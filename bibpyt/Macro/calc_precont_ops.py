@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -554,6 +554,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             motscle6['RELA_CINE_BP'].append(_F(CABLE_BP=mcabl,
                                                SIGM_BPEL='NON',
                                                RELA_CINE='OUI',))
+        info_actif_actif = []
         for mcabl in CABLE_BP:
             __TCAB1 = RECU_TABLE(CO=mcabl, NOM_TABLE='CABLE_GL')
 
@@ -582,6 +583,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
                 actif = 0
                 ancr1_passif = 1
+                
                 for j in range(2):
                     if string.strip(__typ_ancr[j]) == 'PASSIF':
                         if j == 0:
@@ -650,8 +652,18 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                                                           GLIS=ancr1_passif * __sens * __recul * (-1) ** (j)))
                 if (actif == 2):
                     __ActifActif = True
-            # DETRUIRE(CONCEPT=_F(NOM=__TCAB1))
+#                   on stocke les infos pour la construction de la fonction multiplicatrice
+#                   lors de la deuxième phase de mise en tension (sur l'ancrage 1)
+                    info = { 'tension' : __tension}
+                    if string.strip(__typ_noeu[0]) == 'NOEUD':
+                        UTMESS('F', 'CABLE0_5')
+                    else:
+                        info['GROUP_NO'] = string.strip(__nom_noeu[0])
+                    
+                    info_actif_actif.append(info)
 
+            # DETRUIRE(CONCEPT=_F(NOM=__TCAB1))
+        
         dExcit = []
         for j in EXCIT:
             dExcit.append(j.cree_dict_valeurs(j.mc_liste))
@@ -716,22 +728,21 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         __LST  = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__LSTR),)
         dIncrement['LIST_INST'] = __LST
         
-        print 't_fin_etape1 ',t_fin_etape1
-        print 't_fin_etape2 ',t_fin_etape2
-        
         # construction des fonctions multiplicatrices
         
         __FCT1 = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
                               NOM_PARA='INST',
                               VALE=(__TMIN, 0.0, t_fin_etape1, 1.0),)
-        if nb_etapes >=2:
-            __FCT2 = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
-                              NOM_PARA='INST',
-                              VALE=(t_fin_etape1, 0.0, t_fin_etape2, 1.0),)
-        if nb_etapes ==3:
-            __FCT3 = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
-                              NOM_PARA='INST',
-                              VALE=(t_fin_etape2, 0.0, t_fin_etape3, 1.0),)
+        
+        if __recul_exists :
+            if nb_etapes ==2:
+                __FCTREC = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
+                                      NOM_PARA='INST',
+                                      VALE=(t_fin_etape1, 0.0, t_fin_etape2, 1.0),)
+            else:
+                __FCTREC = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
+                                       NOM_PARA='INST',
+                                       VALE=(t_fin_etape2, 0.0, t_fin_etape3, 1.0),)
         
         if CABLE_BP_INACTIF:
             _C_CI = AFFE_CHAR_MECA(MODELE=MODELE, **motscle6)
@@ -755,7 +766,6 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             _C_CAc = AFFE_CHAR_MECA(MODELE=MODELE, VECT_ASSE=__CH1a,)
             _C_CAd = AFFE_CHAR_MECA(MODELE=MODELE, VECT_ASSE=__CH1b,)
             dExcit1a.append(_F(CHARGE=_C_CAc, FONC_MULT = __FCT1))
-            dExcit1b.append(_F(CHARGE=_C_CAd, FONC_MULT = __FCT2))
             
             _C_CAe = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2)
             _C_CAf = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2)
@@ -770,7 +780,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             
             if __recul_exists:
                 dExcit2.append(_F(CHARGE=_C_RA, TYPE_CHARGE='DIDI',
-                                  FONC_MULT = __FCT3),)
+                                  FONC_MULT = __FCTREC),)
             
         else:
             dExcit1 = copy.copy(dExcit)
@@ -788,7 +798,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             
             if __recul_exists:
                 dExcit2.append(_F(CHARGE=_C_RA, TYPE_CHARGE='DIDI',
-                                  FONC_MULT = __FCT2),)
+                                  FONC_MULT = __FCTREC),)
 
         dIncrement['INST_FIN'] = t_fin_etape1
         if __ActifActif:
@@ -809,6 +819,36 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                                 TITRE=TITRE,
                                 EXCIT=dExcit1a,
                                 **motscle4)
+            # construction de la fonction multiplicatrice afin de ne pas
+            # provoquer un recul d'ancrage
+            # en effet ceci peut se produire si on impose une force moins forte
+            # que celle obtenue a la fin du premier calcul en cas de subdivision
+            # des pas de temps
+            
+            __RESREA=CALC_CHAMP(
+                    FORCE=('REAC_NODA',),
+                    RESULTAT=RES,);
+            
+            __REAC1 = CREA_CHAMP( OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
+                          RESULTAT=__RESREA, NOM_CHAM='REAC_NODA',
+                          INST=t_fin_etape1)
+            
+            
+            rapMax = 0.
+            for dic in info_actif_actif:
+                grno = dic['GROUP_NO']
+                GLIS = __REAC1.EXTR_COMP('GLIS',[grno]).valeurs
+                rap = abs(GLIS[0])/dic['tension']
+                                   
+                if rap > rapMax:
+                    rapMax = rap
+            
+            __FCT2 = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
+                                   NOM_PARA='INST',
+                                   VALE=(t_fin_etape1, rapMax, t_fin_etape2, 1.0),)
+            
+            dExcit1b.append(_F(CHARGE=_C_CAd, FONC_MULT = __FCT2))
+            
             
             dIncrement['INST_FIN'] = t_fin_etape2
 

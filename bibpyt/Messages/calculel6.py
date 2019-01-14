@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -244,17 +244,6 @@ Risques et conseils :
   Problème lors du calcul de la pesanteur sur un élément de "câble poulie" :
   Le chargement doit être déclaré "suiveur".
   Il faut utiliser le mot clé : EXCIT / TYPE_CHARGE='SUIV'
-"""),
-
-
-    79: _(u"""
-  Problème lors du calcul de l'option %(k1)s pour les éléments X-FEM :
-  le champ produit est incomplet sur les éléments X-FEM.
-
-  Risque & Conseils :
-  Ce champ ne pourra pas être utilisé sur des éléments non X-FEM.
-  Il vaut mieux utiliser les commandes de post-traitement spécifique
-  POST_MAIL_XFEM et POST_CHAM_XFEM avant la commande CALC_CHAMP.
 """),
 
     80 : _(u"""

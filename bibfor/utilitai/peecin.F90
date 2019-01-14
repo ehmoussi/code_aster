@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine peecin(resu, modele, mate, cara, nh,&
-                  nbocc)
-    implicit none
+!
+subroutine peecin(resu, modele, mate, cara, nh, nbocc)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/gettco.h"
 #include "asterc/r8depi.h"
 #include "asterc/r8vide.h"
+#include "asterfort/assert.h"
 #include "asterfort/chpve2.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exlim3.h"
@@ -31,7 +33,6 @@ subroutine peecin(resu, modele, mate, cara, nh,&
 #include "asterfort/getvid.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -42,7 +43,7 @@ subroutine peecin(resu, modele, mate, cara, nh,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/mecact.h"
-#include "asterfort/mecalc.h"
+#include "asterfort/compEnergyKinetic.h"
 #include "asterfort/mecham.h"
 #include "asterfort/mechti.h"
 #include "asterfort/meharm.h"
@@ -57,7 +58,6 @@ subroutine peecin(resu, modele, mate, cara, nh,&
 #include "asterfort/vrcins.h"
 #include "asterfort/vrcref.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/assert.h"
 !
     integer :: nh, nbocc
     character(len=*) :: resu, modele, mate, cara
@@ -67,20 +67,21 @@ subroutine peecin(resu, modele, mate, cara, nh,&
 !
     integer :: nd, nr, ni, iret, np, nc, jord, jins, jad, nbordr, iord, numord, iainst, jnmo, ibid
     integer :: ie, nt, nm, ng, nbgrma, ig, jgr, nbma, nume, im, lfreq, nbparr, nbpard
-    integer :: nbpaep, iocc, jma, nf, inume, ifm, niv, ier
+    integer :: nbpaep, iocc, jma, nf, inume, ier
     parameter (nbpaep=2,nbparr=6,nbpard=4)
-    real(kind=8) :: prec, xfreq, varpep(nbpaep), alpha, valer(3), inst
+    real(kind=8) :: prec, xfreq, varpep(nbpaep), valer(3), inst
     real(kind=8) :: rundf
     character(len=1) :: base
     character(len=2) :: codret
     character(len=8) :: k8b, noma, resul, crit, nommai, nommas, typarr(nbparr), typard(nbpard)
     character(len=8) :: valk(2), nomgd
-    character(len=16) :: typres, option, optio2, noparr(nbparr), nopard(nbpard), optmas, tabtyp(3)
-    character(len=19) :: chelem, knum, kins, depla, ligrel, chvarc, chvref
-    character(len=24) :: chmasd, chfreq, chamgd, typcha, chtime, k24b, chgeom, chcara(18)
+    character(len=16) :: typres, option, noparr(nbparr), nopard(nbpard), optmas, tabtyp(3)
+    character(len=19) :: chelem, knum, kins, field_node, field_elem, ligrel, chvarc, chvref
+    character(len=19) :: chdisp, chvite
+    character(len=24) :: chmasd, chfreq, typcha, chtime, chgeom, chcara(18)
     character(len=24) :: chtemp, opt, mlggma, mlgnma, chharm, nomgrm, valk2(2)
-    aster_logical :: exitim
-    complex(kind=8) :: c16b, calpha
+    aster_logical :: exitim, l_modal
+    complex(kind=8) :: c16b
     integer :: iarg
 !
     data noparr/'NUME_ORDRE','FREQ','LIEU','ENTITE','TOTALE',&
@@ -95,37 +96,35 @@ subroutine peecin(resu, modele, mate, cara, nh,&
     call jemarq()
     c16b=(0.d0,0.d0)
 !
-! --- RECUPERATION DU NIVEAU D'IMPRESSION
-    call infniv(ifm, niv)
-!
     base = 'V'
-    k24b = ' '
-    alpha = 1.d0
-    calpha = (1.d0,1.d0)
     rundf = r8vide()
     exitim = .false.
     inst = 0.d0
+    chdisp = ' '
+    chvite = ' ' 
     chtemp = ' '
     chfreq = ' '
-    call getvid(' ', 'CHAM_GD', scal=depla, nbret=nd)
+    typres = ' '
+    call getvid(' ', 'CHAM_GD', scal=field_node, nbret=nd)
     if (nd .ne. 0) then
-        call chpve2(depla, 3, tabtyp, ier)
+        call chpve2(field_node, 3, tabtyp, ier)
+        call dismoi('TYPE_SUPERVIS', field_node, 'CHAMP', repk=typcha)
+        call dismoi('NOM_GD', field_node, 'CHAMP', repk=nomgd)
     endif
     call getvr8(' ', 'FREQ', scal=xfreq, nbret=nf)
     call getvid(' ', 'RESULTAT', scal=resul, nbret=nr)
     call getvr8(' ', 'INST', scal=inst, nbret=ni)
-    typres=' '
+
     if (ni .ne. 0) exitim = .true.
     if (nr .ne. 0) then
         call gettco(resul, typres)
         if (typres(1:9) .eq. 'MODE_MECA') then
             noparr(2) = 'FREQ'
-            else if (typres(1:9).eq.'EVOL_THER' .or. typres(1:9)&
-        .eq.'EVOL_ELAS' .or. typres(1:9).eq.'EVOL_NOLI' .or. typres(1:&
-        10).eq.'DYNA_TRANS') then
+        else if (typres(1:9).eq.'EVOL_THER' .or. typres(1:9) .eq.'EVOL_ELAS' .or.&
+                 typres(1:9).eq.'EVOL_NOLI' .or. typres(1: 10).eq.'DYNA_TRANS') then
             noparr(2) = 'INST'
         else
-            call utmess('F', 'UTILITAI3_68')
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !
@@ -141,7 +140,6 @@ subroutine peecin(resu, modele, mate, cara, nh,&
 !
     knum = '&&PEECIN.NUME_ORDRE'
     kins = '&&PEECIN.INSTANT'
-!      TYPRES = ' '
     inume = 1
 !
     if (nd .ne. 0) then
@@ -162,23 +160,21 @@ subroutine peecin(resu, modele, mate, cara, nh,&
     else
         call getvr8(' ', 'PRECISION', scal=prec, nbret=np)
         call getvtx(' ', 'CRITERE', scal=crit, nbret=nc)
-        call rsutnu(resul, ' ', 0, knum, nbordr,&
-                    prec, crit, iret)
+        call rsutnu(resul, ' ', 0, knum, nbordr, prec, crit, iret)
         if (iret .ne. 0) goto 80
         call jeveuo(knum, 'L', jord)
 !        - DANS LE CAS OU CE N'EST PAS UN RESULTAT DE TYPE EVOL_NOLI -
 !        --- ON RECUPERE L'OPTION DE CALCUL DE LA MATRICE DE MASSE ---
         if (typres(1:9) .ne. 'EVOL_NOLI') then
             call dismoi('REF_MASS_PREM', resul, 'RESU_DYNA', repk=nommas, arret='C')
-            if (nommas .eq. ' ') goto 5
-            call dismoi('SUR_OPTION', nommas, 'MATR_ASSE', repk=opt, arret='C',&
-                        ier=ie)
-            if (ie .ne. 0) then
-                call utmess('A', 'UTILITAI3_71')
-            else
-                if (opt(1:14) .eq. 'MASS_MECA_DIAG') inume = 0
+            if (nommas .ne. ' ') then
+                call dismoi('SUR_OPTION', nommas, 'MATR_ASSE', repk=opt, arret='C', ier=ie)
+                if (ie .ne. 0) then
+                    call utmess('A', 'UTILITAI3_71')
+                else
+                    if (opt(1:14) .eq. 'MASS_MECA_DIAG') inume = 0
+                endif
             endif
-  5         continue
         endif
 !        --- ON VERIFIE SI L'UTILISATEUR A DEMANDE L'UTILISATION ---
 !        --- D'UNE MATRICE DE MASSE DIAGONALE                    ---
@@ -224,6 +220,7 @@ subroutine peecin(resu, modele, mate, cara, nh,&
     do iord = 1, nbordr
         call jemarq()
         call jerecu('V')
+        l_modal = ASTER_FALSE
         numord = zi(jord+iord-1)
         inst = zr(jins+iord-1)
         ASSERT(inst.ne.rundf)
@@ -237,29 +234,28 @@ subroutine peecin(resu, modele, mate, cara, nh,&
         if (exitim) call mechti(noma, inst, rundf, rundf, chtime)
 !
         if (nr .ne. 0) then
-            call rsexch(' ', resul, 'ECIN_ELEM', numord, depla,&
-                        iret)
+            call rsexch(' ', resul, 'ECIN_ELEM', numord, field_elem, iret)
             if (iret .gt. 0) then
-!   SI RESULTAT TRANSITOIRE ON RECUPERE LE CHAMP DE VITESSE
                 if (exitim) then
-                    call rsexch(' ', resul, 'VITE', numord, depla,&
-                                iret)
+                    call rsexch(' ', resul, 'VITE', numord, field_node, iret)
                     if (iret .gt. 0) goto 72
-!   SINON RESULTAT MODAL ET ON RECUPERE LE CHAMP DE DEPLACEMENT
+                    call dismoi('NOM_GD', field_node, 'CHAMP', repk=nomgd)
+                    call dismoi('TYPE_SUPERVIS', field_node, 'CHAMP', repk=typcha)
                 else
-                    call rsexch(' ', resul, 'DEPL', numord, depla,&
-                                iret)
+                    l_modal = ASTER_TRUE
+                    call rsexch(' ', resul, 'DEPL', numord, field_node, iret)
                     if (iret .gt. 0) goto 72
+                    call dismoi('NOM_GD', field_node, 'CHAMP', repk=nomgd)
+                    call dismoi('TYPE_SUPERVIS', field_node, 'CHAMP', repk=typcha)
                 endif
+            else
+                call dismoi('NOM_GD', field_elem, 'CHAMP', repk=nomgd)
+                call dismoi('TYPE_SUPERVIS', field_elem, 'CHAMP', repk=typcha)
             endif
-!   SI RESULTAT TRANSITOIRE (OMEGA**2=1.0) :
             if (exitim) then
                 xfreq = 1.d0
-!   SINON C'EST UN RESULTAT MODAL :
             else
-!           --- C'EST BIEN OMEGA2 QUE L'ON RECUPERE ----
-                call rsadpa(resul, 'L', 1, 'OMEGA2', numord,&
-                            0, sjv=lfreq, styp=k8b)
+                call rsadpa(resul, 'L', 1, 'OMEGA2', numord, 0, sjv=lfreq)
                 xfreq = zr(lfreq)
             endif
         endif
@@ -268,25 +264,16 @@ subroutine peecin(resu, modele, mate, cara, nh,&
         call mecact('V', chfreq, 'MAILLA', noma, 'OME2_R',&
                     ncmp=1, nomcmp='OMEG2', sr=xfreq)
 !
-        call dismoi('NOM_GD', depla, 'CHAMP', repk=nomgd)
-        call dismoi('TYPE_SUPERVIS', depla, 'CHAMP', repk=typcha)
         if (typcha(1:7) .eq. 'CHAM_NO') then
             if (nomgd(1:4) .eq. 'DEPL') then
-                optio2 = 'ECIN_ELEM'
-                chamgd = depla
-                call vrcins(modele, mate, cara, inst, chvarc,&
-                            codret)
+                call vrcins(modele, mate, cara, inst, chvarc, codret)
                 call vrcref(modele(1:8), mate(1:8), cara(1:8), chvref(1: 19))
-            else if (nomgd(1:4).eq.'TEMP') then
-                optio2 = 'ECIN_ELEM_TEMP'
-                chamgd = ' '
-                chtemp = depla
             else
                 call utmess('F', 'UTILITAI3_73')
             endif
         else if (typcha(1:9).eq.'CHAM_ELEM') then
             if (nomgd(1:4) .eq. 'ENER') then
-                chelem = depla
+                chelem = field_elem
                 goto 30
             else
                 call utmess('F', 'UTILITAI3_73')
@@ -296,13 +283,18 @@ subroutine peecin(resu, modele, mate, cara, nh,&
         endif
         chelem = '&&PEECIN.CHAM_ELEM'
         ibid = 0
-        call mecalc(optio2, modele, chamgd, chgeom, mate,&
-                    chcara, chtemp, k24b, chtime,&
-                    k24b, k24b, k24b, chfreq, chmasd,&
-                    k24b, k24b, k24b, alpha, calpha,&
-                    k24b, k24b, chelem, k24b, ligrel,&
-                    base, chvarc, chvref, k24b, k24b,&
-                    k24b, iret)
+        if (l_modal) then
+            chvite = ' '
+            chdisp = field_node
+        else
+            chvite = field_node
+            chdisp = ' '
+        endif
+
+        call compEnergyKinetic(modele, ligrel, l_modal,&
+                               chdisp, chvite, chfreq , chgeom , mate,&
+                               chcara, chmasd, chvarc , &
+                               base  , chelem, iret)
  30     continue
 !
 !        --- ON CALCULE L'ENERGIE TOTALE ---

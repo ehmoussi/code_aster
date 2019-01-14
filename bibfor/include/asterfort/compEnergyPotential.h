@@ -15,11 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine rsexc1(nomsd, nomsy, nume_store, chextr)
-        character(len=*), intent(in) :: nomsd, nomsy
-        integer, intent(in) :: nume_store
-        character(len=*), intent(out) :: chextr
-    end subroutine rsexc1
+    subroutine compEnergyPotential(option , modelz , ligrel, compor, l_temp,&
+                                   chdispz, chtempz,&
+                                   chharm , chgeom , chmate, chcara, chtime,&
+                                   chvarc , chvref , &
+                                   basez  , chelemz, codret)
+        character(len=*), intent(in) :: option, modelz, ligrel, compor
+        aster_logical, intent(in) :: l_temp
+        character(len=*), intent(in) :: chdispz, chtempz
+        character(len=*), intent(in) :: chharm, chgeom, chmate, chcara(*), chtime
+        character(len=*), intent(in) :: chvarc, chvref
+        character(len=*), intent(in) :: chelemz, basez
+        integer, intent(out) :: codret
+    end subroutine compEnergyPotential
 end interface
