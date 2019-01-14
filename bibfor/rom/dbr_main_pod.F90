@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,9 +58,11 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     real(kind=8), pointer :: s(:) => null() 
     real(kind=8), pointer :: v_gamma(:) => null()
     character(len=19) :: tabl_coor
+    real(kind=8) :: tole_svd
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    tole_svd     = ds_para_pod%tole_svd
     tabl_coor    = ds_empi%tabl_coor
     nb_snap_redu = ds_para_pod%ds_snap%nb_snap
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
@@ -81,7 +83,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Select empiric modes
 !
-    call dbr_calcpod_sele(nb_mode_maxi, ds_para_pod%tole_svd, s, nb_sing, nb_mode)
+    call dbr_calcpod_sele(nb_mode_maxi, tole_svd, s, nb_sing, nb_mode)
 !
 ! - Save empiric modes
 ! 

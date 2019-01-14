@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine dbr_pod_incr(l_reuse, nb_mode_maxi, ds_empi, ds_para_pod,&
+    subroutine dbr_pod_incr(l_reuse, ds_empi, ds_para_pod,&
                             q, s, v, nb_mode, nb_snap_redu)
         use Rom_Datastructure_type
         aster_logical, intent(in) :: l_reuse
-        integer, intent(in) :: nb_mode_maxi
         type(ROM_DS_Empi), intent(inout) :: ds_empi
         type(ROM_DS_ParaDBR_POD) , intent(in) :: ds_para_pod
         real(kind=8), pointer :: q(:)
