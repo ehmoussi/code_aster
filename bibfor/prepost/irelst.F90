@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
                   nomamd, nbimpr, caimpi, caimpk, sdcarm,&
                   carael)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
+#include "MeshTypes_type.h"
 #include "jeveux.h"
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mfiope.h"
@@ -48,13 +52,11 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
 #include "asterfort/as_allocate.h"
 !
 character(len=8) :: nomaas, typech, sdcarm, carael
-    character(len=*) :: nofimd
-    character(len=19) :: chanom
-    character(len=64) :: nomamd, nochmd
-    integer :: nbimpr, caimpi(10, nbimpr)
-    character(len=80) :: caimpk(3, nbimpr)
-!
-! person_in_charge: nicolas.sellenet at edf.fr
+character(len=*) :: nofimd
+character(len=19) :: chanom
+character(len=64) :: nomamd, nochmd
+integer :: nbimpr, caimpi(10, nbimpr)
+character(len=80) :: caimpk(3, nbimpr)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,45 +77,37 @@ character(len=8) :: nomaas, typech, sdcarm, carael
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: inimpr, nbcouc, nbsect, nummai, lgmax, ntypef, codret
-    integer :: nbnoso, nbnoto, nbrepg, ndim, nbfamx, nbelr, nbgamm
-    integer :: edleaj, idfimd, edcart, edfuin, ntymax, nbtyp, nnomax, nbsp
-    integer :: edmail, ednoda, edtyre, medcel, nbmssu, nbattc, prespr
-    parameter    (edleaj = 1)
-    parameter    (nbfamx = 20)
-    parameter    (lgmax  = 1000)
-    parameter    (edcart = 0)
-    parameter    (edfuin = 0)
-    parameter    (ntymax = 69)
-    parameter    (nnomax = 27)
-    parameter    (edmail = 0)
-    parameter    (ednoda = 0)
-    parameter    (edtyre = 6)
-    integer :: nnotyp(ntymax), typgeo(ntymax), renumd(ntymax)
-    integer :: modnum(ntymax), nuanom(ntymax, nnomax), ino, inimp2
-    integer :: numnoa(ntymax, nnomax), tymaas, tymamd, connex(9)
+    integer :: inimpr, nbcouc, nbsect, nummai,  ntypef, codret
+    integer :: nbnoso, nbnoto, nbrepg, ndim, nbelr, nbgamm
+    integer :: idfimd, nbtyp, nbsp
+    integer :: medcel, nbmssu, nbattc, prespr
+    integer, parameter :: lgmax = 1000, edleaj = 1, nbfamx = 20
+    integer, parameter :: edmail = 0, edcart = 0, edfuin = 0, ednoda = 0, edtyre = 6
+    character(len=8) :: lielrf(nbfamx)
+    real(kind=8)     :: refcoo(3*lgmax), gscoo(3*lgmax), wg(lgmax)
+    integer :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX), renumd(MT_NTYMAX)
+    integer :: modnum(MT_NTYMAX), nuanom(MT_NTYMAX, MT_NNOMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
+    character(len=8) :: nomtyp(MT_NTYMAX)
+    integer :: ino, inimp2
+    integer :: tymaas, tymamd, connex(9)
     integer :: imasup, jmasup, nbmasu, nbmsmx, nvtymd, edcar2, nbattv
     integer :: dimest, nbnosu, tygems
-!
-    character(len=8) :: lielrf(nbfamx), saux08, nomtyp(ntymax)
-    character(len=16) :: nomtef, nomfpg, nocoor(3), uncoor(3)
+    character(len=8) :: saux08
+    character(len=16) :: nomtef, nomfpg
     character(len=16) :: nocoo2(3), uncoo2(3)
-    character(len=64) :: nomasu, atepai, atangv, nomaes
-    character(len=64) :: nocoqu, nompmf, notuya
+    character(len=64) :: nomasu, nomaes
     character(len=64) :: nomas2
     character(len=200) :: desmed
-    parameter    (atepai = 'SCALE')
-    parameter    (atangv = 'ANGLE')
-    parameter    (nocoqu = 'SP_SHELL')
-    parameter    (nompmf = 'SP_BEAM')
-    parameter    (notuya = 'SP_PIPE')
-!
-    real(kind=8)     :: refcoo(3*lgmax), gscoo(3*lgmax), wg(lgmax)
+    character(len=64), parameter :: atepai = 'SCALE', atangv = 'ANGLE'
+    character(len=64), parameter :: nocoqu = 'SP_SHELL', nompmf = 'SP_BEAM', notuya = 'SP_PIPE'
     aster_logical    :: newest, okgr, okcq, oktu, okpf
     integer, pointer :: nv_type_med(:) => null()
-!
-    data nocoor  /'X               ', 'Y               ', 'Z               '/
-    data uncoor  /'INCONNU         ', 'INCONNU         ', 'INCONNU         '/
+    character(len=16), parameter :: nocoor(3) = (/'X               ',&
+                                                  'Y               ',&
+                                                  'Z               '/)
+    character(len=16), parameter :: uncoor(3) = (/'INCONNU         ',&
+                                                  'INCONNU         ',&
+                                                  'INCONNU         '/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -162,7 +156,7 @@ character(len=8) :: nomaas, typech, sdcarm, carael
 !   CREATION DES ELEMENTS DE STRUCTURES DANS LE FICHIER MED
 !   UN ELEMENT DE STRUCTURE EST DEFINIT PAR UNE PAIRE :
 !   TYPE ELEMENT (COQUE, TUYAU, ...) + TYPE MAILLE
-    newest = .false.
+    newest = ASTER_FALSE
     do inimpr = 1, nbimpr
         ntypef = caimpi(1,inimpr)
         nbsp   = caimpi(3,inimpr)
@@ -208,7 +202,7 @@ character(len=8) :: nomaas, typech, sdcarm, carael
                 nbgamm = 4
                 nomas2(8:10) = '_4'
             else
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
         else if ( okpf ) then
 !           CAS D'UNE PMF
@@ -311,13 +305,13 @@ character(len=8) :: nomaas, typech, sdcarm, carael
                 call utmess('F', 'DVP_97', sk=saux08, si=codret)
             endif
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
 !
 !       MODIFICATION DU TYPE MED A IMPRIMER
         caimpi(9,inimpr) = nvtymd
         caimpk(3,inimpr) = nomasu
-        newest = .true.
+        newest = ASTER_TRUE
 !
 50      continue
     enddo

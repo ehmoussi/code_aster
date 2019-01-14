@@ -15,25 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "MeshTypes_type.h"
+! person_in_charge: mickael.abbas at edf.fr
 !
-interface
-    subroutine lrmmfa(fid, nomamd, nbnoeu, grpnoe,&
-                      gpptnn, grpmai, gpptnm, nbgrno, nbgrma,&
-                      typgeo, nomtyp, nmatyp, prefix, infmed)
-        integer :: fid
-        character(len=*) :: nomamd
-        integer :: nbnoeu
-        character(len=24) :: grpnoe
-        character(len=24) :: gpptnn
-        character(len=24) :: grpmai
-        character(len=24) :: gpptnm
-        integer :: nbgrno
-        integer :: nbgrma
-        integer :: typgeo(MT_NTYMAX)
-        character(len=8) :: nomtyp(MT_NTYMAX)
-        integer :: nmatyp(MT_NTYMAX)
-        character(len=6) :: prefix
-        integer :: infmed
-    end subroutine lrmmfa
-end interface
+
+! Total number of mesh types 
+#define MT_NTYMAX 69
+! Maximum number of nodes of all elements
+#define MT_NNOMAX 27

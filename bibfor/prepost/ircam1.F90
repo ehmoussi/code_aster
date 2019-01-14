@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,60 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+! aslint: disable=W1504
+!
 subroutine ircam1(nofimd, nochmd, existc, ncmprf, numpt,&
                   instan, numord, adsd, adsv, adsl,&
                   adsk, partie, ncmpve, ntlcmp, ntncmp,&
                   ntucmp, ntproa, nbimpr, caimpi, caimpk,&
                   typech, nomamd, nomtyp, modnum, nuanom,&
                   codret)
-! person_in_charge: nicolas.sellenet at edf.fr
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "MeshTypes_type.h"
+#include "jeveux.h"
+#include "asterc/utflsh.h"
+#include "asterfort/as_mfdfin.h"
+#include "asterfort/as_mficlo.h"
+#include "asterfort/as_mfiope.h"
+#include "asterfort/infniv.h"
+#include "asterfort/ircmcc.h"
+#include "asterfort/ircmec.h"
+#include "asterfort/ircmva.h"
+#include "asterfort/jedetr.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/utmess.h"
+#include "asterfort/wkvect.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/as_allocate.h"
+!
+integer :: nbimpr
+integer :: caimpi(10, nbimpr)
+integer :: numpt, numord
+integer :: adsd, adsv, adsl, adsk
+integer :: existc, ncmprf
+integer :: ncmpve
+integer :: typent, tygeom
+integer :: modnum(MT_NTYMAX), nuanom(MT_NTYMAX, *)
+character(len=8) :: typech
+character(len=8) :: nomtyp(*)
+character(len=24) :: ntlcmp, ntncmp, ntucmp, ntproa
+character(len=*) :: nofimd, partie
+character(len=*) :: nomamd
+character(len=*) :: caimpk(3, nbimpr)
+character(len=64) :: nochmd
+real(kind=8) :: instan
+integer :: codret
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ECRITURE D'UN CHAMP - FORMAT MED - PHASE 1
-!        -  -       - -            -           -
-!-----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ENTREES :
 !       NOFIMD : NOM DU FICHIER MED
 !       NOCHMD : NOM MED DU CHAMP A ECRIRE
@@ -66,111 +109,40 @@ subroutine ircam1(nofimd, nochmd, existc, ncmprf, numpt,&
 !                MAILLE DE TYPE ITYP DANS MED.
 !     SORTIES:
 !       CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
-!_______________________________________________________________________
 !
-! aslint: disable=W1504
-    implicit none
+! --------------------------------------------------------------------------------------------------
 !
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterc/utflsh.h"
-#include "asterfort/as_mfdfin.h"
-#include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
-#include "asterfort/infniv.h"
-#include "asterfort/ircmcc.h"
-#include "asterfort/ircmec.h"
-#include "asterfort/ircmva.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
-    integer :: ntymax
-    parameter (ntymax = 69)
-!
-! 0.1. ==> ARGUMENTS
-!
-    integer :: nbimpr
-    integer :: caimpi(10, nbimpr)
-    integer :: numpt, numord
-    integer :: adsd, adsv, adsl, adsk
-    integer :: existc, ncmprf
-    integer :: ncmpve
-    integer :: typent, tygeom
-    integer :: modnum(ntymax), nuanom(ntymax, *)
-!
-    character(len=8) :: typech
-    character(len=8) :: nomtyp(*)
-    character(len=24) :: ntlcmp, ntncmp, ntucmp, ntproa
-    character(len=*) :: nofimd, partie
-    character(len=*) :: nomamd
-    character(len=*) :: caimpk(3, nbimpr)
-    character(len=64) :: nochmd
-    character(len=64) :: nompb(2)
-!
-    real(kind=8) :: instan
-!
-    integer :: codret
-!
-! 0.2. ==> COMMUNS
-!
-!
-! 0.3. ==> VARIABLES LOCALES
-!
-    character(len=6) :: nompro
-    parameter ( nompro = 'IRCAM1' )
-!
+    character(len=6), parameter :: nompro = 'IRCAM1'
     integer :: edleaj
-    integer :: ednoeu
-    parameter (ednoeu=3)
-    integer :: edmail
-    parameter (edmail=0)
-    integer :: edelst
-    parameter (edelst=5)
-    integer :: typnoe
-    parameter (typnoe=0)
-    integer :: ednopg
-    parameter (ednopg=1)
-    integer :: ednoma
-    parameter (ednoma=4)
-!
+    integer, parameter :: ednoeu=3
+    integer, parameter :: edmail=0
+    integer, parameter :: ednoma=4
+    integer, parameter :: typnoe=0
+    integer, parameter :: ednopg=1
+    integer, parameter :: edelst=5
     character(len=8) :: saux08
     character(len=24) :: ntvale
     character(len=64) :: nomprf, nolopg, nomam2
-!
     integer :: nbrepg, nbpt, iret
-    integer :: ifm, nivinf
+    integer :: ifm, niv
     integer :: nbenty, nvalec, nbpg, nbsp, nbco, nbse, nbfi
     integer :: tymast
     integer :: advale
     integer :: adproa, adnucm
     integer :: nrimpr, codre2, retsav
     integer :: ideb, ifin
-!
     integer :: idfimd
     integer :: iaux
     aster_logical :: ficexi
     character(len=16), pointer :: cname(:) => null()
     character(len=16), pointer :: cunit(:) => null()
 !
-!====
-! 1. PREALABLES
-!====
+! --------------------------------------------------------------------------------------------------
 !
-! 1.1. ==> RECUPERATION DU NIVEAU D'IMPRESSION
-!
-    call infniv(ifm, nivinf)
-!
-    if (nivinf .gt. 1) then
-        write (ifm,1001) 'DEBUT DE '//nompro
-        write (ifm,*) 'ECRITURE DE '//nochmd
-    endif
-    1001 format(/,4x,10('='),a,10('='),/)
+    call infniv(ifm, niv)
 !
 ! 1.2. ==> NOMS DES TABLEAUX DE TRAVAIL
-!               12   345678   9012345678901234
+!
     ntvale = '&&'//nompro//'.VALEURS        '
 !
 ! 1.3. ==> ADRESSES
@@ -229,122 +201,111 @@ subroutine ircam1(nofimd, nochmd, existc, ncmprf, numpt,&
 ! 4. ECRITURE POUR CHAQUE IMPRESSION SELECTIONNEE
 !====
 !
-    ifin = 0
-!
+    ifin   = 0
     retsav = 0
-    do 41 , nrimpr = 1 , nbimpr
-!
-    if (codret .eq. 0) then
-!
-!GN        PRINT *,'IMPRESSION NUMERO ',NRIMPR
-!GN        PRINT *,'CAIMPI : ',(CAIMPI(IAUX,NRIMPR),IAUX = 1 , 7)
-!GN        PRINT *,'CAIMPK (LOCA GAUSS) : ',CAIMPK(1,NRIMPR)
-!GN        PRINT *,'CAIMPK (PROFIL)     : ',CAIMPK(2,NRIMPR)
-! 4.0. ==> NOMBRE DE VALEURS A ECRIRE
-!
-        nvalec = caimpi(7,nrimpr)
-!
-        if (nvalec .gt. 0) then
+    do nrimpr = 1 , nbimpr
+        if (codret .eq. 0) then
+            nvalec = caimpi(7,nrimpr)
+            if (nvalec .gt. 0) then
 !
 ! 4.1. ==> ON DOIT ECRIRE DES VALEURS CORRESPONDANTS A NVALEC SUPPORTS
 !          DU TYPE EN COURS.
 !
-            if (nivinf .gt. 1) then
-                write (ifm,4000)
-                call utflsh(codret)
-            endif
+                if (niv .gt. 1) then
+                    write (ifm,400)
+                    call utflsh(codret)
+                endif
 !
-            tygeom = caimpi(9,nrimpr)
-            tymast = caimpi(8,nrimpr)
-            ideb = ifin + 1
-            ifin = ideb + nvalec - 1
+                tygeom = caimpi(9,nrimpr)
+                tymast = caimpi(8,nrimpr)
+                ideb = ifin + 1
+                ifin = ideb + nvalec - 1
 !
-            if (tygeom .eq. typnoe) then
-                typent = ednoeu
-            else
-                if (typech .eq. 'ELNO') then
-                    typent = ednoma
+                if (tygeom .eq. typnoe) then
+                    typent = ednoeu
                 else
-                    typent = edmail
-                endif
-            endif
-!
-            if (tygeom .eq. typnoe) then
-                nbpg = 1
-                nbsp = 1
-                nbco = 0
-                nbse = 0
-                nbfi = 0
-                if (nivinf .gt. 1) then
-                    write (ifm,4001)
-                endif
-            else
-                nbpg = caimpi(2,nrimpr)
-                nbsp = caimpi(3,nrimpr)
-                nbco = caimpi(4,nrimpr)
-                nbse = caimpi(5,nrimpr)
-                nbfi = caimpi(6,nrimpr)
-                if (nivinf .gt. 1) then
-                    write (ifm,4002) nomtyp(tymast), tygeom
-                endif
-            endif
-!
-            nbenty = caimpi(10,nrimpr)
-            nolopg = caimpk(1,nrimpr)
-            nomprf = caimpk(2,nrimpr)
-!
-! 4.2. ==> CREATION DES TABLEAUX DE VALEURS A ECRIRE
-!
-            if (codret .eq. 0) then
-!
-                iaux = ncmpve*nbsp*nbpg*nvalec
-                call wkvect(ntvale, 'V V R', iaux, advale)
-!
-                call ircmva(zi(adnucm), ncmpve, ncmprf, nvalec, nbpg,&
-                            nbsp, adsv, adsd, adsl, adsk,&
-                            partie, tymast, modnum, nuanom, typech,&
-                            zr(advale), zi( adproa), ideb, ifin, codre2)
-                if (codre2 .ne. 0) retsav = 100
-!
-            endif
-!
-! 4.4. ==> ECRITURE VRAIE
-!
-            if (codret .eq. 0) then
-!
-                nbrepg = ednopg
-                if ((tygeom.ne.typnoe) .and. (nbpg*nbsp.ne.1)) then
-                    nbrepg = nbpg
-                    if (nbco .eq. 0 .and. nbse .eq. 0 .and. nbfi .eq. 0) then
-                        nbrepg = nbpg*nbsp
+                    if (typech .eq. 'ELNO') then
+                        typent = ednoma
                     else
-                        typent = edelst
+                        typent = edmail
                     endif
                 endif
 !
-                call ircmec(idfimd, nochmd, nomprf, nolopg, numpt,&
-                            instan, numord, zr(advale), ncmpve, nbenty,&
-                            nbrepg, nvalec, typent, tygeom, codret)
+                if (tygeom .eq. typnoe) then
+                    nbpg = 1
+                    nbsp = 1
+                    nbco = 0
+                    nbse = 0
+                    nbfi = 0
+                    if (niv .gt. 1) then
+                        write (ifm,401)
+                    endif
+                else
+                    nbpg = caimpi(2,nrimpr)
+                    nbsp = caimpi(3,nrimpr)
+                    nbco = caimpi(4,nrimpr)
+                    nbse = caimpi(5,nrimpr)
+                    nbfi = caimpi(6,nrimpr)
+                    if (niv .gt. 1) then
+                        write (ifm,402) nomtyp(tymast), tygeom
+                    endif
+                endif
 !
-                call jedetr(ntvale)
+                nbenty = caimpi(10,nrimpr)
+                nolopg = caimpk(1,nrimpr)
+                nomprf = caimpk(2,nrimpr)
+!
+! 4.2. ==> CREATION DES TABLEAUX DE VALEURS A ECRIRE
+!
+                if (codret .eq. 0) then
+!
+                    iaux = ncmpve*nbsp*nbpg*nvalec
+                    call wkvect(ntvale, 'V V R', iaux, advale)
+!
+                    call ircmva(zi(adnucm), ncmpve, ncmprf, nvalec, nbpg,&
+                                nbsp, adsv, adsd, adsl, adsk,&
+                                partie, tymast, modnum, nuanom, typech,&
+                                zr(advale), zi( adproa), ideb, ifin, codre2)
+                    if (codre2 .ne. 0) retsav = 100
+!
+                endif
+!
+! 4.4. ==> ECRITURE VRAIE
+!
+                if (codret .eq. 0) then
+!
+                    nbrepg = ednopg
+                    if ((tygeom.ne.typnoe) .and. (nbpg*nbsp.ne.1)) then
+                        nbrepg = nbpg
+                        if (nbco .eq. 0 .and. nbse .eq. 0 .and. nbfi .eq. 0) then
+                            nbrepg = nbpg*nbsp
+                        else
+                            typent = edelst
+                        endif
+                    endif
+!
+                    call ircmec(idfimd, nochmd, nomprf, nolopg, numpt,&
+                                instan, numord, zr(advale), ncmpve, nbenty,&
+                                nbrepg, nvalec, typent, tygeom, codret)
+!
+                    call jedetr(ntvale)
+!
+                endif
 !
             endif
 !
         endif
 !
-    endif
+    end do
 !
-    41 end do
-!
-    if (nivinf .gt. 1) then
+    if (niv .gt. 1) then
         call utflsh(codret)
-        write (ifm,4000)
+        write (ifm,400)
     endif
 !
-    4000 format(/,80('-'),/)
-    4001 format('  * VALEURS AUX NOEUDS',/)
-    4002 format(&
-     &/,'  * VALEURS SUR LES MAILLES DE TYPE ASTER ',a,' ET MED',i4)
+400 format(/,80('-'),/)
+401 format('  * VALEURS AUX NOEUDS',/)
+402 format(/,'  * VALEURS SUR LES MAILLES DE TYPE ASTER ',a,' ET MED',i4)
 !
 !====
 ! 5. FERMETURE DU FICHIER MED
@@ -361,12 +322,7 @@ subroutine ircam1(nofimd, nochmd, existc, ncmprf, numpt,&
 ! 6. LA FIN
 !====
 !
-!     MENAGE
     AS_DEALLOCATE(vk16=cname)
     AS_DEALLOCATE(vk16=cunit)
-!
-    if (nivinf .gt. 1) then
-        write (ifm,1001) 'FIN DE '//nompro
-    endif
 !
 end subroutine
