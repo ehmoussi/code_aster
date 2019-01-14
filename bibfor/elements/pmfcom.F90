@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -113,6 +113,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
     materi = compor(1)(1:8)
     compo  = compor(2)(1:16)
     algo   = compor(3)(1:16)
+
 !
 !   TEMP ou pas ?
     istemp = rcexistvarc('TEMP')
@@ -129,6 +130,8 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
     endif
 !   angle du MOT_CLEF massif (AFFE_CARA_ELEM) initialise à 0.D0 (on ne s'en sert pas)
     call r8inir(3, 0.d0, angmas, 1)
+
+
 !
 ! --------------------------------------------------------------------------------------------------
     if (compo .eq. 'ELAS') then
@@ -312,8 +315,9 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
                 ksp=debsp-1+i
                 call paeldt(kpg, ksp, fami, 'T', icdmat, materi, em, ep, nu, depsth)
             endif
+            depsm = ddefp(i)-depsth
             call nm1dco('RIGI', kpg, i, option, icdmat,&
-                        materi, ep, contm(i), epsm, ddefp(i),&
+                        materi, ep, contm(i), defm(i), depsm,&
                         varim(ivari), sigf(i), varip(ivari), modf(i), crit,&
                         codret)
             if (codret .ne. 0) goto 999
