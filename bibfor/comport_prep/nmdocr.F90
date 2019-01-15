@@ -92,7 +92,7 @@ aster_logical, intent(in) :: l_implex
 !
 ! - Save and check informations in CARCRI <CARTE>
 !
-    call carc_save(model, mesh, carcri, nb_cmp, ds_compor_para)
+    call carc_save(mesh, carcri, nb_cmp, ds_compor_para)
 !
 ! - Cleaning
 !

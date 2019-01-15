@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine mfront_get_mater_value(rela_comp, jvariexte,&
+    subroutine mfront_get_mater_value(rela_comp, jvariext1,&
                                       fami     , kpg      , ksp, imate, &
                                       nprops   , props)
         character(len=16), intent(in) :: rela_comp
-        integer, intent(in) :: jvariexte
+        integer, intent(in) :: jvariext1
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
         integer, intent(in) :: ksp
