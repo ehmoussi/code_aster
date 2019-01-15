@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,6 +34,8 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/GeneralizedModel.h"
 #include "Supervis/ResultNaming.h"
+
+#include "Results/ForwardMechanicalModeContainer.h"
 
 /**
  * @class GeneralizedFieldOnNodesDescriptionInstance
@@ -123,6 +125,8 @@ class GeneralizedDOFNumberingInstance : public DataStructure {
     GeneralizedFieldOnNodesDescriptionPtr _nume;
     /** @brief support GeneralizedFieldOnNodesDescription */
     GeneralizedModelPtr _model;
+    /** @brief support modal basis */
+    ForwardMechanicalModeContainerPtr _basis;
 
   public:
     /**
@@ -156,11 +160,34 @@ class GeneralizedDOFNumberingInstance : public DataStructure {
     GeneralizedModelPtr getGeneralizedModel() const { return _model; };
 
     /**
+     * @brief Get support modal basis
+     */
+    MechanicalModeContainerPtr getModalBasis()
+    {
+        if ( _basis.isSet() )
+            return _basis.getPointer();
+        return MechanicalModeContainerPtr( nullptr );
+    };
+
+    /**
      * @brief Set the support GeneralizedModel
      */
     bool setGeneralizedModel( const GeneralizedModelPtr &model ) {
         _model = model;
         return true;
+    };
+
+    /**
+     * @brief Set support modal basis
+     */
+    bool setModalBasis( const MechanicalModeContainerPtr &mecaModeC )
+    {
+        if ( mecaModeC != nullptr )
+        {
+            _basis = mecaModeC;
+            return true;
+        }
+        return false;
     };
 };
 
