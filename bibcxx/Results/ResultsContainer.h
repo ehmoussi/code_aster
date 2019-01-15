@@ -299,7 +299,7 @@ class ResultsContainerInstance : public DataStructure {
     * @brief Get the number of steps stored in the ResultContainer
     * @return nbRanks
     */
-    const int getNumberOfRanks() const;
+    int getNumberOfRanks() const;
 
     /**
     * @brief Get the number of steps stored in the ResultContainer
