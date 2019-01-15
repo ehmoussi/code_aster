@@ -148,7 +148,7 @@ ModelPtr ResultsContainerInstance::getModel() {
     return toReturn;
 };
 
-const int ResultsContainerInstance::getNumberOfRanks() const
+int ResultsContainerInstance::getNumberOfRanks() const
 {
     return _serialNumber->usedSize();
 };
