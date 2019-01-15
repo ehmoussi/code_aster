@@ -37,5 +37,7 @@ void exportGeneralizedDOFNumberingToPython() {
         .def( "__init__",
               make_constructor(&initFactoryPtr< GeneralizedDOFNumberingInstance, std::string >))
         .def( "getGeneralizedModel", &GeneralizedDOFNumberingInstance::getGeneralizedModel )
-        .def( "setGeneralizedModel", &GeneralizedDOFNumberingInstance::setGeneralizedModel );
+        .def( "getModalBasis", &GeneralizedDOFNumberingInstance::getModalBasis )
+        .def( "setGeneralizedModel", &GeneralizedDOFNumberingInstance::setGeneralizedModel )
+        .def( "setModalBasis", &GeneralizedDOFNumberingInstance::setModalBasis );
 };

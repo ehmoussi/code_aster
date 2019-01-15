@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -45,6 +45,9 @@ class GeneralizedDOFNumberingDefinition(ExecuteCommand):
         modeleGene = keywords.get("MODELE_GENE")
         if modeleGene is not None:
             self._result.setGeneralizedModel(modeleGene)
+        basis = keywords.get("BASE")
+        if basis is not None:
+            self._result.setModalBasis(basis)
 
 
 NUME_DDL_GENE = GeneralizedDOFNumberingDefinition.run
