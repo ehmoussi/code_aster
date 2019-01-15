@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -170,7 +170,12 @@ Conseil :
   MACR_ECLA_PG(... NOM_CHAM=('SIEF_ELGA', 'VARI_ELGA'),
 """),
 
-
+    25: _(u"""
+  Attention : %(i1)d mailles de type %(k1)s n'ont pas été projetées car la famille
+  de points de Gauss sur le champ en question a une maille support 1D.
+  
+  Il s'agit certainement d'éléments de joint 2D.
+"""),
 
     31: _(u"""
 Erreur utilisateur dans la commande AFFE_CARA_ELEM :
