@@ -38,6 +38,15 @@ void exportMechanicalModeContainerToPython() {
     bool ( MechanicalModeContainerInstance::*c4 )( const AssemblyMatrixPressureDoublePtr & ) =
         &MechanicalModeContainerInstance::setStiffnessMatrix;
 
+    bool ( MechanicalModeContainerInstance::*c5 )( const AssemblyMatrixDisplacementDoublePtr & ) =
+        &MechanicalModeContainerInstance::setMassMatrix;
+    bool ( MechanicalModeContainerInstance::*c6 )( const AssemblyMatrixTemperatureDoublePtr & ) =
+        &MechanicalModeContainerInstance::setMassMatrix;
+    bool ( MechanicalModeContainerInstance::*c7 )( const AssemblyMatrixDisplacementComplexPtr & ) =
+        &MechanicalModeContainerInstance::setMassMatrix;
+    bool ( MechanicalModeContainerInstance::*c8 )( const AssemblyMatrixPressureDoublePtr & ) =
+        &MechanicalModeContainerInstance::setMassMatrix;
+
     class_< MechanicalModeContainerInstance, MechanicalModeContainerPtr,
             bases< FullResultsContainerInstance > >( "MechanicalModeContainer", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< MechanicalModeContainerInstance >))
@@ -49,6 +58,11 @@ void exportMechanicalModeContainerToPython() {
         .def( "setStiffnessMatrix", c2 )
         .def( "setStiffnessMatrix", c3 )
         .def( "setStiffnessMatrix", c4 )
+        .def( "getMassMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr > )
+        .def( "setMassMatrix", c5 )
+        .def( "setMassMatrix", c6 )
+        .def( "setMassMatrix", c7 )
+        .def( "setMassMatrix", c8 )
         .def( "setStructureInterface", &MechanicalModeContainerInstance::setStructureInterface );
 };
 

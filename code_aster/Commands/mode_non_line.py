@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import TableContainer
+from ..Objects import TableContainer, MechanicalModeContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -50,6 +50,24 @@ class ModeNonLine(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = TableContainer()
+        if keywords.get("reuse"):
+            self._result = keywords.get("reuse")
+        else:
+            self._result = TableContainer()
+
+    def post_exec(self, keywords):
+        """
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        self._result.update()
+        nrow=self._result.get_nrow()
+        for irow in range(nrow):
+            nom_obj=self._result["NOM_OBJET",irow+1]
+            mode_meca=self._result.getMechanicalModeContainer(nom_obj)           
+            mode_meca.setMassMatrix(keywords['MATR_MASS'])
+            mode_meca.setStiffnessMatrix(keywords['MATR_RIGI'])
+            
 
 MODE_NON_LINE = ModeNonLine.run
