@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine mfront_get_mater_value(rela_comp, jvariexte,&
+subroutine mfront_get_mater_value(rela_comp, jvariext1,&
                                   fami     , kpg      , ksp, imate, &
                                   nprops   , props)
 !
@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/Behaviour_type.h"
 !
 character(len=16), intent(in) :: rela_comp
-integer, intent(in) :: jvariexte
+integer, intent(in) :: jvariext1
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg
 integer, intent(in) :: ksp
@@ -51,7 +51,7 @@ real(kind=8), intent(out) :: props(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  jvariexte        : coded integer for external state variable
+! In  jvariext1        : first coded integer for external state variable
 ! In  rela_comp        : RELATION comportment
 ! In  fami             : Gauss family for integration point rule
 ! In  imate            : coded material address
@@ -73,7 +73,7 @@ real(kind=8), intent(out) :: props(*)
 ! --------------------------------------------------------------------------------------------------
 !
     tabcod(:) = 0
-    variextecode(1) = jvariexte
+    variextecode(1) = jvariext1
     call isdeco(variextecode(1), tabcod, 30)
     nbcoef = 0
 !

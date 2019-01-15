@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 subroutine getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                     l_mfront_offi, l_mfront_proto ,&
                                     cptr_nbvarext, cptr_namevarext,&
-                                    jvariexte)
+                                    jvariext1)
 !
 use NonLin_Datastructure_type
 !
@@ -35,13 +35,10 @@ implicit none
 #include "asterc/lcinfo.h"
 #include "asterc/lcextevari.h"
 !
-aster_logical, intent(in) :: l_mfront_offi
-aster_logical, intent(in) :: l_mfront_proto
-character(len=16), intent(in) :: rela_comp
-character(len=16), intent(in) :: comp_code_py
-integer, intent(in) :: cptr_nbvarext
-integer, intent(in) :: cptr_namevarext
-integer, intent(out) :: jvariexte
+aster_logical, intent(in) :: l_mfront_offi, l_mfront_proto
+character(len=16), intent(in) :: rela_comp, comp_code_py
+integer, intent(in) :: cptr_nbvarext, cptr_namevarext
+integer, intent(out) :: jvariext1
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,7 +53,7 @@ integer, intent(out) :: jvariexte
 ! In  rela_comp        : RELATION comportment
 ! In  cptr_nbvarext    : pointer to number of external state variable
 ! In  cptr_namevarext  : pointer to name of external state variable
-! Out jvariexte        : coded integer for external state variable
+! Out jvariext1        : first coded integer for external state variable
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,7 +85,7 @@ integer, intent(out) :: jvariexte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    jvariexte    = 0
+    jvariext1    = 0
     nb_exte      = 0
     name_exte(:) = ' '
 !
@@ -127,6 +124,6 @@ integer, intent(out) :: jvariexte
         end do
     end do 
     call iscode(tabcod, variextecode(1), 30)
-    jvariexte = variextecode(1)
+    jvariext1 = variextecode(1)
 !
 end subroutine
