@@ -62,12 +62,18 @@ class VibrationDynamics(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         if keywords["BASE_CALCUL"] == "PHYS":
-            self._result.appendModelOnAllRanks(keywords["MATR_MASS"].getDOFNumbering().getSupportModel())
+            massMatrix = keywords["MATR_MASS"]
+            self._result.appendModelOnAllRanks(massMatrix.getDOFNumbering().getSupportModel())
             self._result.update()
         if keywords["BASE_CALCUL"] == "GENE":
-            dofNum = keywords["MATR_RIGI"].getGeneralizedDOFNumbering()
+            stiffnessMatrix = keywords["MATR_RIGI"]
+            dofNum = stiffnessMatrix.getGeneralizedDOFNumbering()
             if isinstance(self._result, HarmoGeneralizedResultsContainer):
                 self._result.setGeneralizedDOFNumbering(dofNum)
+            else:
+                base = stiffnessMatrix.getModalBasis()
+                if base is not None:
+                    self._result.setDOFNumbering(base.getDOFNumbering())
 
 
 DYNA_VIBRA = VibrationDynamics.run
