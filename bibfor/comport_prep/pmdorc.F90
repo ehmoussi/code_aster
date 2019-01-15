@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1003
 !
-subroutine pmdorc(compor, carcri, nb_vari, incela, mult_comp)
+subroutine pmdorc(compor, carcri, nb_vari, type_comp, mult_comp)
 !
 use Behaviour_type
 !
@@ -45,15 +45,14 @@ implicit none
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/utmess.h"
-#include "asterfort/setBehaviourValue.h"
+#include "asterfort/setBehaviourTypeValue.h"
 #include "asterfort/setMFrontPara.h"
 #include "asterfort/Behaviour_type.h"
 !
 character(len=16), intent(out) :: compor(*)
 real(kind=8), intent(out) :: carcri(*)
 integer, intent(out) :: nb_vari
-integer, intent(out) :: incela
-character(len=16), intent(out) :: mult_comp
+character(len=16), intent(out) :: type_comp, mult_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,23 +62,24 @@ character(len=16), intent(out) :: mult_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! OUT COMPOR  : OBJET COMPOR DECRIVANT LE TYPE DE COMPORTEMENT
-! OUT CARCRI  : OBJET CARCRI CRITERES DE CONVERGENCE LOCAUX
-! OUT NBVARI  : NOMBRE DE VARIABLE INTERNES
-! OUT incela  : =1 si COMP_INCR, =2 si COMP_ELAS
+! Out compor           : name of <CARTE> COMPOR
+! Out carcri           : name of <CARTE> CARCRI
+! Out nb_vari          : number of internal variables
+! Out type_comp        : type of comportment (INCR/ELAS)
+! Out mult_comp        : multi-comportment (DEFI_COMPOR for PMF)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=19) :: compor_info
-    integer :: i_comp, nume_comp(4), nb_vari_comp(4)
+    integer :: i_comp
     integer :: nbocc1, nbocc2, nbocc3
     character(len=16) :: keywordfact
-    character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp, meca_comp
-    character(len=16) :: kit_comp(4), type_cpla, post_iter, defo_ldc
-    aster_logical :: l_etat_init, l_implex, plane_stress, l_comp_external
+    character(len=16) :: rela_comp, algo_inte, defo_comp
+    character(len=16) :: kit_comp(4)
+    aster_logical :: l_etat_init, l_implex, plane_stress
     aster_logical :: l_kit_thm, l_mfront_proto, l_mfront_offi
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
-    integer :: iveriborne, jvariext1
+    integer :: jvariext1
     type(Behaviour_PrepPara) :: ds_compor_prep
     type(Behaviour_PrepCrit) :: ds_compor_para
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
@@ -92,6 +92,8 @@ character(len=16), intent(out) :: mult_comp
 !
 ! - Initializations
 !
+    nb_vari               = 0
+    type_comp             = ' '
     compor_info           = '&&PMDORC.LIST_VARI'
     keywordfact           = 'COMPORTEMENT'
     compor(1:COMPOR_SIZE) = 'VIDE'
@@ -122,40 +124,24 @@ character(len=16), intent(out) :: mult_comp
 ! - Save it
 !
     i_comp = 1
-    nb_vari         = ds_compor_prep%v_comp(i_comp)%nb_vari
-    nb_vari_comp(:) = ds_compor_prep%v_comp(i_comp)%nb_vari_comp(:)
-    nume_comp(:)    = ds_compor_prep%v_comp(i_comp)%nume_comp(:)
-    rela_comp       = ds_compor_prep%v_comp(i_comp)%rela_comp
-    defo_comp       = ds_compor_prep%v_comp(i_comp)%defo_comp
-    type_comp       = ds_compor_prep%v_comp(i_comp)%type_comp
-    type_cpla       = ds_compor_prep%v_comp(i_comp)%type_cpla
-    kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
-    mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
-    post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
-    defo_ldc        = ds_compor_prep%v_comp(i_comp)%defo_ldc
+    nb_vari   = ds_compor_prep%v_comp(1)%nb_vari
+    rela_comp = ds_compor_prep%v_comp(1)%rela_comp
+    defo_comp = ds_compor_prep%v_comp(1)%defo_comp
+    type_comp = ds_compor_prep%v_comp(1)%type_comp
+    mult_comp = ds_compor_prep%v_comp(1)%mult_comp
 !
 ! - Detection of specific cases
 !
-    call comp_meca_l(rela_comp, 'KIT_THM'     , l_kit_thm)
-    call comp_meca_l(rela_comp, 'MFRONT_PROTO', l_mfront_proto)
-    call comp_meca_l(rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
+    call comp_meca_l(ds_compor_prep%v_comp(1)%rela_comp, 'KIT_THM'     , l_kit_thm)
+    call comp_meca_l(ds_compor_prep%v_comp(1)%rela_comp, 'MFRONT_PROTO', l_mfront_proto)
+    call comp_meca_l(ds_compor_prep%v_comp(1)%rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
     if (l_kit_thm) then
         call utmess('F', 'COMPOR2_7')
     endif
-    if (type_comp .eq. 'COMP_ELAS') then
-        incela = 2
-    else if (type_comp.eq.'COMP_INCR') then
-        incela = 1
-    else
-        ASSERT(ASTER_FALSE)
-    endif
 !  
-! - Save in list
+! - Save informations in the field <COMPOR>
 !
-    call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                           mult_comp, post_iter   , defo_ldc, kit_comp ,&
-                           nb_vari  , nb_vari_comp, nume_comp,&
-                           l_compor_ = compor(1:COMPOR_SIZE))
+    call setBehaviourTypeValue(ds_compor_prep%v_comp, l_compor_ = compor(1:COMPOR_SIZE))
 !
 ! - Prepare informations about internal variables
 !
@@ -174,13 +160,11 @@ character(len=16), intent(out) :: mult_comp
     call carc_read(ds_compor_para, l_implex_ = l_implex)
 !
 ! - Coding comportment (Python)
-!    
-    i_comp = 1
-    meca_comp = ds_compor_para%v_para(i_comp)%meca_comp
+!
     call comp_meca_code(rela_comp_    = rela_comp   ,&
                         defo_comp_    = defo_comp   ,&
                         kit_comp_     = kit_comp    ,&
-                        meca_comp_    = meca_comp   ,&
+                        meca_comp_    = ds_compor_para%v_para(1)%meca_comp,&
                         comp_code_py_ = comp_code_py,&
                         rela_code_py_ = rela_code_py,&
                         defo_code_py_ = defo_code_py,&
@@ -188,8 +172,7 @@ character(len=16), intent(out) :: mult_comp
 !
 ! - Get ALGO_INTE
 !
-    i_comp = 1
-    plane_stress = .false.
+    plane_stress = ASTER_FALSE
     call getBehaviourAlgo(plane_stress, rela_comp   ,&
                           rela_code_py, meca_code_py,&
                           keywordfact , i_comp      ,&
@@ -197,17 +180,14 @@ character(len=16), intent(out) :: mult_comp
 !
 ! - Get RESI_INTE_RELA/ITER_INTE_MAXI
 !
-    i_comp = 1
     call getBehaviourPara(l_mfront_offi , l_mfront_proto, l_kit_thm,&
                           keywordfact   , i_comp        , algo_inte,&
                           iter_inte_maxi, resi_inte_rela)
 !
 ! - Get function pointers for external programs (MFRONT/UMAT)
 !
-    i_comp = 1
-    l_comp_external = ds_compor_para%v_para(i_comp)%l_comp_external
-    if (l_comp_external) then
-        call getExternalBehaviourPntr(ds_compor_para%v_para(i_comp)%comp_exte,&
+    if (ds_compor_para%v_para(1)%l_comp_external) then
+        call getExternalBehaviourPntr(ds_compor_para%v_para(1)%comp_exte,&
                                       cptr_fct_ldc ,&
                                       cptr_nbvarext, cptr_namevarext,&
                                       cptr_nbprop  , cptr_nameprop)
@@ -215,10 +195,8 @@ character(len=16), intent(out) :: mult_comp
 !
 ! - Set values for MFRONT
 !
-    i_comp = 1
-    iveriborne = ds_compor_para%v_para(i_comp)%iveriborne
-    call setMFrontPara(ds_compor_para%v_para(i_comp)%comp_exte,&
-                       iter_inte_maxi, resi_inte_rela, iveriborne)
+    call setMFrontPara(ds_compor_para%v_para(1)%comp_exte,&
+                       iter_inte_maxi, resi_inte_rela, ds_compor_para%v_para(1)%iveriborne)
 !
 ! - Get external state variables
 !

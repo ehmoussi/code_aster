@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,8 +32,6 @@ implicit none
 #include "asterfort/GetResi.h"
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
-!
-! person_in_charge: jean-michel.proix at edf.fr
 !
     real(kind=8) :: r(12)
     real(kind=8) :: rini(12)
@@ -68,7 +66,6 @@ implicit none
     real(kind=8) :: r8b(12)
     real(kind=8) :: ee, e1, e2, toler, e1ini, e2ini, er1, eini
     aster_logical :: l_rela
-    character(len=8) :: fonimp(6)
 !-----------------------------------------------------------------------
 !
 !
@@ -153,7 +150,7 @@ implicit none
     endif
 999 continue
 !
-    call pmimpr(ind, inst, indimp, fonimp, r8b,&
+    call pmimpr(ind, inst, indimp, r8b,&
                 iter, r8b, r8b, r8b, 1,&
                 r8b, ee, eini)
 end subroutine

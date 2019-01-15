@@ -54,7 +54,6 @@ implicit none
 #include "asterfort/pmsta1.h"
 #include "asterfort/pmstab.h"
 #include "asterfort/pmvtgt.h"
-#include "asterfort/r8inir.h"
 #include "asterfort/tnsvec.h"
 #include "asterfort/utbtab.h"
 #include "asterfort/utmess.h"
@@ -73,16 +72,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ndim, iret, nbmat, nbvari, nbpar, i, incela, ier
+    integer :: ndim, iret, nbmat, nbvari, nbpar, i, ier
     integer :: imate, kpg, ksp, iter, pred, ncmp, imptgt
     integer :: matrel, irota, defimp, liccvg(5)
-    integer :: indimp(9), numins, actite, action, itgt, iforta
+    integer :: indimp(9), nume_inst, actite, action, itgt, iforta
 !     NOMBRE MAXI DE COLONNES DANS UNE TABLE 9999 (CF D4.02.05)
     integer, parameter ::  ntamax = 9999
     integer :: igrad, nbvita
     character(len=4) :: fami, cargau
     character(len=8) :: typmod(2), mater(30), table, fonimp(9), typpar(ntamax)
-    character(len=16) :: option, compor(COMPOR_SIZE), nompar(ntamax), opt2, mult_comp
+    character(len=16) :: option, compor(COMPOR_SIZE), nompar(ntamax), opt2, mult_comp, type_comp
     character(len=19) :: codi, sddisc, k19b, sdcrit
     character(len=24) :: sderro
     real(kind=8) :: instam, instap, ang(7), r8b, carcri(CARCRI_SIZE), fem(9)
@@ -113,17 +112,22 @@ implicit none
 !
     call infmaj()
     call jemarq()
-    ndim=3
-    rac2=sqrt(2.d0)
-    fami='PMAT'
-    kpg=1
-    ksp=1
-    k19b=' '
-    iter = 0
-    action=1
-    finpas=.false.
-    itemax=.false.
-    liccvg(1:5)=0
+!
+! - Initializations
+!
+    work(:)     = 0.d0
+    dsidep(:,:) = 0.d0
+    ndim        = 3
+    rac2        = sqrt(2.d0)
+    fami        = 'PMAT'
+    kpg         = 1
+    ksp         = 1
+    k19b        = ' '
+    iter        = 0
+    action      = 1
+    finpas      = ASTER_FALSE
+    itemax      = ASTER_FALSE
+    liccvg(1:5) = 0
 !
 ! - Create convergence management datastructure
 !
@@ -133,13 +137,16 @@ implicit none
 !
     call nonlinDSAlgoParaCreate(ds_algopara)
 !
-!     RECUPERATION DES OPTIONS DEMANDEES
-!     ----------------------------------
+! - Get material parameters
+!
     call getvid(' ', 'MATER', nbval=6, vect=mater, nbret=nbmat)
 !
-!     RECUPERATION DU COMPORTEMENT
-!     ----------------------------
-    call pmdorc(compor, carcri, nbvari, incela, mult_comp)
+! - Get behaviours parameters
+!
+    call pmdorc(compor, carcri, nbvari, type_comp, mult_comp)
+    ASSERT(type_comp .eq. 'COMP_INCR' .or. type_comp .eq. 'COMP_ELAS')
+!
+! - Create working vectors
 !
     call wkvect(vim, 'V V R', nbvari, lvim)
     call wkvect(vip, 'V V R', nbvari, lvip)
@@ -147,21 +154,17 @@ implicit none
     call wkvect(vim2, 'V V R', nbvari, lvim2)
     call wkvect(nomvi, 'V V K8', nbvari, lnomvi)
 !
+! - Coding material parameters
 !
-!-------------------------------------------------------------------
-!     LECTURE MATERIAU ET CODAGE
-!-------------------------------------------------------------------
-    call r8inir(10, 0.d0, work, 1)
     call pmmaco(mater, nbmat, codi)
     call jeveut(codi//'.CODI', 'L', imate)
-!-------------------------------------------------------------------
 !
-!     GESTION DES VARIABLES DE COMMANDE
+! - External state variables
 !
     call vrcinp(1, 0.d0, 0.d0)
 !
-!
 !     INITIALISATIONS SD
+!
     call pminit(imate, nbvari, ndim, typmod, table,&
                 nbpar, iforta, nompar, typpar, ang,&
                 pgl, irota, epsm, sigm, zr(lvim),&
@@ -169,12 +172,11 @@ implicit none
                 fonimp, cimpo, kel, sddisc, ds_conv, ds_algopara, &
                 pred, matrel, imptgt, option, zk8(lnomvi),&
                 nbvita, sderro)
-    call r8inir(54, 0.d0, dsidep, 1)
 !
 ! - Message if PETIT_REAC
 !
-    if (defimp.gt.0) then
-        if (compor(DEFO).eq.'PETIT_REAC') then
+    if (defimp .gt. 0) then
+        if (compor(DEFO) .eq. 'PETIT_REAC') then
             call utmess('I', 'COMPOR2_93')
         endif
     endif
@@ -182,7 +184,7 @@ implicit none
 ! --- CREATION DE LA SD POUR ARCHIVAGE DES INFORMATIONS DE CONVERGENCE
 !
     call nmcrcv(sdcrit)
-    numins=1
+    nume_inst=1
 !
 !==================================
 !     BOUCLE SUR lES INSTANTS
@@ -192,31 +194,32 @@ implicit none
 !
     liccvg(1:5)=0
 !
-!        RECUPERATION DU NUMERO D'ORDRE ET DE L'INSTANT COURANTS
-!        DECOUPE INITIALE DU PAS DE TEMPS
+! - Get times
 !
-    instam = diinst(sddisc, numins-1)
-    instap = diinst(sddisc, numins )
-!        CALCUL DES VARIABLES DE COMMANDE
+    instam = diinst(sddisc, nume_inst-1)
+    instap = diinst(sddisc, nume_inst )
+!
+! - Compute external state variables
+!
     call vrcinp(2, instam, instap)
 !
+! - Prepare stress/strain to impose
+!
     if (defimp .lt. 2) then
-        igrad=0
-!            VALEURS IMPOSEES DE CONTRAINTES OU DEFORMATIONS
+        igrad = 0
         do i = 1, 6
-            call fointe('F', fonimp(i), 1, ['INST'], [instap],&
-                        valimp(i), ier)
+            call fointe('F', fonimp(i), 1, ['INST'], [instap], valimp(i), ier)
 !               NORMALISATION DES TERMES EN CONTRAINTES
-            if (indimp(i) .eq. 0) valimp(i)=valimp(i)/coef
+            if (indimp(i) .eq. 0) then
+                valimp(i) = valimp(i)/coef
+            endif
         end do
-!            NORMALEMENT DEJA VERIFIE PAR SIMU_POINT_MAT_OPS
         ASSERT(compor(DEFO).eq.'PETIT')
-    else if (defimp.eq.2) then
+    else if (defimp .eq. 2) then
         igrad=1
 !           VALEURS IMPOSEES DE GRADIENTS F
         do i = 1, 9
-            call fointe('F', fonimp(i), 1, ['INST'], [instap],&
-                        valimp(i), ier)
+            call fointe('F', fonimp(i), 1, ['INST'], [instap], valimp(i), ier)
         end do
     endif
 !
@@ -247,7 +250,7 @@ implicit none
             call lcdetf(3, deps, jd)
             jp = jm*jd
         endif
-        if (incela .eq. 1) then
+        if (type_comp .eq. 'COMP_INCR') then
             call dcopy(nbvari, zr(lvim), 1, zr(lvim2), 1)
             call nmcomp(fami, kpg, ksp, ndim, typmod,&
                         imate, compor, carcri, instam, instap,&
@@ -258,18 +261,15 @@ implicit none
             if (compor(DEFO) .eq. 'SIMO_MIEHE') then
                 call dscal(2*ndim, 1.d0/jp, sigp, 1)
             endif
-        else if (incela.eq.2) then
+        else if (type_comp .eq. 'COMP_ELAS') then
             call dcopy(ncmp, epsm, 1, eps, 1)
-            call daxpy(ncmp, 1.d0, deps, 1, eps,&
-                       1)
+            call daxpy(ncmp, 1.d0, deps, 1, eps, 1)
             call nmcpel(fami, kpg, 1, '+', ndim,&
                         typmod, ang, imate, compor, carcri,&
                         option, eps, sigp, zr(lvip), dsidep,&
                         iret)
-        else
-            ASSERT(.false.)
         endif
-        call pmimpr(0, instap, indimp, fonimp, valimp,&
+        call pmimpr(0, instap, indimp, valimp,&
                     0, epsm, sigm, zr(lvim), nbvari,&
                     r, r8b, r8b)
         if (iret .ne. 0) then
@@ -286,18 +286,18 @@ implicit none
     call dcopy(6, epsm, 1, ym(7), 1)
 !
     if (pred .eq. 1) then
-        call r8inir(12, 0.d0, dy, 1)
-        call r8inir(6, 0.d0, deps, 1)
+        dy(:)   = 0.d0
+        deps(:) = 0.d0
         opt2='RIGI_MECA_TANG'
         call dcopy(nbvari, zr(lvim), 1, zr(lsvip), 1)
-        if (incela .eq. 1) then
+        if (type_comp .eq. 'COMP_INCR') then
             call nmcomp(fami, kpg, ksp, ndim, typmod,&
                         imate, compor, carcri, instam, instap,&
                         6, epsm, deps, 6, sigm,&
                         zr(lsvip), opt2, ang, 10, work,&
                         ssigp, zr(lsvip), 36, dsidep, 1,&
                         rbid, iret, mult_comp)
-        else if (incela.eq.2) then
+        else if (type_comp .eq. 'COMP_ELAS') then
             call nmcpel(fami, kpg, 1, '+', ndim,&
                         typmod, ang, imate, compor, carcri,&
                         option, epsm, sigp, zr(lvip), dsidep,&
@@ -309,15 +309,15 @@ implicit none
             call pmdrdy(dsidep, coef, cimpo, valimp, ym,&
                         sigm, r, drdy)
         endif
-    else if ((pred .eq. 0).or.((pred.eq.-1).and.(numins.eq.1))) then
-        call r8inir(12, 0.d0, dy, 1)
-        call r8inir(6, 0.d0, deps, 1)
+    else if ((pred .eq. 0).or.((pred.eq.-1).and.(nume_inst.eq.1))) then
+        dy(:)   = 0.d0
+        deps(:) = 0.d0
         call pmdrdy(kel, coef, cimpo, valimp, ym,&
                     sigm, r, drdy)
     endif
 !        SAUVEGARDE DE R(DY0) POUR TEST DE CONVERGENCE
     call dcopy(12, r, 1, rini, 1)
-    call pmimpr(0, instap, indimp, fonimp, valimp,&
+    call pmimpr(0, instap, indimp, valimp,&
                 0, epsm, sigm, zr(lvim), nbvari,&
                 r, r8b, r8b)
 !
@@ -331,9 +331,9 @@ implicit none
 !
     iter = iter + 1
 !
-    if ((iter.eq.1) .and. (pred.eq.-1) .and. (numins.gt.1)) then
+    if ((iter.eq.1) .and. (pred.eq.-1) .and. (nume_inst.gt.1)) then
 !   prediction='extrapole'
-        coefextra = (instap-instam)/(instam-diinst(sddisc, numins-2))
+        coefextra = (instap-instam)/(instam-diinst(sddisc, nume_inst-2))
 !       dy = dy * (ti - ti-1)/(ti-1 - ti-2)
         call dscal(12, coefextra, dy, 1)
     else
@@ -346,13 +346,12 @@ implicit none
                     1, r8b, iret)
         if (iret .ne. 0) then
             liccvg(5) = 1
-            conver = .false.
+            conver = ASTER_FALSE
             goto 500
         endif
 !
 !      REACTUALISATION DE DY = DY + DDY
-        call daxpy(12, 1.d0, ddy, 1, dy,&
-                   1)
+        call daxpy(12, 1.d0, ddy, 1, dy, 1)
 !
     endif
 !
@@ -363,7 +362,7 @@ implicit none
 !
 !           CALCUL DU RESIDU
     liccvg(2) = 0
-    if (incela .eq. 1) then
+    if (type_comp .eq. 'COMP_INCR') then
         call dcopy(nbvari, zr(lvim), 1, zr(lvim2), 1)
         call nmcomp(fami, kpg, ksp, ndim, typmod,&
                     imate, compor, carcri, instam, instap,&
@@ -371,21 +370,20 @@ implicit none
                     zr(lvim2), option, ang, 10, work,&
                     sigp, zr(lvip), 36, dsidep, 1,&
                     rbid, iret, mult_comp)
-    else if (incela.eq.2) then
+    else if (type_comp .eq. 'COMP_ELAS') then
         call dcopy(6, epsm, 1, eps, 1)
-        call daxpy(6, 1.d0, deps, 1, eps,&
-                   1)
+        call daxpy(6, 1.d0, deps, 1, eps, 1)
         call nmcpel(fami, kpg, 1, '+', ndim,&
                     typmod, ang, imate, compor, carcri,&
                     option, eps, sigp, zr(lvip), dsidep,&
                     iret)
     endif
 !
-    call pmimpr(1, instap, indimp, fonimp, valimp,&
+    call pmimpr(1, instap, indimp, valimp,&
                 iter, deps, sigp, zr(lvip), nbvari,&
                 r, r8b, r8b)
     if (iret .ne. 0) then
-        conver = .false.
+        conver = ASTER_FALSE
         liccvg(2) = 1
         goto 500
     endif
@@ -399,8 +397,7 @@ implicit none
     endif
 !
     call dcopy(12, ym, 1, y, 1)
-    call daxpy(12, 1.d0, dy, 1, y,&
-               1)
+    call daxpy(12, 1.d0, dy, 1, y, 1)
     if (matrel .eq. 1) then
         call pmdrdy(kel, coef, cimpo, valimp, y,&
                     sigp, r, drdy)
@@ -434,7 +431,7 @@ implicit none
 !        GESTION DE LA DECOUPE DU PAS DE TEMPS
 !        EN L'ABSENCE DE CONVERGENCE ON CHERCHE A SUBDIVISER LE PAS
 !        DE TEMPS SI L'UTILISATEUR A FAIT LA DEMANDE
-    call pmactn(sddisc, ds_conv, iter, numins, itemax,&
+    call pmactn(sddisc, ds_conv, iter, nume_inst, itemax,&
                 sderro, liccvg , actite, action)
 !
 ! ---    ACTION
@@ -461,16 +458,16 @@ implicit none
 !
 !        ADAPTATION DU NOUVEAU PAS DE TEMPS
 !        PAS DE GESTION DE DELTA_GRANDEUR ACTUELLEMENT
-    call nmfinp(sddisc, numins, finpas)
-    if (.not.finpas) call nmadat(sddisc, numins, iter, k19b)
-    numins=numins+1
+    call nmfinp(sddisc, nume_inst, finpas)
+    if (.not.finpas) call nmadat(sddisc, nume_inst, iter, k19b)
+    nume_inst=nume_inst+1
 !        STOCKAGE EFFECTIF DU RESULTAT DANS LA TABLE
     call pmstab(sigm, sigp, epsm, deps, nbvari,&
                 zr(lvim), zr(lvip), iforta, instam, instap,&
                 iter, nbpar, nompar, table, vr,&
                 igrad, valimp, imptgt, dsidep, zk8(lnomvi),&
                 nbvita)
-    call pmimpr(2, instap, indimp, fonimp, valimp,&
+    call pmimpr(2, instap, indimp, valimp,&
                 iter, deps, sigp, zr(lvip), nbvari,&
                 r, r8b, r8b)
 !
