@@ -55,9 +55,11 @@ class TableContainerInstance : public TableInstance
   private:
     JeveuxVectorChar16 _objectName;
     JeveuxVectorChar16 _objectType;
-    JeveuxVectorChar24 _dsName;
+    JeveuxVectorChar8  _dsName1;
+    JeveuxVectorChar24 _dsName2;
     std::vector< JeveuxVectorLong > _vecOfSizes;
     std::vector< JeveuxVectorLong > _others;
+
 
     std::map< std::string, GeneralizedAssemblyMatrixDoublePtr > _mapGAMD;
     std::map< std::string, ElementaryMatrixDisplacementDoublePtr > _mapEMDD;

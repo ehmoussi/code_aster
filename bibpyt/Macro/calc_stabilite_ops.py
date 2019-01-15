@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,6 +43,7 @@ def calc_stabilite_ops(self, **args):
 
     t_mnl = args['MODE_NON_LINE'].EXTR_TABLE()
     nbord = len(t_mnl.rows)
+    mnl=args['MODE_NON_LINE']
 
     rows_tab = []
     t_res = Table(rows=rows_tab,
@@ -72,21 +73,12 @@ def calc_stabilite_ops(self, **args):
         filtre = {}
         filtre['FILTRE'] = _F(NOM_PARA= 'NUME_ORDRE',
                           VALE_I= num_ordr)
-
-        __sol_per = EXTR_TABLE(TABLE= args['MODE_NON_LINE'],
-                        TYPE_RESU= 'MODE_MECA',
-                        NOM_PARA= 'NOM_SD',
-                        **filtre)
+        nom_obj=mnl["NOM_OBJET", num_ordr] 
+        __sol_per = mnl.getMechanicalModeContainer( nom_obj )
 
         if not recup_para:
-            iret, ibid, kass_name = aster.dismoi(
-                'REF_RIGI_PREM', __sol_per.nom, 'RESU_DYNA', 'F')
-            iret, ibid, mass_name = aster.dismoi(
-                'REF_MASS_PREM', __sol_per.nom, 'RESU_DYNA', 'F')
-
-            ctx = CONTEXT.get_current_step().get_contexte_courant()
-            kass = ctx[kass_name]
-            masse = ctx[mass_name]
+            kass=__sol_per.getStiffnessMatrix()
+            masse=__sol_per.getMassMatrix()
 
             __choc = EXTR_TABLE(TABLE=args['MODE_NON_LINE'],
                      TYPE_RESU= 'TABLE_SDASTER',
@@ -175,8 +167,7 @@ def calc_stabilite_ops(self, **args):
         else:
             t_mnl.rows[i]['STABILITE'] = 'INSTABLE'
         t_res.rows.append(t_mnl.rows[i])
-
-    if self.reuse:
+    if args.get("reuse") is not None:
 # surcharge de la table
         t_res.rows = []
         for i in range(nbord):
