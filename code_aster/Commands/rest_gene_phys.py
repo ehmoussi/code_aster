@@ -53,5 +53,11 @@ class RestGenePhys(ExecuteCommand):
             if dofNum is not None:
                 self._result.setDOFNumbering(dofNum)
                 self._result.appendModelOnAllRanks(dofNum.getSupportModel())
+        if keywords["RESU_GENE"].getType() == "HARM_GENE":
+            dofNum = keywords["RESU_GENE"].getGeneralizedDOFNumbering()
+            basis = dofNum.getModalBasis()
+            dofNum2 = basis.getDOFNumbering()
+            if dofNum2 is not None:
+                self._result.appendModelOnAllRanks(dofNum2.getSupportModel())
 
 REST_GENE_PHYS = RestGenePhys.run
