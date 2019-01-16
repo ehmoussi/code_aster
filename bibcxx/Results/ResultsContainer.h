@@ -264,6 +264,11 @@ class ResultsContainerInstance : public DataStructure {
     MaterialOnMeshPtr getMaterialOnMesh( int rank ) ;
 
     /**
+     * @brief Get mesh
+     */
+    BaseMeshPtr getMesh();
+
+    /**
      * @brief Get model
      */
     ModelPtr getModel() ;

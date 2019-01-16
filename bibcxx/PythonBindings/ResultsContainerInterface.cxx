@@ -3,7 +3,7 @@
  * @brief Interface python de ResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -49,6 +49,7 @@ void exportResultsContainerToPython() {
               &ResultsContainerInstance::getElementaryCharacteristics )
         .def( "getMaterialOnMesh", c1 )
         .def( "getMaterialOnMesh", c2 )
+        .def( "getMesh", &ResultsContainerInstance::getMesh )
         .def( "getNumberOfRanks", &ResultsContainerInstance::getNumberOfRanks )
         .def( "getRanks", &ResultsContainerInstance::getRanks )
         .def( "getRealFieldOnNodes", &ResultsContainerInstance::getRealFieldOnNodes )
