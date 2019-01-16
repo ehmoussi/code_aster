@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -310,23 +310,23 @@ for (vale, noeud) in enumerate(liste_nom_noe) :
 SRO_MOY=CALC_FONCTION(MOYENNE=_F(FONCTION=l_SROU, ) )
 SROI_MOY=CALC_FONCTION(MOYENNE=_F(FONCTION=l_SROI, ) )
 
-l_SROMI1.append(SROMI1_0)
-l_SROMI1.append(SROMI2_0)
-l_SROMI1.append(SROMI3_0)
-l_SROMI1.append(SROMI4_0)
-l_SROMI1.append(SROMI5_0)
+l_SROMI1.append(SROMI1[0])
+l_SROMI1.append(SROMI2[0])
+l_SROMI1.append(SROMI3[0])
+l_SROMI1.append(SROMI4[0])
+l_SROMI1.append(SROMI5[0])
 
-l_SROMI2.append(SROMI1_1)
-l_SROMI2.append(SROMI2_1)
-l_SROMI2.append(SROMI3_1)
-l_SROMI2.append(SROMI4_1)
-l_SROMI2.append(SROMI5_1)
+l_SROMI2.append(SROMI1[1])
+l_SROMI2.append(SROMI2[1])
+l_SROMI2.append(SROMI3[1])
+l_SROMI2.append(SROMI4[1])
+l_SROMI2.append(SROMI5[1])
 
-l_SROMI3.append(SROMI1_2)
-l_SROMI3.append(SROMI2_2)
-l_SROMI3.append(SROMI3_2)
-l_SROMI3.append(SROMI4_2)
-l_SROMI3.append(SROMI5_2)
+l_SROMI3.append(SROMI1[2])
+l_SROMI3.append(SROMI2[2])
+l_SROMI3.append(SROMI3[2])
+l_SROMI3.append(SROMI4[2])
+l_SROMI3.append(SROMI5[2])
 
 
 # On calcule la mediane pour chaque noeud (sur 5 tirages)
