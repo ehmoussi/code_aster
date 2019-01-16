@@ -96,9 +96,9 @@ class ExtendedMaterialOnMesh(injector(MaterialOnMesh), MaterialOnMesh):
                     if type is EntityType.AllMeshEntitiesType:
                         self.addMaterialsOnAllMesh(listOfMater)
                     elif type is EntityType.GroupOfElementsType:
-                        self.addMaterialsOnAllMesh(listOfMater, names)
+                        self.addMaterialsOnGroupOfElements(listOfMater, names)
                     elif type is EntityType.ElementType:
-                        self.addMaterialsOnAllMesh(listOfMater, names)
+                        self.addMaterialsOnElement(listOfMater, names)
                     searchForSize = True
                     endMater = 0
                     listOfMater = []
