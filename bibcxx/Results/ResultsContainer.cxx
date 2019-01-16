@@ -134,6 +134,16 @@ MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() {
     return toReturn;
 };
 
+BaseMeshPtr ResultsContainerInstance::getMesh()
+{
+    if( _mesh != nullptr )
+        return _mesh;
+    const auto model = getModel();
+    if( model != nullptr )
+        return model->getSupportMesh();
+    return nullptr;
+};
+
 ModelPtr ResultsContainerInstance::getModel() {
     std::string name( "" );
     ModelPtr toReturn( nullptr );
