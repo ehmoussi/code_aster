@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FieldOnNodes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,6 +38,7 @@
 #include "Discretization/DOFNumbering.h"
 #include "MemoryManager/JeveuxAllowedTypes.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Meshes/Mesh.h"
 
 /**
  * @struct AllowedFieldType
@@ -82,6 +83,8 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
     BaseDOFNumberingPtr _dofNum;
     /** @brief Dof description */
     FieldOnNodesDescriptionPtr _dofDescription;
+    /** @brief Dof description */
+    BaseMeshPtr _mesh;
     /** @brief jeveux vector '.TITR' */
     JeveuxVectorChar80 _title;
 
@@ -96,32 +99,36 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    FieldOnNodesInstance( const std::string name )
-        : GenericDataFieldInstance( name, "CHAM_NO" ),
-          _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
-          _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-          _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
-          _dofDescription( nullptr ), _title( JeveuxVectorChar80( getName() + ".TITR" ) ){};
+    FieldOnNodesInstance( const std::string name ):
+        GenericDataFieldInstance( name, "CHAM_NO" ),
+        _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+        _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
+        _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
+        _dofDescription( nullptr ), _title( JeveuxVectorChar80( getName() + ".TITR" ) ),
+        _mesh( nullptr )
+    {};
 
     /**
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    FieldOnNodesInstance( const JeveuxMemory memType = Permanent )
-        : GenericDataFieldInstance( memType, "CHAM_NO" ),
-          _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
-          _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-          _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
-          _dofDescription( nullptr ), _title( JeveuxVectorChar80( getName() + ".TITR" ) ){};
+    FieldOnNodesInstance( const JeveuxMemory memType = Permanent ):
+        GenericDataFieldInstance( memType, "CHAM_NO" ),
+        _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+        _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
+        _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
+        _dofDescription( nullptr ), _title( JeveuxVectorChar80( getName() + ".TITR" ) )
+    {};
 
     /**
      * @brief Constructeur from a MeshCoordinatesFieldPtr&
      */
-    FieldOnNodesInstance( MeshCoordinatesFieldPtr &toCopy )
-        : GenericDataFieldInstance( toCopy->getMemoryType(), "CHAM_NO" ),
-          _descriptor( toCopy->_descriptor ), _reference( toCopy->_reference ),
-          _valuesList( toCopy->_valuesList ), _dofNum( nullptr ), _dofDescription( nullptr ),
-          _title( JeveuxVectorChar80( getName() + ".TITR" ) ){};
+    FieldOnNodesInstance( MeshCoordinatesFieldPtr &toCopy ):
+        GenericDataFieldInstance( toCopy->getMemoryType(), "CHAM_NO" ),
+        _descriptor( toCopy->_descriptor ), _reference( toCopy->_reference ),
+        _valuesList( toCopy->_valuesList ), _dofNum( nullptr ), _dofDescription( nullptr ),
+        _title( JeveuxVectorChar80( getName() + ".TITR" ) )
+    {};
 
     ~FieldOnNodesInstance() {
 #ifdef __DEBUG_GC__
@@ -200,15 +207,30 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
         return toReturn;
     };
 
+    /**
+     * @brief Get support mesh
+     */
+    BaseMeshPtr getMesh() const
+    {
+        return _mesh;
+    };
+
     bool printMedFile( const std::string fileName ) const ;
 
     /**
      * @brief Set support DOFNumering
      */
-    void setDOFNumering( const BaseDOFNumberingPtr &dofNum ) {
+    void setDOFNumbering( const BaseDOFNumberingPtr &dofNum ) {
         if ( _dofNum )
             throw std::runtime_error( "DOFNumbering already set" );
         _dofNum = dofNum;
+        if( _mesh != nullptr )
+        {
+            const auto name1 = _mesh->getName();
+            const auto name2 = _dofNum->getSupportModel()->getSupportMesh()->getName();
+            if( name1 != name2 )
+                throw std::runtime_error( "Support meshes inconsistents" );
+        }
     };
 
     /**
@@ -219,6 +241,23 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
         if ( _dofDescription )
             throw std::runtime_error( "FieldOnNodesDescription already set" );
         _dofDescription = desc;
+    };
+
+    /**
+     * @brief Set support mesh
+     * @param mesh object BaseMeshPtr
+     */
+    void setMesh( const BaseMeshPtr &mesh ) {
+        if( _mesh )
+            throw std::runtime_error( "Mesh already set" );
+        _mesh = mesh;
+        if( _dofNum != nullptr )
+        {
+            const auto name1 = _mesh->getName();
+            const auto name2 = _dofNum->getSupportModel()->getSupportMesh()->getName();
+            if( name1 != name2 )
+                throw std::runtime_error( "Support meshes inconsistents" );
+        }
     };
 
     /**
