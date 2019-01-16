@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ subroutine op0194()
 ! ----------------------------------------------------------------------
 !
 #include "jeveux.h"
+#include "asterc/getfac.h"
 #include "asterfort/gettco.h"
 #include "asterfort/calcop.h"
 #include "asterfort/chpver.h"
@@ -64,6 +65,9 @@ subroutine op0194()
     character(len=24) :: chmeta, phasin, mate
     character(len=24) :: valk
     character(len=24) :: lesopt
+    character(len=16) :: keywordfact
+    integer :: i_comp, nbocc
+    character(len=16) :: phase_type
 !
 ! ----------------------------------------------------------------------
 !
@@ -153,6 +157,17 @@ subroutine op0194()
             call detrsd('CARTE', '&&NMDORC.COMPOR')
 !
         else
+            nbocc        = 0
+            keywordfact  = 'COMPORTEMENT'
+            call getfac(keywordfact, nbocc)
+            do i_comp = 1, nbocc
+                call getvtx(keywordfact, 'RELATION', iocc = i_comp, scal = phase_type, nbret=iret)
+                if (iret .ne. 0) then
+                    if (phase_type(1:5) .ne. 'ACIER' .and. option.eq.'DURT_ELNO') then
+                        call utmess('F', 'META1_3', sk=phase_type)
+                    endif
+                endif
+            end do
 !         PASSAGE CALC_CHAMP
             call calcop(option, lesopt, temper, temper, kordre,&
                         nbordr, ctyp, tysd, iret)
