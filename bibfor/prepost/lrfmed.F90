@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
                   option, param, nochmd, acces, nbordr,&
                   nnu, nis, nto, jnume, jlist,&
                   noma, nbcmpv, ncmpva, ncmpvm, prolz,&
-                  iinst, crit, epsi, linoch, acce)
-! aslint: disable=W1504
+                  iinst, crit, epsi, linoch, acce,&
+                  npas0)
+
     implicit none
 ! ----------------------------------------------------------------------
-! person_in_charge: nicolas.sellenet at edf.fr
 !
 !     BUT:
 !       LECTURE DES RESULTATS PRESENTS DANS LES FICHIERS MED
@@ -53,6 +55,7 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mfinvr.h"
 #include "asterfort/as_mfiope.h"
+#include "asterfort/jeecra.h"
 #include "asterfort/codent.h"
 #include "asterfort/copisd.h"
 #include "asterfort/detrsd.h"
@@ -77,6 +80,7 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
 #include "asterfort/ulisog.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+integer, intent(out) :: npas0
     character(len=6) :: nompro
     parameter (nompro='LRFMED')
     integer :: ntymax
@@ -102,12 +106,11 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
     character(len=4) :: acce
     character(len=8) :: resu, noma, typcha
     character(len=8) :: crit
-    character(len=8) :: k8bid
     character(len=8) :: nomtyp(ntymax), param
     character(len=10) :: acces
     character(len=16) :: linoch(100)
     character(len=19) :: nomch
-    character(len=19) :: prefix, chanom, pchn1
+    character(len=19) :: prefix, chanom, pchn1, resu19
     character(len=24) :: valk(2)
     character(len=24) :: nomprn
     character(len=24) :: option
@@ -130,18 +133,13 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
     parameter (typnoe=0)
     character(len=1) :: saux01
     character(len=8) :: saux08
-!
     character(len=8) :: nomgd
     integer :: numpt, numord, inum
-    integer :: nbcmpv, iaux, npas0, itps0
-!
+    integer :: nbcmpv, iaux, itps0
     integer :: iinst
     real(kind=8) :: inst
-!
     character(len=24) :: ncmpva, ncmpvm
-!
     character(len=64) :: k64b
-!
     aster_logical :: existm, logaux
     character(len=24), pointer :: refe(:) => null()
 !
@@ -150,6 +148,7 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
     call jemarq()
 !
     nomprn = resu//'.PRFCN00000.PRNO'
+    resu19 = resu
 !
     call infmaj()
     call infniv(ifm, nivinf)
@@ -173,7 +172,7 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
     if (nivinf .gt. 1) then
         write(ifm,*) '<',nompro,'> NOM DU FICHIER MED : ',nofimd
     endif
-!               12   345678   90123456789
+!
     prefix = '&&'//nompro//'.MED'
     call jedetr(prefix//'.NUME')
     call jedetr(prefix//'.INST')
@@ -278,7 +277,7 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
             itps0=indiis(zi(jnuom),numord,1,npas)
             if (itps0 .eq. 0) then
                 call utmess('A', 'MED_87', sk=resu, si=numord)
-                goto 250
+                cycle
             endif
             numpt=zi(inum+2*itps0-2)
         else if (nto.ne.0) then
@@ -287,24 +286,23 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
         else if (nis.ne.0) then
             inst = zr(jlist+itps-1)
             logaux = .false.
-            do 222 , iaux2 = 1 , npas0
-            if (crit(1:4) .eq. 'RELA') then
-                if (abs(zr(ipas-1+iaux2)-inst) .le. abs(epsi*inst)) then
-                    logaux = .true.
+            do iaux2 = 1 , npas0
+                if (crit(1:4) .eq. 'RELA') then
+                    if (abs(zr(ipas-1+iaux2)-inst) .le. abs(epsi*inst)) then
+                        logaux = .true.
+                    endif
+                else if (crit(1:4).eq.'ABSO') then
+                    if (abs(zr(ipas-1+iaux2)-inst) .le. abs(epsi)) then
+                        logaux = .true.
+                    endif
                 endif
-            else if (crit(1:4).eq.'ABSO') then
-                if (abs(zr(ipas-1+iaux2)-inst) .le. abs(epsi)) then
-                    logaux = .true.
+                if (logaux) then
+                    numpt = zi(inum+2*iaux2-2)
+                    numord = zi(inum+2*iaux2-1)
+                    iinst = 0
+                    exit
                 endif
-            endif
-            if (logaux) then
-                numpt = zi(inum+2*iaux2-2)
-                numord = zi(inum+2*iaux2-1)
-                iinst = 0
-                goto 2221
-            endif
-222         continue
-2221         continue
+            end do
         endif
 !
         call lrchme(chanom, nochmd, k64b, noma, typcha,&
@@ -334,25 +332,21 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
             ordins = ordins + 1
         endif
 !
-        call rsexch(' ', resu, linoch(i), numord, nomch,&
-                    iret)
+        call rsexch(' ', resu, linoch(i), numord, nomch, iret)
         if (iret .eq. 100) then
         else if (iret.eq.110) then
             call rsagsd(resu, 0)
-            call rsexch(' ', resu, linoch(i), numord, nomch,&
-                        iret)
+            call rsexch(' ', resu, linoch(i), numord, nomch, iret)
         else
             valk (1) = resu
             valk (2) = chanom
             vali (1) = itps
             vali (2) = iret
-            call utmess('F', 'UTILITAI8_27', nk=2, valk=valk, ni=2,&
-                        vali=vali)
+            call utmess('F', 'UTILITAI8_27', nk=2, valk=valk, ni=2,vali=vali)
         endif
         call copisd('CHAMP_GD', 'G', chanom, nomch)
         call rsnoch(resu, linoch(i), numord)
-        call rsadpa(resu, 'E', 1, acce, numord,&
-                    0, sjv=jinst, styp=k8bid)
+        call rsadpa(resu, 'E', 1, acce, numord, 0, sjv=jinst)
 !
         if (nis .ne. 0) then
             zr(jinst) = inst
@@ -362,7 +356,6 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
             zr(jinst) = zr(ipas-1+itps)
         endif
         call detrsd('CHAMP_GD', chanom)
-250     continue
     end do
     call jedetr('&&OP0150_NBPG_MAILLE')
     call jedetr('&&OP0150_NBPG_MED')

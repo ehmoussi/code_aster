@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ subroutine op0150()
 !
     character(len=8) :: nomgd
     integer :: n2
-    integer :: nbcmpv, iaux, n3
+    integer :: nbcmpv, iaux, n3, nbordr_out
 !
     integer :: iinst, nchar
 !
@@ -177,9 +177,9 @@ subroutine op0150()
     nis=0
     call getvtx(' ', 'TOUT_ORDRE', scal=k8bid, nbret=nto)
     if (nto .ne. 0) then
-        acces = 'TOUT_ORDRE'
+        acces  = 'TOUT_ORDRE'
         nbordr = 100
-        iinst=0
+        iinst  = 0
         goto 20
     endif
 !
@@ -285,6 +285,7 @@ subroutine op0150()
         call lridea(resu, typres, linoch, nbnoch, nomcmd,&
                     listr8, listis, precis, crit, epsi,&
                     acces, mfich, noma, ligrel, nbvari)
+        nbordr_out = nbnoch
 !
 !     --- FIN LECTURE
 !
@@ -296,6 +297,7 @@ subroutine op0150()
         call lect58(mfich, resu, noma, typres, acces,&
                     listr8, listis, precis, crit, epsi,&
                     linoch, nbnoch)
+        nbordr_out = nbnoch
 !
 !     --- FIN LECTURE
 !
@@ -326,9 +328,7 @@ subroutine op0150()
 !         NOM DU CHAMP MED
             call getvtx('FORMAT_MED', 'NOM_CHAM_MED', iocc=i, scal=nochmd, nbret=n1)
             if (n1 .eq. 0) then
-!                   12345678901234567890123456789012
-                nochmd='________________________________'//&
-     &             '________________________________'
+                nochmd='________________________________'//'________________________________'
                 call getvtx('FORMAT_MED', 'NOM_RESU', iocc=i, scal=noraci, nbret=n2)
                 nchar=lxlgut(noraci)
                 nochmd(1:nchar)=noraci(1:nchar)
@@ -379,13 +379,14 @@ subroutine op0150()
                         option, param, nochmd, acces, nbordr,&
                         nnu, nis, nto, jnume, jlist,&
                         noma, nbcmpv, ncmpva, ncmpvm, prolz,&
-                        iinst, crit, epsi, linoch, acce)
+                        iinst, crit, epsi, linoch, acce,&
+                        nbordr_out)
         end do
 !
 !     POUR LES FORMATS NON PREVUS
 !     ===========================
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - STOCKAGE EVENTUEL : MODELE, CHAM_MATER, CARA_ELEM, EXCIT
@@ -420,15 +421,13 @@ subroutine op0150()
         do ich = 1, nbnoch
             write (ifm,*) '    CHAMP : ',linoch(ich)
         end do
-!
-        call wkvect('&&'//nompro//'.NUME_ORDR', 'V V I', nbordr, lordr)
+        call wkvect('&&'//nompro//'.NUME_ORDR', 'V V I', nbordr_out, lordr)
         call rsorac(resu, 'TOUT_ORDRE', ibid, rbid, k8bid,&
-                    cbid, epsi, crit, zi(lordr), nbordr,&
+                    cbid, epsi, crit, zi(lordr), nbordr_out,&
                     nbtrou)
-        do iord = 1, nbordr
-            call rsadpa(resu, 'L', 1, acce, zi(lordr+iord-1),&
-                        0, sjv=jinst, styp=k8bid)
-            write (ifm,*) '    NUMERO D''ORDRE : ',zi(lordr+iord-1),&
+        do iord = 1, nbordr_out
+            call rsadpa(resu, 'L', 1, acce, zi(lordr+iord-1), 0, sjv=jinst)
+                        write (ifm,*) '    NUMERO D''ORDRE : ',zi(lordr+iord-1),&
      &        '    '//acces//' : ',zr(jinst)
         end do
     endif
