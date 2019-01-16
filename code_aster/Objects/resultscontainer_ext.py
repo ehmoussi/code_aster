@@ -24,7 +24,7 @@
 """
 
 import aster
-from libaster import ResultsContainer
+from libaster import ResultsContainer, Model, MaterialOnMesh
 
 from ..Utilities import injector
 
@@ -32,14 +32,28 @@ from ..Utilities import injector
 class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
     cata_sdj = "SD.sd_resultat.sd_resultat"
 
-    # TODO if several models?!
     def __getstate__(self):
         """Return internal state.
 
         Returns:
             dict: Internal state.
         """
-        return (True, self.getModel(), self.getMaterialOnMesh(),)
+        models = []
+        materials = []
+        ranks = self.getRanks()
+        for i in ranks:
+            try:
+                models.append(self.getModel(i))
+            except: pass
+            try:
+                materials.append(self.getMaterialOnMesh(i))
+            except: pass
+        if len(ranks) != len(models):
+            models = []
+        if len(ranks) != len(materials):
+            materials = []
+        tupleOut = tuple(ranks) + tuple(models) + tuple(materials)
+        return tupleOut
 
     def __setstate__(self, state):
         """Restore internal state.
@@ -47,10 +61,18 @@ class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
         Arguments:
             state (dict): Internal state.
         """
-        if state[1] is not None:
-            self.appendModelOnAllRanks(state[1])
-        if state[2] is not None:
-            self.appendMaterialOnMeshOnAllRanks(state[2])
+        ranks = []
+        rankModel = 0
+        rankMater = 0
+        for obj in state:
+            if type(obj) == int:
+                ranks.append(obj)
+            if isinstance(obj, Model):
+                self.addModel(obj, ranks[rankModel])
+                rankModel = rankModel + 1
+            if isinstance(obj, MaterialOnMesh):
+                self.addMaterialOnMesh(obj, ranks[rankMater])
+                rankMater = rankMater + 1
 
     def LIST_VARI_ACCES (self):
         if not self.accessible():
