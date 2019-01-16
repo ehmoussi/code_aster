@@ -158,6 +158,14 @@ ModelPtr ResultsContainerInstance::getModel() {
     return toReturn;
 };
 
+ModelPtr ResultsContainerInstance::getModel( int rank )
+{
+    auto curIter = _mapModel.find( rank );
+    if ( curIter == _mapModel.end() )
+        throw std::runtime_error( "Rank not find" );
+    return ( *curIter ).second;
+};
+
 int ResultsContainerInstance::getNumberOfRanks() const
 {
     return _serialNumber->usedSize();
@@ -166,6 +174,7 @@ int ResultsContainerInstance::getNumberOfRanks() const
 std::vector< long > ResultsContainerInstance::getRanks() const
 {
     std::vector< long > v;
+    _serialNumber->updateValuePointer();
     for ( int j = 0; j < _serialNumber->usedSize(); ++j ) {
         v.push_back( ( *_serialNumber )[j] );
     }

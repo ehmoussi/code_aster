@@ -274,6 +274,12 @@ class ResultsContainerInstance : public DataStructure {
     ModelPtr getModel() ;
 
     /**
+     * @brief Get model
+     * @param rank
+     */
+    ModelPtr getModel( int rank ) ;
+
+    /**
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
      * @param name nom Aster du champ
      * @param rank numéro d'ordre

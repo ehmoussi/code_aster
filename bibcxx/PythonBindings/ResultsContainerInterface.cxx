@@ -33,6 +33,11 @@ void exportResultsContainerToPython() {
     MaterialOnMeshPtr ( ResultsContainerInstance::*c2 )( int ) =
         &ResultsContainerInstance::getMaterialOnMesh;
 
+    ModelPtr ( ResultsContainerInstance::*c3 )() =
+        &ResultsContainerInstance::getModel;
+    ModelPtr ( ResultsContainerInstance::*c4 )( int ) =
+        &ResultsContainerInstance::getModel;
+
     class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
             bases< DataStructure > >( "ResultsContainer", no_init )
         .def( "__init__",
@@ -40,11 +45,14 @@ void exportResultsContainerToPython() {
         .def( "__init__",
               make_constructor(
                   &initFactoryPtr< ResultsContainerInstance, std::string, std::string >))
+        .def( "addMaterialOnMesh", &ResultsContainerInstance::addMaterialOnMesh )
+        .def( "addModel", &ResultsContainerInstance::addModel )
         .def( "appendMaterialOnMeshOnAllRanks",
               &ResultsContainerInstance::appendMaterialOnMeshOnAllRanks )
         .def( "appendModelOnAllRanks", &ResultsContainerInstance::appendModelOnAllRanks )
         .def( "listFields", &ResultsContainerInstance::listFields )
-        .def( "getModel", &ResultsContainerInstance::getModel )
+        .def( "getModel", c3 )
+        .def( "getModel", c4 )
         .def( "getElementaryCharacteristics",
               &ResultsContainerInstance::getElementaryCharacteristics )
         .def( "getMaterialOnMesh", c1 )
