@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -39,38 +39,42 @@ class FieldCreator(ExecuteCommand):
         location = keywords["TYPE_CHAM"][:5]
         typ = keywords["TYPE_CHAM"][10:]
 
+        mesh = keywords.get("MAILLAGE")
+        model = keywords.get("MODELE")
+        caraElem = keywords.get("CARA_ELEM")
+        charge = keywords.get("CHARGE")
+        resultat = keywords.get("RESULTAT")
+        if mesh is None:
+            if model is not None:
+                mesh = model.getSupportMesh()
+            elif caraElem is not None:
+                mesh = caraElem.getModel().getSupportMesh()
+            elif charge is not None:
+                mesh = charge.getSupportModel().getSupportMesh()
+            elif resultat is not None:
+                mesh = resultat.getMesh()
+
         if location == "CART_":
-            mesh = keywords.get("MAILLAGE")
-            model = keywords.get("MODELE")
-            caraElem = keywords.get("CARA_ELEM")
-            charge = keywords.get("CHARGE")
             if mesh is None:
-                if model is not None:
-                    mesh = model.getSupportMesh()
-                elif caraElem is not None:
-                    mesh = caraElem.getModel().getSupportMesh()
-                elif charge is not None:
-                    mesh = charge.getSupportModel().getSupportMesh()
-                else:
-                    raise NotImplementedError("Must have Mesh, Model or ElementaryCharacteristics")
+                raise NotImplementedError("Must have Mesh, Model or ElementaryCharacteristics")
             self._result = PCFieldOnMeshDouble(mesh)
         elif location == "NOEU_":
             if typ == "C":
                 self._result = FieldOnNodesComplex()
             else:
                 self._result = FieldOnNodesDouble()
+            if mesh is not None:
+                self._result.setMesh(mesh)
         else:
             # ELGA_
             self._result = FieldOnElementsDouble()
         numeDdl = keywords.get("NUME_DDL")
         if numeDdl is not None:
-            self._result.setDOFNumering(numeDdl)
+            self._result.setDOFNumbering(numeDdl)
         modele = keywords.get("MODELE")
         if location[:2] == "EL":
             modele = keywords.get("MODELE")
-            resultat = keywords.get("RESULTAT")
             chamF = keywords.get("CHAM_F")
-            caraElem = keywords.get("CARA_ELEM")
             if modele is not None:
                 self._result.setModel(modele)
             elif resultat is not None:
