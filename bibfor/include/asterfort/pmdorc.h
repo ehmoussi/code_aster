@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine pmdorc(compor, carcri, nb_vari, incela, mult_comp)
-        character(len=16), intent(out) :: compor(21)
-        real(kind=8), intent(out) :: carcri(22)
+    subroutine pmdorc(compor, carcri, nb_vari, type_comp, mult_comp)
+        character(len=16), intent(out) :: compor(*)
+        real(kind=8), intent(out) :: carcri(*)
         integer, intent(out) :: nb_vari
-        integer, intent(out) :: incela
-        character(len=16), intent(out) :: mult_comp
+        character(len=16), intent(out) :: type_comp, mult_comp
     end subroutine pmdorc
 end interface

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     3 : _(u"""
  Calcul des valeurs propres en grandes déformations
 """),
+
+    4 : _(u"""Le calcul d'un critère de stabilité ou d'un mode vibratoire n'est pas possible avec des éléments de type POU_D_EM."""),
 
     14 : _(u"""
  Vous utilisez la méthode CONTINUE pour le traitement du contact et faites une reprise de calcul (mot-clé reuse). De plus, vous n'avez pas activé

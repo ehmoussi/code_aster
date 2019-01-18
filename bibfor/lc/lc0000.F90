@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -270,7 +270,7 @@ integer :: codret
 !             RETURN1 EN CAS DE NON CONVERGENCE LOCALE
 !     ----------------------------------------------------------------
 !
-    integer :: tabcod(30), variextecode(1)
+    integer :: tabcod(60), variextecode(2)
     integer, parameter :: npred = 8
     character(len=16) :: defo_ldc, defo_comp
     real(kind=8) :: epsth(neps), depsth(neps)
@@ -291,8 +291,9 @@ integer :: codret
 ! - Prepare some external state variables
 !
     tabcod(:) = 0
-    variextecode(1) = nint(carcri(IVARIEXTE))
-    call isdeco(variextecode(1), tabcod, 30)
+    variextecode(1) = nint(carcri(IVARIEXT1))
+    variextecode(2) = nint(carcri(IVARIEXT2))
+    call isdeco(variextecode, tabcod, 60)
     if (tabcod(HYGR) .eq. 1) then
         call calcExternalStateVariable5(fami, kpg, ksp, imate)
     endif
@@ -315,10 +316,10 @@ integer :: codret
         if (.not. l_large_strains) then
 !
 !       * Compute "thermic" strains for some external state variables
-            call lcExternalStateVariable(carcri, compor, &
-                                         fami  , kpg      , ksp, imate, &
-                                         neps  , epsth    , depsth, &
-                                         temp  , dtemp, &
+            call lcExternalStateVariable(carcri, compor, instap, &
+                                         fami  , kpg   , ksp   , imate, &
+                                         neps  , epsth , depsth, &
+                                         temp  , dtemp  , &
                                          predef, dpred )
 !
 !       * Subtract to get mechanical strain
@@ -580,11 +581,11 @@ integer :: codret
     case (58)
 !     MFRONT
         call lc0058(fami , kpg   , ksp   , ndim  , typmod,&
-                      imate, compor, carcri, instam, instap,&
-                      neps , epsm  , deps  , nsig  , sigm  ,&
-                      nvi  , vim   , option, angmas, icomp ,&
-                      temp , dtemp , predef, dpred ,&
-                      sigp , vip   , dsidep, codret)
+                    imate, compor, carcri, instam, instap,&
+                    neps , epsm  , deps  , nsig  , sigm  ,&
+                    nvi  , vim   , option, angmas, &
+                    temp , dtemp , predef, dpred ,&
+                    sigp , vip   , dsidep, codret)
     case (59)
         call lc0059(fami, kpg, ksp, imate,&
                     compor, carcri, instam, instap, neps, epsm,&
@@ -920,7 +921,7 @@ integer :: codret
         call lc1058(fami , kpg   , ksp   , ndim  , typmod,&
                     imate, compor, carcri, instam, instap,&
                     neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas, icomp ,&
+                    nvi  , vim   , option, angmas,&
                     temp , dtemp , predef, dpred ,&
                     sigp , vip   , dsidep, codret)
 
@@ -1111,7 +1112,7 @@ integer :: codret
         call lc7058(fami , kpg   , ksp   , ndim  , typmod,&
                     imate, compor, carcri, instam, instap,&
                     neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas, icomp ,&
+                    nvi  , vim   , option, angmas, &
                     temp , dtemp , predef, dpred ,&
                     sigp , vip   , dsidep, codret)
 !

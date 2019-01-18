@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
     subroutine lc0058(fami , kpg   , ksp   , ndim  , typmod,&
                       imate, compor, carcri, instam, instap,&
                       neps , epsm  , deps  , nsig  , sigm  ,&
-                      nvi  , vim   , option, angmas, icomp ,&
+                      nvi  , vim   , option, angmas,&
                       temp , dtemp , predef, dpred ,&
                       sigp , vip   , dsidep, codret)
         character(len=*), intent(in) :: fami
@@ -39,9 +38,8 @@ interface
         real(kind=8), intent(in) :: vim(*)
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: angmas(*)
-        integer, intent(in) :: icomp  
         real(kind=8), intent(in) :: temp, dtemp
-        real(kind=8), intent(in) :: predef(*), dpred(*)   
+        real(kind=8), intent(in) :: predef(*), dpred(*)
         real(kind=8), intent(out) :: sigp(6)
         real(kind=8), intent(out) :: vip(nvi)
         real(kind=8), intent(out) :: dsidep(6, 6)

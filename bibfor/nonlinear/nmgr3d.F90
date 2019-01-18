@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -103,7 +103,7 @@ integer, intent(inout) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: grand, axi, cplan
-    integer :: kpg, j, jvariexte, jstrainexte, ndim
+    integer :: kpg, j, jvariext1, jvariext2, jstrainexte, ndim
     real(kind=8) :: dsidep(6, 6)
     real(kind=8) :: f_prev(3, 3), f_curr(3, 3)
     real(kind=8) :: epsg_prev(6), epsg_incr(6), epsg_curr(6)
@@ -128,16 +128,17 @@ integer, intent(inout) :: codret
     disp_curr(:) = 0.d0
     rela_comp    = compor(RELA_NAME)
 !
-! - Get coded integer for external state variable
+! - Get coded integers for external state variables
 !
-    jvariexte = nint(carcri(IVARIEXTE))
+    jvariext1   = nint(carcri(IVARIEXT1))
+    jvariext2   = nint(carcri(IVARIEXT2))
     jstrainexte = nint(carcri(ISTRAINEXTE))
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno      , npg      , ndim ,&
-                ipoids   , ivf      , idfde,&
-                typmod   , jvariexte, &
+    call lcegeo(nno      , npg      , ndim     ,&
+                ipoids   , ivf      , idfde    ,&
+                typmod   , jvariext1, jvariext2,&
                 geom_init, disp_prev, disp_incr)
 !
 ! - Only isotropic material !

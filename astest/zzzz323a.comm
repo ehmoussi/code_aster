@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -131,15 +131,15 @@ CARAELEM=AFFE_CARA_ELEM(INFO=2,
                       MULTIFIBRE=(_F( MAILLE=('POU6','POU7'),   PREC_AIRE=6.0E-04, PREC_INERTIE=1.1, GROUP_FIBRE=('SBET',)  ),  )
 )
 
-IMPR_RESU(FORMAT="RESULTAT",
-          CONCEPT=_F(CARA_ELEM=CARAELEM,REPERE_LOCAL='ELEM',MODELE=MODELE
+IMPR_CONCEPT(FORMAT="RESULTAT",
+             CONCEPT=_F(CARA_ELEM=CARAELEM,REPERE_LOCAL='ELEM',MODELE=MODELE
                       ))
 
 
 DEFI_FICHIER(UNITE=82, FICHIER='./fort.82', TYPE = 'BINARY')
 
-IMPR_RESU(FORMAT='MED',UNITE=82,PROC0='NON',
-          CONCEPT=_F(CARA_ELEM=CARAELEM,REPERE_LOCAL='ELEM',MODELE=MODELE
+IMPR_CONCEPT(FORMAT='MED',UNITE=82,
+             CONCEPT=_F(CARA_ELEM=CARAELEM,REPERE_LOCAL='ELEM',MODELE=MODELE
                       ))
 
 
@@ -343,15 +343,15 @@ CARATUY4=AFFE_CARA_ELEM(INFO=2,
                                   ),
                          )
 
-IMPR_RESU(FORMAT="RESULTAT",
-          CONCEPT=_F(CARA_ELEM=CARATUY4,REPERE_LOCAL='ELEM',MODELE=MODTUY4,
-                      ))
+IMPR_CONCEPT(FORMAT="RESULTAT",
+             CONCEPT=_F(CARA_ELEM=CARATUY4,REPERE_LOCAL='ELEM',MODELE=MODTUY4,
+                       ))
 
 
 DEFI_FICHIER(UNITE=83, FICHIER='./fort.83', TYPE = 'BINARY')
 
-IMPR_RESU(FORMAT='MED',UNITE=83,PROC0='NON',
-          CONCEPT=_F(CARA_ELEM=CARATUY4,REPERE_LOCAL='ELEM',MODELE=MODTUY4,
+IMPR_CONCEPT(FORMAT='MED',UNITE=83,
+             CONCEPT=_F(CARA_ELEM=CARATUY4,REPERE_LOCAL='ELEM',MODELE=MODTUY4,
                       ))
 
 

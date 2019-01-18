@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -86,15 +86,15 @@ CARAELEM=AFFE_CARA_ELEM(
                          )
 
 
-IMPR_RESU(FORMAT="RESULTAT",
-          CONCEPT=_F(CARA_ELEM=CARAELEM,REPERE_LOCAL='ELEM',MODELE=MODELE
+IMPR_CONCEPT(FORMAT="RESULTAT",
+            CONCEPT=_F(CARA_ELEM=CARAELEM,REPERE_LOCAL='ELEM',MODELE=MODELE
                       ))
 
 
 DEFI_FICHIER(UNITE=82, FICHIER='./fort.82', TYPE = 'BINARY')
 
-IMPR_RESU(FORMAT='MED',UNITE=82, PROC0='NON',
-          CONCEPT=_F(CARA_ELEM=CARAELEM,REPERE_LOCAL='ELEM',MODELE=MODELE
+IMPR_CONCEPT(FORMAT='MED',UNITE=82, 
+             CONCEPT=_F(CARA_ELEM=CARAELEM,REPERE_LOCAL='ELEM',MODELE=MODELE
                       ))
 
 

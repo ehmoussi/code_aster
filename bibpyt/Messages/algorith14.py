@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -114,15 +113,6 @@ cata_msg = {
   le calcul de masses effectives risque d'être imprécis %(i2)d
 """),
 
-    31 : _(u"""
- problème de cohérence entre le nombre de concepts MODE_MECA et
- la liste des NMAX_MODE:
- nombre de concepts MODE_MECA dans la liste MODE_MECA     : %(i1)d
- nombre de valeurs de la liste NMAX_MODE                  : %(i2)d
- Conseils & solution:
-   Les deux listes doivent avoir la même taille.
-"""),
-
     32 : _(u"""
    Il est aussi possible de renseigner une unique valeur pour NMAX_MODE
    (dans ce cas, cette valeur sera appliquée à chaque concept MODE_MECA).
@@ -130,14 +120,6 @@ cata_msg = {
 
     35 : _(u"""
  aucun champ n'est calculé dans la structure de données  %(k1)s
-"""),
-
-    50 : _(u"""
- il faut au moins 1 mode !
-"""),
-
-    51 : _(u"""
- il faut au moins un MODE_MECA a la 1ère occurrence de RITZ
 """),
 
     61 : _(u"""

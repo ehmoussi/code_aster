@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 subroutine getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                     l_mfront_offi, l_mfront_proto ,&
                                     cptr_nbvarext, cptr_namevarext,&
-                                    jvariexte)
+                                    jvariext1    , jvariext2)
 !
 use NonLin_Datastructure_type
 !
@@ -35,13 +35,10 @@ implicit none
 #include "asterc/lcinfo.h"
 #include "asterc/lcextevari.h"
 !
-aster_logical, intent(in) :: l_mfront_offi
-aster_logical, intent(in) :: l_mfront_proto
-character(len=16), intent(in) :: rela_comp
-character(len=16), intent(in) :: comp_code_py
-integer, intent(in) :: cptr_nbvarext
-integer, intent(in) :: cptr_namevarext
-integer, intent(out) :: jvariexte
+aster_logical, intent(in) :: l_mfront_offi, l_mfront_proto
+character(len=16), intent(in) :: rela_comp, comp_code_py
+integer, intent(in) :: cptr_nbvarext, cptr_namevarext
+integer, intent(out) :: jvariext1, jvariext2
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,15 +53,16 @@ integer, intent(out) :: jvariexte
 ! In  rela_comp        : RELATION comportment
 ! In  cptr_nbvarext    : pointer to number of external state variable
 ! In  cptr_namevarext  : pointer to name of external state variable
-! Out jvariexte        : coded integer for external state variable
+! Out jvariext1        : first coded integer for external state variable
+! Out jvariext2        : second coded integer for external state variable
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nb_exte, i_exte, idummy1, idummy2, i_exte_list
-    integer, parameter :: nb_exte_list = 30
+    integer, parameter :: nb_exte_list = 31
     character(len=8) :: name_exte(8)
-    integer :: variextecode(1)
-    integer :: tabcod(30)
+    integer :: variextecode(2)
+    integer :: tabcod(60)
     character(len=16), parameter :: name_varc(nb_exte_list)  = (/'ELTSIZE1','ELTSIZE2','COORGA  ',&
                                                                  'GRADVELO','HYGR    ','NEUT1   ',&
                                                                  'NEUT2   ','TEMP    ','DTX     ',&
@@ -74,7 +72,8 @@ integer, intent(out) :: jvariexte
                                                                  'EPSAXX  ','EPSAYY  ','EPSAZZ  ',&
                                                                  'EPSAXY  ','EPSAXZ  ','EPSAYZ  ',&
                                                                  'PFERRITE','PPERLITE','PBAINITE',&
-                                                                 'PMARTENS','ALPHPUR ','ALPHBET '/)
+                                                                 'PMARTENS','ALPHPUR ','ALPHBET ',&
+                                                                 'TIME    '/)
     aster_logical, parameter :: l_allow_mfront(nb_exte_list) = (/.true.    ,.false.   ,.false.   ,&
                                                                  .false.   ,.true.    ,.true.    ,&
                                                                  .true.    ,.true.    ,.true.    ,&
@@ -84,11 +83,13 @@ integer, intent(out) :: jvariexte
                                                                  .true.    ,.true.    ,.true.    ,&
                                                                  .true.    ,.true.    ,.true.    ,&
                                                                  .true.    ,.true.    ,.true.    ,&
-                                                                 .true.    ,.true.    ,.true.    /)
+                                                                 .true.    ,.true.    ,.true.    ,&
+                                                                 .true./)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    jvariexte    = 0
+    jvariext1    = 0
+    jvariext2    = 0
     nb_exte      = 0
     name_exte(:) = ' '
 !
@@ -97,8 +98,10 @@ integer, intent(out) :: jvariexte
     if (l_mfront_proto .or. l_mfront_offi) then
         call mfront_get_external_state_variable(cptr_nbvarext, cptr_namevarext,&
                                                 name_exte    , nb_exte)
+        ASSERT(nb_exte .le. 8)
     else
         call lcinfo(comp_code_py, idummy1, idummy2, nb_exte)
+        ASSERT(nb_exte .le. 8)
         call lcextevari(comp_code_py, nb_exte, name_exte)
     endif
 ! 
@@ -113,7 +116,7 @@ integer, intent(out) :: jvariexte
 !
 ! - Coding
 !
-    tabcod(1:30) = 0
+    tabcod(1:60) = 0
     do i_exte = 1, nb_exte
         do i_exte_list = 1, nb_exte_list
             if (name_exte(i_exte) .eq. name_varc(i_exte_list)) then
@@ -126,7 +129,8 @@ integer, intent(out) :: jvariexte
             endif
         end do
     end do 
-    call iscode(tabcod, variextecode(1), 30)
-    jvariexte = variextecode(1)
+    call iscode(tabcod, variextecode, 60)
+    jvariext1 = variextecode(1)
+    jvariext2 = variextecode(2)
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/carc_info.h"
 #include "asterfort/carc_init.h"
+#include "asterfort/carc_chck.h"
 #include "asterfort/carc_read.h"
 #include "asterfort/carc_save.h"
 #include "asterfort/dismoi.h"
@@ -85,9 +86,13 @@ aster_logical, intent(in) :: l_implex
 !
     call carc_read(ds_compor_para, model, l_implex)
 !
+! - Check informations in CARCRI <CARTE>
+!
+    call carc_chck(ds_compor_para)
+!
 ! - Save and check informations in CARCRI <CARTE>
 !
-    call carc_save(model, mesh, carcri, nb_cmp, ds_compor_para)
+    call carc_save(mesh, carcri, nb_cmp, ds_compor_para)
 !
 ! - Cleaning
 !
