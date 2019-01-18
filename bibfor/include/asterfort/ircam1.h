@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "MeshTypes_type.h"
 !
 interface
     subroutine ircam1(nofimd, nochmd, existc, ncmprf, numpt,&
@@ -48,8 +47,7 @@ interface
         character(len=8) :: typech
         character(len=*) :: nomamd
         character(len=8) :: nomtyp(*)
-        integer :: modnum(69)
-        integer :: nuanom(69, *)
+        integer :: modnum(MT_NTYMAX), nuanom(MT_NTYMAX, *)
         integer :: codret
     end subroutine ircam1
 end interface

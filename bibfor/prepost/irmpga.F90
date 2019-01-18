@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,44 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine irmpga(nofimd, chanom, nochmd, typech, nomtyp,&
                   nbimpr, caimpi, caimpk, modnum, nuanom,&
                   sdcarm, codret)
-! person_in_charge: nicolas.sellenet at edf.fr
-!_______________________________________________________________________
+!
+implicit none
+!
+#include "jeveux.h"
+#include "asterf_types.h"
+#include "MeshTypes_type.h"
+#include "asterc/utflsh.h"
+#include "asterfort/assert.h"
+#include "asterfort/infniv.h"
+#include "asterfort/irmase.h"
+#include "asterfort/irmpg1.h"
+#include "asterfort/jenuno.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/uteref.h"
+#include "asterfort/utmess.h"
+!
+integer :: nbimpr
+integer :: caimpi(10, nbimpr)
+integer :: modnum(MT_NTYMAX), nuanom(MT_NTYMAX, *)
+character(len=8) :: nomtyp(*)
+character(len=8) :: typech, sdcarm
+character(len=19) :: chanom
+character(len=80) :: caimpk(3, nbimpr)
+character(len=*) :: nofimd
+character(len=64) :: nochmd
+integer :: codret
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ECRITURE AU FORMAT MED - LOCALISATION POINTS DE GAUSS
-!        -  -            -                  -         --
-!_______________________________________________________________________
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ENTREES :
 !       NOFIMD : NOM DU FICHIER MED
 !       CHANOM : NOM ASTER DU CHAMP
@@ -54,82 +83,37 @@ subroutine irmpga(nofimd, chanom, nochmd, typech, nomtyp,&
 !                  CAIMPK(2,I) = NOM DU PROFIL AU SENS MED
 !                  CAIMPK(3,I) = NOM DE L'ELEMENT DE STRUCTURE
 !       CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
-!_______________________________________________________________________
 !
-    implicit none
+! --------------------------------------------------------------------------------------------------
 !
-#include "jeveux.h"
-#include "asterf_types.h"
-#include "asterc/utflsh.h"
-#include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/irmase.h"
-#include "asterfort/irmpg1.h"
-#include "asterfort/jenuno.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/uteref.h"
-#include "asterfort/utmess.h"
-!
-    integer :: ntymax
-    parameter (ntymax = 69)
-!
-! 0.1. ==> ARGUMENTS
-!
-    integer :: nbimpr
-    integer :: caimpi(10, nbimpr)
-    integer :: modnum(ntymax), nuanom(ntymax, *)
-!
-    character(len=8) :: nomtyp(*)
-    character(len=8) :: typech, sdcarm
-    character(len=19) :: chanom
-    character(len=80) :: caimpk(3, nbimpr)
-    character(len=*) :: nofimd
-    character(len=64) :: nochmd
-!
-    integer :: codret
-!
-! 0.2. ==> COMMUNS
-!
-!
-! 0.3. ==> VARIABLES LOCALES
-!
-    character(len=6) :: nompro
-    parameter ( nompro = 'IRMPGA' )
-!
-    integer :: ifm, nivinf, nbcouc, nbsect, nummai
+    character(len=6), parameter :: nompro = 'IRMPGA'
+    integer :: ifm, niv, nbcouc, nbsect, nummai
     integer :: iaux, jaux, kaux, laux
     integer :: nbrepg, nbnoso, nbnoto, ndim
     integer :: ntypef, tygeom, tymast
     integer :: nbpg, nbsp
     integer :: nrimpr
-!
-    integer :: lgmax
-    parameter (lgmax=1000)
-!
+    integer, parameter :: lgmax = 1000
     real(kind=8) :: refcoo(3*lgmax), gscoo(3*lgmax), wg(lgmax)
     real(kind=8) :: raux1(3*lgmax), raux2(3*lgmax), raux3(lgmax)
-!
     aster_logical :: okgr, okcq, oktu, okpf
-
     character(len=4)  :: chnbco, chnbse
     character(len=10) :: nonuma
     character(len=16) :: nomtef, nomfpg, typsec
     character(len=64) :: nolopg, nomasu
 !
-!====
-! 1. PREALABLES
-!====
+! --------------------------------------------------------------------------------------------------
 !
     codret = 0
 !
-    call infniv(ifm, nivinf)
+    call infniv(ifm, niv)
 !
-    if (nivinf .gt. 1) then
-        write (ifm,1001) 'DEBUT DE '//nompro
+    if (niv .gt. 1) then
+        write (ifm,100) 'DEBUT DE '//nompro
         call utmess('I', 'MED_74')
         call utflsh(codret)
     endif
-    1001 format(/,4x,10('='),a,10('='),/)
+100 format(/,4x,10('='),a,10('='),/)
 !
 !====
 ! 2. BOUCLAGE SUR LES IMPRESSIONS DEMANDEES
@@ -137,7 +121,7 @@ subroutine irmpga(nofimd, chanom, nochmd, typech, nomtyp,&
 !    GAUSS ET/OU PLUS DE 1 SOUS_POINT
 !====
 !
-    do 20 , nrimpr = 1 , nbimpr
+    do nrimpr = 1 , nbimpr
         nbpg = caimpi(2,nrimpr)
         nbsp = caimpi(3,nrimpr)
 !
@@ -155,15 +139,15 @@ subroutine irmpga(nofimd, chanom, nochmd, typech, nomtyp,&
 !               WG1 WG2 ... ... WGN
 !
         if (codret .eq. 0) then
-            if (nivinf .gt. 1) then
+            if (niv .gt. 1) then
                 if (typech(1:4) .eq. 'ELGA') then
-                    write (ifm,2100) typech, nbpg, nbsp
+                    write (ifm,210) typech, nbpg, nbsp
                 else
-                    write (ifm,2101) typech, nbpg, nbsp
+                    write (ifm,211) typech, nbpg, nbsp
                 endif
             endif
-2100        format('CHAMP DE TYPE ',a,', AVEC,',i5,' POINTS DE GAUSS ET',i5,' SOUS_POINTS')
-2101        format('CHAMP DE TYPE ',a,', AVEC,',i5,' POINTS ET',i5,' SOUS_POINTS')
+210        format('CHAMP DE TYPE ',a,', AVEC,',i5,' POINTS DE GAUSS ET',i5,' SOUS_POINTS')
+211        format('CHAMP DE TYPE ',a,', AVEC,',i5,' POINTS ET',i5,' SOUS_POINTS')
 !
 ! 2.1.1.    CARACTERISATIONS DE L'ELEMENT FINI QUAND C'EST UN CHAMP
 !           AUX POINTS DE GAUSS AVEC PLUS DE 1 POINT DE GAUSS
@@ -296,11 +280,12 @@ subroutine irmpga(nofimd, chanom, nochmd, typech, nomtyp,&
                 caimpk(3,nrimpr) = nomasu
             endif
         endif
-20  enddo
+20      continue
+    end do
 !
 ! 3. LA FIN
-    if (nivinf .gt. 1) then
-        write (ifm,1001) 'FIN DE '//nompro
+    if (niv .gt. 1) then
+        write (ifm,100) 'FIN DE '//nompro
     endif
 !
 end subroutine

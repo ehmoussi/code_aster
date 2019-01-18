@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,47 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine irmmma(fid, nomamd, nbmail, connex, point,&
                   typma, nommai, prefix, nbtyp, typgeo,&
                   nomtyp, nnotyp, renumd, nmatyp, infmed,&
                   modnum, nuanom)
-! person_in_charge: nicolas.sellenet at edf.fr
-!-----------------------------------------------------------------------
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "MeshTypes_type.h"
+#include "jeveux.h"
+#include "asterfort/as_mmhcyw.h"
+#include "asterfort/as_mmheaw.h"
+#include "asterfort/as_mmhenw.h"
+#include "asterfort/infniv.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jedetr.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jenonu.h"
+#include "asterfort/jexnom.h"
+#include "asterfort/utmess.h"
+#include "asterfort/wkvect.h"
+!
+integer :: fid
+integer :: nbmail, nbtyp
+integer :: connex(*), typma(*), point(*)
+integer :: typgeo(*), nnotyp(*), nmatyp(MT_NTYMAX)
+integer :: renumd(*), modnum(MT_NTYMAX), nuanom(MT_NTYMAX, *)
+integer :: infmed
+character(len=6) :: prefix
+character(len=8) :: nommai(*)
+character(len=8) :: nomtyp(*)
+character(len=*) :: nomamd
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ECRITURE DU MAILLAGE -  FORMAT MED - LES MAILLES
-!        -  -     -                  -         --
-!-----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ENTREE:
 !       FID    : IDENTIFIANT DU FICHIER MED
 !       NOMAMD : NOM DU MAILLAGE MED
@@ -51,71 +82,23 @@ subroutine irmmma(fid, nomamd, nbmail, connex, point,&
 !
 !     SORTIE:
 !       NMATYP : NOMBRE DE MAILLES PAR TYPE
-!-----------------------------------------------------------------------
 !
-    implicit none
+! --------------------------------------------------------------------------------------------------
 !
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/as_mmhcyw.h"
-#include "asterfort/as_mmheaw.h"
-#include "asterfort/as_mmhenw.h"
-#include "asterfort/infniv.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jenonu.h"
-#include "asterfort/jexnom.h"
-#include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
-!
-    integer :: ntymax
-    parameter (ntymax = 69)
-!
-! 0.1. ==> ARGUMENTS
-!
-    integer :: fid
-    integer :: nbmail, nbtyp
-    integer :: connex(*), typma(*), point(*)
-    integer :: typgeo(*), nnotyp(*), nmatyp(*)
-    integer :: renumd(*), modnum(ntymax), nuanom(ntymax, *)
-    integer :: infmed
-!
-    character(len=6) :: prefix
-    character(len=8) :: nommai(*)
-    character(len=8) :: nomtyp(*)
-    character(len=*) :: nomamd
-!
-! 0.2. ==> COMMUNS
-!
-!
-! 0.3. ==> VARIABLES LOCALES
-!
-    character(len=6) :: nompro
-    parameter ( nompro = 'IRMMMA' )
-!
-    integer :: edfuin
-    parameter (edfuin=0)
-    integer :: edmail
-    parameter (edmail=0)
-    integer :: ednoda
-    parameter (ednoda=0)
-!
+    character(len=6), parameter :: nompro = 'IRMMMA'
+    integer :: edfuin = 0, edmail = 0, ednoda = 0
     integer :: codret
     integer :: ipoin, ityp, letype
     integer :: ino
     integer :: ima
-    integer :: jnomma(ntymax), jnumma(ntymax), jcnxma(ntymax)
-    integer :: ifm, nivinf
-!
+    integer :: jnomma(MT_NTYMAX), jnumma(MT_NTYMAX), jcnxma(MT_NTYMAX)
+    integer :: ifm, niv
     character(len=8) :: saux08
-!====
-! 1. PREALABLES
-!====
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-!
-    call infniv(ifm, nivinf)
+    call infniv(ifm, niv)
 !
 !====
 ! 2. PREPARATION DES TABLEAUX PAR TYPE DE MAILLE
@@ -124,10 +107,7 @@ subroutine irmmma(fid, nomamd, nbmail, connex, point,&
 ! 2.1. ==> DECOMPTE DU NOMBRE DE MAILLES PAR TYPE
 !          EN FAIT, ON VEUT JUSTE SAVOIR S'IL Y EN A OU PAS.
 !
-    do ityp = 1 , ntymax
-        nmatyp(ityp) = 0
-    end do
-!
+    nmatyp(1:) = 0
     do ima = 1, nbmail
         nmatyp(typma(ima)) = nmatyp(typma(ima)) + 1
     end do
@@ -135,14 +115,12 @@ subroutine irmmma(fid, nomamd, nbmail, connex, point,&
 ! 2.2. ==> ON VERIFIE QUE L'ON SAIT ECRIRE LES MAILLES PRESENTES DANS
 !          LE MAILLAGE
 !
-    do ityp = 1, ntymax
-!
+    do ityp = 1, MT_NTYMAX
         if (nmatyp(ityp) .ne. 0) then
             if (typgeo(ityp) .eq. 0) then
                 call utmess('F', 'PREPOST2_93', sk=nomtyp(ityp))
             endif
         endif
-!
     end do
 !
 ! 2.3. ==> CREATION DE PLUSIEURS VECTEURS PAR TYPE DE MAILLE PRESENT :
@@ -151,17 +129,13 @@ subroutine irmmma(fid, nomamd, nbmail, connex, point,&
 !           +  UN VECTEUR CONTENANT LA CONNECTIVITE DES MAILLE/TYPE
 !              (CONNECTIVITE = NOEUDS + UNE VALEUR BIDON(0) SI BESOIN)
 !
-    do ityp = 1, ntymax
-!
+    do ityp = 1, MT_NTYMAX
         if (nmatyp(ityp) .ne. 0) then
-!
             call wkvect('&&'//nompro//'.NOM.'//nomtyp(ityp), 'V V K16', nmatyp(ityp), jnomma(ityp))
             call wkvect('&&'//prefix//'.NUM.'//nomtyp(ityp), 'V V I', nmatyp(ityp), jnumma(ityp))
             call wkvect('&&'//nompro//'.CNX.'//nomtyp(ityp), 'V V I', nnotyp(ityp)*nmatyp(ityp),&
                         jcnxma(ityp))
-!
         endif
-!
     end do
 !
 ! 2.4. ==> ON PARCOURT TOUTES LES MAILLES. POUR CHACUNE D'ELLES, ON
@@ -172,12 +146,9 @@ subroutine irmmma(fid, nomamd, nbmail, connex, point,&
 !          A LA FIN DE CETTE PHASE, NMATYP CONTIENT LE NOMBRE DE MAILLES
 !          POUR CHAQUE TYPE
 !
-    do ityp = 1 , ntymax
-        nmatyp(ityp) = 0
-    end do
+    nmatyp(:) = 0
 !
     do ima = 1, nbmail
-!
         ityp = typma(ima)
 !       ON TRAITE LES PENTA18 EN OUBLIANT
 !       LES NOEUDS DU CENTRE ET LES SEG4 EN OUBLIANT
@@ -186,7 +157,6 @@ subroutine irmmma(fid, nomamd, nbmail, connex, point,&
         nmatyp(ityp) = nmatyp(ityp) + 1
 !       NOM DE LA MAILLE DE TYPE ITYP DANS VECT NOM MAILLES
         zk16(jnomma(ityp)-1+nmatyp(ityp)) = nommai(ima)//'        '
-!                                                         12345678
 !       NUMERO ASTER DE LA MAILLE DE TYPE ITYP DANS VECT NUM MAILLES
         zi(jnumma(ityp)-1+nmatyp(ityp)) = ima
 !       CONNECTIVITE DE LA MAILLE TYPE ITYP DANS VECT CNX:
@@ -205,7 +175,6 @@ subroutine irmmma(fid, nomamd, nbmail, connex, point,&
                     connex(ipoin-1+nuanom(ityp,ino))
             end do
         endif
-!
     end do
 !
 !====
@@ -227,9 +196,9 @@ subroutine irmmma(fid, nomamd, nbmail, connex, point,&
         ityp = renumd(letype)
 !
         if (infmed .ge. 2) then
-            write (ifm,3001) nomtyp(ityp), nmatyp(ityp)
+            write (ifm,300) nomtyp(ityp), nmatyp(ityp)
         endif
-    3001 format('TYPE ',a8,' : ',i10,' MAILLES')
+    300 format('TYPE ',a8,' : ',i10,' MAILLES')
 !
         if (nmatyp(ityp) .ne. 0) then
 !
@@ -271,7 +240,7 @@ subroutine irmmma(fid, nomamd, nbmail, connex, point,&
 ! 4. LA FIN
 !====
 !
-    do ityp = 1, ntymax
+    do ityp = 1, MT_NTYMAX
         if (nmatyp(ityp) .ne. 0) then
             call jedetr('&&'//nompro//'.NOM.'//nomtyp(ityp))
             call jedetr('&&'//nompro//'.CNX.'//nomtyp(ityp))

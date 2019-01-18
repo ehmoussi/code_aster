@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine comp_meca_chck(model         , mesh          , full_elem_s, l_etat_init,&
-                          ds_compor_prep,&
-                          l_auto_elas   , l_auto_deborst, l_comp_erre)
+subroutine comp_meca_chck(model, mesh, full_elem_s, l_etat_init, ds_compor_prep)
 !
 use Behaviour_type
 !
@@ -46,14 +44,10 @@ implicit none
 #include "asterf_mpi.h"
 #endif
 !
-character(len=8), intent(in) :: model
-character(len=8), intent(in) :: mesh
+character(len=8), intent(in) :: model, mesh
 character(len=19), intent(in) :: full_elem_s
 aster_logical, intent(in) :: l_etat_init
 type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
-aster_logical, intent(out) :: l_auto_elas
-aster_logical, intent(out) :: l_auto_deborst
-aster_logical, intent(out) :: l_comp_erre
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,10 +62,6 @@ aster_logical, intent(out) :: l_comp_erre
 ! In  full_elem_s      : <CHELEM_S> of FULL_MECA option
 ! In  l_etat_init      : .true. if initial state is defined
 ! IO  ds_compor_prep   : datastructure to prepare comportement
-! Out l_auto_elas      : .true. if at least one element use ELAS by default
-! Out l_auto_deborst   : .true. if at least one element swap to Deborst algorithm
-! Out l_comp_erre      : .true. if at least one element use comportment on element 
-!                        doesn't support it
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -89,12 +79,16 @@ aster_logical, intent(out) :: l_comp_erre
     character(len=24) :: ligrmo
     character(len=8) :: partit
     mpi_int :: nb_proc, mpicou
+    aster_logical :: l_auto_elas, l_auto_deborst, l_comp_erre
 !
 ! --------------------------------------------------------------------------------------------------
 !
     keywordfact    = 'COMPORTEMENT'
     list_elem_affe = '&&COMPMECASAVE.LIST'
     nb_comp        = ds_compor_prep%nb_comp
+    l_auto_elas    = ASTER_FALSE
+    l_auto_deborst = ASTER_FALSE
+    l_comp_erre    = ASTER_FALSE
 !
 ! - MPI initialisation
 ! 
@@ -118,8 +112,8 @@ aster_logical, intent(out) :: l_comp_erre
         rela_thmc = ds_compor_prep%v_comp(i_comp)%kit_comp(1)
 !
 ! ----- Detection of specific cases
-!              
-        if (rela_comp .eq. 'ENDO_HETEROGENE') then 
+!
+        if (rela_comp .eq. 'ENDO_HETEROGENE') then
             ligrmo = model//'.MODELE'
             call dismoi('PARTITION', ligrmo, 'LIGREL', repk=partit)
             if (partit .ne. ' ' .and. nb_proc .gt. 1) then
@@ -179,5 +173,20 @@ aster_logical, intent(out) :: l_comp_erre
         call lcdiscard(rela_comp_py)
         call lcdiscard(defo_comp_py)
     end do
+!
+! - Some informations
+!   l_auto_elas      : .true. if at least one element use ELAS by default
+!   l_auto_deborst   : .true. if at least one element swap to Deborst algorithm
+!   l_comp_erre      : .true. if at least one element use comportment on element doesn't support it
+!
+    if (l_auto_deborst) then
+        call utmess('I', 'COMPOR5_20')
+    endif
+    if (l_auto_elas) then
+        call utmess('I', 'COMPOR5_21')
+    endif
+    if (l_comp_erre) then
+        call utmess('I', 'COMPOR5_22')
+    endif
 !
 end subroutine

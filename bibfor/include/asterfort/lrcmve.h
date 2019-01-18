@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "MeshTypes_type.h"
 !
 interface
     subroutine lrcmve(ntvale, nmatyp, nbnoma, ntproa, lgproa,&
@@ -51,7 +50,7 @@ interface
         integer :: adsl
         integer :: adsv
         integer :: adsd
-        integer :: nuanom(69, 27)
+        integer :: nuanom(MT_NTYMAX, MT_NNOMAX)
         aster_logical :: lrenum
         integer :: codret
     end subroutine lrcmve
