@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -105,7 +105,7 @@ integer, intent(inout) :: codret
 !
     aster_logical :: grand
     integer :: kpg, kk, i_node, i_dim, m, j, j1, kl, kkd, i_tens
-    integer :: cod(27), ndim, jvariexte
+    integer :: cod(27), ndim, jvariext1, jvariext2
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sigm_norm(6)
     real(kind=8) :: rbid(1), sig(6)
     real(kind=8) :: poids, tmp, rac2
@@ -120,15 +120,16 @@ integer, intent(inout) :: codret
         cod(kpg) = 0
     end do
 !
-! - Get coded integer for external state variable
+! - Get coded integers for external state variables
 !
-    jvariexte = nint(carcri(IVARIEXTE))
+    jvariext1 = nint(carcri(IVARIEXT1))
+    jvariext2 = nint(carcri(IVARIEXT2))
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno   , npg      , 3    ,&
-                ipoids, ivf      , idfde,&
-                typmod, jvariexte,&
+    call lcegeo(nno   , npg      , 3        ,&
+                ipoids, ivf      , idfde    ,&
+                typmod, jvariext1, jvariext2,&
                 geom  ,&
                 deplm , deplp )
 !

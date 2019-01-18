@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
                   modnum, nuanom, nomtyp, nnotyp, sdcarm,&
                   carael)
-    implicit none
+!
+implicit none
 !
 #include "asterf_types.h"
+#include "MeshTypes_type.h"
 #include "jeveux.h"
 #include "asterc/indik8.h"
 #include "asterfort/as_mmhcyw.h"
@@ -36,19 +39,18 @@ subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
 #include "asterfort/jexatr.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    integer :: ntymax
-    parameter (ntymax = 69)
 !
-    character(len=8)  :: nomaas, nomtyp(*), sdcarm, carael
-    character(len=64) :: nomamd
-    integer :: nbimpr, caimpi(10,nbimpr), modnum(ntymax)
-    integer :: nnotyp(*), nuanom(ntymax,*)
-    integer :: idfimd, nvtyge
-! person_in_charge: nicolas.sellenet at edf.fr
-! ----------------------------------------------------------------------
+character(len=8)  :: nomaas, nomtyp(*), sdcarm, carael
+character(len=64) :: nomamd
+integer :: nbimpr, caimpi(10,nbimpr), modnum(MT_NTYMAX)
+integer :: nnotyp(*), nuanom(MT_NTYMAX,*)
+integer :: idfimd, nvtyge
+!
+! --------------------------------------------------------------------------------------------------
+!
 !  IMPR_RESU - IMPRESSION DANS LE MAILLAGE DES ELEMENTS DE STRUCTURE
-!  -    -                         --           -           -
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  :
 !   IDFIMD  K*   ENTIER LIE AU FICHIER MED OUVERT
@@ -65,32 +67,22 @@ subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
 !   NNOTYP  I(*) NOMBRE DE NOEUDS PAR TYPES DE MAILLES
 !   SDCARM  K*   SD_CARA_ELEM EN CHAM_ELEM_S
 !
+! --------------------------------------------------------------------------------------------------
 !
     integer :: codret, ipoin, ityp, letype, ino, iret, nbcmp, iad, iadzr, iadep, iadex, iadr1
-    integer :: ima, nbsect, nbcouc, nbsp, nummai, nbmail, jpoin, ibid, edfuin, edelst, ednoda
-
-    integer :: jcnxma(ntymax), jepama(ntymax), joripmf(ntymax), jr1eptu(ntymax), jorituy(ntymax)
-    integer :: nmatyp(ntymax)
-
+    integer :: ima, nbsect, nbcouc, nbsp, nummai, nbmail, jpoin, ibid
+    integer :: jcnxma(MT_NTYMAX), jepama(MT_NTYMAX), joripmf(MT_NTYMAX)
+    integer :: jr1eptu(MT_NTYMAX), jorituy(MT_NTYMAX), nmatyp(MT_NTYMAX)
     integer :: j_pmf_cesl, j_pmf_cesd, j_cg_cesl, j_cg_cesd
     integer :: j_tu_cesl, j_tu_cesd, j_tu_or_cesl, j_tu_or_cesd
-
     integer :: icmp_cq_ep, icmp_cq_ex, icmp_gr_se, icmp_gr_ex, icmp_pf_g1
     integer :: icmp_tu_r1, icmp_tu_ep, icmp_tu_g1, icmp_tu_g2, icmp_tu_g3, icmp_tu_g4
     integer :: nbgamm
-
-    parameter   (edfuin=0)
-    parameter   (edelst=5)
-    parameter   (ednoda=0)
-!
+    integer, parameter :: edfuin=0, edelst=5, ednoda=0
     character(len=3) :: saux03
     character(len=8) :: saux08, nomo
-    character(len=64) :: atepai, atangv
-    parameter   (atepai = 'SCALE')
-    parameter   (atangv = 'ANGLE')
-!
+    character(len=64), parameter :: atepai = 'SCALE', atangv = 'ANGLE'
     aster_logical :: exicoq, exituy, exipmf, exigri, okgr, okcq, oktu, okpf
-!
     integer,          pointer :: connex(:)      => null()
     integer,          pointer :: typmail(:)     => null()
     real(kind=8),     pointer :: cg_cesv(:)     => null()
@@ -99,14 +91,15 @@ subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
     real(kind=8),     pointer :: pmf_cesv(:)    => null()
     character(len=8), pointer :: tmp_cesc(:)    => null()
 !
+! --------------------------------------------------------------------------------------------------
 !
     call jeveuo(nomaas//'.TYPMAIL', 'L', vi=typmail)
     call jelira(nomaas//'.NOMMAI', 'NOMUTI', nbmail)
     call jeveuo(jexatr(nomaas//'.CONNEX', 'LONCUM'), 'L', jpoin)
     call jeveuo(nomaas//'.CONNEX', 'L', vi=connex)
 !
-    exicoq = .false.
-    exigri = .false.
+    exicoq = ASTER_FALSE
+    exigri = ASTER_FALSE
     call exisd('CHAM_ELEM_S', sdcarm//'.CARCOQUE', iret)
     if (iret .ne. 0) then
         call jeveuo(sdcarm//'.CARCOQUE  .CESV', 'L', vr=cg_cesv)
@@ -119,20 +112,20 @@ subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
         icmp_cq_ep = indik8(tmp_cesc,'EP',1,nbcmp)
         icmp_cq_ex = indik8(tmp_cesc,'EXCENT',1,nbcmp)
         if ((icmp_cq_ep.ne.0).and.(icmp_cq_ex.ne.0)) then
-            exicoq   = .true.
+            exicoq   = ASTER_TRUE
         endif
         icmp_gr_se = indik8(tmp_cesc,'SECT_L',1,nbcmp)
         icmp_gr_ex = indik8(tmp_cesc,'DIST_N',1,nbcmp)
         if ((icmp_gr_se.ne.0).and.(icmp_gr_ex.ne.0)) then
-            exigri   = .true.
+            exigri   = ASTER_TRUE
         endif
     endif
 !
-    exituy = .false.
+    exituy = ASTER_FALSE
     call dismoi('NOM_MODELE',carael,'CARA_ELEM', ibid,nomo,'F',iret)
     call dismoi('EXI_TUYAU',nomo,'MODELE', ibid,saux03,'F',iret)
     if (saux03 .eq. 'OUI') then
-        exituy = .true.
+        exituy = ASTER_TRUE
         call jeveuo(sdcarm//'.CARGEOPO  .CESV', 'L', vr=tu_cesv)
         call jeveuo(sdcarm//'.CARGEOPO  .CESL', 'L', j_tu_cesl)
         call jeveuo(sdcarm//'.CARGEOPO  .CESD', 'L', j_tu_cesd)
@@ -141,14 +134,14 @@ subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
         icmp_tu_r1 = indik8(tmp_cesc,'R1',1,nbcmp)
         icmp_tu_ep = indik8(tmp_cesc,'EP1',1,nbcmp)
         if ((icmp_tu_r1.eq.0).or.(icmp_tu_ep.eq.0)) then
-            exituy = .false.
+            exituy = ASTER_FALSE
         endif
     endif
 !
-    exipmf = .false.
+    exipmf = ASTER_FALSE
     call exisd('CHAM_ELEM_S', sdcarm//'.CAFIBR', iret)
     if (iret .ne. 0) then
-        exipmf = .true.
+        exipmf = ASTER_TRUE
     endif
     if (exipmf) then
         call jeveuo(sdcarm//'.CARORIEN  .CESV', 'L', vr=pmf_cesv)
@@ -182,7 +175,7 @@ subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
 !
 !   CREATION D'UN VECTEURS PAR TYPE DE MAILLE PRESENT CONTENANT LA CONNECTIVITE DES MAILLE/TYPE
 !   (CONNECTIVITE = NOEUDS + UNE VALEUR BIDON(0) SI BESOIN)
-    do ityp = 1, ntymax
+    do ityp = 1, MT_NTYMAX
         if (nmatyp(ityp) .ne. 0) then
             call wkvect('&&IRMAES.CNX.'//nomtyp(ityp), 'V V I',&
                         nnotyp(ityp)*nmatyp(ityp), jcnxma(ityp))
@@ -358,7 +351,7 @@ subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
         endif
     enddo cletype
 !
-    do ityp = 1, ntymax
+    do ityp = 1, MT_NTYMAX
         if (nmatyp(ityp) .ne. 0) then
             call jedetr('&&IRMAES.CNX.'//nomtyp(ityp))
             if (exicoq.or.exigri) then

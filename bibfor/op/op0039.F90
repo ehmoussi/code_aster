@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,6 @@ subroutine op0039()
 #include "asterfort/ultype.h"
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
-#include "asterfort/w039ca.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/asmpi_info.h"
     mpi_int :: mrank, msize
@@ -79,12 +78,6 @@ subroutine op0039()
     call getvtx(' ', 'PROC0', scal=proc, nbret=nproc)
     if ( proc .eq. 'NON' ) then 
       nbrank = 0 
-    else 
-      call getfac('CONCEPT', nocc)
-      if ( nocc .gt. 0 ) then 
-         if ( nbrank .gt. 0 ) call utmess ('A', 'PREPOST_1')
-         nbrank = 0
-      endif
     endif   
 !
     !if ( nbrank .eq. 0 ) then 
@@ -195,19 +188,12 @@ subroutine op0039()
 !
 !     --- BOUCLE SUR LE NOMBRE DE MISES EN FACTEUR ---
 !     -----------------------------------------------------------------
-      do iocc = 1, nocc
+      do iocc = 1, nocc  
 !
         call irmfac(iocc, form, ifi, versio,&
                     modele, noma, nomare, resure(iocc), lgmsh)
 !
       end do
-!
-!     -- IMPRESSION DES CARTES DE DONNEES DE CHAM_MATER,  ... :
-      if ( proc .eq. 'OUI' ) then 
-         nbrank = 0 
-      endif   
-      call w039ca(ifi, form)
-!
 !
 999   continue
     !endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+! aslint: disable=W1502
+!
 subroutine lrvema(nomail, mfich, nochmd)
-    implicit none
+!
+implicit none
 !
 #include "asterf_types.h"
+#include "MeshTypes_type.h"
 #include "jeveux.h"
 #include "asterfort/as_mfdfin.h"
 #include "asterfort/as_mfdncn.h"
@@ -38,38 +42,32 @@ subroutine lrvema(nomail, mfich, nochmd)
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
-    integer :: mfich
-    character(len=8) :: nomail
-    character(len=64) :: nochmd
+!
+integer :: mfich
+character(len=8) :: nomail
+character(len=64) :: nochmd
+!
+! --------------------------------------------------------------------------------------------------
 !
 !   BUT : ROUTINE DE LIRE RESU / LIRE_CHAMP QUI VERIFIE LA COHERENCE
 !       ENTRE LE MAILLAGE FOURNI ET LES DONNEES DU FICHIER MED
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  :
 !   NOMAIL  K8   NOM DU MAILLAGE ASTER
 !   MFICH   I    NUMERO DU FICHIER MED
 !   NOCHMD  K64  NOM D'UN CHAMP REPOSANT SUR LE MAILLAGE MED A VERIFIER
-!-----------------------------------------------------------------------
-! person_in_charge: nicolas.sellenet at edf.fr
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: iret, nmatyp, ncmp
     integer :: nbma, jnbtyp, jmatyp, nbtym, nbtv, codret
     integer :: i, j, idfimd, iaux, jnbty2
     integer :: vali(2), lnomam
-    integer :: edlect
-    parameter (edlect=0)
-    integer :: ntymax
-    parameter (ntymax = 69)
-    integer :: edconn
-    parameter (edconn=1)
-    integer :: edmail
-    parameter (edmail=0)
-    integer :: ednoda
-    parameter (ednoda=0)
-!
-    integer :: nummed(ntymax)
+    integer, parameter :: edlect=0,edconn=1,edmail=0,ednoda=0
     character(len=1) :: k1b
-    character(len=8) :: saux08, nomast(ntymax)
+    character(len=8) :: saux08
     character(len=64) :: nomamd
     character(len=200) :: nofimd
     character(len=255) :: kfic
@@ -77,45 +75,54 @@ subroutine lrvema(nomail, mfich, nochmd)
     character(len=16), pointer :: cname(:) => null()
     character(len=16), pointer :: cunit(:) => null()
     integer, pointer :: typmail(:) => null()
+    character(len=8), parameter :: nomast(MT_NTYMAX) = (/'POI1    ','SEG2    ','SEG22   ',&
+                                                         'SEG3    ','SEG33   ','SEG4    ',&
+                                                         'TRIA3   ','TRIA33  ','TRIA6   ',&
+                                                         'TRIA66  ','TRIA7   ','QUAD4   ',&
+                                                         'QUAD44  ','QUAD8   ','QUAD88  ',&
+                                                         'QUAD9   ','QUAD99  ','TETRA4  ',&
+                                                         'TETRA10 ','PENTA6  ','PENTA15 ',&
+                                                         'PENTA18 ','PYRAM5  ','PYRAM13 ',&
+                                                         'HEXA8   ','HEXA20  ','HEXA27  ',&
+                                                         'TR3QU4  ','QU4TR3  ','TR6TR3  ',&
+                                                         'TR3TR6  ','TR6QU4  ','QU4TR6  ',&
+                                                         'TR6QU8  ','QU8TR6  ','TR6QU9  ',&
+                                                         'QU9TR6  ','QU8TR3  ','TR3QU8  ',&
+                                                         'QU8QU4  ','QU4QU8  ','QU8QU9  ',&
+                                                         'QU9QU8  ','QU9QU4  ','QU4QU9  ',&
+                                                         'QU9TR3  ','TR3QU9  ','SEG32   ',&
+                                                         'SEG23   ','QU4QU4  ','TR3TR3  ',&
+                                                         'HE8HE8  ','PE6PE6  ','TE4TE4  ',&
+                                                         'QU8QU8  ','TR6TR6  ','SE2TR3  ',&
+                                                         'SE2TR6  ','SE2QU4  ','SE2QU8  ',&
+                                                         'SE2QU9  ','SE3TR3  ','SE3TR6  ',&
+                                                         'SE3QU4  ','SE3QU8  ','SE3QU9  ',&
+                                                         'H20H20  ','P15P15  ','T10T10  '/)
+    integer, parameter :: nummed(MT_NTYMAX) = (/1  , 102, 0  ,&
+                                                103, 0  , 104,&
+                                                203, 0  , 206,&
+                                                0  , 207, 204,&
+                                                0  , 208, 0  ,&
+                                                209, 0  , 304,&
+                                                310, 306, 315,&
+                                                318, 305, 313,&
+                                                308, 320, 327,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  /)
 !
-    data nomast  /'POI1    ','SEG2    ','SEG22   ','SEG3    ',&
-     &              'SEG33   ','SEG4    ',&
-     &                         'TRIA3   ','TRIA33  ','TRIA6   ',&
-     &              'TRIA66  ','TRIA7   ','QUAD4   ','QUAD44  ',&
-     &              'QUAD8   ','QUAD88  ','QUAD9   ','QUAD99  ',&
-     &              'TETRA4  ','TETRA10 ','PENTA6  ','PENTA15 ',&
-     &              'PENTA18 ','PYRAM5  ','PYRAM13 ','HEXA8   ',&
-     &              'HEXA20  ','HEXA27  ','TR3QU4  ','QU4TR3  ',&
-     &              'TR6TR3  ','TR3TR6  ','TR6QU4  ','QU4TR6  ',&
-     &              'TR6QU8  ','QU8TR6  ','TR6QU9  ','QU9TR6  ',&
-     &              'QU8TR3  ','TR3QU8  ','QU8QU4  ','QU4QU8  ',&
-     &              'QU8QU9  ','QU9QU8  ','QU9QU4  ','QU4QU9  ',&
-     &              'QU9TR3  ','TR3QU9  ','SEG32   ','SEG23   ',&
-     &              'QU4QU4  ','TR3TR3  ','HE8HE8  ','PE6PE6  ',&
-     &              'TE4TE4  ','QU8QU8  ','TR6TR6  ','SE2TR3  ',&
-     &              'SE2TR6  ','SE2QU4  ','SE2QU8  ','SE2QU9  ',&
-     &              'SE3TR3  ','SE3TR6  ','SE3QU4  ','SE3QU8  ',&
-     &              'SE3QU9  ','H20H20  ','P15P15  ','T10T10  '/
-!
-    data nummed  /1,         102,       0,         103,&
-     &              0,         0,&
-     &                         203,       0,         206,&
-     &              0,         207,       204,       0,&
-     &              208,       0,         209,       0,&
-     &              304,       310,       306,       315,&
-     &              0,         305,       313,       308,&
-     &              320,       327,       0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0/
-!-----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
@@ -150,9 +157,9 @@ subroutine lrvema(nomail, mfich, nochmd)
     call as_mfdfin(idfimd, nochmd, nomamd, nbtv, cunit(1),&
                    cname(1), codret)
 !
-    call wkvect('&&LRVERIMO_NBETYP1', 'V V I', ntymax, jnbtyp)
-    call wkvect('&&LRVERIMO_NBETYP2', 'V V I', ntymax, jnbty2)
-    do i = 1, ntymax
+    call wkvect('&&LRVERIMO_NBETYP1', 'V V I', MT_NTYMAX, jnbtyp)
+    call wkvect('&&LRVERIMO_NBETYP2', 'V V I', MT_NTYMAX, jnbty2)
+    do i = 1, MT_NTYMAX
         zi(jnbtyp+i-1)=0
         if (nummed(i) .ne. 0) then
             call as_mmhnme(idfimd, nomamd, edconn, edmail, nummed(i),&
@@ -173,7 +180,7 @@ subroutine lrvema(nomail, mfich, nochmd)
         zi(jmatyp+i-1)=nummed(typmail(i))
     end do
 !
-    do i = 1, ntymax
+    do i = 1, MT_NTYMAX
         nbtym=0
         zi(jnbty2+i-1)=nbtym
         if (nummed(i) .ne. 0) then
@@ -187,7 +194,7 @@ subroutine lrvema(nomail, mfich, nochmd)
     end do
 !
     lfirst=.true.
-    do i = 1, ntymax
+    do i = 1, MT_NTYMAX
         if (nummed(i) .ne. 0) then
             if (zi(jnbtyp+i-1) .ne. zi(jnbty2+i-1) .and. lfirst) then
                 lfirst=.false.

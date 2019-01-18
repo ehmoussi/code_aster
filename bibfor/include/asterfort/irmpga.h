@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "MeshTypes_type.h"
 !
 interface
     subroutine irmpga(nofimd, chanom, nochmd, typech, nomtyp,&
                       nbimpr, caimpi, caimpk, modnum, nuanom,&
                       sdcarm, codret)
-        integer, parameter :: ntymax=69
         integer :: nbimpr
         character(len=*) :: nofimd
         character(len=19) :: chanom
@@ -30,8 +28,8 @@ interface
         character(len=8) :: nomtyp(*)
         integer :: caimpi(10, nbimpr)
         character(len=80) :: caimpk(3, nbimpr)
-        integer :: modnum(ntymax)
-        integer :: nuanom(ntymax, *)
+        integer :: modnum(MT_NTYMAX)
+        integer :: nuanom(MT_NTYMAX, *)
         character(len=8) :: sdcarm
         character(len=64) :: nochmd
         integer :: codret

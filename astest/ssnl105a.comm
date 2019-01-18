@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -140,10 +140,9 @@ RESU1=CALC_CHAMP(reuse=RESU1, CONTRAINTE=('EFGE_ELNO'),RESULTAT=RESU1,
     CHAM_MATER=CHMAT, CARA_ELEM=CARELEM,)
 
 # Pour tester les repères locaux
-IMPR_RESU(FORMAT='MED',
-    UNITE=82,
-    CONCEPT=_F(CARA_ELEM=CARELEM, REPERE_LOCAL='ELNO',MODELE=MO,)
-)
+IMPR_CONCEPT(FORMAT='MED',
+          UNITE=82,
+          CONCEPT=_F(CARA_ELEM=CARELEM, REPERE_LOCAL='ELNO',MODELE=MO,),)
 
 #IMPR_RESU(FORMAT='RESULTAT',RESU=_F(RESULTAT=RESU1))
 

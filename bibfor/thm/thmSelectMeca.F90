@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -101,7 +101,7 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: compor_meca(NB_COMP_MAXI)
+    character(len=16) :: compor_meca(COMPOR_SIZE)
     integer :: i, j
     real(kind=8) :: dsdeme(6, 6), alpha0, ther_meca(6)
     aster_logical :: l_matrix

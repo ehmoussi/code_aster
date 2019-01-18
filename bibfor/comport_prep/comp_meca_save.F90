@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,11 +41,9 @@ implicit none
 #include "asterfort/nocart.h"
 #include "asterfort/reliem.h"
 #include "asterfort/utmess.h"
-#include "asterfort/setBehaviourValue.h"
+#include "asterfort/setBehaviourTypeValue.h"
 !
-character(len=8), intent(in) :: model
-character(len=8), intent(in) :: mesh
-character(len=8), intent(in) :: chmate
+character(len=8), intent(in) :: model, mesh, chmate
 character(len=19), intent(in) :: compor
 integer, intent(in) :: nb_cmp
 type(Behaviour_PrepPara), intent(in) :: ds_compor_prep
@@ -77,17 +75,15 @@ type(Behaviour_PrepPara), intent(in) :: ds_compor_prep
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp
     character(len=16), pointer :: v_compor_valv(:) => null()
-    character(len=16) :: defo_comp, rela_comp, type_comp, type_cpla, mult_comp
-    character(len=16) :: kit_comp(4), post_iter, defo_ldc
     aster_logical :: l_cristal, l_pmf, l_is_pmf
-    integer :: nb_vari, nb_vari_comp(4), elem_nume, nume_comp(4)
+    integer :: elem_nume
 !
 ! --------------------------------------------------------------------------------------------------
 !
     keywordfact    = 'COMPORTEMENT'
     list_elem_affe = '&&COMPMECASAVE.LIST'
     nb_comp        = ds_compor_prep%nb_comp
-    l_is_pmf       = .false.
+    l_is_pmf       = ASTER_FALSE
     ligrmo         =  model//'.MODELE'
 !
 ! - Access to MODEL
@@ -102,24 +98,10 @@ type(Behaviour_PrepPara), intent(in) :: ds_compor_prep
 !
     do i_comp = 1, nb_comp
 !
-! ----- Get infos
-!
-        nb_vari         = ds_compor_prep%v_comp(i_comp)%nb_vari
-        nb_vari_comp(:) = ds_compor_prep%v_comp(i_comp)%nb_vari_comp(:)
-        nume_comp(:)    = ds_compor_prep%v_comp(i_comp)%nume_comp(:)
-        rela_comp       = ds_compor_prep%v_comp(i_comp)%rela_comp
-        defo_comp       = ds_compor_prep%v_comp(i_comp)%defo_comp
-        type_comp       = ds_compor_prep%v_comp(i_comp)%type_comp
-        type_cpla       = ds_compor_prep%v_comp(i_comp)%type_cpla
-        kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
-        mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
-        post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
-        defo_ldc        = ds_compor_prep%v_comp(i_comp)%defo_ldc
-!
 ! ----- Detection of specific cases
 !
-        call comp_meca_l(rela_comp, 'CRISTAL', l_cristal)
-        call comp_meca_l(rela_comp, 'PMF'    , l_pmf)
+        call comp_meca_l(ds_compor_prep%v_comp(i_comp)%rela_comp, 'CRISTAL', l_cristal)
+        call comp_meca_l(ds_compor_prep%v_comp(i_comp)%rela_comp, 'PMF'    , l_pmf)
 !
 ! ----- Multifiber beams
 !
@@ -129,7 +111,7 @@ type(Behaviour_PrepPara), intent(in) :: ds_compor_prep
 !
 ! ----- Get elements
 !
-        call comp_read_mesh(mesh          , keywordfact, i_comp        ,&
+        call comp_read_mesh(mesh          , keywordfact, i_comp      ,&
                             list_elem_affe, l_affe_all , nb_elem_affe)
 !
 ! ----- Check if elements belong to model
@@ -150,12 +132,9 @@ type(Behaviour_PrepPara), intent(in) :: ds_compor_prep
             endif
         endif
 !
-! ----- Set in <CARTE>
+! ----- Save informations in the field <COMPOR>
 !
-        call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                               mult_comp, post_iter   , defo_ldc , kit_comp ,&
-                               nb_vari  , nb_vari_comp, nume_comp,&
-                               v_compor_ = v_compor_valv) 
+        call setBehaviourTypeValue(ds_compor_prep%v_comp, i_comp, v_compor_ = v_compor_valv)
 !
 ! ----- Affect in <CARTE>
 !

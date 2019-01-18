@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -81,9 +81,9 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
     call jeveuo(ds_constitutive%compor(1:19)//'.DESC', 'L', vi   = v_compor_desc)
     nb_affe = v_compor_desc(3)
     do i_affe = 1, nb_affe
-        if ((v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'GROT_GDEP') .or.&
-            (v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'SIMO_MIEHE') .or.&
-            (v_compor_vale(DEFO+NB_COMP_MAXI*(i_affe-1)).eq.'GDEF_LOG')) then
+        if ((v_compor_vale(DEFO+COMPOR_SIZE*(i_affe-1)).eq.'GROT_GDEP') .or.&
+            (v_compor_vale(DEFO+COMPOR_SIZE*(i_affe-1)).eq.'SIMO_MIEHE') .or.&
+            (v_compor_vale(DEFO+COMPOR_SIZE*(i_affe-1)).eq.'GDEF_LOG')) then
             ds_constitutive%l_matr_geom = ASTER_TRUE
         endif
     enddo
