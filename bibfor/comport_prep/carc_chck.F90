@@ -17,67 +17,54 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine comp_meca_elas(comp_elas, nb_cmp, l_etat_init)
+subroutine carc_chck(ds_compor_para)
+!
+use Behaviour_type
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/nocart.h"
-#include "asterfort/Behaviour_type.h"
+#include "asterfort/comp_meca_l.h"
+#include "asterfort/utmess.h"
 !
-character(len=19), intent(in) :: comp_elas
-integer, intent(in) :: nb_cmp
-aster_logical, intent(in) :: l_etat_init
+type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Preparation of comportment (mechanics)
 !
-! Set elastic comportment
+! Some checks
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  comp_elas   : name of ELAS <CARTE> COMPOR
-! In  nb_cmp      : number of components in ELAS <CARTE> COMPOR
-! In  l_etat_init : .true. if initial state is defined
+! In  ds_compor_para   : datastructure to prepare parameters for constitutive laws
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16), pointer :: p_compelas_valv(:) => null()
+    integer :: i_comp, nb_comp
+    aster_logical :: l_mfront_proto, l_mfront_offi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ASSERT(nb_cmp .ge. 6)
+    nb_comp = ds_compor_para%nb_comp
 !
-! - Access <CARTE>
+! - Loop on occurrences of COMPORTEMENT
 !
-    call jeveuo(comp_elas(1:19)//'.VALV', 'E', vk16 = p_compelas_valv)
+    do i_comp = 1, nb_comp
 !
-! - Init <CARTE>
+! ----- Detection of specific cases
 !
-    p_compelas_valv(1:COMPOR_SIZE) = 'VIDE'
+        call comp_meca_l(ds_compor_para%v_para(i_comp)%rela_comp, 'MFRONT_PROTO', l_mfront_proto)
+        call comp_meca_l(ds_compor_para%v_para(i_comp)%rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
 !
-! - Set for ELASTIQUE
+! ----- Ban if RELATION = MFRONT and ITER_INTE_PAS negative
 !
-    p_compelas_valv(RELA_NAME) = 'ELAS'
-    p_compelas_valv(NVAR) = '1'
-    p_compelas_valv(DEFO) = 'PETIT'
-    if (l_etat_init) then
-        p_compelas_valv(INCRELAS) = 'COMP_INCR'
-    else
-        p_compelas_valv(INCRELAS) = 'COMP_ELAS'
-    endif
-    p_compelas_valv(PLANESTRESS) = 'ANALYTIQUE'
-    write (p_compelas_valv(NUME) ,'(I16)') 1
-    write (p_compelas_valv(KIT1_NVAR) ,'(I16)') 1
-    write (p_compelas_valv(KIT2_NVAR) ,'(I16)') 1
-    write (p_compelas_valv(KIT3_NVAR) ,'(I16)') 1
-    write (p_compelas_valv(KIT4_NVAR) ,'(I16)') 1
-!
-! - Create <CARTE>
-!
-    call nocart(comp_elas, 1, nb_cmp)
+        if (ds_compor_para%v_para(i_comp)%iter_inte_pas .lt. 0.d0) then
+            if (l_mfront_offi .or. l_mfront_proto) then
+                call utmess('F', 'COMPOR1_95')
+            end if
+        end if
+    enddo
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,57 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+! aslint: disable=W1504
+!
 subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
                   option, param, typech, typen, npgma,&
                   npgmm, nspmm, nbcmpv, ncmpva, ncmpvm,&
                   iinst, numpt, numord, inst, crit,&
                   prec, nomgd, ncmprf, jnocmp, chames,&
                   codret)
-!_____________________________________________________________________
 !
-! person_in_charge: nicolas.sellenet at edf.fr
-!     LECTURE D'UN CHAMP - FORMAT MED
-!     -    -       - -            --
-!-----------------------------------------------------------------------
-!      ENTREES:
-!        NROFIC : UNITE LOGIQUE DU FICHIER MED
-!        NOCHMD : NOM MED DU CHAMP A LIRE
-!        NOMAMD : NOM MED DU MAILLAGE LIE AU CHAMP A LIRE
-!                  SI ' ' : ON SUPPOSE QUE C'EST LE PREMIER MAILLAGE
-!                          DU FICHIER
-!        NOMAAS : NOM ASTER DU MAILLAGE
-!        NBVATO : NOMBRE DE VALEURS TOTAL
-!        TYPECH : TYPE DE CHAMP AUX ELEMENTS : ELEM/ELGA/ELNO/NOEU
-!        TYPEN  : TYPE D'ENTITE DU CHAMP
-!                (MED_NOEUD=3,MED_MAILLE=0,MED_NOEUD_MAILLE=4)
-!        NPGMA  : NOMBRE DE POINTS DE GAUSS PAR MAILLE (ASTER)
-!        NPGMM  : NOMBRE DE POINTS DE GAUSS PAR MAILLE (MED)
-!        NSPMM  : NOMBRE DE SOUS-POINTS PAR MAILLE (MED)
-!        NBCMPV : NOMBRE DE COMPOSANTES VOULUES
-!                 SI NUL, ON LIT LES COMPOSANTES A NOM IDENTIQUE
-!        NCMPVA : LISTE DES COMPOSANTES VOULUES POUR ASTER
-!        NCMPVM : LISTE DES COMPOSANTES VOULUES DANS MED
-!        IINST  : 1 SI LA DEMANDE EST FAITE SUR UN INSTANT, 0 SINON
-!        NUMPT  : NUMERO DE PAS DE TEMPS EVENTUEL
-!        NUMORD : NUMERO D'ORDRE EVENTUEL DU CHAMP
-!        INST   : INSTANT EVENTUEL
-!        CRIT   : CRITERE SUR LA RECHERCHE DU BON INSTANT
-!        PREC   : PRECISION SUR LA RECHERCHE DU BON INSTANT
-!        NOMGD  : NOM DE LA GRANDEUR ASSOCIEE AU CHAMP
-!        NCMPRF : NOMBRE DE COMPOSANTES DE REFERENCE DU CHAMP SIMPLE
-!        JNOCMP : ADRESSE DU NOM DES COMP. DE REF. DU CHAMP SIMPLE
-!      SORTIES:
-!         CHAMES : NOM DU CHAMP A CREER
-!         CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
-!_____________________________________________________________________
-!
-! aslint: disable=W1504
-    implicit none
-!
-! 0.1. ==> ARGUMENTS
+implicit none
 !
 #include "asterf_types.h"
+#include "MeshTypes_type.h"
 #include "jeveux.h"
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mficom.h"
@@ -99,86 +62,92 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
 #include "asterfort/utlicm.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    integer :: nrofic, typen
-    integer :: ncmprf, jnocmp
-    integer :: nbcmpv
-    integer :: iinst, numpt, numord
-    integer :: npgma(*), npgmm(*), nspmm(*)
-    integer :: codret, codre2
 !
-    character(len=*) :: typech
-    character(len=8) :: nomgd, nomaas
-    character(len=8) :: crit, param
-    character(len=19) :: chames, ligrel
-    character(len=24) :: option
-    character(len=*) :: nochmd, nomamd
-    character(len=*) :: ncmpva, ncmpvm
+integer :: nrofic, typen
+integer :: ncmprf, jnocmp
+integer :: nbcmpv
+integer :: iinst, numpt, numord
+integer :: npgma(*), npgmm(*), nspmm(*)
+integer :: codret, codre2
+character(len=*) :: typech
+character(len=8) :: nomgd, nomaas
+character(len=8) :: crit, param
+character(len=19) :: chames, ligrel
+character(len=24) :: option
+character(len=*) :: nochmd, nomamd
+character(len=*) :: ncmpva, ncmpvm
+real(kind=8) :: inst, prec
 !
-    real(kind=8) :: inst
-    real(kind=8) :: prec
+! --------------------------------------------------------------------------------------------------
 !
-! 0.2. ==> COMMUNS
+!     LECTURE D'UN CHAMP - FORMAT MED
 !
-! 0.3. ==> VARIABLES LOCALES
+! --------------------------------------------------------------------------------------------------
 !
-    character(len=6) :: nompro
-    parameter ( nompro = 'LRCAME' )
+!      ENTREES:
+!        NROFIC : UNITE LOGIQUE DU FICHIER MED
+!        NOCHMD : NOM MED DU CHAMP A LIRE
+!        NOMAMD : NOM MED DU MAILLAGE LIE AU CHAMP A LIRE
+!                  SI ' ' : ON SUPPOSE QUE C'EST LE PREMIER MAILLAGE
+!                          DU FICHIER
+!        NOMAAS : NOM ASTER DU MAILLAGE
+!        NBVATO : NOMBRE DE VALEURS TOTAL
+!        TYPECH : TYPE DE CHAMP AUX ELEMENTS : ELEM/ELGA/ELNO/NOEU
+!        TYPEN  : TYPE D'ENTITE DU CHAMP
+!                (MED_NOEUD=3,MED_MAILLE=0,MED_NOEUD_MAILLE=4)
+!        NPGMA  : NOMBRE DE POINTS DE GAUSS PAR MAILLE (ASTER)
+!        NPGMM  : NOMBRE DE POINTS DE GAUSS PAR MAILLE (MED)
+!        NSPMM  : NOMBRE DE SOUS-POINTS PAR MAILLE (MED)
+!        NBCMPV : NOMBRE DE COMPOSANTES VOULUES
+!                 SI NUL, ON LIT LES COMPOSANTES A NOM IDENTIQUE
+!        NCMPVA : LISTE DES COMPOSANTES VOULUES POUR ASTER
+!        NCMPVM : LISTE DES COMPOSANTES VOULUES DANS MED
+!        IINST  : 1 SI LA DEMANDE EST FAITE SUR UN INSTANT, 0 SINON
+!        NUMPT  : NUMERO DE PAS DE TEMPS EVENTUEL
+!        NUMORD : NUMERO D'ORDRE EVENTUEL DU CHAMP
+!        INST   : INSTANT EVENTUEL
+!        CRIT   : CRITERE SUR LA RECHERCHE DU BON INSTANT
+!        PREC   : PRECISION SUR LA RECHERCHE DU BON INSTANT
+!        NOMGD  : NOM DE LA GRANDEUR ASSOCIEE AU CHAMP
+!        NCMPRF : NOMBRE DE COMPOSANTES DE REFERENCE DU CHAMP SIMPLE
+!        JNOCMP : ADRESSE DU NOM DES COMP. DE REF. DU CHAMP SIMPLE
+!      SORTIES:
+!         CHAMES : NOM DU CHAMP A CREER
+!         CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
 !
-    integer :: edlect, typent
-    integer :: vali(4)
-    parameter (edlect=0)
-    character(len=64) :: ednopf
-    parameter ( ednopf=' ' )
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: ntymax
-    parameter (ntymax=69)
-    integer :: nnomax
-    parameter (nnomax=27)
-    integer :: ednoeu
-    parameter (ednoeu=3)
-    integer :: edmail
-    parameter (edmail=0)
-    integer :: edconn
-    parameter (edconn=1)
-    integer :: ednoda
-    parameter (ednoda=0)
-    integer :: typnoe
-    parameter (typnoe=0)
-    integer :: ntypel, npgmax
-    parameter(ntypel=26,npgmax=27)
+    character(len=6), parameter :: nompro = 'LRCAME'
+    integer :: typent, vali(4)
+    character(len=64), parameter :: ednopf=' '
+    integer, parameter :: ednoeu=3, edmail=0, edconn=1, ednoda=0
+    integer, parameter :: edlect=0, typnoe=0, ntypel=26, npgmax=27
     integer :: iaux, letype, vlib(3), vfic(3), iret
     integer :: idfimd, ifimed, indpg(ntypel, npgmax)
     integer :: nbvato, nbcmfi, nbval, nbma, nbprof
     integer :: adsl, adsv, adsd, i, j
-    integer :: ncmput
-    integer :: existc
-    integer :: ndim
-    integer :: npas
-    integer :: lgproa
-    integer :: ifm, nivinf
+    integer :: ncmput, existc, ndim, npas, lgproa
+    integer :: ifm, niv
     integer :: tygeom, nbtyp
-    integer :: nnotyp(ntymax), modnum(ntymax), numnoa(ntymax, nnomax)
-    integer :: typgeo(ntymax), lygeom(ntymax), lypent(ntymax), ltyp(ntymax)
-    integer :: renumd(ntymax), nlyval(ntymax), nuanom(ntymax, nnomax)
-    integer :: nbtylu, iaux2, k, nbty(ntymax), lnbpro(ntymax)
+    integer :: nnotyp(MT_NTYMAX), modnum(MT_NTYMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
+    integer :: typgeo(MT_NTYMAX), lygeom(MT_NTYMAX), lypent(MT_NTYMAX), ltyp(MT_NTYMAX)
+    integer :: renumd(MT_NTYMAX), nlyval(MT_NTYMAX), nuanom(MT_NTYMAX, MT_NNOMAX)
+    integer :: nbtylu, iaux2, k, nbty(MT_NTYMAX), lnbpro(MT_NTYMAX)
     integer :: nbnoma, nmatyp, jntpro, lgprof, cptyma, iprof
     integer :: jnumty, numma, ima, hdfok, medok, jmaill
     aster_logical :: lrenum
-!
     character(len=1) :: saux01
     character(len=8) :: saux08, modele
-    character(len=8) :: nomtyp(ntymax)
+    character(len=8) :: nomtyp(MT_NTYMAX)
     character(len=19) :: prefix
-    character(len=24) :: numcmp, ntncmp, ntucmp, ntvale, nmcmfi(ntymax)
+    character(len=24) :: numcmp, ntncmp, ntucmp, ntvale, nmcmfi(MT_NTYMAX)
     character(len=24) :: valk(2)
     character(len=24) :: ntproa, nmcmfl
     character(len=64) :: nomprf
     character(len=200) :: nofimd
     character(len=255) :: kfic
     character(len=2) :: k2bid
-!
     real(kind=8) :: valr
-!
     aster_logical :: existm, existt
     aster_logical :: logaux
     character(len=8), pointer :: lgrf(:) => null()
@@ -186,25 +155,21 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
     integer, pointer :: typmail(:) => null()
     real(kind=8), pointer :: vinst(:) => null()
 !
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
 !
-!====
-! 1. PREALABLES
-!====
-!
-! 1.1. ==> RECUPERATION DU NIVEAU D'IMPRESSION
-!
-    call infniv(ifm, nivinf)
+    call infniv(ifm, niv)
     nomprf = ' '
 !
-    if (nivinf .gt. 1) then
-        write (ifm,1001) 'DEBUT DE '//nompro
+    if (niv .gt. 1) then
+        write (ifm,101) 'DEBUT DE '//nompro
         write (ifm,*) '.. NOM DU CHAMP A LIRE : ',nochmd
     endif
-    1001 format(/,10('='),a,10('='),/)
+101 format(/,10('='),a,10('='),/)
 !
 ! 1.2. ==> NOMS DES TABLEAUX DE TRAVAIL
-!               12   345678   9012345678901234
+!
     numcmp = '&&'//nompro//'.NUMERO_CMP     '
     ntncmp = '&&'//nompro//'.NOMCMP         '
     ntucmp = '&&'//nompro//'.UNITECMP       '
@@ -222,7 +187,7 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
         nofimd = kfic(1:200)
     endif
 !
-    if (nivinf .gt. 1) then
+    if (niv .gt. 1) then
         write (ifm,*) '<',nompro,'> NOM DU FICHIER MED : ',nofimd
     endif
 !
@@ -276,7 +241,6 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
 !            ON RECUPERE SON NOM ET SA DIMENSION.
 !
     if (nomamd .eq. ' ') then
-!
         ifimed = 0
         call mdexpm(nofimd, ifimed, nomamd, existm, ndim,&
                     codret)
@@ -288,7 +252,6 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
 !            ON RECUPERE SA DIMENSION.
 !
     else
-!
         iaux = 1
         ifimed = 0
         call mdexma(nofimd, ifimed, nomamd, iaux, existm,&
@@ -298,7 +261,6 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
             valk(2) = nofimd(1:24)
             call utmess('F', 'MED_51', nk=2, valk=valk)
         endif
-!
     endif
 !
     if (typech .eq. 'NOEU') then
@@ -309,7 +271,7 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
         nbvato = nbma
     endif
 !
-    if (nivinf .gt. 1) then
+    if (niv .gt. 1) then
         write (ifm,*) '.. NOM DU MAILLAGE MED ASSOCIE : ', nomamd
         write (ifm,*) '   DE DIMENSION ', ndim
     endif
@@ -367,7 +329,7 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
 !
     nbtylu = 0
     nbcmfi = 0
-    existt = .false.
+    existt = ASTER_FALSE
 !
     numma = 1
 !     EN SORTIE DE MDEXMA/MDEXPM, CODRET=0
@@ -407,31 +369,28 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
 !            LE NUMERO D'ORDRE ASSOCIE
 !
             if (iinst .ne. 0) then
-!
-                if (nivinf .gt. 1) then
+                if (niv .gt. 1) then
                     write (ifm,*) '.... INSTANT : ', inst
                 endif
-                call mdchin(nofimd, idfimd, nochmd, typent, tygeom,&
-                            prefix, npas, codret)
-!
+                call mdchin(nofimd, idfimd, nochmd, typent, tygeom, prefix, npas, codret)
                 if (npas .ne. 0) then
                     call jeveuo(prefix//'.INST', 'L', vr=vinst)
                     call jeveuo(prefix//'.NUME', 'L', vi=nume)
-                    logaux = .false.
+                    logaux = ASTER_FALSE
                     do iaux2 = 1, npas
                         if (crit(1:4) .eq. 'RELA') then
                             if (abs(vinst(iaux2)-inst) .le. abs( prec*inst)) then
-                                logaux = .true.
+                                logaux = ASTER_TRUE
                             endif
                         else if (crit(1:4).eq.'ABSO') then
                             if (abs(vinst(iaux2)-inst) .le. abs( prec)) then
-                                logaux = .true.
+                                logaux = ASTER_TRUE
                             endif
                         endif
                         if (logaux) then
                             numpt = nume(1+2*iaux2-2)
                             numord = nume(1+2*iaux2-1)
-                            goto 2221
+                            goto 222
                         endif
                     enddo
                     valk (1) = nofimd(1:24)
@@ -439,13 +398,11 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
                     valr = inst
                     vali (1) = typent
                     vali (2) = typgeo(1)
-                    call utmess('A', 'MED_97', nk=2, valk=valk, ni=2,&
-                                vali=vali, sr=valr)
+                    call utmess('A', 'MED_97', nk=2, valk=valk, ni=2, vali=vali, sr=valr)
                     call utmess('A', 'MED_52')
                     goto 22
-2221                continue
-!
-                    if (nivinf .gt. 1) then
+222                 continue
+                    if (niv .gt. 1) then
                         valk (1) = nochmd(1:24)
                         vali (1) = typent
                         vali (2) = typgeo(1)
@@ -458,7 +415,6 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
                     call jedetr(prefix//'.INST')
                     call jedetr(prefix//'.NUME')
                 endif
-!
             endif
 !
 ! 2.2.3. ==> RECHERCHE DES COMPOSANTES
@@ -471,7 +427,7 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
                         existc, nbcmfi, nmcmfl, nbval, nbprof,&
                         codret)
             if (existc .ge. 3) then
-                existt = .true.
+                existt = ASTER_TRUE
                 nbtylu = nbtylu + 1
                 nmcmfi(nbtylu) = nmcmfl
                 if (typech(1:4) .ne. 'NOEU') then
@@ -486,13 +442,12 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
 !
 !       ENDIF <<< IF ( CODRE2.EQ.0 )
         endif
-!
 !       INCREMENTE LE NUMERO INITIAL DES MAILLES DU TYPE SUIVANT
         if (nmatyp .gt. 0) then
             numma = numma + nmatyp
         endif
-!
- 22 enddo
+22      continue
+    enddo
 !
 ! 2.3. ==> IL MANQUE DES CHOSES !
 !
@@ -559,7 +514,7 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
             call cescre('V', chames, typech, nomaas, nomgd,&
                         ncmprf, zk8(jnocmp), [-1], [-1], [-ncmprf])
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
 !
         call jeveuo(chames//'.CESD', 'L', adsd)
@@ -628,11 +583,9 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
                 if (typech(1:4) .eq. 'ELNO') then
                     nbnoma = nnotyp(ltyp(letype))
                 endif
-                if (nivinf .gt. 1) then
+                if (niv .gt. 1) then
                     write (ifm,*) '.... NBNOMA : ', nbnoma
                 endif
-!
-!
 !
 !====
 ! 4.0   LECTURE DES VALEURS
@@ -717,8 +670,8 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
 ! 4.3   TRANFERT DES VALEURS
 !====
 !
-                lrenum = .false.
-                if ( modnum(ltyp(letype)).eq.1 ) lrenum = .true.
+                lrenum = ASTER_FALSE
+                if ( modnum(ltyp(letype)).eq.1 ) lrenum = ASTER_TRUE
                 call lrcmve(ntvale, nbty(letype), nbnoma, ntproa, lgproa,&
                             ncmprf, zk8(jnocmp), ntypel, npgmax, indpg,&
                             nbcmfi, nmcmfi(letype), nbcmpv, ncmpvm, numcmp,&
@@ -756,8 +709,8 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
         call jedetr('&&'//nompro//'.NOMCMP_FICHIE'//k2bid)
     enddo
 !
-    if (nivinf .gt. 1) then
-        write (ifm,1001) 'FIN DE '//nompro
+    if (niv .gt. 1) then
+        write (ifm,101) 'FIN DE '//nompro
     endif
     call jedema()
 !

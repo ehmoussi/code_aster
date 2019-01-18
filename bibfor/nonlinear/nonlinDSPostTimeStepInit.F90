@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSPostTimeStepInit(result         , ds_algopara, ds_constitutive,&
+subroutine nonlinDSPostTimeStepInit(result         , model, ds_algopara, ds_constitutive,&
                                     ds_posttimestep)
 !
 use NonLin_Datastructure_type
@@ -29,10 +29,12 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/nonlinDSTableIOSetPara.h"
 #include "asterfort/nonlinDSTableIOCreate.h"
 !
 character(len=8), intent(in) :: result
+character(len=24), intent(in) :: model
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
@@ -46,6 +48,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  result           : name of results datastructure
+! In  model            : name of model
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IO  ds_posttimestep  : datastructure for post-treatment at each time step
@@ -53,7 +56,8 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_hpp
+    aster_logical :: l_hpp, l_pou_d_em
+    character(len=8) :: answer
     integer, parameter :: nb_para = 10
     character(len=24), parameter :: list_para(nb_para) = (/&
         'INST           ','NUME_INST      ',&
@@ -92,6 +96,16 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         endif
     endif
     ds_posttimestep%l_hpp = l_hpp
+!
+! - THe POU_D_EM elements are prohibidden
+!
+    call dismoi('EXI_STR2', model, 'MODELE', repk=answer)
+    l_pou_d_em = answer .eq. 'OUI'
+    if (ds_posttimestep%l_crit_stab .or. ds_posttimestep%l_mode_vibr) then
+        if (l_pou_d_em) then
+            call utmess('F', 'MECANONLINE4_4')
+        endif
+    endif
 !
 ! - Create list of parameters for output table
 !

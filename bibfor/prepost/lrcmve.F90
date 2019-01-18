@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,46 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+! aslint: disable=W1504
+!
 subroutine lrcmve(ntvale, nmatyp, nbnoma, ntproa, lgproa,&
                   ncmprf, nomcmr, ntypel, npgmax, indpg,&
                   nbcmfi, nmcmfi, nbcmpv, ncmpvm, numcmp,&
                   jnumma, nochmd, nbma, npgma, npgmm,&
                   nspmm, typech, nutyma, adsl, adsv, adsd,&
                   lrenum, nuanom, codret)
-! person_in_charge: nicolas.sellenet at edf.fr
-!-----------------------------------------------------------------------
+!
+implicit none
+!
+#include "jeveux.h"
+#include "MeshTypes_type.h"
+#include "asterc/indik8.h"
+#include "asterfort/cesexi.h"
+#include "asterfort/infniv.h"
+#include "asterfort/jedetr.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/lxlgut.h"
+#include "asterfort/utmess.h"
+#include "asterfort/wkvect.h"
+!
+integer :: nmatyp, nbnoma, lgproa, ntypel, npgmax
+integer :: ncmprf, nbcmpv, jnumma, nbma
+integer :: indpg(ntypel, npgmax), npgma(nbma), npgmm(nbma), nspmm(nbma)
+integer :: adsl, adsv, adsd, nutyma
+integer :: nuanom(MT_NTYMAX, MT_NNOMAX)
+aster_logical :: lrenum
+integer :: codret
+character(len=*) :: nochmd
+character(len=*) :: nomcmr(*), typech
+character(len=*) :: ntvale, ntproa, ncmpvm, nmcmfi, numcmp
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     LECTURE D'UN CHAMP - FORMAT MED - CREATION DES VALEURS AUX ELTS
-!     -    -       -              -                  -           -
-!-----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ENTREES:
 !       NTVALE : TABLEAU QUI CONTIENT LES VALEURS LUES
 !       NMATYP : NOMBRE D ELEMENTS DU TYPE CONSIDERE
@@ -65,63 +93,28 @@ subroutine lrcmve(ntvale, nmatyp, nbnoma, ntproa, lgproa,&
 !    TV(NBCMFI,2) , TV(1,3), TV(2,3), ..., TV(1,NVALUT), TV(2,NVALUT),
 !    TV(NBCMFI,NVALUT)
 !    C'EST CE QUE MED APPELLE LE MODE ENTRELACE
-!_____________________________________________________________________
 !
-! aslint: disable=W1504
-    implicit none
+! --------------------------------------------------------------------------------------------------
 !
-! 0.1. ==> ARGUMENTS
-!
-#include "jeveux.h"
-#include "asterc/indik8.h"
-#include "asterfort/cesexi.h"
-#include "asterfort/infniv.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/lxlgut.h"
-#include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
-    integer :: ntymax
-    parameter (ntymax=69)
-    integer :: nnomax
-    parameter (nnomax=27)
-    integer :: nmatyp, nbnoma, lgproa, ntypel, npgmax
-    integer :: ncmprf, nbcmpv, jnumma, nbma
-    integer :: indpg(ntypel, npgmax), npgma(nbma), npgmm(nbma), nspmm(nbma)
-    integer :: adsl, adsv, adsd, nutyma
-    integer :: nuanom(ntymax, nnomax)
-    aster_logical :: lrenum
-    integer :: codret
-!
-    character(len=*) :: nochmd
-    character(len=*) :: nomcmr(*), typech
-    character(len=*) :: ntvale, ntproa, ncmpvm, nmcmfi, numcmp
-!
-! 0.2. ==> COMMUNS
-!
-! 0.3. ==> VARIABLES LOCALES
-!
-    character(len=6) :: nompro
-    parameter ( nompro = 'LRCMVE' )
-!
-!
+    character(len=6), parameter :: nompro = 'LRCMVE'
     integer :: iaux, jaux, kaux, laux
     integer :: nrcmp, ncmpdb, nbpt, nbptm
     integer :: nuval, ipg
     integer :: nbcmfi, i, kk, ima, nbspm, i2, isp
     integer :: adremp, advale, adncfi, adnucm, adncvm, adproa, nummod
-    integer :: ifm, nivinf
-!
+    integer :: ifm, niv
     character(len=8) :: saux08
     character(len=24) :: ntcmpl
     character(len=24) :: valk(2)
 !
-    call infniv(ifm, nivinf)
+! --------------------------------------------------------------------------------------------------
 !
-    if (nivinf .gt. 1) then
-        write (ifm,1001) 'DEBUT DE '//nompro
+    call infniv(ifm, niv)
+!
+    if (niv .gt. 1) then
+        write (ifm,101) 'DEBUT DE '//nompro
     endif
-    1001 format(/,10('='),a,10('='),/)
+101 format(/,10('='),a,10('='),/)
 !
 !====
 ! 1. ON BOUCLE SUR LES NBCMFI COMPOSANTES DU CHAMP QUI A ETE LU
@@ -338,9 +331,7 @@ subroutine lrcmve(ntvale, nmatyp, nbnoma, ntproa, lgproa,&
                     enddo
                 enddo
             endif
-!
         endif
-!
 !
 ! 1.4. ==> QUAND ON VEUT UNE SERIE DE COMPOSANTES, ON REPREND
 !          L'EXPLORATION DE LA LISTE VOULUE
@@ -348,8 +339,8 @@ subroutine lrcmve(ntvale, nmatyp, nbnoma, ntproa, lgproa,&
         if (nbcmpv .ne. 0) then
             goto 110
         endif
-!
- 11 end do
+ 11     continue
+    end do
 !
 !====
 ! 2. ON INFORME SUR LES COMPOSANTES QUI ONT ETE REMPLIES
@@ -362,19 +353,19 @@ subroutine lrcmve(ntvale, nmatyp, nbnoma, ntproa, lgproa,&
         endif
     end do
 !
-    if (kaux .gt. 0 .and. nivinf .gt. 1) then
-        write(ifm,2001) nochmd
+    if (kaux .gt. 0 .and. niv .gt. 1) then
+        write(ifm,201) nochmd
         do jaux = 1, ncmprf
             if (zl(adremp+jaux-1)) then
                 saux08 = nomcmr(jaux)
-                write(ifm,2002) saux08
+                write(ifm,202) saux08
             endif
         enddo
         write(ifm,*) ' '
     endif
 !
-    2001 format('CHAMP ',a)
-    2002 format('. LA COMPOSANTE LUE : ',a8,'.')
+201 format('CHAMP ',a)
+202 format('. LA COMPOSANTE LUE : ',a8,'.')
 !
 !====
 ! 3. MENAGE
@@ -382,8 +373,8 @@ subroutine lrcmve(ntvale, nmatyp, nbnoma, ntproa, lgproa,&
 !
     call jedetr(ntcmpl)
 !
-    if (nivinf .gt. 1) then
-        write (ifm,1001) 'FIN DE '//nompro
+    if (niv .gt. 1) then
+        write (ifm,101) 'FIN DE '//nompro
     endif
 !
 end subroutine

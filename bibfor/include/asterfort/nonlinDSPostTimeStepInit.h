@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinDSPostTimeStepInit(result         , ds_algopara, ds_constitutive,&
+    subroutine nonlinDSPostTimeStepInit(result         , model, ds_algopara, ds_constitutive,&
                                         ds_posttimestep)
         use NonLin_Datastructure_type
         character(len=8), intent(in) :: result
+        character(len=24), intent(in) :: model
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep

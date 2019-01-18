@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+! aslint: disable=W1504
+!
 subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
                   nbmaec, limaec, adsd, adsl, nbimpr,&
                   ncaimi, ncaimk, tyefma, typmai, typgeo,&
                   nomtyp, typech, profas, promed, prorec,&
                   nroimp, chanom, sdcarm)
-! aslint: disable=W1504
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
+#include "jeveux.h"
+#include "MeshTypes_type.h"
 #include "asterfort/assert.h"
 #include "asterfort/celfpg.h"
 #include "asterfort/cesexi.h"
@@ -37,19 +42,22 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
-    integer :: nbvato, ncmpve, numcmp(ncmpve), nbmaec, typmai(*), adsd
-    integer :: limaec(*), nbimpr, typgeo(*), profas(nbvato), tyefma(*)
-    integer :: nroimp(nbvato), promed(nbvato), prorec(nbvato), adsl
-    character(len=*) :: nofimd
-    character(len=8) :: nomtyp(*), typech, sdcarm
-    character(len=19) :: chanom
-    character(len=24) :: ncaimi, ncaimk
-    aster_logical :: exicmp(nbvato)
-! person_in_charge: nicolas.sellenet at edf.fr
-!_______________________________________________________________________
+!
+integer :: nbvato, ncmpve, numcmp(ncmpve), nbmaec, typmai(*), adsd
+integer :: limaec(*), nbimpr, typgeo(*), profas(nbvato), tyefma(*)
+integer :: nroimp(nbvato), promed(nbvato), prorec(nbvato), adsl
+character(len=*) :: nofimd
+character(len=8) :: nomtyp(*), typech, sdcarm
+character(len=19) :: chanom
+character(len=24) :: ncaimi, ncaimk
+aster_logical :: exicmp(nbvato)
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ECRITURE D'UN CHAMP - MAILLES ET PROFIL SUR LES ELEMENTS
-!        -  -       -       -          -              -
-!_______________________________________________________________________
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ENTREES :
 !       NOFIMD : NOM DU FICHIER MED
 !       NCMPVE : NOMBRE DE COMPOSANTES VALIDES EN ECRITURE
@@ -88,37 +96,35 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
 !       PROMED : PROFIL MED. C'EST LA LISTE DES NUMEROS MED DES
 !                ELEMENTS POUR LESQUELS LE CHAMP EST DEFINI
 !       NROIMP : NUMERO DE L'IMPRESSION ASSOCIEE A CHAQUE MAILLE
-!_______________________________________________________________________
 !
-#include "jeveux.h"
-    character(len=80) :: ednopf, ednoga
-    parameter (ednopf=' ')
-    parameter (ednoga=' ')
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: ntymax, nmaxfi
-    parameter (ntymax=69)
-    parameter (nmaxfi=10)
-    integer :: ifm, nivinf, ibid, iret, iaux, jaux, kaux, ima, jcesd, laux
+    character(len=80), parameter :: ednopf = ' ', ednoga = ' '
+    integer, parameter :: nmaxfi = 10
+    integer :: nugrfi(nmaxfi), nugrf2(nmaxfi)
+    integer :: nmaty0(MT_NTYMAX), adraux(MT_NTYMAX)
+    integer :: ifm, niv, ibid, iret, iaux, jaux, kaux, ima, jcesd, laux
     integer :: jcesc, jcesl, jcesv, nrefma
     integer :: nrcmp, nrpg, nrsp, nbpg, nbsp, nval, typmas, nbimp0, nrimpr
-    integer :: nmaty0(ntymax), adraux(ntymax), nbtcou, nbqcou, nbsec, nbfib
-    integer :: adcaii, adcaik, nbgrf, nugrfi(nmaxfi)
+    integer :: nbtcou, nbqcou, nbsec, nbfib
+    integer :: adcaii, adcaik, nbgrf
     integer :: nbgrf2, nbtcou2, nbqcou2, nbsec2, nbfib2, ima2
-    integer :: nugrf2(nmaxfi), igrfi, imafib
-!
+    integer :: igrfi, imafib
     character(len=16) :: nomfpg
     character(len=64) :: noprof
-!
     aster_logical :: exicar, grfidt, elga_sp, okgrcq, oktuy
     character(len=16), pointer :: tabnofpg(:) => null()
     character(len=16), pointer :: nofpgma(:) => null()
 !
-!====
-! 1. PREALABLES
-!====
-    call infniv(ifm, nivinf)
+! --------------------------------------------------------------------------------------------------
 !
-    if (nivinf .gt. 1) write (ifm,805) 'DEBUT DE IRCMPE'
+    call infniv(ifm, niv)
+!
+    nmaty0(:) = 0
+!
+    if (niv .ge. 2) then
+        write (ifm,805) 'DEBUT DE IRCMPE'
+    endif
 !
 !====
 ! 2. ON REMPLIT UN PREMIER TABLEAU PAR MAILLE :
@@ -146,7 +152,8 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
                 enddo
             enddo
         enddo
-21  enddo
+21      continue
+    end do
 !
 !====
 ! 3. PROFAS : LISTE DES MAILLES POUR LESQUELS ON AURA IMPRESSION
@@ -403,10 +410,6 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
 !          ADRAUX(JAUX) = ADRESSE DANS LES TABLEAUX PROMED ET PROFAS
 !                         DE LA MAILLE COURANTE ASSOCIEE A L'IMPRESSION
 !                         NUMERO JAUX
-    do iaux = 1 , ntymax
-        nmaty0(iaux) = 0
-    enddo
-!
     do ima = 1 , nbvato
 !
         typmas = typmai(ima)
@@ -476,7 +479,7 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
 !====
 ! 8. LA FIN
 !====
-    if (nivinf .gt. 1) then
+    if (niv .ge. 2) then
         if (typech(1:4) .eq. 'ELGA') then
             write (ifm,801)
         else

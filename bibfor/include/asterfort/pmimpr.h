@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine pmimpr(ind, inst, indimp, fonimp, valimp,&
+    subroutine pmimpr(ind, inst, indimp, valimp,&
                       iter, eps, sig, vi, nbvari,&
                       r, ee, eini)
         integer :: nbvari
         integer :: ind
         real(kind=8) :: inst
         integer :: indimp(6)
-        character(len=8) :: fonimp(6)
         real(kind=8) :: valimp(6)
         integer :: iter
         real(kind=8) :: eps(6)

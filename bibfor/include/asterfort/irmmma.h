@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "MeshTypes_type.h"
 !
 interface
     subroutine irmmma(fid, nomamd, nbmail, connex, point,&
                       typma, nommai, prefix, nbtyp, typgeo,&
                       nomtyp, nnotyp, renumd, nmatyp, infmed,&
                       modnum, nuanom)
-        integer, parameter :: ntymax=69
         integer :: fid
         character(len=*) :: nomamd
         integer :: nbmail
@@ -37,9 +35,9 @@ interface
         character(len=8) :: nomtyp(*)
         integer :: nnotyp(*)
         integer :: renumd(*)
-        integer :: nmatyp(*)
+        integer :: nmatyp(MT_NTYMAX)
         integer :: infmed
-        integer :: modnum(ntymax)
-        integer :: nuanom(ntymax, *)
+        integer :: modnum(MT_NTYMAX)
+        integer :: nuanom(MT_NTYMAX, *)
     end subroutine irmmma
 end interface

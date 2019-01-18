@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,20 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-! Behaviour data structure : Parameters <-> integer definitions
-! -------------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! The field <COMPOR>
+!   List of strings (K16) for each cell
+!   Definition of behaviour (relation, strain model, number of internal state vari, etc.)
 !
-! - Access in <COMPOR> - Behaviour field - General
+! --------------------------------------------------------------------------------------------------
 !
-#define NB_COMP_MAXI 21
+! Size
+!
+#define COMPOR_SIZE 21
+!
+! Slots: general
+!
 #define RELA_NAME    1
 #define NVAR         2
 #define DEFO         3
@@ -33,7 +40,7 @@
 #define POSTITER     8
 #define DEFO_LDC     21
 !
-! - Access in <COMPOR> - Behaviour field - KITs
+! Slots: for KIT
 !
 #define KIT1_NAME    9
 #define KIT2_NAME    10
@@ -46,7 +53,7 @@
 #define KIT3_NVAR    17
 #define KIT4_NVAR    18
 !
-! - Access in <COMPOR> - Behaviour field - KIT_THM
+! Slots: for KIT_THM
 !
 #define THMC_NAME    9
 #define THER_NAME    10
@@ -61,7 +68,7 @@
 #define HYDR_NVAR    19
 #define MECA_NVAR    20
 !
-! - Access in <COMPOR> - Behaviour field - KIT_DDI
+! Slots: for KIT_DDI
 !
 #define CREEP_NAME   9
 #define PLAS_NAME    10
@@ -72,29 +79,33 @@
 #define CREEP_NVAR   17
 #define PLAS_NVAR    18
 !
-! - Access in <COMPOR> - Behaviour field - KIT_META
+! Slots: for KIT_META
 !
 #define META_NAME    9
 !
-! - Access in <COMPOR> - Behaviour field - KIT_CG
+! Slots: for KIT_CG
 !
 #define CABLE_NAME   9
 #define SHEATH_NAME  10
+
+! --------------------------------------------------------------------------------------------------
 !
-! - Access in <CARCRI> for external state variables
+! The field <CARCRI>
+!   List of real for each cell
+!   Parameters to solve behaviour equations
 !
-#define IVARIEXTE      11
+! --------------------------------------------------------------------------------------------------
 !
-! - Access in <CARCRI> for THM parameters
+! Size
 !
-#define PARM_ALPHA_THM 18
-#define PARM_THETA_THM 12
+#define CARCRI_SIZE    23
 !
-! - Access in <CARCRI> for strains model
+! Slots: for external state variables
 !
-#define ISTRAINEXTE    22
+#define IVARIEXT1      11
+#define IVARIEXT2      23
 !
-! - Access in <CARCRI_VARI_EXT>: type of external state variables
+!        type of external state variables
 !
 #define ELTSIZE1  1
 #define ELTSIZE2  2
@@ -126,8 +137,18 @@
 #define ZMARTENS  28
 #define ZALPHPUR  29
 #define ZALPHBET  30
+#define TIME      31
 !
-! - Type of strains model from MFRONT
+! Slots: for THM parameters
+!
+#define PARM_ALPHA_THM 18
+#define PARM_THETA_THM 12
+!
+! Slots: strain model for MFRONT
+!
+#define ISTRAINEXTE    22
+!
+!        type of strain model for MFRONT
 !
 #define MFRONT_STRAIN_SMALL          0
 #define MFRONT_STRAIN_SIMOMIEHE      1
