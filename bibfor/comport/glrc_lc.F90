@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,23 +19,30 @@
 subroutine glrc_lc(epsm, deps, vim, option, sig,&
                    vip, dsidep, lambda, deuxmu, lamf,&
                    deumuf, gmt, gmc, gf, seuil,&
-                   alf, alfmc, crit, codret)
+                   alf, alfmc, crit,&
+                   epsic, epsiels, epsilim, codret,&
+                   ep, is_param_opt, val_param_opt, t2iu)
 ! person_in_charge: sebastien.fayolle at edf.fr
 !
     implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/calc_glrcdm_err.h"
 #include "asterfort/diago2.h"
 #include "asterfort/glrc_calc_cst.h"
 #include "asterfort/glrc_calc_eps33.h"
 #include "asterfort/glrc_integ_loc.h"
 #include "asterfort/glrc_sig_mat.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/dxefro.h"
     integer :: codret
     real(kind=8) :: epsm(6), deps(6), vim(*), crit(*), seuil, alfmc
     real(kind=8) :: lambda, deuxmu, lamf, deumuf, alf, gmt, gmc, gf
-    real(kind=8) :: sig(6), dsidep(6, 6), vip(*)
+    real(kind=8) :: epsic, epsiels, epsilim
+    real(kind=8) :: sig(6), dsidep(6, 6), vip(*), vecp(2,2), valp(2)
     character(len=16) :: option
+    aster_logical :: is_param_opt(*), l_calc(2)
+    real(kind=8) :: val_param_opt(*), ep, t2iu(4) 
 ! ----------------------------------------------------------------------
 !
 !      LOI GLOBALE POUR LES PLAQUES/COQUES DKT - GLRC_DM
@@ -50,6 +57,9 @@ subroutine glrc_lc(epsm, deps, vim, option, sig,&
 !       GF      : PARAMETRE GAMMA POUR LA FLEXION
 !       SEUIL   : INITIAL MEMBRANE
 !       ALF     : PARAMETRE DE SEUIL FLEXION
+!       EPSIC   : DEFORMATION AU PIC DE COMPRESSION
+!       EPSIELS : DEFORMATION DES ACIERS A L'ETAT ULTIME DE SERVICE
+!       EPSILIM : DEFORMATION A RUPTURE DES ACIERS
 !       VIM     : VARIABLES INTERNES EN T-
 !       OPTION  : TOUTES
 !       CRIT    : CRITERES DE CONVERGENCE LOCAUX
@@ -83,12 +93,13 @@ subroutine glrc_lc(epsm, deps, vim, option, sig,&
     aster_logical :: rigi, resi, coup
     aster_logical :: lelas, elas, elas1, elas2
     integer :: k, kdmax
-    real(kind=8) :: eps(6), emp(2), efp(2), qff(2)
+    real(kind=8) :: eps(6), emp(2), efp(2), qff(2), eps8(8), epsu(6)
     real(kind=8) :: vmp(2, 2), vfp(2, 2)
     real(kind=8) :: muf, trot, treps, eps33, de33d1, de33d2
     real(kind=8) :: da1, da2, ksi2d, dksi1, dksi2
     real(kind=8) :: tr2d, told, cof1(2), q2d(2)
-    real(kind=8) :: cof2(2), dq2d(2)
+    real(kind=8) :: cof2(2), dq2d(2), maxabs
+    real(kind=8) :: tens(3), rx
 !
 ! --  OPTION ET MODELISATION
     rigi = (option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL')
@@ -179,7 +190,70 @@ subroutine glrc_lc(epsm, deps, vim, option, sig,&
         vip(5)=1.d0-0.5d0*((1.d0+gmt*da1)/(1.d0+da1) +(1.d0+gmt*da2)/(1.d0+da2))
         vip(6)=1.d0-0.5d0*((1.d0+gmc*da1)/(1.d0+da1) +(1.d0+gmc*da2)/(1.d0+da2))
         vip(7)=1.d0-max((1.d0+gf*da1)/(1.d0+da1), (1.d0+gf*da2)/(1.d0+da2))
-        vip(8)=vim(8)+(da1+da2)*seuil
+        
+
+        if (is_param_opt(1))then
+            
+!           passage des deformation dans le repere utilisateur
+            eps8(1:6) = eps(1:6)
+            eps8(7:8) = 0.d0
+            call dxefro(1, t2iu, eps8, eps8)
+            epsu(1:6) = eps8(1:6)
+            
+            rx = val_param_opt(1)
+            
+            maxabs = max( abs(epsu(1) - 0.5d0*ep*rx *epsu(4)),&
+                          abs(epsu(1) + 0.5d0*ep*rx *epsu(4)))
+            vip(8) = maxabs /epsiels
+            vip(9) = maxabs /epsilim
+            
+            maxabs = max( abs(epsu(2) - 0.5d0*ep*rx *epsu(5)),&
+                          abs(epsu(2) + 0.5d0*ep*rx *epsu(5)))
+            vip(10) = maxabs /epsiels
+            vip(11) = maxabs /epsilim
+
+            tens(1) = epsu(1)-ep/2*epsu(4)
+            tens(2) = epsu(2)-ep/2*epsu(5)
+            tens(3) = epsu(3)-ep/2*epsu(6)
+            call diago2(tens, vecp, valp)
+            vip(12) = -min(valp(1), valp(2), 0.d0)/epsic
+
+            tens(1) = epsu(1)+ep/2*epsu(4)
+            tens(2) = epsu(2)+ep/2*epsu(5)
+            tens(3) = epsu(3)+ep/2*epsu(6)
+            call diago2(tens, vecp, valp)
+            vip(13) = -min(valp(1), valp(2), 0.d0)/epsic
+
+            vip(14) = max(vim(14), epsu(1),epsu(2),0.d0)
+            vip(15) = max(vim(15), -epsu(1),-epsu(2),0.d0)
+            vip(16) = max(vim(16), abs(epsu(4)),abs(epsu(5)))
+            
+            if (is_param_opt(2))then
+                
+                if (vip(15) .gt.vim(15))then
+                    l_calc(1) = .true.
+                else
+                    l_calc(1) = .false.
+                    vip(17) = vim(17)
+                endif
+                
+                if (vip(16) .gt.vim(16))then
+                    l_calc(2) = .true.
+                else
+                    l_calc(2) = .false.
+                    vip(18) = vim(18)
+                endif
+                
+                call calc_glrcdm_err(l_calc, vip(15), vip(16), gf,&
+                           gmc, epsic, ep, val_param_opt,&
+                           vip(17), vip(18))
+                
+            else
+                vip(17:18) = 0.d0
+            endif
+        else
+            vip(8:18) = 0.d0
+        endif
     else
         if (lelas) then
             da1 = 0.0d0

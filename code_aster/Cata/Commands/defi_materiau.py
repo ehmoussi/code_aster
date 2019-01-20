@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -93,7 +93,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                            'LAIGLE','LETK','LKR','DRUCK_PRAGER','VISC_DRUC_PRAG','HOEK_BROWN','GONF_ELAS','JOINT_BANDIS',
                            'MONO_VISC1','MONO_VISC2','MONO_ISOT1','MONO_ISOT2','MONO_CINE1','MONO_CINE2','MONO_DD_KR','MONO_DD_CFC','MONO_DD_CFC_IRRA',
                            'MONO_DD_FAT','MONO_DD_CC','MONO_DD_CC_IRRA',
-                           'MFRONT','MFRONT_FO','UMAT','UMAT_FO','CRIT_RUPT','REST_ECRO'),
+                           'MFRONT','MFRONT_FO','UMAT','UMAT_FO','CRIT_RUPT','REST_ECRO','BETON_GLRC'),
                ),
 
            reuse=SIMP(statut='c', typ=CO),
@@ -932,6 +932,11 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              ECRO_COMP_P_PIC =SIMP(statut='f',typ='TXM',defaut="LINEAIRE",into=("LINEAIRE","PARABOLE") ),
              ECRO_TRAC_P_PIC =SIMP(statut='f',typ='TXM',defaut="LINEAIRE",into=("LINEAIRE","EXPONENT") ),
            ),
+           BETON_GLRC =FACT(statut='f',
+             FCJ             =SIMP(statut='o',typ='R',val_min=0.0E+0,),
+             EPSI_C          =SIMP(statut='o',typ='R',val_min=0.0E+0,),
+             FTJ             =SIMP(statut='o',typ='R',val_min=0.0E+0,),
+           ),
            MAZARS=FACT(statut='f',
              EPSD0           =SIMP(statut='o',typ='R'),
              K               =SIMP(statut='o',typ='R'),
@@ -1366,13 +1371,27 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
             ),
 
            GLRC_DM         =FACT(statut='f',max=1,
+                                 regles=(ENSEMBLE('OMX', 'EA', 'SY', 'FTJ', 'FCJ'),
+                                         PRESENT_PRESENT('OMX', 'RX')
+                                         ),
              GAMMA_T         =SIMP(statut='o',typ='R',val_min=-1.E+0,val_max=1.E+0),
-             GAMMA_C         =SIMP(statut='f',typ='R',val_min=-1.E+0,val_max=1.E+0),
+             GAMMA_C         =SIMP(statut='o',typ='R',val_min=-1.E+0,val_max=1.E+0),
              GAMMA_F         =SIMP(statut='o',typ='R',val_min=-1.E+0,val_max=1.E+0),
              NYT             =SIMP(statut='o',typ='R',val_min=0.E+0),
-             NYC             =SIMP(statut='f',typ='R'),
+             NYC             =SIMP(statut='o',typ='R'),
              MYF             =SIMP(statut='o',typ='R',val_min=0.E+0),
-             ALPHA_C         =SIMP(statut='f',typ='R',val_min=1.E+0,defaut=1.E+0),
+             ALPHA_C         =SIMP(statut='o',typ='R',val_min=1.E+0),
+             EPSI_C          =SIMP(statut='f',typ='R',defaut=1.E+0),
+             EPSI_ELS        =SIMP(statut='f',typ='R',defaut=1.E+0),
+             EPSI_LIM        =SIMP(statut='f',typ='R',defaut=1.E+0),
+#            pour calcul des variables internes V8 à V16
+             RX              =SIMP(statut='f',typ='R'),
+#            pour calcul des variables internes V17 à V18
+             OMX             =SIMP(statut='f',typ='R'),
+             EA              =SIMP(statut='f',typ='R'),
+             SY              =SIMP(statut='f',typ='R'),
+             FTJ             =SIMP(statut='f',typ='R'),
+             FCJ             =SIMP(statut='f',typ='R'),
            ),
            DHRC            =FACT(statut='f',
              NYD           =SIMP(statut='o',typ='R',min=2,max=2),
