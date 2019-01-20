@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 #            REMARQUE 1   : LES PARAMETRES GLRC_DM ONT ETE IDENTIFIES
 #                           PAR CE TEST
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI',),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI',),PAR_LOT='NON');
 
 #PRE_GIBI();
 EP = 0.1;
@@ -125,14 +125,22 @@ ACIER=DEFI_MATERIAU(ELAS=_F(E=2.E11,
 EGM = 35620000000.0;
 EGF = 38700000000.0;
 
+
+# remarque si GAMMA_C vaut 1.0 nyc n'est pas utilise (sauf calcul de v17) et alpha_c est forcé
+# à 1.0
+
 MAT_G=DEFI_MATERIAU(ELAS_GLRC=_F(E_M=EGM,
                                  NU_M=0.18,
                                  E_F=EGF,
                                  NU_F=0.17,),
                     GLRC_DM=_F(GAMMA_T=0.02,
                                GAMMA_F=0.32,
+                               GAMMA_C=1.,  
                                NYT=3.7E5,
-                               MYF=9.0E3,),);
+                               NYC= 0., # NYC non utilise si GAMMA_C = 1 sauf pour la variable interne V17 
+                               MYF=9.0E3,
+                               ALPHA_C = 1.,
+                               ),);
 
 MATER=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=(_F(GROUP_MA='DALLE_G',
@@ -277,6 +285,7 @@ RESU_G1=STAT_NON_LINE(MODELE=MO_G,
                       NEWTON=_F(REAC_ITER=1,),
                       CONVERGENCE=_F(ITER_GLOB_MAXI=26,),
                       ARCHIVAGE=_F(LIST_INST=inst1,),);
+
 
 RESU_G1=CALC_CHAMP(reuse =RESU_G1,
                    RESULTAT=RESU_G1,
