@@ -418,7 +418,7 @@ def check_optimization_fcflags(self):
     flags = [f for f in self.env.FCFLAGS
              if (f.startswith('-O') and f[-1].isdigit()) or f == '-g']
     # remove existing optimization flags
-    map(self.env.FCFLAGS.remove, flags)
+    list(map(self.env.FCFLAGS.remove, flags))
     if not flags:
         flags = ['-O2']
     # different cases to check

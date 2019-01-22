@@ -82,7 +82,7 @@ def check_scotch_libs(self):
         check_lib = lambda lib: check_scotch(stlib=lib)
     else:
         check_lib = lambda lib: check_scotch(lib=lib)
-    map(check_lib, Utils.to_list(opts.scotch_libs))
+    list(map(check_lib, Utils.to_list(opts.scotch_libs)))
 
 @Configure.conf
 def check_scotch_headers(self):

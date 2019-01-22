@@ -70,7 +70,7 @@ def check_metis_libs(self):
         check = lambda lib: check_metis(stlib=lib)
     else:
         check = lambda lib: check_metis(lib=lib)
-    map(check, Utils.to_list(opts.metis_libs))
+    list(map(check, Utils.to_list(opts.metis_libs)))
 
 @Configure.conf
 def check_metis_headers(self):
