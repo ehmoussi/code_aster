@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ subroutine op0115()
 !     ------------------------------------------------------------------
     integer :: iocpf, iockt, ioccs
     integer :: ipf, ifonc, inum, ifreq, ikt, ics, ispec
-    integer :: mxval, ibid, nbabs, nbfreq, nbval
+    integer :: mxval, ibid, nbabs, nbfreq, nbval, nbfreqold
     integer :: lnumi, lnumj, lfonc, lfreq, lrefe, nbvalr
     integer :: lnoei, lnoej, lcmpi, lcmpj, n2, n3, n4, n5, n6, n7
 !
@@ -137,6 +137,13 @@ subroutine op0115()
         tfonc = prol(1)(1:8)
         if (tfonc .eq. 'FONCTION') nbfreq = nbval/2
         if (tfonc .eq. 'FONCT_C') nbfreq = nbval/3
+        if (ifonc .eq. 1) then
+            nbfreqold = nbfreq
+        else
+            if (nbfreq .ne. nbfreqold) then
+                call utmess('F', 'ALGORITH3_79')
+            endif
+        endif
         diag = .false.
         if (n2 .lt. 0) then
             if ((zk8(lnoei-1+ifonc) .eq. zk8(lnoej-1+ifonc)) .and.&
