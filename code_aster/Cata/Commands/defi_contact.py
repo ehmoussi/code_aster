@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -522,7 +522,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                                   #b_frotpena_adapt1=BLOC(condition = """(equal_to("ALGO_FROT", 'PENALISATION') and equal_to("ADAPTATION", 'ADAPT_COEF'))   """, fr=tr("Paramètres de la méthode pénalisée"),
                                                                         #COEF_PENA_FROT  =SIMP(statut='f',typ='R',defaut=1.E+7),
                                                            #),
-                                          #),
+                                          #), 
 
                                           #b_frot_pena_adapt=BLOC(condition = """(equal_to("ALGO_FROT", 'PENALISATION') and equal_to("ADAPTATION", 'ADAPT_COEF')) or (equal_to("ALGO_FROT", 'PENALISATION') and equal_to("ADAPTATION", 'TOUT'))  """, fr=tr("Paramètres de la méthode pénalisée"),
                                                            #COEF_PENA_FROT  =SIMP(statut='o',typ='R'),
