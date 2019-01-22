@@ -27,6 +27,7 @@ implicit none
 #include "jeveux.h"
 #include "asterc/r8nnem.h"
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/jenuno.h"
 #include "asterfort/jexatr.h"
 #include "asterfort/apcoor.h"
@@ -170,8 +171,10 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! --------- Get/Set LAGS_C
             nume_equa = v_sdcont_ddlc(i_patch)
             if (iter_newt .eq. 0 .and. loop_geom_count .gt. 1) then
+! ------------- For POINT_FIXE
                 lagc      = v_sdcont_lagc(j_patch-2+i_patch)
                 v_disp_curr(nume_equa) = lagc
+                ASSERT(ASTER_FALSE)
             else
                 lagc = v_disp_curr(nume_equa)
             endif

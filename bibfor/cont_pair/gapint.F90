@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 subroutine gapint(elem_dime     , l_axis          ,&
-                  elem_slav_code, elem_slav_nbnode, elem_slav_coor , elem_slav_coorN,&
+                  elem_slav_code, elem_slav_nbnode, elem_slav_coorO, elem_slav_coorN,&
                   elem_mast_code, elem_mast_nbnode, elem_mast_coorN,&
                   nb_poin_inte  , poin_inte       , poin_gaus_ma  ,&
                   gap_moy       , inte_weight)
@@ -49,7 +49,7 @@ integer, intent(in) :: elem_dime
 aster_logical, intent(in) :: l_axis
 character(len=8), intent(in) :: elem_slav_code
 integer, intent(in) :: elem_slav_nbnode
-real(kind=8), intent(in) :: elem_slav_coor(3,elem_slav_nbnode)
+real(kind=8), intent(in) :: elem_slav_coorO(3,elem_slav_nbnode)
 real(kind=8), intent(in) :: elem_slav_coorN(3,elem_slav_nbnode)
 character(len=8), intent(in) :: elem_mast_code
 integer, intent(in) :: elem_mast_nbnode
@@ -72,7 +72,7 @@ real(kind=8), intent(out) :: inte_weight
 ! In  l_axis           : .true. for axisymmetric element
 ! In  elem_slav_code   : code of slave element
 ! In  elem_slav_nbnode : number of nodes of slave element
-! In  elem_slav_coor   : coordinates of slave element (on old geometry)
+! In  elem_slav_coorO  : coordinates of slave element (on old geometry)
 ! In  elem_slav_coorN  : coordinates of slave element (on new geometry)
 ! In  elem_mast_code   : code of master element
 ! In  elem_mast_nbnode : number of nodes of master element
@@ -177,7 +177,7 @@ real(kind=8), intent(out) :: inte_weight
                         gauss_coot    , gauss_coouN)
 ! --------- Compute jacobian (on old geometry)
             call mmmjac(l_axis        , elem_slav_nbnode, elem_dime,&
-                        elem_slav_code, elem_slav_coor  ,&
+                        elem_slav_code, elem_slav_coorO ,&
                         shape_func    , shape_dfunc     ,&
                         jacobian)
             jaco_weight = gauss_weight(i_gauss)*jacobian
@@ -201,9 +201,6 @@ real(kind=8), intent(out) :: inte_weight
                 ASSERT(ASTER_FALSE)
             end if
             dist_sign = -sign(dist,sig)
-            !if (abs(dist_sign) .le. 0.1) then
-            !    WRITE(6,*) 'SIGNE: ',sig
-            !endif
 ! --------- Total integration weight and mean square gap
             gap_moy     = gap_moy+jaco_weight*dist_sign
             inte_weight = inte_weight+jaco_weight
