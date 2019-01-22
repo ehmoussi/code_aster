@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -265,8 +265,7 @@ DYNALEA1=DYNA_ALEA_MODAL(BASE_MODALE=_F( MODE_MECA = MODEAU,
                           EXCIT=_F(  MODAL = 'OUI',
                                   GRANDEUR = 'EFFO',
                                   INTE_SPEC = SPPROJ,
-                                  NUME_ORDRE_I = 1,
-                                  NUME_ORDRE_J = 1),
+                                  NUME_ORDRE_I = 1,),
                           REPONSE=_F()  )
 
 REPINTSP=REST_SPEC_PHYS(         MODE_MECA=MODEAU,
