@@ -1,6 +1,6 @@
 /**
- * @file TableInterface.cxx
- * @brief Interface python de Table
+ * @file TableContainerInterface.cxx
+ * @brief Interface python de TableContainer
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
@@ -25,18 +25,14 @@
 
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
-#include "PythonBindings/TableInterface.h"
+#include "PythonBindings/TableContainerInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
 
-void exportTableToPython() {
+void exportTableContainerToPython() {
     using namespace boost::python;
 
-    class_< TableInstance, TableInstance::TablePtr, bases< DataStructure > >( "Table", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< TableInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< TableInstance, std::string >));
-    class_< TableOfFunctionsInstance, TableOfFunctionsInstance::TableOfFunctionsPtr,
-            bases< TableInstance > >( "TableOfFunctions", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< TableOfFunctionsInstance >))
-        .def( "__init__",
-              make_constructor(&initFactoryPtr< TableOfFunctionsInstance, std::string >));
+    class_< TableContainerInstance, TableContainerInstance::TableContainerPtr,
+            bases< TableInstance > >( "TableContainer", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance, std::string >));
 };
