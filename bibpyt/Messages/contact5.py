@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -75,4 +75,6 @@ cata_msg = {
    27 : _(u"""  Calcul des matrices pour le contact."""),
 
    28 : _(u"""  Calcul du second membre pour le contact."""),
+
+   29 : _(u"""   Calcul du gap intégré."""),
 }

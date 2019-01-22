@@ -43,6 +43,7 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/jenuno.h"
+#include "asterfort/lac_gapi.h"
 !
 character(len=8), intent(in) :: mesh
 type(NL_DS_Contact), intent(inout) :: ds_contact
@@ -170,58 +171,9 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     call jeveuo(sdappa_ap2m, 'L', vr = v_sdappa_ap2m)
     call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
 !
-! - Compute integrated gap
+! - Compute mean square gaps and weights of intersections
 !
-    v_sdappa_gapi(:) = 0.d0
-    v_sdappa_coef(:) = 0.d0
-    v_sdappa_nmcp(:) = 0
-    do i_pair=1,nb_pair
-        !get master and slave element number
-        elem_slav_nume = v_sdappa_apli(3*(i_pair-1)+1)
-        elem_mast_nume = v_sdappa_apli(3*(i_pair-1)+2)
-        !get slave coor
-        elem_type_nume = v_mesh_typmail(elem_slav_nume)
-        call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_slav_type)
-        call aptype(elem_slav_type  ,&
-                    elem_slav_nbnode, elem_slav_code, elem_slav_dime)
-        call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
-                    elem_slav_nume, elem_slav_nbnode, elem_slav_dime,&
-                    elem_slav_coor)
-        !get patch number
-        patch_indx = v_mesh_comapa(elem_slav_nume)
-        v_sdappa_nmcp(patch_indx) = v_sdappa_nmcp(patch_indx) + 1
-        !get master coor
-        elem_type_nume = v_mesh_typmail(elem_mast_nume)
-        call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_mast_type)
-        call aptype(elem_mast_type  ,&
-                    elem_mast_nbnode, elem_mast_code, elem_mast_dime)
-        call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
-                    elem_mast_nume, elem_mast_nbnode, elem_mast_dime,&
-                    elem_mast_coor)
-        !get number of intersection nodes
-        nb_poin_inte = v_sdappa_apnp(i_pair)
-        !get intersection nodes
-        poin_inte(1:16) = v_sdappa_apts(16*(i_pair-1)+1:16*(i_pair-1)+16)
-        poin_gaus_ma(1:72) = v_sdappa_ap2m(72*(i_pair-1)+1:72*(i_pair-1)+72)
-        !compute gap
-        call gapint(elem_slav_dime, elem_slav_code  , elem_slav_nbnode, elem_slav_coor,&
-                    elem_mast_code, elem_mast_nbnode, elem_mast_coor  , nb_poin_inte  ,&
-                    poin_inte     , gap_moy         , inte_weight     , poin_gaus_ma  ,&
-                    l_axis )
-        !save gap
-        v_sdappa_gapi(patch_indx)  = v_sdappa_gapi(patch_indx)-gap_moy
-        patch_weight_c(patch_indx) = patch_weight_c(patch_indx)+inte_weight
-    end do
-    do i_patch=1,nb_patch
-        if (patch_weight_c(i_patch) .le. pair_tole) then
-            v_sdappa_gapi(i_patch) = r8nnem()
-        end if
-        if (.not.isnan(v_sdappa_gapi(i_patch))) then
-            v_sdappa_gapi(i_patch) = v_sdappa_gapi(i_patch)/patch_weight_c(i_patch)
-            v_sdappa_coef(i_patch) = patch_weight_c(i_patch)/v_sdappa_wpat(i_patch)
-            v_sdappa_poid(i_patch) = patch_weight_c(i_patch)
-        end if
-    end do
+    call lac_gapi(mesh, ds_contact)
 !
 ! - Loop on contact zones
 !
