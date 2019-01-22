@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "Contact_type.h"
 #include "asterfort/assert.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jedema.h"
@@ -58,6 +59,7 @@ character(len=19), intent(in) :: chmlcf
     integer, parameter :: nceld1 = 4
     integer, parameter :: nceld2 = 4
     integer, parameter :: nceld3 = 4
+    integer :: i_reso_geom
     integer :: nt_liel, nb_grel, nb_liel, i_grel, i_liel, i_cont_pair, nb_cont_pair, i_zone
     integer :: vale_indx, decal, elem_slav_nume, patch_nume, jacobian_type, nb_cont_zone
     real(kind=8) :: r_axi, r_smooth
@@ -98,8 +100,10 @@ character(len=19), intent(in) :: chmlcf
 !
     call jemarq()
 !
-! - Get parameters
+! - Get_contact parameters
 !
+    i_reso_geom  = cfdisi(ds_contact%sdcont_defi,'ALGO_RESO_GEOM')
+    ASSERT(i_reso_geom .eq. ALGO_NEWT)
     r_smooth     = real(cfdisi(ds_contact%sdcont_defi,'LISSAGE'),kind=8)
     r_axi        = real(cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE'),kind=8)
     nb_cont_pair = ds_contact%nb_cont_pair
@@ -220,7 +224,7 @@ character(len=19), intent(in) :: chmlcf
             zr(vale_indx-1+38) = v_sdappa_aptm(16*(i_cont_pair-1)+14)
             zr(vale_indx-1+39) = v_sdappa_aptm(16*(i_cont_pair-1)+15)
             zr(vale_indx-1+40) = v_sdappa_aptm(16*(i_cont_pair-1)+16)
-            zr(vale_indx-1+41) = 0.d0
+            zr(vale_indx-1+41) = i_reso_geom
             zr(vale_indx-1+42) = 0.d0
             zr(vale_indx-1+43) = 0.d0
             zr(vale_indx-1+44) = 0.d0
