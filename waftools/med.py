@@ -103,7 +103,7 @@ def check_hdf5_libs(self):
         check_lib = lambda lib: check_hdf5(stlib=lib)
     else:
         check_lib = lambda lib: check_hdf5(lib=lib)
-    map(check_lib, Utils.to_list(opts.hdf5_libs))
+    list(map(check_lib, Utils.to_list(opts.hdf5_libs)))
 
 @Configure.conf
 def check_hdf5_headers(self):
@@ -184,7 +184,7 @@ def check_med_libs(self):
         check_lib = lambda lib: check_med(stlib=lib)
     else:
         check_lib = lambda lib: check_med(lib=lib)
-    map(check_lib, Utils.to_list(opts.med_libs))
+    list(map(check_lib, Utils.to_list(opts.med_libs)))
 
 @Configure.conf
 def check_med_headers(self):

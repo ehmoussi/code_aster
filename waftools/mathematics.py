@@ -281,7 +281,7 @@ def get_mathlib_from_numpy(self):
     return libblas, liblapack
 
 def _detect_libnames_in_ldd_line(line, libnames):
-    if not filter(line.__contains__, libnames):
+    if not list(filter(line.__contains__, libnames)):
         return None
     lib = line.split()[0].split('.', 1)[0]
     return lib[3:]
@@ -293,11 +293,11 @@ def check_math_libs_call(self, color='RED'):
     try:
         ret = self.check_fc(fragment=blas_lapack_fragment, use='MATH OPENMP MPI',
                             mandatory=False, execute=True, define_ret=True)
-        values = map(float, ret and ret.split() or [])
+        values = list(map(float, ret and ret.split() or []))
         ref = [10.0, 5.0]
         if list(values) != ref:
             raise Errors.ConfigurationError('invalid result: %r (expecting %r)' % (values, ref))
-    except Exception, exc:
+    except Exception as exc:
         # the message must be closed
         self.end_msg('no', color=color)
         raise Errors.ConfigurationError(str(exc))
@@ -309,7 +309,7 @@ def check_math_libs_call(self, color='RED'):
         try:
             ret = self.check_fc(fragment=blacs_fragment, use='MATH OPENMP MPI',
                                 mandatory=True)
-        except Exception, exc:
+        except Exception as exc:
             # the message must be closed
             self.end_msg('no', color=color)
             raise Errors.ConfigurationError(str(exc))
@@ -324,7 +324,7 @@ def check_math_libs_call(self, color='RED'):
         refe = min(self.env['NPROC'], 2) if self.env.BUILD_OPENMP else 1
         if nbThreads < refe:
             raise ValueError("expected at least {0} thread(s)".format(nbThreads))
-    except Exception, exc:
+    except Exception as exc:
         # the message must be closed
         self.end_msg('no', color=color)
         raise Errors.ConfigurationError(str(exc))

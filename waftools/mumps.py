@@ -77,7 +77,7 @@ def check_mumps_libs(self):
         check = lambda lib: check_mumps(stlib=lib)
     else:
         check = lambda lib: check_mumps(lib=lib)
-    map(check, Utils.to_list(opts.mumps_libs))
+    list(map(check, Utils.to_list(opts.mumps_libs)))
 
 @Configure.conf
 def check_mumps_headers(self):

@@ -144,7 +144,7 @@ class CaptureTask(Task.Task):
     def exec_command(self, cmd, **kw):
         try:
             self.generator.bld.cmd_and_log(cmd, quiet=0, **kw)
-        except Errors.WafError, err:
+        except Errors.WafError as err:
             if hasattr(err, 'stdout'):
                 Logs.warn('stdout: %s' % err.stdout)
                 Logs.warn('stderr: %s' % err.stderr)
