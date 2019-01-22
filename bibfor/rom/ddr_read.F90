@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
     integer :: nb_node = 0, nb_mail = 0
     aster_logical :: l_corr_ef = .false._1
     type(ROM_DS_Empi) :: empi_prim, empi_dual
-    character(len=8)  :: base_prim = ' ', base_dual = ' ', mesh = ' '
+    character(len=8)  :: base_prim = ' ', base_dual = ' ', mesh = ' ', mesh_reuse = ' '
     character(len=16) :: k16bid = ' ', answer, keywf
     character(len=24) :: grelem_rid  = ' ', grnode_int  = ' ', grnode_sub = ' '
     character(len=24) :: list_node, list_mail = ' '
@@ -72,6 +72,10 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
 ! - Output datastructure
 !
     call getres(mesh, k16bid, k16bid)
+    call getvid(' ', 'MAILLAGE', scal = mesh_reuse)
+    if (mesh .ne. mesh_reuse) then
+        call utmess('F', 'ROM5_14')
+    endif
 !
 ! - Get parameters
 !
@@ -95,8 +99,7 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
     ASSERT(nocc .le. 1)
     if (nocc .eq. 1) then
         list_node = '&&OP0050.LIST_NODE'
-        call getnode(mesh   , keywf, 1, ' ', list_node,&
-                     nb_node)
+        call getnode(mesh   , keywf, 1, ' ', list_node, nb_node)
         call jeveuo(list_node, 'L', vi = ds_para%v_rid_mini)
         ds_para%nb_rid_mini = nb_node
     endif
