@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ subroutine op0086()
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
+#include "asterfort/getvid.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
@@ -33,7 +34,7 @@ subroutine op0086()
 #include "asterfort/ssmage.h"
 #include "asterfort/ssrige.h"
 #include "asterfort/utmess.h"
-    character(len=8) :: nomu
+    character(len=8) :: nomu, macrelem_reuse
     character(len=16) :: kbi1, kbi2
 !
 !
@@ -44,6 +45,13 @@ subroutine op0086()
     call infmaj()
 !
     call getres(nomu, kbi1, kbi2)
+
+    call getvid(' ', 'MACR_ELEM', scal = macrelem_reuse, nbret = nocc)
+    if (nocc .ne. 0) then
+        if (nomu .ne. macrelem_reuse) then
+            call utmess('F', 'SOUSTRUC_17')
+        endif
+    endif
 !
 !
 !     --TRAITEMENT DES MOTS CLEFS 'DEFINITION' ET 'EXTERIEUR'
