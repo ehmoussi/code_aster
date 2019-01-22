@@ -81,7 +81,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     integer :: elem_mast_nbnode, elem_mast_nume, elem_mast_dime
     character(len=8) :: elem_mast_code, elem_slav_code
     real(kind=8) :: elem_slav_coorO(27), elem_mast_coorN(27), elem_slav_coorN(27)
-    character(len=19) :: inigeo, newgeo, oldgeo, depgeo
+    character(len=19) :: newgeo
     integer :: jv_geomO, jv_geomN
     integer :: patch_indx
     integer, pointer :: v_mesh_typmail(:) => null()
@@ -93,7 +93,6 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     aster_logical :: l_axis
     real(kind=8) :: inte_weight, gap_moy, pair_tole
     real(kind=8), pointer :: patch_weight_c(:) => null()
-    real(kind=8), pointer :: v_vale(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -126,30 +125,10 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! - Access to geometry
 !
-    inigeo = mesh(1:8)//'.COORDO'
-    depgeo = ds_contact%sdcont_solv(1:14)//'.DEPG'
     newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
-    oldgeo = '&&OLDGEO'
-    call copisd('CHAMP_GD', 'V', newgeo, oldgeo)
-    call jeveuo(oldgeo//'.VALE','E',vr = v_vale)
-    v_vale(:) = 0.d0
-    call mmfield_prep(inigeo, oldgeo,&
-                      l_update_ = ASTER_TRUE, field_update_ = depgeo, alpha_ = 1.d0)
-    !WRITE(6,*) 'Coor. initiales'
-    !call nmdebg('VECT', inigeo, 6)
-    !WRITE(6,*) 'Depl au début du point fixe'
-    !call nmdebg('VECT', depgeo, 6)
-    !WRITE(6,*) 'Coor. courantes'
-    !call nmdebg('VECT', newgeo, 6)
-    !WRITE(6,*) 'Coor. au début du point fixe'
-    !call nmdebg('VECT', oldgeo, 6)
-
-! - Newton gene
+! - For Newton:
     call jeveuo(newgeo(1:19)//'.VALE', 'L', jv_geomO)
     call jeveuo(newgeo(1:19)//'.VALE', 'L', jv_geomN)
-! - Point fixe
-    !call jeveuo(oldgeo(1:19)//'.VALE', 'L', jv_geomO)
-    !call jeveuo(newgeo(1:19)//'.VALE', 'L', jv_geomN)
 !
 ! - Access pairing datastructure
 !
@@ -226,11 +205,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
     do i_patch = 1, nt_patch
         if (patch_weight_c(i_patch) .le. pair_tole) then
-            !WRITE(6,*) 'GAP: ',i_patch,'NON APPARIE'
             v_sdappa_gapi(i_patch) = r8nnem()
         end if
         if (.not.isnan(v_sdappa_gapi(i_patch))) then
-            !WRITE(6,*) 'GAP: ',i_patch,v_sdappa_gapi(i_patch)
             v_sdappa_gapi(i_patch) = v_sdappa_gapi(i_patch)/patch_weight_c(i_patch)
             v_sdappa_coef(i_patch) = patch_weight_c(i_patch)/v_sdappa_wpat(i_patch)
             v_sdappa_poid(i_patch) = patch_weight_c(i_patch)

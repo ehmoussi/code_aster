@@ -19,7 +19,7 @@
 !
 interface
     subroutine gapint(elem_dime     , l_axis          ,&
-                      elem_slav_code, elem_slav_nbnode, elem_slav_coor , elem_slav_coorN,&
+                      elem_slav_code, elem_slav_nbnode, elem_slav_coorO, elem_slav_coorN,&
                       elem_mast_code, elem_mast_nbnode, elem_mast_coorN,&
                       nb_poin_inte  , poin_inte       , poin_gaus_ma  ,&
                       gap_moy       , inte_weight)
@@ -27,7 +27,7 @@ interface
         aster_logical, intent(in) :: l_axis
         character(len=8), intent(in) :: elem_slav_code
         integer, intent(in) :: elem_slav_nbnode
-        real(kind=8), intent(in) :: elem_slav_coor(3,elem_slav_nbnode)
+        real(kind=8), intent(in) :: elem_slav_coorO(3,elem_slav_nbnode)
         real(kind=8), intent(in) :: elem_slav_coorN(3,elem_slav_nbnode)
         character(len=8), intent(in) :: elem_mast_code
         integer, intent(in) :: elem_mast_nbnode
