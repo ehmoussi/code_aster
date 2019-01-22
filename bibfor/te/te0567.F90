@@ -36,8 +36,7 @@ implicit none
 #include "asterfort/mmmtdb.h"
 #include "asterfort/lcmatr.h"
 !
-character(len=16), intent(in) :: nomopt
-character(len=16), intent(in) :: nomte
+character(len=16), intent(in) :: nomopt, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,7 +52,7 @@ character(len=16), intent(in) :: nomte
     integer :: elem_dime
     integer :: jmatt
     real(kind=8) :: lagrc, lagrc_prev
-    integer :: indi_cont, nmcp
+    integer :: indi_cont, nmcp, i_reso_geom
     aster_logical :: l_norm_smooth
     aster_logical :: l_axis, debug, l_upda_jaco
     character(len=8) :: elem_slav_code, elem_mast_code
@@ -67,7 +66,6 @@ character(len=16), intent(in) :: nomte
     real(kind=8) :: mmat(55, 55), mmat_prev(55, 55), mmat_(55,55)
     real(kind=8) :: gap_curr, gap_prev, gapi
     aster_logical :: l_previous
-    real(kind=8) :: alpha
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -81,14 +79,12 @@ character(len=16), intent(in) :: nomte
     elem_mast_coop(1:27) = 0.d0
     elem_slav_coor(1:27) = 0.d0
     elem_slav_coop(1:27) = 0.d0
-    alpha                = 0.7
     debug                = ASTER_FALSE
     ASSERT(nomopt.eq.'RIGI_CONT')
 !
 ! - Get informations about contact element
 !
-    call lcelem(nomte         , elem_dime     ,&
-                l_axis        , &
+    call lcelem(nomte         , elem_dime     , l_axis      ,&
                 nb_dof        , nb_lagr       , indi_lagc   ,&
                 elem_slav_code, elga_fami_slav, nb_node_slav,&
                 elem_mast_code, elga_fami_mast, nb_node_mast)
@@ -101,7 +97,8 @@ character(len=16), intent(in) :: nomte
                 gap_prev  , gap_curr     ,&
                 indi_cont , l_norm_smooth,&
                 gapi, nmcp, nb_poin_inte ,&
-                poin_inte_sl, poin_inte_ma)
+                poin_inte_sl, poin_inte_ma,&
+                i_reso_geom)
 !
 ! - Get initial coordinates
 !
@@ -111,7 +108,8 @@ character(len=16), intent(in) :: nomte
 !
 ! - Compute updated geometry
 !
-    call lcgeog(elem_dime     , nb_lagr       , indi_lagc,&
+    call lcgeog(elem_dime     , i_reso_geom   ,&
+                nb_lagr       , indi_lagc     ,&
                 nb_node_slav  , nb_node_mast  ,&
                 elem_mast_init, elem_slav_init,&
                 elem_mast_coor, elem_slav_coor)
@@ -119,63 +117,17 @@ character(len=16), intent(in) :: nomte
 ! - Compute matrix
 !
     if (indi_cont .eq. 1) then
-        call lcmatr(elem_dime   ,&
-                    l_axis      , l_upda_jaco   , l_norm_smooth ,&
-                    nb_lagr     , indi_lagc     ,&
-                    nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coor,&
-                    nb_node_mast  , elem_mast_code, elem_mast_init, elga_fami_mast,elem_mast_coor,&
-                    nb_poin_inte, poin_inte_sl, poin_inte_ma,&
+        call lcmatr(elem_dime     ,&
+                    l_axis        , l_upda_jaco   , l_norm_smooth ,&
+                    nb_lagr       , indi_lagc     ,&
+                    nb_node_slav  , elem_slav_code, elem_slav_init,&
+                    elga_fami_slav, elem_slav_coor,&
+                    nb_node_mast  , elem_mast_code, elem_mast_init,&
+                    elga_fami_mast, elem_mast_coor,&
+                    nb_poin_inte  , poin_inte_sl  , poin_inte_ma  ,&
                     mmat)
-        if (.false.) then
-            call lclaze(elem_dime, nb_lagr, nb_node_slav, indi_lagc,&
-                        mmat_prev)
-            if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
-                alpha = 1.0-abs(lagrc+100.d0*gap_curr)/&
-                        (abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr))
-            else
-                alpha = 1.0-abs(lagrc+100.d0*gap_curr)
-            endif
-            count_consi = 0
-            50 continue
-            count_consi = count_consi + 1
-            alpha = 0.5*(alpha+1)
-            mmat_ = alpha*mmat+(1-alpha)*mmat_prev
-            if ( norm2(mmat_-mmat) .gt. 1.d-6*norm2(mmat) .and. count_consi .lt. 30 ) goto 50
-            mmat = mmat_
-
-        endif
-
     elseif (indi_cont .eq. 0) then
-        call lclaze(elem_dime, nb_lagr, nb_node_slav, indi_lagc,&
-                    mmat     )
-        if (.false.) then
-            call lcmatr(elem_dime   ,&
-                        l_axis      , l_upda_jaco   , l_norm_smooth ,&
-                        nb_lagr     , indi_lagc     ,&
-                        nb_node_slav, elem_slav_code, elem_slav_init,&
-                        elga_fami_slav, elem_slav_coop,&
-                        nb_node_mast, elem_mast_code, elem_mast_init,&
-                        elga_fami_mast, elem_mast_coop,&
-                        nb_poin_inte, poin_inte_sl, poin_inte_ma,&
-                        mmat_prev)
-            if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
-                alpha = 1.0-abs(lagrc+100.d0*gap_curr)/&
-                        (abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr))
-            else
-                alpha = 1.0-abs(lagrc+100.d0*gap_curr)
-            endif
-
-            count_consi = 0
-            51 continue
-            count_consi = count_consi + 1
-            alpha = 0.5*(alpha+1.0)
-            mmat_ = alpha*mmat+(1-alpha)*mmat_prev
-
-            if ( norm2(mmat_-mmat) .gt. 1.d-6*norm2(mmat) .and. count_consi .lt. 30) goto 51
-            mmat = mmat_
-
-        endif
-
+        call lclaze(elem_dime, nb_lagr, nb_node_slav, indi_lagc, mmat)
     else
 !
     endif

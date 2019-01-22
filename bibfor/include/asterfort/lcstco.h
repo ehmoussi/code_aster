@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,8 @@ interface
                       gap_prev  , gap_curr     ,&
                       indi_cont , l_norm_smooth,&
                       gapi, nmcp, nb_poin_inte ,&
-                      poin_inte_sl, poin_inte_ma)
+                      poin_inte_sl, poin_inte_ma,&
+                      i_reso_geom)
         aster_logical, intent(out) :: l_previous
         real(kind=8), intent(out) :: lagrc_curr
         real(kind=8), intent(out) :: lagrc_prev
@@ -38,5 +39,6 @@ interface
         integer, intent(out) :: nmcp
         integer, intent(out) :: nb_poin_inte
         aster_logical, intent(out) :: l_norm_smooth
+        integer, intent(out) :: i_reso_geom
     end subroutine lcstco
 end interface

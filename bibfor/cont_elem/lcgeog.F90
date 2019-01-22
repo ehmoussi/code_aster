@@ -16,19 +16,21 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcgeog(elem_dime     , nb_lagr       , indi_lagc,&
+subroutine lcgeog(elem_dime     , i_reso_geom   ,&
+                  nb_lagr       , indi_lagc     ,&
                   nb_node_slav  , nb_node_mast  ,&
                   elem_mast_init, elem_slav_init,&
                   elem_mast_coor, elem_slav_coor)
 !
 implicit none
 !
-#include "jeveux.h"
 #include "asterf_types.h"
 #include "asterfort/jevech.h"
 #include "asterfort/mmreac.h"
+#include "Contact_type.h"
 !
-integer, intent(in) :: elem_dime, nb_lagr, indi_lagc(10)
+integer, intent(in) :: elem_dime, i_reso_geom
+integer, intent(in) :: nb_lagr, indi_lagc(10)
 integer, intent(in) :: nb_node_slav, nb_node_mast
 real(kind=8), intent(in) :: elem_slav_init(nb_node_slav, elem_dime)
 real(kind=8), intent(in) :: elem_mast_init(nb_node_mast, elem_dime)
@@ -44,6 +46,7 @@ real(kind=8), intent(inout) :: elem_mast_coor(nb_node_mast, elem_dime)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  elem_dime        : dimension of elements
+! In  i_reso_geom      : algorithm for geometry
 ! In  nb_lagr          : total number of Lagrangian dof on contact element
 ! In  indi_lagc        : PREVIOUS node where Lagrangian dof is present (1) or not (0)
 ! In  nb_node_slav     : number of nodes of for slave side from contact element
@@ -63,9 +66,12 @@ real(kind=8), intent(inout) :: elem_mast_coor(nb_node_mast, elem_dime)
     call jevech('PDEPL_P', 'L', jv_disp_incr)
     call jevech('PDEPL_M', 'L', jv_disp)
 !
-! - Coefficient to update geometry
+! - Coefficient to update gap
 !
-    ppe = 1.d0
+    ppe = 0.d0
+    if (i_reso_geom .eq. ALGO_NEWT) then
+        ppe = 1.d0
+    endif
 !
 ! - Get updated coordinates
 !
