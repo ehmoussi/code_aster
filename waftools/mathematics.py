@@ -268,7 +268,7 @@ def get_mathlib_from_numpy(self):
     self.find_program('ldd')
     ldd_env = {'LD_LIBRARY_PATH': ':'.join(self.env.LIBPATH)}
     cmd = self.env.LDD + [pymodule_path]
-    out = Popen(cmd, stdout=PIPE, env=ldd_env).communicate()[0]
+    out = Popen(cmd, stdout=PIPE, env=ldd_env).communicate()[0].decode()
 
     for line in out.split('\n'):
         lib = _detect_libnames_in_ldd_line(line, LAPACK)

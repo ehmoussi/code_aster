@@ -228,7 +228,7 @@ def _build_testlist(path, filter_expr):
     cmd = ['grep', '-l', filter_expr,
            osp.join(path, 'astest', '*.export')]
     proc = Popen(' '.join(cmd), stdout=PIPE, stderr=PIPE, shell=True)
-    out = proc.communicate()[0]
+    out = proc.communicate()[0].decode()
     tests = [osp.splitext(osp.basename(i))[0] for i in out.split()]
     return os.linesep.join(tests)
 

@@ -54,7 +54,7 @@ def check_prerequisites_package(self, yammdir, minvers):
     if osp.isfile(filename):
         with open(filename, 'rb') as fvers:
             version = fvers.read().strip()
-        ok = version >= minvers
+        ok = version.decode() >= minvers
     else:
         version = "not found"
         ok = False

@@ -106,9 +106,9 @@ def runtest(self):
         Logs.info("`- output in %s" % fname)
         nook = False
         proc = Popen(cmd, stdout=PIPE, bufsize=1)
-        for line in iter(proc.stdout.readline, ''):
+        for line in iter(proc.stdout.readline, b''):
             fobj.write(line)
-            nook = nook or 'NOOK_TEST_RESU' in line
+            nook = nook or 'NOOK_TEST_RESU' in line.decode()
             fobj.flush()
         proc.stdout.close()
         fobj.close()

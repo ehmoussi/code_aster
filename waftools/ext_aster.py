@@ -30,15 +30,15 @@ for lang in ('c', 'cxx', 'fc'):
 
 class fcprogram(fc.fcprogram):
     """Link object files into a fortran program, add optional OPTLIB_FLAGS at the end"""
-    run_str = fc.fcprogram.hcode + ' ${OPTLIB_FLAGS}'
+    run_str = fc.fcprogram.hcode.decode() + ' ${OPTLIB_FLAGS}'
 
 class cprogram(c.cprogram):
     """Link object files into a C program, add optional OPTLIB_FLAGS at the end"""
-    run_str = c.cprogram.hcode + ' ${OPTLIB_FLAGS}'
+    run_str = c.cprogram.hcode.decode() + ' ${OPTLIB_FLAGS}'
 
 class cxxprogram(cxx.cxxprogram):
     """Link object files into a C program, add optional OPTLIB_FLAGS at the end"""
-    run_str = cxx.cxxprogram.hcode + ' ${OPTLIB_FLAGS}'
+    run_str = cxx.cxxprogram.hcode.decode() + ' ${OPTLIB_FLAGS}'
 
 ###############################################################################
 def customize_configure_output():
@@ -79,8 +79,8 @@ def format_error(self):
         bldlog = osp.join(self.generator.bld.path.get_bld().abspath(), '%s.log' % name)
         slog = ''
         try:
-            open(bldlog, 'wb').write('task: %r\nlast command:\n%r\n' % (self, msg))
-        except (OSError, IOError), exc:
+            open(bldlog, 'w').write('task: %r\nlast command:\n%r\n' % (self, msg))
+        except (OSError, IOError) as exc:
             slog = '\ncan not write the log file: %s' % str(exc)
         text = text.splitlines()[0] \
              + '\n    task details in: {0}{1}'.format(bldlog, slog)
