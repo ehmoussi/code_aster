@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Table
+from ..Objects import TableContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -33,7 +33,16 @@ class Compute(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Table()
+        self._result = TableContainer()
+
+    def post_exec(self, keywords):
+        """Update the result
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        self._result.update()
 
 
 CALCUL = Compute.run
