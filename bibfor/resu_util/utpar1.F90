@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,14 +65,6 @@ implicit none
         para_list(ico)='EXCIT#P#K24'
         ico=ico+1
         para_list(ico)='ITER_GLOB#P#I'
-        ico=ico+1
-        para_list(ico)='ITER_LINE#P#I'
-        ico=ico+1
-        para_list(ico)='RESI_GLOB_RELA#P#R'
-        ico=ico+1
-        para_list(ico)='RESI_GLOB_MAXI#P#R'
-        ico=ico+1
-        para_list(ico)='RHO#P#R'
         ico=ico+1
         para_list(ico)='PARM_THETA#P#R'
         ico=ico+1
