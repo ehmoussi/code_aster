@@ -148,17 +148,24 @@ implicit none
 !
 ! - Read parameters (non-linear)
 !
-    call nxlect(result       , model     , ther_crit_i, ther_crit_r, ds_inout,&
-                ds_algopara  , ds_algorom, result_dry , compor     , l_dry   ,&
-                l_line_search)
+    call nxlect(result     , model      ,&
+                ther_crit_i, ther_crit_r,&
+                ds_inout   , ds_algopara,&
+                ds_algorom , &
+                result_dry , compor     ,&
+                mesh       , l_dry)
     itmax      = ther_crit_i(3)
 !
 ! - Initializations
 !
-    call nxinit(model , mate    , cara_elem , compor       , list_load,&
-                para  , nume_dof, l_stat    , l_evol       , l_rom    ,&
-                sddisc, ds_inout, vhydr     , sdobse       , mesh     ,&
-                sdcrit, time    , ds_algorom, l_line_search)
+    call nxinit(mesh         , model   , mate       ,&
+                cara_elem    , compor  , list_load  ,&
+                para         , nume_dof,&
+                sddisc       , ds_inout, sdobse     ,&
+                sdcrit       , time    , ds_algopara,&
+                ds_algorom   , vhydr      ,&
+                l_stat       , l_evol  , l_rom      ,&
+                l_line_search, lnkry)
 !
     if (l_stat) then
         nume_inst=0
@@ -166,9 +173,6 @@ implicit none
         nume_inst=1
     endif
     deltat=-1.d150
-! --- La fonctionnalité Newton-Krylov est-elle active ? 
-    lnkry = ds_algopara%method == 'NEWTON_KRYLOV' 
-
 !
 ! --- CREATION DES OBJETS DE TRAVAIL ET DES STRUCTURES DE DONNEES
     vtemp ='&&NXLECTVAR_____'
@@ -379,16 +383,6 @@ implicit none
 !
     call uttcpu('CPU.OP0186.3', 'DEBUT', ' ')
     call copisd('CHAMP_GD', 'V', vhydrp(1:19), vhydr(1:19))
-!
-    if (niv .eq. 2) then
-        write (ifm,*)
-        write (ifm,*) '**************************************'
-        write (ifm,*) ' THER_NON_LINE: OP00186'
-        write (ifm,*)
-        write (ifm,*) ' T+       :',vtemp
-        write (ifm,*) ' T-       :',vtempp
-        write (ifm,*)
-    endif
 !
 ! ======================================================================
 ! -- PREPARATION DES PARAMETRES ARCHIVES  ------------------------------
