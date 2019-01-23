@@ -34,6 +34,17 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "DataFields/Table.h"
 
+#include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
+#include "LinearAlgebra/ElementaryMatrix.h"
+#include "LinearAlgebra/ElementaryVector.h"
+#include "DataFields/GenericDataField.h"
+#include "DataFields/FieldOnNodes.h"
+#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/FieldOnElements.h"
+#include "Results/MechanicalModeContainer.h"
+#include "Functions/Function.h"
+#include "Functions/Surface.h"
+#include <map>
 
 /**
  * @typedef TableContainerInstance
@@ -45,6 +56,23 @@ class TableContainerInstance : public TableInstance
     JeveuxVectorChar16 _objectName;
     JeveuxVectorChar16 _objectType;
     JeveuxVectorChar24 _dsName;
+    std::vector< JeveuxVectorLong > _vecOfSizes;
+    std::vector< JeveuxVectorLong > _others;
+
+    std::map< std::string, GeneralizedAssemblyMatrixDoublePtr > _mapGAMD;
+    std::map< std::string, ElementaryMatrixDisplacementDoublePtr > _mapEMDD;
+    std::map< std::string, ElementaryMatrixTemperatureDoublePtr > _mapEMTD;
+//     std::map< std::string, VECT_ELEM_DEPL_R > _mapEMTD;
+//     std::map< std::string, VECT_ELEM_TEMP_R > _mapEMTD;
+    std::map< std::string, GenericDataFieldPtr > _mapGDF;
+    std::map< std::string, FieldOnNodesDoublePtr > _mapFOND;
+    std::map< std::string, PCFieldOnMeshDoublePtr > _mapPCFOMD;
+    std::map< std::string, FieldOnElementsDoublePtr > _mapFOED;
+    std::map< std::string, MechanicalModeContainerPtr > _mapMMC;
+    std::map< std::string, TablePtr > _mapT;
+    std::map< std::string, FunctionPtr > _mapF;
+    std::map< std::string, FunctionComplexPtr > _mapFC;
+    std::map< std::string, SurfacePtr > _mapS;
 
   public:
     /**
