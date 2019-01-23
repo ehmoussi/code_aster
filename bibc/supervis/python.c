@@ -65,7 +65,8 @@ int _MAIN_(int argc, char** argv){
     PyImport_AppendInittab("med_aster", initmed_aster);
 #endif
     wchar_t **wargv = PyMem_Malloc(sizeof(wchar_t*)*argc);
-    for (int i=0; i<argc; i++)
+    int i;
+    for (i=0; i<argc; i++)
         wargv[i] = Py_DecodeLocale(argv[i], NULL);
 
     ierr = Py_Main(argc, wargv);
