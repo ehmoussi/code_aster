@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
 !
-subroutine nxinit(model , mate    , cara_elem , compor       , list_load,&
-                  para  , nume_dof, l_stat    , l_evol       , l_rom    ,&
-                  sddisc, ds_inout, vhydr     , sdobse       , mesh     ,&
-                  sdcrit, time    , ds_algorom, l_line_search)
+subroutine nxinit(mesh         , model   , mate       ,&
+                  cara_elem    , compor  , list_load  ,&
+                  para         , nume_dof, &
+                  sddisc       , ds_inout, sdobse     ,&
+                  sdcrit       , time    , ds_algopara,&
+                  ds_algorom   , vhydr   ,&
+                  l_stat       , l_evol  , l_rom      ,&
+                  l_line_search, lnkry)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -43,25 +48,20 @@ implicit none
 #include "asterfort/ntload_chck.h"
 #include "asterfort/romAlgoNLInit.h"
 !
-character(len=24), intent(in) :: model
-character(len=24), intent(in) :: mate
-character(len=24), intent(in) :: cara_elem
-character(len=24), intent(in) :: compor
+character(len=24), intent(in) :: model, mate, cara_elem, compor
 character(len=19), intent(in) :: list_load
 real(kind=8), intent(in) :: para(*)
 character(len=24), intent(out) :: nume_dof
-aster_logical, intent(out) :: l_stat
-aster_logical, intent(out) :: l_evol
-aster_logical, intent(out) :: l_rom
+character(len=8), intent(in) :: mesh
 character(len=19), intent(in) :: sddisc
 type(NL_DS_InOut), intent(inout) :: ds_inout
-character(len=24), intent(in) :: vhydr
 character(len=19), intent(out) :: sdobse
-character(len=8), intent(out) :: mesh
 character(len=19), intent(in) :: sdcrit
 character(len=24), intent(out) :: time
+type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
-aster_logical, intent(in) :: l_line_search
+character(len=24), intent(in) :: vhydr
+aster_logical, intent(out) :: l_stat, l_evol, l_rom, l_line_search, lnkry
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,6 +71,7 @@ aster_logical, intent(in) :: l_line_search
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  mesh             : name of mesh
 ! In  model            : name of model
 ! In  mate             : name of material characteristics (field)
 ! In  cara_elem        : name of elementary characteristics (field)
@@ -78,19 +79,21 @@ aster_logical, intent(in) :: l_line_search
 ! In  list_load        : name of datastructure for list of loads
 ! In  para             : parameters for time
 !                            (1) THETA
-!                            (2) DELTAT
-! In  vhydr            : field for hydration
-! Out sdobse           : datastructure for observation parameters
-! In  sddisc           : datastructure for time discretization
-! In  sdcrit           : name of datastructure to save convergence parameters
-! IO  ds_inout         : datastructure for input/output management
+!                            (2) DELTA
 ! Out nume_dof         : name of numbering object (NUME_DDL)
+! In  sddisc           : datastructure for time discretization
+! IO  ds_inout         : datastructure for input/output management
+! Out sdobse           : datastructure for observation parameters
+! In  sdcrit           : name of datastructure to save convergence parameters
+! Out time             : name of field to save time parameters
+! In  ds_algopara      : datastructure for algorithm parameters
+! IO  ds_algorom       : datastructure for ROM parameters
+! In  vhydr            : field for hydration
 ! Out l_stat           : .true. is stationnary
 ! Out l_evol           : .true. if transient
-! Out mesh             : name of mesh
-! Out time             : name of field to save time parameters
-! IO  ds_algorom       : datastructure for ROM parameters
-! In  l_line_search    : .true. if line search
+! Out l_rom            : .true. if ROM
+! Out l_line_search    : .true. if line search
+! Out lnkry            : .true. if Newton-Krylov solver
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -99,12 +102,16 @@ aster_logical, intent(in) :: l_line_search
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    l_stat = .false._1
-    l_evol = .false._1
-    l_rom  = ds_algorom%l_rom
+    l_stat = ASTER_FALSE
+    l_evol = ASTER_FALSE
     result = ds_inout%result
     time   = result(1:8)//'.CHTPS'
-    call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
+!
+! - Active functionnalities
+!
+    l_rom         = ds_algorom%l_rom
+    lnkry         = ds_algopara%method == 'NEWTON_KRYLOV'
+    l_line_search = ds_algopara%line_search%iter_maxi .gt. 0
 !
 ! - Create numbering
 !

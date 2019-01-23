@@ -17,9 +17,12 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nxlect(result       , model     , ther_crit_i, ther_crit_r, ds_inout,&
-                  ds_algopara  , ds_algorom, result_dry , compor     , l_dry   ,&
-                  l_line_search)
+subroutine nxlect(result     , model      ,&
+                  ther_crit_i, ther_crit_r,&
+                  ds_inout   , ds_algopara,&
+                  ds_algorom ,&
+                  result_dry , compor     ,&
+                  mesh       , l_dry)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -31,6 +34,7 @@ implicit none
 #include "asterfort/nxdocc.h"
 #include "asterfort/nxdocn.h"
 #include "asterfort/nxdomt.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/nonlinDSInOutRead.h"
 !
 character(len=8), intent(in) :: result
@@ -42,8 +46,8 @@ type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 character(len=8), intent(out) :: result_dry
 character(len=24), intent(out) :: compor
+character(len=8), intent(out) :: mesh
 aster_logical, intent(out) :: l_dry
-aster_logical, intent(out) :: l_line_search
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,13 +66,15 @@ aster_logical, intent(out) :: l_line_search
 ! IO  ds_algorom       : datastructure for ROM parameters
 ! Out result_dry       : name of datastructure for results (drying)
 ! Out compor           : name of <CARTE> COMPOR
+! Out mesh             : name of mesh
 ! Out l_dry            : .true. if drying (concrete)
-! Out l_line_search    : .true. if line search
 !
 ! --------------------------------------------------------------------------------------------------
 !
     result_dry = ' '
     compor     = ' '
+    mesh       = ' '
+    call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
 !
 ! - Create comportment <CARTE>
 !
@@ -89,9 +95,5 @@ aster_logical, intent(out) :: l_line_search
 ! - Read parameters for input/output management
 !
     call nonlinDSInOutRead('THER', result, ds_inout)
-!
-! - Line search
-!
-    l_line_search = ds_algopara%line_search%iter_maxi .gt. 0
 !
 end subroutine
