@@ -95,7 +95,7 @@ implicit none
     character(len=24) :: tpscvt
     character(len=76) :: fmt2, fmt3, fmt4
     character(len=85) :: fmt1
-    real(kind=8), pointer :: crtr(:) => null()
+    real(kind=8), pointer :: v_crit_crtr(:) => null()
     real(kind=8), pointer :: tempm(:) => null()
 !
     type(NL_DS_InOut)     :: ds_inout
@@ -384,12 +384,8 @@ implicit none
 ! -- PREPARATION DES PARAMETRES ARCHIVES  ------------------------------
 ! ======================================================================
     if (conver) then
-        call jeveuo(sdcrit(1:19)//'.CRTR', 'E', vr=crtr)
-        crtr(1) = iterat
-        crtr(2) = iterho
-        crtr(3) = resi_rela
-        crtr(4) = resi_maxi
-        crtr(5) = rho
+        call jeveuo(sdcrit(1:19)//'.CRTR', 'E', vr=v_crit_crtr)
+        v_crit_crtr(1) = iterat
     endif
 !
     finpas = didern(sddisc, nume_inst)
