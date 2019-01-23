@@ -22,17 +22,30 @@
  */
 
 #include "DataFields/TableContainer.h"
+#include <iostream>
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 bool TableContainerInstance::update()
 {
     _parameterDescription->updateValuePointer();
-    const int size = _parameterDescription->size();
+    const int size = _parameterDescription->size() / 4;
 
-//     for( int i = 0; i < size; ++i )
-//     {
-//         std::cout << "Desc " << (*_parameterDescription)[i] << std::endl;
-//     }
+    for( int i = 0; i < size; ++i )
+    {
+        const auto test = (*_parameterDescription)[ i*4 ].toString();
+        const auto name = (*_parameterDescription)[ i*4 + 2 ].toString();
+        const auto name2 = (*_parameterDescription)[ i*4 + 3 ].toString();
+        std::cout << "Desc " << test << " " << name << std::endl;
+        if( test == "NOM_OBJET" )
+            _objectName = JeveuxVectorChar16( name );
+        else if( test == "TYPE_OBJET" )
+            _objectType = JeveuxVectorChar16( name );
+        else if( test == "NOM_SD" )
+            _dsName = JeveuxVectorChar24( name );
+        else
+            _others.push_back( JeveuxVectorLong( name ) );
+        _vecOfSizes.push_back( JeveuxVectorLong( name2 ) );
+    }
     return true;
 };
