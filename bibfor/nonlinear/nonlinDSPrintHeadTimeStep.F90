@@ -16,61 +16,52 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
-!
-subroutine PrepareTableLine(table, col_sep, table_line)
+!    
+subroutine nonlinDSPrintHeadTimeStep(sddisc, nume_inst, ds_print)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/utmess.h"
+#include "asterfort/nmimpt.h"
+#include "asterfort/nmimpx.h"
 !
-type(NL_DS_Table), intent(in) :: table
-character(len=1), intent(in) :: col_sep
-character(len=512), intent(out) :: table_line
-!
-! --------------------------------------------------------------------------------------------------
-!
-! MECA_NON_LINE - Table management
-!
-! Prepare line of table with empty cols
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: nume_inst
+type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  table            : datastructure for table
-! In  col_sep          : separator between columns
-! Out table_line       : line of the table
+! MECA_NON_LINE - Print management
+!
+! Initializations for new step time
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_col, nb_cols, width, total_width, line_width
+! In  sddisc           : name of datastructure for time discretization
+! In  nume_inst        : index of current time step
+! IO  ds_print         : datastructure for printing parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    table_line = ' '
+    aster_logical :: l_print
 !
-! - Get parameters
+! --------------------------------------------------------------------------------------------------
 !
-    nb_cols         = table%nb_cols
-    line_width      = table%width
-    ASSERT(line_width .le. 512)
-    ASSERT(nb_cols .le. table%nb_cols_maxi)
+    l_print = mod(nume_inst+1,ds_print%reac_print) .eq. 0
+    ds_print%l_print = l_print
 !
-! - Prepare line
+! - Print separator line
 !
-    table_line(1:1) = col_sep
-    total_width     = 1
-    do i_col = 1, nb_cols
-        if (table%l_cols_acti(i_col)) then
-            width       = 16
-            total_width = total_width + width + 1
-            ASSERT(total_width + width + 1 .le. 512)
-            table_line(total_width:total_width) = col_sep
-        endif
-    end do
+    if (l_print) then
+        call nmimpx(ds_print)
+    endif
 !
-    ASSERT(total_width.eq.line_width)
+! - Print head of convergence table
+!
+    if (l_print) then
+        call nmimpt(nume_inst, sddisc, ds_print)
+    endif
 !
 end subroutine

@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinDSPrintCreate(phenom, ds_print)
+    subroutine nonlinDSPrintInitTimeStep(ds_print)
         use NonLin_Datastructure_type
-        character(len=4), intent(in) :: phenom
-        type(NL_DS_Print), intent(out) :: ds_print
-    end subroutine nonlinDSPrintCreate
+        type(NL_DS_Print), intent(inout) :: ds_print
+    end subroutine nonlinDSPrintInitTimeStep
 end interface
