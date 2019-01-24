@@ -3,7 +3,7 @@
  * @brief Interface python de ElementaryVector
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -53,4 +53,31 @@ void exportElementaryVectorToPython() {
 #endif /* _USE_MPI */
         .def( "setListOfLoads", &ElementaryVectorInstance::setListOfLoads )
         .def( "update", &ElementaryVectorInstance::update );
+
+    class_< ElementaryVectorDisplacementDoubleInstance,
+            ElementaryVectorDisplacementDoublePtr, bases< ElementaryVectorInstance > >
+            ( "ElementaryVectorDisplacementDouble", no_init )
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ElementaryVectorDisplacementDoubleInstance > ) )
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ElementaryVectorDisplacementDoubleInstance,
+                                                std::string >));
+
+    class_< ElementaryVectorTemperatureDoubleInstance,
+            ElementaryVectorTemperatureDoublePtr, bases< ElementaryVectorInstance > >
+            ( "ElementaryVectorTemperatureDouble", no_init )
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ElementaryVectorTemperatureDoubleInstance > ) )
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ElementaryVectorTemperatureDoubleInstance,
+                                                std::string >));
+
+    class_< ElementaryVectorPressureComplexInstance,
+            ElementaryVectorPressureComplexPtr, bases< ElementaryVectorInstance > >
+            ( "ElementaryVectorPressureComplex", no_init )
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ElementaryVectorPressureComplexInstance > ) )
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ElementaryVectorPressureComplexInstance,
+                                                std::string >));
 };
