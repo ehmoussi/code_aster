@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ElementaryVector
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,6 +35,7 @@
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
 #include "DataFields/ElementaryResult.h"
+#include "Loads/PhysicalQuantity.h"
 
 /**
  * @class ElementaryVectorInstance
@@ -72,8 +73,10 @@ class ElementaryVectorInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    ElementaryVectorInstance( const std::string name, const JeveuxMemory memType = Permanent )
-        : DataStructure( name, 19, "VECT_ELEM", memType ),
+    ElementaryVectorInstance( const std::string name,
+                              const JeveuxMemory memType = Permanent,
+                              const std::string type = "VECT_ELEM" )
+        : DataStructure( name, 19, type, memType ),
           _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
           _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ), _isEmpty( true ),
           _listOfLoads( new ListOfLoadsInstance( memType ) ),
@@ -191,5 +194,72 @@ class ElementaryVectorInstance : public DataStructure {
  * @brief Pointeur intelligent vers un ElementaryVectorInstance
  */
 typedef boost::shared_ptr< ElementaryVectorInstance > ElementaryVectorPtr;
+
+/**
+ * @class TemplateElementaryVectorInstance
+ * @brief Classe definissant une sd_vect_elem template
+ * @author Nicolas Sellenet
+ */
+template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
+class TemplateElementaryVectorInstance: public ElementaryVectorInstance
+{
+  private:
+
+  public:
+    /**
+     * @typedef TemplateElementaryVectorPtr
+     * @brief Pointeur intelligent vers un TemplateElementaryVector
+     */
+    typedef boost::shared_ptr< TemplateElementaryVectorInstance< ValueType, PhysicalQuantity > >
+        TemplateElementaryVectorPtr;
+
+    /**
+     * @brief Constructor with a name
+     */
+    TemplateElementaryVectorInstance( const std::string name,
+                                      const JeveuxMemory memType = Permanent ):
+        ElementaryVectorInstance( name, memType,
+            "VECT_ELEM_" + std::string( PhysicalQuantityNames[PhysicalQuantity] ) +
+            ( typeid( ValueType ) == typeid(double)? "_R" : "_C" ) )
+    {};
+
+    /**
+     * @brief Constructor
+     */
+    TemplateElementaryVectorInstance( const JeveuxMemory memType = Permanent ):
+        TemplateElementaryVectorInstance( ResultNaming::getNewResultName(), memType )
+    {};
+
+    /**
+     * @brief Destructeur
+     */
+    ~TemplateElementaryVectorInstance() {
+#ifdef __DEBUG_GC__
+        std::cout << "TemplateElementaryVectorInstance.destr: " << this->getName() << std::endl;
+#endif
+    };
+};
+
+/** @typedef Definition d'une matrice élémentaire de double */
+template class TemplateElementaryVectorInstance< double, Displacement >;
+typedef TemplateElementaryVectorInstance< double,
+                                          Displacement > ElementaryVectorDisplacementDoubleInstance;
+
+/** @typedef Definition d'une matrice élémentaire de double temperature */
+template class TemplateElementaryVectorInstance< double, Temperature >;
+typedef TemplateElementaryVectorInstance< double,
+                                          Temperature > ElementaryVectorTemperatureDoubleInstance;
+
+/** @typedef Definition d'une matrice élémentaire de DoubleComplex pression */
+template class TemplateElementaryVectorInstance< DoubleComplex, Pressure >;
+typedef TemplateElementaryVectorInstance< DoubleComplex,
+                                          Pressure > ElementaryVectorPressureComplexInstance;
+
+typedef boost::shared_ptr< ElementaryVectorDisplacementDoubleInstance >
+    ElementaryVectorDisplacementDoublePtr;
+typedef boost::shared_ptr< ElementaryVectorTemperatureDoubleInstance >
+    ElementaryVectorTemperatureDoublePtr;
+typedef boost::shared_ptr< ElementaryVectorPressureComplexInstance >
+    ElementaryVectorPressureComplexPtr;
 
 #endif /* ELEMENTARYVECTOR_H_ */
