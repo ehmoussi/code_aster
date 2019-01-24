@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,7 +19,9 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import ElementaryVector
+from ..Objects import (ElementaryVectorDisplacementDouble,
+                       ElementaryVectorTemperatureDouble,
+                       ElementaryVectorPressureComplex)
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -34,10 +36,9 @@ class ComputeElementaryVector(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = ElementaryVector()
-        if keywords['OPTION'] == "CHAR_MECA": self._result.setType('VECT_ELEM_DEPL_R')
-        elif keywords['OPTION'] == "CHAR_THER": self._result.setType('VECT_ELEM_TEMP_R')
-        elif keywords['OPTION'] == "CHAR_ACOU": self._result.setType('VECT_ELEM_PRES_C')
+        if keywords['OPTION'] == "CHAR_MECA": self._result = ElementaryVectorDisplacementDouble()
+        elif keywords['OPTION'] == "CHAR_THER": self._result = ElementaryVectorTemperatureDouble()
+        elif keywords['OPTION'] == "CHAR_ACOU": self._result = ElementaryVectorPressureComplex()
         else: raise NotImplementedError("Must be implemented")
 
     def post_exec(self, keywords):
