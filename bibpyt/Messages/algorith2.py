@@ -42,8 +42,6 @@ Erreur utilisateur dans la commande CREA_RESU / AFFE :
  Le repère utilisateur défini par VECT_X et VECT_Y ne peut être utilisé qu'en 3D.
 """),
 
-    5 : _(u"""La commande est ré-entrante mais n'utilise pas le bon résultat dans le mot-clef RESULTAT."""),
-
     6 : _(u"""
  il faut définir NOM_CMP
 """),
@@ -183,10 +181,10 @@ Risques & conseils :
 """),
 
     51 : _(u"""
- Commande CREA_RESU   
+ Commande CREA_RESU
  La numérotation fournie avec les mots clés MATR_RIGI ou MATR_MASS est différente de celle des champs
- fournis sous le mot clé AFFE. 
- 
+ fournis sous le mot clé AFFE.
+
  Risques & conseils :
  Les champs ont pu être créés par la commande CREA_CHAMP sans préciser la numérotation (mot clé NUME_DDL absent)
 """),

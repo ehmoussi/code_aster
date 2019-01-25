@@ -126,7 +126,7 @@ implicit none
     call getvid(' ', 'RESULTAT', scal = result_reuse, nbret = nocc)
     if (nocc .ne. 0) then
         if (result .ne. result_reuse) then
-            call utmess('F', 'MECASTATIQUE_2')
+            call utmess('F', 'SUPERVIS2_79', sk='RESULTAT')
         endif
     endif
 !

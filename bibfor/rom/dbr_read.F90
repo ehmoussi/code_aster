@@ -74,7 +74,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
     if (l_reuse) then
         call getvid(' ', 'BASE', scal = result_reuse)
         if (result_out .ne. result_reuse) then
-            call utmess('F', 'ROM5_21')
+            call utmess('F', 'SUPERVIS2_79', sk='BASE')
         endif
     endif
 !

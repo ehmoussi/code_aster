@@ -29,8 +29,6 @@ cata_msg = {
             COMPORTEMENT/RELATION='MULTIFIBRE'
 """),
 
-    2: _(u"""La commande est ré-entrante mais n'utilise pas le bon résultat dans le mot-clef RESULTAT."""),
-
     25 : _(u"""
  Le chargement contient plus d'une charge répartie.
  Le calcul n'est pas possible pour les modèles de poutre.

@@ -49,7 +49,7 @@ subroutine op0086()
     call getvid(' ', 'MACR_ELEM', scal = macrelem_reuse, nbret = nocc)
     if (nocc .ne. 0) then
         if (nomu .ne. macrelem_reuse) then
-            call utmess('F', 'SOUSTRUC_17')
+            call utmess('F', 'SUPERVIS2_79', sk='MACR_ELEM')
         endif
     endif
 !
