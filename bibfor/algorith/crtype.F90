@@ -131,7 +131,7 @@ subroutine crtype()
         call getvid(' ', 'RESULTAT', scal = resu_reuse, nbret = nocc)
         if (nocc .ne. 0) then
             if (resu .ne. resu_reuse) then
-                call utmess('F', 'ALGORITH2_5')
+                call utmess('F', 'SUPERVIS2_79', sk='RESULTAT')
             endif
         endif
     endif

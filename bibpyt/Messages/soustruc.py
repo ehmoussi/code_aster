@@ -95,8 +95,6 @@ cata_msg = {
  utiliser OPERATION = SOUS_STRUC
 """),
 
-    17: _(u"""La commande est ré-entrante mais n'utilise pas le bon macro-élément dans le mot-clef MACR_ELEM."""),
-
     20: _(u"""
  vecteur nul pour l'orientation
 """),
