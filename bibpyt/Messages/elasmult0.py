@@ -22,6 +22,4 @@ cata_msg = {
 On ne peut avoir à la fois NOM_CAS et MODE_FOURIER.
 """),
 
-    2: _(u"""La commande est ré-entrante mais n'utilise pas le bon résultat dans le mot-clef RESULTAT."""),
-
 }
