@@ -33,6 +33,25 @@ void exportTableContainerToPython() {
 
     class_< TableContainerInstance, TableContainerInstance::TableContainerPtr,
             bases< TableInstance > >( "TableContainer", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance, std::string >));
+        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance >) )
+        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance, std::string >) )
+        .def( "getElementaryMatrixDisplacementDouble",
+              &TableContainerInstance::getElementaryMatrixDisplacementDouble )
+        .def( "getElementaryMatrixTemperatureDouble",
+              &TableContainerInstance::getElementaryMatrixTemperatureDouble )
+        .def( "getElementaryVectorDisplacementDouble",
+              &TableContainerInstance::getElementaryVectorDisplacementDouble )
+        .def( "getElementaryVectorTemperatureDouble",
+              &TableContainerInstance::getElementaryVectorTemperatureDouble )
+        .def( "getFieldOnElementsDouble", &TableContainerInstance::getFieldOnElementsDouble )
+        .def( "getFieldOnNodesDouble", &TableContainerInstance::getFieldOnNodesDouble )
+        .def( "getFunction", &TableContainerInstance::getFunction )
+        .def( "getFunctionComplex", &TableContainerInstance::getFunctionComplex )
+        .def( "getGeneralizedAssemblyMatrix",
+              &TableContainerInstance::getGeneralizedAssemblyMatrix )
+        .def( "getGenericDataField", &TableContainerInstance::getGenericDataField )
+        .def( "getMechanicalModeContainer", &TableContainerInstance::getMechanicalModeContainer )
+        .def( "getPCFieldOnMeshDouble", &TableContainerInstance::getPCFieldOnMeshDouble )
+        .def( "getSurface", &TableContainerInstance::getSurface )
+        .def( "getTable", &TableContainerInstance::getTable );
 };
