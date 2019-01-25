@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MechanicalModeContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -59,21 +59,15 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
      * @brief Constructeur
      */
     MechanicalModeContainerInstance():
-        FullResultsContainerInstance( "MODE_MECA" ),
-        _structureInterface( StructureInterfacePtr() ),
-        _rigidityDispDMatrix( nullptr ),
-        _rigidityDispCMatrix( nullptr ),
-        _rigidityTempDMatrix( nullptr ),
-        _rigidityPressDMatrix( nullptr ),
-        _rigidityGDMatrix( nullptr ),
-        _rigidityGCMatrix( nullptr )
+        MechanicalModeContainerInstance( ResultNaming::getNewResultName(), "MODE_MECA" )
     {};
 
     /**
      * @brief Constructeur
      */
-    MechanicalModeContainerInstance( const std::string &name ):
-        FullResultsContainerInstance( name, "MODE_MECA" ),
+    MechanicalModeContainerInstance( const std::string &name,
+                                     const std::string type = "MODE_MECA" ):
+        FullResultsContainerInstance( name, type ),
         _structureInterface( StructureInterfacePtr() ),
         _rigidityDispDMatrix( nullptr ),
         _rigidityDispCMatrix( nullptr ),

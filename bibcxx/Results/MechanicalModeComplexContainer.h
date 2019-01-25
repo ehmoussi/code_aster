@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MechanicalModeComplexContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,7 +26,7 @@
 
 #include "astercxx.h"
 
-#include "Results/FullResultsContainer.h"
+#include "Results/MechanicalModeContainer.h"
 #include "LinearAlgebra/StructureInterface.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
@@ -38,7 +38,7 @@
    un résultat disposant, en plus des membres usuels d'un résultat, de champs aux noeuds complexes.
  * @author Natacha Béreux
  */
-class MechanicalModeComplexContainerInstance : public FullResultsContainerInstance {
+class MechanicalModeComplexContainerInstance : public MechanicalModeContainerInstance {
   private:
     typedef std::vector< FieldOnNodesComplexPtr > VectorOfComplexFieldsNodes;
 
@@ -72,21 +72,14 @@ class MechanicalModeComplexContainerInstance : public FullResultsContainerInstan
      * @brief Constructeur
      */
     MechanicalModeComplexContainerInstance():
-        FullResultsContainerInstance( "MODE_MECA_C" ),
-        _structureInterface( StructureInterfacePtr() ),
-        _dampingMatrix( nullptr ),
-        _rigidityDispDMatrix( nullptr ),
-        _rigidityDispCMatrix( nullptr ),
-        _rigidityTempDMatrix( nullptr ),
-        _rigidityPressDMatrix( nullptr ),
-        _rigidityGDMatrix( nullptr ),
-        _rigidityGCMatrix( nullptr )
+        MechanicalModeComplexContainerInstance( ResultNaming::getNewResultName() )
     {};
+
     /**
      * @brief Constructeur
      */
     MechanicalModeComplexContainerInstance( const std::string &name ):
-        FullResultsContainerInstance( name, "MODE_MECA_C" ),
+       MechanicalModeContainerInstance ( name, "MODE_MECA_C" ),
         _structureInterface( StructureInterfacePtr() ),
         _dampingMatrix( nullptr ),
         _rigidityDispDMatrix( nullptr ),

@@ -3,7 +3,7 @@
  * @brief Interface python de MechanicalModeContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -69,7 +69,7 @@ void exportMechanicalModeComplexContainerToPython() {
         &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
 
     class_< MechanicalModeComplexContainerInstance, MechanicalModeComplexContainerPtr,
-            bases< FullResultsContainerInstance > >( "MechanicalModeComplexContainer", no_init )
+            bases< MechanicalModeContainerInstance > >( "MechanicalModeComplexContainer", no_init )
         .def( "__init__",
               make_constructor(&initFactoryPtr< MechanicalModeComplexContainerInstance >))
         .def( "__init__",
