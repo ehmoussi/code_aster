@@ -97,90 +97,177 @@ class TableContainerInstance : public TableInstance
     {};
 
     /**
+     * @brief Add ElementaryMatrixDisplacementDouble to TableContainer
+     * @param name key used to find object
+     */
+    void addObject
+        ( const std::string& name, ElementaryMatrixDisplacementDoublePtr );
+
+    /**
+     * @brief Add ElementaryMatrixTemperatureDouble to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, ElementaryMatrixTemperatureDoublePtr );
+
+    /**
+     * @brief Add ElementaryVectorDisplacementDouble to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, ElementaryVectorDisplacementDoublePtr );
+
+    /**
+     * @brief Add ElementaryVectorTemperatureDouble to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, ElementaryVectorTemperatureDoublePtr );
+
+    /**
+     * @brief Add FieldOnElementsDouble to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, FieldOnElementsDoublePtr );
+
+    /**
+     * @brief Add FieldOnNodesDouble to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, FieldOnNodesDoublePtr );
+
+    /**
+     * @brief Add Function to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, FunctionPtr );
+
+    /**
+     * @brief Add FunctionComplex to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, FunctionComplexPtr );
+
+    /**
+     * @brief Add generalized assembly matrix to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, GeneralizedAssemblyMatrixDoublePtr );
+
+    /**
+     * @brief Add GenericDataField to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, GenericDataFieldPtr );
+
+    /**
+     * @brief Add MechanicalModeContainer to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, MechanicalModeContainerPtr );
+
+    /**
+     * @brief Add PCFieldOnMeshDouble to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, PCFieldOnMeshDoublePtr );
+
+    /**
+     * @brief Add Surface to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, SurfacePtr );
+
+    /**
+     * @brief Add Table to TableContainer
+     * @param name key used to find object
+     */
+    void addObject( const std::string&, TablePtr );
+
+    /**
      * @brief Get ElementaryMatrixDisplacementDouble stored in TableContainer
      * @param name key used to find object
      */
     ElementaryMatrixDisplacementDoublePtr getElementaryMatrixDisplacementDouble
-        ( const std::string& name );
+        ( const std::string& name ) const;
 
     /**
      * @brief Get ElementaryMatrixTemperatureDouble stored in TableContainer
      * @param name key used to find object
      */
-    ElementaryMatrixTemperatureDoublePtr getElementaryMatrixTemperatureDouble( const std::string& );
+    ElementaryMatrixTemperatureDoublePtr getElementaryMatrixTemperatureDouble
+        ( const std::string& ) const;
 
     /**
      * @brief Get ElementaryVectorDisplacementDouble stored in TableContainer
      * @param name key used to find object
      */
     ElementaryVectorDisplacementDoublePtr getElementaryVectorDisplacementDouble
-        ( const std::string& );
+        ( const std::string& ) const;
 
     /**
      * @brief Get ElementaryVectorTemperatureDouble stored in TableContainer
      * @param name key used to find object
      */
-    ElementaryVectorTemperatureDoublePtr getElementaryVectorTemperatureDouble( const std::string& );
+    ElementaryVectorTemperatureDoublePtr getElementaryVectorTemperatureDouble
+        ( const std::string& ) const;
 
     /**
      * @brief Get FieldOnElementsDouble stored in TableContainer
      * @param name key used to find object
      */
-    FieldOnElementsDoublePtr getFieldOnElementsDouble( const std::string& );
+    FieldOnElementsDoublePtr getFieldOnElementsDouble( const std::string& ) const;
 
     /**
      * @brief Get FieldOnNodesDouble stored in TableContainer
      * @param name key used to find object
      */
-    FieldOnNodesDoublePtr getFieldOnNodesDouble( const std::string& );
+    FieldOnNodesDoublePtr getFieldOnNodesDouble( const std::string& ) const;
 
     /**
      * @brief Get Function stored in TableContainer
      * @param name key used to find object
      */
-    FunctionPtr getFunction( const std::string& );
+    FunctionPtr getFunction( const std::string& ) const;
 
     /**
      * @brief Get FunctionComplex stored in TableContainer
      * @param name key used to find object
      */
-    FunctionComplexPtr getFunctionComplex( const std::string& );
+    FunctionComplexPtr getFunctionComplex( const std::string& ) const;
 
     /**
      * @brief Get generalized assembly matrix stored in TableContainer
      * @param name key used to find object
      */
-    GeneralizedAssemblyMatrixDoublePtr getGeneralizedAssemblyMatrix( const std::string& );
+    GeneralizedAssemblyMatrixDoublePtr getGeneralizedAssemblyMatrix( const std::string& ) const;
 
     /**
      * @brief Get GenericDataField stored in TableContainer
      * @param name key used to find object
      */
-    GenericDataFieldPtr getGenericDataField( const std::string& );
+    GenericDataFieldPtr getGenericDataField( const std::string& ) const;
 
     /**
      * @brief Get MechanicalModeContainer stored in TableContainer
      * @param name key used to find object
      */
-    MechanicalModeContainerPtr getMechanicalModeContainer( const std::string& );
+    MechanicalModeContainerPtr getMechanicalModeContainer( const std::string& ) const;
 
     /**
      * @brief Get PCFieldOnMeshDouble stored in TableContainer
      * @param name key used to find object
      */
-    PCFieldOnMeshDoublePtr getPCFieldOnMeshDouble( const std::string& );
+    PCFieldOnMeshDoublePtr getPCFieldOnMeshDouble( const std::string& ) const;
 
     /**
      * @brief Get Surface stored in TableContainer
      * @param name key used to find object
      */
-    SurfacePtr getSurface( const std::string& );
+    SurfacePtr getSurface( const std::string& ) const;
 
     /**
      * @brief Get Table stored in TableContainer
      * @param name key used to find object
      */
-    TablePtr getTable( const std::string& );
+    TablePtr getTable( const std::string& ) const;
 
     /**
      * @brief Update the table
