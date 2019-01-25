@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ subroutine cremnl(reprise, baseno, numrep, nbordr0, nbordr,&
 #include "asterfort/as_allocate.h"
 
     aster_logical :: reprise, suite
-    character(len=4) :: nomsym(1)
+    character(len=4) :: nomsym(1), kordr
     character(len=8) :: nomres, nomrep, baseno, k8b, nomtab, modrep
     character(len=8) :: typpar(12), typpat(11), vk8
     character(len=14) :: parcho
@@ -161,6 +161,10 @@ subroutine cremnl(reprise, baseno, numrep, nbordr0, nbordr,&
 !
 !     BOUCLE SUR LES NUMEROS D ORDRE    
     do 100 iordr = 1, nbordr
+!   Conversion du numéro d'ordre en chaine de caractère
+    ASSERT( nbordr <=9999 ) 
+    write (kordr,'(I4.4)') iordr 
+    
 !-- ATTRIBUTION D UN NOM DE CONCEPT
         call gcncon('_', nomrep)
 !
@@ -258,7 +262,7 @@ subroutine cremnl(reprise, baseno, numrep, nbordr0, nbordr,&
         valr(2) = energ
         valk(1) = nomrep
         valk(2) = 'MODE_MECA'
-        valk(3) = 'COEF_FOURIER'
+        valk(3) = 'FOURIER'//"_"//kordr
         if (reprise) then
             valk(4) = vk8
         else
