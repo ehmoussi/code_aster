@@ -74,7 +74,7 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
     call getres(mesh, k16bid, k16bid)
     call getvid(' ', 'MAILLAGE', scal = mesh_reuse)
     if (mesh .ne. mesh_reuse) then
-        call utmess('F', 'ROM5_14')
+        call utmess('F', 'SUPERVIS2_79', sk='MAILLAGE')
     endif
 !
 ! - Get parameters
