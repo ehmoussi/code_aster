@@ -65,7 +65,7 @@ class TableInstance : public DataStructure {
      * @param name Nom Jeveux du champ aux noeuds
      */
     TableInstance( const std::string &name, const std::string type = "TABLE" )
-        : DataStructure( name, 19, "TABLE" ),
+        : DataStructure( name, 19, type ),
           _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
           _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
           _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) ){
