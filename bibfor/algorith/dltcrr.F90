@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -102,8 +102,8 @@ subroutine dltcrr(result, neq, nbordr, iarchi, texte,&
                     dep0, vit0, acc0, fexte(neq+1), famor( neq+1),&
                     fliai(neq+1))
 !
-        call utmess('I', 'DYNAMIQUE_89', ni=2, vali=[0, 0],&
-                                               nr=2, valr=[t0, t0])
+        call utmess('I', 'PROGRESS_1', ni=2, vali=[0, 0],&
+                                       nr=2, valr=[t0, t0])
 
 !
         iarchi = 0
