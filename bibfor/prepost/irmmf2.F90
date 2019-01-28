@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,50 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
                   nomgen, nbec, nomast, prefix, typgeo,&
                   nomtyp, nmatyp, nufaen, nufacr, nogrfa,&
-                  nofaex, tabaux, infmed, nivinf, ifm)
-! person_in_charge: nicolas.sellenet at edf.fr
-!-----------------------------------------------------------------------
+                  nofaex, tabaux, infmed, ifm)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "MeshTypes_type.h"
+#include "jeveux.h"
+#include "asterfort/as_mfacre.h"
+#include "asterfort/as_mmhfnw.h"
+#include "asterfort/desgfa.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/mdnofa.h"
+#include "asterfort/nomgfa.h"
+#include "asterfort/setgfa.h"
+#include "asterfort/utmess.h"
+!
+integer :: fid
+integer :: typgeo(*), nmatyp(*)
+integer :: typent, nbrent, nbgrou
+integer :: nbec
+integer :: nufaen(nbrent), nufacr(nbrent), tabaux(*)
+integer :: infmed
+integer :: ifm
+character(len=6) :: prefix
+character(len=8) :: nomast
+character(len=24) :: nomgen(*)
+character(len=8) :: nomtyp(*)
+character(len=*) :: nofaex(*)
+character(len=80) :: nogrfa(nbgrou)
+character(len=*) :: nomamd
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ECRITURE DU MAILLAGE - FORMAT MED - LES FAMILLES - 2
-!        -  -     -                 -         -          -
-!-----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     L'ENSEMBLE DES FAMILLES EST L'INTERSECTION DE L'ENSEMBLE
 !     DES GROUPES : UN NOEUD/MAILLE APPARAIT AU PLUS DANS 1 FAMILLE
 !     TABLE  NUMEROS DES FAMILLES POUR LES NOEUDS  <-> TABLE  DES COO
@@ -57,55 +91,10 @@ subroutine irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
 !   INFMED : NIVEAU DES INFORMATIONS SPECIFIQUES A MED A IMPRIMER
 !   NIVINF : NIVEAU DES INFORMATIONS GENERALES
 !   IFM    : UNITE LOGIQUE DU FICHIER DE MESSAGE
-!-----------------------------------------------------------------------
 !
-    implicit none
+! --------------------------------------------------------------------------------------------------
 !
-! 0.1. ==> ARGUMENTS
-!
-#include "jeveux.h"
-#include "asterfort/as_mfacre.h"
-#include "asterfort/as_mmhfnw.h"
-#include "asterfort/desgfa.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/mdnofa.h"
-#include "asterfort/nomgfa.h"
-#include "asterfort/setgfa.h"
-#include "asterfort/utmess.h"
-!
-    integer :: fid
-    integer :: typgeo(*), nmatyp(*)
-    integer :: typent, nbrent, nbgrou
-    integer :: nbec
-    integer :: nufaen(nbrent), nufacr(nbrent), tabaux(*)
-    integer :: infmed
-    integer :: ifm, nivinf
-!
-    character(len=6) :: prefix
-    character(len=8) :: nomast
-    character(len=24) :: nomgen(*)
-    character(len=8) :: nomtyp(*)
-    character(len=*) :: nofaex(*)
-    character(len=80) :: nogrfa(nbgrou)
-    character(len=*) :: nomamd
-!
-! 0.2. ==> COMMUNS
-!
-!
-! 0.3. ==> VARIABLES LOCALES
-!
-    character(len=6) :: nompro
-    parameter ( nompro = 'IRMMF2' )
-!
-    integer :: ntymax
-    parameter (ntymax = 69)
-    integer :: edmail, ednoeu
-    parameter (edmail=0, ednoeu=3)
-    integer :: tygeno
-    parameter (tygeno=0)
-!
+    integer, parameter :: edmail = 0, ednoeu = 3, tygeno = 0
     integer :: codret
     integer :: iaux, jaux, kaux
     integer :: numfam, nfam
@@ -113,21 +102,14 @@ subroutine irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
     integer :: nbeg, ige, ient, entfam, nbgnof, natt
     integer :: jgren
     integer :: tbaux(1)
-!
     character(len=7) :: saux07
     character(len=8) :: saux08
     character(len=9) :: saux09
     character(len=64) :: nomfam
-!      REAL*8 TPS1(4),TPS2(4),TPS3(4)
 !
-!====
-! 1. PREALABLES
-!====
-!
-    if (nivinf .ge. 2) then
+! --------------------------------------------------------------------------------------------------
 !
 !
-    endif
 !
 !     NATT = NOMBRE D'ATTRIBUTS DANS UNE FAMILLE : JAMAIS. ELLES NE SONT
 !            DEFINIES QUE PAR LES GROUPES
@@ -152,38 +134,32 @@ subroutine irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
 ! 2.1. ==> BUT DE L'ETAPE 2.1 : CONNAITRE POUR CHAQUE ENTITE SES GROUPES
 !          D'APPARTENANCE
 !
-        do 21 , ige = 1 , nbgrou
-!
-        call jeveuo(jexnum(nomast//saux09, ige), 'L', jgren)
-        call jelira(jexnum(nomast//saux09, ige), 'LONMAX', nbeg)
-!
-        if (infmed .ge. 2) then
-            if (typent .eq. tygeno) then
-                saux07 = 'NOEUDS '
-            else
-                saux07 = 'MAILLES'
+        do ige = 1 , nbgrou
+            call jeveuo(jexnum(nomast//saux09, ige), 'L', jgren)
+            call jelira(jexnum(nomast//saux09, ige), 'LONMAX', nbeg)
+            if (infmed .ge. 2) then
+                if (typent .eq. tygeno) then
+                    saux07 = 'NOEUDS '
+                else
+                    saux07 = 'MAILLES'
+                endif
+                write (ifm,100) nomgen(ige), nbeg, saux07
             endif
-            write (ifm,2001) nomgen(ige), nbeg, saux07
-        endif
-        2001 format( '. GROUPE ',a,' :',i12,1x,a)
-!
-!         POUR CHAQUE GROUPE, ON BOUCLE SUR LES ENTITES QU'IL CONTIENT.
-!
-        do 211 , iaux = 1 , nbeg
+100         format( '. GROUPE ',a,' :',i12,1x,a)
+!           POUR CHAQUE GROUPE, ON BOUCLE SUR LES ENTITES QU'IL CONTIENT.
+            do iaux = 1 , nbeg
 !
 !           DEBUT VECTEUR ENTIER CODE POUR ENTITE IENT DANS JENTXG
-        ient = zi(jgren-1+iaux)
-        if (ient .ne. 0) then
+                ient = zi(jgren-1+iaux)
+                if (ient .ne. 0) then
 !             ENREGISTREMENT APPARTENANCE DU ENTITE AU GROUPE
-            call setgfa(tabaux(1+(ient-1)*nbec), ige)
+                    call setgfa(tabaux(1+(ient-1)*nbec), ige)
 !             MISE A -1 DU NUM DE FAMILLE POUR CETTE ENTITE DANS NUFAEN
 !             POUR INDIQUER QU'ELLE APPARTIENT AU MOINS A UN GROUPE
-            nufaen(ient) = 1
-        endif
-!
-211      continue
-!
-21      continue
+                    nufaen(ient) = 1
+                endif
+            end do
+        end do
 !
 ! 2.2. ==> BUT DE L'ETAPE 2.2 : FAIRE LA PARTITION EN FAMILLE ET NOTER :
 !          . LE NUMERO DE LA 1ER ENTITE DE LA FAMILLE
@@ -202,9 +178,8 @@ subroutine irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
 !                      . 426 817 NOEUDS EN 57 GROUPES ET
 !                      . 418 514 MAILLES EN 8 629 GROUPES.
 !
-        do 22 , ient = 1 , nbrent
-!
-        if (nufaen(ient) .ne. 0) then
+        do ient = 1 , nbrent
+            if (nufaen(ient) .ne. 0) then
 !
 !         BOUCLE 221 : ON PARCOURT TOUTES LES FAMILLES DEJA VUES.
 !         POUR CHACUNE D'ELLES, ON COMPARE LES GROUPES ASSOCIES ET LES
@@ -215,46 +190,38 @@ subroutine irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
 !         . SI ON N'A TROUVE AUCUNE FAMILLE, C'EST QU'UNE NOUVELLE
 !           FAMILLE VIENT D'APPARAITRE. ON STOCKE SES CARACTERISTIQUES.
 !
-            jaux = nbec*(ient-1)
-!
-            do 221 , numfam = 1 , nfam
-!
-            entfam = nufacr(numfam)
-!
-            kaux = nbec*(entfam-1)
-!
-            do 222 , iaux = 1 , nbec
-            if (tabaux(jaux+iaux) .ne. tabaux(kaux+iaux)) then
-                goto 221
-            endif
-222          continue
-!
+                jaux = nbec*(ient-1)
+                do numfam = 1 , nfam
+                    entfam = nufacr(numfam)
+                    kaux = nbec*(entfam-1)
+                    do iaux = 1 , nbec
+                        if (tabaux(jaux+iaux) .ne. tabaux(kaux+iaux)) then
+                            goto 221
+                        endif
+                    end do
 !             ON A TROUVE UNE FAMILLE AVEC LA MEME COMPOSITION :
 !             . ON NOTE QUE LA FAMILLE EST LA MEME
 !             . ON PASSE A L'ENTITE SUIVANTE
-!
-            nufaen(ient) = nufaen(entfam)
-            goto 22
-!
-221          continue
-!
+                    nufaen(ient) = nufaen(entfam)
+                    goto 22
+    221             continue
+                end do
 !           AUCUN ENTITE NE CORRESPONDAIT : ON CREE UNE NOUVELLE FAMILLE
-            nfam = nfam + 1
+                nfam = nfam + 1
 !           ON MEMORISE CE NUMERO DE FAMILLE POUR L'ENTITE COURANTE
 !           ATTENTION : LA CONVENTION MED VEUT QUE LE NUMERO SOIT
 !           POSITIF POUR LES FAMILLES DE NOEUDS, NEGATIF POUR
 !           LES MAILLES
-            nufaen(ient) = nfam
-            if (typent .ne. tygeno) then
-                nufaen(ient) = -nufaen(ient)
-            endif
+                nufaen(ient) = nfam
+                if (typent .ne. tygeno) then
+                    nufaen(ient) = -nufaen(ient)
+                endif
 !           ON INDIQUE OU SE TROUVE LA 1ERE REFERENCE A CETTE FAMILLE
 !           DANS LE VECTEUR NUFACR POUR EVITER DE PERDRE SON TEMPS APRES
-            nufacr(nfam) = ient
-!
-        endif
-!
-22      continue
+                nufacr(nfam) = ient
+            endif
+22          continue
+        end do
 !
 ! 2.3. ==> BUT DE L'ETAPE 2.3 : CREATION DES FAMILLES D'ENTITES ET LES
 !          ECRIRE DANS LE FICHIER
@@ -264,60 +231,55 @@ subroutine irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
 !          CARACTERISENT. POUR CELA, ON SE BASE SUR LE PREMIER ENTITE
 !          QUI EN FAIT PARTIE.
 !
-        do 23 , iaux = 1 , nfam
+        do iaux = 1 , nfam
 !
 ! 2.3.1. ==> DETERMINATION DE LA FAMILLE : NOM, NOMS ET NUMEROS DES
 !              GROUPES ASSOCIES
-!
-        numfam = iaux
-        if (typent .ne. tygeno) then
-            numfam = -numfam
-        endif
+            numfam = iaux
+            if (typent .ne. tygeno) then
+                numfam = -numfam
+            endif
 !
 !         NUMERO DE LA 1ERE ENTITE FAISANT REFERENCE A CETTE FAMILLE
-        ient = nufacr(iaux)
+            ient = nufacr(iaux)
 !
 !         NB ET NOMS+NUMS DES GROUPES ASSOCIES A LA FAMILLE
-        call nomgfa(nomgen, nbgrou, tabaux(1+(ient-1)*nbec), nogrfa, nbgnof)
+            call nomgfa(nomgen, nbgrou, tabaux(1+(ient-1)*nbec), nogrfa, nbgnof)
 !
 !         NOM DE LA FAMILLE : ON LE CONSTRUIT A PARTIR DES NOMS
 !         DE GROUPES
 !
-        jaux = iaux - 1
-        call mdnofa(numfam, nogrfa, nbgnof, jaux, nofaex,&
-                    nomfam)
+            jaux = iaux - 1
+            call mdnofa(numfam, nogrfa, nbgnof, jaux, nofaex, nomfam)
 !
 ! 2.3.2. ==> INFORMATION EVENTUELLE
 !
-        if (infmed .ge. 2) then
-            jaux = 0
-            do 232 , ient = 1 , nbrent
-            if (nufaen(ient) .eq. numfam) then
-                jaux = jaux + 1
-            endif
-232          continue
-            if (typent .eq. tygeno) then
-                kaux = 0
-            else
-                kaux = jaux
+            if (infmed .ge. 2) then
                 jaux = 0
+                do ient = 1 , nbrent
+                    if (nufaen(ient) .eq. numfam) then
+                        jaux = jaux + 1
+                    endif
+                end do
+                if (typent .eq. tygeno) then
+                    kaux = 0
+                else
+                    kaux = jaux
+                    jaux = 0
+                endif
+                call desgfa(typent+1, numfam, nomfam, nbgnof, nogrfa,&
+                            natt, tbaux, jaux, kaux, ifm,&
+                            codret)
             endif
-            call desgfa(typent+1, numfam, nomfam, nbgnof, nogrfa,&
-                        natt, tbaux, jaux, kaux, ifm,&
-                        codret)
-        endif
 !
 ! 2.3.3. ==> ECRITURE DES CARACTERISTIQUES DE LA FAMILLE
 !
-        call as_mfacre(fid, nomamd, nomfam, numfam, nbgnof,&
-                       nogrfa, codret)
-        if (codret .ne. 0) then
-            saux08='mfacre'
-            call utmess('F', 'DVP_97', sk=saux08, si=codret)
-        endif
-!
-23      continue
-!
+            call as_mfacre(fid, nomamd, nomfam, numfam, nbgnof, nogrfa, codret)
+            if (codret .ne. 0) then
+                saux08='mfacre'
+                call utmess('F', 'DVP_97', sk=saux08, si=codret)
+            endif
+        end do
     endif
 !
 !====
@@ -329,10 +291,7 @@ subroutine irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
 ! 3.1. ==> ECRITURE DANS LE CAS DES NOEUDS
 !
     if (typent .eq. tygeno) then
-!
-        call as_mmhfnw(fid, nomamd, nufaen, nbrent, ednoeu,&
-                       tygeno, codret)
-!
+        call as_mmhfnw(fid, nomamd, nufaen, nbrent, ednoeu, tygeno, codret)
         if (codret .ne. 0) then
             saux08='mmhfnw'
             call utmess('F', 'DVP_97', sk=saux08, si=codret)
@@ -342,38 +301,21 @@ subroutine irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
 !          RENUMEROTATION ASTER-MED
 !
     else
-!
-        do 32 , ityp = 1 , ntymax
-!
-        if (nmatyp(ityp) .ne. 0) then
-!
-!           RECUPERATION DU TABLEAU DES RENUMEROTATIONS
-!
-            call jeveuo('&&'//prefix//'.NUM.'//nomtyp(ityp), 'L', kaux)
-!
-!           CREATION VECTEUR NUMEROS DE FAMILLE POUR LES MAILLES / TYPE
-!
-            do 321 , iaux = 1 , nmatyp(ityp)
-            tabaux(iaux) = nufaen(zi(kaux-1+iaux))
-321          continue
-!
-            call as_mmhfnw(fid, nomamd, tabaux, nmatyp(ityp), edmail,&
-                           typgeo(ityp), codret)
-!
-            if (codret .ne. 0) then
-                saux08='mmhfnw'
-                call utmess('F', 'DVP_97', sk=saux08, si=codret)
+        do ityp = 1 , MT_NTYMAX
+            if (nmatyp(ityp) .ne. 0) then
+!               RECUPERATION DU TABLEAU DES RENUMEROTATIONS
+                call jeveuo('&&'//prefix//'.NUM.'//nomtyp(ityp), 'L', kaux)
+!               CREATION VECTEUR NUMEROS DE FAMILLE POUR LES MAILLES / TYPE
+                do iaux = 1 , nmatyp(ityp)
+                    tabaux(iaux) = nufaen(zi(kaux-1+iaux))
+                end do
+                call as_mmhfnw(fid, nomamd, tabaux, nmatyp(ityp), edmail, typgeo(ityp), codret)
+                if (codret .ne. 0) then
+                    saux08='mmhfnw'
+                    call utmess('F', 'DVP_97', sk=saux08, si=codret)
+                endif
             endif
-!
-        endif
-!
-32      continue
-!
-    endif
-!
-    if (nivinf .ge. 2) then
-!
-!
+        enddo
     endif
 !
 end subroutine

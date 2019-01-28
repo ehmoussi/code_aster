@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -255,7 +255,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=10,
                 ),
           )
 
-# Modele mixte: THM+NON-THM (ticket #26301)
+# Modele mixte: THM+NON-THM (ticket #26301 + #28345)
 MODELM=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=(_F(GROUP_MA='BOX2',
                            PHENOMENE='MECANIQUE',
@@ -302,13 +302,25 @@ FLUXM=AFFE_CHAR_MECA(MODELE=MODELM,
                                      FLUN=100.0,
                                      FLUN_HYDR1=0.0,),);
 
-U0M=STAT_NON_LINE(MODELE=MODELM,
+
+ACC_0=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                 OPERATION='AFFE',
+                 MODELE=MODELM,
+                 AFFE=(_F(TOUT='OUI',
+                          NOM_CMP=('DX','DY','TEMP','PRE1'),
+                          VALE=(0.,0.,0.,0.),),
+                       ),)
+
+U0M=DYNA_NON_LINE(MODELE=MODELM,
                  CHAM_MATER=CHMATM,
                  EXCIT=(_F(CHARGE=CALBAM,),
                         _F(CHARGE=CALHAUM,),
                         _F(CHARGE=CALBORM,),
                         _F(CHARGE=FLUXM,),),
                  SCHEMA_THM=_F(PARM_THETA=0.57,),
+                 ETAT_INIT=_F(ACCE=ACC_0,),
+                 SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
+                                FORMULATION='DEPLACEMENT',),
                  COMPORTEMENT=(
                                _F(GROUP_MA='BOX1',
                                   RELATION='ELAS',),

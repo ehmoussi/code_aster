@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
 !.......................................................................
 !
     aster_logical :: grand, axi
-    integer :: kpg, kk, kkd, n, i, m, j, j1, kl, kpgs, proj, jvariexte
+    integer :: kpg, kk, kkd, n, i, m, j, j1, kl, kpgs, proj, jvariext1, jvariext2
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
     real(kind=8) :: poids, tmp, sig(6), rbid(1)
     real(kind=8) :: elgeom(10, 9)
@@ -124,15 +124,16 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
         end do
     end do
 !
-! - Get coded integer for external state variable
+! - Get coded integers for external state variables
 !
-    jvariexte = nint(carcri(IVARIEXTE))
+    jvariext1 = nint(carcri(IVARIEXT1))
+    jvariext2 = nint(carcri(IVARIEXT2))
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno   , npg      , 2    ,&
-                ipoids, ivf      , idfde,&
-                typmod, jvariexte,&
+    call lcegeo(nno   , npg      , 2        ,&
+                ipoids, ivf      , idfde    ,&
+                typmod, jvariext1, jvariext2,&
                 geom  ,&
                 deplm , deplp)
 !

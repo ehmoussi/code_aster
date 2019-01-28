@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine mfront_get_mater_value(rela_comp, jvariexte,&
+subroutine mfront_get_mater_value(rela_comp, jvariext1, jvariext2,&
                                   fami     , kpg      , ksp, imate, &
                                   nprops   , props)
 !
@@ -35,11 +35,9 @@ implicit none
 #include "asterfort/Behaviour_type.h"
 !
 character(len=16), intent(in) :: rela_comp
-integer, intent(in) :: jvariexte
+integer, intent(in) :: jvariext1, jvariext2
 character(len=*), intent(in) :: fami
-integer, intent(in) :: kpg
-integer, intent(in) :: ksp
-integer, intent(in) :: imate
+integer, intent(in) :: kpg, ksp, imate
 integer, intent(inout) :: nprops
 real(kind=8), intent(out) :: props(*)
 !
@@ -51,8 +49,9 @@ real(kind=8), intent(out) :: props(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  jvariexte        : coded integer for external state variable
 ! In  rela_comp        : RELATION comportment
+! In  jvariext1        : first coded integer for external state variable
+! In  jvariext2        : second coded integer for external state variable
 ! In  fami             : Gauss family for integration point rule
 ! In  imate            : coded material address
 ! In  kpg              : current point gauss
@@ -68,13 +67,14 @@ real(kind=8), intent(out) :: props(*)
     real(kind=8) :: propl(npropmax)
     real(kind=8) :: zalpha
     integer      :: nb_phasis, meta_type
-    integer      :: tabcod(30), variextecode(1)
+    integer      :: tabcod(60), variextecode(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     tabcod(:) = 0
-    variextecode(1) = jvariexte
-    call isdeco(variextecode(1), tabcod, 30)
+    variextecode(1) = jvariext1
+    variextecode(2) = jvariext2
+    call isdeco(variextecode, tabcod, 60)
     nbcoef = 0
 !
     if (rela_comp .eq. 'MFRONT') then

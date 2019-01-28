@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 !
 subroutine mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
                                          irets, ireth, &
-                                         sechm, sechp, hydrm, hydrp, &
+                                         sechm, sechp, hydrm, hydrp, time_curr,&
                                          predef, dpred)
 !
 use calcul_module, only : ca_vext_eltsize1_, ca_vext_hygrm_, ca_vext_hygrp_
@@ -38,7 +38,7 @@ character(len=16), intent(in) :: rela_comp
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg, ksp
 integer, intent(in)      :: irets, ireth
-real(kind=8), intent(in) :: sechm, sechp, hydrm, hydrp
+real(kind=8), intent(in) :: sechm, sechp, hydrm, hydrp, time_curr
 real(kind=8), intent(out) :: predef(*), dpred(*)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -60,6 +60,7 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
 ! In  sechp            : 'SECH' at the end of current step time
 ! In  hydrm            : 'HYDR' at the beginning of current step time
 ! In  hydrp            : 'HYDR' at the end of current step time
+! In  time_curr        : current step time
 ! Out predef           : external state variables at beginning of current step time
 ! Out dpred            : increment of external state variables during current step time
 !
@@ -109,12 +110,16 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
                     if (list_varc(i_varc) .eq. 'ELTSIZE1') then
                         predef(i_varc) = ca_vext_eltsize1_
                     endif
+                    if (list_varc(i_varc) .eq. 'TIME') then
+                        predef(i_varc) = time_curr
+                    endif
                     if (list_varc(i_varc) .eq. 'HYGR') then
                         predef(i_varc) = ca_vext_hygrm_
                         dpred(i_varc)  = ca_vext_hygrp_-ca_vext_hygrm_
                     endif
                     if ((list_varc(i_varc) .ne. 'HYGR') .and. &
-                    (list_varc(i_varc) .ne. 'ELTSIZE1')) then
+                        (list_varc(i_varc) .ne. 'ELTSIZE1') .and.&
+                        (list_varc(i_varc) .ne. 'TIME')) then
                         if (rela_comp .ne. 'BETON_BURGER') then
                             call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
                         endif

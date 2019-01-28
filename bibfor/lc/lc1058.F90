@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504,W0104
+! aslint: disable=W1504
 !
 subroutine lc1058(fami , kpg   , ksp   , ndim  , typmod,&
                   imate, compor, carcri, instam, instap,&
                   neps , epsm  , deps  , nsig  , sigm  ,&
-                  nvi  , vim   , option, angmas, icomp ,&
+                  nvi  , vim   , option, angmas,&
                   temp , dtemp , predef, dpred ,&
                   sigp , vip   , dsidep, codret)
 !
@@ -58,7 +58,6 @@ integer, intent(in) :: nvi
 real(kind=8), intent(in) :: vim(*)
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: angmas(*)
-integer, intent(in) :: icomp
 real(kind=8), intent(in) :: temp, dtemp
 real(kind=8), intent(in) :: predef(*), dpred(*)
 real(kind=8), intent(out) :: sigp(6)
@@ -93,11 +92,10 @@ integer, intent(out) :: codret
 ! In  vim              : internal state variables at beginning of current step time
 ! In  option           : name of option to compute
 ! In  angmas           : nautical angles
-! In  icomp            : indicator of local sub-step
-! In temp              : temperature at beginning of current step time
-! In dtemp             : increment of temperature during current step time
-! In predef            : external state variables at beginning of current step time
-! In dpred             : increment of external state variables during current step time
+! In  temp             : temperature at beginning of current step time
+! In  dtemp            : increment of temperature during current step time
+! In  predef           : external state variables at beginning of current step time
+! In  dpred            : increment of external state variables during current step time
 ! Out sigm             : stresses at end of current step time
 ! Out vip              : internal state variables at end of current step time
 ! Out dsidep           : tangent matrix
@@ -106,7 +104,7 @@ integer, intent(out) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: npropmax = 197
-    integer :: nprops, nstatv, j, i, pfcmfr, nummod, elas_id, jvariexte
+    integer :: nprops, nstatv, j, i, pfcmfr, nummod, elas_id, jvariext1, jvariext2
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     real(kind=8), parameter :: usrac2 = sqrt(2.d0)*0.5d0
     real(kind=8) :: drot(3, 3), dstran(9), props(npropmax)
@@ -130,7 +128,8 @@ integer, intent(out) :: codret
     rela_comp      = compor(RELA_NAME)
     defo_comp      = compor(DEFO)
     pfcmfr         = nint(carcri(16))
-    jvariexte      = nint(carcri(IVARIEXTE))
+    jvariext1      = nint(carcri(IVARIEXT1))
+    jvariext2      = nint(carcri(IVARIEXT2))
     l_simomiehe    = defo_comp .eq. 'SIMO_MIEHE'
     l_grotgdep     = ASTER_FALSE
     l_czm          = typmod(2).eq.'ELEMJOIN'
@@ -139,8 +138,8 @@ integer, intent(out) :: codret
 !
 ! - Get material properties
 !
-    call mfront_get_mater_value(rela_comp, jvariexte, &
-                                fami     , kpg      , ksp, imate,&
+    call mfront_get_mater_value(rela_comp, jvariext1, jvariext2,&
+                                fami     , kpg      , ksp      , imate,&
                                 nprops   , props)
 !
 ! - Get type of modelization

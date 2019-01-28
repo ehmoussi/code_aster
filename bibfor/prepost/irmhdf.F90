@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,49 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine irmhdf(ifi, ndim, nbnoeu, coordo, nbmail,&
                   connex, point, nomast, typma, titre,&
                   nbtitr, nbgrno, nomgno, nbgrma, nomgma,&
                   nommai, nomnoe, infmed)
-!     ------------------------------------------------------------------
-! person_in_charge: nicolas.sellenet at edf.fr
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "MeshTypes_type.h"
+#include "asterfort/as_mficlo.h"
+#include "asterfort/as_mfiope.h"
+#include "asterfort/as_mmhcre.h"
+#include "asterfort/codent.h"
+#include "asterfort/infniv.h"
+#include "asterfort/irmdes.h"
+#include "asterfort/irmmfa.h"
+#include "asterfort/irmmma.h"
+#include "asterfort/irmmno.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jedetc.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/lrmtyp.h"
+#include "asterfort/mdexma.h"
+#include "asterfort/mdnoma.h"
+#include "asterfort/ulisog.h"
+#include "asterfort/utmess.h"
+!
+integer :: connex(*), typma(*), point(*)
+integer :: ifi, ndim, nbnoeu, nbmail, nbgrno, nbgrma
+integer :: infmed, nbtitr
+character(len=80) :: titre(*)
+character(len=8) :: nommai(*), nomnoe(*), nomast
+character(len=24) :: nomgno(*), nomgma(*)
+real(kind=8) :: coordo(*)
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ECRITURE DU MAILLAGE - FORMAT MED
-!        -  -     -                 ---
-!-----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ENTREE:
 !       IFI    : UNITE LOGIQUE D'IMPRESSION DU MAILLAGE
 !       NDIM   : DIMENSION DU PROBLEME (2  OU 3)
@@ -43,102 +76,41 @@ subroutine irmhdf(ifi, ndim, nbnoeu, coordo, nbmail,&
 !       NOMMAI : VECTEUR NOMS DES MAILLES
 !       NOMNOE : VECTEUR NOMS DES NOEUDS
 !       INFMED : NIVEAU DES INFORMATIONS A IMPRIMER
-!     ------------------------------------------------------------------
 !
-    implicit none
+! --------------------------------------------------------------------------------------------------
 !
-! 0.1. ==> ARGUMENTS
-!
-#include "asterf_types.h"
-#include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
-#include "asterfort/as_mmhcre.h"
-#include "asterfort/codent.h"
-#include "asterfort/infniv.h"
-#include "asterfort/irmdes.h"
-#include "asterfort/irmmfa.h"
-#include "asterfort/irmmma.h"
-#include "asterfort/irmmno.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jedetc.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/lrmtyp.h"
-#include "asterfort/mdexma.h"
-#include "asterfort/mdnoma.h"
-#include "asterfort/ulisog.h"
-#include "asterfort/utmess.h"
-    integer :: connex(*), typma(*), point(*)
-    integer :: ifi, ndim, nbnoeu, nbmail, nbgrno, nbgrma
-    integer :: infmed, nbtitr
-!
-    character(len=80) :: titre(*)
-    character(len=8) :: nommai(*), nomnoe(*), nomast
-    character(len=24) :: nomgno(*), nomgma(*)
-!
-    real(kind=8) :: coordo(*)
-!
-! 0.2. ==> COMMUNS
-!
-! 0.3. ==> VARIABLES LOCALES
-!
-    character(len=6) :: nompro
-    parameter ( nompro = 'IRMHDF' )
-!
-    integer :: ntymax
-    parameter (ntymax = 69)
-    integer :: nnomax
-    parameter (nnomax=27)
-    integer :: edlect
-    parameter (edlect=0)
-    integer :: edleaj
-    parameter (edleaj=1)
-    integer :: edcrea
-    parameter (edcrea=3)
-    integer :: ednstr
-    parameter (ednstr=0)
-    integer :: edcart
-    parameter (edcart=0)
-!
+    character(len=6), parameter :: nompro = 'IRMHDF'
+    integer, parameter :: edlect = 0, edleaj = 1, edcrea = 3, ednstr = 0, edcart = 0
     integer :: edmode, codret
     integer :: nbtyp, fid
-    integer :: nmatyp(ntymax), nnotyp(ntymax), typgeo(ntymax)
-    integer :: renumd(ntymax), modnum(ntymax), numnoa(ntymax, nnomax)
-    integer :: iaux, jaux, nuanom(ntymax, nnomax)
+    integer :: nmatyp(MT_NTYMAX), nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX)
+    integer :: renumd(MT_NTYMAX), modnum(MT_NTYMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
+    integer :: iaux, jaux, nuanom(MT_NTYMAX, MT_NNOMAX)
     integer :: lnomam, ifimed
-    integer :: ifm, nivinf
-!
+    integer :: ifm, niv
     character(len=1) :: saux01
     character(len=6) :: saux06
-    character(len=8) :: nomtyp(ntymax)
+    character(len=8) :: nomtyp(MT_NTYMAX)
     character(len=8) :: saux08
     character(len=16) :: saux16(0:3)
-    character(len=16) :: nomcoo(3), unicoo(3)
     character(len=64) :: nomamd
     character(len=80) :: descdt
     character(len=200) :: nofimd, desc
     character(len=255) :: kfic
     character(len=64) :: valk(2)
-!
     aster_logical :: existm, ficexi
+    character(len=16), parameter :: nocoor(3) = (/'X               ',&
+                                                  'Y               ',&
+                                                  'Z               '/)
+    character(len=16), parameter :: uncoor(3) = (/'INCONNU         ',&
+                                                  'INCONNU         ',&
+                                                  'INCONNU         '/)
 !
-!     ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-!====
-! 1. PREALABLES
-!====
-!
-    nomcoo(1) = 'X               '
-    nomcoo(2) = 'Y               '
-    nomcoo(3) = 'Z               '
-!
-    unicoo(1) = 'INCONNUE        '
-    unicoo(2) = 'INCONNUE        '
-    unicoo(3) = 'INCONNUE        '
-! 1.1. ==> RECUPERATION DU NIVEAU D'IMPRESSION
-!
-    call infniv(ifm, nivinf)
+    call infniv(ifm, niv)
 !
 ! 1.2. ==> NOM DU FICHIER MED
 !
@@ -150,7 +122,7 @@ subroutine irmhdf(ifi, ndim, nbnoeu, coordo, nbmail,&
         nofimd = kfic(1:200)
     endif
 !
-    if (nivinf .gt. 1) then
+    if (niv .gt. 1) then
         write (ifm,*) '<',nompro,'> NOM DU FICHIER MED : ',nofimd
     endif
 !
@@ -210,7 +182,6 @@ subroutine irmhdf(ifi, ndim, nbnoeu, coordo, nbmail,&
         endif
 !
         if (infmed .ge. 2) then
-!                         1234567890123456
             saux16(edlect) = 'LECTURE SEULE.  '
             saux16(edleaj) = 'LECTURE/ECRITURE'
             saux16(edcrea) = 'CREATION.       '
@@ -229,7 +200,7 @@ subroutine irmhdf(ifi, ndim, nbnoeu, coordo, nbmail,&
         desc = 'CREE PAR CODE_ASTER'
         descdt = 'SANS UNITES'
         call as_mmhcre(fid, nomamd, ndim, ednstr, desc,&
-                       descdt, edcart, nomcoo, unicoo, codret)
+                       descdt, edcart, nocoor, uncoor, codret)
         if (codret .ne. 0) then
             saux08='mmhcre'
             call utmess('F', 'DVP_97', sk=saux08, si=codret)
@@ -304,8 +275,6 @@ subroutine irmhdf(ifi, ndim, nbnoeu, coordo, nbmail,&
         call jedetc('V', '&&'//nompro, 1)
 !
     endif
-!
-!     ------------------------------------------------------------------
 !
     call jedema()
 !

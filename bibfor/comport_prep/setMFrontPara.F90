@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine setMFrontPara(comp_exte,&
-                         iter_inte_maxi, resi_inte_rela, iveriborne)
+subroutine setMFrontPara(v_para, i_comp)
 !
 use Behaviour_type
 !
@@ -30,10 +29,8 @@ implicit none
 #include "asterc/mfront_set_outofbounds_policy.h"
 #include "asterfort/assert.h"
 !
-type(Behaviour_External), intent(in) :: comp_exte
-real(kind=8), intent(in) :: iter_inte_maxi
-real(kind=8), intent(in) :: resi_inte_rela
-integer, intent(in) :: iveriborne
+type(Behaviour_Criteria), pointer :: v_para(:)
+integer, intent(in) :: i_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,19 +40,24 @@ integer, intent(in) :: iveriborne
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  comp_exte        : values defining external behaviour
-! In  iter_inte_maxi   : value for ITER_INTE_MAXI
-! In  resi_inte_rela   : value for RESI_INTE_RELA
-! In  iveriborne       : value for VERI_BORNE
+! In  v_para           : list of informations to save
+! In  i_comp           : index in previous list
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    type(Behaviour_External) :: comp_exte
+    real(kind=8) :: iter_inte_maxi, resi_inte_rela
+    integer:: iveriborne
     aster_logical :: l_mfront_proto, l_mfront_offi
     character(len=255) :: libr_name, subr_name
     character(len=16) :: model_mfront
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    iveriborne      = v_para(i_comp)%iveriborne
+    resi_inte_rela  = v_para(i_comp)%resi_inte_rela
+    iter_inte_maxi  = v_para(i_comp)%iter_inte_maxi
+    comp_exte       = v_para(i_comp)%comp_exte
     l_mfront_offi   = comp_exte%l_mfront_offi
     l_mfront_proto  = comp_exte%l_mfront_proto
     libr_name       = comp_exte%libr_name 

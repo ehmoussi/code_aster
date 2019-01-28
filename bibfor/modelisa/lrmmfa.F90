@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,38 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
+! person_in_charge: nicolas.sellenet at edf.fr
+!
+subroutine lrmmfa(fid, nomamd, nbnoeu, grpnoe,&
                   gpptnn, grpmai, gpptnm, nbgrno, nbgrma,&
                   typgeo, nomtyp, nmatyp, prefix, infmed)
 !
-! person_in_charge: nicolas.sellenet at edf.fr
-!-----------------------------------------------------------------------
-!     LECTURE DU MAILLAGE - FORMAT MED - LES FAMILLES
-!     -    -     -                 -         --
-!-----------------------------------------------------------------------
-!
-! ENTREES :
-!  FID    : IDENTIFIANT DU FICHIER MED
-!  NOMAMD : NOM DU MAILLAGE MED
-!  NBNOEU : NOMBRE DE NOEUDS DU MAILLAGE
-!  NBMAIL : NOMBRE DE MAILLES DU MAILLAGE
-!  TYPGEO : TYPE MED POUR CHAQUE MAILLE
-!  NOMTYP : NOM DES TYPES POUR CHAQUE MAILLE
-!  NMATYP : NOMBRE DE MAILLES PAR TYPE
-!  PREFIX : PREFIXE POUR LES TABLEAUX DES RENUMEROTATIONS
-! SORTIES :
-!  GRPNOE : OBJETS DES GROUPES DE NOEUDS
-!  GRPMAI : OBJETS DES GROUPES DE MAILLES
-!  NBGRNO : NOMBRE DE GROUPES DE NOEUDS
-!  NBGRMA : NOMBRE DE GROUPES DE MAILLES
-! DIVERS
-! INFMED : NIVEAU DES INFORMATIONS A IMPRIMER
-!-----------------------------------------------------------------------
-!
-    implicit none
+implicit none
 !
 #include "jeveux.h"
+#include "MeshTypes_type.h"
 #include "asterfort/as_mfafai.h"
 #include "asterfort/as_mfanfa.h"
 #include "asterfort/as_mfanfg.h"
@@ -74,45 +52,51 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
 #include "asterfort/lxnoac.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    integer :: ntymax
-    parameter (ntymax = 69)
 !
-! 0.1. ==> ARGUMENTS
+integer :: fid
+integer :: nbnoeu, nbgrno, nbgrma
+integer :: typgeo(MT_NTYMAX), nmatyp(MT_NTYMAX)
+integer :: infmed
+character(len=6) :: prefix
+character(len=8) :: nomtyp(MT_NTYMAX)
+character(len=*) :: nomamd
+character(len=24) :: grpnoe, grpmai
 !
-    integer :: fid
-    integer :: nbnoeu, nbmail, nbgrno, nbgrma
-    integer :: typgeo(ntymax), nmatyp(ntymax)
-    integer :: infmed
+! --------------------------------------------------------------------------------------------------
 !
-    character(len=6) :: prefix
-    character(len=8) :: nomtyp(ntymax)
-    character(len=*) :: nomamd
+!     LECTURE DU MAILLAGE - FORMAT MED - LES FAMILLES
 !
-    character(len=24) :: grpnoe, grpmai
+! --------------------------------------------------------------------------------------------------
 !
-! 0.2. ==> COMMUNS
+! ENTREES :
+!  FID    : IDENTIFIANT DU FICHIER MED
+!  NOMAMD : NOM DU MAILLAGE MED
+!  NBNOEU : NOMBRE DE NOEUDS DU MAILLAGE
+!  NBMAIL : NOMBRE DE MAILLES DU MAILLAGE
+!  TYPGEO : TYPE MED POUR CHAQUE MAILLE
+!  NOMTYP : NOM DES TYPES POUR CHAQUE MAILLE
+!  NMATYP : NOMBRE DE MAILLES PAR TYPE
+!  PREFIX : PREFIXE POUR LES TABLEAUX DES RENUMEROTATIONS
+! SORTIES :
+!  GRPNOE : OBJETS DES GROUPES DE NOEUDS
+!  GRPMAI : OBJETS DES GROUPES DE MAILLES
+!  NBGRNO : NOMBRE DE GROUPES DE NOEUDS
+!  NBGRMA : NOMBRE DE GROUPES DE MAILLES
+! DIVERS
+! INFMED : NIVEAU DES INFORMATIONS A IMPRIMER
 !
-! 0.3. ==> VARIABLES LOCALES
+! --------------------------------------------------------------------------------------------------
 !
-    character(len=6) :: nompro
-    parameter ( nompro = 'LRMMFA' )
-!
-    integer :: ednoeu
-    parameter (ednoeu=3)
-    integer :: edmail
-    parameter (edmail=0)
-    integer :: typnoe
-    parameter (typnoe=0)
-!
+    character(len=6), parameter :: nompro = 'LRMMFA'
+    integer, parameter :: ednoeu=3,edmail=0,typnoe=0
     integer :: codret, major, minor, rel, cret, nblim1, nblim2
     integer :: nbgr, jv2, jv3, num, ifam, igrp, jnogrp, numfam, nbver
     integer :: ityp, ilmed, jgrp, ecart, jv4, nbgrp
     integer :: nbrfam, jnbnog, jadcor, ino, jcolno, jnbno, jvec, nbno
     integer :: adfano, val_max, val_min, ngro, ima
-    integer :: ifm, nivinf, jcolma, jnbma, nbma, nummai, nbattr
-    integer :: jnumty(ntymax), jfamma(ntymax), idatfa(200), vaatfa(200)
+    integer :: ifm, niv, jcolma, jnbma, nbma, nummai, nbattr
+    integer :: jnumty(MT_NTYMAX), jfamma(MT_NTYMAX), idatfa(200), vaatfa(200)
     aster_logical :: bgrpno
-!
     character(len=8) :: saux08
     character(len=19) :: nocorf
     character(len=24) :: famnoe, gpptnn, gpptnm, nomgro, nomtmp, nonbgr
@@ -121,20 +105,16 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
     character(len=80) :: nomgrp, valk(4), newgrm
     character(len=200) :: descat(200)
 !
-!====
-! 1. PREALABLES
-!====
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-    call infniv(ifm, nivinf)
+    call infniv(ifm, niv)
     call as_mfinvr(fid, major, minor, rel, cret)
 !
-    if (nivinf .ge. 2) then
-!
-        write (ifm,1001) nompro
-        1001 format( 60('='),/,'DEBUT DU PROGRAMME ',a)
-!
+    if (niv .ge. 2) then
+        write (ifm,101) nompro
+101     format( 60('='),/,'DEBUT DU PROGRAMME ',a)
     endif
 !
 !====
@@ -153,10 +133,8 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
     endif
 !
     if (infmed .ge. 3) then
-!
-        write (ifm,2101) nbrfam
-        2101 format('NOMBRE DE FAMILLES DANS LE FICHIER A LIRE :',i5)
-!
+        write (ifm,211) nbrfam
+211     format('NOMBRE DE FAMILLES DANS LE FICHIER A LIRE :',i5)
     endif
 !
 ! 2.2. ==> SI PAS DE FAMILLE, PAS DE GROUPE ! DONC, ON S'EN VA.
@@ -183,7 +161,7 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
 ! 3.2. ==> LA FAMILLE D'APPARTENANCE DE CHAQUE MAILLE
 !          ON DOIT LIRE TYPE PAR TYPE
 !
-        do ityp = 1 , ntymax
+        do ityp = 1 , MT_NTYMAX
 !
             if (nmatyp(ityp) .ne. 0) then
 !
@@ -279,7 +257,7 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
                         valk(1) = nomgrp
                         call utmess('F', 'MED_7', nk=1, valk=valk)
                     endif
-                    nomgro = nomgrp
+                    nomgro = nomgrp(1:24)
                     call lxnoac(nomgro, newgrm)
                     if( nomgro.ne.newgrm ) then
                         valk(1) = nomgro
@@ -360,14 +338,12 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
 
             call wkvect('&&LRMMFA.COL_NO', 'V V I', nbgrno, jcolno)
             do igrp = 1, nbgrno
-!
                 nbno = zi(jnbnog-1+igrp)
                 if( nbno.gt.0 ) then
                     call jenuno(jexnum(nonogn, igrp), nomgrp)
                     call jucroc(grpnoe, nomgrp, 0, nbno, jvec)
                     zi(jcolno+igrp-1) = jvec
                 endif
-!
             enddo
 !
             call wkvect('&&LRMMFA.NB_NO_GR', 'V V I', nbgrno, jnbno)
@@ -398,7 +374,7 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
         if( nbgrma.gt.0 ) then
             call wkvect('&&LRMMFA.NB_MA_GRP', 'V V I', nbgrma, jnbnog)
 !
-            do ityp = 1 , ntymax
+            do ityp = 1 , MT_NTYMAX
 !
                 if( nmatyp(ityp).ne.0 ) then
                     do ima = 1, nmatyp(ityp)
@@ -446,7 +422,7 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
             enddo
 !
             call wkvect('&&LRMMFA.NB_MA_GR', 'V V I', nbgrma, jnbma)
-            do ityp = 1 , ntymax
+            do ityp = 1 , MT_NTYMAX
 !
                 if( nmatyp(ityp).ne.0 ) then
                     do ima = 1, nmatyp(ityp)
@@ -475,7 +451,7 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
             call jedetr('&&LRMMFA.NB_MA_GRP')
             call jedetr('&&LRMMFA.NB_MA_GR')
 !
-            do ityp = 1, ntymax
+            do ityp = 1, MT_NTYMAX
                 if (nmatyp(ityp) .ne. 0) then
                     call jedetr('&&'//nompro//'.FAMMA.'//nomtyp(ityp))
                 endif
@@ -492,9 +468,9 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
 !
     call jedema()
 !
-    if (nivinf .ge. 2) then
-        write (ifm,6001) nompro
-        6001 format(/,'FIN DU PROGRAMME ',a,/,60('='))
+    if (niv .ge. 2) then
+        write (ifm,601) nompro
+601     format(/,'FIN DU PROGRAMME ',a,/,60('='))
     endif
 !
 end subroutine

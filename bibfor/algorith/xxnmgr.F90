@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -102,7 +102,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
     integer :: i, ig, j, j1, k, kk, kkd, kpg, l, m, mn, n, nn
     integer :: ddls, ddld, ddldn, cpt, dec(nnop), hea_se
-    integer :: idfde, ipoids, ivf, jcoopg, jdfd2, jgano, jvariexte
+    integer :: idfde, ipoids, ivf, jcoopg, jdfd2, jgano, jvariext1, jvariext2
     integer :: ndimb, nno, nnops, nnos, npgbis
     integer :: singu, alp, ii, jj
     real(kind=8) :: f(3, 3), fm(3, 3), fr(3, 3), epsm(6), epsp(6), deps(6)
@@ -154,15 +154,16 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
     ASSERT(npg.eq.npgbis.and.ndim.eq.ndimb)
 !
-! - Get coded integer for external state variable
+! - Get coded integers for external state variables
 !
-    jvariexte = nint(carcri(IVARIEXTE))
+    jvariext1 = nint(carcri(IVARIEXT1))
+    jvariext2 = nint(carcri(IVARIEXT2))
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno, npg, ndim,&
-                ipoids, ivf, idfde,&
-                typmod, jvariexte, &
+    call lcegeo(nno      , npg      , ndim     ,&
+                ipoids   , ivf      , idfde    ,&
+                typmod   , jvariext1, jvariext2,&
                 zr(igeom))
 !
     do n = 1, nnop

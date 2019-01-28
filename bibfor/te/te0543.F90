@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ character(len=16) :: option, nomte
     character(len=16) :: compor, pilo
 !
     integer :: jgano, ndim, nno, nnos, npg, lgpg, jtab(7), itype
-    integer :: ipoids, ivf, idfde, igeom, imate, jvariexte, icarcr
+    integer :: ipoids, ivf, idfde, igeom, imate, jvariext1, jvariext2, icarcr
     integer :: icontm, ivarim, icopil, iborne, ictau
     integer :: ideplm, iddepl, idepl0, idepl1, icompo, iret
 !
@@ -107,10 +107,11 @@ character(len=16) :: option, nomte
 ! - Compute intrinsic external state variables
 !
     if (compor .eq. 'BETON_DOUBLE_DP') then
-        jvariexte = nint(zr(icarcr-1+IVARIEXTE))
-        call lcegeo(nno      , npg      , ndim ,&
-                    ipoids   , ivf      , idfde,&
-                    typmod   , jvariexte,&
+        jvariext1 = nint(zr(icarcr-1+IVARIEXT1))
+        jvariext2 = nint(zr(icarcr-1+IVARIEXT2))
+        call lcegeo(nno      , npg      , ndim     ,&
+                    ipoids   , ivf      , idfde    ,&
+                    typmod   , jvariext1, jvariext2,&
                     zr(igeom),&
                     zr(ideplm), zr(iddepl))
     endif

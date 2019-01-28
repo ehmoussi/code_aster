@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine  lcExternalStateVariable(carcri, compor, &
-                                       fami  , kpg      , ksp, imate, &
-                                       neps  , epsth    , depsth, &
-                                       temp  , dtemp, &
-                                       predef, dpred )
+    subroutine  lcExternalStateVariable(carcri, compor, time_curr,&
+                                        fami  , kpg      , ksp, imate, &
+                                        neps  , epsth    , depsth, &
+                                        temp  , dtemp, &
+                                        predef, dpred )
         real(kind=8), intent(in) :: carcri(*)
         character(len=16), intent(in) :: compor(*)
+        real(kind=8), intent(in) :: time_curr
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg, ksp
         integer, intent(in) :: imate

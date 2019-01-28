@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,26 +57,8 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
            VERSION         =SIMP(statut='f',typ='R',defaut=1.2,into=(1.0,1.2)),
          ),
 
-         b_concept =BLOC(condition="""is_in('FORMAT', ('MED','RESULTAT') )""",
-           CONCEPT          =FACT(statut='f',max='**',
-             fr=tr('Pour imprimer les champs de "données" à des fins de visualisation (controle des affectations).'),
-             # (valide pour les format RESULTAT et MED)
-             regles=(UN_PARMI('CHAM_MATER','CARA_ELEM','CHARGE'),),
-             CHAM_MATER      =SIMP(statut='f',typ=cham_mater),
-             CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
-             CHARGE          =SIMP(statut='f',typ=char_meca),
-  
-             b_cara_elem        =BLOC(condition="""exists("CARA_ELEM")""", fr=tr("impression des repères locaux."),
-                REPERE_LOCAL    =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","ELEM", "ELNO")),
-                b_reploc        =BLOC(condition="""not equal_to("REPERE_LOCAL", 'NON')""", fr=tr("impression des repères locaux."),
-                   MODELE          =SIMP(statut='o',typ=modele_sdaster),
-                ),
-             ),
-           ), # end fkw_concept
-         ), # end b_concept
-
          b_fmt_med = BLOC(condition="""equal_to("FORMAT", 'MED')""",
-            RESU            =FACT(statut='f',max='**',
+            RESU            =FACT(statut='o',max='**',
 
               regles=(AU_MOINS_UN('CHAM_GD','RESULTAT','MAILLAGE',),
                       EXCLUS('CHAM_GD','RESULTAT'),

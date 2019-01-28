@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "MeshTypes_type.h"
 !
 interface
     subroutine ircmva(numcmp, ncmpve, ncmprf, nvalec, nbpg,&
@@ -35,8 +34,8 @@ interface
         integer :: adsk
         character(len=*) :: partie
         integer :: tymast
-        integer :: modnum(69)
-        integer :: nuanom(69, *)
+        integer :: modnum(MT_NTYMAX)
+        integer :: nuanom(MT_NTYMAX, *)
         character(len=8) :: typech
         real(kind=8) :: val(ncmpve, nbsp, nbpg, nvalec)
         integer :: profas(*)
