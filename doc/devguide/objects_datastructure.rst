@@ -281,6 +281,33 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.ElementaryVectorDisplacementDouble` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ElementaryVectorDisplacementDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ElementaryVectorPressureComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ElementaryVectorPressureComplex
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ElementaryVectorTemperatureDouble` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ElementaryVectorTemperatureDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.EvolutiveLoad` object
 ================================================================================
 
