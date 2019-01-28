@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -377,6 +377,7 @@ NUME=[None]*nbV
 _mod1=[None]*nbV;
 _mod2=[None]*nbV;
 tab=Table()
+dictToAdd = {}
 
 for kk in range(0,nbV,1) :
 
@@ -554,9 +555,12 @@ for kk in range(0,nbV,1) :
                            )
 
    tab.append({'NUME_VITE' : kk, 'VITE_ROTA' : OM, 'NOM_OBJET': 'MODE_MECA', 'TYPE_OBJET': 'MODE_MECA', 'NOM_SD' : _mod1[kk].nom})
+   dictToAdd['MODE_MECA_'+str(kk)] = _mod[kk]
 
 motcles=tab.dict_CREA_TABLE()
 tab_out=CREA_TABLE(TYPE_TABLE = 'TABLE_CONTENEUR', **motcles);
+for key, value in dictToAdd.iteritems():
+    tab_out.addObject(key, value)
 
 #VITESSE DE ROTATION OMEGA=0 RAD/S, METHODE QZ DIRECT
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
