@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,6 +65,7 @@ implicit none
 #include "asterfort/uttcpu.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/vtzero.h"
+#include "asterfort/setTimeListProgressBar.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -114,10 +115,11 @@ implicit none
     data vhydr,vhydrp/'&&OP0186.HY','&&OP0186.HYP'/
     data mediri/'&&MEDIRI'/
     data matass/'&&MTHASS'/
-    data fmt1/'(85(''-''))'/
-    data fmt2/'(A,1X,A,6X,A,9X,A,6X,A,3X,A,3X,A,1X,A)'/
-    data fmt3/'(A,16X,A,8X,A,6X,A,3X,A,6X,A,4X,A)'/
-    data fmt4/'(A,12X,A,2X,A,17X,A,9X,A,4X,A)'/
+    data fmt1/'(103(''-''))'/
+    data fmt2/'(A,5X,A,5X,A,5X,A,5X,A,5X,A,5X,A,2X,A,2X,A,2X,A,2X,A,1X,A,2X,A)'/
+    data fmt3/'(A,4X,A,3X,A,5X,A,4X,A,5X,A,5X,A,4X,A,4X,A,2X,A,3X,A,5X,A,4X,A)'/
+    data fmt4/'(A,16X,A,1X,A,1X,A,1X,A,1X,A,16X,A,6X,A,7X,A,4X,A,4X,A)'/
+
     data sddisc            /'&&OP0186.PARTPS'/
 !
 ! --------------------------------------------------------------------------------------------------
@@ -160,9 +162,9 @@ implicit none
                 sdcrit, time    , ds_algorom, l_line_search)
 !
     if (l_stat) then
-        numins=0
+        numins = 0
     else
-        numins=1
+        numins = 1
     endif
     deltat=-1.d150
 ! --- La fonctionnalité Newton-Krylov est-elle active ? 
@@ -210,6 +212,7 @@ implicit none
     call uttcpu('CPU.OP0186.2', 'INIT', ' ')
     call uttcpu('CPU.OP0186.3', 'INIT', ' ')
     call uttcpr('CPU.OP0186.3', 4, tps3)
+!
 200 continue
 ! --- RECUPERATION DU PAS DE TEMPS ET DES PARAMETRES DE RESOLUTION
 !
@@ -252,12 +255,11 @@ implicit none
     tpsthe(6) = r8vide()
     call utmess('I', 'MECANONLINE6_6', sr=instap)
     write (ifm,fmt1)
-    write (ifm,fmt2) '|','ITERATION','RESIDU','RESIDU',&
-     &      'ITERATION','COEFFICIENT','ACTUALISATION','|'
-    write (ifm,fmt3) '|','RELATIF','ABSOLU','RECH. LIN.',&
-     &      'RECH. LIN.','MATRICE','|'
-    write (ifm,fmt4) '|','RESI_GLOB_RELA','RESI_GLOB_MAXI','RHO',&
-     &      'TANGENTE','|'
+    write (ifm,fmt2) '|','NEWTON','|','RESIDU','|','RESIDU',&
+                     '|','RECH.  LINE.','|','RECH.  LINE.','|','ACTUALISATION','|'
+    write (ifm,fmt3) '|','ITERATION','|','RELATIF','|','ABSOLU',&
+                     '|','NB. ITER','|','COEFFICIENT','|','MATRICE','|'
+    write (ifm,fmt4) '|','|','RESI_GLOB_RELA','|','RESI_GLOB_MAXI','|','|','RHO','|','TANGENTE','|'
     write (ifm,fmt1)
     call jelira(vtempm(1:19)//'.VALE', 'LONMAX', neq)
 !
@@ -390,9 +392,8 @@ implicit none
     endif
 !
     write (ifm,&
-     &      '(A,1X,I5,6X,1PE12.5,4X,1PE12.5,7X,I2,5X,1PE12.5,8X,A,6X,A)'&
-     &        ) '|',iterat,testr,testm,iterho,rho,kreas,'|'
-!
+     &      '(A,5X,I6,5X,A,2X,1PE12.5,2X,A,2X,1PE12.5,2X,A,5X,I6,5X,A,2X,1PE12.5,2X,A,6X,A,7X,A)'&
+     &        ) '|',iterat,'|',testr,'|',testm,'|',iterho,'|',rho,'|',kreas,'|'
     if (itemax .and. .not.conver) then
         write (ifm,fmt1)
         call utmess('I', 'MECANONLINE10_3')
@@ -521,15 +522,22 @@ implicit none
                     num_except=28)
     endif
 !
-    if (finpas) goto 500
+    if (finpas) then
+        if (l_evol) then
+            call setTimeListProgressBar(sddisc, numins, final_ = ASTER_TRUE)
+        endif
+        goto 500
+    endif
 !
 !----- NOUVEAU PAS DE TEMPS
+    numins = numins + 1
+    if (.not.l_stat) then
+        call setTimeListProgressBar(sddisc, numins)
+    endif
     if (l_stat) then
         l_stat=.false.
     endif
-    numins = numins + 1
     goto 200
-!
 !
 500 continue
 !
