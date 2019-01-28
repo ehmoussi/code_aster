@@ -3,7 +3,7 @@
  * @brief Interface python de Table
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,8 +39,4 @@ void exportTableToPython() {
         .def( "__init__", make_constructor(&initFactoryPtr< TableOfFunctionsInstance >))
         .def( "__init__",
               make_constructor(&initFactoryPtr< TableOfFunctionsInstance, std::string >));
-    class_< TableContainerInstance, TableContainerInstance::TableContainerPtr,
-            bases< TableInstance > >( "TableContainer", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance, std::string >));
 };

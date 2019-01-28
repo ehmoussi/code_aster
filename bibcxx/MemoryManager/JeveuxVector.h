@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe JeveuxVector
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -269,6 +269,8 @@ template < class ValueType > class JeveuxVector {
     JeveuxVectorInstance< ValueType > &operator*( void ) const { return *_jeveuxVectorPtr; };
 
     bool isEmpty() const {
+        if ( _jeveuxVectorPtr == nullptr )
+            return true;
         if ( _jeveuxVectorPtr.use_count() == 0 )
             return true;
         return false;

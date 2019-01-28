@@ -134,6 +134,16 @@ MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() {
     return toReturn;
 };
 
+BaseMeshPtr ResultsContainerInstance::getMesh()
+{
+    if( _mesh != nullptr )
+        return _mesh;
+    const auto model = getModel();
+    if( model != nullptr )
+        return model->getSupportMesh();
+    return nullptr;
+};
+
 ModelPtr ResultsContainerInstance::getModel() {
     std::string name( "" );
     ModelPtr toReturn( nullptr );
@@ -148,7 +158,15 @@ ModelPtr ResultsContainerInstance::getModel() {
     return toReturn;
 };
 
-const int ResultsContainerInstance::getNumberOfRanks() const
+ModelPtr ResultsContainerInstance::getModel( int rank )
+{
+    auto curIter = _mapModel.find( rank );
+    if ( curIter == _mapModel.end() )
+        throw std::runtime_error( "Rank not find" );
+    return ( *curIter ).second;
+};
+
+int ResultsContainerInstance::getNumberOfRanks() const
 {
     return _serialNumber->usedSize();
 };
@@ -156,6 +174,7 @@ const int ResultsContainerInstance::getNumberOfRanks() const
 std::vector< long > ResultsContainerInstance::getRanks() const
 {
     std::vector< long > v;
+    _serialNumber->updateValuePointer();
     for ( int j = 0; j < _serialNumber->usedSize(); ++j ) {
         v.push_back( ( *_serialNumber )[j] );
     }

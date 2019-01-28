@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -568,6 +568,7 @@ for kk in range(0,nbV,1) :
 _mod=[None]*nbV;
 
 tab=Table()
+dictToAdd = {}
 for kk in range(0,nbV):
    OM=L_VITROT[kk]
    nom = 'OM_'+str(kk)
@@ -595,10 +596,13 @@ for kk in range(0,nbV):
                                            ),
                           )
 
-   tab.append({'NUME_VITE' : kk, 'VITE_ROTA' : OM, 'NOM_OBJET': 'MODE_MECA', 'TYPE_OBJET': 'MODE_MECA', 'NOM_SD' : _mod[kk].nom})
+   tab.append({'NUME_VITE' : kk, 'VITE_ROTA' : OM, 'NOM_OBJET': 'MODE_MECA_'+str(kk), 'TYPE_OBJET': 'MODE_MECA', 'NOM_SD' : _mod[kk].nom})
+   dictToAdd['MODE_MECA_'+str(kk)] = _mod[kk]
 
 motcles=tab.dict_CREA_TABLE()
 tab_out=CREA_TABLE(TYPE_TABLE = 'TABLE_CONTENEUR', **motcles);
+for key, value in dictToAdd.iteritems():
+    tab_out.addObject(key, value)
 
 lmod=EXTR_TABLE(TYPE_RESU='MODE_MECA',
                 TABLE=tab_out,

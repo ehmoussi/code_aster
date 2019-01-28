@@ -3,7 +3,7 @@
  * @brief Interface python de ResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,6 +33,11 @@ void exportResultsContainerToPython() {
     MaterialOnMeshPtr ( ResultsContainerInstance::*c2 )( int ) =
         &ResultsContainerInstance::getMaterialOnMesh;
 
+    ModelPtr ( ResultsContainerInstance::*c3 )() =
+        &ResultsContainerInstance::getModel;
+    ModelPtr ( ResultsContainerInstance::*c4 )( int ) =
+        &ResultsContainerInstance::getModel;
+
     class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
             bases< DataStructure > >( "ResultsContainer", no_init )
         .def( "__init__",
@@ -40,15 +45,19 @@ void exportResultsContainerToPython() {
         .def( "__init__",
               make_constructor(
                   &initFactoryPtr< ResultsContainerInstance, std::string, std::string >))
+        .def( "addMaterialOnMesh", &ResultsContainerInstance::addMaterialOnMesh )
+        .def( "addModel", &ResultsContainerInstance::addModel )
         .def( "appendMaterialOnMeshOnAllRanks",
               &ResultsContainerInstance::appendMaterialOnMeshOnAllRanks )
         .def( "appendModelOnAllRanks", &ResultsContainerInstance::appendModelOnAllRanks )
         .def( "listFields", &ResultsContainerInstance::listFields )
-        .def( "getModel", &ResultsContainerInstance::getModel )
+        .def( "getModel", c3 )
+        .def( "getModel", c4 )
         .def( "getElementaryCharacteristics",
               &ResultsContainerInstance::getElementaryCharacteristics )
         .def( "getMaterialOnMesh", c1 )
         .def( "getMaterialOnMesh", c2 )
+        .def( "getMesh", &ResultsContainerInstance::getMesh )
         .def( "getNumberOfRanks", &ResultsContainerInstance::getNumberOfRanks )
         .def( "getRanks", &ResultsContainerInstance::getRanks )
         .def( "getRealFieldOnNodes", &ResultsContainerInstance::getRealFieldOnNodes )
