@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -64,6 +64,8 @@ def proj_base_ops(self, **args):
                 UTMESS('F', 'MODAL0_1')
             #self.DeclareOut('mm', m['MATRICE'])
             mm = PROJ_MATR_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
+            mm.setGeneralizedDOFNumbering(_num)
+            mm.setModalBasis(BASE)
             self.register_result(mm, m['MATRICE'])
 
     if VECT_ASSE_GENE:
@@ -92,6 +94,7 @@ def proj_base_ops(self, **args):
             motscles['TYPE_VECT'] = v['TYPE_VECT']
             self.DeclareOut('vv', v['RESULTAT'])
             vv = PROJ_RESU_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
+            vv.setGeneralizedDOFNumbering(_num)
             self.register_result(vv, v['RESULTAT'])
 
     return

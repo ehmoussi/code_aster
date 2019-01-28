@@ -222,8 +222,8 @@ TEST_RESU(CHAM_NO=(_F(
                 ),
           )
 
-test.assertEqual(CONT1.getType(), "TABLE_SDASTER")
-test.assertEqual(CONT1M.getType(), "TABLE_SDASTER")
+test.assertEqual(CONT1.getType(), "TABLE_CONTAINER")
+test.assertEqual(CONT1M.getType(), "TABLE_CONTAINER")
 
 
 test.printSummary()

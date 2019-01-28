@@ -264,9 +264,20 @@ class ResultsContainerInstance : public DataStructure {
     MaterialOnMeshPtr getMaterialOnMesh( int rank ) ;
 
     /**
+     * @brief Get mesh
+     */
+    BaseMeshPtr getMesh();
+
+    /**
      * @brief Get model
      */
     ModelPtr getModel() ;
+
+    /**
+     * @brief Get model
+     * @param rank
+     */
+    ModelPtr getModel( int rank ) ;
 
     /**
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
@@ -299,7 +310,7 @@ class ResultsContainerInstance : public DataStructure {
     * @brief Get the number of steps stored in the ResultContainer
     * @return nbRanks
     */
-    const int getNumberOfRanks() const;
+    int getNumberOfRanks() const;
 
     /**
     * @brief Get the number of steps stored in the ResultContainer

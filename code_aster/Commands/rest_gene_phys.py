@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -49,6 +49,15 @@ class RestGenePhys(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         if keywords["RESU_GENE"].getType() == "TRAN_GENE":
-            self._result.setDOFNumbering(keywords["RESU_GENE"].getDOFNumbering())
+            dofNum = keywords["RESU_GENE"].getDOFNumbering()
+            if dofNum is not None:
+                self._result.setDOFNumbering(dofNum)
+                self._result.appendModelOnAllRanks(dofNum.getSupportModel())
+        if keywords["RESU_GENE"].getType() == "HARM_GENE":
+            dofNum = keywords["RESU_GENE"].getGeneralizedDOFNumbering()
+            basis = dofNum.getModalBasis()
+            dofNum2 = basis.getDOFNumbering()
+            if dofNum2 is not None:
+                self._result.appendModelOnAllRanks(dofNum2.getSupportModel())
 
 REST_GENE_PHYS = RestGenePhys.run

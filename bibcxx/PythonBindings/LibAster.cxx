@@ -3,7 +3,7 @@
  * @brief Création de LibAster
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -129,6 +129,7 @@
 #include "PythonBindings/StudyDescriptionInterface.h"
 #include "PythonBindings/SurfaceInterface.h"
 #include "PythonBindings/TableInterface.h"
+#include "PythonBindings/TableContainerInterface.h"
 #include "PythonBindings/ThermalLoadInterface.h"
 #include "PythonBindings/TimeDependantResultsContainerInterface.h"
 #include "PythonBindings/TimeStepManagerInterface.h"
@@ -212,6 +213,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportSimpleFieldOnElementsToPython();
     exportSimpleFieldOnNodesToPython();
     exportTableToPython();
+    exportTableContainerToPython();
     exportTimeStepperToPython();
     exportGeneralizedDOFNumberingToPython();
     exportFluidStructureInteractionToPython();

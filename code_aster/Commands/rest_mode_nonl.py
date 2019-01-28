@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -39,8 +39,6 @@ class RestModeNonl(ExecuteCommand):
             self._result = FullTransientResultsContainer()
         elif keywords["TYPE_RESU"] ==  'MODE_MECA' : 
             self._result = MechanicalModeContainer()
-        
-        
-        
+
 
 REST_MODE_NONL = RestModeNonl.run

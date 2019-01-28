@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Table
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -41,7 +41,7 @@
  * @author Nicolas Sellenet
  */
 class TableInstance : public DataStructure {
-  private:
+  protected:
     /** @brief Vecteur Jeveux '.TBBA' */
     JeveuxVectorChar8 _memoryLocation;
     /** @brief Vecteur Jeveux '.TBNP' */
@@ -64,8 +64,8 @@ class TableInstance : public DataStructure {
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    TableInstance( const std::string &name )
-        : DataStructure( name, 19, "TABLE" ),
+    TableInstance( const std::string &name, const std::string type = "TABLE" )
+        : DataStructure( name, 19, type ),
           _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
           _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
           _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) ){
@@ -120,44 +120,21 @@ class TableOfFunctionsInstance : public TableInstance {
     * @brief Definition of a smart pointer to a TableOfFunctionsInstance
     */
     typedef boost::shared_ptr< TableOfFunctionsInstance > TableOfFunctionsPtr;
+
     /**
     * @brief Constructeur
     * @param name Nom Jeveux du champ aux noeuds
     */
-    TableOfFunctionsInstance( const std::string &name ) : TableInstance( name ) {
-        this->setType( "TABLE_FONCTION" );
-    };
+    TableOfFunctionsInstance( const std::string &name ):
+        TableInstance( name, "TABLE_FONCTION" )
+    {};
 
     /**
      * @brief Constructeur
      */
-    TableOfFunctionsInstance() : TableInstance() { this->setType( "TABLE_FONCTION" ); };
-};
-
-/**
- * @typedef TableContainerInstance
- * @brief Definition of TableContainerInstance (table_container)
- */
-
-class TableContainerInstance : public TableInstance {
-  public:
-    /**
-    * @typedef TableContainerPtr
-    * @brief Definition of a smart pointer to a TableContainerInstance
-    */
-    typedef boost::shared_ptr< TableContainerInstance > TableContainerPtr;
-    /**
-    * @brief Constructeur
-    * @param name Nom Jeveux du champ aux noeuds
-    */
-    TableContainerInstance( const std::string &name ) : TableInstance( name ) {
-        this->setType( "TABLE_CONTAINER" );
-    };
-
-    /**
-     * @brief Constructeur
-     */
-    TableContainerInstance() : TableInstance() { this->setType( "TABLE_CONTAINER" ); };
+    TableOfFunctionsInstance():
+        TableInstance( ResultNaming::getNewResultName(), "TABLE_FONCTION" )
+    {};
 };
 
 #endif /* TABLE_H_ */

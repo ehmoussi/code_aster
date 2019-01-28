@@ -27,6 +27,7 @@ from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
                        MultElasContainer, MechanicalModeContainer,
                        MechanicalModeComplexContainer,
                        FullTransientResultsContainer, FullHarmonicResultsContainer)
+from ..Objects import FieldOnNodesDouble, FieldOnNodesComplex
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -79,6 +80,18 @@ class ResultCreator(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         fkw = keywords.get("AFFE")
+        if fkw is not None:
+            if type(fkw) not in (list, tuple): fkw = fkw,
+            for occ in fkw:
+                chamGd = occ.get("CHAM_GD")
+                if chamGd is not None:
+                    isFieldOnNodesDouble = isinstance(chamGd, FieldOnNodesDouble)
+                    isFieldOnNodesComplex = isinstance(chamGd, FieldOnNodesComplex)
+                    if isFieldOnNodesDouble or isFieldOnNodesComplex:
+                        mesh = chamGd.getMesh()
+                        if mesh is not None:
+                            self._result.setMesh(mesh)
+                            break
         if fkw is None:
             fkw = keywords.get("ASSE")
         if fkw is None:
@@ -91,15 +104,19 @@ class ResultCreator(ExecuteCommand):
                 self._result.appendMaterialOnMeshOnAllRanks(chamMater)
 
             modele = fkw[0].get("MODELE")
+            chamGd = fkw[0].get("CHAM_GD")
             if modele is not None:
                 self._result.appendModelOnAllRanks(modele)
             else:
-                chamGd = fkw[0].get("CHAM_GD")
                 if chamGd is not None:
-                    model = None
                     try:
                         modele = chamGd.getModel()
                         self._result.appendModelOnAllRanks(modele)
+                    except:
+                        pass
+                    try:
+                        mesh = chamGd.getMesh()
+                        self._result.setMesh(mesh)
                     except:
                         pass
 

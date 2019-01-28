@@ -3,7 +3,7 @@
  * @brief Interface python de FieldOnNodes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -41,10 +41,12 @@ void exportFieldOnNodesToPython() {
 
         .def( "exportToSimpleFieldOnNodes",
               &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
+        .def( "getMesh", &FieldOnNodesDoubleInstance::getMesh )
         .def( "__getitem__",
               +[]( const FieldOnNodesDoubleInstance &v, int i ) { return v.operator[]( i ); } )
         .def( "printMedFile", &FieldOnNodesDoubleInstance::printMedFile )
-        .def( "setDOFNumering", &FieldOnNodesDoubleInstance::setDOFNumering )
+        .def( "setDOFNumbering", &FieldOnNodesDoubleInstance::setDOFNumbering )
+        .def( "setMesh", &FieldOnNodesDoubleInstance::setMesh )
         .def( "update", &FieldOnNodesDoubleInstance::update )
         .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers );
     class_< FieldOnNodesComplexInstance, FieldOnNodesComplexPtr,
@@ -54,10 +56,12 @@ void exportFieldOnNodesToPython() {
               make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance, std::string >))
         .def( "exportToSimpleFieldOnNodes",
               &FieldOnNodesComplexInstance::exportToSimpleFieldOnNodes )
+        .def( "getMesh", &FieldOnNodesComplexInstance::getMesh )
         .def( "__getitem__",
               +[]( const FieldOnNodesComplexInstance &v, int i ) { return v.operator[]( i ); } )
         .def( "printMedFile", &FieldOnNodesComplexInstance::printMedFile )
-        .def( "setDOFNumering", &FieldOnNodesComplexInstance::setDOFNumering )
+        .def( "setDOFNumbering", &FieldOnNodesComplexInstance::setDOFNumbering )
+        .def( "setMesh", &FieldOnNodesComplexInstance::setMesh )
         .def( "update", &FieldOnNodesComplexInstance::update )
         .def( "updateValuePointers", &FieldOnNodesComplexInstance::updateValuePointers );
 };
