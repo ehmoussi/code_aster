@@ -320,11 +320,9 @@ subroutine jelira(nomlu, catr, ival, cval)
     if (lcol) then
         call jjlide('JELIBE', noml32(1:24), 2)
     endif
-    if (iret .eq. 1 ) then 
-      if ((100*nbluti(ic))/nblmax(ic) .gt. 50 ) then 
+    if ((100*nbluti(ic))/nblmax(ic) .gt. 50 ) then 
          call jjagod (ic, 2*nblmax(ic) )
-      endif  
-    endif 
+    endif  
     ipgc = ipgcex
 !
 end subroutine
