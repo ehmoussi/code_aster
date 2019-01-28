@@ -15,25 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "MeshTypes_type.h"
 !
 interface
-    subroutine lrmmfa(fid, nomamd, nbnoeu, grpnoe,&
-                      gpptnn, grpmai, gpptnm, nbgrno, nbgrma,&
-                      typgeo, nomtyp, nmatyp, prefix, infmed)
-        integer :: fid
-        character(len=*) :: nomamd
-        integer :: nbnoeu
-        character(len=24) :: grpnoe
-        character(len=24) :: gpptnn
-        character(len=24) :: grpmai
-        character(len=24) :: gpptnm
-        integer :: nbgrno
-        integer :: nbgrma
-        integer :: typgeo(MT_NTYMAX)
-        character(len=8) :: nomtyp(MT_NTYMAX)
-        integer :: nmatyp(MT_NTYMAX)
-        character(len=6) :: prefix
-        integer :: infmed
-    end subroutine lrmmfa
+    subroutine carc_chck(ds_compor_para)
+        use Behaviour_type
+        type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
+    end subroutine carc_chck
 end interface

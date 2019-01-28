@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,59 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+! aslint: disable=W1504
+!
 subroutine ircame(ifi, nochmd, chanom, typech, modele,&
                   nbcmp, nomcmp, etiqcp, partie, numpt,&
                   instan, numord, adsk, adsd, adsc,&
                   adsv, adsl, nbenec, lienec, sdcarm,&
                   carael, codret)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "MeshTypes_type.h"
+#include "jeveux.h"
+#include "asterfort/codent.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/infniv.h"
+#include "asterfort/ircam1.h"
+#include "asterfort/ircmpr.h"
+#include "asterfort/irelst.h"
+#include "asterfort/irmail.h"
+#include "asterfort/irmpga.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jedetr.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/lrmtyp.h"
+#include "asterfort/mdexch.h"
+#include "asterfort/mdexma.h"
+#include "asterfort/mdnoma.h"
+#include "asterfort/ulisog.h"
+#include "asterfort/utlicm.h"
+#include "asterfort/utmess.h"
+!
+character(len=8) :: typech, modele, sdcarm, carael
+character(len=19) :: chanom
+character(len=64) :: nochmd
+character(len=*) :: nomcmp(*), partie, etiqcp
+integer :: nbcmp, numpt, numord, ifi
+integer :: adsk, adsd, adsc, adsv, adsl
+integer :: nbenec
+integer :: lienec(*)
+integer :: typent, tygeom
+real(kind=8) :: instan
+integer :: codret
+!
 ! --------------------------------------------------------------------------------------------------
 !
 !     ECRITURE D'UN CHAMP - FORMAT MED
 !
-!-----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
 !     ENTREES :
 !       IFI    : UNITE LOGIQUE D'IMPRESSION DU CHAMP
 !       NOCHMD : NOM MED DU CHAMP A ECRIRE
@@ -50,89 +92,31 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! person_in_charge: nicolas.sellenet at edf.fr
-!
-! aslint: disable=W1504
-implicit none
-!
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/codent.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/infniv.h"
-#include "asterfort/ircam1.h"
-#include "asterfort/ircmpr.h"
-#include "asterfort/irelst.h"
-#include "asterfort/irmail.h"
-#include "asterfort/irmpga.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/lrmtyp.h"
-#include "asterfort/mdexch.h"
-#include "asterfort/mdexma.h"
-#include "asterfort/mdnoma.h"
-#include "asterfort/ulisog.h"
-#include "asterfort/utlicm.h"
-#include "asterfort/utmess.h"
-    character(len=8) :: typech, modele, sdcarm, carael
-    character(len=19) :: chanom
-    character(len=64) :: nochmd
-    character(len=*) :: nomcmp(*), partie, etiqcp
-!
-    integer :: nbcmp, numpt, numord, ifi
-    integer :: adsk, adsd, adsc, adsv, adsl
-    integer :: nbenec
-    integer :: lienec(*)
-    integer :: typent, tygeom
-!
-    real(kind=8) :: instan
-!
-    integer :: codret
-!
-! --------------------------------------------------------------------------------------------------
-!
-    character(len=6) :: nompro
-    parameter ( nompro = 'IRCAME' )
-!
-    integer :: ntymax
-    parameter (ntymax=69)
-    integer :: nnomax
-    parameter (nnomax=27)
-    integer :: ednoeu
-    parameter (ednoeu=3)
-    integer :: edmail
-    parameter (edmail=0)
-    integer :: ednoma
-    parameter (ednoma=4)
-    integer :: typnoe
-    parameter (typnoe=0)
-!
+    character(len=6), parameter :: nompro = 'IRCAME'
+    integer, parameter :: ednoeu=3, edmail=0, ednoma=4, typnoe=0
     character(len=1)   :: saux01
-    character(len=8)   :: saux08, k8bid, nomaas, nomtyp(ntymax)
+    character(len=8)   :: saux08, k8bid, nomaas, nomtyp(MT_NTYMAX)
     character(len=16)  :: formar
     character(len=24)  :: ntlcmp, ntncmp, ntucmp, ntproa, nmcmfi, ncaimi, ncaimk
     character(len=64)  :: nomamd
     character(len=200) :: nofimd
     character(len=255) :: kfic
-!
-    integer :: ndim, typgeo(ntymax)
-    integer :: nbtyp, nnotyp(ntymax)
-    integer :: modnum(ntymax)
-    integer :: numnoa(ntymax, nnomax), nuanom(ntymax, nnomax)
-    integer :: renumd(ntymax)
+    integer :: ndim, nbtyp
     integer :: ifm, nivinf, ifimed, lnomam
     integer :: ncmpve, nvalec, nbprof, nbvato, ncmprf
     integer :: nbimpr, jnocm1, jnocm2, nbcmp2, icmp1, icmp2
     integer :: adcaii, adcaik
-!
     integer :: iaux, jaux, nrimpr
     integer :: existc, nbcmfi, nbval
+    aster_logical :: lgaux, existm
 !
-    aster_logical :: lgaux
-    aster_logical :: existm
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: typgeo(MT_NTYMAX)
+    integer :: nnotyp(MT_NTYMAX)
+    integer :: modnum(MT_NTYMAX)
+    integer :: numnoa(MT_NTYMAX, MT_NNOMAX), nuanom(MT_NTYMAX, MT_NNOMAX)
+    integer :: renumd(MT_NTYMAX)
 !
 ! --------------------------------------------------------------------------------------------------
 !

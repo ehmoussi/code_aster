@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,35 +21,21 @@
 
 cata_msg = {
 
-    1  : _(u"""
- Erreur dans CALC_META: le résultat thermique doit contenir au moins deux pas de temps.
-"""),
+    1  : _(u"""Le résultat thermique doit contenir au moins deux pas de temps."""),
 
-    2  : _(u"""
- Erreur dans CALC_META: le résultat thermique donné pour l'état initial doit être le même que le résultat de CALC_META.
-"""),
+    2  : _(u"""Le résultat thermique donné pour l'état initial doit être le même que le résultat de CALC_META."""),
 
-    44 : _(u"""
-Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
-Pour l'acier, il faut renseigner les cinq phases.
-"""),
+    3  : _(u"""Il n'est pas possible de calculer la dureté (DURT_ELNO) pour les phases de type %(k1)s."""),
 
-    45 : _(u"""
-Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
-Pour le Zircaloy, il faut renseigner les trois phases.
-"""),
+    44 : _(u"""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour l'acier, il faut renseigner les cinq phases."""),
 
-    46 : _(u"""
-Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
-Pour l'acier, il faut renseigner la taille de grain.
-"""),
+    45 : _(u"""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour le Zircaloy, il faut renseigner les trois phases."""),
 
-    47 : _(u"""
-Erreur dans CALC_META: l'état métallurgique initial produit par CREA_CHAMP est incomplet.
-Pour le Zircaloy, il faut renseigner l'instant de transition.
-"""),
+    46 : _(u"""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour l'acier, il faut renseigner la taille de grain."""),
 
-    46 : _(u"""
-Erreur dans CALC_META: La somme des phases vaut %(r1)12.4E.
-"""),
+    47 : _(u"""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour le Zircaloy, il faut renseigner l'instant de transition."""),
+
+    48 : _(u"""Erreur dans CALC_META: La somme des phases vaut %(r1)12.4E."""),
+
+
 }

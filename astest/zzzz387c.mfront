@@ -6,7 +6,7 @@
  * \date   13 05 2013
  */
 
-// Test modified to validate external state variable ELTSIZE1/HYGR
+// Test modified to validate external state variable ELTSIZE1/HYGR/TIME
 
 @Parser Implicit;
 @Behaviour BurgerAgeing_mod;
@@ -45,9 +45,11 @@
 @ExternalStateVariable real SECH;
 @ExternalStateVariable real ELTSIZE1;
 @ExternalStateVariable real HYGR;
+@ExternalStateVariable real TIME;
 
 @LocalVariable real    lambda;
 @LocalVariable real    mu;
+
 
 
 
@@ -73,8 +75,8 @@
 @Integrator{
     real stresP=trace(sig)/3.;
     real Vsech =fabs(dSECH);
-    real coefverif = (2.-0.25*ELTSIZE1-0.75*HYGR);
-    // Coefverif is to validate ELTSIZE1/HYGR using - Non-physical sense
+    real coefverif = (2.-0.25*ELTSIZE1-0.75*HYGR+log(TIME/TIME));
+    // Coefverif is to validate ELTSIZE1/HYGR/TIME using - Non-physical sense
     Stensor stresD = coefverif*sig-stresP*Stensor::Id();
     real Tmoy=(2.*T+dT)/2.;
     real KRS_T=KRS*exp(Ea_R*(1./(273.+Tmoy)-1./(273+Tref)));

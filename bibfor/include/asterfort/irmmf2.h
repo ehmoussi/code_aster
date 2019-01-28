@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
                       nomgen, nbec, nomast, prefix, typgeo,&
                       nomtyp, nmatyp, nufaen, nufacr, nogrfa,&
-                      nofaex, tabaux, infmed, nivinf, ifm)
+                      nofaex, tabaux, infmed, ifm)
         integer :: nbgrou
         integer :: nbrent
         integer :: fid
@@ -41,7 +39,6 @@ interface
         character(len=*) :: nofaex(*)
         integer :: tabaux(*)
         integer :: infmed
-        integer :: nivinf
         integer :: ifm
     end subroutine irmmf2
 end interface

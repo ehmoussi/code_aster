@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,37 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine irmmf1(fid, nomamd, typent, nbrent, nbgrou,&
                   nomgen, nufaen, nomast, prefix, typgeo,&
-                  nomtyp, nmatyp, infmed, nivinf, ifm)
-! person_in_charge: nicolas.sellenet at edf.fr
-!-----------------------------------------------------------------------
+                  nomtyp, nmatyp, infmed, ifm)
+!
+implicit none
+!
+#include "jeveux.h"
+#include "asterfort/irmmf2.h"
+#include "asterfort/jedetr.h"
+#include "asterfort/wkvect.h"
+!
+integer :: fid
+integer :: typent, nbrent, nbgrou
+integer :: nufaen(nbrent)
+integer :: typgeo(*), nmatyp(*)
+integer :: infmed
+integer :: ifm
+character(len=6) :: prefix
+character(len=8) :: nomast
+character(len=24) :: nomgen(*)
+character(len=8) :: nomtyp(*)
+character(len=*) :: nomamd
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ECRITURE DU MAILLAGE - FORMAT MED - LES FAMILLES - 1
-!        -  -     -                 -         -          -
-!-----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     L'ENSEMBLE DES FAMILLES EST L'INTERSECTION DE L'ENSEMBLE
 !     DES GROUPES : UN ENTITE/MAILLE APPARAIT AU PLUS DANS 1 FAMILLE
 !     TABLE  NUMEROS DES FAMILLES POUR LES ENTITES  <-> TABLE  DES COO
@@ -49,58 +71,26 @@ subroutine irmmf1(fid, nomamd, typent, nbrent, nbgrou,&
 !            SIGNIFIE QUE LES ENTITES APPARTIENNENT A LA FAMILLE NULLE.
 ! DIVERS
 !   INFMED : NIVEAU DES INFORMATIONS SPECIFIQUES A MED A IMPRIMER
-!   NIVINF : NIVEAU DES INFORMATIONS GENERALES
 !   IFM    : UNITE LOGIQUE DU FICHIER DE MESSAGE
-!-----------------------------------------------------------------------
 !
-    implicit none
+! --------------------------------------------------------------------------------------------------
 !
-! 0.1. ==> ARGUMENTS
-!
-#include "jeveux.h"
-#include "asterfort/irmmf2.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/wkvect.h"
-    integer :: fid
-    integer :: typent, nbrent, nbgrou
-    integer :: nufaen(nbrent)
-    integer :: typgeo(*), nmatyp(*)
-    integer :: infmed
-    integer :: ifm, nivinf
-!
-    character(len=6) :: prefix
-    character(len=8) :: nomast
-    character(len=24) :: nomgen(*)
-    character(len=8) :: nomtyp(*)
-    character(len=*) :: nomamd
-!
-! 0.2. ==> COMMUNS
-!
-!
-! 0.3. ==> VARIABLES LOCALES
-!
-    character(len=6) :: nompro
-    parameter ( nompro = 'IRMMF1' )
-!
-    integer :: tygeno
-    parameter (tygeno=0)
-!
+    character(len=6) :: nompro = 'IRMMF1'
+    integer :: tygeno = 0
     integer :: iaux
     integer :: nbec
     integer :: adtabx, adnufa, adnogr, adnofe
-!
     real(kind=8) :: raux
-!
     character(len=7) :: saux07
     character(len=24) :: nufacr, nogrfa, nofaex, tabaux
+!
+! --------------------------------------------------------------------------------------------------
+!
 !
 !====
 ! 1. S'IL EXISTE DES GROUPES, ON ALLOUE DES TABLEAUX DE TRAVAIL POUR
 !    POUVOIR CONSTRUIRE LES FAMILLES
 !====
-!
-    if (nivinf .ge. 2) then
-    endif
 !
     if (infmed .ge. 2) then
 !
@@ -109,11 +99,9 @@ subroutine irmmf1(fid, nomamd, typent, nbrent, nbgrou,&
         else
             saux07 = 'MAILLES'
         endif
-        write (ifm,1002) saux07, saux07, nbrent, nbgrou
-        1002 format( /,'CONSTRUCTION DES FAMILLES DE ',a,&
-     &        /,'. NOMBRE DE ',a,' :',i12,&
-     &        /,'. NOMBRE DE GROUPES :',i5)
-!
+        write (ifm,100) saux07, saux07, nbrent, nbgrou
+100     format( /,'CONSTRUCTION DES FAMILLES DE ',a, /,'. NOMBRE DE ',a,' :',i12,&
+                /,'. NOMBRE DE GROUPES :',i5)
     endif
 !
     if (nbgrou .ne. 0) then
@@ -175,21 +163,12 @@ subroutine irmmf1(fid, nomamd, typent, nbrent, nbgrou,&
         call irmmf2(fid, nomamd, typent, nbrent, nbgrou,&
                     nomgen, nbec, nomast, prefix, typgeo,&
                     nomtyp, nmatyp, nufaen, zi( adnufa), zk80(adnogr),&
-                    zk80(adnofe), zi(adtabx), infmed, nivinf, ifm)
-!
-!====
-! 4. MENAGE
-!====
+                    zk80(adnofe), zi(adtabx), infmed, ifm)
 !
         call jedetr(nufacr)
         call jedetr(nogrfa)
         call jedetr(nofaex)
         call jedetr(tabaux)
-!
-    endif
-!
-    if (nivinf .ge. 2) then
-!
 !
     endif
 !

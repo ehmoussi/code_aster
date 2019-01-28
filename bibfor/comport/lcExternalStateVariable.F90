@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcExternalStateVariable(carcri, compor, &
-                                       fami  , kpg      , ksp, imate, &
-                                       neps  , epsth    , depsth, &
-                                       temp  , dtemp, &
-                                       predef, dpred )
+subroutine lcExternalStateVariable(carcri, compor, time_curr,&
+                                   fami  , kpg   , ksp      , imate, &
+                                   neps  , epsth , depsth   , &
+                                   temp  , dtemp, &
+                                   predef, dpred )
 !
 implicit none
 !
@@ -40,6 +40,7 @@ implicit none
 !
 real(kind=8), intent(in) :: carcri(*)
 character(len=16), intent(in) :: compor(*)
+real(kind=8), intent(in) :: time_curr
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg, ksp
 integer, intent(in) :: imate
@@ -60,6 +61,7 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
 !
 ! In  compor           : name of comportment definition (field)
 ! In  carcri           : parameters for comportment
+! In  time_curr        : current step time
 ! In  fami             : Gauss family for integration point rule
 ! In  imate            : coded material address
 ! In  kpg              : current point gauss
@@ -238,7 +240,7 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
         rela_comp = compor(RELA_NAME)
         call mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
                                          irets, ireth, &
-                                         sechm, sechp, hydrm, hydrp, &
+                                         sechm, sechp, hydrm, hydrp, time_curr,&
                                          predef, dpred)
     endif
 !     * For UMAT
