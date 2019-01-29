@@ -90,18 +90,13 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     character(len=24) :: sdappa_nmcp
     integer, pointer :: v_sdappa_nmcp(:) => null()
     integer, pointer :: v_mesh_lpatch(:) => null()
-    integer :: nb_poin_inte, patch_indx, i_pair, nb_pair, jv_geom,elem_type_nume
+    integer :: nb_pair, jv_geom
     integer, pointer :: v_mesh_connex(:)  => null()
     integer, pointer :: v_connex_lcum(:)  => null()
     real(kind=8), pointer :: patch_weight_c(:) => null()
     integer, pointer :: v_mesh_comapa(:) => null()
     integer, pointer :: v_mesh_typmail(:) => null()
-    integer :: elem_slav_nbnode, elem_slav_nume, elem_slav_dime
-    integer :: elem_mast_nbnode, elem_mast_nume, elem_mast_dime
-    character(len=8) :: elem_mast_code, elem_slav_code
-    character(len=8) :: elem_slav_type, elem_mast_type
-    real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27), poin_inte(16), gap_moy
-    real(kind=8) :: inte_weight, pair_tole, poin_gaus_ma(72)
+    real(kind=8) ::  pair_tole
     aster_logical :: l_axis
 !
 ! --------------------------------------------------------------------------------------------------
