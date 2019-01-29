@@ -21,13 +21,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine gapint(pair_tole     , elem_dime       ,&
-                      elem_slav_code, elem_slav_nbnode, elem_slav_coor,&
-                      elem_mast_code, elem_mast_nbnode, elem_mast_coor,&
-                      nb_poin_inte  , poin_inte       ,&
-                      gap_moy       , inte_weight     ,&
+    subroutine gapint(elem_dime     , elem_slav_code  , elem_slav_nbnode, elem_slav_coor,&
+                      elem_mast_code, elem_mast_nbnode, elem_mast_coor  , nb_poin_inte  ,&
+                      poin_inte     , gap_moy         , inte_weight     , poin_gaus_ma  ,&
                       l_axis)
-        real(kind=8), intent(in) :: pair_tole
         integer, intent(in) :: elem_dime
         character(len=8), intent(in) :: elem_slav_code
         integer, intent(in) :: elem_slav_nbnode
@@ -37,6 +34,7 @@ interface
         real(kind=8), intent(in) :: elem_mast_coor(3,elem_mast_nbnode)
         integer, intent(in) :: nb_poin_inte
         real(kind=8), intent(in) :: poin_inte(elem_dime-1,nb_poin_inte)
+        real(kind=8), intent(in) :: poin_gaus_ma(elem_dime-1,36)
         real(kind=8), intent(out) :: gap_moy
         real(kind=8), intent(out) :: inte_weight
         aster_logical, intent(in) :: l_axis

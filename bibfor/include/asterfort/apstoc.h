@@ -20,7 +20,7 @@
 !
 interface
     subroutine apstoc(ds_contact, nb_pair, list_pair, list_nbptit, list_ptitsl,&
-                      list_ptitma)
+                      list_ptitma,list_ptgama)
         use NonLin_Datastructure_type
         type(NL_DS_Contact), intent(inout) :: ds_contact
         integer, intent(in):: nb_pair
@@ -28,5 +28,6 @@ interface
         integer, pointer :: list_nbptit(:)
         real(kind=8), pointer :: list_ptitsl(:)
         real(kind=8), pointer :: list_ptitma(:)
+        real(kind=8), pointer :: list_ptgama(:)
     end subroutine apstoc
 end interface

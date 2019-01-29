@@ -19,12 +19,15 @@
 subroutine aprtpm(pair_tole       , elem_dime     , &
                   elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
                   elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
-                  poin_inte_sl    , nb_poin_inte  , poin_inte_ma  , iret)
+                  poin_inte_sl    , nb_poin_inte  , poin_inte_ma  ,&
+                  poin_gaus_ma    , iret)
 !
 implicit none
 !
 #include "asterfort/reerel.h"
 #include "asterfort/assert.h"
+#include "asterfort/lctria.h"
+#include "asterfort/lcptga.h"
 #include "asterfort/mmdonf.h"
 #include "asterfort/mmtang.h"
 #include "asterfort/mmnorm.h"
@@ -41,8 +44,9 @@ integer, intent(in) :: elem_slav_nbnode
 real(kind=8), intent(in) :: elem_slav_coor(3,9)
 character(len=8), intent(in) :: elem_slav_code
 integer, intent(in) :: nb_poin_inte
-real(kind=8), intent(out) :: poin_inte_ma(elem_dime-1,16)
-real(kind=8), intent(in) :: poin_inte_sl(elem_dime-1,16)
+real(kind=8), intent(out) :: poin_inte_ma(elem_dime-1,8)
+real(kind=8), intent(out) :: poin_gaus_ma(elem_dime-1,36)
+real(kind=8), intent(in) :: poin_inte_sl(elem_dime-1,8)
 integer, intent(out) :: iret
 
 !
@@ -54,46 +58,27 @@ integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_poin_inte, i_node, i_dime
+    integer :: i_poin_inte, nb_poin_gaus
     real(kind=8) :: node_real(3), ksi(2), ksi_ma(2)
-    real(kind=8) :: tau1(3), tau2(3), norm(3), elem_slav_coot(27)
+    real(kind=8) :: norm(3)
     real(kind=8) :: dff(2, 9)
-    character(len=8) :: elin_slav_code
-    integer :: elin_slav_nbnode
-    character(len=8) :: elin_mast_code
-    integer :: elin_mast_nbnode, iret_
+    integer :: iret_
+    real(kind=8) :: tria_coor_es(2,3)
+    integer :: i_tria, i_gauss, nb_tria, nb_gauss, niverr, i_node, i_dime
+    real(kind=8) :: gauss_weight_es(12), gauss_coor_es(2,12)
+    real(kind=8) :: gauss_coou(3), dire_norm(3), gauss_coot(2)
+    real(kind=8) :: tau1(3), tau2(3), ksi1, ksi2, elem_slav_coot(27)
+    integer :: tria_node(6,3)
+    character(len=8) :: gauss_family
+    real(kind=8) :: shape_dfunc(2, 9)
+
 !
 ! --------------------------------------------------------------------------------------------------
 !
     iret = 0
     poin_inte_ma(:,:) = 0.d0
-    if (elem_slav_code .eq. "QU8" .or. elem_slav_code .eq. "QU9") then
-        elin_slav_code = "QU4"
-        elin_slav_nbnode =  4
-    elseif (elem_slav_code .eq. "TR6") then
-        elin_slav_code = "TR3"
-        elin_slav_nbnode =  3
-    elseif (elem_slav_code .eq. "SE3") then
-        elin_slav_code = "SE2"
-        elin_slav_nbnode =  2
-    else
-        elin_slav_code = elem_slav_code
-        elin_slav_nbnode = elem_slav_nbnode
-    end if
-
-    if (elem_mast_code .eq. "QU8" .or. elem_mast_code .eq. "QU9") then
-        elin_mast_code = "QU4"
-        elin_mast_nbnode =  4
-    elseif (elem_mast_code .eq. "TR6") then
-        elin_mast_code = "TR3"
-        elin_mast_nbnode =  3
-    elseif (elem_slav_code .eq. "SE3") then
-        elin_mast_code = "SE2"
-        elin_mast_nbnode =  2
-    else
-        elin_mast_code = elem_mast_code
-        elin_mast_nbnode = elem_mast_nbnode
-    end if
+    shape_dfunc(:,:)  = 0.d0
+    poin_gaus_ma(:,:) = 0.d0
 !
 ! - Transform the format of slave element coordinates
 !
@@ -120,22 +105,22 @@ integer, intent(out) :: iret
 !0
 ! --------- Transfert slave intersection coordinates in real space
 !
-        call reerel(elin_slav_code, elin_slav_nbnode, elem_dime, elem_slav_coot,&
+        call reerel(elem_slav_code, elem_slav_nbnode, elem_dime, elem_slav_coot,&
                     ksi           , node_real)
 !
 ! --------- Compute normal
 !
-        call mmdonf(elem_dime, elin_slav_nbnode, elin_slav_code,&
+        call mmdonf(elem_dime, elem_slav_nbnode, elem_slav_code,&
                     ksi(1), ksi(2),&
                     dff)
-        call mmtang(elem_dime, elin_slav_nbnode, elem_slav_coor, dff, tau1,&
+        call mmtang(elem_dime, elem_slav_nbnode, elem_slav_coor, dff, tau1,&
                     tau2)
         call mmnorm(elem_dime, tau1, tau2, norm)
 
 !
 ! ----- Project in parametric space
 !
-        call mmnewd(elin_mast_code, elin_mast_nbnode, elem_dime, elem_mast_coor,&
+        call mmnewd(elem_mast_code, elem_mast_nbnode, elem_dime, elem_mast_coor,&
                     node_real     , 100             , pair_tole, norm          ,&
                     ksi_ma(1)     , ksi_ma(2)       , tau1     , tau2          ,&
                     iret_)
@@ -149,5 +134,94 @@ integer, intent(out) :: iret
             poin_inte_ma(2,i_poin_inte) = ksi_ma(2)
         endif
     end do
+!
+! - Triangulation of convex polygon defined by intersection points
+!
+    if ((elem_dime-1) .eq. 2) then
+        call lctria(nb_poin_inte, nb_tria, tria_node)
+    else
+        nb_tria = 1
+    end if
+!
+! - Loop on triangles
+!
+    nb_poin_gaus = 0
+
+    do i_tria=1, nb_tria
+!
+! ----- Get coordinates of triangles (parametric slave space)
+!
+        if ((elem_dime-1) .eq. 2) then
+            tria_coor_es(1:2,1) = poin_inte_sl(1:2,tria_node(i_tria,1))
+            tria_coor_es(1:2,2) = poin_inte_sl(1:2,tria_node(i_tria,2))
+            tria_coor_es(1:2,3) = poin_inte_sl(1:2,tria_node(i_tria,3))
+            gauss_family         = 'FPG6'
+        else
+            tria_coor_es(1,1:2) = poin_inte_sl(1,1:2)
+            tria_coor_es(2,1:2) = 0.d0
+            gauss_family         = 'FPG3'
+        end if
+!
+! ----- Get integration scheme
+!
+        call lcptga(elem_dime, tria_coor_es , gauss_family,&
+                    nb_gauss , gauss_coor_es   , gauss_weight_es)
+!
+! ----- Loop on Gauss points
+!
+        do i_gauss = 1, nb_gauss
+
+            dire_norm(1:3)  = 0.d0
+            gauss_coou(1:3) = 0.d0
+            gauss_coot(1:2) = 0.d0
+            tau1(:)         = 0.d0
+            tau2(:)         = 0.d0
+!
+! --------- Transform the format of Gauss coordinates
+!
+            gauss_coot(1) = gauss_coor_es(1, i_gauss)
+            if (elem_dime .eq. 3) then
+                gauss_coot(2) = gauss_coor_es(2, i_gauss)
+            end if
+!
+! --------- Transfert Gauss coordinates in real space
+!
+            call reerel(elem_slav_code, elem_slav_nbnode, elem_dime, elem_slav_coot,&
+                        gauss_coot    , gauss_coou)
+
+!
+! - Get shape functions and first derivative only (for perf)
+!
+
+            call mmdonf(elem_dime    , elem_slav_nbnode      , elem_slav_code,&
+                        gauss_coot(1), gauss_coot(2),&
+                        shape_dfunc)
+!
+! - Compute normal at integration point
+!
+            call mmtang(elem_dime,  elem_slav_nbnode, elem_slav_coor, shape_dfunc,&
+                        tau1, tau2)
+
+            call mmnorm(elem_dime, tau1, tau2, dire_norm)
+
+            dire_norm=-dire_norm
+!
+! --------- Projection along given direction
+!
+            call mmnewd(elem_mast_code, elem_mast_nbnode, elem_dime, elem_mast_coor,&
+                        gauss_coou    , 200             , pair_tole, dire_norm     ,&
+                        ksi1          , ksi2            , tau1     , tau2          ,&
+                        niverr)
+            if (niverr.eq.1) then
+                ASSERT(.false.)
+            end if
+            poin_gaus_ma(1,nb_poin_gaus+i_gauss) = ksi1
+            if (elem_dime .eq. 3) then
+                poin_gaus_ma(2,nb_poin_gaus+i_gauss) = ksi2
+            end if
+        end do
+        nb_poin_gaus = nb_gauss + nb_poin_gaus
+    end do
+
 
 end subroutine

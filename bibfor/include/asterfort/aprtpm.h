@@ -20,7 +20,8 @@ interface
     subroutine aprtpm(pair_tole       , elem_dime     , &
                       elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
                       elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
-                      poin_inte_sl    , nb_poin_inte  ,poin_inte_ma, iret)
+                      poin_inte_sl    , nb_poin_inte  , poin_inte_ma  ,&
+                      poin_gaus_ma    , iret)
         real(kind=8), intent(in) :: pair_tole
         integer, intent(in) :: elem_dime
         integer, intent(in) :: elem_mast_nbnode
@@ -30,8 +31,9 @@ interface
         real(kind=8), intent(in) :: elem_slav_coor(3,9)
         character(len=8), intent(in) :: elem_slav_code
         integer, intent(in) :: nb_poin_inte
-        real(kind=8), intent(out) :: poin_inte_ma(elem_dime-1,16)
-        real(kind=8), intent(in) :: poin_inte_sl(elem_dime-1,16)
+        real(kind=8), intent(out) :: poin_inte_ma(elem_dime-1,8)
+        real(kind=8), intent(out) :: poin_gaus_ma(elem_dime-1,36)
+        real(kind=8), intent(in) :: poin_inte_sl(elem_dime-1,8)
         integer, intent(out) :: iret
     end subroutine aprtpm
 end interface

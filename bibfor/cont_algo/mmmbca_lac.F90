@@ -97,6 +97,8 @@ implicit none
     integer, pointer :: v_sdappa_apnp(:) => null()
     character(len=24) :: sdappa_apts
     real(kind=8), pointer :: v_sdappa_apts(:) => null()
+    character(len=24) :: sdappa_ap2m
+    real(kind=8), pointer :: v_sdappa_ap2m(:) => null()
     character(len=24) :: sdappa_nmcp
     integer, pointer :: v_sdappa_nmcp(:) => null()
     character(len=24) :: sdcont_stat_prev
@@ -123,7 +125,7 @@ implicit none
     character(len=8) :: elem_mast_code, elem_slav_code
     character(len=8) :: elem_slav_type, elem_mast_type
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27), poin_inte(16), gap_moy
-    real(kind=8) :: inte_weight, pair_tole
+    real(kind=8) :: inte_weight, pair_tole, poin_gaus_ma(72)
     aster_logical:: l_axis
 
 
@@ -181,6 +183,7 @@ implicit none
     sdappa_apli = sdappa(1:19)//'.APLI'
     sdappa_apnp = sdappa(1:19)//'.APNP'
     sdappa_apts = sdappa(1:19)//'.APTS'
+    sdappa_ap2m = sdappa(1:19)//'.AP2M'
     sdappa_gapi = sdappa(1:19)//'.GAPI'
     sdappa_coef = sdappa(1:19)//'.COEF'
     sdappa_wpat = sdappa(1:19)//'.WPAT'
@@ -194,6 +197,7 @@ implicit none
     call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
     call jeveuo(sdappa_apnp, 'L', vi = v_sdappa_apnp)
     call jeveuo(sdappa_apts, 'L', vr = v_sdappa_apts)
+    call jeveuo(sdappa_ap2m, 'L', vr = v_sdappa_ap2m)
     call jeveuo(sdcont_stat_prev, 'E', vi = v_sdcont_stat_pr)
     call jeveuo(contcylac_etat, 'E', vi = v_contcylac_etat)
     call jeveuo(contcylac_hist, 'E', vr = v_contcylac_hist)
@@ -254,12 +258,12 @@ implicit none
         nb_poin_inte = v_sdappa_apnp(i_pair)
         !get intersection nodes
         poin_inte(1:16) = v_sdappa_apts(16*(i_pair-1)+1:16*(i_pair-1)+16)
+        poin_gaus_ma(1:72) = v_sdappa_ap2m(72*(i_pair-1)+1:72*(i_pair-1)+72)
         !compute gap
-        call gapint(pair_tole    , elem_slav_dime,&
-                    elem_slav_code, elem_slav_nbnode, elem_slav_coor,&
-                    elem_mast_code, elem_mast_nbnode, elem_mast_coor,&
-                    nb_poin_inte  , poin_inte                    , &
-                    gap_moy       , inte_weight, l_axis)
+        call gapint(elem_slav_dime, elem_slav_code  , elem_slav_nbnode, elem_slav_coor,&
+                    elem_mast_code, elem_mast_nbnode, elem_mast_coor  , nb_poin_inte  ,&
+                    poin_inte     , gap_moy         , inte_weight     , poin_gaus_ma  ,&
+                    l_axis )
         !save gap
         v_sdappa_gapi(patch_indx)  = v_sdappa_gapi(patch_indx)-gap_moy
         patch_weight_c(patch_indx) = patch_weight_c(patch_indx)+inte_weight
