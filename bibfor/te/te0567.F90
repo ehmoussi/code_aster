@@ -51,7 +51,7 @@ character(len=16), intent(in) :: nomopt, nomte
     integer :: indi_lagc(10)
     integer :: elem_dime
     integer :: jmatt
-    real(kind=8) :: lagrc, lagrc_prev
+    real(kind=8) :: lagrc_curr, gap_curr, gapi
     integer :: indi_cont, nmcp, i_reso_geom
     aster_logical :: l_norm_smooth
     aster_logical :: l_axis, debug, l_upda_jaco
@@ -63,9 +63,7 @@ character(len=16), intent(in) :: nomopt, nomte
     real(kind=8) :: poin_inte_ma(16)
     integer :: nb_poin_inte
     character(len=8) :: elga_fami_slav, elga_fami_mast
-    real(kind=8) :: mmat(55, 55), mmat_prev(55, 55)
-    real(kind=8) :: gap_curr, gap_prev, gapi
-    aster_logical :: l_previous
+    real(kind=8) :: mmat(55, 55)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,7 +72,6 @@ character(len=16), intent(in) :: nomopt, nomte
 ! - Initializations
 !
     mmat(1:55,1:55)      = 0.d0
-    mmat_prev(1:55,1:55) = 0.d0
     elem_mast_coor(1:27) = 0.d0
     elem_mast_coop(1:27) = 0.d0
     elem_slav_coor(1:27) = 0.d0
@@ -93,13 +90,11 @@ character(len=16), intent(in) :: nomopt, nomte
 !
 ! - Get indicators
 !
-    call lcstco(l_previous, l_upda_jaco  ,&
-                lagrc_prev, lagrc        ,&
-                gap_prev  , gap_curr     ,&
-                indi_cont , l_norm_smooth,&
-                gapi, nmcp, nb_poin_inte ,&
-                poin_inte_sl, poin_inte_ma,&
-                i_reso_geom)
+    call lcstco(l_upda_jaco , l_norm_smooth, i_reso_geom ,&
+                lagrc_curr  , gap_curr     ,&
+                indi_cont   , &
+                gapi        , nmcp         ,&
+                nb_poin_inte, poin_inte_sl , poin_inte_ma)
 !
 ! - Get initial coordinates
 !

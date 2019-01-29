@@ -49,7 +49,7 @@ character(len=16), intent(in) :: nomopt, nomte
     integer :: indi_lagc(10)
     integer :: elem_dime
     integer :: jvect
-    real(kind=8) :: lagrc, lagrc_prev
+    real(kind=8) :: lagrc_curr, gap_curr, gapi
     integer :: indi_cont, nmcp, i_reso_geom
     aster_logical :: l_norm_smooth
     aster_logical :: l_axis, debug, l_upda_jaco
@@ -61,9 +61,7 @@ character(len=16), intent(in) :: nomopt, nomte
     real(kind=8) :: poin_inte_ma(16)
     integer :: nb_poin_inte
     character(len=8) :: elga_fami_slav, elga_fami_mast
-    real(kind=8) :: vcont(55), vcont_prev(55)
-    real(kind=8) :: gap_curr,gap_prev, gapi
-    aster_logical :: l_previous
+    real(kind=8) :: vcont(55)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,7 +70,6 @@ character(len=16), intent(in) :: nomopt, nomte
 ! - Initializations
 !
     vcont(1:55)          = 0.d0
-    vcont_prev(1:55)     = 0.d0
     elem_mast_coor(1:27) = 0.d0
     elem_slav_coor(1:27) = 0.d0
     elem_mast_coop(1:27) = 0.d0
@@ -92,13 +89,11 @@ character(len=16), intent(in) :: nomopt, nomte
 !
 ! - Get indicators
 !
-    call lcstco(l_previous, l_upda_jaco  ,&
-                lagrc_prev, lagrc        ,&
-                gap_prev  , gap_curr     ,&
-                indi_cont , l_norm_smooth,&
-                gapi, nmcp, nb_poin_inte ,&
-                poin_inte_sl, poin_inte_ma,&
-                i_reso_geom)
+    call lcstco(l_upda_jaco , l_norm_smooth, i_reso_geom ,&
+                lagrc_curr  , gap_curr     ,&
+                indi_cont   , &
+                gapi        , nmcp         ,&
+                nb_poin_inte, poin_inte_sl , poin_inte_ma)
 !
 ! - Get initial coordinates
 !
@@ -118,14 +113,14 @@ character(len=16), intent(in) :: nomopt, nomte
 !
     if (indi_cont .eq. 1) then
         call lcvect(elem_dime     , l_axis        , l_upda_jaco   , l_norm_smooth ,&
-                    nb_lagr       , indi_lagc     , lagrc         , elga_fami_slav,&
+                    nb_lagr       , indi_lagc     , lagrc_curr    , elga_fami_slav,&
                     nb_node_slav  , elem_slav_code, elem_slav_init, elem_slav_coor,&
                     nb_node_mast  , elem_mast_code, elem_mast_init, elem_mast_coor,&
                     nb_poin_inte  , poin_inte_sl  , poin_inte_ma  ,&
                     vcont         , gapi          , nmcp)
     elseif (indi_cont .eq. 0) then
-        call lcsena(elem_dime, nb_lagr, nb_node_slav, indi_lagc, &
-                    lagrc    , vcont)
+        call lcsena(elem_dime , nb_lagr, nb_node_slav, indi_lagc, &
+                    lagrc_curr, vcont)
     else
 !
     endif
