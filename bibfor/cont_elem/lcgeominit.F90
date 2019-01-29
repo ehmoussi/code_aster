@@ -32,7 +32,7 @@ real(kind=8), intent(out) :: elem_mast_init(nb_node_mast, elem_dime)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Contact (LAC) - Elementary computations
+! Contact - Elementary computations
 !
 ! Get initial geometry
 !
