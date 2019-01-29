@@ -19,12 +19,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine lcvect(elem_dime   ,&
-                      l_axis      , l_upda_jaco   , l_norm_smooth ,&
-                      nb_lagr     , indi_lagc     , lagrc         ,&
-                      nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coor,&
-                      nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coor,&
-                      nb_poin_inte, poin_inte_sl, poin_inte_ma,&
+    subroutine lcvect(elem_dime   , l_axis        , l_upda_jaco   , l_norm_smooth ,&
+                      nb_lagr     , indi_lagc     , lagrc         , elga_fami     ,&
+                      nb_node_slav, elem_slav_code, elem_slav_init, elem_slav_coor,&
+                      nb_node_mast, elem_mast_code, elem_mast_init, elem_mast_coor,&
+                      nb_poin_inte, poin_inte_sl  , poin_inte_ma  ,&
                       vect, gapi, nmcp)
         integer, intent(in) :: elem_dime
         aster_logical, intent(in) :: l_axis
@@ -33,20 +32,17 @@ interface
         integer, intent(in) :: nb_lagr
         integer, intent(in) :: indi_lagc(10)
         real(kind=8), intent(in) :: lagrc, gapi
-        character(len=8), intent(in) :: elem_slav_code
-        character(len=8), intent(in) :: elem_mast_code
-        integer, intent(in) :: nb_node_slav
-        integer, intent(in) :: nb_node_mast
+        character(len=8), intent(in) :: elem_slav_code, elem_mast_code
+        integer, intent(in) :: nb_node_slav, nb_node_mast
         integer, intent(in) :: nmcp
         integer, intent(in) :: nb_poin_inte
         real(kind=8), intent(in):: poin_inte_sl(16)
         real(kind=8), intent(in):: poin_inte_ma(16)
+        character(len=8), intent(in) :: elga_fami
         real(kind=8), intent(in) :: elem_mast_init(nb_node_mast, elem_dime)
         real(kind=8), intent(in) :: elem_slav_init(nb_node_slav, elem_dime)
         real(kind=8), intent(in) :: elem_mast_coor(nb_node_mast, elem_dime)
         real(kind=8), intent(in) :: elem_slav_coor(nb_node_slav, elem_dime)
-        character(len=8), intent(in) :: elga_fami_slav
-        character(len=8), intent(in) :: elga_fami_mast
         real(kind=8), intent(inout) :: vect(55)
     end subroutine lcvect
 end interface

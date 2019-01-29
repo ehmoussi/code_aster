@@ -61,10 +61,9 @@ character(len=16), intent(in) :: nomopt, nomte
     real(kind=8) :: poin_inte_ma(16)
     integer :: nb_poin_inte
     character(len=8) :: elga_fami_slav, elga_fami_mast
-    real(kind=8) :: vcont(55), vcont_prev(55), vcont_(55)
+    real(kind=8) :: vcont(55), vcont_prev(55)
     real(kind=8) :: gap_curr,gap_prev, gapi
     aster_logical :: l_previous
-    real(kind=8) :: alpha, max_value
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,13 +71,12 @@ character(len=16), intent(in) :: nomopt, nomte
 !
 ! - Initializations
 !
-    vcont(1:55)           = 0.d0
-    vcont_prev(1:55)      = 0.d0
+    vcont(1:55)          = 0.d0
+    vcont_prev(1:55)     = 0.d0
     elem_mast_coor(1:27) = 0.d0
     elem_slav_coor(1:27) = 0.d0
     elem_mast_coop(1:27) = 0.d0
     elem_slav_coop(1:27) = 0.d0
-    max_value            = 0.5d0
     debug                = ASTER_FALSE
     ASSERT(nomopt.eq.'CHAR_MECA_CONT')
 !
@@ -90,6 +88,7 @@ character(len=16), intent(in) :: nomopt, nomte
                 elem_slav_code, elga_fami_slav, nb_node_slav,&
                 elem_mast_code, elga_fami_mast, nb_node_mast)
     ASSERT(nb_dof .le. 55)
+    ASSERT(elga_fami_slav .eq. elga_fami_mast)
 !
 ! - Get indicators
 !
@@ -118,13 +117,10 @@ character(len=16), intent(in) :: nomopt, nomte
 ! - Compute vector
 !
     if (indi_cont .eq. 1) then
-        call lcvect(elem_dime     ,&
-                    l_axis        , l_upda_jaco   , l_norm_smooth ,&
-                    nb_lagr       , indi_lagc     , lagrc         ,&
-                    nb_node_slav  , elem_slav_code, elem_slav_init,&
-                    elga_fami_slav, elem_slav_coor,&
-                    nb_node_mast  , elem_mast_code, elem_mast_init,&
-                    elga_fami_mast, elem_mast_coor,&
+        call lcvect(elem_dime     , l_axis        , l_upda_jaco   , l_norm_smooth ,&
+                    nb_lagr       , indi_lagc     , lagrc         , elga_fami_slav,&
+                    nb_node_slav  , elem_slav_code, elem_slav_init, elem_slav_coor,&
+                    nb_node_mast  , elem_mast_code, elem_mast_init, elem_mast_coor,&
                     nb_poin_inte  , poin_inte_sl  , poin_inte_ma  ,&
                     vcont         , gapi          , nmcp)
     elseif (indi_cont .eq. 0) then

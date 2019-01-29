@@ -21,7 +21,7 @@ interface
     subroutine lctppe(side      , l_axis    , l_upda_jaco,&
                       nb_node   , elem_dime , elem_code  ,&
                       elem_init , elem_coor , &
-                      gauss_coor, shape_func, shape_dfunc,&
+                      gauss_coor, shape_func, &
                       jacobian  , norm_g)
         character(len=*), intent(in) :: side
         integer, intent(in) :: elem_dime
@@ -31,7 +31,7 @@ interface
         real(kind=8), intent(in) :: elem_coor(nb_node, elem_dime)
         character(len=8), intent(in) :: elem_code
         real(kind=8), intent(in) :: gauss_coor(2)
-        real(kind=8), intent(out) :: shape_func(9), shape_dfunc(2, 9)
+        real(kind=8), intent(out) :: shape_func(9)
         real(kind=8), intent(out) :: jacobian 
         real(kind=8), intent(out) :: norm_g(3)
     end subroutine lctppe
