@@ -16,31 +16,24 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcgeog(l_previous    ,&
-                  elem_dime     , nb_lagr       , indi_lagc,&
+subroutine lcgeog(elem_dime     , nb_lagr       , indi_lagc,&
                   nb_node_slav  , nb_node_mast  ,&
                   elem_mast_init, elem_slav_init,&
-                  elem_mast_coor, elem_slav_coor,&
-                  l_norm_smooth)
+                  elem_mast_coor, elem_slav_coor)
 !
 implicit none
 !
 #include "jeveux.h"
 #include "asterf_types.h"
 #include "asterfort/jevech.h"
-#include "asterfort/lcreac.h"
+#include "asterfort/mmreac.h"
 !
-aster_logical, intent(in) :: l_previous
-integer, intent(in) :: elem_dime
-integer, intent(in) :: nb_lagr
-integer, intent(in) :: indi_lagc(10)
-integer, intent(in) :: nb_node_slav
-integer, intent(in) :: nb_node_mast
+integer, intent(in) :: elem_dime, nb_lagr, indi_lagc(10)
+integer, intent(in) :: nb_node_slav, nb_node_mast
 real(kind=8), intent(in) :: elem_slav_init(nb_node_slav, elem_dime)
 real(kind=8), intent(in) :: elem_mast_init(nb_node_mast, elem_dime)
 real(kind=8), intent(inout) :: elem_slav_coor(nb_node_slav, elem_dime)
 real(kind=8), intent(inout) :: elem_mast_coor(nb_node_mast, elem_dime)
-aster_logical, intent(out) :: l_norm_smooth 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,7 +43,6 @@ aster_logical, intent(out) :: l_norm_smooth
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_previous       : .true. to get previous state
 ! In  elem_dime        : dimension of elements
 ! In  nb_lagr          : total number of Lagrangian dof on contact element
 ! In  indi_lagc        : PREVIOUS node where Lagrangian dof is present (1) or not (0)
@@ -63,35 +55,25 @@ aster_logical, intent(out) :: l_norm_smooth
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jpcf, jv_disp, jv_disp_incr, jv_ddisp
+    real(kind=8) :: ppe
+    integer :: jv_disp, jv_disp_incr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call jevech('PCONFR', 'L', jpcf)
     call jevech('PDEPL_P', 'L', jv_disp_incr)
     call jevech('PDEPL_M', 'L', jv_disp)
 !
-! - Smooth normals ?
+! - Coefficient to update geometry
 !
-    l_norm_smooth = int(zr(jpcf-1+1)) .eq. 1
+    ppe = 1.d0
 !
 ! - Get updated coordinates
 !
-    if (l_previous) then 
-        call jevech('PDDEPLA', 'L', jv_ddisp)
-        call lcreac(nb_lagr       , indi_lagc     , elem_dime,&
-                    nb_node_slav  , nb_node_mast  ,&
-                    jv_disp       , jv_disp_incr  ,&
-                    elem_slav_init, elem_mast_init,&
-                    elem_slav_coor, elem_mast_coor,&
-                    jv_ddisp)
-                    
-    else 
-        call lcreac(nb_lagr       , indi_lagc     , elem_dime,&
-                    nb_node_slav  , nb_node_mast  ,&
-                    jv_disp       , jv_disp_incr  ,&
-                    elem_slav_init, elem_mast_init,&
-                    elem_slav_coor, elem_mast_coor)
-    end if
+    call mmreac(elem_dime     , nb_node_slav  , nb_node_mast,&
+                jv_disp       , jv_disp_incr  , ppe,&
+                elem_slav_init, elem_mast_init,&
+                elem_slav_coor, elem_mast_coor,&
+                nb_lagr_   = nb_lagr,&
+                indi_lagc_ = indi_lagc)
 !
 end subroutine  

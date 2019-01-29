@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lcgeominit.h"
 #include "asterfort/mmdepm.h"
 #include "asterfort/mmform.h"
 #include "asterfort/mmgeom.h"
@@ -128,60 +129,57 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jgeom, jdepde, jdepm
+    integer :: jv_disp_incr, jv_disp
     real(kind=8) :: ppe=0.0
     real(kind=8) :: ddepmam(9, 3)=0.0
-    real(kind=8) :: geomae(9, 3)=0.0, geomam(9, 3)=0.0
     real(kind=8) :: geomm(3)=0.0, geome(3)=0.0
     real(kind=8) :: ddeple(3)=0.0, ddeplm(3)=0.0
     real(kind=8) :: deplme(3)=0.0, deplmm(3)=0.0
     real(kind=8) :: djeu(3)=0.0
     real(kind=8) :: gene11(3,3)=0.0, gene21(3,3)=0.0, gene22(3,3)=0.0
     real(kind=8) :: a(2, 2)=0.0, ha(2, 2)=0.0
+    real(kind=8) :: elem_slav_init(9, 3), elem_mast_init(9, 3)
+    real(kind=8) :: elem_slav_coor(9, 3), elem_mast_coor(9, 3)
+    real(kind=8) :: elem_slav_temp(nne, ndim), elem_mast_temp(nnm, ndim)
+    real(kind=8) :: elem_slav_tem2(nne, ndim), elem_mast_tem2(nnm, ndim)
+    integer :: i_dime, i_nne, i_nnm
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call jevech('PGEOMER', 'L', jgeom)
-    call jevech('PDEPL_P', 'L', jdepde)
-    call jevech('PDEPL_M', 'L', jdepm)
-
+    call jevech('PDEPL_P', 'L', jv_disp_incr)
+    call jevech('PDEPL_M', 'L', jv_disp)
 !
-! -------------------------Initialisation---------------------
+! - Initialisations
 !
-
-
-
-jeu=0
-djeu=0
-djeut=0
-norm=0
-mprojn=0
-mprojt=0
-mprt1n=0
-mprt2n=0
-mprt11=0
-mprt21=0
-mprt22=0
-gene11=0 
-gene21=0
-gene22=0
-kappa=0
-a=0
-h=0
-ha=0
-hah=0
-vech1=0 
-vech2=0
-geomae=0
-geomam=0
-geomm=0
-geome=0
-ddeple=0
-ddeplm=0
-deplme=0
-deplmm=0
-
-
+    jeu=0
+    djeu=0
+    djeut=0
+    norm=0
+    mprojn=0
+    mprojt=0
+    mprt1n=0
+    mprt2n=0
+    mprt11=0
+    mprt21=0
+    mprt22=0
+    gene11=0 
+    gene21=0
+    gene22=0
+    kappa=0
+    a=0
+    h=0
+    ha=0
+    hah=0
+    vech1=0 
+    vech2=0
+    elem_slav_coor = 0.d0
+    elem_mast_coor = 0.d0
+    geomm=0
+    geome=0
+    ddeple=0
+    ddeplm=0
+    deplme=0
+    deplmm=0
 !
 ! - Coefficient to update geometry
 !
@@ -190,33 +188,61 @@ deplmm=0
         ppe = 1.d0
     endif
 !
+! - Get initial geometry
+!
+    call lcgeominit(ndim          ,&
+                    nne           , nnm           ,&
+                    elem_mast_temp, elem_slav_temp)
+    elem_slav_init(:,:) = 0.d0
+    elem_mast_init(:,:) = 0.d0
+    do i_dime = 1, ndim
+        do i_nne = 1, nne
+            elem_slav_init(i_nne,i_dime) = elem_slav_temp(i_nne,i_dime)
+        end do
+        do i_nnm = 1, nnm
+            elem_mast_init(i_nnm,i_dime) = elem_mast_temp(i_nnm,i_dime)
+        end do
+    end do
+!
 ! - Update geometry
 !
-    call mmreac(nbdm  , ndim  ,&
-                nne   , nnm   ,&
-                jgeom , jdepm , jdepde , ppe,&
-                geomae, geomam, ddepmam)
+    call mmreac(ndim          , nne           , nnm,&
+                jv_disp       , jv_disp_incr  , ppe,&
+                elem_slav_temp, elem_mast_temp,&
+                elem_slav_tem2, elem_mast_tem2,&
+                nbdm_    = nbdm,&
+                ddepmam_ = ddepmam)
+    elem_slav_coor(:,:) = 0.d0
+    elem_mast_coor(:,:) = 0.d0
+    do i_dime = 1, ndim
+        do i_nne = 1, nne
+            elem_slav_coor(i_nne,i_dime) = elem_slav_tem2(i_nne,i_dime)
+        end do
+        do i_nnm = 1, nnm
+            elem_mast_coor(i_nnm,i_dime) = elem_mast_tem2(i_nnm,i_dime)
+        end do
+    end do
 !
 ! - Compute local basis
 !
     call mmgeom(ndim  ,&
                 nne   , nnm   ,&
                 ffe   , ffm   ,&
-                geomae, geomam,&
+                elem_slav_coor, elem_mast_coor,&
                 tau1  , tau2  ,&
                 norm  , mprojn, mprojt,&
                 geome , geomm )
 !
 ! - Compute increment of Lagrange multipliers
 !
-    call mmlagm(nbdm  , ndim  , nnl, jdepde, ffl,&
+    call mmlagm(nbdm  , ndim  , nnl, jv_disp_incr, ffl,&
                 dlagrc, dlagrf)
 !
 ! - Compute increment of displacements
 !
     call mmdepm(nbdm  , ndim  ,&
                 nne   , nnm   ,&
-                jdepm , jdepde,&
+                jv_disp , jv_disp_incr,&
                 ffe   , ffm   ,&
                 ddeple, ddeplm,&
                 deplme, deplmm)
@@ -233,7 +259,7 @@ deplmm=0
 !
     call mmcalg(ndim     , l_large_slip,&
                 nnm      , dffm        , ddffm ,&
-                geomam   , ddepmam     ,&
+                elem_mast_coor, ddepmam     ,&
                 tau1     , tau2        , norm  ,&
                 jeu      , djeu        ,&
                 gene11   , gene21      , gene22,&

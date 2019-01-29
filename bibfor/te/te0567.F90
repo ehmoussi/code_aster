@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -109,32 +109,12 @@ character(len=16), intent(in) :: nomte
                     nb_node_slav  , nb_node_mast  ,&
                     elem_mast_init, elem_slav_init)
 !
-! - Get initial coordinates
-!
-    call lcgeominit(elem_dime     ,&
-                    nb_node_slav  , nb_node_mast  ,&
-                    elem_mast_init, elem_slav_init)
-!
 ! - Compute updated geometry
 !
-    call lcgeog(ASTER_FALSE   ,&
-                elem_dime     , nb_lagr       , indi_lagc ,&
+    call lcgeog(elem_dime     , nb_lagr       , indi_lagc,&
                 nb_node_slav  , nb_node_mast  ,&
                 elem_mast_init, elem_slav_init,&
-                elem_mast_coor, elem_slav_coor,&
-                l_norm_smooth)
-
-!
-! - S'il y a du cyclage, on calcule la géométrie à n-1 :
-!
-    if (.false.) then
-        call lcgeog(ASTER_TRUE    ,&
-                    elem_dime     , nb_lagr       , indi_lagc ,&
-                    nb_node_slav  , nb_node_mast  ,&
-                    elem_mast_init, elem_slav_init,&
-                    elem_mast_coop, elem_slav_coop,&
-                    l_norm_smooth)
-    end if
+                elem_mast_coor, elem_slav_coor)
 !
 ! - Compute matrix
 !

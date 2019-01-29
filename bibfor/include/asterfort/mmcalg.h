@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 interface
     subroutine mmcalg(ndim     , l_large_slip,&
                       nnm      , dffm        , ddffm ,&
-                      geomam   , ddepmam     ,&
+                      elem_mast_coor, ddepmam     ,&
                       tau1     , tau2        , norm  ,&
                       jeu      , djeu        ,&
                       gene11   , gene21      , gene22,&
@@ -34,7 +34,7 @@ interface
         integer, intent(in) :: ndim, nnm
         aster_logical, intent(in) :: l_large_slip
         real(kind=8), intent(in) :: dffm(2, 9), ddffm(3,9)
-        real(kind=8), intent(in) :: geomam(9, 3), ddepmam(9, 3)
+        real(kind=8), intent(in) :: elem_mast_coor(9, 3), ddepmam(9, 3)
         real(kind=8), intent(in) :: tau1(3), tau2(3), norm(3)
         real(kind=8), intent(in) :: jeu, djeu(3)
         real(kind=8), intent(out) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
