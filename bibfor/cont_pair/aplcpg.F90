@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 subroutine aplcpg(mesh            , newgeo        , sdappa          , i_zone        , pair_tole,&
                   nb_elem_mast    , list_elem_mast, nb_elem_slav    , list_elem_slav, &
                   nb_pair_zone    , list_pair_zone, list_nbptit_zone, list_ptitsl_zone,&
-                  list_ptitma_zone, i_proc        , nb_proc         , pair_method)
+                  list_ptitma_zone, li_ptgausma_zone,i_proc      , nb_proc        , pair_method)
 !
 implicit none
 !
@@ -70,6 +70,7 @@ integer, pointer :: list_pair_zone(:)
 integer, pointer :: list_nbptit_zone(:)
 real(kind=8), pointer :: list_ptitsl_zone(:)
 real(kind=8), pointer :: list_ptitma_zone(:)
+real(kind=8), pointer :: li_ptgausma_zone(:)
 integer, intent(in) :: i_proc
 integer, intent(in) :: nb_proc
 character(len=24), intent(in) :: pair_method
@@ -98,6 +99,7 @@ character(len=24), intent(in) :: pair_method
 !
     integer :: list_pair(nb_elem_mast),li_nb_pt_inte_sl(nb_elem_mast), nbpatch_t, iret
     real(kind=8) :: li_pt_inte_sl(nb_elem_mast*16), li_pt_inte_ma(nb_elem_mast*16)
+    real(kind=8) :: li_pt_gaus_ma(nb_elem_mast*72)
     integer :: elem_slav_nbnode, elem_slav_nume, elem_slav_dime, elem_slav_indx
     integer :: elem_mast_nbnode, elem_mast_nume, elem_mast_dime, elem_mast_indx
     character(len=8) :: elem_mast_code, elem_slav_code
@@ -110,6 +112,7 @@ character(len=24), intent(in) :: pair_method
     real(kind=8) :: inte_weight, elem_slav_weight
     real(kind=8) :: poin_inte_sl(32)
     real(kind=8) :: poin_inte_ma(32)
+    real(kind=8) :: poin_gauss_ma(74)
     integer ::  elin_mast_nbnode
     integer ::  elin_slav_nbnode
     character(len=8) :: elin_mast_code, elin_slav_code, elem_slav_name, elem_mast_name, elem_name
@@ -140,6 +143,7 @@ character(len=24), intent(in) :: pair_method
     integer, pointer :: li_nbptsl_zmpi(:) => null()
     real(kind=8), pointer :: li_ptintsl_zmpi(:) => null()
     real(kind=8), pointer :: li_ptintma_zmpi(:) => null()
+    real(kind=8), pointer :: li_ptgausma_zmpi(:) => null()
     integer, pointer :: v_mesh_connex(:)  => null()
     integer, pointer :: v_connex_lcum(:)  => null()
     character(len=16), pointer :: valk(:) => null()
@@ -183,6 +187,7 @@ character(len=24), intent(in) :: pair_method
     AS_ALLOCATE(vi=li_nbptsl_zmpi, size= nb_elem_slav*nb_elem_mast)
     AS_ALLOCATE(vr=li_ptintsl_zmpi, size= 16*nb_elem_slav*nb_elem_mast)
     AS_ALLOCATE(vr=li_ptintma_zmpi, size= 16*nb_elem_slav*nb_elem_mast)
+    AS_ALLOCATE(vr=li_ptgausma_zmpi, size= 72*nb_elem_slav*nb_elem_mast)
 !
 ! - Access to updated geometry
 !
@@ -454,7 +459,8 @@ character(len=24), intent(in) :: pair_method
                 call aprtpm(pair_tole       , elem_slav_dime, &
                             elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
                             elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
-                            poin_inte_sl    , nb_poin_inte  ,poin_inte_ma, iret)
+                            poin_inte_sl    , nb_poin_inte  ,poin_inte_ma,&
+                            poin_gauss_ma   , iret)
             end if
 !
 ! --------- Add element paired
@@ -465,6 +471,7 @@ character(len=24), intent(in) :: pair_method
                 li_nb_pt_inte_sl(nb_pair)      = nb_poin_inte
                 ASSERT(nb_poin_inte.le.8)
                 li_pt_inte_ma(1+(nb_pair-1)*16:(nb_pair-1)*16+16) = poin_inte_ma(1:16)
+                li_pt_gaus_ma(1+(nb_pair-1)*72:(nb_pair-1)*72+72) = poin_gauss_ma(1:72)
                 li_pt_inte_sl(1+(nb_pair-1)*16:(nb_pair-1)*16+16) = poin_inte_sl(1:16)
                 elem_mast_flag(elem_mast_indx) = 1
             end if
@@ -533,8 +540,10 @@ character(len=24), intent(in) :: pair_method
             call apsave_pair(i_zone      , elem_slav_nume,&
                              nb_pair     , list_pair     ,&
                              li_nb_pt_inte_sl, li_pt_inte_sl,li_pt_inte_ma,&
+                             li_pt_gaus_ma,&
                              nb_pair_zmpi(i_proc+1), list_pair_zmpi,&
-                             li_nbptsl_zmpi,li_ptintsl_zmpi, li_ptintma_zmpi)
+                             li_nbptsl_zmpi,li_ptintsl_zmpi, li_ptintma_zmpi,&
+                             li_ptgausma_zmpi)
         end if
 !
 ! ----- Next elements
@@ -575,9 +584,9 @@ character(len=24), intent(in) :: pair_method
 !
     call apsave_patch(mesh          , sdappa        , i_zone,&
                       patch_weight_t, nb_proc, list_pair_zmpi,&
-                      li_nbptsl_zmpi,li_ptintsl_zmpi,li_ptintma_zmpi,&
+                      li_nbptsl_zmpi,li_ptintsl_zmpi,li_ptintma_zmpi,li_ptgausma_zmpi,&
                       nb_pair_zmpi, list_pair_zone,list_nbptit_zone, list_ptitsl_zone,&
-                      list_ptitma_zone,nb_pair_zone, i_proc)
+                      list_ptitma_zone,li_ptgausma_zone,nb_pair_zone, i_proc)
     !write(*,*)"Fin APSAVE_PATCH", i_proc
     !write(*,*)"NB_pair_zone: ",nb_pair_zone ,i_proc
     !write(*,*)"list_pair_zone: ",list_pair_zone(:) ,i_proc
@@ -589,6 +598,7 @@ character(len=24), intent(in) :: pair_method
     AS_DEALLOCATE(vi=li_nbptsl_zmpi)
     AS_DEALLOCATE(vr=li_ptintsl_zmpi)
     AS_DEALLOCATE(vr=li_ptintma_zmpi)
+    AS_DEALLOCATE(vr=li_ptgausma_zmpi)
     call jedetr(njv_weight_t)
     call jedetr(njv_nb_pair_zmpi)
     call jedema()

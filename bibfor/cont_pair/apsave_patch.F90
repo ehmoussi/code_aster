@@ -19,8 +19,9 @@
 subroutine apsave_patch(mesh          , sdappa        , i_zone,&
                         patch_weight_t, nb_proc, list_pair_zmpi,&
                         list_nbptit_zmpi,list_ptitsl_zmpi,list_ptitma_zmpi,&
+                        li_ptgausma_zmpi,&
                         nb_pair_zmpi, list_pair_zone,list_nbptit_zone, list_ptitsl_zone,&
-                        list_ptitma_zone,nb_pair_zone, i_proc)
+                        list_ptitma_zone,li_ptgausma_zone,nb_pair_zone, i_proc)
 !
 implicit none
 !
@@ -45,11 +46,13 @@ implicit none
     integer, pointer :: list_nbptit_zone(:)
     real(kind=8), pointer :: list_ptitsl_zone(:)
     real(kind=8), pointer :: list_ptitma_zone(:)
+    real(kind=8), pointer :: li_ptgausma_zone(:)
     integer, pointer :: nb_pair_zmpi(:)
     integer, pointer :: list_pair_zmpi(:)
     integer, pointer :: list_nbptit_zmpi(:)
     real(kind=8), pointer :: list_ptitsl_zmpi(:)
     real(kind=8), pointer :: list_ptitma_zmpi(:)
+    real(kind=8), pointer :: li_ptgausma_zmpi(:)
     integer, intent(in) :: nb_proc
     integer, intent(in) :: i_proc
 !
@@ -71,17 +74,19 @@ implicit none
     integer :: i_patch, patch_indx, patch_jdec, nb_patch, deca, idx_start, idx_end
     integer :: i_proc2, nb_pair_init
     integer, pointer :: v_mesh_lpatch(:) => null()
-    character(len=24) :: sdappa_wpat,njv_aux, njv_aux2, njv_aux3, njv_aux4
+    character(len=24) :: sdappa_wpat,njv_aux, njv_aux2, njv_aux3, njv_aux4, njv_aux5
     real(kind=8), pointer :: v_sdappa_wpat(:) => null()
     integer, pointer :: v_sdappa_dcl(:) => null()
     integer, pointer :: list_tmp(:) => null()
     integer, pointer :: list_tmp2(:) => null()
     real(kind=8), pointer :: list_tmp3(:) => null()
     real(kind=8), pointer :: list_tmp4(:) => null()
+    real(kind=8), pointer :: list_tmp5(:) => null()
     integer, pointer :: list_aux(:) => null()
     integer, pointer :: list_aux2(:) => null()
     real(kind=8), pointer :: list_aux3(:) => null()
     real(kind=8), pointer :: list_aux4(:) => null()
+    real(kind=8), pointer :: list_aux5(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -100,6 +105,7 @@ implicit none
     njv_aux2 = sdappa(1:19)//'.AUX2 '
     njv_aux3 = sdappa(1:19)//'.AUX3 '
     njv_aux4 = sdappa(1:19)//'.AUX4 '
+    njv_aux5 = sdappa(1:19)//'.AUX5 '
     nb_pair_init=0
     call sdmpic('SD_APPA_LAC1', sdappa)
 !
@@ -114,10 +120,12 @@ implicit none
         AS_ALLOCATE(vi = list_tmp2, size = nb_pair_init)
         AS_ALLOCATE(vr = list_tmp3, size = 16*nb_pair_init)
         AS_ALLOCATE(vr = list_tmp4, size = 16*nb_pair_init)
+        AS_ALLOCATE(vr = list_tmp5, size = 72*nb_pair_init)
         list_tmp(1:3*nb_pair_init)   = list_pair_zone(1:3*nb_pair_init)
         list_tmp2(1:nb_pair_init)    = list_nbptit_zone(1:nb_pair_init)
         list_tmp3(1:16*nb_pair_init) = list_ptitsl_zone(1:16*nb_pair_init)
         list_tmp4(1:16*nb_pair_init) = list_ptitma_zone(1:16*nb_pair_init)
+        list_tmp5(1:72*nb_pair_init) = li_ptgausma_zone(1:72*nb_pair_init)
     end if
     do i_proc2=1, nb_proc
         nb_pair_zone=nb_pair_zone+nb_pair_zmpi(i_proc2)
@@ -134,10 +142,13 @@ implicit none
         AS_ALLOCATE(vr = list_ptitsl_zone, size = 16*nb_pair_zone)
         AS_DEALLOCATE(vr = list_ptitma_zone)
         AS_ALLOCATE(vr = list_ptitma_zone, size = 16*nb_pair_zone)
+        AS_DEALLOCATE(vr = li_ptgausma_zone)
+        AS_ALLOCATE(vr = li_ptgausma_zone, size = 72*nb_pair_zone)
         call wkvect(njv_aux,"V V I", 3*nb_pair_zone, vi=list_aux)
         call wkvect(njv_aux2,"V V I", nb_pair_zone, vi=list_aux2)
         call wkvect(njv_aux3,"V V R", 16*nb_pair_zone, vr=list_aux3)
         call wkvect(njv_aux4,"V V R", 16*nb_pair_zone, vr=list_aux4)
+        call wkvect(njv_aux5,"V V R", 72*nb_pair_zone, vr=list_aux5)
 
 !
 ! ----- Add new pairs
@@ -158,6 +169,9 @@ implicit none
             idx_end   = 16*(nb_pair_zmpi(i_proc+1) + deca + nb_pair_init)
             list_aux3(idx_start:idx_end) = list_ptitsl_zmpi(1:16*nb_pair_zmpi(i_proc+1))
             list_aux4(idx_start:idx_end) = list_ptitma_zmpi(1:16*nb_pair_zmpi(i_proc+1))
+            idx_start = 1 + 72*(deca+nb_pair_init)
+            idx_end   = 72*(nb_pair_zmpi(i_proc+1) + deca + nb_pair_init)
+            list_aux5(idx_start:idx_end) = li_ptgausma_zmpi(1:72*nb_pair_zmpi(i_proc+1))
         endif
         call sdmpic('SD_APPA_LAC2', sdappa)
 
@@ -165,6 +179,7 @@ implicit none
         list_nbptit_zone(:) = list_aux2(:)
         list_ptitsl_zone(:) = list_aux3(:)
         list_ptitma_zone(:) = list_aux4(:)
+        li_ptgausma_zone(:) = list_aux5(:)
 !
 ! ----- Copy old pairs
 !
@@ -172,6 +187,7 @@ implicit none
         list_nbptit_zone(1:nb_pair_init)    = list_tmp2(1:nb_pair_init)
         list_ptitsl_zone(1:16*nb_pair_init) = list_tmp3(1:16*nb_pair_init)
         list_ptitma_zone(1:16*nb_pair_init) = list_tmp4(1:16*nb_pair_init)
+        li_ptgausma_zone(1:72*nb_pair_init) = list_tmp5(1:72*nb_pair_init)
     end if
 !
 ! - Access to pairing datastructures
@@ -191,10 +207,12 @@ implicit none
         call jedetr(njv_aux2)
         call jedetr(njv_aux3)
         call jedetr(njv_aux4)
+        call jedetr(njv_aux5)
         AS_DEALLOCATE(vi = list_tmp)
         AS_DEALLOCATE(vi = list_tmp2)
         AS_DEALLOCATE(vr = list_tmp3)
         AS_DEALLOCATE(vr = list_tmp4)
+        AS_DEALLOCATE(vr = list_tmp5)
     end if
 !
 end subroutine
