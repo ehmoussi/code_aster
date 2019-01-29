@@ -384,11 +384,6 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                           b_cont_std=BLOC(condition = """equal_to("ALGO_CONT", 'STANDARD') """,
                                                           fr=tr("Paramètres de la formulation Lagrangienne"),
                                                           COEF_CONT = SIMP(statut='f',typ='R',defaut=100.E+0),
-
-                                          ),
-
-                                          b_cont_lac_adapt=BLOC(condition = """equal_to("ALGO_CONT", 'LAC') """,
-                                                          fr=tr("Paramètres de la formulation LAC"),
                                           ),
 
                                           b_cont_pena_noadapt=BLOC(condition = """equal_to("ALGO_CONT", 'PENALISATION')   and (equal_to("ADAPTATION", 'NON') or equal_to("ADAPTATION", 'CYCLAGE')) """, fr=tr("Paramètres de la méthode pénalisée"),

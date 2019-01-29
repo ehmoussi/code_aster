@@ -79,10 +79,6 @@ character(len=19), intent(in) :: chmlcf
     character(len=24) :: sdappa_apli
     integer, pointer :: v_sdappa_apli(:) => null()
     integer, pointer :: typ_jaco(:) => null()
-    character(len=24) :: sdcont_cyclac_hist
-    real(kind=8), pointer :: v_sdcont_cyclac_hist(:) => null()
-    character(len=24) :: sdcont_cyclac_etat
-    integer, pointer :: v_sdcont_cyclac_etat(:) => null()
     character(len=24) :: sdappa_poid
     real(kind=8), pointer :: v_sdappa_poid(:) => null()
     character(len=24) :: sdappa_gapi
@@ -154,10 +150,6 @@ character(len=19), intent(in) :: chmlcf
     call jeveuo(sdappa_apnp, 'L', vi = v_sdappa_apnp)
     call jeveuo(sdappa_apts, 'L', vr = v_sdappa_apts)
     call jeveuo(sdappa_aptm, 'L', vr = v_sdappa_aptm)
-    sdcont_cyclac_etat = ds_contact%sdcont_solv(1:14)//'.CYCE'
-    call jeveuo(sdcont_cyclac_etat, 'L', vi = v_sdcont_cyclac_etat)
-    sdcont_cyclac_hist = ds_contact%sdcont_solv(1:14)//'.CYCH'
-    call jeveuo(sdcont_cyclac_hist, 'L', vr = v_sdcont_cyclac_hist)
 !
 ! - Fill input field
 !
@@ -173,13 +165,6 @@ character(len=19), intent(in) :: chmlcf
             elem_slav_nume = v_sdappa_apli(3*(i_cont_pair-1)+1)
             i_zone         = v_sdappa_apli(3*(i_cont_pair-1)+3)
             patch_nume     = v_mesh_comapa(elem_slav_nume)
-            ! Pour le cyclage : Numero de maille maitre correspondant
-            v_sdcont_cyclac_hist(22*(patch_nume-1)+11) = v_sdappa_apli(3*(i_cont_pair-1)+2)
-            !On fait le cyclage ou pas
-            if (v_sdcont_cyclac_hist(22*(patch_nume-1)+11) .ne. &
-                v_sdcont_cyclac_hist(22*(patch_nume-1)+22) ) then
-                v_sdcont_cyclac_hist(22*(patch_nume-1)+10) = 1
-            endif
             jacobian_type  = typ_jaco(i_zone)
 ! --------- Adress in CHAM_ELEM
             vale_indx = jv_chmlcf_celv-1+v_chmlcf_celd(decal+nceld2+nceld3*(i_liel-1)+4)
@@ -190,7 +175,7 @@ character(len=19), intent(in) :: chmlcf
             zr(vale_indx-1+4)  = v_sdappa_gapi(patch_nume)*v_sdappa_poid(patch_nume)
             zr(vale_indx-1+5)  = v_sdcont_stat(patch_nume)
             zr(vale_indx-1+6)  = v_sdcont_lagc(patch_nume)
-            zr(vale_indx-1+7)  = v_sdcont_cyclac_etat(patch_nume)
+            zr(vale_indx-1+7)  = 0.d0
             zr(vale_indx-1+8)  = v_sdappa_apnp(i_cont_pair)
             zr(vale_indx-1+9)  = v_sdappa_apts(16*(i_cont_pair-1)+1)
             zr(vale_indx-1+10) = v_sdappa_apts(16*(i_cont_pair-1)+2)

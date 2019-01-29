@@ -115,12 +115,6 @@ integer, intent(in) :: nb_node_mesh
     character(len=24) :: sdappa_dcl
     integer, pointer :: v_sdappa_dcl(:) => null()
     integer, pointer :: vi_ptrdclac(:) => null()
-    character(len=24) :: sdcont_stat_prev
-    integer, pointer :: v_sdcont_stat_pr(:) => null()
-    character(len=24) :: contcylac_etat
-    integer, pointer :: v_contcylac_etat(:) => null()
-    character(len=24) :: contcylac_hist
-    real(kind=8), pointer :: v_contcylac_hist(:) => null()
     character(len=24) :: sdappa_nmcp
     integer, pointer :: v_sdappa_nmcp(:) => null()
 !
@@ -246,18 +240,6 @@ integer, intent(in) :: nb_node_mesh
     sdappa_norl = sdappa(1:19)//'.NORL'
     call wkvect(sdappa_norl, 'V V R', 3*nb_cont_node, vr = v_sdappa_norl)
 !
-! - Status saving (At Iteration k-2) ! statut a n-1
-!
-    sdcont_stat_prev = ds_contact%sdcont_solv(1:14)//'.CYCL'
-    contcylac_etat = ds_contact%sdcont_solv(1:14)//'.CYCE'
-    contcylac_hist = ds_contact%sdcont_solv(1:14)//'.CYCH'
-!
-! - Creating cycling objects
-!
-    call wkvect(sdcont_stat_prev, 'V V I', nt_patch, vi = v_sdcont_stat_pr)
-    call wkvect(contcylac_etat, 'V V I', nt_patch, vi = v_contcylac_etat)
-    call wkvect(contcylac_hist, 'V V R', 22*nt_patch, vr = v_contcylac_hist)
-!
 ! - Datastructures for informations (from mesh to patch)
 !
     sdappa_info = sdappa(1:19)//'.INFO'
@@ -273,10 +255,6 @@ integer, intent(in) :: nb_node_mesh
             ASSERT(v_sdappa_info(6*(patch_indx-1)+1+nb_elem_patch) .eq. 0)
             v_sdappa_info(6*(patch_indx-1)+1+nb_elem_patch) = elem_nume
             v_sdappa_info(6*(patch_indx-1)+1) = nb_elem_patch
-            v_sdcont_stat_pr((patch_indx-1)+1) = -2
-            v_contcylac_etat((patch_indx-1)+1) = -2
-            v_contcylac_hist(22*(patch_indx-1)+1) = -2
-            v_contcylac_hist(22*(patch_indx-1)+11) = elem_nume
         endif
     end do
 !
