@@ -46,7 +46,7 @@ character(len=16), intent(in) :: nomopt, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i, j, ij, count_consi
+    integer :: i, j, ij
     integer :: nb_node_slav, nb_node_mast, nb_lagr, nb_dof
     integer :: indi_lagc(10)
     integer :: elem_dime
@@ -63,7 +63,7 @@ character(len=16), intent(in) :: nomopt, nomte
     real(kind=8) :: poin_inte_ma(16)
     integer :: nb_poin_inte
     character(len=8) :: elga_fami_slav, elga_fami_mast
-    real(kind=8) :: mmat(55, 55), mmat_prev(55, 55), mmat_(55,55)
+    real(kind=8) :: mmat(55, 55), mmat_prev(55, 55)
     real(kind=8) :: gap_curr, gap_prev, gapi
     aster_logical :: l_previous
 !
@@ -89,6 +89,7 @@ character(len=16), intent(in) :: nomopt, nomte
                 elem_slav_code, elga_fami_slav, nb_node_slav,&
                 elem_mast_code, elga_fami_mast, nb_node_mast)
     ASSERT(nb_dof .le. 55)
+    ASSERT(elga_fami_slav .eq. elga_fami_mast)
 !
 ! - Get indicators
 !
@@ -117,13 +118,10 @@ character(len=16), intent(in) :: nomopt, nomte
 ! - Compute matrix
 !
     if (indi_cont .eq. 1) then
-        call lcmatr(elem_dime     ,&
-                    l_axis        , l_upda_jaco   , l_norm_smooth ,&
-                    nb_lagr       , indi_lagc     ,&
-                    nb_node_slav  , elem_slav_code, elem_slav_init,&
-                    elga_fami_slav, elem_slav_coor,&
-                    nb_node_mast  , elem_mast_code, elem_mast_init,&
-                    elga_fami_mast, elem_mast_coor,&
+        call lcmatr(elem_dime     , l_axis        , l_upda_jaco   , l_norm_smooth ,&
+                    nb_lagr       , indi_lagc     , elga_fami_slav,&
+                    nb_node_slav  , elem_slav_code, elem_slav_init, elem_slav_coor,&
+                    nb_node_mast  , elem_mast_code, elem_mast_init, elem_mast_coor,&
                     nb_poin_inte  , poin_inte_sl  , poin_inte_ma  ,&
                     mmat)
     elseif (indi_cont .eq. 0) then

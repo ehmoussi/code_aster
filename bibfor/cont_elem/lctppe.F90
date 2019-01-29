@@ -20,7 +20,7 @@
 subroutine lctppe(side      , l_axis    , l_upda_jaco,&
                   nb_node   , elem_dime , elem_code  ,&
                   elem_init , elem_coor , &
-                  gauss_coor, shape_func, shape_dfunc,&
+                  gauss_coor, shape_func, &
                   jacobian  , norm_g)
 !
 implicit none
@@ -50,7 +50,7 @@ real(kind=8), intent(in) :: elem_init(nb_node, elem_dime)
 real(kind=8), intent(in) :: elem_coor(nb_node, elem_dime)
 character(len=8), intent(in) :: elem_code   
 real(kind=8), intent(in) :: gauss_coor(2)
-real(kind=8), intent(out) :: shape_func(9), shape_dfunc(2, 9)
+real(kind=8), intent(out) :: shape_func(9)
 real(kind=8), intent(out) :: jacobian 
 real(kind=8), intent(out) :: norm_g(3)
 !
@@ -72,7 +72,6 @@ real(kind=8), intent(out) :: norm_g(3)
 ! In  elem_code        : code of element
 ! In  gauss_coor       : coordinates of current integration point
 ! Out shape_func       : shape functions at integration point
-! Out shape_dfunc      : derivatives of shape functions at integration point
 ! Out jacobian         : jacobian at integration point
 ! Out norm_g           : normal at integration point
 !
@@ -80,7 +79,7 @@ real(kind=8), intent(out) :: norm_g(3)
 !
     integer :: i_dime, i_node
     real(kind=8) :: elem_coot(3,9)
-    real(kind=8) :: tau1(3), tau2(3)
+    real(kind=8) :: tau1(3), tau2(3), shape_dfunc(2, 9)
 !
 ! --------------------------------------------------------------------------------------------------
 !
