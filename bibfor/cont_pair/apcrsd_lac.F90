@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -103,6 +103,8 @@ integer, intent(in) :: nb_node_mesh
     real(kind=8), pointer :: v_sdappa_gapi(:) => null()
     character(len=24) :: sdappa_coef
     real(kind=8), pointer :: v_sdappa_coef(:) => null()
+    character(len=24) :: sdappa_wpat
+    real(kind=8), pointer :: v_sdappa_wpat(:) => null()
     character(len=24) :: sdappa_gpre
     real(kind=8), pointer :: v_sdappa_gpre(:) => null()
     character(len=24) :: sdappa_poid
@@ -114,11 +116,11 @@ integer, intent(in) :: nb_node_mesh
     integer, pointer :: v_sdappa_dcl(:) => null()
     integer, pointer :: vi_ptrdclac(:) => null()
     character(len=24) :: sdcont_stat_prev
-    integer, pointer :: v_sdcont_stat_prev(:) => null()
-    character(len=24) :: sdcont_cyclac_etat
-    integer, pointer :: v_sdcont_cyclac_etat(:) => null()
-    character(len=24) :: sdcont_cyclac_hist
-    real(kind=8), pointer :: v_sdcont_cyclac_hist(:) => null()
+    integer, pointer :: v_sdcont_stat_pr(:) => null()
+    character(len=24) :: contcylac_etat
+    integer, pointer :: v_contcylac_etat(:) => null()
+    character(len=24) :: contcylac_hist
+    real(kind=8), pointer :: v_contcylac_hist(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -208,9 +210,13 @@ integer, intent(in) :: nb_node_mesh
 !
     sdappa_coef = sdappa(1:19)//'.COEF'
     sdappa_poid = sdappa(1:19)//'.POID'
+    sdappa_wpat = sdappa(1:19)//'.WPAT'
     call wkvect(sdappa_poid, 'V V R', nt_patch, vr = v_sdappa_coef)
     call wkvect(sdappa_coef, 'V V R', nt_patch, vr = v_sdappa_poid)
-!
+    call wkvect(sdappa_wpat, 'V V R', nt_patch, vr = v_sdappa_wpat)
+
+
+
 ! - Datastructures for adaptation rho_n
 !
     sdappa_gpre = sdappa(1:19)//'.GPRE'
@@ -241,14 +247,14 @@ integer, intent(in) :: nb_node_mesh
 ! - Status saving (At Iteration k-2) ! statut a n-1
 !
     sdcont_stat_prev = ds_contact%sdcont_solv(1:14)//'.CYCL'
-    sdcont_cyclac_etat = ds_contact%sdcont_solv(1:14)//'.CYCE'
-    sdcont_cyclac_hist = ds_contact%sdcont_solv(1:14)//'.CYCH'
+    contcylac_etat = ds_contact%sdcont_solv(1:14)//'.CYCE'
+    contcylac_hist = ds_contact%sdcont_solv(1:14)//'.CYCH'
 !
 ! - Creating cycling objects
 !
-    call wkvect(sdcont_stat_prev, 'V V I', nt_patch, vi = v_sdcont_stat_prev)
-    call wkvect(sdcont_cyclac_etat, 'V V I', nt_patch, vi = v_sdcont_cyclac_etat)
-    call wkvect(sdcont_cyclac_hist, 'V V R', 22*nt_patch, vr = v_sdcont_cyclac_hist)
+    call wkvect(sdcont_stat_prev, 'V V I', nt_patch, vi = v_sdcont_stat_pr)
+    call wkvect(contcylac_etat, 'V V I', nt_patch, vi = v_contcylac_etat)
+    call wkvect(contcylac_hist, 'V V R', 22*nt_patch, vr = v_contcylac_hist)
 !
 ! - Datastructures for informations (from mesh to patch)
 !
@@ -265,10 +271,10 @@ integer, intent(in) :: nb_node_mesh
             ASSERT(v_sdappa_info(6*(patch_indx-1)+1+nb_elem_patch) .eq. 0)
             v_sdappa_info(6*(patch_indx-1)+1+nb_elem_patch) = elem_nume
             v_sdappa_info(6*(patch_indx-1)+1) = nb_elem_patch
-            v_sdcont_stat_prev((patch_indx-1)+1) = -2
-            v_sdcont_cyclac_etat((patch_indx-1)+1) = -2
-            v_sdcont_cyclac_hist(22*(patch_indx-1)+1) = -2
-            v_sdcont_cyclac_hist(22*(patch_indx-1)+11) = elem_nume
+            v_sdcont_stat_pr((patch_indx-1)+1) = -2
+            v_contcylac_etat((patch_indx-1)+1) = -2
+            v_contcylac_hist(22*(patch_indx-1)+1) = -2
+            v_contcylac_hist(22*(patch_indx-1)+11) = elem_nume
         endif
     end do
 !

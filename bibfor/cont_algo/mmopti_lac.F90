@@ -32,9 +32,17 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jexnum.h"
+#include "asterfort/jexatr.h"
 #include "asterfort/jedema.h"
 #include "asterfort/mminfi.h"
 #include "asterfort/utmess.h"
+#include "asterfort/apcoor.h"
+#include "asterfort/gapint.h"
+#include "asterfort/jelira.h"
+#include "asterc/r8nnem.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/jenuno.h"
 !
 character(len=8), intent(in) :: mesh
 type(NL_DS_Contact), intent(inout) :: ds_contact
@@ -57,14 +65,36 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     integer :: j_patch, cont_init
     integer :: indi_cont_curr, indi_cont_prev
     real(kind=8) :: tole_inter, gap, armini, epsint
-    character(len=19) :: sdappa
+    character(len=19) :: sdappa, newgeo
     character(len=24) :: sdcont_stat
     integer, pointer :: v_sdcont_stat(:) => null()
     character(len=24) :: sdappa_gapi
     real(kind=8), pointer :: v_sdappa_gapi(:) => null()
     character(len=24) :: sdappa_coef
     real(kind=8), pointer :: v_sdappa_coef(:) => null()
+    character(len=24) :: sdappa_apli
+    integer, pointer :: v_sdappa_apli(:) => null()
+    character(len=24) :: sdappa_apnp
+    integer, pointer :: v_sdappa_apnp(:) => null()
+    character(len=24) :: sdappa_apts
+    real(kind=8), pointer :: v_sdappa_apts(:) => null()
+    character(len=24) :: sdappa_wpat
+    real(kind=8), pointer :: v_sdappa_wpat(:) => null()
+    character(len=24) :: sdappa_poid
+    real(kind=8), pointer :: v_sdappa_poid(:) => null()
     integer, pointer :: v_mesh_lpatch(:) => null()
+    integer :: nb_poin_inte, patch_indx, i_pair, nb_pair, jv_geom,elem_type_nume
+    integer, pointer :: v_mesh_connex(:)  => null()
+    integer, pointer :: v_connex_lcum(:)  => null()
+    real(kind=8), pointer :: patch_weight_c(:) => null()
+    integer, pointer :: v_mesh_comapa(:) => null()
+    integer, pointer :: v_mesh_typmail(:) => null()
+    integer :: elem_slav_nbnode, elem_slav_nume, elem_slav_dime
+    integer :: elem_mast_nbnode, elem_mast_nume, elem_mast_dime
+    character(len=8) :: elem_mast_code, elem_slav_code
+    character(len=8) :: elem_slav_type, elem_mast_type
+    real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27), poin_inte(16), gap_moy
+    real(kind=8) :: inte_weight, pair_tole
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,6 +107,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! - Initializations
 !
     tole_inter   = 1.d-5
+    pair_tole      = 1.d-8
     nb_cont_init = 0
 !
 ! - Tolerance for CONTACT_INIT
@@ -92,6 +123,14 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! - Access to mesh (patch)
 !
     call jeveuo(jexnum(mesh//'.PATCH',1), 'L', vi = v_mesh_lpatch)
+    newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
+    call jeveuo(newgeo(1:19)//'.VALE', 'L', jv_geom)
+    call jeveuo(mesh//'.TYPMAIL', 'L', vi = v_mesh_typmail)
+    call jeveuo(mesh//'.COMAPA','L', vi = v_mesh_comapa)
+    call jeveuo(mesh//'.CONNEX', 'L', vi = v_mesh_connex)
+    call jeveuo(jexatr(mesh//'.CONNEX', 'LONCUM'), 'L', vi = v_connex_lcum)
+    nb_patch = ds_contact%nt_patch
+    AS_ALLOCATE(vr=patch_weight_c,size=nb_patch)
 !
 ! - Get pairing datastructure
 !
@@ -99,9 +138,67 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     call jeveuo(sdcont_stat, 'E', vi = v_sdcont_stat)
     sdappa = ds_contact%sdcont_solv(1:14)//'.APPA'
     sdappa_gapi = sdappa(1:19)//'.GAPI'
-    sdappa_coef = sdappa(1:19)//'.COEF' 
-    call jeveuo(sdappa_gapi, 'L', vr = v_sdappa_gapi)
-    call jeveuo(sdappa_coef, 'L', vr = v_sdappa_coef)
+    sdappa_coef = sdappa(1:19)//'.COEF'
+    sdappa_apli = sdappa(1:19)//'.APLI'
+    sdappa_apnp = sdappa(1:19)//'.APNP'
+    sdappa_apts = sdappa(1:19)//'.APTS'
+    sdappa_wpat = sdappa(1:19)//'.WPAT'
+    sdappa_poid = sdappa(1:19)//'.POID'
+    call jeveuo(sdappa_gapi, 'E', vr = v_sdappa_gapi)
+    call jeveuo(sdappa_coef, 'E', vr = v_sdappa_coef)
+    call jeveuo(sdappa_wpat, 'L', vr = v_sdappa_wpat)
+    call jeveuo(sdappa_poid, 'E', vr = v_sdappa_poid)
+    call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
+    call jeveuo(sdappa_apnp, 'L', vi = v_sdappa_apnp)
+    call jeveuo(sdappa_apts, 'L', vr = v_sdappa_apts)
+    call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
+    nb_pair = ds_contact%nb_cont_pair
+    v_sdappa_gapi(:) = 0.d0
+    v_sdappa_coef(:) = 0.d0
+    do i_pair=1,nb_pair
+        !get master and slave element number
+        elem_slav_nume = v_sdappa_apli(3*(i_pair-1)+1)
+        elem_mast_nume = v_sdappa_apli(3*(i_pair-1)+2)
+        !get slave coor
+        elem_type_nume = v_mesh_typmail(elem_slav_nume)
+        call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_slav_type)
+        call apcoor(jv_geom       , elem_slav_type  ,&
+                    elem_slav_nume, elem_slav_coor, elem_slav_nbnode,&
+                    elem_slav_code, elem_slav_dime, v_mesh_connex   ,&
+                    v_connex_lcum)
+        !get patch number
+        patch_indx = v_mesh_comapa(elem_slav_nume)
+        !get master coor
+        elem_type_nume = v_mesh_typmail(elem_mast_nume)
+        call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_mast_type)
+        call apcoor(jv_geom       , elem_mast_type  ,&
+                    elem_mast_nume, elem_mast_coor, elem_mast_nbnode,&
+                    elem_mast_code, elem_mast_dime, v_mesh_connex   ,&
+                    v_connex_lcum)
+        !get number of intersection nodes
+        nb_poin_inte = v_sdappa_apnp(i_pair)
+        !get intersection nodes
+        poin_inte(1:16) = v_sdappa_apts(16*(i_pair-1)+1:16*(i_pair-1)+16)
+        !compute gap
+        call gapint(pair_tole    , elem_slav_dime,&
+                    elem_slav_code, elem_slav_nbnode, elem_slav_coor,&
+                    elem_mast_code, elem_mast_nbnode, elem_mast_coor,&
+                    nb_poin_inte  , poin_inte                    , &
+                    gap_moy       , inte_weight                  )
+        !save gap
+        v_sdappa_gapi(patch_indx)  = v_sdappa_gapi(patch_indx)-gap_moy
+        patch_weight_c(patch_indx) = patch_weight_c(patch_indx)+inte_weight
+    end do
+    do i_patch=1,nb_patch
+        if (patch_weight_c(i_patch) .le. pair_tole) then
+            v_sdappa_gapi(i_patch) = r8nnem()
+        end if
+        if (.not.isnan(v_sdappa_gapi(i_patch))) then
+            v_sdappa_gapi(i_patch) = v_sdappa_gapi(i_patch)/patch_weight_c(i_patch)
+            v_sdappa_coef(i_patch) = patch_weight_c(i_patch)/v_sdappa_wpat(i_patch)
+            v_sdappa_poid(i_patch) = patch_weight_c(i_patch)
+        end if
+    end do
 !
 ! - Loop on contact zones
 !
@@ -156,6 +253,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     call utmess('I', 'CONTACT3_6', si = nb_cont_init)
 !
+    AS_DEALLOCATE(vr=patch_weight_c)
     call jedema()
 !
 end subroutine

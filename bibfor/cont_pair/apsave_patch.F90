@@ -16,11 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine apsave_patch(mesh           , sdappa        ,  i_zone,      pair_tole,&
-                         patch_weight_c, patch_weight_t, nb_proc, list_pair_zmpi,&
-                         list_nbptit_zmpi,list_ptitsl_zmpi,&
-                         nb_pair_zmpi  , list_pair_zone, list_nbptit_zone,&
-                         list_ptitsl_zone , nb_pair_zone, i_proc)
+subroutine apsave_patch(mesh             ,  sdappa         ,  i_zone       ,&
+                        patch_weight_t   , nb_proc         , list_pair_zmpi,&
+                        list_nbptit_zmpi , list_ptitsl_zmpi,                &
+                        nb_pair_zmpi     , list_pair_zone  , list_nbptit_zone,&
+                        list_ptitsl_zone , nb_pair_zone    , i_proc)
 !
 implicit none
 !
@@ -39,8 +39,6 @@ implicit none
     character(len=8), intent(in) :: mesh
     character(len=19), intent(in) :: sdappa
     integer, intent(in) :: i_zone
-    real(kind=8), intent(in) :: pair_tole
-    real(kind=8), intent(in) :: patch_weight_c(*)
     real(kind=8), intent(in) :: patch_weight_t(*)
     integer, intent(inout) :: nb_pair_zone
     integer, pointer :: list_pair_zone(:)
@@ -71,10 +69,8 @@ implicit none
     integer :: i_patch, patch_indx, patch_jdec, nb_patch, deca, idx_start, idx_end
     integer :: i_proc2, nb_pair_init
     integer, pointer :: v_mesh_lpatch(:) => null()
-    character(len=24) :: sdappa_gapi, sdappa_coef, sdappa_poid,njv_aux,njv_aux2,njv_aux3
-    real(kind=8), pointer :: v_sdappa_gapi(:) => null()
-    real(kind=8), pointer :: v_sdappa_coef(:) => null()
-    real(kind=8), pointer :: v_sdappa_poid(:) => null()
+    character(len=24) :: sdappa_wpat,njv_aux,njv_aux2,njv_aux3
+    real(kind=8), pointer :: v_sdappa_wpat(:) => null()
     integer, pointer :: v_sdappa_dcl(:) => null()
     integer, pointer :: list_tmp(:) => null()
     integer, pointer :: list_tmp2(:) => null()
@@ -167,41 +163,16 @@ implicit none
 !
 ! - Access to pairing datastructures
 !
-    sdappa_gapi = sdappa(1:19)//'.GAPI'
-    sdappa_coef = sdappa(1:19)//'.COEF'
-    sdappa_poid = sdappa(1:19)//'.POID'
-    call jeveuo(sdappa_gapi, 'E', vr = v_sdappa_gapi)
-    call jeveuo(sdappa_coef, 'E', vr = v_sdappa_coef)
-    call jeveuo(sdappa_poid, 'E', vr = v_sdappa_poid)
+    sdappa_wpat = sdappa(1:19)//'.WPAT'
+    call jeveuo(sdappa_wpat, 'E', vr = v_sdappa_wpat)
 !
 ! - Init
 !
     do i_patch = 1, nb_patch
         patch_indx = i_patch-1+patch_jdec
-        v_sdappa_coef(patch_indx) = 0.d0
-        v_sdappa_poid(patch_indx) = 0.d0
+        v_sdappa_wpat(patch_indx) = patch_weight_t(patch_indx)
     end do
-!
-! - For non-paired patchs => NAN for gap
-!
-    do i_patch = 1, nb_patch
-        patch_indx = i_patch-1+patch_jdec
-        if (patch_weight_c(patch_indx) .le. pair_tole) then
-            v_sdappa_gapi(patch_indx) = r8nnem()
-            v_sdappa_coef(patch_indx) = 0.d0
-        end if
-    end do
-!
-! - Compute gap
-!
-    do i_patch = 1, nb_patch
-        patch_indx = i_patch-1+patch_jdec
-        if (.not.isnan(v_sdappa_gapi(patch_indx))) then
-            v_sdappa_gapi(patch_indx) = v_sdappa_gapi(patch_indx)/patch_weight_c(patch_indx)
-            v_sdappa_coef(patch_indx) = patch_weight_c(patch_indx)/patch_weight_t(patch_indx)
-            v_sdappa_poid(patch_indx) = patch_weight_c(patch_indx)
-        end if
-    end do
+
     if (nb_pair_zone .ne. 0) then
         call jedetr(njv_aux)
         call jedetr(njv_aux2)

@@ -41,7 +41,6 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/apcoor.h"
 #include "asterfort/prjint.h"
-#include "asterfort/gapint.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/clpoma.h"
 #include "asterfort/assert.h"
@@ -106,9 +105,9 @@ character(len=24), intent(in) :: pair_method
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
     integer :: nb_pair, nb_poin_inte
     integer :: i_mast_neigh, i_slav_start, i_mast_start, i_find_mast
-    integer :: i_slav_neigh, i_neigh
+    integer :: i_slav_neigh
     integer :: patch_indx
-    real(kind=8) :: total_weight, inte_weight, gap_moy, elem_slav_weight
+    real(kind=8) :: total_weight, inte_weight, elem_slav_weight
     real(kind=8) :: poin_inte(32)
     integer :: elin_mast_nbsub, elin_mast_sub(1,4), elin_mast_nbnode(1)
     integer :: elin_slav_nbsub, elin_slav_sub(1,4), elin_slav_nbnode(1)
@@ -128,14 +127,11 @@ character(len=24), intent(in) :: pair_method
     integer, pointer :: v_sdappa_mane(:) => null()
     integer :: list_slav_master(4)
     integer :: nb_mast_neigh, nb_slav_neigh
-    integer :: inte_neigh(4), inte_neigh_aux(4)
+    integer :: inte_neigh(4)
     integer :: jv_geom, elem_type_nume
     real(kind=8) :: list_slav_weight(4), weight_test, tole_weight
-    character(len=24) :: sdappa_gapi, sdappa_coef, njv_weight_c, njv_weight_t,njv_nb_pair_zmpi
-    real(kind=8), pointer :: v_sdappa_gapi(:) => null()
-    real(kind=8), pointer :: v_sdappa_coef(:) => null()
+    character(len=24) :: njv_weight_t,njv_nb_pair_zmpi
     real(kind=8), pointer :: patch_weight_t(:) => null()
-    real(kind=8), pointer :: patch_weight_c(:) => null()
     integer, pointer :: v_mesh_comapa(:) => null()
     integer, pointer :: v_mesh_typmail(:) => null()
     integer, pointer :: nb_pair_zmpi(:) => null()
@@ -158,8 +154,6 @@ character(len=24), intent(in) :: pair_method
     list_slav_weight(1:4)          = 0.d0
     call jelira(mesh//'.PATCH','NUTIOC', nbpatch_t)
     nbpatch_t= nbpatch_t-1
-    njv_weight_c=sdappa(1:19)//'.PWC '
-    call wkvect(njv_weight_c, "V V R", nbpatch_t, vr=patch_weight_c)
     njv_weight_t=sdappa(1:19)//'.PWT '
     call wkvect(njv_weight_t, "V V R", nbpatch_t, vr=patch_weight_t)
     njv_nb_pair_zmpi=sdappa(1:19)//'.NAPP'
@@ -181,12 +175,8 @@ character(len=24), intent(in) :: pair_method
     mast_indx_mini = minval(list_elem_mast)
     slav_indx_mini = minval(list_elem_slav)
 !
-! - Access to pairing datastructures
+! - Allocate pairing saving vectors
 !
-    sdappa_gapi = sdappa(1:19)//'.GAPI'
-    sdappa_coef = sdappa(1:19)//'.COEF'
-    call jeveuo(sdappa_gapi, 'E', vr = v_sdappa_gapi)
-    call jeveuo(sdappa_coef, 'E', vr = v_sdappa_coef)
     AS_ALLOCATE(vi=list_pair_zmpi, size= 3*nb_elem_slav*nb_elem_mast)
     AS_ALLOCATE(vi=li_nbptsl_zmpi, size= nb_elem_slav*nb_elem_mast)
     AS_ALLOCATE(vr=li_ptintsl_zmpi, size= 16*nb_elem_slav*nb_elem_mast)
@@ -425,15 +415,13 @@ character(len=24), intent(in) :: pair_method
 !
             inte_neigh(1:4) = 0
 !
-            inte_neigh_aux(1:4) = 0
-!
 ! ----------------- Projection/intersection of elements in slave parametric space
 !
             call prjint(pair_tole     , elem_slav_dime,&
                         elin_mast_nbnode(1), elem_mast_coor, elin_mast_code,&
                         elin_slav_nbnode(1), elem_slav_coor, elin_slav_code,&
                         poin_inte     , inte_weight         , nb_poin_inte  ,&
-                        inte_neigh_ = inte_neigh_aux)
+                        inte_neigh_ = inte_neigh)
             if (debug) then
                 write(*,*) "Intersection - Master: ", elem_mast_name
                 write(*,*) "Intersection - Slave : ", elem_slav_name
@@ -445,29 +433,7 @@ character(len=24), intent(in) :: pair_method
 ! ----------------- Non-void intersection
 !
             if (inte_weight .gt. pair_tole) then
-!
-! --------------------- Set neighbours
-!
-                do i_neigh = 1,nb_slav_neigh
-                    if (inte_neigh_aux(i_neigh).ne.0) then
-                        inte_neigh(i_neigh) = inte_neigh_aux(i_neigh)
-                    endif
-                end do
-!
                 total_weight = total_weight+inte_weight
-!
-! --------------------- Compute mean square gap and weight of intersection
-!
-                call gapint(pair_tole     , elem_slav_dime,&
-                            elem_slav_code, elem_slav_nbnode, elem_slav_coor,&
-                            elem_mast_code, elem_mast_nbnode, elem_mast_coor,&
-                            nb_poin_inte  , poin_inte                    , &
-                            gap_moy       , inte_weight                  )
-!
-! --------------------- Save values
-!
-                v_sdappa_gapi(patch_indx)  = v_sdappa_gapi(patch_indx)-gap_moy
-                patch_weight_c(patch_indx) = patch_weight_c(patch_indx)+inte_weight
             end if
 !
 ! --------- Add element paired
@@ -585,8 +551,8 @@ character(len=24), intent(in) :: pair_method
 !
 ! - Save values for patch
 !
-    call apsave_patch(mesh          , sdappa        , i_zone, pair_tole,&
-                      patch_weight_c, patch_weight_t, nb_proc, list_pair_zmpi,&
+    call apsave_patch(mesh          , sdappa        , i_zone,&
+                      patch_weight_t, nb_proc, list_pair_zmpi,&
                       li_nbptsl_zmpi,li_ptintsl_zmpi,&
                       nb_pair_zmpi, list_pair_zone,list_nbptit_zone, list_ptitsl_zone,&
                       nb_pair_zone, i_proc)
@@ -600,7 +566,6 @@ character(len=24), intent(in) :: pair_method
     AS_DEALLOCATE(vi=list_pair_zmpi)
     AS_DEALLOCATE(vi=li_nbptsl_zmpi)
     AS_DEALLOCATE(vr=li_ptintsl_zmpi)
-    call jedetr(njv_weight_c)
     call jedetr(njv_weight_t)
     call jedetr(njv_nb_pair_zmpi)
     call jedema()

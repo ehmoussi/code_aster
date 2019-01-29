@@ -137,9 +137,7 @@ subroutine sdmpic(typesd, nomsd)
 !     ----------------------------------
         call jeveuo(k19//'.MPID', 'E', vk16=valk)
         if (valk(1) .eq. 'MPI_COMPLET') goto 999
-        call asmpi_comm_jev('MPI_SUM', k19//'.GAPI')
         call asmpi_comm_jev('MPI_SUM', k19//'.PWT ')
-        call asmpi_comm_jev('MPI_SUM', k19//'.PWC ')
         call asmpi_comm_jev('MPI_SUM', k19//'.NAPP')
         valk(1)='MPI_COMPLET'
 !
