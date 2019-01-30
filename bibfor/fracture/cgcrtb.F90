@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cgcrtb(table, option, lmelas, ndim, typfis, nxpara,&
+subroutine cgcrtb(table, option, ndim, typfis, nxpara,&
                   lmoda, nbpara, linopa, litypa)
 !
     implicit none
@@ -27,7 +27,7 @@ subroutine cgcrtb(table, option, lmelas, ndim, typfis, nxpara,&
 #include "asterfort/cgajpa.h"
 #include "asterfort/assert.h"
     integer :: nbpara, nxpara, ndim
-    aster_logical :: lmelas, lmoda
+    aster_logical :: lmoda
     character(len=*) :: litypa(nxpara), linopa(nxpara)
     character(len=8) :: table, typfis
     character(len=16) :: option
@@ -43,8 +43,6 @@ subroutine cgcrtb(table, option, lmelas, ndim, typfis, nxpara,&
 !  IN :
 !     TABLE : NOM DE LA TABLE
 !     OPTION : OPTION DE CALCUL
-!     LMELAS : .TRUE.  SI TYPE SD RESULTAT = MULT_ELAS
-!              .FALSE. SINON
 !     NDIM    : DIMENSION DU CALCUL : 2 OU 3
 !     TYPFIS : TYPE D'OBJET POUR DECRIRE LE FOND DE FISSURE
 !              'FONDFISS' OU 'FISSURE' OU 'THETA'
@@ -84,10 +82,7 @@ subroutine cgcrtb(table, option, lmelas, ndim, typfis, nxpara,&
 !   --------------------    
 !   1.2 TEMPOREL/CHARGEMENT
 !   ---------------------           
-        if (lmelas) then
-            call cgajpa('NUME_CAS', 'I', nbpara, linopa, litypa, nxpara)
-            call cgajpa('NOM_CAS', 'K16', nbpara, linopa, litypa, nxpara)           
-        elseif (lmoda) then
+        if (lmoda) then
             call cgajpa('NUME_MODE', 'I', nbpara, linopa, litypa, nxpara)   
         else
             call cgajpa('NUME_ORDRE', 'I', nbpara, linopa, litypa, nxpara)
@@ -136,17 +131,11 @@ subroutine cgcrtb(table, option, lmelas, ndim, typfis, nxpara,&
         nbpara = 14
         linopa(1) = 'NUME_FOND'
         litypa(1) = 'I'
-        if (lmelas) then
-            linopa(2) = 'NUME_CAS'
-            litypa(2) = 'I'
-            linopa(3) = 'NOM_CAS'
-            litypa(3) = 'K16'
-        else
-            linopa(2) = 'NUME_ORDRE'
-            litypa(2) = 'I'
-            linopa(3) = 'INST'
-            litypa(3) = 'R'
-        endif
+        linopa(2) = 'NUME_ORDRE'
+        litypa(2) = 'I'
+        linopa(3) = 'INST'
+        litypa(3) = 'R'
+
         if (typfis.eq.'FONDFISS') then
             linopa(4) = 'NOEUD'
             litypa(4) = 'K8'
@@ -173,13 +162,8 @@ subroutine cgcrtb(table, option, lmelas, ndim, typfis, nxpara,&
         litypa(14) = 'R'
     elseif ((option.eq.'G_BILI').or.(option.eq.'G_MAX')) then
         nbpara = 6
-        if (lmelas) then
-            linopa(1) = 'NOM_CAS'
-            litypa(1) = 'K16'
-        else
-            linopa(1) = 'INST'
-            litypa(1) = 'R'
-        endif
+        linopa(1) = 'INST'
+        litypa(1) = 'R'
         linopa(2) = 'NUME_CMP_I'
         litypa(2) = 'I'
         linopa(3) = 'NUME_CMP_J'
@@ -215,7 +199,7 @@ subroutine cgcrtb(table, option, lmelas, ndim, typfis, nxpara,&
         write(6,*)'NO_PARA, NOM_PARA, TYP_PARA'
         do 10 i = 1, nbpara
             write(6,*)i, linopa(i), litypa(i)
-        10 enddo
+        10 continue
     endif
 
 end subroutine

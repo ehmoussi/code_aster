@@ -21,12 +21,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine cgcrtb(table, option, lmelas, ndim, typfis, nxpara,&
+    subroutine cgcrtb(table, option, ndim, typfis, nxpara,&
                       lmoda, nbpara, linopa, litypa)
         integer :: nbpara
         character(len=8) :: table
         character(len=16) :: option
-        aster_logical :: lmelas
         integer :: ndim
         character(len=8) :: typfis
         integer :: nxpara

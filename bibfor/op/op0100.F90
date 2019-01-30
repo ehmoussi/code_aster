@@ -26,6 +26,7 @@ subroutine op0100()
 !
     implicit none
 !
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getfac.h"
@@ -40,7 +41,6 @@ subroutine op0100()
 #include "asterfort/cglecc.h"
 #include "asterfort/cgleco.h"
 #include "asterfort/cglect.h"
-#include "asterfort/cglemu.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/gcou2d.h"
@@ -72,7 +72,7 @@ subroutine op0100()
 #include "asterfort/wkvect.h"
 #include "asterfort/deprecated_algom.h"
 #include "asterfort/xcourb.h"
-    integer :: nbord, iord, i, iad, jnord, ivec, iret, nbpara
+    integer :: nbord, iord, i, ivec, iret, nbpara
     integer :: lnoff, jinst, ndeg, nbropt, iadrco, ipuls, iord0
     integer :: iadfis, iadnoe
     integer :: ndimte, ndim, jopt
@@ -86,19 +86,19 @@ subroutine op0100()
     character(len=8) :: nomfis, litypa(nxpara), symech, config
     character(len=8) :: table, noma, thetai, noeud, typfis, typfon
     character(len=16) :: option, typsd, linopa(nxpara)
-    character(len=16) :: nomcas, k16bid, typdis
+    character(len=16) :: k16bid, typdis
     character(len=19) :: lischa, lisopt, vecord, grlt
     character(len=24) :: depla, mate, compor, chvite, chacce
     character(len=24) :: basfon, fonoeu, liss, taillr
     character(len=24) :: chfond, basloc, theta
-    character(len=24) :: nomno, coorn, melord
+    character(len=24) :: nomno, coorn
     character(len=24) :: trav1, trav2, trav3, stok4
     character(len=24) :: trav4, courb
     character(len=24) :: norfon
     parameter  ( resuc2 = '&&MECALG' )
 !
     aster_logical :: exitim, connex, milieu, direc
-    aster_logical :: lncas, lmelas, incr, lmoda
+    aster_logical :: incr, lmoda
     integer, pointer :: ordr(:) => null()
 !
 !     ==============
@@ -183,15 +183,6 @@ subroutine op0100()
                 incr)
 !
 !     ATTENTION, INCR EST MAL GERE : VOIR MECAGL !!
-!
-!     LECTURE DES INFORMATIONS RELATIVES AUX MULT_ELAS
-    melord = '&&OP100.MULTELAS.NOMCAS'
-    call cglemu(resu, vecord, lmelas, lncas, melord)
-    if (lncas) then
-        call jeveuo(melord, 'L', jnord)
-    else
-        jnord = 1
-    endif
 !
 !     LECTURE ET VERIFICATION RELATIVE AU MOT-CLE CALCUL_CONTRAINTE
     call cglecc(typfis, resu, vecord, calsig)
@@ -297,7 +288,7 @@ subroutine op0100()
 !
 !     CREATION DE LA TABLE
 !
-    call cgcrtb(table, option, lmelas, ndim, typfis, nxpara,&
+    call cgcrtb(table, option, ndim, typfis, nxpara,&
                 lmoda, nbpara, linopa, litypa)
 !
 !!    ARRET POUR CONTROLE DEVELOPPEMENT DANS CGCRTB
@@ -319,16 +310,7 @@ subroutine op0100()
             call rsexch('F', resu, 'DEPL', iord, depla,&
                         iret)
 !
-            if (lmelas) then
-                if (lncas) then
-                    if (.not.zl(jnord+i-1)) goto 33
-                endif
-                exitim = .false.
-                time=0.d0
-                call rsadpa(resu, 'L', 1, 'NOM_CAS', iord,&
-                            0, sjv=iad, styp=k8bid)
-                nomcas=zk16(iad)
-            else if (lmoda) then
+            if (lmoda) then
                 call rsadpa(resu, 'L', 1, 'OMEGA2', iord,&
                             0, sjv=ipuls, styp=k8bid)
                 puls = zr(ipuls)
@@ -347,10 +329,9 @@ subroutine op0100()
                         lnoff, basloc, courb, iord, ndeg,&
                         liss, ndimte,&
                         exitim, time, nbpara, linopa, nomfis,&
-                        lmelas, nomcas, lmoda, puls, milieu,&
+                        lmoda, puls, milieu,&
                         connex, iadfis, iadnoe, typdis)
 !
- 33         continue
         end do
 !
 !     -------------------------------
@@ -388,16 +369,7 @@ subroutine op0100()
                             iret)
             endif
 !
-            if (lmelas) then
-                if (lncas) then
-                    if (.not.zl(jnord+i-1)) goto 34
-                endif
-                call rsadpa(resu, 'L', 1, 'NOM_CAS', iord,&
-                            0, sjv=iad, styp=k8bid)
-                nomcas=zk16(iad)
-                exitim = .false.
-                time = 0.d0
-            else if (lmoda) then
+            if (lmoda) then
                 call rsadpa(resu, 'L', 1, 'OMEGA2', iord,&
                             0, sjv=ipuls, styp=k8bid)
                 puls = zr(ipuls)
@@ -415,7 +387,7 @@ subroutine op0100()
                 call mecalg(option, table, modele, depla, theta,&
                             mate, lischa, symech, compor, incr,&
                             time, iord, nbpara, linopa, chvite,&
-                            chacce, lmelas, nomcas, calsig, iadfis, iadnoe)
+                            chacce, calsig, iadfis, iadnoe)
 !
             else if (option(1:6).eq.'CALC_G'.and. ndim .eq.3) then
 !
@@ -424,21 +396,19 @@ subroutine op0100()
                             lnoff, iord, ndeg, liss,&
                             milieu, ndimte, exitim,&
                             time, nbpara, linopa, chvite, chacce,&
-                            lmelas, nomcas, calsig, fonoeu, incr, iadfis, &
+                            calsig, fonoeu, incr, iadfis, &
                             norfon, connex)
 !
             else if (option(1:6).eq.'CALC_K'.and. ndim .eq. 2) then
 !
                 call cakg2d(option, table, modele, depla, theta,&
                             mate, lischa, symech, nomfis, noeud,&
-                            time, iord, nbpara, linopa, lmelas,&
-                            nomcas, lmoda, puls, compor)
+                            time, iord, nbpara, linopa,&
+                            lmoda, puls, compor)
 !
             else
                 ASSERT(.false.)
             endif
-!
- 34         continue
 !
             call jedema()
         end do

@@ -19,7 +19,7 @@
 subroutine mecalg(optioz, result, modele, depla, theta,&
                   mate, lischa, symech, compor, incr,&
                   time, iord, nbprup, noprup, chvite,&
-                  chacce, lmelas, nomcas, kcalc, coor, iadnoe)
+                  chacce, kcalc, coor, iadnoe)
 !
 !     - FONCTION REALISEE:   CALCUL DU TAUX DE RESTITUTION D'ENERGIE
 !
@@ -35,8 +35,6 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
 ! IN    SYMECH       --> SYMETRIE DU CHARGEMENT
 ! IN    TIME         --> INSTANT DE CALCUL
 ! IN    IORD         --> NUMERO D'ORDRE DE LA SD
-! IN    LMELAS       --> TRUE SI LE TYPE DE LA SD RESULTAT EST MULT_ELAS
-! IN    NOMCAS       --> NOM DU CAS DE CHARGE SI LMELAS
 ! IN    KCALC        --> = 'NON' : ON RECUPERE LES CHAMPS DE CONTRAINTES
 !                                  ET D'ENERGIE DE LA SD RESULTAT
 !                        = 'OUI' :ON RECALCULE LES CHAMPS DE CONTRAINTES
@@ -79,12 +77,12 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
     character(len=8) :: modele, result, symech
     character(len=8) :: kcalc
     character(len=19) :: lischa
-    character(len=16) :: optioz, noprup(*), nomcas
+    character(len=16) :: optioz, noprup(*)
     character(len=24) :: depla, mate, compor, theta
     character(len=24) :: chvite, chacce
     real(kind=8) :: time
     integer :: iord, nbprup, iadnoe
-    aster_logical :: lmelas, incr
+    aster_logical :: incr
 !
 !
 ! DECLARATION VARIABLES LOCALES
@@ -429,13 +427,8 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
         call tbajvk(result, nbprup, 'NOEUD', zk8(iadnoe), livk)
     endif
 !
-    if (lmelas) then
-        call tbajvi(result, nbprup, 'NUME_CAS', iord, livi)
-        call tbajvk(result, nbprup, 'NOM_CAS', nomcas, livk)
-    else
-        call tbajvi(result, nbprup, 'NUME_ORDRE', iord, livi)
-        call tbajvr(result, nbprup, 'INST', time, livr)
-    endif
+    call tbajvi(result, nbprup, 'NUME_ORDRE', iord, livi)
+    call tbajvr(result, nbprup, 'INST', time, livr)
 !
     call tbajvr(result, nbprup, 'COOR_X', zr(coor), livr)
     call tbajvr(result, nbprup, 'COOR_Y', zr(coor+1), livr)
