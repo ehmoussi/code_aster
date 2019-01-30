@@ -378,25 +378,67 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                           ALGO_CONT       =SIMP(statut='f',typ='TXM',defaut="STANDARD",
                                                                 into=("STANDARD","PENALISATION","LAC"),),
 
-                                          b_cont_fadap=BLOC(condition ="""equal_to("ALGO_CONT", 'STANDARD') or equal_to("ALGO_CONT", 'PENALISATION')""",
+                                          ALGO_FROT       =SIMP(statut='f',typ='TXM',defaut="STANDARD", into=("STANDARD","PENALISATION"),),
+                                          b_frot_std      =BLOC(condition = """equal_to("ALGO_FROT", 'STANDARD') """,
+                                                                  fr=tr("Paramètres de la formulation Lagrangienne"),
+                                                                  COEF_FROT  =SIMP(statut='f',typ='R',defaut=100.E+0),
+                                          ),
+
+                                          b_contpen_frotstd=BLOC(condition ="""(equal_to("ALGO_CONT", 'PENALISATION') and equal_to("ALGO_FROT", 'STANDARD') )""",
+                                                          fr=tr("Adaptation pour STANDARD et PENALISATION"),
+
+                                            ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE",
+                                                                into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
+                                            COEF_FROT  =SIMP(statut='f',typ='R',defaut=100.E+0),
+                                              b_cont_pena_noadapt=BLOC(condition = """(equal_to("ADAPTATION", 'NON') or equal_to("ADAPTATION", 'CYCLAGE') or not exists("ADAPTATION")) """, fr=tr("Paramètres de la méthode pénalisée"),
+                                                           COEF_PENA_CONT  =SIMP(statut='o',typ='R'),
+                                          ),
+                                              b_cont_pena_adapt=BLOC(condition = """(equal_to("ADAPTATION", 'ADAPT_COEF') or equal_to("ADAPTATION", 'TOUT'))  """, fr=tr("Paramètres de la méthode pénalisée"),
+                                                            PENE_MAXI  =SIMP(statut='f',typ='R'),
+                                                            COEF_PENA_CONT  =SIMP(statut='f',typ='R',defaut=100.0E+0),
+                                          ),
+                                          ),
+
+                                          b_contstd_frotstd=BLOC(condition = """(equal_to("ALGO_CONT", 'STANDARD') and equal_to("ALGO_FROT",'STANDARD' ) )""",
+                                                          fr=tr("Paramètres de la formulation Lagrangienne"),
+                                                          ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE",
+                                                                into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
+                                                          COEF_CONT = SIMP(statut='f',typ='R',defaut=100.E+0),
+                                                          COEF_FROT  =SIMP(statut='f',typ='R',defaut=100.E+0),
+                                          ),
+
+                                          b_contpen_frotpen=BLOC(condition ="""(equal_to("ALGO_CONT", 'PENALISATION') and equal_to("ALGO_FROT", 'PENALISATION'))""",
                                                           fr=tr("Adaptation pour STANDARD et PENALISATION"),
 
                                           ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE",
                                                                 into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
-                                          ),
-
-                                          b_cont_std=BLOC(condition = """equal_to("ALGO_CONT", 'STANDARD') """,
-                                                          fr=tr("Paramètres de la formulation Lagrangienne"),
-                                                          COEF_CONT = SIMP(statut='f',typ='R',defaut=100.E+0),
-                                          ),
-
-                                          b_cont_pena_noadapt=BLOC(condition = """equal_to("ALGO_CONT", 'PENALISATION')   and (equal_to("ADAPTATION", 'NON') or equal_to("ADAPTATION", 'CYCLAGE')) """, fr=tr("Paramètres de la méthode pénalisée"),
+                                              b_cont_pena_noadapt2=BLOC(condition = """(equal_to("ADAPTATION", 'NON') or equal_to("ADAPTATION", 'CYCLAGE') or not exists("ADAPTATION")) """, fr=tr("Paramètres de la méthode pénalisée"),
                                                            COEF_PENA_CONT  =SIMP(statut='o',typ='R'),
+                                                           COEF_PENA_FROT  =SIMP(statut='o',typ='R',),
                                           ),
-                                          b_cont_pena_adapt=BLOC(condition = """equal_to("ALGO_CONT", 'PENALISATION')  and (equal_to("ADAPTATION", 'ADAPT_COEF') or equal_to("ADAPTATION", 'TOUT'))  """, fr=tr("Paramètres de la méthode pénalisée"),
+                                              b_cont_pena_adapt2=BLOC(condition = """(equal_to("ADAPTATION", 'ADAPT_COEF') or equal_to("ADAPTATION", 'TOUT'))  """, fr=tr("Paramètres de la méthode pénalisée"),
                                                             PENE_MAXI  =SIMP(statut='f',typ='R'),
                                                             COEF_PENA_CONT  =SIMP(statut='f',typ='R',defaut=100.0E+0),
+                                                            GLIS_MAXI  =SIMP(statut='f',typ='R'),
+                                                            COEF_PENA_FROT  =SIMP(statut='f',typ='R',defaut=100.0E+5),
                                           ),
+                                          ),
+
+                                          b_contstd_frotpen=BLOC(condition = """(equal_to("ALGO_CONT", 'STANDARD') and equal_to("ALGO_FROT", 'PENALISATION'))""",
+                                                          fr=tr("Paramètres de la formulation Lagrangienne"),
+                                                          ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE",
+                                                                into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
+                                                          COEF_CONT = SIMP(statut='f',typ='R',defaut=100.E+0),
+                                              b_frot_pena_noadapt=BLOC(condition = """(equal_to("ADAPTATION", 'NON') or equal_to("ADAPTATION", 'CYCLAGE'))""", fr=tr("Paramètres de la méthode pénalisée"),
+                                                                             COEF_PENA_FROT  =SIMP(statut='o',typ='R',),
+                                          ),
+                                              b_frot_pena_adapt=BLOC(condition = """(equal_to("ADAPTATION", 'ADAPT_COEF') or equal_to("ADAPTATION", 'TOUT'))""", fr=tr("Paramètres de la méthode pénalisée"),
+                                                           GLIS_MAXI  =SIMP(statut='f',typ='R'),
+                                                           COEF_PENA_FROT  =SIMP(statut='f',typ='R',defaut=100.0E+5),
+                                          ),
+                                          ),
+
+
 
 
 # --- Pairing options (for standard slave/master)
@@ -498,19 +540,9 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                             fr=tr("Direction de frottement à exclure (uniquement dans le cas 3D)"),
                                                             DIRE_EXCL_FROT=SIMP(statut='f',typ='R',min=3,max=3),
                                           ),
-                                          ALGO_FROT       =SIMP(statut='f',typ='TXM',defaut="STANDARD", into=("STANDARD","PENALISATION"),),
-                                          b_frot_std      =BLOC(condition = """equal_to("ALGO_FROT", 'STANDARD') """,
-                                                                  fr=tr("Paramètres de la formulation Lagrangienne"),
-                                                                  COEF_FROT  =SIMP(statut='f',typ='R',defaut=100.E+0),
-                                          ),
 
-                                          b_frot_pena_noadapt=BLOC(condition = """equal_to("ALGO_FROT", 'PENALISATION')  and (equal_to("ADAPTATION", 'NON') or equal_to("ADAPTATION", 'CYCLAGE'))""", fr=tr("Paramètres de la méthode pénalisée"),
-                                                                             COEF_PENA_FROT  =SIMP(statut='o',typ='R',),
-                                          ),
-                                          b_frot_pena_adapt=BLOC(condition = """equal_to("ALGO_FROT", 'PENALISATION')  and (equal_to("ADAPTATION", 'ADAPT_COEF') or equal_to("ADAPTATION", 'TOUT'))""", fr=tr("Paramètres de la méthode pénalisée"),
-                                                           GLIS_MAXI  =SIMP(statut='f',typ='R'),
-                                                           COEF_PENA_FROT  =SIMP(statut='f',typ='R',defaut=100.0E+5),
-                                          ),
+
+
                                           #b_frotpena = BLOC(condition = """equal_to("ALGO_FROT", 'PENALISATION') """,
                                                                   #fr=tr("Paramètres de la formulation Lagrangienne"),
                                                                   ##COEF_PENA_FROT  =SIMP(statut='f',typ='R',defaut=100.E+0),
@@ -545,7 +577,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                            ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE", into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
                                           ),
 
-                                          b_cont_pena=BLOC(condition = """equal_to("ALGO_CONT", 'PENALISATION')  """, fr=tr("Paramètres de la méthode pénalisée"),
+                                          b_cont_pen=BLOC(condition = """equal_to("ALGO_CONT", 'PENALISATION')  """, fr=tr("Paramètres de la méthode pénalisée"),
                                                            #COEF_PENA_CONT  =SIMP(statut='o',typ='R'),
                                                            #COEF_PENA_CONT  =SIMP(statut='f',typ='R',defaut=100.0E+0),
                                                            ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE", into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
@@ -554,10 +586,11 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                                              PENE_MAXI  =SIMP(statut='f',typ='R'),
                                                                              COEF_PENA_CONT  =SIMP(statut='f',typ='R',defaut=100.0E+0),
                                                           ),
-                                                           b_noadapt_penal =BLOC(condition = """(equal_to("ADAPTATION", 'CYCLAGE')) or (equal_to("ADAPTATION", 'NON'))""",
+                                                           b_noadapt_penal =BLOC(condition = """(equal_to("ADAPTATION", 'CYCLAGE')) or (equal_to("ADAPTATION", 'NON')) or (not exists("ADAPTATION"))""",
                                                                              #PENE_MAXI  =SIMP(statut='f',typ='R'),
                                                                              COEF_PENA_CONT  =SIMP(statut='o',typ='R',),
                                                           ),
+
                                           ),
 
 # --- Pairing options (for standard slave/master)
