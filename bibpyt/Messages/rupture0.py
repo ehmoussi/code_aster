@@ -181,12 +181,6 @@ inférieure et perpendiculaire au fond  %(k1)s.
 Pour un résultat de type MODE_MECA, seule l'option CALC_K_G est disponible.
 """),
 
-    28: _(u"""
-Le cas de charge %(k1)s n'a pas été trouvé dans la SD Résultat %(k2)s.
--> Risque et Conseil :
-Veuillez vérifier les données fournies au mot-clé NOM_CAS.
-"""),
-
     29: _(u"""
 Lorsque une modélisation 3D est de type FEM l'option %(k1)s nécessite une
 fissure en configuration collée.
