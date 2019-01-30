@@ -17,17 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine cont_init(mesh  , model    , ds_contact, nume_inst     , ds_measure,&
-                         sddyna, hval_incr, sdnume    , list_func_acti)
+    subroutine nonlinInitDisp(list_func_acti, sdnume   , nume_dof,&
+                              hval_algo     , hval_incr)
         use NonLin_Datastructure_type
-        character(len=8), intent(in) :: mesh
-        character(len=24), intent(in) :: model
-        type(NL_DS_Contact), intent(inout) :: ds_contact
-        integer, intent(in) :: nume_inst
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19), intent(in) :: hval_incr(*)
-        character(len=19), intent(in) :: sddyna
         integer, intent(in) :: list_func_acti(*)
         character(len=19), intent(in) :: sdnume
-    end subroutine cont_init
+        character(len=24), intent(in) :: nume_dof
+        character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
+    end subroutine nonlinInitDisp
 end interface
