@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,16 +24,35 @@
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Objects import PCFieldOnMeshDouble
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
 
 
-RAFF_XFEM_ZONE=OPER(nom="RAFF_XFEM_ZONE",
-                    op=188,
+RAFF_XFEM_ZONE_CATA=OPER(nom="RAFF_XFEM_ZONE",
+                         op=188,
 #                    sd_prod=cham_elem,
-                    sd_prod=carte_sdaster,
-                    fr=tr("Calcul d'un indicateur binaire pour le raffinement"),
-                    reentrant='n',
+                         sd_prod=carte_sdaster,
+                         fr=tr("Calcul d'un indicateur binaire pour le raffinement"),
+                         reentrant='n',
 
-                    FISSURE=SIMP(statut='o',typ=fiss_xfem,min=1,max=1),
-                    RAYON  =SIMP(statut='o',typ='R',val_min=0.),
+                         FISSURE=SIMP(statut='o',typ=fiss_xfem,min=1,max=1),
+                         RAYON  =SIMP(statut='o',typ='R',val_min=0.),
 
-                    )  ;
+                         )  ;
+
+class RaffXfemZone(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.XfemCrack`.
+    """
+    command_name = "RAFF_XFEM_ZONE"
+    command_cata = RAFF_XFEM_ZONE_CATA
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = PCFieldOnMeshDouble(keywords["FISSURE"].getSupportMesh())
+
+
+RAFF_XFEM_ZONE = RaffXfemZone.run
