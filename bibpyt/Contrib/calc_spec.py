@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,9 +23,11 @@
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Commands.ExecuteCommand import UserMacro
+from Macro.calc_spec_ops import calc_spec_ops
 
 
-CALC_SPEC=MACRO(nom="CALC_SPEC",
+CALC_SPEC_CATA=MACRO(nom="CALC_SPEC",
                 op=OPS('Macro.calc_spec_ops.calc_spec_ops'),
                 sd_prod=interspectre,
                 reentrant='n',
@@ -66,3 +68,6 @@ CALC_SPEC=MACRO(nom="CALC_SPEC",
          TITRE           =SIMP(statut='f',typ='TXM',max='**'),
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
 );
+
+CALC_SPEC = UserMacro("CALC_SPEC", CALC_SPEC_CATA,
+                      calc_spec_ops)
