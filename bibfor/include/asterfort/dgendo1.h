@@ -19,21 +19,20 @@
 !
 !
 interface
-    subroutine kit_glrc_dm_vmis(imate, compor, epsm, deps, vim,&
-                      option, sigm, sig, vip, dsidep,&
-                      crit, iret, t2iu)
-        integer :: imate
-        character(len=16) :: compor
-        real(kind=8) :: epsm(6)
-        real(kind=8) :: deps(6)
-        real(kind=8) :: vim(*)
-        character(len=16) :: option
-        real(kind=8) :: sigm(*)
-        real(kind=8) :: sig(*)
-        real(kind=8) :: vip(*)
-        real(kind=8) :: dsidep(6, *)
-        real(kind=8) :: crit(*)
-        integer :: iret
-        real(kind=8) :: t2iu(4)
-    end subroutine kit_glrc_dm_vmis
+    subroutine dgendo1(em, ea, sya, b, syt, h, fcj, epsi_c, num,&
+                       gt, gc, syc, alpha_c)
+        real(kind=8), intent(in) :: em
+        real(kind=8), intent(in) :: ea
+        real(kind=8), intent(in) :: sya
+        real(kind=8), intent(in) :: b
+        real(kind=8), intent(in) :: syt
+        real(kind=8), intent(in) :: h
+        real(kind=8), intent(in) :: fcj
+        real(kind=8), intent(in) :: epsi_c
+        real(kind=8), intent(in) :: num
+        real(kind=8), intent(inout) :: gt
+        real(kind=8), intent(out) :: gc
+        real(kind=8), intent(out) :: syc
+        real(kind=8), intent(out) :: alpha_c
+    end subroutine dgendo1
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -157,6 +157,7 @@ implicit none
     aster_logical :: resi, rigi
     aster_logical :: q4gg
     aster_logical :: coupmf  = .false.
+    aster_logical :: is_param_opt(2)
 !
     integer :: ndim, nno, nnos, npg, ipoids, icoopg, ivf, idfdx
     integer :: idfd2, jgano
@@ -180,10 +181,12 @@ implicit none
     real(kind=8) :: cstseu(6)
 !   -- attention la taille de ecp depend du nombre de variable interne
 !   -- lors de l ajout de variable interne il faut incrementer ecr et ecrp
-    real(kind=8) :: epst(6), ep, surfgp, sig(8), dsig(8), ecr(24), ecrp(24)
+    integer, parameter :: nbvarmax = 35
+    real(kind=8) :: epst(6), ep, surfgp, sig(8), dsig(8), ecr(nbvarmax), ecrp(nbvarmax)
     real(kind=8) :: epsm(6), qsi, eta, ctor
     real(kind=8) :: carat3(21), jacob(5), caraq4(25)
     real(kind=8) :: matr(50), sigm(8), alfmc
+    real(kind=8) :: epsi_c, epsi_els, epsi_lim, val_param_opt(10)
 !
     character(len=16) :: comp3, mult_comp, rela_plas
     character(len=24) :: valk(2)
@@ -256,7 +259,7 @@ implicit none
             leul = zk16(icompo-1+DEFO).eq.'GROT_GDEP'
             read (zk16(icompo-1+NVAR),'(I16)') nbvari
 !           -- on verifie que le nombre de varint tient dans ecr
-            ASSERT(nbvari.le.24)
+            ASSERT(nbvari.le.nbvarmax)
 !
             call tecach('OOO', 'PCONTMR', 'L', iret, nval=7, itab=jtab)
             icontm=jtab(1)
@@ -385,7 +388,7 @@ implicit none
 !     BOUCLE SUR LES POINTS DE GAUSS DE LA SURFACE:
 !
         do ipg = 1, npg
-            call r8inir(24, 0.d0, ecrp, 1)
+            call r8inir(nbvarmax, 0.d0, ecrp, 1)
             call r8inir(3, 0.d0, n, 1)
             call r8inir(3, 0.d0, m, 1)
             call r8inir(2, 0.d0, q, 1)
@@ -589,7 +592,9 @@ implicit none
                 call glrc_recup_mate(zi(imate), compor, lrgm, ep, lambda=lambda, &
                                      deuxmu=deuxmu, lamf=lamf, deumuf=deumuf, &
                                      gt=gt, gc=gc, gf=gf, seuil=seuil,&
-                                     alpha=alphaf, alfmc=alfmc)
+                                     alpha=alphaf, alfmc=alfmc, epsic=epsi_c,&
+                                     epsiels=epsi_els, epsilim=epsi_lim,&
+                                     is_param_opt_=is_param_opt, val_param_opt_=val_param_opt)
 
 !
 !               --  prise en compte de la dilatation thermique
@@ -600,7 +605,9 @@ implicit none
                 call glrc_lc(epsm, deps, ecr, option, sig,&
                              ecrp, dsidep, lambda, deuxmu, lamf,&
                              deumuf, gt, gc, gf, seuil,&
-                             alphaf, alfmc, zr(icarcr), codret)
+                             alphaf, alfmc, zr(icarcr),&
+                             epsi_c, epsi_els, epsi_lim, codret,&
+                             ep, is_param_opt, val_param_opt, t2iu)
 !
             else if (compor(1:4).eq. 'DHRC') then
 !
@@ -654,7 +661,7 @@ implicit none
                 rela_plas = zk16(icompo+PLAS_NAME-1)
                 call kit_glrc_dm_vmis(zi(imate)  , rela_plas, epsm, deps, ecr,&
                                       option, sigm     , sig , ecrp , dsidep,&
-                                      zr(icarcr)  , codret)
+                                      zr(icarcr)  , codret, t2iu)
             else
                 valk(1) = compor
                 call utmess('F', 'ELEMENTS4_79', nk=1, valk=valk)

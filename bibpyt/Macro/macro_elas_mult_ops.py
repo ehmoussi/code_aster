@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
        Ecriture de la macro MACRO_ELAS_MULT
     """
     ier = 0
-    import types
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
@@ -50,8 +49,12 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
 
     # Le concept sortant (de type mult_elas ou fourier_elas) est nommé
     # 'nomres' dans le contexte de la macro
-
     self.DeclareOut('nomres', self.sd)
+
+    if self.reuse:
+        changed = args.get('RESULTAT')
+        if changed is None or changed != self.sd:
+            UTMESS('F', 'SUPERVIS2_79', valk='RESULTAT')
 
     ielas = 0
     ifour = 0

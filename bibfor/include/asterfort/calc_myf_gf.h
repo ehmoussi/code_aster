@@ -19,21 +19,20 @@
 !
 !
 interface
-    subroutine kit_glrc_dm_vmis(imate, compor, epsm, deps, vim,&
-                      option, sigm, sig, vip, dsidep,&
-                      crit, iret, t2iu)
-        integer :: imate
-        character(len=16) :: compor
-        real(kind=8) :: epsm(6)
-        real(kind=8) :: deps(6)
-        real(kind=8) :: vim(*)
-        character(len=16) :: option
-        real(kind=8) :: sigm(*)
-        real(kind=8) :: sig(*)
-        real(kind=8) :: vip(*)
-        real(kind=8) :: dsidep(6, *)
-        real(kind=8) :: crit(*)
-        integer :: iret
-        real(kind=8) :: t2iu(4)
-    end subroutine kit_glrc_dm_vmis
+    subroutine calc_myf_gf(em, ftj, fcj, h, ea, omx, & 
+                           ya, sya, ipenteflex, kappa_flex,&
+                           myf, gf)
+        real(kind=8) :: em
+        real(kind=8) :: ftj
+        real(kind=8) :: fcj
+        real(kind=8) :: h
+        real(kind=8) :: ea
+        real(kind=8) :: omx
+        real(kind=8) :: ya
+        real(kind=8) :: sya
+        integer :: ipenteflex
+        real(kind=8) :: kappa_flex
+        real(kind=8) :: myf
+        real(kind=8) :: gf
+    end subroutine calc_myf_gf
 end interface

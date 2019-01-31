@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -244,7 +244,7 @@ subroutine eclpgm(ma2, mo, cham1, ligrel, shrink,&
         call eclaty(nomte, elrefa, fapg, npg1, npoini,&
                     nterm1, nsomm1, csomm1, tyma, nbno2,&
                     connx, mxnbn2, mxnbpi, mxnbte, mxnbse,&
-                    nse1, corsel)
+                    nse1, corsel, iret)
         nbse = nbse+nbelgr*nse1
         nbpi = nbpi+nbelgr*npoini
         do kse = 1, nse1
@@ -298,7 +298,7 @@ subroutine eclpgm(ma2, mo, cham1, ligrel, shrink,&
         call eclaty(nomte, elrefa, fapg, npg1, npoini,&
                     nterm1, nsomm1, csomm1, tyma, nbno2,&
                     connx, mxnbn2, mxnbpi, mxnbte, mxnbse,&
-                    nse1, corsel)
+                    nse1, corsel, iret)
         if (nse1 .eq. 0) goto 2
 !
         do iel = 1, nbelgr

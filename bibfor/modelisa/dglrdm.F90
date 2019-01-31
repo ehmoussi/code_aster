@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,13 +42,15 @@ subroutine dglrdm()
 !                                IMPORTANTS
 !                 "ENDO_INT"   : ON CALCULE LE RAPPORT
 !                                PENTE D'ENDOMMAGEMENT/PENTE ELASTIQUE
-!       PENTE   : METHODE RETENUE POUR CALCULER LA PENTE D'ENDOMMAGEMENT
+!       PENTE/TRACTION : METHODE RETENUE POUR CALCULER LA PENTE D'ENDOMMAGEMENT
 !                 "ACIER_PLAS"     = RECALAGE A LA PLASTICITE DES ACIERS
 !                 "UTIL" = RECALAGE A LA DEFO GENE MAX DE L'ELEMENT
 !                 "RIGI_ACIER"= PENTE REPRISE DES RAIDEURS DES ACIERS
+!       PENTE/FLEXION : METHODE RETENUE POUR CALCULER LA PENTE D'ENDOMMAGEMENT
+!                 "UTIL" = RECALAGE A LA DEFO GENE MAX DE L'ELEMENT
+!                 "RIGI_INIT"= 
+
 !       CISAIL  : RECALAGE PAR RAPPORT AU TEST DE CISAILLEMENT PUR
-!       COMPR   : PARAMETRES D'ENDOMMAGEMENT INSERE PAR L'UTILISATEUR
-!                 (GAMMA OU SEUIL D'ENDOMMAGEMENT)
 !       INFO    : IMPRESSION DES PARAMETRES DE LA LOI GLRC_DM
 ! OUT:
 !       RHO     : MASSE VOLUMIQUE DE LA STRUCTURE
@@ -64,6 +66,8 @@ subroutine dglrdm()
 !       NYT     : SEUIL D'ENDOMMAGEMENT EN TRACTION
 !       NYC     : SEUIL D'ENDOMMAGEMENT EN COMPRESSION
 !       MYF     : SEUIL D'ENDOMMAGEMENT EN FLEXION
+!       ALPHAC  :
+!       EPSI_C  :
 ! ----------------------------------------------------------------------
 #include "jeveux.h"
 #include "asterc/getfac.h"
@@ -92,40 +96,34 @@ subroutine dglrdm()
     parameter (na=10)
     integer :: nnap, ibid, ilit, jlm, jmelk
     integer :: jmelr, jmelc, lonobj
-    integer :: icompr, iret, icisai
+    integer :: iret, icisai
     integer :: ibid1, ibid2, ibid3
-    integer :: nimpr, impr, ifr, iendo, ipente, nalphat
+    integer :: nimpr, impr, ifr, iendo, ipentetrac, nalphat, ipenteflex
 !
-    real(kind=8) :: ea(3*na), sya(3*na), eb, nub, sytb, b, b1, a
-    real(kind=8) :: h, np, emaxm, emaxf, alphat
+    real(kind=8) :: ea(3*na), sya(3*na), eb, nub, b, b1, a
+    real(kind=8) :: h, np, emaxm, kapflex, alphat
     real(kind=8) :: pendt, pendf, nyc, gt, gf, gc
     real(kind=8) :: num, nuf, em, ef, nyt, dxd, myf, dxp, drp, mp, rho, drd
     real(kind=8) :: pelast, pelasf, amora, amorb, amorh, rhob, rhoa, alpha, beta, hyst
     real(kind=8) :: omx(3*na), omy(3*na)
     real(kind=8) :: rx(3*na), ry(3*na)
     real(kind=8) :: valres(6), r8b
+    real(kind=8) :: epsi_c, fcj, ftj, alpha_c, epsi_els, epsi_lim
 !
     integer :: icodr2(6)
     character(len=6) :: k6
-    character(len=8) :: mater, k8b, compr
+    character(len=8) :: mater, k8b
     character(len=16) :: nomres(6)
     character(len=19) :: mendom
-    character(len=19) :: cisail, pente
+    character(len=19) :: cisail, pentetrac, penteflex
     character(len=16) :: type, nomcmd, fichie
 !
     call jemarq()
 !
+    nnap = 1
     a=0.d0
     b=0.d0
     b1=0.d0
-    gc=0.d0
-    nyc=0.d0
-!
-! - DEFINITION DU NOMBRE DE NAPPE DANS L'EPAISSEUR
-    call getfac('NAPPE', nnap)
-    if (nnap .ne. 1) then
-        call utmess('A', 'ALGORITH6_7')
-    endif
 !
 ! - VARIABLE D IMPRESSION DES PARAMETRES GLRC_DM
     nimpr = 0
@@ -177,31 +175,21 @@ subroutine dglrdm()
     else
         amorh = valres(6)
     endif
-!
-    nomres(1) = 'SYT'
-    call rcvale(mater, 'BETON_ECRO_LINE ', 0, k8b, [r8b], 1, nomres, valres, icodr2, 0)
-    if (icodr2(1) .ne. 0) then
-        call utmess('A', 'ALGORITH6_9')
+
+    nomres(1) = 'FCJ'
+    nomres(2) = 'EPSI_C'
+    nomres(3) = 'FTJ'
+    call rcvale(mater, 'BETON_GLRC ', 0, k8b, [r8b], 3, nomres, valres, icodr2, 0)
+    if (icodr2(1) .ne. 0 .or. icodr2(2) .ne. 0 .or. icodr2(3) .ne. 0) then
+        call utmess('F', 'ALGORITH6_38')
     endif
-    sytb = valres(1)
-!
-! - RECUPERATION DU PARAMETRE DE COMPRESSION SAISI PAR L'UTILISATEUR
-    call getvtx(' ', 'COMPR', scal=compr, nbret=ibid2)
-    if (compr .eq. 'GAMMA') then
-        call getvr8(' ', 'GAMMA_C', scal=gc, nbret=ibid1)
-    else if (compr .eq. 'SEUIL') then
-        call getvr8(' ', 'NYC', scal=nyc, nbret=ibid1)
+    fcj = valres(1)
+    epsi_c = valres(2)
+    ftj = valres(3)
+    if (fcj.lt. ftj) then
+        call utmess('F', 'ALGORITH6_2')
     endif
-!
-! - CARACTERISATION DES PARAMETRES DE COMPRESSION ENTRES PAR
-!   L'UTILISATEUR
-    if (nyc .ne. 0.0d0) then
-        icompr=1
-    else if (gc .ne. 0.0d0) then
-        icompr=2
-    else
-        ASSERT(.false.)
-    endif
+
 ! DEFINITION DES PROPRIETES MECANIQUE DU FERRAILLAGE
 !      IF(NNAP .GT. 0) THEN
 !        DO 10, ILIT = 1,NNAP
@@ -222,14 +210,21 @@ subroutine dglrdm()
     rhoa = valres(3)
 !
     nomres(1) = 'SY'
+    nomres(2) = 'SIGM_LIM'
+    nomres(3) = 'EPSI_LIM'
     call rcvale(mater, 'ECRO_LINE       ', 0, k8b, [r8b],&
-                1, nomres, valres, icodr2, 0)
+                3, nomres, valres, icodr2, 0)
 !
     if (icodr2(1) .eq. 0) then
         sya(ilit) = valres(1)
     else
         sya(ilit) = -1.d0
     endif
+    if (icodr2(2) .ne. 0 .or. icodr2(3) .ne. 0)then
+        call utmess('F', 'ALGORITH6_37')
+    endif
+    epsi_els = valres(2)/ea(1)
+    epsi_lim = valres(3)
 !
     call getvr8('NAPPE', 'OMX', iocc=ilit, scal=omx(ilit), nbret=ibid)
     call getvr8('NAPPE', 'OMY', iocc=ilit, scal=omy(ilit), nbret=ibid)
@@ -279,20 +274,30 @@ subroutine dglrdm()
     endif
 !
 ! RECUPERATION DES MOTS CLES "CISAIL", "METHODE_ENDO" et "PENTE"
-    call getvtx(' ', 'PENTE', scal=pente, nbret=ibid1)
-    if (pente .eq. 'UTIL') then
-        ipente = 3
-! - RECUPERATION DE LA DEFORMATION MAXIMALE EN MEMBRANE (EPSI_MAX_M)
-! - RECUPERATION DE LA DEFORMATION MAXIMALE EN FLEXION (COUR_MAX_F)
-        call getvr8(' ', 'EPSI_MEMB',  scal=emaxm, nbret=ibid1)
-        call getvr8(' ', 'KAPPA_FLEX', scal=emaxf, nbret=ibid1)
-    else if (pente .eq. 'PLAS_ACIER') then
+
+!   PENTE/TRACTION
+    call getvtx('PENTE', 'TRACTION', iocc=1, scal=pentetrac, nbret=ibid1)
+    
+    if (pentetrac .eq. 'UTIL') then
+        ipentetrac = 3
+        call getvr8('PENTE', 'EPSI_MEMB',  iocc=1, scal=emaxm, nbret=ibid1)
+    else if (pentetrac .eq. 'PLAS_ACIER') then
         if (sya(ilit) .le. 0.d0) then
             call utmess('F', 'ALGORITH6_11')
         endif
-        ipente = 2
-    else if (pente .eq. 'RIGI_ACIER') then
-        ipente = 1
+        ipentetrac = 2
+    else if (pentetrac .eq. 'RIGI_ACIER') then
+        ipentetrac = 1
+    endif
+
+!   PENTE/FLEXION
+    call getvtx('PENTE', 'FLEXION', iocc=1, scal=penteflex, nbret=ibid1)
+    kapflex = 0.d0
+    if (penteflex.eq.'UTIL')then
+        call getvr8('PENTE', 'KAPPA_FLEX', iocc=1, scal=kapflex, nbret=ibid1)
+        ipenteflex = 2
+    else
+        ipenteflex = 1
     endif
 !
     call getvtx(' ', 'CISAIL', scal=cisail, nbret=ibid2)
@@ -302,29 +307,21 @@ subroutine dglrdm()
         icisai = 0
     endif
 !
-    call getvtx(' ', 'METHODE_ENDO', scal=mendom, nbret=ibid3)
-    if (mendom(1:10) .eq. 'ENDO_NAISS') then
-        iendo=1
-    else if (mendom(1:8) .eq. 'ENDO_LIM') then
-        iendo=2
-    else if (mendom(1:10) .eq. 'ENDO_INTER') then
-        iendo=3
-    endif
 ! - CALCUL DES PARAMETRES ELASTIQUE HOMOGENEISES EM,NUM,EF,NUF
     call getres(mater, type, nomcmd)
     call dgelas(eb, nub, h, b, a, em, num, ef, nuf, icisai)
 ! - DETERMINATION DES POINTS DE FISSURATION (DXD,NYT) ET (DRD,MYF)
 !   ET DES PENTES ELASTIQUES
-    call dgseui(em, num, ef, nuf, eb, nub, sytb, h, icisai, nyt, nyc, dxd, myf, drd, pelast,&
-                pelasf, icompr)
+    call dgseui(em, num, ef, nuf, eb, nub, ftj, h, icisai, nyt, dxd, myf, drd, pelast,&
+                pelasf)
 ! - DETERMINATION DES PENTES POST ELASTIQUE
-    call dgplas(ea, sya, eb, nub, sytb, num, nuf, a, b1, b, nyt, myf, dxd, drd, h,&
-                ipente, icisai, emaxm, emaxf, nnap, rx, ry, np, dxp, pendt, drp, mp, pendf)
+    call dgplas(ea, sya, eb, nub, ftj, num, nuf, a, b1, b, nyt, myf, dxd, drd, h,&
+                ipentetrac, icisai, emaxm, kapflex, nnap, rx, ry, np, dxp, pendt, drp, mp, pendf)
 ! - DETERMINATION DES PARAMETRES D ENDOMMAGEMENT
-    call dgendo(em, ef, h, nyt, nyc, num, nuf, pendt, pelast, pendf,&
-                pelasf, iendo, icisai, icompr, gt, gf, gc, ipente, np, dxp)
-
-
+    call dgendo(em, ef, h, ea(1), sya(1), fcj, ftj, epsi_c, omx(1), rx(1), & 
+                nyt, nyc, num, pendt, pelast,&
+                icisai, gt, gf, gc, ipentetrac,&
+                ipenteflex, kapflex, np, dxp, b, myf, alpha_c)
 !---------------------------------------------------------------------------------------
 
 !-----REMPLISSAGE DU MATERIAU
@@ -372,7 +369,7 @@ subroutine dglrdm()
     endif
 
 !---------GLRC_DM---------------
-    lonobj = 8
+    lonobj = 16
     call codent(1,'D0',K6)
     call wkvect(mater//'.CPT.'//K6//'.VALK', 'G V K16', 2*lonobj, jmelk)
     call jeecra(mater//'.CPT.'//K6//'.VALK', 'LONUTI',   lonobj)
@@ -393,15 +390,31 @@ subroutine dglrdm()
     zk16(jmelk+5) = 'NYC     '
     zr(jmelr+5 ) = nyc
     zk16(jmelk+6) = 'ALPHA_C '
-    zr(jmelr+6 ) = 1.d0
-    zk16(jmelk+7) = 'EPAIS   '
-    zr(jmelr+7 ) = h
+    zr(jmelr+6 ) = alpha_c
+    zk16(jmelk+7) = 'EPSI_C  '
+    zr(jmelr+7 ) = epsi_c
+    zk16(jmelk+8) = 'EPSI_ELS'
+    zr(jmelr+8 ) = epsi_els
+    zk16(jmelk+9) = 'EPSI_LIM'
+    zr(jmelr+9 ) = epsi_lim
+    zk16(jmelk+10) = 'RX'
+    zr(jmelr+10 ) = rx(1)/2.d0
+    zk16(jmelk+11) = 'OMX'
+    zr(jmelr+11 ) = omx(1)
+    zk16(jmelk+12) = 'EA'
+    zr(jmelr+12 ) = ea(1)
+    zk16(jmelk+13) = 'SY'
+    zr(jmelr+13 ) = sya(1)
+    zk16(jmelk+14) = 'FTJ'
+    zr(jmelr+14 ) = ftj
+    zk16(jmelk+15) = 'FCJ'
+    zr(jmelr+15 ) = fcj
 
 !---------IMPRESSION-------------
     if (nimpr .gt. 0) then
         write (ifr,*) 'PARAMETRES HOMOGENEISES POUR GLRC_DM :'
-        write (ifr,*) 'PENTE = :',pente
-        write (ifr,*) 'METHODE_ENDO = :',mendom
+        write (ifr,*) 'PENTE EN TRACTION = :',pentetrac
+        write (ifr,*) 'PENTE EN FLEXION = :',penteflex
         write (ifr,*) 'CISAILLEMENT = :',cisail
         write (ifr,*) 'MODULE D YOUNG ET COEFFICIENT DE POISSON EFFECTIFS EN MEMBRANE:'
         write (ifr,*) 'E_M =  :',em
@@ -417,7 +430,11 @@ subroutine dglrdm()
         write (ifr,*) 'GAMMA_T = ',gt
         write (ifr,*) 'GAMMA_F = ',gf
         write (ifr,*) 'GAMMA_C = ',gc
-        write (ifr,*) 'ALPHA_C= ',1.d0
+        write (ifr,*) 'ALPHA_C = ',alpha_c
+        write (ifr,*) 'PARAMETRES DE DEFORMATION:'
+        write (ifr,*) 'EPSI_C   = ',epsi_c
+        write (ifr,*) 'EPSI_ELS = ',epsi_els
+        write (ifr,*) 'EPSI_LIM = ',epsi_lim
         write (ifr,*) 'MASSE VOLUMIQUE:'
         write (ifr,*) 'RHO = ',rho
         if (alpha .gt. 0.0d0 .or. beta .gt. 0.0d0 .or. hyst .gt. 0.0d0) then

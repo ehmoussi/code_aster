@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -264,7 +264,7 @@ subroutine te0412(option, nomte)
 !
                 if (dkg .and. lkit) then
                     read (zk16(icompo-1+NVAR),'(I16)') nbvar
-                    ivpg = jvari + (ipg-1)*nbvar + 13
+                    ivpg = jvari + (ipg-1)*nbvar + 24
                     do isig = 1, nbsm
                         eps(isig) = zr(ivpg + isig )
                         khi(isig) = zr(ivpg + isig + 3)

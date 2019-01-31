@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ subroutine vriale()
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/utmess.h"
-    integer :: ibid, nbamor, nbmode, nindex, nbindi, nbindj, nbcmpi, nbcmpj
+    integer :: ibid, nbamor, nbmode, nindex, nbindi, nbcmpi
     integer :: nnoeex, nvasex, ncmpex, nmost1, napexc
     real(kind=8) :: fremin, fremax
     character(len=4) :: excmod
@@ -55,7 +55,6 @@ subroutine vriale()
     call getvis('EXCIT', 'NUME_ORDRE_I', iocc=1, nbval=0, nbret=nindex)
     call getvtx('EXCIT', 'GRANDEUR', iocc=1, scal=graexc, nbret=ibid)
     call getvis('EXCIT', 'NUME_ORDRE_I', iocc=1, nbval=0, nbret=nbindi)
-    call getvis('EXCIT', 'NUME_ORDRE_J', iocc=1, nbval=0, nbret=nbindj)
 !
 !--- COHERENCE ENTRE LES MODES ET L'INTERSPECTRE DE LA FONCTION
 !                                  ACCEPTANCE
@@ -69,19 +68,12 @@ subroutine vriale()
 !
     if (nbindi .eq. 0) then
         call getvtx('EXCIT', 'NOEUD_I', iocc=1, nbval=0, nbret=nbindi)
-        call getvtx('EXCIT', 'NOEUD_J', iocc=1, nbval=0, nbret=nbindj)
         call getvtx('EXCIT', 'NOM_CMP_I', iocc=1, nbval=0, nbret=nbcmpi)
-        call getvtx('EXCIT', 'NOM_CMP_J', iocc=1, nbval=0, nbret=nbcmpj)
-        if (nbcmpi .ne. nbcmpj) then
-            call utmess('E', 'PREPOST3_84')
-        endif
         if (nbcmpi .ne. nbindi) then
             call utmess('E', 'PREPOST3_85')
         endif
     endif
-    if (nbindj .ne. nbindi) then
-        call utmess('E', 'ALGORITH11_31')
-    endif
+
     nindex = -nbindi
 !
     call getvtx('EXCIT', 'NOEUD', iocc=1, nbval=0, nbret=nnoeex)

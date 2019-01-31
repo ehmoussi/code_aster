@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -120,6 +120,63 @@ EXCISPEC = LIRE_INTE_SPEC( FORMAT = 'IDEAS', UNITE = 33, NOM_RESU = 'EFFO')
 
 #IMPR_TABLE( UNITE = 8, TABLE = EXCISPEC )
 
+#pour test plusieurs NUME_ORDRE_I dans DYNA_ALEA_MODAL/EXCIT
+F11 = RECU_FONCTION( INTE_SPEC = EXCISPEC,
+                                     NOEUD_I = 'N2633',
+                                     NOM_CMP_I = 'DX',
+                                    )
+
+F22 = RECU_FONCTION( INTE_SPEC = EXCISPEC,
+                                     NOEUD_I = 'N2633',
+                                     NOM_CMP_I = 'DZ',
+                                    )
+
+F33 = RECU_FONCTION( INTE_SPEC = EXCISPEC,
+                                     NOEUD_I = 'N2937',
+                                     NOM_CMP_I = 'DY',
+                                    )
+
+F12 = RECU_FONCTION( INTE_SPEC = EXCISPEC,
+                                     NOEUD_I = 'N2633',
+                                     NOM_CMP_I = 'DX',
+                                     NOEUD_J = 'N2633',
+                                     NOM_CMP_J = 'DZ',
+                                    )
+
+F13 = RECU_FONCTION( INTE_SPEC = EXCISPEC,
+                                     NOEUD_I = 'N2633',
+                                     NOM_CMP_I = 'DX',
+                                     NOEUD_J = 'N2937',
+                                     NOM_CMP_J = 'DY',
+                                    )
+
+F23 = RECU_FONCTION( INTE_SPEC = EXCISPEC,
+                                     NOEUD_I = 'N2633',
+                                     NOM_CMP_I = 'DZ',
+                                     NOEUD_J = 'N2937',
+                                     NOM_CMP_J = 'DY',
+                                    )
+INTESP = DEFI_INTE_SPEC( DIMENSION = 2,
+                         PAR_FONCTION = (_F( NUME_ORDRE_I = 1, NUME_ORDRE_J = 1, FONCTION = F11),
+                                         _F( NUME_ORDRE_I = 2, NUME_ORDRE_J = 2, FONCTION = F22),
+                                         _F( NUME_ORDRE_I = 3, NUME_ORDRE_J = 3, FONCTION = F33),
+                                         _F( NUME_ORDRE_I = 1, NUME_ORDRE_J = 2, FONCTION = F12),
+                                         _F( NUME_ORDRE_I = 1, NUME_ORDRE_J = 3, FONCTION = F13),
+                                         _F( NUME_ORDRE_I = 2, NUME_ORDRE_J = 3, FONCTION = F23),
+                                         ),
+                        );
+
+
+DYNX = DYNA_ALEA_MODAL( BASE_MODALE = _F( MODE_MECA = MODE_NUM,
+                                         BANDE     = (0.0,250.0,),
+                                         AMOR_UNIF = 0.01,),
+                       EXCIT = _F( INTE_SPEC    = INTESP,
+                                   NUME_ORDRE_I = (1,2,3),
+                                   NOEUD        = ('N2633','N2633','N2937'),
+                                   NOM_CMP      = ('DX','DZ','DY'),
+                                   GRANDEUR = 'EFFO',),);
+
+
 
 #-----------------------------------------------
 # 4) Calcul de l'inter-spectre de reponse modale
@@ -129,9 +186,7 @@ DYN = DYNA_ALEA_MODAL( BASE_MODALE = _F( MODE_MECA = MODE_NUM,
                                          AMOR_UNIF = 0.01,),
                        EXCIT = _F( INTE_SPEC    = EXCISPEC,
                                    NOEUD_I = ('N2633','N2633','N2937'),
-                                   NOEUD_J = ('N2633','N2633','N2937'),
                                    NOM_CMP_I = ('DX','DZ','DY'),
-                                   NOM_CMP_J = ('DX','DZ','DY'),
                                    NOEUD        = ('N2633','N2633','N2937'),
                                    NOM_CMP      = ('DX','DZ','DY'),
                                    GRANDEUR = 'EFFO',),);
@@ -315,6 +370,14 @@ SPECTPHY = REST_SPEC_PHYS( MODE_MECA = MODEIDE1,
                            NOM_CHAM       = 'DEPL',
                            OPTION         = 'TOUT_TOUT',);
 
+SPECTPHX = REST_SPEC_PHYS( MODE_MECA = MODEIDE1,
+                           BANDE     = (0.0,250.0,),
+                           INTE_SPEC_GENE = DYNX,
+                           NOEUD          = noeud,
+                           NOM_CMP        = nom_cmp,
+                           NOM_CHAM       = 'DEPL',
+                           OPTION         = 'TOUT_TOUT',);
+
 
 #****************************************************************************
 #
@@ -419,6 +482,23 @@ else:
                                         ),
               );
 
+#pour test plusieurs NUME_ORDRE_I dans DYNA_ALEA_MODAL/EXCIT
+CALC_ESSAI(
+                INTERACTIF = 'NON',
+                IDENTIFICATION = _F(
+                                      ALPHA = 0.0,
+                                      EPS   = 1.0E-7,
+                                      INTE_SPEC      = SPECTPHX,
+                                      OBSERVABILITE  = MODEIDE1,
+                                      COMMANDABILITE = MODEACT,
+                                      BASE = MODE_NUM),
+                RESU_IDENTIFICATION = (
+                                         _F(TABLE = CO('EFFORTX')),  # intsp des efforts phy identifies
+                                         _F(TABLE = CO('DEPL_PHX')), # intsp des deplacements mesures
+                                         _F(TABLE = CO('DEPL_SYX')), # intsp des deplacements resynthetises
+                                        ),
+              );
+
 #**************************************************************************************
 #
 #       TEST_RESU : COMPARAISON ENTRE DEPLACEMENTS "MESURES" (DEPL_PHY, OU SPECTPHY)
@@ -491,6 +571,55 @@ for ind in range(len(test_no)):
 
 
     DETRUIRE( CONCEPT = _F(NOM = (NORM,NORM0,DIFF,FONC0,FONC1,NOM)))
+
+#pour test plusieurs NUME_ORDRE_I dans DYNA_ALEA_MODAL/EXCIT
+    FONC0X= RECU_FONCTION( INTE_SPEC = DEPL_PHX,
+                                     NOEUD_I = test_no[ind],
+                                     NOM_CMP_I = test_ddl[ind],
+                                    )
+
+    FONC1X= RECU_FONCTION( INTE_SPEC = DEPL_SYX,
+                                     NOEUD_I = test_no[ind],
+                                     NOM_CMP_I = test_ddl[ind],
+                                    )
+
+    DIFFX = CALC_FONCTION(COMB = (_F( FONCTION = FONC0X,COEF = -1),
+                                    _F( FONCTION = FONC1X,COEF =  1)))
+
+    NORM0X = INFO_FONCTION( RMS= _F(FONCTION = FONC0X))
+    NORM0X = CALC_TABLE( reuse = NORM0X, TABLE = NORM0X,
+                        ACTION = _F(OPERATION = 'RENOMME', NOM_PARA=('RMS','REFE')))
+
+    NORMX  = INFO_FONCTION( RMS= _F(FONCTION = DIFFX))
+    NORMX = CALC_TABLE( reuse = NORMX, TABLE = NORMX,
+                       ACTION = _F(OPERATION = 'RENOMME', NOM_PARA=('RMS','DELTA')))
+
+    # On range dans la meme table la RMS de la mesure et la RMS de la difference entre mesure et synthese
+    NORMX = CALC_TABLE( reuse = NORMX, TABLE = NORMX,
+                       ACTION = _F(OPERATION = 'COMB', TABLE = NORM0X, NOM_PARA='METHODE'))
+
+    # On ajoute le NOEU_CMP associe :
+    noeu_cmp = test_no[ind] + '_' + test_ddl[ind]
+    NOMX = CREA_TABLE(LISTE = (_F( PARA = 'FONCTION', LISTE_K = 'DIFF'),
+                              _F( PARA = 'NOEU_CMP', LISTE_K = noeu_cmp)))
+    NORMX = CALC_TABLE( reuse = NORMX, TABLE = NORMX,
+                       ACTION = _F(OPERATION = 'COMB', TABLE = NOMX, NOM_PARA='FONCTION'))
+
+    # calcul de la colonne du rapport DELTA/REFE : celui-ci doit etre e
+    NORMX = CALC_TABLE( reuse = NORMX, TABLE = NORMX,
+                       ACTION = _F(OPERATION = 'OPER', FORMULE = RAPPORT, NOM_PARA='DELTA/REFE'))
+
+    TEST_TABLE(CRITERE='ABSOLU',
+               REFERENCE='ANALYTIQUE',
+               PRECISION=0.2,
+               VALE_CALC=l_vale_calc[ind],
+               VALE_REFE=0.0,
+               NOM_PARA='DELTA/REFE',
+               TYPE_TEST='MAX',
+               TABLE=NORMX,)
+
+
+    DETRUIRE( CONCEPT = _F(NOM = (NORMX,NORM0X,DIFFX,FONC0X,FONC1X,NOMX)))
 
 
 FIN();
