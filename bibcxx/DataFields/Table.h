@@ -34,6 +34,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructures/DataStructure.h"
 #include "Supervis/ResultNaming.h"
+#include "Functions/Function.h"
 
 /**
  * @class TableInstance
@@ -68,9 +69,7 @@ class TableInstance : public DataStructure {
         : DataStructure( name, 19, type ),
           _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
           _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
-          _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) ){
-              // std::cout<< "name = "<< this->getName() << std::endl ;
-          };
+          _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) ) {};
 
     /**
      * @brief Constructeur
@@ -79,9 +78,7 @@ class TableInstance : public DataStructure {
         : DataStructure( ResultNaming::getNewResultName(), 19, "TABLE" ),
           _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
           _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
-          _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) ){
-              // std::cout<< "name = "<< this->getName() << std::endl ;
-          };
+          _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) ) {};
 
     ~TableInstance() {
 #ifdef __DEBUG_GC__
@@ -114,6 +111,9 @@ typedef boost::shared_ptr< TableInstance > TablePtr;
  * @brief Definition of TableOfFunctionsInstance (table_fonction)
  */
 class TableOfFunctionsInstance : public TableInstance {
+  private:
+    std::vector< BaseFunctionPtr > _vecOfFunctions;
+
   public:
     /**
     * @typedef TableOfFunctionsPtr
@@ -135,6 +135,34 @@ class TableOfFunctionsInstance : public TableInstance {
     TableOfFunctionsInstance():
         TableInstance( ResultNaming::getNewResultName(), "TABLE_FONCTION" )
     {};
+
+    /**
+     * @brief Add function in TableOfFunctions
+     * @param func function to add
+     */
+    void addFunction( BaseFunctionPtr func )
+    {
+        _vecOfFunctions.push_back( func );
+    };
+
+    /**
+     * @brief Get a function from his position
+     * @param pos position
+     */
+    BaseFunctionPtr getFunction( int pos ) const
+    {
+        if( pos < _vecOfFunctions.size() )
+            return _vecOfFunctions[ pos ];
+        return BaseFunctionPtr( nullptr );
+    };
+
+    /**
+     * @brief Get the number of functions referenced
+     */
+    int getNumberOfFunctions() const
+    {
+        return _vecOfFunctions.size();
+    };
 };
 
 #endif /* TABLE_H_ */
