@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -58,6 +58,8 @@ sy_acier = 400*MPa
 Dsde_acier = 3280*MPa
 # masse volumique acier
 Rho_acier = 7800
+# deformation au pic de compores 
+epsi_c = 0.7*((-fc)/MPa)**(0.31)*1e-3
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
@@ -98,22 +100,27 @@ MO=AFFE_MODELE(MAILLAGE=MA,
 #-----------------------------------------------
 # DEFINTION DES MATERIAUX
 #-----------------------------------------------
-BETON = DEFI_MATERIAU(ELAS=_F(E=E_beton,
-                            NU=Nu_beton,
-                            RHO=Rho_beton,
-                            ),
-                      BETON_ECRO_LINE=_F(
-                                         D_SIGM_EPSI=(DE_beton),
-                                         SYT=ft,
-                                         SYC=-fc
-                                         ),);
-ACIER = DEFI_MATERIAU(ELAS=_F(E=E_acier,
-                            NU=Nu_acier,
-                            RHO=Rho_acier,),
-                    ECRO_LINE=_F(
-                                D_SIGM_EPSI=Dsde_acier,
-                                 SY=sy_acier,
-                                 ),);
+
+BETON = DEFI_MATER_GC(
+   BETON_GLRC=_F(
+      CODIFICATION='ESSAI',
+      FCJ=-fc, EIJ=E_beton, FTJ=ft, EPSI_C=epsi_c,
+      NU=Nu_beton,
+   ),
+   RHO=Rho_beton, 
+)
+
+ACIER = DEFI_MATER_GC(
+   ACIER=_F(
+      E = E_acier,
+      NU = Nu_acier,
+      SY=sy_acier,
+      D_SIGM_EPSI=Dsde_acier,
+   ),
+   RHO=Rho_acier,
+)
+
+
 
 MAT_T = DEFI_GLRC(
          RELATION = 'GLRC_DM',
@@ -125,11 +132,16 @@ MAT_T = DEFI_GLRC(
                     RX = excentr/ep_beton*2,
                     RY = excentr/ep_beton*2,
                 ),
-        PENTE ='PLAS_ACIER',
+        PENTE =_F(
+                  TRACTION='PLAS_ACIER',
+                  FLEXION = 'UTIL',
+                  KAPPA_FLEX = 3E-3,
+                  ),
         AMOR_ALPHA=8.E-5,
         AMOR_BETA=20.,
         INFO =2
 )
+
 
 MATER=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=(_F(GROUP_MA='POUTRE',
@@ -223,56 +235,56 @@ TEST_RESU(RESU=(_F(GROUP_NO='AA',
                    RESULTAT=RESU,
                    NOM_CHAM='FORC_NODA',
                    NOM_CMP='DY',
-                   VALE_CALC=-2.2780230968398E4,
+                   VALE_CALC=-23180.2188011,
                    ),
                 _F(GROUP_NO='CC',
                    INST=1.76,
                    RESULTAT=RESU,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DY',
-                   VALE_CALC=1.9397870215904E-03,
+                   VALE_CALC=0.00207689090409,
                    ),
                 _F(GROUP_NO='AA',
                    INST=2.05,
                    RESULTAT=RESU,
                    NOM_CHAM='FORC_NODA',
                    NOM_CMP='DY',
-                   VALE_CALC=1.6684414330187E4,
+                   VALE_CALC=16883.3534937,
                    ),
                 _F(GROUP_NO='CC',
                    INST=2.05,
                    RESULTAT=RESU,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DY',
-                   VALE_CALC=-1.1103406908659E-03,
+                   VALE_CALC=-0.0011247084302,
                    ),
                 _F(GROUP_NO='AA',
                    INST=2.68,
                    RESULTAT=RESU,
                    NOM_CHAM='FORC_NODA',
                    NOM_CMP='DY',
-                   VALE_CALC=-3.8918040947715E4,
+                   VALE_CALC=-37925.6062957,
                    ),
                 _F(GROUP_NO='CC',
                    INST=2.68,
                    RESULTAT=RESU,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DY',
-                   VALE_CALC=4.4235992727914E-03,
+                   VALE_CALC=0.00467068995226,
                    ),
                 _F(GROUP_NO='AA',
                    INST=2.87,
                    RESULTAT=RESU,
                    NOM_CHAM='FORC_NODA',
                    NOM_CMP='DY',
-                   VALE_CALC= 2.9974625623498E4,
+                   VALE_CALC= 30468.713038,
                    ),
                 _F(GROUP_NO='CC',
                    INST=2.87,
                    RESULTAT=RESU,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DY',
-                   VALE_CALC=-3.0796634755416E-03,
+                   VALE_CALC=-0.00337005988819,
                    ),
                 ),
           )

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,9 +25,9 @@ cata_msg = {
  GAMMA_T et GAMMA_C ne doivent pas être égal à 1 en même temps.
 """),
 
-    2 : _(u"""
- -> La valeur de SYC %(r1)f ne permet pas de respecter GAMMA_C < 1.
- -> Conseil : Choisissez une valeur de SYC inférieure à %(r2)f
+   2 : _(u"""
+ Pour la détermination des paramètres de la loi GLRC_DM, il faut que la valeur de la limite en compression FCJ soit supérieur à la limite en traction FTJ (en valeur absolue).
+ -> Conseil : Modifier les valeurs des paramètres matériaux
 """),
 
     3 : _(u"""
@@ -36,7 +36,7 @@ cata_msg = {
 """),
 
     4 : _(u"""
-  La valeur de %(k1)s est négative. Les résultats obtenus risquent d'être inattendus
+  La valeur de %(k1)s est négative ou trop faible. La valeur est modifiée avec un seuil de 1e-3.
 """),
 
     5 : _(u"""
@@ -51,18 +51,9 @@ cata_msg = {
  -> Conseil: Choisissez une autre loi de comportement ou couplez le modèle avec un modèle de grille d'acier.
 """),
 
-    7 : _(u"""
- -> Il faut définir au moins et seulement une armature d'acier.
-"""),
-
     8 : _(u"""
  -> L'objet transmis au mot clé MATER de BETON ne contient pas de propriétés élastique.
  -> Risque & Conseil : Ajouter les propriétés élastique dans le DEFI_MATERIAU du béton.
-"""),
-
-    9 : _(u"""
- -> L'objet transmis au mot clé MATER de BETON ne contient pas de propriétés post élastiques.
- -> Risque & Conseil : Ajouter les propriétés post élastiques dans le DEFI_MATERIAU du béton.
 """),
 
     10 : _(u"""
@@ -167,6 +158,34 @@ cata_msg = {
  incompatibilité NOM_PARA et données mesurées
 """),
 
+    34 : _(u"""
+ L'option RIGI_INIT pour le mot-clé FLEXION conduit à une valeur négative pour
+ le paramètre gamma en flexion. 
+ On modifie donc le moment seuil et la pente de flexion.
+"""),
+
+    35 : _(u"""
+ La courbure de calage KAPPA_FLEX est inférieure la limite de courbure de la section élastique,
+ égale à %(k1)s. Dans ce cas, on considère le moment d'initiation de la première fissure
+ et une pente d'endommagement nulle. 
+"""),
+
+    36 : _(u"""
+ Le choix de KAPPA_FLEX conduit à un coefficient GAMMA_F négatif.
+ On impose donc GAMMA_F = 0.d0 et le moment limite est celui de l'initiation de la fissure.
+"""),
+
+    37 : _(u"""
+ Au moins un des paramètres SIGM_LIM et EPSI_LIM est absent du matériau renseigné pour
+ le mot-clé NAPPE/MATER. Cela indique que ce matériau n'a pas été créé par DEFI_MATER_GC/ACIER.
+ Veuillez utiliser cette procédure pour créer ce matériau.
+"""),
+
+    38 : _(u"""
+ Au moins un des paramètres FCJ, EPSI_C et FTJ est absent du matériau renseigné pour
+ le mot-clé BETON/MATER. Cela indique que ce matériau n'a pas été créé par DEFI_MATER_GC/BETON_GLRC.
+ Veuillez utiliser cette procédure pour créer ce matériau.
+"""),
 
     55 : _(u"""
  THETA = 1 ou 0.5

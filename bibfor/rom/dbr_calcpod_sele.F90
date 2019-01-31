@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_calcpod_sele(nb_mode_maxi, tole_svd, s, nb_sing, nb_mode)
 !
 use Rom_Datastructure_type
@@ -26,13 +27,11 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: nb_mode_maxi
-    real(kind=8), intent(in) :: tole_svd
-    real(kind=8), pointer :: s(:)
-    integer, intent(in) :: nb_sing
-    integer, intent(out) :: nb_mode
+integer, intent(in) :: nb_mode_maxi
+real(kind=8), intent(in) :: tole_svd
+real(kind=8), pointer :: s(:)
+integer, intent(in) :: nb_sing
+integer, intent(out) :: nb_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,26 +66,29 @@ implicit none
 !
 ! - Get parameters
 !
-    vale_mini    = s(nb_sing)
-    vale_maxi    = s(1)
-    vale_tole    = tole_svd*vale_maxi
+    vale_mini = s(nb_sing)
+    vale_maxi = s(1)
+    vale_tole = tole_svd*vale_maxi
 !
 ! - Select singular values
 !
-    do i_sing = 1, nb_sing
-        if (s(i_sing) .ge. vale_tole) then
-            nb_mode = nb_mode + 1
-        endif
-    end do
-    if (nb_mode_maxi .ne. 0) then
-        if (nb_mode .gt. nb_mode_maxi) then
+    if (nb_mode_maxi .eq. 0) then
+        do i_sing = 1, nb_sing
+            if (s(i_sing) .ge. vale_tole) then
+                nb_mode = nb_mode + 1
+            endif
+        end do
+    else
+        if (nb_sing .le. nb_mode_maxi) then
+            nb_mode = nb_sing
+        else
             nb_mode = nb_mode_maxi
         endif
     endif
-    valr(1)   = vale_mini
-    valr(2)   = vale_maxi
-    vali(1)   = nb_sing
-    vali(2)   = nb_mode
+    valr(1) = vale_mini
+    valr(2) = vale_maxi
+    vali(1) = nb_sing
+    vali(2) = nb_mode
     call utmess('I', 'ROM5_5', ni = 2, vali = vali, nr = 2, valr = valr)
 !
     if (nb_mode .lt. 1) then

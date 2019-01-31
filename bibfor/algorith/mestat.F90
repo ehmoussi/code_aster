@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ subroutine mestat(modelz, fomulz, lischz, mate, caraz,&
 !
 !    OUT: L'EVOL_ELAS  EST REMPLI (POUR SA PARTIE 'DEPL')
 ! ---------------------------------------------------------------------
-    implicit none
+implicit none
 !
 ! 0.1. ==> ARGUMENTS
 !
@@ -45,6 +45,7 @@ subroutine mestat(modelz, fomulz, lischz, mate, caraz,&
 #include "asterc/r8maem.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/getvid.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/gnomsd.h"
 #include "asterfort/jedema.h"
@@ -80,11 +81,11 @@ subroutine mestat(modelz, fomulz, lischz, mate, caraz,&
     character(len=6) :: nompro
     parameter    (nompro = 'MESTAT')
     integer :: nbval, ibid, itps, itps0, iret, ninstc
-    integer :: vali
+    integer :: vali, nocc
     real(kind=8) :: time, instf, tps1(4), tps2(4), tps3(4), tcpu, partps(3)
     real(kind=8) :: valr(3)
     character(len=1) :: base
-    character(len=8) :: repk, result
+    character(len=8) :: repk, result, result_reuse
     character(len=14) :: nuposs
     character(len=16) :: k16bid
     character(len=19) :: maprec, vecass, chdepl, matass
@@ -122,6 +123,12 @@ subroutine mestat(modelz, fomulz, lischz, mate, caraz,&
     base = 'V'
     criter = '&&RESGRA_GCPC'
     call getres(result, k16bid, k16bid)
+    call getvid(' ', 'RESULTAT', scal = result_reuse, nbret = nocc)
+    if (nocc .ne. 0) then
+        if (result .ne. result_reuse) then
+            call utmess('F', 'SUPERVIS2_79', sk='RESULTAT')
+        endif
+    endif
 !
 !
 ! 1.3. ==> ALLOCATION DES RESULTATS

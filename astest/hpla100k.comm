@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 # 
 # code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,11 @@ MAT = DEFI_MATERIAU(ECRO_LINE=_F(D_SIGM_EPSI=2000.0,
                     GLRC_DM=_F(GAMMA_F=0.25,
                                GAMMA_T=0.025,
                                MYF=200000.0,
-                               NYT=3900000.0))
+                               NYT=3900000.0,
+                               GAMMA_C= 1.0,
+                               NYC = 0.0,
+                               ALPHA_C = 1.0,
+                               ))
 
 MATHER = DEFI_MATERIAU(THER=_F(LAMBDA=1.0,
                                RHO_CP=0.0))

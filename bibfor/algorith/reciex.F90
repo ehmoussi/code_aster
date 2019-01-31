@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,9 +53,11 @@ subroutine reciex(intexc, iderex, nindex, nnoeex, ncmpex,&
 !
 !-----------------------------------------------------------------------
     integer :: i1, i2, ibid1, iderex, ij2, ilcmpi
-    integer :: ilcpex, ilfex, ilindi, ilindj, illex, ilnoex
+    integer :: ilcpex, ilfex, ilindi, illex, ilnoex
     integer :: ilvaex, ivite, napexc, ncmpex
     integer :: ndim, nindex, nnoeex, nvasex
+    integer :: vali(2)
+
 !-----------------------------------------------------------------------
     integer :: ibid, iret
     character(len=4) :: excmod
@@ -63,11 +65,11 @@ subroutine reciex(intexc, iderex, nindex, nnoeex, ncmpex,&
     character(len=16) :: graexc
     character(len=24) :: chnumi, chnumj, chnoei, chnoej, chcmpi, chcmpj, chvale
     character(len=24) :: chfreq
+    character(len=24) :: valk(5)
 !
     aster_logical :: lindi, exiind
     integer :: lnumi, lnumj, mxval, num, lcmpi, lcmpj
     integer :: nbfreq, ifreq
-    character(len=8), pointer :: cmp_j(:) => null()
 !
     call getvid('EXCIT', 'INTE_SPEC', iocc=1, scal=intexc, nbret=ibid)
 !
@@ -78,26 +80,17 @@ subroutine reciex(intexc, iderex, nindex, nnoeex, ncmpex,&
         lindi = .true.
         nindex = -nindex
         call wkvect('&&RECIEX.INDI_I', 'V V I', nindex, ilindi)
-        call wkvect('&&RECIEX.INDI_J', 'V V I', nindex, ilindj)
         call getvis('EXCIT', 'NUME_ORDRE_I', iocc=1, nbval=nindex, vect=zi(ilindi),&
-                    nbret=ibid)
-        call getvis('EXCIT', 'NUME_ORDRE_J', iocc=1, nbval=nindex, vect=zi(ilindj),&
                     nbret=ibid)
     else
         call getvtx('EXCIT', 'NOEUD_I', iocc=1, nbval=0, nbret=nindex)
         lindi = .false.
         nindex = -nindex
         call wkvect('&&RECIEX.INDI_I', 'V V K8', nindex, ilindi)
-        call wkvect('&&RECIEX.INDI_J', 'V V K8', nindex, ilindj)
         call wkvect('&&RECIEX.CMP_I', 'V V K8', nindex, ilcmpi)
-        AS_ALLOCATE(vk8=cmp_j, size=nindex)
         call getvtx('EXCIT', 'NOEUD_I', iocc=1, nbval=nindex, vect=zk8(ilindi),&
                     nbret=ibid)
-        call getvtx('EXCIT', 'NOEUD_J', iocc=1, nbval=nindex, vect=zk8(ilindj),&
-                    nbret=ibid)
         call getvtx('EXCIT', 'NOM_CMP_I', iocc=1, nbval=nindex, vect=zk8(ilcmpi),&
-                    nbret=ibid)
-        call getvtx('EXCIT', 'NOM_CMP_J', iocc=1, nbval=nindex, vect=cmp_j,&
                     nbret=ibid)
     endif
     call getvis('EXCIT', 'NUME_VITE_FLUI', iocc=1, scal=ivite, nbret=ibid)
@@ -114,7 +107,6 @@ subroutine reciex(intexc, iderex, nindex, nnoeex, ncmpex,&
     chvale = intexc//'.VALE'
 !
 !     VERIFICATIONS EXISTENCE PARAMETRES DE LA SD
-    exiind = .false.
     if (lindi) then
         chnumi = intexc//'.NUMI'
         chnumj = intexc//'.NUMJ'
@@ -124,14 +116,24 @@ subroutine reciex(intexc, iderex, nindex, nnoeex, ncmpex,&
         do 103 i1 = 1, nindex
             do 108 i2 = i1, nindex
                 ij2 = (i2*(i2-1))/2+i1
+    exiind = .false.
                 do 111 num = 1, mxval
-                    if ((zi(lnumi-1+num) .eq. zi(ilindi-1+i1)) .and.&
-                        (zi(lnumj-1+num) .eq. zi(ilindj-1+i2))) then
+                    if (((zi(lnumi-1+num) .eq. zi(ilindi-1+i1)) .and.&
+                        (zi(lnumj-1+num) .eq. zi(ilindi-1+i2))) .or.&
+                    ((zi(lnumi-1+num) .eq. zi(ilindi-1+i2)) .and.&
+                        (zi(lnumj-1+num) .eq. zi(ilindi-1+i1)))&
+                     ) then
                         exiind = .true.
                         call jeveuo(jexnum(chvale, num), 'L', zi(ilfex-1+ ij2))
                         call jelira(jexnum(chvale, num), 'LONMAX', zi( illex+ij2))
                     endif
 111             continue
+    if (.not. exiind) then
+            valk (1) = intexc
+            vali (1) = zi(ilindi-1+i1)
+            vali (2) = zi(ilindi-1+i2)
+        call utmess('F', 'PREPOST3_84',sk=valk(1),ni=2,vali=vali)
+    endif
 108         continue
 103     continue
     else
@@ -147,22 +149,31 @@ subroutine reciex(intexc, iderex, nindex, nnoeex, ncmpex,&
         do 120 i1 = 1, nindex
             do 122 i2 = i1, nindex
                 ij2 = (i2*(i2-1))/2+i1
+    exiind = .false.
                 do 121 num = 1, mxval
-                    if ((zk8(lnumi-1+num) .eq. zk8(ilindi-1+i1)) .and.&
-                        (zk8(lnumj-1+num) .eq. zk8(ilindj-1+i2)) .and.&
+                    if(((zk8(lnumi-1+num) .eq. zk8(ilindi-1+i1)) .and.&
+                        (zk8(lnumj-1+num) .eq. zk8(ilindi-1+i2)) .and.&
                         (zk8(lcmpi-1+num) .eq. zk8(ilcmpi-1+i1)) .and.&
-                        (zk8(lcmpj-1+num) .eq. cmp_j(i2))) then
+                        (zk8(lcmpj-1+num) .eq. zk8(ilcmpi-1+i2))) .or.&
+                       ((zk8(lnumi-1+num) .eq. zk8(ilindi-1+i2)) .and.&
+                        (zk8(lnumj-1+num) .eq. zk8(ilindi-1+i1)) .and.&
+                        (zk8(lcmpi-1+num) .eq. zk8(ilcmpi-1+i2)) .and.&
+                        (zk8(lcmpj-1+num) .eq. zk8(ilcmpi-1+i1))))then
                         exiind = .true.
                         call jeveuo(jexnum(chvale, num), 'L', zi(ilfex-1+ ij2))
                         call jelira(jexnum(chvale, num), 'LONMAX', zi( illex+ij2))
                     endif
 121             continue
+    if (.not. exiind) then
+            valk (1) = zk8(ilindi-1+i1)
+            valk (2) = zk8(ilcmpi-1+i1)
+            valk (3) = zk8(ilindi-1+i2)
+            valk (4) = zk8(ilcmpi-1+i2)
+            valk (5) = intexc
+        call utmess('F', 'PREPOST3_85',nk=5,valk=valk)
+    endif
 122         continue
 120     continue
-    endif
-!
-    if (.not. exiind) then
-        call utmess('F', 'UTILITAI4_53')
     endif
 !
 !----TYPE MODAL ('NON' PAR DEFAUT)
@@ -210,11 +221,9 @@ subroutine reciex(intexc, iderex, nindex, nnoeex, ncmpex,&
     if (graexc .eq. 'EFFO') iderex = 0
 !
     call jedetr('&&RECIEX.INDI_I')
-    call jedetr('&&RECIEX.INDI_J')
     call jeexin('&&RECIEX.CMP_I', iret)
     if (iret .ne. 0) then
         call jedetr('&&RECIEX.CMP_I')
-        AS_DEALLOCATE(vk8=cmp_j)
     endif
 !
 end subroutine
