@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,20 +103,17 @@ Il n y a pas le même nombre de modes retenus  dans l'excitation modale et
 dans la base modale
 """),
 
-    31 : _(u"""
-Il faut autant d'indices en i et j.
-"""),
-
     32 : _(u"""
 Avec SOUR_PRESS et SOUR_FORCE, il faut deux points par degré de liberté d'application
 """),
 
     33 : _(u"""
-Mauvais accord entre le nombre d'appuis et le nombre de valeur dans le mot-clé NUME_ORDRE_I
+Mauvais accord entre le nombre d'appuis et le nombre de valeur dans le mot-clé EXCIT/NUME_ORDRE ou EXCIT/NOEUD
 """),
 
     34 : _(u"""
-Il faut autant de noms de composantes que de noms de noeuds.
+Il faut autant de nom de composantes EXCIT/NOM_CMP
+                que de nom de noeuds EXCIT/NOEUD
 """),
 
     35 : _(u"""

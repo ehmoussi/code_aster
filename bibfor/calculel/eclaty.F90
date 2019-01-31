@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 subroutine eclaty(nomte, elrefa, fapg, npg, npoini,&
                   nterm1, nsomm1, csomm1, tyma, nbno2,&
                   connx, mxnbn2, mxnbpi, mxnbte, mxnbse,&
-                  nbsel, corsel)
+                  nbsel, corsel, iret)
     implicit   none
 #include "asterc/indik8.h"
 #include "asterfort/assert.h"
@@ -31,7 +31,7 @@ subroutine eclaty(nomte, elrefa, fapg, npg, npoini,&
     integer :: mxnbn2, mxnbpi, mxnbte, mxnbse
     integer :: ndim, npg, connx(mxnbn2, mxnbse), nsomm1(mxnbpi, mxnbte)
     integer :: nterm1(mxnbpi), nbno2(mxnbse), npoini, tyma(mxnbse)
-    integer :: nbsel, corsel(mxnbse)
+    integer :: nbsel, corsel(mxnbse), iret
     real(kind=8) :: csomm1(mxnbpi, mxnbte)
     character(len=8) :: elrefa, fapg
     character(len=16) :: nomte
@@ -54,6 +54,8 @@ subroutine eclaty(nomte, elrefa, fapg, npg, npoini,&
 !       MAIS PARFOIS :
 !           NBSEL > NBPG : PLUSIEURS SE POUR 1 SEUL PG
 !           NBSEL < NBPG : IL Y A DES PG SANS SE (DEHORS)
+! OUT : IRET = 0 -> le type_elem a été traité
+!            = 1 -> non traité
 !
 ! ---------------------------------------------------------------------
 ! DESCRIPTION DES POINTS INTERMEDIAIRES (POINT_I) :
@@ -93,6 +95,7 @@ subroutine eclaty(nomte, elrefa, fapg, npg, npoini,&
     npg = 0
     npoini = 0
     nbsel = 0
+    iret = 1
 !
     call elraca(elrefa, ndim, nno, nnos, nbfpg,&
                 famg, nbpg, x, vol)
@@ -106,12 +109,14 @@ subroutine eclaty(nomte, elrefa, fapg, npg, npoini,&
                     nterm1, nsomm1, csomm1, tyma, nbno2,&
                     connx, mxnbn2, mxnbpi, mxnbte, mxnbse,&
                     nbsel, corsel)
+        iret = 0
 !
     else if (ndim .eq. 3) then
         call ecla3d(nomte, elrefa, fapg, npg, npoini,&
                     nterm1, nsomm1, csomm1, tyma, nbno2,&
                     connx, mxnbn2, mxnbpi, mxnbte, mxnbse,&
                     nbsel, corsel)
+        iret = 0
 !
     endif
 !

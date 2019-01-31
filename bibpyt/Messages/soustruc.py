@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -94,6 +94,8 @@ cata_msg = {
  maillages avec super mailles :
  utiliser OPERATION = SOUS_STRUC
 """),
+
+    17: _(u"""La commande est ré-entrante mais n'utilise pas le bon macro-élément dans le mot-clef MACR_ELEM."""),
 
     20: _(u"""
  vecteur nul pour l'orientation

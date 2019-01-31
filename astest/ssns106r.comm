@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -138,6 +138,8 @@ MAT_G=DEFI_MATERIAU(ELAS_GLRC=_F(E_M=EGM,
                                GAMMA_C=0.8,
                                GAMMA_F=0.45,
                                NYT=3.7E5,
-                               MYF=9.E3,),);
+                               MYF=9.E3,
+                               NYC = 0.0,
+                               ALPHA_C = 1.0,),);
 
 FIN();

@@ -19,21 +19,21 @@
 !
 !
 interface
-    subroutine kit_glrc_dm_vmis(imate, compor, epsm, deps, vim,&
-                      option, sigm, sig, vip, dsidep,&
-                      crit, iret, t2iu)
-        integer :: imate
-        character(len=16) :: compor
-        real(kind=8) :: epsm(6)
-        real(kind=8) :: deps(6)
-        real(kind=8) :: vim(*)
-        character(len=16) :: option
-        real(kind=8) :: sigm(*)
-        real(kind=8) :: sig(*)
-        real(kind=8) :: vip(*)
-        real(kind=8) :: dsidep(6, *)
-        real(kind=8) :: crit(*)
-        integer :: iret
-        real(kind=8) :: t2iu(4)
-    end subroutine kit_glrc_dm_vmis
+    subroutine calc_moment(e0, kappa, e_b, f_t, f_c, c,&
+                           h, e_a, s_a, y_a, f_ta, cas, eff, mom)
+        real(kind=8) :: e0
+        real(kind=8) :: kappa
+        real(kind=8) :: e_b
+        real(kind=8) :: f_t
+        real(kind=8) :: f_c
+        real(kind=8) :: c
+        real(kind=8) :: h
+        real(kind=8) :: e_a
+        real(kind=8) :: s_a
+        real(kind=8) :: y_a
+        real(kind=8) :: f_ta
+        integer :: cas
+        real(kind=8) :: eff
+        real(kind=8) :: mom
+    end subroutine calc_moment
 end interface

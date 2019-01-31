@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -211,6 +211,68 @@ def Mazars_Unil(DMATER, args):
     UTMESS('I', 'COMPOR1_75', valk=(message0, message1, message2, message3))
     #
     return mclef
+    
+def Beton_GLRC(DMATER, args):
+    """
+    BETON_GLRC = Paramètres de la loi de comportement
+        UNITE_LONGUEUR = unité du problème [M|MM]
+        FCJ    [Unite] = Contrainte au pic en compression
+        EIJ    [Unite] = Module d'young
+        EPSI_C         = Déformation au pic en compression
+        FTJ    [Unite] = Contrainte au pic en traction
+        NU             = Coefficient de poisson
+
+    """
+    #
+    MATER = DMATER.cree_dict_valeurs(DMATER.mc_liste)
+    #
+    # Obligatoire : Règlement de codification
+    Regle = MATER['CODIFICATION']
+    
+    if (Regle == 'EC2'):
+        # Obligatoire CLASSE UNITE_CONTRAINTE
+        if (MATER['UNITE_CONTRAINTE'] == "MPa"):
+            coeff = 1.0
+        elif (MATER['UNITE_CONTRAINTE'] == "Pa"):
+            coeff = 1.0E+06
+        beton = BetonEC2(MATER['CLASSE'])
+        #
+        FCJ = beton['fcm'] * coeff
+        EIJ = beton['ecm'] * coeff
+        FTJ = beton['fctm'] * coeff
+        EPSI_C = beton['epsi_c1'] / 1000.0
+        NU = beton['nu']
+
+    elif (Regle == 'ESSAI'):
+        # Obligatoire FCJ , EIJ, FTJ, EPSI_C
+        FCJ = MATER['FCJ']
+        EIJ = MATER['EIJ']
+        FTJ = MATER['FTJ']
+        EPSI_C = MATER['EPSI_C']
+        NU = MATER['NU'] # 0.2 par defaut dans le catalogue
+        MATER['UNITE_CONTRAINTE'] = ''
+
+    # Mot clef MATER
+    # voir si ELAS est necessaire
+    mclef = elastic_properties(EIJ, NU, args)
+    mclef[
+        'BETON_GLRC'] = {'FCJ': FCJ, 'FTJ': FTJ,
+                         'EPSI_C': EPSI_C,}
+    #
+    # On affiche dans tous les cas
+    if (len(MATER['UNITE_CONTRAINTE']) > 0):
+        message0 = "BETON_GLRC [%s]" % MATER['UNITE_CONTRAINTE']
+    else:
+        message0 = "BETON_GLRC"
+    #
+    message1 = FaitMessage(mclef['ELAS'])
+    message2 = FaitMessage(mclef['BETON_GLRC'])
+    #Dico = {'FCJ': FCJ, 'FTJ': FTJ, 'EPSI_C': EPSI_C}
+    #message3 = FaitMessage(Dico)
+    #
+    UTMESS('I', 'COMPOR1_75', valk=(message0, message1, message2))
+    #
+    return mclef
 
 
 def Acier_Cine_Line(DMATER, args):
@@ -412,9 +474,9 @@ def elastic_properties(E, NU, args):
     return mclef
 
 
-def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, **args):
+def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, BETON_GLRC=None, **args):
     """
-    C'est : un parmi : ACIER  MAZARS  ENDO_FISS_EXP
+    C'est : un parmi : ACIER  MAZARS  ENDO_FISS_EXP, BETON_GLRC
     """
     ier = 0
     # La macro compte pour 1 dans la numérotation des commandes
@@ -431,6 +493,8 @@ def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, **args)
         mclef = Acier_Cine_Line(ACIER[0], args)
     if ENDO_FISS_EXP != None:
         mclef = Endo_Fiss_Exp(ENDO_FISS_EXP[0], args)
+    if BETON_GLRC != None:
+        mclef = Beton_GLRC(BETON_GLRC[0], args)
 
     Materiau = DEFI_MATERIAU(**mclef)
     return Materiau

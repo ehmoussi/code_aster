@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -48,24 +48,19 @@ DEFI_GLRC=OPER(nom="DEFI_GLRC",op=57,sd_prod=mater_sdaster,
                               AMOR_ALPHA = SIMP(statut='f',typ='R',val_min=0.E+0,),
                               AMOR_BETA = SIMP(statut='f',typ='R',val_min=0.E+0,),
                               AMOR_HYST = SIMP(statut='f',typ='R',val_min=0.E+0,),
-                              COMPR = SIMP(statut='f',typ='TXM',defaut="GAMMA",
-                                           into=("GAMMA","SEUIL")),
-                   b_gamma=BLOC(condition = """equal_to("COMPR", 'GAMMA')""",
-                                fr=tr("Paramètre d'endommagement en compression "),
-                                GAMMA_C = SIMP(statut='f',typ='R',defaut=1.0E+0,val_min=0.0E+0, val_max=1.0E+0),),
-                   b_seuil=BLOC(condition = """equal_to("COMPR", 'SEUIL')""",
-                                fr=tr("Seuil d'endommagement en compression "),
-                                NYC = SIMP(statut='o',typ='R'),),
-                   PENTE = SIMP(statut='f',typ='TXM',defaut="RIGI_ACIER",
-                                into=("PLAS_ACIER","UTIL","RIGI_ACIER")),
-                   b_util = BLOC(condition = """equal_to("PENTE", 'UTIL')""",
-                                 fr=tr("Valeur de la déformation maximale de l'élément"),
-                                  EPSI_MEMB = SIMP(statut='f',typ='R',defaut=0.E+0),
-                                  KAPPA_FLEX = SIMP(statut='f',typ='R',defaut=0.E+0),),
+                   
+                   PENTE = FACT(statut='o',max=1,
+                                TRACTION = SIMP(statut='f',typ='TXM',defaut="RIGI_ACIER",
+                                                into=("PLAS_ACIER","UTIL","RIGI_ACIER"),),
+                                b_trac_util=BLOC(condition = """equal_to("TRACTION", 'UTIL')""",
+                                                 EPSI_MEMB = SIMP(statut='f',typ='R',defaut=0.E0,),),
+                                FLEXION = SIMP(statut='f',typ='TXM',defaut="RIGI_INIT",
+                                                into=("UTIL","RIGI_INIT"),),
+                                b_flex_util=BLOC(condition = """equal_to("FLEXION", 'UTIL')""",
+                                                 KAPPA_FLEX = SIMP(statut='o',typ='R',),),
+                                ),               
                    CISAIL = SIMP(statut='f',typ='TXM',defaut="NON",
                                  into=("OUI","NON"),),
-                   METHODE_ENDO = SIMP(statut='f',typ='TXM',defaut="ENDO_INTER",
-                                  into=("ENDO_NAISS","ENDO_LIM","ENDO_INTER"),),
                            ),
            b_glrc_damage=BLOC(condition = """equal_to("RELATION", 'GLRC_DAMAGE')""",
                             fr=tr("Paramètres de la loi GLRC_DAMAGE"),
