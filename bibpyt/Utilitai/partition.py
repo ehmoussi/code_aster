@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -291,7 +291,7 @@ class MAIL_PY:
 
 # -------------------------------------------------------------
     def ToAster(self, unite=None):
-        from Utilitai.UniteAster import UniteAster
+        from code_aster.RunManager.LogicalUnit import LogicalUnitFile, Action, FileAccess, FileType
         try:
             LIRE_MAILLAGE = self.jdc.get_cmd('LIRE_MAILLAGE')
         except:
@@ -301,20 +301,19 @@ class MAIL_PY:
                 print "Il faut lancer ce programme depuis Aster pour pouvoir générer un maillage Aster."
                 sys.exit()
 
-        UL = UniteAster()
         # Récupération d'une unité logique libre si besoin
         if (unite == None):
-            unite = UL.Libre(action='ASSOCIER')
-        fichier = UL.Nom(unite)
-        # Bascule le fichier en F : ferme
-        UL.Etat(unite, etat='F')
+            unite = LogicalUnitFile._get_free_number()
+        name = LogicalUnitFile.filename_from_unit(unite)
+        fileObject = LogicalUnitFile(unite, name, Action.Open, FileType.Ascii,
+                                     FileAccess.New)
+        fichier = fileObject.filename
         # Ouverture du fichier en WRITE
         f = open(fichier, 'w')
         # Sauvegarde du maillage dans le fichier
         f.write(self.Voir_Mail())
         f.close()
-        # Remet les unités comme au debut
-        UL.EtatInit()
+        fileObject.release()
 
         return unite
 
