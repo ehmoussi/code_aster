@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -56,6 +56,8 @@ sy_acier = 610*MPa
 Dsde_acier = E_acier/10000.
 # masse volumique acier
 Rho_acier = 7500
+# deformation au pic de compores 
+epsi_c = 0.7*((-fc)/MPa)**(0.31)*1e-3
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
@@ -86,18 +88,25 @@ MO=AFFE_MODELE(MAILLAGE=MAIL,
 #-----------------------------------------------
 # DEFINTION DES MATERIAUX ET CARACTERSISTIQUES
 #-----------------------------------------------
-BETON=DEFI_MATERIAU(ELAS=_F(E=E_beton,
-                            NU=Nu_beton,
-                            RHO=Rho_beton,),
-                    BETON_ECRO_LINE=_F(D_SIGM_EPSI=DE_beton,
-                                       SYT=ft,),);
 
-ACIER=DEFI_MATERIAU(ELAS=_F(E=E_acier,
-                            NU=Nu_acier,
-                            RHO=Rho_acier,),
-                    ECRO_LINE=_F(D_SIGM_EPSI=Dsde_acier,
-                                 SY=sy_acier,),);
- 
+BETON = DEFI_MATER_GC(
+          BETON_GLRC=_F(
+                        CODIFICATION='ESSAI',
+                        FCJ=-fc, 
+                        EIJ=E_beton, 
+                        FTJ=ft, 
+                        EPSI_C=epsi_c,
+                        NU=Nu_beton,),
+          RHO=Rho_beton,)
+
+ACIER = DEFI_MATER_GC(
+                      ACIER=_F(
+                               E = E_acier,
+                               NU = Nu_acier,
+                               SY=sy_acier,
+                               D_SIGM_EPSI=Dsde_acier,),
+                      RHO=Rho_acier,)
+
 MAT_T1=DEFI_GLRC(RELATION='GLRC_DM',
                  BETON=_F(MATER=BETON,
                           EPAIS=ep_beton),
@@ -106,13 +115,12 @@ MAT_T1=DEFI_GLRC(RELATION='GLRC_DM',
                           OMY=section_acier, 
                           RX=excentr,
                           RY=excentr,),
-                COMPR='GAMMA',
-                GAMMA_C=gamma_c,        
-                INFO=2,);
+                 PENTE=_F(
+                         #FLEXION = 'UTIL',
+                         #KAPPA_FLEX = 5E-3,
+                        ),       
+                 INFO=2,);
 
-# la parametres de GLRC sont obtenus a partir de la commande DEFI_GLRC precdente, on y ajoute les parametres
-# GAMMA_C
-# ALPHA_C
 
 MAT_T=DEFI_MATERIAU(ELAS_GLRC=_F(E_M=34017455010.1217,
                                  NU_M=0.169526519709666,

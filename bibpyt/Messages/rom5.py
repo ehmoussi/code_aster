@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,6 +45,8 @@ cata_msg = {
 
    13 : _(u"""On a détecté %(i1)d tranches pour la définition des modes linéiques."""),
 
+   14 : _(u"""La commande est ré-entrante mais n'utilise pas le bon maillage dans le mot-clef MAILLAGE."""),
+
    15 : _(u"""Le nombre de couches du domaine est inférieur au nombre de couches de l'interface, on aura peut-être un problème de convergence"""),
 
    16 : _(u"""Méthode de construction de la base empirique: %(k1)s """),
@@ -56,6 +58,8 @@ cata_msg = {
    19 : _(u"""Vérifications de la conformité de la structure de données résultat utilisée."""),
 
    20 : _(u"""On ne peut utiliser des bases empiriques qu'avec des maillages tridimensionnels."""),
+
+   21 : _(u"""La commande est ré-entrante mais n'utilise pas la bonne base dans le mot-clef BASE."""),
 
    22 : _(u"""Un mode empirique contient des conditions limites dualisés (AFFE_CHAR_THER ou AFFE_CHAR_MECA).
               Ce n'est pas possible, utilisez AFFE_CHAR_CINE"""),

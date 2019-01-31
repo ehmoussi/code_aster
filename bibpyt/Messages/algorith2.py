@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,6 +42,7 @@ Erreur utilisateur dans la commande CREA_RESU / AFFE :
  Le repère utilisateur défini par VECT_X et VECT_Y ne peut être utilisé qu'en 3D.
 """),
 
+    5 : _(u"""La commande est ré-entrante mais n'utilise pas le bon résultat dans le mot-clef RESULTAT."""),
 
     6 : _(u"""
  il faut définir NOM_CMP

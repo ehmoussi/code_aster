@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -152,7 +152,6 @@ DYNALEA1=DYNA_ALEA_MODAL(
                               EXCIT=_F(  INTE_SPEC = INTEREXC,
                                       GRANDEUR = 'SOUR_PRESS',
                                       NUME_ORDRE_I = 1,
-                                      NUME_ORDRE_J = 1,
                                       NOEUD = ( 'NBAM1', 'NBAM2', ),
                                       NOM_CMP = ('PHI', 'PHI',)),
                             REPONSE=_F(  FREQ_MIN = 10.,
@@ -214,7 +213,6 @@ DYNALEA2=DYNA_ALEA_MODAL(
                               EXCIT=_F(  INTE_SPEC = INTEREXC,
                                       GRANDEUR = 'SOUR_FORCE',
                                       NUME_ORDRE_I = 1,
-                                      NUME_ORDRE_J = 1,
                                       NOEUD = ( 'NBAM1', 'NBAM2', ),
                                       NOM_CMP = ('PHI', 'PHI',)),
                             REPONSE=_F(  FREQ_MIN = 10.,
@@ -276,7 +274,6 @@ DYNALEA3=DYNA_ALEA_MODAL(
                               EXCIT=_F(  INTE_SPEC = INTEREXC,
                                       GRANDEUR = 'SOUR_DEBI_VOLU',
                                       NUME_ORDRE_I = 1,
-                                      NUME_ORDRE_J = 1,
                                       NOEUD = 'NBAM1',
                                       NOM_CMP = 'PHI'),
                             REPONSE=_F(  FREQ_MIN = 10.,
@@ -338,7 +335,6 @@ DYNALEA4=DYNA_ALEA_MODAL(
                               EXCIT=_F(  INTE_SPEC = INTEREXC,
                                       GRANDEUR = 'SOUR_DEBI_MASS',
                                       NUME_ORDRE_I = 1,
-                                      NUME_ORDRE_J = 1,
                                       NOEUD = 'NBAM1',
                                       NOM_CMP = 'PHI'),
                             REPONSE=_F(  FREQ_MIN = 10.,
@@ -400,7 +396,6 @@ DYNALEA5=DYNA_ALEA_MODAL(
                               EXCIT=_F(  INTE_SPEC = INTEREXC,
                                       GRANDEUR = 'EFFO',
                                       NUME_ORDRE_I = 1,
-                                      NUME_ORDRE_J = 1,
                                       NOEUD = 'NBAM10',
                                       NOM_CMP = 'DX'),
                             REPONSE=_F(  FREQ_MIN = 10.,

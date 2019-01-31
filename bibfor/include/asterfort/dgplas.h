@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 !
 interface
-    subroutine dgplas(ea, sya, eb, nub, sytb,&
+    subroutine dgplas(ea, sya, eb, nub, ftj,&
                       num, nuf, a, b1, b,&
                       syt, syf, dxd, drd, h,&
                       ipente, icisai, emaxm, emaxf, nnap,&
@@ -29,7 +29,7 @@ interface
         real(kind=8) :: sya(*)
         real(kind=8) :: eb
         real(kind=8) :: nub
-        real(kind=8) :: sytb
+        real(kind=8) :: ftj
         real(kind=8) :: num
         real(kind=8) :: nuf
         real(kind=8) :: a

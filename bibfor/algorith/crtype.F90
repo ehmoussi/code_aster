@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501
+!
 subroutine crtype()
     implicit none
-! aslint: disable=W1501
+
 !
 !     COMMANDE:  CREA_RESU /AFFE
 !     CREE UNE STRUCTURE DE DONNEE DE TYPE
@@ -32,6 +33,8 @@ subroutine crtype()
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
+#include "asterc/getexm.h"
+#include "asterfort/getvid.h"
 #include "asterfort/codent.h"
 #include "asterfort/copisd.h"
 #include "asterfort/detrsd.h"
@@ -39,7 +42,6 @@ subroutine crtype()
 #include "asterfort/dismoi.h"
 #include "asterfort/fointe.h"
 #include "asterfort/fonbpa.h"
-#include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
@@ -74,7 +76,7 @@ subroutine crtype()
     integer :: mxpara, ibid, ier, lg, icompt, iret, nbfac, numini, numfin
     integer :: n0, n1, n2, n3, nis, nbinst, ip, nbval, nume, igd, l, i, j, jc
     integer :: iad, jinst, nbpf, nuprev
-    integer :: ino, nbv(1), jrefe, nb_load, icmpd, icmpi
+    integer :: ino, nbv(1), jrefe, nb_load, icmpd, icmpi, nocc
     integer :: nbtrou, jcpt, nbr, ivmx, k, iocc, nbecd, nbeci, nboini, iexi
     integer :: valii(2), nfr, n4, jnmo, nmode, nbcmpd, nbcmpi, tnum(1)
     integer :: nbordr1, nbordr2, ier1, nb_modele, nb_materi, nb_carele
@@ -88,7 +90,7 @@ subroutine crtype()
 !
     character(len=4) :: typabs
     character(len=6) :: typegd
-    character(len=8) :: k8b, resu, nomf, noma, typmod, criter, matr, nogdsi, axe
+    character(len=8) :: k8b, resu, nomf, noma, typmod, criter, matr, nogdsi, axe, resu_reuse
     character(len=8) :: modele, materi, carele, blan8, noma2, modele_prev, materi_prev, carele_prev
     character(len=14) :: numedd
     character(len=16) :: nomp(mxpara), type, oper, acces, k16b
@@ -125,6 +127,14 @@ subroutine crtype()
     call getfac('AFFE', nbfac)
     call getvtx(' ', 'NOM_CHAM', scal=nsymb, nbret=n1)
     call getvtx(' ', 'TYPE_RESU', scal=typres, nbret=n1)
+    if (getexm(' ','RESULTAT') .eq. 1) then
+        call getvid(' ', 'RESULTAT', scal = resu_reuse, nbret = nocc)
+        if (nocc .ne. 0) then
+            if (resu .ne. resu_reuse) then
+                call utmess('F', 'ALGORITH2_5')
+            endif
+        endif
+    endif
 !
     call jeexin(resu//'           .DESC', iret)
     if (iret .eq. 0) call rscrsd('G', resu, typres, nboini)

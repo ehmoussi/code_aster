@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
+#include "asterfort/getvid.h"
 #include "asterfort/dbr_read_pod.h"
 #include "asterfort/dbr_read_rb.h"
 #include "asterfort/dbr_read_tr.h"
@@ -51,7 +52,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
     integer :: ifm, niv
     character(len=16) :: k16bid, operation = ' '
-    character(len=8) :: result_out = ' '
+    character(len=8) :: result_out = ' ', result_reuse = ' '
     integer :: ireuse
     aster_logical :: l_reuse
 !
@@ -70,6 +71,12 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
     call gcucon(result_out, 'MODE_EMPI', ireuse)
     l_reuse = ireuse .ne. 0
+    if (l_reuse) then
+        call getvid(' ', 'BASE', scal = result_reuse)
+        if (result_out .ne. result_reuse) then
+            call utmess('F', 'ROM5_21')
+        endif
+    endif
 !
 ! - Type of ROM methods
 !

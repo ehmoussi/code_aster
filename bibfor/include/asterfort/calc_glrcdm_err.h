@@ -18,22 +18,21 @@
 
 !
 !
+#include "asterf_types.h"
+
 interface
-    subroutine kit_glrc_dm_vmis(imate, compor, epsm, deps, vim,&
-                      option, sigm, sig, vip, dsidep,&
-                      crit, iret, t2iu)
-        integer :: imate
-        character(len=16) :: compor
-        real(kind=8) :: epsm(6)
-        real(kind=8) :: deps(6)
-        real(kind=8) :: vim(*)
-        character(len=16) :: option
-        real(kind=8) :: sigm(*)
-        real(kind=8) :: sig(*)
-        real(kind=8) :: vip(*)
-        real(kind=8) :: dsidep(6, *)
-        real(kind=8) :: crit(*)
-        integer :: iret
-        real(kind=8) :: t2iu(4)
-    end subroutine kit_glrc_dm_vmis
+    subroutine calc_glrcdm_err(l_calc, commax, flexmax, gamma_f,&
+                           gamma_c, epsi_c, h, valpar,&
+                           errcom, errflex)
+        aster_logical :: l_calc(2)
+        real(kind=8) :: commax
+        real(kind=8) :: flexmax
+        real(kind=8) :: gamma_f
+        real(kind=8) :: gamma_c
+        real(kind=8) :: epsi_c
+        real(kind=8) :: h
+        real(kind=8) :: valpar(*)
+        real(kind=8) :: errcom
+        real(kind=8) :: errflex
+    end subroutine calc_glrcdm_err
 end interface

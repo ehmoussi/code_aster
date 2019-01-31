@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -106,7 +106,7 @@ subroutine eclpgc(ch1, ch2, ligrel, ma2, prchno,&
     real(kind=8) :: csomm1(mxnbpi, mxnbte)
 ! ---------------------------------------------------------------------
     aster_logical :: lvari
-    integer :: numa, jnofpg, kk
+    integer :: numa, jnofpg, kk, iret
     integer :: k, te, npg1, npoini, ideca2
     integer :: igr, jcmaco, jcliel, jcnsl2
     integer :: ibid, nbpg, ino, nbgr, inogl, kse
@@ -262,7 +262,10 @@ subroutine eclpgc(ch1, ch2, ligrel, ma2, prchno,&
         call eclaty(nomte, elrefa, fapg, npg1, npoini,&
                     nterm1, nsomm1, csomm1, tyma, nbno2,&
                     connx, mxnbn2, mxnbpi, mxnbte, mxnbse,&
-                    nse1, corsel)
+                    nse1, corsel, iret)
+        if (iret .ne. 0) then
+            call utmess('A', 'CALCULEL2_25', sk=nomte, si=nbelgr)
+        endif
         if (npg1 .ne. 0) then
             if (nbpg .ne. npg1) then
                 valk(1)=nomte

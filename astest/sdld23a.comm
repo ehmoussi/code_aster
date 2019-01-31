@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -170,7 +170,6 @@ DYNALEA0=DYNA_ALEA_MODAL(
              INTE_SPEC = INTEREXC,
              GRANDEUR = 'EFFO',
              NUME_ORDRE_I = 1,
-             NUME_ORDRE_J = 1,
              NOEUD = 'P4',
              NOM_CMP = 'DX'),
               REPONSE=_F(
@@ -211,7 +210,6 @@ DYNALEAZ=DYNA_ALEA_MODAL(
              INTE_SPEC = INTEREXC,
              GRANDEUR = 'EFFO',
              NUME_ORDRE_I = 1,
-             NUME_ORDRE_J = 1,
              NOEUD = 'P4',
              NOM_CMP = 'DX'),
               REPONSE=_F(
@@ -255,7 +253,6 @@ DYNALEA2=DYNA_ALEA_MODAL(
              INTE_SPEC = INTEREXC,
              GRANDEUR = 'EFFO',
              NUME_ORDRE_I = 1,
-             NUME_ORDRE_J = 1,
              NOEUD = 'P4',
              NOM_CMP = 'DX'),
               REPONSE=_F(
@@ -286,7 +283,6 @@ DYNALEA4=DYNA_ALEA_MODAL(
              INTE_SPEC = INTEREXC,
              GRANDEUR = 'EFFO',
              NUME_ORDRE_I = 1,
-             NUME_ORDRE_J = 1,
              NOEUD = 'P4',
              NOM_CMP = 'DX'),
               REPONSE=_F(

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,6 +52,11 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
     # 'nomres' dans le contexte de la macro
 
     self.DeclareOut('nomres', self.sd)
+
+    resultat_reuse = args['RESULTAT']
+    if resultat_reuse != None:
+        if resultat_reuse != nomres:
+            UTMESS('F', 'ELASMULT0_2')
 
     ielas = 0
     ifour = 0

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_pod_incr(l_reuse, nb_mode_maxi, ds_empi, ds_para_pod,&
+subroutine dbr_pod_incr(l_reuse, ds_empi, ds_para_pod,&
                         q, s, v, nb_mode, nb_snap_redu)
 !
 use Rom_Datastructure_type
@@ -47,12 +47,11 @@ implicit none
 #include "asterc/r8prem.h"
 !
 aster_logical, intent(in) :: l_reuse
-integer, intent(in) :: nb_mode_maxi
 type(ROM_DS_Empi), intent(inout) :: ds_empi
 type(ROM_DS_ParaDBR_POD) , intent(in) :: ds_para_pod
 real(kind=8), pointer :: q(:)
-real(kind=8), pointer   :: s(:)
-real(kind=8), pointer   :: v(:)
+real(kind=8), pointer :: s(:)
+real(kind=8), pointer :: v(:)
 integer, intent(out) :: nb_mode
 integer, intent(out) :: nb_snap_redu
 !
@@ -65,7 +64,6 @@ integer, intent(out) :: nb_snap_redu
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  l_reuse          : .true. if reuse
-! In  nb_mode_maxi     : maximum number of emprical modes
 ! IO  ds_empi          : datastructure for empiric modes
 ! In  ds_para_pod      : datastructure for parameters (POD)
 ! IO  q                : pointer to snapshots matrix (be modified after SVD)
@@ -78,7 +76,7 @@ integer, intent(out) :: nb_snap_redu
 !
     integer :: ifm, niv
     integer :: incr_ini, incr_end, i_equa, i_snap, p, i_incr, k, i_mode
-    integer :: nb_equa, nb_snap, nb_sing
+    integer :: nb_equa, nb_snap, nb_sing, nb_mode_maxi
     real(kind=8) :: tole_incr, tole_svd
     character(len=8)  :: base_type, base
     real(kind=8) :: norm_q, norm_r
@@ -108,15 +106,16 @@ integer, intent(out) :: nb_snap_redu
 !
 ! - Get parameters
 !
-    nb_equa     = ds_empi%ds_mode%nb_equa
-    base        = ds_empi%base
-    tabl_coor   = ds_empi%tabl_coor
-    base_type   = ds_para_pod%base_type
-    nb_snap     = ds_para_pod%ds_snap%nb_snap
-    tole_incr   = ds_para_pod%tole_incr
-    tole_svd    = ds_para_pod%tole_svd
-    tabl_user   = ds_para_pod%tabl_user
-    l_tabl_user = ds_para_pod%l_tabl_user
+    nb_equa      = ds_empi%ds_mode%nb_equa
+    nb_mode_maxi = ds_para_pod%nb_mode_maxi
+    base         = ds_empi%base
+    tabl_coor    = ds_empi%tabl_coor
+    base_type    = ds_para_pod%base_type
+    nb_snap      = ds_para_pod%ds_snap%nb_snap
+    tole_incr    = ds_para_pod%tole_incr
+    tole_svd     = ds_para_pod%tole_svd
+    tabl_user    = ds_para_pod%tabl_user
+    l_tabl_user  = ds_para_pod%l_tabl_user
     ASSERT(base_type .eq. '3D')
 !
 ! - Allocate objects
