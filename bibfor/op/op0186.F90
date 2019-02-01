@@ -81,10 +81,9 @@ implicit none
     integer :: itmax, ifm, niv, neq, iterat, jtempp, jtemp
     integer :: itab(2)
     real(kind=8) :: tpsthe(6), deltat, tps1(7)
-    real(kind=8) :: tps2(4), tps3(4), tpex, ther_crit_r(2), rho, testr
-    real(kind=8) :: testm, para(2), time_curr, tconso
+    real(kind=8) :: tps2(4), tps3(4), tpex, ther_crit_r(2), rho, resi_rela
+    real(kind=8) :: resi_maxi, para(2), time_curr, tconso
     real(kind=8) :: rtab(2), theta_read
-    real(kind=8) :: vrela(1), vmaxi(1), vnorm(1)
     character(len=3) :: kreas
     character(len=8) :: result, result_dry, mesh
     character(len=19) :: sdobse
@@ -296,19 +295,16 @@ implicit none
 ! SYSTEME LINEAIRE RESOLU:  A * (T+,I+1 - T+,I) = B
 ! SOLUTION: VTEMPP = T+,I+1 - T+,I
 !
-    call nxnewt(model , mate       , cara_elem  , list_load, nume_dof,&
-                solver, tpsthe     , time       , matass   , cn2mbr  ,&
-                maprec, cncine     , varc_curr  , vtemp    , vtempm  ,&
-                vtempp, cn2mbr_stat, mediri     , conver   , vhydr   ,&
-                vhydrp, dry_prev   , dry_curr   , compor   , vabtla  ,&
-                cnresi, ther_crit_i, ther_crit_r, reasma   , testr,&
-                testm , vnorm(1)   , ds_algorom )
+    call nxnewt(model    , mate       , cara_elem  , list_load, nume_dof ,&
+                solver   , tpsthe     , time       , matass   , cn2mbr   ,&
+                maprec   , cncine     , varc_curr  , vtemp    , vtempm   ,&
+                vtempp   , cn2mbr_stat, mediri     , conver   , vhydr    ,&
+                vhydrp   , dry_prev   , dry_curr   , compor   , vabtla   ,&
+                cnresi   , ther_crit_i, ther_crit_r, reasma   , resi_rela,&
+                resi_maxi, ds_algorom )
 !
-    vrela(1) = testr 
-    vmaxi(1) = testm
-    call nmlere(sddisc, 'E', 'VRELA', iterat, vrela)
-    call nmlere(sddisc, 'E', 'VMAXI', iterat, vmaxi)
-    call nmlere(sddisc, 'E', 'VCHAR', iterat, vnorm)
+    call nmlere(sddisc, 'E', 'VRELA', iterat, [resi_rela])
+    call nmlere(sddisc, 'E', 'VMAXI', iterat, [resi_maxi])
 !
 ! --- SI NON CONVERGENCE ALORS RECHERCHE LINEAIRE
 !       (CALCUL DE RHO) SUR L INCREMENT VTEMPP
@@ -337,7 +333,7 @@ implicit none
 !
     write (ifm,&
      &      '(A,5X,I6,5X,A,2X,1PE12.5,2X,A,2X,1PE12.5,2X,A,5X,I6,5X,A,2X,1PE12.5,2X,A,6X,A,7X,A)'&
-     &        ) '|',iterat,'|',testr,'|',testm,'|',iterho,'|',rho,'|',kreas,'|'
+     &        ) '|',iterat,'|',resi_rela,'|',resi_maxi,'|',iterho,'|',rho,'|',kreas,'|'
 !
     if (itemax .and. .not.conver) then
         write (ifm,fmt1)
@@ -391,8 +387,8 @@ implicit none
         call jeveuo(sdcrit(1:19)//'.CRTR', 'E', vr=crtr)
         crtr(1) = iterat
         crtr(2) = iterho
-        crtr(3) = testr
-        crtr(4) = testm
+        crtr(3) = resi_rela
+        crtr(4) = resi_maxi
         crtr(5) = rho
     endif
 !

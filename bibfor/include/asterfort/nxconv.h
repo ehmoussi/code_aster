@@ -18,11 +18,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romAlgoNLTherResidual(ds_algorom, vec2nd   , cnvabt, cnresi, cn2mbr,&
-                                     resi_rela , resi_maxi)
-        use ROM_Datastructure_type
-        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-        character(len=24), intent(in) :: vec2nd, cnvabt, cnresi, cn2mbr
-        real(kind=8)     , intent(out):: resi_rela, resi_maxi
-    end subroutine romAlgoNLTherResidual
+    subroutine nxconv(ther_crit_i, ther_crit_r, resi_rela, resi_maxi, conver)
+        integer, intent(in) :: ther_crit_i(*)
+        real(kind=8), intent(in) :: ther_crit_r(*)
+        real(kind=8), intent(in) :: resi_rela, resi_maxi
+        aster_logical, intent(out) :: conver
+    end subroutine nxconv
 end interface
