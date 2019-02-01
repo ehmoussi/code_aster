@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,8 +23,8 @@ subroutine nxnewt(model    , mate       , cara_elem  , list_load, nume_dof ,&
                   maprec   , cnchci     , varc_curr  , temp_prev, temp_iter,&
                   vtempp   , vec2nd     , mediri     , conver   , hydr_prev,&
                   hydr_curr, dry_prev   , dry_curr   , compor   , cnvabt   ,&
-                  cnresi   , ther_crit_i, ther_crit_r, reasma   , testr    ,&
-                  testm    , vnorm      , ds_algorom )
+                  cnresi   , ther_crit_i, ther_crit_r, reasma   , resi_rela,&
+                  resi_maxi, ds_algorom )
 !
 use ROM_Datastructure_type
 !
@@ -52,6 +52,7 @@ implicit none
 #include "asterfort/preres.h"
 #include "asterfort/verstp.h"
 #include "asterfort/vethbt.h"
+#include "asterfort/nxconv.h"
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: mate
@@ -62,13 +63,14 @@ character(len=19), intent(in) :: solver
 real(kind=8) :: tpsthe(6)
 character(len=24), intent(in) :: time
 character(len=19), intent(in) :: varc_curr
-aster_logical :: conver, reasma
+aster_logical, intent(out) :: conver
+aster_logical :: reasma
 character(len=19) :: maprec
 character(len=24) :: matass, cnchci, cnresi, temp_prev, temp_iter, vtempp, vec2nd, cn2mbr
 character(len=24) :: hydr_prev, hydr_curr, compor, dry_prev, dry_curr
 integer :: ther_crit_i(*)
 real(kind=8) :: ther_crit_r(*)
-real(kind=8) :: testr, testm, vnorm
+real(kind=8), intent(out) :: resi_rela, resi_maxi
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
@@ -137,17 +139,20 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
     if (ds_algorom%l_rom) then
         if (ds_algorom%phase .eq. 'HROM') then
-            call romAlgoNLTherResidual(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi    ,&
-                                       cn2mbr     , testr      , testm , conver, ds_algorom)
+            call romAlgoNLTherResidual(ds_algorom, vec2nd   , cnvabt, cnresi, cn2mbr,&
+                                       resi_rela , resi_maxi)
         else if (ds_algorom%phase .eq. 'CORR_EF') then
-            call romAlgoNLCorrEFTherResidual(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi    ,&
-                                             cn2mbr     , testr      , testm , conver, ds_algorom)
+            call romAlgoNLCorrEFTherResidual(ds_algorom, vec2nd   , cnvabt, cnresi, cn2mbr,&
+                                             resi_rela , resi_maxi)
         endif
     else
-        call nxresi(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi,&
-                    cn2mbr     , testr      , testm , vnorm, conver)
+        call nxresi(vec2nd   , cnvabt   , cnresi, cn2mbr,&
+                    resi_rela, resi_maxi)
     endif
- 
+!
+! - Evaluate convergence
+!
+    call nxconv(ther_crit_i, ther_crit_r, resi_rela, resi_maxi, conver)
     if (conver) then
         call copisd('CHAMP_GD', 'V', temp_iter, vtempp)
         goto 999
@@ -156,9 +161,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! - New matrix if necessary
 !
     if (reasma) then
-!
-! ---- Tangent matrix (non-linear) - Volumic and surfacic terms
-!
+! ----- Compute tangent matrix (non-linear) - Volumic and surfacic terms
         call merxth(model    , lload_name, lload_info, cara_elem, mate     ,&
                     time_curr, time      , temp_iter , compor   , varc_curr,&
                     merigi   , 'V',&
@@ -181,19 +184,14 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
                 tlimat(nbmat) =mediri(1:19)
             endif
         endif
-!
-! --- ASSEMBLAGE DE LA MATRICE
-!
+! ----- Assemble tangent matrix
         call asmatr(nbmat, tlimat, ' ', nume_dof, &
                     list_load, 'ZERO', 'V', 1, matass)
-!
-! --- DECOMPOSITION OU CALCUL DE LA MATRICE DE PRECONDITIONNEMENT
-!
+! ----- Factorize tangent matrix
         if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'HROM') then
             call mtdscr(matass)
         else
-            call preres(solver, 'V', ierr, maprec, matass,&
-                        ibid, -9999)
+            call preres(solver, 'V', ierr, maprec, matass,ibid, -9999)
         endif
 !
     endif
@@ -206,11 +204,9 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     else if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
         call romAlgoNLCorrEFMatrixModify(nume_dof, matass, ds_algorom)
         call romAlgoNLCorrEFResiduModify(cn2mbr, ds_algorom)
-        call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
-                    chsol)
+        call nxreso(matass, maprec, solver, cnchci, cn2mbr, chsol)
     else
-        call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
-                    chsol)
+        call nxreso(matass, maprec, solver, cnchci, cn2mbr, chsol)
     endif
 !
 ! - RECOPIE DANS VTEMPP DU CHAMP SOLUTION CHSOL, INCREMENT DE TEMPERATURE

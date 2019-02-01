@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nxresi(ther_crit_i, ther_crit_r, vec2nd   , cnvabt   , cnresi   ,&
-                  cn2mbr     , resi_rela  , resi_maxi, vnorm, conver )
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nxresi(vec2nd   , cnvabt   , cnresi, cn2mbr,&
+                  resi_rela, resi_maxi)
 !
 implicit none
 !
@@ -25,18 +26,8 @@ implicit none
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: ther_crit_i(*)
-    real(kind=8), intent(in) :: ther_crit_r(*)
-    character(len=24), intent(in) :: vec2nd
-    character(len=24), intent(in) :: cnvabt
-    character(len=24), intent(in) :: cnresi
-    character(len=24), intent(in) :: cn2mbr
-    real(kind=8), intent(out) :: resi_rela
-    real(kind=8), intent(out) :: resi_maxi
-    real(kind=8), intent(out) :: vnorm
-    aster_logical, intent(out) :: conver
+character(len=24), intent(in) :: vec2nd, cnvabt, cnresi, cn2mbr
+real(kind=8)     , intent(out):: resi_rela, resi_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,9 +37,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  vec2nd           : applied loads
+! In  cnvabt           : BT.T LAMBDA for Dirichlet loads
+! In  cnresi           : non-linear residual
+! In  cn2mbr           : equilibrium residual (to evaluate convergence)
+! Out resi_rela        : value for RESI_GLOB_RELA
+! Out resi_maxi        : value for RESI_GLOB_MAXI
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    real(kind=8) :: vnorm
     real(kind=8), pointer :: v_cn2mbr(:) => null()
     real(kind=8), pointer :: v_vec2nd(:) => null()
     real(kind=8), pointer :: v_cnvabt(:) => null()
@@ -59,8 +57,6 @@ implicit none
 !
     resi_rela  = 0.d0
     resi_maxi  = 0.d0
-    vnorm      = 0.d0
-    conver     = .false.
 !
 ! - Access to vectors
 !
@@ -83,22 +79,6 @@ implicit none
 !
     if (vnorm .gt. 0.d0) then
         resi_rela = sqrt( resi_rela / vnorm )
-    endif
-!
-! - Evaluate
-!
-    if (ther_crit_i(1) .ne. 0) then
-        if (resi_maxi .lt. ther_crit_r(1)) then
-            conver = .true.
-        else
-            conver = .false.
-        endif
-    else
-        if (resi_rela .lt. ther_crit_r(2)) then
-            conver = .true.
-        else
-            conver = .false.
-        endif
     endif
 !
 end subroutine
