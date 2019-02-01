@@ -15,11 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine ntdcom(result_dry, l_dry)
-        character(len=8), intent(out) :: result_dry
-        aster_logical, intent(out) :: l_dry
-    end subroutine ntdcom
+    subroutine nxnpas(sddisc, solver    , nume_inst,&
+                      lnkry , l_evol    , l_stat   ,&
+                      l_dry , result_dry, dry_prev , dry_curr,&
+                      para  , time_curr , deltat   , reasma  ,&
+                      tpsthe)
+        use NonLin_Datastructure_type
+        character(len=19), intent(in) :: sddisc, solver
+        integer, intent(in) :: nume_inst
+        aster_logical, intent(in) :: lnkry, l_evol, l_stat
+        aster_logical, intent(in) :: l_dry
+        character(len=8), intent(in) :: result_dry
+        character(len=24), intent(in) :: dry_prev, dry_curr
+        real(kind=8), intent(inout) :: para(2)
+        real(kind=8), intent(out) :: time_curr, deltat
+        aster_logical, intent(out) :: reasma
+        real(kind=8), intent(out) :: tpsthe(6)
+    end subroutine nxnpas
 end interface
