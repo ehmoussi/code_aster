@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -80,7 +80,7 @@ aster_logical, intent(out) :: l_line_search
 !
 ! - Read parameters for drying
 !
-    call ntdcom(result_dry)
+    call ntdcom(result_dry, l_dry)
 !
 ! - Read convergence criteria
 !
@@ -89,10 +89,6 @@ aster_logical, intent(out) :: l_line_search
 ! - Read parameters for input/output management
 !
     call nonlinDSInOutRead('THER', result, ds_inout)
-!
-! - Drying
-!
-    l_dry = result_dry(1:1) .ne. ' '
 !
 ! - Line search
 !

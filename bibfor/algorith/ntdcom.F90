@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ntdcom(evolsc)
 !
-    implicit none
+subroutine ntdcom(result_dry, l_dry)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
@@ -27,65 +28,70 @@ subroutine ntdcom(evolsc)
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/utmess.h"
-    character(len=8) :: evolsc
 !
-! ----------------------------------------------------------------------
+character(len=8), intent(out) :: result_dry
+aster_logical, intent(out) :: l_dry
 !
-! COMMANDE THER_NON_LINE : VERIFICATION SYNTAXIQUE SPECIFIQUES AU
-!                          SECHAGE
-!                          RECUPERATION DE L'EVOL_THER
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! Thermics - Init
 !
-    integer :: iocc, k, n1, nbcham
-    character(len=8) :: k8b
-    character(len=16) :: comp, motcle, k16bid, nomcmd, tysd
-    aster_logical :: lrela, lsech
+! Read parameters for drying
 !
-    data         motcle / 'COMPORTEMENT' /
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! Out result_dry       : name of datastructure for results (drying)
+! Out l_dry            : .true. if drying (concrete)
 !
-    call getres(k8b, k16bid, nomcmd)
+! --------------------------------------------------------------------------------------------------
 !
-    if (nomcmd .eq. 'THER_NON_LINE') then
-        call getfac(motcle, iocc)
-        lrela = .false.
-        lsech = .false.
-        do k = 1, iocc
-            call getvtx(motcle, 'RELATION', iocc=k, scal=comp, nbret=n1)
-            if (comp(1:10) .eq. 'SECH_NAPPE') lsech = .true.
-            if (comp(1:12) .eq. 'SECH_GRANGER') lsech = .true.
-            if (comp(1:5) .ne. 'SECH_') lrela = .true.
-        end do
+    integer :: nbocc, iocc, n1, nbcham
+    character(len=16) :: comp_rela, tysd
+    aster_logical :: lrela
+    character(len=16) :: keywfact = 'COMPORTEMENT'
 !
-        if (lsech .and. lrela) then
-            call utmess('F', 'ALGORITH8_96')
+! --------------------------------------------------------------------------------------------------
+!
+    result_dry = ' '
+    l_dry      = ASTER_FALSE
+!
+! - Look for behaviour
+!
+    call getfac(keywfact, nbocc)
+    lrela = ASTER_FALSE
+    do iocc = 1, nbocc
+        call getvtx(keywfact, 'RELATION', iocc=iocc, scal=comp_rela, nbret=n1)
+        if (comp_rela(1:10) .eq. 'SECH_NAPPE') then
+            l_dry = ASTER_TRUE
         endif
+        if (comp_rela(1:12) .eq. 'SECH_GRANGER') then
+            l_dry = ASTER_TRUE
+        endif
+        if (comp_rela(1:5) .ne. 'SECH_') then
+            lrela = ASTER_TRUE
+        endif
+    end do
 !
-        evolsc = ' '
-        if (lsech) then
-            call getvid(' ', 'EVOL_THER_SECH', nbval=0, nbret=n1)
-            if (n1 .eq. 0) then
-                call utmess('F', 'ALGORITH8_97')
+    if (l_dry .and. lrela) then
+        call utmess('F', 'THERNONLINE4_96')
+    endif
+!
+    if (l_dry) then
+        call getvid(' ', 'EVOL_THER_SECH', nbval=0, nbret=n1)
+        if (n1 .eq. 0) then
+            call utmess('F', 'THERNONLINE4_97')
+        else
+            call getvid(' ', 'EVOL_THER_SECH', scal=result_dry, nbret=n1)
+            call gettco(result_dry, tysd)
+            if (tysd(1:9) .ne. 'EVOL_THER') then
+                call utmess('F', 'THERNONLINE4_98', sk=result_dry)
             else
-                call getvid(' ', 'EVOL_THER_SECH', scal=evolsc, nbret=n1)
-!
-! ----------VERIFICATION DU CHAMP DE TEMPERATURE
-!
-                call gettco(evolsc, tysd)
-                if (tysd(1:9) .ne. 'EVOL_THER') then
-                    call utmess('F', 'ALGORITH8_98', sk=evolsc)
-                else
-                    call dismoi('NB_CHAMP_UTI', evolsc, 'RESULTAT', repi=nbcham)
-                    if (nbcham .le. 0) then
-                        call utmess('F', 'ALGORITH8_99', sk=evolsc)
-                    endif
+                call dismoi('NB_CHAMP_UTI', result_dry, 'RESULTAT', repi=nbcham)
+                if (nbcham .le. 0) then
+                    call utmess('F', 'THERNONLINE4_99', sk=result_dry)
                 endif
             endif
         endif
-!
     endif
 !
-!-----------------------------------------------------------------------
 end subroutine
