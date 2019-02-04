@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,62 +35,168 @@ MOD = AFFE_MODELE(MAILLAGE = MA,
 RESUREF = LIRE_RESU(TYPE_RESU  = 'EVOL_NOLI',
                     FORMAT     = 'MED',
                     MODELE     = MOD,
-                    FORMAT_MED = (_F(NOM_RESU = 'U_9',
+                    FORMAT_MED = (_F(NOM_RESU = 'RESUR',
                                      NOM_CHAM = 'SIEF_ELGA'),) ,
                     UNITE      = 21,
                     TOUT_ORDRE = 'OUI',);
 
+
 RESU = LIRE_RESU(TYPE_RESU  = 'EVOL_NOLI',
                  FORMAT     = 'MED',
                  MODELE     = MOD,
-                 FORMAT_MED = (_F( NOM_RESU = 'EAU',
+                 FORMAT_MED = (_F( NOM_RESU = 'RESU',
                                    NOM_CHAM = 'SIEF_ELGA'),) ,
                  UNITE      = 22,
                  TOUT_ORDRE = 'OUI',);
 
-POSTLIQ = POST_LIQUEFACTION(RESU_REF = RESUREF,
+POSTSV = POST_LIQUEFACTION(RESU_REF = RESUREF,
                     INST_REF = 94608000.,
                             AXE      = 'Y',
+                    CRITERE ='DP_SIGV_REF',
                     RESULTAT = RESU,)
 
-#-------------------------------------------------------------------------------
-#   TEST (COMPARAISON DU CHAMP OBTENU AVEC POST_LIQEUFACTION ET DU CHAMP 
-#         D'UN .MED QUI CONTIENT LE CALCUL) 
-#--------------------------------------------------------------------------------
+POSTSM = POST_LIQUEFACTION(RESU_REF = RESUREF,
+                    INST_REF = 94608000.,
+                    AXE      = 'Y',
+                    CRITERE ='DP_SIGM_REF',
+                    RESULTAT = RESU,)
 
-RUPOSTLI = CREA_CHAMP (OPERATION = 'EXTR',
+
+POSTD = POST_LIQUEFACTION(RESU_REF = RESUREF,
+                    INST_REF = 94608000.,
+                            AXE      = 'Y',
+                    CRITERE ='DP',
+                    RESULTAT = RESU,)
+
+POSTR = POST_LIQUEFACTION(AXE      = 'Y',
+                    CRITERE ='P_SIGM',
+                    RESULTAT = RESU,)
+
+RUPOSTSM = CREA_CHAMP (OPERATION = 'EXTR',
                TYPE_CHAM = 'ELGA_SIEF_R',
-                       RESULTAT  = POSTLIQ, 
+                       RESULTAT  = POSTSM, 
                NOM_CHAM  = 'SIEF_ELGA',
                INST      = 31536000.,)
 
-REFLIQ = LIRE_RESU(TYPE_RESU  = 'EVOL_NOLI',
-                   FORMAT     = 'MED',
-                   MODELE     = MOD,
-                   FORMAT_MED = (_F(NOM_RESU = 'LIQ',
-                                    NOM_CHAM = 'SIEF_ELGA'),) ,
-                   UNITE      = 23,
-                   TOUT_ORDRE = 'OUI',);
-
-RUREF = CREA_CHAMP(OPERATION = 'EXTR',
-           TYPE_CHAM = 'ELGA_SIEF_R',
-                   RESULTAT  = REFLIQ, 
-           NOM_CHAM  = 'SIEF_ELGA',
+RUPOSTSV = CREA_CHAMP (OPERATION = 'EXTR',
+               TYPE_CHAM = 'ELGA_SIEF_R',
+                       RESULTAT  = POSTSV, 
+               NOM_CHAM  = 'SIEF_ELGA',
                INST      = 31536000.,)
 
-DIFF = CREA_CHAMP(OPERATION = 'ASSE',
+RUPOSTD = CREA_CHAMP (OPERATION = 'EXTR',
+               TYPE_CHAM = 'ELGA_SIEF_R',
+                       RESULTAT  = POSTD, 
+               NOM_CHAM  = 'SIEF_ELGA',
+               INST      = 31536000.,)
+
+RUPOSTR = CREA_CHAMP (OPERATION = 'EXTR',
+               TYPE_CHAM = 'ELGA_SIEF_R',
+                       RESULTAT  = POSTR, 
+               NOM_CHAM  = 'SIEF_ELGA',
+               INST      = 31536000.,)
+
+
+RESUM = CREA_CHAMP( OPERATION= 'AFFE',
+                TYPE_CHAM='ELGA_SIEF_R' , 
+                MODELE = MOD,
+                PROL_ZERO='OUI',
+                AFFE= (_F(TOUT='OUI', NOM_CMP=('SIPYY'), VALE=(6.),),),)
+
+RESUV = CREA_CHAMP( OPERATION= 'AFFE',
+                TYPE_CHAM='ELGA_SIEF_R' , 
+                MODELE = MOD,
+                PROL_ZERO='OUI',
+                AFFE= (_F(TOUT='OUI', NOM_CMP=('SIPYY'), VALE=(4.),),),)
+
+RESUD = CREA_CHAMP( OPERATION= 'AFFE',
+                TYPE_CHAM='ELGA_SIEF_R' , 
+                MODELE = MOD,
+                PROL_ZERO='OUI',
+                AFFE= (_F(TOUT='OUI', NOM_CMP=('SIPYY'), VALE=(12.),),),)
+
+RESUR = CREA_CHAMP( OPERATION= 'AFFE',
+                TYPE_CHAM='ELGA_SIEF_R' , 
+                MODELE = MOD,
+                PROL_ZERO='OUI',
+                AFFE= (_F(TOUT='OUI', NOM_CMP=('SIPYY'), VALE=(14.),),),)
+
+
+
+DIFFM = CREA_CHAMP(OPERATION = 'ASSE',
                MODELE    = MOD, 
           TYPE_CHAM = 'ELGA_SIEF_R',
-               ASSE      = (_F(CHAM_GD = RUPOSTLI , 
+               ASSE      = (_F(CHAM_GD = RUPOSTSM , 
                   TOUT    = 'OUI',
                                 CUMUL   = 'OUI', 
                   COEF_R  = 1.),
-                           _F(CHAM_GD = RUREF ,
+                           _F(CHAM_GD = RESUM ,
                   TOUT    = 'OUI',
                     CUMUL   = 'OUI', 
                   COEF_R  = -1.),),) 
 
-TEST_RESU (CHAM_ELEM=(_F(CHAM_GD        = DIFF,
+DIFFV = CREA_CHAMP(OPERATION = 'ASSE',
+               MODELE    = MOD, 
+          TYPE_CHAM = 'ELGA_SIEF_R',
+               ASSE      = (_F(CHAM_GD = RUPOSTSV , 
+                  TOUT    = 'OUI',
+                                CUMUL   = 'OUI', 
+                  COEF_R  = 1.),
+                           _F(CHAM_GD = RESUV ,
+                  TOUT    = 'OUI',
+                    CUMUL   = 'OUI', 
+                  COEF_R  = -1.),),) 
+
+DIFFD = CREA_CHAMP(OPERATION = 'ASSE',
+               MODELE    = MOD, 
+          TYPE_CHAM = 'ELGA_SIEF_R',
+               ASSE      = (_F(CHAM_GD = RUPOSTD , 
+                  TOUT    = 'OUI',
+                                CUMUL   = 'OUI', 
+                  COEF_R  = 1.),
+                           _F(CHAM_GD = RESUD ,
+                  TOUT    = 'OUI',
+                    CUMUL   = 'OUI', 
+                  COEF_R  = -1.),),) 
+
+DIFFR = CREA_CHAMP(OPERATION = 'ASSE',
+               MODELE    = MOD, 
+          TYPE_CHAM = 'ELGA_SIEF_R',
+               ASSE      = (_F(CHAM_GD = RUPOSTR , 
+                  TOUT    = 'OUI',
+                                CUMUL   = 'OUI', 
+                  COEF_R  = 1.),
+                           _F(CHAM_GD = RESUR ,
+                  TOUT    = 'OUI',
+                    CUMUL   = 'OUI', 
+                  COEF_R  = -1.),),) 
+
+
+TEST_RESU (CHAM_ELEM=(_F(CHAM_GD        = DIFFM,
+                         NOM_CMP        = 'SIPYY',
+                         TYPE_TEST      = 'SOMM_ABS',
+                     VALE_CALC      = 0.0,
+                         CRITERE        = 'ABSOLU',
+                         REFERENCE      = 'ANALYTIQUE',
+                         VALE_REFE      = 0.0,
+                         ORDRE_GRANDEUR = 1.0),
+                    _F(CHAM_GD        = DIFFV,
+                         NOM_CMP        = 'SIPYY',
+                         TYPE_TEST      = 'SOMM_ABS',
+                     VALE_CALC      = 0.0,
+                         CRITERE        = 'ABSOLU',
+                         REFERENCE      = 'ANALYTIQUE',
+                         VALE_REFE      = 0.0,
+                         ORDRE_GRANDEUR = 1.0),
+                    _F(CHAM_GD        = DIFFD,
+                         NOM_CMP        = 'SIPYY',
+                         TYPE_TEST      = 'SOMM_ABS',
+                     VALE_CALC      = 0.0,
+                         CRITERE        = 'ABSOLU',
+                         REFERENCE      = 'ANALYTIQUE',
+                         VALE_REFE      = 0.0,
+                         ORDRE_GRANDEUR = 1.0),
+                    _F(CHAM_GD        = DIFFR,
                          NOM_CMP        = 'SIPYY',
                          TYPE_TEST      = 'SOMM_ABS',
                      VALE_CALC      = 0.0,
