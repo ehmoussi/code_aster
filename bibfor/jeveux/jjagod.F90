@@ -77,8 +77,8 @@ subroutine jjagod(iclas, nblnew)
     common /idagod/ indiq_jjagod, indiq_jjldyn
     
 ! ----------------------------------------------------------------------
-    integer :: iad14, kat14, kdy14, iad15, kat15, kdy15, l
-    integer :: lon, lonoi, irt, iadmi, iadyn, imq(2)
+    integer :: iad14, kat14, kdy14, iad15, kat15, kdy15, l, lonoi_av
+    integer :: lon, irt, iadmi, iadyn, imq(2)
 ! DEB ------------------------------------------------------------------
     ic = iclas
     ASSERT ( nblnew .gt. nblmax(ic) )
@@ -97,7 +97,7 @@ subroutine jjagod(iclas, nblnew)
     do  l = 1, nblnew
         iusadi(iad14 + (3*l-2) - 1) = -1
         iusadi(iad14 + (3*l-1) - 1) = -1
-        iusadi(iad14 + (3*l)   - 1) =  0
+        iusadi(iad14 + (3*l)   - 1) = 0
     enddo
     do l = 1, 3*nblmax(ic)
         iusadi(iad14 + l - 1) = iusadi(jusadi(ic)+l)
@@ -105,6 +105,7 @@ subroutine jjagod(iclas, nblnew)
 
     iadmi=iadm(jiadm(ic)+2*14-1)
     iadyn=iadm(jiadm(ic)+2*14)
+    lonoi_av=lono(jlono(ic)+14)*ltyp(jltyp(ic)+14)
     call jjecrs(kat14, ic, 14, 0, 'E', imq)
     jusadi(ic) = iad14 - 1 
     long(jlong(ic)+14) = 3*nblnew
@@ -115,8 +116,7 @@ subroutine jjagod(iclas, nblnew)
 ! --- L'ANCIENNE IMAGE DE L'OBJET PEUT ETRE MARQUEE INUTILISEE
 !
     if (iadd(jiadd(ic)+2*14-1) .gt. 0) then
-        lonoi = lono(jlono(ic)+14)*ltyp(jltyp(ic)+14)
-        call jxlibd(0, 14, ic, iadd(jiadd(ic)+2*14-1), lonoi)
+        call jxlibd(0, 14, ic, iadd(jiadd(ic)+2*14-1), lonoi_av)
         iadd(jiadd(ic)+2*14-1) = 0
         iadd(jiadd(ic)+2*14 ) = 0
     endif
@@ -131,11 +131,12 @@ subroutine jjagod(iclas, nblnew)
     lon = nblnew*lois
     call jjalls(lon, ic, 'V', 'I', lois, 'INIT', iacce, iad15, kat15, kdy15)
     do l = 1, nblmax(ic)
-        iacce(iad15 + l) = iacce(jiacce(ic) + l)
+        iacce(iad15 + l - 1) = iacce(jiacce(ic) + l)
     enddo
 
     iadmi=iadm(jiadm(ic)+2*15-1)
     iadyn=iadm(jiadm(ic)+2*15)
+    lonoi_av=lono(jlono(ic)+15)*ltyp(jltyp(ic)+15)
     call jjecrs(kat15, ic, 15, 0, 'E', imq)
     jiacce(ic) = iad15 - 1
     long(jlong(ic)+15) = nblnew
@@ -151,8 +152,7 @@ subroutine jjagod(iclas, nblnew)
 ! --- L'ANCIENNE IMAGE DE L'OBJET PEUT ETRE MARQUEE INUTILISEE
 !
     if (iadd(jiadd(ic)+2*15-1) .gt. 0) then
-        lonoi = lono(jlono(ic)+15)*ltyp(jltyp(ic)+15)
-        call jxlibd(0, 15, ic, iadd(jiadd(ic)+2*15-1), lonoi)
+        call jxlibd(0, 15, ic, iadd(jiadd(ic)+2*15-1), lonoi_av)
         iadd(jiadd(ic)+2*15-1) = 0
         iadd(jiadd(ic)+2*15 ) = 0
     endif
