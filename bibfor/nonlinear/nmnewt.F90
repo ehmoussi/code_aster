@@ -416,9 +416,13 @@ integer :: nbiter
     call nmleeb(sderro, 'FIXE', etfixe)
     if (etfixe .eq. 'CONT') then
         if (l_cont_disc) then
-            call nmeceb(sderro, 'NEWT', 'CTCD')
-            call nmtime(ds_measure, 'Launch', 'Newt_Iter')
-            goto 320
+            if (.not.ds_conv%l_stop) then
+                call nmeceb(sderro, 'FIXE', 'CONV')
+            else
+                call nmeceb(sderro, 'NEWT', 'CTCD')
+                call nmtime(ds_measure, 'Launch', 'Newt_Iter')
+                goto 320
+            endif
         else if (l_loop_exte) then
             goto 100
         else
