@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -82,20 +82,18 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
 !
 ! --- VARIABLES LOCALES
 !
-    integer :: ibid, imet, lamor, lmasse, lmatra, lraide, maxitr, nbvect, neq, nfreq
+    integer :: imet, lamor, lmasse, lmatra, lraide, maxitr, nbvect, neq, nfreq
     integer :: lonwl, lselec, lresid, lworkd, lworkl, lworkv, ldsor, laux, lworkr
     integer :: lauc, laur, laul, ldiagr, lsurdr, lprod, lddl, eddl, eddl2
     integer :: nfreq1, izero, mfreq, ifreq, ifm, niv, priram(8)
     integer :: lresui, lresur, lresuk, lvec, redem, jstab
     real(kind=8) :: alpha, quapi2, omecor, precdc, precsh, rbid, rzero, tolsor
     character(len=1) :: appr
-    character(len=8) :: method, k8bid
-    character(len=9) :: k9bid
-    character(len=14) :: k14bid
-    character(len=16) :: k16bid, optiof, stoper, typres
-    character(len=19) :: amor, k19bid, masse, raide
+    character(len=8) :: method
+    character(len=16) :: optiof, stoper, typres
+    character(len=19) :: amor, masse, raide
     character(len=24) :: kmetho, k24bid
-    aster_logical :: lbid, lc, lkr, lns, lpg
+    aster_logical :: lc, lkr, lns, lpg
 !
 ! -----------------------
 ! --- CORPS DE LA ROUTINE
@@ -138,15 +136,14 @@ subroutine vpcals(eigsol, vecrer, vecrei, vecrek, vecvp,&
 !
 ! --- LECTURE DES DONNEES DE EIGSOL
 !
-    call vplecs(eigsol, ibid, maxitr, ibid, ibid,&
-                ibid, ibid, nbvect, ibid, nfreq,&
-                ibid, alpha, omecor, rbid, rbid,&
-                precdc, precsh, rbid, rbid, rbid,&
-                rbid, rbid, tolsor, appr, k8bid,&
-                method, k9bid, k14bid, k14bid, k14bid,&
-                k16bid, optiof, stoper, k16bid, k16bid, k16bid,&
-                typres, amor, masse, raide, k19bid,&
-                lc, lkr, lns, lpg, lbid)
+    call vplecs(eigsol, maxitr_=maxitr,&
+                nbvect_=nbvect, nfreq_=nfreq,&
+                alpha_=alpha, omecor_=omecor,&
+                precdc_=precdc, precsh_=precsh,&
+                tolsor_=tolsor, appr_=appr,&
+                method_=method, optiof_=optiof, stoper_=stoper,&
+                typres_=typres, amor_=amor, masse_=masse, raide_=raide,&
+                lc_=lc, lkr_=lkr, lns_=lns, lpg_=lpg)
     ASSERT(method(1:8).eq.'SORENSEN')
 !
 ! ---  DESCRIPTEURS MATRICES

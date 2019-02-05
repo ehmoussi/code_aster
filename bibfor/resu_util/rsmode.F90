@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ subroutine rsmode(resu)
 !    IN/JXVAR : RESU  NOM DU CONCEPT SD_RESULTAT
 !-----------------------------------------------------------------------
     integer :: iret, neq, iordr, isymb,  k, krang
-    integer :: nbnosy, nbordr, iexi, nbval, jliprf
+    integer :: nbnosy, nbordr, iexi, nbval, jliprf, nbval2
     character(len=1) :: kbid, typ1
     character(len=8) :: resu8, nomgd, ma1, ma2
     character(len=19) :: resu19
@@ -125,8 +125,8 @@ subroutine rsmode(resu)
             nbval=-nbval
             call wkvect('&&RSMODES.LIPRFCN', 'V V K24', nbval, jliprf)
             call jelstc('G', resu8//'.PRFCN', 1, nbval, zk24(jliprf),&
-                        nbval)
-            do k = 1, nbval
+                        nbval2)
+            do k = 1, nbval2
                 call detrsd('PROF_CHNO', zk24(jliprf-1+k)(1:19))
             end do
         endif

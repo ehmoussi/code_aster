@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -94,11 +94,11 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
     character(len=1) :: appr
     character(len=8) :: arret, method, chaine
     character(len=9) :: typevp
-    character(len=14) :: k14bid, matra, matrc
-    character(len=16) :: k16bid, modrig, optiof, optiov, typeqz, typres, typcal
+    character(len=14) :: matra, matrc
+    character(len=16) :: modrig, optiof, optiov, typeqz, typres, typcal
     character(len=19) :: amor, masse, raide, tabmod
     character(len=24) :: metres, valk(2), k24bid
-    aster_logical :: lbid, lc, lkr, lns, lqz, ltabmo
+    aster_logical :: lc, lkr, lns, lqz, ltabmo
 !
 ! -----------------------
 ! --- CORPS DE LA ROUTINE
@@ -113,15 +113,15 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
     indf=isnnem()
 !
 ! --  LECTURE DES PARAMETRES MODAUX
-    call vplecs(eigsol, ibid, ibid, nbborn, ibid,&
-                ibid, nbvec2, nbvect, nbrss, nfreq,&
-                ibid, rbid, omecor, freq1, freq2,&
-                precdc, precsh, rbid, rbid, rbid,&
-                rbid, rbid, rbid, appr, arret,&
-                method, typevp, matra, k14bid, matrc,&
-                modrig, optiof, k16bid, k16bid, typcal, typeqz,&
-                typres, amor, masse, raide, tabmod,&
-                lc, lkr, lns, lbid, lqz)
+    call vplecs(eigsol, nbborn_=nbborn, nbvec2_=nbvec2, &
+                nbvect_=nbvect, nbrss_=nbrss, nfreq_=nfreq,&
+                omecor_=omecor, freq1_=freq1, freq2_=freq2,&
+                precdc_=precdc, precsh_=precsh,&
+                appr_=appr, arret_=arret,&
+                method_=method, typevp_=typevp, matra_=matra, matrc_=matrc,&
+                modrig_=modrig, optiof_=optiof, typcal_=typcal, typeqz_=typeqz,&
+                typres_=typres, amor_=amor, masse_=masse, raide_=raide, tabmod_=tabmod,&
+                lc_=lc, lkr_=lkr, lns_=lns, lqz_=lqz)
 !
 ! --  DESCRIPTEURS MATRICES
     call mtdscr(raide)
