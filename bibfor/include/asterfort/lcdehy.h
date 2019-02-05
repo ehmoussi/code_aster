@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
     subroutine lcdehy(fami, kpg, ksp, nmat, materd,&
-                      materf, depsm, epsdm)
+                      materf, depsm, epsdm, l_epsi_varc_)
         integer :: nmat
         character(len=*) :: fami
         integer :: kpg
@@ -29,5 +28,6 @@ interface
         real(kind=8) :: materf(nmat, 2)
         real(kind=8) :: depsm(6)
         real(kind=8) :: epsdm(6)
+        aster_logical, optional, intent(in) :: l_epsi_varc_
     end subroutine lcdehy
 end interface

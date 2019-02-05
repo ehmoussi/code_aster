@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1501,W1504
 !
-subroutine lc0000(fami, kpg, ksp, ndim, typmod,&
+subroutine lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   imate, compor, mult_comp, carcri,&
                   instam, instap,&
                   neps, epsm, deps, nsig, sigm,&
@@ -164,6 +164,7 @@ implicit none
 #include "asterfort/assert.h"
 !
 integer :: imate, ndim, nvi, kpg, ksp
+aster_logical, intent(in) :: l_epsi_varc
 integer :: neps, nsig, nwkin, nwkout, ndsde
 real(kind=8) :: carcri(*), angmas(3)
 real(kind=8) :: instam, instap
@@ -363,7 +364,7 @@ integer :: codret
                     dsidep, codret)
     case (2)
 !     VMIS_ISOT_XXX, VISC_ISOT_XXX
-        call lc0002(fami, kpg, ksp, ndim, imate,&
+        call lc0002(fami, kpg, ksp, ndim, imate, l_epsi_varc,&
                     compor, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, sigp, vip, typmod, ndsde,&
@@ -830,7 +831,7 @@ integer :: codret
                     nvi, dsidep, codret)
     case (120)
 !     BETON_DOUBLE_DP
-        call lc0120(fami, kpg, ksp, ndim, imate,&
+        call lc0120(fami, kpg, ksp, ndim, imate, l_epsi_varc,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
