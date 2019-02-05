@@ -47,7 +47,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
     integer :: i_col, line_width, i, nb_cols_active
     type(NL_DS_Table) :: table_cvg
-    aster_logical :: l_info_time, l_csv
+    aster_logical :: l_info_time, l_csv, l_info_resi
     character(len=512) :: sep_line
 !
 ! --------------------------------------------------------------------------------------------------
@@ -61,7 +61,18 @@ type(NL_DS_Print), intent(inout) :: ds_print
 ! - Get parameters
 !
     l_info_time = ds_print%l_info_time
+    l_info_resi = ds_print%l_info_resi
     l_csv       = ds_print%l_tcvg_csv
+!
+! - About maximum
+!
+    if (l_info_resi) then
+        call SetTableColumn(table_cvg, name_ = 'RELA_NOEU', flag_acti_ = ASTER_TRUE)
+        call SetTableColumn(table_cvg, name_ = 'MAXI_NOEU', flag_acti_ = ASTER_TRUE)
+    else
+        call SetTableColumn(table_cvg, name_ = 'RELA_NOEU', flag_acti_ = ASTER_FALSE)
+        call SetTableColumn(table_cvg, name_ = 'MAXI_NOEU', flag_acti_ = ASTER_FALSE)
+    endif
 !
 ! - Measure time
 !

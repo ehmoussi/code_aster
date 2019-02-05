@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nxnpas(sddisc, solver    , nume_inst,&
+subroutine nxnpas(sddisc, solver    , nume_inst, ds_print,&
                   lnkry , l_evol    , l_stat   ,&
                   l_dry , result_dry, dry_prev , dry_curr,&
                   para  , time_curr , deltat   , reasma  ,&
@@ -36,8 +36,13 @@ implicit none
 #include "asterfort/rsinch.h"
 #include "asterfort/utmess.h"
 #include "asterfort/SetTableColumn.h"
+#include "asterfort/nmimpx.h"
+#include "asterfort/nmimen.h"
+#include "asterfort/nonlinDSPrintInitTimeStep.h"
+#include "asterfort/nonlinDSPrintHeadTimeStep.h"
 !
 character(len=19), intent(in) :: sddisc, solver
+type(NL_DS_Print), intent(inout) :: ds_print
 integer, intent(in) :: nume_inst
 aster_logical, intent(in) :: lnkry, l_evol, l_stat
 aster_logical, intent(in) :: l_dry
@@ -58,6 +63,7 @@ real(kind=8), intent(out) :: tpsthe(6)
 !
 ! In  sddisc           : datastructure for time discretization
 ! In  solver           : datastructure for solver parameters
+! IO  ds_print         : datastructure for printing parameters
 ! In  nume_inst        : index of current time step
 ! In  l_stat           : .true. is stationnary
 ! In  l_evol           : .true. if transient
@@ -126,8 +132,8 @@ real(kind=8), intent(out) :: tpsthe(6)
     tpsthe(5) = r8vide()
     tpsthe(6) = r8vide()
 !
-! --- RECUPERATION DU CHAMP DE TEMPERATURE A T ET T+DT POUR LE SECHAGE
-!     LOIS SECH_GRANGER ET SECH_NAPPE
+! - RECUPERATION DU CHAMP DE TEMPERATURE A T ET T+DT POUR LE SECHAGE
+!
     if (l_dry) then
         call dismoi('NB_CHAMP_UTI', result_dry, 'RESULTAT', repi=nbcham)
         if (nbcham .gt. 0) then
@@ -148,5 +154,14 @@ real(kind=8), intent(out) :: tpsthe(6)
             call utmess('F', 'THERNONLINE4_99', sk=result_dry)
         endif
     endif
+!
+! - Print management - Initializations for convergence table
+!
+    call SetTableColumn(ds_print%table_cvg, flag_acti_ = ASTER_TRUE)
+    call nonlinDSPrintInitTimeStep(ds_print)
+!
+! - Print management - Print head for new step time
+!
+    call nonlinDSPrintHeadTimeStep(sddisc, nume_inst, ds_print)
 !
 end subroutine

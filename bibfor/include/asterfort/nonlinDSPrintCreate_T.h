@@ -17,22 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nxnpas(sddisc, solver    , nume_inst, ds_print,&
-                      lnkry , l_evol    , l_stat   ,&
-                      l_dry , result_dry, dry_prev , dry_curr,&
-                      para  , time_curr , deltat   , reasma  ,&
-                      tpsthe)
+    subroutine nonlinDSPrintCreate_T(ds_print)
         use NonLin_Datastructure_type
-        character(len=19), intent(in) :: sddisc, solver
-        type(NL_DS_Print), intent(inout) :: ds_print
-        integer, intent(in) :: nume_inst
-        aster_logical, intent(in) :: lnkry, l_evol, l_stat
-        aster_logical, intent(in) :: l_dry
-        character(len=8), intent(in) :: result_dry
-        character(len=24), intent(in) :: dry_prev, dry_curr
-        real(kind=8), intent(inout) :: para(2)
-        real(kind=8), intent(out) :: time_curr, deltat
-        aster_logical, intent(out) :: reasma
-        real(kind=8), intent(out) :: tpsthe(6)
-    end subroutine nxnpas
+        type(NL_DS_Print), intent(out) :: ds_print
+    end subroutine nonlinDSPrintCreate_T
 end interface

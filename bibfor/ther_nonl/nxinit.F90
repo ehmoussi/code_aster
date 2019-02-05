@@ -23,7 +23,7 @@ subroutine nxinit(mesh         , model   , mate       ,&
                   para         , nume_dof, &
                   sddisc       , ds_inout, sdobse     ,&
                   sdcrit       , time    , ds_algopara,&
-                  ds_algorom   , vhydr   ,&
+                  ds_algorom   , ds_print, vhydr      ,&
                   l_stat       , l_evol  , l_rom      ,&
                   l_line_search, lnkry)
 !
@@ -47,6 +47,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/ntload_chck.h"
 #include "asterfort/romAlgoNLInit.h"
+#include "asterfort/nonlinDSPrintInit.h"
 !
 character(len=24), intent(in) :: model, mate, cara_elem, compor
 character(len=19), intent(in) :: list_load
@@ -60,6 +61,7 @@ character(len=19), intent(in) :: sdcrit
 character(len=24), intent(out) :: time
 type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+type(NL_DS_Print), intent(inout) :: ds_print
 character(len=24), intent(in) :: vhydr
 aster_logical, intent(out) :: l_stat, l_evol, l_rom, l_line_search, lnkry
 !
@@ -88,6 +90,7 @@ aster_logical, intent(out) :: l_stat, l_evol, l_rom, l_line_search, lnkry
 ! Out time             : name of field to save time parameters
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_algorom       : datastructure for ROM parameters
+! IO  ds_print         : datastructure for printing parameters
 ! In  vhydr            : field for hydration
 ! Out l_stat           : .true. is stationnary
 ! Out l_evol           : .true. if transient
@@ -144,6 +147,10 @@ aster_logical, intent(out) :: l_stat, l_evol, l_rom, l_line_search, lnkry
         call romAlgoNLInit('THER'       , model, mesh, nume_dof, result, ds_algorom,&
                            l_line_search)
     endif
+!
+! - Initializations for printing
+!
+    call nonlinDSPrintInit(ds_print)
 !
 ! - Time discretization and storing datastructures
 !
