@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmcomp(fami, kpg, ksp, ndim, typmod,&
                   imate, compor, carcri, instam, instap,&
                   neps, epsm, deps, nsig, sigm,&
                   vim, option, angmas, nwkin, wkin,&
                   sigp, vip, ndsde, dsidep, nwkout,&
-                  wkout, codret, mult_comp_)
+                  wkout, codret, mult_comp_, l_epsi_varc_)
 !
 implicit none
 !
@@ -34,19 +35,19 @@ implicit none
 #include "asterfort/redece.h"
 #include "asterfort/lcidbg.h"
 !
-! aslint: disable=W1504
+integer :: kpg, ksp, ndim, imate, codret, icp, numlc
+integer :: neps, nsig, nwkin, nwkout, ndsde
+character(len=8) :: typmod(*)
+character(len=*) :: fami
+character(len=16) :: compor(*), option
+real(kind=8) :: carcri(*), instam, instap
+real(kind=8) :: epsm(*), deps(*), dsidep(*)
+real(kind=8) :: sigm(*), vim(*), sigp(*), vip(*)
+real(kind=8) :: wkin(nwkin), wkout(nwkout)
+real(kind=8) :: angmas(*)
+character(len=16), optional, intent(in) :: mult_comp_
+aster_logical, optional, intent(in) :: l_epsi_varc_
 !
-    integer :: kpg, ksp, ndim, imate, codret, icp, numlc
-    integer :: neps, nsig, nwkin, nwkout, ndsde
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
-    character(len=16) :: compor(*), option
-    real(kind=8) :: carcri(*), instam, instap
-    real(kind=8) :: epsm(*), deps(*), dsidep(*)
-    real(kind=8) :: sigm(*), vim(*), sigp(*), vip(*)
-    real(kind=8) :: wkin(nwkin), wkout(nwkout)
-    real(kind=8) :: angmas(*)
-    character(len=16), optional, intent(in) :: mult_comp_
 ! ----------------------------------------------------------------------
 !     INTEGRATION DES LOIS DE COMPORTEMENT NON LINEAIRE POUR LES
 !     ELEMENTS ISOPARAMETRIQUES EN PETITES OU GRANDES DEFORMATIONS
@@ -117,11 +118,16 @@ implicit none
     integer :: ndt, ndi
     common /tdim/ ndt,ndi
 !
+    aster_logical :: l_epsi_varc
     character(len=16) :: optio2, mult_comp
     aster_logical :: cp, convcp
     integer :: cpl, nvv, ncpmax
 !
     codret = 0
+    l_epsi_varc = ASTER_TRUE
+    if (present(l_epsi_varc_)) then
+        l_epsi_varc = l_epsi_varc_
+    endif
 !
 !     CONTRAINTES PLANES
     call nmcpl1(compor, typmod, option, vip, deps,&
@@ -151,7 +157,7 @@ implicit none
 !
 !     BOUCLE POUR ETABLIR LES CONTRAINTES PLANES
     do icp = 1, ncpmax
-        call redece(fami, kpg, ksp, ndim, typmod,&
+        call redece(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                     imate, compor, mult_comp, carcri, instam, instap,&
                     neps, epsm, deps, nsig, sigm,&
                     vim, option, angmas, nwkin, wkin,&
@@ -161,9 +167,11 @@ implicit none
 !
 !       VERIFIER LA CONVERGENCE DES CONTRAINTES PLANES ET
 !       SORTIR DE LA BOUCLE SI NECESSAIRE
-        if (cp) call nmcpl3(compor, option, carcri, deps, dsidep,&
-                            ndim, sigp, vip, cpl, icp,&
-                            convcp)
+        if (cp) then
+            call nmcpl3(compor, option, carcri, deps, dsidep,&
+                        ndim, sigp, vip, cpl, icp,&
+                        convcp)
+        endif
 !
         if (convcp) then
             exit
