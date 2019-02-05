@@ -20,7 +20,7 @@
 subroutine nxlect(result     , model      ,&
                   ther_crit_i, ther_crit_r,&
                   ds_inout   , ds_algopara,&
-                  ds_algorom ,&
+                  ds_algorom , ds_print   ,&
                   result_dry , compor     ,&
                   mesh       , l_dry)
 !
@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/nxdomt.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/nonlinDSInOutRead.h"
+#include "asterfort/nonlinDSPrintRead.h"
 !
 character(len=8), intent(in) :: result
 character(len=24), intent(in) :: model
@@ -44,6 +45,7 @@ real(kind=8), intent(inout) :: ther_crit_r(*)
 type(NL_DS_InOut), intent(inout) :: ds_inout
 type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+type(NL_DS_Print), intent(inout) :: ds_print
 character(len=8), intent(out) :: result_dry
 character(len=24), intent(out) :: compor
 character(len=8), intent(out) :: mesh
@@ -64,6 +66,7 @@ aster_logical, intent(out) :: l_dry
 ! IO  ds_inout         : datastructure for input/output management
 ! IO  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_algorom       : datastructure for ROM parameters
+! IO  ds_print         : datastructure for printing parameters
 ! Out result_dry       : name of datastructure for results (drying)
 ! Out compor           : name of <CARTE> COMPOR
 ! Out mesh             : name of mesh
@@ -95,5 +98,9 @@ aster_logical, intent(out) :: l_dry
 ! - Read parameters for input/output management
 !
     call nonlinDSInOutRead('THER', result, ds_inout)
+!
+! - Read parameters for printing
+!
+    call nonlinDSPrintRead(ds_print)
 !
 end subroutine

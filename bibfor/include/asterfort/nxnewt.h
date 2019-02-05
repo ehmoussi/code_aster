@@ -15,19 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine nxnewt(model    , mate       , cara_elem  , list_load, nume_dof ,&
-                      solver   , tpsthe     , time       , matass   , cn2mbr   ,&
-                      maprec   , cnchci     , varc_curr  , temp_prev, temp_iter,&
-                      vtempp   , vec2nd     , mediri     , conver   , hydr_prev,&
-                      hydr_curr, dry_prev   , dry_curr   , compor   , cnvabt   ,&
-                      cnresi   , ther_crit_i, ther_crit_r, reasma   , resi_rela,&
-                      resi_maxi, ds_algorom)
-        use ROM_Datastructure_type
+    subroutine nxnewt(model    , mate       , cara_elem  , list_load, nume_dof  ,&
+                      solver   , tpsthe     , time       , matass   , cn2mbr    ,&
+                      maprec   , cnchci     , varc_curr  , temp_prev, temp_iter ,&
+                      vtempp   , vec2nd     , mediri     , conver   , hydr_prev ,&
+                      hydr_curr, dry_prev   , dry_curr   , compor   , cnvabt    ,&
+                      cnresi   , ther_crit_i, ther_crit_r, reasma   , ds_algorom,&
+                      ds_print , sddisc     , iter_newt )
+        use NonLin_Datastructure_type
+        use Rom_Datastructure_type
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: mate
         character(len=24), intent(in) :: cara_elem
@@ -36,7 +36,8 @@ interface
         character(len=19), intent(in) :: solver
         real(kind=8) :: tpsthe(6)
         character(len=24), intent(in) :: time
-        character(len=19), intent(in) :: varc_curr
+        character(len=19), intent(in) :: varc_curr, sddisc
+        integer, intent(in) :: iter_newt
         character(len=24) :: matass
         character(len=19) :: maprec
         character(len=24) :: cnchci
@@ -57,7 +58,7 @@ interface
         integer :: ther_crit_i(*)
         real(kind=8) :: ther_crit_r(*)
         aster_logical :: reasma
-        real(kind=8), intent(out) :: resi_rela, resi_maxi
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+        type(NL_DS_Print), intent(inout) :: ds_print
     end subroutine nxnewt
 end interface

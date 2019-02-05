@@ -18,15 +18,16 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nxnewt(model    , mate       , cara_elem  , list_load, nume_dof ,&
-                  solver   , tpsthe     , time       , matass   , cn2mbr   ,&
-                  maprec   , cnchci     , varc_curr  , temp_prev, temp_iter,&
-                  vtempp   , vec2nd     , mediri     , conver   , hydr_prev,&
-                  hydr_curr, dry_prev   , dry_curr   , compor   , cnvabt   ,&
-                  cnresi   , ther_crit_i, ther_crit_r, reasma   , resi_rela,&
-                  resi_maxi, ds_algorom )
+subroutine nxnewt(model    , mate       , cara_elem  , list_load, nume_dof  ,&
+                  solver   , tpsthe     , time       , matass   , cn2mbr    ,&
+                  maprec   , cnchci     , varc_curr  , temp_prev, temp_iter ,&
+                  vtempp   , vec2nd     , mediri     , conver   , hydr_prev ,&
+                  hydr_curr, dry_prev   , dry_curr   , compor   , cnvabt    ,&
+                  cnresi   , ther_crit_i, ther_crit_r, reasma   , ds_algorom,&
+                  ds_print , sddisc    , iter_newt )
 !
-use ROM_Datastructure_type
+use NonLin_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -53,6 +54,12 @@ implicit none
 #include "asterfort/verstp.h"
 #include "asterfort/vethbt.h"
 #include "asterfort/nxconv.h"
+#include "asterfort/nmlere.h"
+#include "asterfort/nmimci.h"
+#include "asterfort/SetTableColumn.h"
+#include "asterfort/nmimcr.h"
+#include "asterfort/nmimck.h"
+#include "asterfort/impcmp.h"
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: mate
@@ -62,7 +69,8 @@ character(len=24), intent(in) :: nume_dof
 character(len=19), intent(in) :: solver
 real(kind=8) :: tpsthe(6)
 character(len=24), intent(in) :: time
-character(len=19), intent(in) :: varc_curr
+character(len=19), intent(in) :: varc_curr, sddisc
+integer, intent(in) :: iter_newt
 aster_logical, intent(out) :: conver
 aster_logical :: reasma
 character(len=19) :: maprec
@@ -70,8 +78,8 @@ character(len=24) :: matass, cnchci, cnresi, temp_prev, temp_iter, vtempp, vec2n
 character(len=24) :: hydr_prev, hydr_curr, compor, dry_prev, dry_curr
 integer :: ther_crit_i(*)
 real(kind=8) :: ther_crit_r(*)
-real(kind=8), intent(out) :: resi_rela, resi_maxi
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,7 +95,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ibid
+    integer :: ibid, ieq_rela, ieq_maxi
     integer :: jmed, jmer, nbmat, ierr, iret
     real(kind=8) :: r8bid
     character(len=1) :: typres
@@ -96,6 +104,8 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     character(len=24) :: tlimat(2), mediri, merigi, cnvabt
     real(kind=8) :: time_curr
     character(len=24) :: lload_name, lload_info
+    real(kind=8) :: resi_rela, resi_maxi
+    character(len=16) :: name_dof_rela = ' ', name_dof_maxi = ' '
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -137,6 +147,8 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! - Evaluate residuals
 !
+    ieq_rela = 0
+    ieq_maxi = 0
     if (ds_algorom%l_rom) then
         if (ds_algorom%phase .eq. 'HROM') then
             call romAlgoNLTherResidual(ds_algorom, vec2nd   , cnvabt, cnresi, cn2mbr,&
@@ -146,13 +158,37 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
                                              resi_rela , resi_maxi)
         endif
     else
-        call nxresi(vec2nd   , cnvabt   , cnresi, cn2mbr,&
-                    resi_rela, resi_maxi)
+        call nxresi(vec2nd   , cnvabt   , cnresi  , cn2mbr,&
+                    resi_rela, resi_maxi, ieq_rela, ieq_maxi)
     endif
+    call impcmp(ieq_rela, nume_dof, name_dof_rela)
+    call impcmp(ieq_maxi, nume_dof, name_dof_maxi)
 !
 ! - Evaluate convergence
 !
     call nxconv(ther_crit_i, ther_crit_r, resi_rela, resi_maxi, conver)
+    call nmimci(ds_print, 'ITER_NUME', iter_newt, l_affe = ASTER_TRUE)
+    call SetTableColumn(ds_print%table_cvg, name_ = 'RESI_RELA', mark_ = ' ')
+    call SetTableColumn(ds_print%table_cvg, name_ = 'RESI_MAXI', mark_ = ' ')
+    call nmimcr(ds_print, 'RESI_RELA', resi_rela, l_affe = ASTER_TRUE)
+    call nmimcr(ds_print, 'RESI_MAXI', resi_maxi, l_affe = ASTER_TRUE)
+    call nmimck(ds_print, 'RELA_NOEU', name_dof_rela, l_affe = ASTER_TRUE)
+    call nmimck(ds_print, 'MAXI_NOEU', name_dof_maxi, l_affe = ASTER_TRUE)
+    if (.not. conver) then
+        if (ther_crit_i(1) .eq. 0) then
+            call SetTableColumn(ds_print%table_cvg, name_ = 'RESI_RELA', mark_ = 'X')
+        else
+            call SetTableColumn(ds_print%table_cvg, name_ = 'RESI_MAXI', mark_ = 'X')
+        endif
+    endif
+!
+! - Save residuals for Newton-Krylov solver
+!
+    call nmlere(sddisc, 'E', 'VRELA', iter_newt, [resi_rela])
+    call nmlere(sddisc, 'E', 'VMAXI', iter_newt, [resi_maxi])
+!
+! - Convergence
+!
     if (conver) then
         call copisd('CHAMP_GD', 'V', temp_iter, vtempp)
         goto 999

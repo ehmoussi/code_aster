@@ -23,7 +23,7 @@ interface
                       para         , nume_dof, &
                       sddisc       , ds_inout, sdobse     ,&
                       sdcrit       , time    , ds_algopara,&
-                      ds_algorom   , vhydr      ,&
+                      ds_algorom   , ds_print, vhydr      ,&
                       l_stat       , l_evol  , l_rom      ,&
                       l_line_search, lnkry)
         use NonLin_Datastructure_type
@@ -40,6 +40,7 @@ interface
         character(len=24), intent(out) :: time
         type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
         type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+        type(NL_DS_Print), intent(inout) :: ds_print
         character(len=24), intent(in) :: vhydr
         aster_logical, intent(out) :: l_stat, l_evol, l_rom, l_line_search, lnkry
     end subroutine nxinit

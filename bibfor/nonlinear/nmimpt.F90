@@ -61,12 +61,16 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
     sddisc_linf = sddisc(1:19)//'.LINF'
     call jeexin(sddisc_linf, i_exist)
+    if (i_exist .eq. 0) then
+        lenivo = 0
+    endif
+    if (nume_inst .eq. 0) then
+        lenivo = 0
+    endif
 !
 ! - Get level
 !
-    if (i_exist .eq. 0) then
-        lenivo = 0
-    else
+    if (lenivo .ne. 0) then
         call utdidt('L', sddisc, 'LIST', 'METHODE', valk_ = metlis)
         if (metlis .eq. 'MANUEL') then
             lenivo = dinins(sddisc, nume_inst)

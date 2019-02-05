@@ -17,17 +17,19 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nxresi(vec2nd   , cnvabt   , cnresi, cn2mbr,&
-                  resi_rela, resi_maxi)
+subroutine nxresi(vec2nd   , cnvabt   , cnresi  , cn2mbr  ,&
+                  resi_rela, resi_maxi, ieq_rela, ieq_maxi)
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterc/r8gaem.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
 !
 character(len=24), intent(in) :: vec2nd, cnvabt, cnresi, cn2mbr
 real(kind=8)     , intent(out):: resi_rela, resi_maxi
+integer          , intent(out):: ieq_rela, ieq_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,10 +45,12 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 ! In  cn2mbr           : equilibrium residual (to evaluate convergence)
 ! Out resi_rela        : value for RESI_GLOB_RELA
 ! Out resi_maxi        : value for RESI_GLOB_MAXI
+! Out ieq_rela         : number of equation where RESI_GLOB_RELA is maximum
+! Out ieq_maxi         : number of equation where RESI_GLOB_MAXI is maximum
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: vnorm
+    real(kind=8) :: vnorm, value
     real(kind=8), pointer :: v_cn2mbr(:) => null()
     real(kind=8), pointer :: v_vec2nd(:) => null()
     real(kind=8), pointer :: v_cnvabt(:) => null()
@@ -55,8 +59,11 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resi_rela  = 0.d0
-    resi_maxi  = 0.d0
+    resi_rela = 0.d0
+    resi_maxi = -r8gaem()
+    ieq_rela  = 0
+    ieq_maxi  = 0
+    vnorm     = 0.d0
 !
 ! - Access to vectors
 !
@@ -72,11 +79,16 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
         v_cn2mbr(i_equa) = v_vec2nd(i_equa) - v_cnresi(i_equa) - v_cnvabt(i_equa)
         resi_rela        = resi_rela + ( v_cn2mbr(i_equa) )**2
         vnorm            = vnorm + ( v_vec2nd(i_equa) - v_cnvabt(i_equa) )**2
-        resi_maxi        = max( resi_maxi,abs( v_cn2mbr(i_equa) ) )
+        value            = abs(v_cn2mbr(i_equa))
+        if (value .ge. resi_maxi) then
+            resi_maxi = value
+            ieq_maxi  = i_equa
+        endif
     end do
 !
 ! - Compute relative
 !
+    ieq_rela = ieq_maxi
     if (vnorm .gt. 0.d0) then
         resi_rela = sqrt( resi_rela / vnorm )
     endif

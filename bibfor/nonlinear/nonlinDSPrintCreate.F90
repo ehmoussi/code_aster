@@ -26,7 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/nonlinDSPrintCreate_M.h"
-!#include "asterfort/nonlinDSPrintCreate_T.h"
+#include "asterfort/nonlinDSPrintCreate_T.h"
 !
 character(len=4), intent(in) :: phenom
 type(NL_DS_Print), intent(out) :: ds_print
@@ -47,8 +47,7 @@ type(NL_DS_Print), intent(out) :: ds_print
     if (phenom .eq. 'MECA') then
         call nonlinDSPrintCreate_M(ds_print)
     elseif (phenom.eq.'THNL') then
-        ASSERT(ASTER_FALSE)
-        !call nonlinDSPrintCreate_T(ds_print)
+        call nonlinDSPrintCreate_T(ds_print)
     else
         ASSERT(ASTER_FALSE)
     endif
