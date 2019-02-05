@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,23 +19,23 @@
 !
 #include "asterf_types.h"
 interface
-    subroutine vpmpi(option, eigsol, icom1, icom2, lcomod,&
-                     mpicou, mpicow, nbvecg, nfreqg, rangl,&
-                     omemax, omemin, vpinf, vpmax)
+    subroutine vpmpi(option, eigsol, icom1_, icom2_, lcomod_,&
+                     mpicou_, mpicow_, nbvecg_, nfreqg_, rangl_,&
+                     omemax_, omemin_, vpinf_, vpmax_)
         integer, intent(in) :: option
-        character(len=19), intent(in) :: eigsol
+        character(len=19), optional, intent(in) :: eigsol
 !!
-        integer, intent(out) :: icom1
-        integer, intent(out) :: icom2
-        aster_logical , intent(inout) :: lcomod
-        mpi_int , intent(inout) :: mpicou
-        mpi_int , intent(inout) :: mpicow
-        integer, intent(out) :: nbvecg
-        integer, intent(out) :: nfreqg
-        integer, intent(inout) :: rangl
-        real(kind=8), intent(inout) :: omemax
-        real(kind=8), intent(inout) :: omemin
-        real(kind=8), intent(inout) :: vpinf
-        real(kind=8), intent(inout) :: vpmax
+        integer, optional, intent(out) :: icom1_
+        integer, optional, intent(out) :: icom2_
+        aster_logical, optional, intent(inout) :: lcomod_
+        mpi_int, optional, intent(inout) :: mpicou_
+        mpi_int, optional, intent(inout) :: mpicow_
+        integer, optional, intent(out) :: nbvecg_
+        integer, optional, intent(out) :: nfreqg_
+        integer, optional, intent(inout) :: rangl_
+        real(kind=8), optional, intent(inout) :: omemax_
+        real(kind=8), optional, intent(inout) :: omemin_
+        real(kind=8), optional, intent(inout) :: vpinf_
+        real(kind=8), optional, intent(inout) :: vpmax_
     end subroutine vpmpi
 end interface

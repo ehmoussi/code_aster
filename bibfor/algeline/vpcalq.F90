@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -71,20 +71,18 @@ subroutine vpcalq(eigsol, vecrer, vecrei, vecrek, vecvp,&
 !
 ! --- VARIABLES LOCALES
 !
-    integer :: ibid, imet, lamor, lmasse, lraide, nbvect, neq, nfreq, lprod
+    integer :: imet, lamor, lmasse, lraide, nbvect, neq, nfreq, lprod
     integer :: qrn, qrlwor, qrn2, ilscal, irscal, icscal, ivscal, iiscal
     integer :: lvalpr, iqrn, lqrn, qrar, qrai, qrba, qrvl, kqrn
     integer :: lauc, kqrnr, mfreq, ifreq, izero
     integer :: lresui, lresur, lresuk, lvec
     real(kind=8) :: quapi2, omecor, precdc, rbid, rzero
-    character(len=1) :: k1bid, ktyp
-    character(len=8) :: method, k8bid
-    character(len=9) :: k9bid
-    character(len=14) :: k14bid
-    character(len=16) :: k16bid, optiof, typeqz, typres
-    character(len=19) :: amor, k19bid, masse, raide, numedd
+    character(len=1) :: ktyp
+    character(len=8) :: method
+    character(len=16) :: optiof, typeqz, typres
+    character(len=19) :: amor, masse, raide, numedd
     character(len=24) :: k24bid
-    aster_logical :: lbid, lc, lkr, lns, lpg
+    aster_logical :: lc, lkr, lns, lpg
     logical(kind=4), pointer :: bwork(:) => null()
 !
 ! -----------------------
@@ -109,15 +107,11 @@ subroutine vpcalq(eigsol, vecrer, vecrei, vecrek, vecvp,&
 !
 ! --- LECTURE DES DONNEES DE EIGSOL
 !
-    call vplecs(eigsol, ibid, ibid, ibid, ibid,&
-                ibid, ibid, nbvect, ibid, nfreq,&
-                ibid, rbid, omecor, rbid, rbid,&
-                precdc, rbid, rbid, rbid, rbid,&
-                rbid, rbid, rbid, k1bid, k8bid,&
-                method, k9bid, k14bid, k14bid, k14bid,&
-                k16bid, optiof, k16bid, k16bid, k16bid, typeqz,&
-                typres, amor, masse, raide, k19bid,&
-                lc, lkr, lns, lpg, lbid)
+    call vplecs(eigsol, nbvect_=nbvect, nfreq_=nfreq,&
+                omecor_=omecor, precdc_=precdc,&
+                method_=method, optiof_=optiof, typeqz_=typeqz,&
+                typres_=typres, amor_=amor, masse_=masse, raide_=raide,&
+                lc_=lc, lkr_=lkr, lns_=lns, lpg_=lpg)
     ASSERT(method(1:2).eq.'QZ')
     if (lkr) then
         ktyp='R'

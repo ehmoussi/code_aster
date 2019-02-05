@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -83,14 +83,13 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
     integer :: lresui, lresur, lresuk, lvec
     real(kind=8) :: omecor, rbid, precdc, precsh, seuil
     complex(kind=8) :: czero
-    character(len=1) :: k1bid, ktyp, k1blan, ctyp
-    character(len=8) :: knega, k8bid
-    character(len=9) :: k9bid
-    character(len=14) :: k14bid, matra, matrc
+    character(len=1) :: ktyp, k1blan, ctyp
+    character(len=8) :: knega
+    character(len=14) :: matra, matrc
     character(len=16) :: k16bid, optiof, optiov, stoper, sturm, typres
     character(len=19) :: amor, masse, raide, k19bid
     character(len=24) :: nopara(nbpara), valk(2)
-    aster_logical :: lc, lkr, lns, lbid
+    aster_logical :: lc, lkr, lns
 !
 !
 ! --- DECLARATION DES DATAS
@@ -125,17 +124,15 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
     call jeveuo(veclag, 'L', lddl)
     czero=dcmplx(0.d0,0.d0)
     k1blan=' '
+    rbid = 0.d0
 !
 ! --  LECTURE DES DONNEES DE EIGSOL
-    call vplecs(eigsol, ibid, ibid, ibid, ibid,&
-                ibid, ibid, ibid, nbrss, ibid,&
-                ibid, rbid, omecor, rbid, rbid,&
-                precdc, precsh, rbid, rbid, seuil,&
-                rbid, rbid, rbid, k1bid, k8bid,&
-                k8bid, k9bid, matra, k14bid, matrc,&
-                k16bid, optiof, stoper, sturm, k16bid, k16bid,&
-                typres, amor, masse, raide, k19bid,&
-                lc, lkr, lns, lbid, lbid)
+    call vplecs(eigsol, nbrss_=nbrss, omecor_=omecor,&
+                precdc_=precdc, precsh_=precsh, seuil_=seuil,&
+                matra_=matra, matrc_=matrc,&
+                optiof_=optiof, stoper_=stoper, sturm_=sturm,&
+                typres_=typres, amor_=amor, masse_=masse, raide_=raide,&
+                lc_=lc, lkr_=lkr, lns_=lns)
     if (lkr) then
         ktyp='R'
     else
@@ -224,9 +221,9 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
     endif
 !
 ! --  PARALLELISME MULTI-NIVEAUX STEP 4
-    call vpmpi(4, k19bid, ibid, ibid, lcomod,&
-               mpicou, mpicow, ibid, ibid, ibid,&
-               omemax, omemin, vpinf, vpmax)
+    call vpmpi(4, lcomod_=lcomod,&
+               mpicou_=mpicou, mpicow_=mpicow,&
+               omemax_=omemax, omemin_=omemin, vpinf_=vpinf, vpmax_=vpmax)
     if (mod45b(1:4).eq.'OP45') then
 !
 ! --  ON PASSE DANS LE MODE "VALIDATION DU CONCEPT EN CAS D'ERREUR"

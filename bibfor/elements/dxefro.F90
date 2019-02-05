@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,8 +37,6 @@ subroutine dxefro(ne, t2iu, edgle, edglc)
 !     
 !     ATTENTION : LES DEFORMATIONS GENERALISEES SONT ATTENDUES SOUS LA FORME
 !     EXX EYY EXY ET NON PAS SOUS LA FORME EXX EYY 2EXY.
-!
-!  REMARQUE : ON PEUT APPELER CETTE ROUTINE AVEC LE MEME TABLEAU EN E/S
 !     ------------------------------------------------------------------
     real(kind=8) :: nle(2,2), mle(2,2), qle(2)
     real(kind=8) :: nlc(2,2), mlc(2,2), qlc(2)
