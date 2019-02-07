@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -69,14 +69,14 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
     if (MAILLAGE != None):
         __nomlma = COPIER(CONCEPT=MAILLAGE)
     else:
-        __nomlma = LIRE_MAILLAGE(UNITE=UNITE, FORMAT=args['FORMAT'])
+        __nomlma = LIRE_MAILLAGE(UNITE=UNITE, FORMAT=args.get('FORMAT'))
     #
     # Dans les tables on retrouve une ligne avec __nomlma.nom. Soit :
     #   - on remplace __nomlma.nom par NomMaillageNew.
     #   - on supprime la ligne
     NomMaillage = (None, __nomlma.get_name())
     if (args.has_key('NOM')):
-        NomMaillage = (args['NOM'], __nomlma.get_name())
+        NomMaillage = (args.get('NOM'), __nomlma.get_name())
     #
     #
     __nomamo = AFFE_MODELE(
@@ -128,11 +128,11 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             if ( not igr.strip() in collgrma):
                 UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_BORD'])
         if args.has_key('GROUP_MA_INTE'):
-            if args['GROUP_MA_INTE'] != None:
-                if type(args['GROUP_MA_INTE']) == types.StringType:
-                    l_group_ma_inte = [args['GROUP_MA_INTE'], ]
+            if args.get('GROUP_MA_INTE') != None:
+                if type(args.get('GROUP_MA_INTE')) == types.StringType:
+                    l_group_ma_inte = [args.get('GROUP_MA_INTE'), ]
                 else:
-                    l_group_ma_inte = args['GROUP_MA_INTE']
+                    l_group_ma_inte = args.get('GROUP_MA_INTE')
                 for igr in l_group_ma_inte:
                     if ( not igr.strip() in collgrma):
                         UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_INTE'])
@@ -179,9 +179,9 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
         #------------------------------------------------------------
         motscles = {}
         if args.has_key('GROUP_MA_INTE'):
-            if args['GROUP_MA_INTE'] != None:
+            if args.get('GROUP_MA_INTE') != None:
                 motscles['LIAISON_UNIF'] = _F(
-                    GROUP_MA=args['GROUP_MA_INTE'], DDL='TEMP'),
+                    GROUP_MA=args.get('GROUP_MA_INTE'), DDL='TEMP'),
 
         __chart1 = AFFE_CHAR_THER(MODELE=__nomoth,
                                   TEMP_IMPO=_F(GROUP_NO=GROUP_MA_BORD,
@@ -197,18 +197,18 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
         # OU D/DN DESIGNE LA DERIVEE PAR RAPPORT A LA
         # NORMALE ET L DESIGNE LA LONGUEUR DU BORD DU TROU :
         if args.has_key('GROUP_MA_INTE'):
-            lgmaint = args['GROUP_MA_INTE']
+            lgmaint = args.get('GROUP_MA_INTE')
             if lgmaint != None:
                 __tbaire = POST_ELEM(
                     MODELE=__nomoth,
-                    AIRE_INTERNE=_F(GROUP_MA_BORD=args['GROUP_MA_INTE'],),)
+                    AIRE_INTERNE=_F(GROUP_MA_BORD=args.get('GROUP_MA_INTE'),),)
 
                 motscles = {}
                 motscles['FLUX_REP'] = []
 
                 if type(lgmaint) == types.StringType:
                     motscles['FLUX_REP'] = _F(
-                        GROUP_MA=args['GROUP_MA_INTE'], CARA_TORSION=__tbaire)
+                        GROUP_MA=args.get('GROUP_MA_INTE'), CARA_TORSION=__tbaire)
                 else:
                     motscles['FLUX_REP'] = []
                     for grma in lgmaint:
@@ -250,10 +250,10 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
         # LE TERME SOURCE CONSTITUANT LE SECOND MEMBRE DE L ÉQUATION
         # DE LAPLACE EST PRIS ÉGAL A Y DANS TOUTE LA SECTION :
         mctimpo = {}
-        if args['NOEUD'] != None:
-            if len( args['NOEUD'] ) != 1:
+        if args.get('NOEUD') != None:
+            if len( args.get('NOEUD') ) != 1:
                 UTMESS('F', 'POUTRE0_3')
-            nthno = string.strip(args['NOEUD'][0])
+            nthno = string.strip(args.get('NOEUD')[0])
             # nthno est-il dans le maillage ?
             nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.nom)
             nomnoe = map( string.strip, nomnoe)
@@ -261,10 +261,10 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
                 UTMESS('F', 'POUTRE0_9',valk=nthno)
 
             mctimpo['TEMP_IMPO'] = (_F(NOEUD=nthno, TEMP=__fnsec0))
-        elif args['GROUP_NO'] != None:
-            if len( args['GROUP_NO'] ) != 1:
+        elif args.get('GROUP_NO') != None:
+            if len( args.get('GROUP_NO') ) != 1:
                 UTMESS('F', 'POUTRE0_3')
-            grthno = args['GROUP_NO'][0]
+            grthno = args.get('GROUP_NO')[0]
             #grthno = grthno[0]
             collgrno = aster.getcolljev('%-8s.GROUPENO' % __nomapi.nom)
             nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomapi.nom)
@@ -356,11 +356,11 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
         #    CALCUL DU RAYON DE TORSION : rt
         #    rt = max ( rtext , 2*AIRE(TROU)/L(TROU) )
         if args.has_key('GROUP_MA_INTE'):
-            if args['GROUP_MA_INTE'] != None:
-                if type(args['GROUP_MA_INTE']) == types.StringType:
-                    l_group_ma_inte = [args['GROUP_MA_INTE'], ]
+            if args.get('GROUP_MA_INTE') != None:
+                if type(args.get('GROUP_MA_INTE')) == types.StringType:
+                    l_group_ma_inte = [args.get('GROUP_MA_INTE'), ]
                 else:
-                    l_group_ma_inte = args['GROUP_MA_INTE']
+                    l_group_ma_inte = args.get('GROUP_MA_INTE')
                 for i in range(0, len(l_group_ma_inte)):
                     __flun = MACR_LIGN_COUPE(
                                   RESULTAT=__tempe1,
@@ -386,15 +386,14 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
         #------------------------------------------------------------
         # CALCUL DE LA CONSTANTE DE TORSION :
         motscles = {}
-        if args.has_key('GROUP_MA_INTE'):
-            lgmaint = args['GROUP_MA_INTE']
-            if lgmaint != None:
-                motscles['CARA_POUTRE'] = _F(CARA_GEOM=__cageo, LAPL_PHI=__tempe1, RT=__rt,
-                                        TOUT='OUI', OPTION='CARA_TORSION',
-                                        GROUP_MA_INTE=args['GROUP_MA_INTE'],)
-            else:
-                motscles['CARA_POUTRE'] = _F(CARA_GEOM=__cageo, LAPL_PHI=__tempe1, RT=__rt,
-                                        TOUT='OUI', OPTION='CARA_TORSION', )
+        lgmaint = args.get('GROUP_MA_INTE')
+        if lgmaint != None:
+            motscles['CARA_POUTRE'] = _F(CARA_GEOM=__cageo, LAPL_PHI=__tempe1, RT=__rt,
+                                    TOUT='OUI', OPTION='CARA_TORSION',
+                                    GROUP_MA_INTE=args.get('GROUP_MA_INTE'),)
+        else:
+            motscles['CARA_POUTRE'] = _F(CARA_GEOM=__cageo, LAPL_PHI=__tempe1, RT=__rt,
+                                    TOUT='OUI', OPTION='CARA_TORSION', )
         #
         __cator = POST_ELEM(MODELE=__nomoth, CHAM_MATER=__chmath, **motscles)
 
@@ -559,17 +558,17 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
                 UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA'])
         #
         if args.has_key('GROUP_MA_INTE'):
-            if args['GROUP_MA_INTE'] != None:
-                if type(args['GROUP_MA_INTE']) == types.StringType:
-                    l_group_ma_inte = [args['GROUP_MA_INTE'], ]
+            if args.get('GROUP_MA_INTE') != None:
+                if type(args.get('GROUP_MA_INTE')) == types.StringType:
+                    l_group_ma_inte = [args.get('GROUP_MA_INTE'), ]
                 else:
-                    l_group_ma_inte = args['GROUP_MA_INTE']
+                    l_group_ma_inte = args.get('GROUP_MA_INTE')
                 for igr in l_group_ma_inte:
                     if ( not igr.strip() in collgrma):
                         UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_INTE'])
 
-        if args['NOEUD'] != None:
-            l_noeud = map( string.strip, args['NOEUD'] )
+        if args.get('NOEUD') != None:
+            l_noeud = map( string.strip, args.get('NOEUD') )
             if (len(l_group_ma) != len(l_noeud)):
                 UTMESS('F', 'POUTRE0_2')
             # Les noeuds doivent faire partie du maillage
@@ -578,11 +577,11 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             for ino in l_noeud:
                 if ( not ino in nomnoe ):
                     UTMESS('F', 'POUTRE0_9',valk=ino)
-        elif args['GROUP_NO'] != None:
+        elif args.get('GROUP_NO') != None:
             collgrno = aster.getcolljev('%-8s.GROUPENO' % __nomlma.nom)
             nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.nom)
             l_nu_no = []
-            for grno in args['GROUP_NO']:
+            for grno in args.get('GROUP_NO'):
                 try:
                     l_nu_no.extend(collgrno[string.ljust(grno, 24)])
                 except:
@@ -592,10 +591,10 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
 
         # Si len(l_group_ma_bord) > 1, alors il faut donner : 'LONGUEUR', 'MATERIAU', 'LIAISON'
         if ( len(l_group_ma_bord) > 1 ):
-            if ( (args['LONGUEUR']==None) or (args['MATERIAU']==None) or (args['LIAISON']==None) ):
+            if ( args.get('LONGUEUR') or args.get('MATERIAU') or args.get('LIAISON') ):
                 UTMESS('F', 'POUTRE0_6')
         else:
-            if ( (args['LONGUEUR']!=None) or (args['MATERIAU']!=None) or (args['LIAISON']!=None) ):
+            if ( args.get('LONGUEUR') or args.get('MATERIAU') or args.get('LIAISON') ):
                 UTMESS('A', 'POUTRE0_7')
 
 
@@ -734,11 +733,11 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             # CALCUL DU RAYON DE TORSION : rt
             # rt = max ( rtext , 2*AIRE(TROU)/L(TROU) )
             if args.has_key('GROUP_MA_INTE'):
-                if args['GROUP_MA_INTE'] != None:
-                    if type(args['GROUP_MA_INTE']) == types.StringType:
-                        l_group_ma_inte = [args['GROUP_MA_INTE'], ]
+                if args.get('GROUP_MA_INTE') != None:
+                    if type(args.get('GROUP_MA_INTE')) == types.StringType:
+                        l_group_ma_inte = [args.get('GROUP_MA_INTE'), ]
                     else:
-                        l_group_ma_inte = args['GROUP_MA_INTE']
+                        l_group_ma_inte = args.get('GROUP_MA_INTE')
 
                     for j in range(0, len(l_group_ma_inte)):
                         __flun = MACR_LIGN_COUPE(
@@ -776,9 +775,9 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
                     CARA_POUTRE=_F(CARA_GEOM=__catp1,
                                LAPL_PHI_Y=__tempe2, LAPL_PHI_Z=__tempe3,
                                GROUP_MA=l_group_ma[i],
-                               LONGUEUR=args['LONGUEUR'],
-                               MATERIAU=args['MATERIAU'],
-                               LIAISON=args['LIAISON'],
+                               LONGUEUR=args.get('LONGUEUR'),
+                               MATERIAU=args.get('MATERIAU'),
+                               LIAISON=args.get('LIAISON'),
                                OPTION='CARA_CISAILLEMENT',),
                 )
             else:
