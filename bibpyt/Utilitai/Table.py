@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -295,8 +295,6 @@ class TableBase(object):
                     getattr(tnv, tnv.para[1]).values()],
             'Lab': tnv.para,
         }
-        if args['LEGENDE'] == None:
-            del args['LEGENDE']
         Graph.AjoutParaCourbe(dicC, args)
         graph.AjoutCourbe(**dicC)
 
