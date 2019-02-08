@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine irmfac(ioccur, formaf, ifichi, versio,&
-                  modele, nomail, nomare, resure, lgmsh)
+subroutine irmfac(ioccur, formaf, ifichi, versio, modele, nomail, lgmsh)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -40,7 +39,7 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
     integer :: ioccur, ifichi, versio
-    character(len=8) :: formaf, resure, modele, nomare, nomail
+    character(len=8) :: formaf, modele, nomail
     aster_logical :: lgmsh
 ! person_in_charge: nicolas.sellenet at edf.fr
 ! ----------------------------------------------------------------------
@@ -85,7 +84,7 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
     parameter   (novcmp = '&&IRMFAC.NOM_CH_MED')
     parameter   (nnopar = '&&IRMFAC.NOM_PAR')
 !
-    aster_logical :: lresu, lcor, lmax, lmin, linf, lsup, lvarie, lrestr, lmodel
+    aster_logical :: lresu, lcor, lmax, lmin, linf, lsup, lvarie, lmodel
 !
     call jemarq()
 !
@@ -100,8 +99,6 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
     cecr = 'L'
     lmodel = .false.
     if (modele .ne. ' ') lmodel = .true.
-    lrestr = .false.
-    if (nomare .ne. ' ') lrestr = .true.
 !
 !     --- FORMAF D'ECRITURE DES REELS ---
     formr=' '
@@ -137,10 +134,14 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
     resu = ' '
     partie = ' '
     call getvid('RESU', 'RESULTAT', iocc=ioccur, scal=resu, nbret=nresu)
-    if (lrestr) then
-        nresu=1
-        resu=resure
+!   Le modele lié au RESU s'il n'est pas déjà donné
+    if ( (nresu.ne.0).and.(.not. lmodel) ) then
+        call dismoi('MODELE', resu, 'RESULTAT',repk=modele)
+        if ( modele(1:1) .eq. '#' ) then
+            modele = ' '
+        endif
     endif
+!
     call getvtx('RESU', 'PARTIE', iocc=ioccur, scal=partie, nbret=npart)
     if (nresu .ne. 0) then
         call gettco(resu, tyres)
@@ -157,8 +158,7 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
     call getvid('RESU', 'CHAM_GD', iocc=ioccur, scal=resu, nbret=ncham)
     if (ncham .ne. 0) then
         resu19=resu
-        call dismoi('NOM_GD', resu19, 'CHAMP', repk=nomgd, arret='C',&
-                    ier=ier)
+        call dismoi('NOM_GD', resu19, 'CHAMP', repk=nomgd, arret='C', ier=ier)
         if (nomgd(6:6) .eq. 'C') then
             if (formaf(1:4) .eq. 'GMSH') then
                 if (npart .eq. 0) then
@@ -190,14 +190,6 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
     if ((formaf.eq.'ASTER') .and. (nomail.eq.' ')) then
         call utmess('A', 'PREPOST3_70')
     endif
-    if (lrestr) then
-        if (ioccur .eq. 1) then
-            nmail=1
-            nomail=nomare
-        else
-            nmail=0
-        endif
-    endif
 !
 !     --- RECUPERATION DE NOM_PARA
     linopa = ' '
@@ -215,8 +207,7 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
 !     --- TEST DE LA COHERENCE DU MAILLAGE ET DU MODELE ---
 !
     if (lmodel .and. nmail .ne. 0) then
-        call dismoi('NOM_MAILLA', modele, 'MODELE', repk=nomab, arret='C',&
-                    ier=iret)
+        call dismoi('NOM_MAILLA', modele, 'MODELE', repk=nomab, arret='C', ier=iret)
         if (nomail .ne. nomab) then
             call utmess('F', 'PREPOST3_66')
         endif
@@ -235,8 +226,7 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
 !     ---  IMPRESSION DU MAILLAGE AU PREMIER PASSAGE -----
     if (nmail .ne. 0) then
         if (formaf(1:4) .ne. 'GMSH' .or. (nresu.eq.0.and.ncham.eq.0)) then
-            call irmail(formaf, ifichi, versio, nomail, lmodel,&
-                        modele, infmai, formr)
+            call irmail(formaf, ifichi, versio, nomail, lmodel, modele, infmai, formr)
         endif
     endif
 !
