@@ -28,28 +28,20 @@ subroutine op0039()
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getfac.h"
-#include "asterfort/assert.h"
-#include "asterfort/codent.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infmaj.h"
-#include "asterfort/irmail.h"
 #include "asterfort/irmfac.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jeecra.h"
-#include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/mdexma.h"
 #include "asterfort/ulaffe.h"
 #include "asterfort/ulexis.h"
 #include "asterfort/ultype.h"
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
 #include "asterfort/asmpi_info.h"
     mpi_int :: mrank, msize
     integer :: nocc, iocc, ifc, ifi, versio, nbrank
@@ -59,12 +51,12 @@ subroutine op0039()
     real(kind=8) :: versi2, eps
 !
     character(len=1) :: typf
-    character(len=8) :: modele, noma, form, nomare, nomsq, proc
-    character(len=8) :: resu, resure(9)
+    character(len=8) :: modele, noma, form, nomsq, proc
+    character(len=8) :: resu
     character(len=16) :: fich
     character(len=24) :: valk(6)
 !
-    aster_logical :: lresu, lmod
+    aster_logical :: lresu
     aster_logical :: lmail, lgmsh
 !
 ! ----------------------------------------------------------------------
@@ -73,14 +65,14 @@ subroutine op0039()
     nbrank = to_aster_int(mrank)
     call jemarq()
     call infmaj()
-!       
+!
 !   --- PROC0 = 'OUI' pour effectuer les impressions uniquement sur le processeur de rang 0 ---
     call getvtx(' ', 'PROC0', scal=proc, nbret=nproc)
-    if ( proc .eq. 'NON' ) then 
-      nbrank = 0 
-    endif   
+    if ( proc .eq. 'NON' ) then
+      nbrank = 0
+    endif
 !
-    if ( nbrank .eq. 0 ) then 
+    if ( nbrank .eq. 0 ) then
 !     --- RECUPERATION DU NOMBRE DE MISES EN FACTEUR DU MOT-CLE RESU ---
        call getfac('RESU', nocc)
 !
@@ -97,11 +89,8 @@ subroutine op0039()
 !     -----------------
 !     --- LE MODELE ---
 !     -----------------
-       lmod = .false.
        modele = ' '
        call getvid(' ', 'MODELE', scal=modele, nbret=nmod)
-       if (nmod .ne. 0) lmod= .true.
-       nomare=' '
 !
 !     ---------------------------------------------
 !     --- FORMAT, FICHIER ET UNITE D'IMPRESSION ---
@@ -184,14 +173,13 @@ subroutine op0039()
             goto 999
         endif
       endif
-      lgmsh = .false.
+      lgmsh = ASTER_FALSE
 !
 !     --- BOUCLE SUR LE NOMBRE DE MISES EN FACTEUR ---
 !     -----------------------------------------------------------------
-      do iocc = 1, nocc  
+      do iocc = 1, nocc
 !
-        call irmfac(iocc, form, ifi, versio,&
-                    modele, noma, nomare, resure(iocc), lgmsh)
+        call irmfac(iocc, form, ifi, versio, modele, noma, lgmsh)
 !
       end do
 !
