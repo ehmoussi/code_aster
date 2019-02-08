@@ -33,7 +33,7 @@ class FieldProjector(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        methode = keywords.get("SOUS_POINT")
+        methode = keywords.get("METHODE")
         resultat = keywords.get("RESULTAT")
         chamGd = keywords.get("CHAM_GD")
         if resultat is None and chamGd is None:
