@@ -115,6 +115,8 @@ subroutine op0017()
                     0, base, perm=perm)
     endif
     flush(ifi)
-    call ulopen(-ifi, ' ', ' ', ' ', ' ')
+    if( ifi.ne.6 ) then
+        call ulopen(-ifi, ' ', ' ', ' ', ' ')
+    endif
     call jedema()
 end subroutine
