@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,8 +20,10 @@
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Commands.ExecuteCommand import UserMacro
+from post_t_q_ops import post_t_q_ops
 
-POST_T_Q=MACRO(nom="POST_T_Q",
+POST_T_Q_CATA=MACRO(nom="POST_T_Q",
                     op=OPS('Contrib.post_t_q_ops.post_t_q_ops'),
                     sd_prod=table_sdaster,
                     fr=tr("Calcul des facteurs d'intensité de contraintes en 2D et en 3D par "
@@ -113,3 +115,6 @@ POST_T_Q=MACRO(nom="POST_T_Q",
          INFO          =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
          TITRE         =SIMP(statut='f',typ='TXM',max='**'),
 )  ;
+
+POST_T_Q = UserMacro("POST_T_Q", POST_T_Q_CATA,
+                     post_t_q_ops)

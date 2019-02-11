@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,8 +60,6 @@ IMPR_FONCTION(   UNITE = 50,
                COURBE=_F(  FONC_X = DFC1,
                            FONC_Y = DFC2) )
 
-DEFI_FICHIER( ACTION="LIBERER", UNITE = 50 , INFO=2)
-
 FF1=LIRE_FONCTION(        UNITE=50,
                           NOM_PARA='FREQ',
                           NOM_RESU='AMOR',
@@ -95,8 +93,6 @@ IMPR_FONCTION(   UNITE = 51,
                FORMAT='TABLEAU', TITRE='LU DANS FF2',
                COURBE=_F(  FONC_Y = DFC1,
                            FONC_X = DFC2, ) )
-
-DEFI_FICHIER( ACTION="LIBERER", UNITE = 51 )
 
 FF2=LIRE_FONCTION(     UNITE=51,
                        NOM_PARA='FREQ',
@@ -141,8 +137,6 @@ IMPR_FONCTION(   UNITE = 52, INFO=2,
                            FONC_Y = DFC2,
                            LIST_PARA = L03)
                   )
-
-DEFI_FICHIER( ACTION="LIBERER", UNITE = 52)
 
 FF3=LIRE_FONCTION(        UNITE=52,
                           NOM_PARA='FREQ',
@@ -198,8 +192,6 @@ IMPR_FONCTION(   UNITE = 53,
                FORMAT='TABLEAU', TITRE='LU DANS FF4',
                COURBE=_F(  FONC_X = DFC2,
                            FONC_Y = DFC1) )
-
-DEFI_FICHIER( ACTION="LIBERER", UNITE = 53 )
 
 FF4=LIRE_FONCTION(        UNITE=53,
                           NOM_PARA='AMOR',

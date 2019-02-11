@@ -260,7 +260,6 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
     # On importe les definitions des commandes a utiliser dans la macro
     ASSE_MAILLAGE = self.get_cmd('ASSE_MAILLAGE')
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    DEFI_FICHIER = self.get_cmd('DEFI_FICHIER')
     DEFI_GROUP = self.get_cmd('DEFI_GROUP')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
     from Contrib.propa_xfem import PROPA_XFEM
@@ -1247,7 +1246,6 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 #self.DeclareOut('ma_xfem2', MAIL_FISS2)
 
             unit = mm[numfis].ToAster()
-            DEFI_FICHIER(UNITE=unit, ACTION="LIBERER")
             ma_xfem2 = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=unit)
             if MAIL_FISS2 != None:
                 self.register_result(ma_xfem2, MAIL_FISS2)
@@ -1500,7 +1498,6 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         #if MAIL_FISS2 != None:
             #self.DeclareOut('ma_xfem2', MAIL_FISS2)
         unit = mm.ToAster()
-        DEFI_FICHIER(UNITE=unit, ACTION="LIBERER")
         self.DeclareOut('ma_xfem2', MAIL_FISS2)
         ma_xfem2 = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=unit)
         self.register_result(ma_xfem2, MAIL_FISS2)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -734,12 +734,6 @@ def post_endo_fiss_ops(self,
     MasquerAlarme('CALCULEL5_7')
 
     # --------------------------------------------------
-    # OUTPUT DECLARATION
-    #
-    self.DeclareOut('MAFISS', self.sd)
-    self.DeclareOut('tabRes', TABLE)
-
-    # --------------------------------------------------
     # IMPORT OF ASTER COMMANDS
     #
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
@@ -785,15 +779,15 @@ def post_endo_fiss_ops(self,
         nomresu = __RESUIN.nom
         dicResu = __RESUIN.LIST_PARA()
         dicVarAcc = __RESUIN.LIST_VARI_ACCES()
-        if args['NUME_ORDRE'] != None:
-            nume_ordre = args['NUME_ORDRE']
+        if args.get('NUME_ORDRE') != None:
+            nume_ordre = args.get('NUME_ORDRE')
             if nume_ordre not in dicVarAcc['NUME_ORDRE']:
                 UTMESS('F', 'POST0_41')
             else:
                 inst = (dicVarAcc['INST'])[nume_ordre]
             motscles['NUME_ORDRE'] = nume_ordre
         else:
-            inst = args['INST']
+            inst = args.get('INST')
             motscles['INST'] = inst
             nume_ordre = None
             for champ_inst_index, champ_inst in enumerate(dicVarAcc['INST']):
@@ -804,9 +798,11 @@ def post_endo_fiss_ops(self,
                 UTMESS('F', 'POST0_41')
 
         # Maillage pour projections
-        iret, ibid, n_mail = aster.dismoi(
-            'NOM_MAILLA', __RESUIN.nom, 'RESULTAT', 'F')
-        __mail = self.get_concept(n_mail)
+        model = __RESUIN.getModel()
+        if model is None:
+            __mail = __RESUIN.getMesh()
+        else:
+            __mail = __RESUIN.getModel().getSupportMesh()
 
     dime = __mail.sdj.DIME.get()[5]
 
@@ -990,6 +986,7 @@ def post_endo_fiss_ops(self,
                 _F(PARA='OUVERTURE', LISTE_R=lstO),
                 _F(PARA='ERREUR', LISTE_R=lstE),
             ),)
+    self.register_result(tabRes, TABLE)
 
     # --------------------------------------------------
     # CREATION OF DATA STRUCTURE "MESH"
@@ -1000,14 +997,15 @@ def post_endo_fiss_ops(self,
     fproc = open(nomFichierSortie, 'w')
     fproc.write(resu_mail0)
     fproc.close()
-    UL = UniteAster()
-    uniteMail = UL.Libre(action='ASSOCIER', nom=nomFichierSortie)
+    from code_aster.RunManager.LogicalUnit import LogicalUnitFile
+    unitFile = LogicalUnitFile.open(nomFichierSortie)
+    uniteMail = unitFile.unit
     MAFISS = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=uniteMail,)
-    UL.EtatInit(uniteMail)
+    unitFile.release()
 
     RetablirAlarme('CALCULEL5_48')
     RetablirAlarme('ALGORITH12_43')
     RetablirAlarme('CALCULEL2_12')
     RetablirAlarme('CALCULEL5_7')
 
-    return resu_mail0
+    return MAFISS

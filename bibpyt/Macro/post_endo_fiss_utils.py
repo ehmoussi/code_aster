@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -156,17 +156,17 @@ def crea_mail_lin(XcreteTot, YcreteTot, ZcreteTot, ConnTot, lstNomFiss, dime):
 # CREATE AN MESH OBJECT FROM A STRING REPRESENTING
 #    A MESH IN THE ASTER FORMAT
 def crea_sd_mail(self, mailString):
-    from Utilitai.UniteAster import UniteAster
+    from code_aster.RunManager.LogicalUnit import LogicalUnitFile
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
 
     nomFichierSortie = os.path.join(os.getcwd(), 'maillage.mail')
     fproc = open(nomFichierSortie, 'w')
     fproc.write(mailString)
     fproc.close()
-    UL = UniteAster()
-    uniteMail = UL.Libre(action='ASSOCIER', nom=nomFichierSortie)
+    unitFile = LogicalUnitFile.open(nomFichierSortie)
+    uniteMail = unitFile.unit
     _MAI = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=uniteMail)
-    UL.EtatInit(uniteMail)
+    unitFile.release()
 
     return _MAI
 

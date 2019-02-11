@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ class ProlongementError(FonctionError):
 # -----------------------------------------------------------------------------
 
 
-def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **args):
+def calc_spec_ops(self, **args):
 #  ------------------------------------------------------------------
 #  Calcul d'une matrice interspectrale
 #  a partir de fonctions reelles
@@ -55,14 +55,26 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
     import numpy
     import numpy.fft as FFT
 
+    TAB_ECHANT = args.get("TAB_ECHANT")
+    ECHANT = args.get("ECHANT")
+    INTERSPE = args.get("INTERSPE")
+    TRANSFERT = args.get("TRANSFERT")
+    TITRE = args.get("TITRE")
+    INFO = args.get("INFO")
+    if TAB_ECHANT is not None and type(TAB_ECHANT) not in (list, tuple):
+        TAB_ECHANT = TAB_ECHANT,
+    if ECHANT is not None and type(ECHANT) not in (list, tuple):
+        ECHANT = ECHANT,
+    if INTERSPE is not None and type(INTERSPE) not in (list, tuple):
+        INTERSPE = INTERSPE,
+    if TRANSFERT is not None and type(TRANSFERT) not in (list, tuple):
+        TRANSFERT = TRANSFERT,
+
     commande = 'CALC_SPEC'
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
-
-    # Le concept sortant (de type table_sdaster ou derive) est tab
-    self.DeclareOut('tabout', self.sd)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
@@ -95,11 +107,13 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
     else:
 
         tab_ast = l_t[0][1]['NOM_TAB']
+        fonc_py = []
+        for i in range(tab_ast.getNumberOfFunctions()):
+            fonc_py.append(tab_ast.getFunction(i))
         tab_py = tab_ast.EXTR_TABLE()
 
-        nom_fonc = tab_py['FONCTION'].values()['FONCTION']
-        fonc_py = [sd_fonction(fonc) for fonc in nom_fonc]
-        temp = fonc_py[0].VALE.get()
+        values = fonc_py[0].Valeurs()
+        temp = list(values[0]) + list(values[1])
         dt = temp[1] - temp[0]
 
         l_ech_t = [l_t[0][1]['LONGUEUR_DUREE'], l_t[0][1]
@@ -183,7 +197,13 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
         num_mes_temp = tab_py['NUME_MES'].values()['NUME_MES']
         max_mes = numpy.maximum.reduce(num_mes_temp)
         num_ord_temp = tab_py['NUME_ORDRE_I'].values()['NUME_ORDRE_I']
-        long_fonc = [len(fonc_py[i1].VALE.get()) for i1 in range(len(fonc_py))]
+        long_fonc = []
+        for i1 in range(len(fonc_py)):
+            values = fonc_py[i1].Valeurs()
+            temp = list(values[0]) + list(values[1])
+            long_fonc.append(len(temp))
+        print "long_fonc", long_fonc
+        #long_fonc = [len(fonc_py[i1].VALE.get()) for i1 in range(len(fonc_py))]
 
         N_fen = int(
             numpy.floor((numpy.minimum.reduce(long_fonc) / 2 - l_ech) / (l_ech - recouvr)) + 1)
@@ -191,7 +211,8 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
         sig = []
         dt = []
         for i1 in range(len(fonc_py)):
-            vale = fonc_py[i1].VALE.get()
+            values = fonc_py[i1].Valeurs()
+            vale = list(values[0]) + list(values[1])
             temp = (list(vale[0:int(len(vale) / 2)]))
             sig.append(list(vale[int(len(vale) / 2):]))
             test_pas = numpy.subtract(temp[1:], temp[0:-1])
@@ -329,7 +350,6 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
             mcfact.append(_F(NUME_ORDRE_I=nume_i1[i],
                              NUME_ORDRE_J=nume_j1[i],
                              FONCTION=l_fc[i]),)
-        self.DeclareOut('inte_out', self.sd)
         inte_out = DEFI_INTE_SPEC(PAR_FONCTION=mcfact,
                                   TITRE='DSP',)
 
@@ -344,7 +364,7 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
         if type(l_H[0][1]['REFER']) == int:
             refer = []
             refer.append(l_H[0][1]['REFER'])
-        elif type(l_H[0][1]['REFER']) == tuple:
+        elif type(l_H[0][1]['REFER']) in (list, tuple):
             refer = list(l_H[0][1]['REFER'])
 
         ind_refer = []
@@ -423,6 +443,6 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
             mcfact.append(_F(NUME_ORDRE_I=nume_i1[i],
                              NUME_ORDRE_J=nume_j1[i],
                              FONCTION=l_fc[i]),)
-        self.DeclareOut('inte_out', self.sd)
         inte_out = DEFI_INTE_SPEC(PAR_FONCTION=mcfact,
                                   TITRE=nom_frf,)
+    return inte_out
