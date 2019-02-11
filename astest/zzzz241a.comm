@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -221,6 +221,11 @@ tab_rep=CREA_TABLE(LISTE=(_F(PARA='NOM_CHAM',LISTE_K='Rep_Temp',),
                           TITRE='',
                           TYPE_TABLE='TABLE_FONCTION',
                    )
+tab_rep.addFunction(EFFORT)
+tab_rep.addFunction(REP_1)
+tab_rep.addFunction(REP_2)
+tab_rep.addFunction(REP_3)
+tab_rep.addFunction(REP_4)
 
 #-- Calcul des fonctions de transfert a partir de resultats
 

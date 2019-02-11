@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -274,8 +274,8 @@ def simu_point_mat_ops(
 
         if SIGM_IMPOSE:
             SIG = dict(SIGM_IMPOSE[0])
-            for i in SIG.keys():
-                if SIG[i] == None:
+            for i in CMP_SIG:
+                if SIG.get(i) == None:
                     SIG[i] = __fonczero
         else:
             for i in range(nbsig):
@@ -508,11 +508,11 @@ def simu_point_mat_ops(
         for i in xrange(nbsig):
             ike = CMP_EPS[i]
             if EPS.get(ike):
-                l_char.append(_F(CHARGE=__E[i], FONC_MULT=EPS[ike]))
+                l_char.append(_F(CHARGE=__E[i], FONC_MULT=EPS.get(ike)))
 
         for i in xrange(nbsig):
             iks = CMP_SIG[i]
-            l_char.append(_F(CHARGE=__S[i], FONC_MULT=SIG[iks]))
+            l_char.append(_F(CHARGE=__S[i], FONC_MULT=SIG.get(iks)))
 
 #     variables de commande
         mcvarc = []

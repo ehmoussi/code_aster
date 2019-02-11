@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -33,7 +33,7 @@ class FieldProjector(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        methode = keywords.get("SOUS_POINT")
+        methode = keywords.get("METHODE")
         resultat = keywords.get("RESULTAT")
         chamGd = keywords.get("CHAM_GD")
         if resultat is None and chamGd is None:
@@ -59,6 +59,8 @@ class FieldProjector(ExecuteCommand):
         if keywords.has_key("RESULTAT"):
             if keywords.has_key("MODELE_2"):
                 self._result.appendModelOnAllRanks(keywords["MODELE_2"])
+            if keywords.has_key("MAILLAGE_2"):
+                self._result.setMesh(keywords["MAILLAGE_2"])
             self._result.update()
         elif keywords.has_key("CHAM_GD"):
             pass

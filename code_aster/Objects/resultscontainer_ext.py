@@ -74,6 +74,11 @@ class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
                 self.addMaterialOnMesh(obj, ranks[rankMater])
                 rankMater = rankMater + 1
 
+    def LIST_CHAMPS (self) :
+        if not self.accessible():
+            raise AsException("Erreur dans resultat.LIST_CHAMPS en PAR_LOT='OUI'")
+        return aster.GetResu(self.get_name(), "CHAMPS")
+
     def LIST_VARI_ACCES (self):
         if not self.accessible():
             raise AsException("Erreur dans resultat.LIST_VARI_ACCES " +

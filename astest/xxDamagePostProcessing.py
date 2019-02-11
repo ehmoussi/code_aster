@@ -1,5 +1,22 @@
 #!/usr/bin/python
-# coding: utf-8
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
 import code_aster
 import numpy as NP
@@ -84,10 +101,12 @@ def dist_crack_path(x1,y1) :
 
 
 CRACKPNT = FORMULE(VALE     = 'crack_point(COORX)',
-                   NOM_PARA = ('COORX',),)
+                   NOM_PARA = ('COORX',),
+                   crack_point = crack_point)
 
 DIST = FORMULE(VALE     = 'dist_crack_path(COORX, COORY)',
-               NOM_PARA = ('COORX','COORY'),)
+               NOM_PARA = ('COORX','COORY'),
+               dist_crack_path = dist_crack_path)
 
 TAB_FISS = CALC_TABLE(reuse  = TAB_FISS,
                       TABLE  = TAB_FISS,

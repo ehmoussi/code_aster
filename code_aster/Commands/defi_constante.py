@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -48,7 +48,7 @@ class ConstantAsFunction(ExecuteCommand):
             value = list(keywords['VALE'])
         else:
             value = [keywords['VALE'],]
-        funct.setValues([0.], value)
+        funct.setValues([1.], value)
         funct.setResultName(keywords['NOM_RESU'])
         funct.setParameterName("TOUTPARA")
         funct.setInterpolation("LIN LIN")
