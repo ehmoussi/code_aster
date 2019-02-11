@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -88,13 +88,15 @@ character(len=19) :: matele
 ! In  l_xthm           : contact with THM and XFEM (!)
 !
 !
+!
+    integer :: ifm, niv
     character(len=19) :: memass, merigi
     character(len=24) :: model
     integer :: jinfc, jchar, jchar2
     integer :: nbchar
-    integer :: i, ifm, niv
+    integer :: i
     character(len=16) :: optmat
-    character(len=19) :: disp_prev, sigplu, vite_curr, vite_prev, acce_prev, strplu
+    character(len=19) :: disp_prev, sigplu, strplu
     character(len=19) :: disp_cumu_inst, disp_newt_curr, varplu, time_curr
     character(len=19) :: varc_prev, varc_curr, time_prev
     character(len=24) :: charge, infoch
@@ -115,9 +117,6 @@ character(len=19) :: matele
 !
     if (valinc(1)(1:1) .ne. ' ') then
         call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
-        call nmchex(valinc, 'VALINC', 'VITMOI', vite_prev)
-        call nmchex(valinc, 'VALINC', 'ACCMOI', acce_prev)
-        call nmchex(valinc, 'VALINC', 'VITPLU', vite_curr)
         call nmchex(valinc, 'VALINC', 'SIGPLU', sigplu)
         call nmchex(valinc, 'VALINC', 'STRPLU', strplu)
         call nmchex(valinc, 'VALINC', 'VARMOI', varplu)

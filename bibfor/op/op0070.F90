@@ -217,20 +217,20 @@ implicit none
 ! --- REALISATION DU PAS DE TEMPS
 !
     if (lexpl) then
-        call ndexpl(model   , numedd         , numfix   , ds_material, cara_elem,&
-                    ds_constitutive, list_load, ds_algopara, fonact   , ds_system,&
-                    ds_print, ds_measure     , sdnume   , sddyna     , sddisc   ,&
-                    sderro  , valinc         , numins   , solalg     , solver   ,&
-                    matass  , maprec         , ds_inout , meelem     , measse   ,&
-                    veelem  , veasse         , nbiter)
+        call ndexpl(model          , numedd    , numfix     , ds_material, cara_elem,&
+                    ds_constitutive, list_load , ds_algopara, fonact     , ds_system,&
+                    ds_print       , ds_measure, sdnume     , sddyna     , sddisc   ,&
+                    sderro         , valinc    , numins     , solalg     , solver   ,&
+                    matass         , maprec    , ds_inout   , meelem     , measse   ,&
+                    veelem         , veasse    , nbiter)
     else if (lstat.or.limpl) then
-        call nmnewt(mesh       , model    , numins    , numedd         , numfix   ,&
-                    ds_material, cara_elem, ds_constitutive, list_load, ds_system,&
-                    ds_algopara, fonact   , ds_measure, sderro         , ds_print ,&
-                    sdnume     , sddyna   , sddisc    , sdcrit         , sd_suiv  ,&
-                    sdpilo     , ds_conv  , solver    , maprec         , matass   ,&
-                    ds_inout   , valinc   , solalg    , meelem         , measse   ,&
-                    veelem     , veasse   , ds_contact, ds_algorom     , eta      ,&
+        call nmnewt(mesh       , model    , numins         , numedd    , numfix   ,&
+                    ds_material, cara_elem, ds_constitutive, list_load , ds_system,&
+                    ds_algopara, fonact   , ds_measure     , sderro    , ds_print ,&
+                    sdnume     , sddyna   , sddisc         , sdcrit    , sd_suiv  ,&
+                    sdpilo     , ds_conv  , solver         , maprec    , matass   ,&
+                    ds_inout   , valinc   , solalg         , meelem    , measse   ,&
+                    veelem     , veasse   , ds_contact     , ds_algorom, eta      ,&
                     nbiter  )
     else
         ASSERT(ASTER_FALSE)
@@ -255,12 +255,12 @@ implicit none
 !
 ! - Post-treatment
 !
-    call nmpost(model          , mesh       , numedd, numfix    , cara_elem      ,&
+    call nmpost(model          , mesh       , numedd     , numfix    , cara_elem      ,&
                 ds_constitutive, numins     , ds_material, ds_system ,&
-                ds_contact     , ds_algopara, fonact, ds_measure,&
-                sddisc         , sd_obsv    , sderro, sddyna    , ds_posttimestep,&
-                valinc         , solalg     , meelem, measse    , veelem         ,&
-                veasse         , ds_energy  , sdcriq, eta       , list_load)
+                ds_contact     , ds_algopara, fonact     , ds_measure,&
+                sddisc         , sd_obsv    , sderro     , sddyna    , ds_posttimestep,&
+                valinc         , solalg     , meelem     , measse    , veelem         ,&
+                veasse         , ds_energy  , sdcriq     , eta       , list_load)
 !
 ! --- ETAT DE LA CONVERGENCE DU PAS DE TEMPS
 !
