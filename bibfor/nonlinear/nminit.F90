@@ -21,7 +21,7 @@
 subroutine nminit(mesh       , model         , mate       , cara_elem      , list_load ,&
                   numedd     , numfix        , ds_algopara, ds_constitutive, maprec    ,&
                   solver     , numins        , sddisc     , sdnume         , sdcrit    ,&
-                  ds_material, list_func_acti    , sdpilo     , sddyna         , ds_print  ,&
+                  ds_material, list_func_acti, sdpilo     , sddyna         , ds_print  ,&
                   sd_suiv    , sd_obsv       , sderro     , ds_posttimestep, ds_inout  ,&
                   ds_energy  , ds_conv       , sdcriq     , valinc         , solalg    ,&
                   measse     , veelem        , meelem     , veasse         , ds_contact,&
@@ -72,6 +72,7 @@ implicit none
 #include "asterfort/nonlinDSConstitutiveInit.h"
 #include "asterfort/nonlinDSPostTimeStepInit.h"
 #include "asterfort/nonlinDSInOutInit.h"
+#include "asterfort/nonlinSystemInit.h"
 #include "asterfort/nmrefe.h"
 #include "asterfort/nminma.h"
 #include "asterfort/nminmc.h"
@@ -86,7 +87,6 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/nonlinDSPrintSepLine.h"
 #include "asterfort/nonlinDSDynamicInit.h"
-#include "asterfort/nonlinSystemInit.h"
 !
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
