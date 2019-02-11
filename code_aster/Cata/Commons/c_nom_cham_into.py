@@ -365,8 +365,6 @@ class NOM_CHAM_INTO:  #COMMUN#
                                  tr(u"Pression totale de fluide en THM"), ),
             "SISE_ELNO":        ( (),
                                  tr(u"Contraintes aux noeuds par sous-élément"), ),
-            "SPMX_ELGA":        ( (),
-                                 tr(u"Valeurs maximum sur un sous-point"), ),
             "VITE_VENT":        ( (),
                                  tr(u"Chargement vitesse du vent"), ),
         }
