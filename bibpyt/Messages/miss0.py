@@ -21,7 +21,7 @@
 
 cata_msg = {
     2 : _(u"""
-Parmi les matériaux définis, les occurences suivantes ne sont pas utilisées :
+Parmi les matériaux définis, les occurrences suivantes ne sont pas utilisées :
     %(k1)s
 """),
 

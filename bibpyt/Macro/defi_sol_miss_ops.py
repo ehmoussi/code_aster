@@ -121,7 +121,6 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
         if n_epais == 0:
             UTMESS("F", "MISS0_21")
         nb_couche = len(l_couche)
-        print 'l_couche=',l_couche
 
     # Mode automatique pour les couches :
     grma_interf = None
@@ -214,7 +213,6 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
             if len(coor_z_sol) == 1:
                 UTMESS("F", "MISS0_29")
             # Verification entre base de l'interface et couches de sol
-            print 'coor_z_sol=',coor_z_sol
             if len(l_epais) <> len(ll_mate):
                UTMESS("F", "MISS0_30")
 
@@ -325,7 +323,6 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
                         id_mate = ll_mate[0]
                     elif ind_mat_sup < (ind_mat_inf - 2):
                         #Cas plus de deux materiaux dans la sous-couche
-                        print '   Cas plus de deux materiaux dans la sous-couche'
                         ep_mat_h = []
                         ep_mat_b = []
                         ep_mat = [(l_z_ep[ind_mat_sup + 1] - enfonc_ss_c_haut),]
@@ -464,8 +461,6 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
         for couche in l_couche[:-2]:
             prof = prof - couche["EPAIS"]
             prof = round(prof,tole_r)
-            print 'ii=',ii
-            print 'prof=',prof
             if prof == min_z_input_r:
                 if decalage_auto:
                     UTMESS("A", "MISS0_40", valr=(prof,couche["EPAIS"]))
@@ -473,7 +468,6 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
                 else:
                     UTMESS("A", "MISS0_41")
             ii += 1
-        print 'l_couche mod=',l_couche
 
 
     # 3. définition de la table
