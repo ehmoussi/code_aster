@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -177,9 +177,6 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=5,
 #----------------------------------------------------------
 #
 
-
-DEFI_FICHIER( FICHIER= 'WILAMOR', UNITE = 38)
-
 IMPR_RESU(FORMAT = 'IDEAS', UNITE = 38,
           RESU=_F( RESULTAT = WILAMOR,
           NOM_CHAM=('DEPL', 'VITE', 'ACCE',),
@@ -189,7 +186,9 @@ IMPR_RESU(FORMAT = 'IDEAS', UNITE = 38,
 #----------------------------------------------------------
 # TEST DE LIRE_RESU
 #----------------------------------------------------------
-
+import os
+os.system("ls -ltr fort.38")
+os.system("cat fort.38")
 
 WILAMOR2=LIRE_RESU(       MAILLAGE=POUTRE,
                                  UNITE=38,
