@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -32,15 +32,6 @@ class FunctionDefinition(ExecuteCommand):
     """Command that creates a :py:class:`~code_aster.Objects.Function`."""
     command_name = "DEFI_FONCTION"
 
-    def adapt_syntax(self, keywords):
-        """Hook to adapt syntax from a old version or for compatibility reasons.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords, changed
-                in place.
-        """
-        unsupported(keywords, "", "NOEUD_PARA")
-
     def create_result(self, keywords):
         """Initialize the result object.
 
@@ -58,6 +49,11 @@ class FunctionDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        #TODO: Remove this fix
+        if keywords.get("NOEUD_PARA") is not None:
+            ExecuteCommand.exec_(self, keywords)
+            return
+
         funct = self._result
         cmplx = False
         minx = 1
