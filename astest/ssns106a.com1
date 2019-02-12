@@ -222,7 +222,7 @@ TEST_TABLE(
            TABLE=TAB_G_RA,
            FILTRE=_F(NOM_PARA='NOM_PARA',
                      VALE_K='GAMMA_F',),
-           )
+           CRITERE='ABSOLU')
 
 TEST_TABLE(
            VALE_CALC=0.640067689972,
@@ -389,7 +389,7 @@ TEST_TABLE(
            TABLE=TAB_G_PA,
            FILTRE=_F(NOM_PARA='NOM_PARA',
                      VALE_K='GAMMA_F',),
-           )
+           CRITERE='ABSOLU')
 
 TEST_TABLE(
            VALE_CALC=0.62428364007,
@@ -728,7 +728,7 @@ TEST_TABLE(
            TABLE=TAB_G_CI,
            FILTRE=_F(NOM_PARA='NOM_PARA',
                      VALE_K='GAMMA_F',),
-           )
+           CRITERE='ABSOLU')
 
 TEST_TABLE(
            VALE_CALC=0.675090797175,
