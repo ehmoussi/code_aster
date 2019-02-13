@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,10 +68,10 @@ class ExecProgram( object ):
     @staticmethod
     def factory(macro, **kwargs):
         """Factory that returns the object according to the arguments"""
-        if kwargs.has_key('SALOME') and kwargs['SALOME']:
+        if kwargs.has_key('SALOME') and kwargs.get('SALOME'):
             class_ = ExecSalomeScript
-        elif kwargs.has_key('MAILLAGE') and kwargs['MAILLAGE']:
-            fmt = kwargs['MAILLAGE']['FORMAT']
+        elif kwargs.has_key('MAILLAGE') and kwargs.get('MAILLAGE'):
+            fmt = kwargs.get('MAILLAGE')['FORMAT']
             if fmt == 'SALOME':
                 class_ = ExecSalome
             elif fmt == 'GMSH':
@@ -90,11 +90,11 @@ class ExecProgram( object ):
 
     def configure( self, kwargs ):
         """Pre-execution function, read the keywords"""
-        self.prog = kwargs['LOGICIEL']
-        self.args = list( kwargs['ARGUMENT'] if kwargs.has_key('ARGUMENT') and kwargs['ARGUMENT'] else [] )
-        self.shell = kwargs['SHELL'] == 'OUI'
-        self.debug = kwargs['INFO'] == 2
-        self.exitCodeMax = kwargs['CODE_RETOUR_MAXI']
+        self.prog = kwargs.get('LOGICIEL')
+        self.args = list( kwargs.get('ARGUMENT') if kwargs.has_key('ARGUMENT') and kwargs.get('ARGUMENT') else [] )
+        self.shell = kwargs.get('SHELL') == 'OUI'
+        self.debug = kwargs.get('INFO') == 2
+        self.exitCodeMax = kwargs.get('CODE_RETOUR_MAXI')
         self.cmdBuilder = CommandLine()
 
     def execute( self ):
@@ -171,21 +171,19 @@ class ExecMesher( ExecProgram ):
         """Pre-execution function, read the keywords"""
         super(ExecMesher, self).configure( kwargs )
         self.uniteAster = UniteAster()
-        self.fileIn = self.uniteAster.Nom( kwargs['MAILLAGE']['UNITE_GEOM'] )
-
-    def cleanUp( self ):
-        """Cleanup function"""
-        self.uniteAster.EtatInit()
+        self.fileIn = self.uniteAster.Nom( kwargs.get('MAILLAGE')['UNITE_GEOM'] )
 
     def post( self ):
         """Create the mesh object"""
-        self.step.DeclareOut('mesh', self.step.sd)
-        ulMesh = self.uniteAster.Unite(self.fileOut)
+        from code_aster.RunManager.LogicalUnit import LogicalUnitFile, FileType, FileAccess
+        fileToRead = LogicalUnitFile.open(self.fileOut, FileType.Binary, FileAccess.Old)
+        ulMesh = fileToRead.unit
         assert ulMesh, \
             "file '{}' not associated to a logical unit".format(self.fileOut)
         mesh = LIRE_MAILLAGE(UNITE=ulMesh,
                              FORMAT=self.format,
                              INFO=2 if self.debug else 1)
+        return mesh
 
 
 class ExecSalome( ExecMesher ):
@@ -254,7 +252,7 @@ class ExecSalomeScript( ExecProgram ):
     def configure( self, kwargs ):
         """Pre-execution function, read the keywords"""
         super(ExecSalomeScript, self).configure( kwargs )
-        factKw = kwargs['SALOME']
+        factKw = kwargs.get('SALOME')
         if os.environ.get('APPLI'):
             local = osp.join(os.environ['HOME'], os.environ['APPLI'],
                              'salome')
@@ -267,7 +265,7 @@ class ExecSalomeScript( ExecProgram ):
             self.args.extend( ['-m', factKw['MACHINE']] )
             # suppose the path to salome is the same on the remote host
             # if LOGICIEL is not provided
-            self.args.extend( ['-d', kwargs['LOGICIEL'] or local] )
+            self.args.extend( ['-d', kwargs.get('LOGICIEL') or local] )
             self.args.extend( ['-u', factKw['UTILISATEUR']] )
         self.args.extend( ['-p', str( factKw['PORT'] )] )
         # change NOM_PARA/VALE in the original script
@@ -324,7 +322,7 @@ def exec_logiciel_ops(self, **kwargs):
     try:
         action.configure( kwargs )
         action.execute()
-        action.post()
+        return action.post()
     except AsterError as err:
         UTMESS('F', err.id_message, valk=err.valk,
                vali=err.vali, valr=err.valr)
