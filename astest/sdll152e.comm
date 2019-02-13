@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -372,9 +372,11 @@ FONC01_2=DEFI_FONCTION(       NOM_PARA='Y',
                                           1.000000000000000,       -1.000000000000000,
                                           ) )
 
-FONC01 = CREA_TABLE( LISTE      = _F(LISTE_K = ('FONC01_1','FONC01_2'),
+FONC01 = CREA_TABLE( LISTE      = _F(LISTE_K = ('00000015','00000016'),
                                      PARA    = 'FONCTION',             ),
                      TYPE_TABLE = 'TABLE_FONCTION',)
+FONC01.addReference(FONC01_1)
+FONC01.addReference(FONC01_2)
 
 SPECTRE1=DEFI_SPEC_TURB(    SPEC_FONC_FORME=_F(
               INTE_SPEC = INTSPEX,
