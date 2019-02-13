@@ -197,9 +197,9 @@ TAB=CREA_TABLE(LISTE=(_F(PARA='NUMERO',
 IMPR_TABLE(TABLE=TAB,UNITE=50,);
 TEST_FICHIER(FICHIER="./fort.50",
              NB_VALE_I=2,
-             VALE_CALC_I=2,
+             VALE_CALC_I=1,
              NB_VALE=0,
-             VALE_CALC_K="9ad3416e570da40ccfbd2089baa629cc",
+             VALE_CALC_K="f41d7f05d3a9bc2d9284d05f814bbb73",
              EXPR_IGNORE='ASTER',
 )
 
@@ -271,7 +271,7 @@ IMPR_RESU(UNITE=82, FORMAT='GMSH',
 
 TEST_FICHIER(FICHIER="./fort.82",
              NB_VALE_I=32,
-             VALE_CALC_I=17,
+             VALE_CALC_I=32,
              NB_VALE=63,
              VALE_CALC=1.1398620000e+03,
 )
@@ -560,10 +560,12 @@ IMPR_RESU(UNITE=84, FORMAT='GMSH',
 
 TEST_FICHIER(FICHIER="./fort.84",
              NB_VALE_I=244,
-             VALE_CALC_I=51,
+             VALE_CALC_I=243,
              NB_VALE=201,
              VALE_CALC=1.6920779992e+02,
 )
+import os
+os.system("cat fort.84")
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
