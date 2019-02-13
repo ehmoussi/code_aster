@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -150,8 +150,8 @@ IMPR_RESU ( MODELE=MODELE_1,
 DEFI_FICHIER(ACTION='LIBERER',UNITE=36)
 
 TEST_FICHIER(FICHIER="./REPE_OUT/DEP10.pos",
-             NB_VALE_I=93,
-             VALE_CALC_I=1023,
+             NB_VALE_I=100,
+             VALE_CALC_I=1121,
              NB_VALE=12968,
              VALE_CALC=1.8146172191e+04,
 )
@@ -188,8 +188,8 @@ IMPR_RESU ( MODELE=MODELE_1,
 DEFI_FICHIER(ACTION='LIBERER',UNITE=38)
 
 TEST_FICHIER(FICHIER="./REPE_OUT/DEP12.pos",
-             NB_VALE_I=176,
-             VALE_CALC_I=878,
+             NB_VALE_I=182,
+             VALE_CALC_I=962,
              NB_VALE=10375,
              VALE_CALC=1.5553683808e+04,
 )
