@@ -323,12 +323,6 @@ subroutine irmfac(ioccur, formaf, ifichi, versio,&
                         formr, versio, 2)
         endif
     endif
-    if( formaf(1:4) .ne. 'MED' ) then
-        flush(ifichi)
-        if( ifichi.ne.6 ) then
-            call ulopen(-ifichi, ' ', ' ', ' ', ' ')
-        endif
-    endif
 !     **********************
 !     --- FIN IMPRESSION ---
 !     **********************

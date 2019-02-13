@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -444,7 +444,7 @@ DEFI_FICHIER(ACTION='LIBERER',UNITE=36)
 
 TEST_FICHIER(FICHIER="./REPE_OUT/ssll11b.36",
              NB_VALE_I=122,
-             VALE_CALC_I=28,
+             VALE_CALC_I=272,
              NB_VALE=149,
              VALE_CALC=445.200084858,
 )
@@ -460,7 +460,7 @@ DEFI_FICHIER(ACTION='LIBERER',UNITE=37)
 
 TEST_FICHIER(FICHIER="./REPE_OUT/ssll11b.37",
              NB_VALE_I=122,
-             VALE_CALC_I=28,
+             VALE_CALC_I=272,
              NB_VALE=149,
              VALE_CALC=445.200093662,
 )
