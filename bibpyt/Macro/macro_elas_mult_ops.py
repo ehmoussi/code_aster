@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -117,11 +117,11 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
         # calcul de lcharg : liste des listes de char_meca (mots clé CHAR_MECA
         # et CHAR_MECA_GLOBAL)
         xx1 = m['CHAR_MECA']
-        if type(xx1) != tuple and type(xx1) != list:
-            xx1 = (xx1,)
+        if type(xx1) is not tuple:
+            xx1 = tuple(xx1)
         xx2 = CHAR_MECA_GLOBAL
-        if type(xx2) != tuple and type(xx2) != list:
-            xx2 = (xx2,)
+        if type(xx2) is not tuple:
+            xx2 = tuple(xx2)
         lchar1 = []
         for chargt in (xx1 + xx2):
             if chargt:
