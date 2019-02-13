@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -276,7 +276,7 @@ ListLTHAX  = [] # 37 <-> MLTHAXX
 ListLMEAXC = [] # 38 <-> MLMEAXXC
 
 # 31 <-> ListLMECP  / MLMECPX
-nommo  = 'MLMECPX'
+nommo  = '00000011'
 nommo += (8-len(nommo))*" "
 for line in LinesFile31:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -288,7 +288,7 @@ for line in LinesFile31:
     ListLMECP.append(lsplit)
 
 # 32 <-> ListLMECPC / MLMECPXC
-nommo  = 'MLMECPXC'
+nommo  = '00000012'
 nommo += (8-len(nommo))*" "
 for line in LinesFile32:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -300,7 +300,7 @@ for line in LinesFile32:
     ListLMECPC.append(lsplit)
 
 # 33 <-> ListLMEDP  / MLMEDPX 
-nommo  = 'MLMEDPX'
+nommo  = '00000013'
 nommo += (8-len(nommo))*" "
 for line in LinesFile33:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -312,7 +312,7 @@ for line in LinesFile33:
     ListLMEDP.append(lsplit)
 
 # 34 <-> ListLMEDPC / MLMEDPXC
-nommo  = 'MLMEDPXC'
+nommo  = '00000014'
 nommo += (8-len(nommo))*" "
 for line in LinesFile34:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -324,7 +324,7 @@ for line in LinesFile34:
     ListLMEDPC.append(lsplit)
 
 # 35 <-> ListLMEAX  / MLMEAXX 
-nommo  = 'MLMEAXX'
+nommo  = '00000015'
 nommo += (8-len(nommo))*" "
 for line in LinesFile35:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -336,7 +336,7 @@ for line in LinesFile35:
     ListLMEAX.append(lsplit)
 
 # 36 <-> ListLTHPL  / MLTHPLX 
-nommo  = 'MLTHPLX'
+nommo  = '00000017'
 nommo += (8-len(nommo))*" "
 for line in LinesFile36:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -348,7 +348,7 @@ for line in LinesFile36:
     ListLTHPL.append(lsplit)
 
 # 37 <-> ListLTHAX  / MLTHAXX 
-nommo  = 'MLTHAXX'
+nommo  = '00000018'
 nommo += (8-len(nommo))*" "
 for line in LinesFile37:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -360,7 +360,7 @@ for line in LinesFile37:
     ListLTHAX.append(lsplit)
 
 # 38 <-> ListLMEAXC / MLMEAXXC
-nommo  = 'MLMEAXXC'
+nommo  = '00000016'
 nommo += (8-len(nommo))*" "
 for line in LinesFile38:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -698,7 +698,7 @@ ListQHMDP = [] # 32 <-> MQHMDPX
 ListQHMDPC = [] # 33 <-> MQHMDPXC
 
 # 31 <-> ListQMEDP / MQMEDPX
-nommo  = 'MQMEDPX'
+nommo  = '0000002c'
 nommo += (8-len(nommo))*" "
 for line in LinesFile31:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -710,7 +710,7 @@ for line in LinesFile31:
     ListQMEDP.append(lsplit)
 
 # 32 <-> ListQHMDP / MQHMDPX
-nommo  = 'MQHMDPX'
+nommo  = '0000002d'
 nommo += (8-len(nommo))*" "
 for line in LinesFile32:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -722,7 +722,7 @@ for line in LinesFile32:
     ListQHMDP.append(lsplit)
 
 # 33 <-> ListQHMDP / MQHMDPXC
-nommo  = 'MQHMDPXC'
+nommo  = '0000002e'
 nommo += (8-len(nommo))*" "
 for line in LinesFile33:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
