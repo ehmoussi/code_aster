@@ -194,6 +194,12 @@ subroutine op0039()
                     modele, noma, nomare, resure(iocc), lgmsh)
 !
       end do
+      if( form(1:4) .ne. 'MED' ) then
+        flush(ifi)
+        if( ifi.ne.6 ) then
+          call ulopen(-ifi, ' ', ' ', ' ', ' ')
+        endif
+      endif
 !
 999   continue
     !endif
