@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -175,6 +175,8 @@ def macro_matr_ajou_ops(
         if ECOULEMENT != None:
             grma.append(ECOULEMENT['GROUP_MA_1'])
             grma.append(ECOULEMENT['GROUP_MA_2'])
+            if type(ECOULEMENT) not in (list, tuple):
+                ECOULEMENT = (ECOULEMENT,)
         __NOFLUI = AFFE_MODELE(MAILLAGE=MAILLAGE,
                                AFFE=_F(GROUP_MA=grma,
                                        MODELISATION=MODELISATION,
