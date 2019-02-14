@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -77,11 +77,11 @@ DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
 DETRUIRE(CONCEPT=_F(NOM=unite),INFO=1)
 TEST_FICHIER(
     FICHIER     ='./REPE_OUT/carelem1.concept',EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
-    NB_VALE_I   =  3478,
-    VALE_CALC_I =  105246533,
-    NB_VALE     =  10278,
-    VALE_CALC   =  615.0,
-    VALE_CALC_K = "477064b60bb5cab72bdfda4900071394",
+    NB_VALE_I   =  3548,
+    VALE_CALC_I =  105246599,
+    NB_VALE     =  10304,
+    VALE_CALC   =  1120.999973,
+    VALE_CALC_K = "c36aa5e9a259a51009aa5ef0127f8caf",
 )
 
 unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER='./REPE_OUT/carelem2.concept',ACCES='NEW')
@@ -90,9 +90,9 @@ DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
 DETRUIRE(CONCEPT=_F(NOM=unite),INFO=1)
 TEST_FICHIER(
     FICHIER     ='./REPE_OUT/carelem2.concept',EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
-    NB_VALE     =  10278,
-    VALE_CALC   =  829.0,
-    VALE_CALC_K = "477064b60bb5cab72bdfda4900071394",
+    NB_VALE     =  10304,
+    VALE_CALC   =  1360.999973,
+    VALE_CALC_K = "c36aa5e9a259a51009aa5ef0127f8caf",
 )
 
 unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER='./REPE_OUT/carelem3.concept',ACCES='NEW')
@@ -101,9 +101,9 @@ DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
 DETRUIRE(CONCEPT=_F(NOM=unite),INFO=1)
 TEST_FICHIER(
     FICHIER     ='./REPE_OUT/carelem3.concept',EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
-    NB_VALE     =  2718,
-    VALE_CALC   =  389.0,
-    VALE_CALC_K = "2b8ee25e4c356c095d65f6ade2610eda",
+    NB_VALE     =  2744,
+    VALE_CALC   =  707.0,
+    VALE_CALC_K = "02009f5c732f429db661b46adbfd6162",
 )
 
 unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER='./REPE_OUT/carelem4.concept',ACCES='NEW')
@@ -112,9 +112,9 @@ DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
 DETRUIRE(CONCEPT=_F(NOM=unite),INFO=1)
 TEST_FICHIER(
     FICHIER     ='./REPE_OUT/carelem4.concept',EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
-    NB_VALE     =  2718,
-    VALE_CALC   =  483.0,
-    VALE_CALC_K = "2b8ee25e4c356c095d65f6ade2610eda",
+    NB_VALE     =  2744,
+    VALE_CALC   =  827.0,
+    VALE_CALC_K = "02009f5c732f429db661b46adbfd6162",
 )
 
 unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER='./REPE_OUT/carelem5.concept',ACCES='NEW')
@@ -123,9 +123,9 @@ DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
 DETRUIRE(CONCEPT=_F(NOM=unite),INFO=1)
 TEST_FICHIER(
     FICHIER     ='./REPE_OUT/carelem5.concept',EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
-    NB_VALE     =  10278,
-    VALE_CALC   =  1993.00012,
-    VALE_CALC_K = "477064b60bb5cab72bdfda4900071394",
+    NB_VALE     =  10304,
+    VALE_CALC   =  2843.00012,
+    VALE_CALC_K = "c36aa5e9a259a51009aa5ef0127f8caf",
 )
 
 FIN()
