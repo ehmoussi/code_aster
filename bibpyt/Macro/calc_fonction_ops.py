@@ -190,11 +190,13 @@ class CalcFonctionOper(object):
         self.oper = oper
         self.ctxt = ctxt
         self.args = kwargs
-        if type(self.args[self.oper]) is tuple:
+        if type(self.args[self.oper]) in (list, tuple):
             if len(self.args[self.oper]) == 1:
                 self.kw = self.args[self.oper][0]
             else:
                 self.kw = self.args[self.oper]
+        else:
+            self.kw = self.args[self.oper]
         self.resu = None
         self._lf = []
         self._dat = None
