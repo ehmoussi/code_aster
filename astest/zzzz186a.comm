@@ -323,8 +323,6 @@ IMPR_OAR(TYPE_CALC  = 'COMPOSANT',
                         TABLE=T_MECA_S,
                         TABLE_S = T_MECA_R),)
 
-import os
-os.system("cat fort.38")
 # TEST DU FICHIER PRODUIT
 TEST_FICHIER(FICHIER='fort.38',
              NB_VALE=81,
@@ -335,7 +333,6 @@ TEST_FICHIER(FICHIER='fort.38',
   # Nombre de valeurs : 81                                      82
   # Somme des valeurs :  2.0192044917e+09                   2.0192044960e+09
   # Somme de contrôle : 600d2cac9724fb08057384cf9f744c1b  600d2cac9724fb08057384cf9f744c1b
-
 
 # Resultats thermo-mecaniques
 RESUT2 = CALC_CHAMP(CHAM_MATER=CHM2,

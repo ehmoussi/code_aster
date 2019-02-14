@@ -259,7 +259,7 @@ class composant(OAR_element):
         try:
             # On ne construit qu'une table des abscisses et une table des contraintes.
             # Le revetement est obligatoirement en interne on commence par lui
-            para_resu_meca = args['RESU_MECA']
+            para_resu_meca = args['RESU_MECA'][0]
             self.num_char = para_resu_meca['NUM_CHAR']
             self.type_char = para_resu_meca['TYPE']
 
