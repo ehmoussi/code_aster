@@ -45,6 +45,7 @@ implicit none
 #include "asterfort/mreacg.h"
 #include "asterfort/mmbouc.h"
 #include "asterfort/mminfi.h"
+#include "asterfort/mmfield_prep.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/lac_gapi.h"
@@ -70,14 +71,16 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     integer :: ifm, niv
     integer :: i_cont_zone, i_patch, nb_patch, nb_cont_zone
     integer :: j_patch
-    integer :: indi_cont_curr, indi_cont_prev
+    integer :: indi_cont_curr, indi_cont_prev, node_nume
     real(kind=8) :: tole_inter, gap
     integer :: loop_cont_vali
     aster_logical :: loop_cont_conv
     real(kind=8) :: lagc, coefint, loop_cont_vale
     integer :: jacobian_type
     integer :: loop_geom_count, iter_newt
-    character(len=19) :: sdappa, newgeo
+    character(len=19) :: sdappa, newgeo, cnscon
+    integer, pointer :: v_pa_lcum(:) => null()
+    integer, pointer :: v_mesh_patch(:) => null()
     character(len=24) :: sdcont_stat
     integer, pointer :: v_sdcont_stat(:) => null()
     character(len=24) :: sdcont_lagc
@@ -92,8 +95,8 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     integer, pointer :: v_sdappa_apli(:) => null()
     integer :: jv_geom
     real(kind=8), pointer :: v_disp_curr(:)  => null()
-    integer :: nume_equa
     integer, pointer :: v_mesh_lpatch(:) => null()
+    real(kind=8), pointer :: v_cnscon_cnsv(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -149,6 +152,18 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     call jeveuo(disp_curr(1:19)//'.VALE', 'E', vr = v_disp_curr)
 !
+! - Prepare displacement field to get contact Lagrangien multiplier
+!
+    cnscon = '&&MMMBCA.CNSCON'
+    call mmfield_prep(disp_curr, cnscon,&
+                      l_sort_ = .true._1, nb_cmp_ = 1, list_cmp_ = ['LAGS_C  '])
+    call jeveuo(cnscon//'.CNSV', 'L', vr = v_cnscon_cnsv)
+!
+! - Get current patch
+
+    call jeveuo(mesh//'.PATCH', 'L', vi = v_mesh_patch)
+    call jeveuo(jexatr(mesh//'.PATCH', 'LONCUM'), 'L', vi = v_pa_lcum)
+!
 ! - Get status of loops
 !
     call mmbouc(ds_contact, 'Geom', 'Read_Counter', loop_geom_count)
@@ -169,15 +184,8 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! ----- Loop on patches
         do i_patch = 1, nb_patch
 ! --------- Get/Set LAGS_C
-            nume_equa = v_sdcont_ddlc(i_patch)
-            if (iter_newt .eq. 0 .and. loop_geom_count .gt. 1) then
-! ------------- For POINT_FIXE
-                lagc      = v_sdcont_lagc(j_patch-2+i_patch)
-                v_disp_curr(nume_equa) = lagc
-                ASSERT(ASTER_FALSE)
-            else
-                lagc = v_disp_curr(nume_equa)
-            endif
+            node_nume = v_mesh_patch(v_pa_lcum(j_patch+i_patch-1)+2-1)
+            lagc      = v_cnscon_cnsv(node_nume)
             v_sdcont_lagc(j_patch-2+i_patch) = lagc
 ! --------- Get parameters
             coefint        = v_sdappa_coef(j_patch-2+i_patch)
@@ -221,6 +229,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! - Cleaning
 !
     call jedetr(newgeo)
+    call detrsd('CHAM_NO_S', cnscon)
 !
     call jedema()
 end subroutine
