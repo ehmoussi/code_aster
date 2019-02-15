@@ -31,6 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "Discretization/ForwardGeneralizedDOFNumbering.h"
 #include "Results/ForwardMechanicalModeContainer.h"
+#include "Results/ForwardGeneralizedModeContainer.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
 
@@ -50,6 +51,8 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     ForwardGeneralizedDOFNumberingPtr _dofNum;
     /** @brief Support MechanicalModeContainer */
     ForwardMechanicalModeContainerPtr _mecaModeC;
+    /** @brief Support GeneralizedModeContainer */
+    ForwardGeneralizedModeContainerPtr _geneModeC;
 
   public:
     /**
@@ -65,7 +68,10 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     GenericGeneralizedAssemblyMatrixInstance( const std::string name ):
         DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
         _desc( JeveuxVectorDouble( getName() + ".DESC" ) ),
-        _refe( JeveuxVectorChar24( getName() + ".REFE" ) )
+        _refe( JeveuxVectorChar24( getName() + ".REFE" ) ),
+        _dofNum( nullptr ),
+        _mecaModeC( nullptr ),
+        _geneModeC( nullptr )
     {};
 
     /**
@@ -78,9 +84,19 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     };
 
     /**
+     * @brief Get support GeneralizedModeContainer
+     */
+    GeneralizedModeContainerPtr getModalBasisFromGeneralizedModeContainer()
+    {
+        if ( _geneModeC.isSet() )
+            return _geneModeC.getPointer();
+        return GeneralizedModeContainerPtr( nullptr );
+    };
+
+    /**
      * @brief Get support MechanicalModeContainer
      */
-    MechanicalModeContainerPtr getModalBasis()
+    MechanicalModeContainerPtr getModalBasisFromMechanicalModeContainer()
     {
         if ( _mecaModeC.isSet() )
             return _mecaModeC.getPointer();
@@ -101,6 +117,20 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     };
 
     /**
+     * @brief Set support GeneralizedModeContainer
+     */
+    bool setModalBasis( const GeneralizedModeContainerPtr &mecaModeC )
+    {
+        if ( mecaModeC != nullptr )
+        {
+            _geneModeC = mecaModeC;
+            _mecaModeC = nullptr;
+            return true;
+        }
+        return false;
+    };
+
+    /**
      * @brief Set support MechanicalModeContainer
      */
     bool setModalBasis( const MechanicalModeContainerPtr &mecaModeC )
@@ -108,6 +138,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
         if ( mecaModeC != nullptr )
         {
             _mecaModeC = mecaModeC;
+            _geneModeC = nullptr;
             return true;
         }
         return false;
