@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,14 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from Utilitai.Utmess import MessageLog
-
 DEBUT(CODE=_F( NIV_PUB_WEB='INTERNET', ),
       ERREUR=_F(ERREUR_F='EXCEPTION',), DEBUG=_F(SDVERI='OUI'),
       IGNORE_ALARM='SUPERVIS_1',
       PAR_LOT='NON')
 # ALARME 'SUPERVIS_1' : PAR_LOT='NON' necessaire pour verifier l'emission
 # d'une alarme
+
+from Utilitai.Utmess import MessageLog
 
 M=LIRE_MAILLAGE(FORMAT="ASTER",);
 
