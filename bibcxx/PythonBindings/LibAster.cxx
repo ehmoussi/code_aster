@@ -137,6 +137,7 @@
 #include "PythonBindings/TurbulentSpectrumInterface.h"
 #include "PythonBindings/UnitaryThermalLoadInterface.h"
 #include "PythonBindings/VariantStiffnessMatrixInterface.h"
+#include "PythonBindings/VariantModalBasisInterface.h"
 #include "PythonBindings/VectorUtilitiesInterface.h"
 #include "PythonBindings/XfemCrackInterface.h"
 // Please keep '*Interface.h' files in alphabetical order to ease merging
@@ -198,6 +199,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     py::def( "raiseAsterError", &raiseAsterError, raiseAsterError_overloads() );
 
     exportStiffnessMatrixVariantToPython();
+    exportModalBasisVariantToPython();
     exportVectorUtilitiesToPython();
     exportDataStructureToPython();
     exportMeshToPython();
