@@ -62,6 +62,7 @@ from .pcfieldonmesh_ext import PCFieldOnMeshDouble
 from .resultscontainer_ext import ResultsContainer
 from .surface_ext import Surface
 from .table_ext import Table
+from .tablecontainer_ext import TableContainer
 from .thermalload_ext import ThermalLoad
 from .timestepmanager_ext import TimeStepManager
 from .xfemcrack_ext import XfemCrack
