@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -333,7 +333,6 @@ TEST_FICHIER(FICHIER='fort.38',
   # Nombre de valeurs : 81                                      82
   # Somme des valeurs :  2.0192044917e+09                   2.0192044960e+09
   # Somme de contrôle : 600d2cac9724fb08057384cf9f744c1b  600d2cac9724fb08057384cf9f744c1b
-
 
 # Resultats thermo-mecaniques
 RESUT2 = CALC_CHAMP(CHAM_MATER=CHM2,

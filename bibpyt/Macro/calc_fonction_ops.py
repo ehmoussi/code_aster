@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -190,7 +190,13 @@ class CalcFonctionOper(object):
         self.oper = oper
         self.ctxt = ctxt
         self.args = kwargs
-        self.kw = self.args[self.oper]
+        if type(self.args[self.oper]) in (list, tuple):
+            if len(self.args[self.oper]) == 1:
+                self.kw = self.args[self.oper][0]
+            else:
+                self.kw = self.args[self.oper]
+        else:
+            self.kw = self.args[self.oper]
         self.resu = None
         self._lf = []
         self._dat = None

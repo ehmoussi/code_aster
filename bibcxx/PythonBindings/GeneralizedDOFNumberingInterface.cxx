@@ -26,9 +26,15 @@
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
 #include "PythonBindings/GeneralizedDOFNumberingInterface.h"
+#include "PythonBindings/VariantModalBasisInterface.h"
 
 void exportGeneralizedDOFNumberingToPython() {
     using namespace boost::python;
+
+    bool ( GeneralizedDOFNumberingInstance::*c1 )( const MechanicalModeContainerPtr& ) =
+        &GeneralizedDOFNumberingInstance::setModalBasis;
+    bool ( GeneralizedDOFNumberingInstance::*c2 )( const GeneralizedModeContainerPtr& ) =
+        &GeneralizedDOFNumberingInstance::setModalBasis;
 
     class_< GeneralizedDOFNumberingInstance,
             GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr, bases< DataStructure > >(
@@ -37,7 +43,8 @@ void exportGeneralizedDOFNumberingToPython() {
         .def( "__init__",
               make_constructor(&initFactoryPtr< GeneralizedDOFNumberingInstance, std::string >))
         .def( "getGeneralizedModel", &GeneralizedDOFNumberingInstance::getGeneralizedModel )
-        .def( "getModalBasis", &GeneralizedDOFNumberingInstance::getModalBasis )
+        .def( "getModalBasis", &getModalBasis< GeneralizedDOFNumberingPtr > )
         .def( "setGeneralizedModel", &GeneralizedDOFNumberingInstance::setGeneralizedModel )
-        .def( "setModalBasis", &GeneralizedDOFNumberingInstance::setModalBasis );
+        .def( "setModalBasis", c1 )
+        .def( "setModalBasis", c2 );
 };

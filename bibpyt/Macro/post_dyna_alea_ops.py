@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ def post_dyna_alea_ops(self, INFO, **args):
     if args.has_key('FRAGILITE'):
         from Utilitai.optimize import fmin
         from Utilitai.stats import normcdf, linregress
-        FRAGILITE = args['FRAGILITE']
+        FRAGILITE = args['FRAGILITE'][0]
         if FRAGILITE['LIST_PARA'] != None:
             liste_a = FRAGILITE['LIST_PARA'].sdj.VALE.get()
         elif FRAGILITE['VALE'] != None:

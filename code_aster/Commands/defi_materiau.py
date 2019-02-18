@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -168,7 +168,7 @@ class MaterialDefinition(ExecuteCommand):
                         mater.addNewFunctionProperty(kwName, mandatory)
                     elif isinstance(kwValue, Table):
                         mater.addNewTableProperty(kwName, mandatory)
-                    elif isinstance(kwValue, (list, tuple)):
+                    elif type(kwValue) in (list, tuple):
                         if type(kwValue[0]) is float:
                             mater.addNewVectorOfDoubleProperty(
                                 kwName, mandatory)

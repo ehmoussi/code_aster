@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -202,6 +202,18 @@ class TableReaderAster(TableReader):
     idt_fin = '#FIN_TABLE\n'
     idt_tit = '#TITRE'
     id_vide = '-'
+
+    def _build_row(self, values):
+        """Make a dict line."""
+        dico = {}
+        for para, typ, valk in zip(self.tab.para, self.tab.type, values):
+            valk = valk.strip()
+            if valk != self.id_vide:
+                if typ[0] != "K":
+                    dico[para] = convert(valk)
+                else:
+                    dico[para] = valk
+        return dico
 
     def split_tab(self, nblock):
         """Split the text to extract the 'nblock'-th block."""

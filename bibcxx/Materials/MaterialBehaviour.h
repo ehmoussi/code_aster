@@ -949,7 +949,7 @@ class BetonRagMaterialBehaviourInstance : public GeneralMaterialBehaviourInstanc
                 true ) );
         this->addDoubleProperty( "Endo_mc", ElementaryMaterialPropertyDouble( "ENDO_MC", false ) );
         this->addDoubleProperty( "Endo_mt", ElementaryMaterialPropertyDouble( "ENDO_MT", false ) );
-        this->addDoubleProperty( "Endo_Siguc",
+        this->addDoubleProperty( "Endo_siguc",
                                  ElementaryMaterialPropertyDouble( "ENDO_SIGUC", false ) );
         this->addDoubleProperty( "Endo_sigut",
                                  ElementaryMaterialPropertyDouble( "ENDO_SIGUT", false ) );

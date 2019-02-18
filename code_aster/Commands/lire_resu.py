@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -25,8 +25,9 @@ from ..Objects import NonLinearEvolutionContainer
 from ..Objects import EvolutiveLoad
 from ..Objects import FullTransientResultsContainer
 from ..Objects import FullHarmonicResultsContainer
-from ..Objects import MechanicalModeContainer
+from ..Objects import MechanicalModeContainer, MechanicalModeComplexContainer
 from ..Objects import ModeEmpiContainer
+from ..Objects import InputVariableEvolutionContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -59,11 +60,9 @@ class ResultsReader(ExecuteCommand):
         elif typ == "MODE_EMPI":
             self._result = ModeEmpiContainer()
         elif typ == "MODE_MECA_C":
-            raise NotImplementedError("Type of result {0!r} not yet "
-                                      "implemented".format(typ))
+            self._result = MechanicalModeComplexContainer()
         elif typ == "EVOL_VARC":
-            raise NotImplementedError("Type of result {0!r} not yet "
-                                      "implemented".format(typ))
+            self._result = InputVariableEvolutionContainer()
         else:
             raise NotImplementedError("Type of result {0!r} not yet "
                                       "implemented".format(typ))
