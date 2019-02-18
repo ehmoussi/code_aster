@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine kit_glrc_dm_vmis(imate, compor, epsm, deps, vim,&
                             option, sigm, sig, vip, dsidep,&
-                            crit, iret)
+                            crit, iret, t2iu)
 !
 implicit none
 !
@@ -39,7 +39,7 @@ implicit none
     integer :: imate, iret
     real(kind=8) :: epsm(6), deps(6), vim(*), ep
     real(kind=8) :: crit(*)
-    real(kind=8) :: sigm(*), sig(*), vip(*), dsidep(6, *)
+    real(kind=8) :: sigm(*), sig(*), vip(*), dsidep(6, *), t2iu(4)
     character(len=16) :: option, compor
 ! ----------------------------------------------------------------------
 !
@@ -57,7 +57,7 @@ implicit none
 ! ----------------------------------------------------------------------
 !
 !
-    aster_logical :: rigi, resi
+    aster_logical :: rigi, resi, is_param_opt(2)
     integer :: i, j, k, ierr, nvv, icp, ncpmax, nsgmax, isg, icara
     real(kind=8) :: emmp(6), demp(6), cel(6, 6), celinv(6, 6), celdam(6, 6)
     real(kind=8) :: emel(6)
@@ -69,6 +69,7 @@ implicit none
     real(kind=8) :: ddemp(6), tanloc(6, 6), tanpom(6, 6), precr
     real(kind=8) :: lambda, deuxmu, lamf, deumuf, gt, gc, gf, seuil, alpha
     real(kind=8) :: alfmc
+    real(kind=8) :: epsi_c, epsi_els, epsi_lim, val_param_opt(10)
     character(len=8) :: typmod(2)
 !
     rac2 = sqrt(2.d0)
@@ -86,9 +87,9 @@ implicit none
 !-----NOMBRE DE VARIABLES INTERNES DU MODELE, SANS CELLE POUR
 !-----LA CONTRAINTE PLANE
     if (compor(1:14) .eq. 'VMIS_CINE_LINE') then
-        nvv = 20
+        nvv = 31
     else if (compor(1:10) .eq. 'VMIS_ISOT_') then
-        nvv = 15
+        nvv = 26
     endif
 !
 !-----TOLERANCE POUR LA CONTRAINTE HORS PLAN
@@ -114,17 +115,21 @@ implicit none
     call glrc_recup_mate(imate, 'GLRC_DM         ', .false._1, ep, lambda=lambda, &
                          deuxmu=deuxmu, lamf=lamf, deumuf=deumuf, &
                          gt=gt, gc=gc, gf=gf, seuil=seuil,&
-                         alpha=alpha, alfmc=alfmc)
+                         alpha=alpha, alfmc=alfmc, epsic=epsi_c,&
+                         epsiels=epsi_els, epsilim=epsi_lim,&
+                         is_param_opt_=is_param_opt, val_param_opt_=val_param_opt)
 
 !
 !-----OBTENTION DU MODULE ELASTIQUE INITIAL
     call r8inir(6, 0.d0, demp, 1)
-    call r8inir(7, 0.d0, vip, 1)
+    call r8inir(18, 0.d0, vip, 1)
 !
     call glrc_lc(demp, demp, vip, 'RIGI_MECA_TANG  ', demp,&
                  vip, cel, lambda, deuxmu, lamf,&
                  deumuf, gt, gc, gf, seuil,&
-                 alpha, alfmc, crit, iret)
+                 alpha, alfmc, crit,&
+                 epsi_c, epsi_els, epsi_lim, iret,&
+                 ep, is_param_opt, val_param_opt, t2iu)
 !
     do j = 1, 6
         do i = 1, 6
@@ -174,7 +179,9 @@ implicit none
         call glrc_lc(emmp, demp, vim, 'FULL_MECA       ', sigpd,&
                      vip, tandam, lambda, deuxmu, lamf,&
                      deumuf, gt, gc, gf, seuil,&
-                     alpha, alfmc, crit, iret)
+                     alpha, alfmc, crit,&
+                     epsi_c, epsi_els, epsi_lim, iret,&
+                     ep, is_param_opt, val_param_opt, t2iu)
 !
 !-------CALCUL DE L INCREMENT DE LA DEFORMATION ELASTIQUE
 !        PUIS DEPS - DEPS^D
@@ -220,8 +227,8 @@ implicit none
             if (compor(1:14) .eq. 'VMIS_CINE_LINE') then
                 call nmcine('RIGI', 1, 1, 3, imate,&
                             compor, crbid(1:10), inbid, inbid, eps2d,&
-                            deps2d, sig2dm, vim(8), 'FULL_MECA       ', sig2dp,&
-                            vip(8), tan3d, iret)
+                            deps2d, sig2dm, vim(19), 'FULL_MECA       ', sig2dp,&
+                            vip(19), tan3d, iret)
 !
 !---------VMIS_ISOT_LINE--------------------
             else if (compor(1:14) .eq. 'VMIS_ISOT_LINE') then
@@ -230,7 +237,7 @@ implicit none
                 typmod(2) = '        '
                 call nmisot('RIGI', 1, 1, 3, typmod,&
                             imate, 'VMIS_ISOT_LINE  ', crbid, deps2d, sig2dm,&
-                            vim(8), 'FULL_MECA       ', sig2dp, vip(8), tan3d,&
+                            vim(19), 'FULL_MECA       ', sig2dp, vip(19), tan3d,&
                             iret)
             endif
 !

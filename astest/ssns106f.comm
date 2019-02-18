@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -132,7 +132,10 @@ MAT_G=DEFI_MATERIAU(ELAS_GLRC=_F(E_M=EGM,
                     GLRC_DM=_F(GAMMA_T=0.1,
                                GAMMA_F=0.1,
                                NYT=3.7E5,
-                               MYF=5.0E3,),);
+                               MYF=5.0E3,
+                               GAMMA_C= 1.0,
+                               NYC = 0.0,
+                               ALPHA_C = 1.0,),);
 
 MATER=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=(_F(GROUP_MA='DALLE_G',
@@ -271,6 +274,7 @@ RESU_G=STAT_NON_LINE(MODELE=MO_G,
                                   PRECISION=0.1,),
                      NEWTON=_F(REAC_ITER=2,),
                      CONVERGENCE=_F(ITER_GLOB_MAXI=25,),);
+                     
 
 RESU_G=CALC_CHAMP(reuse =RESU_G,RESULTAT=RESU_G,PRECISION=1.E-3,
              FORCE=('FORC_NODA',),)

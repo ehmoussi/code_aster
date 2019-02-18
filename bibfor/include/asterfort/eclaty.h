@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ interface
     subroutine eclaty(nomte, elrefa, fapg, npg, npoini,&
                       nterm1, nsomm1, csomm1, tyma, nbno2,&
                       connx, mxnbn2, mxnbpi, mxnbte, mxnbse,&
-                      nbsel, corsel)
+                      nbsel, corsel, iret)
         integer :: mxnbse
         integer :: mxnbte
         integer :: mxnbpi
@@ -40,5 +40,6 @@ interface
         integer :: connx(mxnbn2, mxnbse)
         integer :: nbsel
         integer :: corsel(mxnbse)
+        integer :: iret
     end subroutine eclaty
 end interface

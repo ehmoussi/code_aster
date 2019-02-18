@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -298,7 +298,6 @@ DYN=DYNA_ALEA_MODAL( BASE_MODALE = _F( MODE_MECA = MODEAIR,
                                        AMOR_UNIF = 0.02,),
                      EXCIT = _F( INTE_SPEC = INTESP,
                                  NUME_ORDRE_I = (1,2),
-                                 NUME_ORDRE_J = (1,2),
                                  NOEUD = ('N3','N136'),
                                  NOM_CMP = ('DX','DX'),
                                  GRANDEUR = 'EFFO',),

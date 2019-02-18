@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,10 @@ nom ne serait pas déclaré ici."""
 
 DICT_NOM_VARI = {
     "AAAR": _(u"FLUA_ENDO_PORO avancement AAR"),
+    "ACIXELS": _(u"Maximum absolu des déformations selon X normalisé par la déformation ELS"),
+    "ACIXELU": _(u"Maximum absolu des déformations selon X normalisé par la déformation ELU"),
+    "ACIYELS": _(u"Maximum absolu des déformations selon Y normalisé par la déformation ELS"),
+    "ACIYELU": _(u"Maximum absolu des déformations selon Y normalisé par la déformation ELU"),
     "ADEF": _(u"FLUA_ENDO_PORO avancement DEF"),
     "ADOUCOMP": _(u"affaiblissement relatif de raideur en membrane en compression"),
     "ADOUFLEX": _(u"affaiblissement relatif de raideur en flexion"),
@@ -61,6 +65,8 @@ DICT_NOM_VARI = {
     "ATIL": _(u"FLUA_ENDO_PORO sulfo aluminates pour la def"),
     "AUSTENITE": _(u"phase métallurgique acier variable (austenite)"),
     "BAINITE": _(u"phase métallurgique acier variable (bainite)"),
+    "BETINF": _(u"Déformation de la nappe inférieure du béton, max. abs sur X et Y"),
+    "BETSUP": _(u"Déformation de la nappe supérieure du béton, max. abs sur X et Y"),
     "BIOG": _(u"FLUA_ENDO_PORO coeff de Biot effectif pour les RGI"),
     "BIOW": _(u"FLUA_ENDO_PORO coeff de Biot effectif pour la capillarite"),
     "BR_AVCHI": _(u"BETON_RAG : Avancement chimique"),
@@ -97,6 +103,7 @@ DICT_NOM_VARI = {
     "BR_SUT23": _(u"BETON_RAG : contrainte seuil d'endommagement de traction, composante 6"),
     "BR_SUT33": _(u"BETON_RAG : contrainte seuil d'endommagement de traction, composante 3"),
     "COHESION": _(u"cohésion"),
+    "COMMAX": _(u"Déformation à l’axe neutre maximale en compression (maximum sur les directions et instants"),
     "COMPT": _(u"itération de Newton courante,"),
     "COMR": _(u"itération de Newton de rupture,"),
     "CRITEPS": _(u"Critère en déformation, utilisé en Génie Civil"),
@@ -295,6 +302,8 @@ DICT_NOM_VARI = {
     "ERD23": _(u"déformation déviatorique réversible, composante 23"),
     "ERD31": _(u"déformation déviatorique réversible, composante 31"),
     "ERD33": _(u"déformation déviatorique réversible, composante 33"),
+    "ERRCOM": _(u"Pourcentage d'erreur sur la réponse en compression"),
+    "ERRFLE": _(u"Pourcentage d'erreur sur la réponse en flexion"),
     "ERSP": _(u"Déformation sphérique réversible"),
     "FECRDVC1": _(u"Hujeux : facteur de mobilisation du mécanisme déviatoire cyclique, k= 1"),
     "FECRDVC2": _(u"Hujeux : facteur de mobilisation du mécanisme déviatoire cyclique, k= 1"),
@@ -308,6 +317,7 @@ DICT_NOM_VARI = {
     "FH_X": _(u"flux hydraulique dans le repère global ( xxx_JOINT_HYME) composante 1"),
     "FH_Y": _(u"flux hydraulique dans le repère global ( xxx_JOINT_HYME) composante 2"),
     "FH_Z": _(u"flux hydraulique dans le repère global ( xxx_JOINT_HYME) composante 3"),
+    "FLEMAX": _(u"Déformation maximale absolue au cours de temps en flexion"),
     "FORCE": _(u"Force"),
     "FORCEX":   _(u"DIS_ECRO_TRAC : Force suivant x local."),
     "FORCEY":   _(u"DIS_ECRO_TRAC : Force suivant y local."),
@@ -475,6 +485,7 @@ DICT_NOM_VARI = {
     "THXZ2": _(u"Hujeux : normale entrante à la surface de charge du mécanisme père du mécanisme déviatoire du plan 2, composante 2"),
     "THYZ1": _(u"Hujeux : normale entrante à la surface de charge du mécanisme père du mécanisme déviatoire du plan 1, composante 1"),
     "THYZ2": _(u"Hujeux : normale entrante à la surface de charge du mécanisme père du mécanisme déviatoire du plan 1, composante 2"),
+    "TRAMAX": _(u"Déformation maximale absolue au cours de temps en membrane"),
     "TXX": _(u"GDEF_LOG  contrainte T, composante XX"),
     "TXY": _(u"GDEF_LOG  contrainte T, composante XY"),
     "TXZ": _(u"GDEF_LOG  contrainte T, composante XZ"),

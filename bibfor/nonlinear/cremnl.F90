@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -161,6 +161,7 @@ subroutine cremnl(reprise, baseno, numrep, nbordr0, nbordr,&
 !
 !     BOUCLE SUR LES NUMEROS D ORDRE    
     do 100 iordr = 1, nbordr
+    
 !-- ATTRIBUTION D UN NOM DE CONCEPT
         call gcncon('_', nomrep)
 !
@@ -258,7 +259,7 @@ subroutine cremnl(reprise, baseno, numrep, nbordr0, nbordr,&
         valr(2) = energ
         valk(1) = nomrep
         valk(2) = 'MODE_MECA'
-        valk(3) = 'COEF_FOURIER'
+        valk(3) = 'FOURIER'//trim(nomrep)
         if (reprise) then
             valk(4) = vk8
         else
