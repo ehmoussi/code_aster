@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -277,35 +277,6 @@ class MINC_HEXA20(Element):
                      (SP.PTEMPSR, CTEMPSR), (SP.PTHETAR, NDEPLAR),
                      (OP.CALC_G_F.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
                      (OP.CALC_G_F.PVARIPR, LC.ZVARINO), (SP.PVITESS, NDEPLAR),
-                     ),
-            para_out=((SP.PGTHETA, LC.EGTHETA), ),
-        ),
-
-        OP.CALC_G_GLOB(te=27,
-            para_in=((SP.PACCELE, NDEPLAR), (OP.CALC_G_GLOB.PCOMPOR, LC.CCOMPOR),
-                     (SP.PCONTGR, ESIGMPG), (OP.CALC_G_GLOB.PCONTRR, ESIGMPG),
-                     (SP.PDEFOPL, EDEFONO), (SP.PDEPINR, NDEPLAR),
-                     (SP.PDEPLAR, NDEPLAR), (SP.PEPSINR, CEPSINR),
-                     (SP.PFRVOLU, NFORCER), (SP.PGEOMER, NGEOMER),
-                     (SP.PMATERC, LC.CMATERC), (SP.PPESANR, LC.CPESANR),
-                     (SP.PROTATR, LC.CROTATR), (SP.PSIGINR, ESIGMNO),
-                     (SP.PTHETAR, NDEPLAR), (OP.CALC_G_GLOB.PVARCPR, LC.ZVARCPG),
-                     (SP.PVARCRR, LC.ZVARCPG), (OP.CALC_G_GLOB.PVARIPR, LC.ZVARINO),
-                     (SP.PVITESS, NDEPLAR), ),
-            para_out=((SP.PGTHETA, LC.EGTHETA), ),
-        ),
-
-        OP.CALC_G_GLOB_F(te=27,
-            para_in=((SP.PACCELE, NDEPLAR), (OP.CALC_G_GLOB_F.PCOMPOR, LC.CCOMPOR),
-                     (SP.PCONTGR, ESIGMPG), (OP.CALC_G_GLOB_F.PCONTRR, ESIGMPG),
-                     (SP.PDEFOPL, EDEFONO), (SP.PDEPINR, NDEPLAR),
-                     (SP.PDEPLAR, NDEPLAR), (SP.PEPSINF, CEPSINF),
-                     (SP.PFFVOLU, CFORCEF), (SP.PGEOMER, NGEOMER),
-                     (SP.PMATERC, LC.CMATERC), (SP.PPESANR, LC.CPESANR),
-                     (SP.PROTATR, LC.CROTATR), (SP.PSIGINR, ESIGMNO),
-                     (SP.PTEMPSR, CTEMPSR), (SP.PTHETAR, NDEPLAR),
-                     (OP.CALC_G_GLOB_F.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
-                     (OP.CALC_G_GLOB_F.PVARIPR, LC.ZVARINO), (SP.PVITESS, NDEPLAR),
                      ),
             para_out=((SP.PGTHETA, LC.EGTHETA), ),
         ),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -176,24 +176,6 @@ class MECA_FACE3(Element):
                      (SP.PTEMPSR, CTEMPSR), (SP.PTHETAR, DDL_MECA),
                      (OP.CALC_G_F.PVARCPR, LC.ZVARCPG), (SP.PVITESS, DDL_MECA),
                      ),
-            para_out=((SP.PGTHETA, LC.EGTHETA), ),
-        ),
-
-        OP.CALC_G_GLOB(te=280,
-            para_in=((SP.PACCELE, DDL_MECA), (SP.PDEPLAR, DDL_MECA),
-                     (SP.PFR2D3D, NFORCER), (SP.PGEOMER, NGEOMER),
-                     (SP.PPRESSR, EPRESNO), (SP.PTHETAR, DDL_MECA),
-                     (OP.CALC_G_GLOB.PVARCPR, LC.ZVARCPG), (SP.PVITESS, DDL_MECA),
-                     ),
-            para_out=((SP.PGTHETA, LC.EGTHETA), ),
-        ),
-
-        OP.CALC_G_GLOB_F(te=280,
-            para_in=((SP.PACCELE, DDL_MECA), (SP.PDEPLAR, DDL_MECA),
-                     (SP.PFF2D3D, CFORCEF), (SP.PGEOMER, NGEOMER),
-                     (SP.PPRESSF, CPRESSF), (SP.PTEMPSR, CTEMPSR),
-                     (SP.PTHETAR, DDL_MECA), (OP.CALC_G_GLOB_F.PVARCPR, LC.ZVARCPG),
-                     (SP.PVITESS, DDL_MECA), ),
             para_out=((SP.PGTHETA, LC.EGTHETA), ),
         ),
 

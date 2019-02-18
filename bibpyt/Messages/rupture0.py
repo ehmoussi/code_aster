@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,19 +22,6 @@ cata_msg = {
     1: _(u"""
 Vous avez renseigné le mot clé simple MATER de la commande POST_K1_K2_K3.
 Le matériau %(k1)s présent dans la structure de données résultat va être surchargée par le matériau %(k2)s .
-"""),
-
-    2: _(u"""
-Erreur dans la récupération de la dimension (du maillage ou du modèle).
-L'opérateur CALC_G ne fonctionne que pour des maillages et des modèles purement 2d ou 3d.
-Notamment, un mélange de dimensions n'est pas autorisé.
-Si le besoin est réel, faites une demande d'évolution auprès de l'équipe de développement.
-"""),
-
-    3: _(u"""
-Erreur utilisateur.
-Incohérence entre le mot-clé OPTION et la dimension du problème.
-L'option %(k1)s ne s'utilise qu'en 3d. Or le problème est 2d.
 """),
 
     4: _(u"""

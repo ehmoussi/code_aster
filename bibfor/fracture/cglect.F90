@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cglect(resu, modele, ndim, option, cas,&
+subroutine cglect(resu, modele, ndim, option,&
                   typfis, nomfis, fonoeu, chfond, basfon,&
                   taillr, conf, lnoff, liss, ndeg, typdis)
     implicit none
@@ -24,8 +24,6 @@ subroutine cglect(resu, modele, ndim, option, cas,&
 #include "asterc/getfac.h"
 #include "asterfort/cgleff.h"
 #include "asterfort/cgtyfi.h"
-#include "asterfort/cgveca.h"
-#include "asterfort/cgvedo.h"
 #include "asterfort/cgvefo.h"
 #include "asterfort/cgveli.h"
 #include "asterfort/cgvemf.h"
@@ -40,7 +38,7 @@ subroutine cglect(resu, modele, ndim, option, cas,&
 #include "asterfort/utmess.h"
     integer :: ndim, lnoff, ndeg
     character(len=8) :: resu, modele, typfis, nomfis, conf
-    character(len=16) :: option, cas, typdis
+    character(len=16) :: option, typdis
     character(len=24) :: fonoeu, chfond, basfon, taillr, liss
 !
 ! person_in_charge: samuel.geniaut at edf.fr
@@ -55,7 +53,6 @@ subroutine cglect(resu, modele, ndim, option, cas,&
 !     MODELE : MODELE ASSOCIE A RESU
 !     NDIM   : DIMENSION DU MODELE
 !     OPTION : MOT-CLE OPTION
-!     CAS    : '2D', '3D_LOCAL' OU '3D_GLOBAL'
 !     TYPFIS : TYPE D'OBJET POUR DECRIRE LE FOND DE FISSURE
 !              'FONDFISS' OU 'FISSURE' OU 'THETA'
 !     NOMFIS : NOM DE L'OBJET POUR DECRIRE LE FOND DE FISSURE
@@ -96,16 +93,10 @@ subroutine cglect(resu, modele, ndim, option, cas,&
     call dismoi('MODELE', resu, 'RESULTAT', repk=modele)
     call dismoi('DIM_GEOM', modele, 'MODELE', repi=ndim)
 !
-!     VERIFICATION DE LA COMPATIBILITE ENTRE NDIM ET OPTION
-    call cgvedo(ndim, option)
-!
 !   CALCUL COHESIF OUVERT EN 3D UNIQUEMENT POUR L INSTANT
-    if(ndim.eq.2.and.typdis.eq.'COHESIF') then
+    if(ndim .eq. 2 .and. typdis.eq.'COHESIF') then
         call utmess('F', 'RUPTURE2_5')
     endif
-!
-!     DETERMINATION DU CAS : 2D, 3D LOCAL OU 3D GLOBAL
-    call cgveca(ndim, option, cas)
 !
 !     VERIFICATION DE LA COMPATIBILITE ENTRE LA SD ASSOCIEE AU FOND
 !     DE FISSURE ET LE MODELE
@@ -119,7 +110,7 @@ subroutine cglect(resu, modele, ndim, option, cas,&
     call cgvefo(option, typfis, nomfis, typdis)
 !
 !     VERIFICATION DES DONNEES RELATIVES AU(X) CHAMP(S) THETA
-    call cgveth(typfis, cas)
+    call cgveth(typfis, ndim)
 !
 !     LECTURE DE LA DESCRIPTION DU FOND DE FISSURE
 !     ET RECUPERATION DES OBJETS FONOEU, CHFOND, BASFON + LNOFF
@@ -128,7 +119,7 @@ subroutine cglect(resu, modele, ndim, option, cas,&
 !
 !     VERIFICATION DES DONNEES RELATIVES AU LISSAGE
 !     ET DETERMINATION DU LISSAGE (NOM UNIQUE CONTRACTE) : LISS ET NDEG
-    call cgveli(typfis, typdis, cas, lnoff, liss,&
+    call cgveli(typfis, typdis, ndim, lnoff, liss,&
                 ndeg)
 !
     call jedema()
