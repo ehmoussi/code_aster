@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,8 +27,6 @@ subroutine te0027(option, nomte)
 !               'CALC_G_F'        (LOCAL,CHARGES FONCTIONS)
 !               'CALC_GTP'        (LOCAL,CHARGES REELLES)
 !               'CALC_GTP_F'      (LOCAL,CHARGES FONCTIONS)
-!               'CALC_G_GLOB'     (GLOBAL,CHARGES REELLES)
-!               'CALC_G_GLOB_F'   (GLOBAL,CHARGES FONCTIONS)
 !
 ! ENTREES  ---> OPTION : OPTION DE CALCUL
 !          ---> NOMTE  : NOM DU TYPE ELEMENT
@@ -130,8 +128,7 @@ subroutine te0027(option, nomte)
     matcod = zi(imate)
 ! RECUPERATION DU CHAMP LOCAL (CARTE) ASSOCIE AU PRE-EPSI
 ! CE CHAMP EST ISSU D UN CHARGEMENT PRE-EPSI
-    if (option .eq. 'CALC_G_F' .or. option .eq. 'CALC_G_GLOB_F' .or. option .eq.&
-        'CALC_GTP_F') then
+    if (option .eq. 'CALC_G_F' .or. option .eq. 'CALC_GTP_F') then
         fonc = .true.
         call jevech('PFFVOLU', 'L', iforf)
         call jevech('PTEMPSR', 'L', itemps)
@@ -164,9 +161,8 @@ subroutine te0027(option, nomte)
     call tecach('ONO', 'PPESANR', 'L', iret, iad=ipesa)
     call tecach('ONO', 'PROTATR', 'L', iret, iad=irota)
     call tecach('ONO', 'PSIGINR', 'L', iret, iad=isigi)
-    if (option .eq. 'CALC_G' .or. option .eq. 'CALC_G_F' .or. option .eq. 'CALC_G_GLOB'&
-        .or. option .eq. 'CALC_G_GLOB_F' .or. option .eq. 'CALC_GTP' .or. option .eq.&
-        'CALC_GTP_F') then
+    if (option .eq. 'CALC_G' .or. option .eq. 'CALC_G_F' &
+        .or. option .eq. 'CALC_GTP' .or. option .eq. 'CALC_GTP_F') then
         call tecach('ONO', 'PVITESS', 'L', iret, iad=ivites)
         call tecach('ONO', 'PACCELE', 'L', iret, iad=iaccel)
     endif

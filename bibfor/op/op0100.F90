@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,13 +46,11 @@ subroutine op0100()
 #include "asterfort/gcou2d.h"
 #include "asterfort/gcour2.h"
 #include "asterfort/gcour3.h"
-#include "asterfort/gcouro.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/gver2d.h"
 #include "asterfort/gveri3.h"
-#include "asterfort/gverig.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -75,7 +73,7 @@ subroutine op0100()
 #include "asterfort/deprecated_algom.h"
 #include "asterfort/xcourb.h"
     integer :: nbord, iord, i, iad, jnord, ivec, iret, nbpara
-    integer :: lnoff, jinst, ndeg, nbropt, iadrco, iadrno, ipuls, iord0
+    integer :: lnoff, jinst, ndeg, nbropt, iadrco, ipuls, iord0
     integer :: iadfis, iadnoe
     integer :: ndimte, ndim, jopt
     integer :: nxpara
@@ -87,7 +85,7 @@ subroutine op0100()
     character(len=8) :: modele, resu, k8bid, calsig, resuc2
     character(len=8) :: nomfis, litypa(nxpara), symech, config
     character(len=8) :: table, noma, thetai, noeud, typfis, typfon
-    character(len=16) :: option, typsd, linopa(nxpara), cas
+    character(len=16) :: option, typsd, linopa(nxpara)
     character(len=16) :: nomcas, k16bid, typdis
     character(len=19) :: lischa, lisopt, vecord, grlt
     character(len=24) :: depla, mate, compor, chvite, chacce
@@ -124,14 +122,14 @@ subroutine op0100()
 !
 !     CREATION DES OBJETS :
 !     - RESU, MODELE, NDIM
-!     - OPTION, CAS
+!     - OPTION
 !     - TYPFIS, NOMFIS
 !     - FONOEU, CHFOND, BASFON, TAILLR
 !     - CONFIG
 !     - LNOFF
 !     - LISS, NDEG
 !     - TYPDIS
-    call cglect(resu, modele, ndim, option, cas,&
+    call cglect(resu, modele, ndim, option,&
                 typfis, nomfis, fonoeu, chfond, basfon,&
                 taillr, config, lnoff, liss, ndeg, typdis)
 !
@@ -206,8 +204,8 @@ subroutine op0100()
         call dismoi('SYME', nomfis, 'FOND_FISS', repk=symech)
     endif
 !
-!     CALCUL DU CHAMP THETA (2D OU 3D_GLOBAL)
-    if (cas .ne. '3D_LOCAL') then
+!     CALCUL DU CHAMP THETA (2D)
+    if (ndim .eq. 2) then
 !
         theta = table//'_CHAM_THETA'
 !
@@ -222,29 +220,13 @@ subroutine op0100()
         else if (iret.gt.0) then
             direc=.true.
         endif
-!
-!       THETA 2D (COURONNE)
-        if (ndim .eq. 2) then
-            call gver2d(1, noeud,&
-                        rinf, rsup, module)
-            call gcou2d('V', theta, noma, nomno, noeud,&
-                        zr(iadrco), rinf, rsup, module, direc,&
-                        dir)
-!       THETA 3D
-        else if (ndim.eq.3) then
-            call jeveuo(fonoeu, 'L', iadrno)
-            call gverig(1, fonoeu, taillr, config,&
-                        lnoff, nomno, coorn, trav1, trav2,&
-                        trav3, trav4)
-            call gcouro('V', theta, noma, nomno, coorn,&
-                        lnoff, trav1, trav2, trav3, dir,&
-                        zk8(iadrno), nomfis, direc, stok4)
-        endif
-!
+        call gver2d(1, noeud,rinf, rsup, module)
+        call gcou2d('V', theta, noma, nomno, noeud,zr(iadrco),&
+                         rinf, rsup, module, direc,dir)
     endif
 !
-!     DETERMINATION AUTOMATIQUE DE THETA (CAS 3D LOCAL)
-    if (cas .eq. '3D_LOCAL' .and. typfis .eq. 'FISSURE') then
+!     DETERMINATION AUTOMATIQUE DE THETA (CAS 3D)
+    if (ndim .eq. 3 .and. typfis .eq. 'FISSURE') then
 !
         call dismoi('TYPE_FOND', nomfis, 'FISS_XFEM', repk=typfon)
 !
@@ -268,7 +250,7 @@ subroutine op0100()
                     liss, basfon, ndeg, milieu,&
                     ndimte, typdis, nomfis)
 !
-    else if (cas.eq.'3D_LOCAL'.and.typfis.eq.'FONDFISS') then
+    else if (ndim.eq. 3 .and.typfis.eq.'FONDFISS') then
 !
 !       A FAIRE : DISMOI POUR RECUP CONNEX ET METTRE DANS CGLECT
         call dismoi('TYPE_FOND', nomfis, 'FOND_FISS', repk=typfon)
@@ -315,14 +297,14 @@ subroutine op0100()
 !
 !     CREATION DE LA TABLE
 !
-    call cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
+    call cgcrtb(table, option, lmelas, ndim, typfis, nxpara,&
                 lmoda, nbpara, linopa, litypa)
 !
 !!    ARRET POUR CONTROLE DEVELOPPEMENT DANS CGCRTB
 !    ASSERT(.false.)
 !
 !
-    if (cas.eq.'3D_LOCAL'.and.option.eq.'CALC_K_G') then
+    if (ndim.eq. 3 .and.option.eq.'CALC_K_G') then
 !
 !       -------------------------------
 !       3.3. ==> CALCUL DE KG (3D LOC)
@@ -428,14 +410,14 @@ subroutine op0100()
                 exitim = .true.
             endif
 !
-            if ((option(1:6).eq.'CALC_G'.and.cas.eq.'2D') .or. option .eq. 'CALC_G_GLOB') then
+            if (option(1:6).eq.'CALC_G'.and. ndim.eq. 2) then
 !
                 call mecalg(option, table, modele, depla, theta,&
                             mate, lischa, symech, compor, incr,&
                             time, iord, nbpara, linopa, chvite,&
                             chacce, lmelas, nomcas, calsig, iadfis, iadnoe)
 !
-            else if (option(1:6).eq.'CALC_G'.and.cas.eq.'3D_LOCAL') then
+            else if (option(1:6).eq.'CALC_G'.and. ndim .eq.3) then
 !
                 call mecagl(option, table, modele, depla, thetai,&
                             mate, compor, lischa, symech, chfond,&
@@ -445,7 +427,7 @@ subroutine op0100()
                             lmelas, nomcas, calsig, fonoeu, incr, iadfis, &
                             norfon, connex)
 !
-            else if (option(1:6).eq.'CALC_K'.and.cas.eq.'2D') then
+            else if (option(1:6).eq.'CALC_K'.and. ndim .eq. 2) then
 !
                 call cakg2d(option, table, modele, depla, theta,&
                             mate, lischa, symech, nomfis, noeud,&

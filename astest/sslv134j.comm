@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -110,38 +110,7 @@ for i in range(2) :
                   ),
                         NEWTON     =_F ( REAC_INCR    = 1 ))
 
-   G01[i]=CALC_G(        RESULTAT=RESU[i],
-                   OPTION='CALC_G_GLOB',
-                   INST = 1,
-                   THETA=_F(
-                            FOND_FISS=FF1,
-                            MODULE=1.0),
-                  )
-
-   TEST_TABLE(TABLE=G01[i],
-              NOM_PARA='G',
-              VALE_CALC=146.87654135497,
-              VALE_REFE=145.60,
-              REFERENCE='NON_DEFINI',
-              PRECISION=0.02)
-
-
-   G0[i]=CALC_G(        RESULTAT=RESU[i],
-                  OPTION='CALC_G_GLOB',
-                  INST = 1,
-                  THETA=_F(
-                           FOND_FISS=FF,
-                           MODULE=1.0),
-                )
-
 #IMPR_TABLE(       TABLE=G0,);
-
-   TEST_TABLE(TABLE=G0[i],
-              NOM_PARA='G',
-              VALE_CALC=146.87654135497,
-              VALE_REFE=145.60,
-              REFERENCE='NON_DEFINI',
-              PRECISION=0.02)
 
    GLOC1[i]=CALC_G(        RESULTAT=RESU[i],
                      INFO=2,

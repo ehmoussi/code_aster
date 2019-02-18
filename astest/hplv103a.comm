@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -130,8 +130,9 @@ TEST_TABLE(VALE_CALC=1.47608122885,
                      VALE_I=1),
            )
 
+#
 #--------------------------------------------------------------------
-#               CALCUL DE G GLOBAL SUR 4 COURONNES                  #
+#               CALCUL DE G (LOCAL) SUR LES 4 COURONNES             #
 #--------------------------------------------------------------------
 
 # C1 = 0.07 - 0.2
@@ -149,100 +150,6 @@ FF=DEFI_FOND_FISS(MAILLAGE=M,
                   FOND_FISS=_F(GROUP_NO='LFF',
                                DTAN_ORIG=(0.0,1.0,0.0)),
                   );
-
-
-G1=CALC_G(THETA=_F(
-                   R_INF=0.07,
-                   FOND_FISS=FF,
-                   MODULE=1.0,
-                   R_SUP=0.2),
-          RESULTAT=MEST,
-          OPTION='CALC_G_GLOB');
-
-
-G2=CALC_G(THETA=_F(
-                   R_INF=0.2,
-                   FOND_FISS=FF,
-                   MODULE=1.0,
-                   R_SUP=0.4),
-          RESULTAT=MEST,
-          OPTION='CALC_G_GLOB');
-
-G3=CALC_G(THETA=_F(FOND_FISS=FF,
-                   R_INF=0.4,
-                   R_SUP=0.6),
-          RESULTAT=MEST,
-          OPTION='CALC_G_GLOB');
-
-G4=CALC_G(THETA=_F(FOND_FISS=FF,
-                   R_INF=0.07,
-                   R_SUP=0.6),
-          RESULTAT=MEST,
-          OPTION='CALC_G_GLOB');
-
-
-G5=CALC_G(THETA=_F(
-                   FOND_FISS=FF,
-                   MODULE=1.0),
-          RESULTAT=MEST,
-          OPTION='CALC_G_GLOB');
-
-G6=CALC_G(THETA=_F(FOND_FISS=FF,),
-          RESULTAT=MEST,
-          OPTION='CALC_G_GLOB');
-
-#--------------------------------------------------------------------
-#            TEST DES RESULTATS DE G GLOBAL                         #
-#--------------------------------------------------------------------
-
-Gglob_ref = 0.17781
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.02,
-           VALE_CALC=0.174605623044,
-           VALE_REFE=Gglob_ref,
-           NOM_PARA='G',
-           TABLE=G1)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.02,
-           VALE_CALC=0.174746903481,
-           VALE_REFE=Gglob_ref,
-           NOM_PARA='G',
-           TABLE=G2)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.02,
-           VALE_CALC=0.174663827045,
-           VALE_REFE=Gglob_ref,
-           NOM_PARA='G',
-           TABLE=G3)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.02,
-           VALE_CALC=0.17468090019,
-           VALE_REFE=Gglob_ref,
-           NOM_PARA='G',
-           TABLE=G4)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.02,
-           VALE_CALC=0.174573750023,
-           VALE_REFE=Gglob_ref,
-           NOM_PARA='G',
-           TABLE=G5)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.02,
-           VALE_CALC=0.174573750023,
-           VALE_REFE=Gglob_ref,
-           NOM_PARA='G',
-           TABLE=G6)
-
-#
-#--------------------------------------------------------------------
-#               CALCUL DE G (LOCAL) SUR LES 4 COURONNES             #
-#--------------------------------------------------------------------
 
 # Couronne 1, lissage par defaut (Leg-Leg)
 GLOC1a=CALC_G(THETA=_F(FOND_FISS=FF,
@@ -428,7 +335,7 @@ IMPR_TABLE(TABLE=GLOC5d)
 
 
 #--------------------------------------------------------------------
-#            TEST DES RESULTATS DE GLOCAL                           #
+#            TEST DES RESULTATS DE G LOCAL                           #
 #--------------------------------------------------------------------
 
 Gloc_ref = 0.1132

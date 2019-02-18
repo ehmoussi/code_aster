@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -71,12 +71,6 @@ Il n'est pas possible de calculer automatiquement R_INF et R_SUP en cas
 de modélisation FEM avec une fissure en configuration décollée.
 -> Risque et Conseil :
 Veuillez indiquer les mots-clés R_INF et R_SUP (ou R_INF_FO et R_SUP_FO).
-"""),
-
-    9: _(u"""
-Le fond de fissure n'est pas complet.
--> Risque et Conseil :
-Veuillez revoir la mise en données de l'opérateur DEFI_FOND_FISS.
 """),
 
     10: _(u"""
