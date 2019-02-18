@@ -53,6 +53,18 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
     GeneralizedAssemblyMatrixDoublePtr _rigidityGDMatrix;
     /** @brief Stiffness generalized complex matrix */
     GeneralizedAssemblyMatrixComplexPtr _rigidityGCMatrix;
+    /** @brief Mass double displacement matrix */
+    AssemblyMatrixDisplacementDoublePtr _massDispDMatrix;
+    /** @brief Mass complex displacement matrix */
+    AssemblyMatrixDisplacementComplexPtr _massDispCMatrix;
+    /** @brief Mass double temperature matrix */
+    AssemblyMatrixTemperatureDoublePtr _massTempDMatrix;
+    /** @brief Mass double pressure matrix */
+    AssemblyMatrixPressureDoublePtr _massPressDMatrix;
+    /** @brief Mass generalized double matrix */
+    GeneralizedAssemblyMatrixDoublePtr _massGDMatrix;
+    /** @brief Mass generalized complex matrix */
+    GeneralizedAssemblyMatrixComplexPtr _massGCMatrix;
 
   public:
     /**
@@ -74,8 +86,28 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
         _rigidityTempDMatrix( nullptr ),
         _rigidityPressDMatrix( nullptr ),
         _rigidityGDMatrix( nullptr ),
-        _rigidityGCMatrix( nullptr )
+        _rigidityGCMatrix( nullptr ),
+        _massDispDMatrix( nullptr ),
+        _massDispCMatrix( nullptr ),
+        _massTempDMatrix( nullptr ),
+        _massPressDMatrix( nullptr ),
+        _massGDMatrix( nullptr ),
+        _massGCMatrix( nullptr )
     {};
+
+     /**
+     * @brief Get the DOFNumbering
+     */
+    BaseDOFNumberingPtr getDOFNumbering() const
+    {
+        if ( _dofNum != nullptr )
+            return _dofNum;
+        if ( _rigidityDispDMatrix != nullptr )
+            return _rigidityDispDMatrix->getDOFNumbering();
+        if ( _rigidityTempDMatrix != nullptr )
+            return _rigidityTempDMatrix->getDOFNumbering();
+        return BaseDOFNumberingPtr( nullptr );
+    };
 
     /**
      * @brief Get the rigidity matrix
@@ -93,20 +125,7 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
         return _rigidityDispDMatrix;
     };
 
-    /**
-     * @brief Get the DOFNumbering
-     */
-    BaseDOFNumberingPtr getDOFNumbering() const
-    {
-        if ( _dofNum != nullptr )
-            return _dofNum;
-        if ( _rigidityDispDMatrix != nullptr )
-            return _rigidityDispDMatrix->getDOFNumbering();
-        if ( _rigidityTempDMatrix != nullptr )
-            return _rigidityTempDMatrix->getDOFNumbering();
-        return BaseDOFNumberingPtr( nullptr );
-    };
-
+   
     /**
      * @brief Get the rigidity matrix
      */
@@ -212,7 +231,128 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
         _rigidityGCMatrix = matr;
         return true;
     };
+    /**
+     * @brief Get the mass matrix
+     */
+    AssemblyMatrixDisplacementComplexPtr getDisplacementComplexMassMatrix() const
+    {
+        return _massDispCMatrix;
+    };
 
+    /**
+     * @brief Get the mass matrix
+     */
+    AssemblyMatrixDisplacementDoublePtr getDisplacementDoubleMassMatrix() const
+    {
+        return _massDispDMatrix;
+    };
+
+   
+    /**
+     * @brief Get the mass matrix
+     */
+    AssemblyMatrixPressureDoublePtr getPressureDoubleMassMatrix() const
+    {
+        return _massPressDMatrix;
+    };
+
+    /**
+     * @brief Get the mass matrix
+     */
+    AssemblyMatrixTemperatureDoublePtr getTemperatureDoubleMassMatrix() const
+    {
+        return _massTempDMatrix;
+    };
+
+    /**
+     * @brief Set the mass matrix
+     * @param matr AssemblyMatrixDisplacementDoublePtr
+     */
+    bool setMassMatrix( const AssemblyMatrixDisplacementDoublePtr &matr )
+    {
+        _massDispDMatrix = matr;
+        _massDispCMatrix = nullptr;
+        _massTempDMatrix = nullptr;
+        _massPressDMatrix = nullptr;
+        _massGDMatrix = nullptr;
+        _massGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the mass matrix
+     * @param matr AssemblyMatrixDisplacementComplexPtr
+     */
+    bool setMassMatrix( const AssemblyMatrixDisplacementComplexPtr &matr )
+    {
+        _massDispDMatrix = nullptr;
+        _massDispCMatrix = matr;
+        _massTempDMatrix = nullptr;
+        _massPressDMatrix = nullptr;
+        _massGDMatrix = nullptr;
+        _massGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the mass matrix
+     * @param matr AssemblyMatrixTemperatureDoublePtr
+     */
+    bool setMassMatrix( const AssemblyMatrixTemperatureDoublePtr &matr )
+    {
+        _massDispDMatrix = nullptr;
+        _massDispCMatrix = nullptr;
+        _massTempDMatrix = matr;
+        _massPressDMatrix = nullptr;
+        _massGDMatrix = nullptr;
+        _massGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the mass matrix
+     * @param matr AssemblyMatrixPressureDoublePtr
+     */
+    bool setMassMatrix( const AssemblyMatrixPressureDoublePtr &matr )
+    {
+        _massDispDMatrix = nullptr;
+        _massDispCMatrix = nullptr;
+        _massTempDMatrix = nullptr;
+        _massPressDMatrix = matr;
+        _massGDMatrix = nullptr;
+        _massGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the mass matrix
+     * @param matr GeneralizedAssemblyMatrixDoublePtr
+     */
+    bool setMassMatrix( const GeneralizedAssemblyMatrixDoublePtr &matr )
+    {
+        _massDispDMatrix = nullptr;
+        _massDispCMatrix = nullptr;
+        _massTempDMatrix = nullptr;
+        _massPressDMatrix = nullptr;
+        _massGDMatrix = matr;
+        _massGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the mass matrix
+     * @param matr GeneralizedAssemblyMatrixComplexPtr
+     */
+    bool setMassMatrix( const GeneralizedAssemblyMatrixComplexPtr &matr )
+    {
+        _massDispDMatrix = nullptr;
+        _massDispCMatrix = nullptr;
+        _massTempDMatrix = nullptr;
+        _massPressDMatrix = nullptr;
+        _massGDMatrix = nullptr;
+        _massGCMatrix = matr;
+        return true;
+    };
     /**
      * @brief set interf_dyna
      * @param structureInterface objet StructureInterfacePtr

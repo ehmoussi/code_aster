@@ -25,7 +25,7 @@
 # ======================================================================
 # Principe du test :
 # ------------------
-#  Une plaque est soumise a deux chargements ÃÂ©quivalents :
+#  Une plaque est soumise a deux chargements équivalents :
 #   * 1) deplacement impose
 #   * 2) chargement thermique (dilatation)
 #  On peut alors verifier que le chargement 2 produit les memes efforts que le chargement 1.
@@ -74,7 +74,9 @@ MO_G=AFFE_MODELE(MAILLAGE=MAIL,
 #-------------------------------------
 MAT_G=DEFI_MATERIAU(
              ELAS_GLRC =_F(E_M= 35620000000.0,  NU_M=0.18,   E_F=38700000000.0, NU_F=0.17, ALPHA = 1.E-5),
-             GLRC_DM   =_F(GAMMA_T=0.02, GAMMA_F=0.32, NYT=3.7E5,  MYF=9.0E3,),
+             GLRC_DM   =_F(GAMMA_T=0.02, GAMMA_F=0.32, NYT=3.7E5,  MYF=9.0E3,GAMMA_C= 1.0,
+                               NYC = 0.0,
+                               ALPHA_C = 1.0,),
              );
 
 #=====================================================================================

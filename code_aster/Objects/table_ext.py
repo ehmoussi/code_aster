@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -69,6 +69,14 @@ class ExtendedTable(injector(Table), Table):
         else:
             titr = ''
         return titr
+    
+    def get_nrow(self):
+        """Renvoie le nombre de lignes
+        """
+        if not self.accessible():
+            raise RuntimeError("Erreur dans table.get_nrow en PAR_LOT='OUI'")
+        shape = self.sdj.TBNP.get()
+        return shape[1]
 
     def get_nom_para(self):
         """Produit une liste des noms des colonnes

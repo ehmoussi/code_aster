@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -390,7 +390,6 @@ DYNALEA1=DYNA_ALEA_MODAL(
              DERIVATION = 2,
              INTE_SPEC = INTKTJ1,
              NUME_ORDRE_I = 1,
-             NUME_ORDRE_J = 1,
              NOEUD = 'PA1',
              NOM_CMP = 'DY'),
                REPONSE=_F(
@@ -488,7 +487,6 @@ DYNALEA2=DYNA_ALEA_MODAL(
              DERIVATION = 2,
              INTE_SPEC = INTKTJ1,
              NUME_ORDRE_I = 1,
-             NUME_ORDRE_J = 1,
              NOEUD = 'PA1',
              NOM_CMP = 'DY'),
               REPONSE=_F(
@@ -587,9 +585,6 @@ DYNALEA3=DYNA_ALEA_MODAL(
 
              NOEUD_I = ( 'PA11', 'PA21', 'PA31', 'PA11', 'PA21', 'PA31', ),
              NOM_CMP_I = ('DY', 'DY', 'DY', 'DX', 'DX', 'DX',  ),
-
-             NOEUD_J = ( 'PA11', 'PA21', 'PA31', 'PA11', 'PA21', 'PA31', ),
-             NOM_CMP_J = ('DY', 'DY', 'DY', 'DX', 'DX', 'DX',  ),
 
              NOEUD = ( 'PB11', 'PB21', 'PB31', 'PB11', 'PB21', 'PB31', ),
              NOM_CMP = ('DY', 'DY', 'DY', 'DX', 'DX', 'DX',  )),

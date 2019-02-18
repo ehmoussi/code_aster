@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,9 +31,10 @@ loi = LoiComportement(
    de membrane et de flexion dans GLRC_DM est pris en compte, ce qui n'est pas le cas dans GLRC_DAMAGE.
    Pour les précisions sur la formulation du modèle voir [R7.01.32]"""              ,
     num_lc         = 0,
-    nb_vari        = 7,
+    nb_vari        = 18,
     nom_vari       = ('ENDOFL+','ENDOFL-','INDIEND1','INDIEND2','ADOUTRAC',
-        'ADOUCOMP','ADOUFLEX',),
+        'ADOUCOMP','ADOUFLEX', 'ACIXELS', 'ACIXELU', 'ACIYELS', 'ACIYELU',
+        'BETSUP','BETINF','TRAMAX','COMMAX','FLEMAX','ERRCOM','ERRFLE'),
     mc_mater       = ('GLRC_DM',),
     modelisation   = ('DKTG',),
     deformation    = ('PETIT','GROT_GDEP',),

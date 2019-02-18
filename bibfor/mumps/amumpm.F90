@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,6 +37,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 ! IN  EPSMAT :   R8   : SEUIL DE FILTRAGE DES TERMES DE LA MATRICE
 ! IN  KTYPR  :   K8   : TYPE DE RESOLUTION MUMPS (SYMDEF...)
 ! IN  LPRECO :  LOG   : MUMPS EST-IL UTILISE COMME PRECONDITIONNEUR ?
+! IN  LMHPC  :  LOG   : LOGIQUE PRECISANT SI ON EST EN MODE DISTRIBUE ASTERXX
 !---------------------------------------------------------------
 ! aslint: disable=W1501
 ! person_in_charge: olivier.boiteau at edf.fr
@@ -87,10 +88,12 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     integer :: sym, iret, jcoll, iligl, jnulogl, ltot, iok, iok2, coltmp
     integer :: kzero, ibid, ifiltr, vali(2), nbproc, nfilt1, nfilt2
     integer :: nfilt3, isizemu, nsizemu, rang, esizemu, jpddl, jdeeq
-    integer :: nuno1, nuno2, procol, prolig, jnugll
+    integer :: nuno1, nuno2, procol, prolig, jnugll,jrefn,nucmp1,nucmp2,jmlogl
     mumps_int :: nbeq, nz2, iligg, jcolg
     character(len=4) :: etam
     character(len=8) :: k8bid
+    character(len=8) :: noma
+    character(len=24) :: nonulg
     character(len=14) :: nonu
     character(len=16) :: k16bid, nomcmd
     character(len=19) :: nomat, nosolv
@@ -98,7 +101,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     real(kind=8) :: raux, rfiltr, epsmac, rmax, rmin, rtest
     complex(kind=8) :: caux
     aster_logical :: lmnsy, ltypr, lnn, lfiltr, lspd, eli2lg, lsimpl, lcmde
-    aster_logical :: lgive
+    aster_logical :: lgive,ldebug
     integer, pointer :: smdi(:) => null()
     integer, pointer :: nequ(:) => null()
 !
@@ -115,6 +118,20 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     nosolv=nosols(kxmps)
     nonu=nonus(kxmps)
     etam=etams(kxmps)
+
+!   Adresses needed to get the stiffness matrix wrt nodes and dof numbers (see below)
+    ldebug=.false.
+    if (ldebug) then
+        call jeveuo(nonu//'.NUME.REFN', 'L', jrefn)
+        noma = zk24(jrefn)
+        if (lmhpc) then
+            nonulg = noma//'.NULOGL'
+            call jeveuo(nonulg, 'L', jmlogl)
+        else
+            call jeveuo(nonu//'.NUME.DEEQ', 'L', jdeeq)
+        endif
+    endif
+
 ! --- REMPLISSAGE DE DIFFERENTS OBJETS SUIVANT LE TYPE DU POINTEUR
 ! --- DE MUMPS: DMUMPS_STRUC OU ZMUMPS_STRUC
     if (type .eq. 'S') then
@@ -348,10 +365,6 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     if (.not.lgive) then
                         cycle
                     endif
-                else
-                    if (prolig.ne.rang) then
-                        cycle
-                    endif
                 endif
             endif
             if (lfiltr) then
@@ -362,6 +375,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !
 !
 ! --- PARTIE TRIANGULAIRE INF. SI REEL
+            if( .not.lmhpc.or.(lmhpc.and.procol.eq.rang)) then
             if (ltypr) then
                 raux=zr(jvale-1+kterm)
                 if (raux .ne. 0.d0) then
@@ -406,16 +420,11 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     nfilt1=nfilt1+1
                 endif
             endif
-
-            if (lmhpc) then
-                if (nuno1.ne.0.and.nuno2.ne.0) then
-                    if (procol.ne.rang) then
-                        cycle
-                    endif
-                endif
             endif
+
 !
 ! --- PARTIE TRIANGULAIRE SUP. SI REEL
+            if( .not.lmhpc.or.(lmhpc.and.prolig.eq.rang)) then
             if ((sym.eq.0) .and. (iligl.ne.jcoll)) then
 !
                 if (ltypr) then
@@ -463,6 +472,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     endif
 !
                 endif
+            endif
             endif
         enddo
         nz2=to_mumps_int(nzloc)
@@ -618,10 +628,6 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     if (.not.lgive) then
                         cycle
                     endif
-                else
-                    if( prolig.ne.rang ) then
-                        cycle
-                    endif
                 endif
             endif
             lnn=.false.
@@ -664,6 +670,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
             endif
 !
 ! ---- PARTIE TRIANGULAIRE INF. TERME NON NUL
+            if( .not.lmhpc.or.(lmhpc.and.procol.eq.rang)) then
             if (lnn) then
                 iterm=iterm+1
                 if (ldist.or.lmhpc) then
@@ -686,6 +693,19 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     else
                         ASSERT(.false.)
                     endif
+!                   Writings to get the stiffness matrix wrt nodes and dof numbers
+                    if (ldebug) then
+                        if (lmhpc) then 
+                            nuno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
+                            nuno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
+                        else
+                            nuno1 = zi(jdeeq+2*(iligl-1)) 
+                            nuno2 = zi(jdeeq+2*(jcoll-1)) 
+                        endif
+                        nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
+                        nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
+                        write(11+rang,*) nuno2, nucmp2, nuno1, nucmp1, raux
+                    endif 
                 else
                     if (type .eq. 'S') then
                         smpsk%irn(iterm)=iligg
@@ -706,6 +726,14 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     else
                         ASSERT(.false.)
                     endif
+!                   Writings to get the stiffness matrix wrt nodes and dof numbers
+                    if (ldebug) then
+                        nuno1 = zi(jdeeq+2*(iligg-1)) 
+                        nuno2 = zi(jdeeq+2*(jcolg-1)) 
+                        nucmp1 = zi(jdeeq +2*(iligg-1) + 1)
+                        nucmp2 = zi(jdeeq +2*(jcolg-1)+1)
+                        write(11+rang,*) nuno2, nucmp2, nuno1, nucmp1, raux
+                    endif 
                 endif
                 kzero=0
                 if (eli2lg) then
@@ -729,16 +757,11 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     endif
                 endif
             endif
-
-            if (lmhpc) then
-                if (nuno1.ne.0.and.nuno2.ne.0) then
-                    if (procol.ne.rang) then
-                        cycle
-                    endif
-                endif
             endif
+
 !
 ! --- PARTIE TRIANGULAIRE SUP. SI REEL
+            if( .not.lmhpc.or.(lmhpc.and.prolig.eq.rang)) then
             if ((sym.eq.0) .and. (iligl.ne.jcoll)) then
 !
                 lnn=.false.
@@ -797,6 +820,19 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                         else
                             ASSERT(.false.)
                         endif
+!                       Writings to get the stiffness matrix wrt nodes and dof numbers
+                        if (ldebug) then
+                            if (lmhpc) then 
+                                nuno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
+                                nuno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
+                            else
+                                nuno1 = zi(jdeeq+2*(iligl-1)) 
+                                nuno2 = zi(jdeeq+2*(jcoll-1)) 
+                            endif
+                            nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
+                            nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
+                            write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, raux
+                        endif 
                     else
                         if (type .eq. 'S') then
                             smpsk%irn(iterm)=jcolg
@@ -817,6 +853,14 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                         else
                             ASSERT(.false.)
                         endif
+!                       Writings to get the stiffness matrix wrt nodes and dof numbers
+                        if (ldebug) then
+                            nuno1 = zi(jdeeq+2*(iligg-1)) 
+                            nuno2 = zi(jdeeq+2*(jcolg-1)) 
+                            nucmp1 = zi(jdeeq +2*(iligg-1) + 1)
+                            nucmp2 = zi(jdeeq +2*(jcolg-1)+1)
+                            write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, raux
+                        endif 
                     endif
                     if (eli2lg) then
                         if (kzero .eq. 1) iterm=iterm-1
@@ -828,6 +872,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                         endif
                     endif
                 endif
+            endif
             endif
 ! ---FIN DE LA BOUCLE SUR NZ
         enddo
@@ -934,8 +979,8 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 enddo
             else if (type.eq.'D') then
                 do k = 1, nz2
-                    if (ldist) then
-                        write(ifmump,*)dmpsk%irn_loc(k),dmpsk%jcn_loc(k),&
+                    if (ldist.or.lmhpc) then
+                        write(ifmump+rang,*)dmpsk%irn_loc(k),dmpsk%jcn_loc(k),&
                     dmpsk%a_loc(k)
                     else
                         write(ifmump,*)dmpsk%irn(k),dmpsk%jcn(k),dmpsk%a(&
@@ -962,9 +1007,16 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
             else
                 write(ifmump,*) 'MUMPS FIN A'
             endif
+            
+!  -------   VIDANGE DES BUFFERS D'IMPRESSION
+            call flush(ifmump+rang)
+            
         endif
 ! FIN DU IF LDIST
     endif
+!
+! --- VIDANGE DES BUFFERS D'IMPRESSION
+    if (ldebug) call flush(11+rang)
 !
 ! --- COMMUNICATION DU VECTEUR KSIZEMU A TOUS LES PROCS
     call asmpi_comm_jev('MPI_SUM', ksizemu)

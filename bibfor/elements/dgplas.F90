@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine dgplas(ea, sya, eb, nub, sytb,&
+subroutine dgplas(ea, sya, eb, nub, ftj,&
                   num, nuf, a, b1, b,&
                   syt, syf, dxd, drd, h,&
                   ipente, icisai, emaxm, emaxf, nnap,&
@@ -34,7 +34,7 @@ subroutine dgplas(ea, sya, eb, nub, sytb,&
 !
     real(kind=8) :: ea(*), sya(*), eb, nub, num, nuf, w, emaxm, emaxf
     real(kind=8) :: a, b1, b, syt, syf, dxd, drd, h, c, rx(*), ry(*)
-    real(kind=8) :: rmesg(2), sytb
+    real(kind=8) :: rmesg(2), ftj
 !
 ! PARAMETRES SORTANTS
     real(kind=8) :: pendt, pendf
@@ -50,7 +50,7 @@ subroutine dgplas(ea, sya, eb, nub, sytb,&
 !       SYA      : LIMITES ELASTIQUES DES ACIERS
 !       EB       : MODULE D YOUNG DU BETON
 !       NUB      : COEFF DE POISSON DU BETON
-!       SYTB     : LIMITE A LA TRACTION DU BETON
+!       FTJ      : LIMITE A LA TRACTION DU BETON
 !       NUM      : COEFF DE POISSON EN MEMBRANE
 !       NUF      : COEFF DE POISSON EN FLEXION
 !       A
@@ -97,11 +97,11 @@ subroutine dgplas(ea, sya, eb, nub, sytb,&
         pendt=b
     else if (ipente .eq. 2) then
         dxp=sya(1)/ea(1)
-        do 10, ilit = 1,nnap
-        if (sya(ilit)/ea(ilit) .lt. dxp) then
-            dxp=sya(ilit)/ea(ilit)
-        endif
-10      continue
+        do ilit = 2,nnap
+            if (sya(ilit)/ea(ilit) .lt. dxp) then
+                dxp=sya(ilit)/ea(ilit)
+            endif
+        enddo
         np=b*dxp
         pendt=(np-syt)/(dxp-dxd)
     endif
@@ -117,10 +117,10 @@ subroutine dgplas(ea, sya, eb, nub, sytb,&
                 call utmess('F', 'ALGORITH6_5', nr=2, valr=rmesg)
             endif
             dxp=emaxm
-            np=b*dxd+sytb/3.d0
+            np=b*dxd+ftj/3.d0
         else if (ipente .eq. 2) then
             dxp=sqrt(2.d0)*dxp+2.d0*dxd
-            np=b*dxp+sytb/3.d0
+            np=b*dxp+ftj/3.d0
         endif
     endif
 !

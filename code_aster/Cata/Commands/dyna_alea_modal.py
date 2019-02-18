@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,6 @@ DYNA_ALEA_MODAL=OPER(nom="DYNA_ALEA_MODAL",op= 131,sd_prod=interspectre,
                regles=(EXCLUS('CHAM_NO','NOEUD'),),
 # on devrait rajouter EXCLUS('GRANDEUR','CHAM_NO') pour eviter ambiguite car CHAM_NO => GRANDEUR='EFFO'
 # cela impliquerait d'enlever la valeur par defaut a GRANDEUR
-               NUME_ORDRE_J    =SIMP(statut='o',typ='I',max='**'),
                CHAM_NO         =SIMP(statut='f',typ=cham_no_sdaster),
                NOEUD           =SIMP(statut='f',typ=no,max='**'),
                b_noeud         =BLOC(condition = """exists("NOEUD")""",
@@ -66,9 +65,7 @@ DYNA_ALEA_MODAL=OPER(nom="DYNA_ALEA_MODAL",op= 131,sd_prod=interspectre,
                DERIVATION      =SIMP(statut='f',typ='I',defaut= 0,into=( 0 , 1 , 2 ) ),
              ),
              b_noeud_i       =BLOC(condition = """exists("NOEUD_I")""",
-               NOEUD_J         =SIMP(statut='o',typ=no,max='**'),
                NOM_CMP_I       =SIMP(statut='o',typ='TXM',max='**'),
-               NOM_CMP_J       =SIMP(statut='o',typ='TXM',max='**'),
                NOEUD           =SIMP(statut='o',typ=no,max='**'),
                NOM_CMP         =SIMP(statut='o',typ='TXM',max='**'),
 # ne serait-il pas bien que NOEUD et NOM_CMP soient facultatifs, car l'information peut etre contenue dans
@@ -82,7 +79,6 @@ DYNA_ALEA_MODAL=OPER(nom="DYNA_ALEA_MODAL",op= 131,sd_prod=interspectre,
            b_modal_oui = BLOC(condition = """(equal_to("MODAL", 'OUI'))""",
 # dans ce cas, y-a-t-il vraiment la possibilite d'une matrice interspectrale avec plusieurs termes
              NUME_ORDRE_I    =SIMP(statut='o',typ='I',max='**'),
-             NUME_ORDRE_J    =SIMP(statut='o',typ='I',max='**'),
              GRANDEUR        =SIMP(statut='f',typ='TXM',defaut="DEPL_R",
                            into=("DEPL_R","EFFO","SOUR_DEBI_VOLU","SOUR_DEBI_MASS","SOUR_PRESS","SOUR_FORCE")),
              DERIVATION      =SIMP(statut='f',typ='I',defaut= 0,into=( 0 , 1 , 2 ) ),
