@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedAssemblyMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,11 +25,17 @@
 
 #include "PythonBindings/GeneralizedAssemblyMatrixInterface.h"
 #include "Discretization/GeneralizedDOFNumbering.h"
+#include "PythonBindings/VariantModalBasisInterface.h"
 #include <PythonBindings/factory.h>
 #include <boost/python.hpp>
 
 void exportGeneralizedAssemblyMatrixToPython() {
     using namespace boost::python;
+
+    bool ( GenericGeneralizedAssemblyMatrixInstance::*c1 )( const MechanicalModeContainerPtr& ) =
+        &GenericGeneralizedAssemblyMatrixInstance::setModalBasis;
+    bool ( GenericGeneralizedAssemblyMatrixInstance::*c2 )( const GeneralizedModeContainerPtr& ) =
+        &GenericGeneralizedAssemblyMatrixInstance::setModalBasis;
 
     class_< GenericGeneralizedAssemblyMatrixInstance, GenericGeneralizedAssemblyMatrixPtr,
             bases< DataStructure > >( "GeneralizedAssemblyMatrix", no_init )
@@ -37,12 +43,11 @@ void exportGeneralizedAssemblyMatrixToPython() {
         // fake initFactoryPtr: created by subclasses
         .def( "getGeneralizedDOFNumbering",
               &GenericGeneralizedAssemblyMatrixInstance::getGeneralizedDOFNumbering )
-        .def( "getModalBasis",
-              &GenericGeneralizedAssemblyMatrixInstance::getModalBasis )
+        .def( "getModalBasis", &getModalBasis< GenericGeneralizedAssemblyMatrixPtr > )
         .def( "setGeneralizedDOFNumbering",
               &GenericGeneralizedAssemblyMatrixInstance::setGeneralizedDOFNumbering )
-        .def( "setModalBasis",
-              &GenericGeneralizedAssemblyMatrixInstance::setModalBasis );
+        .def( "setModalBasis", c1 )
+        .def( "setModalBasis", c2 );
 
     class_< GeneralizedAssemblyMatrixDoubleInstance, GeneralizedAssemblyMatrixDoublePtr,
             bases< GenericGeneralizedAssemblyMatrixInstance > >( "GeneralizedAssemblyMatrixDouble",

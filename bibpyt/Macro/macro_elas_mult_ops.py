@@ -120,13 +120,13 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
         # calcul de lcharg : liste des listes de char_meca (mots clé CHAR_MECA
         # et CHAR_MECA_GLOBAL)
         xx1 = m['CHAR_MECA']
-        if type(xx1) != tuple and type(xx1) != list:
+        if type(xx1) not in (tuple, list):
             xx1 = (xx1,)
         xx2 = CHAR_MECA_GLOBAL
-        if type(xx2) != tuple and type(xx2) != list:
+        if type(xx2) not in (tuple, list):
             xx2 = (xx2,)
         lchar1 = []
-        for chargt in (xx1 + xx2):
+        for chargt in (tuple(xx1) + tuple(xx2)):
             if chargt:
                 lchar1.append(chargt)
         lcharg.append(lchar1)

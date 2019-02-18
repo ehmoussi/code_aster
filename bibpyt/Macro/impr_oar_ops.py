@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -259,7 +259,7 @@ class composant(OAR_element):
         try:
             # On ne construit qu'une table des abscisses et une table des contraintes.
             # Le revetement est obligatoirement en interne on commence par lui
-            para_resu_meca = args['RESU_MECA']
+            para_resu_meca = args['RESU_MECA'][0]
             self.num_char = para_resu_meca['NUM_CHAR']
             self.type_char = para_resu_meca['TYPE']
 
@@ -714,6 +714,9 @@ class tuyauterie(OAR_element):
         self.nodeComp = XMLNode("TUYAUTERIE")
 
         self.para_resu_meca = args['RESU_MECA']
+        if len(self.para_resu_meca) > 1:
+            assert False
+        self.para_resu_meca = self.para_resu_meca[0]
         self.num_char = self.para_resu_meca['NUM_CHAR']
 
         # Gestion du maillage

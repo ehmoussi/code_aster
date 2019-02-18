@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -727,8 +727,6 @@ IMPR_TABLE ( TABLE = TB2,
              UNITE=40,
              )
 
-DEFI_FICHIER(ACTION='LIBERER',UNITE=40)
-
 TAB2=LIRE_TABLE( UNITE=40,
                    FORMAT='ASTER',
                    NUME_TABLE=1,
@@ -798,8 +796,6 @@ IMPR_TABLE ( TABLE = TB3,
              FORMAT='ASTER',
              UNITE=41
              )
-
-DEFI_FICHIER(ACTION='LIBERER',UNITE=41)
 
 TAB3=LIRE_TABLE( UNITE=41,
                    FORMAT='ASTER',
@@ -882,8 +878,6 @@ IMPR_TABLE ( TABLE = TB6,
              UNITE=46
              )
 
-DEFI_FICHIER(ACTION='LIBERER',UNITE=43)
-
 TAB4=LIRE_TABLE( UNITE=43,
                    FORMAT='ASTER',
                    NUME_TABLE=1,
@@ -899,8 +893,6 @@ TEST_TABLE(
                       VALE=0.2,),
                    ),
            )
-
-DEFI_FICHIER(ACTION='LIBERER',UNITE=46)
 
 TAB6=LIRE_TABLE( UNITE=46,
                    FORMAT='ASTER',
@@ -939,8 +931,6 @@ IMPR_TABLE ( TABLE = TB5,
              FORMAT='ASTER',
              UNITE=42
              )
-
-DEFI_FICHIER(ACTION='LIBERER',UNITE=42)
 
 TAB5=LIRE_TABLE( UNITE=42,
                    FORMAT='ASTER',

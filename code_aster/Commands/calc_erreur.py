@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -27,22 +27,16 @@ class ComputeError(ExecuteCommand):
     """Command that creates the :class:`~code_aster.Objects.ResultsContainer`"""
     command_name = "CALC_ERREUR"
 
-    def adapt_syntax(self, keywords):
-        """Hook to adapt syntax from a old version or for compatibility reasons.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords, changed
-                in place.
-        """
-        required(keywords, "", "reuse")
-
     def create_result(self, keywords):
         """Initialize the result.
 
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = keywords["RESULTAT"]
+        if keywords.has_key("reuse"):
+            self._result = keywords["reuse"]
+        else:
+            self._result = type(keywords["RESULTAT"])()
 
     def post_exec(self, keywords):
         """Execute the command.
