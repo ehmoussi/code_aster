@@ -56,6 +56,8 @@ implicit none
 #include "asterfort/preres.h"
 #include "asterfort/mtdscr.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
+#include "asterfort/asmari.h"
+#include "asterfort/nmrigi.h"
 #include "asterfort/utmess.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
@@ -131,7 +133,7 @@ integer :: faccvg, ldccvg
     aster_logical :: ldyna, lamor, l_neum_undead, lcrigi, lcfint, larigi
     character(len=16) :: metcor, metpre
     character(len=16) :: optrig, optamo
-    character(len=19) :: matr_elem
+    character(len=19) :: matr_elem, rigid
     character(len=24) :: model
     aster_logical :: renume
     integer :: ifm, niv
@@ -149,6 +151,7 @@ integer :: faccvg, ldccvg
 !
 ! - Initializations
 !
+    call nmchex(measse, 'MEASSE', 'MERIGI', rigid)
     nb_matr              = 0
     list_matr_type(1:20) = ' '
     model = modelz
@@ -227,33 +230,32 @@ integer :: faccvg, ldccvg
 ! - Update dualized matrix for non-linear Dirichlet boundary conditions (undead)
 !
     if (l_neum_undead) then
-        call nmcmat('MESUIV', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MESUIV', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
 ! --- ASSEMBLAGE DES MATR-ELEM DE RIGIDITE
 !
     if (larigi) then
-        call nmcmat('MERIGI', optrig, ' ', .false._1,&
-                    larigi, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse)
+        call asmari(list_func_acti, meelem, ds_system, numedd, lischa, ds_algopara,&
+                    rigid)
     endif
 !
 ! --- CALCUL DES MATR-ELEM D'AMORTISSEMENT DE RAYLEIGH A CALCULER
 ! --- NECESSAIRE SI MATR_ELEM RIGIDITE CHANGE !
 !
     if (lcamor) then
-        call nmcmat('MEAMOR', optamo, ' ', .true._1,&
-                    .true._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MEAMOR', optamo, ' ', ASTER_TRUE,&
+                    ASTER_TRUE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
 ! - Update dualized relations for non-linear Dirichlet boundary conditions (undead)
 !
     if (l_diri_undead) then
-        call nmcmat('MEDIRI', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MEDIRI', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
@@ -261,8 +263,8 @@ integer :: faccvg, ldccvg
 !
     if (renume) then
         if (ldyna) then
-            call nmcmat('MEMASS', ' ', ' ', .false._1,&
-                        .true._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+            call nmcmat('MEMASS', ' ', ' ', ASTER_FALSE,&
+                        ASTER_TRUE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                         list_l_calc, list_l_asse)
         endif
         ASSERT(reasma)
@@ -271,12 +273,13 @@ integer :: faccvg, ldccvg
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modelz        , ds_material   , cara_elem  , ds_constitutive, sddisc        ,&
-                    sddyna        , list_func_acti, numins     , iter_newt      , hval_incr     ,&
-                    hval_algo     , lischa        , ds_system  , numedd         , numfix        ,&
-                    ds_measure    , ds_algopara   , nb_matr    , list_matr_type , list_calc_opti,&
-                    list_asse_opti, list_l_calc   , list_l_asse, lcfint         , meelem        ,&
-                    measse        , ldccvg     )
+        call nmxmat(modelz         , ds_material   , cara_elem     ,&
+                    ds_constitutive, sddisc        , numins        ,&
+                    hval_incr      , hval_algo     , lischa        ,&
+                    numedd         , numfix        , ds_measure    ,&
+                    nb_matr        , list_matr_type, list_calc_opti,&
+                    list_asse_opti , list_l_calc   , list_l_asse   ,&
+                    meelem         , measse        , ds_system)
     endif
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER

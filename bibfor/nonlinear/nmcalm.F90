@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmcalm(typmat         , modelz, lischa, ds_material, carele,&
-                  ds_constitutive, instam, instap, valinc     , solalg,&
-                  optmaz         , base  , meelem, matele)
+subroutine nmcalm(typmat         , modelz, lischa   , ds_material, carele,&
+                  ds_constitutive, instam, instap   , valinc     , solalg,&
+                  optmaz         , base  , ds_system, meelem     , matele)
 !
 use NonLin_Datastructure_type
 !
@@ -53,6 +53,7 @@ character(len=19) :: lischa
 character(len=6) :: typmat
 character(len=*) :: optmaz
 character(len=1) :: base
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: meelem(*), solalg(*), valinc(*)
 character(len=19) :: matele
 !
@@ -130,7 +131,7 @@ character(len=19) :: matele
         call nmchex(solalg, 'SOLALG', 'DDEPLA', disp_newt_curr)
     endif
     if (meelem(1)(1:1) .ne. ' ') then
-        call nmchex(meelem, 'MEELEM', 'MERIGI', merigi)
+        merigi = ds_system%merigi
         call nmchex(meelem, 'MEELEM', 'MEMASS', memass)
     endif
 !

@@ -63,7 +63,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: fonact(100) = 0
-    integer, parameter :: zmeelm = 9
+    integer, parameter :: zmeelm = 8
     integer, parameter :: zmeass = 4
     integer, parameter :: zveelm = 13
     integer, parameter :: zveass = 19

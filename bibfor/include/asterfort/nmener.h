@@ -18,7 +18,7 @@
 !
 interface
     subroutine nmener(valinc, veasse, measse, sddyna, eta        ,&
-                      ds_energy, fonact, numedd, numfix, ds_algopara,&
+                      ds_energy, fonact, numedd, numfix, &
                       meelem, numins, modele, ds_material, carele     ,&
                       ds_constitutive, ds_measure, sddisc, solalg,&
                       ds_contact, ds_system)
@@ -37,7 +37,6 @@ interface
         character(len=24) :: modele
         type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
-        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_System), intent(in) :: ds_system
         type(NL_DS_Measure), intent(inout) :: ds_measure

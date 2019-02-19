@@ -54,6 +54,8 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/utmess.h"
+#include "asterfort/asmari.h"
+#include "asterfort/nmrigi.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
@@ -129,7 +131,7 @@ integer :: faccvg, ldccvg
     aster_logical :: ldyna, lamor, l_neum_undead, l_diri_undead, l_rom, l_cont_elem
     character(len=16) :: metcor, metpre
     character(len=16) :: optrig, optamo
-    character(len=19) :: matr_elem
+    character(len=19) :: matr_elem, rigid
     integer :: ifm, niv, ibid
     integer :: iterat
     integer :: nb_matr
@@ -158,6 +160,7 @@ integer :: faccvg, ldccvg
 !
 ! - Initializations
 !
+    call nmchex(measse, 'MEASSE', 'MERIGI', rigid)
     nb_matr              = 0
     list_matr_type(1:20) = ' '
     faccvg = -1
@@ -187,6 +190,7 @@ integer :: faccvg, ldccvg
     call nmchoi('PREDICTION', sddyna, numins, fonact, metpre,&
                 metcor, reasma, lcamor, optrig, lcrigi,&
                 larigi, lcfint)
+!
     if (lcfint) then
         ASSERT(.false.)
     endif
@@ -201,35 +205,42 @@ integer :: faccvg, ldccvg
                     matr_elem)
     endif
 !
-! --- CALCUL DES MATR-ELEM DE RIGIDITE
+! - Compute rigidity matrix
 !
     if (lcrigi) then
-        call nmcmat('MERIGI', optrig, ' ', .true._1,&
-                    larigi, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse)
+        call nmrigi(modelz         , carele     , sddyna,&
+                    fonact         , iterat     ,&
+                    ds_constitutive, ds_material,&
+                    ds_measure     , valinc     , solalg,&
+                    ds_system      , optrig     ,&
+                    ldccvg)
+        if (larigi) then
+            call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
+                        rigid)
+        endif
     endif
 !
 ! - Update dualized matrix for non-linear Dirichlet boundary conditions (undead)
 !
     if (l_diri_undead .and. (metpre.ne.'EXTRAPOLE')) then
-        call nmcmat('MEDIRI', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MEDIRI', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR-ELEM D'AMORTISSEMENT DE RAYLEIGH
 !
     if (lcamor) then
-        call nmcmat('MEAMOR', optamo, ' ', .true._1,&
-                    .true._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MEAMOR', optamo, ' ', ASTER_TRUE,&
+                    ASTER_TRUE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL DES MATR-ELEM DES CHARGEMENTS
 !
     if (l_neum_undead .and. (metpre.ne.'EXTRAPOLE')) then
-        call nmcmat('MESUIV', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MESUIV', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
@@ -237,8 +248,8 @@ integer :: faccvg, ldccvg
 !
     if (renume) then
         if (ldyna) then
-            call nmcmat('MEMASS', ' ', ' ', .false._1,&
-                        .true._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+            call nmcmat('MEMASS', ' ', ' ', ASTER_FALSE,&
+                        ASTER_TRUE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                         list_l_calc, list_l_asse)
         endif
         if (.not.reasma) then
@@ -249,12 +260,13 @@ integer :: faccvg, ldccvg
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modelz        , ds_material, carele     , ds_constitutive, sddisc        ,&
-                    sddyna        , fonact     , numins     , iterat         , valinc        ,&
-                    solalg        , lischa     , ds_system, numedd         , numfix        ,&
-                    ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
-                    list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
-                    measse        , ldccvg     )
+        call nmxmat(modelz         , ds_material   , carele        ,&
+                    ds_constitutive, sddisc        , numins        ,&
+                    valinc         , solalg        , lischa        ,&
+                    numedd         , numfix        , ds_measure    ,&
+                    nb_matr        , list_matr_type, list_calc_opti,&
+                    list_asse_opti , list_l_calc   , list_l_asse   ,&
+                    meelem         , measse        , ds_system)
     endif
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
@@ -266,9 +278,9 @@ integer :: faccvg, ldccvg
     if (reasma) then
         call nmmatr('PREDICTION', fonact    , lischa, numedd, sddyna,&
                     numins      , ds_contact, meelem, measse, matass)
-        call nmimck(ds_print, 'MATR_ASSE', metpre, .true._1)
+        call nmimck(ds_print, 'MATR_ASSE', metpre, ASTER_TRUE)
     else
-        call nmimck(ds_print, 'MATR_ASSE', ' '   , .false._1)
+        call nmimck(ds_print, 'MATR_ASSE', ' '   , ASTER_FALSE)
     endif
     l_cont_cont         = isfonc(fonact,'CONT_CONTINU')
     if (l_cont_cont) then
@@ -287,7 +299,7 @@ integer :: faccvg, ldccvg
             if (kmpic1 .eq. 'NON') then
                 call sdmpic('MATR_ASSE', matass)
             endif
-            call echmat(matass, .false._1, minmat, maxmat)
+            call echmat(matass, ASTER_FALSE, minmat, maxmat)
             ds_contact%max_coefficient = maxmat
             if (abs(log(minmat)) .ne. 0.0) then
 
@@ -321,14 +333,12 @@ integer :: faccvg, ldccvg
         elseif (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
             call mtdscr(matass)
             call romAlgoNLCorrEFMatrixModify(numedd, matass, ds_algorom)
-            call preres(solveu, 'V', faccvg, maprec, matass,&
-                        ibid, -9999)
+            call preres(solveu, 'V', faccvg, maprec, matass, ibid, -9999)
             if (niv .ge. 2) then
                 call utmess('I', 'MECANONLINE13_42')
             endif
         else
-            call preres(solveu, 'V', faccvg, maprec, matass,&
-                        ibid, -9999)
+            call preres(solveu, 'V', faccvg, maprec, matass, ibid, -9999)
             if (niv .ge. 2) then
                 call utmess('I', 'MECANONLINE13_42')
             endif

@@ -40,6 +40,9 @@ implicit none
 #include "asterfort/nmxmat.h"
 #include "asterfort/preres.h"
 #include "asterfort/utmess.h"
+#include "asterfort/nmrigi.h"
+#include "asterfort/asmari.h"
+#include "asterfort/nmchex.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: fonact(*)
@@ -109,6 +112,7 @@ integer :: faccvg, ldccvg
     integer :: ifm, niv, ibid
     integer :: iterat
     integer :: nb_matr
+    character(len=19) :: rigid
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
     aster_logical :: list_l_asse(20), list_l_calc(20)
@@ -135,6 +139,7 @@ integer :: faccvg, ldccvg
     lprmo         = ndynlo(sddyna,'PROJ_MODAL')
     l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
     lshima        = ndynlo(sddyna,'COEF_MASS_SHIFT')
+    call nmchex(measse, 'MEASSE', 'MERIGI', rigid)
 !
 ! - First step ?
 !
@@ -188,9 +193,16 @@ integer :: faccvg, ldccvg
 ! --- CALCUL DES MATR-ELEM DE RIGIDITE
 !
     if (lcrigi) then
-        call nmcmat('MERIGI', optrig, ' ', .true._1,&
-                    larigi, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse)
+        call nmrigi(modelz         , carele     , sddyna,&
+                    fonact         , iterat     ,&
+                    ds_constitutive, ds_material,&
+                    ds_measure     , valinc     , solalg,&
+                    ds_system      , optrig     ,&
+                    ldccvg)
+    endif
+    if (larigi) then
+        call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
+                    rigid)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR-ELEM D'AMORTISSEMENT DE RAYLEIGH
@@ -212,12 +224,13 @@ integer :: faccvg, ldccvg
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modelz        , ds_material, carele     , ds_constitutive, sddisc        ,&
-                    sddyna        , fonact     , numins     , iterat         , valinc        ,&
-                    solalg        , lischa     , ds_system,numedd     , numfix        ,&
-                    ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
-                    list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
-                    measse        , ldccvg)
+        call nmxmat(modelz         , ds_material   , carele        ,&
+                    ds_constitutive, sddisc        , numins        ,&
+                    valinc         , solalg        , lischa        ,&
+                    numedd         , numfix        , ds_measure    ,&
+                    nb_matr        , list_matr_type, list_calc_opti,&
+                    list_asse_opti , list_l_calc   , list_l_asse   ,&
+                    meelem         , measse        , ds_system)
     endif
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER

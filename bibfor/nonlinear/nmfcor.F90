@@ -22,7 +22,7 @@ subroutine nmfcor(model          , nume_dof   , ds_material   , cara_elem  , ds_
                   ds_constitutive, list_load  , list_func_acti, ds_algopara, nume_inst,&
                   iter_newt      , ds_measure , sddisc        , sddyna     , sdnume   ,&
                   sderro         , ds_contact , hval_incr     , hval_algo  ,&
-                  hval_veelem    , hval_veasse, hval_meelem   , hval_measse, matass   ,&
+                  hval_veelem    , hval_veasse, hval_measse   , matass   ,&
                   lerrit)
 !
 use NonLin_Datastructure_type
@@ -61,7 +61,7 @@ type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24) :: sderro
 type(NL_DS_System), intent(in) :: ds_system
-character(len=19) :: hval_meelem(*), hval_veelem(*)
+character(len=19) :: hval_veelem(*)
 character(len=19) :: hval_measse(*), hval_veasse(*)
 character(len=19) :: hval_algo(*), hval_incr(*)
 type(NL_DS_Contact), intent(in) :: ds_contact
@@ -97,7 +97,6 @@ aster_logical :: lerrit
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  hval_veelem      : hat-variable for elementary vectors
 ! In  hval_veasse      : hat-variable for vectors (node fields)
-! In  hval_meelem      : hat-variable for elementary matrix
 ! In  hval_measse      : hat-variable for matrix
 ! IN  SDNUME : SD NUMEROTATION
 ! OUT LERRIT : .TRUE. SI ERREUR PENDANT CORRECTION
@@ -168,11 +167,11 @@ aster_logical :: lerrit
 !
     if (lcfint) then
         if (lcrigi) then
-            call nmrigi(model          , cara_elem  , sddyna,&
-                        list_func_acti  , iter_newt  ,&
+            call nmrigi(model          , cara_elem  , sddyna   ,&
+                        list_func_acti , iter_newt  ,&
                         ds_constitutive, ds_material,&
                         ds_measure     , hval_incr  , hval_algo,&
-                        hval_meelem    , ds_system  , option   ,&
+                        ds_system      , option     ,&
                         ldccvg)
         else
             call nmfint(model           , cara_elem      ,&

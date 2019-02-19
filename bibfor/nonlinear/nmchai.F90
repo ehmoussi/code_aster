@@ -53,7 +53,7 @@ character(len=6), optional, intent(out) :: tychap_out
 !
 ! ----------------------------------------------------------------------
 !
-    integer, parameter :: zmeelm = 9
+    integer, parameter :: zmeelm = 8
     integer, parameter :: zmeass = 4
     integer, parameter :: zveelm = 13
     integer, parameter :: zveass = 19
@@ -67,7 +67,7 @@ character(len=6), optional, intent(out) :: tychap_out
 !
     character(len=8) :: tyvari
 !
-    data lmeelm /'MERIGI','MEDIRI','MEMASS','MEAMOR','MESUIV',&
+    data lmeelm /'MEDIRI','MEMASS','MEAMOR','MESUIV',&
      &             'MESSTR','MEGEOM','MEELTC','MEELTF'/
     data lmeass /'MERIGI','MEMASS','MEAMOR','MESSTR'/
 !

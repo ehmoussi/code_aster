@@ -21,7 +21,7 @@ interface
                       fonact         , iterat     ,&
                       ds_constitutive, ds_material,&
                       ds_measure     , valinc     , solalg,&
-                      meelem         , ds_system  , optioz,&
+                      ds_system      , optioz     ,&
                       ldccvg)
         use NonLin_Datastructure_type
         character(len=*) :: optioz
@@ -33,7 +33,7 @@ interface
         integer :: iterat, ldccvg
         character(len=19) :: sddyna
         type(NL_DS_System), intent(in) :: ds_system
-        character(len=19) :: meelem(*), solalg(*), valinc(*)
+        character(len=19) :: solalg(*), valinc(*)
         integer :: fonact(*)
     end subroutine nmrigi
 end interface

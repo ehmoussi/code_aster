@@ -323,9 +323,9 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! --- PRE-CALCUL DES MATR_ELEM CONSTANTES AU COURS DU CALCUL
 !
-    call nminmc(list_func_acti, list_load  , sddyna     , model , ds_constitutive,&
-                numedd        , numfix     , ds_algopara, solalg,&
-                valinc        , ds_material, cara_elem  , sddisc, ds_measure     ,&
+    call nminmc(list_func_acti, list_load  , sddyna   , model , ds_constitutive,&
+                numedd        , numfix     , solalg   ,&
+                valinc        , ds_material, cara_elem, sddisc, ds_measure     ,&
                 meelem        , measse     , ds_system)
 !
 ! - Compute reference vector for RESI_REFE_RELA
@@ -372,10 +372,10 @@ type(NL_DS_System), intent(inout) :: ds_system
                          veelem        , veasse         ,&
                          measse)
 ! ----- Compute initial acceleration
-        call accel0(model     , numedd     , numfix   , list_func_acti, list_load,&
-                    ds_contact, maprec     , solver   , valinc        , sddyna   ,&
-                    ds_measure, ds_algopara, ds_system, meelem        , measse   ,&
-                    veelem    , veasse     , solalg)
+        call accel0(model     , numedd   , list_func_acti, list_load,&
+                    ds_contact, maprec   , solver        , valinc   , sddyna,&
+                    ds_measure, ds_system, meelem        , measse   ,&
+                    veelem    , veasse   , solalg)
     endif
 !
 ! - Extract variables
@@ -402,8 +402,8 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! --- PRE-CALCUL DES MATR_ASSE CONSTANTES AU COURS DU CALCUL
 !
-    call nminma(list_func_acti, list_load, sddyna, numedd, ds_algopara,&
-                numfix        , meelem   , measse)
+    call nminma(list_load, sddyna, numedd,&
+                numfix   , meelem, measse)
 !
 ! - Prepare storing
 !
