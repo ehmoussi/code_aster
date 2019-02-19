@@ -153,11 +153,11 @@ integer :: fonact(*)
 ! ----- CALCUL DES ENERGIES
 !
         if (lener) then
-            call nmener(valinc, veasse, measse, sddyna, eta        ,&
-                        ds_energy, fonact, numedd, numfix, ds_algopara,&
-                        meelem, numins, modele, ds_material, carele     ,&
-                        ds_constitutive, ds_measure, sddisc, solalg,&
-                        ds_contact, ds_system)
+            call nmener(valinc         , veasse    , measse, sddyna     , eta        ,&
+                        ds_energy      , fonact    , numedd, numfix     ,&
+                        meelem         , numins    , modele, ds_material, carele     ,&
+                        ds_constitutive, ds_measure, sddisc, solalg     ,&
+                        ds_contact     , ds_system)
         endif
 !
 ! ----- Post-treatment for behavior laws.

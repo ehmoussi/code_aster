@@ -15,7 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
@@ -23,7 +22,7 @@ interface
                       ds_constitutive, list_load  , list_func_acti, ds_algopara, nume_inst,&
                       iter_newt      , ds_measure , sddisc        , sddyna     , sdnume   ,&
                       sderro         , ds_contact , hval_incr     , hval_algo,&
-                      hval_veelem    , hval_veasse, hval_meelem   , hval_measse, matass   ,&
+                      hval_veelem    , hval_veasse, hval_measse   , matass   ,&
                       lerrit)
         use NonLin_Datastructure_type
         integer :: list_func_acti(*)
@@ -37,7 +36,7 @@ interface
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_System), intent(in) :: ds_system
         character(len=24) :: sderro
-        character(len=19) :: hval_meelem(*), hval_veelem(*)
+        character(len=19) :: hval_veelem(*)
         character(len=19) :: hval_measse(*), hval_veasse(*)
         character(len=19) :: hval_algo(*), hval_incr(*)
         type(NL_DS_Contact), intent(in) :: ds_contact

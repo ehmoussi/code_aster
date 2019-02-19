@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
 !
 subroutine nmener(valinc, veasse, measse, sddyna, eta        ,&
-                  ds_energy, fonact, numedd, numfix, ds_algopara,&
+                  ds_energy, fonact, numedd, numfix,&
                   meelem, numins, modele, ds_material, carele   ,&
                   ds_constitutive, ds_measure, sddisc, solalg,&
                   ds_contact, ds_system)
@@ -56,7 +55,6 @@ type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Measure), intent(inout) :: ds_measure
 real(kind=8) :: eta
 integer :: fonact(*), numins
-type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
@@ -80,7 +78,6 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  MODELE : MODELE
 ! In  ds_material      : datastructure for material parameters
-! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_system        : datastructure for non-linear system management
@@ -292,7 +289,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     if (reassm) then
 ! --- REASSEMBLAGE DE LA MATRICE DE MASSE.
         lisbid=' '
-        call nmmass(fonact, lisbid, sddyna, numedd, ds_algopara,&
+        call nmmass(lisbid, sddyna, numedd,&
                     numfix, meelem, masse)
     endif
 !

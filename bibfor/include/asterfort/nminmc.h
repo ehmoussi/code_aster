@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nminmc(fonact, lischa     , sddyna     , modele, ds_constitutive,&
-                      numedd, numfix     , ds_algopara, solalg,&
-                      valinc, ds_material, carele     , sddisc, ds_measure     ,&
+    subroutine nminmc(fonact, lischa     , sddyna   , modele, ds_constitutive,&
+                      numedd, numfix     , solalg   ,&
+                      valinc, ds_material, carele   , sddisc, ds_measure     ,&
                       meelem, measse     , ds_system)
-        use NonLin_Datastructure_type        
+        use NonLin_Datastructure_type
         integer :: fonact(*)
         character(len=19) :: lischa
         character(len=19) :: sddyna
@@ -29,7 +29,6 @@ interface
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=24) :: numedd
         character(len=24) :: numfix
-        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=19) :: solalg(*)
         character(len=19) :: valinc(*)
         type(NL_DS_Material), intent(in) :: ds_material

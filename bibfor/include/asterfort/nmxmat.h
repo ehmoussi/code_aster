@@ -18,30 +18,28 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmxmat(modelz    , ds_material, carele   , ds_constitutive, sddisc,&
-                      sddyna    , fonact     , numins   , iterat         , valinc,&
-                      solalg    , lischa     , ds_system, numedd         , numfix,&
-                      ds_measure, ds_algopara, nbmatr   , ltypma         , loptme,&
-                      loptma    , lcalme     , lassme   , lcfint         , meelem,&
-                      measse    , ldccvg)
+    subroutine nmxmat(modelz         , ds_material, carele    ,&
+                      ds_constitutive, sddisc     , numins    ,&
+                      valinc         , solalg     , lischa    ,&
+                      numedd         , numfix     , ds_measure,&
+                      nbmatr         , ltypma     , loptme    ,&
+                      loptma         , lcalme     , lassme    ,&
+                      meelem         , measse     , ds_system)
         use NonLin_Datastructure_type
         character(len=*) :: modelz
         type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: sddisc, sddyna
-        integer :: fonact(*)
-        integer :: numins, iterat
+        character(len=19) :: sddisc
+        integer :: numins
         character(len=19) :: solalg(*), valinc(*), lischa
-        type(NL_DS_System), intent(in) :: ds_system
         character(len=24) :: numedd, numfix
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         integer :: nbmatr
         character(len=6) :: ltypma(20)
         character(len=16) :: loptme(20), loptma(20)
-        aster_logical :: lcalme(20), lassme(20), lcfint
+        aster_logical :: lcalme(20), lassme(20)
         character(len=19) :: meelem(*), measse(*)
-        integer :: ldccvg
+        type(NL_DS_System), intent(in) :: ds_system
     end subroutine nmxmat
 end interface

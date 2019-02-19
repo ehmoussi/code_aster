@@ -663,6 +663,8 @@ implicit none
         character(len=19)     :: cnfint = ' '
 ! ----- Elementary and assembled vector for internal force (full integration at prediction)
         character(len=19)     :: cnpred = ' '
+! ----- Elementary rigidity matrix
+        character(len=19)     :: merigi = ' '
     end type NL_DS_System
 !
 end module

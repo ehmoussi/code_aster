@@ -21,7 +21,7 @@ subroutine nmrigi(modelz         , carele     , sddyna,&
                   fonact         , iterat     ,&
                   ds_constitutive, ds_material,&
                   ds_measure     , valinc     , solalg,&
-                  meelem         , ds_system  , optioz,&
+                  ds_system      , optioz     ,&
                   ldccvg)
 !
 use NonLin_Datastructure_type
@@ -31,7 +31,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/merimo.h"
-#include "asterfort/nmchex.h"
 #include "asterfort/nmdep0.h"
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
@@ -45,7 +44,7 @@ character(len=24) :: carele
 integer :: iterat, ldccvg
 character(len=19) :: sddyna
 type(NL_DS_System), intent(in) :: ds_system
-character(len=19) :: meelem(*), solalg(*), valinc(*)
+character(len=19) :: solalg(*), valinc(*)
 integer :: fonact(*)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -91,7 +90,7 @@ integer :: fonact(*)
 !
 ! --- VECT_ELEM ET MATR_ELEM
 !
-    call nmchex(meelem, 'MEELEM', 'MERIGI', merigi)
+    merigi = ds_system%merigi
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !

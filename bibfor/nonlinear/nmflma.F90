@@ -49,6 +49,7 @@ implicit none
 #include "asterfort/nmchai.h"
 #include "asterfort/nmchcp.h"
 #include "asterfort/nmchex.h"
+#include "asterfort/nmrigi.h"
 #include "asterfort/nmcmat.h"
 #include "asterfort/nmxmat.h"
 #include "asterfort/utmess.h"
@@ -125,7 +126,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 !
     integer, parameter :: zvalin = 28
     aster_logical :: reasma
-    aster_logical :: lcrigi, lcfint, lmacr
+    aster_logical :: lcrigi, lmacr
     aster_logical :: l_neum_undead
     character(len=16) :: optrig
     integer :: reincr, iterat
@@ -223,21 +224,23 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! --- A RECALCULER
 !
     lcrigi = reasma
-    lcfint = .false.
 !
 ! --- CALCUL DES MATR-ELEM DE RIGIDITE
 !
     if (lcrigi) then
-        call nmcmat('MERIGI', optrig, ' ', .true._1,&
-                    reasma, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse)
+        call nmrigi(modelz         , carele     , sddyna,&
+                    fonact         , iterat     ,&
+                    ds_constitutive, ds_material,&
+                    ds_measure     , valin2     , solalg,&
+                    ds_system      , optrig     ,&
+                    ldccvg)
     endif
 !
 ! --- CALCUL DES MATR-ELEM DES CHARGEMENTS SUIVEURS
 !
     if (l_neum_undead) then
-        call nmcmat('MESUIV', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MESUIV', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
@@ -245,8 +248,8 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 !
     if (mod45 .eq. 'FLAM') then
         if (l_hpp) then
-            call nmcmat('MEGEOM', ' ', ' ', .true._1,&
-                        .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+            call nmcmat('MEGEOM', ' ', ' ', ASTER_TRUE,&
+                        ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                         list_l_calc, list_l_asse)
         endif
     endif
@@ -254,25 +257,26 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! --- CALCUL DES MATR-ELEM DES SOUS-STRUCTURES
 !
     if (lmacr) then
-        call nmcmat('MESSTR', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MESSTR', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modelz        , ds_material, carele     , ds_constitutive, sddisc        ,&
-                    sddyna        , fonact     , numins     , iterat         , valin2        ,&
-                    solalg        , lischa     , ds_system  , numedd         , numfix        ,&
-                    ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
-                    list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
-                    measse        , ldccvg)
+        call nmxmat(modelz         , ds_material   , carele        ,&
+                    ds_constitutive, sddisc        , numins        ,&
+                    valin2         , solalg        , lischa        ,&
+                    numedd         , numfix        , ds_measure    ,&
+                    nb_matr        , list_matr_type, list_calc_opti,&
+                    list_asse_opti , list_l_calc   , list_l_asse   ,&
+                    meelem         , measse        ,  ds_system)
     endif
 !
 ! --- ON RECONSTRUIT RIGI2 TOUJOURS SYMETRIQUE
 !
-    call asmari(fonact, meelem, numedd, lischa, ds_algopara,&
+    call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
                 rigi2)
     matass = rigi2
 !

@@ -50,5 +50,6 @@ type(NL_DS_System), intent(out) :: ds_system
     ds_system%vefint        = '&&OP00XX.VEFINT'
     ds_system%cnfint        = '&&OP00XX.CNFINT'
     ds_system%cnpred        = '&&OP00XX.CNPRED'
+    ds_system%merigi        = '&&OP00XX.MERIGI'
 !
 end subroutine

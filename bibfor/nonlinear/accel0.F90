@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine accel0(modele    , numedd     , numfix   , fonact, lischa,&
-                  ds_contact, maprec     , solveu   , valinc, sddyna,&
-                  ds_measure, ds_algopara, ds_system, meelem, measse,&
-                  veelem    , veasse     , solalg)
+subroutine accel0(modele    , numedd   , fonact, lischa,&
+                  ds_contact, maprec   , solveu, valinc, sddyna,&
+                  ds_measure, ds_system, meelem, measse,&
+                  veelem    , veasse   , solalg)
 !
 use NonLin_Datastructure_type
 !
@@ -44,12 +44,11 @@ implicit none
 character(len=19) :: solveu, maprec, lischa
 character(len=19) :: sddyna
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=24) :: numedd, numfix, modele
+character(len=24) :: numedd, modele
 type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=19) :: meelem(*), measse(*), veasse(*), veelem(*)
 character(len=19) :: solalg(*), valinc(*)
 integer :: fonact(*)
-type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_System), intent(in) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
@@ -68,7 +67,6 @@ type(NL_DS_System), intent(in) :: ds_system
 !
 ! IN  MODELE : NOM DU MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
-! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
 ! IN  LISCHA : LISTE DES CHARGES
 ! In  ds_contact       : datastructure for contact management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
@@ -79,7 +77,6 @@ type(NL_DS_System), intent(in) :: ds_system
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! In  ds_algopara      : datastructure for algorithm parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -116,8 +113,8 @@ type(NL_DS_System), intent(in) :: ds_system
 !
 ! --- ASSEMBLAGE ET FACTORISATION DE LA MATRICE
 !
-    call nmprac(fonact, lischa    , numedd    , numfix     , solveu     ,&
-                sddyna, ds_measure, ds_contact, ds_algopara,&
+    call nmprac(fonact, lischa    , numedd    , solveu     ,&
+                sddyna, ds_measure, ds_contact, &
                 meelem, measse    , maprec    , matass     , faccvg)
     if (faccvg .eq. 2) then
         call vtzero(acce_prev)

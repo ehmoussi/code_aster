@@ -285,7 +285,7 @@ integer :: nbiter
                 ds_constitutive, list_load , fonact     , ds_algopara, numins,&
                 iterat         , ds_measure, sddisc     , sddyna     , sdnume,&
                 sderro         , ds_contact, valinc     , solalg,&
-                veelem         , veasse    , meelem     , measse     , matass,&
+                veelem         , veasse    , measse     , matass,&
                 lerrit)
 !
     if (lerrit) goto 315
