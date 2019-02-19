@@ -116,7 +116,7 @@ use petsc_data_module
     ASSERT(mod(neq2,bs).eq.0)
 !
 !   Adresses needed to get the stiffness matrix wrt nodes and dof numbers (see below)
-    ldebug=.true.
+    ldebug=.false.
     if (ldebug) then
         call jeveuo(nonu//'.NUME.REFN', 'L', jrefn)
         noma = zk24(jrefn)

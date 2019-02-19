@@ -96,7 +96,7 @@ use petsc_data_module
     nonu = nonu_courant
     nosolv = nosols(kptsc)
     a = ap(kptsc)
-    ldebug=.true.
+    ldebug=.false.
 !
     call jeveuo(nonu//'.SMOS.SMDI', 'L', jsmdi)
     call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)

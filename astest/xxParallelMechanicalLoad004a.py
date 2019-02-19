@@ -105,6 +105,16 @@ MESTAT = STAT_NON_LINE(
 # else:
 #     os.system( """cp fort.11 /tmp/ddl_seq.txt """ )
 
+## To post-process the matrices :
+## cd /tmp
+## cat ddl0.txt ddl1.txt    > ddl_par.txt
+## LANG=en_US.UTF-8  sort -g ddl_seq.txt > ddl_seq_sorted.txt
+## LANG=en_US.UTF-8  sort -g ddl_par.txt > ddl_par_sorted.txt
+## uniq ddl_seq_sorted.txt > ddl_seq_sorted_uniq.txt
+## uniq ddl_par_sorted.txt > ddl_par_sorted_uniq.txt
+## meld ddl_seq_sorted_uniq.txt ddl_par_sorted_uniq.txt
+
+
 # if parallel:
 #     rank = code_aster.getMPIRank()
 #     MESTAT.printMedFile('/tmp/par_%d.resu.med'%rank)
