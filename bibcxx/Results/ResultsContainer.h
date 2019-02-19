@@ -253,6 +253,12 @@ class ResultsContainerInstance : public DataStructure {
 
     /**
      * @brief Get elementary characteristics
+     */
+    ElementaryCharacteristicsPtr
+    getElementaryCharacteristics() ;
+
+    /**
+     * @brief Get elementary characteristics
      * @param rank
      */
     ElementaryCharacteristicsPtr
