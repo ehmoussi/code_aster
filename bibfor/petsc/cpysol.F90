@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
+subroutine cpysol(nomat, numddl, rsolu, debglo, vecpet, nbval)
     implicit none
 #include "asterf_config.h"
 #include "asterf.h"
@@ -42,10 +42,11 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
     integer(kind=4) :: debglo, nbval
     real(kind=8) :: rsolu(*), vecpet(*)
     character(len=14) :: numddl
+    character(len=19) :: nomat
 #ifdef _USE_MPI
 #include "mpif.h"
 !
-    integer :: rang, nbproc, jnbjoi, nbjoin, numpro, jjointr, jjointe
+    integer :: rang, nbproc, jnbjoi, nbjoin, numpro, jjointr, jjointe,lmat
     integer :: lgenvo, lgrecep, jvaleue, jvaleur, iaux, jaux, jnulg
     integer :: jprddl, jnequ, nloc, nlili, ili, iret, jjoin, ijoin
     integer :: numglo, jdeeq, jrefn, jmlogl, nuno1, nucmp1, numloc
@@ -250,6 +251,11 @@ subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
 !        endif
 !      enddo
 ! nsellenet
+!
+! -- REMISE A L'ECHELLE DES LAGRANGES DANS LA SOLUTION
+    call jeveuo(nomat//'.&INT', 'L', lmat)
+    call mrconl('MULT', lmat, 0, 'R', rsolu, 1)
+
     call jedema()
 #endif
 !

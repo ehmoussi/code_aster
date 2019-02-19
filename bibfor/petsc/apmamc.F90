@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ use petsc_data_module
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/asmpi_info.h"
     integer :: kptsc
 !----------------------------------------------------------------
 !
@@ -64,12 +65,16 @@ use petsc_data_module
     integer :: k, ilig, nzdeb, nzfin,bs
     integer :: iterm, jterm, nbterm, neq2
     integer :: nbloc, kbloc, k1, k2, k3
+    integer :: jrefn,jdeeq,numno1,numno2,nucmp1,nucmp2,rang
 !
     character(len=19) :: nomat, nosolv
     character(len=16) :: idxi1, idxi2, trans1, trans2
     character(len=14) :: nonu
+    character(len=8)  :: noma
 !
-    aster_logical :: lmnsy
+    aster_logical :: lmnsy,ldebug
+!
+    mpi_int :: mrank, msize
 !
     real(kind=8) :: valm
     integer, pointer :: smdi(:) => null()
@@ -83,7 +88,7 @@ use petsc_data_module
 !----------------------------------------------------------------
 !     Variables PETSc
     PetscInt :: low2, high2, neq, jcol1, jcol2, low1
-    PetscInt :: mm, nn 
+    PetscInt :: mm, nn
     PetscErrorCode ::  ierr
     PetscInt, parameter :: ione = 1
     Mat :: a
@@ -109,7 +114,17 @@ use petsc_data_module
     nz=smdi(neq2)
 
     ASSERT(mod(neq2,bs).eq.0)
-
+!
+!   Adresses needed to get the stiffness matrix wrt nodes and dof numbers (see below)
+    ldebug=.false.
+    if (ldebug) then
+        call jeveuo(nonu//'.NUME.REFN', 'L', jrefn)
+        noma = zk24(jrefn)
+        call jeveuo(nonu//'.NUME.DEEQ', 'L', jdeeq)
+        call asmpi_info(rank = mrank, size = msize)
+        rang = to_aster_int(mrank)
+    endif
+!
 !   la matrice est-elle symetrique ?
 !   ---------------------------------
     call jelira(nomat//'.VALM', 'NMAXOC', nvalm)
@@ -205,6 +220,14 @@ use petsc_data_module
 !           -- on stocke l'indice C de la ligne, c'est
 !              l'indice de la colonne transposee
             zi4(jdxi2+jterm-1)=ilig-1
+!           Writings to get the stiffness matrix wrt nodes and dof numbers
+            if (ldebug) then
+                numno1 = zi(jdeeq+2*(ilig-1))
+                numno2 = zi(jdeeq+2*(jcol1-1))
+                nucmp1 = zi(jdeeq +2*(ilig-1) + 1)
+                nucmp2 = zi(jdeeq +2*(jcol1-1)+1)
+                write(11+rang,*) numno2, nucmp2, numno1, nucmp1, valm, to_aster_int(jcol1), ilig
+            endif
 ! ======
 ! bloc D
 ! ======
@@ -216,6 +239,14 @@ use petsc_data_module
                 zr(jdval1+iterm-1)=valm
 !               -- on stocke l'indice C de la ligne
                 zi4(jdxi1+iterm-1)=ilig-1
+!               Writings to get the stiffness matrix wrt nodes and dof numbers
+                if (ldebug) then
+                    numno1 = zi(jdeeq+2*(ilig-1))
+                    numno2 = zi(jdeeq+2*(jcol1-1))
+                    nucmp1 = zi(jdeeq +2*(ilig-1) + 1)
+                    nucmp2 = zi(jdeeq +2*(jcol1-1)+1)
+                    write(11+rang,*) numno1, nucmp1, numno2, nucmp2, valm, ilig, to_aster_int(jcol1)
+                endif
             endif
         end do
 
@@ -262,6 +293,14 @@ use petsc_data_module
                 valm=zr(jvalm-1+k)
                 zr(jdval1+iterm-1)=valm
                 zi4(jdxi1+iterm-1)=ilig-1
+!               Writings to get the stiffness matrix wrt nodes and dof numbers
+                if (ldebug) then
+                    numno1 = zi(jdeeq+2*(ilig-1))
+                    numno2 = zi(jdeeq+2*(jcol1-1))
+                    nucmp1 = zi(jdeeq +2*(ilig-1) + 1)
+                    nucmp2 = zi(jdeeq +2*(jcol1-1)+1)
+                    write(11+rang,*) numno1, nucmp1, numno2, nucmp2, valm, ilig, to_aster_int(jcol1)
+                endif
             else
 !               -- On ignore les lignes après high2
                 exit
@@ -284,6 +323,9 @@ use petsc_data_module
     call jedetr(idxi2)
     call jedetr(trans1)
     call jedetr(trans2)
+
+! -- Close the logical unit dedicated to dump the matrix
+    call flush(11+rang)
 
 
     call jedema()
