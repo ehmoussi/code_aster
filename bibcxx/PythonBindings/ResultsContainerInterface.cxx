@@ -47,6 +47,8 @@ void exportResultsContainerToPython() {
                   &initFactoryPtr< ResultsContainerInstance, std::string, std::string >))
         .def( "addMaterialOnMesh", &ResultsContainerInstance::addMaterialOnMesh )
         .def( "addModel", &ResultsContainerInstance::addModel )
+        .def( "appendElementaryCharacteristicsOnAllRanks",
+              &ResultsContainerInstance::appendElementaryCharacteristicsOnAllRanks )
         .def( "appendMaterialOnMeshOnAllRanks",
               &ResultsContainerInstance::appendMaterialOnMeshOnAllRanks )
         .def( "appendModelOnAllRanks", &ResultsContainerInstance::appendModelOnAllRanks )

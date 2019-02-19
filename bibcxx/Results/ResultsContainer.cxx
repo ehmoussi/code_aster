@@ -41,6 +41,8 @@ bool ResultsContainerInstance::allocate( int nbRanks ) {
 void
 ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCharacteristicsPtr &cara,
                                                         int rank ) {
+    if( !cara )
+        throw std::runtime_error( "ElementaryCharacteristics is empty" );
     _mapElemCara[rank] = cara;
     ASTERINTEGER rang = rank;
     std::string type( "CARAELEM" );
@@ -90,6 +92,18 @@ void ResultsContainerInstance::addModel( const ModelPtr &model,
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, model->getName(), type );
     const auto fed = model->getFiniteElementDescriptor();
     _fieldBuidler.addFiniteElementDescriptor( fed );
+};
+
+void ResultsContainerInstance::appendElementaryCharacteristicsOnAllRanks
+    ( const ElementaryCharacteristicsPtr& cara )
+{
+    _serialNumber->updateValuePointer();
+    ASTERINTEGER nbRanks = _serialNumber->usedSize();
+    for ( int rank = 0; rank < nbRanks; ++rank ) {
+        const ASTERINTEGER iordr = ( *_serialNumber )[rank];
+        if ( _mapElemCara.find( iordr ) == _mapElemCara.end() )
+            addElementaryCharacteristics( cara, iordr );
+    }
 };
 
 void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr &mater ) {

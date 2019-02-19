@@ -194,7 +194,13 @@ class ResultsContainerInstance : public DataStructure {
      * @brief Add time value for one rank
      * @param rank
      */
-    void addTimeValue( double, int rank ) ;
+    void addTimeValue( double, int rank );
+
+    /**
+     * @brief Append a elementary characteristics on all rank of ResultsContainer
+     * @param ElementaryCharacteristicsPtr
+     */
+    void appendElementaryCharacteristicsOnAllRanks( const ElementaryCharacteristicsPtr& );
 
     /**
      * @brief Append a material on all rank of ResultsContainer
