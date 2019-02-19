@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmtfpe(phase , iresof, l_pena_cont, l_pena_fric,&
+    subroutine mmtfpe(phase , i_reso_fric, l_pena_cont, l_pena_fric,&
                       ndim  , nne   , nnm        ,  nnl       , nbcps ,&
                       wpg   , jacobi,&
                       ffl   , ffe   , ffm        ,&
@@ -32,7 +32,7 @@ interface
                       matref, matrmf)
         character(len=4), intent(in) :: phase
         aster_logical, intent(in) :: l_pena_cont, l_pena_fric
-        integer, intent(in) :: iresof, ndim, nne, nnm, nnl, nbcps
+        integer, intent(in) :: i_reso_fric, ndim, nne, nnm, nnl, nbcps
         real(kind=8), intent(in) :: norm(3), tau1(3), tau2(3), mprojn(3, 3), mprojt(3, 3)
         real(kind=8), intent(in) :: ffe(9), ffm(9), ffl(9)
         real(kind=8), intent(in) :: wpg, jacobi

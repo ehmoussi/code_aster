@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine plasbe(fami, kpg, ksp, typmod, imat,&
+    subroutine plasbe(fami, kpg, ksp, typmod, imat, l_epsi_varc,&
                       crit, epsdt, depst, sigd, vind,&
                       opt, sigf, vinf, dsde,&
                       icomp, nvi, irteti)
+        aster_logical, intent(in) :: l_epsi_varc
         character(len=*) :: fami
         integer :: kpg
         integer :: ksp

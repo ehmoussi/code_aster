@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -278,7 +278,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
             b_iss_harm = BLOC(condition="""equal_to("ISS", 'OUI')""",
 
 
-                              VERSION_MISS     = SIMP(statut='f', typ='TXM', into=("V6.6","V6.5"), defaut="V6.6",
+                              VERSION_MISS     = SIMP(statut='f', typ='TXM', into=("V6.7","V6.6","V6.5"), defaut="V6.7",
                                                 fr=tr("Version de Miss utilisée")),
 
                               CALC_IMPE_FORC = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="OUI"),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,6 +65,14 @@ implicit none
 #include "asterfort/uttcpu.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/vtzero.h"
+#include "asterfort/setTimeListProgressBar.h"
+#include "asterfort/nxnpas.h"
+#include "asterfort/nmimr0.h"
+#include "asterfort/nmimck.h"
+#include "asterfort/nmimci.h"
+#include "asterfort/nmimcr.h"
+#include "asterfort/nmimpr.h"
+#include "asterfort/nmimpx.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,33 +83,28 @@ implicit none
     aster_logical :: l_stat, matcst, coecst, reasma, arret, conver, itemax
     aster_logical :: l_dry, l_line_search, finpas, l_evol, lnkry
     aster_logical :: force, l_rom
-    integer :: ther_crit_i(3), numins, k, icoret, nbcham, iterho
-    integer :: itmax, ifm, niv, neq, iterat, jtempp, jtemp
+    integer :: ther_crit_i(3), nume_inst, k, iterho
+    integer :: itmax, ifm, niv, neq, iter_newt, jtempp, jtemp
     integer :: itab(2)
-    real(kind=8) :: tpsthe(6), deltat, timet, timtdt, tps1(7)
-    real(kind=8) :: tps2(4), tps3(4), tpex, ther_crit_r(2), theta, khi, rho, testr
-    real(kind=8) :: testm, para(2), instap, tconso
+    real(kind=8) :: tpsthe(6), deltat, tps1(7)
+    real(kind=8) :: tps2(4), tps3(4), tpex, ther_crit_r(2), rho
+    real(kind=8) :: para(2), time_curr, tconso
     real(kind=8) :: rtab(2), theta_read
-    real(kind=8) :: vrela(1), vmaxi(1), vnorm(1)
-    character(len=1) :: base
-    character(len=3) :: kreas
     character(len=8) :: result, result_dry, mesh
     character(len=19) :: sdobse
-    character(len=16) :: tysd
     character(len=19) :: solver, maprec, sddisc, sdcrit, varc_curr, list_load
     character(len=24) :: model, mate, cara_elem
     character(len=24) :: time, dry_prev, dry_curr, compor, vtemp, vtempm, vtempp
     character(len=24) :: vtempr, cn2mbr_stat, cn2mbr_tran, nume_dof, mediri, matass, cndiri, cn2mbr
     character(len=24) :: cncine, cnresi, vabtla, vhydr, vhydrp
     character(len=24) :: tpscvt
-    character(len=76) :: fmt2, fmt3, fmt4
-    character(len=85) :: fmt1
-    real(kind=8), pointer :: crtr(:) => null()
+    real(kind=8), pointer :: v_crit_crtr(:) => null()
     real(kind=8), pointer :: tempm(:) => null()
 !
     type(NL_DS_InOut)     :: ds_inout
     type(NL_DS_AlgoPara)  :: ds_algopara
     type(ROM_DS_AlgoPara) :: ds_algorom
+    type(NL_DS_Print)     :: ds_print
 !
     data sdcrit/'&&OP0186.CRITERE'/
     data maprec/'&&OP0186.MAPREC'/
@@ -114,10 +117,6 @@ implicit none
     data vhydr,vhydrp/'&&OP0186.HY','&&OP0186.HYP'/
     data mediri/'&&MEDIRI'/
     data matass/'&&MTHASS'/
-    data fmt1/'(85(''-''))'/
-    data fmt2/'(A,1X,A,6X,A,9X,A,6X,A,3X,A,3X,A,1X,A)'/
-    data fmt3/'(A,16X,A,8X,A,6X,A,3X,A,6X,A,4X,A)'/
-    data fmt4/'(A,12X,A,2X,A,17X,A,9X,A,4X,A)'/
     data sddisc            /'&&OP0186.PARTPS'/
 !
 ! --------------------------------------------------------------------------------------------------
@@ -133,11 +132,11 @@ implicit none
     varc_curr = '&&OP0186.CHVARC'
 ! --- CE BOOLEEN ARRET EST DESTINE AUX DEVELOPPEURS QUI VOUDRAIENT
 ! --- FORCER LE CALCUL MEME SI ON N'A PAS CONVERGENCE (ARRET=TRUE)
-    arret = .false.
+    arret     = ASTER_FALSE
 !
 ! - Creation of datastructures
 !
-    call nxini0(ds_algopara, ds_inout)
+    call nxini0(ds_algopara, ds_inout, ds_print)
 !
 ! - Read parameters (linear)
 !
@@ -147,27 +146,31 @@ implicit none
 !
 ! - Read parameters (non-linear)
 !
-    call nxlect(result       , model     , ther_crit_i, ther_crit_r, ds_inout,&
-                ds_algopara  , ds_algorom, result_dry , compor     , l_dry   ,&
-                l_line_search)
+    call nxlect(result     , model      ,&
+                ther_crit_i, ther_crit_r,&
+                ds_inout   , ds_algopara,&
+                ds_algorom , ds_print   ,&
+                result_dry , compor     ,&
+                mesh       , l_dry)
     itmax      = ther_crit_i(3)
 !
 ! - Initializations
 !
-    call nxinit(model , mate    , cara_elem , compor       , list_load,&
-                para  , nume_dof, l_stat    , l_evol       , l_rom    ,&
-                sddisc, ds_inout, vhydr     , sdobse       , mesh     ,&
-                sdcrit, time    , ds_algorom, l_line_search)
+    call nxinit(mesh         , model   , mate       ,&
+                cara_elem    , compor  , list_load  ,&
+                para         , nume_dof,&
+                sddisc       , ds_inout, sdobse     ,&
+                sdcrit       , time    , ds_algopara,&
+                ds_algorom   , ds_print, vhydr      ,&
+                l_stat       , l_evol  , l_rom      ,&
+                l_line_search, lnkry)
 !
     if (l_stat) then
-        numins=0
+        nume_inst=0
     else
-        numins=1
+        nume_inst=1
     endif
     deltat=-1.d150
-! --- La fonctionnalité Newton-Krylov est-elle active ?
-    lnkry = ds_algopara%method == 'NEWTON_KRYLOV'
-
 !
 ! --- CREATION DES OBJETS DE TRAVAIL ET DES STRUCTURES DE DONNEES
     vtemp ='&&NXLECTVAR_____'
@@ -189,7 +192,7 @@ implicit none
         call copisd('CHAMP_GD', 'V', vtemp, cn2mbr_stat)
         call copisd('CHAMP_GD', 'V', vtemp, cn2mbr_tran)
     endif
-
+    call jelira(vtempm(1:19)//'.VALE', 'LONMAX', neq)
     call copisd('CHAMP_GD', 'V', vhydr, vhydrp)
 !
 ! - Total second member
@@ -200,101 +203,39 @@ implicit none
 !
     call medith('V', 'ZERO', model, list_load, mediri)
 !
-! **********************************************************************
-!                 BOUCLE SUR LES PAS DE TEMPS
-! **********************************************************************
-!
     call uttcpu('CPU.OP0186.1', 'INIT', ' ')
     call uttcpr('CPU.OP0186.1', 7, tps1)
     tpex = tps1(7)
     call uttcpu('CPU.OP0186.2', 'INIT', ' ')
     call uttcpu('CPU.OP0186.3', 'INIT', ' ')
     call uttcpr('CPU.OP0186.3', 4, tps3)
+!
+! **********************************************************************
+!
+! Loop on time steps
+!
+! **********************************************************************
+!
+!
 200 continue
-! --- RECUPERATION DU PAS DE TEMPS ET DES PARAMETRES DE RESOLUTION
 !
-    if (l_stat) then
-        if (.not.l_evol) then
-            instap=0.d0
-            deltat=-1.d150
-            theta=1.d0
-            khi=0.d0
-        else
-            instap=diinst(sddisc, numins)
-            deltat=-1.d150
-            theta=1.d0
-            khi=0.d0
-        endif
-    else
-        instap = diinst(sddisc, numins)
-        deltat = instap-diinst(sddisc, numins-1)
-        theta=theta_read
-        khi=1.d0
-    endif
-    para(2) = deltat
-!
-! --- NEWTON-KRYLOV : COPIE DANS LA SD SOLVEUR DE LA PRECISION DE LA
-!                     RESOLUTION POUR LA PREDICTION (FORCING-TERM)
-    if (lnkry) then
-        call nmnkft(solver, sddisc)
-    endif
-!
-! --- MATRICE TANGENTE REACTUALISEE POUR UN NOUVEAU DT
-!
-    reasma = .true.
+! - Launch timer for current step time
 !
     call uttcpu('CPU.OP0186.1', 'DEBUT', ' ')
-    tpsthe(1) = instap
-    tpsthe(2) = deltat
-    tpsthe(3) = theta
-    tpsthe(4) = khi
-    tpsthe(5) = r8vide()
-    tpsthe(6) = r8vide()
-    call utmess('I', 'MECANONLINE6_6', sr=instap)
-    write (ifm,fmt1)
-    write (ifm,fmt2) '|','ITERATION','RESIDU','RESIDU',&
-     &      'ITERATION','COEFFICIENT','ACTUALISATION','|'
-    write (ifm,fmt3) '|','RELATIF','ABSOLU','RECH. LIN.',&
-     &      'RECH. LIN.','MATRICE','|'
-    write (ifm,fmt4) '|','RESI_GLOB_RELA','RESI_GLOB_MAXI','RHO',&
-     &      'TANGENTE','|'
-    write (ifm,fmt1)
-    call jelira(vtempm(1:19)//'.VALE', 'LONMAX', neq)
 !
-! RECUPERATION DE:
-! VTEMP  --> T+,I+1BIS
-! VTEMPP --> T-
-    vtemp='&&NXLECTVAR_____'
+! - Reset values in convergence table for Newton loop
 !
-! --- RECUPERATION DU CHAMP DE TEMPERATURE A T ET T+DT POUR LE SECHAGE
-!     LOIS SECH_GRANGER ET SECH_NAPPE
-    if (l_dry) then
-        call gettco(result_dry, tysd)
-        if (tysd(1:9) .eq. 'EVOL_THER') then
-            call dismoi('NB_CHAMP_UTI', result_dry, 'RESULTAT', repi=nbcham)
-            if (nbcham .gt. 0) then
-                timet = instap
-                timtdt = instap + deltat
-                base = 'V'
-                call rsinch(result_dry, 'TEMP', 'INST', timet, dry_prev,&
-                            'CONSTANT', 'CONSTANT', 1, base, icoret)
-                if (icoret .ge. 10) then
-                    call utmess('F', 'ALGORITH8_94', sk=result_dry, si=icoret, sr=timet)
-                endif
-                call rsinch(result_dry, 'TEMP', 'INST', timtdt, dry_curr,&
-                            'CONSTANT', 'CONSTANT', 1, base, icoret)
-                if (icoret .ge. 10) then
-                    call utmess('F', 'ALGORITH8_94', sk=result_dry, si=icoret, sr=timtdt)
-                endif
-            else
-                call utmess('F', 'ALGORITH8_99', sk=result_dry)
-            endif
-        endif
-    endif
+    call nmimr0(ds_print, 'NEWT')
 !
-! ======================================================================
-!  Compute second members and tangent matrix
-! ======================================================================
+! - Updates for new time step
+!
+    call nxnpas(sddisc, solver    , nume_inst, ds_print,&
+                lnkry , l_evol    , l_stat   ,&
+                l_dry , result_dry, dry_prev , dry_curr,&
+                para  , time_curr , deltat   , reasma  ,&
+                tpsthe)
+!
+! - Compute second members and tangent matrix
 !
     call nxacmv(model      , mate     , cara_elem , list_load, nume_dof   ,&
                 solver     , l_stat   , time      , tpsthe   , vtemp      ,&
@@ -317,32 +258,34 @@ implicit none
                 cn2mbr    , vhydr , vhydrp   , dry_prev   , dry_curr   ,&
                 compor    , cndiri, cncine   , cn2mbr_stat, cn2mbr_tran,&
                 ds_algorom)
-
+!
+    iter_newt = 0
+    itemax = ASTER_FALSE
+    conver = ASTER_FALSE
 !
 ! ======================================================================
-!              ITERATIONS DE LA METHODE DE NEWTON-RAPHSON
+!     BOUCLE SUR LES ITERATIONS DE NEWTON
 ! ======================================================================
-!
-    iterat = 0
-    itemax = .false.
-    conver = .false.
-!
-! --- REPRISE DE LA BOUCLE D'ITERATIONS DE NEWTON-RAPHSON
 !
  20 continue
 !
 ! --- DOIT ON REACTUALISER LA MATRICE TANGENTE
 !
     call uttcpu('CPU.OP0186.2', 'DEBUT', ' ')
-    iterat = iterat + 1
+    iter_newt = iter_newt + 1
     reasma = .false.
-    kreas = 'NON'
-    if (iterat .ge. itmax) itemax = .true.
+    if (iter_newt .ge. itmax) then
+        itemax = .true.
+    endif
     if ((ds_algopara%reac_iter.ne.0)) then
-        if (mod(iterat,ds_algopara%reac_iter) .eq. 0) then
+        if (mod(iter_newt,ds_algopara%reac_iter) .eq. 0) then
             reasma = .true.
-            kreas = 'OUI'
         endif
+    endif
+!
+    call nmimck(ds_print, 'MATR_ASSE', ' ', ASTER_FALSE)
+    if (reasma) then
+        call nmimck(ds_print, 'MATR_ASSE', '      OUI', ASTER_TRUE)
     endif
 !
 ! ON ASSEMBLE LE SECOND MEMBRE B= |VEC2ND - RESI_THER - (BT)*LAGRANGE|
@@ -350,26 +293,21 @@ implicit none
 ! SYSTEME LINEAIRE RESOLU:  A * (T+,I+1 - T+,I) = B
 ! SOLUTION: VTEMPP = T+,I+1 - T+,I
 !
-    call nxnewt(model , mate       , cara_elem  , list_load, nume_dof,&
-                solver, tpsthe     , time       , matass   , cn2mbr  ,&
-                maprec, cncine     , varc_curr  , vtemp    , vtempm  ,&
-                vtempp, cn2mbr_stat, mediri     , conver   , vhydr   ,&
-                vhydrp, dry_prev   , dry_curr   , compor   , vabtla  ,&
-                cnresi, ther_crit_i, ther_crit_r, reasma   , testr,&
-                testm , vnorm(1)   , ds_algorom )
-!
-    vrela(1) = testr
-    vmaxi(1) = testm
-    call nmlere(sddisc, 'E', 'VRELA', iterat, vrela)
-    call nmlere(sddisc, 'E', 'VMAXI', iterat, vmaxi)
-    call nmlere(sddisc, 'E', 'VCHAR', iterat, vnorm)
+    call nxnewt(model   , mate       , cara_elem  , list_load, nume_dof  ,&
+                solver  , tpsthe     , time       , matass   , cn2mbr    ,&
+                maprec  , cncine     , varc_curr  , vtemp    , vtempm    ,&
+                vtempp  , cn2mbr_stat, mediri     , conver   , vhydr     ,&
+                vhydrp  , dry_prev   , dry_curr   , compor   , vabtla    ,&
+                cnresi  , ther_crit_i, ther_crit_r, reasma   , ds_algorom,&
+                ds_print, sddisc     , iter_newt)
 !
 ! --- SI NON CONVERGENCE ALORS RECHERCHE LINEAIRE
 !       (CALCUL DE RHO) SUR L INCREMENT VTEMPP
 ! --- ACTUALISATION DE LA TEMPERATURE VTEMPM AVEC L INCREMENT VTEMPP
 !     MULTIPLIE PAR RHO
-    rho = 0.d0
+    rho    = 0.d0
     iterho = 0
+    call nmimr0(ds_print, 'RELI')
     if (.not.conver) then
         if (l_line_search) then
             call nxrech(model , mate    , cara_elem, list_load  , nume_dof ,&
@@ -377,6 +315,8 @@ implicit none
                         vtempm, vtempp  , vtempr   , vtemp      , vhydr    ,&
                         vhydrp, dry_prev, dry_curr , cn2mbr_stat, vabtla   ,&
                         cnresi, rho     , iterho   , ds_algopara)
+            call nmimci(ds_print, 'RELI_NBIT', iterho, l_affe = ASTER_TRUE)
+            call nmimcr(ds_print, 'RELI_COEF', rho   , l_affe = ASTER_TRUE)
         else
             rho = 1.d0
         endif
@@ -389,27 +329,37 @@ implicit none
         end do
     endif
 !
-    write (ifm,&
-     &      '(A,1X,I5,6X,1PE12.5,4X,1PE12.5,7X,I2,5X,1PE12.5,8X,A,6X,A)'&
-     &        ) '|',iterat,testr,testm,iterho,rho,kreas,'|'
-!
-    if (itemax .and. .not.conver) then
-        write (ifm,fmt1)
-        call utmess('I', 'MECANONLINE10_3')
-    endif
-!
-! --------- CALCUL CRITERE DE CONVERGENCE POUR NEWTON-KRYLOV (FORCING-TERM)
-!
-    if (lnkry) then
-       call nmnkft(solver, sddisc, iterat)
-    endif
+! - End of time measure for Newton
 !
     call uttcpu('CPU.OP0186.2', 'FIN', ' ')
     call uttcpr('CPU.OP0186.2', 4, tps2)
+    call nmimcr(ds_print, 'ITER_TIME', tps2(4), ASTER_TRUE)
+!
+! - Print line in convergence table
+!
+    call nmimpr(ds_print)
+!
+! - Print separator line in convergence table
+!
+    if (conver) then
+        if (ds_print%l_print) then 
+            call nmimpx(ds_print)
+        endif
+    endif
+!
+    if (itemax .and. .not.conver) then
+        call utmess('I', 'MECANONLINE10_3')
+    endif
+!
+! - Update NEWTON-KRYLOV (FORCING-TERM)
+!
+    if (lnkry) then
+       call nmnkft(solver, sddisc, iter_newt)
+    endif
+!
     if ((.not.conver) .and. (.not.itemax)) then
         if (2.d0*tps2(4) .gt. 0.95d0*tps2(1)-tps3(4)) then
-            write (ifm,fmt1)
-            itab(1) = numins
+            itab(1) = nume_inst
             rtab(1) = tps2(4)
             rtab(2) = tps2(1)
             call utmess('Z', 'DISCRETISATION2_79', si=itab(1), nr=2, valr=rtab,&
@@ -418,12 +368,10 @@ implicit none
             goto 20
         endif
     else if ((.not.conver) .and. itemax .and. (.not.arret)) then
-        write (ifm,fmt1)
-        itab(1) = numins
-        itab(2) = iterat
+        itab(1) = nume_inst
+        itab(2) = iter_newt
         call utmess('Z', 'THERNONLINE4_85', ni=2, vali=itab, num_except=CONVERGENCE_ERROR)
     endif
-    write (ifm,fmt1)
 !
 ! --- VERIFICATION SI INTERRUPTION DEMANDEE PAR SIGNAL USR1
 !
@@ -438,29 +386,15 @@ implicit none
     call uttcpu('CPU.OP0186.3', 'DEBUT', ' ')
     call copisd('CHAMP_GD', 'V', vhydrp(1:19), vhydr(1:19))
 !
-    if (niv .eq. 2) then
-        write (ifm,*)
-        write (ifm,*) '**************************************'
-        write (ifm,*) ' THER_NON_LINE: OP00186'
-        write (ifm,*)
-        write (ifm,*) ' T+       :',vtemp
-        write (ifm,*) ' T-       :',vtempp
-        write (ifm,*)
-    endif
-!
 ! ======================================================================
 ! -- PREPARATION DES PARAMETRES ARCHIVES  ------------------------------
 ! ======================================================================
     if (conver) then
-        call jeveuo(sdcrit(1:19)//'.CRTR', 'E', vr=crtr)
-        crtr(1) = iterat
-        crtr(2) = iterho
-        crtr(3) = testr
-        crtr(4) = testm
-        crtr(5) = rho
+        call jeveuo(sdcrit(1:19)//'.CRTR', 'E', vr=v_crit_crtr)
+        v_crit_crtr(1) = iter_newt
     endif
 !
-    finpas = didern(sddisc, numins)
+    finpas = didern(sddisc, nume_inst)
 !
     call jeveuo(vtempm(1:19)//'.VALE', 'L', jtempp)
     call jeveuo(vtemp(1:19)//'.VALE', 'E', jtemp)
@@ -489,13 +423,13 @@ implicit none
     else
         force = .false.
     endif
-    call ntarch(numins, model   , mate , cara_elem, para,&
-                sddisc, ds_inout, force, sdcrit   , ds_algorom)
+    call ntarch(nume_inst, model   , mate , cara_elem, para,&
+                sddisc   , ds_inout, force, sdcrit   , ds_algorom)
 !
 ! - Make observation
 !
     if (l_evol) then
-        call ntobsv(mesh, sdobse, numins, instap)
+        call ntobsv(mesh, sdobse, nume_inst, time_curr)
     endif
 !
 ! ------- VERIFICATION SI INTERRUPTION DEMANDEE PAR SIGNAL USR1
@@ -514,22 +448,29 @@ implicit none
     write (ifm,'(/)')
     tpex = tps1(7)
     if (tps1(4) .gt. 0.48d0*tps1(1)) then
-        itab(1) = numins
+        itab(1) = nume_inst
         rtab(1) = tps2(4)
         rtab(2) = tps2(1)
         call utmess('Z', 'DISCRETISATION2_80', si=itab(1), nr=2, valr=rtab,&
                     num_except=TIMELIMIT_ERROR)
     endif
 !
-    if (finpas) goto 500
+    if (finpas) then
+        if (l_evol) then
+            call setTimeListProgressBar(sddisc, nume_inst, final_ = ASTER_TRUE)
+        endif
+        goto 500
+    endif
 !
 !----- NOUVEAU PAS DE TEMPS
+    nume_inst = nume_inst + 1
+    if (.not.l_stat) then
+        call setTimeListProgressBar(sddisc, nume_inst)
+    endif
     if (l_stat) then
         l_stat=.false.
     endif
-    numins = numins + 1
     goto 200
-!
 !
 500 continue
 !

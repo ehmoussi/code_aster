@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ interface
     subroutine apinte_prsl(proj_tole       , elem_dime     , &
                            elem_mast_nbnode, elem_mast_coor, &
                            elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
-                           proj_coor       )
+                           proj_coor       , iret)
         real(kind=8), intent(in) :: proj_tole
         integer, intent(in) :: elem_dime
         integer, intent(in) :: elem_mast_nbnode
@@ -29,5 +29,7 @@ interface
         real(kind=8), intent(in) :: elem_slav_coor(3,9)
         character(len=8), intent(in) :: elem_slav_code
         real(kind=8), intent(out) :: proj_coor(elem_dime-1,4)
+        integer, intent(out) :: iret
     end subroutine apinte_prsl
+
 end interface

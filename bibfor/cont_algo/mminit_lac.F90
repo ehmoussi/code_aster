@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,6 @@ implicit none
 #include "asterfort/copisd.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/mmopti_lac.h"
-#include "asterfort/mm_cycl_init_lac.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
 !
@@ -123,9 +122,5 @@ integer, intent(in) :: nume_inst
     if (.not.l_cont_allv .and. l_step_first) then
        call mmopti_lac(mesh, ds_contact)
     endif
-!
-! - Cycling initialization
-!
-    call mm_cycl_init_lac(mesh,ds_contact)
 !
 end subroutine

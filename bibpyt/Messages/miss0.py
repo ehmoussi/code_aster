@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,6 +20,11 @@
 # person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
+    2 : _(u"""
+Parmi les matériaux définis, les occurrences suivantes ne sont pas utilisées :
+    %(k1)s
+"""),
+
     3 : _(u"""
 Il faut une et une seule couche avec SUBSTRATUM="OUI".
 """),
@@ -157,9 +162,9 @@ doivent obligatoirement être définies en utilisant le mot-clé MATER_FLUIDE.
     34 : _(u"""Incohérence entre GROUP_MA_INTERF et les cotes verticales.
 """),
 
-    35 : _(u"""Si le maillage de l'interface est quadratique, 
+    35 : _(u"""Si le maillage de l'interface est quadratique,
                alors on ne peut assurer la cohérence avec le GROUP_NO spécifié.
-               Conseil : l'utilisation de GROUP_MA au lieu de GROUP_NO permettrait de valider 
+               Conseil : l'utilisation de GROUP_MA au lieu de GROUP_NO permettrait de valider
                la cohérence pour les maillages quadratiques.
 """),
 
@@ -181,7 +186,7 @@ doivent obligatoirement être définies en utilisant le mot-clé MATER_FLUIDE.
 """),
 
     41 : _(u"""On a détecté qu'une couche de sol coïncide avec la base de l'interface.
-               Cela peut poser problème avec MISS3D 
+               Cela peut poser problème avec MISS3D
                et l'option DECALAGE_AUTO peut corriger cela automatiquement.
 """),
 

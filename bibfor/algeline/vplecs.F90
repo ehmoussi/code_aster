@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,15 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
-                  nborto, nbvec2, nbvect, nbrss, nfreq,&
-                  nperm, alpha, omecor, freq1, freq2,&
-                  precdc, precsh, prorto, prsudg, seuil,&
-                  tol, toldyn, tolsor, appr, arret,&
-                  method, typevp, matra, matrb, matrc,&
-                  modrig, optiof, stoper, sturm, typcal, typeqz,&
-                  typres, amor, masse, raide, tabmod,&
-                  lc, lkr, lns, lpg, lqz)
+subroutine vplecs(eigsol, itemax_, maxitr_, nbborn_, nitv_,&
+                  nborto_, nbvec2_, nbvect_, nbrss_, nfreq_,&
+                  nperm_, alpha_, omecor_, freq1_, freq2_,&
+                  precdc_, precsh_, prorto_, prsudg_, seuil_,&
+                  tol_, toldyn_, tolsor_, appr_, arret_,&
+                  method_, typevp_, matra_, matrb_, matrc_,&
+                  modrig_, optiof_, stoper_, sturm_, typcal_, typeqz_,&
+                  typres_, amor_, masse_, raide_, tabmod_,&
+                  lc_, lkr_, lns_, lpg_, lqz_)
 !
 ! ROUTINE UTILITAIRE LISANT UNE SD_EIGENSOLVER ET CREEANT QUELQUES VALEURS DE LOGICAL ET CHARACTER
 ! UTILES POUR LA SUITE D'UN CALCUL MODAL DE MODE_ITER_SIMULT.
@@ -52,17 +52,19 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
 !
 ! --- OUTPUT
 !
-    integer, intent(out) :: itemax, maxitr, nbborn, nitv, nborto, nbvec2, nbvect, nbrss
-    integer, intent(out) :: nfreq, nperm
-    real(kind=8), intent(out) :: alpha, omecor, freq1, freq2, precdc, precsh, prorto, prsudg
-    real(kind=8), intent(out) :: seuil, tol, toldyn, tolsor
-    character(len=1), intent(out) :: appr
-    character(len=8), intent(out) :: arret, method
-    character(len=9), intent(out) :: typevp
-    character(len=14), intent(out) :: matra, matrb, matrc
-    character(len=16), intent(out) :: modrig, optiof, stoper, sturm, typcal, typeqz, typres
-    character(len=19), intent(out) :: amor, masse, raide, tabmod
-    aster_logical , intent(out) :: lc, lkr, lns, lpg, lqz
+    integer, optional, intent(out) :: itemax_, maxitr_, nbborn_, nitv_, nborto_ 
+    integer, optional, intent(out) :: nbvec2_, nbvect_, nbrss_, nfreq_, nperm_
+    real(kind=8), optional, intent(out) :: alpha_, omecor_, freq1_, freq2_, precdc_
+    real(kind=8), optional, intent(out) :: precsh_, prorto_, prsudg_
+    real(kind=8), optional, intent(out) :: seuil_, tol_, toldyn_, tolsor_
+    character(len=1), optional, intent(out) :: appr_
+    character(len=8), optional, intent(out) :: arret_, method_
+    character(len=9), optional, intent(out) :: typevp_
+    character(len=14), optional, intent(out) :: matra_, matrb_, matrc_
+    character(len=16), optional, intent(out) :: modrig_, optiof_, stoper_
+    character(len=16), optional, intent(out) :: sturm_, typcal_, typeqz_, typres_
+    character(len=19), optional, intent(out) :: amor_, masse_, raide_, tabmod_
+    aster_logical, optional, intent(out) :: lc_, lkr_, lns_, lpg_, lqz_
 !
 ! --- INPUT/OUTPUT
 ! None
@@ -73,6 +75,20 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
     real(kind=8) :: undf
     character(len=1) :: ktyp
     aster_logical :: lnsc, lnsk, lnsm
+!
+    integer :: itemax, maxitr, nbborn, nitv, nborto 
+    integer :: nbvec2, nbvect, nbrss, nfreq, nperm
+    real(kind=8) :: alpha, omecor, freq1, freq2, precdc
+    real(kind=8) :: precsh, prorto, prsudg
+    real(kind=8) :: seuil, tol, toldyn, tolsor
+    character(len=1) :: appr
+    character(len=8) :: arret, method
+    character(len=9) :: typevp
+    character(len=14) :: matra, matrb, matrc
+    character(len=16) :: modrig, optiof, stoper
+    character(len=16) :: sturm, typcal, typeqz, typres
+    character(len=19) :: amor, masse, raide, tabmod
+    aster_logical :: lc, lkr, lns, lpg, lqz
 !
 ! --  BUFFERS DE LECTURE (EN CAS D'APPELS AVEC K*BID, PASSAGE PAR REFERENCE)
     character(len=1) :: app2
@@ -291,6 +307,53 @@ subroutine vplecs(eigsol, itemax, maxitr, nbborn, nitv,&
     masse=trim(mass2)
     raide=trim(raid2)
     tabmod=trim(tabmo2)
+!
+! -- GESTION DES ARGUMENTS DE SORTIE
+    if (present(itemax_))itemax_ = itemax
+    if (present(maxitr_))maxitr_ = maxitr
+    if (present(nbborn_))nbborn_ = nbborn
+    if (present(nitv_))nitv_ = nitv
+    if (present(nborto_))nborto_ = nborto
+    if (present(nbvec2_))nbvec2_ = nbvec2
+    if (present(nbvect_))nbvect_ = nbvect
+    if (present(nbrss_))nbrss_ = nbrss
+    if (present(nfreq_))nfreq_ = nfreq
+    if (present(nperm_))nperm_ = nperm
+    if (present(alpha_))alpha_ = alpha
+    if (present(omecor_))omecor_ = omecor
+    if (present(freq1_))freq1_ = freq1
+    if (present(freq2_))freq2_ = freq2
+    if (present(precdc_))precdc_ = precdc
+    if (present(precsh_))precsh_ = precsh
+    if (present(prorto_))prorto_ = prorto
+    if (present(prsudg_))prsudg_ = prsudg
+    if (present(seuil_))seuil_ = seuil
+    if (present(tol_))tol_ = tol
+    if (present(toldyn_))toldyn_ = toldyn
+    if (present(tolsor_))tolsor_ = tolsor
+    if (present(appr_))appr_ = appr
+    if (present(arret_))arret_ = arret
+    if (present(method_))method_ = method
+    if (present(typevp_))typevp_ = typevp
+    if (present(matra_))matra_ = matra
+    if (present(matrb_))matrb_ = matrb
+    if (present(matrc_))matrc_ = matrc
+    if (present(modrig_))modrig_ = modrig
+    if (present(optiof_))optiof_ = optiof
+    if (present(stoper_))stoper_ = stoper
+    if (present(sturm_))sturm_ = sturm
+    if (present(typcal_))typcal_ = typcal
+    if (present(typeqz_))typeqz_ = typeqz
+    if (present(typres_))typres_ = typres
+    if (present(amor_))amor_ = amor
+    if (present(masse_))masse_ = masse
+    if (present(raide_))raide_ = raide
+    if (present(tabmod_))tabmod_ = tabmod
+    if (present(lc_))lc_ = lc
+    if (present(lkr_))lkr_ = lkr
+    if (present(lns_))lns_ = lns
+    if (present(lpg_))lpg_ = lpg
+    if (present(lqz_))lqz_ = lqz
 !
     call jedema()
 !

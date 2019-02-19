@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -81,7 +81,6 @@ CHA2=DEFI_CONTACT(MODELE=MO,
                           GROUP_MA_MAIT='CON1',
                           GROUP_MA_ESCL='CON2',
                           CONTACT_INIT='OUI',
-                          ADAPTATION='CYCLAGE',
                           ),);
 
 
@@ -132,7 +131,7 @@ TEST_RESU(CHAM_NO=_F(CRITERE='RELATIF',
                      GROUP_NO='G1_1',
                      PRECISION=0.05,
                      CHAM_GD=SIELNO2,
-                     VALE_CALC=-2929.34412338,
+                     VALE_CALC=-2929.35927818,
                      VALE_REFE=-2798.3,),
           )
 
@@ -142,7 +141,7 @@ TEST_RESU(CHAM_NO=_F(CRITERE='RELATIF',
                      GROUP_NO='G1_2',
                      PRECISION=0.05,
                      CHAM_GD=SIELNO2,
-                     VALE_CALC=-2870.28847685,
+                     VALE_CALC=-2870.30084792,
                      VALE_REFE=-2798.3,),
           )
 

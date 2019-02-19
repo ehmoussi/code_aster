@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -436,8 +436,6 @@ Archivage
 Avancement du calcul
 --------------------------------------------------------------------------------------
 """),
-
-    89 : _(u"""[%(i1)3d%%] Instant calculé :%(r1)12.5e, dernier instant archivé :%(r2)12.5e, au numéro d'ordre : %(i2)5d"""),
 
     90 : _(u"""
 Entrée/Changement d'état de choc détecté à l'instant %(r1)12.5e

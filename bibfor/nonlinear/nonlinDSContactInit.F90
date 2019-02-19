@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/armin.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
@@ -203,8 +204,9 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
             v_load_type(1) = 'ME'
             call jelira(mesh//'.PATCH', 'NUTIOC', nt_patch)
             nt_patch = nt_patch-1
-            ds_contact%nt_patch = nt_patch                   
+            ds_contact%nt_patch = nt_patch
             call lac_rela(mesh, ds_contact, iden_rela, l_iden_rela)
+            ds_contact%arete_min = armin(mesh)
         endif
 !
 ! ----- Identity relation

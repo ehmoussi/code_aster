@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,6 +52,9 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,
            CHARGE          =SIMP(statut='o',typ=char_ther),
            FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
          ),
+#-------------------------------------------------------------------
+         AFFICHAGE       =C_AFFICHAGE(),
+#-------------------------------------------------------------------
          METHODE         =SIMP(statut='f',typ='TXM',defaut="NEWTON",into=("NEWTON","MODELE_REDUIT","NEWTON_KRYLOV")),
          b_meth_newton = BLOC(condition = """equal_to("METHODE", 'NEWTON') or equal_to("METHODE", 'NEWTON_KRYLOV')""",
                     NEWTON          =FACT(statut='d',

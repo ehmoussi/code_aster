@@ -183,7 +183,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
      # ========================================================================================
      #          Creation de la pression calculee en deplacement aux points d'integration
      # ========================================================================================
- 
+
      Pcalc1=CREA_CHAMP(OPERATION='ASSE',
                        TYPE_CHAM='CART_NEUT_R',
                        MAILLAGE=MAIL,
@@ -267,7 +267,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
                        _F(NOM=Pcalc1),
                        _F(NOM=UcalcG),
                        _F(NOM=PcalcG),
-                       _F(NOM=DIFFUG), 
+                       _F(NOM=DIFFUG),
                        _F(NOM=tabU),
                        _F(NOM=tabP),
                        ),
@@ -460,7 +460,7 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 2.99578529889,   # raffinement=4
+            VALE_CALC= 2.99572191679,   # raffinement=4
             VALE_REFE=2.5,              # vitesse de convergence
             PRECISION=0.199,            # surconvergence : mélange de convergence de géométrie
             )                           # (surface de contact courbée)
@@ -469,15 +469,15 @@ TEST_TABLE (TABLE = PenteLST,
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.99184450349,    # raffinement=5  
+            VALE_CALC=1.99358507301,    # raffinement=5
             VALE_REFE=1.0,              # vitesse de convergence
-            PRECISION=0.992,            # surconvergence: mélange de convergence de géométrie
-            )                           # (surface de contact courbée)            
+            PRECISION=0.994,            # surconvergence: mélange de convergence de géométrie
+            )                           # (surface de contact courbée)
 
 sous_titreU='Ordres de convergence: cas TETRA10= %f'%(PenteL2U)
 sous_titreP='Ordres de convergence: cas TETRA10= %f'%(PenteL2P)
 
-    
+
 IMPR_FONCTION(FORMAT='XMGRACE',
                UNITE=29,
                BORNE_X=(min(TailleMaille)*0.7,max(TailleMaille)*1.3),

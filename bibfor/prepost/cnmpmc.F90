@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,21 +34,21 @@ subroutine cnmpmc(main,nbma, lima,mpmc)
 #include "asterfort/assert.h"
 !
     integer :: nbma, lima(nbma), mpmc(nbma), inc1, inc2, aux, jlino
-    integer :: jlmat, ntrou, nbnoma, dima, macou, nocou 
+    integer :: jlmat, ntrou, nbnoma, dima, macou, nocou
     integer :: jlico3, nlico1, lico1, nlico2, lico2, inc3, var(1), jlico4
-    character(len=8) :: main 
+    character(len=8) :: main
     character(len=24) :: lmat, conneo, lico3, lico4
 ! ----------------------------------------------------------------------
-!        CREATION DE LA CONNECTIVITÉ MAILLE DE PEAU MAILLE DE CORPS 
+!        CREATION DE LA CONNECTIVITÉ MAILLE DE PEAU MAILLE DE CORPS
 !                  (POUR LE GROUPE DE MAILLE LIMA)
 ! ----------------------------------------------------------------------
-! IN        MAIN   K8  NOM DU MAILLAGE 
+! IN        MAIN   K8  NOM DU MAILLAGE
 ! IN        NBMA    I  NOMBRE DE MAILLE DE PEAU
 ! IN        LIMA    I  NUMERO DES MAILLES A TRAITER
 ! OUT       MPMC    I  CONNECTIVITÉ
 ! ----------------------------------------------------------------------
-    
-    
+
+
 ! ----------------------------------------------------------------------
 !        CONSTRUCTION DE LA CONNECTIVITÉ INVERSE NOEUD MAILLE
 ! ----------------------------------------------------------------------
@@ -59,10 +59,10 @@ subroutine cnmpmc(main,nbma, lima,mpmc)
     call wkvect(lmat, 'V V I', zi(dima-1+3), jlmat)
     do inc1=1,aux
         zi(jlmat+inc1-1)=inc1
-    end do 
+    end do
     call cncinv(main, [0], 0,'V', conneo)
-    
-    
+
+
 ! ----------------------------------------------------------------------
 !        CONSTRUCTION DE MPMC
 ! ----------------------------------------------------------------------
@@ -70,7 +70,7 @@ subroutine cnmpmc(main,nbma, lima,mpmc)
         macou=lima(inc1)
         call jelira(jexnum(main//'.CONNEX',macou),'LONMAX',nbnoma)
         call jeveuo(jexnum(main//'.CONNEX',macou),'L',jlino)
-        nocou=zi(jlino+1-1)   
+        nocou=zi(jlino+1-1)
         call jelira(jexnum(conneo,nocou),'LONMAX',nlico1)
         ASSERT(nlico1.gt.1)
         call jeveuo(jexnum(conneo,nocou),'L',lico1)
@@ -93,25 +93,24 @@ subroutine cnmpmc(main,nbma, lima,mpmc)
                 do inc3 = 1,ntrou
                         zi(jlico3+inc3-1)=zi(jlico4+inc3-1)
                 end do
-                nlico1 = ntrou  
+                nlico1 = ntrou
 !
         end do
         if (ntrou .gt. 0) then
-        call utlisi('DIFFE',zi(jlico3),nlico1,lima, nbma,&
-                            var,1,ntrou)
-        mpmc(inc1)=var(1)
+            call utlisi('DIFFE',zi(jlico3),nlico1,lima, nbma, var,1,ntrou)
+            mpmc(inc1)=var(1)
         else
-        call utmess('F', 'ALGELINE2_93')!à changer avec un message aproprié
+            ASSERT(.false.)
         end if
         call jedetr(lico3)
         call jedetr(lico4)
     end do
 
-    
+
 ! ---------------------------------------------------------------------
 !     DESTRUCTION DES VECTEUR AUXILIAIRES
 ! ---------------------------------------------------------------------
    call jedetr(lmat)
    call jedetr(conneo)
-   
+
 end subroutine

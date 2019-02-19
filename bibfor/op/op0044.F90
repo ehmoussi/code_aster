@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -90,14 +90,15 @@ subroutine op0044()
     parameter     ( mxddl = 1 )
 !
     integer :: indf, ifreq, ifm, iret, ierfr, ierd, idet1, ieme1, ierx, idet2
-    integer :: ieme2, ieq, i, ibid, npivot(2)
+    integer :: ieme2, ieq, i, ibid, npivot(2),islvi_old
     integer :: jvalp, jdet, jidet, jieme, jnpas, kfreq, k
     integer :: lmat(3), l, lamor, ltypre, lbrss, lmo, lmf, lborne, lmasse
     integer :: lraide, ldynam, lfreq, lamort, lddl, lprod, nblagr, lresui
     integer :: lresur, lresuk, lvalp, lvec, lenout
     integer :: mxfreq, ncritr, nbrss, nitsep, nitaju, nitv, idet(2), nfreqr
     integer :: nfreq, ncrit, nbmod, na1, namorr, niv, nbcine, neqact
-    integer :: nfreqb, mxresf, ndim, nparr, neq, islvi, jrefa
+    integer :: nfreqb, mxresf, ndim, nparr, neq, jrefa
+    integer, pointer :: slvi(:) => null()
 !
     real(kind=8) :: tolsep, tolaju, tolv, fcorig, omecor, precsh, omeg, det1
     real(kind=8) :: det2, fr, am, zam(3), zfr(3), seuil, vpinf, vpmax, omgmin
@@ -306,9 +307,9 @@ subroutine op0044()
     solveu='&&OP0044.SOLVEUR'
     call cresol(solveu)
     call jeveuo(solveu//'.SLVK', 'L', vk24=slvk)
-    call jeveuo(solveu//'.SLVI', 'L', islvi)
+    call jeveuo(solveu//'.SLVI', 'E', vi=slvi)
     metres=slvk(1)
-    if (metres(1:5).eq.'MUMPS') call utmess('F', 'ALGELINE5_72')
+!    if (metres(1:5).eq.'MUMPS') call utmess('F', 'ALGELINE5_72')
     if ((metres(1:4).ne.'LDLT') .and. (metres(1:10).ne.'MULT_FRONT') .and.&
         (metres(1:5).ne.'MUMPS')) then
         call utmess('F', 'ALGELINE5_71')
@@ -396,7 +397,7 @@ subroutine op0044()
                     nbret=l)
     endif
 
-!   passage de charges critiques à fréquences
+!   passage de charges critiques a  frequences
     if (typres.eq.'MODE_FLAMB') then
         do ifreq = 1, ncrit/2
             rbid = zr(lborne-1+ifreq)
@@ -547,6 +548,13 @@ subroutine op0044()
                 zr(jvalp+ifreq) = zr(lborne+ifreq)
             end do
 !
+! Precaution pour permettre a MUMPS de resoudre des systemes quasi-singuliers sans
+! procedure de decalage du shift. Et ce, afin d'etre homogene avec MULT_FRONT/LDLT
+! Début procédure
+            if (metres(1:5).eq.'MUMPS') then
+              islvi_old=slvi(1)
+              slvi(1)=99
+            endif
 !           --- CALCUL DES FREQUENCES PAR DICHOTOMIE
             call vpdich(lraide, lmasse, ldynam, tolsep, nitsep,&
                         mxfreq, nbmod, zr(jvalp), zi(jieme), zr(jdet),&
@@ -559,6 +567,10 @@ subroutine op0044()
                         lmasse, ldynam, zi(lresui), zr(lresur), mxresf,&
                         solveu)
 !
+! Fin procédure
+            if (metres(1:5).eq.'MUMPS') then
+              slvi(1)=islvi_old
+            endif
 !
         else
             call utmess('F', 'ALGELINE2_62')
@@ -697,6 +709,14 @@ subroutine op0044()
 !         --- CALCUL DES VECTEURS PROPRES PAR ITERATION INVERSE ---
 !     ------------------------------------------------------------------
 !
+!
+! Precaution pour permettre a MUMPS de resoudre des systemes quasi-singuliers sans
+! procedure de decalage du shift. Et ce, afin d'etre homogene avec MULT_FRONT/LDLT
+! Début procédure
+    if (metres(1:5).eq.'MUMPS') then
+      islvi_old=slvi(1)
+      slvi(1)=99
+    endif
     if (lamor .eq. 0) then
 !
 !        --- CAS GENERALISE
@@ -716,6 +736,10 @@ subroutine op0044()
         call wp1inv(lmasse, lamor, lraide, tolv, nitv,&
                     mxresf, nbmod, neq, zi(lresui), zr(lresur),&
                     zk24(lresuk), zc(lvec), solveu)
+    endif
+! Fin procédure
+    if (metres(1:5).eq.'MUMPS') then
+      slvi(1)=islvi_old
     endif
 !
 !     ------------------------------------------------------------------

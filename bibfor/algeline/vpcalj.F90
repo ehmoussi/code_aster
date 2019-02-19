@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,19 +63,16 @@ subroutine vpcalj(eigsol, vecrer, vecrei, vecrek, vecvp,&
 !
 ! --- VARIABLES LOCALES
 !
-    integer :: ibid, iret, imet, lmasse, lmatra, lraide, nbvect, neq, nfreq
+    integer :: iret, imet, lmasse, lmatra, lraide, nbvect, neq, nfreq
     integer :: lprod, lmtpsc, lvalpr, itemax, nperm, nitbat, nitjac
     integer :: mfreq, ifreq
     integer :: lresui, lresur, lresuk, lvec
-    real(kind=8) :: quapi2, omecor, precdc, rbid, rzero, tol, toldyn
-    character(len=1) :: k1bid
-    character(len=8) :: method, k8bid
-    character(len=9) :: k9bid
-    character(len=14) :: k14bid
-    character(len=16) :: k16bid, optiof, typres
-    character(len=19) :: k19bid, masse, raide
+    real(kind=8) :: quapi2, omecor, precdc, rzero, tol, toldyn
+    character(len=8) :: method
+    character(len=16) :: optiof, typres
+    character(len=19) :: masse, raide
     character(len=24) :: kmetho
-    aster_logical :: lbid, lc, lkr, lns, lpg
+    aster_logical :: lc, lkr, lns, lpg
 !
 ! -----------------------
 ! --- CORPS DE LA ROUTINE
@@ -99,15 +96,12 @@ subroutine vpcalj(eigsol, vecrer, vecrei, vecrek, vecvp,&
 !
 ! --- LECTURE DES DONNEES DE EIGSOL
 !
-    call vplecs(eigsol, itemax, ibid, ibid, ibid,&
-                ibid, ibid, nbvect, ibid, nfreq,&
-                nperm, rbid, omecor, rbid, rbid,&
-                precdc, rbid, rbid, rbid, rbid,&
-                tol, toldyn, rbid, k1bid, k8bid,&
-                method, k9bid, k14bid, k14bid, k14bid,&
-                k16bid, optiof, k16bid, k16bid, k16bid, k16bid,&
-                typres, k19bid, masse, raide, k19bid,&
-                lc, lkr, lns, lpg, lbid)
+    call vplecs(eigsol, itemax_=itemax, nbvect_=nbvect, nfreq_=nfreq,&
+                nperm_=nperm, omecor_=omecor, precdc_=precdc, &
+                tol_=tol, toldyn_=toldyn, &
+                method_=method, optiof_=optiof, &
+                typres_=typres, masse_=masse, raide_=raide, &
+                lc_=lc, lkr_=lkr, lns_=lns, lpg_=lpg)
     ASSERT(method(1:6).eq.'JACOBI')
 !
 ! ---  DESCRIPTEURS MATRICES

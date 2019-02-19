@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ subroutine op0045()
     character(len=4) :: mod45, mod45b
     character(len=8) :: modes, method
     character(len=16) :: typcon, compex
-    character(len=19) :: k19bid, matpsc, matopa, solveu, eigsol
+    character(len=19) :: matpsc, matopa, solveu, eigsol
     character(len=24) :: veclag, vecblo, vecrig, vecrer, vecrei, vecrek, vecvp, k24bid
     aster_logical :: flage, lcomod
 !
@@ -93,9 +93,8 @@ subroutine op0045()
                 vecrer, vecrei, vecrek, vecvp)
 !
 ! --  ETAPE 0.1: PARALLELISME MULTI-NIVEAUX STEP 1
-    call vpmpi(1, k19bid, icom1, icom2, lcomod,&
-               mpicou, mpicow, ibid, ibid, rangl,&
-               rbid, rbid, rbid, rbid)
+    call vpmpi(1, icom1_=icom1, icom2_=icom2, lcomod_=lcomod,&
+               mpicou_=mpicou, mpicow_=mpicow, rangl_=rangl)
 !
 ! --  ETAPE 0.2: LECTURE DES PARAMETRES SOLVEUR LINEAIRE ET CREATION DE LA SD SOLVEUR ASSOCIEE
     call cresol(solveu)
@@ -119,9 +118,8 @@ subroutine op0045()
     if (iret .ne. 0) goto 999
 !
 ! --  ETAPE 1.2: PARALLELISME MULTI-NIVEAUX STEP 2
-    call vpmpi(2, eigsol, ibid, ibid, lcomod,&
-               mpicou, mpicow, nbvecg, nfreqg, rangl,&
-               rbid, rbid, rbid, rbid)
+    call vpmpi(2, eigsol, lcomod_=lcomod, mpicou_=mpicou, mpicow_=mpicow, &
+               nbvecg_=nbvecg, nfreqg_=nfreqg, rangl_=rangl)
 !
 ! --  ETAPE 1.3: CREATION ET INITIALISATION DES SDS RESULTATS
     call vpini2(eigsol, lcomod, nbvecg, nfreqg, nbpark,&
@@ -177,9 +175,8 @@ subroutine op0045()
 ! --------------------------------------------------------------------------------------------------
 ! --- ETAPE 4: NETTOYAGE DES COMMUNICATEURS, PARALLELISME MULTI-NIVEAUX STEP 5
 ! --------------------------------------------------------------------------------------------------
-    call vpmpi(5, k19bid, ibid, ibid, lcomod,&
-               mpicou, mpicow, ibid, ibid, ibid,&
-               rbid, rbid, rbid, rbid)
+    call vpmpi(5, lcomod_=lcomod,&
+               mpicou_=mpicou, mpicow_=mpicow)
 !
 !
 !     FIN DE OP0045
