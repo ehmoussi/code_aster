@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,9 +16,10 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine cpysol(numddl, rsolu, debglo, vecpet, nbval)
+    subroutine cpysol(nomat, numddl, rsolu, debglo, vecpet, nbval)
         integer(kind=4) :: debglo, nbval
         real(kind=8) :: rsolu(*), vecpet(*)
         character(len=14) :: numddl
+        character(len=19) :: nomat
     end subroutine
 end interface

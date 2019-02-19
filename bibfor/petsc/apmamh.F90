@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ use petsc_data_module
 !     VARIABLES LOCALES
     integer :: nsmdi, nsmhc, nz, nvalm, nlong
     integer :: jsmdi, jsmhc, jdxi1, jdxi2, jdval1, jdval2, jvalm, jvalm2
-    integer :: k, iligl, jcoll, nzdeb, nzfin, nuno1, nucmp1, nuno2, nbproc
+    integer :: k, iligl, jcoll, nzdeb, nzfin, nuno1, nucmp1, nuno2, nbproc, numno1,numno2
     integer :: jcolg, iligg, jnugll, nucmp2, procol, jprddl
     integer :: jnequ, nloc, nglo, jdeeq, prolig, rang, ibid
     integer(kind=4) :: tmp, jterm, un, jcolg4(1), iterm
@@ -96,7 +96,7 @@ use petsc_data_module
     nonu = nonu_courant
     nosolv = nosols(kptsc)
     a = ap(kptsc)
-    ldebug=.false.
+    ldebug=.true.
 !
     call jeveuo(nonu//'.SMOS.SMDI', 'L', jsmdi)
     call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)
@@ -172,6 +172,18 @@ use petsc_data_module
         call MatSetValue(a, tmp, tmp, zr(jvalm),&
                          INSERT_VALUES, ierr)
     endif
+!   Writings to get the stiffness matrix wrt nodes and dof numbers
+    if (ldebug) then
+        iligl=zi4(jsmhc)
+        jcoll=1
+        numno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
+        nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
+        numno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
+        nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
+        valm = zr(jvalm)
+        ! write(11+rang,*) numno1, nucmp1, numno2, nucmp2, valm, zi(jdeeq+2*(jcoll-1)), rang
+        write(11+rang,*) numno1, nucmp1, numno2, nucmp2, valm, 'DIAG'
+    endif
 !
 !   On commence par s'occuper du nombres de NZ par ligne
 !   dans le bloc diagonal
@@ -197,30 +209,46 @@ use petsc_data_module
             if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
                 nuno1 = 1
             endif
-!           Writings to get the stiffness matrix wrt nodes and dof numbers
-            if (ldebug) then
-                nuno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
-                nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
-                nuno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
-                nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
-                write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, valm, zi(jdeeq+2*(jcoll-1)), rang
-            endif 
             if( nuno1.ne.0.and.nuno2.ne.0 ) then
                 if( prolig .eq. rang ) then
                     jterm = jterm + 1
                     zr(jdval2 + jterm - 1) = valm
                     zi4(jdxi2 + jterm - 1) = iligg
+!                   Writings to get the stiffness matrix wrt nodes and dof numbers
+                    if (ldebug) then
+                        numno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
+                        nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
+                        numno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
+                        nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
+                        write(11+rang,*) numno1, nucmp1, numno2, nucmp2, valm
+                    endif
                     if( procol .eq. rang ) then
                         if( iligg .ne. jcolg ) then
                             iterm = iterm + 1
                             zr(jdval1 + iterm - 1) = valm2
                             zi4(jdxi1 + iterm - 1) = iligg
+!                           Writings to get the stiffness matrix wrt nodes and dof numbers
+                            if (ldebug) then
+                                numno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
+                                nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
+                                numno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
+                                nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
+                                write(11+rang,*) numno2, nucmp2, numno1, nucmp1, valm2
+                            endif
                         endif
                     endif
                 else if( procol .eq. rang ) then
                     iterm = iterm + 1
                     zr(jdval1 + iterm - 1) = valm2
                     zi4(jdxi1 + iterm - 1) = iligg
+!                   Writings to get the stiffness matrix wrt nodes and dof numbers
+                    if (ldebug) then
+                        numno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
+                        nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
+                        numno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
+                        nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
+                        write(11+rang,*) numno2, nucmp2, numno1, nucmp1, valm2
+                    endif
                 endif
             else
 !               Si on est sur un ddl de Lagrange et qu'on possede le ddl d'en face
@@ -232,10 +260,26 @@ use petsc_data_module
                     jterm = jterm + 1
                     zr(jdval2 + jterm - 1) = valm
                     zi4(jdxi2 + jterm - 1) = iligg
+!                   Writings to get the stiffness matrix wrt nodes and dof numbers
+                    if (ldebug) then
+                        numno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
+                        nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
+                        numno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
+                        nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
+                        write(11+rang,*) numno1, nucmp1, numno2, nucmp2, valm, 'LAG11'
+                    endif
                     if( iligg .ne. jcolg ) then
                         iterm = iterm + 1
                         zr(jdval1 + iterm - 1) = valm2
                         zi4(jdxi1 + iterm - 1) = iligg
+!                        Writings to get the stiffness matrix wrt nodes and dof numbers
+                        if (ldebug) then
+                            numno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
+                            nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
+                            numno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
+                            nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
+                            write(11+rang,*) numno2, nucmp2, numno1, nucmp1, valm2, 'LAG22'
+                        endif
                     endif
                 endif
             endif
@@ -265,6 +309,9 @@ use petsc_data_module
     call jedetr(idxi2)
     call jedetr(trans1)
     call jedetr(trans2)
+
+!   Close the logical unit dedicated to dump the matrix
+    if (ldebug) call flush(11+rang)
 !
     call jedema()
 !
