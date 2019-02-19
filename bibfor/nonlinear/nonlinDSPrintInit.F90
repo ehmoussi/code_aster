@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSPrintInit(sdsuiv, ds_print)
+subroutine nonlinDSPrintInit(ds_print, sdsuiv_)
 !
 use NonLin_Datastructure_type
 !
@@ -30,8 +30,8 @@ implicit none
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
 !
-character(len=24), intent(in) :: sdsuiv
 type(NL_DS_Print), intent(inout) :: ds_print
+character(len=24), optional, intent(in) :: sdsuiv_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,8 +41,8 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  sdsuiv           : datastructure for DOF monitoring
 ! IO  ds_print         : datastructure for printing parameters
+! In  sdsuiv           : datastructure for DOF monitoring
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,23 +77,27 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! - Get number of columns for DOF monitoring
 !
-    sdsuiv_info = sdsuiv(1:14)//'     .INFO'
-    call jeveuo(sdsuiv_info, 'L', vi = v_sdsuiv_info)
-    nb_dof_monitor = v_sdsuiv_info(2)
-    if (nb_dof_monitor .gt. 9) then
-        call utmess('F', 'IMPRESSION_3', si=nb_dof_monitor)
+    if (present(sdsuiv_)) then
+        sdsuiv_info = sdsuiv_(1:14)//'     .INFO'
+        call jeveuo(sdsuiv_info, 'L', vi = v_sdsuiv_info)
+        nb_dof_monitor = v_sdsuiv_info(2)
+        if (nb_dof_monitor .gt. 9) then
+            call utmess('F', 'IMPRESSION_3', si=nb_dof_monitor)
+        endif
+    else
+        nb_dof_monitor = 0
     endif
 !
 ! - Title of columns for DOF monitoring
 !
     if (nb_dof_monitor .ne. 0) then
-        sdsuiv_titr = sdsuiv(1:14)//'     .TITR'
+        sdsuiv_titr = sdsuiv_(1:14)//'     .TITR'
         call jeveuo(sdsuiv_titr, 'L', vk16 = v_sdsuiv_titr)
     endif
 !
 ! - Set list of columns for DOF monitor in convergence table
 !
-    do i_dof_monitor = 1, nb_dof_monitor    
+    do i_dof_monitor = 1, nb_dof_monitor
 !
 ! ----- Name of the column
 !

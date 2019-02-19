@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmimpt(nume_inst, sddisc, ds_print)
 !
 use NonLin_Datastructure_type
@@ -31,16 +32,15 @@ implicit none
 #include "asterfort/nmimr0.h"
 #include "asterfort/utdidt.h"
 #include "asterfort/utmess.h"
+#include "asterfort/jeexin.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: nume_inst
-    character(len=19), intent(in) :: sddisc
-    type(NL_DS_Print), intent(inout) :: ds_print
+integer, intent(in) :: nume_inst
+character(len=19), intent(in) :: sddisc
+type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Print management
+! *_NON_LINE - Print management
 !
 ! Print head and convergence table
 !
@@ -53,18 +53,32 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: curr_inst
-    integer :: lenivo
+    integer :: lenivo, i_exist
     character(len=16) :: metlis
+    character(len=24) :: sddisc_linf
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call utdidt('L', sddisc, 'LIST', 'METHODE', valk_ = metlis)
-    if (metlis .eq. 'MANUEL') then
-        lenivo = dinins(sddisc, nume_inst)
-    else if (metlis.eq.'AUTO') then
+    sddisc_linf = sddisc(1:19)//'.LINF'
+    call jeexin(sddisc_linf, i_exist)
+    if (i_exist .eq. 0) then
         lenivo = 0
-    else
-        ASSERT(.false.)
+    endif
+    if (nume_inst .eq. 0) then
+        lenivo = 0
+    endif
+!
+! - Get level
+!
+    if (lenivo .ne. 0) then
+        call utdidt('L', sddisc, 'LIST', 'METHODE', valk_ = metlis)
+        if (metlis .eq. 'MANUEL') then
+            lenivo = dinins(sddisc, nume_inst)
+        else if (metlis.eq.'AUTO') then
+            lenivo = 0
+        else
+            ASSERT(ASTER_FALSE)
+        endif
     endif
 !
 ! - Get current time and set in row

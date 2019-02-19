@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mm_cycl_init_lac(mesh,ds_contact)
+    subroutine nonlinDSPrintCreate_T(ds_print)
         use NonLin_Datastructure_type
-        type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=8), intent(in) :: mesh
-    end subroutine mm_cycl_init_lac
+        type(NL_DS_Print), intent(out) :: ds_print
+    end subroutine nonlinDSPrintCreate_T
 end interface

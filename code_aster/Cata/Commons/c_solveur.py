@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,8 +38,8 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 #
 # CLASSIFICATION EN 3 CATEGORIES :
 #  - solveurs directs uniquement
-#  - solveurs pour le linéaire
-#  - solveurs pour le non-linéaire
+#  - solveurs pour le lineaire
+#  - solveurs pour le non-lineaire
 #
 # GESTION DES EXCEPTIONS
 #
@@ -56,6 +56,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
                    'INFO_MODE',
                    'MODE_ITER_SIMULT',
                    'MODE_ITER_INV',
+                   'MODE_ITER_INV_SM',             
                    'CALC_ERC_DYN',
                    ):
         _type = 'SD'
@@ -107,27 +108,28 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
     _gene = False
     _ldlt = False
 
-# Avec des matrices généralisées, MULT_FRONT n'est pas permis, LDLT est
-# donc par défaut
+# Avec des matrices generalisees, MULT_FRONT n'est pas permis, LDLT est
+# donc par defaut
     if BASE == 'GENE':
         _gene = True
         _ldlt = True
 
-# LDLT est le solveur par défaut dans DYNA_TRAN_MODAL (systèmes linéaires
+# LDLT est le solveur par defaut dans DYNA_TRAN_MODAL (systemes lineaires
 # petits)
     if COMMAND == 'DYNA_TRAN_MODAL':
         _ldlt = True
 
 # --------------------------------------------------------------------
 
-    _singu = True
-    _resol = True
+    _singu  = True
+    _resol  = True
     _cmodal = False
 
 #  Avec les solveurs modaux STOP_SINGULIER n'existe pas
-    if COMMAND in ('INFO_MODE', 'MODE_ITER_INV', 'MODE_ITER_SIMULT'):
+    if COMMAND in ('INFO_MODE', 'MODE_ITER_INV', 'MODE_ITER_SIMULT','MODE_ITER_INV_SM',):
         _cmodal = True
         _singu = False
+
 #     Dans INFO_MODE on ne fait que factoriser
         if COMMAND == 'INFO_MODE':
             _resol = False
@@ -136,7 +138,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 
     _singu_non = False
 
-#  Dans DEFI_BASE_MODALE, NON est le défaut de STOP_SINGULIER
+#  Dans DEFI_BASE_MODALE, NON est le defaut de STOP_SINGULIER
     if COMMAND == 'DEFI_BASE_MODALE':
         _singu_non = True
 
@@ -146,7 +148,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 #
 # --------------------------------------------------------------------
 
-#  Mot-clés simples
+#  Mot-cles simples
     _MotCleSimples = {}
 
 #  Solveurs
@@ -156,7 +158,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
     _BlocGC = {}
     _BlocPE = {}
 
-#  Préconditionneurs
+#  Preconditionneurs
     _BlocGC_INC = {}
     _BlocPE_INC = {}
     _BlocXX_SP = {}
@@ -173,6 +175,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 # --------------------------------------------------------------------
 
 #  METHODE
+# CAS GENERAL
     if (_ldlt):
         _defaut = "LDLT"
     else:
@@ -185,13 +188,16 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
     else:
         _into = ("MULT_FRONT", "LDLT", "MUMPS", "GCPC", "PETSC", )
 
+#CAS PARTICULIERS
     if COMMAND in ['MODE_NON_LINE']:
         _defaut = "MUMPS"
         _into = ("MUMPS", )
-
     if COMMAND in ['CALC_ERC_DYN']:
         _defaut = "MUMPS"
         _into = ("MUMPS", "LDLT")
+    if COMMAND in ['MODE_ITER_INV_SM']:
+        _defaut = "MULT_FRONT"
+        _into = ("MULT_FRONT", "LDLT",)
     _MotCleSimples['METHODE'] = SIMP(
         statut='f', typ='TXM', defaut=_defaut, into=_into, )
 
@@ -457,7 +463,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
                   ),
                   b_petsc=BLOC(
                       condition="""equal_to("METHODE", 'PETSC') """,
-                                      fr=tr("Paramètres de la méthode PETSC"),
+                                      fr=tr("Parametres de la methode PETSC"),
                                       b_ldltinc=BLOC(
                                           condition="""equal_to("PRE_COND", 'LDLT_INC') """,
                                                           fr=tr(

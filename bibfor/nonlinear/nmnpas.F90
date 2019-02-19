@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,6 +52,7 @@ implicit none
 #include "asterfort/nonlinDSMaterialTimeStep.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
+#include "asterfort/nonlinInitDisp.h"
 !
 character(len=8) :: mesh
 character(len=24), intent(in) :: model, cara_elem
@@ -102,14 +103,9 @@ character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: lgrot, ldyna, lnkry
-    aster_logical :: l_cont, l_diri_undead
-    integer :: neq, ifm, niv
-    character(len=19) :: depmoi, varmoi
-    character(len=19) :: depplu, varplu
-    character(len=19) :: depdel
-    integer :: jdepde, indro
-    real(kind=8), pointer :: depp(:) => null()
+    aster_logical :: ldyna, lnkry, l_cont, l_diri_undead
+    integer :: ifm, niv
+    character(len=19) :: disp_prev, vari_prev, vari_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -117,65 +113,48 @@ character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
     if (niv .ge. 2) then
         call utmess('I', 'MECANONLINE13_30')
     endif
-    call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=neq)
 !
 ! - Active functionnalites
 !
     ldyna         = ndynlo(sddyna,'DYNAMIQUE')
     l_cont        = isfonc(list_func_acti,'CONTACT')
-    lgrot         = isfonc(list_func_acti,'GD_ROTA')
     lnkry         = isfonc(list_func_acti,'NEWTON_KRYLOV')
     l_diri_undead = isfonc(list_func_acti,'DIRI_UNDEAD')
 !
-! --- POUTRES EN GRANDES ROTATIONS
+! - Get hat variables
 !
-    if (lgrot) then
-        call jeveuo(sdnume(1:19)//'.NDRO', 'L', indro)
-    else
-        indro = isnnem()
-    endif
+    call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
+    call nmchex(hval_incr, 'VALINC', 'VARMOI', vari_prev)
+    call nmchex(hval_incr, 'VALINC', 'VARPLU', vari_curr)
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+! - Update internal state variables for current time step
 !
-    call nmchex(hval_incr, 'VALINC', 'DEPMOI', depmoi)
-    call nmchex(hval_incr, 'VALINC', 'VARMOI', varmoi)
-    call nmchex(hval_incr, 'VALINC', 'DEPPLU', depplu)
-    call nmchex(hval_incr, 'VALINC', 'VARPLU', varplu)
-    call nmchex(hval_algo, 'SOLALG', 'DEPDEL', depdel)
+    call copisd('CHAMP_GD', 'V', vari_prev, vari_curr)
 !
-! --- ESTIMATIONS INITIALES DES VARIABLES INTERNES
-!
-    call copisd('CHAMP_GD', 'V', varmoi, varplu)
-!
-! --- INITIALISATION DES DEPLACEMENTS
-!
-    call copisd('CHAMP_GD', 'V', depmoi, depplu)
-!
-! - Initializations of residuals
+! - Initializations of residuals for current time step
 !
     call SetResi(ds_conv, vale_calc_ = r8vide())
 !
-! --- INITIALISATION DE L'INCREMENT DE DEPLACEMENT DEPDEL
+! - Initializations of displacements for current time step
 !
-    call jeveuo(depdel//'.VALE', 'E', jdepde)
-    call jeveuo(depplu//'.VALE', 'L', vr=depp)
-    call initia(neq, lgrot, zi(indro), depp, zr(jdepde))
+    call nonlinInitDisp(list_func_acti, sdnume   , nume_dof,&
+                        hval_algo     , hval_incr)
 !
 ! - Update dualized relations for non-linear Dirichlet boundary conditions (undead)
 !
     if (l_diri_undead) then
-        call cldual_maj(list_load, depmoi)
+        call cldual_maj(list_load, disp_prev)
     endif
 !
-! --- INITIALISATIONS EN DYNAMIQUE
+! - Initializations for dynamic for current time step
 !
     if (ldyna) then
         call ndnpas(list_func_acti, nume_dof, nume_inst, sddisc, sddyna,&
-                    hval_incr, hval_algo)
+                    hval_incr     , hval_algo)
     endif
 !
-! --- NEWTON-KRYLOV : COPIE DANS LA SD SOLVEUR DE LA PRECISION DE LA
-!                     RESOLUTION POUR LA PREDICTION (FORCING-TERM)
+! - Initializations for NEWTON-KRYLOV for current time step
+!
     if (lnkry) then
         call nmnkft(solver, sddisc)
     endif
@@ -183,7 +162,7 @@ character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
 ! - Initializations of contact for current time step
 !
     if (l_cont) then
-        call cont_init(mesh  , model, ds_contact, nume_inst, ds_measure,&
+        call cont_init(mesh  , model    , ds_contact, nume_inst     , ds_measure,&
                        sddyna, hval_incr, sdnume    , list_func_acti)
     endif
 !

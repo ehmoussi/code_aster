@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ subroutine jeveuo(nomlu, cel, jadr, vl, vi,&
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "jeveux_private.h"
+#include "asterfort/jjagod.h"
 #include "asterfort/jjallc.h"
 #include "asterfort/jjalty.h"
 #include "asterfort/jjcroc.h"
@@ -67,6 +68,11 @@ subroutine jeveuo(nomlu, cel, jadr, vl, vi,&
      &                 jlono(n), jhcod(n), jcara(n), jluti(n), jmarq(n)
 !
     common /jkatje/  jgenr(n), jtype(n), jdocu(n), jorig(n), jrnom(n)
+    integer :: nblmax, nbluti, longbl, kitlec, kitecr, kiadm, iitlec, iitecr
+    integer :: nitecr, kmarq
+    common /ificje/  nblmax(n) , nbluti(n) , longbl(n) ,&
+     &                 kitlec(n) , kitecr(n) ,             kiadm(n) ,&
+     &                 iitlec(n) , iitecr(n) , nitecr(n) , kmarq(n)
     integer :: numatr
     common /idatje/  numatr
 !     ------------------------------------------------------------------
@@ -83,11 +89,12 @@ subroutine jeveuo(nomlu, cel, jadr, vl, vi,&
     integer :: iddeso, idiadd, idlono
     parameter    (  iddeso = 1 , idiadd = 2  , idlono = 8   )
 !
-    integer :: jad, n1, jctab
+    integer :: jad, n1, jctab, ic
     character(len=8) :: ktyp
     type(c_ptr) :: pc
 !
 !   ==================================================================
+
     noml32 = nomlu
     noml8 = noml32(25:32)
     kcel = cel
@@ -112,6 +119,7 @@ subroutine jeveuo(nomlu, cel, jadr, vl, vi,&
         if (genri .eq. 'N') then
             call utmess('F', 'JEVEUX1_20', sk=noml32)
         endif
+        ic = iclaos
 ! ----   IRET = 2
     case (2)
         call jjallc(iclaco, idatco, cel, ibacol)
@@ -152,8 +160,16 @@ subroutine jeveuo(nomlu, cel, jadr, vl, vi,&
             typei = type( jtype(iclaco) + ixdeso )
             ltypi = ltyp( jltyp(iclaco) + ixdeso )
         endif
+        ic = iclaco
 !
     end select
+!
+!   ON PREND LA PRECAUTION DE REDIMENSIONNER LE NOMBRE D'ENREGISTREMENTS SI
+!   BESOIN DU FICHIER ASSOCIÉ A LA BASE
+!
+    if ((100*nbluti(ic)) .gt. (50*nblmax(ic))) then 
+       call jjagod (ic, 2*nblmax(ic) )
+    endif  
 !
     call jjalty(typei, ltypi, cel, inatb, jctab)
     if (inat .eq. 3 .and. ixiadd .eq. 0) then

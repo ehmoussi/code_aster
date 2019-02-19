@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,13 +43,13 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=16) :: rela_meta_py
-    integer :: idummy
+    integer :: idummy, idummy2
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_vari_meta = 0
     call lccree(1, rela_meta, rela_meta_py)
-    call lcinfo(rela_meta_py, idummy, nb_vari_meta, idummy)
+    call lcinfo(rela_meta_py, idummy, nb_vari_meta, idummy2)
     call lcdiscard(rela_meta_py)
 !
 end subroutine

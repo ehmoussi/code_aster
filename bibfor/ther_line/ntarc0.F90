@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -90,12 +90,6 @@ implicit none
         call jeveuo(sdcrit_nonl_(1:19)//'.CRDE', 'L', vk16 = v_crit_crde)
         call rsadpa(result, 'E', 1, v_crit_crde(1), nume_store, 0, sjv=jv_para)
         zi(jv_para) = nint(v_crit_crtr(1))
-        call rsadpa(result, 'E', 1, v_crit_crde(2), nume_store, 0, sjv=jv_para)
-        zi(jv_para) = nint(v_crit_crtr(2))
-        call rsadpa(result, 'E', 1, v_crit_crde(3), nume_store, 0, sjv=jv_para)
-        zr(jv_para) = v_crit_crtr(3)
-        call rsadpa(result, 'E', 1, v_crit_crde(4), nume_store, 0, sjv=jv_para)
-        zr(jv_para) = v_crit_crtr(4)
     endif
 !
 ! - Store others

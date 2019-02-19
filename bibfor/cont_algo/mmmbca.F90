@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+!
 subroutine mmmbca(mesh  , iter_newt, nume_inst   ,&
                   sddisc, disp_curr, disp_cumu_inst, ds_contact)
 !
@@ -59,23 +60,21 @@ implicit none
 #include "asterfort/mmfield_prep.h"
 #include "asterfort/mreacg.h"
 !
-! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+character(len=8), intent(in) :: mesh
+integer, intent(in) :: iter_newt
+integer, intent(in) :: nume_inst
+character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: disp_curr
+character(len=19), intent(in) :: disp_cumu_inst
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
-    character(len=8), intent(in) :: mesh
-    integer, intent(in) :: iter_newt
-    integer, intent(in) :: nume_inst
-    character(len=19), intent(in) :: sddisc
-    character(len=19), intent(in) :: disp_curr
-    character(len=19), intent(in) :: disp_cumu_inst
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-!
-! --------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! Contact - Solve
 !
 ! Continue method - Management of contact loop
 !
-! --------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! In  mesh             : name of mesh
 ! In  iter_newt        : index of current Newton iteration
@@ -85,7 +84,7 @@ implicit none
 ! In  disp_cumu_inst   : displacement increment from beginning of current time
 ! IO  ds_contact       : datastructure for contact management
 !
-! ------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ztabf
     integer :: ifm, niv
@@ -150,7 +149,6 @@ implicit none
 !
 ! - Parameters
 !
-    
     l_exis_glis  = cfdisl(ds_contact%sdcont_defi,'EXIS_GLISSIERE')
     l_loop_cont  = cfdisl(ds_contact%sdcont_defi,'CONT_BOUCLE')
     type_adap    = cfdisi(ds_contact%sdcont_defi,'TYPE_ADAPT')
@@ -179,18 +177,16 @@ implicit none
     call jeveuo(sdcont_cychis, 'E', vr = v_sdcont_cychis)
     call jeveuo(sdcont_cyccoe, 'E', vr = v_sdcont_cyccoe)
 !
-!
 ! - Get current time
 !
     time_curr = diinst(sddisc, nume_inst)
     ds_contact%time_curr = time_curr
-
 !
 ! - Geometric update
 !
     oldgeo = mesh//'.COORDO'
     newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
-    call mreacg(mesh, ds_contact, field_update_ = disp_curr)
+    call mreacg(mesh, ds_contact, disp_curr)
 !
 ! - Prepare displacement field to get contact Lagrangien multiplier
 !
@@ -216,8 +212,8 @@ implicit none
 !
 ! - Loop on contact zones
 !
-    sum_cont_press = 0.0d0
-    ds_contact%resi_pressure =0.
+    sum_cont_press           = 0.d0
+    ds_contact%resi_pressure = 0.d0
     i_cont_poin = 1
     do i_zone = 1, nb_cont_zone
 !

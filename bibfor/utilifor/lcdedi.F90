@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,8 +18,15 @@
 
 subroutine lcdedi(fami, kpg, ksp, nmat, materd,&
                   materf, tempd, tempf, tref, depst,&
-                  epsdt, depsm, epsdm)
-    implicit none
+                  epsdt, depsm, epsdm, l_epsi_varc_)
+!
+implicit none
+!
+#include "asterc/r8vide.h"
+#include "asterf_types.h"
+#include "asterfort/rcvarc.h"
+#include "asterfort/utmess.h"
+!
 !       RETRAIT DE LA DEFORMATION DUE A LA DILATATION THERMIQUE
 !       POUR TENIR COMPTE DES CONTRAINTES THERMIQUES :
 !       (DILATATION ISOTROPE POUR LE MOMENT !!)
@@ -54,9 +61,7 @@ subroutine lcdedi(fami, kpg, ksp, nmat, materd,&
 !       OUT     DEPSM   INCREMENT DE DEFORMATION MECANIQUE
 !               EPSDM   DEFORMATION MECANIQUE A T
 !       ----------------------------------------------------------------
-#include "asterc/r8vide.h"
-#include "asterfort/rcvarc.h"
-#include "asterfort/utmess.h"
+    aster_logical, optional, intent(in) :: l_epsi_varc_
     integer :: kpg, ksp, ndt, ndi, nmat, k, iret
     character(len=*) :: fami
     real(kind=8) :: td, tf, tr, tempd, tempf, tref
@@ -64,17 +69,20 @@ subroutine lcdedi(fami, kpg, ksp, nmat, materd,&
     real(kind=8) :: epsdm(6), depsm(6), alphfn, alphfl, alphft
     real(kind=8) :: alphad, alphaf, alphdl, alphdt, alphdn
     real(kind=8) :: materd(nmat, 2), materf(nmat, 2)
+    aster_logical :: l_epsi_varc
 !       ----------------------------------------------------------------
     common /tdim/   ndt  , ndi
 !       ----------------------------------------------------------------
+    l_epsi_varc = ASTER_TRUE
+    if (present(l_epsi_varc_)) then
+        l_epsi_varc = l_epsi_varc_
+    endif
+!
     if (.not.isnan(tref)) then
         if (tref .eq. r8vide()) then
-            call rcvarc(' ', 'TEMP', '-', fami, kpg,&
-                        ksp, td, iret)
-            call rcvarc(' ', 'TEMP', '+', fami, kpg,&
-                        ksp, tf, iret)
-            call rcvarc(' ', 'TEMP', 'REF', fami, kpg,&
-                        ksp, tr, iret)
+            call rcvarc(' ', 'TEMP', '-', fami, kpg, ksp, td, iret)
+            call rcvarc(' ', 'TEMP', '+', fami, kpg, ksp, tf, iret)
+            call rcvarc(' ', 'TEMP', 'REF', fami, kpg, ksp, tr, iret)
         else
             td=tempd
             tf=tempf
@@ -86,22 +94,21 @@ subroutine lcdedi(fami, kpg, ksp, nmat, materd,&
         tr=tref
     endif
 !
-    if ((.not.isnan(tf)) .and. (.not.isnan(td))) then
+    if ((.not.isnan(tf)) .and. (.not.isnan(td)) .and. l_epsi_varc) then
         if (isnan(tr)) then
             call utmess('F', 'COMPOR5_43')
         else
             if (materd(nmat,1) .eq. 0) then
                 alphad = materd(3,1)
                 alphaf = materf(3,1)
-                do 110 k = 1, ndi
+                do k = 1, ndi
                     depsm(k) = depst(k) - ( alphaf*(tf-tr) - alphad*( td-tr))
                     epsdm(k) = epsdt(k) - ( alphad*(td-tr) )
-110              continue
-!
-                do 111 k = ndi+1, ndt
+                end do
+                do k = ndi+1, ndt
                     depsm(k) = depst(k)
                     epsdm(k) = epsdt(k)
-111              continue
+                end do
 !
             else if (materd(nmat,1).eq.1) then
 !
@@ -121,19 +128,19 @@ subroutine lcdedi(fami, kpg, ksp, nmat, materd,&
                 epsdm(2) = epsdt(2) - ( alphdt*(td-tr) )
                 epsdm(3) = epsdt(3) - ( alphdn*(td-tr) )
 !
-                do 112 k = 4, 6
+                do k = 4, 6
                     depsm(k) = depst(k)
                     epsdm(k) = epsdt(k)
-112              continue
+                end do
             endif
 !
         endif
     else
         alphad = materd(3,1)
         alphaf = materf(3,1)
-        do 113 k = 1, ndt
+        do k = 1, ndt
             depsm(k) = depst(k)
             epsdm(k) = epsdt(k)
-113      continue
+        end do
     endif
 end subroutine

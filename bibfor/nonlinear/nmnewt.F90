@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -221,16 +221,16 @@ integer :: nbiter
     ds_contact%iteration_newton = iterat
     ds_contact%it_adapt_maxi = ds_conv%iter_glob_maxi
 !
-! --- GESTION DEBUT DE BOUCLE POINTS FIXES
+! - External loop management - BEGIN
 !
     call nmible(niveau, model     , mesh    , ds_contact,&
                 fonact, ds_measure, ds_print, ds_algorom)
 !
-! --- CREATION OBJETS POUR CONTACT CONTINU
+! - External loop management - Initializations for new loop
 !
-    call nmnble(numins, model , mesh  , numedd    , ds_measure,&
-                sddyna, sddisc, fonact, ds_contact, valinc    ,&
-                solalg)
+    call nmnble(mesh  , model , fonact, sddisc    , numins    ,&
+                sddyna, sdnume, numedd, ds_measure, ds_contact,&
+                valinc, solalg)
 !
 ! ======================================================================
 !     PREDICTION
@@ -395,7 +395,7 @@ integer :: nbiter
         goto 320
     endif
 !
-! --- GESTION FIN DE BOUCLE POINTS FIXES
+! - External loop management - END
 !
     call nmtble(niveau, model, mesh    , ds_material, ds_contact, &
                 fonact, ds_print, &
@@ -416,9 +416,13 @@ integer :: nbiter
     call nmleeb(sderro, 'FIXE', etfixe)
     if (etfixe .eq. 'CONT') then
         if (l_cont_disc) then
-            call nmeceb(sderro, 'NEWT', 'CTCD')
-            call nmtime(ds_measure, 'Launch', 'Newt_Iter')
-            goto 320
+            if (.not.ds_conv%l_stop) then
+                call nmeceb(sderro, 'FIXE', 'CONV')
+            else
+                call nmeceb(sderro, 'NEWT', 'CTCD')
+                call nmtime(ds_measure, 'Launch', 'Newt_Iter')
+                goto 320
+            endif
         else if (l_loop_exte) then
             goto 100
         else

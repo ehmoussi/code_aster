@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mreacg(mesh, ds_contact, field_update_)
+subroutine mreacg(mesh, ds_contact, field_update)
 !
 use NonLin_Datastructure_type
 !
@@ -29,25 +29,25 @@ implicit none
 !
 character(len=8), intent(in) :: mesh
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=*), optional, intent(in) :: field_update_
+character(len=*), intent(in) :: field_update
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Contact - Solve
 !
-! Continue method - Geometry update
+! LAC and continue methods - Geometry update
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  mesh             : name of mesh
 ! In  ds_contact       : datastructure for contact management
-! In  field_update     : displacement field to use for update. If not present, using DEPGEO
+! In  field_update     : displacement field to use for update
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: depgeo, oldgeo
-    character(len=19) :: newgeo, field_update
+    character(len=24) :: oldgeo
+    character(len=19) :: newgeo
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,17 +59,11 @@ character(len=*), optional, intent(in) :: field_update_
 ! - Name of objects
 !
     oldgeo = mesh(1:8)//'.COORDO'
-    depgeo = ds_contact%sdcont_solv(1:14)//'.DEPG'
     newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
-    if (present(field_update_)) then
-        field_update = field_update_
-    else
-        field_update = depgeo(1:19)
-    endif
 !
 ! - Update
 !
     call mmfield_prep(oldgeo, newgeo,&
-                      l_update_ = .true._1, field_update_ = field_update, alpha_ = 1.d0)
+                      l_update_ = ASTER_TRUE, field_update_ = field_update, alpha_ = 1.d0)
 !
 end subroutine

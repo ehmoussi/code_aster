@@ -30,7 +30,6 @@ implicit none
 #include "MeshTypes_type.h"
 #include "jeveux.h"
 #include "asterfort/codent.h"
-#include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
 #include "asterfort/ircam1.h"
 #include "asterfort/ircmpr.h"
@@ -95,13 +94,13 @@ integer :: codret
     character(len=6), parameter :: nompro = 'IRCAME'
     integer, parameter :: ednoeu=3, edmail=0, ednoma=4, typnoe=0
     character(len=1)   :: saux01
-    character(len=8)   :: saux08, k8bid, nomaas, nomtyp(MT_NTYMAX)
+    character(len=8)   :: saux08, nomaas, nomtyp(MT_NTYMAX)
     character(len=16)  :: formar
     character(len=24)  :: ntlcmp, ntncmp, ntucmp, ntproa, nmcmfi, ncaimi, ncaimk
     character(len=64)  :: nomamd
     character(len=200) :: nofimd
     character(len=255) :: kfic
-    integer :: ndim, nbtyp
+    integer :: nbtyp
     integer :: ifm, nivinf, ifimed, lnomam
     integer :: ncmpve, nvalec, nbprof, nbvato, ncmprf
     integer :: nbimpr, jnocm1, jnocm2, nbcmp2, icmp1, icmp2
@@ -151,9 +150,8 @@ integer :: codret
     ncmprf = zi(adsd+1)
 !
 ! 2. LE MAILLAGE
-!   2.1. ==> NOM ET DIMENSION DU MAILLAGE ASTER
+!   2.1. ==> NOM DU MAILLAGE ASTER
     nomaas = zk8(adsk-1+1)
-    call dismoi('DIM_GEOM_B', nomaas, 'MAILLAGE', repi=ndim)
 !   Generate name of mesh for MED
     call mdnoma(nomamd, lnomam, nomaas, codret)
 !   2.3. ==> CE MAILLAGE EST-IL DEJA PRESENT DANS LE FICHIER ?
@@ -164,9 +162,8 @@ integer :: codret
     if (.not.existm) then
         saux08 = 'MED     '
         lgaux = .false.
-        k8bid = '        '
         formar=' '
-        call irmail(saux08, ifi, iaux, nomaas, lgaux, k8bid, nivinf, formar)
+        call irmail(saux08, ifi, iaux, nomaas, lgaux, modele, nivinf, formar)
     endif
 !
 ! 3. PREPARATION DU CHAMP A ECRIRE

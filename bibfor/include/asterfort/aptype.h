@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine aprtpe(elem_dime   , elem_code, indx_tria_elem,&
-                      nb_poin_inte, poin_inte)
-        integer, intent(in) :: elem_dime
-        character(len=8), intent(in) :: elem_code
-        integer, intent(in) :: indx_tria_elem
-        integer, intent(in) :: nb_poin_inte
-        real(kind=8), intent(inout) :: poin_inte(elem_dime-1,16)
-    end subroutine aprtpe
+    subroutine aptype(elem_type, elem_nbnode, elem_code, elem_dime)
+        character(len=8), intent(in) :: elem_type
+        integer, intent(out) :: elem_nbnode
+        character(len=8), intent(out) :: elem_code
+        integer, intent(out) :: elem_dime
+    end subroutine aptype
 end interface

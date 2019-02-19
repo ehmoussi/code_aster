@@ -94,7 +94,7 @@ subroutine glrc_lc(epsm, deps, vim, option, sig,&
     aster_logical :: lelas, elas, elas1, elas2
     integer :: k, kdmax
     real(kind=8) :: eps(6), emp(2), efp(2), qff(2), eps8(8), epsu(6)
-    real(kind=8) :: vmp(2, 2), vfp(2, 2)
+    real(kind=8) :: vmp(2, 2), vfp(2, 2), eps8out(8)
     real(kind=8) :: muf, trot, treps, eps33, de33d1, de33d2
     real(kind=8) :: da1, da2, ksi2d, dksi1, dksi2
     real(kind=8) :: tr2d, told, cof1(2), q2d(2)
@@ -197,8 +197,8 @@ subroutine glrc_lc(epsm, deps, vim, option, sig,&
 !           passage des deformation dans le repere utilisateur
             eps8(1:6) = eps(1:6)
             eps8(7:8) = 0.d0
-            call dxefro(1, t2iu, eps8, eps8)
-            epsu(1:6) = eps8(1:6)
+            call dxefro(1, t2iu, eps8, eps8out)
+            epsu(1:6) = eps8out(1:6)
             
             rx = val_param_opt(1)
             

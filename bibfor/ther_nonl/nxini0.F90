@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nxini0(ds_algopara, ds_inout)
+subroutine nxini0(ds_algopara, ds_inout, ds_print)
 !
 use NonLin_Datastructure_type
 !
@@ -27,9 +27,11 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/nonlinDSInOutCreate.h"
 #include "asterfort/nonlinDSAlgoParaCreate.h"
+#include "asterfort/nonlinDSPrintCreate.h"
 !
 type(NL_DS_AlgoPara), intent(out) :: ds_algopara
 type(NL_DS_InOut), intent(out) :: ds_inout
+type(NL_DS_Print), intent(out) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,6 +43,7 @@ type(NL_DS_InOut), intent(out) :: ds_inout
 !
 ! Out ds_algopara      : datastructure for algorithm parameters
 ! Out ds_inout         : datastructure for input/output management
+! Out ds_print         : datastructure for printing parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,5 +63,9 @@ type(NL_DS_InOut), intent(out) :: ds_inout
 ! - Create algorithm parameters datastructure
 !
     call nonlinDSAlgoParaCreate(ds_algopara)
+!
+! - Create printing management datastructure
+!
+    call nonlinDSPrintCreate('THNL', ds_print)
 !
 end subroutine

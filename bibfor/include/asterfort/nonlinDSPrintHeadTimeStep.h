@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine jacsur(elem_coor, elem_nbnode, elem_code, elem_dime,&
-                      ksi1     , ksi2       , jacobian , dire_norm)
-        real(kind=8), intent(in) :: elem_coor(3,9)
-        integer, intent(in) :: elem_nbnode
-        character(len=8), intent(in) :: elem_code
-        integer, intent(in) :: elem_dime
-        real(kind=8), intent(in) :: ksi1
-        real(kind=8), intent(in) :: ksi2
-        real(kind=8), intent(out) :: jacobian
-        real(kind=8), intent(out) :: dire_norm(3)
-    end subroutine jacsur
+    subroutine nonlinDSPrintHeadTimeStep(sddisc, nume_inst, ds_print)
+        use NonLin_Datastructure_type
+        character(len=19), intent(in) :: sddisc
+        integer, intent(in) :: nume_inst
+        type(NL_DS_Print), intent(inout) :: ds_print
+    end subroutine nonlinDSPrintHeadTimeStep
 end interface

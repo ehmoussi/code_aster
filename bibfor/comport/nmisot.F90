@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmisot(fami, kpg, ksp, ndim, typmod,&
+!
+subroutine nmisot(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   imate, compor, crit, deps, sigm,&
                   vim, option, sigp, vip, dsidep,&
                   iret)
 !
+implicit none
 !
-    implicit none
 #include "asterf_types.h"
 #include "asterc/r8miem.h"
 #include "asterc/r8prem.h"
@@ -40,13 +40,15 @@ subroutine nmisot(fami, kpg, ksp, ndim, typmod,&
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 #include "asterfort/zerofr.h"
-    integer :: ndim, imate, kpg, ksp, iret
-    character(len=*) :: fami
-    character(len=8) :: typmod(*)
-    character(len=16) :: compor, option
-    real(kind=8) :: crit(*), line, radi
-    real(kind=8) :: deps(6), dx, deuxmu
-    real(kind=8) :: sigm(6), vim(*), sigp(6), vip(*), dsidep(6, 6)
+!
+aster_logical, intent(in) :: l_epsi_varc
+integer :: ndim, imate, kpg, ksp, iret
+character(len=*) :: fami
+character(len=8) :: typmod(*)
+character(len=16) :: compor, option
+real(kind=8) :: crit(*), line, radi
+real(kind=8) :: deps(6), dx, deuxmu
+real(kind=8) :: sigm(6), vim(*), sigp(6), vip(*), dsidep(6, 6)
 ! ----------------------------------------------------------------------
 !     REALISE LA LOI DE VON MISES ISOTROPE ET ELASTIQUE POUR LES
 !     ELEMENTS ISOPARAMETRIQUES EN PETITES DEFORMATIONS
@@ -371,9 +373,18 @@ subroutine nmisot(fami, kpg, ksp, ndim, typmod,&
 !
 !     -- 4 CALCUL DE DEPSMO ET DEPSDV :
 !     --------------------------------
-    coef = epsthe - bendop*hydrp + bendom*hydrm - kdessp*(sref-sechp) + kdessm*(sref-sechm)
-    if (cplan) deps(3)=-nu/(1.d0-nu)*(deps(1)+deps(2)) +(1.d0+nu)/(1.d0-nu)*coef + nu*(defap(1)- &
-               &defam(1)+defap(2)-defam(2))/(1.d0-nu) + defap(3)-defam(3)
+
+    if (l_epsi_varc) then
+        coef = epsthe - bendop*hydrp + bendom*hydrm - kdessp*(sref-sechp) + kdessm*(sref-sechm)
+    else
+        coef = 0.d0
+        defam(:) = 0.d0
+        defap(:) = 0.d0
+    endif
+    if (cplan) then
+        deps(3)=-nu/(1.d0-nu)*(deps(1)+deps(2)) +(1.d0+nu)/(1.d0-nu)*coef +&
+                 nu*(defap(1)- defam(1)+defap(2)-defam(2))/(1.d0-nu) + defap(3)-defam(3)
+    endif
     depsmo = 0.d0
     do k = 1, 3
         depsth(k) = deps(k) -coef -(defap(k)-defam(k))

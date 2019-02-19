@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine mmtfpe(phase , iresof, l_pena_cont, l_pena_fric,&
+subroutine mmtfpe(phase , i_reso_fric, l_pena_cont, l_pena_fric,&
                   ndim  , nne   , nnm        ,  nnl       , nbcps ,&
                   wpg   , jacobi,&
                   ffl   , ffe   , ffm        ,&
@@ -37,10 +37,11 @@ implicit none
 #include "asterfort/mmmtuc.h"
 #include "asterfort/mmmtuf.h"
 #include "asterfort/mmmtuu.h"
+#include "Contact_type.h"
 !
 character(len=4), intent(in) :: phase
 aster_logical, intent(in) :: l_pena_cont, l_pena_fric
-integer, intent(in) :: iresof, ndim, nne, nnm, nnl, nbcps
+integer, intent(in) :: i_reso_fric, ndim, nne, nnm, nnl, nbcps
 real(kind=8), intent(in) :: norm(3), tau1(3), tau2(3), mprojn(3, 3), mprojt(3, 3)
 real(kind=8), intent(in) :: ffe(9), ffm(9), ffl(9)
 real(kind=8), intent(in) :: wpg, jacobi
@@ -66,7 +67,7 @@ real(kind=8), intent(out) :: matrmf(27, 18), matref(27, 18)
 !                        'GLIS' - Slip
 ! In  l_pena_cont      : flag for penalized contact
 ! In  l_pena_fric      : flag for penalized friction
-! In  iresof           : algorithm for friction
+! In  i_reso_fric      : algorithm for friction
 ! In  ndim             : dimension of problem (2 or 3)
 ! In  nnl              : number of nodes with Lagrange multiplicators (contact and friction)
 ! In  nne              : number of slave nodes
@@ -134,7 +135,7 @@ real(kind=8), intent(out) :: matrmf(27, 18), matref(27, 18)
                     rese  , nrese      ,&
                     matree, matrmm     ,&
                     matrem, matrme)
-        if (iresof .ge. 1) then
+        if (i_reso_fric .eq. ALGO_NEWT) then
             call mmmtuc(phase , l_pena_cont, l_pena_fric,&
                         ndim  , nnl        , nne        , nnm,&
                         norm  , tau1       , tau2       , mprojt,&
@@ -159,7 +160,7 @@ real(kind=8), intent(out) :: matrmf(27, 18), matref(27, 18)
                     tau1  , tau2       , mprojt,&
                     rese  , nrese      , lambda, coefff,&
                     matref, matrmf)
-        if (iresof .ge. 1) then
+        if (i_reso_fric .eq. ALGO_NEWT) then
             call mmmtuc(phase , l_pena_cont, l_pena_fric,&
                         ndim  , nnl        , nne        , nnm,&
                         norm  , tau1       , tau2       , mprojt,&
