@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,6 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/SetTableColumn.h"
 #include "asterfort/utmess.h"
-#include "asterfort/ComputeTableWidth.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: sdsuiv
@@ -49,13 +48,13 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_col, i_dof_monitor, nb_dof_monitor, line_width, i, nb_cols_active
+    integer :: i_dof_monitor, nb_dof_monitor
     type(NL_DS_Table) :: table_cvg
     aster_logical :: l_line_search, l_pilo, l_cont_disc, l_cont_cont, l_hrom
     aster_logical :: l_deborst, l_refe_rela, l_comp_rela
     aster_logical :: l_loop_cont, l_loop_frot, l_loop_geom, l_cont_all_verif
     aster_logical :: l_newt_frot, l_newt_cont, l_newt_geom
-    aster_logical :: l_info_resi, l_info_time, l_csv
+    aster_logical :: l_info_resi
     aster_logical :: l_pena_cont
     character(len=1) :: indsui
     character(len=24) :: col_name
@@ -74,8 +73,6 @@ type(NL_DS_Print), intent(inout) :: ds_print
 ! - Get parameters
 !
     l_info_resi = ds_print%l_info_resi
-    l_info_time = ds_print%l_info_time
-    l_csv       = ds_print%l_tcvg_csv
 !
 ! - Active functionnalities
 !
@@ -98,129 +95,120 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! - No cols activated
 !
-    call SetTableColumn(table_cvg, flag_acti_ = .false._1)
-!
-! - Time step
-!
-    if (l_csv) then
-        call SetTableColumn(table_cvg, name_ = 'INCR_INST', flag_acti_ = .true._1)
-    endif
+    call SetTableColumn(table_cvg, flag_acti_ = ASTER_FALSE)
 !
 ! - Newton iterations
 !
-    call SetTableColumn(table_cvg, name_ = 'ITER_NUME', flag_acti_ = .true._1)
-    if (l_info_time) then
-        call SetTableColumn(table_cvg, name_ = 'ITER_TIME', flag_acti_ = .true._1)
-    endif
+    call SetTableColumn(table_cvg, name_ = 'ITER_NUME', flag_acti_ = ASTER_TRUE)
 !
 ! - RESI_GLOB_RELA
 !
-    call SetTableColumn(table_cvg, name_ = 'RESI_RELA', flag_acti_ = .true._1)
+    call SetTableColumn(table_cvg, name_ = 'RESI_RELA', flag_acti_ = ASTER_TRUE)
     if (l_info_resi) then
-        call SetTableColumn(table_cvg, name_ = 'RELA_NOEU', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'RELA_NOEU', flag_acti_ = ASTER_TRUE)
     endif
 !
 ! - RESI_GLOB_MAXI
 !
-    call SetTableColumn(table_cvg, name_ = 'RESI_MAXI', flag_acti_ = .true._1)
+    call SetTableColumn(table_cvg, name_ = 'RESI_MAXI', flag_acti_ = ASTER_TRUE)
     if (l_info_resi) then
-        call SetTableColumn(table_cvg, name_ = 'MAXI_NOEU', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'MAXI_NOEU', flag_acti_ = ASTER_TRUE)
     endif
 !
 ! - RESI_REFE_RELA
 !
     if (l_refe_rela) then
-        call SetTableColumn(table_cvg, name_ = 'RESI_REFE', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'RESI_REFE', flag_acti_ = ASTER_TRUE)
         if (l_info_resi) then
-            call SetTableColumn(table_cvg, name_ = 'REFE_NOEU', flag_acti_ = .true._1)
+            call SetTableColumn(table_cvg, name_ = 'REFE_NOEU', flag_acti_ = ASTER_TRUE)
         endif
     endif
 !
 ! - RESI_COMP_RELA
 !
     if (l_comp_rela) then
-        call SetTableColumn(table_cvg, name_ = 'RESI_COMP', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'RESI_COMP', flag_acti_ = ASTER_TRUE)
         if (l_info_resi) then
-            call SetTableColumn(table_cvg, name_ = 'COMP_NOEU', flag_acti_ = .true._1)
+            call SetTableColumn(table_cvg, name_ = 'COMP_NOEU', flag_acti_ = ASTER_TRUE)
         endif
     endif
 !
 ! - Contact
 !
     if (l_loop_geom) then
-        call SetTableColumn(table_cvg, name_ = 'BOUC_GEOM', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'BOUC_GEOM', flag_acti_ = ASTER_TRUE)
     endif
     if (l_loop_frot) then
-        call SetTableColumn(table_cvg, name_ = 'BOUC_FROT', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'BOUC_FROT', flag_acti_ = ASTER_TRUE)
     endif
     if (l_loop_cont) then
-        call SetTableColumn(table_cvg, name_ = 'BOUC_CONT', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'BOUC_CONT', flag_acti_ = ASTER_TRUE)
     endif
     if (l_cont_disc .and. (.not.l_cont_all_verif)) then
-        call SetTableColumn(table_cvg, name_ = 'CTCD_NBIT', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'CTCD_NBIT', flag_acti_ = ASTER_TRUE)
     endif
     if (l_cont_cont .and. (.not.l_cont_all_verif)) then
-        call SetTableColumn(table_cvg, name_ = 'CTCC_CYCL', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'CTCC_CYCL', flag_acti_ = ASTER_TRUE)
     endif
 !
 ! - Contact (generalized Newton)
 !
     if (l_newt_geom) then
-        call SetTableColumn(table_cvg, name_ = 'GEOM_NEWT', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'GEOM_NEWT', flag_acti_ = ASTER_TRUE)
         if (l_info_resi) then
-            call SetTableColumn(table_cvg, name_ = 'GEOM_NOEU', flag_acti_ = .true._1)
+            call SetTableColumn(table_cvg, name_ = 'GEOM_NOEU', flag_acti_ = ASTER_TRUE)
         endif
     endif
     if (l_newt_frot) then
-        call SetTableColumn(table_cvg, name_ = 'FROT_NEWT', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'FROT_NEWT', flag_acti_ = ASTER_TRUE)
         if (l_info_resi) then
-            call SetTableColumn(table_cvg, name_ = 'FROT_NOEU', flag_acti_ = .true._1)
+            call SetTableColumn(table_cvg, name_ = 'FROT_NOEU', flag_acti_ = ASTER_TRUE)
         endif
     endif
     if (l_newt_cont) then
-        call SetTableColumn(table_cvg, name_ = 'CONT_NEWT', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'CONT_NEWT', flag_acti_ = ASTER_TRUE)
     endif
     
     if (l_pena_cont) then
-        call SetTableColumn(table_cvg, name_ = 'PENE_MAXI', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'PENE_MAXI', flag_acti_ = ASTER_TRUE)
     endif
 !
 ! - Contact (fixed points)
 !
     if (l_loop_geom .or. l_loop_frot .or. l_loop_cont) then
-        call SetTableColumn(table_cvg, name_ = 'BOUC_VALE', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'BOUC_VALE', flag_acti_ = ASTER_TRUE)
         if (l_info_resi) then
-            call SetTableColumn(table_cvg, name_ = 'BOUC_NOEU', flag_acti_ = .true._1)
+            call SetTableColumn(table_cvg, name_ = 'BOUC_NOEU', flag_acti_ = ASTER_TRUE)
         endif
     endif
 !
 ! - DE BORST method (stress planes)
 !
     if (l_deborst) then
-        call SetTableColumn(table_cvg, name_ = 'DEBORST  ', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'DEBORST  ', flag_acti_ = ASTER_TRUE)
     endif
 !
 ! - Line search
 !
     if (l_line_search) then
-        call SetTableColumn(table_cvg, name_ = 'RELI_NBIT', flag_acti_ = .true._1)
-        call SetTableColumn(table_cvg, name_ = 'RELI_COEF', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'RELI_NBIT', flag_acti_ = ASTER_TRUE)
+        call SetTableColumn(table_cvg, name_ = 'RELI_COEF', flag_acti_ = ASTER_TRUE)
     endif
 !
 ! - Pilotage (continuation methods)
 !
     if (l_pilo) then
-        call SetTableColumn(table_cvg, name_ = 'PILO_COEF', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'PILO_COEF', flag_acti_ = ASTER_TRUE)
     endif
 !
 ! - Matrix option
 !
-    call SetTableColumn(table_cvg, name_ = 'MATR_ASSE', flag_acti_ = .true._1)
+    call SetTableColumn(table_cvg, name_ = 'MATR_ASSE', flag_acti_ = ASTER_TRUE)
 !
 ! - Hyper-reduction
 !
     if (l_hrom) then
-        call SetTableColumn(table_cvg, name_ = 'BOUC_HROM', flag_acti_ = .true._1)
+        call SetTableColumn(table_cvg, name_ = 'BOUC_HROM', flag_acti_ = ASTER_TRUE)
     endif
 !
 ! - For DOF monitoring
@@ -231,32 +219,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
     do i_dof_monitor = 1, nb_dof_monitor
         write(indsui,'(I1)') i_dof_monitor
         col_name        = 'SUIVDDL'//indsui
-        call SetTableColumn(table_cvg, name_ = col_name, flag_acti_ = .true._1)
-    end do
-!
-! - Compute width of table
-!
-    call ComputeTableWidth(table_cvg, line_width, nb_cols_active)
-    if (line_width .gt. 255) then
-        call utmess('F', 'IMPRESSION_2', si = line_width)
-    endif
-    if (nb_cols_active .ge. 15) then
-        call utmess('F', 'IMPRESSION_1', si = nb_cols_active)
-    endif
-!
-! - Compute separator line
-!
-    do i = 1, line_width
-        sep_line(i:i) = '-'
-    end do
-    table_cvg%width    = line_width
-    table_cvg%sep_line = sep_line
-    ds_print%sep_line  = sep_line
-!
-! - No value affected in column
-!
-    do i_col = 1, table_cvg%nb_cols
-        table_cvg%cols(i_col)%l_vale_affe = .false._1
+        call SetTableColumn(table_cvg, name_ = col_name, flag_acti_ = ASTER_TRUE)
     end do
 !
 ! - Set convergence table

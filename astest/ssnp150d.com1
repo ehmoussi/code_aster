@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -102,7 +102,6 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
 
      Pcalc = CREA_CHAMP(OPERATION='EXTR',
                         INST=1.,
-#                        NOM_CHAM = 'CONT_ELEM' , TYPE_CHAM = 'ELEM_NEUT_R',
                         NOM_CHAM = 'CONT_ELEM' , TYPE_CHAM = 'ELEM_CLAC_R',
                         RESULTAT = RESULTAT ,);
 
@@ -188,7 +187,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
                                 NOM_CMP = 'PRES',
                                 NOM_CMP_RESU = 'X1',),
                              ),);
-     
+
 
      PcalcG=CREA_CHAMP(OPERATION='DISC',
                        TYPE_CHAM='ELGA_NEUT_R',
@@ -427,7 +426,7 @@ for Raff in range(0,Nb_Raffinement):
                        MAILLAGE_N =MA0[Raff],
                        MAILLAGE_NP1 =MA0[Raff+1],
                        )
-        
+
         MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MA0[Raff+1],
                             DECOUPE_LAC=_F(GROUP_MA_ESCL='BAS',),);
 
@@ -468,7 +467,7 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 2.9415110159,  # raffiement=6,
+            VALE_CALC= 2.81404623178,  # raffiement=6,
             VALE_REFE=2.5,             # taux de convergence
             PRECISION=0.177,           # normal
             )
@@ -477,10 +476,10 @@ TEST_TABLE (TABLE = PenteLST,
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.01229288913,   # raffiement=6,
+            VALE_CALC=1.01178177732,   # raffiement=6,
             VALE_REFE=1.0,             # taux de convergence
             PRECISION=0.013,
-            )     
+            )
 
 sous_titreU='Ordres de convergence: cas TRIA6= %f'%(PenteL2U)
 sous_titreP='Ordres de convergence: cas TRIA6= %f'%(PenteL2P)

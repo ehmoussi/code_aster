@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,11 +59,11 @@ subroutine vpvers(eigsol, modes, checksd)
     integer           :: ibid, iret
     real(kind=8)      :: alpha, eps, freq1, rbid
     character(len=1)  :: appr
-    character(len=8)  :: k8bid, method
+    character(len=8)  :: method
     character(len=9)  :: typevp
     character(len=14) :: matra, matrb, matrc
-    character(len=16) :: k16bid, modrig, optiof, typeqz, typres
-    character(len=19) :: amor, k19bid, masse, masse0, raide, raide0, numedd
+    character(len=16) :: modrig, optiof, typeqz, typres
+    character(len=19) :: amor, masse, masse0, raide, raide0, numedd
     character(len=24) :: valk(2), k24buff
     aster_logical :: lc, lkr, lns, lpg, lqz
 !
@@ -76,13 +76,11 @@ subroutine vpvers(eigsol, modes, checksd)
     eps=1.d+4*r8prem()
 !
 ! --  LECTURE DES PARAMETRES MODAUX
-    call vplecs(eigsol,&
-                ibid, ibid, ibid, ibid, ibid, ibid, ibid, ibid, ibid, ibid,&
-                alpha, rbid, freq1, rbid, rbid, rbid, rbid, rbid, rbid, rbid, rbid,&
-                rbid,&
-                appr, k8bid, method, typevp, matra, matrb, matrc, modrig, optiof, k16bid, k16bid,&
-                k16bid, typeqz, typres, amor, masse, raide, k19bid,&
-                lc, lkr, lns, lpg, lqz)
+    call vplecs(eigsol, alpha_=alpha, freq1_=freq1,&
+                appr_=appr, method_=method, typevp_=typevp, matra_=matra,&
+                matrb_=matrb, matrc_=matrc, modrig_=modrig, optiof_=optiof,&
+                typeqz_=typeqz, typres_=typres, amor_=amor, masse_=masse, raide_=raide,&
+                lc_=lc, lkr_=lkr, lns_=lns, lpg_=lpg, lqz_=lqz)
 !
 ! --  REGLES D'EXCLUSION
 !

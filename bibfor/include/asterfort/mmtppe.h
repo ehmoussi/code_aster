@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 interface
     subroutine mmtppe(ndim       , nne      , nnm   , nnl     , nbdm  ,&
-                      iresog     , l_large_slip, &
+                      i_reso_geom, l_large_slip, &
                       jeusup   , &
                       tau1       , tau2     ,&
                       ffe        , ffm      , dffm    , ddffm , ffl   ,&
@@ -33,7 +33,7 @@ interface
                       taujeu1    , taujeu2  ,&
                       dnepmait1  , dnepmait2)
         integer, intent(in) :: ndim, nne, nnm, nnl, nbdm
-        integer, intent(in) :: iresog
+        integer, intent(in) :: i_reso_geom
         aster_logical, intent(in) :: l_large_slip
         real(kind=8), intent(in) :: jeusup
         real(kind=8), intent(in) :: tau1(3), tau2(3)

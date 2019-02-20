@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ subroutine te0338(option, nomte)
     character(len=16) :: optcal(12), nomres(4)
 !
     real(kind=8) :: sigm(6), sig1, sigwk, valres(4), epsg(6), eps1
-    real(kind=8) :: m, vref, sref, seuil, dvpg, poids, vkp, dfdbid(30)
+    real(kind=8) :: m, vref, sref, seuil, dvpg, poids, vkp
     real(kind=8) :: equi(6), pp, ppt, vkpact
     real(kind=8) :: sigold, signew, tg, tmoy
 !
@@ -152,7 +152,7 @@ subroutine te0338(option, nomte)
         pp = zr(ivarig+nbvari* (kp-1)+ipopp-1)
         if (pp .ge. seuil) then
             call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
-                        poids, dfdbid, dfdbid, dfdbid)
+                        poids)
             dvpg = poids
             vkp = vkp + dvpg
             do 20,i = 1,6,1
@@ -220,7 +220,7 @@ subroutine te0338(option, nomte)
         pp = zr(ivarig+nbvari* (kp-1)+ipopp-1)
         if (pp .ge. seuil) then
             call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
-                        poids, dfdbid, dfdbid, dfdbid)
+                        poids)
             dvpg = poids
             vkp = vkp + dvpg
             do 60,i = 1,6,1
@@ -286,7 +286,7 @@ subroutine te0338(option, nomte)
         signew = 0.d0
         if (pp .ge. seuil) then
             call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
-                        poids, dfdbid, dfdbid, dfdbid)
+                        poids)
             dvpg = poids
             if ((zk16(icompo).eq.'LEMAITRE') .and. (pp.ge.seuil)) then
                 ppt = 1.d0
@@ -324,7 +324,7 @@ subroutine te0338(option, nomte)
         pp = zr(ivarig+nbvari* (kp-1)+ipopp-1)
         if (pp .ge. seuil) then
             call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
-                        poids, dfdbid, dfdbid, dfdbid)
+                        poids)
             dvpg = poids
             if ((zk16(icompo).eq.'LEMAITRE') .and. (pp.ge.seuil)) then
                 ppt = 1.d0

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/getvtx.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
+#include "Contact_type.h"
 !
 character(len=8), intent(in) :: sdcont
 character(len=8), intent(in) :: model
@@ -109,9 +110,9 @@ character(len=8), intent(in) :: model
     endif
 !
     if (algo_reso_geom .eq. 'POINT_FIXE') then
-        v_sdcont_paraci(9) = 0
+        v_sdcont_paraci(9) = ALGO_FIXE
     else if (algo_reso_geom .eq. 'NEWTON') then
-        v_sdcont_paraci(9) = 1
+        v_sdcont_paraci(9) = ALGO_NEWT
     else
         ASSERT(ASTER_FALSE)
     endif
@@ -169,9 +170,9 @@ character(len=8), intent(in) :: model
 !
     if (l_frot) then
         if (algo_reso_frot .eq. 'POINT_FIXE') then
-            v_sdcont_paraci(28) = 0
+            v_sdcont_paraci(28) = ALGO_FIXE
         else if (algo_reso_frot.eq.'NEWTON') then
-            v_sdcont_paraci(28) = 1
+            v_sdcont_paraci(28) = ALGO_NEWT
         else
             ASSERT(ASTER_FALSE)
         endif
@@ -215,9 +216,9 @@ character(len=8), intent(in) :: model
     endif
 !
     if (algo_reso_cont .eq. 'POINT_FIXE') then
-        v_sdcont_paraci(27) = 0
+        v_sdcont_paraci(27) = ALGO_FIXE
     else if (algo_reso_cont.eq.'NEWTON') then
-        v_sdcont_paraci(27) = 1
+        v_sdcont_paraci(27) = ALGO_NEWT
     else
         ASSERT(ASTER_FALSE)
     endif

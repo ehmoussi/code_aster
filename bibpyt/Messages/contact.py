@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -124,6 +124,9 @@ Contact méthode sans résolution.
     94 : _(u"""
 La modélisation COQUE_3D n'est pas encore compatible avec la formulation CONTINUE.
 """),
+
+
+    95 : _(u"""L'option ADAPTATION du contact n'est pas disponible pour la méthode LAC."""),
 
     96 : _(u"""
 La prise en compte d'un contact entre une maille '%(k1)s' et une maille '%(k2)s' n'est pas prévue avec la formulation CONTINUE.

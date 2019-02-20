@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine irmail(form, ifi, versio, noma, lmod,&
-                  nomo, infmai, formar)
+subroutine irmail(form, ifi, versio, noma, lmod, nomo, infmai, formar)
 !
     implicit none
 !
@@ -52,11 +51,11 @@ subroutine irmail(form, ifi, versio, noma, lmod,&
 #include "asterfort/wkvect.h"
 !
 !---------------- ARGUMENTS --------------------------------------------
-    integer :: versio, infmai
-    aster_logical :: lmod
-    character(len=8) :: noma, nomo
-    character(len=16) :: formar
-    character(len=*) :: form
+    integer             :: versio, infmai
+    aster_logical       :: lmod
+    character(len=8)    :: noma, nomo, modele
+    character(len=16)   :: formar
+    character(len=*)    :: form
 !---------------- VARIABLES LOCALES ------------------------------------
 !
     integer :: ifi, igm, ign
@@ -66,24 +65,50 @@ subroutine irmail(form, ifi, versio, noma, lmod,&
     integer :: jtitr, jtypl
 !
     integer :: lon1, maxnod, nbgrm, nbgrn
-    integer :: nbmai, nbnoe, nbtitr, ndim
+    integer :: nbmai, nbnoe, nbtitr, ndim, repi
 !
     aster_logical :: lmasu, lgmsh
 !
-    character(len=80) :: titmai
-    real(kind=8), pointer :: vale(:) => null()
-    integer, pointer :: connex(:) => null()
-    integer, pointer :: codegra(:) => null()
-    integer, pointer :: codephd(:) => null()
-    integer, pointer :: codephy(:) => null()
-    integer, pointer :: permuta(:) => null()
-    integer, pointer :: typmail(:) => null()
+    character(len=80)       :: titmai
+    real(kind=8), pointer   :: vale(:) => null()
+    integer, pointer        :: connex(:) => null()
+    integer, pointer        :: codegra(:) => null()
+    integer, pointer        :: codephd(:) => null()
+    integer, pointer        :: codephy(:) => null()
+    integer, pointer        :: permuta(:) => null()
+    integer, pointer        :: typmail(:) => null()
 !     ------------------------------------------------------------------
 !
     call jemarq()
 !
-!     --- RECUPERATION DE LA DIMENSION DU PROBLEME
-    call dismoi('DIM_GEOM_B', noma, 'MAILLAGE', repi=ndim)
+!   RECUPERATION DE LA DIMENSION DU PROBLEME
+    modele = ' '
+    if ( lmod ) then
+        modele = nomo
+    else
+        if ( len_trim(nomo) .ne. 0) modele = nomo
+    endif
+!
+    if (modele .ne. ' ') then
+        call dismoi('DIM_GEOM', modele, 'MODELE', repi=repi)
+!       avec repi   =   1  : 1D
+!                   =   2  : 2D
+!                   =   3  : 3D
+!                   = 120  : 1D+2D     MELANGE
+!                   = 103  : 1D+3D     MELANGE
+!                   =  23  : 2D+3D     MELANGE
+!                   = 123  : 1D+2D+3D  MELANGE
+        select case (repi)
+            case (1)
+                ndim = 1
+            case (2,120)
+                ndim = 2
+            case (3,103,23,123)
+                ndim = 3
+        end select
+    else
+        call dismoi('DIM_GEOM_B', noma, 'MAILLAGE', repi=ndim)
+    endif
 !
 !     --- RECUPERATION DU NOMBRE DE MAILLES
     call jelira(noma//'.NOMMAI', 'NOMUTI', nbmai)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
                        fr=tr("Nom de l'étude Miss")),
     REPERTOIRE  = SIMP(statut='f', typ='TXM',
                        fr=tr("Répertoire de travail de Miss")),
-    VERSION     = SIMP(statut='f', typ='TXM', into=("V6.6","V6.5"), defaut="V6.6",
+    VERSION     = SIMP(statut='f', typ='TXM', into=("V6.7","V6.6","V6.5"), defaut="V6.7",
                        fr=tr("Version de Miss utilisée")),
 
     TABLE_SOL   = SIMP(statut='f', typ=table_sdaster,

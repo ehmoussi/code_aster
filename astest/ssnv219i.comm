@@ -191,7 +191,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
      # ========================================================================================
      #          Creation de la pression calculee en deplacement aux points d'integration
      # ========================================================================================
- 
+
      Pcalc1=CREA_CHAMP(OPERATION='ASSE',
                        TYPE_CHAM='CART_NEUT_R',
                        MAILLAGE=MAIL,
@@ -275,7 +275,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
                        _F(NOM=Pcalc1),
                        _F(NOM=UcalcG),
                        _F(NOM=PcalcG),
-                       _F(NOM=DIFFUG), 
+                       _F(NOM=DIFFUG),
                        _F(NOM=tabU),
                        _F(NOM=tabP),
                        ),
@@ -481,7 +481,7 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 2.99909182813,       # raffinement=4
+            VALE_CALC= 2.99861260357,       # raffinement=4
             VALE_REFE=2.5,                  # taux de convergence
             PRECISION=0.200,                # surconvergence: mélange de convergence de géométrie
             )                               # (surface de contact courbée)
@@ -490,7 +490,7 @@ TEST_TABLE (TABLE = PenteLST,
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.01524915695,        # raffinement=4
+            VALE_CALC=1.01557409035,        # raffinement=4
             VALE_REFE=1.0,                  # taux de convergence
             PRECISION=0.016,                # surconvergence: mélange de convergence de géométrie
             )                               # (surface de contact courbée)
@@ -498,7 +498,7 @@ TEST_TABLE (TABLE = PenteLST,
 sous_titreU='Ordres de convergence: cas HEXA27 %f'%(PenteL2U)
 sous_titreP='Ordres de convergence: cas HEXA27= %f'%(PenteL2P)
 
-    
+
 
 IMPR_FONCTION(FORMAT='XMGRACE',
                UNITE=29,
@@ -549,7 +549,7 @@ IMPR_RESU(FORMAT='MED',
            ),);
 
 for n in range(0,Nb_Raffinement):
-    
+
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),
                       _F(NOM=MA27[n]),
                       _F(NOM=MA[n]),

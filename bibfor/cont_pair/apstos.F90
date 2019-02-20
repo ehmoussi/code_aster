@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,6 +77,10 @@ implicit none
     real(kind=8) :: pair_tole
     character(len=24) :: pair_method
     integer, pointer :: list_pair_zone(:) => null()
+    integer, pointer :: list_nbptit_zone(:) => null()
+    real(kind=8), pointer :: list_ptitsl_zone(:) => null()
+    real(kind=8), pointer :: list_ptitma_zone(:) => null()
+    real(kind=8), pointer :: list_ptgama_zone(:) => null()
     character(len=24) :: sdappa_gapi
     integer, pointer :: v_sdappa_mast(:) => null()
     integer, pointer :: v_sdappa_slav(:) => null()
@@ -164,14 +168,16 @@ implicit none
         !write(*,*)"NB_ELEM_SLAV = ", nb_elem_slav, "LIST_ELEM_SLAV = ",v_sdappa_slav(:)
         call aplcpg(mesh        , newgeo        , sdappa      , i_zone       , pair_tole,&
                     nb_elem_mast, v_sdappa_mast , nb_el_slav_mpi, v_appa_slav_mpi, &
-                    nb_pair_zone, list_pair_zone, int(i_proc), int(nb_proc), pair_method)
+                    nb_pair_zone, list_pair_zone, list_nbptit_zone, list_ptitsl_zone,&
+                    list_ptitma_zone,list_ptgama_zone,int(i_proc), int(nb_proc), pair_method)
         AS_DEALLOCATE(vi=v_appa_slav_mpi)
     end do
 !
 ! - Save pairing information in sdappa data structure
 !
     !write(*,*)"Debut apstoc"
-    call apstoc(ds_contact, nb_pair_zone, list_pair_zone)
+    call apstoc(ds_contact, nb_pair_zone, list_pair_zone,list_nbptit_zone,list_ptitsl_zone,&
+                list_ptitma_zone,list_ptgama_zone)
     !write(*,*)"Fin apstoc"
 !
 ! - Compute smooth normals at nodes

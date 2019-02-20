@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,8 @@ subroutine pjloin(nbnod,nbnodm,m2,geom2,nbmax,tino2m,tdmin2,lino_loin)
             unite = ulnume()
             if (unite.le.0) call utmess('F', 'UTILITAI5_10')
             call ulaffe(unite, fichier, ' ', 'N', 'O')
-            formar=' '
+            formar= ' '
+            k8bid = ' '
             call irmail('MED', unite, ibid, madebug, ASTER_FALSE , k8bid, 1, formar)
             call ulopen(-unite, k8bid, k8bid, k8bid, k8bid)
             call detrsd('MAILLAGE', madebug)

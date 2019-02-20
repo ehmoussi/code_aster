@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,8 @@ subroutine te0009(option, nomte)
 #include "asterfort/upletr.h"
 #include "asterfort/utmess.h"
 #include "asterfort/utpalg.h"
+#include "asterfort/utpsgl.h"
+#include "asterfort/utppgl.h"
     character(len=16) :: option, nomte
 !     CALCUL DES MATRICES D'AMORTISSEMENT GYROSCOPIQUE
 !     DES ELEMENTS DISCRETS :
@@ -38,8 +40,9 @@ subroutine te0009(option, nomte)
 !
     integer :: nddlm, nl1, ipoint, lorien
     parameter     (nddlm=6,nl1=(nddlm+1)*nddlm/2)
-    integer :: i, nc, nno, jdm, jdc, j, infodi, ibid
+    integer :: i, nc, nno, jdm, jdc, j, infodi, ibid, irep, indvxx
     real(kind=8) :: vxx, r8bid, pgl(3, 3), klv(nl1), klw(nl1)
+    real(kind=8) :: vml(36)
     character(len=8) :: k8bid
 !
 !     ------------------------------------------------------------------
@@ -60,6 +63,9 @@ subroutine te0009(option, nomte)
             call utmess('A+', 'DISCRETS_26', sk=nomte)
             call infdis('DUMP', ibid, r8bid, 'A+')
         endif
+!       type de repere
+        call infdis('REPM', irep, r8bid, k8bid)
+        nno = 1
         nc = 6
     else
         call utmess('F', 'CALCULEL_17')
@@ -71,10 +77,26 @@ subroutine te0009(option, nomte)
 !
     call infdis('SYMM', infodi, r8bid, k8bid)
     call jevech('PCADISM', 'L', jdc)
-    if (infodi .eq. 1) then
-        vxx = zr(jdc+10-1)
-    else if (infodi.eq.2) then
-        vxx = zr(jdc+22-1)
+    call jevech('PCAORIE', 'L', lorien)
+    call matrot(zr(lorien), pgl)
+!
+!   passage dans le repère local
+    if (irep.eq.1) then
+        if (infodi .eq. 1) then
+            call utpsgl(nno, nc, pgl, zr(jdc), vml)
+            indvxx = 10
+        else
+            call utppgl(nno, nc, pgl, zr(jdc), vml)
+            indvxx = 22
+        endif
+        vxx = vml(indvxx)
+    else
+        if (infodi .eq. 1) then
+            indvxx = 10
+        else if (infodi.eq.2) then
+            indvxx = 22
+        endif
+        vxx = zr(jdc+indvxx-1)
     endif
     call jevech('PMATUNS', 'E', jdm)
 !
@@ -88,9 +110,6 @@ subroutine te0009(option, nomte)
     ipoint = int(j*(j-1)/2)+i
     klv(ipoint) = -vxx
 !
-    call jevech('PCAORIE', 'L', lorien)
-    call matrot(zr(lorien), pgl)
-    nno = 1
     call utpalg(nno, nc, pgl, klv, klw)
     call upletr(nddlm, zr(jdm), klw)
 !

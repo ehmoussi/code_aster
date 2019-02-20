@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ def recu_coor_z(noma,group,typ_group,tole_r):
                    coor_z.append(uz)
     else:
         assert 0, 'recu_coor_z : erreur argument typ_group'
-    
+
     prov = sorted(coor_z)
     coor_z = prov[::-1]
 
@@ -122,8 +122,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         if n_epais == 0:
             UTMESS("F", "MISS0_21")
         nb_couche = len(l_couche)
-        print 'l_couche=',l_couche
-   
+
     # Mode automatique pour les couches :
     grma_interf = None
     arg_grno = False
@@ -143,7 +142,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         tole_r = 5
         l_pt_ctrl = False
         coor_z_input = []
-        decalage_auto = False            
+        decalage_auto = False
         # Lecture des arguments :
         if COUCHE_AUTO["HOMOGENE"] == "OUI":
             homogene = True
@@ -204,7 +203,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
             max_z_input = Z0
             ll_mate.append(1)
             l_mate.append(l_mate[0])
-            nb_mate += 1            
+            nb_mate += 1
         coor_z_sol = [max_z_input,]
         for ep in l_epais:
             coor_z_sol.append(coor_z_sol[-1]-ep)
@@ -215,10 +214,9 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
             if len(coor_z_sol) == 1:
                 UTMESS("F", "MISS0_29")
             # Verification entre base de l'interface et couches de sol
-            print 'coor_z_sol=',coor_z_sol
             if len(l_epais) <> len(ll_mate):
                UTMESS("F", "MISS0_30")
-        
+
         if l_pt_ctrl:
             if coor_z_ctrl[-1] < coor_z_sol[-1]:
                UTMESS("F", "MISS0_32")
@@ -251,7 +249,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
                 if zz in coor_z_sol:
                     jj += 1
                 ll_mate = ll_mate2
-               
+
     # Verification avec l'interface FEM-BEM
     nb_noeud = 0
     verif = False
@@ -284,9 +282,9 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
             for zz in coor_z_ctrl:
                 if zz > min_z_input:
                     UTMESS("F", "MISS0_36")
-              
-        
-           
+
+
+
     #Generation table sol en mode auto
     if (COUCHE_AUTO != None):
         couche = {}
@@ -317,7 +315,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
                             i += 1
                         while l_z_ep[ind_mat_sup] <= enfonc_ss_c_haut:
                             ind_mat_sup += 1
-                        ind_mat_inf = ind_mat_sup    
+                        ind_mat_inf = ind_mat_sup
                         ind_mat_sup = ind_mat_sup - 1
                         while enfonc_ss_c_bas >= l_z_ep[ind_mat_inf]:
                             ind_mat_inf += 1
@@ -325,8 +323,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
                     if homogene:
                         id_mate = ll_mate[0]
                     elif ind_mat_sup < (ind_mat_inf - 2):
-                        #Cas plus de deux materiaux dans la sous-couche 
-                        print '   Cas plus de deux materiaux dans la sous-couche'
+                        #Cas plus de deux materiaux dans la sous-couche
                         ep_mat_h = []
                         ep_mat_b = []
                         ep_mat = [(l_z_ep[ind_mat_sup + 1] - enfonc_ss_c_haut),]
@@ -347,13 +344,13 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
                               ep1 = ep_mat[ii]
                               id_mate = ll_mate[ind_mat_sup+ii]
                     elif ind_mat_sup == (ind_mat_inf - 2):
-                        #Cas deux materiaux dans la sous-couche 
+                        #Cas deux materiaux dans la sous-couche
                         zz1 = l_z_ep[ind_mat_sup+1] - enfonc_ss_c_haut
                         zz2 = enfonc_ss_c_bas - l_z_ep[ind_mat_sup+1]
                         if zz2 > zz1:
                             id_mate = ll_mate[ind_mat_sup+1]
                         else:
-                            id_mate = ll_mate[ind_mat_sup]                     
+                            id_mate = ll_mate[ind_mat_sup]
                     elif ind_mat_sup == (ind_mat_inf - 1):
                         #Cas un seul materiau
                         id_mate = ll_mate[ind_mat_sup]
@@ -367,10 +364,10 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
                     if nc == nb_recept/2:
                        couche["SOURCE"] = "OUI"
                     l_couche.append(couche)
-                    idc += 1                    
-                    enfonc_ss_c_bas = l_noeud[0] - l_noeud[pt+1]       
+                    idc += 1
+                    enfonc_ss_c_bas = l_noeud[0] - l_noeud[pt+1]
             # Fin des sous-couches
-            
+
             # Couche a la base de l'interface
             ii = 0
             epais = -1.
@@ -393,7 +390,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
             couche["EPAIS"] = epais
             couche["SOURCE"] = "OUI"
             couche["RECEPTEUR"] = "OUI"
-            idc += 1            
+            idc += 1
             l_couche.append(couche)
             # Couches strictement sous l'interface
             while ii < len(l_epais):
@@ -465,16 +462,13 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         for couche in l_couche[:-2]:
             prof = prof - couche["EPAIS"]
             prof = round(prof,tole_r)
-            print 'ii=',ii
-            print 'prof=',prof
             if prof == min_z_input_r:
                 if decalage_auto:
                     UTMESS("A", "MISS0_40", valr=(prof,couche["EPAIS"]))
                     couche["NUME_MATE"] = l_couche[ii+1]["NUME_MATE"]
                 else:
-                    UTMESS("A", "MISS0_41")   
+                    UTMESS("A", "MISS0_41")
             ii += 1
-        print 'l_couche mod=',l_couche
 
 
     # 3. définition de la table
@@ -484,11 +478,13 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
               "RECEPTEUR", "SOURCE", "NUME_MATE", "SUBSTRATUM"],
         typ=["I", "R", "R", "R", "R", "R", "K8", "K8", "I", "K8"])
     idc = 0
+    unused = set([i + 1 for i in range(nb_mate)])
     for couche in l_couche:
         idc += 1
         id_mate = couche["NUME_MATE"]
         if id_mate > nb_mate:
             UTMESS("F", "MISS0_4", vali=(idc, nb_mate, id_mate))
+        unused.discard(id_mate)
         id_mate = id_mate - 1
         couche["NUME_COUCHE"] = idc
         couche.update(l_mate[id_mate])
@@ -498,6 +494,16 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         if couche["EPAIS"] is None:
             couche["EPAIS"] = 0.
         tab.append(couche)
+
+    if unused:
+        unused = sorted(list(unused))
+        idef = [i + 1 for i in range(nb_mate)]
+        # ignore last material
+        while unused and unused[-1] == idef[-1]:
+            unused.pop()
+            idef.pop()
+        if unused:
+            UTMESS("F", "MISS0_2", valk=str(tuple(unused)))
 
     # 4. surcharge par le titre fourni
     if TITRE != None:

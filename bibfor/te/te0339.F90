@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ subroutine te0339(option, nomte)
 !
     real(kind=8) :: sig(6), triax, volu, rsr0, numema, depseq
     real(kind=8) :: poids, dvpg, sigm, sigeq, lrsr0m, lrsr0p
-    real(kind=8) :: cong(6), varigp, varigm, crois, vk, dfdbid(30)
+    real(kind=8) :: cong(6), varigp, varigm, crois, vk
     integer :: jgano, nno, npg, i, kp, iritra, ndim, iret
     integer :: issopt, ima, iadzi, iazk24, nbvari, ipopp, icompo
     integer :: ipoids, ivf, idfde, nnos
@@ -151,7 +151,7 @@ subroutine te0339(option, nomte)
 !        ----------------------------------------------
         do 30,kp = 1,npg,1
         call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
-                    poids, dfdbid, dfdbid, dfdbid)
+                    poids)
         dvpg = poids
         vk = vk + dvpg
         do 20,i = 1,6,1
@@ -216,7 +216,7 @@ subroutine te0339(option, nomte)
 !           2.2.3 INTEGRATION PAR QUADRATURE
 !           --------------------------------
         call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
-                    poids, dfdbid, dfdbid, dfdbid)
+                    poids)
         dvpg = poids
         vk = vk + dvpg
         triax = triax + dvpg* (sigm/sigeq)
@@ -240,7 +240,7 @@ subroutine te0339(option, nomte)
 !        ----------------------------------------------
         do 100,kp = 1,npg,1
         call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
-                    poids, dfdbid, dfdbid, dfdbid)
+                    poids)
         dvpg = poids
         vk = vk + dvpg
         do 90,i = 1,6,1
@@ -297,7 +297,7 @@ subroutine te0339(option, nomte)
         varigm = zr(ivarmg+nbvari* (kp-1)+ipopp-1)
         varigp = zr(ivarpg+nbvari* (kp-1)+ipopp-1)
         call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
-                    poids, dfdbid, dfdbid, dfdbid)
+                    poids)
         dvpg = poids
         volu = volu+dvpg
 !

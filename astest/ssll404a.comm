@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -169,7 +169,7 @@ TEST_RESU(RESU=(_F(PARA='CHAR_CRIT',
 MODE2=CALC_MODES( MATR_RIGI=K_ASSE,
                   MATR_RIGI_GEOM=KS_ASSE,
                   TYPE_RESU='MODE_FLAMB', VERI_MODE=_F(STURM='OUI'),
-                  OPTION='PROCHE', SOLVEUR=_F(METHODE='MULT_FRONT'),
+                  OPTION='PROCHE', SOLVEUR=_F(METHODE='MUMPS'),
                   CALC_CHAR_CRIT=_F(CHAR_CRIT = (-14.1, -8.35, 2.88, 8.35, 14.1) 
                   ),
                   SOLVEUR_MODAL=_F( OPTION_INV = 'RAYLEIGH',),
@@ -222,7 +222,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=5,
 MODE3=CALC_MODES( MATR_RIGI=K_ASSE,
                   MATR_RIGI_GEOM=KS_ASSE,
                   TYPE_RESU='MODE_FLAMB',VERI_MODE=_F(STURM='OUI'),
-                  OPTION='SEPARE', SOLVEUR=_F(METHODE='MULT_FRONT'),
+                  OPTION='SEPARE', SOLVEUR=_F(METHODE='MUMPS'),
                   CALC_CHAR_CRIT=_F( CHAR_CRIT = (-15., -10., -2., 5., 10.,16.) ),
                   SOLVEUR_MODAL=_F( OPTION_INV = 'RAYLEIGH' ),
                  )
@@ -273,7 +273,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=5,
 MODE4=CALC_MODES( MATR_RIGI=K_ASSE,
                   MATR_RIGI_GEOM=KS_ASSE,
                   TYPE_RESU='MODE_FLAMB',VERI_MODE=_F(STURM='OUI'),
-                  OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
+                  OPTION='AJUSTE', SOLVEUR=_F(METHODE='MUMPS'),
                   CALC_CHAR_CRIT=_F( CHAR_CRIT = (-15., -10., -2., 5., 10.,16.) ),
                   SOLVEUR_MODAL=_F( OPTION_INV = 'RAYLEIGH' ),
                  )

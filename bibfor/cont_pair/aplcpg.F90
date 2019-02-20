@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,10 @@
 
 ! aslint: disable=W1306
 !
-subroutine aplcpg(mesh        , newgeo        , sdappa      , i_zone        , pair_tole,&
-                  nb_elem_mast, list_elem_mast, nb_elem_slav, list_elem_slav, &
-                  nb_pair_zone, list_pair_zone, i_proc      , nb_proc, pair_method)
+subroutine aplcpg(mesh            , newgeo        , sdappa          , i_zone        , pair_tole,&
+                  nb_elem_mast    , list_elem_mast, nb_elem_slav    , list_elem_slav, &
+                  nb_pair_zone    , list_pair_zone, list_nbptit_zone, list_ptitsl_zone,&
+                  list_ptitma_zone, li_ptgausma_zone,i_proc      , nb_proc        , pair_method)
 !
 implicit none
 !
@@ -28,6 +29,7 @@ implicit none
 #include "jeveux.h"
 #include "asterc/r8nnem.h"
 #include "asterfort/jecrec.h"
+#include "asterfort/aprtpm.h"
 #include "asterfort/jexatr.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jedema.h"
@@ -39,15 +41,13 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/apcoor.h"
+#include "asterfort/aptype.h"
 #include "asterfort/prjint.h"
-#include "asterfort/gapint.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/clpoma.h"
 #include "asterfort/assert.h"
-#include "asterfort/apdcma.h"
 #include "asterfort/ap_infast.h"
 #include "asterfort/apprin.h"
-#include "asterfort/aprtpe.h"
 #include "asterfort/cncinv.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/codent.h"
@@ -68,6 +68,10 @@ integer, intent(in) :: list_elem_mast(nb_elem_mast)
 integer, intent(in) :: list_elem_slav(nb_elem_slav)
 integer, intent(inout) :: nb_pair_zone
 integer, pointer :: list_pair_zone(:)
+integer, pointer :: list_nbptit_zone(:)
+real(kind=8), pointer :: list_ptitsl_zone(:)
+real(kind=8), pointer :: list_ptitma_zone(:)
+real(kind=8), pointer :: li_ptgausma_zone(:)
 integer, intent(in) :: i_proc
 integer, intent(in) :: nb_proc
 character(len=24), intent(in) :: pair_method
@@ -94,21 +98,24 @@ character(len=24), intent(in) :: pair_method
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: list_pair(nb_elem_mast), nbpatch_t, iret
+    integer :: list_pair(nb_elem_mast),li_nb_pt_inte_sl(nb_elem_mast), nbpatch_t, iret
+    real(kind=8) :: li_pt_inte_sl(nb_elem_mast*16), li_pt_inte_ma(nb_elem_mast*16)
+    real(kind=8) :: li_pt_gaus_ma(nb_elem_mast*72)
     integer :: elem_slav_nbnode, elem_slav_nume, elem_slav_dime, elem_slav_indx
     integer :: elem_mast_nbnode, elem_mast_nume, elem_mast_dime, elem_mast_indx
     character(len=8) :: elem_mast_code, elem_slav_code
     character(len=8) :: elem_slav_type, elem_mast_type
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
     integer :: nb_pair, nb_poin_inte
-    integer :: i_mast_neigh, i_elin_mast, i_elin_slav, i_slav_start, i_mast_start, i_find_mast
-    integer :: i_node, i_dime, i_slav_neigh, i_neigh
-    integer :: patch_indx
-    real(kind=8) :: total_weight, inte_weight, gap_moy, elem_slav_weight
-    real(kind=8) :: poin_inte(32)
-    integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
-    integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
-    real(kind=8) :: elin_mast_coor(27), elin_slav_coor(27)
+    integer :: i_mast_neigh, i_slav_start, i_mast_start, i_find_mast
+    integer :: i_slav_neigh
+    integer :: patch_indx, nb_next_alloc
+    real(kind=8) :: inte_weight, elem_slav_weight
+    real(kind=8) :: poin_inte_sl(32)
+    real(kind=8) :: poin_inte_ma(32)
+    real(kind=8) :: poin_gauss_ma(74)
+    integer ::  elin_mast_nbnode
+    integer ::  elin_slav_nbnode
     character(len=8) :: elin_mast_code, elin_slav_code, elem_slav_name, elem_mast_name, elem_name
     integer :: nb_slav_start, nb_find_mast, nb_mast_start
     integer :: list_find_mast(nb_elem_mast)
@@ -125,18 +132,19 @@ character(len=24), intent(in) :: pair_method
     integer, pointer :: v_sdappa_mane(:) => null()
     integer :: list_slav_master(4)
     integer :: nb_mast_neigh, nb_slav_neigh
-    integer :: inte_neigh(4), inte_neigh_aux(4)
+    integer :: inte_neigh(4)
     integer :: jv_geom, elem_type_nume
     real(kind=8) :: list_slav_weight(4), weight_test, tole_weight
-    character(len=24) :: sdappa_gapi, sdappa_coef, njv_weight_c, njv_weight_t,njv_nb_pair_zmpi
-    real(kind=8), pointer :: v_sdappa_gapi(:) => null()
-    real(kind=8), pointer :: v_sdappa_coef(:) => null()
+    character(len=24) :: njv_weight_t,njv_nb_pair_zmpi
     real(kind=8), pointer :: patch_weight_t(:) => null()
-    real(kind=8), pointer :: patch_weight_c(:) => null()
     integer, pointer :: v_mesh_comapa(:) => null()
     integer, pointer :: v_mesh_typmail(:) => null()
     integer, pointer :: nb_pair_zmpi(:) => null()
     integer, pointer :: list_pair_zmpi(:) => null()
+    integer, pointer :: li_nbptsl_zmpi(:) => null()
+    real(kind=8), pointer :: li_ptintsl_zmpi(:) => null()
+    real(kind=8), pointer :: li_ptintma_zmpi(:) => null()
+    real(kind=8), pointer :: li_ptgausma_zmpi(:) => null()
     integer, pointer :: v_mesh_connex(:)  => null()
     integer, pointer :: v_connex_lcum(:)  => null()
     character(len=16), pointer :: valk(:) => null()
@@ -153,8 +161,6 @@ character(len=24), intent(in) :: pair_method
     list_slav_weight(1:4)          = 0.d0
     call jelira(mesh//'.PATCH','NUTIOC', nbpatch_t)
     nbpatch_t= nbpatch_t-1
-    njv_weight_c=sdappa(1:19)//'.PWC '
-    call wkvect(njv_weight_c, "V V R", nbpatch_t, vr=patch_weight_c)
     njv_weight_t=sdappa(1:19)//'.PWT '
     call wkvect(njv_weight_t, "V V R", nbpatch_t, vr=patch_weight_t)
     njv_nb_pair_zmpi=sdappa(1:19)//'.NAPP'
@@ -175,14 +181,6 @@ character(len=24), intent(in) :: pair_method
     slav_indx_maxi = maxval(list_elem_slav)
     mast_indx_mini = minval(list_elem_mast)
     slav_indx_mini = minval(list_elem_slav)
-!
-! - Access to pairing datastructures
-!
-    sdappa_gapi = sdappa(1:19)//'.GAPI'
-    sdappa_coef = sdappa(1:19)//'.COEF'
-    call jeveuo(sdappa_gapi, 'E', vr = v_sdappa_gapi)
-    call jeveuo(sdappa_coef, 'E', vr = v_sdappa_coef)
-    AS_ALLOCATE(vi=list_pair_zmpi, size= 3*nb_elem_slav*nb_elem_mast)
 !
 ! - Access to updated geometry
 !
@@ -258,7 +256,6 @@ character(len=24), intent(in) :: pair_method
         elem_slav_indx = elem_slav_nume +1 - slav_indx_mini
         elem_type_nume = v_mesh_typmail(elem_slav_nume)
         call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_slav_type)
-        call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
 !
 ! ----- Shift list of slave element start
 !
@@ -276,28 +273,40 @@ character(len=24), intent(in) :: pair_method
 !
 ! ----- Get informations about slave element
 !
-        call apcoor(jv_geom       , elem_slav_type  ,&
-                    elem_slav_nume, elem_slav_coor, elem_slav_nbnode,&
-                    elem_slav_code, elem_slav_dime, v_mesh_connex   ,&
-                    v_connex_lcum)
+        call aptype(elem_slav_type  ,&
+                    elem_slav_nbnode, elem_slav_code, elem_slav_dime)
+!
+! ----- Get coordinates of slave element
+!
+        call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
+                    elem_slav_nume, elem_slav_nbnode, elem_slav_dime,&
+                    elem_slav_coor)
         if (debug) then
+            call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
             write(*,*) "Current slave element: ", elem_slav_nume, elem_slav_name,&
                        '(type : ', elem_slav_code, ')'
         endif
 !
 ! ----- Cut element in linearized sub-elements
 !
-        call apdcma(elem_slav_code,&
-                    elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub, elin_slav_code)
+        if (elem_slav_code .eq. "TR6") then
+            elin_slav_code   = "TR3"
+            elin_slav_nbnode = 3
+        elseif(elem_slav_code .eq. "QU8" .or. elem_slav_code .eq. "QU9") then
+            elin_slav_code   = "QU4"
+            elin_slav_nbnode = 4
+        elseif(elem_slav_code .eq. "SE3") then
+            elin_slav_code   = "SE2"
+            elin_slav_nbnode = 2
+        else
+            elin_slav_code   = elem_slav_code
+            elin_slav_nbnode = elem_slav_nbnode
+        endif
 !
 ! ----- Compute weight of element
 !
         call clpoma(elem_slav_dime  , elem_slav_code, elem_slav_coor, elem_slav_nbnode,&
                     elem_slav_weight)
-        if (debug) then
-            write(*,*) "Current slave element is cut: ", elin_slav_nbsub,&
-                       "- Weight: ", elem_slav_weight
-        endif
 !
 ! ----- Total weight for patch
 !
@@ -354,9 +363,9 @@ character(len=24), intent(in) :: pair_method
 !
 ! ----- Initialization list of contact pairs
 !
-        do i_elin_mast = 1, nb_elem_mast
-            list_pair(i_elin_mast) = 0
-        end do
+        list_pair(:) = 0
+        li_pt_inte_sl(:) = 0.0
+        li_nb_pt_inte_sl(:) = 0
         nb_pair = 0
         l_recup = .true.
 !
@@ -364,7 +373,7 @@ character(len=24), intent(in) :: pair_method
 !
         do while(nb_find_mast .gt. 0)
 !
-            total_weight = 0.d0
+            inte_weight = 0.d0
 !
 ! --------- Get master element
 !
@@ -372,8 +381,8 @@ character(len=24), intent(in) :: pair_method
             elem_mast_indx = elem_mast_nume+1-mast_indx_mini
             elem_type_nume = v_mesh_typmail(elem_mast_nume)
             call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_mast_type)
-            call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
             if (debug) then
+                call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
                 write(*,*) "Current master element: ", elem_mast_nume, elem_mast_name,&
                            '(type : ', elem_mast_type, ')'
             endif
@@ -401,127 +410,76 @@ character(len=24), intent(in) :: pair_method
 !
 ! --------- Get informations about master element
 !
-            call apcoor(jv_geom       , elem_mast_type  ,&
-                        elem_mast_nume, elem_mast_coor, elem_mast_nbnode,&
-                        elem_mast_code, elem_mast_dime, v_mesh_connex   ,&
-                        v_connex_lcum)
+            call aptype(elem_mast_type  ,&
+                        elem_mast_nbnode, elem_mast_code, elem_mast_dime)
+!
+! --------- Get coordinates of master element
+!
+            call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
+                        elem_mast_nume, elem_mast_nbnode, elem_mast_dime,&
+                        elem_mast_coor)
 !
 ! --------- Cut master element in linearized sub-elements
 !
-            call apdcma(elem_mast_code,&
-                        elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
-            if (debug) then
-                write(*,*) "Current slave element is cut: ", elin_mast_nbsub
+            if (elem_mast_code .eq. "TR6") then
+                elin_mast_code   = "TR3"
+                elin_mast_nbnode = 3
+            elseif(elem_mast_code .eq. "QU8" .or. elem_mast_code .eq. "QU9") then
+                elin_mast_code   = "QU4"
+                elin_mast_nbnode = 4
+            elseif(elem_mast_code .eq. "SE3") then
+                elin_mast_code   = "SE2"
+                elin_mast_nbnode = 2
+            else
+                elin_mast_code   = elem_mast_code
+                elin_mast_nbnode = elem_mast_nbnode
             endif
 !
 ! --------- Loop on linearized slave sub-elements
 !
             inte_neigh(1:4) = 0
-            do i_elin_slav = 1, elin_slav_nbsub
-!
-                inte_neigh_aux(1:4) = 0
-!
-! ------------- Coordinates for current linearized slave sub-element
-!
-                elin_slav_coor(:) = 0.d0
-                do i_node = 1, elin_slav_nbnode(i_elin_slav)
-                    do i_dime = 1, elem_slav_dime
-                        elin_slav_coor(3*(i_node-1)+i_dime) =&
-                            elem_slav_coor(3*(elin_slav_sub(i_elin_slav,i_node)-1)+i_dime)
-                    end do
-                end do
-!
-! ------------- Loop on linearized master sub-elements
-!
-                do i_elin_mast = 1, elin_mast_nbsub
-!
-! ----------------- Get coordinates for current linearized master sub-element
-!
-                    elin_mast_coor(:) = 0.d0
-                    do i_node = 1, elin_mast_nbnode(i_elin_mast)
-                        do i_dime = 1,elem_slav_dime
-                             elin_mast_coor(3*(i_node-1)+i_dime) = &
-                                elem_mast_coor(3*(elin_mast_sub(i_elin_mast,i_node)-1)+i_dime)
-                        end do
-                    end do
 !
 ! ----------------- Projection/intersection of elements in slave parametric space
 !
-                    call prjint(pair_tole     , elem_slav_dime,&
-                                elin_mast_nbnode(i_elin_mast), elin_mast_coor, elin_mast_code,&
-                                elin_slav_nbnode(i_elin_slav), elin_slav_coor, elin_slav_code,&
-                                poin_inte     , inte_weight                  , nb_poin_inte  ,&
-                                inte_neigh_ = inte_neigh_aux)
-                    if (debug) then
-                        write(*,*) "Intersection - Master: ", elem_mast_name, i_elin_mast
-                        write(*,*) "Intersection - Slave : ", elem_slav_name, i_elin_slav
-                        write(*,*) "Intersection - Poids : ", inte_weight
-                        write(*,*) "Intersection - Nb    : ", nb_poin_inte
-                        write(*,*) "Intersection - Points: ", poin_inte
-                    endif
+            call prjint(pair_tole     , elem_slav_dime,&
+                        elin_mast_nbnode, elem_mast_coor, elin_mast_code,&
+                        elin_slav_nbnode, elem_slav_coor, elin_slav_code,&
+                        poin_inte_sl       , inte_weight   , nb_poin_inte  ,&
+                        inte_neigh_ = inte_neigh)
+            if (debug) then
+                write(*,*) "Intersection - Master: ", elem_mast_name
+                write(*,*) "Intersection - Slave : ", elem_slav_name
+                write(*,*) "Intersection - Poids : ", inte_weight
+                write(*,*) "Intersection - Nb    : ", nb_poin_inte
+                write(*,*) "Intersection - Points: ", poin_inte_sl
+            endif
 !
 ! ----------------- Non-void intersection
 !
-                    if (inte_weight .gt. pair_tole) then
-!
-! --------------------- Set neighbours
-!
-                        if (elin_slav_code .ne. elem_slav_code .and.&
-                            (elem_slav_code .eq. 'QU4' .or. &
-                             elem_slav_code .eq. 'QU8' .or. &
-                             elem_slav_code .eq. 'QU9' &
-                            )) then
-                            if (i_elin_slav .eq. 1) then
-                                inte_neigh(1) = inte_neigh_aux(1)
-                                inte_neigh(2) = inte_neigh_aux(2)
-                            elseif (i_elin_slav .eq. 2) then
-                                inte_neigh(3) = inte_neigh_aux(1)
-                                inte_neigh(4) = inte_neigh_aux(2)
-                            else
-                                ASSERT(.false.)
-                            end if
-                        else
-                            do i_neigh = 1,nb_slav_neigh
-                                if (inte_neigh_aux(i_neigh).ne.0) then
-                                    inte_neigh(i_neigh) = inte_neigh_aux(i_neigh)
-                                endif
-                            end do
-                        end if
-!
-                        total_weight = total_weight+inte_weight
-!
-! --------------------- Projection from para. space of element into sub-element para. space
-!
-                        call aprtpe(elem_slav_dime, elem_slav_code, i_elin_slav,&
-                                    nb_poin_inte  , poin_inte )
-!
-! --------------------- Compute mean square gap and weight of intersection
-!
-                        call gapint(pair_tole     , elem_slav_dime,&
-                                    elem_slav_code, elem_slav_nbnode, elem_slav_coor,&
-                                    elem_mast_code, elem_mast_nbnode, elem_mast_coor,&
-                                    nb_poin_inte  , poin_inte                    , &
-                                    gap_moy       , inte_weight                  )
-!
-! --------------------- Save values
-!
-                        v_sdappa_gapi(patch_indx)  = v_sdappa_gapi(patch_indx)-gap_moy
-                        patch_weight_c(patch_indx) = patch_weight_c(patch_indx)+inte_weight
-                    end if
-                end do
-            end do
+            if (inte_weight .gt. pair_tole) then
+                call aprtpm(pair_tole       , elem_slav_dime, &
+                            elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
+                            elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
+                            poin_inte_sl    , nb_poin_inte  ,poin_inte_ma,&
+                            poin_gauss_ma   , iret)
+            end if
 !
 ! --------- Add element paired
 !
-            if (total_weight .gt. pair_tole) then
+            if (inte_weight .gt. pair_tole .and. iret .eq.0) then
                 nb_pair                        = nb_pair+1
                 list_pair(nb_pair)             = elem_mast_nume
+                li_nb_pt_inte_sl(nb_pair)      = nb_poin_inte
+                ASSERT(nb_poin_inte.le.8)
+                li_pt_inte_ma(1+(nb_pair-1)*16:(nb_pair-1)*16+16) = poin_inte_ma(1:16)
+                li_pt_gaus_ma(1+(nb_pair-1)*72:(nb_pair-1)*72+72) = poin_gauss_ma(1:72)
+                li_pt_inte_sl(1+(nb_pair-1)*16:(nb_pair-1)*16+16) = poin_inte_sl(1:16)
                 elem_mast_flag(elem_mast_indx) = 1
             end if
 !
 ! --------- Find neighbour of current master element
 !
-            if (total_weight .gt. pair_tole .or. l_recup) then
+            if (inte_weight .gt. pair_tole .or. l_recup) then
 !
 ! ------------- Number of neighbours
 !
@@ -582,7 +540,12 @@ character(len=24), intent(in) :: pair_method
         if (nb_pair .ne. 0) then
             call apsave_pair(i_zone      , elem_slav_nume,&
                              nb_pair     , list_pair     ,&
-                             nb_pair_zmpi(i_proc+1), list_pair_zmpi)
+                             li_nb_pt_inte_sl, li_pt_inte_sl,li_pt_inte_ma,&
+                             li_pt_gaus_ma,&
+                             nb_pair_zmpi(i_proc+1), list_pair_zmpi,&
+                             li_nbptsl_zmpi,li_ptintsl_zmpi, li_ptintma_zmpi,&
+                             li_ptgausma_zmpi, nb_elem_slav, nb_elem_mast,&
+                             nb_next_alloc)
         end if
 !
 ! ----- Next elements
@@ -621,9 +584,11 @@ character(len=24), intent(in) :: pair_method
 !
 ! - Save values for patch
 !
-    call apsave_patch(mesh          , sdappa        , i_zone, pair_tole,&
-                      patch_weight_c, patch_weight_t, nb_proc, list_pair_zmpi,&
-                      nb_pair_zmpi, list_pair_zone, nb_pair_zone, i_proc)
+    call apsave_patch(mesh          , sdappa        , i_zone,&
+                      patch_weight_t, nb_proc, list_pair_zmpi,&
+                      li_nbptsl_zmpi,li_ptintsl_zmpi,li_ptintma_zmpi,li_ptgausma_zmpi,&
+                      nb_pair_zmpi, list_pair_zone,list_nbptit_zone, list_ptitsl_zone,&
+                      list_ptitma_zone,li_ptgausma_zone,nb_pair_zone, i_proc)
     !write(*,*)"Fin APSAVE_PATCH", i_proc
     !write(*,*)"NB_pair_zone: ",nb_pair_zone ,i_proc
     !write(*,*)"list_pair_zone: ",list_pair_zone(:) ,i_proc
@@ -632,7 +597,10 @@ character(len=24), intent(in) :: pair_method
     AS_DEALLOCATE(vi=elem_slav_flag)
     AS_DEALLOCATE(vi=elem_mast_flag)
     AS_DEALLOCATE(vi=list_pair_zmpi)
-    call jedetr(njv_weight_c)
+    AS_DEALLOCATE(vi=li_nbptsl_zmpi)
+    AS_DEALLOCATE(vr=li_ptintsl_zmpi)
+    AS_DEALLOCATE(vr=li_ptintma_zmpi)
+    AS_DEALLOCATE(vr=li_ptgausma_zmpi)
     call jedetr(njv_weight_t)
     call jedetr(njv_nb_pair_zmpi)
     call jedema()
