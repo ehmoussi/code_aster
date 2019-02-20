@@ -547,7 +547,6 @@ IMPR_RESU(FORMAT='MED',
             _F(CHAM_GD=dicResu['DIFFUN'],GROUP_MA='VOLUME',NOM_CMP=('DX','DY','DZ'),),
             _F(RESULTAT=EVOLNOLI),
            ),);
-                  _F(NOM=acier),
 
 for n in range(0,Nb_Raffinement):
 
