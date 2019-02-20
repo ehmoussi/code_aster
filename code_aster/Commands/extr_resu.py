@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -46,8 +46,10 @@ class ExtrResu(ExecuteCommand):
         """
         resultat = keywords["RESULTAT"]
         if resultat != None:
-            self._result.appendModelOnAllRanks(resultat.getModel())
-            self._result.appendMaterialOnMeshOnAllRanks(resultat.getMaterialOnMesh())
+            if resultat.getModel() is not None:
+                self._result.appendModelOnAllRanks(resultat.getModel())
+            if resultat.getMaterialOnMesh() is not None:
+                self._result.appendMaterialOnMeshOnAllRanks(resultat.getMaterialOnMesh())
             self._result.update()
 
 EXTR_RESU = ExtrResu.run
