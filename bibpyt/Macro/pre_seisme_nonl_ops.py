@@ -1137,7 +1137,7 @@ class Mesh(object):
         """Count the number of fictitious cells and nodes to add to the mesh"""
         if self.macro_elem:
             mael = self.macro_elem.get_mael()
-            Nb_no = len(mael._get_sdj().LINO.get())
+            Nb_no = mael.getNumberOfNodes()
         else:
             if self.param['PRE_CALC_MISS']['NMAX_MODE_IFS']:
                 nb_modes_IFS = self.param['PRE_CALC_MISS']['NMAX_MODE_IFS']
