@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -165,7 +165,7 @@ subroutine mtdete(option, method, lmat, mantis, expo,&
  20         continue
             if (abs(mantis) .gt. rmin) then
                 ie = nint(log10(abs(mantis)))
-                mantis = mantis/ (10**ie)
+                mantis = mantis/ (10.d0**ie)
                 expo = expo + ie
             else
                 mantis=0.d0

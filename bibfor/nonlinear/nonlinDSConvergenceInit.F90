@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ implicit none
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/cfdisr.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/getvr8.h"
@@ -57,7 +58,7 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact
     real (kind=8) :: resi_glob_rela, resi_frot, resi_geom,pene_maxi_user
     integer :: iret
     aster_logical :: l_newt_frot, l_newt_geom, l_resi_user, l_rela, l_maxi, l_refe, l_comp
-    aster_logical :: l_pena_cont
+    aster_logical :: l_pena_cont, l_cont, l_geom_sans
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,7 +109,14 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact
 !
     if (present(list_func_acti)) then
 !
-        sdcont_defi   = ds_contact%sdcont_defi
+        l_cont      = isfonc(list_func_acti,'CONTACT')
+        sdcont_defi = ds_contact%sdcont_defi
+        if (l_cont) then
+            l_geom_sans = cfdisl(ds_contact%sdcont_defi, 'REAC_GEOM_SANS')
+            if (.not.ds_conv%l_stop .and. .not. l_geom_sans) then
+                call utmess('A', 'MECANONLINE5_54')
+            endif
+        endif
 !
 ! ----- Active functionnalites
 !

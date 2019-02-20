@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine lc0000(fami, kpg, ksp, ndim, typmod,&
+    subroutine lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                       imate, compor, mult_comp, carcri, instam, instap,&
                       neps, epsm, deps, nsig, sigm,&
                       vim, option, angmas, nwkin, wkin,&
                       cp, numlc,&
                       sigp, vip, ndsde, dsidep, icomp,&
                       nvi, nwkout, wkout, codret)
+        aster_logical, intent(in) :: l_epsi_varc
         integer :: nwkout
         integer :: nvi
         integer :: ndsde

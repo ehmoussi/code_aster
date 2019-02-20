@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine apdcma(elem_code,&
-                      elin_sub , elin_nbnode, elin_nbsub, elin_code)
-        character(len=8), intent(in) :: elem_code
-        integer, intent(out) :: elin_sub(2,3)
-        integer, intent(out) :: elin_nbnode(2)
-        integer, intent(out) :: elin_nbsub
-        character(len=8), intent(out) :: elin_code
-    end subroutine apdcma
+    subroutine nonlinInitDisp(list_func_acti, sdnume   , nume_dof,&
+                              hval_algo     , hval_incr)
+        use NonLin_Datastructure_type
+        integer, intent(in) :: list_func_acti(*)
+        character(len=19), intent(in) :: sdnume
+        character(len=24), intent(in) :: nume_dof
+        character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
+    end subroutine nonlinInitDisp
 end interface

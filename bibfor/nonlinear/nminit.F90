@@ -395,7 +395,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Initializations for printing
 !
-    call nonlinDSPrintInit(sd_suiv, ds_print)
+    call nonlinDSPrintInit(ds_print, sd_suiv)
 !
 ! --- PRE-CALCUL DES MATR_ASSE CONSTANTES AU COURS DU CALCUL
 !

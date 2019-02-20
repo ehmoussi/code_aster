@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 subroutine mmcalg(ndim     , l_large_slip,&
                   nnm      , dffm        , ddffm ,&
-                  geomam   , ddepmam     ,&
+                  elem_mast_coor, ddepmam     ,&
                   tau1     , tau2        , norm  ,&
                   jeu      , djeu        ,&
                   gene11   , gene21      , gene22,&
@@ -41,7 +41,7 @@ implicit none
 integer, intent(in) :: ndim, nnm
 aster_logical, intent(in) :: l_large_slip
 real(kind=8), intent(in) :: dffm(2, 9), ddffm(3,9)
-real(kind=8), intent(in) :: geomam(9, 3), ddepmam(9, 3)
+real(kind=8), intent(in) :: elem_mast_coor(9, 3), ddepmam(9, 3)
 real(kind=8), intent(in) :: tau1(3), tau2(3), norm(3)
 real(kind=8), intent(in) :: jeu, djeu(3)
 real(kind=8), intent(out) :: gene11(3, 3), gene21(3, 3), gene22(3,3)
@@ -66,7 +66,7 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2
 ! In  nnm              : number of master nodes
 ! In  dffm             : first derivative of shape function for master nodes
 ! In  ddffm            : second derivative of shape function for master nodes
-! In  geomam           : updated geometry for master nodes
+! In  elem_mast_coor   : updated coordinates from master side of contact element
 ! In  ddepmam          : increment of displacement from beginning of time step for master nodes
 ! In  tau1             : first tangent at current contact point
 ! In  tau2             : second tangent at current contact point
@@ -150,31 +150,31 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2
     ! Sur la géométrie courante de l'élément esclave on calcule la
     ! distance du Noeud I=2,9 par rapport à au noeud 1
     ! Puis on calcule la moyenne
-    !       write (6,*) "GEOMAM",geomam(1,1)
-        long_mmait(1) = sqrt(abs(geomam(1,1) - geomam(2,1)))**2
-        long_mmait(2) = sqrt(abs(geomam(1,2) - geomam(2,2)))**2
-        long_mmait(3) = sqrt(abs(geomam(1,3) - geomam(2,3)))**2
-        long_mmait(4) = sqrt(abs(geomam(1,1) - geomam(3,1)))**2
-        long_mmait(5) = sqrt(abs(geomam(1,2) - geomam(3,2)))**2
-        long_mmait(6) = sqrt(abs(geomam(1,3) - geomam(3,3)))**2
-        long_mmait(7) = sqrt(abs(geomam(1,3) - geomam(4,1)))**2
-        long_mmait(8) = sqrt(abs(geomam(1,3) - geomam(4,2)))**2
-        long_mmait(9) = sqrt(abs(geomam(1,3) - geomam(4,3)))**2
-        long_mmait(10) = sqrt(abs(geomam(1,3) - geomam(5,1)))**2
-        long_mmait(11) = sqrt(abs(geomam(1,3) - geomam(5,2)))**2
-        long_mmait(12) = sqrt(abs(geomam(1,3) - geomam(5,3)))**2
-        long_mmait(13) = sqrt(abs(geomam(1,3) - geomam(6,1)))**2
-        long_mmait(14) = sqrt(abs(geomam(1,3) - geomam(6,2)))**2
-        long_mmait(15) = sqrt(abs(geomam(1,3) - geomam(6,3)))**2
-        long_mmait(16) = sqrt(abs(geomam(1,3) - geomam(7,1)))**2
-        long_mmait(17) = sqrt(abs(geomam(1,3) - geomam(7,2)))**2
-        long_mmait(18) = sqrt(abs(geomam(1,3) - geomam(7,3)))**2
-        long_mmait(19) = sqrt(abs(geomam(1,3) - geomam(8,1)))**2
-        long_mmait(20) = sqrt(abs(geomam(1,3) - geomam(8,2)))**2
-        long_mmait(21) = sqrt(abs(geomam(1,3) - geomam(8,3)))**2
-        long_mmait(22) = sqrt(abs(geomam(1,3) - geomam(9,1)))**2
-        long_mmait(23) = sqrt(abs(geomam(1,3) - geomam(9,2)))**2
-        long_mmait(24) = sqrt(abs(geomam(1,3) - geomam(9,3)))**2
+    !       write (6,*) "elem_mast_coor",elem_mast_coor(1,1)
+        long_mmait(1) = sqrt(abs(elem_mast_coor(1,1) - elem_mast_coor(2,1)))**2
+        long_mmait(2) = sqrt(abs(elem_mast_coor(1,2) - elem_mast_coor(2,2)))**2
+        long_mmait(3) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(2,3)))**2
+        long_mmait(4) = sqrt(abs(elem_mast_coor(1,1) - elem_mast_coor(3,1)))**2
+        long_mmait(5) = sqrt(abs(elem_mast_coor(1,2) - elem_mast_coor(3,2)))**2
+        long_mmait(6) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(3,3)))**2
+        long_mmait(7) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(4,1)))**2
+        long_mmait(8) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(4,2)))**2
+        long_mmait(9) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(4,3)))**2
+        long_mmait(10) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(5,1)))**2
+        long_mmait(11) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(5,2)))**2
+        long_mmait(12) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(5,3)))**2
+        long_mmait(13) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(6,1)))**2
+        long_mmait(14) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(6,2)))**2
+        long_mmait(15) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(6,3)))**2
+        long_mmait(16) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(7,1)))**2
+        long_mmait(17) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(7,2)))**2
+        long_mmait(18) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(7,3)))**2
+        long_mmait(19) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(8,1)))**2
+        long_mmait(20) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(8,2)))**2
+        long_mmait(21) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(8,3)))**2
+        long_mmait(22) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(9,1)))**2
+        long_mmait(23) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(9,2)))**2
+        long_mmait(24) = sqrt(abs(elem_mast_coor(1,3) - elem_mast_coor(9,3)))**2
         valmoy =  0.
         do i = 1,24
             valmoy = valmoy + long_mmait(i)/24
@@ -201,9 +201,9 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2
 !
     do  idim = 1, ndim
         do  inom = 1, nnm
-            ddgeo1(idim) = ddgeo1(idim) + ddffm(1,inom)*geomam(inom,idim)
-            ddgeo2(idim) = ddgeo2(idim) + ddffm(2,inom)*geomam(inom,idim)
-            ddgeo3(idim) = ddgeo3(idim) + ddffm(3,inom)*geomam(inom,idim)
+            ddgeo1(idim) = ddgeo1(idim) + ddffm(1,inom)*elem_mast_coor(inom,idim)
+            ddgeo2(idim) = ddgeo2(idim) + ddffm(2,inom)*elem_mast_coor(inom,idim)
+            ddgeo3(idim) = ddgeo3(idim) + ddffm(3,inom)*elem_mast_coor(inom,idim)
         enddo
     end do
 !
@@ -284,9 +284,9 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2
     do  i = 1, ndim
         do  j = 1, ndim
             do  inom = 1, nnm
-                gene11(i,j) = gene11(i,j)+ ddffm(1,inom)*geomam(inom, i)*norm(j)
-                gene22(i,j) = gene11(i,j)+ ddffm(2,inom)*geomam(inom, i)*norm(j)
-                gene21(i,j) = gene21(i,j)+ ddffm(3,inom)*geomam(inom, i)*norm(j)
+                gene11(i,j) = gene11(i,j)+ ddffm(1,inom)*elem_mast_coor(inom, i)*norm(j)
+                gene22(i,j) = gene11(i,j)+ ddffm(2,inom)*elem_mast_coor(inom, i)*norm(j)
+                gene21(i,j) = gene21(i,j)+ ddffm(3,inom)*elem_mast_coor(inom, i)*norm(j)
             enddo
         enddo
     end do

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -349,7 +349,7 @@ contains
         integer, dimension(:), pointer :: nulg => null()
         integer, dimension(:), pointer :: nlgp => null()
         integer :: numno, icmp, ieq, ix
-        integer :: nloc, ndprop, neqg_mail
+        integer :: nloc, ndprop
         integer :: il, iga_f, igp_f
         real(kind=8) :: val
         aster_logical :: lmd, lmhpc
@@ -361,8 +361,6 @@ contains
         call dismoi('NOM_MAILLA', nonu, 'NUME_DDL', repk=nomail)
         call dismoi('DIM_GEOM_B', nomail, 'MAILLAGE', repi=dimgeo_b)
         call dismoi('DIM_GEOM', nomail, 'MAILLAGE', repi=dimgeo)
-        call dismoi('NB_NO_MAILLA', nomail, 'MAILLAGE', repi=neqg_mail)
-        neqg_mail=neqg_mail*3
 !
 !   Distribution style
         nomat = nomat_courant
@@ -378,7 +376,7 @@ contains
         call jeveuo(nonu//'.NUME.DEEQ', 'L', vi=deeq)
         call jeveuo(nomail//'.COORDO    .VALE', 'L', vr=coordo)
 !
-        bs=3
+        bs=1
 !
         call VecCreate(mpicomm, coords, ierr)
         ASSERT(ierr == 0)

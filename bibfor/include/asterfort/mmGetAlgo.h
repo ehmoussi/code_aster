@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,15 +18,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmGetAlgo(l_large_slip, ndexfr     , jeusup, lambds,&
-                         ialgoc      , ialgof     , iresof, iresog,&
+    subroutine mmGetAlgo(l_large_slip, ndexfr     , jeusup     , lambds,&
+                         ialgoc      , ialgof     , i_reso_fric, i_reso_geom,&
                          l_pena_cont , l_pena_fric,&
                          lambds_prev_, jeu_prev_)
         aster_logical, intent(out) :: l_large_slip
         integer, intent(out) :: ndexfr
         real(kind=8), intent(out) :: jeusup
         real(kind=8), intent(out) :: lambds
-        integer, intent(out) :: ialgoc, ialgof, iresof, iresog
+        integer, intent(out) :: ialgoc, ialgof, i_reso_fric, i_reso_geom
         aster_logical, intent(out) :: l_pena_cont, l_pena_fric
         real(kind=8), optional, intent(out) :: lambds_prev_, jeu_prev_
     end subroutine mmGetAlgo

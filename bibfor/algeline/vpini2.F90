@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,17 +57,12 @@ subroutine vpini2(eigsol, lcomod, nbvecg, nfreqg, nbpark,&
 !
 ! --- VARIABLES LOCALES
 !
-    integer :: ibid, nbvect, nfreq, iauxr, iauxi, iauxk, lresui, lresur, lresuk
+    integer :: nbvect, nfreq, iauxr, iauxi, iauxk, lresui, lresur, lresuk
     integer :: lraide, neq, indf, lvec
-    real(kind=8) :: rbid, undf
-    character(len=1) :: k1bid
-    character(len=8) :: k8bid
-    character(len=9) :: k9bid
-    character(len=14) :: k14bid
-    character(len=16) :: k16bid
-    character(len=19) :: k19bid, raide
+    real(kind=8) :: undf
+    character(len=19) :: raide
     character(len=24) :: kzero
-    aster_logical :: lbid, lc, lkr, lns
+    aster_logical :: lc, lkr, lns
 !
 ! -----------------------
 ! --- CORPS DE LA ROUTINE
@@ -81,15 +76,8 @@ subroutine vpini2(eigsol, lcomod, nbvecg, nfreqg, nbpark,&
     kzero=' '
 !
 ! --  LECTURE DES PARAMETRES MODAUX
-    call vplecs(eigsol, ibid, ibid, ibid, ibid,&
-                ibid, ibid, nbvect, ibid, nfreq,&
-                ibid, rbid, rbid, rbid, rbid,&
-                rbid, rbid, rbid, rbid, rbid,&
-                rbid, rbid, rbid, k1bid, k8bid,&
-                k8bid, k9bid, k14bid, k14bid, k14bid,&
-                k16bid, k16bid, k16bid, k16bid, k16bid, k16bid,&
-                k16bid, k19bid, k19bid, raide, k19bid,&
-                lc, lkr, lns, lbid, lbid)
+    call vplecs(eigsol, nbvect_=nbvect, nfreq_=nfreq,&
+                raide_=raide, lc_=lc, lkr_=lkr, lns_=lns)
     call jeveuo(raide//'.&INT', 'E', lraide)
     neq = zi(lraide+2)
 !

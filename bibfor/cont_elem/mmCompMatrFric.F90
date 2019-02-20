@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 subroutine mmCompMatrFric(phase      , l_large_slip,&
                           l_pena_fric,&
-                          iresog     , iresof      ,&
+                          i_reso_geom, i_reso_fric ,&
                           nbdm       , nbcps       , ndexfr,&
                           ndim       , nne         , nnm   , nnl   ,&
                           wpg        , jacobi      , coefac, coefaf,&
@@ -42,10 +42,11 @@ implicit none
 #include "asterfort/mmPrepMatrFric.h"
 #include "asterfort/mmgtuu.h"
 #include "asterfort/mmmtex.h"
+#include "Contact_type.h"
 !
 character(len=4), intent(in) :: phase
 aster_logical, intent(in) :: l_large_slip, l_pena_fric
-integer, intent(in) :: iresog, iresof
+integer, intent(in) :: i_reso_geom, i_reso_fric
 integer, intent(in) :: nbdm, nbcps, ndexfr
 integer, intent(in) :: ndim, nne, nnm, nnl
 real(kind=8), intent(in) :: wpg, jacobi, coefac, coefaf
@@ -72,12 +73,8 @@ real(kind=8), intent(inout) :: matr_fric(81, 81)
 !                        'GLIS' - Slip
 ! In  l_large_slip     : flag for GRAND_GLISSEMENT
 ! In  l_pena_fric      : flag for penalized friction
-! In  iresog           : algorithm for geometry
-!                        0 - Fixed point
-!                        1 - Newton
-! In  iresof           : algorithm for friction
-!                        0 - Fixed point
-!                        1 - Newton
+! In  i_reso_geom      : algorithm for geometry
+! In  i_reso_fric      : algorithm for friction
 ! In  ndexfr           : integer for EXCL_FROT_* keyword
 ! In  nbdm             : number of components by node for all dof
 ! In  nbcps            : number of components by node for Lagrange multiplicators
@@ -422,7 +419,7 @@ real(kind=8), intent(inout) :: matr_fric(81, 81)
 !
 ! - MATR_EC
 !
-    if (iresof .ge. 1) then
+    if (i_reso_fric .eq. ALGO_NEWT) then
         if (phase .eq. 'ADHE') then
             if (.not. l_pena_fric) then
                 do inoc = 1, nnl
@@ -453,7 +450,7 @@ real(kind=8), intent(inout) :: matr_fric(81, 81)
 !
 ! - MATR_MC
 !
-    if (iresof .ge. 1) then
+    if (i_reso_fric .eq. ALGO_NEWT) then
         if (phase .eq. 'ADHE') then
             if (.not. l_pena_fric) then
                 do inoc = 1, nnl
@@ -604,7 +601,7 @@ real(kind=8), intent(inout) :: matr_fric(81, 81)
 !
 ! - Non-linear geometric contribution
 !
-    if (iresog .eq. 1) then
+    if (i_reso_geom .eq. ALGO_NEWT) then
         if (phase .eq. 'GLIS' .and. l_large_slip) then
             call mmgtuu(ndim  , nne   , nnm   ,&
                         wpg   , ffe   , ffm   , dffm  , ddffm ,&

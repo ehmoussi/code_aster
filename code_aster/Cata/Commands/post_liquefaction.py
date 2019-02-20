@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,8 +26,20 @@ POST_LIQUEFACTION=MACRO(nom="POST_LIQUEFACTION",
                         op=OPS("Macro.post_liquefaction_ops.post_liquefaction_ops"),
                         sd_prod=evol_noli,
                         reentrant='n',
-                        AXE      = SIMP(statut='o',typ='TXM',into=("X","Y","Z"),max=1),
-                        RESU_REF = SIMP(statut='o',typ=evol_noli,),
-                        INST_REF = SIMP(statut='o',typ='R'),
-                        RESULTAT = SIMP(statut='o',typ=evol_noli,), 
+                        AXE      = SIMP(statut='o',typ='TXM',into=("X","Y","Z"),max=1,fr=tr("Direction de la pesanteur")),
+                        RESULTAT = SIMP(statut='o',typ=evol_noli,fr=tr("Resultat contenant les pressions"),), 
+                        CRITERE  = SIMP(statut='o',typ='TXM',into=("DP_SIGV_REF","DP_SIGM_REF","DP","P_SIGM"),max=1,
+                        fr=tr("Choix de la formule du critere de liquefaction")),
+                        b_def_ref =BLOC(condition = """equal_to('CRITERE', 'DP_SIGV_REF')""",
+                            fr=tr("Bloc associe aux donnees à l instant de reference pour le critere DP_SIGV_REF"),
+                            RESU_REF = SIMP(statut='o',typ=evol_noli,),
+                            INST_REF = SIMP(statut='o',typ='R'),),
+                        b_moy_ref =BLOC(condition = """equal_to('CRITERE', 'DP_SIGM_REF')""",
+                            fr=tr("Bloc associe aux donnees à l instant de reference pour le critere DP_SIGM_REF"),
+                            RESU_REF = SIMP(statut='o',typ=evol_noli,),
+                            INST_REF = SIMP(statut='o',typ='R'),),
+                        b_delta_ref =BLOC(condition = """equal_to('CRITERE', 'DP')""",
+                            fr=tr("Bloc associe aux donnees à l instant de reference pour le critere DP"),
+                            RESU_REF = SIMP(statut='o',typ=evol_noli,),
+                            INST_REF = SIMP(statut='o',typ='R'),)
 ) ;

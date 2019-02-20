@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 !
 subroutine lccoma(elem_dime    , nb_node_mast, nb_node_slav   , nb_lagr,&
-                  l_norm_smooth, norm_line   , norm_g         ,&
-                  indi_lagc    , poidpg      , shape_mast_func, jaco_upda,&
+                  l_norm_smooth, &
+                  indi_lagc    , poidpg      , shape_mast_func,&
+                  jaco_upda    , dist_vect   ,&
                   mmat     )
 !
 implicit none
@@ -27,18 +28,16 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/jevech.h"
-#include "asterfort/lcnorm.h"
 !
 integer, intent(in) :: elem_dime
 integer, intent(in) :: nb_node_mast
 integer, intent(in) :: nb_node_slav
 integer, intent(in) :: nb_lagr
 aster_logical, intent(in) :: l_norm_smooth
-real(kind=8), intent(in) :: norm_line(3), norm_g(3)
 integer, intent(in) :: indi_lagc(10)
 real(kind=8), intent(in) :: poidpg
 real(kind=8), intent(in) :: shape_mast_func(9)
-real(kind=8), intent(in) :: jaco_upda
+real(kind=8), intent(in) :: jaco_upda, dist_vect(3)
 real(kind=8), intent(inout) :: mmat(55,55)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -54,18 +53,17 @@ real(kind=8), intent(inout) :: mmat(55,55)
 ! In  nb_node_slav     : number of nodes of for slave side from contact element
 ! In  nb_lagr          : total number of Lagrangian dof on contact element
 ! In  l_norm_smooth    : indicator for normals smoothing
-! In  norm_line        : normal vector on linearized element
-! In  norm_g           : normal vector at integration point
 ! In  indi_lagc        : PREVIOUS node where Lagrangian dof is present (1) or not (0)
 ! In  poidspg          : weight at integration point
 ! In  shape_mast_func  : shape functions at integration point
 ! In  jaco_upda        : updated jacobian at integration point
+! In  dist_vect        : distance vector between slave and master
 ! IO  mmat             : matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i_node_lagc, i_node_mast, i_dime, jj, indlgc, shift
-    real(kind=8) :: r_nb_lagr, norm(3)
+    real(kind=8) :: r_nb_lagr
     integer :: jv_norm
 !
 ! --------------------------------------------------------------------------------------------------
@@ -77,7 +75,7 @@ real(kind=8), intent(inout) :: mmat(55,55)
     if (l_norm_smooth) then   
         call jevech('PSNO', 'L', jv_norm)
         do i_node_lagc = 1, nb_node_slav
-            shift = shift+indi_lagc(i_node_lagc)     
+            shift = shift+indi_lagc(i_node_lagc)
             if (indi_lagc(i_node_lagc+1).eq. 1) then
                 indlgc  = (i_node_lagc-1)*elem_dime+shift+elem_dime+1
                 do i_node_mast = 1, nb_node_mast
@@ -94,19 +92,18 @@ real(kind=8), intent(inout) :: mmat(55,55)
             end if
         end do
     else
-        call lcnorm(norm_line, norm_g, norm)
         do i_node_lagc = 1, nb_node_slav
-            shift = shift+indi_lagc(i_node_lagc)     
+            shift = shift+indi_lagc(i_node_lagc)
             if (indi_lagc(i_node_lagc+1).eq. 1) then
                 indlgc = (i_node_lagc-1)*elem_dime+shift+elem_dime+1
                 do i_node_mast = 1, nb_node_mast
                     do i_dime = 1, elem_dime
                         jj=(i_node_mast-1)*elem_dime+nb_node_slav*elem_dime+nb_lagr+i_dime
                         mmat(jj,indlgc)= mmat(jj,indlgc)+&
-                            (-norm(i_dime)*&
+                            (-dist_vect(i_dime)*&
                              jaco_upda*poidpg*shape_mast_func(i_node_mast))/(r_nb_lagr)
                         mmat(indlgc,jj)= mmat(indlgc,jj)+&
-                            (-norm(i_dime)*&
+                            (-dist_vect(i_dime)*&
                              jaco_upda*poidpg*shape_mast_func(i_node_mast))/(r_nb_lagr)
                     end do
                 end do

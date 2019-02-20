@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
 !   -0.2- Local variables
     aster_logical     :: upmat, checkcpu
     integer           :: nbrede, nbrevi, nbpas, nbnli, nbmode
-    integer           :: n100, i, append, exgyro, lev, iret, jrefa
+    integer           :: n100, i, append, exgyro, lev
     integer           :: adapt, pasarch, iarch, force_arch, reinteg
     integer           :: nltreat, nr, nbsauv, iarch_sd, i_nbar
     integer           :: perc, last_prperc, freqpr, ifm, niv
@@ -72,9 +72,6 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
     real(kind=8)      :: time, lastarch, tfin, epsi, newdt
     real(kind=8)      :: dt0
     character(len=8)  :: sd_dtm, sd_int, calcres, nomres, sd_nl
-    character(len=24) :: nume24
-    character(len=8)  :: riggen, metres
-    character(len=19) :: matmass, matrigi, matamor
 !
     integer         , pointer :: isto(:)    => null()
     integer         , pointer :: allocs(:)  => null()
@@ -146,7 +143,7 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
     perc     = 0
     i_nbar   = oldarch
     lastarch = tinit
-    call utmess('I', 'DYNAMIQUE_89', ni=2, vali=[perc, i_nbar],&
+    call utmess('I', 'PROGRESS_1', ni=2, vali=[perc, i_nbar],&
                                      nr=2, valr=[time, lastarch])
     last_prperc = perc
 !
@@ -163,7 +160,7 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
         perc = int(100.d0*(time-tinit)/(tfin-tinit))
         if (perc.ne.last_prperc)then
             if (mod(perc,freqpr).eq.0) then
-                call utmess('I', 'DYNAMIQUE_89', ni=2, vali=[perc, i_nbar],&
+                call utmess('I', 'PROGRESS_1', ni=2, vali=[perc, i_nbar],&
                                                  nr=2, valr=[time, lastarch])
                 last_prperc = perc
             endif
@@ -301,7 +298,7 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
 !
     if (last_prperc.ne.100) then
         perc = 100
-        call utmess('I', 'DYNAMIQUE_89', ni=2, vali=[perc, i_nbar],&
+        call utmess('I', 'PROGRESS_1', ni=2, vali=[perc, i_nbar],&
                                          nr=2, valr=[tfin, lastarch])
     endif
 

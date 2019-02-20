@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,14 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmlagc(lambds, dlagrc, iresof, lambda)
+subroutine mmlagc(lambds, dlagrc, i_reso_fric, lambda)
 !
 implicit none
 !
+#include "Contact_type.h"
+!
 real(kind=8), intent(in) :: lambds, dlagrc
-integer, intent(in) :: iresof
+integer, intent(in) :: i_reso_fric
 real(kind=8), intent(out) :: lambda
 !
 ! --------------------------------------------------------------------------------------------------
@@ -35,15 +37,13 @@ real(kind=8), intent(out) :: lambda
 !
 ! In  lambds           : contact pressure (fixed trigger)
 ! In  dlagrc           : increment of contact Lagrange from beginning of time step
-! In  iresof           : algorithm for friction
-!                        0 - Fixed point
-!                        1 - Newton
+! In  i_reso_fric      : algorithm for friction
 ! Out lambda           : contact pressure
 !
 ! --------------------------------------------------------------------------------------------------
 !
     lambda = lambds
-    if (iresof .ne. 0) then
+    if (i_reso_fric .eq. ALGO_NEWT) then
         if (dlagrc .ne. 0) lambda = dlagrc
     endif
 !

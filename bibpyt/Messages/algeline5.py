@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -396,13 +396,6 @@ Commande FACTORISER :
     Conseil :
     changer de solveur linéaire : sous le mot-clé facteur SOLVEUR,
     utiliser 'MULT_FRONT' ou 'MUMPS'.
-"""),
-   72: _(u"""
-    Par précaution, cette fonctionnalité est pour l'instant interdite avec le solveur linéaire MUMPS.
-
-    Conseil :
-    Changer de solveur linéaire : sous le mot-clé facteur SOLVEUR,
-    poser METHODE='MULT_FRONT'.
 """),
 
     73: _(u"""

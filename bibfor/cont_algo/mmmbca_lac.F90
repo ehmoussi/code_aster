@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine mmmbca_lac(mesh, disp_curr, ds_contact)
 !
 use NonLin_Datastructure_type
@@ -24,8 +25,15 @@ implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterc/r8nnem.h"
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
+#include "asterfort/jenuno.h"
 #include "asterfort/jexatr.h"
+#include "asterfort/apcoor.h"
+#include "asterfort/aptype.h"
+#include "asterfort/gapint.h"
+#include "asterfort/jelira.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/infdbg.h"
@@ -36,15 +44,15 @@ implicit none
 #include "asterfort/detrsd.h"
 #include "asterfort/mreacg.h"
 #include "asterfort/mmbouc.h"
-#include "asterfort/mmfield_prep.h"
 #include "asterfort/mminfi.h"
-#include "asterfort/search_opt_coef.h"
+#include "asterfort/mmfield_prep.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/lac_gapi.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: disp_curr
-    type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=8), intent(in) :: mesh
+character(len=19), intent(in) :: disp_curr
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,45 +68,35 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv, hist_index
+    integer :: ifm, niv
     integer :: i_cont_zone, i_patch, nb_patch, nb_cont_zone
-    integer :: j_patch, node_nume
-    integer :: indi_cont_curr, indi_cont_prev, loop_cont_vali, indi_cont_prev2
+    integer :: j_patch
+    integer :: indi_cont_curr, indi_cont_prev, node_nume
+    real(kind=8) :: tole_inter, gap
+    integer :: loop_cont_vali
     aster_logical :: loop_cont_conv
-    character(len=19) :: oldgeo, newgeo, cnscon
-    real(kind=8) :: tole_inter, gap,gap_prev, lagc,lagc_prev, coefint, loop_cont_vale
+    real(kind=8) :: lagc, coefint, loop_cont_vale
+    integer :: jacobian_type
+    integer :: loop_geom_count, iter_newt
+    character(len=19) :: sdappa, newgeo, cnscon
+    integer, pointer :: v_pa_lcum(:) => null()
+    integer, pointer :: v_mesh_patch(:) => null()
     character(len=24) :: sdcont_stat
     integer, pointer :: v_sdcont_stat(:) => null()
     character(len=24) :: sdcont_lagc
     real(kind=8), pointer :: v_sdcont_lagc(:) => null()
-    character(len=19) :: sdappa
+    character(len=24) :: sdcont_ddlc
+    integer, pointer :: v_sdcont_ddlc(:) => null()
     character(len=24) :: sdappa_gapi
     real(kind=8), pointer :: v_sdappa_gapi(:) => null()
     character(len=24) :: sdappa_coef
     real(kind=8), pointer :: v_sdappa_coef(:) => null()
-    integer, pointer :: v_mesh_patch(:) => null()
+    character(len=24) :: sdappa_apli
+    integer, pointer :: v_sdappa_apli(:) => null()
+    integer :: jv_geom
+    real(kind=8), pointer :: v_disp_curr(:)  => null()
     integer, pointer :: v_mesh_lpatch(:) => null()
-    integer, pointer :: v_pa_lcum(:) => null()
     real(kind=8), pointer :: v_cnscon_cnsv(:) => null()
-    character(len=24) :: sdappa_gpre
-    real(kind=8), pointer :: v_sdappa_gpre(:) => null()
-    character(len=24) :: sdappa_poid
-    real(kind=8), pointer :: v_sdappa_poid(:) => null()
-    character(len=24) :: sdcont_stat_prev
-    integer, pointer :: v_sdcont_stat_prev(:) => null()
-    integer :: etatcyc 
-    character(len=24) :: sdcont_cyclac_etat
-    integer, pointer :: v_sdcont_cyclac_etat(:) => null()
-    character(len=24) :: sdcont_cyclac_hist
-    real(kind=8), pointer :: v_sdcont_cyclac_hist(:) => null()
-    real(kind=8) :: r_axi, r_smooth
-    integer :: jacobian_type
-    real(kind=8) :: coef_opt=0.0,pres_cont(2)=0.0, dist_cont(2)=0.0
-    real(kind=8) :: bound_coef(2)
-    aster_logical:: coef_found=.false._1
-    integer :: indi(2)=0
-    integer :: type_adap
-    
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -110,58 +108,49 @@ implicit none
 !
 ! - Initializations
 !
-    loop_cont_conv = .true.
+    loop_cont_conv = ASTER_TRUE
     loop_cont_vali = 0
-    tole_inter     = 1.d-5
-    bound_coef(1)     = 1.d-8
-    bound_coef(2)     = 1.d8
 !
 ! - Get parameters
 !
-    nb_cont_zone = cfdisi(ds_contact%sdcont_defi, 'NZOCO')
-    r_smooth     = real(cfdisi(ds_contact%sdcont_defi,'LISSAGE'),kind=8)
-    r_axi        = real(cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE'),kind=8)
-    type_adap    = cfdisi(ds_contact%sdcont_defi,'TYPE_ADAPT')
+    tole_inter   = 1.d-5
+    nb_cont_zone = cfdisi(ds_contact%sdcont_defi,'NZOCO')
 !
 ! - Access to mesh (patches)
 !
     call jeveuo(jexnum(mesh//'.PATCH',1), 'L', vi = v_mesh_lpatch)
 !
+! - Update geometry
+!
+    call mreacg(mesh, ds_contact, disp_curr)
+!
+! - Access to geometry
+!
+    newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
+    call jeveuo(newgeo(1:19)//'.VALE', 'L', jv_geom)
+!
 ! - Acces to contact objects
 !
     sdcont_stat = ds_contact%sdcont_solv(1:14)//'.STAT'
     sdcont_lagc = ds_contact%sdcont_solv(1:14)//'.LAGC'
-    sdcont_stat_prev = ds_contact%sdcont_solv(1:14)//'.CYCL'
-    sdcont_cyclac_etat = ds_contact%sdcont_solv(1:14)//'.CYCE'
-    sdcont_cyclac_hist = ds_contact%sdcont_solv(1:14)//'.CYCH'
+    sdcont_ddlc = ds_contact%sdcont_solv(1:14)//'.DDLC'
     call jeveuo(sdcont_stat, 'E', vi = v_sdcont_stat)
     call jeveuo(sdcont_lagc, 'E', vr = v_sdcont_lagc)
-
-    call jeveuo(sdcont_stat_prev, 'E', vi = v_sdcont_stat_prev)
-    call jeveuo(sdcont_cyclac_etat, 'E', vi = v_sdcont_cyclac_etat)
-    call jeveuo(sdcont_cyclac_hist, 'E', vr = v_sdcont_cyclac_hist)
-    
-    
+    call jeveuo(sdcont_ddlc, 'L', vi = v_sdcont_ddlc)
 !
 ! - Get pairing datastructure
 !
     sdappa = ds_contact%sdcont_solv(1:14)//'.APPA'
     sdappa_gapi = sdappa(1:19)//'.GAPI'
-    sdappa_coef = sdappa(1:19)//'.COEF'  
-    sdappa_gpre = sdappa(1:19)//'.GPRE'
-    sdappa_poid = sdappa(1:19)//'.POID' 
-    call jeveuo(sdappa_gapi, 'L', vr = v_sdappa_gapi)
-    call jeveuo(sdappa_coef, 'L', vr = v_sdappa_coef)
-    call jeveuo(sdcont_stat_prev, 'E', vi = v_sdcont_stat_prev)
-    call jeveuo(sdcont_cyclac_etat, 'E', vi = v_sdcont_cyclac_etat)
-    call jeveuo(sdcont_cyclac_hist, 'E', vr = v_sdcont_cyclac_hist)
-    call jeveuo(sdappa_poid, 'L', vr = v_sdappa_poid)
+    sdappa_coef = sdappa(1:19)//'.COEF'
+    sdappa_apli = sdappa(1:19)//'.APLI'
+    call jeveuo(sdappa_gapi, 'E', vr = v_sdappa_gapi)
+    call jeveuo(sdappa_coef, 'E', vr = v_sdappa_coef)
+    call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
 !
-! - Geometric update
+! - Access to displacement field to get contact Lagrangien multiplier
 !
-    oldgeo = mesh//'.COORDO'
-    newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
-    call mreacg(mesh, ds_contact, field_update_ = disp_curr)
+    call jeveuo(disp_curr(1:19)//'.VALE', 'E', vr = v_disp_curr)
 !
 ! - Prepare displacement field to get contact Lagrangien multiplier
 !
@@ -174,45 +163,37 @@ implicit none
 
     call jeveuo(mesh//'.PATCH', 'L', vi = v_mesh_patch)
     call jeveuo(jexatr(mesh//'.PATCH', 'LONCUM'), 'L', vi = v_pa_lcum)
-
 !
-! - Loop on contact zones
+! - Get status of loops
+!
+    call mmbouc(ds_contact, 'Geom', 'Read_Counter', loop_geom_count)
+    iter_newt = ds_contact%iteration_newton
+!
+! - Compute mean square gaps and weights of intersections
+!
+    call lac_gapi(mesh, ds_contact)
+!
+! - Evaluatio of status
 !
     do i_cont_zone = 1, nb_cont_zone
-!
-! ----- Get access to patch
-!
+! ----- Access to patch
         nb_patch = v_mesh_lpatch((i_cont_zone-1)*2+2)
         j_patch  = v_mesh_lpatch((i_cont_zone-1)*2+1)
-        jacobian_type= mminfi(ds_contact%sdcont_defi, 'TYPE_JACOBIEN', i_cont_zone)
-
-!
+! ----- Get parameters on current zone
+        jacobian_type = mminfi(ds_contact%sdcont_defi, 'TYPE_JACOBIEN', i_cont_zone)
 ! ----- Loop on patches
-!
         do i_patch = 1, nb_patch
-
-!
-! --------- Get/Set LAGS_C 
-!
+! --------- Get/Set LAGS_C
             node_nume = v_mesh_patch(v_pa_lcum(j_patch+i_patch-1)+2-1)
             lagc      = v_cnscon_cnsv(node_nume)
             v_sdcont_lagc(j_patch-2+i_patch) = lagc
-!
-! --------- Get previous parameters
-!
+! --------- Get parameters
             coefint        = v_sdappa_coef(j_patch-2+i_patch)
             gap            = v_sdappa_gapi(j_patch-2+i_patch)
             indi_cont_prev = v_sdcont_stat(j_patch-2+i_patch)
-            indi_cont_prev2= v_sdcont_stat_prev(j_patch-2+i_patch)
-            lagc_prev = v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+10+5)
-!
 ! --------- Compute new status
-!
-
             if (isnan(gap)) then
                 indi_cont_curr = -1
-!            elseif (v_sdcont_cyclac_etat(j_patch-2+i_patch) .eq. 1) then 
-!                indi_cont_curr = indi_cont_prev
             else
                 if ((lagc+gap) .le. r8prem() .and.&
                     v_sdappa_coef(j_patch-2+i_patch).ge.tole_inter) then
@@ -220,83 +201,14 @@ implicit none
                 else
                     indi_cont_curr = 0
                 endif
-                
-                            
-    ! --------- Cycling ?
-                etatcyc = indi_cont_curr+2*indi_cont_prev+4*indi_cont_prev2
-                if (type_adap .ne. 4) etatcyc = 0
-                if( (ds_contact%iteration_newton .ge. 3 ).and.&
-                    (etatcyc .eq.2 .or. etatcyc .eq. 5) ) then
-                    v_sdcont_cyclac_etat(j_patch-2+i_patch) = 1
-                else 
-                    v_sdcont_cyclac_etat(j_patch-2+i_patch) = -2
-                endif
-                
-                if( (ds_contact%iteration_newton .ge. 3 ) .and. &
-                  v_sdcont_cyclac_etat(j_patch-2+i_patch) .eq. 1) then
-                       
-                       indi(1) = indi_cont_curr
-                       indi(2) = indi_cont_prev
-                       pres_cont(1) = lagc
-                       pres_cont(2) = v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+10+5)
-                       dist_cont(1) = gap
-                       dist_cont(2) = gap_prev
-                       call search_opt_coef(bound_coef, &
-                                       indi, &
-                                        pres_cont, dist_cont, &
-                                        coef_opt,coef_found)
-!                       write (6,*) "coefficient found" , coef_found                                
-                       if (coef_found) then
-                           indi_cont_curr =  indi(1)
-                           indi_cont_prev =  indi(1)  
-!                           write (6,*) "a coefficient is found"
-!                           if (indi_cont_curr .ne. indi_cont_prev) write (6,*) "Traitement NOOK"
-                       endif
-    
-!                    write (6,*) "traitement cyclage",indi_cont_curr,indi_cont_prev,indi_cont_prev2
-                    
-                else 
-                    v_sdcont_cyclac_etat(j_patch-2+i_patch) = -2
-                endif
                 v_sdcont_stat(j_patch-2+i_patch) = indi_cont_curr
-                v_sdcont_stat_prev(j_patch-2+i_patch) = indi_cont_prev
-            
             endif
-!
 ! --------- Save new status
-!
             v_sdcont_stat(j_patch-2+i_patch) = indi_cont_curr
-            
-! --------- Save new status a n-1
-!
-            v_sdcont_stat_prev(j_patch-2+i_patch) = indi_cont_prev
-!
-
-!
 ! --------- Change status ?
-!
-            if (indi_cont_curr .ne. indi_cont_prev )  then
+            if (indi_cont_curr .ne. indi_cont_prev) then
                 loop_cont_vali = loop_cont_vali+1
-            end if    
-           
-! -------- Copier la valeur precedente :
-           do hist_index = 1,11
-              v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+11+hist_index) = & 
-                       v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+hist_index)  
-           enddo
-! ---------- Mettre a jours les valeurs actuelle :
-           r_smooth       = real(cfdisi(ds_contact%sdcont_defi,'LISSAGE'),kind=8)
-           r_axi          = real(cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE'),kind=8)
-           v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+1) = r_smooth
-           v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+2) = jacobian_type
-           v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+3) = v_sdappa_coef(j_patch-2+i_patch)
-           v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+4) = v_sdcont_stat(j_patch-2+i_patch)
-           v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+5) = v_sdcont_lagc(j_patch-2+i_patch)
-           v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+6) = r_axi
-!           v_sdcont_cyclac_hist(20*(j_patch-2+i_patch-1)+7) = v_sdcont_lagg(j_patch-2+i_patch)
-           v_sdcont_cyclac_hist(22*(j_patch-2+i_patch-1)+8) = v_sdappa_poid(j_patch-2+i_patch)
-!           v_sdcont_cyclac_hist(20*(j_patch-2+i_patch-1)+9) = v_sdappa_rhon(j_patch-2+i_patch) 
-!           v_sdcont_cyclac_hist(20*(j_patch-2+i_patch-1)+10)= v_sdappa_eval(j_patch-2+i_patch) 
+            end if
         end do
     end do
 !
