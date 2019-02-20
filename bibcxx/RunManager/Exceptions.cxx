@@ -3,7 +3,7 @@
  * @brief Definition of code_aster exceptions
  * @author Mathieu Courtois
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -89,7 +89,7 @@ extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_id, _IN char 
     VectorLong argi = {};
     VectorDouble argr = {};
     for ( int i = 0; i < *nbk; ++i ) {
-        argk.push_back( trim( std::string( valk[i], lvk ) ) );
+        argk.push_back( trim( std::string( valk + i*lvk, lvk ) ) );
     }
     for ( int i = 0; i < *nbi; ++i ) {
         argi.push_back( vali[i] );
