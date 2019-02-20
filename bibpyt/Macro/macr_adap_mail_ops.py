@@ -93,7 +93,7 @@ def liste_passages_init(INFO, fichier_archive, Rep_Calc_ASTER):
 #   puis on recupere la liste des passages
 #
         fic = os.path.join(Rep_Calc_ASTER, laux[0], "pick.1")
-        file = open(fic, "r")
+        file = open(fic, "rb")
         laux = pickle.load(file)
         file.close()
 #
@@ -1830,7 +1830,7 @@ def macr_adap_mail_ops(self,
 # ensuite
         Rep_Calc_HOMARD_global = dico["Rep_Calc_HOMARD_global"]
         fic = os.path.join(Rep_Calc_HOMARD_global, "pick.1")
-        file = open(fic, "w")
+        file = open(fic, "wb")
         pickle.dump(Liste_Passages, file)
         file.close()
 #
