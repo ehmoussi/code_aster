@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -246,8 +246,7 @@ except AsterError as err:
     assert err.id_message == "MODELISA6_10", 'unexpected id : %s' % err.id_message
     # on peut aussi verifier les arguments
     assert err.args[1][0].strip() == "XXX", "unexpected arguments: %s" % err.args
-    assert err.args[1][1].strip() == "MA", "unexpected arguments: %s" % err.args
-    DETRUIRE(CONCEPT=_F(NOM=MO),)
+    assert err.args[1][1].strip() == "00000006", "unexpected arguments: %s" % err.args
     MO=AFFE_MODELE(MAILLAGE=MA,
                    AFFE=_F(MAILLE='D1',
                            PHENOMENE='MECANIQUE',
@@ -376,7 +375,6 @@ try:
 except AsterError as err:
     # on verifie que la bonne exception a ete levee
     assert err.id_message == "POSTRELE_46", 'unexpected id : %s' % err.id_message
-    DETRUIRE(CONCEPT=_F(NOM=TAB_DEPL),)
     TAB_DEPL=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL',
                                      NOEUD='N2',
                                      RESULTAT=STATNL,
