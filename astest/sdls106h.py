@@ -1,3 +1,4 @@
+# coding=utf-8
 # VALEURS DE NON REGRESSION
 
 # - TROISIEME MODE
