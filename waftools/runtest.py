@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,23 +20,19 @@
 import os
 import os.path as osp
 import tempfile
-from subprocess import Popen, PIPE
+from configparser import ConfigParser
 from functools import partial
+from subprocess import PIPE, Popen
 
-from waflib import TaskGen, Logs, Errors
+from waflib import Errors, Logs, TaskGen
 
-try:
-    from mercurial import hg, ui as UI
-    ui = UI.ui()
-    _reader = partial(ui.config, 'aster')
-except:
-    _reader = None
 
 def _read_config(env, prefs, key):
-    """Read """
-    if _reader is None:
-        return
-    value = _reader(key)
+    """Read a value in the config file and add it in `env` and `prefs`."""
+    cfg = ConfigParser()
+    cfg.read(osp.join(os.environ["HOME"], ".hgrc"))
+
+    value = cfg.get("aster", key)
     dkey = 'PREFS_{}'.format(key.upper())
     env[dkey] = value
     if value:
