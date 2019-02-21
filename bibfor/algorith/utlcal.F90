@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,6 +68,10 @@ subroutine utlcal(typque, algo, valr)
             valr = 9.d0
         else if (algo.eq.'NEWTON_PERT') then
             valr =10.d0
+        else if (algo.eq.'SEMI_EXPLICITE') then
+            valr =11.d0
+        else if (algo.eq.'BASCULE_EXPLICIT') then
+            valr =12.d0
         else
             ASSERT(.false.)
         endif
@@ -98,6 +102,10 @@ subroutine utlcal(typque, algo, valr)
             algo = 'BRENT'
         else if (valr.eq.10.d0) then
             algo = 'NEWTON_PERT'
+        else if (valr.eq.11.d0) then
+            algo = 'SEMI_EXPLICITE'
+        else if (valr.eq.12.d0) then
+            algo = 'BASCULE_EXPLICIT'
         else
             ASSERT(.false.)
         endif

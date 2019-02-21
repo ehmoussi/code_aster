@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,8 @@ loi = LoiComportement(
     mc_mater       = ('ELAS','HUJEUX',),
     modelisation   = ('3D','THM','D_PLAN',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP','GDEF_LOG',),
-    algo_inte      = ('NEWTON','NEWTON_PERT','NEWTON_RELI','SPECIFIQUE',),
+    algo_inte      = ('NEWTON','NEWTON_PERT','NEWTON_RELI',
+                      'SEMI_EXPLICITE','BASCULE_EXPLICIT','SPECIFIQUE',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('No',),

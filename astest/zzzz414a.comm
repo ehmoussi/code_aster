@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,7 +103,7 @@ RESU=SIMU_POINT_MAT(INFO=1,
                     VARI_INIT=_F(VALE=vari_init,),
 
                     COMPORTEMENT=_F(RELATION      ='HUJEUX',
-                                    ITER_INTE_MAXI=10,
+                                    ITER_INTE_MAXI=-10,
                                     RESI_INTE_RELA=1.E-07,
                                     ALGO_INTE     ='SPECIFIQUE',
                                     ITER_INTE_PAS =-10,
