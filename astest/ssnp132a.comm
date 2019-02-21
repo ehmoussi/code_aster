@@ -27,7 +27,7 @@ MODEL=AFFE_MODELE(MAILLAGE=MAIL,
    AFFE=_F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='C_PLAN',),
 )
 
-INCLUDE(DONNEE='ssnp132a_mater.comm')
+from ssnp132a_mater import *
 
 FIN();
 
