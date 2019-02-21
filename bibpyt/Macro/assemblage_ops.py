@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -234,6 +234,13 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
                     motscles['CHAM_MATER'] = CHAM_MATER
 
             _b = CALC_VECT_ELEM(**motscles)
+
+# Create NUME_DDL
+            if (numeddl_status != 'OK'):
+                num = create_nume(self, numeddl_status, option, numeddl, None, CHARGE, info, MODELE)
+                if (numeddl_status == 'To_Create') :
+                     self.register_result(num, numeddl)
+                numeddl_status = 'OK'
 
             # les vecteurs assembles sont des concepts sortants.
             # self.DeclareOut('vv', v['VECTEUR'])
