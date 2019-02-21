@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,12 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine hujela(mod, crit, mater, deps, sigd,&
-                  sigf, iret)
+subroutine hujela(mod, mater, deps, sigd, sigf, iret)
     implicit none
 !       INTEGRATION ELASTIQUE NON LINEAIRE DE LA LOI DE HUJEUX
 !       IN  MOD    :  MODELISATION
-!           CRIT   :  CRITERES DE CONVERGENCE
 !           MATERF :  COEFFICIENTS MATERIAU A T+DT
 !           SIGD   :  CONTRAINTE  A T
 !           DEPS   :  INCREMENT DE DEFORMATION
@@ -40,7 +38,7 @@ subroutine hujela(mod, crit, mater, deps, sigd,&
     integer :: ndt, ndi, iret, i, j
     real(kind=8) :: coef, e, nu, al, demu, i1, n, pref
     real(kind=8) :: deps(6), dsig(6), sigd(6), sigf(6)
-    real(kind=8) :: hook(6, 6), mater(22, 2), crit(*)
+    real(kind=8) :: hook(6, 6), mater(22, 2)
     real(kind=8) :: zero, un, d13, deux, la, epsv, i1e
     real(kind=8) :: e1, e2, e3, nu12, nu13, nu23, g1, g2, g3, nu21, nu31, nu32
     real(kind=8) :: delta
@@ -109,8 +107,7 @@ subroutine hujela(mod, crit, mater, deps, sigd,&
 !
 !--->  CALCUL DE I1=TR(SIG) A T+DT PAR METHODE DE LA SECANTE
 !      OU EXPLICITEMENT SI NIVEAU HUJEUX
-    call hujci1(crit, mater, deps, sigd, i1,&
-                tract, iret)
+    call hujci1(mater, deps, sigd, i1, tract, iret)
 !
     if (iret .eq. 1) goto 9999
 !
@@ -167,7 +164,7 @@ subroutine hujela(mod, crit, mater, deps, sigd,&
 !---> CALCUL DU COEF  (-----------)**N ET MODULE_YOUNG A T+DT
     call lcinma(zero, hook)
 !
-    coef = ((i1 -piso)/pref)**n
+    coef = ((i1-piso)/pref)**n
 !
     if (mod(1:2) .eq. '3D' .or. mod(1:6) .eq. 'D_PLAN' .or. mod(1:4) .eq. 'AXIS') then
 !

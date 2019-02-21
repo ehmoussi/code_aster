@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -76,10 +76,10 @@ tabbid2 = CREA_TABLE(LISTE=(_F(PARA='TYPE'    , LISTE_K=['GAMMA-G',]),
 CALC_ESSAI_GEOMECA(INFO=1,
                    MATER=MATE1,
                    COMPORTEMENT=_F(RELATION='HUJEUX',
-                                ITER_INTE_MAXI=20,
+                                ITER_INTE_MAXI=-5,
                                 RESI_INTE_RELA=1.E-8,
                                 ALGO_INTE = 'SPECIFIQUE',
-                                ITER_INTE_PAS = -5,),
+                                ITER_INTE_PAS =-5,),
                                 
                    CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                   ITER_GLOB_MAXI = 20,),
@@ -599,8 +599,8 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           VALE_CALC= 42472.9966488,
-           VALE_REFE= 42472.9966488,
+           VALE_CALC= 42473.0963244,
+           VALE_REFE= 42473.0963244,
            NOM_PARA='Q_1',
            TABLE=TTDA1,
            FILTRE=_F(CRITERE='ABSOLU',
@@ -610,8 +610,8 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           VALE_CALC= -153999.977332,
-           VALE_REFE= -153999.977332,
+           VALE_CALC= -153997.707098,
+           VALE_REFE= -153997.707098,
            NOM_PARA='Q_1',
            TABLE=TTDA1,
            FILTRE=_F(CRITERE='ABSOLU',
@@ -638,8 +638,8 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           VALE_REFE=36611.9233256,
-           VALE_CALC=36611.9233256,
+           VALE_REFE=36612.6731156,
+           VALE_CALC=36612.6731156,
            NOM_PARA='Q_1',
            TABLE=TTDNA1,
            FILTRE=_F(CRITERE='ABSOLU',
@@ -649,8 +649,8 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           VALE_REFE=-142893.051492,
-           VALE_CALC=-142893.051492,
+           VALE_REFE=-142885.06496,
+           VALE_CALC=-142885.06496,
            NOM_PARA='Q_1',
            TABLE=TTDNA1,
            FILTRE=_F(CRITERE='ABSOLU',
