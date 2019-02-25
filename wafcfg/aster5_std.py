@@ -29,6 +29,7 @@ waf install -p
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
 YAMMROOT = ASTER_ROOT + '/public/default'
+YAMMROOT_OLD = os.environ['ROOT_SALOME_OLD']
 
 import intel
 import official_programs
@@ -57,8 +58,8 @@ def configure(self):
     self.env.TFELVERS = TFELVERS
 
     self.env.append_value('LIBPATH', [
-        YAMMROOT + '/prerequisites/Hdf5-1814/lib',
-        YAMMROOT + '/prerequisites/Medfichier-331/lib',
+        YAMMROOT_OLD + '/prerequisites/Hdf5-1814/lib',
+        YAMMROOT_OLD + '/prerequisites/Medfichier-331/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/lib',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/lib',
@@ -66,8 +67,8 @@ def configure(self):
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Hdf5-1814/include',
-        YAMMROOT + '/prerequisites/Medfichier-331/include',
+        YAMMROOT_OLD + '/prerequisites/Hdf5-1814/include',
+        YAMMROOT_OLD + '/prerequisites/Medfichier-331/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/include',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include',
@@ -83,6 +84,6 @@ def configure(self):
     opts.enable_metis = True
     opts.enable_mumps = True
     opts.enable_scotch = True
-    opts.enable_mfront = True
+    opts.enable_mfront = False
 
     opts.enable_petsc = False
