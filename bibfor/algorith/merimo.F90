@@ -157,10 +157,10 @@ character(len=*), optional, intent(in) :: sddynz_
         l_codpre = ASTER_FALSE
     else if (option(1:10) .eq. 'RIGI_MECA_') then
         l_merigi = ASTER_TRUE
-        l_vefint = ASTER_TRUE
-        l_codret = ASTER_TRUE
+        l_vefint = ASTER_FALSE
+        l_codret = ASTER_FALSE
         l_sigmex = ASTER_FALSE
-        l_codpre = ASTER_TRUE
+        l_codpre = ASTER_FALSE
     else if (option(1:9) .eq. 'RAPH_MECA') then
         l_merigi = ASTER_FALSE
         l_vefint = ASTER_TRUE
