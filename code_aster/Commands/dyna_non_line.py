@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -47,6 +47,9 @@ class DynaNonLine(ExecuteCommand):
         """
         self._result.appendModelOnAllRanks(keywords["MODELE"])
         self._result.appendMaterialOnMeshOnAllRanks(keywords["CHAM_MATER"])
+        caraElem = keywords.get("CARA_ELEM")
+        if caraElem is not None:
+            self._result.appendElementaryCharacteristicsOnAllRanks(caraElem)
         self._result.update()
 
 DYNA_NON_LINE = DynaNonLine.run

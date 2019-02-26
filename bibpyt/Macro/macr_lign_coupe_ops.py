@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -942,9 +942,9 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
 
     if (l_mode_meca_sans_modele == False):
         # on utilise le modèle pour projeter le champ
-        if CHAM_GD != None:
+        if MODELE is not None or CHAM_GD is not None:
             MODELE_1 = MODELE
-        elif RESULTAT != None:
+        elif RESULTAT is not None:
             MODELE_1 = RESULTAT.getModel()
 
         __recou = PROJ_CHAMP(METHODE='COLLOCATION',

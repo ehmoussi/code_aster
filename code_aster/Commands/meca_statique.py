@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -101,17 +101,18 @@ class MechanicalSolver(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        contrainte = []
-        if keywords["MODELE"].existsMultiFiberBeam():
-            contrainte.append("STRX_ELGA")
-        if keywords.get("OPTION") == "SIEF_ELGA":
-            contrainte.append("SIEF_ELGA")
+        if self._result is not None:
+            contrainte = []
+            if keywords["MODELE"].existsMultiFiberBeam():
+                contrainte.append("STRX_ELGA")
+            if keywords.get("OPTION") == "SIEF_ELGA":
+                contrainte.append("SIEF_ELGA")
 
-        if contrainte:
-            CALC_CHAMP(reuse=self._result,
-                       RESULTAT=self._result,
-                       CONTRAINTE=contrainte)
-        else:
-            self._result.update()
+            if contrainte:
+                CALC_CHAMP(reuse=self._result,
+                        RESULTAT=self._result,
+                        CONTRAINTE=contrainte)
+            else:
+                self._result.update()
 
 MECA_STATIQUE = MechanicalSolver.run

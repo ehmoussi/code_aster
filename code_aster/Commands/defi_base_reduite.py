@@ -52,7 +52,8 @@ class ReducedBaseDefinition(ExecuteCommand):
         else:
             if keywords.get("RESULTAT"):
                 resultat = keywords["RESULTAT"]
-                if(resultat is not None):
-                    self._result.appendModelOnAllRanks(resultat.getModel())
+                if resultat is not None:
+                    if resultat.getModel() is not None:
+                        self._result.appendModelOnAllRanks(resultat.getModel())
 
 DEFI_BASE_REDUITE = ReducedBaseDefinition.run

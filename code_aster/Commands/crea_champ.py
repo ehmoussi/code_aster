@@ -79,9 +79,11 @@ class FieldCreator(ExecuteCommand):
                 self._result.setModel(modele)
             elif resultat is not None:
                 if isinstance(resultat, FullResultsContainer):
-                    dofNum = resultat.getDOFNumbering()
-                    self._result.setDescription(dofNum.getFiniteElementDescriptors()[0])
-                else:
+                    try:
+                        dofNum = resultat.getDOFNumbering()
+                        self._result.setDescription(dofNum.getFiniteElementDescriptors()[0])
+                    except: pass
+                if resultat.getModel() is not None:
                     self._result.setModel(resultat.getModel())
             elif caraElem is not None:
                 self._result.setModel(caraElem.getModel())

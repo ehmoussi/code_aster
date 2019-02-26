@@ -38,6 +38,11 @@ void exportResultsContainerToPython() {
     ModelPtr ( ResultsContainerInstance::*c4 )( int ) =
         &ResultsContainerInstance::getModel;
 
+    ElementaryCharacteristicsPtr ( ResultsContainerInstance::*c5 )() =
+        &ResultsContainerInstance::getElementaryCharacteristics;
+    ElementaryCharacteristicsPtr ( ResultsContainerInstance::*c6 )( int ) =
+        &ResultsContainerInstance::getElementaryCharacteristics;
+
     class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
             bases< DataStructure > >( "ResultsContainer", no_init )
         .def( "__init__",
@@ -47,17 +52,19 @@ void exportResultsContainerToPython() {
                   &initFactoryPtr< ResultsContainerInstance, std::string, std::string >))
         .def( "addMaterialOnMesh", &ResultsContainerInstance::addMaterialOnMesh )
         .def( "addModel", &ResultsContainerInstance::addModel )
+        .def( "appendElementaryCharacteristicsOnAllRanks",
+              &ResultsContainerInstance::appendElementaryCharacteristicsOnAllRanks )
         .def( "appendMaterialOnMeshOnAllRanks",
               &ResultsContainerInstance::appendMaterialOnMeshOnAllRanks )
         .def( "appendModelOnAllRanks", &ResultsContainerInstance::appendModelOnAllRanks )
         .def( "listFields", &ResultsContainerInstance::listFields )
-        .def( "getModel", c3 )
-        .def( "getModel", c4 )
-        .def( "getElementaryCharacteristics",
-              &ResultsContainerInstance::getElementaryCharacteristics )
+        .def( "getElementaryCharacteristics", c5 )
+        .def( "getElementaryCharacteristics", c6 )
         .def( "getMaterialOnMesh", c1 )
         .def( "getMaterialOnMesh", c2 )
         .def( "getMesh", &ResultsContainerInstance::getMesh )
+        .def( "getModel", c3 )
+        .def( "getModel", c4 )
         .def( "getNumberOfRanks", &ResultsContainerInstance::getNumberOfRanks )
         .def( "getRanks", &ResultsContainerInstance::getRanks )
         .def( "getRealFieldOnNodes", &ResultsContainerInstance::getRealFieldOnNodes )
