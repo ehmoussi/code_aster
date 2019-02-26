@@ -26,8 +26,6 @@
 #            CHARGEMENT   : CYCLIQUE TRACTION - COMPRESSION
 #            REMARQUE 1   : ON TESTE DEFI_GLRC
 
-import aster
-
 POURSUITE(CODE='OUI',
           DEBUG=_F(SDVERI='OUI',),
           PAR_LOT='NON');
