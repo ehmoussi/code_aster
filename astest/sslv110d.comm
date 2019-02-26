@@ -104,6 +104,7 @@ FISS1=DEFI_FOND_FISS(MAILLAGE=MA,
                      SYME='OUI',
                      FOND_FISS=_F(GROUP_NO = 'FONFIS',
                                   DTAN_ORIG=( 0.,  1.,  0.,),),
+                     LEVRE_SUP=_F(  GROUP_MA = 'GRPRES'),
                     )
 
 #

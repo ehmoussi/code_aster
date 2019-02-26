@@ -74,6 +74,8 @@ CHAMDEPL=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT,
 #
 FOND1=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                             FOND_FISS=_F( GROUP_NO = ('P0',)),
+                            LEVRE_SUP=_F(GROUP_MA = 'LEVR_SUP',),
+                            LEVRE_INF=_F(GROUP_MA = 'LEVR_INF',),
                       )
 
 #
@@ -82,8 +84,7 @@ G01A=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.,
                          FOND_FISS=FOND1,
                          MODULE=1.,
-                         R_SUP=0.001875E-2,
-                         DIRECTION=(0.5, 0.866025404, 0.,)),
+                         R_SUP=0.001875E-2,),
                       )
 
 #
@@ -101,8 +102,7 @@ G01B=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.001875E-2,
                          FOND_FISS=FOND1,
                          MODULE=1.,
-                         R_SUP=0.003750E-2,
-                         DIRECTION=(0.5, 0.866025404, 0.,)),
+                         R_SUP=0.003750E-2,),
                       )
 
 #
@@ -120,8 +120,7 @@ G01C=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.003750E-2,
                          FOND_FISS=FOND1,
                          MODULE=1.,
-                         R_SUP=0.005625E-2,
-                         DIRECTION=(0.5, 0.866025404, 0.,)),
+                         R_SUP=0.005625E-2,),
                       )
 
 #
@@ -139,8 +138,7 @@ G01D=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.005625E-2,
                          FOND_FISS=FOND1,
                          MODULE=1.,
-                         R_SUP=0.007500E-2,
-                         DIRECTION=(0.5, 0.866025404, 0.,)),
+                         R_SUP=0.007500E-2,),
                       )
 
 #
@@ -157,6 +155,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 #
 FOND2=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                             FOND_FISS=_F( GROUP_NO = ('P0G',)),
+                            LEVRE_SUP=_F(GROUP_MA = 'LEVR_SUP',),
+                            LEVRE_INF=_F(GROUP_MA = 'LEVR_INF',),
                        )
 
 #
@@ -165,8 +165,7 @@ G02A=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.,
                          FOND_FISS=FOND2,
                          MODULE=1.,
-                         R_SUP=0.001875E-2,
-                         DIRECTION=(-0.5, -0.866025404, 0.,)),
+                         R_SUP=0.001875E-2,),
                       )
 
 #
@@ -184,8 +183,7 @@ G02B=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.001875E-2,
                          FOND_FISS=FOND2,
                          MODULE=1.,
-                         R_SUP=0.003750E-2,
-                         DIRECTION=(-0.5, -0.866025404, 0.,)),
+                         R_SUP=0.003750E-2,),
                      )
 
 #
@@ -205,8 +203,7 @@ G02C=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.003750E-2,
                          FOND_FISS=FOND2,
                          MODULE=1.,
-                         R_SUP=0.005625E-2,
-                         DIRECTION=(-0.5, -0.866025404, 0.,)),
+                         R_SUP=0.005625E-2,),
                       )
 
 #
@@ -226,8 +223,7 @@ G02D=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.005625E-2,
                          FOND_FISS=FOND2,
                          MODULE=1.,
-                         R_SUP=0.007500E-2,
-                         DIRECTION=(-0.5, -0.866025404, 0.,)),
+                         R_SUP=0.007500E-2,),
                       )
 
 #

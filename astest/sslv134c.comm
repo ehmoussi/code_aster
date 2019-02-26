@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,11 +62,7 @@ CHAMDEPL=MECA_STATIQUE(        MODELE=MO,
 CHAMDEPL=CALC_CHAMP(reuse=CHAMDEPL,CONTRAINTE=('SIGM_ELNO'),RESULTAT=CHAMDEPL)
 
 
-FISS=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
-                    FOND_FISS=_F( GROUP_NO = ('P0',)),
-                   )
-
-FISS2=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
+FISS=DEFI_FOND_FISS(MAILLAGE=MA,SYME='NON',
                     FOND_FISS=_F( GROUP_NO = ('P0',)),
                     LEVRE_SUP=_F(  GROUP_MA = 'LP0P8'),
                     LEVRE_INF=_F(  GROUP_MA = 'LP0P8S'),
@@ -78,7 +74,7 @@ RINF=0.05
 
 G0=CALC_G(RESULTAT=CHAMDEPL,
           THETA=_F(R_INF=RINF,
-                   FOND_FISS=FISS2,
+                   FOND_FISS=FISS,
                    MODULE=1.,
                    R_SUP=RSUP,
                    DIRECTION=(1., 0., 0.,)
@@ -99,7 +95,7 @@ IMPR_TABLE(TABLE=GK0)
 
 # POST_K1_K2_K3
 TABL_K1=POST_K1_K2_K3(RESULTAT=CHAMDEPL,
-                      FOND_FISS=FISS2,
+                      FOND_FISS=FISS,
                       INFO=2,
                       )
 
@@ -188,7 +184,7 @@ IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=DEPL_ROT));
 
 G1=CALC_G(RESULTAT=DEPL_ROT,
           THETA=_F(R_INF=RINF,
-                   FOND_FISS=FISS2,
+                   FOND_FISS=FISS,
                    MODULE=1.,
                    R_SUP=RSUP,
                    DIRECTION=(1., 0., 0.,)
@@ -208,7 +204,7 @@ IMPR_TABLE(TABLE=GK1)
 
 # POST_K1_K2_K3
 TABL_K2=POST_K1_K2_K3(RESULTAT=DEPL_ROT,
-                      FOND_FISS=FISS2,
+                      FOND_FISS=FISS,
                       )
 
 IMPR_TABLE(TABLE=TABL_K2)

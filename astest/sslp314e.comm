@@ -49,10 +49,14 @@ MAT2=DEFI_MATERIAU(    ELAS=_F(  E = 2.E12,
 CHMAT=AFFE_MATERIAU(    MAILLAGE=MA,AFFE=(
                                   _F(  GROUP_MA = 'VTOT1',
                                         MATER = MAT1),
+                                  _F(  GROUP_MA = 'LEVR_SUP',
+                                     MATER = MAT1),
                                   _F(  GROUP_MA = 'LPB1PA1',
                                         MATER = MAT1),
                                   _F(  GROUP_MA = 'VTOT2',
                                         MATER = MAT2),
+                                  _F(  GROUP_MA = 'LEVR_INF',
+                                     MATER = MAT2),
                                   _F(  GROUP_MA = 'LPA2PB2',
                                         MATER = MAT2))
                           )
@@ -84,6 +88,8 @@ CHAMDEPL=MECA_STATIQUE(        MODELE=MO,
 #
 FOND1=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                             FOND_FISS=_F( GROUP_NO = ('P0',)),
+                            LEVRE_SUP=_F(  GROUP_MA = 'LEVR_SUP'),
+                            LEVRE_INF=_F(  GROUP_MA = 'LEVR_INF'),
                        )
 
 #

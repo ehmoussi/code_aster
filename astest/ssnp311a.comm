@@ -169,6 +169,8 @@ CHAMDEPL=CALC_CHAMP(reuse=CHAMDEPL,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=('VARI_
 #
 FOND=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                            FOND_FISS=_F( GROUP_NO = ('P0',)),
+                            LEVRE_SUP=_F(GROUP_MA = 'LEVR_SUP',),
+                            LEVRE_INF=_F(GROUP_MA = 'LEVR_INF',),
                       )
 
 #
@@ -188,7 +190,7 @@ G220=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=2.00,
-                             DIRECTION=(0., -1., 0.,)),
+                            ),
                     NUME_ORDRE=22
               )
 
@@ -199,7 +201,7 @@ G360=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=2.00,
-                             DIRECTION=(0., -1., 0.,)),
+                            ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=36
               )
@@ -211,7 +213,7 @@ G500=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=2.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=50
               )
@@ -223,7 +225,7 @@ G640=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=2.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=64
               )
@@ -235,7 +237,7 @@ G221=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=3.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=22
               )
@@ -247,7 +249,7 @@ G361=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=3.00,
-                             DIRECTION=(0., -1., 0.,)),
+                            ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=36
               )
@@ -259,7 +261,7 @@ G501=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=3.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=50
               )
@@ -271,7 +273,7 @@ G641=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=3.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=64
               )
@@ -283,7 +285,7 @@ G222=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=4.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=22
               )
@@ -295,7 +297,7 @@ G362=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=4.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=36
               )
@@ -307,7 +309,7 @@ G502=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=4.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=50
               )
@@ -319,7 +321,7 @@ G642=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=4.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=64
               )
@@ -331,7 +333,7 @@ G223=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=5.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                   NUME_ORDRE=22
               )
@@ -343,7 +345,7 @@ G363=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=5.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=36
               )
@@ -355,7 +357,7 @@ G503=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=5.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=50
               )
@@ -367,7 +369,7 @@ G643=CALC_G(        RESULTAT=CHAMDEPL,
                              FOND_FISS=FOND,
                              MODULE=1.,
                              R_SUP=5.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=64
               )

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -70,9 +70,12 @@ CHAMDEPL=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT,
 #
 # POINT DROIT
 #
-FOND1=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
-                            FOND_FISS=_F( GROUP_NO = ('P0',)),
-                      )
+
+FOND1=DEFI_FOND_FISS(MAILLAGE=MA,SYME='NON',
+                     FOND_FISS=_F(GROUP_NO='P0',),
+                     LEVRE_SUP=_F(GROUP_MA = 'LEVR_SUP',),
+                     LEVRE_INF=_F(GROUP_MA = 'LEVR_INF',),
+                     );
 
 #
 G01A=CALC_G(    RESULTAT=CHAMDEPL,
@@ -80,8 +83,7 @@ G01A=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.,
                          FOND_FISS=FOND1,
                          MODULE=1.,
-                         R_SUP=0.001875E-2,
-                         DIRECTION=(0.707106781, 0.707106781, 0.,)),
+                         R_SUP=0.001875E-2,),
                       )
 
 #
@@ -100,8 +102,7 @@ G01B=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.001875E-2,
                          FOND_FISS=FOND1,
                          MODULE=1.,
-                         R_SUP=0.003750E-2,
-                         DIRECTION=(0.707106781, 0.707106781, 0.,)),
+                         R_SUP=0.003750E-2,),
                       )
 
 #
@@ -120,8 +121,7 @@ G01C=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.003750E-2,
                          FOND_FISS=FOND1,
                          MODULE=1.,
-                         R_SUP=0.005625E-2,
-                         DIRECTION=(0.707106781, 0.707106781, 0.,)),
+                         R_SUP=0.005625E-2,),
                       )
 
 #
@@ -139,8 +139,7 @@ G01D=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.005625E-2,
                          FOND_FISS=FOND1,
                          MODULE=1.,
-                         R_SUP=0.007500E-2,
-                         DIRECTION=(0.70710678, 0.70710678, 0.,)),
+                         R_SUP=0.007500E-2,),
                       )
 
 #
@@ -155,9 +154,11 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 #
 # POINT GAUCHE
 #
-FOND2=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
-                            FOND_FISS=_F( GROUP_NO = ('P0G',)),
-                       )
+FOND2=DEFI_FOND_FISS(MAILLAGE=MA,SYME='NON',
+                     FOND_FISS=_F(GROUP_NO='P0G',),
+                     LEVRE_SUP=_F(GROUP_MA = 'LEVR_SUP',),
+                     LEVRE_INF=_F(GROUP_MA = 'LEVR_INF',),
+                     );
 
 #
 G02A=CALC_G(    RESULTAT=CHAMDEPL,
@@ -165,8 +166,7 @@ G02A=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.,
                          FOND_FISS=FOND2,
                          MODULE=1.,
-                         R_SUP=0.001875E-2,
-                         DIRECTION=(-0.70710678, -0.70710678, 0.,)),
+                         R_SUP=0.001875E-2,),
                       )
 
 #
@@ -185,8 +185,7 @@ G02B=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.001875E-2,
                          FOND_FISS=FOND2,
                          MODULE=1.,
-                         R_SUP=0.003750E-2,
-                         DIRECTION=(-0.70710678, -0.70710678, 0.,)),
+                         R_SUP=0.003750E-2,),
                      )
 
 #
@@ -205,8 +204,7 @@ G02C=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.003750E-2,
                          FOND_FISS=FOND2,
                          MODULE=1.,
-                         R_SUP=0.005625E-2,
-                         DIRECTION=(-0.70710678, -0.70710678, 0.,)),
+                         R_SUP=0.005625E-2,),
                       )
 
 #
@@ -225,8 +223,7 @@ G02D=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.005625E-2,
                          FOND_FISS=FOND2,
                          MODULE=1.,
-                         R_SUP=0.007500E-2,
-                         DIRECTION=(-0.70710678, -0.70710678, 0.,)),
+                         R_SUP=0.007500E-2,),
                       )
 
 #

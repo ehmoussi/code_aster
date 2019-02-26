@@ -261,7 +261,7 @@ subroutine op0100()
 !
         call gveri3(chfond, taillr, config, lnoff, liss,&
                     ndeg, trav1, trav2, trav3, option)
-        call gcour2(thetai, noma, modele, nomno, coorn,&
+        call gcour2(thetai, noma, nomno, coorn,&
                     lnoff, trav1, trav2, trav3, fonoeu, chfond, basfon,&
                     nomfis, connex, stok4, liss,&
                     ndeg, milieu, ndimte, norfon)
