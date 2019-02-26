@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -163,7 +163,6 @@ FOND=DEFI_FOND_FISS(MAILLAGE=M,
 G1=CALC_G(        THETA=_F(R_INF=1.0,
                            FOND_FISS=FOND,
                            MODULE=1.0,
-                           DIRECTION=(1.0,0.0,0.0,),
                            R_SUP=4.0),
                   RESULTAT=RESU,
                   EXCIT=_F(CHARGE=CH,),);
@@ -173,7 +172,6 @@ G2=CALC_G(        THETA=_F(
                            R_INF=0.5,
                            FOND_FISS=FOND,
                            MODULE=1.0,
-                           DIRECTION=(1.0,0.0,0.0,),
                            R_SUP=4.5),
                   RESULTAT=RESU,
                   EXCIT=_F(CHARGE=CH,),);
@@ -183,7 +181,6 @@ G3=CALC_G(        THETA=_F(
                            R_INF=1.5,
                            FOND_FISS=FOND,
                            MODULE=1.0,
-                           DIRECTION=(1.0,0.0,0.0,),
                            R_SUP=3.5),
                   RESULTAT=RESU,
                   EXCIT=_F(CHARGE=CH,),);
@@ -193,7 +190,6 @@ G4=CALC_G(        THETA=_F(
                            R_INF=1.0,
                            FOND_FISS=FOND,
                            MODULE=1.0,
-                           DIRECTION=(1.0,0.0,0.0,),
                            R_SUP=4.5),
                   RESULTAT=RESU,
                   EXCIT=_F(CHARGE=CH,),);

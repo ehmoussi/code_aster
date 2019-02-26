@@ -77,7 +77,6 @@ G0=CALC_G(RESULTAT=CHAMDEPL,
                    FOND_FISS=FISS,
                    MODULE=1.,
                    R_SUP=RSUP,
-                   DIRECTION=(1., 0., 0.,)
                    ),
           INFO=2)
 
@@ -87,7 +86,6 @@ GK0=CALC_G(RESULTAT=CHAMDEPL,
                     FOND_FISS=FISS,
                     MODULE=1.,
                     R_SUP=RSUP,
-                    DIRECTION=(1., 0., 0.,)
                     ),
            OPTION='CALC_K_G')
 
@@ -187,7 +185,6 @@ G1=CALC_G(RESULTAT=DEPL_ROT,
                    FOND_FISS=FISS,
                    MODULE=1.,
                    R_SUP=RSUP,
-                   DIRECTION=(1., 0., 0.,)
                    ),
           )
 
@@ -195,7 +192,6 @@ GK1=CALC_G(THETA=_F(R_INF=RINF,
                     FOND_FISS=FISS,
                     MODULE=1.,
                     R_SUP=RSUP,
-                    DIRECTION=(1., 0., 0.,)
                     ),
           RESULTAT=DEPL_ROT,
           OPTION='CALC_K_G')

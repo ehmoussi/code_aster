@@ -97,7 +97,7 @@ subroutine op0100()
     character(len=24) :: norfon
     parameter  ( resuc2 = '&&MECALG' )
 !
-    aster_logical :: exitim, connex, milieu, direc
+    aster_logical :: exitim, connex, milieu
     aster_logical :: incr, lmoda
     integer, pointer :: ordr(:) => null()
 !
@@ -200,20 +200,9 @@ subroutine op0100()
 !
         theta = table//'_CHAM_THETA'
 !
-!       MOT-CLE A RECUPERER, INDEPENDAMMENT DE NDIM
-        call getvr8('THETA', 'DIRECTION', iocc=1, nbval=3, vect=dir,&
-                    nbret=iret)
-        if (ndim .eq. 2) dir(3)=0.d0
-        if (iret .eq. 0) then
-            direc=.false.
-        else if (iret.lt.0) then
-            ASSERT(.false.)
-        else if (iret.gt.0) then
-            direc=.true.
-        endif
         call gver2d(1, noeud,rinf, rsup, module)
         call gcou2d('V', theta, noma, nomno, noeud,zr(iadrco),&
-                         rinf, rsup, module, direc,dir)
+                         rinf, rsup, module, dir)
     endif
 !
 !     DETERMINATION AUTOMATIQUE DE THETA (CAS 3D)

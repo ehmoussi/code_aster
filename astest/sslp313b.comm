@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -71,8 +71,7 @@ G01=CALC_G(              RESULTAT=CHAMDEPL,
                                   R_INF=0.00001875,
                                   R_SUP=0.000075,
                                   FOND_FISS=FOND1,
-                                  MODULE=1.,
-                                  DIRECTION=(0.7986, 0.6018, 0.,)),
+                                  MODULE=1.,),
                      )
 
 GK01=CALC_G(              RESULTAT=CHAMDEPL,
