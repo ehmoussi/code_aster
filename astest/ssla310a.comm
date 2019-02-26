@@ -103,6 +103,8 @@ RES6=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT3,
 
 FOND=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                            FOND_FISS=_F( GROUP_NO = ('P0',)),
+                        LEVRE_SUP=_F(GROUP_MA='LEVRE_SUP',),
+                        LEVRE_INF=_F(GROUP_MA='LEVRE_INF',),
                       )
 
 # CREATION DU CHAMP THETA SUR LA COURONNE 0 (TRIANGLES)

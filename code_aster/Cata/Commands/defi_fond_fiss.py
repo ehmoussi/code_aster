@@ -87,7 +87,7 @@ DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
     #   SYME doit êter présent tout le temps mais afin de rendre possible la règle pour la définition de la LEVRE_INF
     #   on a besoin de SYME dans ce bloc. SYME est donc dupliqué ici et dans le bloc b_decolle
                         SYME = SIMP(statut='o',typ='TXM',into=("OUI","NON"),),
-                        LEVRE_SUP = FACT(statut='f',max=1,
+                        LEVRE_SUP = FACT(statut='o',max=1,
                                         regles=(UN_PARMI('GROUP_MA','MAILLE'),),
                                         GROUP_MA =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                                         MAILLE   =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**'),

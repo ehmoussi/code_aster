@@ -169,6 +169,7 @@ FISS1=DEFI_FOND_FISS(MAILLAGE=MA,
                      SYME='OUI',
                      FOND_FISS=_F(GROUP_NO='PTFIS',
                                   DTAN_ORIG=(1.0,0.0,0.0,),),
+                     LEVRE_SUP=_F( GROUP_MA = 'LEVRE2D'),
                     );
 
 #

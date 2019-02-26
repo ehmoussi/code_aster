@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -173,7 +173,7 @@ TEST_TABLE(TABLE=GLO1,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(0.),
            PRECISION=0.11,
-           VALE_CALC=54736810.9974,
+           VALE_CALC=54737425.6312,
            )
 
 # a l'abscisse curviligne 5.34881e-3 (point 8)
@@ -184,7 +184,7 @@ TEST_TABLE(TABLE=GLO1,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(5.34881e-3),
            PRECISION=0.02,
-           VALE_CALC=74416259.3999,
+           VALE_CALC=74416951.3646,
            )
 
 # a l'abscisse curviligne 3.44482e-2 (point 25)
@@ -195,7 +195,7 @@ TEST_TABLE(TABLE=GLO1,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(3.44482e-2),
            PRECISION=0.01,
-           VALE_CALC=101903303.976,
+           VALE_CALC=101903389.054,
            )
 
 # a l'abscisse curviligne 5.36143e-2 (point 33)
@@ -206,7 +206,7 @@ TEST_TABLE(TABLE=GLO1,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(5.36143e-2),
            PRECISION=0.07,
-           VALE_CALC=96993430.7196,
+           VALE_CALC=96993514.5257,
            )
 
 
@@ -297,7 +297,7 @@ TEST_TABLE(TABLE=GK2leg,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(0.),
            PRECISION=0.24,
-           VALE_CALC=54736810.9974,
+           VALE_CALC=54737425.6312,
            )
 
 # a l'abscisse curviligne 5.34881e-3 (point 8)
@@ -308,7 +308,7 @@ TEST_TABLE(TABLE=GK2leg,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(5.34881e-3),
            PRECISION=0.08,
-           VALE_CALC=74416259.3999,
+           VALE_CALC=74416951.3646,
            )
 
 # a l'abscisse curviligne 3.44482e-2 (point 25)
@@ -319,7 +319,7 @@ TEST_TABLE(TABLE=GK2leg,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(3.44482e-2),
            PRECISION=0.02,
-           VALE_CALC=101903303.976,
+           VALE_CALC=101903389.054,
            )
 
 # a l'abscisse curviligne 5.36143e-2 (point 33)
@@ -330,7 +330,7 @@ TEST_TABLE(TABLE=GK2leg,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(5.36143e-2),
            PRECISION=0.07,
-           VALE_CALC=96993430.7196,
+           VALE_CALC=96993514.5257,
            )
 
 
@@ -365,7 +365,7 @@ TEST_TABLE(TABLE=GK2lagno,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(5.36143e-2),
            PRECISION=0.01,
-           VALE_CALC=104081096.502,
+           VALE_CALC=104081098.486,
            )
 
 FIN()

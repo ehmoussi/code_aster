@@ -148,7 +148,9 @@ TEST_TABLE(VALE_CALC=1.47608122885,
 FF=DEFI_FOND_FISS(MAILLAGE=M,
                   SYME='OUI',
                   FOND_FISS=_F(GROUP_NO='LFF',
-                               DTAN_ORIG=(0.0,1.0,0.0)),
+                               DTAN_ORIG=(0.0,1.0,0.0),
+                               ),
+                  LEVRE_SUP=_F(GROUP_MA='LEVREINF',),
                   );
 
 # Couronne 1, lissage par defaut (Leg-Leg)
