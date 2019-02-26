@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,12 +27,12 @@ implicit none
 !
 integer, intent(in) :: elem_dime
 integer, intent(in) :: nb_node_slav,  nb_node_mast
-real(kind=8), intent(out) :: elem_slav_init(elem_dime, nb_node_slav)
-real(kind=8), intent(out) :: elem_mast_init(elem_dime, nb_node_mast)
+real(kind=8), intent(out) :: elem_slav_init(nb_node_slav, elem_dime)
+real(kind=8), intent(out) :: elem_mast_init(nb_node_mast, elem_dime)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Contact (LAC) - Elementary computations
+! Contact - Elementary computations
 !
 ! Get initial geometry
 !
@@ -57,7 +57,7 @@ real(kind=8), intent(out) :: elem_mast_init(elem_dime, nb_node_mast)
 !
     do i_node_slav = 1, nb_node_slav
         do i_dime = 1, elem_dime          
-            elem_slav_init(i_dime, i_node_slav) =&
+            elem_slav_init(i_node_slav, i_dime) =&
                 zr(jv_geom+(i_node_slav-1)*elem_dime+i_dime-1) 
         end do
     end do
@@ -66,7 +66,7 @@ real(kind=8), intent(out) :: elem_mast_init(elem_dime, nb_node_mast)
 !
     do i_node_mast = 1, nb_node_mast
         do i_dime = 1, elem_dime
-            elem_mast_init(i_dime, i_node_mast) = &
+            elem_mast_init(i_node_mast, i_dime) = &
                 zr(jv_geom+nb_node_slav*elem_dime+(i_node_mast-1)*elem_dime+i_dime- 1)
         end do
     end do

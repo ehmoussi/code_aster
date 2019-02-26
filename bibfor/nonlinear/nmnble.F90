@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmnble(numins, modele, noma, numedd, ds_measure,&
-                  sddyna, sddisc, fonact, ds_contact,&
-                  valinc, solalg)
+subroutine nmnble(mesh     , model    , list_func_acti, sddisc    , nume_inst ,&
+                  sddyna   , sdnume   , nume_dof      , ds_measure, ds_contact,&
+                  hval_incr, hval_algo)
 !
 use NonLin_Datastructure_type
 !
@@ -31,124 +31,97 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/mmbouc.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmctce.h"
 #include "asterfort/nmctcl.h"
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
-#include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/nonlinInitDisp.h"
 !
-integer :: fonact(*)
-character(len=8) :: noma
-character(len=24) :: modele
-character(len=24) :: numedd
+integer, intent(in) :: list_func_acti(*)
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: model, nume_dof
 type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=19) :: sddyna, sddisc
-character(len=19) :: solalg(*), valinc(*)
-integer :: numins
+character(len=19), intent(in) :: sddyna, sddisc, sdnume
+character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+integer, intent(in) :: nume_inst
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGO - BOUCLE CONTACT)
+! MECA_NON_LINE - Algo
 !
-! BOUCLE CONTACT: GESTION DES CONTRAINTES ACTIVES
+! External loop management - Initializations for new loop
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  NOMA   : NOM DU MAILLAGE
-! IN  NUMINS : NUMERO D'INSTANT
-! IN  FONACT : FONCTIONNALITES ACTIVEES
+! In  model            : name of model
+! In  mesh             : name of mesh
+! IO  ds_contact       : datastructure for contact management
+! In  list_func_acti   : list of active functionnalities
 ! IO  ds_measure       : datastructure for measure and statistics management
-! In  ds_contact       : datastructure for contact management
-! IN  SDDYNA : SD DEDIEE A LA DYNAMIQUE
-! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  NUMEDD : NOM DU NUME_DDL
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
+! In  sddisc           : datastructure for time discretization
+! In  nume_inst        : index of current time step
+! In  sddyna           : datastructure for dynamic
+! In  sdnume           : datastructure for dof positions
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: neq
     integer :: ifm, niv
-    character(len=19) :: depmoi, depplu
-    character(len=19) :: depdel, ddepla
-    character(len=19) :: vitini, accini, vitplu, accplu
-    aster_logical :: lallv, leltc, ldyna
-    real(kind=8), pointer :: ddepl(:) => null()
-    real(kind=8), pointer :: depde(:) => null()
+    aster_logical :: l_all_verif, l_cont_elem, l_dyna
+    character(len=19) :: vite_curr, acce_curr
+    character(len=19) :: vite_init, acce_init
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call infdbg('CONTACT', ifm, niv)
-    leltc = isfonc(fonact,'ELT_CONTACT')
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    if (.not.leltc) goto 999
 !
-! --- INITIALISATIONS
+! - Active functionnalities
 !
-    call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
+    l_cont_elem = isfonc(list_func_acti,'ELT_CONTACT')   
+    l_dyna      = ndynlo(sddyna,'DYNAMIQUE')
 !
-    lallv = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
-    if (lallv) goto 999
+    if (l_cont_elem) then
+        l_all_verif = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
+        if (l_all_verif) then
+            goto 99
+        endif
+! ----- Display
+        if (niv .ge. 2) then
+            call utmess('I', 'CONTACT5_20')
+        endif
+! ----- Initializations of displacements for external loop management
+        call nonlinInitDisp(list_func_acti, sdnume   , nume_dof,&
+                            hval_algo     , hval_incr)
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+! ----- AFIN QUE LE VECTEUR DES FORCES D'INERTIE NE SOIT PAS MODIFIE AU
+! ----- COURS DE LA BOUCLE DES CONTRAINTES ACTIVES PAR L'APPEL A OP0070
+! ----- ON LE DUPLIQUE ET ON UTILISE CETTE COPIE FIXE (VITINI,ACCINI)
 !
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
-    call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
-    call nmchex(valinc, 'VALINC', 'VITPLU', vitplu)
-    call nmchex(valinc, 'VALINC', 'ACCPLU', accplu)
-    call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
-    call nmchex(solalg, 'SOLALG', 'DDEPLA', ddepla)
-!
-! - Display
-!
-    if (niv .ge. 2) then
-        call utmess('I', 'CONTACT5_20')
+        if (l_dyna) then
+            call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
+            call nmchex(hval_incr, 'VALINC', 'ACCPLU', acce_curr)
+            vite_init = ds_contact%sdcont_solv(1:14)//'.VITI'
+            acce_init = ds_contact%sdcont_solv(1:14)//'.ACCI'
+            call copisd('CHAMP_GD', 'V', vite_init, vite_curr)
+            call copisd('CHAMP_GD', 'V', acce_init, acce_curr)
+        endif
+! ----- Start timer for preparation of contact
+        call nmtime(ds_measure, 'Launch', 'Cont_Prep')
+! ----- Create elements for contact
+        call nmctcl(model, mesh, ds_contact)
+! ----- Create input fields for contact
+        call nmctce(model, mesh, ds_contact, sddyna, sddisc, nume_inst)
+! ----- Stop timer for preparation of contact
+        call nmtime(ds_measure, 'Stop', 'Cont_Prep')
+        call nmrinc(ds_measure, 'Cont_Prep')
     endif
 !
-! --- INITIALISATION DES CHAMPS DE DEPLACEMENT
-!
-    call copisd('CHAMP_GD', 'V', depmoi, depplu)
-    call jeveuo(depdel(1:19)//'.VALE', 'E', vr=depde)
-    call jeveuo(ddepla(1:19)//'.VALE', 'E', vr=ddepl)
-    call r8inir(neq, 0.d0, depde, 1)
-    call r8inir(neq, 0.d0, ddepl, 1)
-!
-! --- AFIN QUE LE VECTEUR DES FORCES D'INERTIE NE SOIT PAS MODIFIE AU
-! --- COURS DE LA BOUCLE DES CONTRAINTES ACTIVES PAR L'APPEL A OP0070
-! --- ON LE DUPLIQUE ET ON UTILISE CETTE COPIE FIXE (VITINI,ACCINI)
-!
-    if (ldyna) then
-        vitini = ds_contact%sdcont_solv(1:14)//'.VITI'
-        accini = ds_contact%sdcont_solv(1:14)//'.ACCI'
-        call copisd('CHAMP_GD', 'V', vitini, vitplu)
-        call copisd('CHAMP_GD', 'V', accini, accplu)
-    endif
-!
-! - Start timer for preparation of contact
-!
-    call nmtime(ds_measure, 'Launch', 'Cont_Prep')
-!
-! - Create elements for contact
-!
-    call nmctcl(modele, noma, ds_contact)
-!
-! - Create input fields for contact
-!
-    call nmctce(modele, noma, ds_contact, sddyna, sddisc,&
-                numins)
-!
-! - Stop timer for preparation of contact
-!
-    call nmtime(ds_measure, 'Stop', 'Cont_Prep')
-    call nmrinc(ds_measure, 'Cont_Prep')
-!
-999 continue
+99  continue
 !
 end subroutine

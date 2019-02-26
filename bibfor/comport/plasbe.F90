@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine plasbe(fami, kpg, ksp, typmod, imat,&
+subroutine plasbe(fami, kpg, ksp, typmod, imat, l_epsi_varc,&
                   crit, epsdt, depst, sigd, vind,&
                   opt, sigf, vinf, dsde,&
                   icomp, nvi, irteti)
@@ -166,6 +166,7 @@ implicit none
 !       PRODUITS TENSORIELS ET CONSERVATION DE LA SYMETRIE
 !
 !       ----------------------------------------------------------------
+    aster_logical, intent(in) :: l_epsi_varc
     integer :: imat, ndt, ndi, nr, nvi
     integer :: itmax, icomp
     integer :: nmat, irtet, irteti, nseui4
@@ -274,12 +275,12 @@ implicit none
 !
     call lcdedi(fami, kpg, ksp, nmat, materd,&
                 materf, tempd, tempf, tref, depst,&
-                epsdt, deps, epsd)
+                epsdt, deps, epsd, l_epsi_varc)
 !
 ! --    RETRAIT ENDOGENNE ET RETRAIT DE DESSICCATION
 !
     call lcdehy(fami, kpg, ksp, nmat, materd,&
-                materf, deps, epsd)
+                materf, deps, epsd, l_epsi_varc)
 !
 ! --    SEUIL A T > ETAT ELASTIQUE OU PLASTIQUE A T
 !

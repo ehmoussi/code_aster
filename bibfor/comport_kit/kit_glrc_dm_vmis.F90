@@ -235,7 +235,7 @@ implicit none
 !     --    POUR POUVOIR UTILISER NMISOT
                 typmod(1) = '3D  '
                 typmod(2) = '        '
-                call nmisot('RIGI', 1, 1, 3, typmod,&
+                call nmisot('RIGI', 1, 1, 3, typmod, ASTER_TRUE,&
                             imate, 'VMIS_ISOT_LINE  ', crbid, deps2d, sig2dm,&
                             vim(19), 'FULL_MECA       ', sig2dp, vip(19), tan3d,&
                             iret)

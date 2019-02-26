@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,6 +41,7 @@ implicit none
 #include "asterfort/mmCombLineMatr.h"
 #include "asterfort/mmCompMatrCont.h"
 #include "asterfort/mmCompMatrFric.h"
+#include "Contact_type.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -55,7 +56,7 @@ character(len=16), intent(in) :: option, nomte
     integer :: i, j, ij, jv_matr
     integer :: nne, nnm, nnl
     integer :: nddl, ndim, nbcps, nbdm
-    integer :: iresof, iresog, ialgoc, ialgof
+    integer :: i_reso_fric, i_reso_geom, ialgoc, ialgof
     integer :: ndexfr
     integer :: indco, indco_prev, indadhe_prev, indadhe2_prev
     character(len=8) :: typmae, typmam
@@ -146,14 +147,14 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get projections datas
 !
-    call mmGetProjection(iresog  , wpg     ,&
-                         xpc     , ypc     , xpr     , ypr     , tau1     , tau2     ,&
-                         xpc_prev, ypc_prev, xpr_prev, ypr_prev, tau1_prev, tau2_prev,wpg_prev)
+    call mmGetProjection(i_reso_geom, wpg     ,&
+                         xpc        , ypc     , xpr     , ypr     , tau1     , tau2     ,&
+                         xpc_prev   , ypc_prev, xpr_prev, ypr_prev, tau1_prev, tau2_prev,wpg_prev)
 !
 ! - Get algorithms
 !
     call mmGetAlgo(l_large_slip, ndexfr  , jeusup, lambds,&
-                   ialgoc      , ialgof  , iresof, iresog,&
+                   ialgoc      , ialgof  , i_reso_fric, i_reso_geom,&
                    lpenac      , lpenaf  ,&
                    lambds_prev , jeu_prev)
 !
@@ -166,17 +167,17 @@ character(len=16), intent(in) :: option, nomte
                              ffl  , jacobi)
 
     if (l_prev_cont .or. l_prev_fric) then
-        call mmGetShapeFunctions(laxis   , typmae  , typmam  , &
-                                 ndim    , nne     , nnm     , &
-                                 xpc_prev, ypc_prev, xpr_prev, ypr_prev,&
-                                 ffe_prev     , ffm_prev     , dffm_prev    , ddffm_prev   ,&
-                                 ffl_prev     , jacobi_prev)
+        call mmGetShapeFunctions(laxis   , typmae  , typmam   , &
+                                 ndim    , nne     , nnm      , &
+                                 xpc_prev, ypc_prev, xpr_prev , ypr_prev  ,&
+                                 ffe_prev, ffm_prev, dffm_prev, ddffm_prev,&
+                                 ffl_prev, jacobi_prev)
     endif
 !
 ! - Compute quantities
 !
-    call mmtppe(ndim     , nne      , nnm   , nnl     , nbdm  ,&
-                iresog   , l_large_slip, &
+    call mmtppe(ndim       , nne      , nnm   , nnl     , nbdm  ,&
+                i_reso_geom, l_large_slip, &
                 jeusup   ,&
                 tau1     , tau2     ,&
                 ffe      , ffm      , dffm  , ddffm   , ffl   ,&
@@ -191,10 +192,10 @@ character(len=16), intent(in) :: option, nomte
                 dnepmait1, dnepmait2)
     if (l_prev_cont .or. l_prev_fric) then
         call mmtppe(ndim          , nne      , nnm     , nnl     , nbdm  ,&
-                    iresog        , l_large_slip, &
+                    i_reso_geom, l_large_slip, &
                     jeusup   ,&
                     tau1_prev     , tau2_prev,&
-                    ffe_prev           , ffm_prev      , dffm_prev    , ddffm_prev   , ffl_prev   ,&
+                    ffe_prev      , ffm_prev      , dffm_prev    , ddffm_prev   , ffl_prev   ,&
                     jeu_prev , djeut_prev,&
                     dlagrc_prev   , dlagrf_prev,&
                     norm_prev     , mprojn_prev, mprojt_prev,&
@@ -208,9 +209,9 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get contact pressure
 !
-    call mmlagc(lambds, dlagrc, iresof, lambda)
+    call mmlagc(lambds, dlagrc, i_reso_fric, lambda)
     if (l_prev_cont .or. l_prev_fric) then
-        call mmlagc(lambds_prev, dlagrc_prev, iresof, lambda_prev)
+        call mmlagc(lambds_prev, dlagrc_prev, i_reso_fric, lambda_prev)
     endif
 !
 ! - Compute state of contact and friction
@@ -260,7 +261,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Compute matrices for contact
 !
-    call mmCompMatrCont(phase    , lpenac, iresog, &
+    call mmCompMatrCont(phase    , lpenac, i_reso_geom, &
                         nbdm     , &
                         ndim     , nne   , nnm   , nnl,&
                         wpg      , jacobi, coefac,&
@@ -273,7 +274,7 @@ character(len=16), intent(in) :: option, nomte
                         h        , hah   , &
                         matr_cont)
     if (l_prev_cont) then
-        call mmCompMatrCont(phase_prev , lpenac     , iresog, &
+        call mmCompMatrCont(phase_prev , lpenac     , i_reso_geom, &
                             nbdm       , &
                             ndim       , nne        , nnm        , nnl,&
                             wpg_prev        , jacobi_prev     , coefac_prev,&
@@ -292,7 +293,7 @@ character(len=16), intent(in) :: option, nomte
     if (leltf) then
         call mmCompMatrFric(phase      , l_large_slip,&
                             lpenaf     ,&
-                            iresog     , iresof      ,&
+                            i_reso_geom     , i_reso_fric      ,&
                             nbdm       , nbcps       , ndexfr,&
                             ndim       , nne         , nnm   , nnl   ,&
                             wpg        , jacobi      , coefac, coefaf,&
@@ -309,7 +310,7 @@ character(len=16), intent(in) :: option, nomte
         if (l_prev_fric) then
             call mmCompMatrFric(phase_prev , l_large_slip,&
                                 lpenaf     ,&
-                                iresog     , iresof      ,&
+                                i_reso_geom     , i_reso_fric      ,&
                                 nbdm       , nbcps       , ndexfr,&
                                 ndim       , nne         , nnm   , nnl   ,&
                                 wpg_prev        , jacobi_prev      , coefac_prev, coefaf_prev,&
@@ -339,7 +340,7 @@ character(len=16), intent(in) :: option, nomte
 ! - Copy
 !
     if ((lpenac.and.(.not.leltf)) .or.&
-        (leltf.and.(iresof.ne.0)) .or.&
+        (leltf.and.(i_reso_fric.eq.ALGO_NEWT)) .or.&
         (lpenaf.and.leltf)) then
         call jevech('PMATUNS', 'E', jv_matr)
         do j = 1, nddl

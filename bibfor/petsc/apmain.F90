@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -473,7 +473,7 @@ use lmp_module, only : lmp_update
             ASSERT(ierr.eq.0)
 !
             ndpro2 = high - low
-            call cpysol(nonu, rsolu, low, xx(xidx+1), ndpro2)
+            call cpysol(nomat, nonu, rsolu, low, xx(xidx+1), ndpro2)
 !
             call VecRestoreArray(x, xx, xidx, ierr)
             ASSERT(ierr.eq.0)

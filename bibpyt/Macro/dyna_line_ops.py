@@ -567,11 +567,12 @@ class DynaLineBasis:
                                      NUME_DDL_GENE=self.__getNumeDdlGene(),
                                      MATR_ASSE=matrix)
         return __matrixGen
-    def vectPhyToGen(self, vector):
+    def vectPhyToGen(self, vector, typVect = 'FORC'):
         """project a given vector to the gen basis"""
         __vectorGen = PROJ_VECT_BASE(BASE=self.get(),
                                      NUME_DDL_GENE=self.__getNumeDdlGene(),
-                                     VECT_ASSE=vector)
+                                     VECT_ASSE=vector,
+                                     TYPE_VECT=typVect)
         return __vectorGen
     def __getNumeDdlGene(self):
         """retrieve NUME_DDL_GENE corresponding to this basis"""
@@ -1030,7 +1031,7 @@ class DynaLineInitialState:
             if self.etat_init.has_key(key) and \
                self.etat_init[key].getType()[:7] == "CHAM_NO":
                 if self.__isBaseGene:
-                    __vectGen = self.dynaLineFem.dynaLineBasis.vectPhyToGen(self.etat_init[key])
+                    __vectGen = self.dynaLineFem.dynaLineBasis.vectPhyToGen(self.etat_init[key], key)
                     self.etat_init[key] = __vectGen
                 else:
                     __vect = self.dynaLineFem.asseToNumeddl(self.etat_init[key])

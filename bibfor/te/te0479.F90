@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ subroutine te0479(option, nomte)
         if (ndim .eq. 2) then
 !         -- CAS DES ELEMENTS 2D
             call dfdm2d(nno, kp, ipoids, idfde, zr(igeom),&
-                        poids, rbid81, rbid81)
+                        poids)
         else if (ndim.eq.1) then
 !         -- CAS DES ELEMENTS PEAU
             call vff2dn(ndim, nno, kp, ipoids, idfde,&

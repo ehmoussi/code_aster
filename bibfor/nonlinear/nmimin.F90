@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,8 +25,8 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/InitTableCvg.h"
-#include "asterfort/nmimpt.h"
-#include "asterfort/nmimpx.h"
+#include "asterfort/nonlinDSPrintInitTimeStep.h"
+#include "asterfort/nonlinDSPrintHeadTimeStep.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
 !
@@ -53,7 +53,6 @@ type(NL_DS_Print), intent(inout) :: ds_print
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,25 +61,16 @@ type(NL_DS_Print), intent(inout) :: ds_print
         call utmess('I', 'MECANONLINE13_31')
     endif
 !
-! - Initializations for convergence table
+! - Activations for convergence table
 !
     call InitTableCvg(list_func_acti, sdsuiv, ds_print)
 !
-! - Print or not ?
+! - Initializations for convergence table
 !
-    l_print = mod(nume_inst+1,ds_print%reac_print) .eq. 0
-    ds_print%l_print = l_print
+    call nonlinDSPrintInitTimeStep(ds_print)
 !
-! - Print separator line
+! - Print head for new step time
 !
-    if (l_print) then
-        call nmimpx(ds_print)
-    endif
-!
-! - Print head of convergence table
-!
-    if (l_print) then
-        call nmimpt(nume_inst, sddisc, ds_print)
-    endif
+    call nonlinDSPrintHeadTimeStep(sddisc, nume_inst, ds_print)
 !
 end subroutine

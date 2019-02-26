@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ real(kind=8), intent(out) :: mast_norm(3), slav_norm(3)
 !
 ! - Compute master element normal (at center)
 !
-    ASSERT(elem_mast_code .eq. 'SE2' .or. elem_mast_code .eq. 'TR3')
+    ASSERT(elem_mast_code .eq. 'SE2' .or. elem_mast_code .eq. 'TR3' .or.elem_mast_code .eq. 'QU4')
     call apelem_getcenter(elem_mast_code, ksi1_cent, ksi2_cent)
     call apnorm(elem_mast_nbnode, elem_mast_code, elem_dime, elem_mast_coor,&
                 ksi1_cent       , ksi2_cent     , mast_norm)
@@ -81,18 +81,18 @@ real(kind=8), intent(out) :: mast_norm(3), slav_norm(3)
     if (elem_slav_code .eq. 'TR3' .or.&
         elem_slav_code .eq. 'TR6') then
         elem_line_code   = 'TR3'
-        elem_line_nbnode = 3 
+        elem_line_nbnode = 3
     elseif (elem_slav_code .eq. 'QU4' .or.&
             elem_slav_code .eq. 'QU8' .or. &
             elem_slav_code .eq. 'QU9') then
         elem_line_code   = 'QU4'
-        elem_line_nbnode = 4  
+        elem_line_nbnode = 4
     elseif (elem_slav_code .eq. 'SE2' .or.&
             elem_slav_code .eq. 'SE3') then
         elem_line_code   = 'SE2'
         elem_line_nbnode = 2
     else
-        ASSERT(ASTER_FALSE) 
+        ASSERT(ASTER_FALSE)
     end if
 !
 ! - Compute slave element normal (at center)
@@ -105,4 +105,3 @@ real(kind=8), intent(out) :: mast_norm(3), slav_norm(3)
     endif
 !
 end subroutine
-

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,11 +32,9 @@ subroutine tailsd(nom, nomsd, val, nbval)
 !                 DIFFERENTES TAILLES
 ! IN  NBVAL   I   TAILLE DU VECTEUR D'ENTIERS VAL
 ! ---------------------------------------------------------------
-    character(len=8) :: k8bid
     character(len=19) :: sd19
     character(len=24) :: sd
     integer :: iret1, iret2, ibid
-    real(kind=8) :: rbid
     complex(kind=8) :: cbid
 !
 !  DETERMINE LE NOMBRE MAXIMUM DE CHAMPS ET DE PARAMETRES
@@ -56,8 +54,8 @@ subroutine tailsd(nom, nomsd, val, nbval)
         endif
         call jelira(sd19 // '.DESC', 'NOMMAX', val(1))
         call jelira(sd19 // '.NOVA', 'NOMMAX', val(2))
-        call rsorac(sd19, 'LONUTI', ibid, rbid, k8bid,&
-                    cbid, rbid, ' ', val(3), 1,&
+        call rsorac(sd19, 'LONUTI', 0, 0.d0, ' ',&
+                    cbid, 0.d0, ' ', val(3), 1,&
                     ibid)
 !
 !

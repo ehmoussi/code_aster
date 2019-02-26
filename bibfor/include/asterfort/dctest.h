@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@
 interface
     subroutine dctest(elem_code, elin_sub, elin_nbnode, elin_nbsub, elin_code)
         character(len=8), intent(in) :: elem_code
-        integer, intent(out) :: elin_sub(8,4)
-        integer, intent(out) :: elin_nbnode(8)
+        integer, intent(out) :: elin_sub(1,4)
+        integer, intent(out) :: elin_nbnode(1)
         integer, intent(out) :: elin_nbsub
-        character(len=8),intent(out) :: elin_code    
+        character(len=8),intent(out) :: elin_code
     end subroutine dctest
 end interface

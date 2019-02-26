@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,28 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nxresi(ther_crit_i, ther_crit_r, vec2nd   , cnvabt   , cnresi   ,&
-                  cn2mbr     , resi_rela  , resi_maxi, vnorm, conver )
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nxresi(vec2nd   , cnvabt   , cnresi  , cn2mbr  ,&
+                  resi_rela, resi_maxi, ieq_rela, ieq_maxi)
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterc/r8gaem.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: ther_crit_i(*)
-    real(kind=8), intent(in) :: ther_crit_r(*)
-    character(len=24), intent(in) :: vec2nd
-    character(len=24), intent(in) :: cnvabt
-    character(len=24), intent(in) :: cnresi
-    character(len=24), intent(in) :: cn2mbr
-    real(kind=8), intent(out) :: resi_rela
-    real(kind=8), intent(out) :: resi_maxi
-    real(kind=8), intent(out) :: vnorm
-    aster_logical, intent(out) :: conver
+character(len=24), intent(in) :: vec2nd, cnvabt, cnresi, cn2mbr
+real(kind=8)     , intent(out):: resi_rela, resi_maxi
+integer          , intent(out):: ieq_rela, ieq_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,9 +39,18 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  vec2nd           : applied loads
+! In  cnvabt           : BT.T LAMBDA for Dirichlet loads
+! In  cnresi           : non-linear residual
+! In  cn2mbr           : equilibrium residual (to evaluate convergence)
+! Out resi_rela        : value for RESI_GLOB_RELA
+! Out resi_maxi        : value for RESI_GLOB_MAXI
+! Out ieq_rela         : number of equation where RESI_GLOB_RELA is maximum
+! Out ieq_maxi         : number of equation where RESI_GLOB_MAXI is maximum
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    real(kind=8) :: vnorm, value
     real(kind=8), pointer :: v_cn2mbr(:) => null()
     real(kind=8), pointer :: v_vec2nd(:) => null()
     real(kind=8), pointer :: v_cnvabt(:) => null()
@@ -57,10 +59,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resi_rela  = 0.d0
-    resi_maxi  = 0.d0
-    vnorm      = 0.d0
-    conver     = .false.
+    resi_rela = 0.d0
+    resi_maxi = -r8gaem()
+    ieq_rela  = 0
+    ieq_maxi  = 0
+    vnorm     = 0.d0
 !
 ! - Access to vectors
 !
@@ -76,29 +79,18 @@ implicit none
         v_cn2mbr(i_equa) = v_vec2nd(i_equa) - v_cnresi(i_equa) - v_cnvabt(i_equa)
         resi_rela        = resi_rela + ( v_cn2mbr(i_equa) )**2
         vnorm            = vnorm + ( v_vec2nd(i_equa) - v_cnvabt(i_equa) )**2
-        resi_maxi        = max( resi_maxi,abs( v_cn2mbr(i_equa) ) )
+        value            = abs(v_cn2mbr(i_equa))
+        if (value .ge. resi_maxi) then
+            resi_maxi = value
+            ieq_maxi  = i_equa
+        endif
     end do
 !
 ! - Compute relative
 !
+    ieq_rela = ieq_maxi
     if (vnorm .gt. 0.d0) then
         resi_rela = sqrt( resi_rela / vnorm )
-    endif
-!
-! - Evaluate
-!
-    if (ther_crit_i(1) .ne. 0) then
-        if (resi_maxi .lt. ther_crit_r(1)) then
-            conver = .true.
-        else
-            conver = .false.
-        endif
-    else
-        if (resi_rela .lt. ther_crit_r(2)) then
-            conver = .true.
-        else
-            conver = .false.
-        endif
     endif
 !
 end subroutine

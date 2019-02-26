@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -314,31 +314,31 @@ TEST_FONCTION(# DYNA_LINE : F_ES
               VALEUR=(_F(VALE_REFE=1.E-2,
                          PRECISION=5.E-2,
                          REFERENCE='ANALYTIQUE',
-                         VALE_CALC=9.811052052689E-03,
+                         VALE_CALC=9.999883729946E-03,
                          VALE_PARA=2.0,
                          FONCTION=F_ES,),
                       _F(VALE_REFE=-1.E-2,
                          PRECISION=5.E-2,
                          REFERENCE='ANALYTIQUE',
-                         VALE_CALC=-0.01049192109356,
+                         VALE_CALC=-9.999848874655E-03,
                          VALE_PARA=6.0,
                          FONCTION=F_ES,),
                       _F(VALE_REFE=1.E-2,
                          PRECISION=6.E-2,
                          REFERENCE='ANALYTIQUE',
-                         VALE_CALC=9.447050059545E-03,
+                         VALE_CALC=9.999902314109E-03,
                          VALE_PARA=10.0,
                          FONCTION=F_ES,),
                       _F(VALE_REFE=-1.E-2,
                          PRECISION=5.E-2,
                          REFERENCE='ANALYTIQUE',
-                         VALE_CALC=-0.01036364915865,
+                         VALE_CALC=-9.999855237058E-03,
                          VALE_PARA=14.0,
                          FONCTION=F_ES,),
                       _F(VALE_REFE=1.E-2,
                          PRECISION=5.E-2,
                          REFERENCE='ANALYTIQUE',
-                         VALE_CALC=0.01000863080201,
+                         VALE_CALC=9.999873975236E-03,
                          VALE_PARA=18.0,
                          FONCTION=F_ES,),
                       ),

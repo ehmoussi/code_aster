@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,15 +19,21 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine lcstco(l_previous, l_upda_jaco  ,&
-                      lagrc_prev, lagrc_curr   ,&
-                      gap_prev  , gap_curr     ,&
-                      indi_cont , l_norm_smooth)
-        aster_logical, intent(out) :: l_previous
-        real(kind=8), intent(out) :: lagrc_curr, lagrc_prev
-        real(kind=8), intent(out) :: gap_curr, gap_prev
+    subroutine lcstco(l_upda_jaco , l_norm_smooth, i_reso_geom ,&
+                      lagrc_curr  , gap_curr     ,&
+                      indi_cont   , &
+                      gapi        , nmcp         ,&
+                      nb_poin_inte, poin_inte_sl , poin_inte_ma)
         aster_logical, intent(out) :: l_upda_jaco
-        integer, intent(out) :: indi_cont
         aster_logical, intent(out) :: l_norm_smooth
+        integer, intent(out) :: i_reso_geom
+        real(kind=8), intent(out) :: lagrc_curr
+        real(kind=8), intent(out) :: gap_curr
+        integer, intent(out) :: indi_cont
+        real(kind=8), intent(out) :: gapi
+        integer, intent(out) :: nmcp
+        integer, intent(out) :: nb_poin_inte
+        real(kind=8), intent(out) :: poin_inte_sl(16)
+        real(kind=8), intent(out) :: poin_inte_ma(16)
     end subroutine lcstco
 end interface

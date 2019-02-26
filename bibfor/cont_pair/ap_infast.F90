@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/apcoor.h"
-#include "asterfort/apdcma.h"
+#include "asterfort/aptype.h"
 #include "asterfort/prjint.h"
 #include "asterfort/gt_linoma.h"
 #include "asterfort/gtctma.h"
@@ -87,16 +87,15 @@ integer, intent(in) :: i_zone
     character(len=24) :: conx_inve
     character(len=8) :: elem_slav_type, elem_slav_code, knuzo
     real(kind=8) :: elem_slav_coor(27)
-    integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
+    integer ::  elin_slav_nbnode
     integer :: elem_mast_nbnode, elem_mast_dime, elem_mast_nume, elem_mast_indx
     character(len=8) :: elem_mast_type, elem_mast_code, elem_slav_name, elem_mast_name
     real(kind=8) :: elem_mast_coor(27)
-    integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
+    integer :: elin_mast_nbnode
     character(len=8) :: elin_mast_code, elin_slav_code
-    real(kind=8) :: elin_mast_coor(27), elin_slav_coor(27)
     integer :: slav_indx_mini, mast_indx_mini
     integer :: jv_geom
-    integer :: i_elem_slav, i_elem_mast, i_dime, i_elin_mast, i_elin_slav, i_node
+    integer :: i_elem_slav, i_elem_mast
     integer :: nb_poin_inte, nb_node_mast, nume_node_cl, nb_el_ma_ax
     real(kind=8) :: poin_inte(32), inte_weight, center(3)
     integer, pointer :: v_mesh_typmail(:) => null()
@@ -165,24 +164,35 @@ integer, intent(in) :: i_zone
 ! --------- Get informations about slave element
 !
             call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_slav_type)
-            call apcoor(jv_geom       , elem_slav_type  ,&
-                        elem_slav_nume, elem_slav_coor, elem_slav_nbnode,&
-                        elem_slav_code, elem_slav_dime, v_mesh_connex   ,&
-                        v_connex_lcum)
+            call aptype(elem_slav_type  ,&
+                        elem_slav_nbnode, elem_slav_code, elem_slav_dime)
+!
+! --------- Get coordinates of slave element
+!
+            call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
+                        elem_slav_nume, elem_slav_nbnode, elem_slav_dime,&
+                        elem_slav_coor)
 !
 ! --------- Cut slave element in linearized sub-elements (SEG2 or TRIA3)
 !
-            call apdcma(elem_slav_code,&
-                        elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub, elin_slav_code)
-            if (debug) then
-                write(*,*) "Cut slave: ", elin_slav_nbsub
+            if (elem_slav_code .eq. "TR6") then
+                elin_slav_code   = "TR3"
+                elin_slav_nbnode = 3
+            elseif(elem_slav_code .eq. "QU8" .or. elem_slav_code .eq. "QU9") then
+                elin_slav_code   = "QU4"
+                elin_slav_nbnode = 4
+            elseif(elem_slav_code .eq. "SE3") then
+                elin_slav_code   = "SE2"
+                elin_slav_nbnode = 2
+            else
+                elin_slav_code   = elem_slav_code
+                elin_slav_nbnode = elem_slav_nbnode
             endif
 !
 ! --------- Find the closest master node from center
 !
             call gtctma(elem_slav_coor, elem_slav_nbnode,elem_slav_code, elem_slav_dime, center)
             call gtclno(jv_geom, list_node_mast, nb_node_mast, center ,nume_node_cl)
-
 !
 ! --------- Loop on master elements next to the closest master node
 !
@@ -207,74 +217,56 @@ integer, intent(in) :: i_zone
                         write(*,*) "Master element not yet tracked"
                     endif
 !
-! ----------------- Get informations about master element! - Access to mesh
+! ----------------- Get informations about master element
 !
                     call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_mast_type)
-                    call apcoor(jv_geom       , elem_mast_type  ,&
-                                elem_mast_nume, elem_mast_coor, elem_mast_nbnode,&
-                                elem_mast_code, elem_mast_dime, v_mesh_connex   ,&
-                                v_connex_lcum)
+                    call aptype(elem_mast_type  ,&
+                                elem_mast_nbnode, elem_mast_code, elem_mast_dime)
+!
+! ----------------- Get coordinates of master element
+!
+                    call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
+                                elem_mast_nume, elem_mast_nbnode, elem_mast_dime,&
+                                elem_mast_coor)
 !
 ! ----------------- Cut master element in linearized sub-elements (SEG2 or TRIA3)
 !
-                    call apdcma(elem_mast_code,&
-                                elin_mast_sub , elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
-                    if (debug) then
-                        write(*,*) "Cut master: ", elin_mast_nbsub
+                    if (elem_mast_code .eq. "TR6") then
+                        elin_mast_code   = "TR3"
+                        elin_mast_nbnode = 3
+                    elseif(elem_mast_code .eq. "QU8" .or. elem_mast_code .eq. "QU9") then
+                        elin_mast_code   = "QU4"
+                        elin_mast_nbnode = 4
+                    elseif(elem_mast_code .eq. "SE3") then
+                        elin_mast_code   = "SE2"
+                        elin_mast_nbnode = 2
+                    else
+                        elin_mast_code   = elem_mast_code
+                        elin_mast_nbnode = elem_mast_nbnode
                     endif
 !
-! ----------------- Loop on linearized master sub-elements
+! ----------------- Projection/intersection of elements in slave parametric space
 !
-                    do i_elin_mast = 1, elin_mast_nbsub
+                    call prjint(pair_tole     , elem_mast_dime,&
+                                elin_slav_nbnode, elem_slav_coor, elin_slav_code,&
+                                elin_mast_nbnode, elem_mast_coor, elin_mast_code,&
+                                poin_inte     , inte_weight   , nb_poin_inte)
 !
-! --------------------- Get coordinates for current linearized master sub-element
+! ----------------- Set start elements
 !
-                        elin_mast_coor(:) = 0.d0
-                        do i_node = 1, elin_mast_nbnode(i_elin_mast)
-                            do i_dime = 1, elem_slav_dime
-                                elin_mast_coor(3*(i_node-1)+i_dime) =&
-                                    elem_mast_coor(3*(elin_mast_sub(i_elin_mast,i_node)-1)+i_dime)
-                            end do
-                        end do
-!
-! --------------------- Loop on linearized slave sub-elements
-!
-                        do i_elin_slav = 1, elin_slav_nbsub
-!
-! ------------------------- Get coordinates for current linearized slave sub-element
-!
-                            elin_slav_coor(:) = 0.d0
-                            do i_node = 1, elin_slav_nbnode(i_elin_slav)
-                                do i_dime = 1, elem_slav_dime
-                                    elin_slav_coor(3*(i_node-1)+i_dime) =&
-                                      elem_slav_coor(3*(elin_slav_sub(i_elin_slav,i_node)-1)+i_dime)
-                                end do
-                            end do
-!
-! ------------------------- Projection/intersection of elements in slave parametric space
-!
-                        call prjint(pair_tole     , elem_mast_dime,&
-                                    elin_slav_nbnode(i_elin_slav) , elin_slav_coor, elin_slav_code,&
-                                    elin_mast_nbnode(i_elin_mast) , elin_mast_coor, elin_mast_code,&
-                                    poin_inte     , inte_weight   , nb_poin_inte  )
-!
-! ------------------------- Set start elements
-!
-                            if (inte_weight .gt. 100*pair_tole) then
-                                elem_mast_start(1)             = elem_mast_nume
-                                nb_mast_start                  = 1
-                                elem_slav_start(1)             = elem_slav_nume
-                                nb_slav_start                  = 1
-                                elem_slav_flag(elem_slav_indx) = 1
-                                call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
-                                call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
-                                if (debug) then
-                                    write(*,*)"Depart trouvé(M/S): ",elem_mast_name,elem_slav_name
-                                endif
-                                goto 100
-                            end if
-                        end do
-                    end do
+                    if (inte_weight .gt. 100*pair_tole) then
+                        elem_mast_start(1)             = elem_mast_nume
+                        nb_mast_start                  = 1
+                        elem_slav_start(1)             = elem_slav_nume
+                        nb_slav_start                  = 1
+                        elem_slav_flag(elem_slav_indx) = 1
+                        if (debug) then
+                            call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
+                            call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
+                            write(*,*)"Depart trouvé(M/S): ",elem_mast_name,elem_slav_name
+                        endif
+                        goto 100
+                    end if
                 else
                     if (debug) then
                         write(*,*) "Master element not yet tracked"

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -67,6 +67,8 @@ aster_logical, intent(out) :: l_inter
     real(kind=8) :: dist, vect_pm(3)
     real(kind=8) :: tevapr, dist_sign, sig
     integer :: i_node, i_dime
+    character(len=8) :: elin_slav_code
+    integer :: elin_slav_nbnode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -86,7 +88,14 @@ aster_logical, intent(out) :: l_inter
         endif
 ! ----- Compute distance from point to its orthogonal projection
         dist = 0.d0
-        call apdist(elem_slav_code, elem_slav_coor, elem_slav_nbnode, ksi1, ksi2,&
+        if (elem_slav_code .eq. "QU4") then
+            elin_slav_code   = "TR3"
+            elin_slav_nbnode =  3
+        else
+            elin_slav_code   = elem_slav_code
+            elin_slav_nbnode = elem_slav_nbnode
+        end if
+        call apdist(elin_slav_code, elem_slav_coor, elin_slav_nbnode, ksi1, ksi2,&
                     noma_coor     , dist          , vect_pm)
 ! ----- Sign of colinear product VECT_PM . NORMAL(slave)
         sig = 0.d0
@@ -99,7 +108,7 @@ aster_logical, intent(out) :: l_inter
                   vect_pm(2)*slav_norm(2)
         else
             ASSERT(ASTER_FALSE)
-        end if       
+        end if
         dist_sign = -sign(dist,sig)
 ! ----- Sign of colinear product VECT_PM . NORMAL(master)
         if (elem_dime .eq. 3) then
@@ -128,8 +137,7 @@ aster_logical, intent(out) :: l_inter
                 l_inter = ASTER_FALSE
                 exit
             end if
-        end if     
+        end if
     end do
 !
 end subroutine
-

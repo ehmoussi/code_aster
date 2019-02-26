@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine mmCompMatrCont(phase    , l_pena_cont, iresog, &
+subroutine mmCompMatrCont(phase    , l_pena_cont, i_reso_geom, &
                           nbdm     , &
                           ndim     , nne        , nnm   , nnl   ,&
                           wpg      , jacobi     , coefac,&
@@ -36,10 +36,11 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/mmmtas.h"
 #include "asterfort/mmgnuu.h"
+#include "Contact_type.h"
 !
 character(len=4), intent(in) :: phase
 aster_logical, intent(in) :: l_pena_cont
-integer, intent(in) :: iresog
+integer, intent(in) :: i_reso_geom
 integer, intent(in) :: nbdm
 integer, intent(in) :: ndim, nne, nnm, nnl
 real(kind=8), intent(in) :: wpg, jacobi, coefac
@@ -63,9 +64,7 @@ real(kind=8), intent(inout) :: matr_cont(81, 81)
 !                        'SANS' - No contact
 !                        'CONT' - Contact
 ! In  l_pena_cont      : flag for penalized contact
-! In  iresog           : algorithm for geometry
-!                        0 - Fixed point
-!                        1 - Newton
+! In  i_reso_geom      : algorithm for geometry
 ! In  nbdm             : number of components by node for all dof
 ! In  ndim             : dimension of problem (2 or 3)
 ! In  nne              : number of slave nodes
@@ -185,7 +184,7 @@ real(kind=8), intent(inout) :: matr_cont(81, 81)
 ! - Non-linear geometric contribution
 !
     if (phase_cont .eq. 'CONT') then
-        if (iresog .eq. 1) then
+        if (i_reso_geom .eq. ALGO_NEWT) then
             call mmgnuu(ndim  , nne   , nnm   ,&
                         wpg   , ffe   , ffm   , dffm  ,&
                         jacobi, coefac, jeu   , dlagrc,&

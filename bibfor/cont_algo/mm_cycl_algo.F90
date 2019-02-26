@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+! aslint: disable=W1504
+!
 subroutine mm_cycl_algo(ds_contact,  l_frot_zone, &
                   l_glis_init, type_adap, zone_index, i_cont_poin, &
                   indi_cont_eval, indi_frot_eval, dist_cont_curr,  &
@@ -36,34 +38,32 @@ implicit none
 #include "asterfort/cfdisi.h"
 #include "asterfort/search_opt_coef.h"
 #include "asterfort/bussetta_algorithm.h"
+#include "Contact_type.h"
 !#include "asterfort/proscal.h"
 !
-! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-! aslint: disable=W1504
-!
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    aster_logical, intent(in) :: l_frot_zone
-    aster_logical, intent(in) :: l_glis_init
-    aster_logical, intent(in) :: l_pena_frot
-    aster_logical, intent(in) :: l_pena_cont
-    integer, intent(inout) :: type_adap
-    integer, intent(in) :: i_cont_poin
-    integer, intent(in) :: zone_index
-    integer, intent(inout) :: indi_cont_eval
-    integer, intent(inout) :: indi_frot_eval
-    real(kind=8), intent(in) :: vale_pene
-    real(kind=8), intent(in) :: glis_maxi
-    real(kind=8), intent(inout) :: dist_cont_curr
-    real(kind=8), intent(inout) :: pres_cont_curr
-    real(kind=8), intent(inout) :: dist_frot_curr(3)
-    real(kind=8), intent(in) :: pres_frot_curr(3)
-    real(kind=8), pointer :: v_sdcont_cychis(:)
-    real(kind=8), pointer :: v_sdcont_cyccoe(:)
-    integer, pointer :: v_sdcont_cyceta(:)
-    integer, intent(out) :: indi_cont_curr
-    integer, intent(out) :: indi_frot_curr
-    integer, intent(out) :: ctcsta
-    aster_logical, intent(out) :: mmcvca
+type(NL_DS_Contact), intent(inout) :: ds_contact
+aster_logical, intent(in) :: l_frot_zone
+aster_logical, intent(in) :: l_glis_init
+aster_logical, intent(in) :: l_pena_frot
+aster_logical, intent(in) :: l_pena_cont
+integer, intent(inout) :: type_adap
+integer, intent(in) :: i_cont_poin
+integer, intent(in) :: zone_index
+integer, intent(inout) :: indi_cont_eval
+integer, intent(inout) :: indi_frot_eval
+real(kind=8), intent(in) :: vale_pene
+real(kind=8), intent(in) :: glis_maxi
+real(kind=8), intent(inout) :: dist_cont_curr
+real(kind=8), intent(inout) :: pres_cont_curr
+real(kind=8), intent(inout) :: dist_frot_curr(3)
+real(kind=8), intent(in) :: pres_frot_curr(3)
+real(kind=8), pointer :: v_sdcont_cychis(:)
+real(kind=8), pointer :: v_sdcont_cyccoe(:)
+integer, pointer :: v_sdcont_cyceta(:)
+integer, intent(out) :: indi_cont_curr
+integer, intent(out) :: indi_frot_curr
+integer, intent(out) :: ctcsta
+aster_logical, intent(out) :: mmcvca
 !
 ! ---------------------------------------------------------------
 !
@@ -114,8 +114,6 @@ implicit none
     real(kind=8) :: alpha_frot_matr=0.0, alpha_frot_vect=0.0
     real(kind=8) :: coef_opt=0.0,pres_cont(2)=0.0, dist_cont(2)=0.0
     real(kind=8) :: coef_bussetta=0.0, dist_max=0.0, coe1=0.
-    integer      ::  i_algo_cont=0
-    integer :: i_reso_frot=0
     integer :: n_cychis
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
     real(kind=8) ::  coef_tmp
@@ -127,7 +125,7 @@ implicit none
 
 
 
-
+    i_reso_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_RESO_CONT')
 !
 ! ---------------------------------------------------------------------
 ! - Initializations
@@ -152,10 +150,6 @@ implicit none
     treatment =  ((type_adap .eq. 4) .or. (type_adap .eq. 5) .or. &
                   (type_adap .eq. 6) .or.&
                   (type_adap .eq. 7 ) .or. (type_adap .eq. 11 ))
-    i_reso_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_RESO_CONT')
-    
-    i_reso_frot  = cfdisi(ds_contact%sdcont_defi,'ALGO_FROT')
-    i_algo_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_CONT')
 
     if (nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24)) .ne. &
         nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+24))) then
@@ -298,7 +292,7 @@ implicit none
                                        indi, pres_cont, dist_cont, &
                                        coef_opt,coef_found)
        if (coef_found) then
-           if (i_reso_cont .ne. 0) then
+           if (i_reso_cont .eq. ALGO_NEWT) then
                indi_cont_curr =  indi(1)
                indi_cont_prev =  indi(2)  
                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
