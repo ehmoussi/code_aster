@@ -141,6 +141,7 @@ RIGI_MECA_TANG = Option(
         SP.PMATUUR,
         SP.PVECTUR,
         SP.PCOPRED,
+        SP.PCODRET,
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
