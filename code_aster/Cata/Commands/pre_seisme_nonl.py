@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -84,21 +84,21 @@ PRE_SEISME_NONL = MACRO(nom="PRE_SEISME_NONL",
                  sd_prod=pre_seisme_nonl_sdprod,
                  fr=tr("description"),
                  reentrant='n',
-                 AFFE_MODELE = FACT(statut='d',
+                 AFFE_MODELE = FACT(statut='f',
                      regles=AFFE_MODELE.regles,
                      **AFFE_MODELE.entites
                                     ),
-                 AFFE_MATERIAU = FACT(statut='d',
+                 AFFE_MATERIAU = FACT(statut='f',
                      regles=AFFE_MATERIAU.regles,
                      **AFFE_MATERIAU.entites
                                     ),
 
-                 AFFE_CARA_ELEM = FACT(statut='d',
+                 AFFE_CARA_ELEM = FACT(statut='f',
                      regles=AFFE_CARA_ELEM.regles,
                      **affe_cara_elem_keywords()
                                     ),
 
-                 AFFE_CHAR_MECA = FACT(statut='d',
+                 AFFE_CHAR_MECA = FACT(statut='f',
                      regles=AFFE_CHAR_MECA.regles,
                      **affe_char_meca_keywords()
                                     ),

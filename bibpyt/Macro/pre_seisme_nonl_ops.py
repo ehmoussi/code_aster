@@ -41,7 +41,6 @@ from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
 from Noyau.N_types import force_list
 from Noyau.N_utils import AsType
 from Utilitai.partition import MAIL_PY
-from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import ASSERT, UTMESS
 
 
@@ -566,7 +565,7 @@ class StatDyna(object):
         self.cara_elem = self.set_from_resu('caraele', self.resu_snl)
         self.coef_amor = properties['STAT_DYNA']['COEF_AMOR']
 
-        self.charges = properties['STAT_DYNA']['EXCIT']
+        self.charges = list(properties['STAT_DYNA']['EXCIT'])
         self.chsol = properties['STAT_DYNA']['FORCE_SOL']
 
         if properties['STAT_DYNA']['COMPORTEMENT']:
@@ -582,17 +581,20 @@ class StatDyna(object):
         self.base_modale = properties['STAT_DYNA']['BASE_MODALE']
         self.UL_impe_freq = properties['STAT_DYNA']['UNITE_IMPE_FREQ']
 
-        UL = UniteAster()
-        if properties['STAT_DYNA']['UNITE_IMPE_TEMPS']['UNITE_RESU_RIGI']:
-            self.UL_impe_temps_K = properties['STAT_DYNA']['UNITE_IMPE_TEMPS']['UNITE_RESU_RIGI']
-            fid = open(UL.Nom(self.UL_impe_temps_K), 'r')
-        if properties['STAT_DYNA']['UNITE_IMPE_TEMPS']['UNITE_RESU_AMOR']:
-            self.UL_impe_temps_C = properties['STAT_DYNA']['UNITE_IMPE_TEMPS']['UNITE_RESU_AMOR']
-            fid = open(UL.Nom(self.UL_impe_temps_K), 'r')
-        if properties['STAT_DYNA']['UNITE_IMPE_TEMPS']['UNITE_RESU_MASS']:
-            self.UL_impe_temps_M = properties['STAT_DYNA']['UNITE_IMPE_TEMPS']['UNITE_RESU_MASS']
-            fid = open(UL.Nom(self.UL_impe_temps_K), 'r')
-        UL.EtatInit()
+        from code_aster.RunManager.LogicalUnit import LogicalUnitFile
+        uniteImpeTemps = properties['STAT_DYNA']['UNITE_IMPE_TEMPS'][0]
+        if uniteImpeTemps['UNITE_RESU_RIGI']:
+            self.UL_impe_temps_K = uniteImpeTemps['UNITE_RESU_RIGI']
+            filename = LogicalUnitFile.filename_from_unit(self.UL_impe_temps_K)
+            fid = open(filename, 'r')
+        if uniteImpeTemps['UNITE_RESU_AMOR']:
+            self.UL_impe_temps_C = uniteImpeTemps['UNITE_RESU_AMOR']
+            filename = LogicalUnitFile.filename_from_unit(self.UL_impe_temps_C)
+            fid = open(filename, 'r')
+        if uniteImpeTemps['UNITE_RESU_MASS']:
+            self.UL_impe_temps_M = uniteImpeTemps['UNITE_RESU_MASS']
+            filename = LogicalUnitFile.filename_from_unit(self.UL_impe_temps_M)
+            fid = open(filename, 'r')
 
         data = fid.readline().split()
         fid.close()
@@ -608,13 +610,14 @@ class StatDyna(object):
     def set_from_resu(self, what, resu):
         """Extract a parameter from a result"""
         assert what in ('mesh', 'model', 'caraele', 'mater')
-        key, typ = {'mesh': ('NOM_MAILLA', maillage_sdaster),
-                    'model': ('NOM_MODELE', modele_sdaster),
-                    'caraele': ('CARA_ELEM', cara_elem),
-                    'mater': ('CHAM_MATER', cham_mater)
-                    }[what]
-        nom_co = aster.dismoi(key, resu.nom, 'RESULTAT', 'F')[2].strip()
-        return self.parent.get_concept_by_type(nom_co, typ)
+        if what == "mesh":
+            return resu.getMesh()
+        elif what == "model":
+            return resu.getModel()
+        elif what == "caraele":
+            return resu.getElementaryCharacteristics()
+        elif what == "mater":
+            return resu.getMaterialOnMesh()
 
     def etapeStatique(self):
         """Execute static calculation"""
@@ -822,7 +825,7 @@ class StatDyna(object):
                            INFO = 1,);
 
         lchar = []
-        for elem in self.charges.List_F():
+        for elem in self.charges:
             lchar.append(elem['CHARGE'])
 
         _rigiEle = CALC_MATR_ELEM( MODELE = self.modele ,
@@ -1134,7 +1137,7 @@ class Mesh(object):
         """Count the number of fictitious cells and nodes to add to the mesh"""
         if self.macro_elem:
             mael = self.macro_elem.get_mael()
-            Nb_no = len(mael._get_sdj().LINO.get())
+            Nb_no = mael.getNumberOfNodes()
         else:
             if self.param['PRE_CALC_MISS']['NMAX_MODE_IFS']:
                 nb_modes_IFS = self.param['PRE_CALC_MISS']['NMAX_MODE_IFS']

@@ -30,17 +30,11 @@
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/Tools.h"
 
-bool ResultsContainerInstance::allocate( int nbRanks ) {
-    std::string base( JeveuxMemoryTypesNames[getMemoryType()] );
-    ASTERINTEGER nbordr = nbRanks;
-    CALLO_RSCRSD( base, getName(), getType(), &nbordr );
-    _nbRanks = nbRanks;
-    return true;
-};
-
 void
 ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCharacteristicsPtr &cara,
                                                         int rank ) {
+    if( !cara )
+        throw std::runtime_error( "ElementaryCharacteristics is empty" );
     _mapElemCara[rank] = cara;
     ASTERINTEGER rang = rank;
     std::string type( "CARAELEM" );
@@ -53,21 +47,6 @@ void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr &load,
     ASTERINTEGER rang = rank;
     std::string type( "EXCIT" );
     CALLO_RSADPA_ZK24_WRAP( getName(), &rang, load->getName(), type );
-};
-
-ListOfLoadsPtr ResultsContainerInstance::getListOfLoads( int rank ) {
-    auto curIter = _mapLoads.find( rank );
-    if ( curIter == _mapLoads.end() )
-        throw std::runtime_error( "Rank not find" );
-    return ( *curIter ).second;
-};
-
-ElementaryCharacteristicsPtr
-ResultsContainerInstance::getElementaryCharacteristics( int rank ) {
-    auto curIter = _mapElemCara.find( rank );
-    if ( curIter == _mapElemCara.end() )
-        throw std::runtime_error( "Rank not find" );
-    return ( *curIter ).second;
 };
 
 void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr &mater,
@@ -92,6 +71,32 @@ void ResultsContainerInstance::addModel( const ModelPtr &model,
     _fieldBuidler.addFiniteElementDescriptor( fed );
 };
 
+void ResultsContainerInstance::addTimeValue( double value, int rank ) {
+    ASTERINTEGER rang = rank;
+    std::string type( "INST" );
+    CALLO_RSADPA_ZR_WRAP( getName(), &rang, &value, type );
+};
+
+bool ResultsContainerInstance::allocate( int nbRanks ) {
+    std::string base( JeveuxMemoryTypesNames[getMemoryType()] );
+    ASTERINTEGER nbordr = nbRanks;
+    CALLO_RSCRSD( base, getName(), getType(), &nbordr );
+    _nbRanks = nbRanks;
+    return true;
+};
+
+void ResultsContainerInstance::appendElementaryCharacteristicsOnAllRanks
+    ( const ElementaryCharacteristicsPtr& cara )
+{
+    _serialNumber->updateValuePointer();
+    ASTERINTEGER nbRanks = _serialNumber->usedSize();
+    for ( int rank = 0; rank < nbRanks; ++rank ) {
+        const ASTERINTEGER iordr = ( *_serialNumber )[rank];
+        if ( _mapElemCara.find( iordr ) == _mapElemCara.end() )
+            addElementaryCharacteristics( cara, iordr );
+    }
+};
+
 void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr &mater ) {
     _serialNumber->updateValuePointer();
     ASTERINTEGER nbRanks = _serialNumber->usedSize();
@@ -112,10 +117,76 @@ void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr &model ) {
     }
 };
 
-MaterialOnMeshPtr
-ResultsContainerInstance::getMaterialOnMesh( int rank ) {
-    auto curIter = _mapMaterial.find( rank );
-    if ( curIter == _mapMaterial.end() )
+BaseDOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering() {
+    std::string resuName( getName() );
+    std::string name( "12345678.00000          " );
+    ASTERINTEGER a = 10, b = 14;
+    CALLO_GNOMSD( resuName, name, &a, &b );
+    DOFNumberingPtr retour( new DOFNumberingInstance( name.substr( 0, 14 ) ) );
+    _listOfDOFNum.push_back( retour );
+    return retour;
+};
+
+FieldOnNodesDoublePtr
+ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
+                                                      const int rank ) {
+    if ( rank > _nbRanks || rank <= 0 )
+        throw std::runtime_error( "Order number out of range" );
+    ASTERINTEGER retour;
+    retour = 0;
+    const ASTERINTEGER rankLong = rank;
+    std::string null( " " );
+    std::string returnName( 19, ' ' );
+    CALLO_RSEXCH( null, getName(), name, &rankLong, returnName, &retour );
+    CALLO_RSNOCH( getName(), name, &rankLong );
+    std::string bis( returnName.c_str(), 19 );
+    FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
+
+    auto curIter = _dictOfVectorOfFieldsNodes.find( name );
+    if ( curIter == _dictOfVectorOfFieldsNodes.end() ) {
+        _dictOfVectorOfFieldsNodes[name] = VectorOfFieldsNodes( _nbRanks );
+    }
+    _dictOfVectorOfFieldsNodes[name][rank - 1] = result;
+    return result;
+};
+
+#ifdef _USE_MPI
+BaseDOFNumberingPtr ResultsContainerInstance::getEmptyParallelDOFNumbering() {
+    std::string resuName( getName() );
+    std::string name( "12345678.00000          " );
+    ASTERINTEGER a = 10, b = 14;
+    CALLO_GNOMSD( resuName, name, &a, &b );
+    ParallelDOFNumberingPtr retour( new ParallelDOFNumberingInstance( name.substr( 0, 14 ) ) );
+    _listOfDOFNum.push_back( retour );
+    return retour;
+};
+#endif /* _USE_MPI */
+
+ElementaryCharacteristicsPtr ResultsContainerInstance::getElementaryCharacteristics() {
+    std::string name( "" );
+    ElementaryCharacteristicsPtr toReturn( nullptr );
+    for ( const auto &curIter : _mapElemCara ) {
+        if ( name == "" ) {
+            toReturn = curIter.second;
+            name = toReturn->getName();
+        }
+        if ( name != curIter.second->getName() )
+            throw std::runtime_error( "Error: multiple elementary characteristics" );
+    }
+    return toReturn;
+};
+
+ElementaryCharacteristicsPtr
+ResultsContainerInstance::getElementaryCharacteristics( int rank ) {
+    auto curIter = _mapElemCara.find( rank );
+    if ( curIter == _mapElemCara.end() )
+        throw std::runtime_error( "Rank not find" );
+    return ( *curIter ).second;
+};
+
+ListOfLoadsPtr ResultsContainerInstance::getListOfLoads( int rank ) {
+    auto curIter = _mapLoads.find( rank );
+    if ( curIter == _mapLoads.end() )
         throw std::runtime_error( "Rank not find" );
     return ( *curIter ).second;
 };
@@ -132,6 +203,14 @@ MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() {
             throw std::runtime_error( "Error: multiple materials" );
     }
     return toReturn;
+};
+
+MaterialOnMeshPtr
+ResultsContainerInstance::getMaterialOnMesh( int rank ) {
+    auto curIter = _mapMaterial.find( rank );
+    if ( curIter == _mapMaterial.end() )
+        throw std::runtime_error( "Rank not find" );
+    return ( *curIter ).second;
 };
 
 BaseMeshPtr ResultsContainerInstance::getMesh()
@@ -181,13 +260,36 @@ std::vector< long > ResultsContainerInstance::getRanks() const
     return v;
 };
 
-void ResultsContainerInstance::addTimeValue( double value, int rank ) {
-    ASTERINTEGER rang = rank;
-    std::string type( "INST" );
-    CALLO_RSADPA_ZR_WRAP( getName(), &rang, &value, type );
+FieldOnElementsDoublePtr ResultsContainerInstance::getRealFieldOnElements( const std::string name,
+                                                                           const int rank ) const
+{
+    if ( rank > _nbRanks || rank <= 0 )
+        throw std::runtime_error( "Order number out of range" );
+
+    auto curIter = _dictOfVectorOfFieldsElements.find( trim( name ) );
+    if ( curIter == _dictOfVectorOfFieldsElements.end() )
+        throw std::runtime_error( "Field " + name + " unknown in the results container" );
+
+    FieldOnElementsDoublePtr toReturn = curIter->second[rank - 1];
+    return toReturn;
 };
 
-void ResultsContainerInstance::listFields() const {
+FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::string name,
+                                                                     const int rank ) const
+{
+    if ( rank > _nbRanks || rank <= 0 )
+        throw std::runtime_error( "Order number out of range" );
+
+    auto curIter = _dictOfVectorOfFieldsNodes.find( trim( name ) );
+    if ( curIter == _dictOfVectorOfFieldsNodes.end() )
+        throw std::runtime_error( "Field " + name + " unknown in the results container" );
+
+    FieldOnNodesDoublePtr toReturn = curIter->second[rank - 1];
+    return toReturn;
+};
+
+void ResultsContainerInstance::listFields() const
+{
     std::cout << "Content of DataStructure : ";
     for ( auto curIter : _dictOfVectorOfFieldsNodes ) {
         std::cout << curIter.first << " - ";
@@ -198,7 +300,37 @@ void ResultsContainerInstance::listFields() const {
     std::cout << std::endl;
 };
 
-bool ResultsContainerInstance::update() {
+bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
+{
+    LogicalUnitFileCython a( fileName, Binary, New );
+    ASTERINTEGER retour = a.getLogicalUnit();
+    CommandSyntax cmdSt( "IMPR_RESU" );
+
+    SyntaxMapContainer dict;
+    dict.container["FORMAT"] = "MED";
+    dict.container["UNITE"] = retour;
+
+    ListSyntaxMapContainer listeResu;
+    SyntaxMapContainer dict2;
+    dict2.container["RESULTAT"] = getName();
+    dict2.container["TOUT_ORDRE"] = "OUI";
+    listeResu.push_back( dict2 );
+    dict.container["RESU"] = listeResu;
+
+    cmdSt.define( dict );
+
+    try {
+        ASTERINTEGER op = 39;
+        CALL_EXECOP( &op );
+    } catch ( ... ) {
+        throw;
+    }
+
+    return true;
+};
+
+bool ResultsContainerInstance::update()
+{
     _serialNumber->updateValuePointer();
     auto boolRet = _namesOfFields->buildFromJeveux( true );
     const auto numberOfSerialNum = _serialNumber->usedSize();
@@ -274,108 +406,6 @@ bool ResultsContainerInstance::update() {
             }
         }
         ++cmpt;
-    }
-
-    return true;
-};
-
-BaseDOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering() {
-    std::string resuName( getName() );
-    std::string name( "12345678.00000          " );
-    ASTERINTEGER a = 10, b = 14;
-    CALLO_GNOMSD( resuName, name, &a, &b );
-    DOFNumberingPtr retour( new DOFNumberingInstance( name.substr( 0, 14 ) ) );
-    _listOfDOFNum.push_back( retour );
-    return retour;
-};
-
-#ifdef _USE_MPI
-BaseDOFNumberingPtr ResultsContainerInstance::getEmptyParallelDOFNumbering() {
-    std::string resuName( getName() );
-    std::string name( "12345678.00000          " );
-    ASTERINTEGER a = 10, b = 14;
-    CALLO_GNOMSD( resuName, name, &a, &b );
-    ParallelDOFNumberingPtr retour( new ParallelDOFNumberingInstance( name.substr( 0, 14 ) ) );
-    _listOfDOFNum.push_back( retour );
-    return retour;
-};
-#endif /* _USE_MPI */
-
-FieldOnNodesDoublePtr
-ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
-                                                      const int rank ) {
-    if ( rank > _nbRanks || rank <= 0 )
-        throw std::runtime_error( "Order number out of range" );
-    ASTERINTEGER retour;
-    retour = 0;
-    const ASTERINTEGER rankLong = rank;
-    std::string null( " " );
-    std::string returnName( 19, ' ' );
-    CALLO_RSEXCH( null, getName(), name, &rankLong, returnName, &retour );
-    CALLO_RSNOCH( getName(), name, &rankLong );
-    std::string bis( returnName.c_str(), 19 );
-    FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
-
-    auto curIter = _dictOfVectorOfFieldsNodes.find( name );
-    if ( curIter == _dictOfVectorOfFieldsNodes.end() ) {
-        _dictOfVectorOfFieldsNodes[name] = VectorOfFieldsNodes( _nbRanks );
-    }
-    _dictOfVectorOfFieldsNodes[name][rank - 1] = result;
-    return result;
-};
-
-FieldOnElementsDoublePtr ResultsContainerInstance::getRealFieldOnElements( const std::string name,
-                                                                           const int rank ) const
-    {
-    if ( rank > _nbRanks || rank <= 0 )
-        throw std::runtime_error( "Order number out of range" );
-
-    auto curIter = _dictOfVectorOfFieldsElements.find( trim( name ) );
-    if ( curIter == _dictOfVectorOfFieldsElements.end() )
-        throw std::runtime_error( "Field " + name + " unknown in the results container" );
-
-    FieldOnElementsDoublePtr toReturn = curIter->second[rank - 1];
-    return toReturn;
-};
-
-FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::string name,
-                                                                     const int rank ) const
-    {
-    if ( rank > _nbRanks || rank <= 0 )
-        throw std::runtime_error( "Order number out of range" );
-
-    auto curIter = _dictOfVectorOfFieldsNodes.find( trim( name ) );
-    if ( curIter == _dictOfVectorOfFieldsNodes.end() )
-        throw std::runtime_error( "Field " + name + " unknown in the results container" );
-
-    FieldOnNodesDoublePtr toReturn = curIter->second[rank - 1];
-    return toReturn;
-};
-
-bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
-    {
-    LogicalUnitFileCython a( fileName, Binary, New );
-    ASTERINTEGER retour = a.getLogicalUnit();
-    CommandSyntax cmdSt( "IMPR_RESU" );
-
-    SyntaxMapContainer dict;
-    dict.container["FORMAT"] = "MED";
-    dict.container["UNITE"] = retour;
-
-    ListSyntaxMapContainer listeResu;
-    SyntaxMapContainer dict2;
-    dict2.container["RESULTAT"] = getName();
-    dict2.container["TOUT_ORDRE"] = "OUI";
-    listeResu.push_back( dict2 );
-    dict.container["RESU"] = listeResu;
-
-    cmdSt.define( dict );
-
-    try {
-        ASTERINTEGER op = 39;
-        CALL_EXECOP( &op );
-    } catch ( ... ) {
-        throw;
     }
 
     return true;

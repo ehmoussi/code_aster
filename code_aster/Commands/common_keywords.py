@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -45,6 +45,8 @@ def create_solver(solver_keyword):
     """
     if not solver_keyword:
         return None
+    if type(solver_keyword) in (list, tuple):
+        solver_keyword = solver_keyword[0]
     for key, value in solver_keyword.iteritems():
         if key not in ("METHODE", "RENUM", "PRE_COND", "RESI_RELA",
                        "STOP_SINGULIER", "ELIM_LAGR", "TYPE_RESOL",
