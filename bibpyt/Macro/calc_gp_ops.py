@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -266,10 +266,6 @@ def calc_gp_ops(self, **args):
 
 #    liste des noeuds du fond de fissure
         l_noeuds_fissure = self['FOND_FISS'].sdj.FOND_NOEU.get()
-        if l_noeuds_fissure == None:
-# Cas double fond de fissure : par convention les noeuds sont ceux de
-# fond_inf
-            l_noeuds_fissure = self['FOND_FISS'].sdj.FONDINF_NOEU.get()
 
 #    normale au plan de la fissure
         lnormale = self['FOND_FISS'].sdj.NORMALE.get()

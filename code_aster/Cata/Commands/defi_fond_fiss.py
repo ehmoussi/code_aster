@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
     # definition du fond de fissure
     FOND_FISS = FACT(statut='o',max=2,
 
-                     TYPE_FOND = SIMP(statut='f',typ='TXM',into=("OUVERT","FERME","INF","SUP"),defaut="OUVERT"),
+                     TYPE_FOND = SIMP(statut='f',typ='TXM',into=("OUVERT","FERME"),defaut="OUVERT"),
                      GROUP_NO = SIMP(statut='f',typ=grno,max=1   ),
                      GROUP_MA = SIMP(statut='f',typ=grma,max=1   ),
                      regles=(UN_PARMI('GROUP_NO','GROUP_MA'),),
