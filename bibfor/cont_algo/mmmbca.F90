@@ -94,7 +94,6 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     integer :: model_ndim, nb_cont_zone, loop_cont_vali
     integer :: elem_slav_nbno, nb_poin_elem, nb_elem_slav
     integer :: indi_cont_eval, indi_frot_eval
-    integer :: indi_cont_init, indi_frot_init
     real(kind=8) :: ksipr1, ksipr2, ksipc1, ksipc2
     real(kind=8) :: ksipr1_old, ksipr2_old,ksipc1_old, ksipc2_old,resi_geom
     real(kind=8) :: norm(3), tau1(3), tau2(3)
@@ -370,10 +369,6 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! ------------- Previous status and coefficients
 !
-                indi_cont_init = nint(v_sdcont_tabfin(ztabf*(i_cont_poin-1)+23))
-                if (l_frot_zone) then
-                    indi_frot_init = nint(v_sdcont_tabfin(ztabf*(i_cont_poin-1)+24))
-                endif
                 coef_cont = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)
                 coef_frot = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6)
 !
