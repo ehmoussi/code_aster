@@ -75,7 +75,6 @@ RINF=0.05
 G0=CALC_G(RESULTAT=CHAMDEPL,
           THETA=_F(R_INF=RINF,
                    FOND_FISS=FISS,
-                   MODULE=1.,
                    R_SUP=RSUP,
                    ),
           INFO=2)
@@ -84,7 +83,6 @@ G0=CALC_G(RESULTAT=CHAMDEPL,
 GK0=CALC_G(RESULTAT=CHAMDEPL,
            THETA=_F(R_INF=RINF,
                     FOND_FISS=FISS,
-                    MODULE=1.,
                     R_SUP=RSUP,
                     ),
            OPTION='CALC_K_G')
@@ -183,14 +181,12 @@ IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=DEPL_ROT));
 G1=CALC_G(RESULTAT=DEPL_ROT,
           THETA=_F(R_INF=RINF,
                    FOND_FISS=FISS,
-                   MODULE=1.,
                    R_SUP=RSUP,
                    ),
           )
 
 GK1=CALC_G(THETA=_F(R_INF=RINF,
                     FOND_FISS=FISS,
-                    MODULE=1.,
                     R_SUP=RSUP,
                     ),
           RESULTAT=DEPL_ROT,

@@ -82,7 +82,6 @@ GPRES1=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=22.04078,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=30.,),
 
               )
@@ -97,7 +96,6 @@ GPRES2=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=15.3061094,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=22.04078,),
     )
                              
@@ -111,7 +109,6 @@ GPRES3=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=9.79591846,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=15.3061094,),
               )
                              
@@ -126,7 +123,6 @@ GPRES4=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=5.510197639,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=9.79591846,),
     )
                              
@@ -140,7 +136,6 @@ GPRES5=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=2.448979377,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=5.510197639,),
                )
 
@@ -154,7 +149,6 @@ GPRES6=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=0.61225116,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=2.448979377,),
               )
 
@@ -170,7 +164,6 @@ GFCON1=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=22.04078,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=30.,),
               )
 
@@ -184,7 +177,6 @@ GFCON2=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=22.04078,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=30.,),
               )
 
@@ -198,7 +190,6 @@ GFCON3=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=9.79591846,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=15.3061094,),
               )
 
@@ -212,7 +203,6 @@ GFCON4=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=5.510197639,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=9.79591846,),
               )
 
@@ -226,7 +216,6 @@ GFCON5=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=2.448979377,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=5.510197639,),
               )
 
@@ -240,7 +229,6 @@ GFCON6=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=0.61225116,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=2.448979377,),
               )
 

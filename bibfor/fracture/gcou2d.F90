@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine gcou2d(base, resu, noma, nomno, noeud,&
-                  coor, rinf, rsup, module,dir)
+                  coor, rinf, rsup, dir)
     implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
@@ -40,7 +40,7 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-    real(kind=8) :: rinf, rsup, module, dir(3), coor(*)
+    real(kind=8) :: rinf, rsup, dir(3), coor(*)
     character(len=1) :: base
     character(len=8) :: noma, noeud
     character(len=24) :: resu, nomno
@@ -163,8 +163,8 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 !     CAS CLASSIQUE
     if (estfem) then
 !       NOEUD DU FOND DE FISSURE
-        zr(itheta + (num-1)*2 + 1 - 1) = module*dir(1)
-        zr(itheta + (num-1)*2 + 2 - 1) = module*dir(2)
+        zr(itheta + (num-1)*2 + 1 - 1) = dir(1)
+        zr(itheta + (num-1)*2 + 2 - 1) = dir(2)
         xi = coor((num-1)*3+1)
         yi = coor((num-1)*3+2)
 !     CAS X-FEM
@@ -215,8 +215,8 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
                 dir(1) = dir(1)/norme
                 dir(2) = dir(2)/norme
             endif
-            valx = module*dir(1)
-            valy = module*dir(2)
+            valx = dir(1)
+            valy = dir(2)
             if ((abs(alpha).le.eps) .or. (alpha.lt.0)) then
                 zr(itheta+(i-1)*2+1-1) = valx
                 zr(itheta+(i-1)*2+2-1) = valy

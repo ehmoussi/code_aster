@@ -151,8 +151,7 @@ G1=CALC_G(
                  THETA=_F(
                           R_INF=10.,
                           R_SUP=40.,
-                          FOND_FISS=FOND,
-                          MODULE=1.0,),
+                          FOND_FISS=FOND,),
                  EXCIT=_F(CHARGE=CH,),)
 
 GK1=CALC_G(        RESULTAT=RESU,
@@ -166,8 +165,7 @@ G2=CALC_G(        RESULTAT=RESU,
                   THETA=_F(
                            R_INF=15.,
                            R_SUP=45.,
-                           FOND_FISS=FOND,
-                           MODULE=1.0,),
+                           FOND_FISS=FOND,),
                   EXCIT=_F(CHARGE=CH,),)
 
 GK2=CALC_G(          RESULTAT=RESU,
@@ -181,8 +179,7 @@ G3=CALC_G(         RESULTAT=RESU,
                    THETA=_F(
                             R_INF=5.0,
                             R_SUP=47.,
-                            FOND_FISS=FOND,
-                            MODULE=1.0,),
+                            FOND_FISS=FOND,),
                    EXCIT=_F(CHARGE=CH,),)
 
 GK3=CALC_G(          RESULTAT=RESU,
@@ -197,8 +194,7 @@ G4=CALC_G(        RESULTAT=RESU,
                   THETA=_F(
                            R_INF=3.0,
                            R_SUP=48.,
-                           FOND_FISS=FOND,
-                           MODULE=1.0,),
+                           FOND_FISS=FOND,),
                   EXCIT=_F(CHARGE=CH,),)
 
 GK4=CALC_G(         RESULTAT=RESU,

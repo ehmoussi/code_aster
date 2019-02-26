@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -117,7 +117,6 @@ FOND=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
 G5_0=CALC_G(THETA=_F(
                      R_INF=0.02,
                      FOND_FISS=FOND,
-                     MODULE=1.0,
                      R_SUP=0.18,),
            RESULTAT=CHAMDEPL,
            NUME_ORDRE=5,
@@ -128,7 +127,6 @@ G5_0=CALC_G(THETA=_F(
 G10_0=CALC_G(THETA=_F(
                       R_INF=0.02,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=0.18,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=10,
@@ -139,7 +137,6 @@ G10_0=CALC_G(THETA=_F(
 G20_0=CALC_G(THETA=_F(
                       R_INF=0.02,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=0.18,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=20,
@@ -150,7 +147,6 @@ G20_0=CALC_G(THETA=_F(
 G30_0=CALC_G(THETA=_F(
                       R_INF=0.02,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=0.18,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=30,
@@ -161,7 +157,6 @@ G30_0=CALC_G(THETA=_F(
 G40_0=CALC_G(THETA=_F(
                       R_INF=0.02,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=0.18,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=40,
@@ -172,7 +167,6 @@ G40_0=CALC_G(THETA=_F(
 G70_0=CALC_G(THETA=_F(
                       R_INF=0.02,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=0.18,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=70,
@@ -183,7 +177,6 @@ G70_0=CALC_G(THETA=_F(
 G100_0=CALC_G(THETA=_F(
                        R_INF=0.02,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=0.18,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=100,
@@ -194,7 +187,6 @@ G100_0=CALC_G(THETA=_F(
 G130_0=CALC_G(THETA=_F(
                        R_INF=0.02,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=0.18,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=130,
@@ -205,7 +197,6 @@ G130_0=CALC_G(THETA=_F(
 G160_0=CALC_G(THETA=_F(
                        R_INF=0.02,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=0.18,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=160,
@@ -216,7 +207,6 @@ G160_0=CALC_G(THETA=_F(
 G190_0=CALC_G(THETA=_F(
                        R_INF=0.02,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=0.18,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=190,
@@ -227,7 +217,6 @@ G190_0=CALC_G(THETA=_F(
 G220_0=CALC_G(THETA=_F(
                        R_INF=0.02,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=0.18,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=220,
@@ -241,7 +230,6 @@ G220_0=CALC_G(THETA=_F(
 G5_1=CALC_G(THETA=_F(
                      R_INF=0.2,
                      FOND_FISS=FOND,
-                     MODULE=1.0,
                      R_SUP=1.0,),
          RESULTAT=CHAMDEPL,
          NUME_ORDRE=5,
@@ -252,7 +240,6 @@ G5_1=CALC_G(THETA=_F(
 G10_1=CALC_G(THETA=_F(
                       R_INF=0.2,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=1.0,),
           RESULTAT=CHAMDEPL,
           NUME_ORDRE=10,
@@ -263,7 +250,6 @@ G10_1=CALC_G(THETA=_F(
 G20_1=CALC_G(THETA=_F(
                       R_INF=0.2,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=1.0,),
           RESULTAT=CHAMDEPL,
           NUME_ORDRE=20,
@@ -274,7 +260,6 @@ G20_1=CALC_G(THETA=_F(
 G30_1=CALC_G(THETA=_F(
                       R_INF=0.2,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=1.0,),
           RESULTAT=CHAMDEPL,
           NUME_ORDRE=30,
@@ -285,7 +270,6 @@ G30_1=CALC_G(THETA=_F(
 G40_1=CALC_G(THETA=_F(
                       R_INF=0.2,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=1.0,),
           RESULTAT=CHAMDEPL,
           NUME_ORDRE=40,
@@ -296,7 +280,6 @@ G40_1=CALC_G(THETA=_F(
 G70_1=CALC_G(THETA=_F(
                       R_INF=0.2,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=1.0,),
              RESULTAT=CHAMDEPL,
              NUME_ORDRE=70,
@@ -307,7 +290,6 @@ G70_1=CALC_G(THETA=_F(
 G100_1=CALC_G(THETA=_F(
                        R_INF=0.2,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=1.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=100,
@@ -318,7 +300,6 @@ G100_1=CALC_G(THETA=_F(
 G130_1=CALC_G(THETA=_F(
                        R_INF=0.2,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=1.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=130,
@@ -329,7 +310,6 @@ G130_1=CALC_G(THETA=_F(
 G160_1=CALC_G(THETA=_F(
                        R_INF=0.2,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=1.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=160,
@@ -340,7 +320,6 @@ G160_1=CALC_G(THETA=_F(
 G190_1=CALC_G(THETA=_F(
                        R_INF=0.2,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=1.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=190,
@@ -351,7 +330,6 @@ G190_1=CALC_G(THETA=_F(
 G220_1=CALC_G(THETA=_F(
                        R_INF=0.2,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=1.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=220,
@@ -365,7 +343,6 @@ G220_1=CALC_G(THETA=_F(
 G5_2=CALC_G(THETA=_F(
                      R_INF=1.0,
                      FOND_FISS=FOND,
-                     MODULE=1.0,
                      R_SUP=2.0,),
            RESULTAT=CHAMDEPL,
            NUME_ORDRE=5,
@@ -376,7 +353,6 @@ G5_2=CALC_G(THETA=_F(
 G10_2=CALC_G(THETA=_F(
                       R_INF=1.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=2.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=10,
@@ -387,7 +363,6 @@ G10_2=CALC_G(THETA=_F(
 G20_2=CALC_G(THETA=_F(
                       R_INF=1.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=2.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=20,
@@ -398,7 +373,6 @@ G20_2=CALC_G(THETA=_F(
 G30_2=CALC_G(THETA=_F(
                       R_INF=1.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=2.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=30,
@@ -409,7 +383,6 @@ G30_2=CALC_G(THETA=_F(
 G40_2=CALC_G(THETA=_F(
                       R_INF=1.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=2.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=40,
@@ -420,7 +393,6 @@ G40_2=CALC_G(THETA=_F(
 G70_2=CALC_G(THETA=_F(
                       R_INF=1.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=2.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=70,
@@ -431,7 +403,6 @@ G70_2=CALC_G(THETA=_F(
 G100_2=CALC_G(THETA=_F(
                        R_INF=1.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=2.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=100,
@@ -442,7 +413,6 @@ G100_2=CALC_G(THETA=_F(
 G130_2=CALC_G(THETA=_F(
                        R_INF=1.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=2.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=130,
@@ -453,7 +423,6 @@ G130_2=CALC_G(THETA=_F(
 G160_2=CALC_G(THETA=_F(
                        R_INF=1.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=2.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=160,
@@ -464,7 +433,6 @@ G160_2=CALC_G(THETA=_F(
 G190_2=CALC_G(THETA=_F(
                        R_INF=1.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=2.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=190,
@@ -475,7 +443,6 @@ G190_2=CALC_G(THETA=_F(
 G220_2=CALC_G(THETA=_F(
                        R_INF=1.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=2.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=220,
@@ -488,7 +455,6 @@ G220_2=CALC_G(THETA=_F(
 G5_3=CALC_G(THETA=_F(
                      R_INF=2.0,
                      FOND_FISS=FOND,
-                     MODULE=1.0,
                      R_SUP=3.0,),
            RESULTAT=CHAMDEPL,
            NUME_ORDRE=5,
@@ -499,7 +465,6 @@ G5_3=CALC_G(THETA=_F(
 G10_3=CALC_G(THETA=_F(
                       R_INF=2.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=3.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=10,
@@ -510,7 +475,6 @@ G10_3=CALC_G(THETA=_F(
 G20_3=CALC_G(THETA=_F(
                       R_INF=2.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=3.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=20,
@@ -521,7 +485,6 @@ G20_3=CALC_G(THETA=_F(
 G30_3=CALC_G(THETA=_F(
                       R_INF=2.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=3.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=30,
@@ -532,7 +495,6 @@ G30_3=CALC_G(THETA=_F(
 G40_3=CALC_G(THETA=_F(
                       R_INF=2.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=3.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=40,
@@ -543,7 +505,6 @@ G40_3=CALC_G(THETA=_F(
 G70_3=CALC_G(THETA=_F(
                       R_INF=2.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=3.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=70,
@@ -554,7 +515,6 @@ G70_3=CALC_G(THETA=_F(
 G100_3=CALC_G(THETA=_F(
                        R_INF=2.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=3.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=100,
@@ -565,7 +525,6 @@ G100_3=CALC_G(THETA=_F(
 G130_3=CALC_G(THETA=_F(
                        R_INF=2.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=3.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=130,
@@ -576,7 +535,6 @@ G130_3=CALC_G(THETA=_F(
 G160_3=CALC_G(THETA=_F(
                        R_INF=2.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=3.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=160,
@@ -586,7 +544,6 @@ G160_3=CALC_G(THETA=_F(
 G190_3=CALC_G(THETA=_F(
                        R_INF=2.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=3.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=190,
@@ -596,7 +553,6 @@ G190_3=CALC_G(THETA=_F(
 G220_3=CALC_G(THETA=_F(
                        R_INF=2.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=3.0,),
               RESULTAT=CHAMDEPL,
               NUME_ORDRE=220,
@@ -608,7 +564,6 @@ G220_3=CALC_G(THETA=_F(
 G5_4=CALC_G(THETA=_F(
                      R_INF=3.0,
                      FOND_FISS=FOND,
-                     MODULE=1.0,
                      R_SUP=5.0,),
            RESULTAT=CHAMDEPL,
            NUME_ORDRE=5,
@@ -618,7 +573,6 @@ G5_4=CALC_G(THETA=_F(
 G10_4=CALC_G(THETA=_F(
                       R_INF=3.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=5.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=10,
@@ -628,7 +582,6 @@ G10_4=CALC_G(THETA=_F(
 G20_4=CALC_G(THETA=_F(
                       R_INF=3.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=5.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=20,
@@ -638,7 +591,6 @@ G20_4=CALC_G(THETA=_F(
 G30_4=CALC_G(THETA=_F(
                       R_INF=3.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=5.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=30,
@@ -648,7 +600,6 @@ G30_4=CALC_G(THETA=_F(
 G40_4=CALC_G(THETA=_F(
                       R_INF=3.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=5.0,),
             RESULTAT=CHAMDEPL,
             NUME_ORDRE=40,
@@ -658,7 +609,6 @@ G40_4=CALC_G(THETA=_F(
 G70_4=CALC_G(THETA=_F(
                       R_INF=3.0,
                       FOND_FISS=FOND,
-                      MODULE=1.0,
                       R_SUP=5.0,
                       ),
             RESULTAT=CHAMDEPL,
@@ -669,7 +619,6 @@ G70_4=CALC_G(THETA=_F(
 G100_4=CALC_G(THETA=_F(
                        R_INF=3.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=5.0,
                        ),
               RESULTAT=CHAMDEPL,
@@ -680,7 +629,6 @@ G100_4=CALC_G(THETA=_F(
 G130_4=CALC_G(THETA=_F(
                        R_INF=3.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=5.0,
                        ),
               RESULTAT=CHAMDEPL,
@@ -691,7 +639,6 @@ G130_4=CALC_G(THETA=_F(
 G160_4=CALC_G(THETA=_F(
                        R_INF=3.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=5.0,
                        ),
               RESULTAT=CHAMDEPL,
@@ -702,7 +649,6 @@ G160_4=CALC_G(THETA=_F(
 G190_4=CALC_G(THETA=_F(
                        R_INF=3.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=5.0,
                        ),
               RESULTAT=CHAMDEPL,
@@ -713,7 +659,6 @@ G190_4=CALC_G(THETA=_F(
 G220_4=CALC_G(THETA=_F(
                        R_INF=3.0,
                        FOND_FISS=FOND,
-                       MODULE=1.0,
                        R_SUP=5.0,
                        ),
               RESULTAT=CHAMDEPL,

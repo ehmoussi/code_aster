@@ -111,7 +111,6 @@ FOND=DEFI_FOND_FISS(    MAILLAGE=MA,
 G_0=CALC_G( THETA=_F(
                      R_INF=0.15,
                      FOND_FISS=FOND,
-                     MODULE=1.,
                      R_SUP=0.6,),
             RESULTAT=CHAMDEP,
             TOUT_ORDRE='OUI',
@@ -123,7 +122,6 @@ LISTG = (30, 60,90,120,150);
 G_1=CALC_G( THETA=_F(
                      R_INF=0.3,
                      FOND_FISS=FOND,
-                     MODULE=1.,
                      R_SUP=0.9,),
             RESULTAT=CHAMDEP,
             NUME_ORDRE=LISTG,
@@ -134,7 +132,6 @@ IMPR_TABLE(TABLE=G_1,);
 G_2=CALC_G( THETA=_F(
                      R_INF=0.9,
                      FOND_FISS=FOND,
-                     MODULE=1.,
                      R_SUP=1.5,),
             RESULTAT=CHAMDEP,
             NUME_ORDRE=LISTG,

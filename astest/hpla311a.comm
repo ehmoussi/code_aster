@@ -204,7 +204,6 @@ G00=CALC_G(
                       THETA=_F(
                                R_INF=1.E-6,
                                FOND_FISS=FOND,
-                               MODULE=1.,
                                R_SUP=2.5E-5,),
                       EXCIT=_F(CHARGE=CH,),
              )

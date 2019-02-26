@@ -204,7 +204,6 @@ gtheta = CALC_G(COMPORTEMENT=_F(
                              ),
                 THETA=_F(R_INF=0.25,
                          R_SUP=0.5,
-                         MODULE=1.0,
                          FOND_FISS=FONFISS,),
                          RESULTAT=RESU,
                          LIST_INST=L_INS_GP,

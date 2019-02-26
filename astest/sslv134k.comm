@@ -113,7 +113,6 @@ for i in range(2):
                 THETA=_F(
                          R_INF=RINF,
                          FOND_FISS=FISS,
-                         MODULE=1.,
                          R_SUP=RSUP,),
                 )
 

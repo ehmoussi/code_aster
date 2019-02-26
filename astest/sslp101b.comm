@@ -62,8 +62,7 @@ G1=CALC_G(              RESULTAT=CHAMDEPL,
                         THETA=_F(
                                  R_INF=22.04078,
                                  R_SUP=30.,
-                                 FOND_FISS=FOND,
-                                 MODULE=1.,),
+                                 FOND_FISS=FOND,),
           )
 
 GK1=CALC_G(             RESULTAT=CHAMDEPL,
@@ -78,8 +77,7 @@ G2=CALC_G(              RESULTAT=CHAMDEPL,
                         THETA=_F(
                                  R_INF=15.3061094,
                                  R_SUP=22.04078,
-                                 FOND_FISS=FOND,
-                                 MODULE=1.,),
+                                 FOND_FISS=FOND,),
           )
 
 GK2=CALC_G(             RESULTAT=CHAMDEPL,
@@ -93,8 +91,7 @@ G3=CALC_G(              RESULTAT=CHAMDEPL,
                         THETA=_F(
                                  R_INF=9.79591846,
                                  R_SUP=15.3061094,
-                                 FOND_FISS=FOND,
-                                 MODULE=1.,),
+                                 FOND_FISS=FOND,),
           )
 
 GK3=CALC_G(             RESULTAT=CHAMDEPL,
@@ -108,8 +105,7 @@ G4=CALC_G(              RESULTAT=CHAMDEPL,
                         THETA=_F(
                                  R_INF=5.510197639,
                                  R_SUP=9.79591846,
-                                 FOND_FISS=FOND,
-                                 MODULE=1.,),
+                                 FOND_FISS=FOND,),
           )
 
 GK4=CALC_G(              RESULTAT=CHAMDEPL,
@@ -123,8 +119,7 @@ G5=CALC_G(               RESULTAT=CHAMDEPL,
                          THETA=_F(
                                   R_INF=2.448979377,
                                   R_SUP=5.510197639,
-                                  FOND_FISS=FOND,
-                                  MODULE=1.,),
+                                  FOND_FISS=FOND,),
           )
 
 GK5=CALC_G(              RESULTAT=CHAMDEPL,
@@ -138,8 +133,7 @@ G6=CALC_G(               RESULTAT=CHAMDEPL,
                          THETA=_F(
                                   R_INF=0.61225116,
                                   R_SUP=2.448979377,
-                                  FOND_FISS=FOND,
-                                  MODULE=1.,),
+                                  FOND_FISS=FOND,),
           )
 
 GK6=CALC_G(              RESULTAT=CHAMDEPL,

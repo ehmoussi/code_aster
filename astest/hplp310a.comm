@@ -237,7 +237,6 @@ G0_P=CALC_G(    RESULTAT=CHAMDEPP,
                         THETA=_F(
                                  R_INF=0.0025,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.005,),
                     )
 
@@ -256,7 +255,6 @@ G1_P=CALC_G(    RESULTAT=CHAMDEPP,
                         THETA=_F(
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.0075,),
                     )
 
@@ -275,7 +273,6 @@ G2_P=CALC_G(    RESULTAT=CHAMDEPP,
                         THETA=_F(
                                  R_INF=0.0075,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.01,),
                     )
 
@@ -294,7 +291,6 @@ G3_P=CALC_G(    RESULTAT=CHAMDEPP,
                         THETA=_F(
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.03,),
                     )
 
@@ -326,7 +322,6 @@ G0_T=CALC_G(    RESULTAT=CHAMDEPT,
                         THETA=_F(
                                  R_INF=0.0025,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.005,),
                     )
 
@@ -345,7 +340,6 @@ G1_T=CALC_G(    RESULTAT=CHAMDEPT,
                         THETA=_F(
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.0075,),
                     )
 
@@ -364,7 +358,6 @@ G2_T=CALC_G(    RESULTAT=CHAMDEPT,
                         THETA=_F(
                                  R_INF=0.0075,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.01,),
                     )
 
@@ -383,7 +376,6 @@ G3_T=CALC_G(    RESULTAT=CHAMDEPT,
                         THETA=_F(
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.03,),
                     )
 
@@ -415,7 +407,6 @@ G0_C=CALC_G(   RESULTAT=CHAMDEP0,
                         THETA=_F(
                                  R_INF=0.0025,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.005,),
                     )
 
@@ -434,7 +425,6 @@ G1_C=CALC_G(   RESULTAT=CHAMDEP0,
                         THETA=_F(
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.0075,),
                     )
 
@@ -453,7 +443,6 @@ G2_C=CALC_G(   RESULTAT=CHAMDEP0,
                         THETA=_F(
                                  R_INF=0.0075,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.01,),
                     )
 
@@ -472,7 +461,6 @@ G3_C=CALC_G(   RESULTAT=CHAMDEP0,
                         THETA=_F(
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=0.03,),
                     )
 
