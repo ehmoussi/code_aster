@@ -211,8 +211,8 @@ PROJ_BASE(  BASE=BMOD,
                              MATRICE = CO("RIGGEN"),
                              MATR_ASSE = RIGIAF)),
              VECT_ASSE_GENE=(
-                            _F( VECTEUR = CO("VAGFZ"), VECT_ASSE = VASFZ,),
-                            _F( VECTEUR = CO("VAGFX"), VECT_ASSE = VASFX,),
+                            _F( VECTEUR = CO("VAGFZ"), VECT_ASSE = VASFZ, TYPE_VECT='FORC'),
+                            _F( VECTEUR = CO("VAGFX"), VECT_ASSE = VASFX, TYPE_VECT='FORC'),
              ))
 
 

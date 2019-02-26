@@ -264,13 +264,15 @@ NUMGEN=NUME_DDL_GENE(        BASE=MODE1,
 #
 VECTGENA=PROJ_VECT_BASE(             BASE=MODE1,
                               NUME_DDL_GENE=NUMGEN,
-                                  VECT_ASSE=MONOX1
+                                  VECT_ASSE=MONOX1,
+                                  TYPE_VECT='FORC'
                           )
 
 #
 VECTGENB=PROJ_VECT_BASE(             BASE=MODE1,
                               NUME_DDL_GENE=NUMGEN,
-                                  VECT_ASSE=MONOX2
+                                  VECT_ASSE=MONOX2,
+                                  TYPE_VECT='FORC'
                           )
 
 #

@@ -133,7 +133,7 @@ PROJ_BASE(  BASE=MODE_MEC,
                              MATR_ASSE = RIGIDITE)),
              VECT_ASSE_GENE=_F(
                              VECTEUR = CO("VECT_X"),
-                             VECT_ASSE = VECTEUR)
+                             VECT_ASSE = VECTEUR, TYPE_VECT='FORC')
 )
 
 #

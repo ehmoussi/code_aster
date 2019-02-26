@@ -163,7 +163,7 @@ PROJ_BASE(BASE=MODE_EXT,
                           _F(MATRICE=CO('RIGI_GEN'),
                              MATR_ASSE=RIGIDITE,),),
           VECT_ASSE_GENE=_F(VECTEUR=CO('VECT_X'),
-                            VECT_ASSE=MONO_X,),);
+                            VECT_ASSE=MONO_X, TYPE_VECT='FORC'),);
 
 
 TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
@@ -250,7 +250,7 @@ PROJ_BASE(BASE=MODE_MEC,
                           _F(MATRICE=CO('RIGI_COM'),
                              MATR_ASSE=RIGIDITE,),),
           VECT_ASSE_GENE=_F(VECTEUR=CO('VECT_COM'),
-                            VECT_ASSE=MONO_X,),);
+                            VECT_ASSE=MONO_X, TYPE_VECT='FORC'),);
 
 
 TRAN_COM=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
@@ -303,7 +303,7 @@ PROJ_BASE(BASE=RITZ2,
                              MATR_ASSE=RIGIDITE,),),
           VECT_ASSE_GENE=(
                           _F(VECTEUR=CO('VECT_RI2'),
-                            VECT_ASSE=MONO_X,),
+                            VECT_ASSE=MONO_X, TYPE_VECT='FORC'),
                           ),
           ),
 
@@ -355,7 +355,7 @@ PROJ_BASE(BASE=RITZ5,
                              MATR_ASSE=RIGIDITE,),),
           VECT_ASSE_GENE=(
                           _F(VECTEUR=CO('VECT_RI5'),
-                            VECT_ASSE=MONO_X,),
+                            VECT_ASSE=MONO_X, TYPE_VECT='FORC'),
                           ),
           ),
 
@@ -412,7 +412,7 @@ PROJ_BASE(BASE=RITZ6,
                              MATR_ASSE=RIGIDITE,),),
           VECT_ASSE_GENE=(
                           _F(VECTEUR=CO('VECT_RI6'),
-                            VECT_ASSE=MONO_X,),
+                            VECT_ASSE=MONO_X, TYPE_VECT='FORC'),
                           ),
           ),
 

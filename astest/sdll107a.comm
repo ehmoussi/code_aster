@@ -1732,10 +1732,10 @@ PROJ_BASE(  BASE=MODES,
                              MATR_ASSE = A)),VECT_ASSE_GENE=(
              _F(
                              VECTEUR = CO("EFPROJ1"),
-                             VECT_ASSE = VECTAS1),
+                             VECT_ASSE = VECTAS1, TYPE_VECT='FORC'),
              _F(
                              VECTEUR = CO("EFPROJ2"),
-                             VECT_ASSE = VECTAS2))
+                             VECT_ASSE = VECTAS2, TYPE_VECT='FORC'))
 )
 
 #

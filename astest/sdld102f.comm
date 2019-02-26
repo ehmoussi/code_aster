@@ -335,7 +335,8 @@ PROJ_BASE(BASE=RESGEN,
                           _F(MATRICE=CO('MASPRO'),
                              MATR_ASSE_GENE=MASGEN,),),
           VECT_ASSE_GENE=_F(VECTEUR=CO('VECPRO'),
-                            VECT_ASSE_GENE=FGEN,),);
+                            VECT_ASSE_GENE=FGEN,
+                            TYPE_VECT='FORC'),);
 
 #
 # ----- CALCULS TRANSITOIRES

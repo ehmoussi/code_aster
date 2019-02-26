@@ -158,9 +158,9 @@ PROJ_BASE(BASE=MODES,
                                 _F(MATRICE=CO('AGGE'),
                                    MATR_ASSE=AMOGYRO,),),
                 VECT_ASSE_GENE=(_F(VECTEUR=CO('BZGE'),
-                                   VECT_ASSE=bal_Zass,),
+                                   VECT_ASSE=bal_Zass, TYPE_VECT='FORC'),
                                 _F(VECTEUR=CO('BYGE'),
-                                   VECT_ASSE=bal_Yass,),),);
+                                   VECT_ASSE=bal_Yass, TYPE_VECT='FORC'),),);
 
 TRANSMO=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),

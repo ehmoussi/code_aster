@@ -240,7 +240,7 @@ M_PROJ=PROJ_MATR_BASE(            BASE=RESGEN,
 #
 F_PROJ=PROJ_VECT_BASE(            BASE=RESGEN,
                              NUME_DDL_GENE=NUMEMODE,
-                            VECT_ASSE_GENE=F_GENE)
+                            VECT_ASSE_GENE=F_GENE, TYPE_VECT='FORC')
 
 #
 # DEFINITION DE L'OBSTACLE

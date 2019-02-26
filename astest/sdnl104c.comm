@@ -225,15 +225,15 @@ M_PROJ4=PROJ_MATR_BASE(BASE=MODES0,
 #
 F_PROJ2=PROJ_VECT_BASE(BASE=MODES2,
                        NUME_DDL_GENE=NUMEMOD2,
-                       VECT_ASSE=V_ASSE)
+                       VECT_ASSE=V_ASSE, TYPE_VECT='FORC')
 
 F_PROJ3=PROJ_VECT_BASE(BASE=MODES3,
                        NUME_DDL_GENE=NUMEMOD3,
-                       VECT_ASSE=V_ASSE)
+                       VECT_ASSE=V_ASSE, TYPE_VECT='FORC')
 
 F_PROJ4=PROJ_VECT_BASE(BASE=MODES0,
                        NUME_DDL_GENE=NUMEMOD4,
-                       VECT_ASSE=V_ASSE)
+                       VECT_ASSE=V_ASSE, TYPE_VECT='FORC')
 
 #
 # CALCULS TRANSITOIRES SUR BASE MODALE

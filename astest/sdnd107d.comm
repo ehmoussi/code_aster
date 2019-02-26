@@ -140,8 +140,8 @@ PROJ_BASE(
         _F(MATRICE = CO("RigidGen"), MATR_ASSE = Rigidite),
     ),
     VECT_ASSE_GENE=(
-        _F(VECTEUR = CO("Depl1Gen"), VECT_ASSE = DeplSis1),
-        _F(VECTEUR = CO("Depl3Gen"), VECT_ASSE = DeplSis3),
+        _F(VECTEUR = CO("Depl1Gen"), VECT_ASSE = DeplSis1, TYPE_VECT='FORC'),
+        _F(VECTEUR = CO("Depl3Gen"), VECT_ASSE = DeplSis3, TYPE_VECT='FORC'),
     ),
 )
 #

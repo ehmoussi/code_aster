@@ -310,9 +310,11 @@ PROJ_BASE(BASE=MODE_BIC,
                           _F(MATRICE=CO('RGEN_BIC'),
                              MATR_ASSE=RIGI_BIC,),),
           VECT_ASSE_GENE=(_F(VECTEUR=CO('VECT_X1'),
-                             VECT_ASSE=MULT_X1,),
+                             VECT_ASSE=MULT_X1,
+                             TYPE_VECT = 'FORC'),
                           _F(VECTEUR=CO('VECT_X2'),
-                             VECT_ASSE=MULT_X2,),),)
+                             VECT_ASSE=MULT_X2,
+                             TYPE_VECT = 'FORC'),),)
 
 GRILLE=DEFI_OBSTACLE(TYPE='BI_PLAN_Z',)
 

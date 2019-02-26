@@ -129,7 +129,8 @@ PROJ_BASE(BASE=MODES,
                                 _F(MATRICE=CO('RIGI_GEN'),
                                    MATR_ASSE=RIGIDITE,),),
                 VECT_ASSE_GENE=_F(VECTEUR=CO('VGEN_FY'),
-                                  VECT_ASSE=FY,),);
+                                  VECT_ASSE=FY,
+                                  TYPE_VECT='FORC'),);
 
 #
 OMEGA = 121.0;

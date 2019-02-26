@@ -262,12 +262,12 @@ PROJ_BASE(
         _F(MATRICE = CO("RigidGen"), MATR_ASSE = Rigidite),
     ),
     VECT_ASSE_GENE=(
-        _F(VECTEUR = CO("D1GenX"), VECT_ASSE = DSis1X),
-        _F(VECTEUR = CO("D1GenY"), VECT_ASSE = DSis1Y),
-        _F(VECTEUR = CO("D1GenZ"), VECT_ASSE = DSis1Z),
-        _F(VECTEUR = CO("D3GenX"), VECT_ASSE = DSis3X),
-        _F(VECTEUR = CO("D3GenY"), VECT_ASSE = DSis3Y),
-        _F(VECTEUR = CO("D3GenZ"), VECT_ASSE = DSis3Z),
+        _F(VECTEUR = CO("D1GenX"), VECT_ASSE = DSis1X, TYPE_VECT='FORC'),
+        _F(VECTEUR = CO("D1GenY"), VECT_ASSE = DSis1Y, TYPE_VECT='FORC'),
+        _F(VECTEUR = CO("D1GenZ"), VECT_ASSE = DSis1Z, TYPE_VECT='FORC'),
+        _F(VECTEUR = CO("D3GenX"), VECT_ASSE = DSis3X, TYPE_VECT='FORC'),
+        _F(VECTEUR = CO("D3GenY"), VECT_ASSE = DSis3Y, TYPE_VECT='FORC'),
+        _F(VECTEUR = CO("D3GenZ"), VECT_ASSE = DSis3Z, TYPE_VECT='FORC'),
     ),
 )
 

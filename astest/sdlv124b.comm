@@ -216,7 +216,7 @@ CDIAG=PROJ_MATR_BASE(BASE=MODES,
 
 FDIAG=PROJ_VECT_BASE(BASE=MODES,
                     NUME_DDL_GENE=NUMDIAG,
-                    VECT_ASSE=FASS,);
+                    VECT_ASSE=FASS, TYPE_VECT='FORC');
 
 
 #######################################################

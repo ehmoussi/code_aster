@@ -137,7 +137,7 @@ PROJ_BASE(  BASE=MODES,
                              MATR_ASSE = MATRAMOR,)),
              VECT_ASSE_GENE=_F(
                              VECTEUR = CO("EFFOGENE"),
-                             VECT_ASSE = VECTASS) )
+                             VECT_ASSE = VECTASS, TYPE_VECT='FORC') )
 
 #
 # DEFINITION DE L'EXCITATION SINUSOIDALE

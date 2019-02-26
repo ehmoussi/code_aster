@@ -240,7 +240,8 @@ RIGPRO=PROJ_MATR_BASE(BASE=RESGEN,
 
 VECPRO=PROJ_VECT_BASE(BASE=RESGEN,
                       NUME_DDL_GENE=NUMEMODE,
-                      VECT_ASSE_GENE=FGEN,);
+                      VECT_ASSE_GENE=FGEN,
+                      TYPE_VECT='FORC');
 
 
 # ----- POUR LES CONDITIONS INITIALES

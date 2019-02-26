@@ -141,7 +141,7 @@ M_PROJ=PROJ_MATR_BASE(BASE=MODES,
 #
 F_PROJ=PROJ_VECT_BASE(BASE=MODES,
                       NUME_DDL_GENE=NUMEMODE,
-                      VECT_ASSE=V_ASSE
+                      VECT_ASSE=V_ASSE, TYPE_VECT='FORC',
                       )
 
 #

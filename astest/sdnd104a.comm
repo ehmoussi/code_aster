@@ -148,7 +148,8 @@ NUMEGE=NUME_DDL_GENE(   BASE=MODES,
 
 #
 FGENE=PROJ_VECT_BASE(  BASE=MODES,  VECT_ASSE=SEISME,
-                          NUME_DDL_GENE=NUMEGE
+                          NUME_DDL_GENE=NUMEGE,
+                          TYPE_VECT='FORC',
                        )
 
 #

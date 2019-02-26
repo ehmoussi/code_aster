@@ -1421,9 +1421,9 @@ PROJ_BASE(  BASE=MODES,
              _F(  MATRICE = CO("RIGIDGEN"),
                               MATR_ASSE = MATRRIGI)),VECT_ASSE_GENE=(
              _F(  VECTEUR = CO("VECTGE1"),
-                              VECT_ASSE = VECTAS1),
+                              VECT_ASSE = VECTAS1, TYPE_VECT='FORC'),
              _F(  VECTEUR = CO("VECTGE2"),
-                              VECT_ASSE = VECTAS2))
+                              VECT_ASSE = VECTAS2, TYPE_VECT='FORC'))
              )
 
 FCT=DEFI_FONCTION(    NOM_PARA='INST',

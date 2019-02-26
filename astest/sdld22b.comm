@@ -200,7 +200,7 @@ PROJ_BASE(  BASE=MODES,
                              MATR_ASSE = MATRAMOR,),),
              VECT_ASSE_GENE=_F(
                              VECTEUR = CO("EFFOGENE"),
-                             VECT_ASSE = VECTASS) )
+                             VECT_ASSE = VECTASS, TYPE_VECT='FORC') )
 
 DYNMOD_E=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                             SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
