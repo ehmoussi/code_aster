@@ -179,9 +179,7 @@ FOND=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
 # comportement de STAT_NON_LINE (VMIS_ISOT_TRAC).
 # Ceci est du au fait que l'on veut calculer G en supposant
 # que le chargement est monotone
-# proportionnel. L'utilisation de la loi VMIS_ISOT_TRAC dans
-# CALC_G aurait conduit a
-# calculer le parametre GTP (voir doc U2.82.03).
+# proportionnel.
 
 G220=CALC_G(        RESULTAT=CHAMDEPL,
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -219,35 +219,6 @@ class MUAXQU8(Element):
                      (SP.PTHETAR, NDEPLAR), (OP.CALC_G.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), (OP.CALC_G.PVARIPR, LC.ZVARINO),
                      (SP.PVITESS, NDEPLAR), ),
-            para_out=((SP.PGTHETA, LC.EGTHETA), ),
-        ),
-
-        OP.CALC_GTP(te=96,
-            para_in=((SP.PACCELE, NDEPLAR), (OP.CALC_GTP.PCOMPOR, LC.CCOMPOR),
-                     (SP.PCONTGR, ESIGMPG), (OP.CALC_GTP.PCONTRR, ESIGMPG),
-                     (SP.PDEFOPL, EDEFONO), (SP.PDEPINR, NDEPLAR),
-                     (SP.PDEPLAR, NDEPLAR), (SP.PEPSINR, CEPSINR),
-                     (SP.PFRVOLU, NFORCER), (SP.PGEOMER, NGEOMER),
-                     (SP.PMATERC, LC.CMATERC), (SP.PPESANR, LC.CPESANR),
-                     (SP.PROTATR, LC.CROTATR), (SP.PSIGINR, ESIGMNO),
-                     (SP.PTHETAR, NDEPLAR), (OP.CALC_GTP.PVARCPR, LC.ZVARCPG),
-                     (SP.PVARCRR, LC.ZVARCPG), (OP.CALC_GTP.PVARIPR, LC.ZVARINO),
-                     (SP.PVITESS, NDEPLAR), ),
-            para_out=((SP.PGTHETA, LC.EGTHETA), ),
-        ),
-
-        OP.CALC_GTP_F(te=96,
-            para_in=((SP.PACCELE, NDEPLAR), (OP.CALC_GTP_F.PCOMPOR, LC.CCOMPOR),
-                     (SP.PCONTGR, ESIGMPG), (OP.CALC_GTP_F.PCONTRR, ESIGMPG),
-                     (SP.PDEFOPL, EDEFONO), (SP.PDEPINR, NDEPLAR),
-                     (SP.PDEPLAR, NDEPLAR), (SP.PEPSINF, CEPSINF),
-                     (SP.PFFVOLU, CFORCEF), (SP.PGEOMER, NGEOMER),
-                     (SP.PMATERC, LC.CMATERC), (SP.PPESANR, LC.CPESANR),
-                     (SP.PROTATR, LC.CROTATR), (SP.PSIGINR, ESIGMNO),
-                     (SP.PTEMPSR, CTEMPSR), (SP.PTHETAR, NDEPLAR),
-                     (OP.CALC_GTP_F.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
-                     (OP.CALC_GTP_F.PVARIPR, LC.ZVARINO), (SP.PVITESS, NDEPLAR),
-                     ),
             para_out=((SP.PGTHETA, LC.EGTHETA), ),
         ),
 
