@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,11 @@
 !
 !
 interface
-    subroutine fonnoe(resu, noma, cnxinv, nomobj, typfon,&
-                      nbnoff)
+    subroutine fonnoe(resu, noma, cnxinv, nomobj, nbnoff)
         character(len=8) :: resu
         character(len=8) :: noma
         character(len=19) :: cnxinv
         character(len=6) :: nomobj
-        character(len=8) :: typfon
         integer :: nbnoff
     end subroutine fonnoe
 end interface

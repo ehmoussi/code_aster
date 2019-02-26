@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -282,11 +282,7 @@ def get_noeud_fond_fiss(FOND_FISS):
     from Utilitai.Utmess import UTMESS
     Lnoff = FOND_FISS.sdj.FOND_NOEU.get()
     if Lnoff == None:
-# Cas double fond de fissure : par convention les noeuds sont ceux de
-# fond_inf
-        Lnoff = FOND_FISS.sdj.FONDINF_NOEU.get()
-        if Lnoff == None:
-            UTMESS('F', 'RUPTURE0_11')
+        UTMESS('F', 'RUPTURE0_11')
     Lnoff = map(S.rstrip, Lnoff)
     return Lnoff
 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ subroutine op0055()
     integer :: iadr1, ifm, niv
     integer :: nbocc, nbnoff
     integer :: ibas, ibid, iocc, idon, idonn, ifonoe, ndonn
-    integer :: iret1, iret2, iret, irets
+    integer :: iret1, iret, irets
     integer :: n1, n2
     character(len=6) :: nompro
     character(len=8) :: resu, noma, typfon, confin
@@ -86,8 +86,7 @@ subroutine op0055()
 !
 !
 !     ---------------------------------------------------------------
-!     RECUPERATION DU TYPE DE FOND
-!     OUVERT OU FERME OU INF/SUP
+!     RECUPERATION DU TYPE DE FOND : OUVERT OU FERME
 !     ---------------------------------------------------------------
 !
     call getfac('FOND_FISS', nbocc)
@@ -134,7 +133,7 @@ subroutine op0055()
             motcl(6) = 'GROUP_MA_ORIG'
             ndonn = 6
         else
-            ndonn = 4
+            ASSERT(.FALSE.)
         endif
         do 11 idonn = 1, ndonn
             call getvtx('FOND_FISS', motcl(idonn), iocc=iocc, nbval=0, nbret=n1)
@@ -161,22 +160,19 @@ subroutine op0055()
 !       CONSTRUCTION DE FOND DE FISSURE
 !       ---------------------------------------------------------------
 !
-!        SI LE MOT CLE FACTEUR EST NOEUD OU GROUP_NO
+!        SI LE MOT CLE FACTEUR EST GROUP_NO
 !        ----------------------------------------
 !
-        call jeexin('&&'//nompro//'.NOEUD', iret1)
-        call jeexin('&&'//nompro//'.GROUP_NO', iret2)
-        if ((iret1.ne.0) .or. (iret2.ne.0)) then
-            call fonnoe(resu, noma, cnxinv, nompro, typfon,&
-                        nbnoff)
+        call jeexin('&&'//nompro//'.GROUP_NO', iret1)
+        if (iret1.ne.0) then
+            call fonnoe(resu, noma, cnxinv, nompro, nbnoff)
         endif
 !
-!        SI LE MOT CLE FACTEUR EST MAILLE OU GROUP_MA
+!        SI LE MOT CLE FACTEUR EST GROUP_MA
 !        ----------------------------------------
 !
-        call jeexin('&&'//nompro//'.MAILLE', iret1)
-        call jeexin('&&'//nompro//'.GROUP_MA', iret2)
-        if ((iret1.ne.0) .or. (iret2.ne.0)) then
+        call jeexin('&&'//nompro//'.GROUP_MA', iret1)
+        if (iret1.ne.0) then
             call fonmai(resu, noma, typfon, iocc, nbnoff)
         endif
 !C
@@ -188,7 +184,7 @@ subroutine op0055()
             if (iret .ne. 0) call jedetr('&&'//nompro//'.'//motcl(idonn))
 20      continue
 !
- 1  end do
+ 1  continue
 !
 !
 !     ---------------------------------------------------------------
@@ -226,7 +222,7 @@ subroutine op0055()
             ASSERT(zk8(ifonoe+1-1).eq.zk8(ifonoe+nbnoff-1))
         endif
     else
-        fonoeu = resu//'.FOND_SUP.NOEU'
+        ASSERT(.FALSE.)
     endif
 !
     fondfi = resu//'.FONDFISS'

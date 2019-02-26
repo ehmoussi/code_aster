@@ -384,19 +384,6 @@ Dans le cas présent, ils sont ignorés.
 Supprimer les mots-clés LISSAGE_G et/ou LISSAGE_THETA.
 ."""),
 
-    68 : _(u"""
-Les mailles de FOND_INF et de FOND_SUP sont de type différent.
-  Type de mailles pour FOND_SUP : %(k1)s
-  Type de mailles pour FOND_INF : %(k2)s
-"""),
-
-    69: _(u"""
-Les noeuds %(k1)s de FOND_INF et %(k2)s de FOND_SUP ne sont pas en vis à vis.
--> Risque et Conseil :
-Vérifiez que les deux groupes correspondent bien à des noeuds coïncidents
-géométriquement et que les groupes de noeuds sont ordonnés dans le même sens.
-"""),
-
     70 : _(u"""
 Erreur utilisateur : la lèvre définie sous %(k1)s possède une maille répétée 2 fois :
 maille %(k2)s.
