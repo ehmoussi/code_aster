@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -67,7 +67,7 @@ aster_logical, intent(out) :: incr
     character(len=16) :: keywordfact
     character(len=24) :: repk
     character(len=8) :: mesh
-    aster_logical :: limpel, l_etat_init, l_temp, l_implex
+    aster_logical :: limpel, l_etat_init, l_implex
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -140,14 +140,10 @@ aster_logical, intent(out) :: incr
 !
     call gverlc(resu, compor, iord0)
 !
-! - Check if TEMP is present or not in result cham_mater
-!
-    l_temp = cgvtem(resu, iord0)
-!
 ! - Check COMPORTEMENT / RELATION in result for incremental comportement 
 !
     if (incr) then
-        call cgvein(compor, l_temp)
+        call cgvein(compor)
     endif
 !
     call jedema()

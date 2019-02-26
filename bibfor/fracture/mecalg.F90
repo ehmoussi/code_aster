@@ -236,8 +236,6 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
             option = 'CALC_DG_F'
         else if (option.eq.'CALC_G') then
             option = 'CALC_G_F'
-        else if (option.eq.'CALC_GTP') then
-            option = 'CALC_GTP_F'
         else if (option.eq.'CALC_DG_E') then
             option = 'CALC_DG_E_F'
         else if (option.eq.'CALC_DGG_E') then
