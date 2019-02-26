@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,6 @@ G01A=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.,
                          R_SUP=0.001875E-2,
                          FOND_FISS=FOND1,
-                         MODULE=1.,
                          ),
                       )
 
@@ -101,8 +100,7 @@ G01B=CALC_G(    RESULTAT=CHAMDEPL,
                 THETA=_F(
                          R_INF=0.001875E-2,
                          R_SUP=0.003750E-2,
-                         FOND_FISS=FOND1,
-                         MODULE=1.,),
+                         FOND_FISS=FOND1,),
                       )
 
 #
@@ -119,8 +117,7 @@ G01C=CALC_G(    RESULTAT=CHAMDEPL,
                 THETA=_F(
                          R_INF=0.003750E-2,
                          R_SUP=0.005625E-2,
-                         FOND_FISS=FOND1,
-                         MODULE=1.,),
+                         FOND_FISS=FOND1,),
                       )
 
 #
@@ -141,7 +138,6 @@ G01D=CALC_G(    RESULTAT=CHAMDEPL,
                 THETA=_F(
                          R_INF=0.005625E-2,
                          FOND_FISS=FOND1,
-                         MODULE=1.,
                          R_SUP=0.007500E-2,
 
                          ),
@@ -172,8 +168,6 @@ G02A=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.,
                          R_SUP=0.001875E-2,
                          FOND_FISS=FOND2,
-                         MODULE=1.,
-
                          ),
                       )
 
@@ -194,7 +188,6 @@ G02B=CALC_G(    RESULTAT=CHAMDEPL,
                 THETA=_F(
                          R_INF=0.001875E-2,
                          FOND_FISS=FOND2,
-                         MODULE=1.,
                          R_SUP=0.003750E-2,
                          ),
                      )
@@ -215,7 +208,6 @@ G02C=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.003750E-2,
                          R_SUP=0.005625E-2,
                          FOND_FISS=FOND2,
-                         MODULE=1.,
                          ),
                       )
 
@@ -234,7 +226,6 @@ G02D=CALC_G(    RESULTAT=CHAMDEPL,
                          R_INF=0.005625E-2,
                          R_SUP=0.007500E-2,
                          FOND_FISS=FOND2,
-                         MODULE=1.,
                          ),
                       )
 

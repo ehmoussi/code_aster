@@ -106,7 +106,6 @@ CHAMDEP=STAT_NON_LINE( MODELE=MO,
 G_0=CALC_G( THETA=_F(
                      R_INF=0.15,
                      FOND_FISS=FOND,
-                     MODULE=1.,
                      R_SUP=0.6,),
                      RESULTAT=CHAMDEP,
                      TOUT_ORDRE='OUI',
@@ -243,7 +242,6 @@ CHAMDEP2=STAT_NON_LINE( MODELE=MO,
 G_0_2=CALC_G( THETA=_F(
                        R_INF=0.15,
                        FOND_FISS=FOND,
-                       MODULE=1.,
                        R_SUP=0.6,),
                        RESULTAT=CHAMDEP2,
                        TOUT_ORDRE='OUI',
@@ -384,7 +382,6 @@ CHAMDEP3=STAT_NON_LINE( MODELE=MO,
 G_0_3=CALC_G( THETA=_F(
                        R_INF=0.15,
                        FOND_FISS=FOND,
-                       MODULE=1.,
                        R_SUP=0.6,),
                        RESULTAT=CHAMDEP3,
                        TOUT_ORDRE='OUI',
@@ -556,7 +553,6 @@ CHAMDEP4=STAT_NON_LINE( MODELE=MO,
 G_0_4=CALC_G( THETA=_F(
                        R_INF=0.15,
                        FOND_FISS=FOND,
-                       MODULE=1.,
                        R_SUP=0.6,),
                        RESULTAT=CHAMDEP4,
                        TOUT_ORDRE='OUI',
@@ -689,7 +685,6 @@ CHAMDEP5=STAT_NON_LINE( MODELE=MO,
 G_0_5=CALC_G(THETA=_F(
                       R_INF=0.15,
                       FOND_FISS=FOND,
-                      MODULE=1.,
                       R_SUP=0.6,),
                       RESULTAT=CHAMDEP5,
             )
@@ -820,7 +815,6 @@ G_I_E=CALC_G(RESULTAT=RESUINCR,
              THETA=_F(
                       R_INF=0.15,
                       FOND_FISS=FOND,
-                      MODULE=1.,
                       R_SUP=0.6,),
                       COMPORTEMENT=_F(RELATION='ELAS_VMIS_PUIS'))
 
@@ -831,7 +825,6 @@ G_I_E2=CALC_G(RESULTAT=RESUINCR,
               THETA=_F(
                        R_INF=0.15,
                        FOND_FISS=FOND,
-                       MODULE=1.,
                        R_SUP=0.6,),
                        COMPORTEMENT=_F(RELATION='ELAS_VMIS_PUIS'),
                        CALCUL_CONTRAINTE='NON',)

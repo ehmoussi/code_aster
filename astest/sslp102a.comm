@@ -118,7 +118,6 @@ G1=CALC_G(        RESULTAT=RESU,
                   NUME_ORDRE=1,
                   THETA=_F(
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_INF=1.,
                            R_SUP=5.),
                   COMPORTEMENT=_F(
@@ -129,7 +128,6 @@ G2=CALC_G(        RESULTAT=RESU,
                   NUME_ORDRE=1,
                   THETA=_F(
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_INF=5.,
                            R_SUP=10.),
                   COMPORTEMENT=_F(
@@ -139,7 +137,6 @@ G3=CALC_G(        RESULTAT=RESU,
                   NUME_ORDRE=1,
                   THETA=_F(
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_INF=10.,
                            R_SUP=20.),
                   COMPORTEMENT=_F(
@@ -149,7 +146,6 @@ G4=CALC_G(        RESULTAT=RESU,
                   NUME_ORDRE=1,
                   THETA=_F(
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_INF=20.,
                            R_SUP=30.),
                   COMPORTEMENT=_F(

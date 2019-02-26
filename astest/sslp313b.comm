@@ -70,8 +70,7 @@ G01=CALC_G(              RESULTAT=CHAMDEPL,
                          THETA=_F(
                                   R_INF=0.00001875,
                                   R_SUP=0.000075,
-                                  FOND_FISS=FOND1,
-                                  MODULE=1.,),
+                                  FOND_FISS=FOND1,),
                      )
 
 GK01=CALC_G(              RESULTAT=CHAMDEPL,

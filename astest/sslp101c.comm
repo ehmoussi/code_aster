@@ -69,7 +69,6 @@ G1=CALC_G(              RESULTAT=RESU,
                         THETA=_F(
                                  R_INF=22.04078,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_SUP=30.,)
           )
 
@@ -84,7 +83,6 @@ G2=CALC_G(                  RESULTAT=RESU,
                             THETA=_F(
                                      R_INF=15.3061094,
                                      FOND_FISS=FOND,
-                                     MODULE=1.,
                                      R_SUP=22.04078,)
           )
 
@@ -99,7 +97,6 @@ G3=CALC_G(                  RESULTAT=RESU,
                             THETA=_F(
                                      R_INF=9.79591846,
                                      FOND_FISS=FOND,
-                                     MODULE=1.,
                                      R_SUP=15.3061094,)
            )
 
@@ -114,7 +111,6 @@ G4=CALC_G(                  RESULTAT=RESU,
                             THETA=_F(
                                      R_INF=5.510197639,
                                      FOND_FISS=FOND,
-                                     MODULE=1.,
                                      R_SUP=9.79591846,)
          )
 
@@ -129,7 +125,6 @@ G5=CALC_G(                  RESULTAT=RESU,
                             THETA=_F(
                                      R_INF=2.448979377,
                                      FOND_FISS=FOND,
-                                     MODULE=1.,
                                      R_SUP=5.510197639,)
           )
 
@@ -144,7 +139,6 @@ G6=CALC_G(                  RESULTAT=RESU,
                             THETA=_F(
                                      R_INF=0.61225116,
                                      FOND_FISS=FOND,
-                                     MODULE=1.,
                                      R_SUP=2.448979377,)
         )
 

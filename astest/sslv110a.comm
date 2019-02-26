@@ -58,10 +58,8 @@ CHAMDEPL=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT,
 
 #
 #
-#    --- DEFINITION DU MODULE DE THETA ET DES RAYONS DEFINISSANT LA
-#        COURONNE PAR FONCTIONS
+#    DEFINITION DES RAYONS DEFINISSANT LA COURONNE PAR FONCTIONS
 #
-MODUF=DEFI_FONCTION(  NOM_PARA='ABSC',  VALE=( 0., 1.,     26.69, 1., ))
 
 RINF0=DEFI_FONCTION(  NOM_PARA='ABSC',  VALE=( 0., 0.,     26.69, 0., ))
 
@@ -173,7 +171,6 @@ _F( NOEUD = 'NO1259',    NOM_CMP = ('DX', 'DY', 'DZ',),
 
 GLOC0=CALC_G(   RESULTAT=CHAMDEPL,
                        THETA=_F(FOND_FISS=FISS1,
-                                MODULE_FO = MODUF,
                                 R_INF_FO = RINF0,
                                 R_SUP_FO = RSUP0),
                        LISSAGE=_F(DEGRE=7),

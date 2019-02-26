@@ -62,7 +62,6 @@ FOND=DEFI_FOND_FISS(    MAILLAGE=MA,
 G0=CALC_G(              RESULTAT=CHAMDEPL,
                         THETA=_F(
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
                                  R_INF=0.001,
                                  R_SUP=0.003),
                     )

@@ -222,7 +222,6 @@ Rsup3 = 9.0
 GINGA1=CALC_G(THETA=_F(
                        R_INF=Rinf1,
                        FOND_FISS=FISS1,
-                       MODULE=1,
                        R_SUP=Rsup1,),
               RESULTAT=RESUINI,
               INST=3,
@@ -234,7 +233,6 @@ GINGA1=CALC_G(THETA=_F(
 GINGA2=CALC_G(THETA=_F(
                        R_INF=Rinf2,
                        FOND_FISS=FISS1,
-                       MODULE=1,
                        R_SUP=Rsup2,),
               RESULTAT=RESUINI,
               INST=3,
@@ -246,7 +244,6 @@ GINGA2=CALC_G(THETA=_F(
 GINGA3=CALC_G(THETA=_F(
                        R_INF=Rinf3,
                        FOND_FISS=FISS1,
-                       MODULE=1,
                        R_SUP=Rsup3,),
               RESULTAT=RESUINI,
               INST=3,
@@ -261,7 +258,6 @@ GINGA3=CALC_G(THETA=_F(
 GINNO1=CALC_G(THETA=_F(
                        R_INF=Rinf1,
                        FOND_FISS=FISS1,
-                       MODULE=1,
                        R_SUP=Rsup1,),
              RESULTAT=RESUINI,
              INST=3,
@@ -271,7 +267,6 @@ GINNO1=CALC_G(THETA=_F(
 GINNO2=CALC_G(THETA=_F(
                        R_INF=Rinf2,
                        FOND_FISS=FISS1,
-                       MODULE=1,
                        R_SUP=Rsup2,),
              RESULTAT=RESUINI,
              INST=3,
@@ -281,7 +276,6 @@ GINNO2=CALC_G(THETA=_F(
 GINNO3=CALC_G(THETA=_F(
                        R_INF=Rinf3,
                        FOND_FISS=FISS1,
-                       MODULE=1,
                        R_SUP=Rsup3,),
               RESULTAT=RESUINI,
               INST=3,
@@ -294,7 +288,6 @@ GINNO3=CALC_G(THETA=_F(
 GINELNO1=CALC_G(THETA=_F(
                          R_INF=Rinf1,
                          FOND_FISS=FISS1,
-                         MODULE=1,
                          R_SUP=Rsup1,),
                 RESULTAT=RESUINI,
                 INST=3,
@@ -304,7 +297,6 @@ GINELNO1=CALC_G(THETA=_F(
 GINELNO2=CALC_G(THETA=_F(
                          R_INF=Rinf2,
                          FOND_FISS=FISS1,
-                         MODULE=1,
                          R_SUP=Rsup2,),
                 RESULTAT=RESUINI,
                 INST=3,
@@ -314,7 +306,6 @@ GINELNO2=CALC_G(THETA=_F(
 GINELNO3=CALC_G(THETA=_F(
                          R_INF=Rinf3,
                          FOND_FISS=FISS1,
-                         MODULE=1,
                          R_SUP=Rsup3,),
                 RESULTAT=RESUINI,
                 INST=3,
@@ -380,7 +371,6 @@ GINGAK3=CALC_G(THETA=_F(FOND_FISS=FISS1,
 GTHER3=CALC_G(THETA=_F(
                        R_INF=Rinf3,
                        FOND_FISS=FISS1,
-                       MODULE=1,
                        R_SUP=Rsup3,),
               RESULTAT=RESOUVFI,
               INST=1,

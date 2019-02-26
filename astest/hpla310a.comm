@@ -697,7 +697,6 @@ G01B=CALC_G(
                            THETA=_F(
                                     R_INF=0.0025,
                                     FOND_FISS=FOND,
-                                    MODULE=1.,
                                     R_SUP=0.125,),
                       )
 
@@ -707,7 +706,6 @@ G01B1=CALC_G(              RESULTAT=CHDEP1B,
                            THETA=_F(
                                     R_INF=0.0025,
                                     FOND_FISS=FOND,
-                                    MODULE=1.,
                                     R_SUP=0.425,),
                        )
 
@@ -717,7 +715,6 @@ G01B2=CALC_G(              RESULTAT=CHDEP1B,
                            THETA=_F(
                                     R_INF=0.0025,
                                     FOND_FISS=FOND,
-                                    MODULE=1.,
                                     R_SUP=0.625,),
                        )
 
@@ -727,7 +724,6 @@ G01B3=CALC_G(              RESULTAT=CHDEP1B,
                            THETA=_F(
                                     R_INF=0.0025,
                                     FOND_FISS=FOND,
-                                    MODULE=1.,
                                     R_SUP=0.825,),
                        )
 
@@ -775,7 +771,6 @@ G02B=CALC_G(        RESULTAT=CHDEP2B,
                     THETA=_F(
                              R_INF=0.0025,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=0.125,),
                       )
 
@@ -785,7 +780,6 @@ G02B1=CALC_G(        RESULTAT=CHDEP2B,
                      THETA=_F(
                               R_INF=0.0025,
                               FOND_FISS=FOND,
-                              MODULE=1.,
                               R_SUP=0.425,),
                        )
 
@@ -795,7 +789,6 @@ G02B2=CALC_G(        RESULTAT=CHDEP2B,
                      THETA=_F(
                               R_INF=0.0025,
                               FOND_FISS=FOND,
-                              MODULE=1.,
                               R_SUP=0.625,),
                        )
 
@@ -805,7 +798,6 @@ G02B3=CALC_G(        RESULTAT=CHDEP2B,
                      THETA=_F(
                               R_INF=0.0025,
                               FOND_FISS=FOND,
-                              MODULE=1.,
                               R_SUP=0.825,),
                        )
 
@@ -853,7 +845,6 @@ G03B=CALC_G(        RESULTAT=CHDEP3B,
                     THETA=_F(
                              R_INF=0.0025,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=0.125,),
                       )
 
@@ -863,7 +854,6 @@ G03B1=CALC_G(       RESULTAT=CHDEP3B,
                     THETA=_F(
                              R_INF=0.0025,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=0.425,),
                        )
 
@@ -873,7 +863,6 @@ G03B2=CALC_G(       RESULTAT=CHDEP3B,
                     THETA=_F(
                              R_INF=0.0025,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=0.625,),
                        )
 
@@ -883,7 +872,6 @@ G03B3=CALC_G(        RESULTAT=CHDEP3B,
                      THETA=_F(
                               R_INF=0.0025,
                               FOND_FISS=FOND,
-                              MODULE=1.,
                               R_SUP=0.825,),
                        )
 

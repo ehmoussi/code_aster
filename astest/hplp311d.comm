@@ -204,8 +204,7 @@ G00=CALC_G(        RESULTAT=RESU,
                    THETA=_F(
                             R_INF=5.00E-4,
                             R_SUP=1.00E-3,
-                            FOND_FISS=FOND,
-                            MODULE=1.,),
+                            FOND_FISS=FOND,),
                    EXCIT=_F(CHARGE=CH,),
            )
 
@@ -243,8 +242,7 @@ G01=CALC_G(        RESULTAT=RESU,
                    THETA=_F(
                             R_INF=5.00E-4,
                             R_SUP=1.00E-3,
-                            FOND_FISS=FOND,
-                            MODULE=1.,),
+                            FOND_FISS=FOND,),
                    EXCIT=_F(CHARGE=CH,),
                      )
 
@@ -282,8 +280,7 @@ G02=CALC_G(        RESULTAT=RESU,
                    THETA=_F(
                             R_INF=5.00E-4,
                             R_SUP=1.00E-3,
-                            FOND_FISS=FOND,
-                            MODULE=1.,),
+                            FOND_FISS=FOND,),
                    EXCIT=_F(CHARGE=CH,),
            )
 

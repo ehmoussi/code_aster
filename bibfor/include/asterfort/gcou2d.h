@@ -22,7 +22,7 @@
 !
 interface
     subroutine gcou2d(base, resu, noma, nomno, noeud,&
-                      coor, rinf, rsup, module,dir)
+                      coor, rinf, rsup, dir)
         character(len=1) :: base
         character(len=24) :: resu
         character(len=8) :: noma
@@ -31,7 +31,6 @@ interface
         real(kind=8) :: coor(*)
         real(kind=8) :: rinf
         real(kind=8) :: rsup
-        real(kind=8) :: module
         real(kind=8) :: dir(3)
     end subroutine gcou2d
 end interface

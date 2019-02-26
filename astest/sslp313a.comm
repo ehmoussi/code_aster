@@ -63,7 +63,6 @@ G01=CALC_G(          RESULTAT=CHAMDEPL,
                      THETA=_F(
                               R_INF=0.00001875,
                               FOND_FISS=FOND1,
-                              MODULE=1.,
                               R_SUP=0.000075,),
                    )
 

@@ -162,7 +162,6 @@ FOND=DEFI_FOND_FISS(MAILLAGE=M,
 
 G1=CALC_G(        THETA=_F(R_INF=1.0,
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_SUP=4.0),
                   RESULTAT=RESU,
                   EXCIT=_F(CHARGE=CH,),);
@@ -171,7 +170,6 @@ G1=CALC_G(        THETA=_F(R_INF=1.0,
 G2=CALC_G(        THETA=_F(
                            R_INF=0.5,
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_SUP=4.5),
                   RESULTAT=RESU,
                   EXCIT=_F(CHARGE=CH,),);
@@ -180,7 +178,6 @@ G2=CALC_G(        THETA=_F(
 G3=CALC_G(        THETA=_F(
                            R_INF=1.5,
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_SUP=3.5),
                   RESULTAT=RESU,
                   EXCIT=_F(CHARGE=CH,),);
@@ -189,7 +186,6 @@ G3=CALC_G(        THETA=_F(
 G4=CALC_G(        THETA=_F(
                            R_INF=1.0,
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_SUP=4.5),
                   RESULTAT=RESU,
                   EXCIT=_F(CHARGE=CH,),);
