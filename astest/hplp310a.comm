@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -238,8 +238,7 @@ G0_P=CALC_G(    RESULTAT=CHAMDEPP,
                                  R_INF=0.0025,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.005,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.005,),
                     )
 
 GK0_P=CALC_G(    RESULTAT=CHAMDEPP,
@@ -258,8 +257,7 @@ G1_P=CALC_G(    RESULTAT=CHAMDEPP,
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.0075,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.0075,),
                     )
 
 GK1_P=CALC_G(    RESULTAT=CHAMDEPP,
@@ -278,8 +276,7 @@ G2_P=CALC_G(    RESULTAT=CHAMDEPP,
                                  R_INF=0.0075,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.01,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.01,),
                     )
 
 GK2_P=CALC_G(    RESULTAT=CHAMDEPP,
@@ -298,8 +295,7 @@ G3_P=CALC_G(    RESULTAT=CHAMDEPP,
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.03,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.03,),
                     )
 
 GK3_P=CALC_G(    RESULTAT=CHAMDEPP,
@@ -331,8 +327,7 @@ G0_T=CALC_G(    RESULTAT=CHAMDEPT,
                                  R_INF=0.0025,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.005,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.005,),
                     )
 
 GK0_T=CALC_G(    RESULTAT=CHAMDEPT,
@@ -351,8 +346,7 @@ G1_T=CALC_G(    RESULTAT=CHAMDEPT,
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.0075,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.0075,),
                     )
 
 GK1_T=CALC_G(    RESULTAT=CHAMDEPT,
@@ -371,8 +365,7 @@ G2_T=CALC_G(    RESULTAT=CHAMDEPT,
                                  R_INF=0.0075,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.01,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.01,),
                     )
 
 GK2_T=CALC_G(    RESULTAT=CHAMDEPT,
@@ -391,8 +384,7 @@ G3_T=CALC_G(    RESULTAT=CHAMDEPT,
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.03,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.03,),
                     )
 
 GK3_T=CALC_G(    RESULTAT=CHAMDEPT,
@@ -424,8 +416,7 @@ G0_C=CALC_G(   RESULTAT=CHAMDEP0,
                                  R_INF=0.0025,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.005,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.005,),
                     )
 
 GK0_C=CALC_G(   RESULTAT=CHAMDEP0,
@@ -444,8 +435,7 @@ G1_C=CALC_G(   RESULTAT=CHAMDEP0,
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.0075,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.0075,),
                     )
 
 GK1_C=CALC_G(   RESULTAT=CHAMDEP0,
@@ -464,8 +454,7 @@ G2_C=CALC_G(   RESULTAT=CHAMDEP0,
                                  R_INF=0.0075,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.01,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.01,),
                     )
 
 GK2_C=CALC_G(   RESULTAT=CHAMDEP0,
@@ -484,8 +473,7 @@ G3_C=CALC_G(   RESULTAT=CHAMDEP0,
                                  R_INF=0.005,
                                  FOND_FISS=FOND,
                                  MODULE=1.,
-                                 R_SUP=0.03,
-                                 DIRECTION=(1., 0., 0.,)),
+                                 R_SUP=0.03,),
                     )
 
 GK3_C=CALC_G(   RESULTAT=CHAMDEP0,

@@ -97,15 +97,13 @@ subroutine gcour2(resu, noma, nomno, coorn,&
 !
     integer :: nbnoeu, iadrt1, iadrt2, iadrt3, itheta, ifon
     integer :: in2, iadrco, jmin, ielinf, iadnum, jvect
-    integer :: iadrno, num, indic, iadrtt, nbre, nbr8, nbptfd
-    integer :: iret, numa, ndimte, iebas
-    integer :: jnorm, iftyp
+    integer :: iadrno, num, indic, iadrtt, nbre, nbptfd
+    integer :: iret, numa, ndimte, iebas, iftyp
 !
     real(kind=8) :: xi1, yi1, zi1, xj1, yj1, zj1
-    real(kind=8) :: xij, yij, zij, eps, d, tei, tej, dir(3)
+    real(kind=8) :: xij, yij, zij, eps, d, tei, tej
     real(kind=8) :: xm, ym, zm, xim, yim, zim, s, dmin, smin, xn, yn, zn
-    real(kind=8) :: rii, rsi, alpha, valx, valy, valz, norm2, psca
-    real(kind=8) :: norme, tmpv(3)
+    real(kind=8) :: rii, rsi, alpha, valx, valy, valz, norm2
 !
     aster_logical :: milieu, connex
 !
@@ -173,60 +171,24 @@ subroutine gcour2(resu, noma, nomno, coorn,&
 !
     stok4 = '&&COURON.DIREC'
     call wkvect(stok4, 'V V R', 3*nbnoeu, in2)
-!
-!
-!  RECUPERATION DIRECTION DU CHAMP THETA
-!     DANS LE CAS OU LA NORMALE EST DEFINIE DANS DEFI_FOND_FISS/NORMALE,
-!     ON AVERTIT L'UTILISATEUR PAR UNE ALARME SI LA DIRECTION N'EST PAS
-!     FOURNIE
-    call getvr8('THETA', 'DIRECTION', iocc=1, nbval=3, vect=dir,&
-                nbret=nbr8)
-    if (nbr8 .eq. 0 .and. ienorm .ne. 0) then
-        call utmess('A', 'RUPTURE0_91')
-    endif
-!     ON VERIFIE QUE LA DIRECTION FOURNIE EST ORTHOGONALE A LA NORMALE
-    if (nbr8 .ne. 0 .and. ienorm .ne. 0) then
-        call jeveuo(norm, 'L', jnorm)
-        call dcopy(3, zr(jnorm), 1, tmpv, 1)
-        call normev(dir, norme)
-        call normev(tmpv, norme)
-        call lcprsn(3, dir, tmpv, psca)
-        if (abs(psca) .gt. 0.1d0) then
-            call utmess('F', 'RUPTURE0_94')
-        endif
-    endif
-!
-! 1ER CAS: LA DIRECTION DE THETA EST DONNEE, ON LA NORME
-!
-    if (nbr8 .ne. 0) then
-        norme = 0.d0
-        do i = 1, 3
-            norme = norme + dir(i)*dir(i)
-        end do
-        norme = sqrt(norme)
+    call jeexin(basfon, iebas)
+!    
+!   DETERMINATION DE LA DIRECTION DE PROPAGATION
+    if(iebas .ne. 0) then
+!       CAS D'UNE FISSURE : LA DIRECTION EST A PRENDRE DANS BASEFOND
+        call jeveuo(basfon, 'L', jvect)
         do i = 1, nbnoeu
-            zr(in2+(i-1)*3+1-1) = dir(1)/norme
-            zr(in2+(i-1)*3+2-1) = dir(2)/norme
-            zr(in2+(i-1)*3+3-1) = dir(3)/norme
+            zr(in2+(i-1)*3+1-1) = zr(jvect-1+6*(i-1)+4)
+            zr(in2+(i-1)*3+2-1) = zr(jvect-1+6*(i-1)+5)
+            zr(in2+(i-1)*3+3-1) = zr(jvect-1+6*(i-1)+6)
         end do
-!
+    else if (ienorm.ne.0) then
+!       CAS D'UNE ENTAILLE : BASEFOND N'EXISTE PAS
+        call gdinor(norm, nbnoeu, iadnum, coorn, in2)
     else
-        call jeexin(basfon, iebas)
-        if(iebas .ne. 0) then
-!           CAS D'UNE FISSURE : LA DIRECTION EST A PRENDRE DANS BASEFOND
-            call jeveuo(basfon, 'L', jvect)
-            do i = 1, nbnoeu
-                zr(in2+(i-1)*3+1-1) = zr(jvect-1+6*(i-1)+4)
-                zr(in2+(i-1)*3+2-1) = zr(jvect-1+6*(i-1)+5)
-                zr(in2+(i-1)*3+3-1) = zr(jvect-1+6*(i-1)+6)
-            end do
-        else if (ienorm.ne.0) then
-!           CAS D'UNE ENTAILLE : BASEFOND N'EXISTE PAS
-            call gdinor(norm, nbnoeu, iadnum, coorn, in2)
-        else
         ASSERT(.FALSE.)
-        endif
     endif
+
 !
     norfon= '&&NORM.STOCK'
     call wkvect(norfon, 'V V R', 3*nbnoeu, inorfon)

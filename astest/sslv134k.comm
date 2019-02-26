@@ -114,8 +114,7 @@ for i in range(2):
                          R_INF=RINF,
                          FOND_FISS=FISS,
                          MODULE=1.,
-                         R_SUP=RSUP,
-                         DIRECTION=(1., 0., 0.,)),
+                         R_SUP=RSUP,),
                 )
 
 

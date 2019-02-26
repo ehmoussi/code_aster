@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -107,8 +107,7 @@ G_0=CALC_G( THETA=_F(
                      R_INF=0.15,
                      FOND_FISS=FOND,
                      MODULE=1.,
-                     R_SUP=0.6,
-                     DIRECTION=(1., 0., 0.,)),
+                     R_SUP=0.6,),
                      RESULTAT=CHAMDEP,
                      TOUT_ORDRE='OUI',
             );
@@ -245,8 +244,7 @@ G_0_2=CALC_G( THETA=_F(
                        R_INF=0.15,
                        FOND_FISS=FOND,
                        MODULE=1.,
-                       R_SUP=0.6,
-                       DIRECTION=(1., 0., 0.,)),
+                       R_SUP=0.6,),
                        RESULTAT=CHAMDEP2,
                        TOUT_ORDRE='OUI',
             );
@@ -387,8 +385,7 @@ G_0_3=CALC_G( THETA=_F(
                        R_INF=0.15,
                        FOND_FISS=FOND,
                        MODULE=1.,
-                       R_SUP=0.6,
-                       DIRECTION=(1., 0., 0.,)),
+                       R_SUP=0.6,),
                        RESULTAT=CHAMDEP3,
                        TOUT_ORDRE='OUI',
              );
@@ -560,8 +557,7 @@ G_0_4=CALC_G( THETA=_F(
                        R_INF=0.15,
                        FOND_FISS=FOND,
                        MODULE=1.,
-                       R_SUP=0.6,
-                       DIRECTION=(1., 0., 0.,)),
+                       R_SUP=0.6,),
                        RESULTAT=CHAMDEP4,
                        TOUT_ORDRE='OUI',
             );
@@ -694,8 +690,7 @@ G_0_5=CALC_G(THETA=_F(
                       R_INF=0.15,
                       FOND_FISS=FOND,
                       MODULE=1.,
-                      R_SUP=0.6,
-                      DIRECTION=(1., 0., 0.,)),
+                      R_SUP=0.6,),
                       RESULTAT=CHAMDEP5,
             )
 
@@ -826,8 +821,7 @@ G_I_E=CALC_G(RESULTAT=RESUINCR,
                       R_INF=0.15,
                       FOND_FISS=FOND,
                       MODULE=1.,
-                      R_SUP=0.6,
-                      DIRECTION=(1., 0., 0.,)),
+                      R_SUP=0.6,),
                       COMPORTEMENT=_F(RELATION='ELAS_VMIS_PUIS'))
 
 IMPR_TABLE(TABLE=G_I_E)
@@ -838,8 +832,7 @@ G_I_E2=CALC_G(RESULTAT=RESUINCR,
                        R_INF=0.15,
                        FOND_FISS=FOND,
                        MODULE=1.,
-                       R_SUP=0.6,
-                       DIRECTION=(1., 0., 0.,)),
+                       R_SUP=0.6,),
                        COMPORTEMENT=_F(RELATION='ELAS_VMIS_PUIS'),
                        CALCUL_CONTRAINTE='NON',)
 

@@ -157,8 +157,7 @@ for i in range(2):
                           R_INF=10.,
                           FOND_FISS=FOND,
                           MODULE=1.,
-                          R_SUP=20.,
-                          DIRECTION=( 8.6602540379E-01, 0.5, 0.,)))
+                          R_SUP=20.,))
 
    K1K2[i]=CALC_G(RESULTAT=ELADP[i],
                   INST = 1,
