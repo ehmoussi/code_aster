@@ -150,11 +150,11 @@ MDIAG=PROJ_MATR_BASE(BASE=MODES,
 
 FDIAG=PROJ_VECT_BASE(BASE=MODES,
                     NUME_DDL_GENE=NUMDIAG,
-                    VECT_ASSE=FASS,);
+                    VECT_ASSE=FASS, TYPE_VECT='FORC');
 
 FDIAGC=PROJ_VECT_BASE(BASE=MODES,
                     NUME_DDL_GENE=NUMDIAG,
-                    VECT_ASSE=FASC,);
+                    VECT_ASSE=FASC, TYPE_VECT='FORC');
 
 
 
@@ -394,11 +394,11 @@ MPLEIN=PROJ_MATR_BASE(BASE=MODES,
 
 FPLEIN=PROJ_VECT_BASE(BASE=MODES,
                     NUME_DDL_GENE=NUMPLEIN,
-                    VECT_ASSE=FASS,);
+                    VECT_ASSE=FASS, TYPE_VECT='FORC');
 
 FPLEINC=PROJ_VECT_BASE(BASE=MODES,
                     NUME_DDL_GENE=NUMPLEIN,
-                    VECT_ASSE=FASC,);
+                    VECT_ASSE=FASC, TYPE_VECT='FORC');
 
 MODEGP=CALC_MODES(MATR_RIGI=KPLEIN,
                   VERI_MODE=_F(STOP_ERREUR='NON',

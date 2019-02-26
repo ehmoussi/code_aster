@@ -190,7 +190,7 @@ PROJ_BASE(BASE=MODE_MEC,
           STOCKAGE='DIAG',
           MATR_ASSE_GENE=(_F( MATRICE = CO("MASSMONO"), MATR_ASSE = MASSE),
                           _F( MATRICE = CO("RIGIMONO"), MATR_ASSE = RIGIDITE)),
-          VECT_ASSE_GENE=(_F( VECTEUR = CO("VECT_X"), VECT_ASSE = MULT_X),))
+          VECT_ASSE_GENE=(_F( VECTEUR = CO("VECT_X"), VECT_ASSE = MULT_X, TYPE_VECT='FORC'),))
 
 # EN MULTI-APPUI
 #---------------------------------------------------
@@ -198,8 +198,8 @@ PROJ_BASE(BASE=MODE_MEC,
           STOCKAGE='DIAG',
           MATR_ASSE_GENE=(_F( MATRICE = CO("MASSMULT"), MATR_ASSE = MASSE),
                           _F( MATRICE = CO("RIGIMULT"), MATR_ASSE = RIGIDITE)),
-          VECT_ASSE_GENE=(_F( VECTEUR = CO("VECT_X1"), VECT_ASSE = MULT_X1),
-                          _F( VECTEUR = CO("VECT_X2"), VECT_ASSE = MULT_X2)))
+          VECT_ASSE_GENE=(_F( VECTEUR = CO("VECT_X1"), VECT_ASSE = MULT_X1, TYPE_VECT='FORC'),
+                          _F( VECTEUR = CO("VECT_X2"), VECT_ASSE = MULT_X2, TYPE_VECT='FORC')))
 
 #
 # ON ETUDIE LA STRUCTURE EN FAUX MULTI-APPUI:

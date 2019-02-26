@@ -214,8 +214,8 @@ PROJ_BASE(BASE=MODE_MEC,
           MATR_ASSE_GENE=(
            _F( MATRICE = CO("MASS_GEN"), MATR_ASSE = MASSE),
            _F( MATRICE = CO("RIGI_GEN"), MATR_ASSE = RIGIDITE)),VECT_ASSE_GENE=(
-           _F( VECTEUR = CO("VECT_GEN"), VECT_ASSE = VIT_INIT),
-           _F( VECTEUR = CO("VECT_X"), VECT_ASSE = MONO_X))
+           _F( VECTEUR = CO("VECT_GEN"), VECT_ASSE = VIT_INIT, TYPE_VECT='VITE'),
+           _F( VECTEUR = CO("VECT_X"), VECT_ASSE = MONO_X, TYPE_VECT='FORC'))
                )
 
 #

@@ -552,22 +552,22 @@ massgen=PROJ_MATR_BASE(  BASE=bamo,  NUME_DDL_GENE=nddlgen,
                             MATR_ASSE=masseb );
 
 vecge1b=PROJ_VECT_BASE(  BASE=bamo,  NUME_DDL_GENE=nddlgen,
-                            VECT_ASSE=vecas1b );
+                            VECT_ASSE=vecas1b, TYPE_VECT='FORC');
 
 vecge2b=PROJ_VECT_BASE(  BASE=bamo,  NUME_DDL_GENE=nddlgen,
-                            VECT_ASSE=vecas2b );
+                            VECT_ASSE=vecas2b, TYPE_VECT='FORC');
 
 vecge3b=PROJ_VECT_BASE(  BASE=bamo,  NUME_DDL_GENE=nddlgen,
-                            VECT_ASSE=vecas3b );
+                            VECT_ASSE=vecas3b, TYPE_VECT='FORC');
 
 vecge4b=PROJ_VECT_BASE(  BASE=bamo,  NUME_DDL_GENE=nddlgen,
-                            VECT_ASSE=vecas4b );
+                            VECT_ASSE=vecas4b, TYPE_VECT='FORC');
 
 vecge5b=PROJ_VECT_BASE(  BASE=bamo,  NUME_DDL_GENE=nddlgen,
-                            VECT_ASSE=vecas5b );
+                            VECT_ASSE=vecas5b, TYPE_VECT='FORC');
 
 vecge6b=PROJ_VECT_BASE(  BASE=bamo,  NUME_DDL_GENE=nddlgen,
-                            VECT_ASSE=vecas6b );
+                            VECT_ASSE=vecas6b, TYPE_VECT='FORC');
 
 NF = 3
 impe=[None]*NF

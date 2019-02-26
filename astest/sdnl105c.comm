@@ -403,7 +403,7 @@ AMO=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=MATRMASS,
 
 F_GENE=PROJ_VECT_BASE(    BASE=BAMODA,
                            NUME_DDL_GENE = NDDLGENE,
-                          VECT_ASSE = V_ASSE)
+                          VECT_ASSE = V_ASSE, TYPE_VECT='FORC')
 
 
 RESGEN=CALC_MODES(CALC_FREQ=_F(NMAX_FREQ=30,
@@ -447,7 +447,7 @@ M_PROJ=PROJ_MATR_BASE(            BASE=MODGL2,
 #
 F_PROJ=PROJ_VECT_BASE(            BASE=MODGL2,
                              NUME_DDL_GENE=NUMEMODE,
-                            VECT_ASSE=V_ASSE)
+                            VECT_ASSE=V_ASSE, TYPE_VECT='FORC')
 
 #
 # DEFINITION DE LOBSTACLE

@@ -118,7 +118,8 @@ PROJ_BASE(BASE=MODEF,
                           _F(MATRICE=CO('RIGPRO'),
                              MATR_ASSE=RIGIDITE,),),
           VECT_ASSE_GENE=_F(VECTEUR=CO('PESPRO'),
-                            VECT_ASSE=PESA,),);
+                            VECT_ASSE=PESA,
+                            TYPE_VECT='FORC'),);
 
 CORGRA=MACRO_ELAS_MULT(MODELE=MODELE,
                        CHAM_MATER=CHMAT,

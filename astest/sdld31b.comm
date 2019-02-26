@@ -245,7 +245,7 @@ PROJ_BASE(BASE=MODES,
                                 _F(MATRICE=CO('PAMO2'),
                                    MATR_ASSE=AMO2,),),
                 VECT_ASSE_GENE=_F(VECTEUR=CO('PRACTION'),
-                                  VECT_ASSE=VRACTION,),);
+                                  VECT_ASSE=VRACTION, TYPE_VECT='FORC'),);
 
 
 # TRANSITOIRE - METHODE EULER

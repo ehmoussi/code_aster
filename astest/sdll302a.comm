@@ -252,7 +252,8 @@ MASSGEN1=PROJ_MATR_BASE(             BASE=MODE1,
 #
 VECTGEN1=PROJ_VECT_BASE(             BASE=MODE1,
                               NUME_DDL_GENE=NUMGEN,
-                                  VECT_ASSE=MULTIX
+                                  VECT_ASSE=MULTIX,
+                                  TYPE_VECT='FORC'
                           )
 
 #

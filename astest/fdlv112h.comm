@@ -312,7 +312,8 @@ impegen=PROJ_MATR_BASE(BASE=BAMO,
                      
 vecxgen=PROJ_VECT_BASE(BASE=BAMO,
                      NUME_DDL_GENE=NDDLGEN,
-                     VECT_ASSE=vecasx,);
+                     VECT_ASSE=vecasx,
+                     TYPE_VECT='FORC');
 #
 lfreq = DEFI_LIST_REEL ( DEBUT = 0.,
                            INTERVALLE = _F( JUSQU_A = fmax,

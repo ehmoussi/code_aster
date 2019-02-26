@@ -97,7 +97,7 @@ PROJ_BASE(BASE=modes,
                           _F(MATRICE=CO('K_GENE'),
                              MATR_ASSE=K_ASSE,),),
           VECT_ASSE_GENE=_F(VECTEUR=CO('F_GENE'),
-                            VECT_ASSE=F_ASSE,),);
+                            VECT_ASSE=F_ASSE, TYPE_VECT='FORC'),);
 
 
 # Definition de l'obstacle

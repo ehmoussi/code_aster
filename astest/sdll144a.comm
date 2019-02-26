@@ -230,9 +230,9 @@ PROJ_BASE(BASE=MODES,
                                    MATR_ASSE=RIGY2,),
                                     ),
                 VECT_ASSE_GENE=(_F(VECTEUR=CO('BXGE'),
-                                   VECT_ASSE=bal_Xass,),
+                                   VECT_ASSE=bal_Xass, TYPE_VECT='FORC'),
                                 _F(VECTEUR=CO('BYGE'),
-                                   VECT_ASSE=bal_Yass,),),);
+                                   VECT_ASSE=bal_Yass, TYPE_VECT='FORC'),),);
 
 
 TRANGEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
