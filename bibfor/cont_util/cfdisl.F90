@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 function cfdisl(sdcont_defi_, question_)
 !
 implicit none
@@ -23,12 +24,11 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/mminfl.h"
 #include "asterfort/cfdisi.h"
+#include "Contact_type.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    aster_logical :: cfdisl
-    character(len=*), intent(in) :: sdcont_defi_
-    character(len=*), intent(in) :: question_
+aster_logical :: cfdisl
+character(len=*), intent(in) :: sdcont_defi_
+character(len=*), intent(in) :: question_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,7 +80,6 @@ implicit none
     else if (question .eq.'EXIS_PENA') then
         cfdisl = cfdisi(sdcont_defi,'EXIS_PENA').eq.1
     else if (question .eq.'EXIS_ADAP') then
-!        write (6,*) "cfdisi type_adap",cfdisi(sdcont_defi,'TYPE_ADAPT')
         cfdisl = ((cfdisi(sdcont_defi,'TYPE_ADAPT').eq.1) .or. &
                   (cfdisi(sdcont_defi,'TYPE_ADAPT').eq.2) .or. &
                   (cfdisi(sdcont_defi,'TYPE_ADAPT').eq.3) .or. &
@@ -142,18 +141,18 @@ implicit none
     else if (question.eq.'PRE_COND_DIRICHLET') then
         cfdisl = cfdisi(sdcont_defi,'PRE_COND').eq.1
     else if (question.eq.'GEOM_NEWTON') then
-        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_GEOM').eq.1
+        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_GEOM') .eq. ALGO_NEWT
     else if (question.eq.'FROT_NEWTON') then
-        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_FROT').eq.1
+        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_FROT') .eq. ALGO_NEWT
     else if (question.eq.'CONT_NEWTON') then
-        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_CONT').eq.1
+        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_CONT') .eq. ALGO_NEWT
     else if (question.eq.'GEOM_BOUCLE') then
-        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_GEOM') .eq. 0 .and.&
+        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_GEOM') .eq. ALGO_FIXE .and.&
                  cfdisi(sdcont_defi,'NB_ITER_GEOM') .ne.0
     else if (question.eq.'CONT_BOUCLE') then
-        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_CONT').eq.0
+        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_CONT') .eq. ALGO_FIXE
     else if (question.eq.'FROT_BOUCLE') then
-        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_FROT').eq.0
+        cfdisl = cfdisi(sdcont_defi,'ALGO_RESO_FROT') .eq. ALGO_FIXE
     else if (question.eq.'REAC_GEOM_SANS') then
         cfdisl = cfdisi(sdcont_defi,'NB_ITER_GEOM').eq.0
     else if (question.eq.'REAC_GEOM_MANU') then
@@ -162,7 +161,7 @@ implicit none
         cfdisl = cfdisi(sdcont_defi,'NB_ITER_GEOM').lt.0
     else
         write(6,*) 'QUESTION: ',question
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end function

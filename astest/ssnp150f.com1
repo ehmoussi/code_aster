@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -457,19 +457,19 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 2.84633760873,  # raffiement=6,
+            VALE_CALC= 2.67333768953,  # raffiement=6,
             VALE_REFE=2.5,             # taux de convergence
-            PRECISION=0.139,           # 
+            PRECISION=0.139,           #
             )
 
 
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.01981102648,   # raffiement=6,
+            VALE_CALC=1.0193044686,   # raffiement=6,
             VALE_REFE=1.0,             # taux de convergence
             PRECISION=0.020,
-            ) 
+            )
 
 sous_titreU='Ordres de convergence: cas QUAD8= %f '%(PenteL2U)
 sous_titreP='Ordres de convergence: cas QUAD8= %f '%(PenteL2P)

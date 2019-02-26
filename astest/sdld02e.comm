@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -175,7 +175,7 @@ IMPR_TABLE(TABLE=MASSIN,);
 # --------------------------------------------------------------------
 
 FREQ=CALC_MODES(MATR_RIGI=MATASSR,
-                OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
+                OPTION='AJUSTE', SOLVEUR=_F(METHODE='MUMPS'),
                 CALC_FREQ=_F(FREQ=(5.,10.,15.,20.,24.,27.,30.,32.,),),
                 MATR_MASS=MATASSM,
                 SOLVEUR_MODAL=_F(OPTION_INV='DIRECT',),

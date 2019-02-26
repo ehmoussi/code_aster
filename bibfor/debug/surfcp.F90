@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine surfcp(sdcont, unit_msg)
 !
 implicit none
@@ -24,11 +25,10 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/cfdisr.h"
+#include "Contact_type.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: sdcont
-    integer, intent(in) :: unit_msg
+character(len=8), intent(in) :: sdcont
+integer, intent(in) :: unit_msg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +48,7 @@ implicit none
     integer :: cont_mult, frot_maxi, geom_maxi, cont_maxi
     integer :: geom_nbiter
     real(kind=8) :: geom_resi, frot_resi
-    integer :: algo_reso_cont, algo_reso_frot, algo_reso_geom
+    integer :: i_reso_cont, i_reso_fric, i_reso_geom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,19 +56,19 @@ implicit none
 !
 ! - Parameters
 !
-    cont_form      = cfdisi(sdcont_defi,'FORMULATION')
-    algo_cont      = cfdisi(sdcont_defi,'ALGO_CONT')
-    algo_frot      = cfdisi(sdcont_defi,'ALGO_FROT')
-    algo_reso_cont = cfdisi(sdcont_defi,'ALGO_RESO_CONT')
-    algo_reso_frot = cfdisi(sdcont_defi,'ALGO_RESO_FROT')
-    algo_reso_geom = cfdisi(sdcont_defi,'ALGO_RESO_GEOM')
-    geom_nbiter    = cfdisi(sdcont_defi,'NB_ITER_GEOM')
-    geom_maxi      = cfdisi(sdcont_defi,'ITER_GEOM_MAXI')
-    geom_resi      = cfdisr(sdcont_defi,'RESI_GEOM')
-    cont_mult      = cfdisi(sdcont_defi,'ITER_CONT_MULT')
-    cont_maxi      = cfdisi(sdcont_defi,'ITER_CONT_MAXI')
-    frot_maxi      = cfdisi(sdcont_defi,'ITER_FROT_MAXI')
-    frot_resi      = cfdisr(sdcont_defi,'RESI_FROT')
+    cont_form   = cfdisi(sdcont_defi,'FORMULATION')
+    algo_cont   = cfdisi(sdcont_defi,'ALGO_CONT')
+    algo_frot   = cfdisi(sdcont_defi,'ALGO_FROT')
+    i_reso_cont = cfdisi(sdcont_defi,'ALGO_RESO_CONT')
+    i_reso_fric = cfdisi(sdcont_defi,'ALGO_RESO_FROT')
+    i_reso_geom = cfdisi(sdcont_defi,'ALGO_RESO_GEOM')
+    geom_nbiter = cfdisi(sdcont_defi,'NB_ITER_GEOM')
+    geom_maxi   = cfdisi(sdcont_defi,'ITER_GEOM_MAXI')
+    geom_resi   = cfdisr(sdcont_defi,'RESI_GEOM')
+    cont_mult   = cfdisi(sdcont_defi,'ITER_CONT_MULT')
+    cont_maxi   = cfdisi(sdcont_defi,'ITER_CONT_MAXI')
+    frot_maxi   = cfdisi(sdcont_defi,'ITER_FROT_MAXI')
+    frot_resi   = cfdisr(sdcont_defi,'RESI_FROT')
 !
 ! - User print
 !
@@ -98,7 +98,7 @@ implicit none
 ! - Geometry algorithm and parameters
 !
     write (unit_msg,*) '<CONTACT> ALGORITHMES'
-    if (algo_reso_geom .eq. 0) then
+    if (i_reso_geom .eq. ALGO_FIXE) then
         write (unit_msg,*) '<CONTACT> ... ALGO. GEOMETRIQUE - POINT FIXE'
         if (geom_nbiter .eq. 0) then
             write (unit_msg,*) '<CONTACT> ...... PAS DE REAC. GEOM.'
@@ -110,36 +110,30 @@ implicit none
         write (unit_msg,170) 'ITER_GEOM_MAXI  ',geom_maxi
         write (unit_msg,171) 'RESI_GEOM       ',geom_resi
         write (unit_msg,170) 'NB_ITER_GEOM    ',geom_nbiter
-    else if (algo_reso_geom .eq. 1) then
+    else
         write (unit_msg,*) '<CONTACT> ... ALGO. GEOMETRIQUE - NEWTON'
         write (unit_msg,171) 'RESI_GEOM       ',geom_resi
-    else
-        ASSERT(.false.)
     endif
 !
 ! - Friction algorithm and parameters
 !
-    if (algo_reso_frot .eq. 0) then
+    if (i_reso_fric .eq. ALGO_FIXE) then
         write (unit_msg,*) '<CONTACT> ... ALGO. FROTTEMENT - POINT FIXE'
         write (unit_msg,170) 'ITER_FROT_MAXI  ',frot_maxi
         write (unit_msg,171) 'RESI_FROT       ',frot_resi
-    else if (algo_reso_frot .eq. 1) then
+    else
         write (unit_msg,*) '<CONTACT> ... ALGO. FROTTEMENT - NEWTON'
         write (unit_msg,171) 'RESI_FROT       ',frot_resi
-    else
-        ASSERT(.false.)
     endif
 !
 ! - Contact algorithm and parameters
 !
-    if (algo_reso_cont .eq. 0) then
+    if (i_reso_cont .eq. ALGO_FIXE) then
         write (unit_msg,*) '<CONTACT> ... ALGO. CONTACT - POINT FIXE'
         write (unit_msg,170) 'ITER_CONT_MULT  ',cont_mult
         write (unit_msg,170) 'ITER_CONT_MAXI  ',cont_maxi
-    else if (algo_reso_cont .eq. 1) then
-        write (unit_msg,*) '<CONTACT> ... ALGO. CONTACT - NEWTON'
     else
-        ASSERT(.false.)
+        write (unit_msg,*) '<CONTACT> ... ALGO. CONTACT - NEWTON'
     endif
 !
 170 format (' <CONTACT> ...... PARAM. : ',a16,' - VAL. : ',i5)

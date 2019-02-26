@@ -7,3 +7,4 @@ P testlist asterxx verification parallel
 
 F comm xxParallelMechanicalLoad002a.py D 1
 R nom  xxParallelMesh001a D 0
+F nom  xxParallelMechanicalLoad002a.med D 0

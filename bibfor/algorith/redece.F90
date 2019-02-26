@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine redece(fami, kpg, ksp, ndim, typmod,&
+! aslint: disable=W1306,W1504
+!
+subroutine redece(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   imate, compor, mult_comp, carcri, instam, instap,&
                   neps, epsdt, depst, nsig, sigd,&
                   vind, option, angmas, nwkin, wkin,&
@@ -38,8 +39,6 @@ implicit none
 #include "asterfort/lcsove.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
-!
-! aslint: disable=W1306,W1504
 !
 ! ======================================================================
 !     INTEGRATION DES LOIS DE COMPORTEMENT NON LINEAIRE POUR LES
@@ -133,7 +132,7 @@ implicit none
 !
     integer :: imate, ndim, ndt, ndi, nvi, kpg, ksp, numlc
     integer :: neps, nsig, nwkin, nwkout, ndsde
-!
+    aster_logical, intent(in) :: l_epsi_varc
     real(kind=8) :: carcri(*), angmas(*)
     real(kind=8) :: instam, instap
     real(kind=8) :: wkin(nwkin), wkout(nwkout)
@@ -214,7 +213,7 @@ implicit none
         icomp = -1
     endif
 !
-    call lc0000(fami, kpg, ksp, ndim, typmod,&
+    call lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                 imate, compor, mult_comp, carcri, instam, instap,&
                 neps, epsdt, depst, nsig, sigd,&
                 vind, option, angmas, nwkin, wkin,&
@@ -282,7 +281,7 @@ implicit none
         endif
 !
 !
-        call lc0000(fami, kpg, ksp, ndim, typmod,&
+        call lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                     imate, compor, mult_comp, carcri, td, tf,&
                     neps, eps, deps, nsig, sd,&
                     vind, option, angmas, nwkin, wkin,&

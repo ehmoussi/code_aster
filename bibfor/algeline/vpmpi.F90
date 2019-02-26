@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vpmpi(option, eigsol, icom1, icom2, lcomod,&
-                 mpicou, mpicow, nbvecg, nfreqg, rangl,&
-                 omemax, omemin, vpinf, vpmax)
+subroutine vpmpi(option, eigsol, icom1_, icom2_, lcomod_,&
+                 mpicou_, mpicow_, nbvecg_, nfreqg_, rangl_,&
+                 omemax_, omemin_, vpinf_, vpmax_)
 !
 ! ROUTINE ORGANISANT LE PARALLELISME MULTI-NIVEAUX DANS MODE_ITER_SIMULT (+ APPELS DS VPPARA).
 ! -------------------------------------------------------------------------------------------------
@@ -40,18 +40,18 @@ subroutine vpmpi(option, eigsol, icom1, icom2, lcomod,&
 ! --- INPUT
 !
     integer, intent(in) :: option
-    character(len=19), intent(in) :: eigsol
+    character(len=19), optional, intent(in) :: eigsol
 !
 ! --- OUTPUT
 !
-    integer, intent(out) :: icom1, icom2, nbvecg, nfreqg
+    integer, optional, intent(out) :: icom1_, icom2_, nbvecg_, nfreqg_
 !
 ! --- INPUT/OUTPUT
 !
-    mpi_int , intent(inout) :: mpicou, mpicow
-    integer, intent(inout) :: rangl
-    aster_logical , intent(inout) :: lcomod
-    real(kind=8), intent(inout) :: omemax, omemin, vpinf, vpmax
+    mpi_int, optional, intent(inout) :: mpicou_, mpicow_
+    integer, optional, intent(inout) :: rangl_
+    aster_logical, optional, intent(inout) :: lcomod_
+    real(kind=8), optional, intent(inout) :: omemax_, omemin_, vpinf_, vpmax_
 !
 ! --- VARIABLES LOCALES
 !
@@ -59,12 +59,32 @@ subroutine vpmpi(option, eigsol, icom1, icom2, lcomod,&
     integer :: l1, l2, l3, nbvect, nbproc, nfreq, rang, typeco, vali(5)
     real(kind=8) :: rbid
     character(len=24) :: k24bid, valk(5)
+    
+    integer :: icom1, icom2, nbvecg, nfreqg
+    mpi_int :: mpicou, mpicow
+    integer :: rangl
+    aster_logical :: lcomod
+    real(kind=8) :: omemax, omemin, vpinf, vpmax
 !
 ! -----------------------
 ! --- CORPS DE LA ROUTINE
 ! -----------------------
 !
-!
+
+!   traitement des arguments optionnels en entrée
+    if (option.ne.2)then
+        ASSERT(.not.present(eigsol))
+    endif
+    
+    if (present(mpicou_))mpicou = mpicou_
+    if (present(mpicow_))mpicow = mpicow_
+    if (present(rangl_))rangl = rangl_
+    if (present(lcomod_))lcomod = lcomod_
+    if (present(omemax_))omemax = omemax_
+    if (present(omemin_))omemin = omemin_
+    if (present(vpinf_))vpinf = vpinf_
+    if (present(vpmax_))vpmax = vpmax_
+    
     select case (option)
     case (1)
 ! ---  STEP 1: RECUPERATION DES PARAMETRES MPI + TESTS
@@ -133,6 +153,7 @@ subroutine vpmpi(option, eigsol, icom1, icom2, lcomod,&
         nbvecg=-9999
         nfreqg=-9999
         if (lcomod) then
+            ASSERT(present(eigsol))
             call vpleci(eigsol, 'I', 1, k24bid, rbid,&
                         nfreq)
             call vpleci(eigsol, 'I', 2, k24bid, rbid,&
@@ -193,6 +214,22 @@ subroutine vpmpi(option, eigsol, icom1, icom2, lcomod,&
     case default
         ASSERT(.false.)
     end select
+    
+!   traitement des arguments optionnels en sortie
+    
+    if (present(mpicou_))mpicou_ = mpicou
+    if (present(mpicow_))mpicow_ = mpicow
+    if (present(rangl_))rangl_ = rangl
+    if (present(lcomod_))lcomod_ = lcomod
+    if (present(omemax_))omemax_ = omemax
+    if (present(omemin_))omemin_ = omemin
+    if (present(vpinf_))vpinf_ = vpinf
+    if (present(vpmax_))vpmax_ = vpmax
+    
+    if (present(icom1_))icom1_ = icom1
+    if (present(icom2_))icom2_ = icom2
+    if (present(nbvecg_))nbvecg_ = nbvecg
+    if (present(nfreqg_))nfreqg_ = nfreqg
 !
 !     FIN DE VPMPI
 !

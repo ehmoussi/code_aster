@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,17 +44,17 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=16) :: rela_py
-    integer :: ibid
+    integer :: numlc, nbvari_ext
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_vari_cg(1) = 0
     nb_vari_cg(2) = 0
     call lccree(1, rela_comp_cg(1), rela_py)
-    call lcinfo(rela_py, ibid, nb_vari_cg(1), ibid)
+    call lcinfo(rela_py, numlc, nb_vari_cg(1), nbvari_ext)
     call lcdiscard(rela_py)
     call lccree(1, rela_comp_cg(2), rela_py)
-    call lcinfo(rela_py, ibid, nb_vari_cg(2), ibid)
+    call lcinfo(rela_py, numlc, nb_vari_cg(2), nbvari_ext)
     call lcdiscard(rela_py)
 !
 end subroutine

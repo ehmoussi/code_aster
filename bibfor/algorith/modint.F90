@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -118,7 +118,7 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
     integer(kind=4) :: info
     real(kind=8) :: temp, rbid, norm, lambda, comlin(2), swork(1), max, omecor
     real(kind=8) :: bande(2), freq1, freq2, alpha, tolsor, precsh, fcorig, precdc
-    real(kind=8) :: mval, normx, valx, avalx, r8bid
+    real(kind=8) :: mval, normx, valx, avalx, r8bid, vrbid(1)
     complex(kind=8) :: cbid
     character(len=1)  :: listyp(2), k1bid
     character(len=4)  :: mod45
@@ -318,7 +318,7 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
     call wkvect('&&MODINT.SE_KRYLOV', 'V V R', neq*nsekry, lmakry)
     call jeveuo('&&MOIN93.V_IND_LAG', 'L', vi=v_ind_lag)
     call jeveuo('&&MOIN93.DDL_ACTIF_INT', 'L', vi=ddl_actif_int)
-!
+!restaurant trélazé
     do j1 = 1, nsekry
       ! construction du nom du mode "a la main"
       call codent(j1-1, 'D0', k6bid)
@@ -411,13 +411,13 @@ subroutine modint(ssami, raiint, nddlin, nbmod, shift,&
 !
     call dggev('N', 'V', nsekry, zr(lkpro), nsekry,&
                zr(lmapro), nsekry, vect_alphar, vect_alphai, vect_beta,&
-               matr_mod_red, nsekry, matr_mod_red, nsekry, swork,&
+               vrbid, 1, matr_mod_red, nsekry, swork,&
                -1, info)
     lwork=int(swork(1))
     AS_ALLOCATE(vr=matr_work_dggev, size=lwork)
     call dggev('N', 'V', nsekry, zr(lkpro), nsekry,&
                zr(lmapro), nsekry, vect_alphar, vect_alphai, vect_beta,&
-               matr_mod_red, nsekry, matr_mod_red, nsekry, matr_work_dggev,&
+               vrbid, 1, matr_mod_red, nsekry, matr_work_dggev,&
                lwork, info)
 !-- ON REACTIVE LE TEST FPE
     call matfpe(1)

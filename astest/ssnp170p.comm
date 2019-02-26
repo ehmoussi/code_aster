@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,10 +54,10 @@ group_ma_escl = ['Group_1', 'Group_2']
 group_ma_mait = ['Group_2', 'Group_1']
 
 for i in range(2):
-    group_ma_escl = 'Group_1'
-    group_ma_mait = 'Group_2'
+    gp_ma_escl = group_ma_escl[i]
+    gp_ma_mait = group_ma_mait[i]
     Mail2[i]=CREA_MAILLAGE(MAILLAGE=Mail,
-                        DECOUPE_LAC=_F(GROUP_MA_ESCL=group_ma_escl,),
+                        DECOUPE_LAC=_F(GROUP_MA_ESCL=gp_ma_escl,),
                         )
     
     MODI[i]=AFFE_MODELE(MAILLAGE=Mail2[i],
@@ -76,8 +76,8 @@ for i in range(2):
                         ALGO_RESO_GEOM='NEWTON',
                         ALGO_RESO_CONT='NEWTON',
                         ZONE=_F(APPARIEMENT='MORTAR',
-                                GROUP_MA_MAIT=group_ma_mait,
-                                GROUP_MA_ESCL=group_ma_escl,
+                                GROUP_MA_MAIT=gp_ma_mait,
+                                GROUP_MA_ESCL=gp_ma_escl,
                                 ALGO_CONT='LAC',
                                 TYPE_APPA="ROBUSTE",
                                 ),);

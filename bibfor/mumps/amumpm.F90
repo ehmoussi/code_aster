@@ -695,17 +695,17 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     endif
 !                   Writings to get the stiffness matrix wrt nodes and dof numbers
                     if (ldebug) then
-                        if (lmhpc) then 
+                        if (lmhpc) then
                             nuno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
                             nuno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
                         else
-                            nuno1 = zi(jdeeq+2*(iligl-1)) 
-                            nuno2 = zi(jdeeq+2*(jcoll-1)) 
+                            nuno1 = zi(jdeeq+2*(iligl-1))
+                            nuno2 = zi(jdeeq+2*(jcoll-1))
                         endif
                         nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
                         nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
                         write(11+rang,*) nuno2, nucmp2, nuno1, nucmp1, raux
-                    endif 
+                    endif
                 else
                     if (type .eq. 'S') then
                         smpsk%irn(iterm)=iligg
@@ -728,12 +728,12 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     endif
 !                   Writings to get the stiffness matrix wrt nodes and dof numbers
                     if (ldebug) then
-                        nuno1 = zi(jdeeq+2*(iligg-1)) 
-                        nuno2 = zi(jdeeq+2*(jcolg-1)) 
+                        nuno1 = zi(jdeeq+2*(iligg-1))
+                        nuno2 = zi(jdeeq+2*(jcolg-1))
                         nucmp1 = zi(jdeeq +2*(iligg-1) + 1)
                         nucmp2 = zi(jdeeq +2*(jcolg-1)+1)
                         write(11+rang,*) nuno2, nucmp2, nuno1, nucmp1, raux
-                    endif 
+                    endif
                 endif
                 kzero=0
                 if (eli2lg) then
@@ -822,17 +822,17 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                         endif
 !                       Writings to get the stiffness matrix wrt nodes and dof numbers
                         if (ldebug) then
-                            if (lmhpc) then 
+                            if (lmhpc) then
                                 nuno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
                                 nuno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
                             else
-                                nuno1 = zi(jdeeq+2*(iligl-1)) 
-                                nuno2 = zi(jdeeq+2*(jcoll-1)) 
+                                nuno1 = zi(jdeeq+2*(iligl-1))
+                                nuno2 = zi(jdeeq+2*(jcoll-1))
                             endif
                             nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
                             nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
                             write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, raux
-                        endif 
+                        endif
                     else
                         if (type .eq. 'S') then
                             smpsk%irn(iterm)=jcolg
@@ -855,12 +855,12 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                         endif
 !                       Writings to get the stiffness matrix wrt nodes and dof numbers
                         if (ldebug) then
-                            nuno1 = zi(jdeeq+2*(iligg-1)) 
-                            nuno2 = zi(jdeeq+2*(jcolg-1)) 
+                            nuno1 = zi(jdeeq+2*(iligg-1))
+                            nuno2 = zi(jdeeq+2*(jcolg-1))
                             nucmp1 = zi(jdeeq +2*(iligg-1) + 1)
                             nucmp2 = zi(jdeeq +2*(jcolg-1)+1)
                             write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, raux
-                        endif 
+                        endif
                     endif
                     if (eli2lg) then
                         if (kzero .eq. 1) iterm=iterm-1
@@ -1007,10 +1007,10 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
             else
                 write(ifmump,*) 'MUMPS FIN A'
             endif
-            
+
 !  -------   VIDANGE DES BUFFERS D'IMPRESSION
             call flush(ifmump+rang)
-            
+
         endif
 ! FIN DU IF LDIST
     endif

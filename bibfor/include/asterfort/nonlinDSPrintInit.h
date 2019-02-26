@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinDSPrintInit(sdsuiv, ds_print)
+    subroutine nonlinDSPrintInit(ds_print, sdsuiv_)
         use NonLin_Datastructure_type
-        character(len=24), intent(in) :: sdsuiv
         type(NL_DS_Print), intent(inout) :: ds_print
+        character(len=24), optional, intent(in) :: sdsuiv_
     end subroutine nonlinDSPrintInit
 end interface

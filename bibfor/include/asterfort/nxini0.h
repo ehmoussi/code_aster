@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine nxini0(ds_algopara, ds_inout)
+    subroutine nxini0(ds_algopara, ds_inout, ds_print)
         use NonLin_Datastructure_type
         type(NL_DS_AlgoPara), intent(out) :: ds_algopara
         type(NL_DS_InOut), intent(out) :: ds_inout
+        type(NL_DS_Print), intent(out) :: ds_print
     end subroutine nxini0
 end interface 

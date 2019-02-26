@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romAlgoNLCorrEFTherResidual(ther_crit_i, ther_crit_r, vec2nd   , cnvabt, cnresi    ,&
-                                       cn2mbr     , resi_rela  , resi_maxi, conver, ds_algorom)
-
+subroutine romAlgoNLCorrEFTherResidual(ds_algorom, vec2nd   , cnvabt, cnresi, cn2mbr,&
+                                       resi_rela , resi_maxi)
 !
 use Rom_Datastructure_type
 !
@@ -30,16 +29,9 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/jeveuo.h"
 !
-integer, intent(in) :: ther_crit_i(*)
-real(kind=8), intent(in) :: ther_crit_r(*)
-character(len=24), intent(in) :: vec2nd
-character(len=24), intent(in) :: cnvabt
-character(len=24), intent(in) :: cnresi
-character(len=24), intent(in) :: cn2mbr
-real(kind=8)     , intent(out):: resi_rela
-real(kind=8)     , intent(out):: resi_maxi
-aster_logical    , intent(out):: conver
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=24), intent(in) :: vec2nd, cnvabt, cnresi, cn2mbr
+real(kind=8)     , intent(out):: resi_rela, resi_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,16 +41,13 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ther_crit_i      : criteria for algorithm (integer)
-! In  ther_crit_r      : criteria for algorithm (real)
+! In  ds_algorom       : datastructure for ROM parameters
 ! In  vec2nd           : applied loads
 ! In  cnvabt           : BT.T LAMBDA for Dirichlet loads
 ! In  cnresi           : non-linear residual
 ! In  cn2mbr           : equilibrium residual (to evaluate convergence)
 ! Out resi_rela        : value for RESI_GLOB_RELA
 ! Out resi_maxi        : value for RESI_GLOB_MAXI
-! Out conver           : .true. if convergence
-! In  ds_algorom       : datastructure for ROM parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,7 +65,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     resi_rela = 0.d0
     resi_maxi = 0.d0
     vnorm     = 0.d0
-    conver    = .false.
 !
 ! - Get parameters
 !
@@ -125,22 +113,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
     if (vnorm .gt. 0.d0) then
         resi_rela = sqrt( resi_rela / vnorm )
-    endif
-!
-! - Evaluate
-!
-    if (ther_crit_i(1) .ne. 0) then
-        if (resi_maxi .lt. ther_crit_r(1)) then
-            conver = .true.
-        else
-            conver = .false.
-        endif
-    else
-        if (resi_rela .lt. ther_crit_r(2)) then
-            conver = .true.
-        else
-            conver = .false.
-        endif
     endif
 !
 ! - Cleaning

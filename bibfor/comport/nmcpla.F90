@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmcpla(fami, kpg   , ksp  , ndim  , typmod,&
                   imat, compor_plas, compor_creep, carcri , timed , timef ,&
                   neps, epsdt , depst, nsig  , sigd  ,&
@@ -43,22 +44,20 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
-! aslint: disable=W1504
-!
-    integer :: imat, ndim, kpg, ksp, iret
-    integer :: neps, nsig, nwkin, nwkout, ndsde
-    character(len=16), intent(in) :: compor_plas(*)
-    character(len=16), intent(in) :: compor_creep(*)
-    real(kind=8), intent(in) :: carcri(*)
-    real(kind=8) :: timed, timef, tempd, tempf, tref
-    real(kind=8) :: wkin(*), wkout(*)
-    real(kind=8) :: epsdt(6), depst(6)
-    real(kind=8) :: sigd(6), sigf(6)
-    real(kind=8) :: vind(*), vinf(*)
-    real(kind=8) :: dsde(ndsde)
-    character(len=16) :: option
-    character(len=*) :: fami
-    character(len=8) :: typmod(*)
+integer :: imat, ndim, kpg, ksp, iret
+integer :: neps, nsig, nwkin, nwkout, ndsde
+character(len=16), intent(in) :: compor_plas(*)
+character(len=16), intent(in) :: compor_creep(*)
+real(kind=8), intent(in) :: carcri(*)
+real(kind=8) :: timed, timef, tempd, tempf, tref
+real(kind=8) :: wkin(*), wkout(*)
+real(kind=8) :: epsdt(6), depst(6)
+real(kind=8) :: sigd(6), sigf(6)
+real(kind=8) :: vind(*), vinf(*)
+real(kind=8) :: dsde(ndsde)
+character(len=16) :: option
+character(len=*) :: fami
+character(len=8) :: typmod(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -146,7 +145,7 @@ implicit none
     real(kind=8) :: sigf2(6)
     real(kind=8) :: tmpdmx, tmpfmx, epsth
     real(kind=8) :: alphad, alphaf, bendod, bendof, kdessd, kdessf
-    aster_logical :: l_inte_forc
+    aster_logical :: l_inte_forc, l_epsi_varc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -215,12 +214,13 @@ implicit none
 !
 ! ----- Solve creep law
 !
+        l_epsi_varc = ASTER_TRUE
         call nmcomp(fami, kpg, ksp, ndim, typmod,&
                     imat, compor_creep, carcri, timed, timef  ,&
                     neps, epsdt, depst2, nsig, sigd,&
                     vind, option, angmas, nwkin, wkin,&
                     sigf2, vinf, ndsde, dsde, nwkout,&
-                    wkout, iret)
+                    wkout, iret, l_epsi_varc_ = l_epsi_varc)
 !
 ! ----- Get material parameters
 !
@@ -285,13 +285,14 @@ implicit none
 !
 ! - Solve plasticity law
 !
+    l_epsi_varc = ASTER_FALSE
     idx_vi_plas = nvi_flua + 1
     call nmcomp(fami, kpg, ksp, ndim, typmod,&
                 imat, compor_plas, carcri, timed, timef  ,&
                 neps, epsdt, deps, nsig, sigd,&
                 vind(idx_vi_plas), option, angmas, nwkin, wkin,&
                 sigf, vinf(idx_vi_plas), ndsde, dsde, nwkout,&
-                wkout, retcom)
+                wkout, retcom, l_epsi_varc_ = l_epsi_varc)
     if (retcom .eq. 1) then
         iret = 1
         goto 999

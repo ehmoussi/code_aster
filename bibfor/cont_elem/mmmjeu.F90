@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmmjeu(ndim  , iresog, jeusup,&
+subroutine mmmjeu(ndim  , i_reso_geom, jeusup,&
                   geome , geomm ,&
                   ddeple, ddeplm,&
                   norm  , mprojt,&
@@ -26,8 +26,9 @@ subroutine mmmjeu(ndim  , iresog, jeusup,&
 implicit none
 !
 #include "asterfort/assert.h"
+#include "Contact_type.h"
 !
-integer, intent(in) :: ndim, iresog
+integer, intent(in) :: ndim, i_reso_geom
 real(kind=8), intent(in) :: jeusup,  norm(3)
 real(kind=8), intent(in):: geomm(3), geome(3)
 real(kind=8), intent(in) :: ddeple(3), ddeplm(3)
@@ -43,9 +44,7 @@ real(kind=8), intent(out) :: jeu, djeu(3), djeut(3)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ndim             : dimension of problem (2 or 3)
-! In  iresog           : algorithm for geometry
-!                        0 - Fixed point
-!                        1 - Newton
+! In  i_reso_geom      : algorithm for geometry
 ! In  jeusup           : gap from DIST_ESCL/DIST_MAIT
 ! In  norm             : normal at current contact point
 ! In  geome            : coordinates for contact point
@@ -60,12 +59,20 @@ real(kind=8), intent(out) :: jeu, djeu(3), djeut(3)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: idim, i, j
+    real(kind=8) :: ppe
 !
 ! --------------------------------------------------------------------------------------------------
 !
     djeu(:)  = 0.d0
     djeut(:) = 0.d0
     jeu      = 0.d0
+!
+! - Coefficient to update gap
+!
+    ppe = 0.d0
+    if (i_reso_geom .eq. ALGO_NEWT) then
+        ppe = 1.d0
+    endif
 !
 ! - Increment of normal gap
 !
@@ -77,8 +84,8 @@ real(kind=8), intent(out) :: jeu, djeu(3), djeut(3)
 !
     jeu = jeusup
     do idim = 1, ndim
-        jeu = jeu + (geome(idim)+(1-iresog)*ddeple(idim) &
-                  -  geomm(idim)-(1-iresog)*ddeplm(idim))*norm(idim)
+        jeu = jeu + (geome(idim)+(1.d0-ppe)*ddeple(idim) &
+                  -  geomm(idim)-(1.d0-ppe)*ddeplm(idim))*norm(idim)
     end do
 !
 ! - Increment of tangent gaps

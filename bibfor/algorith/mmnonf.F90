@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,34 +48,24 @@ subroutine mmnonf(ndim, nno, alias, ksi1, ksi2,&
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: ibid, i
+    integer :: ibid
     real(kind=8) :: ksi(2)
-    character(len=8) :: elrefe
 !
 ! ----------------------------------------------------------------------
 !
 !
 ! --- INITIALISATIONS
 !
-    do 10 i = 1, 9
-        ff(i) = 0.d0
-10  end do
+    ff(:) = 0.d0
 !
     ksi(1) = ksi1
     ksi(2) = ksi2
-!
-    elrefe = alias
-!
-    if ((nno.lt.1) .or. (nno.gt.9)) then
-        ASSERT(.false.)
-    endif
-!
-    if ((ndim.lt.1) .or. (ndim.gt.3)) then
+    if ((nno.lt.1) .or. (nno.gt.9) .or. (ndim.lt.1) .or. (ndim.gt.3)) then
         ASSERT(.false.)
     endif
 !
 ! --- RECUP FONCTIONS DE FORME
 !
-    call elrfvf(elrefe, ksi, nno, ff, ibid)
+    call elrfvf(alias, ksi, nno, ff, ibid)
 !
 end subroutine

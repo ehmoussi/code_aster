@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,9 +62,11 @@ cara=AFFE_CARA_ELEM(MODELE=modele,
                               VALE=0.05,),
                     DISCRET=(_F(CARA='M_TR_D_N',
                                 GROUP_MA='DISQ1',
-                                REPERE='LOCAL',
-                                VALE=(1.458013e+01,1.232021e-01,
-                                6.463858e-02,6.463858e-02,0,0,0,0,0,0,),),
+                                #REPERE='LOCAL',
+                                #VALE=(1.458013e+01,1.232021e-01,6.463858e-02,6.463858e-02,0,0,0,0,0,0,),
+                                # test de la prise en compte du repère global
+                                VALE=(1.458013e+01,6.463858e-02,6.463858e-02,1.232021e-01,0,0,0,0,0,0,),
+                                ),
                              _F(CARA='K_TR_D_N',
                                 GROUP_MA='DISQ1',
                                 REPERE='LOCAL',
@@ -86,11 +88,24 @@ cara=AFFE_CARA_ELEM(MODELE=modele,
                                 GROUP_MA='DISQ2',
                                 REPERE='LOCAL',
                                 VALE=(0,0,0,0,0,0,),),
-                             _F(CARA='M_TR_D_N',
+                             # on remplace cette occurrence par une occurrence en matrice pleine
+                             #_F(CARA='M_TR_D_N',
+                                #GROUP_MA='DISQ3',
+                                #REPERE='LOCAL',
+                                #VALE=(5.513495e+01,1.171618e+00,6.023493e-01,6.023493e-01,0,0,0,0,0,0,),
+                                #VALE=(5.513495e+01,6.023493e-01,6.023493e-01,1.171618e+00,0,0,0,0,0,0,),
+                                #),
+                             _F(CARA='M_TR_N',
+                                SYME='NON', 
                                 GROUP_MA='DISQ3',
-                                REPERE='LOCAL',
-                                VALE=(5.513495e+01,1.171618e+00,
-                                6.023493e-01,6.023493e-01,0,0,0,0,0,0,),),
+                                VALE=(5.513495e+01 ,0, 0, 0 ,0, 0,
+                                      0, 5.513495e+01, 0, 0, 0, 0,
+                                      0, 0, 5.513495e+01, 0, 0, 0,
+                                      0, 0, 0, 0.6023493, 0, 0,
+                                      0, 0, 0, 0, 0.6023493, 0,
+                                      0, 0, 0, 0, 0, 1.1716180000000000,
+                                     ),
+                                ),
                              _F(CARA='K_TR_D_N',
                                 GROUP_MA='DISQ3',
                                 REPERE='LOCAL',

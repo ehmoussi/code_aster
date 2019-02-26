@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -104,24 +102,5 @@ Arrêt suite à l'échec de l'intégration de la loi de comportement.
  or la maille est de type :  %(k1)s .
 """),
 
-    94 : _(u"""
- le champ issu du concept %(k1)s n'est pas calculé à l'instant %(i3)i
-"""),
-
-    96 : _(u"""
- le séchage ne peut pas être mélangé à un autre comportement
-"""),
-
-    97 : _(u"""
- EVOL_THER_SECH est un mot-clé obligatoire pour le séchage de type SECH_GRANGER et SECH_NAPPE
-"""),
-
-    98 : _(u"""
-  le concept :  %(k1)s  n'est pas un champ de température
-"""),
-
-    99 : _(u"""
-  le concept EVOL_THER :  %(k1)s  ne contient aucun champ de température
-"""),
 
 }

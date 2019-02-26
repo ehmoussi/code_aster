@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
     subroutine nmcomp(fami, kpg, ksp, ndim, typmod,&
@@ -24,7 +23,7 @@ interface
                       neps, epsm, deps, nsig, sigm,&
                       vim, option, angmas, nwkin, wkin,&
                       sigp, vip, ndsde, dsidep, nwkout,&
-                      wkout, codret, mult_comp_)
+                      wkout, codret, mult_comp_, l_epsi_varc_)
         character(len=*) :: fami
         integer :: kpg
         integer :: ksp
@@ -42,7 +41,6 @@ interface
         real(kind=8) :: sigm(*)
         real(kind=8) :: vim(*)
         character(len=16) :: option
-        character(len=16), optional, intent(in) :: mult_comp_
         real(kind=8) :: angmas(*)
         integer :: nwkin
         real(kind=8) :: wkin(nwkin)
@@ -53,5 +51,7 @@ interface
         integer :: nwkout
         real(kind=8) :: wkout(nwkout)
         integer :: codret
+        character(len=16), optional, intent(in) :: mult_comp_
+        aster_logical, optional, intent(in) :: l_epsi_varc_
     end subroutine nmcomp
 end interface

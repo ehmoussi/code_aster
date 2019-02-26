@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -279,6 +279,7 @@ CHARGE=AFFE_CHAR_THER_F(MODELE=MOTH,
 TEMPE=THER_NON_LINE(       MODELE=MOTH,
                   ETAT_INIT=_F(  STATIONNAIRE = 'OUI'),
                  CHAM_MATER=CHMAT,
+                AFFICHAGE=_F(INFO_TEMPS='OUI', INFO_RESIDU='OUI',UNITE=37,),
                       EXCIT=_F(  CHARGE = CHARGE),
                      NEWTON=_F(  ITER_LINE_MAXI = 2,
                               REAC_ITER = 1)
