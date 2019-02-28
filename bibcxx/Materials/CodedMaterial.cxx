@@ -59,7 +59,6 @@ bool CodedMaterialInstance::allocate(bool force) {
     CALLO_RCMFMC_WRAP( materName, mate, &thm, &ther, getName(), strJeveuxBase );
 
     auto vecOfMater = _mater->getVectorOfMaterial();
-    int compteur = 0;
     for ( auto curIter : vecOfMater ) {
         std::string nameWithoutBlanks = trim( curIter->getName() ) + ".0";
         std::string base( " " );
@@ -81,7 +80,7 @@ bool CodedMaterialInstance::allocate(bool force) {
             }
         }
 
-        const int nbMB = curIter->getNumberOfUserMaterialBehviour();
+        const int nbMB = curIter->getNumberOfMaterialBehviour();
         for( int i = 0; i < nbMB; ++i )
         {
             auto vecVec1 = curIter->getBehaviourVectorOfDoubleValues( i );
