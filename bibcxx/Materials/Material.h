@@ -99,6 +99,12 @@ class MaterialInstance: public DataStructure
             _mater( nullptr )
         {};
 
+        MaterialInstance( const std::string& name, VectorInt vec ):
+            MaterialInstance( name )
+        {
+            setStateAfterUnpickling( vec );
+        };
+
         /**
          * @brief Ajout d'un GeneralMaterialBehaviourPtr
          * @param curMaterBehav GeneralMaterialBehaviourPtr a ajouter au MaterialInstance
@@ -114,6 +120,28 @@ class MaterialInstance: public DataStructure
          * @todo pouvoir compléter un matériau (ajout d'un comportement après build)
          */
         bool build();
+
+        /**
+         * @brief Get the number of list of double properties for one MaterialBehaviour
+         * @return number of list of double properties
+         */
+        int getNumberOfListOfDoubleProperties( int position )
+        {
+            if( position >= _vectorOfUserDoubleValues.size() )
+                throw std::runtime_error("Out of bound");
+            return _vectorOfUserDoubleValues[ position ].size();
+        };
+
+        /**
+         * @brief Get the number of list of function properties for one MaterialBehaviour
+         * @return number of list of function properties
+         */
+        int getNumberOfListOfFunctionProperties( int position )
+        {
+            if( position >= _vectorOfUserFunctionValues.size() )
+                throw std::runtime_error("Out of bound");
+            return _vectorOfUserFunctionValues[ position ].size();
+        };
 
         /**
          * @brief Get the number of behaviours
@@ -173,10 +201,11 @@ class MaterialInstance: public DataStructure
             _mater = curMater;
         };
 
+    private:
         /**
          * @brief Add reference to jeveux object after unpickling
          */
-        void setStateAfterUnpickling( VectorInt );
+        void setStateAfterUnpickling( const VectorInt& );
 };
 
 /**
