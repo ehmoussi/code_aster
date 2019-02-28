@@ -36,7 +36,7 @@ void MaterialInstance::addMaterialBehaviour( const GeneralMaterialBehaviourPtr& 
 
     std::ostringstream numString;
     numString << std::setw( 6 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
-    const std::string currentName = _jeveuxName + ".CPT." + numString.str();
+    const std::string currentName = getName() + ".CPT." + numString.str();
     _vectorOfComplexValues.push_back( JeveuxVectorComplex( currentName + ".VALC" ) );
     _vectorOfDoubleValues.push_back( JeveuxVectorDouble( currentName + ".VALR" ) );
     _vectorOfChar16Values.push_back( JeveuxVectorChar16( currentName + ".VALK" ) );
@@ -58,10 +58,10 @@ void MaterialInstance::addMaterialBehaviour( const GeneralMaterialBehaviourPtr& 
             ++_nbUserMaterialBehaviour;
             std::ostringstream numUser2;
             numUser2 << std::setw( 7 ) << std::setfill( '0' ) << _nbUserMaterialBehaviour;
-            std::string currentName2 = _jeveuxName + "." + numUser2.str() + ".LISV_R8";
+            std::string currentName2 = getName() + "." + numUser2.str() + ".LISV_R8";
             auto o1 = JeveuxVectorDouble( currentName2 );
             _vectorOfUserDoubleValues[cP].push_back( o1 );
-            std::string currentName3 = _jeveuxName + "." + numUser2.str() + ".LISV_FO";
+            std::string currentName3 = getName() + "." + numUser2.str() + ".LISV_FO";
             auto o2 = JeveuxVectorChar8( currentName3 );
             _vectorOfUserFunctionValues[cP].push_back( o2 );
         }
@@ -143,4 +143,39 @@ bool MaterialInstance::build() {
         ++num;
     }
     return true;
+};
+
+void MaterialInstance::setStateAfterUnpickling( VectorInt vec )
+{
+    _nbMaterialBehaviour = 0;
+    _nbUserMaterialBehaviour = 0;
+    for( auto curVal : vec )
+    {
+        std::cout << "Test " << curVal << std::endl;
+        ++_nbMaterialBehaviour;
+        std::ostringstream numString;
+        numString << std::setw( 6 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
+        const std::string currentName = getName() + ".CPT." + numString.str();
+        _vectorOfComplexValues.push_back( JeveuxVectorComplex( currentName + ".VALC" ) );
+        _vectorOfDoubleValues.push_back( JeveuxVectorDouble( currentName + ".VALR" ) );
+        _vectorOfChar16Values.push_back( JeveuxVectorChar16( currentName + ".VALK" ) );
+        _vectorOrdr.push_back( JeveuxVectorChar16( currentName + ".ORDR" ) );
+        _vectorKOrdr.push_back( JeveuxVectorLong( currentName + ".KORD" ) );
+
+        const auto cP = _vectorOfUserDoubleValues.size();
+        _vectorOfUserDoubleValues.push_back( VectorOfJeveuxVectorDouble() );
+        _vectorOfUserFunctionValues.push_back( VectorOfJeveuxVectorChar8() );
+        for( int i = 1; i <= curVal; ++i )
+        {
+            ++_nbUserMaterialBehaviour;
+            std::ostringstream numUser2;
+            numUser2 << std::setw( 7 ) << std::setfill( '0' ) << _nbUserMaterialBehaviour;
+            std::string currentName2 = getName() + "." + numUser2.str() + ".LISV_R8";
+            auto o1 = JeveuxVectorDouble( currentName2 );
+            _vectorOfUserDoubleValues[cP].push_back( o1 );
+            std::string currentName3 = getName() + "." + numUser2.str() + ".LISV_FO";
+            auto o2 = JeveuxVectorChar8( currentName3 );
+            _vectorOfUserFunctionValues[cP].push_back( o2 );
+        }
+    }
 };

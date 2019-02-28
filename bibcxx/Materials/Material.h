@@ -51,8 +51,6 @@ class MaterialInstance: public DataStructure
         typedef std::vector< JeveuxVectorChar8 > VectorOfJeveuxVectorChar8;
 
     private:
-        /** @brief Nom Jeveux de la SD */
-        const std::string                  _jeveuxName;
         /** @brief Vecteur Jeveux '.MATERIAU.NOMRC' */
         JeveuxVectorChar32                 _materialBehaviourNames;
         /** @brief Nombre de MaterialBehaviour deja ajoutes */
@@ -94,11 +92,10 @@ class MaterialInstance: public DataStructure
 
         MaterialInstance( const std::string& name ):
             DataStructure( name, 8, "MATER" ),
-            _jeveuxName( ResultNaming::getCurrentName() ),
-            _materialBehaviourNames( JeveuxVectorChar32( _jeveuxName + ".MATERIAU.NOMRC " ) ),
+            _materialBehaviourNames( JeveuxVectorChar32( name + ".MATERIAU.NOMRC " ) ),
             _nbMaterialBehaviour( 0 ),
             _nbUserMaterialBehaviour( 0 ),
-            _doubleValues( new FunctionInstance( _jeveuxName + ".&&RDEP" ) ),
+            _doubleValues( new FunctionInstance( name + ".&&RDEP" ) ),
             _mater( nullptr )
         {};
 
@@ -119,7 +116,7 @@ class MaterialInstance: public DataStructure
         bool build();
 
         /**
-         * @brief Get the number of behviours
+         * @brief Get the number of behaviours
          * @return number of added behaviours
          */
         int getNumberOfMaterialBehviour()
@@ -128,7 +125,7 @@ class MaterialInstance: public DataStructure
         };
 
         /**
-         * @brief Get the number of users behviours
+         * @brief Get the number of users behaviours
          * @return number of added users behaviours
          */
         int getNumberOfUserMaterialBehviour()
@@ -138,21 +135,25 @@ class MaterialInstance: public DataStructure
 
         /**
          * @brief Get vector of double values for a given material behaviour
-         * @param position number of the material behaviour
+         * @param position index of vector
          * @return jeveux vector of double values
          */
         VectorOfJeveuxVectorDouble getBehaviourVectorOfDoubleValues( int position )
         {
+            if( position >= _vectorOfUserDoubleValues.size() )
+                throw std::runtime_error("Out of bound");
             return _vectorOfUserDoubleValues[ position ];
         };
 
         /**
-         * @brief Get vector of double values for a given material behaviour
-         * @param position number of the material behaviour
-         * @return jeveux vector of double values
+         * @brief Get vector of function values for a given material behaviour
+         * @param position index of vector
+         * @return jeveux vector of function values
          */
         VectorOfJeveuxVectorChar8 getBehaviourVectorOfFunctions( int position )
         {
+            if( position >= _vectorOfUserFunctionValues.size() )
+                throw std::runtime_error("Out of bound");
             return _vectorOfUserFunctionValues[ position ];
         };
 
@@ -171,6 +172,11 @@ class MaterialInstance: public DataStructure
         {
             _mater = curMater;
         };
+
+        /**
+         * @brief Add reference to jeveux object after unpickling
+         */
+        void setStateAfterUnpickling( VectorInt );
 };
 
 /**
