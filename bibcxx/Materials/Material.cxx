@@ -145,11 +145,12 @@ bool MaterialInstance::build() {
     return true;
 };
 
-void MaterialInstance::setStateAfterUnpickling( VectorInt vec )
+void MaterialInstance::setStateAfterUnpickling( const VectorInt& vec )
 {
-    _nbMaterialBehaviour = 0;
-    _nbUserMaterialBehaviour = 0;
-    for( auto curVal : vec )
+    if( _nbMaterialBehaviour != 0 )
+        throw std::runtime_error( "Object already fill in" );
+
+    for( const auto& curVal : vec )
     {
         ++_nbMaterialBehaviour;
         std::ostringstream numString;

@@ -32,27 +32,16 @@ from ..Utilities import injector
 class ExtendedMaterial(injector(Material), Material):
     cata_sdj = "SD.sd_mater.sd_mater"
 
-    def __getstate__(self):
-        """Return internal state.
-
-        Returns:
-            dict: Internal state.
+    def __getinitargs__(self):
+        """Returns the argument required to reinitialize a MaterialOnMesh
+        object during unpickling.
         """
+        toReturn = self.getName(),
         state = []
-        for mater in self.getVectorOfMaterialBehaviours():
-            val1 = mater.getNumberOfListOfDoubleProperties()
-            val2 = mater.getNumberOfListOfFunctionProperties()
-            state.append(val1+val2)
-        return tuple(state)
-
-    def __setstate__(self, state):
-        """Restore internal state.
-
-        Arguments:
-            state (dict): Internal state.
-        """
-        if state is not ():
-            self.setStateAfterUnpickling(list(state))
+        for i in range(self.getNumberOfMaterialBehviour()):
+            state.append(self.getNumberOfListOfDoubleProperties(i))
+        toReturn = toReturn + (state,)
+        return toReturn
 
     def RCVALE(self, phenomene, nompar=(), valpar=(), nomres=(), stop=1):
         """Appel à la routine fortran RCVALE pour récupérer les valeurs des
