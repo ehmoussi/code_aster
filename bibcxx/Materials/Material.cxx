@@ -151,7 +151,6 @@ void MaterialInstance::setStateAfterUnpickling( VectorInt vec )
     _nbUserMaterialBehaviour = 0;
     for( auto curVal : vec )
     {
-        std::cout << "Test " << curVal << std::endl;
         ++_nbMaterialBehaviour;
         std::ostringstream numString;
         numString << std::setw( 6 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
