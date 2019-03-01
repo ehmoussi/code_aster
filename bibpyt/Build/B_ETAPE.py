@@ -263,7 +263,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         nom_motfac = nom_motfac.strip()
         nom_motcle = nom_motcle.strip()
         valeur = self.get_valeur_motcle(nom_motfac, iocc, nom_motcle)
-        if valeur == None:
+        if valeur is None:
             retval = 0, ()
         else:
             retval = B_utils.RETLIST(valeur, mxval)

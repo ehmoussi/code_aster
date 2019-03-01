@@ -105,7 +105,7 @@ class ListProtocol(Protocol):
                 return obj
         elif type(obj) is list:
             return obj
-        elif obj == None:
+        elif obj is None:
             # pas de valeur affecte. La cardinalite vaut 0
             return obj
         elif is_str(obj):

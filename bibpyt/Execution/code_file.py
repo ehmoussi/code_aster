@@ -99,8 +99,12 @@ class CodeVisitor(JDCVisitor):
         self.value = ", ".join(svalues)
         if as_list:
             self.value = "(%s)" % self.value
-        if mcsimp.definition.into is None and mcsimp.valeur != mcsimp.definition.defaut:
-            self.value = ''
+        if mcsimp.definition.into is None:
+            valeur_is_not_default = mcsimp.valeur != mcsimp.definition.defaut
+            if type(valeur_is_not_default) is not bool:
+                valeur_is_not_default = any(valeur_is_not_default)
+            if valeur_is_not_default:
+                self.value = ''
         self.add_args()
 
     def visitASSD(self, sd):

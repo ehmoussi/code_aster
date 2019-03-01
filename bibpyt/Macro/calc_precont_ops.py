@@ -656,10 +656,10 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 #                   on stocke les infos pour la construction de la fonction multiplicatrice
 #                   lors de la deuxième phase de mise en tension (sur l'ancrage 1)
                     info = { 'tension' : __tension}
-                    if string.strip(__typ_noeu[0]) == 'NOEUD':
+                    if __typ_noeu[0].strip() == 'NOEUD':
                         UTMESS('F', 'CABLE0_5')
                     else:
-                        info['GROUP_NO'] = string.strip(__nom_noeu[0])
+                        info['GROUP_NO'] = __nom_noeu[0].strip()
                     
                     info_actif_actif.append(info)
 

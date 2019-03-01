@@ -57,7 +57,7 @@ def DSP2ACCE1D(f_dsp, rv=None):
     DW = lw2[1] - lw2[0]
     nbfreq2 = len(lw2)
     nbfreq = nbfreq2 * 2
-    if rv == None:
+    if rv is None:
         rv = NP.random.normal(0.0, 1., nbfreq) + \
             1j * NP.random.normal(0.0, 1., nbfreq)
     rv1 = rv[0: nbfreq2]
@@ -107,7 +107,7 @@ def gene_traj_gauss_evol1D(self, rv=None, **kwargs):
             l_FIT = l_FIT * l_ALPHA
         else:
             mof = NP.trapz(dsp_fr_refe * l_FIT, self.sampler.liste_w2) * 2.
-    if rv == None:
+    if rv is None:
         rv = NP.random.normal(0.0, 1., nbfreq) + \
             1j * NP.random.normal(0.0, 1., nbfreq)
 #      vecc1=(NP.random.normal(0.0,1.,nbfreq2)+1j*NP.random.normal(0.0,1.,nbfreq2))
