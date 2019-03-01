@@ -106,7 +106,7 @@ print(('err_globale_F_adap2', err_globale_F_adap2))
 ############################################################
 N=len(t)
    # Pour Euler:
-dchoc_euler = d_euler>=jeu_choc
+dchoc_euler = (d_euler>=jeu_choc).astype(int)
 diff_euler = NP.zeros(N)
 diff_euler[1:len(diff_euler)] = dchoc_euler[1:N]-dchoc_euler[0:N-1]
 in_euler = diff_euler>=1
@@ -122,7 +122,7 @@ for i in out2_euler:
 t_inout_euler.sort()
 
    # Pour Differences centrees:
-dchoc_adapt = d_adapt>=jeu_choc
+dchoc_adapt = (d_adapt>=jeu_choc).astype(int)
 diff_adapt = NP.zeros(N)
 diff_adapt[1:len(diff_adapt)] = dchoc_adapt[1:N]-dchoc_adapt[0:N-1]
 in_adapt = diff_adapt>=1

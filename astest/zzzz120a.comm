@@ -37,7 +37,7 @@ def POST_GOUJ_ops(self,TABLE):
   nbv=0
   for num in v_NU :
     if num==v_NU[0] : nbv=nbv+1
-  if nbv>0 : ninch=NBVAL/nbv
+  if nbv>0 : ninch=NBVAL//nbv
   else : print("error")
 
   v_F1=[v_DY[i*nbv:(i+1)*nbv] for i in range(ninch)]

@@ -535,14 +535,14 @@ def gestion_sous_bande(solveur_lineaire, __nbmodi, nnfreq, nbproc, stop):
             aster.affiche('MESSAGE', 72 * '-')
         div = None
         reste = None
-        div = nbproc / nbsb_nonvide
+        div = nbproc // nbsb_nonvide
         reste = nbproc - nbsb_nonvide * div
         if ((nbproc > nbsb_nonvide) & (reste != 0)):
             aster.affiche('MESSAGE', 72 * '-')
             UTMESS('I', 'MODAL_12', vali=(nbsb_nonvide, div, div + 1),)
             aster.affiche('MESSAGE', 72 * '-')
 
-        l1 = nbproc / nbsb_nonvide
+        l1 = nbproc // nbsb_nonvide
         l11 = l1 + 1
         l2 = nbproc - (l1 * nbsb_nonvide)
         l21 = l2 + 1
@@ -578,7 +578,7 @@ def gestion_frequence(solveur_lineaire, nnfreq, nbproc):
             aster.affiche('MESSAGE', 72 * '-')
         div = None
         reste = None
-        div = nbproc / (nnfreq - 1)
+        div = nbproc // (nnfreq - 1)
         reste = nbproc - (nnfreq - 1) * div
         if ((nbproc > nnfreq - 1) & (reste != 0)):
             aster.affiche('MESSAGE', 72 * '-')

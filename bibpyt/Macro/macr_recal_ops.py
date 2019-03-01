@@ -226,7 +226,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
     dESCLAVE = args['CALCUL_ESCLAVE'][0].cree_dict_valeurs(
         args['CALCUL_ESCLAVE'][0].mc_liste)
     for i in list(dESCLAVE.keys()):
-        if dESCLAVE[i] == None:
+        if dESCLAVE[i] is None:
             del dESCLAVE[i]
 
     CALCUL_ESCLAVE[
@@ -400,7 +400,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
     #
     # GESTION DE L'OPTION FACULTATIVE POUR LES POIDS
     #_______________________________________________
-    if(POIDS == None):
+    if(POIDS is None):
         POIDS = NP.ones(len(RESU_EXP))
 
     #_____________________________________________

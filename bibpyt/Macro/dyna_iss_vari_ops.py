@@ -119,7 +119,7 @@ class Generator(object):
         if params.cas == 'TRANS':
             self.excit_params = params.excit_sol_keys
             for dire in list(self.excit_params.keys()):
-                if self.excit_params[dire] == None:
+                if self.excit_params[dire] is None:
                     del self.excit_params[dire]
             nom_cmp = [q.replace('ACCE_','D') for q in list(self.excit_params.keys())]
             self.list_NOM_CMP = nom_cmp
@@ -280,7 +280,7 @@ class GeneratorTRANS(Generator):
 
             # si tous les point on été calculés: pas d'interpolation
             vale_fre, vale_re, vale_im = self.excit_params[dire].Valeurs()
-            if self.calc_params['FREQ_MAX'] == None:
+            if self.calc_params['FREQ_MAX'] is None:
                 inul = 0
                 for k, freqk in enumerate(self.liste_freq_sig):
                     omegk = 2.0 * pi * freqk
@@ -423,7 +423,7 @@ class GeneratorTRANS(Generator):
 
 
     def append_Vec(self, RS, k, VEC=None):
-        if VEC == None:
+        if VEC is None:
             nbmodt = self.mat_gene_params['NBMODT']
             VEC = NP.zeros((self.NB_FREQ, nbmodt)) + 0j
         VEC[k] = RS
@@ -641,7 +641,7 @@ class GeneratorSPEC(Generator):
 
 
     def append_Vec(self, RS, k , SPEC=None):
-        if SPEC == None:
+        if SPEC is None:
             nbmodt = self.mat_gene_params['NBMODT']
             SPEC = NP.zeros((self.NB_FREQ, nbmodt, nbmodt)) + 0j
         if self.interf_params['MODE_INTERF'] =='QUELCONQUE':
