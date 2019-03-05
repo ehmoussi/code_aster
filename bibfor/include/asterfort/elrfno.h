@@ -15,15 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine elrfdf(elrefz, x, dimd, dff, nno, ndim)
-        character(len=*), intent(in) :: elrefz
-        integer, intent(in) :: dimd
-        real(kind=8), intent(in) :: x(*)
-        integer, intent(out) :: nno, ndim
-        real(kind=8), intent(out) :: dff(3, *)
-    end subroutine elrfdf
+    subroutine elrfno(elrefz, nno, nnos, ndim, coorno)
+        character(len=*), intent(in)        :: elrefz
+        integer, intent(out)                :: nno
+        integer, optional, intent(out)      :: ndim, nnos
+        real(kind=8), optional, intent(out) :: coorno(3,27)
+    end subroutine elrfno
 end interface
