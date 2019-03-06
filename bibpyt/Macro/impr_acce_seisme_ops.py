@@ -115,7 +115,6 @@ def impr_acce_seisme_ops(self, **args):
     """
         Ecriture de la macro IMPR_ACCE_SEISME
     """
-    ier = 0
     TABLE = args.get("TABLE")
     NOCI_REFE = args.get("NOCI_REFE")
     SPEC_OSCI = args.get("SPEC_OSCI")
@@ -873,4 +872,4 @@ def impr_acce_seisme_ops(self, **args):
     for idi in range(dim):
         DETRUIRE( CONCEPT = _F(NOM = (__MOY[idi])) )
 
-    return ier
+    return
