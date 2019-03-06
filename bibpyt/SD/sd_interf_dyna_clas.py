@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ class sd_interf_dyna_clas(AsBase):
         defo = self.IDC_DEFO.get()
         desc = self.IDC_DESC.get()
         nbec = desc[1]
-        nbnot = len(defo) / (nbec + 2)
+        nbnot = len(defo) // (nbec + 2)
         assert len(defo) == nbnot * (nbec + 2), defo
         for k in range(nbnot):
             assert defo[k] > 0, defo
