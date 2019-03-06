@@ -15,34 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_clean_pod(ds_para)
-!
-use Rom_Datastructure_type
-!
-implicit none
-!
-#include "asterfort/romBaseClean.h"
-#include "asterfort/romFieldClean.h"
-!
-type(ROM_DS_ParaDBR), intent(inout) :: ds_para
-!
-! --------------------------------------------------------------------------------------------------
-!
-! DEFI_BASE_REDUITE
-!
-! Clean datastructures for POD
-!
-! --------------------------------------------------------------------------------------------------
-!
-! IO  ds_para           : datastructure for parameters 
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call romBaseClean(ds_para%ds_empi)
-    if (ds_para%l_reuse) then
-        call romFieldClean(ds_para%para_pod%ds_result_in%field)
-    endif
-!
-end subroutine
+interface
+    subroutine ddr_clean(ds_para)
+        use Rom_Datastructure_type
+        type(ROM_DS_ParaDDR), intent(inout) :: ds_para
+    end subroutine ddr_clean
+end interface

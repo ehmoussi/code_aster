@@ -62,9 +62,11 @@ cata_msg = {
    22 : _("""Un mode empirique contient des conditions limites dualisés (AFFE_CHAR_THER ou AFFE_CHAR_MECA).
               Ce n'est pas possible, utilisez AFFE_CHAR_CINE"""),
 
-   23 : _("""Un mode empirique contient une composante au noeud %(k1)s qui n'est pas autorisée."""),
+   23 : _("""Un mode empirique contient la composante %(k1)s qui n'est pas autorisée. Vous utilisez un modèle qui n'est actuellement pas compatible avec la réduction de modèle."""),
 
    24 : _("""Paramètres généraux de DEFI_BASE_REDUITE."""),
+
+   25 : _("""Le champ d'entrée ne contient pas la composante %(k1)s. Vous utilisez un modèle qui n'est actuellement pas compatible avec la réduction de modèle."""),
 
    27 : _("""Lecture des paramètres pour la méthode GLOUTON."""),
 
@@ -91,8 +93,6 @@ cata_msg = {
    40 : _("""Résolution du problème réduit."""),
 
    41 : _("""Lecture des paramètres pour réaliser le calcul non-linéaire avec réduction de modèle."""),
-
-   42 : _("""Suppression de la structure de données pour réaliser le calcul non-linéaire avec réduction de modèle."""),
 
    44 : _("""Évaluation des coefficients pour la valeur %(i1)d des paramètres."""),
 

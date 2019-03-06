@@ -16,61 +16,31 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
-subroutine romBaseGetInfoFromResult(ds_result_in, base, ds_empi)
+subroutine romFieldClean(ds_field)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/utmess.h"
-#include "asterfort/ltnotb.h"
+#include "asterfort/as_deallocate.h"
 !
-type(ROM_DS_Result), intent(in)  :: ds_result_in
-character(len=8), intent(in)     :: base
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_Field), intent(in) :: ds_field
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Get informations about empiric modes base from input results to reduce
+! Clean field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_result_in     : input results to reduce
-! In  base             : name of empiric base
-! IO  ds_empi          : datastructure for empiric modes
+! In  ds_field         : datastructure for field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret
-    character(len=8) :: model = ' '
-    character(len=19) :: tabl_coor = ' '
-    type(ROM_DS_Field) :: ds_field
-!
-! --------------------------------------------------------------------------------------------------
-!
-!
-! - Get name of COOR_REDUIT table
-!
-    call ltnotb(base, 'COOR_REDUIT', tabl_coor, iret)
-    ASSERT(iret .ne. 1)
-!
-! - Get model from input results datastructure
-!
-    model    = ds_result_in%model
-!
-! - Get field reference from input result datastructures
-!
-    ds_field = ds_result_in%field
-!
-! - Save informations about empiric modes
-!
-    ds_empi%base      = base
-    ds_empi%tabl_coor = tabl_coor
-    ds_empi%ds_mode   = ds_field
+    AS_DEALLOCATE(vi  = ds_field%v_equa_type)
+    AS_DEALLOCATE(vk8 = ds_field%v_list_cmp)
 !
 end subroutine
