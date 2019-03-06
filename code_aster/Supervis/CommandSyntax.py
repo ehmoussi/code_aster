@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -335,6 +335,21 @@ class CommandSyntax(object):
         length = [min(len(i), lenmax) for i in value]
         return size, tuple(length[:maxval])
 
+    #TODO: to remove
+    def hasDefaultValue(self, factName, simpName):
+        hasDV = 0
+        if self._commandCata is not None and hasattr(self._commandCata, "keywords"):
+            fkw = self._commandCata.keywords.get(factName)
+            if fkw is not None:
+                skw = fkw.keywords.get(simpName)
+                if skw is not None:
+                    hasDV = skw.hasDefaultValue()
+                    if hasDV == False:
+                        hasDV = 0
+                    else:
+                        hasDV = 1
+        return hasDV
+
     def getvid(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of results.
 
@@ -357,7 +372,8 @@ class CommandSyntax(object):
         size = len(value)
         if size > maxval:
             size = -size
-        return size, tuple(value[:maxval]), 0
+        hasDV = self.hasDefaultValue(factName, simpName)
+        return size, tuple(value[:maxval]), hasDV
 
     def getvtx(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of strings.
@@ -381,8 +397,8 @@ class CommandSyntax(object):
         size = len(value)
         if size > maxval:
             size = -size
-        # TODO: last returned value is "is_default"
-        return size, tuple(value[:maxval]), 0
+        hasDV = self.hasDefaultValue(factName, simpName)
+        return size, tuple(value[:maxval]), hasDV
 
     def getvis(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of integers.
@@ -407,8 +423,8 @@ class CommandSyntax(object):
         size = len(value)
         if size > maxval:
             size = -size
-        # TODO: last returned value is "is_default"
-        return size, tuple(value[:maxval]), 0
+        hasDV = self.hasDefaultValue(factName, simpName)
+        return size, tuple(value[:maxval]), hasDV
 
     def getvr8(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of float numbers.
@@ -436,8 +452,8 @@ class CommandSyntax(object):
         size = len(value)
         if size > maxval:
             size = -size
-        # TODO: last returned value is "is_default"
-        return size, tuple(value[:maxval]), 0
+        hasDV = self.hasDefaultValue(factName, simpName)
+        return size, tuple(value[:maxval]), hasDV
 
     def getvc8(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of complex numbers.
@@ -475,8 +491,8 @@ class CommandSyntax(object):
         size = len(values)
         if size > maxval:
             size = -size
-        # TODO: last returned values is "is_default"
-        return size, tuple(values[:maxval]), 0
+        hasDV = self.hasDefaultValue(factName, simpName)
+        return size, tuple(values[:maxval]), hasDV
 
     def getres(self):
         """Return the name and type of the result, and the command name.

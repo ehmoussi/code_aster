@@ -42,6 +42,10 @@ void exportMaterialBehaviourToPython() {
         .def( "getStringValue", &GeneralMaterialBehaviourInstance::getStringValue )
         .def( "getGenericFunctionValue",
               &GeneralMaterialBehaviourInstance::getGenericFunctionValue )
+        .def( "getNumberOfListOfDoubleProperties",
+              &GeneralMaterialBehaviourInstance::getNumberOfListOfDoubleProperties )
+        .def( "getNumberOfListOfFunctionProperties",
+              &GeneralMaterialBehaviourInstance::getNumberOfListOfFunctionProperties )
         .def( "getTableValue", &GeneralMaterialBehaviourInstance::getTableValue )
         .def( "hasComplexValue", &GeneralMaterialBehaviourInstance::hasComplexValue )
         .def( "hasDoubleValue", &GeneralMaterialBehaviourInstance::hasDoubleValue )
