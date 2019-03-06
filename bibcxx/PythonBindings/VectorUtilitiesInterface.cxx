@@ -34,6 +34,7 @@ void exportVectorUtilitiesToPython() {
     using namespace boost::python;
 
     exportVectorUtilities< long >();
+    exportVectorUtilities< int >();
     exportVectorUtilities< double >();
     exportVectorUtilities< std::string >();
     exportVectorUtilities< PhysicalQuantityComponent >();
