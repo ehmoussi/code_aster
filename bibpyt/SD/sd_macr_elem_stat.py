@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -96,30 +96,28 @@ class sd_macr_elem_stat(AsBase):
 
         # rigidité condensée :
         if self.MAEL_RAID_VALE.exists:
-#           assert self.MAEL_RAID_VALE.lonmax == (nddle * (nddle + 1)) / 2
-            assert len(self.MAEL_RAID_VALE.get()[1]) == (nddle * (nddle + 1)) / 2
+#           assert self.MAEL_RAID_VALE.lonmax == (nddle * (nddle + 1)) // 2
+            assert len(self.MAEL_RAID_VALE.get()[1]) == (nddle * (nddle + 1)) // 2
             assert self.PHI_IE.exists
             phi_ie = self.PHI_IE.get()
                                      # on ne sait pas faire autrement que
                                      # ramener l'objet entier ...
-            nlblph = len(
-                phi_ie[1]) / nddli   # nombre de lignes de phi_ie par bloc
-            assert self.PHI_IE.nmaxoc == (
-                nddle - 1) / nlblph + 1, (nddle, self.PHI_IE.nmaxoc)
+            nlblph = len(phi_ie[1]) // nddli   # nombre de lignes de phi_ie par bloc
+            assert self.PHI_IE.nmaxoc == (nddle - 1) // nlblph + 1, (nddle, self.PHI_IE.nmaxoc)
             for ke in list(phi_ie.keys()):
                 assert len(phi_ie[ke]) == nddli * nlblph, (
                     nddli, nlblph, nddle, len(phi_ie[ke]), ke)
 
         # masse condensée :
         if self.MAEL_MASS_VALE.exists:
-            assert len(self.MAEL_MASS_VALE.get()[1]) == (nddle * (nddle + 1)) / 2
-#           assert self.MAEL_MASS_VALE.lonmax == (nddle * (nddle + 1)) / 2
+            assert len(self.MAEL_MASS_VALE.get()[1]) == (nddle * (nddle + 1)) // 2
+#           assert self.MAEL_MASS_VALE.lonmax == (nddle * (nddle + 1)) // 2
             assert refm[6] == 'OUI_MASS'
 
         # amortissement condensé : (JP : je ne sais pas si ca peut exister ?)
         if self.MAEL_AMOR_VALE.exists:
-            assert len(self.MAEL_AMOR_VALE.get()[1]) == (nddle * (nddle + 1)) / 2
-#           assert self.MAEL_AMOR_VALE.lonmax == (nddle * (nddle + 1)) / 2
+            assert len(self.MAEL_AMOR_VALE.get()[1]) == (nddle * (nddle + 1)) // 2
+#           assert self.MAEL_AMOR_VALE.lonmax == (nddle * (nddle + 1)) // 2
 
             assert refm[7] == 'OUI_AMOR'
 

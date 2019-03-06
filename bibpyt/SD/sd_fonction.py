@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ class sd_fonction_aster(sd_titre):
             assert prolgd[1] in ('E', 'C', 'L', 'I'), prol
 
         if typfon == 'NAPPE':
-            nf = (len(prol) - 7) / 2
+            nf = (len(prol) - 7) // 2
             assert len(prol) == 7 + 2 * nf, prol
             # 1er paramètre de la nappe
             assert prol[6].strip() != '', prol
@@ -114,13 +114,13 @@ class sd_fonction_aster(sd_titre):
             assert len(vale) == 2, (vale, self)
 
         elif typfon == 'FONCTION':
-            nbpt = len(vale) / 2
+            nbpt = len(vale) // 2
             assert len(vale) == 2 * nbpt, (vale, self)
             if nbpt > 1:
                 assert sdu_monotone(vale[:nbpt]) in (-1, 1), (nbpt, vale, self)
 
         elif typfon == 'FONCT_C':
-            nbpt = len(vale) / 3
+            nbpt = len(vale) // 3
             assert len(vale) == 3 * nbpt, (vale, self)
             if nbpt > 1:
                 # print "AJACOT fonction=",self
@@ -130,7 +130,7 @@ class sd_fonction_aster(sd_titre):
             nbfonc = len(list(vale.keys()))
             for k in range(nbfonc):
                 val1 = vale[k + 1]
-                nbpt = len(val1) / 2
+                nbpt = len(val1) // 2
                 assert len(val1) == 2 * nbpt, (val1, self)
                 if nbpt > 1:
                     assert sdu_monotone(val1[:nbpt]) in (
