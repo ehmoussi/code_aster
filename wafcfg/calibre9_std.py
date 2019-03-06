@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20181019')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190304')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env['ADDMEM'] = 350
@@ -74,6 +74,6 @@ def configure(self):
     opts.enable_metis = True
     opts.enable_mumps = True
     opts.enable_scotch = True
-    opts.enable_mfront = True
+    opts.enable_mfront = False
 
     opts.enable_petsc = False

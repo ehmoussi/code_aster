@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -140,8 +140,7 @@ def _print_header():
                  get_option('hostname'),
                  get_option('architecture'),
                  get_option('processor'),
-                 get_option('system') + ' ' + get_option('osname')
-                 + ' ' + get_option('osrelease'),
+                 get_option('osname'),
                  lang_settings,),)
     pyvers = '%s.%s.%s' % tuple(sys.version_info[:3])
     UTMESS('I', 'SUPERVIS2_9', valk=(pyvers, numpy.__version__))

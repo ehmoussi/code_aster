@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -142,11 +142,11 @@ def remove_optflags(self, type_flags):
 @Configure.conf
 def remove_duplicates(self, list_in):
     """Return the list by removing the duplicated elements
-    and by keeping the order"""
+    and by keeping the order. It ignores empty values."""
     dset = set()
     # relies on the fact that dset.add() always returns None.
-    return [ l for l in list_in if
-             l not in dset and not dset.add(l) ]
+    return [path for path in list_in
+            if path not in dset and not dset.add(path) ]
 
 # Force static libs
 CHECK = '_check'

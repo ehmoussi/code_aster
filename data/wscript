@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -170,8 +170,7 @@ def env2dict(self, src):
     dico = {}
     dico['DEFINES'] = ' '.join([d.split('=')[0] for d in env['DEFINES']])
     py_path = self.remove_duplicates(Utils.to_list(env['CFG_PYTHONPATH']))
-    dico['PYTHONHOME'] = sys.prefix + '' if sys.prefix == sys.exec_prefix \
-        else ':' + sys.exec_prefix
+    dico['PYTHONHOME'] = env['CFG_PYTHONHOME']
     dico['PYTHON_DIRNAME'] = osp.dirname(env['PYTHON'][0])
     # as_run compatibility
     if env.ASRUN_MPI_VERSION:
