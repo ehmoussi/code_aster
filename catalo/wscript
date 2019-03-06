@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -154,6 +154,7 @@ def exec_pyaster(self, pyfile, args, with_aster=False, **kwargs):
     add_to_env_paths(environ, 'PYTHONARCHDIR', env['PYTHONARCHDIR'])
     add_to_env_paths(environ, 'PYTHONDIR', env['PYTHONDIR'])
     add_to_env_paths(environ, 'PYTHONPATH', python_path)
+    add_to_env_paths(environ, 'PYTHONHOME', env['CFG_PYTHONHOME'])
     add_to_env_paths(environ, 'ASTER_ROOT', env['PREFIX'])
 
     cmdexe = [python, osp.join(python_path, pyfile)] + args

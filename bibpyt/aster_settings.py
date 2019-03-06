@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -171,9 +171,8 @@ class CoreOptions(object):
         self.info['system'] = platform.system()
         # ex. 32bit/64bit
         self.info['architecture'] = platform.architecture()[0]
-        # ex. 2.6.32...
-        self.info['osrelease'] = platform.release()
-        self.info['osname'] = ' '.join(platform.linux_distribution())
+        # ex. Linux-3.16.0-7-amd64-x86_64-with-debian-8.11
+        self.info['osname'] = platform.platform()
         version = aster_pkginfo.version_info.version
         self.info['versionSTA'] = None
         self.info['versLabel'] = None

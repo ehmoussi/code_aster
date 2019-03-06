@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -115,7 +115,11 @@ def get_revision_info_cmd(from_rev=None, rev="."):
     """Return details about changes on `rev` or the current revision
     between last official tagged revision"""
     def exec_cmd(cmd):
-        return Popen(cmd, stdout=PIPE).communicate()[0].strip()
+        # avoid conflict between hg and currently used python version
+        env = dict([(k, v) for k, v in os.environ.items()
+                    if not k.startswith('PYTHON')])
+        out = Popen(cmd, stdout=PIPE, env=env).communicate()[0]
+        return out.decode().strip()
 
     if not from_rev:
         from_rev = "({0})~{1}".format(rev, MAXLEVEL)
@@ -148,7 +152,7 @@ def get_revision_info_cmd(from_rev=None, rev="."):
     vers = "?"
     chg = 0
     for info in reversed(logs):
-        rev, node, tag, br, idat, files = info.split(":")
+        rev, _node, tag, br, _idat, _files = info.split(":")
         # ignore non official branches
         if br not in BR:
             continue

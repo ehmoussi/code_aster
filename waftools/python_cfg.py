@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,8 @@ def check_system_libs(self):
 def configure_pythonpath(self):
     """Insert env.PYTHONPATH at the beginning of sys.path"""
     path = Utils.to_list(self.env['PYTHONPATH'])
-    system_path = _get_default_pythonpath(self.environ["PYTHON"])
+    system_path = _get_default_pythonpath(self.environ.get("PYTHON",
+                                                           sys.executable))
     for i in system_path:
         if i in sys.path:
             continue
@@ -73,6 +74,8 @@ def configure_pythonpath(self):
         path.append(i)
     sys.path = path + sys.path
     self.env['CFG_PYTHONPATH'] = path
+    self.env['CFG_PYTHONHOME'] = sys.prefix + (
+        '' if sys.prefix == sys.exec_prefix else ':' + sys.exec_prefix)
     os.environ['PYTHONPATH'] = os.pathsep.join(sys.path)
 
 @Configure.conf

@@ -6,7 +6,7 @@ syntax: glob
 
 syntax: regexp
 ^build/
-^\.waf\-.*/
+^\.waf.?\-.*/
 ^\.lock\-.*
 ^\.hgignore
 ^\.yamm/

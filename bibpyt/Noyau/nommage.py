@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ from functools import partial
 from . import N_utils
 from .strfunc import get_encoding
 
-regex1 = '=?\s*%s\s*\('
+regex1 = r'=?\s*%s\s*\('
 # commentaire standard precede d'un nombre quelconque de blancs (pas
 # multiligne)
 pattern_comment = re.compile(r"^\s*#.*")
@@ -106,7 +106,7 @@ def evalnom(text, d):
       2. text est un element d'une liste on construit le nom en
         evaluant la partie indice dans le contexte de l'appelant d
     """
-    l = re.split('([\[\]]+)', text)
+    l = re.split(r'([\[\]]+)', text)
     if l[-1] == '':
         l = l[:-1]
     lll = []
