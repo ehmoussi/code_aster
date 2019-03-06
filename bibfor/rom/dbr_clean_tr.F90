@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,9 +23,9 @@ use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/romBaseClean.h"
 #include "asterfort/assert.h"
 #include "asterfort/as_deallocate.h"
+#include "asterfort/romBaseClean.h"
 !
 type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
@@ -43,5 +43,6 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
     call romBaseClean(ds_para%ds_empi)
     AS_DEALLOCATE(vi = ds_para%para_tr%v_equa_rom)
+    call romBaseClean(ds_para%para_tr%ds_empi_init)
 !
 end subroutine

@@ -68,9 +68,10 @@ implicit none
         character(len=8)        :: model = ' '
 ! ----- Mesh
         character(len=8)        :: mesh  = ' '
-! ----- Number of components by node
-        integer                 :: nb_cmp_by_node = 0
-        character(len=8)        :: cmp_by_node(10) = ' '
+! ----- Components in the field
+        integer, pointer          :: v_equa_type(:) => null()
+        character(len=8), pointer :: v_list_cmp(:) => null()
+        integer                   :: nb_cmp = 0
 ! ----- Flag if has Lagrange multipliers
         aster_logical           :: l_lagr = ASTER_FALSE
 ! ----- Number of nodes with dof
@@ -213,8 +214,8 @@ implicit none
         type(ROM_DS_VariPara)   :: vari_para(5)
 ! ----- Evaluation of coefficients
         type(ROM_DS_EvalCoef)   :: evalcoef
-! ----- Size of system
-        integer                 :: nb_equa = 0
+! ----- Reference field
+        type(ROM_DS_Field)      :: field
     end type ROM_DS_MultiPara
 !
 ! - Parameters to solve systems
@@ -239,17 +240,8 @@ implicit none
         character(len=8)        :: model = ' '
 ! ----- Mesh
         character(len=8)        :: mesh  = ' '
-! ----- Name of field for read (NOM_CHAM)
-        character(len=24)       :: field_name = ' '
-! ----- A field for reference (to manipulate real field)
-        character(len=24)       :: field_refe = ' '
-! ----- Number of components by node
-        integer                 :: nb_cmp_by_node = 0
-        character(len=8)        :: cmp_by_node(10) = ' '
-! ----- Flag if has Lagrange multipliers
-        aster_logical           :: l_lagr = ASTER_FALSE
-! ----- Number of nodes with dof
-        integer                 :: nb_node = 0
+! ----- Field saved in
+        type(ROM_DS_Field)      :: field
     end type ROM_DS_Result
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (POD)

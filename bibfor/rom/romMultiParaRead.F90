@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/romMultiCoefRead.h"
 #include "asterfort/romVariParaRead.h"
+#include "asterfort/romFieldGetInfo.h"
 !
 type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 !
@@ -52,11 +53,13 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_matr = 0, nb_equa = 0
+    integer :: nb_matr = 0
     integer :: i_matr, i_vect, i_vari_para, nbret, nb_vari_coef, nb_vari_para
     character(len=1)  :: matr_type, vect_type, ktyp, matr_elem_type
     character(len=16) :: keywfact, type_vari_coef
-    character(len=8) :: matr_asse, vect_asse, gran_name
+    character(len=8) :: matr_asse, vect_asse, gran_name, model
+    character(len=19) :: prof_chno
+    character(len=24) :: field_name, vect_assez
     type(ROM_DS_MultiCoef) :: ds_multicoef
     type(ROM_DS_VariPara) :: ds_varipara
 !
@@ -89,8 +92,8 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
             elseif (ktyp .eq. 'R') then
                 matr_elem_type = 'R'
             else
-                ASSERT(.false.)
-            endif   
+                ASSERT(ASTER_FALSE)
+            endif
         endif
         call romMultiCoefRead(ds_multicoef, keywfact, i_matr)
         ds_multipara%matr_name(i_matr) = matr_asse
@@ -98,8 +101,6 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
         ds_multipara%matr_coef(i_matr) = ds_multicoef
     end do
     ds_multipara%nb_matr = nb_matr
-    call dismoi('NB_EQUA' , ds_multipara%matr_name(1), 'MATR_ASSE', repi = nb_equa)
-    ds_multipara%nb_equa = nb_equa
 !
 ! - Get informations about second member
 !
@@ -115,18 +116,26 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
     elseif (gran_name .eq. 'DEPL_C') then
         vect_type = 'C'
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
     call romMultiCoefRead(ds_multicoef, keywfact, i_vect)
     ds_multipara%vect_name = vect_asse
     ds_multipara%vect_type = vect_type
     ds_multipara%vect_coef = ds_multicoef
 !
+! - Get informations from field
+!
+    vect_assez = vect_asse
+    call dismoi('PROF_CHNO', vect_assez, 'CHAM_NO', repk=prof_chno)
+    call dismoi('NOM_MODELE', prof_chno, 'PROF_CHNO', repk=model)
+    field_name = 'DEPL'
+    call romFieldGetInfo(model, field_name, vect_assez, ds_multipara%field, l_chck_ = ASTER_FALSE)
+!
 ! - Set system type
 !
-    ds_multipara%syst_type    = 'R'
+    ds_multipara%syst_type = 'R'
     if (vect_type .eq. 'C' .or. matr_type .eq. 'C') then
-        ds_multipara%syst_type    = 'C'
+        ds_multipara%syst_type = 'C'
     endif
 !
 ! - Read data for variations of multiparametric problems

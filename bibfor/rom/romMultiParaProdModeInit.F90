@@ -64,7 +64,7 @@ integer, intent(in) :: nb_mode_maxi
 !
     nb_matr   = ds_multipara%nb_matr
     syst_type = ds_multipara%syst_type
-    nb_equa   = ds_multipara%nb_equa
+    nb_equa   = ds_multipara%field%nb_equa
 !
 ! - Prepare product [Matrix] x [Mode]
 !

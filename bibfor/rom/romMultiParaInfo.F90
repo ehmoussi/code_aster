@@ -47,11 +47,12 @@ type(ROM_DS_MultiPara), intent(in) :: ds_multipara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_equa = ds_multipara%nb_equa
+    nb_equa      = ds_multipara%field%nb_equa
+    nb_matr      = ds_multipara%nb_matr
+    nb_vari_para = ds_multipara%nb_vari_para
 !
 ! - For matrix
 !
-    nb_matr = ds_multipara%nb_matr
     call utmess('I', 'ROM3_30', si = nb_matr)
     do i_matr = 1, nb_matr
         if (ds_multipara%matr_type(i_matr) .eq. 'R') then
@@ -91,7 +92,6 @@ type(ROM_DS_MultiPara), intent(in) :: ds_multipara
     call utmess('I', 'ROM3_45')
     call utmess('I', 'ROM3_46', sk = ds_multipara%type_vari_coef)
     call utmess('I', 'ROM3_47', si = ds_multipara%nb_vari_coef)
-    nb_vari_para = ds_multipara%nb_vari_para
     call utmess('I', 'ROM3_48', si = nb_vari_para)
     do i_vari_para = 1, nb_vari_para
         call romVariParaInfo(ds_multipara%vari_para(i_vari_para))
