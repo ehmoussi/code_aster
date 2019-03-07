@@ -26,7 +26,7 @@
 import os
 import os.path as osp
 import types
-import pickle as pickle
+import pickle
 import traceback
 PICKLE_PROTOCOL = 0
 
