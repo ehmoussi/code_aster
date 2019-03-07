@@ -28,10 +28,6 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/utmess.h"
-#include "asterc/indik8.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jexnom.h"
 !
 type(ROM_DS_MultiPara), intent(in) :: ds_multipara
 aster_logical, intent(in) :: l_base_ifs
@@ -49,16 +45,10 @@ aster_logical, intent(in) :: l_base_ifs
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: syme, gran_name
+    character(len=8) :: syme
     integer :: nb_matr, nb_vari_para, nb_vale_para
-    integer :: nb_equa_int, nb_cmp_maxi, nume_cmp
-    integer :: i_matr, i_vari_para, i_equa
+    integer :: i_matr, i_vari_para
     character(len=24) :: nume_dof_ref, nume_dof
-    character(len=19) :: prof_chno
-    integer, pointer :: v_deeq(:) => null()
-    integer :: indx_cmp_p, indx_cmp_phi
-    aster_logical :: present_p, present_phi
-    character(len=8), pointer :: v_list_cmp(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -112,32 +102,10 @@ aster_logical, intent(in) :: l_base_ifs
         end do
     endif
 !
-! - Check composant PRES and PHI is in the model if we active l_base_ifs  
-!    
-    if (l_base_ifs) then 
-! ----- Find index composant of PRES and PHI
-        call dismoi('NOM_GD',     ds_multipara%vect_name, 'CHAM_NO', repk = gran_name)
-        call dismoi('PROF_CHNO' , ds_multipara%vect_name, 'CHAM_NO', repk = prof_chno)
-        call jeveuo(prof_chno//'.DEEQ', 'L', vi = v_deeq)
-        call jeveuo(jexnom('&CATA.GD.NOMCMP', gran_name), 'L', vk8 = v_list_cmp)
-        call jelira(jexnom('&CATA.GD.NOMCMP', gran_name), 'LONMAX', nb_cmp_maxi)
-        indx_cmp_p   = indik8(v_list_cmp, 'PRES', 1, nb_cmp_maxi) 
-        indx_cmp_phi = indik8(v_list_cmp, 'PHI', 1, nb_cmp_maxi) 
-        call dismoi('NB_EQUA',    ds_multipara%matr_name(1), 'MATR_ASSE', repi = nb_equa_int)
-! ----- Check composant PRES and PHI in the problem
-        present_p   = ASTER_FALSE
-        present_phi = ASTER_FALSE
-        do i_equa = 1, nb_equa_int
-            nume_cmp = v_deeq(2*(i_equa-1)+2)
-            if (nume_cmp .eq. indx_cmp_p) then 
-                present_p = ASTER_TRUE
-            else if (nume_cmp .eq. indx_cmp_phi) then
-                present_phi = ASTER_TRUE
-            end if 
-        end do
-        if (.not. present_p .and. .not. present_phi) then
-            call utmess('F', 'ROM2_30')
-        endif
+! - Check composant PRES and PHI is in the model if we active l_base_ifs
+!
+    if (l_base_ifs) then
+        ASSERT(ASTER_FALSE)
     end if 
 !
 end subroutine

@@ -70,8 +70,6 @@ cata_msg = {
 
    29 : _("""Le nombre de coefficients pour faire varier les fonctions n'est pas le même pour tous les paramètres."""),
 
-   30 : _("""La stabilisation ne peut pas s'appliquer sur les champs donnés car il ne contiennent pas les degrés de liberté PRES et PHI."""),
-
    31 : _("""Le coefficient devant le second membre est une fonction et il n'y a aucune donnée sur la variation de cette fonction."""),
 
    32 : _("""Initialisation des coefficients pour le problème multi-paramétrique."""),

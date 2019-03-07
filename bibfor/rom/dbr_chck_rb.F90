@@ -45,7 +45,6 @@ aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_mode_maxi
     aster_logical :: l_base_ifs
 !
 ! --------------------------------------------------------------------------------------------------
@@ -56,7 +55,6 @@ aster_logical, intent(in) :: l_reuse
 !
 ! - Check data for multiparametric problems
 !
-    nb_mode_maxi = ds_para_rb%nb_mode_maxi
     l_base_ifs   = ds_para_rb%l_base_ifs
     call romMultiParaChck(ds_para_rb%multipara, l_base_ifs)
 !
