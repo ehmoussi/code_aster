@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,8 @@ subroutine as_mfiope(fid, nom, acces, cret)
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: acces4, fid4, cret4
+    med_idt :: fidm
+    med_int :: acces4, cret4
 #endif
     cret = 0
 !    ! En cas de demande d'acces en lecture, on verifie par un appel à HDF que le fichier
@@ -52,8 +53,8 @@ subroutine as_mfiope(fid, nom, acces, cret)
     if (cret.eq.0) then
 #if med_int_kind != aster_int_kind
         acces4 = acces
-        call mfiope(fid4, nom, acces4, cret4)
-        fid = fid4
+        call mfiope(fidm, nom, acces4, cret4)
+        fid = fidm
         cret = cret4
 #else
         call mfiope(fid, nom, acces, cret)

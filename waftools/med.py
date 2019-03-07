@@ -173,6 +173,7 @@ def check_med(self):
         self.check_med_libs()
     self.check_med_headers()
     self.check_sizeof_med_int()
+    self.check_sizeof_med_idt()
     self.check_med_version()
 
 @Configure.conf
@@ -242,3 +243,19 @@ int main(void){
     #XXX compatibility
     if self.env['MED_INT_SIZE'] == 4 and self.is_defined('_USE_64_BITS'):
         self.define('_USE_MED_SHORT_INT', 1)
+
+@Configure.conf
+def check_sizeof_med_idt(self):
+    fragment = r'''
+#include <stdio.h>
+#include <hdf5.h>
+#include <med.h>
+int main(void){
+    med_idt integer;
+    printf("%d", (int)sizeof(integer));
+    return 0;
+}'''
+    self.code_checker('MED_IDT_SIZE', self.check_cc, fragment,
+                      'Checking size of med_idt integers',
+                      'unexpected value for sizeof(med_idt): %s',
+                      into=(4, 8), use='MED HDF5')

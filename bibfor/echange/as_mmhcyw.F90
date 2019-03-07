@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,13 +38,14 @@ subroutine as_mmhcyw(fid, maa, conn, csize, switch,&
 !
 #if med_int_kind != aster_int_kind
     med_int, allocatable :: conn4(:)
-    med_int :: fid4, typen4, typge4, typco4, cret4
+    med_idt :: fidm
+    med_int :: typen4, typge4, typco4, cret4
     med_int :: n4, switc4, mdnon4, mdnoi4
     aster_int :: ic
     mdnont = -1
     mdnoit = -1
     mdnodt = -1.d0
-    fid4 = fid
+    fidm = to_med_idt(fid)
     allocate ( conn4(csize) )
     call conv_int('ast->med', csize, vi_ast=conn, vi_med=conn4)
     typen4 = typent
@@ -54,7 +55,7 @@ subroutine as_mmhcyw(fid, maa, conn, csize, switch,&
     switc4 = switch
     mdnon4 = mdnont
     mdnoi4 = mdnoit
-    call mmhcyw(fid4, maa, mdnon4, mdnoi4, mdnodt,&
+    call mmhcyw(fidm, maa, mdnon4, mdnoi4, mdnodt,&
                 typen4, typge4, typco4, switc4, n4,&
                 conn4, cret4)
     cret = cret4

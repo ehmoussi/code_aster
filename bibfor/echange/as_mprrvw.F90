@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,11 +34,12 @@ subroutine as_mprrvw(fid, nom, numdt, numit, dt,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, numdt4, numit4, cret4
-    fid4 = fid
+    med_idt :: fidm
+    med_int :: numdt4, numit4, cret4
+    fidm = to_med_idt(fid)
     numdt4 = numdt
     numit4 = numit
-    call mprrvw(fid4, nom, numdt4, numit4, dt, val, cret4)
+    call mprrvw(fidm, nom, numdt4, numit4, dt, val, cret4)
     cret = cret4
 #else
     call mprrvw(fid, nom, numdt, numit, dt, val, cret)
