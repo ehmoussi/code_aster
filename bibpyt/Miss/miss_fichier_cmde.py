@@ -94,9 +94,9 @@ class MissCmdeGenerator(object):
         text = remove_empty_lines(content)
         if self._dbg:
             dtmp = tempfile.mkdtemp(prefix=self.param["PROJET"] + '_')
-            with open(osp.join(dtmp, 'command'), 'wb') as f:
+            with open(osp.join(dtmp, 'command'), 'w') as f:
                 f.write(text)
-            with open(osp.join(dtmp, 'para'), 'wb') as f:
+            with open(osp.join(dtmp, 'para'), 'w') as f:
                 f.write(pformat(self.param))
             print('#dbg command file:', osp.join(dtmp, 'command'))
         return text
@@ -719,7 +719,7 @@ stwDncR5RevYR6cq/CqGI19Y6lvgN0yQXTY=
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            with open('/tmp/test01_sdlx103a.in', 'wb') as f:
+            with open('/tmp/test01_sdlx103a.in', 'w') as f:
                 f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -756,7 +756,7 @@ DJ2q7FXuRr6t9JfAH4AuXdY=
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            with open('/tmp/test02_zzzz200b.in', 'wb') as f:
+            with open('/tmp/test02_zzzz200b.in', 'w') as f:
                 f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -798,7 +798,7 @@ bEoiaetIF5ltey0cVW72YG2767XsvvDfhYldqSF/Ac9u8B8=
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            with open('/tmp/test03_fdlv112b.in', 'wb') as f:
+            with open('/tmp/test03_fdlv112b.in', 'w') as f:
                 f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -837,7 +837,7 @@ HmecpsR1A32bksx/vuIcSoZD61ZCZ5JNfN6YDfgPEoFDsQ==
         gen = MissCmdeGen(self.par, self.struct, self.fname, lapl_temps=True)
         txt = gen.build()
         if self._debug:
-            with open('/tmp/test04_miss03c_inci.in', 'wb') as f:
+            with open('/tmp/test04_miss03c_inci.in', 'w') as f:
                 f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -880,7 +880,7 @@ mvv8JCqRitMzdqbpHCjF9gW142wdq/JFHgdevNSrwW/+xHAQ
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            with open('/tmp/test05_miss03c_loop.in', 'wb') as f:
+            with open('/tmp/test05_miss03c_loop.in', 'w') as f:
                 f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -921,7 +921,7 @@ RYFWCQ==
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            with open('/tmp/test06_zzzz108c.in', 'wb') as f:
+            with open('/tmp/test06_zzzz108c.in', 'w') as f:
                 f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -974,7 +974,7 @@ aoGdEL8yaVmewuCHkhR/om5lOpTds/i504zrNvFvcCbg8g==
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            with open('/tmp/test07_fdlv112e.in', 'wb') as f:
+            with open('/tmp/test07_fdlv112e.in', 'w') as f:
                 f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -1015,7 +1015,7 @@ rXffxK/nhVQeQ/4A5Lekkg==
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            with open('/tmp/test08_fdlv113a.in', 'wb') as f:
+            with open('/tmp/test08_fdlv113a.in', 'w') as f:
                 f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
