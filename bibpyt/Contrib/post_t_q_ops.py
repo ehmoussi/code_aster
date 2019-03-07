@@ -1784,15 +1784,16 @@ def get_tabout(
     mcfact.append(_F(PARA='Td_MAX', LISTE_R=tg[2].tolist()))
     mcfact.append(_F(PARA='Td_MIN', LISTE_R=tg[3].tolist()))
 
+    print "ICI1", ino, iord, inst
     if (ino == 0 and iord == 0) and inst == None:
         tabout = CREA_TABLE(LISTE=mcfact, TITRE=titre)
 
-        get_erreur(self, ndim, tabout, type_para)
+        tabout = get_erreur(self, ndim, tabout, type_para)
     elif iord == 0 and ino == 0 and inst != None:
         mcfact = [_F(PARA='NUME_ORDRE', LISTE_I=nume)] + mcfact
         mcfact = [_F(PARA=type_para, LISTE_R=[inst, ] * 3)] + mcfact
         tabout = CREA_TABLE(LISTE=mcfact, TITRE=titre)
-        get_erreur(self, ndim, tabout, type_para)
+        tabout = get_erreur(self, ndim, tabout, type_para)
     else:
         if inst != None:
             mcfact = [_F(PARA='NUME_ORDRE', LISTE_I=nume)] + mcfact
@@ -1808,8 +1809,7 @@ def get_tabout(
         elif FISSURE and MODELISATION == '3D':
             npara.append('NUM_PT')
 
-        get_erreur(self, ndim, __tabi, type_para)
-        tabout.debugPrint()
+        __tabi = get_erreur(self, ndim, __tabi, type_para)
         tabout = CALC_TABLE(reuse=tabout,
                             TABLE=tabout,
                             TITRE=titre,
@@ -2480,4 +2480,4 @@ def post_t_q_ops(self, **args):
                                           NOM_PARA=('INST', 'ABSC_CURV'),
                                           ORDRE='CROISSANT'))
 
-    return ier
+    return tabout
