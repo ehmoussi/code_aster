@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # Copyright (C) 2014 STEFAN H. REITERER stefan.harald.reiterer@gmail.com
 # This file is part of code_aster.
 #
