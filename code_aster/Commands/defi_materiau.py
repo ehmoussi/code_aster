@@ -57,6 +57,9 @@ class MaterialDefinition(ExecuteCommand):
         classByName = MaterialDefinition._byKeyword()
         materByName = self._buildInstance(keywords, classByName)
         for fkwName, fkw in keywords.iteritems():
+            if type(fkw) in (list, tuple):
+                assert len(fkw) == 1
+                fkw = fkw[0]
             # only see factor keyword
             if not isinstance(fkw, dict):
                 continue
@@ -150,6 +153,9 @@ class MaterialDefinition(ExecuteCommand):
             if materName[-2:] == "FO":
                 asterNewName = materName[:-3]
             mater = MaterialBehaviour(materName, asterNewName)
+            if type(skws) in (list, tuple):
+                assert len(skws) == 1
+                skws = skws[0]
             if isinstance(skws, _F) or type(skws) is dict:
                 for kwName, kwValue in skws.iteritems():
                     curType = type(kwValue)
