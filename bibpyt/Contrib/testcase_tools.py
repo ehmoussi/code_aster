@@ -50,11 +50,11 @@ def change_test_resu():
                              '', ''])
     reval = re.compile('^ *(OK|NOOK|SKIP) +NON_REGRESSION +(?P<leg>.+?) +'
                        '(?P<refe>.+?) +(?P<calc>.+?) +(?P<err>.+?) +(?P<tole>.+?) *$', re.M)
-    with open('fort.8', 'rb') as f:
-        fort8 = f.read().decode()
+    with open('fort.8', 'r') as f:
+        fort8 = f.read()
     results = reval.findall(fort8)
-    with open('fort.1', 'rb') as f:
-        fort1 = f.read().decode()
+    with open('fort.1', 'r') as f:
+        fort1 = f.read()
     keywords = read_keyword_value('VALE_CALC(|_.)', fort1)
     for i, val in enumerate(results):
         print(i, val)
@@ -152,7 +152,7 @@ def extract_from(from_dir, to_dir, pattern='*.mess'):
     if not osp.exists(to_dir):
         os.makedirs(to_dir)
     for fname in lfiles:
-        with open(fname, 'rb') as f:
+        with open(fname, 'r') as f:
             txt = f.read()
         parts = txt.split(DELIMITER)
         if len(parts) % 2 != 1:
@@ -166,7 +166,7 @@ def extract_from(from_dir, to_dir, pattern='*.mess'):
                 resname += '.' + osp.basename(fname)
             print('write', resname)
             content = parts[2 * i + 1].strip() + os.linesep
-            with open(resname, 'wb') as f:
+            with open(resname, 'w') as f:
                 f.write(content)
 
 if __name__ == '__main__':

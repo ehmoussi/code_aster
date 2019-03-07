@@ -822,7 +822,8 @@ def imprime_ojb(cel, file, timer, dbgdir):
         ojb.impr(file)
         if dbgdir:
             fdbg = osp.join(dbgdir, nomojb.replace(' ', '_') + '.ojb')
-            ojb.impr(open(fdbg, 'wb'))
+            with open(fdbg, 'w') as fobj:
+                ojb.impr(fobj)
     cel.msg("INFO Fin de la transformation de l'ENSEMBLE des catalogues en objets jeveux")
     timer.Stop('T9')
     cel.msg(repr(timer))
@@ -995,10 +996,10 @@ def liste_opt_a_calculer(cel, dbgdir=None):
     if dbgdir:
         opt_contrainte = OrderedDict(sorted(list(opt_contrainte.items()),
                                             key=lambda i: i[0]))
-        fdbg = open(osp.join(dbgdir, 'opt_contrainte'), 'wb')
+        fdbg = open(osp.join(dbgdir, 'opt_contrainte'), 'w')
         fdbg.write(os.linesep.join(list(opt_contrainte.keys())))
         fdbg.close()
-        fdbg = open(osp.join(dbgdir, 'opt_a_calculer'), 'wb')
+        fdbg = open(osp.join(dbgdir, 'opt_a_calculer'), 'w')
         for nomte in sorted(opt_a_calculer.keys()):
             fdbg.write(' '.join([nomte, ":"] + sorted(opt_a_calculer[nomte])))
             fdbg.write(os.linesep)

@@ -219,7 +219,7 @@ class ExecSalome( ExecMesher ):
         self.args = ['start', '-t', '--ns-port-log={}'.format(portFile)]
         # do not capture the output, it will block!
         self.executeCommand(capture=False, silent=True)
-        with open(portFile, 'rb') as f:
+        with open(portFile, 'r') as f:
             self.pid = f.read().strip()
         # prepare the main command
         self.args = ['shell', '-p', self.pid, self.fileIn]
@@ -290,12 +290,12 @@ class ExecSalomeScript( ExecProgram ):
 
 def writeSalomeScript( orig, new, factKw ):
     """Create the SALOME script using a 'template'"""
-    with open( orig, 'rb' ) as f:
+    with open( orig, 'r' ) as f:
         text = f.read()
     text = _textReplace( text, factKw['NOM_PARA'], factKw['VALE'] )
     text = _textReplaceNumb( text, 'INPUTFILE{}', factKw['FICHIERS_ENTREE'] )
     text = _textReplaceNumb( text, 'OUTPUTFILE{}', factKw['FICHIERS_SORTIE'] )
-    with open(new, 'wb') as f:
+    with open(new, 'w') as f:
         f.write( text )
 
 

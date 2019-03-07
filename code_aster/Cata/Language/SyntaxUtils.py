@@ -75,10 +75,13 @@ def add_none_sdprod(sd_prod, dictargs):
         sd_prod (callable): *sd_prod* function to inspect.
         dictargs (dict): Dict of keywords, changed in place.
     """
-    argspec = inspect.getargspec(sd_prod)
-    required = argspec.args
-    if argspec.defaults:
-        required = required[:-len(argspec.defaults)]
+    sign = inspect.signature(sd_prod)
+    required = []
+    for param in sign.parameters.values():
+        if param.default is not param.empty:
+            break
+        required.append(param.name)
+
     args = list(dictargs.keys())
     # add 'self' for macro
     required.append('self')
