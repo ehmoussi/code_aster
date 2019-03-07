@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFieldChck(ds_field)
+subroutine romFieldChck(ds_field, field_name_)
 !
 use Rom_Datastructure_type
 !
@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 type(ROM_DS_Field), intent(in) :: ds_field
+character(len=*), optional, intent(in) :: field_name_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -39,6 +40,7 @@ type(ROM_DS_Field), intent(in) :: ds_field
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_field         : datastructure for field
+! In  field_name       : name of field where empiric modes have been constructed 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,7 +52,11 @@ type(ROM_DS_Field), intent(in) :: ds_field
 ! --------------------------------------------------------------------------------------------------
 !
     nb_cmp     = ds_field%nb_cmp
-    field_name = ds_field%field_name
+    if (present(field_name_)) then
+        field_name = field_name_
+    else
+        field_name = ds_field%field_name
+    endif
 !
 ! - List of componets authorized in field
 !
@@ -75,6 +81,19 @@ type(ROM_DS_Field), intent(in) :: ds_field
         name_cmp_chck(4) = 'SIXZ'
         name_cmp_chck(5) = 'SIYZ'
         name_cmp_chck(6) = 'SIXY'
+    elseif (field_name .eq. 'UPPHI_2D') then
+        nb_cmp_chck      = 4
+        name_cmp_chck(1) = 'DX'
+        name_cmp_chck(2) = 'DY'
+        name_cmp_chck(3) = 'PRES'
+        name_cmp_chck(4) = 'PHI'
+    elseif (field_name .eq. 'UPPHI_3D') then
+        nb_cmp_chck      = 5
+        name_cmp_chck(1) = 'DX'
+        name_cmp_chck(2) = 'DY'
+        name_cmp_chck(3) = 'DZ'
+        name_cmp_chck(4) = 'PRES'
+        name_cmp_chck(5) = 'PHI'
     else
         ASSERT(ASTER_FALSE)
     endif

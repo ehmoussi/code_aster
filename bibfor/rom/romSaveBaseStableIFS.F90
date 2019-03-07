@@ -48,8 +48,6 @@ integer, intent(in) :: i_mode
 ! --------------------------------------------------------------------------------------------------
 !
     type(ROM_DS_Solve) :: ds_solve
-    character(len=24)  :: name_obj
-    integer, pointer   :: vi_obj(:) => null()
     character(len=19)  :: base_1, base_2, base_3
     complex(kind=8), pointer :: vc_base_1(:) => null()
     complex(kind=8), pointer :: vc_base_2(:) => null()
@@ -60,16 +58,14 @@ integer, intent(in) :: i_mode
     real(kind=8), pointer :: vr_base_3(:) => null()
     real(kind=8), pointer :: vr_syst_solu(:) => null()
     character(len=1)  :: syst_type
-    integer :: i_equa, nb_equa
+    integer :: i_equa, nb_equa, nume_pres, nume_phi
+    type(ROM_DS_Field) :: field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
-!
-! - Get access to objet which contain the information about index of U, P, PHI
-!
-    name_obj  = '&&OP0053.INDICE_U_P_PHI'
-    call jeveuo(name_obj, 'L', vi = vi_obj) 
+    field     = ds_para_rb%multipara%field
+    nume_pres = ds_para_rb%nume_pres
+    nume_phi  = ds_para_rb%nume_phi
 !    
 ! - Prepre 3 champs noeuds pour la base
 !
@@ -94,37 +90,37 @@ integer, intent(in) :: i_mode
         vr_base_2(:) = 0.d0 
         vr_base_3(:) = 0.d0
         do i_equa = 1, nb_equa
-            if (vi_obj(i_equa) .eq. 2) then 
-                vr_base_1(i_equa) = vr_syst_solu(i_equa)
-            else if (vi_obj(i_equa) .eq. 0) then 
+            if (field%v_equa_type(i_equa) .eq. nume_pres) then
                 vr_base_2(i_equa) = vr_syst_solu(i_equa)
-            else if (vi_obj(i_equa) .eq. 1) then 
+            elseif (field%v_equa_type(i_equa) .eq. nume_phi) then
                 vr_base_3(i_equa) = vr_syst_solu(i_equa)
-            else 
-                ASSERT(.false.)
-            end if
+            elseif (field%v_equa_type(i_equa) .gt. 0) then
+                vr_base_1(i_equa) = vr_syst_solu(i_equa)
+            else
+                ASSERT(ASTER_FALSE)
+            endif
         end do 
     else if (syst_type .eq. 'C') then 
         call jeveuo(ds_solve%syst_solu//'.VALE', 'L', vc = vc_syst_solu) 
         call jeveuo(base_1(1:19)//'.VALE',       'E', vc = vc_base_1) 
         call jeveuo(base_2(1:19)//'.VALE',       'E', vc = vc_base_2) 
         call jeveuo(base_3(1:19)//'.VALE',       'E', vc = vc_base_3)
-        vc_base_1(:) = dcmplx(0.d0,0.d0) 
-        vc_base_2(:) = dcmplx(0.d0,0.d0) 
-        vc_base_3(:) = dcmplx(0.d0,0.d0) 
+        vc_base_1(:) = dcmplx(0.d0,0.d0)
+        vc_base_2(:) = dcmplx(0.d0,0.d0)
+        vc_base_3(:) = dcmplx(0.d0,0.d0)
         do i_equa = 1, nb_equa
-            if (vi_obj(i_equa) .eq. 2) then 
-                vc_base_1(i_equa) = vc_syst_solu(i_equa)
-            else if (vi_obj(i_equa) .eq. 0) then 
+            if (field%v_equa_type(i_equa) .eq. nume_pres) then
                 vc_base_2(i_equa) = vc_syst_solu(i_equa)
-            else if (vi_obj(i_equa) .eq. 1) then 
+            elseif (field%v_equa_type(i_equa) .eq. nume_phi) then
                 vc_base_3(i_equa) = vc_syst_solu(i_equa)
+            elseif (field%v_equa_type(i_equa) .gt. 0) then
+                vc_base_1(i_equa) = vc_syst_solu(i_equa)
             else
-                ASSERT(.false.) 
-            end if
+                ASSERT(ASTER_FALSE)
+            endif
         end do 
     else 
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     end if
 !
 ! - Normalization of basis

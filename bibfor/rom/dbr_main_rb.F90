@@ -103,13 +103,13 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Normalization of basis and save it 
 !
     if (ds_para_rb%l_base_ifs) then
-        ASSERT(ASTER_FALSE)
-    else
-        call romNormalize(ds_para_rb%solveDOM%syst_type, ds_para_rb%solveDOM%syst_solu,&
-                          ds_empi%ds_mode%nb_equa)
-        call romGreedyModeSave(ds_para_rb%multipara, ds_empi,&
-                               i_mode              , ds_para_rb%solveDOM%syst_solu)
-    end if
+         call romSaveBaseStableIFS(ds_para_rb, ds_empi, i_mode)
+    else 
+         call romNormalize(ds_para_rb%solveDOM%syst_type, ds_para_rb%solveDOM%syst_solu,&
+                           ds_empi%ds_mode%nb_equa)
+         call romGreedyModeSave(ds_para_rb%multipara, ds_empi,&
+                                i_mode              , ds_para_rb%solveDOM%syst_solu)
+    end if 
 !
 ! - Loop on modes
 !
@@ -122,7 +122,12 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         endif
 ! ----- Compute reduced coefficients and residual
         if (ds_para_rb%l_base_ifs) then
-            ASSERT(ASTER_FALSE)
+            call romMultiParaCoefCompute(ds_empi                  ,&
+                                         ds_para_rb%multipara     ,&
+                                         ds_para_rb%solveROM      ,&
+                                         3*(i_mode-1), i_mode-1   ,&
+                                         ds_para_rb%coef_redu)
+            call romGreedyResiCalc(ds_empi, ds_para_rb, 3*(i_mode-1), i_mode-1)
         else
             call romMultiParaCoefCompute(ds_empi              ,& 
                                          ds_para_rb%multipara ,&
@@ -152,7 +157,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call romSolveDOMSystSolve(ds_para_rb%solver, ds_para_rb%solveDOM)
 ! ----- Normalization of basis and save it
         if (ds_para_rb%l_base_ifs) then 
-            ASSERT(ASTER_FALSE)
+            call romSaveBaseStableIFS(ds_para_rb, ds_empi, i_mode)
         else
             call romNormalize(ds_para_rb%solveDOM%syst_type,&
                               ds_para_rb%solveDOM%syst_solu, ds_empi%ds_mode%nb_equa)

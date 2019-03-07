@@ -85,18 +85,21 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Nomber of mode maxi given by user
 !    
     nb_mode_maxi = ds_para_rb%nb_mode_maxi
+!
+! - For FSI: three basis
+!
     if (ds_para_rb%l_base_ifs) then 
         nb_mode_maxi = 3*nb_mode_maxi
     end if 
 !
 ! - Save in empiric base
 !
-    ds_empi%base         = base
-    ds_empi%base_type    = ' '
-    ds_empi%axe_line     = ' '
-    ds_empi%surf_num     = ' '
-    ds_empi%nb_mode      = 0
-    ds_empi%nb_mode_maxi = nb_mode_maxi
+    ds_empi%base                 = base
+    ds_empi%base_type            = ' '
+    ds_empi%axe_line             = ' '
+    ds_empi%surf_num             = ' '
+    ds_empi%nb_mode              = 0
+    ds_empi%nb_mode_maxi         = nb_mode_maxi
     ds_empi%ds_mode%field_name   = field_name
     ds_empi%ds_mode%field_refe   = field_refe
     ds_empi%ds_mode%mesh         = mesh

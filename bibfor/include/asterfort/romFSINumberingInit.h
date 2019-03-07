@@ -16,12 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine romFieldChck(ds_field, field_name_)
+    subroutine romFSINumberingInit(ds_para_rb)
         use Rom_Datastructure_type
-        type(ROM_DS_Field), intent(in) :: ds_field
-        character(len=*), optional, intent(in) :: field_name_
-    end subroutine romFieldChck
+        type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
+    end subroutine romFSINumberingInit
 end interface
