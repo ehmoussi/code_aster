@@ -237,7 +237,7 @@ class MAIL_PY:
     def FromAster(self, nom):
         # On accepte le concept Aster ou bien la chaine texte de son nom
         if type(nom) != types.StringType:
-            nom_maillage = nom.nom
+            nom_maillage = nom.getName()
         else:
             nom_maillage = nom
         nom_maillage = string.ljust(nom_maillage, 8)
