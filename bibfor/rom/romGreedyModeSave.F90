@@ -68,16 +68,16 @@ character(len=19), intent(in)      :: mode
 !
 ! - Save mode
 !
-    call romMultiParaModeSave(ds_multipara, ds_empi ,&
+    call romMultiParaModeSave(ds_multipara, ds_empi,&
                               i_mode      , mode)
 !
 ! - Compute products
 !
     syst_type = ds_multipara%syst_type
     if (syst_type .eq. 'R') then 
-! ---- Get acess to mode        
+! ---- Get acess to mode
        call jeveuo(mode(1:19)//'.VALE', 'L', vr = vr_mode)
-! ---- Compute Matrix x Mode    
+! ---- Compute Matrix x Mode
        call romMatrixProdMode(ds_multipara%nb_matr  ,&
                               ds_multipara%matr_name,&
                               ds_multipara%matr_type,&
@@ -85,7 +85,7 @@ character(len=19), intent(in)      :: mode
                               ds_multipara%prod_matr_mode,&
                               i_mode,&
                               'R' , vr_mode = vr_mode)
-! ---- Compute reduced vector   
+! ---- Compute reduced vector
        call romCalcVectReduit(i_mode,&
                               ds_empi%ds_mode%nb_equa,&
                               ds_multipara%vect_name,&
@@ -98,12 +98,11 @@ character(len=19), intent(in)      :: mode
                               ds_multipara%nb_matr   ,&
                               ds_multipara%prod_matr_mode,&
                               ds_multipara%matr_redu,&
-                              'R') 
-                              
-    else if (syst_type .eq. 'C') then 
-! ---- Get acess to mode        
+                              'R')
+    else if (syst_type .eq. 'C') then
+! ---- Get acess to mode
        call jeveuo(mode(1:19)//'.VALE', 'L', vc = vc_mode)
-! ---- Compute Matrix x Mode   
+! ---- Compute Matrix x Mode
        call romMatrixProdMode(ds_multipara%nb_matr  ,&
                               ds_multipara%matr_name,&
                               ds_multipara%matr_type,&
@@ -111,14 +110,14 @@ character(len=19), intent(in)      :: mode
                               ds_multipara%prod_matr_mode,&
                               i_mode,&
                               'C' , vc_mode = vc_mode)
-! ---- Compute reduced vector  
+! ---- Compute reduced vector
        call romCalcVectReduit(i_mode,&
                               ds_empi%ds_mode%nb_equa,&
                               ds_multipara%vect_name ,&
                               ds_multipara%vect_type ,&
                               ds_multipara%vect_redu,&
                               'C' , vc_mode = vc_mode)
-! ---- Compute reduced matrix 
+! ---- Compute reduced matrix
        call romCalcMatrReduit(i_mode,  &
                               ds_empi ,&
                               ds_multipara%nb_matr   ,&
