@@ -49,10 +49,6 @@ Un NOM_CAS indiqué n'appartient pas aux cas disponibles
 Un NUME_ORDRE indiqué n'appartient pas aux cas disponibles
 """),
 
-8 : _(u"""
-L'utilisation de COMBINAISON_FERRAILLAGE n'est possible qu'avec un seul MODELE
-"""),
-
 9 : _(u"""
 Le cas '%(k1)s' existe déjà. Il sera écrasé.
 """),

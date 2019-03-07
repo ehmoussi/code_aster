@@ -28,45 +28,31 @@ from Utilitai.Utmess import UTMESS
 
 from code_aster.Cata.Syntax import _F
 
-from code_aster.Cata.Commands import CREA_CHAMP
-from code_aster.Cata.Commands import CREA_RESU
-from code_aster.Cata.Commands import CALC_FERRAILLAGE
-from code_aster.Cata.Commands import FORMULE
-from code_aster.Cata.Commands import DETRUIRE
+from code_aster.Commands import CREA_CHAMP
+from code_aster.Commands import CREA_RESU
+from code_aster.Commands import CALC_FERRAILLAGE
+from code_aster.Commands import FORMULE
+from code_aster.Commands import DETRUIRE
 
 def combinaison_ferraillage_ops(self, **args):
     """Command to combine results to estimate reinforcement of the structure."""
     self.set_icmd(1)
 
-    #
-    # declaration of the return variable.
-    #
-    self.DeclareOut('resu', self.sd)
-
-    resu         = self.reuse
-    combinaison  = self [ 'COMBINAISON' ]
-    affe         = self [ 'AFFE' ]
-    codification = self [ 'CODIFICATION' ]
+    resu         = args.get('reuse')
+    combinaison  = args.get('COMBINAISON')
+    affe         = args.get('AFFE')
+    codification = args.get('CODIFICATION')
 
     #
     # Retriving MODELE from RESULTAT
     #
-    # modele       = self [ 'MODELE' ] changed with dismoi
-    iret, ibid, n_modele = aster.dismoi('MODELE', resu.nom, 'RESULTAT', 'F')
-    n_model = n_modele.rstrip()
-    if len(n_modele) == 0 or n_model == "#PLUSIEURS":
-        UTMESS('F', 'COMBFERR_8')
-
-    modele = self.get_concept(n_modele)
+    modele = resu.getModel()
 
     #
     # Retriving CARA_ELEM from RESULTAT
     #
     # caraelem     = self [ 'CARA_ELEM' ] changed with dismoi
-    iret, ibid, n_cara_elem = aster.dismoi('CARA_ELEM', resu.nom, 'RESULTAT', 'F')
-    n_cara_elem = n_cara_elem.rstrip()
-
-    caraelem = self.get_concept(n_cara_elem.strip())
+    caraelem = resu.getElementaryCharacteristics()
 
     if codification != 'EC2':
         UTMESS('F', 'COMBFERR_1')
@@ -264,7 +250,7 @@ def combinaison_ferraillage_ops(self, **args):
 
     nc = resu.LIST_VARI_ACCES()['NOM_CAS']
     UTMESS('I', 'COMBFERR_13', valk='\n    '.join(nc))
-    return 0
+    return resu
 
 def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
 
