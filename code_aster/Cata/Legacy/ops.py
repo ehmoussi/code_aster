@@ -24,7 +24,7 @@ import sys
 import os
 import os.path as osp
 import traceback
-import pickle as pickle
+import pickle
 import re
 from math import sqrt, pi, atan2, tan, log, exp
 from glob import glob
@@ -310,12 +310,11 @@ def get_pickled_context():
     # sauvegardés
     context = {}
     try:
-        file = open(fpick, 'rb')
         # Le contexte sauvegardé a été picklé en une seule fois. Il est seulement
         # possible de le récupérer en bloc. Si cette opération echoue, on ne récupère
         # aucun objet.
-        context = pickle.load(file)
-        file.close()
+        with open(fpick, 'rb') as pick:
+            context = pickle.load(pick)
     except:
         # En cas d'erreur on ignore le contenu du fichier
         traceback.print_exc()

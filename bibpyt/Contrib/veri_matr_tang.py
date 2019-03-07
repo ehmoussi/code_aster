@@ -45,13 +45,13 @@ class TANGENT:
 
     def Load(self, nom_fichier):
         """lit la matrice depuis un fichier"""
-        fichier = file(nom_fichier, 'r')
-        self.__dict__ = pickle.load(fichier)
+        with open(nom_fichier, 'rb') as pick:
+            self.__dict__ = pickle.load(pick)
 
     def Save(self, nom_fichier):
         """sauvegarde la matrice dans un fichier"""
-        fichier = file(nom_fichier, 'w')
-        pickle.dump(self.__dict__, fichier)
+        with open(nom_fichier, 'wb') as pick:
+            pickle.dump(self.__dict__, pick)
 
     def Aster(self, suffixe='MATA'):
         """lit la matrice depuis l'espace Aster.

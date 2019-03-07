@@ -691,9 +691,8 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
 
         UTMESS('I', 'STANLEY_23', valk=[fichier])
         try:
-            f = open(fichier, 'r')
-            old_para = pickle.load(f)
-            f.close()
+            with open(fichier, 'rb') as pick:
+                old_para = pickle.load(pick)
             ok_env = True   # Le fichier a ete relu
         except:
             ok_env = False  # Le fichier n'existe plus
@@ -899,9 +898,8 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
             para['VERSION']['version_parametres'] = __version_parametres__
 
             # Ouverture du fichier
-            fp = open(fichier, 'w')
-            pickle.dump(para, fp)
-            fp.close()
+            with open(fichier, 'wb') as pick:
+                pickle.dump(para, pick)
 
             # Sauvegarde de la derniere configuration connue (fichier
             # ~/__rcstanley__/__fichier_last__)
