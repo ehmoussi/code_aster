@@ -114,6 +114,8 @@ cata_msg = {
 
    52 : _("""Coefficient réduit pour le mode %(i1)d et le paramètre %(i2)d: (%(r1)19.12e,%(r2)19.12e)."""),
 
+   53 : _("""Initialisation de la numérotation pour STAB_IFS."""),
+
    55 : _("""Création du nouveau profil de numérotation du champ tronqué."""),
 
    56 : _("""Lecture de la base à tronquer. La base tronquée aura le même nom que la base à tronquer."""),

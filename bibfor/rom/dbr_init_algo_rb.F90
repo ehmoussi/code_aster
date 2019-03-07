@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/romSolveROMSystCreate.h"
 #include "asterfort/romMultiParaSystEvalType.h"
 #include "asterfort/romMultiParaInit.h"
+#include "asterfort/romFSINumberingInit.h"
 !
 type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
@@ -61,6 +62,12 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
     nb_mode_maxi = ds_para_rb%nb_mode_maxi
 !
+! - For FSI: three basis
+!
+    if (ds_para_rb%l_base_ifs) then 
+        nb_mode_maxi = 3*nb_mode_maxi
+    end if 
+!
 ! - Evaluate type of system
 !
     call romMultiParaSystEvalType(ds_para_rb%multipara,&
@@ -82,6 +89,12 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! - Initializations for multiparametric problems
 !
     call romMultiParaInit(ds_para_rb%multipara, nb_mode_maxi)
+!
+! - Create numbering of nodes for FSI
+!
+    if (ds_para_rb%l_base_ifs) then 
+        call romFSINumberingInit(ds_para_rb)
+    endif
 !
 ! - Init algorithm
 !

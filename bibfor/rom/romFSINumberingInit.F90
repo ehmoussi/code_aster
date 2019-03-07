@@ -17,29 +17,24 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_read_rb(ds_para_rb)
+subroutine romFSINumberingInit(ds_para_rb)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/cresol.h"
+#include "asterc/indik8.h"
 #include "asterfort/infniv.h"
-#include "asterfort/getvis.h"
-#include "asterfort/getvtx.h"
-#include "asterfort/romMultiParaRead.h"
 #include "asterfort/utmess.h"
-#include "asterfort/getvr8.h"
 !
 type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE - Initializations
+! Model reduction
 !
-! Read parameters - For RB methods
+! Create numbering of nodes for FSI
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,44 +43,20 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode_maxi = 0, nocc
-    character(len=16) :: base_ifs = ' '
-    aster_logical :: l_base_ifs
-    real(kind=8) :: tole_glouton
+    integer :: indx_cmp
+    type(ROM_DS_Field) :: field
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_27')
+        call utmess('I', 'ROM2_53')
     endif
 !
-! - Maximum number of modes
-!
-    call getvis(' ', 'NB_MODE' , scal = nb_mode_maxi, nbret = nocc)
-    ASSERT(nocc .eq. 1 .and. nb_mode_maxi .ge. 1)
-!
-! - If we stabilise the basis for IFS transient problem   
-!
-    call getvtx(' ', 'TYPE_BASE', scal = base_ifs)
-    l_base_ifs = base_ifs .eq. 'IFS_STAB'
-!
-! - Read tolerance
-!
-    call getvr8(' ', 'TOLE_GLOUTON', scal = tole_glouton)
-!
-! - Read data for multiparametric problems
-!
-    call romMultiParaRead(ds_para_rb%multipara)
-!
-! - Read solver parameters
-!
-    call cresol(ds_para_rb%solver)
-!
-! - Save parameters in datastructure
-!
-    ds_para_rb%nb_mode_maxi = nb_mode_maxi
-    ds_para_rb%l_base_ifs   = l_base_ifs
-    ds_para_rb%tole_glouton = tole_glouton
+    field = ds_para_rb%multipara%field
+    indx_cmp = indik8(field%v_list_cmp, 'PRES', 1, field%nb_cmp)
+    ds_para_rb%nume_pres = indx_cmp
+    indx_cmp = indik8(field%v_list_cmp, 'PHI', 1, field%nb_cmp)
+    ds_para_rb%nume_phi  = indx_cmp
 !
 end subroutine

@@ -294,8 +294,10 @@ implicit none
         type(ROM_DS_MultiPara)  :: multipara
 ! ----- Maximum number of modes
         integer                 :: nb_mode_maxi = 0
-! ----- If we stabilise the basis for IFS transient problem
-        aster_logical           :: l_base_ifs   = ASTER_FALSE
+! ----- Flag to stabilize the basis for IFS transient problem
+        aster_logical           :: l_base_ifs = ASTER_FALSE
+        integer                 :: nume_pres = 0
+        integer                 :: nume_phi  = 0
 ! ----- Tolerance 
         real(kind=8)            :: tole_glouton = 0.d0
     end type ROM_DS_ParaDBR_RB

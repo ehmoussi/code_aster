@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/utmess.h"
+#include "asterfort/romFieldChck.h"
 !
 type(ROM_DS_MultiPara), intent(in) :: ds_multipara
 aster_logical, intent(in) :: l_base_ifs
@@ -46,7 +47,7 @@ aster_logical, intent(in) :: l_base_ifs
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: syme
-    integer :: nb_matr, nb_vari_para, nb_vale_para
+    integer :: nb_matr, nb_vari_para, nb_vale_para, ndim
     integer :: i_matr, i_vari_para
     character(len=24) :: nume_dof_ref, nume_dof
 !
@@ -105,7 +106,14 @@ aster_logical, intent(in) :: l_base_ifs
 ! - Check composant PRES and PHI is in the model if we active l_base_ifs
 !
     if (l_base_ifs) then
-        ASSERT(ASTER_FALSE)
-    end if 
+        call dismoi('DIM_GEOM', ds_multipara%field%model, 'MODELE', repi=ndim)
+        if (ndim .eq. 2) then
+            call romFieldChck(ds_multipara%field, field_name_ = 'UPPHI_2D')
+        elseif (ndim .eq. 3) then
+            call romFieldChck(ds_multipara%field, field_name_ = 'UPPHI_3D')
+        else
+            ASSERT(ASTER_FALSE)
+        endif
+    end if
 !
 end subroutine
