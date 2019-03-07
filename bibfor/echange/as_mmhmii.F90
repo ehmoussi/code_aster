@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -36,9 +36,10 @@ subroutine as_mmhmii(fid, indice, maa, dim, type,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, dim4, cret4, indic4, type4, dimb4, typtr4
+    med_idt :: fidm
+    med_int :: dim4, cret4, indic4, type4, dimb4, typtr4
     med_int :: nbseq4, typre4
-    fid4 = to_med_int(fid)
+    fidm = to_med_idt(fid)
     indic4 = to_med_int(indice)
 !   -- initialisation des chaines (prudent car appel C ensuite):
     maa=' '
@@ -46,7 +47,7 @@ subroutine as_mmhmii(fid, indice, maa, dim, type,&
     descdt=' '
     nom(:)=' '
     unit(:)=' '
-    call mmhmii(fid4, indic4, maa, dim4, dimb4,&
+    call mmhmii(fidm, indic4, maa, dim4, dimb4,&
                 type4, desc, descdt, typtr4, nbseq4,&
                 typre4, nom, unit, cret4)
     dim = dim4

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,16 +37,17 @@ subroutine as_mfdfin(fid, cha, ma, n, cunit,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, n4, cret4, lmesh4, typen4
+    med_idt :: fidm
+    med_int :: n4, cret4, lmesh4, typen4
     med_int :: oexist4, class4
-    fid4 = fid
+    fidm = to_med_idt(fid)
     ! class4 = 1 <=> field type
-    class4 = 1_4 
+    class4 = 1_4
     ! On verifie que le champ existe bien avant d'appeler mfdfin
     ! pour eviter les "Erreur à l'ouverture du groupe" dans MED
-    call mfioex(fid4, class4, cha, oexist4, cret4)
+    call mfioex(fidm, class4, cha, oexist4, cret4)
     if (oexist4.eq.1) then
-        call mfdfin(fid4, cha, ma, lmesh4, typen4,&
+        call mfdfin(fidm, cha, ma, lmesh4, typen4,&
                     cunit, cname, dtunit, n4, cret4)
         n = n4
         cret = cret4

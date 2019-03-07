@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,9 +37,10 @@ subroutine as_mfdrpw(fid, cha, val, intlac, n,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, n4, pflmo4, typen4, typge4, cret4
+    med_idt :: fidm
+    med_int :: n4, pflmo4, typen4, typge4, cret4
     med_int :: intla4, numco4, numdt4, numo4
-    fid4 = fid
+    fidm = to_med_idt(fid)
     n4 = n
     pflmo4 = pflmod
     typen4 = typent
@@ -48,7 +49,7 @@ subroutine as_mfdrpw(fid, cha, val, intlac, n,&
     numco4 = numco
     numdt4 = numdt
     numo4 = numo
-    call mfdrpw(fid4, cha, numdt4, numo4, dt,&
+    call mfdrpw(fidm, cha, numdt4, numo4, dt,&
                 typen4, typge4, pflmo4, profil, locname,&
                 intla4, numco4, n4, val, cret4)
     cret = cret4

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,19 +37,20 @@ subroutine as_mmhenw(fid, maa, num, n, typent,&
 !
 #if med_int_kind != aster_int_kind
     med_int, allocatable :: num4(:)
-    med_int :: fid4, typen4, typge4, cret4
+    med_idt :: fidm
+    med_int :: typen4, typge4, cret4
     med_int :: n4, mdnon4, mdnoi4
     mdnont = -1
     mdnoit = -1
     allocate ( num4(n) )
     call conv_int('ast->med', n, vi_ast=num, vi_med=num4)
-    fid4 = fid
+    fidm = to_med_idt(fid)
     typen4 = typent
     typge4 = typgeo
     n4 = n
     mdnon4 = mdnont
     mdnoi4 = mdnoit
-    call mmhenw(fid4, maa, mdnon4, mdnoi4, typen4,&
+    call mmhenw(fidm, maa, mdnon4, mdnoi4, typen4,&
                 typge4, n4, num4, cret4)
     cret = cret4
     deallocate (num4)

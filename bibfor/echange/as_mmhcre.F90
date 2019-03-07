@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,14 +35,15 @@ subroutine as_mmhcre(fid, nom, dim, type, desc,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, dim4, type4, cret4, stund4, typre4
+    med_idt :: fidm
+    med_int :: dim4, type4, cret4, stund4, typre4
     stunde = 1
-    fid4 = fid
+    fidm = to_med_idt(fid)
     dim4 = dim
     type4 = type
     stund4 = stunde
     typre4 = typrep
-    call mmhcre(fid4, nom, dim4, dim4, type4,&
+    call mmhcre(fidm, nom, dim4, dim4, type4,&
                 desc, descdt, stund4, typre4, nocomp,&
                 unit, cret4)
     cret = cret4
