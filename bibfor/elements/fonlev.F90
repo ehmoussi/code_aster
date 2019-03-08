@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 subroutine fonlev(resu, noma, nbnoff)
     implicit none
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
@@ -50,12 +51,10 @@ subroutine fonlev(resu, noma, nbnoff)
 !
     integer :: jmai1, jadr, jnoe1, jmai2, jmaii, jjj, iatyma
     integer ::   iamase, ityp
-    integer :: jufinf, jufsup, juinf2
     integer :: igr, ngr, ino, i, j, k, ibid, k2, j2
     integer :: nbmai, nent, indice
     integer :: nn, compta, nbmas1, nbmas2, nbmal
     integer :: iret, iret1, iret2, jjj2
-    real(kind=8) :: d, prec, precr
     character(len=4) :: typma
     character(len=6) :: nompro
     character(len=8) :: maille, type, noeug, typmcl(2), motcle(2)
@@ -63,10 +62,6 @@ subroutine fonlev(resu, noma, nbnoff)
     character(len=24) :: nomobj, grouma, nommai, conec, trav, trav2
     character(len=8), pointer :: inf(:) => null()
     character(len=8), pointer :: sup(:) => null()
-    character(len=8), pointer :: finf(:) => null()
-    character(len=8), pointer :: fsup(:) => null()
-    real(kind=8), pointer :: vale(:) => null()
-    parameter(prec=1.d-1)
 !     -----------------------------------------------------------------
 !
     call jemarq()
@@ -220,13 +215,7 @@ subroutine fonlev(resu, noma, nbnoff)
             call jelira(resu//'.FOND.NOEU', 'LONUTI', nbnoff)
             call jeveuo(resu//'.FOND.NOEU', 'L', jnoe1)
         else
-            if (motfac .eq. 'LEVRE_SUP') then
-                call jelira(resu//'.FOND_SUP.NOEU', 'LONUTI', nbnoff)
-                call jeveuo(resu//'.FOND_SUP.NOEU', 'L', jnoe1)
-            else if (motfac .eq. 'LEVRE_INF') then
-                call jelira(resu//'.FOND_INF.NOEU', 'LONUTI', nbnoff)
-                call jeveuo(resu//'.FOND_INF.NOEU', 'L', jnoe1)
-            endif
+            ASSERT(.FALSE.)
         endif
         if (nbnoff .gt. 1) then
             do i = 1, nbnoff
@@ -291,34 +280,6 @@ subroutine fonlev(resu, noma, nbnoff)
         end do
     endif
 999 continue
-!
-!     LORSQUE LE FOND DE FISSURE EST DEFINI PAR FOND_INF ET FOND_SUP,
-!     ON VERIFIE QUE LES NOEUDS SONT EN VIV A VIS
-    call jeveuo(noma//'.COORDO    .VALE', 'L', vr=vale)
-    call jeexin(resu//'.FOND_INF.NOEU', iret1)
-    call jeexin(resu//'.FOND_SUP.NOEU', iret2)
-    if (iret1 .ne. 0 .and. iret2 .ne. 0) then
-        call jeveuo(resu//'.FOND_INF.NOEU', 'L', vk8=finf)
-        call jeveuo(resu//'.FOND_SUP.NOEU', 'L', vk8=fsup)
-        call jenonu(jexnom(noma//'.NOMNOE', finf(1)), jufinf)
-        call jenonu(jexnom(noma//'.NOMNOE', finf(2)), juinf2)
-        d = abs(vale(1+3*(jufinf-1))- vale(1+3*(juinf2-1)))
-        d = d+abs(vale(1+3*(jufinf-1)+1)- vale(1+3*(juinf2-1)+1))
-        d = d+abs(vale(1+3*(jufinf-1)+2)- vale(1+3*(juinf2-1)+2))
-        precr = prec*d
-        do ino = 1, nbnoff
-            call jenonu(jexnom(noma//'.NOMNOE', finf(ino)), jufinf)
-            call jenonu(jexnom(noma//'.NOMNOE', fsup(ino)), jufsup)
-            d = abs(vale(1+3*(jufinf-1))- vale(1+3*(jufsup-1)))
-            d = d+abs(vale(1+3*(jufinf-1)+1)- vale(1+3*(jufsup-1)+ 1))
-            d = d+abs(vale(1+3*(jufinf-1)+2)- vale(1+3*(jufsup-1)+ 2))
-            if (sqrt(d) .gt. precr) then
-                valk(1) = finf(ino)
-                valk(2) = fsup(ino)
-                call utmess('F', 'RUPTURE0_69', nk=2, valk=valk)
-            endif
-        end do
-    endif
 !
     call jedema()
 !

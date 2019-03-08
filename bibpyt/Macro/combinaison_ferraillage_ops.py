@@ -173,7 +173,7 @@ def combinaison_ferraillage_ops(self, **args):
 
     # Workaround to Bug: "ELEM_NEUT_R can use only X1"
     __CHP = [None] * 7
-    for cmp_index, cmp_name in enumerate(['DNSXI','DNSXS','DNSYI','DNSYS','DNST','SIGMBE','EPSIBE']):
+    for cmp_index, cmp_name in enumerate(['DNSXI','DNSXS','DNSYI','DNSYS','DNST','DNSVOL','CONSTRUC']):
 
         # Renaming component(s) in COMB_DIME_ORDRE to avoid overlapping with COMB_DIME_ACIER
         __CHORD2=CREA_CHAMP(OPERATION='ASSE',
@@ -304,6 +304,8 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
         affe_for_cf.pop('GAMMA_S_ACCI')
 
         dic_calc_ferraillage = dict(dic_type_comb.items() + [('CODIFICATION', code)])
+
+        print 'LOL', affe_for_cf
 
         _resfer = CALC_FERRAILLAGE (
             reuse = _resfer,

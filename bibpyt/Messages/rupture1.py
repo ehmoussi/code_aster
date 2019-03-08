@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -71,12 +71,6 @@ Il n'est pas possible de calculer automatiquement R_INF et R_SUP en cas
 de modélisation FEM avec une fissure en configuration décollée.
 -> Risque et Conseil :
 Veuillez indiquer les mots-clés R_INF et R_SUP (ou R_INF_FO et R_SUP_FO).
-"""),
-
-    9: _(u"""
-Le fond de fissure n'est pas complet.
--> Risque et Conseil :
-Veuillez revoir la mise en données de l'opérateur DEFI_FOND_FISS.
 """),
 
     10: _(u"""
@@ -235,12 +229,6 @@ La récupération des contraintes à partir de la SD Résultat n'est permise que
 Veillez à ne pas vous servir de FISSURE avec le mot-clé CALCUL_CONTRAINTE.
 """),
 
-    40: _(u"""
-L'option de calcul CALC_GTP n'est fonctionnelle qu'avec une relation de type VMIS_XXXX_XXXX
-lors de la résolution.
-Comme loi de comportement, vous utilisez une relation de type : %(k1)s lors de la résolution mécanique.
-"""),
-
     41: _(u"""
 Attention, dans CALC_G vous utilisez le mot clef RELATION.
 La relation est normalement récupéré a partir du calcul mécanique dans
@@ -299,16 +287,6 @@ maximale, type de lissage, ...).
 Vous demandez un calcul de G en post-traitement d'un calcul élastoplastique. Ceci n'est valable que
 si votre CHARGEMENT est MONOTONE PROPORTIONNEL.
 Si tel est le cas, renseignez, dans CALC_G, l'option RELATION = ELAS_VMIS_XXX pour un calcul de G.
-Si votre chargement n'est pas monotone proportionnel, il faut renseigner, dans CALC_G,
-l'option OPTION=CALC_GTP et dans ce cas, vous calculerez GTP.
-(modèle issue de la recherche interne EDF R&D, en cours de validation.)
-"""),
-
-
-    48: _(u"""
-Attention vous utilisez l'option de calcul CALC_GTP qui est issue de la recherche interne EDF.
-(En cours de validation.)
-Le défaut doit alors être régularisé par une zone cohésive ou une entaille.
 """),
 
     49: _(u"""
@@ -403,14 +381,8 @@ La macro-commande POST_RUPTURE ne fonctionne pas quand les paramètres matériau
 """),
 
     69: _(u"""
-GTP :
+Comportement incrémental :
 La relation de comportement %(k1)s n'est pas prévue dans CALC_G
-"""),
-
-    70: _(u"""
-GTP :
-La relation de comportement VMIS_ISOT_TRAC est interdite dans CALC_G en présence de thermique.
-Dans la commande AFFE_MATERIAU, le mot clé facteur AFFE_VARC ne doit pas être présent.
 """),
 
     71: _(u"""

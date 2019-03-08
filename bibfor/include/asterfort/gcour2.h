@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,13 +21,12 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine gcour2(resu, noma, nomo, nomno, coorn,&
+    subroutine gcour2(resu, noma, nomno, coorn,&
                       nbnoeu, trav1, trav2, trav3, fonoeu, chfond, basfon, &
                       nomfiss, connex, stok4, liss,&
                       nbre, milieu, ndimte, norfon)
         character(len=8)  :: resu
         character(len=8)  :: noma
-        character(len=8)  :: nomo
         character(len=24) :: nomno
         character(len=24) :: coorn
         integer           :: nbnoeu

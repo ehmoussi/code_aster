@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,25 +18,20 @@
 
 !
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine gcouro(base, resu, noma, nomno, coorn,&
-                      lobj2, trav1, trav2, trav3, dir,&
-                      nomnoe, fond, direc, stok4)
-        character(len=1) :: base
-        character(len=24) :: resu
-        character(len=8) :: noma
-        character(len=24) :: nomno
-        character(len=24) :: coorn
-        integer :: lobj2
-        character(len=24) :: trav1
-        character(len=24) :: trav2
-        character(len=24) :: trav3
-        real(kind=8) :: dir(3)
-        character(len=8) :: nomnoe(*)
-        character(len=8) :: fond
-        aster_logical :: direc
-        character(len=24) :: stok4
-    end subroutine gcouro
+    subroutine cafels(cequi, effm, effn, ht, enrobs, enrobi, sigaci,&
+                      sigbet, uc, dnsinf, dnssup, ierr)
+        real(kind=8) :: cequi
+        real(kind=8) :: effm
+        real(kind=8) :: effn
+        real(kind=8) :: ht
+        real(kind=8) :: enrobs
+        real(kind=8) :: enrobi
+        real(kind=8) :: sigaci
+        real(kind=8) :: sigbet
+        integer :: uc
+        real(kind=8) :: dnsinf
+        real(kind=8) :: dnssup
+        integer :: ierr
+    end subroutine cafels
 end interface

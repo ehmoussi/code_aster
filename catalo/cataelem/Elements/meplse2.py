@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -122,24 +122,6 @@ class MEPLSE2(Element):
                      (SP.PPRESSR, EPRESNO), (SP.PTHETAR, DDL_MECA),
                      (OP.CALC_G.PVARCPR, LC.ZVARCPG), (SP.PVITESS, DDL_MECA),
                      ),
-            para_out=((SP.PGTHETA, LC.EGTHETA), ),
-        ),
-
-        OP.CALC_GTP(te=282,
-            para_in=((SP.PACCELE, DDL_MECA), (SP.PDEPLAR, DDL_MECA),
-                     (SP.PFR1D2D, NFORCER), (SP.PGEOMER, NGEOMER),
-                     (SP.PPRESSR, EPRESNO), (SP.PTHETAR, DDL_MECA),
-                     (OP.CALC_GTP.PVARCPR, LC.ZVARCPG), (SP.PVITESS, DDL_MECA),
-                     ),
-            para_out=((SP.PGTHETA, LC.EGTHETA), ),
-        ),
-
-        OP.CALC_GTP_F(te=282,
-            para_in=((SP.PACCELE, DDL_MECA), (SP.PDEPLAR, DDL_MECA),
-                     (SP.PFF1D2D, CFORCEF), (SP.PGEOMER, NGEOMER),
-                     (SP.PPRESSF, CPRESSF), (SP.PTEMPSR, CTEMPSR),
-                     (SP.PTHETAR, DDL_MECA), (OP.CALC_GTP_F.PVARCPR, LC.ZVARCPG),
-                     (SP.PVITESS, DDL_MECA), ),
             para_out=((SP.PGTHETA, LC.EGTHETA), ),
         ),
 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 subroutine mecalg(optioz, result, modele, depla, theta,&
                   mate, lischa, symech, compor, incr,&
                   time, iord, nbprup, noprup, chvite,&
-                  chacce, lmelas, nomcas, kcalc, coor, iadnoe)
+                  chacce, kcalc, coor, iadnoe)
 !
 !     - FONCTION REALISEE:   CALCUL DU TAUX DE RESTITUTION D'ENERGIE
 !
@@ -35,8 +35,6 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
 ! IN    SYMECH       --> SYMETRIE DU CHARGEMENT
 ! IN    TIME         --> INSTANT DE CALCUL
 ! IN    IORD         --> NUMERO D'ORDRE DE LA SD
-! IN    LMELAS       --> TRUE SI LE TYPE DE LA SD RESULTAT EST MULT_ELAS
-! IN    NOMCAS       --> NOM DU CAS DE CHARGE SI LMELAS
 ! IN    KCALC        --> = 'NON' : ON RECUPERE LES CHAMPS DE CONTRAINTES
 !                                  ET D'ENERGIE DE LA SD RESULTAT
 !                        = 'OUI' :ON RECALCULE LES CHAMPS DE CONTRAINTES
@@ -79,12 +77,12 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
     character(len=8) :: modele, result, symech
     character(len=8) :: kcalc
     character(len=19) :: lischa
-    character(len=16) :: optioz, noprup(*), nomcas
+    character(len=16) :: optioz, noprup(*)
     character(len=24) :: depla, mate, compor, theta
     character(len=24) :: chvite, chacce
     real(kind=8) :: time
     integer :: iord, nbprup, iadnoe
-    aster_logical :: lmelas, incr
+    aster_logical :: incr
 !
 !
 ! DECLARATION VARIABLES LOCALES
@@ -236,10 +234,6 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
             option = 'CALC_DG_F'
         else if (option.eq.'CALC_G') then
             option = 'CALC_G_F'
-        else if (option.eq.'CALC_GTP') then
-            option = 'CALC_GTP_F'
-        else if (option.eq.'CALC_G_GLOB') then
-            option = 'CALC_G_GLOB_F'
         else if (option.eq.'CALC_DG_E') then
             option = 'CALC_DG_E_F'
         else if (option.eq.'CALC_DGG_E') then
@@ -353,7 +347,7 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
     endif
 !
     if ((option.eq.'CALC_G_F') .or. (option.eq.'CALC_DG_F') .or. (option.eq.'CALC_DG_E_F')&
-        .or. (option.eq.'CALC_G_GLOB_F') .or. (option.eq.'CALC_DGG_E_F') .or.&
+        .or. (option.eq.'CALC_DGG_E_F') .or.&
         (option.eq.'CALC_DGG_FORC_F') .or. (option.eq.'CALC_DG_FORC_F')) then
         call mecact('V', chtime, 'MODELE', ligrmo, 'INST_R  ',&
                     ncmp=1, nomcmp='INST   ', sr=time)
@@ -426,27 +420,19 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
 !- IMPRESSION DE G ET ECRITURE DANS LA TABLE RESULT
 !
     call getvis('THETA', 'NUME_FOND', iocc=1, scal=numfon, nbret=ibid)
-    if (option(1:11).ne.'CALC_G_GLOB') then
-        call tbajvi(result, nbprup, 'NUME_FOND', numfon, livi)
-    endif
+    call tbajvi(result, nbprup, 'NUME_FOND', numfon, livi)
     
 ! NOM DES NOEUDS DU FOND
-    if ((.not.lxfem).and.(option(1:11).ne.'CALC_G_GLOB')) then
+    if (.not.lxfem) then
         call tbajvk(result, nbprup, 'NOEUD', zk8(iadnoe), livk)
     endif
 !
-    if (lmelas) then
-        call tbajvi(result, nbprup, 'NUME_CAS', iord, livi)
-        call tbajvk(result, nbprup, 'NOM_CAS', nomcas, livk)
-    else
-        call tbajvi(result, nbprup, 'NUME_ORDRE', iord, livi)
-        call tbajvr(result, nbprup, 'INST', time, livr)
-    endif
+    call tbajvi(result, nbprup, 'NUME_ORDRE', iord, livi)
+    call tbajvr(result, nbprup, 'INST', time, livr)
 !
-    if (option(1:11).ne.'CALC_G_GLOB') then
-        call tbajvr(result, nbprup, 'COOR_X', zr(coor), livr)
-        call tbajvr(result, nbprup, 'COOR_Y', zr(coor+1), livr)
-    endif
+    call tbajvr(result, nbprup, 'COOR_X', zr(coor), livr)
+    call tbajvr(result, nbprup, 'COOR_Y', zr(coor+1), livr)
+
     call tbajvr(result, nbprup, 'G', g(1), livr)
     call tbajli(result, nbprup, noprup, livi, livr,&
                 livc, livk, 0)
