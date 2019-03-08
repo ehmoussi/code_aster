@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,6 +47,7 @@ subroutine mdexcc(nofimd, idfimd, nochmd, nbcmpc, nomcmc,&
 ! 0. DECLARATIONS ET DIMENSIONNEMENT
 !====
 !
+    use as_med_module, only: as_med_open
     implicit none
 !
 ! 0.1. ==> ARGUMENTS
@@ -57,7 +58,6 @@ subroutine mdexcc(nofimd, idfimd, nochmd, nbcmpc, nomcmc,&
 #include "asterfort/as_mfdnfc.h"
 #include "asterfort/as_mfdnfd.h"
 #include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/codent.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -123,7 +123,7 @@ subroutine mdexcc(nofimd, idfimd, nochmd, nbcmpc, nomcmc,&
     if (.not.ficexi) goto 9999
 !
     if (idfimd .eq. 0) then
-        call as_mfiope(idfimd, nofimd, edlect, iouv)
+        call as_med_open(idfimd, nofimd, edlect, iouv)
         dejouv = .false.
     else
         dejouv = .true.

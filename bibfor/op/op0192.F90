@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ subroutine op0192()
 !_____________________________________________________________________
 !
 ! person_in_charge: nicolas.sellenet at edf.fr
+    use as_med_module, only: as_med_open
     implicit none
 !
 ! 0.1. ==> ARGUMENTS
@@ -36,7 +37,6 @@ subroutine op0192()
 #include "asterc/getres.h"
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mfinvr.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/codent.h"
 #include "asterfort/copisd.h"
 #include "asterfort/detrsd.h"
@@ -303,7 +303,7 @@ subroutine op0192()
             else
                 nofimd = kfic(1:200)
             endif
-            call as_mfiope(idfimd, nofimd, edlect, iret)
+            call as_med_open(idfimd, nofimd, edlect, iret)
             call as_mfinvr(idfimd, imaj, imin, irel, iret)
             call as_mficlo(idfimd, iret)
 !          ON VERIFIE LA VERSION DU FICHIER A LA VERSION 2.3.3

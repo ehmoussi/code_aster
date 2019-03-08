@@ -15,22 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! person_in_charge: mathieu.courtois@edf.fr
 
-subroutine as_mfiope(fid, nom, acces, cret)
-! person_in_charge: nicolas.sellenet at edf.fr
-!
+subroutine as_mfivop(fid, nom, acces, major, minor, rel, cret)
 !
     implicit none
 #include "asterf_types.h"
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "asterfort/assert.h"
-!#include "asterc/hdfopf.h"
-!#include "asterc/hdfclf.h"
-#include "med/mfiope.h"
+#include "med/mfivop.h"
     aster_int, intent(out) :: fid
     character(len=*), intent(in) :: nom
     aster_int, intent(in) :: acces
+    aster_int, intent(in) :: major
+    aster_int, intent(in) :: minor
+    aster_int, intent(in) :: rel
     aster_int, intent(out) :: cret
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
@@ -38,28 +38,20 @@ subroutine as_mfiope(fid, nom, acces, cret)
 !
 #if med_int_kind != aster_int_kind
     med_idt :: fidm
-    med_int :: acces4, cret4
+    med_int :: acces4, cret4, major4, minor4, rel4
 #endif
     cret = 0
-!    ! En cas de demande d'acces en lecture, on verifie par un appel à HDF que le fichier
-!    ! est bien de type hdf afin d'eviter les "Erreur à l'ouverture du fichier" dans MED
-!    if (acces.eq.0) then
-!        fid = hdfopf(nom)
-!        if (fid.gt.0) then
-!            cret = hdfclf(fid)
-!            ASSERT(cret.eq.0)
-!        else
-!            cret = -1
-!        endif
-!    endif
     if (cret.eq.0) then
 #if med_int_kind != aster_int_kind
         acces4 = acces
-        call mfiope(fidm, nom, acces4, cret4)
+        major4 = major
+        minor4 = minor
+        rel4 = rel
+        call mfivop(fidm, nom, acces4, major4, minor4, rel4, cret4)
         fid = fidm
         cret = cret4
 #else
-        call mfiope(fid, nom, acces, cret)
+        call mfivop(fid, nom, acces, major, minor, rel, cret)
 #endif
     endif
 !

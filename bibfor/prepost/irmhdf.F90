@@ -22,12 +22,12 @@ subroutine irmhdf(ifi, ndim, nbnoeu, coordo, nbmail,&
                   nbtitr, nbgrno, nomgno, nbgrma, nomgma,&
                   nommai, nomnoe, infmed)
 !
-implicit none
+    use as_med_module, only: as_med_open
+    implicit none
 !
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
 #include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/as_mmhcre.h"
 #include "asterfort/codent.h"
 #include "asterfort/infniv.h"
@@ -161,7 +161,7 @@ real(kind=8) :: coordo(*)
         inquire(file=nofimd,exist=ficexi)
         if (ficexi) then
             edmode = edlect
-            call as_mfiope(fid, nofimd, edmode, codret)
+            call as_med_open(fid, nofimd, edmode, codret)
             if (codret .ne. 0) then
                 edmode = edcrea
             else
@@ -175,7 +175,7 @@ real(kind=8) :: coordo(*)
         else
             edmode = edcrea
         endif
-        call as_mfiope(fid, nofimd, edmode, codret)
+        call as_med_open(fid, nofimd, edmode, codret)
         if (codret .ne. 0) then
             saux08='mfiope'
             call utmess('F', 'DVP_97', sk=saux08, si=codret)

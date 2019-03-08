@@ -16,12 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-#include "asterf_types.h"
+!
+!
 interface
-    subroutine as_mfiope(fid, nom, acces, cret)
-        aster_int, intent(out) :: fid
-        character(len=*), intent(in) :: nom
-        aster_int, intent(in) :: acces
-        aster_int, intent(out) :: cret
-    end subroutine as_mfiope
+#include "asterf_types.h"
+    subroutine mfivop(fid, name, access, major, minor, rel, cret)
+        med_idt :: fid
+        character(len=*) :: name
+        med_int :: access
+        med_int :: major, minor, rel
+        med_int :: cret
+    end subroutine mfivop
 end interface

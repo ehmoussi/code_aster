@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,13 +43,13 @@ subroutine mdexma(nofimd, idfimd, nomamd, option, existm,&
 ! 0. DECLARATIONS ET DIMENSIONNEMENT
 !====
 !
+    use as_med_module, only: as_med_open
     implicit none
 !
 ! 0.1. ==> ARGUMENTS
 !
 #include "asterf_types.h"
 #include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/as_mmhmii.h"
 #include "asterfort/as_mmhnmh.h"
 #include "asterfort/lxlgut.h"
@@ -99,7 +99,7 @@ subroutine mdexma(nofimd, idfimd, nomamd, option, existm,&
 !
     else
         if (idfimd .eq. 0) then
-            call as_mfiope(idfimd, nofimd, edlect, iaux)
+            call as_med_open(idfimd, nofimd, edlect, iaux)
             dejouv = .false.
         else
             dejouv = .true.

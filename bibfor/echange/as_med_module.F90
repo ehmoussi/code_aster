@@ -15,13 +15,47 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! person_in_charge: mathieu.courtois@edf.fr
+module as_med_module
+    implicit none
+    private
 
-#include "asterf_types.h"
-interface
-    subroutine as_mfiope(fid, nom, acces, cret)
+! default version to be used for output
+    integer, parameter :: DEF_BKWD_VERS(3) = (/4, 0, 0/)
+
+    ! currently used version
+    integer :: bkwd_vers(3) = (/0, 0, 0/)
+
+#include "asterfort/as_mfiope.h"
+#include "asterfort/as_mfivop.h"
+
+    public :: as_med_open
+
+contains
+
+    subroutine init()
+        bkwd_vers = DEF_BKWD_VERS
+    end subroutine init
+
+!>  Open med file
+    subroutine as_med_open(fid, nom, acces, cret)
+!
         aster_int, intent(out) :: fid
         character(len=*), intent(in) :: nom
         aster_int, intent(in) :: acces
         aster_int, intent(out) :: cret
-    end subroutine as_mfiope
-end interface
+!
+        integer, parameter :: med_acc_creat = 3
+        call init()
+!
+        if (acces .eq. med_acc_creat) then
+            call as_mfivop(fid, nom, acces, &
+                           bkwd_vers(1), bkwd_vers(2), bkwd_vers(3), &
+                           cret)
+        else
+            call as_mfiope(fid, nom, acces, cret)
+        endif
+!
+    end subroutine as_med_open
+
+end module as_med_module
