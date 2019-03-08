@@ -112,7 +112,7 @@ typedef boost::shared_ptr< TableInstance > TablePtr;
  */
 class TableOfFunctionsInstance : public TableInstance {
   private:
-    std::vector< BaseFunctionPtr > _vecOfFunctions;
+    std::vector< GenericFunctionPtr > _vecOfFunctions;
 
   public:
     /**
@@ -140,7 +140,7 @@ class TableOfFunctionsInstance : public TableInstance {
      * @brief Add function in TableOfFunctions
      * @param func function to add
      */
-    void addFunction( BaseFunctionPtr func )
+    void addFunction( GenericFunctionPtr func )
     {
         _vecOfFunctions.push_back( func );
     };
@@ -149,7 +149,7 @@ class TableOfFunctionsInstance : public TableInstance {
      * @brief Get a function from his position
      * @param pos position
      */
-    BaseFunctionPtr getFunction( int pos ) const
+    GenericFunctionPtr getFunction( int pos ) const
     {
         if( pos < _vecOfFunctions.size() )
             return _vecOfFunctions[ pos ];
