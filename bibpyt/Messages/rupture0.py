@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,19 +22,6 @@ cata_msg = {
     1: _(u"""
 Vous avez renseigné le mot clé simple MATER de la commande POST_K1_K2_K3.
 Le matériau %(k1)s présent dans la structure de données résultat va être surchargée par le matériau %(k2)s .
-"""),
-
-    2: _(u"""
-Erreur dans la récupération de la dimension (du maillage ou du modèle).
-L'opérateur CALC_G ne fonctionne que pour des maillages et des modèles purement 2d ou 3d.
-Notamment, un mélange de dimensions n'est pas autorisé.
-Si le besoin est réel, faites une demande d'évolution auprès de l'équipe de développement.
-"""),
-
-    3: _(u"""
-Erreur utilisateur.
-Incohérence entre le mot-clé OPTION et la dimension du problème.
-L'option %(k1)s ne s'utilise qu'en 3d. Or le problème est 2d.
 """),
 
     4: _(u"""
@@ -145,18 +132,6 @@ Pour un calcul avec POST_K1_K2_K3, la lèvre supérieure de la fissure doit
 LEVRE_SUP. Vérifier la définition du fond de fissure.
 """),
 
-    20: _(u"""
-Vous avez défini le mot clef DIRECTION pour une fissure maillée :
--> Risque et Conseil :
-  - Si vous avez défini CONFIG_INIT='COLLEE' dans DEFI_FOND_FISS, la direction
-peut être calculée automatiquement à partir des informations géométriques
-du maillage. Il est donc préférable de ne pas renseigner DIRECTION à moins que l'on
-soit sûr de la valeur entrée.
-  - Si vous avez défini CONFIG_INIT='DECOLLEE', la direction  est calculée par défaut
-à partir de la normale au front définie dans DEFI_FOND_FISS. L'ajout de l'information
-DIRECTION dans CALC_G la supplante, il faut donc être sûr de ce vecteur.
-"""),
-
     21: _(u"""
 Les noeuds ne sont pas en vis-à-vis dans le plan perpendiculaire
 au noeud %(k1)s.
@@ -192,12 +167,6 @@ inférieure et perpendiculaire au fond  %(k1)s.
 
     27: _(u"""
 Pour un résultat de type MODE_MECA, seule l'option CALC_K_G est disponible.
-"""),
-
-    28: _(u"""
-Le cas de charge %(k1)s n'a pas été trouvé dans la SD Résultat %(k2)s.
--> Risque et Conseil :
-Veuillez vérifier les données fournies au mot-clé NOM_CAS.
 """),
 
     29: _(u"""
@@ -403,19 +372,6 @@ Dans le cas présent, ils sont ignorés.
 Supprimer les mots-clés LISSAGE_G et/ou LISSAGE_THETA.
 ."""),
 
-    68 : _(u"""
-Les mailles de FOND_INF et de FOND_SUP sont de type différent.
-  Type de mailles pour FOND_SUP : %(k1)s
-  Type de mailles pour FOND_INF : %(k2)s
-"""),
-
-    69: _(u"""
-Les noeuds %(k1)s de FOND_INF et %(k2)s de FOND_SUP ne sont pas en vis à vis.
--> Risque et Conseil :
-Vérifiez que les deux groupes correspondent bien à des noeuds coïncidents
-géométriquement et que les groupes de noeuds sont ordonnés dans le même sens.
-"""),
-
     70 : _(u"""
 Erreur utilisateur : la lèvre définie sous %(k1)s possède une maille répétée 2 fois :
 maille %(k2)s.
@@ -502,22 +458,6 @@ est interdit.
 Veuillez redéfinir le mot-clé LISSAGE_THETA.
 """),
 
-    91: _(u"""
-Aucune direction de propagation n'est fournie par l'utilisateur, la direction est
-calculée à partir de la normale au fond de fissure (donnée dans DEFI_FOND_FISS).
-
--> Risque :
-  - La direction calculée est correcte, au signe près. En effet, comme il n'y a
-    aucun moyen de vérifier que la direction de propagation est dans le bon sens,
-    cela peut inverser le signe du G calculé.
-
--> Conseils pour ne plus avoir cette alarme :
-  - On peut préciser la direction de propagation sous le mot clé DIRECTION.
-    Cette solution n'est applicable que si le fond de fissure est rectiligne.
-  - La solution la plus générale (donc préférable) est de définir le fond de
-    fissure à partir des mailles de lèvres (DEFI_FOND_FISS/LEVRE_SUP et LEVRE_INF).
-"""),
-
     92: _(u"""
 Incohérence entre la dimension du maillage et le nombre de noeuds du fond. L'opérateur
 DEFI_FOND_FISS ne trouve qu'un seul noeud pour le fond, mais le maillage %(k1)s est considéré
@@ -534,17 +474,6 @@ CALCUL_CONTRAINTE='NON'. Le calcul s'arrête.
 - Vérifiez vote mise en données pour archiver SIEF_ELGA à tous les instants
 demandés dans la commande CALC_G.
 - Ou bien supprimer CALCUL_CONTRAINTE='NON' de la commande CALC_G.
-"""),
-
-    94: _(u"""
-La direction de propagation de la fissure et la normale au fond de fissure
-ne sont pas orthogonales.
--> Risque et Conseil :
-Si la fissure est plane, la normale et la direction de propagation sont
-nécessairement orthogonales, sinon les résultats sont faux: vérifier la
-mise en données dans DEFI_FOND_FISS et CALC_G.
-Si la fissure n'est pas plane, on ne peut pas utiliser le mot-clé NORMALE
-dans DEFI_FOND_FISS: définissez la fissure à partir des mailles de ses lèvres.
 """),
 
     95: _(u"""

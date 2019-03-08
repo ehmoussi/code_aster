@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ subroutine fonnor(resu, noma, cnxinv)
 !     RECUPERATION DU NOMBRE DE NOEUDS DU MAILLAGE
     call dismoi('DIM_GEOM', noma, 'MAILLAGE', repi=ndim)
 !
-!     RECUPERATION DU TYPE DU FOND DE FISSURE OUVERT OU FERME OU INF/SUP
+!     RECUPERATION DU TYPE DU FOND DE FISSURE OUVERT OU FERME
     call getvtx('FOND_FISS', 'TYPE_FOND', iocc=1, scal=tyfond, nbret=iret)
 !
 !     RECUPERATION DES NOEUDS DU FOND DE FISSURE
@@ -100,10 +100,7 @@ subroutine fonnor(resu, noma, cnxinv)
 !       RECUPERATION DU NOMBRE DE NOEUD
         call jelira(resu//'.FOND.NOEU', 'LONUTI', nbnoff)
     else
-!       RECUPERATION DE L'ADRESSE DES NOEUDS DE FOND DE FISSURE
-        call jeveuo(resu//'.FOND_SUP.NOEU', 'L', jnoe1)
-!       RECUPERATION DU NOMBRE DE NOEUD
-        call jelira(resu//'.FOND_SUP.NOEU', 'LONUTI', nbnoff)
+        ASSERT(.FALSE.)
     endif
 !
 !     VERIFICATION DE LA PRESENCE DE LEVRE_SUP
@@ -274,10 +271,10 @@ subroutine fonnor(resu, noma, cnxinv)
 !       ----------------------------------------------------
 !
         if (ilev .ne. 0 .and. iseg .eq. 1) then
-            call fonno8(resu, noma, tablev, vnor, vect)
+            call fonno8(resu, noma, tablev, vect)
         endif
 !
-        call fonno6(resu, noma, ndim, ina, nbnose,&
+        call fonno6(resu, noma, ndim, &
                     iseg, nseg, noe, indr, nbnoel,&
                     vnor, vdir, basseg, vect, sens)
 !

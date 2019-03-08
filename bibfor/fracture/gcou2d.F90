@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine gcou2d(base, resu, noma, nomno, noeud,&
-                  coor, rinf, rsup, module, ldirec,&
-                  dir)
+                  coor, rinf, rsup, dir)
     implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
@@ -41,11 +40,10 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-    real(kind=8) :: rinf, rsup, module, dir(3), coor(*)
+    real(kind=8) :: rinf, rsup, dir(3), coor(*)
     character(len=1) :: base
     character(len=8) :: noma, noeud
     character(len=24) :: resu, nomno
-    aster_logical :: ldirec
 !
 !
 ! FONCTION REALISEE:
@@ -69,7 +67,6 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 !        RSUP   : RAYON SUPERIEURE DE LA COURONNE
 !        MODULE : MODULE(THETA)
 !        DIR    : DIRECTION DU CHAMPS THETA
-!        LDIREC : INDIQUE SI LA DIRECTION A ETE DONNEE
 !
 ! SORTIE:
 !        DIR    : DIRECTION DU CHAMPS THETA NORMALISEE
@@ -116,30 +113,14 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 !     SI ELLE N'A PAS ETE DONNEE, ON PREND UNE DIRECTION VARIABLE QUI
 !     VAUT LE GRADIENT DE LA LEVEL SET TANGENTE
 
-    ! On verifie l'existence de basefond
+!     On verifie l'existence de basefond
     call jeexin(fonfis//'.BASEFOND', estbf)
 
-    if (ldirec) then
-!     --- LA DIRECTION DE THETA EST DONNEE, ON LA NORME ---
-        norme = 0.d0
-        do i = 1, 2
-            norme = norme + dir(i)*dir(i)
-        end do
-        norme = sqrt(norme)
-        dir(1) = dir(1)/norme
-        dir(2) = dir(2)/norme
-        if (estbf .ne. 0) then
-            ! Si basefond existe alors il est risque pour l'util.
-            ! de renseigner la direction qui peut être fausse.
-            call utmess('A', 'RUPTURE0_20')
-        end if
 !     --- LA DIRECTION DE THETA N'EST DONNEE, ON LA RECUPERE
 !         DE BASEFOND CALCULE DANS DEFI_FOND_FISS. ---
-    else if (estfem) then
+    if (estfem) then
         if (estbf .eq. 0) then
-           ! basefond n'existe pas, la fissure est probablement
-           ! definie avec calc_theta sans passer par defi_fond_fiss. Il FAUT
-           ! alors renseigner DIRECTION.
+           ! basefond n'existe pas
             call utmess('F', 'RUPTURE0_58')
         end if
 
@@ -182,8 +163,8 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 !     CAS CLASSIQUE
     if (estfem) then
 !       NOEUD DU FOND DE FISSURE
-        zr(itheta + (num-1)*2 + 1 - 1) = module*dir(1)
-        zr(itheta + (num-1)*2 + 2 - 1) = module*dir(2)
+        zr(itheta + (num-1)*2 + 1 - 1) = dir(1)
+        zr(itheta + (num-1)*2 + 2 - 1) = dir(2)
         xi = coor((num-1)*3+1)
         yi = coor((num-1)*3+2)
 !     CAS X-FEM
@@ -192,15 +173,13 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
         call jeveuo(fiss//'.FONDFISS', 'L', vr=fondfiss)
         xi = fondfiss(4*(numfon-1)+1)
         yi = fondfiss(4*(numfon-1)+2)
-        if (.not.ldirec) then
-            call utmess('I', 'XFEM_10')
+        call utmess('I', 'XFEM_10')
 !         RÉCUPÉRATION DU GRADIENT DE LST
-            grlt = fiss//'.GRLTNO'
-            chgrs = '&&GCOU2D.GRLT'
-            call cnocns(grlt, 'V', chgrs)
-            call jeveuo(chgrs//'.CNSV', 'L', vr=cnsv)
-            call jeveuo(chgrs//'.CNSL', 'L', jgtl)
-        endif
+        grlt = fiss//'.GRLTNO'
+        chgrs = '&&GCOU2D.GRLT'
+        call cnocns(grlt, 'V', chgrs)
+        call jeveuo(chgrs//'.CNSV', 'L', vr=cnsv)
+        call jeveuo(chgrs//'.CNSL', 'L', jgtl)
     endif
 !
 !
@@ -212,7 +191,7 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
             ym = coor((i-1)*3+2)
             d = sqrt((xi-xm)*(xi-xm)+(yi-ym)*(yi-ym))
             alpha = (d-rinf)/(rsup-rinf)
-            if ((.not.ldirec) .and. (.not. estfem)) then
+            if (.not. estfem) then
 !           LE GRANDIENT EST DÉFINI
                 if (zl(jgtl-1+ndim*(i-1)+1)) then
                     dir(1) = cnsv(ndim*(i-1)+1)
@@ -236,8 +215,8 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
                 dir(1) = dir(1)/norme
                 dir(2) = dir(2)/norme
             endif
-            valx = module*dir(1)
-            valy = module*dir(2)
+            valx = dir(1)
+            valy = dir(2)
             if ((abs(alpha).le.eps) .or. (alpha.lt.0)) then
                 zr(itheta+(i-1)*2+1-1) = valx
                 zr(itheta+(i-1)*2+2-1) = valy

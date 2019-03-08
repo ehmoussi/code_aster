@@ -358,7 +358,6 @@ ferrDatSlu = dict(
     C_SUP = 30,
     FCK = fck,
     FYK = fyk,
-    E_S = E,
     GAMMA_S_FOND = 1.15,
     GAMMA_C_FOND = 1.5,
     GAMMA_S_ACCI = 1.15,
@@ -645,7 +644,6 @@ TEST_RESU(
 ferrDatSlu['UNITE_CONTRAINTE'] = 'MPa'
 ferrDatSlu['FCK'] = 35 * Pa
 ferrDatSlu['FYK'] = 450 * Pa
-ferrDatSlu['E_S'] = 210000 * Pa
 ferrDatSlu['SIGS_ELS'] = 0.8 * ferrDatSlu['FYK']
 ferrDatSlu['SIGC_ELS'] = 0.6 * ferrDatSlu['FCK']
 
@@ -698,7 +696,6 @@ ferrDatSlu = dict(
     CEQUI = 15,
     TYPE_STRUCTURE = '2D',
     ENROBG = 30,
-    ES = E,
     SIGM_ACIER = 0.8 * fyk,
     SIGM_BETON = 0.6 * fck,
     PIVA  =  10.0E-3,

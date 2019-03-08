@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,6 +52,8 @@ CHMAT=AFFE_MATERIAU(    MAILLAGE=MA,AFFE=(
                                          MATER = MAT1),
                                   _F(  GROUP_MA = 'LPBPB1',
                                          MATER = MAT1),
+                                  _F(  GROUP_MA = 'LEVR_SUP',
+                                     MATER = MAT1),
                                   _F(  GROUP_MA = 'VTOT2',
                                          MATER = MAT2),
                                   _F(  GROUP_MA = 'LPA2PB2',
@@ -59,7 +61,10 @@ CHMAT=AFFE_MATERIAU(    MAILLAGE=MA,AFFE=(
                                   _F(  GROUP_MA = 'LPAPA2',
                                          MATER = MAT2),
                                   _F(  GROUP_MA = 'LPB2PB',
-                                         MATER = MAT2))
+                                         MATER = MAT2),
+                                  _F(  GROUP_MA = 'LEVR_INF',
+                                     MATER = MAT2),
+                                         ),
                          )
 
 #
@@ -97,6 +102,8 @@ CHAMDEPL=MECA_STATIQUE(        MODELE=MO,
 #
 FOND1=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                             FOND_FISS=_F( GROUP_NO = ('P0',)),
+                            LEVRE_SUP=_F(  GROUP_MA = 'LEVR_SUP'),
+                            LEVRE_INF=_F(  GROUP_MA = 'LEVR_INF'),
                       )
 
 #
@@ -104,9 +111,7 @@ G01=CALC_G(        RESULTAT=CHAMDEPL,
                    THETA=_F(
                             R_INF=3.57125E-4,
                             R_SUP=7.14250E-4,
-                            FOND_FISS=FOND1,
-                            MODULE=1.,
-                            DIRECTION=(-0.707106781, 0.707106781, 0.,)),
+                            FOND_FISS=FOND1,),
                      )
 
 #
@@ -122,9 +127,7 @@ G02=CALC_G(        RESULTAT=CHAMDEPL,
                    THETA=_F(
                             R_INF=7.1425E-4,
                             R_SUP=1.071375E-3,
-                            FOND_FISS=FOND1,
-                            MODULE=1.,
-                            DIRECTION=(-0.707106781, 0.707106781, 0.,)),
+                            FOND_FISS=FOND1,),
                      )
 
 #
@@ -141,9 +144,7 @@ G03=CALC_G(        RESULTAT=CHAMDEPL,
                    THETA=_F(
                             R_INF=1.071375E-3,
                             R_SUP=7.1425E-3,
-                            FOND_FISS=FOND1,
-                            MODULE=1.,
-                            DIRECTION=(-0.707106781, 0.707106781, 0.,)),
+                            FOND_FISS=FOND1,),
                      )
 
 #
@@ -159,9 +160,7 @@ G04=CALC_G(        RESULTAT=CHAMDEPL,
                    THETA=_F(
                             R_INF=3.57125E-4,
                             R_SUP=7.1425E-3,
-                            FOND_FISS=FOND1,
-                            MODULE=1.,
-                            DIRECTION=(-0.707106781, 0.707106781, 0.,)),
+                            FOND_FISS=FOND1,),
                      )
 
 #

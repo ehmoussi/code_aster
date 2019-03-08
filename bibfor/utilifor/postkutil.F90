@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -75,8 +75,8 @@ subroutine postkutil(nomres, nomfis, repmat, repmod)
 !
     integer :: nbma, ier, nfiss, iret, ima, nutyel, iad, i
     integer :: imodeli, ndim, jcesl, jcesd, nbcmp, icmp, vin_modeli(4)
-    integer :: ier1, ier2, ier3, nbnof, ino, inoeu
-    integer :: ideb, ifin, nmanoe, jmanoe, imanoe, itypma, ndime
+    integer :: ier1, nbnof, ino, inoeu
+    integer :: nmanoe, jmanoe, imanoe, itypma, ndime
     integer :: cpt_ma_fon, cpt_ma_noe, imaf, j, ima1, ima2, cpt_dbl
     integer :: nbma_tmp, nbma_fon
     character(len=8) :: nommod, nomchm, noma, vk8_typmod(4)
@@ -94,8 +94,6 @@ subroutine postkutil(nomres, nomfis, repmat, repmod)
     character(len=8), pointer :: vcesk(:) => null()
     character(len=8), pointer :: v8fiss(:) => null()
     character(len=8), pointer :: vnofon(:) => null()
-    character(len=8), pointer :: vnofo_inf(:) => null()
-    character(len=8), pointer :: vnofo_sup(:) => null()
 !
     data vk8_typmod/ 'COMP3D',   'AXIS', 'D_PLAN', 'C_PLAN'/
     data vk8_modeli/     '3D',   'AXIS', 'D_PLAN', 'C_PLAN'/
@@ -190,22 +188,9 @@ subroutine postkutil(nomres, nomfis, repmat, repmod)
 !
 !       recup de la liste des noeuds du fond
         call jeexin(nomfis//'.FOND.NOEU', ier1)
-        call jeexin(nomfis//'.FOND_INF.NOEU', ier2)
-        call jeexin(nomfis//'.FOND_SUP.NOEU', ier3)
-        ASSERT( (ier1 .gt. 0) .or. ((ier2 .gt. 0) .and. (ier3 .gt. 0)) )
+        ASSERT( ier1 .gt. 0 )
         if ( ier1 .ne. 0 ) then
             call jeveuo(nomfis//'.FOND.NOEU', 'L', vk8=vnofon)
-        endif
-        if ( ier2 .ne. 0 ) then
-            call jeveuo(nomfis//'.FOND_INF.NOEU', 'L', vk8=vnofo_inf)
-            call jeveuo(nomfis//'.FOND_SUP.NOEU', 'L', vk8=vnofo_sup)
-            AS_ALLOCATE(vk8=vnofon, size=size(vnofo_inf)+size(vnofo_sup))
-            ideb = 1
-            ifin = size(vnofo_inf)
-            vnofon(ideb:ifin) = vnofo_inf(:)
-            ideb = size(vnofo_inf) + 1
-            ifin = size(vnofo_inf) + size(vnofo_sup)
-            vnofon(ideb:ifin) = vnofo_sup(:)
         endif
         nbnof = size(vnofon)
 !
@@ -304,9 +289,6 @@ subroutine postkutil(nomres, nomfis, repmat, repmod)
 !
 !       menage
         call jedetr(cnxinv)
-        if ( ier2 .ne. 0 ) then
-            AS_DEALLOCATE(vk8=vnofon)
-        endif
         AS_DEALLOCATE(vi=vmatmp)
 !
     endif

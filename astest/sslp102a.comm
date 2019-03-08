@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -117,9 +117,7 @@ FOND=DEFI_FOND_FISS( MAILLAGE=MA,
 G1=CALC_G(        RESULTAT=RESU,
                   NUME_ORDRE=1,
                   THETA=_F(
-                           DIRECTION=(1.,0.,0.,),
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_INF=1.,
                            R_SUP=5.),
                   COMPORTEMENT=_F(
@@ -129,9 +127,7 @@ G1=CALC_G(        RESULTAT=RESU,
 G2=CALC_G(        RESULTAT=RESU,
                   NUME_ORDRE=1,
                   THETA=_F(
-                           DIRECTION=(1.,0.,0.,),
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_INF=5.,
                            R_SUP=10.),
                   COMPORTEMENT=_F(
@@ -140,9 +136,7 @@ G2=CALC_G(        RESULTAT=RESU,
 G3=CALC_G(        RESULTAT=RESU,
                   NUME_ORDRE=1,
                   THETA=_F(
-                           DIRECTION=(1.,0.,0.,),
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_INF=10.,
                            R_SUP=20.),
                   COMPORTEMENT=_F(
@@ -151,9 +145,7 @@ G3=CALC_G(        RESULTAT=RESU,
 G4=CALC_G(        RESULTAT=RESU,
                   NUME_ORDRE=1,
                   THETA=_F(
-                           DIRECTION=(1.,0.,0.,),
                            FOND_FISS=FOND,
-                           MODULE=1.0,
                            R_INF=20.,
                            R_SUP=30.),
                   COMPORTEMENT=_F(

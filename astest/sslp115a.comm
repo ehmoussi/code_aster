@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -222,9 +222,7 @@ Rsup3 = 9.0
 GINGA1=CALC_G(THETA=_F(
                        R_INF=Rinf1,
                        FOND_FISS=FISS1,
-                       MODULE=1,
-                       R_SUP=Rsup1,
-                       DIRECTION=(-1,0,0,)),
+                       R_SUP=Rsup1,),
               RESULTAT=RESUINI,
               INST=3,
 #              COMPORTEMENT=_F(RELATION='ELAS'),
@@ -235,9 +233,7 @@ GINGA1=CALC_G(THETA=_F(
 GINGA2=CALC_G(THETA=_F(
                        R_INF=Rinf2,
                        FOND_FISS=FISS1,
-                       MODULE=1,
-                       R_SUP=Rsup2,
-                       DIRECTION=(-1,0,0,)),
+                       R_SUP=Rsup2,),
               RESULTAT=RESUINI,
               INST=3,
 #              COMPORTEMENT=_F(RELATION='ELAS'),
@@ -248,9 +244,7 @@ GINGA2=CALC_G(THETA=_F(
 GINGA3=CALC_G(THETA=_F(
                        R_INF=Rinf3,
                        FOND_FISS=FISS1,
-                       MODULE=1,
-                       R_SUP=Rsup3,
-                       DIRECTION=(-1,0,0,)),
+                       R_SUP=Rsup3,),
               RESULTAT=RESUINI,
               INST=3,
 #              COMPORTEMENT=_F(RELATION='ELAS'),
@@ -264,9 +258,7 @@ GINGA3=CALC_G(THETA=_F(
 GINNO1=CALC_G(THETA=_F(
                        R_INF=Rinf1,
                        FOND_FISS=FISS1,
-                       MODULE=1,
-                       R_SUP=Rsup1,
-                       DIRECTION=(-1,0,0,)),
+                       R_SUP=Rsup1,),
              RESULTAT=RESUINI,
              INST=3,
              ETAT_INIT =_F(SIGM=SIEFNOEU),
@@ -275,9 +267,7 @@ GINNO1=CALC_G(THETA=_F(
 GINNO2=CALC_G(THETA=_F(
                        R_INF=Rinf2,
                        FOND_FISS=FISS1,
-                       MODULE=1,
-                       R_SUP=Rsup2,
-                       DIRECTION=(-1,0,0,)),
+                       R_SUP=Rsup2,),
              RESULTAT=RESUINI,
              INST=3,
              ETAT_INIT =_F(SIGM=SIEFNOEU),
@@ -286,9 +276,7 @@ GINNO2=CALC_G(THETA=_F(
 GINNO3=CALC_G(THETA=_F(
                        R_INF=Rinf3,
                        FOND_FISS=FISS1,
-                       MODULE=1,
-                       R_SUP=Rsup3,
-                       DIRECTION=(-1,0,0,)),
+                       R_SUP=Rsup3,),
               RESULTAT=RESUINI,
               INST=3,
               ETAT_INIT =_F(SIGM=SIEFNOEU),
@@ -300,9 +288,7 @@ GINNO3=CALC_G(THETA=_F(
 GINELNO1=CALC_G(THETA=_F(
                          R_INF=Rinf1,
                          FOND_FISS=FISS1,
-                         MODULE=1,
-                         R_SUP=Rsup1,
-                         DIRECTION=(-1,0,0,)),
+                         R_SUP=Rsup1,),
                 RESULTAT=RESUINI,
                 INST=3,
                 ETAT_INIT=_F(SIGM=SIEFELNO),
@@ -311,9 +297,7 @@ GINELNO1=CALC_G(THETA=_F(
 GINELNO2=CALC_G(THETA=_F(
                          R_INF=Rinf2,
                          FOND_FISS=FISS1,
-                         MODULE=1,
-                         R_SUP=Rsup2,
-                         DIRECTION=(-1,0,0,)),
+                         R_SUP=Rsup2,),
                 RESULTAT=RESUINI,
                 INST=3,
                 ETAT_INIT=_F(SIGM=SIEFELNO),
@@ -322,9 +306,7 @@ GINELNO2=CALC_G(THETA=_F(
 GINELNO3=CALC_G(THETA=_F(
                          R_INF=Rinf3,
                          FOND_FISS=FISS1,
-                         MODULE=1,
-                         R_SUP=Rsup3,
-                         DIRECTION=(-1,0,0,)),
+                         R_SUP=Rsup3,),
                 RESULTAT=RESUINI,
                 INST=3,
                 ETAT_INIT=_F(SIGM=SIEFELNO),
@@ -389,9 +371,7 @@ GINGAK3=CALC_G(THETA=_F(FOND_FISS=FISS1,
 GTHER3=CALC_G(THETA=_F(
                        R_INF=Rinf3,
                        FOND_FISS=FISS1,
-                       MODULE=1,
-                       R_SUP=Rsup3,
-                       DIRECTION=(-1,0,0,)),
+                       R_SUP=Rsup3,),
               RESULTAT=RESOUVFI,
               INST=1,
               OPTION='CALC_G')

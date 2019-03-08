@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -155,17 +155,19 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 #
 # POINT DROIT
 #
-FOND1=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
-                     FOND_FISS=_F(GROUP_NO='P0',),);
+FOND1=DEFI_FOND_FISS(MAILLAGE=MA,SYME='NON',
+                     FOND_FISS=_F(GROUP_NO='P0',),
+                     LEVRE_SUP=_F(GROUP_MA = 'LEVR_SUP',),
+                     LEVRE_INF=_F(GROUP_MA = 'LEVR_INF',),
+                     );
 
 
 #
 G01A=CALC_G(THETA=_F(
                      R_INF=0.,
                      FOND_FISS=FOND1,
-                     MODULE=1.,
                      R_SUP=0.001875E-2,
-                     DIRECTION=(0.866025404,0.5,0.,)),
+                     ),
             RESULTAT=CHAMDEPL,
             OPTION='CALC_G',);
 
@@ -182,9 +184,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 G01B=CALC_G(THETA=_F(
                      R_INF=0.001875E-2,
                      FOND_FISS=FOND1,
-                     MODULE=1.,
                      R_SUP=0.003750E-2,
-                     DIRECTION=(0.866025404,0.5,0.,)),
+                     ),
             RESULTAT=CHAMDEPL,
             OPTION='CALC_G',);
 
@@ -201,9 +202,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 G01C=CALC_G(THETA=_F(
                      R_INF=0.003750E-2,
                      FOND_FISS=FOND1,
-                     MODULE=1.,
                      R_SUP=0.005625E-2,
-                     DIRECTION=(0.866025404,0.5,0.,)),
+                     ),
             RESULTAT=CHAMDEPL,
             OPTION='CALC_G',);
 
@@ -219,9 +219,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 G01D=CALC_G(THETA=_F(
                      R_INF=0.005625E-2,
                      FOND_FISS=FOND1,
-                     MODULE=1.,
                      R_SUP=0.007500E-2,
-                     DIRECTION=(0.866025404,0.5,0.,)),
+                     ),
             RESULTAT=CHAMDEPL,
             OPTION='CALC_G',);
 
@@ -237,16 +236,18 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 #
 # POINT GAUCHE
 #
-FOND2=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
-                     FOND_FISS=_F(GROUP_NO='P0G',),);
+FOND2=DEFI_FOND_FISS(MAILLAGE=MA,SYME='NON',
+                     FOND_FISS=_F(GROUP_NO='P0G',),
+                     LEVRE_SUP=_F(GROUP_MA = 'LEVR_SUP',),
+                     LEVRE_INF=_F(GROUP_MA = 'LEVR_INF',),
+                     );
 
 #
 G02A=CALC_G(THETA=_F(
                      R_INF=0.,
                      FOND_FISS=FOND2,
-                     MODULE=1.,
                      R_SUP=0.001875E-2,
-                     DIRECTION=(-0.866025404,-0.5,0.,)),
+                     ),
             RESULTAT=CHAMDEPL,
             OPTION='CALC_G',);
 
@@ -263,9 +264,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 G02B=CALC_G(THETA=_F(
                      R_INF=0.001875E-2,
                      FOND_FISS=FOND2,
-                     MODULE=1.,
                      R_SUP=0.003750E-2,
-                     DIRECTION=(-0.866025404,-0.5,0.,)),
+                     ),
             RESULTAT=CHAMDEPL,
             OPTION='CALC_G',);
 
@@ -282,9 +282,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 G02C=CALC_G(THETA=_F(
                      R_INF=0.003750E-2,
                      FOND_FISS=FOND2,
-                     MODULE=1.,
                      R_SUP=0.005625E-2,
-                     DIRECTION=(-0.866025404,-0.5,0.,)),
+                     ),
             RESULTAT=CHAMDEPL,
             OPTION='CALC_G',);
 
@@ -301,9 +300,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 G02D=CALC_G(THETA=_F(
                      R_INF=0.005625E-2,
                      FOND_FISS=FOND2,
-                     MODULE=1.,
                      R_SUP=0.007500E-2,
-                     DIRECTION=(-0.866025404,-0.5,0.,)),
+                     ),
             RESULTAT=CHAMDEPL,
             OPTION='CALC_G',);
 

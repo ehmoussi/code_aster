@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -128,8 +128,6 @@ G1=CALC_G(          RESULTAT=evol,
                     THETA=_F(
                              R_INF=3.,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             DIRECTION=(1.,0.,0.,),
                              R_SUP=10.),
                     EXCIT=_F(CHARGE=CH_PF,
                              FONC_MULT=FONC,),
@@ -140,8 +138,6 @@ G2=CALC_G(          RESULTAT=evol,
                     THETA=_F(
                              R_INF=5.,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             DIRECTION=(1.,0.,0.,),
                              R_SUP=15.),
                     EXCIT=_F(CHARGE=CH_PF,
                              FONC_MULT=FONC,),
@@ -152,8 +148,6 @@ G3=CALC_G(          RESULTAT=evol,
                     THETA=_F(
                              R_INF=5.,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             DIRECTION=(1.,0.,0.,),
                              R_SUP=18.),
                     EXCIT=_F(CHARGE=CH_PF,
                              FONC_MULT=FONC,),
@@ -163,8 +157,6 @@ G3=CALC_G(          RESULTAT=evol,
 G4=CALC_G(          THETA=_F(
                              R_INF=3.,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             DIRECTION=(1.,0.,0.,),
                              R_SUP=10.),
                     RESULTAT=evol,
                     NUME_ORDRE=5,
@@ -197,8 +189,6 @@ G5=CALC_G(          RESULTAT=evol,
                     THETA=_F(
                              R_INF=5.,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             DIRECTION=(1.,0.,0.,),
                              R_SUP=15.),
                     EXCIT=_F(CHARGE=CH_P,
                              FONC_MULT=F_UNIT,),

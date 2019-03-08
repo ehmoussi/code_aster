@@ -1,498 +1,411 @@
-#!/usr/bin/env python
-# -*- coding: utf - 8 -*-
-import os, sys
-from math import sqrt
-import numpy as np
-CODE_PATH = os.path.dirname(os.path.abspath(__file__))
-c = 0.04
-h = 0.2
-d = (h-c)
-def check_pivot(mu_bc,mu_ab,mu_1s,mu):
-    if mu>mu_bc:
-        pivot = 'C'
-    else:
-        if mu<mu_ab:
-            pivot = 'A'
-            if mu<0.0:
-                pivot += ' entierement tendu'
+# -*- coding: utf-8 -*-
+
+import math
+from math import *
+
+C_ELU = {
+    "Conf 1":  {"Nxx": 0,     "Nyy": -1e6,  "Nxy": 0, "Mxx": 0,    "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 1e5},
+    "Conf 2":  {"Nxx": 1e6,   "Nyy": 0,     "Nxy": 0, "Mxx": 0,    "Myy": 0,      "Mxy": 0, "Qx": -6e5, "Qy": 0},
+    "Conf 3":  {"Nxx": 0,     "Nyy": 1e6,   "Nxy": 0, "Mxx": 0,    "Myy": 0,      "Mxy": 0, "Qx": -2e4, "Qy": 8e4},
+    "Conf 4":  {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 0,    "Myy": 1e5,    "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 5":  {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 6":  {"Nxx": -1e5,  "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 7":  {"Nxx": 1e5,   "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 8":  {"Nxx": 2e6,   "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 9":  {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": -75e3,  "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 10": {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 0,    "Myy": -150e3, "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 13": {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 0,    "Myy": -260e3, "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 14": {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 0,    "Myy": -380e3, "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 15": {"Nxx": 0,     "Nyy": -15e5, "Nxy": 0, "Mxx": 0,    "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 8e5},
+    "Conf 16": {"Nxx": -45e5, "Nyy": 0,     "Nxy": 0, "Mxx": 38e4, "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 1e5},
+    }
+
+C_ELU_D = {
+    "Conf 1":  {"Nxx": 1.e6,  "Nyy": 0,     "Nxy": 0, "Mxx": 0,    "Myy": 0,      "Mxy": 0, "Qx": -6e5, "Qy": 0},
+    "Conf 2":  {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 3":  {"Nxx": 1e5,   "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 4":  {"Nxx": 2e6,   "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 5":  {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": -75e3,  "Mxy": 0, "Qx": 0,    "Qy": 0},
+}
+
+C_ELS = {
+    "Conf 1":  {"Nxx": 0,     "Nyy": -1e6,  "Nxy": 0, "Mxx": 0,    "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 1e5},
+    "Conf 2":  {"Nxx": 1e6,   "Nyy": 0,     "Nxy": 0, "Mxx": 0,    "Myy": 0,      "Mxy": 0, "Qx": -6e5, "Qy": 0},
+    "Conf 3":  {"Nxx": 0,     "Nyy": 1e6,   "Nxy": 0, "Mxx": 0,    "Myy": 0,      "Mxy": 0, "Qx": -2e4, "Qy": 8e4},
+    "Conf 4":  {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 0,    "Myy": 1e5,    "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 5":  {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 12": {"Nxx": -20e3, "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 7":  {"Nxx": 1e5,   "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 8":  {"Nxx": 2e6,   "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": 0,      "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 9":  {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 1e5,  "Myy": -75e3,  "Mxy": 0, "Qx": 0,    "Qy": 0},
+    "Conf 11": {"Nxx": 0,     "Nyy": 0,     "Nxy": 0, "Mxx": 0,    "Myy": -1e5,   "Mxy": 0, "Qx": 0,    "Qy": 0},
+    }
+
+DG = {"ht" : 0.2}
+
+CF = {
+    "ALPHA_E": 21,
+    "C_SUP": 0.04,
+    "C_INF": 0.04,
+    "ALPHA_CC": 1,
+    "GAMMA_S": 1.15,
+    "GAMMA_C": 1.5,
+    "FYK": 5e8,
+    "FCK": 3.5e7,
+    "FE": 500.e6,
+    "FCJ": 35.e6,
+    "PIVA": 10.e-3,
+    "PIVB": 3.5e-3,
+    "SIGM_ACIER_ELU": 435.e6,
+    "SIGM_BETON_ELU": 23.3e6,
+    "CL_ACIER": "B",
+    "RHO_ACIER": 7800,
+    "ALPHA_REINF": 1,
+    "ALPHA_SHEAR": 1,
+    "ALPHA_STIRRUPS": 1,
+    "RHO_CRIT": 150,
+    "DNSTRA_CRIT": 0.006,
+    "L_CRIT": 1,
+    "UNITE": "Pa",
+    "CEQUI": 15.1,
+    "N": 15.1,
+    "SIGM_BETON_ELS": 21.e6,
+    "SIGM_ACIER_ELS": 400.e6,
+    "SIGC_ELS": 21.e6,
+    "SIGS_ELS": 400.e6,
+    "VALO_COMP": 'NON'}
+
+def calc_efforts(efforts):
+    angle_0 = -math.pi/2
+    pas = math.pi/36
+    l_effn = []
+    l_efft = []
+    for i in range(36):
+        angle = angle_0+i*pas
+        l_effn.append(cos(angle)*cos(angle)*efforts["Nxx"]+sin(angle)*sin(angle)*efforts["Nyy"])
+        l_efft.append(abs(sin(angle)*efforts["Qx"]+cos(angle)*efforts["Qy"]))
+    m = max([abs(i) for i in l_effn])
+    pos_n = [i for i, j in enumerate(l_effn) if abs(j) == m]
+    m = max([abs(i) for i in l_efft])
+    pos_t = [i for i, j in enumerate(l_efft) if abs(j) == m]
+    return efforts["Nxx"], efforts["Nyy"], efforts["Mxx"], efforts["Myy"],l_effn[pos_n[0]], l_efft[pos_t[0]]
+
+# Calculs préparatoire à partir des données de CALC_FERRAILLAGE :
+codififcation = "BAEL91"
+type_comb = 'ELS'
+
+print "==================================================="
+print "CALCUL DES ACIERS DE FLEXION ET D'EFFORT TRANCHANT"
+print "      CODIFICATION = ", codififcation, " TYPE_COMB = ", type_comb
+print "===================================================\n"
+
+if type_comb == 'ELU':
+    dict_char = C_ELU
+    if codififcation == "UTIL":
+        eta = 1
+        lambdaa = 0.8
+        piv_a = CF["PIVA"]
+        piv_b = CF["PIVB"]
+        sigm_acier = CF["SIGM_ACIER_ELU"]
+        sigm_beton = CF["SIGM_BETON_ELU"]
+    elif codififcation == "BAEL91":
+        CF["ALPHA_CC"] = 0.85
+        eta = 1
+        lambdaa = 0.8
+        piv_a = 10.e-3
+        piv_b = 3.5e-3
+        sigm_acier = CF["FE"]/CF["GAMMA_S"]
+        sigm_beton = CF["FCJ"]*CF["ALPHA_CC"]/CF["GAMMA_C"]
+    elif "EC2" in codififcation:
+        # Pour aciers de flexion à l'ELU
+        if codififcation == "EC2_D":
+            CF["C_SUP"] = 0.02
+            dict_char = C_ELU_D
+            CF["FCK"] = 5.5e7
+        if CF["UNITE"] == "Pa": unite = 1e6
+        if CF["UNITE"] == "MPa": unite = 1
+        eta = min(1,1-(CF["FCK"]-(50*unite))/(200*unite))
+        lambdaa = min(0.8,0.8-(CF["FCK"]-(50*unite))/(400*unite))
+        if CF["CL_ACIER"] == "A" : piv_a = 0.9*2.5e-2
+        if CF["CL_ACIER"] == "B" : piv_a = 0.9*5.e-2
+        if CF["CL_ACIER"] == "C" : piv_a = 0.9*7.5e-2
+        piv_b = min(3.5e-3,0.26+3.5*0.01*(((90*unite-CF["FCK"])/100)**4))
+        sigm_acier = CF["FYK"]/CF["GAMMA_S"]
+        sigm_beton = CF["FCK"]*CF["ALPHA_CC"]/CF["GAMMA_C"]
+        # Pour aciers d'effort tranchant à l'ELU
+        if CF["GAMMA_S"] > 1.25 : nu_1 = min(0.6,max(0.9-(CF["FCK"]/(200*unite)),0.5))
+        if CF["GAMMA_S"] <= 1.25 :  nu_1 = 0.6*(1.-(CF["FCK"]/(250*unite)))
+
+    alpha_ab = piv_b/(piv_a+piv_b)
+    mu_bc = lambdaa*(1-lambdaa/2)
+
+    l_conf = dict_char.keys()
+    l_conf.sort()
+    for conf in l_conf:
+        effn_x, effn_y, effm_x, effm_y, effn_fac, efft = calc_efforts(dict_char[conf])
+        dns_xi = 0.
+        dns_xs = 0.
+        dns_yi = 0.
+        dns_ys = 0.
+        ierr = 0
+        for i in range(2):
+            dnssup = 0.
+            dnsinf = 0.
+            if i == 0:
+                effn = effn_x
+                effm = effm_x
             else:
-                pivot += ' partiellement tendu'
-        else:
-            pivot = 'B'
-    return pivot
+                effn = effn_y
+                effm = effm_y
+            if effm >= 0 : enrob = CF["C_INF"]
+            if effm < 0 : enrob = CF["C_SUP"]
+            hu = 0.5*DG["ht"] - enrob
+            d = DG["ht"] - enrob
+            m_inf = abs(effm) - effn*hu
+            mu_inf = m_inf/(d**2*sigm_beton*eta)
+            if effn != 0 : force = effn/(1-(2*effm)/(DG["ht"]*effn))
+            if effn == 0 : force = 0
 
-for codification in ["utilisateur","BAEL","EC2"]:
-    algoelu_fich = os.path.join(CODE_PATH,"algo_elu_"+codification+".csv")
-    algo_elu = open(algoelu_fich, "w")
-    algo_elu.write(codification+" ELU\n")
-    if codification == "BAEL":
-        lambd = 0.8
-        gamma_s = 1.15
-        gamma_c = 1.5
-        fcj = 35
-        fe = 500.e6
-        alpha_cc = 0.85
-        sigm_c_els = 21.e6
-        sigm_s_els = 400.e6
-        n = 15.1
-        E_s = 2.1e11
-        eps_b = 3.5e-3
-        eps_a = 10e-3
-        sigm_s = fe/gamma_s
-        sigm_c = alpha_cc*fcj*1e6/gamma_c
-        alpha_ab = 3.5e-3/(3.5e-3+10e-3)
-        alpha_b = 1.0
-        zd = 0.9*d
-    if codification == "EC2":
-        lambd = 0.8
-        gamma_s = 1.15
-        gamma_c = 1.5
-        fcj = 35
-        fe = 500.e6
-        alpha_cc = 1.0
-        sigm_c_els = 21.e6
-        sigm_s_els = 400.e6
-        n = 210.e3/10.e3
-        E_s = 2.1e11
-        eps_b = 3.5e-3
-        eps_a = 0.9*5.e-2 #classe B
-        alpha_ab = 3.5e-3/(3.5e-3+eps_a)
-        sigm_s = fe/gamma_s
-        eps_bb = sigm_s/(E_s)
-        alpha_b = 3.5e-3/(3.5e-3+eps_bb)
-        alpha_b = 1
-        sigm_c = alpha_cc*fcj*1e6/gamma_c
-        algo_elu.write("esp_bb=%f\n"% (eps_bb))
-        zd = 0.9*d
-    if codification ==  "utilisateur":
-        lambd = 0.8
-        gamma_s = 1.15
-        gamma_c = 1.5
-        fcj = 35
-        fe = 500.e6
-        alpha_cc = 1.0
-        sigm_c_els = 21.e6
-        sigm_s_els = 400.e6
-        alpha_b = 1.0
-        n = 15.1
-        E_s = 2.1e11
-        eps_b = 3.5e-3
-        eps_a = 10e-3
-        sigm_s = 435e6
-        sigm_c = 23.3e6
-        alpha_ab = 3.5e-3/(3.5e-3+10e-3)
-        zd = 0.9*d
+            # Calcul aciers de flexion à l'ELU :
+            if mu_inf < 0:
+                ETAT = "SECTION ENTIEREMENT TENDUE"
+                dnssup = (effn*hu+effm)/(2*hu)/sigm_acier
+                dnsinf = (effn*hu-effm)/(2*hu)/sigm_acier
+            else:
+                if mu_inf < mu_bc:
+                    alpha = 1-sqrt(1-2*mu_inf)
+                    N = alpha*d*eta*sigm_beton + effn
+                    if N < 0 :
+                        ETAT = "PIVOT B : SECTION COMPRIMEE"
+                        N = 0
+                    if force < -1*eta*sigm_beton*DG["ht"]:
+                        ETAT = "PIVOT B : SECTION TROP COMPRIMEE"
+                        ierr = -1
+                    else:
+                        ETAT = "SECTION PARTIELLEMENT COMPRIMEE"
+                        if effm >= 0.:
+                            dnssup = N/sigm_acier
+                        else:
+                            dnsinf = N/sigm_acier
+                else:
+                    ETAT = "PIVOT C"
+                    ierr = -1
+                    if effn < -1*lambdaa*eta*sigm_beton*DG["ht"]:
+                        ETAT = "PIVOT C : SECTION TROP COMPRIMEE"
+            if i == 0:
+                dns_xs = dnssup
+                dns_xi = dnsinf
+            else:
+                dns_ys = dnssup
+                dns_yi = dnsinf
+            if ierr == -1:
+                dns_xs = -1
+                dns_xi = -1
+                dns_ys = -1
+                dns_yi = -1
 
-    algo_elu.write("sigm_s = %f\n"% sigm_s)
-    algo_elu.write("sigm_c = %f\n"% sigm_c)
-    mu_ab = lambd*alpha_ab*(1-lambd*alpha_ab/2)
-    mu_bc = lambd*alpha_b*(1-lambd*alpha_b/2)
-    algo_elu.write("alpha_ab = %f\n"% alpha_ab)
-    algo_elu.write("alpha_b = %f\n"% alpha_b)
-    algo_elu.write("mu_ab = %f\n"% mu_ab)
-    algo_elu.write("mu_bc = %f\n"% mu_bc)
-    algo_elu.write("esp_a= piv_a = %f\n"% (eps_a))
-    Dref_elu = list()
-    Dref_els = list()
-    alpha_1s = eps_b/(eps_b+sigm_s/(E_s))
-    mu_1s = lambd*alpha_1s*(1-lambd*alpha_1s/2)
-    algo_elu.write("alpha_1s = %f\n"% alpha_1s)
-    algo_elu.write("mu_1s = %f\n"% mu_1s)
+        print conf, " ETAT CAFELU : ", ETAT, " DNS_XI: ", dns_xi, " DNS_XS: ", dns_xs, " DNS_YI: ", dns_yi, " DNS_YS: ", dns_ys
 
-    algo_elu.write("z = %f, 0.9d = %f\n"% (zd,0.9*d))
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 1:\n")
-    algo_elu.write("*****************************:\n")
-    Nxx = 1e6 #pivot C
-    Minf= Nxx*(d-h/2)
-    mu= Minf / (d**2*sigm_c)
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    algo_elu.write("pivot %s\n"% pivot)
-    Qy = 1e5
-    Qx = 0.0
-    Q = sqrt(Qy**2+Qx**2)
-    if codification == "EC2":
-        Q = abs(Qy)
-        v1 = 0.6*( 1 -fcj/250.)
-        algo_elu.write("v1 = %f\n"% v1)
-        sigm_cp = Nxx /h
-        algo_elu.write("sigm_cp = %f\n"% sigm_cp)
-        algo_elu.write("(sigm_cp/sigm_c) = %f\n"% ((sigm_cp/sigm_c)))
-        alpha_cw = 1. +sigm_cp /sigm_c
-        algo_elu.write("alpha_cw = %f\n"% alpha_cw)
-        X = Q / (alpha_cw*v1*sigm_c*zd)
-        algo_elu.write("X = %.6f\n"% X)
-        if X >= 0.3448:
-            cot = (1+sqrt(1-4*X**2))/(2*X)
-            algo_elu.write("cot = %f\n"% cot)
-        elif X<=0.3448:
-            cot = 2.5
-        Ast = Q/(sigm_s*zd*cot)
-    else:
-        Ast = sqrt(Qy**2+Qx**2)/(zd*sigm_s)
-    algo_elu.write("Ast = %.8f\n"% Ast)
-    Dref_elu.append([-1.0,-1.0,-1.0,-1.0,Ast])
-    Nxx = -1e6
-    Minf = -Nxx*(0.5*h-c)
-    mu = Minf/(d**2*sigm_c_els)
-    print Minf, mu
-    mub = 1+(2*n*Minf)/(d**2*sigm_s_els)
-    Dref_els.append([0,0,0,0])
+        # Calcul aciers d'effort trnahcant à l'ELU :
+        dnstra = 0
+        if codififcation == "UTIL":
+            z = 0.9*(DG["ht"]-CF["C_INF"])
+            sigmat = sqrt(dict_char[conf]["Qx"]*dict_char[conf]["Qx"]+dict_char[conf]["Qy"]*dict_char[conf]["Qy"])/z
+            dnstra = sigmat / CF["SIGM_ACIER_ELU"]
+        if codififcation == "BAEL91":
+            z = 0.9*(DG["ht"]-CF["C_SUP"])
+            sigmat = sqrt(dict_char[conf]["Qx"]*dict_char[conf]["Qx"]+dict_char[conf]["Qy"]*dict_char[conf]["Qy"])/z
+            dnstra = sigmat / (CF["FE"]/CF["GAMMA_S"])
+        elif "EC2" in codififcation:
+            fcd = CF["FCK"]*CF["ALPHA_CC"]/CF["GAMMA_C"]
+            if CF["VALO_COMP"] == 'NON':
+                sigma_cp = 0
+            else:
+                sigma_cp = -effn/DG["ht"]
+            ratio = sigma_cp/sigm_beton
+            if ratio <= 0:
+                alpha_cw = 1
+            elif ratio < 0.25:
+                alpha_cw = 1+ratio
+            elif ratio < 0.5:
+                alpha_cw = 1.25
+            else:
+                alpha_cw = 2.5*(1-ratio)
+            if effm >= 0: z = 0.9*(DG["ht"]-CF["C_INF"])
+            if effm < 0: z = 0.9*(DG["ht"]-CF["C_SUP"])
+            X = efft/(alpha_cw*nu_1*sigm_beton*z)
+            ETAT = "OK"
+            if X <= 0.3448:
+                cotheta = 2.5
+            elif X <= 0.5:
+                cotheta = (1+sqrt(1-4*(X**2)))/(2*X)
+            dnstra = efft/((CF["FYK"]/CF["GAMMA_S"])*z*cotheta)
+            if X > 0.5:
+                ETAT = "BETON TROP CISAILLE"
+                dnstra = -1
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 2:\n")
-    algo_elu.write("*****************************:\n")
-    Nxx = -1e6 #pivot A
-    Qy = 0.0
-    Qx = -600000
-    Q = sqrt(Qy**2+Qx**2)
-    Minf= Nxx*(d-h/2)
-    mu= Minf / (d**2*sigm_c)
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    algo_elu.write("pivot %s\n"% pivot)
-    algo_elu.write("mu = %f\n"% mu)
-    if codification == "EC2":
-        Q = abs(Qx)
-        v1 = 0.6*( 1 -fcj/250.)
-        algo_elu.write("v1 = %f\n"% v1)
-        sigm_cp = Nxx /h
-        algo_elu.write("sigm_cp = %f\n"% sigm_cp)
-        algo_elu.write("(sigm_cp/sigm_c) = %f\n"% (sigm_cp/sigm_c))
-        alpha_cw = 1
-        algo_elu.write("alpha_cw = %f\n"% alpha_cw)
-        X = Q / (alpha_cw*v1*sigm_c*zd)
-        algo_elu.write("X = %f\n"% X)
-        if X >= 0.3448:
-            cot = (1.+sqrt(1.-4*X**2))/(2*X)
-            algo_elu.write("cot = %f\n"% cot)
-        elif X<=0.3448:
-            cot = 2.5
-        Ast = Q/(sigm_s*zd*cot)
-    else:
-        Ast = sqrt(Qy**2+Qx**2)/(zd*sigm_s)
-    algo_elu.write("Ast = %f\n"% Ast)
-    As = abs(Nxx)/sigm_s
-    Asxs = Asxi = As / 2
-    Dref_elu.append([Asxi,Asxs,0,0,Ast])
-    Minf = -Nxx*(h/2 - c)
-    mu = Minf/(d**2*sigm_c_els)
-    As = abs(Nxx)/sigm_s_els
-    Asxs = Asxi = As / 2
-    Dref_els.append([Asxi,Asxs,0,0])
+        dnsvol = CF["RHO_ACIER"]*((dns_xs+dns_xi+dns_ys+dns_yi)+dnstra*DG["ht"])/DG["ht"]
+        reinf = CF["ALPHA_REINF"]*dnsvol/CF["RHO_CRIT"]
+        shear = CF["ALPHA_SHEAR"]*dnstra/CF["DNSTRA_CRIT"]
+        stirr = CF["ALPHA_STIRRUPS"]*dnstra*(DG["ht"]-CF["C_INF"]-CF["C_SUP"])/(CF["DNSTRA_CRIT"]*CF["L_CRIT"])
+        construc = (reinf+shear+stirr)/(CF["ALPHA_REINF"]+CF["ALPHA_SHEAR"]+CF["ALPHA_STIRRUPS"])
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 3:\n")
-    algo_elu.write("*****************************:\n")
-    Nyy = -1e6 #pivot A
-    Minf= Nxx*(d-h/2)
-    mu= Minf / (d**2*sigm_c)
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    algo_elu.write("pivot %s\n"% pivot)
-    algo_elu.write("mu = %f\n"% mu)
-    Qy = 80000
-    Qx = -20000
-    Q = sqrt(Qy**2+Qx**2)
-    if codification == "EC2":
-        Q = 82450
-        v1 = 0.6*( 1 -fcj/250.)
-        algo_elu.write("v1 = %f\n"% v1)
-        sigm_cp = Nxx /h
-        algo_elu.write("sigm_cp = %f\n"% sigm_cp)
-        algo_elu.write("(sigm_cp/sigm_c) = %f\n"% (sigm_cp/sigm_c))
-        alpha_cw = 1
-        X = Q / (alpha_cw*v1*sigm_c*zd)
-        algo_elu.write("X = %f\n"% X)
-        if X >= 0.3448:
-            cot = (1.+sqrt(1.-4*X**2))/(2*X)
-        elif X<=0.3448:
-            cot = 2.5
-        algo_elu.write("cot = %f\n"% cot)
-        Ast = Q/(sigm_s*zd*cot)
-    else:
-        Ast = sqrt(Qy**2+Qx**2)/(zd*sigm_s)
-    algo_elu.write("Ast = %f\n"% Ast)
-    As = abs(Nyy)/((2*sigm_s))
-    Asys = Asyi = As 
-    Dref_elu.append([0.0,0.0,Asyi,Asys,Ast])
-    As = abs(Nyy)/sigm_s_els
-    Asys = Asyi = As / 2
-    Dref_els.append([0.0,0.0,Asyi,Asys])
+        print conf, " ETAT CFTELU : ", ETAT, " DNSTRA = ", dnstra, " DNSVOL: ", dnsvol, " CONSTRUC: ", construc
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 4-5:\n")
-    algo_elu.write("*****************************:\n")
-    Mfx = 100000
-    mu = Mfx/(d**2*sigm_c)
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    algo_elu.write("pivot %s\n"% pivot)
-    algo_elu.write("mub = %f\n"% mu)
-    alpha = 1-sqrt(1-2*mu)
-    algo_elu.write("alpha = %f\n"% alpha)
-    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
-    z = d*(1-alpha/2)
-    algo_elu.write("z = %f\n"% z)
-    Asys = Asxs =  Mfx/(z*sigm_s)
-    tmp = Mfx/z
-    tmp2 = (1-sqrt(1-2*mu))*d*sigm_c
-    tmp2 = (alpha)*d*sigm_c
-    algo_elu.write("tmp = %f\n"% tmp)
-    algo_elu.write("tmp = %f\n"% tmp2)
-    Dref_elu.append([0,0,0,Asys,0.0])
-    Dref_elu.append([0,Asxs,0,0,0.0])
-    ylim = d*(n*sigm_c_els)/(n*sigm_c_els+sigm_s_els)
-    Mlim = 0.5*sigm_c_els*ylim*(d-ylim/3)
-    mu = n*Mfx/(d**2 *sigm_s_els)
-    coeff = [1, -3, -6*mu,+6*mu]
-    sol = np.roots(coeff)
-    alpha = min(abs(sol))
-    Asys = Asxs = Mfx /(sigm_s_els*d*(1-alpha/3))
-    Dref_els.append([0,0,0,Asys])
-    Dref_els.append([0,Asxs,0,0])
+elif type_comb == "ELS":
+    dict_char = C_ELS
+    if codififcation == "UTIL":
+        cequi = CF["CEQUI"]
+        sigbet = CF["SIGM_BETON_ELS"]
+        sigaci = CF["SIGM_ACIER_ELS"]
+    elif codififcation == "BAEL91":
+        cequi = CF["N"]
+        sigbet = CF["SIGC_ELS"]
+        sigaci = CF["SIGS_ELS"]
+    elif codififcation in ["EC2","EC2_D"]:
+        cequi = CF["ALPHA_E"]
+        sigbet = CF["SIGC_ELS"]
+        sigaci = CF["SIGS_ELS"]
+        if CF["UNITE"] == "Pa": unite = 1e6
+        if CF["UNITE"] == "MPa": unite = 1
+        if codififcation == "EC2_D":
+            CF["C_SUP"] = 0.02
+            dict_char = C_ELU_D
+    alpha_ab = cequi*sigbet/(cequi*sigbet+sigaci)
+    mu_ab = 0.5*alpha_ab*(1-alpha_ab/3)
+    mu_bc = 1./3.
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 6:\n")
-    algo_elu.write("*****************************:\n")
-    Mfy = 1e5
-    Nxx = -1e5
-    M = Mfy - Nxx*(d-h/2)
-    algo_elu.write("M = %f\n"% M)
-    mu = M/(d**2*sigm_c)
-    algo_elu.write("mu = %f\n"% mu)
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    algo_elu.write("pivot %s\n"% pivot)
-    alpha = 1-sqrt(1-2*mu)
-    algo_elu.write("alpha = %f\n"% alpha)
-    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
-    z = d*(1-alpha/2)
-    algo_elu.write("z = %f\n"% z)
-    Asxs = M/(z*sigm_s)+Nxx/sigm_s
-    Dref_elu.append([0,Asxs,0,0,0])
-    Nxx = -20000
-    M = Mfy -Nxx*(d-h/2)
-    mu = n*M/(d**2*sigm_s_els)
-    coeff = [1, -3, -6*mu,+6*mu]
-    sol = np.roots(coeff)
-    alpha = min(abs(sol))
-    Asxs = M/(sigm_s_els*d*(1-alpha/3))+Nxx/sigm_s_els
-    Dref_els.append([0,Asxs,0,0])
+    l_conf = dict_char.keys()
+    l_conf.sort()
+    for conf in l_conf:
+        effn_x, effn_y, effm_x, effm_y, effn_fac, efft = calc_efforts(dict_char[conf])
+        dns_xi = 0.
+        dns_xs = 0.
+        dns_yi = 0.
+        dns_ys = 0.
+        ierr = 0
+        for i in range(2):
+            dnssup = 0.
+            dnsinf = 0.
+            if i == 0:
+                effn = effn_x
+                effm = effm_x
+            else:
+                effn = effn_y
+                effm = effm_y
+            if effm >= 0 : enrob = CF["C_INF"]
+            if effm < 0 : enrob = CF["C_SUP"]
+            hu = 0.5*DG["ht"] - enrob
+            d = DG["ht"] - enrob
+            m_inf = abs(effm) - effn*hu
+            mu = m_inf/((d**2)*sigbet)
+            if mu < 0:
+                ETAT = "SECTION ENTIEREMENT TENDUE"
+                dnssup = (m_inf+effn*(d-enrob))/(sigaci*(d-enrob))
+                dnsinf = (-m_inf)/(sigaci*(d-enrob))
+            else:
+                if mu < mu_ab:
+                    ETAT = "PIVOT A : SECTION PARTIELLEMENT TENDUE"
+                    phi = acos(-1/(1+2*cequi*mu*sigbet/sigaci)**(1.5))
+                    alpha = 1+2*(1+2*cequi*mu*sigbet/sigaci)**(0.5)*cos(math.pi/3+phi/3)
+                    dns = m_inf/((1-alpha/3)*sigaci*d)+effn/sigaci
+                    if dns <= 0:
+                        dns = 0.
+                elif mu < mu_bc:
+                    ETAT = "PIVOT B : SECTION PARTIELLEMENT TENDUE"
+                    alpha = (3-sqrt(3*(3-8*mu)))/2
+                    sigma_s = (1-alpha)/alpha*cequi*sigbet
+                    dns = m_inf/((1-alpha/3)*(d*sigma_s))+effn/sigma_s
+                    if dns <= 0:
+                        dns = 0.
+                    force = (8.*DG["ht"]*effn**2)/(6.*DG["ht"]*effn-12.*effm)
+                    if force < -1*sigbet*DG["ht"]:
+                        ETAT = "PIVOT B : SECTION TROP COMPRIMEE"
+                        ierr = -1.
+                else:
+                    ETAT = "PIVOT C"
+                    ierr = -1
+                    force = (DG["ht"]*effn**2)/(DG["ht"]*effn+6.*effm)
+                    if force < -1*sigbet*DG["ht"]:
+                        ETAT = "PIVOT C : SECTION TROP COMPRIMEE"
+                if effm >= 0.: 
+                    dnssup = dns
+                else:
+                    dnsinf = dns
+            if i == 0:
+                dns_xs = dnssup
+                dns_xi = dnsinf
+            else:
+                dns_ys = dnssup
+                dns_yi = dnsinf
+            if ierr == -1:
+                dns_xs = -1
+                dns_xi = -1
+                dns_ys = -1
+                dns_yi = -1
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 7:\n")
-    algo_elu.write("*****************************:\n")
-    Mfy = 1e5
-    Nxx = 1e5
-    M = Mfy - Nxx*(d-h/2)
-    mu = M/(d**2*sigm_c)
-    alpha = 1-sqrt(1-2*mu)
-    z = d*(1-alpha/2)
-    Asxs = M/(z*sigm_s)+Nxx/sigm_s
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    algo_elu.write("pivot %s\n"% pivot)
-    algo_elu.write("M = %f\n"% M)
-    algo_elu.write("mu = %f\n"% mu)
-    algo_elu.write("alpha = %f\n"% alpha)
-    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
-    algo_elu.write("z = %f\n"% z)
-    Dref_elu.append([0,Asxs,0,0,0])
-    M = Mfy -Nxx*(d-h/2)
-    mu = n*M/(d**2*sigm_s_els)
-    coeff = [1, -3, -6*mu,+6*mu]
-    sol = np.roots(coeff)
-    alpha = min(abs(sol))
-    Asxs = M/(sigm_s_els*d*(1-alpha/3))+Nxx/sigm_s_els
-    Dref_els.append([0,Asxs,0,0])
+        print conf, " ETAT CAFELU : ", ETAT, " DNS_XI: ", dns_xi, " DNS_XS: ", dns_xs, " DNS_YI: ", dns_yi, " DNS_YS: ", dns_ys
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 8:\n")
-    algo_elu.write("*****************************:\n")
-    Mfy = 1e5
-    Nxx = 2e6
-    M = Mfy - Nxx*(d-h/2)
-    mu = M/(d**2*sigm_c)
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    algo_elu.write("pivot %s\n"% pivot)
-    algo_elu.write("mu = %f\n"% mu)
-    Asxs = M/((d-c)*sigm_s)+Nxx/sigm_s
-    Asxi = -M/((d-c)*sigm_s)
-    algo_elu.write("M = %f\n"% M)
-    Dref_elu.append([Asxi,Asxs,0,0,0.0])
-    Asxs = M/((d-c)*sigm_s_els)+Nxx/sigm_s_els
-    Asxi = -M/((d-c)*sigm_s_els)
-    Dref_els.append([Asxi,Asxs,0,0])
+        # Calcul aciers d'effort trnahcant à l'ELS :
+        dnstra = 0
+        if codififcation == "UTIL":
+            ETAT = "DNSTRA NON CALCULE"
+            dnstra = 0.
+        if codififcation == "BAEL91":
+            ETAT = "DNSTRA NON CALCULE"
+            dnstra = 0.
+        elif codififcation in ["EC2","EC2_D"]:
+            nu_1 = min(0.6,max(0.9-(CF['FCK']/(200.*unite)),0.5))
+            if CF['FCK'] <= 50.*unite:
+                fctm = 0.3*(CF['FCK']**(2./3.))
+            else:
+                fctm = 2.12*math.log(1.+((CF['FCK']+8.*unite)/10.))
+            if CF["VALO_COMP"] == 'NON':
+                sigma_cp = 0.
+            else:
+                sigma_cp = -effn_fac/DG["ht"]
+            ratio = sigma_cp/CF["SIGC_ELS"]
+            if ratio <= 0.:
+                alpha_cw = 1.
+            elif ratio < 0.25:
+                alpha_cw = 1.+ratio
+            elif ratio < 0.5:
+                alpha_cw = 1.25
+            else:
+                alpha_cw = 2.5*(1.-ratio)
+            if effm >= 0: z = 0.9*(DG["ht"]-CF["C_INF"])
+            if effm < 0: z = 0.9*(DG["ht"]-CF["C_SUP"])
+            if sigma_cp >= 0.:
+                cotheta_0 = 1.2+0.2*(sigma_cp/fctm)
+            else:
+                cotheta_0 = max(1.,1.2+0.9*(sigma_cp/fctm))
+            X = efft/(alpha_cw*z*nu_1*CF["SIGC_ELS"])
+            Xmin = cotheta_0/(1.+(cotheta_0**2))
+            if X <= Xmin:
+                ETAT = 'PARTICIPATION DU BETON AU CISAILLEMENT'
+                if sigma_cp > 0.: 
+                    Vfd = 0.068*z*(1.-(cotheta_0/4.))*CF["SIGC_ELS"]
+                else:
+                    Vfd = 0.068*z*(1.-(0.36/cotheta_0))*CF["SIGC_ELS"]
+            else:
+                ETAT = 'BETON TROP CISAILLE'
+                dnstra = -1.
+                Vfd = -1.
+            if Vfd != -1. and efft > Vfd:
+                dnstra = (efft-Vfd)/(CF["SIGS_ELS"]*z*cotheta_0)
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 9:\n")
-    algo_elu.write("*****************************:\n")
-    Mfy = 1e5
-    Mfx = -7.5e4
-    mu = abs(Mfx)/(d**2*sigm_c)
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    algo_elu.write("pivot %s\n"% pivot)
-    alpha = 1-sqrt(1-2*mu)
-    z = d*(1-alpha/2)
-    Asyi = abs(Mfx)/(z*sigm_s)
-    algo_elu.write("M = %f\n"% Mfx)
-    algo_elu.write("mu = %f\n"% mu)
-    algo_elu.write("alpha = %f\n"% alpha)
-    algo_elu.write("z = %f\n"% z)
-    algo_elu.write("Asyi = %f\n"% Asyi)
-    mu = abs(Mfy)/(d**2*sigm_c)
-    alpha = 1-sqrt(1-2*mu)
-    z = d*(1-alpha/2)
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    algo_elu.write("pivot %s\n"% pivot)
-    algo_elu.write("M = %f\n"% Mfy)
-    algo_elu.write("mu = %f\n"% mu)
-    algo_elu.write("alpha = %f\n"% alpha)
-    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
-    algo_elu.write("z = %f\n"% z)
-    Asxs = abs(Mfy)/(z*sigm_s)
-    algo_elu.write("Asxs = %f\n"% Asxs)
-    Dref_elu.append([0,Asxs,Asyi,0,0])
+        dnsvol = CF["RHO_ACIER"]*((dns_xs+dns_xi+dns_ys+dns_yi)+dnstra*DG["ht"])/DG["ht"]
+        reinf = CF["ALPHA_REINF"]*dnsvol/CF["RHO_CRIT"]
+        shear = CF["ALPHA_SHEAR"]*dnstra/CF["DNSTRA_CRIT"]
+        stirr = CF["ALPHA_STIRRUPS"]*dnstra*(DG["ht"]-CF["C_INF"]-CF["C_SUP"])/(CF["DNSTRA_CRIT"]*CF["L_CRIT"])
+        construc = (reinf+shear+stirr)/(CF["ALPHA_REINF"]+CF["ALPHA_SHEAR"]+CF["ALPHA_STIRRUPS"])
 
-    mu = n*abs(Mfx)/(d**2 *sigm_s_els)
-    coeff = [1, -3, -6*mu,+6*mu]
-    sol = np.roots(coeff)
-    alpha = min(abs(sol))
-    Asyi = abs(Mfx)/(sigm_s_els*d*(1-alpha/3))
-    mu = n*Mfy/(d**2 *sigm_s_els)
-    coeff = [1, -3, -6*mu,+6*mu]
-    sol = np.roots(coeff)
-    alpha = min(abs(sol))
-    Asxs = Mfy /(sigm_s_els*d*(1-alpha/3))
-    Dref_els.append([0,Asxs,Asyi,0])
+        #print 'lol', efft,Vfd,CF["SIGS_ELS"],z,cotheta_0
+        print conf, " ETAT CFTELS : ", ETAT, " DNSTRA = ", dnstra, " DNSVOL: ", dnsvol, " CONSTRUC: ", construc
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 10:\n")
-    algo_elu.write("*****************************:\n")
-    Mfx = M = -150e3
-    mu = abs(Mfx)/(d**2*sigm_c)
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    alpha = 1-sqrt(1-2*mu)
-    z = d*(1-alpha/2)
-    eps_a = eps_b * (1-alpha)/alpha
-    Asyi = abs(Mfx)/(z*sigm_s)
-    algo_elu.write("pivot %s\n"% pivot)
-    algo_elu.write("M = %f\n"% M)
-    algo_elu.write("mu = %f\n"% mu)
-    algo_elu.write("alpha = %f\n"% alpha)
-    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
-    algo_elu.write("z = %f\n"% z)
-    Dref_elu.append([0,0,Asyi,0,0])
 
-    ylim = d*(n*sigm_c_els)/(n*sigm_c_els+sigm_s_els)
-    Mfx = 100e3
-    Mlim = 0.5*sigm_c_els*ylim*(d-ylim/3)
-    mu = n*Mfx/(d**2 *sigm_s_els)
-    coeff = [1, -3, -6*mu,+6*mu]
-    sol = np.roots(coeff)
-    alpha = min(abs(sol))
-    Asyi = Mfx /(sigm_s_els*d*(1-alpha/3))
-    Dref_els.append([0,0,Asyi,0])
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 11:\n")
-    algo_elu.write("*****************************:\n")
-    Mfx = -260e3
-    if codification == "BAEL":
-        Mfx = -220e3
-    mu = abs(Mfx)/(d**2*sigm_c)
-    pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
-    alpha = 1-sqrt(1-2*mu)
-    z = d*(1-alpha/2)
-    eps_a = lambd*eps_b * (1-alpha/lambd)/alpha
-    Asyi = abs(Mfx)/(z*E_s*eps_a)
-    Asyi = abs(Mfx)/(z*sigm_s)
-    algo_elu.write("pivot %s\n"% pivot)
-    algo_elu.write("M = %f\n"% Mfx)
-    algo_elu.write("mu = %f\n"% mu)
-    algo_elu.write("alpha = %f\n"% alpha)
-    algo_elu.write("alpha/lambd = %f\n"% (alpha/lambd))
-    algo_elu.write("esp_a = %f\n"% eps_a)
-    algo_elu.write("E_s*eps_a = %f\n"% (E_s*eps_a))
-    algo_elu.write("z = %f\n"% z)
-    Dref_elu.append([0,0,Asyi,0,0])
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 12:\n")
-    algo_elu.write("*****************************:\n")
-    Dref_elu.append([-1.0,-1.0,-1.0,-1.0,0.0])
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 13:\n")
-    algo_elu.write("*****************************:\n")
-    Nxx = -1.5e6 #pivot C
-    Qy = 8e5
-    Qx = 0.0
-    Q = sqrt(Qy**2+Qx**2)
-    if codification == "EC2":
-        Q = abs(Qy)
-        v1 = 0.6*( 1 -fcj/250.)
-        algo_elu.write("v1 = %f"% v1)
-        sigm_cp = Nxx /h
-        algo_elu.write("sigm_cp = %f\n"% sigm_cp)
-        algo_elu.write("(sigm_cp/sigm_c) = %f\n"% ((sigm_cp/sigm_c)))
-        alpha_cw = 1.25
-        algo_elu.write("alpha_cw = %f\n"% alpha_cw)
-        X = Q / (alpha_cw*v1*sigm_c*zd)
-        algo_elu.write("X = %.6f\n"% X)
-        if X >= 0.3448:
-            cot = (1+sqrt(1-4*X**2))/(2*X)
-            algo_elu.write("cot = %f\n"% cot)
-        elif X<=0.3448:
-            cot = 2.5
-        Ast = Q/(sigm_s*zd*cot)
-    else:
-        Ast = sqrt(Qy**2+Qx**2)/(zd*sigm_s)
-    algo_elu.write("Ast = %.8f\n"% Ast)
-    Dref_elu.append([-1.0,-1.0,-1.0,-1.0,Ast])
 
-    algo_elu.write("*****************************:\n")
-    algo_elu.write("conf 14:\n")
-    algo_elu.write("*****************************:\n")
-    Nxx = -2.5e6 #pivot C
-    Qy = 1e5
-    Qx = 0.0
-    Q = sqrt(Qy**2+Qx**2)
-    if codification == "EC2":
-        Q = abs(Qy)
-        v1 = 0.6*( 1 -fcj/250.)
-        algo_elu.write("v1 = %f"% v1)
-        sigm_cp = -Nxx /h
-        algo_elu.write("sigm_cp = %f\n"% sigm_cp)
-        algo_elu.write("(sigm_cp/sigm_c) = %f\n"% ((sigm_cp/sigm_c)))
-        alpha_cw = 2.5*(1-sigm_cp/sigm_c)
-        algo_elu.write("alpha_cw = %f\n"% alpha_cw)
-        X = Q / (alpha_cw*v1*sigm_c*zd)
-        algo_elu.write("X = %.6f\n"% X)
-        if X >= 0.3448:
-            cot = (1+sqrt(1-4*X**2))/(2*X)
-            algo_elu.write("cot = %f\n"% cot)
-        elif X<=0.3448:
-            cot = 2.5
-        Ast = Q/(sigm_s*zd*cot)
-    else:
-        Ast = sqrt(Qy**2+Qx**2)/(zd*sigm_s)
-    algo_elu.write("Ast = %.8f\n"% Ast)
-    Dref_elu.append([-1.0,-1.0,-1.0,-1.0,Ast])
 
-    csv_elu = os.path.join(CODE_PATH,"ref_elu_"+codification+".csv")
-    fich = open(csv_elu, "w")
-    fich.write(codification+" ELU\n")
-    fich.write("[Asxs, Asxi, Asys, Asyi, Ast]\n")
-    for j,listi in enumerate(Dref_elu):
-        text = "%s,\n"% str(listi)
-        fich.write(text)
-    fich.close()
-
-    csv_els = os.path.join(CODE_PATH,"ref_els_"+codification+".csv")
-    fich = open(csv_els, "w")
-    fich.write(codification+" ELS\n")
-    fich.write("[Asxs, Asxi, Asys, Asyi]\n")
-    for j,listi in enumerate(Dref_els):
-        text = "%s,\n"% str(listi)
-        fich.write(text)
-    fich.close()
-    Mfx = mu_ab *(d**2*sigm_c)
-    algo_elu.write("Mfab < %.6f pour etre en pivot A entre A et B\n"% Mfx)
-    algo_elu.close()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,8 +23,8 @@
 interface
     subroutine cakg2d(optioz, result, modele, depla, theta,&
                       mate, lischa, symech, fondf, noeud, &
-                      time, iord, nbprup, noprup, lmelas, &
-                      nomcas, lmoda, puls, compor)
+                      time, iord, nbprup, noprup, &
+                      lmoda, puls, compor)
         character(len=16) :: optioz
         character(len=8) :: result
         character(len=8) :: modele
@@ -39,8 +39,6 @@ interface
         integer :: iord
         integer :: nbprup
         character(len=16) :: noprup(*)
-        aster_logical :: lmelas
-        character(len=16) :: nomcas
         aster_logical :: lmoda
         real(kind=8) :: puls
         character(len=24) :: compor

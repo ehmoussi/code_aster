@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,12 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cgveth(typfis, cas)
+subroutine cgveth(typfis, ndim)
     implicit none
 #include "asterfort/utmess.h"
 !
     character(len=8) :: typfis
-    character(len=16) :: cas
+    integer :: ndim
 !
 ! person_in_charge: samuel.geniaut at edf.fr
 !
@@ -32,14 +32,14 @@ subroutine cgveth(typfis, cas)
 !  IN :
 !    TYPFIS : TYPE DE LA SD DECRIVANT LE FOND DE FISSURE
 !            ('THETA' OU 'FONDIFSS' OU 'FISSURE')
-!    CAS    : '2D', '3D LOCAL' OU '3D GLOBAL'
+!    NDIM    : DIMENSION DU CALCUL
 ! ======================================================================
 !
 !     SI LE CHAMP THETA EST FOURNI
     if (typfis .eq. 'THETA') then
 !
 !       ON NE DOIT PAS ETRE DANS UN CALCUL 3D LOCAL
-        if (cas .eq. '3D_LOCAL') then
+        if (ndim .eq. 3) then
             call utmess('F', 'RUPTURE0_57')
         endif
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,8 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine hujci1(crit, mater, deps, sigd, i1f,&
+    subroutine hujci1(mater, deps, sigd, i1f,&
                       tract, iret)
-        real(kind=8) :: crit(*)
         real(kind=8) :: mater(22, 2)
         real(kind=8) :: deps(6)
         real(kind=8) :: sigd(6)

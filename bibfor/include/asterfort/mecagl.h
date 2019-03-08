@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 !
 !
-! aslint: disable=W1504
 #include "asterf_types.h"
 !
 interface
@@ -27,7 +26,7 @@ interface
                       nnoff, iord, ndeg, liss, &
                       milieu, ndimte, extim, &
                       time, nbprup, noprup, chvite, chacce, &
-                      lmelas, nomcas, kcalc, fonoeu, lincr, coor, &
+                      kcalc, fonoeu, lincr, coor, &
                       norfon, connex)
         character(len=16) :: option
         character(len=8)  :: result
@@ -52,8 +51,6 @@ interface
         character(len=16) :: noprup(*)
         character(len=24) :: chvite
         character(len=24) :: chacce
-        aster_logical     :: lmelas
-        character(len=16) :: nomcas
         character(len=8)  :: kcalc
         character(len=24) :: fonoeu
         integer           :: coor

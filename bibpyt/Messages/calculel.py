@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -445,24 +445,11 @@ Risques et conseils :
    z = 0.9(h-c) est négatif ou nul (l'utilisateur a fourni des valeurs d'enrobage incompatibles avec l'épaisseur de l'élément)
 """),
 
-    73 : _(u"""
- Erreur utilisateur commande CALC_FERRAILLAGE / CODIFICATION = UTILISATEUR :
-   Certains mots clés de CALC_FERRAILLAGE / AFFE sont obligatoires :
-     pour TYPE_COMB = 'ELU' :
-        PIVA, PIVB et ES
-        Attention ES doit être supérieur à 0
-     pour TYPE_COMB = 'ELS' :
-        CEQUI
-"""),
-
     74 : _(u"""
- Erreur utilisateur commande CALC_FERRAILLAGE / CODIFICATION = BAEL91 :
-   Certains mots clés de CALC_FERRAILLAGE / AFFE sont obligatoires :
-     pour TYPE_COMB = 'ELU' :
-        FE, FCJ, GAMMA_S, GAMMA_C et E_S
-        Attention E_S doit être supérieur à 0
-     pour TYPE_COMB = 'ELS' :
-        SIGS_ELS, SIGC_ELS et N
+ Erreur utilisateur commande CALC_FERRAILLAGE / TYPE_COMB = ELU :
+   Certains mots-clé de CALC_FERRAILLAGE / AFFE sont obligatoires pour un calcul à l'ELU :
+     pour CODIFICATION = 'BAEL91' : FE, FCJ, GAMMA_S et GAMMA_C
+     pour CODIFICATION = 'EC2' : FYK, FCK, GAMMA_S et GAMMA_C
 """),
 
     75 : _(u"""
@@ -500,29 +487,24 @@ Risques et conseils :
 """),
 
     80 : _(u"""
- Erreur commande CALC_FERRAILLAGE :
-   ELS : On n'a pas réussi à calculer la carte de ferraillage sur un élément.
-   Raison : dépassement de la contrainte de compression maximale du béton.
-   Conseil : on suggère soit de changer la classe de béton soit de revoir le coffrage.
+ Commande CALC_FERRAILLAGE :
+   Le calcul des aciers d'efforts tranchants ne sont pas calculés à l'ELS pour la codifications 'BAEL91'
 """),
 
     81 : _(u"""
  Commande CALC_FERRAILLAGE :
-   ELU : On n'a pas réussi à calculer la densité de ferraillage sur l'élément.
+   On n'a pas réussi à calculer la densité de ferraillage sur l'élément.
    Pour une des facettes de Capra Maury au moins, le béton est trop cisaillé.
-   La densité de ferraillage transversale est fixé à -1 pour l'élément.
+   La densité d'acier d'effort tranchant est fixé à -1 pour l'élément.
    Conseil : on suggère soit de changer la classe de béton soit de revoir le coffrage.
 
 """),
 
     82 : _(u"""
- Erreur utilisateur commande CALC_FERRAILLAGE / CODIFICATION = EC2 :
-   Certains mots clés de CALC_FERRAILLAGE / AFFE sont obligatoires :
-     pour TYPE_COMB = 'ELU' :
-        FCK, FYK, GAMMA_S, GAMMA_C et E_S
-        Attention E_S doit être supérieur à 0
-     pour TYPE_COMB = 'ELS' :
-        SIGS_ELS, SIGC_ELS et ALPHA_E
+ Erreur utilisateur commande CALC_FERRAILLAGE / TYPE_COMB = ELU :
+   Certains mots-clé de CALC_FERRAILLAGE / AFFE sont obligatoires pour un calcul à l'ELU :
+     pour CODIFICATION = 'BAEL91' : N, SIGS_ELS et SIGC_ELS
+     pour CODIFICATION = 'EC2' : ALPHA_E, SIGS_ELS, SIGC_ELS et FCK
 """),
 
     83 : _(u"""
@@ -570,6 +552,12 @@ Risques et conseils :
     88 : _(u"""
  Commande CALC_FERRAILLAGE : ATTENTION un champ de ferraillage existe déjà au numéro d'ordre %(i1)d du résultat %(k1)s
    Ce champ de ferraillage sera écrasé !
+"""),
+
+    89 : _(u"""
+ Commande CALC_FERRAILLAGE : ATTENTION la masse volumique des acier n'est pas renseignée ou est négative !
+   Conséquence : le calcul de la densité volumique d'armature ne sera pas réalisé.
+   Renseignez le mot-clé RHO_ACIER pour que le calcul de la densité volumique d'armature soit réalisé.
 """),
 
     90 : _(u"""
