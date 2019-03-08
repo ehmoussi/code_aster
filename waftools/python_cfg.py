@@ -64,8 +64,8 @@ def configure_pythonpath(self):
     path = Utils.to_list(self.env['PYTHONPATH'])
     system_path = _get_default_pythonpath(self.environ.get("PYTHON",
                                                            sys.executable))
-    for i in system_path:
-        if i in sys.path:
+    for i in sys.path:
+        if i in system_path:
             continue
         if osp.basename(i).startswith('.waf'):
             continue
