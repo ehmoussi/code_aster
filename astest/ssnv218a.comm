@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='OUI',
-      IGNORE_ALARM=('RUPTURE0_91','RUPTURE1_42', 'RUPTURE1_47'),
+      IGNORE_ALARM=('RUPTURE1_42', 'RUPTURE1_47'),
 );
 
 
@@ -189,7 +189,6 @@ FONFISS=DEFI_FOND_FISS(MAILLAGE=MA,
                                     GROUP_NO_ORIG='PFONI',),
                        SYME='OUI',
                        NORMALE=(0.,0.,1.,),
-
                        );
 l_copeaux1 = ('CO_1_1','CO_1_2')
 l_copeaux4 = ('CO_4_1','CO_4_2')
@@ -205,7 +204,6 @@ gtheta = CALC_G(COMPORTEMENT=_F(
                              ),
                 THETA=_F(R_INF=0.25,
                          R_SUP=0.5,
-                         MODULE=1.0,
                          FOND_FISS=FONFISS,),
                          RESULTAT=RESU,
                          LIST_INST=L_INS_GP,

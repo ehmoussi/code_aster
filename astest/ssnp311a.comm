@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -169,6 +169,8 @@ CHAMDEPL=CALC_CHAMP(reuse=CHAMDEPL,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=('VARI_
 #
 FOND=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                            FOND_FISS=_F( GROUP_NO = ('P0',)),
+                            LEVRE_SUP=_F(GROUP_MA = 'LEVR_SUP',),
+                            LEVRE_INF=_F(GROUP_MA = 'LEVR_INF',),
                       )
 
 #
@@ -179,18 +181,15 @@ FOND=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
 # comportement de STAT_NON_LINE (VMIS_ISOT_TRAC).
 # Ceci est du au fait que l'on veut calculer G en supposant
 # que le chargement est monotone
-# proportionnel. L'utilisation de la loi VMIS_ISOT_TRAC dans
-# CALC_G aurait conduit a
-# calculer le parametre GTP (voir doc U2.82.03).
+# proportionnel.
 
 G220=CALC_G(        RESULTAT=CHAMDEPL,
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     THETA=_F(
                              R_INF=1.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=2.00,
-                             DIRECTION=(0., -1., 0.,)),
+                            ),
                     NUME_ORDRE=22
               )
 
@@ -199,9 +198,8 @@ G360=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=1.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=2.00,
-                             DIRECTION=(0., -1., 0.,)),
+                            ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=36
               )
@@ -211,9 +209,8 @@ G500=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=1.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=2.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=50
               )
@@ -223,9 +220,8 @@ G640=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=1.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=2.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=64
               )
@@ -235,9 +231,8 @@ G221=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=2.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=3.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=22
               )
@@ -247,9 +242,8 @@ G361=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=2.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=3.00,
-                             DIRECTION=(0., -1., 0.,)),
+                            ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=36
               )
@@ -259,9 +253,8 @@ G501=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=2.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=3.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=50
               )
@@ -271,9 +264,8 @@ G641=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=2.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=3.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=64
               )
@@ -283,9 +275,8 @@ G222=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=3.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=4.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=22
               )
@@ -295,9 +286,8 @@ G362=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=3.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=4.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=36
               )
@@ -307,9 +297,8 @@ G502=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=3.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=4.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=50
               )
@@ -319,9 +308,8 @@ G642=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=3.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=4.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=64
               )
@@ -331,9 +319,8 @@ G223=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=4.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=5.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                   NUME_ORDRE=22
               )
@@ -343,9 +330,8 @@ G363=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=4.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=5.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=36
               )
@@ -355,9 +341,8 @@ G503=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=4.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=5.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=50
               )
@@ -367,9 +352,8 @@ G643=CALC_G(        RESULTAT=CHAMDEPL,
                     THETA=_F(
                              R_INF=4.00,
                              FOND_FISS=FOND,
-                             MODULE=1.,
                              R_SUP=5.00,
-                             DIRECTION=(0., -1., 0.,)),
+                             ),
                     COMPORTEMENT=_F(  RELATION = 'ELAS_VMIS_TRAC'),
                     NUME_ORDRE=64
               )

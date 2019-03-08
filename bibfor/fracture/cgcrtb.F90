@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
+subroutine cgcrtb(table, option, ndim, typfis, nxpara,&
                   lmoda, nbpara, linopa, litypa)
 !
     implicit none
@@ -26,11 +26,11 @@ subroutine cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
 #include "asterfort/tbcrsd.h"
 #include "asterfort/cgajpa.h"
 #include "asterfort/assert.h"
-    integer :: nbpara, nxpara
-    aster_logical :: lmelas, lmoda
+    integer :: nbpara, nxpara, ndim
+    aster_logical :: lmoda
     character(len=*) :: litypa(nxpara), linopa(nxpara)
     character(len=8) :: table, typfis
-    character(len=16) :: option, cas
+    character(len=16) :: option
 !
 ! person_in_charge: samuel.geniaut at edf.fr
 !
@@ -43,9 +43,7 @@ subroutine cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
 !  IN :
 !     TABLE : NOM DE LA TABLE
 !     OPTION : OPTION DE CALCUL
-!     LMELAS : .TRUE.  SI TYPE SD RESULTAT = MULT_ELAS
-!              .FALSE. SINON
-!     CAS    : '2D', '3D_LOCAL'  OU '3D_GLOBAL'
+!     NDIM    : DIMENSION DU CALCUL : 2 OU 3
 !     TYPFIS : TYPE D'OBJET POUR DECRIRE LE FOND DE FISSURE
 !              'FONDFISS' OU 'FISSURE' OU 'THETA'
 !     NXPARA : NOMBRE MAXI DE PARAMETRES DE LA TABLE
@@ -78,16 +76,13 @@ subroutine cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
 !   --------------------
 !   1.1 FOND DE FISSURE
 !   ---------------------      
-        if ((typfis.ne.'THETA').and.(cas.ne.'3D_GLOBAL')) then
+        if (typfis.ne.'THETA') then
             call cgajpa('NUME_FOND', 'I', nbpara, linopa, litypa, nxpara)
         endif    
 !   --------------------    
 !   1.2 TEMPOREL/CHARGEMENT
 !   ---------------------           
-        if (lmelas) then
-            call cgajpa('NUME_CAS', 'I', nbpara, linopa, litypa, nxpara)
-            call cgajpa('NOM_CAS', 'K16', nbpara, linopa, litypa, nxpara)           
-        elseif (lmoda) then
+        if (lmoda) then
             call cgajpa('NUME_MODE', 'I', nbpara, linopa, litypa, nxpara)   
         else
             call cgajpa('NUME_ORDRE', 'I', nbpara, linopa, litypa, nxpara)
@@ -96,14 +91,14 @@ subroutine cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
 !   --------------------    
 !   1.3 POINT DU FOND DE FISSURE
 !   ---------------------    
-        if ((cas.ne.'3D_GLOBAL').and.(typfis.ne.'THETA')) then
+        if (typfis.ne.'THETA') then
             if (typfis.eq.'FONDFISS') then
                 call cgajpa('NOEUD', 'K8', nbpara, linopa, litypa, nxpara)           
             endif
 !            if (typfis.ne.'THETA') then
             call cgajpa('COOR_X', 'R', nbpara, linopa, litypa, nxpara)
             call cgajpa('COOR_Y', 'R', nbpara, linopa, litypa, nxpara)  
-            if (cas.eq.'3D_LOCAL') then
+            if (ndim.eq.3) then
                 call cgajpa('COOR_Z', 'R', nbpara, linopa, litypa, nxpara)       
                 call cgajpa('NUM_PT', 'I', nbpara, linopa, litypa, nxpara)
                 call cgajpa('ABSC_CURV', 'R', nbpara, linopa, litypa, nxpara)
@@ -124,7 +119,7 @@ subroutine cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
             call cgajpa('K1', 'R', nbpara, linopa, litypa, nxpara)
             call cgajpa('K2', 'R', nbpara, linopa, litypa, nxpara)
             call cgajpa('G_IRWIN', 'R', nbpara, linopa, litypa, nxpara)
-            if (cas.eq.'3D_LOCAL') then
+            if (ndim.eq.3) then
                 call cgajpa('K3', 'R', nbpara, linopa, litypa, nxpara)
             endif
         endif
@@ -136,17 +131,11 @@ subroutine cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
         nbpara = 14
         linopa(1) = 'NUME_FOND'
         litypa(1) = 'I'
-        if (lmelas) then
-            linopa(2) = 'NUME_CAS'
-            litypa(2) = 'I'
-            linopa(3) = 'NOM_CAS'
-            litypa(3) = 'K16'
-        else
-            linopa(2) = 'NUME_ORDRE'
-            litypa(2) = 'I'
-            linopa(3) = 'INST'
-            litypa(3) = 'R'
-        endif
+        linopa(2) = 'NUME_ORDRE'
+        litypa(2) = 'I'
+        linopa(3) = 'INST'
+        litypa(3) = 'R'
+
         if (typfis.eq.'FONDFISS') then
             linopa(4) = 'NOEUD'
             litypa(4) = 'K8'
@@ -173,13 +162,8 @@ subroutine cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
         litypa(14) = 'R'
     elseif ((option.eq.'G_BILI').or.(option.eq.'G_MAX')) then
         nbpara = 6
-        if (lmelas) then
-            linopa(1) = 'NOM_CAS'
-            litypa(1) = 'K16'
-        else
-            linopa(1) = 'INST'
-            litypa(1) = 'R'
-        endif
+        linopa(1) = 'INST'
+        litypa(1) = 'R'
         linopa(2) = 'NUME_CMP_I'
         litypa(2) = 'I'
         linopa(3) = 'NUME_CMP_J'
@@ -215,7 +199,7 @@ subroutine cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
         write(6,*)'NO_PARA, NOM_PARA, TYP_PARA'
         do 10 i = 1, nbpara
             write(6,*)i, linopa(i), litypa(i)
-        10 enddo
+        10 continue
     endif
 
 end subroutine

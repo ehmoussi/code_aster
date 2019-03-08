@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -189,41 +189,6 @@ class MECPTR3_XH1(Element):
                      (SP.PPRESSR, EPRESNO), (SP.PROTATR, LC.CROTATR),
                      (SP.PTHETAR, DDL_MECC), (OP.CALC_G.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), ),
-            para_out=((SP.PGTHETA, LC.EGTHETA), ),
-        ),
-
-        OP.CALC_GTP(te=288,
-            para_in=((OP.CALC_GTP.PAINTER, LC.E40NEUTR), (OP.CALC_GTP.PBASECO, LC.E32NEUTR),
-                     (OP.CALC_GTP.PBASLOR, LC.N6NEUT_R), (OP.CALC_GTP.PCFACE, E14NEUTI),
-                     (OP.CALC_GTP.PCNSETO, LC.E72NEUI), (OP.CALC_GTP.PCOMPOR, LC.CCOMPOR),
-                     (SP.PDEPLAR, DDL_MECA), (SP.PFRVOLU, NFORCER),
-                     (SP.PGEOMER, NGEOMER), (OP.CALC_GTP.PHEAVTO, E24NEUI),
-                     (OP.CALC_GTP.PHEA_NO, LC.N5NEUTI), (OP.CALC_GTP.PLONCHA, LC.E10NEUTI),
-                     (OP.CALC_GTP.PLONGCO, LC.E3NEUTI), (OP.CALC_GTP.PLSN, LC.N1NEUT_R),
-                     (OP.CALC_GTP.PLST, LC.N1NEUT_R), (SP.PMATERC, LC.CMATERC),
-                     (SP.PPESANR, LC.CPESANR), (OP.CALC_GTP.PPINTER, E16NEUTR),
-                     (OP.CALC_GTP.PPINTTO, LC.E24NEUTR), (OP.CALC_GTP.PPMILTO, LC.E22NEUTR),
-                     (SP.PPRESSR, EPRESNO), (SP.PROTATR, LC.CROTATR),
-                     (SP.PTHETAR, DDL_MECC), (OP.CALC_GTP.PVARCPR, LC.ZVARCPG),
-                     (SP.PVARCRR, LC.ZVARCPG), ),
-            para_out=((SP.PGTHETA, LC.EGTHETA), ),
-        ),
-
-        OP.CALC_GTP_F(te=288,
-            para_in=((OP.CALC_GTP_F.PAINTER, LC.E40NEUTR), (OP.CALC_GTP_F.PBASECO, LC.E32NEUTR),
-                     (OP.CALC_GTP_F.PBASLOR, LC.N6NEUT_R), (OP.CALC_GTP_F.PCFACE, E14NEUTI),
-                     (OP.CALC_GTP_F.PCNSETO, LC.E72NEUI), (OP.CALC_GTP_F.PCOMPOR, LC.CCOMPOR),
-                     (SP.PDEPLAR, DDL_MECA), (SP.PFFVOLU, CFORCEF),
-                     (SP.PGEOMER, NGEOMER), (OP.CALC_GTP_F.PHEAVTO, E24NEUI),
-                     (OP.CALC_GTP_F.PHEA_NO, LC.N5NEUTI), (OP.CALC_GTP_F.PLONCHA, LC.E10NEUTI),
-                     (OP.CALC_GTP_F.PLONGCO, LC.E3NEUTI), (OP.CALC_GTP_F.PLSN, LC.N1NEUT_R),
-                     (OP.CALC_GTP_F.PLST, LC.N1NEUT_R), (SP.PMATERC, LC.CMATERC),
-                     (SP.PPESANR, LC.CPESANR), (OP.CALC_GTP_F.PPINTER, E16NEUTR),
-                     (OP.CALC_GTP_F.PPINTTO, LC.E24NEUTR), (OP.CALC_GTP_F.PPMILTO, LC.E22NEUTR),
-                     (SP.PPRESSF, CPRESSF), (SP.PROTATR, LC.CROTATR),
-                     (SP.PTEMPSR, CTEMPSR), (SP.PTHETAR, DDL_MECC),
-                     (OP.CALC_GTP_F.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
-                     ),
             para_out=((SP.PGTHETA, LC.EGTHETA), ),
         ),
 

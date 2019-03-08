@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,14 +19,12 @@
 !
 !
 interface
-    subroutine fonno6(resu, noma, ndim, ina, nbnose,&
+    subroutine fonno6(resu, noma, ndim, &
                       iseg, nseg, noe, indr, nbnoel,&
                       vnor, vdir, basseg, vect, sens)
         integer :: ndim
         character(len=8) :: resu
         character(len=8) :: noma
-        integer :: ina
-        integer :: nbnose
         integer :: iseg
         integer :: nseg
         integer :: noe(4, 4)

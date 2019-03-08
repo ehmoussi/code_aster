@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,17 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine clcels(cequi, effm, effn, ht, enrobs, enrobi,&
-                  sigaci, sigbet, dnsinf, dnssup, sigmab,&
-                  ierr)
+subroutine cafels(cequi, effm, effn, ht, enrobs, enrobi, sigaci,&
+                  sigbet, uc, dnsinf, dnssup, ierr)
 !______________________________________________________________________
 !
-!     CC_ELS
+!     CAFELS
 !
-!      DETERMINATION DES ARMATURES EN FLEXION COMPOSEE, CONDITIONS ELS
+!      CALCUL DES ACIERS EN FLEXION COMPOSEE A L'ELS
 !
-!      I TYPCO   CODIFICATION UTILISEE
-!                (0 = UTILISATEUR, 1 = BAEL91, 2 = EC2)
 !      I CEQUI   COEFFICIENT D'EQUIVALENCE ACIER/BETON
 !      I EFFM    MOMENT DE FLEXION
 !      I EFFN    EFFORT NORMAL
@@ -35,9 +32,9 @@ subroutine clcels(cequi, effm, effn, ht, enrobs, enrobi,&
 !      I ENROBI  ENROBAGE DES ARMATURES INFERIEURES
 !      I SIGACI  CONTRAINTE ADMISSIBLE DANS L'ACIER
 !      I SIGBET  CONTRAINTE ADMISSIBLE DANS LE BETON
+!
 !      O DNSINF  DENSITE DE L'ACIER INFERIEUR
 !      O DNSSUP  DENSITE DE L'ACIER SUPERIEUR
-!      O SIGMAB  CONTRAINTE DANS LE BETON
 !      O IERR    CODE RETOUR (0 = OK)
 !______________________________________________________________________
 !
@@ -55,12 +52,14 @@ subroutine clcels(cequi, effm, effn, ht, enrobs, enrobi,&
     real(kind=8) :: enrobi
     real(kind=8) :: sigaci
     real(kind=8) :: sigbet
+    integer :: uc
     real(kind=8) :: dnsinf
     real(kind=8) :: dnssup
-    real(kind=8) :: sigmab
     integer :: ierr
 !
 !
+!       COEFFICIENT LIE A L'UNITE CHOISIE (Pa OU MPa)
+    real(kind=8) :: unite_m
 !       ENROBAGE A CONSIDERER
     real(kind=8) :: enrob
 !       BRAS DE LEVIER PAR RAPPORT A LA FIBRE SUPERIEURE
@@ -95,11 +94,14 @@ subroutine clcels(cequi, effm, effn, ht, enrobs, enrobi,&
     dnsinf = 0d0
     dnssup = 0d0
     dns = 0.d0
-!   INITIALISATION DE LA CONTRAINTE DANS LE BETON
-    sigmab = 0.d0
 !
 !   CALCULS INTERMEDIAIRES
 !
+    if (uc.eq.0) then
+        unite_m = 1.
+    else if (uc.eq.1) then
+        unite_m = 1.e-3
+    endif
     if (effm.ge.0.) then
         enrob = enrobi
     else
@@ -108,10 +110,10 @@ subroutine clcels(cequi, effm, effn, ht, enrobs, enrobi,&
     d = ht - enrob
     hu = ht/2 - enrob
     alpha_ab = cequi*sigbet/(cequi*sigbet+sigaci)
-    mu_ab = 0.5*alpha_ab*(1-alpha_ab/3.d0)
+    mu_ab = 0.5*alpha_ab*(1.d0-alpha_ab/3.d0)
     mu_bc = 1.d0/3.d0
     m_inf = abs(effm) - effn*hu
-    mu = m_inf/(d**2.d0*sigbet)
+    mu = m_inf/(d**2.d0*sigbet*unite_m)
 !
 !   CALCUL DES DENSITES DE FERRAILLAGE A L'ELS
 !
@@ -130,7 +132,6 @@ subroutine clcels(cequi, effm, effn, ht, enrobs, enrobi,&
             if (dns.le.0.d0) then
                 dns = 0.d0
             endif
-            sigmab = sigaci*(alpha)/(cequi*(1.d0-alpha))
         else if (mu.lt.mu_bc) then
 !           PIVOT B : SECTION PARTIELLEMENT TENDUE
             alpha = (3.d0-sqrt(3.d0*(3.d0-8.d0*mu)))/2.d0
@@ -139,26 +140,25 @@ subroutine clcels(cequi, effm, effn, ht, enrobs, enrobi,&
             if (dns.le.0.d0) then
                 dns = 0.d0
             endif
-            sigmab = sigaci*(1.d0-alpha)/(cequi*alpha)
-            force = effn/(3.d0/4.d0 - 2.d0*effm/(2.d0*ht*effn))
+!           force = effn/(3.d0/4.d0 - 2.d0*effm/(2.d0*ht*effn))
+            force = (8.d0*ht*effn**2)/(6.d0*ht*effn-12.d0*effm)
             if (force.lt.-1.d0*sigbet*ht) then
 !               PIVOT B : SECTION TROP COMPRIMEE
                 ierr = 1050
-                goto 9999
+                goto 996
             endif
         else
 !           PIVOT C
             ierr = 1060
             dnssup = 0.0d0
             dnsinf = 0.0d0
-            sigmab = (-effn+6.d0*abs(effm)/ht)/ht
-            force = effn/(1.d0+6.d0*effm/(effn*ht))
+            force = (ht*effn**2)/(ht*effn+6.d0*effm)
             if (force.lt.-1.d0*sigbet*ht) then
 !               PIVOT C : SECTION TROP COMPRIMEE
                 ierr = 1070
-                goto 9999
+                goto 996
             else
-                goto 9999
+                goto 996
             endif
         endif
         if (effm.ge.0.d0) then 
@@ -168,5 +168,5 @@ subroutine clcels(cequi, effm, effn, ht, enrobs, enrobi,&
         endif
     endif
 !
-9999  continue
+996  continue
 end subroutine

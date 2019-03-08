@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,9 +47,6 @@ character(len=*), intent(in) :: option
     else if (option .eq. 'VAEX_ELGA') then
         vali = 14
         valk = "OPTION='VAEX_ELGA'"
-    else if (option .eq. 'CALC_GTP') then
-        vali = 14
-        valk = "OPTION='CALC_GTP'"
     else
         goto 999
     endif

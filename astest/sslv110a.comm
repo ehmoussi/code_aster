@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 # CAS TEST SSLV110A
-# CALCUL DE G ET G LOCAL PAR LA METHODE 'THETA_LEGENDRE'
+# CALCUL DE G LOCAL PAR LA METHODE 'THETA_LEGENDRE'
 #
 # MODELISATION : ELEMENTS MECANIQUE 3D (PENTA15 ET HEXA20)
 # MAILLAGE     : ASTER
@@ -58,10 +58,8 @@ CHAMDEPL=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT,
 
 #
 #
-#    --- DEFINITION DU MODULE DE THETA ET DES RAYONS DEFINISSANT LA
-#        COURONNE PAR FONCTIONS
+#    DEFINITION DES RAYONS DEFINISSANT LA COURONNE PAR FONCTIONS
 #
-MODUF=DEFI_FONCTION(  NOM_PARA='ABSC',  VALE=( 0., 1.,     26.69, 1., ))
 
 RINF0=DEFI_FONCTION(  NOM_PARA='ABSC',  VALE=( 0., 0.,     26.69, 0., ))
 
@@ -171,64 +169,16 @@ _F( NOEUD = 'NO1259',    NOM_CMP = ('DX', 'DY', 'DZ',),
 #                           COURONNE 1
 #----------------------------------------------------------------------
 
-G0=CALC_G(  RESULTAT=CHAMDEPL,
-                       OPTION='CALC_G_GLOB',
-                        THETA=_F(
-                                 FOND_FISS=FISS1,
-                                 MODULE_FO=MODUF,
-                                 R_SUP_FO=RSUP0,
-                                 R_INF_FO=RINF0),
-    )
-                                 
-G0BIS=CALC_G(  RESULTAT=CHAMDEPL,
-                       OPTION='CALC_G_GLOB',
-                        THETA=_F(FOND_FISS=FISS1,
-                                 MODULE_FO = MODUF,
-                                 R_INF_FO = RINF0,
-                                 R_SUP_FO = RSUP0),
-             )
-
-
 GLOC0=CALC_G(   RESULTAT=CHAMDEPL,
                        THETA=_F(FOND_FISS=FISS1,
-                                MODULE_FO = MODUF,
                                 R_INF_FO = RINF0,
                                 R_SUP_FO = RSUP0),
                        LISSAGE=_F(DEGRE=7),
              )
 
-
-G0M=CALC_G(            RESULTAT=CHAMDEPL,
-                       OPTION='CALC_G_GLOB',
-                       THETA=_F(
-                                FOND_FISS=FISS1,
-                                MODULE_FO=MODUF,
-                                R_SUP_FO=RSUP0,
-                                R_INF_FO=RINF0),
-        )
-                                
-GLOC0M=CALC_G(         RESULTAT=CHAMDEPL,
-                       THETA=_F(FOND_FISS=FISS1,
-                               R_SUP_FO=RSUP0,
-                               R_INF_FO=RINF0,),
-                       LISSAGE=_F(DEGRE=7),
-                       )
-
-
 #----------------------------------------------------------------------
 #                           COURONNE 2
 #----------------------------------------------------------------------
-
-
-G1=CALC_G(     RESULTAT=CHAMDEPL,
-                       OPTION='CALC_G_GLOB',
-                     THETA=_F(
-                              FOND_FISS=FISS1,
-                              MODULE_FO=MODUF,
-                              R_SUP_FO=RSUP1,
-                              R_INF_FO=RINF1),
-        )
-            
                               
 GLOC1=CALC_G(  RESULTAT=CHAMDEPL,
                         THETA=_F(FOND_FISS=FISS1,
@@ -236,120 +186,14 @@ GLOC1=CALC_G(  RESULTAT=CHAMDEPL,
                                  R_INF_FO=RINF1,),
                         LISSAGE=_F(DEGRE=7),
                        )
-
-
-G1M=CALC_G(  RESULTAT=CHAMDEPL,
-                     OPTION='CALC_G_GLOB',
-                     THETA=_F(
-                              FOND_FISS=FISS1,
-                              MODULE_FO=MODUF,
-                              R_SUP_FO=RSUP1,
-                              R_INF_FO=RINF1),
-        )
                               
-GLOC1M=CALC_G(    RESULTAT=CHAMDEPL,
-                        THETA=_F(FOND_FISS=FISS1,
-                                 R_SUP_FO=RSUP1,
-                                 R_INF_FO=RINF1,),
-                        LISSAGE=_F(DEGRE=7),
-                     )
-
-
 #----------------------------------------------------------------------
 #                           COURONNE 3
 #----------------------------------------------------------------------
 
-
-
-G2=CALC_G(     RESULTAT=CHAMDEPL,
-                      THETA=_F(
-                               FOND_FISS=FISS1,
-                               MODULE_FO=MODUF,
-                               R_SUP_FO=RSUP2,
-                               R_INF_FO=RINF2),
-                       OPTION='CALC_G_GLOB',
-                     )
-
 GLOC2=CALC_G(  RESULTAT=CHAMDEPL,
                        THETA=_F(FOND_FISS=FISS1,R_SUP_FO=RSUP2,  R_INF_FO=RINF2),
                        LISSAGE=_F(DEGRE=7))
-
-
-G2M=CALC_G(  RESULTAT=CHAMDEPL,
-                      THETA=_F(
-                               FOND_FISS=FISS1,
-                               MODULE_FO=MODUF,
-                               R_SUP_FO=RSUP2,
-                               R_INF_FO=RINF2),
-                       OPTION='CALC_G_GLOB',
-                     )
-
-GLOC2M=CALC_G(   RESULTAT=CHAMDEPL,
-                       LISSAGE=_F(DEGRE=7),
-                       THETA=_F(FOND_FISS=FISS1,R_SUP_FO=RSUP2,  R_INF_FO=RINF2),
-                       )
-
-
-#----------------------------------------------------------------------
-#              TEST DE G SUR LES 3 COURONNES
-#----------------------------------------------------------------------
-
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.021000000000000001,
-           VALE_CALC=0.00141028345082,
-           VALE_REFE=1.4400000000000001E-3,
-           NOM_PARA='G',
-           TABLE=G0,)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.021000000000000001,
-           VALE_CALC=0.00141028345082,
-           VALE_REFE=1.4400000000000001E-3,
-           NOM_PARA='G',
-           TABLE=G0BIS,)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-2,
-           VALE_CALC=0.00145117093221,
-           VALE_REFE=1.4400000000000001E-3,
-           NOM_PARA='G',
-           TABLE=G1,
-           FILTRE=_F(NOM_PARA='NUME_ORDRE',
-                     VALE_I=1,),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.012,
-           VALE_CALC=0.0014235620108,
-           VALE_REFE=1.4400000000000001E-3,
-           NOM_PARA='G',
-           TABLE=G2,)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.021000000000000001,
-           VALE_CALC=0.00141028345082,
-           VALE_REFE=1.4400000000000001E-3,
-           NOM_PARA='G',
-           TABLE=G0M,)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-2,
-           VALE_CALC=0.00145117093221,
-           VALE_REFE=1.4400000000000001E-3,
-           NOM_PARA='G',
-           TABLE=G1M,
-           FILTRE=_F(NOM_PARA='NUME_ORDRE',
-                     VALE_I=1,),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.012,
-           VALE_CALC=0.0014235620108,
-           VALE_REFE=1.4400000000000001E-3,
-           NOM_PARA='G',
-           TABLE=G2M,)
-
 #----------------------------------------------------------------------
 #              TEST DE G(A) SUR LES 3 COURONNES
 #----------------------------------------------------------------------
@@ -386,44 +230,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 #----------------------------------------------------------------------
-#              TEST DE G(A) SUR LES 3 COURONNES (DIRECTION UTILISATEUR)
-#----------------------------------------------------------------------
-
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.050000000000000003,
-           VALE_CALC=6.82897220046E-05,
-           VALE_REFE=7.1710000000000003E-05,
-           NOM_PARA='G',
-           TABLE=GLOC0M,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.02,
-           VALE_CALC=7.2392293091E-05,
-           VALE_REFE=7.1710000000000003E-05,
-           NOM_PARA='G',
-           TABLE=GLOC1M,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.050000000000000003,
-           VALE_CALC=6.86383077464E-05,
-           VALE_REFE=7.1710000000000003E-05,
-           NOM_PARA='G',
-           TABLE=GLOC2M,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
-           )
-
-#----------------------------------------------------------------------
 #              TEST DE G(B) SUR LES 3 COURONNES
 #----------------------------------------------------------------------
-
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.14000000000000001,
@@ -456,44 +264,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 #----------------------------------------------------------------------
-#              TEST DE G(B) SUR LES 3 COURONNES (DIRECTION UTILISATEUR)
-#----------------------------------------------------------------------
-
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.14000000000000001,
-           VALE_CALC=1.48288183146E-05,
-           VALE_REFE=1.721E-05,
-           NOM_PARA='G',
-           TABLE=GLOC0M,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1259',),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.087999999999999995,
-           VALE_CALC=1.57073966912E-05,
-           VALE_REFE=1.721E-05,
-           NOM_PARA='G',
-           TABLE=GLOC1M,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1259',),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.14000000000000001,
-           VALE_CALC=1.60124079793E-05,
-           VALE_REFE=1.721E-05,
-           NOM_PARA='G',
-           TABLE=GLOC2M,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1259',),
-           )
-
-#----------------------------------------------------------------------
 #              TEST DE G(C) SUR LES 3 COURONNES
 #----------------------------------------------------------------------
-
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.050000000000000003,
@@ -524,41 +296,5 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='NOEUD',
                      VALE_K='NO1179',),
            )
-
-#----------------------------------------------------------------------
-#              TEST DE G(C) SUR LES 3 COURONNES (DIRECTION UTILISATEUR)
-#----------------------------------------------------------------------
-
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.050000000000000003,
-           VALE_CALC=4.99174197815E-05,
-           VALE_REFE=5.215E-05,
-           NOM_PARA='G',
-           TABLE=GLOC0M,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1179',),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.050000000000000003,
-           VALE_CALC=5.12383113014E-05,
-           VALE_REFE=5.215E-05,
-           NOM_PARA='G',
-           TABLE=GLOC1M,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1179',),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.050000000000000003,
-           VALE_CALC=5.01341793449E-05,
-           VALE_REFE=5.215E-05,
-           NOM_PARA='G',
-           TABLE=GLOC2M,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1179',),
-           )
-
 FIN()
 #

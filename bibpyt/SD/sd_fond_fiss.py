@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,8 +28,6 @@ class sd_fond_fiss(AsBase):
     BASEFOND = Facultatif(AsVR())
     FOND_TYPE = AsVK8(SDNom(nomj='.FOND.TYPE'), lonmax=1, )
     FOND_NOEU = Facultatif(AsVK8(SDNom(nomj='.FOND.NOEU'), ))
-    FONDSUP_NOEU = Facultatif(AsVK8(SDNom(nomj='.FOND_SUP.NOEU'), ))
-    FONDINF_NOEU = Facultatif(AsVK8(SDNom(nomj='.FOND_INF.NOEU'), ))
     DTAN_EXTREMITE = Facultatif(AsVR(lonmax=3, ))
     INFNORM_NOEU = Facultatif(AsVK8(SDNom(nomj='.INFNORM.NOEU'), ))
     DTAN_ORIGINE = Facultatif(AsVR(lonmax=3, ))
