@@ -22,7 +22,7 @@ import os.path as osp
 import tempfile
 from configparser import ConfigParser
 from functools import partial
-from subprocess import PIPE, Popen
+from subprocess import PIPE, CalledProcessError, Popen, call, check_call
 
 from waflib import Errors, Logs, TaskGen
 
@@ -125,10 +125,10 @@ def runtest(self):
 def _has_asrun():
     """check that as_run is available"""
     try:
-        iret = Popen(['as_run', '--version'], stdout=PIPE, stderr=PIPE).wait()
-    except OSError:
-        iret = 127
-    return iret == 0
+        check_call(['as_run', '--version'], stdout=PIPE, stderr=PIPE)
+    except CalledProcessError:
+        return False
+    return True
 
 def notify(message, errlevel=0):
     """Send a message as a notification bubble"""
@@ -140,6 +140,6 @@ def notify(message, errlevel=0):
     }
     icon = d_icon.get(errlevel, d_icon[1])
     try:
-        Popen(['notify-send', '-i', icon, title, message])
+        call(['notify-send', '-i', icon, title, message])
     except OSError:
         pass
