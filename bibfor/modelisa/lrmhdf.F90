@@ -20,7 +20,8 @@
 subroutine lrmhdf(nomamd, nomu, ifm, nrofic, niv,&
                   infmed, nbnoeu, nbmail, nbcoor)
 !
-implicit none
+    use as_med_module, only: as_med_open
+    implicit none
 !
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
@@ -28,7 +29,6 @@ implicit none
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mficom.h"
 #include "asterfort/as_mfinvr.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/as_mlbnuv.h"
 #include "asterfort/codent.h"
 #include "asterfort/jedema.h"
@@ -89,7 +89,7 @@ integer :: nbnoeu, nbmail, nbcoor
     character(len=24) :: titre, nommai, nomnoe, typmai, adapma, gpptnn, gpptnm
     character(len=64) :: valk(2)
     character(len=200) :: nofimd, descfi
-    character(len=255) :: kfic 
+    character(len=255) :: kfic
     aster_logical :: existm
 !
 ! --------------------------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ integer :: nbnoeu, nbmail, nbcoor
             vali (3) = vlib(3)
             call utmess('A+', 'MED_25', ni=3, vali=vali)
         endif
-        call as_mfiope(fid, nofimd, edlect, codret)
+        call as_med_open(fid, nofimd, edlect, codret)
         call as_mfinvr(fid, vfic(1), vfic(2), vfic(3), iret)
         if (iret .eq. 0) then
             if (vfic(2) .eq. -1 .or. vfic(3) .eq. -1) then
@@ -214,7 +214,7 @@ integer :: nbnoeu, nbmail, nbcoor
 !
 ! 2.1. ==> OUVERTURE FICHIER MED EN LECTURE
 !
-    call as_mfiope(fid, nofimd, edlect, codret)
+    call as_med_open(fid, nofimd, edlect, codret)
     if (codret .ne. 0) then
         valk (1) = nofimd(1:32)
         valk (2) = nomamd

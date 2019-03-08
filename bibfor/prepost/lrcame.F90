@@ -25,7 +25,8 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
                   prec, nomgd, ncmprf, jnocmp, chames,&
                   codret)
 !
-implicit none
+    use as_med_module, only: as_med_open
+    implicit none
 !
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
@@ -33,7 +34,6 @@ implicit none
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mficom.h"
 #include "asterfort/as_mfinvr.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/as_mlbnuv.h"
 #include "asterfort/as_mmhnme.h"
 #include "asterfort/assert.h"
@@ -213,7 +213,7 @@ real(kind=8) :: inst, prec
             vali (3) = vlib(3)
             call utmess('F+', 'MED_25', ni=3, vali=vali)
         endif
-        call as_mfiope(idfimd, nofimd, edlect, codret)
+        call as_med_open(idfimd, nofimd, edlect, codret)
         call as_mfinvr(idfimd, vfic(1), vfic(2), vfic(3), iret)
         if (iret .eq. 0) then
             if (vfic(2) .eq. -1 .or. vfic(3) .eq. -1) then
@@ -296,7 +296,7 @@ real(kind=8) :: inst, prec
 ! 2. OUVERTURE DU FICHIER EN LECTURE
 !====
 !
-    call as_mfiope(idfimd, nofimd, edlect, codret)
+    call as_med_open(idfimd, nofimd, edlect, codret)
     if (codret .ne. 0) then
         saux08='mfiope'
         call utmess('F', 'DVP_97', sk=saux08, si=codret)
@@ -353,13 +353,13 @@ real(kind=8) :: inst, prec
         endif
 !
 !       RECUPERE LE NOMBRE DE MAILLES DE TYPE TYGEOM
-        
+
         ! incompatibilite (tygeom==0 <=> MED_NONE) et (edmail==0 <=> MED_CELL)
         ! => on saute pour eviter une Erreur d'appel de l'API dans MED
         if (tygeom.eq.0.and.edmail.eq.0) then
             cycle
         endif
-        
+
         call as_mmhnme(idfimd, nomamd, edconn, edmail, tygeom,&
                        ednoda, nmatyp, codre2)
 !

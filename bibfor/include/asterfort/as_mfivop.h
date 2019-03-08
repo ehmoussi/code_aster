@@ -18,10 +18,13 @@
 
 #include "asterf_types.h"
 interface
-    subroutine as_mfiope(fid, nom, acces, cret)
+    subroutine as_mfivop(fid, nom, acces, major, minor, rel, cret)
         aster_int, intent(out) :: fid
         character(len=*), intent(in) :: nom
         aster_int, intent(in) :: acces
+        aster_int, intent(in) :: major
+        aster_int, intent(in) :: minor
+        aster_int, intent(in) :: rel
         aster_int, intent(out) :: cret
-    end subroutine as_mfiope
+    end subroutine as_mfivop
 end interface
