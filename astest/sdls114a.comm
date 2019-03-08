@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -148,6 +148,8 @@ MODE=NORM_MODE(reuse=MODE,
 
 FF1=DEFI_FOND_FISS(MAILLAGE=M, SYME='NON',
                    FOND_FISS=_F(GROUP_NO = 'PF',),
+                   LEVRE_SUP=_F(  GROUP_MA = 'LEVSUP'),
+                   LEVRE_INF=_F(  GROUP_MA = 'LEVINF'),
                   );
 
 GLMO1=CALC_G(OPTION='CALC_K_G',
@@ -161,16 +163,11 @@ GLMO1=CALC_G(OPTION='CALC_K_G',
 
 IMPR_TABLE(TABLE =GLMO1);
 
-FISS=DEFI_FOND_FISS(MAILLAGE=M, SYME='NON',
-                   FOND_FISS=_F(GROUP_NO = 'PF',),
-                   LEVRE_SUP=_F(  GROUP_MA = 'LEVSUP'),
-                   LEVRE_INF=_F(  GROUP_MA = 'LEVINF'),
-                  );
 
 
 T1_K = POST_K1_K2_K3(INFO = 2,
                            RESULTAT=MODE,
-                           FOND_FISS=FISS,
+                           FOND_FISS=FF1,
                            NUME_ORDRE=(1,2,3,4,5),);
 IMPR_TABLE(TABLE=T1_K)
 

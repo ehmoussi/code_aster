@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ subroutine fonnof(resu, noma, typfon, nbnoff)
     implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/cgnop0.h"
 #include "asterfort/dfflon.h"
 #include "asterfort/dfftan.h"
@@ -52,7 +53,7 @@ subroutine fonnof(resu, noma, typfon, nbnoff)
 !        RESU       : NOM DU CONCEPT RESULTAT DE L'OPERATEUR
 !        NOMA       : NOM DU MAILLAGE
 !        TYPFON     : TYPE DE FOND
-!                     IL PEUT VALOIR OUVERT/FERME/INOFF/SUP
+!                     IL PEUT VALOIR OUVERT/FERME
 !        NBNOFF     : NOMBRE DE NOEUDS EN FOND DE FISSURE
 !-----------------------------------------------------------------------
 !
@@ -61,7 +62,7 @@ subroutine fonnof(resu, noma, typfon, nbnoff)
     integer :: nuno, jints, nbtrls, iera
     integer :: numfin, isym, inoli, jinf, jnoli, nbnoli, jcoori, jinti
     integer :: nbtrli, ino, inos, nbs, numun, jts, jti, nbi, inoi
-    integer :: jnofos, irlev,  ndim
+    integer :: irlev,  ndim
     real(kind=8) :: x0(3), x1, x2, y1, y2, z1, z2, d, vplan(3), dmin
     real(kind=8) :: dmax, prec, preco, ps, vectan(3), precn
     character(len=6) :: nompro
@@ -94,10 +95,7 @@ subroutine fonnof(resu, noma, typfon, nbnoff)
     if (irlev .ne. 0) then
         call jeveuo(fonnoe, 'L', jnofo)
     else
-        fonnoe =resu//'.FOND_INF.NOEU'
-        call jeveuo(fonnoe, 'L', jnofo)
-        fonnoe =resu//'.FOND_SUP.NOEU'
-        call jeveuo(fonnoe, 'L', jnofos)
+        ASSERT(.FALSE.)
     endif
 !
 !     BASE LOCALE EN FOND DE FISSURE
@@ -296,9 +294,6 @@ subroutine fonnof(resu, noma, typfon, nbnoff)
         call wkvect('&&PKFOND_TRAV_SUP', 'V V I', nbtrls, jts)
 !
 ! ---- ORDRE DES NOEUDS
-        if (irlev .eq. 0) then
-            call jenonu(jexnom(nomnoe, zk8(jnofos-1 + inoff)), nuno)
-        endif
         numfin = nuno
         dmax = 0.d0
         dmin = 100.d0

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -314,7 +314,7 @@ subroutine op0119()
             ii = (iinbmailles-1)*ncarma+1
             vimailles( ii    ) = nutyma
             vimailles( ii +1 ) = nno
-            vimailles( ii +2 : ii+2+nno ) = correni(1:nno)
+            vimailles( ii +2 : ii+1+nno ) = correni(1:nno)
             vigroup( (iinbgf-1)*maxmailgrp +nbmagr ) = iinbmailles
 !           Pour la fibre : surface et centre
             call pmfsce(nno, x, y, surf, centre)

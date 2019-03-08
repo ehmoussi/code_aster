@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -163,27 +163,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='N77',),
            )
 
-GGLOB1=CALC_G(THETA=_F(
-                       FOND_FISS=FISS,
-                       MODULE_FO=MOD_T1,
-                       R_SUP_FO=RAY_SUP1,
-                       R_INF_FO=RAY_INF1),
-              RESULTAT=RESU1,
-              OPTION='CALC_G_GLOB',);
-
-# VALEUR DE REFERENCE MILIEU INFINI : G=145.6
-# POUR UN QUART DE FISSURE G=36.4
-
-TEST_TABLE(PRECISION=0.012,
-           VALE_CALC=36.8224403149,
-           VALE_REFE=36.399999999999999,
-           REFERENCE='NON_DEFINI',
-           NOM_PARA='G',
-           TABLE=GGLOB1,)
-
 TABK1A=POST_K1_K2_K3(RESULTAT=RESU1,
                       FOND_FISS=FISS,);
-
 
 # ---------------
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -348,24 +329,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='N77',),
            )
 
-GGLOB3=CALC_G(THETA=_F(
-                       FOND_FISS=FISS,
-                       MODULE_FO=MOD_T1,
-                       R_SUP_FO=RAY_SUP1,
-                       R_INF_FO=RAY_INF1),
-              RESULTAT=RESU3,
-              OPTION='CALC_G_GLOB',);
-
-# VALEUR DE REFERENCE MILIEU INFINI :
-# POUR UN QUART DE FISSURE G=23.11
-
-TEST_TABLE(PRECISION=0.012,
-           VALE_CALC=23.0262356948,
-           VALE_REFE=23.109999999999999,
-           REFERENCE='NON_DEFINI',
-           NOM_PARA='G',
-           TABLE=GGLOB3,)
-
 # POST_K1_K2_K3
 
 TABK3A=POST_K1_K2_K3(RESULTAT=RESU3,
@@ -500,24 +463,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='NOEUD',
                      VALE_K='N77',),
            )
-
-GGLOB13=CALC_G(THETA=_F(
-                        FOND_FISS=FISS,
-                        MODULE_FO=MOD_T1,
-                        R_SUP_FO=RAY_SUP1,
-                        R_INF_FO=RAY_INF1),
-               RESULTAT=RESU13,
-               EXCIT=_F(CHARGE=TORSION,),
-               OPTION='CALC_G_GLOB',);
-
-GGref13=Gref13*pi*A/2.
-
-TEST_TABLE(PRECISION=0.012,
-           VALE_CALC=59.8486760097,
-           VALE_REFE=59.511102041012222,
-           REFERENCE='NON_DEFINI',
-           NOM_PARA='G',
-           TABLE=GGLOB13,)
 
 # POST_K1_K2_K3
 

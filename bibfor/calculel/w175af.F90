@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,10 +46,10 @@ subroutine w175af(modele, chfer1)
 !-----------------------------------------------------------------------
     integer :: gd, nocc, ncmpmx, nbtou
     integer :: n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13
-    integer :: n14, n15, n16
+    integer :: n14, n15, n16, n17, n18, n19, n20, n21, n22
     integer ::   jmail, iocc, nbmail
     real(kind=8) :: valrcb, valrco
-    character(len=8) :: k8b, typmcl(2), noma, typcb, clacier, uc
+    character(len=8) :: k8b, typmcl(2), noma, typcb, clacier, uc, compress
     character(len=16) :: motcls(2), typco
     character(len=24) :: mesmai
     character(len=8), pointer :: ncmp(:) => null()
@@ -77,23 +77,29 @@ subroutine w175af(modele, chfer1)
     call jenonu(jexnom('&CATA.GD.NOMGD', 'FER1_R'), gd)
     call jelira(jexnum('&CATA.GD.NOMCMP', gd), 'LONMAX', ncmpmx)
 !
-    ASSERT(ncmpmx.eq.16)
+    ASSERT(ncmpmx.eq.22)
     ncmp(1) = 'TYPCOMB'
     ncmp(2) = 'CODIF'
-    ncmp(3) = 'ES'
+    ncmp(3) = 'COMPRESS'
     ncmp(4) = 'CEQUI'
     ncmp(5) = 'ENROBS'
     ncmp(6) = 'ENROBI'
     ncmp(7) = 'SIGMACI'
     ncmp(8) = 'SIGMBET'
-    ncmp(9) = 'COEFF1'
-    ncmp(10)= 'COEFF2'
-    ncmp(11)= 'GAMMAS'
-    ncmp(12)= 'GAMMAC'
-    ncmp(13)= 'FACIER'
-    ncmp(14)= 'FBETON'
-    ncmp(15)= 'CLACIER'
-    ncmp(16)= 'UC'
+    ncmp(9) = 'ALPHACC'
+    ncmp(10)= 'GAMMAS'
+    ncmp(11)= 'GAMMAC'
+    ncmp(12)= 'FACIER'
+    ncmp(13)= 'FBETON'
+    ncmp(14)= 'CLACIER'
+    ncmp(15)= 'UC'
+    ncmp(16)= 'RHOACIER'
+    ncmp(17)= 'AREINF'
+    ncmp(18)= 'ASHEAR'
+    ncmp(19)= 'ASTIRR'
+    ncmp(20)= 'RHOCRIT'
+    ncmp(21)= 'DATCRIT'
+    ncmp(22)= 'LCRIT'
 !
 !     2. MOTS CLES GLOBAUX :
 !     ----------------------
@@ -101,102 +107,92 @@ subroutine w175af(modele, chfer1)
     call getvtx(' ', 'TYPE_COMB', scal=typcb, nbret=n1)
     if (typcb.eq.'ELU') valrcb = 0.d0
     if (typcb.eq.'ELS') valrcb = 1.d0
-    valv(1)=valrcb
+    valv(1) = valrcb
 !
 !     2.2 CODIFICATION :
     call getvtx(' ', 'CODIFICATION', scal=typco, nbret=n2)
-    if (typco.eq.'UTILISATEUR') valrco = 0.d0
     if (typco.eq.'BAEL91') valrco = 1.d0
     if (typco.eq.'EC2') valrco = 2.d0
-    valv(2)=valrco
+    valv(2) = valrco
 !
 !
 !     3- BOUCLE SUR LES OCCURENCES DU MOT CLE AFFE
 !     --------------------------------------------
     do iocc = 1, nocc
 !
-        if (typco.eq.'UTILISATEUR') then
-!       RECUPERATION DES MOTS CLES POUR CODIFICATION = 'UTILISATEUR'
-        call getvr8('AFFE', 'ES', iocc=iocc, scal=valv(3), nbret=n3)
-        call getvr8('AFFE', 'CEQUI', iocc=iocc, scal=valv(4), nbret=n4)
-        call getvr8('AFFE', 'ENROBG', iocc=iocc, scal=valv(6), nbret=n6)
-        valv(5) = valv(6)
-        call getvr8('AFFE', 'SIGM_ACIER', iocc=iocc, scal=valv(7), nbret=n7)
-        call getvr8('AFFE', 'SIGM_BETON', iocc=iocc, scal=valv(8), nbret=n8)
-        call getvr8('AFFE', 'PIVA', iocc=iocc, scal=valv(9), nbret=n9)
-        call getvr8('AFFE', 'PIVB', iocc=iocc, scal=valv(10), nbret=n10)
-        else if (typco.eq.'BAEL91') then
-!       RECUPERATION DES MOTS CLES POUR CODIFICATION = 'BAEL91'
-        call getvr8('AFFE', 'E_S', iocc=iocc, scal=valv(3), nbret=n3)
-        call getvr8('AFFE', 'N', iocc=iocc, scal=valv(4), nbret=n4)
-        call getvr8('AFFE', 'C_SUP', iocc=iocc, scal=valv(5), nbret=n5)
-        call getvr8('AFFE', 'C_INF', iocc=iocc, scal=valv(6), nbret=n6)
-        call getvr8('AFFE', 'SIGS_ELS', iocc=iocc, scal=valv(7), nbret=n7)
-        call getvr8('AFFE', 'SIGC_ELS', iocc=iocc, scal=valv(8), nbret=n8)
-        call getvr8('AFFE', 'ALPHA_CC', iocc=iocc, scal=valv(9), nbret=n9)
-        call getvr8('AFFE', 'GAMMA_S', iocc=iocc, scal=valv(11), nbret=n11)
-        call getvr8('AFFE', 'GAMMA_C', iocc=iocc, scal=valv(12), nbret=n12)
-        call getvr8('AFFE', 'FE', iocc=iocc, scal=valv(13), nbret=n13)
-        call getvr8('AFFE', 'FCJ', iocc=iocc, scal=valv(14), nbret=n14)
+        if (typco.eq.'BAEL91') then
+!           RECUPERATION DES MOTS CLES POUR CODIFICATION = 'BAEL91'
+            call getvr8('AFFE', 'N', iocc=iocc, scal=valv(4), nbret=n4)
+            call getvr8('AFFE', 'C_SUP', iocc=iocc, scal=valv(5), nbret=n5)
+            call getvr8('AFFE', 'C_INF', iocc=iocc, scal=valv(6), nbret=n6)
+            call getvr8('AFFE', 'SIGS_ELS', iocc=iocc, scal=valv(7), nbret=n7)
+            call getvr8('AFFE', 'SIGC_ELS', iocc=iocc, scal=valv(8), nbret=n8)
+            call getvr8('AFFE', 'ALPHA_CC', iocc=iocc, scal=valv(9), nbret=n9)
+            call getvr8('AFFE', 'GAMMA_S', iocc=iocc, scal=valv(10), nbret=n10)
+            call getvr8('AFFE', 'GAMMA_C', iocc=iocc, scal=valv(11), nbret=n11)
+            call getvr8('AFFE', 'FE', iocc=iocc, scal=valv(12), nbret=n12)
+            call getvr8('AFFE', 'FCJ', iocc=iocc, scal=valv(13), nbret=n13)
+            call getvr8('AFFE', 'RHO_ACIER', iocc=iocc, scal=valv(16), nbret=n16)
+            call getvr8('AFFE', 'ALPHA_REINF', iocc=iocc, scal=valv(17), nbret=n17)
+            call getvr8('AFFE', 'ALPHA_SHEAR', iocc=iocc, scal=valv(18), nbret=n18)
+            call getvr8('AFFE', 'ALPHA_STIRRUPS', iocc=iocc, scal=valv(19), nbret=n19)
+            call getvr8('AFFE', 'RHO_CRIT', iocc=iocc, scal=valv(20), nbret=n20)
+            call getvr8('AFFE', 'DNSTRA_CRIT', iocc=iocc, scal=valv(21), nbret=n21)
+            call getvr8('AFFE', 'L_CRIT', iocc=iocc, scal=valv(22), nbret=n22)
         else if (typco.eq.'EC2') then
-!       RECUPERATION DES MOTS CLES POUR CODIFICATION = 'EC2'
-        call getvr8('AFFE', 'E_S', iocc=iocc, scal=valv(3), nbret=n3)
-        call getvr8('AFFE', 'ALPHA_E', iocc=iocc, scal=valv(4), nbret=n4)
-        call getvr8('AFFE', 'C_SUP', iocc=iocc, scal=valv(5), nbret=n5)
-        call getvr8('AFFE', 'C_INF', iocc=iocc, scal=valv(6), nbret=n6)
-        call getvr8('AFFE', 'SIGS_ELS', iocc=iocc, scal=valv(7), nbret=n7)
-        call getvr8('AFFE', 'SIGC_ELS', iocc=iocc, scal=valv(8), nbret=n8)
-        call getvr8('AFFE', 'ALPHA_CC', iocc=iocc, scal=valv(9), nbret=n9)
-        call getvr8('AFFE', 'GAMMA_S', iocc=iocc, scal=valv(11), nbret=n11)
-        call getvr8('AFFE', 'GAMMA_C', iocc=iocc, scal=valv(12), nbret=n12)
-        call getvr8('AFFE', 'FYK', iocc=iocc, scal=valv(13), nbret=n13)
-        call getvr8('AFFE', 'FCK', iocc=iocc, scal=valv(14), nbret=n14)
-        call getvtx('AFFE', 'CLASSE_ACIER', iocc=iocc, scal=clacier, nbret=n15)
-        if (clacier.eq.'A') valv(15) = 0.d0
-        if (clacier.eq.'B') valv(15) = 1.d0
-        if (clacier.eq.'C') valv(15) = 2.d0
-        call getvtx('AFFE', 'UNITE_CONTRAINTE', iocc=iocc, scal=uc, nbret=n16)
-        if (uc.eq.'Pa') valv(16) = 0.d0
-        if (uc.eq.'MPa') valv(16) = 1.d0
-        endif
+!           RECUPERATION DES MOTS CLES POUR CODIFICATION = 'EC2'
+            call getvtx('AFFE', 'UTIL_COMPR', iocc=iocc, scal=compress, nbret=n3)
+            if (compress.eq.'NON') valv(3) = 0.d0
+            if (compress.eq.'OUI') valv(3) = 1.d0
+            call getvr8('AFFE', 'ALPHA_E', iocc=iocc, scal=valv(4), nbret=n4)
+            call getvr8('AFFE', 'C_SUP', iocc=iocc, scal=valv(5), nbret=n5)
+            call getvr8('AFFE', 'C_INF', iocc=iocc, scal=valv(6), nbret=n6)
+            call getvr8('AFFE', 'SIGS_ELS', iocc=iocc, scal=valv(7), nbret=n7)
+            call getvr8('AFFE', 'SIGC_ELS', iocc=iocc, scal=valv(8), nbret=n8)
+            call getvr8('AFFE', 'ALPHA_CC', iocc=iocc, scal=valv(9), nbret=n9)
+            call getvr8('AFFE', 'GAMMA_S', iocc=iocc, scal=valv(10), nbret=n10)
+            call getvr8('AFFE', 'GAMMA_C', iocc=iocc, scal=valv(11), nbret=n11)
+            call getvr8('AFFE', 'FYK', iocc=iocc, scal=valv(12), nbret=n12)
+            call getvr8('AFFE', 'FCK', iocc=iocc, scal=valv(13), nbret=n13)
+            call getvtx('AFFE', 'CLASSE_ACIER', iocc=iocc, scal=clacier, nbret=n14)
+            if (clacier.eq.'A') valv(14) = 0.d0
+            if (clacier.eq.'B') valv(14) = 1.d0
+            if (clacier.eq.'C') valv(14) = 2.d0
+            call getvtx('AFFE', 'UNITE_CONTRAINTE', iocc=iocc, scal=uc, nbret=n15)
+            if (uc.eq.'Pa') valv(15) = 0.d0
+            if (uc.eq.'MPa') valv(15) = 1.d0
+            call getvr8('AFFE', 'RHO_ACIER', iocc=iocc, scal=valv(16), nbret=n16)
+            call getvr8('AFFE', 'ALPHA_REINF', iocc=iocc, scal=valv(17), nbret=n17)
+            call getvr8('AFFE', 'ALPHA_SHEAR', iocc=iocc, scal=valv(18), nbret=n18)
+            call getvr8('AFFE', 'ALPHA_STIRRUPS', iocc=iocc, scal=valv(19), nbret=n19)
+            call getvr8('AFFE', 'RHO_CRIT', iocc=iocc, scal=valv(20), nbret=n20)
+            call getvr8('AFFE', 'DNSTRA_CRIT', iocc=iocc, scal=valv(21), nbret=n21)
+            call getvr8('AFFE', 'L_CRIT', iocc=iocc, scal=valv(22), nbret=n22)
+            endif
 !
 !       VERIFICATION DE LA COHERENCE DES PARAMETRES
-        if (typco.eq.'UTILISATEUR') then
-!           REGLES SUR LES MOTS CLE POUR CODIFICATION = UTILISATEUR
-            if (typcb.eq.'ELU') then
-                if (n3.eq.0 .or. n9.eq.0 .or. n10.eq.0 .or. valv(3).le.0) then
-                    call utmess('F', 'CALCULEL_73')
-                endif
-            else
-                if (n4.eq.0) then
-                    call utmess('F', 'CALCULEL_73')
-                endif
-            endif
+        if (valv(16).lt.0.d0) then
+!           MASSE VOLUMIQUE NEGATIVE
+            call utmess('I', 'CALCULEL_89')
         endif
-        if (typco.eq.'BAEL91') then
-!           REGLES SUR LES MOTS CLE POUR CODIFICATION =  BAEL91
-            if (typcb.eq.'ELU') then
-                if (n3.eq.0 .or. n11.eq.0 .or. n12.eq.0 .or. &
-                    n13.eq.0 .or. n14.eq.0 .or. valv(3).le.0) then
-                    call utmess('F', 'CALCULEL_74')
-                endif
-            else
-                if (n4.eq.0 .or. n7.eq.0 .or. n8.eq.0) then
-                    call utmess('F', 'CALCULEL_74')
-                endif
+!
+        if (typcb.eq.'ELU') then
+!           MOTS-CLE OBLIGATOIRES POUR UN CALCUL A L'ELU
+            if (n10.eq.0 .or. n11.eq.0 .or. n12.eq.0 .or. n13.eq.0) then
+                call utmess('F', 'CALCULEL_74')
             endif
-        endif
-        if (typco.eq.'EC2') then
-!           REGLES SUR LES MOTS CLE POUR CODIFICATION =  EC2
-            if (typcb .eq. 'ELU') then
-                if (n3.eq.0  .or. n11.eq.0 .or. n12.eq.0 .or. &
-                    n13.eq.0 .or. n14.eq.0 .or. valv(3).le.0) then
-                    call utmess('F', 'CALCULEL_82')
-                endif
-            else
-                if (n4.eq.0 .or. n7.eq.0 .or. n8.eq.0) then
-                    call utmess('F', 'CALCULEL_82')
-                endif
+        else if (typcb.eq.'ELS') then
+!           MOTS-CLE OBLIGATOIRES POUR UN CALCUL A L'ELS
+            if (n4.eq.0 .or. n7.eq.0 .or. n8.eq.0) then
+                call utmess('F', 'CALCULEL_82')
+            endif
+            if (typco.eq.'EC2' .and. n13.eq.0) then
+                call utmess('F', 'CALCULEL_82')
+            endif
+            if (typco.eq.'BAEL91') then
+!               MESSAGE D'INFORMATION : PAS DE CALCUL DES ACIERS
+!               TRANSVERSAUX POUR LA CODIFICATION BAEL91
+                call utmess('I', 'CALCULEL_80')
             endif
         endif
 !
@@ -205,10 +201,10 @@ subroutine w175af(modele, chfer1)
             call nocart(chfer1, 1, ncmpmx)
 !
         else
-            call reliem(' ', noma, 'NU_MAILLE', 'AFFE', iocc,&
+            call reliem(' ', noma, 'NU_MAILLE', 'AFFE', iocc, &
                         2, motcls, typmcl, mesmai, nbmail)
             call jeveuo(mesmai, 'L', jmail)
-            call nocart(chfer1, 3, ncmpmx, mode='NUM', nma=nbmail,&
+            call nocart(chfer1, 3, ncmpmx, mode='NUM', nma=nbmail, &
                         limanu=zi(jmail))
             call jedetr(mesmai)
         endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fonno6(resu, noma, ndim, ina, nbnose,&
+subroutine fonno6(resu, noma, ndim, &
                   iseg, nseg, noe, indr, nbnoel,&
                   vnor, vdir, basseg, vect, sens)
 ! aslint: disable=W1306
@@ -40,7 +40,7 @@ subroutine fonno6(resu, noma, ndim, ina, nbnose,&
 #include "blas/ddot.h"
 !
     character(len=8) :: resu, noma
-    integer :: ndim, ina, nbnose, iseg, noe(4, 4)
+    integer :: ndim, iseg, noe(4, 4)
     integer :: indr(2), nbnoel, nseg
     real(kind=8) :: vdir(2, 3), vnor(2, 3), vect(3), sens
     character(len=19) :: basseg
@@ -55,9 +55,6 @@ subroutine fonno6(resu, noma, ndim, ina, nbnose,&
 !       RESU   : NOM DU CONCEPT RESULTAT
 !       NOMA   : NOM DU MAILLAGE
 !       NDIM   : DIMENSION DU MODELE
-!       INA    : INDICE DU NOEUD SOMMET DANS LA LISTE DES NOEUDS DU
-!                FOND DE FISSURE
-!       NBNOSE : NOMBRE DE NOEUD PAR SEGMENT
 !       ISEG   : INDICE DU SEGMENT DU FOND DE FISSURE COURANT
 !       NSEG   : NOMBRES DE SEGMENTS DU FOND DE FISSURE
 !       NOE    : NOEUDS DES FACES CONTENANT NA et NB ET APPARTENANT AUX
@@ -120,12 +117,7 @@ subroutine fonno6(resu, noma, ndim, ina, nbnose,&
 !     ATTENTION, NE JAMAIS UTILISER LA FONCTION FORTRAN ACOS
     alpha = trigom('ACOS',s)*180.d0/r8pi()
 !
-!     CAS DE FOND "DOUBLE" : ON FEINTE EN FAISANT CROIRE QUE L'ON
-!     EST DANS UNE CONFIG SYMETRIQUE
-    call jeexin(resu//'.FOND_SUP.NOEU', iret)
-    if (iret .ne. 0) syme='OUI'
-!
-!     CAS SYMETRIQUE, OU CAS DES FONDS DOUBLES
+!     CAS SYMETRIQUE
     if (syme .eq. 'OUI') then
 !
 !       ANGLE DOIT ETRE EGAL A 180+-2,5 DEGRES, SINON CA VEUT DIRE

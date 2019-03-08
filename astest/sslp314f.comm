@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,10 +49,14 @@ MAT2=DEFI_MATERIAU(    ELAS=_F(  E = 5.E11,
 CHMAT=AFFE_MATERIAU(    MAILLAGE=MA,AFFE=(
                                   _F(  GROUP_MA = 'VTOT1',
                                         MATER = MAT1),
+                                  _F(  GROUP_MA = 'LEVR_SUP',
+                                     MATER = MAT1),
                                   _F(  GROUP_MA = 'LPB1PA1',
                                         MATER = MAT1),
                                   _F(  GROUP_MA = 'VTOT2',
                                         MATER = MAT2),
+                                  _F(  GROUP_MA = 'LEVR_INF',
+                                     MATER = MAT2),
                                   _F(  GROUP_MA = 'LPA2PB2',
                                         MATER = MAT2))
                           )
@@ -84,6 +88,8 @@ CHAMDEPL=MECA_STATIQUE(        MODELE=MO,
 #
 FOND1=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                             FOND_FISS=_F( GROUP_NO = ('P0',)),
+                            LEVRE_SUP=_F(  GROUP_MA = 'LEVR_SUP'),
+                            LEVRE_INF=_F(  GROUP_MA = 'LEVR_INF'),
                        )
 
 #
@@ -91,9 +97,7 @@ G0=CALC_G(         RESULTAT=CHAMDEPL,
                    THETA=_F(
                             R_INF=1.25E-5,
                             R_SUP=5.E-4,
-                            FOND_FISS=FOND1,
-                            MODULE=1.,
-                            DIRECTION=(-0.707106781, 0.707106781, 0.,)),
+                            FOND_FISS=FOND1,),
                     )
 
 #
