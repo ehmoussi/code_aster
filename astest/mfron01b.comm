@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -119,7 +119,7 @@ MATF =DEFI_MATERIAU(ELAS_FO=_F(E=YOUN,
                     MFRONT_FO=_F(LISTE_COEF=(YOUN,POISS,ALPH,Rinf,SIGY,B,C_T,ZERO,D_T,ZERO,N_T,K_T,
                                             ),)
                                     ,)
-                                    
+
 NPAS = 60;
 
 
@@ -301,7 +301,7 @@ IMPR_FONCTION(
                    _F(FONC_X=epsAsXX, FONC_Y=sigAsXX,),
                    _F(FONC_X=epsMfXX, FONC_Y=sigMfXX,),
                       ),
-            UNITE=39,);
+            UNITE=40,);
 
 
 # DIFF DES COURBES OBTENUES AVEC LES DEUX METHODES

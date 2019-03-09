@@ -1333,36 +1333,37 @@ def IniGrace(fich):
     y0 = None
     y1 = None
     if os.path.exists(fich) and os.stat(fich).st_size != 0:
+        assert not is_binary(fich), 'Can not append text to a binary file'
         os.rename(fich, fich + '.prev')
         fpre = open(fich + '.prev', 'r')
         fnew = open(fich,         'w')
         for line in fpre:
             ikeep = True
-            mat = re.search('@target g[0-9]+\.s([0-9]+)', line)
+            mat = re.search(r'@target g[0-9]+\.s([0-9]+)', line)
             if mat != None and int(mat.group(1)) > ns:
                 ns = int(mat.group(1))
-            mat = re.search('@[ ]+world[ ]+xmin[ ]+([\-\+\.0-9eEdD]+)', line)
+            mat = re.search(r'@[ ]+world[ ]+xmin[ ]+([\-\+\.0-9eEdD]+)', line)
             if mat != None:
                 try:
                     x0 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
-            mat = re.search('@[ ]+world[ ]+xmax[ ]+([\-\+\.0-9eEdD]+)', line)
+            mat = re.search(r'@[ ]+world[ ]+xmax[ ]+([\-\+\.0-9eEdD]+)', line)
             if mat != None:
                 try:
                     x1 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
-            mat = re.search('@[ ]+world[ ]+ymin[ ]+([\-\+\.0-9eEdD]+)', line)
+            mat = re.search(r'@[ ]+world[ ]+ymin[ ]+([\-\+\.0-9eEdD]+)', line)
             if mat != None:
                 try:
                     y0 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
-            mat = re.search('@[ ]+world[ ]+ymax[ ]+([\-\+\.0-9eEdD]+)', line)
+            mat = re.search(r'@[ ]+world[ ]+ymax[ ]+([\-\+\.0-9eEdD]+)', line)
             if mat != None:
                 try:
                     y1 = float(mat.group(1))
@@ -1378,3 +1379,16 @@ def IniGrace(fich):
         else:
             UTMESS('A', 'GRAPH0_11', valk=fich)
     return ns, x0, x1, y0, y1
+
+
+def is_binary(fname):
+    """Tell if a file appears to be binary (containing a NULL byte)
+    Note: UTF-16 files are reported as binary."""
+    fobj = open(fname, 'rb')
+    try:
+        for block in fobj:
+            if b'\0' in block:
+                return True
+    finally:
+        fobj.close()
+    return False
