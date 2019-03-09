@@ -188,21 +188,22 @@ implicit none
     type ROM_DS_MultiPara
 ! ----- Type of system to solve
         character(len=1)        :: syst_type = ' '
-! ----- List of matrix for system
+! ----- List of matrices for system
         integer                 :: nb_matr = 0
         character(len=8)        :: matr_name(8) = ' '
         character(len=1)        :: matr_type(8) = ' '
         type(ROM_DS_MultiCoef)  :: matr_coef(8)
-! ----- Second member for system
-        character(len=8)        :: vect_name = ' '
-        character(len=1)        :: vect_type = ' '
-        type(ROM_DS_MultiCoef)  :: vect_coef
+! ----- List of vectors for system
+        integer                 :: nb_vect = 0
+        character(len=8)        :: vect_name(8) = ' '
+        character(len=1)        :: vect_type(8) = ' '
+        type(ROM_DS_MultiCoef)  :: vect_coef(8)
 ! ----- Products matrix by current mode
         character(len=19)       :: matr_mode_curr(8) = ' '
 ! ----- Products matrix by mode
         character(len=24)       :: prod_matr_mode(8) = ' '
 ! ----- Reduced Vector
-        character(len=24)       :: vect_redu = ' '
+        character(len=24)       :: vect_redu(8) = ' '
 ! ----- Reduced matrix
         character(len=24)       :: matr_redu(8) = ' '
 ! ----- Variation of coefficients: number (by mode)

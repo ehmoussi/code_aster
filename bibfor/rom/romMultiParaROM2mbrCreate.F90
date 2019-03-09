@@ -53,8 +53,8 @@ character(len=19), intent(in) :: syst_2mbrROM
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode_curr, nb_equa
-    integer :: i_mode
+    integer :: nb_mode_curr, nb_equa, nb_vect
+    integer :: i_mode, i_vect
     aster_logical :: l_coef_cplx, l_coef_real
     real(kind=8) :: coef_r
     complex(kind=8) :: coef_c, coef_cplx
@@ -74,6 +74,7 @@ character(len=19), intent(in) :: syst_2mbrROM
 !
     nb_mode_curr   = ds_empi%nb_mode
     nb_equa        = ds_empi%ds_mode%nb_equa
+    nb_vect        = ds_multipara%nb_vect
 !
 ! - Get second member
 !
@@ -88,27 +89,33 @@ character(len=19), intent(in) :: syst_2mbrROM
     end if 
 !
 ! - Compute second member
-!  
-    l_coef_cplx = ds_multipara%vect_coef%l_cplx
-    l_coef_real = ds_multipara%vect_coef%l_real
-    if (ds_multipara%syst_type .eq.'R') then
-        ASSERT(l_coef_real)
-        coef_r = ds_multipara%vect_coef%coef_real(i_coef)
-        call jeveuo(ds_multipara%vect_redu, 'L', vr = vr_vect_redu)
-        do i_mode = 1, nb_mode_curr
-            vr_syst_2mbp(i_mode)=vr_syst_2mbp(i_mode)+vr_vect_redu(i_mode)*coef_r
+!
+    if (ds_multipara%syst_type .eq.'R') then      
+        do i_vect = 1, nb_vect
+            l_coef_cplx = ds_multipara%vect_coef(i_vect)%l_cplx
+            l_coef_real = ds_multipara%vect_coef(i_vect)%l_real
+            ASSERT(l_coef_real)
+            coef_r = ds_multipara%vect_coef(i_vect)%coef_real(i_coef)
+            call jeveuo(ds_multipara%vect_redu(i_vect), 'L', vr = vr_vect_redu)
+            do i_mode = 1, nb_mode_curr
+                vr_syst_2mbp(i_mode)=vr_syst_2mbp(i_mode)+vr_vect_redu(i_mode)*coef_r
+            end do
         end do
     else if (ds_multipara%syst_type .eq.'C') then
-        if (l_coef_cplx) then
-            coef_c    = ds_multipara%vect_coef%coef_cplx(i_coef)
-            coef_cplx = coef_c
-        else
-            coef_r    = ds_multipara%vect_coef%coef_real(i_coef)
-            coef_cplx = dcmplx(coef_r)
-        endif 
-        call jeveuo(ds_multipara%vect_redu, 'L', vc = vc_vect_redu)
-        do i_mode = 1, nb_mode_curr
-            vc_syst_2mbp(i_mode)=vc_syst_2mbp(i_mode)+vc_vect_redu(i_mode)*coef_cplx
+        do i_vect = 1, nb_vect
+            l_coef_cplx = ds_multipara%vect_coef(i_vect)%l_cplx
+            l_coef_real = ds_multipara%vect_coef(i_vect)%l_real
+            if (l_coef_cplx) then
+                coef_c    = ds_multipara%vect_coef(i_vect)%coef_cplx(i_coef)
+                coef_cplx = coef_c
+            else
+                coef_r    = ds_multipara%vect_coef(i_vect)%coef_real(i_coef)
+                coef_cplx = dcmplx(coef_r)
+            endif 
+            call jeveuo(ds_multipara%vect_redu(i_vect), 'L', vc = vc_vect_redu)
+            do i_mode = 1, nb_mode_curr
+                vc_syst_2mbp(i_mode)=vc_syst_2mbp(i_mode)+vc_vect_redu(i_mode)*coef_cplx
+            end do
         end do
     else 
        ASSERT(ASTER_FALSE)

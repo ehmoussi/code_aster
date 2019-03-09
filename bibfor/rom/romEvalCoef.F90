@@ -52,7 +52,7 @@ integer, optional, intent(in) :: i_coef_
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_matr, nb_matr, i_coef_list, nb_vari_coef, i_coef, i_mode_coef
+    integer :: i_matr, i_vect, nb_matr, nb_vect, i_coef_list, nb_vari_coef, i_coef, i_mode_coef
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -102,12 +102,15 @@ integer, optional, intent(in) :: i_coef_
 !
 ! - Evaluate coefficients for second member
 !
-    call romEvalCoefFunc(ds_multipara%evalcoef, ds_multipara%vect_coef, i_coef_list)
-    if (niv .ge. 2) then
-        call romCoefInfo('V',&
-                         ds_multipara%vect_name,&
-                         i_coef,&
-                         ds_multipara%vect_coef)
-    endif
+    nb_vect = ds_multipara%nb_vect
+    do i_vect = 1, nb_vect
+        call romEvalCoefFunc(ds_multipara%evalcoef, ds_multipara%vect_coef(i_vect), i_coef_list)
+        if (niv .ge. 2) then
+            call romCoefInfo('V',&
+                             ds_multipara%vect_name(i_vect),&
+                             i_coef,&
+                             ds_multipara%vect_coef(i_vect))
+        endif
+    end do
 !
 end subroutine

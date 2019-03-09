@@ -53,9 +53,9 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_matr = 0
+    integer :: nb_matr = 0, nb_vect = 0
     integer :: i_matr, i_vect, i_vari_para, nbret, nb_vari_coef, nb_vari_para
-    character(len=1)  :: matr_type, vect_type, ktyp, matr_elem_type
+    character(len=1)  :: matr_type, vect_type, ktyp, matr_elem_type, vect_elem_type
     character(len=16) :: keywfact, type_vari_coef
     character(len=8) :: matr_asse, vect_asse, gran_name, model
     character(len=19) :: prof_chno
@@ -102,26 +102,37 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
     end do
     ds_multipara%nb_matr = nb_matr
 !
-! - Get informations about second member
+! - List of vectors
 !
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_23')
     endif
-    keywfact  = ' '
-    i_vect    = 1
-    call getvid(keywfact, 'VECTEUR', iocc=0, scal=vect_asse, nbret=nbret)
-    call dismoi('NOM_GD', vect_asse, 'CHAM_NO', repk=gran_name)
-    if (gran_name .eq. 'DEPL_R') then
-        vect_type = 'R'
-    elseif (gran_name .eq. 'DEPL_C') then
-        vect_type = 'C'
-    else
-        ASSERT(ASTER_FALSE)
-    endif
-    call romMultiCoefRead(ds_multicoef, keywfact, i_vect)
-    ds_multipara%vect_name = vect_asse
-    ds_multipara%vect_type = vect_type
-    ds_multipara%vect_coef = ds_multicoef
+    keywfact  = 'VECT_ASSE'
+    vect_type = 'R'
+    call getfac(keywfact, nb_vect)
+    ASSERT(nb_vect .gt. 0)
+    do i_vect = 1, nb_vect
+        vect_asse      = ' '
+        vect_elem_type = ' '
+        if (getexm(keywfact, 'VECTEUR') .eq. 1) then
+            call getvid(keywfact, 'VECTEUR', iocc=i_vect, scal=vect_asse, nbret=nbret)
+            ASSERT(nbret .gt. 0)
+            call dismoi('NOM_GD', vect_asse, 'CHAM_NO', repk=gran_name)
+            if (gran_name .eq. 'DEPL_C') then
+                vect_elem_type = 'C'
+                vect_type      = 'C'
+            elseif (gran_name .eq. 'DEPL_R') then
+                vect_elem_type = 'R'
+            else
+                ASSERT(.false.)
+            endif   
+        endif
+        call romMultiCoefRead(ds_multicoef, keywfact, i_vect)
+        ds_multipara%vect_name(i_vect) = vect_asse
+        ds_multipara%vect_type(i_vect) = vect_type
+        ds_multipara%vect_coef(i_vect) = ds_multicoef
+    end do
+    ds_multipara%nb_vect = nb_vect
 !
 ! - Get informations from field
 !

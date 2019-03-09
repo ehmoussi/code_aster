@@ -41,15 +41,20 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_matr, nb_matr, i_vari_para, nb_vari_para
+    integer :: i_matr, nb_matr
+    integer :: i_vect, nb_vect
+    integer :: i_vari_para, nb_vari_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_matr = ds_multipara%nb_matr
+    nb_vect = ds_multipara%nb_vect
     do i_matr = 1, nb_matr
         call romMultiCoefClean(ds_multipara%matr_coef(i_matr))
     end do
-    call romMultiCoefClean(ds_multipara%vect_coef)
+    do i_vect = 1, nb_vect
+        call romMultiCoefClean(ds_multipara%vect_coef(i_vect))
+    end do
     nb_vari_para = ds_multipara%nb_vari_para
     do i_vari_para = 1, nb_vari_para
         call romVariParaClean(ds_multipara%vari_para(i_vari_para))

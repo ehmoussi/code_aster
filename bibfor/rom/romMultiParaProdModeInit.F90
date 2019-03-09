@@ -46,7 +46,7 @@ integer, intent(in) :: nb_mode_maxi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_matr, nb_matr, jv_dummy, nb_equa
+    integer :: i_matr, nb_matr, i_vect, nb_vect,jv_dummy, nb_equa
     character(len=24) :: prod_matr_mode
     character(len=19) ::matr_mode_curr
     character(len=8) :: matr_name
@@ -63,6 +63,7 @@ integer, intent(in) :: nb_mode_maxi
 ! - Get parameters
 !
     nb_matr   = ds_multipara%nb_matr
+    nb_vect   = ds_multipara%nb_vect
     syst_type = ds_multipara%syst_type
     nb_equa   = ds_multipara%field%nb_equa
 !
@@ -86,6 +87,8 @@ integer, intent(in) :: nb_mode_maxi
 !
 ! - Prepare Reduced Vector
 !
-    call wkvect(ds_multipara%vect_redu, 'V V '//syst_type, nb_mode_maxi, jv_dummy)
+    do i_vect = 1, nb_vect
+        call wkvect(ds_multipara%vect_redu(i_vect), 'V V '//syst_type, nb_mode_maxi, jv_dummy)
+    end do
 !
 end subroutine

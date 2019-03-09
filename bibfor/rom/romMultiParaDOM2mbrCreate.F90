@@ -50,7 +50,7 @@ type(ROM_DS_Solve), intent(in) :: ds_solve
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer, parameter :: nb_vect_maxi = 1
+    integer, parameter :: nb_vect_maxi = 8
     character(len=1) :: type_comb(nb_vect_maxi)
     real(kind=8) :: coef_comb(2*nb_vect_maxi)
     character(len=24) :: vect_comb(nb_vect_maxi)
@@ -72,9 +72,7 @@ type(ROM_DS_Solve), intent(in) :: ds_solve
 !
     syst_2mbr         = ds_solve%syst_2mbr
     syst_2mbr_type    = ds_solve%syst_2mbr_type
-    nb_vect           = 1
-    vect_name         = ds_multipara%vect_name
-    !vect_type        = ds_multipara%vect_type
+    nb_vect           = ds_multipara%nb_vect
     ASSERT(nb_vect .le. nb_vect_maxi)
     type_comb(:)      = ''
     vect_comb(:)      = ''
@@ -85,20 +83,20 @@ type(ROM_DS_Solve), intent(in) :: ds_solve
 !
     i_coef_comb = 0
     do i_vect = 1, nb_vect
-        vect_name              = ds_multipara%vect_name
+        vect_name              = ds_multipara%vect_name(i_vect)
         vect_comb(i_vect)      = vect_name(1:8)//'           .VALE'
-        type_vect_comb(i_vect) = ds_multipara%vect_type
-        l_coefv_cplx           = ds_multipara%vect_coef%l_cplx
+        type_vect_comb(i_vect) = ds_multipara%vect_type(i_vect)
+        l_coefv_cplx           = ds_multipara%vect_coef(i_vect)%l_cplx
         if (l_coefv_cplx) then
             type_comb(i_vect) = 'C'
             i_coef_comb = i_coef_comb +1
-            coef_comb(i_coef_comb) = real(ds_multipara%vect_coef%coef_cplx(i_coef))
+            coef_comb(i_coef_comb) = real(ds_multipara%vect_coef(i_vect)%coef_cplx(i_coef))
             i_coef_comb = i_coef_comb +1
-            coef_comb(i_coef_comb) = dimag(ds_multipara%vect_coef%coef_cplx(i_coef))
+            coef_comb(i_coef_comb) = dimag(ds_multipara%vect_coef(i_vect)%coef_cplx(i_coef))
         else
             type_comb(i_vect) = 'R'
             i_coef_comb = i_coef_comb +1
-            coef_comb(i_coef_comb) = ds_multipara%vect_coef%coef_real(i_coef)
+            coef_comb(i_coef_comb) = ds_multipara%vect_coef(i_vect)%coef_real(i_coef)
         endif
     end do
     call vtcmbl(nb_vect, type_comb, coef_comb, type_vect_comb, vect_comb,&
