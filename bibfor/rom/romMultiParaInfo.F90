@@ -42,13 +42,14 @@ type(ROM_DS_MultiPara), intent(in) :: ds_multipara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_matr, i_vari_para
-    integer :: nb_matr, nb_vari_para, nb_equa
+    integer :: i_matr, i_vect, i_vari_para
+    integer :: nb_matr, nb_vect, nb_vari_para, nb_equa
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_equa      = ds_multipara%field%nb_equa
     nb_matr      = ds_multipara%nb_matr
+    nb_vect      = ds_multipara%nb_vect
     nb_vari_para = ds_multipara%nb_vari_para
 !
 ! - For matrix
@@ -65,16 +66,19 @@ type(ROM_DS_MultiPara), intent(in) :: ds_multipara
         call romMultiCoefInfo(ds_multipara%matr_coef(i_matr))
     end do
 !
-! - For second member
+! - For vector
 !
-    if (ds_multipara%vect_type .eq. 'R') then
-        call utmess('I', 'ROM3_33', sk = ds_multipara%vect_name)
-    elseif (ds_multipara%vect_type .eq. 'C') then
-        call utmess('I', 'ROM3_34', sk = ds_multipara%vect_name)
-    else
-        ASSERT(ASTER_FALSE)
-    endif
-    call romMultiCoefInfo(ds_multipara%vect_coef)
+    call utmess('I', 'ROM3_60', si = nb_vect)
+    do i_vect = 1, nb_vect
+        if (ds_multipara%vect_type(i_vect) .eq. 'R') then
+            call utmess('I', 'ROM3_33', sk = ds_multipara%vect_name(i_vect))
+        elseif (ds_multipara%vect_type(i_vect) .eq. 'C') then
+            call utmess('I', 'ROM3_34', sk = ds_multipara%vect_name(i_vect))
+        else
+            ASSERT(ASTER_FALSE)
+        endif
+        call romMultiCoefInfo(ds_multipara%vect_coef(i_vect))
+    end do
 !
 ! - Global system type
 !

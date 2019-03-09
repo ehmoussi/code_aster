@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romMultiParaSystEvalType(ds_multipara,&
                                     syst_matr_type, syst_2mbr_type, syst_type)
 !
@@ -28,12 +29,10 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-    character(len=1), intent(out) :: syst_matr_type
-    character(len=1), intent(out) :: syst_2mbr_type
-    character(len=1), intent(out) :: syst_type
+type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+character(len=1), intent(out) :: syst_matr_type
+character(len=1), intent(out) :: syst_2mbr_type
+character(len=1), intent(out) :: syst_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,7 +50,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_matr, nb_matr
+    integer :: i_matr, nb_matr, i_vect, nb_vect
     character(len=1) :: matr_type, vect_type
     aster_logical :: l_coefm_cplx, l_coefv_cplx
 !
@@ -71,6 +70,7 @@ implicit none
 ! - Get parameters
 !
     nb_matr   = ds_multipara%nb_matr
+    nb_vect   = ds_multipara%nb_vect
 !
 ! - Evaluate type of resultant matrix
 !
@@ -87,16 +87,20 @@ implicit none
         endif
     end do
 !
-! - Evaluate type of second member
+! - Evaluate type of resultant vector
 !
-    vect_type      = ds_multipara%vect_type
-    l_coefv_cplx   = ds_multipara%vect_coef%l_cplx
-    if (vect_type .eq. 'C') then
-        syst_2mbr_type = 'C'
-    endif
-    if (l_coefv_cplx) then
-        syst_2mbr_type = 'C'
-    endif
+    do i_vect = 1, nb_vect
+        vect_type    = ds_multipara%vect_type(i_vect)
+        l_coefv_cplx = ds_multipara%vect_coef(i_vect)%l_cplx
+        if (vect_type .eq. 'C') then
+            syst_2mbr_type = 'C'
+            exit
+        endif
+        if (l_coefv_cplx) then
+            syst_2mbr_type = 'C'
+            exit
+        endif
+    end do
 !
 ! - To be consistent
 !  

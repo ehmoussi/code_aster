@@ -52,7 +52,7 @@ cata_msg = {
 
    20 : _("""Lecture des données pour le calcul multi-paramétrique avec réduction de modèle."""),
 
-   21 : _("""Les matrices ne reposent pas toutes sur la même numérotation."""),
+   21 : _("""Les matrices et les vecteurs ne reposent pas toutes sur la même numérotation."""),
 
    22 : _("""Les matrices doivent être symétriques."""),
 

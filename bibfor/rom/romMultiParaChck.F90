@@ -47,22 +47,36 @@ aster_logical, intent(in) :: l_stab_fsi
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: syme
-    integer :: nb_matr, nb_vari_para, nb_vale_para, ndim
-    integer :: i_matr, i_vari_para
+    integer :: nb_matr, nb_vect, nb_vari_para, nb_vale_para, ndim
+    integer :: i_matr, i_vect, i_vari_para
     character(len=24) :: nume_dof_ref, nume_dof
+    character(len=24) :: prchno_ref, prchno
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_matr      = ds_multipara%nb_matr
+    nb_vect      = ds_multipara%nb_vect
     nb_vari_para = ds_multipara%nb_vari_para
 !
-! - Check numbering
+! - Check numbering in matrix
 !
     if (ds_multipara%matr_name(1) .ne. ' ') then
         call dismoi('NOM_NUME_DDL', ds_multipara%matr_name(1), 'MATR_ASSE', repk=nume_dof_ref)
         do i_matr = 2, nb_matr
             call dismoi('NOM_NUME_DDL', ds_multipara%matr_name(i_matr), 'MATR_ASSE', repk=nume_dof)
             if (nume_dof .ne. nume_dof_ref) then
+                call utmess('F','ROM2_21')
+            endif
+        end do
+    endif
+!
+! - Check numbering in vector
+!
+    if (ds_multipara%vect_name(1) .ne. ' ') then
+        call dismoi('PROF_CHNO', ds_multipara%vect_name(1), 'CHAM_NO', repk=prchno_ref)
+        do i_vect = 2, nb_vect
+            call dismoi('PROF_CHNO', ds_multipara%vect_name(i_vect), 'CHAM_NO', repk=prchno)
+            if (prchno .ne. prchno_ref) then
                 call utmess('F','ROM2_21')
             endif
         end do
@@ -87,9 +101,11 @@ aster_logical, intent(in) :: l_stab_fsi
                 call utmess('F','ROM2_25', sk = ds_multipara%matr_name(i_matr))
             endif
         end do
-        if (ds_multipara%vect_coef%l_func) then
-            call utmess('F','ROM2_31')
-        endif
+        do i_vect = 1, nb_vect
+            if (ds_multipara%vect_coef(i_vect)%l_func) then
+                call utmess('F','ROM2_31')
+            endif
+        end do
     endif
 !
 ! - Same number of values for each parameter

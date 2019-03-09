@@ -88,9 +88,10 @@ character(len=19), intent(in)      :: mode
 ! ---- Compute reduced vector
        call romCalcVectReduit(i_mode,&
                               ds_empi%ds_mode%nb_equa,&
-                              ds_multipara%vect_name,&
-                              ds_multipara%vect_type,&
-                              ds_multipara%vect_redu,&
+                              ds_multipara%nb_vect   ,&
+                              ds_multipara%vect_name ,&
+                              ds_multipara%vect_type ,&
+                              ds_multipara%vect_redu ,&
                               'R' , vr_mode = vr_mode)
 ! ---- Compute reduced matrix 
        call romCalcMatrReduit(i_mode,  &
@@ -113,6 +114,7 @@ character(len=19), intent(in)      :: mode
 ! ---- Compute reduced vector
        call romCalcVectReduit(i_mode,&
                               ds_empi%ds_mode%nb_equa,&
+                              ds_multipara%nb_vect   ,&
                               ds_multipara%vect_name ,&
                               ds_multipara%vect_type ,&
                               ds_multipara%vect_redu,&

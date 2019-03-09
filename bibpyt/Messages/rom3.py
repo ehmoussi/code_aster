@@ -82,4 +82,7 @@ cata_msg = {
    51 : _("""Nombre total de valeurs pour le paramètre: %(i1)d."""),
 
    52 : _("""Valeur initiale du paramètre : %(r1)19.12e."""),
+
+   60 : _("""Le second membre est une combinaison de %(i1)d vecteurs."""),
+
 }

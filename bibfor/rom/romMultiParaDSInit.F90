@@ -40,8 +40,8 @@ type(ROM_DS_MultiPara), intent(out) :: ds_multipara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_matr_max = 8
-    integer :: i_matr
+    integer :: nb_matr_max = 8, nb_vect_max = 8
+    integer :: i_matr, i_vect
     character(len=4) :: knume
 !
 ! --------------------------------------------------------------------------------------------------
@@ -49,10 +49,13 @@ type(ROM_DS_MultiPara), intent(out) :: ds_multipara
     do i_matr = 1, nb_matr_max
         call codent(i_matr, 'D0', knume)
         ds_multipara%matr_mode_curr(i_matr) = '&&OP0053.MAMOC_'//knume
-        ds_multipara%matr_redu(i_matr)      = '&&OP0053.M_REDUITE_'//knume
         ds_multipara%prod_matr_mode(i_matr) = '&&OP0053.MATR_MODE_'//knume
+        ds_multipara%matr_redu(i_matr)      = '&&OP0053.M_REDUITE_'//knume
     end do
 !
-    ds_multipara%vect_redu = '&&OP0053.V_REDUIT'
+    do i_vect = 1, nb_vect_max
+        call codent(i_vect, 'D0', knume)
+        ds_multipara%vect_redu(i_vect) = '&&OP0053.V_REDUIT_'//knume
+    end do
 !
 end subroutine
