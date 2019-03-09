@@ -120,7 +120,7 @@ MATF=DEFI_MATERIAU(
                   MFRONT=_F(LISTE_COEF=(80000.,0.35,2.39,0.22,9.36,0.0,0.77E-04,0.99E-04,4.39,2.96,6.11,19922.8,21023.7,6219.,0.4414,0.714,1.,0.75,0.75,0.75,1.,1.,1.,0.75,0.75,0.75,
                             ),)
                         ,)
-                                                       
+
 
 #a_0  =2.39,       ## F1_A
 #a_1  =0.22,       ## F2_A
@@ -321,7 +321,7 @@ def ANGLE_CYL(GROUP_MA,MAILLAGE,CENTRE,AXE,LISTE_CARA,**args):
   nommai=MAILLAGE.sdj.NOMMAI.get()
   groupma=MAILLAGE.sdj.GROUPEMA.get()[GROUP_MA.ljust(24)]
   # On met en forme les coordonnees : matrice 3 colonnes
-  coordo=NP.reshape(coordo,[len(coordo)/3,3])
+  coordo=NP.reshape(coordo,[len(coordo) // 3, 3])
   # On recupere chacune des coordonnees
   X=coordo[:,0]
   Y=coordo[:,1]
