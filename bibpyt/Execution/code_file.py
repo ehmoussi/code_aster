@@ -85,7 +85,7 @@ class CodeVisitor(JDCVisitor):
         as_list = (mcsimp.definition.max == '**' or mcsimp.definition.max > 1) \
             and mcsimp.definition.into is not None
         svalues = []
-        for i, value in enumerate(lval):
+        for value in lval:
             repr_value = ''
             if is_float(value):
                 repr_value = repr_float(value)
@@ -101,8 +101,10 @@ class CodeVisitor(JDCVisitor):
             self.value = "(%s)" % self.value
         if mcsimp.definition.into is None:
             valeur_is_not_default = mcsimp.valeur != mcsimp.definition.defaut
-            if type(valeur_is_not_default) is not bool:
+            try:
                 valeur_is_not_default = any(valeur_is_not_default)
+            except TypeError:
+                pass
             if valeur_is_not_default:
                 self.value = ''
         self.add_args()
