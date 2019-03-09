@@ -259,7 +259,7 @@ Causes possibles :
         except NameError as e:
             etype, value, tb = sys.exc_info()
             l = traceback.extract_tb(tb)
-            s = traceback.format_exception_only("Erreur de nom", e)[0][:-1]
+            s = traceback.format_exception_only(NameError, e)[0][:-1]
             msg = "erreur de syntaxe,  %s ligne %d" % (s, l[-1][1])
             if CONTEXT.debug:
                 traceback.print_exc()

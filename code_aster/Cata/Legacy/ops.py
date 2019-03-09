@@ -214,7 +214,7 @@ def POURSUITE(self, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, LANG, INFO, 
         # être le cas des concepts non executés, placés après FIN.
         UTMESS('I', 'SUPERVIS2_1', valk='pick.1')
         pickle_context = get_pickled_context()
-        if pickle_context == None:
+        if pickle_context is None:
             UTMESS('F', 'SUPERVIS_86')
             return
         self.jdc.restore_pickled_attrs(pickle_context)
@@ -236,6 +236,8 @@ def POURSUITE(self, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, LANG, INFO, 
         count = 0
         UTMESS('I', 'SUPERVIS_65')
         for elem, co in list(pickle_context.items()):
+            if self.jdc.info_level > 1:
+                print("unpickle: {} = {}".format(elem, type(co)))
             if isinstance(co, ASSD):
                 count += 1
                 typnam = co.__class__.__name__
@@ -261,7 +263,7 @@ def POURSUITE(self, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, LANG, INFO, 
                         elem, name, "del {}".format(elem)))
                     del pickle_context[elem]
                     continue
-            if co == None:
+            if co is None:
                 del pickle_context[elem]
         if only_syntax:
             interrupt = []
@@ -498,7 +500,7 @@ def build_formule(self, d):
         if para.strip() != para:
             raise Accas.AsException("nom de paramètre invalide (contient des blancs)"
                                     " : %s" % repr(para))
-    if self.sd == None:
+    if self.sd is None:
         return
     if VALE != None:
         texte = ''.join(VALE.splitlines())
