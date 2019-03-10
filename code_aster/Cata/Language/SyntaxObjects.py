@@ -55,7 +55,6 @@ class SyntaxId(object):
     This list of type identifiers can be extended but never change between
     two releases of code_aster.
     """
-    __slots__ = ('simp', 'fact', 'bloc', 'command')
     simp, fact, bloc, command = list(range(4))
 
 IDS = SyntaxId()
@@ -192,14 +191,15 @@ class UIDMixing(object):
         """Attribute that holds unique *id*"""
         return self._id
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         if other is None or not hasattr(other, 'uid'):
-            return -1
-        if self._id < other.uid:
-            return -1
-        if self._id > other.uid:
-            return 1
-        return 0
+            return True
+        return self._id < other.uid
+
+    def __eq__(self, other):
+        if other is None or not hasattr(other, 'uid'):
+            return False
+        return self._id == other.uid
 
 
 class _F(dict):
