@@ -45,6 +45,7 @@ from ..Objects import ZircaloyPhasesInputVariable, Neutral1InputVariable, Neutra
 from ..Objects import ConcreteDryingInputVariable, TotalFluidPressureInputVariable
 from ..Objects import VolumetricDeformationInputVariable, InputVariableOnMesh
 from ..Objects import MaterialOnMeshBuilder, EvolutionParameter
+from ..Objects import InputVariableConverter
 
 
 class MaterialAssignment(ExecuteCommand):
@@ -112,7 +113,28 @@ class MaterialAssignment(ExecuteCommand):
             else:
                 raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
 
-        self._result = MaterialOnMeshBuilder.build(self._result, inputVarOnMesh)
+        varc = ["VARC_NEUT1", "VARC_NEUT2", "VARC_TEMP", "VARC_GEOM", "VARC_PTOT", "VARC_SECH",
+                "VARC_HYDR", "VARC_CORR", "VARC_IRRA", "VARC_DIVU", "VARC_EPSA", "VARC_M_ACIER",
+                "VARC_M_ZIRC"]
+        inputVariableConverter = InputVariableConverter()
+        for varcName in varc:
+            fkw = keywords[varcName]
+            name1 = fkw["NOM_VARC"]
+            name2 = fkw["GRANDEUR"]
+            comp1 = fkw["CMP_VARC"]
+            comp2 = fkw["CMP_GD"]
+            if type(comp1) is str:
+                comp1 = [comp1]
+            if type(comp1) is tuple:
+                comp1 = list(comp1)
+            if type(comp2) is str:
+                comp2 = [comp2]
+            if type(comp2) is tuple:
+                comp2 = list(comp2)
+            inputVariableConverter.addConverter(name1, comp1, name2, comp2)
+
+        self._result = MaterialOnMeshBuilder.build(self._result, inputVarOnMesh,
+                                                   inputVariableConverter)
 
     def _addBehaviour(self, fkw):
         kwTout = fkw.get("TOUT")
