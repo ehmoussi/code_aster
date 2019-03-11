@@ -825,7 +825,7 @@ def post_mac3coeur_ops(self, **args):
                     maxGraviteParType[Milieu]=gravite
             except KeyError :
                 maxGraviteParType[Milieu] = gravite
-            for i in xrange(nbGrille) :
+            for i in range(nbGrille) :
                 if normeDepl[i] > maxDeplGrille[i] :
                     maxDeplGrille[i] = normeDepl[i]
                     locMaxDeplGrille[i] = name_AC_damac

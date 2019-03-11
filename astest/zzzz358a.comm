@@ -39,7 +39,7 @@ LN = FORMULE(VALE='Z+0.125',
              NOM_PARA=['X', 'Y', 'Z'],)
 
 FISBID = DEFI_FISS_XFEM(MAILLAGE = MA0,
-                        TYPE_DISCONTINUITE = 'INTERFACE', 
+                        TYPE_DISCONTINUITE = 'INTERFACE',
                         DEFI_FISS = _F(FONC_LN = LN,),
                         )
 
@@ -84,7 +84,7 @@ MODTHS = AFFE_MODELE(MAILLAGE = MAILLAGE,
                                MODELISATION = '3D',),)
 
 # ###################################################
-# Definition des fissures mecanique et thermique 
+# Definition des fissures mecanique et thermique
 # ###################################################
 
 D    = 1.0
@@ -93,7 +93,7 @@ a    = 0.57
 b    = 0.57
 
 FISS = DEFI_FISS_XFEM(MAILLAGE = MAILLAGE,
-                      TYPE_DISCONTINUITE = 'FISSURE', 
+                      TYPE_DISCONTINUITE = 'FISSURE',
                       DEFI_FISS = _F(FORM_FISS = 'ELLIPSE',
                                      DEMI_GRAND_AXE = a, # suivant x ellipse
                                      DEMI_PETIT_AXE = b, # suivant y ellipse
@@ -107,7 +107,7 @@ LNHAUT = FORMULE(VALE='Z-0.5',
                  NOM_PARA=['X', 'Y', 'Z'],)
 
 INTERF = DEFI_FISS_XFEM(MAILLAGE = MAILLAGE,
-                        TYPE_DISCONTINUITE = 'INTERFACE', 
+                        TYPE_DISCONTINUITE = 'INTERFACE',
                         DEFI_FISS = _F(FONC_LN = LNHAUT,),)
 
 # ###################################################
@@ -206,14 +206,14 @@ for il in range(n41):
         break
 
 #assert len(ListM2) == len(ListM1)
-#for i in xrange(len(ListM2)):
+#for i in range(len(ListM2)):
   #print ListM2[i] == ListM1[i]
   #print ListM2[i]
   #print ListM1[i]
   #print "&&"
 
 #assert len(ListM2) == len(ListT1)
-#for i in xrange(len(ListM2)):
+#for i in range(len(ListM2)):
   #print ListM2[i] == ListT1[i]
   #print ListM2[i]
   #print ListT1[i]
@@ -225,7 +225,7 @@ for il in range(n41):
 
 # -------
 # on retranche 1 au nombre d'objets trouves dans MODMEX2
-# car en presence du mot cle MODELE_THER, l'operateur 
+# car en presence du mot cle MODELE_THER, l'operateur
 # MODI_MODELE_XFEM ajoute dans la sd modele_xfem l'objet
 # facultatif MODELE_THER
 # -------
@@ -263,8 +263,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 # -------
 # vale_ok == 1 si le "resume" (IMPR_CO/NIVEAU=-1) des .CELV
-# ou .VALE contenus dans les deux modeles sont identiques 
-# (au nom du modele pres) 
+# ou .VALE contenus dans les deux modeles sont identiques
+# (au nom du modele pres)
 # vale_ok == 0 sinon
 # -------
 
