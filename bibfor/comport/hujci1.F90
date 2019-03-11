@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine hujci1(crit, mater, deps, sigd, i1f,&
-                  tract, iret)
+subroutine hujci1(mater, deps, sigd, i1f, tract, iret)
     implicit none
 !
 ! -----------------------------------------------------------------
@@ -30,7 +29,6 @@ subroutine hujci1(crit, mater, deps, sigd, i1f,&
 !       ET   KOE = K = E /3/(1 - 2*NU)
 !
 ! -----------------------------------------------------------------
-! IN  CRIT  : CRITERES DE CONVERGENCE
 ! IN  MATER : COEFFICIENTS MATERIAU A T+DT
 ! IN  DEPS  : INCREMENT DE DEFORMATION
 ! IN  SIGD  : CONTRAINTE A T
@@ -46,7 +44,7 @@ subroutine hujci1(crit, mater, deps, sigd, i1f,&
 #include "asterfort/utmess.h"
 #include "asterfort/zeroco.h"
     integer :: ndt, ndi, iret, ifm, niv
-    real(kind=8) :: mater(22, 2), crit(*), deps(6), sigd(6), i1d, i1f
+    real(kind=8) :: mater(22, 2), deps(6), sigd(6), i1d, i1f
     real(kind=8) :: trdeps, coef, prec, alpha, theta
     real(kind=8) :: x(4), y(4)
     real(kind=8) :: young, poisso, n, pa, piso
@@ -62,6 +60,8 @@ subroutine hujci1(crit, mater, deps, sigd, i1f,&
     data un   /1.d0/
     data deux /2.d0/
     data d13  /0.33333333333334d0/
+    data niter /50/
+    data prec /1.e-8/
 !
     call infniv(ifm, niv)
 !
@@ -205,9 +205,7 @@ subroutine hujci1(crit, mater, deps, sigd, i1f,&
     y(3) = y(1)
     x(4) = x(2)
     y(4) = y(2)
-    niter = int(crit(1))
-    prec = crit(3)
-    icmpt = 0
+    icmpt= 0
 !
  41 continue
     do i = 1, niter

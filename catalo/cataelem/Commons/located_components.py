@@ -98,14 +98,13 @@ CDECENT = LocatedComponents(phys=PHY.NEUT_K24, type='ELEM',
                             components=('Z1',))
 
 CFER1_R = LocatedComponents(phys=PHY.FER1_R, type='ELEM',
-                            components=('TYPCOMB', 'CODIF', 'ES', 'CEQUI', 'ENROBS', 'ENROBI',
-                                        'SIGMACI', 'SIGMBET', 'COEFF1', 'COEFF2', 'GAMMAS', 
-                                        'GAMMAC', 'FACIER', 'FBETON', 'CLACIER', 'UC',))
+                            components=('TYPCOMB', 'CODIF', 'COMPRESS', 'CEQUI', 'ENROBS', 'ENROBI',
+                                        'SIGMACI', 'SIGMBET', 'ALPHACC', 'GAMMAS', 'GAMMAC', 'FACIER',
+                                        'FBETON', 'CLACIER', 'UC', 'RHOACIER', 'AREINF', 'ASHEAR',
+                                        'ASTIRR', 'RHOCRIT', 'DATCRIT', 'LCRIT'))
 
 CFER2_R = LocatedComponents(phys=PHY.FER2_R, type='ELEM',
-                            components=(
-                                'DNSXI', 'DNSXS', 'DNSYI', 'DNSYS', 'DNST',
-                            'SIGMBE', 'EPSIBE',))
+                            components=('DNSXI', 'DNSXS', 'DNSYI', 'DNSYS', 'DNST', 'DNSVOL', 'CONSTRUC'))
 
 CFISSR = LocatedComponents(phys=PHY.FISS_R, type='ELEM',
                            components=('XA', 'YA', 'XTAN', 'YTAN', 'XNORM', 'YNORM',))

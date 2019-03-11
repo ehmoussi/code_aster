@@ -65,6 +65,7 @@ nu.setGlossaryName("PoissonRatio");
 
 @LocalVariable real    lambda;
 @LocalVariable real    mu;
+@LocalVariable real    val;
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
@@ -108,7 +109,16 @@ nu.setGlossaryName("PoissonRatio");
     real emax=sqrt(((ESPHI+dESPHI)*Stensor::Id()+(EDEVI+dEDEVI))|((ESPHI+dESPHI)*Stensor::Id()+(EDEVI+dEDEVI)));
     fELIM=ELIM+dELIM-max(ELIM,emax);
 
-    real eexp=exp((ELIM+dELIM)/KAPPA_T);
+    val = (ELIM+dELIM)/KAPPA_T;
+    if(val < -200)
+    {
+        val = -200;
+    } else if (val > 200)
+    {
+        val = 200;
+    }
+
+    real eexp=exp(val);
     fESPHR=dESPHR-((HYGR*stresP-KRS_T*(ESPHR+dESPHR))/NRS_T)*dt;
     fEDEVR=dEDEVR-(HYGR*stresD-KRD_T*(EDEVR+dEDEVR))/NRD_T*dt;
     fESPHI=dESPHI-(HYGR*stresP/(NIS_T*eexp))*dt;

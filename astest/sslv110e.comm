@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 # TEST SSLV110E (non documente)
-# CALCUL DE G ET G LOCAL PAR LES METHODES 'LEGENDRE' ET 'LAGRANGE'
+# CALCUL DE G LOCAL PAR LES METHODES 'LEGENDRE' ET 'LAGRANGE'
 # PRESSION SUR LES LEVRES DE LA FISSURE (UNE SEULE LEVRE REPRESENTEE !)
 #
 #
@@ -101,14 +101,6 @@ RSUP=DEFI_FONCTION(  NOM_PARA='ABSC',  VALE=( 0., 0.375,  26.69, 1.5625,))
 
 
 # post-traitement avec la charge du calcul (pression constante)
-Gglob1=CALC_G(OPTION='CALC_G_GLOB',
-              RESULTAT=CHAMDEPL,
-              THETA=_F(
-                       FOND_FISS=FONDFISS,
-                       MODULE_FO=MODUF,
-                       R_SUP_FO=RSUP,
-                       R_INF_FO=RINF), 
-               )
 
 Gloc1=CALC_G(RESULTAT=CHAMDEPL,
              THETA=_F(
@@ -118,14 +110,6 @@ Gloc1=CALC_G(RESULTAT=CHAMDEPL,
              )
 
 # post-traitement avec une charge en force face constante
-Gglob2=CALC_G(OPTION='CALC_G_GLOB',
-              RESULTAT=CHAMDEPL,
-              THETA=_F(
-                       FOND_FISS=FONDFISS,
-                       MODULE_FO=MODUF,
-                       R_SUP_FO=RSUP,
-                       R_INF_FO=RINF),
-                       EXCIT=_F(CHARGE=CHFACER))
 
 Gloc2=CALC_G(RESULTAT=CHAMDEPL,
              THETA=_F(
@@ -135,14 +119,6 @@ Gloc2=CALC_G(RESULTAT=CHAMDEPL,
              EXCIT=_F(CHARGE=CHFACER))
 
 # post-traitement avec une charge en force face 'fonction'
-Gglob3=CALC_G(OPTION='CALC_G_GLOB',
-              RESULTAT=CHAMDEPL,
-              THETA=_F(
-                       FOND_FISS=FONDFISS,
-                       MODULE_FO=MODUF,
-                       R_SUP_FO=RSUP,
-                       R_INF_FO=RINF),
-                       EXCIT=_F(CHARGE=CHFACEF))
 
 Gloc3=CALC_G(RESULTAT=CHAMDEPL,
              THETA=_F(
@@ -150,46 +126,6 @@ Gloc3=CALC_G(RESULTAT=CHAMDEPL,
                       R_SUP_FO=RSUP,
                       R_INF_FO=RINF),
              EXCIT=_F(CHARGE=CHFACEF))
-
-
-#----------------------------------------------------------------------
-#              TEST DE G global
-#----------------------------------------------------------------------
-
-Gglob_ref = 5.76e-3 / 4
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-2,
-           VALE_CALC=0.00144905123012,
-           VALE_REFE=1.4400000000000001E-3,
-           NOM_PARA='G',
-           TABLE=Gglob1,)
-
-Gglob_cal = 1.449052E-03
-# deuxieme test pour verif que la valeur que l'on cherche a reproduire n'a pas bouge
-TEST_TABLE(
-           VALE_CALC=0.00144905123012,
-           
-           NOM_PARA='G',
-           TABLE=Gglob1,
-           )
-
-# dans la suite, on ne cherche pas a se comparer a la valeur analytique
-# on fait juste une comparaison avec les resultats de la charge du calcul
-
-TEST_TABLE(REFERENCE='AUTRE_ASTER',
-           PRECISION=9.9999999999999995E-07,
-           VALE_CALC=0.00144905115815,
-           VALE_REFE=1.4490519999999999E-3,
-           NOM_PARA='G',
-           TABLE=Gglob2,)
-
-TEST_TABLE(REFERENCE='AUTRE_ASTER',
-           PRECISION=9.9999999999999995E-07,
-           VALE_CALC=0.00144905115815,
-           VALE_REFE=1.4490519999999999E-3,
-           NOM_PARA='G',
-           TABLE=Gglob3,)
 
 #----------------------------------------------------------------------
 #              TEST DE G(A)

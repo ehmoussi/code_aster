@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -91,9 +91,7 @@ FOND=DEFI_FOND_FISS(    MAILLAGE=MA,
 G_0=CALC_G( THETA=_F(
                      R_INF=0.15,
                      FOND_FISS=FOND,
-                     MODULE=1.,
-                     R_SUP=0.6,
-                     DIRECTION=(1., 0., 0.,)),
+                     R_SUP=0.6,),
             RESULTAT=CHAMDEP,
             TOUT_ORDRE='OUI',
             COMPORTEMENT=_F(RELATION='ELAS_VMIS_LINE',),
@@ -105,9 +103,7 @@ LISTG = (30, 60,90,120,150);
 G_1=CALC_G( THETA=_F(
                      R_INF=0.3,
                      FOND_FISS=FOND,
-                     MODULE=1.,
-                     R_SUP=0.9,
-                     DIRECTION=(1., 0., 0.,)),
+                     R_SUP=0.9,),
             RESULTAT=CHAMDEP,
             NUME_ORDRE=LISTG,
             COMPORTEMENT=_F(RELATION='ELAS_VMIS_LINE',),
@@ -118,9 +114,7 @@ IMPR_TABLE(TABLE=G_1,);
 G_2=CALC_G( THETA=_F(
                      R_INF=0.9,
                      FOND_FISS=FOND,
-                     MODULE=1.,
-                     R_SUP=1.5,
-                     DIRECTION=(1., 0., 0.,)),
+                     R_SUP=1.5,),
             RESULTAT=CHAMDEP,
             NUME_ORDRE=LISTG,
             COMPORTEMENT=_F(RELATION='ELAS_VMIS_LINE',),

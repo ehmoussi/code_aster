@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,13 +28,7 @@ FISS0=DEFI_FOND_FISS(MAILLAGE=M,
                     LEVRE_SUP=_F(GROUP_MA='LEVR_SUP',),
                     SYME='OUI',);
 
-FISS1=DEFI_FOND_FISS(MAILLAGE=M,
-                    FOND_FISS=_F(GROUP_NO='FOND',
-                                 DTAN_ORIG=(1.,0.,0.,),),
-                    SYME='OUI',);
-
 basefond0=FISS0.sdj.BASEFOND.get()
-basefond1=FISS1.sdj.BASEFOND.get()
 
 ndfon=[]
 vnorX=[]
@@ -50,25 +44,6 @@ for i in range(0,len(basefond0)/4):
   vdirY.append(basefond0[4*i+3])
 
 TABL0=CREA_TABLE(LISTE=(_F(LISTE_I=ndfon,PARA='ND_FOND'),
-                        _F(LISTE_R=vnorX,PARA='VNORX'),
-                        _F(LISTE_R=vnorY,PARA='VNORY'),
-                        _F(LISTE_R=vdirX,PARA='VDIRX'),
-                        _F(LISTE_R=vdirY,PARA='VDIRY'),
-                        ),);
-ndfon=[]
-vnorX=[]
-vnorY=[]
-vdirX=[]
-vdirY=[]
-
-for i in range(0,len(basefond1)/4):
-  ndfon.append(i+1)
-  vnorX.append(basefond1[4*i])
-  vnorY.append(basefond1[4*i+1])
-  vdirX.append(basefond1[4*i+2])
-  vdirY.append(basefond1[4*i+3])
-
-TABL1=CREA_TABLE(LISTE=(_F(LISTE_I=ndfon,PARA='ND_FOND'),
                         _F(LISTE_R=vnorX,PARA='VNORX'),
                         _F(LISTE_R=vnorY,PARA='VNORY'),
                         _F(LISTE_R=vdirX,PARA='VDIRX'),
@@ -104,42 +79,6 @@ for i in range(0,len(basefond0)/4):
               REFERENCE='ANALYTIQUE' )
 
    TEST_TABLE(TABLE=TABL0,
-              FILTRE=_F(  NOM_PARA = 'ND_FOND',
-                          VALE_I = i+1),
-              NOM_PARA='VDIRY',
-              VALE_CALC=0.,
-              VALE_REFE=0.,
-              CRITERE='ABSOLU',
-              REFERENCE='ANALYTIQUE' )
-
-   TEST_TABLE(TABLE=TABL1,
-              FILTRE=_F(  NOM_PARA = 'ND_FOND',
-                          VALE_I = i+1),
-              NOM_PARA='VNORX',
-              VALE_CALC=0.,
-              VALE_REFE=0.,
-              CRITERE='ABSOLU',
-              REFERENCE='ANALYTIQUE' )
-
-   TEST_TABLE(TABLE=TABL1,
-              FILTRE=_F(  NOM_PARA = 'ND_FOND',
-                          VALE_I = i+1),
-              NOM_PARA='VNORY',
-              VALE_CALC=0.99999982,
-              VALE_REFE=1.,
-              CRITERE='ABSOLU',
-              REFERENCE='ANALYTIQUE' )
-
-   TEST_TABLE(TABLE=TABL1,
-              FILTRE=_F(  NOM_PARA = 'ND_FOND',
-                          VALE_I = i+1),
-              NOM_PARA='VDIRX',
-              VALE_CALC=1.0,
-              VALE_REFE=1.,
-              CRITERE='ABSOLU',
-              REFERENCE='ANALYTIQUE' )
-
-   TEST_TABLE(TABLE=TABL1,
               FILTRE=_F(  NOM_PARA = 'ND_FOND',
                           VALE_I = i+1),
               NOM_PARA='VDIRY',

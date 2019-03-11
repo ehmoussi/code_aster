@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -82,9 +82,7 @@ GPRES1=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=22.04078,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=30.,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=30.,),
 
               )
               
@@ -98,9 +96,7 @@ GPRES2=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=15.3061094,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=22.04078,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=22.04078,),
     )
                              
 GKPRES2=CALC_G(     RESULTAT=RESU1,
@@ -113,9 +109,7 @@ GPRES3=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=9.79591846,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=15.3061094,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=15.3061094,),
               )
                              
 
@@ -129,9 +123,7 @@ GPRES4=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=5.510197639,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=9.79591846,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=9.79591846,),
     )
                              
 GKPRES4=CALC_G(     RESULTAT=RESU1,
@@ -144,9 +136,7 @@ GPRES5=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=2.448979377,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=5.510197639,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=5.510197639,),
                )
 
 GKPRES5=CALC_G(     RESULTAT=RESU1,
@@ -159,9 +149,7 @@ GPRES6=CALC_G(      RESULTAT=RESU1,
                     THETA=_F(
                              R_INF=0.61225116,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=2.448979377,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=2.448979377,),
               )
 
 GKPRES6=CALC_G(     RESULTAT=RESU1,
@@ -176,9 +164,7 @@ GFCON1=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=22.04078,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=30.,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=30.,),
               )
 
 GKFCON1=CALC_G(     RESULTAT=RESU2,
@@ -191,9 +177,7 @@ GFCON2=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=22.04078,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=30.,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=30.,),
               )
 
 GKFCON2=CALC_G(     RESULTAT=RESU2,
@@ -206,9 +190,7 @@ GFCON3=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=9.79591846,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=15.3061094,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=15.3061094,),
               )
 
 GKFCON3=CALC_G(     RESULTAT=RESU2,
@@ -221,9 +203,7 @@ GFCON4=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=5.510197639,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=9.79591846,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=9.79591846,),
               )
 
 GKFCON4=CALC_G(     RESULTAT=RESU2,
@@ -236,9 +216,7 @@ GFCON5=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=2.448979377,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=5.510197639,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=5.510197639,),
               )
 
 GKFCON5=CALC_G(     RESULTAT=RESU2,
@@ -251,9 +229,7 @@ GFCON6=CALC_G(      RESULTAT=RESU2,
                     THETA=_F(
                              R_INF=0.61225116,
                              FOND_FISS=FOND,
-                             MODULE=1.,
-                             R_SUP=2.448979377,
-                             DIRECTION=( 1., 0., 0.,)),
+                             R_SUP=2.448979377,),
               )
 
 GKFCON6=CALC_G(     RESULTAT=RESU2,

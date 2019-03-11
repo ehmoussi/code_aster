@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,8 +22,7 @@
 !
 interface
     subroutine gcou2d(base, resu, noma, nomno, noeud,&
-                      coor, rinf, rsup, module, ldirec,&
-                      dir)
+                      coor, rinf, rsup, dir)
         character(len=1) :: base
         character(len=24) :: resu
         character(len=8) :: noma
@@ -32,8 +31,6 @@ interface
         real(kind=8) :: coor(*)
         real(kind=8) :: rinf
         real(kind=8) :: rsup
-        real(kind=8) :: module
-        aster_logical :: ldirec
         real(kind=8) :: dir(3)
     end subroutine gcou2d
 end interface

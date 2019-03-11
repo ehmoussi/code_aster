@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,13 +21,12 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
+    subroutine cgcrtb(table, option, ndim, typfis, nxpara,&
                       lmoda, nbpara, linopa, litypa)
         integer :: nbpara
         character(len=8) :: table
         character(len=16) :: option
-        aster_logical :: lmelas
-        character(len=16) :: cas
+        integer :: ndim
         character(len=8) :: typfis
         integer :: nxpara
         aster_logical :: lmoda

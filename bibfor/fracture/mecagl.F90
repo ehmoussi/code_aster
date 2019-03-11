@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine mecagl(option, result, modele, depla, thetai,&
                   nnoff, iord, ndeg, liss,&
                   milieu, ndimte, extim,&
                   time, nbprup, noprup, chvite, chacce,&
-                  lmelas, nomcas, kcalc, fonoeu, lincr, coor,&
+                  kcalc, fonoeu, lincr, coor,&
                   norfon, connex)
 ! aslint: disable=W1504
     implicit none
@@ -71,11 +71,11 @@ subroutine mecagl(option, result, modele, depla, thetai,&
     character(len=19) :: lischa
     character(len=8) :: modele, thetai
     character(len=8) :: result, symech, kcalc
-    character(len=16) :: option, noprup(*), nomcas
+    character(len=16) :: option, noprup(*)
     character(len=24) :: depla, chfond, mate, compor
     character(len=24) :: chvite, chacce, fonoeu, liss, norfon
 !
-    aster_logical :: extim, milieu, lmelas, lincr, connex
+    aster_logical :: extim, milieu, lincr, connex
 ! ......................................................................
 !
 !  - FONCTION REALISEE:   CALCUL DU TAUX DE RESTITUTION LOCAL D'ENERGIE
@@ -98,8 +98,6 @@ subroutine mecagl(option, result, modele, depla, thetai,&
 !  IN    IORD   --> NUMERO D'ORDRE DE LA SD
 !  IN    LISS   --> TYPE DE LISSAGE
 !  IN    NDEG   --> DEGRE DU POLYNOME DE LEGENDRE
-!  IN    LMELAS --> TRUE SI LE TYPE DE LA SD RESULTAT EST MULT_ELAS
-!  IN    NOMCAS --> NOM DU CAS DE CHARGE SI LMELAS
 !  IN    KCALC  --> = 'NON' : ON RECUPERE LES CHAMPS DE CONTRAINTES
 !                             ET D'ENERGIE DE LA SD RESULTAT
 !                   = 'OUI' : ON RECALCULE LES CHAMPS DE CONTRAINTES
@@ -494,13 +492,8 @@ subroutine mecagl(option, result, modele, depla, thetai,&
 !
     call tbajvi(result, nbprup, 'NUME_FOND', numfon, livi)
 !
-    if (lmelas) then
-        call tbajvi(result, nbprup, 'NUME_CAS', iord, livi)
-        call tbajvk(result, nbprup, 'NOM_CAS', nomcas, livk)
-    else
-        call tbajvi(result, nbprup, 'NUME_ORDRE', iord, livi)
-        call tbajvr(result, nbprup, 'INST', time, livr)
-    endif
+    call tbajvi(result, nbprup, 'NUME_ORDRE', iord, livi)
+    call tbajvr(result, nbprup, 'INST', time, livr)
 !
     do i = 1, nnoff
         if (.not.lxfem) then

@@ -15,13 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine elrfvf(elrefz, x, dimf, ff, nno)
-    implicit none
+!
+implicit none
+!
+#include "asterf_types.h"
 #include "asterfort/assert.h"
-    integer :: dimf, nno
-    real(kind=8) :: x(*), ff(*)
-    character(len=*) :: elrefz
+!
+    character(len=*), intent(in) :: elrefz
+    real(kind=8), intent(in)     :: x(*)
+    integer, intent(in)          :: dimf
+    real(kind=8), intent(out)    :: ff(*)
+    integer, intent(out)         :: nno
+!
 ! person_in_charge: jacques.pellet at edf.fr
 !
 !
@@ -40,25 +47,17 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
     real(kind=8) :: pface2 = 0.0
     real(kind=8) :: pface3 =0.0, pface4=0.0, pmili1=0.0, pmili2=0.0, pmili3=0.0, pmili4=0.0
     real(kind=8) :: x1=0.0, x2=0.0, x3=0.0, x4=0.0, d1=0.0, d2=0.0, d3=0.0, d4=0.0
-    real(kind=8) :: zero, undemi, un, deux, quatre,huit, uns4, uns8
+    real(kind=8), parameter :: zero = 0.d0, un = 1.d0, deux = 2.d0, quatre = 4.d0
+    real(kind=8), parameter :: undemi = 0.5d0, uns4 = 0.25d0, uns8 = 0.125d0
 !
 ! -----  FONCTIONS FORMULES
+!
 #define al31(u)   0.5d0*(u)* (u-1.d0)
 #define al32(u)   (-(u+1.d0)*(u-1.d0))
 #define al33(u)   0.5d0*(u)* (u+1.d0)
+!
 ! DEB ------------------------------------------------------------------
 !
-    zero = 0.0d0
-    undemi = 0.5d0
-    un = 1.0d0
-    deux = 2.0d0
-    quatre = 4.0d0
-    huit = 8.0d0
-    uns4 = un/quatre
-    uns8 = un/huit
-
-!
-!     ------------------------------------------------------------------
     select case (elrefz)
         case('HE8')
 !
@@ -66,6 +65,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 8
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = (un-x0)* (un-y0)* (un-z0)*uns8
             ff(2) = (un+x0)* (un-y0)* (un-z0)*uns8
@@ -83,6 +83,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 20
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = (un-x0)* (un-y0)* (un-z0)* (-x0-y0-z0-deux)*uns8
             ff(2) = (un+x0)* (un-y0)* (un-z0)* (x0-y0-z0-deux)*uns8
@@ -112,6 +113,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 27
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = al31(x0)*al31(y0)*al31(z0)
             ff(2) = al33(x0)*al31(y0)*al31(z0)
@@ -148,6 +150,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 6
+            ASSERT(dimf.ge.nno)
             al = un - x0 - y0
 !
             ff(1) = undemi*x0*(un-z0)
@@ -163,6 +166,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 6
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = undemi*y0* (un-x0)
             ff(2) = undemi*z0* (un-x0)
@@ -178,6 +182,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 15
+            ASSERT(dimf.ge.nno)
             al = un - x0 - y0
 !
             ff(1)  = x0* (un-z0)* ((deux*x0)-deux-z0)/deux
@@ -206,6 +211,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 15
+            ASSERT(dimf.ge.nno)
             al = un - y0 - z0
 !
             ff(1) = y0* (un-x0)* ((deux*y0)-deux-x0)/deux
@@ -234,6 +240,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 18
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = x0*y0*(x0-un)*(deux*y0-un)/deux
             ff(2) = x0*z0*(x0-un)*(deux*z0-un)/deux
@@ -265,6 +272,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 4
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = y0
             ff(2) = z0
@@ -278,6 +286,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 10
+            ASSERT(dimf.ge.nno)
             al = un - x0 - y0 - z0
 !
             ff(1) = (deux*y0-un)*y0
@@ -298,6 +307,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 5
+            ASSERT(dimf.ge.nno)
             z04 = (un-z0)*quatre
 !
             pface1 = x0 + y0 + z0 - un
@@ -325,6 +335,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             y0 = x(2)
             z0 = x(3)
             nno = 13
+            ASSERT(dimf.ge.nno)
             z01 = un - z0
             z02 = (un-z0)*deux
 !
@@ -365,6 +376,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             x0 = x(1)
             y0 = x(2)
             nno = 3
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = un - x0 - y0
             ff(2) = x0
@@ -376,6 +388,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             x0 = x(1)
             y0 = x(2)
             nno = 6
+            ASSERT(dimf.ge.nno)
             al = un - x0 - y0
 !
             ff(1) = -al* (un-deux*al)
@@ -391,6 +404,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             x0 = x(1)
             y0 = x(2)
             nno = 7
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = un - 3.0d0*(x0+y0) + 2.0d0*(x0*x0+y0*y0) + 7.0d0*x0* y0 - 3.0d0*x0*y0*(x0+y0)
             ff(2) = x0*( -un + 2.0d0*x0 + 3.0d0*y0 - 3.0d0*y0*(x0+y0) )
@@ -406,6 +420,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             x0 = x(1)
             y0 = x(2)
             nno = 4
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = uns4* (un-x0)* (un-y0)
             ff(2) = uns4* (un+x0)* (un-y0)
@@ -418,6 +433,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             x0 = x(1)
             y0 = x(2)
             nno = 8
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = uns4* (un-x0)* (un-y0)* (-un-x0-y0)
             ff(2) = uns4* (un+x0)* (un-y0)* (-un+x0-y0)
@@ -434,6 +450,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
             x0 = x(1)
             y0 = x(2)
             nno = 9
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = al31(x0)*al31(y0)
             ff(2) = al33(x0)*al31(y0)
@@ -448,6 +465,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
 !         ------------------------------------------------------------------
         case('PO1')
             nno = 1
+            ASSERT(dimf.ge.nno)
             ff(1) = un
 !
 !         ------------------------------------------------------------------
@@ -455,6 +473,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
 !
             x0 = x(1)
             nno = 2
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = (un-x0)/deux
             ff(2) = (un+x0)/deux
@@ -464,6 +483,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
 !
             x0 = x(1)
             nno = 3
+            ASSERT(dimf.ge.nno)
 !
             ff(1) = - (un-x0)*x0/deux
             ff(2) = (un+x0)*x0/deux
@@ -472,6 +492,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
 !         ------------------------------------------------------------------
         case('SE4')
             nno = 4
+            ASSERT(dimf.ge.nno)
             x0 = x(1)
 !
             x1 = -1.d0
@@ -494,10 +515,7 @@ subroutine elrfvf(elrefz, x, dimf, ff, nno)
 !         ------------------------------------------------------------------
 !
         case default
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
     end select
-!
-    ASSERT(dimf.ge.nno)
-!
 !
 end subroutine

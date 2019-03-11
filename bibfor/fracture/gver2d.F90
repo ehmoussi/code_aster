@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine gver2d(nocc, noeud,&
-                  rinf, rsup, module)
+subroutine gver2d(nocc, noeud, rinf, rsup)
     implicit none
 !
 !     ------------------------------------------------------------------
@@ -45,7 +44,6 @@ subroutine gver2d(nocc, noeud,&
 !     NOEUD      : NOEUD DU FOND DE FISSURE
 !     R_INF       : RAYON INFERIEUR DE LA COURONNE
 !     R_SUP       : RAYON SUPERIEUR DE LA COURONNE
-!     MODULE     : MODULE THETA
 !
 !     ------------------------------------------------------------------
 !
@@ -77,7 +75,7 @@ subroutine gver2d(nocc, noeud,&
     integer :: nbm, n2, lnoff, numfon, ibid
     integer :: iatmno
 !
-    real(kind=8) :: rbid, rinf, rsup, module, valr(2)
+    real(kind=8) :: rbid, rinf, rsup, valr(2)
 !
 !-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
@@ -85,7 +83,6 @@ subroutine gver2d(nocc, noeud,&
 !
     do iocc = 1, nocc
 !
-        call getvr8('THETA', 'MODULE', iocc=iocc, scal=module, nbret=nbm)
         call getvr8('THETA', 'R_INF', iocc=iocc, scal=rinf, nbret=nbm)
         call getvr8('THETA', 'R_SUP', iocc=iocc, scal=rsup, nbret=nbm)
 !

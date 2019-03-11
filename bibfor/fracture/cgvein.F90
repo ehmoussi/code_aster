@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cgvein(compor, l_temp)
+subroutine cgvein(compor)
 !
     implicit none
 !
@@ -33,19 +33,16 @@ subroutine cgvein(compor, l_temp)
 #include "asterfort/utmess.h"
 !
 character(len=19), intent(in) :: compor
-aster_logical, intent(in) :: l_temp
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! CALC_G
 !
-! Verifications supplementaires pour les comportements incrementaux (ELAS + ETAT_INIT ou GTP)
+! Verifications supplementaires pour les comportements incrementaux (ELAS + ETAT_INIT)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In compor : carte comportement cree dans cgleco()
-! In l_temp : .true.  en presence de thermique
-!             .false. sinon
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,12 +84,9 @@ aster_logical, intent(in) :: l_temp
         k16ldc = cesv(iadc)
 !
 !       seules relations de type COMP_INCR autorisees
-        lldcok = k16ldc .eq. 'ELAS            ' .or. k16ldc .eq. 'VMIS_ISOT_LINE  ' .or. k16ldc&
-                 .eq. 'VMIS_ISOT_TRAC  '
+        lldcok = k16ldc .eq. 'ELAS            '
         if (.not.lldcok) call utmess('F', 'RUPTURE1_69', sk=k16ldc)
 !
-!       on interdit VMIS_ISOT_TRAC en presence de thermique
-        if (k16ldc .eq. 'VMIS_ISOT_TRAC  ' .and. l_temp) call utmess('F', 'RUPTURE1_70')
     enddo
 !
     call jedema()

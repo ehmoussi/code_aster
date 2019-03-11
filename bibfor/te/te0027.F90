@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,10 +25,6 @@ subroutine te0027(option, nomte)
 !
 !      OPTION : 'CALC_G'          (LOCAL,CHARGES REELLES)
 !               'CALC_G_F'        (LOCAL,CHARGES FONCTIONS)
-!               'CALC_GTP'        (LOCAL,CHARGES REELLES)
-!               'CALC_GTP_F'      (LOCAL,CHARGES FONCTIONS)
-!               'CALC_G_GLOB'     (GLOBAL,CHARGES REELLES)
-!               'CALC_G_GLOB_F'   (GLOBAL,CHARGES FONCTIONS)
 !
 ! ENTREES  ---> OPTION : OPTION DE CALCUL
 !          ---> NOMTE  : NOM DU TYPE ELEMENT
@@ -60,7 +56,7 @@ subroutine te0027(option, nomte)
 ! DECLARATION VARIABLES LOCALES
     integer :: ipoids, ivf, idfde
     integer :: icomp, igeom, itemps, idepl, imate
-    integer :: iepsr, iepsf, isigi, isigm, iepsp, ivari
+    integer :: iepsr, iepsf, isigi, isigm
     integer :: iforc, iforf, ithet, igthet, irota, ipesa, ier
     integer :: jgano, nno, nnos, npg, ncmp
     integer :: i, j, k, kk, l, m, kp, ndim, compt, nbvari, iret
@@ -68,14 +64,14 @@ subroutine te0027(option, nomte)
 !
     real(kind=8) :: epsref(6), epsi, rac2, crit(13)
     real(kind=8) :: dfdi(81), f(3, 3), sr(3, 3)
-    real(kind=8) :: eps(6), epsin(6), depsin(6, 3), epsp(6), depsp(6, 3)
+    real(kind=8) :: eps(6), epsin(6), depsin(6, 3), epsp(6)
     real(kind=8) :: epsino(162), fno(81)
     real(kind=8) :: sigl(6), sigin(6), dsigin(6, 3)
     real(kind=8) :: thet, tgdm(3), tgd(20)
     real(kind=8) :: prod, prod1, prod2, divt, valpar(4)
-    real(kind=8) :: tcla, tthe, tfor, tplas, tini, poids, rbid, dsidep(6, 6)
+    real(kind=8) :: tcla, tthe, tfor, tini, poids, rbid, dsidep(6, 6)
     real(kind=8) :: dudm(3, 4), dfdm(3, 4), dtdm(3, 4), der(4), dvdm(3, 4)
-    real(kind=8) :: p, ppg, dpdm(3), rp, energi(2), rho(1), om, omo
+    real(kind=8) :: energi(2), rho(1), om, omo
     real(kind=8) :: ecin, prod3, prod4, accele(3), e(1), nu(1), mu
 !
     aster_logical :: grand, fonc, incr, epsini
@@ -107,7 +103,6 @@ subroutine te0027(option, nomte)
     tcla = 0.d0
     tthe = 0.d0
     tfor = 0.d0
-    tplas = 0.d0
     tini = 0.d0
     compt = 0
     do 40 i = 1, nno
@@ -130,8 +125,7 @@ subroutine te0027(option, nomte)
     matcod = zi(imate)
 ! RECUPERATION DU CHAMP LOCAL (CARTE) ASSOCIE AU PRE-EPSI
 ! CE CHAMP EST ISSU D UN CHARGEMENT PRE-EPSI
-    if (option .eq. 'CALC_G_F' .or. option .eq. 'CALC_G_GLOB_F' .or. option .eq.&
-        'CALC_GTP_F') then
+    if (option .eq. 'CALC_G_F') then
         fonc = .true.
         call jevech('PFFVOLU', 'L', iforf)
         call jevech('PTEMPSR', 'L', itemps)
@@ -158,15 +152,11 @@ subroutine te0027(option, nomte)
     read (zk16(icomp+1),'(I16)') nbvari
     if (incr) then
         call jevech('PCONTRR', 'L', isigm)
-        call jevech('PDEFOPL', 'L', iepsp)
-        call jevech('PVARIPR', 'L', ivari)
     endif
     call tecach('ONO', 'PPESANR', 'L', iret, iad=ipesa)
     call tecach('ONO', 'PROTATR', 'L', iret, iad=irota)
     call tecach('ONO', 'PSIGINR', 'L', iret, iad=isigi)
-    if (option .eq. 'CALC_G' .or. option .eq. 'CALC_G_F' .or. option .eq. 'CALC_G_GLOB'&
-        .or. option .eq. 'CALC_G_GLOB_F' .or. option .eq. 'CALC_GTP' .or. option .eq.&
-        'CALC_GTP_F') then
+    if (option .eq. 'CALC_G' .or. option .eq. 'CALC_G_F') then
         call tecach('ONO', 'PVITESS', 'L', iret, iad=ivites)
         call tecach('ONO', 'PACCELE', 'L', iret, iad=iaccel)
     endif
@@ -277,10 +267,8 @@ subroutine te0027(option, nomte)
 !
 ! INITIALISATIONS
         l = (kp-1)*nno
-        ppg = 0.d0
         do 240 i = 1, 3
             tgdm(i) = 0.d0
-            dpdm(i) = 0.d0
             accele(i) = 0.d0
             do 220 j = 1, 3
                 sr(i,j) = 0.d0
@@ -302,7 +290,6 @@ subroutine te0027(option, nomte)
             do 250 j = 1, 3
                 dsigin(i,j) = 0.d0
                 depsin(i,j) = 0.d0
-                depsp(i,j) = 0.d0
 250         continue
 260     continue
 !
@@ -340,46 +327,6 @@ subroutine te0027(option, nomte)
                 dfdm(j,4) = dfdm(j,4) + fno(ndim* (i-1)+j)*der(4)
 280         continue
 290     continue
-! =======================================================
-! PLASTICITE
-! =======================================================
-! - CALCULS DES GRADIENTS DE P (DPDM) ET EPSP (DEPSP) EN PLASTICITE
-!
-        if (incr) then
-            do 340 i = 1, nno
-                der(1) = dfdi(i)
-                der(2) = dfdi(i+nno)
-                der(3) = dfdi(i+2*nno)
-                der(4) = zr(ivf+l+i-1)
-                p = zr(ivari+ (i-1)*nbvari)
-                ppg = ppg + p*der(4)
-                do 300 j = 1, ncmp
-                    epsp(j) = epsp(j) + zr(iepsp+ncmp* (i-1)+j-1)*der( 4)
-300             continue
-                if (p .ge. epsi) then
-                    do 310 j = 1, ndim
-                        dpdm(j) = dpdm(j) + zr(ivari+ (i-1)*nbvari)* der(j)
-310                 continue
-                    do 330 k = 1, ndim
-                        do 320 j = 1, ncmp
-                            depsp(j,k) = depsp(j,k) + zr(iepsp+ncmp* ( i-1)+j-1)*der(k)
-320                     continue
-330                 continue
-                endif
-340         continue
-            do 360 i = 4, ncmp
-                epsp(i) = epsp(i)*rac2
-                do 350 j = 1, ndim
-                    depsp(i,j) = depsp(i,j)*rac2
-350             continue
-360         continue
-            if (ppg .lt. epsi) then
-                ppg = 0.d0
-                do 370 j = 1, ncmp
-                    epsp(j) = 0.d0
-370             continue
-            endif
-        endif
 !
 ! =======================================================
 ! PRE DEFORMATIONS ET LEUR GRADIENT DEPSIN
@@ -411,10 +358,11 @@ subroutine te0027(option, nomte)
 ! =======================================================
 !
         if (incr) then
-! EN PLASTICITE
+! BESOIN GARDER APPEL NMPLRU POUR LE CALCUL DE L'ENERGIE EN PRESENCE 
+! D'ETAT INITIAL MAIS NETTOYAGE A COMPLETER
             call nmplru(fami, kp, 1, '+', ndim,&
-                        typmod, matcod, compor, ppg, eps,&
-                        epsp, rp, energi)
+                        typmod, matcod, compor, rbid, eps,&
+                        epsp, rbid, energi)
             do 430 i = 1, 3
                 sigl(i) = zr(isigm+ncmp* (kp-1)+i-1)
                 sigl(i+3) = zr(isigm+ncmp* (kp-1)+i-1+3)*rac2
@@ -569,22 +517,6 @@ subroutine te0027(option, nomte)
             tfor = tfor + dudm(i,4)* (prod+dfdm(i,4)*divt)*poids
 580     continue
 !
-! =======================================================
-! - TERME PLASTIQUE :   SIG:(GRAD(EPSP).THETA)- R(P).GRAD(P).THETA
-! =======================================================
-        if (incr) then
-            prod1 = 0.d0
-            prod2 = 0.d0
-            do 600 i = 1, ncmp
-                do 590 j = 1, ndim
-                    prod1 = prod1 + sigl(i)*depsp(i,j)*dtdm(j,4)
-590             continue
-600         continue
-            do 610 i = 1, ndim
-                prod2 = prod2 + rp*dpdm(i)*dtdm(i,4)
-610         continue
-            tplas = tplas + (prod1-prod2)*poids
-        endif
 !
 ! =======================================================
 ! TERME INITIAL:PROD1 LIE A LA CONTRAINTE (EPS-EPSREF):GRAD(SIGIN).THETA
@@ -625,6 +557,6 @@ subroutine te0027(option, nomte)
 ! EXIT EN CAS DE THETA FISSURE NUL PARTOUT
 9999 continue
 ! ASSEMBLAGE FINAL DES TERMES DE G OU DG
-    zr(igthet) = tthe + tcla + tfor + tplas + tini
+    zr(igthet) = tthe + tcla + tfor + tini
 !
 end subroutine

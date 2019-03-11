@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -92,8 +92,6 @@ FISS=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
                     LEVRE_INF=_F(GROUP_MA='LEV_INF',),
                     )
 
-# ici, la direction est facultative mais permet d'ameliorer la
-# precision sur K2 : de 10% -> 5%
 CG=CALC_G(THETA=_F(FOND_FISS=FISS,
                    R_INF=2*h,
                    R_SUP=5*h,),
@@ -102,16 +100,6 @@ CG=CALC_G(THETA=_F(FOND_FISS=FISS,
 
 IMPR_TABLE(TABLE=CG)
 
-# Test de l'opérande DIRECTION dans un cas complexe
-CGD=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=2*h,
-                   R_SUP=5*h,
-                   DIRECTION=(cos(alpha),sin(alpha),0.0),
-                   ),
-          RESULTAT=RESU,
-          OPTION='CALC_K_G')
-
-IMPR_TABLE(TABLE=CGD)
 
 PK=POST_K1_K2_K3(FOND_FISS=FISS,
                  RESULTAT=RESU)
@@ -120,20 +108,6 @@ IMPR_TABLE(TABLE=PK)
 
 K1ref = 0.877*(2/pi)*sig*sqrt(pi*a)
 K2ref = 0.235*(2/pi)*sig*sqrt(pi*a)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.02,
-           VALE_CALC=1181628.26319,
-           VALE_REFE=1.176825720257336E6,
-           NOM_PARA='K1',
-           TABLE=CGD,)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.10,
-           VALE_CALC=311375.138525,
-           VALE_REFE=3.1534098547374451E5,
-           NOM_PARA='K2',
-           TABLE=CGD,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.02,

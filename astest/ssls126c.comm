@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -369,14 +369,16 @@ TEST_RESU(RESU=(_F(RESULTAT=RESU1,
 RESU=CALC_FERRAILLAGE(reuse =RESU,
                       RESULTAT=RESU,
                       INST=1.0,
+                      CODIFICATION='EC2',
                       TYPE_COMB='ELU',
                       AFFE=_F(TOUT='OUI',
-                              ENROBG=0.04,
-                              SIGM_ACIER=500000000.0,
-                              SIGM_BETON=21000000.0,
-                              PIVA=0.01,
-                              PIVB=0.0035,
-                              ES=E,),);
+                              C_INF=0.04,
+                              C_SUP=0.04,
+                              GAMMA_S = 1.15,
+                              GAMMA_C = 1.5,
+                              FYK=575000000.0,
+                              FCK=31500000.0,
+                              UNITE_CONTRAINTE='Pa'),);
 
 TEST_RESU(RESU=_F(RESULTAT=RESU,
                   INST=1.0,
