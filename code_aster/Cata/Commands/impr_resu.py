@@ -50,6 +50,10 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
 
          b_format_med  =BLOC(condition="""equal_to("FORMAT", 'MED')""",fr=tr("unité logique d'impression au format MED"),
            UNITE           =SIMP(statut='f',typ=UnitType('med'),defaut=80, inout='out'),
+           # same keyword in IMPR_CONCEPT, keep consistency
+           MED_VERSION     =SIMP(statut='f', typ='TXM',
+                                 into=('3.3.1', '4.0.0'), defaut='3.3.1',
+                                 fr=tr("Choix de la version du fichier MED")),
          ),
 
          b_format_gmsh  =BLOC(condition="""equal_to("FORMAT", 'GMSH')""",fr=tr("unité logique d'impression et version GMSH"),
@@ -351,6 +355,6 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
          translation={
             "IMPR_RESU": "Set output results",
             "UNITE": "Result file location",
-        
+
          }
 ) ;

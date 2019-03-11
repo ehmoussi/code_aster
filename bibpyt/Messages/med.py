@@ -65,7 +65,13 @@ cata_msg = {
      Il vous faut le renommer en vous limitant à 24 caractères.
 """),
 
+    8 : _("""
+Création du fichier au format MED %(i1)d.%(i2)d.%(i3)d.
+"""),
 
+    9 : _("""
+On ne peut pas écrire au format MED %(i1)d.%(i2)d.%(i3)d.
+"""),
 
     10 : _("""
   -> Le nom de groupe "%(k1)s" contient des caractères interdits.

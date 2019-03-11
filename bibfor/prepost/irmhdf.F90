@@ -27,6 +27,8 @@ subroutine irmhdf(ifi, ndim, nbnoeu, coordo, nbmail,&
 !
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
+#include "asterc/getexm.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mmhcre.h"
 #include "asterfort/codent.h"
@@ -81,7 +83,9 @@ real(kind=8) :: coordo(*)
 !
     character(len=6), parameter :: nompro = 'IRMHDF'
     integer, parameter :: edlect = 0, edleaj = 1, edcrea = 3, ednstr = 0, edcart = 0
-    integer :: edmode, codret
+    aster_logical :: has_vers
+    integer :: edmode, codret, vers(3), nbret
+    character(len=8) :: tvers
     integer :: nbtyp, fid
     integer :: nmatyp(MT_NTYMAX), nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX)
     integer :: renumd(MT_NTYMAX), modnum(MT_NTYMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
@@ -175,7 +179,22 @@ real(kind=8) :: coordo(*)
         else
             edmode = edcrea
         endif
-        call as_med_open(fid, nofimd, edmode, codret)
+        has_vers = ASTER_FALSE
+        if (getexm(' ', 'MED_VERSION') .eq. 1) then
+            call getvtx(' ', 'MED_VERSION', nbval=1, scal=tvers, nbret=nbret)
+            if (nbret .eq. 1) then
+                has_vers = ASTER_TRUE
+!               TODO create a dedicated function if more than one digit
+                read(tvers(1:1), '(i1)') vers(1)
+                read(tvers(3:3), '(i1)') vers(2)
+                read(tvers(5:5), '(i1)') vers(3)
+            endif
+        endif
+        if (has_vers .and. edmode .eq. edcrea) then
+            call as_med_open(fid, nofimd, edmode, codret, vers=vers)
+        else
+            call as_med_open(fid, nofimd, edmode, codret)
+        endif
         if (codret .ne. 0) then
             saux08='mfiope'
             call utmess('F', 'DVP_97', sk=saux08, si=codret)
