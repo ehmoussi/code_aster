@@ -23,6 +23,10 @@
 
 #include "aster.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 STRING_SIZE FStrlen( char *, STRING_SIZE );
 char * MakeCStrFromFStr( char *, STRING_SIZE );
 char * MakeFStrFromCStr( char *, STRING_SIZE );
@@ -50,5 +54,9 @@ extern PyObject * MakeTupleInt(long, ASTERINTEGER *);
 extern PyObject * MakeListInt(long, ASTERINTEGER *);
 extern PyObject * MakeTupleFloat(long, ASTERDOUBLE *);
 extern PyObject * MakeListFloat(long, ASTERDOUBLE *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
