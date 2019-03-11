@@ -32,7 +32,8 @@
 #include "Utilities/SyntaxDictionary.h"
 
 void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMater,
-                                                   const InputVariableOnMeshPtr &curInputVariables )
+                                                   const InputVariableOnMeshPtr &curInputVariables,
+                                                   const InputVariableConverterPtr &converter )
 {
     SyntaxMapContainer dict;
 
@@ -81,7 +82,7 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMa
     }
     dict.container["AFFE_COMPOR"] = listeAFFE_COMPOR;
 
-    if ( curInputVariables != nullptr ) {
+    if( curInputVariables != nullptr ) {
         ListSyntaxMapContainer listeAFFE_VARC;
         for ( auto &curIter : curInputVariables->_inputVars ) {
             SyntaxMapContainer dict2;
@@ -121,6 +122,28 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMa
         dict.container["AFFE_VARC"] = listeAFFE_VARC;
     }
 
+    if( converter != nullptr )
+    {
+        const int size = converter->getNumberOfConverter();
+        for( int i = 0; i < size; ++i )
+        {
+            const auto name1 = converter->getName(i);
+            const auto name2 = converter->getNewVariableType(i);
+            const auto comp1 = converter->getComponentNames(i);
+            const auto comp2 = converter->getNewComponentNames(i);
+            const std::string fkwName = "VARC_" + name1;
+            SyntaxMapContainer dict1;
+
+            dict1.container["NOM_VARC"] = name1;
+            dict1.container["GRANDEUR"] = name2;
+            dict1.container["CMP_VARC"] = comp1;
+            dict1.container["CMP_GD"] = comp2;
+            ListSyntaxMapContainer listeVARC_;
+            listeVARC_.push_back(dict1);
+            dict.container[fkwName] = listeVARC_;
+        }
+    }
+
     auto syntax = CommandSyntax( "AFFE_MATERIAU" );
     syntax.setResult( curMater.getName(), curMater.getType() );
     syntax.define( dict );
@@ -135,9 +158,10 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMa
 
 MaterialOnMeshPtr
 MaterialOnMeshBuilderInstance::build( MaterialOnMeshPtr &curMater,
-                                      const InputVariableOnMeshPtr &curInputVariables )
+                                      const InputVariableOnMeshPtr &curInputVariables,
+                                      const InputVariableConverterPtr &converter )
 
 {
-    MaterialOnMeshBuilderInstance::buildInstance( *curMater, curInputVariables );
+    MaterialOnMeshBuilderInstance::buildInstance( *curMater, curInputVariables, converter );
     return curMater;
 };

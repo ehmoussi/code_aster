@@ -1,6 +1,9 @@
+#ifndef INPUTVARIABLECONVERTERINTERFACE_H_
+#define INPUTVARIABLECONVERTERINTERFACE_H_
+
 /**
- * @file MaterialOnMeshBuilderInterface.cxx
- * @brief Interface python de MaterialOnMeshBuilder
+ * @file InputVariableConverterInterface.h
+ * @brief Fichier entete de la classe InputVariableConverterInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
@@ -21,21 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/MaterialOnMeshBuilderInterface.h"
-#include "PythonBindings/factory.h"
-#include <boost/python.hpp>
+#include "astercxx.h"
+#include "Materials/InputVariableConverter.h"
 
-BOOST_PYTHON_FUNCTION_OVERLOADS( MaterialOnMeshBuilderbuild, MaterialOnMeshBuilderInstance::build,
-                                 1, 3 )
+void exportInputVariableConverterToPython();
 
-void exportMaterialOnMeshBuilderToPython() {
-    using namespace boost::python;
-
-    class_< MaterialOnMeshBuilderInstance, MaterialOnMeshBuilderInstance::MaterialOnMeshBuilderPtr >
-        c1( "MaterialOnMeshBuilder", no_init );
-        // fake initFactoryPtr: no constructor
-        // fake initFactoryPtr: no constructor
-
-    c1.def( "build", &MaterialOnMeshBuilderInstance::build, MaterialOnMeshBuilderbuild() );
-    c1.staticmethod( "build" );
-};
+#endif /* INPUTVARIABLECONVERTERINTERFACE_H_ */

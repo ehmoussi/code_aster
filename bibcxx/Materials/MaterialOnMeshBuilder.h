@@ -6,7 +6,7 @@
  * @brief Fichier entete de MaterialOnMeshBuilder
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,6 +28,7 @@
 
 #include "Materials/InputVariableDefinition.h"
 #include "Materials/MaterialOnMesh.h"
+#include "Materials/InputVariableConverter.h"
 #include "astercxx.h"
 #include <stdexcept>
 
@@ -45,7 +46,8 @@ class MaterialOnMeshBuilderInstance : public DataStructure {
      * @param curInputVariables Input variables to add in MaterialOnMeshPtr
      */
     static void buildInstance( MaterialOnMeshInstance &curMater,
-                               const InputVariableOnMeshPtr &curInputVariables = nullptr );
+                               const InputVariableOnMeshPtr &curInputVariables = nullptr,
+                               const InputVariableConverterPtr &converter = nullptr );
 
   public:
     /**
@@ -60,7 +62,8 @@ class MaterialOnMeshBuilderInstance : public DataStructure {
      * @param curInputVariables Input variables to add in MaterialOnMeshPtr
      */
     static MaterialOnMeshPtr build( MaterialOnMeshPtr &curMater,
-                                    const InputVariableOnMeshPtr &curInputVariables = nullptr );
+                                    const InputVariableOnMeshPtr &curInputVariables = nullptr,
+                                    const InputVariableConverterPtr &converter = nullptr );
 };
 
 #endif /* MATERIALONMESHBUILDER_H_ */
