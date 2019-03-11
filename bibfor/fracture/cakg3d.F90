@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
                   nnoff, basloc, courb, iord, ndeg,&
                   liss, ndimte,&
                   extim, time, nbprup, noprup, fiss,&
-                  lmelas, nomcas, lmoda, puls, milieu,&
+                  lmoda, puls, milieu,&
                   connex, coor, iadnoe, typdis)
 
     implicit none
@@ -67,11 +67,11 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
     real(kind=8) :: puls
     character(len=8) :: modele, thetai, fiss
     character(len=8) :: result, symech
-    character(len=16) :: option, noprup(*), nomcas
+    character(len=16) :: option, noprup(*)
     character(len=16), intent(in), optional :: typdis
     character(len=19) :: lischa
     character(len=24) :: depla, chfond, mate, compor, basloc, courb, chpuls, liss
-    aster_logical :: extim, lmelas, lmoda, milieu, connex
+    aster_logical :: extim, lmoda, milieu, connex
 !
 !
 !  FONCTION REALISEE:   CALCUL DU TAUX DE RESTITUTION LOCAL D'ENERGIE ET
@@ -94,8 +94,6 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
 !  IN    LISS   --> TYPE DE LISSAGE
 !  IN    TIME   --> INSTANT DE CALCUL
 !  IN    FISS   --> NOM DE LA SD FISS_XFEM
-!  IN    LMELAS --> TRUE SI LE TYPE DE LA SD RESULTAT EST MULT_ELAS
-!  IN    NOMCAS --> NOM DU CAS DE CHARGE SI LMELAS
 !  IN    MILIEU --> .TRUE.  : ELEMENT QUADRATIQUE
 !                   .FALSE. : ELEMENT LINEAIRE
 !  IN    CONNEX --> .TRUE.  : SI FOND FERME
@@ -519,10 +517,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
 !
     call tbajvi(result, nbprup, 'NUME_FOND', numfon, livi)
     
-    if (lmelas) then
-        call tbajvi(result, nbprup, 'NUME_CAS', iord, livi)
-        call tbajvk(result, nbprup, 'NOM_CAS', nomcas, livk)
-    else if (lmoda) then
+    if (lmoda) then
         call tbajvi(result, nbprup, 'NUME_MODE', iord, livi)
     else
         call tbajvi(result, nbprup, 'NUME_ORDRE', iord, livi)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
 #include "asterfort/lceqvn.h"
 #include "asterfort/utmess.h"
     integer :: ndt, ndi, nvi, ndec, iret, kpg, ksp
-    integer :: i, k, ifm, niv, nsubd, maj
+    integer :: i, k, ifm, niv, nsubd, maj, niter
     integer :: nvimax, idec, imat, indi(7)
     parameter     (nvimax=50)
     real(kind=8) :: deps(6), vins(nvimax)
@@ -76,9 +76,10 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
         call utmess('F', 'COMPOR1_1')
     endif
 !
-    try = .true.
+    try  = .true.
     loop = .false.
-    nodec=.false.
+    nodec= .false.
+    niter= int(crit(1))
 !
     do i = 1, 7
         indi(i) = 0
@@ -98,41 +99,42 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
 !
 !  ARRET OU NON EN NON CONVERGENCE INTERNE
 !  ---------------------------------------
-    if (int(crit(1)) .lt. 0) then
-        stopnc = .true.
-    else
-        stopnc = .false.
-    endif
+    stopnc = .false.
+!     if (int(crit(1)) .lt. 0) then
+!         stopnc = .true.
+!     else
+!         stopnc = .false.
+!     endif
 !
 !
 !  INITIALISATION DES VARIABLES DE REDECOUPAGE
 !  -------------------------------------------
-!  INT( CRIT(5) ) = 0  1 OU -1 ==> PAS DE REDECOUPAGE DU PAS DE TEMPS
-    if ((int(crit(5)) .eq. 0) .or. (int(crit(5)) .eq. -1) .or. (int(crit(5)) .eq. 1)) then
+!  INT( CRIT(1) ) = 0  1 OU -1 ==> PAS DE REDECOUPAGE DU PAS DE TEMPS
+    if ((niter .eq. 0) .or. (niter .eq. -1) .or. (niter .eq. 1)) then
         ndec = 1
         nodec = .true.
         aredec = .true.
         noconv = .false.
 !
 !
-! ---- INT( CRIT(5) ) < -1 ==> REDECOUPAGE DU PAS DE TEMPS
+! ---- INT( CRIT(1) ) < -1 ==> REDECOUPAGE DU PAS DE TEMPS
 !                            SI NON CONVERGENCE
-    else if (int(crit(5)) .lt. -1) then
+    else if (niter .lt. -1) then
         ndec = 1
         aredec = .false.
         noconv = .false.
 !
 !
 ! ---- INT( CRIT(5) ) > 1 ==> REDECOUPAGE IMPOSE DU PAS DE TEMPS
-    else if (int(crit(5)) .gt. 1) then
-        ndec = int(crit(5))
+    else if (niter .gt. 1) then
+        ndec = niter
         aredec = .true.
         noconv = .false.
     endif
 !
 !
 !  POINT DE RETOUR EN CAS DE DECOUPAGE POUR DR/R > TOLE OU
-!  APRES UNE NON CONVERGENCE, POUR  INT(CRIT(5)) < -1
+!  APRES UNE NON CONVERGENCE, POUR  INT(CRIT(1)) < -1
 !
     subd = .false.
     rdctps = .false.
@@ -171,7 +173,7 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
     enddo
 !
     call hujpre(fami, kpg, ksp,'ELASTIC', mod,&
-                crit, imat, mater, deps, sigd,&
+                imat, mater, deps, sigd,&
                 sigf, vind, iret)
 !
 !KH ON IMPOSE UNE CONDITION SUR LA VARIATION DE DSIGMA
@@ -404,7 +406,7 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
             enddo
 ! --- APPLICATION DE L'INCREMENT DE DÉFORMATIONS, SUPPOSE ELASTIQUE
             call hujpre(fami, kpg, ksp, 'ELASTIC', mod,&
-                        crit, imat, mater, deps, sigd,&
+                        imat, mater, deps, sigd,&
                         sigf, vind, iret)
         endif
 !

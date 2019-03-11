@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine hujpre(fami, kpg, ksp, etat, mod,&
-                  crit, imat, mater, deps, sigd,&
+                  imat, mater, deps, sigd,&
                   sigf, vind, iret)
     implicit none
 !                   CALCUL DE LA PREDICTION EN CONTRAINTE
@@ -26,20 +26,6 @@ subroutine hujpre(fami, kpg, ksp, etat, mod,&
 !                               'ELASTIC'     > ELASTIQUE
 !                               'PLASTIC'     > PLASTIQUE
 !               MOD     TYPE DE MODELISATION
-!               CRIT    CRITERES  LOCAUX
-!                       CRIT(1) = NOMBRE D ITERATIONS MAXI A CONVERGENCE
-!                                 (ITER_INTE_MAXI == ITECREL)
-!                       CRIT(2) = TYPE DE JACOBIEN A T+DT
-!                                 (TYPE_MATR_COMP == MACOMP)
-!                                 0 = EN VITESSE     > SYMETRIQUE
-!                                 1 = EN INCREMENTAL > NON-SYMETRIQUE
-!                       CRIT(3) = VALEUR DE LA TOLERANCE DE CONVERGENCE
-!                                 (RESI_INTE_RELA == RESCREL)
-!                       CRIT(5) = NOMBRE D'INCREMENTS POUR LE
-!                                 REDECOUPAGE LOCAL DU PAS DE TEMPS
-!                                 (RESI_INTE_PAS == ITEDEC )
-!                                 0 = PAS DE REDECOUPAGE
-!                                 N = NOMBRE DE PALIERS
 !               DEPS    INCREMENT DE DEFORMATION TOTALE
 !               SIGD    CONTRAINTE A T
 !               VIND    VARIABLES INTERNES A T    + INDICATEUR ETAT T
@@ -62,7 +48,7 @@ subroutine hujpre(fami, kpg, ksp, etat, mod,&
 #include "asterfort/tecael.h"
 #include "asterfort/trace.h"
     integer :: ndt, ndi, imat, iret, iadzi, iazk24, i, kpg, ksp
-    real(kind=8) :: crit(*), vind(*)
+    real(kind=8) :: vind(*)
     real(kind=8) :: deps(6), dev(3), pf(3), q, pd(3), dp(3)
     real(kind=8) :: sigd(6), sigf(6), dsig(6), dsde(6, 6), rtrac
     real(kind=8) :: mater(22, 2), i1, d13, tole1, un, zero
@@ -85,8 +71,7 @@ subroutine hujpre(fami, kpg, ksp, etat, mod,&
 !
     if (etat .eq. 'ELASTIC') then
 !
-        call hujela(mod, crit, mater, deps, sigd,&
-                    sigf, iret)
+        call hujela(mod, mater, deps, sigd, sigf, iret)
 !
     else if (etat .eq. 'PLASTIC') then
 !
@@ -116,8 +101,7 @@ subroutine hujpre(fami, kpg, ksp, etat, mod,&
      &      'HUJPRE :: TRACTION DANS LA PSEUDO-PREDICTION ELASTIQUE ',&
      &      'DANS LA MAILLE ',nomail
             endif
-            call hujela(mod, crit, mater, deps, sigd,&
-                        sigf, iret)
+            call hujela(mod, mater, deps, sigd, sigf, iret)
         endif
 !
     endif
@@ -155,7 +139,7 @@ subroutine hujpre(fami, kpg, ksp, etat, mod,&
             write (6,'(A,A,E12.5)')&
      &    'HUJPRE :: APPLICATION DE FACTOR POUR MODIFIER ',&
      &    'LA PREDICTION -> FACTOR =',maxi
-            write(6,'(A,6(1X,E12.5))')'SIGF =',(sigf(i),i=1,ndt)
+            write(6,'(A,6(1X,E12.5))') 'SIGF =',(sigf(i),i=1,ndt)
         endif
     endif
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ subroutine fonmai(resu, nomail, typfon, iocc, nbnoff)
     implicit none
 #include "jeveux.h"
 #include "asterc/getres.h"
+#include "asterfort/assert.h"
 #include "asterfort/cgnoor.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/i2extf.h"
@@ -52,7 +53,7 @@ subroutine fonmai(resu, nomail, typfon, iocc, nbnoff)
 !        RESU   : NOM DU CONCEPT RESULTAT DE L'OPERATEUR
 !        NOMAIL : NOM DU MAILLAGE
 !        TYPFON : TYPE DE FOND
-!                 IL PEUT VALOIR OUVERT/FERME/INF/SUP
+!                 IL PEUT VALOIR OUVERT/FERME
 !        IOCC   : OCCURENCE COURANTE DE MOTFAC
 !     SORTIES:
 !        NBNOFF : NOMBRE DE NOEUDS EN FOND DE FISSURE
@@ -65,13 +66,12 @@ subroutine fonmai(resu, nomail, typfon, iocc, nbnoff)
     integer :: i, nbma, n1, im, nig
     integer :: nid, numno, iret, trouv, numma
     character(len=8) :: k8b, nomma, typm, ndorig, ndextr
-    character(len=8) :: noeud, valk(2)
+    character(len=8) :: noeud
     character(len=16) :: k16bid, nomcmd, motfac
     character(len=16) :: motcle(2), typmcl(2)
     character(len=24) :: conec, typp, nommai, nomnoe, noeord
     character(len=24) :: mesnoe, mafour, nogrp
     integer, pointer :: maillestriees(:) => null()
-    character(len=8), pointer :: type(:) => null()
 ! DEB-------------------------------------------------------------------
     call jemarq()
 !
@@ -166,13 +166,7 @@ subroutine fonmai(resu, nomail, typfon, iocc, nbnoff)
     mesnoe = '&&FONMAI.NOEUD'
     call ornofd(mafour, nomail, nbma, mesnoe, ndorig,&
                 ndextr, 'V', vecori)
-    if (typfon .eq. 'INF') then
-        noeord = resu//'.FOND_INF.NOEU'
-    else if (typfon.eq.'SUP') then
-        noeord = resu//'.FOND_SUP.NOEU'
-    else
-        noeord = resu//'.FOND.NOEU'
-    endif
+    noeord = resu//'.FOND.NOEU'
     call jelira(mesnoe, 'LONMAX', nbnoff)
     call jeveuo(mesnoe, 'L', idnono)
 !
@@ -180,7 +174,7 @@ subroutine fonmai(resu, nomail, typfon, iocc, nbnoff)
     do 90 i = 1, nbnoff
         call jenuno(jexnum(nomail//'.NOMNOE', zi(idnono-1 + i)), noeud)
         zk8(idlino-1 + i) = noeud
-90  end do
+90  continue
 !
 !
 !
@@ -193,12 +187,7 @@ subroutine fonmai(resu, nomail, typfon, iocc, nbnoff)
         call wkvect(resu//'.FOND.TYPE', 'G V K8', 1, jtypm)
         zk8(jtypm) = typm
     else
-        call jeveuo(resu//'.FOND.TYPE', 'L', vk8=type)
-        if (typm .eq. type(1)) then
-            valk(1) = typm
-            valk(2) = type(1)
-            call utmess('F', 'RUPTURE0_68', nk=2, valk=valk)
-        endif
+        ASSERT(.FALSE.)
     endif
 !
 !     ------------------------------------------------------------------

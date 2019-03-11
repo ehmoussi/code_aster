@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -85,8 +85,7 @@ subroutine xsifl1(elrefp, angl, basloc, coeff, coeff3, ddlm,&
 !
     call vecini(3*2, 0.d0, forrep)
 !
-    if ((option.eq.'CALC_K_G') .or. (option.eq.'CALC_G')&
-        .or. (option .eq. 'CALC_GTP')) then
+    if ((option.eq.'CALC_K_G') .or. (option.eq.'CALC_G')) then
 !
 !         CALCUL DE LA PRESSION AUX POINTS DE GAUSS
         pres = 0.d0
@@ -109,8 +108,7 @@ subroutine xsifl1(elrefp, angl, basloc, coeff, coeff3, ddlm,&
             forrep(2,2) = forrep(2,2)+ cisa * (-nd(1))
         endif
 !
-    else if ((option.eq.'CALC_K_G_F') .or. (option.eq.'CALC_G_F')&
-            .or. (option .eq. 'CALC_GTP_F')) then
+    else if ((option.eq.'CALC_K_G_F') .or. (option.eq.'CALC_G_F')) then
 !
 !         VALEUR DE LA PRESSION
         call vecini(ndim+1, 0.d0, var)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -104,10 +104,6 @@ class MEPLSE2_XT(Element):
                      (SP.PTHETAR, NTHETAR), ),
             para_out=((SP.PGTHETA, LC.EGTHETA), ),
         ),
-
-        OP.CALC_GTP(te=-1),
-
-        OP.CALC_GTP_F(te=-1),
 
         OP.CALC_K_G(te=580,
             para_in=((SP.PFR1D2D, NFORCER), (SP.PPRESSR, EPRESNO),

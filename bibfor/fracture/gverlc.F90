@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -122,9 +122,6 @@ subroutine gverlc(resu, compor, iord0)
 !     ET QUE LA LOI DE COMPORTEMENT EST 'ELAS'.
 !
     call getvtx(' ', 'OPTION', scal=option)
-    if (option.eq.'CALC_GTP') then
-        call utmess('A', 'RUPTURE1_48')
-    endif
     if (iret .ne. 0) then
 !
 ! ----- No COMPOR <CARTE> in result: isotropic elastic only. If not -> alarm
@@ -143,9 +140,6 @@ subroutine gverlc(resu, compor, iord0)
                     if (cldc .eq. 0) then
                         call utmess('A', 'RUPTURE1_42', nk=3, valk=valk)
                         cldc=1
-                    endif
-                    if (option.eq.'CALC_GTP')then
-                        call utmess('F', 'RUPTURE1_40', nk=1, valk=valk)
                     endif
                     goto 999
                 endif
@@ -169,25 +163,20 @@ subroutine gverlc(resu, compor, iord0)
 !
 ! --------- COMP_INCR -> only VMIS and ELAS
 !
-! SI LA LDC DANS SNL EST COMP_INC, ON EMMET UNE ALAMRE
+! SI LA LDC DANS SNL EST COMP_INC, ON EMMET UNE ALARME
         if (iadr .gt. 0) then
 !!            if (resv(1+iadr-1+2)(1:9) .eq. 'COMP_INCR') then
                 if (resv(iadr)(1:4) .eq. 'VMIS') then
-                    if ((celasto .eq. 0).and.(option.ne.'CALC_GTP')) then
+                    if (celasto .eq. 0) then
                       call utmess('A', 'RUPTURE1_47')
                       celasto=1
                     end if
                 else
                     if ((resv(iadr)(1:4) .ne. 'ELAS') .and. &
-                         (celasto .eq. 0).and.(option.ne.'CALC_GTP')) then
+                         (celasto .eq. 0)) then
                        call utmess('F', 'RUPTURE1_47')
                        celasto=1
                     endif
-!                    Si option= GTP et resolution en ELAS_XXX ---> Erreur Fatal
-                    if ((option.eq.'CALC_GTP').and.(resv(iadr)(1:4) .eq. 'ELAS'))then
-                        valk(1)= resv(iadr)
-                        call utmess('F', 'RUPTURE1_40', nk=1,valk=valk)
-                    end if
                 endif
 !!            endif
         endif

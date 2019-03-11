@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -85,8 +85,7 @@ subroutine te0280(option, nomte)
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PDEPLAR', 'L', idepl)
-    if ((option.eq.'CALC_G_F') .or. (option.eq.'CALC_G_GLOB_F') .or.&
-        (option.eq.'CALC_GTP_F')) then
+    if (option.eq.'CALC_G_F') then
         fonc = .true.
         call jevech('PFF2D3D', 'L', iforf)
         call jevech('PPRESSF', 'L', ipref)

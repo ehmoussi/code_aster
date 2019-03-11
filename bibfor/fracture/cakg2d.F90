@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,8 +18,8 @@
 
 subroutine cakg2d(optioz, result, modele, depla, theta,&
                   mate, lischa, symech, fondf, noeud,&
-                  time, iord, nbprup, noprup, lmelas,&
-                  nomcas, lmoda, puls, compor)
+                  time, iord, nbprup, noprup,&
+                  lmoda, puls, compor)
     implicit none
 !
 #include "asterf_types.h"
@@ -62,12 +62,12 @@ subroutine cakg2d(optioz, result, modele, depla, theta,&
 !
     character(len=8) :: modele, fondf, result, symech
     character(len=8) :: noeud
-    character(len=16) :: optioz, noprup(*), nomcas
+    character(len=16) :: optioz, noprup(*)
     character(len=24) :: depla, mate, theta, compor
     character(len=19) :: lischa
     real(kind=8) :: time, puls
     integer :: iord, nbprup
-    aster_logical :: lmelas, lmoda
+    aster_logical :: lmoda
 ! ......................................................................
 !
 !     - FONCTION REALISEE:   CALCUL DES COEFFICIENTS D'INTENSITE DE
@@ -89,8 +89,6 @@ subroutine cakg2d(optioz, result, modele, depla, theta,&
 ! IN   IORD    --> NUMERO D'ORDRE DE LA SD
 ! IN   NBPRUP  --> NOMBRE DE PARAMETRES RUPTURE DANS LA TABLE
 ! IN   NOPRUP  --> NOMS DES PARAMETRES RUPTURE
-! IN   LMELAS  --> TRUE SI LE TYPE DE LA SD RESULTAT = MULT_ELAS
-! IN   NOMCAS  --> NOM DU CAS DE CHARGE SI LMELAS
 ! IN   LMODA   --> TRUE SI LE TYPE DE LA SD RESULTAT = MODE_MECA
 ! IN   PULS    --> PULSATION SI LMODA
 ! IN   COMPOR  --> COMPORTEMENT
@@ -519,10 +517,7 @@ subroutine cakg2d(optioz, result, modele, depla, theta,&
     if (.not.lxfem) then
         call tbajvk(result, nbprup, 'NOEUD', zk8(iadrno), livk)
     endif
-    if (lmelas) then
-        call tbajvi(result, nbprup, 'NUME_CAS', iord, livi)
-        call tbajvk(result, nbprup, 'NOM_CAS', nomcas, livk)
-    else if (lmoda) then
+    if (lmoda) then
         call tbajvi(result, nbprup, 'NUME_MODE', iord, livi)
     else
         call tbajvi(result, nbprup, 'NUME_ORDRE', iord, livi)

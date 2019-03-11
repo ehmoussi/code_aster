@@ -214,11 +214,7 @@ def get_noeud_fond_fiss(FOND_FISS):
     from Utilitai.Utmess import UTMESS
     Lnoff = FOND_FISS.sdj.FOND_NOEU.get()
     if Lnoff == None:
-# Cas double fond de fissure : par convention les noeuds sont ceux de
-# fond_inf
-        Lnoff = FOND_FISS.sdj.FONDINF_NOEU.get()
-        if Lnoff == None:
-            UTMESS('F', 'RUPTURE0_11')
+        UTMESS('F', 'RUPTURE0_11')
     Lnoff = map(S.rstrip, Lnoff)
     return Lnoff
 

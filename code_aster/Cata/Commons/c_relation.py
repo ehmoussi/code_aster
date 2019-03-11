@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,13 +31,6 @@ def C_RELATION( COMMAND ):
                                         "ELAS_VMIS_LINE",
                                         "ELAS_VMIS_TRAC",
                                         "ELAS_VMIS_PUIS",
-                                        "ELAS_HYPER",
-                                        "VMIS_ISOT_LINE",
-                                        "VMIS_ISOT_TRAC",
-                                        # relations interdites depuis issue21711, elles
-                                        # devront etre introduites dans le F90 si besoin
-                                        #"VMIS_CINE_LINE",
-                                        #"VMIS_ISOT_PUIS",
                                      )
     elif COMMAND in ('MACR_ASCOUF_CALC','MACR_ASPIC_CALC',):
                    return (             "ELAS",

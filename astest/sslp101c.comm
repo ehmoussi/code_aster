@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -69,9 +69,7 @@ G1=CALC_G(              RESULTAT=RESU,
                         THETA=_F(
                                  R_INF=22.04078,
                                  FOND_FISS=FOND,
-                                 MODULE=1.,
-                                 R_SUP=30.,
-                                 DIRECTION=( 1., 0., 0.,))
+                                 R_SUP=30.,)
           )
 
 GK1=CALC_G(                  RESULTAT=RESU,
@@ -85,9 +83,7 @@ G2=CALC_G(                  RESULTAT=RESU,
                             THETA=_F(
                                      R_INF=15.3061094,
                                      FOND_FISS=FOND,
-                                     MODULE=1.,
-                                     R_SUP=22.04078,
-                                     DIRECTION=( 1., 0., 0.,))
+                                     R_SUP=22.04078,)
           )
 
 GK2=CALC_G(                  RESULTAT=RESU,
@@ -101,9 +97,7 @@ G3=CALC_G(                  RESULTAT=RESU,
                             THETA=_F(
                                      R_INF=9.79591846,
                                      FOND_FISS=FOND,
-                                     MODULE=1.,
-                                     R_SUP=15.3061094,
-                                     DIRECTION=( 1., 0., 0.,))
+                                     R_SUP=15.3061094,)
            )
 
 GK3=CALC_G(                  RESULTAT=RESU,
@@ -117,9 +111,7 @@ G4=CALC_G(                  RESULTAT=RESU,
                             THETA=_F(
                                      R_INF=5.510197639,
                                      FOND_FISS=FOND,
-                                     MODULE=1.,
-                                     R_SUP=9.79591846,
-                                     DIRECTION=( 1., 0., 0.,))
+                                     R_SUP=9.79591846,)
          )
 
 GK4=CALC_G(                  RESULTAT=RESU,
@@ -133,9 +125,7 @@ G5=CALC_G(                  RESULTAT=RESU,
                             THETA=_F(
                                      R_INF=2.448979377,
                                      FOND_FISS=FOND,
-                                     MODULE=1.,
-                                     R_SUP=5.510197639,
-                                     DIRECTION=( 1., 0., 0.,))
+                                     R_SUP=5.510197639,)
           )
 
 GK5=CALC_G(                  RESULTAT=RESU,
@@ -149,9 +139,7 @@ G6=CALC_G(                  RESULTAT=RESU,
                             THETA=_F(
                                      R_INF=0.61225116,
                                      FOND_FISS=FOND,
-                                     MODULE=1.,
-                                     R_SUP=2.448979377,
-                                     DIRECTION=( 1., 0., 0.,))
+                                     R_SUP=2.448979377,)
         )
 
 GK6=CALC_G(                  RESULTAT=RESU,

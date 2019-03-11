@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ interface
     subroutine mecalg(optioz, result, modele, depla, theta,&
                       mate, lischa, symech, compor, incr, &
                       time, iord, nbprup, noprup, chvite, &
-                      chacce, lmelas, nomcas, kcalc, coor, iadnoe)
+                      chacce, kcalc, coor, iadnoe)
         character(len=16) :: optioz
         character(len=8) :: result
         character(len=8) :: modele
@@ -41,8 +41,6 @@ interface
         character(len=16) :: noprup(*)
         character(len=24) :: chvite
         character(len=24) :: chacce
-        aster_logical :: lmelas
-        character(len=16) :: nomcas
         character(len=8) :: kcalc
         integer :: coor
         integer :: iadnoe

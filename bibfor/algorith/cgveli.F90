@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cgveli(typfis, typdis, cas, lnoff, liss,&
+subroutine cgveli(typfis, typdis, ndim, lnoff, liss,&
                   ndeg)
     implicit none
 !
@@ -24,9 +24,9 @@ subroutine cgveli(typfis, typdis, cas, lnoff, liss,&
 #include "asterfort/getvtx.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
-    integer :: lnoff, ndeg
+    integer :: lnoff, ndeg, ndim
     character(len=8) :: typfis
-    character(len=16) :: cas, typdis
+    character(len=16) :: typdis
     character(len=24) :: liss
 ! person_in_charge: samuel.geniaut at edf.fr
 !
@@ -37,7 +37,7 @@ subroutine cgveli(typfis, typdis, cas, lnoff, liss,&
 !  IN :
 !     TYPFIS : TYPE DE LA SD DECRIVANT LE FOND DE FISSURE
 !             ('FONDIFSS' OU 'FISSURE')
-!     CAS    : '2D', '3D LOCAL' OU '3D GLOBAL'
+!     NDIM   : DIMENSION DU CALCUL
 !     LNOFF  : NOMBRE DE NOEUDS (OU POINTS) DU FOND DE FISSURE
 !     TYPDIS : TYPE DE DISCONTINUITE SI FISSURE XFEM 
 !              'FISSURE' OU 'COHESIF'
@@ -65,7 +65,7 @@ subroutine cgveli(typfis, typdis, cas, lnoff, liss,&
     liss=' '
     ndeg=-1
 !
-    if (cas .ne. '3D_LOCAL') then
+    if (ndim .eq. 2) then
 !
 !       L'UTILISATEUR NE DOIT PAS AVOIR RENSEIGNE LISSAGE_G
         call getvtx('LISSAGE', 'LISSAGE_G', iocc=1, scal=lissg, nbret=ier,&
@@ -81,7 +81,7 @@ subroutine cgveli(typfis, typdis, cas, lnoff, liss,&
             call utmess('A', 'RUPTURE0_67')
         endif
 !
-    else if (cas.eq.'3D_LOCAL') then
+    else if (ndim.eq.3) then
 !
         call getvtx('LISSAGE', 'LISSAGE_G', iocc=1, scal=lissg, nbret=ier,&
                     isdefault=iarg)

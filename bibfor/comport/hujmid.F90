@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,9 +56,11 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 #include "asterfort/lcnrvn.h"
 #include "asterfort/lcsovn.h"
 #include "asterfort/mgauss.h"
+#include "asterfort/utlcal.h"
+!
     integer :: ndt, ndi, nvi, nr, nmod, iret, nbmect
     integer :: i, j, k, kk, iter, indi(7), ndec0, ndec
-    integer :: nitimp, nbmeca, compt, msup(4)
+    integer :: nitimp, nbmeca, compt, msup(4), niter
     integer :: umess, ifm, niv
     integer :: essai, essmax, resi, nmax, imin
     aster_logical :: debug, noconv, aredec, stopnc, negmul(8), subd
@@ -80,7 +82,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     real(kind=8) :: err, dsig(6)
     real(kind=8) :: det, zero, un, ratio, maxi
     real(kind=8) :: evol
-    real(kind=8) :: rdec, tole2
+    real(kind=8) :: rdec, tole2, tolres
 !
     real(kind=8) :: relax(essmax+1)
     real(kind=8) :: erimp(nitimp, 4), pref, dev(3), pf, qf
@@ -92,15 +94,26 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     aster_logical :: neglam(3), mectra, ltry, modif, mtrac
 !
     character(len=8) :: mod
+    character(len=16) :: algo_inte
 !
-    data   zero, un, deux, tole1 / 0.d0, 1.d0, 2.d0, 1.d-6/
+    data zero, un, deux, tole1 / 0.d0, 1.d0, 2.d0, 1.d-6/
 !
 ! ====================================================================
 ! ---- PROPRIETES MATERIAU
 ! -------------------------
-    pref = mater(8,2)
+    pref  = mater(8,2)
     rtrac = abs(pref*1.d-6)
     tole2 = un/(pref**2)
+    niter = 50
+!
+    call utlcal('VALE_NOM', algo_inte, crit(6))
+!
+    if (algo_inte(1:16).eq.'BASCULE_EXPLICIT') then
+       tolres = 1.e-8
+    else
+       tolres = crit(3)
+    endif
+!
 ! ----------------------------------------------------------------
 ! --- INITIALISATION VECTEUR GESTION MECANISMES TRACTION: PK-DP<=0
 ! ----------------------------------------------------------------
@@ -135,7 +148,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
  30 continue
     if (compt .gt. 5) goto 9999
     compt = compt + 1
-    if (debug) write(6,*)'DEBUT --- VINF =',(vinf(i),i=24,31)
+    if (debug) write(6,*) 'DEBUT --- VINF =',(vinf(i),i=24,31)
 !
 ! --------------------------------------------------
 ! ---> DIMENSION DU PROBLEME:
@@ -254,7 +267,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             nbmect = nbmect + 1
         endif
     enddo
-    if(nbmect.ne.nbmeca)mectra = .true.
+    if (nbmect.ne.nbmeca) mectra = .true.
 ! ------------------------------------
 ! ---> INCREMENTATION DE YF = YD + DY
 ! ------------------------------------
@@ -373,7 +386,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
         endif
     end do
     call lcnrvn(nr, r, err)
-    if (debug) write(6,*)'ERREUR =',err
+    if (debug) write(6,*) 'ERREUR =',err
 !
     if (iter .le. nitimp) then
         erimp(iter,1) = err
@@ -381,14 +394,14 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     endif
 !
 ! ----------------------------------------------------------------
-!     SI ON N'A PAS ATTEINT LE NB MAX D'ITERATION: RESI_INTE_MAXI
+!     SI ON N'A PAS ATTEINT LE NB MAX D'ITERATION: ITER_INTE_MAXI
 ! ----------------------------------------------------------------
-    if (iter .le. int(abs(crit(1)))) then
+    if (iter .le. niter) then
 !
 ! -------------------------
 ! ----   CONVERVENCE   ----
 ! -------------------------
-        if ((err .lt. crit(3)) .and. (iter.gt.1)) then
+        if (err.lt.tolres .and. iter.gt.1) then
             goto 250
 !
 ! ------------------------------------------------
@@ -429,8 +442,8 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! --- CONTROLE DE L'ETAT DE CONTRAINTE PAR RAPPORT A LA
 !     LIMITE DE TRACTION A NE PAS DEPASSEE
 ! -----------------------------------------------------
-            if ((nbmeca.ne.nbmect) .and. (nbmeca.eq.0)) then
-                if (err .gt. 1d5) then
+            if (nbmeca.ne.nbmect .and. nbmeca.eq.0) then
+                if (err .gt. 1.d5) then
                     iret = 1
                     goto 9999
                 endif
@@ -479,7 +492,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! -------------------------------------------------
 ! ---- VERIFICATION DES MULTIPLICATEURS PLASTIQUES
 ! -------------------------------------------------
-    maxi = abs(crit(3))
+    maxi = tolres
     do k = 1, nbmect
         if (yf(ndt+1+nbmeca+k) .gt. maxi) maxi = yf(ndt+1+nbmeca+k)
     enddo
@@ -617,8 +630,8 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 !     SI DEPS_V^P/EPS_V^P > TOLE ---> SUBD = .TRUE.
 ! -------------------------------------------------
     ratio = zero
-    if (abs(vind(23)) .gt. abs(crit(3))) ratio = (vinf(23)-vind(23))/vind(23)
-    if ((ratio.gt.evol) .and. (abs(vind(23)).gt.crit(3))) then
+    if (abs(vind(23)) .gt. tolres) ratio = (vinf(23)-vind(23))/vind(23)
+    if (ratio.gt.evol .and. abs(vind(23)).gt.tolres) then
         rdec = (vinf(23)-vind(23))/(evol*abs(vind(23)))
         ndec = nint(rdec)
         if (ndec .lt. 1) ndec=1
@@ -655,8 +668,8 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             call lceqvn(nvi, vind0, vind)
             call lceqvn(nvi, vind0, vinf)
         endif
-        if (debug) write(6,*)'NOCONV =',noconv
-        if (debug) write(6,*)'MECTRA =',mectra
+        if (debug) write(6,*) 'NOCONV =',noconv
+        if (debug) write(6,*) 'MECTRA =',mectra
         goto 2000
     endif
 !
@@ -675,7 +688,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     end do
 !
     if (probt) then
-        if (debug) write(6,'(A)')'HUJMID :: 9999 PROBT'
+        if (debug) write(6,'(A)') 'HUJMID :: 9999 PROBT'
 !
         call lceqve(predi0, sigf)
         call lceqve(sigd0, sigd)
@@ -751,7 +764,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             endif
         enddo
 !
-        if (debug) write(6,*)'NEGLAM =',(neglam(i),i=1,3)
+        if (debug) write(6,*) 'NEGLAM =',(neglam(i),i=1,3)
         mtrac = .false.
         do i = 1, 3
 ! --- ON NE DOIT PAS REACTIVE UN MECANISME DE TRACTION QUI DONNE
@@ -761,8 +774,8 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! ----------------------------------------------------
 ! ---> ACTIVATION MECANISMES DE TRACTION NECESSAIRES
 ! ----------------------------------------------------
-                if (debug) write(6,*)'I=',i
-                if (debug) write(6,*)'PK =',pf
+                if (debug) write(6,*) ' I  =',i
+                if (debug) write(6,*) ' PK =',pf
                 if (((pf+deux*rtrac-ptrac)/abs(pref)) .gt. -r8prem()) then
                     bnews(i) = .false.
                     if(.not.modif)mtrac = .true.
@@ -793,7 +806,8 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     end do
     cycl = .false.
     do i = 1, nbmeca
-        if ((indi(i).gt.4) .and. (indi(i).lt.8) .and. (vind(indi(i)) .eq.mater(18,2))) then
+        if (indi(i).gt.4 .and. indi(i).lt.8 .and. &
+            (vind(indi(i)) .eq.mater(18,2))) then
             cycl = .true.
         endif
     end do
@@ -899,14 +913,14 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     call lceqvn(nvi, vind0, vind)
     aredec = arede0
     stopnc = stopn0
-    loop = loop0
-    probt = .false.
-    euler = .true.
-    lamin = 1.d2
-    imin = 0
+    loop   = loop0
+    probt  = .false.
+    euler  = .true.
+    lamin  = 1.d2
+    imin   = 0
     do i = 1, nbmeca
         if (ye(ndt+1+nbmeca+i) .eq. zero) then
-            if ((indi(i).gt.4) .and. (indi(i).lt.9)) then
+            if (indi(i).gt.4 .and. indi(i).lt.9) then
                 vind(indi(i)+23) = 0
                 euler = .false.
             else if (indi(i).lt.5) then
@@ -996,6 +1010,6 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 !
 2000 continue
 !
-    if (debug) write(6,*)'HUJMID --- VINF =',(vinf(i),i=24,31)
-    if (debug) write(6,*)'IRET - HUJMID =',iret
+    if (debug) write(6,*) 'HUJMID --- VINF   =',(vinf(i),i=24,31)
+    if (debug) write(6,*) 'IRET ----- HUJMID =',iret
 end subroutine

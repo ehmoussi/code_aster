@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fonnoe(resu, noma, cnxinv, nomobj, typfon,&
-                  nbnoff)
+subroutine fonnoe(resu, noma, cnxinv, nomobj, nbnoff)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/ismali.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -38,7 +38,7 @@ subroutine fonnoe(resu, noma, cnxinv, nomobj, typfon,&
 #include "asterfort/wkvect.h"
 !
     character(len=6) :: nomobj
-    character(len=8) :: resu, noma, typfon
+    character(len=8) :: resu, noma
     character(len=19) :: cnxinv
 ! FONCTION REALISEE:
 !
@@ -51,7 +51,6 @@ subroutine fonnoe(resu, noma, cnxinv, nomobj, typfon,&
 !        CNXINV     : CONNECTIVITE INVERSE
 !        NOMOBJ     : NOM DU VECTEUR CONTENANT LES DONNEES RELATIVES
 !                     AUX NOEUDS
-!        TYPFON     : TYPE DE FOND IL PEUT VALOIR OUVERT/FERME/INF/SUP
 !     SORTIES:
 !        NBNOFF     : NOMBRE DE NOEUDS EN FOND DE FISSURE
 !-----------------------------------------------------------------------
@@ -64,29 +63,14 @@ subroutine fonnoe(resu, noma, cnxinv, nomobj, typfon,&
     integer :: jjj, ino, it, nbnoff, nbma, nbmb, na, nb, adra, adrb
     integer :: iret
     character(len=6) :: nompro
-    character(len=8) :: noeud, type, motcle(2), typmcl(2), typmp, valk(8)
-    character(len=8) :: typm
+    character(len=8) :: noeud, type, motcle(2), typmcl(2), typmp
     character(len=24) :: noeord, trav
     character(len=24) :: entree, obtrav
-    aster_logical :: lfon, test
-    character(len=8), pointer :: vtype(:) => null()
+    aster_logical :: test
 ! DEB-------------------------------------------------------------------
     call jemarq()
     nompro = 'FONNOE'
-!
-! ---  TYPE DE FOND TRAITE
-!      -----------------------------------
-!
-    lfon = .false.
-    if (typfon .eq. 'INF') then
-        noeord = resu//'.FOND_INF.NOEU'
-        lfon = .true.
-    else if (typfon.eq.'SUP') then
-        noeord = resu//'.FOND_SUP.NOEU'
-        lfon = .true.
-    else
-        noeord = resu//'.FOND.NOEU'
-    endif
+    noeord = resu//'.FOND.NOEU'
 !
 ! ---  RECUPERATIONS RELATIVES AU MAILLAGE
 !      -----------------------------------
@@ -148,13 +132,9 @@ subroutine fonnoe(resu, noma, cnxinv, nomobj, typfon,&
                     endif
                     typmp = type
                     it = it + 1
-!             DANS LE CAS LFON (INF ET SUP) IL EST NECESSAIRE D'AVOIR
-!             DES MAILLES SEG SI CE N'EST PAS LE CAS ON ECHOUE
-                    if (lfon .and. numa .eq. numb) goto 216
                 endif
-!           DANS LE CAS (OUVERT OU FERME) IL N'EST NECESSAIRE PAS
-!           D'AVOIR DES MAILLES SEG
-                if (.not.lfon .and. numa .eq. numb) goto 216
+!           IL N'EST PAS NECESSAIRE  D'AVOIR DES MAILLES SEG
+                if (numa .eq. numb) goto 216
 214         continue
 212     continue
         call utmess('F', 'RUPTURE0_66')
@@ -201,13 +181,7 @@ subroutine fonnoe(resu, noma, cnxinv, nomobj, typfon,&
         call wkvect(resu//'.FOND.TYPE', 'G V K8', 1, jnoe2)
         zk8(jnoe2) = typmp
     else
-        call jeveuo(resu//'.FOND.TYPE', 'L', vk8=vtype)
-        typm=vtype(1)
-        if (typmp .ne. typm) then
-            valk(1) = typmp
-            valk(2) = typm
-            call utmess('F', 'RUPTURE0_68', nk=2, valk=valk)
-        endif
+        ASSERT(.FALSE.)
     endif
     call jelira(noeord, 'LONUTI', nbnoff)
 !

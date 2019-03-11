@@ -1,0 +1,385 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+#
+# 5 modes propres (m=1, n=2,3,4,5,6) d'un tuyau élastique mince 
+# sous 5 différentes conditions aux limites : 
+# FF, SF, CS, CC, SS
+# ( S, C, F représentent simply-supported, clamped et free )
+# 
+# Référence : Free vibration analysis of cylindrical shells using 
+#             the Haar wavelet method, 2013, Xiang Xie, Guoyong Jin, Zhigang Liu
+#-------------------------------------------------------------------
+# 1) type d'éléments finis : DKT avec TRIA3
+#-------------------------------------------------------------------
+
+# définition des constants
+epai = 2.5e-3
+
+nu = 0.3
+
+module = 2.0e11
+
+rho = 7800
+
+########################################################################
+DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+mesh = LIRE_MAILLAGE(UNITE=20)
+
+mesh = MODI_MAILLAGE(reuse=mesh,
+                     MAILLAGE=mesh,
+                     ORIE_PEAU_3D=_F(GROUP_MA=('surf', )))
+
+model = AFFE_MODELE(AFFE=_F(MODELISATION=('DKT', ),
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=mesh)
+
+carac = AFFE_CARA_ELEM(COQUE=_F(EPAIS=epai,
+                                GROUP_MA=('surf', )),
+                       MODELE=model)
+
+acier = DEFI_MATERIAU(ELAS=_F(E=module,
+                              NU=nu,
+                              RHO=rho))
+
+fieldmat = AFFE_MATERIAU(AFFE=_F(MATER=(acier, ),
+                                 TOUT='OUI'),
+                         MAILLAGE=mesh)
+
+# définitions de 5 conditions aux limites
+CC = AFFE_CHAR_MECA(DDL_IMPO=_F(GROUP_MA=('circle_1', 'circle_2'),
+                                LIAISON='ENCASTRE'),
+                    MODELE=model)
+
+SS = AFFE_CHAR_MECA(DDL_IMPO=(_F(DX=0.0,
+                                 DY=0.0,
+                                 GROUP_MA=('circle_1', )),
+                              _F(DX=0.0,
+                                 DY=0.0,
+                                 GROUP_MA=('circle_2', ))),
+                    MODELE=model)
+
+SF = AFFE_CHAR_MECA(DDL_IMPO=_F(DX=0.0,
+                                DY=0.0,
+                                GROUP_MA=('circle_1', )),
+                    MODELE=model)
+
+CS = AFFE_CHAR_MECA(DDL_IMPO=(_F(GROUP_MA=('circle_1', ),
+                                 LIAISON='ENCASTRE'),
+                              _F(DX=0.0,
+                                 DY=0.0,
+                                 GROUP_MA=('circle_2', ))),
+                    MODELE=model)
+
+########################################################################
+# cas FF
+
+ASSEMBLAGE(CARA_ELEM=carac,
+           CHAM_MATER=fieldmat,
+           MATR_ASSE=(_F(MATRICE=CO('MASSE'),
+                         OPTION='MASS_MECA'),
+                      _F(MATRICE=CO('RIGID'),
+                         OPTION='RIGI_MECA')),
+           MODELE=model,
+           NUME_DDL=CO('NUMEDDL'))
+
+# chercher des modes sous une bande de fréquence
+#modes = CALC_MODES(CALC_FREQ=_F(FREQ=(600.0, 8500.0)),
+                   #MATR_MASS=MASSE,
+                   #MATR_RIGI=RIGID,
+                   #OPTION='BANDE',
+                   #VERI_MODE=_F(STOP_ERREUR='NON'))
+
+modesFF = CALC_MODES(CALC_FREQ=_F(FREQ=(656.432, 1853.03, 3544.79, 5717.42, 8362.13)),
+                     MATR_MASS=MASSE,
+                     MATR_RIGI=RIGID,
+                     OPTION='PROCHE',
+                     SOLVEUR=_F(METHODE='MULT_FRONT',),),
+
+########################################################################
+# cas SF
+
+ASSEMBLAGE(CARA_ELEM=carac,
+           CHAM_MATER=fieldmat,
+           CHARGE=SF,
+           MATR_ASSE=(_F(MATRICE=CO('MASSESF'),
+                         OPTION='MASS_MECA'),
+                      _F(MATRICE=CO('RIGIDSF'),
+                         OPTION='RIGI_MECA')),
+           MODELE=model,
+           NUME_DDL=CO('NUMESF'))
+           
+modesSF = CALC_MODES(CALC_FREQ=_F(FREQ=(657.048, 1853.95, 3545.74, 5718.28, 8362.94)),
+                     MATR_MASS=MASSESF,
+                     MATR_RIGI=RIGIDSF,
+                     OPTION='PROCHE',
+                     SOLVEUR=_F(METHODE='MULT_FRONT',),),
+
+########################################################################
+# cas CS
+
+ASSEMBLAGE(CARA_ELEM=carac,
+           CHAM_MATER=fieldmat,
+           CHARGE=CS,
+           MATR_ASSE=(_F(MATRICE=CO('MASSECS'),
+                         OPTION='MASS_MECA'),
+                      _F(MATRICE=CO('RIGIDCS'),
+                         OPTION='RIGI_MECA')),
+           MODELE=model,
+           NUME_DDL=CO('NUMECS'))
+           
+modesCS = CALC_MODES(CALC_FREQ=_F(FREQ=(674.87, 1861.27, 3554.36, 5728.83, 8374.82)),
+                     MATR_MASS=MASSECS,
+                     MATR_RIGI=RIGIDCS,
+                     OPTION='PROCHE',
+                     SOLVEUR=_F(METHODE='MULT_FRONT',),),
+
+########################################################################
+# cas CC
+
+ASSEMBLAGE(CARA_ELEM=carac,
+           CHAM_MATER=fieldmat,
+           CHARGE=CC,
+           MATR_ASSE=(_F(MATRICE=CO('MASSECC'),
+                         OPTION='MASS_MECA'),
+                      _F(MATRICE=CO('RIGIDCC'),
+                         OPTION='RIGI_MECA')),
+           MODELE=model,
+           NUME_DDL=CO('NUMECC'))
+
+modesCC = CALC_MODES(CALC_FREQ=_F(FREQ=(689.418, 1862.87, 3554.85, 5729.07, 8374.96,)),
+                     MATR_MASS=MASSECC,
+                     MATR_RIGI=RIGIDCC,
+                     OPTION='PROCHE',
+                     SOLVEUR=_F(METHODE='MULT_FRONT',),),                   
+
+########################################################################
+# cas SS
+
+ASSEMBLAGE(CARA_ELEM=carac,
+           CHAM_MATER=fieldmat,
+           CHARGE=SS,
+           MATR_ASSE=(_F(MATRICE=CO('MASSESS'),
+                         OPTION='MASS_MECA'),
+                      _F(MATRICE=CO('RIGIDSS'),
+                         OPTION='RIGI_MECA')),
+           MODELE=model,
+           NUME_DDL=CO('NUMESS'))
+
+modesSS = CALC_MODES(CALC_FREQ=_F(FREQ=(666.26, 1860.07, 3553.92, 5728.62, 8374.69,)),
+                     MATR_MASS=MASSESS,
+                     MATR_RIGI=RIGIDSS,
+                     OPTION='PROCHE',
+                     SOLVEUR=_F(METHODE='MULT_FRONT',),),                            
+
+#IMPR_RESU(FORMAT='MED',
+          #RESU=_F(RESULTAT=modesFF),
+          #UNITE=80)
+
+########################################################################
+#                             VALIDATIONS
+          
+## MODES POUR FF
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesFF,
+                   VALE_CALC=(656.431935048, ),
+                   VALE_REFE=(654.216, )),
+                _F(NUME_ORDRE=2,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesFF,
+                   VALE_CALC=(1853.02639335, ),
+                   VALE_REFE=(1850.287, )),
+                _F(NUME_ORDRE=3,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesFF,
+                   VALE_CALC=(3544.79124105, ),
+                   VALE_REFE=(3547.66, )),
+                _F(NUME_ORDRE=4,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesFF,
+                   VALE_CALC=(5717.41537376, ),
+                   VALE_REFE=(5737.228, )),
+                _F(NUME_ORDRE=5,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesFF,
+                   VALE_CALC=(8362.13479644, ),
+                   VALE_REFE=(8416.323, ))))
+                   
+## MODES POUR SF
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesSF,
+                   VALE_CALC=(657.048078065, ),
+                   VALE_REFE=(657.308, )),
+                _F(NUME_ORDRE=2,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesSF,
+                   VALE_CALC=(1853.94885425, ),
+                   VALE_REFE=(1851.807, )),
+                _F(NUME_ORDRE=3,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesSF,
+                   VALE_CALC=(3545.74049135, ),
+                   VALE_REFE=(3549.113, )),
+                _F(NUME_ORDRE=4,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesSF,
+                   VALE_CALC=(5718.28124665, ),
+                   VALE_REFE=(5738.698, )),
+                _F(NUME_ORDRE=5,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesSF,
+                   VALE_CALC=(8362.93583716, ),
+                   VALE_REFE=(8417.793, ))))                   
+
+### MODES POUR CS
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesCS,
+                   VALE_CALC=(674.873113941, ),
+                   VALE_REFE=(671.113, )),
+                _F(NUME_ORDRE=2,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesCS,
+                   VALE_CALC=(1861.27235741, ),
+                   VALE_REFE=(1856.454, )),
+                _F(NUME_ORDRE=3,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesCS,
+                   VALE_CALC=(3554.3617834, ),
+                   VALE_REFE=(3553.286, )),
+                _F(NUME_ORDRE=4,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesCS,
+                   VALE_CALC=(5728.8344361, ),
+                   VALE_REFE=(5743.872, )),
+                _F(NUME_ORDRE=5,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesCS,
+                   VALE_CALC=(8374.82090802, ),
+                   VALE_REFE=(8422.0, )))) 
+
+
+### MODES POUR CC
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesCC,
+                   VALE_CALC=(689.418024941, ),
+                   VALE_REFE=(687.249, )),
+                _F(NUME_ORDRE=2,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesCC,
+                   VALE_CALC=(1862.87451926, ),
+                   VALE_REFE=(1858.296, )),
+                _F(NUME_ORDRE=3,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesCC,
+                   VALE_CALC=(3554.85415701, ),
+                   VALE_REFE=(3553.911, )),
+                _F(NUME_ORDRE=4,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesCC,
+                   VALE_CALC=(5729.06713115, ),
+                   VALE_REFE=(5743.21, )),
+                _F(NUME_ORDRE=5,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesCC,
+                   VALE_CALC=(8374.95816844, ),
+                   VALE_REFE=(8422.237, )))) 
+                   
+## MODES POUR SS
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesSS,
+                   VALE_CALC=(666.259670344, ),
+                   VALE_REFE=(663.543, )),
+                _F(NUME_ORDRE=2,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesSS,
+                   VALE_CALC=(1860.07244578, ),
+                   VALE_REFE=(1855.44, )),
+                _F(NUME_ORDRE=3,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesSS,
+                   VALE_CALC=(3553.92452408, ),
+                   VALE_REFE=(3552.948, )),
+                _F(NUME_ORDRE=4,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesSS,
+                   VALE_CALC=(5728.61507595, ),
+                   VALE_REFE=(5742.737, )),
+                _F(NUME_ORDRE=5,
+                   PARA='FREQ',
+                   PRECISION=0.01,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=modesSS,
+                   VALE_CALC=(8374.68839871, ),
+                   VALE_REFE=(8421.966, )))) 
+
+FIN()

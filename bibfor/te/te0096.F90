@@ -28,8 +28,6 @@ subroutine te0096(option, nomte)
 !
 !   OPTION : 'CALC_G'     (G AVEC CHARGES REELLES)
 !            'CALC_G_F'   (G AVEC CHARGES FONCTIONS)
-!            'CALC_GTP'     (G AVEC CHARGES REELLES)
-!            'CALC_GTP_F'   (G AVEC CHARGES FONCTIONS)
 !
 ! ----------------------------------------------------------------------
 ! CORPS DU PROGRAMME
@@ -68,18 +66,18 @@ subroutine te0096(option, nomte)
     real(kind=8) :: epsref(6), e(1), mu
     real(kind=8) :: epsi, rac2, crit(13)
     real(kind=8) :: dfdi(27), f(3, 3), sr(3, 3), sigl(6), sigin(6), dsigin(6, 3)
-    real(kind=8) :: eps(6), epsin(6), depsin(6, 3), epsp(6), depsp(6, 3)
+    real(kind=8) :: eps(6), epsin(6), depsin(6, 3), epsp(6)
     real(kind=8) :: epsino(36), fno(18)
     real(kind=8) :: thet, tn(20), tgdm(3), prod, prod1, prod2, divt
-    real(kind=8) :: valpar(3), tcla, tthe, tfor, tplas, tini, poids, r, rbid, dsidep(6, 6)
-    real(kind=8) :: p, ppg, dpdm(3), rp, energi(2), rho(1), om, omo
+    real(kind=8) :: valpar(3), tcla, tthe, tfor, tini, poids, r, rbid, dsidep(6, 6)
+    real(kind=8) :: energi(2), rho(1), om, omo
     real(kind=8) :: dtdm(3, 5), der(6), dfdm(3, 5), dudm(3, 4), dvdm(3, 4)
     real(kind=8) :: vepscp
     real(kind=8) :: ecin, prod3, prod4, nu(1), accele(3)
 !
     integer :: ipoids, ivf, idfde
     integer :: icomp, igeom, itemps, idepl, imate
-    integer :: iepsr, iepsf, isigi, isigm, iepsp, ivari
+    integer :: iepsr, iepsf, isigi, isigm
     integer :: iforc, iforf, ithet, igthet, irota, ipesa, ier
     integer :: ivites, iaccel, j1, j2
     integer :: nno, nnos, ncmp, jgano
@@ -124,7 +122,6 @@ subroutine te0096(option, nomte)
     tcla = 0.d0
     tthe = 0.d0
     tfor = 0.d0
-    tplas = 0.d0
     tini = 0.d0
     call jevech('PGTHETA', 'E', igthet)
     call jevech('PTHETAR', 'L', ithet)
@@ -158,7 +155,7 @@ subroutine te0096(option, nomte)
 !
 ! RECUPERATION DU CHAMP LOCAL (CARTE) ASSOCIE AU PRE-EPSI
 ! CE CHAMP EST ISSU D UN CHARGEMENT PRE-EPSI
-    if (option .eq. 'CALC_G_F' .or. option .eq. 'CALC_GTP_F') then
+    if (option .eq. 'CALC_G_F' ) then
         fonc = .true.
         call jevech('PFFVOLU', 'L', iforf)
         call jevech('PTEMPSR', 'L', itemps)
@@ -182,14 +179,11 @@ subroutine te0096(option, nomte)
     read(zk16(icomp+1),'(I16)') nbvari
     if (incr) then
         call jevech('PCONTRR', 'L', isigm)
-        call jevech('PDEFOPL', 'L', iepsp)
-        call jevech('PVARIPR', 'L', ivari)
     endif
     call tecach('ONO', 'PPESANR', 'L', iret, iad=ipesa)
     call tecach('ONO', 'PROTATR', 'L', iret, iad=irota)
     call tecach('ONO', 'PSIGINR', 'L', iret, iad=isigi)
-    if (option .eq. 'CALC_G' .or. option .eq. 'CALC_G_F' .or. option .eq. 'CALC_GTP_F' .or.&
-        option .eq. 'CALC_GTP') then
+    if (option .eq. 'CALC_G' .or. option .eq. 'CALC_G_F') then
         call tecach('ONO', 'PVITESS', 'L', iret, iad=ivites)
         call tecach('ONO', 'PACCELE', 'L', iret, iad=iaccel)
     endif
@@ -311,10 +305,8 @@ subroutine te0096(option, nomte)
 !
 ! INITIALISATIONS
         l = (kp-1)*nno
-        ppg = 0.d0
         do 220 i = 1, 3
             tgdm(i) = 0.d0
-            dpdm(i) = 0.d0
             accele(i) = 0.d0
             do 200 j = 1, 3
                 sr(i,j) = 0.d0
@@ -338,7 +330,6 @@ subroutine te0096(option, nomte)
             do 230 j = 1, 3
                 dsigin(i,j) = 0.d0
                 depsin(i,j) = 0.d0
-                depsp(i,j) = 0.d0
 230         continue
 240     continue
 !
@@ -388,50 +379,6 @@ subroutine te0096(option, nomte)
 320     continue
 !
 ! =======================================================
-! PLASTICITE
-! =======================================================
-!
-! CALCULS DES GRADIENTS DE P (DPDM) ET EPSP (DEPSP) EN PLASTICITE
-!
-        if (incr) then
-            do 380 i = 1, nno
-                der(1) = dfdi(i)
-                der(2) = dfdi(i+nno)
-                der(3) = 0.d0
-                der(4) = zr(ivf+l+i-1)
-                p = zr(ivari+(i-1)*nbvari)
-                ppg = ppg + p*der(4)
-                do 350 j = 1, ncmp
-                    epsp(j) = epsp(j)+ zr(iepsp+ncmp*(i-1)+j-1)*der(4)
-350             continue
-                if (p .ge. epsi) then
-                    do 360 j = 1, ndim
-                        dpdm(j)= dpdm(j) + zr(ivari+(i-1)*nbvari)*der(&
-                        j)
-360                 continue
-                    do 370 k = 1, ndim
-                        do 365 j = 1, ncmp
-                            depsp(j,k)=depsp(j,k)+zr(iepsp+ncmp*(i-1)+&
-                            j-1)*der(k)
-365                     continue
-370                 continue
-                endif
-380         continue
-            do 382 i = 4, ncmp
-                epsp(i)=epsp(i)*rac2
-                do 381 j = 1, ndim
-                    depsp(i,j)=depsp(i,j)*rac2
-381             continue
-382         continue
-            if (ppg .lt. epsi) then
-                ppg = 0.d0
-                do 390 j = 1, ncmp
-                    epsp(j) = 0.d0
-390             continue
-            endif
-        endif
-!
-! =======================================================
 ! PRE DEFORMATIONS ET LEUR GRADIENT DEPSIN
 ! (seule intervenant dans le calcul de G)
 ! =======================================================
@@ -464,11 +411,11 @@ subroutine te0096(option, nomte)
 ! =======================================================
 !
         if (incr) then
-!
-! EN PLASTICITE
+! BESOIN GARDER APPEL NMPLRU POUR LE CALCUL DE L'ENERGIE EN PRESENCE 
+! D'ETAT INITIAL MAIS NETTOYAGE A COMPLETER
             call nmplru(fami, kp, 1, '+', ndim,&
-                        typmod, matcod, compor, ppg, eps,&
-                        epsp, rp, energi)
+                        typmod, matcod, compor, rbid, eps,&
+                        epsp, rbid, energi)
             do 435 i = 1, 3
                 sigl(i)= zr(isigm+ncmp*(kp-1)+i-1)
 435         continue
@@ -673,24 +620,6 @@ subroutine te0096(option, nomte)
         tfor = tfor + prod2
 !
 ! =======================================================
-! TERME PLASTIQUE :   SIG:(GRAD(EPSP).THETA)- R(P).GRAD(P).THETA
-! =======================================================
-!
-        if (incr) then
-            prod1=0.d0
-            prod2=0.d0
-            do 620 i = 1, ncmp
-                do 610 j = 1, ndim
-                    prod1 = prod1 + sigl(i)*depsp(i,j)*dtdm(j,4)
-610             continue
-620         continue
-            do 650 i = 1, ndim
-                prod2 = prod2 + rp*dpdm(i)*dtdm(i,4)
-650         continue
-            tplas = tplas + (prod1-prod2)*poids
-        endif
-!
-! =======================================================
 ! TERME INITIAL:PROD1 LIE A LA CONTRAINTE (EPS-EPSREF):GRAD(SIGIN).THETA
 !               PROD2 LIE A LA PREDEFORMATION SIG:GRAD(EPSIN).THETA
 ! =======================================================
@@ -726,7 +655,7 @@ subroutine te0096(option, nomte)
 !
 ! ASSEMBLAGE FINAL DES TERMES DE G OU DG
     
-    zr(igthet) = tthe + tcla + tfor + tplas + tini
+    zr(igthet) = tthe + tcla + tfor + tini
     
     
     

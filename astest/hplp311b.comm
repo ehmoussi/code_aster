@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -195,6 +195,8 @@ RESU=CREA_RESU(  OPERATION='AFFE',
 #
 FOND=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                          FOND_FISS=_F( GROUP_NO = ('P0',)),
+                        LEVRE_SUP=_F(GROUP_MA='LEVRE_SUP',),
+                        LEVRE_INF=_F(GROUP_MA='LEVRE_INF',),
                       )
 
 #
@@ -202,9 +204,7 @@ G00=CALC_G(        RESULTAT=RESU,
                    THETA=_F(
                             R_INF=5.00E-5,
                             R_SUP=1.00E-4,
-                            FOND_FISS=FOND,
-                            MODULE=1.,
-                            DIRECTION=(1., 0., 0.,)),
+                            FOND_FISS=FOND,),
                    EXCIT=_F(CHARGE=CH,),
                      )
 
@@ -243,9 +243,7 @@ G01=CALC_G(        RESULTAT=RESU,
                    THETA=_F(
                             R_INF=1.00E-4,
                             R_SUP=1.50E-4,
-                            FOND_FISS=FOND,
-                            MODULE=1.,
-                            DIRECTION=(1., 0., 0.,)),
+                            FOND_FISS=FOND,),
                    EXCIT=_F(CHARGE=CH,),
                      )
 
@@ -283,9 +281,7 @@ G02=CALC_G(        RESULTAT=RESU,
                    THETA=_F(
                             R_INF=1.50E-4,
                             R_SUP=2.00E-4,
-                            FOND_FISS=FOND,
-                            MODULE=1.,
-                            DIRECTION=(1., 0., 0.,)),
+                            FOND_FISS=FOND,),
                    EXCIT=_F(CHARGE=CH,),
                      )
 

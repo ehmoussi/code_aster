@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,9 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fonno8(resu, noma, tablev, vnor, vect)
+subroutine fonno8(resu, noma, tablev, vect)
     implicit none
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
@@ -33,7 +34,7 @@ subroutine fonno8(resu, noma, tablev, vnor, vect)
 !
     character(len=8) :: noma, resu
     integer :: tablev(2)
-    real(kind=8) :: vect(3), vnor(2, 3)
+    real(kind=8) :: vect(3)
 !
 !      DETERMINATION D'UN VECTEUR SE DIRIGEANT VERS LA LEVRE SUPERIEURE
 !       ----------------------------------------------------------------
@@ -43,7 +44,6 @@ subroutine fonno8(resu, noma, tablev, vnor, vect)
 !       TABLEV : VECTEUR CONTENANT LES NUMEROS DES DEUX MAILLES
 !                CONNECTEES AU NOEUD SOMMET COURANT DU PREMIER SEGMENT
 !                ET AUX LEVRES
-!       VNOR   : VECTEUR NORMAL AU NOEUD SOMMET COURANT
 !    SORTIE
 !       VECT   : VECTEUR SE DIRIGEANT VERS LA LEVRE SUPERIEURE
 !                IL SERT A REORIENTER LE VECTEUR NORMAL POUR QU'IL AILLE
@@ -120,7 +120,7 @@ subroutine fonno8(resu, noma, tablev, vnor, vect)
     if (ifon .ne. 0) then
         call jeveuo(resu//'.FOND.NOEU', 'L', jfon)
     else
-        call jeveuo(resu//'.FOND_INF.NOEU', 'L', jfon)
+        ASSERT(.FALSE.)
     endif
     call jenonu(jexnom(noma//'.NOMNOE', zk8(jfon)), iret)
 !
