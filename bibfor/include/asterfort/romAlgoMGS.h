@@ -15,15 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+
+!
+!
 #include "asterf_types.h"
 !
 interface
-    subroutine romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, ds_empi, i_mode)
-        use Rom_Datastructure_type
-        aster_logical, intent(in) :: l_ortho_base
-        type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-        type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
-        type(ROM_DS_Empi), intent(inout) :: ds_empi
-        integer, intent(in) :: i_mode
-    end subroutine romSaveBaseStableIFS
+    subroutine romAlgoMGS(nb_mode, nb_equa, syst_type, field_iden, base,&
+                          vr_mode_in, vr_mode_out,&   
+                          vc_mode_in, vc_mode_out)
+        integer, intent(in) :: nb_mode, nb_equa
+        character(len=1), intent(in) :: syst_type
+        character(len=8), intent(in) :: base
+        character(len=24), intent(in) :: field_iden
+        real(kind=8), pointer, optional :: vr_mode_in(:), vr_mode_out(:) 
+        complex(kind=8), pointer, optional :: vc_mode_in(:), vc_mode_out(:) 
+    end subroutine romAlgoMGS
 end interface

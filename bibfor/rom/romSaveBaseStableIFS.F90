@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romSaveBaseStableIFS(ds_multipara, ds_algoGreedy, ds_empi, i_mode)
+subroutine romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, ds_empi, i_mode)
 !
 use Rom_Datastructure_type
 !
@@ -30,7 +30,9 @@ implicit none
 #include "asterfort/copisd.h"
 #include "asterfort/romNormalize.h"
 #include "asterfort/romGreedyModeSave.h"
+#include "asterfort/romOrthoBasis.h"
 !
+aster_logical, intent(in) :: l_ortho_base
 type(ROM_DS_MultiPara), intent(in) :: ds_multipara
 type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
 type(ROM_DS_Empi), intent(inout) :: ds_empi
@@ -42,6 +44,7 @@ integer, intent(in) :: i_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  l_ortho_base        : flag to orthogonalize basis
 ! In  ds_multipara        : datastructure for multiparametric problems
 ! In  ds_algoGreedy       : datastructure for Greedy algorithm
 ! IO  ds_empi             : datastructure for empiric modes
@@ -130,6 +133,14 @@ integer, intent(in) :: i_mode
     call romNormalize(syst_type, base_1, nb_equa)
     call romNormalize(syst_type, base_2, nb_equa)
     call romNormalize(syst_type, base_3, nb_equa)
+!
+! - Orthogonalization of basis
+!
+    if (l_ortho_base) then
+        call romOrthoBasis(ds_multipara, ds_empi, base_1)
+        call romOrthoBasis(ds_multipara, ds_empi, base_2)
+        call romOrthoBasis(ds_multipara, ds_empi, base_3)
+    end if
 !
 ! - Save basis
 !

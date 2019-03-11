@@ -301,6 +301,8 @@ implicit none
         type(ROM_DS_MultiPara)  :: multipara
 ! ----- Maximum number of modes
         integer                 :: nb_mode_maxi = 0
+! ----- Flag to orthogonalize the basis 
+        aster_logical           :: l_ortho_base = ASTER_FALSE
 ! ----- Flag to stabilize the basis for FSI transient problem
         aster_logical           :: l_stab_fsi   = ASTER_FALSE
 ! ----- Tolerance for greedy algorithm
