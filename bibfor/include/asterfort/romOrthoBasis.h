@@ -18,12 +18,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, ds_empi, i_mode)
+    subroutine romOrthoBasis(ds_multipara, ds_empi, new_basis)
         use Rom_Datastructure_type
-        aster_logical, intent(in) :: l_ortho_base
         type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-        type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
-        type(ROM_DS_Empi), intent(inout) :: ds_empi
-        integer, intent(in) :: i_mode
-    end subroutine romSaveBaseStableIFS
+        type(ROM_DS_Empi), intent(in)   :: ds_empi
+        character(len=19), intent(in) :: new_basis
+    end subroutine romOrthoBasis
 end interface

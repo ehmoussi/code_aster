@@ -45,6 +45,8 @@ cata_msg = {
 
    13 : _("""On a détecté %(i1)d tranches pour la définition des modes linéiques."""),
 
+   14 : _("""Échec dans l'orthogonalisation des modes empiriques."""),
+
    15 : _("""Le nombre de couches du domaine est inférieur au nombre de couches de l'interface, on aura peut-être un problème de convergence"""),
 
    16 : _("""Méthode de construction de la base empirique: %(k1)s """),

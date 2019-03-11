@@ -49,8 +49,8 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
     integer :: ifm, niv
     integer :: nb_mode_maxi = 0, nocc
-    character(len=16) :: stab_fsi = ' '
-    aster_logical :: l_stab_fsi
+    character(len=16) :: stab_fsi = ' ', ortho_base = ' '
+    aster_logical :: l_stab_fsi, l_ortho_base
     real(kind=8) :: tole_greedy
 !
 ! --------------------------------------------------------------------------------------------------
@@ -65,7 +65,12 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
     call getvis(' ', 'NB_MODE' , scal = nb_mode_maxi, nbret = nocc)
     ASSERT(nocc .eq. 1 .and. nb_mode_maxi .ge. 1)
 !
-! - If we stabilise the basis for IFS transient problem
+! - If we orthogonalize basis
+!
+    call getvtx(' ', 'ORTHO_BASE', scal = ortho_base)
+    l_ortho_base = ortho_base .eq. 'OUI'
+!
+! - If we stabilise the basis for FSI transient problem
 !
     call getvtx(' ', 'TYPE_BASE', scal = stab_fsi)
     l_stab_fsi = stab_fsi .eq. 'IFS_STAB'
@@ -85,6 +90,7 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! - Save parameters in datastructure
 !
     ds_para_rb%nb_mode_maxi = nb_mode_maxi
+    ds_para_rb%l_ortho_base = l_ortho_base
     ds_para_rb%l_stab_fsi   = l_stab_fsi
     ds_para_rb%tole_greedy  = tole_greedy
 !

@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/romSolveDOMSystSolve.h"
 #include "asterfort/romNormalize.h"
 #include "asterfort/romMultiParaCoefCompute.h"
+#include "asterfort/romOrthoBasis.h"
 #include "asterfort/romGreedyModeSave.h"
 #include "asterfort/romGreedyResiCalc.h"
 #include "asterfort/romGreedyResiMaxi.h"
@@ -60,7 +61,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     real(kind=8) :: tole, tole_greedy
     character(len=1) :: syst_type
     character(len=19) :: syst_solu
-    aster_logical :: l_stab_fsi
+    aster_logical :: l_stab_fsi, l_ortho_base
     type(ROM_DS_MultiPara) :: ds_multipara
     type(ROM_DS_AlgoGreedy) :: ds_algoGreedy
     type(ROM_DS_Solve) :: ds_solveDOM
@@ -82,6 +83,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     nb_equa        = ds_multipara%field%nb_equa
     tole_greedy    = ds_para_rb%tole_greedy
     l_stab_fsi     = ds_para_rb%l_stab_fsi
+    l_ortho_base   = ds_para_rb%l_ortho_base
     nb_mode_maxi   = ds_para_rb%nb_mode_maxi
     syst_type      = ds_solveDOM%syst_type
     syst_solu      = ds_solveDOM%syst_solu
@@ -111,7 +113,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Normalization of basis and save it 
 !
     if (l_stab_fsi) then
-         call romSaveBaseStableIFS(ds_multipara, ds_algoGreedy, ds_empi, i_mode)
+         call romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, ds_empi, i_mode)
     else 
          call romNormalize(syst_type, syst_solu, nb_equa)
          call romGreedyModeSave(ds_multipara, ds_empi, i_mode, syst_solu)
@@ -153,9 +155,12 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call romSolveDOMSystSolve(ds_para_rb%solver, ds_solveDOM)
 ! ----- Normalization of basis and save it
         if (l_stab_fsi) then 
-            call romSaveBaseStableIFS(ds_multipara, ds_algoGreedy, ds_empi, i_mode)
+            call romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, ds_empi, i_mode)
         else
             call romNormalize(syst_type, syst_solu, nb_equa)
+            if (l_ortho_base) then 
+                call romOrthoBasis(ds_multipara, ds_empi, syst_solu)
+            endif 
             call romGreedyModeSave(ds_multipara, ds_empi, i_mode, syst_solu)
         endif
 !
