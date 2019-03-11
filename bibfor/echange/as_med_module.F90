@@ -21,11 +21,12 @@ module as_med_module
     private
 
 ! default version to be used for output
-    integer, parameter :: DEF_BKWD_VERS(3) = (/4, 0, 0/)
+    integer, parameter :: DEF_BKWD_VERS(3) = (/3, 3, 1/)
 
     ! currently used version
     integer :: bkwd_vers(3) = (/0, 0, 0/)
 
+#include "asterc/write33header.h"
 #include "asterfort/as_mfiope.h"
 #include "asterfort/as_mfivop.h"
 
@@ -45,11 +46,12 @@ contains
         aster_int, intent(in) :: acces
         aster_int, intent(out) :: cret
 !
-        integer, parameter :: med_acc_creat = 3
+        integer, parameter :: med_acc_rdwr = 1, med_acc_creat = 3
         call init()
 !
         if (acces .eq. med_acc_creat) then
-            call as_mfivop(fid, nom, acces, &
+            call write33header(nom)
+            call as_mfivop(fid, nom, med_acc_rdwr, &
                            bkwd_vers(1), bkwd_vers(2), bkwd_vers(3), &
                            cret)
         else
