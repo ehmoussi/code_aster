@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -108,42 +108,42 @@ a = 10.
 h = a/18.
 
 FISSLI1 = DEFI_FISS_XFEM(MAILLAGE = MAILLALI,
-                        TYPE_DISCONTINUITE = 'FISSURE', 
+                        TYPE_DISCONTINUITE = 'FISSURE',
                         DEFI_FISS = _F(FORM_FISS = 'DEMI_DROITE',
                                        PFON = (0.25*a, 0.25*a, 0.),
                                        DTAN = (1., 0., 0.),),)
 
 FISSLI2 = DEFI_FISS_XFEM(MAILLAGE = MAILLALI,
-                        TYPE_DISCONTINUITE = 'FISSURE', 
+                        TYPE_DISCONTINUITE = 'FISSURE',
                         DEFI_FISS = _F(FORM_FISS = 'DEMI_DROITE',
                                        PFON = (0.25*a, 0.75*a, 0.),
                                        DTAN = ( 1., 0., 0.),),)
 
 FISSLI3 = DEFI_FISS_XFEM(MAILLAGE = MAILLALI,
-                        TYPE_DISCONTINUITE = 'FISSURE', 
+                        TYPE_DISCONTINUITE = 'FISSURE',
                         DEFI_FISS = _F(FORM_FISS = 'DEMI_DROITE',
                                        PFON = (a-1.5*h, 0.5*h, 0.),
                                        DTAN = (-1., 0., 0.),),)
 
 # "subtilite" due au contact : on va definir 3 modeles enrichis avec contact,
 # or MODI_MODELE_XFEM ecrit dans les sd_fiss_xfem (base globale) l'objet
-# '.MAILFISS.CONT' donc on ne peut pas utiliser deux fois le meme jeu 
+# '.MAILFISS.CONT' donc on ne peut pas utiliser deux fois le meme jeu
 # de fissures, d'ou les definitions redondantes ci-dessous
 
 FISSLI1C = DEFI_FISS_XFEM(MAILLAGE = MAILLALI,
-                         TYPE_DISCONTINUITE = 'FISSURE', 
+                         TYPE_DISCONTINUITE = 'FISSURE',
                          DEFI_FISS = _F(FORM_FISS = 'DEMI_DROITE',
                                         PFON = (0.25*a, 0.25*a, 0.),
                                         DTAN = (1., 0., 0.),),)
 
 FISSLI2C = DEFI_FISS_XFEM(MAILLAGE = MAILLALI,
-                         TYPE_DISCONTINUITE = 'FISSURE', 
+                         TYPE_DISCONTINUITE = 'FISSURE',
                          DEFI_FISS = _F(FORM_FISS = 'DEMI_DROITE',
                                         PFON = (0.25*a, 0.75*a, 0.),
                                         DTAN = ( 1., 0., 0.),),)
 
 FISSLI3C = DEFI_FISS_XFEM(MAILLAGE = MAILLALI,
-                         TYPE_DISCONTINUITE = 'FISSURE', 
+                         TYPE_DISCONTINUITE = 'FISSURE',
                          DEFI_FISS = _F(FORM_FISS = 'DEMI_DROITE',
                                         PFON = (a-1.5*h, 0.5*h, 0.),
                                         DTAN = (-1., 0., 0.),),)
@@ -266,13 +266,13 @@ File36.close()
 File37.close()
 File38.close()
 
-ListLMECP  = [] # 31 <-> MLMECPX 
+ListLMECP  = [] # 31 <-> MLMECPX
 ListLMECPC = [] # 32 <-> MLMECPXC
-ListLMEDP  = [] # 33 <-> MLMEDPX 
+ListLMEDP  = [] # 33 <-> MLMEDPX
 ListLMEDPC = [] # 34 <-> MLMEDPXC
-ListLMEAX  = [] # 35 <-> MLMEAXX 
-ListLTHPL  = [] # 36 <-> MLTHPLX 
-ListLTHAX  = [] # 37 <-> MLTHAXX 
+ListLMEAX  = [] # 35 <-> MLMEAXX
+ListLTHPL  = [] # 36 <-> MLTHPLX
+ListLTHAX  = [] # 37 <-> MLTHAXX
 ListLMEAXC = [] # 38 <-> MLMEAXXC
 
 # 31 <-> ListLMECP  / MLMECPX
@@ -299,7 +299,7 @@ for line in LinesFile32:
     lsplit[1] = lsplit[1].replace(nommo," "*8)
     ListLMECPC.append(lsplit)
 
-# 33 <-> ListLMEDP  / MLMEDPX 
+# 33 <-> ListLMEDP  / MLMEDPX
 nommo  = 'MLMEDPX'
 nommo += (8-len(nommo))*" "
 for line in LinesFile33:
@@ -323,7 +323,7 @@ for line in LinesFile34:
     lsplit[1] = lsplit[1].replace(nommo," "*8)
     ListLMEDPC.append(lsplit)
 
-# 35 <-> ListLMEAX  / MLMEAXX 
+# 35 <-> ListLMEAX  / MLMEAXX
 nommo  = 'MLMEAXX'
 nommo += (8-len(nommo))*" "
 for line in LinesFile35:
@@ -335,7 +335,7 @@ for line in LinesFile35:
     lsplit[1] = lsplit[1].replace(nommo," "*8)
     ListLMEAX.append(lsplit)
 
-# 36 <-> ListLTHPL  / MLTHPLX 
+# 36 <-> ListLTHPL  / MLTHPLX
 nommo  = 'MLTHPLX'
 nommo += (8-len(nommo))*" "
 for line in LinesFile36:
@@ -347,7 +347,7 @@ for line in LinesFile36:
     lsplit[1] = lsplit[1].replace(nommo," "*8)
     ListLTHPL.append(lsplit)
 
-# 37 <-> ListLTHAX  / MLTHAXX 
+# 37 <-> ListLTHAX  / MLTHAXX
 nommo  = 'MLTHAXX'
 nommo += (8-len(nommo))*" "
 for line in LinesFile37:
@@ -374,37 +374,37 @@ for line in LinesFile38:
 
 ## pour debug
 #assert len(ListLMECP ) == len(ListLMECPC)
-#for i in xrange(len(ListLMECP )):
+#for i in range(len(ListLMECP )):
   #print ListLMECP[i] == ListLMECPC[i]
   #print ListLMECP[i]
   #print ListLMECPC[i]
 #print "&&"
 #assert len(ListLMECP ) == len(ListLMEDP )
-#for i in xrange(len(ListLMECP )):
+#for i in range(len(ListLMECP )):
   #print ListLMECP[i] == ListLMEDP[i]
   #print ListLMECP[i]
   #print ListLMEDP[i]
 #print "&&"
 #assert len(ListLMECP ) == len(ListLMEDPC)
-#for i in xrange(len(ListLMECP )):
+#for i in range(len(ListLMECP )):
   #print ListLMECP[i] == ListLMEDPC[i]
   #print ListLMECP[i]
   #print ListLMEDPC[i]
 #print "&&"
 #assert len(ListLMECP ) == len(ListLMEAX )
-#for i in xrange(len(ListLMECP )):
+#for i in range(len(ListLMECP )):
   #print ListLMECP[i] == ListLMEAX[i]
   #print ListLMECP[i]
   #print ListLMEAX[i]
 #print "&&"
 #assert len(ListLMECP ) == len(ListLTHPL )
-#for i in xrange(len(ListLMECP )):
+#for i in range(len(ListLMECP )):
   #print ListLMECP[i] == ListLTHPL[i]
   #print ListLMECP[i]
   #print ListLTHPL[i]
 #print "&&"
 #assert len(ListLMECP ) == len(ListLTHAX )
-#for i in xrange(len(ListLMECP )):
+#for i in range(len(ListLMECP )):
   #print ListLMECP[i] == ListLTHAX[i]
   #print ListLMECP[i]
   #print ListLTHAX[i]
@@ -426,7 +426,7 @@ if (len(ListLMECP ) > 0) and (len(ListLMECP ) == len(ListLMECPC)) : nobj_ok = 1
 TABTAIL1 = CREA_TABLE(TITRE = '',
                       LISTE = _F( LISTE_I = [nobj_ok], PARA = 'BOOLEEN'),)
 
-# TABTAIL2 -> entre MLMECPX et MLMEDPX 
+# TABTAIL2 -> entre MLMECPX et MLMEDPX
 nobj_ok = 0
 if (len(ListLMECP ) > 0) and (len(ListLMECP ) == len(ListLMEDP )) : nobj_ok = 1
 TABTAIL2 = CREA_TABLE(TITRE = '',
@@ -438,19 +438,19 @@ if (len(ListLMECP ) > 0) and (len(ListLMECP ) == len(ListLMEDPC)) : nobj_ok = 1
 TABTAIL3 = CREA_TABLE(TITRE = '',
                       LISTE = _F( LISTE_I = [nobj_ok], PARA = 'BOOLEEN'),)
 
-# TABTAIL4 -> entre MLMECPX et MLMEAXX 
+# TABTAIL4 -> entre MLMECPX et MLMEAXX
 nobj_ok = 0
 if (len(ListLMECP ) > 0) and (len(ListLMECP ) == len(ListLMEAX )) : nobj_ok = 1
 TABTAIL4 = CREA_TABLE(TITRE = '',
                       LISTE = _F( LISTE_I = [nobj_ok], PARA = 'BOOLEEN'),)
 
-# TABTAIL5 -> entre MLMECPX et MLTHPLX 
+# TABTAIL5 -> entre MLMECPX et MLTHPLX
 nobj_ok = 0
 if (len(ListLMECP ) > 0) and (len(ListLMECP ) == len(ListLTHPL )) : nobj_ok = 1
 TABTAIL5 = CREA_TABLE(TITRE = '',
                       LISTE = _F( LISTE_I = [nobj_ok], PARA = 'BOOLEEN'),)
 
-# TABTAIL6 -> entre MLMECPX et MLTHAXX 
+# TABTAIL6 -> entre MLMECPX et MLTHAXX
 nobj_ok = 0
 if (len(ListLMECP ) > 0) and (len(ListLMECP ) == len(ListLTHAX )) : nobj_ok = 1
 TABTAIL6 = CREA_TABLE(TITRE = '',
@@ -506,8 +506,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 ## -------
 ## vale_ok == 1 si le "resume" (IMPR_CO/NIVEAU=-1) des .CELV
-## ou .VALE des cham_elem issus de TOPOSE et TOPOFA et contenus 
-## dans les deux modeles sont identiques (au nom du modele pres) 
+## ou .VALE des cham_elem issus de TOPOSE et TOPOFA et contenus
+## dans les deux modeles sont identiques (au nom du modele pres)
 ## vale_ok == 0 sinon
 ## -------
 
@@ -517,7 +517,7 @@ if (ListLMECP != []) and (ListLMECP == ListLMECPC) : vale_ok = 1
 TARESUM1 = CREA_TABLE(TITRE = '',
                       LISTE = _F( LISTE_I = [vale_ok], PARA = 'BOOLEEN'),)
 
-# TARESUM2 -> entre MLMECPX et MLMEDPX 
+# TARESUM2 -> entre MLMECPX et MLMEDPX
 vale_ok = 0
 if (ListLMECP != []) and (ListLMECP == ListLMEDP ) : vale_ok = 1
 TARESUM2 = CREA_TABLE(TITRE = '',
@@ -529,13 +529,13 @@ if (ListLMECP != []) and (ListLMECP == ListLMEDPC) : vale_ok = 1
 TARESUM3 = CREA_TABLE(TITRE = '',
                       LISTE = _F( LISTE_I = [vale_ok], PARA = 'BOOLEEN'),)
 
-# TARESUM4 -> entre MLMECPX et MLMEAXX 
+# TARESUM4 -> entre MLMECPX et MLMEAXX
 vale_ok = 0
 if (ListLMECP != []) and (ListLMECP == ListLMEAX ) : vale_ok = 1
 TARESUM4 = CREA_TABLE(TITRE = '',
                       LISTE = _F( LISTE_I = [vale_ok], PARA = 'BOOLEEN'),)
 
-# TARESUM5 -> entre MLMECPX et MLTHPLX 
+# TARESUM5 -> entre MLMECPX et MLTHPLX
 vale_ok = 0
 if (ListLMECP != []) and (ListLMECP == ListLTHPL ) : vale_ok = 1
 TARESUM5 = CREA_TABLE(TITRE = '',
@@ -641,7 +641,7 @@ LN = FORMULE(VALE='Y-0.25*a',
              NOM_PARA=['X', 'Y'],)
 
 INTEQU = DEFI_FISS_XFEM(MAILLAGE = MAILLAQU,
-                        TYPE_DISCONTINUITE = 'INTERFACE', 
+                        TYPE_DISCONTINUITE = 'INTERFACE',
                         DEFI_FISS = _F(FONC_LN = LN,),)
 
 # ###################################################
@@ -735,7 +735,7 @@ for line in LinesFile33:
 
 ## pour debug
 #assert len(ListQMEDP) == len(ListQHMDP)
-#for i in xrange(len(ListQMEDP)):
+#for i in range(len(ListQMEDP)):
   #print ListQMEDP[i] == ListQHMDP[i]
   #print ListQMEDP[i]
   #print ListQHMDP[i]
@@ -765,8 +765,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 ## -------
 ## vale_ok == 1 si le "resume" (IMPR_CO/NIVEAU=-1) des .CELV
-## ou .VALE des cham_elem issus de TOPOSE et TOPOFA et contenus 
-## dans les deux modeles sont identiques (au nom du modele pres) 
+## ou .VALE des cham_elem issus de TOPOSE et TOPOFA et contenus
+## dans les deux modeles sont identiques (au nom du modele pres)
 ## vale_ok == 0 sinon
 ## -------
 

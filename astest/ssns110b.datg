@@ -52,7 +52,7 @@ def creation_elements_interface_3D(maillage, groupMa_1, groupMa_2, nom_interface
 
    listAllGroupVolume = []
    listAllGroupFace = []
-   for i in xrange(nbAllGroups):
+   for i in range(nbAllGroups):
       if str(listAllGroup[i].GetType())=="VOLUME" :
          listAllGroupVolume.append(listAllGroup[i])
       if str(listAllGroup[i].GetType())=="FACE" :
@@ -64,7 +64,7 @@ def creation_elements_interface_3D(maillage, groupMa_1, groupMa_2, nom_interface
    verif_2 = False
    create_group = True
    is_face = 0
-   for j in xrange(nbAllGroupVolume):
+   for j in range(nbAllGroupVolume):
       if (groupMa_1==listAllGroupVolume[j].GetName()) :
          verif_1 = True
          volume_1 = listAllGroupVolume[j]
@@ -78,7 +78,7 @@ def creation_elements_interface_3D(maillage, groupMa_1, groupMa_2, nom_interface
       print "Erreur : Le premier groupe de mailles doit être un groupe de mailles volumiques"
       assert False
    if not verif_2 :
-      for j in xrange(nbAllGroupFace):
+      for j in range(nbAllGroupFace):
          if (groupMa_2==listAllGroupFace[j].GetName()) :
             verif_2 = True
             is_face = 2
@@ -161,7 +161,7 @@ def creation_elements_interface_3D(maillage, groupMa_1, groupMa_2, nom_interface
    listNouveauxNoeuds.sort()
 
    tableauCorrespondance = {}
-   for k in xrange(len(id_noeuds_inter)):
+   for k in range(len(id_noeuds_inter)):
       tab1 = maillage.GetNodeXYZ(listNouveauxNoeuds[k])
       tab2 = maillage.GetNodeXYZ(id_noeuds_inter[k])
       assert (tab1 == tab2)

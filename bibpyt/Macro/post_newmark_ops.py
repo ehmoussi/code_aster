@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ def post_newmark_ops(self,**args):
   ky = args['KY']
 
  ### GROUP_MA DANS LE MODELE
-  grpma = args['GROUP_MA_CALC'] 
+  grpma = args['GROUP_MA_CALC']
 
  ### gravité
   g=9.81
@@ -91,7 +91,7 @@ def post_newmark_ops(self,**args):
   __ch_mat = self.get_concept(nom_chamat.strip())
 
 
- ### AJOUT DU GROUPE GLISSE DANS LE MAILLAGE 
+ ### AJOUT DU GROUPE GLISSE DANS LE MAILLAGE
   __mail = DEFI_GROUP(reuse = __mail,
                 MAILLAGE = __mail,
                 CREA_GROUP_MA = _F(NOM = 'GLISSE_',
@@ -131,12 +131,12 @@ def post_newmark_ops(self,**args):
 
   tabmasse = __tabmas.EXTR_TABLE()
 
-  masse = __tabmas['MASSE',1] 
+  masse = __tabmas['MASSE',1]
   cdgx = __tabmas['CDG_X',1]
   cdgy = __tabmas['CDG_Y',1]
 
 ##############################################################################
-##   METHODE : CALCUL DE L'ACCELERATION MOYENNE A PARTIR DE LA RESULTANTE 
+##   METHODE : CALCUL DE L'ACCELERATION MOYENNE A PARTIR DE LA RESULTANTE
 ##             LE LONG DE LA SURFACE DE GLISSEMENT
 ##############################################################################
 
@@ -176,20 +176,20 @@ def post_newmark_ops(self,**args):
                 ORDONNEE = list(accxFLI)),
 
 ###############################################################################
-##    METHODE DE CORRECTION DE L'ACCELERATION POUR CALCUL DES DÉPLACEMENTS 
+##    METHODE DE CORRECTION DE L'ACCELERATION POUR CALCUL DES DÉPLACEMENTS
 ##    IRREVERSIBLES
 ##############################################################################
 
   acc = accyFLI
 
   ## Calcul de l'accéleration corrigée par ay
-  ## on compte les valeurs de a>ay de manière à disposer 
+  ## on compte les valeurs de a>ay de manière à disposer
   ## du même nombre de valeurs a<ay. Cela servira pour calculer correctement
   ## les vitesses et les déplacements résiduels.
   ## Partie à modifier si kh variable
   accA=np.zeros(len(time))
   count = 0
-  for i in xrange(len(time)):
+  for i in range(len(time)):
     if acc[i]>ay:
       accA[i] = acc[i] - ay
       count = count + 1
@@ -215,14 +215,14 @@ def post_newmark_ops(self,**args):
   vitA=np.zeros(len(time))
   ind=[False]*len(time)
   eps = 1e-9
-  for i in xrange(len(time)-1):
+  for i in range(len(time)-1):
     if (vitAFv[i+1] - vitAFv[i])>eps or (vitAFv[i+1] - vitAFv[i])< (-1.)*eps:
       vitA[i] = vitAFv[i]
       ind[i] = True
 
   initial = True
   vini = 0.
-  for i in xrange(len(time)):
+  for i in range(len(time)):
     if ind[i]:
       vitA[i] = vitA[i]-vini
       initial = False
@@ -231,7 +231,7 @@ def post_newmark_ops(self,**args):
       vini = vitAFv[i]
       #print vini
 
-  for i in xrange(len(time)):
+  for i in range(len(time)):
     if vitA[i]<0:
       vitA[i]=0.
 
