@@ -59,18 +59,28 @@ IMPR_CONCEPT(FORMAT="RESULTAT",
 
 
 # IMPRESSION AU FORMAT MED
-DEFI_FICHIER(UNITE=82, FICHIER='./fort.82', TYPE = 'BINARY')
-                      
+# On pourrait très bien utiliser un seul fichier.
+# On sépare les deux pour vérifier l'écriture dans des versions différentes de MED.
+IMPR_CONCEPT(FORMAT='MED',UNITE=81,
+             MED_VERSION='3.3.1',
+             CONCEPT=_F(CARA_ELEM=CARAELEM,
+                        REPERE_LOCAL='ELEM',
+                        MODELE=MODELE))
+
+DEFI_FICHIER(UNITE=81, ACTION='LIBERER')
+
 IMPR_CONCEPT(FORMAT='MED',UNITE=82,
-             CONCEPT=_F(CARA_ELEM=CARAELEM,REPERE_LOCAL='ELEM',MODELE=MODELE
-                      ))                      
+             MED_VERSION='4.0.0',
+             CONCEPT=_F(CARA_ELEM=CARAELEM,
+                        REPERE_LOCAL='ELEM',
+                        MODELE=MODELE))
 
 DEFI_FICHIER(UNITE=82, ACTION='LIBERER')
 
 # RELECTURE DU FICHIER MED
 REPLO_1 = LIRE_CHAMP(
                       TYPE_CHAM   = 'ELEM_GEOM_R',
-                      UNITE       = 82,
+                      UNITE       = 81,
                       NUME_PT     = 0,
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
