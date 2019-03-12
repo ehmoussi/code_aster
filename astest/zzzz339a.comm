@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -95,7 +95,7 @@ RESU=STAT_NON_LINE(MODELE=MO,
                    INCREMENT=_F(LIST_INST=L_INST,),);
 
 FOND=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
-                    FOND_FISS=_F(GROUP_NO='FOND',),
+                    FOND_FISS=_F(GROUP_MA='FOND_FISS',),
                     LEVRE_SUP=_F(GROUP_MA='LEVR_SUP',),
                     LEVRE_INF=_F(GROUP_MA='LEVR_INF',),)
 

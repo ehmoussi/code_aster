@@ -165,7 +165,13 @@ subroutine op0055()
 !
         call jeexin('&&'//nompro//'.GROUP_NO', iret1)
         if (iret1.ne.0) then
-            call fonnoe(resu, noma, cnxinv, nompro, nbnoff)
+            call jeveuo(noma//'.DIME', 'L', iret1)
+!!          LE MOT-CLE GROUP_NO EST UNIQUEMENT AUTORISE EN DIMENSION 2
+            if (zi(iret1-1+6).eq.2) then
+                call fonnoe(resu, noma, cnxinv, nompro, nbnoff)
+            else
+                call utmess('F', 'RUPTURE1_9')
+            endif
         endif
 !
 !        SI LE MOT CLE FACTEUR EST GROUP_MA
@@ -173,7 +179,13 @@ subroutine op0055()
 !
         call jeexin('&&'//nompro//'.GROUP_MA', iret1)
         if (iret1.ne.0) then
-            call fonmai(resu, noma, typfon, iocc, nbnoff)
+            call jeveuo(noma//'.DIME', 'L', iret1)
+!!          LE MOT-CLE GROUP_MA EST UNIQUEMENT AUTORISE EN DIMENSION 3
+            if (zi(iret1-1+6).eq.3) then
+                call fonmai(resu, noma, typfon, iocc, nbnoff)
+            else
+                call utmess('F', 'RUPTURE1_8')
+            endif
         endif
 !C
 !
