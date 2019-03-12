@@ -1,6 +1,6 @@
 /**
- * @file MaterialOnMeshBuilderInterface.cxx
- * @brief Interface python de MaterialOnMeshBuilder
+ * @file InputVariableConverterInterface.cxx
+ * @brief Interface python de InputVariableConverter
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
@@ -21,21 +21,19 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/MaterialOnMeshBuilderInterface.h"
-#include "PythonBindings/factory.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include "PythonBindings/InputVariableConverterInterface.h"
+#include <PythonBindings/factory.h>
 #include <boost/python.hpp>
 
-BOOST_PYTHON_FUNCTION_OVERLOADS( MaterialOnMeshBuilderbuild, MaterialOnMeshBuilderInstance::build,
-                                 1, 3 )
-
-void exportMaterialOnMeshBuilderToPython() {
+void exportInputVariableConverterToPython() {
     using namespace boost::python;
 
-    class_< MaterialOnMeshBuilderInstance, MaterialOnMeshBuilderInstance::MaterialOnMeshBuilderPtr >
-        c1( "MaterialOnMeshBuilder", no_init );
-        // fake initFactoryPtr: no constructor
-        // fake initFactoryPtr: no constructor
-
-    c1.def( "build", &MaterialOnMeshBuilderInstance::build, MaterialOnMeshBuilderbuild() );
-    c1.staticmethod( "build" );
+    class_< InputVariableConverterInstance,
+            InputVariableConverterPtr >( "InputVariableConverter", no_init )
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< InputVariableConverterInstance >))
+        // fake initFactoryPtr: created by subclasses
+        .def( "addConverter", &InputVariableConverterInstance::addConverter );
 };

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -115,7 +115,6 @@ def impr_acce_seisme_ops(self, **args):
     """
         Ecriture de la macro IMPR_ACCE_SEISME
     """
-    ier = 0
     TABLE = args.get("TABLE")
     NOCI_REFE = args.get("NOCI_REFE")
     SPEC_OSCI = args.get("SPEC_OSCI")
@@ -177,7 +176,7 @@ def impr_acce_seisme_ops(self, **args):
     nom_comp = ["X","Y","Z"]
 
     tab_data = TABLE.EXTR_TABLE()
-    nom_table = TABLE.get_name()
+    nom_table = TABLE.getName()[:8]
 
     if not 'FONCTION' in tab_data.para:
         UTMESS('F','SEISME_88')
@@ -873,4 +872,4 @@ def impr_acce_seisme_ops(self, **args):
     for idi in range(dim):
         DETRUIRE( CONCEPT = _F(NOM = (__MOY[idi])) )
 
-    return ier
+    return
