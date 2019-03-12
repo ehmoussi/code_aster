@@ -65,6 +65,7 @@ from .table_ext import Table
 from .tablecontainer_ext import TableContainer
 from .thermalload_ext import ThermalLoad
 from .timestepmanager_ext import TimeStepManager
+from .transientgeneralizedresultscontainer_ext import TransientGeneralizedResultsContainer
 from .xfemcrack_ext import XfemCrack
 
 

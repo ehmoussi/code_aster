@@ -347,8 +347,6 @@ class GeneratorSpectrum(Generator):
         import numpy
         spec_osci = self.method_params.get('SPEC_OSCI')
         l_freq_sro, sro_ref = spec_osci.Valeurs()
-        l_freq_sro = l_freq_sro.tolist()
-        sro_ref = sro_ref.tolist()
         ZPA = sro_ref[-1]
         F_MIN = l_freq_sro[0]
         if self.sampler.FREQ_COUP > l_freq_sro[-1]:
@@ -374,7 +372,6 @@ class GeneratorSpectrum(Generator):
             self.SRO_args.update({'PAS': self.method_params.get('FREQ_PAS')})
         elif 'LIST_FREQ' in self.method_params:
             L_FREQ = self.method_params.get('LIST_FREQ').Valeurs()
-            L_FREQ = L_FREQ.tolist()
             assert L_FREQ[0] > 0.0, "LIST_FREQ: il faut des valeurs >0.0"
             self.SRO_args.update({'LIST_FREQ': L_FREQ})
         else:

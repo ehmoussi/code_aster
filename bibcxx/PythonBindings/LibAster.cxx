@@ -82,6 +82,7 @@
 #include "PythonBindings/GenericFunctionInterface.h"
 #include "PythonBindings/GridInterface.h"
 #include "PythonBindings/InputVariableDefinitionInterface.h"
+#include "PythonBindings/InputVariableConverterInterface.h"
 #include "PythonBindings/InputVariableEvolutionContainerInterface.h"
 #include "PythonBindings/InterspectralMatrixInterface.h"
 #include "PythonBindings/KinematicsLoadInterface.h"
@@ -306,6 +307,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportListOfFloatsToPython();
     exportListOfIntegersToPython();
     exportInputVariableDefinitionToPython();
+    exportInputVariableConverterToPython();
     exportModeEmpiContainerToPython();
     exportElasticEvolutionContainerToPython();
     exportInputVariableEvolutionContainerToPython();

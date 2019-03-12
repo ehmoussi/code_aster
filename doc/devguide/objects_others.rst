@@ -246,6 +246,15 @@ Documentation of all other types.
 
 
 ********************************************************************************
+:py:class:`~code_aster.Objects.InputVariableConverter` object
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.InputVariableConverter
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
 :py:class:`~code_aster.Objects.InputVariableOnMesh` object
 ********************************************************************************
 

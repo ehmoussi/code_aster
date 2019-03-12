@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -86,12 +86,12 @@ def raff_gp_ops(self, **args):
 # RECUPERATION DU MAILLAGE ET DES DONNEES UTILISATEUR
 #
 
-    __MA0 = self['MAILLAGE_N']
+    __MA0 = args.get('MAILLAGE_N')
 
-    nb_calc = self['NB_RAFF']
+    nb_calc = args.get('NB_RAFF')
 # Manipulation obligatoire pour pouvoir se servir des grandeurs dans les
 # formules
-    TRANCHE_2D = self['TRANCHE_2D']
+    TRANCHE_2D = args.get('TRANCHE_2D')
     nbcop = TRANCHE_2D['NB_ZONE']
     theta = TRANCHE_2D['ANGLE']
     taille = TRANCHE_2D['TAILLE']
@@ -131,7 +131,11 @@ def raff_gp_ops(self, **args):
                 VALE='''SEUIL(X,Y,origine[0]-1.2*rayon*ccos,origine[1]-1.2*rayon*ssin,1.2*rayon,taille,nbcop,ccos,ssin)''',
                 NOM_PARA=('X', 'Y'),
                 **const_context)
-        __MO = AFFE_MODELE(MAILLAGE=__MA[num_calc],
+        if num_calc == 0:
+            currentMesh = __MA[num_calc]
+        else:
+            currentMesh = globals()['MA_%d' % (num_calc)]
+        __MO = AFFE_MODELE(MAILLAGE=currentMesh,
                            AFFE=_F(TOUT='OUI',
                                    PHENOMENE='MECANIQUE',
                                    MODELISATION='D_PLAN'),
@@ -140,7 +144,7 @@ def raff_gp_ops(self, **args):
         __CHXN = CREA_CHAMP(OPERATION='EXTR',
                             TYPE_CHAM='NOEU_GEOM_R',
                             NOM_CHAM='GEOMETRIE',
-                            MAILLAGE=__MA[num_calc])
+                            MAILLAGE=currentMesh)
         __CHXG = CREA_CHAMP(OPERATION='DISC',
                             TYPE_CHAM='ELGA_GEOM_R',
                             MODELE=__MO,
@@ -156,11 +160,11 @@ def raff_gp_ops(self, **args):
                                OPERATION='EVAL',
                                CHAM_F=__f_seuil,
                                CHAM_PARA=(__CHXG),)
-        __MA[num_calc + 1] = CO('__MA_%d' % (num_calc + 1))
+        __MA[num_calc + 1] = CO('MA_%d' % (num_calc + 1))
         MACR_ADAP_MAIL(ADAPTATION='RAFFINEMENT',
                        CHAM_GD=__COPEAUX,
                        CRIT_RAFF_ABS=0.01,
-                       MAILLAGE_N=__MA[num_calc],
+                       MAILLAGE_N=currentMesh,
                        MAILLAGE_NP1=__MA[num_calc + 1])
         DETRUIRE(CONCEPT=(_F(NOM=__COPEAUX,),
                           _F(NOM=__MO,),
@@ -171,7 +175,7 @@ def raff_gp_ops(self, **args):
         ),
         )
 
-    MAOUT = COPIER(CONCEPT=__MA[nb_calc])
+    MAOUT = COPIER(CONCEPT=globals()['MA_%d' % (nb_calc)])
     RetablirAlarme('CALCCHAMP_1')
 
-    return ier
+    return MAOUT
