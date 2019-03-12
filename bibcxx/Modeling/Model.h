@@ -210,6 +210,12 @@ class ModelInstance : public DataStructure {
     bool existsThm();
 
     /**
+     * @brief function to know if XFEM Preconditioning is enable in model
+     * @return true if xfem preconditioning enable
+     */
+    bool xfemPreconditioningEnable();
+
+    /**
      * @brief Get FiniteElementDescriptor
      */
     FiniteElementDescriptorPtr getFiniteElementDescriptor() const { return _ligrel; };

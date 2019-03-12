@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe LinearSolver
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -178,6 +178,7 @@ class BaseLinearSolverInstance : public DataStructure {
     ListGenParam _listOfParameters;
     AssemblyMatrixDisplacementDoublePtr _matrixPrec;
     std::string _commandName;
+    bool _xfem;
 
   public:
     /**
@@ -206,27 +207,28 @@ class BaseLinearSolverInstance : public DataStructure {
      */
     BaseLinearSolverInstance( const std::string name,
                               const LinearSolverEnum currentBaseLinearSolver = MultFront,
-                              const Renumbering currentRenumber = Metis )
-        : DataStructure( name, 19, "SOLVEUR" ), _linearSolver( currentBaseLinearSolver ),
-          _renumber( currentRenumber ), _isEmpty( true ), _preconditioning( Without ),
-          _charValues( JeveuxVectorChar24( getName() + ".SLVK" ) ),
-          _doubleValues( JeveuxVectorDouble( getName() + ".SLVR" ) ),
-          _integerValues( JeveuxVectorLong( getName() + ".SLVI" ) ), _algo( "ALGORITHME", false ),
-          _lagr( "ELIM_LAGR", false ), _matrFilter( "FILTRAGE_MATRICE", false ),
-          _memory( "GESTION_MEMOIRE", false ), _lowRankThreshold( "LOW_RANK_SEUIL", false ),
-          _lowRankSize( "LOW_RANK_TAILLE", false ), _distMatrix( "MATR_DISTRIBUEE", false ),
-          _method( "METHODE", false ), _precision( "MIXER_PRECISION", false ),
-          _fillingLevel( "NIVE_REMPLISSAGE", false ), _iterNumber( "NMAX_ITER", false ),
-          _nPrec( "NPREC", false ), _pivotPourcent( "PCENT_PIVOT", false ),
-          _postPro( "POSTTRAITEMENTS", false ), _precond( "PRE_COND", false ),
-          _prePro( "PRETRAITEMENTS", false ), _reac( "REAC_PRECOND", false ),
-          _filling( "REMPLISSAGE", false ), _renum( "RENUM", false ),
-          _residual( "RESI_RELA", false ), _precondResidual( "RESI_RELA_PC", false ),
-          _stopSingular( "STOP_SINGULIER", false ), _resolutionType( "TYPE_RESOL", false ),
-          _acceleration( "ACCELERATION", false ),
-          _matrixPrec( new AssemblyMatrixDisplacementDoubleInstance(
-              ResultNaming::getNewResultName() + ".PREC" ) ),
-          _commandName( "SOLVEUR" )
+                              const Renumbering currentRenumber = Metis ):
+        DataStructure( name, 19, "SOLVEUR" ), _linearSolver( currentBaseLinearSolver ),
+        _renumber( currentRenumber ), _isEmpty( true ), _preconditioning( Without ),
+        _charValues( JeveuxVectorChar24( getName() + ".SLVK" ) ),
+        _doubleValues( JeveuxVectorDouble( getName() + ".SLVR" ) ),
+        _integerValues( JeveuxVectorLong( getName() + ".SLVI" ) ), _algo( "ALGORITHME", false ),
+        _lagr( "ELIM_LAGR", false ), _matrFilter( "FILTRAGE_MATRICE", false ),
+        _memory( "GESTION_MEMOIRE", false ), _lowRankThreshold( "LOW_RANK_SEUIL", false ),
+        _lowRankSize( "LOW_RANK_TAILLE", false ), _distMatrix( "MATR_DISTRIBUEE", false ),
+        _method( "METHODE", false ), _precision( "MIXER_PRECISION", false ),
+        _fillingLevel( "NIVE_REMPLISSAGE", false ), _iterNumber( "NMAX_ITER", false ),
+        _nPrec( "NPREC", false ), _pivotPourcent( "PCENT_PIVOT", false ),
+        _postPro( "POSTTRAITEMENTS", false ), _precond( "PRE_COND", false ),
+        _prePro( "PRETRAITEMENTS", false ), _reac( "REAC_PRECOND", false ),
+        _filling( "REMPLISSAGE", false ), _renum( "RENUM", false ),
+        _residual( "RESI_RELA", false ), _precondResidual( "RESI_RELA_PC", false ),
+        _stopSingular( "STOP_SINGULIER", false ), _resolutionType( "TYPE_RESOL", false ),
+        _acceleration( "ACCELERATION", false ),
+        _matrixPrec( new AssemblyMatrixDisplacementDoubleInstance(
+            ResultNaming::getNewResultName() + ".PREC" ) ),
+        _commandName( "SOLVEUR" ),
+        _xfem( false )
     {
         _renum = RenumberingNames[(int)_renumber];
 
@@ -315,6 +317,14 @@ class BaseLinearSolverInstance : public DataStructure {
      * @return vrai si tout s'est bien passé
      */
     bool build();
+
+    /**
+     * @brief Enable Xfem preconditioning
+     */
+    void enableXfem()
+    {
+        _xfem = true;
+    };
 
     /**
      * @brief Récupération de la liste des paramètres du solveur
