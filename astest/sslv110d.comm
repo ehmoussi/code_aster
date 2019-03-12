@@ -99,8 +99,10 @@ RSUP3=DEFI_FONCTION(  NOM_PARA='ABSC',  VALE=( 0., 5.484,  26.69, 6.25,  ))
 
 FISS1=DEFI_FOND_FISS(MAILLAGE=MA,
                      SYME='OUI',
-                     FOND_FISS=_F(GROUP_NO = 'FONFIS',
-                                  DTAN_ORIG=( 0.,  1.,  0.,),),
+                     FOND_FISS=_F(GROUP_MA = 'FONDFISS',
+                                  DTAN_ORIG=( 0.,  1.,  0.,),
+                                  GROUP_NO_ORIG='GNO1099',
+                                  ),
                      LEVRE_SUP=_F(  GROUP_MA = 'GRPRES'),
                     )
 
@@ -162,8 +164,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=7.1710000000000003E-05,
            NOM_PARA='G',
            TABLE=GLOC0,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=0.0,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -172,8 +174,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=7.1710000000000003E-05,
            NOM_PARA='G',
            TABLE=GLOC1,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=0.0,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -182,8 +184,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=7.1710000000000003E-05,
            NOM_PARA='G',
            TABLE=GLOC2,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=0.0,),
            )
 
 #----------------------------------------------------------------------
@@ -196,8 +198,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=1.721E-05,
            NOM_PARA='G',
            TABLE=GLOC0,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1259',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=2.66827E+01,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -206,8 +208,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=1.721E-05,
            NOM_PARA='G',
            TABLE=GLOC1,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1259',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=2.66827E+01,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -216,8 +218,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=1.721E-05,
            NOM_PARA='G',
            TABLE=GLOC2,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1259',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=2.66827E+01,),
            )
 
 #----------------------------------------------------------------------
@@ -230,8 +232,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=5.215E-05,
            NOM_PARA='G',
            TABLE=GLOC0,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1179',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=1.78016E+01,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -240,8 +242,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=5.215E-05,
            NOM_PARA='G',
            TABLE=GLOC1,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1179',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=1.78016E+01,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -250,8 +252,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=5.215E-05,
            NOM_PARA='G',
            TABLE=GLOC2,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1179',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=1.78016E+01,),
            )
 
 FIN()
