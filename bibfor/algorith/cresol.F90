@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cresol(solveu, basz)
+subroutine cresol(solveu, basz, xfem)
     use superv_module, only: asthread_blasset
     implicit none
 #include "jeveux.h"
@@ -40,6 +40,7 @@ subroutine cresol(solveu, basz)
 #include "asterfort/wkvect.h"
     character(len=19) :: solveu
     character(len=1), optional :: basz
+    character(len=3), optional :: xfem
 ! person_in_charge: jacques.pellet at edf.fr
 ! ----------------------------------------------------------------------
 !
@@ -127,12 +128,16 @@ subroutine cresol(solveu, basz)
     endif
 !
 ! ------ PRE_COND_XFEM
-    eximc=getexm(' ','MODELE')
-    if (eximc .eq. 1) then
-        call getvid(' ', 'MODELE', scal=modele, nbret=n1)
-            if (n1 .eq. 1 .and. modele .ne. ' ') then
-               call dismoi('PRE_COND_XFEM', modele, 'MODELE', repk=kxfem)
-            endif
+    if( present(xfem) ) then
+        kxfem = xfem
+    else
+        eximc=getexm(' ','MODELE')
+        if (eximc .eq. 1) then
+            call getvid(' ', 'MODELE', scal=modele, nbret=n1)
+                if (n1 .eq. 1 .and. modele .ne. ' ') then
+                    call dismoi('PRE_COND_XFEM', modele, 'MODELE', repk=kxfem)
+                endif
+        endif
     endif
 !
     zslvk = sdsolv('ZSLVK')
