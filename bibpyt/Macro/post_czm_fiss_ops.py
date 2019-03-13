@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -58,9 +58,6 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
     # calcul de la longueur d'une fissure cohesive 2D
     #
     if OPTION == "LONGUEUR":
-
-    # Nom de la sortie
-        self.DeclareOut('TABLE_OUT', self.sd)
 
         # Mots cles specifiques au bloc "LONGUEUR"
         GROUP_MA = args['GROUP_MA']
@@ -241,8 +238,6 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
     # calcul de la triaxialite dans les elements massifs voisins de l'interface cohesive
     #
     elif OPTION == "TRIAXIALITE":
-
-        self.DeclareOut('CARTE_OUT', self.sd)
 
         CARTE_OUT = POST_VOISIN_CZM(RESULTAT=RESULTAT)
 
