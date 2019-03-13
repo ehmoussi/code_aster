@@ -97,7 +97,10 @@ def check_numpy_module(self):
     # getting python module
     self.start_msg('Checking for numpy')
     self.check_python_module('numpy')
-    self.end_msg('yes')
+    import numpy
+    self.env.append_unique('CFG_PYTHONPATH',
+        [osp.normpath(osp.dirname(osp.dirname(numpy.__file__)))])
+    self.end_msg(numpy.__file__)
 
 @Configure.conf
 def check_numpy_headers(self):
