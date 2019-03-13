@@ -37,7 +37,7 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20190307')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190315')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env['ADDMEM'] = 350
@@ -48,21 +48,21 @@ def configure(self):
     self.env.TFELVERS = TFELVERS
 
     self.env.append_value('LIBPATH', [
-        YAMMROOT + '/prerequisites/Hdf5-1103/lib',
+        '/opt/hdf5/1.10.3/lib',
         YAMMROOT + '/prerequisites/Medfichier-400/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/lib',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/lib',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/lib',
         TFELHOME + '/lib',
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Hdf5-1103/include',
+        '/opt/hdf5/1.10.3/include',
         YAMMROOT + '/prerequisites/Medfichier-400/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/include_seq',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include_seq',
         TFELHOME + '/include',
     ])
 

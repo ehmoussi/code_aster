@@ -254,9 +254,7 @@ def get_mathlib_from_numpy(self):
     '''The idea is that numpy shall be linked to blas and lapack.
     So we will try to get then using ldd if available'''
     libblas = []
-    pathblas = []
     liblapack = []
-    pathlapack = []
 
     self.load('python')
 
