@@ -32,7 +32,7 @@ def _read_config(env, prefs, key):
     cfg = ConfigParser()
     cfg.read(osp.join(os.environ["HOME"], ".hgrc"))
 
-    value = cfg.get("aster", key)
+    value = cfg.get("aster", key, fallback="")
     dkey = 'PREFS_{}'.format(key.upper())
     env[dkey] = value
     if value:
