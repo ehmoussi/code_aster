@@ -187,36 +187,36 @@ implicit none
 !
     type ROM_DS_MultiPara
 ! ----- Type of system to solve
-        character(len=1)        :: syst_type = ' '
+        character(len=1)                 :: syst_type = ' '
 ! ----- List of matrices for system
-        integer                 :: nb_matr = 0
-        character(len=8)        :: matr_name(8) = ' '
-        character(len=1)        :: matr_type(8) = ' '
-        type(ROM_DS_MultiCoef)  :: matr_coef(8)
+        integer                          :: nb_matr = 0
+        character(len=8), pointer        :: matr_name(:) => null()
+        character(len=8), pointer        :: matr_type(:) => null()
+        type(ROM_DS_MultiCoef), pointer  :: matr_coef(:) => null()
 ! ----- List of vectors for system
-        integer                 :: nb_vect = 0
-        character(len=8)        :: vect_name(8) = ' '
-        character(len=1)        :: vect_type(8) = ' '
-        type(ROM_DS_MultiCoef)  :: vect_coef(8)
+        integer                          :: nb_vect = 0
+        character(len=8), pointer        :: vect_name(:) => null()
+        character(len=8), pointer        :: vect_type(:) => null()
+        type(ROM_DS_MultiCoef), pointer  :: vect_coef(:) => null()
 ! ----- Products matrix by current mode
-        character(len=19)       :: matr_mode_curr(8) = ' '
+        character(len=24), pointer       :: matr_mode_curr(:) => null()
 ! ----- Products matrix by mode
-        character(len=24)       :: prod_matr_mode(8) = ' '
+        character(len=24), pointer       :: prod_matr_mode(:) => null()
 ! ----- Reduced Vector
-        character(len=24)       :: vect_redu(8) = ' '
+        character(len=24), pointer       :: vect_redu(:) => null()
 ! ----- Reduced matrix
-        character(len=24)       :: matr_redu(8) = ' '
+        character(len=24), pointer       :: matr_redu(:) => null()
 ! ----- Variation of coefficients: number (by mode)
-        integer                 :: nb_vari_coef = 0
+        integer                          :: nb_vari_coef = 0
 ! ----- Variation of coefficients: type (DIRECT, ALEATOIRE, etc. )
-        character(len=24)       :: type_vari_coef = ' '
+        character(len=24)                :: type_vari_coef = ' '
 ! ----- Variation of coefficients: by parameter
-        integer                 :: nb_vari_para = 0
-        type(ROM_DS_VariPara)   :: vari_para(5)
+        integer                          :: nb_vari_para = 0
+        type(ROM_DS_VariPara), pointer   :: vari_para(:) => null()
 ! ----- Evaluation of coefficients
-        type(ROM_DS_EvalCoef)   :: evalcoef
+        type(ROM_DS_EvalCoef)            :: evalcoef
 ! ----- Reference field
-        type(ROM_DS_Field)      :: field
+        type(ROM_DS_Field)               :: field
     end type ROM_DS_MultiPara
 !
 ! - Parameters to solve systems

@@ -15,6 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1003
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine romMultiParaClean(ds_multipara)
@@ -26,6 +27,7 @@ implicit none
 #include "asterfort/romMultiCoefClean.h"
 #include "asterfort/romVariParaClean.h"
 #include "asterfort/romFieldClean.h"
+#include "asterfort/as_deallocate.h"
 !
 type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 !
@@ -48,17 +50,30 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 ! --------------------------------------------------------------------------------------------------
 !
     nb_matr = ds_multipara%nb_matr
-    nb_vect = ds_multipara%nb_vect
     do i_matr = 1, nb_matr
         call romMultiCoefClean(ds_multipara%matr_coef(i_matr))
     end do
+    AS_DEALLOCATE(vk8 = ds_multipara%matr_name)
+    AS_DEALLOCATE(vk8 = ds_multipara%matr_type)
+    deallocate(ds_multipara%matr_coef)
+    AS_DEALLOCATE(vk24 = ds_multipara%matr_mode_curr)
+    AS_DEALLOCATE(vk24 = ds_multipara%prod_matr_mode)
+    AS_DEALLOCATE(vk24 = ds_multipara%matr_redu)
+!
+    nb_vect = ds_multipara%nb_vect
     do i_vect = 1, nb_vect
         call romMultiCoefClean(ds_multipara%vect_coef(i_vect))
     end do
+    AS_DEALLOCATE(vk8 = ds_multipara%vect_name)
+    AS_DEALLOCATE(vk8 = ds_multipara%vect_type)
+    deallocate(ds_multipara%vect_coef)
+    AS_DEALLOCATE(vk24 = ds_multipara%vect_redu)
+!
     nb_vari_para = ds_multipara%nb_vari_para
     do i_vari_para = 1, nb_vari_para
         call romVariParaClean(ds_multipara%vari_para(i_vari_para))
     end do
+!
     call romFieldClean(ds_multipara%field)
 !
 end subroutine

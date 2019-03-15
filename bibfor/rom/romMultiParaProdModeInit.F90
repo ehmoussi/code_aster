@@ -28,8 +28,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vtcrem.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/codent.h"
 !
-type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 integer, intent(in) :: nb_mode_maxi
 !
 ! --------------------------------------------------------------------------------------------------
@@ -47,11 +48,11 @@ integer, intent(in) :: nb_mode_maxi
 !
     integer :: ifm, niv
     integer :: i_matr, nb_matr, i_vect, nb_vect,jv_dummy, nb_equa
-    character(len=24) :: prod_matr_mode
-    character(len=19) ::matr_mode_curr
-    character(len=8) :: matr_name
-    character(len=1) :: matr_type, prod_type, syst_type
+    character(len=24) :: prod_matr_mode, matr_mode_curr
+    character(len=8) :: matr_name, matr_type
+    character(len=1) :: prod_type, syst_type
     aster_logical :: l_coefm_cplx
+    character(len=7) :: knume
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,6 +67,21 @@ integer, intent(in) :: nb_mode_maxi
     nb_vect   = ds_multipara%nb_vect
     syst_type = ds_multipara%syst_type
     nb_equa   = ds_multipara%field%nb_equa
+!
+! - Generate names of datastructures
+!
+    ASSERT(nb_matr .le. 9999999)
+    do i_matr = 1, nb_matr
+        call codent(i_matr, 'D0', knume)
+        ds_multipara%matr_mode_curr(i_matr) = '&&OP0053.MM.'//knume
+        ds_multipara%prod_matr_mode(i_matr) = '&&OP0053.PM.'//knume
+        ds_multipara%matr_redu(i_matr)      = '&&OP0053.MR.'//knume
+    end do
+    ASSERT(nb_vect .le. 9999999)
+    do i_vect = 1, nb_vect
+        call codent(i_vect, 'D0', knume)
+        ds_multipara%vect_redu(i_vect) = '&&OP0053.VR.'//knume
+    end do
 !
 ! - Prepare product [Matrix] x [Mode]
 !

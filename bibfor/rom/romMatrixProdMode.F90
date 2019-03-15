@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romMatrixProdMode(nb_matr  , l_matr_name, l_matr_type, matr_mode_curr,&
                              prod_matr_mode, i_mode, mode_type, vc_mode, vr_mode)
 !
@@ -28,16 +29,14 @@ implicit none
 #include "asterfort/romModeSave.h"
 #include "asterfort/jeveuo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: nb_matr, i_mode
-    character(len=8), intent(in) :: l_matr_name(:)
-    character(len=1), intent(in) :: l_matr_type(:)
-    character(len=19), intent(in) :: matr_mode_curr(:)
-    character(len=24), intent(in) :: prod_matr_mode(:)
-    character(len=1), intent(in) :: mode_type
-    complex(kind=8), pointer, optional :: vc_mode(:)
-    real(kind=8), pointer, optional :: vr_mode(:)
+integer, intent(in) :: nb_matr, i_mode
+character(len=8), intent(in) :: l_matr_name(:)
+character(len=8), intent(in) :: l_matr_type(:)
+character(len=24), intent(in) :: matr_mode_curr(:)
+character(len=24), intent(in) :: prod_matr_mode(:)
+character(len=1), intent(in) :: mode_type
+complex(kind=8), pointer, optional :: vc_mode(:)
+real(kind=8), pointer, optional :: vr_mode(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,7 +70,7 @@ implicit none
 
     do i_matr = 1, nb_matr
         matr      = l_matr_name(i_matr)
-        matr_type = l_matr_type(i_matr)
+        matr_type = l_matr_type(i_matr)(1:1)
         call jeveuo(matr(1:8)//'           .&INT', 'L', jv_desc_matr)
         if (matr_type .eq. 'C') then
             if (mode_type .eq. 'C') then

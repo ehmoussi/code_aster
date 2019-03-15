@@ -23,7 +23,7 @@ interface
                                  mode_type  , vc_mode    , vr_mode)
         integer, intent(in) :: i_mode, nb_vect, nb_equa
         character(len=8), intent(in) :: l_vect_name(:)
-        character(len=1), intent(in) :: l_vect_type(:)
+        character(len=8), intent(in) :: l_vect_type(:)
         character(len=24), intent(in) :: l_vect_redu(:)
         character(len=1), intent(in) :: mode_type
         complex(kind=8), pointer, optional :: vc_mode(:)

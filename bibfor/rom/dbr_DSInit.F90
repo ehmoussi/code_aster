@@ -26,7 +26,6 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/dbr_paraRBDSInit.h"
 #include "asterfort/dbr_paraDSInit.h"
-#include "asterfort/romMultiParaDSInit.h"
 #include "asterfort/romSolveDSInit.h"
 #include "asterfort/romGreedyAlgoDSInit.h"
 #include "asterfort/utmess.h"
@@ -64,10 +63,6 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
     call romSolveDSInit('ROM', ds_solveROM)
     call romSolveDSInit('DOM', ds_solveDOM)
-!
-! - Initialisation of datastructure for multiparametric problems
-!
-    call romMultiParaDSInit(ds_multipara)
 !
 ! - Initialisation of datastructure for greedy algorithm
 !

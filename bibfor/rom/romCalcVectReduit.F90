@@ -33,7 +33,7 @@ implicit none
 !
 integer, intent(in) :: i_mode, nb_vect, nb_equa
 character(len=8), intent(in) :: l_vect_name(:)
-character(len=1), intent(in) :: l_vect_type(:)
+character(len=8), intent(in) :: l_vect_type(:)
 character(len=24), intent(in) :: l_vect_redu(:)
 character(len=1), intent(in) :: mode_type
 complex(kind=8), pointer, optional :: vc_mode(:)
@@ -71,7 +71,7 @@ real(kind=8), pointer, optional :: vr_mode(:)
         do i_vect = 1, nb_vect
             call jeveuo(l_vect_redu(i_vect), 'E', vr = vr_vect_redu)
             vect_name = l_vect_name(i_vect)
-            vect_type = l_vect_type(i_vect)
+            vect_type = l_vect_type(i_vect)(1:1)
             if (vect_type .eq. 'R') then
                 call jeveuo(vect_name(1:8)//'           .VALE', 'L', vr=jv_vect_r)
                 vr_vect_redu(i_mode) = ddot(nb_equa, vr_mode, 1, jv_vect_r, 1)
@@ -83,7 +83,7 @@ real(kind=8), pointer, optional :: vr_mode(:)
         do i_vect = 1, nb_vect
             call jeveuo(l_vect_redu(i_vect), 'E', vc = vc_vect_redu)
             vect_name = l_vect_name(i_vect)
-            vect_type = l_vect_type(i_vect)
+            vect_type = l_vect_type(i_vect)(1:1)
             if (vect_type .eq. 'R') then
                 call jeveuo(vect_name(1:8)//'           .VALE', 'L', vr=jv_vect_r)
                 do i_equa = 1, nb_equa
