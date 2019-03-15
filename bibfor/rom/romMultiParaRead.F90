@@ -15,6 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1003
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine romMultiParaRead(ds_multipara)
@@ -37,6 +38,7 @@ implicit none
 #include "asterfort/romMultiCoefRead.h"
 #include "asterfort/romVariParaRead.h"
 #include "asterfort/romFieldGetInfo.h"
+#include "asterfort/as_allocate.h"
 !
 type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 !
@@ -79,6 +81,9 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
     matr_type = 'R'
     call getfac(keywfact, nb_matr)
     ASSERT(nb_matr .gt. 0)
+    AS_ALLOCATE(vk8 = ds_multipara%matr_name, size = nb_matr)
+    AS_ALLOCATE(vk8 = ds_multipara%matr_type, size = nb_matr)
+    allocate(ds_multipara%matr_coef(nb_matr))
     do i_matr = 1, nb_matr
         matr_asse      = ' '
         matr_elem_type = ' '
@@ -101,6 +106,9 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
         ds_multipara%matr_coef(i_matr) = ds_multicoef
     end do
     ds_multipara%nb_matr = nb_matr
+    AS_ALLOCATE(vk24 = ds_multipara%matr_mode_curr, size = nb_matr)
+    AS_ALLOCATE(vk24 = ds_multipara%prod_matr_mode, size = nb_matr)
+    AS_ALLOCATE(vk24 = ds_multipara%matr_redu, size = nb_matr)
 !
 ! - List of vectors
 !
@@ -111,6 +119,9 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
     vect_type = 'R'
     call getfac(keywfact, nb_vect)
     ASSERT(nb_vect .gt. 0)
+    AS_ALLOCATE(vk8 = ds_multipara%vect_name, size = nb_vect)
+    AS_ALLOCATE(vk8 = ds_multipara%vect_type, size = nb_vect)
+    allocate(ds_multipara%vect_coef(nb_vect))
     do i_vect = 1, nb_vect
         vect_asse      = ' '
         vect_elem_type = ' '
@@ -133,6 +144,7 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
         ds_multipara%vect_coef(i_vect) = ds_multicoef
     end do
     ds_multipara%nb_vect = nb_vect
+    AS_ALLOCATE(vk24 = ds_multipara%vect_redu, size = nb_vect)
 !
 ! - Get informations from field
 !
@@ -166,6 +178,7 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
         endif
     endif
     ds_multipara%nb_vari_para = nb_vari_para
+    allocate(ds_multipara%vari_para(nb_vari_para))
     do i_vari_para = 1, nb_vari_para
         call romVariParaRead(ds_varipara, keywfact, i_vari_para)
         ds_multipara%vari_para(i_vari_para) = ds_varipara

@@ -15,9 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
@@ -25,8 +22,8 @@ interface
                                  prod_matr_mode, i_mode, mode_type, vc_mode, vr_mode)
         integer, intent(in) :: nb_matr, i_mode
         character(len=8), intent(in) :: l_matr_name(:)
-        character(len=1), intent(in) :: l_matr_type(:)
-        character(len=19), intent(in) :: matr_mode_curr(:)
+        character(len=8), intent(in) :: l_matr_type(:)
+        character(len=24), intent(in) :: matr_mode_curr(:)
         character(len=24), intent(in) :: prod_matr_mode(:)
         character(len=1), intent(in) :: mode_type
         complex(kind=8), pointer, optional :: vc_mode(:)
