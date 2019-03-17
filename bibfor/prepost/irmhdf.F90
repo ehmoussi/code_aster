@@ -180,8 +180,8 @@ real(kind=8) :: coordo(*)
             edmode = edcrea
         endif
         has_vers = ASTER_FALSE
-        if (getexm(' ', 'MED_VERSION') .eq. 1) then
-            call getvtx(' ', 'MED_VERSION', nbval=1, scal=tvers, nbret=nbret)
+        if (getexm(' ', 'VERSION_MED') .eq. 1) then
+            call getvtx(' ', 'VERSION_MED', nbval=1, scal=tvers, nbret=nbret)
             if (nbret .eq. 1) then
                 has_vers = ASTER_TRUE
 !               TODO create a dedicated function if more than one digit
