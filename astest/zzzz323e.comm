@@ -62,7 +62,7 @@ IMPR_CONCEPT(FORMAT="RESULTAT",
 # On pourrait très bien utiliser un seul fichier.
 # On sépare les deux pour vérifier l'écriture dans des versions différentes de MED.
 IMPR_CONCEPT(FORMAT='MED',UNITE=81,
-             MED_VERSION='3.3.1',
+             VERSION_MED='3.3.1',
              CONCEPT=_F(CARA_ELEM=CARAELEM,
                         REPERE_LOCAL='ELEM',
                         MODELE=MODELE))
@@ -70,7 +70,7 @@ IMPR_CONCEPT(FORMAT='MED',UNITE=81,
 DEFI_FICHIER(UNITE=81, ACTION='LIBERER')
 
 IMPR_CONCEPT(FORMAT='MED',UNITE=82,
-             MED_VERSION='4.0.0',
+             VERSION_MED='4.0.0',
              CONCEPT=_F(CARA_ELEM=CARAELEM,
                         REPERE_LOCAL='ELEM',
                         MODELE=MODELE))

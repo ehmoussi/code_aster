@@ -32,7 +32,7 @@ IMPR_CONCEPT=PROC(nom="IMPR_CONCEPT",op=21,
 
          b_format_med=BLOC(condition="""equal_to("FORMAT", 'MED')""",
            # same keyword in IMPR_RESU, keep consistency
-           MED_VERSION     =SIMP(statut='f', typ='TXM',
+           VERSION_MED     =SIMP(statut='f', typ='TXM',
                                  into=('3.3.1', '4.0.0'), defaut='3.3.1',
                                  fr=tr("Choix de la version du fichier MED")),
          ),

@@ -74,12 +74,12 @@ STA1=MECA_STATIQUE(MODELE=MO,
 #                   ),);
 
 IMPR_RESU(FORMAT='MED',
-          MED_VERSION='3.3.1',
+          VERSION_MED='3.3.1',
           UNITE=80,
           RESU=_F(RESULTAT=STA1,),);
 
 IMPR_RESU(FORMAT='MED',
-          MED_VERSION='4.0.0',
+          VERSION_MED='4.0.0',
           UNITE=81,
           RESU=_F(RESULTAT=STA1,),);
 
