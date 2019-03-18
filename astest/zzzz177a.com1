@@ -90,7 +90,7 @@ class MyHTMLParser( HTMLParser ):
 parser = MyHTMLParser()
 
 with open('fort.88', 'r') as fobj:
-    code = fobj.read().
+    code = fobj.read()
 
 print("Checking the html code written by IMPR_TABLE... ", end=' ')
 try:
