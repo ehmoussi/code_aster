@@ -29,7 +29,6 @@ waf install -p
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
 YAMMROOT = os.environ['ROOT_SALOME']
-YAMMROOT_OLD = os.environ['ROOT_SALOME_OLD']
 
 import intel
 import official_programs
@@ -48,7 +47,6 @@ def configure(self):
     self.env.append_value('OPT_ENV', [
         'module unload mkl',
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
-        'export PATH=' + YAMMROOT_OLD + '/prerequisites/Medfichier-331/bin:$PATH',
         'export OPENBLAS_CORETYPE=SANDYBRIDGE'])
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
@@ -57,21 +55,21 @@ def configure(self):
     self.env.TFELVERS = TFELVERS
 
     self.env.append_value('LIBPATH', [
-        YAMMROOT_OLD + '/prerequisites/Hdf5-1814/lib',
-        YAMMROOT_OLD + '/prerequisites/Medfichier-331/lib',
+        YAMMROOT + '/prerequisites/Hdf5-1103/lib',
+        YAMMROOT + '/prerequisites/Medfichier-400/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/lib',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/lib',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/lib',
         TFELHOME + '/lib',
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT_OLD + '/prerequisites/Hdf5-1814/include',
-        YAMMROOT_OLD + '/prerequisites/Medfichier-331/include',
+        YAMMROOT + '/prerequisites/Hdf5-1103/include',
+        YAMMROOT + '/prerequisites/Medfichier-400/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/include_seq',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include_seq',
         TFELHOME + '/include',
     ])
 
