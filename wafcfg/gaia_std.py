@@ -48,8 +48,8 @@ def configure(self):
     self.env.TFELVERS = TFELVERS
 
     self.env.append_value('LIBPATH', [
-        YAMMROOT + '/prerequisites/Hdf5-1814/lib',
-        YAMMROOT + '/prerequisites/Medfichier-331/lib',
+        YAMMROOT + '/prerequisites/Hdf5-1103/lib',
+        YAMMROOT + '/prerequisites/Medfichier-400/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/lib',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/lib',
@@ -57,8 +57,8 @@ def configure(self):
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Hdf5-1814/include',
-        YAMMROOT + '/prerequisites/Medfichier-331/include',
+        YAMMROOT + '/prerequisites/Hdf5-1103/include',
+        YAMMROOT + '/prerequisites/Medfichier-400/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/include',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include',
