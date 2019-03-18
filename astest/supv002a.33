@@ -155,7 +155,7 @@ class AspellCall(object):
             cmd.append('--personal=%s' % personal_dict)
         logdbg and logdbg('command: ' + ' '.join(cmd))
         self.lang = lang
-        self.pipe = Popen(cmd, stdin=PIPE, stdout=PIPE)
+        self.pipe = Popen(cmd, stdin=PIPE, stdout=PIPE, universal_newlines=True)
         self.inp = self.pipe.stdin
         self.out = self.pipe.stdout
         self.queue = MPR.Queue()
@@ -184,7 +184,7 @@ class AspellCall(object):
             string = str(string, ENCODING)
         uwords = self._rxspl.split(string.strip())
         uwords = [i for i in uwords if i and not i[0].isdigit()]
-        string = ' '.join([i.encode(ENCODING) for i in uwords if len(i) > 1])
+        string = ' '.join([i for i in uwords if len(i) > 1])
         return string.strip()
 
     def send(self, string):
@@ -220,13 +220,14 @@ class AspellCall(object):
 
 def get_cata_msg(catamess):
     """Import a messages file"""
+    import importlib
     cata_msg = {}
     try:
         d = {}
         mod = __import__('Messages.%s' % catamess, d, d, [catamess])
-        reload(mod)
+        importlib.reload(mod)
         cata_msg = getattr(mod, 'cata_msg', {})
-    except UnicodeDecodeError as exc:
+    except UnicodeDecodeError:
         UTMESS('F', 'CATAMESS_1',
                valk=("Encodage invalide pour le fichier de messages : '%s'" % catamess,
                      traceback.format_exc()))
