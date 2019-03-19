@@ -47,7 +47,7 @@ subroutine cgveli(typfis, typdis, ndim, lnoff, liss,&
 !              (-1 DANS LES CAS OU DEGRE N'A PAS DE SENS)
 ! ======================================================================
 !
-    integer :: ier, iarg
+    integer :: ier
     character(len=24) :: lissg, lissth
 !
 !     ----------------------------------------------------------
@@ -68,25 +68,15 @@ subroutine cgveli(typfis, typdis, ndim, lnoff, liss,&
     if (ndim .eq. 2) then
 !
 !       L'UTILISATEUR NE DOIT PAS AVOIR RENSEIGNE LISSAGE_G
-        call getvtx('LISSAGE', 'LISSAGE_G', iocc=1, scal=lissg, nbret=ier,&
-                    isdefault=iarg)
-        if (iarg .eq. 0) then
-            call utmess('A', 'RUPTURE0_67')
-        endif
+        call getvtx('LISSAGE', 'LISSAGE_G', iocc=1, scal=lissg, nbret=ier)
 !
 !       L'UTILISATEUR NE DOIT PAS AVOIR RENSEIGNE LISSAGE_THETA
-        call getvtx('LISSAGE', 'LISSAGE_THETA', iocc=1, scal=lissth, nbret=ier,&
-                    isdefault=iarg)
-        if (iarg .eq. 0) then
-            call utmess('A', 'RUPTURE0_67')
-        endif
+        call getvtx('LISSAGE', 'LISSAGE_THETA', iocc=1, scal=lissth, nbret=ier)
 !
     else if (ndim.eq.3) then
 !
-        call getvtx('LISSAGE', 'LISSAGE_G', iocc=1, scal=lissg, nbret=ier,&
-                    isdefault=iarg)
-        call getvtx('LISSAGE', 'LISSAGE_THETA', iocc=1, scal=lissth, nbret=ier,&
-                    isdefault=iarg)
+        call getvtx('LISSAGE', 'LISSAGE_G', iocc=1, scal=lissg, nbret=ier)
+        call getvtx('LISSAGE', 'LISSAGE_THETA', iocc=1, scal=lissth, nbret=ier)
 !
         if (lissg .eq. 'LEGENDRE' .and. lissth .eq. 'LEGENDRE') then
             liss='LEGENDRE'
@@ -114,8 +104,7 @@ subroutine cgveli(typfis, typdis, ndim, lnoff, liss,&
         endif
 !
 !       RECUPERATION DU DEGRE DES POLYNOMES DE LEGENDRE
-        call getvis('LISSAGE', 'DEGRE', iocc=1, scal=ndeg, nbret=ier,&
-                    isdefault=iarg)
+        call getvis('LISSAGE', 'DEGRE', iocc=1, scal=ndeg, nbret=ier)
 !
 !       COMPATIBILITE DES DIMENSIONS DES ESPACES EN LISSAGE MIXTE
         if (liss .eq. 'MIXTE') then

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ subroutine arllec(motcle,iocc  ,modele,noma  ,nomb  , &
     character(len=8) ::  k8bid
     character(len=16) ::  option
     integer ::      jgrm1,jgrm2
-    integer ::      ifm,niv,iarg,iop
+    integer ::      ifm,niv,iop
     character(len=6) :: nompro
     parameter   (nompro='ARLLEC')
 
@@ -80,19 +80,18 @@ subroutine arllec(motcle,iocc  ,modele,noma  ,nomb  , &
     call getvtx(motcle,'OPTION', iocc=iocc, scal=option, nbret=iop)
     if (option .eq. '3D_POU_ARLEQUIN') then
        call getvtx(motcle,'GROUP_MA_1',iocc=iocc,nbval=0,&
-                nbret=nbev1,scal=k8bid,isdefault=iarg)
+                nbret=nbev1,scal=k8bid)
        call wkvect('&&'//nompro//'.GMA1','V V K8', -nbev1, jgrm1 )
        call getvtx(motcle,'GROUP_MA_1',iocc=iocc,nbval=-nbev1,&
-                vect=zk8(jgrm1),nbret=nbev1,isdefault=iarg)
+                vect=zk8(jgrm1),nbret=nbev1)
        call arlver(modele,zk8(jgrm1),nbev1,noma,model(1),cine(1))
 
 ! --- LECTURE MAILLE GROUPE_MA_2
 
-       call getvtx(motcle,'GROUP_MA_2',iocc,0,k8bid,nbret=nbev2,&
-                isdefault=iarg)
+       call getvtx(motcle,'GROUP_MA_2',iocc,0,k8bid,nbret=nbev2)
        call wkvect('&&'//nompro//'.GMA2','V V K8', -nbev2, jgrm2 )
        call getvtx(motcle,'GROUP_MA_2',iocc,-nbev2,zk8(jgrm2),&
-                nbret=nbev2,isdefault=iarg)
+                nbret=nbev2)
        call arlver(modele,zk8(jgrm2),nbev2,nomb,model(2),cine(2))
     endif
 

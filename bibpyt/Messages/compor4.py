@@ -113,11 +113,6 @@ Comme vous n'avez pas défini explicitement le comportement, tout le modèle est
     65 : _("""
 Il y a trop d'occurrences du mot-clef facteur COMPORTEMENT. On n'affichera aucune information sur les comportements."""),
 
-    70 : _("""
-Le comportement s'intègre avec un algorithme de type analytique.
-On ne peut donc pas utiliser le mot-clé  %(k1)s . On l'ignore.
-"""),
-
     71 : _("""
 La valeur propre numéro %(i1)d du module tangent local est négative et vaut %(r1)f.
 L'énergie libre n'est donc pas convexe ce qui peut mener à des problèmes de convergence.
