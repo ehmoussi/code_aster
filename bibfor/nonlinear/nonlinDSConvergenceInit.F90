@@ -92,15 +92,9 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact
         call utmess('A', 'MECANONLINE5_37')
     endif
 !
-! - No NEWTON/PAS_MINI_ELAS parameter => ITER_GLOB_ELAS is useless
-!
-    call getvr8('NEWTON', 'PAS_MINI_ELAS', iocc=1, nbret=iret)
-    if ((iret.eq.0) .and. (ds_conv%l_iter_elas)) then
-        call utmess('A', 'MECANONLINE5_38')
-    endif
-!
 ! - No NEWTON/PAS_MINI_ELAS parameter => using ITER_GLOB_MAXI instead of ITER_GLOB_ELAS
 !
+    call getvr8('NEWTON', 'PAS_MINI_ELAS', iocc=1, nbret=iret)
     if (iret.eq.0) then
         ds_conv%iter_glob_elas = ds_conv%iter_glob_maxi
     endif

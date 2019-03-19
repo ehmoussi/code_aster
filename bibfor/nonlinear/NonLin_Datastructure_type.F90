@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -145,7 +145,6 @@ implicit none
         integer :: iter_glob_elas
         aster_logical :: l_stop
         aster_logical :: l_stop_pene
-        aster_logical :: l_iter_elas
         real(kind=8)  :: swap_trig
         real(kind=8)  :: line_sear_coef
         integer       :: line_sear_iter
