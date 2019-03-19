@@ -208,7 +208,7 @@ PyObject *args;
     }
 
     Py_DECREF(option);
-    Py_DECREF(value);
+    // Py_DECREF(value); Do not deallocate, stored in the 'info' dict.
     Py_DECREF(res);
 
     Py_INCREF(Py_None);
