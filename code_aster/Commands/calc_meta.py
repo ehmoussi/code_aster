@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -47,10 +47,8 @@ class CalcMeta(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        modele = None
-        try:
-            modele = keywords["RESULTAT"].getModel()
-        except:
+        modele = keywords["RESULTAT"].getModel()
+        if modele is None:
             modele = keywords.get("MODELE")
         if modele is not None:
             self._result.appendModelOnAllRanks(modele)
