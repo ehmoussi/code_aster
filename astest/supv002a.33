@@ -378,13 +378,15 @@ def supv002_ops(self, ERREUR, **kwargs):
     #LCATA = [osp.basename(osp.splitext(cata)[0]) for cata in glob(osp.join(msgdir, 'mecanonline9.py'))]
 
     # check for installation problem: http://bugs.python.org/issue3770
-    do_check = True
-    try:
-        MPR.Queue()
-    except ImportError as exc:
-        if 'sem_open implementation' in str(exc):
-            do_check = False
-            print("\n  <A> Problem detected ! supv002a can not run on this machine\n\n")
+    # do_check = True
+    # try:
+    #     MPR.Queue()
+    # except ImportError as exc:
+    #     if 'sem_open implementation' in str(exc):
+    #         do_check = False
+    #         print("\n  <A> Problem detected ! supv002a can not run on this machine\n\n")
+    # FIXME temporarly disabled!
+    do_check = False
     if do_check:
         try:
             aspell = AspellCall(get_personal_dict(), 'fr', ENCODING)
