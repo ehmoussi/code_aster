@@ -99,7 +99,7 @@ class MAIL_PY:
 
  EXEMPLE D'UTILISATION
  ---------------------
- from Utilitai.Partition import *
+ from Utilitai.Partition import MAIL_PY
  import numpy as N
 
  mail=LIRE_MAILLAGE();
