@@ -48,7 +48,7 @@ type(NL_DS_System), intent(out) :: ds_system
     ds_system%vefnod        = '&&OP00XX.VEFNOD'
     ds_system%cnfnod        = '&&OP00XX.CNFNOD'
     ds_system%vefint        = '&&OP00XX.VEFINT'
-    ds_system%cnfint        = '&&NMCH5P.CNFINT'
+    ds_system%cnfint        = '&&OP00XX.CNFINT'
     ds_system%cnpred        = '&&OP00XX.CNPRED'
 !
 end subroutine

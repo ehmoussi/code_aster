@@ -122,11 +122,11 @@ aster_logical :: lerrit
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call ndxprm(model, ds_material, cara_elem    , ds_constitutive, ds_algopara,&
-                list_load, nume_dof, numfix    , solveu         ,&
-                sddisc, sddyna, ds_measure, nume_inst         , list_func_acti     ,&
-                hval_incr, hval_algo, hval_veelem    , hval_meelem         , hval_measse     ,&
-                maprec, matass, faccvg    , ldccvg)
+    call ndxprm(model    , ds_material, cara_elem  , ds_constitutive, ds_algopara   ,&
+                list_load, nume_dof   , numfix     , solveu         , ds_system     ,&
+                sddisc   , sddyna     , ds_measure , nume_inst      , list_func_acti,&
+                hval_incr, hval_algo  , hval_meelem, hval_measse    ,&
+                maprec   , matass     , faccvg     , ldccvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
@@ -149,7 +149,7 @@ aster_logical :: lerrit
 !
 ! - Evaluate second member
 !
-    call nmassx(list_func_acti, sddyna, ds_material, hval_veasse,&
+    call nmassx(list_func_acti, sddyna, ds_material, hval_veasse, ds_system,&
                 cndonn)
 !
 ! - Solve system

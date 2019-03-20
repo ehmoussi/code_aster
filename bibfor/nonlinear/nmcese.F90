@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,12 +18,12 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmcese(modele         , numedd, ds_material, carele    ,&
-                  ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                  iterat         , sdnume, sdpilo, valinc    , solalg    ,&
-                  veelem         , veasse, offset, typsel    , sddisc    ,&
-                  licite         , rho   , eta   , etaf      , criter    ,&
-                  ldccvg         , pilcvg, matass)
+subroutine nmcese(modele         , numedd    , ds_material, carele, vefint, cnfint,&
+                  ds_constitutive, ds_contact, lischa     , fonact, ds_measure,&
+                  iterat         , sdnume    , sdpilo     , valinc, solalg    ,&
+                  veelem         , veasse    , offset     , typsel, sddisc    ,&
+                  licite         , rho       , eta        , etaf  , criter    ,&
+                  ldccvg         , pilcvg    , matass)
 !
 use NonLin_Datastructure_type
 !
@@ -51,6 +51,7 @@ type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: vefint, cnfint
 character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
 character(len=24) :: typsel
@@ -220,15 +221,15 @@ real(kind=8) :: etaf, criter
 ! --- SELECTION SELON LA METHODE CHOISIE: RESIDU OU MIXTE
 !
     if (typsel .eq. 'RESIDU' .or. mixte) then
-        call nmcere(modele         , numedd, ds_material, carele    ,&
-                    ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                    iterat         , sdnume, valinc, solalg    , veelem    ,&
-                    veasse         , offset, rho   , eta(1)    , f(1)      ,&
+        call nmcere(modele         , numedd    , ds_material, carele, vefint, cnfint,&
+                    ds_constitutive, ds_contact, lischa     , fonact, ds_measure,&
+                    iterat         , sdnume    , valinc     , solalg, veelem    ,&
+                    veasse         , offset    , rho        , eta(1), f(1)      ,&
                     ldccv(1)       , matass)
-        call nmcere(modele         , numedd, ds_material, carele    ,&
-                    ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                    iterat         , sdnume, valinc, solalg    , veelem    ,&
-                    veasse         , offset, rho   , eta(2)    , f(2)      ,&
+        call nmcere(modele         , numedd    , ds_material, carele, vefint, cnfint,&
+                    ds_constitutive, ds_contact, lischa     , fonact, ds_measure,&
+                    iterat         , sdnume    , valinc     , solalg, veelem    ,&
+                    veasse         , offset    , rho        , eta(2), f(2)      ,&
                     ldccv(2)       , matass)
 !
 ! ----- SI STRATEGIE MIXTE : EXAMEN DU CONTRASTE

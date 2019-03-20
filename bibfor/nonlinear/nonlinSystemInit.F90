@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinSystemInit(list_func_acti, sddyna, ds_system)
+subroutine nonlinSystemInit(list_func_acti , sddyna, nume_dof, ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -29,9 +29,11 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
+#include "asterfort/vtcreb.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=19), intent(in) :: sddyna
+character(len=24), intent(in) :: nume_dof
 type(NL_DS_System), intent(inout) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
@@ -44,6 +46,7 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! In  list_func_acti   : list of active functionnalities
 ! In  sddyna           : dynamic parameters datastructure
+! In  nume_dof         : name of numbering object (NUME_DDL)
 ! IO  ds_system        : datastructure for non-linear system management
 !
 ! --------------------------------------------------------------------------------------------------
@@ -83,5 +86,9 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! - Full prediction
 !
     ds_system%l_pred_full = ASTER_TRUE
+!
+! - Create fields
+!
+    call vtcreb(ds_system%cnfint, 'V', 'R', nume_ddlz = nume_dof)
 !
 end subroutine

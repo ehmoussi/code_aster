@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,8 +18,8 @@
 !
 interface
     subroutine nmchht(model    , ds_material, cara_elem     , ds_constitutive,&
-                      list_load, nume_dof   , list_func_acti, ds_measure,&
-                      sddyna   , sddisc     , sdnume        , &
+                      list_load, nume_dof   , list_func_acti, ds_measure     ,&
+                      sddyna   , sddisc     , sdnume        , ds_system      ,&
                       hval_incr, hval_algo  , hval_measse   , ds_inout)
         use NonLin_Datastructure_type
         character(len=24), intent(in) :: model
@@ -33,6 +33,7 @@ interface
         character(len=19), intent(in) :: sddyna
         character(len=19), intent(in) :: sddisc
         character(len=19), intent(in) :: sdnume
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: hval_incr(*)
         character(len=19), intent(in) :: hval_algo(*)
         character(len=19), intent(in) :: hval_measse(*)

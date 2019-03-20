@@ -37,7 +37,7 @@ character(len=19) :: veelem(*)
 !
 ! ----------------------------------------------------------------------
 !
-    character(len=19) :: vefsdo, vefint, vebudi, vedido, vesstf
+    character(len=19) :: vefsdo, vebudi, vedido, vesstf
     character(len=19) :: vedipi, vefedo, vefepi, veondp
     character(len=19) :: vedidi, vediri, velapl
     character(len=19) :: verefe
@@ -45,7 +45,7 @@ character(len=19) :: veelem(*)
 !
     data vefedo,vefsdo    /'&&NMCH4P.VEFEDO','&&NMCH4P.VEFSDO'/
     data vedido,vefepi    /'&&NMCH4P.VEDIDO','&&NMCH4P.VEFEPI'/
-    data vedipi,vefint    /'&&NMCH4P.VEDIPI','&&NMCH4P.VEFINT'/
+    data vedipi           /'&&NMCH4P.VEDIPI'/
     data vebudi,vedidi    /'&&NMCH4P.VEBUDI','&&NMCH4P.VEDIDI'/
     data veondp,velapl    /'&&NMCH4P.VEONDP','&&NMCH4P.VELAPL'/
     data vediri           /'&&NMCH4P.VEDIRI'/
@@ -56,7 +56,6 @@ character(len=19) :: veelem(*)
 ! ----------------------------------------------------------------------
 !
     call nmcha0('VEELEM', 'ALLINI', ' ', veelem)
-    call nmcha0('VEELEM', 'CNFINT', vefint, veelem)
     call nmcha0('VEELEM', 'CNDIRI', vediri, veelem)
     call nmcha0('VEELEM', 'CNBUDI', vebudi, veelem)
     call nmcha0('VEELEM', 'CNDIDO', vedido, veelem)

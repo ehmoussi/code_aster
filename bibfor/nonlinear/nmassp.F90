@@ -78,7 +78,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 ! - Evaluate second member for prediction
 !
     if (l_dyna) then
-        call ndassp(ds_material, list_func_acti, ds_contact,&
+        call ndassp(ds_material, list_func_acti, ds_contact, ds_system ,&
                     sddyna     , hval_veasse   , cndonn)
     else if (l_stat) then
         call nsassp(list_func_acti, ds_material, ds_contact, ds_algorom, ds_system,&

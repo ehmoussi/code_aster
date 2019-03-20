@@ -65,8 +65,8 @@ implicit none
     integer :: fonact(100) = 0
     integer, parameter :: zmeelm = 9
     integer, parameter :: zmeass = 4
-    integer, parameter :: zveelm = 14
-    integer, parameter :: zveass = 20
+    integer, parameter :: zveelm = 13
+    integer, parameter :: zveass = 19
     integer, parameter :: zsolal = 17
     integer, parameter :: zvalin = 28
 !
@@ -259,7 +259,7 @@ implicit none
                 ds_constitutive, numins     , ds_material, ds_system ,&
                 ds_contact     , ds_algopara, fonact     , ds_measure,&
                 sddisc         , sd_obsv    , sderro     , sddyna    , ds_posttimestep,&
-                valinc         , solalg     , meelem     , measse    , veelem         ,&
+                valinc         , solalg     , meelem     , measse    , &
                 veasse         , ds_energy  , sdcriq     , eta       , list_load)
 !
 ! --- ETAT DE LA CONVERGENCE DU PAS DE TEMPS
@@ -322,7 +322,7 @@ implicit none
 !
     ASSERT(etcalc.eq.'CONT')
     call nmfpas(fonact    , sddyna, sdpilo, sddisc, nbiter,&
-                numins    , eta   , valinc, solalg, veasse,&
+                numins    , eta   , valinc, solalg, veasse, ds_system,&
                 ds_contact)
     numins = numins + 1
 !

@@ -38,7 +38,7 @@ character(len=19) :: veasse(*)
 !
 ! ----------------------------------------------------------------------
 !
-    character(len=19) :: cnfedo, cnfepi, cnfsdo, cndidi, cnfint
+    character(len=19) :: cnfedo, cnfepi, cnfsdo, cndidi
     character(len=19) :: cndido, cndipi, cncine, cndiri
     character(len=19) :: cnbudi, cnlapl, cnsstr, cnondp
     character(len=19) :: cnsstf
@@ -49,7 +49,7 @@ character(len=19) :: veasse(*)
 !
     data cnfedo,cnfsdo    /'&&NMCH5P.CNFEDO','&&NMCH5P.CNFSDO'/
     data cndido,cnfepi    /'&&NMCH5P.CNDIDO','&&NMCH5P.CNFEPI'/
-    data cndipi,cnfint    /'&&NMCH5P.CNDIPI','&&NMCH5P.CNFINT'/
+    data cndipi           /'&&NMCH5P.CNDIPI'/
     data cnbudi,cndidi    /'&&NMCH5P.CNBUDI','&&NMCH5P.CNDIDI'/
     data cnondp,cnlapl    /'&&NMCH5P.CNONDP','&&NMCH5P.CNLAPL'/
     data cndiri           /'&&NMCH5P.CNDIRI'/
@@ -65,7 +65,6 @@ character(len=19) :: veasse(*)
 ! ----------------------------------------------------------------------
 !
     call nmcha0('VEASSE', 'ALLINI', ' ', veasse)
-    call nmcha0('VEASSE', 'CNFINT', cnfint, veasse)
     call nmcha0('VEASSE', 'CNDIRI', cndiri, veasse)
     call nmcha0('VEASSE', 'CNBUDI', cnbudi, veasse)
     call nmcha0('VEASSE', 'CNDIDO', cndido, veasse)

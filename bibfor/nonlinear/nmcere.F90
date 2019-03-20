@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     ,&
+subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     , vefint, cnfint,&
                   ds_constitutive, ds_contact, list_load  , list_func_acti, ds_measure ,&
                   iter_newt      , sdnume    , valinc     , solalg        , hval_veelem,&
                   hval_veasse    , offset    , rho        , eta           , residu     ,&
@@ -57,6 +57,7 @@ character(len=19) :: list_load, sdnume, matr_asse
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=24) :: model, nume_dof, cara_elem
+character(len=19), intent(in) :: vefint, cnfint
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19) :: hval_veelem(*), hval_veasse(*)
@@ -72,6 +73,8 @@ character(len=19) :: solalg(*), valinc(*)
 !
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
+! In  vefint           : elementary vectors for internal forces
+! In  cnfint           : assembled vector for internal forces
 ! In  ds_material      : datastructure for material parameters
 ! In  list_load        : name of datastructure for list of loads
 ! In  nume_dof         : name of numbering object (NUME_DDL)
@@ -105,8 +108,7 @@ character(len=19) :: solalg(*), valinc(*)
     integer, parameter :: zsolal = 17
     aster_logical :: lgrot, lendo
     integer :: neq, nmax
-    character(len=19) :: vefint
-    character(len=19) :: cnfint, cnfext
+    character(len=19) :: cnfext
     character(len=19) :: valint(zvalin)
     character(len=19) :: solalt(zsolal)
     character(len=19) :: depdet, depdel, deppr1, deppr2
@@ -149,8 +151,6 @@ character(len=19) :: solalg(*), valinc(*)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
     call nmchex(solalg, 'SOLALG', 'DEPPR1', deppr1)
     call nmchex(solalg, 'SOLALG', 'DEPPR2', deppr2)
-    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
 !
 ! --- MISE A JOUR DEPLACEMENT
 ! --- DDEP = RHO*DEPPRE(1) + (ETA-OFFSET)*DEPPRE(2)
@@ -234,7 +234,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- CALCUL DU RESIDU
 !
     if (ldccvg .eq. 0) then
-        call nmpilr(list_func_acti, nume_dof, matr_asse, hval_veasse, ds_contact,&
+        call nmpilr(list_func_acti, nume_dof, matr_asse, hval_veasse, ds_contact, cnfint,&
                     eta   , residu)
     endif
 !
