@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1403
 !
-subroutine nonlinDSConstitutiveCreate(ds_constitutive)
+subroutine nonlinDSSystemCreate(ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -27,27 +27,28 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 !
-type(NL_DS_Constitutive), intent(out) :: ds_constitutive
+type(NL_DS_System), intent(out) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Constitutive laws
+! MECA_NON_LINE - Non-linear system
 !
-! Create constitutive laws management datastructure
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Out ds_constitutive  : datastructure for constitutive laws management
+! Create non-linear system management datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_constitutive%compor        = '&&OP00XX.COMPOR'
-    ds_constitutive%carcri        = '&&OP00XX.CARCRI'
-    ds_constitutive%mult_comp     = '&&OP00XX.MULT_COMP'
-    ds_constitutive%comp_error    = '&&OP00XX.COMP_ERROR'
-    ds_constitutive%l_deborst     = ASTER_FALSE
-    ds_constitutive%l_dis_choc    = ASTER_FALSE
-    ds_constitutive%l_post_incr   = ASTER_FALSE
-    ds_constitutive%l_matr_geom   = ASTER_FALSE
+! Out ds_system        : datastructure for non-linear system management
+!
+! --------------------------------------------------------------------------------------------------
+!
+    ds_system%l_pred_cnfnod = ASTER_FALSE
+    ds_system%l_pred_cnfint = ASTER_FALSE
+    ds_system%l_pred_full   = ASTER_FALSE
+    ds_system%code_pred     = '&&OP00XX.CODE_PRED'
+    ds_system%vefnod        = '&&OP00XX.VEFNOD'
+    ds_system%cnfnod        = '&&OP00XX.CNFNOD'
+    ds_system%vefint        = '&&OP00XX.VEFINT'
+    ds_system%cnfint        = '&&NMCH5P.CNFINT'
+    ds_system%cnpred        = '&&OP00XX.CNPRED'
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
 !
 subroutine nmresi(mesh       , list_func_acti, ds_material,&
                   nume_dof   , sdnume        , sddyna     ,&
                   ds_conv    , ds_print      , ds_contact ,&
-                  ds_inout   , ds_algorom    ,&
+                  ds_inout   , ds_algorom    , ds_system  ,&
                   matass     , nume_inst     , eta        ,&
                   hval_incr  , hval_algo     ,&
                   hval_veasse, hval_measse   ,&
@@ -66,6 +67,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
 type(NL_DS_Contact), intent(inout) :: ds_contact
 type(NL_DS_InOut), intent(in) :: ds_inout
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: matass
 integer, intent(in) :: nume_inst
 real(kind=8), intent(in) :: eta
@@ -92,6 +94,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 ! In  ds_contact       : datastructure for contact management
 ! In  ds_inout         : datastructure for input/output management
 ! In  ds_algorom       : datastructure for ROM parameters
+! In  ds_system        : datastructure for non-linear system management
 ! In  matass           : matrix
 ! In  nume_inst        : index of current time step    
 ! In  eta              : coefficient for pilotage (continuation)
@@ -115,7 +118,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     character(len=19) :: varc_prev=' ', disp_prev=' '
     character(len=19) :: cndiri=' ', cnbudi=' ', cnfext=' '
     character(len=19) :: cnrefe=' ', cnfint=' '
-    character(len=19) :: cndfdo=' ', cnequi = ' ', cndipi = ' ', cnsstr = ' ', cnfnod = ' '
+    character(len=19) :: cndfdo=' ', cnequi = ' ', cndipi = ' ', cnsstr = ' '
     real(kind=8) :: vale_equi=0.d0, vale_refe=0.d0, vale_varc=0.d0
     integer :: r_rela_indx=0, r_resi_indx=0, r_equi_indx=0
     integer :: r_refe_indx=0, r_char_indx=0, r_comp_indx=0
@@ -185,7 +188,6 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     call nmchex(hval_veasse, 'VEASSE', 'CNREFE', cnrefe)
     call nmchex(hval_veasse, 'VEASSE', 'CNFEXT', cnfext)
     call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(hval_veasse, 'VEASSE', 'CNFNOD', cnfnod)
     call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', cnsstr)
     cndfdo = '&&CNCHAR.DFDO'
 !
@@ -230,7 +232,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 ! - Compute RESI_COMP_RELA
 !
     if (l_resi_comp) then
-        call rescmp(cnfnod     , cnequi,&
+        call rescmp(ds_system%cnfnod, cnequi,&
                     r_comp_vale, r_comp_name, r_comp_indx)
     endif
 !

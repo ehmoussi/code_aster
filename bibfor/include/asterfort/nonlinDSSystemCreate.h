@@ -17,11 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmassi(list_func_acti, sddyna, ds_system, hval_veasse, cndonn)
+    subroutine nonlinDSSystemCreate(ds_system)
         use NonLin_Datastructure_type
-        integer, intent(in) :: list_func_acti(*)
-        character(len=19), intent(in) :: sddyna, hval_veasse(*)
-        type(NL_DS_System), intent(in) :: ds_system
-        character(len=19), intent(in) :: cndonn
-    end subroutine nmassi
+        type(NL_DS_System), intent(out) :: ds_system
+    end subroutine nonlinDSSystemCreate
 end interface

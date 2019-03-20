@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ subroutine nmener(valinc, veasse, measse, sddyna, eta        ,&
                   ds_energy, fonact, numedd, numfix, ds_algopara,&
                   meelem, numins, modele, ds_material, carele   ,&
                   ds_constitutive, ds_measure, sddisc, solalg,&
-                  veelem, ds_contact)
+                  ds_contact, ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -49,9 +49,10 @@ implicit none
 character(len=19) :: sddyna, valinc(*), veasse(*), measse(*)
 type(NL_DS_Energy), intent(inout) :: ds_energy
 type(NL_DS_Material), intent(in) :: ds_material
-character(len=19) :: meelem(*), sddisc, solalg(*), veelem(*)
+character(len=19) :: meelem(*), sddisc, solalg(*)
 character(len=24) :: numedd, numfix, modele, carele
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Measure), intent(inout) :: ds_measure
 real(kind=8) :: eta
 integer :: fonact(*), numins
@@ -82,15 +83,15 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! In  ds_constitutive  : datastructure for constitutive laws management
+! In  ds_system        : datastructure for non-linear system management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  VEELEM : VECTEURS ELEMENTAIRES
 ! In  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 21
+    integer, parameter:: zveass = 20
     integer :: iret(zveass)
     character(len=19) :: depmoi, depplu, vitmoi, vitplu, masse, amort, rigid
     character(len=19) :: fexmoi, fexplu, fammoi, fnomoi
@@ -251,48 +252,48 @@ type(NL_DS_Contact), intent(in) :: ds_contact
         if (iret(i) .ne. 0) then
             call jeveuo(veasse(i)//'.VALE', 'L', vr=veass)
 ! --------------------------------------------------------------------
-! 7  - CNFEDO : CHARGES MECANIQUES FIXES DONNEES
-! 9  - CNLAPL : FORCES DE LAPLACE
-! 11 - CNFSDO : FORCES SUIVEUSES
-! 14 - CNSSTF : FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
+! 6  - CNFEDO : CHARGES MECANIQUES FIXES DONNEES
+! 8  - CNLAPL : FORCES DE LAPLACE
+! 10 - CNFSDO : FORCES SUIVEUSES
+! 13 - CNSSTF : FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
 ! --------------------------------------------------------------------
-            if ((i.eq.7 ) .or. (i.eq.9 ) .or. (i.eq.11) .or. (i.eq.14)) then
+            if ((i.eq.6 ) .or. (i.eq.8) .or. (i.eq.10) .or. (i.eq.13)) then
                 do j = 1, neq
                     fexpl(j)=fexpl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 8  - CNFEPI : FORCES PILOTEES PARAMETRE ETA A PRENDRE EN COMPTE
+! 7  - CNFEPI : FORCES PILOTEES PARAMETRE ETA A PRENDRE EN COMPTE
 ! --------------------------------------------------------------------
-            else if (i.eq.8) then
+            else if (i.eq.7) then
                 do j = 1, neq
                     fexpl(j)=fexpl(j)+eta*veass(j)
                 end do
 ! --------------------------------------------------------------------
 ! 2  - CNDIRI : BtLAMBDA                : IL FAUT PRENDRE L OPPOSE
-! 10 - CNONDP : CHARGEMENT ONDES PLANES : IL FAUT PRENDRE L OPPOSE
+! 9  - CNONDP : CHARGEMENT ONDES PLANES : IL FAUT PRENDRE L OPPOSE
 ! --------------------------------------------------------------------
-            else if ((i.eq.2).or.(i.eq.10)) then
+            else if ((i.eq.2).or.(i.eq.9)) then
                 do j = 1, neq
                     fexpl(j)=fexpl(j)-veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 19 - CNAMOD : FORCE D AMORTISSEMENT MODAL
+! 18 - CNAMOD : FORCE D AMORTISSEMENT MODAL
 ! --------------------------------------------------------------------
-            else if (i.eq.19) then
+            else if (i.eq.18) then
                 do j = 1, neq
                     fampl(j)=fampl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 12 - CNIMPE : FORCES IMPEDANCE
+! 11 - CNIMPE : FORCES IMPEDANCE
 ! --------------------------------------------------------------------
-            else if (i.eq.12) then
+            else if (i.eq.11) then
                 do j = 1, neq
                     flipl(j)=flipl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 21 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
+! 20 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
 ! --------------------------------------------------------------------
-            else if (i.eq.21) then
+            else if (i.eq.20) then
 ! CHARGEMENT FORCE_SOL CNVISS. SI ON COMPTE SA CONTRIBUTION EN TANT
 ! QUE FORCE DISSIPATIVE DE LIAISON, ON DOIT PRENDRE L OPPOSE.
                 do j = 1, neq
@@ -306,9 +307,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
                     fnopl(j)=fnopl(j)+veass(j)
                 end do
 ! --------------------------------------------------------------------
-! 16 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
+! 15 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
 ! --------------------------------------------------------------------
-            else if (i.eq.16) then
+            else if (i.eq.15) then
 ! ON DOIT RECONSTRUIRE LA MATRICE DE MASSE CAR ELLE A ETE MODIFIEE
 ! POUR SUPPRIMER DES DEGRES DE LIBERTE EN RAISON DE AFFE_CHAR_CINE.
                 reassm=.true.
@@ -331,9 +332,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 ! --- ON LE FAIT ICI AFIN DE DISPOSER D UNE MATRICE D AMORTISSEMENT.
 !
     if (numins .eq. 1) then
-        call nmfini(sddyna, valinc         , measse    , modele, ds_material,&
-                    carele, ds_constitutive, ds_measure, sddisc, numins     ,&
-                    solalg, numedd         , fonact    , veelem, veasse)
+        call nmfini(sddyna, valinc         , measse   , modele    , ds_material,&
+                    carele, ds_constitutive, ds_system, ds_measure, sddisc     , numins,&
+                    solalg, numedd         , fonact   )
     endif
 !
 ! --- PREPARATION DES CHAMPS DE FORCE

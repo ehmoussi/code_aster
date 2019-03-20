@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -189,9 +189,6 @@ character(len=19) :: solalg(*), valinc(*)
 !
 ! - Compute internal forces
 !
-!    call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
-!                list_func_acti, iter_newt, k19bla, ds_measure, valint         ,&
-!                solalt, ldccvg, vefint)
     call nmfint(model         , cara_elem      ,&
                 ds_material   , ds_constitutive,&
                 list_func_acti, iter_newt      , k19bla, ds_measure,&

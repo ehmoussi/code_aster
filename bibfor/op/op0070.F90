@@ -62,11 +62,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: fonact(100)
+    integer :: fonact(100) = 0
     integer, parameter :: zmeelm = 9
     integer, parameter :: zmeass = 4
-    integer, parameter :: zveelm = 15
-    integer, parameter :: zveass = 21
+    integer, parameter :: zveelm = 14
+    integer, parameter :: zveass = 20
     integer, parameter :: zsolal = 17
     integer, parameter :: zvalin = 28
 !
@@ -113,6 +113,7 @@ implicit none
     type(NL_DS_Constitutive) :: ds_constitutive
     type(NL_DS_PostTimeStep) :: ds_posttimestep
     type(NL_DS_Material)     :: ds_material
+    type(NL_DS_System)       :: ds_system
 !
 ! --- VARIABLES CHAPEAUX
 !
@@ -154,12 +155,13 @@ implicit none
 !
 ! - Creation of datastructures
 !
-    call nmini0(eta       , numins   , matass     ,&
-                zmeelm    , zmeass   , zveelm     ,&
-                zveass    , zsolal   , zvalin     ,&
-                ds_print  , ds_conv  , ds_algopara    , ds_inout   , ds_contact ,&
-                ds_measure, ds_energy, ds_constitutive, ds_material,&
-                sderro)
+    call nmini0(eta      , numins         , matass     ,&
+                zmeelm   , zmeass         , zveelm     ,&
+                zveass   , zsolal         , zvalin     ,&
+                ds_print , ds_conv        , ds_algopara,&
+                ds_inout , ds_contact     , ds_measure ,&
+                ds_energy, ds_constitutive, ds_material,&
+                ds_system, sderro)
 !
 ! - Read parameters
 !
@@ -177,7 +179,7 @@ implicit none
                 sd_suiv    , sd_obsv   , sderro     , ds_posttimestep, ds_inout  ,&
                 ds_energy  , ds_conv   , sdcriq     , valinc         , solalg    ,&
                 measse     , veelem    , meelem     , veasse         , ds_contact,&
-                ds_measure , ds_algorom)
+                ds_measure , ds_algorom, ds_system)
 !
 ! - Launch timer for total time
 !
@@ -216,14 +218,14 @@ implicit none
 !
     if (lexpl) then
         call ndexpl(model   , numedd         , numfix   , ds_material, cara_elem,&
-                    ds_constitutive, list_load, ds_algopara, fonact   ,&
+                    ds_constitutive, list_load, ds_algopara, fonact   , ds_system,&
                     ds_print, ds_measure     , sdnume   , sddyna     , sddisc   ,&
                     sderro  , valinc         , numins   , solalg     , solver   ,&
                     matass  , maprec         , ds_inout , meelem     , measse   ,&
                     veelem  , veasse         , nbiter)
     else if (lstat.or.limpl) then
         call nmnewt(mesh       , model    , numins    , numedd         , numfix   ,&
-                    ds_material, cara_elem, ds_constitutive, list_load,&
+                    ds_material, cara_elem, ds_constitutive, list_load, ds_system,&
                     ds_algopara, fonact   , ds_measure, sderro         , ds_print ,&
                     sdnume     , sddyna   , sddisc    , sdcrit         , sd_suiv  ,&
                     sdpilo     , ds_conv  , solver    , maprec         , matass   ,&
@@ -254,7 +256,7 @@ implicit none
 ! - Post-treatment
 !
     call nmpost(model          , mesh       , numedd, numfix    , cara_elem      ,&
-                ds_constitutive, numins     , ds_material,&
+                ds_constitutive, numins     , ds_material, ds_system ,&
                 ds_contact     , ds_algopara, fonact, ds_measure,&
                 sddisc         , sd_obsv    , sderro, sddyna    , ds_posttimestep,&
                 valinc         , solalg     , meelem, measse    , veelem         ,&

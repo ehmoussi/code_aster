@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
+#include "asterfort/comp_info.h"
 #include "asterfort/Behaviour_type.h"
 !
 character(len=24), intent(in) :: model
@@ -87,5 +88,9 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
             ds_constitutive%l_matr_geom = ASTER_TRUE
         endif
     enddo
+!
+! - Print informations about COMPORTEMENT keyword*
+!
+    call comp_info(model, ds_constitutive%compor)
 !
 end subroutine

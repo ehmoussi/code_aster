@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 21
+    integer, parameter:: zveass = 20
     integer, parameter:: zvelem = 15
     character(len=19) :: hval_veelem(zvelem)
     character(len=19) :: hval_veasse(zveass)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ interface
     subroutine nmresi(mesh       , list_func_acti, ds_material,&
                       nume_dof   , sdnume        , sddyna     ,&
                       ds_conv    , ds_print      , ds_contact ,&
-                      ds_inout   , ds_algorom    ,&
+                      ds_inout   , ds_algorom    , ds_system  ,&
                       matass     , nume_inst     , eta        ,&
                       hval_incr  , hval_algo     ,&
                       hval_veasse, hval_measse   ,&
@@ -37,6 +37,7 @@ interface
         type(NL_DS_Contact), intent(inout) :: ds_contact
         type(NL_DS_InOut), intent(in) :: ds_inout
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: matass
         integer, intent(in) :: nume_inst
         real(kind=8), intent(in) :: eta

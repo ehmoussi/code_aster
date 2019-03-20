@@ -541,13 +541,8 @@ implicit none
         aster_logical         :: l_dis_choc
 ! ----- Flag for POST_INCR
         aster_logical         :: l_post_incr
-! ----- Flag for large strains in tangent matrix
+! ----- Flag for if large strains are in tangent matrix
         aster_logical         :: l_matr_geom
-! ----- Flag to compute nodal force at prediction
-        aster_logical         :: l_pred_cnfnod
-! ----- Flag to integrate behaviour law at prediction
-        aster_logical         :: l_pred_cnfint
-
     end type NL_DS_Constitutive
 !
 ! - Type: selection list
@@ -639,7 +634,6 @@ implicit none
         character(len=24) :: fvarc_pred = ' '
 ! ----- Force from external state variables for convergence criteria
         character(len=24) :: fvarc_curr = ' '
-
     end type NL_DS_Material
 !
 ! - Type: combine vectors
@@ -649,5 +643,26 @@ implicit none
         real(kind=8)       :: vect_coef(20)
         character(len=19)  :: vect_name(20)
     end type NL_DS_VectComb
+!
+! - Type: non-linear system
+! 
+    type NL_DS_System
+! ----- Flag to compute nodal force at prediction
+        aster_logical         :: l_pred_cnfnod = ASTER_FALSE
+! ----- Flag to integrate behaviour law at prediction
+        aster_logical         :: l_pred_cnfint = ASTER_FALSE
+! ----- Flag to integrate behaviour law at prediction (full prediction)
+        aster_logical         :: l_pred_full = ASTER_FALSE
+! ----- Name of field for multiplicator for full prediction
+        character(len=24)     :: code_pred = ' '
+! ----- Elementary and assembled vector for nodal force (no integration)
+        character(len=19)     :: vefnod = ' '
+        character(len=19)     :: cnfnod = ' '
+! ----- Elementary and assembled vector for internal force (integration)
+        character(len=19)     :: vefint = ' '
+        character(len=19)     :: cnfint = ' '
+! ----- Elementary and assembled vector for internal force (full integration at prediction)
+        character(len=19)     :: cnpred = ' '
+    end type NL_DS_System
 !
 end module
