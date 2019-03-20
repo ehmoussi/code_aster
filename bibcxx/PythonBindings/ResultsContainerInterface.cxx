@@ -50,6 +50,7 @@ void exportResultsContainerToPython() {
         .def( "__init__",
               make_constructor(
                   &initFactoryPtr< ResultsContainerInstance, std::string, std::string >))
+        .def( "addFieldOnNodesDescription", &ResultsContainerInstance::addFieldOnNodesDescription )
         .def( "addMaterialOnMesh", &ResultsContainerInstance::addMaterialOnMesh )
         .def( "addModel", &ResultsContainerInstance::addModel )
         .def( "appendElementaryCharacteristicsOnAllRanks",

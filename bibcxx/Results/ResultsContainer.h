@@ -168,6 +168,14 @@ class ResultsContainerInstance : public DataStructure {
                                        int rank ) ;
 
     /**
+     * @brief Add a existing FieldOnNodesDescription in _fieldBuidler
+     */
+    void addFieldOnNodesDescription( const FieldOnNodesDescriptionPtr &fond )
+    {
+        _fieldBuidler.addFieldOnNodesDescription( fond );
+    };
+
+    /**
      * @brief Add elementary characteristics to container
      * @param rank
      */
