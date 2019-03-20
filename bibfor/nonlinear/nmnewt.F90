@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine nmnewt(mesh       , model    , numins         , numedd    , numfix   ,&
-                  ds_material, cara_elem, ds_constitutive, list_load,&
+                  ds_material, cara_elem, ds_constitutive, list_load , ds_system,&
                   ds_algopara, fonact   , ds_measure     , sderro    , ds_print ,&
                   sdnume     , sddyna   , sddisc         , sdcrit    , sdsuiv   ,&
                   sdpilo     , ds_conv  , solveu         , maprec    , matass   ,&
@@ -78,6 +78,7 @@ type(NL_DS_Material), intent(in) :: ds_material
 character(len=24), intent(in) :: cara_elem
 type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 character(len=19), intent(in) :: list_load
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: fonact(*)
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -121,6 +122,7 @@ integer :: nbiter
 ! IO  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_constitutive  : datastructure for constitutive laws management
 ! In  solver           : name of datastructure for solver
+! In  ds_system        : datastructure for non-linear system management
 ! In  sd_suiv          : datastructure for dof monitoring parameters
 ! In  sd_obsv          : datastructure for observation parameters
 ! IO  ds_inout         : datastructure for input/output management
@@ -204,7 +206,7 @@ integer :: nbiter
     call nmforc_step(fonact     ,&
                      model      , cara_elem      , numedd  ,&
                      list_load  , sddyna         ,&
-                     ds_material, ds_constitutive,&
+                     ds_material, ds_constitutive, ds_system,&
                      ds_measure , ds_inout       ,&
                      sddisc     , numins         ,&
                      valinc     , solalg         ,&
@@ -244,7 +246,7 @@ integer :: nbiter
 ! --- PREDICTION D'UNE DIRECTION DE DESCENTE
 !
     call nmpred(mesh, model , numedd         , numfix    , ds_material, cara_elem,&
-                ds_constitutive, list_load , ds_algopara, solveu   ,&
+                ds_constitutive, list_load , ds_algopara, solveu   , ds_system,&
                 fonact, ds_print       , ds_measure, ds_algorom , sddisc   ,&
                 sdnume, sderro         , numins    , valinc     , solalg   ,&
                 matass, maprec         , ds_contact, sddyna     , &
@@ -299,7 +301,7 @@ integer :: nbiter
     call nmconv(mesh    , model, ds_material, numedd  , sdnume     ,&
                 fonact  , sddyna, ds_conv, ds_print, ds_measure,&
                 sddisc  , sdcrit , sderro  , ds_algopara, ds_algorom,&
-                ds_inout, matass , solveu  , numins     ,&
+                ds_inout, matass , solveu  , ds_system, numins     ,&
                 iterat  , eta   , ds_contact, valinc     ,&
                 solalg  , measse, veasse )
 !

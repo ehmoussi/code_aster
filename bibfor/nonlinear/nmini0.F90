@@ -17,11 +17,13 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmini0(eta       , nume_inst, matass         ,&
-                  zmeelm    , zmeass   , zveelm         ,&
-                  zveass    , zsolal   , zvalin         ,&
-                  ds_print  , ds_conv  , ds_algopara    , ds_inout   , ds_contact,&
-                  ds_measure, ds_energy, ds_constitutive, ds_material, sderro)
+subroutine nmini0(eta      , nume_inst      , matass     ,&
+                  zmeelm   , zmeass         , zveelm     ,&
+                  zveass   , zsolal         , zvalin     ,&
+                  ds_print , ds_conv        , ds_algopara,&
+                  ds_inout , ds_contact     , ds_measure ,&
+                  ds_energy, ds_constitutive, ds_material,&
+                  ds_system, sderro)
 !
 use NonLin_Datastructure_type
 !
@@ -43,6 +45,7 @@ implicit none
 #include "asterfort/nonlinDSMaterialCreate.h"
 #include "asterfort/nmcrga.h"
 #include "asterfort/nonlinDSPrintSepLine.h"
+#include "asterfort/nonlinDSSystemCreate.h"
 !
 character(len=19), intent(out) :: matass
 integer, intent(out) :: nume_inst
@@ -58,6 +61,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
 type(NL_DS_Energy), intent(out) :: ds_energy
 type(NL_DS_Constitutive), intent(out) :: ds_constitutive
 type(NL_DS_Material), intent(out) :: ds_material
+type(NL_DS_System), intent(out) :: ds_system
 character(len=24) :: sderro
 !
 ! --------------------------------------------------------------------------------------------------
@@ -78,6 +82,7 @@ character(len=24) :: sderro
 ! Out ds_energy        : datastructure for energy management
 ! Out ds_constitutive  : datastructure for constitutive laws management
 ! Out ds_material      : datastructure for material parameters
+! Out ds_system        : datastructure for non-linear system management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -133,11 +138,15 @@ character(len=24) :: sderro
 !
     call nmcrga(sderro)
 !
+! - Create non-linear system management datastructure
+!
+    call nonlinDSSystemCreate(ds_system)
+!
 ! --- INITIALISATION BOUCLE EN TEMPS
 !
     nume_inst = 0
-    eta    = zero
-    matass = '&&OP0070.MATASS'
+    eta       = zero
+    matass    = '&&OP0070.MATASS'
 !
 ! --- VERIF. LONGUEURS VARIABLES CHAPEAUX (SYNCHRO OP0070/NMCHAI)
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine nminit(mesh       , model     , mate       , cara_elem      , list_load ,&
-                      numedd     , numfix    , ds_algopara, ds_constitutive, maprec    ,&
-                      solver     , numins    , sddisc     , sdnume         , sdcrit    ,&
-                      ds_material, fonact    , sdpilo     , sddyna         , ds_print  ,&
-                      sd_suiv    , sd_obsv   , sderro     , ds_posttimestep, ds_inout  ,&
-                      ds_energy  , ds_conv   , sdcriq     , valinc         , solalg    ,&
-                      measse     , veelem    , meelem     , veasse         , ds_contact,&
-                      ds_measure , ds_algorom)
+    subroutine nminit(mesh       , model         , mate       , cara_elem      , list_load ,&
+                      numedd     , numfix        , ds_algopara, ds_constitutive, maprec    ,&
+                      solver     , numins        , sddisc     , sdnume         , sdcrit    ,&
+                      ds_material, list_func_acti, sdpilo     , sddyna         , ds_print  ,&
+                      sd_suiv    , sd_obsv       , sderro     , ds_posttimestep, ds_inout  ,&
+                      ds_energy  , ds_conv       , sdcriq     , valinc         , solalg    ,&
+                      measse     , veelem        , meelem     , veasse         , ds_contact,&
+                      ds_measure , ds_algorom    , ds_system)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
         character(len=8), intent(in) :: mesh
@@ -44,7 +43,7 @@ interface
         character(len=19) :: sdnume
         character(len=19) :: sdcrit
         type(NL_DS_Material), intent(inout) :: ds_material
-        integer :: fonact(*)
+        integer, intent(inout) :: list_func_acti(*)
         character(len=19) :: sdpilo
         character(len=19) :: sddyna
         type(NL_DS_Print), intent(inout) :: ds_print
@@ -65,5 +64,6 @@ interface
         type(NL_DS_Contact), intent(inout) :: ds_contact
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+        type(NL_DS_System), intent(inout) :: ds_system
     end subroutine nminit
 end interface

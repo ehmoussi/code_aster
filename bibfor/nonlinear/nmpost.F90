@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
-                  ds_constitutive , numins  , ds_material,&
+                  ds_constitutive, numins  , ds_material, ds_system,&
                   ds_contact, ds_algopara, fonact  ,&
                   ds_measure, sddisc     , &
                   sd_obsv, sderro  , sddyna, ds_posttimestep, valinc  ,&
@@ -58,6 +58,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 character(len=19), intent(in) :: sd_obsv
 character(len=24) :: modele, numedd, numfix
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: veelem(*), measse(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -79,6 +80,7 @@ integer :: fonact(*)
 ! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! In  ds_constitutive  : datastructure for constitutive laws management
+! In  ds_system        : datastructure for non-linear system management
 ! IO  ds_contact       : datastructure for contact management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
@@ -156,7 +158,7 @@ integer :: fonact(*)
                         ds_energy, fonact, numedd, numfix, ds_algopara,&
                         meelem, numins, modele, ds_material, carele     ,&
                         ds_constitutive, ds_measure, sddisc, solalg,&
-                        veelem, ds_contact)
+                        ds_contact, ds_system)
         endif
 !
 ! ----- Post-treatment for behavior laws.

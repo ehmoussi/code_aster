@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,6 +39,8 @@ cata_msg = {
 
     9  : _(u""" Initialisations pour la gestion de l'affichage."""),
 
+   10  : _(u""" Initialisations pour le système à résoudre."""),
+
    11  : _(u""" Initialisations des fonctionnalités actives."""),
 
    12  : _(u""" Initialisations de la numérotation des inconnues."""),
@@ -72,8 +74,6 @@ cata_msg = {
    26  : _(u""" Initialisations pour l'état initial."""),
 
    27  : _(u""" Initialisations des structures de données pour la résolution du contact."""),
-
-   28  : _(u""" Initialisations pour les lois de comportement."""),
 
    29  : _(u""" Initialisations des structures de données pour la résolution des liaisons unilatérales."""),
 

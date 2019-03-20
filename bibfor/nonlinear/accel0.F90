@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine accel0(modele    , numedd, numfix     , fonact, lischa,&
-                  ds_contact, maprec, solveu     , valinc, sddyna,&
-                  ds_measure, ds_algopara, meelem, measse,&
-                  veelem    , veasse, solalg)
+subroutine accel0(modele    , numedd     , numfix   , fonact, lischa,&
+                  ds_contact, maprec     , solveu   , valinc, sddyna,&
+                  ds_measure, ds_algopara, ds_system, meelem, measse,&
+                  veelem    , veasse     , solalg)
 !
 use NonLin_Datastructure_type
 !
@@ -50,6 +50,7 @@ character(len=19) :: meelem(*), measse(*), veasse(*), veelem(*)
 character(len=19) :: solalg(*), valinc(*)
 integer :: fonact(*)
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_System), intent(in) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,6 +73,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! In  ds_contact       : datastructure for contact management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_system        : datastructure for non-linear system management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
@@ -92,11 +94,11 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CALCUL DE L''ACCELERATION INITIALE'
+        call utmess('I', 'MECANONLINE11_26')
     endif
     call utmess('I', 'MECANONLINE_24')
 !
-! --- INITIALISATIONS
+! - Initializations
 !
     k19bla = ' '
     cndonn = '&&CNCHAR.DONN'
@@ -114,9 +116,9 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --- ASSEMBLAGE ET FACTORISATION DE LA MATRICE
 !
-    call nmprac(fonact, lischa, numedd, numfix    , solveu     ,&
+    call nmprac(fonact, lischa    , numedd    , numfix     , solveu     ,&
                 sddyna, ds_measure, ds_contact, ds_algopara,&
-                meelem, measse, maprec, matass    , faccvg)
+                meelem, measse    , maprec    , matass     , faccvg)
     if (faccvg .eq. 2) then
         call vtzero(acce_prev)
         call utmess('A', 'MECANONLINE_69')
@@ -131,7 +133,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! - Evaluate second member for initial acceleration
 !
-    call nmassi(fonact, sddyna, veasse, cndonn)
+    call nmassi(fonact, sddyna, ds_system, veasse, cndonn)
 !
 ! --- POUR LE CALCUL DE DDEPLA, IL FAUT METTRE CNCINE A ZERO
 !
