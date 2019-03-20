@@ -73,4 +73,6 @@ cata_msg = {
 
    28  : _("""Intégration de la loi de comportement (assemblage des efforts internes élémentaires)."""),
 
+   29  : _(u"""Intégration de la loi de comportement et de la matrice tangente."""),
+
 }

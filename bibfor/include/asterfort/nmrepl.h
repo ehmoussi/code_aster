@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmrepl(modele         , numedd, ds_material, carele, ds_system ,&
-                      ds_constitutive, lischa, ds_algopara, fonact, iterat    ,&
-                      ds_measure     , sdpilo, sdnume     , sddyna, ds_contact,&
-                      deltat         , valinc, solalg     , veelem, veasse    ,&
-                      sddisc         , etan  , ds_conv    , eta   , offset    ,&
+    subroutine nmrepl(modele         , numedd, ds_material, carele    , ds_system,&
+                      ds_constitutive, lischa, ds_algopara, fonact    , iterat   ,&
+                      ds_measure     , sdpilo, sdnume     , ds_contact,&
+                      deltat         , valinc, solalg     , veelem    , veasse   ,&
+                      sddisc         , etan  , ds_conv    , eta       , offset   ,&
                       ldccvg         , pilcvg, matass )
         use NonLin_Datastructure_type
         character(len=24) :: modele
@@ -36,7 +36,6 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19) :: sdpilo
         character(len=19) :: sdnume
-        character(len=19) :: sddyna
         type(NL_DS_Contact), intent(in) :: ds_contact
         type(NL_DS_System), intent(in) :: ds_system
         real(kind=8) :: deltat

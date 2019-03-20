@@ -17,12 +17,11 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmrigi(modelz         , carele     , sddyna,&
-                  fonact         , iterat     ,&
-                  ds_constitutive, ds_material,&
-                  ds_measure     , valinc     , solalg,&
-                  ds_system      , optioz     ,&
-                  ldccvg)
+subroutine nmrigi(modelz         , cara_elem,&
+                  ds_material    , ds_constitutive,&
+                  list_func_acti , iter_newt      , sddyna, ds_measure, ds_system,&
+                  hval_incr      , hval_algo      ,&
+                  optioz         , ldccvg)
 !
 use NonLin_Datastructure_type
 !
@@ -34,24 +33,27 @@ implicit none
 #include "asterfort/nmdep0.h"
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
+#include "asterfort/utmess.h"
+#include "asterfort/infdbg.h"
 !
-character(len=*) :: optioz
-character(len=*) :: modelz
+character(len=*), intent(in) :: modelz
+character(len=24), intent(in) :: cara_elem
 type(NL_DS_Material), intent(in) :: ds_material
-type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-character(len=24) :: carele
-integer :: iterat, ldccvg
-character(len=19) :: sddyna
+integer, intent(in) :: list_func_acti(*)
+integer, intent(in) :: iter_newt
+character(len=19), intent(in) :: sddyna
+type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_System), intent(in) :: ds_system
-character(len=19) :: solalg(*), valinc(*)
-integer :: fonact(*)
+character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+character(len=*), intent(in) :: optioz
+integer, intent(out) :: ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (CALCUL - UTILITAIRE)
+! MECA_NON_LINE - Algorithm
 !
-! CALCUL DES MATR_ELEM DE RIGIDITE
+! Compute elementaries for internal forces/rigidity matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,29 +77,48 @@ integer :: fonact(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: merigi
+    integer :: ifm, niv
+    character(len=19) :: merigi = ' ', vefint = ' '
     character(len=1) :: base
-    character(len=24) :: modele
+    character(len=24) :: model
     character(len=16) :: optrig
-    aster_logical :: tabret(0:10), lendo
+    aster_logical :: lendo, l_xfem, l_macr_elem
+    character(len=24) :: mate, varc_refe
+    integer :: iter
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    base = 'V'
-    modele = modelz
-    ldccvg = 0
-    optrig = optioz
+    call infdbg('MECA_NON_LINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_29')
+    endif
 !
-! --- VECT_ELEM ET MATR_ELEM
+! - Initializations
+!
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
+    iter      = iter_newt+1
+    base      = 'V'
+    optrig    = optioz
+    model     = modelz
+    ldccvg    = 0
+!
+! - Active functionnalities
+!
+    l_xfem      = isfonc(list_func_acti, 'XFEM')
+    l_macr_elem = isfonc(list_func_acti, 'MACR_ELEM_STAT')
+    lendo       = isfonc(list_func_acti,'ENDO_NO')
+!
+! - Elementaries
 !
     merigi = ds_system%merigi
+    vefint = ds_system%vefint
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !
-    lendo = isfonc(fonact,'ENDO_NO')
     if (.not.lendo) then
         if (optrig(1:9) .eq. 'RIGI_MECA') then
-            call nmdep0('ON ', solalg)
+            call nmdep0('ON ', hval_algo)
         endif
     endif
 !
@@ -108,39 +129,22 @@ integer :: fonact(*)
 !
 ! - Computation
 !
-    call merimo(base                  , modele               , carele,&
-                ds_material%field_mate, ds_material%varc_refe,&
-                ds_constitutive       , iterat+1             , fonact, sddyna,&
-                valinc                , solalg               , merigi,&
-                ds_system%vefint      , optrig,&
-                tabret)
+    call merimo(base           , l_xfem   , l_macr_elem,&
+                model          , cara_elem, mate       , iter_newt+1,&
+                ds_constitutive, varc_refe,&
+                hval_incr      , hval_algo,&
+                optrig         , merigi   , vefint     ,&
+                ldccvg         , sddyna)
 !
 ! - End timer
 !
     call nmtime(ds_measure, 'Stop', 'Integrate')
     call nmrinc(ds_measure, 'Integrate')
 !
-! - Return code
-!
-    if (tabret(0)) then
-        if (tabret(4)) then
-            ldccvg = 4
-        else if (tabret(3)) then
-            ldccvg = 3
-        else if (tabret(2)) then
-            ldccvg = 2
-        else
-            ldccvg = 1
-        endif
-        if (tabret(1)) then
-            ldccvg = 1
-        endif
-    endif
-!
 ! --- REMISE INCREMENT DE DEPLACEMENT
 !
     if (optrig(1:9) .eq. 'RIGI_MECA') then
-        call nmdep0('OFF', solalg)
+        call nmdep0('OFF', hval_algo)
     endif
 !
 end subroutine

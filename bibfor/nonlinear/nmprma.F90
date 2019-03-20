@@ -208,12 +208,11 @@ integer :: faccvg, ldccvg
 ! - Compute rigidity matrix
 !
     if (lcrigi) then
-        call nmrigi(modelz         , carele     , sddyna,&
-                    fonact         , iterat     ,&
-                    ds_constitutive, ds_material,&
-                    ds_measure     , valinc     , solalg,&
-                    ds_system      , optrig     ,&
-                    ldccvg)
+        call nmrigi(modelz     , carele         ,&
+                    ds_material, ds_constitutive, &
+                    fonact     , iterat         , sddyna, ds_measure, ds_system,&
+                    valinc     , solalg,&
+                    optrig     , ldccvg)
         if (larigi) then
             call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
                         rigid)

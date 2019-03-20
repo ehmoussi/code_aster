@@ -92,9 +92,10 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --- RECHERCHE LINEAIRE DANS LA DIRECTION DE DESCENTE
 !
-    call nmrelp(modele         , numedd, ds_material, carele    , ds_system ,&
-                ds_constitutive, lischa, fonact     , iterat    , ds_measure,&
-                sdnume         , sddyna, ds_algopara, ds_contact, valinc    ,&
-                solalg         , veelem, veasse     , ds_conv   , ldccvg)
+    call nmrelp(modele         , numedd     , ds_material, carele , ds_system ,&
+                ds_constitutive, lischa     , fonact     , iterat , ds_measure,&
+                sdnume         , ds_algopara, ds_contact , valinc ,&
+                solalg         , veelem     , veasse     , ds_conv, ldccvg, &
+                sddyna)
 !
 end subroutine

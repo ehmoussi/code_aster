@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmihht(model    , nume_dof , ds_material, ds_constitutive,&
-                      cara_elem, list_load, list_func_acti, ds_measure,&
-                      sddyna   , sdnume   , hval_incr     , ds_system,&
+    subroutine nmihht(model    , nume_dof , ds_material   , ds_constitutive,&
+                      cara_elem, list_load, list_func_acti, ds_measure     ,&
+                      sddyna   , sdnume   , hval_incr     , &
                       sddisc   , hval_algo, hval_measse   , ds_inout)
         use NonLin_Datastructure_type
         character(len=24), intent(in) :: model
@@ -30,7 +30,6 @@ interface
         character(len=19), intent(in) :: list_load
         integer, intent(in) :: list_func_acti(*)
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: sddyna
         character(len=19), intent(in) :: sddisc
         character(len=19), intent(in) :: sdnume

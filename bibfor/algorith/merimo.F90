@@ -17,10 +17,12 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine merimo(base           , model , cara_elem, mate  , varc_refe,&
-                  ds_constitutive, iterat, acti_func, sddyna, hval_incr,&
-                  hval_algo      , merigi, vefint   , optioz,&
-                  tabret)
+subroutine merimo(base           , l_xfem   , l_macr_elem,&
+                  model          , cara_elem, mate       , iter_newt,&
+                  ds_constitutive, varc_refe,&
+                  hval_incr      , hval_algo,&
+                  optioz         , merigi   , vefint     ,&
+                  ldccvg         , sddynz_)
 !
 use NonLin_Datastructure_type
 !
@@ -31,7 +33,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/calcul.h"
 #include "asterfort/inical.h"
-#include "asterfort/isfonc.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -45,18 +46,17 @@ implicit none
 #include "asterfort/redetr.h"
 !
 character(len=1), intent(in) :: base
-integer, intent(in) :: iterat
+aster_logical, intent(in) :: l_xfem, l_macr_elem
+character(len=24), intent(in) :: model, cara_elem
 character(len=*), intent(in) :: mate
-character(len=19), intent(in) :: sddyna
-character(len=24), intent(in) :: model
-character(len=24), intent(in) :: cara_elem
+integer, intent(in) :: iter_newt
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24), intent(in) :: varc_refe
-integer, intent(in) :: acti_func(*)
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
 character(len=*), intent(in) :: optioz
 character(len=19), intent(in) :: merigi, vefint
-aster_logical, intent(out) :: tabret(0:10)
+integer, intent(out) :: ldccvg
+character(len=*), optional, intent(in) :: sddynz_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,23 +66,43 @@ aster_logical, intent(out) :: tabret(0:10)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  base             : JEVEUX base to create objects
+! In  l_xfem           : flag for XFEM elements
+! In  l_macr_elem      : flag for macro-elements
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
+! In  mate             : name of material characteristics (field)
+! In  iter_newt        : index of current Newton iteration
 ! In  ds_constitutive  : datastructure for constitutive laws management
-!
+! In  varc_refe        : name of reference command variables vector
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
+! In  option           : name of option to compute
+! In  merigi           : name of elementary matrices for tangent matrix
+! In  vefint           : elementary vectors for internal forces
+! Out ldccvg           : return code from integration of behaviour
+!                       -1 - no integration of behaviour
+!                        0 - OK
+!                        1 - Failure
+!                        2 - Failure but not fatal during Newton's iterations
+!                        3 - De Borst not converged
+!                        4 - Using law outside bounds (VERI_BORNE)
+! In  sddyna           : datastructure for dynamic
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: mxchout = 11
     integer, parameter :: mxchin = 57
     character(len=8) :: lpaout(mxchout), lpain(mxchin)
     character(len=19) :: lchout(mxchout), lchin(mxchin)
-    aster_logical :: l_macr_elem
     aster_logical :: l_merigi, l_vefint, l_sigmex
     aster_logical :: l_codret, l_codpre
     integer :: ires, iret, nbin, nbout
     character(len=24) :: caco3d, ligrmo
-    character(len=19) :: sigm_extr, sigm_curr, vari_curr, strx_curr
+    character(len=19) :: sigm_extr, sigm_curr, vari_curr, strx_curr, sddyna
     character(len=16) :: option
     integer :: ich_matrixs, ich_matrixn, ich_vefint, ich_codret
     character(len=24), pointer :: v_rerr(:) => null()
+    aster_logical :: tabret(0:10)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -91,13 +111,14 @@ aster_logical, intent(out) :: tabret(0:10)
 ! - Initializations
 !
     option    = optioz
+    sddyna    = ' '
+    if (present(sddynz_)) then
+        sddyna = sddynz_
+    endif
     ligrmo    = model(1:8)//'.MODELE'
     caco3d    = '&&MERIMO.CARA_ROTA_FICTI'
     tabret(:) = ASTER_FALSE
-!
-! - Active functionnalites
-!
-    l_macr_elem = isfonc(acti_func, 'MACR_ELEM_STAT')
+    ldccvg    = 0
 !
 ! - Get fields from hat-variables
 !
@@ -108,9 +129,11 @@ aster_logical, intent(out) :: tabret(0:10)
 !
 ! - Input fields
 !
-    call merimp(model    , cara_elem, mate  , varc_refe, ds_constitutive,&
-                acti_func, iterat   , sddyna, hval_incr, hval_algo      ,&
-                caco3d   , mxchin   , nbin  , lpain    , lchin)
+    call merimp(l_xfem         ,&
+                model          , cara_elem, mate  , sddyna, iter_newt,&
+                ds_constitutive, varc_refe,&
+                hval_incr      , hval_algo, caco3d,&
+                mxchin         , lpain    , lchin , nbin)
 !
 ! - Prepare flags
 !
@@ -134,8 +157,8 @@ aster_logical, intent(out) :: tabret(0:10)
         l_codpre = ASTER_FALSE
     else if (option(1:10) .eq. 'RIGI_MECA_') then
         l_merigi = ASTER_TRUE
-        l_vefint = ASTER_FALSE
-        l_codret = ASTER_FALSE
+        l_vefint = ASTER_TRUE
+        l_codret = ASTER_TRUE
         l_sigmex = ASTER_FALSE
         l_codpre = ASTER_TRUE
     else if (option(1:9) .eq. 'RAPH_MECA') then
@@ -213,6 +236,12 @@ aster_logical, intent(out) :: tabret(0:10)
         lchout(nbout) = ds_constitutive%comp_error(1:19)
         ich_codret = nbout
     endif
+    if (l_codpre) then
+        nbout = nbout+1
+        lpaout(nbout) = 'PCOPRED'
+        lchout(nbout) = ds_constitutive%code_pred(1:19)
+        ich_codret = nbout
+    endif
     ASSERT(nbout.le.mxchout)
     ASSERT(nbin.le.mxchin)
 !
@@ -237,6 +266,20 @@ aster_logical, intent(out) :: tabret(0:10)
 !
     if (l_codret) then
         call nmiret(lchout(ich_codret), tabret)
+        if (tabret(0)) then
+            if (tabret(4)) then
+                ldccvg = 4
+            else if (tabret(3)) then
+                ldccvg = 3
+            else if (tabret(2)) then
+                ldccvg = 2
+            else
+                ldccvg = 1
+            endif
+            if (tabret(1)) then
+                ldccvg = 1
+            endif
+        endif
     endif
 !
     call jedema()

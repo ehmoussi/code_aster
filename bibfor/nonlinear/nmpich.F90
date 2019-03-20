@@ -96,7 +96,6 @@ character(len=19) :: solalg(*), valinc(*)
     real(kind=8) :: proeta(2), residu
     integer :: ifm, niv
     aster_logical :: irecli
-    character(len=19) :: cnfint, vefint
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,12 +107,10 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- INITIALISATIONS
 !
     pilcvg = -1
-    rho = 1.d0
+    rho    = 1.d0
     offset = 0.d0
     nbatte = 2
     irecli = ASTER_FALSE
-    vefint = ds_system%vefint
-    cnfint = ds_system%cnfint
 !
 ! --- RESOLUTION DE L'EQUATION DE PILOTAGE
 !
@@ -125,12 +122,12 @@ character(len=19) :: solalg(*), valinc(*)
 ! - CHOIX DE ETA_PILOTAGE
 !
     if (pilcvg .ne. 1) then
-        call nmceta(modele         , numedd    , ds_material, carele, vefint, cnfint,&
-                    ds_constitutive, ds_contact, lischa     , fonact, ds_measure,&
-                    sdpilo         , iterat    , sdnume     , valinc, solalg    ,&
-                    veelem         , veasse    , sddisc     , nbeffe, irecli    ,&
-                    proeta         , offset    , rho        , eta   , ldccvg    ,&
-                    pilcvg         , residu    , matass)
+        call nmceta(modele         , numedd    , ds_material, carele   , &
+                    ds_constitutive, ds_contact, lischa     , fonact   , ds_measure,&
+                    sdpilo         , iterat    , sdnume     , valinc   , solalg    ,&
+                    veelem         , veasse    , sddisc     , nbeffe   , irecli    ,&
+                    proeta         , offset    , rho        , eta      , ldccvg    ,&
+                    pilcvg         , residu    , matass     , ds_system)
     endif
 !
 ! --- LE CALCUL DE PILOTAGE A FORCEMENT ETE REALISE

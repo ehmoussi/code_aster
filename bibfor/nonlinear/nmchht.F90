@@ -19,7 +19,7 @@
 !
 subroutine nmchht(model    , ds_material, cara_elem     , ds_constitutive,&
                   list_load, nume_dof   , list_func_acti, ds_measure     ,&
-                  sddyna   , sddisc     , sdnume        , ds_system      ,&
+                  sddyna   , sddisc     , sdnume        , &
                   hval_incr, hval_algo  , hval_measse   , ds_inout)
 !
 use NonLin_Datastructure_type
@@ -58,7 +58,6 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19), intent(in) :: sddyna
 character(len=19), intent(in) :: sddisc
 character(len=19), intent(in) :: sdnume
-type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: hval_incr(*)
 character(len=19), intent(in) :: hval_algo(*)
 character(len=19), intent(in) :: hval_measse(*)
@@ -83,7 +82,6 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 ! In  sddyna           : dynamic parameters datastructure
 ! In  sddisc           : datastructure for time discretization
 ! In  sdnume           : datastructure for dof positions
-! In  ds_system        : datastructure for non-linear system management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  hval_measse      : hat-variable for matrix
@@ -107,6 +105,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     real(kind=8) :: time_init, time_prev_step
     integer :: iter_newt, ldccvg, nmax
     character(len=4) :: mode
+    type(NL_DS_System) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -132,8 +131,8 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 !
 ! - Protection
 !
-    if (abs(time_prev_step-time_init).le.r8prem()) then
-        l_comp_mstp = .false.
+    if (abs(time_prev_step-time_init) .le. r8prem()) then
+        l_comp_mstp = ASTER_FALSE
         call utmess('A','DYNAMIQUE_52')
     endif
 !
@@ -155,7 +154,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     call mecact('V', time_curr, 'MODELE', model(1:8)//'.MODELE', 'INST_R',&
                 ncmp=1, nomcmp='INST', sr=time_init)
 !
-! - Get fields from hat-variables - 
+! - Get fields from hat-variables -
 !
     call ndynkk(sddyna, 'OLDP_VEFEDO', vefedo)
     call ndynkk(sddyna, 'OLDP_VEDIDO', vedido)
@@ -195,36 +194,38 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     call nmcha0('VEASSE', 'CNVISS', cnviss, hval_veasse)
     call nmcha0('VEASSE', 'CNSSTF', cnsstf, hval_veasse)
     call nmcha0('VEASSE', 'CNSSTR', cnsstr, hval_veasse)
-    vefint = ds_system%vefint
-    cnfint = ds_system%cnfint
 !
-! - Forces from macro-elements
-! 
+! - Save in the ds_system
+!
+    ds_system%vefint = vefint
+    ds_system%cnfint = cnfint
+!
+! - Compute forces from macro-elements
+!
     if (l_macr) then
         call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
         call nonlinSubStruCompute(ds_measure , disp_prev  ,&
                                   hval_measse, cnsstr)
-    endif  
+    endif
 !
-! - Internal forces
+! - Compute internal forces
 !
     call nmfint(model         , cara_elem      ,&
                 ds_material   , ds_constitutive,&
-                list_func_acti, iter_newt      , sddyna   , ds_measure,&
+                list_func_acti, iter_newt      , ds_measure, ds_system,&
                 hval_incr     , hval_algo      ,&
-                vefint        , ldccvg         )
-    call nmaint(nume_dof, list_func_acti, sdnume,&
-                vefint  , cnfint)
+                ldccvg        , sddyna)
+    call nmaint(nume_dof, list_func_acti, sdnume, ds_system)
 !
 ! - Compute forces
 !
     mode = 'FIXE'
-    call nonlinLoadCompute(mode       , list_load      ,&
-                           model      , cara_elem      , nume_dof  , list_func_acti,&
-                           ds_material, ds_constitutive, ds_measure,&
-                           time_prev_step , time_init,&
+    call nonlinLoadCompute(mode          , list_load      ,&
+                           model         , cara_elem      , nume_dof  , list_func_acti,&
+                           ds_material   , ds_constitutive, ds_measure,&
+                           time_prev_step, time_init,&
                            hval_incr     , hval_algo         ,&
-                           hval_veelem, hval_veasse)
+                           hval_veelem   , hval_veasse)
     call nonlinLoadDynaCompute(mode       , sddyna     ,&
                                model      , nume_dof   ,&
                                ds_material, ds_measure , ds_inout,&
@@ -236,7 +237,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     if (l_didi) then
         call nmdidi(ds_inout   , model , list_load, nume_dof, hval_incr,&
                     hval_veelem, hval_veasse)
-    endif 
+    endif
 !
 99  continue
 end subroutine

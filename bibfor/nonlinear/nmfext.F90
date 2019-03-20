@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmfext(eta, fonact, sddyna, veasse, cnfext, ds_contact_)
+subroutine nmfext(eta, fonact, veasse, cnfext, ds_contact_, sddynz_)
 !
 use NonLin_Datastructure_type
 !
@@ -44,10 +44,10 @@ implicit none
 !
 real(kind=8) :: eta
 integer :: fonact(*)
-character(len=19) :: sddyna
 character(len=19) :: veasse(*)
 type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 character(len=19) :: cnfext
+character(len=*), optional, intent(in) :: sddynz_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,7 +67,7 @@ character(len=19) :: cnfext
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: cnffdo, cnffpi, cnfvdo, cnvady
+    character(len=19) :: cnffdo, cnffpi, cnfvdo, cnvady, sddyna = ' '
     aster_logical :: lctcd, lunil, l_unil_pena
     real(kind=8) :: coeequ
     aster_logical :: ldyna, lallv, l_pilo
@@ -92,6 +92,10 @@ character(len=19) :: cnfext
 !
 ! --- INITIALISATIONS
 !
+    sddyna    = ' '
+    if (present(sddynz_)) then
+        sddyna = sddynz_
+    endif
     ifdo = 0
     cnffdo = '&&CNCHAR.FFDO'
     cnffpi = '&&CNCHAR.FFPI'

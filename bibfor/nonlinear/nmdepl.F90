@@ -154,7 +154,7 @@ aster_logical :: lerrit
 ! --- CALCUL DE LA RESULTANTE DES EFFORTS EXTERIEURS
 !
     call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
-    call nmfext(etan, fonact, sddyna, veasse, cnfext, ds_contact)
+    call nmfext(etan, fonact, veasse, cnfext, ds_contact, sddyna)
 !
 ! --- CONVERSION RESULTAT dU VENANT DE K.dU = F SUIVANT SCHEMAS
 !
@@ -177,11 +177,11 @@ aster_logical :: lerrit
 ! --- RECHERCHE LINEAIRE
 !
         if (lpilo) then
-            call nmrepl(modele         , numedd, ds_material, carele, ds_system ,&
-                        ds_constitutive, lischa, ds_algopara, fonact, iterat    ,&
-                        ds_measure     , sdpilo, sdnume     , sddyna, ds_contact,&
-                        deltat         , valinc, solalg     , veelem, veasse    ,&
-                        sddisc         , etan  , ds_conv    , eta   , offset    ,&
+            call nmrepl(modele         , numedd, ds_material, carele    , ds_system,&
+                        ds_constitutive, lischa, ds_algopara, fonact    , iterat   ,&
+                        ds_measure     , sdpilo, sdnume     , ds_contact,&
+                        deltat         , valinc, solalg     , veelem    , veasse   ,&
+                        sddisc         , etan  , ds_conv    , eta       , offset   ,&
                         ldccvg         , pilcvg, matass )
         else
             call nmreli(modele         , numedd, ds_material, carele    , ds_system ,&

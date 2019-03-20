@@ -166,12 +166,11 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
     if (lelas) then
         optrig = 'RIGI_MECA'
         iterat = 0
-        call nmrigi(modele         , carele     , sddyna,&
-                    fonact         , iterat     ,&
-                    ds_constitutive, ds_material,&
-                    ds_measure     , valinc     , solalg,&
-                    ds_system      , optrig     ,&
-                    ldccvg)
+        call nmrigi(modele     , carele         ,&
+                    ds_material, ds_constitutive,&
+                    fonact     , iterat         , sddyna, ds_measure, ds_system,&
+                    valinc     , solalg,&
+                    optrig     , ldccvg)
         if (lvarc) then
             call utmess('A', 'MECANONLINE3_2')
         endif

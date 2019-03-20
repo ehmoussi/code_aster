@@ -18,11 +18,11 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmrepl(modele         , numedd, ds_material, carele, ds_system ,&
-                  ds_constitutive, lischa, ds_algopara, fonact, iterat    ,&
-                  ds_measure     , sdpilo, sdnume     , sddyna, ds_contact,&
-                  deltat         , valinc, solalg     , veelem, veasse    ,&
-                  sddisc         , etan  , ds_conv    , eta   , offset    ,&
+subroutine nmrepl(modele         , numedd, ds_material, carele    , ds_system,&
+                  ds_constitutive, lischa, ds_algopara, fonact    , iterat   ,&
+                  ds_measure     , sdpilo, sdnume     , ds_contact,&
+                  deltat         , valinc, solalg     , veelem    , veasse   ,&
+                  sddisc         , etan  , ds_conv    , eta       , offset   ,&
                   ldccvg         , pilcvg, matass )
 !
 use NonLin_Datastructure_type
@@ -51,7 +51,7 @@ integer :: fonact(*)
 integer :: iterat
 real(kind=8) :: deltat, eta, etan, offset
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-character(len=19) :: lischa, sddyna, sdnume, sdpilo, sddisc, matass
+character(len=19) :: lischa, sdnume, sdpilo, sddisc, matass
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Contact), intent(in) :: ds_contact
@@ -81,11 +81,10 @@ integer :: pilcvg, ldccvg
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
 ! IN  SDPILO : SD PILOTAGE
 ! IN  SDNUME : SD NUMEROTATION
-! IN  SDDYNA : SD DYNAMIQUE
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! In  ds_contact       : datastructure for contact management
-! In  ds_system        : datastructure for non-linear system management
+! IO  ds_system        : datastructure for non-linear system management
 ! IN  DELTAT : INCREMENT DE TEMPS
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
@@ -132,6 +131,7 @@ integer :: pilcvg, ldccvg
     character(len=24) :: typilo
     integer :: ifm, niv
     character(len=24), pointer :: pltk(:) => null()
+    type(NL_DS_System) :: ds_system2
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -156,6 +156,10 @@ integer :: pilcvg, ldccvg
     ASSERT(nmax.eq.zsolal)
     call nmchai('VALINC', 'LONMAX', nmax)
     ASSERT(nmax.eq.zvalin)
+!
+! - Copy dastructure for solving system
+!
+    ds_system2 = ds_system
 !
 ! --- PARAMETRES RECHERCHE LINEAIRE
 !
@@ -186,10 +190,10 @@ integer :: pilcvg, ldccvg
 ! --- FONCTIONS DE PILOTAGE LINEAIRES : RECHERCHE LINEAIRE STANDARD
 !
     if (typilo .eq. 'DDL_IMPO') then
-        call nmrelp(modele         , numedd, ds_material, carele    , ds_system ,&
-                    ds_constitutive, lischa, fonact     , iterat    , ds_measure,&
-                    sdnume         , sddyna, ds_algopara, ds_contact, valinc    ,&
-                    solalg         , veelem, veasse     , ds_conv   , ldccvg)
+        call nmrelp(modele         , numedd     , ds_material, carele    , ds_system ,&
+                    ds_constitutive, lischa     , fonact     , iterat    , ds_measure,&
+                    sdnume         , ds_algopara, ds_contact , valinc    ,&
+                    solalg         , veelem     , veasse     , ds_conv   , ldccvg)
         goto 999
     endif
 !
@@ -224,7 +228,7 @@ integer :: pilcvg, ldccvg
 !
 ! --- CALCUL DE F(RHO=0)
 !
-    call nmpilr(fonact, numedd, matass, veasse, ds_contact, cnfint,&
+    call nmpilr(fonact, numedd, matass, veasse, ds_contact, ds_system,&
                 etan  , f0)
     fcvg = abs(relirl * f0)
 !
@@ -259,15 +263,20 @@ integer :: pilcvg, ldccvg
             proeta(n) = proeta(n) + offset
         end do
 !
-! ----- CHOIX DU ETA_PILOTAGE
+! ----- Get right vectors
 !
         call nmchso(veasse, 'VEASSE', 'CNDIRI', cndirs(act), veasst)
-        call nmceta(modele         , numedd, ds_material, carele        ,vefins(act), cnfins(act),&
-                    ds_constitutive, ds_contact, lischa, fonact, ds_measure    ,&
-                    sdpilo         , iterat, sdnume, valint(1, act), solalg    ,&
-                    veelem         , veasst, sddisc, nbeffe        , irecli    ,&
-                    proeta         , offset, rho   , eta           , ldccvg    ,&
-                    pilcvg         , residu, matass)
+        ds_system2%vefint = vefins(act)
+        ds_system2%cnfint = cnfins(act)
+!
+! ----- Select ETA
+!
+        call nmceta(modele         , numedd    , ds_material, carele,&
+                    ds_constitutive, ds_contact, lischa     , fonact        , ds_measure,&
+                    sdpilo         , iterat    , sdnume     , valint(1, act), solalg    ,&
+                    veelem         , veasst    , sddisc     , nbeffe        , irecli    ,&
+                    proeta         , offset    , rho        , eta           , ldccvg    ,&
+                    pilcvg         , residu    , matass     , ds_system2)
 !
 ! ----- PB CVG: S'IL EXISTE DEJA UN RHO OPTIMAL, ON LE CONSERVE
 ! ----- ET ON SORT
@@ -337,7 +346,7 @@ integer :: pilcvg, ldccvg
 ! --- REACTUALISATION DES EFFORTS EXTERIEURS (AVEC ETA)
 !
     call nmchex(veasst, 'VEASSE', 'CNFEXT', cnfext)
-    call nmfext(eta, fonact, sddyna, veasst, cnfext, ds_contact)
+    call nmfext(eta, fonact, veasst, cnfext, ds_contact)
 !
 ! --- RECUPERATION DES VARIABLES EN T+ (PAS DE RECALCUL)
 !

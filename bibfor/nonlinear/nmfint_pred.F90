@@ -83,14 +83,17 @@ character(len=19), optional, intent(in) :: sdnume_
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: vefint, cnfint
-    character(len=19) :: vefnod, cnfnod
+    character(len=19) :: vefnod, cnfnod, sdnume
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         call utmess('I', 'MECANONLINE11_27')
+    endif
+    sdnume = ' '
+    if (present(sdnume_)) then
+        sdnume = sdnume_
     endif
 !
 ! - Direct computation (no integration of behaviour)
@@ -108,20 +111,13 @@ character(len=19), optional, intent(in) :: sdnume_
 ! - Integration of behaviour
 !
     if (ds_system%l_pred_cnfint) then
-        vefint = ds_system%vefint
-        cnfint = ds_system%cnfint
         call nmfint(model         , cara_elem      ,&
                     ds_material   , ds_constitutive,&
-                    list_func_acti, iter_newt      , sddyna, ds_measure,&
+                    list_func_acti, iter_newt      , ds_measure, ds_system,&
                     hval_incr     , hval_algo      ,&
-                    vefint        , ldccvg )
+                    ldccvg        , sddyna)
         if (ldccvg .eq. 0) then
-            if (present(sdnume_)) then
-                call nmaint(nume_dof, list_func_acti, sdnume_,&
-                            vefint  , cnfint)
-            else
-                call assvec('V', cnfint, 1, vefint, [1.d0], nume_dof, ' ', 'ZERO', 1)
-            endif
+            call nmaint(nume_dof, list_func_acti, sdnume, ds_system)
         endif
     endif
 !

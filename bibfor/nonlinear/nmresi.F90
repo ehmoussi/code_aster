@@ -192,7 +192,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 !
 ! - Compute external forces
 !
-    call nmfext(eta, list_func_acti, sddyna, hval_veasse, cnfext, ds_contact)
+    call nmfext(eta, list_func_acti, hval_veasse, cnfext, ds_contact, sddyna)
 !
 ! - For kinematic loads
 !

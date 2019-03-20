@@ -218,7 +218,6 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         optrig = 'RIGI_MECA'
     else
         optrig = 'RIGI_MECA_TANG'
-!        ASSERT(.FALSE.)
     endif
 !
 ! --- A RECALCULER
@@ -228,12 +227,12 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! --- CALCUL DES MATR-ELEM DE RIGIDITE
 !
     if (lcrigi) then
-        call nmrigi(modelz         , carele     , sddyna,&
-                    fonact         , iterat     ,&
-                    ds_constitutive, ds_material,&
-                    ds_measure     , valin2     , solalg,&
-                    ds_system      , optrig     ,&
-                    ldccvg)
+        call nmrigi(modelz     , carele         ,&
+                    ds_material, ds_constitutive,&
+                    fonact     , iterat         ,&
+                    sddyna     , ds_measure     ,ds_system,&
+                    valin2     , solalg,&
+                    optrig     , ldccvg)
     endif
 !
 ! --- CALCUL DES MATR-ELEM DES CHARGEMENTS SUIVEURS

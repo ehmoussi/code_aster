@@ -17,10 +17,11 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmrelp(model          , nume_dof , ds_material   , cara_elem , ds_system ,&
-                  ds_constitutive, list_load, list_func_acti, iter_newt , ds_measure,&
-                  sdnume         , sddyna   , ds_algopara   , ds_contact, valinc    ,&
-                  solalg         , veelem   , veasse        , ds_conv   , ldccvg)
+subroutine nmrelp(model          , nume_dof   , ds_material   , cara_elem, ds_system ,&
+                  ds_constitutive, list_load  , list_func_acti, iter_newt, ds_measure,&
+                  sdnume         , ds_algopara, ds_contact    , valinc   ,&
+                  solalg         , veelem     , veasse        , ds_conv  , ldccvg,&
+                  sddyna_)
 !
 use NonLin_Datastructure_type
 !
@@ -60,7 +61,7 @@ integer :: iter_newt, ldccvg
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=19) :: list_load, sddyna, sdnume
+character(len=19) :: list_load, sdnume
 type(NL_DS_Material), intent(in) :: ds_material
 character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
@@ -68,6 +69,7 @@ type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
 type(NL_DS_Conv), intent(inout) :: ds_conv
+character(len=19), intent(in), optional :: sddyna_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -94,7 +96,6 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
-! IN  SDDYNA : SD DYNAMIQUE
 ! OUT LDCCVG : CODE RETOUR DE L'INTEGRATION DU COMPORTEMENT
 !                -1 : PAS D'INTEGRATION DU COMPORTEMENT
 !                 0 : CAS DU FONCTIONNEMENT NORMAL
@@ -120,12 +121,13 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
     character(len=19) :: sigplt, varplt, depplt
     character(len=19) :: vefint, vediri
     character(len=19) :: cnfint, cndiri, cnfext, cnsstr
-    character(len=19) :: depdet, ddepla, depdel
+    character(len=19) :: depdet, ddepla, depdel, sddyna
     character(len=19) :: solalt(zsolal), valint(zvalin, 2)
     character(len=24) :: mate, varc_refe
     aster_logical :: echec
     integer :: ifm, niv
     real(kind=8), pointer :: vale(:) => null()
+    type(NL_DS_System) :: ds_system2
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -136,6 +138,10 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
+    sddyna = ' '
+    if (present(sddyna_)) then
+        sddyna = sddyna_
+    endif
     lgrot = isfonc(list_func_acti,'GD_ROTA')
     lendo = isfonc(list_func_acti,'ENDO_NO')
     lnkry = isfonc(list_func_acti,'NEWTON_KRYLOV')
@@ -177,8 +183,12 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
     call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(solalg, 'SOLALG', 'DDEPLA', ddepla)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
-    cnfint = ds_system%cnfint
-    vefint = ds_system%vefint
+!
+! - Copy dastructure for solving system
+!
+    ds_system2 = ds_system
+    cnfint     = ds_system%cnfint
+    vefint     = ds_system%vefint
 !
 ! --- ACCES VARIABLES
 !
@@ -273,13 +283,14 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
             call nmdebg('VECT', depdet, 6)
         endif
 ! ----- Update internal forces
-        call nmfint(model          , cara_elem      ,&
-                    ds_material    , ds_constitutive,&
-                    list_func_acti , iter_newt      , sddyna, ds_measure,&
-                    valint(1, act) , solalt         ,&
-                    vefint         , ldccvg   )
-        call nmaint(nume_dof, list_func_acti, sdnume,&
-                    vefint, cnfins(act))
+        ds_system2%cnfint = cnfins(act)
+        ds_system2%vefint = vefint
+        call nmfint(model         , cara_elem      ,&
+                    ds_material   , ds_constitutive,&
+                    list_func_acti, iter_newt      , ds_measure, ds_system2,&
+                    valint(1, act), solalt         ,&
+                    ldccvg        , sddyna)
+        call nmaint(nume_dof, list_func_acti, sdnume, ds_system2)
 ! ----- Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
         call nonlinRForceCompute(model   , ds_material, cara_elem, list_load,&
                                  nume_dof, ds_measure , depplt,&
