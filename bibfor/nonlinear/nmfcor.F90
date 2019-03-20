@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmfcor(model          , nume_dof   , ds_material   , cara_elem  ,&
+subroutine nmfcor(model          , nume_dof   , ds_material   , cara_elem  , ds_system,&
                   ds_constitutive, list_load  , list_func_acti, ds_algopara, nume_inst,&
-                  iter_newt         , ds_measure , sddisc        , sddyna     , sdnume   ,&
+                  iter_newt      , ds_measure , sddisc        , sddyna     , sdnume   ,&
                   sderro         , ds_contact , hval_incr     , hval_algo  ,&
                   hval_veelem    , hval_veasse, hval_meelem   , hval_measse, matass   ,&
                   lerrit)
@@ -60,6 +60,7 @@ character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24) :: sderro
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: hval_meelem(*), hval_veelem(*)
 character(len=19) :: hval_measse(*), hval_veasse(*)
 character(len=19) :: hval_algo(*), hval_incr(*)
@@ -86,6 +87,7 @@ aster_logical :: lerrit
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  list_func_acti   : list of active functionnalities
 ! In  ds_algopara      : datastructure for algorithm parameters
+! In  ds_system        : datastructure for non-linear system management
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
 ! In  sddisc           : datastructure for time discretization
 ! In  nume_inst        : index of current time step
@@ -105,7 +107,6 @@ aster_logical :: lerrit
     integer :: ifm, niv
     character(len=24) :: mate, varc_refe
     aster_logical :: lcfint, lcrigi, lcdiri, lcbudi
-    character(len=19) :: vefint, cnfint
     character(len=19) :: disp_curr, vite_curr, acce_curr, vect_lagr
     character(len=16) :: option
     aster_logical :: l_cont_disc, l_unil, leltc
@@ -136,8 +137,6 @@ aster_logical :: lerrit
     call nmchex(hval_incr, 'VALINC', 'DEPPLU', disp_curr)
     call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
     call nmchex(hval_incr, 'VALINC', 'ACCPLU', acce_curr)
-    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
 !
 ! - Compute forces for second member at correction
 !
@@ -169,15 +168,19 @@ aster_logical :: lerrit
 !
     if (lcfint) then
         if (lcrigi) then
-            call nmrigi(model    , mate  , cara_elem, ds_constitutive, sddyna,&
-                        ds_measure, list_func_acti, iter_newt, hval_incr, hval_algo,&
-                        varc_refe, hval_meelem, hval_veelem, option         , ldccvg)
+            call nmrigi(model          , cara_elem  , sddyna,&
+                        list_func_acti  , iter_newt  ,&
+                        ds_constitutive, ds_material,&
+                        ds_measure     , hval_incr  , hval_algo,&
+                        hval_meelem    , ds_system  , option   ,&
+                        ldccvg)
         else
-            call nmfint(model          , cara_elem      ,&
-                        ds_material    , ds_constitutive,&
-                        list_func_acti , iter_newt      , sddyna, ds_measure,&
-                        hval_incr      , hval_algo      ,&
-                        vefint         , ldccvg   )
+            call nmfint(model           , cara_elem      ,&
+                        ds_material     , ds_constitutive,&
+                        list_func_acti  , iter_newt      ,&
+                        sddyna          , ds_measure     ,&
+                        hval_incr       , hval_algo      ,&
+                        ds_system%vefint, ldccvg)
         endif
     endif
 !
@@ -215,7 +218,7 @@ aster_logical :: lerrit
 ! ----- Assemble internal forces
         if (lcfint) then
             call nmaint(nume_dof, list_func_acti, sdnume,&
-                        vefint  , cnfint)
+                        ds_system%vefint  , ds_system%cnfint)
         endif
 ! ----- Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
         if (lcdiri) then

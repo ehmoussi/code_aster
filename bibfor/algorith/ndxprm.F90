@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 ! aslint: disable=W1504
 !
 subroutine ndxprm(modelz, ds_material, carele    , ds_constitutive, ds_algopara,&
-                  lischa, numedd, numfix    , solveu         , &
+                  lischa, numedd, numfix    , solveu         , ds_system,&
                   sddisc, sddyna, ds_measure, numins         , fonact     ,&
-                  valinc, solalg, veelem    , meelem         , measse     ,&
+                  valinc, solalg, meelem    , measse     ,&
                   maprec, matass, faccvg    , ldccvg)
 !
 use NonLin_Datastructure_type
@@ -49,9 +49,10 @@ character(len=24) :: carele
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=24) :: numedd, numfix
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: sddisc, sddyna, lischa, solveu
 character(len=19) :: solalg(*), valinc(*)
-character(len=19) :: veelem(*), meelem(*), measse(*)
+character(len=19) :: meelem(*), measse(*)
 integer :: numins
 character(len=19) :: maprec, matass
 integer :: faccvg, ldccvg
@@ -75,6 +76,7 @@ integer :: faccvg, ldccvg
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SOLVEU : SOLVEUR
+! In  ds_system        : datastructure for non-linear system management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  ITERAT : NUMERO D'ITERATION
@@ -82,7 +84,6 @@ integer :: faccvg, ldccvg
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
 ! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
-! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
 ! OUT MATASS : MATRICE DE RESOLUTION ASSEMBLEE
 ! OUT MAPREC : MATRICE DE RESOLUTION ASSEMBLEE - PRECONDITIONNEMENT
 ! OUT FACCVG : CODE RETOUR FACTORISATION MATRICE GLOBALE
@@ -213,10 +214,10 @@ integer :: faccvg, ldccvg
     if (nb_matr .gt. 0) then
         call nmxmat(modelz        , ds_material, carele     , ds_constitutive, sddisc        ,&
                     sddyna        , fonact     , numins     , iterat         , valinc        ,&
-                    solalg        , lischa     , numedd     , numfix        ,&
+                    solalg        , lischa     , ds_system,numedd     , numfix        ,&
                     ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
                     list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
-                    measse        , veelem     , ldccvg)
+                    measse        , ldccvg)
     endif
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER

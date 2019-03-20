@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 ! aslint: disable=W1504
 !
 subroutine nmprma(mesh       , modelz     , ds_material, carele    , ds_constitutive,&
-                  ds_algopara, lischa     , numedd    , numfix         , solveu,&
+                  ds_algopara, lischa     , numedd    , numfix         , solveu, ds_system,&
                   ds_print   , ds_measure , ds_algorom, sddisc         ,&
                   sddyna     , numins     , fonact    , ds_contact     ,&
-                  valinc     , solalg     , veelem    , meelem         , measse,&
+                  valinc     , solalg     , meelem    , measse,&
                   maprec     , matass     , faccvg    , ldccvg)
 !
 use NonLin_Datastructure_type
@@ -69,7 +69,8 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 character(len=24) :: numedd, numfix
 character(len=19) :: sddisc, sddyna, lischa, solveu
 character(len=19) :: solalg(*), valinc(*)
-character(len=19) :: veelem(*), meelem(*), measse(*)
+character(len=19) :: meelem(*), measse(*)
+type(NL_DS_System), intent(in) :: ds_system
 integer :: numins
 type(NL_DS_Contact), intent(inout) :: ds_contact
 character(len=19) :: maprec, matass
@@ -96,6 +97,7 @@ integer :: faccvg, ldccvg
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! In  ds_algorom       : datastructure for ROM parameters
+! In  ds_system        : datastructure for non-linear system management
 ! IN  SOLVEU : SOLVEUR
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
@@ -104,7 +106,6 @@ integer :: faccvg, ldccvg
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
 ! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
-! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
 ! OUT LFINT  : .TRUE. SI FORCES INTERNES CALCULEES
 ! OUT MATASS : MATRICE DE RESOLUTION ASSEMBLEE
 ! OUT MAPREC : MATRICE DE RESOLUTION ASSEMBLEE - PRECONDITIONNEMENT
@@ -186,7 +187,9 @@ integer :: faccvg, ldccvg
     call nmchoi('PREDICTION', sddyna, numins, fonact, metpre,&
                 metcor, reasma, lcamor, optrig, lcrigi,&
                 larigi, lcfint)
-    ASSERT(.not. lcfint)
+    if (lcfint) then
+        ASSERT(.false.)
+    endif
 !
 ! - Compute matrices for contact
 !
@@ -248,10 +251,10 @@ integer :: faccvg, ldccvg
     if (nb_matr .gt. 0) then
         call nmxmat(modelz        , ds_material, carele     , ds_constitutive, sddisc        ,&
                     sddyna        , fonact     , numins     , iterat         , valinc        ,&
-                    solalg        , lischa     , numedd         , numfix        ,&
+                    solalg        , lischa     , ds_system, numedd         , numfix        ,&
                     ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
                     list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
-                    measse        , veelem     , ldccvg     )
+                    measse        , ldccvg     )
     endif
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER

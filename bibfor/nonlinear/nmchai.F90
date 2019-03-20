@@ -55,8 +55,8 @@ character(len=6), optional, intent(out) :: tychap_out
 !
     integer, parameter :: zmeelm = 9
     integer, parameter :: zmeass = 4
-    integer, parameter :: zveelm = 14
-    integer, parameter :: zveass = 20
+    integer, parameter :: zveelm = 13
+    integer, parameter :: zveass = 19
     integer, parameter :: zsolal = 17
     integer, parameter :: zvalin = 28
 !
@@ -71,11 +71,11 @@ character(len=6), optional, intent(out) :: tychap_out
      &             'MESSTR','MEGEOM','MEELTC','MEELTF'/
     data lmeass /'MERIGI','MEMASS','MEAMOR','MESSTR'/
 !
-    data lveelm /'CNFINT','CNDIRI','CNBUDI','CNDIDO',&
+    data lveelm /'CNDIRI','CNBUDI','CNDIDO',&
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
      &             'CNFSDO','CNIMPE','CNDIDI','CNSSTF',&
      &             'CNREFE'/
-    data lveass /'CNFINT','CNDIRI','CNBUDI','CNDIDO',&
+    data lveass /'CNDIRI','CNBUDI','CNDIDO',&
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
      &             'CNFSDO','CNIMPE','CNDIDI','CNSSTF',&
      &             'CNREFE',&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmrelp(model          , nume_dof , ds_material, cara_elem ,&
-                  ds_constitutive, list_load, list_func_acti     , iter_newt    , ds_measure,&
-                  sdnume         , sddyna   , ds_algopara, ds_contact, valinc    ,&
-                  solalg         , veelem   , veasse     , ds_conv   , ldccvg)
+subroutine nmrelp(model          , nume_dof , ds_material   , cara_elem , ds_system ,&
+                  ds_constitutive, list_load, list_func_acti, iter_newt , ds_measure,&
+                  sdnume         , sddyna   , ds_algopara   , ds_contact, valinc    ,&
+                  solalg         , veelem   , veasse        , ds_conv   , ldccvg)
 !
 use NonLin_Datastructure_type
 !
@@ -64,6 +64,7 @@ character(len=19) :: list_load, sddyna, sdnume
 type(NL_DS_Material), intent(in) :: ds_material
 character(len=24) :: model, nume_dof, cara_elem
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
 type(NL_DS_Conv), intent(inout) :: ds_conv
@@ -87,6 +88,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
 ! IN  SDNUME : SD NUMEROTATION
 ! In  ds_contact       : datastructure for contact management
+! In  ds_system        : datastructure for non-linear system management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
@@ -169,14 +171,14 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
     call nmchex(valinc, 'VALINC', 'SIGPLU', sigplu)
     call nmchex(valinc, 'VALINC', 'VARPLU', varplu)
     call nmchex(valinc, 'VALINC', 'COMPLU', complu)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
     call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
-    call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
     call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(solalg, 'SOLALG', 'DDEPLA', ddepla)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
+    cnfint = ds_system%cnfint
+    vefint = ds_system%vefint
 !
 ! --- ACCES VARIABLES
 !

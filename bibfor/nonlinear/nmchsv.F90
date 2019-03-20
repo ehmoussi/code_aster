@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmchsv(fonact, veasse, sddyna, ds_contact)
+subroutine nmchsv(fonact, veasse, sddyna, ds_system, ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -36,6 +36,7 @@ implicit none
 integer :: fonact(*)
 character(len=19) :: sddyna
 character(len=19) :: veasse(*)
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! ----------------------------------------------------------------------
@@ -50,7 +51,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! IN  SDDYNA : SD DYNAMIQUE
 ! In  ds_contact       : datastructure for contact management
-!
+! In  ds_system        : datastructure for non-linear system management
 !
 !
     character(len=19) :: olfedo, olfsdo, oldido, oldidi, olfint
@@ -96,7 +97,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     call nmchex(veasse, 'VEASSE', 'CNFSDO', cnfsdo)
     call nmchex(veasse, 'VEASSE', 'CNDIDO', cndido)
     call nmchex(veasse, 'VEASSE', 'CNDIDI', cndidi)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
+    cnfint = ds_system%cnfint
     call nmchex(veasse, 'VEASSE', 'CNONDP', cnondp)
     call nmchex(veasse, 'VEASSE', 'CNLAPL', cnlapl)
     call nmchex(veasse, 'VEASSE', 'CNCINE', cncine)

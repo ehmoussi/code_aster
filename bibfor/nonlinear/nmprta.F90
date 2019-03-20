@@ -165,17 +165,18 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmprma(mesh, model      , ds_material, cara_elem, ds_constitutive,&
-                ds_algopara, list_load  , nume_dof, numfix, solveu,&
-                ds_print   , ds_measure , ds_algorom, sddisc,&
-                sddyna     , nume_inst  , list_func_acti, ds_contact,&
-                hval_incr  , hval_algo  , hval_veelem, hval_meelem, hval_measse,&
-                maprec     , matass     , faccvg, ldccvg)
+    call nmprma(mesh       , model      , ds_material   , cara_elem , ds_constitutive,&
+                ds_algopara, list_load  , nume_dof      , numfix    , solveu         ,&
+                ds_system  , ds_print   , ds_measure    , ds_algorom, sddisc         ,&
+                sddyna     , nume_inst  , list_func_acti, ds_contact, hval_incr      ,&
+                hval_algo  , hval_meelem, hval_measse   , maprec    , matass         ,&
+                faccvg     , ldccvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
-    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
-    if (ldccvg .eq. 1) goto 999
+    if ((faccvg .eq. 1) .or. (faccvg .eq. 2) .or. (ldccvg .eq. 1)) then
+        goto 999
+    endif
 !
 ! - Compute forces for second member at prediction
 !
@@ -201,7 +202,7 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
 !
     call nmfint_pred(model      , cara_elem      , list_func_acti, &
                      sddyna     , nume_dof       , &
-                     ds_material, ds_constitutive, ds_system     , ds_measure    ,&
+                     ds_material, ds_constitutive, ds_system     , ds_measure,&
                      time_prev  , time_curr      , iter_newt     ,&
                      hval_incr  , hval_algo      ,&
                      ldccvg     , sdnume)
@@ -211,10 +212,10 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
 !
 ! - Evaluate second member for prediction
 !
-    call nmassp(ds_material   , list_func_acti,&
-                ds_algorom    , sddyna        , ds_system,&
-                ds_contact    , hval_veasse   ,&
-                cnpilo        , cndonn)
+    call nmassp(ds_material, list_func_acti,&
+                ds_algorom , sddyna        , ds_system,&
+                ds_contact , hval_veasse   ,&
+                cnpilo     , cndonn)
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !

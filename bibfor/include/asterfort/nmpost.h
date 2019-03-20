@@ -22,7 +22,7 @@ interface
                       ds_contact, ds_algopara, fonact  ,&
                       ds_measure, sddisc , &
                       sd_obsv, sderro  , sddyna, ds_posttimestep     , valinc  ,&
-                      solalg , meelem  , measse, veelem     , veasse  ,&
+                      solalg , meelem  , measse, veasse  ,&
                       ds_energy, sdcriq  , eta   , lischa)
         use NonLin_Datastructure_type
         character(len=24) :: modele
@@ -49,7 +49,6 @@ interface
         character(len=19) :: solalg(*)
         character(len=19) :: meelem(*)
         character(len=19) :: measse(*)
-        character(len=19) :: veelem(*)
         character(len=19) :: veasse(*)
         type(NL_DS_Energy), intent(inout) :: ds_energy
         character(len=24) :: sdcriq

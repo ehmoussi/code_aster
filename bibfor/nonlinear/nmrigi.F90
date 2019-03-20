@@ -17,9 +17,12 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmrigi(modelz    , mate  , carele, ds_constitutive, sddyna,&
-                  ds_measure, fonact, iterat, valinc         , solalg,&
-                  comref    , meelem, veelem, optioz         , ldccvg)
+subroutine nmrigi(modelz         , carele     , sddyna,&
+                  fonact         , iterat     ,&
+                  ds_constitutive, ds_material,&
+                  ds_measure     , valinc     , solalg,&
+                  meelem         , ds_system  , optioz,&
+                  ldccvg)
 !
 use NonLin_Datastructure_type
 !
@@ -35,33 +38,32 @@ implicit none
 !
 character(len=*) :: optioz
 character(len=*) :: modelz
-character(len=*) :: mate
+type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24) :: carele
 integer :: iterat, ldccvg
 character(len=19) :: sddyna
-character(len=24) :: comref
-character(len=19) :: meelem(*), veelem(*)
-character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_System), intent(in) :: ds_system
+character(len=19) :: meelem(*), solalg(*), valinc(*)
 integer :: fonact(*)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (CALCUL - UTILITAIRE)
 !
 ! CALCUL DES MATR_ELEM DE RIGIDITE
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  MODELE : MODELE
 ! IN  OPTRIG : OPTION DE CALCUL POUR MERIMO
-! IN  MATE   : CHAMP MATERIAU
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_system        : datastructure for non-linear system management
 ! IN  ITERAT : NUMERO D'ITERATION
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
@@ -72,15 +74,15 @@ integer :: fonact(*)
 !                 2 : ERREUR SUR LA NON VERIF. DE CRITERES PHYSIQUES
 !                 3 : SIZZ PAS NUL POUR C_PLAN DEBORS
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: vefint, merigi
+    character(len=19) :: merigi
     character(len=1) :: base
     character(len=24) :: modele
     character(len=16) :: optrig
     aster_logical :: tabret(0:10), lendo
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     base = 'V'
     modele = modelz
@@ -89,13 +91,11 @@ integer :: fonact(*)
 !
 ! --- VECT_ELEM ET MATR_ELEM
 !
-    call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
     call nmchex(meelem, 'MEELEM', 'MERIGI', merigi)
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !
     lendo = isfonc(fonact,'ENDO_NO')
-!
     if (.not.lendo) then
         if (optrig(1:9) .eq. 'RIGI_MECA') then
             call nmdep0('ON ', solalg)
@@ -109,9 +109,11 @@ integer :: fonact(*)
 !
 ! - Computation
 !
-    call merimo(base, modele, carele, mate, comref,&
-                ds_constitutive, iterat+1, fonact, sddyna,&
-                valinc, solalg, merigi, vefint, optrig,&
+    call merimo(base                  , modele               , carele,&
+                ds_material%field_mate, ds_material%varc_refe,&
+                ds_constitutive       , iterat+1             , fonact, sddyna,&
+                valinc                , solalg               , merigi,&
+                ds_system%vefint      , optrig,&
                 tabret)
 !
 ! - End timer

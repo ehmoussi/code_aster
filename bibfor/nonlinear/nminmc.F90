@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 subroutine nminmc(fonact, lischa     , sddyna     , modele, ds_constitutive,&
                   numedd, numfix     , ds_algopara, solalg,&
                   valinc, ds_material, carele     , sddisc, ds_measure     ,&
-                  meelem, measse     , veelem)
+                  meelem, measse     , ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -42,7 +42,7 @@ type(NL_DS_Material), intent(in) :: ds_material
 character(len=24) :: modele
 character(len=24) :: carele
 character(len=19) :: meelem(*), measse(*)
-character(len=19) :: veelem(*)
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: solalg(*), valinc(*)
 character(len=19) :: sddisc
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -71,7 +71,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! OUT MEELEM : MATRICES ELEMENTAIRES
-! OUT VEELEM : VECTEURS ELEMENTAIRES
+! In  ds_system        : datastructure for non-linear system management
 ! OUT MEASSE : MATRICES ASSEMBLEES
 !
 ! ----------------------------------------------------------------------
@@ -189,13 +189,12 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modele, ds_material, carele, ds_constitutive,&
-                    sddisc, sddyna, fonact, numins, iterat,&
-                    valinc, solalg, lischa,&
-                    numedd, numfix, ds_measure, ds_algopara,&
-                    nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse, lcfint, meelem, measse,&
-                    veelem, ldccvg)
+        call nmxmat(modele        , ds_material, carele     , ds_constitutive, sddisc, &
+                    sddyna        , fonact     , numins     , iterat         , valinc, &
+                    solalg        , lischa     , ds_system  , numedd         , numfix, &
+                    ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti, &
+                    list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem,&
+                    measse        , ldccvg)
         if (ldccvg .gt. 0) then
             call utmess('F', 'MECANONLINE_1')
         endif

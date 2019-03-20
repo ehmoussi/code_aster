@@ -19,9 +19,10 @@
 !
 subroutine nmfint(model          , cara_elem      ,&
                   ds_material    , ds_constitutive,&
-                  list_func_acti , iter_newt      , sddyna, ds_measure,&
+                  list_func_acti , iter_newt      ,&
+                  sddyna         , ds_measure     ,&
                   hval_incr      , hval_algo      ,&
-                  vefint         , ldccvg   )
+                  vefint         , ldccvg)
 !
 use NonLin_Datastructure_type
 !

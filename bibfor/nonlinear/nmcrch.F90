@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,9 +77,9 @@ character(len=19), intent(in) :: veasse(*)
     character(len=19) :: depabs, vitabs, accabs
     character(len=19) :: cndyna, cnamod
     character(len=19) :: cnfext
-    character(len=19) :: cnfedo, cnfsdo, cndidi, cnfint
+    character(len=19) :: cnfedo, cnfsdo, cndidi
     character(len=19) :: cndido, cncine, cndiri
-    character(len=19) :: cnondp, cnlapl, cnviss
+    character(len=19) :: cnondp, cnlapl, cnviss, cnfint
     character(len=19) :: cnsstf, cnsstr
     character(len=19) :: cnimpe
     character(len=19) :: cnfepi, cndipi, cnrefe, cneltc, cneltf
@@ -267,9 +267,7 @@ character(len=19), intent(in) :: veasse(*)
 ! --- PAS VRAIMENT DES VECT_ELEM MAIS DES CHAM_NO A CREER
 !
     call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
     call vtcreb(cnfext, 'V', 'R', nume_ddlz = numedd)
-    call vtcreb(cnfint, 'V', 'R', nume_ddlz = numedd)
 !
     if (ldyna) then
         call nmchex(veasse, 'VEASSE', 'CNDYNA', cndyna)

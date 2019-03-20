@@ -91,7 +91,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 20
+    integer, parameter:: zveass = 19
     integer :: iret(zveass)
     character(len=19) :: depmoi, depplu, vitmoi, vitplu, masse, amort, rigid
     character(len=19) :: fexmoi, fexplu, fammoi, fnomoi
@@ -99,7 +99,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     character(len=19) :: lisbid
     character(len=8) :: k8bid
     integer :: ivitmo, ivitpl
-    integer :: neq, i, j, long
+    integer :: neq, i, long, j
     integer :: ifexte, ifamor, ifliai, ifcine, ifnoda
     aster_logical :: ldyna, lamor, lexpl, reassm
     real(kind=8), pointer :: epmo(:) => null()
@@ -119,6 +119,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     real(kind=8), pointer :: v_cnunil(:) => null()
     real(kind=8), pointer :: v_cneltc(:) => null()
     real(kind=8), pointer :: v_cneltf(:) => null()
+    real(kind=8), pointer :: v_cnfint(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -173,6 +174,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     if (ds_contact%l_cneltf) then
         call jeveuo(ds_contact%cneltf(1:19)//'.VALE', 'L', vr=v_cneltf)
     endif
+    call jeveuo(ds_system%cnfint(1:19)//'.VALE', 'L', vr=v_cnfint)
 !
 !
     do i = 1, zveass
@@ -189,12 +191,10 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     call jeveuo(fliplu//'.VALE', 'E', vr=flipl)
     call jeveuo(fnoplu//'.VALE', 'E', vr=fnopl)
 !
-    do i = 1, neq
-        fexpl(i)=0.d0
-        fampl(i)=0.d0
-        flipl(i)=0.d0
-        fnopl(i)=0.d0
-    end do
+    fexpl(:) = 0.d0
+    fampl(:) = 0.d0
+    flipl(:) = 0.d0
+    fnopl(:) = 0.d0
 !
     call wkvect('FEXTE', 'V V R', 2*neq, ifexte)
     call wkvect('FAMOR', 'V V R', 2*neq, ifamor)
@@ -202,114 +202,79 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     call wkvect('FNODA', 'V V R', 2*neq, ifnoda)
     call wkvect('FCINE', 'V V R', neq, ifcine)
 !
-! - Get external state variable contribution
+! - Add external state variable contribution
 !
-    do j = 1, neq
-        fexpl(j)=fexpl(j)+v_fvarc_curr(j)
-        fnopl(j)=fnopl(j)+v_fvarc_curr(j)
-    end do
+    fexpl(:) = fexpl(:)+v_fvarc_curr(:)
+    fnopl(:) = fnopl(:)+v_fvarc_curr(:)
 !
-! - Get discrete contact/friction contribution
+! - Add discrete contact/friction contribution
 !
     if (ds_contact%l_cnctdf) then
-        do j = 1, neq
-            flipl(j)=flipl(j)+v_cnctdf(j)
-        end do
+        flipl(:) = flipl(:) + v_cnctdf(:)
     endif
     if (ds_contact%l_cnctdc) then
-        do j = 1, neq
-            flipl(j)=flipl(j)+v_cnctdc(j)
-        end do
+        flipl(:) = flipl(:) + v_cnctdc(:)
     endif
     if (ds_contact%l_cnunil) then
-        do j = 1, neq
-            flipl(j)=flipl(j)+v_cnunil(j)
-        end do
+        flipl(:) = flipl(:) + v_cnunil(:)
     endif
 !
-! - Get continue contact/friction contribution
+! - Add continue contact/friction contribution
 !
     if (ds_contact%l_cneltc) then
-        do j = 1, neq
-            flipl(j)=flipl(j)+v_cneltc(j)
-        end do
-        do j = 1, neq
-            fnopl(j)=fnopl(j)-v_cneltc(j)
-        end do
+        flipl(:) = flipl(:) + v_cneltc(:)
+        fnopl(:) = fnopl(:) - v_cneltc(:)
     endif
     if (ds_contact%l_cneltf) then
-        do j = 1, neq
-            flipl(j)=flipl(j)+v_cneltf(j)
-        end do
-        do j = 1, neq
-            fnopl(j)=fnopl(j)-v_cneltf(j)
-        end do
+        flipl(:) = flipl(:) + v_cneltf(:)
+        fnopl(:) = fnopl(:) - v_cneltf(:)
     endif
 !
-! - Get other contributions
+! - Add other contributions
 !
     do i = 1, zveass
         if (iret(i) .ne. 0) then
             call jeveuo(veasse(i)//'.VALE', 'L', vr=veass)
 ! --------------------------------------------------------------------
-! 6  - CNFEDO : CHARGES MECANIQUES FIXES DONNEES
-! 8  - CNLAPL : FORCES DE LAPLACE
-! 10 - CNFSDO : FORCES SUIVEUSES
-! 13 - CNSSTF : FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
+! 5  - CNFEDO : CHARGES MECANIQUES FIXES DONNEES
+! 7  - CNLAPL : FORCES DE LAPLACE
+! 9  - CNFSDO : FORCES SUIVEUSES
+! 12 - CNSSTF : FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
 ! --------------------------------------------------------------------
-            if ((i.eq.6 ) .or. (i.eq.8) .or. (i.eq.10) .or. (i.eq.13)) then
-                do j = 1, neq
-                    fexpl(j)=fexpl(j)+veass(j)
-                end do
+            if ((i.eq.5) .or. (i.eq.7) .or. (i.eq.9) .or. (i.eq.12)) then
+                fexpl(:)=fexpl(:)+veass(:)
 ! --------------------------------------------------------------------
-! 7  - CNFEPI : FORCES PILOTEES PARAMETRE ETA A PRENDRE EN COMPTE
+! 6  - CNFEPI : FORCES PILOTEES PARAMETRE ETA A PRENDRE EN COMPTE
 ! --------------------------------------------------------------------
-            else if (i.eq.7) then
-                do j = 1, neq
-                    fexpl(j)=fexpl(j)+eta*veass(j)
-                end do
+            else if (i.eq.6) then
+                fexpl(:)=fexpl(:)+eta*veass(:)
 ! --------------------------------------------------------------------
-! 2  - CNDIRI : BtLAMBDA                : IL FAUT PRENDRE L OPPOSE
-! 9  - CNONDP : CHARGEMENT ONDES PLANES : IL FAUT PRENDRE L OPPOSE
+! 1  - CNDIRI : BtLAMBDA                : IL FAUT PRENDRE L OPPOSE
+! 8  - CNONDP : CHARGEMENT ONDES PLANES : IL FAUT PRENDRE L OPPOSE
 ! --------------------------------------------------------------------
-            else if ((i.eq.2).or.(i.eq.9)) then
-                do j = 1, neq
-                    fexpl(j)=fexpl(j)-veass(j)
-                end do
+            else if ((i.eq.1).or.(i.eq.8)) then
+                fexpl(:)=fexpl(:)-veass(:)
 ! --------------------------------------------------------------------
-! 18 - CNAMOD : FORCE D AMORTISSEMENT MODAL
+! 17 - CNAMOD : FORCE D AMORTISSEMENT MODAL
 ! --------------------------------------------------------------------
-            else if (i.eq.18) then
-                do j = 1, neq
-                    fampl(j)=fampl(j)+veass(j)
-                end do
+            else if (i.eq.17) then
+                fampl(:)=fampl(:)+veass(:)
 ! --------------------------------------------------------------------
-! 11 - CNIMPE : FORCES IMPEDANCE
+! 10 - CNIMPE : FORCES IMPEDANCE
 ! --------------------------------------------------------------------
-            else if (i.eq.11) then
-                do j = 1, neq
-                    flipl(j)=flipl(j)+veass(j)
-                end do
+            else if (i.eq.10) then
+                flipl(:)=flipl(:)+veass(:)
 ! --------------------------------------------------------------------
-! 20 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
+! 19 - CNVISS : CHARGEMENT VEC_ISS (FORCE_SOL)
 ! --------------------------------------------------------------------
-            else if (i.eq.20) then
+            else if (i.eq.19) then
 ! CHARGEMENT FORCE_SOL CNVISS. SI ON COMPTE SA CONTRIBUTION EN TANT
 ! QUE FORCE DISSIPATIVE DE LIAISON, ON DOIT PRENDRE L OPPOSE.
-                do j = 1, neq
-                    flipl(j)=flipl(j)-veass(j)
-                end do
+                flipl(:)=flipl(:)-veass(:)
 ! --------------------------------------------------------------------
-!  1  - CNFINT : FORCES INTERNES
+! 14 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
 ! --------------------------------------------------------------------
-            else if (i.eq.1) then
-                do j = 1, neq
-                    fnopl(j)=fnopl(j)+veass(j)
-                end do
-! --------------------------------------------------------------------
-! 15 - CNCINE : INCREMENTS DE DEPLACEMENT IMPOSES (AFFE_CHAR_CINE)
-! --------------------------------------------------------------------
-            else if (i.eq.15) then
+            else if (i.eq.14) then
 ! ON DOIT RECONSTRUIRE LA MATRICE DE MASSE CAR ELLE A ETE MODIFIEE
 ! POUR SUPPRIMER DES DEGRES DE LIBERTE EN RAISON DE AFFE_CHAR_CINE.
                 reassm=.true.
@@ -319,6 +284,10 @@ type(NL_DS_Contact), intent(in) :: ds_contact
             endif
         endif
     end do
+!
+! - Add internal forces
+!
+    fnopl(:) = fnopl(:) + v_cnfint(:)
 !
     if (reassm) then
 ! --- REASSEMBLAGE DE LA MATRICE DE MASSE.

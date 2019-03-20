@@ -23,7 +23,7 @@ subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
                   ds_contact, ds_algopara, fonact  ,&
                   ds_measure, sddisc     , &
                   sd_obsv, sderro  , sddyna, ds_posttimestep, valinc  ,&
-                  solalg , meelem  , measse, veelem     , veasse  ,&
+                  solalg , meelem  , measse, veasse  ,&
                   ds_energy, sdcriq  , eta   , lischa)
 !
 use NonLin_Datastructure_type
@@ -59,7 +59,7 @@ character(len=19), intent(in) :: sd_obsv
 character(len=24) :: modele, numedd, numfix
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_System), intent(in) :: ds_system
-character(len=19) :: veelem(*), measse(*), veasse(*)
+character(len=19) :: measse(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=24) :: sderro, sdcriq
@@ -140,14 +140,13 @@ integer :: fonact(*)
 !
         if (l_mode_vibr .or. l_crit_stab) then
             call nmspec(modele         , ds_material, carele    ,lischa      , fonact,&
-                        numedd         , numfix    ,&
+                        numedd         , numfix     , ds_system ,&
                         ds_constitutive, &
                         sddisc         , numins    ,&
                         sddyna         , sderro    , ds_algopara,&
                         ds_measure     ,&
                         valinc         , solalg    ,&
                         meelem         , measse    ,&
-                        veelem         ,&
                         ds_posttimestep)
         endif
 !

@@ -18,8 +18,8 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmchht(model    , ds_material, cara_elem     , ds_constitutive,&
-                  list_load, nume_dof   , list_func_acti, ds_measure,&
-                  sddyna   , sddisc     , sdnume        , &
+                  list_load, nume_dof   , list_func_acti, ds_measure     ,&
+                  sddyna   , sddisc     , sdnume        , ds_system      ,&
                   hval_incr, hval_algo  , hval_measse   , ds_inout)
 !
 use NonLin_Datastructure_type
@@ -58,6 +58,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19), intent(in) :: sddyna
 character(len=19), intent(in) :: sddisc
 character(len=19), intent(in) :: sdnume
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: hval_incr(*)
 character(len=19), intent(in) :: hval_algo(*)
 character(len=19), intent(in) :: hval_measse(*)
@@ -82,6 +83,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 ! In  sddyna           : dynamic parameters datastructure
 ! In  sddisc           : datastructure for time discretization
 ! In  sdnume           : datastructure for dof positions
+! In  ds_system        : datastructure for non-linear system management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  hval_measse      : hat-variable for matrix
@@ -89,9 +91,9 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 20
-    integer, parameter:: zvelem = 15
-    character(len=19) :: hval_veelem(zvelem)
+    integer, parameter:: zveass = 19
+    integer, parameter:: zveelm = 13
+    character(len=19) :: hval_veelem(zveelm)
     character(len=19) :: hval_veasse(zveass)
     aster_logical :: l_didi, l_comp_mstp, l_macr
     character(len=19) :: vefint, vedido
@@ -111,7 +113,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     iter_newt = 0
     codere    = '&&NMCHHT.CODERE'
     call nmchai('VEELEM', 'LONMAX', nmax)
-    ASSERT(nmax.eq.zvelem)
+    ASSERT(nmax.eq.zveelm)
     call nmchai('VEASSE', 'LONMAX', nmax)
     ASSERT(nmax.eq.zveass)
 !
@@ -180,7 +182,6 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     call nmcha0('VEELEM', 'CNFEDO', vefedo, hval_veelem)
     call nmcha0('VEELEM', 'CNDIDO', vedido, hval_veelem)
     call nmcha0('VEELEM', 'CNDIDI', vedidi, hval_veelem)
-    call nmcha0('VEELEM', 'CNFINT', vefint, hval_veelem)
     call nmcha0('VEELEM', 'CNONDP', veondp, hval_veelem)
     call nmcha0('VEELEM', 'CNLAPL', velapl, hval_veelem)
     call nmcha0('VEELEM', 'CNSSTF', vesstf, hval_veelem)
@@ -188,13 +189,14 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     call nmcha0('VEASSE', 'CNFEDO', cnfedo, hval_veasse)
     call nmcha0('VEASSE', 'CNDIDO', cndido, hval_veasse)
     call nmcha0('VEASSE', 'CNDIDI', cndidi, hval_veasse)
-    call nmcha0('VEASSE', 'CNFINT', cnfint, hval_veasse)
     call nmcha0('VEASSE', 'CNONDP', cnondp, hval_veasse)
     call nmcha0('VEASSE', 'CNLAPL', cnlapl, hval_veasse)
     call nmcha0('VEASSE', 'CNCINE', cncine, hval_veasse)
     call nmcha0('VEASSE', 'CNVISS', cnviss, hval_veasse)
     call nmcha0('VEASSE', 'CNSSTF', cnsstf, hval_veasse)
     call nmcha0('VEASSE', 'CNSSTR', cnsstr, hval_veasse)
+    vefint = ds_system%vefint
+    cnfint = ds_system%cnfint
 !
 ! - Forces from macro-elements
 ! 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine nmfcor(model          , nume_dof   , ds_material   , cara_elem  ,&
+    subroutine nmfcor(model          , nume_dof   , ds_material   , cara_elem  , ds_system,&
                       ds_constitutive, list_load  , list_func_acti, ds_algopara, nume_inst,&
                       iter_newt      , ds_measure , sddisc        , sddyna     , sdnume   ,&
                       sderro         , ds_contact , hval_incr     , hval_algo,&
@@ -36,6 +35,7 @@ interface
         character(len=24) :: model, nume_dof, cara_elem
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=24) :: sderro
         character(len=19) :: hval_meelem(*), hval_veelem(*)
         character(len=19) :: hval_measse(*), hval_veasse(*)

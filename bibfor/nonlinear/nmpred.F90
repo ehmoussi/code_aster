@@ -138,13 +138,13 @@ aster_logical :: lerrit
     elseif ((ds_algopara%matrix_pred .eq. 'EXTRAPOLE').or.&
             (ds_algopara%matrix_pred .eq.'DEPL_CALCULE')) then
         call nmprde(mesh, modele, numedd         , numfix    , ds_material, carele    ,&
-                    ds_constitutive, lischa    , ds_algopara, solveu    ,&
+                    ds_constitutive, lischa    , ds_algopara, solveu    , ds_system,&
                     fonact, ds_print       , ds_measure, ds_algorom, sddisc     , numins    ,&
                     valinc, solalg         , matass    , maprec     , ds_contact,&
                     sddyna, meelem         , measse    , veelem     , veasse    ,&
                     ldccvg, faccvg         , rescvg)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! --- TRANSFORMATION DES CODES RETOURS EN EVENEMENTS

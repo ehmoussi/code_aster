@@ -319,14 +319,14 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! - Initializations for non-linear system
 !
-    call nonlinSystemInit(list_func_acti, sddyna, ds_system)
+    call nonlinSystemInit(list_func_acti, sddyna, numedd, ds_system)
 !
 ! --- PRE-CALCUL DES MATR_ELEM CONSTANTES AU COURS DU CALCUL
 !
     call nminmc(list_func_acti, list_load  , sddyna     , model , ds_constitutive,&
                 numedd        , numfix     , ds_algopara, solalg,&
                 valinc        , ds_material, cara_elem  , sddisc, ds_measure     ,&
-                meelem        , measse     , veelem)
+                meelem        , measse     , ds_system)
 !
 ! - Compute reference vector for RESI_REFE_RELA
 !
@@ -436,7 +436,7 @@ type(NL_DS_System), intent(inout) :: ds_system
     if (lmpas) then
         call nmihht(model    , numedd   , ds_material   , ds_constitutive,&
                     cara_elem, list_load, list_func_acti, ds_measure     ,&
-                    sddyna   , sdnume   , valinc        ,&
+                    sddyna   , sdnume   , valinc        , ds_system      ,&
                     sddisc   , solalg   , measse        , ds_inout)
     endif
 !
