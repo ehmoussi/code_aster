@@ -204,6 +204,10 @@ def block_utils(evaluation_context):
         """Return True if the value of keyword is less than test_value."""
         return value(name) < test_value
 
+    def greater_than(name, test_value):
+        """Return True if the value of keyword is grower than test_value."""
+        return value(name) > test_value
+
     return locals()
 
 def sorted_dict(kwargs):
