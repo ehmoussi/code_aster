@@ -15,8 +15,8 @@ def DEFI_ANGLES(Ng,prefix_nomgr,**args):
    # Noter que comme MASSIF est un mot-cle facteur, il
    # contient une liste de dictionnaires
    import copy, math
-   from random import *
-   
+   from random import random
+
    # coef=2*math.pi
    coef=360.
 
@@ -28,7 +28,7 @@ def DEFI_ANGLES(Ng,prefix_nomgr,**args):
       angles=[coef*random(), coef/(2.*math.pi)*math.acos(2.*(random()-1./2.)), coef*random()]
       mon_dico["ANGL_EULER"]=angles
       LISTE_ANGLES.append(mon_dico)
-      
+
    return LISTE_ANGLES
 ###################################################################
 
