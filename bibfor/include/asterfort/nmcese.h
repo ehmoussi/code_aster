@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmcese(modele         , numedd    , ds_material, carele, vefint, cnfint,&
-                      ds_constitutive, ds_contact, lischa     , fonact, ds_measure,&
-                      iterat         , sdnume    , sdpilo     , valinc, solalg    ,&
-                      veelem         , veasse    , offset     , typsel, sddisc    ,&
-                      licite         , rho       , eta        , etaf  , criter    ,&
-                      ldccvg         , pilcvg    , matass)
+    subroutine nmcese(modele         , numedd    , ds_material, carele   ,&
+                      ds_constitutive, ds_contact, lischa     , fonact   , ds_measure,&
+                      iterat         , sdnume    , sdpilo     , valinc   , solalg    ,&
+                      veelem         , veasse    , offset     , typsel   , sddisc    ,&
+                      licite         , rho       , eta        , etaf     , criter    ,&
+                      ldccvg         , pilcvg    , matass     , ds_system)
         use NonLin_Datastructure_type
         character(len=24) :: modele
         character(len=24) :: numedd
@@ -33,7 +33,7 @@ interface
         character(len=19) :: lischa
         integer :: fonact(*)
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19), intent(in) :: vefint, cnfint
+        type(NL_DS_System), intent(in) :: ds_system
         integer :: iterat
         character(len=19) :: sdnume
         character(len=19) :: sdpilo

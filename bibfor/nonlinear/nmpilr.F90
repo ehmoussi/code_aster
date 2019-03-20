@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmpilr(list_func_acti, nume_dof, matass, hval_veasse, ds_contact, cnfint,&
+subroutine nmpilr(list_func_acti, nume_dof, matass, hval_veasse, ds_contact, ds_system,&
                   eta           , residu  )
 !
 use NonLin_Datastructure_type
@@ -38,7 +38,7 @@ integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: nume_dof
 character(len=19), intent(in) :: matass, hval_veasse(*)
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19), intent(in) :: cnfint
+type(NL_DS_System), intent(in) :: ds_system
 real(kind=8), intent(in) :: eta
 real(kind=8), intent(out) :: residu
 !
@@ -47,7 +47,7 @@ real(kind=8), intent(out) :: residu
 ! MECA_NON_LINE - Algorithm (PILOTAGE)
 !
 ! Compute maximum of out-of-balance force
-
+!
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  list_func_acti   : list of active functionnalities
@@ -55,13 +55,13 @@ real(kind=8), intent(out) :: residu
 ! In  matass           : matrix
 ! In  hval_veasse      : hat-variable for vectors (node fields)
 ! In  ds_contact       : datastructure for contact management
-! In  cnfint           : assembled vector for internal forces
+! In  ds_system        : datastructure for non-linear system management
 ! In  eta              : coefficient for pilotage (continuation)
 ! Out residu           : value of maximum of out-of-balance force
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: cnfext, cndiri, cnbudi, cndipi, cndfdo, cnequi, cnsstr
+    character(len=19) :: cnfext, cndiri, cnbudi, cndipi, cndfdo, cnequi, cnsstr, cnfint
     integer :: i_equa, nb_equa
     aster_logical :: l_load_cine, l_disp, l_pilo, l_macr
     integer, pointer :: v_ccid(:) => null()
@@ -86,6 +86,7 @@ real(kind=8), intent(out) :: residu
     call nmchex(hval_veasse, 'VEASSE', 'CNDIPI', cndipi)
     call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', cnsstr)
     cndfdo = '&&CNCHAR.DFDO'
+    cnfint = ds_system%cnfint
 !
 ! - For kinematic loads
 !

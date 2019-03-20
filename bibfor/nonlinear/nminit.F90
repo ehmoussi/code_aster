@@ -436,7 +436,7 @@ type(NL_DS_System), intent(inout) :: ds_system
     if (lmpas) then
         call nmihht(model    , numedd   , ds_material   , ds_constitutive,&
                     cara_elem, list_load, list_func_acti, ds_measure     ,&
-                    sddyna   , sdnume   , valinc        , ds_system      ,&
+                    sddyna   , sdnume   , valinc        , &
                     sddisc   , solalg   , measse        , ds_inout)
     endif
 !

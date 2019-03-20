@@ -528,21 +528,23 @@ implicit none
 ! 
     type NL_DS_Constitutive
 ! ----- Name of field for constitutive laws
-        character(len=24)     :: compor
+        character(len=24)     :: compor      = ' '
 ! ----- Name of field for criteria of constitutive laws
-        character(len=24)     :: carcri
+        character(len=24)     :: carcri      = ' '
 ! ----- Name of field for constitutive laws - Special crystal
-        character(len=24)     :: mult_comp
+        character(len=24)     :: mult_comp   = ' '
 ! ----- Name of field for error field from constitutive laws
-        character(len=24)     :: comp_error
+        character(len=24)     :: comp_error  = ' '
+! ----- Name of field for coefficient in prediction
+        character(len=24)     :: code_pred   = ' '
 ! ----- Flag for De Borst algorithm
-        aster_logical         :: l_deborst
+        aster_logical         :: l_deborst   = ASTER_FALSE
 ! ----- Flag for DIS_CHOC
-        aster_logical         :: l_dis_choc
+        aster_logical         :: l_dis_choc  = ASTER_FALSE
 ! ----- Flag for POST_INCR
-        aster_logical         :: l_post_incr
+        aster_logical         :: l_post_incr = ASTER_FALSE
 ! ----- Flag for if large strains are in tangent matrix
-        aster_logical         :: l_matr_geom
+        aster_logical         :: l_matr_geom = ASTER_FALSE
     end type NL_DS_Constitutive
 !
 ! - Type: selection list

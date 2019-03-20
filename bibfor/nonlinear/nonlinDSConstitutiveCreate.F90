@@ -45,6 +45,7 @@ type(NL_DS_Constitutive), intent(out) :: ds_constitutive
     ds_constitutive%carcri        = '&&OP00XX.CARCRI'
     ds_constitutive%mult_comp     = '&&OP00XX.MULT_COMP'
     ds_constitutive%comp_error    = '&&OP00XX.COMP_ERROR'
+    ds_constitutive%code_pred     = '&&OP00XX.CODE_PRED'
     ds_constitutive%l_deborst     = ASTER_FALSE
     ds_constitutive%l_dis_choc    = ASTER_FALSE
     ds_constitutive%l_post_incr   = ASTER_FALSE

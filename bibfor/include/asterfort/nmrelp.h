@@ -17,10 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmrelp(model          , nume_dof , ds_material, cara_elem , ds_system,&
-                      ds_constitutive, list_load, list_func_acti, iter_newt , ds_measure,&
-                      sdnume         , sddyna   , ds_algopara, ds_contact, valinc    ,&
-                      solalg         , veelem   , veasse     , ds_conv   , ldccvg)
+    subroutine nmrelp(model          , nume_dof   , ds_material, cara_elem , ds_system,&
+                      ds_constitutive, list_load  , list_func_acti, iter_newt , ds_measure,&
+                      sdnume         , ds_algopara, ds_contact, valinc    ,&
+                      solalg         , veelem     , veasse     , ds_conv   , ldccvg, &
+                      sddyna_ )
         use NonLin_Datastructure_type
         integer :: list_func_acti(*)
         integer :: iter_newt, ldccvg
@@ -35,5 +36,6 @@ interface
         character(len=19) :: veelem(*), veasse(*)
         character(len=19) :: solalg(*), valinc(*)
         type(NL_DS_Conv), intent(inout) :: ds_conv
+        character(len=19), intent(in), optional :: sddyna_
     end subroutine nmrelp
 end interface

@@ -19,10 +19,10 @@
 ! aslint: disable=W1504
 !
 subroutine ndxprm(modelz, ds_material, carele    , ds_constitutive, ds_algopara,&
-                  lischa, numedd, numfix    , solveu         , ds_system,&
-                  sddisc, sddyna, ds_measure, numins         , fonact     ,&
-                  valinc, solalg, meelem    , measse     ,&
-                  maprec, matass, faccvg    , ldccvg)
+                  lischa, numedd     , numfix    , solveu         , ds_system  ,&
+                  sddisc, sddyna     , ds_measure, numins         , fonact     ,&
+                  valinc, solalg     , meelem    , measse     ,&
+                  maprec, matass     , faccvg    , ldccvg)
 !
 use NonLin_Datastructure_type
 !
@@ -193,13 +193,15 @@ integer :: faccvg, ldccvg
 ! --- CALCUL DES MATR-ELEM DE RIGIDITE
 !
     if (lcrigi) then
-        call nmrigi(modelz         , carele     , sddyna,&
-                    fonact         , iterat     ,&
-                    ds_constitutive, ds_material,&
-                    ds_measure     , valinc     , solalg,&
-                    ds_system      , optrig     ,&
-                    ldccvg)
+        call nmrigi(modelz     , carele,&
+                    ds_material, ds_constitutive,&
+                    fonact     , iterat         , sddyna, ds_measure, ds_system,&
+                    valinc     , solalg         ,&
+                    optrig     , ldccvg)
     endif
+!
+! - Assembly internal forces/rigidity matrix
+!
     if (larigi) then
         call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
                     rigid)

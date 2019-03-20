@@ -194,12 +194,11 @@ integer :: faccvg, ldccvg
 ! - Compute internal forces
 !
     if (lcfint) then
-        call nmfint(model           , cara_elem      ,&
-                    ds_material     , ds_constitutive,&
-                    list_func_acti  , iter_newt      ,&
-                    sddyna          , ds_measure     ,&
-                    hval_incr       , hval_algo      ,&
-                    ds_system%vefint, ldccvg   )
+        call nmfint(model         , cara_elem      ,&
+                    ds_material   , ds_constitutive,&
+                    list_func_acti, iter_newt      , ds_measure, ds_system,&
+                    hval_incr     , hval_algo      ,&
+                    ldccvg        , sddyna)
     endif
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
@@ -212,8 +211,7 @@ integer :: faccvg, ldccvg
 !
     if (lcfint) then
         lcfint = ASTER_FALSE
-        call nmaint(numedd          , list_func_acti  , sdnume,&
-                    ds_system%vefint, ds_system%cnfint)
+        call nmaint(numedd, list_func_acti, sdnume, ds_system)
     endif
 !
 ! - Compute matrices for contact

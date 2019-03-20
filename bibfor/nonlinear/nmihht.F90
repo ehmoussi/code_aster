@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmihht(model    , nume_dof , ds_material, ds_constitutive,&
-                  cara_elem, list_load, list_func_acti, ds_measure,&
-                  sddyna   , sdnume   , hval_incr, ds_system,&
-                  sddisc   , hval_algo, hval_measse, ds_inout)
+subroutine nmihht(model    , nume_dof , ds_material   , ds_constitutive,&
+                  cara_elem, list_load, list_func_acti, ds_measure     ,&
+                  sddyna   , sdnume   , hval_incr     ,&
+                  sddisc   , hval_algo, hval_measse   , ds_inout)
 !
 use NonLin_Datastructure_type
 !
@@ -38,7 +38,6 @@ character(len=24), intent(in) :: nume_dof
 character(len=19), intent(in) :: list_load
 integer, intent(in) :: list_func_acti(*)
 type(NL_DS_Measure), intent(inout) :: ds_measure
-type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: sddyna
 character(len=19), intent(in) :: sddisc
 character(len=19), intent(in) :: sdnume
@@ -66,7 +65,6 @@ type(NL_DS_InOut), intent(in) :: ds_inout
 ! In  sddyna           : dynamic parameters datastructure
 ! In  sddisc           : datastructure for time discretization
 ! In  sdnume           : datastructure for dof positions
-! In  ds_system        : datastructure for non-linear system management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  hval_measse      : hat-variable for matrix
@@ -93,7 +91,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     if (l_reuse .or. l_init_state) then
         call nmchht(model    , ds_material, cara_elem     , ds_constitutive,&
                     list_load, nume_dof   , list_func_acti, ds_measure     ,&
-                    sddyna   , sddisc     , sdnume        , ds_system      ,&
+                    sddyna   , sddisc     , sdnume        , &
                     hval_incr, hval_algo  , hval_measse   , ds_inout)
     endif
 

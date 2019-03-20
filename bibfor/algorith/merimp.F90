@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,11 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine merimp(model    , cara_elem, mate  , varc_refe, ds_constitutive,&
-                  acti_func, iterat   , sddyna, hval_incr, hval_algo      ,&
-                  caco3d   , mxchin   , nbin  , lpain    , lchin)
+subroutine merimp(l_xfem         ,&
+                  model          , cara_elem, mate  , sddyna, iter_newt,&
+                  ds_constitutive, varc_refe,&
+                  hval_incr      , hval_algo, caco3d,&
+                  mxchin         , lpain    , lchin , nbin)
 !
 use NonLin_Datastructure_type
 !
@@ -32,7 +34,7 @@ implicit none
 #include "asterfort/copisd.h"
 #include "asterfort/exisd.h"
 #include "asterfort/exixfe.h"
-#include "asterfort/isfonc.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/mecact.h"
@@ -44,17 +46,15 @@ implicit none
 #include "asterfort/nmvcex.h"
 #include "asterfort/xajcin.h"
 !
-integer, intent(in) :: iterat
+aster_logical, intent(in) :: l_xfem
+character(len=24), intent(in) :: model, cara_elem
 character(len=*), intent(in) :: mate
 character(len=19), intent(in) :: sddyna
-character(len=24), intent(in) :: model
-character(len=24), intent(in) :: cara_elem
+integer, intent(in) :: iter_newt
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24), intent(in) :: varc_refe
-integer, intent(in) :: acti_func(*)
+character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
 character(len=24), intent(in) :: caco3d
-character(len=19), intent(in) :: hval_incr(*)
-character(len=19), intent(in) :: hval_algo(*)
 integer, intent(in) :: mxchin
 character(len=8), intent(inout) :: lpain(mxchin)
 character(len=19), intent(inout) :: lchin(mxchin)
@@ -68,12 +68,25 @@ integer, intent(out) :: nbin
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  l_xfem           : flag for XFEM elements
 ! In  ds_constitutive  : datastructure for constitutive laws management
-!
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
+! In  mate             : name of material characteristics (field)
+! In  iter_newt        : index of current Newton iteration
+! In  ds_constitutive  : datastructure for constitutive laws management
+! In  varc_refe        : name of reference command variables vector
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
+! In  caco3d           : name of field for COQUE_3D (field of normals)
+! In  mxchin           : maximum number of input fields
+! IO  lpain            : list of input parameters
+! IO  lchin            : list of input fields
+! Out nbin             : number of input fields
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     integer :: iret
-    aster_logical :: lxfem
     character(len=24) :: chgeom, chcara(18), chiter
     character(len=19) :: stadyn, depent, vitent
     character(len=16) :: option
@@ -88,27 +101,27 @@ integer, intent(out) :: nbin
     character(len=19) :: romkm1, romk
     character(len=24) :: ligrmo
     character(len=19) :: disp_iter, disp_cumu_inst
-    aster_logical :: ldyna
+    aster_logical :: l_dyna
     real(kind=8) :: iter
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
+    call infdbg('MECA_NON_LINE', ifm, niv)
 !
 ! - Initializations
 !
-    ligrmo = model(1:8)//'.MODELE'
-    option = 'FULL_MECA'
-    chiter = '&&MERIMO.CH_ITERAT'
+    ligrmo    = model(1:8)//'.MODELE'
+    option    = 'FULL_MECA'
+    chiter    = '&&MERIMO.CH_ITERAT'
     vari_iter = '&&MERIMO.VARMOJ'
     stru_iter = '&&MERIMO.STRMOJ'
-    nbin = 0
+    nbin      = 0
     ASSERT(mate(9:18).eq.'.MATE_CODE')
 !
 ! - Active functionnalities
 !
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lxfem = isfonc(acti_func, 'XFEM')
+    l_dyna = ndynlo(sddyna,'DYNAMIQUE')
 !
 ! - Get fields from hat-variables - Begin of time step
 !
@@ -141,7 +154,7 @@ integer, intent(out) :: nbin
 !
 ! - Dynamic fields
 !
-    if (ldyna) then
+    if (l_dyna) then
         call ndynkk(sddyna, 'DEPENT', depent)
         call ndynkk(sddyna, 'VITENT', vitent)
         call ndynkk(sddyna, 'STADYN', stadyn)
@@ -192,7 +205,7 @@ integer, intent(out) :: nbin
 !
 ! - Field for iteration number
 !
-    iter = iterat
+    iter = iter_newt
     call mecact('V', chiter, 'MODELE', ligrmo, 'NEUT_R',&
                 ncmp=1, nomcmp='X1', sr=iter)
 !
@@ -276,14 +289,13 @@ integer, intent(out) :: nbin
 !
 ! - XFEM fields
 !
-    if (lxfem) then
-        call xajcin(model, option, mxchin, lchin, lpain,&
-                    nbin)
+    if (l_xfem) then
+        call xajcin(model, option, mxchin, lchin, lpain, nbin)
     endif
 !
 ! - Dynamic
 !
-    if (ldyna) then
+    if (l_dyna) then
         nbin = nbin + 1
         lpain(nbin) = 'PDEPENT'
         lchin(nbin) = depent(1:19)

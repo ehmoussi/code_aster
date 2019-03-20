@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     , vefint, cnfint,&
+    subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     , &
                       ds_constitutive, ds_contact, list_load  , list_func_acti, ds_measure ,&
                       iter_newt      , sdnume    , valinc     , solalg        , hval_veelem,&
                       hval_veasse    , offset    , rho        , eta           , residu     ,&
-                      ldccvg         , matr_asse)
+                      ldccvg         , ds_system , matr_asse)
         use NonLin_Datastructure_type
         integer :: list_func_acti(*)
         integer :: iter_newt, ldccvg
@@ -30,10 +30,10 @@ interface
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Contact), intent(in) :: ds_contact
         character(len=24) :: model, nume_dof, cara_elem
-        character(len=19), intent(in) :: vefint, cnfint
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19) :: hval_veelem(*), hval_veasse(*)
         character(len=19) :: solalg(*), valinc(*)
+        type(NL_DS_System), intent(in) :: ds_system
     end subroutine nmcere
 end interface

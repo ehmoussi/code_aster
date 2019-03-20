@@ -17,23 +17,23 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmrigi(modelz         , carele     , sddyna,&
-                      fonact         , iterat     ,&
-                      ds_constitutive, ds_material,&
-                      ds_measure     , valinc     , solalg,&
-                      ds_system      , optioz     ,&
-                      ldccvg)
+    subroutine nmrigi(modelz         , cara_elem,&
+                      ds_material    , ds_constitutive,&
+                      list_func_acti , iter_newt      , sddyna, ds_measure, ds_system,&
+                      hval_incr      , hval_algo      ,&
+                      optioz         , ldccvg)
         use NonLin_Datastructure_type
-        character(len=*) :: optioz
-        character(len=*) :: modelz
+        character(len=*), intent(in) :: modelz
+        character(len=24), intent(in) :: cara_elem
         type(NL_DS_Material), intent(in) :: ds_material
-        type(NL_DS_Measure), intent(inout) :: ds_measure
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=24) :: carele
-        integer :: iterat, ldccvg
-        character(len=19) :: sddyna
+        integer, intent(in) :: list_func_acti(*)
+        integer, intent(in) :: iter_newt
+        character(len=19), intent(in) :: sddyna
+        type(NL_DS_Measure), intent(inout) :: ds_measure
         type(NL_DS_System), intent(in) :: ds_system
-        character(len=19) :: solalg(*), valinc(*)
-        integer :: fonact(*)
+        character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        character(len=*), intent(in) :: optioz
+        integer, intent(out) :: ldccvg
     end subroutine nmrigi
 end interface

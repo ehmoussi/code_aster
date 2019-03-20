@@ -167,19 +167,17 @@ aster_logical :: lerrit
 !
     if (lcfint) then
         if (lcrigi) then
-            call nmrigi(model          , cara_elem  , sddyna   ,&
-                        list_func_acti , iter_newt  ,&
-                        ds_constitutive, ds_material,&
-                        ds_measure     , hval_incr  , hval_algo,&
-                        ds_system      , option     ,&
-                        ldccvg)
+            call nmrigi(model          , cara_elem,&
+                        ds_material    , ds_constitutive,&
+                        list_func_acti , iter_newt      , sddyna, ds_measure, ds_system,&
+                        hval_incr      , hval_algo      ,&
+                        option         , ldccvg)
         else
-            call nmfint(model           , cara_elem      ,&
-                        ds_material     , ds_constitutive,&
-                        list_func_acti  , iter_newt      ,&
-                        sddyna          , ds_measure     ,&
-                        hval_incr       , hval_algo      ,&
-                        ds_system%vefint, ldccvg)
+            call nmfint(model          , cara_elem      ,&
+                        ds_material    , ds_constitutive,&
+                        list_func_acti , iter_newt      , ds_measure, ds_system,&
+                        hval_incr      , hval_algo      ,&
+                        ldccvg         , sddyna)
         endif
     endif
 !
@@ -216,8 +214,7 @@ aster_logical :: lerrit
         endif
 ! ----- Assemble internal forces
         if (lcfint) then
-            call nmaint(nume_dof, list_func_acti, sdnume,&
-                        ds_system%vefint  , ds_system%cnfint)
+            call nmaint(nume_dof, list_func_acti, sdnume, ds_system)
         endif
 ! ----- Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
         if (lcdiri) then
