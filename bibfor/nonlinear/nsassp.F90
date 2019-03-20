@@ -136,7 +136,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 ! - Force from sub-structuring
 !
     if (l_macr) then
-        call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTR', +1.d0, ds_vectcomb)
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTR', -1.d0, ds_vectcomb)
     endif
 !
 ! - External state variable
