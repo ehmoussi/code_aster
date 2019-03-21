@@ -25,6 +25,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/jeveuo.h"
 #include "asterfort/nmprof.h"
 #include "asterfort/nuendo.h"
 #include "asterfort/nunuco.h"
@@ -61,8 +62,14 @@ character(len=19), intent(in) :: sdnume
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
+    integer :: ifm, niv, i_load, nb_load_init
+    character(len=8) :: lag12
     character(len=24) :: sdnuro, sdnuen, sdnuco
+    character(len=24) :: lload_info, lload_list, load_n, load_type
+    integer, pointer :: v_load_info(:) => null()
+    character(len=8), pointer :: v_lgrf(:) => null()
+    character(len=24), pointer :: v_load_list(:) => null()
+    character(len=24), pointer :: v_tco(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,6 +77,25 @@ character(len=19), intent(in) :: sdnume
     if (niv .ge. 2) then
         call utmess('I', 'MECANONLINE13_12')
     endif
+!
+! - Check if single Lagrange multiplier is not used
+!
+    lload_info = list_load(1:19)//'.INFC'
+    call jeveuo(lload_info, 'L', vi = v_load_info)
+    nb_load_init = v_load_info(1)
+    lload_list = list_load(1:19)//'.LCHA'
+    call jeveuo(lload_list, 'L', vk24 = v_load_list)
+    do i_load = 1, nb_load_init
+        load_n = v_load_list(i_load)
+        call jeveuo(load_n(1:19)//'._TCO', 'L', vk24 = v_tco)
+        if( v_tco(1).eq.'CHAR_MECA' ) then
+            call jeveuo(load_n(1:8)//'.CHME.LIGRE.LGRF', 'L', vk8 = v_lgrf)
+            lag12 = v_lgrf(3)
+            if( lag12.eq.'LAG1' ) then
+                call utmess('F', 'MECANONLINE_5')
+            endif
+        endif
+    enddo
 !
 ! - Create numbering 
 !

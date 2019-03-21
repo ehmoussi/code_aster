@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/liscad.h"
 #include "asterfort/lisccr.h"
 #include "asterfort/liscli.h"
+#include "asterfort/utmess.h"
 !
 character(len=19), intent(in) :: list_load
 type(NL_DS_Contact), intent(in) :: ds_contact
@@ -53,12 +54,14 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     character(len=24) :: list_info_type(nb_info_maxi)
     integer :: nb_load_init, nb_load_new, nb_info_type
     integer :: i_neum_lapl, i_load
-    character(len=8) :: ligrel_link_slav, ligrel_link, ligrel_link_cont
+    character(len=8) :: ligrel_link_slav, ligrel_link, ligrel_link_cont, lag12
     character(len=19) :: list_load_new
-    character(len=24) :: lload_info
+    character(len=24) :: lload_info, lload_list, load_n
     character(len=8) :: load_name, load_func, func_const
     real(kind=8) :: coef
     integer, pointer :: v_load_info(:) => null()
+    character(len=8), pointer :: v_lgrf(:) => null()
+    character(len=24), pointer :: v_load_list(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,6 +75,19 @@ type(NL_DS_Contact), intent(in) :: ds_contact
         call jeveuo(lload_info, 'L', vi = v_load_info)
         nb_load_init = v_load_info(1)
         nb_load_new  = nb_load_init
+!
+! ----- Check if single Lagrange multiplier is not used
+!
+        lload_list = list_load(1:19)//'.LCHA'
+        call jeveuo(lload_list, 'L', vk24 = v_load_list)
+        do i_load = 1, nb_load_init
+            load_n = v_load_list(i_load)
+            call jeveuo(load_n(1:19)//'.LGRF', 'L', vk8 = v_lgrf)
+            lag12 = v_lgrf(3)
+            if( lag12.eq.'LAG1' ) then
+                call utmess('F', 'MECANONLINE_5')
+            endif
+        enddo
 !
 ! ----- Prepare constant function
 !
