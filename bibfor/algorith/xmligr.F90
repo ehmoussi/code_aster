@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -129,7 +129,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --- CREATION DE .NOMA
 !
-    call wkvect(ligrxf//'.LGRF', 'V V K8', 2, jlgrf)
+    call wkvect(ligrxf//'.LGRF', 'V V K8', 3, jlgrf)
     zk8(jlgrf-1+1) = mesh
     zk8(jlgrf-1+2) = model
     call jeveuo(mesh//'.CONNEX', 'L', vi=connex)

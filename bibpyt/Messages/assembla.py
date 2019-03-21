@@ -56,6 +56,12 @@ cata_msg = {
  modèles discordants
 """),
 
+    6 : _("""
+ Il n'est pas possible de mélanger simple et double Lagrange.
+
+ Conseil : Vérifiez le mot-clé DOUBLE_LAGRANGE de vos chargements issus d'AFFE_CHAR_MECA.
+"""),
+
 
 
 
