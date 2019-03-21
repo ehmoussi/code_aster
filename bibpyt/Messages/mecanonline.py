@@ -50,6 +50,13 @@ Erreur utilisateur :
   On arrête le calcul.
 """),
 
+    5 : _("""
+Erreur utilisateur :
+  L'utilisation de simple Lagrange est interdite dans STAT_NON_LINE.
+"""),
+
+
+
     23 : _("""
  Le calcul de l'accélération initiale a ignoré les chargements de type:
  - ONDE_PLANE
