@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nudeeq(mesh, nb_node_mesh, nb_node_subs, nume_ddl, nb_equa,&
-                  igds, iddlag)
+subroutine nudeeq_lag1(mesh, nb_node_mesh, nb_node_subs, nume_ddl, nb_equa,&
+                       igds, iddlag)
 !
 implicit none
 !
@@ -48,7 +48,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Numbering 
+! Numbering
 !
 ! Set DEEQ object (with non-physical nodes)
 ! Set DELG object
@@ -63,7 +63,7 @@ implicit none
 ! In  igds           : index of GRANDEUR used to numbering
 ! In  iddlag         : adresse of DSCLAG object (see nueffe)
 !
-! Object   : PROF_CHNO.DEEQ 
+! Object   : PROF_CHNO.DEEQ
 ! Dimension: vector of size (2*nb_equa)
 ! Contains : for i_equa = 1,nb_equa
 !
@@ -82,7 +82,7 @@ implicit none
 !       SI LE NOEUD SUPPORT DE L'EQUA. i_equa EST UN LAGRANGE DE LIAISON :
 !           0
 !
-! Object   : NUME_EQUA.DELG 
+! Object   : NUME_EQUA.DELG
 ! Dimension: vector of size (nb_equa)
 ! Contains : for i_equa = 1,nb_equa
 !
@@ -122,6 +122,7 @@ implicit none
     prno      = prof_chno(1:19)//'.PRNO'
     nueq      = prof_chno(1:19)//'.NUEQ'
     deeq      = prof_chno(1:19)//'.DEEQ'
+
     if (nb_node_subs .gt. 0) then
         call jeveuo(mesh//'.TYPL', 'L', jtypl)
     endif
@@ -169,11 +170,11 @@ implicit none
                             p_delg(i_equ) = 0
                         else
                             ilag  = nb_lagr + i_node
-                            nob   = zi(iddlag+ (ilag-1)*3)
-                            nddlb = zi(iddlag+ (ilag-1)*3+1)
+                            nob   = zi(iddlag+ (ilag-1)*2)
+                            nddlb = zi(iddlag+ (ilag-1)*2+1)
                             p_deeq(2*(i_equ-1)+1) = nob
                             p_deeq(2*(i_equ-1)+2) = nddlb
-                            p_delg(i_equ) = -zi(iddlag+ (ilag-1)*3+ 2)
+                            p_delg(i_equ) = -1
                         endif
                     endif
                 end do

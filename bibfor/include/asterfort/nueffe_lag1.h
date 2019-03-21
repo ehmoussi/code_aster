@@ -18,9 +18,15 @@
 
 !
 !
-interface 
-    subroutine te0330(option, nomte)
-        character(len=16), intent(in) :: option
-        character(len=16), intent(in) :: nomte
-    end subroutine te0330
-end interface 
+interface
+    subroutine nueffe_lag1(nb_ligr, list_ligr, base, nume_ddlz, renumz,&
+                           modelocz, sd_iden_relaz)
+        integer, intent(in) :: nb_ligr
+        character(len=24), pointer :: list_ligr(:)
+        character(len=2), intent(in) :: base
+        character(len=*), intent(in) :: nume_ddlz
+        character(len=*), intent(in) :: renumz
+        character(len=*), optional, intent(in) :: modelocz
+        character(len=*), optional, intent(in) :: sd_iden_relaz
+    end subroutine nueffe_lag1
+end interface

@@ -18,9 +18,15 @@
 
 !
 !
-interface 
-    subroutine te0330(option, nomte)
-        character(len=16), intent(in) :: option
-        character(len=16), intent(in) :: nomte
-    end subroutine te0330
-end interface 
+interface
+    subroutine nudeeq_lag1(mesh, nb_node_mesh, nb_node_subs, nume_ddl, nb_equa,&
+                           igds, iddlag)
+        character(len=8), intent(in) :: mesh
+        integer, intent(in) :: nb_node_mesh
+        integer, intent(in) :: nb_node_subs
+        character(len=14), intent(in) :: nume_ddl
+        integer, intent(in) :: nb_equa
+        integer, intent(in) :: igds
+        integer, intent(in) :: iddlag
+    end subroutine nudeeq_lag1
+end interface
