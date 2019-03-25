@@ -418,7 +418,7 @@ class CommandSyntax(object):
             explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
-        if len( value ) > 0 and not isinstance(value[0], (int, long)):
+        if len( value ) > 0 and not isinstance(value[0], int):
             raise TypeError( "integer expected, got %s" % type( value[0] ) )
         size = len(value)
         if size > maxval:
@@ -518,14 +518,14 @@ class CommandSyntax(object):
             int: 1 if the keyword exists, else 0.
         """
         catadef = self._getCataDefinition(factName)
-        logger.debug("getexm: catadef: {0}".format(catadef.keys()
+        logger.debug("getexm: catadef: {0}".format(list(catadef.keys())
                                                    if catadef else None))
         if not catadef:
             return 0
         if not simpName.strip():
             return 1
         keywords = catadef.simple_keywords
-        logger.debug("getexm: simple keywords: {0}".format(keywords.keys()))
+        logger.debug("getexm: simple keywords: {0}".format(list(keywords.keys())))
         return int(keywords.get(simpName) is not None)
 
     def getmjm(self, factName, occurrence, maxval):
@@ -554,7 +554,7 @@ class CommandSyntax(object):
             if obj is None:
                 continue
             # ignore factor keyword: legacy getmjm returned typ='MCList'
-            if not catadef.has_key(kw):
+            if kw not in catadef:
                 continue
             kws.append(kw)
             typ = typeaster(catadef[kw].definition['typ'])
@@ -628,7 +628,7 @@ def _check_strings(factName, simpName, value):
     Returns:
         list[str]: String values or names for DataStructure objects.
     """
-    if len(value) > 0 and not isinstance(value[0], (str, unicode)):
+    if len(value) > 0 and not isinstance(value[0], str):
         try:
             value2 = []
             for i in range(len(value)):

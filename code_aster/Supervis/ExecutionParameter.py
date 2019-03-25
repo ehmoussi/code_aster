@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ from .options import Options
 RCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir, os.pardir,
                     os.pardir, os.pardir, 'share', 'aster'))
 
-class ExecutionParameter(object):
+class ExecutionParameter(object, metaclass=Singleton):
     """This class stores and provides the execution parameters.
 
     The execution parameters are defined by reading the command line or using
@@ -67,7 +67,6 @@ class ExecutionParameter(object):
         _syntax (*CommandSyntax*): Class that passes user keywords up to
             Fortran operator.
     """
-    __metaclass__ = Singleton
     _singleton_id = 'Supervis.ExecutionParameter'
     _args = _bool = None
     _timer = _command_counter = None
@@ -118,7 +117,7 @@ class ExecutionParameter(object):
         version = aster_pkginfo.version_info.version
         keys = ('parentid', 'branch', 'date',
                 'from_branch', 'changes', 'uncommitted')
-        self._args.update(zip(keys, aster_pkginfo.version_info[1:]))
+        self._args.update(list(zip(keys, aster_pkginfo.version_info[1:])))
         self._args['version'] = '.'.join(str(i) for i in version)
         self._args['versMAJ'] = version[0]
         self._args['versMIN'] = version[1]
@@ -168,7 +167,7 @@ class ExecutionParameter(object):
                 value = self.option & Options.by_name(option)
             except AttributeError:
                 value = None
-        if isinstance(value, (str, unicode)):
+        if isinstance(value, str):
             value = convert(value)
         logger.debug("return for {0!r}: {1} {2}"
                      .format(option, value, type(value)))
@@ -299,7 +298,7 @@ class ExecutionParameter(object):
         logger.debug("Read options: %r", vars(args))
 
         # assign parameter values
-        for opt, value in vars(args).items():
+        for opt, value in list(vars(args).items()):
             self.set_option(opt, value)
 
         # For convenience DEBUG can be set from environment

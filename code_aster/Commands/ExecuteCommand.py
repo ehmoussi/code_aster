@@ -201,7 +201,7 @@ class ExecuteCommand(object):
                 else:
                     self._visitSyntax(value)
         elif type(toVisit) in (dict, _F):
-            for value in toVisit.itervalues():
+            for value in toVisit.values():
                 self._visitSyntax(value)
         elif isinstance(toVisit, DataStructure):
             if name != toVisit.getName():
@@ -474,7 +474,7 @@ class ExecuteMacro(ExecuteCommand):
         else:
             dres = dict(main=output)
             dres.update(self._add_results)
-            missing = set(self._result_names).difference(dres.keys())
+            missing = set(self._result_names).difference(list(dres.keys()))
             if missing:
                 raise ValueError("Missing results: {0}".format(tuple(missing)))
             self._result = self._result_type(**dres)
@@ -607,7 +607,7 @@ def publish_in(context, dict_objects):
         dict_objects (dict): Objects to be added into the context.
     """
     re_id = re.compile("^(.*)_([0-9]+)$")
-    for name, value in dict_objects.items():
+    for name, value in list(dict_objects.items()):
         indexed = re_id.search(name)
         if indexed:
             bas, idx = indexed.groups()

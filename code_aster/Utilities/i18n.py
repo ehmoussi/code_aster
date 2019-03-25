@@ -46,10 +46,9 @@ def get_language():
     return lang
 
 
-class Language(object):
+class Language(object, metaclass=Singleton):
 
     """Simple class to switch between languages."""
-    __metaclass__ = Singleton
     _singleton_id = 'i18n.Language'
 
     def __init__(self):
