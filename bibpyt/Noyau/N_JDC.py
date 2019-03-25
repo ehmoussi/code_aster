@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,19 +26,18 @@
 
 # Modules Python
 import os
-import string
 import traceback
 import types
 import sys
 import linecache
 
 # Modules EFICAS
-import N_OBJECT
-import N_CR
-from N_Exception import AsException, InterruptParsingError
-from N_ASSD import ASSD
-from N_info import message, SUPERV
-from strfunc import get_encoding
+from . import N_OBJECT
+from . import N_CR
+from .N_Exception import AsException, InterruptParsingError
+from .N_ASSD import ASSD
+from .N_info import message, SUPERV
+from .strfunc import get_encoding
 
 
 MemoryErrorMsg = """MemoryError :
@@ -81,7 +80,7 @@ from Accas import *
 NONE = None
 """
 
-    from N_utils import SEP
+    from .N_utils import SEP
 
     def __init__(self, definition=None, procedure=None, cata=None,
                  cata_ord_dico=None, parent=None,
@@ -89,7 +88,7 @@ NONE = None
         self.procedure = procedure
         self.definition = definition
         self.cata = cata
-        if type(self.cata) != types.TupleType and cata != None:
+        if type(self.cata) != tuple and cata != None:
             self.cata = (self.cata,)
         self._build_reserved_kw_list()
         self.cata_ordonne_dico = cata_ord_dico
@@ -155,17 +154,16 @@ NONE = None
             # Python 2.7 compile function does not accept unicode filename, so we encode it
             # with the current locale encoding in order to have a correct
             # traceback
-            encoded_filename = self.nom.encode(get_encoding())
             self.proc_compile = compile(
-                self.procedure, encoded_filename, 'exec')
-        except SyntaxError, e:
+                self.procedure, self.nom, 'exec')
+        except SyntaxError as e:
             if CONTEXT.debug:
                 traceback.print_exc()
             l = traceback.format_exception_only(SyntaxError, e)
-            self.cr.exception("Compilation impossible : " + string.join(l))
-        except MemoryError, e:
+            self.cr.exception("Compilation impossible : " + " ".join(l))
+        except MemoryError as e:
             self.cr.exception(MemoryErrorMsg)
-        except SystemError, e:
+        except SystemError as e:
             erreurs_connues = """
 Causes possibles :
  - offset too large : liste trop longue derrière un mot-clé.
@@ -189,16 +187,15 @@ Causes possibles :
         # Dans le cas d'une chaine de caractères il faut accéder
         # aux commandes qui sont dans la chaine
         import linecache
-        linecache.cache[self.nom] = 0, 0, string.split(
-            self.procedure, '\n'), self.nom
+        linecache.cache[self.nom] = 0, 0, self.procedure.split('\n'), self.nom
         try:
-            exec self.exec_init in self.g_context
+            exec(self.exec_init, self.g_context)
             # message.debug(SUPERV, "JDC.exec_compile_1 - len(g_context) = %d",
             # len(self.g_context.keys()))
             for obj_cata in self.cata:
                 if type(obj_cata) == types.ModuleType:
                     init2 = "from " + obj_cata.__name__ + " import *"
-                    exec init2 in self.g_context
+                    exec(init2, self.g_context)
             # message.debug(SUPERV, "JDC.exec_compile_2 - len(g_context) = %d",
             # len(self.g_context.keys()))
 
@@ -212,7 +209,7 @@ Causes possibles :
             if self.context_ini:
                 self.g_context.update(self.context_ini)
                 # Update du dictionnaire des concepts
-                for sdnom, sd in self.context_ini.items():
+                for sdnom, sd in list(self.context_ini.items()):
                     if isinstance(sd, ASSD):
                         self.sds_dict[sdnom] = sd
 
@@ -225,7 +222,7 @@ Causes possibles :
             # mais les constantes sont perdues
             self.const_context = self.g_context
             # message.debug(SUPERV, "pass")
-            exec self.proc_compile in self.g_context
+            exec(self.proc_compile, self.g_context)
             # message.debug(SUPERV, "JDC.exec_compile_3 - len(g_context) = %d",
             # len(self.g_context.keys()))
 
@@ -247,7 +244,7 @@ Causes possibles :
             self.affiche_fin_exec()
             self.traiter_fin_exec('commande')
 
-        except AsException, e:
+        except AsException as e:
             # une erreur a ete identifiee
             if CONTEXT.debug:
                 traceback.print_exc()
@@ -259,17 +256,17 @@ Causes possibles :
             self.cr.exception(txt)
             CONTEXT.unset_current_step()
 
-        except NameError, e:
+        except NameError as e:
             etype, value, tb = sys.exc_info()
             l = traceback.extract_tb(tb)
-            s = traceback.format_exception_only("Erreur de nom", e)[0][:-1]
+            s = traceback.format_exception_only(NameError, e)[0][:-1]
             msg = "erreur de syntaxe,  %s ligne %d" % (s, l[-1][1])
             if CONTEXT.debug:
                 traceback.print_exc()
             self.cr.exception(msg)
             CONTEXT.unset_current_step()
 
-        except self.UserError, exc_val:
+        except self.UserError as exc_val:
             self.traiter_user_exception(exc_val)
             CONTEXT.unset_current_step()
             self.affiche_fin_exec()
@@ -287,7 +284,7 @@ Causes possibles :
             exc_typ, exc_val, exc_fr = sys.exc_info()
             l = traceback.format_exception(exc_typ, exc_val, exc_fr)
             self.cr.exception(
-                "erreur non prevue et non traitee prevenir la maintenance " + '\n' + string.join(l))
+                "erreur non prevue et non traitee prevenir la maintenance " + '\n' + " ".join(l))
             del exc_typ, exc_val, exc_fr
             CONTEXT.unset_current_step()
 
@@ -331,7 +328,7 @@ Causes possibles :
            Retourne un identificateur pour concept
         """
         self.nsd = self.nsd + 1
-        nom = sd.idracine + self.SEP + `self.nsd`
+        nom = sd.idracine + self.SEP + repr(self.nsd)
         return nom
 
     def g_register(self, etape):
@@ -339,7 +336,7 @@ Causes possibles :
             Retourne un identificateur pour etape
         """
         self.nstep = self.nstep + 1
-        idetape = etape.idracine + self.SEP + `self.nstep`
+        idetape = etape.idracine + self.SEP + repr(self.nstep)
         return idetape
 
     def get_new_id(self):
@@ -426,7 +423,7 @@ Causes possibles :
         """Nettoie les `netapes` dernières étapes de la liste des étapes."""
         if self.hist_etape:
             return
-        for i in xrange(netapes):
+        for i in range(netapes):
             e = self.etapes.pop()
             jdc = e.jdc
             parent = e.parent
@@ -652,7 +649,7 @@ Causes possibles :
         """On peut acceder aux "valeurs" (jeveux) des ASSD si le JDC est en PAR_LOT="NON".
         """
         if CONTEXT.debug:
-            print ' `- JDC sd_accessible : PAR_LOT =', self.par_lot
+            print(' `- JDC sd_accessible : PAR_LOT =', self.par_lot)
         return self.par_lot == 'NON'
 
     def _build_reserved_kw_list(self):

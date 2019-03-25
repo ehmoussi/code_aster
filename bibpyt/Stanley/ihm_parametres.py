@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ use_Pmw = False
 use_Tix = False
 use_Tk = True
 # import Tix as Tk
-import Tkinter as Tk
+import tkinter as Tk
 
 try:
     import Pmw
@@ -34,9 +34,8 @@ except:
     pass
 
 
-import types
-import tkMessageBox
-import ihm_parametres as objets
+import tkinter.messagebox
+from . import ihm_parametres as objets
 
 
 # ========================================================================
@@ -47,7 +46,7 @@ class AFFICHAGE_PARAMETRES:
       Fenetre d'affichage et de modification des parametres.
     """
 
-    def __init__(self, master, dliste_section, dparam, para, aide, titre=_(u"Affichage"), largeur=800, hauteur=660):
+    def __init__(self, master, dliste_section, dparam, para, aide, titre=_("Affichage"), largeur=800, hauteur=660):
 
         self.master = master
         self.dliste_section = dliste_section
@@ -90,11 +89,11 @@ class AFFICHAGE_PARAMETRES:
 
         # Variables Tk
         self.dvar = {}
-        for section in self.dliste_section.keys():
+        for section in list(self.dliste_section.keys()):
             self.dvar[section] = {}
-        for cle in self.dparam.keys():
+        for cle in list(self.dparam.keys()):
             section = self.dparam[cle]['section']
-            if type(self.dparam[cle]['val']) == types.IntType:
+            if type(self.dparam[cle]['val']) == int:
                 self.dvar[section][cle] = Tk.IntVar()
             else:
                 self.dvar[section][cle] = Tk.StringVar()
@@ -176,13 +175,13 @@ class AFFICHAGE_PARAMETRES:
             frame=frame_3, x=10, y=30, h=hauteur_3 - 40, l=largeur_3 - 40, params=None, fonte=self.fonte)
 
         # Boutons
-        bullemsg = _(u"Annuler")
+        bullemsg = _("Annuler")
         bouton_annuler = objets.BUTTON(frame_4, x=largeur_4 * 0.6, y=hauteur_4 - 50, txt=_(
-            u"Annuler"), command=self.Quitter, width=10, fonte=self.fonte, background="grey", bulle=self.bulle, bullemsg=bullemsg)
+            "Annuler"), command=self.Quitter, width=10, fonte=self.fonte, background="grey", bulle=self.bulle, bullemsg=bullemsg)
 
-        bullemsg = _(u"Valider les parametres et sortir")
+        bullemsg = _("Valider les parametres et sortir")
         bouton_ok = objets.BUTTON(frame_5, x=largeur_5 * 0.1, y=hauteur_5 - 50, txt=_(
-            u"OK"), command=self.Renvoi_Parametres, width=10, fonte=self.fonte, background="grey", bulle=self.bulle, bullemsg=bullemsg)
+            "OK"), command=self.Renvoi_Parametres, width=10, fonte=self.fonte, background="grey", bulle=self.bulle, bullemsg=bullemsg)
 
 #     bullemsg = _(u"")
 # bouton_voir      = objets.BUTTON(frame_5, x=largeur_5*0.5, y=hauteur_5 -
@@ -211,9 +210,9 @@ class AFFICHAGE_PARAMETRES:
         """
            Voir l'etat des variables
         """
-        for cle in self.dparam.keys():
+        for cle in list(self.dparam.keys()):
             section = self.dparam[cle]['section']
-            print section + " - " + cle + " = " + self.dvar[section][cle].get()
+            print(section + " - " + cle + " = " + self.dvar[section][cle].get())
 
     def Construction_Objets(self, init=False):
         """
@@ -240,7 +239,7 @@ class AFFICHAGE_PARAMETRES:
 
             # Produit la liste des parametres de la section
             self.liste_cle[section] = []
-            for cle in self.dparam.keys():
+            for cle in list(self.dparam.keys()):
                 section2 = self.dparam[cle]['section']
                 if section2 == section:
                     if self.dparam[cle]['type'] == 'liste':
@@ -257,7 +256,7 @@ class AFFICHAGE_PARAMETRES:
             for cle in self.liste_cle[section]:
                 label = self.dparam[cle]['label']
                 type_para = self.dparam[cle]['type']
-                if (type_para in ['texte', types.FloatType, 'fichier']):
+                if (type_para in ['texte', float, 'fichier']):
                     self.label[cle] = objets.LABEL(
                         frame, self.dparam, self.dvar, section, cle, x=x, y=y + 2, txt=label, fonte=self.fonte, bulle=self.bulle)
                     self.objet[cle] = objets.ENTRY(
@@ -282,8 +281,8 @@ class AFFICHAGE_PARAMETRES:
 
     def Quitter(self):
 
-        reponse = tkMessageBox.askokcancel(
-            _(u"Quitter"), _(u"Voulez-vous quitter ? Les paramètres modifiés seront perdus."))
+        reponse = tkinter.messagebox.askokcancel(
+            _("Quitter"), _("Voulez-vous quitter ? Les paramètres modifiés seront perdus."))
         if reponse == 1:
             reponse = True
         elif reponse == 0:
@@ -310,23 +309,23 @@ class AFFICHAGE_PARAMETRES:
         # Raffrachir l'aide
         self.Raffraichir_Aide()
 
-        for section in self.dliste_section.keys():
+        for section in list(self.dliste_section.keys()):
             txt = self.dliste_section[section]
             self.titre[section].Efface()
             self.titre[section].Affiche(txt)
 
-        for section in self.dliste_section.keys():
+        for section in list(self.dliste_section.keys()):
             for cle in self.liste_cle[section]:
                 affiche = True
                 # Verification du mode_graphique (Gmsh/Xmgrace, Salome)
-                if self.dparam[cle].has_key('mode_graphique'):
+                if 'mode_graphique' in self.dparam[cle]:
                     if mode_graphique in self.dparam[cle]['mode_graphique']:
                         affiche = True
                     else:
                         affiche = False
                 # Verification du mode (LOCAL, DISTANT, WINDOWS)
                 if affiche:
-                    if self.dparam[cle].has_key('mode') and not mode in self.dparam[cle]['mode']:
+                    if 'mode' in self.dparam[cle] and not mode in self.dparam[cle]['mode']:
                         affiche = False
 
                 # Active ou desactive
@@ -346,9 +345,9 @@ class AFFICHAGE_PARAMETRES:
     def Renvoi_Parametres(self):
 
         self.nouveau_para = {}
-        for section in self.dliste_section.keys():
+        for section in list(self.dliste_section.keys()):
             self.nouveau_para[section] = {}
-        for cle in self.dparam.keys():
+        for cle in list(self.dparam.keys()):
             section = self.dparam[cle]['section']
             self.nouveau_para[section][cle] = self.dvar[section][cle].get()
 
@@ -402,7 +401,7 @@ class LABEL:
         self.enabled = True
 
         # Bulle d'aide
-        if bulle and self.dparam[cle].has_key('bulle'):
+        if bulle and 'bulle' in self.dparam[cle]:
             bullemsg = self.dparam[cle]['bulle']
             self.bulle = bulle
             self.bulle.bind_widget(self.label, balloonmsg=bullemsg)
@@ -454,7 +453,7 @@ class ENTRY:
         self.valeur.configure(font=fonte)
 
         # Bulle d'aide
-        if bulle and self.dparam[cle].has_key('bulle'):
+        if bulle and 'bulle' in self.dparam[cle]:
             bullemsg = self.dparam[cle]['bulle']
             self.bulle = bulle
             self.bulle.bind_widget(self.valeur, balloonmsg=bullemsg)
@@ -510,15 +509,14 @@ class LISTE:
             # Tkinter
             variable = self.dvar[section][cle]
             OPTIONS = self.dparam[cle]['val_possible']
-            self.liste = apply(
-                Tk.OptionMenu, (frame, variable) + tuple(OPTIONS))
+            self.liste = Tk.OptionMenu(*(frame, variable) + tuple(OPTIONS))
             self.liste.place(in_=frame, x=x, y=y)
             self.liste.configure(font=self.fonte)
 
         self.enabled = True
 
         # Bulle d'aide
-        if bulle and self.dparam[cle].has_key('bulle'):
+        if bulle and 'bulle' in self.dparam[cle]:
             bullemsg = self.dparam[cle]['bulle']
             self.bulle = bulle
             self.bulle.bind_widget(self.liste, balloonmsg=bullemsg)

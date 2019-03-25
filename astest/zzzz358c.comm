@@ -55,26 +55,26 @@ MODTHS = AFFE_MODELE(MAILLAGE = MAILLAGE,
                                MODELISATION = 'PLAN',),)
 
 # ###################################################
-# Definition des fissures mecanique et thermique 
+# Definition des fissures mecanique et thermique
 # ###################################################
 
 a = 10.
 h = a/18.
 
 FISS1 = DEFI_FISS_XFEM(MAILLAGE = MAILLAGE,
-                       TYPE_DISCONTINUITE = 'FISSURE', 
+                       TYPE_DISCONTINUITE = 'FISSURE',
                        DEFI_FISS = _F(FORM_FISS = 'DEMI_DROITE',
                                       PFON = (0.25*a, 0.25*a, 0.),
                                       DTAN = (1., 0., 0.),),)
 
 FISS2 = DEFI_FISS_XFEM(MAILLAGE = MAILLAGE,
-                       TYPE_DISCONTINUITE = 'FISSURE', 
+                       TYPE_DISCONTINUITE = 'FISSURE',
                        DEFI_FISS = _F(FORM_FISS = 'DEMI_DROITE',
                                       PFON = (0.25*a, 0.75*a, 0.),
                                       DTAN = ( 1., 0., 0.),),)
 
 FISS3 = DEFI_FISS_XFEM(MAILLAGE = MAILLAGE,
-                       TYPE_DISCONTINUITE = 'FISSURE', 
+                       TYPE_DISCONTINUITE = 'FISSURE',
                        DEFI_FISS = _F(FORM_FISS = 'DEMI_DROITE',
                                       PFON = (a-1.5*h, 0.5*h, 0.),
                                       DTAN = (-1., 0., 0.),),)
@@ -151,7 +151,7 @@ ListM1 = []
 ListM2 = []
 ListT1 = []
 
-for il in xrange(n31):
+for il in range(n31):
   lF31 = LinesFile31[il]
   if '&&UTIMSD' in lF31 :
     ind = lF31.index('0000008')
@@ -160,7 +160,7 @@ for il in xrange(n31):
       if ('.CELV' in char) or ('.VALE' in char):
         ListM1.append(lF31)
         break
-for il in xrange(n32):
+for il in range(n32):
   lF32 = LinesFile32[il]
   if '&&UTIMSD' in lF32 :
     ind = lF32.index('000000a')
@@ -169,7 +169,7 @@ for il in xrange(n32):
       if ('.CELV' in char) or ('.VALE' in char):
         ListM2.append(lF32)
         break
-for il in xrange(n41):
+for il in range(n41):
   lF41 = LinesFile41[il]
   if '&&UTIMSD' in lF41 :
     ind = lF41.index('0000009')
@@ -180,14 +180,14 @@ for il in xrange(n41):
         break
 
 #assert len(ListM2) == len(ListM1)
-#for i in xrange(len(ListM2)):
+#for i in range(len(ListM2)):
   #print ListM2[i] == ListM1[i]
   #print ListM2[i]
   #print ListM1[i]
   #print "&&"
 
 #assert len(ListM2) == len(ListT1)
-#for i in xrange(len(ListM2)):
+#for i in range(len(ListM2)):
   #print ListM2[i] == ListT1[i]
   #print ListM2[i]
   #print ListT1[i]
@@ -199,7 +199,7 @@ for il in xrange(n41):
 
 # -------
 # on retranche 1 au nombre d'objets trouves dans MODMEX2
-# car en presence du mot cle MODELE_THER, l'operateur 
+# car en presence du mot cle MODELE_THER, l'operateur
 # MODI_MODELE_XFEM ajoute dans la sd modele_xfem l'objet
 # facultatif MODELE_THER
 # -------
@@ -237,8 +237,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 # -------
 # vale_ok == 1 si le "resume" (IMPR_CO/NIVEAU=-1) des .CELV
-# ou .VALE contenus dans les deux modeles sont identiques 
-# (au nom du modele pres) 
+# ou .VALE contenus dans les deux modeles sont identiques
+# (au nom du modele pres)
 # vale_ok == 0 sinon
 # -------
 

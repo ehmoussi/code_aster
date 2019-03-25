@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    11 : _(u"""
+    11 : _("""
 Plus de %(i1)d faces touchent le noeud %(k1)s.
 
 Risque & conseils :
@@ -33,7 +33,7 @@ Risque & conseils :
 
 
 
-    14 : _(u"""
+    14 : _("""
  Le mot-clé MAILLAGE est obligatoire avec le mot-clé %(k1)s.
 """),
 

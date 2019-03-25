@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import cPickle
-import string
+import pickle
 
 import numpy as NP
 from numpy import linalg as LA
@@ -52,20 +51,20 @@ class TANGENT:
 
     def Load(self, nom_fichier):
         """lit la matrice depuis un fichier"""
-        fichier = file(nom_fichier, 'r')
-        self.__dict__ = cPickle.load(fichier)
+        with open(nom_fichier, 'rb') as pick:
+            self.__dict__ = pickle.load(pick)
 
     def Save(self, nom_fichier):
         """sauvegarde la matrice dans un fichier"""
-        fichier = file(nom_fichier, 'w')
-        cPickle.dump(self.__dict__, fichier)
+        with open(nom_fichier, 'wb') as pick:
+            pickle.dump(self.__dict__, pick)
 
     def Aster(self, suffixe='MATA'):
         """lit la matrice depuis l'espace Aster.
         nom : suffixe de l'objet jeveux
         """
         import aster
-        nom_obj_jeveux = string.ljust('PYTHON.TANGENT.' + suffixe, 24)
+        nom_obj_jeveux = ('PYTHON.TANGENT.' + suffixe).ljust(24)
         obj_jeveux = aster.getvectjev(nom_obj_jeveux)
         if not obj_jeveux:
             raise RuntimeError('TANGENT : OBJET JEVEUX DE SUFFIXE ' +
@@ -91,7 +90,7 @@ class TANGENT:
         self.nddl = nddl
         if not self.ddl:
             self.ddl = 'D' * nddl
-        elif len(self.ddl) <> nddl:
+        elif len(self.ddl) != nddl:
             raise RuntimeError(
                 'Nommage des DDL incoherents avec la taille de la matrice')
         self.norme = NP.trace(NP.dot(NP.transpose(self.mat), self.mat))
@@ -115,7 +114,7 @@ class TANGENT:
                                'ou tableau numpy)')
         matp = NP.ravel(matp)
         matp = matp.astype(float)
-        if len(matp) <> self.nddl * self.nddl:
+        if len(matp) != self.nddl * self.nddl:
             raise RuntimeError('Matrices de tailles differentes')
         matp.shape = (self.nddl, self.nddl)
         refe = NP.abs(self.mat) + NP.abs(matp)
@@ -134,7 +133,7 @@ class TANGENT:
         liste_diff = []
         for ind in affi:
             for pos in ind:
-                i = pos / self.nddl
+                i = pos // self.nddl
                 j = pos % self.nddl
                 liste_i.append(i + 1)
                 liste_j.append(j + 1)
@@ -189,13 +188,13 @@ def veri_matr_tang_ops(self, **args):
     if args['SYMETRIE'] == 'OUI':
         symetgt = tgt.Symetrie(prec_diff)[-2]
         symeper = matp.Symetrie(prec_diff)[-2]
-        print 'Symetrie de la matrice tangente', symetgt
-        print 'Symetrie de la matrice pr pertubation', symeper
+        print('Symetrie de la matrice tangente', symetgt)
+        print('Symetrie de la matrice pr pertubation', symeper)
     if args['DIFFERENCE'] == 'OUI':
         liste_i, liste_j, liste_matt, liste_matp, liste_diff, nor_diff, max_diff = \
             tgt.Difference(matp, prec_diff)
-        print 'difference entre matrice tangente et matrice par pertubation : norme=', \
-            nor_diff, ' max=', max_diff
+        print('difference entre matrice tangente et matrice par pertubation : norme=', \
+            nor_diff, ' max=', max_diff)
         TAB_MAT = CREA_TABLE(LISTE=(_F(PARA='I', LISTE_I=liste_i),
                                     _F(PARA='J', LISTE_I=liste_j),
                              _F(PARA='MAT_TGTE',

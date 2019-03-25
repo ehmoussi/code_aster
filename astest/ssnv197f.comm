@@ -29,7 +29,7 @@ G=238.2E6
 YOUNG = 9.*K*G /(3.*K+G)
 POISSON = (3.*K-2.*G) /(6.*K+2.*G)
 
-print 'young=',YOUNG,' /// nu=',POISSON
+print('young=',YOUNG,' /// nu=',POISSON)
 
 # pression de preconsolidation [en kPa]
 P0=100.E3
@@ -253,7 +253,7 @@ U1=STAT_NON_LINE(MODELE=MODELE,
                               RESI_INTE_RELA = 1.E-8,
                               #ITER_INTE_PAS = 20,
                               ALGO_INTE='SPECIFIQUE',
-                              ITER_INTE_MAXI = 20),
+                              ITER_INTE_MAXI = 0),
                  NEWTON=_F(MATRICE = 'TANGENTE',REAC_ITER=1),
                  CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                 ITER_GLOB_MAXI = 10),
@@ -381,486 +381,446 @@ TAB_TEST=CREA_TABLE(LISTE=(_F(LISTE_R=values_EPZL,PARA='EPZZL'),
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.02,
-           VALE_CALC=190142.012974,
+           VALE_CALC=189073.385188,
            VALE_REFE=191799,
            NOM_PARA='VMIS',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-1.E-2,),
-           )
+                     VALE=-1.E-2,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=0.01,
-           VALE_CALC=190142.012974,
+           VALE_CALC=189073.385188,
            VALE_REFE=1.8849958125248E+05,
            NOM_PARA='VMIS',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-1.E-2,),
-           )
+                     VALE=-1.E-2,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.01,
-           VALE_CALC=254420.919313,
+           VALE_CALC=253669.049631,
            VALE_REFE=255501,
            NOM_PARA='VMIS',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.02,),
-           )
+                     VALE=-0.02,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=0.01,
-           VALE_CALC=254420.919313,
+           VALE_CALC=253669.049631,
            VALE_REFE=2.5307863060519E+05,
            NOM_PARA='VMIS',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.02,),
-           )
+                     VALE=-0.02,),)
 
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=330337.727577,
+           VALE_CALC=330053.668723,
            VALE_REFE=330404,
            NOM_PARA='VMIS',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.050000000000000003,),
-           )
+                     VALE=-0.050000000000000003,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=330337.727577,
+           VALE_CALC=330053.668723,
            VALE_REFE=3.2955719797221E+05,
            NOM_PARA='VMIS',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.050000000000000003,),
-           )
+                     VALE=-0.050000000000000003,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=355390.472986,
+           VALE_CALC=355331.823586,
            VALE_REFE=355895,
            NOM_PARA='VMIS',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.10000000000000001,),
-           )
+                     VALE=-0.10000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=355390.472986,
+           VALE_CALC=355331.823586,
            VALE_REFE=3.5540238603668E+05,
            NOM_PARA='VMIS',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.10000000000000001,),
-           )
+                     VALE=-0.10000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=339792.524491,
+           VALE_CALC=339806.198589,
            VALE_REFE=341220,
            NOM_PARA='VMIS',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.20000000000000001,),
-           )
+                     VALE=-0.20000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=339792.524491,
+           VALE_CALC=339806.198589,
            VALE_REFE=3.407310846735E+05,
            NOM_PARA='VMIS',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.20000000000000001,),
-           )
+                     VALE=-0.20000000000000001,),)
 
 # TEST DE LA DEFORMATION VOLUMIQUE TOTALE PAR RAPPORT AUX REFERENCES LAWYER
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.025,
-           VALE_CALC=-0.00541723267622,
+           VALE_CALC=-0.00540057191158,
            VALE_REFE=-5.5300000000000002E-3,
            NOM_PARA='EPVL',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-1.E-2,),
-           )
+                     VALE=-1.E-2,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=0.02,
-           VALE_CALC=-0.00541723267622,
+           VALE_CALC=-0.00540057191158,
            VALE_REFE=-5.4646356078588E-03,
            NOM_PARA='EPVL',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-1.E-2,),
-           )
+                     VALE=-1.E-2,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=2.E-2,
-           VALE_CALC=-0.00702127006935,
+           VALE_CALC=-0.0070190643463,
            VALE_REFE=-7.1500000000000001E-3,
            NOM_PARA='EPVL',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.02,),
-           )
+                     VALE=-0.02,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=2.E-2,
-           VALE_CALC=-0.00702127006935,
+           VALE_CALC=-0.0070190643463,
            VALE_REFE=-7.1274401976704E-03,
            NOM_PARA='EPVL',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.02,),
-           )
+                     VALE=-0.02,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=2.E-2,
-           VALE_CALC=-0.00653101573404,
+           VALE_CALC=-0.00655113422126,
            VALE_REFE=-6.6400000000000001E-3,
            NOM_PARA='EPVL',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.050000000000000003,),
-           )
+                     VALE=-0.050000000000000003,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=2.5E-2,
-           VALE_CALC=-0.00653101573404,
+           VALE_CALC=-0.00655113422126,
            VALE_REFE=-6.6867989451988E-03,
            NOM_PARA='EPVL',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.050000000000000003,),
-           )
+                     VALE=-0.050000000000000003,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.12,
-           VALE_CALC=-0.000736890124954,
+           VALE_CALC=-0.000766310753605,
            VALE_REFE=-8.2200000000000003E-4,
            NOM_PARA='EPVL',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.10000000000000001,),
-           )
+                     VALE=-0.10000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=0.12,
-           VALE_CALC=-0.000736890124954,
+           VALE_CALC=-0.000766310753605,
            VALE_REFE=-8.282723882571E-04,
            NOM_PARA='EPVL',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.10000000000000001,),
-           )
+                     VALE=-0.10000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.0125050864199,
+           VALE_CALC=0.0124763599269,
            VALE_REFE=0.012500000000000001,
            NOM_PARA='EPVL',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.20000000000000001,),
-           )
+                     VALE=-0.20000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.5E-2,
-           VALE_CALC=0.0125050864199,
+           VALE_CALC=0.0124763599269,
            VALE_REFE=0.012605700404409,
            NOM_PARA='EPVL',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.20000000000000001,),
-           )
+                     VALE=-0.20000000000000001,),)
 
 # TEST DU COEF D ECROUISSAGE DEVIATOIRE PAR RAPPORT AUX REFERENCES LAWYER
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.661471344052,
+           VALE_CALC=0.659328948127,
            VALE_REFE=0.66500000000000004,
            NOM_PARA='V1',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-1.E-2,),
-           )
+                     VALE=-1.E-2,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=5.E-3,
-           VALE_CALC=0.661471344052,
+           VALE_CALC=0.659328948127,
            VALE_REFE=0.65861500986473,
            NOM_PARA='V1',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-1.E-2,),
-           )
+                     VALE=-1.E-2,),)
 
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.772954092355,
+           VALE_CALC=0.771757262214,
            VALE_REFE=0.77500000000000002,
            NOM_PARA='V1',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.02,),
-           )
+                     VALE=-0.02,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=2.E-3,
-           VALE_CALC=0.772954092355,
+           VALE_CALC=0.771757262214,
            VALE_REFE=0.77143535659615,
            NOM_PARA='V1',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.02,),
-           )
+                     VALE=-0.02,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.88239367901,
+           VALE_CALC=0.881967278306,
            VALE_REFE=0.88300000000000001,
            NOM_PARA='V1',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.050000000000000003,),
-           )
+                     VALE=-0.050000000000000003,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=2.E-3,
-           VALE_CALC=0.882393679012,
+           VALE_CALC=0.881967278306,
            VALE_REFE=0.88187624908297,
            NOM_PARA='V1',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.050000000000000003,),
-           )
+                     VALE=-0.050000000000000003,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.934214744691,
+           VALE_CALC=0.934049020144,
            VALE_REFE=0.93400000000000005,
            NOM_PARA='V1',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.10000000000000001,),
-           )
+                     VALE=-0.10000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=2.E-3,
-           VALE_CALC=0.934214744691,
+           VALE_CALC=0.934049020144,
            VALE_REFE=0.93403009639927,
            NOM_PARA='V1',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.10000000000000001,),
-           )
+                     VALE=-0.10000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.965111655548,
+           VALE_CALC=0.965055784547,
            VALE_REFE=0.96499999999999997,
            NOM_PARA='V1',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.20000000000000001,),
-           )
+                     VALE=-0.20000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=2.E-3,
-           VALE_CALC=0.965111655548,
+           VALE_CALC=0.965055784547,
            VALE_REFE=0.96506890963068,
            NOM_PARA='V1',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.20000000000000001,),
-           )
+                     VALE=-0.20000000000000001,),)
 
 # TEST DU COEF D ECROUISSAGE ISOTROPE PAR RAPPORT AUX REFERENCES LAWYER
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.0574298100463,
+           VALE_CALC=0.0573261982912,
            VALE_REFE=0.057799999999999997,
            NOM_PARA='V4',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-1.E-2,),
-           )
+                     VALE=-1.E-2,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=0.0574298100463,
+           VALE_CALC=0.0573261982912,
            VALE_REFE=0.057506007117910,
            NOM_PARA='V4',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-1.E-2,),
-           )
+                     VALE=-1.E-2,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.062515627226,
+           VALE_CALC=0.0624323604507,
            VALE_REFE=0.063,
            NOM_PARA='V4',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.02,),
-           )
+                     VALE=-0.02,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=0.062515627226,
+           VALE_CALC=0.0624323604507,
            VALE_REFE=0.062687383287459,
            NOM_PARA='V4',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.02,),
-           )
+                     VALE=-0.02,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.0721194084029,
+           VALE_CALC=0.0720513444767,
            VALE_REFE=0.072499999999999995,
            NOM_PARA='V4',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.050000000000000003,),
-           )
+                     VALE=-0.050000000000000003,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=0.0721194084029,
+           VALE_CALC=0.0720513444767,
            VALE_REFE=0.072278254557118,
            NOM_PARA='V4',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.050000000000000003,),
-           )
+                     VALE=-0.050000000000000003,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.0867845544888,
+           VALE_CALC=0.0867215848468,
            VALE_REFE=0.086800000000000002,
            NOM_PARA='V4',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.10000000000000001,),
-           )
+                     VALE=-0.10000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=0.0867845544888,
+           VALE_CALC=0.0867215848468,
            VALE_REFE=0.086669491351368,
            NOM_PARA='V4',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.10000000000000001,),
-           )
+                     VALE=-0.10000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.117697518299,
+           VALE_CALC=0.117645747083,
            VALE_REFE=0.11700000000000001,
            NOM_PARA='V4',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.20000000000000001,),
-           )
+                     VALE=-0.20000000000000001,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=0.117697518299,
+           VALE_CALC=0.117645747083,
            VALE_REFE=0.11691626154425,
            NOM_PARA='V4',
            TABLE=TAB_TEST,
            FILTRE=_F(CRITERE='ABSOLU',
                      NOM_PARA='EPZZL',
-                     VALE=-0.20000000000000001,),
-           )
+                     VALE=-0.20000000000000001,),)
 
 FIN();

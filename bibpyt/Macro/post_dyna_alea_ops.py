@@ -18,11 +18,9 @@
 # --------------------------------------------------------------------
 
 import random
-import string
-from types import ListType, TupleType
 from math import pi, sqrt, log, exp
 
-EnumTypes = (ListType, TupleType)
+EnumTypes = (list, tuple)
 
 
 def post_dyna_alea_ops(self, INFO, **args):
@@ -110,16 +108,16 @@ def post_dyna_alea_ops(self, INFO, **args):
         tab2 = FRAGILITE['TABL_RESU'].EXTR_TABLE()
         dicta = tab2.values()
 
-        if dicta.has_key('DEFA'):
+        if 'DEFA' in dicta:
             liste_def = dicta['DEFA']
             test2 = NP.equal(None, liste_def)
-        elif dicta.has_key('DEMANDE'):
+        elif 'DEMANDE' in dicta:
             liste_dem = dicta['DEMANDE']
             test2 = NP.equal(None, liste_dem)
         else:
             UTMESS('F', 'TABLE0_1', valk=('DEFA,DEMANDE'))
 
-        if dicta.has_key('PARA_NOCI'):
+        if 'PARA_NOCI' in dicta:
             liste_indic = dicta['PARA_NOCI']
         else:
             UTMESS('F', 'TABLE0_1', valk=('PARA_NOCI'))
@@ -127,14 +125,14 @@ def post_dyna_alea_ops(self, INFO, **args):
         Nbval = len(liste_indic)
         test1 = NP.equal(None, liste_indic)
         if test1.any() or test2.any():
-            if dicta.has_key('DEFA'):
+            if 'DEFA' in dicta:
                 UTMESS('F', 'TABLE0_14', valk=('DEFA', 'PARA_NOCI'))
-            elif dicta.has_key('DEMANDE'):
+            elif 'DEMANDE' in dicta:
                 UTMESS('F', 'TABLE0_14', valk=('DEMANDE', 'PARA_NOCI'))
 
         if FRAGILITE['METHODE'] == "EMV":
         # 1) estimation paramètres maximum de vraisemblance
-            if not dicta.has_key('DEFA'):
+            if 'DEFA' not in dicta:
                 if FRAGILITE['SEUIL'] != None:
                     liste_def = [fonc_def(vale, FRAGILITE['SEUIL'])
                                  for vale in liste_dem]
@@ -375,9 +373,9 @@ def post_dyna_alea_ops(self, INFO, **args):
 #     Boucle sur les fonctions
 
         if aster.getvectjev(intespec + '.NOEI'):
-            l_ind = zip(l_ind_i, l_ind_j, l_cmp_i, l_cmp_j)
+            l_ind = list(zip(l_ind_i, l_ind_j, l_cmp_i, l_cmp_j))
         else:
-            l_ind = zip(l_ind_i, l_ind_j)
+            l_ind = list(zip(l_ind_i, l_ind_j))
 
         # pour la présentation de la table finale, on stocke le nbre de
         # paramètres "initiaux"

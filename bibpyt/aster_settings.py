@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -159,8 +159,8 @@ class CoreOptions(object):
         self.default_values()
         self.init_info()
         if self._dbg:
-            print 'options   :', self.opts
-            print 'arguments :', self.args
+            print('options   :', self.opts)
+            print('arguments :', self.args)
 
     def init_info(self):
         """Stocke les informations générales (machine, os...)."""
@@ -172,15 +172,14 @@ class CoreOptions(object):
         self.info['system'] = platform.system()
         # ex. 32bit/64bit
         self.info['architecture'] = platform.architecture()[0]
-        # ex. 2.6.32...
-        self.info['osrelease'] = platform.release()
-        self.info['osname'] = ' '.join(platform.linux_distribution())
+        # ex. Linux-3.16.0-7-amd64-x86_64-with-debian-8.11
+        self.info['osname'] = platform.platform()
         version = aster_pkginfo.version_info.version
         self.info['versionSTA'] = None
         self.info['versLabel'] = None
         keys = ('parentid', 'branch', 'date',
                 'from_branch', 'changes', 'uncommitted')
-        self.info.update(zip(keys, aster_pkginfo.version_info[1:]))
+        self.info.update(list(zip(keys, aster_pkginfo.version_info[1:])))
         self.info['version'] = '.'.join(str(i) for i in version)
         self.info['versMAJ'] = version[0]
         self.info['versMIN'] = version[1]
@@ -217,15 +216,15 @@ class CoreOptions(object):
             value = getattr(self.opts, option)
         else:
             value = self.info.get(option, default)
-        if type(value) in (str, unicode):
+        if type(value) in (str, str):
             value = convert(value)
         if self._dbg:
-            print("<CoreOptions.get_option> option={0!r} value={1!r}".format(option, value))
+            print(("<CoreOptions.get_option> option={0!r} value={1!r}".format(option, value)))
         return value
 
     def set_option(self, option, value):
         """Définit la valeur d'une option ou d'une information de base."""
-        assert hasattr(self.opts, option) or self.info.has_key(option), (
+        assert hasattr(self.opts, option) or option in self.info, (
             "unexisting option or information: '{0}'".format(option))
         if hasattr(self.opts, option):
             setattr(self.opts, option, value)
@@ -243,7 +242,8 @@ def get_program_path(program):
         prog_cfg = {}
         fname = osp.join(os.environ["ASTER_DATADIR"], "external_programs.js")
         if osp.isfile(fname):
-            prog_cfg = json.load(open(fname, "rb"))
+            with open(fname, 'r') as f:
+                prog_cfg = json.load(f)
         get_program_path._cache = prog_cfg
 
     programs = get_program_path._cache

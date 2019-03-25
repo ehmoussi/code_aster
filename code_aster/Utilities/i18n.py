@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -90,7 +90,7 @@ class Language(object):
             lang.extend(variants)
         tr = gettext.translation(
             self.domain, self.localedir, languages=lang, fallback=True)
-        tr.install(unicode=True)
+        tr.install()
         return tr
 
 localization = Language()

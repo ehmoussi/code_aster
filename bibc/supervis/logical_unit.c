@@ -48,8 +48,8 @@ int openLogicalUnitFile(const char* name, const int type, const int access)
         MYABORT("Error calling `LogicalUnitFile.open`.");
     }
     unit = PyObject_GetAttrString(res, "unit");
-    if (PyInt_Check(unit)) {
-        number = (int)PyInt_AsLong(unit);
+    if (PyLong_Check(unit)) {
+        number = (int)PyLong_AsLong(unit);
     } else {
         number = -1;
     }

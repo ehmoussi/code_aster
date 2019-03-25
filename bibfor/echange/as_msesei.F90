@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine as_msesei(idfimd, imasup, nomaes, nvtymd, dimest,&
+subroutine as_msesei(fid, imasup, nomaes, nvtymd, dimest,&
                      nomasu, medcel, nbnosu, nbmssu, tygems,&
                      nbattc, prespr, nbattv, codret)
 ! person_in_charge: nicolas.sellenet at edf.fr
@@ -28,18 +28,19 @@ subroutine as_msesei(idfimd, imasup, nomaes, nvtymd, dimest,&
 #include "asterfort/utmess.h"
 #include "med/msesei.h"
     character(len=*) :: nomaes, nomasu
-    aster_int :: idfimd, imasup, nvtymd, dimest, medcel, nbnosu
+    aster_int :: fid, imasup, nvtymd, dimest, medcel, nbnosu
     aster_int :: nbmssu, tygems, nbattc, prespr, nbattv, codret
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: idfim4, imasu4, nvtym4, dimes4, medce4, nbnos4
+    med_idt :: fidm
+    med_int :: imasu4, nvtym4, dimes4, medce4, nbnos4
     med_int :: nbmss4, tygem4, nbatc4, presp4, nbatv4, codre4
-    idfim4 = idfimd
+    fidm = to_med_idt(fid)
     imasu4 = imasup
-    call msesei(idfim4, imasu4, nomaes, nvtym4, dimes4,&
+    call msesei(fidm, imasu4, nomaes, nvtym4, dimes4,&
                 nomasu, medce4, nbnos4, nbmss4, tygem4,&
                 nbatc4, presp4, nbatv4, codre4)
     nvtymd = nvtym4
@@ -53,7 +54,7 @@ subroutine as_msesei(idfimd, imasup, nomaes, nvtymd, dimest,&
     nbattv = nbatv4
     codret = codre4
 #else
-    call msesei(idfimd, imasup, nomaes, nvtymd, dimest,&
+    call msesei(fid, imasup, nomaes, nvtymd, dimest,&
                 nomasu, medcel, nbnosu, nbmssu, tygems,&
                 nbattc, prespr, nbattv, codret)
 #endif

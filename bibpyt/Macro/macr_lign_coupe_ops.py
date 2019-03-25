@@ -400,7 +400,7 @@ def crea_resu_local(self, dime, NOM_CHAM, m, resin, mail, nomgrma):
                 motscles = {}
                 motscles['MODI_CHAM'] = []
                 motscles['AFFE'] = []
-                noeu = dictu.keys()
+                noeu = list(dictu.keys())
                 motscles['MODI_CHAM'].append(
                     _F(NOM_CHAM=NOM_CHAM, NOM_CMP=LCMP, TYPE_CHAM=TYPE_CHAM,),)
                 ANGL_NAUT = []
@@ -835,7 +835,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
         elif m['TYPE'] == 'GROUP_NO':
             ngrno = m['GROUP_NO'].ljust(24)
             collgrno = aster.getcolljev(n_mailla.ljust(8) + '.GROUPENO')
-            if ngrno not in collgrno.keys():
+            if ngrno not in list(collgrno.keys()):
                 UTMESS('F', 'POST0_13', valk=[ngrno, n_mailla])
             grpn = collgrno[ngrno]
             l_coor_group = [ngrno, ]
@@ -846,7 +846,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
 
         elif m['TYPE'] == 'GROUP_MA':
             ngrma = m['GROUP_MA'].ljust(24)
-            if ngrma not in collgrma.keys():
+            if ngrma not in list(collgrma.keys()):
                 UTMESS('F', 'POST0_14', valk=[ngrma, n_mailla])
             grpm = collgrma[ngrma]
             for ma in grpm:
@@ -959,7 +959,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     else:
         # on utilise directement le maillage (ou squelette) pour projeter le
         # champ
-        if n_mailla in self.get_global_contexte().keys():
+        if n_mailla in list(self.get_global_contexte().keys()):
             MAILLAGE_1 = self.get_global_contexte()[n_mailla]
         else:
             MAILLAGE_1 = self.jdc.current_context[n_mailla]
@@ -1077,7 +1077,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     if len(arcgma) > 0 and 'ABSC_CURV' in dictab.para:
         coltab = []
         val = dictab['ABSC_CURV'].values()['ABSC_CURV']
-        nbi = len(val) / nbno
+        nbi = len(val) // nbno
         nba = len(angles)
         tmp = []
         for k in range(nba):

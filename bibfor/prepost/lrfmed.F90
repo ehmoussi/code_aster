@@ -25,14 +25,14 @@ subroutine lrfmed(resu, i, mfich, nomgd, typcha,&
                   iinst, crit, epsi, linoch, acce,&
                   npas0)
 !
-implicit none
+    use as_med_module, only: as_med_open
+    implicit none
 !
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
 #include "jeveux.h"
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mfinvr.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/codent.h"
 #include "asterfort/copisd.h"
 #include "asterfort/detrsd.h"
@@ -143,7 +143,7 @@ integer, intent(out) :: npas0
         nofimd = kfic(1:200)
     endif
 !
-    call as_mfiope(fid, nofimd, edlect, iret)
+    call as_med_open(fid, nofimd, edlect, iret)
     call as_mfinvr(fid, major, minor, rel, iret)
     if (major .lt. 3) then
         nochmd(33:64) = '                                '

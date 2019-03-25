@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 import os
 import os.path as osp
 import types
-import cPickle as pickle
+import pickle
 import traceback
 PICKLE_PROTOCOL = 0
 
@@ -38,8 +38,8 @@ from Noyau.N_JDC import MemoryErrorMsg
 from Noyau.N_info import message, SUPERV
 from Noyau import basetype
 
-from strfunc import convert, ufmt
-from concept_dependency import ConceptDependenciesVisitor
+from .strfunc import convert, ufmt
+from .concept_dependency import ConceptDependenciesVisitor
 
 import aster
 
@@ -78,7 +78,7 @@ class JDC:
         self.initexec()
         for e in self.etapes:
             if CONTEXT.debug:
-                print e, e.nom, e.isactif()
+                print(e, e.nom, e.isactif())
             try:
                 if e.isactif():
                     # message.debug(SUPERV, "call etape.Exec : %s %s", e.nom,
@@ -104,8 +104,8 @@ class JDC:
         CONTEXT.set_current_step(self)
 
         # On reinitialise le compte-rendu self.cr
-        self.cr = self.CR(debut=_(u"CR d'execution de JDC en MIXTE"),
-                          fin=_(u"fin CR d'execution de JDC en MIXTE"))
+        self.cr = self.CR(debut=_("CR d'execution de JDC en MIXTE"),
+                          fin=_("fin CR d'execution de JDC en MIXTE"))
 
         self.timer.Start(" . build")
         ret = self._Build()
@@ -119,17 +119,17 @@ class JDC:
         try:
             for e in self.etapes:
                 if CONTEXT.debug:
-                    print e, e.nom, e.isactif()
+                    print(e, e.nom, e.isactif())
                 if e.isactif():
                     e.BuildExec()
 
-        except self.codex.error, exc_val:
+        except self.codex.error as exc_val:
             self.traiter_user_exception(exc_val)
             self.affiche_fin_exec()
             e = self.get_derniere_etape()
             self.traiter_fin_exec("par_lot", e)
 
-        except MemoryError, e:
+        except MemoryError as e:
             self.cr.exception(MemoryErrorMsg)
 
         except EOFError:
@@ -139,7 +139,7 @@ class JDC:
             self.traiter_fin_exec("par_lot", e)
 
         if self.info_level > 1:
-            print self.timer_fin
+            print(self.timer_fin)
         CONTEXT.unset_current_step()
         return ier
 
@@ -173,7 +173,7 @@ class JDC:
         l_etapes = self.get_liste_etapes()
         l_etapes.reverse()
         for e in l_etapes:
-            if self.timer.timers.has_key(id(e)):
+            if id(e) in self.timer.timers:
                 e.AfficheFinCommande()
                 break
 
@@ -187,7 +187,7 @@ class JDC:
         else:
             cpu_restant = 0.
 
-        texte_final = _(u"""
+        texte_final = _("""
 
   <I> Informations sur les temps d'exécution
       Temps cpu user total              %10.2f s
@@ -214,7 +214,8 @@ class JDC:
         # fichier d'info
         txt = "%10.2f %10.2f %10.2f %10.2f\n" \
             % (elapsed_total, cpu_total_user, cpu_total_syst, cpu_restant)
-        open('info_cpu', 'w').write(txt)
+        with open('info_cpu', 'w') as f:
+            f.write(txt)
 
     def traiter_fin_exec(self, mode, etape=None):
         """ Cette methode realise un traitement final lorsque la derniere commande
@@ -247,7 +248,7 @@ class JDC:
             # On retire du contexte des constantes les concepts produits
             # par les commandes (exécutées et non exécutées)
             context = self.const_context
-            for key, value in context.items():
+            for key, value in list(context.items()):
                 if isinstance(value, ASSD):
                     del context[key]
 
@@ -256,11 +257,11 @@ class JDC:
             context.update(self.get_contexte_avant(etape))
 
         if CONTEXT.debug:
-            print '<DBG> (traiter_fin_exec) context.keys(assd) =',
-            for key, value in context.items():
+            print('<DBG> (traiter_fin_exec) context.keys(assd) =', end=' ')
+            for key, value in list(context.items()):
                 if isinstance(value, ASSD):
-                    print key,
-            print
+                    print(key, end=' ')
+            print()
 
         # On élimine du contexte courant les objets qui ne supportent pas
         # le pickle (version 2.2)
@@ -271,8 +272,8 @@ class JDC:
             self.timer_fin.Stop(" . filter")
         # Sauvegarde du pickle dans le fichier pick.1 du repertoire de travail
 
-        file = open('pick.1', 'wb')
-        pickle.dump(context, file, protocol=PICKLE_PROTOCOL)
+        with open('pick.1', 'wb') as f:
+            pickle.dump(context, f, protocol=PICKLE_PROTOCOL)
         if self.info_level > 1:
             self.timer_fin.Stop("pickle")
 
@@ -285,14 +286,14 @@ class JDC:
            Le dictionnaire résultat est retourné par la méthode.
         """
         d = {}
-        for key, value in context.items():
+        for key, value in list(context.items()):
             if key in ('aster', 'aster_core', '__builtins__'):
                 continue
-            if type(value) in (types.ModuleType, types.ClassType, types.FunctionType):
+            if type(value) in (types.ModuleType, type, types.FunctionType):
                 continue
             if issubclass(type(value), basetype.MetaType):
                 continue
-            if issubclass(type(value), types.TypeType):
+            if issubclass(type(value), type):
                 continue
             if isinstance(value, ENTITE):
                 continue
@@ -313,7 +314,7 @@ class JDC:
                 pass
         self.save_pickled_attrs(d)
         if self.info_level > 1:
-            keys = d.keys()
+            keys = list(d.keys())
             keys.sort()
             for key in keys:
                 try:
@@ -324,7 +325,7 @@ class JDC:
                 except:
                     valk = key, '...'
                 # on ne peut plus appeler UTMESS
-                print 'pickle: %s = %s' % valk
+                print('pickle: %s = %s' % valk)
         return d
 
     def traiter_user_exception(self, exc_val):
@@ -335,18 +336,18 @@ class JDC:
             # erreur utilisateur levee et pas trappee, on ferme les bases en
             # appelant la commande FIN
             self.codex.impers()
-            self.cr.exception(ufmt(_(u"<S> Exception utilisateur levee mais pas interceptee.\n"
-                                     u"Les bases sont fermees.\n"
-                                     u"Type de l'exception : %s\n%s"),
+            self.cr.exception(ufmt(_("<S> Exception utilisateur levee mais pas interceptee.\n"
+                                     "Les bases sont fermees.\n"
+                                     "Type de l'exception : %s\n%s"),
                                    exc_val.__class__.__name__, exc_val))
             self.fini_jdc(exc_val)
 
     def abort_jdc(self):
         """ Cette methode termine le JDC par un abort
         """
-        print convert(_(u">> JDC.py : DEBUT RAPPORT"))
-        print self.cr
-        print convert(_(u">> JDC.py : FIN RAPPORT"))
+        print(convert(_(">> JDC.py : DEBUT RAPPORT")))
+        print(self.cr)
+        print(convert(_(">> JDC.py : FIN RAPPORT")))
         os.abort()
 
     def fini_jdc(self, exc_val):
@@ -400,8 +401,8 @@ class JDC:
            Retourne la valeur d'un des attributs "aster"
         """
         if attr not in self.l_jdc_attr:
-            raise aster.error(ufmt(_(u"Erreur de programmation :\n"
-                                     u"attribut '%s' non autorisé"), attr))
+            raise aster.error(ufmt(_("Erreur de programmation :\n"
+                                     "attribut '%s' non autorisé"), attr))
         return getattr(self, attr)
 
     def set_jdc_attr(self, attr, value):
@@ -409,11 +410,11 @@ class JDC:
            Positionne un des attributs "aster"
         """
         if attr not in self.l_jdc_attr:
-            raise aster.error(ufmt(_(u"Erreur de programmation :\n"
-                                     u"attribut '%s' non autorisé"), attr))
-        if type(value) not in (int, long):
-            raise aster.error(ufmt(_(u"Erreur de programmation :\n"
-                                     u"valeur non entière : %s"), value))
+            raise aster.error(ufmt(_("Erreur de programmation :\n"
+                                     "attribut '%s' non autorisé"), attr))
+        if type(value) not in (int, int):
+            raise aster.error(ufmt(_("Erreur de programmation :\n"
+                                     "valeur non entière : %s"), value))
         setattr(self, attr, value)
 
     def save_pickled_attrs(self, context):
@@ -429,7 +430,7 @@ class JDC:
         """Restaure les attributs du jdc qui ont été "picklés" via le contexte.
         """
         d = context.pop('jdc_pickled_attributes', {})
-        for attr, value in d.items():
+        for attr, value in list(d.items()):
             # assert attr in self.l_pick_attr
             setattr(self, attr, value)
         self._sign = getattr(self, '_sign') or '?'

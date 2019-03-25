@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,11 @@
 !
 !
 interface
-    subroutine elrfdf(elrefz, x, dimd, dff, nno,&
-                      ndim)
-        character(len=*) :: elrefz
-        real(kind=8) :: x(*)
-        integer :: dimd
-        real(kind=8) :: dff(3, *)
-        integer :: nno
-        integer :: ndim
+    subroutine elrfdf(elrefz, x, dimd, dff, nno, ndim)
+        character(len=*), intent(in) :: elrefz
+        integer, intent(in) :: dimd
+        real(kind=8), intent(in) :: x(*)
+        integer, intent(out) :: nno, ndim
+        real(kind=8), intent(out) :: dff(3, *)
     end subroutine elrfdf
 end interface

@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------- */
-/* Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org             */
+/* Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org             */
 /* This file is part of code_aster.                                     */
 /*                                                                      */
 /* code_aster is free software: you can redistribute it and/or modify   */
@@ -155,10 +155,22 @@ static PyMethodDef methods[] = {
    { NULL, NULL, 0, NULL }
 };
 
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "aster_fonctions",
+        NULL,
+        -1,
+        methods,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
 
 PyMODINIT_FUNC initaster_fonctions(void)
 {
-   Py_InitModule("aster_fonctions", methods);
+   PyObject* aster_fonctions = PyModule_Create(&moduledef);
    import_array();
+   return aster_fonctions;
 }
 #endif

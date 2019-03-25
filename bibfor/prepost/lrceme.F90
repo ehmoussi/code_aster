@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,6 +54,7 @@ subroutine lrceme(chanom, nochmd, typech, nomamd, nomaas,&
 !_____________________________________________________________________
 !
 ! aslint: disable=W1504
+    use as_med_module, only: as_med_open
     implicit none
 !
 ! 0.1. ==> ARGUMENTS
@@ -64,7 +65,6 @@ subroutine lrceme(chanom, nochmd, typech, nomamd, nomaas,&
 #include "asterfort/as_mfdnfc.h"
 #include "asterfort/as_mfdnfd.h"
 #include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/cescar.h"
 #include "asterfort/cescel.h"
 #include "asterfort/codent.h"
@@ -192,7 +192,7 @@ subroutine lrceme(chanom, nochmd, typech, nomamd, nomaas,&
         else
             nofimd = kfic(1:200)
         endif
-        call as_mfiope(idfimd, nofimd, edlect, iret)
+        call as_med_open(idfimd, nofimd, edlect, iret)
         call as_mfdnfd(idfimd, nbcham, iret)
         do 777 i = 1, nbcham
             call as_mfdnfc(idfimd, i, nbcmp, iret)

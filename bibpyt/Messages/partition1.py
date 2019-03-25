@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    1: _(u"""
+    1: _("""
  Il y a moins de sous-domaines (%(i1)d) que de processeurs participant au calcul (%(i2)d).
 
  Conseils :
@@ -29,7 +29,7 @@ cata_msg = {
    - diminuez le nombre de processeurs du calcul
 """),
 
-    2: _(u"""
+    2: _("""
  Le partitionnement des mailles du maillage conduit à un sous-domaine ayant 0 maille.
  Le code ne sait pas traiter ce cas de figure.
  Conseils :
@@ -39,7 +39,7 @@ cata_msg = {
  
 """),
 
-    17 : _(u"""
+    17 : _("""
   La partition %(k1)s que vous utilisez pour partitionner le modèle %(k2)s en sous-domaines a été construite sur un autre modèle (%(k3)s).
 
   Conseil : vérifiez la cohérence des modèles.
@@ -48,7 +48,7 @@ cata_msg = {
 
 
 
-    93 : _(u"""
+    93 : _("""
  Il y a moins de mailles (%(i1)d) dans le modèle que de processeurs participant au calcul (%(i2)d).
 
  Conseils :
@@ -57,11 +57,11 @@ cata_msg = {
 """),
 
 
-    98: _(u"""
+    98: _("""
   La maille de numéro:  %(i1)d appartient à plusieurs sous-domaines !
 """),
 
-    99 : _(u"""
+    99 : _("""
  Le paramètre CHARGE_PROC0_SD du mot-clé facteur DISTRIBUTION est mal renseigné.
  Il faut qu'il reste au moins un sous domaine par processeur une fois affectés tous les sous-domaines du processeur 0.
 

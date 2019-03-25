@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,10 +21,10 @@
 
 import numpy
 
-from Tkinter import Frame, Menubutton, Checkbutton, Menu, StringVar, IntVar
-from Tkinter import Scrollbar, Label, Radiobutton, Button, Entry
-from Tkinter import Checkbutton, Listbox, Toplevel, Message
-import tkFont
+from tkinter import Frame, Menubutton, Checkbutton, Menu, StringVar, IntVar
+from tkinter import Scrollbar, Label, Radiobutton, Button, Entry
+from tkinter import Checkbutton, Listbox, Toplevel, Message
+import tkinter.font
 
 from code_aster.Cata.Syntax import _F
 import aster
@@ -66,7 +66,7 @@ class InterfaceCalcSpec(Frame):
 
         self.objects = aster_objects
 
-        self.font1 = tkFont.Font(family="Helvetica", size=16)
+        self.font1 = tkinter.font.Font(family="Helvetica", size=16)
 
         self.mess = mess
         self.param_visu = param_visu
@@ -94,14 +94,14 @@ class InterfaceCalcSpec(Frame):
 
         Label(fl, text="Tables disponibles :", pady=5).grid(row=r, column=0)
         Label(fl, text="Points de mesures :", pady=5).grid(row=r, column=2)
-        Label(fl, text=u"Points de référence :", pady=5).grid(row=r, column=4)
+        Label(fl, text="Points de référence :", pady=5).grid(row=r, column=4)
 
         r = r + 1
 
         # appeler refresh quand on change de selection dans list_tab #
 
         self.list_tab = Listbox(fl, selectmode='browse', background='white')
-        for item in self.list_temp.keys():
+        for item in list(self.list_temp.keys()):
             self.list_tab.insert('end', item)
         self.list_tab.grid(row=r, column=0)
 
@@ -160,7 +160,7 @@ class InterfaceCalcSpec(Frame):
 
         r = r + 1
         Label(fp, text="Longueur :", pady=5).grid(row=r, column=0)
-        longueur = [u"Durée", "Points", "Pourcent"]
+        longueur = ["Durée", "Points", "Pourcent"]
         self.radio_long = IntVar()
         for lon in range(len(longueur)):
             Radiobutton(fp, text=longueur[lon], variable=self.radio_long, value=lon).grid(
@@ -171,7 +171,7 @@ class InterfaceCalcSpec(Frame):
         r = r + 1
         Label(fp, text="Recouvrement :", pady=5).grid(row=r, column=0)
         self.radio_rec = IntVar()
-        recouvr = [u"Durée", "Points", "Pourcent"]
+        recouvr = ["Durée", "Points", "Pourcent"]
         for rec in range(len(recouvr)):
             Radiobutton(fp, text=recouvr[rec], variable=self.radio_rec, value=rec).grid(
                 row=r, column=rec + 2)
@@ -193,7 +193,7 @@ class InterfaceCalcSpec(Frame):
         self.view_spec.grid(row=r, column=2)
 
         self.view_spec = Button(
-            fp, text=u"Cohérence", command=self.calc_coherence)
+            fp, text="Cohérence", command=self.calc_coherence)
         self.view_spec.grid(row=r, column=3)
 
         r = r + 1
@@ -246,7 +246,7 @@ class InterfaceCalcSpec(Frame):
         #-- On teste les entrees
         if self.list_mes.size() == 0:
             self.mess.disp_mess(
-                u"Pas de mesure sélectionnée pour la visualisation")
+                "Pas de mesure sélectionnée pour la visualisation")
             return
 
         #-- Si OK, on continu
@@ -264,7 +264,7 @@ class InterfaceCalcSpec(Frame):
 
         #-- remise a jour de la liste pour la visu
 # self.curve_list.delete()
-        self.coupl_ddl = zip(self.tab_temp.nume_ordr, self.tab_temp.nume_mes)
+        self.coupl_ddl = list(zip(self.tab_temp.nume_ordr, self.tab_temp.nume_mes))
         lab = []
         for nume_ordr, nume_mes in self.coupl_ddl:
             lab.append('Pt. ' + str(nume_ordr) + ' - Mes. ' + str(nume_mes))
@@ -282,7 +282,7 @@ class InterfaceCalcSpec(Frame):
             self.mess.disp_mess("Aucune courbe selectionnee !!")
             return
         try:
-            ind_v = map(int, ind_v)
+            ind_v = list(map(int, ind_v))
         except ValueError:
             pass
 
@@ -386,7 +386,7 @@ class InterfaceCalcSpec(Frame):
 
         if (test1 + test2) == 0:
             self.mess.disp_mess(
-                u"Sélectionner au moins une mesure et une référence")
+                "Sélectionner au moins une mesure et une référence")
             return
 
         #-- Si OK, on continu
@@ -398,7 +398,7 @@ class InterfaceCalcSpec(Frame):
         ind_sel = self.list_mes.curselection()
         ind_tab = self.list_tab_cur
         try:
-            ind_sel = map(int, ind_sel)
+            ind_sel = list(map(int, ind_sel))
         except ValueError:
             pass
 
@@ -443,7 +443,7 @@ class InterfaceCalcSpec(Frame):
             __Spec = CALC_SPEC(TAB_ECHANT=mcfact_tabechant,
                                INTERSPE=mcfact_win,)
 
-        except EOFError, err:
+        except EOFError as err:
             self.mess.disp_mess("ERREUR DANS CALC_SPEC")
             UTMESS('A', 'CALCESSAI0_8')
             return
@@ -475,7 +475,7 @@ class InterfaceCalcSpec(Frame):
 
         if (test1 * test2) == 0:
             self.mess.disp_mess(
-                u"Sélectionner au moins une mesure et une référence")
+                "Sélectionner au moins une mesure et une référence")
             return
 
         #-- Si OK, on continu
@@ -487,7 +487,7 @@ class InterfaceCalcSpec(Frame):
         ind_sel = self.list_ref.curselection()
         ind_tab = self.list_tab_cur
         try:
-            ind_sel = map(int, ind_sel)
+            ind_sel = list(map(int, ind_sel))
         except ValueError:
             pass
 
@@ -543,7 +543,7 @@ class InterfaceCalcSpec(Frame):
             __Coh = CALC_SPEC(TAB_ECHANT=mcfact_tabechant,
                               TRANSFERT=mcfact_win,)
 
-        except EOFError, err:
+        except EOFError as err:
             self.mess.disp_mess("ERREUR DANS CALC_SPEC")
             UTMESS('A', 'CALCESSAI0_8')
             return
@@ -562,7 +562,7 @@ class InterfaceCalcSpec(Frame):
         for nume_i, nume_j in self.coupl_ddl:
             lst.append('Pt. ' + str(nume_i) + ' - Pt. ' + str(nume_j))
         self.curve_list.set_values(lst)
-        self.label_visu.set(u"Cohérences :")
+        self.label_visu.set("Cohérences :")
 
     def calc_transfert(self):
 
@@ -572,11 +572,11 @@ class InterfaceCalcSpec(Frame):
 
         if (test1 * test2) == 0:
             self.mess.disp_mess(
-                u"Sélectionner au moins une mesure et une référence")
+                "Sélectionner au moins une mesure et une référence")
             return
         if test1 > 1:
             self.mess.disp_mess(
-                u"Pour le calcul des fonctions de transfert, ne sélectionner qu'une seule référence !")
+                "Pour le calcul des fonctions de transfert, ne sélectionner qu'une seule référence !")
             return
 
         #-- Si OK, on continu
@@ -589,7 +589,7 @@ class InterfaceCalcSpec(Frame):
         ind_sel = self.list_ref.curselection()
         ind_tab = self.list_tab_cur
         try:
-            ind_sel = map(int, ind_sel)
+            ind_sel = list(map(int, ind_sel))
         except ValueError:
             pass
 
@@ -644,7 +644,7 @@ class InterfaceCalcSpec(Frame):
             __FRF = CALC_SPEC(TAB_ECHANT=mcfact_tabechant,
                               TRANSFERT=mcfact_win)
 
-        except EOFError, err:
+        except EOFError as err:
             self.mess.disp_mess("ERREUR DANS CALC_SPEC")
             UTMESS('A', 'CALCESSAI0_8')
             return
@@ -674,12 +674,12 @@ class InterfaceCalcSpec(Frame):
         ind_mes = self.list_mes.curselection()
         ind_tab = self.list_tab_cur
         try:
-            ind_mes = map(int, ind_mes)
+            ind_mes = list(map(int, ind_mes))
         except ValueError:
             pass
 
         # creation d'une table_fonction a partir des indices selectionnes
-        keys = self.list_temp.keys()
+        keys = list(self.list_temp.keys())
         list_temp = self.list_temp[keys[ind_tab]]
         list_temp.extr_tempo()
 
@@ -687,8 +687,8 @@ class InterfaceCalcSpec(Frame):
         ind_ref = self.list_ref.curselection()
         ind_tab = self.list_tab_cur
         try:
-            ind_mes = map(int, ind_mes)
-            ind_ref = map(int, ind_ref)
+            ind_mes = list(map(int, ind_mes))
+            ind_ref = list(map(int, ind_ref))
         except ValueError:
             pass
 
@@ -752,7 +752,7 @@ class InterfaceCalcSpec(Frame):
         self.list_tab.delete(0, 'end')
         self.objects.recup_objects()
         self.list_temp = self.objects.list_tempo
-        for item in self.list_temp.keys():
+        for item in list(self.list_temp.keys()):
             self.list_tab.insert('end', item)
 
     def refresh(self, list_tempo, list_tab, list_mes, list_ref):
@@ -765,7 +765,7 @@ class InterfaceCalcSpec(Frame):
         ind_tab = list_tab.curselection()
         if len(ind_tab) > 1:
             self.mess.disp_mess(
-                u"Ne sélectionner qu'une seule table pour le calcul")
+                "Ne sélectionner qu'une seule table pour le calcul")
             return
         ind_tab = int(ind_tab[0])
 
@@ -773,7 +773,7 @@ class InterfaceCalcSpec(Frame):
         # ete exportee)
         if type(self) != type([]):
             self.list_tab_cur = 0 + ind_tab
-        keys = list_tempo.keys()
+        keys = list(list_tempo.keys())
         list_temp = list_tempo[keys[ind_tab]]
         list_temp.extr_tempo()
 

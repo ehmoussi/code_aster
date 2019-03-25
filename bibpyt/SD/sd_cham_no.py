@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ class sd_cham_no(sd_titre):
     def check_cham_no_i_REFE(self, checker):
         if not self.exists():
             return
-        if checker.names.has_key(self.REFE):
+        if self.REFE in checker.names:
             return
 
         mail, prof_chno = self.u_refe()
@@ -65,7 +65,7 @@ class sd_cham_no(sd_titre):
         sd2.check(checker)
 
         if prof_chno:
-            if checker.names.has_key(prof_chno[:14] + '.NUME.PRNO'):
+            if prof_chno[:14] + '.NUME.PRNO' in checker.names:
                 return
             sd2 = sd_prof_chno(prof_chno)
             sd2.check(checker)
@@ -73,7 +73,7 @@ class sd_cham_no(sd_titre):
     def check_cham_no_DESC(self, checker):
         if not self.exists():
             return
-        if checker.names.has_key(self.DESC):
+        if self.DESC in checker.names:
             return
 
         gd, num = self.u_desc()

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,9 +33,9 @@ def asse_elem_ssd_prod(self, RESU_ASSE_SSD, **args):
         'MASS_GENE' : matr_asse_gene_r,
     }
     if args.get('__all__'):
-        return ([None], MTYPES.values())
+        return ([None], list(MTYPES.values()))
 
-    for mc, typ in MTYPES.items():
+    for mc, typ in list(MTYPES.items()):
         if RESU_ASSE_SSD.get(mc):
             self.type_sdprod(RESU_ASSE_SSD[mc], typ)
     return None

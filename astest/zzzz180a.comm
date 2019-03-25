@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -166,8 +166,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 ##############################
 
 ts =  aster.getvectjev(FONCT1.getName() + ".VALE");
-nbpoin=(len(ts)/2-1)/nbtir
-tfin=ts[len(ts)/2-1]
+nbpoin=(len(ts)//2-1)/nbtir
+tfin=ts[len(ts)//2-1]
 
 #
 INTERS=CALC_INTE_SPEC(          INST_INIT=0.,
@@ -273,7 +273,7 @@ MF11=RECU_FONCTION(    INTE_SPEC=INTERS,
 
 tt =  aster.getvectjev(MF11.getName() + ".VALE");
 fmin=tt[0]
-fmax=tt[len(tt)/2-1]
+fmax=tt[len(tt)//2-1]
 
 RMS11=INFO_FONCTION( RMS=_F(  FONCTION = MF11))
 

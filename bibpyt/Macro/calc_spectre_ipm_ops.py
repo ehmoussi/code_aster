@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,10 +37,7 @@ def calc_spectre_ipm_ops(
                         AMOR_SPEC=None, LIST_INST=None, FREQ=None, LIST_FREQ=None, NORME=None, TOLE_INIT=None, CORR_INIT=None, **args):
     import numpy as NP
     import math
-    import string
-    from types import ListType, TupleType, StringType
-    ier = 0
-    EnumType = (ListType, TupleType)
+    EnumType = (list, tuple)
 
     # Comptage commandes + déclaration concept sortant
     self.set_icmd(1)
@@ -70,10 +67,10 @@ def calc_spectre_ipm_ops(
     #
     for plancher in dplancher:
         liste_no = []
-        clefs = plancher.keys()
+        clefs = list(plancher.keys())
         if ('NOEUD' in clefs):
             if plancher['NOEUD'] != None:
-                if type(plancher['NOEUD']) == StringType:
+                if type(plancher['NOEUD']) is str:
                     liste_no.append(plancher['NOEUD'])
                 else:
                     for noeud in plancher['NOEUD']:
@@ -81,13 +78,13 @@ def calc_spectre_ipm_ops(
         if ('GROUP_NO' in clefs):
             if plancher['GROUP_NO'] != None:
                 assert (MAILLAGE != None)
-                if type(plancher['GROUP_NO']) == StringType:
-                    noms_no = [string.strip(l_nodes[n - 1])
+                if type(plancher['GROUP_NO']) is str:
+                    noms_no = [l_nodes[n - 1].strip()
                                for n in dic_gpno[plancher['GROUP_NO'].ljust(24)]]
                     liste_no = liste_no + noms_no
                 else:
                     for group_no in plancher['GROUP_NO']:
-                        noms_no = [string.strip(l_nodes[n - 1])
+                        noms_no = [l_nodes[n - 1].strip()
                                    for n in dic_gpno[group_no.ljust(24)]]
                         liste_no = liste_no + noms_no
         planch_nodes[plancher['NOM']] = liste_no
@@ -141,140 +138,142 @@ def calc_spectre_ipm_ops(
         indexn = 0
         for node in planch_nodes[plancher]:
             # ---------------------------------------------------------------------------------
-            if RESU['TABLE'] != None:
-                # 2 formats de table possible. Avec les colonnes :
-                #   INST NOEUD NOM_CHAM NOM_CMP VALE
-                #   INST NOEUD NOM_CHAM DX DY DZ
-                # récupération du nom des colonnes de la table
-                nomcol = RESU['TABLE'].get_nom_para()
-                #
-                lst1 = ('INST', 'NOEUD', 'NOM_CHAM', 'NOM_CMP', 'VALE')
-                ok1 = True
-                for para in lst1:
-                    ok1 = ok1 and (para in nomcol)
-                #
-                lst2 = ('INST', 'NOEUD', 'NOM_CHAM', 'DZ',)
-                ok2 = True
-                for para in lst2:
-                    ok2 = ok2 and (para in nomcol)
-                #
-                if (not ok1 ^ ok2):
-                    print nomcol
-                    assert (ok1 ^ ok2)
-                #
-                if (ok1):
-                    __ACCE_E = RECU_FONCTION(
-                        TABLE=RESU['TABLE'],
-                        PARA_X='INST', PARA_Y='VALE', INTERPOL='LIN',
-                        FILTRE=(_F(NOM_PARA='NOEUD',    VALE_K=node),
-                                _F(NOM_PARA='NOM_CHAM',
-                                            VALE_K='ACCE'),
-                                _F(NOM_PARA='NOM_CMP',  VALE_K='DZ'),),
+            # boucle 3 sur les résultats
+            l_fonc=[]
+            for resu in RESU :
+                # Etape 1: Récupération des fonctions
+                # if resu['RESU_GENE'] != None :
+                    # __ACCE_E=RECU_FONCTION(NOM_CHAM     = 'ACCE',
+                            # TOUT_ORDRE   = 'OUI',
+                            # NOM_CMP      = 'DZ',
+                            # INTERPOL     = 'LIN',
+                            # PROL_GAUCHE  = 'CONSTANT',
+                            # PROL_DROITE  = 'CONSTANT',
+                            # NOEUD        = node ,
+                            # RESU_GENE    = resu['RESU_GENE']
+                        # )
+                # if resu['RESULTAT'] !=None :
+                    # __ACCE_E=RECU_FONCTION(
+                            # NOM_CHAM     = 'ACCE',
+                            # TOUT_ORDRE   = 'OUI',
+                            # NOM_CMP      = 'DZ',
+                            # INTERPOL     = 'LIN',
+                            # PROL_GAUCHE  = 'CONSTANT',
+                            # PROL_DROITE  = 'CONSTANT',
+                            # NOEUD        = node ,
+                            # RESULTAT     = resu['RESULTAT']
+                        # )
+                if resu['TABLE'] !=None :
+                    # 2 formats de table possible. Avec les colonnes :
+                    #   INST NOEUD NOM_CHAM NOM_CMP VALE
+                    #   INST NOEUD NOM_CHAM DX DY DZ
+                    # récupération du nom des colonnes de la table
+                    nomcol = resu['TABLE'].get_nom_para()
+                    #
+                    lst1 = ('INST','NOEUD','NOM_CHAM','NOM_CMP','VALE')
+                    ok1  = True
+                    for para in lst1: ok1 = ok1 and (para in nomcol)
+                    #
+                    lst2 = ('INST','NOEUD','NOM_CHAM','DZ',)
+                    ok2  = True
+                    for para in lst2: ok2 = ok2 and (para in nomcol)
+                    #
+                    if ( not ok1 ^ ok2 ):
+                        print(nomcol)
+                        assert (ok1 ^ ok2)
+                    #
+                    if ( ok1 ):
+                        __ACCE_E=RECU_FONCTION(
+                            TABLE=resu['TABLE'],
+                            PARA_X  = 'INST', PARA_Y  = 'VALE', INTERPOL= 'LIN',
+                            FILTRE  = ( _F(NOM_PARA='NOEUD',    VALE_K=node),
+                                        _F(NOM_PARA='NOM_CHAM', VALE_K='ACCE' ),
+                                        _F(NOM_PARA='NOM_CMP',  VALE_K='DZ'   ),),
+                        )
+                    #
+                    if ( ok2 ):
+                        __ACCE_E=RECU_FONCTION(
+                            TABLE=resu['TABLE'], PARA_X  = 'INST', PARA_Y  = 'DZ', INTERPOL= 'LIN',
+                                FILTRE  = ( _F(NOM_PARA='NOEUD',    VALE_K=node),
+                                            _F(NOM_PARA='NOM_CHAM', VALE_K='ACCE' ),),
+                        )
+                # Etape 2: Combinaisons
+                if CALCUL=='RELATIF' :
+                    # Combinaison avec fonction d'accélération
+                    motscles={}
+                    if LIST_INST!=None : motscles['LIST_PARA']=LIST_INST
+                    __ACCE_E=CALC_FONCTION(
+                        COMB=(  _F(FONCTION=__ACCE_E, COEF= 1.0  ),
+                                _F(FONCTION=resu['ACCE_Z'], COEF= 1.0),),
+                        **motscles
                     )
+                val_Acc = NP.array( __ACCE_E.Ordo() )
+                init = abs(val_Acc[0])/max(abs(val_Acc))
+                if init>TOLE_INIT:
+                    if CORR_INIT=="OUI":
+                        UTMESS('A','SPECTRAL0_16', valr=(init, TOLE_INIT))
+                        val_Acc[0]=0
+                        __ACCE_E  = DEFI_FONCTION(ABSCISSE =__ACCE_E.Absc(),ORDONNEE =val_Acc, NOM_PARA='INST' )
+                    else:
+                        UTMESS('F','SPECTRAL0_16', valr=(init, TOLE_INIT))
+
+                freq1 = FREQ_SUPP
+                # frequence modèle A
+                omega1=freq1*2.*pi;
+                # frequence modèle B
+                omega1_=omega1*(1+RAP_MAS)**0.5
+                # calcul de la fft de l'accelero d entree
+                # methode 2: CALC_FONCTION pour FFT
+                _FFTE = CALC_FONCTION(FFT = _F(FONCTION = __ACCE_E, METHODE='COMPLET'))
+                FFT   = NP.array(_FFTE.Ordo()) +complex(0.,1.)*NP.array(_FFTE.OrdoImg())
+                X     = NP.array(_FFTE.Valeurs()[0])
                 #
-                if (ok2):
-                    __ACCE_E = RECU_FONCTION(
-                        TABLE=RESU['TABLE'], PARA_X='INST', PARA_Y='DZ', INTERPOL='LIN',
-                            FILTRE=(
-                                _F(NOM_PARA='NOEUD',    VALE_K=node),
-                                        _F(NOM_PARA='NOM_CHAM', VALE_K='ACCE'),),
-                    )
-            # Etape 2: Combinaisons
-            if CALCUL == 'RELATIF':
-                # Combinaison avec fonction d'accélération
-                motscles = {}
-                if LIST_INST != None:
-                    motscles['LIST_PARA'] = LIST_INST
-                __ACCE_E = CALC_FONCTION(
-                    COMB=(_F(FONCTION=__ACCE_E, COEF=1.0),
-                            _F(FONCTION=RESU['ACCE_Z'], COEF=1.0),),
-                    **motscles
-                )
-            val_Acc = NP.array(__ACCE_E.Ordo())
-            init = abs(val_Acc[0]) / max(abs(val_Acc))
-            if init > TOLE_INIT:
-                if CORR_INIT == "OUI":
-                    UTMESS('A', 'SPECTRAL0_16', valr=(init, TOLE_INIT))
-                    val_Acc[0] = 0
-                    __ACCE_E = DEFI_FONCTION(
-                        ABSCISSE=__ACCE_E.Absc(), ORDONNEE=val_Acc, NOM_PARA='INST')
-                else:
-                    UTMESS('F', 'SPECTRAL0_16', valr=(init, TOLE_INIT))
-
-            freq1 = FREQ_SUPP
-            # frequence modèle A
-            omega1 = freq1 * 2. * pi
-            # frequence modèle B
-            omega1_ = omega1 * (1 + RAP_MAS) ** 0.5
-            # calcul de la fft de l'accelero d entree
-            # methode 2: CALC_FONCTION pour FFT
-            _FFTE = CALC_FONCTION(
-                FFT=_F(FONCTION=__ACCE_E, METHODE='COMPLET'))
-            FFT = NP.array(_FFTE.Ordo()) + complex(
-                0., 1.) * NP.array(_FFTE.OrdoImg())
-            X = NP.array(_FFTE.Valeurs()[0])
-            #
-            RES = []
-            cNum = [0] * len(FFT)
-            cDenom = [0] * len(FFT)
-            # boucle 4 sur les equipements
-            for i in range(len(FREQ_EQUI)):
-                omega = FREQ_EQUI[i] * 2. * pi
-                Delta = -(2. * pi * X[0:len(FFT)]) ** 2 + 2. * complex(
-                    0., 1.) * 2. * pi * X[0:len(FFT)] * omega * AMOR_EQUI[i] + omega ** 2
-                cNum = cNum + RAP_MAS * \
-                    RAP_MAS_COEF[i] * (
-                        Delta + (2. * pi * X[0:len(FFT)]) ** 2) / Delta
-                cDenom = cDenom + RAP_MAS * \
-                    RAP_MAS_COEF[i] * (Delta + (2. * pi * X[0:len(FFT)]) ** 2) - RAP_MAS * RAP_MAS_COEF[
-                        i] * (Delta + (2. * pi * X[0:len(FFT)]) ** 2) ** 2 / Delta
-            # Modele B
-            Delta1_ = -(2. * pi * X[0:len(FFT)]) ** 2 + 2. * complex(0., 1.) * 2. * pi * X[
-                0:len(FFT)] * omega1_ * AMOR_SUPP * (1 + RAP_MAS) ** 0.5 + omega1_ ** 2
-            # Modele A
-            Delta1 = -(2. * pi * X[0:len(FFT)]) ** 2 + 2. * complex(
-                0., 1.) * 2. * pi * X[0:len(FFT)] * omega1 * AMOR_SUPP + omega1 ** 2
-            # Calcul de la fonction de transfert
-            c = (1. + (2. * pi * X[0:len(FFT)]) ** 2 * (1 + cNum) / (Delta1_ + cDenom)) / (
-                1 + (2. * pi * X[0:len(FFT)]) ** 2 / Delta1)
-            RES = FFT * c
-            #
-            # methode 2: CALC_FONCTION pour FFT
-            val_c = []
-            for i in range(len(X) / 2):
-                val_c += [X[i], RES[i].real, RES[i].imag]
-            __FRESULT = DEFI_FONCTION(VALE_C=val_c, NOM_PARA='FREQ')
-            __ACCEAcor = CALC_FONCTION(
-                FFT=_F(FONCTION=__FRESULT, METHODE='COMPLET', SYME='NON'))
-            #
-            # calcul de spectres corriges
-            motscles = {}
-            if FREQ != None:
-                motscles['FREQ'] = FREQ
-            if LIST_FREQ != None:
-                motscles['LIST_FREQ'] = LIST_FREQ
-            __Spec = [None] * len(AMOR_SPEC)
-            for amor in range(len(AMOR_SPEC)):  # eviter la boucle ??
-                __Spec[amor] = CALC_FONCTION(
-                    SPEC_OSCI=_F(FONCTION=__ACCEAcor,
-                                    AMOR_REDUIT=AMOR_SPEC[amor],
-                                    NORME=NORME,
-                                    **motscles),
-                                                NOM_PARA='FREQ', )
-            # ---------------------------------------------------------------------------------
-            dico_global['FREQ ' + plancher] = Valeurs(
-                __Spec[amor])[1][0][0]
-            for amor in range(len(AMOR_SPEC)):
-                if len(planch_nodes[plancher]) > 1:
-                    nom = 'IPM ' + plancher + ' ' + node + \
-                        ' ' + str(int(AMOR_SPEC[amor] * 100)) + '%'
-                else:
-                    nom = 'IPM ' + plancher + ' ' + \
-                        str(int(AMOR_SPEC[amor] * 100)) + '%'
-                dico_global[nom] = Valeurs(__Spec[amor])[1][0][1]
-
+                RES=[];
+                cNum = [0]*len(FFT)
+                cDenom = [0]*len(FFT)
+                # boucle 4 sur les equipements
+                for i in range(len(FREQ_EQUI)):
+                    omega = FREQ_EQUI[i]*2.*pi;
+                    Delta =  -(2.*pi*X[0:len(FFT)])**2 + 2.*complex(0.,1.)*2.*pi*X[0:len(FFT)]*omega*AMOR_EQUI[i] + omega**2
+                    cNum = cNum + RAP_MAS*RAP_MAS_COEF[i]*(Delta+(2.*pi*X[0:len(FFT)])**2)/Delta
+                    cDenom = cDenom + RAP_MAS*RAP_MAS_COEF[i]*(Delta+(2.*pi*X[0:len(FFT)])**2) - RAP_MAS*RAP_MAS_COEF[i]*(Delta+(2.*pi*X[0:len(FFT)])**2)**2/Delta
+                # Modele B
+                Delta1_ = -(2.*pi*X[0:len(FFT)])**2 + 2.*complex(0.,1.)*2.*pi*X[0:len(FFT)]*omega1_*AMOR_SUPP*(1+RAP_MAS)**0.5 + omega1_**2;
+                # Modele A
+                Delta1 = -(2.*pi*X[0:len(FFT)])**2 + 2.*complex(0.,1.)*2.*pi*X[0:len(FFT)]*omega1*AMOR_SUPP + omega1**2;
+                # Calcul de la fonction de transfert
+                c = (1.+(2.*pi*X[0:len(FFT)])**2*( 1 + cNum)/(Delta1_ + cDenom))/(1+(2.*pi*X[0:len(FFT)])**2/Delta1)
+                RES = FFT*c;
+                #
+                # methode 2: CALC_FONCTION pour FFT
+                val_c=[]
+                for i in range(len(X)//2):
+                    val_c+=[X[i],RES[i].real,RES[i].imag]
+                __FRESULT  = DEFI_FONCTION(VALE_C =val_c, NOM_PARA='FREQ' )
+                __ACCEAcor = CALC_FONCTION(FFT = _F(FONCTION = __FRESULT, METHODE='COMPLET', SYME='NON'));
+                #
+                # calcul de spectres corriges
+                motscles={}
+                if FREQ     !=None : motscles['FREQ']     =FREQ
+                if LIST_FREQ!=None : motscles['LIST_FREQ']=LIST_FREQ
+                __Spec=[None]*len(AMOR_SPEC);
+                for amor in range(len(AMOR_SPEC)): # eviter la boucle ??
+                    __Spec[amor] = CALC_FONCTION(
+                                SPEC_OSCI = _F(  FONCTION = __ACCEAcor,
+                                                 AMOR_REDUIT = AMOR_SPEC[amor],
+                                                 NORME = NORME ,
+                                                  **motscles) ,
+                                                 NOM_PARA='FREQ', ) ;
+       #****************************************************
+                dico_global['FREQ ' + plancher] = Valeurs(__Spec[amor])[1][0][0]
+                for amor in range(len(AMOR_SPEC)):
+                    if len(planch_nodes[plancher])>1:
+                        nom = 'IPM '+ plancher + ' ' +node + ' ' + str(int(AMOR_SPEC[amor]*100)) + '%'
+                    else:
+                        nom = 'IPM '+ plancher + ' ' + str(int(AMOR_SPEC[amor]*100)) + '%'
+                    dico_global[nom] = Valeurs(__Spec[amor])[1][0][1]
     lListe = []
-    lkeys = dico_global.keys()
+    lkeys = list(dico_global.keys())
     lkeys.sort()
     for key in lkeys:
         lListe.append(_F(LISTE_R=dico_global[key], PARA=key))

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ class MissCsolReader(object):
             self.fobj = open(fname, "r")
             self._read_all()
             self.fobj.close()
-        except (ValueError, IOError, AssertionError), err:
+        except (ValueError, IOError, AssertionError) as err:
             UTMESS('F', 'MISS0_7', vali=self.ln, valk=str(err))
         return self.listfreq, self.values
 
@@ -72,7 +72,7 @@ class MissCsolReader(object):
                     self.fobj.readline()
                     mat = re_lab.search(self.fobj.readline())
                     assert mat is not None, 'unexpected line'
-                    nums = map(int, mat.groups())
+                    nums = list(map(int, mat.groups()))
                     assert nums == [ipc + 1, ich + 1, iddl + 1], \
                         '(%d, %d, %d) expected' % (ipc + 1, ich + 1, iddl + 1)
                     val = []

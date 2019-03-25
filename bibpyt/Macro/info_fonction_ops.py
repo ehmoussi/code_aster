@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ def info_fonction_ops(self, INFO, **args):
             if nbv % 2 != 0:
                 UTMESS('F', 'FONCT0_55')
             tint = NP.array(mc_interv)
-            tint.shape = (nbv / 2, 2)
+            tint.shape = (nbv // 2, 2)
             dx = tint[:, 1] - tint[:, 0]
             if min(dx) < 0.:
                 UTMESS('F', 'FONCT0_56')

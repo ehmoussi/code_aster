@@ -22,6 +22,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/elrfno.h"
 !
     character(len=*), intent(in) :: elrefz
     real(kind=8), intent(in)     :: x(*)
@@ -29,21 +30,19 @@ implicit none
     real(kind=8), intent(out)    :: ff(*)
     integer, intent(out)         :: nno
 !
-! person_in_charge: jacques.pellet at edf.fr
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! BUT:   CALCUL DES FONCTIONS DE FORMES ET DE LEURS DERIVEES
 !        AU POINT DE COORDONNEES X,Y,Z
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !   IN   ELREFZ : NOM DE L'ELREFE (K8)
 !        X      : VECTEUR DU POINT DE CALCUL DES F FORMES ET DERIVEES
 !        DIMF   : DIMENSION DE FF
 !   OUT  FF     : FONCTIONS DE FORMES EN X,Y,Z
 !        NNO    : NOMBRE DE NOEUDS
-!   -------------------------------------------------------------------
-    integer :: i
-    real(kind=8) ::  x0=0.0, y0=0.0, z0=0.0, al=0.0, z01=0.0, z02=0.0, z04=0.0, pface1=0.0
+! --------------------------------------------------------------------------------------------------
+    real(kind=8) :: x0=0.0, y0=0.0, z0=0.0, al=0.0, z01=0.0, z02=0.0, z04=0.0, pface1=0.0
     real(kind=8) :: pface2 = 0.0
     real(kind=8) :: pface3 =0.0, pface4=0.0, pmili1=0.0, pmili2=0.0, pmili3=0.0, pmili4=0.0
     real(kind=8) :: x1=0.0, x2=0.0, x3=0.0, x4=0.0, d1=0.0, d2=0.0, d3=0.0, d4=0.0
@@ -56,7 +55,10 @@ implicit none
 #define al32(u)   (-(u+1.d0)*(u-1.d0))
 #define al33(u)   0.5d0*(u)* (u+1.d0)
 !
-! DEB ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
+    call elrfno(elrefz, nno)
+    ASSERT(dimf.ge.nno)
 !
     select case (elrefz)
         case('HE8')
@@ -64,8 +66,6 @@ implicit none
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 8
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = (un-x0)* (un-y0)* (un-z0)*uns8
             ff(2) = (un+x0)* (un-y0)* (un-z0)*uns8
@@ -82,8 +82,6 @@ implicit none
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 20
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = (un-x0)* (un-y0)* (un-z0)* (-x0-y0-z0-deux)*uns8
             ff(2) = (un+x0)* (un-y0)* (un-z0)* (x0-y0-z0-deux)*uns8
@@ -112,8 +110,6 @@ implicit none
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 27
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = al31(x0)*al31(y0)*al31(z0)
             ff(2) = al33(x0)*al31(y0)*al31(z0)
@@ -149,8 +145,6 @@ implicit none
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 6
-            ASSERT(dimf.ge.nno)
             al = un - x0 - y0
 !
             ff(1) = undemi*x0*(un-z0)
@@ -160,29 +154,11 @@ implicit none
             ff(5) = undemi*y0*(un+z0)
             ff(6) = undemi*al*(un+z0)
 !         ------------------------------------------------------------------
-        case('PE6')
-!
-            x0 = x(1)
-            y0 = x(2)
-            z0 = x(3)
-            nno = 6
-            ASSERT(dimf.ge.nno)
-!
-            ff(1) = undemi*y0* (un-x0)
-            ff(2) = undemi*z0* (un-x0)
-            ff(3) = undemi* (un-y0-z0)* (un-x0)
-            ff(4) = undemi*y0* (un+x0)
-            ff(5) = undemi*z0* (un+x0)
-            ff(6) = undemi* (un-y0-z0)* (un+x0)
-!
-!         ------------------------------------------------------------------
         case('S15')
 !
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 15
-            ASSERT(dimf.ge.nno)
             al = un - x0 - y0
 !
             ff(1)  = x0* (un-z0)* ((deux*x0)-deux-z0)/deux
@@ -205,13 +181,25 @@ implicit none
             ff(15) = deux*x0*al* (un+z0)
 !
 !         ------------------------------------------------------------------
+        case('PE6')
+!
+            x0 = x(1)
+            y0 = x(2)
+            z0 = x(3)
+!
+            ff(1) = undemi*y0* (un-x0)
+            ff(2) = undemi*z0* (un-x0)
+            ff(3) = undemi* (un-y0-z0)* (un-x0)
+            ff(4) = undemi*y0* (un+x0)
+            ff(5) = undemi*z0* (un+x0)
+            ff(6) = undemi* (un-y0-z0)* (un+x0)
+!
+!         ------------------------------------------------------------------
         case('P15')
 !
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 15
-            ASSERT(dimf.ge.nno)
             al = un - y0 - z0
 !
             ff(1) = y0* (un-x0)* ((deux*y0)-deux-x0)/deux
@@ -239,8 +227,6 @@ implicit none
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 18
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = x0*y0*(x0-un)*(deux*y0-un)/deux
             ff(2) = x0*z0*(x0-un)*(deux*z0-un)/deux
@@ -271,8 +257,6 @@ implicit none
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 4
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = y0
             ff(2) = z0
@@ -285,8 +269,6 @@ implicit none
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 10
-            ASSERT(dimf.ge.nno)
             al = un - x0 - y0 - z0
 !
             ff(1) = (deux*y0-un)*y0
@@ -306,8 +288,6 @@ implicit none
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 5
-            ASSERT(dimf.ge.nno)
             z04 = (un-z0)*quatre
 !
             pface1 = x0 + y0 + z0 - un
@@ -316,9 +296,7 @@ implicit none
             pface4 = x0 - y0 + z0 - un
 !
             if (abs(z0-un) .lt. 1.0d-6) then
-                do 10 i = 1, 4
-                    ff(i) = zero
-10              continue
+                ff(1:4) = zero
                 ff(5) = un
             else
                 ff(1) = pface2*pface3/z04
@@ -334,8 +312,6 @@ implicit none
             x0 = x(1)
             y0 = x(2)
             z0 = x(3)
-            nno = 13
-            ASSERT(dimf.ge.nno)
             z01 = un - z0
             z02 = (un-z0)*deux
 !
@@ -350,9 +326,7 @@ implicit none
             pmili4 = -y0 - undemi
 !
             if (abs(z0-un) .lt. 1.0d-6) then
-                do 20 i = 1, 13
-                    ff(i) = zero
-20              continue
+                ff(1:13) = zero
                 ff(5) = un
             else
                 ff(1) = pface2*pface3*pmili1/z02
@@ -375,8 +349,6 @@ implicit none
 !
             x0 = x(1)
             y0 = x(2)
-            nno = 3
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = un - x0 - y0
             ff(2) = x0
@@ -387,8 +359,6 @@ implicit none
 !
             x0 = x(1)
             y0 = x(2)
-            nno = 6
-            ASSERT(dimf.ge.nno)
             al = un - x0 - y0
 !
             ff(1) = -al* (un-deux*al)
@@ -403,8 +373,6 @@ implicit none
 !
             x0 = x(1)
             y0 = x(2)
-            nno = 7
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = un - 3.0d0*(x0+y0) + 2.0d0*(x0*x0+y0*y0) + 7.0d0*x0* y0 - 3.0d0*x0*y0*(x0+y0)
             ff(2) = x0*( -un + 2.0d0*x0 + 3.0d0*y0 - 3.0d0*y0*(x0+y0) )
@@ -419,8 +387,6 @@ implicit none
 !
             x0 = x(1)
             y0 = x(2)
-            nno = 4
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = uns4* (un-x0)* (un-y0)
             ff(2) = uns4* (un+x0)* (un-y0)
@@ -432,8 +398,6 @@ implicit none
 !
             x0 = x(1)
             y0 = x(2)
-            nno = 8
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = uns4* (un-x0)* (un-y0)* (-un-x0-y0)
             ff(2) = uns4* (un+x0)* (un-y0)* (-un+x0-y0)
@@ -449,8 +413,6 @@ implicit none
 !
             x0 = x(1)
             y0 = x(2)
-            nno = 9
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = al31(x0)*al31(y0)
             ff(2) = al33(x0)*al31(y0)
@@ -464,16 +426,12 @@ implicit none
 !
 !         ------------------------------------------------------------------
         case('PO1')
-            nno = 1
-            ASSERT(dimf.ge.nno)
             ff(1) = un
 !
 !         ------------------------------------------------------------------
         case('SE2')
 !
             x0 = x(1)
-            nno = 2
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = (un-x0)/deux
             ff(2) = (un+x0)/deux
@@ -482,8 +440,6 @@ implicit none
         case('SE3')
 !
             x0 = x(1)
-            nno = 3
-            ASSERT(dimf.ge.nno)
 !
             ff(1) = - (un-x0)*x0/deux
             ff(2) = (un+x0)*x0/deux
@@ -491,8 +447,6 @@ implicit none
 !
 !         ------------------------------------------------------------------
         case('SE4')
-            nno = 4
-            ASSERT(dimf.ge.nno)
             x0 = x(1)
 !
             x1 = -1.d0

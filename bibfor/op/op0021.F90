@@ -15,25 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
-! This file is part of code_aster.
 !
-! code_aster is free software: you can redistribute it and/or modify
-! it under the terms of the GNU General Public License as published by
-! the Free Software Foundation, either version 3 of the License, or
-! (at your option) any later version.
-!
-! code_aster is distributed in the hope that it will be useful,
-! but WITHOUT ANY WARRANTY; without even the implied warranty of
-! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-! GNU General Public License for more details.
-!
-! You should have received a copy of the GNU General Public License
-! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
-! --------------------------------------------------------------------
-
 subroutine op0021()
     implicit none
 ! ----------------------------------------------------------------------
@@ -45,7 +27,7 @@ subroutine op0021()
 #include "asterfort/getvtx.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"  
+#include "asterfort/jemarq.h"
 #include "asterfort/ulaffe.h"
 #include "asterfort/ulexis.h"
 #include "asterfort/ultype.h"
@@ -54,12 +36,12 @@ subroutine op0021()
 #include "asterfort/w039ca.h"
 
 
-    integer :: ifc, ifi  
-    integer :: n11 
-    integer :: nforma 
+    integer :: ifc, ifi
+    integer :: n11
+    integer :: nforma
 !
     character(len=1) :: typf
-    character(len=8) :: form 
+    character(len=8) :: form
 
     character(len=16) :: fich
 
@@ -67,7 +49,7 @@ subroutine op0021()
 !
     call jemarq()
     call infmaj()
-!           
+!
 !     ---------------------------------------------
 !     --- FORMAT, FICHIER ET UNITE D'IMPRESSION ---
 !     ---------------------------------------------
@@ -94,7 +76,7 @@ subroutine op0021()
     endif
 
 
-!     -- IMPRESSION DES CARTES DE DONNEES DE CHAM_MATER,  ... :   
+!     -- IMPRESSION DES CARTES DE DONNEES DE CHAM_MATER,  ... :
     call w039ca(ifi, form)
 !
     call jedema()

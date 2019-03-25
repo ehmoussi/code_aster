@@ -27,7 +27,6 @@ from math import *
 def calc_matr_ifs_ops(self, **args):
 
     from code_aster.Cata.Syntax import _F
-    import types
     import aster
     from Utilitai.Utmess import UTMESS
     MAILLAGE = args.get("MAILLAGE")

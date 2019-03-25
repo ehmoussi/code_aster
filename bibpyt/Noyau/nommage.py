@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,15 +37,14 @@
 
 # Modules Python
 import re
-import string
 import linecache
 from functools import partial
 
 # Modules EFICAS
-import N_utils
-from strfunc import get_encoding
+from . import N_utils
+from .strfunc import get_encoding
 
-regex1 = '=?\s*%s\s*\('
+regex1 = r'=?\s*%s\s*\('
 # commentaire standard precede d'un nombre quelconque de blancs (pas
 # multiligne)
 pattern_comment = re.compile(r"^\s*#.*")
@@ -72,7 +71,7 @@ def _GetNomConceptResultat(ope, level=2):
     lineno = f.f_lineno     # XXX Too bad if -O is used
     # lineno = f_lineno(f)  # Ne marche pas toujours
     co = f.f_code
-    filename = unicode(co.co_filename, get_encoding())
+    filename = co.co_filename
     name = co.co_name
     # pattern pour identifier le debut de la commande
     pattern_oper = re.compile(regex1 % ope)
@@ -89,7 +88,7 @@ def _GetNomConceptResultat(ope, level=2):
             list.reverse()
             # On suppose que le concept resultat a bien ete
             # isole en tete de la ligne de source
-            m = evalnom(string.strip(l[0]), f.f_locals)
+            m = evalnom(l[0].strip(), f.f_locals)
             # print "NOMS ",m
             if m != []:
                 return m[-1]
@@ -107,7 +106,7 @@ def evalnom(text, d):
       2. text est un element d'une liste on construit le nom en
         evaluant la partie indice dans le contexte de l'appelant d
     """
-    l = re.split('([\[\]]+)', text)
+    l = re.split(r'([\[\]]+)', text)
     if l[-1] == '':
         l = l[:-1]
     lll = []

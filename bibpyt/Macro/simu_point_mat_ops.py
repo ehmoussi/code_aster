@@ -74,7 +74,7 @@ def simu_point_mat_ops(
             itetra = 1
     if itetra == 0:
         if lcomp['DEFORMATION'] != 'PETIT':
-            if args.has_key('GRAD_IMPOSE'):
+            if 'GRAD_IMPOSE' in args:
                 if args['GRAD_IMPOSE'] != None:
                     if lcomp['DEFORMATION'] != 'SIMO_MIEHE':
                         UTMESS('F', 'COMPOR2_22', valk=lcomp['DEFORMATION'])
@@ -98,29 +98,29 @@ def simu_point_mat_ops(
         if EPSI_IMPOSE:
             EPS = dict(EPSI_IMPOSE[0])
             ieps = 1
-        if args.has_key('GRAD_IMPOSE'):
+        if 'GRAD_IMPOSE' in args:
             if args['GRAD_IMPOSE'] != None:
                 FIJ = dict(args['GRAD_IMPOSE'][0])
                 igrd = 1
-        if args.has_key('MATR_C1'):
+        if 'MATR_C1' in args:
             if args['MATR_C1'] != None:
                 ic1c2 = 1
-        if args.has_key('MATR_C2'):
+        if 'MATR_C2' in args:
             if args['MATR_C2'] != None:
                 ic1c2 = 1
 
         motscles = {}
         if igrd:
-            for i in FIJ.keys():
+            for i in list(FIJ.keys()):
                 motscles[i] = FIJ[i]
         elif ic1c2:
-            if args.has_key('MATR_C1'):
+            if 'MATR_C1' in args:
                 if args['MATR_C1'] != None:
                     motscles['MATR_C1'] = args['MATR_C1']
-            if args.has_key('MATR_C2'):
+            if 'MATR_C2' in args:
                 if args['MATR_C2'] != None:
                     motscles['MATR_C2'] = args['MATR_C2']
-            if args.has_key('VECT_IMPO'):
+            if 'VECT_IMPO' in args:
                 if args['VECT_IMPO'] != None:
                     motscles['VECT_IMPO'] = args['VECT_IMPO']
         else:
@@ -163,15 +163,15 @@ def simu_point_mat_ops(
 #      -- Deroulement du calcul
         motscles['INCREMENT'] = INCREMENT
 
-        if args.has_key('FORMAT_TABLE'):
+        if 'FORMAT_TABLE' in args:
             if args['FORMAT_TABLE'] != None:
                 motscles['FORMAT_TABLE'] = args['FORMAT_TABLE']
 
-        if args.has_key('OPER_TANGENT'):
+        if 'OPER_TANGENT' in args:
             if args['OPER_TANGENT'] != None:
                 motscles['OPER_TANGENT'] = args['OPER_TANGENT']
 
-        if args.has_key('NB_VARI_TABLE'):
+        if 'NB_VARI_TABLE' in args:
             if args['NB_VARI_TABLE'] != None:
                 motscles['NB_VARI_TABLE'] = args['NB_VARI_TABLE']
 
@@ -179,7 +179,7 @@ def simu_point_mat_ops(
             motscles['ARCHIVAGE'] = ARCHIVAGE
 
             #     variables de commande
-        if args.has_key('AFFE_VARC'):
+        if 'AFFE_VARC' in args:
             if args['AFFE_VARC'] != None:
                 lvarc = args['AFFE_VARC']
                 nbvarc = len(lvarc)
@@ -259,7 +259,7 @@ def simu_point_mat_ops(
         EPS = {}
         SIG = {}
         MODELISATION = "3D"
-        if args.has_key('MODELISATION'):
+        if 'MODELISATION' in args:
             if args['MODELISATION'] != None:
                 MODELISATION = args['MODELISATION']
 
@@ -505,18 +505,18 @@ def simu_point_mat_ops(
 
         l_char = [_F(CHARGE=__C_RIGIDE)]
 
-        for i in xrange(nbsig):
+        for i in range(nbsig):
             ike = CMP_EPS[i]
             if EPS.get(ike):
                 l_char.append(_F(CHARGE=__E[i], FONC_MULT=EPS.get(ike)))
 
-        for i in xrange(nbsig):
+        for i in range(nbsig):
             iks = CMP_SIG[i]
             l_char.append(_F(CHARGE=__S[i], FONC_MULT=SIG.get(iks)))
 
 #     variables de commande
         mcvarc = []
-        if args.has_key('AFFE_VARC'):
+        if 'AFFE_VARC' in args:
             if args.get('AFFE_VARC') != None:
                 lvarc = args['AFFE_VARC']
                 nbvarc = len(lvarc)
@@ -724,7 +724,7 @@ def simu_point_mat_ops(
         if SIGM_INIT:
             etatinit = 1
             SIGINI = dict(SIGM_INIT[0])
-            for i in SIGINI.keys():
+            for i in list(SIGINI.keys()):
                 if SIGINI.get(i) != None:
                     LCSIG.append(i)
                     LVSIG.append(SIGINI[i])
@@ -844,7 +844,7 @@ def simu_point_mat_ops(
 
         motscles['NEWTON'] = NEWTON
 
-        if args.has_key('RECH_LINEAIRE'):
+        if 'RECH_LINEAIRE' in args:
             if args.get('RECH_LINEAIRE') != None:
                 motscles['RECH_LINEAIRE'] = args['RECH_LINEAIRE']
 
@@ -853,7 +853,7 @@ def simu_point_mat_ops(
         if ARCHIVAGE:
             motscles['ARCHIVAGE'] = ARCHIVAGE
 
-        if args.has_key('SUIVI_DDL'):
+        if 'SUIVI_DDL' in args:
             if args['SUIVI_DDL'] != None:
                 motscles['SUIVI_DDL'] = args['SUIVI_DDL']
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ M=-T*L
 # nombre de couches
 ncou = 1
 # sous-point pour la fibre neutre
-nssp_neutre = 2*ncou-(int(ncou)/2)
+nssp_neutre = 2*ncou-(int(ncou)//2)
 # sous-point sur fibre sup
 nssp_sup = ncou*3
 #
@@ -85,8 +85,8 @@ sixy2 = T*b/A*3/2
 epxx2 = -z3*T*b/(E*I)*(L-x2)
 epxy2 = 0.5*T*b/(k*G*A)
 
-print x1
-print x2
+print(x1)
+print(x2)
 # Materiau
 # MATISO=DEFI_MATERIAU(ELAS_COQUE=_F(MEMB_L=E*h,
                                    # MEMB_LT=0,

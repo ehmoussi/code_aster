@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,13 +26,13 @@
 """
 
 import re
-import N_CR
-import N_OPS
-import N_VALIDATOR
-from N_VALIDATOR import ValError, TypeProtocol, listProto
-from strfunc import ufmt
+from . import N_CR
+from . import N_OPS
+from . import N_VALIDATOR
+from .N_VALIDATOR import ValError, TypeProtocol, listProto
+from .strfunc import ufmt
 
-stringTypes = (str, unicode)
+stringTypes = (str, str)
 
 
 class ENTITE:
@@ -70,7 +70,7 @@ class ENTITE:
             directement
             Il s'agit principalement des mots cles
         """
-        for k, v in self.entites.items():
+        for k, v in list(self.entites.items()):
             v.pere = self
             v.nom = k
 
@@ -98,19 +98,19 @@ class ENTITE:
         """
         self.cr = self.CR()
         self.verif_cata(nom)
-        for k, v in self.entites.items():
+        for k, v in list(self.entites.items()):
             try:
                 cr = v.report(k)
-                cr.debut = u"Début " + v.__class__.__name__ + ' : ' + k
-                cr.fin = u"Fin " + v.__class__.__name__ + ' : ' + k
+                cr.debut = "Début " + v.__class__.__name__ + ' : ' + k
+                cr.fin = "Fin " + v.__class__.__name__ + ' : ' + k
                 self.cr.add(cr)
             except:
                 import traceback
                 traceback.print_exc()
                 self.cr.fatal(
-                    _(u"Impossible d'obtenir le rapport de %s %s"), k, `v`)
-                print "Impossible d'obtenir le rapport de %s %s" % (k, `v`)
-                print "père =", self
+                    _("Impossible d'obtenir le rapport de %s %s"), k, repr(v))
+                print("Impossible d'obtenir le rapport de %s %s" % (k, repr(v)))
+                print("père =", self)
         return self.cr
 
     def verif_cata_regles(self):
@@ -129,13 +129,13 @@ class ENTITE:
             if l != []:
                 txt = str(regle)
                 self.cr.fatal(
-                    _(u"Argument(s) non permis : %r pour la règle : %s"), l, txt)
+                    _("Argument(s) non permis : %r pour la règle : %s"), l, txt)
 
     def check_definition(self, parent):
         """Verifie la definition d'un objet composite (commande, fact, bloc)."""
         args = self.entites.copy()
         mcs = set()
-        for nom, val in args.items():
+        for nom, val in list(args.items()):
             if val.label == 'SIMP':
                 mcs.add(nom)
             elif val.label == 'FACT':
@@ -145,7 +145,7 @@ class ENTITE:
             del args[nom]
         # seuls les blocs peuvent entrer en conflit avec les mcs du plus haut
         # niveau
-        for nom, val in args.items():
+        for nom, val in list(args.items()):
             if val.label == 'BLOC':
                 mcbloc = val.check_definition(parent)
                 assert mcs.isdisjoint(mcbloc), "Commande %s : Mot(s)-clef(s) vu(s) plusieurs fois : %s" \
@@ -156,40 +156,40 @@ class ENTITE:
         """Vérifie l'attribut op."""
         if self.op is not None and \
            (type(self.op) is not int or self.op < valmin or self.op > valmax):
-            self.cr.fatal(_(u"L'attribut 'op' doit être un entier "
-                            u"compris entre %d et %d : %r"), valmin, valmax, self.op)
+            self.cr.fatal(_("L'attribut 'op' doit être un entier "
+                            "compris entre %d et %d : %r"), valmin, valmax, self.op)
 
     def check_proc(self):
         """Vérifie l'attribut proc."""
         if self.proc is not None and not isinstance(self.proc, N_OPS.OPS):
             self.cr.fatal(
-                _(u"L'attribut op doit être une instance d'OPS : %r"), self.proc)
+                _("L'attribut op doit être une instance d'OPS : %r"), self.proc)
 
     def check_regles(self):
         """Vérifie l'attribut regles."""
         if type(self.regles) is not tuple:
-            self.cr.fatal(_(u"L'attribut 'regles' doit être un tuple : %r"),
+            self.cr.fatal(_("L'attribut 'regles' doit être un tuple : %r"),
                           self.regles)
 
     def check_fr(self):
         """Vérifie l'attribut fr."""
         if type(self.fr) not in stringTypes:
             self.cr.fatal(
-                _(u"L'attribut 'fr' doit être une chaine de caractères : %r"),
+                _("L'attribut 'fr' doit être une chaine de caractères : %r"),
                 self.fr)
 
     def check_docu(self):
         """Vérifie l'attribut docu."""
         if type(self.docu) not in stringTypes:
             self.cr.fatal(
-                _(u"L'attribut 'docu' doit être une chaine de caractères : %r"),
+                _("L'attribut 'docu' doit être une chaine de caractères : %r"),
                 self.docu)
 
     def check_nom(self):
         """Vérifie l'attribut proc."""
         if type(self.nom) is not str:
             self.cr.fatal(
-                _(u"L'attribut 'nom' doit être une chaine de caractères : %r"),
+                _("L'attribut 'nom' doit être une chaine de caractères : %r"),
                 self.nom)
 
     def check_reentrant(self):
@@ -197,17 +197,17 @@ class ENTITE:
         status = self.reentrant[0]
         if status not in ('o', 'n', 'f'):
             self.cr.fatal(
-                _(u"L'attribut 'reentrant' doit valoir 'o','n' ou 'f' : %r"),
+                _("L'attribut 'reentrant' doit valoir 'o','n' ou 'f' : %r"),
                 status)
-        if status != 'n' and 'reuse' not in self.entites.keys():
-            self.cr.fatal(_(u"L'opérateur est réentrant, il faut ajouter "
-                            u"le mot-clé 'reuse'."))
+        if status != 'n' and 'reuse' not in list(self.entites.keys()):
+            self.cr.fatal(_("L'opérateur est réentrant, il faut ajouter "
+                            "le mot-clé 'reuse'."))
         if status != 'n':
             orig = self.reentrant.split(':')
             try:
-                assert len(orig) in (2, 3), u"un ou deux mots-clés attendus"
+                assert len(orig) in (2, 3), "un ou deux mots-clés attendus"
                 orig.pop(0)
-                msg = u"Mot-clé inexistant {0!r}"
+                msg = "Mot-clé inexistant {0!r}"
                 for k1 in orig[0].split("|"):
                     key1 = self.get_entite(k1)
                     assert key1 is not None, msg.format(k1)
@@ -215,29 +215,29 @@ class ENTITE:
                         key2 = key1.get_entite(orig[1])
                         assert key2 is not None, msg.format("/".join([k1, orig[1]]))
             except AssertionError as exc:
-                self.cr.fatal(_(u"'reentrant' doit indiquer quel mot-clé "
-                                u"fournit le concept réentrant.\nPar exemple: "
-                                u"'o:MAILLAGE' pour un mot-clé simple ou "
-                                u"'o:ETAT_INIT:EVOL_NOLI' pour un mot-clé "
-                                u"facteur. Les mots-clés doivent exister.\n"
-                                u"Erreur: {0}"
+                self.cr.fatal(_("'reentrant' doit indiquer quel mot-clé "
+                                "fournit le concept réentrant.\nPar exemple: "
+                                "'o:MAILLAGE' pour un mot-clé simple ou "
+                                "'o:ETAT_INIT:EVOL_NOLI' pour un mot-clé "
+                                "facteur. Les mots-clés doivent exister.\n"
+                                "Erreur: {0}"
                                 .format(exc)))
 
     def check_statut(self, into=('o', 'f', 'c', 'd')):
         """Vérifie l'attribut statut."""
         if self.statut not in into:
-            self.cr.fatal(_(u"L'attribut 'statut' doit être parmi %s : %r"),
+            self.cr.fatal(_("L'attribut 'statut' doit être parmi %s : %r"),
                           into, self.statut)
         if self.nom == 'reuse' and self.statut != 'c':
-            self.cr.fatal(_(u"L'attribut 'statut' doit être 'c' pour reuse."))
+            self.cr.fatal(_("L'attribut 'statut' doit être 'c' pour reuse."))
 
     def check_condition(self):
         """Vérifie l'attribut condition."""
-        from N_BLOC import block_utils
+        from .N_BLOC import block_utils
         if self.condition != None:
             if type(self.condition) is not str:
                 self.cr.fatal(
-                    _(u"L'attribut 'condition' doit être une chaine de caractères : %r"),
+                    _("L'attribut 'condition' doit être une chaine de caractères : %r"),
                     self.condition)
             from code_aster.Cata import cata
             try:
@@ -247,54 +247,54 @@ class ENTITE:
                 eval(self.condition, ctxt)
             except Exception as exc:
                 self.cr.fatal(
-                    _(u"L'attribut 'condition' ne peut être évalué : %r; Raison : %s"),
+                    _("L'attribut 'condition' ne peut être évalué : %r; Raison : %s"),
                     self.condition, str(exc))
         else:
-            self.cr.fatal(_(u"La condition ne doit pas valoir None !"))
+            self.cr.fatal(_("La condition ne doit pas valoir None !"))
 
     def check_min_max(self):
         """Vérifie les attributs min/max."""
         if type(self.min) != int:
             if self.min != '**':
                 self.cr.fatal(
-                    _(u"L'attribut 'min' doit être un entier : %r"), self.min)
+                    _("L'attribut 'min' doit être un entier : %r"), self.min)
         if type(self.max) != int:
             if self.max != '**':
                 self.cr.fatal(
-                    _(u"L'attribut 'max' doit être un entier : %r"), self.max)
-        if self.min > self.max:
+                    _("L'attribut 'max' doit être un entier : %r"), self.max)
+        if self.max != '**' and self.min > self.max:
             self.cr.fatal(
-                _(u"Nombres d'occurrence min et max invalides : %r %r"),
+                _("Nombres d'occurrence min et max invalides : %r %r"),
                 self.min, self.max)
 
     def check_validators(self):
         """Vérifie les validateurs supplémentaires"""
         if self.validators and not self.validators.verif_cata():
-            self.cr.fatal(_(u"Un des validateurs est incorrect. Raison : %s"),
+            self.cr.fatal(_("Un des validateurs est incorrect. Raison : %s"),
                           self.validators.cata_info)
 
     def check_homo(self):
         """Vérifie l'attribut homo."""
         if self.homo != 0 and self.homo != 1:
             self.cr.fatal(
-                _(u"L'attribut 'homo' doit valoir 0 ou 1 : %r"), self.homo)
+                _("L'attribut 'homo' doit valoir 0 ou 1 : %r"), self.homo)
 
     def check_into(self):
         """Vérifie l'attribut into."""
         if self.into is not None:
             if type(self.into) not in (list, tuple):
                 self.cr.fatal(
-                    _(u"L'attribut 'into' doit être un tuple : %r"), self.into)
+                    _("L'attribut 'into' doit être un tuple : %r"), self.into)
             if len(self.into) == 0:
                 self.cr.fatal(
-                    _(u"L'attribut 'into' doit contenir au moins une valeur"))
+                    _("L'attribut 'into' doit contenir au moins une valeur"))
 
     def check_position(self):
         """Vérifie l'attribut position."""
         if self.position != None:
             # a priori, 'global_jdc' est aussi autorisée mais ça ne me semble
             # pas une bonne idée !
-            self.cr.fatal(_(u"l'attribut 'position' n'est plus autorisé"))
+            self.cr.fatal(_("l'attribut 'position' n'est plus autorisé"))
 
 
     def check_defaut(self):
@@ -307,11 +307,11 @@ class ENTITE:
                     typeProto.adapt(val)
                 except ValError:
                     self.cr.fatal(
-                        _(u"La valeur de l'attribut 'defaut' n'est pas "
-                          u"cohérente avec le type %r : %r"), self.type, val)
+                        _("La valeur de l'attribut 'defaut' n'est pas "
+                          "cohérente avec le type %r : %r"), self.type, val)
             if self.statut == 'o':
-                self.cr.fatal(_(u"Un mot-clé avec valeur par défaut doit être "
-                                u"facultatif."))
+                self.cr.fatal(_("Un mot-clé avec valeur par défaut doit être "
+                                "facultatif."))
 
     def check_inout(self):
         """Vérifie l'attribut inout."""
@@ -320,11 +320,11 @@ class ENTITE:
             return
         elif self.inout not in ('in', 'out'):
             self.cr.fatal(
-                _(u"L'attribut 'inout' doit valoir 'in' ou 'out' : %r"),
+                _("L'attribut 'inout' doit valoir 'in' ou 'out' : %r"),
                 self.inout)
         elif UnitType() not in self.type or len(self.type) != 1:
             self.cr.fatal(
-                _(u"L'attribut 'typ' doit valoir UnitType() : %r"),
+                _("L'attribut 'typ' doit valoir UnitType() : %r"),
                 self.type)
 
     def check_unit(self, nom):
@@ -335,8 +335,8 @@ class ENTITE:
         if nom.startswith('UNITE') and UnitType() in self.type:
             if not self.inout:
                 self.cr.fatal(
-                    _(u"L'attribut 'inout' est obligatoire pour le type "
-                      u"UnitType()."))
+                    _("L'attribut 'inout' est obligatoire pour le type "
+                      "UnitType()."))
             if self.defaut == 6 :
                 self.cr.fatal(
-                    _(u"La valeur par défaut doit être différente de 6" ))
+                    _("La valeur par défaut doit être différente de 6" ))

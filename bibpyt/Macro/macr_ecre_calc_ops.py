@@ -24,8 +24,6 @@ def macr_ecre_calc_ops(self, **args):
     """
 
     import os
-    import string
-    import types
     import shutil
     import aster_core
     import aster
@@ -79,39 +77,39 @@ def macr_ecre_calc_ops(self, **args):
     CONVERGENCE = _F(CONVERGENCE)
     # RECUPERATION DES MOTS-CLES FACTEURS
     dFISSURE = FISSURE[0].cree_dict_valeurs(FISSURE[0].mc_liste)
-    for i in dFISSURE.keys():
+    for i in list(dFISSURE.keys()):
         if dFISSURE[i] == None:
             del dFISSURE[i]
 
     dECOULEMENT = ECOULEMENT[0].cree_dict_valeurs(ECOULEMENT[0].mc_liste)
-    for i in dECOULEMENT.keys():
+    for i in list(dECOULEMENT.keys()):
         if dECOULEMENT[i] == None:
             del dECOULEMENT[i]
 
     dTEMPERATURE = TEMPERATURE[0].cree_dict_valeurs(TEMPERATURE[0].mc_liste)
-    for i in dTEMPERATURE.keys():
+    for i in list(dTEMPERATURE.keys()):
         if dTEMPERATURE[i] == None:
             del dTEMPERATURE[i]
 
     dMODELE_ECRE = MODELE_ECRE[0].cree_dict_valeurs(MODELE_ECRE[0].mc_liste)
-    for i in dMODELE_ECRE.keys():
+    for i in list(dMODELE_ECRE.keys()):
         if dMODELE_ECRE[i] == None:
             del dMODELE_ECRE[i]
 
     dCONVERGENCE = CONVERGENCE[0].cree_dict_valeurs(CONVERGENCE[0].mc_liste)
-    for i in dCONVERGENCE.keys():
+    for i in list(dCONVERGENCE.keys()):
         if dCONVERGENCE[i] == None:
             del dCONVERGENCE[i]
 
     if debug:
-        print 'dFISSURE = ', dFISSURE
-        print 'dECOULEMENT = ', dECOULEMENT
-        print 'dTEMPERATURE = ', dTEMPERATURE
-        print 'dMODELE_ECRE = ', dMODELE_ECRE
-        print 'dCONVERGENCE = ', dCONVERGENCE
-        print 'ENTETE = ', ENTETE
-        print 'IMPRESSION = ', IMPRESSION
-        print 'INFO = ', INFO
+        print('dFISSURE = ', dFISSURE)
+        print('dECOULEMENT = ', dECOULEMENT)
+        print('dTEMPERATURE = ', dTEMPERATURE)
+        print('dMODELE_ECRE = ', dMODELE_ECRE)
+        print('dCONVERGENCE = ', dCONVERGENCE)
+        print('ENTETE = ', ENTETE)
+        print('IMPRESSION = ', IMPRESSION)
+        print('INFO = ', INFO)
 
 # ---------------------------------------------------------------------
 # CONSTRUCTION DU JEU DE PARAMETRES
@@ -220,13 +218,13 @@ def macr_ecre_calc_ops(self, **args):
     d[90] = dCONVERGENCE['CRIT_CONV_DEBI'],
 
     if debug:
-        print d
+        print(d)
 
 # ---------------------------------------------------------------------
 # GENERATION DU FICHIER DATA.DAT
     txt = fichier_data_ecrevisse()
 
-    for num_param in d.keys():
+    for num_param in list(d.keys()):
         if type(d[num_param]) in [int, float]:
             txt0 = str(d[num_param])
         elif type(d[num_param]) in [tuple, list]:
@@ -246,7 +244,7 @@ def macr_ecre_calc_ops(self, **args):
         txt = txt.replace('$V[' + str(num_param) + ']', txt0)
 
     if debug:
-        print txt
+        print(txt)
 
 # ---------------------------------------------------------------------
 # CREATION DE L'ENVIRONNEMENT D'ETUDE POUR ECREVISSE
@@ -256,9 +254,9 @@ def macr_ecre_calc_ops(self, **args):
     if not os.path.isdir(tmp_ecrevisse):
         try:
             os.mkdir(tmp_ecrevisse)
-        except os.error, erreur:
+        except os.error as erreur:
             if debug:
-                print "Code d'erreur de mkdir : " + str(erreur[0]) + " : " + str(erreur[1])
+                print("Code d'erreur de mkdir : " + str(erreur[0]) + " : " + str(erreur[1]))
             UTMESS('F', 'ECREVISSE0_12', valk=[tmp_ecrevisse])
 
     # On recopie eventuellement l'ancien fichier debits
@@ -267,7 +265,7 @@ def macr_ecre_calc_ops(self, **args):
     if os.path.isfile(src):
         try:
             shutil.copyfile(src, dst)
-        except Exception, e:
+        except Exception as e:
             UTMESS('F', 'ECREVISSE0_24', valk=[src, dst])
             # print "ERREUR : copyfile %s -> %s" % (src, dst)
 
@@ -280,7 +278,7 @@ def macr_ecre_calc_ops(self, **args):
     else:
         chemin_executable = aster_core.get_option('prog:ecrevisse')
         if debug:
-            print 'chemin_executable:', chemin_executable
+            print('chemin_executable:', chemin_executable)
 
     # Soit on fait un lien symbolique (incompatible avec certaines
     # plate-formes) soit on recopie l'executable
@@ -293,7 +291,7 @@ def macr_ecre_calc_ops(self, **args):
             cmd = 'cp ' + chemin_executable + ' ' + \
                 os.path.join(tmp_ecrevisse, 'ecrevisse')
             res = os.system(cmd)
-            os.chmod(os.path.join(tmp_ecrevisse, 'ecrevisse'), 0755)
+            os.chmod(os.path.join(tmp_ecrevisse, 'ecrevisse'), 0o755)
             if (res != 0):
                 UTMESS('F', 'ECREVISSE0_15')
 
@@ -325,7 +323,7 @@ def macr_ecre_calc_ops(self, **args):
     fw = open(os.path.join(tmp_ecrevisse, 'ecrevisse.sh'), 'w')
     fw.write(cmd)
     fw.close()
-    os.chmod(os.path.join(tmp_ecrevisse, 'ecrevisse.sh'), 0755)
+    os.chmod(os.path.join(tmp_ecrevisse, 'ecrevisse.sh'), 0o755)
 
     # Lancement d'Ecrevisse
     UTMESS('I', 'ECREVISSE0_16')
@@ -348,7 +346,7 @@ def macr_ecre_calc_ops(self, **args):
         # transforme le texte en liste
         _lst = _txt.split()
         # transforme la liste de textes en liste de float
-        _lst = map(float, _lst)
+        _lst = list(map(float, _lst))
 
         # ATTENTION : les cotes _ecr_c sont celles des resultats ecrevisse,
         #              c'est a dire les points de milieu du maillage aster,
@@ -387,7 +385,7 @@ def macr_ecre_calc_ops(self, **args):
         _tex = f_deb.read()
         f_deb.close()
         _lis = _tex.split()
-        _lis = map(float, _lis)
+        _lis = list(map(float, _lis))
 
         _dtot = _lis[0:len(_lis):5]
         _dair = _lis[1:len(_lis):5]
@@ -436,22 +434,22 @@ def macr_ecre_calc_ops(self, **args):
 # ---------------------------------------------------------------------
 # DEBUG
     if debug:
-        print 'DEBUT DEBUG MACR_ECRE_CALC'
-        print 'Chargements donnes par Ecrevisse'
-        print 'cotes aster :', lx_ast
-        print '_ecr_c  : min=', min(_ecr_c), ' / max=', max(_ecr_c), ' / ', _ecr_c
-        print '_ecr_f  : min=', min(_ecr_f), ' / max=', max(_ecr_f), ' / ', _ecr_f
-        print '_ecr_p  : min=', min(_ecr_p), ' / max=', max(_ecr_p), ' / ', _ecr_p
-        print '_ecr_t  : min=', min(_ecr_t), ' / max=', max(_ecr_t), ' / ', _ecr_t
-        print '_ecr_cc : min=', min(_ecr_cc), ' / max=', max(_ecr_cc), ' / ', _ecr_cc
-        print '_dtot=', _dtot
-        print '_dair=', _dair
-        print '_dvap=', _dvap
-        print '_dliq=', _dliq
-        print '_ecou=', _ecou
-        print __DEB.EXTR_TABLE()
-        print __TAB.EXTR_TABLE()
-        print 'FIN DEBUG MACR_ECRE_CALC'
+        print('DEBUT DEBUG MACR_ECRE_CALC')
+        print('Chargements donnes par Ecrevisse')
+        print('cotes aster :', lx_ast)
+        print('_ecr_c  : min=', min(_ecr_c), ' / max=', max(_ecr_c), ' / ', _ecr_c)
+        print('_ecr_f  : min=', min(_ecr_f), ' / max=', max(_ecr_f), ' / ', _ecr_f)
+        print('_ecr_p  : min=', min(_ecr_p), ' / max=', max(_ecr_p), ' / ', _ecr_p)
+        print('_ecr_t  : min=', min(_ecr_t), ' / max=', max(_ecr_t), ' / ', _ecr_t)
+        print('_ecr_cc : min=', min(_ecr_cc), ' / max=', max(_ecr_cc), ' / ', _ecr_cc)
+        print('_dtot=', _dtot)
+        print('_dair=', _dair)
+        print('_dvap=', _dvap)
+        print('_dliq=', _dliq)
+        print('_ecou=', _ecou)
+        print(__DEB.EXTR_TABLE())
+        print(__TAB.EXTR_TABLE())
+        print('FIN DEBUG MACR_ECRE_CALC')
 
 # ---------------------------------------------------------------------
 # RECUPERATION DES RESULTATS OPTIONNELS DEPUIS ECREVISSE

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,15 +30,15 @@ for lang in ('c', 'cxx', 'fc'):
 
 class fcprogram(fc.fcprogram):
     """Link object files into a fortran program, add optional OPTLIB_FLAGS at the end"""
-    run_str = fc.fcprogram.hcode + ' ${OPTLIB_FLAGS}'
+    run_str = fc.fcprogram.hcode.decode() + ' ${OPTLIB_FLAGS}'
 
 class cprogram(c.cprogram):
     """Link object files into a C program, add optional OPTLIB_FLAGS at the end"""
-    run_str = c.cprogram.hcode + ' ${OPTLIB_FLAGS}'
+    run_str = c.cprogram.hcode.decode() + ' ${OPTLIB_FLAGS}'
 
 class cxxprogram(cxx.cxxprogram):
     """Link object files into a C program, add optional OPTLIB_FLAGS at the end"""
-    run_str = cxx.cxxprogram.hcode + ' ${OPTLIB_FLAGS}'
+    run_str = cxx.cxxprogram.hcode.decode() + ' ${OPTLIB_FLAGS}'
 
 class cxxshlib(cxxprogram):
     """Link object files into a c++ shared library"""
@@ -87,8 +87,8 @@ def format_error(self):
             pass
         slog = ''
         try:
-            open(bldlog, 'wb').write('task: %r\nlast command:\n%r\n' % (self, msg))
-        except (OSError, IOError), exc:
+            open(bldlog, 'w').write('task: %r\nlast command:\n%r\n' % (self, msg))
+        except (OSError, IOError) as exc:
             slog = '\ncan not write the log file: %s' % str(exc)
         text = text.splitlines()[0] \
              + '\n    task details in: {0}{1}'.format(bldlog, slog)
@@ -153,11 +153,11 @@ def remove_optflags(self, type_flags):
 @Configure.conf
 def remove_duplicates(self, list_in):
     """Return the list by removing the duplicated elements
-    and by keeping the order"""
+    and by keeping the order. It ignores empty values."""
     dset = set()
     # relies on the fact that dset.add() always returns None.
-    return [ l for l in list_in if
-             l and l not in dset and not dset.add(l) ]
+    return [path for path in list_in
+            if path not in dset and not dset.add(path) ]
 
 # Force static libs
 CHECK = '_check'

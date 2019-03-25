@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 Ce module définit des fonctions permettant de manipuler un résultat issu de THYC
 """
 
-import string,re
+import re
 
 
 class ThycResult(object):
@@ -77,18 +77,18 @@ def definir_chargement_transverse(cote, epaisseur, pos_thyc, force, prod):
     som_l = 0.0
     som_f = 0.0
     for k in range(kk, pos_thyc[0]):
-        som_l = som_l + string.atof(epaisseur[k])
-        som_f = som_f + prod * string.atof(
-            force[k]) / string.atof(epaisseur[k])
+        som_l = som_l + float(epaisseur[k])
+        som_f = som_f + prod * float(
+            force[k]) / float(epaisseur[k])
     som_feq = som_l / \
-        (som_l + 0.5 * string.atof(epaisseur[pos_thyc[0]])) * som_f
+        (som_l + 0.5 * float(epaisseur[pos_thyc[0]])) * som_f
     defi_fonc.append(
-        string.atof(cote[kk]) - 0.5 * string.atof(epaisseur[kk]) - eps)
+        float(cote[kk]) - 0.5 * float(epaisseur[kk]) - eps)
     defi_fonc.append(som_feq)
     defi_fonc.append(
-        string.atof(cote[pos_thyc[0]]) - 0.5 * string.atof(epaisseur[pos_thyc[0]]) + eps)
+        float(cote[pos_thyc[0]]) - 0.5 * float(epaisseur[pos_thyc[0]]) + eps)
     defi_fonc.append(som_feq)
-    defi_fonc.append(string.atof(cote[pos_thyc[0]]))
+    defi_fonc.append(float(cote[pos_thyc[0]]))
     defi_fonc.append(0.0)
 
     # Pour aller de la premiere a la derniere grille.
@@ -96,35 +96,35 @@ def definir_chargement_transverse(cote, epaisseur, pos_thyc, force, prod):
         som_l = 0.0
         som_f = 0.0
         for k in range(pos_thyc[j] + 1, pos_thyc[j + 1]):
-            som_l = som_l + string.atof(epaisseur[k])
-            som_f = som_f + prod * string.atof(
-                force[k]) / string.atof(epaisseur[k])
+            som_l = som_l + float(epaisseur[k])
+            som_f = som_f + prod * float(
+                force[k]) / float(epaisseur[k])
         som_feq = som_l / \
             (som_l + 0.5 *
-             (string.atof(epaisseur[pos_thyc[j]]) + string.atof(epaisseur[pos_thyc[j + 1]]))) * som_f
+             (float(epaisseur[pos_thyc[j]]) + float(epaisseur[pos_thyc[j + 1]]))) * som_f
         defi_fonc.append(
-            string.atof(cote[pos_thyc[j]]) + 0.5 * string.atof(epaisseur[pos_thyc[j]]) - eps)
+            float(cote[pos_thyc[j]]) + 0.5 * float(epaisseur[pos_thyc[j]]) - eps)
         defi_fonc.append(som_feq)
         defi_fonc.append(
-            string.atof(cote[pos_thyc[j + 1]]) - 0.5 * string.atof(epaisseur[pos_thyc[j + 1]]) + eps)
+            float(cote[pos_thyc[j + 1]]) - 0.5 * float(epaisseur[pos_thyc[j + 1]]) + eps)
         defi_fonc.append(som_feq)
-        defi_fonc.append(string.atof(cote[pos_thyc[j + 1]]))
+        defi_fonc.append(float(cote[pos_thyc[j + 1]]))
         defi_fonc.append(0.0)
 
     # Pour aller de la derniere grille jusqu'a l embout superieur.
     som_l = 0.0
     som_f = 0.0
     for k in range(pos_thyc[len(pos_thyc) - 1] + 1, len(cote)):
-        som_l = som_l + string.atof(epaisseur[k])
-        som_f = som_f + prod * string.atof(
-            force[k]) / string.atof(epaisseur[k])
+        som_l = som_l + float(epaisseur[k])
+        som_f = som_f + prod * float(
+            force[k]) / float(epaisseur[k])
     som_feq = som_l / \
-        (som_l + 0.5 * string.atof(epaisseur[len(cote) - 1])) * som_f
-    defi_fonc.append(string.atof(cote[pos_thyc[len(pos_thyc) - 1]]) + 0.5 * string.atof(
+        (som_l + 0.5 * float(epaisseur[len(cote) - 1])) * som_f
+    defi_fonc.append(float(cote[pos_thyc[len(pos_thyc) - 1]]) + 0.5 * float(
         epaisseur[pos_thyc[len(pos_thyc) - 1]]) - eps)
     defi_fonc.append(som_feq)
     defi_fonc.append(
-        string.atof(cote[len(cote) - 1]) + 0.5 * string.atof(epaisseur[len(cote) - 1]) + eps)
+        float(cote[len(cote) - 1]) + 0.5 * float(epaisseur[len(cote) - 1]) + eps)
     defi_fonc.append(som_feq)
 
     _resu = DEFI_FONCTION(NOM_PARA='X',
@@ -180,7 +180,7 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
     pos_thyc = []
     for i in range(2, len(cote)):
         # Positionnement des grilles
-        if ((coeur.altitude[j] > (string.atof(cote[i]) - string.atof(epaisseur[i]) / 2.)) & (coeur.altitude[j] < (string.atof(cote[i]) + string.atof(epaisseur[i]) / 2.))):
+        if ((coeur.altitude[j] > (float(cote[i]) - float(epaisseur[i]) / 2.)) & (coeur.altitude[j] < (float(cote[i]) + float(epaisseur[i]) / 2.))):
             pos_thyc.append(i)
             j = j + 1
             if (j == len(coeur.altitude)):
@@ -188,9 +188,9 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
 
     for i in range(2, len(cote)):
         # Positionnement des crayons pour application des efforts transverses
-        if ((coeur.XINFC > (string.atof(cote[i]) - string.atof(epaisseur[i]) / 2.)) & (coeur.XINFC < (string.atof(cote[i]) + string.atof(epaisseur[i]) / 2.))):
+        if ((coeur.XINFC > (float(cote[i]) - float(epaisseur[i]) / 2.)) & (coeur.XINFC < (float(cote[i]) + float(epaisseur[i]) / 2.))):
             pos_gril_inf = i
-        if ((coeur.XSUPC > (string.atof(cote[i]) - string.atof(epaisseur[i]) / 2.)) & (coeur.XSUPC < (string.atof(cote[i]) + string.atof(epaisseur[i]) / 2.))):
+        if ((coeur.XSUPC > (float(cote[i]) - float(epaisseur[i]) / 2.)) & (coeur.XSUPC < (float(cote[i]) + float(epaisseur[i]) / 2.))):
             pos_gril_sup = i
 
     # Recuperation des efforts transverses sur les grilles
@@ -200,16 +200,16 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
     for i in range(0, coeur.NBAC):
         line = f.readline().split()
         line2 = f2.readline().split()
-        print 'line = ',line
-        print 'line2 = ',line2
+        print('line = ',line)
+        print('line2 = ',line2)
         posi_aster1 = coeur.position_fromthyc(int(line[0]),int(line[1]))
         posi_aster2 = coeur.position_fromthyc(int(line2[0]),int(line2[1]))
         if (posi_aster1 != posi_aster2):
             raise KeyError("position d assemblage avec ordre different")
 
         for j in range(0, len(pos_thyc)):
-            chThyc['X']=string.atof(line[pos_thyc[j]])  / 4.0
-            chThyc['Y']=string.atof(line2[pos_thyc[j]]) / 4.0
+            chThyc['X']=float(line[pos_thyc[j]])  / 4.0
+            chThyc['Y']=float(line2[pos_thyc[j]]) / 4.0
             chAsterY=coeur.coefFromThyc('Y')*chThyc[coeur.axeFromThyc('Y')]
             chAsterZ=coeur.coefFromThyc('Z')*chThyc[coeur.axeFromThyc('Z')]
             #print 'chAsterY , type()',chAsterY,type(chAsterY)
@@ -244,7 +244,7 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
         posi_aster=coeur.position_fromthyc(int(line[0]),int(line[1]))
         idAC = coeur.position_todamac(posi_aster)
 
-        print coeur.collAC.keys()
+        print(list(coeur.collAC.keys()))
 
         ac = coeur.collAC[idAC]
         KTOT = ac.K_GRM * \
@@ -252,32 +252,32 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
 
         # Force axiale pour une grille extremite (inf)
         mtmp = (_F(GROUP_NO='G_' + posi_aster + '_' + str(1),
-                FX=string.atof(line[2]) / FOHYCH_1 * ac.K_GRE / KTOT / 4.0),)
+                FX=float(line[2]) / FOHYCH_1 * ac.K_GRE / KTOT / 4.0),)
         mcp.extend(mtmp)
 
         # Force axiale pour chacune des grilles de mélange
         for j in range(1, ac.NBGR - 1):
             mtmp = (_F(GROUP_NO='G_' + posi_aster + '_' + str(j + 1),
-                    FX=string.atof(line[2]) / FOHYCH_1 * ac.K_GRM / KTOT / 4.0),)
+                    FX=float(line[2]) / FOHYCH_1 * ac.K_GRM / KTOT / 4.0),)
             mcp.extend(mtmp)
 
         # Force axiale pour une grille extremite (sup)
         mtmp = (_F(GROUP_NO='G_' + posi_aster + '_' + str(ac.NBGR),
-                FX=string.atof(line[2]) / FOHYCH_1 * ac.K_GRE / KTOT / 4.0),)
+                FX=float(line[2]) / FOHYCH_1 * ac.K_GRE / KTOT / 4.0),)
         mcp.extend(mtmp)
 
         # Force axiale pour l'embout inferieur
         mtmp = (
-            _F(GROUP_NO='PI_' + posi_aster, FX=string.atof(line[2]) / FOHYCH_1 * ac.K_EBIN / KTOT),)
+            _F(GROUP_NO='PI_' + posi_aster, FX=float(line[2]) / FOHYCH_1 * ac.K_EBIN / KTOT),)
         mcp.extend(mtmp)
 
         # Force axiale pour l'embout superieur
         mtmp = (
-            _F(GROUP_NO='PS_' + posi_aster, FX=string.atof(line[2]) / FOHYCH_1 * ac.K_EBSU / KTOT),)
+            _F(GROUP_NO='PS_' + posi_aster, FX=float(line[2]) / FOHYCH_1 * ac.K_EBSU / KTOT),)
         mcp.extend(mtmp)
 
         # Force axiale pour les crayons (appel a DEFI_FONCTION)
-        vale = string.atof(line[2]) / FOHYCH_1 * \
+        vale = float(line[2]) / FOHYCH_1 * \
             ac.K_TUB / KTOT * ac.NBCR / \
             (ac.NBCR + ac.NBTG) / ac.LONCR
         _FXC = DEFI_FONCTION(
@@ -287,7 +287,7 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
         mcpf.extend(mtmp)
 
         # Force axiale pour les tubes-guides (appel a DEFI_FONCTION)
-        vale = string.atof(line[2]) / FOHYCH_1 * ac.K_TUB / KTOT * ac.NBTG / (
+        vale = float(line[2]) / FOHYCH_1 * ac.K_TUB / KTOT * ac.NBTG / (
             ac.NBCR + ac.NBTG) / ac.LONTU
         _FXT = DEFI_FONCTION(
             NOM_PARA='X', PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',

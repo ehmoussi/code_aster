@@ -158,7 +158,7 @@ class XMLNode:
         try:
             # listOpt contient les paramètres optionnels de la balise
             chaine = ''
-            for v in self.param.keys():
+            for v in list(self.param.keys()):
                 chaine = chaine + ' ' + v + '=' + self.param[v]
         except:
             pass
@@ -334,7 +334,7 @@ class composant(OAR_element):
                                        # Interpolation des instants de la table
                                        # des température sur celle de la table
                                        # mécanique
-            except interpolationError, err:
+            except interpolationError as err:
                 UTMESS('F', 'OAR0_2', valk=err.getMess())
 
             # 3. Calcul de l'épaisseur de la coupe.
@@ -452,7 +452,7 @@ class composant(OAR_element):
             dictInstAbscTemp[val] = 0  # On crée juste les clés du dictionnaire
 
         listTables = list()  # liste de tables contenant une table pas instant
-        for inst in dictInstAbscTemp.keys():
+        for inst in list(dictInstAbscTemp.keys()):
             listTables.append(table_temp.INST == inst)
 
         # 2. Récupération des abscisses
@@ -466,12 +466,12 @@ class composant(OAR_element):
             tableTemp.append(TEMPERATURE)
 
         # 4. Construction de dictInstAbscTemp
-        for i in range(0, len(dictInstAbscTemp.keys())):
+        for i in range(0, len(list(dictInstAbscTemp.keys()))):
             listDoublets = list()
             for absc, temp in zip(tableAbsc, tableTemp[i]):
                 listDoublets.append((absc, temp))
 
-            inst = dictInstAbscTemp.keys()[i]
+            inst = list(dictInstAbscTemp.keys())[i]
             dictInstAbscTemp[inst] = listDoublets
 
     def buildTablesTher(self, label, para_resu, tabAbscisses, dictInstAbscSig, offset=0.0):
@@ -496,7 +496,7 @@ class composant(OAR_element):
             dictInstAbscSig[val] = 0  # On crée juste les clés du dictionnaire
 
         listTables = list()  # liste de tables contenant une table pas instant
-        for inst in dictInstAbscSig.keys():
+        for inst in list(dictInstAbscSig.keys()):
             listTables.append(table_temp.INST == inst)
 
         # 2. Récupération des abscisses
@@ -530,13 +530,13 @@ class composant(OAR_element):
             listListListSigAbscInst.append(listListSigAbscInst)
 
         # 4. Assemblage du dictionnaire
-        for i in range(0, len(dictInstAbscSig.keys())):
+        for i in range(0, len(list(dictInstAbscSig.keys()))):
             listDoublet = list()
             for j in range(0, len(tabAbscisses)):
                 listDoublet.append(
                     (tabAbscisses[j], listListListSigAbscInst[i][j]))
 
-            dictInstAbscSig[dictInstAbscSig.keys()[i]] = listDoublet
+            dictInstAbscSig[list(dictInstAbscSig.keys())[i]] = listDoublet
 
     def mergeDictTher(self):
         """
@@ -568,7 +568,7 @@ class composant(OAR_element):
 
         # On recopie les élément thermiques de la structure principale en
         # sautant la première abscisse de la structure
-        for key in dictInstAbscTempBis.keys():  # Les dictionnaires partagent les memes instants
+        for key in list(dictInstAbscTempBis.keys()):  # Les dictionnaires partagent les memes instants
             debut = True
             for valTher in self.dictInstAbscTemp[key]:
                 if debut:
@@ -578,7 +578,7 @@ class composant(OAR_element):
 
         # On recopie les élément mécaniques de la structure principale en
         # sautant la première abscisse de la structure
-        for key in dictInstAbscSigBis.keys():  # Les dictionnaires partagent les memes instants
+        for key in list(dictInstAbscSigBis.keys()):  # Les dictionnaires partagent les memes instants
             debut = True
             for valSig in self.dictInstAbscSig[key]:
                 if debut:
@@ -596,7 +596,7 @@ class composant(OAR_element):
         """
         # 1. Récupération des abscisses associées aux températures
         listAbsc = list()
-        lstDoublet = self.dictInstAbscTemp[self.dictInstAbscTemp.keys()[0]]
+        lstDoublet = self.dictInstAbscTemp[list(self.dictInstAbscTemp.keys())[0]]
         for val in lstDoublet:
             listAbsc.append(val[0])
 
@@ -612,8 +612,8 @@ class composant(OAR_element):
            Interpole les résultats thermique sur les instants des résultats mécaniques
         """
         # 1. récupération des instants des deux tables
-        listInstTher = self.dictInstAbscTemp.keys()
-        listInstMeca = self.dictInstAbscSig.keys()
+        listInstTher = list(self.dictInstAbscTemp.keys())
+        listInstMeca = list(self.dictInstAbscSig.keys())
 
         # 2. calcul de la liste des bornes de la table thermique qui encadrent
         # les résultats mécaniques
@@ -674,14 +674,14 @@ class composant(OAR_element):
             nodeSigma_meca = nodeSigma_u.append("SIGMA_MECA")
 
             for i in range(0, len(self.tabAbscisses)):
-                for val in self.dictMeca.keys():
+                for val in list(self.dictMeca.keys()):
                     nodeSigma_meca.append(val, valeur=self.dictMeca[val][i])
 
         # Création de l'arborescence "résultat thermo_mécanique"
         if self.noResuTher == False:
             # Création des abscisses
             listDoublet = self.dictInstAbscTemp[
-                self.dictInstAbscTemp.keys()[0]]
+                list(self.dictInstAbscTemp.keys())[0]]
             for val in listDoublet:
                 nodeLigneCoupe.append("ABSCISSE", val[0])
 
@@ -691,7 +691,7 @@ class composant(OAR_element):
             nodeSigma_ther_c = self.nodeComp.append("SIGMA_THER_C")
             nodeSigma_ther_c.append("NUM_TRANSI_THER", valeur=self.num_tran)
 
-            for inst in self.dictInstAbscTemp.keys():  # boucle sur les instants
+            for inst in list(self.dictInstAbscTemp.keys()):  # boucle sur les instants
                 nodeSigma_ther = nodeSigma_ther_c.append("SIGMA_THER")
                 nodeSigma_ther.append("INSTANT", valeur=inst)
 
@@ -783,10 +783,10 @@ class tuyauterie(OAR_element):
         nodeTM.append("oar:CHAR-REF", self.num_char)
         nodeMTG = nodeTM.append("MAILLE_TORSEUR-GRP")
         nodeMT = nodeMTG.append("MAILLE_TORSEUR")
-        for MA in self.dictMailleNoeuds.keys():  # Boucle sur les mailles
+        for MA in list(self.dictMailleNoeuds.keys()):  # Boucle sur les mailles
             NbNoeuds = 0
             for NO in self.dictMailleNoeuds[MA]:  # 2 noeuds
-                if ( NO in self.dictNoeudValTorseur.keys() ):
+                if ( NO in list(self.dictNoeudValTorseur.keys()) ):
                     NbNoeuds += 1
             if ( NbNoeuds == 2 ):
                 nodeMT.append("oar:MAILLE-REF", MA)

@@ -213,6 +213,6 @@ def C_RELATION( COMMAND ):
                                         "UMAT",
                                         "MFRONT",
         ]
-        mfront = [ i for i in C_MFRONT_OFFICIAL().keys() \
+        mfront = [ i for i in list(C_MFRONT_OFFICIAL().keys()) \
                      if not i.endswith('_FO') ]
         return tuple(native + mfront)

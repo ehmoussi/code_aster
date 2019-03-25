@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ diff = abs(valcal - valref)
 
 ttest = CREA_TABLE(LISTE=(
                        _F(PARA='SENSOR',
-                          LISTE_I=range(1, number_of_sensors + 1),),
+                          LISTE_I=list(range(1, number_of_sensors + 1)),),
                        _F(PARA='REFE',
                           LISTE_R=tuple(valref.tolist()),),
                        _F(PARA='CALC',

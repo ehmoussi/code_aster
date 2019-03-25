@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -234,7 +234,7 @@ for LeDiscret in ListeDiscrets:
       LeD[ii] = RECU_FONCTION(RESULTAT=RESU, NOM_CHAM='DEPL', NOM_CMP=DDL, NOEUD= LeNoeud,
          INTERPOL='LIN',PROL_DROITE='EXCLU',PROL_GAUCHE='EXCLU',)
       # TESTS DES RESULTATS
-      if ( Force in LesDiscrets[LeDiscret].keys() ):
+      if ( Force in list(LesDiscrets[LeDiscret].keys()) ):
          Lvale = LesDiscrets[LeDiscret][Force]
          motclefs = {}
          motclefs['VALEUR'] = []
@@ -246,7 +246,7 @@ for LeDiscret in ListeDiscrets:
          TEST_FONCTION(**motclefs)
       ii += 1
    # TESTS DES RESULTATS : energie
-   if ( "ENERG" in LesDiscrets[LeDiscret].keys() ):
+   if ( "ENERG" in list(LesDiscrets[LeDiscret].keys()) ):
       LaMaille = LesDiscrets[LeDiscret]['MAILLE']
       Energie  = LesDiscrets[LeDiscret]['ENERG']
       motclefs = {}

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 
 cata_msg = {
 
-    2 : _(u"""
+    2 : _("""
 On ne sait pas calculer les déformations plastiques avec de l'élasticité non-isotrope.
 """),
 
-   3 : _(u"""
+   3 : _("""
   -> Attention vous êtes en contraintes planes, et vous utilisez la loi
      de comportement %(k1)s. La composante du tenseur des déformations
      plastiques EPZZ est calculée en supposant l'incompressibilité des
@@ -34,22 +34,22 @@ On ne sait pas calculer les déformations plastiques avec de l'élasticité non-
      Vérifiez que cette expression est valide avec votre loi de comportement.
 """),
 
-    5 : _(u"""
+    5 : _("""
 On ne peut pas utiliser le modèle 3D_SI avec un comportement élastique de type %(k1)s.
 """),
 
-    6 : _(u"""
+    6 : _("""
   -> Erreur de programmation :
   -> L argument %(k1)s est manquant ou mal renseigné dans une routine élémentaire XFEM
   -> Veuillez renseigner cette argument
 """),
 
-    9 : _(u"""
+    9 : _("""
   -> Erreur de programmation :
   -> En dimension %(i1)d, le calcul d'une matrice de passage n'a pas de sens.
 """),
 
-    10 : _(u"""
+    10 : _("""
   -> Erreur de programmation :
   -> Au moins un des paramètres élastiques (module d'Young ou coefficient de poisson) n'a
      pas été trouvé lors de l'évaluation des fonctions vectorielles XFEM

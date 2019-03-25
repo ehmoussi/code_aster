@@ -35,12 +35,12 @@ PyObject *AbstractErrorCpp::py_attrs() const {
     int idx = 0;
     PyObject *py_err = PyTuple_New( 4 );
 
-    PyObject *py_id = PyString_FromString( _idmess.c_str() );
+    PyObject *py_id = PyUnicode_FromString( _idmess.c_str() );
 
     PyObject *py_valk = PyTuple_New( _valk.size() );
     idx = 0;
     for ( auto it = _valk.begin(); it != _valk.end(); ++it, ++idx )
-        PyTuple_SetItem( py_valk, idx, PyString_FromString( it->c_str() ) );
+        PyTuple_SetItem( py_valk, idx, PyUnicode_FromString( it->c_str() ) );
 
     PyObject *py_vali = PyTuple_New( _vali.size() );
     idx = 0;

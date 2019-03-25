@@ -98,10 +98,10 @@ class MISS_PARAMETER(object):
         if mcfact is not None:
             self._keywords.update(mcfact)
         # autres mots-clés
-        others = kwargs.keys()
+        others = list(kwargs.keys())
         if kwargs.has_key('PARAMETRE'):
             others.remove('PARAMETRE')
-        for key in others + self._defaults.keys():
+        for key in others + list(self._defaults.keys()):
             val = kwargs.get(key)
             if val is None:
                 val = self._defaults.get(key)
@@ -283,11 +283,13 @@ def en_ligne(valeurs, format, cols, separateur=" ", format_ligne="%(valeurs)s"):
 
 def convert_double(fich1, fich2):
     """Convertit les 1.D+09 en 1.E+09"""
-    txt = open(fich1, "r").read()
+    with open(fich1, "r") as f:
+        txt = f.read()
     # see python doc (module re)
     expr = re.compile("([\-\+]?\d+(\.\d*)?|\.\d+)([eEdD])([\-\+]?\d+)?")
     new = expr.sub("\\1E\\4", txt)
-    open(fich2, "w").write(new)
+    with open(fich2, "w") as f:
+        f.write(new)
 
 
 def double(string):
