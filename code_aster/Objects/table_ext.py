@@ -131,7 +131,7 @@ class ExtendedTable(injector(Table), Table):
         for i in lparam :
             value=list(aster.getvectjev(i[2]))
             exist=aster.getvectjev(i[3])
-            dval[i[0].strip()] = map(Nonefy, value, exist)
+            dval[i[0].strip()] = list(map(Nonefy, value, exist))
             lpar.append(i[0].strip())
             ltyp.append(i[1].strip())
         n=len(dval[lpar[0]])

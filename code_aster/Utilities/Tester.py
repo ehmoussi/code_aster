@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ def addSuccess(method):
         """wrapper"""
         try:
             ret = method(inst, *args, **kwds)
-        except AssertionError, exc:
+        except AssertionError as exc:
             ret = None
             inst.writeResult( False, method.__name__, kwds.get('msg'), str(exc) )
         else:
@@ -59,7 +59,7 @@ class AssertRaisesContext(case._AssertRaisesContext):
     def __init__(self, expected, test_case, expected_regexp=None):
         self.writeResult = test_case.writeResult
         # these two lines already exist in __exit__ in python >= 2.7.9
-        if isinstance(expected_regexp, basestring):
+        if isinstance(expected_regexp, str):
             expected_regexp = re.compile(expected_regexp)
         super(AssertRaisesContext, self).__init__(expected, test_case, expected_regexp)
 
@@ -74,7 +74,7 @@ class AssertRaisesContext(case._AssertRaisesContext):
                     exc_name = str(exc_type)
                 raise AssertionError("unexpected exception raised: "
                                      "{0}".format(exc_name))
-        except AssertionError, exc:
+        except AssertionError as exc:
             ret = False
             comment = str(exc)
         self.writeResult( ret, self.expected.__name__, comment )
@@ -99,10 +99,10 @@ class TestCase( unittest.TestCase ):
 
     def printSummary(self):
         """Print a summary of the tests"""
-        print("-" * 70)
+        print(("-" * 70))
         count = self._passed + self._failure
-        print("Ran {0} tests, {1} passed, {2} in failure".format(
-            count, self._passed, self._failure))
+        print(("Ran {0} tests, {1} passed, {2} in failure".format(
+            count, self._passed, self._failure)))
         if self._failure:
             print("\nFAILED\n")
         else:
@@ -157,7 +157,6 @@ def _add_assert_methods(cls):
                   'assertIsNone',
                   'assertIsNot',
                   'assertIsNotNone',
-                  'assertItemsEqual',
                   'assertLess',
                   'assertLessEqual',
                   'assertMultiLineEqual',

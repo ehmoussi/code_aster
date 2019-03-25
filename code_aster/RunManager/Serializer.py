@@ -141,7 +141,7 @@ class Serializer(object):
             # ordered list of objects names
             logger.info("Saving objects...")
             objList = []
-            for name, obj in ctxt.items():
+            for name, obj in list(ctxt.items()):
                 if name == "CO":
                     continue
                 try:
@@ -351,10 +351,10 @@ class AsterPickler(pickle.Pickler):
                 for item in obj:
                     self.save_one(item)
         elif main and isinstance(obj, dict):
-            if obj and contains_datastructure(obj.values()):
+            if obj and contains_datastructure(list(obj.values())):
                 self.dump(DICT)
                 self.dump(len(obj))
-                for item in obj.values():
+                for item in list(obj.values()):
                     self.save_one(item)
         elif isinstance(obj, DataStructure):
             # save initial arguments
@@ -505,7 +505,7 @@ class AsterUnpickler(pickle.Unpickler):
 
         def buffer(self, name):
             name = name.strip()
-            if not self._store.has_key(name):
+            if name not in self._store:
                 self._store[name] = AsterUnpickler.BufferObject(name)
             return self._store[name]
 
@@ -600,12 +600,12 @@ def _filteringContext(context):
     # functions to be ignored
     ignored = (DETRUIRE, FIN, VARIABLE)
     ctxt = {}
-    for name, obj in context.items():
+    for name, obj in list(context.items()):
         if name in ('code_aster', ) or name.startswith('__'):
             continue
         if not isinstance(obj, numpy.ndarray) and obj in ignored:
             continue
-        if type(obj) in (types.ModuleType, types.ClassType,
+        if type(obj) in (types.ModuleType, type,
                          types.MethodType, types.FunctionType,
                          types.BuiltinMethodType, types.BuiltinFunctionType):
             continue

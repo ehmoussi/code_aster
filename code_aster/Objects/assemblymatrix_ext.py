@@ -115,7 +115,7 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
                 def __iter__(self):
                     return self
 
-                def next(self):
+                def __next__(self):
                     if self.kterm == 0:
                         self.kterm += 1
                         return self.jcol
@@ -152,7 +152,7 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
         else :
             data = NP.zeros([dim, dim], dtype=dtype)
             jcol = 1
-            for kterm in xrange(1,nnz+1):
+            for kterm in range(1,nnz+1):
                 ilig = smhc[kterm-1]
                 if smdi[jcol-1] < kterm:
                     jcol += 1
@@ -216,7 +216,7 @@ class ExtendedAssemblyMatrixDisplacementComplex(injector(AssemblyMatrixDisplacem
                 def __iter__(self):
                     return self
 
-                def next(self):
+                def __next__(self):
                     if self.kterm == 0:
                         self.kterm += 1
                         return self.jcol
@@ -253,7 +253,7 @@ class ExtendedAssemblyMatrixDisplacementComplex(injector(AssemblyMatrixDisplacem
         else :
             data = NP.zeros([dim, dim], dtype=dtype)
             jcol = 1
-            for kterm in xrange(1,nnz+1):
+            for kterm in range(1,nnz+1):
                 ilig = smhc[kterm-1]
                 if smdi[jcol-1] < kterm:
                     jcol += 1

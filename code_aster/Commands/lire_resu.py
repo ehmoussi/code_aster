@@ -73,9 +73,9 @@ class ResultsReader(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if keywords.has_key("MODELE"):
+        if "MODELE" in keywords:
             self._result.appendModelOnAllRanks(keywords["MODELE"])
-        elif keywords.has_key("MAILLAGE"):
+        elif "MAILLAGE" in keywords:
             self._result.setMesh(keywords["MAILLAGE"])
         self._result.update()
 

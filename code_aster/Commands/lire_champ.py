@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -40,7 +40,7 @@ class FieldReader(ExecuteCommand):
         typ = keywords["TYPE_CHAM"][10:]
 
         if location == "CART_":
-            if keywords.has_key("MAILLAGE"):
+            if "MAILLAGE" in keywords:
                 mesh = keywords["MAILLAGE"]
             else:
                 mesh = keywords["MODELE"].getSupportMesh()

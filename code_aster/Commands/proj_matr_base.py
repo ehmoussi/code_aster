@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -35,7 +35,7 @@ class ProjMatrBase(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords.has_key("MATR_ASSE_GENE"):
+        if "MATR_ASSE_GENE" in keywords:
             self._result = type(keywords["MATR_ASSE_GENE"])()
         else:
             if type(keywords["MATR_ASSE"]) == AssemblyMatrixDisplacementDouble:

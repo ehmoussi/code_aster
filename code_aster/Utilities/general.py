@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,10 +31,10 @@ def initial_context():
     Returns:
         dict: pairs of name per corresponding Python instance.
     """
-    import __builtin__
+    import builtins
     import math
     context = {}
-    context.update(__builtin__.__dict__)
+    context.update(builtins.__dict__)
     for func in dir(math):
         if not func.startswith('_'):
             context[func] = getattr(math, func)

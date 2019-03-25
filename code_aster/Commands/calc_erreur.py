@@ -33,7 +33,7 @@ class ComputeError(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords.has_key("reuse"):
+        if "reuse" in keywords:
             self._result = keywords["reuse"]
         else:
             self._result = type(keywords["RESULTAT"])()

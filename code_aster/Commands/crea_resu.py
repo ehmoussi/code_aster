@@ -41,7 +41,7 @@ class ResultCreator(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords.has_key("reuse"):
+        if "reuse" in keywords:
             self._result = keywords["reuse"]
         else:
             typ = keywords["TYPE_RESU"]
