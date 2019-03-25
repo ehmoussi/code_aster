@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,14 +25,13 @@
 # Modules Python
 import traceback
 import sys
-import types
 
 # Modules EFicas
-import B_ETAPE
+from . import B_ETAPE
 from Noyau.N_Exception import AsException
 from Noyau import N__F
 from Noyau.N_utils import AsType
-import B_utils
+from . import B_utils
 
 
 class MACRO_ETAPE(B_ETAPE.ETAPE):
@@ -62,7 +61,7 @@ class MACRO_ETAPE(B_ETAPE.ETAPE):
         # compte-rendu hierarchique
         self.cr = self.CR(
             debut='Etape : ' + self.nom + '    ligne : ' +
-            `self.appel[0]` + '    fichier : ' + `self.appel[1]`,
+            repr(self.appel[0]) + '    fichier : ' + repr(self.appel[1]),
             fin='Fin Etape : ' + self.nom)
 
         try:
@@ -102,7 +101,7 @@ class MACRO_ETAPE(B_ETAPE.ETAPE):
            l'objet lui meme
         """
         if CONTEXT.debug:
-            print "MACRO_ETAPE._Build ", self.nom, self.definition.op
+            print("MACRO_ETAPE._Build ", self.nom, self.definition.op)
 
         ier = 0
         try:
@@ -112,8 +111,8 @@ class MACRO_ETAPE(B_ETAPE.ETAPE):
                 # La fonction proc doit demander la numerotation de la commande
                 # (appel de set_icmd)
                 d = self.cree_dict_valeurs(self.mc_liste)
-                ier = apply(self.definition.proc, (self,), d)
-            elif self.macros.has_key(self.definition.op):
+                ier = self.definition.proc(*(self,), **d)
+            elif self.definition.op in self.macros:
                 ier = self.macros[self.definition.op](self)
             else:
                 # Pour presque toutes les commandes (sauf FORMULE et POURSUITE)
@@ -128,12 +127,12 @@ class MACRO_ETAPE(B_ETAPE.ETAPE):
 
             if ier:
                 self.cr.fatal(
-                    _(u"Erreur dans la macro %s\nligne : %s fichier : "),
+                    _("Erreur dans la macro %s\nligne : %s fichier : "),
                     self.nom, self.appel[0], self.appel[1])
 
-        except AsException, e:
+        except AsException as e:
             ier = 1
-            self.cr.fatal(_(u"Erreur dans la macro %s\n%s"), self.nom, e)
+            self.cr.fatal(_("Erreur dans la macro %s\n%s"), self.nom, e)
         except (EOFError, self.jdc.UserError):
             raise
         except:
@@ -141,7 +140,7 @@ class MACRO_ETAPE(B_ETAPE.ETAPE):
             l = traceback.format_exception(
                 sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
             self.cr.fatal(
-                _(u"Erreur dans la macro %s\n%s"), self.nom, ' '.join(l))
+                _("Erreur dans la macro %s\n%s"), self.nom, ' '.join(l))
 
         return ier
 

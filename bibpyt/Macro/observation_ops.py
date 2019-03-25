@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -136,7 +136,7 @@ def observation_ops(self,
         afreq = None
         NUME_DDL = None
 
-    indice = range(RESULTAT.getNumberOfRanks())
+    indice = list(range(RESULTAT.getNumberOfRanks()))
     
 #***********************************************
 #  PHASE DE CALCUL DE LA DEFORMATION MOYENNE AUX NOEUDS
@@ -490,14 +490,14 @@ def observation_ops(self,
                     if modi_rep['REPERE'] == 'DIR_JAUGE':
                         vect_x = None
                         vect_y = None
-                        if modi_rep.has_key('VECT_X'):
+                        if 'VECT_X' in modi_rep:
                             vect_x = modi_rep['VECT_X']
-                        if modi_rep.has_key('VECT_Y'):
+                        if 'VECT_Y' in modi_rep:
                             vect_y = modi_rep['VECT_Y']
 
                         # il faut des mailles pour les tenseurs d'ordre 2
                         for typ in ['MAILLE', 'GROUP_MA', ]:
-                            if modi_rep.has_key(typ):
+                            if typ in modi_rep:
                                 if PROJECTION == 'OUI':
                                     maya = mayaexp
                                 else:
@@ -524,7 +524,7 @@ def observation_ops(self,
                         # selon la normale. On fait un changement de repere local
                         # par noeud
                         for option in ['VECT_X', 'VECT_Y', 'CONDITION_X', 'CONDITION_Y']:
-                            if modi_rep.has_key(option):
+                            if option in modi_rep:
                                 vect = {option: modi_rep[option]}
                         if len(vect) != 1:
                             UTMESS('E', 'UTILITAI7_9')
@@ -542,7 +542,7 @@ def observation_ops(self,
                         # chercher les noeuds des mailles pour 'MAILLE' et
                         # 'GROUP_MA'
                         for typ in ['NOEUD', 'GROUP_NO', 'MAILLE', 'GROUP_MA']:
-                            if modi_rep.has_key(typ):
+                            if typ in modi_rep:
                                 list_no_exp = find_no(
                                     mayaexp, {typ: modi_rep[typ]})
 
@@ -571,11 +571,11 @@ def observation_ops(self,
 
                         if type_cham == 'TENS_2D' or type_cham == 'TENS_3D':
                             for typ in ['MAILLE', 'GROUP_MA', ]:
-                                if modi_rep.has_key(typ):
+                                if typ in modi_rep:
                                     mcfact2.update({typ: modi_rep[typ]})
                         else:
                             for typ in ['NOEUD', 'GROUP_NO', 'MAILLE', 'GROUP_MA']:
-                                if modi_rep.has_key(typ):
+                                if typ in modi_rep:
                                     mcfact2.update({typ: modi_rep[typ]})
 
                         if modi_rep['REPERE'] == 'CYLINDRIQUE':
@@ -648,7 +648,7 @@ def observation_ops(self,
 
                         if atraiter:
                             for typ in ['NOEUD', 'GROUP_NO', 'MAILLE', 'GROUP_MA']:
-                                if filtre.has_key(typ):
+                                if typ in filtre:
                                     mcfact1.update({typ: filtre[typ]})
                             mcfact1.update({'NOM_CMP': filtre['DDL_ACTIF'],
                                            'CHAM_GD': __chamex})
@@ -844,7 +844,7 @@ def crea_repere(chnorm, ind_no, vect):
 
     import numpy
 
-    nom_para = vect.keys()[0]  # nom_para = 'VECT_X' ou 'VECT_Y'
+    nom_para = list(vect.keys())[0]  # nom_para = 'VECT_X' ou 'VECT_Y'
 
     # 1) pour tous les noeuds du maillage experimental, recuperer la normale
     #    calculee a partir du maillage numerique
@@ -988,16 +988,16 @@ def find_no(maya, mcsimp):
     import numpy
 
     list_no = []
-    if mcsimp.has_key('GROUP_NO') and type(mcsimp['GROUP_NO']) not in (tuple, list):
+    if 'GROUP_NO' in mcsimp and type(mcsimp['GROUP_NO']) not in (tuple, list):
         mcsimp['GROUP_NO'] = [mcsimp['GROUP_NO']]
-    if mcsimp.has_key('MAILLE') and type(mcsimp['MAILLE']) not in (tuple, list):
+    if 'MAILLE' in mcsimp and type(mcsimp['MAILLE']) not in (tuple, list):
         mcsimp['MAILLE'] = [mcsimp['MAILLE']]
-    if mcsimp.has_key('GROUP_MA') and type(mcsimp['GROUP_MA']) not in (tuple, list):
+    if 'GROUP_MA' in mcsimp and type(mcsimp['GROUP_MA']) not in (tuple, list):
         mcsimp['GROUP_MA'] = [mcsimp['GROUP_MA']]
 
-    if mcsimp.has_key('NOEUD'):
+    if 'NOEUD' in mcsimp:
         list_no = list(mcsimp['NOEUD'])
-    elif mcsimp.has_key('GROUP_NO'):
+    elif 'GROUP_NO' in mcsimp:
         for group in mcsimp['GROUP_NO']:
             list_ind_no = list(
                 numpy.array(maya.sdj.GROUPENO.get()[group.ljust(24)]) - 1)
@@ -1005,7 +1005,7 @@ def find_no(maya, mcsimp):
                 nomnoe = maya.sdj.NOMNOE.get()[ind_no]
                 if nomnoe not in list_no:
                     list_no.append(nomnoe)
-    elif mcsimp.has_key('MAILLE'):
+    elif 'MAILLE' in mcsimp:
         for mail in mcsimp['MAILLE']:
             for index in range(len(maya.sdj.NOMMAI.get())):
                 if maya.sdj.NOMMAI.get()[index].strip() == mail:
@@ -1014,7 +1014,7 @@ def find_no(maya, mcsimp):
                 nomnoe = maya.sdj.NOMNOE.get()[ind_no - 1]
                 if nomnoe not in list_no:
                     list_no.append(nomnoe)
-    elif mcsimp.has_key('GROUP_MA'):
+    elif 'GROUP_MA' in mcsimp:
         for group in mcsimp['GROUP_MA']:
             list_nu_ma = list(numpy.array(maya.sdj.GROUPEMA.get()
                                           [group.ljust(24)]) - 1)
@@ -1039,15 +1039,15 @@ def find_ma(maya, mcsimp):
     import numpy
 
     list_ma = []
-    if mcsimp.has_key('GROUP_MA') and type(mcsimp['GROUP_MA']) != tuple:
+    if 'GROUP_MA' in mcsimp and type(mcsimp['GROUP_MA']) != tuple:
         mcsimp['GROUP_MA'] = [mcsimp['GROUP_MA']]
-    if mcsimp.has_key('MAILLE') and type(mcsimp['MAILLE']) != tuple:
+    if 'MAILLE' in mcsimp and type(mcsimp['MAILLE']) != tuple:
         mcsimp['MAILLE'] = [mcsimp['MAILLE']]
 
-    if mcsimp.has_key('MAILLE'):
+    if 'MAILLE' in mcsimp:
         for mail in mcsimp['MAILLE']:
             list_ma.append(mail)
-    elif mcsimp.has_key('GROUP_MA'):
+    elif 'GROUP_MA' in mcsimp:
         for group in mcsimp['GROUP_MA']:
             list_ind_ma = list(
                 numpy.array(maya.sdj.GROUPEMA.get()[group.ljust(24)]) - 1)

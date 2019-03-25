@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ class sd_resu_dyna(AsBase):
         REFDColl = self.REFD.get()
         # Convert into a simple python list by looping over the dictionnary
         # keys
-        REFDColl = [REFDColl[i] for i in REFDColl.keys()]
+        REFDColl = [REFDColl[i] for i in list(REFDColl.keys())]
         # assert (True in [Val != None for Val in REFDColl])
         # Check each of the REFD entries, one by one
         for REFDEntry in REFDColl:
@@ -178,7 +178,7 @@ def CheckInterfStat(InterfSName, checker, **args):
         if IsResuDyna(InterfSName):
             CheckResuDyna(InterfSName, checker)
     else:
-        print "A generalized numbering for a static interface reference result! Aborting."
+        print("A generalized numbering for a static interface reference result! Aborting.")
         assert(False)
 
 

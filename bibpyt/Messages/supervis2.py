@@ -21,10 +21,10 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  Lecture du fichier %(k1)s..."""),
 
-    2 : _(u"""
+    2 : _("""
     Vous utilisez une vieille version de Code_Aster.
 
     En mettant à jour votre version, vous bénéficierez des dernières améliorations
@@ -33,11 +33,11 @@ cata_msg = {
     important de portage si vous ne suivez pas les mises à jour.
 """),
 
-    3 : _(u"""%(k1)-8s %(k2)-16s ignoré"""),
+    3 : _("""%(k1)-8s %(k2)-16s ignoré"""),
 
     # 4 plus bas avec 9, 10
 
-    5 : _(u"""
+    5 : _("""
 Erreur inattendue lors de l'exécution de la commande '%(k1)s'.
 Merci de signaler cette anomalie.
 
@@ -47,37 +47,37 @@ Erreur :
 %(k3)s
 """),
 
-    6 : _(u"""
+    6 : _("""
 Erreur lors du chargement du catalogue du matériau '%(k1)s'.
 """),
 
-    7 : _(u"""
+    7 : _("""
 Erreur dans le catalogue du matériau '%(k1)s'.
 
 Il n'est pas possible d'avoir plusieurs occurrences pour le
 mot-clé facteur '%(k2)s'.
 """),
 
-    8 : _(u"""
+    8 : _("""
 L'opération de retassage de la base GLOBALE (mot clé RETASSAGE="OUI"
 dans la commande FIN) est inutile lorsque l'on sauvegarde cette
 dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
 """),
 
     # Lignes d'entete
-    4 : {  'message' : _(u"""
+    4 : {  'message' : _("""
 
                 -- CODE_ASTER -- VERSION : %(k1)s --
 """),
            'flags': 'CENTER',
            },
 
-    23 : {  'message' : _(u"""Version %(k1)s modifiée le %(k2)s
+    23 : {  'message' : _("""Version %(k1)s modifiée le %(k2)s
                révision %(k3)s - branche '%(k4)s'"""),
             'flags': 'CENTER',
             },
 
-    10 : {  'message' : _(u"""Copyright EDF R&D %(k1)s - %(k2)s
+    10 : {  'message' : _("""Copyright EDF R&D %(k1)s - %(k2)s
 
                 Exécution du : %(k3)s
                 Nom de la machine : %(k4)s
@@ -88,64 +88,64 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
 """), 'flags' : 'CENTER',
             },
 
-    9 : {  'message' : _(u"""Version de Python : %(k1)s
+    9 : {  'message' : _("""Version de Python : %(k1)s
                           Version de NumPy : %(k2)s"""),
            'flags': 'CENTER',
            },
 
     # fin Lignes d'entete
 
-    11 : {  'message' : _(u"""Parallélisme MPI : actif
+    11 : {  'message' : _("""Parallélisme MPI : actif
                 Rang du processeur courant : %(i1)d
                 Nombre de processeurs utilisés : %(i2)d"""),
             'flags': 'CENTER',
             },
 
-    12 : {  'message' : _(u"""Parallélisme MPI : inactif"""),
+    12 : {  'message' : _("""Parallélisme MPI : inactif"""),
             'flags': 'CENTER',
             },
 
-    13 : {  'message' : _(u"""Parallélisme OpenMP : actif
+    13 : {  'message' : _("""Parallélisme OpenMP : actif
                 Nombre de processus utilisés : %(i1)d"""),
             'flags': 'CENTER',
             },
 
     14: {
-        'message' : _(u"""Version de la librairie HDF5 : %(i1)d.%(i2)d.%(i3)d"""),
+        'message' : _("""Version de la librairie HDF5 : %(i1)d.%(i2)d.%(i3)d"""),
         'flags': 'CENTER',
     },
 
-    15 : {  'message' : _(u"""Librairie HDF5 : non disponible"""),
+    15 : {  'message' : _("""Librairie HDF5 : non disponible"""),
             'flags': 'CENTER',
             },
 
     16: {
-        'message' : _(u"""Version de la librairie MED : %(i1)d.%(i2)d.%(i3)d"""),
+        'message' : _("""Version de la librairie MED : %(i1)d.%(i2)d.%(i3)d"""),
         'flags': 'CENTER',
     },
 
-    17 : {  'message' : _(u"""Librairie MED : non disponible"""),
+    17 : {  'message' : _("""Librairie MED : non disponible"""),
             'flags': 'CENTER',
             },
 
-    18 : {  'message' : _(u"""Version de la librairie MUMPS : %(k1)s"""),
+    18 : {  'message' : _("""Version de la librairie MUMPS : %(k1)s"""),
             'flags': 'CENTER',
             },
 
-    19 : {  'message' : _(u"""Librairie MUMPS : non disponible"""),
+    19 : {  'message' : _("""Librairie MUMPS : non disponible"""),
             'flags': 'CENTER',
             },
 
     20: {
-        'message' : _(u"""Version de la librairie SCOTCH : %(i1)d.%(i2)d.%(i3)d"""),
+        'message' : _("""Version de la librairie SCOTCH : %(i1)d.%(i2)d.%(i3)d"""),
         'flags': 'CENTER',
     },
 
-    21 : {  'message' : _(u"""Librairie SCOTCH : non disponible"""),
+    21 : {  'message' : _("""Librairie SCOTCH : non disponible"""),
             'flags': 'CENTER',
             },
 
-    22 : {  'message' : _(u"""Mémoire limite pour l'exécution : %(r2).2f Mo
+    22 : {  'message' : _("""Mémoire limite pour l'exécution : %(r2).2f Mo
                           consommée par l'initialisation : %(r3).2f Mo
                          par les objets du jeu de commandes : %(r4).2f Mo
                          reste pour l'allocation dynamique : %(r1).2f Mo"""),
@@ -154,28 +154,28 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
 
     # 23 plus haut avec 10
 
-    24 : {  'message' : _(u"""Taille limite des fichiers d'échange : %(r1).2f Go
+    24 : {  'message' : _("""Taille limite des fichiers d'échange : %(r1).2f Go
 """), 'flags' : 'CENTER',
             },
 
-    25 : {  'message' : _(u"""Version de la librairie PETSc : %(k1)s"""),
+    25 : {  'message' : _("""Version de la librairie PETSc : %(k1)s"""),
             'flags': 'CENTER',
             },
 
-    26 : {  'message' : _(u"""Librairie PETSc : non disponible"""),
+    26 : {  'message' : _("""Librairie PETSc : non disponible"""),
             'flags': 'CENTER',
             },
 
     27: {
-        'message' : _(u"""Version de la librairie MFront : %(k1)s"""),
+        'message' : _("""Version de la librairie MFront : %(k1)s"""),
         'flags': 'CENTER',
     },
 
-    28 : {  'message' : _(u"""Librairie MFront : non disponible"""),
+    28 : {  'message' : _("""Librairie MFront : non disponible"""),
             'flags': 'CENTER',
             },
 
-    29 : {  'message' : _(u"""Mémoire limite pour l'exécution : %(r2).2f Mo
+    29 : {  'message' : _("""Mémoire limite pour l'exécution : %(r2).2f Mo
                          reste pour l'allocation dynamique : %(r1).2f Mo"""),
             'flags': 'CENTER',
             },
@@ -186,36 +186,36 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
     # Affichage des commandes
     70 : u"""  # ------------------------------------------------------------------------------------------""",
 
-    71 : _(u"""  # Commande No :  %(i1)04d            Concept de type : %(k1)s"""),
+    71 : _("""  # Commande No :  %(i1)04d            Concept de type : %(k1)s"""),
 
-    72 : _(u"""  # Commande :
+    72 : _("""  # Commande :
   # ----------"""),
 
-    73 : _(u"""  # Mémoire (Mo) : %(r1)8.2f / %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmPeak / VmSize / Optimum / Minimum)"""),
+    73 : _("""  # Mémoire (Mo) : %(r1)8.2f / %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmPeak / VmSize / Optimum / Minimum)"""),
 
     # attention au décalage
-    74 : _(u"""  # Mémoire (Mo) : %(r3)8.2f / %(r4)8.2f (Optimum / Minimum)"""),
+    74 : _("""  # Mémoire (Mo) : %(r3)8.2f / %(r4)8.2f (Optimum / Minimum)"""),
 
-    75 : _(u"""  # Fin commande No : %(i1)04d   user+syst:%(r1)12.2fs (syst:%(r2)12.2fs, elaps:%(r3)12.2fs)"""),
+    75 : _("""  # Fin commande No : %(i1)04d   user+syst:%(r1)12.2fs (syst:%(r2)12.2fs, elaps:%(r3)12.2fs)"""),
 
-    76 : _(u"""  # Fin commande : %(k1)s"""),
+    76 : _("""  # Fin commande : %(k1)s"""),
 
     # sans formatage pour STAT_NON_LINE (impmem)
-    77 : _(u"""
+    77 : _("""
   Mémoire (Mo) : %(r1)8.2f / %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmPeak / VmSize / Optimum / Minimum)
 """),
 
     # attention au décalage
-    78 : _(u"""
+    78 : _("""
   Mémoire (Mo) : %(r3)8.2f / %(r4)8.2f (Optimum / Minimum)
 """),
 
-    79: _(u"""
+    79: _("""
 La commande est ré-entrante. Il faut renseigner le mot-clé '%(k1)s' pour
 indiquer l'objet qui est modifié.
 """),
 
-    98 : _(u"""
+    98 : _("""
  <INFO> Démarrage de l'exécution.
 """),
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -209,7 +209,7 @@ def EXTR_FONC_NAP(nappe,temp,YOUN) :
 #   en sortie, courbe de traction a cette temperature
     epsmax=1.
     npas=200
-    l=N.array(range(0,npas))
+    l=N.array(list(range(0,npas)))
     labs=[]
     lsig=[]
     lepsp=l*epsmax/npas
@@ -236,7 +236,7 @@ for i in range(NCAL):
 
           epsimp =DEFI_CONSTANTE(VALE=-ALPH(Ti)*(Ti - TREF));
 
-          print 'i=',i, ' instant=', time, ' Temperature=',Ti, F0_T(Ti)
+          print(('i=',i, ' instant=', time, ' Temperature=',Ti, F0_T(Ti)))
 
           # variation des coef du comportement avec la temperature
           # correction eventuelle des valeurs initiales du temps ti

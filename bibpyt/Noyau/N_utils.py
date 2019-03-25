@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,9 +28,9 @@
 import sys
 
 # Modules EFICAS
-from N_Exception import AsException
-from N_types import is_int, is_float, is_complex, is_str, is_sequence, is_assd
-from strfunc import get_encoding
+from .N_Exception import AsException
+from .N_types import is_int, is_float, is_complex, is_str, is_sequence, is_assd
+from .strfunc import get_encoding
 
 SEP = '_'
 
@@ -68,7 +68,7 @@ def callee_where(niveau=4):
         # Python 2.7 compile function does not accept unicode filename, so we encode it
         # with the current locale encoding in order to have a correct traceback.
         # Here, we convert it back to unicode.
-        filename = unicode(frame.f_code.co_filename, get_encoding())
+        filename = str(frame.f_code.co_filename, get_encoding())
         return frame.f_lineno, filename, frame.f_code.co_firstlineno, frame.f_locals
     except:
         return 0, "inconnu", 0, {}
@@ -95,9 +95,9 @@ def AsType(a):
 
 
 def prbanner(s):
-    print "*" * (len(s) + 10)
-    print "*" * 5 + s + "*" * 5
-    print "*" * (len(s) + 10)
+    print("*" * (len(s) + 10))
+    print("*" * 5 + s + "*" * 5)
+    print("*" * (len(s) + 10))
 
 
 def repr_float(valeur):
@@ -178,19 +178,19 @@ def import_object(uri):
     path = uri.split('.')
     modname = '.'.join(path[:-1])
     if len(modname) == 0:
-        raise ImportError(u"invalid uri: %s" % uri)
+        raise ImportError("invalid uri: %s" % uri)
     mod = object = '?'
     objname = path[-1]
     try:
         __import__(modname)
         mod = sys.modules[modname]
-    except ImportError, err:
+    except ImportError as err:
         raise ImportError(
-            u"can not import module : %s (%s)" % (modname, str(err)))
+            "can not import module : %s (%s)" % (modname, str(err)))
     try:
         object = getattr(mod, objname)
-    except AttributeError, err:
-        raise AttributeError(u"object (%s) not found in module '%s'. "
+    except AttributeError as err:
+        raise AttributeError("object (%s) not found in module '%s'. "
                              "Module content is: %s" % (objname, modname, tuple(dir(mod))))
     return object
 

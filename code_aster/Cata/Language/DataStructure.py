@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ the return of the class method `getType()` of datastructures.
 Ex.: maillage_sdaster.getType() = Mesh().getType() = "MAILLAGE"
 """
 
-import UserDict
+from collections import UserDict
 
 
 class DataStructure(object):
@@ -69,7 +69,7 @@ class DataStructure(object):
             from copy import deepcopy
             copied = self.__class__()
             memodict[id(self)] = copied
-            for (k, v) in self.__dict__.items():
+            for (k, v) in list(self.__dict__.items()):
                 copied.__dict__[k] = deepcopy(v, memodict)
         return copied
 
@@ -99,7 +99,7 @@ def AsType(obj):
     return type(obj)
 
 
-class PythonVariable(UserDict.UserDict, DataStructure):
+class PythonVariable(UserDict, DataStructure):
     """Generic type for all Python variables, for conversion only in AsterStudy.
 
     Inheritance from dict allows to support item assignement,
@@ -151,7 +151,7 @@ class UnitBaseType(ValueCheckMixing):
         if isinstance(value, int):
             return value
 
-        return value.keys()[0]
+        return list(value.keys())[0]
 
     @staticmethod
     def checkValue(value):
@@ -167,10 +167,10 @@ class UnitBaseType(ValueCheckMixing):
         if len(value) != 1:
             return False
 
-        if not isinstance(value.keys()[0], int):
+        if not isinstance(list(value.keys())[0], int):
             return False
 
-        if not isinstance(value.values()[0], basestring):
+        if not isinstance(list(value.values())[0], str):
             return False
 
         return True

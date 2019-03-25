@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -148,7 +148,7 @@ def create_interactive_window(macro,
                               ):
     """Construit la fenêtre interactive comprenant une table pour
     les 4 domaines de CALC_ESSAI."""
-    from Tkinter import Tk
+    from tkinter import Tk
 
     from Calc_essai.cata_ce import CalcEssaiObjects
     from Calc_essai.ce_ihm_expansion import InterfaceCorrelation
@@ -169,7 +169,7 @@ def create_interactive_window(macro,
                 "Modification structurale",
                 "Identification de chargement",
                 "Traitement du signal",
-                u"Paramètres et visualisation"]
+                "Paramètres et visualisation"]
 # "Visualisation"]
 
     tabs, mess = create_tab_mess_widgets(tk, tabskeys)
@@ -202,4 +202,4 @@ def create_interactive_window(macro,
     try:
         tk.mainloop()
     except:
-        print "CALC_ESSAI : *ERREUR*"
+        print("CALC_ESSAI : *ERREUR*")

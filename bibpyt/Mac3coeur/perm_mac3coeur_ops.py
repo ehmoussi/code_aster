@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,20 +20,19 @@
 # person_in_charge: samuel.geniaut at edf.fr
 
 import os.path as osp
-import string
 from pprint import pformat
 
 import aster_core
 from code_aster.Cata.DataStructure import (modele_sdaster, maillage_sdaster,
     table_sdaster)
-from mac3coeur_coeur import CoeurFactory
+from .mac3coeur_coeur import CoeurFactory
 
 
 def perm_mac3coeur_ops(self, **args):
     """Corps principal de la macro pour la permutation des AC dans MAC3COEUR"""
     import aster
     from code_aster.Cata.Syntax import _F
-    from mac3coeur_ac_permute import MACRO_AC_PERMUTE
+    from .mac3coeur_ac_permute import MACRO_AC_PERMUTE
     from Utilitai.UniteAster import UniteAster
     from Utilitai.Utmess import UTMESS
 
@@ -221,8 +220,8 @@ def perm_mac3coeur_ops(self, **args):
     assert (len(l_last_i) == nbresu)
     assert (len(_l_MA_N) == nbresu)
 
-    for nom in _coeurp1.nameAC.keys():
-        for i in xrange(len(_l_coeur)) :
+    for nom in list(_coeurp1.nameAC.keys()):
+        for i in range(len(_l_coeur)) :
             _coeur = _l_coeur[i]
             last_i = l_last_i[i]
             RESUI  = l_RESUI[i]

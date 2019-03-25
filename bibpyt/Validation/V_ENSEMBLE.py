@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,14 +44,14 @@ class ENSEMBLE:
         args = self.liste_to_dico(args)
         pivot = None
         for mc in self.mcs:
-            if args.has_key(mc):
+            if mc in args:
                 pivot = mc
                 break
         if pivot:
             for mc in self.mcs:
                 if mc != pivot:
-                    if not args.has_key(mc):
-                        text = text + "- " + pivot + u" étant présent, " + \
-                            mc + u" doit être présent" + '\n'
+                    if mc not in args:
+                        text = text + "- " + pivot + " étant présent, " + \
+                            mc + " doit être présent" + '\n'
                         test = 0
         return text, test

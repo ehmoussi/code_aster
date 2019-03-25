@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -138,15 +138,14 @@ def _print_header():
                  get_option('hostname'),
                  get_option('architecture'),
                  get_option('processor'),
-                 get_option('system') + ' ' + get_option('osname')
-                 + ' ' + get_option('osrelease'),
+                 get_option('osname'),
                  lang_settings,),)
     pyvers = '%s.%s.%s' % tuple(sys.version_info[:3])
     UTMESS('I', 'SUPERVIS2_9', valk=(pyvers, numpy.__version__))
     # avertissement si la version a plus de 15 mois
     if _aster_core._NO_EXPIR == 0:
         try:
-            d0, m0, y0 = map(int, date_build.split('/'))
+            d0, m0, y0 = list(map(int, date_build.split('/')))
             tbuild = datetime(y0, m0, d0)
             tnow = datetime.today()
             delta = (tnow - tbuild).days
@@ -190,7 +189,7 @@ def checksd(nomsd, typesd):
     iret = 4
     try:
         sd_module = __import__('SD.%s' % typesd, globals(), locals(), [typesd])
-    except ImportError, msg:
+    except ImportError as msg:
         UTMESS('F', 'SDVERI_1', valk=typesd)
         return iret
     # on récupère la classe typesd

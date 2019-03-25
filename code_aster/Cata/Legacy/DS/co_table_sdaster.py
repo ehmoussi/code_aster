@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -98,7 +98,7 @@ class table_sdaster(ASSD):
             # retourne une table vide
             return Table(titr=titr, nom=self.nom)
         tabnom=list(v_tblp)
-        nparam=len(tabnom)/4
+        nparam=len(tabnom)//4
         lparam=[tabnom[4*i:4*i+4] for i in range(nparam)]
         # restriction aux paramètres demandés
         if para is not None:
@@ -117,7 +117,7 @@ class table_sdaster(ASSD):
         for i in lparam :
             value=list(aster.getvectjev(i[2]))
             exist=aster.getvectjev(i[3])
-            dval[i[0].strip()] = map(Nonefy, value, exist)
+            dval[i[0].strip()] = list(map(Nonefy, value, exist))
             lpar.append(i[0].strip())
             ltyp.append(i[1].strip())
         n=len(dval[lpar[0]])

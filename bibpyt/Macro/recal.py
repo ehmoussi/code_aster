@@ -38,7 +38,6 @@ from math import log10, sqrt
 
 import numpy as NP
 
-
 # Importation de commandes Aster
 try:
     import aster_core
@@ -106,9 +105,9 @@ def affiche(unity, filename, label='', filetype='stderr'):
             fw.write( txt )
             fw.close()
         else:
-            print txt
-    except Exception, e:
-        print e
+            print(txt)
+    except Exception as e:
+        print(e)
     return
 
 
@@ -163,8 +162,8 @@ def make_include_files(UNITE_INCLUDE, calcul, parametres):
         pass
     try:
         from asrun.common.utils import find_command, search_enclosed
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
         UTMESS('F', 'RECAL0_99')
 
 
@@ -225,7 +224,7 @@ def make_include_files(UNITE_INCLUDE, calcul, parametres):
         fw = open(new, 'w')
         fw.write(newtxt)
         fw.close()
-    except Exception, e:
+    except Exception as e:
         raise e
 
     return
@@ -250,7 +249,7 @@ def detr_concepts(self):
     for e in liste_concepts:
         nom = string.strip(e)
         DETRUIRE( OBJET =self.g_context['_F'](CHAINE = nom), INFO=2)
-        if self.jdc.g_context.has_key(nom) :
+        if nom in self.jdc.g_context :
             del self.jdc.g_context[nom]
     del(liste_concepts)
 
@@ -263,7 +262,7 @@ def get_tables(tables_calc, tmp_repe_table, prof):
     assert (tmp_repe_table is not None)
 
     # Import du module lire_table
-    if os.environ.has_key('ASTER_ROOT'):
+    if 'ASTER_ROOT' in os.environ:
         version = prof['version'][0]
         bibpyt = os.path.join(os.environ['ASTER_ROOT'], version, 'bibpyt')
         sys.path.append(bibpyt)
@@ -283,7 +282,7 @@ def get_tables(tables_calc, tmp_repe_table, prof):
             f = open(_fic_table, 'r')
             texte = f.read()
             f.close()
-        except Exception, err:
+        except Exception as err:
             ier = 1
             UTMESS('F', 'RECAL0_24', valk=str(err))
 
@@ -292,7 +291,7 @@ def get_tables(tables_calc, tmp_repe_table, prof):
             table_lue = reader.read(1)
             list_para = table_lue.para
             tab_lue   = table_lue.values()
-        except Exception, err:
+        except Exception as err:
             ier = 1
         else:
             ier = 0
@@ -317,7 +316,7 @@ def table2numpy(tab_lue, list_para, reponses, i):
         for k in range(nb_val):
             F[k][0] = tab_lue[ str(reponses[i][1]) ][k]
             F[k][1] = tab_lue[ str(reponses[i][2]) ][k]
-    except Exception, err:
+    except Exception as err:
         UTMESS('F', 'RECAL0_24', valk=str(err))
     return F
 
@@ -507,7 +506,7 @@ class CALCULS_ASTER:
         list_val = []
 
         # Dictionnaire des parametres du point courant
-        dic = dict( zip( list_params, X0 ) )
+        dic = dict( list(zip( list_params, X0 )) )
         list_val.append( dic )
 
         # Calcul du gradient (perturbations des differences finies)
@@ -526,7 +525,7 @@ class CALCULS_ASTER:
 # new_Xi = X0[i] * (1-l[i])  # diff finie a gauche marche pas fort
                     X.append( new_Xi )
                 # print 'X=', X
-                dic = dict( zip( list_params, X ) )
+                dic = dict( list(zip( list_params, X )) )
                 list_val.append( dic )
 
         # ----------------------------------------------------------------------------
@@ -568,13 +567,12 @@ class CALCULS_ASTER:
 
         try:
             import aster
-            from code_aster.Cata.context import *
             from code_aster.Cata.Syntax import OPER, MACRO
             from code_aster.Cata.Syntax import _F
 
             # Declaration de toutes les commandes Aster
-            from code_aster.Commands import *
-        except Exception, e:
+            from code_aster.Cata.Commands import DETRUIRE
+        except Exception as e:
             raise Exception("Le mode INCLUDE doit etre lance depuis Aster : \nErreur : %s" % e)
 
 
@@ -605,7 +603,6 @@ class CALCULS_ASTER:
                 valpara = params[nompara]
                 exec( "%s=%s" % (nompara, valpara) )    #  YOUN__ = X0[0], DSDE__ = X0[1], ...
 
-
             # ----------------------------------------------------------------------------
             # Affichage des parametres du calcul courant
             # ----------------------------------------------------------------------------
@@ -621,8 +618,10 @@ class CALCULS_ASTER:
             # ----------------------------------------------------------------------------
             new = "fort.%s.new" % self.UNITE_INCLUDE
             try:
-                execfile(new)
-            except Exception, e:
+                with open(new) as f:
+                    exec(compile(f.read(), new, 'exec'), self.jdc.get_global_contexte(), locals())
+                    globals().update(self.jdc.get_global_contexte())
+            except Exception as e:
                 UTMESS('F', 'RECAL0_85', valk=str(e))
 
 
@@ -639,7 +638,7 @@ class CALCULS_ASTER:
             for i in range(len(liste_reponses)):
                 reponse = liste_reponses[i]
                 DETRUIRE(OBJET=_F(CHAINE='VEXTR___'), INFO=1)  # Faudrait proteger ce nom ici (VEXTR___ peut etre deja utilise dans l'etude)
-                exec( "VEXTR___ = %s.EXTR_TABLE()" % reponse)
+                VEXTR___ = globals()[reponse].EXTR_TABLE()
                 list_para = VEXTR___.para
                 tab_lue   = VEXTR___.values()
                 F = table2numpy(tab_lue, list_para, reponses, i)
@@ -651,7 +650,7 @@ class CALCULS_ASTER:
 
 
             # Destruction des concepts Aster
-            #liste_concepts = self.jdc.g_context.keys()
+            #liste_concepts = list(self.jdc.g_context.keys())
             liste_concepts = []
             for c in liste_concepts:
                 DETRUIRE(OBJET=_F(CHAINE=c), INFO=1);
@@ -664,7 +663,7 @@ class CALCULS_ASTER:
         # Calcul de la fonctionnelle et du gradient
         # ----------------------------------------------------------------------------
         if debug:
-            print "AA4/Lcalc=", Lcalc
+            print("AA4/Lcalc=", Lcalc)
         fonctionnelle, gradient = self.calc2fonc_gradient(Lcalc)
 
 
@@ -736,8 +735,8 @@ class CALCULS_ASTER:
             from asrun.parametric   import is_list_of_dict
             from asrun.thread       import Dispatcher
             from asrun.distrib      import DistribParametricTask
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             UTMESS('F', 'RECAL0_99')
 
 
@@ -769,7 +768,7 @@ class CALCULS_ASTER:
         tmp_param = "%s@%s:%s" % ( username, noeud, tmp_param)
         prof.Set('R', {'type' : 'repe', 'isrep' : True, 'ul' : 0, 'compr' : False, 'path' : tmp_param })
         if info >= 2:
-            print prof
+            print(prof)
 
         # Si batch n'est pas possible, on bascule en interactif
         if prof.param['mode'][0] == 'batch' and run.get('batch') == 'non':
@@ -875,10 +874,10 @@ class CALCULS_ASTER:
         # ... and dispatch task on 'list_tests'
         etiq = 'calc_%%0%dd' % (int(log10(nbval)) + 1)
         labels = [etiq % (i+1) for i in range(nbval)]
-        couples = zip(labels, list_val)
+        couples = list(zip(labels, list_val))
 
         if info >= 2:
-            print couples
+            print(couples)
         execution = Dispatcher(couples, task, numthread=numthread)
 
         # ----------------------------------------------------------------------------
@@ -908,8 +907,8 @@ class CALCULS_ASTER:
                     affiche(unity=None, filename=output_filename, label=label, filetype='stdout')
                     error_filename = '.'.join(output_filename.split('.')[0:-1]) + '.e' + output_filename.split('.')[-1][1:]
                     affiche(unity=None, filename=error_filename, label=label, filetype='stderr')
-                except Exception, e:
-                    print e
+                except Exception as e:
+                    print(e)
 
                 if diag in ['<F>_NOT_RUN', '<A>_NOT_SUBMITTED']:
                     UTMESS('F', 'RECAL0_86', valk=(label, diag))
@@ -944,7 +943,7 @@ class CALCULS_ASTER:
         # Calcul de la fonctionnelle et du gradient
         # ----------------------------------------------------------------------------
         if debug:
-            print "AA4/Lcalc=", Lcalc
+            print("AA4/Lcalc=", Lcalc)
         fonctionnelle, gradient = self.calc2fonc_gradient(Lcalc)
 
 
@@ -1017,13 +1016,13 @@ class CALCULS_ASTER:
                 col = [ (y-x) for x, y in zip(FY, FY_X0) ]
                 gradient.append(col)
                 # print 'Calcul numero: %s - Diagnostic: %s' % (n, self.list_diag[idx])
-                if info >= 1:
+                if info and info >= 1:
                     UTMESS('I', 'RECAL0_74', valk=(str(n), self.list_diag[idx]) )
 
         # ----------------------------------------------------------------------------
         # Affichages
         # ----------------------------------------------------------------------------
-        if info >= 2:
+        if info and info >= 2:
             UTMESS('I', 'RECAL0_72', valk=str(fonctionnelle))
             import pprint
             if CalcGradient:
@@ -1051,8 +1050,8 @@ class CALCULS_ASTER:
             pass
         try:
             from asrun.utils        import search_enclosed
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             UTMESS('F', 'RECAL0_99')
 
         pos, endpos = -1, -1
@@ -1099,7 +1098,7 @@ class CALCULS_ASTER:
         else:
             txt.append( "for i in range(nb_freq): l_mac.append(_mac[i,i])\n" )
         txt.append( "DETRUIRE(CONCEPT=_F(NOM="+str(reponse[0])+"),)\n" )
-        txt.append( str(reponse[0]) + "=CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',LISTE_I=range(1,nb_freq+1),),_F(PARA='MAC',LISTE_R=l_mac,),),)\n" )
+        txt.append( str(reponse[0]) + "=CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',LISTE_I=list(range(1,nb_freq+1)),),_F(PARA='MAC',LISTE_R=l_mac,),),)\n" )
         return '\n'.join(txt)
 
 
@@ -1172,14 +1171,14 @@ class CALC_ERROR:
         self.norme = NP.sum( [x**2 for x in self.erreur] )
 
         if self.debug:
-            print "AA1/F=", self.F
-            print "AA1/calcul=", self.calcul
-            print "AA1/L_J=", self.L_J
-            print "AA1/erreur=", self.erreur
-            print "AA1/L_J_init=", self.L_J_init
-            print "AA1/J=", self.J
-            print "AA1/norme de l'erreur=", self.norme
-            print "AA1/norme de J (fonctionnelle)=", str(self.J)
+            print("AA1/F=", self.F)
+            print("AA1/calcul=", self.calcul)
+            print("AA1/L_J=", self.L_J)
+            print("AA1/erreur=", self.erreur)
+            print("AA1/L_J_init=", self.L_J_init)
+            print("AA1/J=", self.J)
+            print("AA1/norme de l'erreur=", self.norme)
+            print("AA1/norme de J (fonctionnelle)=", str(self.J))
 
         if self.INFO >= 1:
             UTMESS('I', 'RECAL0_30')
@@ -1274,10 +1273,10 @@ class CALC_ERROR:
         self.residu = self.test_convergence(self.gradient_init, self.erreur, self.A, NP.zeros(len(self.gradient_init)))
 
         if self.debug:
-            print "AA1/erreur=", self.erreur
-            print "AA1/residu=", self.residu
-            print "AA1/A_nodim=", self.A_nodim
-            print "AA1/A=", self.A
+            print("AA1/erreur=", self.erreur)
+            print("AA1/residu=", self.residu)
+            print("AA1/A_nodim=", self.A_nodim)
+            print("AA1/A=", self.A)
 
 
         if self.objective_type == 'vector':
@@ -1296,8 +1295,8 @@ class CALC_ERROR:
                 self.norme_A_nodim[0, c] = sqrt( norme_A_nodim )
                 self.norme_A[0, c] = sqrt( norme_A )
             if self.debug:
-                print "AA1/norme_A_nodim=", self.norme_A_nodim
-                print "AA1/norme_A=", self.norme_A
+                print("AA1/norme_A_nodim=", self.norme_A_nodim)
+                print("AA1/norme_A=", self.norme_A)
             return self.erreur, self.residu, self.norme_A_nodim, self.norme_A
 
 
@@ -1396,7 +1395,7 @@ if __name__ == '__main__':
         ASTER_ROOT = None
         if options.aster_root:
             ASTER_ROOT = options.aster_root
-        elif os.environ.has_key('ASTER_ROOT'):
+        elif 'ASTER_ROOT' in os.environ:
             ASTER_ROOT = os.environ['ASTER_ROOT']
         if not ASTER_ROOT:
             raise Exception("ASTER_ROOT is missing! Set it by --aster_root flag or environment variable ASTER_ROOT")
@@ -1435,8 +1434,9 @@ if __name__ == '__main__':
         if options.mr_parameters:
             try:
                 if info >= 1:
-                    print "Read MR parameters file : %s" % options.mr_parameters
-                execfile(options.mr_parameters)
+                    print("Read MR parameters file : %s" % options.mr_parameters)
+                with open(options.mr_parameters) as f:
+                    exec(compile(f.read(), options.mr_parameters, 'exec'))
             except:
                 raise Exception("Wrong file for MR Parameters: %s" % options.mr_parameters)
         else:
@@ -1544,7 +1544,7 @@ if __name__ == '__main__':
     if info >= 1:
         lpara = [x[0] for x in parametres]
         lpara.sort()
-        print "Calcul avec les parametres : \n%s" % Affiche_Param(lpara, X0)
+        print("Calcul avec les parametres : \n%s" % Affiche_Param(lpara, X0))
 
     C = CALCULS_ASTER(
                 # MACR_RECAL inputs
@@ -1625,8 +1625,8 @@ if __name__ == '__main__':
     #                               Affichages
     # ------------------------------------------------------------------------------------------------------------------
     if info >= 2:
-        print "\nFonctionnelle au point X0: \n%s" % str(fonctionnelle)
+        print("\nFonctionnelle au point X0: \n%s" % str(fonctionnelle))
         import pprint
         if dX:
-            print "\nGradient au point X0:"
+            print("\nGradient au point X0:")
             pprint.pprint(gradient)

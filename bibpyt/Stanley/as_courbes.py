@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 import numpy
 import copy
 
-import xmgrace
+from . import xmgrace
 
 
 def Extr_colonne(table, para, *l_crit):
@@ -87,9 +87,9 @@ class Courbe:
 
         dim_x = numpy.shape(x)
         dim_y = numpy.shape(y)
-        if len(dim_x) <> 1 or len(dim_y) <> 1:
+        if len(dim_x) != 1 or len(dim_y) != 1:
             raise Courbe.BAD_VALUES
-        if dim_x <> dim_y:
+        if dim_x != dim_y:
             raise Courbe.BAD_VALUES
 
         self.x = copy.copy(x)
@@ -110,13 +110,13 @@ class Courbe:
 
     def Lire_x(self, table, para, *l_crit):
 
-        self.x = apply(Extr_colonne, (table, para) + l_crit)
+        self.x = Extr_colonne(*(table, para) + l_crit)
 
 # -------------------------------------------------------------------------
 # BUT Lit les ordonnees de la courbe a partir d'une colonne d'une table
     def Lire_y(self, table, para, *l_crit):
 
-        self.y = apply(Extr_colonne, (table, para) + l_crit)
+        self.y = Extr_colonne(*(table, para) + l_crit)
 
     def Discret(self, xmin, *disc):
 
@@ -130,7 +130,7 @@ class Courbe:
                 xmax = disc[p]
                 nbr = disc[p + 1]
                 step = (xmax - xmin) / float(nbr)
-                for i in xrange(1, nbr + 1):
+                for i in range(1, nbr + 1):
                     l.append(xmin + i * step)
                 p = p + 2
                 xmin = xmax
@@ -165,7 +165,7 @@ class Courbe:
         n = len(self.x)
         ch = ''
 
-        for i in xrange(n):
+        for i in range(n):
             x = self.x[i]
             y = self.y[i]
             ch = ch + repr(x) + '  ' + repr(y) + '\n'
@@ -196,7 +196,7 @@ class Courbe:
           Realise : self.y = fonc(self.x)
         """
 
-        self.y = numpy.array(map(fonc, self.x))
+        self.y = numpy.array(list(map(fonc, self.x)))
 
     def Operation(self, fonction, *autres_courbes):
 
@@ -206,12 +206,12 @@ class Courbe:
         taille = numpy.shape(self.y)
 
         for courbe in autres_courbes:
-            if numpy.shape(courbe.y) <> taille:
+            if numpy.shape(courbe.y) != taille:
                 raise 'Dimensions incompatibles'
             l_valeurs.append(courbe.y)
 
         resu_x = copy.copy(self.x)
-        resu_y = apply(fonction, l_valeurs)
+        resu_y = fonction(*l_valeurs)
 
         return Courbe(resu_x, resu_y)
 

@@ -146,13 +146,13 @@ ASSEMBLAGE(MODELE=MODELE,
 
 nddl=rig.shape[0]
 
-print "D"
-print len(d)
+print("D")
+print((len(d)))
 i=0
 for ddd in d:
-   print i,ddd
+   print((i,ddd))
    i=i+1
-print "\n"
+print("\n")
 
 
 MODES=CALC_MODES(MATR_RIGI=RIGIDITE,
@@ -180,7 +180,7 @@ PHAZDIS2=NP.zeros(nbtour)
 
 
 
-print "\n"
+print("\n")
 F=NP.zeros([nddl,1], complex)
 reponsy=NP.zeros([nbtour,1], complex)
 reponsz=NP.zeros([nbtour,1], complex)
@@ -191,7 +191,7 @@ for NTRIM in tours:
 
   FREQ=NTRIM/60.
   OM = ((FREQ * 2) * pi );
-  print 'nbtour ', NTRIM
+  print(('nbtour ', NTRIM))
 
   malou = balou * OM**2
   F[25]= malou

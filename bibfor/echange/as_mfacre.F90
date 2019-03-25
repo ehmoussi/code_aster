@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,11 +34,12 @@ subroutine as_mfacre(fid, maa, fam, num, ngro,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, num4, ngro4, cret4
-    fid4 = fid
+    med_idt :: fidm
+    med_int :: num4, ngro4, cret4
+    fidm = to_med_idt(fid)
     num4 = num
     ngro4 = ngro
-    call mfacre(fid4, maa, fam, num4, ngro4,&
+    call mfacre(fidm, maa, fam, num4, ngro4,&
                 gro, cret4)
     cret = cret4
 #else

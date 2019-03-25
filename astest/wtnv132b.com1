@@ -149,7 +149,7 @@ n_pas_temps= len(list_pas_temps);
 for n in range(n_pas_temps):
 
   def_courbe={'ABSCISSE': noeu_tass['TEMPS'+str(list_pas_temps[n])]}
-  def_courbe['ORDONNEE'] = range(1,nbcouche+1)
+  def_courbe['ORDONNEE'] = list(range(1,nbcouche+1))
   def_courbe['LEGENDE' ] = 'TEMPS'+str(list_pas_temps[n]);
   def_courbe['COULEUR' ] = list_pas_temps[n]+1
   def_courbe['MARQUEUR'] = list_pas_temps[n]+1

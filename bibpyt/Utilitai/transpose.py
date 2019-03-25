@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,8 +29,8 @@ def transpose(liste):
         warn('prefer use of numpy.transpose instead',
              DeprecationWarning, stacklevel=2)
 
-    n = range(len(liste[0]))
-    m = range(len(liste))
+    n = list(range(len(liste[0])))
+    m = list(range(len(liste)))
     liste_t = [[] for i in n]
     for i in n:
         for j in m:

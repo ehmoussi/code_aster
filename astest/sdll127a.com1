@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -92,12 +92,12 @@ array_calc = NP.array(tmas)
 array_refe = NP.array(refe)
 erreur = NP.abs((array_calc - array_refe) / array_refe * 100.)
 
-print 'Masses référence:', array_refe
-print 'Masses calculées:', array_calc
-print 'Erreurs (%):', erreur
-print 'Erreur maximale (%):', NP.max(erreur)
+print(('Masses référence:', array_refe))
+print(('Masses calculées:', array_calc))
+print(('Erreurs (%):', erreur))
+print(('Erreur maximale (%):', NP.max(erreur)))
 
-print 'Masse totale:', masse_refe, masse_totale, errtot, '%'
+print(('Masse totale:', masse_refe, masse_totale, errtot, '%'))
 
 # C'est sur le dernier élément que l'erreur est la plus grande
 TEST_TABLE(REFERENCE='ANALYTIQUE',

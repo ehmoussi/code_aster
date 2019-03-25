@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 Fichier inexistant : '%(k1)s'
 """),
 
-    2 : _(u"""
+    2 : _("""
 La lecture du fichier a échoué.
 Soit le fichier '%(k1)s' n'existe pas, soit son contenu est invalide.
 

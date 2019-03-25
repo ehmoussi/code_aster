@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,16 +23,16 @@ cata_msg = {
 
 
 
-    11: _(u"""
+    11: _("""
  <CONTACT_2> Le noeud <%(k1)s> n'est pas apparié car il aurait été projeté hors de la zone de tolérance de la maille <%(k2)s> qui était la plus proche.
  <CONTACT_2> Vous pouvez éventuellement modifier TOLE_PROJ_EXT ou revoir la définition de vos zones esclaves et maîtres.
 """),
 
-    12: _(u"""
+    12: _("""
  <CONTACT_2> Le noeud <%(k1)s> n'est pas apparié car aucun noeud n'est dans sa zone TOLE_APPA.
 """),
 
-    13: _(u"""
+    13: _("""
  <CONTACT_2> Le noeud <%(k1)s> n'est pas apparié car il appartient a SANS_NOEUD ou SANS_GROUP_NO.
 """),
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ def fonction(val):
    """
 
    # Affichage
-   print val
+   print(val)
 
    # Menage
    try:    os.remove(fichier_grad_out)
@@ -76,7 +76,7 @@ def fonction(val):
       raise IOError("<F> Probleme : impossible de lire le fichier de la fonction F : %s" % fichier_out)
 
    # Affichage
-   print '  --> fonctionnelle : ' + str(fval)
+   print('  --> fonctionnelle : ' + str(fval))
 
    # Lecture du fichier de G (option -G normal ou -G adim)
    if os.path.isfile(fichier_grad_out):
@@ -89,7 +89,7 @@ def fonction(val):
          raise IOError("<F> Probleme : impossible de lire le fichier de la fonction G: %s" % fichier_grad_out)
 
       # Affichage
-      print '  --> gradient : ' + str(gval)
+      print('  --> gradient : ' + str(gval))
       return fval, gval
 
    return fval

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    11 : _(u"""
+    11 : _("""
  Erreur d'utilisation lors de l'affectation des variables de commande (AFFE_MATERIAU/AFFE_VARC):
    Pour la variable de commande %(k1)s,
    Vous avez oublié d'utiliser l'un des 2 mots clés CHAM_GD ou EVOL.
@@ -29,7 +29,7 @@ cata_msg = {
 """),
 
 
-    13 : _(u"""
+    13 : _("""
  Erreur d'utilisation (AFFE_MATERIAU/AFFE_VARC) :
   Le maillage associé au calcul (%(k1)s) est différent de celui associé
   aux champs (ou EVOL_XXXX) affectés dans AFFE_MATERIAU/AFFE_VARC (%(k2)s).
@@ -38,7 +38,7 @@ cata_msg = {
   Il faut corriger AFFE_MATERIAU.
 """),
 
-    20 : _(u"""
+    20 : _("""
  La matrice d'élasticité orthotrope ou isotrope transverse est non définie positive
   (au moins une valeur propre négative). Si vous êtes sur une modélisation
   isoparamétrique (pas d'éléments de structure), vous avez probablement fait une erreur.
@@ -47,13 +47,13 @@ cata_msg = {
   Vérifiez vos données matériau.
 """),
 
-    50 : _(u"""
+    50 : _("""
 Erreur utilisateur dans la commande AFFE_MATERIAU / AFFE_VARC
   Pour la variable de commande %(k1)s
   la grandeur associée du champ doit être:  %(k2)s  mais elle est:  %(k3)s
 """),
 
-    51 : _(u"""
+    51 : _("""
  Vous utilisez la variable de commande de température alors que votre problème est couplé.
  Ce n'est pas possible.
 """),

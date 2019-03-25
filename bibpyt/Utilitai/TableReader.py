@@ -27,7 +27,7 @@ try:
     import aster
     error = aster.error
 except ImportError:
-    error = StandardError
+    error = Exception
 
 from Utilitai.Table import Table
 from Utilitai.string_utils import cut_long_lines, maximize_lines
@@ -309,7 +309,7 @@ A B C
 """
     reader = TableReaderFree(txt)
     tab = reader.read(1)
-    print tab
+    print(tab)
 
     taster = """
 #DEBUT_TABLE
@@ -322,4 +322,4 @@ R R K8
 """
     reader = TableReaderAster(taster)
     tab = reader.read(1)
-    print tab
+    print(tab)

@@ -125,13 +125,17 @@ class ExecProgram( object ):
         """Execute the program"""
         cmd = self.cmdBuilder.build( [self.prog] + self.args, self.shell )
         output, error, exitCode = self.executeCmdLine( cmd, capture, silent )
+        if type(output) is bytes:
+            output = output.decode()
+        if type(error) is bytes:
+            error = error.decode()
         ok = self.isOk( exitCode )
         # print the output
         if self.debug or not silent:
             UTMESS('I', 'EXECLOGICIEL0_11',
                    vali=[self.exitCodeMax, exitCode])
             if capture:
-                UTMESS('I', 'EXECLOGICIEL0_9',  valk=output)
+                UTMESS('I', 'EXECLOGICIEL0_9', valk=output)
         # print error in debug mode or if it failed
         if (self.debug or not ok) and capture:
             UTMESS('I', 'EXECLOGICIEL0_10', valk=error, print_as='E')
@@ -214,7 +218,8 @@ class ExecSalome( ExecMesher ):
         self.args = ['start', '-t', '--ns-port-log={}'.format(portFile)]
         # do not capture the output, it will block!
         self.executeCommand(capture=False, silent=True)
-        self.pid = open(portFile, 'rb').read().strip()
+        with open(portFile, 'r') as f:
+            self.pid = f.read().strip()
         # prepare the main command
         self.args = ['shell', '-p', self.pid, self.fileIn]
 
@@ -284,11 +289,13 @@ class ExecSalomeScript( ExecProgram ):
 
 def writeSalomeScript( orig, new, factKw ):
     """Create the SALOME script using a 'template'"""
-    text = open( orig, 'rb' ).read()
+    with open( orig, 'r' ) as f:
+        text = f.read()
     text = _textReplace( text, factKw['NOM_PARA'], factKw['VALE'] )
     text = _textReplaceNumb( text, 'INPUTFILE{}', factKw['FICHIERS_ENTREE'] )
     text = _textReplaceNumb( text, 'OUTPUTFILE{}', factKw['FICHIERS_SORTIE'] )
-    open(new, 'wb').write( text )
+    with open(new, 'w') as f:
+        f.write( text )
 
 
 def _textReplace( text, inStr, outStr ):
@@ -326,8 +333,8 @@ def exec_logiciel_ops(self, **kwargs):
     except AsterError as err:
         UTMESS('F', err.id_message, valk=err.valk,
                vali=err.vali, valr=err.valr)
-    except Exception, err:
-        trace = ''.join(traceback.format_tb(sys.exc_traceback))
+    except Exception as err:
+        trace = ''.join(traceback.format_tb(sys.exc_info()[2]))
         UTMESS('F', 'SUPERVIS2_5', valk=('EXEC_LOGICIEL', trace, str(err)))
     finally:
         action.cleanUp()

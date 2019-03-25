@@ -1,3 +1,4 @@
+from functools import reduce
 # coding=utf-8
 # --------------------------------------------------------------------
 # Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
@@ -43,8 +44,8 @@ def POST_GOUJ_ops(self,**args):
   nbv=0
   for num in v_NU :
     if num==v_NU[0] : nbv=nbv+1
-  if nbv>0 : ninch=NBVAL/nbv
-  else : print "error"
+  if nbv>0 : ninch=NBVAL//nbv
+  else : print("error")
 
   v_F1=[v_DY[i*nbv:(i+1)*nbv] for i in range(ninch)]
   v_FO=[]
@@ -57,7 +58,8 @@ def POST_GOUJ_ops(self,**args):
     v_CU.append([reduce(add,liste[:i+1])*100./ftot for i in range(len(liste))])
 
   v_NF=[]
-  for i in range(ninch)    : v_NF=v_NF+range(1,nbv+1)
+  for i in range(ninch):
+     v_NF.extend(range(1, nbv + 1))
   v_RE=[]
   for liste in v_FO : v_RE=v_RE+liste
   v_RC=[]

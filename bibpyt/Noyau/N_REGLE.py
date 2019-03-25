@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,9 +39,6 @@
     r.verif({"INFO":v1,"AFFE":v2)
 """
 
-import types
-
-
 class REGLE:
 
     def __init__(self, *args):
@@ -73,9 +70,9 @@ class REGLE:
 
            Ceci permet d'avoir un traitement identique pour les listes et les dictionnaires
         """
-        if type(args) == types.DictionaryType:
+        if type(args) == dict:
             return args
-        elif type(args) == types.ListType:
+        elif type(args) == list:
             dico = {}
             for arg in args:
                 dico[arg] = 0

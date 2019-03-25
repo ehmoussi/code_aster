@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,8 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, **args):
     if not osp.isfile(nomfich):
         UTMESS('F', 'FONCT0_41', valk=nomfich)
 
-    texte = open(nomfich, 'r').read()
+    with open(nomfich, 'r') as f:
+        texte = f.read()
 
     check_para = None
     if RENOMME_PARA == "UNIQUE":
@@ -55,9 +56,9 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, **args):
     reader = TableReaderFactory(texte, FORMAT, SEPARATEUR, debug=(INFO == 2))
     try:
         tab = reader.read(NUME_TABLE, check_para=check_para)
-    except TypeError, exc:
+    except TypeError as exc:
         UTMESS('F', 'TABLE0_45', valk=str(exc))
-    except aster.error, exc:
+    except aster.error as exc:
         raise_UTMESS(exc)
 
     UTMESS('I', 'TABLE0_44', valk=("", tab.titr),

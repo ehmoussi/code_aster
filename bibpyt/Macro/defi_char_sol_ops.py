@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -105,7 +105,7 @@ def defi_char_sol_ops(self, TITRE=None, INFO=None, **args):
           if nompar == 'X' :
             dire = (1., 0., 0.)
 
-      print 'dime=',dime
+      print('dime=',dime)
       # Possibilite d utiliser une longueur caracteristique :
       # llcara ='OUI' ou 'NON'
       if args['LONG_CARA'] != None :

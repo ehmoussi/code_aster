@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 import copy
-import types
 from SD.sd_fonction import sd_fonction
 
 # -----------------------------------------------------------------------------
@@ -48,8 +47,7 @@ def calc_spec_ops(self, **args):
 #  a partir de fonctions reelles
 
     import aster
-    from types import ListType, TupleType
-    EnumTypes = (ListType, TupleType)
+    EnumTypes = (list, tuple)
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
     import numpy
@@ -126,11 +124,11 @@ def calc_spec_ops(self, **args):
         if recouvr_t.count(None) == 3:
             recouvr = 0
         if l_ech_t.count(None) < 2:
-            raise FonctionError, 'Vous ne pouvez utiliser qu' + "'" + \
-                'un mot clef pour definir la longueur des echantillons'
+            raise FonctionError('Vous ne pouvez utiliser qu' + "'" + \
+                'un mot clef pour definir la longueur des echantillons')
         if recouvr_t.count(None) < 2:
-            raise FonctionError, 'Vous ne pouvez utiliser qu' + "'" + \
-                'un mot clef pour definir la longueur de recouvrement des echantillons'
+            raise FonctionError('Vous ne pouvez utiliser qu' + "'" + \
+                'un mot clef pour definir la longueur de recouvrement des echantillons')
         for i1 in range(3):
             if l_ech_t[i1] != None:
                 if i1 == 0:
@@ -141,9 +139,9 @@ def calc_spec_ops(self, **args):
                 elif i1 == 2:
                     l_ech = int(numpy.floor(l_ech_t[i1]))
         if l_ech > len(temp) / 2:
-            raise FonctionError, 'Vous devez specifier une longueur d' + "'" + \
+            raise FonctionError('Vous devez specifier une longueur d' + "'" + \
                 'echantillon inferieure a la longueur totale de l' + \
-                "'" + 'acquisition'
+                "'" + 'acquisition')
         for i1 in range(3):
             if recouvr_t[i1] != None:
                 if i1 == 0:
@@ -153,7 +151,7 @@ def calc_spec_ops(self, **args):
                 elif i1 == 2:
                     recouvr = int(numpy.floor(recouvr_t[i1]))
         if recouvr > l_ech:
-            raise FonctionError, 'La longueur de recouvrement ne peut exceder la longueur '
+            raise FonctionError('La longueur de recouvrement ne peut exceder la longueur ')
 
 #-- Recuperation des fenetres
     for occ in l_G + l_H:
@@ -168,15 +166,15 @@ def calc_spec_ops(self, **args):
         elif occ[1]['FENETRE'] == 'EXPO':
             para = occ[1]['DEFI_FENE']
             if len(para) != 2:
-                raise FonctionError, 'Erreur de taille dans DEFI_FENE : ' + \
-                    'la fenetre exponentielle est definie par exactement deux valeurs'
+                raise FonctionError('Erreur de taille dans DEFI_FENE : ' + \
+                    'la fenetre exponentielle est definie par exactement deux valeurs')
             fene = [1.] * int(para[0]) + [numpy.exp(para[1] * (i1 - int(para[0] - 1)) * dt)
                                           for i1 in range(int(para[0]), l_ech)]
         elif occ[1]['FENETRE'] == 'PART':
             fene = occ[1]['DEFI_FENE']
             if len(fene) != l_ech:
-                raise FonctionError, 'Erreur de taille dans DEFI_FENE : ' + \
-                    'La fenetre doit etre definie avec le meme nombre de points que les echantillons'
+                raise FonctionError('Erreur de taille dans DEFI_FENE : ' + \
+                    'La fenetre doit etre definie avec le meme nombre de points que les echantillons')
 
         # normalisation de la fenetre
         fene = numpy.divide(
@@ -220,8 +218,8 @@ def calc_spec_ops(self, **args):
             crit.sort()
             dt.append(crit[-1])
             if abs((crit[-1] - crit[0]) / crit[-1]) > 1.e-5:
-                raise FonctionError, 'L' + "'" + \
-                    'echantillonage doit etre fait a pas constant'
+                raise FonctionError('L' + "'" + \
+                    'echantillonage doit etre fait a pas constant')
 
         for j1 in range(N_fen):
             for i1 in range(len(fonc_py)):
@@ -237,8 +235,8 @@ def calc_spec_ops(self, **args):
             test_df = test_df.tolist()
             test_df.sort()
             if abs(test_df[-1]) > 1.e-5:
-                raise FonctionError, 'Toutes les fonctions doivent etre definies ' + \
-                    'avec la meme frequence d' + "'" + 'echantillonage'
+                raise FonctionError('Toutes les fonctions doivent etre definies ' + \
+                    'avec la meme frequence d' + "'" + 'echantillonage')
 
         frq = [df[-1] * i1 for i1 in range(l_ech)]
 
@@ -251,8 +249,8 @@ def calc_spec_ops(self, **args):
             # -- pour les tests ulterieurs --#
             lt.append(len(vale_sig[0]))
             if len(vale_sig[0]) != len(vale_sig[1]):
-                raise FonctionError, 'Les vecteurs associes au temps ' + \
-                    'et aux echantillons doivent etre de meme longueur'
+                raise FonctionError('Les vecteurs associes au temps ' + \
+                    'et aux echantillons doivent etre de meme longueur')
             num_mes.append(occ[1]['NUME_MES'])
             num_ord.append(occ[1]['NUME_ORDRE_I'])
 
@@ -261,8 +259,8 @@ def calc_spec_ops(self, **args):
             crit = test_pas.tolist()
             crit.sort()
             if abs((crit[-1] - crit[0]) / crit[-1]) > 1.e-5:
-                raise FonctionError, 'L' + "'" + \
-                    'echantillonage doit etre fait a pas constant'
+                raise FonctionError('L' + "'" + \
+                    'echantillonage doit etre fait a pas constant')
            #  print "vale_sig[1]= ", len(vale_sig[1]), vale_sig[1]
            #  print "  fene = ",len(fene), fene
             fft.append(FFT.fft(numpy.multiply(vale_sig[1], fene)))
@@ -273,15 +271,15 @@ def calc_spec_ops(self, **args):
         test_long = test_long.tolist()
         test_long.sort()
         if (test_long[-1] - test_long[0]) != 0:
-            raise FonctionError, 'Toutes les fonctions doivent etre definies avec le meme nombre de points'
+            raise FonctionError('Toutes les fonctions doivent etre definies avec le meme nombre de points')
 
         if len(df) > 1:
             test_df = numpy.subtract(df[1:], df[0:-1])
             test_df = test_df.tolist()
             test_df.sort()
             if abs(test_df[-1]) > 1.e-5:
-                raise FonctionError, 'Toutes les fonctions doivent etre definies ' + \
-                    'avec la meme frequence d' + "'" + 'echantillonage'
+                raise FonctionError('Toutes les fonctions doivent etre definies ' + \
+                    'avec la meme frequence d' + "'" + 'echantillonage')
 
         frq = [df[-1] * i1 for i1 in range(lt[-1])]
 
@@ -346,7 +344,7 @@ def calc_spec_ops(self, **args):
                     nume_j1.append(list_ord[j1])
 
         mcfact = []
-        for i in range(nb_ord * (nb_ord + 1) / 2):
+        for i in range(nb_ord * (nb_ord + 1) // 2):
             mcfact.append(_F(NUME_ORDRE_I=nume_i1[i],
                              NUME_ORDRE_J=nume_j1[i],
                              FONCTION=l_fc[i]),)

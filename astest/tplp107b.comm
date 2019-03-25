@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -266,7 +266,7 @@ for remail in range(0,nb_remail):
                   );
 
 
-print 'Norme L2 de l erreur= %e' %dicResu['NormeL2Erreur']
+print('Norme L2 de l erreur= %e' %dicResu['NormeL2Erreur'])
 
 PenteL2=-math.log( NormeL2Erreur[-1]/NormeL2Erreur[-2])/math.log(2.)
 
@@ -284,10 +284,10 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                          ORDONNEE=NormeL2Erreur,
                          ),
                      ),
-              TITRE='Erreur ||\qT\sh\N-\2T\N\Q || en norme L\s2\N',
+              TITRE='Erreur ||\qT\sh\\N-\2T\\N\Q || en norme L\s2\\N',
               SOUS_TITRE='Solution manufacturee T(x,y) ordre 6 - Ordre de convergence = %f '%(PenteL2),
               LEGENDE_X='h',
-              LEGENDE_Y='L\s2\N(Erreur)',
+              LEGENDE_Y='L\s2\\N(Erreur)',
               ECHELLE_X='LOG',
               ECHELLE_Y='LOG',
               INFO=2,)

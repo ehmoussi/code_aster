@@ -61,8 +61,8 @@ def gene_acce_seisme_ops(self, **kwargs):
     generator = Generator.factory(self, params)
     try:
         return generator.run()
-    except Exception, err:
-        trace = ''.join(traceback.format_tb(sys.exc_traceback))
+    except Exception as err:
+        trace = ''.join(traceback.format_tb(sys.exc_info()[2]))
         UTMESS('F', 'SUPERVIS2_5', valk=('GENE_ACCE_SEISME', trace, str(err)))
 
 
@@ -86,7 +86,7 @@ class GeneAcceParameters(object):
         keys.update({'DUREE_PHASE_FORTE': kwargs.get('DUREE_PHASE_FORTE'), })
         keys.update({'NORME': kwargs.get('PESANTEUR'), })
         keys.update({'INFO': kwargs.get('INFO'), })
-        if kwargs.has_key('DSP'):
+        if 'DSP' in kwargs:
             if keys['ECART_TYPE']:
                 keys['ECART_TYPE'] = keys['ECART_TYPE'] * self.norme
                 if keys.has_key("ACCE_MAX"): del keys['ACCE_MAX']
@@ -99,7 +99,7 @@ class GeneAcceParameters(object):
                 if keys.has_key("ECART_TYPE"): del keys['ECART_TYPE'],
                 if keys.has_key("ACCE_MAX"): del keys['ACCE_MAX']
 
-        others = kwargs.keys()
+        others = list(kwargs.keys())
         if others.count("MODULATION") != 0: others.remove('MODULATION')
         if others.count("COEF_CORR") != 0: others.remove('COEF_CORR')
         if others.count("MATR_COHE") != 0: others.remove('MATR_COHE')
@@ -160,7 +160,7 @@ class GeneAcceParameters(object):
         for key in method_keys:
             if method_keys.has_key(key):
                 self.method_keys[key] = method_keys[key]
-        if self.method_keys.has_key('NB_ITER') :
+        if 'NB_ITER' in self.method_keys :
             self.simulation_keys.update({'NB_ITER': 
                         self.method_keys['NB_ITER']})               
         # OtherKeys remplissage
@@ -267,7 +267,7 @@ class GeneratorDSP(Generator):
             self.FREQ_CORNER = 0.05 * self.DSP_args['FREQ_FOND']
         # Il faut calculer le facteur de pic si la donnee = PGA
         # pour obtenir sigma et multiplier la modulation avec cette valeur
-        if self.modul_params.has_key('ACCE_MAX'):
+        if 'ACCE_MAX' in self.modul_params:
             PeakFactor = self.calc_PeakFactor()
             sigma = self.modul_params['ACCE_MAX'] / PeakFactor
             self.modulator.sigma = sigma
@@ -360,7 +360,7 @@ class GeneratorSpectrum(Generator):
         if 'METHODE' in self.method_params:
             self.SRO_args.update(
                 {'METHODE_SRO': self.method_params.get('METHODE')})
-        if self.method_params.has_key('SPEC_1_SIGMA'):
+        if 'SPEC_1_SIGMA' in self.method_params:
             spec_sigma = self.method_params.get('SPEC_1_SIGMA')
             f_spec_sigma = t_fonction(spec_sigma.Absc(), spec_sigma.Ordo(),
                                       para=self.para_sro)
@@ -438,7 +438,7 @@ class Sampler(object):
         self.modulation_type = modul_params['TYPE']
         self.DUREE_PHASE_FORTE = modul_params['DUREE_PHASE_FORTE']
         self.INST_INI = 0.0
-        if modul_params.has_key('INST_INI'):
+        if 'INST_INI' in modul_params:
             self.INST_INI = modul_params['INST_INI']
         self.FREQ_COUP = 1. / (2. * self.DT)
         self.liste_temps = None
@@ -481,7 +481,7 @@ class Sampler(object):
         # pour cause d'erreur num si valeurs reeles
         liste_temps = liste_temps[0: self.NB_POIN]
         l_w = l_w[0: self.NB_POIN]
-        l_w2 = l_w2[0: self.NB_POIN / 2]
+        l_w2 = l_w2[0: self.NB_POIN // 2]
         nbfreq = 2 * len(l_w2)
         assert self.NB_POIN == nbfreq
         assert len(liste_temps) == self.NB_POIN
@@ -542,15 +542,15 @@ class Modulator(object):
 
     def calc_fonc_modul(self, sample_time, N1, N2, fqt):
         """determine amplitude of modulating function fqt"""
-        if self.modul_params.has_key('INTE_ARIAS'):
+        if 'INTE_ARIAS' in self.modul_params:
             vale_arias = f_ARIAS(sample_time, fqt, self.norme)
             fqt = fqt * sqrt(self.modul_params['INTE_ARIAS'] / vale_arias)
-        elif self.modul_params.has_key('ECART_TYPE'):
+        elif 'ECART_TYPE' in self.modul_params:
             int12 = NP.trapz((fqt[N1:N2]) ** 2, sample_time[N1:N2])
             fqt = fqt * \
                 self.modul_params['ECART_TYPE'] * sqrt(
                     self.DUREE_PHASE_FORTE / int12)
-        elif self.modul_params.has_key('ACCE_MAX'):
+        elif 'ACCE_MAX' in self.modul_params:
             int12 = NP.trapz(fqt[N1:N2] ** 2, sample_time[N1:N2])
             fqt = fqt * self.sigma * sqrt(self.DUREE_PHASE_FORTE / int12)
         else:
@@ -618,12 +618,12 @@ class ModulatorConstant(Modulator):
     """Modulator type Constant"""
 
     def run(self, sample_time, DUREE_SIGNAL):
-        if self.modul_params.has_key('INTE_ARIAS'):
+        if 'INTE_ARIAS' in self.modul_params:
             vale_arias = self.DUREE_PHASE_FORTE * pi / (2. * self.norme)
             fq = sqrt(self.modul_params['INTE_ARIAS'] / vale_arias)
-        elif self.modul_params.has_key('ECART_TYPE'):
+        elif 'ECART_TYPE' in self.modul_params:
             fq = self.modul_params['ECART_TYPE']
-        elif self.modul_params.has_key('ACCE_MAX'):
+        elif 'ACCE_MAX' in self.modul_params:
             fq = self.sigma
         else:
             fq = 1.0

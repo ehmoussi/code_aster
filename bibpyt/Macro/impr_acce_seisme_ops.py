@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 from code_aster.Cata.Syntax import _F
-import string
 import os
 import numpy as np
 
@@ -192,7 +191,7 @@ def impr_acce_seisme_ops(self, **args):
                dim+=1
         if dim < 2:
             raise Exception("Cas non prevu")
-        nb_tirage = nb_tirage/dim
+        nb_tirage = nb_tirage//dim
         lifonc = tab_data.values()["FONCTION"]
     else:
         lifonc = tab_data.values()["FONCTION"]
@@ -556,7 +555,7 @@ def impr_acce_seisme_ops(self, **args):
 
 
         lfreq, lval = __MOY[idi-1].Valeurs()[1][0]
-        freq_marq = len(lfreq)/20
+        freq_marq = len(lfreq)//20
 
         gx = (lfreq[-1] - lfreq[0])/ngrid
         gy = (max(lval) - min(lval))/ngrid

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,6 +49,7 @@ subroutine lrmpga(nrofic, ligrel, nochmd, nbma, pgmail,&
 !
 !-----------------------------------------------------------------------
 !
+    use as_med_module, only: as_med_open
     implicit none
 !
 #include "jeveux.h"
@@ -56,7 +57,6 @@ subroutine lrmpga(nrofic, ligrel, nochmd, nbma, pgmail,&
 #include "asterfort/as_mfdncn.h"
 #include "asterfort/as_mfdonp.h"
 #include "asterfort/as_mfdonv.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/as_mlcnlc.h"
 #include "asterfort/assert.h"
 #include "asterfort/codent.h"
@@ -176,7 +176,7 @@ subroutine lrmpga(nrofic, ligrel, nochmd, nbma, pgmail,&
     endif
 !
 !     OUVERTURE DU FICHIER MED
-    call as_mfiope(idfimd, nofimd, edlect, codret)
+    call as_med_open(idfimd, nofimd, edlect, codret)
 !
 !  == 1.3. A PARTIR DU NOM DU CHAMP MED ET DE L'INDICE DU PAS DE TEMPS,
 !      ON RECUPERE POUR CHAQUE TYPE DE MAILLE PRESENT:

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 """
 
 from copy import copy
-import N_OBJECT
+from . import N_OBJECT
 
 
 class MCCOMPO(N_OBJECT.OBJECT):
@@ -42,7 +42,7 @@ class MCCOMPO(N_OBJECT.OBJECT):
             à partir du dictionnaire des arguments (valeur)
         """
         if CONTEXT.debug:
-            print "MCCOMPO.build_mc ", self.nom
+            print("MCCOMPO.build_mc ", self.nom)
         # Dans la phase de reconstruction args peut contenir des mots-clés
         # qui ne sont pas dans le dictionnaire des entites de definition (self.definition.entites)
         # de l'objet courant (self)
@@ -63,10 +63,10 @@ class MCCOMPO(N_OBJECT.OBJECT):
         # 2- les entités non présentes dans les arguments, présentes dans la définition avec un défaut
         # Phase 1.1 : on traite d'abord les SIMP pour enregistrer les mots cles
         # globaux
-        for k, v in self.definition.entites.items():
+        for k, v in list(self.definition.entites.items()):
             if v.label != 'SIMP':
                 continue
-            if args.has_key(k) or v.statut == 'o':
+            if k in args or v.statut == 'o':
                 #
                 # Creation par appel de la methode __call__ de la definition de la sous entite k de self
                 # si une valeur existe dans args ou est obligatoire (generique si toutes les
@@ -81,15 +81,15 @@ class MCCOMPO(N_OBJECT.OBJECT):
                         self.append_mc_global(objet)
                     elif objet.definition.position == 'global_jdc':
                         self.append_mc_global_jdc(objet)
-            if args.has_key(k):
+            if k in args:
                 del args[k]
 
         # Phase 1.2 : on traite les autres entites que SIMP
         # (FACT en fait car un BLOC ne peut avoir le meme nom qu'un mot-clef)
-        for k, v in self.definition.entites.items():
+        for k, v in list(self.definition.entites.items()):
             if v.label == 'SIMP':
                 continue
-            if args.has_key(k) or v.statut == 'o':
+            if k in args or v.statut == 'o':
                 #
                 # Creation par appel de la methode __call__ de la definition de la sous entite k de self
                 # si une valeur existe dans args ou est obligatoire (generique si toutes les
@@ -97,7 +97,7 @@ class MCCOMPO(N_OBJECT.OBJECT):
                 #
                 objet = v(val=args.get(k, None), nom=k, parent=self)
                 mc_liste.append(objet)
-            if args.has_key(k):
+            if k in args:
                 del args[k]
 
         # Phase 2:
@@ -105,7 +105,7 @@ class MCCOMPO(N_OBJECT.OBJECT):
         # A ce stade, mc_liste ne contient que les fils de l'objet courant
         # args ne contient plus que des mots-clés qui n'ont pas été attribués car ils sont
         #      à attribuer à des blocs du niveau inférieur ou bien sont des mots-clés erronés
-        for k, v in self.definition.entites.items():
+        for k, v in list(self.definition.entites.items()):
             if v.label != 'BLOC':
                 continue
             # condition and a or b  : Equivalent de l'expression :  condition ?
@@ -183,7 +183,7 @@ class MCCOMPO(N_OBJECT.OBJECT):
                     assert intersection_vide(dico, dadd)
                     dico.update(dadd)
             else:
-                assert not dico.has_key(v.nom), "deja vu : %s" % v.nom
+                assert v.nom not in dico, "deja vu : %s" % v.nom
                 dico[v.nom] = v.get_valeur()
 
         # On rajoute tous les autres mots-clés locaux possibles avec la valeur
@@ -194,8 +194,8 @@ class MCCOMPO(N_OBJECT.OBJECT):
         # une condition.
         # XXX remplacer le not has_key par un dico différent et faire dico2.update(dico)
         #    ce n'est qu'un pb de perf
-        for k, v in self.definition.entites.items():
-            if not dico.has_key(k):
+        for k, v in list(self.definition.entites.items()):
+            if k not in dico:
                 if v.label == 'SIMP':
                         # Mot clé simple
                     dico[k] = v.defaut
@@ -222,7 +222,7 @@ class MCCOMPO(N_OBJECT.OBJECT):
         """Semblable à `cree_dict_valeurs(liste=self.mc_liste)` en supprimant les
         valeurs None."""
         dico = self.cree_dict_valeurs(self.mc_liste, condition=0)
-        dico = dict([(k, v) for k, v in dico.items() if v is not None])
+        dico = dict([(k, v) for k, v in list(dico.items()) if v is not None])
         return dico
 
     def cree_dict_condition(self, liste=[], condition=0):
@@ -247,10 +247,10 @@ class MCCOMPO(N_OBJECT.OBJECT):
         etape = self.get_etape()
         if etape:
             dict_mc_globaux_fac = self.recherche_mc_globaux_facultatifs()
-            for k, v in etape.mc_globaux.items():
+            for k, v in list(etape.mc_globaux.items()):
                 dict_mc_globaux_fac[k] = v.get_valeur()
             if self.jdc:
-                for k, v in self.jdc.mc_globaux.items():
+                for k, v in list(self.jdc.mc_globaux.items()):
                     dict_mc_globaux_fac[k] = v.get_valeur()
             return dict_mc_globaux_fac
         else:
@@ -266,7 +266,7 @@ class MCCOMPO(N_OBJECT.OBJECT):
         etape = self.get_etape()
         if not etape:
             return {}
-        for k, v in etape.definition.entites.items():
+        for k, v in list(etape.definition.entites.items()):
             if v.label != 'SIMP':
                 continue
             if v.position != 'global':
@@ -335,7 +335,7 @@ class MCCOMPO(N_OBJECT.OBJECT):
                 pass
         #  On a rien trouve, le mot cle est absent.
         #  On leve une exception
-        raise IndexError, "Le mot cle %s n existe pas dans %s" % (key, self)
+        raise IndexError("Le mot cle %s n existe pas dans %s" % (key, self))
 
     def get(self, key, default=None):
         """Retourne le mot-clé s'il existe, sinon *default*"""
@@ -439,7 +439,7 @@ class MCCOMPO(N_OBJECT.OBJECT):
         dico = {}
         for child in self.mc_liste:
             daux = child.get_sd_mcs_utilisees()
-            for cle in daux.keys():
+            for cle in list(daux.keys()):
                 dico[cle] = dico.get(cle, [])
                 dico[cle].extend(daux[cle])
         return dico
@@ -473,5 +473,5 @@ def intersection_vide(dict1, dict2):
     inter = sk1.intersection(sk2)
     ok = len(inter) == 0
     if not ok:
-        print 'ERREUR: Mot(s)-clef(s) vu(s) plusieurs fois :', tuple(inter)
+        print('ERREUR: Mot(s)-clef(s) vu(s) plusieurs fois :', tuple(inter))
     return ok

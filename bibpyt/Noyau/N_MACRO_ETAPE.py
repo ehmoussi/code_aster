@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,19 +28,18 @@
 # Modules Python
 import types
 import sys
-import string
 import traceback
 from warnings import warn
 
 # Modules EFICAS
-import N_MCCOMPO
-import N_ETAPE
-from N_Exception import AsException, OpsError
-import N_utils
-from N_utils import AsType
-from N_CO import CO
-from N_ASSD import ASSD
-from N_info import message, SUPERV
+from . import N_MCCOMPO
+from . import N_ETAPE
+from .N_Exception import AsException, OpsError
+from . import N_utils
+from .N_utils import AsType
+from .N_CO import CO
+from .N_ASSD import ASSD
+from .N_info import message, SUPERV
 
 
 class MACRO_ETAPE(N_ETAPE.ETAPE):
@@ -114,7 +113,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
             if self.parent:
                 sd = self.parent.create_sdprod(self, nom)
                 if type(self.definition.op_init) == types.FunctionType:
-                    apply(self.definition.op_init, (
+                    self.definition.op_init(*(
                         self, self.parent.g_context))
             else:
                 sd = self.get_sd_prod()
@@ -123,7 +122,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                     # d un concept
                     sd.set_name(nom)
             self.reset_current_step()
-        except AsException, e:
+        except AsException as e:
             self.reset_current_step()
             raise AsException("Etape ", self.nom, 'ligne : ', self.appel[0],
                               'fichier : ', self.appel[1], str(e))
@@ -138,7 +137,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                 sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
             raise AsException("Etape ", self.nom, 'ligne : ', self.appel[0],
                               'fichier : ', self.appel[1] + '\n',
-                              string.join(l))
+                              ' '.join(l))
 
         self.Execute()
         return sd
@@ -173,7 +172,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                 # zéro avant de l'appeler
                 self.sdprods = []
                 d['__only_type__'] = True
-                sd_prod = apply(sd_prod, (self,), d)
+                sd_prod = sd_prod(*(self,), **d)
                 if self.jdc.fico:
                     self.check_allowed_type(sd_prod)
 
@@ -182,7 +181,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
             except OpsError:
                 # INCLUDE is executed by sdprod. This exception allows to interrupt its execution.
                 raise
-            except Exception, exc:
+            except Exception as exc:
                 if CONTEXT.debug:
                     traceback.print_exc()
                 # "Impossible d'affecter un type au résultat:", str(exc)
@@ -240,7 +239,7 @@ Causes possibles :
             # Comme sd_prod peut invoquer la méthode type_sdprod qui ajoute
             # les concepts produits dans self.sdprods, il faut le mettre à zéro
             self.sdprods = []
-            sd_prod = apply(self.definition.sd_prod, (self,), d)
+            sd_prod = self.definition.sd_prod(*(self,), **d)
         else:
             sd_prod = self.definition.sd_prod
         return sd_prod
@@ -296,7 +295,7 @@ Causes possibles :
         """Nettoie les `netapes` dernières étapes de la liste des étapes."""
         if self.jdc.hist_etape:
             return
-        for i in xrange(netapes):
+        for i in range(netapes):
             e = self.etapes.pop()
             jdc = e.jdc
             parent = e.parent
@@ -468,7 +467,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
                     - Cas 2 : l'étape appartient à une macro qui a déclaré un concept
                       de sortie qui doit etre produit par cette etape.
         """
-        if self.Outputs.has_key(nomsd):
+        if nomsd in self.Outputs:
             # Il s'agit d'un concept de sortie de la macro. Il ne faut pas le créer
             # Il faut quand meme appeler la fonction sd_prod si elle existe.
             # get_type_produit le fait et donne le type attendu par la commande
@@ -539,7 +538,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         # au JDC par l'intermediaire du parent.
         # message.debug(SUPERV, "macro results = %s, (sdnom: %r, restrict: %r)",
                           # self.Outputs.keys(), sdnom, restrict)
-        if self.Outputs.has_key(sdnom):
+        if sdnom in self.Outputs:
                 # Il s'agit d'un concept de sortie de la macro produit par une
                 # sous commande
             sdnom = self.Outputs[sdnom].nom
@@ -621,7 +620,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
            Une fonction enregistree dans op_init peut egalement modifier le contexte
         """
         if type(self.definition.op_init) == types.FunctionType:
-            apply(self.definition.op_init, (self, d))
+            self.definition.op_init(*(self, d))
         if self.sd != None:
             d[self.sd.nom] = self.sd
         for co in self.sdprods:
@@ -660,7 +659,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         globs = self.get_global_contexte()
         d.update(globs)
         try:
-            exec code in globs, d
+            exec(code, globs, d)
         except Exception as exc:
             raise AsException(traceback.format_exc())
 
@@ -678,7 +677,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         # ce qui y est déjà.
         d = self.parent.get_global_contexte()
         d.update(self.g_context)
-        d.update([(k, v) for k, v in self.parent.get_contexte_avant(self).items()
+        d.update([(k, v) for k, v in list(self.parent.get_contexte_avant(self).items())
                   if d.get(k) is None])
         return d
 
@@ -773,5 +772,5 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         sauf pour INCLUDE.
         """
         if CONTEXT.debug:
-            print ' `- MACRO sd_accessible :', self.nom
+            print(' `- MACRO sd_accessible :', self.nom)
         return self.parent.sd_accessible() or not self.is_include()

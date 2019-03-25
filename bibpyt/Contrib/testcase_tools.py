@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ def testcase_post():
 
 def change_test_resu():
     """Fill the TEST_xxxx/VALE_CALC of the .comm file with the computed value"""
-    print 'try to add new values in the .comm file...'
+    print('try to add new values in the .comm file...')
     howto = os.linesep.join(['', 'HOWTO:', '',
                              'To extract automatically the new command files, use:',
                              '',
@@ -50,14 +50,16 @@ def change_test_resu():
                              '', ''])
     reval = re.compile('^ *(OK|NOOK|SKIP) +NON_REGRESSION +(?P<leg>.+?) +'
                        '(?P<refe>.+?) +(?P<calc>.+?) +(?P<err>.+?) +(?P<tole>.+?) *$', re.M)
-    fort8 = open('fort.8', 'rb').read()
+    with open('fort.8', 'r') as f:
+        fort8 = f.read()
     results = reval.findall(fort8)
-    fort1 = open('fort.1', 'rb').read()
+    with open('fort.1', 'r') as f:
+        fort1 = f.read()
     keywords = read_keyword_value('VALE_CALC(|_.)', fort1)
     for i, val in enumerate(results):
-        print i, val
+        print(i, val)
     for i, kw in enumerate(keywords):
-        print i, kw
+        print(i, kw)
     if len(results) == 0:
         # suppose it's a validation testcase: set value to 1.0
         results = [["VALID"] * 4] * len(keywords)
@@ -88,9 +90,10 @@ def append_to_file(fname, txt, delimiter=None, stdout=None):
     """Append a text at the end of a file"""
     if delimiter:
         txt = os.linesep.join([delimiter, txt, delimiter])
-    open(fname, 'ab').write(txt)
+    with open(fname, 'ab') as f:
+        f.write(txt.encode())
     if stdout:
-        print txt
+        print(txt)
 
 
 def read_keyword_value(kw, txt):
@@ -120,7 +123,8 @@ def get_dest_filename(fname, nb):
     lexp = glob(osp.join('astest', root + '.export')) \
         + glob(osp.join('../validation/astest', root + '.export'))
     if lexp:
-        export = open(lexp[0], 'rb').read()
+        with open(lexp[0], 'rb')as f:
+            export = f.read()
         lres = _re_comm.findall(export)
         i = len(lres) + 100
     else:
@@ -142,16 +146,17 @@ def extract_from(from_dir, to_dir, pattern='*.mess'):
     Example:
     python bibpyt/Contrib/testcase_tools.py extract /path/to/resutest /path/to/changed '*.mess'
     """
-    print 'searching', osp.join(from_dir, pattern), '...',
+    print('searching', osp.join(from_dir, pattern), '...', end=' ')
     lfiles = glob(osp.join(from_dir, pattern))
-    print '%d found' % len(lfiles)
+    print('%d found' % len(lfiles))
     if not osp.exists(to_dir):
         os.makedirs(to_dir)
     for fname in lfiles:
-        txt = open(fname, 'rb').read()
+        with open(fname, 'r') as f:
+            txt = f.read()
         parts = txt.split(DELIMITER)
         if len(parts) % 2 != 1:
-            print '%s: expected an odd number of delimiters' % fname
+            print('%s: expected an odd number of delimiters' % fname)
             continue
         nbfile = (len(parts) - 1) / 2
         lres = get_dest_filename(fname, nbfile)
@@ -159,9 +164,10 @@ def extract_from(from_dir, to_dir, pattern='*.mess'):
             resname = osp.join(to_dir, lres.pop(0))
             if osp.isfile(resname):
                 resname += '.' + osp.basename(fname)
-            print 'write', resname
+            print('write', resname)
             content = parts[2 * i + 1].strip() + os.linesep
-            open(resname, 'wb').write(content)
+            with open(resname, 'w') as f:
+                f.write(content)
 
 if __name__ == '__main__':
     args = sys.argv[1:]
@@ -173,7 +179,7 @@ if __name__ == '__main__':
             extract_from(*args[1:])
         else:
             assert False, 'unsupported action: %s' % args[0]
-    except AssertionError, exc:
-        print str(exc)
+    except AssertionError as exc:
+        print(str(exc))
         traceback.print_exc()
         sys.exit(1)

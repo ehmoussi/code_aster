@@ -45,7 +45,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
 
 # TEST DU MECANISME D'EXCEPTION DANS CODE_ASTER
 sep='\n------------------------------------------------------------------------\n'
-print sep
+print(sep)
 
 is_ok = 0
 try:
@@ -53,31 +53,31 @@ try:
         """CAS 1 : declencher error car l'exception n'est pas particularisee.""")
 
 except ConvergenceError as err:
-   print "Exception NonConvergence interceptee"
-   print "Raison : " + err.message
+   print("Exception NonConvergence interceptee")
+   print("Raison : " + err.message)
 
 except IntegrationError as err:
-   print "Exception EchecComportement interceptee"
-   print "Raison : " + err.message
+   print("Exception EchecComportement interceptee")
+   print("Raison : " + err.message)
 
 except SolverError as err:
-   print "Exception BandeFrequenceVide interceptee"
-   print "Raison : " + err.message
+   print("Exception BandeFrequenceVide interceptee")
+   print("Raison : " + err.message)
 
 except ContactError as err:
-   print "Exception TraitementContact interceptee"
-   print "Raison : " + err.message
+   print("Exception TraitementContact interceptee")
+   print("Raison : " + err.message)
 
 except TimeLimitError as err:
-   print "Exception ArretCPU interceptee"
-   print "Raison : " + err.message
+   print("Exception ArretCPU interceptee")
+   print("Raison : " + err.message)
 
 except AsterError as err:
    is_ok = 1
-   print "Exception error interceptee"
-   print "Raison : " + str(err.message)
+   print("Exception error interceptee")
+   print("Raison : " + str(err.valk))
 
-print sep
+print(sep)
 
 # TEST_RESU
 TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
@@ -95,7 +95,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 DETRUIRE(CONCEPT=_F(NOM=TAB1))
 
-print sep
+print(sep)
 
 is_ok = 0
 try:
@@ -104,14 +104,14 @@ try:
 
 except ConvergenceError as err:
    is_ok = 1
-   print "Exception NonConvergence interceptee"
-   print "Raison : " + err.message
+   print("Exception NonConvergence interceptee")
+   print(("Raison : " + str(err.valk)))
 
 except AsterError as err:
-   print "Exception error interceptee"
-   print "Raison : " + err.message
+   print("Exception error interceptee")
+   print(("Raison : " + str(err.valk)))
 
-print sep
+print(sep)
 
 # TEST_RESU
 TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
@@ -129,7 +129,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 DETRUIRE(CONCEPT=_F(NOM=TAB1))
 
-print sep
+print(sep)
 
 is_ok = 0
 try:
@@ -137,19 +137,19 @@ try:
       'CAS 3 : ne pas confondre les exceptions particularisees')
 
 except SolverError as err:
-   print "Exception BandeFrequenceVide interceptee"
-   print "Raison : " + err.message
+   print("Exception BandeFrequenceVide interceptee")
+   print(("Raison : " + str(err.valk)))
 
 except IntegrationError as err:
    is_ok = 1
-   print "Exception EchecComportement interceptee"
-   print "Raison : " + err.message
+   print("Exception EchecComportement interceptee")
+   print(("Raison : " + str(err.valk)))
 
 except AsterError as err:
-   print "Exception error interceptee"
-   print "Raison : " + err.message
+   print("Exception error interceptee")
+   print(("Raison : " + str(err.valk)))
 
-print sep
+print(sep)
 
 # TEST_RESU
 TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
@@ -167,7 +167,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 DETRUIRE(CONCEPT=_F(NOM=TAB1))
 
-print sep
+print(sep)
 
 # Test de la recuperation de l'erreur fatale : LIRE_MAILLAGE avec UNITE invalide
 is_ok = 0
@@ -175,10 +175,10 @@ fmt="""
    Comportement en cas d'erreur fatale : %s
 """
 prev=onFatalError()
-print fmt % prev
+print((fmt % prev))
 
 onFatalError('EXCEPTION')
-print fmt % onFatalError()
+print((fmt % aster.onFatalError()))
 try:
     ma=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=999)   # unite invalide
 except AsterError as err:
@@ -189,8 +189,8 @@ except AsterError as err:
 
 # on remet dans l'etat initial
 onFatalError(prev)
-print fmt % onFatalError()
-print sep
+print((fmt % aster.onFatalError()))
+print(sep)
 
 # TEST_RESU
 TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
@@ -208,7 +208,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 DETRUIRE(CONCEPT=_F(NOM=TAB1))
 
-print sep
+print(sep)
 
 
 # ======================================================================
@@ -344,7 +344,7 @@ except ConvergenceError as err:
      is_ok = 1
      # on verifie que la bonne exception a ete levee
      assert err.id_message == "MECANONLINE9_7", 'unexpected id : %s' % err.id_message
-     print """\nNon convergence, on augmente le nombre d'iterations...\n"""
+     print("""\nNon convergence, on augmente le nombre d'iterations...\n""")
 # on recupere le dernier instant proprement calcule dans le try precedent
 # dans la variable last_iter pour repartir de cet ETAT_INIT
      last_iter=STATNL.LIST_VARI_ACCES()['NUME_ORDRE'][-1]
@@ -381,6 +381,9 @@ except AsterError as err:
                                      NOM_CHAM='DEPL',
                                      NOM_CMP='DY',
                                      OPERATION='EXTRACTION',),);
+    # bypass garbage collector in Python3
+    e = err
+err = e
 STATNL=CALC_CHAMP(reuse=STATNL,RESULTAT=STATNL,CONTRAINTE=('SIEF_ELNO'),VARI_INTERNE=('VARI_ELNO'))
 
 #
@@ -488,7 +491,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 DETRUIRE(CONCEPT=_F(NOM=TAB1))
-
 
 FIN();
 #

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,6 @@ def stanley_ops(self, RESULTAT=None, MODELE=None, CHAM_MATER=None, CARA_ELEM=Non
     """
 
     import os
-    import string
     import aster
     from code_aster import onFatalError
     from code_aster.Cata.Syntax import _F
@@ -51,15 +50,15 @@ def stanley_ops(self, RESULTAT=None, MODELE=None, CHAM_MATER=None, CARA_ELEM=Non
         FICHIER_VALID = None
 
     # On ne lance Stanley que si la variable DISPLAY est définie
-    if os.environ.has_key('DISPLAY'):
+    if 'DISPLAY' in os.environ:
 
         import Stanley
         from Stanley import stanley_engine
 
         if (RESULTAT and MODELE and CHAM_MATER):
             _MAIL = aster.getvectjev(
-                string.ljust(MODELE.nom, 8) + '.MODELE    .LGRF        ')
-            _MAIL = string.strip(_MAIL[0])
+                MODELE.nom.ljust(8) + '.MODELE    .LGRF        ')
+            _MAIL = _MAIL[0].strip()
             MAILLAGE = self.jdc.g_context[_MAIL]
             if CARA_ELEM:
                 stanley_engine.STANLEY(

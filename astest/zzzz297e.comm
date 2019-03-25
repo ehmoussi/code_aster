@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ Relation[2] = (14,8,10,5,6)
 Relation[3] = (15,10,9,6,7)
 
 Liaison = {}
-for nb in Relation.keys():
+for nb in list(Relation.keys()):
    Liaison[nb] = ['N%d' %i for i in Relation[nb] ]
 
 DDLS = {};
@@ -476,7 +476,7 @@ coord= {
 }
 
 Liaison = {}
-for nb in Relation.keys():
+for nb in list(Relation.keys()):
    Liaison[nb]  = ['N%d' %i for i in Relation[nb] ]
    Liaison[nb] += ['N%d' %i for i in Relation[nb][1:] ]
    Liaison[nb] += ['N%d' %i for i in Relation[nb][1:] ]
@@ -486,7 +486,7 @@ DDLS['DY']  = ['DY']*5 + ['DRX']*4 + ['DRZ']*4
 DDLS['DZ']  = ['DZ']*5 + ['DRX']*4 + ['DRY']*4
 
 COEFFS  = {}
-for nb in Relation.keys():
+for nb in list(Relation.keys()):
    COEFFS[nb] = {}
    COEFFS[nb]['DX']  = [-1.0] +  [un4]*4
    COEFFS[nb]['DX'] += [  un4*(coord[Relation[nb][0]][2] - coord[i][2])  for i in Relation[nb][1:] ]
