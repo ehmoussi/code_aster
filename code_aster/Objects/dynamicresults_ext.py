@@ -30,8 +30,8 @@ from libaster import TransientGeneralizedResultsContainer
 from ..Utilities import injector
 
 
-class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralizedResultsContainer),
-                                                   TransientGeneralizedResultsContainer):
+@injector(TransientGeneralizedResultsContainer)
+class ExtendedTransientGeneralizedResultsContainer(object):
     cata_sdj = "SD.sd_dyna_gene.sd_dyna_gene"
 
     def __check_input_inoli(self, inoli):
@@ -60,8 +60,8 @@ class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralized
                                               'VINT_FR3', 'VINT_FR4', 'VINT_FR5',
                                               'VINT_FR6', 'VINT_FR7'],
                           'FLAMBAGE'      : ['F_NORMAL',
-                                              'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1', 
-                                              'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2', 
+                                              'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1',
+                                              'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2',
                                               'V_NORMAL', 'ENFO_PLA', 'RIGI_P_F',
                                               'ENFO_MAX'],
                            'ANTI_SISM'     : ['F_AXIAL',

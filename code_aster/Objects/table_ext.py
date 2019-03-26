@@ -29,7 +29,8 @@ from libaster import Table
 from ..Utilities import injector
 
 
-class ExtendedTable(injector(Table), Table):
+@injector(Table)
+class ExtendedTable(object):
     cata_sdj = "SD.sd_table.sd_table"
 
     def __getitem__(self, key):
@@ -69,7 +70,7 @@ class ExtendedTable(injector(Table), Table):
         else:
             titr = ''
         return titr
-    
+
     def get_nrow(self):
         """Renvoie le nombre de lignes
         """

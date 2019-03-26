@@ -32,7 +32,8 @@ from ..Utilities import deprecated, force_list, initial_context, injector
 from ..Supervis.logger import logger
 
 
-class ExtendedFormula(injector(Formula), Formula):
+@injector(Formula)
+class ExtendedFormula(object):
     cata_sdj = "SD.sd_fonction.sd_formule"
 
     def __getstate__(self):

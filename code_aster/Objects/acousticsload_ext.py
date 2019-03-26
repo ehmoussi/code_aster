@@ -27,8 +27,8 @@ from libaster import AcousticsLoad
 from ..Utilities import injector
 
 
-class AcousticsLoad(injector(AcousticsLoad),
-                    AcousticsLoad):
+@injector(AcousticsLoad)
+class ExtendedAcousticsLoad(object):
 
     def __getinitargs__(self):
         """Returns the argument required to reinitialize a

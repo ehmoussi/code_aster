@@ -29,8 +29,8 @@ from libaster import GeneralizedAssemblyVectorComplex, GeneralizedAssemblyVector
 from ..Utilities import injector
 
 
-class ExtendedGeneralizedAssemblyVectorComplex(injector(GeneralizedAssemblyVectorComplex),
-                                               GeneralizedAssemblyVectorComplex):
+@injector(GeneralizedAssemblyVectorComplex)
+class ExtendedGeneralizedAssemblyVectorComplex(object):
     cata_sdj = "SD.sd_cham_gene.sd_cham_gene"
 
     def EXTR_VECT_GENE_C(self):
@@ -67,8 +67,8 @@ class ExtendedGeneralizedAssemblyVectorComplex(injector(GeneralizedAssemblyVecto
                          1)
         return
 
-class ExtendedGeneralizedAssemblyVectorDouble(injector(GeneralizedAssemblyVectorDouble),
-                                              GeneralizedAssemblyVectorDouble):
+@injector(GeneralizedAssemblyVectorDouble)
+class ExtendedGeneralizedAssemblyVectorDouble(object):
     cata_sdj = "SD.sd_cham_gene.sd_cham_gene"
 
     def EXTR_VECT_GENE_R(self) :

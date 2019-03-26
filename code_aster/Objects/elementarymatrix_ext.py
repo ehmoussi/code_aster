@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,8 +32,8 @@ from libaster import ElementaryMatrixPressureComplex
 from ..Utilities import injector
 
 
-class ExtendedElementaryMatrixDisplacementDouble(injector(ElementaryMatrixDisplacementDouble),
-                                                 ElementaryMatrixDisplacementDouble):
+@injector(ElementaryMatrixDisplacementDouble)
+class ExtendedElementaryMatrixDisplacementDouble():
     cata_sdj = "SD.sd_matr_elem.sd_matr_elem"
 
     def __getinitargs__(self):
@@ -42,8 +42,8 @@ class ExtendedElementaryMatrixDisplacementDouble(injector(ElementaryMatrixDispla
         """
         return (self.getName(), )
 
-class ExtendedElementaryMatrixDisplacementComplex(injector(ElementaryMatrixDisplacementComplex),
-                                                  ElementaryMatrixDisplacementComplex):
+@injector(ElementaryMatrixDisplacementComplex)
+class ExtendedElementaryMatrixDisplacementComplex(object):
     cata_sdj = "SD.sd_matr_elem.sd_matr_elem"
 
     def __getinitargs__(self):
@@ -52,8 +52,8 @@ class ExtendedElementaryMatrixDisplacementComplex(injector(ElementaryMatrixDispl
         """
         return (self.getName(), )
 
-class ExtendedElementaryMatrixTemperatureDouble(injector(ElementaryMatrixTemperatureDouble),
-                                                ElementaryMatrixTemperatureDouble):
+@injector(ElementaryMatrixTemperatureDouble)
+class ExtendedElementaryMatrixTemperatureDouble(object):
     cata_sdj = "SD.sd_matr_elem.sd_matr_elem"
 
     def __getinitargs__(self):
@@ -62,8 +62,8 @@ class ExtendedElementaryMatrixTemperatureDouble(injector(ElementaryMatrixTempera
         """
         return (self.getName(), )
 
-class ExtendedElementaryMatrixPressureComplex(injector(ElementaryMatrixPressureComplex),
-                                              ElementaryMatrixPressureComplex):
+@injector(ElementaryMatrixPressureComplex)
+class ExtendedElementaryMatrixPressureComplex(object):
     cata_sdj = "SD.sd_matr_elem.sd_matr_elem"
 
     def __getinitargs__(self):

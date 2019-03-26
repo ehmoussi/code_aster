@@ -30,8 +30,8 @@ from ..Utilities import injector
 _orig_getType = AssemblyMatrixDisplacementDouble.getType
 
 
-class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplacementDouble),
-                                   AssemblyMatrixDisplacementDouble):
+@injector(AssemblyMatrixDisplacementDouble)
+class ExtendedAssemblyMatrixDisplacementDouble(object):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
 
     def __getstate__(self):
@@ -160,8 +160,8 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
                 data[ilig-1, jcol-1] = triang_sup[kterm-1]
             return data
 
-class ExtendedAssemblyMatrixDisplacementComplex(injector(AssemblyMatrixDisplacementComplex),
-                                   AssemblyMatrixDisplacementComplex):
+@injector(AssemblyMatrixDisplacementComplex)
+class ExtendedAssemblyMatrixDisplacementComplex(object):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
 
     def EXTR_MATR(self, sparse=False, epsilon=None) :

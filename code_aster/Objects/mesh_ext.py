@@ -29,7 +29,8 @@ from libaster import Mesh
 from ..Utilities import injector
 
 
-class ExtendedMesh(injector(Mesh), Mesh):
+@injector(Mesh)
+class ExtendedMesh(object):
     cata_sdj = "SD.sd_maillage.sd_maillage"
 
     def LIST_GROUP_NO(self) :

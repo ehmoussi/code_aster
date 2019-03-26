@@ -32,7 +32,8 @@ from libaster import Function, FunctionComplex
 from ..Utilities import accept_array, injector
 
 
-class ExtendedFunction(injector(Function), Function):
+@injector(Function)
+class ExtendedFunction(object):
     cata_sdj = "SD.sd_fonction.sd_fonction_aster"
 
     setValues = accept_array(Function.setValues)
@@ -130,7 +131,8 @@ class ExtendedFunction(injector(Function), Function):
 
 
 
-class ExtendedFunctionComplex(injector(FunctionComplex), FunctionComplex):
+@injector(FunctionComplex)
+class ExtendedFunctionComplex(object):
     cata_sdj = "SD.sd_fonction.sd_fonction_aster"
 
     setValues = accept_array(FunctionComplex.setValues)

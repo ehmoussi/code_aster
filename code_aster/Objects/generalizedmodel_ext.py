@@ -28,8 +28,9 @@ from libaster import GeneralizedModel
 from ..Utilities import injector
 import aster
 
-class ExtendedGeneralizedModel(injector(GeneralizedModel),
-                                   GeneralizedModel):
+
+@injector(GeneralizedModel)
+class ExtendedGeneralizedModel(object):
     cata_sdj = "SD.sd_model_gene.sd_model_gene"
 
     def LIST_SOUS_STRUCT(self) :

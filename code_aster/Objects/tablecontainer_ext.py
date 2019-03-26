@@ -29,7 +29,8 @@ from libaster import TableContainer
 from ..Utilities import injector
 
 
-class ExtendedTableContainer(injector(TableContainer), TableContainer):
+@injector(TableContainer)
+class ExtendedTableContainer(object):
     cata_sdj = "SD.sd_table_container.sd_table_container"
 #
 # class table_container(table_sdaster):
