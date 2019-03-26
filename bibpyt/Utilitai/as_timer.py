@@ -40,7 +40,7 @@ def _conv_hms(t):
     """Convert a number of seconds in hours, minutes, seconds.
     """
     h = int(t / 3600)
-    m = int(t % 3600) / 60
+    m = int(t % 3600) // 60
     s = (t % 3600) % 60
     return h, m, s
 

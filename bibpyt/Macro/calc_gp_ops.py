@@ -524,7 +524,7 @@ def calc_gp_ops(self, **args):
 
         # le nombre de copeaux est suppose identique sur toutes les tranches
         nbcoptot = len(l_copo_tot)
-        nbcop = nbcoptot / len(TRANCHE_3D)
+        nbcop = nbcoptot // len(TRANCHE_3D)
 
 # calcul de la surface des mailles appartenant au plan de symetrie de
 # l'entaille

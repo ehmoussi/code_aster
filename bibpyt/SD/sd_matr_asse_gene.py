@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,8 +57,8 @@ class sd_matr_asse_gene(sd_matr_asse_com):
             assert n1 == nbvec, desc
         elif type_sto == 2:
             # stockage plein (mais symetrique) :
-            assert n1 == nbvec * (nbvec + 1) / 2, desc
+            assert n1 == nbvec * (nbvec + 1) // 2, desc
         elif type_sto == 3:
             # stockage quelconque :
             assert n1 >= nbvec
-            assert n1 <= nbvec * (nbvec + 1) / 2, desc
+            assert n1 <= nbvec * (nbvec + 1) // 2, desc

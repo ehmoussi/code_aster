@@ -158,7 +158,7 @@ def extract_from(from_dir, to_dir, pattern='*.mess'):
         if len(parts) % 2 != 1:
             print('%s: expected an odd number of delimiters' % fname)
             continue
-        nbfile = (len(parts) - 1) / 2
+        nbfile = (len(parts) - 1) // 2
         lres = get_dest_filename(fname, nbfile)
         for i in range(nbfile):
             resname = osp.join(to_dir, lres.pop(0))

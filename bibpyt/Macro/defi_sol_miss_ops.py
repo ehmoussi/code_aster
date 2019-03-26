@@ -360,7 +360,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
                     couche["EPAIS"] = ep_ss_couche
                     couche["RECEPTEUR"] = "OUI"
                     couche["SOURCE"] = "NON"
-                    if nc == nb_recept/2:
+                    if nc == nb_recept // 2:
                        couche["SOURCE"] = "OUI"
                     l_couche.append(couche)
                     idc += 1

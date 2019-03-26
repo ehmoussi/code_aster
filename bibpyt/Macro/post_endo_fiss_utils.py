@@ -239,7 +239,7 @@ def conv_smoothing_arc_old(lreg, CoorxOrth, CooryOrth, EndoOrth):
         DSb = DS[0:(l - 1)]
         DS1 = NP.concatenate((DSa, DSb))
         Dist = NP.zeros((len(EndoOrth),), float)
-        for k in range(len(EndoOrth) / 2):
+        for k in range(len(EndoOrth) // 2):
             Dist[k + 1] = Dist[k] + DS1[k]
             Dist[-k - 1] = Dist[-k] + DS1[-k - 1]
         Gauss = NP.exp(-(2 * Dist / (lreg / 5)) ** 2)

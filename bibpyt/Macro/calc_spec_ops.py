@@ -106,7 +106,7 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
             'RECOUVREMENT_POURCENT'], l_t[0][1]['RECOUVREMENT_NB_PTS']]
 
         if l_ech_t.count(None) == 3:
-            l_ech = len(temp) / 2
+            l_ech = len(temp) // 2
         if recouvr_t.count(None) == 3:
             recouvr = 0
         if l_ech_t.count(None) < 2:
@@ -121,10 +121,10 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
                     l_ech = int(numpy.floor(l_ech_t[i1] / dt))
                 elif i1 == 1:
                     l_ech = int(
-                        numpy.floor((len(temp) / 2) * l_ech_t[i1] * 0.01))
+                        numpy.floor((len(temp) // 2) * l_ech_t[i1] * 0.01))
                 elif i1 == 2:
                     l_ech = int(numpy.floor(l_ech_t[i1]))
-        if l_ech > len(temp) / 2:
+        if l_ech > len(temp) // 2:
             raise FonctionError('Vous devez specifier une longueur d' + "'" + \
                 'echantillon inferieure a la longueur totale de l' + \
                 "'" + 'acquisition')
@@ -184,14 +184,14 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
         long_fonc = [len(fonc_py[i1].VALE.get()) for i1 in range(len(fonc_py))]
 
         N_fen = int(
-            numpy.floor((numpy.minimum.reduce(long_fonc) / 2 - l_ech) / (l_ech - recouvr)) + 1)
+            numpy.floor((numpy.minimum.reduce(long_fonc) // 2 - l_ech) // (l_ech - recouvr)) + 1)
 
         sig = []
         dt = []
         for i1 in range(len(fonc_py)):
             vale = fonc_py[i1].VALE.get()
-            temp = (list(vale[0:int(len(vale) / 2)]))
-            sig.append(list(vale[int(len(vale) / 2):]))
+            temp = (list(vale[0:int(len(vale) // 2)]))
+            sig.append(list(vale[int(len(vale) // 2):]))
             test_pas = numpy.subtract(temp[1:], temp[0:-1])
             crit = test_pas.tolist()
             crit.sort()
@@ -283,7 +283,7 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
 
     if INTERSPE:
         nb_ord = len(list_ord)
-        dimh = (nb_ord * (nb_ord + 1)) / 2
+        dimh = (nb_ord * (nb_ord + 1)) // 2
         l_fc = []
         nume_i1 = []
         nume_j1 = []
@@ -314,7 +314,7 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
                     dsp = dsp.tolist()
                     dsp_r = []
 
-                    for k1 in range(int(numpy.floor(l_ech / 2))):
+                    for k1 in range(int(numpy.floor(l_ech // 2))):
                         dsp_r = dsp_r + [frq[k1], dsp[k1].real, dsp[k1].imag]
 
                     _fonc = DEFI_FONCTION(NOM_PARA='FREQ', VALE_C=dsp_r,)

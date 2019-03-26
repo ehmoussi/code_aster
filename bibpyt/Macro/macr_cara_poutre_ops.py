@@ -118,7 +118,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
         # les groupes doivent exister
         collgrma = aster.getcolljev('%-8s.GROUPEMA' % __nomlma.nom)
         collgrma = list(map(lambda x: x.strip(), collgrma))
-        if type(GROUP_MA_BORD) == bytes:
+        if type(GROUP_MA_BORD) == str:
             l_group_ma_bord = [ GROUP_MA_BORD,  ]
         else:
             l_group_ma_bord = GROUP_MA_BORD
@@ -127,7 +127,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
                 UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_BORD'])
         if 'GROUP_MA_INTE' in args:
             if args['GROUP_MA_INTE'] != None:
-                if type(args['GROUP_MA_INTE']) == bytes:
+                if type(args['GROUP_MA_INTE']) == str:
                     l_group_ma_inte = [args['GROUP_MA_INTE'], ]
                 else:
                     l_group_ma_inte = args['GROUP_MA_INTE']
@@ -136,7 +136,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
                         UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_INTE'])
         #
         motscles = {}
-        if type(GROUP_MA_BORD) == bytes:
+        if type(GROUP_MA_BORD) == str:
             motscles['CREA_GROUP_NO'] = _F(GROUP_MA=GROUP_MA_BORD,)
         else:
             motscles['CREA_GROUP_NO'] = []
@@ -204,7 +204,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
                 motscles = {}
                 motscles['FLUX_REP'] = []
 
-                if type(lgmaint) == bytes:
+                if type(lgmaint) == str:
                     motscles['FLUX_REP'] = _F(
                         GROUP_MA=args['GROUP_MA_INTE'], CARA_TORSION=__tbaire)
                 else:
@@ -355,7 +355,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
         #    rt = max ( rtext , 2*AIRE(TROU)/L(TROU) )
         if 'GROUP_MA_INTE' in args:
             if args['GROUP_MA_INTE'] != None:
-                if type(args['GROUP_MA_INTE']) == bytes:
+                if type(args['GROUP_MA_INTE']) == str:
                     l_group_ma_inte = [args['GROUP_MA_INTE'], ]
                 else:
                     l_group_ma_inte = args['GROUP_MA_INTE']
@@ -558,7 +558,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
         #
         if 'GROUP_MA_INTE' in args:
             if args['GROUP_MA_INTE'] != None:
-                if type(args['GROUP_MA_INTE']) == bytes:
+                if type(args['GROUP_MA_INTE']) == str:
                     l_group_ma_inte = [args['GROUP_MA_INTE'], ]
                 else:
                     l_group_ma_inte = args['GROUP_MA_INTE']
@@ -733,7 +733,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
             # rt = max ( rtext , 2*AIRE(TROU)/L(TROU) )
             if 'GROUP_MA_INTE' in args:
                 if args['GROUP_MA_INTE'] != None:
-                    if type(args['GROUP_MA_INTE']) == bytes:
+                    if type(args['GROUP_MA_INTE']) == str:
                         l_group_ma_inte = [args['GROUP_MA_INTE'], ]
                     else:
                         l_group_ma_inte = args['GROUP_MA_INTE']
