@@ -67,7 +67,7 @@ class FunctionDefinition(ExecuteCommand):
             values = np.array(keywords["VALE"])
             if values.size % 2 != 0:
                 UTMESS("F", "UTILITAI2_67")
-            values = values.reshape((values.size / 2, 2))
+            values = values.reshape((values.size // 2, 2))
             abscissas = values[:, 0]
             ordinates = values[:, 1]
 
@@ -76,7 +76,7 @@ class FunctionDefinition(ExecuteCommand):
             values = np.array(keywords["VALE_C"])
             if values.size % 3 != 0:
                 UTMESS("F", "UTILITAI2_66")
-            values = values.reshape((values.size / 3, 3))
+            values = values.reshape((values.size // 3, 3))
             abscissas = values[:, 0]
             ordinates = values[:, 1:].ravel()
             miny = min(values[:, 1])

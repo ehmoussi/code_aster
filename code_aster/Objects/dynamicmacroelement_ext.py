@@ -94,7 +94,7 @@ class ExtendedDynamicMacroElement(object):
         tmp=numpy.zeros([int(taille)])
         for j in range(desc[1]+1):
             for i in range(j):
-                k=j*(j-1)/2+i
+                k=j*(j-1) // 2+i
                 tmp[k]=matrice[j-1,i]
         aster.putvectjev(nom_vale,len(tmp),tuple((
             list(range(1,len(tmp)+1)))),tuple(tmp),tuple(tmp),1)
