@@ -1,0 +1,108 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+POURSUITE(CODE='OUI');
+
+
+# TESTS POUR LE MODE 1
+TEST_RESU(RESU=_F(RESULTAT=RESH,
+                  NUME_ORDRE = 1,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  NOEUD='N5',
+                  VALE_CALC_C=-0.0188037717985-0.000654842565872j,
+                 ),
+          )
+
+TEST_RESU(RESU=_F(RESULTAT=RESH,
+                  NUME_ORDRE = 1,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  NOEUD='N5',
+                  VALE_CALC_C=-0.0266775413555-0.00386265694824j,
+                 ),
+          )
+
+TEST_RESU(RESU=_F(RESULTAT=RESH,
+                  NUME_ORDRE = 2,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='PRES',
+                  NOEUD='N9',
+                  VALE_CALC_C=0.000720679222339+7.37390183613E-05j,
+                 ),
+          )
+
+# TESTS POUR LE MODE 2
+TEST_RESU(RESU=_F(RESULTAT=RESH,
+                  NUME_ORDRE = 4,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  NOEUD='N5',
+                  VALE_CALC_C=-0.0103510246152-0.00122336536975j,
+                 ),
+          )
+
+TEST_RESU(RESU=_F(RESULTAT=RESH,
+                  NUME_ORDRE = 4,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  NOEUD='N5',
+                  VALE_CALC_C=0.00809120158081-0.00126724253292j,
+                 ),
+          )
+
+TEST_RESU(RESU=_F(RESULTAT=RESH,
+                  NUME_ORDRE = 5,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='PRES',
+                  NOEUD='N9',
+                  VALE_CALC_C=-0.000244336888369+0.000114315641775j,
+                 ),
+          )
+
+# TESTS POUR LE MODE 3
+TEST_RESU(RESU=_F(RESULTAT=RESH,
+                  NUME_ORDRE = 7,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  NOEUD='N5',
+                  VALE_CALC_C=-0.0140316568386-0.00183831766572j,
+                 ),
+          )
+
+TEST_RESU(RESU=_F(RESULTAT=RESH,
+                  NUME_ORDRE = 7,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  NOEUD='N5',
+                  VALE_CALC_C=0.00908558624771+0.00115374235032j,
+                 ),
+          )
+
+TEST_RESU(RESU=_F(RESULTAT=RESH,
+                  NUME_ORDRE = 8,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='PRES',
+                  NOEUD='N9',
+                  VALE_CALC_C=-0.000425816314494-0.00025330975732j,
+                 ),
+          )
+
+
+FIN();

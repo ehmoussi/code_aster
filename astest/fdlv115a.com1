@@ -1,0 +1,138 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+POURSUITE(CODE='OUI')
+
+# Fréquence et pulsation pour le calcul du pseudo-mode
+freqi    = 15
+omei     = 2.0*pi*freqi
+freqi_ad = freqi*long_ad/cele_eau
+omei_ad  = 2.0*pi*freqi_ad
+
+# Paramètres généraux devant les matrices
+coefvisc = 1.0        # coefEvisco[]
+coefelas = 1.0        # coefEelas[]
+coefrhos = 1.0        # coefMasse[]
+
+# Paramètres pour la viscosité
+Geti     = (Gzer+Ginf*(1.0j*omei*Tau)**Alp)/(1+(1.0j*omei*Tau)**Alp)
+Etaisd   = (Geti.imag)/(Geti.real)
+Eisd     = coefvisc*2.0*(1.0+nu_visc)*(Geti.real)/(rho_eau*cele_eau**2)
+Eetaisd  = Eisd*Etaisd
+
+# ------------------------
+# DEFINITION DES FONCTIONS
+# ------------------------
+
+fRIGI_V = FORMULE(VALE_C="""complex(NEUT1*2.0*(1.0+nu_visc)*(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real)/
+                                (rho_eau*cele_eau**2),
+                                    NEUT1*2.0*(1.0+nu_visc)*(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real)/
+                                (rho_eau*cele_eau**2)*
+           (((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).imag)/(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real))""",
+                  nu_visc=nu_visc,
+                  Gzer=Gzer,
+                  Ginf=Ginf,
+                  cele_eau=cele_eau,
+                  Tau=Tau,
+                  Alp=Alp,
+                  rho_eau=rho_eau,
+                  NOM_PARA=['PULS', 'NEUT1'],)
+
+fRIGI_E = FORMULE(VALE='NEUT2*e_elas/(rho_eau*cele_eau**2)',
+                  e_elas=e_elas,
+                  rho_eau=rho_eau,
+                  cele_eau=cele_eau,
+                  NOM_PARA=['PULS', 'NEUT2'],)
+
+fMASS_E = FORMULE(VALE='-(PULS*PULS)*PORO*rho_elas/rho_eau',
+                  rho_elas=rho_elas,
+                  rho_eau=rho_eau,
+                  NOM_PARA=['PULS', 'PORO'],)
+
+fMASS_FI = FORMULE(VALE='-(PULS*PULS)*1.0',
+                   NOM_PARA='PULS',)
+
+
+fIMPE_R = FORMULE(VALE_C='complex(0.0, -(PULS*PULS*PULS)*1.0)',
+                  NOM_PARA='PULS',)
+
+
+fRIGI_F = FORMULE(VALE='1.',
+                  NOM_PARA='PULS',)
+
+RESH=DEFI_BASE_REDUITE(OPERATION    = 'GLOUTON',
+                       INFO         = 2,
+                       NB_VARI_COEF = 10,
+                       VARI_PARA    = (_F(
+                                            NOM_PARA        = 'PULS',
+                                            VALE_PARA       = [0.06793398887721781, 0.04670317913914212, 0.058898609133860795, 0.0774393304172544, 0.06738951811664812, 0.07531317108105949, 0.013436395928245769, 0.039595388909262196, 0.061052801926139835, 0.07441852903420372,0.04268221227870314, 0.017919840689420898, 0.02030171628085756, 0.03442784796356188, 0.04934088828223367, 0.07796240563382252, 0.004637470055022012, 0.015770818115330147, 0.024821794279337374, 0.004752584949016053,0.07185551246717739, 0.07731641254540125, 0.08248345374787067, 0.006939244975024346, 0.04320147379774347, 0.07475899301941687, 0.042164548957108715, 0.06543615042819306, 0.054006730650614294, 0.03892713535505883],
+                                            VALE_INIT       = 0.06283185307179585,
+                                        ),
+                                      _F(
+                                            NOM_PARA        = 'NEUT1',
+                                            VALE_PARA       = [0.8802657330700971, 0.5466231567516447, 1.37219489087189, 0.9017930880061348, 0.7037395483774915, 0.6860357525111395, 1.0433206371027346, 0.7593005156630711, 1.2223853546908146, 1.2725258747008914,0.7518459074021978, 0.8015098925760106, 1.1026807257069553, 1.0840666814610258, 1.401733469705382, 0.5421040329310535, 0.9038973752146484, 1.4496369204046342, 0.7617095781130815, 0.5005991020545876,1.3950946066807512, 1.195898929964688, 1.3407804609397116, 0.5666052369839903, 0.9656998342281967, 1.0194326780597656, 1.3282899777329793, 1.337024284699404, 0.6419707871508249, 0.5494431927244842],
+                                            VALE_INIT       = 1.0,
+                                        ),
+                                      _F(
+                                            NOM_PARA        = 'NEUT2',
+                                            VALE_PARA       = [0.9473833487314831, 1.0199666726212562, 0.9280396065264875, 0.8731829775785314, 1.0061313580111204, 0.9449076165154071, 0.886440827607453, 0.8169571963603627, 1.1304682932755508, 0.9239148195172557,0.9691072947638687, 1.1711733456177016, 1.0194615701682697, 1.047729879081497, 0.8819336342331806, 0.9901568201847084, 1.1469795568290633, 1.080488017416913, 0.851650101291967, 1.1845607361790345,1.035519994955876, 1.0345204400377228, 0.9800186944027033, 0.994036929441124, 0.8450051555837921, 1.0471489103432483, 1.103426244086392, 0.9974713929646238, 0.972289360656658, 0.9729952448442366],
+                                            VALE_INIT       = 1.0,
+                                        ),
+                                      _F(
+                                            NOM_PARA        = 'PORO',
+                                            VALE_PARA       = [0.9277553997834321, 0.89215900528286, 0.8029282274301635, 0.9825295646508716, 0.86469322383638, 0.8632030746932529, 1.1858652256505013, 1.022463604416216, 0.8533728176052748, 0.8960767052166075,0.8860342576680671, 1.0353109090076444, 0.9576057418684457, 1.1558862736505044, 0.9475621389089873, 1.0290528154089504, 1.0853522984309905, 0.9177507998752624, 0.9389947530478385, 1.16495415234795,0.9631340344391921, 1.099312808101934, 1.0335186120702247, 0.8671749057817971, 1.1790831982922105, 0.9085586450019763, 0.8658333840396872, 0.9289541786090041, 1.018021717561391, 0.9445791510153578],
+                                            VALE_INIT       = 1.0,
+                                        ),
+                                      ),
+                        MATR_ASSE=(_F(
+                                MATRICE   = RIGI_F,
+                                COEF_R    = 1.0,
+                               ),
+                             _F(
+                                MATRICE   = RIGI_V,
+                                FONC_C    = fRIGI_V,
+                               ),
+                             _F(
+                                MATRICE   = RIGI_E,
+                                FONC_R    = fRIGI_E,
+                               ),
+                             _F(
+                                MATRICE   = MASS_E,
+                                FONC_R    = fMASS_E,
+                               ),
+                             _F(
+                                MATRICE   = MASS_FI,
+                                FONC_R    = fMASS_FI,
+                               ),
+                             _F(
+                                MATRICE   = IMPE_R,
+                                FONC_C    = fIMPE_R,
+                               ),
+                            ),
+                       VECTEUR  = Force,
+                       COEF_R   = 1.0,
+                       NB_MODE  = 3,
+                       SOLVEUR=_F(RENUM='METIS',STOP_SINGULIER='OUI',
+                               ELIM_LAGR='NON',NPREC=8,
+                               METHODE='MULT_FRONT',),
+                      )
+
+IMPR_RESU(FORMAT='MED', UNITE=80, RESU=(_F(RESULTAT=RESH, PARTIE='REEL',),),);
+
+FIN()
