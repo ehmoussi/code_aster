@@ -59,8 +59,8 @@ def VALM_diag2array(dict_VALM, dim, dtype=None):
         valeur[i,i] =  diag[i]
     return valeur
 
-class ExtendedGeneralizedAssemblyMatrixComplex(injector(GeneralizedAssemblyMatrixComplex),
-                                   GeneralizedAssemblyMatrixComplex):
+@injector(GeneralizedAssemblyMatrixComplex)
+class ExtendedGeneralizedAssemblyMatrixComplex(object):
     cata_sdj = "SD.sd_matr_asse_gene.sd_matr_asse_gene"
 
     def __getstate__(self):
@@ -155,8 +155,8 @@ class ExtendedGeneralizedAssemblyMatrixComplex(injector(GeneralizedAssemblyMatri
             raise KeyError
         return
 
-class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrixDouble),
-                                   GeneralizedAssemblyMatrixDouble):
+@injector(GeneralizedAssemblyMatrixDouble)
+class ExtendedGeneralizedAssemblyMatrixDouble():
     cata_sdj = "SD.sd_matr_asse_gene.sd_matr_asse_gene"
 
     def __getstate__(self):

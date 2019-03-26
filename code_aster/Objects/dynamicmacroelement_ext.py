@@ -31,7 +31,8 @@ from ..Utilities import injector
 from .generalizedassemblymatrix_ext import VALM_triang2array
 
 
-class ExtendedDynamicMacroElement(injector(DynamicMacroElement), DynamicMacroElement):
+@injector(DynamicMacroElement)
+class ExtendedDynamicMacroElement(object):
     cata_sdj = "SD.sd_macr_elem_dyna.sd_macr_elem_dyna"
 
     def EXTR_MATR_GENE(self,typmat) :

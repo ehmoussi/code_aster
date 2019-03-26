@@ -25,21 +25,19 @@
 """
 
 def injector(boost_class):
-    """Return a class object to inject methods into boost objects.
+    """Decorator to inject methods into boost objects.
 
     Arguments:
         boost_class (*boost-python class*): Boost-Python class to enrich.
 
     Returns:
-        class: Injector.
+        class: Decorated class.
     """
-    class injector_class(object):
-        class __metaclass__(boost_class.__class__):
-            def __init__(self, name, bases, dict):
-                for b in bases:
-                    if type(b) not in (self, type):
-                        for k, v in list(dict.items()):
-                            setattr(b, k, v)
-                return type.__init__(self, name, bases, dict)
-
-    return injector_class
+    def decorated(cls):
+        for name, attr in cls.__dict__.items():
+            if name.startswith("_"):
+                if name not in ("__call__", "__getinitargs__", "__getstate___",
+                                "__len__", "__setstate__"):
+                    continue
+            setattr(boost_class, name, attr)
+    return decorated

@@ -29,9 +29,20 @@ from libaster import TransientGeneralizedResultsContainer
 from ..Utilities import injector
 
 
-class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralizedResultsContainer),
-                                                   TransientGeneralizedResultsContainer):
+@injector(TransientGeneralizedResultsContainer)
+class ExtendedTransientGeneralizedResultsContainer(object):
     cata_sdj = "SD.sd_dyna_gene.sd_dyna_gene"
+
+    def __check_input_inoli(self, inoli):
+        if (inoli==-1) :
+            print("Nonlinearity index not specified, by default the first nonlinearity will be considered.")
+            inoli = 1
+        nbnoli = self.__nb_nonl()
+        if nbnoli == 0 :
+            raise AsException("Linear calculation, no information can be retrieved.")
+        if( inoli <= 0) or (inoli > nbnoli):
+            raise AsException("The nonlinearity index should be a comprised between 1 and %d, the total number of nonlinearities."%(nbnoli))
+        return inoli
 
     def FORCE_RELATION (self, inoli=-1):
         """ Returns a 1D numpy array giving the evolution of the forces defined
@@ -53,6 +64,6 @@ class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralized
 
         vint = self.VARI_INTERNE(inoli, describe=False)
 
-        #The relationship defined forces are saved in position 2  for 
+        #The relationship defined forces are saved in position 2  for
         #RELA_EFFO_DEPL and RELA_EFFO_VITE nonlinearities
         return vint[:,1]
