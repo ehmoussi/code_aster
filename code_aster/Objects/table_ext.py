@@ -113,7 +113,7 @@ class ExtendedTable(object):
             # retourne une table vide
             return Table(titr=titr, nom=self.nom)
         tabnom=list(v_tblp)
-        nparam=len(tabnom)/4
+        nparam=len(tabnom) // 4
         lparam=[tabnom[4*i:4*i+4] for i in range(nparam)]
         # restriction aux paramètres demandés
         if para is not None:

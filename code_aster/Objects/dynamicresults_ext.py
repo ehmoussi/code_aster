@@ -89,7 +89,7 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         indices  = [str(i+1).center(10) for i in range(len(vintDesc))]
         sep = " | "
 
-        nblines = len(indices)/8
+        nblines = len(indices) // 8
         if 8*nblines<len(indices) : nblines = nblines + 1
         for i in range(nblines-1):
             print(sep.join(indices [i*8:(i+1)*8]))
@@ -198,7 +198,7 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         nbvint = vindx[-1]-1    # number of internal variables saved for all nonlinearities : record length of VINT
 
         vint    = self.sdj.sd_nl.VINT.get()
-        nbsaves = len(vint)/nbvint
+        nbsaves = len(vint) // nbvint
 
         start  = vindx[i  ]-1
         finish = vindx[i+1]-1
