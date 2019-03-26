@@ -977,7 +977,7 @@ static struct PyModuleDef moduledef = {
 };
 
 #ifndef _WITHOUT_PYMOD_
-PyMODINIT_FUNC init_aster_core(void)
+PyObject* PyInit__aster_core(void)
 {
     aster_core = PyModule_Create(&moduledef);
     // until all fileOut are removed

@@ -133,7 +133,7 @@ class TestCase( unittest.TestCase ):
         with context:
             callableObj(*args, **kwargs)
 
-    def assertRaisesRegexp(self, expected_exception, expected_regexp,
+    def assertRaisesRegex(self, expected_exception, expected_regexp,
                            callable_obj=None, *args, **kwargs):
         """Asserts that the message in a raised exception matches a regexp."""
         context = AssertRaisesContext(expected_exception, self, expected_regexp)
@@ -164,8 +164,8 @@ def _add_assert_methods(cls):
                   'assertNotEqual',
                   'assertNotIn',
                   'assertNotIsInstance',
-                  'assertNotRegexpMatches',
-                  'assertRegexpMatches',
+                  'assertNotRegex',
+                  'assertRegex',
                   'assertSequenceEqual',
                   'assertSetEqual',
                   'assertTrue',

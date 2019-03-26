@@ -2374,7 +2374,7 @@ static struct PyModuleDef aster_moduledef = {
         NULL
 };
 
-PyMODINIT_FUNC initaster(void)
+PyObject* PyInit_aster(void)
 {
     PyObject *aster = (PyObject*)0 ;
     PyObject *dict = (PyObject*)0 ;
