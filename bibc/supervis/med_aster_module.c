@@ -96,7 +96,7 @@ static struct PyModuleDef moduledef = {
 };
 
 #ifndef _WITHOUT_PYMOD_
-PyMODINIT_FUNC initmed_aster(void)
+PyObject* PyInit_med_aster(void)
 {
     PyObject* med_aster = PyModule_Create(&moduledef);
     return med_aster;

@@ -84,7 +84,7 @@ static PyObject* SPEC_OSCI( PyObject* self, PyObject* args )
    Py_DECREF(Vy);
    Py_DECREF(Vf);
    Py_DECREF(Va);
-   
+
    return PyArray_Return(Sp);
 }
 
@@ -167,7 +167,7 @@ static struct PyModuleDef moduledef = {
         NULL
 };
 
-PyMODINIT_FUNC initaster_fonctions(void)
+PyObject* PyInit_aster_fonctions(void)
 {
    PyObject* aster_fonctions = PyModule_Create(&moduledef);
    import_array();
