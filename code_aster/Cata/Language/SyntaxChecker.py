@@ -355,7 +355,9 @@ class SyntaxCheckerVisitor(object):
                        "Too few factor keyword, at least {0} "
                        "occurrence(s) expected"
                            .format(step.definition.get('min', 0)))
-        if len(userDict) > step.definition.get('max', 1000000000):
+        nmax = step.definition.get('max', '**')
+        nmax = 1000000000 if nmax == '**' else nmax
+        if len(userDict) > nmax:
             self.error(ValueError,
                        "Too much factor keyword, at most {0} "
                        "occurrence(s) expected"
