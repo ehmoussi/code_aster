@@ -206,7 +206,7 @@ MODMES=LIRE_RESU(TYPE_RESU='MODE_MECA',
 
 MACRO_EXPANS( MODELE_CALCUL = _F(MODELE = MODFEM,
                                  BASE = MODSTAT,
-                                 NUME_ORDRE = range(1,nb_ddl+1)),
+                                 NUME_ORDRE = list(range(1,nb_ddl+1))),
               MODELE_MESURE = _F(MODELE  = MODEXP,
                                  MESURE  = MODMES,),
               NUME_DDL      = NUMEXP,

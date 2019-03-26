@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,12 +50,12 @@ def F_DEFI_GROUP(MAIL) :
                  #  computation of the 'repulsion distance'
                  V=dim**3
                  rep_dist = ((V/nb_germs)**(1./3.))*0.8
-                 print 'Number of germs: %i' % (nb_germs,)
-                 print 'Minimal distance between 2 germs: %5.4e' % (rep_dist,)
+                 print('Number of germs: %i' % (nb_germs,))
+                 print('Minimal distance between 2 germs: %5.4e' % (rep_dist,))
 
                  # computation of the random coordinates of all germs with respect to the
                  # repulsion distance
-                 print 'Computing the coordinates of the germs...'
+                 print('Computing the coordinates of the germs...')
                  for i in range(1, nb_germs):
                      good_point = False
                      while not good_point:
@@ -65,18 +65,18 @@ def F_DEFI_GROUP(MAIL) :
                              if NP.sqrt( NP.dot((germ-this_germ),(germ-this_germ)) ) < rep_dist:
                                  good_point = False
                      germs.append( this_germ )
-                 print 'Done.'
+                 print('Done.')
 
                  # get the coordinates of the mesh nodes, and the number of nodes
-                 print 'Getting mesh nodes and coordinates...'
+                 print('Getting mesh nodes and coordinates...')
                  full_mesh_name = "%-8s" % (mesh_name,)
                  coordo=MAIL.sdj.COORDO.VALE.get()
                  nb_nodes = len(coordo) / 3
                  coordo   = NP.reshape(coordo, [nb_nodes, 3])
-                 print 'Done.'
+                 print('Done.')
 
                  # get the mesh connectivity, the elements sets and names, the node names
-                 print 'Getting mesh connectivity and element sets...'
+                 print('Getting mesh connectivity and element sets...')
                  connectivity = MAIL.sdj.CONNEX.get()
                  names_elset = MAIL.sdj.NOMMAI.get()
                  type_elset = MAIL.sdj.TYPMAIL.get()
@@ -93,7 +93,7 @@ def F_DEFI_GROUP(MAIL) :
                  # 26 : HEXA27'
                  nb_elset     = len( names_elset )
                  listegroup   = [None] * nb_elset
-                 print 'Done.'
+                 print('Done.')
 
                  # building of the listegroup table indicating to which germ belong each
                  # elset
@@ -137,12 +137,12 @@ def F_DEFI_GROUP(MAIL) :
                  return LIST_GROUP
 
 
-        print "Definition of grains..."
+        print("Definition of grains...")
 
         LISTE_GROUP = DEFI_GRAINS(Ng,dim, prefix_nomgr)
 
-        print "Grains done"
-        print "Adding the grains to the mesh..."
+        print("Grains done")
+        print("Adding the grains to the mesh...")
 
         MAIL = DEFI_GROUP(
                 reuse=MAIL,
@@ -150,6 +150,6 @@ def F_DEFI_GROUP(MAIL) :
                 CREA_GROUP_MA=LISTE_GROUP,
         );
 
-        print "Grains added"
+        print("Grains added")
 
         return MAIL

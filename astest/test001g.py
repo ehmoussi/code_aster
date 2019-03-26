@@ -17,7 +17,7 @@ traction.setValue(code_aster.PhysicalQuantityComponent.Fz, 3.0 )
 
 # Mauvaise composante
 # Dx n'est pas une composante de FORC_R !
-with test.assertRaisesRegexp( RuntimeError, "component is not allowed"):
+with test.assertRaisesRegex( RuntimeError, "component is not allowed"):
     traction.setValue(code_aster.PhysicalQuantityComponent.Dx, 0.0 )
 
 # Affichage
