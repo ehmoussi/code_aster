@@ -1,5 +1,4 @@
-from scipy.interpolate import interp1d
-from numpy import array, pi, sqrt
+from numpy import array, pi, sqrt, interp
 
 eps = 1.e-6  # convergence precision for the eigenfrequencies
 
@@ -29,10 +28,6 @@ lambda_f = [1.87510407, 4.69409113, 7.85475744, 10.99554073] # eigenfrequency fa
 
 
 ########################################################
-# define interpolation functions for the properties depending on the frequency
-f_E2   = interp1d(fv, Ev,   kind='linear')
-f_eta2 = interp1d(fv, etav, kind='linear')
-
 
 
 eigenfreq = [None] * len(lambda_f)
@@ -54,8 +49,9 @@ for i in range(0, len(lambda_f)):
         
         fc= fc_new
 
-        E2   = f_E2( fc )
-        eta2 = f_eta2( fc )
+        # interpolation For the properties depending on the frequency
+        E2   = interp( fc, fv, Ev )
+        eta2 = interp( fc, fv, etav )
 
         # conversion
         E2c = E2 * complex(1.,eta2)
