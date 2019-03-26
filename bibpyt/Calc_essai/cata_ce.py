@@ -625,7 +625,7 @@ class InterSpectre:
             nb_mes = len(self.nume_phy)
             # verification de la coherence entre la taille de l'inter-spectre et du DDL du resu
             # TODO : retirer la verif ici et la mettre ailleurs
-            if nb_mes * (nb_mes + 1) / 2 != nb_fonc:
+            if nb_mes * (nb_mes + 1) // 2 != nb_fonc:
                 nb_mes_intsp = 0.5 * (-1 + numpy.sqrt(1 + 8 * nb_fonc))
                 self.mess.disp_mess(
                     " Nombre de mesures de CPhi : " + str(int(nb_mes)))

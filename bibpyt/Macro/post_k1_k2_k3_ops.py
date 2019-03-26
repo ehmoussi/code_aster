@@ -59,7 +59,7 @@ def InterpolFondFiss(s0, Coorfo):
 # s0     = abscisse curviligne du point considere
 # Coorfo = Coordonnees du fond (extrait de la sd fiss_xfem)
 # en sortie : xyza = Coordonnees du point et abscisse
-    n = len(Coorfo) / 4
+    n = len(Coorfo) // 4
     if (s0 < Coorfo[3]):
         xyz = [Coorfo[0], Coorfo[1], Coorfo[2], s0]
         return xyz
@@ -91,7 +91,7 @@ def InterpolBaseFiss(s0, Basefo, Coorfo):
 # Basefo = base locale du fond (VNORx,VNORy,VNORz,VDIRx,VDIRy,VDIRz)
 # Coorfo = Coordonnees et abscisses du fond (extrait de la sd fiss_xfem)
 # en sortie : VDIRVNORi = base locale au point considere (6 coordonnes)
-    n = len(Coorfo) / 4
+    n = len(Coorfo) // 4
     if (s0 < Coorfo[3]):
         VDIRVNORi = Basefo[0:6]
         return VDIRVNORi
@@ -116,7 +116,7 @@ def InterpolScalFiss(s0, Scalfo, Coorfo):
 # Coorfo = Coordonnees et abscisses du fond (extrait de la sd fiss_xfem)
 # Scalfo = liste des valeurs de la variable scalaire selon les points de Coorfo
 # en sortie : Vale = valeur de la variable scalaire au point considere
-    n = len(Coorfo) / 4
+    n = len(Coorfo) // 4
     if (s0 < Coorfo[3]):
         Vale = Scalfo[0]
         return Vale
@@ -1245,7 +1245,7 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
 
     # Traitement du cas fond multiple
     Fissmult = FISSURE.sdj.FONDMULT.get()
-    Nbfiss = len(Fissmult) / 2
+    Nbfiss = len(Fissmult) // 2
     Numfiss = args['NUME_FOND']
     if Numfiss <= Nbfiss and (Nbfiss > 1 or TypeFond == 'FERME'):
         Ptinit = Fissmult[2 * (Numfiss - 1)]

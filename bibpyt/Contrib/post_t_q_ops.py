@@ -81,7 +81,7 @@ def InterpolFondFiss(s0, Coorfo):
 # Output : VDIRVNORi = local base at the point considered (6 coordinated )
 
 def InterpolBaseFiss(s0, Basefo, Coorfo):
-    n = len(Coorfo) / 4
+    n = len(Coorfo) // 4
     if (s0 < Coorfo[3]):
         VDIRVNORi = Basefo[0:6]
         return VDIRVNORi
@@ -800,7 +800,7 @@ def get_coor_xfem(args, FISSURE, ndim):
 
 #     Traitement du cas fond multiple
     Fissmult = FISSURE.sdj.FONDMULT.get()
-    Nbfiss = len(Fissmult) / 2
+    Nbfiss = len(Fissmult) // 2
     Numfiss = args['NUME_FOND']
     if Numfiss <= Nbfiss and (Nbfiss > 1 or TypeFond == 'FERME'):
         Ptinit = Fissmult[2 * (Numfiss - 1)]
@@ -825,7 +825,7 @@ def get_coor_xfem(args, FISSURE, ndim):
     else:
         Coorfo = Listfo
         Vpropa = Basefo
-        Nnoff = len(Coorfo) / 4
+        Nnoff = len(Coorfo) // 4
 
     return (Coorfo, Vpropa, Nnoff)
 
@@ -1895,8 +1895,8 @@ def post_t_q_ops(self, MODELISATION, FOND_FISS, FISSURE, MATER, RESULTAT,
     Tempe3D = False
 
     if e == 0.0 and nu == 0.0:
-        list_oper = valk[: len(valk) / 2]
-        list_fonc = valk[len(valk) / 2:]
+        list_oper = valk[: len(valk) // 2]
+        list_fonc = valk[len(valk) // 2:]
 #     valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et
 #     et les noms des concepts de type [fonction] (ecrits derriere les operandes) dans une
 #     une seconde partie
