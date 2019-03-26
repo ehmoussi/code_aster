@@ -27,7 +27,7 @@ MO=AFFE_MODELE(MAILLAGE=MA,
                       )
 
 INSTANTS = code_aster.TimeStepManager()
-INSTANTS.setTimeList( range(6) )
+INSTANTS.setTimeList( list(range(6)) )
 INSTANTS.build()
 
 

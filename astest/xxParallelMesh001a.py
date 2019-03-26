@@ -9,8 +9,8 @@ code_aster.init()
 test = code_aster.TestCase()
 
 rank = code_aster.getMPIRank()
-print "Nb procs", code_aster.getMPINumberOfProcs()
-print "Rank", code_aster.getMPIRank()
+print("Nb procs", code_aster.getMPINumberOfProcs())
+print("Rank", code_aster.getMPIRank())
 
 pMesh2 = code_aster.ParallelMesh()
 pMesh2.readMedFile("xxParallelMesh001a")

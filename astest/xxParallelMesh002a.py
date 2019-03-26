@@ -88,11 +88,11 @@ if False:
         A.view(v)
 
         rank=A.getComm().getRank()
-        print 'rank=',rank
+        print('rank=',rank)
         rs, re = A.getOwnershipRange()
         ce,_ = A.getSize()
-        rows = N.array(range(rs, re), dtype=petsc4py.PETSc.IntType)
-        cols = N.array(range(0, ce), dtype=petsc4py.PETSc.IntType)
+        rows = N.array(list(range(rs, re)), dtype=petsc4py.PETSc.IntType)
+        cols = N.array(list(range(0, ce)), dtype=petsc4py.PETSc.IntType)
         rows = petsc4py.PETSc.IS().createGeneral(rows, comm=A.getComm())
         cols = petsc4py.PETSc.IS().createGeneral(cols, comm=A.getComm())
         (S,) = A.getSubMatrices(rows, cols)
