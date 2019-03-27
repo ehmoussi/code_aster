@@ -39,7 +39,7 @@ def configure(self):
 
     intel.configure(self)
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20181015')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190318')
     opts.with_prog_salome = True
     opts.with_prog_europlexus = True
 
@@ -86,3 +86,5 @@ def configure(self):
     opts.enable_mfront = True
 
     opts.enable_petsc = False
+    # sphinx with python3 not available
+    opts.enable_doc = False
