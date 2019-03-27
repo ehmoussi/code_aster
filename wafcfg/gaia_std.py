@@ -18,11 +18,11 @@
 # --------------------------------------------------------------------
 
 """
-Configuration for Scibian 9
+Configuration for Gaia
 
 . $HOME/dev/codeaster/devtools/etc/env_unstable.sh
 
-waf configure --use-config=scibian9_std --prefix=../install/std
+waf configure --use-config=gaia_std --prefix=../install/std
 waf install -p
 """
 
@@ -37,7 +37,7 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20190122')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190320')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env['ADDMEM'] = 850
@@ -77,3 +77,5 @@ def configure(self):
     opts.enable_mfront = True
 
     opts.enable_petsc = False
+    # sphinx with python3 not available
+    opts.enable_doc = False
