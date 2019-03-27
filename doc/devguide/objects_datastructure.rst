@@ -227,15 +227,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ElementaryCharacteristics` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.ElementaryCharacteristics
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.ElementaryMatrixDisplacementComplex` object
 ================================================================================
 

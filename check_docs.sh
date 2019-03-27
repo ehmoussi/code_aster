@@ -2,7 +2,7 @@
 
 _usage()
 {
-    echo "Check that the documentation can be be built."
+    echo "Check that the documentation can be built."
     echo
     echo "'waf install' or 'waf install_debug' must have been run just before."
     echo

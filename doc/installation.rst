@@ -23,7 +23,7 @@ source folder (``cd $HOME/dev/codeaster/src``).
 Required dependencies
 *********************
 
-- Python 2.7 or later with development files (under Debian python-dev).
+- Python 3.5 or later with development files (under Debian python-dev).
 
 - For the other third party prerequisites for the development version,
   please read the `Prerequisites page on the wiki
