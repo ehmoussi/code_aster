@@ -40,7 +40,7 @@ class NOM_CHAM_INTO:  #COMMUN#
                                  tr("Efforts généralisés aux noeuds par élément"), ),
             "EFGE_NOEU":        ( ("lin", "nonlin", "dyna"),
                                  tr("Efforts généralisés aux noeuds"), ),
-            "SIEF_ELGA":        ( ("lin",),
+            "SIEF_ELGA":        ( ("lin", ),
                                  tr("Contraintes et efforts aux points de Gauss"), ),
             "SIEF_ELNO":        ( ("lin", "nonlin", "dyna"),
                                  tr("Contraintes et efforts aux noeuds par élément"), ),
@@ -60,6 +60,8 @@ class NOM_CHAM_INTO:  #COMMUN#
                                  tr("Contraintes aux noeuds pour les éléments de poutre"), ),
             "SIRO_ELEM":        ( ("lin", "nonlin", "dyna"),
                                  tr("Contraintes de rosette par élément"), ),
+            "STRX_ELGA":        ( ("lin", ),
+                                 tr("Efforts généralisés à partir des déplacements en linéaire aux points de Gauss"), ),
         }
         d['DEFORMATION'] = {
             "DEGE_ELGA":        ( ("lin", "nonlin", "dyna"),
@@ -305,8 +307,6 @@ class NOM_CHAM_INTO:  #COMMUN#
                                  tr("Déplacements aux noeuds"), ),
             "DEPL_ABSOLU":      ( (),
                                  tr("Déplacements absolus aux noeuds"), ),
-            "STRX_ELGA":        ( (),
-                                 tr("Efforts généralisés à partir des déplacements en linéaire aux points de Gauss"), ),
             "TEMP":             ( (),
                                  tr("Température aux noeuds"), ),
             "VITE":             ( (),

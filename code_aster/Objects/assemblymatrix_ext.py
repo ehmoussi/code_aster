@@ -81,8 +81,6 @@ class ExtendedAssemblyMatrixDisplacementDouble(object):
         """
         import numpy as NP
         from SD.sd_stoc_morse import sd_stoc_morse
-        if not self.accessible():
-            raise AsException("Erreur dans matr_asse.EXTR_MATR en PAR_LOT='OUI'")
         refa = NP.array(self.sdj.REFA.get())
         ma = refa[0]
         nu = refa[1]
@@ -182,8 +180,6 @@ class ExtendedAssemblyMatrixDisplacementComplex(object):
         """
         import numpy as NP
         from SD.sd_stoc_morse import sd_stoc_morse
-        if not self.accessible():
-            raise AsException("Erreur dans matr_asse.EXTR_MATR en PAR_LOT='OUI'")
         refa = NP.array(self.sdj.REFA.get())
         ma = refa[0]
         nu = refa[1]

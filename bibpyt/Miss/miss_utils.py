@@ -99,7 +99,7 @@ class MISS_PARAMETER(object):
             self._keywords.update(mcfact)
         # autres mots-clés
         others = list(kwargs.keys())
-        if kwargs.has_key('PARAMETRE'):
+        if 'PARAMETRE' in kwargs:
             others.remove('PARAMETRE')
         for key in others + list(self._defaults.keys()):
             val = kwargs.get(key)
@@ -286,15 +286,15 @@ def convert_double(fich1, fich2):
     with open(fich1, "r") as f:
         txt = f.read()
     # see python doc (module re)
-    expr = re.compile("([\-\+]?\d+(\.\d*)?|\.\d+)([eEdD])([\-\+]?\d+)?")
-    new = expr.sub("\\1E\\4", txt)
+    expr = re.compile(r"([\-\+]?\d+(\.\d*)?|\.\d+)([eEdD])([\-\+]?\d+)?")
+    new = expr.sub(r"\\1E\\4", txt)
     with open(fich2, "w") as f:
         f.write(new)
 
 
 def double(string):
     """Convertit la chaine en réelle (accepte le D comme exposant)"""
-    string = re.sub('([0-9]+)([\-\+][0-9])', '\\1e\\2', string)
+    string = re.sub(r'([0-9]+)([\-\+][0-9])', '\\1e\\2', string)
     return float(string.replace("D", "e"))
 
 

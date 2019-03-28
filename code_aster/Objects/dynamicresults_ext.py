@@ -34,24 +34,24 @@ from ..Utilities import injector
 class ExtendedTransientGeneralizedResultsContainer(object):
     cata_sdj = "SD.sd_dyna_gene.sd_dyna_gene"
 
-    def __check_input_inoli(self, inoli):
+    def _check_input_inoli(self, inoli):
         if (inoli==-1) :
             print("Nonlinearity index not specified, by default the first nonlinearity will be considered.")
             inoli = 1
-        nbnoli = self.__nb_nonl()
+        nbnoli = self._nb_nonl()
         if nbnoli == 0 :
             raise AsException("Linear calculation, no information can be retrieved.")
         if( inoli <= 0) or (inoli > nbnoli):
             raise AsException("The nonlinearity index should be a comprised between 1 and %d, the total number of nonlinearities."%(nbnoli))
         return inoli
 
-    def __nb_nonl (self):
+    def _nb_nonl(self):
         desc = self.sdj.DESC.get()
         nbnoli = desc[2]
         return nbnoli
 
-    def __print_vint_description(self, inoli):
-        nltype = self.__type_nonl()[inoli-1].strip()
+    def _print_vint_description(self, inoli):
+        nltype = self._type_nonl()[inoli-1].strip()
         vintDescription = {'DIS_CHOC'      : ['F_NORMAL', 'F_TANGE1', 'F_TANGE1',
                                               'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1',
                                               'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2',
@@ -100,7 +100,7 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         print("-"*104)
         return vintDesc
 
-    def __type_nonl (self):
+    def _type_nonl(self):
         Int2StrTypes = {1 : 'DIS_CHOC',
                         2 : 'FLAMBAGE',
                         3 : 'ANTI_SISM',
@@ -121,9 +121,9 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.FORCE_NORMALE() en PAR_LOT='OUI'")
 
-        inoli = self.__check_input_inoli(inoli)
+        inoli = self._check_input_inoli(inoli)
 
-        nltypes = self.__type_nonl()
+        nltypes = self._type_nonl()
         if not(nltypes[inoli-1] in ('DIS_CHOC', 'FLAMBAGE')) :
             dummy = self.INFO_NONL()
             raise AsException("The chosen nonlinearity index (%d) does not correspond to a DIS_CHOC or FLAMBAGE nonlinearity\nThese are the only nonlinearities that save the local normal force."%(inoli))
@@ -141,12 +141,12 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.INFO_NONL() en PAR_LOT='OUI'")
 
-        nbnoli  = self.__nb_nonl()
+        nbnoli  = self._nb_nonl()
         if nbnoli == 0 :
             print("Linear calculation, no nonlinearities used or can be printed.")
             return None
 
-        nltypes = self.__type_nonl()
+        nltypes = self._type_nonl()
         inti    = self.sdj.sd_nl.INTI.get()
 
         print("-"*104)
@@ -191,7 +191,7 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.VARI_INTERNE() en PAR_LOT='OUI'")
 
-        inoli = self.__check_input_inoli(inoli)
+        inoli = self._check_input_inoli(inoli)
         i = inoli-1
 
         vindx  = self.sdj.sd_nl.VIND.get()
@@ -214,6 +214,6 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         import numpy as np
         output = np.reshape(output,(nbsaves, finish-start))
 
-        if describe : dummy = self.__print_vint_description(inoli)
+        if describe : dummy = self._print_vint_description(inoli)
 
         return output

@@ -238,7 +238,7 @@ def calc_gp_ops(self, **args):
 
 # mult=Coefficient multiplicatif suivant la symetrie du probleme
     mult = 1.
-    if args.has_key('TRANCHE_2D'):
+    if 'TRANCHE_2D' in args:
         TRANCHE_2D = args['TRANCHE_2D']
         if ndim != 2:
             UTMESS('F', 'RUPTURE1_19', ['TRANCHE_2D', '2D'])
@@ -300,7 +300,7 @@ def calc_gp_ops(self, **args):
 
 # Definition de la sortie facultative GP_MAX
     GPMAX = None
-    if args.has_key('GPMAX'):
+    if 'GPMAX' in args:
         GPMAX = args['GPMAX']
 # Creation des colonnes de la table de sortie gpmax
         tabinstmax = []

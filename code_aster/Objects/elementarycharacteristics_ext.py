@@ -29,7 +29,7 @@ from ..Utilities import injector
 
 
 @injector(ElementaryCharacteristics)
-class ElementaryCharacteristics(object):
+class ExtendedElementaryCharacteristics(object):
     cata_sdj = "SD.sd_cara_elem.sd_cara_elem"
 
     def __getinitargs__(self):

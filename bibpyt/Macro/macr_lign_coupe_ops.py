@@ -663,7 +663,7 @@ def crea_mail_lig_coup(dimension, lignes, groups, arcs):
 
 
 #
-def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None, 
+def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
                         NOM_CHAM=None, MODELE=None, **args):
     """
        Ecriture de la macro MACR_LIGN_COUPE
@@ -707,17 +707,17 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     l_mode_meca_sans_modele = False
 
     if RESULTAT != None:
-        if args.has_key('NUME_ORDRE') and args['NUME_ORDRE'] != None:
+        if 'NUME_ORDRE' in args:
             mcORDR['NUME_ORDRE'] = args['NUME_ORDRE']
-        elif args.has_key('NUME_MODE') and args['NUME_MODE'] != None:
+        elif 'NUME_MODE' in args:
             mcORDR['NUME_MODE'] = args['NUME_MODE']
-        elif args.has_key('LIST_ORDRE') and args['LIST_ORDRE'] != None:
+        elif 'LIST_ORDRE' in args:
             mcORDR['LIST_ORDRE'] = args['LIST_ORDRE']
-        elif args.has_key('INST') and args['INST'] != None:
+        elif 'INST' in args:
             mcORDR['INST'] = args['INST']
             mcORDR['CRITERE'] = args['CRITERE']
             mcORDR['PRECISION'] = args['PRECISION']
-        elif args.has_key('LIST_INST') and args['LIST_INST'] != None:
+        elif 'LIST_INST' in args:
             mcORDR['LIST_INST'] = args['LIST_INST']
             mcORDR['CRITERE'] = args['CRITERE']
             mcORDR['PRECISION'] = args['PRECISION']
@@ -789,7 +789,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
             elif NOM_CHAM[:4] == 'SIEF':
                 TYPE_RESU = 'EVOL_NOLI'
         else:
-            assert 0, 'grandeur imprevue : ' + nomgf
+            assert 0, 'grandeur imprevue : ' + nomgd
 
         # création d'un concept résultat à partir du champ CHAM_GD
         __resuch = CREA_RESU(OPERATION='AFFE',
@@ -928,7 +928,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     motscles = {}
     motscles.update(mcORDR)
     motscles['VIS_A_VIS'] = []
-    if args.has_key('VIS_A_VIS') and args['VIS_A_VIS'] != None:
+    if 'VIS_A_VIS' in args:
         for v in args['VIS_A_VIS']:
             if v['GROUP_MA_1'] != None:
                 motscles['VIS_A_VIS'].append(
