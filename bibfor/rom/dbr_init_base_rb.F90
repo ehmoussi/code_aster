@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_equa = 0, nb_node = 0, nb_mode = 0
+    integer :: nb_equa = 0, nb_node = 0, nb_mode_maxi = 0
     character(len=8)  :: model = ' ', mesh = ' ', matr_name = ' '
     character(len=24) :: field_refe
     character(len=24) :: field_name = ' '
@@ -62,8 +62,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get "representative" matrix
 !
-    nb_mode   = ds_para_rb%nb_mode_maxi
-    matr_name = ds_para_rb%multipara%matr_name(1)
+    matr_name    = ds_para_rb%multipara%matr_name(1)
 !
 ! - Get information about model
 !
@@ -83,6 +82,13 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     field_name = 'DEPL'
     field_refe = ds_para_rb%solveDOM%syst_solu
 !
+! - Nomber of mode maxi given by user
+!    
+    nb_mode_maxi = ds_para_rb%nb_mode_maxi
+    if (ds_para_rb%l_base_ifs) then 
+        nb_mode_maxi = 3*nb_mode_maxi
+    end if 
+!
 ! - Save in empiric base
 !
     ds_empi%base         = base
@@ -90,6 +96,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     ds_empi%axe_line     = ' '
     ds_empi%surf_num     = ' '
     ds_empi%nb_mode      = 0
+    ds_empi%nb_mode_maxi = nb_mode_maxi
     ds_empi%ds_mode%field_name   = field_name
     ds_empi%ds_mode%field_refe   = field_refe
     ds_empi%ds_mode%mesh         = mesh
@@ -99,6 +106,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Create output datastructure
 !
-    call rscrsd('G', base, 'MODE_EMPI', nb_mode)
+    call rscrsd('G', base, 'MODE_EMPI', nb_mode_maxi)
 !
 end subroutine

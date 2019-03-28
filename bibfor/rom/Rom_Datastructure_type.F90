@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -95,6 +95,8 @@ implicit none
         character(len=24)       :: surf_num = ' '
 ! ----- Number of modes in base
         integer                 :: nb_mode = 0
+! ----- Number of modes max 
+        integer                 :: nb_mode_maxi = 0
 ! ----- Number of snapshots when created base
         integer                 :: nb_snap = 0
 ! ----- Datastructure for lineic base numbering
@@ -194,8 +196,14 @@ implicit none
         character(len=8)        :: vect_name = ' '
         character(len=1)        :: vect_type = ' '
         type(ROM_DS_MultiCoef)  :: vect_coef
+! ----- Products matrix by current mode
+        character(len=19)       :: matr_mode_curr(8) = ' '
 ! ----- Products matrix by mode
-        character(len=24)       :: prod_mode(8) = ' '
+        character(len=24)       :: prod_matr_mode(8) = ' '
+! ----- Reduced Vector
+        character(len=24)       :: vect_redu = ' '
+! ----- Reduced matrix
+        character(len=24)       :: matr_redu(8) = ' '
 ! ----- Variation of coefficients: number (by mode)
         integer                 :: nb_vari_coef = 0
 ! ----- Variation of coefficients: type (DIRECT, ALEATOIRE, etc. )
@@ -205,6 +213,8 @@ implicit none
         type(ROM_DS_VariPara)   :: vari_para(5)
 ! ----- Evaluation of coefficients
         type(ROM_DS_EvalCoef)   :: evalcoef
+! ----- Size of system
+        integer                 :: nb_equa = 0
     end type ROM_DS_MultiPara
 !
 ! - Parameters to solve systems
@@ -277,7 +287,7 @@ implicit none
 ! ----- List of reduced components
         character(len=24)       :: coef_redu = ' '
 ! ----- Residual = ' '
-        character(len=24)       :: vect_2mbr_init = ' '
+        character(len=24)       :: vect_2mbr = ' '
         character(len=1)        :: resi_type = ' '
         character(len=24)       :: resi_vect = ' '
         real(kind=8), pointer   :: resi_norm(:) => null()
@@ -292,6 +302,10 @@ implicit none
         type(ROM_DS_MultiPara)  :: multipara
 ! ----- Maximum number of modes
         integer                 :: nb_mode_maxi = 0
+! ----- If we stabilise the basis for IFS transient problem
+        aster_logical           :: l_base_ifs   = ASTER_FALSE
+! ----- Tolerance 
+        real(kind=8)            :: tole_glouton = 0.d0
     end type ROM_DS_ParaDBR_RB
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (TRUNCATION)

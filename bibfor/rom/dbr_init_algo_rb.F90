@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_vari_coef, nb_mode
+    integer :: nb_vari_coef, nb_mode_maxi
     character(len=1) :: syst_matr_type, syst_2mbr_type, syst_type
 !
 ! --------------------------------------------------------------------------------------------------
@@ -59,12 +59,13 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! - Get parameters
 !
-    nb_mode = ds_para_rb%nb_mode_maxi
+    nb_mode_maxi = ds_para_rb%nb_mode_maxi
 !
 ! - Evaluate type of system
 !
     call romMultiParaSystEvalType(ds_para_rb%multipara,&
                                   syst_matr_type, syst_2mbr_type, syst_type)
+    ds_para_rb%resi_type  = syst_type
 !
 ! - Create objects to solve system (DOM)
 !
@@ -75,17 +76,17 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! - Create objects to solve system (ROM)
 !
     call romSolveROMSystCreate(syst_matr_type, syst_2mbr_type, syst_type,&
-                               nb_mode,&
+                               nb_mode_maxi,&
                                ds_para_rb%solveROM)
 !
 ! - Initializations for multiparametric problems
 !
-    call romMultiParaInit(ds_para_rb%multipara)
+    call romMultiParaInit(ds_para_rb%multipara, nb_mode_maxi)
 !
 ! - Init algorithm
 !
     nb_vari_coef = ds_para_rb%multipara%nb_vari_coef
-    call romGreedyAlgoInit(syst_type , nb_mode, nb_vari_coef,&
+    call romGreedyAlgoInit(nb_mode_maxi, nb_vari_coef,&
                            ds_para_rb%solveDOM%vect_zero, ds_para_rb)
 !
 end subroutine

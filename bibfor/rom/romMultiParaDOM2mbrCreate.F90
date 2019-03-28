@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romMultiParaDOM2mbrCreate(ds_multipara, i_coef, syst_2mbr_type, syst_2mbr)
 !
 use Rom_Datastructure_type
@@ -28,13 +29,12 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
 #include "asterfort/infniv.h"
+#include "asterfort/vtcmbl.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-    integer, intent(in) :: i_coef
-    character(len=1), intent(in) :: syst_2mbr_type
-    character(len=19), intent(in) :: syst_2mbr
+type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+integer, intent(in) :: i_coef
+character(len=1), intent(in) :: syst_2mbr_type
+character(len=19), intent(in) :: syst_2mbr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,14 +52,14 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer, parameter :: nb_matr_maxi = 8
-    integer :: i_equa, nb_matr, nb_equa
-    character(len=8) :: vect_name
-    character(len=1) :: vect_type
-    real(kind=8), pointer :: v_syst_vect_r(:) => null()
-    complex(kind=8), pointer :: v_syst_vect_c(:) => null()
-    real(kind=8), pointer :: v_vect_r(:) => null()
-    complex(kind=8), pointer :: v_vect_c(:) => null()
+    integer, parameter :: nb_vect_maxi = 1
+    character(len=1) :: type_comb(nb_vect_maxi)
+    real(kind=8) :: coef_comb(2*nb_vect_maxi)
+    character(len=24) :: vect_comb(nb_vect_maxi)
+    character(len=1)  :: type_vect_comb(nb_vect_maxi)
+    character(len=8)  :: vect_name
+    integer :: i_coef_comb, i_vect, nb_vect
+    aster_logical :: l_coefv_cplx
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,55 +70,36 @@ implicit none
 !
 ! - Initializations
 !
-    nb_matr        = ds_multipara%nb_matr
-    vect_name      = ds_multipara%vect_name
-    vect_type      = ds_multipara%vect_type
-    ASSERT(nb_matr .le. nb_matr_maxi)
+    nb_vect           = 1
+    vect_name         = ds_multipara%vect_name
+    !vect_type        = ds_multipara%vect_type
+    ASSERT(nb_vect .le. nb_vect_maxi)
+    type_comb(:)      = ''
+    vect_comb(:)      = ''
+    coef_comb(:)      = 0.d0
+    type_vect_comb(:) = ''
 !
 ! - Compute second member
 !
-    call dismoi('NB_EQUA', vect_name, 'CHAM_NO' , repi = nb_equa)
-    if (vect_type .eq. 'R') then
-        call jeveuo(vect_name(1:8)//'           .VALE', 'L', vr = v_vect_r)
-        if (syst_2mbr_type .eq. 'R') then
-            call jeveuo(syst_2mbr(1:19)//'.VALE', 'E', vr = v_syst_vect_r)
-            ASSERT(ds_multipara%vect_coef%l_real)
-            do i_equa = 1, nb_equa
-                v_syst_vect_r(i_equa) = ds_multipara%vect_coef%coef_real(i_coef) *&
-                                        v_vect_r(i_equa) 
-            end do
-        elseif (syst_2mbr_type .eq. 'C') then
-            call jeveuo(syst_2mbr(1:19)//'.VALE', 'E', vc = v_syst_vect_c)
-            do i_equa = 1, nb_equa
-                if (ds_multipara%vect_coef%l_real) then
-                    v_syst_vect_c(i_equa) = ds_multipara%vect_coef%coef_real(i_coef) *&
-                                            v_vect_r(i_equa)
-                else
-                    v_syst_vect_c(i_equa) = ds_multipara%vect_coef%coef_cplx(i_coef) *&
-                                            v_vect_r(i_equa)
-                endif
-            end do
+    i_coef_comb = 0
+    do i_vect = 1, nb_vect
+        vect_name              = ds_multipara%vect_name
+        vect_comb(i_vect)      = vect_name(1:8)//'           .VALE'
+        type_vect_comb(i_vect) = ds_multipara%vect_type
+        l_coefv_cplx           = ds_multipara%vect_coef%l_cplx
+        if (l_coefv_cplx) then
+            type_comb(i_vect) = 'C'
+            i_coef_comb = i_coef_comb +1
+            coef_comb(i_coef_comb) = real(ds_multipara%vect_coef%coef_cplx(i_coef))
+            i_coef_comb = i_coef_comb +1
+            coef_comb(i_coef_comb) = dimag(ds_multipara%vect_coef%coef_cplx(i_coef))
         else
-            ASSERT(.false.)
+            type_comb(i_vect) = 'R'
+            i_coef_comb = i_coef_comb +1
+            coef_comb(i_coef_comb) = ds_multipara%vect_coef%coef_real(i_coef)
         endif
-    else
-        call jeveuo(vect_name(1:8)//'           .VALE', 'L', vc = v_vect_c)
-        if (syst_2mbr_type .eq. 'R') then
-            ASSERT(.false.)
-        elseif (syst_2mbr_type .eq. 'C') then
-            call jeveuo(syst_2mbr(1:19)//'.VALE', 'E', vc = v_syst_vect_c)
-            do i_equa = 1, nb_equa
-                if (ds_multipara%vect_coef%l_real) then
-                    v_syst_vect_c(i_equa) = ds_multipara%vect_coef%coef_real(i_coef) *&
-                                            v_vect_r(i_equa)
-                else
-                    v_syst_vect_c(i_equa) = ds_multipara%vect_coef%coef_cplx(i_coef) *&
-                                            v_vect_r(i_equa)
-                endif
-            end do
-        else
-            ASSERT(.false.)
-        endif
-    endif
+    end do
+    call vtcmbl(nb_vect, type_comb, coef_comb, type_vect_comb, vect_comb,&
+                syst_2mbr_type, syst_2mbr//'.VALE')
 !
 end subroutine

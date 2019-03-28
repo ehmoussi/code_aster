@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ type(ROM_DS_ParaDBR_RB), intent(out) :: ds_para_rb
     ds_para_rb%coef_redu      = '&&OP0053.COEF_REDU'
     ds_para_rb%solver         = '&&OP0053.SOLVER'
     ds_para_rb%resi_vect      = '&&OP0053.RESI_VECT'
-    ds_para_rb%vect_2mbr_init = '&&OP0053.2MBR_INIT'
+    ds_para_rb%vect_2mbr      = '&&OP0053.2MBR_VECT'
     ds_para_rb%solveDOM       = ds_solveDOM
     ds_para_rb%solveROM       = ds_solveROM
     ds_para_rb%multipara      = ds_multipara

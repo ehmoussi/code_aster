@@ -70,6 +70,8 @@ cata_msg = {
 
    29 : _("""Le nombre de coefficients pour faire varier les fonctions n'est pas le même pour tous les paramètres."""),
 
+   30 : _("""La stabilisation ne peut pas s'appliquer sur les champs donnés car il ne contiennent pas les degrés de liberté PRES et PHI."""),
+
    31 : _("""Le coefficient devant le second membre est une fonction et il n'y a aucune donnée sur la variation de cette fonction."""),
 
    32 : _("""Initialisation des coefficients pour le problème multi-paramétrique."""),
@@ -113,10 +115,6 @@ cata_msg = {
    51 : _("""Calcul des coefficients réduits pour le paramètre %(i1)d."""),
 
    52 : _("""Coefficient réduit pour le mode %(i1)d et le paramètre %(i2)d: (%(r1)19.12e,%(r2)19.12e)."""),
-
-   53 : _("""Évaluation du résidu initial."""),
-
-   54 : _("""Norme du résidu initial: %(r1)19.12e."""),
 
    55 : _("""Création du nouveau profil de numérotation du champ tronqué."""),
 

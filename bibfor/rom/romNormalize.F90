@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romNormalize(vect_type, vect_vale, nb_equa)
 !
 use Rom_Datastructure_type
@@ -25,13 +26,12 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "blas/zdotc.h"
+#include "blas/ddot.h"
 #include "asterfort/jeveuo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=1), intent(in) :: vect_type
-    character(len=19), intent(in) :: vect_vale
-    integer, intent(in) :: nb_equa
+character(len=1), intent(in) :: vect_type
+character(len=19), intent(in) :: vect_vale
+integer, intent(in) :: nb_equa
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,14 +48,20 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     complex(kind=8), pointer :: v_valec(:) => null()
+    real(kind=8), pointer :: v_valer(:) => null()
     complex(kind=8) :: normc
+    real(kind=8) :: normr
 !
 ! --------------------------------------------------------------------------------------------------
 !
     if (vect_type .eq. 'C') then
         call jeveuo(vect_vale(1:19)//'.VALE', 'E', vc = v_valec)
         normc = zdotc(nb_equa, v_valec, 1, v_valec, 1)
-        v_valec(1:nb_equa) = v_valec(1:nb_equa) / normc
+        v_valec(1:nb_equa) = v_valec(1:nb_equa) / sqrt(normc)
+    else if (vect_type .eq. 'R') then
+        call jeveuo(vect_vale(1:19)//'.VALE', 'E', vr = v_valer)
+        normr = ddot(nb_equa, v_valer, 1, v_valer, 1)
+        v_valer(1:nb_equa) = v_valer(1:nb_equa) / sqrt(normr)
     else
         ASSERT(.false.)
     endif

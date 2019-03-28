@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romMultiParaRead(ds_multipara)
 !
 use Rom_Datastructure_type
@@ -36,9 +37,7 @@ implicit none
 #include "asterfort/romMultiCoefRead.h"
 #include "asterfort/romVariParaRead.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
+type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,7 +52,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_matr = 0
+    integer :: nb_matr = 0, nb_equa = 0
     integer :: i_matr, i_vect, i_vari_para, nbret, nb_vari_coef, nb_vari_para
     character(len=1)  :: matr_type, vect_type, ktyp, matr_elem_type
     character(len=16) :: keywfact, type_vari_coef
@@ -98,7 +97,9 @@ implicit none
         ds_multipara%matr_type(i_matr) = matr_elem_type
         ds_multipara%matr_coef(i_matr) = ds_multicoef
     end do
-    ds_multipara%nb_matr      = nb_matr
+    ds_multipara%nb_matr = nb_matr
+    call dismoi('NB_EQUA' , ds_multipara%matr_name(1), 'MATR_ASSE', repi = nb_equa)
+    ds_multipara%nb_equa = nb_equa
 !
 ! - Get informations about second member
 !
