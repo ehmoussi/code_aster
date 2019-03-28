@@ -42,7 +42,7 @@ def info_fonction_ops(self, INFO, **args):
     # type de traitement
 
     #
-    if args.has_key('MAX'):
+    if 'MAX' in args:
         MAX = args['MAX']
         # liste des t_fonction
         l_cofonc = MAX['FONCTION']
@@ -147,7 +147,7 @@ def info_fonction_ops(self, INFO, **args):
         C_out = CREA_TABLE(**dprod)
 
     #
-    if args.has_key('ECART_TYPE'):
+    if 'ECART_TYPE' in args:
         ECART_TYPE = args['ECART_TYPE']
         __ff = ECART_TYPE['FONCTION'].convert()
         if ECART_TYPE['INST_INIT'] != None:
@@ -185,7 +185,7 @@ def info_fonction_ops(self, INFO, **args):
         )
 
     #
-    if args.has_key('RMS'):
+    if 'RMS' in args:
         RMS = list(args['RMS'])
         sigm = []
         tmpi = []
@@ -225,7 +225,7 @@ def info_fonction_ops(self, INFO, **args):
                            )
 
     #
-    if args.has_key('NORME'):
+    if 'NORME' in args:
         NORME = args['NORME']
         __ff = NORME['FONCTION'].convert()
         norme = []
@@ -237,7 +237,7 @@ def info_fonction_ops(self, INFO, **args):
                            )
 
     #
-    if args.has_key('NOCI_SEISME'):
+    if 'NOCI_SEISME' in args:
         NOCI_SEISME = args['NOCI_SEISME']
         l_table = []
         if NOCI_SEISME['SPEC_OSCI'] != None:

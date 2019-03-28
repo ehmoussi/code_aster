@@ -33,33 +33,32 @@ from ..Utilities import injector
 class ExtendedTransientGeneralizedResultsContainer(object):
     cata_sdj = "SD.sd_dyna_gene.sd_dyna_gene"
 
-    def __check_input_inoli(self, inoli):
+    def _check_input_inoli(self, inoli):
         if (inoli==-1) :
             print("Nonlinearity index not specified, by default the first nonlinearity will be considered.")
             inoli = 1
-        nbnoli = self.__nb_nonl()
+        nbnoli = self._nb_nonl()
         if nbnoli == 0 :
-            raise AsException("Linear calculation, no information can be retrieved.")
+            raise ValueError("Linear calculation, no information can be retrieved.")
         if( inoli <= 0) or (inoli > nbnoli):
-            raise AsException("The nonlinearity index should be a comprised between 1 and %d, the total number of nonlinearities."%(nbnoli))
+            raise ValueError("The nonlinearity index should be a comprised "
+                             "between 1 and %d, the total number of "
+                             "nonlinearities." % nbnoli)
         return inoli
 
     def FORCE_RELATION (self, inoli=-1):
         """ Returns a 1D numpy array giving the evolution of the forces defined
             as displacement or velocity relationships"""
+        inoli = self._check_input_inoli(inoli)
 
-        if not self.accessible():
-            raise AsException("Erreur dans tran_gene.FORCE_RELATION() en PAR_LOT='OUI'")
-
-        inoli = self.__check_input_inoli(inoli)
-
-        nltypes = self.__type_nonl()
+        nltypes = self._type_nonl()
         if not(nltypes[inoli-1] in ('RELA_EFFO_DEPL', 'RELA_EFFO_VITE')) :
             dummy = self.INFO_NONL()
-            raise AsException("The chosen nonlinearity index (%d) does not"+
-                              " correspond to a RELA_EFFO_DEPL or RELA_EFFO_VITE'"+
-                              " nonlinearity\nThese are the only nonlinearities that"+
-                              " calculate and save a relationship defined force."%(inoli))
+            raise TypeError("The chosen nonlinearity index (%d) does not"
+                            " correspond to a RELA_EFFO_DEPL or RELA_EFFO_VITE'"
+                            " nonlinearity\nThese are the only nonlinearities that"
+                            " calculate and save a relationship defined force."
+                            % inoli)
 
 
         vint = self.VARI_INTERNE(inoli, describe=False)

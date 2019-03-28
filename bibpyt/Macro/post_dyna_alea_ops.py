@@ -94,7 +94,7 @@ def post_dyna_alea_ops(self, INFO, **args):
 #  ------------------------------------------------------------------
 #  OPTION FRAGILITE
 # ------------------------------------------------------------------
-    if args.has_key('FRAGILITE'):
+    if 'FRAGILITE' in args:
         from Utilitai.optimize import fmin
         from Utilitai.stats import normcdf, linregress
         FRAGILITE = args['FRAGILITE'][0]
@@ -166,7 +166,7 @@ def post_dyna_alea_ops(self, INFO, **args):
 
         # table sortie
         mcfact = []
-        if args.has_key('TITRE'):
+        if 'TITRE' in args:
             mcfact.append(_F(PARA='TITRE', LISTE_K=args['TITRE']))
 
         mcfact.append(_F(PARA='AM', LISTE_R=xopt[0]))
@@ -244,7 +244,7 @@ def post_dyna_alea_ops(self, INFO, **args):
 #  ------------------------------------------------------------------
 #  OPTION INTESPEC
 # ------------------------------------------------------------------
-    if args.has_key('INTERSPECTRE'):
+    if 'INTERSPECTRE' in args:
 
         INTERSPECTRE = args['INTERSPECTRE']
 

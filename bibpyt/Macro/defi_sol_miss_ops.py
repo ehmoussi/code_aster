@@ -362,7 +362,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
                     couche["EPAIS"] = ep_ss_couche
                     couche["RECEPTEUR"] = "OUI"
                     couche["SOURCE"] = "NON"
-                    if nc == nb_recept/2:
+                    if nc == nb_recept // 2:
                        couche["SOURCE"] = "OUI"
                     l_couche.append(couche)
                     idc += 1
@@ -489,9 +489,8 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         id_mate = id_mate - 1
         couche["NUME_COUCHE"] = idc
         couche.update(l_mate[id_mate])
-        if couche.has_key("SUBSTRATUM"):
-            if couche["SUBSTRATUM"] is None:
-                del couche["SUBSTRATUM"]
+        if "SUBSTRATUM" in couche:
+            del couche["SUBSTRATUM"]
         if couche["EPAIS"] is None:
             couche["EPAIS"] = 0.
         tab.append(couche)

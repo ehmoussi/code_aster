@@ -79,10 +79,10 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     MasquerAlarme('JEVEUX_57')
 
     # Ligne de commande d'Europlexus
-    EXEC = args['LOGICIEL'] if args.has_key('LOGICIEL') else None
+    EXEC = args['LOGICIEL'] if 'LOGICIEL' in args else None
 
     # Version d'Europlexus
-    VERS = args['VERSION_EUROPLEXUS'] if args.has_key('VERSION_EUROPLEXUS') else None
+    VERS = args['VERSION_EUROPLEXUS'] if 'VERSION_EUROPLEXUS' in args else None
 
     # Chemin du repertoire REPE_OUT de l'execution courante d'Aster
     REPE_OUT = os.path.join(os.getcwd(), 'REPE_OUT')
@@ -98,7 +98,6 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     global resu
 
     # On récupère ce nom pour le nommage des fichiers dans REPE_OUT.
-    #nom_resu = self.sd.get_name()
     nom_resu = self.name
 
     #
@@ -566,7 +565,7 @@ class EUROPLEXUS:
 
         directive = 'ECRITURE'
         # blocs d'écriture de tous les noeuds et toutes les mailles
-        [bloc_poin, bloc_elem] = self.write_all_gr()
+        bloc_poin, bloc_elem = self.write_all_gr()
 
         # Traitement du mot-cle facteur OBSERVATION (EPX = LISTING)
         # Ecriture LISTING

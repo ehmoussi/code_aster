@@ -116,7 +116,8 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
         for ddl in l_DDL:
            # recuperation de la liste de fonctions associees a la composante courante
            l_ddl=None
-           if args.has_key(ddl): l_ddl=args[ddl]
+           if ddl in args:
+               l_ddl=args[ddl]
            # mise a jour des mappings si la liste existe
            if l_ddl != None:
               # assertion : l'utilisateur associe une et une seule fonction pour chaque groupe
@@ -205,7 +206,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                              );
         else:
            cham_mater=None
-           if args.has_key('CHAM_MATER'):
+           if 'CHAM_MATER' in args:
               cham_mater=args['CHAM_MATER']
 
         # dans le cas X-FEM, on assemble le champ de deplacement aux points de Gauss pour
@@ -359,7 +360,8 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
         for sig in l_SIGM:
            # recuperation de la liste de fonctions associees a la composante courante
            l_sig=None
-           if args.has_key(sig): l_sig=args[sig]
+           if sig in args:
+               l_sig=args[sig]
            # mise a jour des mappings si la liste existe
            if l_sig != None:
               # assertion : l'utilisateur associe une et une seule fonction pour chaque groupe

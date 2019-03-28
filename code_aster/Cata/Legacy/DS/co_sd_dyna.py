@@ -44,7 +44,7 @@ class harm_gene  (dyna_gene) :
 
 class tran_gene  (dyna_gene) :
     # Private methods
-    def __nb_nonl (self):
+    def _nb_nonl (self):
         desc = self.sdj.DESC.get()
         nbnoli = desc[2]
         return nbnoli
@@ -52,17 +52,17 @@ class tran_gene  (dyna_gene) :
         desc = self.sdj.DESC.get()
         nbmodes = desc[1]
         return nbmodes
-    def __check_input_inoli(self, inoli):
+    def _check_input_inoli(self, inoli):
         if (inoli==-1) :
             print("Nonlinearity index not specified, by default the first nonlinearity will be considered.")
             inoli = 1
-        nbnoli = self.__nb_nonl()
+        nbnoli = self._nb_nonl()
         if nbnoli == 0 :
             raise AsException("Linear calculation, no information can be retrieved.")
         if( inoli <= 0) or (inoli > nbnoli):
             raise AsException("The nonlinearity index should be a comprised between 1 and %d, the total number of nonlinearities."%(nbnoli))
         return inoli
-    def __type_nonl (self):
+    def _type_nonl (self):
         Int2StrTypes = {1 : 'DIS_CHOC',
                         2 : 'FLAMBAGE',
                         3 : 'ANTI_SISM',
@@ -75,8 +75,8 @@ class tran_gene  (dyna_gene) :
 
         nltypes = self.sdj.sd_nl.TYPE.get()
         return [Int2StrTypes[nltypes[i]] for i in range(len(nltypes))]
-    def __print_vint_description(self, inoli):
-        nltype = self.__type_nonl()[inoli-1].strip()
+    def _print_vint_description(self, inoli):
+        nltype = self._type_nonl()[inoli-1].strip()
         vintDescription = {'DIS_CHOC'      : ['F_NORMAL', 'F_TANGE1', 'F_TANGE1',
                                               'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1',
                                               'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2',
@@ -85,8 +85,8 @@ class tran_gene  (dyna_gene) :
                                               'VINT_FR3', 'VINT_FR4', 'VINT_FR5',
                                               'VINT_FR6', 'VINT_FR7'],
                           'FLAMBAGE'      : ['F_NORMAL',
-                                              'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1', 
-                                              'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2', 
+                                              'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1',
+                                              'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2',
                                               'V_NORMAL', 'ENFO_PLA', 'RIGI_P_F',
                                               'ENFO_MAX'],
                            'ANTI_SISM'     : ['F_AXIAL',
@@ -196,12 +196,12 @@ class tran_gene  (dyna_gene) :
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.INFO_NONL() en PAR_LOT='OUI'")
 
-        nbnoli  = self.__nb_nonl()
+        nbnoli  = self._nb_nonl()
         if nbnoli == 0 :
             print("Linear calculation, no nonlinearities used or can be printed.")
             return None
 
-        nltypes = self.__type_nonl()
+        nltypes = self._type_nonl()
         inti    = self.sdj.sd_nl.INTI.get()
 
         print("-"*104)
@@ -264,7 +264,7 @@ class tran_gene  (dyna_gene) :
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.VARI_INTERNE() en PAR_LOT='OUI'")
 
-        inoli = self.__check_input_inoli(inoli)
+        inoli = self._check_input_inoli(inoli)
         i = inoli-1
 
         vindx  = self.sdj.sd_nl.VIND.get()
@@ -287,7 +287,7 @@ class tran_gene  (dyna_gene) :
         import numpy as np
         output = np.reshape(output,(nbsaves, finish-start))
 
-        if describe : dummy = self.__print_vint_description(inoli)
+        if describe : dummy = self._print_vint_description(inoli)
 
         return output
 
@@ -314,7 +314,7 @@ class tran_gene  (dyna_gene) :
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.VARI_INTERNE() en PAR_LOT='OUI'")
 
-        inoli = self.__check_input_inoli(inoli)
+        inoli = self._check_input_inoli(inoli)
         i = inoli-1
 
         vindx  = self.sdj.sd_nl.VIND.get()
@@ -334,7 +334,7 @@ class tran_gene  (dyna_gene) :
                 output[cntr] = vint[iord*(nbvint)+i]
                 cntr += 1
 
-        if describe : dummy = self.__print_vint_description(inoli)
+        if describe : dummy = self._print_vint_description(inoli)
 
         return output
 
@@ -345,9 +345,9 @@ class tran_gene  (dyna_gene) :
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.FORCE_NORMALE() en PAR_LOT='OUI'")
 
-        inoli = self.__check_input_inoli(inoli)
+        inoli = self._check_input_inoli(inoli)
 
-        nltypes = self.__type_nonl()
+        nltypes = self._type_nonl()
         if not(nltypes[inoli-1] in ('DIS_CHOC', 'FLAMBAGE')) :
             dummy = self.INFO_NONL()
             raise AsException("The chosen nonlinearity index (%d) does not correspond to a DIS_CHOC or FLAMBAGE nonlinearity\nThese are the only nonlinearities that save the local normal force."%(inoli))
@@ -369,9 +369,9 @@ class tran_gene  (dyna_gene) :
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.FORCE_TANGENTIELLE() en PAR_LOT='OUI'")
 
-        inoli = self.__check_input_inoli(inoli)
+        inoli = self._check_input_inoli(inoli)
 
-        nltypes = self.__type_nonl()
+        nltypes = self._type_nonl()
         if not(nltypes[inoli-1] in ('DIS_CHOC', 'ROTOR_FISS')) :
             dummy = self.INFO_NONL()
             raise AsException("The chosen nonlinearity index (%d) does not correspond to a DIS_CHOC or ROTOR_FISS nonlinearity\nThese are the only nonlinearities that calculate and save a local tangential force."%(inoli))
@@ -392,9 +392,9 @@ class tran_gene  (dyna_gene) :
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.FORCE_AXIALE() en PAR_LOT='OUI'")
 
-        inoli = self.__check_input_inoli(inoli)
+        inoli = self._check_input_inoli(inoli)
 
-        nltypes = self.__type_nonl()
+        nltypes = self._type_nonl()
         if not(nltypes[inoli-1] in ('ANTI_SISM', 'DIS_VISC', 'DIS_ECRO_TRAC' )) :
             dummy = self.INFO_NONL()
             raise AsException("The chosen nonlinearity index (%d) does not correspond to a ANTI_SISM, DIS_VISC, or DIS_ECRO_TRAC' nonlinearity\nThese are the only nonlinearities that calculate and save an axial force."%(inoli))
@@ -415,9 +415,9 @@ class tran_gene  (dyna_gene) :
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.FORCE_RELATION() en PAR_LOT='OUI'")
 
-        inoli = self.__check_input_inoli(inoli)
+        inoli = self._check_input_inoli(inoli)
 
-        nltypes = self.__type_nonl()
+        nltypes = self._type_nonl()
         if not(nltypes[inoli-1] in ('RELA_EFFO_DEPL', 'RELA_EFFO_VITE')) :
             dummy = self.INFO_NONL()
             raise AsException("The chosen nonlinearity index (%d) does not correspond to a RELA_EFFO_DEPL or RELA_EFFO_VITE' nonlinearity\nThese are the only nonlinearities that calculate and save a relationship defined force."%(inoli))

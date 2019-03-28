@@ -239,10 +239,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
 
     if 'DSP' in args:
-      if args.has_key('DSP')  :
         TSM = args['DUREE']
-      else :
-        del args['DSP']
 
 
 
@@ -254,8 +251,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     # type de modelisation : 2D ou 3D
     dime = "2D"
     if "FONC_SIGNAL_X" in args:
-        if args.has_key('FONC_SIGNAL_X')  :
-            dime = "3D"
+        dime = "3D"
 
     if dime == "2D":
         name_dime = ("",)
@@ -279,11 +275,11 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
             ltranin = 'OUI'
             input = 'RA'
             lliaison = 'NON'
-            if args.has_key('MASS_PENA'):
+            if 'MASS_PENA' in args:
               lmassp = 'OUI'
         # Possibilite d utiliser une longueur caracteristique :
         # llcara ='OUI' ou 'NON'
-            if args.has_key('LONG_CARA'):
+            if 'LONG_CARA' in args:
               llcara = 'OUI'
 
 # Possibilite de faire une verification en temporel avec coeff Rayleigh :
@@ -318,7 +314,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
 # Groupes de mailles et maillage
     mail0 = None
-    if("MAILLAGE" in args):
+    if "MAILLAGE" in args:
         mail0 = args['MAILLAGE']
     if dime == "2D":
         grma_droit = args['GROUP_MA_DROITE']
@@ -477,7 +473,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                + ' non multiple de 4')
        aster.affiche('MESSAGE', text)
 
-    if args.has_key('FREQ_COUP'):
+    if 'FREQ_COUP' in args:
         fcoup = args['FREQ_COUP']
     else:
         fcoup = fmax
@@ -529,7 +525,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 ### Option DSP
     if 'DSP' in args  :
 
-      if "LIST_FREQ_SPEC_OSCI" in args and args.has_key('LIST_FREQ_SPEC_OSCI'):
+      if "LIST_FREQ_SPEC_OSCI" in args:
         __SAX[0] = CALC_FONCTION(
           SPEC_OSCI=_F(FONCTION= __fonc_dsp, NATURE_FONC     ='DSP',DUREE=TSM ,
                        METHODE='RICE', NATURE = 'ACCE',
@@ -563,7 +559,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
           COMB=_F(FONCTION=__fonc_acce[n], COEF=coefu * coefzpa))
 
 
-        if "LIST_FREQ_SPEC_OSCI" in args and args.has_key('LIST_FREQ_SPEC_OSCI'):
+        if "LIST_FREQ_SPEC_OSCI" in args:
           __SAX[n] = CALC_FONCTION(
             SPEC_OSCI=_F(FONCTION=__ACCEX[n],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
         else:
@@ -817,7 +813,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
             CMP2 = 'DX'
 
 # Lecture du maillage
-    if mail0 != None:
+    if mail0 is not None:
       if dime == "2D":
           __mailla = CREA_MAILLAGE(MAILLAGE=mail0,
                                  CREA_POI1=(
@@ -1298,7 +1294,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
         for j in range(1, NCOU + 2):
 
             affmat.append(_F(GROUP_MA=__TMAT['M', j], MATER=tSOLH[j]))
-            if "MAILLAGE" not in args or args['MAILLAGE'] == None:
+            if "MAILLAGE" not in args or args['MAILLAGE'] is None:
               affmat.append(_F(GROUP_MA='L'+__TMAT['M', j], MATER=tSOLH[j]))
               #affmat.append(_F(GROUP_MA='G'+__TMAT['M', j], MATER=tSOLH[j]))
               #affmat.append(_F(GROUP_MA='D'+__TMAT['M', j], MATER=tSOLH[j]))
@@ -1615,7 +1611,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 ######## cas classique et DSP
         else:
           if dime == "2D":
-              if args.has_key('LIST_FREQ'):
+              if 'LIST_FREQ' in args:
                 __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
                                        MODELE=__MODELE,
                                        CHAM_MATER=__CHAMPMAH,
@@ -1651,7 +1647,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                                                   ),
                                        )
           else:
-              if args.has_key('LIST_FREQ'):
+              if 'LIST_FREQ' in args:
                 __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
                                        MODELE=__MODELE,
                                        CHAM_MATER=__CHAMPMAH,
@@ -1779,33 +1775,31 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                 EXTRACTION=_F(FONCTION=__AHuXrCL[0], PARTIE='MODULE'))
             __mAHuXrBH[0] = CALC_FONCTION(
                 EXTRACTION=_F(FONCTION=__AHuXrBH[0], PARTIE='MODULE'))
+            const_context = {
+                'FILTRE': __FILTRE,
+                'AHuXrCL': __AHuXrCL[0],
+                'AHuXrBH': __AHuXrBH[0],
+                'AHX': __AHX[0],
+                'ACCEX0H': __ACCEX0H[0]
+            }
             if args['CHARGEMENT'] == 'MONO_APPUI':
                 __formFDT[0] = FORMULE(
-              NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL(FREQ))',
-              FILTRE=__FILTRE,
-              AHuXrCL=__AHuXrCL[0],
-              AHX=__AHX[0],
-              ACCEX0H=__ACCEX0H[0])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL(FREQ))',
+                    **const_context)
                 __formFDT2[0] = FORMULE(
-              NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL(FREQ))/(1.+0.j + AHuXrBH(FREQ))',
-              FILTRE=__FILTRE,
-              AHuXrCL=__AHuXrCL[0],
-              AHuXrBH=__AHuXrBH[0],
-              AHX=__AHX[0],
-              ACCEX0H=__ACCEX0H[0])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL(FREQ))/(1.+0.j + AHuXrBH(FREQ))',
+                    **const_context)
             else:
                 __formFDT[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX(FREQ)/AHuXrCL(FREQ)',
-              FILTRE=__FILTRE,
-              AHuXrCL=__AHuXrCL[0],
-              AHX=__AHX[0],
-              ACCEX0H=__ACCEX0H[0])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHX(FREQ)/AHuXrCL(FREQ)',
+                    **const_context)
                 __formFDT2[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL(FREQ)/ACCEX0H(FREQ)',
-              FILTRE=__FILTRE,
-              AHuXrCL=__AHuXrCL[0],
-              AHX=__AHX[0],
-              ACCEX0H=__ACCEX0H[0])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHuXrCL(FREQ)/ACCEX0H(FREQ)',
+                    **const_context)
 
         else:
             for n in range(num_dime):
@@ -1827,192 +1821,75 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                 __mAHuXrBH[n] = CALC_FONCTION(
                     EXTRACTION=_F(FONCTION=__AHuXrBH[n], PARTIE='MODULE'))
 
+            const_context = {
+                'FILTRE': __FILTRE,
+                'AHuXrCL0': __AHuXrCL[0],
+                'AHuXrCL1': __AHuXrCL[1],
+                'AHuXrCL2': __AHuXrCL[2],
+                'AHuXrBH0': __AHuXrBH[0],
+                'AHuXrBH1': __AHuXrBH[1],
+                'AHuXrBH2': __AHuXrBH[2],
+                'AHX0': __AHX[0],
+                'AHX1': __AHX[1],
+                'AHX2': __AHX[2],
+                'ACCEX0H0': __ACCEX0H[0],
+                'ACCEX0H1': __ACCEX0H[1],
+                'ACCEX0H2': __ACCEX0H[2],
+            }
             if args['CHARGEMENT'] == 'MONO_APPUI':
                 __formFDT[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL0(FREQ))',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL0(FREQ))',
+                    **const_context)
                 __formFDT2[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL0(FREQ))/(1.+0.j + AHuXrBH0(FREQ))',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL0(FREQ))/(1.+0.j + AHuXrBH0(FREQ))',
+                    **const_context)
 
                 __formFDT[1] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL1(FREQ))',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL1(FREQ))',
+                    **const_context)
                 __formFDT2[1] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL1(FREQ))/(1.+0.j + AHuXrBH1(FREQ))',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL1(FREQ))/(1.+0.j + AHuXrBH1(FREQ))',
+                    **const_context)
 
                 __formFDT[2] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL2(FREQ))',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j )/(1.+0.j + AHuXrCL2(FREQ))',
+                    **const_context)
                 __formFDT2[2] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL2(FREQ))/(1.+0.j + AHuXrBH2(FREQ))',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*(1.+0.j + AHuXrCL2(FREQ))/(1.+0.j + AHuXrBH2(FREQ))',
+                    **const_context)
             else:
                 __formFDT[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX0(FREQ)/AHuXrCL0(FREQ)',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHX0(FREQ)/AHuXrCL0(FREQ)',
+                    **const_context)
                 __formFDT2[0] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL0(FREQ)/ACCEX0H0(FREQ)',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHuXrCL0(FREQ)/ACCEX0H0(FREQ)',
+                    **const_context)
 
                 __formFDT[1] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX1(FREQ)/AHuXrCL1(FREQ)',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHX1(FREQ)/AHuXrCL1(FREQ)',
+                    **const_context)
                 __formFDT2[1] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL1(FREQ)/ACCEX0H1(FREQ)',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHuXrCL1(FREQ)/ACCEX0H1(FREQ)',
+                    **const_context)
 
                 __formFDT[2] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHX2(FREQ)/AHuXrCL2(FREQ)',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHX2(FREQ)/AHuXrCL2(FREQ)',
+                    **const_context)
                 __formFDT2[2] = FORMULE(
-                NOM_PARA='FREQ', VALE_C='FILTRE(FREQ)*AHuXrCL2(FREQ)/ACCEX0H2(FREQ)',
-                FILTRE=__FILTRE,
-                AHuXrCL0=__AHuXrCL[0],
-                AHuXrCL1=__AHuXrCL[1],
-                AHuXrCL2=__AHuXrCL[2],
-                AHuXrBH0=__AHuXrBH[0],
-                AHuXrBH1=__AHuXrBH[1],
-                AHuXrBH2=__AHuXrBH[2],
-                AHX0=__AHX[0],
-                AHX1=__AHX[1],
-                AHX2=__AHX[2],
-                ACCEX0H0=__ACCEX0H[0],
-                ACCEX0H1=__ACCEX0H[1],
-                ACCEX0H2=__ACCEX0H[2])
+                    NOM_PARA='FREQ',
+                    VALE_C='FILTRE(FREQ)*AHuXrCL2(FREQ)/ACCEX0H2(FREQ)',
+                    **const_context)
 
 
             #
@@ -2061,7 +1938,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                                           FONCTION=__formFDT2[n],
                                           INTERPOL='LIN',
                                           PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
-            elif args.has_key('LIST_FREQ'):
+            elif 'LIST_FREQ' in args:
               __FDT_RACL[n] = CALC_FONC_INTERP(NOM_PARA='FREQ',
                                           LIST_PARA=args['LIST_FREQ'],
                                           FONCTION=__formFDT[n],
@@ -2135,7 +2012,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                     PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
                 DETRUIRE(CONCEPT=_F(NOM=__AX_RAf[n],))
 
-                if "LIST_FREQ_SPEC_OSCI" in args and args.has_key('LIST_FREQ_SPEC_OSCI'):
+                if "LIST_FREQ_SPEC_OSCI" in args:
                   __SAX_RA[n] = CALC_FONCTION(
                     SPEC_OSCI=_F(FONCTION=__AX_RA[n],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                 else:
@@ -2150,7 +2027,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                 PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
               DETRUIRE(CONCEPT=_F(NOM= __AHX_RAf,))
 
-              if "LIST_FREQ_SPEC_OSCI" in args and args.has_key('LIST_FREQ_SPEC_OSCI'):
+              if "LIST_FREQ_SPEC_OSCI" in args:
                 __SAX_RA[n] = CALC_FONCTION(
                   SPEC_OSCI=_F(FONCTION= __PAX_RA, NATURE_FONC ='DSP', DUREE = TSM,
                            METHODE ='RICE', NATURE = 'ACCE', LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],
@@ -2254,7 +2131,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
             #MODIF POR DSP: calcul des DSP puis SRO
             if 'DSP' in args:
 
-              if "LIST_FREQ_SPEC_OSCI" in args and args.has_key('LIST_FREQ_SPEC_OSCI'):
+              if "LIST_FREQ_SPEC_OSCI" in args:
 
                 __SAX_CL[n] = CALC_FONCTION(
                    SPEC_OSCI=_F(FONCTION=__PAX_CL, NATURE_FONC ='DSP', DUREE = TSM,
@@ -2273,7 +2150,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                              METHODE ='RICE', NATURE = 'ACCE',  AMOR_REDUIT=0.05,NORME=9.81))
             else:
 
-                if "LIST_FREQ_SPEC_OSCI" in args and args.has_key('LIST_FREQ_SPEC_OSCI'):
+                if "LIST_FREQ_SPEC_OSCI" in args:
                   __SAX_CL[n] = CALC_FONCTION(
                     SPEC_OSCI=_F(FONCTION=__AX_CL[n],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                   __SAX_BH[n] = CALC_FONCTION(
@@ -2309,7 +2186,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
         # Calcul des contraintes et deformations dans tous les elements de
         # la colonne
-        if args.has_key('LIST_FREQ'):
+        if 'LIST_FREQ' in args:
           __DYNHARM = CALC_CHAMP(
             RESULTAT=__DYNHARM,
             reuse=__DYNHARM,
@@ -2969,34 +2846,23 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                 __tabaccX = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[0]),)
                 __tabaccY = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[1]),)
                 __tabaccZ = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[2]),)
+            const_context = {'ca': ca, 'aamult': aamult, 'abmult': abmult}
             __fAB = FORMULE(NOM_PARA=('AHfin'), VALE = 'ca*abmult*AHfin',
-                ca=ca,
-                aamult=aamult,
-                abmult=abmult,)
+                **const_context)
             __fAA = FORMULE(NOM_PARA=('AHfin'), VALE = 'ca*aamult*AHfin',
-                ca=ca,
-                aamult=aamult,
-                abmult=abmult,)
+                **const_context)
             __fEf = FORMULE(NOM_PARA=('Efin'), VALE = 'Efin',
-                ca=ca,
-                aamult=aamult,
-                abmult=abmult,)
+                **const_context)
             __fAHf = FORMULE(NOM_PARA=('AHfin'), VALE = 'AHfin',
-                ca=ca,
-                aamult=aamult,
-                abmult=abmult,)
+                **const_context)
             __fGf = FORMULE(NOM_PARA=('Efin','NU'), VALE = 'Efin/(2.0*(1+NU))',
-                ca=ca,
-                aamult=aamult,
-                abmult=abmult,)
-            __fVSf = FORMULE(NOM_PARA=('Efin','NU','RHO'), VALE = 'sqrt(Efin/(2.0*(1+NU)*RHO))',
-                ca=ca,
-                aamult=aamult,
-                abmult=abmult,)
-            __fVPf = FORMULE(NOM_PARA=('Efin','NU','RHO'), VALE = 'sqrt(Efin*(1-NU)/((1-2.0*NU)*(1+NU)*RHO))',
-                ca=ca,
-                aamult=aamult,
-                abmult=abmult,)
+                **const_context)
+            __fVSf = FORMULE(NOM_PARA=('Efin','NU','RHO'),
+                VALE = 'sqrt(Efin/(2.0*(1+NU)*RHO))',
+                **const_context)
+            __fVPf = FORMULE(NOM_PARA=('Efin','NU','RHO'),
+                VALE = 'sqrt(Efin*(1-NU)/((1-2.0*NU)*(1+NU)*RHO))',
+                **const_context)
 
             act_table = []
             act_table.append(_F(OPERATION='COMB',
@@ -3069,7 +2935,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
             for k in range(1, NCOU + 1):
                 if dime == "2D":
                     if 'DSP' in args:
-                      if "LIST_FREQ_SPEC_OSCI" in args and args.has_key('LIST_FREQ_SPEC_OSCI'):
+                      if "LIST_FREQ_SPEC_OSCI" in args:
                         __SPEC[k] = CALC_FONCTION(
                             SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,
                             LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
@@ -3077,7 +2943,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                         __SPEC[k] = CALC_FONCTION(
                             SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,  NORME=9.81))
                     else:
-                      if "LIST_FREQ_SPEC_OSCI" in args and args.has_key('LIST_FREQ_SPEC_OSCI'):
+                      if "LIST_FREQ_SPEC_OSCI" in args:
                         __SPEC[k] = CALC_FONCTION(
                             SPEC_OSCI=_F(FONCTION=__axa[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                       else:
@@ -3085,7 +2951,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                             SPEC_OSCI=_F(FONCTION=__axa[k], AMOR_REDUIT=0.05, NORME=9.81))
 
                 elif dime == "3D":
-                    if "LIST_FREQ_SPEC_OSCI" in args and args.has_key('LIST_FREQ_SPEC_OSCI'):
+                    if "LIST_FREQ_SPEC_OSCI" in args:
                           __SPECX[k] = CALC_FONCTION(
                             SPEC_OSCI=_F(FONCTION=__axaX[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                           __SPECY[k] = CALC_FONCTION(
@@ -3712,7 +3578,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
                 __AX_CLv = CALC_FONCTION(
                     COMB=(_F(FONCTION=__AXrCLv, COEF=1.,), _F(FONCTION=__AX_RA, COEF=1.,),), LIST_PARA=__linst,)
-                if "LIST_FREQ_SPEC_OSCI" in args and args.has_key('LIST_FREQ_SPEC_OSCI'):
+                if "LIST_FREQ_SPEC_OSCI" in args:
                   __SAX_CLv = CALC_FONCTION(
                     SPEC_OSCI=_F(FONCTION=__AX_CLv,AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                 else:
@@ -3745,7 +3611,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                 ),), INFO = 1)
 
                 for k in range(1, NCOU + 2):
-                    DETRUIRE(CONCEPT=_F(NOM=SOLR[k],), INFO=1)
+                    DETRUIRE(CONCEPT=_F(NOM=__SOLR[k],), INFO=1)
 
             DETRUIRE(CONCEPT=_F(NOM=(
                             __NUMEDDL,
