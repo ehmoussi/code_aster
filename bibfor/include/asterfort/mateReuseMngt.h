@@ -15,11 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+!
 #include "asterf_types.h"
 !
 interface
-    subroutine aniver(mate, v_mate_func)
-        character(len=8), intent(in) :: mate
-        aster_logical, pointer :: v_mate_func(:)
-    end subroutine aniver
+    subroutine mateReuseMngt(mateOUT  , mateOUT_nb  , mateOUT_list, &
+                             mateREUSE, mateREUSE_nb)
+        character(len=8), intent(in) :: mateOUT
+        integer, intent(in) :: mateOUT_nb
+        character(len=32), pointer, intent(in) :: mateOUT_list(:)
+        character(len=8), intent(out) :: mateREUSE
+        integer, intent(out) :: mateREUSE_nb
+    end subroutine mateReuseMngt
 end interface
