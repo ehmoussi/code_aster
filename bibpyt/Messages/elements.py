@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     1 : _("""
@@ -71,12 +69,6 @@ La raideur tangente de la section est nulle.
 Vérifier votre matériau, vous avez peut être défini un matériau élastoplastique parfait.
 
 Risque & Conseil : mettre un léger écrouissage peut permettre de passer cette difficulté.
-"""),
-
-
-    9 : _("""
- il faut renseigner le coefficient E_N  dans les cas des déformations planes et de l'asymétrie
- on ne regarde donc que le cas des contraintes planes.
 """),
 
     10 : _("""

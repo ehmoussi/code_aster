@@ -15,11 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+!
 #include "asterf_types.h"
 !
 interface
-    subroutine aniver(mate, v_mate_func)
-        character(len=8), intent(in) :: mate
-        aster_logical, pointer :: v_mate_func(:)
-    end subroutine aniver
+    subroutine mateGetList(mate_nb_read , v_mate_read  ,&
+                           l_mfront_elas,&
+                           l_elas       , l_elas_func  , l_elas_istr,&
+                           l_elas_orth  , l_elas_meta  ,&
+                           i_mate_elas  , i_mate_mfront)
+        integer, intent(out) :: mate_nb_read
+        character(len=32), pointer, intent(out) :: v_mate_read(:)
+        aster_logical, intent(out) :: l_mfront_elas
+        aster_logical, intent(out) :: l_elas, l_elas_func
+        aster_logical, intent(out) :: l_elas_istr, l_elas_orth, l_elas_meta
+        integer, intent(out) :: i_mate_elas, i_mate_mfront
+    end subroutine mateGetList
 end interface

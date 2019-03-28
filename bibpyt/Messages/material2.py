@@ -17,15 +17,30 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#
-
 cata_msg = {
+
+    2  : _("""Il ne peut y avoir qu'un seul matériau de type MFront dans DEFI_MATERIAU."""),
+
+    3  : _("""Propriétés définies dans le matériau: %(k1)s.
+"""),
+
+    4  : _("""Paramètres des propriétés %(k1)s:"""),
 
     11 : _("""
  Erreur d'utilisation lors de l'affectation des variables de commande (AFFE_MATERIAU/AFFE_VARC):
    Pour la variable de commande %(k1)s,
    Vous avez oublié d'utiliser l'un des 2 mots clés CHAM_GD ou EVOL.
    L'absence de ces deux mots clés n'est permise que pour NOM_VARC='TEMP'.
+"""),
+
+    9  : _("""
+Pour le matériau %(k1)s, on cherche à redéfinir un mot clé déjà défini : %(k2)s
+L'utilisation de DEFI_MATERIAU en mode enrichissement ne permet que d'ajouter de nouvelles données.
+"""),
+
+   10 : _("""
+Vérification de la positivité de la matrice d'élasticité. Il faut renseigner le coefficient E_N dans les cas des déformations planes et de l'axisymétrie.
+On ne regarde donc que le cas des contraintes planes.
 """),
 
 

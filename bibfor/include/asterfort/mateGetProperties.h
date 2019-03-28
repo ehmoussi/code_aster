@@ -18,8 +18,16 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine aniver(mate, v_mate_func)
+    subroutine mateGetProperties(mate      , i_mate , nomrc,&
+                                 mate_shift, v_mate ,&
+                                 noobrc    , nb_prop, v_mate_func)
         character(len=8), intent(in) :: mate
+        integer, intent(in) :: i_mate
+        character(len=32), intent(inout) :: nomrc
+        integer, intent(inout) :: mate_shift
+        character(len=32), pointer :: v_mate(:)
+        character(len=19), intent(out) :: noobrc
+        integer, intent(out) :: nb_prop
         aster_logical, pointer :: v_mate_func(:)
-    end subroutine aniver
+    end subroutine mateGetProperties
 end interface
