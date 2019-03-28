@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,8 +28,10 @@ implicit none
 #include "asterfort/cresol.h"
 #include "asterfort/infniv.h"
 #include "asterfort/getvis.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/romMultiParaRead.h"
 #include "asterfort/utmess.h"
+#include "asterfort/getvr8.h"
 !
 type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
@@ -47,6 +49,9 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
     integer :: ifm, niv
     integer :: nb_mode_maxi = 0, nocc
+    character(len=16) :: base_ifs = ' '
+    aster_logical :: l_base_ifs
+    real(kind=8) :: tole_glouton
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,9 +63,22 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! - Maximum number of modes
 !
     call getvis(' ', 'NB_MODE' , scal = nb_mode_maxi, nbret = nocc)
-    if (nocc .eq. 0) then
-        nb_mode_maxi = 0
-    endif
+    ASSERT(nocc .eq. 1 .and. nb_mode_maxi .ge. 1)
+!
+! - If we stabilise the basis for IFS transient problem   
+!
+    call getvtx(' ', 'TYPE_BASE', scal = base_ifs)
+    l_base_ifs = base_ifs .eq. 'IFS_STAB'
+!
+! - For FSI: three basis
+!
+    if (ds_para_rb%l_base_ifs) then 
+        nb_mode_maxi = 3*nb_mode_maxi
+    end if
+!
+! - Read tolerance
+!
+    call getvr8(' ', 'TOLE_GLOUTON', scal = tole_glouton)
 !
 ! - Read data for multiparametric problems
 !
@@ -73,5 +91,7 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! - Save parameters in datastructure
 !
     ds_para_rb%nb_mode_maxi = nb_mode_maxi
+    ds_para_rb%l_base_ifs   = l_base_ifs
+    ds_para_rb%tole_glouton = tole_glouton
 !
 end subroutine

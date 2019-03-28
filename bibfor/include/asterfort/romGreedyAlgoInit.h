@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine romGreedyAlgoInit(syst_type , nb_mode   , nb_vari_coef,&
-                                 vect_refe , ds_para_rb)
+    subroutine romGreedyAlgoInit(nb_mode, nb_vari_coef, vect_refe, ds_para_rb)
         use Rom_Datastructure_type
-        character(len=1), intent(in) :: syst_type
         integer, intent(in) :: nb_mode
         integer, intent(in) :: nb_vari_coef
         character(len=19), intent(in) :: vect_refe
-        type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
+        type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
     end subroutine romGreedyAlgoInit
 end interface

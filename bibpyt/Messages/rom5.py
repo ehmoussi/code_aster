@@ -57,6 +57,8 @@ cata_msg = {
 
    20 : _("""On ne peut utiliser des bases empiriques qu'avec des maillages tridimensionnels."""),
 
+   21 : _("""Tolérance pour l'algorithme glouton: %(r1)19.12e."""),
+
    22 : _("""Un mode empirique contient des conditions limites dualisés (AFFE_CHAR_THER ou AFFE_CHAR_MECA).
               Ce n'est pas possible, utilisez AFFE_CHAR_CINE"""),
 

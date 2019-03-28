@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,14 +21,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romModeProd(nb_matr  , l_matr_name, l_matr_type, prod_mode,&
-                           mode_type, v_modec    , v_moder)
-        integer, intent(in) :: nb_matr
+    subroutine romMatrixProdMode(nb_matr  , l_matr_name, l_matr_type, matr_mode_curr,&
+                                 prod_matr_mode, i_mode, mode_type, vc_mode, vr_mode)
+        integer, intent(in) :: nb_matr, i_mode
         character(len=8), intent(in) :: l_matr_name(:)
         character(len=1), intent(in) :: l_matr_type(:)
-        character(len=24), intent(in) :: prod_mode(:)
+        character(len=19), intent(in) :: matr_mode_curr(:)
+        character(len=24), intent(in) :: prod_matr_mode(:)
         character(len=1), intent(in) :: mode_type
-        complex(kind=8), pointer, optional :: v_modec(:)
-        real(kind=8), pointer, optional :: v_moder(:)
-    end subroutine romModeProd
+        complex(kind=8), pointer, optional :: vc_mode(:)
+        real(kind=8), pointer, optional :: vr_mode(:)
+    end subroutine romMatrixProdMode
 end interface

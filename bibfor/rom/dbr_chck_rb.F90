@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,13 +45,20 @@ aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: nb_mode_maxi
+    aster_logical :: l_base_ifs
+!
+! --------------------------------------------------------------------------------------------------
+!
     if (l_reuse) then
         call utmess('F','ROM2_13', sk = operation)
     endif
 !
 ! - Check data for multiparametric problems
 !
-    call romMultiParaChck(ds_para_rb%multipara)
+    nb_mode_maxi = ds_para_rb%nb_mode_maxi
+    l_base_ifs   = ds_para_rb%l_base_ifs
+    call romMultiParaChck(ds_para_rb%multipara, l_base_ifs)
 !
 ! - Specific checks for DEFI_BASE_REDUITE
 !

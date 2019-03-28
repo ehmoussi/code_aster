@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romMultiParaInfo(ds_multipara)
 !
 use Rom_Datastructure_type
@@ -27,9 +28,7 @@ implicit none
 #include "asterfort/romVariParaInfo.h"
 #include "asterfort/romMultiCoefInfo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+type(ROM_DS_MultiPara), intent(in) :: ds_multipara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,10 +43,11 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i_matr, i_vari_para
-    integer :: nb_matr, nb_vari_para
+    integer :: nb_matr, nb_vari_para, nb_equa
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    nb_equa = ds_multipara%nb_equa
 !
 ! - For matrix
 !
@@ -57,9 +57,9 @@ implicit none
         if (ds_multipara%matr_type(i_matr) .eq. 'R') then
             call utmess('I', 'ROM3_31', sk = ds_multipara%matr_name(i_matr), si = i_matr)
         elseif (ds_multipara%matr_type(i_matr) .eq. 'C') then
-            call utmess('I', 'ROM3_32', sk = ds_multipara%matr_name(i_matr), si = i_matr)          
+            call utmess('I', 'ROM3_32', sk = ds_multipara%matr_name(i_matr), si = i_matr)
         else
- 
+            ASSERT(ASTER_FALSE)
         endif
         call romMultiCoefInfo(ds_multipara%matr_coef(i_matr))
     end do
@@ -69,20 +69,21 @@ implicit none
     if (ds_multipara%vect_type .eq. 'R') then
         call utmess('I', 'ROM3_33', sk = ds_multipara%vect_name)
     elseif (ds_multipara%vect_type .eq. 'C') then
-        call utmess('I', 'ROM3_34', sk = ds_multipara%vect_name)          
+        call utmess('I', 'ROM3_34', sk = ds_multipara%vect_name)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
     call romMultiCoefInfo(ds_multipara%vect_coef)
 !
 ! - Global system type
 !
+    call utmess('I', 'ROM3_29', si = nb_equa)
     if (ds_multipara%syst_type .eq. 'R') then
         call utmess('I', 'ROM3_35')
     elseif (ds_multipara%syst_type .eq. 'C') then
-        call utmess('I', 'ROM3_36')          
+        call utmess('I', 'ROM3_36')
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Pour la variation des coefficients

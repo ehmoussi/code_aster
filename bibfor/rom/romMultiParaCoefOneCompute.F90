@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romMultiParaCoefOneCompute(ds_empi       , ds_multipara,&
-                                      syst_2mbr_type, syst_2mbr   , solveROM,&
-                                      i_mode_until  , i_mode_coef , i_coef)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romMultiParaCoefOneCompute(ds_empi     , ds_multipara,&
+                                      solveROM    ,&
+                                      i_mode_until, i_mode_coef , i_coef)
 !
 use Rom_Datastructure_type
 !
@@ -34,16 +35,12 @@ implicit none
 #include "asterfort/romMultiParaROM2mbrCreate.h"
 #include "asterfort/romSolveROMSystSolve.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Empi), intent(in) :: ds_empi
-    type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
-    character(len=1), intent(in) :: syst_2mbr_type
-    character(len=19), intent(in) :: syst_2mbr
-    type(ROM_DS_Solve), intent(in) :: solveROM
-    integer, intent(in) :: i_mode_until
-    integer, intent(in) :: i_mode_coef
-    integer, intent(in) :: i_coef
+type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
+type(ROM_DS_Solve), intent(in) :: solveROM
+integer, intent(in) :: i_mode_until
+integer, intent(in) :: i_mode_coef
+integer, intent(in) :: i_coef
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,8 +52,6 @@ implicit none
 !
 ! In  ds_empi          : datastructure for empiric modes
 ! IO  ds_multipara     : datastructure for multiparametric problems
-! In  syst_2mbr_type   : type of second member (R or C)
-! In  syst_2mbr        : second member
 ! In  ds_solveROM      : datastructure to solve systems (ROM)
 ! In  i_mode_until     : last mode until compute
 ! In  i_mode_coef      : index of mode to compute coefficients
@@ -66,8 +61,13 @@ implicit none
 !
     integer :: ifm, niv
     integer :: nb_mode, i_mode, vali(2)
-    complex(kind=8), pointer :: v_syst_solu(:) => null()
-    complex(kind=8), pointer :: v_syst_matr(:) => null()
+    character(len=1) :: syst_2mbr_type
+    complex(kind=8), pointer :: vc_syst_solu(:) => null()
+    complex(kind=8), pointer :: vc_syst_matr(:) => null()
+    complex(kind=8), pointer :: vc_syst_2mbr(:) => null()
+    real(kind=8), pointer :: vr_syst_solu(:) => null()
+    real(kind=8), pointer :: vr_syst_matr(:) => null()
+    real(kind=8), pointer :: vr_syst_2mbr(:) => null()
     real(kind=8) :: valr(2)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -79,32 +79,54 @@ implicit none
 !
 ! - Get parameters
 !
-    nb_mode = solveROM%syst_size
+    nb_mode         = solveROM%syst_size
+    syst_2mbr_type  = solveROM%syst_2mbr_type
 !
 ! - Access to objects
 !
-    if (syst_2mbr_type .eq. 'C') then
-        call jeveuo(solveROM%syst_solu, 'L', vc = v_syst_solu)
+    if (syst_2mbr_type .eq. 'R') then
+        call jeveuo(solveROM%syst_solu, 'L', vr = vr_syst_solu)
+    else if (syst_2mbr_type .eq. 'C') then
+        call jeveuo(solveROM%syst_solu, 'L', vc = vc_syst_solu)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
     ASSERT(i_mode_until .le. nb_mode)
     ASSERT(i_mode_coef  .le. nb_mode)
 !
 ! - Initialization of matrix
 !
-    call jeveuo(solveROM%syst_matr, 'E', vc = v_syst_matr)
-    v_syst_matr(1:nb_mode*nb_mode) = dcmplx(0.d0,0.d0)
+    if (syst_2mbr_type .eq. 'R') then
+         call jeveuo(solveROM%syst_matr, 'E', vr = vr_syst_matr)
+         vr_syst_matr(1:nb_mode*nb_mode) = 0.d0
+    else if (syst_2mbr_type .eq. 'C') then
+        call jeveuo(solveROM%syst_matr, 'E', vc = vc_syst_matr)
+        vc_syst_matr(1:nb_mode*nb_mode) = dcmplx(0.d0,0.d0)
+    else
+        ASSERT(ASTER_FALSE)
+    endif
+!
+! - Initialization of vector
+!
+    if (syst_2mbr_type .eq. 'R') then
+        call jeveuo(solveROM%syst_2mbr, 'E', vr = vr_syst_2mbr)
+        vr_syst_2mbr(1:nb_mode) = 0.d0
+    else if (syst_2mbr_type .eq. 'C') then
+        call jeveuo(solveROM%syst_2mbr, 'E', vc = vc_syst_2mbr)
+        vc_syst_2mbr(1:nb_mode) = dcmplx(0.d0,0.d0)
+    else
+        ASSERT(ASTER_FALSE)
+    endif
 !
 ! - Evaluate coefficients
 !
-    call romEvalCoef(ds_multipara, l_init = .false._1,&
+    call romEvalCoef(ds_multipara, l_init = ASTER_FALSE,&
                      i_mode_coef_ = i_mode_coef, i_coef_ = i_coef)
 !
 ! - Compute reduced second member
 !
-    call romMultiParaROM2mbrCreate(ds_empi       , ds_multipara, i_coef,&
-                                   syst_2mbr_type, syst_2mbr   , solveROM%syst_2mbr)
+    call romMultiParaROM2mbrCreate(ds_empi           , ds_multipara, i_coef,&
+                                   solveROM%syst_2mbr)
 !
 ! - Compute reduced matrix
 !
@@ -118,13 +140,25 @@ implicit none
 ! - Debug print
 !
     if (niv .ge. 2) then
-        do i_mode = 1, i_mode_until
-            valr(1) = real(v_syst_solu(i_mode))
-            valr(2) = dimag(v_syst_solu(i_mode))
-            vali(1) = i_mode
-            vali(2) = i_coef
-            call utmess('I', 'ROM2_52', ni = 2, vali = vali, nr = 2, valr = valr)
-        end do
+        if (syst_2mbr_type .eq. 'R') then
+            do i_mode = 1, i_mode_until
+                valr(1) = vr_syst_solu(i_mode)
+                valr(2) = 0.d0
+                vali(1) = i_mode
+                vali(2) = i_coef
+                call utmess('I', 'ROM2_52', ni = 2, vali = vali, nr = 2, valr = valr)
+            end do
+        else if (syst_2mbr_type .eq. 'C') then
+            do i_mode = 1, i_mode_until
+                valr(1) = real(vc_syst_solu(i_mode))
+                valr(2) = dimag(vc_syst_solu(i_mode))
+                vali(1) = i_mode
+                vali(2) = i_coef
+                call utmess('I', 'ROM2_52', ni = 2, vali = vali, nr = 2, valr = valr)
+            end do
+        else 
+            ASSERT(ASTER_FALSE)
+        end if
     endif
 !
 end subroutine

@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+
+!
 !
 interface
-    subroutine romMultiParaROM2mbrCreate(ds_empi       , ds_multipara, i_coef,&
-                                         syst_2mbrROM)
+    subroutine romCalcIndiceUPPHI(ds_multipara)
         use Rom_Datastructure_type
-        type(ROM_DS_Empi), intent(in) :: ds_empi
-        type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
-        integer, intent(in) :: i_coef
-        character(len=19), intent(in) :: syst_2mbrROM
-    end subroutine romMultiParaROM2mbrCreate
+        type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+    end subroutine romCalcIndiceUPPHI
 end interface

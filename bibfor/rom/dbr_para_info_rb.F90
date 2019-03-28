@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,6 +46,7 @@ type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
 !
     integer :: ifm, niv
     integer :: nb_mode_maxi
+    real(kind=8) :: tole_glouton
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,13 +58,13 @@ type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
 ! - Get parameters in datastructure - General for POD
 !
     nb_mode_maxi = ds_para_rb%nb_mode_maxi
+    tole_glouton = ds_para_rb%tole_glouton
 !
 ! - Print - General for RB
 !
     if (niv .ge. 2) then
-        if (nb_mode_maxi .ne. 0) then
-            call utmess('I', 'ROM5_17', si = nb_mode_maxi)
-        endif
+        call utmess('I', 'ROM5_17', si = nb_mode_maxi)
+        call utmess('I', 'ROM5_21', sr = tole_glouton)
         call utmess('I', 'ROM3_39')
         call romMultiParaInfo(ds_para_rb%multipara)
         call utmess('I', 'ROM3_37')
