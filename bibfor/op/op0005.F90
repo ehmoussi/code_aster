@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/mateGetList.h"
 #include "asterfort/mateReuseMngt.h"
 #include "asterfort/mateGetProperties.h"
+#include "asterfort/mateMFrontAddProperties.h"
 #include "asterfort/mateInfo.h"
 #include "asterfort/getvid.h"
 #include "asterfort/indk32.h"
@@ -60,7 +61,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_mate_elas, i_mate_mfront
+    integer :: i_mate_elas, i_mate_mfront, i_mate_add
     integer :: ifm, niv
     integer :: nb_prop
     integer :: i_mate, jvalrm, jvalcm, jvalkm
@@ -76,6 +77,7 @@ implicit none
     character(len=32), pointer :: v_mate(:) => null()
     aster_logical, pointer :: v_mate_func(:) => null()
     aster_logical :: l_mfront_elas, l_elas, l_elas_func, l_elas_istr, l_elas_orth, l_elas_meta
+    aster_logical :: l_new_elas
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -95,15 +97,24 @@ implicit none
                      l_elas_orth  , l_elas_meta  ,&
                      i_mate_elas  , i_mate_mfront)
 !
+! - Add a new material for elasticity from MFront
+!
+    mate_nb = mate_nb_read
+    l_new_elas = (l_mfront_elas .and.&
+                  .not. (l_elas .or. l_elas_istr .or. l_elas_orth .or. l_elas_meta))
+    if (l_new_elas) then
+        mate_nb = mate_nb + 1
+    endif
+!
 ! - Manage REUSE
 !
     call mateReuseMngt(mate     , mate_nb     , v_mate_read,&
                        mateREUSE, mateREUSE_nb)
-    mate_nb = mate_nb_read
+    mate_nb = mate_nb + mateREUSE_nb
 !
 ! - Create NOMRC object
 !
-    call wkvect(mate//'.MATERIAU.NOMRC', 'G V K32', mate_nb+mateREUSE_nb, vk32 = v_mate)
+    call wkvect(mate//'.MATERIAU.NOMRC', 'G V K32', mate_nb, vk32 = v_mate)
 !
 ! - Copy old material parameters (from REUSE)
 !
@@ -135,6 +146,18 @@ implicit none
         call jeecra(noobrc//'.VALC', 'LONUTI', nbc)
         call jeecra(noobrc//'.VALK', 'LONUTI', nbr+nbc+2*nbk)
     end do
+!
+! - Add ELAS properties from MFront
+!
+    if (l_mfront_elas) then
+        i_mate_add = 0
+        if (l_new_elas) then
+            i_mate_add = mate_nb
+        endif
+        call mateMFrontAddProperties(mate         , v_mate_read,&
+                                     i_mate_mfront, i_mate_elas, i_mate_add ,&
+                                     l_elas       , l_elas_func, l_elas_istr, l_elas_orth)
+    endif
 !
 ! - Debug write
 !

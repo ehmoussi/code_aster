@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/utmess.h"
+#include "asterfort/mateMFrontToAsterProperties.h"
 !
 integer, intent(out) :: mate_nb_read
 character(len=32), pointer, intent(out) :: v_mate_read(:)
@@ -61,15 +62,8 @@ integer, intent(out) :: i_mate_elas, i_mate_mfront
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=16) :: k16dummy
-    integer :: i_mate, prop_nb, i_keyw, idummy, i_prop
+    integer :: i_mate, prop_nb, idummy, i_prop, index
     character(len=32) :: nomrc
-    integer, parameter :: nb_keyw_mfront = 13
-    character(len=16), parameter :: mfront_keyw(nb_keyw_mfront) = &
-            (/'YoungModulus    ','PoissonRatio    ','ThermalExpansion',&
-              'MassDensity     ',&
-              'YoungModulus1   ','YoungModulus2   ','YoungModulus3   ',&
-              'PoissonRatio12  ','PoissonRatio23  ','PoissonRatio13  ',&
-              'ShearModulus12  ','ShearModulus23  ','ShearModulus13  '/)
     character(len=8), pointer :: prop_type(:) => null()
     character(len=16), pointer :: prop_name(:) => null()
     aster_logical :: l_mfront_prop
@@ -105,13 +99,12 @@ integer, intent(out) :: i_mate_elas, i_mate_mfront
         call getmjm(nomrc, 1, prop_nb, prop_name, prop_type, idummy)
 ! ----- Detect ELAS MFront properties
         l_mfront_prop = ASTER_FALSE
-        do i_prop = 1, prop_nb 
-            do i_keyw = 1, nb_keyw_mfront
-                if (prop_name(i_prop) .eq. mfront_keyw(i_keyw)) then
-                    l_mfront_prop = ASTER_TRUE
-                    i_mate_mfront = i_mate
-                endif
-            end do
+        do i_prop = 1, prop_nb
+            call mateMFrontToAsterProperties(prop_name(i_prop), index_ = index)
+            if (index .gt. 0) then
+                l_mfront_prop = ASTER_TRUE
+                i_mate_mfront = i_mate
+            endif
         end do
         if (l_mfront_prop) then
             if (l_mfront_elas) then
