@@ -734,11 +734,11 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
   b_unite_hist = BLOC( condition = """ (not equal_to("ADAPTATION", 'LECTURE')) """ ,
                                 fr=tr("Gestions des historiques.",),
 #
-  UNITE_HIST_IN = SIMP(statut='f',typ=UnitType(),val_min=1, inout='in',
+  UNITE_HIST_IN = SIMP(statut='f',typ=UnitType(), inout='in',
                        fr=tr("Unite logique d'un historique en entrée" ),
                       ),
 #
-  UNITE_HIST_OUT = SIMP(statut='f',typ=UnitType(),val_min=1, inout='out',
+  UNITE_HIST_OUT = SIMP(statut='f',typ=UnitType(), inout='out',
                         fr=tr("Unite logique d'un historique en sortie"),
                        ),
 #
@@ -784,7 +784,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
   b_unite = BLOC( condition = """is_in("VERSION_HOMARD", ('V11_N','V11_N_PERSO') )""" ,
                                 fr=tr("Fichier supplémentaire."),
 #
-  UNITE = SIMP(statut='f',typ=UnitType(),val_min=1, inout='in',
+  UNITE = SIMP(statut='f',typ=UnitType(), inout='in',
                fr=tr("Unite logique à ajouter à HOMARD.Configuration"),
                ),
 #

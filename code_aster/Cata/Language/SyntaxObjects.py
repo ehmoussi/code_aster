@@ -533,6 +533,14 @@ class SimpleKeyword(PartOfSyntax):
     Objet mot-clé simple équivalent à SIMP dans les capy
     """
 
+    def __init__(self, curDict):
+        """Initialization"""
+        super(SimpleKeyword, self).__init__(curDict)
+        if "val_min" in self._definition or "val_max" in self._definition:
+            typ = self._definition['typ']
+            assert typ in ('I', 'R'), ("'val_min/val_max' not allowed for type"
+                                       " '{0}'".format(typ))
+
     def getCataTypeId(self):
         """Get the type id of SimpleKeyword.
 
