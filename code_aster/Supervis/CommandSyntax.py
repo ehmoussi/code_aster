@@ -508,7 +508,7 @@ class CommandSyntax(object):
 
     def getexm(self, factName, simpName):
         """Tell if the couple ( factor keyword, simple keyword ) exists in the
-        Command catalog.
+        Command catalog. It supposes that all blocs conditions are verified.
 
         Arguments:
             factName (str): Name of the factor keyword.
@@ -529,7 +529,7 @@ class CommandSyntax(object):
         return int(keywords.get(simpName) is not None)
 
     def getmjm(self, factName, occurrence, maxval):
-        """Return the list of simple keywords  provided by the user under a
+        """Return the list of simple keywords provided by the user under a
         factor keyword.
 
         Arguments:
@@ -587,7 +587,10 @@ class CommandSyntax(object):
                 numbers generator.
         """
         cls._random = random.Random(100)
-        cls._random.jumpahead(jump)
+        gen = cls._random
+        # similar to python2 `jumpahead` function
+        for _ in range(jump):
+            gen.random()
 
     @classmethod
     def getran(cls):
