@@ -102,11 +102,15 @@ def value_is_sequence(value):
 
 def is_int(obj):
     """Tell if an object is an integer."""
-    return isinstance(obj, int)
+    return isinstance(obj, (int, numpy.integer))
 
 def is_float(obj):
     """Tell if an object is a float number."""
-    return isinstance(obj, (float, Decimal))
+    return isinstance(obj, (float, Decimal, numpy.float))
+
+def is_float_or_int(obj):
+    """Tell if an object is a float or an integer."""
+    return is_float(obj) or is_int(obj)
 
 def is_complex(obj):
     """Tell if an object is complex number."""

@@ -418,7 +418,7 @@ class CommandSyntax(object):
             explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
-        if len( value ) > 0 and not isinstance(value[0], int):
+        if len( value ) > 0 and not is_int(value[0]):
             raise TypeError( "integer expected, got %s" % type( value[0] ) )
         size = len(value)
         if size > maxval:
@@ -631,7 +631,7 @@ def _check_strings(factName, simpName, value):
     Returns:
         list[str]: String values or names for DataStructure objects.
     """
-    if len(value) > 0 and not isinstance(value[0], str):
+    if len(value) > 0 and not is_str(value[0]):
         try:
             value2 = []
             for i in range(len(value)):
