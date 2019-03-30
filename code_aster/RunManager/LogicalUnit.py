@@ -253,10 +253,8 @@ class LogicalUnitFile(object):
         logger.debug("LogicalUnit: release unit {0}".format(unit))
         logicalUnit = cls.from_number(unit)
         if not logicalUnit:
-            if unit in RESERVED_UNIT:
-                return
-            msg = "Unable to free the logical unit {}".format(unit)
-            raise KeyError(msg)
+            # RESERVED_UNIT or not registered
+            return
 
         if to_register:
             cls.register(unit, logicalUnit.filename, Action.Close)
