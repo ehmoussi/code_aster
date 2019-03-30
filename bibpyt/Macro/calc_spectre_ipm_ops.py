@@ -122,9 +122,6 @@ def calc_spectre_ipm_ops(
 
     dico_global = {}
     # ---------------------------------------------------------------------------------------------
-    # only one occurrence of RESU
-    RESU = RESU[0]
-
     # boucle 1 sur les planchers
     for plancher in l_plancher:
         AMOR_EQUI = planch_param[plancher]['AMOR_EQUI']
@@ -292,6 +289,6 @@ def Valeurs(surface):
     lval = []
     for k in range(len(dicv)):
         lbl = dicv[k + 1]
-        dim = len(lbl) / 2
+        dim = len(lbl) // 2
         lval.append([lbl[0:dim], lbl[dim:2 * dim]])
     return [list(lpar), lval]

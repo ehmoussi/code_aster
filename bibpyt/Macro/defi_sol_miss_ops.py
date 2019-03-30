@@ -128,8 +128,6 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
     arg_grno = False
     arg_grma = False
     if COUCHE_AUTO != None:
-        if type(COUCHE_AUTO) in (tuple, list):
-            COUCHE_AUTO = COUCHE_AUTO[0]
         ll_mate = []
         l_epais = []
         enfonce = False

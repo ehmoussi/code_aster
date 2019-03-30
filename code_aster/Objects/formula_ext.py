@@ -44,7 +44,7 @@ class ExtendedFormula(object):
         """
         init = initial_context()
         user_ctxt = {}
-        for key, val in list(self.getContext().items()):
+        for key, val in self.getContext().items():
             if val is not init.get(key):
                 user_ctxt[key] = val
         return self.getExpression(), dumps(user_ctxt)
