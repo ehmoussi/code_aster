@@ -617,10 +617,10 @@ class CALCULS_ASTER:
             # Lancement du calcul (par un include)
             # ----------------------------------------------------------------------------
             new = "fort.%s.new" % self.UNITE_INCLUDE
+            ctxt = {}
             try:
                 with open(new) as f:
-                    exec(compile(f.read(), new, 'exec'), self.jdc.get_global_contexte(), locals())
-                    globals().update(self.jdc.get_global_contexte())
+                    exec(compile(f.read(), new, 'exec'), ctxt, locals())
             except Exception as e:
                 UTMESS('F', 'RECAL0_85', valk=str(e))
 
@@ -638,7 +638,7 @@ class CALCULS_ASTER:
             for i in range(len(liste_reponses)):
                 reponse = liste_reponses[i]
                 DETRUIRE(OBJET=_F(CHAINE='VEXTR___'), INFO=1)  # Faudrait proteger ce nom ici (VEXTR___ peut etre deja utilise dans l'etude)
-                VEXTR___ = globals()[reponse].EXTR_TABLE()
+                VEXTR___ = ctxt[reponse].EXTR_TABLE()
                 list_para = VEXTR___.para
                 tab_lue   = VEXTR___.values()
                 F = table2numpy(tab_lue, list_para, reponses, i)
