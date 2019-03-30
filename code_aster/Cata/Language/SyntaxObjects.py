@@ -156,7 +156,16 @@ class CataDefinition(OrderedDict):
             if isinstance(value, typeslist):
                 entities[key] = value
             elif with_block and isinstance(value, Bloc):
-                entities.update(value.definition._filter_entities(typeslist))
+                bloc_kwds = value.definition._filter_entities(typeslist)
+                # update without overwriting factorkeywords but extending them
+                for kwd, obj in bloc_kwds.items():
+                    if type(obj) is FactorKeyword and kwd in entities:
+                        # do not change existing FactorKeyword!
+                        all_kwds = entities[kwd].definition.copy()
+                        all_kwds.update(obj.definition)
+                        entities[kwd] = FactorKeyword(all_kwds)
+                    else:
+                        entities[kwd] = obj
         return entities
 
     def iterItemsByType(self):
