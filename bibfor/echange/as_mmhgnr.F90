@@ -2,7 +2,7 @@ subroutine as_mmhgnr(fid, nomail, typent, typgeo, tblogl,&
                      n, cret)
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
-! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -30,11 +30,12 @@ subroutine as_mmhgnr(fid, nomail, typent, typgeo, tblogl,&
     call u2mess('F', 'FERMETUR_2')
 #else
 
-#if med_int_kind != aster_int_kind
-    med_int :: fid4, typen4, typge4, cret4, numdt4, numo4
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
+    med_idt :: fid4
+    med_int :: typen4, typge4, cret4, numdt4, numo4
     med_int, allocatable :: tblog4(:)
 
-    fid4 = to_med_int(fid)
+    fid4 = to_med_idt(fid)
     numdt4 = -1
     numo4 = -1
     typen4 = to_med_int(typent)
