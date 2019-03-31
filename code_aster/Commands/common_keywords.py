@@ -47,7 +47,7 @@ def create_solver(solver_keyword):
         return None
     if type(solver_keyword) in (list, tuple):
         solver_keyword = solver_keyword[0]
-    for key, value in solver_keyword.iteritems():
+    for key, value in solver_keyword.items():
         if key not in ("METHODE", "RENUM", "PRE_COND", "RESI_RELA",
                        "STOP_SINGULIER", "ELIM_LAGR", "TYPE_RESOL",
                        "MATR_DISTRIBUEE", "GESTION_MEMOIRE",
@@ -75,86 +75,86 @@ def create_solver(solver_keyword):
     else:
         solver = None
 
-    if solver_keyword.has_key("PRE_COND"):
+    if "PRE_COND" in solver_keyword:
         precondInt = glossary.getPreconditioning(solver_keyword["PRE_COND"])
         solver.setPreconditioning(precondInt)
 
-    if solver_keyword.has_key("RESI_RELA"):
+    if "RESI_RELA" in solver_keyword:
         solver.setSolverResidual(solver_keyword["RESI_RELA"])
 
-    if solver_keyword.has_key("STOP_SINGULIER"):
+    if "STOP_SINGULIER" in solver_keyword:
         value = True
         if solver_keyword["STOP_SINGULIER"] == "NON":
             value = False
         solver.setErrorOnMatrixSingularity(value)
 
-    if solver_keyword.has_key("ELIM_LAGR"):
+    if "ELIM_LAGR" in solver_keyword:
         value = glossary.getLagrangeTreatment(solver_keyword["ELIM_LAGR"])
         solver.setLagrangeElimination(value)
 
-    if solver_keyword.has_key("TYPE_RESOL"):
+    if "TYPE_RESOL" in solver_keyword:
         value = glossary.getMatrixType(solver_keyword["TYPE_RESOL"])
         solver.setMatrixType(value)
 
-    if solver_keyword.has_key("MATR_DISTRIBUEE"):
+    if "MATR_DISTRIBUEE" in solver_keyword:
         value = True
         if solver_keyword["MATR_DISTRIBUEE"] == "NON":
             value = False
         solver.setDistributedMatrix(value)
 
-    if solver_keyword.has_key("GESTION_MEMOIRE"):
+    if "GESTION_MEMOIRE" in solver_keyword:
         value = glossary.getMemoryManagement(solver_keyword["GESTION_MEMOIRE"])
         solver.setMemoryManagement(value)
 
-    if solver_keyword.has_key("LOW_RANK_TAILLE"):
+    if "LOW_RANK_TAILLE" in solver_keyword:
         solver.setLowRankSize(solver_keyword["LOW_RANK_TAILLE"])
 
-    if solver_keyword.has_key("LOW_RANK_SEUIL"):
+    if "LOW_RANK_SEUIL" in solver_keyword:
         solver.setLowRankThreshold(solver_keyword["LOW_RANK_SEUIL"])
 
-    if solver_keyword.has_key("NPREC"):
+    if "NPREC" in solver_keyword:
         solver.setSingularityDetectionThreshold(solver_keyword["NPREC"])
 
-    if solver_keyword.has_key("PCENT_PIVOT"):
+    if "PCENT_PIVOT" in solver_keyword:
         solver.setPivotingMemory(solver_keyword["PCENT_PIVOT"])
 
-    if solver_keyword.has_key("PRETRAITEMENTS"):
+    if "PRETRAITEMENTS" in solver_keyword:
         if solver_keyword["PRETRAITEMENTS"] == "SANS":
             solver.disablePreprocessing()
 
-    if solver_keyword.has_key("ALGORITHME"):
+    if "ALGORITHME" in solver_keyword:
         value = glossary.getIterativeSolverAlgorithm(solver_keyword["ALGORITHME"])
         solver.setAlgorithm(value)
 
-    if solver_keyword.has_key("FILTRAGE_MATRICE"):
+    if "FILTRAGE_MATRICE" in solver_keyword:
         solver.setMatrixFilter(solver_keyword["FILTRAGE_MATRICE"])
 
-    if solver_keyword.has_key("MIXER_PRECISION"):
+    if "MIXER_PRECISION" in solver_keyword:
         value = True
         if solver_keyword["MIXER_PRECISION"] == "NON":
             value = False
         solver.setPrecisionMix(value)
 
-    if solver_keyword.has_key("REMPLISSAGE"):
+    if "REMPLISSAGE" in solver_keyword:
         solver.setFilling(solver_keyword["REMPLISSAGE"])
 
-    if solver_keyword.has_key("NIVE_REMPLISSAGE"):
+    if "NIVE_REMPLISSAGE" in solver_keyword:
         solver.setFillingLevel(solver_keyword["NIVE_REMPLISSAGE"])
 
-    if solver_keyword.has_key("NMAX_ITER"):
+    if "NMAX_ITER" in solver_keyword:
         solver.setMaximumNumberOfIteration(solver_keyword["NMAX_ITER"])
 
-    if solver_keyword.has_key("REAC_PRECOND"):
+    if "REAC_PRECOND" in solver_keyword:
         solver.setUpdatePreconditioningParameter(solver_keyword["REAC_PRECOND"])
 
-    if solver_keyword.has_key("RESI_RELA_PC"):
+    if "RESI_RELA_PC" in solver_keyword:
         solver.setPreconditioningResidual(solver_keyword["RESI_RELA_PC"])
 
-    if solver_keyword.has_key("POSTTRAITEMENTS"):
+    if "POSTTRAITEMENTS" in solver_keyword:
         value = glossary.getMumpsPostTreatment(solver_keyword["POSTTRAITEMENTS"])
         solver.setPostTreatment(value)
 
-    if solver_keyword.has_key("ACCELERATION"):
+    if "ACCELERATION" in solver_keyword:
         value = glossary.getMumpsAcceleration(solver_keyword["ACCELERATION"])
         solver.setAcceleration(value)
 

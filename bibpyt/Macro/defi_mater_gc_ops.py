@@ -26,7 +26,7 @@ from Utilitai.Utmess import UTMESS
 def FaitMessage(Dico):
     message = ""
     cpt = 1
-    for xk, xv in Dico.iteritems():
+    for xk, xv in Dico.items():
         message += " %s = %15.8E," % (xk, xv)
         if (len(message) > 80 * cpt):
             message += "\n  "
@@ -409,7 +409,7 @@ def Endo_Fiss_Exp(DMATER, args):
     (sig0, tau) = Ident_Endo_Fiss_Exp(FT, FC, beta)
     sigc = ConfinedTension(NU, sig0, tau, beta)
     # Paramètres de la fonction d'adoucissement
-    if MATER['P'] <> None:
+    if MATER['P'] != None:
         P = float(MATER['P'])
     else:
         G1 = float(MATER['G_INIT'])
@@ -417,9 +417,9 @@ def Endo_Fiss_Exp(DMATER, args):
         if P < 1:
             UTMESS('F', 'COMPOR1_93')
     #
-    if MATER['Q'] <> None:
+    if MATER['Q'] != None:
         Q = float(MATER['Q'])
-    elif MATER['Q_REL'] <> None:
+    elif MATER['Q_REL'] != None:
         qmax = (1.11375 + 0.565239 * P - 0.003322 * P ** 2) * \
             (1 - NP.exp(-1.98935 * P)) - 0.01
         Q = qmax * float(MATER['Q_REL'])

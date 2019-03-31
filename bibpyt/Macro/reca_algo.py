@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -100,7 +100,7 @@ class Dimension:
 # ------------------------------------------------------------------------
 def cond(matrix):
     e1 = linalg.eigvals(matrix)
-    e = map(abs, e1)
+    e = list(map(abs, e1))
     size = len(e)
     e = NP.sort(e)
     if NP.all(e[0] != 0):

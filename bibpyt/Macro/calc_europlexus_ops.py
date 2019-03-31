@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -79,10 +79,10 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     MasquerAlarme('JEVEUX_57')
 
     # Ligne de commande d'Europlexus
-    EXEC = args['LOGICIEL'] if args.has_key('LOGICIEL') else None
+    EXEC = args['LOGICIEL'] if 'LOGICIEL' in args else None
 
     # Version d'Europlexus
-    VERS = args['VERSION_EUROPLEXUS'] if args.has_key('VERSION_EUROPLEXUS') else None
+    VERS = args['VERSION_EUROPLEXUS'] if 'VERSION_EUROPLEXUS' in args else None
 
     # Chemin du repertoire REPE_OUT de l'execution courante d'Aster
     REPE_OUT = os.path.join(os.getcwd(), 'REPE_OUT')
@@ -98,7 +98,6 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     global resu
 
     # On récupère ce nom pour le nommage des fichiers dans REPE_OUT.
-    #nom_resu = self.sd.get_name()
     nom_resu = self.name
 
     #
@@ -184,7 +183,7 @@ class EUROPLEXUS:
         from Calc_epx.calc_epx_struc import DIRECTIVE
 
         if debug:
-            print 'args_key %s'%args.keys()
+            print('args_key %s'%list(args.keys()))
 
         # Récuperation des concepts de la base
         macro = CONTEXT.get_current_step()
@@ -281,32 +280,32 @@ class EUROPLEXUS:
         self.EXEC = epxExec
 
         # COURBE
-        if args.has_key('UNITE_COURBE'):
+        if 'UNITE_COURBE' in args:
             self.UNITE_COURBE = args['UNITE_COURBE']
         else:
             self.UNITE_COURBE = None
 
-        if args.has_key('PAS_INST_COURBE'):
+        if 'PAS_INST_COURBE' in args:
             self.PAS_INST_COURBE = args['PAS_INST_COURBE']
         else:
             self.PAS_INST_COURBE = None
 
-        if args.has_key('PAS_NBRE_COURBE'):
+        if 'PAS_NBRE_COURBE' in args:
             self.PAS_NBRE_COURBE = args['PAS_NBRE_COURBE']
         else:
             self.PAS_NBRE_COURBE = None
 
-        if args.has_key('INST_COURBE'):
+        if 'INST_COURBE' in args:
             self.INST_COURBE = args['INST_COURBE']
         else:
             self.INST_COURBE = None
 
-        if args.has_key('NUME_ORDRE_COURBE'):
+        if 'NUME_ORDRE_COURBE' in args:
             self.NUME_ORDRE_COURBE = args['NUME_ORDRE_COURBE']
         else:
             self.NUME_ORDRE_COURBE = None
 
-        if args.has_key('TABLE_COURBE'):
+        if 'TABLE_COURBE' in args:
             self.TABLE_COURBE = args['TABLE_COURBE']
         else:
             self.TABLE_COURBE = None
@@ -325,7 +324,7 @@ class EUROPLEXUS:
                         'MED': 'champ_%s.e2m'%NOM_RESU,
                         'PUN': 'courbes_%s.pun'%NOM_RESU,
                         }
-        for fic in nom_fichiers.keys():
+        for fic in list(nom_fichiers.keys()):
             nom_fic = nom_fichiers[fic]
             nom_fichiers[fic] = os.path.join(self.REPE_epx, nom_fic)
         self.nom_fichiers = nom_fichiers
@@ -496,10 +495,10 @@ class EUROPLEXUS:
         if self.CARA_ELEM is not None:
             cara_elem_struc = recupere_structure(self.CARA_ELEM)
 
-            for cle in cara_elem_struc.keys():
+            for cle in list(cara_elem_struc.keys()):
                 if cle in ['INFO', 'MODELE']:
                     continue
-                if not cata_cara_elem.has_key(cle):
+                if cle not in cata_cara_elem:
                     UTMESS('F', 'PLEXUS_18', valk=cle)
                 if cata_cara_elem[cle] == None:
                     continue
@@ -516,10 +515,10 @@ class EUROPLEXUS:
                     for elem in donnees_coque:
                         l_group = get_group_ma(elem, mcfact='AFFE_CARA_ELEM/COQUE')
 
-                        if elem.has_key('VECTEUR'):
+                        if 'VECTEUR' in elem:
                             for group in l_group:
                                 dicOrthotropie[group] = elem['VECTEUR']
-                        elif elem.has_key('ANGL_REP'):
+                        elif 'ANGL_REP' in elem:
                             alpha, beta = elem['ANGL_REP']
                             vect = angle2vectx(alpha, beta)
                             for group in l_group:
@@ -566,7 +565,7 @@ class EUROPLEXUS:
 
         directive = 'ECRITURE'
         # blocs d'écriture de tous les noeuds et toutes les mailles
-        [bloc_poin, bloc_elem] = self.write_all_gr()
+        bloc_poin, bloc_elem = self.write_all_gr()
 
         # Traitement du mot-cle facteur OBSERVATION (EPX = LISTING)
         # Ecriture LISTING
@@ -586,14 +585,14 @@ class EUROPLEXUS:
                 epx[directive].add_bloc(bloc)
 
             # noeuds
-            if listing_fact.has_key('TOUT_GROUP_NO'):
+            if 'TOUT_GROUP_NO' in listing_fact:
                 # tous les noeuds du modèle
                 if bloc_poin is not None:
                     epx[directive].add_bloc(bloc_poin)
                 else:
                     bloc = BLOC_DONNEES('NOPO')
                     epx[directive].add_bloc(bloc)
-            elif listing_fact.has_key('GROUP_NO'):
+            elif 'GROUP_NO' in listing_fact:
                 gr_no = tolist(listing_fact['GROUP_NO'])
                 bloc = BLOC_DONNEES('POIN', l_group=gr_no,)
                 epx[directive].add_bloc(bloc)
@@ -602,14 +601,14 @@ class EUROPLEXUS:
                 epx[directive].add_bloc(bloc)
 
             # mailles
-            if listing_fact.has_key('TOUT_GROUP_MA'):
+            if 'TOUT_GROUP_MA' in listing_fact:
                 # toutes les mailles du modèle
                 if bloc_elem is not None:
                     epx[directive].add_bloc(bloc_elem)
                 else:
                     bloc = BLOC_DONNEES('NOEL')
                     epx[directive].add_bloc(bloc)
-            elif listing_fact.has_key('GROUP_MA'):
+            elif 'GROUP_MA' in listing_fact:
                 gr_ma = tolist(listing_fact['GROUP_MA'])
                 bloc = BLOC_DONNEES('ELEM', l_group=gr_ma,)
                 epx[directive].add_bloc(bloc)
@@ -749,13 +748,13 @@ class EUROPLEXUS:
         lnoeuds = []
         nb_char_lim_pun = 16
         for i_courbe,courbe in enumerate(courbe_fact):
-            for entite_type in dic_entite.keys():
-                if courbe.has_key(entite_type):
+            for entite_type in list(dic_entite.keys()):
+                if entite_type in courbe:
                     entite = courbe[entite_type]
                     cham_aster = courbe['NOM_CHAM']
                     cmp_aster = courbe['NOM_CMP']
                     cham_epx = cata_champs[cham_aster]
-                    if not cata_compo[cham_aster].has_key(cmp_aster):
+                    if cmp_aster not in cata_compo[cham_aster]:
                         UTMESS('F', 'PLEXUS_38', valk=[cham_aster, cmp_aster])
                     cmp_epx = cata_compo[cham_aster][cmp_aster]
                     label = courbe['NOM_COURBE']
@@ -841,7 +840,7 @@ class EUROPLEXUS:
             if type_amor == 'QUASI_STATIQUE':
                 freq = liste_mots_cles_AMOR['FREQUENCE']
                 coef = liste_mots_cles_AMOR['COEF_AMOR']
-                if liste_mots_cles_AMOR.has_key('INST_DEB_AMOR'):
+                if 'INST_DEB_AMOR' in liste_mots_cles_AMOR:
                     deb_amor = liste_mots_cles_AMOR['INST_DEB_AMOR']
                     fin_amor = liste_mots_cles_AMOR['INST_FIN_AMOR']
                     cara = ['FROM', 'UPTO']
@@ -868,9 +867,9 @@ class EUROPLEXUS:
                 Lgma2 = tolist(interface['GROUP_MA_2'])
                 idS1 = interface['IDENT_DOMAINE_1']
                 idS2 = interface['IDENT_DOMAINE_2']
-                if not domaineInterfaces.has_key(idS1):
+                if idS1 not in domaineInterfaces:
                     domaineInterfaces[idS1] = []
-                if not domaineInterfaces.has_key(idS2):
+                if idS2 not in domaineInterfaces:
                     domaineInterfaces[idS2] = []
                 domaineInterfaces[idS1].extend(Lgma1)
                 domaineInterfaces[idS2].extend(Lgma2)
@@ -911,8 +910,8 @@ class EUROPLEXUS:
 
         # CALCUL
         directive = 'CALCUL'
-        for cle in cata_calcul.keys():
-            if liste_mots_cles_CALCUL.has_key(cle):
+        for cle in list(cata_calcul.keys()):
+            if cle in liste_mots_cles_CALCUL:
                 vale = liste_mots_cles_CALCUL[cle]
                 bloc = BLOC_DONNEES(cata_calcul[cle], cle=vale)
                 epx[directive].add_bloc(bloc)
@@ -981,14 +980,14 @@ class EUROPLEXUS:
         if not os.path.isfile(fichier):
             return
         if debug:
-            print self.courbes, type(self.courbes)
+            print(self.courbes, type(self.courbes))
         nc = 0
         para_ordonnee = []
         dico = []
         for icourbe in self.courbes:
             valeurs = self.courbes[icourbe]
             if debug:
-                print 'icourbe = %s ; valeurs = %s'%(icourbe, valeurs)
+                print('icourbe = %s ; valeurs = %s'%(icourbe, valeurs))
             if nc == 0:
                 para_abscisse = self.legend_courbes[icourbe][0]
                 vale_abscisse = valeurs[0,:].tolist()
@@ -1054,7 +1053,7 @@ class EUROPLEXUS:
         # on complète le test car le fichier est créé au début du calcul
         # mais il est vide.
         dic_champ_med = med_aster.get_nom_champ_med(fichier_med)
-        if len(dic_champ_med.keys()) == 0:
+        if len(list(dic_champ_med.keys())) == 0:
             UTMESS('F', 'PLEXUS_14')
 
         unite = self.get_unite_libre()
@@ -1098,12 +1097,12 @@ class EUROPLEXUS:
 
         entite_geo = {}
         entite_geo['ELEM'] = []
-        for model in self.dic_epx_geom.keys():
+        for model in list(self.dic_epx_geom.keys()):
             if self.dic_epx_geom[model]['RESU_ELEM']:
                 entite_geo['ELEM'].extend(self.dic_epx_geom[model]
                                                      ['GROUP_MA'])
         entite_geo['POIN'] = []
-        for model in self.dic_epx_geom.keys():
+        for model in list(self.dic_epx_geom.keys()):
             if self.dic_epx_geom[model]['RESU_POIN']:
                 entite_geo['POIN'].extend(self.dic_epx_geom[model]
                                                        ['GROUP_MA'])

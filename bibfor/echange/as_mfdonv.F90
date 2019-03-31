@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,16 +34,17 @@ subroutine as_mfdonv(fid, cha, typent, typgeo, noma,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, typen4, typge4, stm4, npr4, nip4, n4, cret4
+    med_idt :: fidm
+    med_int :: typen4, typge4, stm4, npr4, nip4, n4, cret4
     med_int :: numdt4, numo4, pit4
-    fid4 = fid
+    fidm = to_med_idt(fid)
     typen4 = typent
     typge4 = typgeo
     numdt4 = numdt
     numo4 = numo
     stm4 = stm
     pit4 = pit
-    call mfdonv(fid4, cha, numdt4, numo4, typen4,&
+    call mfdonv(fidm, cha, numdt4, numo4, typen4,&
                 typge4, noma, pit4, stm4, nompro,&
                 npr4, nomloc, nip4, n4, cret4)
     npr = npr4

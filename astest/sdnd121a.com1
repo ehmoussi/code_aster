@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,23 +27,23 @@ import aster
 ################  Bilan energetique  #######################
 ############################################################
 tmpd = aster.getvectjev('0000001b           .VALE        ');
-t = NP.array(tmpd[0:len(tmpd)/2])
+t = NP.array(tmpd[0:len(tmpd)//2])
 fext = Fa*NP.sin(2*NP.pi*f*t)  # formule qui definit le chargement exterieur
 
 # Euler:
-d_euler = NP.array(tmpd[len(tmpd)/2:len(tmpd)])
+d_euler = NP.array(tmpd[len(tmpd)//2:len(tmpd)])
 del tmpd
 
 tmpv = aster.getvectjev('0000001c           .VALE        ');
-v_euler = NP.array(tmpv[len(tmpv)/2:len(tmpv)])
+v_euler = NP.array(tmpv[len(tmpv)//2:len(tmpv)])
 del tmpv
 
 tmpa = aster.getvectjev('0000001d           .VALE        ');
-a_euler = NP.array(tmpa[len(tmpa)/2:len(tmpa)])
+a_euler = NP.array(tmpa[len(tmpa)//2:len(tmpa)])
 del tmpa
 
 # tmpf = aster.getvectjev('FC_EULER           .VALE        ');
-# fchoc_euler = NP.array(tmpf[len(tmpf)/2:len(tmpf)])
+# fchoc_euler = NP.array(tmpf[len(tmpf)//2:len(tmpf)])
 # del tmpf
 
 E_pot_euler = 1./2 * k_rappel * d_euler**2
@@ -61,20 +61,20 @@ err_globale_E_euler = NP.sqrt( NP.sum((E_inj_euler-E_tot_euler)**2) / NP.sum(E_i
 
 # Adapt:
 tmpd = aster.getvectjev('0000001e           .VALE        ');
-t = NP.array(tmpd[0:len(tmpd)/2])
-d_adapt = NP.array(tmpd[len(tmpd)/2:len(tmpd)])
+t = NP.array(tmpd[0:len(tmpd)//2])
+d_adapt = NP.array(tmpd[len(tmpd)//2:len(tmpd)])
 del tmpd
 
 tmpv = aster.getvectjev('0000001f           .VALE        ');
-v_adapt = NP.array(tmpv[len(tmpv)/2:len(tmpv)])
+v_adapt = NP.array(tmpv[len(tmpv)//2:len(tmpv)])
 del tmpv
 
 tmpa = aster.getvectjev('00000020           .VALE        ');
-a_adapt = NP.array(tmpa[len(tmpa)/2:len(tmpa)])
+a_adapt = NP.array(tmpa[len(tmpa)//2:len(tmpa)])
 del tmpa
 
 # tmpf = aster.getvectjev('FC_ADAPT           .VALE        ');
-# fchoc_adapt = NP.array(tmpf[len(tmpf)/2:len(tmpf)])
+# fchoc_adapt = NP.array(tmpf[len(tmpf)//2:len(tmpf)])
 # del tmpf
 
 E_pot_adapt = 1./2 * k_rappel * d_adapt**2
@@ -89,16 +89,16 @@ err_globale_E_adapt = NP.sqrt( NP.sum((E_inj_adapt-E_tot_adapt)**2) / NP.sum(E_i
 # Verification de la coherence entre la force de choc et la cinematique:
 ############################################################
 tmpd = aster.getvectjev('00000021           .VALE        ');
-d_adap2 = NP.array(tmpd[len(tmpd)/2:len(tmpd)])
+d_adap2 = NP.array(tmpd[len(tmpd)//2:len(tmpd)])
 del tmpd
 
 tmpf = aster.getvectjev('00000022           .VALE        ');
-fchoc_adap2 = NP.array(tmpf[len(tmpf)/2:len(tmpf)])
+fchoc_adap2 = NP.array(tmpf[len(tmpf)//2:len(tmpf)])
 del tmpf
 
 fchoc_cine = kn_choc * (((d_adap2-jeu_choc)+NP.abs(d_adap2-jeu_choc))/2)
 err_globale_F_adap2 = NP.sqrt( NP.sum((fchoc_adap2-fchoc_cine)**2) / NP.sum(fchoc_cine**2) ) *100
-print 'err_globale_F_adap2', err_globale_F_adap2
+print(('err_globale_F_adap2', err_globale_F_adap2))
 #####################################################################
 
 ############################################################
@@ -106,7 +106,7 @@ print 'err_globale_F_adap2', err_globale_F_adap2
 ############################################################
 N=len(t)
    # Pour Euler:
-dchoc_euler = d_euler>=jeu_choc
+dchoc_euler = (d_euler>=jeu_choc).astype(int)
 diff_euler = NP.zeros(N)
 diff_euler[1:len(diff_euler)] = dchoc_euler[1:N]-dchoc_euler[0:N-1]
 in_euler = diff_euler>=1
@@ -122,7 +122,7 @@ for i in out2_euler:
 t_inout_euler.sort()
 
    # Pour Differences centrees:
-dchoc_adapt = d_adapt>=jeu_choc
+dchoc_adapt = (d_adapt>=jeu_choc).astype(int)
 diff_adapt = NP.zeros(N)
 diff_adapt[1:len(diff_adapt)] = dchoc_adapt[1:N]-dchoc_adapt[0:N-1]
 in_adapt = diff_adapt>=1

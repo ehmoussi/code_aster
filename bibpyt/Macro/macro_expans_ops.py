@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,6 @@ def macro_expans_ops(self,
     """!macro MACRO_EXPANS """
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
-    from types import ListType, TupleType
     import aster
     EXTR_MODE = self.get_cmd('EXTR_MODE')
     PROJ_MESU_MODAL = self.get_cmd('PROJ_MESU_MODAL')
@@ -137,8 +136,8 @@ def macro_expans_ops(self,
                                  RESOLUTION=mfact,
                                  NOM_PARA=paras,
                                  )
-    except Exception, err:
-        raise Exception, err
+    except Exception as err:
+        raise Exception(err)
 
     # Phase de reconstruction des donnees mesurees sur le maillage
     # numerique

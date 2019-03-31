@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,8 @@ from libaster import Function, FunctionComplex
 from ..Utilities import accept_array, injector
 
 
-class ExtendedFunction(injector(Function), Function):
+@injector(Function)
+class ExtendedFunction(object):
     cata_sdj = "SD.sd_fonction.sd_fonction_aster"
 
     setValues = accept_array(Function.setValues)
@@ -130,7 +131,8 @@ class ExtendedFunction(injector(Function), Function):
 
 
 
-class ExtendedFunctionComplex(injector(FunctionComplex), FunctionComplex):
+@injector(FunctionComplex)
+class ExtendedFunctionComplex(object):
     cata_sdj = "SD.sd_fonction.sd_fonction_aster"
 
     setValues = accept_array(FunctionComplex.setValues)
@@ -193,7 +195,7 @@ class ExtendedFunctionComplex(injector(FunctionComplex), FunctionComplex):
             ordo = numpy.arctan2(
                 numpy.array(self.OrdoImg()), numpy.array(self.Ordo())) * 180. / pi
         elif arg == 'complex':
-            ordo = map(complex, self.Ordo(), self.OrdoImg())
+            ordo = list(map(complex, self.Ordo(), self.OrdoImg()))
         else:
             assert False, 'unexpected value for arg: %r' % arg
         return class_fonction(self.Absc(), ordo, self.Parametres(), nom=self.nom)

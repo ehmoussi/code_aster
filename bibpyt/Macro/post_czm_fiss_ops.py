@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
     """Corps de POST_CZM_FISS"""
 
     ier = 0
-    
+
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
@@ -115,8 +115,6 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
         xref = POINT_ORIG[0]
         yref = POINT_ORIG[1]
 
-        print vx, vy
-
         # angle entre le vecteur des points de gauss et le vecteur donne par
         # l'utilisateur
         alpha = acos((xdir * vx + ydir * vy) / (ndir * nv))
@@ -125,7 +123,7 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
         eps = 0.0001
         # cas ou le point de reference n'est pas aligne avec les points de
         # Gauss
-        
+
         if (abs(yref - A * xref - B) >= eps):
             UTMESS('F', 'POST0_45', valk=list(
                 GROUP_MA), valr=(xmin, xmax, ymin, ymax))
@@ -234,7 +232,7 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
                                _F(LISTE_R=Lfis, PARA='LONG_FIS'),
                                _F(LISTE_R=Ltot, PARA='LONG_TOT'),
                                _F(LISTE_R=Lcoh, PARA='LONG_COH'),),)
-                               
+
         return TABLE_OUT
 
     #

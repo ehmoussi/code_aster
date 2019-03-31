@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -141,7 +141,7 @@ class MeshType(BaseCataEntity):
 
     def getElrefe(self):
         """Return all the Elrefe supported on this mesh"""
-        return self._elrefe.values()
+        return list(self._elrefe.values())
 
     def addElrefe(self, elrefe):
         """Store an Elrefe supported by the mesh"""
@@ -152,7 +152,7 @@ class MeshType(BaseCataEntity):
     def setName(self, name):
         """Define the object name"""
         super(MeshType, self).setName(name)
-        for key, elrefe in self._elrefe.items():
+        for key, elrefe in list(self._elrefe.items()):
             if type(key) is int:
                 del self._elrefe[key]
                 elname = elrefe.name
@@ -418,7 +418,7 @@ class InputParameter(BaseCataEntity):
         super(InputParameter, self).__init__()
         a_creer_seulement_dans(self, ['parameters', 'Options'])
         check_type([phys], (PhysicalQuantity, ArrayOfQuantities))
-        check_type([container], [types.NoneType, str])
+        check_type([container], [type(None), str])
         self._phys = phys
         self.comment = comment
         self._container = container
@@ -753,7 +753,7 @@ class Element(BaseCataEntity):
 
     def getCalculs(self):
         """Return the list of calculations supported by the element"""
-        return self._calculs.items()
+        return list(self._calculs.items())
 
     def addCalcul(self, calc):
         """Define a calculation on this element"""
@@ -806,13 +806,13 @@ class Element(BaseCataEntity):
     def usedLocatedComponents(self):
         """Return the LocatedComponents used by this element"""
         loco = OrderedDict()
-        for calc in self._calculs.values():
+        for calc in list(self._calculs.values()):
             for _, loc_i in calc.para_in + calc.para_out:
                 loco[id(loc_i)] = loc_i
                 if type(loc_i) is ArrayOfComponents:
                     loc_i = loc_i.locatedComponents
                     loco[id(loc_i)] = loc_i
-        return loco.values()
+        return list(loco.values())
 
     def changeComponents(self, locCmpName, components):
         """Modify the components of a LocatedComponents used in the element.
@@ -913,8 +913,6 @@ class AbstractEntityStore(object):
 
     """Helper class to give access to entities by name"""
     __slots__ = ('_entities', 'entityType', 'subTypes')
-    entityType = None
-    subTypes = None
 
     def __init__(self, package, ignore_names=[], only_mods=[]):
         """Initialisation: import all entities (of type `entityType`) available
@@ -953,7 +951,7 @@ class AbstractEntityStore(object):
               and issubclass(obj, self.entityType)):
             try:
                 self._entities[name] = obj()
-            except AssertionError, exc:
+            except AssertionError as exc:
                 error("ERROR during initialisation of {0}".format(name))
                 raise
         elif type(obj) in self.subTypes:
@@ -961,7 +959,7 @@ class AbstractEntityStore(object):
         elif type(obj) is dict:
             if name == '__builtins__':
                 return
-            for key, val in obj.items():
+            for key, val in list(obj.items()):
                 self._register(key, val)
 
     def getDict(self):
@@ -975,7 +973,7 @@ class AbstractEntityStore(object):
 
 def objects_from_context(dict_objects, filter_type, ignore_names=[]):
     """Build the list of all objects of the given type"""
-    objects = dict([(name, obj) for name, obj in dict_objects.items()
+    objects = dict([(name, obj) for name, obj in list(dict_objects.items())
                     if isinstance(obj, filter_type) and not name in ignore_names])
     return objects
 
@@ -1020,7 +1018,7 @@ def verif_identificateur(chaine, long):
 #    -- verifie que:
 #      * la chaine a une longueur <= long
 #      * la chaine est en majuscules
-    assert isinstance(chaine, types.StringType), chaine
+    assert isinstance(chaine, str), chaine
     assert len(chaine) >= 1 and len(chaine) <= long, chaine
     for c in chaine:
         assert c in string.ascii_uppercase + string.digits + '_'
@@ -1102,7 +1100,7 @@ def a_creer_seulement_dans(obj, l_autorises):
             assert 0, ("non autorise : ", autor)
 
     if not OK:
-        print "l_autorises=", l_autorises
-        print "l1=", l1
+        print(("l_autorises=", l_autorises))
+        print(("l1=", l1))
         assert 0, ("l'objet ", obj, "doit etre cree dans les fichiers de type:",
                    l_autorises)

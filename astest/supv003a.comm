@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ help(aster.get_option_dependency)
 # test que le dictionnaire anglais est disponible
 # Noyau/N_ASSD.py: assd.__convert__
 from code_aster.Cata.Syntax import tr
-translation = tr(u"On attend un objet concept.")
+translation = tr("On attend un objet concept.")
 test = translation == "A concept object is expected."
 
 tab2 = CREA_TABLE(LISTE=(_F(PARA='BOOL',

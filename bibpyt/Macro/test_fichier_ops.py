@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 
 import sys
 import os
+import tempfile
 import re
 
 # hashlib only exists in python>=2.5
@@ -123,7 +124,7 @@ def test_fichier_ops(self, **kwargs):
     # filtre par expression régulière
     try:
         fileobj = regexp_filter(fileobj, kwargs.get('EXPR_IGNORE'))
-    except TestFichierError, valk:
+    except TestFichierError as valk:
         UTMESS('S', 'TEST0_1', valk=valk)
     # calcule le nombre de valeurs et la somme ou min/max
     verbose = INFO > 1
@@ -202,27 +203,27 @@ def regexp_filter(file_in, regexp_ignore, debug=False):
     for exp in regexp_ignore:
         try:
             obj = re.compile(exp)
-        except re.error, s:
-            raise TestFichierError, (s, str(exp))
+        except re.error as s:
+            raise TestFichierError(s, str(exp))
         else:
             l_regexp.append(obj)
     # filtre du fichier
-    file_out = os.tmpfile()
+    file_out = tempfile.NamedTemporaryFile()
     file_in.seek(0)
     for i, line in enumerate(file_in):
         if debug:
-            print 'LIGNE', i,
+            print('LIGNE', i, end=' ')
         keep = True
         for exp in l_regexp:
             if exp.search(line):
                 keep = False
                 if debug:
-                    print ' >>>>>>>>>> IGNOREE <<<<<<<<<<'
+                    print(' >>>>>>>>>> IGNOREE <<<<<<<<<<')
                 break
         if keep:
-            file_out.write(line)
+            file_out.write(line.encode())
             if debug:
-                print
+                print()
     file_out.seek(0)
     return file_out
 
@@ -263,16 +264,15 @@ def test_iter(obj, function, verbose=False):
     #     50 Mo      17 s      48 s      17 s
     #    100 Mo      34 s      96 s      35 s
     # l'itérateur est l'objet file lui-même ou on le crée sur la liste
-    if type(obj) is file:
-        obj.seek(0)
-        iterator = obj
-    else:
-        iterator = iter(obj)
+    obj.seek(0)
+    iterator = iter(obj)
     ok = True
     buff = []
     while ok:
         try:
-            text = iterator.next()
+            text = next(iterator)
+            if type(text) is bytes:
+                text = text.decode()
         except StopIteration:
             ok = False
             text = ''
@@ -297,14 +297,14 @@ def test_iter(obj, function, verbose=False):
         vali = function(vali, l_int)
         # add text
         text = ''.join([s.strip() for s in text.split()])
-        hfile.update(text)
+        hfile.update(text.encode())
         if verbose:
-            print 'Nombres réels :', nbvalr
-            print l_float
-            print 'Nombres entiers :', nbvali
-            print l_int
-            print 'Texte :'
-            print text
+            print('Nombres réels :', nbvalr)
+            print(l_float)
+            print('Nombres entiers :', nbvali)
+            print(l_int)
+            print('Texte :')
+            print(text)
     chksum = hfile.hexdigest()
     return nbvalr, valr, nbvali, int(vali) % 2147483647, chksum
 
@@ -349,4 +349,4 @@ if __name__ == '__main__':
     fileobj = regexp_filter(fileobj, exp)
     results = test_iter(fileobj, function=dict_func_test[opts.type_test],
                         verbose=opts.verbose)
-    print '%6d réels, vale_r = %f, %6d entiers, vale_i = %d, texte : %s' % results
+    print('%6d réels, vale_r = %f, %6d entiers, vale_i = %d, texte : %s' % results)

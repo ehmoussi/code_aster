@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -179,7 +179,7 @@ def K3_ana(x):
 s_deb = 0.
 s_fin = 6.28278
 npt_s = 20
-s_tab = [s_deb + ipt*(s_fin-s_deb)/npt_s for ipt in xrange(npt_s+1)]
+s_tab = [s_deb + ipt*(s_fin-s_deb)/npt_s for ipt in range(npt_s+1)]
 K1_tab = [K1_ana(s) for s in s_tab]
 K2_tab = [K2_ana(s) for s in s_tab]
 K3_tab = [K3_ana(s) for s in s_tab]

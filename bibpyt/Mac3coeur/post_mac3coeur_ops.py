@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ import numpy as N
 import numpy.linalg as LA
 
 import aster_core
-from mac3coeur_coeur import CoeurFactory
+from .mac3coeur_coeur import CoeurFactory
 from scipy import stats
 from Utilitai.UniteAster import UniteAster
 
@@ -124,7 +124,7 @@ def makeXMGRACEjeu(unit, post, coeur, valjeuac, valjeucu):
                        '@s%d symbol color 1\n@s%d symbol fill pattern 1\n@s%d symbol fill color 1\n'
                        '@type xy\n%10.8f %10.8f\n' % (ind, ind, ind, ind, ind, ind, ind, x, y))
 
-    for name in valjeucu.keys():
+    for name in list(valjeucu.keys()):
         position1 = name[3:5]
         position2 = name[6:7]
         #print 'position 1 = ',position1
@@ -148,7 +148,7 @@ def makeXMGRACEjeu(unit, post, coeur, valjeuac, valjeucu):
                        '@string def \"%s\"\n' % (redF, greenF, blueF, size, (x1 + x2), (y1 + y2) - 0.1, lame))
 
     if len(valjeuac) != 0:
-        for name in valjeuac.keys():
+        for name in list(valjeuac.keys()):
             position1 = name[4:6]
             position2 = name[6:8]
             (x1, y1) = NodePos(coeur,position1)
@@ -201,7 +201,7 @@ def makeXMGRACEdef_amp(unit, post, coeur, valdefac):
     xmgrfile = open(filename, 'w')
     makeXMGRACE_entete(coeur,xmgrfile)
     ind = 0
-    for name in valdefac.keys():
+    for name in list(valdefac.keys()):
         ind = ind + 1
         position = name[0:3]
         #print 'position = ',position
@@ -241,7 +241,7 @@ def makeXMGRACEdef_mod(unit, post, coeur, valdefac):
     xmgrfile = open(filename, 'w')
     makeXMGRACE_entete(coeur,xmgrfile)
     ind = 0
-    for name in valdefac.keys():
+    for name in list(valdefac.keys()):
         ind = ind + 1
         position = name[0:3]
         (x,y) = coeur.get_XYOut(position)
@@ -292,7 +292,7 @@ def makeXMGRACEdef_vec(unit, post, coeur, valdefac, valdirYac, valdirZac):
     xmgrfile = open(filename, 'w')
     makeXMGRACE_entete(coeur,xmgrfile)
     ind = 0
-    for name in valdefac.keys():
+    for name in list(valdefac.keys()):
         ind = ind + 1
         position = name[0:3]
         (x,y) = coeur.get_XYOut(position)
@@ -505,7 +505,7 @@ def post_mac3coeur_ops(self, **args):
         nb_grilles = valContactCuve.shape[1]
         valQuantile=[70,80,90,95,99]
         liste_out=[]
-        for i in xrange(nb_grilles) :
+        for i in range(nb_grilles) :
             valContactCuveGrille    = valContactCuve[:,i]
             valContactAssLameGrille = valContactAssLame[:,i]
             valContactGrille        = valContactCuveGrille.tolist()
@@ -541,7 +541,7 @@ def post_mac3coeur_ops(self, **args):
 
 
 
-        print 'liste_out : ',liste_out
+        print('liste_out : ',liste_out)
 
         __TAB_OUT = CREA_TABLE(TITRE='RESU_GLOB_'+nameCoeur,
                              LISTE=liste_out
@@ -715,7 +715,7 @@ def post_mac3coeur_ops(self, **args):
 
         # combien de grille ?
         nbGrille = 0
-        for idAC in _coeur.collAC.keys() :
+        for idAC in list(_coeur.collAC.keys()) :
             AC = _coeur.collAC[idAC]
             altitudeGrilles = AC.altitude
             if len(altitudeGrilles) > nbGrille :
@@ -733,7 +733,7 @@ def post_mac3coeur_ops(self, **args):
         locMaxDeplGrille = [None]*nbGrille
 
         #for name in POSITION:
-        for idAC in _coeur.collAC.keys() :
+        for idAC in list(_coeur.collAC.keys()) :
             AC = _coeur.collAC[idAC]
             altitudeGrilles = AC.altitude
             name_AC_aster = AC.idAST
@@ -777,9 +777,9 @@ def post_mac3coeur_ops(self, **args):
             YG=[YG1,YG2,YG3,YG4,YG5,YG6,YG7,YG8,YG9,YG10]
             posGrille = []
             cosGrille = []
-            for i in xrange(nbGrille) :
+            for i in range(nbGrille) :
                 posGrille.append(N.array((XG[i],YG[i],altitudeGrilles[i]*1000)))
-            for i in xrange(nbGrille-2) :
+            for i in range(nbGrille-2) :
                 cosGrille.append(compute_cos_alpha(posGrille[i],posGrille[i+1],posGrille[i+2]))
             gravite = K_star*N.sum(1.-N.array(cosGrille))
             normeDepl = N.sqrt(N.array(XG)**2+N.array(YG)**2)
@@ -825,7 +825,7 @@ def post_mac3coeur_ops(self, **args):
                     maxGraviteParType[Milieu]=gravite
             except KeyError :
                 maxGraviteParType[Milieu] = gravite
-            for i in xrange(nbGrille) :
+            for i in range(nbGrille) :
                 if normeDepl[i] > maxDeplGrille[i] :
                     maxDeplGrille[i] = normeDepl[i]
                     locMaxDeplGrille[i] = name_AC_damac
@@ -865,11 +865,11 @@ def post_mac3coeur_ops(self, **args):
             l_T5.append(0.)
             l_T6.append(0.)
         moyenneRhoCoeur = N.mean(N.array(l_def_max))
-        for typ in moyenneRhoParType.keys() :
+        for typ in list(moyenneRhoParType.keys()) :
             moyenneRhoParType[typ] = N.mean(N.array(moyenneRhoParType[typ]))
         moyenneGravite = N.mean(N.array(listeGravite))
         sigmaGravite = N.sqrt(N.mean((N.array(listeGravite)-moyenneGravite)**2))
-        for typ in moyenneGraviteParType.keys() :
+        for typ in list(moyenneGraviteParType.keys()) :
             moyenneGraviteParType[typ] = N.mean(N.array(moyenneGraviteParType[typ]))
 
 
@@ -877,33 +877,33 @@ def post_mac3coeur_ops(self, **args):
 
         liste_out = []
         liste_out.append({'LISTE_R' : moyenneRhoCoeur, 'PARA' : 'moyRhoCoeur' })
-        for typ in moyenneRhoParType.keys() :
+        for typ in list(moyenneRhoParType.keys()) :
             liste_out.append({'LISTE_R' : moyenneRhoParType[typ],
                               'PARA'    : 'moR'+typ })
         liste_out.append({'LISTE_R' : maxRho, 'PARA' : 'maxRhoCoeur' })
-        for typ in maxRhoParType.keys() :
+        for typ in list(maxRhoParType.keys()) :
             liste_out.append({'LISTE_R' : maxRhoParType[typ],
                               'PARA'    : 'maR'+typ })
         liste_out.append({'LISTE_R' : moyenneGravite, 'PARA' : 'moyGravCoeur' })
         liste_out.append({'LISTE_R' : maxGravite,     'PARA' : 'maxGravCoeur' })
         liste_out.append({'LISTE_R' : sigmaGravite,   'PARA' : 'sigGravCoeur' })
-        for typ in maxGraviteParType.keys() :
+        for typ in list(maxGraviteParType.keys()) :
             liste_out.append({'LISTE_R' : maxGraviteParType[typ],
                               'PARA'    : 'maG'+typ })
-        for typ in moyenneGraviteParType.keys() :
+        for typ in list(moyenneGraviteParType.keys()) :
             liste_out.append({'LISTE_R' : moyenneGraviteParType[typ],
                               'PARA'    : 'moG'+typ })
-        for i in xrange(2,len(maxDeplGrille)) :
+        for i in range(2,len(maxDeplGrille)) :
             liste_out.append({'LISTE_R' : maxDeplGrille[i-1],
                               'PARA'    : 'maxDeplGrille%i'%i })
         liste_out.append({'LISTE_K' : locMaxRho, 'PARA' : 'locMaxRho', 'TYPE_K' : 'K8' })
         liste_out.append({'LISTE_K' : locMaxGravite, 'PARA' : 'locMaxGrav', 'TYPE_K' : 'K8' })
-        for i in xrange(2,len(maxDeplGrille)) :
+        for i in range(2,len(maxDeplGrille)) :
             liste_out.append({'LISTE_K' : locMaxDeplGrille[i-1],
                               'PARA'    : 'locMaxDeplG%i'%i,
                               'TYPE_K'  : 'K8' })
 
-        print 'liste_out : ',liste_out
+        print('liste_out : ',liste_out)
 
         if tableCreated :
             tmp_vale = []

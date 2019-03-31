@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------- */
-/* Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org             */
+/* Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org             */
 /* This file is part of code_aster.                                     */
 /*                                                                      */
 /* code_aster is free software: you can redistribute it and/or modify   */
@@ -49,7 +49,6 @@
 
 #include <stdio.h>
 
-extern DL_EXPORT(int) Py_Main();
 
 #ifndef _MAIN_
 #define _MAIN_ main
@@ -57,23 +56,26 @@ extern DL_EXPORT(int) Py_Main();
 
 void initAsterModules()
 {
-    PyImport_AppendInittab("_aster_core", init_aster_core);
-    PyImport_AppendInittab("aster", initaster);
+    PyImport_AppendInittab("_aster_core", PyInit__aster_core);
+    PyImport_AppendInittab("aster", PyInit_aster);
 
     /* Module définissant des opérations sur les objets fonction_sdaster */
-    PyImport_AppendInittab("aster_fonctions", initaster_fonctions);
+    PyImport_AppendInittab("aster_fonctions", PyInit_aster_fonctions);
 #ifndef _DISABLE_MED
-    PyImport_AppendInittab("med_aster", initmed_aster);
+    PyImport_AppendInittab("med_aster", PyInit_med_aster);
 #endif
 }
 
-int
-_MAIN_(argc, argv)
-    int argc;
-    char **argv;
-{
+int _MAIN_(int argc, char** argv){
     int ierr;
+
     initAsterModules();
-    ierr = Py_Main(argc, argv);
+
+    wchar_t **wargv = PyMem_Malloc(sizeof(wchar_t*)*argc);
+    int i;
+    for (i=0; i<argc; i++)
+        wargv[i] = Py_DecodeLocale(argv[i], NULL);
+
+    ierr = Py_Main(argc, wargv);
     return ierr;
 }

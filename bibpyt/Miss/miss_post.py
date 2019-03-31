@@ -240,7 +240,7 @@ class PostMiss(object):
             assert fft is not None
             tf_fft = fft.convert('complex')
             df = tf_fft.vale_x[1] - tf_fft.vale_x[0]
-            med = len(tf_fft.vale_x) / 2 + 1
+            med = len(tf_fft.vale_x) // 2 + 1
             lfreq = tf_fft.vale_x[:med].tolist()
             freq_max = lfreq[-1]
             UTMESS('I', 'MISS0_12', valr=(0., freq_max, df), vali=len(lfreq))
@@ -298,13 +298,13 @@ class PostMiss(object):
         for val in kwargs.values():
             if isinstance(val, DataStructure):
                 self.tab.referenceToDataStructure.append(val)
-        values = dict([(k, v.getName()) for k, v in kwargs.items() \
-                          if k in self._torder and v is not None])
+        values = dict([(k, v.getName()) for k, v in kwargs.items()
+                       if k in self._torder and v is not None])
         if index > 0:
             row = self.tab.rows[index]
             row.update(values)
         else:
-            row = dict(zip(self._tkeys, primkey))
+            row = dict(list(zip(self._tkeys, primkey)))
             row.update(values)
             self._tline[primkey] = len(self.tab)
             self.tab.append(row)
@@ -492,7 +492,7 @@ class PostMissHarm(PostMissTran):
         if self.excit_kw is not None:
           for excit_i in self.excit_kw:
             dExc = excit_i
-            for mc in dExc.keys():
+            for mc in list(dExc.keys()):
                 if dExc[mc] is None:
                     del dExc[mc]
             if dExc.get('VECT_ASSE') is not None:
@@ -811,7 +811,7 @@ class PostMissControl(PostMiss):
                              VALE_C=(0.,1.0,0.,fmaxc,1.0,0.,fmaxc+dfc,0.,0.))
         filt = _filt0.convert('complex')
         tfc = tfft * tfa_i * filt
-        med = len(tfa_i.vale_x) / 2 + 1
+        med = len(tfa_i.vale_x) // 2 + 1
         lfreq = tfa_i.vale_x[:med].tolist()
         tffr = tfc.evalfonc(lfreq)
         tffr.para['NOM_PARA'] = 'FREQ'
@@ -841,7 +841,7 @@ class PostMissFichierTemps(PostMissFichier):
         N_inst = int(self.param['INST_FIN']/self.param['PAS_INST'])
         factor = self.param['COEF_SURECH']
         self.L_points = int(factor * N_inst)
-        self.nbr_freq = self.L_points/2 + 1
+        self.nbr_freq = self.L_points//2 + 1
         eps = self.param['PRECISION']
         self.rho = eps**(1./(2.*N_inst))
         self.nrows = self.param['NB_MODE']
@@ -907,9 +907,9 @@ class PostMissFichierTemps(PostMissFichier):
         freq_reduc = freq_list1 + freq_list2 + freq_list3
 
         if len(freq_list2) % 2 == 0:
-            length = len(freq_list1) + len(freq_list2)/2
+            length = len(freq_list1) + len(freq_list2)//2
         else:
-            length = len(freq_list1) + (len(freq_list2)-1)/2 + 1
+            length = len(freq_list1) + (len(freq_list2)-1)//2 + 1
         Z_reduced = NP.zeros((self.nrows, self.ncols, len(freq_reduc)), complex)
         Z_reduced[:,:, 0:length+1] = NP.conj(impe_Laplace[:,:, 0:length+1])
         Z_reduced[:,:, length+1:] = impe_Laplace[:,:, length-1:0:-1]
@@ -1097,7 +1097,7 @@ class PostMissFichierTemps(PostMissFichier):
 
     def impr_impe(self, Zdt, unite_type_impe, ibin):
         """Ecriture d'une impédance quelconque dans le fichier de sortie en argument"""
-        print'ibin=',ibin
+        print('ibin=',ibin)
         if ibin == 0:
          if self.param['NB_MODE'] < 6:
             nb_colonne = self.param['NB_MODE']
@@ -1116,7 +1116,7 @@ class PostMissFichierTemps(PostMissFichier):
                 for c in range(0, self.ncols, nb_colonne):
                     txt.append(fmt_ligne % tuple(Zdt[l, c:c+nb_colonne, n]))
 
-         with open(self._fichier_aster(unite_type_impe), 'wb') as fid:
+         with open(self._fichier_aster(unite_type_impe), 'w') as fid:
             fid.write(os.linesep.join(txt))
 
         else:
@@ -1125,11 +1125,11 @@ class PostMissFichierTemps(PostMissFichier):
          lpara.append(float(self.L_points))
          lpara.append(self.dt)
          lpara.append(float(self.nrows))
-         print 'lpara=',lpara
+         print('lpara=',lpara)
          lfreq =[]
          for n in range(0, self.L_points):
             lfreq.append(n*self.dt)
-         print 'lfreq=',lfreq
+         print('lfreq=',lfreq)
          lparaArr = NP.array(lpara)
          lfreqArr = NP.array(lfreq)
          lparaArr.tofile(fid)
@@ -1158,7 +1158,7 @@ class PostMissFichierTemps(PostMissFichier):
                 txt.append(fmt_ligne % tuple(fs_temps[mode:mode+nb_colonne, n]))
 
         ul = self.param['EXCIT_SOL']['UNITE_RESU_FORC']
-        with open(self._fichier_aster(ul), 'wb') as fid:
+        with open(self._fichier_aster(ul), 'w') as fid:
             fid.write(os.linesep.join(txt))
 
     def cumtrapz(self, a):

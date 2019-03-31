@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,22 +65,22 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
 
     # Recuperation parametres solveur lineaire
     dSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
-    for i in dSolveur.keys():
+    for i in list(dSolveur.keys()):
         if dSolveur[i] == None:
             del dSolveur[i]
-    if dSolveur.has_key('TYPE_RESU'):  # because TYPE_RESU is a keyword with a 'global' position
+    if 'TYPE_RESU' in dSolveur:  # because TYPE_RESU is a keyword with a 'global' position
         del dSolveur['TYPE_RESU']
-    if dSolveur.has_key('OPTION'):    # because OPTION is a keyword with a 'global' position
+    if 'OPTION' in dSolveur:    # because OPTION is a keyword with a 'global' position
         del dSolveur['OPTION']
-    if dSolveur.has_key('FREQ'):      # because FREQ can be a keyword with a 'global' position
+    if 'FREQ' in dSolveur:      # because FREQ can be a keyword with a 'global' position
         del dSolveur['FREQ']
     solveur_lineaire = dSolveur.get('METHODE').strip()
     dSolveur_infomode = dSolveur
     # pour INFO_MODE, le mot-clé facteur SOLVEUR ne doit pas contenir les
     # mot-clés POSTTRAITEMENTS et RESI_RELA
-    if dSolveur_infomode.has_key('POSTTRAITEMENTS'):
+    if 'POSTTRAITEMENTS' in dSolveur_infomode:
         del dSolveur_infomode['POSTTRAITEMENTS']
-    if dSolveur_infomode.has_key('RESI_RELA'):
+    if 'RESI_RELA' in dSolveur_infomode:
         del dSolveur_infomode['RESI_RELA']
 
     nompro = None
@@ -236,36 +236,36 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
 
             OPTION = 'SANS'  # option for detecting rigid body modes
             if METHODE == 'TRI_DIAG':
-                if args.has_key('NMAX_ITER_ORTHO'):
+                if 'NMAX_ITER_ORTHO' in args:
                     motscit['NMAX_ITER_ORTHO'] = SOLVEUR_MODAL[
                         'NMAX_ITER_ORTHO']
-                if args.has_key('PREC_ORTHO'):
+                if 'PREC_ORTHO' in args:
                     motscit['PREC_ORTHO'] = SOLVEUR_MODAL['PREC_ORTHO']
-                if args.has_key('PREC_LANCZOS'):
+                if 'PREC_LANCZOS' in args:
                     motscit['PREC_LANCZOS'] = SOLVEUR_MODAL['PREC_LANCZOS']
-                if args.has_key('MAX_ITER_QR'):
+                if 'MAX_ITER_QR' in args:
                     motscit['NMAX_ITER_QR'] = SOLVEUR_MODAL['NMAX_ITER_QR']
                     if SOLVEUR_MODAL['MODE_RIGIDE'] == 'OUI':
                         OPTION = 'MODE_RIGIDE'
             elif METHODE == 'JACOBI':
-                if args.has_key('NMAX_ITER_BATHE'):
+                if 'NMAX_ITER_BATHE' in args:
                     motscit['NMAX_ITER_BATHE'] = SOLVEUR_MODAL[
                         'NMAX_ITER_BATHE']
-                if args.has_key('PREC_BATHE'):
+                if 'PREC_BATHE' in args:
                     motscit['PREC_BATHE'] = SOLVEUR_MODAL['PREC_BATHE']
-                if args.has_key('NMAX_ITER_JACOBI'):
+                if 'NMAX_ITER_JACOBI' in args:
                     motscit['NMAX_ITER_JACOBI'] = SOLVEUR_MODAL[
                         'NMAX_ITER_JACOBI']
-                if args.has_key('PREC_JACOBI'):
+                if 'PREC_JACOBI' in args:
                     motscit['PREC_JACOBI'] = SOLVEUR_MODAL['PREC_JACOBI']
             elif METHODE == 'SORENSEN':
-                if args.has_key('NMAX_ITER_SOREN'):
+                if 'NMAX_ITER_SOREN' in args:
                     motscit['NMAX_ITER_SOREN'] = SOLVEUR_MODAL[
                         'NMAX_ITER_SOREN']
-                if args.has_key('PARA_ORTHO_SOREN'):
+                if 'PARA_ORTHO_SOREN' in args:
                     motscit['PARA_ORTHO_SOREN'] = SOLVEUR_MODAL[
                         'PARA_ORTHO_SOREN']
-                if args.has_key('PREC_SOREN'):
+                if 'PREC_SOREN' in args:
                     motscit['PREC_SOREN'] = SOLVEUR_MODAL['PREC_SOREN']
             elif METHODE == 'QZ':
                 motscit['TYPE_QZ'] = SOLVEUR_MODAL['TYPE_QZ']
@@ -539,14 +539,14 @@ def gestion_sous_bande(solveur_lineaire, __nbmodi, nnfreq, nbproc, stop):
             aster.affiche('MESSAGE', 72 * '-')
         div = None
         reste = None
-        div = nbproc / nbsb_nonvide
+        div = nbproc // nbsb_nonvide
         reste = nbproc - nbsb_nonvide * div
         if ((nbproc > nbsb_nonvide) & (reste != 0)):
             aster.affiche('MESSAGE', 72 * '-')
             UTMESS('I', 'MODAL_12', vali=(nbsb_nonvide, div, div + 1),)
             aster.affiche('MESSAGE', 72 * '-')
 
-        l1 = nbproc / nbsb_nonvide
+        l1 = nbproc // nbsb_nonvide
         l11 = l1 + 1
         l2 = nbproc - (l1 * nbsb_nonvide)
         l21 = l2 + 1
@@ -582,7 +582,7 @@ def gestion_frequence(solveur_lineaire, nnfreq, nbproc):
             aster.affiche('MESSAGE', 72 * '-')
         div = None
         reste = None
-        div = nbproc / (nnfreq - 1)
+        div = nbproc // (nnfreq - 1)
         reste = nbproc - (nnfreq - 1) * div
         if ((nbproc > nnfreq - 1) & (reste != 0)):
             aster.affiche('MESSAGE', 72 * '-')

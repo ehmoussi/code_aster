@@ -30,7 +30,8 @@ from libaster import EntityType
 from ..Utilities import injector
 
 
-class ExtendedMaterialOnMesh(injector(MaterialOnMesh), MaterialOnMesh):
+@injector(MaterialOnMesh)
+class ExtendedMaterialOnMesh(object):
     cata_sdj = "SD.sd_cham_mater.sd_cham_mater"
 
     def __getinitargs__(self):

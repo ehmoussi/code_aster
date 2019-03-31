@@ -57,17 +57,17 @@ vers = aster_core.__version__
 # lecture du fichier de paramètres
 if os.path.exists(fpara):
    s_para = open(fpara, 'r').read()
-   print """
+   print(("""
 # ========================================= #
 #           FICHIER DE PARAMETRES           #
 
 %s
 # ========================================= #
-""" % s_para
-   execfile(fpara)
+""" % s_para))
+   exec(compile(open(fpara).read(), fpara, 'exec'))
 else:
-   raise code_aster.AsterError, """ <meshtool> File not found : %s
-            It should have been created by meshtool script...""" % fpara
+   raise code_aster.AsterError(""" <meshtool> File not found : %s
+            It should have been created by meshtool script...""" % fpara)
 
 # -----------------------------------------------------------------------------
 unite_mail = 20
@@ -120,8 +120,8 @@ if info_mail:
         MACR_INFO_MAIL(MAILLAGE=ma,
                        **opts_info_mail)
     except code_aster.AsterError as msg:
-        print """Erreur lors de l'appel à HOMARD..."""
-        print msg
+        print("""Erreur lors de l'appel à HOMARD...""")
+        print(msg)
 
 code_aster.onFatalError('ABORT')
 

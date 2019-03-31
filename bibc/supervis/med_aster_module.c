@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------- */
-/* Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org             */
+/* Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org             */
 /* This file is part of code_aster.                                     */
 /*                                                                      */
 /* code_aster is free software: you can redistribute it and/or modify   */
@@ -65,7 +65,7 @@ PyObject *args;
                      nomsComp, unitesComp, dtUnit, &nbCstp);
         tupstr = MakeTupleString((long)nbComp, nomsComp, (STRING_SIZE)MED_SNAME_SIZE, NULL);
 
-        PyDict_SetItem(dic_champ_comp, PyString_FromString(nomChamp), tupstr);
+        PyDict_SetItem(dic_champ_comp, PyUnicode_FromString(nomChamp), tupstr);
         FreeStr(nomsComp);
         FreeStr(unitesComp);
     }
@@ -83,11 +83,23 @@ static PyMethodDef methods[] = {
     { NULL, NULL, 0, NULL }
 };
 
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "med_aster",
+        NULL,
+        -1,
+        methods,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
 
 #ifndef _WITHOUT_PYMOD_
-PyMODINIT_FUNC initmed_aster(void)
+PyObject* PyInit_med_aster(void)
 {
-    Py_InitModule("med_aster", methods);
+    PyObject* med_aster = PyModule_Create(&moduledef);
+    return med_aster;
 }
 #endif
 #endif

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,8 +52,8 @@ def define_operators(store):
 
         return InheritedCommand.run
 
-    for name, command in commandStore.items():
-        if store.has_key(name):
+    for name, command in list(commandStore.items()):
+        if name in store:
             continue
         if name in UNSUPPORTED:
             continue

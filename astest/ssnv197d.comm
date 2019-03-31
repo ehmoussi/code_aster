@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ G=238.2E6
 YOUNG = 9.*K*G /(3.*K+G)
 POISSON = (3.*K-2.*G) /(6.*K+2.*G)
 
-print 'young=',YOUNG,' /// nu=',POISSON
+print('young=',YOUNG,' /// nu=',POISSON)
 
 # pression de preconsolidation [en kPa]
 P0=100.E3

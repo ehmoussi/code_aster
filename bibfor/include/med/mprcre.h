@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,8 @@
 interface
 #include "asterf_types.h"
     subroutine mprcre(fid, nopara, typ, des, dtunit, cret)
-        med_int :: fid, typ
+        med_idt :: fid
+        med_int :: typ
         character(len=*) :: nopara, des, dtunit
         med_int :: cret
     end subroutine mprcre

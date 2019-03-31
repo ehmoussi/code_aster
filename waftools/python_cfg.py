@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,8 @@ def check_system_libs(self):
 def configure_pythonpath(self):
     """Insert env.PYTHONPATH at the beginning of sys.path"""
     path = Utils.to_list(self.env['PYTHONPATH'])
-    system_path = _get_default_pythonpath()
+    system_path = _get_default_pythonpath(self.environ.get("PYTHON",
+                                                           sys.executable))
     for i in sys.path:
         if i in system_path:
             continue
@@ -73,12 +74,14 @@ def configure_pythonpath(self):
         path.append(i)
     sys.path = path + sys.path
     self.env['CFG_PYTHONPATH'] = path
+    self.env['CFG_PYTHONHOME'] = sys.prefix + (
+        '' if sys.prefix == sys.exec_prefix else ':' + sys.exec_prefix)
     os.environ['PYTHONPATH'] = os.pathsep.join(sys.path)
 
 @Configure.conf
 def check_python(self):
     self.load('python')
-    self.check_python_version((2, 7, 0))
+    self.check_python_version((3, 5, 0))
     self.check_python_headers()
 
 @Configure.conf
@@ -94,7 +97,10 @@ def check_numpy_module(self):
     # getting python module
     self.start_msg('Checking for numpy')
     self.check_python_module('numpy')
-    self.end_msg('yes')
+    import numpy
+    self.env.append_unique('CFG_PYTHONPATH',
+        [osp.normpath(osp.dirname(osp.dirname(numpy.__file__)))])
+    self.end_msg(numpy.__file__)
 
 @Configure.conf
 def check_numpy_headers(self):
@@ -145,11 +151,11 @@ def check_optimization_python(self):
     self.setenv('release')
     self.env['PYC'] = self.env['PYO'] = 0
 
-def _get_default_pythonpath():
+def _get_default_pythonpath(python):
     """Default sys.path should be added into PYTHONPATH"""
     env = os.environ.copy()
     env['PYTHONPATH'] = ''
-    proc = Popen([sys.executable, '-c', 'import sys; print sys.path'],
+    proc = Popen([python, '-c', 'import sys; print(sys.path)'],
                  stdout=PIPE, env=env)
     system_path = eval(proc.communicate()[0])
     return system_path

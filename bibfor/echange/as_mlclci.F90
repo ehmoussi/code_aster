@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,10 +34,11 @@ subroutine as_mlclci(fid, nordr, k64, ityp, nbn,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, nordr4, ityp4, nbn4, cret4, ndim4, tymas4, nbmas4
-    fid4 = fid
+    med_idt :: fidm
+    med_int :: nordr4, ityp4, nbn4, cret4, ndim4, tymas4, nbmas4
+    fidm = to_med_idt(fid)
     nordr4 = nordr
-    call mlclci(fid4, nordr4, k64, ityp4, ndim4,&
+    call mlclci(fidm, nordr4, k64, ityp4, ndim4,&
                 nbn4, giname, nomasu, nbmas4, tymas4,&
                 cret4)
     ityp = ityp4

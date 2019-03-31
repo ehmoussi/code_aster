@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,6 @@
 # --------------------------------------------------------------------------------
 #       impression des catalogues d'elements au format "jeveux" (ojb)
 # ------------------------------------------------------------------------
-import string
 import copy
 import os
 import os.path as osp
@@ -109,7 +108,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
         # "splite" la chaine comlibr en plusieurs lignes et stocke ces lignes dans TOUCOMLIBR
         indice = len(TOUCOMLIBR.objs)
         if comlibr:
-            l = string.split(comlibr, '\n')
+            l = comlibr.split('\n')
             nblig = len(l)
             ind1 = indice
             for x in l:
@@ -174,7 +173,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             nom = elrf.name
             ielrf = NOELRF.jenonu(nom)
             TMELRF.ecri_os(indice=ielrf, valeur=nutyma)
-            for nfam, npg in elrf.locations.items():
+            for nfam, npg in list(elrf.locations.items()):
                 npg = int(npg)
                 ifpg = ifpg + 1
                 TMFPG.ecri_os(indice=ifpg, valeur=npg)
@@ -216,7 +215,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             NOMCMP.ecri_co(nom=nogd, indice=icmp + 1, valeur=components[icmp])
 
         DESCRIGD.ecri_co(nom=nogd, indice=1, valeur=1)
-        DESCRIGD.ecri_co(nom=nogd, indice=3, valeur=(ncmp - 1) / 30 + 1)
+        DESCRIGD.ecri_co(nom=nogd, indice=3, valeur=int((ncmp - 1) / 30) + 1)
 
     for gd in l_gdelem:
         k = k + 1
@@ -341,7 +340,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
     # fonction de calcul d'une suite d'entiers codes correspondant à une liste
     # de CMPS:
     def entiers_codes(note, lcmp, lcmp_gd):
-        nbec = (len(lcmp_gd) - 1) / 30 + 1
+        nbec = int((len(lcmp_gd) - 1) / 30) + 1
         liec = [0] * nbec
         rangav = -1
         for icmp in range(len(lcmp)):
@@ -353,7 +352,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
                          repr(lcmp) + " type_elem: " + note)
 
             rangav = rangcmp
-            iec = rangcmp / 30
+            iec = int(rangcmp / 30)
             puiss = (rangcmp % 30) + 1
             liec[iec] = liec[iec] | 2 ** puiss
         return liec
@@ -403,7 +402,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
     NOFPG_LISTE = JV.cree_pn(d, nom='&CATA.TE.NOFPG_LISTE', tsca='K24')
     locIndex = {}
     i = 0
-    for nofpgl, loc in locations.items():
+    for nofpgl, loc in list(locations.items()):
         NOFPG_LISTE.ajout_nom(nofpgl)
         nbpt = len(loc)
         FPG_LISTE.cree_oc(nom=nofpgl, long=nbpt)
@@ -466,7 +465,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             num_elref1 = num_elref1 + 1
 
             # familles de PG ordinaires
-            for loca in elref1.gauss.keys():
+            for loca in list(elref1.gauss.keys()):
                 globa = elref1.gauss[loca]
                 iflpg = iflpg + 1
                 noflpg = note2 + \
@@ -673,7 +672,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             if molo2 != molo1 and type_matrice != 5:
                 raise Exception("Erreur")
             if type_matrice == 4:
-                nbscal = nbsca1 * (nbsca1 + 1) / 2
+                nbscal = int(nbsca1 * (nbsca1 + 1) / 2)
             elif type_matrice == 5:
                 nbscal = nbsca1 * nbsca2
             else:
@@ -748,7 +747,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
         timer.Start('T7.8')
         # -- on emet une erreur si le type_elem calcule des options qu'il NE DEVRAIT PAS calculer
         ERR.contexte("Examen du catalogue du type_elem : " + note)
-        for noop in dico_opt_te.keys():
+        for noop in list(dico_opt_te.keys()):
             #           -- si numte=-1, ce n'est pas tres grave pour l'instant :
             if dico_opt_te[noop] == -1:
                 continue
@@ -798,7 +797,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
                             tsca_pn='K16', contig='CONTIG', acces='NU', longv=(nbtm + 2))
         NOMMODELI = JV.cree_pn(
             d, nom='&CATA.' + txtpad(13, ph) + '.MODL', tsca='K16')
-        for mod in lmod.keys():
+        for mod in list(lmod.keys()):
             modeli = lmod[mod]
             codmod = modeli.code
             (d1, d2) = modeli.dim
@@ -816,14 +815,15 @@ def imprime_ojb(cel, file, timer, dbgdir):
     timer.Start('T9')
     #  impression des obj :
     #-----------------------------------------
-    likeys = d.keys()
+    likeys = list(d.keys())
     likeys.sort()
     for nomojb in likeys:
         ojb = d[nomojb]
         ojb.impr(file)
         if dbgdir:
             fdbg = osp.join(dbgdir, nomojb.replace(' ', '_') + '.ojb')
-            ojb.impr(open(fdbg, 'wb'))
+            with open(fdbg, 'w') as fobj:
+                ojb.impr(fobj)
     cel.msg("INFO Fin de la transformation de l'ENSEMBLE des catalogues en objets jeveux")
     timer.Stop('T9')
     cel.msg(repr(timer))
@@ -939,7 +939,7 @@ def get_liattr(cel, cata):
                 'E', "Il est interdit de redefinir l'attribut:" + attr.name)
         dicattr[attr] = val_attr
 
-    liattr = dicattr.items()
+    liattr = list(dicattr.items())
     _cache_attr[note] = liattr
     return liattr
 
@@ -994,17 +994,17 @@ def liste_opt_a_calculer(cel, dbgdir=None):
             opt_a_calculer[nomte].append(noop)
 
     if dbgdir:
-        opt_contrainte = OrderedDict(sorted(opt_contrainte.items(),
+        opt_contrainte = OrderedDict(sorted(list(opt_contrainte.items()),
                                             key=lambda i: i[0]))
-        fdbg = open(osp.join(dbgdir, 'opt_contrainte'), 'wb')
-        fdbg.write(os.linesep.join(opt_contrainte.keys()))
+        fdbg = open(osp.join(dbgdir, 'opt_contrainte'), 'w')
+        fdbg.write(os.linesep.join(list(opt_contrainte.keys())))
         fdbg.close()
-        fdbg = open(osp.join(dbgdir, 'opt_a_calculer'), 'wb')
+        fdbg = open(osp.join(dbgdir, 'opt_a_calculer'), 'w')
         for nomte in sorted(opt_a_calculer.keys()):
             fdbg.write(' '.join([nomte, ":"] + sorted(opt_a_calculer[nomte])))
             fdbg.write(os.linesep)
             opt_a_calculer[nomte] = sorted(opt_a_calculer[nomte])
-        opt_a_calculer = OrderedDict(sorted(opt_a_calculer.items(),
+        opt_a_calculer = OrderedDict(sorted(list(opt_a_calculer.items()),
                                             key=lambda i: i[0]))
         fdbg.close()
     return (opt_contrainte, opt_a_calculer)
@@ -1042,7 +1042,7 @@ def getAllLocations(cel):
                 nofpgl = "MATER"
                 lifpgl[note2 + nofpgl] = copy.deepcopy(elref1.mater)
                 lifpgl[note2 + nofpgl].append(elref1.elrefe.name)
-    locations = OrderedDict(sorted(lifpgl.items(), key=lambda i: i[0]))
+    locations = OrderedDict(sorted(list(lifpgl.items()), key=lambda i: i[0]))
     return locations
 
 
@@ -1167,8 +1167,8 @@ def PbOptions(cel):
             for opt in opts:
                 noop = opt[0]
                 numte = opt[1]
-                nbin = len(opt[2]) / 2
-                nbou = len(opt[3]) / 2
+                nbin = int(len(opt[2]) / 2)
+                nbou = int(len(opt[3]) / 2)
                 if not noop in utilise:
                     utilise[noop] = []
                 if numte > 0:
@@ -1189,7 +1189,7 @@ def PbOptions(cel):
             declare[noop].append(param)
 
     # les parametres declares et non utilises sont a supprimer :
-    lopt = declare.keys()
+    lopt = list(declare.keys())
     lopt.sort()
     erreur = False
     for noop in lopt:
@@ -1225,7 +1225,7 @@ def numte_lnomte(nomfic, cel):
                 if not numte in dico:
                     dico[numte] = []
                 dico[numte].append(note)
-    l1 = dico.keys()
+    l1 = list(dico.keys())
     l1.sort()
     for numte in l1:
         file.write(numte + ' ')
@@ -1269,7 +1269,7 @@ def verif_phenmode(cel):
     for pheno in cel.getPhenomenons():
         ph = pheno.name
         lmod = pheno.modelisations
-        for mod in lmod.keys():
+        for mod in list(lmod.keys()):
             modeli = lmod[mod]
             laffe = modeli.elements
             for (tyma, tyel) in laffe:

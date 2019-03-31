@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-import string
 import copy
-import types
 import os
 import sys
 import pprint
@@ -127,12 +125,12 @@ def verif_fichier(UL, PARAMETRES, REPONSES):
             str(UL)
         return txt, txt_alarme
     for i in range(len(PARAMETRES)):
-        if((string.find(fic, PARAMETRES[i][0]) == -1) or ((string.find(fic, PARAMETRES[i][0] + '=') == -1) and (string.find(fic, PARAMETRES[i][0] + ' ') == -1))):
+        if((fic.find(PARAMETRES[i][0]) == -1) or ((fic.find(PARAMETRES[i][0] + '=') == -1) and (fic.find(PARAMETRES[i][0] + ' ') == -1))):
             txt += "\nLe paramètre " + \
                 PARAMETRES[i][
                     0] + " que vous avez entré pour la phase d'optimisation n'a pas été trouvé dans votre fichier de commandes ASTER"
     for i in range(len(REPONSES)):
-        if((string.find(fic, REPONSES[i][0]) == -1) or ((string.find(fic, REPONSES[i][0] + '=') == -1) and (string.find(fic, REPONSES[i][0] + ' ') == -1))):
+        if((fic.find(REPONSES[i][0]) == -1) or ((fic.find(REPONSES[i][0] + '=') == -1) and (fic.find(REPONSES[i][0] + ' ') == -1))):
             txt_alarme += "\nLa réponse  " + \
                 REPONSES[i][
                     0] + " que vous avez entrée pour la phase d'optimisation n'a pas été trouvée dans votre fichier de commandes ASTER"

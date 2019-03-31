@@ -146,7 +146,7 @@ NEWNONA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                          MATR_MASS=MATRMASS,  MATR_RIGI=MATRRIGI,
                          SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                          INCREMENT=_F(PAS=0.0005, INST_INIT=0., INST_FIN=1.0),
-                        ARCHIVAGE=_F(  INST = [j*0.01 for j in xrange(1, 101)] ),
+                        ARCHIVAGE=_F(  INST = [j*0.01 for j in range(1, 101)] ),
                  EXCIT=_F(  VECT_ASSE = VECAS,
                          FONC_MULT = FONC)
                                                          )

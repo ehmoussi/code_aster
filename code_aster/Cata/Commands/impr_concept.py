@@ -26,17 +26,25 @@ from code_aster.Cata.Commons import *
 IMPR_CONCEPT=PROC(nom="IMPR_CONCEPT",op=21,
                   fr=tr("Imprimer un concept d'un calcul (champs de donnée) au format MED"),
 
-         FORMAT          =SIMP(statut='f',typ='TXM',defaut="MED",
+         FORMAT=SIMP(statut='f',typ='TXM',defaut="MED",
                                  into=("MED","RESULTAT",) ),
-         UNITE           =SIMP(statut='f',typ=UnitType('med'),defaut=80, inout='out'),                        
-                                          
+         UNITE=SIMP(statut='f',typ=UnitType('med'),defaut=80, inout='out'),
+
+         b_format_med=BLOC(condition="""equal_to("FORMAT", 'MED')""",
+           # same keyword in IMPR_RESU, keep consistency
+           VERSION_MED     =SIMP(statut='f', typ='TXM',
+                                 into=('3.3.1', '4.0.0'), defaut='3.3.1',
+                                 fr=tr("Choix de la version du fichier MED")),
+         ),
+
+
          CONCEPT = FACT( statut ='o', max='**',
              fr=tr('Pour imprimer les champs de "données" à des fins de visualisation (controle des affectations).'),
              regles=(UN_PARMI('CHAM_MATER','CARA_ELEM','CHARGE'),),
              CHAM_MATER      =SIMP(statut='f',typ=cham_mater),
              CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
              CHARGE          =SIMP(statut='f',typ=char_meca),
-  
+
              b_cara_elem     =BLOC(condition="""exists("CARA_ELEM")""", fr=tr("impression des repères locaux."),
                  REPERE_LOCAL    =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","ELEM", "ELNO")),
                  b_reploc        =BLOC(condition="""not equal_to("REPERE_LOCAL", 'NON')""", fr=tr("impression des repères locaux."),
@@ -44,7 +52,7 @@ IMPR_CONCEPT=PROC(nom="IMPR_CONCEPT",op=21,
                      ),
                  ), # end b_cara_elem
            ), # end fkw_concept
-        
-         INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2) ),        
-        
+
+         INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2) ),
+
 ) ;

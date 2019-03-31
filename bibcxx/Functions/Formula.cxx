@@ -2,7 +2,7 @@
  * @file ResultNaming.cxx
  * @brief Implementation of automatic naming of jeveux objects.
  * @section LICENCE
- * Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -124,7 +124,7 @@ VectorDouble evaluate_formula( const PyObject *code, PyObject *globals,
                               PyFloat_FromDouble( values[i] ) );
     }
 
-    PyObject *res = PyEval_EvalCode( (PyCodeObject *)code, globals, locals );
+    PyObject *res = PyEval_EvalCode( (PyObject *)code, globals, locals );
     if ( res == NULL ) {
         std::cerr << "Evaluation failed with: ";
         PyObject_Print( locals, stderr, 0 );

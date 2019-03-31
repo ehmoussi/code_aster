@@ -3,7 +3,7 @@
  * @brief Implementation de SyntaxMapContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -43,14 +43,14 @@ PyObject *SyntaxMapContainer::convertToPythonDictionnary( PyObject *returnDict )
         } else if ( ( *curIter ).second.type() == typeid( std::string ) ) {
             const std::string &tmp = boost::get< std::string >( ( *curIter ).second );
             PyDict_SetItemString( returnDict, ( *curIter ).first.c_str(),
-                                  PyString_FromString( tmp.c_str() ) );
+                                  PyUnicode_FromString( tmp.c_str() ) );
         } else if ( ( *curIter ).second.type() == typeid( VectorString ) ) {
             const VectorString &currentList = boost::get< VectorString >( ( *curIter ).second );
             PyObject *listValues = PyList_New( currentList.size() );
             int count = 0;
             for ( VectorStringCIter iter = currentList.begin(); iter != currentList.end();
                   ++iter ) {
-                PyList_SetItem( listValues, count, PyString_FromString( ( *iter ).c_str() ) );
+                PyList_SetItem( listValues, count, PyUnicode_FromString( ( *iter ).c_str() ) );
                 ++count;
             }
             PyDict_SetItemString( returnDict, ( *curIter ).first.c_str(), listValues );

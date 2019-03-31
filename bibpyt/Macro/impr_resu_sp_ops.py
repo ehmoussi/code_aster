@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ import aster
 
 def Table2vtu(nomfichtar,Reper,LignepvdData):
     #
-    import string
     import os.path as OSP
     import tarfile
     #
@@ -37,7 +36,7 @@ def Table2vtu(nomfichtar,Reper,LignepvdData):
     letar = tarfile.open(nomfichtar, 'w')
     #
     # Boucle sur les "Resultat-Champ"
-    for Resu_Champ in LignepvdData.keys():
+    for Resu_Champ in list(LignepvdData.keys()):
         # Les fichier pvd
         Lignepvd = ['<?xml version="1.0"?>']
         Lignepvd.append('<VTKFile type="Collection" version="0.1" byte_order="LittleEndian">')
@@ -74,7 +73,7 @@ def Table2vtu(nomfichtar,Reper,LignepvdData):
                 tmp = uneligne.strip()
                 try:
                     uneErreur = False
-                    assert nbcmp <> 0
+                    assert nbcmp != 0
                     tmp = tmp.split()
                     if ( len(tmp) == 0): continue
                     if (len(tmp) != 3 + len(LNomCmp) ):
@@ -82,7 +81,7 @@ def Table2vtu(nomfichtar,Reper,LignepvdData):
                         UTMESS('F','IMPRRESUSP_7', valk=(Nom_Champ.upper(),))
                     #
                     try:
-                        valeur = map( float, tmp )
+                        valeur = list(map( float, tmp ))
                     except:
                         uneErreur = True
                         UTMESS('F','IMPRRESUSP_7', valk=(Nom_Champ.upper(),))
@@ -164,7 +163,6 @@ def impr_resu_sp_ops(self,
     import os.path as OSP
     import numpy as NP
     from Utilitai.UniteAster import UniteAster
-    import string as ST
     import tempfile
     from code_aster.Cata.Syntax import _F
     from code_aster.RunManager import LogicalUnitFile
@@ -228,7 +226,7 @@ def impr_resu_sp_ops(self,
         nom_cham = mclf['NOM_CHAM']
         nom_cmp  = mclf['NOM_CMP']
         # Champ dans le RESULTAT ?
-        if ( not nom_cham in Resulchamp.keys() ):
+        if ( not nom_cham in list(Resulchamp.keys()) ):
             valk = ( ResuName, nom_cham )
             UTMESS('F','IMPRRESUSP_3', valk=valk)
         # Composante dans le CHAMP ?

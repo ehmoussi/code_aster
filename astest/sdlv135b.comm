@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -98,7 +98,7 @@ nbno = len(liste_nom_noe)
 noeud1 = liste_nom_noe[0]
 noeud2 = liste_nom_noe[1]
 noeud3 = liste_nom_noe[2]
-print noeud1, noeud2, noeud3
+print((noeud1, noeud2, noeud3))
 #noeud1 = 'N1'
 #noeud2 = 'N2'
 #noeud3 = 'N3'

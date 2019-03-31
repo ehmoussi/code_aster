@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ for n in range(nbcouche-1):
 
   list_group_ma.append('ELEM'+str(n+1));
 
-  print '   n=',n,'; liste=',list_group_ma
+  print('   n=',n,'; liste=',list_group_ma)
 
   MOD[n] = AFFE_MODELE(MAILLAGE=MA,
                        AFFE=_F(GROUP_MA    =tuple(list_group_ma),
@@ -385,15 +385,15 @@ for n in range(1,nbcouche-1):
                               'CHPAR',),),);
 
     n_couche = n+2
-    print ' > n_couche          =',n_couche
+    print(' > n_couche          =',n_couche)
 
     list_noeu_haut.append(list_no_later_dro[n_couche-1])
     # on peut faire aussi :
     # >>    list_noeu_haut = list_no_later_dro[3:2*n_couche:2]
 
-    print ' > list_noeu_haut    =',list_noeu_haut
+    print(' > list_noeu_haut    =',list_noeu_haut)
 
-    print ' > list_no_later_dro =',list_no_later_dro[:n_couche]
+    print(' > list_no_later_dro =',list_no_later_dro[:n_couche])
 
     t_init=(n+1)*1.E+6;
 
@@ -490,8 +490,8 @@ for n in range(1,nbcouche-1):
                             NOM_CMP =('SIXX','SIYY','SIZZ'),
                             VALE    =(P0,P0,P0,),),);
 
-    print ' > list_group_ma_bas =',list_group_ma[:n+1]
-    print '   list_group_ma_hau =',list_group_ma[n+1]
+    print(' > list_group_ma_bas =',list_group_ma[:n+1])
+    print('   list_group_ma_hau =',list_group_ma[n+1])
 
     # Initialisation des champs de deplacement et de contrainte dans les couches
     # deja calculees

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,12 +36,12 @@ def macr_adap_mail_prod(self, MAJ_CHAM, ADD_CHAM, ADAPTATION, **args):
 # 0. Typage des structures produites
 #
   #print args
-  if ( args.has_key('MAILLAGE_NP1') ) :
+  if ( 'MAILLAGE_NP1' in args ) :
     if ( args['MAILLAGE_NP1'] is not None ) :
       maillage_np1=args['MAILLAGE_NP1']
       self.type_sdprod(maillage_np1, maillage_sdaster)
 #
-  if ( args.has_key('MAILLAGE_NP1_ANNEXE') ) :
+  if ( 'MAILLAGE_NP1_ANNEXE' in args ) :
     if ( args['MAILLAGE_NP1_ANNEXE'] is not None ) :
       maillage_np1_annexe=args['MAILLAGE_NP1_ANNEXE']
       self.type_sdprod(maillage_np1_annexe, maillage_sdaster)
@@ -734,11 +734,11 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
   b_unite_hist = BLOC( condition = """ (not equal_to("ADAPTATION", 'LECTURE')) """ ,
                                 fr=tr("Gestions des historiques.",),
 #
-  UNITE_HIST_IN = SIMP(statut='f',typ=UnitType(),val_min=1, inout='in',
+  UNITE_HIST_IN = SIMP(statut='f',typ=UnitType(), inout='in',
                        fr=tr("Unite logique d'un historique en entrée" ),
                       ),
 #
-  UNITE_HIST_OUT = SIMP(statut='f',typ=UnitType(),val_min=1, inout='out',
+  UNITE_HIST_OUT = SIMP(statut='f',typ=UnitType(), inout='out',
                         fr=tr("Unite logique d'un historique en sortie"),
                        ),
 #
@@ -784,7 +784,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
   b_unite = BLOC( condition = """is_in("VERSION_HOMARD", ('V11_N','V11_N_PERSO') )""" ,
                                 fr=tr("Fichier supplémentaire."),
 #
-  UNITE = SIMP(statut='f',typ=UnitType(),val_min=1, inout='in',
+  UNITE = SIMP(statut='f',typ=UnitType(), inout='in',
                fr=tr("Unite logique à ajouter à HOMARD.Configuration"),
                ),
 #

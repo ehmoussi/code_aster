@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ def info_fonction_ops(self, INFO, **args):
     # type de traitement
 
     #
-    if args.has_key('MAX'):
+    if 'MAX' in args:
         MAX = args['MAX']
         # liste des t_fonction
         l_cofonc = MAX['FONCTION']
@@ -59,7 +59,7 @@ def info_fonction_ops(self, INFO, **args):
             if nbv % 2 != 0:
                 UTMESS('F', 'FONCT0_55')
             tint = NP.array(mc_interv)
-            tint.shape = (nbv / 2, 2)
+            tint.shape = (nbv // 2, 2)
             dx = tint[:, 1] - tint[:, 0]
             if min(dx) < 0.:
                 UTMESS('F', 'FONCT0_56')
@@ -147,7 +147,7 @@ def info_fonction_ops(self, INFO, **args):
         C_out = CREA_TABLE(**dprod)
 
     #
-    if args.has_key('ECART_TYPE'):
+    if 'ECART_TYPE' in args:
         ECART_TYPE = args['ECART_TYPE']
         __ff = ECART_TYPE['FONCTION'].convert()
         if ECART_TYPE['INST_INIT'] != None:
@@ -185,7 +185,7 @@ def info_fonction_ops(self, INFO, **args):
         )
 
     #
-    if args.has_key('RMS'):
+    if 'RMS' in args:
         RMS = list(args['RMS'])
         sigm = []
         tmpi = []
@@ -225,7 +225,7 @@ def info_fonction_ops(self, INFO, **args):
                            )
 
     #
-    if args.has_key('NORME'):
+    if 'NORME' in args:
         NORME = args['NORME']
         __ff = NORME['FONCTION'].convert()
         norme = []
@@ -237,7 +237,7 @@ def info_fonction_ops(self, INFO, **args):
                            )
 
     #
-    if args.has_key('NOCI_SEISME'):
+    if 'NOCI_SEISME' in args:
         NOCI_SEISME = args['NOCI_SEISME']
         l_table = []
         if NOCI_SEISME['SPEC_OSCI'] != None:

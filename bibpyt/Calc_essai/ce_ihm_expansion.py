@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,11 +34,11 @@ from Calc_essai.cata_ce import Resultat, ModeMeca, DynaHarmo
 from Calc_essai.outils_ihm import ParamProjMesuModal
 
 from code_aster.Cata.Syntax import _F
-import tkFont
+import tkinter.font
 
-from Tkinter import Frame, Menubutton, Menu, StringVar, IntVar, Listbox
-from Tkinter import Scrollbar, Label, Radiobutton, Button, Entry
-from Tkinter import Checkbutton, Canvas, Toplevel
+from tkinter import Frame, Menubutton, Menu, StringVar, IntVar, Listbox
+from tkinter import Scrollbar, Label, Radiobutton, Button, Entry
+from tkinter import Checkbutton, Canvas, Toplevel
 from Calc_essai.outils_ihm import MyMenu, ModeFreqList
 from Calc_essai.outils_ihm import DispFRFDialogue, MacWindowFrame, DispObs
 from Calc_essai.ce_calcul_expansion import CalcEssaiExpansion
@@ -134,7 +134,7 @@ class InterfaceCorrelation(Frame):
         """
         self.columnconfigure(0, weight=1)
         self.rowconfigure(2, weight=1)
-        l = Label(self, text=u"Expansion de données ",
+        l = Label(self, text="Expansion de données ",
                   pady=5, font=("Helvetica", "16"))
         l.grid(row=0)
 
@@ -151,7 +151,7 @@ class InterfaceCorrelation(Frame):
             row=0, column=0, columnspan=3, sticky='w' + 'e')
 
         # menu de selection du resultat numerique
-        Label(f, text=u"Base numérique d'expansion").grid(
+        Label(f, text="Base numérique d'expansion").grid(
             row=1, column=0, sticky='e')
         self.var_resu_num = StringVar()
         self.menu_resu_num = MyMenu(
@@ -160,7 +160,7 @@ class InterfaceCorrelation(Frame):
         self.menu_resu_num.grid(row=1, column=1, sticky='ew')
 
         # menu de selection du resultat experimental
-        Label(f, text=u"Résultat expérimental").grid(
+        Label(f, text="Résultat expérimental").grid(
             row=1, column=2, sticky='e')
         self.var_resu_exp = StringVar()
         self.menu_resu_exp = MyMenu(
@@ -193,11 +193,11 @@ class InterfaceCorrelation(Frame):
 # var = self.var_norme_exp, cmd = self.exp_changed )
 # self.menu_norme_exp.grid(row=2, column=3, sticky='ew')
         # Type de resu experimental (dyna_harmo ou modes)
-        Label(f, text=u"Type de résultat expérimental").grid(
+        Label(f, text="Type de résultat expérimental").grid(
             row=1, column=4, columnspan=2)
-        Radiobutton(f, text=u"résultat harmonique", value='harmo',
+        Radiobutton(f, text="résultat harmonique", value='harmo',
                     variable=self.type_resu_exp).grid(row=2, column=4)
-        Radiobutton(f, text=u"modes", value='mode',
+        Radiobutton(f, text="modes", value='mode',
                     variable=self.type_resu_exp).grid(row=2, column=5)
 
         Label(f, text="   ").grid(
@@ -252,14 +252,14 @@ class InterfaceCorrelation(Frame):
         f = Frame(root, relief='sunken', borderwidth=1)
 
         self.param_proj_mesu = ParamProjMesuModal(
-            f, u"Paramètres de PROJ_MESU_MODAL")
+            f, "Paramètres de PROJ_MESU_MODAL")
         self.param = self.param_proj_mesu.get_option()
 
         # parametres de proj_mesu_modal
         paraf = Frame(f, borderwidth=1)
-        Label(paraf, text=u"Paramètres de PROJ_MESU_MODAL").grid(
+        Label(paraf, text="Paramètres de PROJ_MESU_MODAL").grid(
             row=0, column=0, rowspan=2, sticky='nswe')
-        Checkbutton(paraf, text=u"Réglages",
+        Checkbutton(paraf, text="Réglages",
                     command=self.display_expans_param_frame,
                     variable=self.var_expans_param_frame_visible,
                     indicatoron=0).grid(row=2, column=0, pady=5, sticky='e')
@@ -273,10 +273,10 @@ class InterfaceCorrelation(Frame):
               bg='white').grid(row=2, column=1, pady=2)
         launchf.grid(row=1, column=0, sticky='ew', pady=10, padx=10)
 
-        self.liste_num = ModeFreqList(f, u"Modes Numériques")
+        self.liste_num = ModeFreqList(f, "Modes Numériques")
         self.liste_num.grid(
             row=0, column=3, rowspan=3, sticky='nsew', pady=10, padx=10)
-        self.liste_exp = ModeFreqList(f, u"Modes Expérimentaux")
+        self.liste_exp = ModeFreqList(f, "Modes Expérimentaux")
         self.liste_exp.grid(
             row=0, column=4, rowspan=3, sticky='nsew', pady=10, padx=10)
 
@@ -289,7 +289,7 @@ class InterfaceCorrelation(Frame):
         frm1.rowconfigure(0, weight=1)
         frm1.columnconfigure(0, weight=1)
         self.param_proj_mesu = ParamProjMesuModal(
-            frm1, u"Paramètres de PROJ_MESU_MODAL")
+            frm1, "Paramètres de PROJ_MESU_MODAL")
         self.param_proj_mesu.grid(row=0, column=0, sticky='nsew')
         if self.param:
             self.param_proj_mesu.set_option(self.param)
@@ -329,15 +329,15 @@ class InterfaceCorrelation(Frame):
         """
         # Validité des donnees :
         if self.resu_num == None or self.resu_exp == None:
-            self.mess.disp_mess(u"Il manque des données pour le calcul")
+            self.mess.disp_mess("Il manque des données pour le calcul")
             return
         if self.resu_num.modele == None:
             self.mess.disp_mess(
-                u"Il manque le modele associe au résultat numérique")
+                "Il manque le modele associe au résultat numérique")
             return
         if self.resu_exp.modele == None:
             self.mess.disp_mess(
-                u"Il manque le modele associe au résultat expérimental")
+                "Il manque le modele associe au résultat expérimental")
             return
 
         self.modes_num_list = self.liste_num.get_selection()

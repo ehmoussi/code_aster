@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ Build some data files (dest: share/aster)
 - 'external_programs.js': definition of external programs called from code_aster
 """
 
-import cPickle
+import pickle
 import json
 import os
 import os.path as osp
@@ -86,7 +86,7 @@ def configure(self):
     self.add_os_flags('ADDMEM')
     self.env.legacy = self.options.legacy
     dict_conv = self.env2dict(osp.dirname(self.path.abspath()))
-    self.env['ASTER_ENVIRON'] = cPickle.dumps(dict_conv)
+    self.env['ASTER_ENVIRON'] = pickle.dumps(dict_conv)
 
     self.getAsrunTmp()
     self.check_external_programs()
@@ -117,7 +117,7 @@ def build(self):
         src.extend(['config.txt.tmpl', 'profile.sh.tmpl'])
         tgt.extend(['config.txt', 'profile.sh'])
     try:
-        dict_conv = cPickle.loads(self.env['ASTER_ENVIRON'])
+        dict_conv = pickle.loads(self.env['ASTER_ENVIRON'])
     except:
         Logs.error("ASTER_ENVIRON not found. Please run 'waf configure...'")
         raise Errors.BuildError
@@ -170,8 +170,7 @@ def env2dict(self, src):
     dico = {}
     dico['DEFINES'] = ' '.join([d.split('=')[0] for d in env['DEFINES']])
     py_path = self.remove_duplicates(Utils.to_list(env['CFG_PYTHONPATH']))
-    dico['PYTHONHOME'] = sys.prefix + '' if sys.prefix == sys.exec_prefix \
-        else ':' + sys.exec_prefix
+    dico['PYTHONHOME'] = env['CFG_PYTHONHOME']
     dico['PYTHON_DIRNAME'] = osp.dirname(env['PYTHON'][0])
     # as_run compatibility
     if env.ASRUN_MPI_VERSION:
@@ -180,7 +179,7 @@ def env2dict(self, src):
     dico['CFG_PYTHONPATH'] = sep.join(py_path)
     dico['SRC'] = src
     dico['FC'] = env.FC[0]
-    flags = [' '.join(env[i]) for i in env.keys() if i.startswith('FCFLAGS')]
+    flags = [' '.join(env[i]) for i in list(env.keys()) if i.startswith('FCFLAGS')]
     dico['FCFLAGS'] = ' '.join(flags)
     dico['OPT_ENV'] = env['OPT_ENV'] and os.linesep.join(env['OPT_ENV']) or ''
     dico['OPT_ENV_FOOTER'] = env['OPT_ENV_FOOTER'] \
@@ -228,7 +227,7 @@ def _build_testlist(path, filter_expr):
     cmd = ['grep', '-l', filter_expr,
            osp.join(path, 'astest', '*.export')]
     proc = Popen(' '.join(cmd), stdout=PIPE, stderr=PIPE, shell=True)
-    out = proc.communicate()[0]
+    out = proc.communicate()[0].decode()
     tests = [osp.splitext(osp.basename(i))[0] for i in out.split()]
     return os.linesep.join(tests)
 
@@ -278,7 +277,7 @@ def check_external_programs(self):
     _check_prog(self, 'xmgrace', ['xmgrace', 'gracebat'])
 
     dict_ext = {}
-    for key in self.env.keys():
+    for key in list(self.env.keys()):
         if not key.startswith('PROG_'):
             continue
         prog = re.sub('^PROG_', '', key)

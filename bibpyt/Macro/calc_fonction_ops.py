@@ -152,13 +152,13 @@ def calc_fonction_ops(self, **args):
     operation = CalcFonctionOper.factory(self, ctxt, args)
     try:
         result = operation.run()
-    except InterpolationError, msg:
+    except InterpolationError as msg:
         UTMESS('F', 'FONCT0_27', valk=(ctxt.f, str(msg)))
-    except ParametreError, msg:
+    except ParametreError as msg:
         UTMESS('F', 'FONCT0_28', valk=(ctxt.f, str(msg)))
-    except ProlongementError, msg:
+    except ProlongementError as msg:
         UTMESS('F', 'FONCT0_29', valk=(ctxt.f, str(msg)))
-    except FonctionError, msg:
+    except FonctionError as msg:
         UTMESS('F', 'FONCT0_30',
                valk=(ctxt.f, str(msg), traceback.format_exc()))
     return result
@@ -276,7 +276,7 @@ class CalcFonctionOper(object):
             kw = (self.kw,)
         try:
             nbmf = len(kw)
-        except AttributeError:
+        except TypeError:
             nbmf = 1
         for mcf in kw:
             val = force_list(mcf[mcsimp])
@@ -533,13 +533,13 @@ class CalcFonction_INTERPOL_FFT(CalcFonctionOper):
 
         # suppression de la partie symetrique du signal
         N = len(ft.vale_x)
-        valex = list(ft.vale_x[:N/2+1])
-        valey = list(ft.vale_y[:N/2+1])
+        valex = list(ft.vale_x[:N//2+1])
+        valey = list(ft.vale_y[:N//2+1])
 
         # zero padding
         dfreq = (valex[1]-valex[0]).real
         last_freq = valex[-1]
-        N_pad = N_sortie/2+1-N/2-1
+        N_pad = N_sortie//2+1-N//2-1
         for i in range(N_pad):
             freq = last_freq + (i+1)* dfreq
             valex.append(freq)
@@ -647,7 +647,7 @@ class CalcFonction_COHERENCE(CalcFonctionOper):
         if FREQ_COUP is not None:
             if lfreq[-1] > FREQ_COUP:
                 N2 = NP.searchsorted(lfreq, FREQ_COUP)
-                print self.kw['FREQ_COUP'], N2
+                print(self.kw['FREQ_COUP'], N2)
         f_cohe = fcohe[N1:N2]
         l_freq = lfreq[N1:N2]
         self.resu = t_fonction(l_freq, f_cohe.real, para)
@@ -742,7 +742,7 @@ class CalcFonction_SPEC_OSCI(CalcFonctionOper):
             for i in range(10):
                 l_freq.append(22.0 + 1.500 * i)
             texte = []
-            for i in range(len(l_freq) / 5):
+            for i in range(len(l_freq) // 5):
                 texte.append(' %f %f %f %f %f' % tuple(l_freq[i * 5:i * 5 + 5]))
             UTMESS('I', 'FONCT0_32', vali=len(l_freq), valk=os.linesep.join(texte))
         if min(l_freq) < 1.E-10:
@@ -865,10 +865,10 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
                 if kw['LIST_AMOR']!=None:
                     amor = kw['LIST_AMOR']
                 else:
-                    amor = range(1,len(nom_para))
+                    amor = list(range(1,len(nom_para)))
                 # error
                 if 'FREQ' not in nom_para:
-                    print 'error'
+                    print('error')
                 nom_para.remove('FREQ')
                 # print dir(tab.EXTR_TABLE())
                 dico = tab.EXTR_TABLE().values()

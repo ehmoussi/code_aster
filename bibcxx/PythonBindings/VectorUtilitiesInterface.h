@@ -6,7 +6,7 @@
  * @brief Utilitaires pour convertir un vector en list et inversement
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -63,7 +63,7 @@ template < typename T > struct Vector_from_python_list {
                            boost::python::converter::rvalue_from_python_stage1_data *data ) {
         using namespace boost::python;
         // Extract the character data from the python string
-        //      const char* value = PyString_AsString(obj_ptr);
+        //      const char* value = PyUnicode_AsString(obj_ptr);
         list blst( handle<>( borrowed( obj_ptr ) ) );
 
         // // Verify that obj_ptr is a string (should be ensured by convertible())

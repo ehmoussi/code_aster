@@ -42,7 +42,7 @@ L_INST=DEFI_LIST_REEL(    DEBUT=0.,
                         )
 
 L_INST = code_aster.TimeStepManager()
-L_INST.setTimeList( range(11) )
+L_INST.setTimeList( list(range(11)) )
 L_INST.build()
 
 T=STAT_NON_LINE(

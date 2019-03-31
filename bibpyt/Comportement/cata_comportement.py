@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ from Noyau.N_types import force_tuple
 from Noyau.N_utils import Singleton
 
 from Execution.strfunc import convert, ufmt
-from cata_vari import DICT_NOM_VARI
+from .cata_vari import DICT_NOM_VARI
 
 from Utilitai.Utmess import UTMESS
 
@@ -104,7 +104,7 @@ def check_type(typ, value, accept_None=False):
         if val is None and accept_None:
             pass
         elif type(val) not in l_typ:
-            msg = ufmt(u"%r n'est pas d'un type autorisé : %r", val, l_typ)
+            msg = ufmt("%r n'est pas d'un type autorisé : %r", val, l_typ)
             raise CataComportementError(msg)
 
 
@@ -239,14 +239,14 @@ class LoiComportement(Base):
         for prop in self.__properties__:
             setattr(self, '_' + prop, None)
         # propriétés fournies
-        for prop in [k for k in kwargs.keys() if k in self.__properties__]:
+        for prop in [k for k in list(kwargs.keys()) if k in self.__properties__]:
             setattr(self, prop, kwargs.get(prop))
 
     def get_nb_vari(self):
         return self._nb_vari or 0
 
     def set_nb_vari(self, value):
-        check_type((long, int), value)
+        check_type((int, int), value)
         self._nb_vari = value
         self.check_vari()
 
@@ -260,7 +260,7 @@ class LoiComportement(Base):
         return self._nom_vari
 
     def set_nom_vari(self, value):
-        check_type((str, unicode), value)
+        check_type((str, str), value)
         self._nom_vari = force_to_tuple(value)
         self.check_vari()
 
@@ -273,39 +273,39 @@ class LoiComportement(Base):
 # définition des propriétés simples (juste vérification de type à
 # l'affectation)
     mc_mater = Base.gen_property(
-        'mc_mater',       (str, unicode), "Mots-clés matériaux")
+        'mc_mater',       (str, str), "Mots-clés matériaux")
     modelisation = Base.gen_property(
-        'modelisation',   (str, unicode), "Modélisations")
+        'modelisation',   (str, str), "Modélisations")
     deformation = Base.gen_property(
-        'deformation',    (str, unicode), "Types de déformation")
+        'deformation',    (str, str), "Types de déformation")
     algo_inte = Base.gen_property(
-        'algo_inte',      (str, unicode), "Schéma d'intégration")
+        'algo_inte',      (str, str), "Schéma d'intégration")
     type_matr_tang = Base.gen_property(
-        'type_matr_tang', (str, unicode), "Type de matrice tangente")
+        'type_matr_tang', (str, str), "Type de matrice tangente")
     proprietes = Base.gen_property(
-        'proprietes',     (str, unicode), "Propriétés")
+        'proprietes',     (str, str), "Propriétés")
     syme_matr_tang  = Base.gen_property(
-        'syme_matr_tang', (str, unicode), "Symétrie")
+        'syme_matr_tang', (str, str), "Symétrie")
     lc_type = Base.gen_property(
-        'lc_type', (str, unicode), "Type de la loi de comportement")
+        'lc_type', (str, str), "Type de la loi de comportement")
     deform_ldc = Base.gen_property(
-        'deform_ldc', (str, unicode), "Déformations en entrée de la loi")
+        'deform_ldc', (str, str), "Déformations en entrée de la loi")
 
     def check_vari(self):
         """Vérifie la cohérence de la définition des variables internes"""
         if self._nb_vari is not None and self._nom_vari is not None \
            and self._nb_vari != len(self._nom_vari):
-            print self
-            msg = ufmt(u"Nombre de variables internes = %d, "
-                       u"incohérent avec la liste des variables internes %s",
+            print(self)
+            msg = ufmt("Nombre de variables internes = %d, "
+                       "incohérent avec la liste des variables internes %s",
                        self._nb_vari, self._nom_vari)
             raise CataComportementError(msg)
         if self._nom_vari:
-            err = set(self._nom_vari).difference(DICT_NOM_VARI.keys())
+            err = set(self._nom_vari).difference(list(DICT_NOM_VARI.keys()))
             if len(err) > 0:
                 strerr = ', '.join(err)
-                msg = ufmt(u"Comportement '%s', nom de variables internes non "
-                           u"autorisés : %s", self.nom, strerr)
+                msg = ufmt("Comportement '%s', nom de variables internes non "
+                           "autorisés : %s", self.nom, strerr)
                 raise CataComportementError(msg)
 
 
@@ -331,7 +331,7 @@ class LoiComportementMFront(LoiComportement):
             **kwargs)
 
     symbol_mfront = Base.gen_property(
-        'symbol_mfront', (str, unicode), "Fonction MFront")
+        'symbol_mfront', (str, str), "Fonction MFront")
 
     def long_repr(self):
         template = """Loi de comportement : %(nom)s
@@ -354,9 +354,9 @@ class KIT(Base):
 
     def __init__(self, nom, *list_comport):
         """Initialisations"""
-        if not type(nom) in (str, unicode):
+        if not type(nom) in (str, str):
             raise CataComportementError(
-                u"'KIT' : argument 1 (nom) de type invalide")
+                "'KIT' : argument 1 (nom) de type invalide")
         self.nom = nom
         self.list_comport = [comport.copy() for comport in list_comport]
         self.list_nom = [comport.nom for comport in self.list_comport]
@@ -398,9 +398,9 @@ class KIT_META(KIT):
     def __init__(self, nom, *list_comport):
         """Initialisations"""
         if len(list_comport) != 2:
-            raise CataComportementError(u"KIT_META : il faut 2 comportements")
+            raise CataComportementError("KIT_META : il faut 2 comportements")
         elif not list_comport[0].nom.startswith('META_'):
-            raise CataComportementError(u"KIT_META : le premier doit être un "
+            raise CataComportementError("KIT_META : le premier doit être un "
                                         "comportement META_xx")
         KIT.__init__(self, nom, *list_comport)
 
@@ -430,8 +430,8 @@ class KIT_META(KIT):
             self._nom_vari.append('INDICAT')
 
         if len(self._nom_vari) != self._nb_vari:
-            raise CataComportementError, "Nombre de variables internes = %d, incohérent avec la liste des variables internes %s" % (
-                self._nb_vari, self._nom_vari)
+            raise CataComportementError("Nombre de variables internes = %d, incohérent avec la liste des variables internes %s" % (
+                self._nb_vari, self._nom_vari))
 
     def get_nb_vari(self):
         return self._nb_vari or 0
@@ -467,7 +467,7 @@ class CataLoiComportement(Singleton):
         """Ajoute une loi de comportement au catalogue"""
         loi = comport.nom
         if self._dico.get(loi) is not None:
-            msg = ufmt(u"Comportement déjà défini : %s", loi)
+            msg = ufmt("Comportement déjà défini : %s", loi)
             raise CataComportementError(msg)
         self._dico[loi] = comport
 
@@ -481,7 +481,7 @@ class CataLoiComportement(Singleton):
         CALL LCDISCARD(COMPOR)
         ==> catalc.discard(COMPOR)"""
         if not names:
-            names = self._dico.keys()
+            names = list(self._dico.keys())
         names = [i for i in names if i.startswith('COMP!')]
         i = 0
         for loi in names:
@@ -489,14 +489,14 @@ class CataLoiComportement(Singleton):
                 del self._dico[loi]
                 i += 1
         if self.debug:
-            print "CATALC: {} objects removed".format(i)
+            print("CATALC: {} objects removed".format(i))
 
     def get(self, loi):
         """Retourne l'objet LoiComportement dont le nom est 'loi'"""
         comport = self._dico.get(loi.strip())
         if comport is None:
             raise CataComportementError(
-                ufmt(u"Comportement inexistant : %s", loi))
+                ufmt("Comportement inexistant : %s", loi))
         return comport
 
     def create(self, *list_kit):
@@ -506,7 +506,7 @@ class CataLoiComportement(Singleton):
         CALL LCCREE(NBKIT, LKIT, COMPOR)
         ==> comport = catalc.create(*list_kit)"""
         if self.debug:
-            print 'catalc.create - args =', list_kit
+            print('catalc.create - args =', list_kit)
         nom = self._name()
         list_comport = [self.get(kit) for kit in list_kit]
         comport = KIT(nom, *list_comport)
@@ -519,7 +519,7 @@ class CataLoiComportement(Singleton):
         CALL LCINFO(COMPOR, NUMLC, NBVARI, NBVARI_EXTE)
         ==> num_lc, nb_vari, nb_vari_exte = catalc.get_info(COMPOR)"""
         if self.debug:
-            print 'catalc.get_info - args =', loi
+            print('catalc.get_info - args =', loi)
         comport = self.get(loi)
         if (comport.exte_vari is None):
             nb = 0
@@ -533,7 +533,7 @@ class CataLoiComportement(Singleton):
         CALL LCVARI(COMPOR, NBVARI, LVARI)
         ==> nom_vari = catalc.get_vari(COMPOR)"""
         if self.debug:
-            print 'catalc.get_vari - args =', loi
+            print('catalc.get_vari - args =', loi)
         comport = self.get(loi)
         return comport.nom_vari
 
@@ -543,7 +543,7 @@ class CataLoiComportement(Singleton):
         CALL LCEXTEVARI(COMPOR, NBVARI, LVARI)
         ==> exte_vari = catalc.get_variexte(COMPOR)"""
         if self.debug:
-            print 'catalc.get_variexte - args =', loi
+            print('catalc.get_variexte - args =', loi)
         comport = self.get(loi)
         return comport.exte_vari
 
@@ -552,11 +552,11 @@ class CataLoiComportement(Singleton):
            CALL LCTEST(COMPOR, PROPRIETE, VALEUR, IRET)
            ==> iret = catalc.query(COMPOR, PROPRIETE, VALEUR)"""
         if self.debug:
-            print 'catalc.query - args =', loi, ':', attr, ':', valeur.strip(), ':'
+            print('catalc.query - args =', loi, ':', attr, ':', valeur.strip(), ':')
         attr = attr.lower()
         comport = self.get(loi)
         if not attr in comport.getPropertiesNames():
-            raise CataComportementError(ufmt(u"Propriete invalide : %s", attr))
+            raise CataComportementError(ufmt("Propriete invalide : %s", attr))
         # retourner 1 si (valeur est dans comport.attr), 0 sinon.
         return int(valeur.strip() in getattr(comport, attr))
 
@@ -566,7 +566,7 @@ class CataLoiComportement(Singleton):
         CALL LCALGO(COMPOR, ALGO)
         ==> algo_inte = catalc.get_algo(COMPOR)"""
         if self.debug:
-            print 'catalc.get_algo - args =', loi
+            print('catalc.get_algo - args =', loi)
         comport = self.get(loi)
         return comport.algo_inte
 
@@ -576,7 +576,7 @@ class CataLoiComportement(Singleton):
         CALL LCTYPE(COMPOR, TYPE)
         ==> ldctype = catalc.get_type(COMPOR)"""
         if self.debug:
-            print 'catalc.get_type - args =', loi
+            print('catalc.get_type - args =', loi)
         comport = self.get(loi)
         return comport.ldctype
 
@@ -586,7 +586,7 @@ class CataLoiComportement(Singleton):
         CALL LCSYMB(COMPOR, NAME)
         ==> name = catalc.get_symbol(COMPOR)"""
         if self.debug:
-            print 'catalc.get_symbol - args =', loi
+            print('catalc.get_symbol - args =', loi)
         comport = self.get(loi)
         return comport.symbol_mfront
 
@@ -596,7 +596,7 @@ class CataLoiComportement(Singleton):
         CALL LCSYMM(COMPOR, SYMMETRY)
         ==> syme_matr_tang = catalc.get_symmetry(COMPOR)"""
         if self.debug:
-            print 'catalc.get_symmetry - args =', loi
+            print('catalc.get_symmetry - args =', loi)
         comport = self.get(loi)
         return comport.syme_matr_tang
         
@@ -606,14 +606,14 @@ class CataLoiComportement(Singleton):
         CALL LCDEFORMLDC(COMPOR, DEFORM_LDC)
         ==> deform_ldc = catalc.get_deformldc(COMPOR)"""
         if self.debug:
-            print 'catalc.get_deformldc - args =', loi
+            print('catalc.get_deformldc - args =', loi)
         comport = self.get(loi)
         return comport.deform_ldc
 
     def get_kit(self, *list_kit):
 #        """Identifie les LdC pour le kit THM """
         if self.debug:
-            print 'catalc.get_kit - args =', list_kit
+            print('catalc.get_kit - args =', list_kit)
 
         rela_meca = 'VIDE'
         rela_hydr = 'VIDE'
@@ -695,7 +695,7 @@ class CataLoiComportement(Singleton):
         """Représentation du catalogue"""
         sep = '-' * 90
         txt = [sep]
-        for k in self._dico.keys():
+        for k in list(self._dico.keys()):
             txt.append(repr(self.get(k)))
             txt.append(sep)
         return os.linesep.join(txt)

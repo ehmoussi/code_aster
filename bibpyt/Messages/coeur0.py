@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,32 +18,32 @@
 # --------------------------------------------------------------------
 
 cata_msg = {
-    1 : _(u"""
+    1 : _("""
 Le mot-clé MAILLAGE_N n'est pas utilisé. Le maillage considéré est celui provenant
 de RESU_INIT.
 """),
 
-    2 : _(u"""
+    2 : _("""
 Assemblage des %(i1)d permutations
 """),
 
-    3 : _(u"""
+    3 : _("""
 Permutation de l\'assemblage %(k1)s en position %(k2)s
 """),
 
-    4 : _(u"""
+    4 : _("""
 Récupération des jeux entre les assemblages
 """),
 
-    5 : _(u"""
+    5 : _("""
 Récupération des jeux entre les assemblages de bord et le cloisonnement
 """),
 
-    6 : _(u"""
+    6 : _("""
 Post-traitement des déformations des assemblages combustibles
 """),
 
-    7 : _(u"""
+    7 : _("""
 Il faut renseigner au moins un des mots-clés MAILLAGE_N ou RESU_INIT.
 """),
 

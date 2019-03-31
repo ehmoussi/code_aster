@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,9 +26,7 @@
     de type ENTITE
 """
 
-import types
-
-import N_MCCOMPO
+from . import N_MCCOMPO
 
 
 class MCBLOC(N_MCCOMPO.MCCOMPO):
@@ -101,8 +99,8 @@ class MCBLOC(N_MCCOMPO.MCCOMPO):
         # et caché ('c')
         # On n'ajoute aucune information sur les blocs. Ils n'ont pas de défaut seulement
         # une condition.
-        for k, v in self.definition.entites.items():
-            if not dico.has_key(k):
+        for k, v in list(self.definition.entites.items()):
+            if k not in dico:
                 if v.label == 'SIMP':
                     # Mot clé simple
                     dico[k] = v.defaut

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ def quaternion(phid) :
     phis=sqrt(x[0,0])
     c1=math.cos(phis/2)
     c2=math.sin(phis/2)/phis
-    return (c1,map(lambda x: c2*x, phid))
+    return (c1,[c2*x for x in phid])
 
 
 def vecteur_phi(quater) :
@@ -86,7 +86,7 @@ def vecteur_phi(quater) :
     ra=sqrt(x[0,0])
     r0=quater[0]
     phis=2*math.atan2(ra,r0)
-    return map(lambda x: (phis/ra)*x,quater[1])
+    return [(phis/ra)*x for x in quater[1]]
 
 
 def pvec(v1,v2) :
@@ -109,8 +109,8 @@ def quater_mult(q1,q2) :
     q2v=array(list(q2[1]), dtype=double )
     q30=q1[0]*q2[0] -  dot(q1v,q2v)
 
-    q3v1=map(lambda x: q1[0]*x,q2[1])
-    q3v2=map(lambda x: q2[0]*x,q1[1])
+    q3v1=[q1[0]*x for x in q2[1]]
+    q3v2=[q2[0]*x for x in q1[1]]
     q3v3=pvec(q1[1],q2[1])
     q3v=array(q3v1)+array(q3v2)+array(q3v3)
     return (q30, q3v)

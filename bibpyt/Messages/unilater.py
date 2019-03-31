@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 Définition d'une liaison unilatérale.
  -> Cette fonctionnalité suppose la symétrie de la matrice obtenue après assemblage.
 
@@ -27,29 +27,29 @@ Il est possible de forcer la matrice à être symétrique en renseignant MATR_RI
     
 """),
 
-    42: _(u"""
+    42: _("""
 Définition d'une liaison unilatérale.
 Le nombre de COEF_MULT n'est pas égal au nombre de grandeurs contenus dans
 le vecteur NOM_CMP
 """),
 
-    43: _(u"""
+    43: _("""
 Définition d'une liaison unilatérale.
 Il y a trop de grandeurs dans le vecteur NOM_CMP (limité à 30)
 """),
 
-    48 : _(u"""
+    48 : _("""
 Définition d'une liaison unilatérale.
 Aucun noeud n'est affecté par une liaison unilatérale.
 """),
 
-    58: _(u"""
+    58: _("""
 Définition d'une liaison unilatérale.
 La composante %(k2)s existe sur le noeud %(k1)s
 """),
 
 
-    75: _(u"""
+    75: _("""
 Définition d'une liaison unilatérale.
 La composante %(k2)s est inexistante sur le noeud %(k1)s
 """),

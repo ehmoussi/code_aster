@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,8 @@
 interface
 #include "asterf_types.h"
     subroutine mprrvw(fid, nom, numdt, numit, dt, val, cret)
-        med_int :: fid, numdt, numit
+        med_idt :: fid
+        med_int :: numdt, numit
         character(len=*) :: nom
         real(kind=8) :: dt, val
         med_int :: cret

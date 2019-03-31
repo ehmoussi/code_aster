@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -179,7 +179,7 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
 #   print "tabdesc",tabdesc
 #   print "tablima",dicolima
 
-    for izone in dicolima.keys():
+    for izone in list(dicolima.keys()):
 
         # chaque maille du groupe est affectee
         for index, ima in enumerate(dicolima[izone]):

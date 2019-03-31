@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -80,7 +80,7 @@ def CoordFibre(ifib):
     Rint = Rext-Ep
     # index des coordonnées
     numAng = ((ifib-1)%(2*Nsect+1))/(2.0*Nsect)
-    numCou = ((ifib-1)/(2*Nsect+1))/(2.0*Ncou)
+    numCou = ((ifib-1)//(2*Nsect+1))/(2.0*Ncou)
     y =  (Rint+Ep*numCou)*NP.cos(2.0*NP.pi*numAng)
     z = -(Rint+Ep*numCou)*NP.sin(2.0*NP.pi*numAng)
     return y,z

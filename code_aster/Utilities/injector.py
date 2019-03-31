@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,21 +25,24 @@
 """
 
 def injector(boost_class):
-    """Return a class object to inject methods into boost objects.
+    """Decorator to inject methods into boost objects.
+
+    Private methods are not injected, except a sublist:
+    ``__call__``, ``__getattr__``, ``__getinitargs__``, ``__getitem__``,
+    ``__getstate__``, ``__len__``, ``__setstate__``.
 
     Arguments:
         boost_class (*boost-python class*): Boost-Python class to enrich.
 
     Returns:
-        class: Injector.
+        class: Decorated class.
     """
-    class injector_class(object):
-        class __metaclass__(boost_class.__class__):
-            def __init__(self, name, bases, dict):
-                for b in bases:
-                    if type(b) not in (self, type):
-                        for k, v in dict.items():
-                            setattr(b, k, v)
-                return type.__init__(self, name, bases, dict)
-
-    return injector_class
+    def decorated(cls):
+        for name, attr in cls.__dict__.items():
+            if name.startswith("__"):
+                if name not in ("__call__", "__getattr__", "__getinitargs__",
+                                "__getitem__", "__getstate___", "__len__",
+                                "__setstate__"):
+                    continue
+            setattr(boost_class, name, attr)
+    return decorated

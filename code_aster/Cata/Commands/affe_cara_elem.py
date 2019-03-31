@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -55,14 +55,14 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
     def check(cond, message, mcf, occ, prop=None):
         """Vérifie que la condition 'cond' est ok, sinon lève une exception"""
         if not cond:
-            fmt = tr(u"Mot-clé {mcf!r}, occurrence {occ:d}, {text!s}")
-            text = unicode(message).format(**locals())
-            msg = unicode(fmt).format(**locals())
+            fmt = tr("Mot-clé {mcf!r}, occurrence {occ:d}, {text!s}")
+            text = str(message).format(**locals())
+            msg = str(fmt).format(**locals())
             raise AsException( msg )
 
     # les messages doivent être courts pour être visibles dans eficas
-    sizeErr = tr(u"les cardinaux de CARA et VALE sont différents.")
-    defErr = tr(u"mauvaise définition de {prop!r}.")
+    sizeErr = tr("les cardinaux de CARA et VALE sont différents.")
+    defErr = tr("mauvaise définition de {prop!r}.")
     # - - - - - - - - - - - - - - -
     if POUTRE != None:
         for i in range(len(POUTRE)):
@@ -851,7 +851,7 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         NOEUD_CENTRE    = SIMP(statut='c',typ=no),
         COOR_CENTRE     = SIMP(statut='f',typ='R',min=2,max=3),
         EUROPLEXUS      = SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="NON"),
-        UNITE           = SIMP(statut='f',typ=UnitType(),val_min=1,inout='out'),
+        UNITE           = SIMP(statut='f',typ=UnitType(),inout='out'),
      ),
 #
 # ==============================================================================

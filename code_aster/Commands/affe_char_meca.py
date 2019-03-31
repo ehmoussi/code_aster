@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -38,9 +38,9 @@ class MechanicalLoadDefinition(ExecuteCommand):
     def _getNodeGroups(self, keywords):
         """for parallel load, return all node groups present in AFFE_CHAR_MECA, in order to define the partial mesh
         """
-        load_types = [key for key in self._cata.keywords.keys() if isinstance(self._cata.keywords[key], FactorKeyword)]
+        load_types = [key for key in list(self._cata.keywords.keys()) if isinstance(self._cata.keywords[key], FactorKeyword)]
         nodeGroups = set()
-        for key in keywords.keys():
+        for key in list(keywords.keys()):
             if key in ("LIAISON_DDL", "DDL_IMPO", "LIAISON_OBLIQUE", "LIAISON_UNIF", "LIAISON_SOLIDE", "DDL_POUTRE"):
                 for mcf in keywords[key]:
                     mc = mcf.get("GROUP_NO")
@@ -68,14 +68,14 @@ class MechanicalLoadDefinition(ExecuteCommand):
 
     def _hasDirichletLoadings(self, keywords):
         """return True if instance has Dirichlet loadings"""
-        for key in keywords.keys():
+        for key in list(keywords.keys()):
             if key in self.dirichletLoads:
                 return True
         return False
 
     def _hasNeumannLoadings(self, keywords):
         """return True if instance has Neumann loadings"""
-        for key in keywords.keys():
+        for key in list(keywords.keys()):
             if key in self.neumannLoads:
                 return True
         return False

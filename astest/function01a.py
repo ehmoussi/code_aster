@@ -49,7 +49,7 @@ DF2=DEFI_FONCTION(  NOM_PARA='INST',  NOM_RESU='DEPL',
                          INTERPOL='LOG',
                          PROL_GAUCHE='LINEAIRE',
                          VALE=( 3., 3., 4., 4.,  5., 5., )               )
-print "getName", DF1.getName(), DF2.getName()
+print("getName", DF1.getName(), DF2.getName())
 # DF1.debugPrint()
 
 DN1=DEFI_NAPPE( NOM_PARA='AMOR', NOM_RESU='ACCE',

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ legacy operators.
 It mainly converts new objects to old ones for backward compatibility.
 """
 
-import __builtin__
+import builtins
 import types
 
 from . import DataStructure as DS
@@ -38,7 +38,7 @@ from .SyntaxObjects import (_F, Bloc, CataError, FactorKeyword, Formule,
 from .Validators import (Absent, AndVal, Compulsory, LongStr, NoRepeat,
                          NotEqualTo, OrdList, OrVal, Together)
 
-__builtin__._F = _F
+builtins._F = _F
 
 
 def OPER(**kwargs):

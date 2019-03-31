@@ -31,7 +31,8 @@ from ..Utilities import injector
 from .generalizedassemblymatrix_ext import VALM_triang2array
 
 
-class ExtendedDynamicMacroElement(injector(DynamicMacroElement), DynamicMacroElement):
+@injector(DynamicMacroElement)
+class ExtendedDynamicMacroElement(object):
     cata_sdj = "SD.sd_macr_elem_dyna.sd_macr_elem_dyna"
 
     def EXTR_MATR_GENE(self,typmat) :
@@ -83,17 +84,17 @@ class ExtendedDynamicMacroElement(injector(DynamicMacroElement), DynamicMacroEle
         numpy.asarray(matrice)
 
         # On teste si la matrice python est de dimension 2
-        if (len(numpy.shape(matrice))<>2):
+        if (len(numpy.shape(matrice)) != 2):
             raise AsException("La dimension de la matrice est incorrecte")
 
         # On teste si les tailles de la matrice jeveux et python sont identiques
-        if (tuple([desc[1],desc[1]])<>numpy.shape(matrice)) :
+        if (tuple([desc[1],desc[1]]) != numpy.shape(matrice)) :
             raise AsException("La dimension de la matrice est incorrecte")
         taille=desc[1]*desc[1]/2.0+desc[1]/2.0
         tmp=numpy.zeros([int(taille)])
         for j in range(desc[1]+1):
             for i in range(j):
-                k=j*(j-1)/2+i
+                k=j*(j-1) // 2+i
                 tmp[k]=matrice[j-1,i]
         aster.putvectjev(nom_vale,len(tmp),tuple((
-            range(1,len(tmp)+1))),tuple(tmp),tuple(tmp),1)
+            list(range(1,len(tmp)+1)))),tuple(tmp),tuple(tmp),1)

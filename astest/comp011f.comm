@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -218,14 +218,14 @@ for i in range(NCAL):
 
           epsimp =DEFI_CONSTANTE(VALE=-ALPH(Ti)*(Ti - TREF));
 
-          print 'i=',i, ' instant=', time, ' Temperature=',Ti
+          print(('i=',i, ' instant=', time, ' Temperature=',Ti))
 
           # variation des coef du comportement avec la temperature
           # correction eventuelle des valeurs initiales du temps ti
 
           Ei=DEFI_CONSTANTE(VALE=YOUN(Ti))
           Ei2 = YOUN(Ti)
-          print 'Ei', Ei2
+          print(('Ei', Ei2))
 
           MATER[i]=DEFI_MATERIAU(#ELAS=_F(E=YOUN(Ti),
                                  #        NU=0.,

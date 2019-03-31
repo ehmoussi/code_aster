@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ interface
 #include "asterf_types.h"
     subroutine mfdcsi(fid, fname, it, numdt, numit,&
                       dt, cret)
-        med_int :: fid
+        med_idt :: fid
         character(len=*) :: fname
         med_int :: it
         med_int :: numdt

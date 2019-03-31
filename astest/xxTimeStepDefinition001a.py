@@ -12,7 +12,7 @@ list_r = DEFI_LIST_REEL(DEBUT=0.,
                         INTERVALLE=(_F(JUSQU_A=1.0, PAS=0.1),))
 
 list_values = list_r.getValues()
-for j in xrange(len(list_values)):
+for j in range(len(list_values)):
     test.assertAlmostEqual(list_values[j], j*0.1)
 
 test.assertEqual(list_r.getType(), "LISTR8_SDASTER")

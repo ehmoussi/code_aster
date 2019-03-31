@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ class fiabilite_fichier:
         self.ligne_commentaire = "#" + self.ligne_sep + "\n"
 #
         if info >= 2:
-            print "Création du fichier : " + self.nomfic
+            print("Création du fichier : " + self.nomfic)
 #
 #====
 # 2. Ouverture du fichier
@@ -117,7 +117,7 @@ class fiabilite_fichier:
             erreur_partiel = [0]
             try:
                 self.fic = open(self.nomfic_global, type_ouvr)
-            except os.error, erreur_partiel:
+            except os.error as erreur_partiel:
                 self.jdc.cr.warn("Code d'erreur de open : " + str(
                     erreur_partiel[0]) + " : " + erreur_partiel[1])
                 erreur = 10
@@ -161,7 +161,7 @@ class fiabilite_fichier:
             erreur_partiel = [0]
             try:
                 self.fic.close()
-            except os.error, erreur_partiel:
+            except os.error as erreur_partiel:
                 self.jdc.cr.warn("Code d'erreur de close : " + str(
                     erreur_partiel[0]) + " : " + erreur_partiel[1])
                 erreur = 11
@@ -200,11 +200,11 @@ class fiabilite_fichier:
 #
         if not erreur:
 #
-            print "\n" + self.ligne_sep
-            print "Contenu du fichier " + self.nomfic, " :"
+            print("\n" + self.ligne_sep)
+            print("Contenu du fichier " + self.nomfic, " :")
             for ligne in les_lignes:
-                print ligne[:-1]
-            print self.ligne_sep + "\n"
+                print(ligne[:-1])
+            print(self.ligne_sep + "\n")
 #
 # 4.4. ==> C'est fini
 #
@@ -337,7 +337,7 @@ if __name__ == "__main__":
 #
     for nomfic in Liste:
         fic_total = os.path.join(Rep_Calc_LOGICIEL_global, nomfic)
-        os.chmod(fic_total, 0755)
+        os.chmod(fic_total, 0o755)
         os.remove(fic_total)
     os.rmdir(Rep_Calc_LOGICIEL_global)
 #

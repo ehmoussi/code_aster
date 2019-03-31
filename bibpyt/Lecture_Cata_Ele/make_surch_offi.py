@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,8 +73,8 @@ def main(surch, unigest, nom_capy_offi, resu_ojb):
     (Il travaille dans un sandbox)
     """
     abspath = lambda path: path and osp.abspath(path)
-    surch, unigest, nom_capy_offi, resu_ojb = map(abspath,
-                                                 (surch, unigest, nom_capy_offi, resu_ojb))
+    surch, unigest, nom_capy_offi, resu_ojb = list(map(abspath,
+                                                 (surch, unigest, nom_capy_offi, resu_ojb)))
 
     trav = tempfile.mkdtemp(prefix='make_surch_offi_')
     dirav = os.getcwd()
@@ -82,9 +82,9 @@ def main(surch, unigest, nom_capy_offi, resu_ojb):
     try:
         _main(nom_capy_offi, resu_ojb)
     except:
-        print 60 * '-' + ' debut trace back'
+        print(60 * '-' + ' debut trace back')
         traceback.print_exc(file=sys.stdout)
-        print 60 * '-' + ' fin   trace back'
+        print(60 * '-' + ' fin   trace back')
         raise
     finally:
         os.chdir(dirav)

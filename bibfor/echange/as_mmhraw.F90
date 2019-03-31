@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine as_mmhraw(ifichi, nomail, typgeo, nomatt, nbrval,&
+subroutine as_mmhraw(fid, nomail, typgeo, nomatt, nbrval,&
                      tabval, codret)
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
@@ -27,7 +27,7 @@ subroutine as_mmhraw(ifichi, nomail, typgeo, nomatt, nbrval,&
 #include "asterfort/utmess.h"
 #include "med/mmhraw.h"
     character(len=*) :: nomail, nomatt
-    aster_int :: ifichi, typgeo, nbrval, codret
+    aster_int :: fid, typgeo, nbrval, codret
     real(kind=8) :: tabval(*)
     aster_int :: numdt, numit
     parameter    (numdt = -1)
@@ -37,17 +37,18 @@ subroutine as_mmhraw(ifichi, nomail, typgeo, nomatt, nbrval,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: ifich4, typge4, nbrva4, codre4, numdt4, numit4
-    ifich4 = ifichi
+    med_idt :: fidm
+    med_int :: typge4, nbrva4, codre4, numdt4, numit4
+    fidm = to_med_idt(fid)
     typge4 = typgeo
     nbrva4 = nbrval
     numdt4 = numdt
     numit4 = numit
-    call mmhraw(ifich4, nomail, numdt4, numit4, typge4,&
+    call mmhraw(fidm, nomail, numdt4, numit4, typge4,&
                 nomatt, nbrva4, tabval, codre4)
     codret = codre4
 #else
-    call mmhraw(ifichi, nomail, numdt, numit, typgeo,&
+    call mmhraw(fid, nomail, numdt, numit, typgeo,&
                 nomatt, nbrval, tabval, codret)
 #endif
 !

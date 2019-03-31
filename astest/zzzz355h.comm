@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -219,7 +219,7 @@ iflow = 6
 
 #
 # ICHAL >=0
-for icalc in xrange(Npos):
+for icalc in range(Npos):
 
     ichal = lst_ichal[icalc]
     titre = 'IFROT=2, IFLOW=6, ICHAL='+str(ichal)
@@ -308,7 +308,7 @@ for icalc in xrange(Npos):
 
 
 # ICHAL<0 (from Npos +1 to Nessai)
-for icalc in xrange(Npos,Npos+Nneg):
+for icalc in range(Npos,Npos+Nneg):
 
     ichal = lst_ichal[icalc]
     titre = 'IFROT=2, IFLOW=6, ICHAL='+str(ichal)

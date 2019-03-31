@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,13 +24,11 @@ Traitement des macros MACR_ADAP_MAIL/MACR_INFO_MAIL
 """
 __revision__ = "V3.1"
 #
-import string
 import os
-import cPickle
+import pickle
 from glob import glob
 import tarfile
-from types import ListType, TupleType
-EnumTypes = (ListType, TupleType)
+EnumTypes = (list, tuple)
 import shutil
 #
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
@@ -53,7 +51,7 @@ def liste_passages_init(INFO, fichier_archive, Rep_Calc_ASTER):
     """
 #
     if (INFO >= 3):
-        print "\nDans liste_passages_init, fichier_archive :", fichier_archive
+        print("\nDans liste_passages_init, fichier_archive :", fichier_archive)
 #
 # A.0. A priori, la liste est vide
 #
@@ -71,21 +69,21 @@ def liste_passages_init(INFO, fichier_archive, Rep_Calc_ASTER):
         file = tarfile.open(fichier_archive, "r")
         for tarinfo in file:
             if (INFO >= 3):
-                print tarinfo.name, "is", tarinfo.size, "bytes in size and is",
+                print(tarinfo.name, "is", tarinfo.size, "bytes in size and is", end=' ')
             if tarinfo.isreg():
                 if (INFO >= 3):
-                    print "a regular file."
+                    print("a regular file.")
                 file.extract(tarinfo.name)
             elif tarinfo.isdir():
                 if (INFO >= 3):
-                    print "a directory."
+                    print("a directory.")
                 file.extract(tarinfo.name)
             else:
                 if (INFO >= 3):
-                    print "something else."
+                    print("something else.")
 #
         if (INFO >= 3):
-            print os.listdir(Rep_Calc_ASTER)
+            print(os.listdir(Rep_Calc_ASTER))
 #
 # A.1.2. Liste de tous les répertoires d'adaptation qui ont ete recuperes
 #
@@ -95,8 +93,8 @@ def liste_passages_init(INFO, fichier_archive, Rep_Calc_ASTER):
 #   puis on recupere la liste des passages
 #
         fic = os.path.join(Rep_Calc_ASTER, laux[0], "pick.1")
-        file = open(fic, "r")
-        laux = cPickle.load(file)
+        file = open(fic, "rb")
+        laux = pickle.load(file)
         file.close()
 #
 # A.1.3. Pour chaque cas, mise à jour du répertoire global
@@ -109,7 +107,7 @@ def liste_passages_init(INFO, fichier_archive, Rep_Calc_ASTER):
 #
     else:
         if (INFO >= 3):
-            print "Fichier inconnu."
+            print("Fichier inconnu.")
 #
     return Liste_Passages
 #
@@ -139,7 +137,7 @@ def liste_passages_maj(INFO, Liste_Passages, niter, Nom_Co_Mail_N, Nom_Co_Mail_N
     """
 #
     if (INFO >= 3):
-        print "Dans liste_passages_maj, numero d'iteration", niter
+        print("Dans liste_passages_maj, numero d'iteration", niter)
 #
 # A.0. A priori, la liste est vide
 #
@@ -174,7 +172,7 @@ def liste_passages_maj(INFO, Liste_Passages, niter, Nom_Co_Mail_N, Nom_Co_Mail_N
         dico["liste_champs"] = liste_champs
         Liste_Passages_0.append(dico)
         if (INFO >= 3):
-            print ".. Nouveau dico", dico
+            print(".. Nouveau dico", dico)
 #
 # A.2. Modification du cas en cours
 #
@@ -193,7 +191,7 @@ def liste_passages_maj(INFO, Liste_Passages, niter, Nom_Co_Mail_N, Nom_Co_Mail_N
                     "unite_fichier_homard_vers_aster"] = unite_fichier_homard_vers_aster
                 dico["liste_champs"] = liste_champs
                 if (INFO >= 3):
-                    print ".. Nouveau dico", dico
+                    print(".. Nouveau dico", dico)
             Liste_Passages_0.append(dico)
 #
     return Liste_Passages_0
@@ -216,14 +214,14 @@ def argument_maillage(INFO, args, mot_cle, mode_homard):
     """
 #
     if (INFO >= 3):
-        print "\nDans argument_maillage, mode_homard =", mode_homard
-        print "Dans argument_maillage, mot_cle     =", mot_cle
+        print("\nDans argument_maillage, mode_homard =", mode_homard)
+        print("Dans argument_maillage, mot_cle     =", mot_cle)
 #
     dico = {}
     dico["Type_Maillage"] = mot_cle
     dico["Action"] = "Rien"
 #
-    if (args.has_key(mot_cle)):
+    if (mot_cle in args):
         if (args.get(mot_cle) != None):
         # print "==> args.get(",mot_cle,"] =",args.get(mot_cle]
             dico["Nom_ASTER"] = args.get(mot_cle)
@@ -236,7 +234,7 @@ def argument_maillage(INFO, args, mot_cle, mode_homard):
                 dico["Action"] = "mot_cle"
 #
     if (INFO >= 3):
-        print "dico =", dico
+        print("dico =", dico)
 #
     return dico
 #
@@ -279,7 +277,7 @@ def argument_pilotage(INFO, args):
     dico["NOM_CHAM_MED"] = nom_cham_med_fichier
     # print "==> dico[\"NOM_CHAM_MED\"] =", dico["NOM_CHAM_MED"]
 #
-    if args.has_key("NOM_CMP"):
+    if "NOM_CMP" in args:
         if args.get("NOM_CMP") != None:
             if not type(args.get("NOM_CMP")) in EnumTypes:
                 l_aux = [args.get("NOM_CMP")]
@@ -291,7 +289,7 @@ def argument_pilotage(INFO, args):
             dico["COMPOSANTE"] = l_aux
 #
     if (INFO >= 3):
-        print "dico =", dico
+        print("dico =", dico)
 #
     return dico
 #
@@ -314,9 +312,9 @@ def argument_champ(INFO, le_champ, usage_champ, iaux):
     """
 #
     if (INFO >= 3):
-        print "\nDans argument_champ, le_champ =", le_champ
-        print "Dans argument_champ, usage_champ =", usage_champ
-        print "Dans argument_champ, iaux =", iaux
+        print("\nDans argument_champ, le_champ =", le_champ)
+        print("Dans argument_champ, usage_champ =", usage_champ)
+        print("Dans argument_champ, iaux =", iaux)
 #
     dico_interp = {}
     dico_interp["AUTO"] = 0
@@ -391,7 +389,7 @@ def argument_champ(INFO, le_champ, usage_champ, iaux):
         # print "==> dico[\"NOM_CHAM_MED\"] =", dico["NOM_CHAM_MED"]
 #
     if (INFO >= 3):
-        print "dico =", dico
+        print("dico =", dico)
 #
     return dico, iaux
 #
@@ -426,7 +424,7 @@ def argument_zone(INFO, args):
         # print dico
         liste_zones.append(dico)
         if (INFO >= 3):
-            print "dico =", dico
+            print("dico =", dico)
 #
     return liste_zones
 #
@@ -469,7 +467,7 @@ def argument_frontiere_analytique(INFO, args):
         for aux in l_aux:
             dico[aux] = frontiere[aux]
         if (INFO >= 3):
-            print "dico =", dico
+            print("dico =", dico)
         liste_front_analytiques.append(dico)
 #
     return liste_front_analytiques
@@ -492,12 +490,12 @@ def argument_historique(INFO, args):
     dico_unites = {}
 #
     for mot_cle in ("UNITE_HIST_IN", "UNITE_HIST_OUT"):
-        if args.has_key(mot_cle):
+        if mot_cle in args:
             if (args.get(mot_cle) != None):
                 dico_unites[mot_cle] = args.get(mot_cle)
 #
     if (INFO >= 3):
-        print "dico_unites =", dico_unites
+        print("dico_unites =", dico_unites)
 #
     return dico_unites
 #
@@ -521,8 +519,8 @@ def version_homard_aster(INFO, VERSION_HOMARD):
     version_perso : vrai/faux si la version est la version personnelle
     """
 #
-    VERSION_HOMARD = string.replace(VERSION_HOMARD, "_", ".")
-    VERSION_HOMARD = string.replace(VERSION_HOMARD, "N", "n")
+    VERSION_HOMARD = VERSION_HOMARD.replace("_", ".")
+    VERSION_HOMARD = VERSION_HOMARD.replace("N", "n")
 #
     if (VERSION_HOMARD[-6:] == ".PERSO"):
         VERSION_HOMARD = VERSION_HOMARD[:-6]
@@ -553,7 +551,7 @@ def fichier_echange_unite(INFO, numero_passage_fonction):
     """
 #
     if (INFO >= 3):
-        print "\nDans fichier_echange_unite, numero_passage_fonction =", numero_passage_fonction
+        print("\nDans fichier_echange_unite, numero_passage_fonction =", numero_passage_fonction)
 #
 # A.1. ==> D'ASTER vers HOMARD
 #
@@ -587,7 +585,7 @@ def fichier_echange_nom(INFO, unite, Rep_Calc_ASTER):
     """
 #
     if (INFO >= 3):
-        print "\nDans fichier_echange_nom, unite =", unite
+        print("\nDans fichier_echange_nom, unite =", unite)
 #
     saux = "fort.%d" % unite
     fichier = os.path.join(Rep_Calc_ASTER, saux)
@@ -612,13 +610,13 @@ def champ_imprime_0(INFO, dico_pilo, liste_champs):
     """
 #
     if (INFO >= 3):
-        print "\nDans champ_imprime_0, dico_pilo =", dico_pilo
+        print("\nDans champ_imprime_0, dico_pilo =", dico_pilo)
 #
 # A.1. Le champ de pilotage est-il deja imprime ?
 #
     if len(dico_pilo) > 0:
         chp_pilo_est_deja_imprime = 0
-        if dico_pilo.has_key("RESULTAT"):
+        if "RESULTAT" in dico_pilo:
             l_aux = ["RESULTAT", "NOM_CHAM"]
         else:
             l_aux = ["CHAM_GD"]
@@ -627,7 +625,7 @@ def champ_imprime_0(INFO, dico_pilo, liste_champs):
         l_aux = []
 #
     if (INFO >= 3):
-        print "\nchp_pilo_est_deja_imprime =", chp_pilo_est_deja_imprime
+        print("\nchp_pilo_est_deja_imprime =", chp_pilo_est_deja_imprime)
 #
 # A.2. Parcours des champs definis
 #
@@ -647,7 +645,7 @@ def champ_imprime_0(INFO, dico_pilo, liste_champs):
 #       Est-ce le meme champ ?
                 on_a_le_champ = 1
                 for cle in l_aux:
-                    if (dico.has_key(cle)):
+                    if (cle in dico):
                         # print "...... dico_pilo[cle] =", dico_pilo[cle]
                         # print "...... dico[cle]      =", dico[cle]
                         if (dico_pilo[cle] != dico[cle]):
@@ -661,9 +659,9 @@ def champ_imprime_0(INFO, dico_pilo, liste_champs):
 #       en numero d'ordre et une donnee en instant. On croise les doigts.)
                 if on_a_le_champ:
                     for cle in ["NUME_ORDRE", "INST"]:
-                        if dico.has_key(cle):
+                        if cle in dico:
                             if (dico[cle] != None):
-                                if dico_pilo.has_key(cle):
+                                if cle in dico_pilo:
                                     if (dico_pilo[cle] != dico[cle]):
                                         on_a_le_champ = 0
                                         break
@@ -674,7 +672,7 @@ def champ_imprime_0(INFO, dico_pilo, liste_champs):
                     chp_pilo_est_deja_imprime = 1
 #
     if (INFO >= 3):
-        print "\nFin de la boucle .. chp_pilo_est_deja_imprime =", chp_pilo_est_deja_imprime
+        print("\nFin de la boucle .. chp_pilo_est_deja_imprime =", chp_pilo_est_deja_imprime)
 #
 # A.3. Si le champ de pilotage de l'adaptation n'a pas ete repere comme champ a mettre a jour,
 #      il faut l'inclure dans les champs a imprimer
@@ -712,7 +710,7 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
     """
 #
     if (INFO >= 3):
-        print "\nPassage dans cree_configuration"
+        print("\nPassage dans cree_configuration")
 #
     dico_configuration = {}
 #
@@ -723,7 +721,7 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
     dico_configuration["Rep_Calc_HOMARD_global"] = Rep_Calc_HOMARD_global
     dico_configuration["VERSION_HOMARD"] = VERSION_HOMARD
     dico_configuration["version_perso"] = version_perso
-    if args.has_key("UNITE"):
+    if "UNITE" in args:
         UNITE = args.get("UNITE")
         if (UNITE != None):
             saux = "fort.%d" % UNITE
@@ -751,11 +749,11 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
         dico_aux = {}
         if (dico["Usage_champ"] == "INDICATEUR"):
             l_aux = []
-            if dico.has_key("NOM_CHAM_MED"):
+            if "NOM_CHAM_MED" in dico:
                 l_aux.append("NOM_CHAM_MED")
-            if dico.has_key("COMPOSANTE"):
+            if "COMPOSANTE" in dico:
                 l_aux.append("COMPOSANTE")
-            if dico.has_key("NUME_ORDRE"):
+            if "NUME_ORDRE" in dico:
                 l_aux.append("NUME_ORDRE")
             for cle in l_aux:
                 if (dico[cle] != None):
@@ -787,13 +785,13 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
         if (dico["Usage_champ"] == "MAJ_CHAM"):
             dico_aux = {}
             l_aux = ["NOM_CHAM_MED", "COMPOSANTE", "TYPE_MAJ"]
-            if dico.has_key("NUME_ORDRE"):
+            if "NUME_ORDRE" in dico:
                 l_aux.append("NUME_ORDRE")
             else:
                 for cle in ["RESULTAT", "NOM_CHAM", "INST", "PRECISION", "CRITERE"]:
                     l_aux.append(cle)
             for cle in l_aux:
-                if dico.has_key(cle):
+                if cle in dico:
                     if (dico[cle] != None):
                         dico_aux[cle] = dico[cle]
             # print dico_aux
@@ -825,8 +823,8 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
                 l_aux.append(dico_aux)
             dico_configuration["Champs_supplementaires"] = l_aux
     if (INFO >= 3):
-        if dico_configuration.has_key("Champs_supplementaires"):
-            print "dico_configuration[Champs_supplementaires] =", dico_configuration["Champs_supplementaires"]
+        if "Champs_supplementaires" in dico_configuration:
+            print("dico_configuration[Champs_supplementaires] =", dico_configuration["Champs_supplementaires"])
 #
 # A.7. ==> Les eventuelles frontieres analytiques
 #
@@ -863,14 +861,14 @@ def file_print(Rep_Calc_HOMARD_global):
 #
         fic = os.path.join(Rep_Calc_HOMARD_global, nomfic)
         if os.path.isfile(fic):
-            print "\n\n=============================================================="
-            print "Contenu de", nomfic
+            print("\n\n==============================================================")
+            print("Contenu de", nomfic)
             fichier = open(fic, "r")
             les_lignes = fichier.readlines()
             fichier.close()
             for ligne in les_lignes:
-                print ligne[:-1]
-            print "==============================================================\n"
+                print(ligne[:-1])
+            print("==============================================================\n")
 #
     return
 #
@@ -916,7 +914,7 @@ def file_remove(INFO, mode_homard, Rep_Calc_HOMARD_global, fichier_aster_vers_ho
         l_aux.remove(fic)
 #
     if (INFO >= 3):
-        print ".. Liste des fichiers a supprimer =", l_aux
+        print(".. Liste des fichiers a supprimer =", l_aux)
 #
     return l_aux
 #
@@ -961,7 +959,7 @@ def post_traitement(INFO, mode_homard, dico_configuration, Rep_Calc_ASTER):
     """
 #
     if (INFO >= 3):
-        print "\nPassage dans post_traitement"
+        print("\nPassage dans post_traitement")
 #
     d_aux = {}
     erreur = 0
@@ -1017,14 +1015,14 @@ def post_traitement(INFO, mode_homard, dico_configuration, Rep_Calc_ASTER):
                 nomfic = "Liste." + str_niter_vers_niterp1
                 fic = os.path.join(Rep_Calc_HOMARD_global, nomfic)
                 if os.path.isfile(fic):
-                    print "\nAnalyse de", fic
+                    print("\nAnalyse de", fic)
                     fichier = open(fic, "r")
                     les_lignes = fichier.readlines()
                     fichier.close()
                     for ligne in les_lignes:
-                        print ligne[:-1]
+                        print(ligne[:-1])
             else:
-                print "\nLe fichier", fic, "est inconnu."
+                print("\nLe fichier", fic, "est inconnu.")
 #
 #
         break
@@ -1134,8 +1132,8 @@ def macr_adap_mail_ops(self,
 #
     Rep_Calc_ASTER = os.getcwd()
     if (INFO >= 3):
-        print "Contenu du répertoire de calcul d'Aster", Rep_Calc_ASTER
-        print os.listdir(Rep_Calc_ASTER)
+        print("Contenu du répertoire de calcul d'Aster", Rep_Calc_ASTER)
+        print(os.listdir(Rep_Calc_ASTER))
 #
 # 1.3. ==> Numéro du passage dans cette macro
 #
@@ -1144,14 +1142,14 @@ def macr_adap_mail_ops(self,
     except:
         numero_passage_fonction = 1
     if (INFO >= 4):
-        print "numero_passage_fonction =", numero_passage_fonction
+        print("numero_passage_fonction =", numero_passage_fonction)
 #
 # 1.4. ==> Fichier d'archivage
 # 1.4.1. ==> Si une unite a ete fournie
 #
     dico_unites = argument_historique(INFO, args)
 #
-    if dico_unites.has_key("UNITE_HIST_IN"):
+    if "UNITE_HIST_IN" in dico_unites:
         unite = dico_unites["UNITE_HIST_IN"]
 #   recherche de l'eventuel fichier defini par DEFI_FICHIER
 #   sinon, c'est un fort.xx classique
@@ -1173,7 +1171,7 @@ def macr_adap_mail_ops(self,
 #
     fichier_archive = os.path.normpath(fichier_archive)
     if (INFO >= 4):
-        print "fichier_archive =", fichier_archive
+        print("fichier_archive =", fichier_archive)
         # os.system("ls -la "+fichier_archive)
 #
 # 1.5. ==> Au tout premier passage, initialisation de la liste des passages
@@ -1183,7 +1181,7 @@ def macr_adap_mail_ops(self,
             INFO, fichier_archive, Rep_Calc_ASTER)
 #
     if (INFO >= 3):
-        print "1.4. Liste_Passages =", Liste_Passages
+        print("1.4. Liste_Passages =", Liste_Passages)
 #
 # 1.6. ==> Initialisations
 #
@@ -1221,7 +1219,7 @@ def macr_adap_mail_ops(self,
             mode_homard = "ADAP"
 #
         if (INFO >= 3):
-            print "2.1.1. mode_homard =", mode_homard
+            print("2.1.1. mode_homard =", mode_homard)
 #
 # 2.1.2. ==> Les concepts "maillage"
 #
@@ -1245,7 +1243,7 @@ def macr_adap_mail_ops(self,
         iaux = 0
         for usage_champ in ("MAJ_CHAM", "ADD_CHAM"):
 #
-            if args.has_key(usage_champ):
+            if usage_champ in args:
 #
                 if args.get(usage_champ) != None:
                     les_champs = args.get(usage_champ)
@@ -1257,7 +1255,7 @@ def macr_adap_mail_ops(self,
 # 2.1.5. ==> Les zones de raffinement
         # print "\n.. Debut de 2.1.5."
 #
-        if args.has_key("ZONE"):
+        if "ZONE" in args:
             if args.get("ZONE") != None:
                 liste_zones = argument_zone(INFO, args)
 #
@@ -1294,7 +1292,7 @@ def macr_adap_mail_ops(self,
 # 2.3.2. ==> Suivi de frontieres analytiques
     # print "\n.. Debut de 2.3.2."
 #
-    if args.has_key("FRONTIERE_ANALYTIQUE"):
+    if "FRONTIERE_ANALYTIQUE" in args:
         if args.get("FRONTIERE_ANALYTIQUE") != None:
             liste_front_analytiques = argument_frontiere_analytique(
                 INFO, args)
@@ -1314,7 +1312,7 @@ def macr_adap_mail_ops(self,
 # 2.5. ==> Les messages d'information
 #
     # print "\n.. Debut de 2.5."
-    if args.has_key("INTERPENETRATION"):
+    if "INTERPENETRATION" in args:
         if (args.get("INTERPENETRATION") == "OUI"):
             if (mode_homard == "INFO"):
                 UTMESS('I', 'HOMARD0_6')
@@ -1407,8 +1405,8 @@ def macr_adap_mail_ops(self,
                     liste_champs = dico["liste_champs"]
 #
                 if (INFO >= 3):
-                    print ".... ==> répertoire de calcul de HOMARD :", Rep_Calc_HOMARD_local
-                    print ".... ==> niter :", niter
+                    print(".... ==> répertoire de calcul de HOMARD :", Rep_Calc_HOMARD_local)
+                    print(".... ==> niter :", niter)
 #
 # 3.2.3. Le répertoire pour homard
 #        Attention : on ne fait cette creation qu'une seule fois par cas
@@ -1422,7 +1420,7 @@ def macr_adap_mail_ops(self,
 #
             try:
                 os.mkdir(Rep_Calc_HOMARD_global)
-            except os.error, codret_partiel:
+            except os.error as codret_partiel:
                 saux = "Code d'erreur de mkdir : %d" % codret_partiel[0]
                 self.cr.warn(saux + " : " + codret_partiel[1])
                 UTMESS("F", 'HOMARD0_4', valk=Rep_Calc_HOMARD_global)
@@ -1432,8 +1430,8 @@ def macr_adap_mail_ops(self,
             if not os.path.isdir(Rep_Calc_HOMARD_global):
                 UTMESS("F", 'HOMARD0_8', valk=Rep_Calc_HOMARD_global)
             if (INFO >= 3):
-                print "Contenu du répertoire de calcul de HOMARD", Rep_Calc_HOMARD_local
-                print os.listdir(Rep_Calc_HOMARD_global)
+                print("Contenu du répertoire de calcul de HOMARD", Rep_Calc_HOMARD_local)
+                print(os.listdir(Rep_Calc_HOMARD_global))
 #
 #====================================================================
 # 4. Ecriture des commandes de creation des donnees MED
@@ -1510,10 +1508,10 @@ def macr_adap_mail_ops(self,
 #
             motscsi = {}
             for cle in ["RESULTAT", "NOM_CHAM", "CHAM_GD", "NUME_ORDRE", "INST", "PRECISION", "CRITERE", "NOM_CHAM_MED"]:
-                if dico.has_key(cle):
+                if cle in dico:
                     if (dico[cle] != None):
                         motscsi[cle] = dico[cle]
-            if dico.has_key("COMPOSANTE"):
+            if "COMPOSANTE" in dico:
                 if (len(dico["COMPOSANTE"]) == 1):
                     motscsi["NOM_CMP"] = dico["COMPOSANTE"][0]
                 else:
@@ -1699,10 +1697,10 @@ def macr_adap_mail_ops(self,
 #
                 motscsi = {}
                 for cle in ["NUME_ORDRE", "INST", "PRECISION", "CRITERE"]:
-                    if dico.has_key(cle):
+                    if cle in dico:
                         if (dico[cle] != None):
                             motscsi[cle] = dico[cle]
-                if dico.has_key("NUME_ORDRE"):
+                if "NUME_ORDRE" in dico:
                     motscsi["NUME_PT"] = dico["NUME_ORDRE"]
 #
                 if (usage_champ == "MAJ_CHAM"):
@@ -1792,10 +1790,10 @@ def macr_adap_mail_ops(self,
     for fic in l_aux:
         if os.path.isfile(fic):
             if (INFO >= 3):
-                print "==> Destruction du fichier", fic
+                print("==> Destruction du fichier", fic)
             try:
                 os.remove(fic)
-            except os.error, codret_partiel:
+            except os.error as codret_partiel:
                 saux = "Code d'erreur de remove : %d" % codret_partiel[0]
                 self.cr.warn(saux + " : " + codret_partiel[1])
                 UTMESS("F", 'HOMARD0_5', valk=fic)
@@ -1817,8 +1815,8 @@ def macr_adap_mail_ops(self,
         # print ".. Debut de 10."
 #
     if (INFO >= 3):
-        print os.listdir(Rep_Calc_ASTER)
-        print "Archivage dans", fichier_archive
+        print(os.listdir(Rep_Calc_ASTER))
+        print("Archivage dans", fichier_archive)
 #
 # 11.1. Archivage de chacun des passages
 #
@@ -1832,8 +1830,8 @@ def macr_adap_mail_ops(self,
 # ensuite
         Rep_Calc_HOMARD_global = dico["Rep_Calc_HOMARD_global"]
         fic = os.path.join(Rep_Calc_HOMARD_global, "pick.1")
-        file = open(fic, "w")
-        cPickle.dump(Liste_Passages, file)
+        file = open(fic, "wb")
+        pickle.dump(Liste_Passages, file)
         file.close()
 #
 # 11.2. Si on a au moins un cas d'adaptation, archivage
@@ -1849,13 +1847,13 @@ def macr_adap_mail_ops(self,
         file = tarfile.open(fichier_archive, "w")
         for rep in laux:
             if (INFO >= 3):
-                print ".. Insertion de", rep
+                print(".. Insertion de", rep)
             file.add(rep)
         file.close()
 #
 # 11.2.2. Sur demande, transfert dans le fichier ad-hoc
 #
-        if dico_unites.has_key("UNITE_HIST_OUT"):
+        if "UNITE_HIST_OUT" in dico_unites:
 #
             unite = dico_unites["UNITE_HIST_OUT"]
 #     recherche de l'eventuel fichier defini par DEFI_FICHIER
@@ -1870,7 +1868,7 @@ def macr_adap_mail_ops(self,
             if os.path.isfile(fichier_hist_out):
                 os.remove(fichier_hist_out)
             if (INFO >= 3):
-                print "Copie de", fichier_archive, "vers", fichier_hist_out
+                print("Copie de", fichier_archive, "vers", fichier_hist_out)
             shutil.copyfile(fichier_archive, fichier_hist_out)
 #
 #====================================================================
@@ -1878,8 +1876,8 @@ def macr_adap_mail_ops(self,
 #====================================================================
 #
     if (INFO >= 3):
-        print "A la fin, contenu du repertoire de calcul ASTER"
-        print os.listdir(Rep_Calc_ASTER)
+        print("A la fin, contenu du repertoire de calcul ASTER")
+        print(os.listdir(Rep_Calc_ASTER))
 #
     # import time
     # time.sleep(3600)

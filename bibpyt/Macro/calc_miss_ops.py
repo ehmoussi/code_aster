@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,6 +49,6 @@ def calc_miss_ops(self, **kwargs):
     except AsterError as err:
         UTMESS('F', err.id_message, valk=err.valk,
                vali=err.vali, valr=err.valr)
-    except Exception, err:
-        trace = ''.join(traceback.format_tb(sys.exc_traceback))
+    except Exception as err:
+        trace = ''.join(traceback.format_tb(sys.exc_info()[2]))
         UTMESS('F', 'SUPERVIS2_5', valk=('CALC_MISS', trace, str(err)))

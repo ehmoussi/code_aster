@@ -21,52 +21,52 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 Erreur utilisateur dans la commande CREA_RESU / AFFE :
  Le maillage associé au mot clé CHAM_GD           : %(k1)s
  est différent de celui associé au mot clé MODELE : %(k2)s
 """),
 
-    2 : _(u"""
+    2 : _("""
  L'état initial défini n'est pas plastiquement admissible pour le modèle LETK.
  L'état initial de contraintes est erroné ou les propriétés matériaux ne sont pas adaptées au problème posé.
  Le calcul s'arrête en erreur fatale par précautions.
 """),
 
-    3 : _(u"""
+    3 : _("""
  REPERE='COQUE' ne traite que les champs aux éléments, pas les champs aux noeuds.
  On arrête le calcul.
 """),
 
-    4 : _(u"""
+    4 : _("""
  Le repère utilisateur défini par VECT_X et VECT_Y ne peut être utilisé qu'en 3D.
 """),
 
-    6 : _(u"""
+    6 : _("""
  il faut définir NOM_CMP
 """),
 
-    7 : _(u"""
+    7 : _("""
  Il faut définir 3 angles nautiques.
 """),
 
-    8 : _(u"""
+    8 : _("""
  L'origine doit être définie par 3 coordonnées.
 """),
 
-    9 : _(u"""
+    9 : _("""
  L'axe z est obligatoire en 3D.
 """),
 
-    10 : _(u"""
+    10 : _("""
  En 2D, seules les premières 2 coordonnées sont considérées pour l'origine.
 """),
 
-    11 : _(u"""
+    11 : _("""
  L'axe z n'a pas de sens en 2D. Le mot-clé AXE_Z est inutile.
 """),
 
-    13 : _(u"""
+    13 : _("""
   -> Lors du passage au repère cylindrique, un noeud a été localisé sur l'axe
      du repère cylindrique. Code_Aster utilise dans ce cas le centre de gravité de
      l'élément pour le calcul de la matrice de passage en repère cylindrique.
@@ -76,59 +76,59 @@ Erreur utilisateur dans la commande CREA_RESU / AFFE :
 """),
 
 
-    15 : _(u"""
+    15 : _("""
  les modélisations autorisées sont 3D et D_PLAN et AXIS
 """),
 
-    16 : _(u"""
+    16 : _("""
  le choix des paramètres ne correspond pas à l'un des modèles CJS
 """),
 
-    17 : _(u"""
+    17 : _("""
  la loi CJS ne converge pas
 """),
 
-    18 : _(u"""
+    18 : _("""
  la loi CJS ne converge pas avec le nombre maximal d'itérations (intégration locale)
 """),
 
-    20 : _(u"""
+    20 : _("""
  modélisation inconnue
 """),
 
-    22 : _(u"""
+    22 : _("""
  vecteur de norme nulle
 """),
 
-    23 : _(u"""
+    23 : _("""
  Le type de maille %(k1)s n'est pas prévu.
 """),
 
-    24 : _(u"""
+    24 : _("""
  la maille doit être de type TETRA4, TETRA10, PENTA6, PENTA15, HEXA8 ou HEXA20.
  ou TRIA3-6 ou QUAD4-8
  or la maille est de type :  %(k1)s .
 """),
 
-    26 : _(u"""
+    26 : _("""
   %(k1)s  groupe inexistant
 """),
 
-    27 : _(u"""
+    27 : _("""
  La maille  %(k1)s  de type  %(k2)s  est invalide pour ORIE_FISSURE.
 """),
 
-    28 : _(u"""
+    28 : _("""
  Le groupe de mailles pour ORIE_FISSURE est invalide.
 """),
 
-    29 : _(u"""
+    29 : _("""
  Dans le groupe à réorienter pour ORIE_FISSURE,
  Il existe des mailles 2d et 3d.
  C'est interdit.
 """),
 
-    30 : _(u"""
+    30 : _("""
 Erreur d'utilisation pour MODI_MAILLAGE / ORIE_FISSURE :
   On ne peut pas orienter les mailles.
 
@@ -148,39 +148,39 @@ Risques & conseils :
 
 
 
-    43 : _(u"""
+    43 : _("""
  pas de calcul sur le critère de Rice disponible
 """),
 
-    44 : _(u"""
+    44 : _("""
  cette commande doit nécessairement avoir le type EVOL_THER.
 """),
 
-    45 : _(u"""
+    45 : _("""
  seuls les champs de fonctions aux noeuds sont évaluables:  %(k1)s
 """),
 
-    46 : _(u"""
+    46 : _("""
  nous traitons les champs de réels et de fonctions: . %(k1)s
 """),
 
-    47 : _(u"""
+    47 : _("""
  le nom symbolique du champ à chercher n'est pas licite. %(k1)s
 """),
 
-    48 : _(u"""
+    48 : _("""
  plusieurs instants correspondent à celui spécifié sous AFFE
 """),
 
-    49 : _(u"""
+    49 : _("""
  NUME_FIN inférieur à NUME_INIT
 """),
 
-    50 : _(u"""
+    50 : _("""
  CMP non traitée
 """),
 
-    51 : _(u"""
+    51 : _("""
  Commande CREA_RESU
  La numérotation fournie avec les mots clés MATR_RIGI ou MATR_MASS est différente de celle des champs
  fournis sous le mot clé AFFE.
@@ -189,11 +189,11 @@ Risques & conseils :
  Les champs ont pu être créés par la commande CREA_CHAMP sans préciser la numérotation (mot clé NUME_DDL absent)
 """),
 
-    54 : _(u"""
+    54 : _("""
   incrément de déformation cumulée (DP) = - %(k1)s
 """),
 
-    55 : _(u"""
+    55 : _("""
  erreur d'intégration
  - essai d(intégration  numéro  %(k1)s
  - convergence vers une solution non conforme
@@ -201,7 +201,7 @@ Risques & conseils :
  - redécoupage du pas de temps
 """),
 
-    56 : _(u"""
+    56 : _("""
   erreur
   - non convergence à l'itération max  %(k1)s
   - convergence régulière mais trop lente
@@ -209,48 +209,48 @@ Risques & conseils :
   - redécoupage du pas de temps
 """),
 
-    57 : _(u"""
+    57 : _("""
   erreur
   - non convergence à l'itération max  %(k1)s
   - convergence irrégulière & erreur >  %(k2)s
   - redécoupage du pas de temps
 """),
 
-    58 : _(u"""
+    58 : _("""
   erreur
   - non convergence à l'itération max  %(k1)s
   - erreur >  %(k2)s
   - redécoupage du pas de temps
 """),
 
-    59 : _(u"""
+    59 : _("""
   la transformation géométrique est singulière pour la maille : %(k1)s
   (jacobien = 0.)
 """),
 
-    63 : _(u"""
+    63 : _("""
  on n'imprime que des champs réels
 """),
 
-    64 : _(u"""
+    64 : _("""
   %(k1)s CHAM_NO déjà existant
 """),
 
-    65 : _(u"""
+    65 : _("""
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    79 : _(u"""
+    79 : _("""
  pas de valeurs propres trouvées
 """),
 
-    80 : _(u"""
+    80 : _("""
  le champ %(k1)s associé à la grandeur de type %(k2)s ne peut pas être utilisé dans une
  structure de données de type %(k3)s
 """),
 
-    81 : _(u"""
+    81 : _("""
  L'état initial défini n'est pas plastiquement admissible.
  L'état initial de contraintes est erroné ou les propriétés matériaux ne sont pas adaptées au problème posé.
  Le calcul s'arrête en erreur fatale par précautions.

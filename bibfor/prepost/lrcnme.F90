@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,6 +51,7 @@ subroutine lrcnme(chanom, nochmd, nomamd, nomaas, nomgd,&
 !        CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
 !_____________________________________________________________________
 !
+    use as_med_module, only: as_med_open
     implicit none
 !
 ! 0.1. ==> ARGUMENTS
@@ -61,7 +62,6 @@ subroutine lrcnme(chanom, nochmd, nomamd, nomaas, nomgd,&
 #include "asterfort/as_mfdnfc.h"
 #include "asterfort/as_mfdnfd.h"
 #include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/cnscno.h"
 #include "asterfort/codent.h"
 #include "asterfort/detrsd.h"
@@ -163,7 +163,7 @@ subroutine lrcnme(chanom, nochmd, nomamd, nomaas, nomgd,&
         else
             nofimd = kfic(1:200)
         endif
-        call as_mfiope(idfimd, nofimd, edlect, iret)
+        call as_med_open(idfimd, nofimd, edlect, iret)
         call as_mfdnfd(idfimd, nbcham, iret)
         do 780 i = 1, nbcham
             call as_mfdnfc(idfimd, i, nbcmp, iret)

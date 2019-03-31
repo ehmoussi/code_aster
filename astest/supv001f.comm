@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import numpy as NP
 
 ma = LIRE_MAILLAGE(FORMAT="ASTER",)
 
-np_str = NP.array(['N3', 'N7'], dtype='a2')
+np_str = NP.array(['N3', 'N7'])
 list_str = [i for i in np_str]
 
 ma = DEFI_GROUP(
@@ -34,22 +34,22 @@ ma = DEFI_GROUP(
     MAILLAGE=ma,
     CREA_GROUP_NO=(
         _F(NOM='NEW1',
-           # test que (no, max='**') accepte un numpy.array de numpy.string_
+           # test que (no, max='**') accepte un numpy.array de numpy.str_
            NOEUD=np_str,),
-        _F(# test que (TXM, max=1) accepte un numpy.string_
+        _F(# test que (TXM, max=1) accepte un numpy.str_
            NOM=np_str[0],
-           # test que (no, max='**') accepte une list de numpy.string_
+           # test que (no, max='**') accepte une list de numpy.str_
            NOEUD=list_str,),
     ),
 )
 
 tab = CREA_TABLE(LISTE=(
     _F(PARA='INT',
-       LISTE_I=range(5),),
+       LISTE_I=list(range(5)),),
     _F(PARA='STR',
        LISTE_K=[str(i) for i in range(5)],),
     _F(PARA='NPSTR',
-       # test que (TXM, max='**') accepte un numpy.array de numpy.string_
+       # test que (TXM, max='**') accepte un numpy.array de numpy.str_
        LISTE_K=np_str,),
 ),)
 
