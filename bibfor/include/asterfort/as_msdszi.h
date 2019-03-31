@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -19,7 +19,7 @@
 interface
     subroutine as_msdszi(fid,mname,jname,numdt,numit,it,letype,&
                          lgtype,retype,rgtype,ncor,cret)
-        character*(*)   mname,jname
-        aster_int   fid,numdt,numit,it,letype,lgtype,retype,rgtype,ncor,cret
+        character(len=*) :: mname,jname
+        aster_int :: fid,numdt,numit,it,letype,lgtype,retype,rgtype,ncor,cret
     end subroutine as_msdszi
 end interface

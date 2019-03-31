@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -19,8 +19,8 @@
 interface
     subroutine as_msdcrr(fid,lmname,jname,numdt,numit,entlcl,&
                          geolcl,entdst,geodst,ncorr,corrtab,cret)
-        character *(*)   lmname,jname
-        aster_int fid,numdt,numit,entlcl,geolcl,entdst
-        aster_int geodst,ncorr,corrtab(*),cret
+        character(len=*) :: lmname,jname
+        aster_int :: fid,numdt,numit,entlcl,geolcl,entdst
+        aster_int :: geodst,ncorr,corrtab(*),cret
     end subroutine as_msdcrr
 end interface

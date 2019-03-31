@@ -1,6 +1,6 @@
 subroutine lrmjoi_wrap(nomu, nofimd)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -19,12 +19,12 @@ subroutine lrmjoi_wrap(nomu, nofimd)
 !-----------------------------------------------------------------------
 !     LECTURE DU MAILLAGE -  FORMAT MED
 !-----------------------------------------------------------------------
+    use as_med_module, only: as_med_open
     implicit none
 #include "asterf.h"
 #include "asterf_types.h"
 #include "jeveux.h"
 !
-#include "asterfort/as_mfiope.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jelira.h"
 #include "asterfort/codent.h"
@@ -76,7 +76,7 @@ subroutine lrmjoi_wrap(nomu, nofimd)
         call utmess('F', 'MED_50', sk=nofimd)
     endif
 !
-    call as_mfiope(fid, nofimd, edlect, codret)
+    call as_med_open(fid, nofimd, edlect, codret)
     if (codret .ne. 0) then
         valk(1) = nofimd
         valk(2) = nomamd

@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -19,7 +19,8 @@ interface
 #include "asterf_types.h"
     subroutine mmhgnr(fid, nomail, numdt, numo, typent,&
                       typgeo, tblogl, cret)
-        med_int :: fid, typent, typgeo, cret, numdt, numo
+        med_idt :: fid
+        med_int :: typent, typgeo, cret, numdt, numo
         med_int :: tblogl(*)
         character(len=*) :: nomail
     end subroutine mmhgnr

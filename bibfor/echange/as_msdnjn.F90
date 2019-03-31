@@ -1,7 +1,7 @@
 subroutine as_msdnjn(fid,maa,n,cret)
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
-! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -33,9 +33,10 @@ subroutine as_msdnjn(fid,maa,n,cret)
     write(6,*) '=== as_msdnjn maa=',maa
 #endif
 
-#if med_int_kind != aster_int_kind
-    med_int :: fid4, n4, cret4
-    fid4=to_med_int(fid)
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
+    med_idt :: fid4
+    med_int :: n4, cret4
+    fid4=to_med_idt(fid)
     call msdnjn(fid4,maa,n4,cret4)
     n=to_aster_int(n4)
     cret=to_aster_int(cret4)
