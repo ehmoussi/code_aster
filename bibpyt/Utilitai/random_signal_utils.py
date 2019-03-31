@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ def DSP2ACCE1D(f_dsp, rv=None):
     DW = lw2[1] - lw2[0]
     nbfreq2 = len(lw2)
     nbfreq = nbfreq2 * 2
-    if rv == None:
+    if rv is None:
         rv = NP.random.normal(0.0, 1., nbfreq) + \
             1j * NP.random.normal(0.0, 1., nbfreq)
     rv1 = rv[0: nbfreq2]
@@ -107,7 +107,7 @@ def gene_traj_gauss_evol1D(self, rv=None, **kwargs):
             l_FIT = l_FIT * l_ALPHA
         else:
             mof = NP.trapz(dsp_fr_refe * l_FIT, self.sampler.liste_w2) * 2.
-    if rv == None:
+    if rv is None:
         rv = NP.random.normal(0.0, 1., nbfreq) + \
             1j * NP.random.normal(0.0, 1., nbfreq)
 #      vecc1=(NP.random.normal(0.0,1.,nbfreq2)+1j*NP.random.normal(0.0,1.,nbfreq2))
@@ -167,13 +167,13 @@ def acce_filtre_CP(vale_acce, dt, fcorner, amoc=1.0):
     # discrectisation
     OM = pi / dt
     dw = 2. * OM / N
-    N2 = N / 2 + 1
+    N2 = N // 2 + 1
     ws0 = NP.arange(0.0, (N2 + 1) * dw, dw)
     ws = ws0[:N2]
     im = csqrt(-1)
     acce_in = NP.fft.fft(NP.array(vale_acce))
     hw2 = ws ** 2 * 1. / ((wcp ** 2 - ws ** 2) + 2. * amoc * im * wcp * ws)
-    liste_pairs = zip(-hw2, acce_in[:N2])
+    liste_pairs = list(zip(-hw2, acce_in[:N2]))
     Yw = [a * b for a, b in liste_pairs]
     if is_even(N):  # nombre pair
         ni = 1
@@ -241,7 +241,7 @@ def calc_phase_delay(t, Xt, phase_data):
                 Xtv.pop()            
         else :
             Xtv = [0.0] * len(Xtv)
-            print 'ATTENTION : le délai de phase est supérieur à la durée du signal'
+            print('ATTENTION : le délai de phase est supérieur à la durée du signal')
 
         X_out.append(Xtv)
    
@@ -574,7 +574,7 @@ def itersim_SRO(self, FONC_DSP, NB_TIRAGE=1, **SRO_args):
     N1 = NP.searchsorted(freq_sro, FMINM) + 1
     FRED = freq_sro[N1:]
     ZPA = vale_sro_ref[-1]
-    vpsum = sum([err_listes[0] for err_listes in dico_err.values()])
+    vpsum = sum([err_listes[0] for err_listes in list(dico_err.values())])
     coef_ZPA = dico_err['ERRE_ZPA'][0] / vpsum
     coef_MAX = dico_err['ERRE_MAX'][0] / vpsum
     coef_RMS = dico_err['ERRE_RMS'][0] / vpsum
@@ -703,7 +703,7 @@ def itersim_SRO(self, FONC_DSP, NB_TIRAGE=1, **SRO_args):
                valr=(errmult[ind_opt], err_max, freq_err[
                      0], err_min, freq_err[1], err_zpa, err_rms)
                )
-    for keys, listev in dico_err.items():
+    for keys, listev in list(dico_err.items()):
         tole = listev[1] * 100.
         erre = abs(listev[-1])
         if abs(erre) > tole:
@@ -802,7 +802,7 @@ def ACCE2SROM(self, f_in, xig, l_freq, ideb, METHODE_SRO):
     elif METHODE_SRO == "HARMO":
         f_out = ACCE2SRO(f_in, xig, l_freq, ideb=2)
     else:
-        print "ERROR METHODE SRO"
+        print("ERROR METHODE SRO")
     return f_out
 
 
@@ -828,7 +828,7 @@ def ACCE2SRO(f_in, xig, l_freq, ideb=2):
     # discrectisation
     OM = pi / dt
     dw = 2. * OM / N
-    N2 = N / 2 + 1
+    N2 = N // 2 + 1
     ws0 = NP.arange(0.0, (N2 + 1) * dw, dw)
     ws = ws0[: N2]
     vale_sro = []
@@ -837,7 +837,7 @@ def ACCE2SRO(f_in, xig, l_freq, ideb=2):
     for fi in l_freq:
         w_0 = fi * 2. * pi
         hw2 = 1. / ((w_0 ** 2 - ws ** 2) + 2. * xig * im * w_0 * ws)
-        liste_pairs = zip(hw2, acce_in[:N2])
+        liste_pairs = list(zip(hw2, acce_in[:N2]))
         Yw = [a * b for a, b in liste_pairs]
         if is_even(N):  # nombre pair
             ni = 1

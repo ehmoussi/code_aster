@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -368,7 +368,7 @@ def itersimcor_SRO(self, FONC_DSP, data_cohe, **SRO_args):
     N1 = NP.searchsorted(freq_sro, FMINM) + 1
     FRED = freq_sro[N1:]
     ZPA = vale_sro_ref[-1]
-    vpsum = sum([err_listes[0] for err_listes in dico_err.values()])
+    vpsum = sum([err_listes[0] for err_listes in list(dico_err.values())])
     coef_ZPA = dico_err['ERRE_ZPA'][0] / vpsum
     coef_MAX = dico_err['ERRE_MAX'][0] / vpsum
     coef_RMS = dico_err['ERRE_RMS'][0] / vpsum
@@ -473,7 +473,7 @@ def itersimcor_SRO(self, FONC_DSP, data_cohe, **SRO_args):
                valr=(errmult[ind_opt], err_max, freq_err[
                      0], err_min, freq_err[1], err_zpa, err_rms)
                )
-    for keys, listev in dico_err.items():
+    for keys, listev in list(dico_err.items()):
         tole = listev[1] * 100.
         erre = abs(listev[-1])
         if abs(erre) > tole:
@@ -527,7 +527,7 @@ def itersimcortir_SRO(self, FONC_DSP, data_cohe, NB_TIR, **SRO_args):
     N1 = NP.searchsorted(freq_sro, FMINM) + 1
     FRED = freq_sro[N1:]
     ZPA = vale_sro_ref[-1]
-    vpsum = sum([err_listes[0] for err_listes in dico_err.values()])
+    vpsum = sum([err_listes[0] for err_listes in list(dico_err.values())])
     coef_ZPA = dico_err['ERRE_ZPA'][0] / vpsum
     coef_MAX = dico_err['ERRE_MAX'][0] / vpsum
     coef_RMS = dico_err['ERRE_RMS'][0] / vpsum
@@ -636,11 +636,10 @@ def itersimcortir_SRO(self, FONC_DSP, data_cohe, NB_TIR, **SRO_args):
                valr=(errmult[ind_opt], err_max, freq_err[
                      0], err_min, freq_err[1], err_zpa, err_rms)
                )
-    for keys, listev in dico_err.items():
+    for keys, listev in list(dico_err.items()):
         tole = listev[1] * 100.
         erre = abs(listev[-1])
         if abs(erre) > tole:
             nbi = ind_opt
             UTMESS('A', 'SEISME_36', vali=nbi,  valk=keys, valr=(erre, tole))
     return f_dsp_opt, list_rv
-

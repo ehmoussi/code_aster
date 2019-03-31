@@ -27,7 +27,7 @@
  *
  */
 
-extern PyMODINIT_FUNC initaster_fonctions();
+extern PyObject* PyInit_aster_fonctions(void);
 
 /* FIN ASTER_FONCTIONS_MODULE_H */
 #endif

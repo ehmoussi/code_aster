@@ -36,8 +36,8 @@ from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
 from Utilitai.utils import _debug
 
-from mac3coeur_coeur import CoeurFactory
-from thyc_result import lire_resu_thyc
+from .mac3coeur_coeur import CoeurFactory
+from .thyc_result import lire_resu_thyc
 
 
 def calc_mac3coeur_ops(self, **args):
@@ -730,7 +730,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                 try :
                     nb = len(keywords)
                     __res_int = [None]*nb
-                    for i in xrange(nb) :
+                    for i in range(nb) :
                         k = keywords[::-1][i]
                         if i>0 :
                             kwds = {
@@ -801,7 +801,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                 try :
                     nb = len(keywords)
                     __res_int = [None]*nb
-                    for i in xrange(nb) :
+                    for i in range(nb) :
                         k = keywords[::-1][i]
                         if i>0 :
                             kwds = {
@@ -1028,7 +1028,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
             try :
                 nb = len(keywords)
                 __res_int = [None]*nb
-                for i in xrange(nb) :
+                for i in range(nb) :
                     k = keywords[::-1][i]
                     if i>0 :
                         kwds = {
@@ -1038,7 +1038,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                              REAC_ITER=1,),
                             }
                         k.update(kwds)
-                    print
+                    print()
                     # if i == nb-1 :
                     #     __RESULT = STAT_NON_LINE(**k)
                     # else :
@@ -1136,7 +1136,7 @@ class Mac3CoeurEtatInitial(Mac3CoeurLame):
     def _run(self,tinit=None,tfin=None):
         tinit = self.coeur.temps_simu['T0']
         tfin  = self.coeur.temps_simu['T5']
-        print 'T0 = %f , T5 = %f'%(tinit,tfin)
+        print('T0 = %f , T5 = %f'%(tinit,tfin))
         super(Mac3CoeurEtatInitial, self)._run(tinit,tfin)
 
 

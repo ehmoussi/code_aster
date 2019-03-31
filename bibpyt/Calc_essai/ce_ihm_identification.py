@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,11 +22,11 @@
 from numpy import array, zeros, conjugate, identity
 from numpy import transpose, ones, arctan, pi, log
 
-from Tkinter import Frame, Menubutton, Checkbutton, Menu, StringVar, IntVar
-from Tkinter import Scrollbar, Label, Radiobutton, Button, Entry
-from Tkinter import Checkbutton, Listbox
+from tkinter import Frame, Menubutton, Checkbutton, Menu, StringVar, IntVar
+from tkinter import Scrollbar, Label, Radiobutton, Button, Entry
+from tkinter import Checkbutton, Listbox
 
-import tkFont
+import tkinter.font
 
 from code_aster.Cata.Syntax import _F, CO
 from code_aster.Commands import OBSERVATION, DETRUIRE, IMPR_RESU
@@ -75,8 +75,8 @@ class InterfaceIdentification(Frame):
             # {'Depl Phy':{'function':self.calcul_depl_phy,'resultat_attr':'Syy','nume':'nume_phy'},'Eff Phy':{...},...}
         self._create_opt_data()
 
-        self.font1 = tkFont.Font(family="Helvetica", size=16)
-        self.font2 = tkFont.Font(family="Helvetica", size=14)
+        self.font1 = tkinter.font.Font(family="Helvetica", size=16)
+        self.font2 = tkinter.font.Font(family="Helvetica", size=14)
 
         # Initialisation des inter-spectres calcules (taille nulle a priori)
         nb_freq = nb_mod = nb_mes = nb_act = 0
@@ -148,7 +148,7 @@ class InterfaceIdentification(Frame):
     def _construit_colonne_1(self):
         col = Frame(self, relief='sunken', borderwidth=1)
         # Menu de choix des donnes de calcul en entree
-        Label(col, text=u"Choix des données de calcul",
+        Label(col, text="Choix des données de calcul",
               font=self.font2).grid(row=0, padx=50, pady=2)
 
         box_cd = self._choix_base_modale(col, relief='flat')
@@ -185,14 +185,14 @@ class InterfaceIdentification(Frame):
 
         self.observabilite = ObservationWindow(
             parent, root, self.mess, self.objects,
-            None, u"'observabilité", 0, **args)
+            None, "'observabilité", 0, **args)
         return self.observabilite
 
     def _definit_commandabilite(self, parent, root, **args):
         """Définition du concept de commandabilité."""
         self.commandabilite = ObservationWindow(
             parent, root, self.mess, self.objects,
-            None, u"e commandabilité", 0, **args)
+            None, "e commandabilité", 0, **args)
         return self.commandabilite
 
     def _choix_interspectre(self, root, **args):
@@ -268,7 +268,7 @@ class InterfaceIdentification(Frame):
             relief='sunken', borderwidth=1)
 
         for label in self.label_visu:
-            label.set(u"Noeuds/numéros d'ordre")
+            label.set("Noeuds/numéros d'ordre")
 
         return fra
 
@@ -295,12 +295,12 @@ class InterfaceIdentification(Frame):
             self.mess.disp_mess("Il faut choisir la base modale")
             return 0
         if not self.observabilite.obs_co:
-            self.mess.disp_mess(u"Il faut définir le concept d'observabilité")
+            self.mess.disp_mess("Il faut définir le concept d'observabilité")
             return 0
         self.obs_co = self.observabilite.obs_co
         if not self.commandabilite.obs_co:
             self.mess.disp_mess(
-                u"Il faut définir le concept de commandabilité")
+                "Il faut définir le concept de commandabilité")
             return 0
         self.com_co = self.commandabilite.obs_co
         if self.var_resu_fonc.get() == 'Choisir':

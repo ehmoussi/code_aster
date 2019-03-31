@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,12 +31,13 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',
 #
 
 # this replaces 'import vocab01a.33'
-execfile('fort.33', globals())
+exec(compile(open('fort.33').read(), 'fort.33', 'exec'), globals())
 
 # read the previous 'fort.34'
 import re
 try:
-    text = open( 'fort.34', 'rb' ).read()
+    with open('fort.34', 'r') as fobj:
+        text = fobj.read()
     recmt = re.compile('^#')
     existing_keywords = [line for line in text.splitlines() if not recmt.search(line)]
 except IOError:

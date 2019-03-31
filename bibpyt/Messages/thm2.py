@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,14 +24,14 @@ cata_msg = {
 
 
 
-    6 : _(u"""
+    6 : _("""
 La température devient négative ou nulle à la maille %(k1)s.
 """),
-    7 : _(u"""
+    7 : _("""
 La pression de gaz est nulle à la maille %(k1)s. Attention à initialiser une valeur non nulle
 """),
 
-    60 : _(u"""
+    60 : _("""
 La porosité donnée dans les paramètres matériaux de %(k1)s doit être la même que dans THM_INIT.
 """),
 

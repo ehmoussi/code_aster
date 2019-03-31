@@ -19,28 +19,28 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  contraintes planes en grandes déformations non implantées
 """),
 
-    2 : _(u"""
+    2 : _("""
  caractéristique fluage incomplet
 """),
 
-    20 : _(u"""
+    20 : _("""
  La définition du repère d'orthotropie a été mal faite.
  Utilisez soit ANGL_REP  soit ANGL_AXE de la commande AFFE_CARA_ELEM mot clé facteur MASSIF
 """),
 
-    22 : _(u"""
+    22 : _("""
  type d'élément incompatible avec une loi élastique anisotrope
 """),
 
-    24 : _(u"""
+    24 : _("""
  Le chargement de type cisaillement (mot-clé CISA_2D) ne peut pas être suiveur (mot-clé TYPE_CHAR='SUIV').
 """),
 
-    25 : _(u"""
+    25 : _("""
  On ne sait pas traiter un chargement de type pression (mot-clé PRES_REP) suiveuse (mot-clé TYPE_CHAR_='SUIV') imposé sur l'axe du modèle axisymétrique.
 
  Conseils :
@@ -48,56 +48,56 @@ cata_msg = {
   - Vérifiez que la zone d'application du chargement est la bonne.
 """),
 
-    28 : _(u"""
+    28 : _("""
  prédiction par extrapolation impossible : pas de temps nul
 """),
 
-    31 : _(u"""
+    31 : _("""
 La borne supérieure est incorrecte.
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    32 : _(u"""
+    32 : _("""
  la viscosité N doit être différente de zéro
 """),
 
-    33 : _(u"""
+    33 : _("""
  la viscosité UN_SUR_K doit être différente de zéro
 """),
 
-    65 : _(u"""
+    65 : _("""
 Arrêt suite à l'échec de l'intégration de la loi de comportement.
    Vérifiez vos paramètres, la cohérence des unités.
    Essayez d'augmenter ITER_INTE_MAXI.
 """),
 
-    66 : _(u"""
+    66 : _("""
   convergence atteinte sur approximation linéaire tangente de l'évolution plastique
   risque d'imprécision
 """),
 
-    67 : _(u"""
+    67 : _("""
   endommagement maximal atteint au cours des résolutions internes
 """),
 
-    87 : _(u"""
+    87 : _("""
  l'incrément de temps vaut zéro, vérifiez votre découpage
 """),
 
-    88 : _(u"""
+    88 : _("""
  fluence décroissante (flux<0)
 """),
 
-    89 : _(u"""
+    89 : _("""
  le paramètre A doit être >=0
 """),
 
-    91 : _(u"""
+    91 : _("""
  stop, RIGI_MECA_TANG non disponible
 """),
 
-    92 : _(u"""
+    92 : _("""
  la maille doit être de type SEG3, TRIA6, QUAD8 TETRA10, PENTA15 ou HEXA20.
  or la maille est de type :  %(k1)s .
 """),

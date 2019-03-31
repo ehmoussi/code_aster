@@ -78,7 +78,7 @@ class PreSeismeNonL(object):
         elif param['STAT_DYNA']:
             return StatDyna(parent, param)
         else:
-            raise NotImplementedError, "option calcul non défini"
+            raise NotImplementedError("option calcul non défini")
 
     def __init__(self, parent, param):
         """initializations"""
@@ -258,7 +258,7 @@ class BaseModale(object):
         for key in charge:
             if key == 'LIAISON_SOLIDE':
                 msg_error = "\n\nLe mot-clé GROUP_NO_CENT est obligatoire lorsqu'une LIAISON_SOLIDE est définie"
-                assert self.param['PRE_CALC_MISS'].has_key('GROUP_NO_CENT') == True, msg_error
+                assert ('GROUP_NO_CENT' in self.param['PRE_CALC_MISS']) == True, msg_error
                 return True
         return False
 
@@ -348,8 +348,8 @@ class BaseModale(object):
 
     def DefineOut(self):
         """Define output depending on user choices"""
+        if 'BASE_MODALE' in self.param['RESULTAT']:
         _BAMO = DEFI_BASE_MODALE(**self.cmd_bamo)
-        if self.param['RESULTAT'].has_key('BASE_MODALE'):
             self.parent.register_result(_BAMO, self.param['RESULTAT']['BASE_MODALE'])
         self.bamo = _BAMO
 
@@ -413,7 +413,7 @@ class Properties(object):
     def __init__(self, **kwargs):
         """initializations"""
         self._keywords = {}
-        for key in kwargs.keys():
+        for key in list(kwargs.keys()):
             if hasattr(kwargs[key], 'List_F'):
                 self._keywords[key] = kwargs[key].List_F()[0]
             else:
@@ -429,7 +429,7 @@ class Properties(object):
         """Get a value from a nested dictionary"""
         diction = self._keywords
         for key in path:
-            if key not in diction.keys():
+            if key not in list(diction.keys()):
                 diction[key] = {}
             diction = diction[key]
         return diction
@@ -441,7 +441,7 @@ class Properties(object):
     def add_MCFACT(self, path, addedKey):
         """Add new Mot-Clé Facteur into a nested dictionary"""
         diction = self._keywords[path[0]]
-        if path[1] not in diction.keys():
+        if path[1] not in list(diction.keys()):
             self.set_key(path, [])
         self._keywords[path[0]][path[1]] = list(self._keywords[path[0]][path[1]])
         self._keywords[path[0]][path[1]].insert(0, addedKey)
@@ -477,7 +477,7 @@ class Model(object):
     def __init__(self, parent, mail, properties):
         """initializations"""
         if not self.option_calcul:
-            raise NotImplementedError, "option_calcul non défini"
+            raise NotImplementedError("option_calcul non défini")
         self.parent = parent
         self.args = properties.copy()
         self.mesh = mail
@@ -532,16 +532,16 @@ class Model(object):
 
     def DefineOut(self):
         """Define output depending on user choices"""
+        if 'CHAM_MATER' in self.args['RESULTAT']:
         _AMa = AFFE_MATERIAU(**self.args['AFFE_MATERIAU'])
-        if self.args['RESULTAT'].has_key('CHAM_MATER'):
             self.parent.register_result(_AMa, self.args['RESULTAT']['CHAM_MATER'])
         self.mate = _AMa
+        if 'CARA_ELEM' in self.args['RESULTAT']:
         _ACa = AFFE_CARA_ELEM(**self.args['AFFE_CARA_ELEM'])
-        if self.args['RESULTAT'].has_key('CARA_ELEM'):
             self.parent.register_result(_ACa, self.args['RESULTAT']['CARA_ELEM'])
         self.cara_elem = _ACa
         _ACh_CL = AFFE_CHAR_MECA(**self.args['AFFE_CHAR_MECA'])
-        if self.args['RESULTAT'].has_key('CHARGE'):
+        if 'CHARGE' in self.args['RESULTAT']:
             for mcfact in self.args['RESULTAT']['CHARGE']:
                 if mcfact['OPTION'] == 'LAPL_TEMPS':
                     ACh_LT = AFFE_CHAR_MECA(**self.args['LAPL_TEMPS'])
@@ -732,7 +732,7 @@ class StatDyna(object):
         """Initialization of the RIGI_PARASOL damping values"""
         val = coef * 1.E16
         lvalues = self.cara_elem.sdj.CARAMOXV.get()
-        p_ind = range(1, len(lvalues)+1)
+        p_ind = list(range(1, len(lvalues)+1))
         p_real = len(lvalues)*(val,)
         p_imag = len(lvalues)*(0.0,)
         self.cara_elem.sdj.CARAMOXV.changeJeveuxValues(len(lvalues),tuple(p_ind),
@@ -811,8 +811,8 @@ class StatDyna(object):
                 p_real.append(NP.real(maelk[n1,n2]))
                 p_imag.append(NP.imag(maelk[n1,n2]))
 
-        last_ind = nbmod*(nbmod+1)/2
-        p_ind = range(1, last_ind +1)
+        last_ind = nbmod*(nbmod+1)//2
+        p_ind = list(range(1, last_ind +1))
 
         aster.putvectjev(nom_mael + (8 - len(nom_mael)) * ' '+ '.MAEL_RAID_VALE         ', last_ind, tuple(
                    p_ind), tuple(p_real), tuple(p_imag), 1)
@@ -864,8 +864,8 @@ class StatDyna(object):
                 p_real.append(NP.real(maelZ[n1,n2]))
                 p_imag.append(NP.imag(maelZ[n1,n2]))
 
-        last_ind = nbmod*(nbmod+1)/2
-        p_ind = range(1, last_ind +1)
+        last_ind = nbmod*(nbmod+1)//2
+        p_ind = list(range(1, last_ind +1))
 
         aster.putvectjev(nom_mael + (8 - len(nom_mael)) * ' '+ '.MAEL_RAID_VALE         ', last_ind, tuple(
                    p_ind), tuple(p_real), tuple(p_imag), 1)
@@ -897,8 +897,8 @@ class ModelMacrElem(Model):
         self.parasol_model()
         self.args.set_key(
             ('AFFE_MODELE', 'MAILLAGE'), self.mesh.get_new_mesh())
+        if 'MODELE' in self.args['RESULTAT']:
         _Modele = AFFE_MODELE(**self.args['AFFE_MODELE'])
-        if self.args['RESULTAT'].has_key('MODELE'):
             self.parent.register_result(_Modele, self.args['RESULTAT']['MODELE'])
         self.modele = _Modele
 
@@ -943,13 +943,13 @@ class ModelMacrElem(Model):
         for mm in mcfact:
             if mm['OPTION'] == 'LAPL_TEMPS':
                 cmd_charge = {'SUPER_MAILLE': 'STAT1'}
-                if self.args['POST_CALC_MISS'].has_key('UNITE_RESU_RIGI'):
+                if 'UNITE_RESU_RIGI' in self.args['POST_CALC_MISS']:
                     UL_rigi = self.args['POST_CALC_MISS']['UNITE_RESU_RIGI']
                     cmd_charge['UNITE_RESU_RIGI'] = UL_rigi
-                if self.args['POST_CALC_MISS'].has_key('UNITE_RESU_MASS'):
+                if 'UNITE_RESU_MASS' in self.args['POST_CALC_MISS']:
                     UL_mass = self.args['POST_CALC_MISS']['UNITE_RESU_MASS']
                     cmd_charge['UNITE_RESU_MASS'] = UL_mass
-                if self.args['POST_CALC_MISS'].has_key('UNITE_RESU_AMOR'):
+                if 'UNITE_RESU_AMOR' in self.args['POST_CALC_MISS']:
                     UL_amor = self.args['POST_CALC_MISS']['UNITE_RESU_AMOR']
                     cmd_charge['UNITE_RESU_AMOR'] = UL_amor
                 charge_sol = _F(**cmd_charge)
@@ -1100,7 +1100,7 @@ class Mesh(object):
                                      CREA_POI1 =_F(NOM_GROUP_MA = 'PARA_SOL',
                                      GROUP_MA = self.param['POST_CALC_MISS']['GROUP_MA_INTERF']),
                                         );
-            if self.param['RESULTAT'].has_key('MAILLAGE'):
+            if 'MAILLAGE' in self.param['RESULTAT']:
                 self.parent.register_result(
                     _NewMesh, self.param['RESULTAT']['MAILLAGE'])
 

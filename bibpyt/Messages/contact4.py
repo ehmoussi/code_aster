@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,24 +21,24 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 Contact LAC
 Seuls les algorithmes en Newton sont utilisables (ALGO_RESO_GEOM et ALGO_RESO_CONT)
 """),
 
-    2 : _(u"""
+    2 : _("""
 Contact LAC
     Le maillage %(k1)s ne contient pas les objets spécifiques à la méthode ALGO_CONT='LAC'.
 Conseil:
     Il faut faire CREA_MAILLAGE/DECOUPE_LAC avant DEFI_CONTACT
 """),
 
-    4 : _(u"""
+    4 : _("""
 Contact LAC
         ALGO_CONT='LAC' ne fonctionne pas avec le frottement. 
 """),
 
-    5 : _(u"""
+    5 : _("""
 Contact LAC
          On ne détecte pas le bon nombre de mailles esclaves. 
          Conseil :

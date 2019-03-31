@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
     # 0. Traitement des arguments, initialisations
     # 0.1. Fichier
     nomfich = LogicalUnitFile.filename_from_unit(args['UNITE'])
-    if nomfich and os.path.exists(nomfich) and os.stat(nomfich).st_size <> 0:
+    if nomfich and os.path.exists(nomfich) and os.stat(nomfich).st_size != 0:
         if FORMAT == 'XMGRACE':
             UTMESS('A', 'TABLE0_6', valk=nomfich)
 
@@ -57,7 +57,7 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
     if args['FILTRE']:
         for Fi in args['FILTRE']:
             dF = Fi.cree_dict_valeurs(Fi.mc_liste)
-            for mc in dF.keys():
+            for mc in list(dF.keys()):
                 if dF[mc] == None:
                     del dF[mc]
             Filtre.append(dF)
@@ -82,7 +82,7 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
 
         # ----- 1. Infos de base
         if INFO == 2:
-            print 'IMPRESSION DE LA TABLE : %s' % sdtab.get_name()
+            print('IMPRESSION DE LA TABLE : %s' % sdtab.get_name())
 
         if args['TITRE']:
         #    tab.titr = os.linesep.join(args['TITRE'] + (tab.titr, ))
@@ -93,10 +93,10 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
             col = getattr(tab, Fi['NOM_PARA'])
             # peu importe le type
             opts = [Fi[k]
-                    for k in ('VALE', 'VALE_I', 'VALE_C', 'VALE_K') if Fi.has_key(k)]
+                    for k in ('VALE', 'VALE_I', 'VALE_C', 'VALE_K') if k in Fi]
             kargs = {}
             for k in ('CRITERE', 'PRECISION'):
-                if Fi.has_key(k):
+                if k in Fi:
                     kargs[k] = Fi[k]
             tab = tab & (getattr(col, Fi['CRIT_COMP'])(*opts, **kargs))
             # trace l'operation dans le titre
@@ -185,8 +185,8 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
                 # on réduit timp aux colonnes FONCTION et FONCTION_C
                 textr = timp.__getitem__(list(p_extr))
                 for row in textr:
-                    for par, cell in row.items():
-                        if type(cell) in (str, unicode):
+                    for par, cell in list(row.items()):
+                        if type(cell) in (str, str):
                             cell = cell.strip()
                             if aster.getvectjev('%-19s.PROL' % cell) != None:
                                 dfon.append(['%-19s' % cell, par])

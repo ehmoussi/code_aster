@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,15 +21,15 @@
 
 cata_msg = {
 
-    2 : _(u"""
+    2 : _("""
      '%(k1)s'
 """),
 
-    3 : _(u"""
+    3 : _("""
      Fichier MED introuvable.
 """),
 
-    4 : _(u"""
+    4 : _("""
 Le champ '%(k1)s' est déjà présent
 dans le fichier MED pour l'instant %(r1)G.
   -> Conseil :
@@ -37,7 +37,7 @@ dans le fichier MED pour l'instant %(r1)G.
      nommer le champ différemment.
 """),
 
-    5 : _(u"""
+    5 : _("""
 Le champ '%(k1)s' dont vous avez demandé l'impression au format MED
 est défini sur des éléments utilisant la famille de points de Gauss
 '%(k2)s'. Or l'impression de cette famille n'est pas possible au
@@ -47,11 +47,11 @@ format MED.
      la famille de point de Gauss incriminée.
 """),
 
-    6 : _(u"""
+    6 : _("""
     Les mots-clés %(k1)s et %(k2)s sont incompatibles.
 """),
 
-    7 : _(u"""
+    7 : _("""
   Il n'a pas été possible d'imprimer le champ des variables internes en utilisant IMPR_NOM_VARI='OUI'.
   Cela est dû au fait que certains comportements  dans votre modèle ne sont pas imprimables avec cette option:
   - Le comportement a été défini avec MFRONT ou UMAT en mode prototype
@@ -61,18 +61,18 @@ format MED.
      - N'utilisez pas IMPR_NOM_VARI='OUI' pour imprimer ce champ
 """),
 
-    8 : _(u"""
+    8 : _("""
   Il n'y a pas de groupe de mailles ou de noeuds dans ce maillage.
 """),
 
-    9 : _(u"""
+    9 : _("""
   Vous demandez l'impression du champ %(k1)s issu de la commande
   PROJ_CHAMP utilisant la méthode 'SOUS_POINT'.
 
   Cette impression n'est pas possible au format MED.
 """),
 
-    11 : _(u"""
+    11 : _("""
   Votre champ repose sur un modèle comportant des éléments joints
   ou interfaces non encore imprimables au format MED.
 

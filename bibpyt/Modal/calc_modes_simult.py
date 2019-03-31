@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -150,11 +150,11 @@ def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args)
     #
     # read the keyword SOLVEUR (linear solver)
     solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
-    if solveur.has_key('TYPE_RESU'):  # because TYPE_RESU is a keyword with a 'global' position
+    if 'TYPE_RESU' in solveur:  # because TYPE_RESU is a keyword with a 'global' position
         solveur.pop('TYPE_RESU')
-    if solveur.has_key('OPTION'):    # because OPTION is a keyword with a 'global' position
+    if 'OPTION' in solveur:    # because OPTION is a keyword with a 'global' position
         solveur.pop('OPTION')
-    if solveur.has_key('FREQ'):      # because FREQ can be a keyword with a 'global' position
+    if 'FREQ' in solveur:      # because FREQ can be a keyword with a 'global' position
         solveur.pop('FREQ')
     motcles['SOLVEUR'] = _F(**solveur)
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -107,14 +107,16 @@ title = re.compile('^#COLUMN_TITLES: *(.*)$', re.M)
 
 def convert(fname):
     """Convert in place an output file from Stanley for Paravis"""
-    txt = open(fname, 'r').read()
+    with open(fname, 'r') as f:
+        txt = f.read()
     mat = title.search(txt)
     assert mat, "COLUMN_TITLES not found"
     label = mat.group(1).split('|')
     values = nocomment.findall(txt)
     cont = [' '.join(label)]
     cont.extend(values)
-    open(fname, 'w').write(os.linesep.join(cont))
+    with open(fname, 'w') as f:
+        f.write(os.linesep.join(cont))
 
 
 if 'CHOIX' == 'COURBE':
@@ -181,10 +183,10 @@ if CHOIXF == 'ISO':
 
     # Recuperation des informations du champ
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
-            NOM_CMP = pd.values()[i - 1].GetComponentName(0)
-            RANGE_CMP = pd.values()[i - 1].GetRange()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
+            NOM_CMP = list(pd.values())[i - 1].GetComponentName(0)
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
 
     # Attributs de visualisation
     CMP = 'Component'
@@ -209,10 +211,10 @@ if CHOIXF == 'GAUSS':
 
     # Recuperation des informations du champ
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
-            NOM_CMP = pd.values()[i - 1].GetComponentName(0)
-            RANGE_CMP = pd.values()[i - 1].GetRange()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
+            NOM_CMP = list(pd.values())[i - 1].GetComponentName(0)
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
 
     # Attributs de visualisation
     CMP = 'Component'
@@ -230,9 +232,9 @@ if CHOIXF == 'DEPL':
     pd = resu.PointData
 
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            RANGE_CMP = pd.values()[i - 1].GetRange()
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
 
     # Filtre calculator si NB_CMP different de 3
 
@@ -295,17 +297,17 @@ if CHOIXF == 'ON_DEFORMED':
         pd = resu.PointData
 
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            NOM_CMP = pd.values()[i - 1].GetComponentName(0)
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
-            RANGE_CMP = pd.values()[i - 1].GetRange()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            NOM_CMP = list(pd.values())[i - 1].GetComponentName(0)
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
 
     # Recuperation des informations du champ DEPL
     pd1 = resu.PointData
     for i in range(len(pd1)):
-        if pd1.values()[i - 1].GetName() == NOM_CHAMP_DEF:
-            NB_CMP_DEF = pd1.values()[i - 1].GetNumberOfComponents()
-            RANGE_CMP_DEF = pd1.values()[i - 1].GetRange()
+        if list(pd1.values())[i - 1].GetName() == NOM_CHAMP_DEF:
+            NB_CMP_DEF = list(pd1.values())[i - 1].GetNumberOfComponents()
+            RANGE_CMP_DEF = list(pd1.values())[i - 1].GetRange()
 
     if NB_CMP_DEF == 2:
         resu = Calculator()

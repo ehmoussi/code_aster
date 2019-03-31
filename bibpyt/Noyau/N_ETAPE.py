@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,20 +28,19 @@
 # Modules Python
 import types
 import sys
-import string
 import os
 import linecache
 import traceback
 from copy import copy
 
 # Modules EFICAS
-import N_MCCOMPO
-from N_Exception import AsException
-import N_utils
-from N_utils import AsType
-from N_ASSD import ASSD
-from N_info import message, SUPERV
-from N_types import force_list
+from . import N_MCCOMPO
+from .N_Exception import AsException
+from . import N_utils
+from .N_utils import AsType
+from .N_ASSD import ASSD
+from .N_info import message, SUPERV
+from .N_types import force_list
 
 
 class ETAPE(N_MCCOMPO.MCCOMPO):
@@ -104,7 +103,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
            Cette methode a pour fonction de retirer tous les arguments egaux à None
            de la liste des arguments. Ils sont supposés non présents et donc retirés.
         """
-        for k in self.valeur.keys():
+        for k in list(self.valeur.keys()):
             if self.valeur[k] is None:
                 del self.valeur[k]
 
@@ -133,7 +132,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
             if self.parent:
                 sd = self.parent.create_sdprod(self, nom)
                 if type(self.definition.op_init) == types.FunctionType:
-                    apply(self.definition.op_init, (
+                    self.definition.op_init(*(
                         self, self.parent.g_context))
             else:
                 sd = self.get_sd_prod()
@@ -143,7 +142,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
                     # On ne nomme le concept que dans le cas de non reutilisation
                     # d un concept
                     sd.set_name(nom)
-        except AsException, e:
+        except AsException as e:
             raise AsException("Etape ", self.nom, 'ligne : ', self.appel[0],
                               'fichier : ', self.appel[1], str(e))
         except EOFError:
@@ -153,7 +152,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
                 sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
             raise AsException("Etape ", self.nom, 'ligne : ', self.appel[0],
                               'fichier : ', self.appel[1] + '\n',
-                              string.join(l))
+                              ' '.join(l))
 
         self.Execute()
         return sd
@@ -183,13 +182,13 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
             d = self.cree_dict_valeurs(self.mc_liste)
             try:
                 d['__only_type__'] = True
-                sd_prod = apply(self.definition.sd_prod, (), d)
+                sd_prod = self.definition.sd_prod(*(), **d)
                 if self.jdc.fico:
                     self.check_allowed_type(sd_prod)
 
             except EOFError:
                 raise
-            except Exception, exc:
+            except Exception as exc:
                 if CONTEXT.debug:
                     traceback.print_exc()
                 # "Impossible d'affecter un type au résultat:", str(exc)
@@ -235,7 +234,7 @@ Causes possibles :
         """
         if type(self.definition.sd_prod) == types.FunctionType:
             d = self.cree_dict_valeurs(self.mc_liste)
-            sd_prod = apply(self.definition.sd_prod, (), d)
+            sd_prod = self.definition.sd_prod(*(), **d)
         else:
             sd_prod = self.definition.sd_prod
         return sd_prod
@@ -362,7 +361,7 @@ Causes possibles :
             l'appelant en argument (d) en fonction de sa definition
         """
         if type(self.definition.op_init) == types.FunctionType:
-            apply(self.definition.op_init, (self, d))
+            self.definition.op_init(*(self, d))
         if self.sd:
             d[self.sd.nom] = self.sd
 
@@ -462,7 +461,7 @@ Causes possibles :
         """Dit si on peut acceder aux "valeurs" (jeveux) de l'ASSD produite par l'étape.
         """
         if CONTEXT.debug:
-            print '`- ETAPE sd_accessible :', self.nom
+            print('`- ETAPE sd_accessible :', self.nom)
         return self.parent.sd_accessible()
 
     def get_concept(self, nomsd):
@@ -492,7 +491,7 @@ def check_sdprod(command, func_prod, sd_prod, verbose=True):
     args['__all__'] = True
     # eval sd_prod with __all__=True + None for other arguments
     try:
-        allowed = force_list(apply(func_prod, (), args))
+        allowed = force_list(func_prod(*(), **args))
         islist = [isinstance(i, (list, tuple)) for i in allowed]
         if True in islist:
             if False in islist:
@@ -509,12 +508,12 @@ def check_sdprod(command, func_prod, sd_prod, verbose=True):
                      .format(command, _name(sd_prod),
                              [_name(i) for i in allowed]))
     except Exception as exc:
-        print("Error: {0}".format(exc))
+        print(("Error: {0}".format(exc)))
         cr.fatal("Error: {0}: the 'sd_prod' function must support "
                  "the '__all__=True' argument".format(command))
     if not cr.estvide():
         if verbose:
-            print(str(cr))
+            print((str(cr)))
         raise TypeError(str(cr))
 
 def subtypes(cls):

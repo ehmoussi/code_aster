@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,28 +30,28 @@ from libaster import TransientGeneralizedResultsContainer
 from ..Utilities import injector
 
 
-class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralizedResultsContainer),
-                                                   TransientGeneralizedResultsContainer):
+@injector(TransientGeneralizedResultsContainer)
+class ExtendedTransientGeneralizedResultsContainer(object):
     cata_sdj = "SD.sd_dyna_gene.sd_dyna_gene"
 
-    def __check_input_inoli(self, inoli):
+    def _check_input_inoli(self, inoli):
         if (inoli==-1) :
-            print "Nonlinearity index not specified, by default the first nonlinearity will be considered."
+            print("Nonlinearity index not specified, by default the first nonlinearity will be considered.")
             inoli = 1
-        nbnoli = self.__nb_nonl()
+        nbnoli = self._nb_nonl()
         if nbnoli == 0 :
             raise AsException("Linear calculation, no information can be retrieved.")
         if( inoli <= 0) or (inoli > nbnoli):
             raise AsException("The nonlinearity index should be a comprised between 1 and %d, the total number of nonlinearities."%(nbnoli))
         return inoli
 
-    def __nb_nonl (self):
+    def _nb_nonl(self):
         desc = self.sdj.DESC.get()
         nbnoli = desc[2]
         return nbnoli
 
-    def __print_vint_description(self, inoli):
-        nltype = self.__type_nonl()[inoli-1].strip()
+    def _print_vint_description(self, inoli):
+        nltype = self._type_nonl()[inoli-1].strip()
         vintDescription = {'DIS_CHOC'      : ['F_NORMAL', 'F_TANGE1', 'F_TANGE1',
                                               'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1',
                                               'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2',
@@ -60,8 +60,8 @@ class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralized
                                               'VINT_FR3', 'VINT_FR4', 'VINT_FR5',
                                               'VINT_FR6', 'VINT_FR7'],
                           'FLAMBAGE'      : ['F_NORMAL',
-                                              'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1', 
-                                              'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2', 
+                                              'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1',
+                                              'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2',
                                               'V_NORMAL', 'ENFO_PLA', 'RIGI_P_F',
                                               'ENFO_MAX'],
                            'ANTI_SISM'     : ['F_AXIAL',
@@ -82,25 +82,25 @@ class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralized
                            'COUPLAGE_EDYOS': [],
                            'RELA_EFFO_DEPL': ['DCMP_N1 ', 'FCMP_LOC', 'IND_NONZ'] ,
                            'RELA_EFFO_VITE': ['VCMP_N1 ', 'FCMP_LOC', 'IND_NONZ']  }
-        print "\n" + "-"*104
-        print "Information regarding the saved internal variables for %s non linearity (index=%d)"%(nltype, inoli)
-        print "-"*104
+        print("\n" + "-"*104)
+        print("Information regarding the saved internal variables for %s non linearity (index=%d)"%(nltype, inoli))
+        print("-"*104)
         vintDesc = [v.center(10) for v in vintDescription[nltype]]
         indices  = [str(i+1).center(10) for i in range(len(vintDesc))]
         sep = " | "
 
-        nblines = len(indices)/8
+        nblines = len(indices) // 8
         if 8*nblines<len(indices) : nblines = nblines + 1
         for i in range(nblines-1):
-            print sep.join(indices [i*8:(i+1)*8])
-            print sep.join(vintDesc[i*8:(i+1)*8])
-            print "-"*104
-        print sep.join(indices [8*(nblines-1):])
-        print sep.join(vintDesc[8*(nblines-1):])
-        print "-"*104
+            print(sep.join(indices [i*8:(i+1)*8]))
+            print(sep.join(vintDesc[i*8:(i+1)*8]))
+            print("-"*104)
+        print(sep.join(indices [8*(nblines-1):]))
+        print(sep.join(vintDesc[8*(nblines-1):]))
+        print("-"*104)
         return vintDesc
 
-    def __type_nonl (self):
+    def _type_nonl(self):
         Int2StrTypes = {1 : 'DIS_CHOC',
                         2 : 'FLAMBAGE',
                         3 : 'ANTI_SISM',
@@ -121,9 +121,9 @@ class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralized
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.FORCE_NORMALE() en PAR_LOT='OUI'")
 
-        inoli = self.__check_input_inoli(inoli)
+        inoli = self._check_input_inoli(inoli)
 
-        nltypes = self.__type_nonl()
+        nltypes = self._type_nonl()
         if not(nltypes[inoli-1] in ('DIS_CHOC', 'FLAMBAGE')) :
             dummy = self.INFO_NONL()
             raise AsException("The chosen nonlinearity index (%d) does not correspond to a DIS_CHOC or FLAMBAGE nonlinearity\nThese are the only nonlinearities that save the local normal force."%(inoli))
@@ -141,21 +141,21 @@ class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralized
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.INFO_NONL() en PAR_LOT='OUI'")
 
-        nbnoli  = self.__nb_nonl()
+        nbnoli  = self._nb_nonl()
         if nbnoli == 0 :
-            print "Linear calculation, no nonlinearities used or can be printed."
+            print("Linear calculation, no nonlinearities used or can be printed.")
             return None
 
-        nltypes = self.__type_nonl()
+        nltypes = self._type_nonl()
         inti    = self.sdj.sd_nl.INTI.get()
 
-        print "-"*104
-        print "%sInformation regarding the considered non linearities"%(' '*15)
-        print "-"*104
+        print("-"*104)
+        print("%sInformation regarding the considered non linearities"%(' '*15))
+        print("-"*104)
         #      12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234
         #      ooo-----ooo+++++++++++++++++ooo---------ooo+++++++++ooo---------ooo+++++++++ooo-------------------------
-        print " |  IND  |       TYPE        |    NO1    |    NO2    |   SST1    |    SST2   |           TITLE          |"
-        print "-"*104
+        print(" |  IND  |       TYPE        |    NO1    |    NO2    |   SST1    |    SST2   |           TITLE          |")
+        print("-"*104)
         Output =[None]*nbnoli
         for i in range(nbnoli):
             title, no1, no2, sst1, sst2 = inti[i*5:i*5+5]
@@ -168,10 +168,10 @@ class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralized
             sst1  = sst1.strip().center(9)
             sst2  = sst2.strip().center(9)
             sep = ' | '
-            print "%s%s%s%s%s%s%s%s%s%s%s%s%s%s"%(sep,str(i+1).center(5),sep,nltypes[i].center(17),sep,no1,sep,no2,sep,sst1,sep,sst2,sep,title)
+            print("%s%s%s%s%s%s%s%s%s%s%s%s%s%s"%(sep,str(i+1).center(5),sep,nltypes[i].center(17),sep,no1,sep,no2,sep,sst1,sep,sst2,sep,title))
             add = [nltypes[i]]+list(inti[(i-1)*5:(i-1)*5+5])
             Output[i] = add
-        print "-"*104
+        print("-"*104)
         return Output
 
     def LIST_ARCH (self):
@@ -191,14 +191,14 @@ class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralized
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.VARI_INTERNE() en PAR_LOT='OUI'")
 
-        inoli = self.__check_input_inoli(inoli)
+        inoli = self._check_input_inoli(inoli)
         i = inoli-1
 
         vindx  = self.sdj.sd_nl.VIND.get()
         nbvint = vindx[-1]-1    # number of internal variables saved for all nonlinearities : record length of VINT
 
         vint    = self.sdj.sd_nl.VINT.get()
-        nbsaves = len(vint)/nbvint
+        nbsaves = len(vint) // nbvint
 
         start  = vindx[i  ]-1
         finish = vindx[i+1]-1
@@ -214,6 +214,6 @@ class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralized
         import numpy as np
         output = np.reshape(output,(nbsaves, finish-start))
 
-        if describe : dummy = self.__print_vint_description(inoli)
+        if describe : dummy = self._print_vint_description(inoli)
 
         return output

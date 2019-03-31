@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -145,13 +145,13 @@ def lire_inte_spec_ops(self,
         # Verification a posteriori de la dimension de l'inter-spectre
         tmp = 0.5 * (-1 + sqrt(1 + 8 * len(l_fonc)))
         dim = int(tmp)
-        nb_fonc = dim * (dim + 1) / 2
+        nb_fonc = dim * (dim + 1) // 2
 
         if dim != tmp:
             UTMESS('F', 'SPECTRAL0_6')
 
         mcfact = []
-        for i in range(dim * (dim + 1) / 2):
+        for i in range(dim * (dim + 1) // 2):
             mcfact.append(_F(NOEUD_I=l_noi[i],
                              NOM_CMP_I=l_cmpi[i],
                              NOEUD_J=l_noj[i],
@@ -170,13 +170,13 @@ def lire_inte_spec_ops(self,
         except ValueError:
             UTMESS('F', 'SPECTRAL0_5')
 
-        if len(list_fonc) != (dim * (dim + 1) / 2):
+        if len(list_fonc) != (dim * (dim + 1) // 2):
             UTMESS('F', 'SPECTRAL0_6')
 
         nume_i = []
         nume_j = []
         l_fonc = []
-        for i in range(dim * (dim + 1) / 2):
+        for i in range(dim * (dim + 1) // 2):
             numi = list_fonc[i][list_fonc[i].index('I =') + 3:]
             numi = numi[:numi.index('\n')]
             nume_i.append(int(numi))
@@ -187,7 +187,7 @@ def lire_inte_spec_ops(self,
                 vale_fonc = list_fonc[i][
                     list_fonc[i].index('VALEUR =\n') + 9:list_fonc[i].index('FINSF\n')]
                 vale_fonc = vale_fonc.replace('\n', ' ')
-                vale_fonc = map(float, vale_fonc.split())
+                vale_fonc = list(map(float, vale_fonc.split()))
             except ValueError:
                 UTMESS('F', 'SPECTRAL0_7')
 
@@ -195,7 +195,7 @@ def lire_inte_spec_ops(self,
             if FORMAT_C == 'REEL_IMAG':
                 liste = vale_fonc
             elif FORMAT_C == 'MODULE_PHASE':
-                for i in range(len(vale_fonc) / 3):
+                for i in range(len(vale_fonc) // 3):
                     module = vale_fonc[3 * i + 1]
                     phase = vale_fonc[3 * i + 2]
                     liste = liste + \
@@ -222,7 +222,7 @@ def lire_inte_spec_ops(self,
         if nume_i != nume_ib or nume_j != nume_jb:
             UTMESS('F', 'SPECTRAL0_3')
         mcfact = []
-        for i in range(dim * (dim + 1) / 2):
+        for i in range(dim * (dim + 1) // 2):
             mcfact.append(_F(NUME_ORDRE_I=nume_i[i],
                              NUME_ORDRE_J=nume_j[i],
                              FONCTION=l_fonc[i],))
@@ -255,4 +255,4 @@ def comp(ddlno):
     elif ddlno == .6:
         return sens, 'DRZ'
     else:
-        print "Probleme pour l'attribution des composantes"
+        print("Probleme pour l'attribution des composantes")

@@ -104,6 +104,7 @@ test.assertTrue(syntax.getexm("IMPRESSION", ""))
 test.assertTrue(syntax.getexm("IMPRESSION", "NIVEAU"))
 
 test.assertTrue(syntax.getexm("EXCIT", "CHARGE"))
+test.assertTrue(syntax.getexm("EXCIT", "D_FONC_DT"))
 
 test.printSummary()
 

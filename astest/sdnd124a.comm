@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ def FctRp(p):
     return Sy + Kp*p/pow(1.0+pow(Kp*p/(Su-Sy),Puiss),1.0/Puiss)
 
 Lt_p  = NU.arange(0.0,U01*8.0,0.01)
-Lt_rp = map( FctRp , Lt_p )
+Lt_rp = list(map( FctRp , Lt_p ))
 Lt_p += Sy/Kp
 Lt_p = list(Lt_p)
 Lt_p.insert(0, 0.0)
@@ -228,7 +228,7 @@ ResuIntgr = {
 }
 
 Lpara = [('V1',1),('V4',2),('V7',3),('V9',4),('V8',5),]
-for nume_ordre in ResuIntgr.keys():
+for nume_ordre in list(ResuIntgr.keys()):
     for para,indx in Lpara:
         TEST_TABLE(TABLE=TABVARI1,
             FILTRE=_F(NOM_PARA='NUME_ORDRE', CRIT_COMP='EQ', VALE_I= nume_ordre),

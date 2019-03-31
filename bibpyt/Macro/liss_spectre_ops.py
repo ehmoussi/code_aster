@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 from code_aster.Cata.Syntax import _F
-import string
 import os
 
 try:
@@ -176,7 +175,7 @@ def liss_spectre_ops(
             
                     if list_defi_fonc != []:
                         dir_pl = '%s_%s'%(dire,pl)
-                        if not dir_pl in dic_dir_planchers.keys():
+                        if not dir_pl in list(dic_dir_planchers.keys()):
                             dic_dir_planchers[dir_pl] = {'liste_nappes' : [],
                                                          'batiment' : 'inconnu',
                                                          'commentaire' : 'pas de commentaire',
@@ -219,7 +218,7 @@ def liss_spectre_ops(
                 nb_freq_max=nb_freq
             
             dir_pl = '%s_%s'%(dire,pl)
-            if not dir_pl in dic_dir_planchers.keys():
+            if not dir_pl in list(dic_dir_planchers.keys()):
                 dic_dir_planchers[dir_pl] = {'liste_nappes' : [],
                                              'batiment' : 'inconnu',
                                              'commentaire' : 'pas de commentaire',
@@ -239,7 +238,7 @@ def liss_spectre_ops(
     
     
     unite = get_unite_libre()
-    for dir_pl in  dic_dir_planchers.keys():
+    for dir_pl in  list(dic_dir_planchers.keys()):
         dico = dic_dir_planchers[dir_pl]
         motscles = {}
         if NB_FREQ_LISS is not None:

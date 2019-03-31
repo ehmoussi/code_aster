@@ -25,7 +25,8 @@ subroutine ircam1(nofimd, nochmd, existc, ncmprf, numpt,&
                   typech, nomamd, nomtyp, modnum, nuanom,&
                   codret)
 !
-implicit none
+    use as_med_module, only: as_med_open
+    implicit none
 !
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
@@ -33,7 +34,6 @@ implicit none
 #include "asterc/utflsh.h"
 #include "asterfort/as_mfdfin.h"
 #include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/infniv.h"
 #include "asterfort/ircmcc.h"
 #include "asterfort/ircmec.h"
@@ -161,14 +161,14 @@ integer :: codret
     inquire(file=nofimd,exist=ficexi)
     if (ficexi) then
         edleaj = 1
-        call as_mfiope(idfimd, nofimd, edleaj, codret)
+        call as_med_open(idfimd, nofimd, edleaj, codret)
         if (codret .ne. 0) then
             edleaj = 3
-            call as_mfiope(idfimd, nofimd, edleaj, codret)
+            call as_med_open(idfimd, nofimd, edleaj, codret)
         endif
     else
         edleaj = 3
-        call as_mfiope(idfimd, nofimd, edleaj, codret)
+        call as_med_open(idfimd, nofimd, edleaj, codret)
     endif
     if (codret .ne. 0) then
         saux08='mfiope'

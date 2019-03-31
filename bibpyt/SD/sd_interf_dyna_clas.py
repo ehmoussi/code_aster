@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,8 +45,8 @@ class sd_interf_dyna_clas(AsBase):
         nb_intf = len(noms)
         assert nb_intf > 0, noms
         assert len(type) == nb_intf, (nb_intf, type)
-        assert len(lino.keys()) == nb_intf, (nb_intf, lino)
-        assert len(ddac.keys()) == nb_intf, (nb_intf, ddac)
+        assert len(list(lino.keys())) == nb_intf, (nb_intf, lino)
+        assert len(list(ddac.keys())) == nb_intf, (nb_intf, ddac)
 
     def check_REFE(self, checker):
         refe = self.IDC_REFE.get()
@@ -81,11 +81,11 @@ class sd_interf_dyna_clas(AsBase):
         ddac = self.IDC_DDAC.get()
         desc = self.IDC_DESC.get()
         nbec = desc[1]
-        nb_intf = len(lino.keys())
+        nb_intf = len(list(lino.keys()))
 
         for kintf in range(nb_intf):
-            llino = lino.values()[kintf]
-            lddac = ddac.values()[kintf]
+            llino = list(lino.values())[kintf]
+            lddac = list(ddac.values())[kintf]
             nbno = len(llino)
             assert len(lddac) == nbno * nbec, (lino, ddac)
             for nuno in llino:
@@ -99,7 +99,7 @@ class sd_interf_dyna_clas(AsBase):
         defo = self.IDC_DEFO.get()
         desc = self.IDC_DESC.get()
         nbec = desc[1]
-        nbnot = len(defo) / (nbec + 2)
+        nbnot = len(defo) // (nbec + 2)
         assert len(defo) == nbnot * (nbec + 2), defo
         for k in range(nbnot):
             assert defo[k] > 0, defo

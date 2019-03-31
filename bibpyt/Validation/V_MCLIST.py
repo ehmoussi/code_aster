@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ class MCList:
     """
 
     CR = N_CR.CR
-    txt_nat = u"Mot clé Facteur Multiple :"
+    txt_nat = "Mot clé Facteur Multiple :"
 
     def isvalid(self, cr='non'):
         """
@@ -76,14 +76,13 @@ class MCList:
             valid = 0
             if cr == 'oui':
                 self.cr.fatal(
-                    _(u"Nombre de mots clés facteurs insuffisant minimum : %s"),
+                    _("Nombre de mots clés facteurs insuffisant minimum : %s"),
                     definition.min)
-
-        if definition.max is not None and len(self.data) > definition.max:
+        if definition.max is not None and definition.max != "**" and len(self.data) > definition.max:
             valid = 0
             if cr == 'oui':
                 self.cr.fatal(
-                    _(u"Nombre de mots clés facteurs trop grand maximum : %s"),
+                    _("Nombre de mots clés facteurs trop grand maximum : %s"),
                     definition.max)
         num = 0
         for i in self.data:
@@ -92,7 +91,7 @@ class MCList:
                 valid = 0
                 if cr == 'oui' and len(self) > 1:
                     self.cr.fatal(
-                        _(u"L'occurrence numéro %d du mot-clé facteur : %s n'est pas valide"),
+                        _("L'occurrence numéro %d du mot-clé facteur : %s n'est pas valide"),
                         num, self.nom)
         return valid
 
@@ -103,26 +102,26 @@ class MCList:
         if len(self) > 1:
             # Mot cle facteur multiple
             self.cr = self.CR(
-                debut=u"Mot-clé facteur multiple : " + self.nom,
-                fin=u"Fin Mot-clé facteur multiple : " + self.nom)
+                debut="Mot-clé facteur multiple : " + self.nom,
+                fin="Fin Mot-clé facteur multiple : " + self.nom)
             j = 0
             for i in self.data:
                 j += 1
                 if j > MAXSIZE:
-                    print(MAXSIZE_MSGCHK.format(MAXSIZE, len(self.data)))
+                    print((MAXSIZE_MSGCHK.format(MAXSIZE, len(self.data))))
                     break
                 self.cr.add(i.report())
         elif len(self) == 1:
             # Mot cle facteur non multiple
             self.cr = self.data[0].report()
         else:
-            self.cr = self.CR(debut=u"Mot-clé facteur : " + self.nom,
-                              fin=u"Fin Mot-clé facteur : " + self.nom)
+            self.cr = self.CR(debut="Mot-clé facteur : " + self.nom,
+                              fin="Fin Mot-clé facteur : " + self.nom)
 
         try:
             self.isvalid(cr='oui')
-        except AsException, e:
+        except AsException as e:
             if CONTEXT.debug:
                 traceback.print_exc()
-            self.cr.fatal(_(u"Mot-clé facteur multiple : %s, %s"), self.nom, e)
+            self.cr.fatal(_("Mot-clé facteur multiple : %s, %s"), self.nom, e)
         return self.cr

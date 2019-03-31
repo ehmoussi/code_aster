@@ -85,14 +85,14 @@ fsin = DEFI_FONCTION(NOM_PARA="INST",
                      VALE=values,
                      INTERPOL=("LIN", "LIN"),)
 
-with test.assertRaisesRegexp(code_aster.AsterError, "listes.*longueurs"):
+with test.assertRaisesRegex(code_aster.AsterError, "listes.*longueurs"):
     fsin = DEFI_FONCTION(NOM_PARA="INST",
                          NOM_RESU="TEMP",
                          ABSCISSE=valx,
                          ORDONNEE=np.arange( n - 1. ),
                          INTERPOL=("LIN", "LIN"),)
 
-with test.assertRaisesRegexp(TypeError, "Unexpected type.*str"):
+with test.assertRaisesRegex(TypeError, "Unexpected type.*str"):
     bad_type = valy.tolist()
     bad_type[5] = "a"
     fsin = DEFI_FONCTION(NOM_PARA="INST",

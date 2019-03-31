@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 #
 POURSUITE(CODE='OUI', PAR_LOT='OUI')
 
-print 'COUCHE INIT = ', COUCHE
+print('COUCHE INIT = ', COUCHE)
 
 tab = CREA_TABLE(LISTE=_F(PARA='COUCHE', LISTE_I=COUCHE))
 
@@ -33,7 +33,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 DETRUIRE(CONCEPT=_F(NOM=tab))
 
 COUCHE = COUCHE + 1
-print 'COUCHE INCREMENT = ', COUCHE
+print('COUCHE INCREMENT = ', COUCHE)
 
 tab = CREA_TABLE(LISTE=_F(PARA='COUCHE', LISTE_I=COUCHE))
 
@@ -50,7 +50,7 @@ os.rename('fort.50', 'fort50.py')
 from fort50 import include_function
 COUCHE = include_function(COUCHE)
 
-print 'COUCHE APRES INCLUDE = ', COUCHE
+print('COUCHE APRES INCLUDE = ', COUCHE)
 
 tab = CREA_TABLE(LISTE=_F(PARA='COUCHE', LISTE_I=COUCHE))
 

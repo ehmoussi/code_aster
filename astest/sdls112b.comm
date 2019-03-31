@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -271,7 +271,7 @@ MODMES=LIRE_RESU(TYPE_RESU='MODE_MECA',
 ##             du debut (validation de la procedure d'expansion)
 MACRO_EXPANS( MODELE_CALCUL = _F(MODELE = MODFEM,
                                  BASE = MODSTAT,
-                                 NUME_ORDRE = range(1,nb_ddl+1)),
+                                 NUME_ORDRE = list(range(1,nb_ddl+1))),
               MODELE_MESURE = _F(MODELE  = MODEXP,
                                  MESURE  = MODMES,),
               NUME_DDL      = NUMEXP,

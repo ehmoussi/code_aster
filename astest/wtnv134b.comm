@@ -48,7 +48,7 @@ pcr   = 361.E5*exp(1.) /2.
 lambd = 0.1 /(1.-poro)
 kapa  = lambd /2.
 
-print 'young=',YOUNG,' /// nu=',POISSON
+print('young=',YOUNG,' /// nu=',POISSON)
 
 # pression de preconsolidation [en Pa]
 PCR = -1.E6 ;
@@ -62,7 +62,7 @@ ptrac =1000
 p0    =-3.e4
 pc    =-1.e6
 c = M*r_ela*b*ptrac*(1+log(p0/pc)-1/b-ptrac/p0)
-print 'cohesion =',c
+print('cohesion =',c)
 
 #*******************************************************************
 #    INCREMENTS DE TEMPS
@@ -238,7 +238,7 @@ coef=KW
 TAB_SIG=SIMU_POINT_MAT(INFO=1,
                   COMPORTEMENT=_F(RELATION='HUJEUX',
                                ALGO_INTE='SPECIFIQUE',
-                               ITER_INTE_MAXI=20,
+                               ITER_INTE_MAXI=0,
                                RESI_INTE_RELA=1.E-8,
                                ),
                   MATER=SOL1,
@@ -290,266 +290,246 @@ TAB_SIG=SIMU_POINT_MAT(INFO=1,
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=-80254.5050268,
+           VALE_CALC=-80224.6381228,
            VALE_REFE=-8.0193699999999997E4,
            NOM_PARA='TRACE',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=10.0,),
-           )
+                     VALE=10.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=-74082.3486813,
+           VALE_CALC=-73991.2059846,
            VALE_REFE=-7.4078100000000006E4,
            NOM_PARA='TRACE',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=20.0,),
-           )
+                     VALE=20.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=-66181.967836,
+           VALE_CALC=-66066.7529797,
            VALE_REFE=-6.6250100000000006E4,
            NOM_PARA='TRACE',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=30.0,),
-           )
+                     VALE=30.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.02,
-           VALE_CALC=-52977.0863354,
+           VALE_CALC=-52654.4921518,
            VALE_REFE=-52999,
            NOM_PARA='TRACE',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=40.0,),
-           )
+                     VALE=40.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.02,
-           VALE_CALC=-45589.74297,
+           VALE_CALC=-45572.1429197,
            VALE_REFE=-4.5671900000000001E4,
            NOM_PARA='TRACE',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=50.0,),
-           )
+                     VALE=50.0,),)
 
 # TEST DU COEF D ECROUISSAGE ISOROPE CYCLIQUE PAR RAPPORT AUX REFERENCES LAWYER
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.02,
-           VALE_CALC= 0.00139223076492,
+           VALE_CALC=0.00139813699772,
            VALE_REFE=1.3799999999999999E-3,
            NOM_PARA='V8',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=15.0,),
-           )
+                     VALE=15.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.02,
-           VALE_CALC= 0.00218629132772,
+           VALE_CALC=0.0022000343506,
            VALE_REFE=2.1700000000000001E-3,
            NOM_PARA='V8',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=25.0,),
-           )
+                     VALE=25.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.029999999999999999,
-           VALE_CALC= 0.00338932486382,
+           VALE_CALC=0.00341006955127,
            VALE_REFE=3.3700000000000002E-3,
            NOM_PARA='V8',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=35.0,),
-           )
+                     VALE=35.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.040000000000000001,
-           VALE_CALC= 0.00512950732056,
+           VALE_CALC=0.00518037699075,
            VALE_REFE=5.1000000000000004E-3,
            NOM_PARA='V8',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=45.0,),
-           )
+                     VALE=45.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.070000000000000007,
-           VALE_CALC= 0.00192089408861,
+           VALE_CALC=0.00194076016652,
            VALE_REFE=1.89E-3,
            NOM_PARA='V8',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=55.0,),
-           )
+                     VALE=55.0,),)
 
 # TEST DU COEF D ECROUISSAGE DEVIATOIRE CYCLIQUE PAR RAPPORT AUX REFERENCES LAWYER
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.325590693194,
+           VALE_CALC=0.325709070275,
            VALE_REFE=0.32600000000000001,
            NOM_PARA='V1',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=20.0,),
-           )
+                     VALE=20.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.39391739276,
+           VALE_CALC=0.394603832188,
            VALE_REFE=0.39400000000000002,
            NOM_PARA='V1',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=30.0,),
-           )
+                     VALE=30.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=0.39391739276,
+           VALE_CALC=0.394603832188,
            VALE_REFE=0.39400000000000002,
            NOM_PARA='V1',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=40.0,),
-           )
+                     VALE=40.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.02,
-           VALE_CALC=0.578782172914,
+           VALE_CALC=0.579020876881,
            VALE_REFE=0.57799999999999996,
            NOM_PARA='V1',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=50.0,),
-           )
+                     VALE=50.0,),)
 
 # TEST SUR LA DEFORMATION VOLUMIQUE PLASTIQUE PAR RAPPORT AUX REFERENCES LAWYER
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=-2.61695522981E-05,
+           VALE_CALC=-2.62588144879E-05,
            VALE_REFE=-2.6299999999999999E-05,
            NOM_PARA='V23',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=10.0,),
-           )
+                     VALE=10.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.02,
-           VALE_CALC=-2.79446852387E-05,
+           VALE_CALC=-2.80733773045E-05,
            VALE_REFE=-2.7800000000000001E-05,
            NOM_PARA='V23',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=15.0,),
-           )
+                     VALE=15.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.02,
-           VALE_CALC=-4.45541687396E-05,
+           VALE_CALC=-4.48540672464E-05,
            VALE_REFE=-4.4299999999999999E-05,
            NOM_PARA='V23',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=25.0,),
-           )
+                     VALE=25.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.029999999999999999,
-           VALE_CALC=-7.08249662212E-05,
+           VALE_CALC=-7.1296625121E-05,
            VALE_REFE=-7.0500000000000006E-05,
            NOM_PARA='V23',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=35.0,),
-           )
+                     VALE=35.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.040000000000000001,
-           VALE_CALC=-0.000111605178373,
+           VALE_CALC=-0.000112867629014,
            VALE_REFE=-1.11E-4,
            NOM_PARA='V23',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=45.0,),
-           )
+                     VALE=45.0,),)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.040000000000000001,
-           VALE_CALC=-0.000185419502234,
+           VALE_CALC=-0.000186244541104,
            VALE_REFE=-1.85E-4,
            NOM_PARA='V23',
            TABLE=TAB_SIG,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0000000000000006E-05,
                      NOM_PARA='INST',
-                     VALE=55.0,),
-           )
+                     VALE=55.0,),)
 
 IMPR_TABLE(TABLE=TAB_SIG,);
 

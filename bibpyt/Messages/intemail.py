@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,25 +26,25 @@ cata_msg = {
 
 
 
-    35: _(u"""
+    35: _("""
 Utilisation de MODI_MAILLAGE / ABSC_CURV :
   Il existait déjà une carte pour les abscisses curviligne dans le
   maillage. Celle-ci sera écrasée.
  """),
 
-    36: _(u"""
+    36: _("""
 Utilisation de MODI_MAILLAGE / ABSC_CURV :
   L'ensemble des segments ne forme pas une ligne ouverte.
   Le noeud %(k1)s appartient à plus de deux segments.
  """),
 
-    37: _(u"""
+    37: _("""
 Utilisation de MODI_MAILLAGE / ABSC_CURV :
   L'ensemble des segments ne forme pas une ligne ouverte.
   Il n'y a pas deux extrémités. Il y en a %(i1)d.
  """),
 
-    38: _(u"""
+    38: _("""
 Utilisation de MODI_MAILLAGE / ABSC_CURV :
   L'ensemble des segments n'a pas pour extrémité le noeud "origine".
  """),

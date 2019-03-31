@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------- */
-/* Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org             */
+/* Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org             */
 /* This file is part of code_aster.                                     */
 /*                                                                      */
 /* code_aster is free software: you can redistribute it and/or modify   */
@@ -144,8 +144,8 @@ PyObject* _libsymb_to_key(const char* libname, const char* symbname)
      */
     PyObject *key;
     key = PyTuple_New( 2 );
-    PyTuple_SetItem( key, 0, PyString_FromString(libname) );
-    PyTuple_SetItem( key, 1, PyString_FromString(symbname) );
+    PyTuple_SetItem( key, 0, PyUnicode_FromString(libname) );
+    PyTuple_SetItem( key, 1, PyUnicode_FromString(symbname) );
     return key;
 }
 

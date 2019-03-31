@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,12 +22,12 @@
 # Attention : cet import permet d'avoir, en Python, le comportement
 # de la division réelle pour les entiers, et non la division entière
 # 1/2=0.5 (et non 0). Comportement par défaut dans Python 3.0.
-from __future__ import division
+
 import pickle
 
-from N_ASSD import ASSD
-from N_info import message, SUPERV
-from N_Exception import AsException
+from .N_ASSD import ASSD
+from .N_info import message, SUPERV
+from .N_Exception import AsException
 
 
 def initial_context():
@@ -36,10 +36,10 @@ def initial_context():
     Returns:
         dict: pairs of name per corresponding Python instance.
     """
-    import __builtin__
+    import builtins
     import math
     context = {}
-    context.update(__builtin__.__dict__)
+    context.update(builtins.__dict__)
     for func in dir(math):
         if not func.startswith('_'):
             context[func] = getattr(math, func)
@@ -82,7 +82,7 @@ class formule(ASSD):
             context.update(dval)
         try:
             res = eval(self.code, self._initial_context, context)
-        except Exception, exc:
+        except Exception as exc:
             message.error(SUPERV, "ERREUR LORS DE L'ÉVALUATION DE LA FORMULE '%s' "
                           ":\n>> %s", self.nom, str(exc))
             raise
@@ -96,7 +96,7 @@ class formule(ASSD):
         self.expression = texte
         try:
             self.code = compile(texte, texte, 'eval')
-        except SyntaxError, exc:
+        except SyntaxError as exc:
             message.error(SUPERV, "ERREUR LORS DE LA CREATION DE LA FORMULE '%s' "
                           ":\n>> %s", self.nom, str(exc))
             raise

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -55,8 +55,7 @@ class SyntaxId(object):
     This list of type identifiers can be extended but never change between
     two releases of code_aster.
     """
-    __slots__ = ('simp', 'fact', 'bloc', 'command')
-    simp, fact, bloc, command = range(4)
+    simp, fact, bloc, command = list(range(4))
 
 IDS = SyntaxId()
 
@@ -153,19 +152,28 @@ class CataDefinition(OrderedDict):
             dict: dict of entities of the requested types.
         """
         entities = CataDefinition()
-        for key, value in self.items():
+        for key, value in list(self.items()):
             if isinstance(value, typeslist):
                 entities[key] = value
             elif with_block and isinstance(value, Bloc):
-                entities.update(value.definition._filter_entities(typeslist))
+                bloc_kwds = value.definition._filter_entities(typeslist)
+                # update without overwriting factorkeywords but extending them
+                for kwd, obj in bloc_kwds.items():
+                    if type(obj) is FactorKeyword and kwd in entities:
+                        # do not change existing FactorKeyword!
+                        all_kwds = entities[kwd].definition.copy()
+                        all_kwds.update(obj.definition)
+                        entities[kwd] = FactorKeyword(all_kwds)
+                    else:
+                        entities[kwd] = obj
         return entities
 
     def iterItemsByType(self):
         """Iterator over dictionary's pairs with respecting order:
         SimpleKeyword, FactorKeyword and Bloc objects"""
-        keysR = [k for k, v in self.items() if type(v) is SimpleKeyword]
-        keysI = [k for k, v in self.items() if type(v) is FactorKeyword]
-        keysS = [k for k, v in self.items() if type(v) is Bloc]
+        keysR = [k for k, v in list(self.items()) if type(v) is SimpleKeyword]
+        keysI = [k for k, v in list(self.items()) if type(v) is FactorKeyword]
+        keysS = [k for k, v in list(self.items()) if type(v) is Bloc]
         for key in keysR + keysI + keysS:
             yield (key, self[key])
 
@@ -192,14 +200,15 @@ class UIDMixing(object):
         """Attribute that holds unique *id*"""
         return self._id
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         if other is None or not hasattr(other, 'uid'):
-            return -1
-        if self._id < other.uid:
-            return -1
-        if self._id > other.uid:
-            return 1
-        return 0
+            return True
+        return self._id < other.uid
+
+    def __eq__(self, other):
+        if other is None or not hasattr(other, 'uid'):
+            return False
+        return self._id == other.uid
 
 
 class _F(dict):
@@ -230,7 +239,7 @@ class _F(dict):
 
     @property
     def mc_liste(self):
-        return self.keys()
+        return list(self.keys())
 
     def List_F(self):
         """Return the object itself, for backward compatibility."""
@@ -288,8 +297,8 @@ class PartOfSyntax(UIDMixing):
     def udocstring(self):
         """unicode: Documentation of the object."""
         doc = self.docstring
-        if type(doc) is not unicode:
-            doc = unicode(doc, 'utf-8', 'replace')
+        if type(doc) is not str:
+            doc = str(doc, 'utf-8', 'replace')
         return doc
 
     @property
@@ -524,6 +533,14 @@ class SimpleKeyword(PartOfSyntax):
     Objet mot-clé simple équivalent à SIMP dans les capy
     """
 
+    def __init__(self, curDict):
+        """Initialization"""
+        super(SimpleKeyword, self).__init__(curDict)
+        if "val_min" in self._definition or "val_max" in self._definition:
+            typ = self._definition['typ']
+            assert typ in ('I', 'R'), ("'val_min/val_max' not allowed for type"
+                                       " '{0}'".format(typ))
+
     def getCataTypeId(self):
         """Get the type id of SimpleKeyword.
 
@@ -629,7 +646,7 @@ class Bloc(PartOfSyntax):
         eval_context.update(DS.__dict__)
         eval_context.update(block_utils(eval_context))
         # evaluate Python variables if present
-        for key, value in context.items():
+        for key, value in list(context.items()):
             eval_context[key] = getattr(value, "evaluation", value)
         try:
             enabled = eval(self.getCondition(), {}, eval_context)

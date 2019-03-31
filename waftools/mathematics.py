@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -254,9 +254,7 @@ def get_mathlib_from_numpy(self):
     '''The idea is that numpy shall be linked to blas and lapack.
     So we will try to get then using ldd if available'''
     libblas = []
-    pathblas = []
     liblapack = []
-    pathlapack = []
 
     self.load('python')
 
@@ -268,7 +266,7 @@ def get_mathlib_from_numpy(self):
     self.find_program('ldd')
     ldd_env = {'LD_LIBRARY_PATH': ':'.join(self.env.LIBPATH)}
     cmd = self.env.LDD + [pymodule_path]
-    out = Popen(cmd, stdout=PIPE, env=ldd_env).communicate()[0]
+    out = Popen(cmd, stdout=PIPE, env=ldd_env).communicate()[0].decode()
 
     for line in out.split('\n'):
         lib = _detect_libnames_in_ldd_line(line, LAPACK)
@@ -281,7 +279,7 @@ def get_mathlib_from_numpy(self):
     return libblas, liblapack
 
 def _detect_libnames_in_ldd_line(line, libnames):
-    if not filter(line.__contains__, libnames):
+    if not list(filter(line.__contains__, libnames)):
         return None
     lib = line.split()[0].split('.', 1)[0]
     return lib[3:]
@@ -293,11 +291,11 @@ def check_math_libs_call(self, color='RED'):
     try:
         ret = self.check_fc(fragment=blas_lapack_fragment, use='MATH OPENMP MPI',
                             mandatory=False, execute=True, define_ret=True)
-        values = map(float, ret and ret.split() or [])
+        values = list(map(float, ret and ret.split() or []))
         ref = [10.0, 5.0]
         if list(values) != ref:
             raise Errors.ConfigurationError('invalid result: %r (expecting %r)' % (values, ref))
-    except Exception, exc:
+    except Exception as exc:
         # the message must be closed
         self.end_msg('no', color=color)
         raise Errors.ConfigurationError(str(exc))
@@ -309,7 +307,7 @@ def check_math_libs_call(self, color='RED'):
         try:
             ret = self.check_fc(fragment=blacs_fragment, use='MATH OPENMP MPI',
                                 mandatory=True)
-        except Exception, exc:
+        except Exception as exc:
             # the message must be closed
             self.end_msg('no', color=color)
             raise Errors.ConfigurationError(str(exc))
@@ -324,7 +322,7 @@ def check_math_libs_call(self, color='RED'):
         refe = min(self.env['NPROC'], 2) if self.env.BUILD_OPENMP else 1
         if nbThreads < refe:
             raise ValueError("expected at least {0} thread(s)".format(nbThreads))
-    except Exception, exc:
+    except Exception as exc:
         # the message must be closed
         self.end_msg('no', color=color)
         raise Errors.ConfigurationError(str(exc))

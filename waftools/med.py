@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,7 +103,7 @@ def check_hdf5_libs(self):
         check_lib = lambda lib: check_hdf5(stlib=lib)
     else:
         check_lib = lambda lib: check_hdf5(lib=lib)
-    map(check_lib, Utils.to_list(opts.hdf5_libs))
+    list(map(check_lib, Utils.to_list(opts.hdf5_libs)))
 
 @Configure.conf
 def check_hdf5_headers(self):
@@ -173,6 +173,7 @@ def check_med(self):
         self.check_med_libs()
     self.check_med_headers()
     self.check_sizeof_med_int()
+    self.check_sizeof_med_idt()
     self.check_med_version()
 
 @Configure.conf
@@ -184,7 +185,7 @@ def check_med_libs(self):
         check_lib = lambda lib: check_med(stlib=lib)
     else:
         check_lib = lambda lib: check_med(lib=lib)
-    map(check_lib, Utils.to_list(opts.med_libs))
+    list(map(check_lib, Utils.to_list(opts.med_libs)))
 
 @Configure.conf
 def check_med_headers(self):
@@ -242,3 +243,19 @@ int main(void){
     #XXX compatibility
     if self.env['MED_INT_SIZE'] == 4 and self.is_defined('_USE_64_BITS'):
         self.define('_USE_MED_SHORT_INT', 1)
+
+@Configure.conf
+def check_sizeof_med_idt(self):
+    fragment = r'''
+#include <stdio.h>
+#include <hdf5.h>
+#include <med.h>
+int main(void){
+    med_idt integer;
+    printf("%d", (int)sizeof(integer));
+    return 0;
+}'''
+    self.code_checker('MED_IDT_SIZE', self.check_cc, fragment,
+                      'Checking size of med_idt integers',
+                      'unexpected value for sizeof(med_idt): %s',
+                      into=(4, 8), use='MED HDF5')

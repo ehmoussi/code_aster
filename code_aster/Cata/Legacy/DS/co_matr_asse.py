@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # Copyright (C) 2014 STEFAN H. REITERER stefan.harald.reiterer@gmail.com
 # This file is part of code_aster.
 #
@@ -79,7 +79,7 @@ class matr_asse(ASSD):
                 def __iter__(self):
                     return self
 
-                def next(self):
+                def __next__(self):
                     if self.kterm == 0:
                         self.kterm += 1
                         return self.jcol
@@ -116,7 +116,7 @@ class matr_asse(ASSD):
         else :
             data = NP.zeros([dim, dim], dtype=dtype)
             jcol = 1
-            for kterm in xrange(1,nnz+1):
+            for kterm in range(1,nnz+1):
                 ilig = smhc[kterm-1]
                 if smdi[jcol-1] < kterm:
                     jcol += 1

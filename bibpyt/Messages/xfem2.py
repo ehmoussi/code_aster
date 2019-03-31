@@ -21,40 +21,40 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
   -> On ne peut pas faire propager une interface.
      Seule les fissures (possédant un fond de fissure) peuvent être propagées.
 """),
 
 
-    2 : _(u"""
+    2 : _("""
   -> GROT_GDEP n'est pas disponible pour un comportement élastique non linéaire.
   -> Conseils : Utilisez un comportement élastique linéaire.
 """),
 
-    3 : _(u"""
+    3 : _("""
 On ne peut pas définir du contact X-FEM sur un maillage contenant à la fois des mailles linéaires et quadratiques.
 """),
 
-    4 : _(u"""
+    4 : _("""
 Nombre d'arêtes vitales : %(i1)d
 """),
 
-    5 : _(u"""
+    5 : _("""
   -> Avec GROT_GDEP, la modélisation axisymétrique n'est pas disponible.
 """),
 
-    6 : _(u"""
+    6 : _("""
   -> Le nombre de fissures est limité à %(i1)d, or vous en avez définies %(i2)d !
      Veuillez contacter votre assistance technique.
 """),
 
-7 : _(u"""
+7 : _("""
 La fissure %(k1)s est de type CZM.
 On ne peut pas appliquer de chargement de pression ou de condition d'échange thermique sur ses lèvres.
 """),
 
-    8 : _(u"""
+    8 : _("""
   -> Le modèle %(k1)s transmis dans DEFI_CONTACT n'est pas un modèle
      XFEM.
   -> Risque & Conseil:
@@ -62,32 +62,32 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      DEFI_CONTACT un modèle XFEM.
 """),
 
-    9 : _(u"""
+    9 : _("""
   -> Le modèle %(k1)s transmis dans DEFI_CONTACT n'est pas un modèle
      XFEM avec contact.
   -> Risque & Conseil:
      Veuillez activer CONTACT dans MODI_MODELE_XFEM.
 """),
 
-    10 : _(u"""
+    10 : _("""
   -> Toutes les fissures ne sont pas rattachées au même maillage.
      La fissure %(k1)s est rattachée au maillage %(k2)s alors que
      la fissure %(k3)s est rattachée au maillage %(k4)s.
 """),
 
-    15 : _(u"""
+    15 : _("""
   -> Point de FOND_FISS sans maille de surface rattachée.
   -> Risque & Conseil:
      Veuillez revoir la définition des level-sets.
 """),
 
-    17 : _(u"""
+    17 : _("""
   -> Segment de FOND_FISS sans maille de surface rattachée
   -> Risque & Conseil:
      Veuillez revoir la définition des level-sets.
 """),
 
-    18 : _(u"""
+    18 : _("""
   -> Le mot-clé CRITERE de PROPA_FISS est différent de 'ANGLE_IMPO' ou 'ANGLE_IMPO_BETA_GAMMA' et le tableau
      des facteurs d'intensité de contraintes de la fissure %(k1)s contient
      une colonne 'BETA' ou une colonne 'GAMMA'.
@@ -98,7 +98,7 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      CRITERE='ANGLE_IMPO' ou 'ANGLE_IMPO_BETA_GAMMA'.
 """),
 
-    19 : _(u"""
+    19 : _("""
   -> Le mot-clé CRITERE de PROPA_FISS vaut 'ANGLE_IMPO' et le tableau
      des facteurs d'intensité de contraintes de la fissure %(k1)s ne contient
      pas de colonne 'BETA'.
@@ -109,7 +109,7 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      en utilisant l'option 'CALC_K_G' de la commande CALC_G.
 """),
 
-    20 : _(u"""
+    20 : _("""
   -> En 3D, si METHODE_PROPA='MAILLAGE' dans PROPA_FISS il faut absolument une
      colonne 'ABSC_CURV' contenant les abscisses curvilignes des points du fond
      dans le tableau des facteurs d'intensité de contraintes.
@@ -128,7 +128,7 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
 """),
 
 
-    50 : _(u"""
+    50 : _("""
   -> Le maillage utilisé pour la représentation des level-sets est 2D
      mais il contient des éléments 1D aussi.
   -> La méthode UPWIND sélectionnée dans PROPA_FISS peut gérer des
@@ -138,13 +138,13 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      QUAD4.
   """),
 
-    51 : _(u"""
+    51 : _("""
   -> Il n'y a aucune maille enrichie.
   -> Risque & Conseil:
      Veuillez vérifier les définitions des level-sets.
   """),
 
-    52 : _(u"""
+    52 : _("""
   -> Le maillage utilisé pour la représentation des level-sets est 3D
      mais il contient des éléments 2D et/ou 1D aussi.
   -> La méthode UPWIND sélectionnée dans PROPA_FISS peut gérer des
@@ -154,7 +154,7 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      HEXA8.
   """),
 
-    53 : _(u"""
+    53 : _("""
   -> Dans le maillage utilisé pour la représentation des level-sets,
      il y a des éléments qui ne sont pas disponibles pour la méthode
      UPWIND (PROPA_FISS).
@@ -163,7 +163,7 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      QUAD4 en 2D et HEXA8 en 3D.
   """),
 
-    54 : _(u"""
+    54 : _("""
   -> Il n'y a pas d'éléments disponibles pour la méthode UPWIND
      (PROPA_FISS) dans le maillage utilisé pour la représentation
      des level-sets.
@@ -172,7 +172,7 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      QUAD4 en 2D et HEXA8 en 3D.
   """),
 
-    55 : _(u"""
+    55 : _("""
   -> Dans le maillage utilisé pour la représentation des level-sets
      (PROPA_FISS), il y a des arêtes qui ne sont pas orthogonales aux
      autres arêtes.
@@ -182,7 +182,7 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      soient orthogonales entre elles.
   """),
 
-    57 : _(u"""
+    57 : _("""
   -> La définition de un ou plusieurs éléments du maillage utilisé pour
      la représentation des level-sets (PROPA_FISS) n'est pas correcte.
   -> Risque & Conseil:
@@ -192,7 +192,7 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      d'un élément; il n'y a pas de noeuds doubles...)
   """),
 
-    58 : _(u"""
+    58 : _("""
   -> La dimension (2D ou 3D) du modèle physique et la dimension (2D ou
      3D) du modèle utilisé pour la grille auxiliaire ne sont pas égales.
   -> Risque & Conseil:
@@ -200,12 +200,12 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      ou les deux 3D).
   """),
 
-    59 : _(u"""
+    59 : _("""
 Il y a au moins une maille qui porte des sous-éléments de peau et qui
 ne borde pourtant aucune maille principale.
   """),
 
-    60 : _(u"""
+    60 : _("""
   -> L'opérande TEST_MAIL a été utilisée dans l'opérateur PROPA_FISS.
      La même vitesse d'avancée est utilisée pour tous les points du
      fond de fissure et l'angle de propagation est fixé égal à zéro.
@@ -218,7 +218,7 @@ ne borde pourtant aucune maille principale.
      des level-sets.
   """),
 
-    63 : _(u"""
+    63 : _("""
   -> La valeur de l'avancée DA_MAX utilisée est petite par rapport à la
      longueur de la plus petite arrête du maillage utilisé pour
      la représentation des level-sets:
@@ -230,7 +230,7 @@ ne borde pourtant aucune maille principale.
      level-sets.
   """),
 
-    64 : _(u"""
+    64 : _("""
   -> La valeur du RAYON est plus petite que la longueur de la plus petite
      arrête du maillage utilisé pour la représentation des level-sets:
      RAYON = %(r1)f
@@ -240,7 +240,7 @@ ne borde pourtant aucune maille principale.
      Veuillez utiliser une valeur du RAYON plus grande.
   """),
 
-    70 : _(u"""
+    70 : _("""
   -> La macro-commande PROPA_FISS ne peut traiter qu'un seul instant de calcul.
   -> Risque & Conseil:
      Veuillez vérifier que les tableaux des facteurs d'intensité de contraintes
@@ -250,7 +250,7 @@ ne borde pourtant aucune maille principale.
 
 
 
-    73 : _(u"""
+    73 : _("""
   -> L'option NB_POINT_FOND a été utilisé dans PROPA_FISS mais le
      modèle est 2D.
   -> Risque & Conseil:
@@ -258,14 +258,14 @@ ne borde pourtant aucune maille principale.
      Ce mot-clé n'est pas pris en compte.
   """),
 
-    74 : _(u"""
+    74 : _("""
   -> Aucune fissure du modèle ne se propage.
   -> Risque & Conseil:
      Veuillez vérifier les conditions du chargement du modèle et les
      constantes de la loi de propagation données à PROPA_FISS.
   """),
 
-    75 : _(u"""
+    75 : _("""
   -> Une valeur de la liste de NB_POINT_FOND ne correspond pas au nombre de
      lignes du tableau des facteurs d'intensité de contraintes pour
      le fond %(i1)d de la fissure %(k1)s.
@@ -276,7 +276,7 @@ ne borde pourtant aucune maille principale.
 
 
 
-    78 : _(u"""
+    78 : _("""
   -> L'option NB_POINT_FOND a été utilisée dans PROPA_FISS
      mais le nombre de valeurs données n'est pas égale au nombre total
      des morceaux des fissures dans le modèle.
@@ -289,7 +289,7 @@ ne borde pourtant aucune maille principale.
 
 
 
-    80 : _(u"""
+    80 : _("""
   -> Le nombre des valeurs dans un des tableaux des facteurs
      d'intensité de contraintes est supérieur au nombre des
      points du fond de la fissure correspondante.
@@ -299,7 +299,7 @@ ne borde pourtant aucune maille principale.
      vérifier aussi que la liste donnée pour chaque fissure est correcte.
   """),
 
-    81 : _(u"""
+    81 : _("""
   -> Les valeurs de COEF_MULT_MAXI et COEF_MULT_MINI de COMP_LINE sont
      égales à zéro.
   -> Risque & Conseil:
@@ -310,13 +310,13 @@ ne borde pourtant aucune maille principale.
 
 
 
-    85 : _(u"""
+    85 : _("""
    Les propriétés matériaux dépendent de la température. La température en fond
    de fissure n'étant pas connue, le calcul se poursuit en prenant la température
    de référence du matériau (TEMP = %(r1)f).
 """),
 
-    86 : _(u"""
+    86 : _("""
  -> Le maillage/la grille sur lequel/laquelle vous voulez créer le group
     n'est pas associé/associée à la fissure donnée.
 
@@ -325,14 +325,14 @@ ne borde pourtant aucune maille principale.
     la bonne fissure.
 """),
 
-    87 : _(u"""
+    87 : _("""
   -> L'opérande TEST_MAIL a été utilisé dans l'opérateur PROPA_FISS.
   -> Cet opérande n'a de sens que pour un modèle 3D.
   -> Risque & Conseil:
      Ne pas utiliser TEST_MAIL pour un modèle 2D.
   """),
 
-    88 : _(u"""
+    88 : _("""
   -> La valeur du rayon du tore de localisation de la zone de mise à
      jour est supérieure à la valeur limite. Cette dernière est
      déterminée par la valeur du rayon du tore utilisée à la propagation
@@ -363,7 +363,7 @@ ne borde pourtant aucune maille principale.
      (ZONE_MAJ='TOUT').
   """),
 
-    89 : _(u"""
+    89 : _("""
   -> La fissure à propager n'existe pas dans le modèle:
      FISS_ACTUELLE = %(k1)s
      MODELE        = %(k2)s
@@ -373,7 +373,7 @@ ne borde pourtant aucune maille principale.
   """),
 
 
-    91 : _(u"""
+    91 : _("""
   -> Le nouveau fond de fissure n'est pas très régulier. Cela signifie
      que le maillage ou la grille auxiliaire utilisés pour la
      représentation de la fissure par level-sets ne sont pas
@@ -385,7 +385,7 @@ ne borde pourtant aucune maille principale.
      auxiliaire plus raffinés.
   """),
 
-    92 : _(u"""
+    92 : _("""
   -> Vous avez demandé la création d'un group de noeuds dans un tore
      construit autour du fond de la fissure suivante:
 
@@ -402,7 +402,7 @@ ne borde pourtant aucune maille principale.
   """),
 
 
-    93 : _(u"""
+    93 : _("""
   -> Aucune fissure n'est définie sur le modèle spécifié:
      MODELE = %(k1)s
   -> Risque & Conseil:
@@ -411,7 +411,7 @@ ne borde pourtant aucune maille principale.
      l'utilisation de PROPA_FISS.
   """),
 
-    94 : _(u"""
+    94 : _("""
   -> L'avancée donnée (DA_MAX) pour la propagation courante est
      inférieure à la valeur minimale conseillée.
 
@@ -434,7 +434,7 @@ ne borde pourtant aucune maille principale.
      utilisant un maillage plus raffiné.
   """),
 
-    95 : _(u"""
+    95 : _("""
   -> Le modèle grille donné est défini sur un maillage (%(k1)s)
      et pas sur une grille.
 
@@ -443,7 +443,7 @@ ne borde pourtant aucune maille principale.
      grille doit être définie par DEFI_GRILLE à partir d'un maillage.
   """),
 
-    96 : _(u"""
+    96 : _("""
  -> Le maillage sur lequel vous voulez créer le group n'est pas associé à
     la fissure donnée.
 
@@ -455,7 +455,7 @@ ne borde pourtant aucune maille principale.
     Veuillez vérifier d'avoir spécifié le bon maillage et/ou la bonne fissure.
 """),
 
-    97 : _(u"""
+    97 : _("""
   -> La localisation de la zone de mise à jour a été utilisé pour la
      détermination de la configuration actuelle des fissures du modèle.
      Par contre, pour la propagation courante, la localisation n'a pas
@@ -465,7 +465,7 @@ ne borde pourtant aucune maille principale.
      (ZONE_MAJ='TORE') pour la propagation courante aussi.
   """),
 
-    98 : _(u"""
+    98 : _("""
   -> Aucune grille auxiliaire n'est utilisée pour la représentation de
      la fissure donnée.
   -> Risque & Conseil:
@@ -473,7 +473,7 @@ ne borde pourtant aucune maille principale.
      fissure.
   """),
 
-    99 : _(u"""
+    99 : _("""
   -> La valeur du rayon du tore de localisation de la zone de mise à
      jour est plus petite que celle qui est nécessaire pour la bonne
      mise à jour des level-sets.

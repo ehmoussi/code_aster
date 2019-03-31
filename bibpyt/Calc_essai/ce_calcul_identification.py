@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -429,7 +429,7 @@ class CalculInverse:
         """ Renvoie un message d'erreur si les prosuits de matrices ne se font pas bien"""
         self.mess.disp_mess("!! Problemes dans les produits de matrices   !!")
         self.mess.disp_mess("!! pour le calcul de " + res + "                     !!")
-        for arg in args.items():
+        for arg in list(args.items()):
             self.mess.disp_mess("La matrice "+arg[0] + " a pour taille "+arg[1])
         self.mess.disp_mess(" ")
         UTMESS('A', 'CALCESSAI0_4')

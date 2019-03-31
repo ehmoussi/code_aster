@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,9 +34,17 @@ out = 'build'
 
 import os
 import os.path as osp
+import sys
 from functools import partial
 from itertools import chain
-from waflib import Configure, Logs, Utils, Build, TaskGen, Task
+
+from waflib import Build, Configure, Logs, Utils
+from waflib.Tools.c_config import DEFKEYS
+
+if sys.version_info.major < 3:
+    Logs.error("Python 2 not is yet supported. "
+               "Please upgrade to Python 3.5 or newer")
+    sys.exit(1)
 
 
 def options(self):
@@ -364,7 +372,6 @@ def check_variant_vars(self):
 # same idea than waflib.Tools.c_config.write_config_header
 # but defines are not removed from `env`
 # XXX see write_config_header(remove=True/False) + format Fortran ?
-from waflib.Tools.c_config import DEFKEYS
 class ConfigHelper(object):
 
     def __init__(self, language):

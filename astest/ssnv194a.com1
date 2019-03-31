@@ -483,7 +483,7 @@ FEY=[None]*NB_GRAINS
 FEZ=[None]*NB_GRAINS
 
 for IP in range (NB_GRAINS):
-  print 'GM'+str(IP+1)
+  print('GM'+str(IP+1))
 
   INS[IP]=POST_ELEM( RESULTAT=SOLNL,
                    INTEGRALE=_F(NOM_CHAM='SIEF_ELGA',

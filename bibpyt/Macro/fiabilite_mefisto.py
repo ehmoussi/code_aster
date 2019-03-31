@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -425,7 +425,7 @@ def fiabilite_mefisto(self, Rep_Calc_LOGICIEL_global,
         break
 #
     if erreur:
-        if not messages_erreur.has_key(erreur):
+        if erreur not in messages_erreur:
             erreur = 100
         self.cr.warn(messages_erreur[erreur])
         erreur = 11
@@ -464,7 +464,7 @@ if __name__ == "__main__":
 #
     for nomfic in Liste:
         fic_total = os.path.join(Rep_Calc_LOGICIEL_global, nomfic)
-        os.chmod(fic_total, 0755)
+        os.chmod(fic_total, 0o755)
         os.remove(fic_total)
     os.rmdir(Rep_Calc_LOGICIEL_global)
 #

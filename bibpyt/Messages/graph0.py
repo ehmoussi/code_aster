@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,43 +20,43 @@
 # person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
-    1 : _(u"""'%(k1)s' doit être une liste de 2 ou 3 listes de réels de même longueur.
+    1 : _("""'%(k1)s' doit être une liste de 2 ou 3 listes de réels de même longueur.
 """),
 
-    2 : _(u"""'%(k1)s' doit être une liste de 2 ou 3 chaînes de caractères.
+    2 : _("""'%(k1)s' doit être une liste de 2 ou 3 chaînes de caractères.
 """),
 
-    3 : _(u"""Le format est inconnu : %(k1)s.
+    3 : _("""Le format est inconnu : %(k1)s.
 """),
 
-    4 : _(u"""On limite la fenêtre aux abscisses positives.
+    4 : _("""On limite la fenêtre aux abscisses positives.
 """),
 
-    5 : _(u"""On limite la fenêtre aux ordonnées positives.
+    5 : _("""On limite la fenêtre aux ordonnées positives.
 """),
 
-    6 : _(u"""Des erreurs se sont produites :
+    6 : _("""Des erreurs se sont produites :
    %(k1)s
 """),
 
-    7 : _(u"""La variable DISPLAY n'est pas définie.
+    7 : _("""La variable DISPLAY n'est pas définie.
 """),
 
-    8 : _(u"""On fixe la variable DISPLAY à %(k1)s.
+    8 : _("""On fixe la variable DISPLAY à %(k1)s.
 """),
 
-    9 : _(u"""Erreur lors de l'utilisation du filtre '%(k1)s'.
+    9 : _("""Erreur lors de l'utilisation du filtre '%(k1)s'.
 Le fichier retourné est le fichier au format texte de xmgrace.
 """),
 
-    10 : _(u"""
+    10 : _("""
    <I> Informations sur le fichier '%(k1)s' :
       Nombre de courbes    : %(i1)3d
       Bornes des abscisses : [ %(r1)13.6G , %(r2)13.6G ]
       Bornes des ordonnées : [ %(r3)13.6G , %(r4)13.6G ]
 """),
 
-    11 : _(u"""
+    11 : _("""
    Le fichier '%(k1)s' ne semble pas être au format texte de xmgrace.
    On ne peut donc pas recalculer les valeurs extrêmes.
    Le pilote ne permet probablement pas d'imprimer plusieurs

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ STANLEY=MACRO(nom="STANLEY",
          CHAM_MATER      =SIMP(statut='f',typ=cham_mater),
          CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
          DISPLAY         =SIMP(statut='f',typ='TXM'),
-         UNITE_VALIDATION=SIMP(statut='f',typ=UnitType(),val_min=10,val_max=90, inout='out',
+         UNITE_VALIDATION=SIMP(statut='f',typ=UnitType(), inout='out',
                                fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit les md5")),
 
 )  ;

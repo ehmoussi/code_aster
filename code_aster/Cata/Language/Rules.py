@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,11 +54,11 @@ class Rule(object):
 
     def _firstExists(self, dictSyntax):
         """Filter that tells if the first keyword exists"""
-        return dictSyntax.has_key( self.ruleArgs[0] )
+        return self.ruleArgs[0] in dictSyntax
 
     def _not_none(self, dictSyntax):
         """Filter that returns existing values"""
-        return [dictSyntax.has_key(i) for i in self.ruleArgs]
+        return [i in dictSyntax for i in self.ruleArgs]
 
 
 class AtLeastOne(Rule):

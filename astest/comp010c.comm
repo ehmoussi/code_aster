@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -150,7 +150,7 @@ for i in range(NCAL):
 
           tempi= DEFI_FONCTION (NOM_PARA='INST',NOM_RESU='TEMP',
                                 VALE=(timem,Ti,time,Ti));
-          print 'i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp
+          print(('i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp))
 
           if i > 0 :
              SXM = SXM *(YOUN(Ti)/YOUN(Tm))

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -259,7 +259,7 @@ SIT1=RECU_FONCTION (RESULTAT = DYNATRAN,
                     NOM_CHAM = 'SIEF_ELGA',
                     MAILLE = 'M194',
                     POINT=1,
-                    NUME_ORDRE=range(1,archsize),
+                    NUME_ORDRE=list(range(1,archsize)),
                           );
 
 SIH1=RECU_FONCTION (RESULTAT = DYNHASS,
@@ -300,7 +300,7 @@ SET1=RECU_FONCTION (RESULTAT = DYNATRAN,
                     NOM_CHAM = 'SIGM_ELNO',
                     MAILLE = 'M194',
                     NOEUD='N1328',
-                    NUME_ORDRE=range(1,archsize),
+                    NUME_ORDRE=list(range(1,archsize)),
                           );
 
 SEH1=RECU_FONCTION (RESULTAT = DYNHASS,
@@ -341,7 +341,7 @@ EPT1=RECU_FONCTION (RESULTAT = DYNATRAN,
                     NOM_CHAM = 'EPSI_ELNO',
                     MAILLE = 'M194',
                     NOEUD='N1328',
-                    NUME_ORDRE=range(1,archsize),
+                    NUME_ORDRE=list(range(1,archsize)),
                           );
 
 EPH1=RECU_FONCTION (RESULTAT = DYNHASS,
@@ -382,7 +382,7 @@ EGT1=RECU_FONCTION (RESULTAT = DYNATRAN,
                     NOM_CHAM = 'EPSI_ELGA',
                     MAILLE = 'M194',
                     POINT=1,
-                    NUME_ORDRE=range(1,archsize),
+                    NUME_ORDRE=list(range(1,archsize)),
                           );
 
 EGH1=RECU_FONCTION (RESULTAT = DYNHASS,

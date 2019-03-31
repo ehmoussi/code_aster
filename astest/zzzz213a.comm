@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -182,7 +182,7 @@ try :
     XXXX=COMB_MATR_ASSE( COMB_R=(  _F(  MATR_ASSE = matas21a, COEF_R = 1.),
                                    _F(  MATR_ASSE = matas22b, COEF_R = 1.)))
 except AsterError as err:
-   print fmt_raison % str(err)
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "ALGELINE2_28":
       is_ok = 1
@@ -208,7 +208,7 @@ try :
     XXXX=RESOUDRE( MATR = matas11, CHAM_NO= vecas11 )
 
 except AsterError as err:
-   print fmt_raison % str(err)
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "ALGELINE3_41":
       is_ok = 1
@@ -238,7 +238,7 @@ try :
                                         _F(  MATR_ASSE = matas33b, COEF_R = 1.)))
 
 except AsterError as err:
-   print fmt_raison % str(err)
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "ALGELINE2_10":
       is_ok = 1
@@ -270,7 +270,8 @@ try :
      u34=RESOUDRE( MATR = matas34, CHAM_NO= vecas34 , CHAM_CINE= vcine34 )
 
 except AsterError as err:
-   print fmt_raison % str(err)
+   print(fmt_raison % str(err))
+
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "ALGELINE_32":
       is_ok = 1

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,20 +22,20 @@
 cata_msg = {
 
 
-    15 : _(u"""   Maille concernée : %(k1)s
+    15 : _("""   Maille concernée : %(k1)s
 """),
 
-    16 : _(u"""   Option de calcul : %(k1)s
+    16 : _("""   Option de calcul : %(k1)s
    Commentaire:"""),
-    17 : _(u"""%(k1)s"""),
+    17 : _("""%(k1)s"""),
 
-    18 : _(u"""     Paramètre d'entrée : %(k1)s
+    18 : _("""     Paramètre d'entrée : %(k1)s
       Commentaire:"""),
 
-    19 : _(u"""     Paramètre de sortie : %(k1)s
+    19 : _("""     Paramètre de sortie : %(k1)s
       Commentaire:"""),
 
-    22 : _(u"""     Grandeur associée au champ : %(k1)s
+    22 : _("""     Grandeur associée au champ : %(k1)s
       Commentaire:"""),
 
 }

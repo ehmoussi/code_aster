@@ -33,7 +33,7 @@ class ReducedBaseDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords.has_key("reuse"):
+        if "reuse" in keywords:
             self._result = keywords["reuse"]
         else:
             self._result = ModeEmpiContainer()
@@ -44,9 +44,9 @@ class ReducedBaseDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if keywords.has_key("reuse"):
+        if "reuse" in keywords:
             self._result.update()
-        elif(keywords.has_key("OPERATION") and
+        elif("OPERATION" in keywords and
              keywords["OPERATION"] == "TRONCATURE"):
             self._result.appendModelOnAllRanks(keywords["MODELE_REDUIT"])
         else:

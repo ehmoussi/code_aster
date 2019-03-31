@@ -63,7 +63,7 @@ class MaterialAssignment(ExecuteCommand):
         """
         mesh = None
         model = keywords.get("MODELE")
-        if keywords.has_key("MAILLAGE"):
+        if "MAILLAGE" in keywords:
             mesh = keywords["MAILLAGE"]
         else:
             mesh = model.getSupportMesh()
@@ -97,7 +97,7 @@ class MaterialAssignment(ExecuteCommand):
                 raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
 
         mesh = None
-        if keywords.has_key("MAILLAGE"):
+        if "MAILLAGE" in keywords:
             mesh = keywords["MAILLAGE"]
         else:
             mesh = keywords["MODELE"].getSupportMesh()

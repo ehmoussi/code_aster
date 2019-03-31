@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -76,6 +76,6 @@ delta[1]=[1,1]
 legende= [None]*ncal
 for index,ical in enumerate(typcal) :
    legende[index]=ical[0]+'_'+ical[1]+'_delta1='+str( int(delta[ical[2]][0]*10000.)/10000.)+'_delta2='+str( int(delta[ical[2]][0]*10000.)/10000.)
-print 'legende=',legende
+print('legende=',legende)
 
 FIN();

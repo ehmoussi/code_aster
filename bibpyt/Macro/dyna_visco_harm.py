@@ -70,7 +70,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
             l_force_nodale = True
             no_force = charge[i].sdj.CHME.LIGRE.NEMA.get()
 
-            for j in no_force.keys():
+            for j in list(no_force.keys()):
                 if not ( len(no_force[j])==2 and no_force[j][1]==1 ): # in the dictionary no_force, an imposed nodal force presents as
                                                                       # an entry (a key) having this shape: (node_number, 1)
                                                                       # so one deletes all entries having a different shape
@@ -83,7 +83,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
             else:
                 raise NameError("No support mesh")
 
-            direction = array( [tuple(array(ddl[i*12:(i+1)*12]).nonzero()[0]) for i in range(0, len(ddl)/12)] )
+            direction = array( [tuple(array(ddl[i*12:(i+1)*12]).nonzero()[0]) for i in range(0, len(ddl)//12)] )
             # array which contains, for each node having an imposed force, the list of the imposed directions
             # (rq : "/12" because each node has 12 DoF)
             # the values are 0 if FX imposed, 1 if FY, and 2 if FZ

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,10 +35,11 @@ subroutine as_mprcre(fid, nom, type, desc, dtunit,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, cret4, typ4
-    fid4 = fid
+    med_idt :: fidm
+    med_int :: cret4, typ4
+    fidm = to_med_idt(fid)
     typ4 = type
-    call mprcre(fid4, nom, typ4, desc, dtunit, cret4)
+    call mprcre(fidm, nom, typ4, desc, dtunit, cret4)
     cret = cret4
 #else
     call mprcre(fid, nom, type, desc, dtunit, cret)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -139,15 +139,16 @@ def include_materiau_ops(self,
     context['_F'] = _F
 
     # exécution du catalogue
-    execfile(fmat, context)
+    with open(fmat) as f:
+        exec(compile(f.read(), fmat, 'exec'), context)
     kwcata = context.get(MOTSCLES)
     if kwcata is None:
         UTMESS('F', 'SUPERVIS2_6', valk=bnmat)
     # certains concepts cachés doivent être connus plus tard (au moins les
     # objets FORMULE)
     to_add = dict([(v.nom, v)
-                  for k, v in context.items() if isinstance(v, formule)])
-    self.sdprods.extend(to_add.values())
+                  for k, v in list(context.items()) if isinstance(v, formule)])
+    self.sdprods.extend(list(to_add.values()))
     if INFO == 2:
         aster.affiche('MESSAGE', " Mots-clés issus du catalogue : \n%s"
                       % pprint.pformat(kwcata))
@@ -155,7 +156,7 @@ def include_materiau_ops(self,
             'MESSAGE', 'Concepts transmis au contexte global :\n%s' % to_add)
 
     # filtre des mots-clés
-    for mcf, value in kwcata.items():
+    for mcf, value in list(kwcata.items()):
         if not keep_compor(mcf):
             del kwcata[mcf]
             continue

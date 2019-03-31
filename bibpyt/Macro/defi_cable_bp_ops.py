@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,8 +54,6 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     """
     from code_aster.Cata.Syntax import _F
     import aster
-    import string
-    import types
     from Utilitai.Utmess import UTMESS
     ier = 0
 
@@ -77,13 +75,13 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 
     motscles = {}
 
-    keys = args.keys()
+    keys = list(args.keys())
 
     # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "CONE"
 
     if CONE:
         dCONE = CONE[0].cree_dict_valeurs(CONE[0].mc_liste)
-        for i in dCONE.keys():
+        for i in list(dCONE.keys()):
             if dCONE[i] == None:
                 del dCONE[i]
 
@@ -95,7 +93,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 
         # RECUPERATION DU MAILLAGE A PARTIR DU MODELE
         __MAIL = aster.getvectjev(
-            string.ljust(MODELE.nom, 8) + '.MODELE    .LGRF        ')
+            MODELE.nom.ljust(8) + '.MODELE    .LGRF        ')
         __MAIL = __MAIL[0].strip()
         MAILLAGE = self.get_sd_avant_etape(__MAIL, self)
 
@@ -114,7 +112,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     dDEFI_CABLE = []
     for j in DEFI_CABLE:
         dDEFI_CABLE.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in dDEFI_CABLE[-1].keys():
+        for i in list(dDEFI_CABLE[-1].keys()):
             if dDEFI_CABLE[-1][i] == None:
                 del dDEFI_CABLE[-1][i]
 
@@ -124,7 +122,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     for i in dDEFI_CABLE:
 #   CAS OU ON RENTRE UNE TENSION INITIALE DU CABLE (TYPE_RELAX='ETCC_REPRISE')
         motscle3 = {}
-        if i.has_key('TENSION_CT') == 1:
+        if ('TENSION_CT' in i) == 1:
             motscle3 = {'TENSION_CT': i['TENSION_CT']}
 
         # CAS OU L'ON A DEFINI LE MOT-CLE "CONE"
@@ -139,10 +137,10 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
                 motscle2 = {}
                 motscle2['CREA_GROUP_NO'] = []
 
-                if i.has_key('GROUP_MA') == 1:
+                if ('GROUP_MA' in i) == 1:
                     __CAB = i['GROUP_MA']
 
-                    if type(GROUP_MA_BETON) in [types.TupleType, types.ListType]:
+                    if type(GROUP_MA_BETON) in [tuple, list]:
                         gma = list(GROUP_MA_BETON)
                     else:
                         gma = [GROUP_MA_BETON]
@@ -150,12 +148,12 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 
                     motscle2 = {
                         'CREA_GROUP_NO': [{'LONGUEUR': LONGUEUR, 'RAYON': RAYON, 'OPTION': 'TUNNEL', 'GROUP_MA': gma, 'GROUP_MA_AXE': __CAB, 'NOM': __NOM1}]}
-                if i.has_key('MAILLE') == 1:
+                if ('MAILLE' in i) == 1:
                     UTMESS('F', 'CABLE0_2')
-                if i.has_key('GROUP_NO_ANCRAGE') == 1:
+                if ('GROUP_NO_ANCRAGE' in i) == 1:
                     __PC1 = i['GROUP_NO_ANCRAGE'][0]
                     motscle2['CREA_GROUP_NO'][0]['GROUP_NO_ORIG'] = __PC1
-                if i.has_key('NOEUD_ANCRAGE') == 1:
+                if ('NOEUD_ANCRAGE' in i) == 1:
                     __PC1 = i['NOEUD_ANCRAGE'][0]
                     motscle2['CREA_GROUP_NO'][0]['NOEUD_ORIG'] = __PC1
 
@@ -175,10 +173,10 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
                 motscle2 = {}
                 motscle2['CREA_GROUP_NO'] = []
 
-                if i.has_key('GROUP_MA') == 1:
+                if ('GROUP_MA' in i) == 1:
                     __CAB = i['GROUP_MA']
 
-                    if type(GROUP_MA_BETON) in [types.TupleType, types.ListType]:
+                    if type(GROUP_MA_BETON) in [tuple, list]:
                         gma = list(GROUP_MA_BETON)
                     else:
                         gma = [GROUP_MA_BETON]
@@ -186,12 +184,12 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 
                     motscle2 = {
                         'CREA_GROUP_NO': [{'LONGUEUR': LONGUEUR, 'RAYON': RAYON, 'OPTION': 'TUNNEL', 'GROUP_MA': gma, 'GROUP_MA_AXE': __CAB, 'NOM': __NOM2}]}
-                if i.has_key('MAILLE') == 1:
+                if ('MAILLE' in i) == 1:
                     UTMESS('F', 'CABLE0_2')
-                if i.has_key('GROUP_NO_ANCRAGE') == 1:
+                if ('GROUP_NO_ANCRAGE' in i) == 1:
                     __PC1 = i['GROUP_NO_ANCRAGE'][1]
                     motscle2['CREA_GROUP_NO'][0]['GROUP_NO_ORIG'] = __PC1
-                if i.has_key('NOEUD_ANCRAGE') == 1:
+                if ('NOEUD_ANCRAGE' in i) == 1:
                     __PC1 = i['NOEUD_ANCRAGE'][1]
                     motscle2['CREA_GROUP_NO'][0]['NOEUD_ORIG'] = __PC1
 
@@ -205,14 +203,14 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
             # CREATION DES NOUVEAUX FACTEURS DU MOT-CLE "DEFI_CABLE" POUR
             # DEFI_CABLE_BP
             if dCONE['PRESENT'][0] == 'OUI' and dCONE['PRESENT'][1] == 'OUI':
-                if i.has_key('GROUP_MA') == 1 and i.has_key('GROUP_NO_ANCRAGE') == 1:
+                if ('GROUP_MA' in i) == 1 and ('GROUP_NO_ANCRAGE' in i) == 1:
                     motscles['DEFI_CABLE'].append(_F(GROUP_MA=i['GROUP_MA'],
                                                      GROUP_NO_ANCRAGE=i[
                                                      'GROUP_NO_ANCRAGE'],
                                                      GROUP_NO_FUT=(
                                                      __NOM1, __NOM2, ),
                                                      **motscle3), )
-                if i.has_key('GROUP_MA') == 1 and i.has_key('NOEUD_ANCRAGE') == 1:
+                if ('GROUP_MA' in i) == 1 and ('NOEUD_ANCRAGE' in i) == 1:
                     motscles['DEFI_CABLE'].append(_F(GROUP_MA=i['GROUP_MA'],
                                                      NOEUD_ANCRAGE=i[
                                                      'NOEUD_ANCRAGE'],
@@ -221,13 +219,13 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
                                                      **motscle3), )
 
             if dCONE['PRESENT'][0] == 'OUI' and dCONE['PRESENT'][1] == 'NON':
-                if i.has_key('GROUP_MA') == 1 and i.has_key('GROUP_NO_ANCRAGE') == 1:
+                if ('GROUP_MA' in i) == 1 and ('GROUP_NO_ANCRAGE' in i) == 1:
                     motscles['DEFI_CABLE'].append(_F(GROUP_MA=i['GROUP_MA'],
                                                      GROUP_NO_ANCRAGE=i[
                                                      'GROUP_NO_ANCRAGE'],
                                                      GROUP_NO_FUT=(__NOM1, ),
                                                      **motscle3), )
-                if i.has_key('GROUP_MA') == 1 and i.has_key('NOEUD_ANCRAGE') == 1:
+                if ('GROUP_MA' in i) == 1 and ('NOEUD_ANCRAGE' in i) == 1:
                     motscles['DEFI_CABLE'].append(_F(GROUP_MA=i['GROUP_MA'],
                                                      NOEUD_ANCRAGE=i[
                                                      'NOEUD_ANCRAGE'],
@@ -235,13 +233,13 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
                                                      **motscle3), )
 
             if dCONE['PRESENT'][0] == 'NON' and dCONE['PRESENT'][1] == 'OUI':
-                if i.has_key('GROUP_MA') == 1 and i.has_key('GROUP_NO_ANCRAGE') == 1:
+                if ('GROUP_MA' in i) == 1 and ('GROUP_NO_ANCRAGE' in i) == 1:
                     motscles['DEFI_CABLE'].append(_F(GROUP_MA=i['GROUP_MA'],
                                                      GROUP_NO_ANCRAGE=i[
                                                      'GROUP_NO_ANCRAGE'],
                                                      GROUP_NO_FUT=(__NOM2, ),
                                                      **motscle3), )
-                if i.has_key('GROUP_MA') == 1 and i.has_key('NOEUD_ANCRAGE') == 1:
+                if ('GROUP_MA' in i) == 1 and ('NOEUD_ANCRAGE' in i) == 1:
                     motscles['DEFI_CABLE'].append(_F(GROUP_MA=i['GROUP_MA'],
                                                      NOEUD_ANCRAGE=i[
                                                      'NOEUD_ANCRAGE'],
@@ -249,12 +247,12 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
                                                      **motscle3), )
 
             if dCONE['PRESENT'][0] == 'NON' and dCONE['PRESENT'][1] == 'NON':
-                if i.has_key('GROUP_MA') == 1 and i.has_key('GROUP_NO_ANCRAGE') == 1:
+                if ('GROUP_MA' in i) == 1 and ('GROUP_NO_ANCRAGE' in i) == 1:
                     motscles['DEFI_CABLE'].append(_F(GROUP_MA=i['GROUP_MA'],
                                                      GROUP_NO_ANCRAGE=i[
                                                      'GROUP_NO_ANCRAGE'],
                                                      **motscle3), )
-                if i.has_key('GROUP_MA') == 1 and i.has_key('NOEUD_ANCRAGE') == 1:
+                if ('GROUP_MA' in i) == 1 and ('NOEUD_ANCRAGE' in i) == 1:
                     motscles['DEFI_CABLE'].append(_F(GROUP_MA=i['GROUP_MA'],
                                                      NOEUD_ANCRAGE=i[
                                                      'NOEUD_ANCRAGE'],
@@ -262,25 +260,25 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 
         # CAS OU L'ON A PAS DEFINI LE MOT-CLE "CONE"
         else:
-            if i.has_key('GROUP_MA') == 1 and i.has_key('GROUP_NO_ANCRAGE') == 1:
+            if ('GROUP_MA' in i) == 1 and ('GROUP_NO_ANCRAGE' in i) == 1:
                 motscles['DEFI_CABLE'].append(_F(GROUP_MA=i['GROUP_MA'],
                                                  GROUP_NO_ANCRAGE=i[
                                                  'GROUP_NO_ANCRAGE'],
                                                  **motscle3), )
 
-            if i.has_key('GROUP_MA') == 1 and i.has_key('NOEUD_ANCRAGE') == 1:
+            if ('GROUP_MA' in i) == 1 and ('NOEUD_ANCRAGE' in i) == 1:
                 motscles['DEFI_CABLE'].append(_F(GROUP_MA=i['GROUP_MA'],
                                                  NOEUD_ANCRAGE=i[
                                                  'NOEUD_ANCRAGE'],
                                                  **motscle3), )
 
-            if i.has_key('MAILLE') == 1 and i.has_key('GROUP_NO_ANCRAGE') == 1:
+            if ('MAILLE' in i) == 1 and ('GROUP_NO_ANCRAGE' in i) == 1:
                 motscles['DEFI_CABLE'].append(_F(MAILLE=i['MAILLE'],
                                                  GROUP_NO_ANCRAGE=i[
                                                  'GROUP_NO_ANCRAGE'],
                                                  **motscle3), )
 
-            if i.has_key('MAILLE') == 1 and i.has_key('NOEUD_ANCRAGE') == 1:
+            if ('MAILLE' in i) == 1 and ('NOEUD_ANCRAGE' in i) == 1:
                 motscles['DEFI_CABLE'].append(_F(MAILLE=i['MAILLE'],
                                                  NOEUD_ANCRAGE=i[
                                                  'NOEUD_ANCRAGE'],

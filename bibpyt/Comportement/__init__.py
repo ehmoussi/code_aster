@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,13 +26,13 @@ Ce package contient la définition des comportements.
 import os.path as osp
 from glob import glob
 
-from cata_comportement import CataComportementError, LoiComportement, KIT, catalc
+from .cata_comportement import CataComportementError, LoiComportement, KIT, catalc
 
 
 def _init_cata(debug):
     """Import de tous les comportements"""
     from Execution.strfunc import ufmt
-    from cata_vari import DICT_NOM_VARI
+    from .cata_vari import DICT_NOM_VARI
     pkgdir = osp.dirname(__file__)
     pkg = osp.basename(pkgdir)
     l_mod = [osp.splitext(osp.basename(modname))[0]
@@ -49,19 +49,19 @@ def _init_cata(debug):
                 obj = getattr(mod, objname)
                 if isinstance(obj, LoiComportement):
                     if debug:
-                        print '<Comportement> Module "%s" - ajout objet "%s"' % (modname, objname)
+                        print('<Comportement> Module "%s" - ajout objet "%s"' % (modname, objname))
                     catalc.add(obj)
                     all_vari.update(obj.nom_vari)
-        except Exception, msg:
-            err = ufmt(u"Erreur import de '%s' : %s", modname, str(msg))
+        except Exception as msg:
+            err = ufmt("Erreur import de '%s' : %s", modname, str(msg))
             raise CataComportementError(err)
     if debug:
-        print catalc
+        print(catalc)
     # vérification que toutes les variables déclarées sont utilisées
     unused = list(set(DICT_NOM_VARI.keys()).difference(all_vari))
     if unused:
         unused.sort()
-        msg = u"Variables déclarées dans cata_vari mais non utilisées: %s" \
+        msg = "Variables déclarées dans cata_vari mais non utilisées: %s" \
             % ', '.join(unused)
         raise CataComportementError(msg)
 

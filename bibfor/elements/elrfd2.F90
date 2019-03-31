@@ -16,21 +16,27 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine elrfd2(elrefz, x, dimd, dff2, nno,&
-                  ndim)
-    implicit none
+subroutine elrfd2(elrefz, x, dimd, dff2, nno, ndim)
+!
+implicit none
+!
+#include "asterf_types.h"
 #include "asterfort/assert.h"
-    integer :: dimd, nno, ndim
-    real(kind=8) :: x(*), dff2(3, 3, *)
-    character(len=*) :: elrefz
-! person_in_charge: jacques.pellet at edf.fr
-! ======================================================================
+#include "asterfort/elrfno.h"
+!
+    character(len=*), intent(in) :: elrefz
+    integer, intent(in)          :: dimd
+    real(kind=8), intent(in)     :: x(*)
+    integer, intent(out)         :: nno, ndim
+    real(kind=8), intent(out)    :: dff2(3, 3, *)
+!
+! --------------------------------------------------------------------------------------------------
 !
 !
 ! BUT:   CALCUL DES DERIVEES 2EMES DES FONCTIONS DE FORME
 !        AU POINT DE COORDONNEES X
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !   IN   ELREFZ : NOM DE L'ELREFE (K8)
 !        X      : COORDONNEES DU POINT DE CALCUL : X(IDIM)
 !        DIMD   : DIMENSION DE DFF2
@@ -38,44 +44,26 @@ subroutine elrfd2(elrefz, x, dimd, dff2, nno,&
 !                 DFF2(IDIM,JDIM,INO)
 !        NNO    : NOMBRE DE NOEUDS
 !        NDIM   : DIMENSION DE L'ESPACE DE L'ELREFE : 1,2 OU 3
-!   -------------------------------------------------------------------
-    real(kind=8) :: x1, x2, x3, x4, d1, d2, d3, d4, x0, y0
-    real(kind=8) :: zero, undemi, un, deux, trois, quatre, six, sept, huit, uns4
+! --------------------------------------------------------------------------------------------------
 !
-! DEB ------------------------------------------------------------------
-    zero = 0.0d0
-    undemi = 0.5d0
-    un = 1.0d0
-    deux = 2.0d0
-    trois = 3.0d0
-    quatre = 4.0d0
-    six = 6.0d0
-    sept = 7.0d0
-    huit = 8.0d0
-    uns4 = un/quatre
+    real(kind=8) :: x1, x2, x3, x4, d1, d2, d3, d4, x0, y0
+    real(kind=8), parameter :: zero = 0.d0, un = 1.d0, deux = 2.d0, trois = 3.0d0, quatre = 4.d0
+    real(kind=8), parameter :: six = 6.0d0, sept = 7.0d0, huit = 8.0d0
+    real(kind=8), parameter :: undemi = 0.5d0, uns4 = 0.25d0
+!
+    call elrfno(elrefz, nno, ndim=ndim)
+    ASSERT(dimd.ge. (nno*ndim*ndim))
 !
 !     -- POUR LES ELEMENTS LINEAIRES : C'EST FACILE : 0.
 !     ------------------------------------------------------------------
    select case(elrefz)
         case('SE2')
-            nno = 2
-            ndim = 1
             dff2(1:ndim,1:ndim,1:nno) = 0.d0
         case('TR3')
-            nno = 3
-            ndim = 2
             dff2(1:ndim,1:ndim,1:nno) = 0.d0
         case('TE4')
-            nno = 4
-            ndim = 3
             dff2(1:ndim,1:ndim,1:nno) = 0.d0
-
-!
-!         ------------------------------------------------------------------
         case('TR6')
-            nno = 6
-            ndim = 2
-!
             dff2(1,1,1) = quatre
             dff2(2,1,1) = quatre
             dff2(1,2,1) = quatre
@@ -106,47 +94,9 @@ subroutine elrfd2(elrefz, x, dimd, dff2, nno,&
             dff2(1,2,6) = -quatre
             dff2(2,2,6) = -huit
 !
-!         ------------------------------------------------------------------
-        case('TW6')
-            nno = 6
-            ndim = 2
-!
-            dff2(1,1,1) = -un
-            dff2(2,1,1) = -un
-            dff2(1,2,1) = -un
-            dff2(2,2,1) = un
-!
-            dff2(1,1,2) = zero
-            dff2(2,1,2) = deux
-            dff2(1,2,2) = deux
-            dff2(2,2,2) = zero
-!
-            dff2(1,1,3) = +un
-            dff2(2,1,3) = -un
-            dff2(1,2,3) = -un
-            dff2(2,2,3) = -un
-!
-            dff2(1,1,4) = quatre
-            dff2(2,1,4) = zero
-            dff2(1,2,4) = zero
-            dff2(2,2,4) = zero
-!
-            dff2(1,1,5) = zero
-            dff2(2,1,5) = zero
-            dff2(1,2,5) = zero
-            dff2(2,2,5) = quatre
-!
-            dff2(1,1,6) = 2.8284271247461901d0
-            dff2(2,1,6) = 2.8284271247461901d0
-            dff2(1,2,6) = 2.8284271247461901d0
-            dff2(2,2,6) = 2.8284271247461901d0
-!
-!         ------------------------------------------------------------------
         case('TR7')
             x0 = x(1)
             y0 = x(2)
-            nno = 7
-            ndim = 2
 !
             dff2(1,1,1) = quatre - six * y0
             dff2(2,1,1) = sept - six * ( x0 + y0 )
@@ -187,8 +137,6 @@ subroutine elrfd2(elrefz, x, dimd, dff2, nno,&
         case('QU4')
             x0 = x(1)
             y0 = x(2)
-            nno = 4
-            ndim = 2
 !
             dff2(1,1,1) = zero
             dff2(2,1,1) = uns4
@@ -210,49 +158,9 @@ subroutine elrfd2(elrefz, x, dimd, dff2, nno,&
             dff2(1,2,4) = -uns4
             dff2(2,2,4) = zero
 !
-!         ------------------------------------------------------------------
-        case('QU6')
-            x0 = x(1)
-            y0 = x(2)
-            nno = 6
-            ndim = 2
-!
-            dff2(1,1,1) = undemi*(un - y0)
-            dff2(2,1,1) = zero
-            dff2(1,2,1) = zero
-            dff2(2,2,1) = undemi*(un - x0) - 0.25d0
-!
-            dff2(1,1,2) = undemi*(un - y0)
-            dff2(2,1,2) = zero
-            dff2(1,2,2) = zero
-            dff2(2,2,2) = 0.25d0 - undemi*(un + x0)
-!
-            dff2(1,1,3) = undemi*(un + y0)
-            dff2(2,1,3) = zero
-            dff2(1,2,3) = zero
-            dff2(2,2,3) = undemi*(un + x0) - 0.25d0
-!
-            dff2(1,1,4) = undemi*(un + y0)
-            dff2(2,1,4) = zero
-            dff2(1,2,4) = zero
-            dff2(2,2,4) = 0.25d0 - undemi*(un - x0)
-!
-            dff2(1,1,5) = y0 - un
-            dff2(2,1,5) = zero
-            dff2(1,2,5) = zero
-            dff2(2,2,5) = x0
-!
-            dff2(1,1,6) = -y0 - un
-            dff2(2,1,6) = zero
-            dff2(1,2,6) = zero
-            dff2(2,2,6) = -x0
-!
-!         ------------------------------------------------------------------
         case('QU8')
             x0 = x(1)
             y0 = x(2)
-            nno = 8
-            ndim = 2
 !
             dff2(1,1,1) = (un - y0) * undemi
             dff2(2,1,1) = (un - deux*x0 - deux*y0) * uns4
@@ -297,8 +205,6 @@ subroutine elrfd2(elrefz, x, dimd, dff2, nno,&
         case('QU9')
             x0 = x(1)
             y0 = x(2)
-            nno = 9
-            ndim = 2
 !
             dff2(1,1,1) = y0 * (y0 - un) * undemi
             dff2(2,1,1) = (x0 - undemi) * (y0 - undemi)
@@ -346,8 +252,6 @@ subroutine elrfd2(elrefz, x, dimd, dff2, nno,&
             dff2(2,2,9) = deux * (x0 + un) * (x0 - un)
 !         ------------------------------------------------------------------
         case('SE3')
-            nno = 3
-            ndim = 1
 !
             dff2(1,1,1) = un
             dff2(1,1,2) = un
@@ -355,8 +259,6 @@ subroutine elrfd2(elrefz, x, dimd, dff2, nno,&
 !
 !         ------------------------------------------------------------------
         case('SE4')
-            nno = 4
-            ndim = 1
 !
             x1 = -un
             x2 = un
@@ -380,9 +282,5 @@ subroutine elrfd2(elrefz, x, dimd, dff2, nno,&
             ndim = 0
 !
     end select
-!
-!     ------------------------------------------------------------------
-!
-    ASSERT(dimd.ge. (nno*ndim*ndim))
 !
 end subroutine

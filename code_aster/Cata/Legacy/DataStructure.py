@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,9 +103,9 @@ class grno(GEOM):
         """
         Fonction de verification de la longueur de la chaine
         """
-        if isinstance(valeur, (str,unicode)) and len(valeur.strip()) <= 24:
+        if isinstance(valeur, str) and len(valeur.strip()) <= 24:
             return valeur.strip()
-        raise ValueError(tr(u'On attend une chaine de caractères (de longueur <= 24).'))
+        raise ValueError(tr('On attend une chaine de caractères (de longueur <= 24).'))
     __convert__ = classmethod(__convert__)
 
 class ma(GEOM):
@@ -124,9 +124,9 @@ class grma(GEOM):
         """
         Fonction de verification de la longueur de la chaine
         """
-        if isinstance(valeur, (str,unicode)) and len(valeur.strip()) <= 24:
+        if isinstance(valeur, str) and len(valeur.strip()) <= 24:
             return valeur.strip()
-        raise ValueError(tr(u'On attend une chaine de caractères (de longueur <= 24).'))
+        raise ValueError(tr('On attend une chaine de caractères (de longueur <= 24).'))
     __convert__ = classmethod(__convert__)
 
 

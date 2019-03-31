@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,12 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-import E_ETAPE
+from . import E_ETAPE
 from os import times
 import aster
-import string
 from Noyau.N__F import _F
 from Noyau.N_info import message, SUPERV
-from strfunc import ufmt
+from .strfunc import ufmt
 
 
 class MACRO_ETAPE(E_ETAPE.ETAPE):
@@ -90,10 +89,9 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
                 self.detruit_sdprod()
                 self.parent.clean(1)
                 raise
-
-            if ier > 0:
+            if ier is not None and ier > 0:
                 # On termine le traitement
-                cr.fatal(_(u"Erreurs à l'exécution de la macro %s"), self.nom)
+                cr.fatal(_("Erreurs à l'exécution de la macro %s"), self.nom)
                 raise EOFError
 
             E_ETAPE.ETAPE.Exec(self)
@@ -146,10 +144,10 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
 
         ier = self.Build_alone()
 
-        if ier > 0:
+        if ier is not None and ier > 0:
             # On termine le traitement
             cr.fatal(
-                _(u"Erreurs dans la construction de la macro %s"), self.nom)
+                _("Erreurs dans la construction de la macro %s"), self.nom)
             raise EOFError
 
         E_ETAPE.ETAPE.Exec(self)
@@ -166,8 +164,8 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
         # (compte-rendu) pour stocker les erreurs eventuelles
         # et doit l'ajouter au cr de l'etape parent pour construire un
         # compte-rendu hierarchique
-        self.cr = self.CR(debut='Etape : ' + self.nom + '    ligne : ' + `self.appel[0]` +
-                          '    fichier : ' + `self.appel[1]`,
+        self.cr = self.CR(debut='Etape : ' + self.nom + '    ligne : ' + repr(self.appel[0]) +
+                          '    fichier : ' + repr(self.appel[1]),
                           fin='Fin Etape : ' + self.nom)
 
         # Si la liste des etapes est remplie avant l'appel à Build
@@ -183,10 +181,10 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
             # sous commandes ont ete realisees sauf dans le cas des INCLUDE
             ier = self._Build()
 
-            if ier > 0:
+            if ier is not None and ier > 0:
                 # On termine le traitement
                 self.cr.fatal(
-                    _(u"Erreurs dans la construction de la macro %s"), self.nom)
+                    _("Erreurs dans la construction de la macro %s"), self.nom)
                 raise EOFError
 
             # La macro de type INCLUDE doit etre executee avant ses sous etapes

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,9 +22,6 @@
 
 """
 """
-# Modules Python
-import string
-import types
 
 # Modules Eficas
 from Noyau.N_MCSIMP import MCSIMP
@@ -48,7 +45,7 @@ class OBJECT:
                         Cette methode est appelee par
                         EXECUTION.getfac (commandes.py)
         """
-        nomfac = string.strip(nom_motfac)
+        nomfac = nom_motfac.strip()
         taille = 0
         # On cherche d'abord dans les mots cles presents a l'exclusion des
         # BLOCs
@@ -69,9 +66,8 @@ class OBJECT:
         if taille == 0:
             assert(hasattr(self, 'definition'))
             assert(hasattr(self.definition, 'entites'))
-            if self.definition.entites.has_key(nomfac):
-                assert(
-                    type(self.definition.entites[nomfac]) == types.InstanceType)
+            if nomfac in self.definition.entites:
+                assert(isinstance(self.definition.entites[nomfac], object))
                 assert(hasattr(self.definition.entites[nomfac], 'statut'))
                 if self.definition.entites[nomfac].statut == 'd':
                     taille = 1

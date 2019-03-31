@@ -56,16 +56,16 @@ class FieldProjector(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if keywords.has_key("RESULTAT"):
-            if keywords.has_key("MODELE_2"):
+        if "RESULTAT" in keywords:
+            if "MODELE_2" in keywords:
                 self._result.appendModelOnAllRanks(keywords["MODELE_2"])
-            if keywords.has_key("MAILLAGE_2"):
+            if "MAILLAGE_2" in keywords:
                 self._result.setMesh(keywords["MAILLAGE_2"])
             self._result.update()
-        elif keywords.has_key("CHAM_GD"):
+        elif "CHAM_GD" in keywords:
             pass
         else:
-            if keywords.has_key("MAILLAGE_1"):
+            if "MAILLAGE_1" in keywords:
                 self._result.setFirstMesh(keywords["MAILLAGE_1"])
 
 

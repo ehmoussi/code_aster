@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------- */
-/* Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org             */
+/* Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org             */
 /* This file is part of code_aster.                                     */
 /*                                                                      */
 /* code_aster is free software: you can redistribute it and/or modify   */
@@ -85,7 +85,7 @@ ASTERINTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
         fprintf(fileOut, "attribut inexistant dans le jdc : '%s'\n\n", attr);
         MYABORT("erreur dans JDCGET");
     }
-    if (! (PyInt_Check(val) || PyLong_Check(val)) )
+    if (! PyLong_Check(val) )
         MYABORT("Seuls les attributs de type entier peuvent etre recuperes !");
 
     value = (ASTERINTEGER)PyLong_AsLong(val);
@@ -202,16 +202,16 @@ PyObject *args;
         return NULL;
 
     res = PyObject_CallMethodObjArgs(get_sh_coreopts(),
-                                     PyString_FromString("set_option"),
+                                     PyUnicode_FromString("set_option"),
                                      option, value, NULL);
     if ( !res ) MYABORT("erreur lors de l'appel a la methode CoreOptions.set_option");
-    sopt = PyString_AsString(option);
+    sopt = PyUnicode_AsUTF8(option);
     if (! strcmp(sopt, "tpmax")) {
         _reset_tpmax();
     }
 
     Py_DECREF(option);
-    Py_DECREF(value);
+    // Py_DECREF(value); Do not deallocate, stored in the 'info' dict.
     Py_DECREF(res);
 
     Py_INCREF(Py_None);
@@ -231,8 +231,8 @@ long asterc_getopt_long(_IN char *option, _OUT int *iret)
     long value = 0 ;
     *iret = 4;
     res = asterc_getopt(option);
-    if ( PyInt_Check(res) ) {
-        value = PyInt_AsLong(res);
+    if ( PyLong_Check(res) ) {
+        value = PyLong_AsLong(res);
         *iret = 0;
     } else if ( PyLong_Check(res) ) {
         value = PyLong_AsLong(res);
@@ -257,9 +257,6 @@ double asterc_getopt_double(_IN char *option, _OUT int *iret)
     if ( PyFloat_Check(res) ) {
         value = PyFloat_AsDouble(res);
         *iret = 0;
-    } else if ( PyInt_Check(res) ) {
-        value = (double)PyInt_AsLong(res);
-        *iret = 0;
     } else if ( PyLong_Check(res) ) {
         value = (double)PyLong_AsLong(res);
         *iret = 0;
@@ -281,8 +278,8 @@ char* asterc_getopt_string(_IN char *option, _OUT int *iret)
     STRING_SIZE lv;
     *iret = 4;
     res = asterc_getopt(option);
-    if ( PyString_Check(res) ) {
-        stmp = PyString_AsString(res);
+    if ( PyUnicode_Check(res) ) {
+        stmp = PyUnicode_AsUTF8(res);
         lv = strlen(stmp);
         value = MakeFStrFromCStr(stmp, strlen(stmp));
         *iret = 0;
@@ -394,7 +391,7 @@ PyObject *args;
     /* retour de la fonction */
     t_res = PyTuple_New(2);
     PyTuple_SetItem(t_res, 0, t_valres);
-    PyTuple_SetItem(t_res, 1, PyInt_FromLong((long)codret));
+    PyTuple_SetItem(t_res, 1, PyLong_FromLong((long)codret));
 
     FreeStr(nompar);
     free(valres);
@@ -445,7 +442,7 @@ PyObject *args;
     CALL_UTPTME(nompar, values, &codret);
 
     /* retour de la fonction */
-    res = PyInt_FromLong((long)codret);
+    res = PyLong_FromLong((long)codret);
 
     FreeStr(nompar);
     free(values);
@@ -477,6 +474,7 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     PyObject *tup_valk, *tup_vali, *tup_valr;
     PyObject *etype, *eval, *etb;
 
+    /* this module should be cached! */
     pModule = PyImport_ImportModule("Utilitai.Utmess");
     if ( pModule == NULL )
     {
@@ -497,7 +495,7 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     {
        kvar = valk + i*lvk;
        char* copyChaine = MakeCStrFromFStr(kvar, lvk);
-       PyTuple_SetItem( tup_valk, i, PyString_FromString(copyChaine));
+       PyTuple_SetItem( tup_valk, i, PyUnicode_FromString(copyChaine));
        FreeStr(copyChaine);
     }
 
@@ -516,7 +514,7 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     args = Py_BuildValue("s#s#OOO", typmess, ltype, idmess, lidmess, tup_valk,
                                     tup_vali, tup_valr, (int)*exc_typ);
     kwargs = PyDict_New();
-    pyfname = PyString_FromStringAndSize(fname, lfn);
+    pyfname = PyUnicode_FromStringAndSize(fname, lfn);
     iret = PyDict_SetItemString(kwargs, "files", pyfname);
     if (iret != 0) {
        MYABORT("error the given filename in utprin");
@@ -681,8 +679,8 @@ void DEFSSPPPPPPPPPPPP(TESTRESU_PRINT,testresu_print,
             val = PyFloat_FromDouble((double)(*valr));
             break;
         case 2:
-            ref = PyInt_FromLong((long)(*refi));
-            val = PyInt_FromLong((long)(*vali));
+            ref = PyLong_FromLong((long)(*refi));
+            val = PyLong_FromLong((long)(*vali));
             break;
         case 3:
             ref = PyComplex_FromDoubles((double)(*refc), (double)(*(refc+1)));
@@ -819,7 +817,7 @@ PyObject *args;
     } else {
         count = (int)PyTuple_Size(tupl);
         item = PyTuple_GetItem(tupl, 0);
-        if ( PyLong_Check(item) || PyInt_Check(item) ) {
+        if ( PyLong_Check(item) || PyLong_Check(item) ) {
             type = MPI_INTEGER8;
             buff = (void *)malloc((size_t)count * sizeof(ASTERINTEGER));
             convert(count, tupl, (ASTERINTEGER *)buff);
@@ -920,7 +918,7 @@ PyObject *args;
             strncpy(wrk, &arraystr[displ[i]], length[i]);
             wrk[length[i]] = '\0';
             DEBUG_MPI("arraystr: %s (len=%d)\n", wrk, (int)strlen(wrk));
-            if( PyTuple_SetItem(res, i, PyString_FromString(wrk))) {
+            if( PyTuple_SetItem(res, i, PyUnicode_FromString(wrk))) {
                 Py_DECREF(res);
                 free(wrk);
                 free(displ);
@@ -938,7 +936,7 @@ PyObject *args;
 #else
     // without MPI, create a tuple with in input string
     res = PyTuple_New((Py_ssize_t)1);
-    if( PyTuple_SetItem(res, 0, PyString_FromString(instr))) {
+    if( PyTuple_SetItem(res, 0, PyUnicode_FromString(instr))) {
         Py_DECREF(res);
         return NULL;
     }
@@ -965,10 +963,23 @@ static PyMethodDef methods[] = {
     { NULL, NULL, 0, NULL }
 };
 
+
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "_aster_core",
+        NULL,
+        -1,
+        methods,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
+
 #ifndef _WITHOUT_PYMOD_
-PyMODINIT_FUNC init_aster_core(void)
+PyObject* PyInit__aster_core(void)
 {
-    aster_core = Py_InitModule("_aster_core", methods);
+    aster_core = PyModule_Create(&moduledef);
     // until all fileOut are removed
     fileOut = stderr;
 
@@ -999,5 +1010,6 @@ PyMODINIT_FUNC init_aster_core(void)
     PyModule_AddIntConstant(aster_core, "_NO_EXPIR", 0);
 #endif
     PyModule_AddIntMacro(aster_core, ASTER_INT_SIZE);
+    return aster_core;
 }
 #endif

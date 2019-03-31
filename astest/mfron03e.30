@@ -65,7 +65,7 @@ l0=array([0,0,1], dtype=float)
 tens=[]
 tens_mu=[]
 
-for i in xrange(0,len(list_cfc)):
+for i in range(0,len(list_cfc)):
     tens.append(outer(list_cfc[i][1][1]/norm(list_cfc[i][1][1], 2), list_cfc[i][1][0]/norm(list_cfc[i][1][0], 2)))
     tens_mu.append(1./2.*(tens[i]+tens[i].transpose()))
 
@@ -80,7 +80,7 @@ def facteur_schmid(l=l0, list_orient=list_cfc):
     Elle retourne une liste contenant les facteurs de Schmid pour un systeme donne (ainsi qu'une valeur qui multipliee par sqrt(6) donne le denominateur et le numerateur)
     """
     schmid=[]
-    for i in xrange(0,len(list_orient)):
+    for i in range(0,len(list_orient)):
         schmid.append([])
         schmid[i].append(list_orient[i][0])
         schmid[i].append([dot(list_orient[i][1][0]/norm(list_orient[i][1][0], 2), l/norm(l,2)) * dot(list_orient[i][1][1]/norm(list_orient[i][1][1], 2), l/norm(l,2)), norm(l,2)**2, dot(list_orient[i][1][0], l) * dot(list_orient[i][1][1], l)])
@@ -88,7 +88,7 @@ def facteur_schmid(l=l0, list_orient=list_cfc):
     return schmid
 
 schmid=facteur_schmid()
-schmid=array([schmid[i][1][0] for i in xrange(0,len(schmid))])
+schmid=array([schmid[i][1][0] for i in range(0,len(schmid))])
 
 print "schmid",schmid
 
@@ -148,4 +148,3 @@ rho_sol = odeint(rhopoint, rho, t)
 
 rho_solb2 = rho_sol*BETA**2
 print 'rho final', rho_solb2[-1]
-

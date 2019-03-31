@@ -36,7 +36,7 @@ vnorY=[]
 vdirX=[]
 vdirY=[]
 
-for i in range(0,len(basefond0)/4):
+for i in range(0,len(basefond0)//4):
   ndfon.append(i+1)
   vnorX.append(basefond0[4*i])
   vnorY.append(basefond0[4*i+1])
@@ -50,7 +50,7 @@ TABL0=CREA_TABLE(LISTE=(_F(LISTE_I=ndfon,PARA='ND_FOND'),
                         _F(LISTE_R=vdirY,PARA='VDIRY'),
                         ),);
 
-for i in range(0,len(basefond0)/4):
+for i in range(0,len(basefond0)//4):
    TEST_TABLE(TABLE=TABL0,
               FILTRE=_F(  NOM_PARA = 'ND_FOND',
                           VALE_I = i+1),

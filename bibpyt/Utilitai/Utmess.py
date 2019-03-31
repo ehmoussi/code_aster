@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ ALL_UNIT = 4
 MAXLENGTH = 132
 LINE_WITH = 80
 
-contacter_assistance = _(u"""
+contacter_assistance = _("""
 Il y a probablement une erreur dans la programmation.
 Veuillez contacter votre assistance technique.""")
 
@@ -102,7 +102,7 @@ class MESSAGE_LOGGER(Singleton):
         for i in range(1, 51):
             self.default_args['i%d' % i] = 99999999
             self.default_args['r%d' % i] = 9.9999E99
-            self.default_args['k%d' % i] = u'xxxxxx'
+            self.default_args['k%d' % i] = 'xxxxxx'
         # mettre en cache les messages 'I' (et uniquement 'I')
         self._cache_txt = {}
         # arguments mpi : ligne de commande à envoyer au proc #0
@@ -176,7 +176,7 @@ class MESSAGE_LOGGER(Singleton):
                 if self._mpi_rank == 0:
                     l_unit = list_unit('F')
                     txt = _(
-                        u"On ne peut pas lever d'exception dans une exécution MPI.")
+                        "On ne peut pas lever d'exception dans une exécution MPI.")
                     for unite in l_unit:
                         self.affiche(unite, txt)
                 exc_typ = dictmess.get('exc_typ')
@@ -190,7 +190,7 @@ class MESSAGE_LOGGER(Singleton):
         """
         # homogénéisation : uniquement des tuples + strip des chaines de
         # caractères
-        valk, vali, valr = map(force_list, (valk, vali, valr))
+        valk, vali, valr = list(map(force_list, (valk, vali, valr)))
         valk = [k.strip() for k in valk]
 
         # variables passées au message
@@ -225,7 +225,7 @@ class MESSAGE_LOGGER(Singleton):
             # si le dictionnaire n'existe pas, on alertera au moment du
             # formatage.
             cata_msg = getattr(mod, 'cata_msg', {})
-        except Exception, msg:
+        except Exception as msg:
             # doit permettre d'éviter la récursivité (catamess réservé à
             # Utmess)
             if catamess != 'catamess':
@@ -233,7 +233,7 @@ class MESSAGE_LOGGER(Singleton):
                 self.print_message(code, 'CATAMESS_57', valk=(catamess, str(msg)))
                 if in_testcase():
                     raise ImportError(
-                        _(u"Fichier de messages non trouvé: {0}").format(str(msg)))
+                        _("Fichier de messages non trouvé: {0}").format(str(msg)))
             cata_msg = {}
 
         # corps du message
@@ -263,17 +263,17 @@ class MESSAGE_LOGGER(Singleton):
             }
             if code == 'I':
                 self._cache_txt[idmess] = convert(fmt_msg)
-        except Exception, msg:
+        except Exception as msg:
             if code == 'I':
                 code = 'A'
             if in_testcase():
-                raise SyntaxError(_(u"Impossible de construire le texte du "
-                                    u"message: {0}").format(str(msg)))
+                raise SyntaxError(_("Impossible de construire le texte du "
+                                    "message: {0}").format(str(msg)))
             dictmess = {
                 'code': code,
                 'flags': 0,
                 'id_message': idmess,
-                'corps_message' : _(u"""Erreur de programmation.
+                'corps_message' : _("""Erreur de programmation.
 Le message %s n'a pas pu être formaté correctement.
 Arguments :
     entiers : %s
@@ -290,12 +290,12 @@ Exception : %s
                 'context_info': '',
             }
             args = (idmess, vali, valr, valk, fmt_msg,
-                    ''.join(traceback.format_tb(sys.exc_traceback)),
+                    ''.join(traceback.format_tb(sys.exc_info()[2])),
                     msg, contacter_assistance)
             # cette étape ne doit jamais faire planter !
             try:
                 dictmess['corps_message'] = dictmess['corps_message'] % args
-            except Exception, exc:
+            except Exception as exc:
                 dictmess['corps_message'] = repr(args)
         # limite la longueur des lignes
         dictmess['corps_message'] = cut_long_lines(
@@ -376,7 +376,7 @@ Exception : %s
         si False, on n'écrit que sur les fichiers habituels (MESSAGE, RESULTAT,
         ERREUR) ou bien dans 'files' si fournit.
         """
-        if type(files) in (str, unicode):
+        if type(files) in (str, str):
             files = files.strip()
         if len(self._buffer) < 1:
             return None
@@ -443,7 +443,7 @@ Exception : %s
         pour chacune d'elle et un indicateur disant si elle a été masquée ou pas."""
         s_alarm = set(self._ignored_alarm.keys())
         if not only_ignored:
-            s_alarm.update(self.count_alarm_tot.keys())
+            s_alarm.update(list(self.count_alarm_tot.keys()))
         l_all = list(s_alarm)
         l_all.sort()
         # occurrences
@@ -454,7 +454,7 @@ Exception : %s
                 l_alarm.append(idmess)
                 l_occ.append(nb)
                 l_masq.append(int(self._ignored_alarm.get(idmess) is not None))
-        return zip(l_alarm, l_occ, l_masq)
+        return list(zip(l_alarm, l_occ, l_masq))
 
     def get_info_alarm_nb(self, only_ignored=False):
         """Retourne le nombre d'alarme émises (et non masquées)."""
@@ -569,27 +569,27 @@ Exception : %s
         charv = '!'    # vertical
         charc = '!'    # coin
         dcomm = {
-            'A' : _(u"""Ceci est une alarme. Si vous ne comprenez pas le sens de cette
+            'A' : _("""Ceci est une alarme. Si vous ne comprenez pas le sens de cette
 alarme, vous pouvez obtenir des résultats inattendus !"""),
-            'E' : _(u"""Cette erreur sera suivie d'une erreur fatale."""),
-            'S' : _(u"""Cette erreur est fatale. Le code s'arrête. Toutes les étapes
+            'E' : _("""Cette erreur sera suivie d'une erreur fatale."""),
+            'S' : _("""Cette erreur est fatale. Le code s'arrête. Toutes les étapes
 du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
-            'F' : _(u"""Cette erreur est fatale. Le code s'arrête."""),
+            'F' : _("""Cette erreur est fatale. Le code s'arrête."""),
         }
 
         # format complet
         format_general = {
-            'decal': u'   ',
-            'header' : u"""<%(type_message)s> %(str_id_message)s""",
-            'ligne': u'%(charv)s %%-%(maxlen)ds %(charv)s',
-            'corps'  : u"""%(header)s
+            'decal': '   ',
+            'header' : """<%(type_message)s> %(str_id_message)s""",
+            'ligne': '%(charv)s %%-%(maxlen)ds %(charv)s',
+            'corps'  : """%(header)s
 
 %(corps_message)s
 %(context_info)s
 
 %(commentaire)s
 """,
-            'final'  : u"""
+            'final'  : """
 %(separateur)s
 %(corps)s
 %(separateur)s
@@ -598,12 +598,12 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
         }
         # format light pour les infos
         format_light = {
-            'decal': u'',
-            'header' : u"""<%(type_message)s> """,
-            'ligne': u'%%s',
-            'corps'  : u"""%(corps_message)s
+            'decal': '',
+            'header' : """<%(type_message)s> """,
+            'ligne': '%%s',
+            'corps'  : """%(corps_message)s
 %(context_info)s""",
-            'final'  : u"""%(corps)s""",
+            'final'  : """%(corps)s""",
         }
         dmsg = dictmess.copy()
         dmsg['type_message'] = self.get_type_message(dictmess)
@@ -694,7 +694,7 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
         # tout dans un try/except car c'est du bonus, il ne faudrait pas
         # planter !
         try:
-            if ctxt_msg.has_key('CONCEPT'):
+            if 'CONCEPT' in ctxt_msg:
                 l_co = [dicarg[arg]
                         for arg in force_list(ctxt_msg['CONCEPT'])]
                 for co in l_co:

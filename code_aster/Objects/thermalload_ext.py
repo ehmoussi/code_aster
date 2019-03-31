@@ -29,7 +29,8 @@ from libaster import ThermalLoad
 from ..Utilities import injector
 
 
-class ExtendedThermalLoad(injector(ThermalLoad), ThermalLoad):
+@injector(ThermalLoad)
+class ExtendedThermalLoad(object):
     cata_sdj = "SD.sd_char_ther.sd_char_ther"
 
     def __getinitargs__(self):

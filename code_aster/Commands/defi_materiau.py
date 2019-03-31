@@ -56,14 +56,14 @@ class MaterialDefinition(ExecuteCommand):
                 self._result.setReferenceMaterial(mater)
         classByName = MaterialDefinition._byKeyword()
         materByName = self._buildInstance(keywords, classByName)
-        for fkwName, fkw in keywords.iteritems():
+        for fkwName, fkw in keywords.items():
             if type(fkw) in (list, tuple):
                 assert len(fkw) == 1
                 fkw = fkw[0]
             # only see factor keyword
             if not isinstance(fkw, dict):
                 continue
-            if materByName.has_key(fkwName):
+            if fkwName in materByName:
                 matBehav = materByName[fkwName]
                 klassName = matBehav.getName()
             else:
@@ -73,7 +73,7 @@ class MaterialDefinition(ExecuteCommand):
                                               .format(fkwName))
                 matBehav = klass()
                 klassName = klass.__name__
-            for skwName, skw in fkw.iteritems():
+            for skwName, skw in fkw.items():
                 if skwName == "ORDRE_PARAM":
                     matBehav.setSortedListParameters(list(skw))
                     continue
@@ -87,17 +87,17 @@ class MaterialDefinition(ExecuteCommand):
                 if type(skw) in (float, int, numpy.float64):
                     cRet = matBehav.setDoubleValue(iName, float(skw))
                     if not cRet:
-                        print ValueError("Can not assign keyword '{1}'/'{0}' "
+                        print(ValueError("Can not assign keyword '{1}'/'{0}' "
                                          "(as '{3}'/'{2}') "
                                          .format(skwName, fkwName, iName,
-                                                 klassName))
+                                                 klassName)))
                 elif type(skw) is complex:
                     cRet = matBehav.setComplexValue(iName, skw)
                     if not cRet:
-                        print ValueError("Can not assign keyword '{1}'/'{0}' "
+                        print(ValueError("Can not assign keyword '{1}'/'{0}' "
                                          "(as '{3}'/'{2}') "
                                          .format(skwName, fkwName, iName,
-                                                 klassName))
+                                                 klassName)))
                 elif type(skw) is str:
                     cRet = matBehav.setStringValue(iName, skw)
                 elif type(skw) is Table:
@@ -137,8 +137,8 @@ class MaterialDefinition(ExecuteCommand):
             dict: Behaviour instances from keywords of command.
         """
         objects = {}
-        for materName, skws in keywords.iteritems():
-            if dictClasses.has_key(materName):
+        for materName, skws in keywords.items():
+            if materName in dictClasses:
                 materClass = dictClasses[materName]
                 if materClass.hasConvertibleValues():
                     objects[materName] = materClass()
@@ -157,7 +157,7 @@ class MaterialDefinition(ExecuteCommand):
                 assert len(skws) == 1
                 skws = skws[0]
             if isinstance(skws, _F) or type(skws) is dict:
-                for kwName, kwValue in skws.iteritems():
+                for kwName, kwValue in skws.items():
                     curType = type(kwValue)
                     mandatory = False
                     if kwName == "ORDRE_PARAM":
@@ -205,7 +205,7 @@ class MaterialDefinition(ExecuteCommand):
         """
         import code_aster.Objects as all_types
         objects = {}
-        for name, obj in all_types.__dict__.items():
+        for name, obj in list(all_types.__dict__.items()):
             if not isinstance(obj, type):
                 continue
             if not issubclass(obj, GeneralMaterialBehaviour):

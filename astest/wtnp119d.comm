@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
 # SDVERI='NON' car la verification est trop couteuse en CPU
 
 import sys
-import string
 import os
 import numpy as NP
 
@@ -79,13 +78,13 @@ PWAGO0    = PGAGO0+P2THMINIT-PCAGO0
 SIPAGO0   = Sipinit_de_Pg(BIOTAGO,PGAGO0+P2THMINIT)
 SINETAGO0  = Sinetinit(SITOTAGO0,SIPAGO0)
 
-print 'SITOTAGO0 ',  SITOTAGO0
-print 'PWAGO0    ',  PWAGO0
-print 'PGAGO0    ',  PGAGO0
-print 'PCAGO0    ',  PCAGO0
-print 'SATAGO0   ',  SATAGO0
-print 'SIPAGO0   ',  SIPAGO0
-print 'SINETAGO0 ',  SINETAGO0
+print('SITOTAGO0 ',  SITOTAGO0)
+print('PWAGO0    ',  PWAGO0)
+print('PGAGO0    ',  PGAGO0)
+print('PCAGO0    ',  PCAGO0)
+print('SATAGO0   ',  SATAGO0)
+print('SIPAGO0   ',  SIPAGO0)
+print('SINETAGO0 ',  SINETAGO0)
 #
 #
 #***********************************************************************

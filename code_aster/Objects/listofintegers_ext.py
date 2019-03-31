@@ -29,5 +29,6 @@ from libaster import ListOfIntegers
 from ..Utilities import injector
 
 
-class ExtendedListOfIntegers(injector(ListOfIntegers), ListOfIntegers):
+@injector(ListOfIntegers)
+class ExtendedListOfIntegers(object):
     cata_sdj = "SD.sd_listis.sd_listis"

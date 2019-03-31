@@ -20,7 +20,6 @@
 #
 
 from code_aster.Cata.Syntax import _F
-from types import ListType, TupleType
 
 
 def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,

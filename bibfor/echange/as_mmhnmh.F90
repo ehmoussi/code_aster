@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,8 +32,8 @@ subroutine as_mmhnmh(fid, n, cret)
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
-    call mmhnmh(to_med_int(fid), nm, cretm)
-    n=to_aster_int(nm)
-    cret=to_aster_int(cretm)
+    call mmhnmh(to_med_idt(fid), nm, cretm)
+    n = to_aster_int(nm)
+    cret = to_aster_int(cretm)
 #endif
 end subroutine

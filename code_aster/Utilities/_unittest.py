@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,7 +19,7 @@
 
 import unittest
 
-from Tester import TestCase
+from .Tester import TestCase
 
 
 class TestTester( unittest.TestCase ):

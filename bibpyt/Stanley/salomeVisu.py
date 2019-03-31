@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,16 +20,15 @@
 debug = False
 
 import os
-import commands
-import string
+import subprocess
 import sys
 import socket
 import getpass
 import os.path as osp
 from Utilitai.Utmess import UTMESS
 # from pylotage.TOOLS import *
-from graphiqueTk import *
-import cata_champs
+from .graphiqueTk import *
+from . import cata_champs
 cata = cata_champs.CATA_CHAMPS()
 
 from code_aster.Commands import EXEC_LOGICIEL
@@ -65,7 +64,7 @@ class VISU:
         self.studyName = None               # nom de l'etude SALOME dans laquelle on fait la visualisation
 
         if debug:
-            print "AA1/param=", self.param, dir(self.param)
+            print("AA1/param=", self.param, dir(self.param))
 
         if param['Visualiseur'] == 'POSTPRO':
             self.chemin_script = osp.join(TEMPLATESDIR, 'salomeScript.py')
@@ -80,7 +79,7 @@ class VISU:
         self.mode = param['mode']
 
         if debug:
-            print "AA1/", self.salome_host, self.salome_port, self.salome_runscript, self.machine_salome_login, self.mode
+            print("AA1/", self.salome_host, self.salome_port, self.salome_runscript, self.machine_salome_login, self.mode)
         if self.salome_host in (None, '', 'localhost'):
             self.mode = 'LOCAL'
         if self.mode == 'LOCAL':
@@ -138,7 +137,7 @@ class VISU:
         except:
             pass
         if debug:
-            print 'AA1/Studies list=', result
+            print('AA1/Studies list=', result)
         if len(result) == 0:
             UTMESS('A', 'STANLEY_19', valk=[
                    self.salome_host, str(self.salome_port), self.salome_runscript])
@@ -198,7 +197,7 @@ class ISOVALEURS(VISU):
         self.visuType = self.__visuType(self.selection)
 
         if debug:
-            print "AA3/", self.fichier, self.visuType, self.selection
+            print("AA3/", self.fichier, self.visuType, self.selection)
 
         # et enfin la visualisation..
         self.Show(self.fichier, self.visuType)
@@ -229,7 +228,7 @@ class ISOVALEURS(VISU):
         else:
             result = ScalarMap
             # Champ sur la deformee
-            if options.has_key('case_sur_deformee'):
+            if 'case_sur_deformee' in options:
                 if options['case_sur_deformee'] == 1:
                     result = DeformedShapeOnField
         return result

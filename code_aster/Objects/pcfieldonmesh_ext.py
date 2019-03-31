@@ -29,7 +29,8 @@ from libaster import PCFieldOnMeshDouble
 from ..Utilities import injector
 
 
-class ExtendedPCFieldOnMeshDouble(injector(PCFieldOnMeshDouble), PCFieldOnMeshDouble):
+@injector(PCFieldOnMeshDouble)
+class ExtendedPCFieldOnMeshDouble(object):
     cata_sdj = "SD.sd_carte.sd_carte"
 
     def __getinitargs__(self):
