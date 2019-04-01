@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -112,34 +112,34 @@ SIF_2 = [None]*(nbc*nbcalc)
 TG_1 = [None]*(nbc*nbcalc)
 
 VALE_CALC=[
-    193535.384152,
-    193549.779991,
-    0.214872834903,
-    109709.078486,
-    109736.748608,
-    193537.102152,
-    193547.003263,
-    0.214876544533,
-    109709.22553,
-    109745.682462,
-    194036.947493,
-    111199.346009,
-    194129.634718,
-    111199.657501,
+    193535.95145155743,
+    193547.49157331363,
+    0.214886283345289,
+    109712.34624607164,
+    109744.19725454596,
+    193537.58289009257,
+    193547.06398518337,
+    0.21488565313253236,
+    109707.9743369463,
+    109752.20455097088,
+    194049.90031797372,
+    111193.87676800124,
+    194133.8993616728,
+    111241.88091828795,
 ]
 ct = -1
 for i in range(nbcalc) :
 
-   # on passe pas un string pour que l evaluation de la fonction se fasse a chaque pas
-   alpha = str(eval('alphaf[i]*pi/180.'))
+   alpha = alphaf[i]*pi/180.
 
    FISS[i]=DEFI_FISS_XFEM(MAILLAGE=MAILLAGE,
                           DEFI_FISS=_F(
                                        FORM_FISS  = 'SEGMENT',
-                                       PFON_ORIG  = (-A*cos(eval(alpha))/2,-A*sin(eval(alpha))/2, 0.),
-                                       PFON_EXTR  = ( A*cos(eval(alpha))/2, A*sin(eval(alpha))/2, 0.),
+                                       PFON_ORIG  = (-A*cos(alpha)/2,-A*sin(alpha)/2, 0.),
+                                       PFON_EXTR  = ( A*cos(alpha)/2, A*sin(alpha)/2, 0.),
                                        ),
-                          TYPE_ENRI_FOND='GEOMETRIQUE',NB_COUCHES=4
+                          TYPE_ENRI_FOND='GEOMETRIQUE',
+                          NB_COUCHES=4,
                           )
 
    MODELK[i]=MODI_MODELE_XFEM(MODELE_IN=MODELEIN,FISSURE=FISS[i])
@@ -160,8 +160,8 @@ for i in range(nbcalc) :
 
    # SOLUTION ANALYTIQUE (handbook tada p42)
    fab=1.0+0.128*(A/W)-0.288*(A/W)**2+1.525*(A/W)**3
-   K1REF=-PRES*sqrt(pi*A/2.)*fab*cos(eval(alpha))**2
-   K2REF=-PRES*sqrt(pi*A/2.)*fab*cos(eval(alpha))*sin(eval(alpha))
+   K1REF=-PRES*sqrt(pi*A/2.)*fab*cos(alpha)**2
+   K2REF=-PRES*sqrt(pi*A/2.)*fab*cos(alpha)*sin(alpha)
    GREF = (1-nu**2)/E*(K1REF**2+K2REF**2)
 
    for j in range(0,nbc) :
