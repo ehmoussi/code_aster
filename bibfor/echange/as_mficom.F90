@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,13 +28,14 @@ subroutine as_mficom(nom, hdfok, medok, cret)
 #include "asterc/hdfclf.h"
 #include "med/mficom.h"
 ! person_in_charge: nicolas.sellenet at edf.fr
-    aster_int :: cret, hdfok, medok, fid
+    aster_int :: cret, hdfok, medok
+    med_idt :: fid
     character(len=*) :: nom
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_int :: cret4, hdfok4, medok4
 #endif
     cret = 0
@@ -50,11 +51,11 @@ subroutine as_mficom(nom, hdfok, medok, cret)
         medok = 0
     endif
     if (cret.eq.0) then
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
         call mficom(nom, hdfok4, medok4, cret4)
-        cret = int(cret4, 8)
-        hdfok = int(hdfok4, 8)
-        medok = int(medok4, 8)
+        cret = to_aster_int(cret4)
+        hdfok = to_aster_int(hdfok4)
+        medok = to_aster_int(medok4)
 #else
         call mficom(nom, hdfok, medok, cret)
 #endif

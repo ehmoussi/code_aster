@@ -31,14 +31,15 @@ subroutine as_mfaofi(fid, maa, ind, fam, num,&
 #include "asterfort/utmess.h"
 #include "med/mfaofi.h"
 !
-    aster_int :: fid, num, attid(*), attval(*), natt, cret, ind
+    med_idt :: fid
+    aster_int :: num, attid(*), attval(*), natt, cret, ind
     character(len=*) :: maa, fam, attdes(*), gro(*)
 !
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_int, allocatable :: attid4(:), attva4(:)
     med_int :: cret4, num4
 !

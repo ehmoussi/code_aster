@@ -53,7 +53,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-integer :: fid
+med_idt :: fid
 integer :: nbnoeu, nbgrno, nbgrma
 integer :: typgeo(MT_NTYMAX), nmatyp(MT_NTYMAX)
 integer :: infmed

@@ -27,13 +27,14 @@ subroutine as_mprrvw(fid, nom, numdt, numit, dt,&
 #include "asterfort/utmess.h"
 #include "med/mprrvw.h"
     character(len=*) :: nom
-    aster_int :: fid, numdt, numit, cret
+    med_idt :: fid
+    aster_int :: numdt, numit, cret
     real(kind=8) :: dt, val
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: numdt4, numit4, cret4
     fidm = to_med_idt(fid)

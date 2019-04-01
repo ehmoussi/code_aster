@@ -131,7 +131,7 @@ integer :: codret
     integer :: adproa, adnucm
     integer :: nrimpr, codre2, retsav
     integer :: ideb, ifin
-    integer :: idfimd
+    med_idt :: idfimd
     integer :: iaux
     aster_logical :: ficexi
     character(len=16), pointer :: cname(:) => null()

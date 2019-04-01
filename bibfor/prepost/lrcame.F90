@@ -123,7 +123,8 @@ real(kind=8) :: inst, prec
     integer, parameter :: ednoeu=3, edmail=0, edconn=1, ednoda=0
     integer, parameter :: edlect=0, typnoe=0, ntypel=26, npgmax=27
     integer :: iaux, letype, vlib(3), vfic(3), iret
-    integer :: idfimd, ifimed, indpg(ntypel, npgmax)
+    med_idt :: idfimd, ifimed
+    integer :: indpg(ntypel, npgmax)
     integer :: nbvato, nbcmfi, nbval, nbma, nbprof
     integer :: adsl, adsv, adsd, i, j
     integer :: ncmput, existc, ndim, npas, lgproa

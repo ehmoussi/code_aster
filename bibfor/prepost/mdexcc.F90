@@ -92,7 +92,8 @@ subroutine mdexcc(nofimd, idfimd, nochmd, nbcmpc, nomcmc,&
 !
 !
     integer :: lnochm, jnbcha, jnocha, jcmpch
-    integer :: idfimd, nbcham, nbcha2
+    med_idt :: idfimd 
+    integer :: nbcham, nbcha2
     integer :: iaux, jaux, kaux, iret, iouv
     integer :: adncmp, aducmp, adncmc, adncfi, nseqca
     aster_logical :: ficexi, dejouv

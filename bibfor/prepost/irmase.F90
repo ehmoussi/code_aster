@@ -57,7 +57,8 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: idfimd, nbpoin, jcoopt, icouch, irayon
+    med_idt :: idfimd
+    integer :: nbpoin, jcoopt, icouch, irayon
     integer :: edleaj, postmp, codret, edcart, jmasup, jcesd, ibid
     integer :: edfuin, ndim, nbmasu, imasup, edcar2, jcesl
     integer :: nbcmp, isp, icmp, iad

@@ -55,7 +55,8 @@ subroutine irmpav(nomcon, ifichi, linopa, numdt, numit,&
 !     ------------------------------------------------------------------
 !
 !     ------------------------------------------------------------------
-    integer :: edleaj, idfimd, codret, hdfok, medok, jlnopa
+    med_idt :: idfimd
+    integer :: edleaj, codret, hdfok, medok, jlnopa
     integer :: nbpara, inopar, iaux
     character(len=1) :: saux01
     character(len=8) :: saux08

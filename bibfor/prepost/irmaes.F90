@@ -43,8 +43,8 @@ implicit none
 character(len=8)  :: nomaas, nomtyp(*), sdcarm, carael
 character(len=64) :: nomamd
 integer :: nbimpr, caimpi(10,nbimpr), modnum(MT_NTYMAX)
-integer :: nnotyp(*), nuanom(MT_NTYMAX,*)
-integer :: idfimd, nvtyge
+integer :: nnotyp(*), nuanom(MT_NTYMAX,*), nvtyge
+med_idt :: idfimd
 !
 ! --------------------------------------------------------------------------------------------------
 !

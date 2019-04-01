@@ -28,7 +28,7 @@ implicit none
 #include "asterfort/jedetr.h"
 #include "asterfort/wkvect.h"
 !
-integer :: fid
+med_idt :: fid
 integer :: typent, nbrent, nbgrou
 integer :: nufaen(nbrent)
 integer :: typgeo(*), nmatyp(*)

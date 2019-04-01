@@ -38,7 +38,7 @@ implicit none
 #include "asterfort/setgfa.h"
 #include "asterfort/utmess.h"
 !
-integer :: fid
+med_idt :: fid
 integer :: typgeo(*), nmatyp(*)
 integer :: typent, nbrent, nbgrou
 integer :: nbec

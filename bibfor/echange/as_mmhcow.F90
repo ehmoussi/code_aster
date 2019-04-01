@@ -28,14 +28,14 @@ subroutine as_mmhcow(fid, maa, coo, modcoo, n,&
 #include "med/mmhcow.h"
     character(len=*) :: maa
     real(kind=8) :: coo(*)
-    aster_int :: fid
+    med_idt :: fid
     aster_int :: n, cret, modcoo, mdnont, mdnoit
     real(kind=8) :: mdnodt
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: n4, cret4, modco4, mdnoi4, mdnon4
     mdnont = -1

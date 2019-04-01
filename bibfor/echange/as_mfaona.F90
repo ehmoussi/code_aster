@@ -25,13 +25,14 @@ subroutine as_mfaona(fid, maa, ind, n, cret)
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "med/mfaona.h"
-    aster_int :: fid, ind, n, cret
+    med_idt :: fid
+    aster_int :: ind, n, cret
     character(len=*) :: maa
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: ind4, n4, cret4
     fidm = to_med_idt(fid)
