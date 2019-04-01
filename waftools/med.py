@@ -94,6 +94,7 @@ def check_hdf5(self):
     self.check_hdf5_headers()
     self.check_hdf5_version()
     self.check_hdf5_api()
+    self.check_sizeof_hid()
 
 @Configure.conf
 def check_hdf5_libs(self):
@@ -159,6 +160,21 @@ def check_hdf5_api(self):
         raise
     else:
         self.end_msg(v18 and 'default v18' or '-DH5_NO_DEPRECATED_SYMBOLS')
+
+@Configure.conf
+def check_sizeof_hid(self):
+    fragment = r'''
+#include <stdio.h>
+#include <hdf5.h>
+int main(void){
+    hid_t integer;
+    printf("%d", (int)sizeof(integer));
+    return 0;
+}'''
+    self.code_checker('HDF_HID_SIZE', self.check_cc, fragment,
+                      'Checking size of hid_t integers',
+                      'unexpected value for sizeof(hid_t): %s',
+                      into=(4, 8), use='HDF5')
 
 @Configure.conf
 def check_med(self):
