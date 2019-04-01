@@ -25,6 +25,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmprof.h"
 #include "asterfort/nuendo.h"
@@ -62,7 +63,7 @@ character(len=19), intent(in) :: sdnume
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv, i_load, nb_load_init
+    integer :: ifm, niv, i_load, nb_load_init, iret
     character(len=8) :: lag12
     character(len=24) :: sdnuro, sdnuen, sdnuco
     character(len=24) :: lload_info, lload_list, load_n, load_type
@@ -89,10 +90,22 @@ character(len=19), intent(in) :: sdnume
         load_n = v_load_list(i_load)
         call jeveuo(load_n(1:19)//'._TCO', 'L', vk24 = v_tco)
         if( v_tco(1).eq.'CHAR_MECA' ) then
-            call jeveuo(load_n(1:8)//'.CHME.LIGRE.LGRF', 'L', vk8 = v_lgrf)
-            lag12 = v_lgrf(3)
-            if( lag12.eq.'LAG1' ) then
-                call utmess('F', 'MECANONLINE_5')
+            call jeexin(load_n(1:8)//'.CHME.LIGRE.LGRF', iret)
+            if( iret.ne.0 ) then
+                call jeveuo(load_n(1:8)//'.CHME.LIGRE.LGRF', 'L', vk8 = v_lgrf)
+                lag12 = v_lgrf(3)
+                if( lag12.eq.'LAG1' ) then
+                    call utmess('F', 'MECANONLINE_5')
+                endif
+            endif
+        else if( v_tco(1).eq.'CHAR_THER' ) then
+            call jeexin(load_n(1:8)//'.CHTH.LIGRE.LGRF', iret)
+            if( iret.ne.0 ) then
+                call jeveuo(load_n(1:8)//'.CHTH.LIGRE.LGRF', 'L', vk8 = v_lgrf)
+                lag12 = v_lgrf(3)
+                if( lag12.eq.'LAG1' ) then
+                    call utmess('F', 'MECANONLINE_5')
+                endif
             endif
         endif
     enddo
