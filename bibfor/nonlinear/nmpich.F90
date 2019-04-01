@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,11 +18,11 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmpich(modele         , numedd, ds_material, carele    ,&
-                  ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
-                  sdpilo         , iterat, sdnume, deltat    , valinc    ,&
-                  solalg         , veelem, veasse, sddisc    , eta       ,&
-                  rho            , offset, ldccvg, pilcvg    , matass)
+subroutine nmpich(modele         , numedd, ds_material, carele    , ds_system ,&
+                  ds_constitutive, lischa, fonact     , ds_measure, ds_contact,&
+                  sdpilo         , iterat, sdnume     , deltat    , valinc    ,&
+                  solalg         , veelem, veasse     , sddisc    , eta       ,&
+                  rho            , offset, ldccvg     , pilcvg    , matass)
 !
 use NonLin_Datastructure_type
 !
@@ -43,6 +43,7 @@ type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
 !
@@ -65,6 +66,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! IN  SDPILO : SD PILOTAGE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! In  ds_contact       : datastructure for contact management
+! In  ds_system        : datastructure for non-linear system management
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
@@ -105,27 +107,27 @@ character(len=19) :: solalg(*), valinc(*)
 ! --- INITIALISATIONS
 !
     pilcvg = -1
-    rho = 1.d0
+    rho    = 1.d0
     offset = 0.d0
     nbatte = 2
     irecli = ASTER_FALSE
 !
 ! --- RESOLUTION DE L'EQUATION DE PILOTAGE
 !
-    call nmpilo(sdpilo, deltat, rho            , solalg    , veasse,&
+    call nmpilo(sdpilo, deltat     , rho            , solalg    , veasse,&
                 modele, ds_material, ds_constitutive, ds_contact, valinc,&
-                nbatte, numedd, nbeffe         , proeta    , pilcvg,&
+                nbatte, numedd     , nbeffe         , proeta    , pilcvg,&
                 carele)
 !
 ! - CHOIX DE ETA_PILOTAGE
 !
     if (pilcvg .ne. 1) then
-        call nmceta(modele         , numedd, ds_material, carele    ,&
-                    ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                    sdpilo         , iterat, sdnume, valinc    , solalg    ,&
-                    veelem         , veasse, sddisc, nbeffe    , irecli    ,&
-                    proeta         , offset, rho   , eta       , ldccvg    ,&
-                    pilcvg         , residu, matass)
+        call nmceta(modele         , numedd    , ds_material, carele   , &
+                    ds_constitutive, ds_contact, lischa     , fonact   , ds_measure,&
+                    sdpilo         , iterat    , sdnume     , valinc   , solalg    ,&
+                    veelem         , veasse    , sddisc     , nbeffe   , irecli    ,&
+                    proeta         , offset    , rho        , eta      , ldccvg    ,&
+                    pilcvg         , residu    , matass     , ds_system)
     endif
 !
 ! --- LE CALCUL DE PILOTAGE A FORCEMENT ETE REALISE

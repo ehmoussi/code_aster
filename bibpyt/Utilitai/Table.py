@@ -517,7 +517,7 @@ class Table(TableBase):
             UTMESS('F', 'TABLE0_29', valk=ORDRE)
         # tri
         self.rows = sort_table(
-            self.rows, self.para, CLES, (ORDRE == 'DECROISSANT'))
+            self.rows, self.para, self.type, CLES, (ORDRE == 'DECROISSANT'))
 
     def __delitem__(self, args):
         """Supprime les colonnes correspondantes aux éléments de args """
@@ -891,58 +891,48 @@ class Colonne(TableBase):
         return self.__ne__(None)
 
 
-def sort_table(rows, l_para, w_para, reverse=False):
+def sort_table(rows, l_para, l_type, w_para, reverse=False):
     """Sort list of dict.
        rows     : list of dict
        l_para   : list of the keys of dict
+       t_type   : list of the types of each parameter
        w_para   : keys of the sort
     """
-    c_para = [i for i in l_para if i not in w_para]
-    new_rows = rows
-    # rename sort keys by "__" + number + para
-    # ("__" to avoid conflict with existing parameters)
-    for i, p in enumerate(w_para):
-        new_key = '__%03d%s' % (i, p)
-        for row in new_rows:
-            v = row.get(p)
-            row[new_key] = v     # must have a value to sort properly
-            try:
-                del row[p]
-            except:
-                pass
-    # rename others parameters by "__999" + para
-    for p in c_para:
-        new_key = '__999' + p
-        for row in new_rows:
-            v = row.get(p)
-            row[new_key] = v     # must have a value to sort properly
-            try:
-                del row[p]
-            except:
-                pass
-    # sort, workaround for python3
-    new_rows = sorted(new_rows, key=lambda d:[d[key] if d[key] is not None else 0 for key in sorted(d.keys())])
-    for i, p in enumerate(w_para):
-        old_key = '__%03d%s' % (i, p)
-        for row in new_rows:
-            v = row.get(old_key)
-            if v is not None:
-                row[p] = v
-            try:
-                del row[old_key]
-            except:
-                pass
-    for p in c_para:
-        old_key = '__999' + p
-        for row in new_rows:
-            v = row.get(old_key)
-            if v is not None:
-                row[p] = v
-            try:
-                del row[old_key]
-            except:
-                pass
+    orows = sorted([OrderableRow(row, l_para, l_type, w_para) for row in rows],
+                   reverse=reverse)
+    new_rows = [orow.data for orow in orows]
     return new_rows
+
+
+class OrderableRow(object):
+    """A row that can be compared to another.
+
+    Arguments:
+        data (dict): dict of the values.
+        parameters (list[str]): parameters names of the Table.
+        types (list[str]): types of the parameters of the Table.
+        keys (list[str]): sub-list of the parameters to be used for ordering.
+    """
+    defval = {
+        'I': 0,
+        'R': 0.,
+    }
+
+    def __init__(self, data, parameters, types, keys):
+        self.data = data
+        self.keys = keys
+        self.defaults = dict()
+        for typ, para in zip(types, parameters):
+            self.defaults[para] = OrderableRow.defval.get(typ, "")
+
+    def __lt__(self, other):
+        """Tell if the row must be upper than the 'other' one."""
+        # 'keys' attr should be the same one
+        for col in self.keys:
+            default = self.defaults[col]
+            if self.data.get(col, default) > other.data.get(col, default):
+                return False
+        return True
 
 
 def FMT(dform, nform, typAster=None, larg=0, val=''):

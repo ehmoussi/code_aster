@@ -133,7 +133,7 @@ def ReorganisationDe(texte, LongueurSousChaine=80):
     # on eclate suivant les separateurs de la liste l_separ
     l_separ = ['+', '-', '/', '*', '(', ')']
     liste2 = []
-    LongueurSousChaine = LongueurSousChaine / 2
+    LongueurSousChaine = LongueurSousChaine // 2
     for sous_chaine in liste:
         uneChaine = sous_chaine.strip()  # elimination des blancs inutiles.
         if (len(uneChaine) > LongueurSousChaine):
@@ -145,7 +145,7 @@ def ReorganisationDe(texte, LongueurSousChaine=80):
             liste3.append(ttt[:ttt.rfind(l_separ[j])])
             reste = ttt[ttt.rfind(l_separ[j]):]
             i = 0
-            for i in range(1, len(uneChaine) / LongueurSousChaine):
+            for i in range(1, len(uneChaine) // LongueurSousChaine):
                 ttt = uneChaine[
                     i * LongueurSousChaine:(i + 1) * LongueurSousChaine]
                 j = 0

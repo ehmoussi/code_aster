@@ -197,10 +197,6 @@ L'usage de ARRET='NON' dans CONVERGENCE est dangereux et doit être utilisé ave
 même lorsque l'équilibre n'est pas vérifié.
 """),
 
-    38 : _("""
-L'usage de ITER_GLOB_ELAS n'est utile que si le mot-clef PAS_MINI_ELAS est activé.
-"""),
-
     39 : _("""
 La recherche linéaire est incompatible avec des chargements de Dirichlet de type suiveur.
 """),

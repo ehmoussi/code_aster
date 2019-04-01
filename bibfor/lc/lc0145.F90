@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -72,9 +72,9 @@ use tenseur_meca_module
 ! --------------------------------------------------------------------------------------------------
 !
     integer       :: ii, jj, iret, jcret, nbres
-    real(kind=8)  :: epsmeca(6), perturb ,vperturb(6)
+    real(kind=8)  :: epsmeca(6), perturb ,vperturb(6), NormSigm, numerateur
     real(kind=8)  :: sigptb(6), viptb(1), dsideptb(6, 6), valr(5)
-    aster_logical :: rigi, resi
+    aster_logical :: rigi, resi, elas
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -82,8 +82,12 @@ use tenseur_meca_module
 !   RIGI_MECA_TANG ->        DSIDEP        -->  RIGI
 !   FULL_MECA      ->  SIGP  DSIDEP  VARP  -->  RIGI  RESI
 !   RAPH_MECA      ->  SIGP          VARP  -->        RESI
+!   RIGI_MECA_ELAS ->        ELAS          -->  RIGI        ELAS
+!   FULL_MECA_ELAS ->  SIGP  ELAS    VARP  -->  RIGI  RESI  ELAS
+
     rigi = (option(1:4).eq.'FULL' .or. option(1:4).eq.'RIGI')
     resi = (option(1:4).eq.'FULL' .or. option(1:4).eq.'RAPH')
+    elas = option(11:14).eq.'ELAS'
     !
     ! Incrément de temps
     param_bet_rag%instap = instap
@@ -264,6 +268,9 @@ use tenseur_meca_module
     if (iret .ne. 0) then
         goto 900
     endif
+    if ( elas ) then
+        goto 900
+    endif
     !
     perturb = maxval(abs(depsldc))
     if ( rigi .and. perturb>1.0D-07 ) then
@@ -273,7 +280,9 @@ use tenseur_meca_module
         param_bet_rag%loi_integre = 1
         sigmldc = VecteurAsterVecteur(sigp)
         ! Perturbation des déformations
-        perturb = 1.0E-07
+        perturb = 1.0D-07
+        !
+        NormSigm = 10.0**(nint(log10( abs(mater_bet_rag%siguc) ) - 3))
         ! Déformations Mécanique
         epsmeca = epsmldc + depsldc
         do ii = 1, 6
@@ -283,7 +292,10 @@ use tenseur_meca_module
             call ldc_beton_rag(epsmeca, vperturb, sigmldc, vip, mater_bet_rag, param_bet_rag, &
                                sigptb, viptb, dsideptb, iret)
             do jj = 1 , 6
-                dsidep(jj,ii) = abs(sigptb(jj) - sigp(jj))/perturb
+                numerateur = abs(sigptb(jj) - sigp(jj))
+                if ( numerateur/NormSigm > 1.0D-03 ) then
+                    dsidep(jj,ii) = numerateur/perturb
+                endif
             enddo
         enddo
     endif

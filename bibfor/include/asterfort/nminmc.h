@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nminmc(fonact, lischa     , sddyna     , modele, ds_constitutive,&
-                      numedd, numfix     , ds_algopara, solalg,&
-                      valinc, ds_material, carele     , sddisc, ds_measure     ,&
-                      meelem, measse     , veelem)
-        use NonLin_Datastructure_type        
+    subroutine nminmc(fonact, lischa     , sddyna   , modele, ds_constitutive,&
+                      numedd, numfix     , solalg   ,&
+                      valinc, ds_material, carele   , sddisc, ds_measure     ,&
+                      meelem, measse     , ds_system)
+        use NonLin_Datastructure_type
         integer :: fonact(*)
         character(len=19) :: lischa
         character(len=19) :: sddyna
@@ -29,7 +29,6 @@ interface
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=24) :: numedd
         character(len=24) :: numfix
-        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=19) :: solalg(*)
         character(len=19) :: valinc(*)
         type(NL_DS_Material), intent(in) :: ds_material
@@ -38,6 +37,6 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19) :: meelem(*)
         character(len=19) :: measse(*)
-        character(len=19) :: veelem(*)
+        type(NL_DS_System), intent(in) :: ds_system
     end subroutine nminmc
 end interface

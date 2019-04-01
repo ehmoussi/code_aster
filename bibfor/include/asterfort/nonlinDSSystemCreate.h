@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinIntegratePrepare(list_func_acti , sddyna, model,&
-                                      ds_constitutive)
-        use NonLin_Datastructure_type        
-        integer, intent(in) :: list_func_acti(*)
-        character(len=19), intent(in) :: sddyna
-        character(len=8), intent(in) :: model
-        type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
-    end subroutine nonlinIntegratePrepare
+    subroutine nonlinDSSystemCreate(ds_system)
+        use NonLin_Datastructure_type
+        type(NL_DS_System), intent(out) :: ds_system
+    end subroutine nonlinDSSystemCreate
 end interface

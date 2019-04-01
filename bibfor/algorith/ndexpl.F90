@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,12 +18,12 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine ndexpl(modele  , numedd         , numfix  , ds_material, carele,&
-                  ds_constitutive, lischa  , ds_algopara, fonact,&
-                  ds_print, ds_measure     , sdnume  , sddyna     , sddisc,&
-                  sderro  , valinc         , numins  , solalg     , solveu,&
-                  matass  , maprec         , ds_inout, meelem     , measse,&
-                  veelem  , veasse         , nbiter  )
+subroutine ndexpl(modele         , numedd    , numfix     , ds_material, carele   ,&
+                  ds_constitutive, lischa    , ds_algopara, fonact     , ds_system,&
+                  ds_print       , ds_measure, sdnume     , sddyna     , sddisc   ,&
+                  sderro         , valinc    , numins     , solalg     , solveu   ,&
+                  matass         , maprec    , ds_inout   , meelem     , measse   ,&
+                  veelem         , veasse    , nbiter  )
 !
 use NonLin_Datastructure_type
 !
@@ -52,6 +52,7 @@ character(len=19) :: lischa
 character(len=19) :: solveu, maprec, matass
 character(len=24) :: modele, numedd, numfix
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Material), intent(in) :: ds_material
 character(len=24) :: carele
 integer :: nbiter
@@ -76,6 +77,7 @@ integer :: nbiter
 ! IN  SOLVEU : SOLVEUR
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_system        : datastructure for non-linear system management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -120,7 +122,7 @@ integer :: nbiter
 ! --- PREDICTION D'UNE DIRECTION DE DESCENTE
 !
     call ndxpre(modele         , numedd, numfix     , ds_material, carele,&
-                ds_constitutive, lischa, ds_algopara, solveu     ,&
+                ds_constitutive, lischa, ds_algopara, solveu     , ds_system,&
                 fonact         , sddisc, ds_measure , numins     , valinc,&
                 solalg         , matass, maprec     , sddyna     , sderro,&
                 meelem         , measse, veelem     , veasse,&

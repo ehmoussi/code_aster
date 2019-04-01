@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,10 +53,10 @@ character(len=6), optional, intent(out) :: tychap_out
 !
 ! ----------------------------------------------------------------------
 !
-    integer, parameter :: zmeelm = 9
+    integer, parameter :: zmeelm = 8
     integer, parameter :: zmeass = 4
-    integer, parameter :: zveelm = 15
-    integer, parameter :: zveass = 21
+    integer, parameter :: zveelm = 13
+    integer, parameter :: zveass = 19
     integer, parameter :: zsolal = 17
     integer, parameter :: zvalin = 28
 !
@@ -67,15 +67,15 @@ character(len=6), optional, intent(out) :: tychap_out
 !
     character(len=8) :: tyvari
 !
-    data lmeelm /'MERIGI','MEDIRI','MEMASS','MEAMOR','MESUIV',&
+    data lmeelm /'MEDIRI','MEMASS','MEAMOR','MESUIV',&
      &             'MESSTR','MEGEOM','MEELTC','MEELTF'/
     data lmeass /'MERIGI','MEMASS','MEAMOR','MESSTR'/
 !
-    data lveelm /'CNFINT','CNDIRI','CNBUDI','CNFNOD','CNDIDO',&
+    data lveelm /'CNDIRI','CNBUDI','CNDIDO',&
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
      &             'CNFSDO','CNIMPE','CNDIDI','CNSSTF',&
      &             'CNREFE'/
-    data lveass /'CNFINT','CNDIRI','CNBUDI','CNFNOD','CNDIDO',&
+    data lveass /'CNDIRI','CNBUDI','CNDIDO',&
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
      &             'CNFSDO','CNIMPE','CNDIDI','CNSSTF',&
      &             'CNREFE',&
@@ -106,11 +106,7 @@ character(len=6), optional, intent(out) :: tychap_out
         ASSERT(tychap_out.eq.tyvari(1:6))
         goto 99
     endif
-
     vali = -1
-
-!
-! ---
 !
     if (tychap .eq. 'MEELEM') then
         if (tyvari .eq. 'LONMAX') then
@@ -149,7 +145,7 @@ character(len=6), optional, intent(out) :: tychap_out
             vali = indik8(lvalin,tyvari,1,zvalin)
         endif
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
  99 continue
