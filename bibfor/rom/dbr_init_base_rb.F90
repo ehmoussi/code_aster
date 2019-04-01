@@ -80,7 +80,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - For greedy algorithm: only displacements
 !
     field_name = 'DEPL'
-    field_refe = ds_para_rb%solveDOM%syst_solu
+    field_refe = ds_para_rb%algoGreedy%solveDOM%syst_solu
 !
 ! - Nomber of mode maxi given by user
 !    
@@ -88,7 +88,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - For FSI: three basis
 !
-    if (ds_para_rb%l_base_ifs) then 
+    if (ds_para_rb%l_stab_fsi) then 
         nb_mode_maxi = 3*nb_mode_maxi
     end if 
 !

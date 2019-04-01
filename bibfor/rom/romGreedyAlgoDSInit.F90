@@ -16,35 +16,35 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
-subroutine dbr_clean_rb(ds_para)
+subroutine romGreedyAlgoDSInit(ds_solveDOM, ds_solveROM, ds_algoGreedy)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/romBaseClean.h"
-#include "asterfort/assert.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/romMultiParaClean.h"
-#include "asterfort/romGreedyAlgoClean.h"
-!
-type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+type(ROM_DS_Solve), intent(in)       :: ds_solveDOM
+type(ROM_DS_Solve), intent(in)       :: ds_solveROM
+type(ROM_DS_AlgoGreedy), intent(out) :: ds_algoGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_BASE_REDUITE
+! Model reduction - Initializations
 !
-! Clean datastructures for GREEDY
-!
-! --------------------------------------------------------------------------------------------------
-!
-! IO  ds_para           : datastructure for parameters 
+! Initialisation of datastructure for greedy algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call romBaseClean(ds_para%ds_empi) 
-    call romMultiParaClean(ds_para%para_rb%multipara)
-    call romGreedyAlgoClean(ds_para%para_rb%algoGreedy)
+! In  ds_solveDOM      : datastructure for datastructure to solve systems (DOM)
+! In  ds_solveROM      : datastructure for datastructure to solve systems (ROM)
+! Out ds_algoGreedy    : datastructure for Greedy algorithm
+!
+! --------------------------------------------------------------------------------------------------
+!
+    ds_algoGreedy%coef_redu = '&&OP0053.COEF_REDU'
+    ds_algoGreedy%resi_vect = '&&OP0053.RESI_VECT'
+    ds_algoGreedy%solveDOM  = ds_solveDOM
+    ds_algoGreedy%solveROM  = ds_solveROM
 !
 end subroutine

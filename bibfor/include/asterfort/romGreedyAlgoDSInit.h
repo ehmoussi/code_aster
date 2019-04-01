@@ -17,9 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romMultiParaChck(ds_multipara, l_stab_fsi)
+    subroutine romGreedyAlgoDSInit(ds_solveDOM, ds_solveROM, ds_algoGreedy)
         use Rom_Datastructure_type
-        type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-        aster_logical, intent(in) :: l_stab_fsi
-    end subroutine romMultiParaChck
+        type(ROM_DS_Solve), intent(in)       :: ds_solveDOM
+        type(ROM_DS_Solve), intent(in)       :: ds_solveROM
+        type(ROM_DS_AlgoGreedy), intent(out) :: ds_algoGreedy
+    end subroutine romGreedyAlgoDSInit
 end interface

@@ -15,11 +15,31 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1403
+! person_in_charge: mickael.abbas at edf.fr
 !
-interface
-    subroutine romMultiParaChck(ds_multipara, l_stab_fsi)
-        use Rom_Datastructure_type
-        type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-        aster_logical, intent(in) :: l_stab_fsi
-    end subroutine romMultiParaChck
-end interface
+subroutine romGreedyAlgoClean(ds_algoGreedy)
+!
+use Rom_Datastructure_type
+!
+implicit none
+!
+#include "asterfort/as_deallocate.h"
+!
+type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Model reduction
+!
+! Clean datastructure for greedy algorithm
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  ds_algoGreedy    : datastructure for Greedy algorithm
+!
+! --------------------------------------------------------------------------------------------------
+!
+    AS_DEALLOCATE(vr = ds_algoGreedy%resi_norm)
+!
+end subroutine

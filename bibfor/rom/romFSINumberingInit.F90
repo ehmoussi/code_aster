@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFSINumberingInit(ds_para_rb)
+subroutine romFSINumberingInit(field, ds_algoGreedy)
 !
 use Rom_Datastructure_type
 !
@@ -28,7 +28,8 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
+type(ROM_DS_Field), intent(in) :: field
+type(ROM_DS_AlgoGreedy), intent(inout) :: ds_algoGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -38,13 +39,13 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para_rb       : datastructure for parameters (RB)
+! In  field            : field to analyze
+! IO  ds_algoGreedy    : datastructure for Greedy algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     integer :: indx_cmp
-    type(ROM_DS_Field) :: field
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,10 +54,9 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
         call utmess('I', 'ROM2_53')
     endif
 !
-    field = ds_para_rb%multipara%field
     indx_cmp = indik8(field%v_list_cmp, 'PRES', 1, field%nb_cmp)
-    ds_para_rb%nume_pres = indx_cmp
+    ds_algoGreedy%nume_pres = indx_cmp
     indx_cmp = indik8(field%v_list_cmp, 'PHI', 1, field%nb_cmp)
-    ds_para_rb%nume_phi  = indx_cmp
+    ds_algoGreedy%nume_phi  = indx_cmp
 !
 end subroutine

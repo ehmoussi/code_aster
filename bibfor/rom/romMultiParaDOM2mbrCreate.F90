@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romMultiParaDOM2mbrCreate(ds_multipara, i_coef, syst_2mbr_type, syst_2mbr)
+subroutine romMultiParaDOM2mbrCreate(ds_multipara, i_coef, ds_solve)
 !
 use Rom_Datastructure_type
 !
@@ -33,8 +33,7 @@ implicit none
 !
 type(ROM_DS_MultiPara), intent(in) :: ds_multipara
 integer, intent(in) :: i_coef
-character(len=1), intent(in) :: syst_2mbr_type
-character(len=19), intent(in) :: syst_2mbr
+type(ROM_DS_Solve), intent(in) :: ds_solve
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,8 +45,7 @@ character(len=19), intent(in) :: syst_2mbr
 !
 ! In  ds_multipara     : datastructure for multiparametric problems
 ! In  i_coef           : index of coefficient
-! In  syst_2mbr_type   : type of second member
-! In  syst_2mbr        : name of second member
+! In  ds_solve         : datastructure to solve systems
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,6 +58,8 @@ character(len=19), intent(in) :: syst_2mbr
     character(len=8)  :: vect_name
     integer :: i_coef_comb, i_vect, nb_vect
     aster_logical :: l_coefv_cplx
+    character(len=1) :: syst_2mbr_type
+    character(len=19) :: syst_2mbr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,6 +70,8 @@ character(len=19), intent(in) :: syst_2mbr
 !
 ! - Initializations
 !
+    syst_2mbr         = ds_solve%syst_2mbr
+    syst_2mbr_type    = ds_solve%syst_2mbr_type
     nb_vect           = 1
     vect_name         = ds_multipara%vect_name
     !vect_type        = ds_multipara%vect_type

@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romFSINumberingInit(ds_para_rb)
+    subroutine romFSINumberingInit(field, ds_algoGreedy)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
+        type(ROM_DS_Field), intent(in) :: field
+        type(ROM_DS_AlgoGreedy), intent(inout) :: ds_algoGreedy
     end subroutine romFSINumberingInit
 end interface

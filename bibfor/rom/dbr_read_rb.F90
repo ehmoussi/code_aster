@@ -49,9 +49,9 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
     integer :: ifm, niv
     integer :: nb_mode_maxi = 0, nocc
-    character(len=16) :: base_ifs = ' '
-    aster_logical :: l_base_ifs
-    real(kind=8) :: tole_glouton
+    character(len=16) :: stab_fsi = ' '
+    aster_logical :: l_stab_fsi
+    real(kind=8) :: tole_greedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,14 +65,14 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
     call getvis(' ', 'NB_MODE' , scal = nb_mode_maxi, nbret = nocc)
     ASSERT(nocc .eq. 1 .and. nb_mode_maxi .ge. 1)
 !
-! - If we stabilise the basis for IFS transient problem   
+! - If we stabilise the basis for IFS transient problem
 !
-    call getvtx(' ', 'TYPE_BASE', scal = base_ifs)
-    l_base_ifs = base_ifs .eq. 'IFS_STAB'
+    call getvtx(' ', 'TYPE_BASE', scal = stab_fsi)
+    l_stab_fsi = stab_fsi .eq. 'IFS_STAB'
 !
 ! - Read tolerance
 !
-    call getvr8(' ', 'TOLE_GLOUTON', scal = tole_glouton)
+    call getvr8(' ', 'TOLE_GLOUTON', scal = tole_greedy)
 !
 ! - Read data for multiparametric problems
 !
@@ -85,7 +85,7 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! - Save parameters in datastructure
 !
     ds_para_rb%nb_mode_maxi = nb_mode_maxi
-    ds_para_rb%l_base_ifs   = l_base_ifs
-    ds_para_rb%tole_glouton = tole_glouton
+    ds_para_rb%l_stab_fsi   = l_stab_fsi
+    ds_para_rb%tole_greedy  = tole_greedy
 !
 end subroutine

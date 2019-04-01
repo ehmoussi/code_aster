@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1403
 !
-subroutine dbr_paraRBDSInit(ds_multipara, ds_solveDOM, ds_solveROM, ds_para_rb)
+subroutine dbr_paraRBDSInit(ds_multipara, ds_algoGreedy, ds_para_rb)
 !
 use Rom_Datastructure_type
 !
@@ -27,9 +27,8 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
 !
-type(ROM_DS_Solve), intent(in)       :: ds_solveDOM
-type(ROM_DS_Solve), intent(in)       :: ds_solveROM
 type(ROM_DS_MultiPara), intent(in)   :: ds_multipara
+type(ROM_DS_AlgoGreedy), intent(in)  :: ds_algoGreedy
 type(ROM_DS_ParaDBR_RB), intent(out) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
@@ -40,19 +39,14 @@ type(ROM_DS_ParaDBR_RB), intent(out) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_solveDOM      : datastructure for datastructure to solve systems (DOM)
-! In  ds_solveROM      : datastructure for datastructure to solve systems (ROM)
 ! In  ds_multipara     : datastructure for multiparametric problems
+! In  ds_algoGreedy    : datastructure for Greedy algorithm
 ! Out ds_para_rb       : datastructure for RB parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_para_rb%coef_redu      = '&&OP0053.COEF_REDU'
-    ds_para_rb%solver         = '&&OP0053.SOLVER'
-    ds_para_rb%resi_vect      = '&&OP0053.RESI_VECT'
-    ds_para_rb%vect_2mbr      = '&&OP0053.2MBR_VECT'
-    ds_para_rb%solveDOM       = ds_solveDOM
-    ds_para_rb%solveROM       = ds_solveROM
-    ds_para_rb%multipara      = ds_multipara
+    ds_para_rb%solver     = '&&OP0053.SOLVER'
+    ds_para_rb%multipara  = ds_multipara
+    ds_para_rb%algoGreedy = ds_algoGreedy
 !
 end subroutine

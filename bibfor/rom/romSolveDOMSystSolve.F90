@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romSolveDOMSystSolve(solver, ds_solve)
 !
 use Rom_Datastructure_type
@@ -29,10 +30,8 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/resoud.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: solver
-    type(ROM_DS_Solve), intent(in) :: ds_solve
+character(len=19), intent(in) :: solver
+type(ROM_DS_Solve), intent(in) :: ds_solve
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,15 +60,15 @@ implicit none
 !
 ! - Initializations
 ! 
-    maprec         = '&&OP0053.MAPREC'
-    crgc           = '&&OP0053.GCPC'
+    maprec    = '&&OP0053.MAPREC'
+    crgc      = '&&OP0053.GCPC'
 !
 ! - Get parameters
 !
-    vect_zero      = ds_solve%vect_zero
-    syst_solu      = ds_solve%syst_solu
-    syst_matr      = ds_solve%syst_matr
-    syst_2mbr      = ds_solve%syst_2mbr
+    vect_zero = ds_solve%vect_zero
+    syst_solu = ds_solve%syst_solu
+    syst_matr = ds_solve%syst_matr
+    syst_2mbr = ds_solve%syst_2mbr
 !
 ! - Factor matrix
 !

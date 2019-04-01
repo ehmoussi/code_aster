@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romMultiParaChck(ds_multipara, l_base_ifs)
+subroutine romMultiParaChck(ds_multipara, l_stab_fsi)
 !
 use Rom_Datastructure_type
 !
@@ -31,7 +31,7 @@ implicit none
 #include "asterfort/romFieldChck.h"
 !
 type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-aster_logical, intent(in) :: l_base_ifs
+aster_logical, intent(in) :: l_stab_fsi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,7 +42,7 @@ aster_logical, intent(in) :: l_base_ifs
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_multipara     : datastructure for multiparametric problems
-! In  l_base_ifs       : flag for IFS stabilization
+! In  l_stab_fsi       : flag for IFS stabilization
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -103,9 +103,9 @@ aster_logical, intent(in) :: l_base_ifs
         end do
     endif
 !
-! - Check composant PRES and PHI is in the model if we active l_base_ifs
+! - Check composant PRES and PHI is in the model if we active l_stab_fsi
 !
-    if (l_base_ifs) then
+    if (l_stab_fsi) then
         call dismoi('DIM_GEOM', ds_multipara%field%model, 'MODELE', repi=ndim)
         if (ndim .eq. 2) then
             call romFieldChck(ds_multipara%field, field_name_ = 'UPPHI_2D')
