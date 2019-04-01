@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,12 +18,16 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmdesc(mesh, modele  , numedd         , numfix    , ds_material, carele     ,&
-                  ds_constitutive, lischa    , ds_contact, ds_algopara,&
-                  solveu  , fonact         , numins    , iterat    , sddisc     ,&
-                  ds_print, ds_measure     , ds_algorom, sddyna    , sdnume     ,&
-                  sderro  , matass         , maprec    , valinc    , solalg     ,&
-                  meelem  , measse         , veasse    , veelem    , lerrit  )
+subroutine nmdesc(mesh           , modele     , numedd    ,&
+                  numfix         , ds_material, carele    ,&
+                  ds_constitutive, lischa     , ds_contact,&
+                  ds_algopara    , ds_system  , solveu    ,&
+                  fonact         , numins     , iterat    ,&
+                  sddisc         , ds_print   , ds_measure,&
+                  ds_algorom     , sddyna     , sdnume    ,&
+                  sderro         , matass     , maprec    ,&
+                  valinc         , solalg     , meelem    ,&
+                  measse         , veasse     , lerrit)
 !
 use NonLin_Datastructure_type
 use ROM_Datastructure_type
@@ -56,9 +60,10 @@ type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Contact), intent(inout) :: ds_contact
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(NL_DS_System), intent(in) :: ds_system
 character(len=24) :: sderro
 integer :: fonact(*)
-character(len=19) :: meelem(*), veelem(*)
+character(len=19) :: meelem(*)
 character(len=19) :: solalg(*), valinc(*)
 character(len=19) :: measse(*), veasse(*)
 type(NL_DS_Print), intent(inout) :: ds_print
@@ -82,6 +87,7 @@ aster_logical :: lerrit
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IO  ds_print         : datastructure for printing parameters
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_system        : datastructure for non-linear system management
 ! IN  SDERRO : SD GESTION DES ERREURS
 ! IN  SDNUME : SD NUMEROTATION
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
@@ -91,7 +97,6 @@ aster_logical :: lerrit
 ! In  ds_algorom       : datastructure for ROM parameters
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLE
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
@@ -134,21 +139,26 @@ aster_logical :: lerrit
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmcoma(mesh, modele, ds_material, carele    , ds_constitutive, ds_algopara,&
-                lischa, numedd, numfix    , solveu         , &
-                sddisc, sddyna, ds_print  , ds_measure     , ds_algorom ,numins     ,&
-                iterat, fonact, ds_contact, valinc         , solalg     ,&
-                veelem, meelem, measse    , veasse         , maprec     ,&
-                matass, faccvg, ldccvg    , sdnume)
+    call nmcoma(mesh      , modele         , ds_material,&
+                carele    , ds_constitutive, ds_algopara,&
+                lischa    , numedd         , numfix     ,&
+                solveu    , ds_system      , sddisc     ,&
+                sddyna    , ds_print       , ds_measure ,&
+                ds_algorom, numins         , iterat     ,&
+                fonact    , ds_contact     , valinc     ,&
+                solalg    , meelem         , measse     ,&
+                maprec    , matass         , faccvg     ,&
+                ldccvg    , sdnume)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
-    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
-    if (ldccvg .eq. 1) goto 999
+    if ((faccvg .eq. 1) .or. (faccvg .eq. 2) .or. (ldccvg .eq. 1)) then
+        goto 999
+    endif
 !
 ! - Evaluate second member for correction
 !
-    call nmassc(fonact, sddyna, ds_contact, veasse,&
+    call nmassc(fonact, sddyna, ds_contact, veasse, ds_system,&
                 cnpilo, cndonn)
 !
 ! --- ACTUALISATION DES CL CINEMATIQUES

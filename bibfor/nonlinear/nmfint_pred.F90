@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,9 @@
 !
 subroutine nmfint_pred(model      , cara_elem      , list_func_acti,&
                        sddyna     , nume_dof       , &
-                       ds_material, ds_constitutive, ds_measure    ,&
+                       ds_material, ds_constitutive, ds_system     , ds_measure,&
                        time_prev  , time_curr      , iter_newt     ,&
                        hval_incr  , hval_algo      ,&
-                       hval_veelem, hval_veasse    ,&
                        ldccvg     , sdnume_)
 !
 use NonLin_Datastructure_type
@@ -35,7 +34,6 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/nmaint.h"
 #include "asterfort/nmfint.h"
-#include "asterfort/nmchex.h"
 #include "asterfort/assvec.h"
 #include "asterfort/nonlinNForceCompute.h"
 !
@@ -45,11 +43,11 @@ character(len=19), intent(in) :: sddyna
 character(len=24), intent(in) :: nume_dof
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Measure), intent(inout) :: ds_measure
 real(kind=8), intent(in) :: time_prev, time_curr
 integer, intent(in) :: iter_newt
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
-character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 integer, intent(out) :: ldccvg
 character(len=19), optional, intent(in) :: sdnume_
 !
@@ -69,14 +67,13 @@ character(len=19), optional, intent(in) :: sdnume_
 ! In  sdnume           : datastructure for dof positions
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
+! In  ds_system        : datastructure for non-linear system management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  time_prev        : time at beginning of time step
 ! In  time_curr        : time at end of time step
 ! In  iter_newt        : index of current Newton iteration
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  hval_veelem      : hat-variable for elementary vectors
-! In  hval_veasse      : hat-variable for vectors (node fields)
 ! Out ldccvg           : indicator from integration of behaviour
 !                -1 : PAS D'INTEGRATION DU COMPORTEMENT
 !                 0 : CAS DE FONCTIONNEMENT NORMAL
@@ -86,7 +83,7 @@ character(len=19), optional, intent(in) :: sdnume_
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: vefint, cnfint
+    character(len=19) :: vefnod, cnfnod, sdnume
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -94,35 +91,33 @@ character(len=19), optional, intent(in) :: sdnume_
     if (niv .ge. 2) then
         call utmess('I', 'MECANONLINE11_27')
     endif
+    sdnume = ' '
+    if (present(sdnume_)) then
+        sdnume = sdnume_
+    endif
 !
 ! - Direct computation (no integration of behaviour)
 !
-    if (ds_constitutive%l_pred_cnfnod) then
+    if (ds_system%l_pred_cnfnod) then
+        vefnod = ds_system%vefnod
+        cnfnod = ds_system%cnfnod
         call nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_func_acti,&
                                  ds_material, ds_constitutive, ds_measure,&
                                  time_prev  , time_curr      ,&
                                  hval_incr  , hval_algo      ,&
-                                 hval_veelem, hval_veasse)
-
+                                 vefnod     , cnfnod)
     endif
 !
 ! - Integration of behaviour
 !
-    if (ds_constitutive%l_pred_cnfint) then
-        call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
-        call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
+    if (ds_system%l_pred_cnfint) then
         call nmfint(model         , cara_elem      ,&
                     ds_material   , ds_constitutive,&
-                    list_func_acti, iter_newt      , sddyna, ds_measure,&
+                    list_func_acti, iter_newt      , ds_measure, ds_system,&
                     hval_incr     , hval_algo      ,&
-                    vefint        , ldccvg )
+                    ldccvg        , sddyna)
         if (ldccvg .eq. 0) then
-            if (present(sdnume_)) then
-                call nmaint(nume_dof, list_func_acti, sdnume_,&
-                            vefint  , cnfint)
-            else
-                call assvec('V', cnfint, 1, vefint, [1.d0], nume_dof, ' ', 'ZERO', 1)
-            endif
+            call nmaint(nume_dof, list_func_acti, sdnume, ds_system)
         endif
     endif
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,11 +18,11 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     ,&
+subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     , &
                   ds_constitutive, ds_contact, list_load  , list_func_acti, ds_measure ,&
                   iter_newt      , sdnume    , valinc     , solalg        , hval_veelem,&
                   hval_veasse    , offset    , rho        , eta           , residu     ,&
-                  ldccvg         , matr_asse)
+                  ldccvg         , ds_system , matr_asse)
 !
 use NonLin_Datastructure_type
 !
@@ -61,12 +61,13 @@ type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19) :: hval_veelem(*), hval_veasse(*)
 character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_System), intent(in) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME - PILOTAGE)
 !
-! CHOIX DU ETA DE PILOTAGE PAR CALCUL DU RESIDU
+! Compute residual
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -81,6 +82,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  SDNUME : SD NUMEROTATION
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_system        : datastructure for non-linear system management
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
@@ -105,14 +107,13 @@ character(len=19) :: solalg(*), valinc(*)
     integer, parameter :: zsolal = 17
     aster_logical :: lgrot, lendo
     integer :: neq, nmax
-    character(len=19) :: vefint
-    character(len=19) :: cnfint, cnfext
+    character(len=19) :: cnfext
     character(len=19) :: valint(zvalin)
     character(len=19) :: solalt(zsolal)
     character(len=19) :: depdet, depdel, deppr1, deppr2
     character(len=19) :: depplt, ddep
     character(len=19) :: depplu
-    character(len=19) :: depl, vite, acce, k19bla
+    character(len=19) :: depl, vite, acce
     real(kind=8), pointer :: ddepl(:) => null()
     real(kind=8), pointer :: depdl(:) => null()
     real(kind=8), pointer :: depdt(:) => null()
@@ -128,9 +129,8 @@ character(len=19) :: solalg(*), valinc(*)
         write (ifm,*) '<PILOTAGE> ...... CALCUL DU RESIDU'
     endif
 !
-! --- INITIALISATIONS
+! - Initializations
 !
-    k19bla = ' '
     lgrot = isfonc(list_func_acti,'GD_ROTA')
     lendo = isfonc(list_func_acti,'ENDO_NO')
     ddep = '&&CNCETA.CHP0'
@@ -149,8 +149,6 @@ character(len=19) :: solalg(*), valinc(*)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
     call nmchex(solalg, 'SOLALG', 'DEPPR1', deppr1)
     call nmchex(solalg, 'SOLALG', 'DEPPR2', deppr2)
-    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
 !
 ! --- MISE A JOUR DEPLACEMENT
 ! --- DDEP = RHO*DEPPRE(1) + (ETA-OFFSET)*DEPPRE(2)
@@ -189,19 +187,15 @@ character(len=19) :: solalg(*), valinc(*)
 !
 ! - Compute internal forces
 !
-!    call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
-!                list_func_acti, iter_newt, k19bla, ds_measure, valint         ,&
-!                solalt, ldccvg, vefint)
     call nmfint(model         , cara_elem      ,&
                 ds_material   , ds_constitutive,&
-                list_func_acti, iter_newt      , k19bla, ds_measure,&
+                list_func_acti, iter_newt      , ds_measure, ds_system,&
                 valint        , solalt         ,&
-                vefint        , ldccvg   )
+                ldccvg   )
 !
 ! - Assemble internal forces
 !
-    call nmaint(nume_dof, list_func_acti, sdnume,&
-                vefint  , cnfint)
+    call nmaint(nume_dof, list_func_acti, sdnume, ds_system)
 !
 ! - Update Dirichlet boundary conditions - B.U
 !
@@ -221,10 +215,10 @@ character(len=19) :: solalg(*), valinc(*)
     call nmtime(ds_measure, 'Init'  , '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
 !
-! --- REACTUALISATION DES EFFORTS EXTERIEURS (AVEC ETA)
+! - Update exterior forces
 !
     call nmchex(hval_veasse, 'VEASSE', 'CNFEXT', cnfext)
-    call nmfext(eta, list_func_acti, k19bla, hval_veasse, cnfext)
+    call nmfext(eta, list_func_acti, hval_veasse, cnfext)
 !
 ! - End timer
 !
@@ -232,12 +226,12 @@ character(len=19) :: solalg(*), valinc(*)
 !
 ! --- ON A FORCEMENT INTEGRE LA LDC !
 !
-    ASSERT(ldccvg.ge.0)
+    ASSERT(ldccvg .ge. 0)
 !
-! --- CALCUL DU RESIDU
+! - Compute maximum of out-of-balance force
 !
     if (ldccvg .eq. 0) then
-        call nmpilr(list_func_acti, nume_dof, matr_asse, hval_veasse, ds_contact,&
+        call nmpilr(list_func_acti, nume_dof, matr_asse, hval_veasse, ds_contact, ds_system,&
                     eta   , residu)
     endif
 !

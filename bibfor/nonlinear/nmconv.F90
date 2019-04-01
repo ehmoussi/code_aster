@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,11 +18,11 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmconv(noma    , modele, ds_material, numedd  , sdnume     ,&
-                  fonact  , sddyna, ds_conv   , ds_print, ds_measure ,&
-                  sddisc  , sdcrit, sderro    , ds_algopara, ds_algorom,&
-                  ds_inout, matass    , solveu  , numins     ,&
-                  iterat  , eta   , ds_contact, valinc  , solalg     ,&
+subroutine nmconv(noma    , modele, ds_material, numedd     , sdnume    ,&
+                  fonact  , sddyna, ds_conv    , ds_print   , ds_measure,&
+                  sddisc  , sdcrit, sderro     , ds_algopara, ds_algorom,&
+                  ds_inout, matass, solveu     , ds_system  , numins    ,&
+                  iterat  , eta   , ds_contact , valinc     , solalg    ,&
                   measse  , veasse)
 !
 use NonLin_Datastructure_type
@@ -72,6 +72,7 @@ character(len=24) :: numedd, modele
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Contact), intent(inout) :: ds_contact
 character(len=24) :: sderro
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_Print), intent(inout) :: ds_print
@@ -108,6 +109,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! IN  SDERRO : GESTION DES ERREURS
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! In  ds_algorom       : datastructure for ROM parameters
+! In  ds_system        : datastructure for non-linear system management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IN  SDCRIT : SYNTHESE DES RESULTATS DE CONVERGENCE POUR ARCHIVAGE
 ! In  ds_material      : datastructure for material parameters
@@ -190,7 +192,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         call nmresi(noma    , fonact    , ds_material,&
                     numedd  , sdnume    , sddyna     ,&
                     ds_conv , ds_print  , ds_contact ,&
-                    ds_inout, ds_algorom,&
+                    ds_inout, ds_algorom, ds_system  ,&
                     matass  , numins    , eta        ,&
                     valinc  , solalg    ,&
                     veasse  , measse    ,& 

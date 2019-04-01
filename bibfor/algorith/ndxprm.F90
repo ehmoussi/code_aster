@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 ! aslint: disable=W1504
 !
 subroutine ndxprm(modelz, ds_material, carele    , ds_constitutive, ds_algopara,&
-                  lischa, numedd, numfix    , solveu         , &
-                  sddisc, sddyna, ds_measure, numins         , fonact     ,&
-                  valinc, solalg, veelem    , meelem         , measse     ,&
-                  maprec, matass, faccvg    , ldccvg)
+                  lischa, numedd     , numfix    , solveu         , ds_system  ,&
+                  sddisc, sddyna     , ds_measure, numins         , fonact     ,&
+                  valinc, solalg     , meelem    , measse     ,&
+                  maprec, matass     , faccvg    , ldccvg)
 !
 use NonLin_Datastructure_type
 !
@@ -40,6 +40,9 @@ implicit none
 #include "asterfort/nmxmat.h"
 #include "asterfort/preres.h"
 #include "asterfort/utmess.h"
+#include "asterfort/nmrigi.h"
+#include "asterfort/asmari.h"
+#include "asterfort/nmchex.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: fonact(*)
@@ -49,9 +52,10 @@ character(len=24) :: carele
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=24) :: numedd, numfix
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: sddisc, sddyna, lischa, solveu
 character(len=19) :: solalg(*), valinc(*)
-character(len=19) :: veelem(*), meelem(*), measse(*)
+character(len=19) :: meelem(*), measse(*)
 integer :: numins
 character(len=19) :: maprec, matass
 integer :: faccvg, ldccvg
@@ -75,6 +79,7 @@ integer :: faccvg, ldccvg
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SOLVEU : SOLVEUR
+! In  ds_system        : datastructure for non-linear system management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  ITERAT : NUMERO D'ITERATION
@@ -82,7 +87,6 @@ integer :: faccvg, ldccvg
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
 ! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
-! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
 ! OUT MATASS : MATRICE DE RESOLUTION ASSEMBLEE
 ! OUT MAPREC : MATRICE DE RESOLUTION ASSEMBLEE - PRECONDITIONNEMENT
 ! OUT FACCVG : CODE RETOUR FACTORISATION MATRICE GLOBALE
@@ -108,6 +112,7 @@ integer :: faccvg, ldccvg
     integer :: ifm, niv, ibid
     integer :: iterat
     integer :: nb_matr
+    character(len=19) :: rigid
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
     aster_logical :: list_l_asse(20), list_l_calc(20)
@@ -134,6 +139,7 @@ integer :: faccvg, ldccvg
     lprmo         = ndynlo(sddyna,'PROJ_MODAL')
     l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
     lshima        = ndynlo(sddyna,'COEF_MASS_SHIFT')
+    call nmchex(measse, 'MEASSE', 'MERIGI', rigid)
 !
 ! - First step ?
 !
@@ -187,9 +193,18 @@ integer :: faccvg, ldccvg
 ! --- CALCUL DES MATR-ELEM DE RIGIDITE
 !
     if (lcrigi) then
-        call nmcmat('MERIGI', optrig, ' ', .true._1,&
-                    larigi, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse)
+        call nmrigi(modelz     , carele,&
+                    ds_material, ds_constitutive,&
+                    fonact     , iterat         , sddyna, ds_measure, ds_system,&
+                    valinc     , solalg         ,&
+                    optrig     , ldccvg)
+    endif
+!
+! - Assembly internal forces/rigidity matrix
+!
+    if (larigi) then
+        call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
+                    rigid)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR-ELEM D'AMORTISSEMENT DE RAYLEIGH
@@ -211,12 +226,13 @@ integer :: faccvg, ldccvg
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modelz        , ds_material, carele     , ds_constitutive, sddisc        ,&
-                    sddyna        , fonact     , numins     , iterat         , valinc        ,&
-                    solalg        , lischa     , numedd     , numfix        ,&
-                    ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
-                    list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
-                    measse        , veelem     , ldccvg)
+        call nmxmat(modelz         , ds_material   , carele        ,&
+                    ds_constitutive, sddisc        , numins        ,&
+                    valinc         , solalg        , lischa        ,&
+                    numedd         , numfix        , ds_measure    ,&
+                    nb_matr        , list_matr_type, list_calc_opti,&
+                    list_asse_opti , list_l_calc   , list_l_asse   ,&
+                    meelem         , measse        , ds_system)
     endif
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmassi(list_func_acti, sddyna, hval_veasse, cndonn)
+    subroutine nmassi(list_func_acti, sddyna, ds_system, hval_veasse, cndonn)
+        use NonLin_Datastructure_type
         integer, intent(in) :: list_func_acti(*)
-        character(len=19), intent(in) :: sddyna
-        character(len=19), intent(in) :: hval_veasse(*)
+        character(len=19), intent(in) :: sddyna, hval_veasse(*)
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: cndonn
     end subroutine nmassi
 end interface

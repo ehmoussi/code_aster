@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_fu
                                ds_material, ds_constitutive, ds_measure,&
                                time_prev  , time_curr      ,&
                                hval_incr  , hval_algo      ,&
-                               hval_veelem, hval_veasse)
+                               vefnod     , cnfnod)
 !
 use NonLin_Datastructure_type
 !
@@ -47,7 +47,8 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Measure), intent(inout) :: ds_measure
 real(kind=8), intent(in) :: time_prev, time_curr
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
-character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
+character(len=19), intent(inout) :: vefnod
+character(len=19), intent(in) :: cnfnod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,13 +69,12 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! In  time_curr        : time at end of time step
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  hval_veelem      : hat-variable for elementary vectors
-! In  hval_veasse      : hat-variable for vectors (node fields)
+! IO  vefnod           : elementary vector for nodal force (no integration)
+! In  cnfnod           : assembled vector for nodal force (no integration)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: vect_elem, vect_asse
     real(kind=8) :: time_list(2)
     character(len=19) :: disp_prev, strx_prev, sigm_prev, varc_prev
     character(len=19) :: disp_cumu_inst, sigm_extr
@@ -99,8 +99,6 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! - Hat variable
 !
-    call nmchex(hval_veelem, 'VEELEM', 'CNFNOD', vect_elem)
-    call nmchex(hval_veasse, 'VEASSE', 'CNFNOD', vect_asse)
     call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst)
     call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
     call nmchex(hval_incr, 'VALINC', 'STRMOI', strx_prev)
@@ -128,16 +126,15 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
                     ds_constitutive%compor, time_list     , 0                     , ' '      ,&
                     vrcmoi                , sigm_extr     , ' ',&
                     disp_prev             , disp_cumu_inst,&
-                    'V'                   , vect_elem)
+                    'V'                   , vefnod)
     else
         call vefnme(option                , model         , ds_material%field_mate, cara_elem,&
                     ds_constitutive%compor, time_list     , 0                     , ' '      ,&
                     vrcmoi                , sigm_prev     , strx_prev,&
                     disp_prev             , disp_cumu_inst,&
-                    'V'                   , vect_elem)
+                    'V'                   , vefnod)
     endif
-    call assvec('V', vect_asse, 1, vect_elem, [1.d0],&
-                 nume_dof, ' ', 'ZERO', 1)
+    call assvec('V', cnfnod, 1, vefnod, [1.d0], nume_dof, ' ', 'ZERO', 1)
 !
 ! - Restore disp_cumu_inst
 !
@@ -150,7 +147,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! - Debug
 !
     if (niv .ge. 2) then
-        call nmdebg('VECT', vect_asse, 6)
+        call nmdebg('VECT', cnfnod, 6)
     endif
 !
 end subroutine

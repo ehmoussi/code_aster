@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine asmari(list_func_acti, hval_meelem, nume_dof, list_load, ds_algopara,&
+subroutine asmari(list_func_acti, hval_meelem, ds_system, nume_dof, list_load, ds_algopara,&
                   matr_rigi)
 !
 use NonLin_Datastructure_type
@@ -31,9 +31,12 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/matr_asse_syme.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=19), intent(in) :: hval_meelem(*)
+type(NL_DS_System), intent(in) :: ds_system
 character(len=24), intent(in) :: nume_dof
 character(len=19), intent(in) :: list_load
 character(len=19), intent(in) :: matr_rigi
@@ -49,6 +52,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! In  list_func_acti   : list of active functionnalities
 ! In  hval_meelem      : hat variable for elementary matrixes
+! In  ds_system        : datastructure for non-linear system management
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  list_load        : name of datastructure for list of loads
 ! In  ds_algopara      : datastructure for algorithm parameters
@@ -56,6 +60,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     integer :: nb_matr_elem, iexi
     character(len=19) :: merigi, mediri, meeltc
     character(len=19) :: list_matr_elem(8)
@@ -63,6 +68,10 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE13_70')
+    endif
     nb_matr_elem = 0
 !
 ! - Active functionnalities
@@ -72,7 +81,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! - Rigidity MATR_ELEM
 !
-    call nmchex(hval_meelem, 'MEELEM', 'MERIGI', merigi)
+    merigi = ds_system%merigi
     nb_matr_elem = nb_matr_elem + 1
     list_matr_elem(nb_matr_elem) = merigi
 !

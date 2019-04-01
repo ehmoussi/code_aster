@@ -19,10 +19,6 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-# Attention : cet import permet d'avoir, en Python, le comportement
-# de la division réelle pour les entiers, et non la division entière
-# 1/2=0.5 (et non 0). Comportement par défaut dans Python 3.0.
-
 import pickle
 
 from .N_ASSD import ASSD

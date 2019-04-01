@@ -365,13 +365,6 @@ Les options SEGM_DROI_ORDO et NOEUD_ORDO de l'opérateur
 DEFI_GROUP/CREA_GROUP_NO peuvent être utilisées.
 ."""),
 
-    67 : _("""
-Les mots-clés LISSAGE_G et LISSAGE_THETA n'ont de sens que pour un calcul 3d local.
-Dans le cas présent, ils sont ignorés.
--> Conseil pour ne plus avoir cette alarme :
-Supprimer les mots-clés LISSAGE_G et/ou LISSAGE_THETA.
-."""),
-
     70 : _("""
 Erreur utilisateur : la lèvre définie sous %(k1)s possède une maille répétée 2 fois :
 maille %(k2)s.

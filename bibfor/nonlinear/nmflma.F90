@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@
 subroutine nmflma(typmat, mod45 , l_hpp  , ds_algopara, modelz,&
                   ds_material, carele, sddisc, sddyna     , fonact,&
                   numins, valinc, solalg, lischa     ,&
-                  numedd     , numfix,&
+                  numedd     , numfix, ds_system,&
                   ds_constitutive, ds_measure, meelem,&
-                  measse, veelem, nddle , ds_posttimestep, modrig,&
+                  measse, nddle , ds_posttimestep, modrig,&
                   ldccvg, matass, matgeo)
 !
 use NonLin_Datastructure_type
@@ -49,6 +49,7 @@ implicit none
 #include "asterfort/nmchai.h"
 #include "asterfort/nmchcp.h"
 #include "asterfort/nmchex.h"
+#include "asterfort/nmrigi.h"
 #include "asterfort/nmcmat.h"
 #include "asterfort/nmxmat.h"
 #include "asterfort/utmess.h"
@@ -66,7 +67,8 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 integer :: numins, ldccvg, nddle
 character(len=19) :: sddisc, sddyna, lischa
 character(len=24) :: numedd, numfix
-character(len=19) :: meelem(*), measse(*), veelem(*)
+character(len=19) :: meelem(*), measse(*)
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: solalg(*), valinc(*)
 character(len=19) :: matass, matgeo
 type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
@@ -97,6 +99,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! In  ds_algopara      : datastructure for algorithm parameters
+! In  ds_system        : datastructure for non-linear system management
 ! IN  SDDISC : SD DISC_INST
 ! IN  PREMIE : SI PREMIER INSTANT DE CALCUL
 ! IN  NUMINS : NUMERO D'INSTANT
@@ -104,7 +107,6 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  MEELEM : MATRICES ELEMENTAIRES
 ! IN  MEASSE : MATRICE ASSEMBLEE
-! IN  VEELEM : VECTEUR ELEMENTAIRE
 ! IN  NDDLE  : NOMBRE DE DDL A EXCLURE
 ! In  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IN  MODRIG : MODIFICATION OU NON DE LA RAIDEUR
@@ -124,7 +126,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 !
     integer, parameter :: zvalin = 28
     aster_logical :: reasma
-    aster_logical :: lcrigi, lcfint, lmacr
+    aster_logical :: lcrigi, lmacr
     aster_logical :: l_neum_undead
     character(len=16) :: optrig
     integer :: reincr, iterat
@@ -216,27 +218,28 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         optrig = 'RIGI_MECA'
     else
         optrig = 'RIGI_MECA_TANG'
-!        ASSERT(.FALSE.)
     endif
 !
 ! --- A RECALCULER
 !
     lcrigi = reasma
-    lcfint = .false.
 !
 ! --- CALCUL DES MATR-ELEM DE RIGIDITE
 !
     if (lcrigi) then
-        call nmcmat('MERIGI', optrig, ' ', .true._1,&
-                    reasma, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse)
+        call nmrigi(modelz     , carele         ,&
+                    ds_material, ds_constitutive,&
+                    fonact     , iterat         ,&
+                    sddyna     , ds_measure     ,ds_system,&
+                    valin2     , solalg,&
+                    optrig     , ldccvg)
     endif
 !
 ! --- CALCUL DES MATR-ELEM DES CHARGEMENTS SUIVEURS
 !
     if (l_neum_undead) then
-        call nmcmat('MESUIV', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MESUIV', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
@@ -244,8 +247,8 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 !
     if (mod45 .eq. 'FLAM') then
         if (l_hpp) then
-            call nmcmat('MEGEOM', ' ', ' ', .true._1,&
-                        .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+            call nmcmat('MEGEOM', ' ', ' ', ASTER_TRUE,&
+                        ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                         list_l_calc, list_l_asse)
         endif
     endif
@@ -253,26 +256,26 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! --- CALCUL DES MATR-ELEM DES SOUS-STRUCTURES
 !
     if (lmacr) then
-        call nmcmat('MESSTR', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MESSTR', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modelz, ds_material, carele, ds_constitutive,&
-                    sddisc, sddyna, fonact, numins, iterat,&
-                    valin2, solalg, lischa, &
-                    numedd, numfix, ds_measure, ds_algopara,&
-                    nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse, lcfint, meelem, measse,&
-                    veelem, ldccvg)
+        call nmxmat(modelz         , ds_material   , carele        ,&
+                    ds_constitutive, sddisc        , numins        ,&
+                    valin2         , solalg        , lischa        ,&
+                    numedd         , numfix        , ds_measure    ,&
+                    nb_matr        , list_matr_type, list_calc_opti,&
+                    list_asse_opti , list_l_calc   , list_l_asse   ,&
+                    meelem         , measse        ,  ds_system)
     endif
 !
 ! --- ON RECONSTRUIT RIGI2 TOUJOURS SYMETRIQUE
 !
-    call asmari(fonact, meelem, numedd, lischa, ds_algopara,&
+    call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
                 rigi2)
     matass = rigi2
 !

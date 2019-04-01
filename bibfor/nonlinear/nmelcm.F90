@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmelcm(mesh       , model          ,&
-                  ds_material, ds_contact, ds_constitutive, ds_measure,&
-                  hval_incr  , hval_algo ,&
+subroutine nmelcm(mesh           , model     ,&
+                  ds_material    , ds_contact,&
+                  ds_constitutive, ds_measure,&
+                  hval_incr      , hval_algo ,&
                   matr_elem)
 !
 use NonLin_Datastructure_type
@@ -134,7 +135,7 @@ character(len=19), intent(out) :: matr_elem
         call nmelco_prep('MATR'   ,&
                          mesh     , model    , ds_material, ds_contact,&
                          disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
-                         disp_newt_curr,nbin     , lpain    , lchin    ,&
+                         disp_newt_curr, nbin     , lpain    , lchin    ,&
                          option   , time_prev, time_curr , ds_constitutive,&
                          ccohes   , xcohes)
 ! ----- <LIGREL> for contact elements

@@ -67,8 +67,12 @@ cata_msg = {
 
    25  : _("""Intégration de la loi de comportement (calcul des efforts internes élémentaires)."""),
 
+   26  : _("""Calcul de l'accélération initiale."""),
+
    27  : _("""Calcul des efforts internes en prédiction."""),
 
    28  : _("""Intégration de la loi de comportement (assemblage des efforts internes élémentaires)."""),
+
+   29  : _(u"""Intégration de la loi de comportement et de la matrice tangente."""),
 
 }

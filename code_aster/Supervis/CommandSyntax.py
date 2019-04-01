@@ -588,6 +588,7 @@ class CommandSyntax(object):
         """
         cls._random = random.Random(100)
         gen = cls._random
+        gen.seed(jump)
         # similar to python2 `jumpahead` function
         for _ in range(jump):
             gen.random()

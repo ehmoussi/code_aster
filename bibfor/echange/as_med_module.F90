@@ -61,6 +61,7 @@ subroutine as_med_open(fid, nom, acces, cret, vers)
             uvers = vers
         endif
         !
+#if (MED_NUM_MAJOR >= 4)
         if (mode .eq. med_acc_creat) then
             if (uvers(1) .eq. 4 .and. uvers(2) .eq. 0) then
 !               pass
@@ -77,6 +78,9 @@ subroutine as_med_open(fid, nom, acces, cret, vers)
         else
             call as_mfiope(fid, nom, acces, cret)
         endif
+#else
+        call as_mfiope(fid, nom, acces, cret)
+#endif
 !
     end subroutine as_med_open
 !

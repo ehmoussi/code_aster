@@ -30,13 +30,13 @@ def VALE_triang2array(vect_VALE, dim, dtype=None):
     """
     import numpy
     triang_sup = numpy.array(vect_VALE)
-    assert dim*(dim+1)/2 == len(triang_sup), \
+    assert dim*(dim+1) // 2 == len(triang_sup), \
         'Matrice non pleine : %d*(%d+1)/2 != %d' % (dim, dim, len(triang_sup))
 
     valeur = numpy.zeros([dim, dim], dtype=dtype)
     for i in range(1, dim+1):
         for j in range(1, i+1):
-            k = i*(i-1)/2 + j
+            k = i*(i-1) // 2 + j
             valeur[j-1, i-1]=triang_sup[k-1]
     valeur = valeur + numpy.transpose(valeur)
     for i in range(dim):
@@ -119,7 +119,7 @@ class macr_elem_dyna(ASSD):
         tmp=numpy.zeros([int(taille)])
         for j in range(desc[1]+1):
             for i in range(j):
-                k=j*(j-1)/2+i
+                k=j*(j-1) // 2 +i
                 tmp[k]=matrice[j-1,i]
         aster.putvectjev(nom_vale,len(tmp),tuple((
             list(range(1,len(tmp)+1)))),tuple(tmp),tuple(tmp),1)

@@ -1202,7 +1202,7 @@ class TraceMatplotlib(TraceGraph):
             lab.set_fontsize(32)
         for lab in ax.yaxis.get_ticklabels():
             lab.set_fontsize(32)
-        plt.grid('on',which='both')
+        plt.grid(True, which='both')
 
 
         if len(liss_nappe)>0:
@@ -1266,7 +1266,9 @@ class TraceMatplotlib(TraceGraph):
         legend.set_fontsize(40)
         legend.scale(1.3, 1.3)
 
+        aster_core.matfpe(-1)
         plt.savefig(fichier[0], format='png',bbox_inches='tight')
+        aster_core.matfpe(1)
 
 
 

@@ -223,6 +223,10 @@ int main(void){
         self.end_msg('no', 'YELLOW')
         raise
     else:
+        major, minor, release = ret.strip().split(".")
+        self.define("MED_NUM_MAJOR", int(major))
+        self.define("MED_NUM_MINOR", int(minor))
+        self.define("MED_NUM_RELEASE", int(release))
         self.end_msg(ret)
 
 @Configure.conf

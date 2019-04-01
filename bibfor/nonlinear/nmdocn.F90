@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
     integer :: ifm, niv
     character(len=16) :: keywf
-    integer :: iret, iret_rela, iret_maxi, iret_refe, iret_comp, para_inte, isdefault
+    integer :: iret, iret_rela, iret_maxi, iret_refe, iret_comp, para_inte
     real(kind=8) :: para_real
     character(len=8) :: answer
 !
@@ -74,9 +74,8 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
     call getvis(keywf, 'ITER_GLOB_MAXI', iocc=1, scal=para_inte)
     ds_conv%iter_glob_maxi = para_inte
     if (getexm(keywf,'ITER_GLOB_ELAS') .eq. 1) then
-        call getvis(keywf, 'ITER_GLOB_ELAS', iocc=1, scal=para_inte, isdefault=isdefault)
+        call getvis(keywf, 'ITER_GLOB_ELAS', iocc=1, scal=para_inte)
         ds_conv%iter_glob_elas = para_inte
-        ds_conv%l_iter_elas    = isdefault.eq.0
     endif
 !
 ! - Get convergence parameters (residuals)

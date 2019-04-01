@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,18 +37,18 @@ character(len=19) :: veelem(*)
 !
 ! ----------------------------------------------------------------------
 !
-    character(len=19) :: vefsdo, vefint, vebudi, vedido, vesstf
+    character(len=19) :: vefsdo, vebudi, vedido, vesstf
     character(len=19) :: vedipi, vefedo, vefepi, veondp
-    character(len=19) :: vedidi, vediri, vefnod, velapl
+    character(len=19) :: vedidi, vediri, velapl
     character(len=19) :: verefe
     character(len=19) :: veimpe
 !
     data vefedo,vefsdo    /'&&NMCH4P.VEFEDO','&&NMCH4P.VEFSDO'/
     data vedido,vefepi    /'&&NMCH4P.VEDIDO','&&NMCH4P.VEFEPI'/
-    data vedipi,vefint    /'&&NMCH4P.VEDIPI','&&NMCH4P.VEFINT'/
+    data vedipi           /'&&NMCH4P.VEDIPI'/
     data vebudi,vedidi    /'&&NMCH4P.VEBUDI','&&NMCH4P.VEDIDI'/
     data veondp,velapl    /'&&NMCH4P.VEONDP','&&NMCH4P.VELAPL'/
-    data vediri,vefnod    /'&&NMCH4P.VEDIRI','&&NMCH4P.VEFNOD'/
+    data vediri           /'&&NMCH4P.VEDIRI'/
     data vesstf           /'&&NMCH4P.VESSTF'/
     data verefe           /'&&NMCH4P.VEREFE'/
     data veimpe           /'&&NMCH4P.VEIMPE'/
@@ -56,10 +56,8 @@ character(len=19) :: veelem(*)
 ! ----------------------------------------------------------------------
 !
     call nmcha0('VEELEM', 'ALLINI', ' ', veelem)
-    call nmcha0('VEELEM', 'CNFINT', vefint, veelem)
     call nmcha0('VEELEM', 'CNDIRI', vediri, veelem)
     call nmcha0('VEELEM', 'CNBUDI', vebudi, veelem)
-    call nmcha0('VEELEM', 'CNFNOD', vefnod, veelem)
     call nmcha0('VEELEM', 'CNDIDO', vedido, veelem)
     call nmcha0('VEELEM', 'CNDIPI', vedipi, veelem)
     call nmcha0('VEELEM', 'CNFEDO', vefedo, veelem)
