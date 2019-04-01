@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmfpas(fonact, sddyna, sdpilo, sddisc, nbiter,&
-                  numins, eta, valinc, solalg, veasse,&
+                  numins, eta   , valinc, solalg, veasse, ds_system,&
                   ds_contact)
 !
 use NonLin_Datastructure_type
@@ -45,6 +45,7 @@ character(len=19) :: sddyna, sdpilo, sddisc
 real(kind=8) :: eta
 integer :: nbiter, numins
 integer :: fonact(*)
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! ----------------------------------------------------------------------
@@ -66,7 +67,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! In  ds_contact       : datastructure for contact management
-!
+! In  ds_system        : datastructure for non-linear system management
 !
 !
     aster_logical :: ldyna, lmpas
@@ -138,7 +139,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 ! --- SAUVEGARDE DU SECOND MEMBRE SI MULTI_PAS EN DYNAMIQUE
 !
     if (lmpas) then
-        call nmchsv(fonact, veasse, sddyna, ds_contact)
+        call nmchsv(fonact, veasse, sddyna, ds_system, ds_contact)
     endif
 !
 ! - Save previous time

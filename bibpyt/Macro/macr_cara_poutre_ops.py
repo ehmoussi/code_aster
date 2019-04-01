@@ -118,7 +118,7 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
         # les groupes doivent exister
         collgrma = aster.getcolljev('%-8s.GROUPEMA' % __nomlma.nom)
         collgrma = list(map(lambda x: x.strip(), collgrma))
-        if type(GROUP_MA_BORD) == bytes:
+        if type(GROUP_MA_BORD) == str:
             l_group_ma_bord = [ GROUP_MA_BORD,  ]
         else:
             l_group_ma_bord = GROUP_MA_BORD
@@ -204,7 +204,7 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
                 motscles = {}
                 motscles['FLUX_REP'] = []
 
-                if type(lgmaint) == bytes:
+                if type(lgmaint) == str:
                     motscles['FLUX_REP'] = _F(
                         GROUP_MA=args.get('GROUP_MA_INTE'), CARA_TORSION=__tbaire)
                 else:

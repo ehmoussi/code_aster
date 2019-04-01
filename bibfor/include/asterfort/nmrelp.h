@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmrelp(model          , nume_dof , ds_material, cara_elem ,&
-                      ds_constitutive, list_load, list_func_acti, iter_newt , ds_measure,&
-                      sdnume         , sddyna   , ds_algopara, ds_contact, valinc    ,&
-                      solalg         , veelem   , veasse     , ds_conv   , ldccvg)
+    subroutine nmrelp(model          , nume_dof   , ds_material, cara_elem , ds_system,&
+                      ds_constitutive, list_load  , list_func_acti, iter_newt , ds_measure,&
+                      sdnume         , ds_algopara, ds_contact, valinc    ,&
+                      solalg         , veelem     , veasse     , ds_conv   , ldccvg, &
+                      sddyna_ )
         use NonLin_Datastructure_type
         integer :: list_func_acti(*)
         integer :: iter_newt, ldccvg
@@ -30,9 +31,11 @@ interface
         character(len=19) :: list_load, sddyna, sdnume
         type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: model, nume_dof, cara_elem
+        type(NL_DS_System), intent(in) :: ds_system
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=19) :: veelem(*), veasse(*)
         character(len=19) :: solalg(*), valinc(*)
         type(NL_DS_Conv), intent(inout) :: ds_conv
+        character(len=19), intent(in), optional :: sddyna_
     end subroutine nmrelp
 end interface

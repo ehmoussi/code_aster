@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine accel0(modele    , numedd, numfix     , fonact, lischa,&
-                      ds_contact, maprec, solveu     , valinc, sddyna,&
-                      ds_measure, ds_algopara, meelem, measse,&
-                      veelem    , veasse, solalg)
-        use NonLin_Datastructure_type        
+    subroutine accel0(modele    , numedd   , fonact, lischa,&
+                      ds_contact, maprec   , solveu, valinc, sddyna,&
+                      ds_measure, ds_system, meelem, measse,&
+                      veelem    , veasse   , solalg)
+        use NonLin_Datastructure_type
         character(len=24) :: modele
         character(len=24) :: numedd
-        character(len=24) :: numfix
         integer :: fonact(*)
         character(len=19) :: lischa
         type(NL_DS_Contact), intent(in) :: ds_contact
@@ -35,7 +32,7 @@ interface
         character(len=19) :: valinc(*)
         character(len=19) :: sddyna
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=19) :: meelem(*)
         character(len=19) :: measse(*)
         character(len=19) :: veelem(*)

@@ -114,7 +114,7 @@ class tran_gene  (dyna_gene) :
         indices  = [str(i+1).center(10) for i in range(len(vintDesc))]
         sep = " | "
 
-        nblines = len(indices)//8
+        nblines = len(indices) // 8
         if 8*nblines<len(indices) : nblines = nblines + 1
         for i in range(nblines-1):
             print(sep.join(indices [i*8:(i+1)*8]))
@@ -155,7 +155,7 @@ class tran_gene  (dyna_gene) :
 
         depl = self.sdj.DEPL.get()
         nbmodes = self.__nb_modes()
-        nbsaves = len(depl)/nbmodes
+        nbsaves = len(depl) // nbmodes
         import numpy as np
         output = np.reshape(depl,(nbsaves,nbmodes))
         return output
@@ -169,7 +169,7 @@ class tran_gene  (dyna_gene) :
 
         vite = self.sdj.VITE.get()
         nbmodes = self.__nb_modes()
-        nbsaves = len(vite)/nbmodes
+        nbsaves = len(vite) // nbmodes
         import numpy as np
         output = np.reshape(vite,(nbsaves,nbmodes))
         return output
@@ -183,7 +183,7 @@ class tran_gene  (dyna_gene) :
 
         acce = self.sdj.ACCE.get()
         nbmodes = self.__nb_modes()
-        nbsaves = len(acce)/nbmodes
+        nbsaves = len(acce) // nbmodes
         import numpy as np
         output = np.reshape(acce,(nbsaves,nbmodes))
         return output
@@ -271,7 +271,7 @@ class tran_gene  (dyna_gene) :
         nbvint = vindx[-1]-1    # number of internal variables saved for all nonlinearities : record length of VINT
 
         vint    = self.sdj.sd_nl.VINT.get()
-        nbsaves = len(vint)//nbvint
+        nbsaves = len(vint) // nbvint
 
         start  = vindx[i  ]-1
         finish = vindx[i+1]-1
@@ -321,7 +321,7 @@ class tran_gene  (dyna_gene) :
         nbvint = vindx[-1]-1    # number of internal variables saved for all nonlinearities : record length of VINT
 
         vint    = self.sdj.sd_nl.VINT.get()
-        nbsaves = len(vint)/nbvint
+        nbsaves = len(vint) // nbvint
 
         start  = vindx[i  ]-1
         finish = vindx[i+1]-1

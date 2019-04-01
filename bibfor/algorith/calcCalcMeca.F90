@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine calcCalcMeca(nb_option   , list_option    , &
-                        list_load   , model          , mate       , cara_elem,& 
+                        list_load   , model          , mate       , cara_elem,&
                         l_elem_nonl , ds_constitutive, varc_refe  ,&
                         hval_incr   , hval_algo      ,&
                         merigi      , vediri         , vefint     , veforc,&
@@ -48,20 +48,14 @@ implicit none
 integer, intent(in) :: nb_option
 character(len=16), intent(in) :: list_option(:)
 character(len=19), intent(in) :: list_load
-character(len=24), intent(in) :: model
-character(len=24), intent(in) :: mate
-character(len=24), intent(in) :: cara_elem
+character(len=24), intent(in) :: model, mate, cara_elem
 aster_logical, intent(in) :: l_elem_nonl
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24), intent(in) :: varc_refe
-character(len=19), intent(in) :: hval_incr(:)
-character(len=19), intent(in) :: hval_algo(:)
-character(len=19), intent(in) :: merigi
-character(len=19), intent(in) :: vediri
-character(len=19), intent(in) :: vefint
+character(len=19), intent(in) :: hval_incr(:), hval_algo(:)
+character(len=19), intent(in) :: merigi, vediri, vefint
 character(len=19), intent(inout) :: veforc
-character(len=19), intent(in) :: vevarc_prev
-character(len=19), intent(in) :: vevarc_curr
+character(len=19), intent(in) :: vevarc_prev, vevarc_curr
 integer, intent(in) :: nume_harm
 integer, intent(in) :: nb_obje_maxi
 character(len=16), intent(inout) :: obje_name(nb_obje_maxi)
@@ -103,17 +97,17 @@ integer, intent(out) ::  nb_obje
     aster_logical :: l_matr, l_nonl, l_varc_prev, l_varc_curr, l_forc_noda
     aster_logical :: l_lagr
     character(len=16) :: option
-    character(len=19) :: varc_curr, disp_curr, sigm_curr, vari_curr, k19bla = ' '
+    character(len=19) :: varc_curr, disp_curr, sigm_curr, vari_curr
     character(len=19) :: vari_prev, disp_prev, sigm_prev
-    integer :: iterat, ixfem, nb_subs_stat
-    aster_logical :: tabret(0:10), l_meta_zirc, l_meta_acier, l_xfem, l_macr_elem
-    integer :: fonact(100)
+    integer :: iter_newt, ixfem, nb_subs_stat
+    aster_logical :: l_meta_zirc, l_meta_acier, l_xfem, l_macr_elem
+    integer :: ldccvg
     real(kind=8) :: partps(3)
     character(len=19) :: ligrmo
+    type(NL_DS_System) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    fonact(:) = 0
     partps(:) = 0.d0
     nb_obje   = 0
 !
@@ -192,11 +186,15 @@ integer, intent(out) ::  nb_obje
 ! - Physical dof computation
 !
     if (l_nonl) then
-        iterat = 1
-        call merimo('G', model, cara_elem, mate, varc_refe,&
-                    ds_constitutive, iterat, fonact, k19bla,&
-                    hval_incr, hval_algo, merigi, vefint, option,&
-                    tabret)
+        ds_system%merigi = merigi
+        ds_system%vefint = vefint
+        iter_newt = 1
+        call merimo('G'            , l_xfem   , l_macr_elem,&
+                    model          , cara_elem, mate       , iter_newt,&
+                    ds_constitutive, varc_refe,&
+                    hval_incr      , hval_algo,&
+                    option         , merigi   , vefint     ,&
+                    ldccvg         )
     endif
 !
 ! - Lagrange dof computation
@@ -223,12 +221,12 @@ integer, intent(out) ::  nb_obje
 ! - State variables
 !
     if (l_varc_prev) then
-        call nmvcpr(model, mate       , cara_elem, varc_refe     , ds_constitutive%compor   ,&
+        call nmvcpr(model, mate       , cara_elem, varc_refe     , ds_constitutive%compor,&
                     hval_incr, base_ = 'G', vect_elem_prev_ = vevarc_prev,&
                     nume_harm_ = nume_harm)
     endif
     if (l_varc_curr) then
-        call nmvcpr(model, mate       , cara_elem, varc_refe     , ds_constitutive%compor   ,&
+        call nmvcpr(model, mate       , cara_elem, varc_refe     , ds_constitutive%compor,&
                     hval_incr, base_ = 'G', vect_elem_curr_ = vevarc_curr,&
                     nume_harm_ = nume_harm)
     endif

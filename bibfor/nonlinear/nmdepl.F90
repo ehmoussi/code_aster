@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 ! aslint: disable=W1504
 !
 subroutine nmdepl(modele         , numedd , ds_material, carele    ,&
-                  ds_constitutive, lischa , fonact, ds_measure, ds_algopara,&
-                  noma           , numins , iterat, solveu    , matass     ,&
-                  sddisc         , sddyna , sdnume, sdpilo    , sderro     ,&
-                  ds_contact     , valinc , solalg, veelem    , veasse     ,&
-                  eta            , ds_conv, lerrit)
+                  ds_constitutive, lischa , fonact     , ds_measure, ds_algopara,&
+                  noma           , numins , iterat     , solveu    , matass     ,&
+                  sddisc         , sddyna , sdnume     , sdpilo    , sderro     ,&
+                  ds_contact     , valinc , solalg     , veelem    , veasse     ,&
+                  eta            , ds_conv, ds_system  , lerrit)
 !
 use NonLin_Datastructure_type
 !
@@ -66,6 +66,7 @@ character(len=24) :: modele, numedd, carele
 character(len=24) :: sderro
 character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Contact), intent(inout) :: ds_contact
 aster_logical :: lerrit
 !
@@ -103,6 +104,7 @@ aster_logical :: lerrit
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! IO  ds_conv          : datastructure for convergence management
 ! I/O ETA    : PARAMETRE DE PILOTAGE
+! In  ds_system        : datastructure for non-linear system management
 ! OUT LERRIT : .TRUE. SI ERREUR PENDANT L'ITERATION
 !
 ! --------------------------------------------------------------------------------------------------
@@ -152,7 +154,7 @@ aster_logical :: lerrit
 ! --- CALCUL DE LA RESULTANTE DES EFFORTS EXTERIEURS
 !
     call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
-    call nmfext(etan, fonact, sddyna, veasse, cnfext, ds_contact)
+    call nmfext(etan, fonact, veasse, cnfext, ds_contact, sddyna)
 !
 ! --- CONVERSION RESULTAT dU VENANT DE K.dU = F SUIVANT SCHEMAS
 !
@@ -162,11 +164,11 @@ aster_logical :: lerrit
 !
     if (.not.lreli .or. iterat .eq. 0) then
         if (lpilo) then
-            call nmpich(modele         , numedd, ds_material, carele    ,&
-                        ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
-                        sdpilo         , iterat, sdnume, deltat    , valinc    ,&
-                        solalg         , veelem, veasse, sddisc    , eta       ,&
-                        rho            , offset, ldccvg, pilcvg    , matass)
+            call nmpich(modele         , numedd, ds_material, carele    , ds_system ,&
+                        ds_constitutive, lischa, fonact     , ds_measure, ds_contact,&
+                        sdpilo         , iterat, sdnume     , deltat    , valinc    ,&
+                        solalg         , veelem, veasse     , sddisc    , eta       ,&
+                        rho            , offset, ldccvg     , pilcvg    , matass)
             ds_conv%line_sear_coef = 1.d0
             ds_conv%line_sear_iter = 0
         endif
@@ -175,14 +177,14 @@ aster_logical :: lerrit
 ! --- RECHERCHE LINEAIRE
 !
         if (lpilo) then
-            call nmrepl(modele         , numedd, ds_material, carele,&
-                        ds_constitutive, lischa, ds_algopara, fonact, iterat    ,&
-                        ds_measure     , sdpilo, sdnume     , sddyna, ds_contact,&
-                        deltat         , valinc, solalg     , veelem, veasse    ,&
-                        sddisc         , etan  , ds_conv    , eta   , offset    ,&
+            call nmrepl(modele         , numedd, ds_material, carele    , ds_system,&
+                        ds_constitutive, lischa, ds_algopara, fonact    , iterat   ,&
+                        ds_measure     , sdpilo, sdnume     , ds_contact,&
+                        deltat         , valinc, solalg     , veelem    , veasse   ,&
+                        sddisc         , etan  , ds_conv    , eta       , offset   ,&
                         ldccvg         , pilcvg, matass )
         else
-            call nmreli(modele         , numedd, ds_material, carele    ,&
+            call nmreli(modele         , numedd, ds_material, carele    , ds_system ,&
                         ds_constitutive, lischa, fonact     , iterat    , ds_measure,&
                         sdnume         , sddyna, ds_algopara, ds_contact, valinc    ,&
                         solalg         , veelem, veasse     , ds_conv   , ldccvg)

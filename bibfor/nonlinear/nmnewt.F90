@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine nmnewt(mesh       , model    , numins         , numedd    , numfix   ,&
-                  ds_material, cara_elem, ds_constitutive, list_load,&
+                  ds_material, cara_elem, ds_constitutive, list_load , ds_system,&
                   ds_algopara, fonact   , ds_measure     , sderro    , ds_print ,&
                   sdnume     , sddyna   , sddisc         , sdcrit    , sdsuiv   ,&
                   sdpilo     , ds_conv  , solveu         , maprec    , matass   ,&
@@ -78,6 +78,7 @@ type(NL_DS_Material), intent(in) :: ds_material
 character(len=24), intent(in) :: cara_elem
 type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 character(len=19), intent(in) :: list_load
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: fonact(*)
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -121,6 +122,7 @@ integer :: nbiter
 ! IO  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_constitutive  : datastructure for constitutive laws management
 ! In  solver           : name of datastructure for solver
+! In  ds_system        : datastructure for non-linear system management
 ! In  sd_suiv          : datastructure for dof monitoring parameters
 ! In  sd_obsv          : datastructure for observation parameters
 ! IO  ds_inout         : datastructure for input/output management
@@ -204,7 +206,7 @@ integer :: nbiter
     call nmforc_step(fonact     ,&
                      model      , cara_elem      , numedd  ,&
                      list_load  , sddyna         ,&
-                     ds_material, ds_constitutive,&
+                     ds_material, ds_constitutive, ds_system,&
                      ds_measure , ds_inout       ,&
                      sddisc     , numins         ,&
                      valinc     , solalg         ,&
@@ -243,12 +245,12 @@ integer :: nbiter
 !
 ! --- PREDICTION D'UNE DIRECTION DE DESCENTE
 !
-    call nmpred(mesh, model , numedd         , numfix    , ds_material, cara_elem,&
-                ds_constitutive, list_load , ds_algopara, solveu   ,&
-                fonact, ds_print       , ds_measure, ds_algorom , sddisc   ,&
-                sdnume, sderro         , numins    , valinc     , solalg   ,&
-                matass, maprec         , ds_contact, sddyna     , &
-                meelem, measse         , veelem    , veasse     , lerrit)
+    call nmpred(mesh,     model, numedd   , numfix     , ds_material, cara_elem,&
+                ds_constitutive, list_load, ds_algopara, solveu     , ds_system,&
+                fonact         , ds_print , ds_measure , ds_algorom , sddisc   ,&
+                sdnume         , sderro   , numins     , valinc     , solalg   ,&
+                matass         , maprec   , ds_contact , sddyna     , &
+                meelem         , measse   , veelem     , veasse     , lerrit)
 !
     if (lerrit) goto 315
 !
@@ -269,21 +271,21 @@ integer :: nbiter
 ! --- SI CONTACT OU PILOTAGE OU RECHERCHE LINEAIRE
 !
     call nmdepl(model          , numedd   , ds_material, cara_elem , &
-                ds_constitutive, list_load, fonact, ds_measure, ds_algopara,&
-                mesh           , numins   , iterat, solveu    , matass     ,&
-                sddisc         , sddyna   , sdnume, sdpilo    , sderro     ,&
-                ds_contact     , valinc   , solalg, veelem    , veasse     ,&
-                eta            , ds_conv  , lerrit)
+                ds_constitutive, list_load, fonact     , ds_measure, ds_algopara,&
+                mesh           , numins   , iterat     , solveu    , matass     ,&
+                sddisc         , sddyna   , sdnume     , sdpilo    , sderro     ,&
+                ds_contact     , valinc   , solalg     , veelem    , veasse     ,&
+                eta            , ds_conv  , ds_system  , lerrit)
 !
     if (lerrit) goto 315
 !
 ! --- CALCUL DES FORCES APRES CORRECTION
 !
-    call nmfcor(model          , numedd    , ds_material, cara_elem  ,&
-                ds_constitutive, list_load , fonact  , ds_algopara, numins,&
-                iterat         , ds_measure, sddisc  , sddyna     , sdnume,&
-                sderro         , ds_contact, valinc  , solalg,&
-                veelem         , veasse    , meelem  , measse     , matass,&
+    call nmfcor(model          , numedd    , ds_material, cara_elem  , ds_system,&
+                ds_constitutive, list_load , fonact     , ds_algopara, numins,&
+                iterat         , ds_measure, sddisc     , sddyna     , sdnume,&
+                sderro         , ds_contact, valinc     , solalg,&
+                veelem         , veasse    , measse     , matass,&
                 lerrit)
 !
     if (lerrit) goto 315
@@ -296,11 +298,11 @@ integer :: nbiter
 ! --- ESTIMATION DE LA CONVERGENCE
 !
 315 continue
-    call nmconv(mesh    , model, ds_material, numedd  , sdnume     ,&
-                fonact  , sddyna, ds_conv, ds_print, ds_measure,&
-                sddisc  , sdcrit , sderro  , ds_algopara, ds_algorom,&
-                ds_inout, matass , solveu  , numins     ,&
-                iterat  , eta   , ds_contact, valinc     ,&
+    call nmconv(mesh    , model , ds_material, numedd     , sdnume    ,&
+                fonact  , sddyna, ds_conv    , ds_print   , ds_measure,&
+                sddisc  , sdcrit, sderro     , ds_algopara, ds_algorom,&
+                ds_inout, matass, solveu     , ds_system  , numins    ,&
+                iterat  , eta   , ds_contact , valinc     ,&
                 solalg  , measse, veasse )
 !
 ! --- MISE A JOUR DES EFFORTS DE CONTACT
@@ -329,12 +331,16 @@ integer :: nbiter
 !
 320 continue
 !
-    call nmdesc(mesh    , model   , numedd         , numfix    , ds_material, cara_elem  ,&
-                ds_constitutive, list_load , ds_contact, ds_algopara,&
-                solveu  , fonact         , numins    , iterat    , sddisc     ,&
-                ds_print, ds_measure     , ds_algorom, sddyna    , sdnume     ,&
-                sderro  , matass         , maprec    , valinc    , solalg     ,&
-                meelem  , measse         , veasse    , veelem    , lerrit)
+    call nmdesc(mesh           , model      , numedd    ,&
+                numfix         , ds_material, cara_elem ,&
+                ds_constitutive, list_load  , ds_contact,&
+                ds_algopara    , ds_system  , solveu    ,&
+                fonact         , numins     , iterat    ,&
+                sddisc         , ds_print   , ds_measure,&
+                ds_algorom     , sddyna     , sdnume    ,&
+                sderro         , matass     , maprec    ,&
+                valinc         , solalg     , meelem    ,&
+                measse         , veasse     , lerrit)
 !
     if (lerrit) goto 315
 !

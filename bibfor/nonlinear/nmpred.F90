@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,12 +18,12 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmpred(mesh, modele, numedd         , numfix    , ds_material, carele  ,&
-                  ds_constitutive, lischa    , ds_algopara, solveu  ,&
-                  fonact, ds_print       , ds_measure, ds_algorom , sddisc  ,&
-                  sdnume, sderro         , numins    , valinc     , solalg  ,&
-                  matass, maprec         , ds_contact, sddyna     ,&
-                  meelem, measse         , veelem    , veasse     , lerrit)
+subroutine nmpred(mesh           , modele  , numedd     , numfix    , ds_material, carele  ,&
+                  ds_constitutive, lischa  , ds_algopara, solveu    , ds_system  ,&
+                  fonact         , ds_print, ds_measure , ds_algorom, sddisc     ,&
+                  sdnume         , sderro  , numins     , valinc    , solalg     ,&
+                  matass         , maprec  , ds_contact , sddyna    ,&
+                  meelem         , measse  , veelem     , veasse    , lerrit)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -54,6 +54,7 @@ character(len=19) :: lischa, solveu, sddisc, sddyna, sdnume
 character(len=24) :: modele, carele
 character(len=24) :: numedd, numfix
 type(NL_DS_Contact), intent(inout) :: ds_contact
+type(NL_DS_System), intent(in) :: ds_system
 character(len=24) :: sderro
 character(len=19) :: meelem(*), veelem(*)
 character(len=19) :: measse(*), veasse(*)
@@ -76,6 +77,7 @@ aster_logical :: lerrit
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  SOLVEU : SOLVEUR
+! In  ds_system        : datastructure for non-linear system management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_print         : datastructure for printing parameters
@@ -123,8 +125,8 @@ aster_logical :: lerrit
     if ((ds_algopara%matrix_pred .eq. 'ELASTIQUE').or.&
         (ds_algopara%matrix_pred .eq. 'TANGENTE')) then
         call nmprta(mesh      , modele    , numedd         , numfix     , ds_material, carele,&
-                    ds_constitutive, lischa    , ds_algopara, solveu,&
-                    fonact    , ds_print       , ds_measure , ds_algorom , sddisc,&
+                    ds_constitutive, lischa    , ds_algopara, solveu, ds_system,&
+                    fonact         , ds_print       , ds_measure , ds_algorom , sddisc,&
                     numins    , valinc         , solalg     , matass     , maprec,&
                     ds_contact, sddyna         , meelem     , measse     , veelem,&
                     veasse    , sdnume         , ldccvg     , faccvg,&
@@ -136,13 +138,13 @@ aster_logical :: lerrit
     elseif ((ds_algopara%matrix_pred .eq. 'EXTRAPOLE').or.&
             (ds_algopara%matrix_pred .eq.'DEPL_CALCULE')) then
         call nmprde(mesh, modele, numedd         , numfix    , ds_material, carele    ,&
-                    ds_constitutive, lischa    , ds_algopara, solveu    ,&
+                    ds_constitutive, lischa    , ds_algopara, solveu    , ds_system,&
                     fonact, ds_print       , ds_measure, ds_algorom, sddisc     , numins    ,&
                     valinc, solalg         , matass    , maprec     , ds_contact,&
                     sddyna, meelem         , measse    , veelem     , veasse    ,&
                     ldccvg, faccvg         , rescvg)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! --- TRANSFORMATION DES CODES RETOURS EN EVENEMENTS

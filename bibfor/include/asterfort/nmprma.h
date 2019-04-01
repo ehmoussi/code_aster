@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmprma(mesh       , modelz     , ds_material, carele, ds_constitutive,&
-                      ds_algopara, lischa  , numedd, numfix, solveu,&
-                      ds_print, ds_measure, ds_algorom, sddisc,&
-                      sddyna     , numins  , fonact, ds_contact,&
-                      valinc     , solalg  , veelem, meelem, measse,&
-                      maprec     , matass  , faccvg, ldccvg)
+    subroutine nmprma(mesh       , modelz  , ds_material, carele    , ds_constitutive,&
+                      ds_algopara, lischa  , numedd     , numfix    , solveu,&
+                      ds_system  , ds_print, ds_measure , ds_algorom, sddisc,&
+                      sddyna     , numins  , fonact     , ds_contact, valinc,&
+                      solalg     , meelem  , measse      ,maprec    , matass,&
+                      faccvg     , ldccvg)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
         character(len=8), intent(in) :: mesh
@@ -38,6 +38,7 @@ interface
         type(NL_DS_Print), intent(inout) :: ds_print
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=19) :: sddisc
         character(len=19) :: sddyna
         integer :: numins
@@ -45,7 +46,6 @@ interface
         type(NL_DS_Contact), intent(inout) :: ds_contact
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
-        character(len=19) :: veelem(*)
         character(len=19) :: meelem(*)
         character(len=19) :: measse(*)
         character(len=19) :: maprec

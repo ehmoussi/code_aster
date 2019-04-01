@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -143,7 +143,6 @@ type(NL_DS_Conv), intent(out) :: ds_conv
     ds_conv%iter_glob_elas   = 0
     ds_conv%l_stop           = ASTER_TRUE
     ds_conv%l_stop_pene      = ASTER_TRUE
-    ds_conv%l_iter_elas      = ASTER_FALSE
 !
 ! - Parameters for automatic swap of convergence criterias
 !

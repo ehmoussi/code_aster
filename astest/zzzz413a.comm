@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -131,9 +131,9 @@ IMPR_RESU(FORMAT='MED',UNITE=unit,
 DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
 DETRUIRE(CONCEPT=_F(NOM=unit,),)
 
-EXEC_LOGICIEL(LOGICIEL="mdump3 {0} NODALE FULL_INTERLACE 1 | sed '1,20d'> {1}"
-                  .format(NomFicMed, NomFicDump),
-              SHELL='OUI')
+EXEC_LOGICIEL(
+    LOGICIEL="mdump3 {0} NODALE FULL_INTERLACE 1 | sed '1,20d'> {1}".format(NomFicMed, NomFicDump),
+    SHELL='OUI')
 
 TEST_FICHIER(
     FICHIER     = NomFicDump,
@@ -142,18 +142,3 @@ TEST_FICHIER(
 )
 
 FIN()
-
-"""
-Nom_Fic = './REPE_OUT/Poutre'
-Nom_Fic_tar = Nom_Fic+'.tar'
-unit = DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=Nom_Fic_tar, ACCES='NEW', TYPE='ASCII')
-IMPR_RESU_SP(
-    RESULTAT = RESUGM, GROUP_MA = ('TOUT',),
-    RESU =_F(
-            NOM_CHAM = ('SIEF_ELGA',), NOM_CMP  = ('SIXX',),
-    ),
-    UNITE = unit,
-)
-DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
-DETRUIRE(CONCEPT=_F(NOM=unit,),)
-"""

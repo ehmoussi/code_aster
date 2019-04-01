@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -145,7 +145,6 @@ implicit none
         integer :: iter_glob_elas
         aster_logical :: l_stop
         aster_logical :: l_stop_pene
-        aster_logical :: l_iter_elas
         real(kind=8)  :: swap_trig
         real(kind=8)  :: line_sear_coef
         integer       :: line_sear_iter
@@ -529,26 +528,23 @@ implicit none
 ! 
     type NL_DS_Constitutive
 ! ----- Name of field for constitutive laws
-        character(len=24)     :: compor
+        character(len=24)     :: compor      = ' '
 ! ----- Name of field for criteria of constitutive laws
-        character(len=24)     :: carcri
+        character(len=24)     :: carcri      = ' '
 ! ----- Name of field for constitutive laws - Special crystal
-        character(len=24)     :: mult_comp
+        character(len=24)     :: mult_comp   = ' '
 ! ----- Name of field for error field from constitutive laws
-        character(len=24)     :: comp_error
+        character(len=24)     :: comp_error  = ' '
+! ----- Name of field for coefficient in prediction
+        character(len=24)     :: code_pred   = ' '
 ! ----- Flag for De Borst algorithm
-        aster_logical         :: l_deborst
+        aster_logical         :: l_deborst   = ASTER_FALSE
 ! ----- Flag for DIS_CHOC
-        aster_logical         :: l_dis_choc
+        aster_logical         :: l_dis_choc  = ASTER_FALSE
 ! ----- Flag for POST_INCR
-        aster_logical         :: l_post_incr
-! ----- Flag for large strains in tangent matrix
-        aster_logical         :: l_matr_geom
-! ----- Flag to compute nodal force at prediction
-        aster_logical         :: l_pred_cnfnod
-! ----- Flag to integrate behaviour law at prediction
-        aster_logical         :: l_pred_cnfint
-
+        aster_logical         :: l_post_incr = ASTER_FALSE
+! ----- Flag for if large strains are in tangent matrix
+        aster_logical         :: l_matr_geom = ASTER_FALSE
     end type NL_DS_Constitutive
 !
 ! - Type: selection list
@@ -640,7 +636,6 @@ implicit none
         character(len=24) :: fvarc_pred = ' '
 ! ----- Force from external state variables for convergence criteria
         character(len=24) :: fvarc_curr = ' '
-
     end type NL_DS_Material
 !
 ! - Type: combine vectors
@@ -650,5 +645,28 @@ implicit none
         real(kind=8)       :: vect_coef(20)
         character(len=19)  :: vect_name(20)
     end type NL_DS_VectComb
+!
+! - Type: non-linear system
+! 
+    type NL_DS_System
+! ----- Flag to compute nodal force at prediction
+        aster_logical         :: l_pred_cnfnod = ASTER_FALSE
+! ----- Flag to integrate behaviour law at prediction
+        aster_logical         :: l_pred_cnfint = ASTER_FALSE
+! ----- Flag to integrate behaviour law at prediction (full prediction)
+        aster_logical         :: l_pred_full = ASTER_FALSE
+! ----- Name of field for multiplicator for full prediction
+        character(len=24)     :: code_pred = ' '
+! ----- Elementary and assembled vector for nodal force (no integration)
+        character(len=19)     :: vefnod = ' '
+        character(len=19)     :: cnfnod = ' '
+! ----- Elementary and assembled vector for internal force (integration)
+        character(len=19)     :: vefint = ' '
+        character(len=19)     :: cnfint = ' '
+! ----- Elementary and assembled vector for internal force (full integration at prediction)
+        character(len=19)     :: cnpred = ' '
+! ----- Elementary rigidity matrix
+        character(len=19)     :: merigi = ' '
+    end type NL_DS_System
 !
 end module

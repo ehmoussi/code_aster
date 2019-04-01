@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface
     subroutine ndxpre(model          , nume_dof   , numfix     , ds_material, cara_elem,&
-                      ds_constitutive, list_load  , ds_algopara, solveu     ,&
+                      ds_constitutive, list_load  , ds_algopara, solveu     , ds_system,&
                       list_func_acti , sddisc     , ds_measure , nume_inst  , hval_incr,&
-                      hval_algo      , matass     , maprec     , sddyna     , sderro,&
+                      hval_algo      , matass     , maprec     , sddyna     , sderro   ,&
                       hval_meelem    , hval_measse, hval_veelem, hval_veasse,&
                       lerrit)
         use NonLin_Datastructure_type
@@ -36,6 +35,7 @@ interface
         character(len=19) :: list_load, solveu, sddisc, sddyna
         character(len=24) :: model, cara_elem
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=24) :: nume_dof, numfix
         character(len=24) :: sderro
         character(len=19) :: hval_meelem(*), hval_veelem(*)
