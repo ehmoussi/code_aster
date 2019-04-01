@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 import math
+
 from code_aster.Cata.Syntax import _F, MACRO, SIMP
 from code_aster.Cata.DataStructure import CO as typCO
 from code_aster.Cata.DataStructure import (maillage_sdaster, modele_sdaster,
     cham_no_sdaster, listr8_sdaster, cham_mater, char_meca,resultat_sdaster)
 from code_aster.Commands.ExecuteCommand import UserMacro
-from code_aster.Commands import DEFI_LIST_REEL
+from code_aster.Commands import (DEFI_LIST_REEL, FORMULE, CALC_FONC_INTERP, DETRUIRE, 
+    AFFE_CHAR_MECA_F, CREA_CHAMP)
 
 
 def char_rota_ops(self,MODELE,ANGLE_DEGRES,TINI,TFIN,RESU,MAIL,**args):
@@ -32,17 +34,11 @@ def char_rota_ops(self,MODELE,ANGLE_DEGRES,TINI,TFIN,RESU,MAIL,**args):
   # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
   # On importe les definitions des commandes a utiliser dans la macro
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    # DEFI_LIST_REEL  = self.get_cmd('DEFI_LIST_REEL')
-    FORMULE  = self.get_cmd('FORMULE')
-    CALC_FONC_INTERP  = self.get_cmd('CALC_FONC_INTERP')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    AFFE_CHAR_MECA_F = self.get_cmd('AFFE_CHAR_MECA_F')
 
     angle=ANGLE_DEGRES*math.pi/180.0
     coordo=MAIL.sdj.COORDO.VALE.get()
     nomnoe=MAIL.sdj.NOMNOE.get()
-    coordo=NP.reshape(coordo,[len(coordo)/3,3])
+    coordo=NP.reshape(coordo,[len(coordo)//3,3])
     X=coordo[:,0]
     Z=coordo[:,2]
 
@@ -85,4 +81,3 @@ CHAR_ROTA_cata =MACRO(nom="CHAR_ROTA", op=char_rota_ops,sd_prod=char_meca,
          )
 
 CHAR_ROTA = UserMacro("CHAR_ROTA", CHAR_ROTA_cata, char_rota_ops)
-

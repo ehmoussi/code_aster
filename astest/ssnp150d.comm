@@ -143,8 +143,6 @@ if sympy_available:
   FsurfTX=FORMULE(VALE=str(Fsurf_BAS_t[0]), NOM_PARA=('X','Y') );
   FsurfTY=FORMULE(VALE=str(Fsurf_BAS_t[1]), NOM_PARA=('X','Y') );
 
-  print 'youyou ',str(Fsurf_BAS_nn.array.item().subs(Y,0))
-
   FcontNN=FORMULE(VALE=str(Fsurf_BAS_nn.array.item().subs(Y,0)), NOM_PARA=('X') );
 
   FvolX=FORMULE(VALE=str(Fvol[0]), NOM_PARA=('X','Y') );
@@ -156,7 +154,7 @@ else:
 #================================================================================================
 # Definition des formules Aster
 #================================================================================================
-  
+
   FUx=FORMULE(VALE="0.2*Y**3*(0.5 - X)", NOM_PARA=('X','Y') );
   FUy=FORMULE(VALE="-0.01*Y - (1 + Y)*(0.5 - X)*(0.025 - 0.05*X)", NOM_PARA=('X','Y') );
 

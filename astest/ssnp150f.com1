@@ -180,7 +180,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
                                 NOM_CMP = 'PRES',
                                 NOM_CMP_RESU = 'X1',),
                              ),);
-     
+
 
      PcalcG=CREA_CHAMP(OPERATION='DISC',
                        TYPE_CHAM='ELGA_NEUT_R',
@@ -281,9 +281,9 @@ POURSUITE(CODE='OUI',
 # nbtest=4
 # Nombre de remaillage
 Nb_Raffinement=6;
-TitreU      ='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en quadrangles'
+TitreU = r'Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en quadrangles'
 
-TitreP      ='Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en quadrangles'
+TitreP = r'Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en quadrangles'
 
 Legende     ='Cas QUAD 8'
 
@@ -417,7 +417,7 @@ for Raff in range(0,Nb_Raffinement):
                        MAILLAGE_N =MA0[Raff],
                        MAILLAGE_NP1 =MA0[Raff+1],
                        )
-        
+
         MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MA0[Raff+1],
                             DECOUPE_LAC=_F(GROUP_MA_ESCL='BAS',),);
 
@@ -493,7 +493,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                 TITRE=TitreU,
                 SOUS_TITRE=sous_titreU,
                 LEGENDE_X='h',
-                LEGENDE_Y='L\s2\N(Erreur)',
+                LEGENDE_Y=r'L\s2\N(Erreur)',
                 ECHELLE_X='LOG',
                 ECHELLE_Y='LOG',
                 INFO=2,)
@@ -511,7 +511,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
               TITRE=TitreP,
               SOUS_TITRE=sous_titreP,
               LEGENDE_X='h',
-              LEGENDE_Y='L\s2\N(Erreur)',
+              LEGENDE_Y=r'L\s2\N(Erreur)',
               ECHELLE_X='LOG',
               ECHELLE_Y='LOG',
               INFO=2,)
@@ -545,11 +545,11 @@ DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   _F(NOM=dicResu['DIFFPG']),
                   _F(NOM=RAMPE),
                   _F(NOM=LINST),
-                  _F(NOM=acier),  
+                  _F(NOM=acier),
                   ),
            INFO=1,);
 for n in range(0,Nb_Raffinement):
-    
+
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),
                       _F(NOM=MA[n]),
                       ),
