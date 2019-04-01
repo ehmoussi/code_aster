@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine romMultiParaDOM2mbrCreate(ds_multipara, i_coef, syst_2mbr_type, syst_2mbr)
+    subroutine romMultiParaDOM2mbrCreate(ds_multipara, i_coef, ds_solve)
         use Rom_Datastructure_type
         type(ROM_DS_MultiPara), intent(in) :: ds_multipara
         integer, intent(in) :: i_coef
-        character(len=1), intent(in) :: syst_2mbr_type
-        character(len=19), intent(in) :: syst_2mbr
+        type(ROM_DS_Solve), intent(in) :: ds_solve
     end subroutine romMultiParaDOM2mbrCreate
 end interface

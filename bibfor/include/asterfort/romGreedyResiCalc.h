@@ -15,15 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine romGreedyResiCalc(ds_empi, ds_para_rb, i_mode_until, i_mode_coef)
+    subroutine romGreedyResiCalc(ds_empi     , ds_multipara, ds_algoGreedy,&
+                                 i_mode_until, i_mode_coef)
         use Rom_Datastructure_type
         type(ROM_DS_Empi), intent(in) :: ds_empi
-        type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
-        integer, intent(in) :: i_mode_until
-        integer, intent(in) :: i_mode_coef
+        type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
+        type(ROM_DS_AlgoGreedy), intent(inout) :: ds_algoGreedy
+        integer, intent(in) :: i_mode_until, i_mode_coef
     end subroutine romGreedyResiCalc
 end interface

@@ -273,33 +273,40 @@ implicit none
 
     end type ROM_DS_ParaDBR_POD
 !
-! - Parameters for DEFI_BASE_REDUITE operator (RB)
+! - Algorithm Greedy
 !
-    type ROM_DS_ParaDBR_RB
+    type ROM_DS_AlgoGreedy
 ! ----- List of reduced components
         character(len=24)       :: coef_redu = ' '
-! ----- Residual = ' '
-        character(len=24)       :: vect_2mbr = ' '
+! ----- For residual
         character(len=1)        :: resi_type = ' '
         character(len=24)       :: resi_vect = ' '
         real(kind=8), pointer   :: resi_norm(:) => null()
         real(kind=8)            :: resi_refe = 0.d0
-! ----- Datastructure for solver's parameters
-        character(len=19)       :: solver = ' '
 ! ----- To solve complete system
         type(ROM_DS_Solve)      :: solveROM
 ! ----- To solve reduced system
         type(ROM_DS_Solve)      :: solveDOM
-! ----- Datastructure for multiparametric reduced problem
+! ----- Index of components FSI transient problem
+        integer                 :: nume_pres = 0
+        integer                 :: nume_phi  = 0
+    end type ROM_DS_AlgoGreedy
+!
+! - Parameters for DEFI_BASE_REDUITE operator (RB)
+!
+    type ROM_DS_ParaDBR_RB
+! ----- Datastructure for solver's parameters
+        character(len=19)       :: solver       = ' '
+! ----- Datastructure for multiparametric problem
         type(ROM_DS_MultiPara)  :: multipara
 ! ----- Maximum number of modes
         integer                 :: nb_mode_maxi = 0
-! ----- Flag to stabilize the basis for IFS transient problem
-        aster_logical           :: l_base_ifs = ASTER_FALSE
-        integer                 :: nume_pres = 0
-        integer                 :: nume_phi  = 0
-! ----- Tolerance 
-        real(kind=8)            :: tole_glouton = 0.d0
+! ----- Flag to stabilize the basis for FSI transient problem
+        aster_logical           :: l_stab_fsi   = ASTER_FALSE
+! ----- Tolerance for greedy algorithm
+        real(kind=8)            :: tole_greedy  = 0.d0
+! ----- Datastructure for greedy algorithm
+        type(ROM_DS_AlgoGreedy) :: algoGreedy
     end type ROM_DS_ParaDBR_RB
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (TRUNCATION)

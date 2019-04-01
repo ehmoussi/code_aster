@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romMultiParaChck(ds_multipara, l_stab_fsi)
+    subroutine romGreedyAlgoClean(ds_algoGreedy)
         use Rom_Datastructure_type
-        type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-        aster_logical, intent(in) :: l_stab_fsi
-    end subroutine romMultiParaChck
+        type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
+    end subroutine romGreedyAlgoClean
 end interface

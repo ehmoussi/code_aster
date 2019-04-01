@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romMultiParaROM2mbrCreate(ds_empi       , ds_multipara, i_coef,&
-                                     syst_2mbrROM)
+subroutine romMultiParaROM2mbrCreate(ds_empi, ds_multipara, i_coef, syst_2mbrROM)
 !
 use Rom_Datastructure_type
 !
@@ -46,10 +45,10 @@ character(len=19), intent(in) :: syst_2mbrROM
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
-! IO  ds_multipara     : datastructure for multiparametric problems
-! In  i_coef           : index of coefficient
-! Out  syst_2mbrROM     : second member on reduced model
+! In  ds_empi             : datastructure for empiric modes
+! IO  ds_multipara        : datastructure for multiparametric problems
+! In  i_coef              : index of coefficient
+! Out  syst_2mbrROM       : second member on reduced model
 !
 ! --------------------------------------------------------------------------------------------------
 !

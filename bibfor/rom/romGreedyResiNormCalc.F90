@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romGreedyResiNormCalc(i_coef, nb_equa, ds_para_rb)
+subroutine romGreedyResiNormCalc(i_coef, nb_equa, ds_algoGreedy)
 !
 use Rom_Datastructure_type
 !
@@ -29,9 +29,8 @@ implicit none
 #include "blas/ddot.h"
 #include "asterfort/jeveuo.h"
 !
-integer, intent(in) :: i_coef
-integer, intent(in) :: nb_equa
-type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
+integer, intent(in) :: i_coef, nb_equa
+type(ROM_DS_AlgoGreedy), intent(inout) :: ds_algoGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,7 +42,7 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! In  i_coef           : index of coefficient
 ! In  nb_equa          : number of equations
-! IO  ds_para_rb       : datastructure for parameters (RB)
+! IO  ds_algoGreedy    : datastructure for Greedy algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,22 +56,22 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resi_type = ds_para_rb%resi_type
+    resi_type = ds_algoGreedy%resi_type
 !
 ! - Compute norm of residual / norm of second member
 !
     if (resi_type .eq. 'R') then
-        call jeveuo(ds_para_rb%vect_2mbr(1:19)//'.VALE', 'L', vr = vr_vect_2mbr)
-        call jeveuo(ds_para_rb%resi_vect(1:19)//'.VALE', 'L', vr = vr_resi_vect)
+        call jeveuo(ds_algoGreedy%solveDOM%syst_2mbr(1:19)//'.VALE', 'L', vr = vr_vect_2mbr)
+        call jeveuo(ds_algoGreedy%resi_vect(1:19)//'.VALE', 'L', vr = vr_resi_vect)
         normr_2mbr = ddot(nb_equa, vr_vect_2mbr, 1, vr_vect_2mbr, 1)
         normr_resi = ddot(nb_equa, vr_resi_vect, 1, vr_resi_vect, 1)
-        ds_para_rb%resi_norm(i_coef) = sqrt(normr_resi/normr_2mbr)
+        ds_algoGreedy%resi_norm(i_coef) = sqrt(normr_resi/normr_2mbr)
     else if (resi_type .eq. 'C') then
-        call jeveuo(ds_para_rb%vect_2mbr(1:19)//'.VALE', 'L', vc = vc_vect_2mbr)
-        call jeveuo(ds_para_rb%resi_vect(1:19)//'.VALE', 'L', vc = vc_resi_vect)
+        call jeveuo(ds_algoGreedy%solveDOM%syst_2mbr(1:19)//'.VALE', 'L', vc = vc_vect_2mbr)
+        call jeveuo(ds_algoGreedy%resi_vect(1:19)//'.VALE', 'L', vc = vc_resi_vect)
         normc_2mbr = zdotc(nb_equa, vc_vect_2mbr, 1, vc_vect_2mbr, 1)
         normc_resi = zdotc(nb_equa, vc_resi_vect, 1, vc_resi_vect, 1)
-        ds_para_rb%resi_norm(i_coef) = real(sqrt(real(normc_resi/normc_2mbr)))
+        ds_algoGreedy%resi_norm(i_coef) = real(sqrt(real(normc_resi/normc_2mbr)))
     else
         ASSERT(ASTER_FALSE)
     endif

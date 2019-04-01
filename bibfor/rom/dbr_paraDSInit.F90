@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,6 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
 ! In  ds_para_pod      : datastructure for POD parameters
 ! In  ds_para_rb       : datastructure for RB parameters
 ! In  ds_para_tr       : datastructure for truncation parameters
@@ -47,8 +46,8 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_para%para_pod     = ds_para_pod
-    ds_para%para_rb      = ds_para_rb
-    ds_para%para_tr      = ds_para_tr
+    ds_para%para_pod = ds_para_pod
+    ds_para%para_rb  = ds_para_rb
+    ds_para%para_tr  = ds_para_tr
 !
 end subroutine

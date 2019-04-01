@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romSaveBaseStableIFS(ds_para_rb, ds_empi, i_mode)
+subroutine romSaveBaseStableIFS(ds_multipara, ds_algoGreedy, ds_empi, i_mode)
 !
 use Rom_Datastructure_type
 !
@@ -31,7 +31,8 @@ implicit none
 #include "asterfort/romNormalize.h"
 #include "asterfort/romGreedyModeSave.h"
 !
-type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
+type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
 type(ROM_DS_Empi), intent(inout) :: ds_empi
 integer, intent(in) :: i_mode
 !
@@ -41,13 +42,13 @@ integer, intent(in) :: i_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para_rb          : datastructure for parameters (RB)
+! In  ds_multipara        : datastructure for multiparametric problems
+! In  ds_algoGreedy       : datastructure for Greedy algorithm
 ! IO  ds_empi             : datastructure for empiric modes
 ! In  i_mode              : .true. if first basis
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type(ROM_DS_Solve) :: ds_solve
     character(len=19)  :: base_1, base_2, base_3
     complex(kind=8), pointer :: vc_base_1(:) => null()
     complex(kind=8), pointer :: vc_base_2(:) => null()
@@ -60,16 +61,17 @@ integer, intent(in) :: i_mode
     character(len=1)  :: syst_type
     integer :: i_equa, nb_equa, nume_pres, nume_phi
     type(ROM_DS_Field) :: field
+    type(ROM_DS_Solve) :: ds_solve
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    field     = ds_para_rb%multipara%field
-    nume_pres = ds_para_rb%nume_pres
-    nume_phi  = ds_para_rb%nume_phi
+    field     = ds_multipara%field
+    ds_solve  = ds_algoGreedy%solveDOM
+    nume_pres = ds_algoGreedy%nume_pres
+    nume_phi  = ds_algoGreedy%nume_phi
 !    
 ! - Prepre 3 champs noeuds pour la base
 !
-    ds_solve =  ds_para_rb%solveDOM
     base_1   = '&&&OP0053.BASE_U'
     base_2   = '&&&OP0053.BASE_P'
     base_3   = '&&&OP0053.BASE_PHI'
@@ -131,11 +133,8 @@ integer, intent(in) :: i_mode
 !
 ! - Save basis
 !
-    call romGreedyModeSave(ds_para_rb%multipara, ds_empi, 3*(i_mode-1)+1 ,&
-                           base_1)
-    call romGreedyModeSave(ds_para_rb%multipara, ds_empi, 3*(i_mode-1)+2 ,&
-                           base_2)
-    call romGreedyModeSave(ds_para_rb%multipara, ds_empi, 3*(i_mode-1)+3 ,&
-                           base_3)
+    call romGreedyModeSave(ds_multipara, ds_empi, 3*(i_mode-1)+1, base_1)
+    call romGreedyModeSave(ds_multipara, ds_empi, 3*(i_mode-1)+2, base_2)
+    call romGreedyModeSave(ds_multipara, ds_empi, 3*(i_mode-1)+3, base_3)
 !
 end subroutine

@@ -15,13 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine romSaveBaseStableIFS(ds_para_rb, ds_empi, i_mode)
+    subroutine romSaveBaseStableIFS(ds_multipara, ds_algoGreedy, ds_empi, i_mode)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
+        type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+        type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
         type(ROM_DS_Empi), intent(inout) :: ds_empi
         integer, intent(in) :: i_mode
     end subroutine romSaveBaseStableIFS

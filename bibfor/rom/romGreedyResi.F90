@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romGreedyResi(ds_empi, ds_para_rb, i_mode_until, i_mode_coef, i_coef)
+subroutine romGreedyResi(ds_empi     , ds_multipara, ds_algoGreedy,&
+                         i_mode_until, i_mode_coef , i_coef)
 !
 use Rom_Datastructure_type
 !
@@ -30,10 +31,9 @@ implicit none
 #include "asterfort/romEvalCoef.h"
 !
 type(ROM_DS_Empi), intent(in) :: ds_empi
-type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
-integer, intent(in) :: i_mode_until
-integer, intent(in) :: i_mode_coef
-integer, intent(in) :: i_coef
+type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
+type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
+integer, intent(in) :: i_mode_until, i_mode_coef, i_coef
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,7 +44,8 @@ integer, intent(in) :: i_coef
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_empi          : datastructure for empiric modes
-! IO  ds_para_rb       : datastructure for parameters (RB)
+! In  ds_multipara     : datastructure for multiparametric problems
+! In  ds_algoGreedy    : datastructure for Greedy algorithm
 ! In  i_mode_until     : last mode until compute
 ! In  i_mode_coef      : index of mode to compute coefficients
 ! In  i_coef           : index of coefficient
@@ -57,7 +58,6 @@ integer, intent(in) :: i_coef
     real(kind=8) :: coef_r
     complex(kind=8) :: coef_c, coef_cplx
     character(len=8) :: base
-    type(ROM_DS_MultiPara) :: ds_multipara
     complex(kind=8), pointer :: vc_coef_redu(:) => null()
     complex(kind=8), pointer :: vc_resi_vect(:) => null()
     complex(kind=8), pointer :: vc_vect_2mbr(:) => null()
@@ -69,24 +69,23 @@ integer, intent(in) :: i_coef
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_multipara   = ds_para_rb%multipara
     nb_matr        = ds_multipara%nb_matr
     nb_coef        = ds_multipara%nb_vari_coef
-    nb_mode        = ds_para_rb%solveROM%syst_size
-    nb_equa        = ds_para_rb%solveDOM%syst_size
+    nb_mode        = ds_algoGreedy%solveROM%syst_size
+    nb_equa        = ds_algoGreedy%solveDOM%syst_size
     base           = ds_empi%base
 !
 ! - Access to objects and copy seconde member contribution in residual
 !
-    if (ds_para_rb%solveROM%syst_2mbr_type .eq. 'R') then
-        call jeveuo(ds_para_rb%coef_redu, 'L', vr = vr_coef_redu)
-        call jeveuo(ds_para_rb%vect_2mbr(1:19)//'.VALE', 'L', vr = vr_vect_2mbr)
-        call jeveuo(ds_para_rb%resi_vect(1:19)//'.VALE', 'E', vr = vr_resi_vect)
+    if (ds_algoGreedy%solveROM%syst_2mbr_type .eq. 'R') then
+        call jeveuo(ds_algoGreedy%coef_redu, 'L', vr = vr_coef_redu)
+        call jeveuo(ds_algoGreedy%solveDOM%syst_2mbr(1:19)//'.VALE', 'L', vr = vr_vect_2mbr)
+        call jeveuo(ds_algoGreedy%resi_vect(1:19)//'.VALE', 'E', vr = vr_resi_vect)
         vr_resi_vect(:) = vr_vect_2mbr(:)
-    else if (ds_para_rb%solveROM%syst_2mbr_type .eq. 'C') then
-        call jeveuo(ds_para_rb%coef_redu, 'L', vc = vc_coef_redu)
-        call jeveuo(ds_para_rb%vect_2mbr(1:19)//'.VALE', 'L', vc = vc_vect_2mbr)
-        call jeveuo(ds_para_rb%resi_vect(1:19)//'.VALE', 'E', vc = vc_resi_vect)
+    else if (ds_algoGreedy%solveROM%syst_2mbr_type .eq. 'C') then
+        call jeveuo(ds_algoGreedy%coef_redu, 'L', vc = vc_coef_redu)
+        call jeveuo(ds_algoGreedy%solveDOM%syst_2mbr(1:19)//'.VALE', 'L', vc = vc_vect_2mbr)
+        call jeveuo(ds_algoGreedy%resi_vect(1:19)//'.VALE', 'E', vc = vc_resi_vect)
         vc_resi_vect(:) = vc_vect_2mbr(:)
     else
         ASSERT(ASTER_FALSE)
@@ -101,7 +100,7 @@ integer, intent(in) :: i_coef
 !
 ! - Matrix contribution
 !    
-    if (ds_para_rb%solveROM%syst_2mbr_type .eq. 'R') then
+    if (ds_algoGreedy%solveROM%syst_2mbr_type .eq. 'R') then
         do i_mode = 1, i_mode_until
             do i_matr = 1, nb_matr
                 l_coef_real = ds_multipara%matr_coef(i_matr)%l_real
@@ -115,7 +114,7 @@ integer, intent(in) :: i_coef
                 end do  
             end do
         end do
-    else if (ds_para_rb%solveROM%syst_2mbr_type .eq. 'C') then
+    else if (ds_algoGreedy%solveROM%syst_2mbr_type .eq. 'C') then
         do i_mode = 1, i_mode_until
             do i_matr = 1, nb_matr
                 l_coef_cplx = ds_multipara%matr_coef(i_matr)%l_cplx

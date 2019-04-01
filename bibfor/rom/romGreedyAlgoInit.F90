@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romGreedyAlgoInit(nb_mode, nb_vari_coef, vect_refe, ds_para_rb)
+subroutine romGreedyAlgoInit(nb_mode, nb_vari_coef, vect_refe, ds_algoGreedy)
 !
 use Rom_Datastructure_type
 !
@@ -31,8 +31,8 @@ implicit none
 #include "asterfort/wkvect.h"
 !
 integer, intent(in) :: nb_mode, nb_vari_coef
-character(len=19), intent(in) :: vect_refe
-type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
+character(len=19), intent(in) :: vect_refe 
+type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,7 +45,7 @@ type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
 ! In  nb_mode          : number of empirical modes
 ! In  nb_vari_coef     : number of coefficients to vary
 ! In  vect_refe        : reference vector to create residual vector
-! In  ds_para_rb       : datastructure for parameters (RB)
+! In  ds_algoGreedy    : datastructure for Greedy algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,9 +59,9 @@ type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
         call utmess('I', 'ROM2_42')
     endif
 !
-    call wkvect(ds_para_rb%coef_redu, 'V V '//ds_para_rb%resi_type, nb_mode*nb_vari_coef, jv_dummy)
-    call copisd('CHAMP_GD', 'V', vect_refe, ds_para_rb%resi_vect)
-    call copisd('CHAMP_GD', 'V', vect_refe, ds_para_rb%vect_2mbr)
-    AS_ALLOCATE(vr = ds_para_rb%resi_norm, size = nb_vari_coef+1)
+    call wkvect(ds_algoGreedy%coef_redu, 'V V '//ds_algoGreedy%resi_type, nb_mode*nb_vari_coef,&
+                jv_dummy)
+    call copisd('CHAMP_GD', 'V', vect_refe, ds_algoGreedy%resi_vect)
+    AS_ALLOCATE(vr = ds_algoGreedy%resi_norm, size = nb_vari_coef+1)
 !
 end subroutine

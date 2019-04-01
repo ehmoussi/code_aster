@@ -17,17 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romMultiParaCoefCompute(ds_empi     , ds_multipara,&
-                                       solveROM    ,&
+    subroutine romMultiParaCoefCompute(ds_empi     , ds_multipara, ds_algoGreedy,&
                                        i_mode_until, i_mode_coef ,&
-                                       coef_redu   , i_coef_)
+                                       i_coef_)
         use Rom_Datastructure_type
         type(ROM_DS_Empi), intent(in) :: ds_empi
         type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
-        type(ROM_DS_Solve), intent(in) :: solveROM
-        integer, intent(in) :: i_mode_until
-        integer, intent(in) :: i_mode_coef
-        character(len=24), intent(in) :: coef_redu
+        type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
+        integer, intent(in) :: i_mode_until, i_mode_coef
         integer, optional, intent(in) :: i_coef_
     end subroutine romMultiParaCoefCompute
 end interface

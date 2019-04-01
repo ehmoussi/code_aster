@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romSolveROMSystSolve(ds_solve, size_to_solve_)
 !
 use Rom_Datastructure_type
@@ -29,10 +30,8 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/zgauss.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Solve), intent(in) :: ds_solve
-    integer, optional, intent(in) :: size_to_solve_
+type(ROM_DS_Solve), intent(in) :: ds_solve
+integer, optional, intent(in) :: size_to_solve_
 !
 ! --------------------------------------------------------------------------------------------------
 !

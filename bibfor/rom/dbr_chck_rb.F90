@@ -45,18 +45,13 @@ aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_base_ifs
-!
-! --------------------------------------------------------------------------------------------------
-!
     if (l_reuse) then
         call utmess('F','ROM2_13', sk = operation)
     endif
 !
 ! - Check data for multiparametric problems
 !
-    l_base_ifs   = ds_para_rb%l_base_ifs
-    call romMultiParaChck(ds_para_rb%multipara, l_base_ifs)
+    call romMultiParaChck(ds_para_rb%multipara, ds_para_rb%l_stab_fsi)
 !
 ! - Specific checks for DEFI_BASE_REDUITE
 !

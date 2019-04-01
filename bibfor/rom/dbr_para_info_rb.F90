@@ -46,7 +46,7 @@ type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
 !
     integer :: ifm, niv
     integer :: nb_mode_maxi
-    real(kind=8) :: tole_glouton
+    real(kind=8) :: tole_greedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,19 +58,19 @@ type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
 ! - Get parameters in datastructure - General for POD
 !
     nb_mode_maxi = ds_para_rb%nb_mode_maxi
-    tole_glouton = ds_para_rb%tole_glouton
+    tole_greedy  = ds_para_rb%tole_greedy
 !
 ! - Print - General for RB
 !
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_17', si = nb_mode_maxi)
-        call utmess('I', 'ROM5_21', sr = tole_glouton)
+        call utmess('I', 'ROM5_21', sr = tole_greedy)
         call utmess('I', 'ROM3_39')
         call romMultiParaInfo(ds_para_rb%multipara)
         call utmess('I', 'ROM3_37')
-        call romSolveInfo(ds_para_rb%solveDOM)
+        call romSolveInfo(ds_para_rb%algoGreedy%solveDOM)
         call utmess('I', 'ROM3_38')
-        call romSolveInfo(ds_para_rb%solveROM)
+        call romSolveInfo(ds_para_rb%algoGreedy%solveROM)
     endif
 !
 end subroutine
