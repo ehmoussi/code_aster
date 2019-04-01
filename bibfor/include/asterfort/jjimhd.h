@@ -21,7 +21,7 @@
 interface
     subroutine jjimhd(idfic, inat, crnom, ngrp, kattr,&
                       iadmi, genri, typei, lt, lonoi)
-        med_idt :: idfic
+        hid_t :: idfic
         integer :: inat
         character(len=*) :: crnom
         character(len=*) :: ngrp

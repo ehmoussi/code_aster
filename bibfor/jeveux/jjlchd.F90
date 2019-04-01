@@ -36,6 +36,7 @@ subroutine jjlchd(id, ic, idfic, idts, ngrp)
 #include "asterc/hdfopg.h"
 #include "asterc/hdfrsv.h"
 #include "asterc/hdftsd.h"
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/jjalls.h"
 #include "asterfort/jjecrs.h"
@@ -44,7 +45,7 @@ subroutine jjlchd(id, ic, idfic, idts, ngrp)
 #include "asterfort/jjlihd.h"
 #include "asterfort/utmess.h"
     integer :: id, ic, idts
-    med_idt :: idfic
+    hid_t :: idfic
     character(len=*) :: ngrp
 ! ----------------------------------------------------------------------
     integer :: lk1zon, jk1zon, liszon, jiszon

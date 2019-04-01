@@ -22,7 +22,7 @@ interface
     subroutine jjlchd(id, ic, idfic, idts, ngrp)
         integer :: id
         integer :: ic
-        med_idt :: idfic
+        hid_t :: idfic
         integer :: idts
         character(len=*) :: ngrp
     end subroutine jjlchd

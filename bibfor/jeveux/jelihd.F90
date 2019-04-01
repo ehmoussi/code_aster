@@ -35,6 +35,7 @@ subroutine jelihd(nomf, fichdf, clas)
 #include "asterc/hdfrsv.h"
 #include "asterc/hdftsd.h"
 #include "asterc/hdftyp.h"
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/codent.h"
 #include "asterfort/iunifi.h"
@@ -131,7 +132,7 @@ subroutine jelihd(nomf, fichdf, clas)
      &                 nomat2 = 'BASE GLOBALE JEVEUX' )
     integer :: ipgca, ltypi, lonoi, nbobj, ik32(1), jk32, ik8(1), jk8
     integer :: idts, ltypb, nbval, iadmi, vali(2)
-    med_idt :: idfic
+    hid_t :: idfic
     integer :: idos, kitab, idgr, idt1, idt2, idg, julist
     integer :: iret1, iret2, iret3, idco, lmarq
     equivalence     (ik32,k32),(ik8,k8)

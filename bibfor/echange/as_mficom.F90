@@ -29,7 +29,7 @@ subroutine as_mficom(nom, hdfok, medok, cret)
 #include "med/mficom.h"
 ! person_in_charge: nicolas.sellenet at edf.fr
     aster_int :: cret, hdfok, medok
-    med_idt :: fid
+    hid_t :: fid
     character(len=*) :: nom
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')

@@ -27,8 +27,9 @@ subroutine jjimhd(idfic, inat, crnom, ngrp, kattr,&
 #include "asterc/hdfopd.h"
 #include "asterc/hdfwat.h"
 #include "asterc/hdfwsv.h"
+#include "asterf_types.h"
 #include "asterfort/utmess.h"
-    med_idt :: idfic
+    hid_t :: idfic
     integer :: inat, iadmi, lt, lonoi
     character(len=*) :: crnom, ngrp, genri, typei
     character(len=24) :: kattr(*)
