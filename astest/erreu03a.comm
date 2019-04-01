@@ -84,7 +84,7 @@ try :
                    )
 
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_77":
       is_ok = 1
@@ -112,7 +112,7 @@ try :
                    )
 
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_10":
       is_ok = 1
@@ -136,7 +136,7 @@ try :
                      SOLVEUR=_F(METHODE='MULT_FRONT',NPREC=8,STOP_SINGULIER='OUI',),
                    )
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_10":
       is_ok = 1
@@ -160,7 +160,7 @@ try :
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=8,STOP_SINGULIER='OUI',),
                    )
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
       is_ok = 1
@@ -184,7 +184,7 @@ try :
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=-8,STOP_SINGULIER='OUI',),
                    )
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_57":
       is_ok = 1
@@ -213,7 +213,7 @@ try :
                    )
 
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
       is_ok = 1
@@ -237,7 +237,7 @@ try :
                      SOLVEUR=_F(METHODE='MULT_FRONT',NPREC=8,STOP_SINGULIER='OUI',),
                    )
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
       is_ok = 1
@@ -261,7 +261,7 @@ try :
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=8,STOP_SINGULIER='OUI',),
                    )
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
       is_ok = 1
@@ -285,7 +285,7 @@ try :
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=-8,STOP_SINGULIER='OUI',),
                    )
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_42":
       is_ok = 1
@@ -309,7 +309,7 @@ try :
                      SOLVEUR=_F(METHODE='MUMPS',TYPE_RESOL='SYMDEF'),
                    )
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_84":
       is_ok = 1

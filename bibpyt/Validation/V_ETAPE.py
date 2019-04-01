@@ -297,7 +297,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
         for child in self.mc_liste:
             i += 1
             if i > MAXSIZE:
-                print((MAXSIZE_MSGCHK.format(MAXSIZE, len(self.mc_liste))))
+                print(MAXSIZE_MSGCHK.format(MAXSIZE, len(self.mc_liste)))
                 break
             self.cr.add(child.report())
         return self.cr

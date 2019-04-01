@@ -195,7 +195,7 @@ def calc_ecrevisse_ops(self,
     DEFI_FICHIER = self.get_cmd("DEFI_FICHIER")
     DEFI_CONSTANTE = self.get_cmd("DEFI_CONSTANTE")
     from Contrib.macr_ecre_calc import MACR_ECRE_CALC
-    
+
     # RECUPERATION DES MOTS-CLES FACTEURS
     dRESULTAT = RESULTAT[0].cree_dict_valeurs(RESULTAT[0].mc_liste)
     for i in list(dRESULTAT.keys()):
@@ -1072,7 +1072,7 @@ def calc_ecrevisse_ops(self,
             # ----------------------------------------------------------
 
         if debug:
-            print(('FISSURE-' + str(k + 1)))
+            print('FISSURE-' + str(k + 1))
             print('_lst_c:', len(_lst_c),        _lst_c)
             print('_lst_f:', len(_lst_f),        _lst_f)
             print('_lst_p:', len(_lst_p),        _lst_p)

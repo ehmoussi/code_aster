@@ -51,36 +51,36 @@ try:
 
 except aster.NonConvergenceError as err:
    print("Exception NonConvergence interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 except aster.EchecComportementError as err:
    print("Exception EchecComportement interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 except aster.BandeFrequenceVideError as err:
    print("Exception BandeFrequenceVide interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 except aster.MatriceSinguliereError as err:
    print("Exception MatriceSinguliere interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 except aster.TraitementContactError as err:
    print("Exception TraitementContact interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 except aster.MatriceContactSinguliereError as err:
    print("Exception MatriceContactSinguliere interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 except aster.ArretCPUError as err:
    print("Exception ArretCPU interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 except aster.error as err:
    is_ok = 1
    print("Exception error interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 print(sep)
 
@@ -110,11 +110,11 @@ try:
 except aster.NonConvergenceError as err:
    is_ok = 1
    print("Exception NonConvergence interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 except aster.error as err:
    print("Exception error interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 print(sep)
 
@@ -143,16 +143,16 @@ try:
 
 except aster.BandeFrequenceVideError as err:
    print("Exception BandeFrequenceVide interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 except aster.EchecComportementError as err:
    is_ok = 1
    print("Exception EchecComportement interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 except aster.error as err:
    print("Exception error interceptee")
-   print(("Raison : " + str(err.valk)))
+   print("Raison : " + str(err.valk))
 
 print(sep)
 
@@ -180,10 +180,10 @@ fmt="""
    Comportement en cas d'erreur fatale : %s
 """
 prev=aster.onFatalError()
-print((fmt % prev))
+print(fmt % prev)
 
 aster.onFatalError('EXCEPTION')
-print((fmt % aster.onFatalError()))
+print(fmt % aster.onFatalError())
 try:
     ma=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=999)   # unite invalide
 except aster.error as err:
@@ -194,7 +194,7 @@ except aster.error as err:
 
 # on remet dans l'etat initial
 aster.onFatalError(prev)
-print((fmt % aster.onFatalError()))
+print(fmt % aster.onFatalError())
 print(sep)
 
 # TEST_RESU

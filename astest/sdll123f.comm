@@ -117,13 +117,13 @@ ASSEMBLAGE(MODELE=MODELE,
 [d,amor]=EXTR_MATR(AMOR,1)
 
 nddl=rig.shape[0]
-print(('nddl', nddl))
+print('nddl', nddl)
 
 print("D")
-print((len(d)))
+print(len(d))
 i=0
 for ddd in d:
-   print((i,ddd))
+   print(i,ddd)
    i=i+1
 print("\n")
 
@@ -169,7 +169,7 @@ i=1
 j=0
 for vp in vpreal:
  if vp>5.e-3:
-  print(("vp %4d : %6.6f" %(i,vp)))
+  print("vp %4d : %6.6f" %(i,vp))
   i=i+1
  j=j+1
  dij=j-i

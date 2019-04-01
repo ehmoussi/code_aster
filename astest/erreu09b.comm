@@ -135,7 +135,7 @@ try:
 except aster.ArretCPUError as msg:
    is_ok = 1
 
-print(("Restore time limit to {0} s".format(tpmax)))
+print("Restore time limit to {0} s".format(tpmax))
 aster_core.set_option("tpmax", tpmax)
 
 
