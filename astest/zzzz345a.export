@@ -1,0 +1,8 @@
+P time_limit 100
+P memory_limit 212
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist verification sequential
+F comm zzzz345a.comm D 1
+F mmed zzzz345a.mmed D 20
