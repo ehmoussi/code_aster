@@ -494,7 +494,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         """
         if self.jdc.alea == None:
             # le generateur n'a pas ete initialise, on l'initialise
-            bidon = self.iniran(0)
+            self.iniran(0)
         valeur = self.jdc.alea.random()
         resu = (valeur, )
         return resu
@@ -506,8 +506,11 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         """
         from random import Random
         self.jdc.alea = Random(100)
-        self.jdc.alea.seed(jump)
-        return None
+        gen = self.jdc.alea
+        gen.seed(jump)
+        # similar to python2 `jumpahead` function
+        for _ in range(jump):
+            gen.random()
 
     def fiintf(self, coderr, nom_fonction, nom_param, val):
         """Cette methode permet d'appeler une formule python depuis le fortran.
