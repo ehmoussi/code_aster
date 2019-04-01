@@ -55,6 +55,9 @@ def options(self):
     group.add_option('--time_limit', dest='time_limit',
                     action='store', default=None,
                     help='override the time limit of the testcase')
+    group.add_option('--notify', dest='notify',
+                    action='store_true', default=False,
+                    help='send a desktop notification on completion')
 
 def configure(self):
     """Store developer preferences"""
@@ -118,7 +121,9 @@ def runtest(self):
             func = Logs.error
             status += 1
         func('`- exit %s' % retcode)
-        notify('testcase %s ended - exit %s' % (test, retcode), errlevel=retcode)
+        if opts.notify:
+            notify('testcase %s ended - exit %s' % (test, retcode),
+                   errlevel=retcode)
     if status != 0:
         raise Errors.WafError('testcase failed')
 
