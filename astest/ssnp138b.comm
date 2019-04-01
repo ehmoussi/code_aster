@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -152,14 +152,13 @@ SI2CH2 = [None]*(nbcalc)
 #--------------------------------------
 for i in range(nbcalc) :
 
-  # on passe pas un string pour que l evaluation de la fonction se fasse a chaque pas
-  alpha = str(eval('alphaf[i]*pi/180.'))
+  alpha = alphaf[i]*pi/180.
 
   FISS[i]=DEFI_FISS_XFEM(MAILLAGE=MAILLAGE,
                     DEFI_FISS=_F(
                                  FORM_FISS  = 'SEGMENT',
-                                 PFON_ORIG  = (-A*cos(eval(alpha))/2,-A*sin(eval(alpha))/2, 0.),
-                                 PFON_EXTR  = ( A*cos(eval(alpha))/2, A*sin(eval(alpha))/2, 0.),
+                                 PFON_ORIG  = (-A*cos(alpha)/2,-A*sin(alpha)/2, 0.),
+                                 PFON_EXTR  = ( A*cos(alpha)/2, A*sin(alpha)/2, 0.),
                                  ),
                     TYPE_ENRI_FOND='GEOMETRIQUE',
                     NB_COUCHES=5,
