@@ -27,6 +27,7 @@ subroutine jeimhd(fichdf, clas)
 #include "asterc/hdfcrg.h"
 #include "asterc/hdfopg.h"
 #include "asterc/hdfwat.h"
+#include "asterf_types.h"
 #include "asterfort/enlird.h"
 #include "asterfort/iunifi.h"
 #include "asterfort/jjallc.h"
@@ -97,7 +98,7 @@ subroutine jeimhd(fichdf, clas)
     character(len=80) :: nhdf
     integer :: ic, julist, ltypi, ilong, lonoi, iaddi(2), iadmi, iadmx
     integer :: nbmax, jctab, idg, idgc, vali
-    med_idt :: idfic
+    hid_t :: idfic
     integer :: lidbas
     parameter      ( lidbas = 20 )
 ! ----------------------------------------------------------------------
