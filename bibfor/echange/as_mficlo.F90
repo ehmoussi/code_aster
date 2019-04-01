@@ -25,12 +25,13 @@ subroutine as_mficlo(fid, cret)
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "med/mficlo.h"
-    aster_int :: fid, cret
+    med_idt :: fid
+    aster_int :: cret
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: cret4
     fidm = to_med_idt(fid)

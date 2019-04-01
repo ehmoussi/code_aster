@@ -22,7 +22,7 @@
 interface
     subroutine as_mmhraw(fid, nomail, typgeo, nomatt, nbrval,&
                       tabval, codret)
-        aster_int :: fid
+        med_idt :: fid
         character(len=*) :: nomail
         aster_int :: typgeo
         character(len=*) :: nomatt

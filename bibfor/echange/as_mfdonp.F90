@@ -31,7 +31,8 @@ subroutine as_mfdonp(fid, cha, numdt, numo, typent,&
 #include "asterfort/as_mfinvr.h"
 #include "med/mfioex.h"
 #include "med/mfdonp.h"
-    aster_int :: fid, typent, typgeo, n, cret, numdt, numo, iterma
+    med_idt :: fid
+    aster_int :: typent, typgeo, n, cret, numdt, numo, iterma
     aster_int :: maj, mini, rel
     character(len=*) :: nompro, nomloc, cha, noma
     character(len=20) :: numdtchar, numochar
@@ -40,7 +41,7 @@ subroutine as_mfdonp(fid, cha, numdt, numo, typent,&
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: typen4, typge4, n4, cret4, numdt4, numo4, iterm4
     med_int :: oexist4, class4
@@ -61,7 +62,7 @@ subroutine as_mfdonp(fid, cha, numdt, numo, typent,&
         ! On verifie uniquement le nom du champ si la version < 3.2
         oname = trim(cha)
     endif
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     fidm = to_med_idt(fid)
     numdt4 = numdt
     numo4 = numo

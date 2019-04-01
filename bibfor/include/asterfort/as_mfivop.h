@@ -19,7 +19,7 @@
 #include "asterf_types.h"
 interface
     subroutine as_mfivop(fid, nom, acces, major, minor, rel, cret)
-        aster_int, intent(out) :: fid
+        med_idt, intent(out) :: fid
         character(len=*), intent(in) :: nom
         aster_int, intent(in) :: acces
         aster_int, intent(in) :: major

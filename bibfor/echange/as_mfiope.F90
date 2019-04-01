@@ -28,7 +28,7 @@ subroutine as_mfiope(fid, nom, acces, cret)
 !#include "asterc/hdfopf.h"
 !#include "asterc/hdfclf.h"
 #include "med/mfiope.h"
-    aster_int, intent(out) :: fid
+    med_idt, intent(out) :: fid
     character(len=*), intent(in) :: nom
     aster_int, intent(in) :: acces
     aster_int, intent(out) :: cret
@@ -36,7 +36,7 @@ subroutine as_mfiope(fid, nom, acces, cret)
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: acces4, cret4
 #endif
@@ -53,7 +53,7 @@ subroutine as_mfiope(fid, nom, acces, cret)
 !        endif
 !    endif
     if (cret.eq.0) then
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
         acces4 = acces
         call mfiope(fidm, nom, acces4, cret4)
         fid = fidm

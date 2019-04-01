@@ -33,7 +33,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-integer :: fid
+med_idt :: fid
 integer :: nbnoeu, nbmail, nbnoma
 integer :: typgeo(*), nmatyp(*), nnotyp(*)
 character(len=8) :: nomtyp(*)

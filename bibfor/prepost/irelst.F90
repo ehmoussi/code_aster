@@ -79,7 +79,8 @@ character(len=80) :: caimpk(3, nbimpr)
 !
     integer :: inimpr, nbcouc, nbsect, nummai,  ntypef, codret
     integer :: nbnoso, nbnoto, nbrepg, ndim, nbelr, nbgamm
-    integer :: idfimd, nbtyp, nbsp
+    med_idt :: idfimd
+    integer :: nbtyp, nbsp
     integer :: medcel, nbmssu, nbattc, prespr
     integer, parameter :: lgmax = 1000, edleaj = 1, nbfamx = 20
     integer, parameter :: edmail = 0, edcart = 0, edfuin = 0, ednoda = 0, edtyre = 6

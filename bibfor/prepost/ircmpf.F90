@@ -66,7 +66,7 @@ subroutine ircmpf(nofimd, nvalty, profil, noprof)
 !
     integer :: ifm, nivinf
 !
-    integer :: idfimd
+    med_idt :: idfimd
     integer :: nbprof, lgprof, adprof, adnopf, nrprty
     integer :: iaux, jaux
     integer :: codret

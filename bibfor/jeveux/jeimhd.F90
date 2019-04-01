@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -96,7 +96,8 @@ subroutine jeimhd(fichdf, clas)
     character(len=32) :: crnom, ngrp, nomcol
     character(len=80) :: nhdf
     integer :: ic, julist, ltypi, ilong, lonoi, iaddi(2), iadmi, iadmx
-    integer :: idfic, nbmax, jctab, idg, idgc
+    integer :: nbmax, jctab, idg, idgc, vali
+    med_idt :: idfic
     integer :: lidbas
     parameter      ( lidbas = 20 )
 ! ----------------------------------------------------------------------
@@ -114,7 +115,8 @@ subroutine jeimhd(fichdf, clas)
     nhdf = fichdf
     idfic = hdfcrf (nhdf)
     if (idfic .lt. 0) then
-        call utmess('F', 'JEVEUX_66', sk=nhdf, si=idfic)
+        vali=idfic
+        call utmess('F', 'JEVEUX_66', sk=nhdf, si=vali)
     endif
     ngrp ='/'
     idg = hdfopg (idfic,ngrp)

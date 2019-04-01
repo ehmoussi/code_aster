@@ -26,14 +26,15 @@ subroutine as_mfacre(fid, maa, fam, num, ngro,&
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "med/mfacre.h"
-    aster_int :: fid, num, ngro, cret
+    med_idt :: fid
+    aster_int :: num, ngro, cret
     character(len=*) :: maa, fam
     character(len=80) :: gro(*)
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: num4, ngro4, cret4
     fidm = to_med_idt(fid)

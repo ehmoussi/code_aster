@@ -28,14 +28,15 @@ subroutine as_mfdrpr(fid, cha, val, intlac, numco,&
 #include "asterfort/utmess.h"
 #include "med/mfdrpr.h"
     character(len=*) :: cha, profil
-    aster_int :: fid, typent, typgeo, cret
+    med_idt :: fid
+    aster_int :: typent, typgeo, cret
     aster_int :: intlac, numco, numdt, numo, pflmod
     real(kind=8) :: val(*)
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: typen4, typge4, cret4
     med_int :: intla4, numco4, numdt4, numo4, pflmo4

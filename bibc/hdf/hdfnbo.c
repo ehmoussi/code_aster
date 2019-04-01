@@ -31,8 +31,11 @@
 #ifndef _DISABLE_HDF5
 #include <hdf5.h>
 #endif
+#ifndef _DISABLE_MED
+#include "med.h"
+#endif
 
-ASTERINTEGER DEFPS(HDFNBO, hdfnbo, ASTERINTEGER *idf, char *nomgr, STRING_SIZE ln)
+ASTERINTEGER DEFPS(HDFNBO, hdfnbo, med_idt *idf, char *nomgr, STRING_SIZE ln)
 {
   ASTERINTEGER nbobj=0;
 #ifndef _DISABLE_HDF5

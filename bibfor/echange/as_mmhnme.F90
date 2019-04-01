@@ -27,13 +27,14 @@ subroutine as_mmhnme(fid, maa, quoi, typent, typgeo,&
 #include "asterfort/utmess.h"
 #include "med/mmhnme.h"
     character(len=*) :: maa
-    aster_int :: fid, typent, typgeo, cret, typcon, n, quoi, mdnont, mdnoit
+    med_idt :: fid 
+    aster_int :: typent, typgeo, cret, typcon, n, quoi, mdnont, mdnoit
     aster_int :: chtseq, chttra
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: typen4, typge4, cret4, typco4, n4, quoi4
     med_int :: mdnon4, mdnoi4, chtse4, chttr4

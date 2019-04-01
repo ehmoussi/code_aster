@@ -29,12 +29,13 @@ subroutine as_mmhcre(fid, nom, dim, type, desc,&
     character(len=*) :: nom
     character(len=*) :: desc, descdt
     character(len=16) :: nocomp(3), unit(3)
-    aster_int :: fid, dim, type, cret, stunde, typrep
+    med_idt :: fid
+    aster_int :: dim, type, cret, stunde, typrep
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: dim4, type4, cret4, stund4, typre4
     stunde = 1
