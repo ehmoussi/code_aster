@@ -3610,7 +3610,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 ),), INFO = 1)
 
                 for k in range(1, NCOU + 2):
-                    DETRUIRE(CONCEPT=_F(NOM=SOLR[k],), INFO=1)
+                    DETRUIRE(CONCEPT=_F(NOM=__SOLR[k],), INFO=1)
 
             DETRUIRE(CONCEPT=_F(NOM=(
                             __NUMEDDL,

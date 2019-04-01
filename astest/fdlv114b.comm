@@ -95,9 +95,9 @@ TABFREQ = RECU_TABLE(CO=modes, NOM_PARA=('FREQ','MASS_EFFE_DX','MASS_EFFE_DY','M
 IMPR_TABLE(TABLE=TABFREQ)
 
 w2=(2.*pi*TABFREQ['FREQ',1])**2
-print(('Omega**2', w2))
+print('Omega**2', w2)
 
-# Calcul des matrices de masse et de raideur generalisees 
+# Calcul des matrices de masse et de raideur generalisees
 
 numgen=NUME_DDL_GENE(BASE=modes,
                      STOCKAGE='PLEIN',);
@@ -118,7 +118,7 @@ MATFLUI = AFFE_MATERIAU(MAILLAGE=ma,
                         AFFE=_F( GROUP_MA=( 'VOL_FLU', 'STRU_2D'), MATER=EAU),)
 
 MODELFLU = AFFE_MODELE(MAILLAGE=ma,
-                           AFFE=_F( GROUP_MA=( 'VOL_FLU', 'STRU_2D'), 
+                           AFFE=_F( GROUP_MA=( 'VOL_FLU', 'STRU_2D'),
                                     MODELISATION='3D',
                                     PHENOMENE='THERMIQUE'), )
 
@@ -139,7 +139,7 @@ massaj = CALC_MATR_AJOU(MODELE_INTERFACE=MODINTER,
                         CHAM_MATER=MATFLUI,
                         )
 
-# Calcul de la matrice de masse totale de la structure (matrice de  
+# Calcul de la matrice de masse totale de la structure (matrice de
 # masse generalisee plus matrice de masse ajoutee)
 
 mastot=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=massaj,
@@ -181,7 +181,7 @@ RIGITH=ASSE_MATRICE(MATR_ELEM=METHER, NUME_DDL =NUDDLT,);
 #  >--------- FACTORISATION (OBLIGATOIRE) DE LA MATRICE DE RIGIDITE  -----------<
 RIGITH=FACTORISER(reuse=RIGITH,  MATR_ASSE=RIGITH   )
 
-  
+
 #  >--------- APPEL AU NOUVEL OPERATEUR FORTRAN CALC_CHAM_FLUI  -----------<
 result = CALC_CHAM_FLUI(RIGI_THER = RIGITH,
                         MODE_MECA = modes,
@@ -200,11 +200,11 @@ TEMPREP1=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
                     NOM_CHAM='TEMP',
                     NUME_ORDRE=0,);
 
-REP0=CREA_CHAMP(TYPE_CHAM='NOEU_PRES_R', OPERATION='AFFE', MODELE=mo, 
+REP0=CREA_CHAMP(TYPE_CHAM='NOEU_PRES_R', OPERATION='AFFE', MODELE=mo,
                  AFFE=(
                        _F( TOUT='OUI', NOM_CMP='PRES',VALE=0.0),),)
 
-PRE1=CREA_CHAMP(TYPE_CHAM='NOEU_PRES_R', OPERATION='ASSE', MODELE=mo, 
+PRE1=CREA_CHAMP(TYPE_CHAM='NOEU_PRES_R', OPERATION='ASSE', MODELE=mo,
                  ASSE=(
                        _F( TOUT='OUI', CHAM_GD=REP0, ),
                        _F( TOUT='OUI', CHAM_GD=TEMPREP1, NOM_CMP=('TEMP'), NOM_CMP_RESU=('PRES',)),))
@@ -218,7 +218,7 @@ PRP1=CREA_RESU(OPERATION='AFFE',
 
 CHARP1=AFFE_CHAR_MECA(MODELE=mo, EVOL_CHAR=PRP1,);
 
-PRASS1=MECA_STATIQUE(MODELE=mo, CHAM_MATER=chmt_mat, CARA_ELEM=aff_car, 
+PRASS1=MECA_STATIQUE(MODELE=mo, CHAM_MATER=chmt_mat, CARA_ELEM=aff_car,
                      EXCIT=(_F(CHARGE=CHARP1), _F(CHARGE=aff_meca)))
 
 PRASS1 = CALC_CHAMP(MODELE=mo, RESULTAT=PRASS1, reuse=PRASS1, FORCE='FORC_NODA')

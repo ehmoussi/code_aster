@@ -52,7 +52,7 @@ MOTH=AFFE_MODELE(  MAILLAGE=MAIL,
 
 
 # Loads
-TGAUCHE=DEFI_FONCTION(NOM_RESU='TEMP',  
+TGAUCHE=DEFI_FONCTION(NOM_RESU='TEMP',
                       NOM_PARA='INST',
                       VALE=(0.0E0,      200.0E0,
                             10.0E0,      200.0E0,
@@ -118,7 +118,7 @@ for i_inst in range(1,len(l_inst)) :
     inst = l_inst[i_inst]
     print(' ')
     print('        ####################################')
-    print(('             instant de calcul ',inst))
+    print('             instant de calcul ',inst)
     print('        ####################################')
     print(' ')
 
@@ -220,7 +220,7 @@ for i_inst in range(1,len(l_inst)) :
                           NUME_DDL  = NU,
                           COMB      = (
                                        _F(
-                                          CHAM_GD = CHAR_AS, 
+                                          CHAM_GD = CHAR_AS,
                                           COEF_R  = 1.,
                                          ),
                                        _F(
@@ -282,13 +282,13 @@ for i_inst in range(1,len(l_inst)) :
     for IterNewton in range(1,NbIterNewtonMax+1) :
         print(' ')
         print('        ####################################')
-        print(('             iteration de Newton ',IterNewton))
+        print('             iteration de Newton ',IterNewton)
         print('        ####################################')
         print(' ')
 
 ####################################################################################################
 # Routine NXNEWT
-####################################################################################################        
+####################################################################################################
 
         # Compute non linear quantities
         CORR     = CALCUL(PHENOMENE  = 'THERMIQUE',
@@ -350,7 +350,7 @@ for i_inst in range(1,len(l_inst)) :
 
 ####################################################################################################
 # Routine NXRESI
-####################################################################################################  
+####################################################################################################
         # Evaluate equilibrium
         CN2MBR   = CREA_CHAMP(OPERATION = 'COMB',
                               TYPE_CHAM = 'NOEU_TEMP_R',
@@ -388,8 +388,8 @@ for i_inst in range(1,len(l_inst)) :
         Residu[IterNewton-1]  = sqrt( resi_rela / vnorm )
         ResiduX[IterNewton-1] = resi_maxi
 
-        print(('RESI_GLOB_RELA:',Residu[IterNewton-1]))
-        print(('RESI_GLOB_MAXI:',ResiduX[IterNewton-1]))
+        print('RESI_GLOB_RELA:',Residu[IterNewton-1])
+        print('RESI_GLOB_MAXI:',ResiduX[IterNewton-1])
 
         # Estimation de la convergence
         if Residu[IterNewton-1] <= ResiGlobRela :
@@ -424,7 +424,7 @@ for i_inst in range(1,len(l_inst)) :
         DETRUIRE(CONCEPT=_F(NOM=T),INFO=1)
         T  = RESOUDRE(MATR    = MT_AS,
                       CHAM_NO = CN2MBR,);
-        
+
 
         # Somme en python T+ = DELTA_t + T-
         DELTA_T = CREA_CHAMP(reuse     = DELTA_T,
@@ -432,11 +432,11 @@ for i_inst in range(1,len(l_inst)) :
                               TYPE_CHAM = 'NOEU_TEMP_R',
                               COMB      = (
                                            _F(
-                                              CHAM_GD = DELTA_T, 
+                                              CHAM_GD = DELTA_T,
                                               COEF_R  = 1.
                                              ),
                                            _F(
-                                              CHAM_GD = T, 
+                                              CHAM_GD = T,
                                               COEF_R  = 1.
                                              ),
                                           ),)
@@ -446,10 +446,10 @@ for i_inst in range(1,len(l_inst)) :
         DETRUIRE(CONCEPT=_F(NOM=BTLA_AS),INFO=1)
         DETRUIRE(CONCEPT=_F(NOM=CN2MBR),INFO=1)
 
-    print(('instant ',inst))
+    print('instant ',inst)
     print('IterNewton | Resi_Glob_rela   | Resi_Glob_Maxi  | Convergence')
     for i in range(0,IterNewton) :
-        print(('     %d     |   %e   |   %e  |    %d ' %(i,Residu[i],ResiduX[i],Conv[i])))
+        print('     %d     |   %e   |   %e  |    %d ' %(i,Residu[i],ResiduX[i],Conv[i]))
 
     if Conv[IterNewton-1] != 1 :
         print('echec de la convergence des iterations de Newton')
@@ -473,11 +473,11 @@ for i_inst in range(1,len(l_inst)) :
                   TYPE_CHAM = 'NOEU_TEMP_R',
                   COMB      = (
                                _F(
-                                  CHAM_GD = DELTA_T, 
+                                  CHAM_GD = DELTA_T,
                                   COEF_R  = 1.
                                  ),
                                _F(
-                                  CHAM_GD = T, 
+                                  CHAM_GD = T,
                                   COEF_R  = 0.
                                  ),
                               ),)
@@ -487,7 +487,7 @@ for i_inst in range(1,len(l_inst)) :
                   TYPE_CHAM = 'NOEU_TEMP_R',
                   COMB      = (
                                _F(
-                                  CHAM_GD = DELTA_T, 
+                                  CHAM_GD = DELTA_T,
                                   COEF_R  = 0.
                                  ),
                               ),)

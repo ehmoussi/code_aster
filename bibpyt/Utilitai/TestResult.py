@@ -177,7 +177,7 @@ def _internal_print(text):
 
 def _internal_mess(a, b):
     """UTMESS replacement for unittest"""
-    print(('<{0}> message {1}').format(a, b))
+    print('<{0}> message {1}').format(a, b)
 
 
 # Creation of the singleton instance

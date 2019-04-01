@@ -508,12 +508,12 @@ def check_sdprod(command, func_prod, sd_prod, verbose=True):
                      .format(command, _name(sd_prod),
                              [_name(i) for i in allowed]))
     except Exception as exc:
-        print(("Error: {0}".format(exc)))
+        print("Error: {0}".format(exc))
         cr.fatal("Error: {0}: the 'sd_prod' function must support "
                  "the '__all__=True' argument".format(command))
     if not cr.estvide():
         if verbose:
-            print((str(cr)))
+            print(str(cr))
         raise TypeError(str(cr))
 
 def subtypes(cls):

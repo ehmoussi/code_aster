@@ -18,11 +18,11 @@
 # --------------------------------------------------------------------
 
 """
-Configuration for Scibian 9
+Configuration for Gaia
 
 . $HOME/dev/codeaster/devtools/etc/env_unstable.sh
 
-waf configure --use-config=scibian9_std --prefix=../install/std
+waf configure --use-config=gaia_std --prefix=../install/std
 waf install -p
 """
 

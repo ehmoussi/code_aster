@@ -101,7 +101,7 @@ try :
                   CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0., 2.),SIGNE='POSITIF_NEGATIF',),
                   );
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MECANONLINE9_51":
       is_ok = 1
@@ -138,7 +138,7 @@ try :
                   CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0., 2.),SIGNE='POSITIF',),
                   );
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MECANONLINE9_51":
       is_ok = 1
@@ -177,7 +177,7 @@ try :
                   CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0., 2.),SIGNE='NEGATIF',),
                   );
 except aster.error as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MECANONLINE9_51":
       is_ok = 1

@@ -217,7 +217,7 @@ for i in range(1,NCAL+1):
 
           epsimp =DEFI_CONSTANTE(VALE=-ALPH(Ti)*(Ti - TREF));
 
-          print(('i=',i, ' instant=', time, ' Temperature=',Ti))
+          print('i=',i, ' instant=', time, ' Temperature=',Ti)
 
           # variation des coef du comportement avec la temperature
           # correction eventuelle des valeurs initiales du temps ti
