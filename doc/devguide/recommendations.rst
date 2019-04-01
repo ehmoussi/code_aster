@@ -224,7 +224,6 @@ returns ``MAILLAGE_P``, so one defines:
         pass
 
 
-
 Commons errors
 ==============
 
@@ -244,3 +243,23 @@ Commons errors
       >>> from code_aster.Commands import MAJ_CATA
       >>> MAJ_CATA(ELEMENT={})
       >>> exit()
+
+
+INCLUDE removal
+===============
+
+During the removal of the ``INCLUDE`` function, some files has been renamed
+but without registering the change by Mercurial.
+Here is a list for help for future merges:
+
+- ``perfe03a.32`` replaced by ``perfe03a_4.py``.
+- ``sdnl141a.datg`` replaced by ``sdnl141a.py``.
+- ``sdnl142a.datg``  replaced by ``sdnl142a.py``.
+- ``sdnl143a.datg`` replaced by ``sdnl143a.py``.
+- ``ssnd106a.30`` replaced by ``ssnd106a.py``.
+- ``ssnd106b.30`` replaced by ``ssnd106b.py``.
+- ``ssnp150b.comm`` replaced by ``ssnp150b.com1``.
+- ``ssnp150c.38`` replaced by ``ssnp150c.comm`` and ``ssnp150c.com1``.
+- ``ssnp150e.comm`` replaced by ``ssnp150e.com1``.
+- ``ssnp150f.comm`` replaced by ``ssnp150d.comm`` and ``ssnp150f.com1``.
+- ``supv001a.33`` really removed.
