@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,12 +18,12 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmcese(modele         , numedd, ds_material, carele    ,&
-                  ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                  iterat         , sdnume, sdpilo, valinc    , solalg    ,&
-                  veelem         , veasse, offset, typsel    , sddisc    ,&
-                  licite         , rho   , eta   , etaf      , criter    ,&
-                  ldccvg         , pilcvg, matass)
+subroutine nmcese(modele         , numedd    , ds_material, carele, &
+                  ds_constitutive, ds_contact, lischa     , fonact, ds_measure,&
+                  iterat         , sdnume    , sdpilo     , valinc, solalg    ,&
+                  veelem         , veasse    , offset     , typsel, sddisc    ,&
+                  licite         , rho       , eta        , etaf  , criter    ,&
+                  ldccvg         , pilcvg    , matass     , ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -32,7 +32,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/exixfe.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmceai.h"
 #include "asterfort/nmceni.h"
@@ -57,12 +56,13 @@ character(len=24) :: typsel
 integer :: licite(2)
 integer :: ldccvg, pilcvg
 real(kind=8) :: etaf, criter
+type(NL_DS_System), intent(in) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME - PILOTAGE)
 !
-! SELECTION DU PARAMETRE DE PILOTAGE ENTRE DEUX SOLUTIONS
+! Select solution
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,6 +75,7 @@ real(kind=8) :: etaf, criter
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  SDPILO : SD PILOTAGE
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_system        : datastructure for non-linear system management
 ! IN  SDNUME : SD NUMEROTATION
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -115,17 +116,17 @@ real(kind=8) :: etaf, criter
     character(len=8) :: choix, txt
     character(len=19) :: depold, depdel, deppr1, deppr2
     character(len=24) :: typpil
-    integer :: ifm, niv
     aster_logical :: swloun, isxfe
     aster_logical :: switch, mixte
-    real(kind=8) :: miincr, miresi, contra, precyc, fnid(2)
+    real(kind=8) :: miincr, miresi, fnid(2)
     real(kind=8), pointer :: plir(:) => null()
     character(len=24), pointer :: pltk(:) => null()
-    parameter     (contra=0.1d0,precyc=5.d-2)
+    real(kind=8), parameter :: contra = 0.1d0
+    real(kind=8), parameter :: precyc = 5.d-2
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('PILOTAGE', ifm, niv)
+
 !
 ! --- LE CALCUL DE PILOTAGE A FORCEMENT ETE REALISE
 !
@@ -134,16 +135,14 @@ real(kind=8) :: etaf, criter
 ! --- INITIALISATIONS
 !
     call jeveuo(sdpilo(1:19)//'.PLTK', 'L', vk24=pltk)
-    typpil = pltk(1)
-    f(1) = 0.d0
-    f(2) = 0.d0
-    ldccv(1) = -1
-    ldccv(2) = -1
-    ldccvg = -1
+    typpil   = pltk(1)
+    f(:)     = 0.d0
+    ldccv(:) = -1
+    ldccvg   = -1
 !
 ! --- STRATEGIE MIXTE BASEE SUR LE CONTRASTE DES CRITERES DE CHOIX
 !
-    mixte = typsel.eq.'MIXTE'
+    mixte  = typsel.eq.'MIXTE'
     switch = .false.
 !
 ! --- VERIFICATION DE LA COMPATIBILITE
@@ -217,23 +216,26 @@ real(kind=8) :: etaf, criter
         endif
     endif
 !
-! --- SELECTION SELON LA METHODE CHOISIE: RESIDU OU MIXTE
+! - Compute residual
 !
     if (typsel .eq. 'RESIDU' .or. mixte) then
-        call nmcere(modele         , numedd, ds_material, carele    ,&
-                    ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                    iterat         , sdnume, valinc, solalg    , veelem    ,&
-                    veasse         , offset, rho   , eta(1)    , f(1)      ,&
-                    ldccv(1)       , matass)
-        call nmcere(modele         , numedd, ds_material, carele    ,&
-                    ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                    iterat         , sdnume, valinc, solalg    , veelem    ,&
-                    veasse         , offset, rho   , eta(2)    , f(2)      ,&
-                    ldccv(2)       , matass)
+        call nmcere(modele         , numedd    , ds_material, carele, &
+                    ds_constitutive, ds_contact, lischa     , fonact, ds_measure,&
+                    iterat         , sdnume    , valinc     , solalg, veelem    ,&
+                    veasse         , offset    , rho        , eta(1), f(1)      ,&
+                    ldccv(1)       , ds_system , matass)
+        call nmcere(modele         , numedd    , ds_material, carele, &
+                    ds_constitutive, ds_contact, lischa     , fonact, ds_measure,&
+                    iterat         , sdnume    , valinc     , solalg, veelem    ,&
+                    veasse         , offset    , rho        , eta(2), f(2)      ,&
+                    ldccv(2)       , ds_system , matass)
+    endif
 !
-! ----- SI STRATEGIE MIXTE : EXAMEN DU CONTRASTE
+! - Have a look on "contrast"
 !
+    if (typsel .eq. 'RESIDU' .or. mixte) then
         if (mixte) then
+! --------- Probleme: dans nmcere, on a touhjours ldccv(1:2) .gt. 0 !
             if (ldccv(1) .eq. 0 .and. ldccv(2) .eq. 0) then
                 miresi = min(f(1),f(2))/max(f(1),f(2))
                 if (miresi .le. contra) goto 600
@@ -278,7 +280,7 @@ real(kind=8) :: etaf, criter
     if ((f(1).le.f(2) .and. .not.switch) .or. (f(1).gt.f(2) .and. switch)) then
         sel=1
     endif
-    etaf = eta(sel)
+    etaf   = eta(sel)
     pilcvg = licite(sel)
     ldccvg = ldccv(sel)
     criter = f(sel)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine nmconv(noma    , modele, ds_material, numedd  , sdnume     ,&
-                      fonact  , sddyna, ds_conv, ds_print, ds_measure,&
-                      sddisc  , sdcrit , sderro  , ds_algopara, ds_algorom,&
-                      ds_inout, matass , solveu  , numins     ,&
-                      iterat  , eta   , ds_contact, valinc  , solalg     ,&
+    subroutine nmconv(noma    , modele, ds_material, numedd     , sdnume    ,&
+                      fonact  , sddyna, ds_conv    , ds_print   , ds_measure,&
+                      sddisc  , sdcrit, sderro     , ds_algopara, ds_algorom,&
+                      ds_inout, matass, solveu     , ds_system  , numins    ,&
+                      iterat  , eta   , ds_contact , valinc     , solalg    ,&
                       measse  , veasse)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
@@ -43,6 +42,7 @@ interface
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=19) :: matass
         character(len=19) :: solveu
+        type(NL_DS_System), intent(in) :: ds_system
         integer :: numins
         integer :: iterat
         real(kind=8) :: eta

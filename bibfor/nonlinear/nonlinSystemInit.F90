@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinIntegratePrepare(list_func_acti , sddyna, model,&
-                                  ds_constitutive)
+subroutine nonlinSystemInit(list_func_acti , sddyna, nume_dof, ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -30,25 +29,25 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
-#include "asterfort/comp_info.h"
+#include "asterfort/vtcreb.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=19), intent(in) :: sddyna
-character(len=8), intent(in) :: model
-type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
+character(len=24), intent(in) :: nume_dof
+type(NL_DS_System), intent(inout) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Constitutive laws
+! MECA_NON_LINE - Non-linear system
 !
-! Prepare integration of constitutive laws
+! Initializations for non-linear system
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  list_func_acti   : list of active functionnalities
 ! In  sddyna           : dynamic parameters datastructure
-! In  model            : name of model
-! IO  ds_constitutive  : datastructure for constitutive laws management
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! IO  ds_system        : datastructure for non-linear system management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +58,7 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'MECANONLINE13_28')
+        call utmess('I', 'MECANONLINE13_10')
     endif
 !
 ! - Active functionnalities
@@ -72,18 +71,24 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 ! - Activation
 !
     if (l_resi_comp) then
-        ds_constitutive%l_pred_cnfnod = ASTER_TRUE
+        ds_system%l_pred_cnfnod = ASTER_TRUE
     endif
     if (l_implex) then
-        ds_constitutive%l_pred_cnfnod = ASTER_TRUE
+        ds_system%l_pred_cnfnod = ASTER_TRUE
     endif
     if (l_stat) then
-        ds_constitutive%l_pred_cnfnod = ASTER_TRUE
+        ds_system%l_pred_cnfnod = ASTER_TRUE
     endif
     if (l_dyna) then
-        ds_constitutive%l_pred_cnfint = ASTER_TRUE
+        ds_system%l_pred_cnfint = ASTER_TRUE
     endif
 !
-    call comp_info(model, ds_constitutive%compor)
+! - Full prediction
+!
+    ds_system%l_pred_full = ASTER_TRUE
+!
+! - Create fields
+!
+    call vtcreb(ds_system%cnfint, 'V', 'R', nume_ddlz = nume_dof)
 !
 end subroutine

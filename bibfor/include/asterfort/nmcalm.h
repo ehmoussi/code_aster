@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmcalm(typmat         , modelz, lischa, ds_material, carele,&
-                      ds_constitutive, instam, instap, valinc     , solalg,&
-                      optmaz         , base  , meelem, matele)
+    subroutine nmcalm(typmat         , modelz, lischa   , ds_material, carele,&
+                      ds_constitutive, instam, instap   , valinc     , solalg,&
+                      optmaz         , base  , ds_system, meelem     , matele)
         use NonLin_Datastructure_type
         character(len=6) :: typmat
         character(len=*) :: modelz
@@ -35,6 +35,7 @@ interface
         character(len=19) :: solalg(*)
         character(len=*) :: optmaz
         character(len=1) :: base
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=19) :: meelem(*)
         character(len=19) :: matele
     end subroutine nmcalm

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmfini(sddyna, valinc         , measse    , modele, ds_material,&
-                  carele, ds_constitutive, ds_measure, sddisc, numins     ,&
-                  solalg, numedd         , fonact    , veelem, veasse)
+subroutine nmfini(sddyna, valinc         , measse   , modele    , ds_material,&
+                  carele, ds_constitutive, ds_system, ds_measure, sddisc     , numins,&
+                  solalg, numedd         , fonact   )
 !
 use NonLin_Datastructure_type
 !
@@ -45,9 +45,10 @@ integer, intent(in) :: fonact(*)
 character(len=24) :: modele, carele
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=24) :: numedd
-character(len=19) :: sddisc, solalg(*), veelem(*), veasse(*)
+character(len=19) :: sddisc, solalg(*)
 integer :: numins
 !
 ! --------------------------------------------------------------------------------------------------
@@ -67,13 +68,12 @@ integer :: numins
 ! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! In  ds_constitutive  : datastructure for constitutive laws management
+! In  ds_system        : datastructure for non-linear system management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  NUMEDD : NUME_DDL
-! IN  VEELEM : VECTEURS ELEMENTAIRES
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -82,7 +82,7 @@ integer :: numins
     integer :: imasse, iamort
     integer :: nb_equa, i_equa
     aster_logical :: lamor, ldyna
-    character(len=19) :: cnfnod, fnomoi
+    character(len=19) :: fnomoi
     real(kind=8) :: time_prev, time_curr
     real(kind=8), pointer :: cv(:) => null()
     real(kind=8), pointer :: ma(:) => null()
@@ -93,6 +93,7 @@ integer :: numins
     real(kind=8), pointer :: flimo(:) => null()
     real(kind=8), pointer :: fnomo(:) => null()
     real(kind=8), pointer :: vitmo(:) => null()
+    character(len=19) :: vefnod, cnfnod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -154,12 +155,13 @@ integer :: numins
 !
 ! --- AJOUT DU TERME CNFNOD
 !
+    vefnod = ds_system%vefnod
+    cnfnod = ds_system%cnfnod
     call nonlinNForceCompute(modele     , carele         , numedd  , fonact,&
                              ds_material, ds_constitutive, ds_measure,&
                              time_prev  , time_curr      ,&
                              valinc     , solalg         ,&
-                             veelem     , veasse)
-    call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)
+                             vefnod     , cnfnod)
     call jeveuo(cnfnod//'.VALE', 'L', vr=cnfno)
     do i_equa = 1, nb_equa
         fexmo(i_equa) = fexmo(i_equa) + cnfno(i_equa)

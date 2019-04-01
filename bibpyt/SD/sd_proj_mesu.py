@@ -51,7 +51,7 @@ class sd_proj_mesu(AsBase):
         # vérifications communes :
         assert self.PJMRG.lonmax >= nbutil
         n1 = self.PJMBP.lonuti
-        nbmode = n1 / nbutil
+        nbmode = n1 // nbutil
         assert n1 == nbutil * nbmode, (nbmode, nbutil, n1)
         assert self.PJMRF.exists
         pjmrf = self.PJMRF.get_stripped()

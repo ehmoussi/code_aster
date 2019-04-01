@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,8 +38,8 @@ character(len=19) :: veasse(*)
 !
 ! ----------------------------------------------------------------------
 !
-    character(len=19) :: cnfedo, cnfepi, cnfsdo, cndidi, cnfint
-    character(len=19) :: cndido, cndipi, cncine, cndiri, cnfnod
+    character(len=19) :: cnfedo, cnfepi, cnfsdo, cndidi
+    character(len=19) :: cndido, cndipi, cncine, cndiri
     character(len=19) :: cnbudi, cnlapl, cnsstr, cnondp
     character(len=19) :: cnsstf
     character(len=19) :: cnrefe
@@ -49,10 +49,10 @@ character(len=19) :: veasse(*)
 !
     data cnfedo,cnfsdo    /'&&NMCH5P.CNFEDO','&&NMCH5P.CNFSDO'/
     data cndido,cnfepi    /'&&NMCH5P.CNDIDO','&&NMCH5P.CNFEPI'/
-    data cndipi,cnfint    /'&&NMCH5P.CNDIPI','&&NMCH5P.CNFINT'/
+    data cndipi           /'&&NMCH5P.CNDIPI'/
     data cnbudi,cndidi    /'&&NMCH5P.CNBUDI','&&NMCH5P.CNDIDI'/
     data cnondp,cnlapl    /'&&NMCH5P.CNONDP','&&NMCH5P.CNLAPL'/
-    data cndiri,cnfnod    /'&&NMCH5P.CNDIRI','&&NMCH5P.CNFNOD'/
+    data cndiri           /'&&NMCH5P.CNDIRI'/
     data cnsstf           /'&&NMCH5P.CNSSTF'/
     data cnrefe           /'&&NMCH5P.CNREFE'/
     data cncine,cnsstr    /'&&NMCH5P.CNCINE','&&NMCH5P.CNSSTR'/
@@ -65,10 +65,8 @@ character(len=19) :: veasse(*)
 ! ----------------------------------------------------------------------
 !
     call nmcha0('VEASSE', 'ALLINI', ' ', veasse)
-    call nmcha0('VEASSE', 'CNFINT', cnfint, veasse)
     call nmcha0('VEASSE', 'CNDIRI', cndiri, veasse)
     call nmcha0('VEASSE', 'CNBUDI', cnbudi, veasse)
-    call nmcha0('VEASSE', 'CNFNOD', cnfnod, veasse)
     call nmcha0('VEASSE', 'CNDIDO', cndido, veasse)
     call nmcha0('VEASSE', 'CNDIPI', cndipi, veasse)
     call nmcha0('VEASSE', 'CNFEDO', cnfedo, veasse)

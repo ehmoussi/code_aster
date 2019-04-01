@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ interface
                             model         , cara_elem      ,&
                             nume_dof      , &
                             list_load     , sddyna         ,&
-                            ds_material   , ds_constitutive,&
+                            ds_material   , ds_constitutive, ds_system,&
                             ds_measure    , &
                             sddisc        , nume_inst      ,&
                             hval_incr     , hval_algo      ,&
@@ -33,6 +33,7 @@ interface
         character(len=19), intent(in) :: list_load, sddyna
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        type(NL_DS_System), intent(in) :: ds_system
         type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19), intent(in) :: sddisc
         integer, intent(in) :: nume_inst

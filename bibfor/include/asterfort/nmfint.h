@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,21 +17,21 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmfint(model          , cara_elem      ,&
-                      ds_material    , ds_constitutive,&
-                      list_func_acti , iter_newt      , sddyna, ds_measure,&
-                      hval_incr      , hval_algo      ,&
-                      vefint         , ldccvg   )
-        use NonLin_Datastructure_type        
+    subroutine nmfint(model         , cara_elem      ,&
+                      ds_material   , ds_constitutive,&
+                      list_func_acti, iter_newt      , ds_measure, ds_system,&
+                      hval_incr     , hval_algo      ,&
+                      ldccvg        , sddynz_)
+        use NonLin_Datastructure_type
         character(len=24), intent(in) :: model, cara_elem
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         integer, intent(in) :: list_func_acti(*)
         integer, intent(in) :: iter_newt
-        character(len=19), intent(in) :: sddyna
         type(NL_DS_Measure), intent(inout) :: ds_measure
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
-        character(len=19), intent(in) :: vefint
         integer, intent(out) :: ldccvg
+        character(len=*), optional, intent(in) :: sddynz_
     end subroutine nmfint
 end interface

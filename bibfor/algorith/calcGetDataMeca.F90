@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,14 +29,12 @@ implicit none
 #include "asterfort/nmlect.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
-#include "asterfort/infniv.h"
 #include "asterfort/nonlinDSConstitutiveCreate.h"
 #include "asterfort/nmdorc.h"
 #include "asterfort/nonlinDSConstitutiveInit.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/isOptionPossible.h"
 #include "asterfort/utmess.h"
-#include "asterfort/comp_info.h"
 !
 character(len=19), intent(out) :: list_load
 character(len=24), intent(out) :: model
@@ -74,7 +72,7 @@ integer, intent(out) :: nume_harm
 !
     character(len=8) :: result
     aster_logical :: l_etat_init
-    integer :: nocc, ifm, niv
+    integer :: nocc
     character(len=19) :: ligrmo
 !
 ! --------------------------------------------------------------------------------------------------
@@ -87,8 +85,7 @@ integer, intent(out) :: nume_harm
     sigm_prev      = ' '
     disp_prev      = ' '
     disp_cumu_inst = ' '
-    l_elem_nonl    = .false._1
-    call infniv(ifm, niv)
+    l_elem_nonl    = ASTER_FALSE
 !
 ! - Get parameters from command file
 !
@@ -98,7 +95,7 @@ integer, intent(out) :: nume_harm
 !
     call dismoi('NOM_LIGREL', model, 'MODELE', repk=ligrmo)
     call isOptionPossible(ligrmo, 'TOU_INI_ELGA', 'PVARI_R', l_some_ = l_elem_nonl)
-! - Does option FULL_MECA exist
+! - Does option FULL_MECA exist ?
     if (l_elem_nonl) then
         call isOptionPossible(ligrmo, 'FULL_MECA', 'PDEPLPR', l_some_ = l_elem_nonl)
     endif
@@ -135,7 +132,9 @@ integer, intent(out) :: nume_harm
 ! - Get Fourier Mode
 !
     call getvis(' ', 'MODE_FOURIER', scal=nume_harm, nbret=nocc)
-    if (nocc .eq. 0) nume_harm = 0
+    if (nocc .eq. 0) then
+        nume_harm = 0
+    endif
 !
 ! - Prepare constitutive laws management datastructure
 !
@@ -145,9 +144,6 @@ integer, intent(out) :: nume_harm
                     ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp,&
                     l_implex_ = .false._1)
         call nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)
-        if (niv .ge. 2) then
-            call comp_info(model(1:8), ds_constitutive%compor)
-        endif
     endif
 !
 end subroutine

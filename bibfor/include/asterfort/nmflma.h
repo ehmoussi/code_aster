@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@ interface
     subroutine nmflma(typmat, mod45 , l_hpp  , ds_algopara, modelz,&
                       ds_material, carele, sddisc, sddyna     , fonact,&
                       numins, valinc, solalg, lischa     ,&
-                      numedd, numfix,&
+                      numedd, numfix, ds_system,&
                       ds_constitutive, ds_measure, meelem,&
-                      measse, veelem, nddle , ds_posttimestep, modrig,&
+                      measse, nddle , ds_posttimestep, modrig,&
                       ldccvg, matass, matgeo)
         use NonLin_Datastructure_type
         character(len=16) :: typmat
@@ -44,9 +44,9 @@ interface
         character(len=24) :: numfix
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Measure), intent(inout) :: ds_measure
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=19) :: meelem(*)
         character(len=19) :: measse(*)
-        character(len=19) :: veelem(*)
         integer :: nddle
         type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
         character(len=16) :: modrig

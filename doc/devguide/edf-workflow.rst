@@ -20,7 +20,7 @@ Rules for EDF continuous integration
 
 - Commit messages must refer to the an existing issue.
 
-- The branches ``asterxx.*`` are automatically and continuously integrated.
+- The branches ``asterxx/.*`` are automatically and continuously integrated.
 
 
 Configure your repository

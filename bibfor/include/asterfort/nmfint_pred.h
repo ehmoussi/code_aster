@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,9 @@
 interface
     subroutine nmfint_pred(model      , cara_elem      , list_func_acti,&
                            sddyna     , nume_dof       , &
-                           ds_material, ds_constitutive, ds_measure    ,&
+                           ds_material, ds_constitutive, ds_system     , ds_measure,&
                            time_prev  , time_curr      , iter_newt     ,&
                            hval_incr  , hval_algo      ,&
-                           hval_veelem, hval_veasse    ,&
                            ldccvg     , sdnume_)
         use NonLin_Datastructure_type        
         character(len=24), intent(in) :: model, cara_elem
@@ -31,11 +30,11 @@ interface
         character(len=24), intent(in) :: nume_dof
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        type(NL_DS_System), intent(in) :: ds_system
         type(NL_DS_Measure), intent(inout) :: ds_measure
         real(kind=8), intent(in) :: time_prev, time_curr
         integer, intent(in) :: iter_newt
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
-        character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
         integer, intent(out) :: ldccvg
         character(len=19), optional, intent(in) :: sdnume_
     end subroutine nmfint_pred

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,11 +45,10 @@ type(NL_DS_Constitutive), intent(out) :: ds_constitutive
     ds_constitutive%carcri        = '&&OP00XX.CARCRI'
     ds_constitutive%mult_comp     = '&&OP00XX.MULT_COMP'
     ds_constitutive%comp_error    = '&&OP00XX.COMP_ERROR'
+    ds_constitutive%code_pred     = '&&OP00XX.CODE_PRED'
     ds_constitutive%l_deborst     = ASTER_FALSE
     ds_constitutive%l_dis_choc    = ASTER_FALSE
     ds_constitutive%l_post_incr   = ASTER_FALSE
     ds_constitutive%l_matr_geom   = ASTER_FALSE
-    ds_constitutive%l_pred_cnfnod = ASTER_FALSE
-    ds_constitutive%l_pred_cnfint = ASTER_FALSE
 !
 end subroutine

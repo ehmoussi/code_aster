@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 ! aslint: disable=W1504
 !
 subroutine nmprma(mesh       , modelz     , ds_material, carele    , ds_constitutive,&
-                  ds_algopara, lischa     , numedd    , numfix         , solveu,&
+                  ds_algopara, lischa     , numedd    , numfix         , solveu, ds_system,&
                   ds_print   , ds_measure , ds_algorom, sddisc         ,&
                   sddyna     , numins     , fonact    , ds_contact     ,&
-                  valinc     , solalg     , veelem    , meelem         , measse,&
+                  valinc     , solalg     , meelem    , measse,&
                   maprec     , matass     , faccvg    , ldccvg)
 !
 use NonLin_Datastructure_type
@@ -54,6 +54,8 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/utmess.h"
+#include "asterfort/asmari.h"
+#include "asterfort/nmrigi.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
@@ -69,7 +71,8 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 character(len=24) :: numedd, numfix
 character(len=19) :: sddisc, sddyna, lischa, solveu
 character(len=19) :: solalg(*), valinc(*)
-character(len=19) :: veelem(*), meelem(*), measse(*)
+character(len=19) :: meelem(*), measse(*)
+type(NL_DS_System), intent(in) :: ds_system
 integer :: numins
 type(NL_DS_Contact), intent(inout) :: ds_contact
 character(len=19) :: maprec, matass
@@ -96,6 +99,7 @@ integer :: faccvg, ldccvg
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! In  ds_algorom       : datastructure for ROM parameters
+! In  ds_system        : datastructure for non-linear system management
 ! IN  SOLVEU : SOLVEUR
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
@@ -104,7 +108,6 @@ integer :: faccvg, ldccvg
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
 ! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
-! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
 ! OUT LFINT  : .TRUE. SI FORCES INTERNES CALCULEES
 ! OUT MATASS : MATRICE DE RESOLUTION ASSEMBLEE
 ! OUT MAPREC : MATRICE DE RESOLUTION ASSEMBLEE - PRECONDITIONNEMENT
@@ -129,7 +132,7 @@ integer :: faccvg, ldccvg
     character(len=3) :: mathpc
     character(len=16) :: metcor, metpre
     character(len=16) :: optrig, optamo
-    character(len=19) :: matr_elem
+    character(len=19) :: matr_elem, rigid
     integer :: ifm, niv, ibid
     integer :: iterat
     integer :: nb_matr
@@ -158,6 +161,7 @@ integer :: faccvg, ldccvg
 !
 ! - Initializations
 !
+    call nmchex(measse, 'MEASSE', 'MERIGI', rigid)
     nb_matr              = 0
     list_matr_type(1:20) = ' '
     faccvg = -1
@@ -187,7 +191,10 @@ integer :: faccvg, ldccvg
     call nmchoi('PREDICTION', sddyna, numins, fonact, metpre,&
                 metcor, reasma, lcamor, optrig, lcrigi,&
                 larigi, lcfint)
-    ASSERT(.not. lcfint)
+!
+    if (lcfint) then
+        ASSERT(.false.)
+    endif
 !
 ! - Compute matrices for contact
 !
@@ -199,35 +206,41 @@ integer :: faccvg, ldccvg
                     matr_elem)
     endif
 !
-! --- CALCUL DES MATR-ELEM DE RIGIDITE
+! - Compute rigidity matrix
 !
     if (lcrigi) then
-        call nmcmat('MERIGI', optrig, ' ', .true._1,&
-                    larigi, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse)
+        call nmrigi(modelz     , carele         ,&
+                    ds_material, ds_constitutive, &
+                    fonact     , iterat         , sddyna, ds_measure, ds_system,&
+                    valinc     , solalg,&
+                    optrig     , ldccvg)
+        if (larigi) then
+            call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
+                        rigid)
+        endif
     endif
 !
 ! - Update dualized matrix for non-linear Dirichlet boundary conditions (undead)
 !
     if (l_diri_undead .and. (metpre.ne.'EXTRAPOLE')) then
-        call nmcmat('MEDIRI', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MEDIRI', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR-ELEM D'AMORTISSEMENT DE RAYLEIGH
 !
     if (lcamor) then
-        call nmcmat('MEAMOR', optamo, ' ', .true._1,&
-                    .true._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MEAMOR', optamo, ' ', ASTER_TRUE,&
+                    ASTER_TRUE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL DES MATR-ELEM DES CHARGEMENTS
 !
     if (l_neum_undead .and. (metpre.ne.'EXTRAPOLE')) then
-        call nmcmat('MESUIV', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MESUIV', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
@@ -235,8 +248,8 @@ integer :: faccvg, ldccvg
 !
     if (renume) then
         if (ldyna) then
-            call nmcmat('MEMASS', ' ', ' ', .false._1,&
-                        .true._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+            call nmcmat('MEMASS', ' ', ' ', ASTER_FALSE,&
+                        ASTER_TRUE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                         list_l_calc, list_l_asse)
         endif
         if (.not.reasma) then
@@ -247,12 +260,13 @@ integer :: faccvg, ldccvg
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modelz        , ds_material, carele     , ds_constitutive, sddisc        ,&
-                    sddyna        , fonact     , numins     , iterat         , valinc        ,&
-                    solalg        , lischa     , numedd         , numfix        ,&
-                    ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
-                    list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
-                    measse        , veelem     , ldccvg     )
+        call nmxmat(modelz         , ds_material   , carele        ,&
+                    ds_constitutive, sddisc        , numins        ,&
+                    valinc         , solalg        , lischa        ,&
+                    numedd         , numfix        , ds_measure    ,&
+                    nb_matr        , list_matr_type, list_calc_opti,&
+                    list_asse_opti , list_l_calc   , list_l_asse   ,&
+                    meelem         , measse        , ds_system)
     endif
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
@@ -264,9 +278,9 @@ integer :: faccvg, ldccvg
     if (reasma) then
         call nmmatr('PREDICTION', fonact    , lischa, numedd, sddyna,&
                     numins      , ds_contact, meelem, measse, matass)
-        call nmimck(ds_print, 'MATR_ASSE', metpre, .true._1)
+        call nmimck(ds_print, 'MATR_ASSE', metpre, ASTER_TRUE)
     else
-        call nmimck(ds_print, 'MATR_ASSE', ' '   , .false._1)
+        call nmimck(ds_print, 'MATR_ASSE', ' '   , ASTER_FALSE)
     endif
     l_cont_cont         = isfonc(fonact,'CONT_CONTINU')
     if (l_cont_cont) then
@@ -287,7 +301,7 @@ integer :: faccvg, ldccvg
             endif
             call dismoi('MATR_HPC', matass, 'MATR_ASSE', repk=mathpc)
             lmhpc = mathpc.eq.'OUI'
-            call echmat(matass, .false._1, lmhpc, minmat, maxmat)
+            call echmat(matass, ASTER_FALSE, lmhpc, minmat, maxmat)
             ds_contact%max_coefficient = maxmat
             if (abs(log(minmat)) .ne. 0.0) then
 
@@ -321,14 +335,12 @@ integer :: faccvg, ldccvg
         elseif (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
             call mtdscr(matass)
             call romAlgoNLCorrEFMatrixModify(numedd, matass, ds_algorom)
-            call preres(solveu, 'V', faccvg, maprec, matass,&
-                        ibid, -9999)
+            call preres(solveu, 'V', faccvg, maprec, matass, ibid, -9999)
             if (niv .ge. 2) then
                 call utmess('I', 'MECANONLINE13_42')
             endif
         else
-            call preres(solveu, 'V', faccvg, maprec, matass,&
-                        ibid, -9999)
+            call preres(solveu, 'V', faccvg, maprec, matass, ibid, -9999)
             if (niv .ge. 2) then
                 call utmess('I', 'MECANONLINE13_42')
             endif

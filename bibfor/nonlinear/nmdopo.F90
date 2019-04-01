@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,6 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     integer :: nb_eigen, coef_dim_espace
     real(kind=8) :: strip(2)
     real(kind=8) :: instab_prec
-    integer :: iarg
     character(len=16) :: level
 !
 ! --------------------------------------------------------------------------------------------------
@@ -125,28 +124,25 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     if (l_mode_vibr) then
         keywfact = 'MODE_VIBR'
 ! ----- Rigidity matrix
-        call getvtx(keywfact, 'MATR_RIGI', iocc=iocc, scal=type_matr_rigi, nbret=iret,&
-                    isdefault=iarg)
+        call getvtx(keywfact, 'MATR_RIGI', iocc=iocc, scal=type_matr_rigi, nbret=iret)
         ds_posttimestep%mode_vibr%type_matr_rigi = type_matr_rigi
 ! ----- How to seek eigen values
-        call getvtx(keywfact, 'OPTION', iocc=iocc, scal=level, nbret=iret,&
-                    isdefault=iarg)
+        call getvtx(keywfact, 'OPTION', iocc=iocc, scal=level, nbret=iret)
         l_small = ASTER_FALSE
         l_strip = ASTER_FALSE
         if (level .eq. 'BANDE') then
             call getvr8(keywfact, 'FREQ', iocc=iocc, nbval=2, vect=strip,&
-                        nbret=iret, isdefault=iarg)
+                        nbret=iret)
             l_strip = ASTER_TRUE
             ds_posttimestep%mode_vibr%strip_bounds(1) = omega2(strip(1))
             ds_posttimestep%mode_vibr%strip_bounds(2) = omega2(strip(2))
         elseif (level .eq. 'PLUS_PETITE') then
-            call getvis(keywfact, 'NMAX_FREQ', iocc=iocc, scal=nb_eigen, nbret=iret,&
-                        isdefault=iarg)
+            call getvis(keywfact, 'NMAX_FREQ', iocc=iocc, scal=nb_eigen, nbret=iret)
             l_small = ASTER_TRUE
             ds_posttimestep%mode_vibr%nb_eigen = nb_eigen
         elseif (level .eq. 'CALIBRATION') then
             call getvr8(keywfact, 'FREQ', iocc=iocc, nbval=2, vect=strip,&
-                        nbret=iret, isdefault=iarg)
+                        nbret=iret)
             l_strip = ASTER_TRUE
             ds_posttimestep%mode_vibr%strip_bounds(1) = omega2(strip(1))
             ds_posttimestep%mode_vibr%strip_bounds(2) = omega2(strip(2))
@@ -157,8 +153,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         ds_posttimestep%mode_vibr%l_small = l_small
         ds_posttimestep%mode_vibr%l_strip = l_strip
 ! ----- Get parameters for eigen solver
-        call getvis(keywfact, 'COEF_DIM_ESPACE', iocc=iocc, scal=coef_dim_espace, nbret=iret,&
-                    isdefault=iarg)
+        call getvis(keywfact, 'COEF_DIM_ESPACE', iocc=iocc, scal=coef_dim_espace, nbret=iret)
         ds_posttimestep%mode_vibr%coef_dim_espace = coef_dim_espace
 ! ----- Read select list
         call selectListRead(keywfact, iocc, ds_posttimestep%mode_vibr%selector)
@@ -169,24 +164,22 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     if (l_crit_stab) then
         keywfact = 'CRIT_STAB'
 ! ----- How to seek eigen values
-        call getvtx(keywfact, 'OPTION', iocc=iocc, scal=level, nbret=iret,&
-                    isdefault=iarg)
+        call getvtx(keywfact, 'OPTION', iocc=iocc, scal=level, nbret=iret)
         l_small = ASTER_FALSE
         l_strip = ASTER_FALSE
         if (level .eq. 'BANDE') then
             call getvr8(keywfact, 'CHAR_CRIT', iocc=iocc, nbval=2, vect=strip,&
-                        nbret=iret, isdefault=iarg)
+                        nbret=iret)
             l_strip = ASTER_TRUE
             ds_posttimestep%crit_stab%strip_bounds(1) = strip(1)
             ds_posttimestep%crit_stab%strip_bounds(2) = strip(2)
         elseif (level .eq. 'PLUS_PETITE') then
-            call getvis(keywfact, 'NMAX_CHAR_CRIT', iocc=iocc, scal=nb_eigen, nbret=iret,&
-                        isdefault=iarg)
+            call getvis(keywfact, 'NMAX_CHAR_CRIT', iocc=iocc, scal=nb_eigen, nbret=iret)
             l_small = ASTER_TRUE
             ds_posttimestep%crit_stab%nb_eigen = nb_eigen
         elseif (level .eq. 'CALIBRATION') then
             call getvr8(keywfact, 'CHAR_CRIT', iocc=iocc, nbval=2, vect=strip,&
-                        nbret=iret, isdefault=iarg)
+                        nbret=iret)
             l_strip = ASTER_TRUE
             ds_posttimestep%crit_stab%strip_bounds(1) = strip(1)
             ds_posttimestep%crit_stab%strip_bounds(2) = strip(2)
@@ -197,22 +190,18 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         ds_posttimestep%crit_stab%l_small = l_small
         ds_posttimestep%crit_stab%l_strip = l_strip
 ! ----- Get parameters for eigen solver
-        call getvis(keywfact, 'COEF_DIM_ESPACE', iocc=iocc, scal=coef_dim_espace, nbret=iret,&
-                    isdefault=iarg)
+        call getvis(keywfact, 'COEF_DIM_ESPACE', iocc=iocc, scal=coef_dim_espace, nbret=iret)
         ds_posttimestep%crit_stab%coef_dim_espace = coef_dim_espace
 ! ----- Read select list
         call selectListRead(keywfact, iocc, ds_posttimestep%crit_stab%selector)
 ! ----- Geometric matrix
-        call getvtx(keywfact, 'RIGI_GEOM', iocc=iocc, scal=answer, nbret=iret,&
-                    isdefault=iarg)
+        call getvtx(keywfact, 'RIGI_GEOM', iocc=iocc, scal=answer, nbret=iret)
         ds_posttimestep%stab_para%l_geom_matr = answer .eq. 'OUI'
 ! ----- Modification of rigidity matrix
-        call getvtx(keywfact, 'MODI_RIGI', iocc=iocc, scal=answer, nbret=iret,&
-                    isdefault=iarg)
+        call getvtx(keywfact, 'MODI_RIGI', iocc=iocc, scal=answer, nbret=iret)
         ds_posttimestep%stab_para%l_modi_rigi = answer .eq. 'OUI'
 ! ----- Excluded DOF
-        call getvtx(keywfact, 'DDL_EXCLUS', iocc=iocc, nbval=0, nbret=nb_dof_excl,&
-                    isdefault=iarg)
+        call getvtx(keywfact, 'DDL_EXCLUS', iocc=iocc, nbval=0, nbret=nb_dof_excl)
         nb_dof_excl = -nb_dof_excl
         ds_posttimestep%stab_para%nb_dof_excl = nb_dof_excl
         if (nb_dof_excl .ne. 0) then
@@ -220,11 +209,10 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
             AS_ALLOCATE(vk8 = ds_posttimestep%stab_para%list_dof_excl, size = nb_dof_excl)
             call getvtx(keywfact, 'DDL_EXCLUS', iocc=iocc,&
                         nbval=nb_dof_excl, vect=ds_posttimestep%stab_para%list_dof_excl,&
-                        nbret=iret, isdefault=iarg)
+                        nbret=iret)
         endif
 ! ----- Stabilized DOF
-        call getvtx(keywfact, 'DDL_STAB', iocc=iocc, nbval=0, nbret=nb_dof_stab,&
-                    isdefault=iarg)
+        call getvtx(keywfact, 'DDL_STAB', iocc=iocc, nbval=0, nbret=nb_dof_stab)
         nb_dof_stab = -nb_dof_stab
         ds_posttimestep%stab_para%nb_dof_stab = nb_dof_stab
         if (nb_dof_stab .ne. 0) then
@@ -232,14 +220,12 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
             AS_ALLOCATE(vk8 = ds_posttimestep%stab_para%list_dof_stab, size = nb_dof_stab)
             call getvtx(keywfact, 'DDL_STAB', iocc=iocc,&
                         nbval=nb_dof_stab, vect=ds_posttimestep%stab_para%list_dof_stab,&
-                        nbret=iret, isdefault=iarg)
+                        nbret=iret)
         endif
 ! ----- Stabilization parameters
-        call getvr8(keywfact, 'PREC_INSTAB', iocc=iocc, scal=instab_prec, nbret=iret,&
-                    isdefault=iarg)
+        call getvr8(keywfact, 'PREC_INSTAB', iocc=iocc, scal=instab_prec, nbret=iret)
         ds_posttimestep%stab_para%instab_prec = instab_prec
-        call getvtx(keywfact, 'SIGNE', iocc=iocc, scal=instab_sign, nbret=iret,&
-                    isdefault=iarg)
+        call getvtx(keywfact, 'SIGNE', iocc=iocc, scal=instab_sign, nbret=iret)
         ds_posttimestep%stab_para%instab_sign = instab_sign
     endif
 !

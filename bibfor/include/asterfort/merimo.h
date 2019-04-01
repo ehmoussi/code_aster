@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,30 +15,29 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine merimo(base           , model , cara_elem, mate  , varc_refe,&
-                      ds_constitutive, iterat, acti_func, sddyna, hval_incr,&
-                      hval_algo      , merigi, vefint   , optioz, tabret   )
+    subroutine merimo(base           , l_xfem   , l_macr_elem,&
+                      model          , cara_elem, mate       , iter_newt,&
+                      ds_constitutive, varc_refe,&
+                      hval_incr      , hval_algo,&
+                      optioz         , merigi   , vefint   ,&
+                      ldccvg         , sddynz_)
         use NonLin_Datastructure_type
         character(len=1), intent(in) :: base
-        integer, intent(in) :: iterat
-        character(len=*), intent(in) :: mate
-        character(len=19), intent(in) :: sddyna
+        aster_logical, intent(in) :: l_xfem, l_macr_elem
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: cara_elem
+        character(len=*), intent(in) :: mate
+        integer, intent(in) :: iter_newt
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=24), intent(in) :: varc_refe
-        integer, intent(in) :: acti_func(*)
-        character(len=19), intent(in) :: hval_incr(*)
-        character(len=19), intent(in) :: hval_algo(*)
+        character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
         character(len=*), intent(in) :: optioz
-        character(len=19), intent(in) :: merigi
-        character(len=19), intent(in) :: vefint
-        aster_logical, intent(out) :: tabret(0:10)
+        character(len=19), intent(in) :: merigi, vefint
+        integer, intent(out) :: ldccvg
+        character(len=*), optional, intent(in) :: sddynz_
     end subroutine merimo
 end interface

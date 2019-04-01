@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmini0(eta       , nume_inst, matass         ,&
-                      zmeelm    , zmeass   , zveelm         ,&
-                      zveass    , zsolal   , zvalin         ,&
-                      ds_print  , ds_conv  , ds_algopara    , ds_inout   , ds_contact ,&
-                      ds_measure, ds_energy, ds_constitutive, ds_material,&
-                      sderro)
+    subroutine nmini0(eta      , nume_inst      , matass     ,&
+                      zmeelm   , zmeass         , zveelm     ,&
+                      zveass   , zsolal         , zvalin     ,&
+                      ds_print , ds_conv        , ds_algopara,&
+                      ds_inout , ds_contact     , ds_measure ,&
+                      ds_energy, ds_constitutive, ds_material,&
+                      ds_system, sderro)
         use NonLin_Datastructure_type
         character(len=19), intent(out) :: matass
         integer, intent(out) :: nume_inst
@@ -38,6 +39,7 @@ interface
         type(NL_DS_Energy), intent(out) :: ds_energy
         type(NL_DS_Constitutive), intent(out) :: ds_constitutive
         type(NL_DS_Material), intent(out) :: ds_material
+        type(NL_DS_System), intent(out) :: ds_system
         character(len=24) :: sderro
     end subroutine nmini0
 end interface
