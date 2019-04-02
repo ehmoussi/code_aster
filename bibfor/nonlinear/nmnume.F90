@@ -88,23 +88,26 @@ character(len=19), intent(in) :: sdnume
     call jeveuo(lload_list, 'L', vk24 = v_load_list)
     do i_load = 1, nb_load_init
         load_n = v_load_list(i_load)
-        call jeveuo(load_n(1:19)//'._TCO', 'L', vk24 = v_tco)
-        if( v_tco(1).eq.'CHAR_MECA' ) then
-            call jeexin(load_n(1:8)//'.CHME.LIGRE.LGRF', iret)
-            if( iret.ne.0 ) then
-                call jeveuo(load_n(1:8)//'.CHME.LIGRE.LGRF', 'L', vk8 = v_lgrf)
-                lag12 = v_lgrf(3)
-                if( lag12.eq.'LAG1' ) then
-                    call utmess('F', 'MECANONLINE_5')
+        call jeexin(load_n(1:19)//'._TCO', iret)
+        if( iret.ne.0 ) then
+            call jeveuo(load_n(1:19)//'._TCO', 'L', vk24 = v_tco)
+            if( v_tco(1).eq.'CHAR_MECA' ) then
+                call jeexin(load_n(1:8)//'.CHME.LIGRE.LGRF', iret)
+                if( iret.ne.0 ) then
+                    call jeveuo(load_n(1:8)//'.CHME.LIGRE.LGRF', 'L', vk8 = v_lgrf)
+                    lag12 = v_lgrf(3)
+                    if( lag12.eq.'LAG1' ) then
+                        call utmess('F', 'MECANONLINE_5')
+                    endif
                 endif
-            endif
-        else if( v_tco(1).eq.'CHAR_THER' ) then
-            call jeexin(load_n(1:8)//'.CHTH.LIGRE.LGRF', iret)
-            if( iret.ne.0 ) then
-                call jeveuo(load_n(1:8)//'.CHTH.LIGRE.LGRF', 'L', vk8 = v_lgrf)
-                lag12 = v_lgrf(3)
-                if( lag12.eq.'LAG1' ) then
-                    call utmess('F', 'MECANONLINE_5')
+            else if( v_tco(1).eq.'CHAR_THER' ) then
+                call jeexin(load_n(1:8)//'.CHTH.LIGRE.LGRF', iret)
+                if( iret.ne.0 ) then
+                    call jeveuo(load_n(1:8)//'.CHTH.LIGRE.LGRF', 'L', vk8 = v_lgrf)
+                    lag12 = v_lgrf(3)
+                    if( lag12.eq.'LAG1' ) then
+                        call utmess('F', 'MECANONLINE_5')
+                    endif
                 endif
             endif
         endif
