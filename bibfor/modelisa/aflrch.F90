@@ -138,29 +138,32 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
     call dismoi('TYPE_CHARGE', charge, 'CHARGE', repk=typcha)
 !
     l_lag1=.false.
-    call getvtx(' ', 'DOUBLE_LAGRANGE', scal=klag2)
+    if (getexm(' ' ,'DOUBLE_LAGRANGE').eq.1) then
+        call getvtx(' ', 'DOUBLE_LAGRANGE', scal=klag2)
+        if( klag2.eq.'NON' ) then
+            l_lag1=.true.
+        endif
+    endif
     if (typcha(1:4) .eq. 'MECA') then
         ligrch=charge//'.CHME.LIGRE'
         nomgd='DEPL_R'
-        if( klag2.eq.'OUI' ) then
+        if( .not.l_lag1 ) then
             nomte='D_DEPL_R_'
         else
-            l_lag1=.true.
             nomte='D_DEPL_RS'
         endif
     else if (typcha(1:4).eq.'THER') then
         ligrch=charge//'.CHTH.LIGRE'
         nomgd='TEMP_R'
-        if( klag2.eq.'OUI' ) then
+        if( .not.l_lag1 ) then
             nomte='D_TEMP_R_'
         else
-            l_lag1=.true.
             nomte='D_TEMP_RS'
         endif
     else if (typcha(1:4).eq.'ACOU') then
         ligrch=charge//'.CHAC.LIGRE'
         nomgd='PRES_C'
-        if( klag2.eq.'OUI' ) then
+        if( .not.l_lag1 ) then
             nomte='D_PRES_C_'
         else
             ASSERT(.false.)
