@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine zacier(metaSteelPara,&
+subroutine zacier(metaSteelPara, nb_phase ,&
                   tpg0         , tpg1     , tpg2,&
                   dt10         , dt21     ,&
                   meta_prev    , meta_curr)
@@ -28,7 +28,6 @@ implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8prem.h"
-#include "asterfort/metaSteelGetParameters.h"
 #include "asterfort/assert.h"
 #include "asterfort/smcarc.h"
 #include "asterfort/utmess.h"
@@ -36,10 +35,11 @@ implicit none
 #include "asterfort/Metallurgy_type.h"
 !
 type(META_SteelParameters), intent(in) :: metaSteelPara
+integer, intent(in) :: nb_phase
 real(kind=8), intent(in) :: tpg0, tpg1, tpg2
 real(kind=8), intent(in) :: dt10, dt21
-real(kind=8), intent(in) :: meta_prev(8)
-real(kind=8), intent(out) :: meta_curr(8)
+real(kind=8), intent(in) :: meta_prev(nb_phase+3)
+real(kind=8), intent(out) :: meta_curr(nb_phase+3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,6 +50,7 @@ real(kind=8), intent(out) :: meta_curr(8)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  metaSteelPara       : material parameters for metallurgy of steel
+! In  nb_phase            : number of phases
 ! In  tpg0                : temperature at time N-1
 ! In  tpg1                : temperature at time N
 ! In  tpg2                : temperature at time N+1
@@ -60,7 +61,7 @@ real(kind=8), intent(out) :: meta_curr(8)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: vari_dumm(8)
+    real(kind=8) :: vari_dumm(nb_phase+3)
     real(kind=8) :: dmoins
     real(kind=8) :: tpoint, zero, ti, tpi
     real(kind=8) :: zeq1, zeq2, zaust, z2, epsi, dt21_mod
@@ -74,7 +75,7 @@ real(kind=8), intent(out) :: meta_curr(8)
     zero = 0.d0
     epsi = 1.d-10
     un   = 1.d0
-    ASSERT(STEEL_NBVARI .eq. 8)
+    ASSERT(nb_phase .eq. 5)
 !
 ! - Get material parameters for steel
 !
@@ -83,8 +84,8 @@ real(kind=8), intent(out) :: meta_curr(8)
 !
 ! - Temperature
 !
-    meta_curr(STEEL_TEMP) = tpg2
-    meta_curr(TEMP_MARTENSITE) = meta_prev(TEMP_MARTENSITE)
+    meta_curr(nb_phase+STEEL_TEMP) = tpg2
+    meta_curr(nb_phase+TEMP_MARTENSITE) = meta_prev(nb_phase+TEMP_MARTENSITE)
     tpoint = (tpg1-tpg0)/dt10
 !
 ! - Proportion of austenite
@@ -116,10 +117,10 @@ real(kind=8), intent(out) :: meta_curr(8)
             dt21_mod     = dt21/dble(nbpas)
             vari_dumm(:) = meta_prev(:)
             do i = 1, nbpas
-                ti                    = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
-                meta_curr(STEEL_TEMP) = tpg1+(dble(i)*(tpg2-tpg1))/dble(nbpas)
-                tpi                   = (meta_curr(STEEL_TEMP)-ti)/dt21_mod
-                call smcarc(nb_hist      , &
+                ti                             = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
+                meta_curr(nb_phase+STEEL_TEMP) = tpg1+(dble(i)*(tpg2-tpg1))/dble(nbpas)
+                tpi                            = (meta_curr(nb_phase+STEEL_TEMP)-ti)/dt21_mod
+                call smcarc(nb_hist, nb_phase, &
                             zr(metaSteelPara%trc%jv_ftrc),&
                             zr(metaSteelPara%trc%jv_trc),&
                             zr(metaSteelPara%trc%iadtrc+3),&
@@ -132,7 +133,7 @@ real(kind=8), intent(out) :: meta_curr(8)
                 vari_dumm(:) = meta_curr(:)
             end do
         else
-            call smcarc(nb_hist      , &
+            call smcarc(nb_hist, nb_phase, &
                         zr(metaSteelPara%trc%jv_ftrc),&
                         zr(metaSteelPara%trc%jv_trc),&
                         zr(metaSteelPara%trc%iadtrc+3),&
@@ -148,7 +149,7 @@ real(kind=8), intent(out) :: meta_curr(8)
 ! ----------------SUBDIVISION EN PAS DE CING DEGRE MAX
             nbpas    = int(abs(tpg2-tpg1)/5.d0-0.001d0)+1
             dt21_mod = dt21/dble(nbpas)
-            dmoins   = meta_prev(SIZE_GRAIN)
+            dmoins   = meta_prev(nb_phase+SIZE_GRAIN)
             do i = 1, nbpas
                 ti1    = tpg1+(tpg2-tpg1)*dble(i-1)/dble(nbpas)
                 ti2    = tpg1+(tpg2-tpg1)*dble(i)/dble(nbpas)
@@ -184,10 +185,10 @@ real(kind=8), intent(out) :: meta_curr(8)
                                         zr(metaSteelPara%trc%iadtrc+metaSteelPara%trc%iadckm),&
                                         ti1          , dt10      , dt21,&
                                         z2           , coef_phase,&
-                                        dmoins       , meta_curr(SIZE_GRAIN))
+                                        dmoins       , meta_curr(nb_phase+SIZE_GRAIN))
                 if (metaSteelPara%l_grain_size) then
                     zaust  = z2
-                    dmoins = meta_curr(SIZE_GRAIN)
+                    dmoins = meta_curr(nb_phase+SIZE_GRAIN)
                 endif
             end do
         else
@@ -221,7 +222,7 @@ real(kind=8), intent(out) :: meta_curr(8)
                                     zr(metaSteelPara%trc%iadtrc+metaSteelPara%trc%iadckm),&
                                     tpg1         , dt10       , dt21,&
                                     z2           , coef_phase ,&
-                                    meta_prev(SIZE_GRAIN), meta_curr(SIZE_GRAIN))
+                                    meta_prev(nb_phase+SIZE_GRAIN), meta_curr(nb_phase+SIZE_GRAIN))
         endif
 !           REPARTITION DE DZGAMMA SUR DZALPHA
         if (z2 .gt. (un-epsi)) then

@@ -55,7 +55,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: metaac(nb_nd_max*nbv_steel), metazi(nb_nd_max*nbv_zirc)
     real(kind=8) :: zero, ms0(1), zalpha, zbeta
     real(kind=8) :: tno0, phase_tot
-    integer :: nno
+    integer :: nb_node, nb_phase, nb_vari
     integer :: jv_compo, j, i_node, kpg, spt
     integer :: imate, itempe, iphasi, iphasn
 !
@@ -66,10 +66,8 @@ character(len=16), intent(in) :: option, nomte
     kpg  = 1
     spt  = 1
     poum = '+'
-    call elrefe_info(fami='RIGI',nno=nno)
-    ASSERT(nno .le. nb_nd_max)
-    ASSERT(nbv_steel .eq. STEEL_NBVARI)
-    ASSERT(nbv_zirc .eq. ZIRC_NBVARI)
+    call elrefe_info(fami='RIGI',nno=nb_node)
+    ASSERT(nb_node .le. nb_nd_max)
 !
 ! - Input fields
 !
@@ -85,6 +83,8 @@ character(len=16), intent(in) :: option, nomte
 ! - Type of phase
 !
     phase_type = zk16(jv_compo)
+    read (zk16(jv_compo-1+5),'(I16)') nb_phase
+    read (zk16(jv_compo-1+2),'(I16)') nb_vari
 !
 ! - Values required for META_INIT_ELNO vector
 !
@@ -98,7 +98,8 @@ character(len=16), intent(in) :: option, nomte
             phase_tot = phase_tot + zr(iphasi-1+j)
         end do
 ! ----- Grain size
-        if (zr(iphasi-1+SIZE_GRAIN) .eq. r8vide() .or. isnan(zr(iphasi-1+SIZE_GRAIN))) then
+        if (zr(iphasi-1+nb_phase+SIZE_GRAIN) .eq. r8vide() .or.&
+            isnan(zr(iphasi-1+nb_phase+SIZE_GRAIN))) then
             call utmess('F', 'META1_46')
         endif
     else if (phase_type.eq.'ZIRC') then
@@ -110,9 +111,12 @@ character(len=16), intent(in) :: option, nomte
             phase_tot = phase_tot + zr(iphasi-1+j)
         end do
 ! ----- Transition time
-        if (zr(iphasi-1+TIME_TRAN) .eq. r8vide() .or. isnan(zr(iphasi-1+TIME_TRAN))) then
+        if (zr(iphasi-1+nb_phase+TIME_TRAN) .eq. r8vide() .or.&
+            isnan(zr(iphasi-1+nb_phase+TIME_TRAN))) then
             call utmess('F', 'META1_47')
         endif
+    else
+        ASSERT(ASTER_FALSE)
     endif
 !
     if (abs(phase_tot-1.d0) .gt. 1.d-2) then
@@ -124,38 +128,40 @@ character(len=16), intent(in) :: option, nomte
         call rcvalb(fami, kpg, spt, poum, zi(imate),&
                     ' ', 'META_ACIER', 0, ' ', [0.d0],&
                     1, nomres, ms0, icodre, 1)
-        do i_node = 1, nno
+        do i_node = 1, nb_node
             tno0 = zr(itempe+i_node-1)
             do j = 1, 6
-                metaac(STEEL_NBVARI*(i_node-1)+j) = zr(iphasi-1+j)
+                metaac(nb_vari*(i_node-1)+j) = zr(iphasi-1+j)
             end do
-            metaac(STEEL_NBVARI*(i_node-1)+TEMP_MARTENSITE) = ms0(1)
-            metaac(STEEL_NBVARI*(i_node-1)+STEEL_TEMP)      = tno0
-            do j = 1, STEEL_NBVARI
-                zr(iphasn+STEEL_NBVARI*(i_node-1)-1+j) = metaac(STEEL_NBVARI*(i_node-1)+j)
+            metaac(nb_vari*(i_node-1)+nb_phase+TEMP_MARTENSITE) = ms0(1)
+            metaac(nb_vari*(i_node-1)+nb_phase+STEEL_TEMP)      = tno0
+            do j = 1, nb_vari
+                zr(iphasn+nb_vari*(i_node-1)-1+j) = metaac(nb_vari*(i_node-1)+j)
             end do
         end do
     else if (phase_type .eq. 'ZIRC') then
-        do i_node = 1, nno
+        do i_node = 1, nb_node
             tno0 = zr(itempe+i_node-1)
-            metazi(ZIRC_NBVARI*(i_node-1)+PALPHA1) = zr(iphasi-1+PALPHA1)
-            metazi(ZIRC_NBVARI*(i_node-1)+PALPHA2) = zr(iphasi-1+PALPHA2)
-            metazi(ZIRC_NBVARI*(i_node-1)+ZIRC_TEMP) = tno0
-            metazi(ZIRC_NBVARI*(i_node-1)+TIME_TRAN) = zr(iphasi-1+TIME_TRAN)
-            zalpha = metazi(ZIRC_NBVARI*(i_node-1)+PALPHA1) + metazi(ZIRC_NBVARI*(i_node-1)+PALPHA2)
+            metazi(nb_vari*(i_node-1)+PALPHA1) = zr(iphasi-1+PALPHA1)
+            metazi(nb_vari*(i_node-1)+PALPHA2) = zr(iphasi-1+PALPHA2)
+            metazi(nb_vari*(i_node-1)+nb_phase+ZIRC_TEMP) = tno0
+            metazi(nb_vari*(i_node-1)+nb_phase+TIME_TRAN) = zr(iphasi-1+nb_phase+TIME_TRAN)
+            zalpha = metazi(nb_vari*(i_node-1)+PALPHA1) + metazi(nb_vari*(i_node-1)+PALPHA2)
             zbeta  = 1.d0-zalpha
             if (zbeta .gt. 0.1d0) then
-                metazi(ZIRC_NBVARI*(i_node-1)+PALPHA1) = 0.d0
+                metazi(nb_vari*(i_node-1)+PALPHA1) = 0.d0
             else
-                metazi(ZIRC_NBVARI*(i_node-1)+PALPHA1) = 10.d0*(zalpha-0.9d0)*zalpha
+                metazi(nb_vari*(i_node-1)+PALPHA1) = 10.d0*(zalpha-0.9d0)*zalpha
             endif
-            metazi(ZIRC_NBVARI* (i_node-1)+PALPHA2) = zalpha -&
-                                                      metazi(ZIRC_NBVARI*(i_node-1)+PALPHA1)
-            metazi(ZIRC_NBVARI* (i_node-1)+PBETA)   = zbeta
-            do j = 1, ZIRC_NBVARI
-                zr(iphasn+ZIRC_NBVARI*(i_node-1)-1+j) = metazi(ZIRC_NBVARI*(i_node-1)+j)
+            metazi(nb_vari*(i_node-1)+PALPHA2) = zalpha -&
+                                                 metazi(nb_vari*(i_node-1)+PALPHA1)
+            metazi(nb_vari*(i_node-1)+PBETA)   = zbeta
+            do j = 1, nb_vari
+                zr(iphasn+nb_vari*(i_node-1)-1+j) = metazi(nb_vari*(i_node-1)+j)
             end do
         end do
+    else
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine
