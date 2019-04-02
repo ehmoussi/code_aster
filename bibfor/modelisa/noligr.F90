@@ -104,13 +104,18 @@ subroutine noligr(ligrz, igrel, numel, nunoeu,&
     integer :: ilag1, ilag2,jnema, jnema02, jnemac2
     integer :: jliel, jliel02, jlielc2
     integer :: kligr, lonigr, lgnema
-    aster_logical :: lrapid
+    aster_logical :: lrapid, l_lag1c
     integer, save :: iprem=0 , numpoi, numse3
 !-----------------------------------------------------------------------
+    if( present(l_lag1) ) then
+        l_lag1c = l_lag1
+    else
+        l_lag1c = .false.
+    endif
     iprem=iprem+1
     if (iprem.eq.1) then
         call jenonu(jexnom('&CATA.TM.NBNO', 'POI1'), numpoi)
-        if(l_lag1) then
+        if(l_lag1c) then
             call jenonu(jexnom('&CATA.TM.NBNO', 'SEG2'), numse3)
         else
             call jenonu(jexnom('&CATA.TM.NBNO', 'SEG3'), numse3)
@@ -154,7 +159,7 @@ subroutine noligr(ligrz, igrel, numel, nunoeu,&
     if (code .eq. 1) then
         lgnema=2
     else
-        if(l_lag1) then
+        if(l_lag1c) then
             lgnema=3
         else
             lgnema=4
@@ -195,7 +200,7 @@ subroutine noligr(ligrz, igrel, numel, nunoeu,&
     else if (code.eq.3) then
         zi(jnema-1+1) = nunoeu
         ASSERT(jlgns.ne.1)
-        if(l_lag1) then
+        if(l_lag1c) then
             zi(jnema-1+2) = -nbno
             zi(jnema-1+3) = numse3
             zi(jlgns+nbno-1) = ilag1
