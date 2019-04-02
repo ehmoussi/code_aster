@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/copisd.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/focste.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/liscad.h"
 #include "asterfort/lisccr.h"
@@ -52,7 +53,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
     integer, parameter :: nb_info_maxi =99
     character(len=24) :: list_info_type(nb_info_maxi)
-    integer :: nb_load_init, nb_load_new, nb_info_type
+    integer :: nb_load_init, nb_load_new, nb_info_type, iret
     integer :: i_neum_lapl, i_load
     character(len=8) :: ligrel_link_slav, ligrel_link, ligrel_link_cont, lag12
     character(len=19) :: list_load_new
@@ -82,10 +83,13 @@ type(NL_DS_Contact), intent(in) :: ds_contact
         call jeveuo(lload_list, 'L', vk24 = v_load_list)
         do i_load = 1, nb_load_init
             load_n = v_load_list(i_load)
-            call jeveuo(load_n(1:19)//'.LGRF', 'L', vk8 = v_lgrf)
-            lag12 = v_lgrf(3)
-            if( lag12.eq.'LAG1' ) then
-                call utmess('F', 'MECANONLINE_5')
+            call jeexin(load_n(1:19)//'.LGRF', iret)
+            if( iret.ne.0 ) then
+                call jeveuo(load_n(1:19)//'.LGRF', 'L', vk8 = v_lgrf)
+                lag12 = v_lgrf(3)
+                if( lag12.eq.'LAG1' ) then
+                    call utmess('F', 'MECANONLINE_5')
+                endif
             endif
         enddo
 !
