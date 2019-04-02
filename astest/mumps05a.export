@@ -3,7 +3,7 @@ P memory_limit 1024
 P ncpus 2
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist verification sequential
+P testlist asterxx verification sequential
 
 F comm mumps05a.comm D 1
 F com1 mumps05a.com1 D 1
