@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,75 +20,65 @@
 # person_in_charge: mickael.abbas at edf.fr
 
 
-
 from cataelem.Tools.base_objects import InputParameter, OutputParameter, Option, CondCalcul
 import cataelem.Commons.physical_quantities as PHY
 import cataelem.Commons.parameters as SP
 import cataelem.Commons.attributes as AT
 
 
-
-
 PCOMPOR  = InputParameter(phys=PHY.COMPOR,
-comment="""  Informations for non-linear comportment """)
+comment=""" Informations for non-linear behaviour """)
 
 PCAORIE  = InputParameter(phys=PHY.CAORIE, container='CARA!.CARORIEN',
-comment="""  PCAORIE : ORIENTATION LOCALE D'UN ELEMENT DE POUTRE OU DE TUYAU  """)
+comment=""" Local orientation for beam and pipe elements""")
 
+PCONTMR  = InputParameter(phys=PHY.SIEF_R,
+comment=""" Stress tensor at beginning of current time step """)
 
-PCONTMR  = InputParameter(phys=PHY.SIEF_R)
-
-
-PVARIMR  = InputParameter(phys=PHY.VARI_R)
-
+PVARIMR  = InputParameter(phys=PHY.VARI_R,
+comment=""" Internal state variables at beginning of current time step """)
 
 PVARCPR  = InputParameter(phys=PHY.VARI_R,
-comment=""" PVARCPR : VARIABLES DE COMMANDES  POUR T+ """)
-
+comment=""" External state variables at end of current time step """)
 
 PNBSP_I  = InputParameter(phys=PHY.NBSP_I, container='CARA!.CANBSP',
-comment="""  PNBSP_I :  NOMBRE DE SOUS_POINTS  """)
+comment=""" Number of sub-integration points for structural elements""")
 
-
-PPINTTO  = InputParameter(phys=PHY.N132_R)
-
-
-PCNSETO  = InputParameter(phys=PHY.N1280I, container='MODL!.TOPOSE.CNS',
-comment="""  XFEM - CONNECTIVITE DES SOUS-ELEMENTS  """)
-
-
-PHEAVTO  = InputParameter(phys=PHY.N512_I)
-
-
-PHEA_NO  = InputParameter(phys=PHY.N120_I,
+PPINTTO  = InputParameter(phys=PHY.N132_R,
 comment=""" XFEM """)
 
+PCNSETO  = InputParameter(phys=PHY.N1280I, container='MODL!.TOPOSE.CNS',
+comment=""" XFEM - CONNECTIVITE DES SOUS-ELEMENTS  """)
+
+PHEAVTO  = InputParameter(phys=PHY.N512_I,
+comment=""" XFEM""")
+
+PHEA_NO  = InputParameter(phys=PHY.N120_I,
+comment=""" XFEM""")
 
 PLONCHA  = InputParameter(phys=PHY.N120_I, container='MODL!.TOPOSE.LON',
-comment="""  XFEM - NBRE DE TETRAEDRES ET DE SOUS-ELEMENTS  """)
+comment=""" XFEM - NBRE DE TETRAEDRES ET DE SOUS-ELEMENTS  """)
 
+PBASLOR  = InputParameter(phys=PHY.NEUT_R,
+comment=""" XFEM""")
 
-PBASLOR  = InputParameter(phys=PHY.NEUT_R)
+PLSN     = InputParameter(phys=PHY.NEUT_R,
+comment=""" XFEM""")
 
+PLST     = InputParameter(phys=PHY.NEUT_R,
+comment=""" XFEM""")
 
-PLSN     = InputParameter(phys=PHY.NEUT_R)
+PSTANO   = InputParameter(phys=PHY.N120_I,
+comment=""" XFEM""")
 
-
-PLST     = InputParameter(phys=PHY.NEUT_R)
-
-
-PSTANO   = InputParameter(phys=PHY.N120_I)
-
-
-PPMILTO  = InputParameter(phys=PHY.N792_R)
-
+PPMILTO  = InputParameter(phys=PHY.N792_R,
+comment=""" XFEM""")
 
 PFISNO   = InputParameter(phys=PHY.NEUT_I,
-comment=""" PFISNO : CONNECTIVITE DES FISSURES ET DES DDL HEAVISIDE """)
-
+comment=""" PXFEM - CONNECTIVITE DES FISSURES ET DES DDL HEAVISIDE """)
 
 PCACO3D  = OutputParameter(phys=PHY.CACO3D, type='ELEM',
-comment=""" NE SERT QUE POUR COQUE_3D """)
+comment=""" Field of normals for COQUE_3D elements """)
 
 
 RIGI_MECA_TANG = Option(
@@ -149,9 +139,13 @@ RIGI_MECA_TANG = Option(
            PCACO3D,
         SP.PMATUNS,
         SP.PMATUUR,
+        SP.PVECTUR,
+        SP.PCOPRED,
+        SP.PCODRET,
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
       CondCalcul('-', ((AT.FLUIDE,'OUI'),(AT.ABSO,'OUI'),)),
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.FSI ,'OUI'),)),
     ),
 )

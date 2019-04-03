@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,9 +32,10 @@ subroutine as_mficor(fid, descfi, cret)
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, cret4
-    fid4 = fid
-    call mficor(fid4, descfi, cret4)
+    med_idt :: fidm
+    med_int :: cret4
+    fidm = to_med_idt(fid)
+    call mficor(fidm, descfi, cret4)
     cret = cret4
 #else
     call mficor(fid, descfi, cret)

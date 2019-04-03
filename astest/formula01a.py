@@ -18,8 +18,8 @@ with test.assertRaises(RuntimeError):
 
 test.assertSequenceEqual(fsin.getVariables(), ['INST', ])
 test.assertEqual(fsin.getExpression(), 'sin(INST)')
-test.assertTrue(fsin.getContext().has_key("sin"))
-test.assertTrue(fsin.getContext().has_key("pow"))
+test.assertTrue("sin" in fsin.getContext())
+test.assertTrue("pow" in fsin.getContext())
 
 prop = fsin.getProperties()
 test.assertEqual(prop[1:5], ['INTERPRE', '', 'TOUTRESU', 'II'])

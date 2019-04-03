@@ -30,7 +30,6 @@ def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,
        Ecriture de la macro macr_ecla_pg
     """
     import os
-    import string
     from code_aster.Cata.Syntax import _F
     from Noyau.N_utils import AsType
     ier = 0

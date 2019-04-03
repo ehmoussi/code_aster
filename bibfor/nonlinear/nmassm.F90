@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmassm(fonact, lischa, numedd, numfix, ds_algopara,&
-                  typmat, optasz, meelem, matass)
+subroutine nmassm(lischa, numedd, numfix, typmat, optasz,&
+                  meelem, matass)
 !
 use NonLin_Datastructure_type
 !
@@ -40,12 +40,10 @@ implicit none
 !
 character(len=19) :: lischa
 character(len=24) :: numedd, numfix
-type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=6) :: typmat
 character(len=*) :: optasz
 character(len=19) :: meelem(8)
 character(len=19) :: matass
-integer :: fonact(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,13 +53,11 @@ integer :: fonact(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IN  LISCHA : LISTE DES CHARGEMENTS
 ! IN  OPTASS : OPTION D'ASSEMBLAGE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
 ! IN  MEELEM : ARIABLE CHAPEAU POUR NOM DES MATR_ELEM
-! In  ds_algopara      : datastructure for algorithm parameters
 ! OUT MATASS : MATR_ASSE CALCULEE
 !
 ! --------------------------------------------------------------------------------------------------
@@ -90,13 +86,7 @@ integer :: fonact(*)
 !
 ! --- ASSEMBLAGE MATRICES ELEMENTAIRES
 !
-    if (typmat .eq. 'MERIGI') then
-        if (niv .ge. 2) then
-            call utmess('I', 'MECANONLINE13_70')
-        endif
-        call asmari(fonact, meelem, numedd, lischa, ds_algopara,&
-                    matass)
-    else if (typmat.eq.'MEAMOR') then
+    if (typmat.eq.'MEAMOR') then
         if (niv .ge. 2) then
             call utmess('I', 'MECANONLINE13_71')
         endif
@@ -120,6 +110,9 @@ integer :: fonact(*)
         call asmatr(1, messtr, ' ', numfix, &
                     lischa, 'ZERO', 'V', 1, matass)
         call mtdscr(matass)
+    else if (typmat.eq.'MERIGI') then
+! ----- Direct with asmari
+        ASSERT(ASTER_FALSE)
     else
         ASSERT(ASTER_FALSE)
     endif

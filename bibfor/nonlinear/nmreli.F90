@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmreli(modele         , numedd, ds_material, carele    , &
+subroutine nmreli(modele         , numedd, ds_material, carele    , ds_system ,&
                   ds_constitutive, lischa, fonact     , iterat    , ds_measure,&
                   sdnume         , sddyna, ds_algopara, ds_contact, valinc    ,&
                   solalg         , veelem, veasse     , ds_conv   , ldccvg)
@@ -38,6 +38,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=19) :: lischa, sddyna, sdnume
 type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_System), intent(in) :: ds_system
 character(len=24) :: modele, numedd, carele
 character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
@@ -59,6 +60,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 ! IN  LISCHA : LISTE DES CHARGES
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_contact       : datastructure for contact management
+! In  ds_system        : datastructure for non-linear system management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
 ! IN  SDNUME : SD NUMEROTATION
@@ -90,9 +92,10 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --- RECHERCHE LINEAIRE DANS LA DIRECTION DE DESCENTE
 !
-    call nmrelp(modele         , numedd, ds_material, carele    ,&
-                ds_constitutive, lischa, fonact     , iterat    , ds_measure,&
-                sdnume         , sddyna, ds_algopara, ds_contact, valinc    ,&
-                solalg         , veelem, veasse     , ds_conv   , ldccvg)
+    call nmrelp(modele         , numedd     , ds_material, carele , ds_system ,&
+                ds_constitutive, lischa     , fonact     , iterat , ds_measure,&
+                sdnume         , ds_algopara, ds_contact , valinc ,&
+                solalg         , veelem     , veasse     , ds_conv, ldccvg, &
+                sddyna)
 !
 end subroutine

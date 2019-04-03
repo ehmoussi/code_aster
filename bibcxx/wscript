@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,8 +18,9 @@
 # --------------------------------------------------------------------
 
 import os.path as osp
+from distutils.version import LooseVersion
 
-from waflib import Configure, Utils
+from waflib import Configure, Errors, Utils
 
 def options(self):
     self.load('compiler_cxx')
@@ -29,8 +30,7 @@ def configure(self):
     self.load('compiler_cxx')
     self.check_cxx_compiler_flags()
     self.check_bibcxx_depends()
-    self.load('boost')
-    self.check_boost(lib="python") # lib='shared_ptr'... ?
+    self.check_boost_aster()
 
     cxxpath = self.path.get_src().abspath()
     incpath = osp.join(cxxpath, 'include')
@@ -90,3 +90,25 @@ def check_optimization_cxxflags(self):
     self.start_msg('Setting C++ optimization flags')
     self.env.append_unique('CXXFLAGS', flags)
     self.end_msg(flags)
+
+@Configure.conf
+def check_boost_aster(self):
+    self.load('boost')
+
+    # manually defined since waf forces to use /usr/lib/x86-64...
+    for key in ('INCLUDES_BOOST', 'LIBPATH_BOOST', 'LIB_BOOST'):
+        if not self.env[key]:
+            raise Errors.ConfigurationError("Please define '{0}' in your "
+                                            "configuration file.".format(key))
+
+    # self.check_boost(lib="python") # lib='shared_ptr'... ?
+    # minver = "1.58.0"
+    # bvn = self.env.BOOST_VERSION_NUMBER
+    # # see waflib/extras/boost
+    # boost_version = "%d.%d.%d" % (bvn // 100000,
+	# 						      bvn // 100 % 1000,
+	# 						      bvn % 100)
+    # if LooseVersion(boost_version) < LooseVersion(minver):
+    #     print("Boost {1} or newer is required, "
+    #                                     "found: {0}"
+    #                                     .format(boost_version, minver))

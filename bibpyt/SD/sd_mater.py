@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,8 +57,8 @@ class sd_compor1(AsBase):
         nbr = self.VALR.lonuti
         nbc = self.VALC.lonuti
         nbk = nbk2 - nbr - nbc
-        for k in range(nbk / 2):
-            nomcon = valk[nbr + nbc + nbk / 2 + k]
+        for k in range(nbk // 2):
+            nomcon = valk[nbr + nbc + nbk // 2 + k]
             # La SD nomcon est une sd_fonction, une sd_table ou un sd_mater_LISV :
             sd2 = sd_fonction(nomcon)
             if sd2.PROL.exists:

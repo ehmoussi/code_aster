@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from __future__ import print_function
+
 
 import code_aster
 from code_aster import AsterError, raiseAsterError
@@ -41,7 +41,7 @@ try:
 except AsterError as exc:
     test.assertEqual(exc.id_message, "SUPERVIS_2")
 
-with test.assertRaisesRegexp(AsterError, "commandes DEBUT et POURSUITE"):
+with test.assertRaisesRegex(AsterError, "commandes DEBUT et POURSUITE"):
     raiseAsterError("SUPERVIS_2")
 
 
@@ -54,7 +54,7 @@ try:
 except Exception as exc:
     test.assertEqual(exc.id_message, "SUPERVIS_2")
 
-with test.assertRaisesRegexp(Exception, "commandes DEBUT et POURSUITE"):
+with test.assertRaisesRegex(Exception, "commandes DEBUT et POURSUITE"):
     raiseAsterError("SUPERVIS_2")
 
 
@@ -66,7 +66,7 @@ try:
 except AsterError as exc:
     test.assertEqual(exc.id_message, "PREPOST3_10")
 
-with test.assertRaisesRegexp(AsterError, "mauvaise version de HDF"):
+with test.assertRaisesRegex(AsterError, "mauvaise version de HDF"):
     mesh = code_aster.Mesh()
     mesh.readMedFile('xxxx.mmed')
 

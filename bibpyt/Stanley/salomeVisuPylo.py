@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,15 +20,14 @@
 debug = False
 
 import os
-import commands
-import string
+import subprocess
 import sys
 import socket
 import getpass
 from Utilitai.Utmess import UTMESS
 from pylotage.TOOLS import *
-from graphiqueTk import *
-import cata_champs
+from .graphiqueTk import *
+from . import cata_champs
 cata = cata_champs.CATA_CHAMPS()
 
 
@@ -248,7 +247,7 @@ class ISOVALEURS(VISU):
         # Copie du fichier
         cmd = copie + " " + fichier + " " + fmdis
         UTMESS('I', 'STANLEY_9', valk=[cmd])
-        code, output = commands.getstatusoutput(cmd)
+        code, output = subprocess.getstatusoutput(cmd)
         if code != 0:
             raise _("Erreur exécution commande : ") + cmd
 
@@ -323,7 +322,7 @@ class ISOVALEURS(VISU):
 
         try:
             salomeVisu = Visu.Visu(**salomeParam)
-        except Exception, e:
+        except Exception as e:
             UTMESS('A', 'STANLEY_19', valk=[salomeParam['machineName']])
             raise _("Erreur lors de la visualisation.\n\nParametres Salome :%s\n\nErreur :\n%s\n\n") % (
                 salomeParam, e)
@@ -425,16 +424,16 @@ class COURBES(VISU):
                 elif selection.geom[0] == 'CHEMIN':
                     ordre = courbe[1].split('=')[1].strip()
 
-                if not tabList.has_key(composantName):
+                if composantName not in tabList:
                     tabList[composantName] = []  # un tableau par composante
                 tabList[composantName].insert(
                     int(float(ordre)), str(courbe[0]))
 
-            for composantName, liste in tabList.items():
+            for composantName, liste in list(tabList.items()):
                 data = ""
                 theTableName = "table Stanley"
 
-                newListe = map(string.split, liste)
+                newListe = list(map(lambda x: x.strip(), liste))
 
                 m = [[newListe[0][i]] + [newListe[j][i + 1]
                                          for j in range(len(newListe))] for i in range(0, len(newListe[0]), 2)]

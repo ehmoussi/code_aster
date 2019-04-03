@@ -53,7 +53,7 @@ pcr   = 361.E5*exp(1.) /2.
 lambd = 0.1 /(1.-poro)
 kapa  = lambd /2.
 
-print 'young=',YOUNG,' /// nu=',POISSON
+print('young=',YOUNG,' /// nu=',POISSON)
 
 # pression de preconsolidation [en Pa]
 PCR = -1.E6 ;
@@ -66,7 +66,7 @@ ptrac =1000
 p0    =-3.e4
 pc    =-1.e6
 c = M*r_ela*b*ptrac*(1+log(p0/pc)-1/b-ptrac/p0)
-print 'cohesion =',c
+print('cohesion =',c)
 
 #*******************************************************************
 #    MAILLAGE + MODELE

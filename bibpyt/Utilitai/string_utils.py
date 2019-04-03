@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -115,12 +115,9 @@ def copy_text_to(text, files):
     """
     files = force_list(files)
     for f_i in files:
-        assert type(f_i) in (str, file)
-        if type(f_i) == file:
-            fobj = file
-        else:
-            fobj = open(f_i, 'a')
-            # should be closed automatically
+        assert type(f_i) == str
+        fobj = open(f_i, 'a')
+        # should be closed automatically
         fobj.write(text)
         fobj.write(os.linesep)
         fobj.flush()

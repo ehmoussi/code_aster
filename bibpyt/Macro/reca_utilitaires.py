@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,8 +21,6 @@
 
 import copy
 import os
-import string
-import types
 import sys
 import glob
 
@@ -34,7 +32,7 @@ except:
     pass
 
 from code_aster.Commands import (INFO_EXEC_ASTER, DEFI_FICHIER,
-                                        IMPR_FONCTION, DETRUIRE)
+                                 IMPR_FONCTION, DETRUIRE)
 from code_aster.Cata.Syntax import _F
 from Utilitai.Utmess import UTMESS
 
@@ -90,9 +88,9 @@ def detr_concepts(self):
     """
     liste_concepts = mes_concepts(base=self.parent)
     for e in liste_concepts:
-        nom = string.strip(e)
+        nom = e.strip()
         DETRUIRE(OBJET=self.g_context['_F'](CHAINE=nom), INFO=1)
-        if self.jdc.g_context.has_key(nom):
+        if nom in self.jdc.g_context:
             del self.jdc.g_context[nom]
     del(liste_concepts)
 
@@ -105,7 +103,7 @@ def Random_Tmp_Name(prefix=None):
         if prefix:
             fic = prefix + str(nombre)
         else:
-            if os.environ.has_key('TEMP'):
+            if 'TEMP' in os.environ:
                 fic = os.path.join(os.environ['TEMP'], 'file%s' % str(nombre))
             else:
                 fic = '/tmp/file' + str(nombre)
@@ -248,5 +246,5 @@ def graphique(FORMAT, L_F, res_exp, reponses, iter, UL_out, pilote, fichier=None
                 impr.plot(Gnuplot.Data(L_F[i], title='Calcul'), Gnuplot.Data(
                     res_exp[i], title='Experimental'))
 
-    except Exception, err:
+    except Exception as err:
         UTMESS('A', 'RECAL0_42', valk=str(err))

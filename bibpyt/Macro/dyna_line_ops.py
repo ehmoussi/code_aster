@@ -35,6 +35,7 @@ from code_aster.Commands import (AFFE_CHAR_MECA, ASSE_MATRICE, ASSE_VECTEUR,
                                  REST_GENE_PHYS)
 from code_aster.Utilities import force_list
 from Utilitai.Utmess import UTMESS
+from functools import reduce
 
 
 class DynaLineFEM:
@@ -45,14 +46,14 @@ class DynaLineFEM:
         self.parent = parent
         self.keywords = {"MODELE" : MODELE}
         try:
-            charge = tuple(filter(lambda x: x.getType()[:9]=="CHAR_MECA", CHARGE))
+            charge = tuple([x for x in CHARGE if x.getType()[:9]=="CHAR_MECA"])
         except TypeError:
             charge = None
         if charge:
             self.keywords["CHARGE"] = charge
         self.char_cine = {}
         try:
-            char_cine = tuple(filter(lambda x: x.getType()[:14]=="CHAR_CINE_MECA", CHARGE))
+            char_cine = tuple([x for x in CHARGE if x.getType()[:14]=="CHAR_CINE_MECA"])
         except TypeError:
             char_cine = None
         if char_cine:
@@ -85,7 +86,7 @@ class DynaLineFEM:
                                                LIAISON = 'ENCASTRE',
                                                )
                                  )
-        self.keywords["CHARGE"] = tuple(list(self.keywords["CHARGE"]) + [__cliss]) if self.keywords.has_key("CHARGE") else (__cliss,)
+        self.keywords["CHARGE"] = tuple(list(self.keywords["CHARGE"]) + [__cliss]) if "CHARGE" in self.keywords else (__cliss,)
     def getModele(self):
         """return the model"""
         return self.keywords["MODELE"]
@@ -119,7 +120,7 @@ class DynaLineFEM:
         """return elementary damping"""
         if hasattr(self, "_DynaLineFEM__amorelem"):
             return self.__amorelem
-        if self.keywords.has_key("CHAM_MATER"):
+        if "CHAM_MATER" in self.keywords:
             # RIGI_MECA and MASS_MECA needed if CHAM_MATER for CALC_MATR_ELEM option AMOR_MECA
             keywords = self.keywords.copy()
             keywords['RIGI_MECA'] = self.__getRigielem()
@@ -166,7 +167,7 @@ class DynaLineFEM:
         if hasattr(self, "_DynaLineFEM__impePhy"):
             return self.__impePhy
         self.__impePhy = None
-        if self.keywords.has_key("CHARGE"):
+        if "CHARGE" in self.keywords:
             for charge in self.keywords['CHARGE']:
                 if aster.jeveux_exists(charge.nom.ljust(8) + '.CHME.IMPE .DESC'):
                     __impePhy = ASSE_MATRICE(MATR_ELEM=self.__getImpeelem(), NUME_DDL=self.getNumeddl(), **self.char_cine)
@@ -254,7 +255,7 @@ class DynaLineFEM:
     def convertChargeToVect(self, charge):
         """compute and return the assembled vector corresponding to 'charge'"""
         keywords = self.keywords.copy()
-        keywords['CHARGE'] = list(keywords['CHARGE']) + [charge] if keywords.has_key('CHARGE') else [charge]
+        keywords['CHARGE'] = list(keywords['CHARGE']) + [charge] if 'CHARGE' in keywords else [charge]
         del keywords['MODELE']
         __vectelem = CALC_VECT_ELEM(OPTION='CHAR_MECA', **keywords)
         __vect = ASSE_VECTEUR(VECT_ELEM=__vectelem, NUME_DDL=self.getNumeddl())
@@ -330,28 +331,28 @@ class DynaLineExcit:
         """return the list of all loadings with CHARGE defined"""
         if hasattr(self, "_DynaLineExcit__charMecaLoadings"):
             return self.__charMecaLoadings
-        self.__charMecaLoadings = filter(lambda x: x.has_key("CHARGE"), self.charges)
+        self.__charMecaLoadings = [x for x in self.charges if "CHARGE" in x]
         return self.__charMecaLoadings
     def __getMultiAppuiLoadings(self):
         """return the list of all loadings with TYPE_APPUI='MULTI'"""
         if hasattr(self, "_DynaLineExcit__multiAppuiLoadings"):
             return self.__multiAppuiLoadings
-        self.__multiAppuiLoadings = filter(lambda x: x.has_key("TYPE_APPUI") and x["TYPE_APPUI"]=="MULTI", self.charges)
+        self.__multiAppuiLoadings = [x for x in self.charges if "TYPE_APPUI" in x and x["TYPE_APPUI"]=="MULTI"]
         return self.__multiAppuiLoadings
     def getMonoAppuiLoadings(self):
         """return the list of all loadings with TYPE_APPUI='MONO'"""
         if hasattr(self, "_DynaLineExcit__monoAppuiLoadings"):
             return self.__monoAppuiLoadings
-        self.__monoAppuiLoadings = filter(lambda x: x.has_key("TYPE_APPUI") and x["TYPE_APPUI"]=="MONO", self.charges)
+        self.__monoAppuiLoadings = [x for x in self.charges if "TYPE_APPUI" in x and x["TYPE_APPUI"]=="MONO"]
         return self.__monoAppuiLoadings
     def __check(self):
         """check consistency of EXCIT, raise error if not consistent"""
         if len(self.getMonoAppuiLoadings()) > 1:
-            monoAppuiLoadingsWithoutGrNoOrNodeKey = filter(lambda x: not(x.has_key("GROUP_NO") or x.has_key("NOEUD")), self.getMonoAppuiLoadings())
-            monoAppuiLoadingsWithGrNoKey = filter(lambda x: x.has_key("GROUP_NO"), self.getMonoAppuiLoadings())
-            grNoValues = map(lambda x: x["GROUP_NO"], monoAppuiLoadingsWithGrNoKey)
-            monoAppuiLoadingsWithNodeKey = filter(lambda x: x.has_key("NOEUD"), self.getMonoAppuiLoadings())
-            nodeValues = map(lambda x: x["NOEUD"], monoAppuiLoadingsWithNodeKey)
+            monoAppuiLoadingsWithoutGrNoOrNodeKey = [x for x in self.getMonoAppuiLoadings() if not("GROUP_NO" in x or "NOEUD" in x)]
+            monoAppuiLoadingsWithGrNoKey = [x for x in self.getMonoAppuiLoadings() if "GROUP_NO" in x]
+            grNoValues = [x["GROUP_NO"] for x in monoAppuiLoadingsWithGrNoKey]
+            monoAppuiLoadingsWithNodeKey = [x for x in self.getMonoAppuiLoadings() if "NOEUD" in x]
+            nodeValues = [x["NOEUD"] for x in monoAppuiLoadingsWithNodeKey]
             # verify that there is only one loading if NODE and GROUP_NO not defined
             if monoAppuiLoadingsWithoutGrNoOrNodeKey:
                 if len(monoAppuiLoadingsWithoutGrNoOrNodeKey) > 1 or grNoValues or nodeValues:
@@ -390,7 +391,7 @@ class DynaLineExcit:
             charge = multiAppuiLoading.copy()
             keywords = {}
             for key in ['GROUP_NO', 'NOEUD', 'DIRECTION']:
-                if charge.has_key(key):
+                if key in charge:
                     keywords[key] = charge[key]
             __vect=CALC_CHAR_SEISME(MATR_MASS=self.dynaLineFEM.getMassPhy(),
                                     MODE_STAT=self.dynaLineFEM.dynaLineBasis.getStaticMultiModes(),
@@ -399,7 +400,7 @@ class DynaLineExcit:
             if self.__isTypeTran:
                 charge['MULT_APPUI'] = 'OUI'
             if self.__isTypeHarm:
-                for key in keywords.keys():
+                for key in list(keywords.keys()):
                     del charge[key]
             del charge['TYPE_APPUI']
             self.__charges.append(charge)
@@ -409,7 +410,7 @@ class DynaLineExcit:
             if 'GROUP_NO' in charge or 'NOEUD' in charge:
                 keywords = {}
                 for key in ['GROUP_NO', 'NOEUD', 'DIRECTION']:
-                    if charge.has_key(key):
+                    if key in charge:
                         keywords[key] = charge[key]
                 __vect=CALC_CHAR_SEISME(MATR_MASS=self.dynaLineFEM.getMassPhy(),
                                         MODE_STAT=self.dynaLineFEM.dynaLineBasis.getStaticMonoModes(),
@@ -422,7 +423,7 @@ class DynaLineExcit:
             self.__setVectOrVectGeneToCharge(charge, __vect)
 
             for key in ["GROUP_NO", "NOEUD", "DIRECTION"]:
-                if charge.has_key(key):
+                if key in charge:
                     del charge[key]
             del charge['TYPE_APPUI']
             self.__charges.append(charge)
@@ -456,9 +457,9 @@ class DynaLineFrequencyBand:
         l_freq_fc = []
         for charge in self.charges:
             if self.__isTypeCalculHarm():
-                if charge.has_key('FONC_MULT'):
+                if 'FONC_MULT' in charge:
                     fonction = charge['FONC_MULT']
-                elif charge.has_key('FONC_MULT_C'):
+                elif 'FONC_MULT_C' in charge:
                     fonction = charge['FONC_MULT_C']
                 else:
                     raise NotImplementedError("Expected to have FONC_MULT or FONC_MULT_C defined in charge for automatic computation of cutoff frequency")
@@ -467,9 +468,9 @@ class DynaLineFrequencyBand:
                                     "A FONCTION should be pass as FONC_MULT instead, you can use CALC_FONC_INTERP to convert your FORMULE to a discret FONCTION")
                 l_freq_fc.append(max(fonction.Absc()))
             else:
-                if charge.has_key('FONC_MULT'):
+                if 'FONC_MULT' in charge:
                     fonction = charge['FONC_MULT']
-                elif charge.has_key('ACCE'):
+                elif 'ACCE' in charge:
                     fonction = charge['ACCE']
                 else:
                     raise NotImplementedError("Expected to have FONC_MULT or ACCE defined in charge")
@@ -478,10 +479,10 @@ class DynaLineFrequencyBand:
                                     "A FONCTION should be pass as FONC_MULT instead, you can use CALC_FONC_INTERP to convert your FORMULE to a discret FONCTION")
                 # compute fft
                 __fonc = CALC_FONCTION(FFT=_F(FONCTION=fonction))
-                len_fonc = len(__fonc.Absc())/2 # remove negative frequencies of the spectrum
+                len_fonc = len(__fonc.Absc())//2 # remove negative frequencies of the spectrum
                 l_freq = __fonc.Absc()[:len_fonc]
-                l_real2 = map(lambda x:x**2, __fonc.Ordo()[:len_fonc])
-                l_imag2 = map(lambda x:x**2, __fonc.OrdoImg()[:len_fonc])
+                l_real2 = [x**2 for x in __fonc.Ordo()[:len_fonc]]
+                l_imag2 = [x**2 for x in __fonc.OrdoImg()[:len_fonc]]
                 l_norm2 = [x+y for x,y in zip(l_real2, l_imag2)]
                 # retrieve cutoff value
                 l_serie = []
@@ -586,7 +587,7 @@ class DynaLineBasis:
         associated to loading_type TYPE_APPUI. loading_type should be in ['MONO', 'MULTI']"""
         if not self.enri_stat:
              return None
-        charges = filter(lambda x: x.has_key("TYPE_APPUI") and x["TYPE_APPUI"]==loading_type, self.charges)
+        charges = [x for x in self.charges if "TYPE_APPUI" in x and x["TYPE_APPUI"]==loading_type]
         if len(charges) == 0:
             return None
         pseudo_mode = []
@@ -611,14 +612,14 @@ class DynaLineBasis:
     def __getStaticModesForLoadingType(self, loading_type):
         """perform a MODE_STATIQUE with MODE_STAT to retrieve the static modes\
         associated to loading_type TYPE_APPUI. loading_type should be in ['MONO', 'MULTI']"""
-        charges = filter(lambda x: x.has_key("TYPE_APPUI") and x["TYPE_APPUI"]==loading_type, self.charges)
+        charges = [x for x in self.charges if "TYPE_APPUI" in x and x["TYPE_APPUI"]==loading_type]
         if len(charges) == 0:
             return None
         mode_stat = []
         for charge in charges:
             keywords = {}
             for key in ['GROUP_NO', 'NOEUD']:
-                if charge.has_key(key):
+                if key in charge:
                     keywords[key] = charge[key]
             avec_cmp = []
             for i, dof_value in enumerate(charge["DIRECTION"]):
@@ -756,8 +757,8 @@ class DynaLineBasis:
         keywords = {}
         tmp = []
         if self.forc_ajou:
-            monoAppuiLoadings = filter(lambda x: x.has_key("TYPE_APPUI") and x["TYPE_APPUI"]=="MONO", self.charges)
-            multiAppuiLoadings = filter(lambda x: x.has_key("TYPE_APPUI") and x["TYPE_APPUI"]=="MULTI", self.charges)
+            monoAppuiLoadings = [x for x in self.charges if "TYPE_APPUI" in x and x["TYPE_APPUI"]=="MONO"]
+            multiAppuiLoadings = [x for x in self.charges if "TYPE_APPUI" in x and x["TYPE_APPUI"]=="MULTI"]
             if monoAppuiLoadings:
                 AppuiLoadings = monoAppuiLoadings
                 keywords['MONO_APPUI'] = 'OUI'
@@ -841,7 +842,7 @@ class DynaLineBasis:
                 keywords["CHAR_MECA_GLOBAL"] = char_meca_global
             else:
                 keywords["LIAISON_DISCRET"] = 'OUI'
-            elasCharges = filter(lambda x: x.has_key("CHARGE"), self.charges)
+            elasCharges = [x for x in self.charges if "CHARGE" in x]
             if len(elasCharges) == 0:
                 self.__elasModes = None
                 return self.__elasModes
@@ -852,7 +853,7 @@ class DynaLineBasis:
                 for key in  ["FONC_MULT_C", "COEF_MULT_C",
                             "FONC_MULT"  , "COEF_MULT"  ,
                             "PHAS_DEG"   , "PUIS_PULS"  ]:
-                    if charge.has_key(key):
+                    if key in charge:
                         del charge[key]
             __elasModes=MACRO_ELAS_MULT(CAS_CHARGE=elasCharges,
                                         NUME_DDL=self.dynaLineFEM.getNumeddl(),
@@ -874,10 +875,10 @@ class DynaLineBasis:
             nodes = []
             node_groups = []
             for key in self.noeud_keys:
-                if comportement.has_key(key):
+                if key in comportement:
                     nodes.append(comportement[key])
             for key in self.group_no_keys:
-                if comportement.has_key(key):
+                if key in comportement:
                     node_groups.append(comportement[key])
 
             if nodes:
@@ -1011,7 +1012,7 @@ class DynaLineIncrement:
         self.__step = 1. / (5 * self.dynaLineFrequencyBand.getFc())
         return self.__step
     def get(self):
-        if self.__isTypeTran and not self.increment[0].has_key("PAS"):
+        if self.__isTypeTran and "PAS" not in self.increment[0]:
             # compute and add step to self.increment if not given before returning it
             self.increment[0]["PAS"] = self.__getStep()
         return self.increment
@@ -1028,7 +1029,7 @@ class DynaLineInitialState:
     def __project(self):
         """project all self.etat_init to gene basis"""
         for key in ["DEPL", "VITE"]:
-            if self.etat_init.has_key(key) and \
+            if key in self.etat_init and \
                self.etat_init[key].getType()[:7] == "CHAM_NO":
                 if self.__isBaseGene:
                     __vectGen = self.dynaLineFem.dynaLineBasis.vectPhyToGen(self.etat_init[key], key)
@@ -1036,7 +1037,7 @@ class DynaLineInitialState:
                 else:
                     __vect = self.dynaLineFem.asseToNumeddl(self.etat_init[key])
                     self.etat_init[key] = __vect
-        if self.etat_init.has_key("RESULTAT"):
+        if "RESULTAT" in self.etat_init:
             raise Exception("keyword RESULTAT should be implemented here")
         self.isProjected = True
     def get(self):
@@ -1148,9 +1149,9 @@ class DynaLineResu:
             if len(self.dynaLineExcit.getMonoAppuiLoadings()) == 1:
                 monoAppuiLoading = self.dynaLineExcit.getMonoAppuiLoadings()[0]
                 keywords["DIRECTION"] = monoAppuiLoading["DIRECTION"]
-                if monoAppuiLoading.has_key("FONC_MULT"):
+                if "FONC_MULT" in monoAppuiLoading:
                     keywords["ACCE_MONO_APPUI"] = monoAppuiLoading["FONC_MULT"]
-                elif monoAppuiLoading.has_key("ACCE"):
+                elif "ACCE" in monoAppuiLoading:
                     keywords["ACCE_MONO_APPUI"] = monoAppuiLoading["ACCE"]
                 else:
                     assert(False)
@@ -1172,7 +1173,7 @@ class DynaLineResu:
             keywords["UNITE_RESU_FORC"] = self.unite_resu_forc
         if self.parametre:
             if self.type_calcul == "HARM":
-                l_is_freq_defined = map(lambda x: x in self.parametre.keys(), ['FREQ_MIN', 'LIST_FREQ', 'FREQ_IMAG'])
+                l_is_freq_defined = [x in list(self.parametre.keys()) for x in ['FREQ_MIN', 'LIST_FREQ', 'FREQ_IMAG']]
                 is_freq_defined = reduce(lambda x,y: x or y, l_is_freq_defined)
                 if not is_freq_defined:
                     # recuperate frequencies from increment definition if not defined
@@ -1193,7 +1194,7 @@ class DynaLineResu:
             # recuperate frequencies from increment definition
             self.parametre["LIST_FREQ"] = self.dynaLineIncrement.get()["FREQ"]
             for key in ["FREQ_MIN" , "FREQ_MAX", "FREQ_PAS", "FREQ_IMAG"]:
-                if self.parametre.has_key(key):
+                if key in self.parametre:
                     del self.parametre[key]
             keywords["PARAMETRE"] = self.parametre
         if self.type_calcul == "HARM" and len(self.dynaLineExcit.get()) > 0:

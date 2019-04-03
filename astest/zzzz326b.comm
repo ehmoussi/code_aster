@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -67,13 +67,19 @@ STA1=MECA_STATIQUE(MODELE=MO,
                    CARA_ELEM=EP,
                    EXCIT=_F(CHARGE=CHME,),);
 
-IMPR_RESU(FORMAT='MED',
-          RESU=_F(RESULTAT=STA1,
-                  #~ À rétablir en même temps que issue26562
-                  #~ CARA_ELEM=EP,
-                  ),);
+# IMPR_RESU(FORMAT='MED',
+#           RESU=_F(RESULTAT=STA1,
+#                   #~ À rétablir en même temps que issue26562
+#                   #~ CARA_ELEM=EP,
+#                   ),);
 
 IMPR_RESU(FORMAT='MED',
+          VERSION_MED='3.3.1',
+          UNITE=80,
+          RESU=_F(RESULTAT=STA1,),);
+
+IMPR_RESU(FORMAT='MED',
+          VERSION_MED='4.0.0',
           UNITE=81,
           RESU=_F(RESULTAT=STA1,),);
 

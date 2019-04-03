@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -199,7 +199,7 @@ def check_mfront_libs(self):
     check_lib = lambda lib: _check(lib=lib)
     libs = ['AsterInterface' + self.env.TFELSUFFIX,
             'TFELSystem' + self.env.TFELSUFFIX]
-    map(check_lib, Utils.to_list(libs))
+    list(map(check_lib, Utils.to_list(libs)))
 
 @Configure.conf
 def check_mfront_py(self):
@@ -224,7 +224,7 @@ def check_cxx11_abi(self):
     # Use http://demangler.com/ to demangle names
     libname = "./libTFELUtilities" + self.env.TFELSUFFIX + ".so"
     symbol = "replace_all"
-    prev = os.getcwdu()
+    prev = os.getcwd()
     os.chdir(osp.join(self.env.TFELHOME[0], "lib"))
     lib = ctypes.cdll.LoadLibrary(libname)
     os.chdir(prev)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    2 : _(u"""
+    2 : _("""
  -> le nombre de mailles de votre maillage (%(i1)d) est supérieur
     à la limite de 9 999 999.
  -> Risque & Conseil : veuillez vérifier le script GIBI qui vous a permis
@@ -30,38 +30,38 @@ cata_msg = {
 
 
 
-    6 : _(u"""
+    6 : _("""
  composante %(k1)s / point  %(i1)d
 """),
 
-    7 : _(u"""
+    7 : _("""
    nombre de valeurs        =  %(i1)d
      %(r1)f, %(r2)f, ...
 """),
 
-    8 : _(u"""
+    8 : _("""
    nombre de pics extraits   =  %(i1)d
      %(r1)f, %(r2)f, ...
 """),
 
-    9 : _(u"""
+    9 : _("""
    nombre de cycles détectés =  %(i1)d
 """),
 
-    10 : _(u"""
+    10 : _("""
    %(i1)d  /  %(r1)f   %(r2)f
 """),
 
-    11 : _(u"""
+    11 : _("""
    dommage en ce point/composante  =  %(r1)f
 """),
 
-    27 : _(u"""
+    27 : _("""
  paramètres de calcul du dommage nombre de numéros d'ordre  =  %(i1)d
  nombre de points de calcul =  %(i2)d
 """),
 
-    28 : _(u"""
+    28 : _("""
  calcul     du      dommage en %(k1)s points  de   calcul  du    dommage %(k2)s
  composante(s) grandeur équivalente %(k3)s
  méthode  d'extraction  des    pics %(k4)s
@@ -70,42 +70,42 @@ cata_msg = {
 
 """),
 
-    29 : _(u"""
+    29 : _("""
  maille:  %(k1)s
 """),
 
-    30 : _(u"""
+    30 : _("""
  des mailles de peau ne s'appuient sur aucune maille support
     maille:  %(k1)s
 """),
 
-    31 : _(u"""
+    31 : _("""
 
      ===== GROUP_MA ASTER / PHYSICAL GMSH =====
 
 """),
 
-    32 : _(u"""
+    32 : _("""
 
   Le GROUP_MA GMSH GM10000 contient %(i1)d éléments :
 """),
 
-    33 : _(u"""
+    33 : _("""
        %(i1)d éléments de type %(k1)s
 """),
 
-    34 : _(u"""
+    34 : _("""
     La composante %(k1)s que vous avez renseignée ne fait pas partie
     des composantes du champ à imprimer.
 """),
 
-    35 : _(u"""
+    35 : _("""
     Le type de champ %(k1)s n'est pas autorisé avec les champs
     élémentaires %(k2)s.
     L'impression du champ sera effectué avec le type SCALAIRE.
 """),
 
-    36 : _(u"""
+    36 : _("""
  Veuillez utiliser IMPR_GENE pour l'impression
  de résultats en variables généralisées.
 """),
@@ -113,40 +113,40 @@ cata_msg = {
 
 
 
-    38 : _(u"""
+    38 : _("""
  Problème dans la lecture du fichier de maillage GMSH.
  Le fichier de maillage ne semble pas être un fichier de type GMSH :
  il manque la balise de début de fichier.
 """),
 
-    39 : _(u"""
+    39 : _("""
  <I> Depuis la version 2.2.0 de GMSH il est possible de lire et écrire le format MED.
      Conseil : Utilisez plutôt GMSH avec MED comme format d'entrée et de sortie.
 
 """),
 
-    40 : _(u"""
+    40 : _("""
  <I> Le ficher de maillage GMSH est au format version %(i1)d.
 """),
 
-    41 : _(u"""
+    41 : _("""
  Problème dans la lecture du fichier de maillage GMSH.
  Il manque la balise de fin de la liste de noeud.
 """),
 
-    42 : _(u"""
+    42 : _("""
  Problème dans la lecture du fichier de maillage GMSH.
  Il manque la balise de début de la liste des éléments.
 """),
 
-    43 : _(u"""
+    43 : _("""
  -> le nombre de mailles de votre maillage (%(i1)d) est supérieur
     à la limite de 9 999 999.
  -> Risque & Conseil : générez un fichier MED directement depuis GMSH.
 """),
 
 
-    46 : _(u"""
+    46 : _("""
  Le modèle %(k1)s ne contient aucun élément de joint ou d'interface.
  Conseil : veuillez revoir la définition de ce modèle
 """),

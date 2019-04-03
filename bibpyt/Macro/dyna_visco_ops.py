@@ -45,7 +45,7 @@ def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
     self.set_icmd(1)
     
     coef_fmax = 1.
-    if args.has_key('COEF_FREQ_MAX'):
+    if 'COEF_FREQ_MAX' in args:
         coef_fmax = args['COEF_FREQ_MAX']
   
   

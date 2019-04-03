@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,8 @@ from ..Utilities import deprecated, force_list, initial_context, injector
 from ..Supervis.logger import logger
 
 
-class ExtendedFormula(injector(Formula), Formula):
+@injector(Formula)
+class ExtendedFormula(object):
     cata_sdj = "SD.sd_fonction.sd_formule"
 
     def __getstate__(self):

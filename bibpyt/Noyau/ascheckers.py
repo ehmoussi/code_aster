@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ class CheckLog(object):
             m.update(str(obj.get()))
             cksum = m.digest()
             nom = obj.nomj()
-            if not self.cksums.has_key(nom):
+            if nom not in self.cksums:
                 self.cksums[nom] = cksum
             else:
                 if self.cksums[nom] != cksum:
@@ -130,7 +130,7 @@ class CheckLog(object):
                 s = 'ignore'
             else:
                 s = 'check '
-            print '#DBG %6d %s : %s' % (self._marq, s, ', '.join(key))
+            print('#DBG %6d %s : %s' % (self._marq, s, ', '.join(key)))
 
     def __str__(self):
         d = {0: "E", 1: "W"}

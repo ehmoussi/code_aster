@@ -1,6 +1,6 @@
 # coding: utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -78,7 +78,7 @@ def compat_listr8(keywords, factor_keyword, list_keyword, float_keyword):
         float_keyword (str): Name of the keyword that takes a list of floats.
     """
     if factor_keyword and factor_keyword.strip():
-        if not keywords.has_key(factor_keyword):
+        if factor_keyword not in keywords:
             return
         fact = force_list(keywords[factor_keyword])
         for occ in fact:
@@ -106,17 +106,17 @@ def _if_exists(keywords, factor_keyword, simple_keyword, callback):
             otherwise.
     """
     if factor_keyword.strip():
-        if not keywords.has_key(factor_keyword):
+        if factor_keyword not in keywords:
             return
         if simple_keyword.strip():
             fact = force_list(keywords[factor_keyword])
             for occ in fact:
-                if occ.has_key(simple_keyword):
+                if simple_keyword in occ:
                     callback(occ, simple_keyword)
             return
         callback(keywords, factor_keyword)
     elif simple_keyword.strip():
-        if keywords.has_key(simple_keyword):
+        if simple_keyword in keywords:
             callback(keywords, simple_keyword)
 
 
@@ -136,16 +136,16 @@ def _if_not_exists(keywords, factor_keyword, simple_keyword, callback):
             otherwise.
     """
     if factor_keyword.strip():
-        if not keywords.has_key(factor_keyword):
+        if factor_keyword not in keywords:
             callback(keywords, factor_keyword)
             return
         if simple_keyword.strip():
             fact = force_list(keywords[factor_keyword])
             for occ in fact:
-                if not occ.has_key(simple_keyword):
+                if simple_keyword not in occ:
                     callback(occ, simple_keyword)
     elif simple_keyword.strip():
-        if not keywords.has_key(simple_keyword):
+        if simple_keyword not in keywords:
             callback(keywords, simple_keyword)
 
 def remove_keyword(keywords, factor_keyword, simple_keyword, warning=False):

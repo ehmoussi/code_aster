@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,18 +34,19 @@ subroutine as_mmhnme(fid, maa, quoi, typent, typgeo,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, typen4, typge4, cret4, typco4, n4, quoi4
+    med_idt :: fidm
+    med_int :: typen4, typge4, cret4, typco4, n4, quoi4
     med_int :: mdnon4, mdnoi4, chtse4, chttr4
     mdnont = -1
     mdnoit = -1
-    fid4 = fid
+    fidm = to_med_idt(fid)
     typen4 = typent
     typge4 = typgeo
     typco4 = typcon
     quoi4 = quoi
     mdnon4 = mdnont
     mdnoi4 = mdnoit
-    call mmhnme(fid4, maa, mdnon4, mdnoi4, typen4,&
+    call mmhnme(fidm, maa, mdnon4, mdnoi4, typen4,&
                 typge4, quoi4, typco4, chtse4, chttr4,&
                 n4, cret4)
     n = n4

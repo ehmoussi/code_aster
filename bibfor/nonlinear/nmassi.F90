@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmassi(list_func_acti, sddyna, hval_veasse, cndonn)
+subroutine nmassi(list_func_acti, sddyna, ds_system, hval_veasse, cndonn)
 !
 use NonLin_Datastructure_type
 !
@@ -38,8 +38,8 @@ implicit none
 #include "asterfort/nonlinDSVectCombAddAny.h"
 !
 integer, intent(in) :: list_func_acti(*)
-character(len=19), intent(in) :: sddyna
-character(len=19), intent(in) :: hval_veasse(*)
+character(len=19), intent(in) :: sddyna, hval_veasse(*)
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: cndonn
 !
 ! --------------------------------------------------------------------------------------------------
@@ -52,7 +52,8 @@ character(len=19), intent(in) :: cndonn
 !
 ! In  list_func_acti   : list of active functionnalities
 ! In  sddyna           : datastructure for dynamic
-! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  hval_veasse      : hat-variable for vectors (nodal fields)
+! In  ds_system        : datastructure for non-linear system management
 ! In  cndonn           : name of nodal field for "given" forces
 !
 ! --------------------------------------------------------------------------------------------------
@@ -101,7 +102,7 @@ character(len=19), intent(in) :: cndonn
 !
 ! - Add internal forces to second member
 !
-    call nonlinDSVectCombAddHat(hval_veasse, 'CNFNOD', -1.d0, ds_vectcomb)
+    call nonlinDSVectCombAddAny(ds_system%cnfnod, -1.d0, ds_vectcomb)
 !
 ! - Second member (standard)
 !

@@ -10,7 +10,7 @@ test = code_aster.TestCase()
 table = LIRE_TABLE(UNITE=31, FORMAT='TABLEAU')
 
 pytab = table.EXTR_TABLE()
-test.assertSequenceEqual(pytab.GAMMA.values(), [None, 1.5, 2.5, None, -3.4])
+test.assertSequenceEqual(list(pytab.GAMMA.values()), [None, 1.5, 2.5, None, -3.4])
 
 IMPR_TABLE(UNITE=88, TABLE=table)
 IMPR_TABLE(UNITE=6, TABLE=table)

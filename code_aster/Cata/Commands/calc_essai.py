@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ def calc_essai_prod(self,RESU_IDENTIFICATION,
     if args.get('__all__'):
         return ([None],
                 [None, interspectre],
-                [None] + MTYPES.values())
+                [None] + list(MTYPES.values()))
 
     if RESU_IDENTIFICATION != None:
         for res in RESU_IDENTIFICATION:
@@ -53,7 +53,7 @@ def calc_essai_prod(self,RESU_IDENTIFICATION,
 
     if RESU_MODIFSTRU != None:
         for res in RESU_MODIFSTRU:
-            for mc, typ in MTYPES.items():
+            for mc, typ in list(MTYPES.items()):
                 if res[mc]:
                     self.type_sdprod(res[mc], typ)
     return None

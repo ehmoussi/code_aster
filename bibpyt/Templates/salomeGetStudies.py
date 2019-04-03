@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,10 +31,10 @@ try:
     myStudyManager = obj._narrow(SALOMEDS.StudyManager)
     List_Studies = myStudyManager.GetOpenStudies()
 
-except Exception, e:
+except Exception as e:
     List_Studies = []
-    print "Probleme avec Salome, il n'est peut etre pas lance!"
-    print e
+    print("Probleme avec Salome, il n'est peut etre pas lance!")
+    print(e)
 
 try:
     if 'OUTPUTFILE1':
@@ -42,7 +42,7 @@ try:
         fw = file('OUTPUTFILE1', 'w')
         fw.write('\n'.join(List_Studies))
 
-except Exception, e:
+except Exception as e:
     raise Exception("Erreur : \n%s" % e)
 
-print 62 * '-' + '\n' + '\n'.join(List_Studies) + '\n' + 62 * '-'
+print(62 * '-' + '\n' + '\n'.join(List_Studies) + '\n' + 62 * '-')

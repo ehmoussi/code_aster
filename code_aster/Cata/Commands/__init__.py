@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,14 +37,14 @@ def _init_command(ctx, debug):
         for objname in dir(mod):
             if curDict.get(objname) is not None:
                 if debug:
-                    print("DEBUG: Module {0}: {1} already seen, "
-                          "ignored!".format(modname, objname))
+                    print(("DEBUG: Module {0}: {1} already seen, "
+                          "ignored!".format(modname, objname)))
                 continue
             obj = getattr(mod, objname)
             if isinstance(obj, Command) or (modname == "variable" and
                                             objname == "VARIABLE"):
                 if debug:
-                    print("DEBUG: Module {0}: add {1}".format(modname, objname))
+                    print(("DEBUG: Module {0}: add {1}".format(modname, objname)))
                 curDict[objname] = obj
     ctx.update(curDict)
     return curDict

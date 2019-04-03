@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,14 +21,14 @@
 
 cata_msg = {
     
-    1 : _(u"""
+    1 : _("""
 
       Vous avez indiqué une épaisseur nulle ou négative (inférieure à la précision des nombres réels). 
       Renseignez une valeur positive non nulle. 
 
 """),
    
-    2 : _(u"""
+    2 : _("""
 
       Vous utilisez un élément MEMBRANE avec STAT_NON_LINE.
       Problème : Les membranes ne prennent pas en compte le COMPORTEMENT %(k1)s .
@@ -37,7 +37,7 @@ cata_msg = {
 
 """),
     
-        3 : _(u"""
+        3 : _("""
 
       Vous utilisez un élément MEMBRANE en GROT_GDEP.
       Problème : Les membranes en non linéaire ne fonctionnent qu'avec le choix ELAS_MEMBRANE_SV ou
@@ -45,14 +45,14 @@ cata_msg = {
       Solution : Changez votre choix de COMPORTEMENT.
 
 """),
-        4 : _(u"""
+        4 : _("""
 
       Vous utilisez un élément MEMBRANE en GROT_GDEP  avec ELAS_MEMBRANE_SV ou ELAS_MEMBRANE_NH.
       Problème : En membrane hyper-élastique, seuls le module d'Young et le coefficient de poisson sont nécessaires.
       Solution : Dans DEFI_MATERIAU choisissez le comportement ELAS.
 
 """),
-        5 : _(u"""
+        5 : _("""
 
       Vous utilisez un élément MEMBRANE et essayez de calculer la matrice de rigidité élastique.
       Problème : Vous utilisez des mots clés incohérents.
@@ -64,7 +64,7 @@ cata_msg = {
                    STAT_NON_LINE.
 
 """),
-        6 : _(u"""
+        6 : _("""
 
       Vous utilisez un élément MEMBRANE en GROT_GDEP avec ELAS_MEMBRANE_SV ou ELAS_MEMBRANE_NH.
       Problème : Vous avez spécifié des angles dans ANGLE_REP.
@@ -72,28 +72,28 @@ cata_msg = {
                       rôle et de définir les directions d'affichage des contraintes
 
 """),
-        7 : _(u"""
+        7 : _("""
 
       Vous utilisez un élément MEMBRANE en GROT_GDEP avec ELAS_MEMBRANE_SV ou ELAS_MEMBRANE_NH.
       Problème : Vous avez spécifié une option de chargement non prise en compte.
       Solution : Modifiez vos chargements. 
 
 """),
-        8 : _(u"""
+        8 : _("""
 
       Vous voulez post-traiter un élément MEMBRANE en GROT_GDEP avec %(k1)s.
       Problème : Vous avez spécifié une option de post-traitement non prise en compte.
       Solution : Modifiez vos options de post-traitement. 
 
 """),
-        9 : _(u"""
+        9 : _("""
 
       Vous utilisez les membranes en GROT_GDEP en dynamique.
       Problème : La dynamique n'est pas implémentée pour les membranes en grandes déformations.
       SOLUTION : Faites un calcul en statique ou changez d'élément. 
 
 """),
-        10 : _(u"""
+        10 : _("""
 
       Vous utilisez un élément de MEMBRANE.
       Problème : Le comportement sélectionné n'est pas compatible avec le type de matériau.

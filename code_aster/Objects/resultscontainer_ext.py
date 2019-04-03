@@ -29,7 +29,8 @@ from libaster import ResultsContainer, Model, MaterialOnMesh
 from ..Utilities import injector
 
 
-class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
+@injector(ResultsContainer)
+class ExtendedResultsContainer(object):
     cata_sdj = "SD.sd_resultat.sd_resultat"
 
     def __getstate__(self):

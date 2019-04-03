@@ -20,7 +20,6 @@
 from math import atan, atan2, cos, sin, log, sqrt, acos, pi
 
 import numpy as NP
-from types import ListType, TupleType
 
 
 def InterpolationLineaire(x0, points):
@@ -55,7 +54,6 @@ def InterpolFondFiss(s0, Coorfo):
     # Coorfo = Coordonnees du fond (extrait de la sd fiss_xfem)
     # xyz = Coordonnees du point
 
-    n = len(Coorfo) / 4
     if (s0 < Coorfo[3]):
         xyz = [Coorfo[0], Coorfo[1], Coorfo[2]]
         return xyz
@@ -224,7 +222,7 @@ def nom_points_fonds(n_taille):
                     tab_alphabet =  tab_alphabet + \
                         [tab_alphabet[
                             (l_let1 - 1) * 26 + l_let2] + alphabet[l_let3]]
-        reste1 = int(n_taille - len(tab_alphabet)) / 26
+        reste1 = int(n_taille - len(tab_alphabet)) // 26
         for l_let2 in range(reste1):
             for l_let3 in range(26):
                 tab_alphabet =  tab_alphabet + \
@@ -246,13 +244,12 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
     """
 
     import aster
-    import string
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
     from Utilitai.partition import MAIL_PY
     from Internal.detec_front import DETEC_FRONT
 
-    EnumTypes = (ListType, TupleType)
+    EnumTypes = (list, tuple)
 
     macro = 'PROPA_FISS'
     ier = 0
@@ -295,11 +292,11 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         Nbfissure = len(Fissures)
         Damax = args['DA_MAX']
 
-        print '-------------------------------------------'
-        print 'NOMBRE DE FISSURES A TRAITER : ', Nbfissure
+        print('-------------------------------------------')
+        print('NOMBRE DE FISSURES A TRAITER : ', Nbfissure)
         for numfis, Fiss in enumerate(Fissures):
-            print 'FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].get_name()
-        print '-------------------------------------------'
+            print('FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].get_name())
+        print('-------------------------------------------')
 
 # Recuperation des donnees
         mcsimp = {}
@@ -349,7 +346,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 mcsimp['FISS_PROP'] = fiss
 
                 Coorfo = fiss.sdj.FONDFISS.get()
-                nb_pt_fiss = len(Coorfo) / 4
+                nb_pt_fiss = len(Coorfo) // 4
 
                 TABLE_BETA = nb_pt_fiss * [0.]
                 TABLE_GAMMA = nb_pt_fiss * [0.]
@@ -463,11 +460,11 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         Fissures = args['FISSURE']
         Nbfissure = len(Fissures)
 
-        print '-------------------------------------------'
-        print 'NOMBRE DE FISSURES A TRAITER : ', Nbfissure
+        print('-------------------------------------------')
+        print('NOMBRE DE FISSURES A TRAITER : ', Nbfissure)
         for numfis, Fiss in enumerate(Fissures):
-            print 'FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].get_name()
-        print '-------------------------------------------'
+            print('FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].get_name())
+        print('-------------------------------------------')
 
 # Recuperation des donnees
         if (OPERATION != 'PROPA_COHESIF'):
@@ -519,7 +516,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 
 # Recuperation du nombre de fonds de fissure
             Fondmult = fiss0.sdj.FONDMULT.get()
-            Nbfond = len(Fondmult) / 2
+            Nbfond = len(Fondmult) // 2
 
             if (('NUME_FOND' in __tabsif.para and
                 (max(__table['NUME_FOND']) != Nbfond or len(set(__table['NUME_FOND'])) != Nbfond))
@@ -778,7 +775,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 NbPointFond = Fiss['NB_POINT_FOND']
 
                 Fondmult = Fiss['FISS_ACTUELLE'].sdj.FONDMULT.get()
-                Nbfond = len(Fondmult) / 2
+                Nbfond = len(Fondmult) // 2
 
                 if (len(Fiss['NB_POINT_FOND']) != Nbfond):
                     UTMESS('F', 'XFEM2_78')
@@ -832,18 +829,18 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 # il doit y avoir autant de valeurs de beta et de gamma que de points au fond de
 # fissure
                 if calc_gamma :
-                   if ((len(TABLE_BETA[numfis]) != len(Coorfo)/4) or (len(TABLE_GAMMA[numfis]) != len(Coorfo)/4)):
+                   if ((len(TABLE_BETA[numfis]) != len(Coorfo)//4) or (len(TABLE_GAMMA[numfis]) != len(Coorfo)//4)):
                       UTMESS('F','XFEM2_80')
 
                 else :
-                   if (len(TABLE_BETA[numfis]) != len(Coorfo)/4):
+                   if (len(TABLE_BETA[numfis]) != len(Coorfo)//4):
                       UTMESS('F','XFEM2_80')
 
 #       Si 2D: verification de l'orientation du repere (VNOR,VDIR)
             if (OPERATION != 'DETECT_COHESIF'):
                 if (not 'K3' in __tabsif.para) and (not CRITERE_ANGLE == 'ANGLE_IMPO_BETA_GAMMA') :
                     Basefond = Fiss['FISS_ACTUELLE'].sdj.BASEFOND.get()
-                    for fond in range(len(Basefond) / 4):
+                    for fond in range(len(Basefond) // 4):
                         VNOR = (Basefond[4 * fond + 0], Basefond[4 * fond + 1])
                         VDIR = (Basefond[4 * fond + 2], Basefond[4 * fond + 3])
         #           produit vectoriel
@@ -891,8 +888,8 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 #
     if METHODE_PROPA == 'MAILLAGE':
 
-        print 'AVANCE MAXIMALE DU FOND DE FISSURE', Damax
-        print 'NOMBRE DE CYCLES DE FATIGUE', NBCYCLE
+        print('AVANCE MAXIMALE DU FOND DE FISSURE', Damax)
+        print('NOMBRE DE CYCLES DE FATIGUE', NBCYCLE)
 
         it = args['ITERATION']
         mm = [None] * Nbfissure
@@ -902,9 +899,9 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         for numfis, Fiss in enumerate(Fissures):
             DETRUIRE(CONCEPT=_F(NOM=__TAB_CUMUL[numfis]), INFO=1)
             fiss0 = Fiss['FISS_ACTUELLE']
-            print '-------------------------------------------'
-            print 'TRAITEMENT DE LA FISSURE ', fiss0.get_name()
-            print '-------------------------------------------'
+            print('-------------------------------------------')
+            print('TRAITEMENT DE LA FISSURE ', fiss0.get_name())
+            print('-------------------------------------------')
             MAIL_FISS1 = Fiss['MAIL_ACTUEL']
             dime = MAIL_FISS1.sdj.DIME.get()[5]
             MFOND = Fiss['GROUP_MA_FOND']
@@ -922,7 +919,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 nbma = mm[numfis].dime_maillage[2]
                 groupma = mm[numfis].gma
                 Fondmult = fiss0.sdj.FONDMULT.get()
-                Nbfond = len(Fondmult) / 2
+                Nbfond = len(Fondmult) // 2
                 Coorfo = fiss0.sdj.FONDFISS.get()
 
 # Recuperation de la liste des noeuds du fond
@@ -1189,7 +1186,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 nbma = mm[numfis].dime_maillage[2]
                 coord = mm[numfis].cn
                 linomno = list(mm[numfis].correspondance_noeuds)
-                linomno = map(string.rstrip, linomno)
+                linomno = list(map(lambda x: x.rstrip(), linomno))
                 l_coorf = [[linomno[i], coord[i]] for i in range(0, nbno)]
                 d_coorf = dict(l_coorf)
 
@@ -1238,7 +1235,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             if INFO == 2:
                 texte = "Maillage produit par l operateur PROPA_FISS"
                 aster.affiche('MESSAGE', texte)
-                print mm[numfis]
+                print(mm[numfis])
 
 # Sauvegarde maillage xfem
             MAIL_FISS2 = Fiss.get('MAIL_PROPAGE')
@@ -1491,7 +1488,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         if INFO == 2:
             texte = "Maillage produit par l operateur PROPA_FISS"
             aster.affiche('MESSAGE', texte)
-            print mm
+            print(mm)
 
 # Sauvegarde (maillage xfem et maillage concatene)
         MAIL_FISS2 = args.get('MAIL_FISS')

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@ Fonctions utilitaire pour CALC_EUROPLEXUS
 """
 
 from Utilitai.Utmess import UTMESS
-import string
 import numpy
 #----------------------------- Precision -------------------------------
 tst = 1.0E-10
@@ -100,7 +99,7 @@ def recupere_structure(concept, mot_cle=None):
     except:
         UTMESS('F', 'PLEXUS_1')
     if mot_cle:
-        if structure.has_key(mot_cle):
+        if mot_cle in structure:
             return structure[mot_cle]
         else:
             return None
@@ -150,7 +149,7 @@ def lire_fichier(fichier):
     for line in lignes:
         add = 1
         for comment in commentaires:
-            if string.find(line, comment) != -1:
+            if line.find(comment) != -1:
                 add = 0
                 break
         if add:
@@ -196,7 +195,7 @@ def ctime(fact):
 
     blocs_ctime = []
 
-    for cle in cata_inst.keys():
+    for cle in list(cata_inst.keys()):
         val = get_motcle(fact, cle, code_mess=None)
         if val is not None:
             cle_epx = cata_inst[cle]

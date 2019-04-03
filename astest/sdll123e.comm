@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -101,15 +101,15 @@ ASSEMBLAGE(MODELE=MODELE,
 [d,amor]=EXTR_MATR(AMOR,1)
 
 nddl=rig.shape[0]
-print 'nddl', nddl
+print(('nddl', nddl))
 
-print "D"
-print len(d)
+print("D")
+print((len(d)))
 i=0
 for ddd in d:
-   print i,ddd
+   print((i,ddd))
    i=i+1
-print "\n"
+print("\n")
 
 MODES=CALC_MODES(MATR_RIGI=RIGIDITE,
                  OPTION='BANDE',
@@ -145,7 +145,7 @@ HPRIME[0:nddl,0:nddl]=NP.dot(gyro,masI)
 HPRIME[0:nddl,nddl:2*nddl]=NP.dot(rig,masI)
 HPRIME[nddl:2*nddl,0:nddl]=-NP.identity(nddl)
 aster_core.matfpe(-1)
-print 'valeurs propres primes'
+print('valeurs propres primes')
 vprime=LA.eigvals(HPRIME)/2./NP.pi
 vpreal=list(vprime.imag)
 vpreal.sort()
@@ -153,7 +153,7 @@ i=1
 j=0
 for vp in vpreal:
  if vp>5.e-3:
-  print "vp %4d : %6.6f" %(i,vp)
+  print(("vp %4d : %6.6f" %(i,vp)))
   i=i+1
  j=j+1
  dij=j-i

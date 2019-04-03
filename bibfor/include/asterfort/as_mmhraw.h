@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 !
 #include "asterf_types.h"
 interface
-    subroutine as_mmhraw(ifichi, nomail, typgeo, nomatt, nbrval,&
+    subroutine as_mmhraw(fid, nomail, typgeo, nomatt, nbrval,&
                       tabval, codret)
-        aster_int :: ifichi
+        aster_int :: fid
         character(len=*) :: nomail
         aster_int :: typgeo
         character(len=*) :: nomatt

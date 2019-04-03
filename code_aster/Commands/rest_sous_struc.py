@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -65,7 +65,7 @@ class RestSousStrucOper(ExecuteCommand):
             resuGene = keywords.get("RESU_GENE")
             if resuGene is not None:
                 dofNum = resuGene.getGeneralizedDOFNumbering()
-                print dofNum.getName()
+                print(dofNum.getName())
                 modeleGene = dofNum.getGeneralizedModel()
                 if modeleGene is not None:
                     macroElem = modeleGene.getDynamicMacroElementFromName(sousStruc)

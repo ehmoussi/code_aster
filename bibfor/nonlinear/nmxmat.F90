@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,12 +18,13 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmxmat(modelz    , ds_material, carele, ds_constitutive, sddisc,&
-                  sddyna    , fonact     , numins, iterat         , valinc,&
-                  solalg    , lischa     , numedd, numfix,&
-                  ds_measure, ds_algopara, nbmatr, ltypma         , loptme,&
-                  loptma    , lcalme     , lassme, lcfint         , meelem,&
-                  measse    , veelem     , ldccvg)
+subroutine nmxmat(modelz         , ds_material, carele    ,&
+                  ds_constitutive, sddisc     , numins    ,&
+                  valinc         , solalg     , lischa    ,&
+                  numedd         , numfix     , ds_measure,&
+                  nbmatr         , ltypma     , loptme    ,&
+                  loptma         , lcalme     , lassme    ,&
+                  meelem         , measse     , ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -35,27 +36,23 @@ implicit none
 #include "asterfort/nmassm.h"
 #include "asterfort/nmcalm.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmrigi.h"
-#include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
 !
+character(len=*) :: modelz
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24) :: carele
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19) :: sddisc
+integer :: numins
+character(len=19) :: solalg(*), valinc(*), lischa
+character(len=24) :: numedd, numfix
+type(NL_DS_Measure), intent(inout) :: ds_measure
 integer :: nbmatr
 character(len=6) :: ltypma(20)
 character(len=16) :: loptme(20), loptma(20)
 aster_logical :: lcalme(20), lassme(20)
-character(len=*) :: modelz
-type(NL_DS_Material), intent(in) :: ds_material
-type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=24) :: carele
-integer :: numins, iterat, ldccvg
-character(len=19) :: sddisc, sddyna, lischa
-character(len=24) :: numedd, numfix
-type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-character(len=19) :: meelem(*), measse(*), veelem(*)
-character(len=19) :: solalg(*), valinc(*)
-integer :: fonact(*)
-aster_logical :: lcfint
-type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19) :: meelem(*), measse(*)
+type(NL_DS_System), intent(in) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,26 +70,16 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IO  ds_measure       : datastructure for measure and statistics management
-! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
-! IN  ITERAT : NUMERO D'ITERATION
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  NBMATR : NOMBRE DE MATR_ELEM DANS LA LISTE
 ! IN  LTYPMA : LISTE DES NOMS DES MATR_ELEM
 ! IN  LOPTME : LISTE DES OPTIONS DES MATR_ELEM
 ! IN  LOPTMA : LISTE DES OPTIONS DES MATR_ASSE
 ! IN  LASSME : SI MATR_ELEM A ASSEMBLER
 ! IN  LCALME : SI MATR_ELEM A CALCULER
-! IN  LCFINT : .TRUE. SI VECT_ELEM DES FORCES INTERNES A CALCULER
-! OUT LDCCVG : CODE RETOUR DE L'INTEGRATION DU COMPORTEMENT
-!                -1 : PAS D'INTEGRATION DU COMPORTEMENT
-!                 0 : CAS DU FONCTIONNEMENT NORMAL
-!                 1 : ECHEC DE L'INTEGRATION DE LA LDC
-!                 2 : ERREUR SUR LA NON VERIF. DE CRITERES PHYSIQUES
-!                 3 : SIZZ PAS NUL POUR C_PLAN DEBORST
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -109,58 +96,29 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     base   = 'V'
     instam = diinst(sddisc,numins-1)
     instap = diinst(sddisc,numins)
-    ldccvg = -1
-!
-! --- SI CALCUL DES FORCES INTERNES
-!
-    if (lcfint) then
-        ASSERT(.false.)
-    endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM
 !
     do imatr = 1, nbmatr
-!
-! --- MATR_ELEM COURANTE
-!
         typmat = ltypma(imatr)
         optcal = loptme(imatr)
         optass = loptma(imatr)
-        lcalc = lcalme(imatr)
-        lasse = lassme(imatr)
-!
-! --- CALCULER MATR_ELEM
-!
+        lcalc  = lcalme(imatr)
+        lasse  = lassme(imatr)
+! ----- Compute
         if (lcalc) then
             call nmchex(meelem, 'MEELEM', typmat, matele)
-            if (typmat .eq. 'MERIGI') then
-                call nmrigi(modelz, ds_material%field_mate, carele, ds_constitutive,&
-                            sddyna, ds_measure, fonact, iterat,&
-                            valinc, solalg, ds_material%varc_refe, meelem, veelem,&
-                            optcal, ldccvg)
-            else
-                if ((typmat.eq.'MEELTC') .or. (typmat.eq.'MEELTF')) then
-                    call nmtime(ds_measure, 'Init', 'Cont_Elem')
-                    call nmtime(ds_measure, 'Launch', 'Cont_Elem')
-                endif
-                call nmcalm(typmat         , modelz, lischa, ds_material, carele,&
-                            ds_constitutive, instam, instap, valinc     , solalg,&
-                            optcal         , base  , meelem, matele)
-                if ((typmat.eq.'MEELTC') .or. (typmat.eq.'MEELTF')) then
-                    call nmtime(ds_measure, 'Stop', 'Cont_Elem')
-                    call nmrinc(ds_measure, 'Cont_Elem')
-                endif
-            endif
+            call nmcalm(typmat         , modelz, lischa   , ds_material, carele,&
+                        ds_constitutive, instam, instap   , valinc     , solalg,&
+                        optcal         , base  , ds_system, meelem     , matele)
         endif
-!
-! --- ASSEMBLER MATR_ELEM
-!
+! ----- Assembly
         if (lasse) then
             call nmtime(ds_measure, 'Init', 'Matr_Asse')
             call nmtime(ds_measure, 'Launch', 'Matr_Asse')
             call nmchex(measse, 'MEASSE', typmat, matass)
-            call nmassm(fonact, lischa, numedd, numfix, ds_algopara,&
-                        typmat, optass, meelem, matass)
+            call nmassm(lischa, numedd, numfix, typmat, optass,&
+                        meelem, matass)
             call nmtime(ds_measure, 'Stop', 'Matr_Asse')
         endif
     end do

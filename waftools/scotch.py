@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ def check_scotch_libs(self):
         check_lib = lambda lib: check_scotch(stlib=lib)
     else:
         check_lib = lambda lib: check_scotch(lib=lib)
-    map(check_lib, Utils.to_list(opts.scotch_libs))
+    list(map(check_lib, Utils.to_list(opts.scotch_libs)))
 
 @Configure.conf
 def check_scotch_headers(self):

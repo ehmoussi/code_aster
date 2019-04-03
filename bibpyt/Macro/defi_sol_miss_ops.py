@@ -128,8 +128,6 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
     arg_grno = False
     arg_grma = False
     if COUCHE_AUTO != None:
-        if type(COUCHE_AUTO) in (tuple, list):
-            COUCHE_AUTO = COUCHE_AUTO[0]
         ll_mate = []
         l_epais = []
         enfonce = False
@@ -144,60 +142,61 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         coor_z_input = []
         decalage_auto = False
         # Lecture des arguments :
-        if COUCHE_AUTO["HOMOGENE"] == "OUI":
-            homogene = True
-        if COUCHE_AUTO["MAILLAGE"]:
-            noma = COUCHE_AUTO["MAILLAGE"]
-        if COUCHE_AUTO["SURF"] == "NON":
-            enfonce = True
-        if COUCHE_AUTO["GROUP_MA"] or COUCHE_AUTO["GROUP_NO"]:
-            collcnx = aster.getcolljev(noma.nom.ljust(8) + '.CONNEX')
-            coord = aster.getvectjev(noma.nom.ljust(8) + '.COORDO    .VALE')
-            cnom = aster.getvectjev(noma.nom.ljust(8) + '.NOMNOE')
-            if COUCHE_AUTO["GROUP_MA"]:
-                arg_grma = True
-                nomgrma = COUCHE_AUTO["GROUP_MA"]
-                coor_z_input =  recu_coor_z(noma,nomgrma,'group_ma',tole_r)
-            else:
-                arg_grno = True
-                nomgrno = COUCHE_AUTO["GROUP_NO"]
-                coor_z_input =  recu_coor_z(noma,nomgrno,'group_no',tole_r)
-            max_z_input = coor_z_input[0]
-            min_z_input = coor_z_input[-1]
-        if COUCHE_AUTO["NUME_MATE"]:
-            ll_mate = COUCHE_AUTO["NUME_MATE"]
-        if COUCHE_AUTO["EPAIS_PHYS"]:
-            if homogene:
-               l_epais.append(COUCHE_AUTO["EPAIS_PHYS"][0])
-            else:
-               l_epais = COUCHE_AUTO["EPAIS_PHYS"]
-        if COUCHE_AUTO["NUME_MATE_SUBSTRATUM"]:
-            nume_substr = COUCHE_AUTO["NUME_MATE_SUBSTRATUM"]
-        if COUCHE_AUTO["NOMBRE_RECEPTEUR"]:
-            nb_recept = COUCHE_AUTO["NOMBRE_RECEPTEUR"]
-            if (nb_recept%2 <> 0):
-                UTMESS("F", "MISS0_27")
-        if COUCHE_AUTO["GROUP_MA_INTERF"]:
-            grma_interf = COUCHE_AUTO["GROUP_MA_INTERF"]
-        if COUCHE_AUTO["Z0"]:
-            Z0 = COUCHE_AUTO["Z0"]
-            l_z0 = True
-        if not l_z0 and enfonce:
-            Z0 = max_z_input
-        if not enfonce:
-            max_z_input = Z0
-        print 'La cote Z vaut : ',Z0
-        if COUCHE_AUTO["TOLERANCE"]:
-           tole_verif = COUCHE_AUTO["TOLERANCE"]
-        if COUCHE_AUTO["DECALAGE_AUTO"] == "OUI":
-           decalage_auto = True
-        if COUCHE_AUTO["GROUP_MA_CONTROL"]:
-            nomgrmactrl = COUCHE_AUTO["GROUP_MA_CONTROL"]
-            l_pt_ctrl = True
-            coor_z_ctrl = recu_coor_z(noma,nomgrmactrl,'group_ma',tole_r)
-            print 'Cotes verticales des points de controle=',coor_z_ctrl
-            if coor_z_ctrl[0] > Z0:
-                UTMESS("F", "MISS0_28", valr=Z0)
+        for dC in COUCHE_AUTO:
+            if dC.get("HOMOGENE") == "OUI":
+                homogene = True
+            if dC.get("MAILLAGE"):
+                noma = dC.get("MAILLAGE")
+            if dC.get("SURF") == "NON":
+                enfonce = True
+            if dC.get("GROUP_MA") or dC.get("GROUP_NO"):
+                collcnx = aster.getcolljev(noma.nom.ljust(8) + '.CONNEX')
+                coord = aster.getvectjev(noma.nom.ljust(8) + '.COORDO    .VALE')
+                cnom = aster.getvectjev(noma.nom.ljust(8) + '.NOMNOE')
+                if dC.get("GROUP_MA"):
+                    arg_grma = True
+                    nomgrma = dC.get("GROUP_MA")
+                    coor_z_input =  recu_coor_z(noma,nomgrma,'group_ma',tole_r)
+                else:
+                    arg_grno = True
+                    nomgrno = dC.get("GROUP_NO")
+                    coor_z_input =  recu_coor_z(noma,nomgrno,'group_no',tole_r)
+                max_z_input = coor_z_input[0]
+                min_z_input = coor_z_input[-1]
+            if dC.get("NUME_MATE"):
+                ll_mate = dC.get("NUME_MATE")
+            if dC.get("EPAIS_PHYS"):
+                if homogene:
+                   l_epais.append(dC.get("EPAIS_PHYS")[0])
+                else:
+                   l_epais = dC.get("EPAIS_PHYS")
+            if dC.get("NUME_MATE_SUBSTRATUM"):
+                nume_substr = dC.get("NUME_MATE_SUBSTRATUM")
+            if dC.get("NOMBRE_RECEPTEUR"):
+                nb_recept = dC.get("NOMBRE_RECEPTEUR")
+                if (nb_recept%2 != 0):
+                    UTMESS("F", "MISS0_27")
+            if dC.get("GROUP_MA_INTERF"):
+                grma_interf = dC.get("GROUP_MA_INTERF")
+            if dC.get("Z0"):
+                Z0 = dC.get("Z0")
+                l_z0 = True
+            if not l_z0 and enfonce:
+                Z0 = max_z_input
+            if not enfonce:
+                max_z_input = Z0
+            print('La cote Z vaut : ',Z0)
+            if dC.get("TOLERANCE"):
+               tole_verif = dC.get("TOLERANCE")
+            if dC.get("DECALAGE_AUTO") == "OUI":
+               decalage_auto = True
+            if dC.get("GROUP_MA_CONTROL"):
+                nomgrmactrl = dC.get("GROUP_MA_CONTROL")
+                l_pt_ctrl = True
+                coor_z_ctrl = recu_coor_z(noma,nomgrmactrl,'group_ma',tole_r)
+                print('Cotes verticales des points de controle=',coor_z_ctrl)
+                if coor_z_ctrl[0] > Z0:
+                    UTMESS("F", "MISS0_28", valr=Z0)
 
         if homogene:
             max_z_input = Z0
@@ -214,7 +213,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
             if len(coor_z_sol) == 1:
                 UTMESS("F", "MISS0_29")
             # Verification entre base de l'interface et couches de sol
-            if len(l_epais) <> len(ll_mate):
+            if len(l_epais) != len(ll_mate):
                UTMESS("F", "MISS0_30")
 
         if l_pt_ctrl:
@@ -361,7 +360,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
                     couche["EPAIS"] = ep_ss_couche
                     couche["RECEPTEUR"] = "OUI"
                     couche["SOURCE"] = "NON"
-                    if nc == nb_recept/2:
+                    if nc == nb_recept // 2:
                        couche["SOURCE"] = "OUI"
                     l_couche.append(couche)
                     idc += 1
@@ -488,9 +487,8 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         id_mate = id_mate - 1
         couche["NUME_COUCHE"] = idc
         couche.update(l_mate[id_mate])
-        if couche.has_key("SUBSTRATUM"):
-            if couche["SUBSTRATUM"] is None:
-                del couche["SUBSTRATUM"]
+        if "SUBSTRATUM" in couche:
+            del couche["SUBSTRATUM"]
         if couche["EPAIS"] is None:
             couche["EPAIS"] = 0.
         tab.append(couche)
@@ -512,7 +510,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         tab.titr = os.linesep.join(TITRE)
 
     if INFO == 2:
-        print tab
+        print(tab)
 
     # 5. création de la table
     dprod = tab.dict_CREA_TABLE()

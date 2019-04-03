@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    1: _(u"""
+    1: _("""
 Erreur utilisateur :
  Les deux champs suivants : %(k1)s et %(k2)s
  sont associés à deux maillages différents : %(k3)s et %(k4)s
@@ -30,15 +30,15 @@ Risques & conseils :
  soit le même que celui qui est associé au modèle.
 """),
 
-    2: _(u"""
+    2: _("""
  le CHAMP_S:  %(k1)s  est a la fois CHAM_ELEM_S et CHAM_NO_S.
 """),
 
-    3: _(u"""
+    3: _("""
  le CHAMP_S:  %(k1)s n'existe pas.
 """),
 
-    4: _(u"""
+    4: _("""
 Erreur de programmation :
  On essaye de calculer l'intégrale d'un CHAM_ELEM / ELGA.
  Malheureusement, la famille de points de Gauss : %(k1)s n'est pas autorisée dans la programmation.
@@ -47,7 +47,7 @@ Conseil :
   Si nécessaire, il faut demander une évolution du code.
 """),
 
-    5: _(u"""
+    5: _("""
 Erreur dans CREA_RESU :
   Quand on utilise la commande CREA_RESU avec le mot clé AFFE / CHAM_GD, les
   composantes du champ de fonctions %(k2)s (de la géométrie et/ou du temps),
@@ -60,18 +60,18 @@ Conseil :
   Si nécessaire, il faut demander une évolution du code.
 """),
 
-    6: _(u"""
+    6: _("""
 Erreur utilisateur dans PROJ_CHAMP :
   Le champ utilisé dans le mot clé CHAM_NO_REFE (%(k1)s) est associé au maillage %(k2)s
   Il doit être associé au maillage %(k3)s
 """),
 
-    7: _(u"""
+    7: _("""
  trop d'antécédents
  vérifiez si le maillage de l'interface ne contient pas de noeuds coïncidents ou diminuez DIST_REFE.
 """),
 
-    8: _(u"""
+    8: _("""
   %(k1)s  valeurs de CHAMNO de déplacement n'ont pas été recopiées sur  %(k2)s  noeuds
   a affecter  ce qui peut entraîner des erreurs de calcul sur la masse ajoutée des sous structures
   déduites par rotation et translation définies dans le modèle  généralisé. augmentez DIST_REFE
@@ -79,7 +79,7 @@ Erreur utilisateur dans PROJ_CHAMP :
   définies dans le modèle généralisé.
 """),
 
-    9: _(u"""
+    9: _("""
   -> plus de 50 %% des valeurs de CHAM_NO de déplacement n'ont pas été recopiées
      ce qui peut entraîner des erreurs graves de calcul sur la masse ajoutée des
      sous structures déduites par rotation et translation définies dans le modèle généralisé
@@ -87,22 +87,22 @@ Erreur utilisateur dans PROJ_CHAMP :
      augmentez DIST_REFE
 """),
 
-    10: _(u"""
+    10: _("""
  trop de noeuds affectés
 """),
 
-    11: _(u"""
+    11: _("""
  Erreur d'utilisation :
    Le maillage associé au modèle : %(k1)s
    n'est pas le même que celui du champ de matériaux : %(k2)s
 """),
 
-    12: _(u"""
+    12: _("""
 Erreur lors de la transformation du CHAM_NO_S (%(k1)s) en CHAM_NO (%(k2)s):
 Le CHAM_NO_S est vide (i.e. il n'a aucune valeur).
 """),
 
-    13: _(u"""
+    13: _("""
 Erreur lors d'une transformation d'un CHAM_NO_S en CHAM_NO :
   Il manque la composante: %(k1)s  sur le noeud: %(k2)s pour le CHAM_NO: %(k3)s
 
@@ -111,51 +111,51 @@ Risques & conseils :
   mettre à zéro les composantes manquantes en utilisant le mot-clé PROL_ZERO.
 """),
 
-    14: _(u"""
+    14: _("""
 Erreur utilisateur dans la commande POST_CHAMP :
  On demande l'extraction des champs sur une couche de numéro supérieur au nombre de couches.
 """),
 
-    15: _(u"""
+    15: _("""
 Erreur utilisateur dans la commande POST_CHAMP :
  On demande l'extraction pour des champs n'ayant pas de "sous-points".
 """),
 
-    16: _(u"""
+    16: _("""
 Erreur utilisateur dans la commande POST_CHAMP :
  On demande l'extraction des champs sur une fibre de numéro supérieur au nombre de fibres.
 """),
 
-    17: _(u"""
+    17: _("""
 Erreur utilisateur dans la commande CREA_CHAMP :
  Incohérence entre le champ %(k1)s associé au maillage %(k2)s
  et le maillage %(k3)s
 """),
 
-    19: _(u"""
+    19: _("""
 Erreur utilisateur dans la commande POST_CHAMP / COQUE_EXCENT :
  Pour l'occurrence %(i1)d du mot clé COQUE_EXCENT,
  et pour le numéro d'ordre %(i2)d le champ calculé est vide.
 """),
 
-    20: _(u"""
+    20: _("""
 Erreur utilisateur dans la commande POST_CHAMP / COQUE_EXCENT :
  La structure de donnée produite est vide.
 """),
 
-    21: _(u"""
+    21: _("""
  grandeur :  %(k1)s  inexistante au catalogue
 """),
 
-    22: _(u"""
+    22: _("""
  composante :  %(k1)s  inexistante au catalogue pour la grandeur : %(k2)s
 """),
 
-    23: _(u"""
+    23: _("""
  la grandeur : %(k1)s  n est pas de type réel.
 """),
 
-    24: _(u"""
+    24: _("""
 Erreur utilisateur dans la commande MACR_ECLA_PG
   On ne sait pas où sont situés les points de Gauss du CHAM_ELEM (ELGA) %(k1)s.
   Cela arrive par exemple pour les champs correspondants à
@@ -177,13 +177,13 @@ Conseil :
   Il s'agit certainement d'éléments de joint 2D.
 """),
 
-    31: _(u"""
+    31: _("""
 Erreur utilisateur dans la commande AFFE_CARA_ELEM :
   On a affecté un excentrement non nul (mot clé COQUE / EXCENTREMENT)
   sur un élément qui ne sait pas traiter l'excentrement (maille %(k1)s).
 """),
 
-    32: _(u"""
+    32: _("""
 Erreur utilisateur :
   On cherche à déterminer de quel coté se situe une maille
   par rapport à une maille de "peau".
@@ -197,89 +197,89 @@ Risques et conseils :
   GROUP_MA_VOLU (ou GROUP_MA_SURF) pour éviter de traiter certaines mailles.
 """),
 
-    33: _(u"""
+    33: _("""
 Erreur Utilisateur :
  Pour le modèle  %(k1)s  on ne peut pas visualiser ensemble plusieurs champs ELGA (%(k2)s,  ...)
  car les familles de points de Gauss sont différentes
 """),
 
-    35: _(u"""
+    35: _("""
 Erreur Utilisateur :
  Aucun élément du modèle n'est visualisable avec ECLA_PG
 """),
 
-    36: _(u"""
+    36: _("""
  On ne trouve aucun point de Gauss
 """),
 
-    37: _(u"""
+    37: _("""
  le type de RESU_INIT est différent de celui du résultat.
 """),
 
-    38: _(u"""
+    38: _("""
  la liste de numéros d'ordre est vide.
 """),
 
-    39: _(u"""
+    39: _("""
  les seuls champs autorisés pour ECLA_PG sont les champs réels.
 """),
 
-    40: _(u"""
+    40: _("""
 Erreur :
  Après avoir retiré tous les éléments à sous-points du champ %(k1)s (grandeur: %(k2)s), celui-ci est vide.
 """),
 
-    41: _(u"""
+    41: _("""
  les seuls champs autorises sont ELGA.
 """),
 
-    42: _(u"""
+    42: _("""
 %(k1)s  n'a pas le nombre de points de Gauss déclaré dans la routine
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    43: _(u"""
+    43: _("""
  nombre de noeuds > 27
 """),
 
-    44: _(u"""
+    44: _("""
    Le modèle n'a pas été trouvé. Le calcul n'est pas possible.
 """),
 
-    45: _(u"""
+    45: _("""
    Le CARA_ELEM n'a pas été trouvé. Le calcul n'est pas possible.
 """),
 
-    46: _(u"""
+    46: _("""
   mode ligne  %(k1)s  /= mode colonne  %(k2)s
 """),
 
-    47: _(u"""
+    47: _("""
   le mode  %(k1)s  de code  %(k2)s  référence le mode  %(k3)s  dont le code :  %(k4)s  > 3
 """),
 
-    48: _(u"""
+    48: _("""
   pour le mode  %(k1)s  nombre de points  %(k2)s  < argument k :  %(k3)s
 """),
 
-    49: _(u"""
+    49: _("""
  carte inexistante.
 """),
 
-    50: _(u"""
+    50: _("""
 Erreur utilisateur :
   Le champ %(k1)s n'est pas associé au maillage %(k2)s.
 """),
 
-    51: _(u"""
+    51: _("""
   La méthode ECLA_PG de PROJ_CHAMP ne peut pas traiter les champs de plus de %(i1)d composantes.
   Le champ à traiter en comporte %(i2)d.
 """),
 
 
 
-    57: _(u"""
+    57: _("""
   Erreur utilisateur dans la commande CREA_CHAMP :
     On demande l'affectation du champ sur les sous-points mais le champ a déjà des sous-points.
 
@@ -287,7 +287,7 @@ Erreur utilisateur :
     Il ne faut pas utiliser le mot clé AFFE_SP dans cette commande.
 """),
 
-    58: _(u"""
+    58: _("""
 Erreur Utilisateur :
   Vous utilisez le mot clé PILOTAGE et votre calcul utilise des variables de
   commande qui dépendent du temps (mot clé AFFE_VARC / EVOL).
@@ -299,7 +299,7 @@ Conseil :
   Il faut utiliser le mot clé AFFE_VARC / CHAM_GD
 """),
 
-    59: _(u"""
+    59: _("""
   La fonctionnalité ECLA_PG de CREA_RESU n'est pas disponible en parallèle.
 """),
 
@@ -309,14 +309,14 @@ Conseil :
 
 
 
-    62: _(u"""
+    62: _("""
  Erreur utilisateur POST_CHAMP /MIN_MAX_SP :
   Il n'y a rien à calculer car le champ  %(k1)s n'existe pas pour les numéros d'ordre indiqués.
 """),
 
 
 
-    65: _(u"""
+    65: _("""
 Erreur d'utilisation :
   -> Le modèle %(k1)s n'a pas d'éléments sachant calculer la rigidité.
 
@@ -331,17 +331,17 @@ Erreur d'utilisation :
          (par exemple 'PLAN_DIAG' en thermique, 'AXIS_SI' en mécanique)
 """),
 
-    66: _(u"""Erreur d'utilisation :
+    66: _("""Erreur d'utilisation :
  On ne peut pas utiliser plus de 50 paramètres pour évaluer une fonction.
  Ici, les différents champs du mot-clé CHAM_PARA possèdent au total plus de 50 composantes.
 """),
 
-    67: _(u"""Erreur d'utilisation :
+    67: _("""Erreur d'utilisation :
  On ne peut pas filtrer les mailles de type %(k1)s car ce n'est pas un type de maille connu.
 """),
 
 
-    78: _(u"""
+    78: _("""
 Erreur utilisateur :
   Pour évaluer une fonction, Il ne faut pas fournir plusieurs fois le même paramètre.
   Ici, le paramètre %(k1)s a été fourni plus d'une fois.
@@ -351,14 +351,14 @@ Conseil :
   on peut voir leur contenu avec le mot clé INFO=2.
 """),
 
-    79: _(u"""
+    79: _("""
 Erreur dans CREA_RESU :
   Quand on utilise la commande CREA_RESU / EVOL_VARC avec le mot clé AFFE / CHAM_GD et
   que le champ de fonctions est %(k2)s_F (de la géométrie et/ou du temps),
   NOM_CHAM doit être %(k2)s et pas %(k1)s.
 """),
 
-    80: _(u"""
+    80: _("""
 Erreur dans CREA_RESU :
   Quand on utilise la commande CREA_RESU avec le mot clé AFFE / CHAM_GD :
   le champ de fonctions %(k2)s doit avoir le même nombre d'entier codés que le
@@ -370,17 +370,17 @@ Conseil :
   Si nécessaire, il faut demander une évolution du code.
 """),
 
-    81: _(u"""
+    81: _("""
 Erreur utilisateur :
   Calcul de la déformation thermique d'un élément de grille.
   On ne trouve pas de température sur le maille %(k1)s.
 """),
 
-    82: _(u"""
+    82: _("""
  il faut un MODELE
 """),
 
-    83: _(u"""
+    83: _("""
 Erreur utilisateur :
   Vous demandez le calcul de la matrice correspondant à l'option IMPE_MECA.
   Mais on ne peut rien calculer, faute de données.
@@ -390,7 +390,7 @@ Risques et conseils :
   mécanique qui utilise le mot clé IMPE_FACE.
 """),
 
-    84: _(u"""
+    84: _("""
 Erreur utilisateur :
   Vous demandez le calcul de la matrice correspondant à l'option ONDE_FLUI.
   Mais on ne peut rien calculer, faute de données.
@@ -402,18 +402,18 @@ Risques et conseils :
 
 
 
-    86: _(u"""
+    86: _("""
  La carte de COMPORTEMENT est absente.
  Votre résultat a peut-être été produit par LIRE_RESU ou CREA_RESU.
  Si votre résultat a été produit par LIRE_RESU, il faut renseigner le mot-clé COMPORTEMENT.
 """),
 
-    88: _(u"""
+    88: _("""
  L'option %(k1)s  n'est disponible pour aucun des éléments de votre modèle.
  Le calcul d'indicateur d'erreur est donc impossible.
 """),
 
-    89: _(u"""
+    89: _("""
  Alarme utilisateur :
    Le champ  %(k1)s  n'a pas pu être calculé.
 
@@ -428,7 +428,7 @@ Risques et conseils :
 
 """),
 
-    90: _(u"""
+    90: _("""
 Erreur dans CREA_RESU :
   Quand on utilise la commande CREA_RESU avec le mot clé AFFE / CHAM_GD et que
   le champ de fonctions est %(k2)s_F (de la géométrie et/ou du temps),
@@ -438,12 +438,12 @@ Conseil :
   Vérifier la construction du champ de fonctions est %(k2)s_F
 """),
 
-    92: _(u"""
+    92: _("""
  votre chargement contient plus d'une charge répartie
  le calcul n'est pas possible pour les modèles de poutre.
 """),
 
-    94: _(u"""
+    94: _("""
  pour un modèle comportant des éléments de plaque ou de coque
  il faut fournir le "CARA_ELEM"
 """),

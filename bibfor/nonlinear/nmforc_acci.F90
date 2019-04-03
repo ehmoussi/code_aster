@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmforc_acci(list_func_acti,&
-                       model         , cara_elem      , nume_dof,&
+                       model         , cara_elem      , nume_dof ,&
                        list_load     , sddyna         ,&
-                       ds_material   , ds_constitutive,&
+                       ds_material   , ds_constitutive, ds_system,&
                        ds_measure    , ds_inout       ,&
                        sddisc        , nume_inst      ,&
                        hval_incr     , hval_algo      ,&
@@ -40,7 +40,6 @@ implicit none
 #include "asterfort/nonlinSubStruCompute.h"
 #include "asterfort/nonlinNForceCompute.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmdep0.h"
 #include "asterfort/nmvcpr.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/diinst.h"
@@ -53,6 +52,7 @@ character(len=24), intent(in) :: model, cara_elem, nume_dof
 character(len=19), intent(in) :: list_load, sddyna
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_InOut), intent(in) :: ds_inout
 character(len=19), intent(in) :: sddisc
@@ -77,6 +77,7 @@ character(len=19), intent(in) :: hval_measse(*)
 ! In  sddyna           : datastructure for dynamic
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
+! In  ds_system        : datastructure for non-linear system management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_inout         : datastructure for input/output management
 ! In  sddisc           : datastructure for time discretization
@@ -93,6 +94,7 @@ character(len=19), intent(in) :: hval_measse(*)
     real(kind=8) :: time_prev, time_curr
     aster_logical :: l_macr, l_impe
     character(len=19) :: disp_curr, cnsstr
+    character(len=19) :: vefnod, cnfnod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -150,12 +152,12 @@ character(len=19), intent(in) :: hval_measse(*)
 !
 ! - Compute nodal force BT . SIGMA (No integration of behaviour)
 !
-    call nmdep0('ON ', hval_algo)
+    vefnod = ds_system%vefnod
+    cnfnod = ds_system%cnfnod
     call nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_func_acti,&
                              ds_material, ds_constitutive, ds_measure,&
                              time_prev  , time_curr      ,&
                              hval_incr  , hval_algo      ,&
-                             hval_veelem, hval_veasse)
-    call nmdep0('OFF', hval_algo)
+                             vefnod     , cnfnod)
 !
 end subroutine

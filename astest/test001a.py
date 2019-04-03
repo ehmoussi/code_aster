@@ -20,7 +20,7 @@ test.assertEqual(coord.getType(), "CHAM_NO_SDASTER")
 # help(coord)
 
 # check readonly access
-print "coord[3] ", coord[3]
+print("coord[3] ", coord[3])
 test.assertEqual(coord[3], 1.0)
 
 with test.assertRaises(TypeError):
@@ -47,7 +47,7 @@ model.build()
 model2 = code_aster.Model()
 model2.setSupportMesh(mesh)
 
-with test.assertRaisesRegexp(RuntimeError, 'not allowed'):
+with test.assertRaisesRegex(RuntimeError, 'not allowed'):
     model2.addModelingOnAllMesh(
         code_aster.Physics.Thermal, code_aster.Modelings.DKT)
 

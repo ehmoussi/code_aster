@@ -27,7 +27,6 @@ def macro_matr_ajou_ops(
        Ecriture de la macro MACRO_MATR_AJOU
     """
     from code_aster.Cata.Syntax import _F
-    import types
     import aster
     from Utilitai.Utmess import UTMESS
     from Utilitai.Utmess import MasquerAlarme, RetablirAlarme

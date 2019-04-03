@@ -20,7 +20,7 @@ C100=DEFI_CONSTANTE(VALE=100.)
 CHT3=AFFE_CHAR_CINE_F(  MODELE=MOTH,THER_IMPO=(
           _F( GROUP_NO = 'GRNM15', TEMP = C100)))
 
-print CHT3
+print(CHT3)
 
 test.assertTrue( True )
 

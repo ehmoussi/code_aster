@@ -29,7 +29,8 @@ from libaster import DOFNumbering
 from ..Utilities import injector
 
 
-class ExtendedDOFNumbering(injector(DOFNumbering), DOFNumbering):
+@injector(DOFNumbering)
+class ExtendedDOFNumbering(object):
     cata_sdj = "SD.sd_nume_ddl.sd_nume_ddl"
 
     def __getstate__(self):

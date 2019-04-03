@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ def flatten(x):
 
     result = []
     for el in x:
-        if hasattr(el, "__iter__") and not isinstance(el, basestring):
+        if hasattr(el, "__iter__") and not isinstance(el, str):
             result.extend(flatten(el))
         else:
             result.append(el)
@@ -125,7 +125,7 @@ class Tensor:
     def dot(self, other):
         if isTensor(other):
             a = self.array
-            b =  NP.transpose(other.array, range(1, other.rank)+[0])
+            b =  NP.transpose(other.array, list(range(1, other.rank))+[0])
             return Tensor(NP.inner(a, b), 1)
         else:
             return Tensor(self.array*other, 1)
@@ -221,7 +221,7 @@ class Tensor:
             ev, vectors = eigenvects(self.array)
             return ev, Tensor(vectors)
         else:
-            raise ValueError, 'Undefined operation'
+            raise ValueError('Undefined operation')
 
     def sympyVariables(self):
         variablesList = []
@@ -254,17 +254,17 @@ class Tensor:
         if self.rank == 1 and other.rank == 1:
             out_array = NP.dot(self.array, other.array)
         elif self.rank == 2 and other.rank == 1:
-            for i in xrange(3):
+            for i in range(3):
                 out_array[i] = NP.dot(self.array[i,:], other.array)
         elif self.rank == 2 and other.rank == 2:
-            for i in xrange(3):
-                for j in xrange(3):
+            for i in range(3):
+                for j in range(3):
                     out_array[i][j] = NP.dot(self.array[i,:], other.array[:, j])
         elif self.rank == 4 and other.rank == 2:
-            for i in xrange(3):
-                for j in xrange(3):
-                    for k in xrange(3):
-                        for l in xrange(3):
+            for i in range(3):
+                for j in range(3):
+                    for k in range(3):
+                        for l in range(3):
                             out_array[i][j][k][l] = NP.dot(self.array[i, j, k,:], other.array[:, l])
         else :
             raise NotImplemented
@@ -283,7 +283,7 @@ def grad(F):
         """apply sympy.diff on 'elt' or each element of 'elt' if iterable"""
         diff = lambda x: sympy.diff(x, symb)
         try:
-            res = map(diff, elt)
+            res = list(map(diff, elt))
         except TypeError:
             res = diff(elt)
         return res

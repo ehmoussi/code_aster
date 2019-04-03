@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,12 +18,12 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmceta(modele         , numedd, ds_material, carele    ,&
-                  ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                  sdpilo         , iterat, sdnume, valinc    , solalg    ,&
-                  veelem         , veasse, sddisc, nbeffe    , irecli    ,&
-                  proeta         , offset, rho   , etaf      , ldccvg    ,&
-                  pilcvg         , residu, matass)
+subroutine nmceta(modele         , numedd    , ds_material, carele   , &
+                  ds_constitutive, ds_contact, lischa     , fonact   , ds_measure,&
+                  sdpilo         , iterat    , sdnume     , valinc   , solalg    ,&
+                  veelem         , veasse    , sddisc     , nbeffe   , irecli    ,&
+                  proeta         , offset    , rho        , etaf     , ldccvg    ,&
+                  pilcvg         , residu    , matass     , ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -51,6 +51,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19) :: veelem(*), veasse(*)
 character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_System), intent(in) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,6 +79,7 @@ character(len=19) :: solalg(*), valinc(*)
 ! IN  OFFSET : DECALAGE DE ETA_PILOTAGE EN FONCTION DE RHO
 ! IN  IRECLI : VRAI SI RECH LIN (ON VEUT LE RESIDU)
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_system        : datastructure for non-linear system management
 ! IN  SDDISC : SD DISCRETISATION
 ! OUT ETAF   : PARAMETRE DE PILOTAGE
 ! I/O PILCVG : CODE DE CONVERGENCE POUR LE PILOTAGE
@@ -196,16 +198,15 @@ character(len=19) :: solalg(*), valinc(*)
         endif
     end do
 !
-! --- SELECTION DU PARAMETRE DE PILOTAGE ETAF
-!     S'IL EXISTE DEUX ETA SOLUTIONS :
-!        - ON DEMANDE A NMCESE DE CHOISIR
+! - Select solution
+!
     if (nbeffe .eq. 2) then
-        call nmcese(modele         , numedd, ds_material, carele    ,&
-                    ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                    iterat         , sdnume, sdpilo, valinc    , solalg    ,&
-                    veelem         , veasse, offset, typsel    , sddisc    ,&
-                    licite         , rho   , eta   , etaf      , residu    ,&
-                    ldccvg         , pilcvg, matass)
+        call nmcese(modele         , numedd    , ds_material, carele   ,&
+                    ds_constitutive, ds_contact, lischa     , fonact   , ds_measure,&
+                    iterat         , sdnume    , sdpilo     , valinc   , solalg    ,&
+                    veelem         , veasse    , offset     , typsel   , sddisc    ,&
+                    licite         , rho       , eta        , etaf     , residu    ,&
+                    ldccvg         , pilcvg    , matass     , ds_system)
     else if (nbeffe.eq.1) then
         etaf = eta(1)
         pilcvg = licite(1)
@@ -213,16 +214,15 @@ character(len=19) :: solalg(*), valinc(*)
         ASSERT(.false.)
     endif
 !
-! --- CALCUL DU RESIDU POUR LA RECHERCHE LINEAIRE
+! - Compute residual (if necessary)
 !
     if (irecli) then
-! ----- CETTE ETAPE EST SAUTEE SI LE RESIDU EST DEJA CALCULE DANS NMCESE
         if (typsel .eq. 'RESIDU' .and. nbeffe .eq. 2)     continue
-        call nmcere(modele         , numedd, ds_material, carele    , &
-                    ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                    iterat         , sdnume, valinc, solalg    , veelem    ,&
-                    veasse         , offset, rho   , etaf      , residu    ,&
-                    ldccvg         , matass)
+        call nmcere(modele         , numedd    , ds_material, carele, &
+                    ds_constitutive, ds_contact, lischa     , fonact, ds_measure,&
+                    iterat         , sdnume    , valinc     , solalg, veelem    ,&
+                    veasse         , offset    , rho        , etaf  , residu    ,&
+                    ldccvg         , ds_system , matass)
     endif
 !
 ! --- AFFICHAGE

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,28 +21,28 @@
 
 cata_msg = {
 
-    2 : _(u"""
+    2 : _("""
  -------------------- PARAMÈTRES DE CHOC --------------------
  Informations sur les noeuds de choc
  lieu de choc   :  %(i1)d
  noeud de choc  :  %(k1)s
 """),
 
-    3 : _(u"""
+    3 : _("""
  sous-structure : %(k1)s
 """),
 
-    4 : _(u"""
+    4 : _("""
  coordonnées    : x :  %(r1)f
                   y :  %(r2)f
                   z :  %(r3)f
 """),
 
-    5 : _(u"""
+    5 : _("""
  noeud de choc  : %(k1)s
 """),
 
-    8 : _(u"""
+    8 : _("""
  amortissement tangent utilise :  %(r1)f
 
  origine choc x : %(r2)f
@@ -58,25 +58,25 @@ cata_msg = {
                cos(gamma) : %(r10)f
 """),
 
-    9 : _(u"""
+    9 : _("""
  jeu initial :  %(r1)f
  ----------------------------------------------------------
 """),
 
-    10 : _(u"""
+    10 : _("""
  <INFO> Pour l'occurrence numéro %(i1)d du mot-clé facteur CHOC, RIGI_TAN est
  renseigné mais pas AMOR_TAN. Le code a donc attribué à AMOR_TAN une valeur
  optimisée : %(r1)f
 """),
 
-    14 : _(u"""
+    14 : _("""
  pas de temps utilisateur trop grand :   %(r1)e
  pas de temps nécessaire pour le calcul: %(r2)e
  risques de problèmes de précision
 
 """),
 
-    15 : _(u"""
+    15 : _("""
  pas de temps utilisateur trop grand :   %(r1)e
  pas de temps nécessaire pour le calcul: %(r2)e
  paramètres de calcul dans ce cas
@@ -84,18 +84,18 @@ cata_msg = {
 
 """),
 
-    16 : _(u"""
+    16 : _("""
  pas de temps utilisateur trop grand   : %(r1)e
  pas de temps nécessaire pour le calcul: %(r2)e
 """),
 
-    17 : _(u"""
+    17 : _("""
  paramètres de calcul dans ce cas
  nombre de pas de calcul :  %(i1)d
 
 """),
 
-    18 : _(u"""
+    18 : _("""
  le nombre d'amortissements réduits est trop grand
  le nombre de modes propres vaut  %(i1)d
  et le nombre de coefficients :  %(i2)d
@@ -104,7 +104,7 @@ cata_msg = {
 
 """),
 
-    19 : _(u"""
+    19 : _("""
  le nombre d'amortissements réduits est insuffisant il en manque :  %(i1)d
  car le nombre de modes vaut :  %(i2)d
  on rajoute  %(i3)d
@@ -112,7 +112,7 @@ cata_msg = {
 
 """),
 
-    20 : _(u"""
+    20 : _("""
  mode dynamique           :  %(i1)d
  amortissement trop grand :  %(r1)f
  amortissement critique   :  %(r2)f
@@ -121,18 +121,18 @@ cata_msg = {
 """),
 
 
-    21 : _(u"""
+    21 : _("""
  taux de souplesse négligée : %(r1)f
 """),
 
 
-    22 : _(u"""
+    22 : _("""
  La matrice de masse fournie est singulière, un pivot nul a été détecté, au moins pour le mode numéro %(i1)d.
  Le calcul va poursuivre avec l'extrait diagonal de la matrice de masse. La dynamique associée aux modes
  sans masses sera artificiellement supprimée en imposant une valeur critique de l'amortissement.
 """),
 
-    44 : _(u"""
+    44 : _("""
  les interfaces de la liaison n'ont pas la même longueur
   sous-structure 1 -->  %(k1)s
   interface 1      -->  %(k2)s
@@ -141,14 +141,14 @@ cata_msg = {
 
 """),
 
-    45 : _(u"""
+    45 : _("""
  conflit dans les VIS_A_VIS des noeuds le noeud  %(k1)s
  est le vis-à-vis des noeuds  %(k2)s
  et  %(k3)s
 
 """),
 
-    46 : _(u"""
+    46 : _("""
  Le critère de vérification ne peut être relatif dans votre cas,
  la longueur caractéristique de l'interface de la sous-structure étant nulle.
   sous-structure 1 -->  %(k1)s
@@ -158,7 +158,7 @@ cata_msg = {
 
 """),
 
-    47 : _(u"""
+    47 : _("""
  les interfaces ne sont pas compatibles sous-structure 1 -->  %(k1)s
   interface 1      -->  %(k2)s
   sous-structure 2 -->  %(k3)s
@@ -166,7 +166,7 @@ cata_msg = {
 
 """),
 
-    48 : _(u"""
+    48 : _("""
  les interfaces ne sont pas compatibles sous-structure 1 -->  %(k1)s
   interface 1      -->  %(k2)s
   sous-structure 2 -->  %(k3)s
@@ -175,21 +175,21 @@ cata_msg = {
 """),
 
 
-    50 : _(u"""
+    50 : _("""
  les deux interfaces ont pas même nombre de noeuds
  nombre noeuds interface droite -->  %(i1)d
  nombre noeuds interface gauche -->  %(i2)d
 
 """),
 
-    51 : _(u"""
+    51 : _("""
  conflit dans les VIS_A_VIS des noeuds
  le noeud  %(k1)s
  est le vis-à-vis des noeuds  %(k2)s et  %(k3)s
 
 """),
 
-    52 : _(u"""
+    52 : _("""
  axe de symétrie cyclique différent de Oz
  numéro du couple de noeuds :  %(i1)d
  noeud droite -->  %(k1)s
@@ -197,7 +197,7 @@ cata_msg = {
 
 """),
 
-    53 : _(u"""
+    53 : _("""
   problème de rayon droite gauche différents
   numéro du couple de noeuds :  %(i1)d
  noeud droite -->  %(k1)s
@@ -205,7 +205,7 @@ cata_msg = {
 
 """),
 
-    54 : _(u"""
+    54 : _("""
  problème signe angle entre droite et gauche
  numéro du couple de noeuds:  %(i1)d
  noeud droite -->  %(k1)s
@@ -213,7 +213,7 @@ cata_msg = {
 
 """),
 
-    55 : _(u"""
+    55 : _("""
  problème valeur angle répétitivité cyclique
  numéro du couple de noeuds:  %(i1)d
  noeud droite -->  %(k1)s
@@ -221,22 +221,22 @@ cata_msg = {
 
 """),
 
-    56 : _(u"""
+    56 : _("""
   vérification répétitivité : aucune erreur détectée
 """),
 
-    57 : _(u"""
+    57 : _("""
  les noeuds des interfaces ne sont pas alignés en vis-à-vis
  les noeuds ont été réordonnés
 
 """),
 
-    58 : _(u"""
+    58 : _("""
   arrêt sur problème répétitivité cyclique
   tentative de diagnostic:  %(k1)s
 """),
 
-    60 : _(u"""
+    60 : _("""
  VISCOCHAB : erreur d'intégration
   - Essai d'intégration numéro :  %(i1)d
   - Convergence vers une solution non conforme,
@@ -244,7 +244,7 @@ cata_msg = {
   - Changer la taille d'incrément.
 """),
 
-    68 : _(u"""
+    68 : _("""
  Arrêt par manque de temps CPU au numéro d'ordre %(i1)d
 
    - Temps moyen par incrément de temps : %(r1)f
@@ -254,7 +254,7 @@ cata_msg = {
 
  """),
 
-    72 : _(u"""
+    72 : _("""
 Erreur utilisateur :
   On veut déplacer "au quart" les noeuds milieux des arêtes près du fond de fissure
   (MODI_MAILLAGE / MODI_MAILLE / OPTION='NOEUD_QUART') pour obtenir des éléments de Barsoum.
@@ -271,7 +271,7 @@ Risques & conseils :
 
 
 
-    77 : _(u"""
+    77 : _("""
    Arrêt par manque de temps CPU au numéro d'ordre : %(i1)d
      - Dernier instant archivé :      %(r1)f
      - Numéro d'ordre correspondant : %(i2)d
@@ -279,21 +279,21 @@ Risques & conseils :
      - Temps restant     :            %(r3)f
   """),
 
-    88 : _(u"""
+    88 : _("""
    Arrêt par manque de temps CPU au pas de temps : %(i1)d
      - A l'instant  :                %(r1)f
      - Temps moyen par pas :         %(r2)f
      - Temps restant     :           %(r3)f
   """),
 
-    89 : _(u"""
+    89 : _("""
    On passe outre car VERI_PAS = NON
   """),
 
 
 
 
-    97 : _(u"""
+    97 : _("""
  Comportement unidirectionnel activé :
  Le coefficient de frottement est nul suivant l'axe X local.
  En repère global cet axe correspond à :  x :  %(r1)f

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -629,17 +629,6 @@ MEKEFOR=STAT_NON_LINE(MODELE=MO,
                       );
 
 
-IMPR_RESU_SP(
-    RESULTAT   =MEKEFOR0,
-    GROUP_MA   =('S00A',),
-    RESU =(
-        _F(NOM_CHAM ="SIEF_ELGA", NOM_CMP=('SIXX'),),
-        _F(NOM_CHAM ="VARI_ELGA", NOM_CMP=('V1','V2'),),
-    ),
-    UNITE =10,
-)
-
-
 ETA_PILO=RECU_FONCTION(RESULTAT=MEKEFOR,
                        NOM_PARA_RESU='ETA_PILOTAGE',);
 
@@ -659,10 +648,9 @@ TET_REF=DEFI_LIST_REEL(VALE=(0.,0.00015,0.0017,0.0027,0.0031,0.0038,0.0044,0.005
 # ----------------------------------------------------
 
 IMPR_FONCTION(FORMAT='XMGRACE',
-              COURBE=(_F(FONC_X=DEP_TETE,
-                        FONC_Y=ETA_PILO,),
-                      _F(LIST_PARA=TET_REF,
-                        LIST_RESU=ETA_REF,),),);
+              COURBE=(_F(FONC_X=DEP_TETE, FONC_Y=ETA_PILO,),
+                      _F(LIST_PARA=TET_REF, LIST_RESU=ETA_REF,),),
+)
 
 # --------------- TEST SUR LA CHARGE DE RUINE ESTIMEE ---------------
 

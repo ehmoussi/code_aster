@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ interface
                                    ds_material, ds_constitutive, ds_measure,&
                                    time_prev  , time_curr      ,&
                                    hval_incr  , hval_algo      ,&
-                                   hval_veelem, hval_veasse)
+                                   vefnod     , cnfnod)
         use NonLin_Datastructure_type
         character(len=24), intent(in) :: model, cara_elem, nume_dof
         integer, intent(in) :: list_func_acti(*)
@@ -30,6 +30,7 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         real(kind=8), intent(in) :: time_prev, time_curr
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
-        character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
+        character(len=19), intent(inout) :: vefnod
+        character(len=19), intent(in) :: cnfnod
     end subroutine nonlinNForceCompute
 end interface

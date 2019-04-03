@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,13 +35,14 @@ subroutine as_mlclow(fid, typgeo, refcoo, modeco, ngauss,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, typge4, mode_4, ngaus4, cret4, ndim4
-    fid4 = fid
+    med_idt :: fidm
+    med_int :: typge4, mode_4, ngaus4, cret4, ndim4
+    fidm = to_med_idt(fid)
     typge4 = typgeo
     mode_4 = modeco
     ngaus4 = ngauss
     ndim4 = ndim
-    call mlclow(fid4, locname, typge4, ndim4, refcoo,&
+    call mlclow(fidm, locname, typge4, ndim4, refcoo,&
                 mode_4, ngaus4, gscoo, wg, '',&
                 nomasu, cret4)
     cret = cret4

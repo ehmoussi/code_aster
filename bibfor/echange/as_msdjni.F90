@@ -1,7 +1,7 @@
 subroutine as_msdjni(fid,lmname,ind,jname,des,dom,rmname,nstep,ncor,cret)
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
-! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -21,8 +21,8 @@ subroutine as_msdjni(fid,lmname,ind,jname,des,dom,rmname,nstep,ncor,cret)
 #include "asterf_config.h"
 #include "asterf_types.h"
 #include "med/msdjni.h"
-    character *(*) lmname,jname,des,rmname
-    aster_int   fid,ind,dom,nstep,ncor,cret
+    character(len=*) :: lmname,jname,des,rmname
+    aster_int :: fid,ind,dom,nstep,ncor,cret
 
 #ifdef _DISABLE_MED
     call u2mess('F', 'FERMETUR_2')
@@ -34,9 +34,10 @@ subroutine as_msdjni(fid,lmname,ind,jname,des,dom,rmname,nstep,ncor,cret)
     write(6,*) '=== as_msdjni ind=',ind
 #endif
 
-#if med_int_kind != aster_int_kind
-    med_int :: fid4,ind4,dom4,nstep4,ncor4,cret4
-    fid4=to_med_int(fid)
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
+    med_idt :: fid4
+    med_int :: ind4,dom4,nstep4,ncor4,cret4
+    fid4=to_med_idt(fid)
     ind4=to_med_int(ind)
     call msdjni(fid4,lmname,ind4,jname,des,dom4,rmname,nstep4,ncor4,cret4)
     dom=to_aster_int(dom4)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ Relation[2] = (33,24,23,28,27,15,14,19,18)
 Relation[3] = (34,23,26,27,29,14,17,18,20)
 
 Liaison = {}
-for nb in Relation.keys():
+for nb in list(Relation.keys()):
    Liaison[nb] = ['N%d' %i for i in Relation[nb] ]
 
 DDLS = {}; DDLS['DX'] = ['DX']*9;  DDLS['DY'] = ['DY']*9; DDLS['DZ'] = ['DZ']*9

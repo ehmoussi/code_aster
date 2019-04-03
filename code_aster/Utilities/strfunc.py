@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,11 +50,11 @@ def to_unicode(string):
     Returns:
         str: Unicode string.
     """
-    if type(string) is unicode:
+    if type(string) is str:
         return string
     elif type(string) is dict:
         new = {}
-        for k, v in string.items():
+        for k, v in list(string.items()):
             new[k] = to_unicode(v)
         return new
     elif type(string) is list:
@@ -63,14 +63,14 @@ def to_unicode(string):
         return tuple(to_unicode(list(string)))
     elif type(string) is not str:
         return string
-    assert type(string) is str, u"unsupported object: %s" % string
+    assert type(string) is str, "unsupported object: %s" % string
     for encoding in ('utf-8', 'iso-8859-15', 'cp1252'):
         try:
-            s = unicode(string, encoding)
+            s = str(string, encoding)
             return s
         except UnicodeDecodeError:
             pass
-    return unicode(string, 'utf-8', 'replace')
+    return str(string, 'utf-8', 'replace')
 
 
 def from_unicode(ustring, encoding, errors='replace'):
@@ -104,8 +104,8 @@ def convert(content, encoding=None, errors='replace'):
     Returns:
         str: Encoded string.
     """
-    if type(content) not in (str, unicode):
-        content = unicode(content)
+    if type(content) is not str:
+        content = str(content)
     if type(content) == str:
         content = to_unicode(content)
-    return from_unicode(content, encoding or get_encoding(), errors)
+    return content

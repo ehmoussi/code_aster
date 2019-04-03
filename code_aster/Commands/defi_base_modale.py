@@ -48,9 +48,9 @@ class ModalBasisDef(ExecuteCommand):
             self._result.setStructureInterface(classique[0]["INTERF_DYNA"])
             self._result.setDOFNumbering(classique[0]["MODE_MECA"][0].getDOFNumbering())
         elif ritz is not None:
-            if ritz[0].has_key("INTERF_DYNA"):
+            if "INTERF_DYNA" in ritz[0]:
                 self._result.setStructureInterface(ritz[0]["INTERF_DYNA"])
-            if ritz[0].has_key("MODE_MECA"):
+            if "MODE_MECA" in ritz[0]:
                 self._result.setDOFNumbering(ritz[0]["MODE_MECA"][0].getDOFNumbering())
         self._result.update()
 

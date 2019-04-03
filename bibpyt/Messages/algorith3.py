@@ -21,18 +21,18 @@
 cata_msg = {
 
 
-    7 : _(u"""
+    7 : _("""
  Il n'est pas possible d'utiliser les repères 'UTILISATEUR' et
  'CYLINDRIQUE' quand TYPE_CHAM vaut 'TENS_2D' ou 'TENS_3D' ou 'TORS_3D' et
  que le modèle contient des éléments plaques ou coques.
 """),
 
-    9 : _(u"""
+    9 : _("""
  Vous avez choisie une méthode à pas de temps adaptatif. Il n'est pas possible de prendre en compte une
  liste d'instants de calcul définie a priori.
 """),
 
-    10 : _(u"""
+    10 : _("""
   -> Contact avec DYNA_VIBRA : Il y a interpénétration d'une valeur supérieure à (DIST_MAIT + DIST_ESCL).
   -> Risque & Conseil :
      DIST_MAIT et DIST_ESCL permettent de tenir compte d'une épaisseur de matériau non représentée dans le maillage
@@ -52,7 +52,7 @@ cata_msg = {
 
 
 
-    18 : _(u"""
+    18 : _("""
  La liste des instants de calcul ne doit contenir qu'un seul pas
  Conseil: si vous avez défini une liste d'instants manuellement par des valeurs discrètes,
  veillez à ce que le pas soit constant dans tout l'intervalle.
@@ -65,37 +65,37 @@ cata_msg = {
 
 
 
-    36 : _(u"""
+    36 : _("""
  NUME_INIT: on n'a pas trouvé le NUME_INIT dans le résultat  %(k1)s
 """),
 
-    37 : _(u"""
+    37 : _("""
  incohérence sur H, ALPHA, ELAS
 """),
 
-    38 : _(u"""
+    38 : _("""
  L'état de contrainte fourni n'est pas cohérent avec le modèle de comportement de DRUCK_PRAGER.
  Vérifier les champs SIEF_ELGA et VARI_ELGA dans ETAT_INIT.
 """),
 
-    40 : _(u"""
+    40 : _("""
  le NOM_CHAM  %(k1)s n'appartient pas à la structure de données
 """),
 
-    41 : _(u"""
+    41 : _("""
  erreur(s) dans les données
 """),
 
-    43 : _(u"""
+    43 : _("""
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    55 : _(u"""
+    55 : _("""
  ITER_INTE_MAXI insuffisant
 """),
 
-    60 : _(u"""
+    60 : _("""
  la matrice interspectrale possède un pivot nul.
 """),
 
@@ -106,45 +106,45 @@ Contactez le support technique.
 
 
 
-    78 : _(u"""
+    78 : _("""
  pas de discrétisation de l'interspectre non constant.
 """),
 
-    79 : _(u"""
+    79 : _("""
  pas de discrétisation des interspectres non identique.
 """),
 
-    80 : _(u"""
+    80 : _("""
  "NB_POIN" n est pas une puissance de 2
  on prend la puissance de 2 supérieure
 """),
 
-    83 : _(u"""
+    83 : _("""
  le pas tend vers 0 ...
 """),
 
-    86 : _(u"""
+    86 : _("""
  pas d'interpolation possible pour les fréquences.
 """),
 
-    87 : _(u"""
+    87 : _("""
  dérivée de F nulle
 """),
 
-    88 : _(u"""
+    88 : _("""
  GM négatif
 """),
 
-    89 : _(u"""
+    89 : _("""
  valeurs propres non ordonnées :
  %(k1)s  %(k2)s  %(k3)s
 """),
 
-    90 : _(u"""
+    90 : _("""
  coefficients paraboliques pas compatibles
 """),
 
-    92 : _(u"""
+    92 : _("""
  modélisations C_PLAN et 1D pas autorisées
 """),
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,94 +21,94 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  La modélisation C_PLAN n'est pas compatible avec la loi de comportement ELAS_VMIS_PUIS.
 """),
 
-    3 : _(u"""
+    3 : _("""
  type de matrice inconnu.
 """),
 
-    13 : _(u"""
+    13 : _("""
  le VECT_ELEM n'existe pas :  %(k1)s
 """),
 
 
 
 
-    21 : _(u"""
+    21 : _("""
  le noeud  %(k1)s  n'appartient pas au maillage :  %(k2)s
 """),
 
-    25 : _(u"""
+    25 : _("""
  données incompatibles.
 """),
 
-    32 : _(u"""
+    32 : _("""
   la numérotation n'est pas cohérente avec le modèle généralisé
   si vous avez activé l'option INITIAL dans NUME_DDL_GENE faites de même ici !
 """),
 
 
-    35 : _(u"""
+    35 : _("""
  les champs " %(k1)s " et " %(k2)s " n'ont pas le même domaine de définition.
 """),
 
-    36 : _(u"""
+    36 : _("""
  BARSOUM, erreur dans le traitement des mailles %(k1)s
 """),
 
-    42 : _(u"""
+    42 : _("""
  BETON_DOUBLE_DP: incrément de déformation plastique en traction négatif
  --> redécoupage automatique du pas de temps
 """),
 
-    43 : _(u"""
+    43 : _("""
  BETON_DOUBLE_DP: incrément de déformation plastique en compression négatif
  --> redécoupage automatique du pas de temps
 """),
 
-    44 : _(u"""
+    44 : _("""
  intégration élastoplastique de la loi BETON_DOUBLE_DP :
  la condition d'applicabilité sur la taille des éléments
  n'est pas respectée en compression.
 """),
 
-    45 : _(u"""
+    45 : _("""
  intégration élastoplastique de la loi BETON_DOUBLE_DP :
  la condition d'applicabilité sur la taille des éléments
  n'est pas respectée en compression pour la maille:  %(k1)s
 """),
 
-    46 : _(u"""
+    46 : _("""
  intégration élastoplastique de la loi BETON_DOUBLE_DP :
  la condition d'applicabilité sur la taille des éléments
  n est pas respectée en traction.
 """),
 
-    47 : _(u"""
+    47 : _("""
  intégration élastoplastique de la loi BETON_DOUBLE_DP :
  la condition d'applicabilité sur la taille des éléments
  n'est pas respectée en traction pour la maille:  %(k1)s
 """),
 
-    48 : _(u"""
+    48 : _("""
   -> Intégration élastoplastique de loi multicritères BETON_DOUBLE_DP :
      la contrainte équivalente est nulle pour la maille %(k1)s
      le calcul de la matrice tangente est impossible.
   -> Risque & Conseil :
 """),
 
-    52 : _(u"""
+    52 : _("""
   Le nombre de modes et de degré de liberté d'interface sont différents.
 """),
 
-    53 : _(u"""
+    53 : _("""
   Le nombre de modes dynamiques est %(i1)d,
   ce n'est pas un multiple du nombre de composante.
 """),
 
-    54 : _(u"""
+    54 : _("""
   Le nombre de modes statiques est %(i1)d,
   ce n'est pas un multiple du nombre de composante.
 """),
@@ -117,37 +117,37 @@ cata_msg = {
 
 
 
-    60 : _(u"""
+    60 : _("""
  certains coefficients de masse ajoutée sont négatifs.
  vérifiez l'orientation des normales des éléments d'interface.
  convention adoptée : structure vers fluide
 """),
 
-    61 : _(u"""
+    61 : _("""
  certains coefficients d'amortissement ajouté sont négatifs.
  possibilité d'instabilité de flottement
 """),
 
-    68 : _(u"""
+    68 : _("""
  trop de familles de systèmes de glissement.
  augmenter la limite actuelle (5)
 """),
 
-    69 : _(u"""
+    69 : _("""
  trop de familles de systèmes de glissement.
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    70 : _(u"""
+    70 : _("""
  Le nombre de système de glissement est égal à 0
 """),
 
-    96 : _(u"""
+    96 : _("""
  ce mot clé de MODI_MAILLAGE attend un vecteur de norme non nulle.
 """),
 
-    97 : _(u"""
+    97 : _("""
  le mot clé REPERE de MODI_MAILLAGE attend deux vecteurs non nuls orthogonaux.
 """),
 

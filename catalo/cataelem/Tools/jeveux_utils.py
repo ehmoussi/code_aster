@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import string
 import sys
 
 #
@@ -41,27 +40,27 @@ class ERREUR:
 
     def mess(self, code, message):
         # pour imprimer un message d'erreur :
-        ucode = string.upper(code)
+        ucode = code.upper()
         if ucode == 'I':
-            print "\n<" + ucode + "> INFORMATION: ", convert(message)
+            print("\n<" + ucode + "> INFORMATION: ", convert(message))
         elif ucode == 'A':
-            print "\n<" + ucode + "> ALARME: ", convert(message)
+            print("\n<" + ucode + "> ALARME: ", convert(message))
         elif ucode == 'E':
-            print "\n<" + ucode + "> ERREUR: ", convert(message)
+            print("\n<" + ucode + "> ERREUR: ", convert(message))
             self.IER = self.IER + 1
         elif ucode == 'F':
-            print "\n<" + ucode + "> ERREUR: ", convert(message)
+            print("\n<" + ucode + "> ERREUR: ", convert(message))
             self.IER = self.IER + 1
         else:
-            raise StandardError
+            raise Exception
 
         if ucode == 'E' or ucode == 'A' or ucode == 'F':
             if len(self.contxt) > 0:
-                print "    CONTEXTE: "
+                print("    CONTEXTE: ")
                 for c in self.contxt:
-                    print "         " + c
+                    print("         " + c)
         if ucode == 'F':
-            raise StandardError(convert(message))
+            raise Exception(convert(message))
 
     def veri_appartient_liste(self, code, element, liste):
         try:
@@ -86,8 +85,8 @@ class ERREUR:
     def fini(self):
         # pour demander l'arret du code si necessaire :
         if self.IER > 0:
-            print "<F> ERREUR FATALE declenchee suite aux erreurs <E> precedentes"
-            raise StandardError
+            print("<F> ERREUR FATALE declenchee suite aux erreurs <E> precedentes")
+            raise Exception
 
     def contexte(self, texte, statut="RAZ"):
         """pour definir le contexte d'un message d'erreur"""

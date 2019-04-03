@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,111 +21,111 @@
 
 cata_msg = {
 
-    4 : _(u"""Lecture des données pour sélectionner les clichés."""),
+    4 : _("""Lecture des données pour sélectionner les clichés."""),
 
-    6 : _(u"""Tolérance pour détecter les noeuds: %(r1)19.12e."""),
+    6 : _("""Tolérance pour détecter les noeuds: %(r1)19.12e."""),
 
-    8 : _(u"""Création de la liste des équations sur le mode empirique."""),
+    8 : _("""Création de la liste des équations sur le mode empirique."""),
 
-    9 : _(u"""Base empirique créée à partir de %(i1)d clichés."""),
+    9 : _("""Base empirique créée à partir de %(i1)d clichés."""),
 
-   10 : _(u"""Vous n'avez sélectionné aucun cliché."""),
+   10 : _("""Vous n'avez sélectionné aucun cliché."""),
 
-   11 : _(u"""On n'a pas réussi à extraire les informations de la structure de données %(k1)s."""),
+   11 : _("""On n'a pas réussi à extraire les informations de la structure de données %(k1)s."""),
 
-   12 : _(u"""Initialisation de la base empirique dans le cas d'une méthode POD."""),
+   12 : _("""Initialisation de la base empirique dans le cas d'une méthode POD."""),
 
-   13 : _(u"""On ne peut pas enrichir une base empirique avec la méthode %(k1)s."""),
+   13 : _("""On ne peut pas enrichir une base empirique avec la méthode %(k1)s."""),
 
-   14 : _(u"""La matrice du système sera complexe."""),
+   14 : _("""La matrice du système sera complexe."""),
 
-   15 : _(u"""La matrice du système sera réelle."""),
+   15 : _("""La matrice du système sera réelle."""),
 
-   16 : _(u"""Le second membre du système sera complexe."""),
+   16 : _("""Le second membre du système sera complexe."""),
 
-   17 : _(u"""Le second membre du système sera réel."""),
+   17 : _("""Le second membre du système sera réel."""),
 
-   18 : _(u"""Échec lors de la résolution.
+   18 : _("""Échec lors de la résolution.
               La matrice est presque singulière à la fréquence."""),
 
-   19 : _(u"""Initialisation pour le problème multi-paramétrique."""),
+   19 : _("""Initialisation pour le problème multi-paramétrique."""),
 
-   20 : _(u"""Lecture des données pour le calcul multi-paramétrique avec réduction de modèle."""),
+   20 : _("""Lecture des données pour le calcul multi-paramétrique avec réduction de modèle."""),
 
-   21 : _(u"""Les matrices ne reposent pas toutes sur la même numérotation."""),
+   21 : _("""Les matrices ne reposent pas toutes sur la même numérotation."""),
 
-   22 : _(u"""Les matrices doivent être symétriques."""),
+   22 : _("""Les matrices doivent être symétriques."""),
 
-   23 : _(u"""Lecture des données pour la construction du système - Le second membre."""),
+   23 : _("""Lecture des données pour la construction du système - Le second membre."""),
 
-   24 : _(u"""Lecture des données pour la variation des coefficients."""),
+   24 : _("""Lecture des données pour la variation des coefficients."""),
 
-   25 : _(u"""Lecture des données pour la construction du système - Les matrices."""),
+   25 : _("""Lecture des données pour la construction du système - Les matrices."""),
 
-   26 : _(u"""Évaluation du type du système (réel ou complexe)."""),
+   26 : _("""Évaluation du type du système (réel ou complexe)."""),
 
-   27 : _(u"""Création des objets pour le système complet."""),
+   27 : _("""Création des objets pour le système complet."""),
 
-   28 : _(u"""Initialisation de la base empirique dans le cas d'une méthode GLOUTON."""),
+   28 : _("""Initialisation de la base empirique dans le cas d'une méthode GLOUTON."""),
 
-   29 : _(u"""Le nombre de coefficients pour faire varier les fonctions n'est pas le même pour tous les paramètres."""),
+   29 : _("""Le nombre de coefficients pour faire varier les fonctions n'est pas le même pour tous les paramètres."""),
 
-   31 : _(u"""Le coefficient devant le second membre est une fonction et il n'y a aucune donnée sur la variation de cette fonction."""),
+   31 : _("""Le coefficient devant le second membre est une fonction et il n'y a aucune donnée sur la variation de cette fonction."""),
 
-   32 : _(u"""Initialisation des coefficients pour le problème multi-paramétrique."""),
+   32 : _("""Initialisation des coefficients pour le problème multi-paramétrique."""),
 
-   33 : _(u"""Création des objets pour le système réduit."""),
+   33 : _("""Création des objets pour le système réduit."""),
 
-   34 : _(u"""Initialisation des produits matrices par mode."""),
+   34 : _("""Initialisation des produits matrices par mode."""),
 
-   35 : _(u"""Taille du système: %(i1)d."""),
+   35 : _("""Taille du système: %(i1)d."""),
 
-   36 : _(u"""Le système résultant sera complexe."""),
+   36 : _("""Le système résultant sera complexe."""),
 
-   37 : _(u"""Le système résultant sera réel."""),
+   37 : _("""Le système résultant sera réel."""),
 
-   38 : _(u"""Pas de lecture des données pour la variation des coefficients."""),
+   38 : _("""Pas de lecture des données pour la variation des coefficients."""),
 
-   39 : _(u"""Initialisation de la base empirique dans le cas d'une méthode de troncature."""),
+   39 : _("""Initialisation de la base empirique dans le cas d'une méthode de troncature."""),
 
-   40 : _(u"""Initialisation de l'algorithme pour les méthodes POD."""),
+   40 : _("""Initialisation de l'algorithme pour les méthodes POD."""),
 
-   41 : _(u"""Initialisation de l'algorithme pour la méthode GLOUTON."""),
+   41 : _("""Initialisation de l'algorithme pour la méthode GLOUTON."""),
 
-   42 : _(u"""Initialisation pour l'algorithme GLOUTON."""),
+   42 : _("""Initialisation pour l'algorithme GLOUTON."""),
 
-   43 : _(u"""Le calcul d'une base réduite pour le calcul multi-paramétrique avec réduction de modèle nécessite de faire varier les coefficients."""),
+   43 : _("""Le calcul d'une base réduite pour le calcul multi-paramétrique avec réduction de modèle nécessite de faire varier les coefficients."""),
 
-   44 : _(u"""Résolution du système réduit."""),
+   44 : _("""Résolution du système réduit."""),
 
-   45 : _(u"""Calcul des coefficients réduits."""),
+   45 : _("""Calcul des coefficients réduits."""),
 
-   46 : _(u"""Pour le coefficient %(i1)d."""),
+   46 : _("""Pour le coefficient %(i1)d."""),
 
-   47 : _(u"""Initialisation pour la troncature de la base empirique."""),
+   47 : _("""Initialisation pour la troncature de la base empirique."""),
 
-   48 : _(u"""Création de la nouvelle numérotation sur le domaine tronqué."""),
+   48 : _("""Création de la nouvelle numérotation sur le domaine tronqué."""),
 
-   49 : _(u"""Norme du résidu pour le coefficient %(i1)d: %(r1)19.12e."""),
+   49 : _("""Norme du résidu pour le coefficient %(i1)d: %(r1)19.12e."""),
 
-   50 : _(u"""Évaluation du résidu."""),
+   50 : _("""Évaluation du résidu."""),
 
-   51 : _(u"""Calcul des coefficients réduits pour le paramètre %(i1)d."""),
+   51 : _("""Calcul des coefficients réduits pour le paramètre %(i1)d."""),
 
-   52 : _(u"""Coefficient réduit pour le mode %(i1)d et le paramètre %(i2)d: (%(r1)19.12e,%(r2)19.12e)."""),
+   52 : _("""Coefficient réduit pour le mode %(i1)d et le paramètre %(i2)d: (%(r1)19.12e,%(r2)19.12e)."""),
 
-   53 : _(u"""Évaluation du résidu initial."""),
+   53 : _("""Évaluation du résidu initial."""),
 
-   54 : _(u"""Norme du résidu initial: %(r1)19.12e."""),
+   54 : _("""Norme du résidu initial: %(r1)19.12e."""),
 
-   55 : _(u"""Création du nouveau profil de numérotation du champ tronqué."""),
+   55 : _("""Création du nouveau profil de numérotation du champ tronqué."""),
 
-   56 : _(u"""Lecture de la base à tronquer. La base tronquée aura le même nom que la base à tronquer."""),
+   56 : _("""Lecture de la base à tronquer. La base tronquée aura le même nom que la base à tronquer."""),
 
-   57 : _(u"""Lecture de la base à tronquer. La base tronquée sera nouvelle."""),
+   57 : _("""Lecture de la base à tronquer. La base tronquée sera nouvelle."""),
 
-   58 : _(u"""Création de la nouvelle base tronquée."""),
+   58 : _("""Création de la nouvelle base tronquée."""),
 
-   59 : _(u"""Création de la nouvelle numérotation sur le domaine complet."""),
+   59 : _("""Création de la nouvelle numérotation sur le domaine complet."""),
 
 }

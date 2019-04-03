@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,14 +35,15 @@ subroutine as_msmsmi(fid, iterat, nom, dim, desc,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, dim4, cret4, typre4, itera4
-    fid4 = fid
-    itera4 = iterat
-    call msmsmi(fid4, itera4, nom, dim4, dim4,&
+    med_idt :: fidm
+    med_int :: dim4, cret4, typre4, itera4
+    fidm = to_med_idt(fid)
+    itera4 = to_med_int(iterat)
+    call msmsmi(fidm, itera4, nom, dim4, dim4,&
                 desc, typre4, nocomp, unit, cret4)
-    dim = dim4
-    typrep = typre4
-    cret = cret4
+    dim = to_aster_int(dim4)
+    typrep = to_aster_int(typre4)
+    cret = to_aster_int(cret4)
 #else
     call msmsmi(fid, iterat, nom, dim, dim,&
                 desc, typrep, nocomp, unit, cret)

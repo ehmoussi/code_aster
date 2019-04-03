@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,176 +21,176 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  la variable  %(k1)s  n'existe pas dans la loi  %(k2)s
 """),
 
 
-    11 : _(u"""
+    11 : _("""
  le champ de déplacement n'a pas été calculé
 """),
 
-    12 : _(u"""
+    12 : _("""
  le champ de vitesse n'a pas été calculé
 """),
 
-    13 : _(u"""
+    13 : _("""
  le champ d'accélération n'a pas été calcule.
 """),
 
-    14 : _(u"""
+    14 : _("""
  développement non prévu pour le MULT_APPUI ou CORR_STAT.
 """),
 
-    15 : _(u"""
+    15 : _("""
  développement non prévu pour la sous-structuration.
 """),
 
-    16 : _(u"""
+    16 : _("""
  dans le cas harmonique les seuls champs restituables sont
  'DEPL', 'VITE' et 'ACCE'.
 """),
 
-    17 : _(u"""
+    17 : _("""
  l'option  %(k1)s  s'applique sur toute la structure
 """),
 
-    20 : _(u"""
+    20 : _("""
   le comportement :  %(k1)s  n'a pas été défini
 """),
 
-    21 : _(u"""
+    21 : _("""
  DIST_REFE est obligatoire à la première occurrence de RECO_GLOBAL
 """),
 
-    31 : _(u"""
+    31 : _("""
  la bande de fréquence retenue ne comporte pas de modes propres
 """),
 
-    32 : _(u"""
+    32 : _("""
  vous avez demandé des modes qui ne sont pas calculés
 """),
 
-    33 : _(u"""
+    33 : _("""
  il n y a pas de mode statique calculé pour le couple (noeud, composante) ci dessus
 """),
 
-    35 : _(u"""
+    35 : _("""
  redécoupage excessif du pas de temps interne
  réduisez votre pas de temps ou augmenter ABS(ITER_INTE_PAS)
  redécoupage global.
 """),
 
 
-    41 : _(u"""
+    41 : _("""
  incohérence de A ou H
 """),
 
-    42 : _(u"""
+    42 : _("""
  incohérence de données
 """),
 
-    43 : _(u"""
+    43 : _("""
  incohérence de C, PHI ou A
 """),
 
-    44 : _(u"""
+    44 : _("""
  champ 'DEPL' non calculé
 """),
 
-    45 : _(u"""
+    45 : _("""
  champ 'VITE' non calculé
 """),
 
-    46 : _(u"""
+    46 : _("""
  champ 'ACCE' non calculé
 """),
 
-    47 : _(u"""
+    47 : _("""
  lecture des instants erronée
 """),
 
-    48 : _(u"""
+    48 : _("""
  axe de rotation indéfini.
 """),
 
-    49 : _(u"""
+    49 : _("""
  la porosité initiale F0 ne peut être nulle ou négative
 """),
 
-    50 : _(u"""
+    50 : _("""
  la porosité initiale F0 ne peut être supérieure ou égale à 1.
 """),
 
-    52 : _(u"""
+    52 : _("""
  la porosité initiale F0 ne peut être négative
 """),
 
-    56 : _(u"""
+    56 : _("""
  on ne sait pas post-traiter le champ de type:  %(k1)s
 """),
 
-    61 : _(u"""
+    61 : _("""
  il faut définir une BANDE ou un NUME_ORDRE
 """),
 
-    62 : _(u"""
+    62 : _("""
  il faut définir une "BANDE" ou une liste de "NUME_ORDRE"
 """),
 
-    63 : _(u"""
+    63 : _("""
  dimension spectrale fausse
 """),
 
-    64 : _(u"""
+    64 : _("""
  l'interspectre modal est de type "ACCE"
  on ne peut que restituer une accélération
 """),
 
-    65 : _(u"""
+    65 : _("""
  l'interspectre modal est de type "VITE"
  on ne peut que restituer une vitesse
 """),
 
-    66 : _(u"""
+    66 : _("""
  l'interspectre modal est de type "DEPL"
  on ne peut pas restituer une accélération
 """),
 
-    67 : _(u"""
+    67 : _("""
  l'interspectre modal est de type "DEPL"
  on ne peut pas restituer une vitesse
 """),
 
-    68 : _(u"""
+    68 : _("""
  Il faut spécifier autant de noeuds (par GROUP_NO ou NOEUD) que de composants (NOM_CMP)
 """),
 
-    69 : _(u"""
+    69 : _("""
  il faut autant de "MAILLE" que de "NOEUD"
 """),
 
-    72 : _(u"""
+    72 : _("""
  il faut définir une liste de mailles pour post-traiter un CHAM_ELEM
 """),
 
-    73 : _(u"""
+    73 : _("""
  la composante  %(k1)s  du noeud  %(k2)s  pour la maille  %(k3)s  n'existe pas.
 """),
 
-    76 : _(u"""
+    76 : _("""
  mot-clé NB_BLOC inopérant on prend un bloc
 """),
 
-    87 : _(u"""
+    87 : _("""
  vecteur de norme trop petite
 """),
 
-    88 : _(u"""
+    88 : _("""
  le seul comportement élastique valide est ELAS
  """),
 
-    91 : _(u"""
+    91 : _("""
  Loi de séchage %(k1)s : le coefficient de diffusion atteint des valeurs trop élevées %(r1)f. Il se peut que cela soit dû à la stabilité du thêta-schéma qui empêche la convergence du calcul non linéaire. 
  Conseils :
  - Branchez REAC_ITER >=1 (actualisation fréquente de la matrice tangente);
@@ -198,19 +198,19 @@ cata_msg = {
 """),
 
 
-    93 : _(u"""
+    93 : _("""
  il faut un nom de champ
 """),
 
-    95 : _(u"""
+    95 : _("""
  pour interpoler il faut fournir une liste de fréquences ou instants.
 """),
 
-    98 : _(u"""
+    98 : _("""
  pivot nul
 """),
 
-    99 : _(u"""
+    99 : _("""
  on ne sait pas encore traiter la sous structuration en axisymétrique
 """),
 

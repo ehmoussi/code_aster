@@ -418,7 +418,7 @@ class CommandSyntax(object):
             explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
-        if len( value ) > 0 and not isinstance(value[0], (int, long)):
+        if len( value ) > 0 and not is_int(value[0]):
             raise TypeError( "integer expected, got %s" % type( value[0] ) )
         size = len(value)
         if size > maxval:
@@ -508,7 +508,7 @@ class CommandSyntax(object):
 
     def getexm(self, factName, simpName):
         """Tell if the couple ( factor keyword, simple keyword ) exists in the
-        Command catalog.
+        Command catalog. It supposes that all blocs conditions are verified.
 
         Arguments:
             factName (str): Name of the factor keyword.
@@ -518,18 +518,18 @@ class CommandSyntax(object):
             int: 1 if the keyword exists, else 0.
         """
         catadef = self._getCataDefinition(factName)
-        logger.debug("getexm: catadef: {0}".format(catadef.keys()
+        logger.debug("getexm: catadef: {0}".format(list(catadef.keys())
                                                    if catadef else None))
         if not catadef:
             return 0
         if not simpName.strip():
             return 1
         keywords = catadef.simple_keywords
-        logger.debug("getexm: simple keywords: {0}".format(keywords.keys()))
+        logger.debug("getexm: simple keywords: {0}".format(list(keywords.keys())))
         return int(keywords.get(simpName) is not None)
 
     def getmjm(self, factName, occurrence, maxval):
-        """Return the list of simple keywords  provided by the user under a
+        """Return the list of simple keywords provided by the user under a
         factor keyword.
 
         Arguments:
@@ -554,7 +554,7 @@ class CommandSyntax(object):
             if obj is None:
                 continue
             # ignore factor keyword: legacy getmjm returned typ='MCList'
-            if not catadef.has_key(kw):
+            if kw not in catadef:
                 continue
             kws.append(kw)
             typ = typeaster(catadef[kw].definition['typ'])
@@ -587,7 +587,11 @@ class CommandSyntax(object):
                 numbers generator.
         """
         cls._random = random.Random(100)
-        cls._random.jumpahead(jump)
+        gen = cls._random
+        gen.seed(jump)
+        # similar to python2 `jumpahead` function
+        for _ in range(jump):
+            gen.random()
 
     @classmethod
     def getran(cls):
@@ -628,7 +632,7 @@ def _check_strings(factName, simpName, value):
     Returns:
         list[str]: String values or names for DataStructure objects.
     """
-    if len(value) > 0 and not isinstance(value[0], (str, unicode)):
+    if len(value) > 0 and not is_str(value[0]):
         try:
             value2 = []
             for i in range(len(value)):

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,13 +36,11 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
     1 dans la zone d'interet
     """
     import aster
-    import string
     import copy
     import math
-    from types import ListType, TupleType
     from code_aster.Cata.Syntax import _F
     from SD.sd_xfem import sd_fiss_xfem
-    EnumTypes = (ListType, TupleType)
+    EnumTypes = (list, tuple)
 
     macro = 'RAFF_XFEM'
     from code_aster.Cata.Syntax import _F

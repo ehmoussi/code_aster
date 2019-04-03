@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmprac(fonact, lischa, numedd, numfix    , solveu     ,&
-                  sddyna, ds_measure, ds_contact, ds_algopara,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmprac(fonact, lischa, numedd, solveu     ,&
+                  sddyna, ds_measure, ds_contact,&
                   meelem, measse, maprec, matass    , faccvg)
 !
 use NonLin_Datastructure_type
@@ -41,19 +42,17 @@ implicit none
 #include "asterfort/nmtime.h"
 #include "asterfort/preres.h"
 #include "asterfort/utmess.h"
+#include "asterfort/asmama.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: fonact(*)
-    character(len=19) :: sddyna, lischa
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: numedd, numfix
-    character(len=19) :: solveu
-    character(len=19) :: meelem(*), measse(*)
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19) :: maprec, matass
-    integer :: faccvg
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+integer :: fonact(*)
+character(len=19) :: sddyna, lischa
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: numedd
+character(len=19) :: solveu
+character(len=19) :: meelem(*), measse(*)
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19) :: maprec, matass
+integer :: faccvg
 !
 ! ----------------------------------------------------------------------
 !
@@ -64,7 +63,6 @@ implicit none
 ! ----------------------------------------------------------------------
 !
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
-! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
 ! IN  LISCHA : LISTE DES CHARGES
 ! In  ds_contact       : datastructure for contact management
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -72,7 +70,6 @@ implicit none
 ! IN  SOLVEU : SOLVEUR
 ! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
-! In  ds_algopara      : datastructure for algorithm parameters
 ! OUT MATASS : MATRICE DE RESOLUTION ASSEMBLEE
 ! OUT MAPREC : MATRICE DE RESOLUTION ASSEMBLEE - PRECONDITIONNEMENT
 ! OUT FACCVG : CODE RETOUR (INDIQUE SI LA MATRICE EST SINGULIERE)
@@ -89,8 +86,7 @@ implicit none
     character(len=8) :: kmatd
     integer :: jvalm, zislv1, zislv3
     integer :: ifm, niv
-    character(len=16) :: optass
-    character(len=19) :: masse
+    character(len=19) :: masse, memass, mediri
     integer, pointer :: slvi(:) => null()
 !
 ! ----------------------------------------------------------------------
@@ -113,13 +109,13 @@ implicit none
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
+    call nmchex(meelem, 'MEELEM', 'MEMASS', memass)
+    call nmchex(meelem, 'MEELEM', 'MEDIRI', mediri)
     call nmchex(measse, 'MEASSE', 'MEMASS', masse)
 !
 ! --- ASSEMBLAGE DE LA MATRICE MASSE
 !
-    optass = 'AVEC_DIRICHLET'
-    call nmassm(fonact, lischa, numedd, numfix, ds_algopara,&
-                'MEMASS', optass, meelem, masse)
+    call asmama(memass, mediri, numedd, lischa, masse)
 !
 ! --- CALCUL DE LA MATRICE ASSEMBLEE GLOBALE
 !

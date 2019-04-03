@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,13 +32,13 @@ import traceback
 from functools import partial
 from subprocess import Popen, PIPE
 
-from N_utils import Enum, Singleton
-from strfunc import convert
+from .N_utils import Enum, Singleton
+from .strfunc import convert
 
 
 def default_print(text):
     """Basic print function."""
-    print convert(text)
+    print(convert(text))
 
 LEVEL = Enum(
     'DEBUG',
@@ -154,7 +154,7 @@ class InfoLevel(Singleton):
             else:
                 func = self._message_print
             func = self._message_print
-            apply(func, (category, level, msg, args, kwargs))
+            func(*(category, level, msg, args, kwargs))
 
     def _message_print(self, category, level, msg, args, kwargs):
         """Print the message if the level is reached."""
@@ -164,7 +164,7 @@ class InfoLevel(Singleton):
         if len(args) > 0:
             try:
                 msg = msg % args
-            except Exception, err:
+            except Exception as err:
                 msg = repr((msg, args, err))
         self._print(msg)
 
@@ -252,7 +252,7 @@ def memory_used(pid):
     """Return the current VmPeak value."""
     p = Popen(['cat', '/proc/%s/status' % pid], stdout=PIPE)
     output = p.communicate()[0]
-    mat = RE_VMPEAK.search(output)
+    mat = RE_VMPEAK.search(output.decode())
     mem = mat and int(mat.group(1)) or 0.
     return mem / 1024.
 

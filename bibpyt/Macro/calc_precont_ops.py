@@ -55,8 +55,6 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     """
     import copy
     import aster
-    import string
-    import types
     from code_aster.Cata.Syntax import _F
     from code_aster.Objects import ListOfFloats, TimeStepper
     from Noyau.N_utils import AsType
@@ -113,7 +111,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     # Traitement de l'etat initial
     if ETAT_INIT:
         dEtatInit = ETAT_INIT[0].cree_dict_valeurs(ETAT_INIT[0].mc_liste)
-        for i in dEtatInit.keys():
+        for i in list(dEtatInit.keys()):
             if dEtatInit[i] == None:
                 del dEtatInit[i]
     else:
@@ -139,7 +137,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     if __TMAX <= __TMIN:
         UTMESS('F', 'CABLE0_1')
         
-    for i in dIncrement.keys():
+    for i in list(dIncrement.keys()):
             if dIncrement[i] == None:
                 del dIncrement[i]
 
@@ -206,19 +204,19 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
         dConvergence = CONVERGENCE[
             0].cree_dict_valeurs(CONVERGENCE[0].mc_liste)
-        for i in dConvergence.keys():
+        for i in list(dConvergence.keys()):
             if dConvergence[i] == None:
                 del dConvergence[i]
 
         dSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
-        for i in dSolveur.keys():
+        for i in list(dSolveur.keys()):
             if dSolveur[i] == None:
                 del dSolveur[i]
 
         if RECH_LINEAIRE:
             dRech_lin = RECH_LINEAIRE[0].cree_dict_valeurs(
                 RECH_LINEAIRE[0].mc_liste)
-            for i in dRech_lin.keys():
+            for i in list(dRech_lin.keys()):
                 if dRech_lin[i] == None:
                     del dRech_lin[i]
         else:
@@ -233,13 +231,13 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         #     Recuperation des cables dans les concepts CABLE_BP
         #     et CABLE_BP_INACTIF
         # ------------------------------------------------------
-        if type(CABLE_BP) is not types.NoneType:
+        if type(CABLE_BP) is not type(None):
             if not is_sequence(CABLE_BP):
                 CABLE_BP0 = CABLE_BP
                 CABLE_BP = []
                 CABLE_BP.append(CABLE_BP0)
 
-        if type(CABLE_BP_INACTIF) is not types.NoneType:
+        if type(CABLE_BP_INACTIF) is not type(None):
             if not is_sequence(CABLE_BP_INACTIF):
                 CABLE_BP_INACTIF0 = CABLE_BP_INACTIF
                 CABLE_BP_INACTIF = []
@@ -315,7 +313,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         dComp_incr = []
         for j in COMPORTEMENT:
             dComp_incr.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in dComp_incr[-1].keys():
+            for i in list(dComp_incr[-1].keys()):
                 if dComp_incr[-1][i] == None:
                     del dComp_incr[-1][i]
         dComp_incr0 = copy.copy(dComp_incr)
@@ -367,7 +365,6 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         # 1.5 Modele contenant uniquement les cables de precontrainte
         # ---------------------------------------------------------
         objma = MODELE.getSupportMesh()
-        print objma
         __M_CA = AFFE_MODELE(MAILLAGE=objma,
                              AFFE=affe_mo)
 
@@ -449,7 +446,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         dExcit = []
         for j in EXCIT:
             dExcit.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in dExcit[-1].keys():
+            for i in list(dExcit[-1].keys()):
                 if dExcit[-1][i] == None:
                     del dExcit[-1][i]
 
@@ -540,7 +537,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             motscle4['reuse'] = reuse
         # assert (len(CABLE_BP) == 1)
         # traitement des cables inactifs
-        if type(CABLE_BP_INACTIF) is not types.NoneType:
+        if type(CABLE_BP_INACTIF) is not type(None):
             if not is_sequence(CABLE_BP_INACTIF):
                 CABLE_BP_INACTIF0 = CABLE_BP_INACTIF
                 CABLE_BP_INACTIF = []
@@ -568,7 +565,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             nb_cable = len(__TCAB1.EXTR_TABLE().NOM_ANCRAGE1.values())
             table_cable = __TCAB1.EXTR_TABLE()
 
-            for icable in xrange(nb_cable):
+            for icable in range(nb_cable):
 
                 __typ_ancr = (table_cable.TYPE_ANCRAGE1.values()[
                               icable], table_cable.TYPE_ANCRAGE2.values()[icable])
@@ -585,80 +582,80 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                 ancr1_passif = 1
                 
                 for j in range(2):
-                    if string.strip(__typ_ancr[j]) == 'PASSIF':
+                    if __typ_ancr[j].strip() == 'PASSIF':
                         if j == 0:
                             ancr1_passif = -1
-                        if string.strip(__typ_noeu[j]) == 'NOEUD':
+                        if __typ_noeu[j].strip() == 'NOEUD':
                             motscle2[
-                                'DDL_IMPO'].append(_F(NOEUD=string.strip(__nom_noeu[j]),
+                                'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
                                                       GLIS=0.))
                             if __recul_exists:
                                 motscle5[
-                                    'DDL_IMPO'].append(_F(NOEUD=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                         else:
                             motscle2[
-                                'DDL_IMPO'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]),
+                                'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                    GLIS=0.))
                             if __recul_exists:
                                 motscle5[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                     else:
                         actif += 1
-                        if string.strip(__typ_noeu[j]) == 'NOEUD':
+                        if __typ_noeu[j].strip() == 'NOEUD':
                             motscle3[
-                                'AFFE'].append(_F(NOEUD=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                   VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
                             if j == 0:
                                 motscle3b[
-                                    'AFFE'].append(_F(NOEUD=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                    'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                       VALE=__sens * __tension * (-1) ** (j + 1)))
                                 motscle2a[
-                                    'DDL_IMPO'].append(_F(NOEUD=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                             else:
                                 motscle3a[
-                                    'AFFE'].append(_F(NOEUD=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                    'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                       VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
                                 motscle2b[
-                                    'DDL_IMPO'].append(_F(NOEUD=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                             if __recul_exists:
                                 motscle5[
-                                    'DDL_IMPO'].append(_F(NOEUD=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
                                                           GLIS=ancr1_passif * __sens * __recul * (-1) ** (j)))
                         else:
                             motscle3[
-                                'AFFE'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                   VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
                             if j == 0:
                                 motscle3b[
-                                    'AFFE'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                    'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                       VALE=__sens * __tension * (-1) ** (j + 1)))
                                 motscle2a[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                             else:
                                 motscle3a[
-                                    'AFFE'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                    'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                       VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
                                 motscle2b[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                             if __recul_exists:
                                 motscle5[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                           GLIS=ancr1_passif * __sens * __recul * (-1) ** (j)))
                 if (actif == 2):
                     __ActifActif = True
 #                   on stocke les infos pour la construction de la fonction multiplicatrice
 #                   lors de la deuxième phase de mise en tension (sur l'ancrage 1)
                     info = { 'tension' : __tension}
-                    if string.strip(__typ_noeu[0]) == 'NOEUD':
+                    if __typ_noeu[0].strip() == 'NOEUD':
                         UTMESS('F', 'CABLE0_5')
                     else:
-                        info['GROUP_NO'] = string.strip(__nom_noeu[0])
+                        info['GROUP_NO'] = __nom_noeu[0].strip()
                     
                     info_actif_actif.append(info)
 
@@ -667,7 +664,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         dExcit = []
         for j in EXCIT:
             dExcit.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in dExcit[-1].keys():
+            for i in list(dExcit[-1].keys()):
                 if dExcit[-1][i] == None:
                     del dExcit[-1][i]
 

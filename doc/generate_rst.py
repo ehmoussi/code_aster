@@ -85,7 +85,7 @@ def all_objects(destdir):
     # sections: directly derivated from Boost.Python.instance
     sections = [OBJ.DataStructure, OBJ.GeneralMaterialBehaviour]
     addsect = []
-    for name, obj in OBJ.__dict__.items():
+    for name, obj in list(OBJ.__dict__.items()):
         if not isinstance(obj, type):
             continue
         if obj.mro()[1] is boost_instance:
@@ -98,7 +98,7 @@ def all_objects(destdir):
 
     # dict of subclasses
     dictobj = OrderedDict([(i, []) for i in sections])
-    for name, obj in OBJ.__dict__.items():
+    for name, obj in list(OBJ.__dict__.items()):
         # if obj is not OBJ.Material:
         #     continue
         if not isinstance(obj, type):
@@ -114,7 +114,7 @@ def all_objects(destdir):
             raise KeyError("Boost class not found: {0}".format(obj.mro()))
 
     dicttext = OrderedDict()
-    for subtyp, objs in dictobj.items():
+    for subtyp, objs in list(dictobj.items()):
         typename = subtyp.__name__
         lines = []
         # put subclass first
@@ -122,7 +122,7 @@ def all_objects(destdir):
             objs.remove(typename)
         except ValueError:
             if subtyp not in (boost_enum, Exception):
-                print subtyp
+                print(subtyp)
                 raise
         objs.sort()
         if subtyp not in (boost_enum, Exception):
@@ -140,22 +140,22 @@ def all_objects(destdir):
         dicttext[typename] = os.linesep.join(lines)
 
     # generate a page for each of the first two classes
-    with open(osp.join(destdir, "objects_datastructure.rst"), "wb") as fobj:
+    with open(osp.join(destdir, "objects_datastructure.rst"), "w") as fobj:
         params = dict(link="objects_datastructure",
                       content=dicttext["DataStructure"],
                       intro="")
         fobj.write(auto_documentation(**params))
 
-    with open(osp.join(destdir, "objects_materialbehaviour.rst"), "wb") as fobj:
+    with open(osp.join(destdir, "objects_materialbehaviour.rst"), "w") as fobj:
         params = dict(link="objects_materialbehaviour",
                       content=dicttext["GeneralMaterialBehaviour"],
                       intro="")
         fobj.write(auto_documentation(**params))
 
     # generate a page for all other classes
-    with open(osp.join(destdir, "objects_others.rst"), "wb") as fobj:
+    with open(osp.join(destdir, "objects_others.rst"), "w") as fobj:
         params = dict(link="objects_others",
-                      content=os.linesep.join(dicttext.values()[2:]),
+                      content=os.linesep.join(list(dicttext.values())[2:]),
                       intro=\
 """
 ####################################
@@ -186,7 +186,7 @@ def main():
         all_objects(args.destdir)
     else:
         for name in args.file:
-            print automodule(name)
+            print(automodule(name))
 
 
 if __name__ == '__main__':

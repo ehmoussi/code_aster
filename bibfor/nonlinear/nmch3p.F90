@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmch3p(meelem)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit     none
+subroutine nmch3p(meelem)
+!
+implicit none
+!
 #include "asterfort/nmcha0.h"
-    character(len=19) :: meelem(*)
+!
+character(len=19) :: meelem(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -37,12 +38,12 @@ subroutine nmch3p(meelem)
 !
 ! ----------------------------------------------------------------------
 !
-    character(len=19) :: memass, meamor, merigi, mediri, mesuiv
+    character(len=19) :: memass, meamor, mediri, mesuiv
     character(len=19) :: messtr, megeom
     character(len=19) :: meeltc, meeltf
 !
     data memass,mediri    /'&&NMCH3P.MEMASS','&&NMCH3P.MEDIRI'/
-    data merigi,meamor    /'&&NMCH3P.MERIGI','&&NMCH3P.MEAMOR'/
+    data meamor    /'&&NMCH3P.MEAMOR'/
     data mesuiv,messtr    /'&&NMCH3P.MATGME','&&NMCH3P.SSRELE'/
     data megeom           /'&&NMCH3P.MEGEOM'/
     data meeltc,meeltf    /'&&NMCH3P.MEELTC','&&NMCH3P.MEELTF'/
@@ -50,7 +51,6 @@ subroutine nmch3p(meelem)
 ! ----------------------------------------------------------------------
 !
     call nmcha0('MEELEM', 'ALLINI', ' ', meelem)
-    call nmcha0('MEELEM', 'MERIGI', merigi, meelem)
     call nmcha0('MEELEM', 'MEDIRI', mediri, meelem)
     call nmcha0('MEELEM', 'MEMASS', memass, meelem)
     call nmcha0('MEELEM', 'MEAMOR', meamor, meelem)

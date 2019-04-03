@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -91,7 +91,7 @@ MACR_SPECTRE=MACRO(nom="MACR_SPECTRE",
            IMPRESSION    =FACT(statut='f',
                 TRI           =SIMP(statut='f',typ='TXM',defaut='AMOR_SPEC',into=("AMOR_SPEC","DIRECTION",),),
                 FORMAT        =SIMP(statut='f',typ='TXM',defaut='TABLEAU',into=("TABLEAU","XMGRACE",),),
-                UNITE         =SIMP(statut='f',typ=UnitType(),val_min=10,val_max=90,defaut=29, inout='out',
+                UNITE         =SIMP(statut='f',typ=UnitType(),defaut=29, inout='out',
                                     fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit")),
                 b_pilote = BLOC(condition = """equal_to("FORMAT", 'XMGRACE')""",
                    PILOTE        =SIMP(statut='f',typ='TXM',defaut='',

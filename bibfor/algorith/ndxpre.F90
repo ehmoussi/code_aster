@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 ! aslint: disable=W1504
 !
 subroutine ndxpre(model          , nume_dof   , numfix     , ds_material, cara_elem,&
-                  ds_constitutive, list_load  , ds_algopara, solveu     ,&
+                  ds_constitutive, list_load  , ds_algopara, solveu     , ds_system,&
                   list_func_acti , sddisc     , ds_measure , nume_inst  , hval_incr,&
-                  hval_algo      , matass     , maprec     , sddyna     , sderro,&
+                  hval_algo      , matass     , maprec     , sddyna     , sderro   ,&
                   hval_meelem    , hval_measse, hval_veelem, hval_veasse,&
                   lerrit)
 !
@@ -50,6 +50,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19) :: list_load, solveu, sddisc, sddyna
 character(len=24) :: model, cara_elem
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_System), intent(in) :: ds_system
 character(len=24) :: nume_dof, numfix
 character(len=24) :: sderro
 character(len=19) :: hval_meelem(*), hval_veelem(*)
@@ -73,6 +74,8 @@ aster_logical :: lerrit
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
+! In  ds_system        : datastructure for non-linear system management
+! In  ds_system        : datastructure for non-linear system management
 ! In  ds_inout         : datastructure for input/output management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SOLVEU : SOLVEUR
@@ -119,11 +122,11 @@ aster_logical :: lerrit
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call ndxprm(model, ds_material, cara_elem    , ds_constitutive, ds_algopara,&
-                list_load, nume_dof, numfix    , solveu         ,&
-                sddisc, sddyna, ds_measure, nume_inst         , list_func_acti     ,&
-                hval_incr, hval_algo, hval_veelem    , hval_meelem         , hval_measse     ,&
-                maprec, matass, faccvg    , ldccvg)
+    call ndxprm(model    , ds_material, cara_elem  , ds_constitutive, ds_algopara   ,&
+                list_load, nume_dof   , numfix     , solveu         , ds_system     ,&
+                sddisc   , sddyna     , ds_measure , nume_inst      , list_func_acti,&
+                hval_incr, hval_algo  , hval_meelem, hval_measse    ,&
+                maprec   , matass     , faccvg     , ldccvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
@@ -137,7 +140,7 @@ aster_logical :: lerrit
                       model         , cara_elem      ,&
                       nume_dof      , &
                       list_load     , sddyna         ,&
-                      ds_material   , ds_constitutive,&
+                      ds_material   , ds_constitutive, ds_system,&
                       ds_measure    , &
                       sddisc        , nume_inst      ,&
                       hval_incr     , hval_algo      ,&
@@ -146,7 +149,7 @@ aster_logical :: lerrit
 !
 ! - Evaluate second member
 !
-    call nmassx(list_func_acti, sddyna, ds_material, hval_veasse,&
+    call nmassx(list_func_acti, sddyna, ds_material, hval_veasse, ds_system,&
                 cndonn)
 !
 ! - Solve system

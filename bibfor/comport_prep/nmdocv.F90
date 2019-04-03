@@ -15,23 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmdocv(keywordfact, iocc, algo_inte, keyword, value)
 !
-    implicit none
+implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: keywordfact
-    integer, intent(in) :: iocc
-    character(len=16), intent(in) :: algo_inte
-    character(len=14), intent(in) :: keyword
-    real(kind=8), intent(out) :: value
+character(len=16), intent(in) :: keywordfact
+integer, intent(in) :: iocc
+character(len=16), intent(in) :: algo_inte
+character(len=14), intent(in) :: keyword
+real(kind=8), intent(out) :: value
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,7 +48,7 @@ subroutine nmdocv(keywordfact, iocc, algo_inte, keyword, value)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iarg, iret, vali, iter_cplan
+    integer :: iret, vali, iter_cplan
     real(kind=8) :: inte_rela_anal
 !
 ! --------------------------------------------------------------------------------------------------
@@ -60,16 +59,24 @@ subroutine nmdocv(keywordfact, iocc, algo_inte, keyword, value)
 ! - Get Values
 !
     if (keyword .eq. 'RESI_INTE_RELA') then
-        call getvr8(keywordfact, keyword, iocc=iocc, scal=value, nbret=iret,&
-                    isdefault=iarg)
+        call getvr8(keywordfact, keyword, iocc=iocc, scal=value, nbret=iret)
+        if (iret .le. 0) then
+            value = 1.d-6
+        endif
     else if (keyword .eq. 'RESI_INTE_MAXI') then
-        call getvr8(keywordfact, keyword, iocc=iocc, scal=value, nbret=iret,&
-                    isdefault=iarg)
+        call getvr8(keywordfact, keyword, iocc=iocc, scal=value, nbret=iret)
+        if (iret .le. 0) then
+            value = 1.d-6
+        endif
     else if (keyword.eq.'ITER_INTE_MAXI') then
-        call getvis(keywordfact, keyword, iocc=iocc, scal=vali, nbret=iret,&
-                    isdefault=iarg)
-        value      = vali
-        iter_cplan = vali
+        call getvis(keywordfact, keyword, iocc=iocc, scal=vali, nbret=iret)
+        if (iret .le. 0) then
+            value      = 20
+            iter_cplan = 20
+        else
+            value      = vali
+            iter_cplan = vali
+        endif
     endif
 !
     ASSERT(iret.ne.0)
@@ -80,16 +87,9 @@ subroutine nmdocv(keywordfact, iocc, algo_inte, keyword, value)
 !
 ! - Checking
 !
-    if (iarg .eq. 0) then
-        if (algo_inte .eq. 'ANALYTIQUE') then
-            call utmess('A', 'COMPOR4_70', sk=keyword)
+    if (algo_inte .eq. 'ANALYTIQUE') then
+        if (keyword .eq. 'ITER_INTE_MAXI') then
             value = inte_rela_anal
-        endif
-    else
-        if (algo_inte .eq. 'ANALYTIQUE') then
-            if (keyword .eq. 'ITER_INTE_MAXI') then
-                value = inte_rela_anal
-            endif
         endif
     endif
 !

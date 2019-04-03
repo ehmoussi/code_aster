@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ def TraceGet(nom_fonction, nom_motfac, iocc, nom_motcle, tup, sortie=sys.stdout)
     assert(nom_motfac != None)
     sortie.write(" nom_motfac='" + nom_motfac + "'")
     sortie.write(" nom_motcle='" + nom_motcle + "'")
-    sortie.write(" iocc= " + `iocc`+' :')
+    sortie.write(" iocc= " + repr(iocc)+' :')
     if tup[0] == 0:
         sortie.write('None')
         sortie.write('\n')
@@ -75,7 +75,7 @@ def TraceGet(nom_fonction, nom_motfac, iocc, nom_motcle, tup, sortie=sys.stdout)
             if type(e) == str:
                 sortie.write('"' + e + '"')
             else:
-                sortie.write(`e`)
+                sortie.write(repr(e))
             sortie.write('\n')
 
     return
@@ -133,7 +133,7 @@ def ReorganisationDe(texte, LongueurSousChaine=80):
     # on eclate suivant les separateurs de la liste l_separ
     l_separ = ['+', '-', '/', '*', '(', ')']
     liste2 = []
-    LongueurSousChaine = LongueurSousChaine / 2
+    LongueurSousChaine = LongueurSousChaine // 2
     for sous_chaine in liste:
         uneChaine = sous_chaine.strip()  # elimination des blancs inutiles.
         if (len(uneChaine) > LongueurSousChaine):
@@ -145,7 +145,7 @@ def ReorganisationDe(texte, LongueurSousChaine=80):
             liste3.append(ttt[:ttt.rfind(l_separ[j])])
             reste = ttt[ttt.rfind(l_separ[j]):]
             i = 0
-            for i in range(1, len(uneChaine) / LongueurSousChaine):
+            for i in range(1, len(uneChaine) // LongueurSousChaine):
                 ttt = uneChaine[
                     i * LongueurSousChaine:(i + 1) * LongueurSousChaine]
                 j = 0
@@ -179,7 +179,7 @@ def ReorganisationDe(texte, LongueurSousChaine=80):
         uneChaine = uneChaine.replace('#9#', 'd-')
         if (len(uneChaine) > LongueurSousChaine):
             sys.stderr.write("ERREUR detectee dans Decoupe\n")
-            print ">", uneChaine, "<"
+            print(">", uneChaine, "<")
             raise Exception("Decoupe : chaine depassant la limite de %s caractères"
                             % LongueurSousChaine)
         apres = apres + uneChaine.ljust(LongueurSousChaine)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 # Modules Python
 
 # Modules Eficas
-import B_utils
+from . import B_utils
 
 
 class ENTITE:
@@ -43,7 +43,7 @@ class ENTITE:
             que si elle est du bon type.
             Si aucune sous entite ne satisfait les criteres la methode retourne None
         """
-        for k, v in self.entites.items():
+        for k, v in list(self.entites.items()):
             if k == nom:
                 if typ == None:
                     return v
@@ -61,7 +61,7 @@ class ENTITE:
             sous l'objet self
         """
         nb = 0
-        for k, v in self.entites.items():
+        for k, v in list(self.entites.items()):
             if v.label in ("BLOC", "FACT"):
                 nb = nb + v.get_nb_mcs()
             elif v.label in ("SIMP",):
@@ -76,7 +76,7 @@ class ENTITE:
             On descend sous les BLOC & MCFACT.
         """
         motcles = []
-        for k, v in self.entites.items():
+        for k, v in list(self.entites.items()):
             if v.label == 'BLOC':
                 motcles.extend(v.get_mc_simp(niv))
             elif v.label == 'SIMP':
@@ -96,7 +96,7 @@ class ENTITE:
             sous self
         """
         motcles = []
-        for k, v in self.entites.items():
+        for k, v in list(self.entites.items()):
             if v.label == 'BLOC':
                 motcles.extend(v.get_mc_fact())
             elif v.label == 'SIMP':
@@ -110,7 +110,7 @@ class ENTITE:
             Cette methode retourne la liste des mots cles facteurs sous self
         """
         motcles = []
-        for k, v in self.entites.items():
+        for k, v in list(self.entites.items()):
             if v.label == 'BLOC':
                 motcles.extend(v.get_li_mc_fact())
             elif v.label == 'SIMP':
@@ -130,7 +130,7 @@ class ENTITE:
             nom_motfac, on retourne une liste vide []
         """
         l = []
-        for k, v in self.entites.items():
+        for k, v in list(self.entites.items()):
             # Si l'entite a pour nom nom_motfac et est de type FACT, on
             # l'ajoute a la liste
             if k == nom_motfac and v.label == 'FACT':

@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -19,7 +19,7 @@
 interface
     subroutine as_msdjni(fid,lmname,ind,jname,des,dom,&
                          rmname,nstep,ncor,cret)
-        character *(*) lmname,jname,des,rmname
-        aster_int   fid,ind,dom,nstep,ncor,cret
+        character(len=*) :: lmname,jname,des,rmname
+        aster_int :: fid,ind,dom,nstep,ncor,cret
     end subroutine as_msdjni
 end interface

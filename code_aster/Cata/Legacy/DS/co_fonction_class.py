@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,7 +109,7 @@ class fonction_sdaster(fonction_class):
             if lbl == None:
                 UTMESS('F', 'SDVERI_2', valk=[vale])
             lbl = list(lbl)
-            dim = len(lbl) / 2
+            dim = len(lbl) // 2
             lx = lbl[0:dim]
             ly = lbl[dim:2 * dim]
         elif hasattr(self, 'etape') and self.etape.nom == 'DEFI_FONCTION':
@@ -178,7 +178,7 @@ class fonction_c(fonction_class):
             ordo = numpy.arctan2(
                 numpy.array(self.OrdoImg()), numpy.array(self.Ordo())) * 180. / pi
         elif arg == 'complex':
-            ordo = map(complex, self.Ordo(), self.OrdoImg())
+            ordo = list(map(complex, self.Ordo(), self.OrdoImg()))
         else:
             assert False, 'unexpected value for arg: %r' % arg
         return class_fonction(self.Absc(), ordo, self.Parametres(), nom=self.nom)
@@ -194,7 +194,7 @@ class fonction_c(fonction_class):
             if lbl == None:
                 UTMESS('F', 'SDVERI_2', valk=[vale])
             lbl = list(lbl)
-            dim = len(lbl) / 3
+            dim = len(lbl) // 3
             lx = lbl[0:dim]
             lr = []
             li = []
@@ -291,7 +291,7 @@ class nappe_sdaster(fonction_class):
         lval = []
         for k in range(len(dicv)):
             lbl = dicv[k + 1]
-            dim = len(lbl) / 2
+            dim = len(lbl) // 2
             lval.append([lbl[0:dim], lbl[dim:2 * dim]])
         return [list(lpar), lval]
 
@@ -320,7 +320,7 @@ class nappe_sdaster(fonction_class):
            'NOM_PARA_FONC': prol[6][0:4].strip(),
         }
         lparf = []
-        nbf = (len(prol) - 7) / 2
+        nbf = (len(prol) - 7) // 2
         for i in range(nbf):
             dicf = {
                 'INTERPOL_FONC': [prol[7 + i * 2][0:3], prol[7 + i * 2][4:7]],

@@ -72,7 +72,7 @@ list_group_ma=['ELEM0'];
 for n in range(nbcouche-1):
 
   list_group_ma.append('ELEM'+str(n+1));
-  print '   n=',n,'; liste=',list_group_ma
+  print('   n=',n,'; liste=',list_group_ma)
 
   MOD[n] = AFFE_MODELE(MAILLAGE=MA,
                        AFFE=(_F(GROUP_MA    =tuple(list_group_ma),
@@ -328,12 +328,12 @@ for n in range(1,nbcouche-1):
              OBJET=_F(CHAINE=('CHLAT','PHAUT','SIEF','CHPAR',),),);
 
     n_couche = n+2
-    print ' > n_couche          =',n_couche
+    print(' > n_couche          =',n_couche)
 
     t_init=(n+1)*1.E6
     t_fin =(n+2)*1.E6
 
-    print ' > t_init =',t_init,' t_fin =',t_fin
+    print(' > t_init =',t_init,' t_fin =',t_fin)
 
     FONCH = DEFI_FONCTION(NOM_PARA='INST',
                           PROL_DROITE='CONSTANT',
@@ -405,8 +405,8 @@ for n in range(1,nbcouche-1):
                             NOM_CMP =('SIXX','SIYY','SIZZ'),
                             VALE    =(PRES0,PRES0,PRES0,),),);
 
-    print ' > list_group_ma =',list_group_ma[:n+1]
-    print '   list_group_ma =',list_group_ma[n+1]
+    print(' > list_group_ma =',list_group_ma[:n+1])
+    print('   list_group_ma =',list_group_ma[n+1])
 
 
     # Initialisation des champs de deplacement et de contrainte dans les couches

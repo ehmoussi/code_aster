@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,24 +30,24 @@
 # Avant toutes choses, on met le module context dans le global de l'interpreteur (__builtin__)
 # sous le nom CONTEXT afin d'avoir accès aux fonctions
 # get_current_step, set_current_step et unset_current_step de n'importe où
-import context
-import __builtin__
-__builtin__.CONTEXT = context
+from . import context
+import builtins
+builtins.CONTEXT = context
 
 
 def _(msg):
     """Differs translation."""
     # 'codex' should install its translation functions later
     return msg
-__builtin__._ = _
+builtins._ = _
 
 # Classes de base
-from N_SIMP import SIMP
-from N_FACT import FACT
+from .N_SIMP import SIMP
+from .N_FACT import FACT
 
 # structures de données
-import asojb
-from asojb import AsBase
+from . import asojb
+from .asojb import AsBase
 
 # Only the first MAXSIZE objects will be checked
 # This is used for the number of MCFACT, the number of MCSIMP and the number of

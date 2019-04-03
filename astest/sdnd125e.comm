@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ def FctRp(p):
 dx       = 0.01
 dx_max   = U01*20.
 X        = np.arange(0., dx_max, dx)
-Y1       = map( FctRp , X )
+Y1       = list(map( FctRp , X ))
 Y2       = [0.5*y for y in Y1] # Non symmetric non linear laws for center/left and center/right
 X        = list(X+Sy/Kp)
 X.insert(0, 0.0)

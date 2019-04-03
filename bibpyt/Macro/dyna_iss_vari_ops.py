@@ -46,8 +46,8 @@ def dyna_iss_vari_ops(self, **kwargs):
     generator = Generator.factory(self, params)
     try:
         return generator.run()
-    except Exception, err:
-        trace = ''.join(traceback.format_tb(sys.exc_traceback))
+    except Exception as err:
+        trace = ''.join(traceback.format_tb(sys.exc_info()[2]))
         UTMESS('F', 'SUPERVIS2_5', valk=('DYNA_ISS_VARI', trace, str(err)))
 
 
@@ -58,7 +58,7 @@ class DynaISSParameters(object):
         - On cree deux dictionnaires de parametres:
                       signal_process_keys et simulation_keys
         """
-        others = kwargs.keys()
+        others = list(kwargs.keys())
         cohekeys = kwargs.get('MATR_COHE')[0]
         genekeys = kwargs.get('MATR_GENE')[0]
         interfkeys = kwargs.get('INTERF')[0]
@@ -83,7 +83,7 @@ class DynaISSParameters(object):
        #  TEST: ERREUR SI ISSF ET INTERF AUTRE QUE QUELCONQUE!
         if self.other_keys['ISSF'] == 'OUI':
             if self.interf_keys['MODE_INTERF'] != 'QUELCONQUE':
-                raise NotImplementedError, "ISSF only available with INTERF='QUELCONQUE'"
+                raise NotImplementedError("ISSF only available with INTERF='QUELCONQUE'")
 
 
 class Generator(object):
@@ -118,10 +118,10 @@ class Generator(object):
         self.cohe_params.update(params.interf_keys)
         if params.cas == 'TRANS':
             self.excit_params = params.excit_sol_keys
-            for dire in self.excit_params.keys():
-                if self.excit_params[dire] == None:
+            for dire in list(self.excit_params.keys()):
+                if self.excit_params[dire] is None:
                     del self.excit_params[dire]
-            nom_cmp = [q.replace('ACCE_','D') for q in self.excit_params.keys()]
+            nom_cmp = [q.replace('ACCE_','D') for q in list(self.excit_params.keys())]
             self.list_NOM_CMP = nom_cmp
             self.NOM_CMP = None
         else:
@@ -196,9 +196,9 @@ class GeneratorTRANS(Generator):
         __foint = [None]*3
 
         # verification que les abscisses des différents signaux sont les mêmes
-        dire0 = self.excit_params.keys()[0]
+        dire0 = list(self.excit_params.keys())[0]
         tt0, vale_s = self.excit_params[dire0].Valeurs()
-        for idi, dire in enumerate(self.excit_params.keys()[1:]):
+        for idi, dire in enumerate(list(self.excit_params.keys())[1:]):
             tt, vale_s = self.excit_params[dire].Valeurs()
             if len(tt0) != len(tt):
                 UTMESS('F','SEISME_80', valk=[dire0,dire])
@@ -274,7 +274,7 @@ class GeneratorTRANS(Generator):
         tup_re2 = []
         tup_im2 = []
         # boucle sur les 3 directions : sommation directionnelle
-        n_dire = len(self.excit_params.keys())
+        n_dire = len(list(self.excit_params.keys()))
         for i, dire in enumerate(self.excit_params.keys()):
             VEC = L_VEC[i]
 
@@ -287,7 +287,7 @@ class GeneratorTRANS(Generator):
 
             # si tous les point on été calculés: pas d'interpolation
             vale_fre, vale_re, vale_im = self.excit_params[dire].Valeurs()
-            if self.calc_params.get('FREQ_MAX') == None:
+            if self.calc_params.get('FREQ_MAX') is None:
                 inul = 0
                 for k, freqk in enumerate(self.liste_freq_sig):
                     omegk = 2.0 * pi * freqk
@@ -430,7 +430,7 @@ class GeneratorTRANS(Generator):
 
 
     def append_Vec(self, RS, k, VEC=None):
-        if VEC == None:
+        if VEC is None:
             nbmodt = self.mat_gene_params['NBMODT']
             VEC = NP.zeros((self.NB_FREQ, nbmodt)) + 0j
         VEC[k] = RS
@@ -648,7 +648,7 @@ class GeneratorSPEC(Generator):
 
 
     def append_Vec(self, RS, k , SPEC=None):
-        if SPEC == None:
+        if SPEC is None:
             nbmodt = self.mat_gene_params['NBMODT']
             SPEC = NP.zeros((self.NB_FREQ, nbmodt, nbmodt)) + 0j
         if self.interf_params['MODE_INTERF'] =='QUELCONQUE':

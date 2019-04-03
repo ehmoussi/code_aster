@@ -21,13 +21,13 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
                   nomamd, nbimpr, caimpi, caimpk, sdcarm,&
                   carael)
 !
-implicit none
+    use as_med_module, only: as_med_open
+    implicit none
 !
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
 #include "jeveux.h"
 #include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/as_mmhcow.h"
 #include "asterfort/as_mmhcyw.h"
 #include "asterfort/as_msecre.h"
@@ -111,7 +111,7 @@ character(len=80) :: caimpk(3, nbimpr)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call as_mfiope(idfimd, nofimd, edleaj, codret)
+    call as_med_open(idfimd, nofimd, edleaj, codret)
     if (codret .ne. 0) then
         saux08='mfiope'
         call utmess('F', 'DVP_97', sk=saux08, si=codret)

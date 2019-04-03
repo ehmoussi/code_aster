@@ -27,7 +27,7 @@
  *
  */
 
-extern PyMODINIT_FUNC initmed_aster();
+extern PyObject* PyInit_med_aster(void);
 
 /* FIN MED_ASTER_MODULE_H */
 #endif
