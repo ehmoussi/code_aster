@@ -363,6 +363,7 @@ class AsterPickler(pickle.Pickler):
             else:
                 init_args = ()
             self.dump(ARGS)
+            # logger.debug("ARGS: %s: %s" % (obj.getName(), init_args))
             self.save_one([obj.getName(), init_args])
             # save state
             if hasattr(obj, "__getstate__"):
@@ -372,6 +373,7 @@ class AsterPickler(pickle.Pickler):
                 state = ()
             self.dump(STATE)
             self.dump(len(state))
+            # logger.debug("STATE: len %d" % len(state))
             for item in state:
                 self.save_one(item)
 
@@ -389,7 +391,7 @@ class AsterPickler(pickle.Pickler):
             logger.debug("persistent id: {0}".format(pers_id))
             return str(pers_id)
 
-        # object objects, pickled as usual
+        # other objects, pickled as usual
         return None
 
 
