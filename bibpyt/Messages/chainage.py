@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,23 +22,23 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 Vous cherchez à faire du chaînage HM avec une modélisation Thermo-hydro-mécanique comportant de la mécanique.
 Le chaînage est donc inutile !
 """),
 
-    2 : _(u"""
+    2 : _("""
 Le champ d'entrée div(u) est mal construit. Il manque soit l'instant actuel soit l'instant précédent de div(u).
 """),
 
-    3 : _(u"""
+    3 : _("""
 Vous n'êtes pas sur une modélisation autorisée pour faire du chaînage.
 Le chaînage ne fonctionne pas sur la modélisation %(k1)s.
 
 Conseil : Vérifiez que votre modélisation %(k2)s est sans mécanique
 """),
 
-    4 : _(u"""
+    4 : _("""
 Vous n'êtes pas sur une modélisation autorisée pour faire du chaînage.
 Le chaînage ne fonctionne pas sur la modélisation %(k1)s.
 
@@ -46,34 +46,34 @@ Conseil : Vérifiez que votre modélisation %(k2)s est 'D_PLAN' ou '3D'
 ou une modélisation THM
 """),
 
-    5 : _(u"""
+    5 : _("""
 Il n'est pas possible de faire du chaînage avec un coefficient d'emmagasinement non nul.
 """),
 
-    6 : _(u"""
+    6 : _("""
 L'instant %(r1)e spécifié en entrée doit être supérieur au dernier
 instant trouvé dans la SD résultat %(k1)s.
 """),
 
-    7 : _(u"""
+    7 : _("""
   Impression du champ %(k1)s à l'instant %(r1)e sur le modèle %(k2)s
 """),
 
-    8 : _(u"""
+    8 : _("""
   Les modélisations THM n'ont de sens qu'en petites déformations.
   Choisissez COMPORTEMENT/DEFORMATION='PETIT'.
 """),
 
-    9 : _(u"""
+    9 : _("""
   Vous n'avez pas choisi une loi de comportement mécanique autorisée pour les
   modélisations THM : %(k1)s
 """),
 
-    11 : _(u"""
+    11 : _("""
   On a trouvé une évolution de variable de commandes PTOT incomplète. Il manque un instant.
 """),
 
-    12 : _(u"""
+    12 : _("""
 Vous cherchez à faire du chaînage HM dans une modélisation qui ne le permet pas.
 """),
 

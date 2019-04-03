@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,13 +21,13 @@
 
 cata_msg = {
 
-    1: _(u"""
+    1: _("""
 Erreur utilisateur :
  Pour définir le coefficient de dilatation thermique ALPHA, vous devez utiliser uniquement une fonction. Les formules et les nappes sont interdites
  Utilisez CALC_FONC_INTERP si nécessaire.
 """),
 
-    2: _(u"""
+    2: _("""
 Erreur utilisateur :
   Dans le CHAM_MATER %(k1)s, vous avez affecté le matériau %(k2)s.
   Dans ce matériau, il existe un coefficient de dilatation thermique ALPHA
@@ -42,18 +42,18 @@ Solution :
   (mot clé AFFE_VARC/NOM_VARC='TEMP',VALE_REF=...).
 """),
 
-    3: _(u"""
+    3: _("""
 Erreur utilisateur :
  Problème lors de l'interpolation de la fonction définissant le coefficient de dilatation thermique ALPHA.
  Il faut resserrer le mot clé PRECISION pour le matériau ELAS_FO.
 """),
 
-    4: _(u"""
+    4: _("""
 Erreur utilisateur :
  Le paramètre ALPHA ne peut pas être une fonction en THM.
 """),
 
-    42: _(u"""
+    42: _("""
 Erreur utilisateur :
  Le coefficient de dilatation thermique ALPHA du matériau est une fonction de la température.
  Cette fonction (%(k1)s) n'est définie que par un point.
@@ -65,13 +65,13 @@ Risque & Conseil:
  Il faut définir la fonction ALPHA avec plus d'un point.
 """),
 
-    43: _(u"""
+    43: _("""
  Le coefficient de dilatation thermique ALPHA du matériau est une fonction de la température.
  Or vous ne fournissez pas de résultats thermiques dans AFFE_MATERIAU / AFFE_VARC.
  Dans ce cas, TEMP_DEF_ALPHA et TEMP_REF doivent être identiques. 
 """),
 
-    56: _(u"""
+    56: _("""
 Erreur utilisateur :
  Un des matériaux du CHAM_MATER %(k1)s contient un coefficient de dilatation ALPHA fonction de la température.
  Mais la température de référence n'est pas fournie sous AFFE_MATERIAU/AFFE_VARC/VALE_REF

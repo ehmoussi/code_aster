@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,8 +27,8 @@ Définition d'une conception de coeur (ensemble d'assemblages).
 
 import os
 
-from mac3coeur_factory import Mac3Factory
-from mac3coeur_assemblage import ACFactory
+from .mac3coeur_factory import Mac3Factory
+from .mac3coeur_assemblage import ACFactory
 
 
 class Coeur(object):
@@ -155,7 +155,7 @@ class Coeur(object):
         """Retourne les mots-clés facteurs pour AFFE_CHAR_CINE/MECA_IMPO."""
         from code_aster.Cata.Syntax import _F
         mcf = []
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             mcf.extend(ac.mcf_deform_impo())
 
         mtmp = (_F(GROUP_MA='CRAYON',           DRX=0.,),
@@ -168,7 +168,7 @@ class Coeur(object):
         """Liste les assemblages."""
         txt = ["Lecture du Coeur %s - composé de %d assemblages"
                % (self.name, self.nbac)]
-        all = self.collAC.items()
+        all = list(self.collAC.items())
         all.sort()
         txt.append(
             "position_DAMAC correspondance_Code_Aster Type_de_conception Nombre_de_cycle")
@@ -180,35 +180,35 @@ class Coeur(object):
     def mcf_geom_fibre(self):
         """Retourne les mots-clés facteurs pour DEFI_GEOM_FIBRE."""
         mcf = []
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             mcf.extend(ac.mcf_geom_fibre())
         return mcf
 
     def mcf_cara_multifibre(self):
         """Retourne les mots-clés facteurs pour AFFE_CARA_ELEM/MULTIFIBRE."""
         mcf = []
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             mcf.extend(ac.mcf_cara_multifibre())
         return mcf
 
     def mcf_cara_barre(self):
         """Retourne les mots-clés facteurs pour AFFE_CARA_ELEM/BARRE."""
         mcf = []
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             mcf.extend(ac.mcf_cara_barre())
         return mcf
 
     def mcf_cara_poutre(self):
         """Retourne les mots-clés facteurs pour AFFE_CARA_ELEM/POUTRE."""
         mcf = []
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             mcf.extend(ac.mcf_cara_poutre())
         return mcf
 
     def mcf_cara_discret(self):
         """Retourne les mots-clés facteurs pour AFFE_CARA_ELEM/DISCRET."""
         mcf = []
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             mcf.extend(ac.mcf_cara_discret())
         return mcf
 
@@ -230,7 +230,7 @@ class Coeur(object):
     def mcf_archimede_nodal(self):
         """Retourne les mots-clés facteurs pour AFFE_CHAR_MECA/FORCE_NODALE."""
         mcf = []
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             mcf.extend(ac.mcf_archimede_nodal())
         return mcf
 
@@ -245,7 +245,7 @@ class Coeur(object):
         """Retourne les mots-clés facteurs pour AFFE_CHAR_MECA_F/FORCE_POUTRE."""
         DEFI_FONCTION = self.macro.get_cmd('DEFI_FONCTION')
         mcf = []
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             _FCT_TG = DEFI_FONCTION(
                 NOM_PARA='X', PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
                 VALE=(
@@ -541,7 +541,7 @@ class Coeur(object):
         LISG = []
         LIS_PG = []
         nbgrmax = 0
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             nbgrmax = max(nbgrmax, ac._para['NBGR'])
             LIS_GNO = []
             for igr in range(0, ac._para['NBGR']):
@@ -606,7 +606,7 @@ class Coeur(object):
 
         #--- recuperation de donnees géometriques ---
         # nombre d'assemblages dans le coeur
-        self.NBAC = len(self.collAC.values())
+        self.NBAC = len(list(self.collAC.values()))
 
         # altitudes mini et maxi de la cavité de coeur
         _ma_tmp = CREA_MAILLAGE(
@@ -668,7 +668,7 @@ class Coeur(object):
         from code_aster.Cata.Syntax import _F
 
         mcf = []
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             LIS_GNO = []
             for igr in range(0, ac._para['NBGR']):
                 mcf.append(_F(GROUP_NO='G_' + ac.idAST + '_' + str(igr + 1)))
@@ -841,7 +841,7 @@ class Coeur(object):
         mcfm=[]
         mcf0=[]
         mcf1=[]
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             (lgma,cyc) = ac.liste_gma_fluence()
             mtmpm = _F(GROUP_MA=lgma,NOM_CMP='INST', VALE=0.)
             mtmp0 = _F(GROUP_MA=lgma,NOM_CMP='INST', VALE=(cyc-1)*fluence_cycle)
@@ -1072,7 +1072,7 @@ class Coeur(object):
         from code_aster.Cata.Syntax import _F
         DEFI_COMPOR = self.macro.get_cmd('DEFI_COMPOR')
         mcf = []
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             _CMPC = DEFI_COMPOR(GEOM_FIBRE=GFF,
                                 MATER_SECT=ac.mate.mate['CR'],
                                 MULTIFIBRE=_F(
@@ -1107,7 +1107,7 @@ class Coeur(object):
         mtmp = (_F(GROUP_MA='RES_TOT', MATER=_M_RES,),)
         mcf.extend(mtmp)
 
-        for ac in self.collAC.values():
+        for ac in list(self.collAC.values()):
             mcf.extend(ac.mcf_AC_mater())
             mtmp = (
                 _F(GROUP_MA=('GT_' + ac.idAST + '_M',
@@ -1436,7 +1436,7 @@ class CoeurFactory(Mac3Factory):
     def build_supported_types(self):
         """Construit la liste des types autorisés."""
         ctxt = {}
-        for obj, val in globals().items():
+        for obj, val in list(globals().items()):
             if type(val) is type and issubclass(val, Coeur):
                 ctxt[obj] = val
         return ctxt

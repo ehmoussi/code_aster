@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -125,7 +125,7 @@ def compute_POD(COHE, PRECISION, INFO):
 #  boucle sur les modes statiques
 def compute_mecmode(NOM_CMP, GROUP_NO_INTER, resultat, nbmods, nbmodd):
     dict_modes = {}
-    dict_modes['NUME_MODE'] = range(nbmods)
+    dict_modes['NUME_MODE'] = list(range(nbmods))
     dict_modes['MCMP'] = []
     dict_modes['som'] = []
     dict_modes['maxm'] = []

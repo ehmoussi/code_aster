@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ class FormulaDefinition(ExecuteCommand):
                 in place.
         """
         # add in _ctxt all keywords but VALE, VALE_C, NOM_PARA.
-        keys = keywords.keys()
+        keys = list(keywords.keys())
         for key in keys:
             if key not in ('VALE', 'VALE_C', 'NOM_PARA'):
                 self._ctxt[key] = keywords.pop(key)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,8 +23,6 @@
 """
 """
 # Modules Python
-import types
-import string
 import os
 import shutil
 
@@ -36,7 +34,7 @@ def repr_float(valeur):
         5 caractères
         NB : valeur est un réel au format Python ou une chaine de caractères représentant un réel
     """
-    if type(valeur) == types.StringType:
+    if type(valeur) == bytes:
         valeur = eval(valeur)
     if valeur == 0.:
         return '0.0'
@@ -49,16 +47,16 @@ def repr_float(valeur):
     t = repr(valeur)
     if t == 'nan':
         return t
-    if string.find(t, 'e') != -1 or string.find(t, 'E') != -1:
+    if t.find('e') != -1 or t.find('E') != -1:
         # le réel est déjà sous forme mantisse exposant !
         # --> on remplace e par E
-        t = string.replace(t, 'e', 'E')
+        t = t.replace('e', 'E')
         # --> on doit encore vérifier que la mantisse contient bien un '.'
-        if string.find(t, '.') != -1:
+        if t.find('.') != -1:
             return t
         else:
             # -->il faut rajouter le point avant le E
-            t = string.replace(t, 'E', '.E')
+            t = t.replace('E', '.E')
             return t
     s = ''
     neg = 0
@@ -66,12 +64,12 @@ def repr_float(valeur):
         s = s + t[0]
         t = t[1:]
     cpt = 0
-    if string.atof(t[0]) == 0.:
+    if float(t[0]) == 0.:
         # réel plus petit que 1
         neg = 1
         t = t[2:]
         cpt = 1
-        while string.atof(t[0]) == 0.:
+        while float(t[0]) == 0.:
             cpt = cpt + 1
             t = t[1:]
         s = s + t[0] + '.'
@@ -80,8 +78,8 @@ def repr_float(valeur):
     else:
         # réel plus grand que 1
         s = s + t[0] + '.'
-        if string.atof(t[1:]) == 0.:
-            l = string.split(t[1:], '.')
+        if float(t[1:]) == 0.:
+            l = t[1:].split('.')
             cpt = len(l[0])
         else:
             r = 0
@@ -94,7 +92,7 @@ def repr_float(valeur):
                     s = s + c
                 else:
                     pt = 1
-                    if r + 1 == len(t) or string.atof(t[r + 1:]) == 0.:
+                    if r + 1 == len(t) or float(t[r + 1:]) == 0.:
                         break
     s = s + 'E' + neg * '-' + repr(cpt)
     return s

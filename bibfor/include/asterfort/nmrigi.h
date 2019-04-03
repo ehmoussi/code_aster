@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,28 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmrigi(modelz    , mate  , carele, ds_constitutive, sddyna,&
-                      ds_measure, fonact, iterat, valinc         , solalg,&
-                      comref    , meelem, veelem, optioz         , ldccvg)
+    subroutine nmrigi(modelz         , cara_elem,&
+                      ds_material    , ds_constitutive,&
+                      list_func_acti , iter_newt      , sddyna, ds_measure, ds_system,&
+                      hval_incr      , hval_algo      ,&
+                      optioz         , ldccvg)
         use NonLin_Datastructure_type
-        character(len=*) :: modelz
-        character(len=*) :: mate
-        character(len=24) :: carele
+        character(len=*), intent(in) :: modelz
+        character(len=24), intent(in) :: cara_elem
+        type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: sddyna
+        integer, intent(in) :: list_func_acti(*)
+        integer, intent(in) :: iter_newt
+        character(len=19), intent(in) :: sddyna
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        integer :: fonact(*)
-        integer :: iterat
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=24) :: comref
-        character(len=19) :: meelem(*)
-        character(len=19) :: veelem(*)
-        character(len=*) :: optioz
-        integer :: ldccvg
+        type(NL_DS_System), intent(in) :: ds_system
+        character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        character(len=*), intent(in) :: optioz
+        integer, intent(out) :: ldccvg
     end subroutine nmrigi
 end interface

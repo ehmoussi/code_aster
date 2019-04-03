@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,23 +20,19 @@
 import os
 import os.path as osp
 import tempfile
-from subprocess import Popen, PIPE
+from configparser import ConfigParser
 from functools import partial
+from subprocess import PIPE, CalledProcessError, Popen, call, check_call
 
-from waflib import TaskGen, Logs, Errors
+from waflib import Errors, Logs, TaskGen
 
-try:
-    from mercurial import hg, ui as UI
-    ui = UI.ui()
-    _reader = partial(ui.config, 'aster')
-except:
-    _reader = None
 
 def _read_config(env, prefs, key):
-    """Read """
-    if _reader is None:
-        return
-    value = _reader(key)
+    """Read a value in the config file and add it in `env` and `prefs`."""
+    cfg = ConfigParser()
+    cfg.read(osp.join(os.environ["HOME"], ".hgrc"))
+
+    value = cfg.get("aster", key, fallback="")
     dkey = 'PREFS_{}'.format(key.upper())
     env[dkey] = value
     if value:
@@ -59,6 +55,9 @@ def options(self):
     group.add_option('--time_limit', dest='time_limit',
                     action='store', default=None,
                     help='override the time limit of the testcase')
+    group.add_option('--notify', dest='notify',
+                    action='store_true', default=False,
+                    help='send a desktop notification on completion')
 
 def configure(self):
     """Store developer preferences"""
@@ -102,11 +101,12 @@ def runtest(self):
         Logs.info("running %s in '%s'" % (test, self.variant))
         ext = '.' + osp.basename(self.env['PREFIX']) + '.' + self.variant + '.output'
         fname = osp.join(dtmp, osp.basename(test) + ext)
-        fobj = open(fname, 'wb')
+        fobj = open(fname, 'w')
         Logs.info("`- output in %s" % fname)
         nook = False
         proc = Popen(cmd, stdout=PIPE, bufsize=1)
-        for line in iter(proc.stdout.readline, ''):
+        for lineb in iter(proc.stdout.readline, b''):
+            line = lineb.decode(errors='replace')
             fobj.write(line)
             nook = nook or 'NOOK_TEST_RESU' in line
             fobj.flush()
@@ -121,7 +121,9 @@ def runtest(self):
             func = Logs.error
             status += 1
         func('`- exit %s' % retcode)
-        notify('testcase %s ended - exit %s' % (test, retcode), errlevel=retcode)
+        if opts.notify:
+            notify('testcase %s ended - exit %s' % (test, retcode),
+                   errlevel=retcode)
     if status != 0:
         raise Errors.WafError('testcase failed')
 
@@ -129,10 +131,10 @@ def runtest(self):
 def _has_asrun():
     """check that as_run is available"""
     try:
-        iret = Popen(['as_run', '--version'], stdout=PIPE, stderr=PIPE).wait()
-    except OSError:
-        iret = 127
-    return iret == 0
+        check_call(['as_run', '--version'], stdout=PIPE, stderr=PIPE)
+    except CalledProcessError:
+        return False
+    return True
 
 def notify(message, errlevel=0):
     """Send a message as a notification bubble"""
@@ -144,6 +146,6 @@ def notify(message, errlevel=0):
     }
     icon = d_icon.get(errlevel, d_icon[1])
     try:
-        Popen(['notify-send', '-i', icon, title, message])
+        call(['notify-send', '-i', icon, title, message])
     except OSError:
         pass

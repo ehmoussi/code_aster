@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,11 +33,12 @@ subroutine as_msevac(fid, nomest, nomatt, tyatmd, nbrcmp,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, tyatm4, nbrcm4, cret4
-    fid4 = fid
+    med_idt :: fidm
+    med_int :: tyatm4, nbrcm4, cret4
+    fidm = to_med_idt(fid)
     tyatm4 = tyatmd
     nbrcm4 = nbrcmp
-    call msevac(fid4, nomest, nomatt, tyatm4, nbrcm4,&
+    call msevac(fidm, nomest, nomatt, tyatm4, nbrcm4,&
                 cret4)
     cret = cret4
 #else

@@ -94,9 +94,11 @@ class MissCmdeGenerator(object):
         text = remove_empty_lines(content)
         if self._dbg:
             dtmp = tempfile.mkdtemp(prefix=self.param["PROJET"] + '_')
-            open(osp.join(dtmp, 'command'), 'wb').write(text)
-            open(osp.join(dtmp, 'para'), 'wb').write(pformat(self.param))
-            print '#dbg command file:', osp.join(dtmp, 'command')
+            with open(osp.join(dtmp, 'command'), 'w') as f:
+                f.write(text)
+            with open(osp.join(dtmp, 'para'), 'w') as f:
+                f.write(pformat(self.param))
+            print('#dbg command file:', osp.join(dtmp, 'command'))
         return text
 
     def build_data(self):
@@ -725,7 +727,8 @@ stwDncR5RevYR6cq/CqGI19Y6lvgN0yQXTY=
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            open('/tmp/test01_sdlx103a.in', 'wb').write(txt)
+            with open('/tmp/test01_sdlx103a.in', 'w') as f:
+                f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
 
@@ -761,7 +764,8 @@ DJ2q7FXuRr6t9JfAH4AuXdY=
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            open('/tmp/test02_zzzz200b.in', 'wb').write(txt)
+            with open('/tmp/test02_zzzz200b.in', 'w') as f:
+                f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
 
@@ -802,7 +806,8 @@ bEoiaetIF5ltey0cVW72YG2767XsvvDfhYldqSF/Ac9u8B8=
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            open('/tmp/test03_fdlv112b.in', 'wb').write(txt)
+            with open('/tmp/test03_fdlv112b.in', 'w') as f:
+                f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
 
@@ -840,7 +845,8 @@ HmecpsR1A32bksx/vuIcSoZD61ZCZ5JNfN6YDfgPEoFDsQ==
         gen = MissCmdeGen(self.par, self.struct, self.fname, lapl_temps=True)
         txt = gen.build()
         if self._debug:
-            open('/tmp/test04_miss03c_inci.in', 'wb').write(txt)
+            with open('/tmp/test04_miss03c_inci.in', 'w') as f:
+                f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
 
@@ -882,7 +888,8 @@ mvv8JCqRitMzdqbpHCjF9gW142wdq/JFHgdevNSrwW/+xHAQ
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            open('/tmp/test05_miss03c_loop.in', 'wb').write(txt)
+            with open('/tmp/test05_miss03c_loop.in', 'w') as f:
+                f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
 
@@ -922,7 +929,8 @@ RYFWCQ==
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            open('/tmp/test06_zzzz108c.in', 'wb').write(txt)
+            with open('/tmp/test06_zzzz108c.in', 'w') as f:
+                f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
 
@@ -974,7 +982,8 @@ aoGdEL8yaVmewuCHkhR/om5lOpTds/i504zrNvFvcCbg8g==
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            open('/tmp/test07_fdlv112e.in', 'wb').write(txt)
+            with open('/tmp/test07_fdlv112e.in', 'w') as f:
+                f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
 
@@ -1014,13 +1023,14 @@ rXffxK/nhVQeQ/4A5Lekkg==
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
         if self._debug:
-            open('/tmp/test08_fdlv113a.in', 'wb').write(txt)
+            with open('/tmp/test08_fdlv113a.in', 'w') as f:
+                f.write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
 
     def _diffcompress(self, refe, new):
         """Compare files without comment"""
-        sref = remove_comments(test_utils.uncompress64(refe))
+        sref = remove_comments((test_utils.uncompress64(refe.encode())).decode())
         snew = remove_comments(new)
         diff = test_utils.difftxt(sref, snew)
         if diff and self._debug:

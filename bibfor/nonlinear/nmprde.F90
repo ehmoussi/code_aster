@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine nmprde(mesh    , modele, numedd         , numfix    , ds_material, carele    ,&
-                  ds_constitutive, lischa    , ds_algopara, solveu    ,&
+                  ds_constitutive, lischa    , ds_algopara, solveu    , ds_system,&
                   fonact, ds_print       , ds_measure, ds_algorom, sddisc     , numins    ,&
                   valinc, solalg         , matass    , maprec     , ds_contact,&
                   sddyna, meelem         , measse    , veelem     , veasse    ,&
@@ -51,6 +51,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 character(len=19) :: lischa, solveu, sddisc, sddyna
 character(len=24) :: numedd, numfix
 character(len=24) :: modele, carele
+type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Contact), intent(inout) :: ds_contact
@@ -160,7 +161,7 @@ character(len=19) :: solalg(*), valinc(*)
 !
     if (lproj) then
         call nmprca(mesh, modele, numedd         , numfix     , ds_material, carele    ,&
-                    ds_constitutive, lischa     , ds_algopara, solveu    ,&
+                    ds_constitutive, lischa     , ds_algopara, solveu    , ds_system,&
                     fonact, ds_print       , ds_measure , ds_algorom, sddisc     , numins    ,&
                     valinc, solalg         , matass     , maprec     , ds_contact,&
                     sddyna, meelem         , measse     , veelem     , veasse    ,&

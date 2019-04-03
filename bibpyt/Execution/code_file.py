@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,8 +28,8 @@ import os
 from Noyau.N_ASSD import ASSD
 from Noyau.N_types import force_list, is_float, is_int
 
-from E_Visitor import JDCVisitor
-from E_utils import repr_float
+from .E_Visitor import JDCVisitor
+from .E_utils import repr_float
 
 MCFACT_VIDE = '--'
 
@@ -85,13 +85,13 @@ class CodeVisitor(JDCVisitor):
         as_list = (mcsimp.definition.max == '**' or mcsimp.definition.max > 1) \
             and mcsimp.definition.into is not None
         svalues = []
-        for i, value in enumerate(lval):
+        for value in lval:
             repr_value = ''
             if is_float(value):
                 repr_value = repr_float(value)
             elif is_int(value):
                 repr_value = str(value)
-            elif type(value) in (str, unicode):
+            elif type(value) in (str, str):
                 repr_value = repr(value)
             svalues.append(repr_value)
         if as_list and len(svalues) == 1:
@@ -99,8 +99,14 @@ class CodeVisitor(JDCVisitor):
         self.value = ", ".join(svalues)
         if as_list:
             self.value = "(%s)" % self.value
-        if mcsimp.definition.into is None and mcsimp.valeur != mcsimp.definition.defaut:
-            self.value = ''
+        if mcsimp.definition.into is None:
+            valeur_is_not_default = mcsimp.valeur != mcsimp.definition.defaut
+            try:
+                valeur_is_not_default = any(valeur_is_not_default)
+            except TypeError:
+                pass
+            if valeur_is_not_default:
+                self.value = ''
         self.add_args()
 
     def visitASSD(self, sd):

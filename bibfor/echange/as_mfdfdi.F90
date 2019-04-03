@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,10 +38,11 @@ subroutine as_mfdfdi(fid, ind, cha, type, comp,&
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, ind4, type4, cret4, nseqc4, lmai4
-    fid4 = fid
+    med_idt :: fidm
+    med_int :: ind4, type4, cret4, nseqc4, lmai4
+    fidm = to_med_idt(fid)
     ind4 = ind
-    call mfdfdi(fid4, ind4, cha, nommai, lmai4,&
+    call mfdfdi(fidm, ind4, cha, nommai, lmai4,&
                 type4, comp, unit, unidt, nseqc4,&
                 cret4)
     type = type4

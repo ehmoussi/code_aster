@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine nmcese(modele         , numedd, ds_material, carele    ,&
-                      ds_constitutive, ds_contact, lischa, fonact, ds_measure,&
-                      iterat         , sdnume, sdpilo, valinc    , solalg    ,&
-                      veelem         , veasse, offset, typsel    , sddisc    ,&
-                      licite         , rho   , eta   , etaf      , criter    ,&
-                      ldccvg         , pilcvg, matass)
+    subroutine nmcese(modele         , numedd    , ds_material, carele   ,&
+                      ds_constitutive, ds_contact, lischa     , fonact   , ds_measure,&
+                      iterat         , sdnume    , sdpilo     , valinc   , solalg    ,&
+                      veelem         , veasse    , offset     , typsel   , sddisc    ,&
+                      licite         , rho       , eta        , etaf     , criter    ,&
+                      ldccvg         , pilcvg    , matass     , ds_system)
         use NonLin_Datastructure_type
         character(len=24) :: modele
         character(len=24) :: numedd
@@ -34,6 +33,7 @@ interface
         character(len=19) :: lischa
         integer :: fonact(*)
         type(NL_DS_Measure), intent(inout) :: ds_measure
+        type(NL_DS_System), intent(in) :: ds_system
         integer :: iterat
         character(len=19) :: sdnume
         character(len=19) :: sdpilo

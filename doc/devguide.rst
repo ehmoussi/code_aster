@@ -1,8 +1,8 @@
 .. _devguide:
 
-###############
-Developer Guide
-###############
+#################
+Developer's Guide
+#################
 
 *****************
 Development rules

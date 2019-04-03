@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,10 +32,11 @@ subroutine as_mfinvr(fid, maj, mini, rel, cret)
 #else
 !
 #if med_int_kind != aster_int_kind
-    med_int :: fid4, maj4, min4, rel4
+    med_idt :: fidm
+    med_int :: maj4, min4, rel4
     med_int :: cret4
-    fid4 = fid
-    call mfinvr(fid4, maj4, min4, rel4, cret4)
+    fidm = to_med_idt(fid)
+    call mfinvr(fidm, maj4, min4, rel4, cret4)
     maj = maj4
     mini = min4
     rel = rel4

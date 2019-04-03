@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 Erreur de programmation.
 
 Condition non respectée:
@@ -40,22 +40,22 @@ Condition non respectée:
 Fichier %(k2)s, ligne %(i1)d
 """),
 
-    2 : _(u"""
+    2 : _("""
 Erreur numérique (floating point exception).
 """),
 
-    3 : _(u"""
+    3 : _("""
 Erreur de programmation : Nom de grandeur inattendu : %(k1)s
 Routine : %(k2)s
 """),
 
-    4 : _(u"""
+    4 : _("""
 On ne sait pas traiter ce type d'élément : %(k1)s
 """),
 
 
 
-    6 : _(u"""
+    6 : _("""
 Erreur de programmation :
   La mémoire allouée avec la routine AS_ALLOCATE n'a pas été totalement libérée
   (fuite mémoire).
@@ -66,7 +66,7 @@ Risques et conseils :
   Il faut émettre une fiche d'anomalie.
 """),
 
-    7 : _(u"""
+    7 : _("""
 Erreur de programmation :
   Le nombre d'objet de travail créés par le mécanisme AS_ALLOCATE
   est supérieur au maximum autorisé.
@@ -77,14 +77,14 @@ Risques et conseils :
 
 
 
-    9 : _(u"""
+    9 : _("""
 Erreur de programmation dans un module Python.
 Condition non respectée : %(k2)s
 
       %(k1)s
 """),
 
-    97 : _(u"""
+    97 : _("""
 Erreur signalée dans la bibliothèque MED
      nom de l'utilitaire : %(k1)s
              code retour : %(i1)d

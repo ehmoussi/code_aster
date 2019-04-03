@@ -255,7 +255,7 @@ def combinaison_ferraillage_ops(self, **args):
 def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
 
     dict_affe = affe.List_F()[0]
-    dict_affe.pop('TYPE_STRUCTURE') # print dict_affe
+    dict_affe.pop('TYPE_STRUCTURE')
 
     for idx, nume_ordre in enumerate(lst_nume_ordre):
 
@@ -289,16 +289,14 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
         affe_for_cf.pop('GAMMA_C_ACCI')
         affe_for_cf.pop('GAMMA_S_ACCI')
 
-        dic_calc_ferraillage = dict(dic_type_comb.items() + [('CODIFICATION', code)])
-
-        print 'LOL', affe_for_cf
+        dic_type_comb['CODIFICATION'] = code
 
         _resfer = CALC_FERRAILLAGE (
             reuse = _resfer,
             RESULTAT = _resfer,
             NUME_ORDRE = nume_ordre,
             AFFE = _F(**affe_for_cf),
-            **dic_calc_ferraillage
+            **dic_type_comb
         )
 
     return _resfer

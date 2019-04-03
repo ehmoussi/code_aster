@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ class fenetre_mac:
 
     def __init__(self, resu1, resu2, mac):
         from Calc_essai.outils_ihm import MacWindowFrame
-        from Tkinter import Tk, Frame, StringVar, Entry, Label, Button
+        from tkinter import Tk, Frame, StringVar, Entry, Label, Button
 
         self.resu1 = resu1
         self.resu2 = resu2
@@ -114,8 +114,8 @@ class fenetre_mac:
         """ affiche la liste d'appariement par defaut. Le nombre de modes
             correspond au plus petit nombre de modes entre resu1 et resu2"""
         nb_mod = min(len(self.freq1), len(self.freq2))
-        self.var_l1.set(range(1, nb_mod + 1))
-        self.var_l2.set(range(1, nb_mod + 1))
+        self.var_l1.set(list(range(1, nb_mod + 1)))
+        self.var_l2.set(list(range(1, nb_mod + 1)))
 
     def close_win(self):
         self.l1 = self.var_l1.get()

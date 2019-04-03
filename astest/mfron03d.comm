@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ MATFRONT=DEFI_MATERIAU(
                       ELAS=_F(E=145200.0, NU=0.3,),
                       MFRONT=_F(LISTE_COEF=(E_L ,E_L ,E_L,Nu,Nu,Nu,G,G,G,10.,40.,0.,75.5,9.77,19.34,1.,36.68,G,
                                                     ),)
-                                      ,)              
+                                      ,)
 
 #m = 10.,   # N
 #K = 40.,   # K
@@ -101,7 +101,7 @@ def DEFI_ANGLES(Ng,COMPMONO,**args):
 #LISTE_GROUP : MOT-CLE FACTEUR MASSIF de DEFI_COMPOR / POLYCRISTAL
 ###################################################################
    import copy, math
-   from random import *
+   from random import random
    coef=360.
    LISTE_ANGLES=[]
    for ig in range(Ng):
@@ -320,6 +320,6 @@ TINT1=CREA_TABLE(FONCTION= _F(FONCTION = DIF1,PARA = ('INST','NEUT1')),);
 
 TEST_TABLE(NOM_PARA='NEUT1',TYPE_TEST='SOMM_ABS',TABLE=TINT1,VALE_CALC=8.77130389904)
 
-IMPR_TABLE(TABLE=SOLMF,UNITE=38)
+IMPR_TABLE(TABLE=SOLMF,UNITE=39)
 
 FIN()

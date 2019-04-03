@@ -174,7 +174,7 @@ tab1 = []
 tab2 = []
 tab3 = []
 compteur = 1
-for nom_cham,cmps in dic_champ_med.iteritems():
+for nom_cham,cmps in dic_champ_med.items():
     for nom_cmp in cmps:
         tab1.append(nom_cham)
         tab2.append(nom_cmp)

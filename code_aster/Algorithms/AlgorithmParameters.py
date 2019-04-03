@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -376,21 +376,21 @@ class Data(object):
 
 
 ConstitutiveLaw = namedtuple("ConstitutiveLaw", Data.allConstitutiveLaw)._make(
-    range(len(Data.allConstitutiveLaw)))
-ConstitutiveLawNames = dict(zip(ConstitutiveLaw, Data.allConstitutiveLawNames))
+    list(range(len(Data.allConstitutiveLaw))))
+ConstitutiveLawNames = dict(list(zip(ConstitutiveLaw, Data.allConstitutiveLawNames)))
 
 StrainType = namedtuple("StrainType", Data.allStrainEnum)._make(
-    range(len(Data.allStrainEnum)))
-StrainTypeNames = dict(zip(StrainType, Data.allStrainNames))
+    list(range(len(Data.allStrainEnum))))
+StrainTypeNames = dict(list(zip(StrainType, Data.allStrainNames)))
 
 TangentMatrixType = namedtuple("TangentMatrixType", Data.allTangentMatrix)._make(
-    range(len(Data.allTangentMatrix)))
-TangentMatrixTypeNames = dict(zip(TangentMatrixType, Data.allTangentMatrixNames))
+    list(range(len(Data.allTangentMatrix))))
+TangentMatrixTypeNames = dict(list(zip(TangentMatrixType, Data.allTangentMatrixNames)))
 
 IntegrationAlgorithm = namedtuple("IntegrationAlgorithm",
                                   Data.allIntegrationAlgo)._make(
-                           range(len(Data.allIntegrationAlgo)))
-IntegrationAlgorithmNames = dict(zip(IntegrationAlgorithm,
-                                     Data.allIntegrationAlgoNames))
+                           list(range(len(Data.allIntegrationAlgo))))
+IntegrationAlgorithmNames = dict(list(zip(IntegrationAlgorithm,
+                                     Data.allIntegrationAlgoNames)))
 
 del Data

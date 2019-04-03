@@ -129,8 +129,8 @@ MATMASS=ASSE_MATRICE(MATR_ELEM=MASELEM,
 
 MATRIGI=ASSE_MATRICE(MATR_ELEM=RIGIELEM,
                      NUME_DDL=NUM_DYN,);
-print "alors le type", MATRIGI.getType()
-print "alors le type", MATMASS.getType()
+print("alors le type", MATRIGI.getType())
+print("alors le type", MATMASS.getType())
 MOD_DYN=CALC_MODES(MATR_RIGI=MATRIGI,SOLVEUR=_F(METHODE='MULT_FRONT'),
                    #FILTRE_MODE=_F(CRIT_EXTR='MASS_EFFE_UN',
                    #               SEUIL=1.E-3,),

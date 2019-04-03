@@ -30,8 +30,8 @@ from ..Utilities import injector
 _orig_getType = AssemblyMatrixDisplacementDouble.getType
 
 
-class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplacementDouble),
-                                   AssemblyMatrixDisplacementDouble):
+@injector(AssemblyMatrixDisplacementDouble)
+class ExtendedAssemblyMatrixDisplacementDouble(object):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
 
     def __getstate__(self):
@@ -81,8 +81,6 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
         """
         import numpy as NP
         from SD.sd_stoc_morse import sd_stoc_morse
-        if not self.accessible():
-            raise AsException("Erreur dans matr_asse.EXTR_MATR en PAR_LOT='OUI'")
         refa = NP.array(self.sdj.REFA.get())
         ma = refa[0]
         nu = refa[1]
@@ -115,7 +113,7 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
                 def __iter__(self):
                     return self
 
-                def next(self):
+                def __next__(self):
                     if self.kterm == 0:
                         self.kterm += 1
                         return self.jcol
@@ -152,7 +150,7 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
         else :
             data = NP.zeros([dim, dim], dtype=dtype)
             jcol = 1
-            for kterm in xrange(1,nnz+1):
+            for kterm in range(1,nnz+1):
                 ilig = smhc[kterm-1]
                 if smdi[jcol-1] < kterm:
                     jcol += 1
@@ -160,8 +158,8 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
                 data[ilig-1, jcol-1] = triang_sup[kterm-1]
             return data
 
-class ExtendedAssemblyMatrixDisplacementComplex(injector(AssemblyMatrixDisplacementComplex),
-                                   AssemblyMatrixDisplacementComplex):
+@injector(AssemblyMatrixDisplacementComplex)
+class ExtendedAssemblyMatrixDisplacementComplex(object):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
 
     def EXTR_MATR(self, sparse=False, epsilon=None) :
@@ -182,8 +180,6 @@ class ExtendedAssemblyMatrixDisplacementComplex(injector(AssemblyMatrixDisplacem
         """
         import numpy as NP
         from SD.sd_stoc_morse import sd_stoc_morse
-        if not self.accessible():
-            raise AsException("Erreur dans matr_asse.EXTR_MATR en PAR_LOT='OUI'")
         refa = NP.array(self.sdj.REFA.get())
         ma = refa[0]
         nu = refa[1]
@@ -216,7 +212,7 @@ class ExtendedAssemblyMatrixDisplacementComplex(injector(AssemblyMatrixDisplacem
                 def __iter__(self):
                     return self
 
-                def next(self):
+                def __next__(self):
                     if self.kterm == 0:
                         self.kterm += 1
                         return self.jcol
@@ -253,7 +249,7 @@ class ExtendedAssemblyMatrixDisplacementComplex(injector(AssemblyMatrixDisplacem
         else :
             data = NP.zeros([dim, dim], dtype=dtype)
             jcol = 1
-            for kterm in xrange(1,nnz+1):
+            for kterm in range(1,nnz+1):
                 ilig = smhc[kterm-1]
                 if smdi[jcol-1] < kterm:
                     jcol += 1

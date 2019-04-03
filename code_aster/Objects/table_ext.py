@@ -29,7 +29,8 @@ from libaster import Table
 from ..Utilities import injector
 
 
-class ExtendedTable(injector(Table), Table):
+@injector(Table)
+class ExtendedTable(object):
     cata_sdj = "SD.sd_table.sd_table"
 
     def __getitem__(self, key):
@@ -69,7 +70,7 @@ class ExtendedTable(injector(Table), Table):
         else:
             titr = ''
         return titr
-    
+
     def get_nrow(self):
         """Renvoie le nombre de lignes
         """
@@ -112,7 +113,7 @@ class ExtendedTable(injector(Table), Table):
             # retourne une table vide
             return Table(titr=titr, nom=self.nom)
         tabnom=list(v_tblp)
-        nparam=len(tabnom)/4
+        nparam=len(tabnom) // 4
         lparam=[tabnom[4*i:4*i+4] for i in range(nparam)]
         # restriction aux paramètres demandés
         if para is not None:
@@ -131,7 +132,7 @@ class ExtendedTable(injector(Table), Table):
         for i in lparam :
             value=list(aster.getvectjev(i[2]))
             exist=aster.getvectjev(i[3])
-            dval[i[0].strip()] = map(Nonefy, value, exist)
+            dval[i[0].strip()] = list(map(Nonefy, value, exist))
             lpar.append(i[0].strip())
             ltyp.append(i[1].strip())
         n=len(dval[lpar[0]])

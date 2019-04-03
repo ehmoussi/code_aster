@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,13 +31,13 @@ subroutine ircmpf(nofimd, nvalty, profil, noprof)
 !       NOPROF : NOM DU PROFIL AU SENS MED
 !_______________________________________________________________________
 !
+    use as_med_module, only: as_med_open
     implicit none
 !
 ! 0.1. ==> ARGUMENTS
 !
 #include "jeveux.h"
 #include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/as_mpfnpf.h"
 #include "asterfort/as_mpfpfi.h"
 #include "asterfort/as_mpfprr.h"
@@ -100,7 +100,7 @@ subroutine ircmpf(nofimd, nvalty, profil, noprof)
 ! 2. ON OUVRE LE FICHIER EN LECTURE
 !====
 !
-    call as_mfiope(idfimd, nofimd, edlect, codret)
+    call as_med_open(idfimd, nofimd, edlect, codret)
     if (codret .ne. 0) then
         saux08='mfiope'
         call utmess('F', 'DVP_97', sk=saux08, si=codret)
@@ -222,7 +222,7 @@ subroutine ircmpf(nofimd, nvalty, profil, noprof)
 !    CELA SIGNIFIE QUE LE FICHIER EST ENRICHI MAIS ON NE PEUT PAS
 !    ECRASER UNE DONNEE EXISTANTE
 !
-        call as_mfiope(idfimd, nofimd, edleaj, codret)
+        call as_med_open(idfimd, nofimd, edleaj, codret)
         if (codret .ne. 0) then
             saux08='mfiope'
             call utmess('F', 'DVP_97', sk=saux08, si=codret)

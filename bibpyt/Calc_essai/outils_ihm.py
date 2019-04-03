@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,13 +22,13 @@
 import os
 import string
 from subprocess import Popen
-from Tkinter import *
+from tkinter import *
 
 from numpy import arange, array, log, maximum, minimum
 
 import aster
 import aster_core
-import tkFont
+import tkinter.font
 from Calc_essai.cata_ce import DynaHarmo, ModeMeca
 from code_aster import AsterError
 from code_aster.Cata.Syntax import _F, ASSD
@@ -346,8 +346,8 @@ class VisuSpectre(Frame):
                  type_data='C', label_visu=None,
                  **args):
 
-        self.font1 = tkFont.Font(family="Helvetica", size=16)
-        self.font2 = tkFont.Font(family="Helvetica", size=14)
+        self.font1 = tkinter.font.Font(family="Helvetica", size=16)
+        self.font2 = tkinter.font.Font(family="Helvetica", size=14)
         self.parent = parent
         self.menu_list = [None] * nb_col
         self.var_export = [StringVar()] * nb_col
@@ -355,7 +355,7 @@ class VisuSpectre(Frame):
         Frame.__init__(self, parent, args)
         r1 = 0
 
-        Label(self, text=u"Visualisation des résultats",
+        Label(self, text="Visualisation des résultats",
               font=self.font2).grid(row=r1, padx=50, pady=3)
         r1 += 1
 
@@ -413,7 +413,7 @@ class VisuSpectre(Frame):
 
         if type_data == 'C':  # donnees complexes a visualiser
             donnees = ["Reel ", "Abs.", "Imag.", "Pha."]
-            Label(box_2, text=u"Données :", pady=5).grid(row=r2, column=0)
+            Label(box_2, text="Données :", pady=5).grid(row=r2, column=0)
             for lon in range(len(donnees)):
                 Radiobutton(box_2, text=donnees[lon],
                             variable=self.parent.radio_donnees,
@@ -422,7 +422,7 @@ class VisuSpectre(Frame):
             r2 += 2
         else:
             donnees = ["Reel ", "Abs."]
-            Label(box_2, text=u"Données :", pady=5).grid(row=r2, column=0)
+            Label(box_2, text="Données :", pady=5).grid(row=r2, column=0)
             for lon in range(2):
                 Radiobutton(box_2, text=donnees[lon],
                             variable=self.parent.radio_donnees,
@@ -430,7 +430,7 @@ class VisuSpectre(Frame):
             r2 += 1
 
         Label(box_2, text="Echelle X :", pady=5).grid(row=r2, column=0)
-        ech = [u"Linéaire", "Logarithmique"]
+        ech = ["Linéaire", "Logarithmique"]
         for lon in range(len(ech)):
             Radiobutton(box_2, text=ech[lon],
                         variable=self.parent.xlinlog, value=lon
@@ -525,7 +525,7 @@ class GroupNoList(ModeList):
 
     def set_mesh(self, mail):
         groupno = mail.sdj.GROUPENO.get()
-        self.set_values(zip(groupno.keys(), groupno.keys()))
+        self.set_values(list(zip(list(groupno.keys()), list(groupno.keys()))))
 
 
 class GroupMaList(ModeList):
@@ -537,7 +537,7 @@ class GroupMaList(ModeList):
 
     def set_mesh(self, mail):
         groupno = mail.sdj.GROUPEMA.get()
-        self.set_values(zip(groupno.keys(), groupno.keys()))
+        self.set_values(list(zip(list(groupno.keys()), list(groupno.keys()))))
 
 
 class OptionFrame(Frame):
@@ -639,7 +639,7 @@ class ParamModelCouple(Frame):
             self.sorensen.destroy()
         if opt == "autour d'une frequence cible":
             panel = OptionFrame(self, None, [
-                (u"Fréquence cible", Entry, {'textvariable': self.opt_freq1}),
+                ("Fréquence cible", Entry, {'textvariable': self.opt_freq1}),
                 ("Nombre de fréquences (renseigner -1 pour calculer tout le spectre)", Entry,
                  {'textvariable': self.opt_nmax_freq}),
             ])
@@ -647,8 +647,8 @@ class ParamModelCouple(Frame):
             self.var_meth_modes_couple.set("MODE_ITER_SIMULT")
         elif opt == "sur une bande frequentielle":
             panel = OptionFrame(self, None, [
-                (u"Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
-                (u"Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
+                ("Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
+                ("Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
             ])
             param_av_ok = True
             self.var_meth_modes_couple.set("MODE_ITER_SIMULT")
@@ -659,20 +659,20 @@ class ParamModelCouple(Frame):
             param_av_ok = True
             self.var_meth_modes_couple.set("MODE_ITER_SIMULT")
         elif opt == "proche de frequences donnees":
-            panel = ModeList(self, u"Fréquences proches")
+            panel = ModeList(self, "Fréquences proches")
             panel.set_values([(f, "% 6.2f Hz" % f) for f in self.frequences])
             self.var_meth_modes_couple.set("MODE_ITER_INV")
         elif opt == "separation sur un intervalle":
             self.var_meth_modes_couple.set("MODE_ITER_INV")
             if param == "Parametres simples":
                 panel = OptionFrame(self, None, [
-                    (u"Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
-                    (u"Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
+                    ("Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
+                    ("Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
                 ])
             else:
                 panel = OptionFrame(self, None, [
-                    (u"Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
-                    (u"Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
+                    ("Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
+                    ("Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
                     ("NMAX iter separe", Entry,
                      {'textvariable': self.nmax_iter_separe}),
                     ("Precision separe", Entry,
@@ -682,13 +682,13 @@ class ParamModelCouple(Frame):
             self.var_meth_modes_couple.set("MODE_ITER_INV")
             if param == "Parametres simples":
                 panel = OptionFrame(self, None, [
-                    (u"Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
-                    (u"Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
+                    ("Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
+                    ("Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
                 ])
             else:
                 panel = OptionFrame(self, None, [
-                    (u"Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
-                    (u"Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
+                    ("Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
+                    ("Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
                     ("NMAX iter separe", Entry,
                      {'textvariable': self.nmax_iter_separe}),
                     ("Precision separe", Entry,
@@ -813,14 +813,14 @@ class ParamModeLMME(Frame):
 
         if opt == "autour d'une frequence cible":
             panel = OptionFrame(self, None, [
-                (u"Fréquence cible", Entry, {'textvariable': self.opt_freq1}),
+                ("Fréquence cible", Entry, {'textvariable': self.opt_freq1}),
                 ("Nombre de fréquences (renseigner -1 pour calculer tout le spectre)", Entry,
                  {'textvariable': self.opt_nmax_freq}),
             ])
         elif opt == "sur une bande frequentielle":
             panel = OptionFrame(self, None, [
-                (u"Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
-                (u"Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
+                ("Fréquence minimale", Entry, {'textvariable': self.opt_freq1}),
+                ("Fréquence maximale", Entry, {'textvariable': self.opt_freq2}),
             ])
         elif opt == "N plus petites frequences":
             panel = OptionFrame(self, None, [
@@ -905,7 +905,7 @@ class ParamProjMesuModal(Frame):
             ])
             self.regul_meth.set('NON')
         elif opt == "LU":
-            panel = Label(self, text=u"Pas de paramétrage")
+            panel = Label(self, text="Pas de paramétrage")
         else:
             raise RuntimeError("Unknown option '%s'" % opt)
         self.opt_panel = panel
@@ -1070,8 +1070,8 @@ class ChgtRepereDialogue(Toplevel):
     def _update_cylindrique(self):
         """Reconstruit l'interface pour le changement
         de repère CYLINDRIQUE"""
-        data = zip(self._param_key["CYLINDRIQUE"],
-                   ["Origine", "Axe z"])
+        data = list(zip(self._param_key["CYLINDRIQUE"],
+                   ["Origine", "Axe z"]))
         for row_offset, (param_key, text) in enumerate(data):
             lab = Label(self.fra, text=text + " :")
             lab.grid(row=2 + row_offset, column=0,
@@ -1152,11 +1152,11 @@ class ChgtRepereDialogue(Toplevel):
             self.is_active = False
         else:
             self.mess.disp_mess(
-                u"Un dialogue pour le groupe '%s' "
-                u"est déjà ouvert. " % self.row_dict["NOM"])
+                "Un dialogue pour le groupe '%s' "
+                "est déjà ouvert. " % self.row_dict["NOM"])
             self.mess.disp_mess(
-                u"Il doit d'abord être fermé pour pouvoir lancer "
-                u"un autre changement de repère."
+                "Il doit d'abord être fermé pour pouvoir lancer "
+                "un autre changement de repère."
             )
 
 
@@ -1220,7 +1220,7 @@ class GroupNoWidget(Frame):
         STYLE.update(self.kwargs)
 
         for row_user_dict in user_data:
-            row_dict = RowDict(row_user_dict.items())
+            row_dict = RowDict(list(row_user_dict.items()))
             row_widgets = []
             row_ddl_vars = []
 
@@ -1291,7 +1291,7 @@ class GroupNoWidget(Frame):
         """Si le concept a ete cree ac OBSERVATION, remplit le self.data
            et met a jour l'interface.
         """
-        message = u"La macro OBSERVATION a été utilisée avec le \
+        message = "La macro OBSERVATION a été utilisée avec le \
                     mot-clé NOEUD ou MAILLE. On ne peut pas traiter \
                     ce cas dans la fenêtre d'Observation"
 
@@ -1299,15 +1299,15 @@ class GroupNoWidget(Frame):
 # print "self.data = "
 # print self.data
 # print "  "
-        if valeur_etape.has_key('FILTRE'):
+        if 'FILTRE' in valeur_etape:
             filtres = valeur_etape['FILTRE']
             if not isinstance(filtres, list) and not isinstance(filtres, tuple):
                 filtres = [filtres]
 
             for filtre in filtres:
-                if filtre.has_key('GROUP_NO'):
+                if 'GROUP_NO' in filtre:
                     grnos = filtre['GROUP_NO']
-                elif filtre.has_key('GROUP_MA'):
+                elif 'GROUP_MA' in filtre:
                     grnos = filtre['GROUP_MA']
                 else:
                     # cas ou les filtres ont ete definis par les mc NOEUD ou
@@ -1325,16 +1325,16 @@ class GroupNoWidget(Frame):
                                     if ddl_key.split() == ddl.split():
                                         int_widget.set(1)
 
-        if valeur_etape.has_key('MODI_REPERE'):
+        if 'MODI_REPERE' in valeur_etape:
             modis_reperes = valeur_etape['MODI_REPERE']
             if not isinstance(modis_reperes, list) and not isinstance(modis_reperes, tuple):
                 modis_reperes = [modis_reperes]
             self.set_chgt_rep(self.root.chgt_rep)
 
             for modi_repere in modis_reperes:
-                if filtre.has_key('GROUP_NO'):
+                if 'GROUP_NO' in filtre:
                     grnos = filtre['GROUP_NO']
-                elif filtre.has_key('GROUP_MA'):
+                elif 'GROUP_MA' in filtre:
                     grnos = filtre['GROUP_MA']
                 else:
                     # cas ou les filtres ont ete definis par les mc NOEUD ou
@@ -1596,7 +1596,7 @@ class DispFRFDialogue(Toplevel):
     def verif_param(self, param):
         """ verification des parametres rentres par l'utilisateur (les parametres sont des StringVar)"""
         if isinstance(param, dict):
-            liste = [kk[1].get() for kk in param.items()]
+            liste = [kk[1].get() for kk in list(param.items())]
         elif isinstance(param, list):
             liste = [kk.get() for kk in param]
         for para in liste:
@@ -1666,9 +1666,9 @@ class DispFRFDialogue(Toplevel):
         # mesurees
         from code_aster.Commands import DYNA_VIBRA, AFFE_CHAR_MECA, DEFI_FONCTION
 
-        f_min = string.atof(param['freq_min'].get())
-        f_max = string.atof(param['freq_max'].get())
-        df = string.atof(param['df'].get())
+        f_min = float(param['freq_min'].get())
+        f_max = float(param['freq_max'].get())
+        df = float(param['df'].get())
         nb_freq = int((f_max - f_min) / df)
         freq = [f_min + df * kk for kk in range(nb_freq)]
         noeud = param['noeud'].get()
@@ -1727,7 +1727,7 @@ class DispFRFDialogue(Toplevel):
             else:
                 if not self.verif_param(param[ind]):
                     self.mess.disp_mess(
-                        u"Il manque des données pour afficher les FRF, colonne " + str(ind + 1))
+                        "Il manque des données pour afficher les FRF, colonne " + str(ind + 1))
                     pass
                 else:
                     champ = param[ind]['champ'].get()
@@ -1765,11 +1765,11 @@ class DispFRFDialogue(Toplevel):
 class ObservationWindow(Frame):
 
     def __init__(self, parent, root, mess, ce_objects, resu=None,
-                 type_co=u"'observabilité", close_widget=1, **args):
+                 type_co="'observabilité", close_widget=1, **args):
         Frame.__init__(self, parent, args)
         self.parent = parent
         self.root = root
-        self.font2 = tkFont.Font(family="Helvetica", size=14)
+        self.font2 = tkinter.font.Font(family="Helvetica", size=14)
         self.objects = ce_objects
         self.chgt_rep = ChgtRepereDialogue(mess)
         self.mess = mess
@@ -1792,11 +1792,11 @@ class ObservationWindow(Frame):
         self.obs_mailles.grp.set_selected(valeur_etape)
 
     def create_obsframe(self):
-        Label(self, text=u"Définition du concept d" + (self.type_co),
+        Label(self, text="Définition du concept d" + (self.type_co),
               font=self.font2).grid(row=0, column=0, columnspan=4)
 
         # Menu choix des deformees a projeter
-        Label(self, text=u"Base de déformées").grid(
+        Label(self, text="Base de déformées").grid(
             row=1, column=0, sticky='ew')
         self.nom_obs_resu = StringVar()
         self.menu_obs_resu = MyMenu(self, self.objects.get_mode_meca_name(),
@@ -1805,7 +1805,7 @@ class ObservationWindow(Frame):
         self.menu_obs_resu.grid(row=2, column=0, sticky='we', pady=2, padx=20)
 
         # Menu choix du modele experimental associe
-        Label(self, text=u"Modèle expérimental").grid(
+        Label(self, text="Modèle expérimental").grid(
             row=1, column=1, sticky='ew')
         self.nom_obs_modele = StringVar()
         self.menu_obs_modele = MyMenu(self, self.objects.get_model_name(),
@@ -1900,13 +1900,13 @@ class ObservationWindow(Frame):
                                 MODI_REPERE=get_chgt_repere(grp_no, grp_ma)
                                 )
         except:
-            self.mess.disp_mess(u"Le concept d" + self.type_co +
-                                u"n'a pas pu être calculé.\n"
-                                u"L'erreur est affichée en console.")
+            self.mess.disp_mess("Le concept d" + self.type_co +
+                                "n'a pas pu être calculé.\n"
+                                "L'erreur est affichée en console.")
             raise
 
-        self.mess.disp_mess(u"Le concept d" + self.type_co +
-                            u" a été calculé et il porte le nom " + __OBS.nom)
+        self.mess.disp_mess("Le concept d" + self.type_co +
+                            " a été calculé et il porte le nom " + __OBS.nom)
 
         self.obs_co = ModeMeca(self.objects, __OBS.nom, __OBS, self.mess)
         self.obs_co.get_modele()
@@ -1926,7 +1926,7 @@ class DispObs(Toplevel):
         Toplevel.__init__(self)
         self.resu = resu
         self.objects = ce_objects
-        self.font2 = tkFont.Font(family="Helvetica", size=14)
+        self.font2 = tkinter.font.Font(family="Helvetica", size=14)
         self.obs_co = None
         self.mess = mess
 
@@ -1992,7 +1992,7 @@ def find_composantes(grp_noeuds, noeuds_def, nb_no, mess=None):
 
     # nb_ecod : nombre d'entier pour coder les DDL de deplacement.
     nb_ecod = len(noeuds_def) / nb_no
-    for grp, noeud_idxs in grp_noeuds.items():
+    for grp, noeud_idxs in list(grp_noeuds.items()):
         grp_comp = set()
         for noeud_idx in noeud_idxs:
             k = (noeud_idx - 1) * 5
@@ -2059,7 +2059,7 @@ class _SelectionBase(Frame):
 
     def display_comp(self, composantes, type_gr):
         data = []
-        groupes = composantes.keys()
+        groupes = list(composantes.keys())
         groupes.sort()
 
         for grp in groupes:
@@ -2119,7 +2119,7 @@ class SelectionMailles(_SelectionBase):
         mailles_def = maillage.sdj.CONNEX.get()
 
         groupno = {}
-        for grp, mailles in groupma.items():
+        for grp, mailles in list(groupma.items()):
             noeuds = []
             groupno[grp] = noeuds
             for maille in mailles:
@@ -2162,8 +2162,8 @@ class VecteurEntry:
                 res_values.append(val)
             except ValueError:
                 self.mess.disp_mess(
-                    u"Mauvaise entrée: "
-                    u"un des champs semble ne pas être un réel."
+                    "Mauvaise entrée: "
+                    "un des champs semble ne pas être un réel."
                 )
                 return None
 
@@ -2206,12 +2206,12 @@ class CalcEssaiXmgr(Xmgr):
         shell += ' -graph ' + repr(gr_max - 1) + ' -npipe ' + self.nom_pipe
 
         # Teste le DISPLAY avant de lancer xmgrace...
-        if os.environ.has_key('DISPLAY'):
+        if 'DISPLAY' in os.environ:
             UTMESS('I', 'STANLEY_9', valk=[shell])
             Popen([shell], shell=True)
 
             # Mise a l'echelle des graphes
-            for i in xrange(gr_max):
+            for i in range(gr_max):
                 gr = 'G' + repr(i)
                 self.Send('WITH ' + gr)
                 self.Send('VIEW XMIN 0.10')

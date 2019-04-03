@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,6 @@ from Calc_epx.calc_epx_utils import recupere_structure, tolist, get_group_ma
 from Calc_epx.calc_epx_utils import extract_from_tuple
 from Utilitai.partition import MAIL_PY
 import aster
-import string
 from Utilitai.Utmess import UTMESS
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import DEFI_GROUP
@@ -62,10 +61,10 @@ def export_modele(epx, MAILLAGE, MODELE, gmaInterfaces, info_mode_compl):
         phenomene = affe['PHENOMENE']
         if phenomene != 'MECANIQUE':
             UTMESS('F', 'PLEXUS_24', valk=phenomene)
-        if modelisation not in cata_modelisa.keys():
+        if modelisation not in list(cata_modelisa.keys()):
             UTMESS('F', 'PLEXUS_6', valk=modelisation)
-        if affe.has_key('TOUT'):
-            if not MApyt.gma.has_key(string.rstrip('TOUT')):
+        if 'TOUT' in affe:
+            if 'TOUT' not in MApyt.gma:
                 DEFI_GROUP(reuse=MAILLAGE, MAILLAGE=MAILLAGE,
                            CREA_GROUP_MA=(_F(NOM='TOUT', TOUT='OUI',),
                            ))
@@ -76,11 +75,11 @@ def export_modele(epx, MAILLAGE, MODELE, gmaInterfaces, info_mode_compl):
             group_ma = get_group_ma(affe, mcfact='AFFE_MODELE/AFFE')
         if not cata_modelisa[modelisation]['ETAT_INIT']:
             etat_init_cont.append(modelisation)
-        if cata_modelisa[modelisation].has_key('MODI_REPERE'):
+        if 'MODI_REPERE' in cata_modelisa[modelisation]:
             type_modi = cata_modelisa[modelisation]['MODI_REPERE']
             modi_repere[type_modi] = True
 
-        li_ty_ma_mode = cata_modelisa[modelisation]['MODE_EPX'].keys()
+        li_ty_ma_mode = list(cata_modelisa[modelisation]['MODE_EPX'].keys())
 
         nb_type_ma = len(li_ty_ma_mode)
         ltyma_maya = MAILLAGE.sdj.TYPMAIL.get()
@@ -123,7 +122,7 @@ def export_modele(epx, MAILLAGE, MODELE, gmaInterfaces, info_mode_compl):
                                     'Problème de noms de groupes de mailles')
                         gr_cr_noms_coupes.append(nom_gr)
 
-                    if not MApyt.gma.has_key(string.rstrip(nom_gr)):
+                    if nom_gr.rstrip() not in MApyt.gma:
                         DEFI_GROUP(reuse=MAILLAGE, MAILLAGE=MAILLAGE,
                                    CREA_GROUP_MA=(
                                    _F(NOM=nom_gr, GROUP_MA=gr,
@@ -145,7 +144,7 @@ def export_modele(epx, MAILLAGE, MODELE, gmaInterfaces, info_mode_compl):
                     # cas ou la modelisation dépend du CARA_ELEM
                     mode_epx_dispo = cata_modelisa[
                         modelisation]['MODE_EPX'][typma]
-                    if not gr in info_mode_compl.keys():
+                    if not gr in list(info_mode_compl.keys()):
                         UTMESS('F', 'PLEXUS_26', valk=gr)
                     else:
                         veri_gr_from_compl.append(gr)
@@ -155,8 +154,8 @@ def export_modele(epx, MAILLAGE, MODELE, gmaInterfaces, info_mode_compl):
                             "Modélisation epx %s non permise pour la modélidation %s"
                             % (mode_epx, modelisation))
 
-                if not epx_geom.has_key(mode_epx):
-                    if cata_modelisa[modelisation].has_key('RESU_POIN'):
+                if mode_epx not in epx_geom:
+                    if 'RESU_POIN' in cata_modelisa[modelisation]:
                         resu_poin = cata_modelisa[modelisation]['RESU_POIN']
                     else:
                         resu_poin = True
@@ -174,7 +173,7 @@ def export_modele(epx, MAILLAGE, MODELE, gmaInterfaces, info_mode_compl):
 
     # liste comportant les modelisations definis dans le module GEOMETRIE
     # Ecriture sous format europlexus
-    for mode_epx in epx_geom.keys():
+    for mode_epx in list(epx_geom.keys()):
         if mode_epx in mode_epx_fin:
             continue
         len_groups = len(epx_geom[mode_epx]['GROUP_MA'])
@@ -184,7 +183,7 @@ def export_modele(epx, MAILLAGE, MODELE, gmaInterfaces, info_mode_compl):
             mode_epx, cara=epx_geom[mode_epx]['GROUP_MA'])
         epx[directive].add_bloc(bloc_simple)
     for mode_epx in mode_epx_fin:
-        if mode_epx in epx_geom.keys():
+        if mode_epx in list(epx_geom.keys()):
             len_groups = len(epx_geom[mode_epx]['GROUP_MA'])
             if len_groups == 0:
                 raise Exception('Erreur de programmation : liste de groupe vide')

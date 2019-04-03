@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@ from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
-from macro_bascule_schema_ops import macro_bascule_schema_ops
 from code_aster.Objects import NonLinearEvolutionContainer
 from code_aster.Commands.ExecuteCommand import ExecuteCommand
+
+from .macro_bascule_schema_ops import macro_bascule_schema_ops
 
 
 MACRO_BASCULE_SCHEMA_CATA = MACRO(
@@ -63,7 +64,7 @@ MACRO_BASCULE_SCHEMA_CATA = MACRO(
                     VECT_GENE=SIMP(statut='f', typ=vect_asse_gene, max='**'),
                     ),
     CONTACT=SIMP(statut='f', typ=char_contact),
-    SOUS_STRUC=FACT(statut='f', min=01, max='**',
+    SOUS_STRUC=FACT(statut='f', min=0o1, max='**',
                     regles=(UN_PARMI('TOUT', 'SUPER_MAILLE'),),
                     CAS_CHARGE=SIMP(statut='o', typ='TXM'),
                     TOUT=SIMP(statut='f', typ='TXM', into=("OUI",)),

@@ -197,9 +197,9 @@ def caract_mater(self, mater):
     compor = sd_compor1('%-8s.CPT.%s' % (mater.nom, ns))
     valk = [s.strip() for s in compor.VALK.get()]
     valr = compor.VALR.get()
-    dicmat = dict(zip(valk, valr))
+    dicmat = dict(list(zip(valk, valr)))
 
-    if dicmat.has_key('TEMP_DEF'):
+    if 'TEMP_DEF' in dicmat:
         nompar = ('TEMP',)
         valpar = (dicmat['TEMP_DEF'],)
         UTMESS('A', 'XFEM2_85', valr=valpar)
@@ -213,8 +213,8 @@ def caract_mater(self, mater):
 
 #    E et nu definis avec defi_fonction
         if young == 0.0 and poisson == 0.0:
-            list_oper = valk[: len(valk) / 2]
-            list_fonc = valk[len(valk) / 2:]
+            list_oper = valk[: len(valk) // 2]
+            list_fonc = valk[len(valk) // 2:]
 
 #    valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et
 #    et les noms des concepts de type [fonction] (ecrits derriere les operandes) dans une
@@ -265,7 +265,7 @@ def caract_mater(self, mater):
 
 def verif_val_neg(val_k1):
     """ recherche presence de valeurs de K1 negatives"""
-    s = filter(lambda x: x < 0, val_k1)
+    s = [x for x in val_k1 if x < 0]
     if len(s) != 0:
         return True
     else:

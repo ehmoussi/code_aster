@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of Code_Aster.
 #
 # Code_Aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ a Python command.
 """
 
 import tempfile
-from itertools import ifilter
+
 
 from ..Cata.Syntax import _F
 from ..Supervis.logger import logger
@@ -119,7 +119,7 @@ class Action(object):
 class LogicalUnitFile(object):
     """This class defines a file associated to a fortran logical unit"""
 
-    _free_number = range(19, 100)
+    _free_number = list(range(19, 100))
     # keep in memory: {unit_number: LogicalUnitFile objects}
     _used_unit = {}
 
@@ -253,14 +253,12 @@ class LogicalUnitFile(object):
         logger.debug("LogicalUnit: release unit {0}".format(unit))
         logicalUnit = cls.from_number(unit)
         if not logicalUnit:
-            if unit in RESERVED_UNIT:
-                return
-            msg = "Unable to free the logical unit {}".format(unit)
-            raise KeyError(msg)
+            # RESERVED_UNIT or not registered
+            return
 
         if to_register:
             cls.register(unit, logicalUnit.filename, Action.Close)
-        if cls._used_unit.has_key(unit):
+        if unit in cls._used_unit:
             if unit not in RESERVED_UNIT:
                 cls._free_number.append(unit)
             del cls._used_unit[unit]

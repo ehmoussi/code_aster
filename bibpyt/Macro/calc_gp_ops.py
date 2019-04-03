@@ -200,7 +200,7 @@ def Calcul_mesure_3D(maya, nbcop, l_copo_tot, ltyma, nd_fiss, normale):
 #
 def calc_gp_ops(self, **args):
     """Corps de CALC_GP"""
-    from numpy import *
+    from numpy import pi, cos, sin
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
@@ -238,7 +238,7 @@ def calc_gp_ops(self, **args):
 
 # mult=Coefficient multiplicatif suivant la symetrie du probleme
     mult = 1.
-    if args.has_key('TRANCHE_2D'):
+    if 'TRANCHE_2D' in args:
         TRANCHE_2D = args['TRANCHE_2D']
         if ndim != 2:
             UTMESS('F', 'RUPTURE1_19', ['TRANCHE_2D', '2D'])
@@ -300,7 +300,7 @@ def calc_gp_ops(self, **args):
 
 # Definition de la sortie facultative GP_MAX
     GPMAX = None
-    if args.has_key('GPMAX'):
+    if 'GPMAX' in args:
         GPMAX = args['GPMAX']
 # Creation des colonnes de la table de sortie gpmax
         tabinstmax = []
@@ -509,7 +509,7 @@ def calc_gp_ops(self, **args):
 
         # le nombre de copeaux est suppose identique sur toutes les tranches
         nbcoptot = len(l_copo_tot)
-        nbcop = nbcoptot / len(TRANCHE_3D)
+        nbcop = nbcoptot // len(TRANCHE_3D)
 
 # calcul de la surface des mailles appartenant au plan de symetrie de
 # l'entaille

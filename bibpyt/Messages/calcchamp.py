@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  Le champ %(k1)s est déjà présent dans la structure de données
  à tous les instants demandés.
  Aucun calcul ne sera donc réalisé pour cette option.
@@ -31,7 +31,7 @@ Conseil :
  créez une nouvelle structure de données.
 """),
 
-    2 : _(u"""
+    2 : _("""
  L'option %(k1)s nécessaire au calcul de l'option %(k2)s est
  manquante dans les structures de données résultat %(k3)s et
  %(k4)s pour le numéro d'ordre %(i1)d.
@@ -40,7 +40,7 @@ Conseil :
  L'option demandée n'est calculable sur les éléments du modèle.
 """),
 
-3 : _(u"""
+3 : _("""
 La sortie EPSI_%(k2)s de CALC_CHAMP est incorrecte pour décrire les
 composantes de la déformation en grandes déformations.
 
@@ -49,12 +49,12 @@ Avec des déformations de type %(k1)s,
 il est préférable d'utiliser %(k2)s
 """),
 
-4 : _(u"""
+4 : _("""
 Les contributions de l'amortissement liées à la vitesse pour les 
 réactions nodales sont négligées dans la version actuelle du code.
 """),
 
-5: _(u"""
+5: _("""
 La récupération des chargements concernant le résultat %(k1)s n'est actuellement pas possible.
 Code_Aster ne peut donc pas vérifier la cohérence des chargements.
 
@@ -62,31 +62,31 @@ Conseil : Si vous utilisez une commande avec une option qui nécessite la redéf
 il faut vérifier la cohérence des chargements.
 """),
 
-6: _(u"""
+6: _("""
 Le mot clef EXCIT de la commande n'est pas renseigné et la récupération des chargements concernant
 le résultat %(k1)s n'est actuellement pas possible.
 
 Conseil : Il faut renseigner le mot clef EXCIT de la commande CALC_CHAMP,
 """),
 
-7 : _(u"""
+7 : _("""
 Le champ STRX_ELGA n'est pas possible sur une modélisation XFEM.
 """),
 
-19 : _(u"""
+19 : _("""
 Problème lors de l'appel de l'option %(k1)s.
 
 Contactez le support technique.
 """),
 
 
-23: _(u"""Le modèle doit être le même sur tous les pas de temps pour ce post-traitement.
+23: _("""Le modèle doit être le même sur tous les pas de temps pour ce post-traitement.
       Conseil : il faut séparer le post-traitement en le découpant pour garder le même modèle"""),
 
-24: _(u"""Le chargement doit être le même sur tous les pas de temps pour ce post-traitement.
+24: _("""Le chargement doit être le même sur tous les pas de temps pour ce post-traitement.
       Conseil : il faut séparer le post-traitement en le découpant pour garder le même chargement"""),
 
-89: _(u"""
+89: _("""
  Le champ  %(k1)s  n'a pas pu être calculé.
  Risques & conseils :
    * Si le champ est un champ par éléments, c'est que le calcul élémentaire n'est pas disponible

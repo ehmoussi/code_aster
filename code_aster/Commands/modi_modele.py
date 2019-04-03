@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -35,7 +35,7 @@ class ModiModele(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         
-        if keywords.has_key("reuse"):
+        if "reuse" in keywords:
             self._result = keywords["reuse"]
         else:
             self._result = Model()
@@ -46,7 +46,7 @@ class ModiModele(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if not keywords.has_key("reuse"):
+        if "reuse" not in keywords:
             self._result.setSupportMesh(keywords["MODELE"].getSupportMesh())
 
 MODI_MODELE = ModiModele.run

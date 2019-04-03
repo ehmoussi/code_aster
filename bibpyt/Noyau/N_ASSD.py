@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,8 +23,8 @@
 
 """
 
-from N_utils import import_object
-from N_info import message, SUPERV
+from .N_utils import import_object
+from .N_info import message, SUPERV
 
 
 class ASSD(object):
@@ -96,9 +96,9 @@ class ASSD(object):
     sdj = property(_get_sdj, None, _del_sdj)
 
     def __getitem__(self, key):
-        from strfunc import convert
-        text_error = convert(_(u"ASSD.__getitem__ est déprécié car la référence à "
-                               u"l'objet ETAPE parent sera supprimée."))
+        from .strfunc import convert
+        text_error = convert(_("ASSD.__getitem__ est déprécié car la référence à "
+                               "l'objet ETAPE parent sera supprimée."))
         # raise NotImplementedError(text_error)
         from warnings import warn
         warn(text_error, DeprecationWarning, stacklevel=2)
@@ -179,9 +179,9 @@ class ASSD(object):
         """
         d = self.__dict__.copy()
         for key in ('parent', 'etape', 'jdc'):
-            if d.has_key(key):
+            if key in d:
                 del d[key]
-        for key in d.keys():
+        for key in list(d.keys()):
             if key in ('_as_co', ):
                 continue
             if key[0] == '_':
@@ -192,23 +192,23 @@ class ASSD(object):
         """Dit si on peut acceder aux "valeurs" (jeveux) de l'ASSD.
         """
         if CONTEXT.debug:
-            print '| accessible ?', self.nom
+            print('| accessible ?', self.nom)
         is_accessible = CONTEXT.get_current_step().sd_accessible()
         if CONTEXT.debug:
-            print '  `- is_accessible =', repr(is_accessible)
+            print('  `- is_accessible =', repr(is_accessible))
         return is_accessible
 
     def filter_context(self, context):
         """Filtre le contexte fourni pour retirer (en gros) ce qui vient du catalogue."""
-        from N_ENTITE import ENTITE
+        from .N_ENTITE import ENTITE
         import types
         ctxt = {}
-        for key, value in context.items():
-            if type(value) is types.ClassType:
+        for key, value in list(context.items()):
+            if type(value) is type:
                 continue
             if type(value) is types.ModuleType and value.__name__.startswith('Accas'):
                 continue
-            if issubclass(type(value), types.TypeType):
+            if issubclass(type(value), type):
                 continue
             if isinstance(value, ENTITE):
                 continue
@@ -235,7 +235,7 @@ class assd(ASSD):
             # qui font tout pour se faire passer pour de vrais entiers/réels.
         if isinstance(valeur, ASSD) or type(valeur) in (int, float):
             return valeur
-        raise ValueError(_(u"On attend un objet concept."))
+        raise ValueError(_("On attend un objet concept."))
     __convert__ = classmethod(__convert__)
 
 

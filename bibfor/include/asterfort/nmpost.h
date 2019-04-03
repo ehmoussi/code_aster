@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
     subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
-                      ds_constitutive , numins  , ds_material,&
+                      ds_constitutive , numins  , ds_material, ds_system,&
                       ds_contact, ds_algopara, fonact  ,&
                       ds_measure, sddisc , &
                       sd_obsv, sderro  , sddyna, ds_posttimestep     , valinc  ,&
-                      solalg , meelem  , measse, veelem     , veasse  ,&
+                      solalg , meelem  , measse, veasse  ,&
                       ds_energy, sdcriq  , eta   , lischa)
         use NonLin_Datastructure_type
         character(len=24) :: modele
@@ -32,6 +31,7 @@ interface
         character(len=24) :: numfix
         character(len=24) :: carele
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        type(NL_DS_System), intent(in) :: ds_system
         integer :: numins
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Contact), intent(inout) :: ds_contact
@@ -49,7 +49,6 @@ interface
         character(len=19) :: solalg(*)
         character(len=19) :: meelem(*)
         character(len=19) :: measse(*)
-        character(len=19) :: veelem(*)
         character(len=19) :: veasse(*)
         type(NL_DS_Energy), intent(inout) :: ds_energy
         character(len=24) :: sdcriq

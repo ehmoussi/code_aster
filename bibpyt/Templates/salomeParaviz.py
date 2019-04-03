@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# TODO Probably obsolete
 #
 import os
 
@@ -62,7 +63,7 @@ salome.salome_init()
 try:
     pvsimple
 except:
-    from pvsimple import *
+    import pvsimple as PV
 
 #%===================Construction courbe======================%
 
@@ -93,10 +94,10 @@ except:
     except:
         pass
 if view == None and 'CHOIX' == 'COURBE':
-    view = CreateXYPlotView()
+    view = PV.CreateXYPlotView()
 if view == None and 'CHOIX' != 'COURBE':
-    view = CreateRenderView()
-SetActiveView(view)
+    view = PV.CreateRenderView()
+PV.SetActiveView(view)
 L = view.Representations
 for i in L:
     i.Visibility = 0
@@ -107,14 +108,16 @@ title = re.compile('^#COLUMN_TITLES: *(.*)$', re.M)
 
 def convert(fname):
     """Convert in place an output file from Stanley for Paravis"""
-    txt = open(fname, 'r').read()
+    with open(fname, 'r') as f:
+        txt = f.read()
     mat = title.search(txt)
     assert mat, "COLUMN_TITLES not found"
     label = mat.group(1).split('|')
     values = nocomment.findall(txt)
     cont = [' '.join(label)]
     cont.extend(values)
-    open(fname, 'w').write(os.linesep.join(cont))
+    with open(fname, 'w') as f:
+        f.write(os.linesep.join(cont))
 
 
 if 'CHOIX' == 'COURBE':
@@ -122,16 +125,16 @@ if 'CHOIX' == 'COURBE':
 
     # reader Table
     convert(file1)
-    myResult = CSVReader(FileName=file1)
+    myResult = PV.CSVReader(FileName=file1)
     if myResult is None:
         raise "Erreur de fichier"
     myResult.FieldDelimiterCharacters = ' '
     myResult.MergeConsecutiveDelimiters = 1
-    Render()
+    PV.Render()
 
-    courbe = PlotData()
+    courbe = PV.PlotData()
 
-    display = Show()
+    display = PV.Show()
     display.AttributeType = 'Row Data'
     display.UseIndexForXAxis = 0
 
@@ -141,13 +144,13 @@ if 'CHOIX' == 'COURBE':
 
     display.SeriesVisibility = labels[2:]
 
-    Render()
+    PV.Render()
 
 #%====================Construction isovaleurs====================%
 
 if 'CHOIX' != 'COURBE':
 
-    myResult = MEDReader(FileName=file1)
+    myResult = PV.MEDReader(FileName=file1)
     if myResult is None:
         raise Exception("Erreur de fichier MED")
 
@@ -176,15 +179,15 @@ if CHOIXF == 'ISO':
     if TYPE_CHAMP == "P1":
         pd = resu.PointData
     if TYPE_CHAMP == "GSSNE":
-        resu = ELNOfieldToSurface()
+        resu = PV.ELNOfieldToSurface()
         pd = resu.PointData
 
     # Recuperation des informations du champ
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
-            NOM_CMP = pd.values()[i - 1].GetComponentName(0)
-            RANGE_CMP = pd.values()[i - 1].GetRange()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
+            NOM_CMP = list(pd.values())[i - 1].GetComponentName(0)
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
 
     # Attributs de visualisation
     CMP = 'Component'
@@ -200,7 +203,7 @@ if CHOIXF == 'GAUSS':
             NOM_CHAMP = nom
             break
 
-    resu = ELGAfieldToPointSprite()
+    resu = PV.ELGAfieldToPointSprite()
 
     nom = "ELGA@" + "0"
     resu.SelectSourceArray = ['CELLS', nom]
@@ -209,10 +212,10 @@ if CHOIXF == 'GAUSS':
 
     # Recuperation des informations du champ
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
-            NOM_CMP = pd.values()[i - 1].GetComponentName(0)
-            RANGE_CMP = pd.values()[i - 1].GetRange()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
+            NOM_CMP = list(pd.values())[i - 1].GetComponentName(0)
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
 
     # Attributs de visualisation
     CMP = 'Component'
@@ -230,27 +233,27 @@ if CHOIXF == 'DEPL':
     pd = resu.PointData
 
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            RANGE_CMP = pd.values()[i - 1].GetRange()
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
 
     # Filtre calculator si NB_CMP different de 3
 
     if NB_CMP == 2:
-        resu = Calculator()
+        resu = PV.Calculator()
         resu.Function = NOM_CHAMP_DEF + \
             "_DX*iHat+" + NOM_CHAMP_DEF + "_DY*jHat+0*kHat"
         resu.ResultArrayName = NOM_CHAMP_DEF + "_Vector"
         NOM_CHAMP_DEF = NOM_CHAMP_DEF + "_Vector"
     if NB_CMP > 3:
-        resu = Calculator()
+        resu = PV.Calculator()
         resu.Function = NOM_CHAMP_DEF + "_DX*iHat+" + \
             NOM_CHAMP_DEF + "_DY*jHat+" + NOM_CHAMP_DEF + "_DZ*kHat"
         resu.ResultArrayName = NOM_CHAMP_DEF + "_Vector"
         NOM_CHAMP_DEF = NOM_CHAMP_DEF + "_Vector"
 
     # Filtre Warp by Vector
-    resu = WarpByVector()
+    resu = PV.WarpByVector()
     resu.Vectors = ['POINTS', NOM_CHAMP_DEF]
     pd = resu.PointData
 
@@ -291,36 +294,36 @@ if CHOIXF == 'ON_DEFORMED':
     if TYPE_CHAMP == "P1":
         pd = resu.PointData
     if TYPE_CHAMP == "GSSNE":
-        resu = ELNOfieldToSurface()
+        resu = PV.ELNOfieldToSurface()
         pd = resu.PointData
 
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            NOM_CMP = pd.values()[i - 1].GetComponentName(0)
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
-            RANGE_CMP = pd.values()[i - 1].GetRange()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            NOM_CMP = list(pd.values())[i - 1].GetComponentName(0)
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
 
     # Recuperation des informations du champ DEPL
     pd1 = resu.PointData
     for i in range(len(pd1)):
-        if pd1.values()[i - 1].GetName() == NOM_CHAMP_DEF:
-            NB_CMP_DEF = pd1.values()[i - 1].GetNumberOfComponents()
-            RANGE_CMP_DEF = pd1.values()[i - 1].GetRange()
+        if list(pd1.values())[i - 1].GetName() == NOM_CHAMP_DEF:
+            NB_CMP_DEF = list(pd1.values())[i - 1].GetNumberOfComponents()
+            RANGE_CMP_DEF = list(pd1.values())[i - 1].GetRange()
 
     if NB_CMP_DEF == 2:
-        resu = Calculator()
+        resu = PV.Calculator()
         resu.Function = NOM_CHAMP_DEF + \
             "_DX*iHat+" + NOM_CHAMP_DEF + "_DY*jHat+0*kHat"
         resu.ResultArrayName = NOM_CHAMP_DEF + "_Vector"
         NOM_CHAMP_DEF = NOM_CHAMP_DEF + "_Vector"
     if NB_CMP_DEF > 3:
-        resu = Calculator()
+        resu = PV.Calculator()
         resu.Function = NOM_CHAMP_DEF + "_DX*iHat+" + \
             NOM_CHAMP_DEF + "_DY*jHat+" + NOM_CHAMP_DEF + "_DZ*kHat"
         resu.ResultArrayName = NOM_CHAMP_DEF + "_Vector"
         NOM_CHAMP_DEF = NOM_CHAMP_DEF + "_Vector"
 
-    resu = WarpByVector()
+    resu = PV.WarpByVector()
     resu.Vectors = ['POINTS', NOM_CHAMP_DEF]
 
     MAX_CMP = max(abs(RANGE_CMP_DEF[0]), abs(RANGE_CMP_DEF[1]))
@@ -339,7 +342,7 @@ if CHOIXF != 'COURBE':
 
     # Visualisation
     if NB_ORDRE > 1:
-        anim = GetAnimationScene()
+        anim = PV.GetAnimationScene()
         anim.Loop = 1
         # anim.PlayMode = 'Sequence'
         # anim.NumberOfFrames = 50
@@ -347,14 +350,14 @@ if CHOIXF != 'COURBE':
     if CHOIXF == 'DEPL' or CHOIXF == 'ON_DEFORMED':
         resu.ScaleFactor = SCALE_FACTOR
 
-    display = Show()
+    display = PV.Show()
     display.ColorArrayName = NOM_CHAMP
     display.Representation = TYPE
     if RANGE_CMP[0] == RANGE_CMP[1]:
         max_scalar = 1.01 * RANGE_CMP[1]
     else:
         max_scalar = RANGE_CMP[1]
-    CH_PVLookupTable = GetLookupTableForArray(NOM_CHAMP, NB_CMP,
+    CH_PVLookupTable = PV.GetLookupTableForArray(NOM_CHAMP, NB_CMP,
                                               VectorMode=CMP,
                                               RGBPoints=[
                                                   RANGE_CMP[
@@ -367,11 +370,9 @@ if CHOIXF != 'COURBE':
         display.RadiusMode = 'Scalar'
         display.RadiusScalarRange = RANGE_CMP
 
-    scalarbar = CreateScalarBar(Title=NOM_CHAMP, ComponentTitle=NOM_CMP,
+    scalarbar = PV.CreateScalarBar(Title=NOM_CHAMP, ComponentTitle=NOM_CMP,
                                 LookupTable=CH_PVLookupTable, TitleFontSize=12, LabelFontSize=12)
     view.Representations.append(scalarbar)
 
-    Render()
-    ResetCamera()
-
-#%==================FIN ================================%
+    PV.Render()
+    PV.ResetCamera()

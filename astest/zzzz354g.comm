@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -216,7 +216,7 @@ iflow = 6 # Type of ingoing fluid
 # Friction coefficient computed by rugosity
 #  --> Ecrevisse : parameter ifrot>0
 #
-for icalc in xrange(Npos):
+for icalc in range(Npos):
     ifrot = lst_frot[icalc]
     kgtest = 0.5
     if ifrot == 0 :
@@ -308,7 +308,7 @@ for icalc in xrange(Npos):
 # User defined friction coefficient
 #  --> Ecrevisse : parameter -5<ifrot<0 (from Npos+1 to N)
 #
-for icalc in xrange(Npos,Npos+Nneg):
+for icalc in range(Npos,Npos+Nneg):
 
     kgtest = 0.5
     ifrot  = lst_frot[icalc]

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,14 +25,12 @@
     qui permet de spécifier les caractéristiques d'un opérateur
 """
 
-import types
-import string
 import traceback
 
-import N_ENTITE
-import N_ETAPE
-import nommage
-from strfunc import ufmt
+from . import N_ENTITE
+from . import N_ETAPE
+from . import nommage
+from .strfunc import ufmt
 
 
 class OPER(N_ENTITE.ENTITE):
@@ -107,7 +105,7 @@ class OPER(N_ENTITE.ENTITE):
         assert args.get('UIinfo') is None, '"UIinfo" does not exist anymore'
         self.repetable = repetable
         self.docu = docu
-        if type(regles) == types.TupleType:
+        if type(regles) == tuple:
             self.regles = regles
         else:
             self.regles = (regles,)

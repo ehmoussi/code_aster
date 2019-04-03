@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,16 +23,15 @@ This module defines objects for the testing feature.
 
 import re
 from functools import partial
-from string import maketrans
 from glob import glob
 
 
-_trans = maketrans('e', 'E')
+_trans = str.maketrans('e', 'E')
 
 
 def _fortran(srepr):
     """for fortran look"""
-    return srepr.translate(_trans, '()')
+    return srepr.translate(_trans)
 
 
 class TestResult(object):
@@ -145,7 +144,8 @@ class TestResult(object):
         if not exports:
             # export file not found, return "verification" that is more strict!
             return True
-        text = open(exports[0], "rb").read()
+        with open(exports[0], "r") as f:
+            text = f.read()
         expr = re.compile("^P +testlist.*validation", re.M)
         isVerif = expr.search(text) is None
         return isVerif
@@ -177,7 +177,7 @@ def _internal_print(text):
 
 def _internal_mess(a, b):
     """UTMESS replacement for unittest"""
-    print('<{0}> message {1}').format(a, b)
+    print(('<{0}> message {1}').format(a, b))
 
 
 # Creation of the singleton instance
@@ -189,22 +189,22 @@ if __name__ == '__main__':
                    1.e-6, 1.123e-6, 0.0, compare=275.0)
     testresu_print('AUTRE_ASTER', 'DX', False, False, False,
                    1.e-6, 1.123e-6, 0.0)
-    print
+    print()
 
     testresu_print('NON_REGRESSION', 'DX', True, True, False,
                    1.e-6, 1.123e-6, 0.0)
     testresu_print('NON_REGRESSION', 'XXXXX', True, False, False,
                    1.e-6, 1.123e-3, 0.0, compare=275.0)
-    print
+    print()
 
     testresu_print('NON_REGRESSION', 'XXXXX', True, False, True,
                    1.e-6, 1.123e-2, 0.0)
-    print
+    print()
 
     testresu_print('NON_REGRESSION', 'XXXXX', True, False, True,
                    0.02, 456, 458)
-    print
+    print()
 
     testresu_print('ANALYTIQUE', 'DEPL_C', True, False, True,
                    1.e-4, 1. + 1.j, -0.5 + 0.99j)
-    print
+    print()

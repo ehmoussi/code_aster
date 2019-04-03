@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -187,14 +187,14 @@ class CalcEssaiModifStruct:
         """Trouve le maillage modif dans la memoire JEVEUX"""
         # existence du modele
         modele = self.objects.get_model(modc_name)
-        for modele_name, modele in self.objects.modeles.items():
+        for modele_name, modele in list(self.objects.modeles.items()):
             if modele_name == modc_name:
                 mailx_name = modele.maya_name
                 self.mailx = self.objects.maillages[mailx_name]
 
     def find_maillage_support_from(self, modc_name):
         """Trouve le maillage modif dans la memoire JEVEUX"""
-        for modele_name, modele in self.objects.modeles.items():
+        for modele_name, modele in list(self.objects.modeles.items()):
             if modele_name == modc_name:
                 mailx_name = modele.maya_name
                 self.support_maillage = self.objects.maillages[mailx_name]
@@ -232,7 +232,7 @@ class CalcEssaiModifStruct:
         la caracteristique des elements et le champ de materiaux sont
         conserves en references.
         """
-        for name, resu in self.objects.resultats.items():
+        for name, resu in list(self.objects.resultats.items()):
             if aster.jeveux_exists(name.ljust(19) + '.NOVA'):
                 iret, ibid, modele_name = aster.dismoi(
                     'MODELE', name, 'RESULTAT', 'F')
@@ -343,7 +343,7 @@ class CalcEssaiModifStruct:
                          'NMAX_FREQ': len(nume_modes_sup),
                          'SEUIL_FREQ': 1.E-4}
 
-        if calc_freq.has_key('NMAX_FREQ'):
+        if 'NMAX_FREQ' in calc_freq:
             if calc_freq['NMAX_FREQ'] == -1:
                 calc_freq['NMAX_FREQ'] = len(nume_modes_sup)
 
@@ -415,7 +415,7 @@ class CalcEssaiModifStruct:
                     'NOEUD_CMP'][num - 1].split()
                 nodes.setdefault(node, []).append(comp)
             grno = []
-            for node, comps in nodes.items():
+            for node, comps in list(nodes.items()):
                 grno.append(_F(NOEUD=node, AVEC_CMP=comps))
             self.calc_base_es(grno)
             _MEXP = self.base_expansion.obj
@@ -478,7 +478,7 @@ class CalcEssaiModifStruct:
 
         try:
             self.cpl.copy()
-        except Exception, err:
+        except Exception as err:
             self.mess.disp_mess("Une erreur est survenue lors "
                                 "de la creation du modele couple")
             self.mess.disp_mess(str(err))
@@ -848,7 +848,7 @@ class CopyModelMeca:
         # on recupere les noms de concepts produits par matr_elem pour detecter ceux utilises
         # par nume_ddl
         nume_args = self.retrieve_nume_ddl(
-            self.orig_modl.nom, self.matr_elem.keys())
+            self.orig_modl.nom, list(self.matr_elem.keys()))
         self.nume_ddl(nume_args)
         nume_names = [sd.nom for args, sd in nume_args]
         asse_matr = self.retrieve_asse_matrice(nume_names)
@@ -1119,11 +1119,11 @@ def convert_args(mc, concepts):
             dest = {}
         else:
             dest = _F()
-        for k, v in mc.items():
+        for k, v in list(mc.items()):
             v = convert_args(v, concepts)
             dest[k] = v
         return dest
-    elif isinstance(mc, (int, float, str, unicode)):
+    elif isinstance(mc, (int, float, str)):
         return mc
     elif isinstance(mc, ASSD):
         if mc.nom in concepts:
@@ -1142,23 +1142,23 @@ def convert_args(mc, concepts):
 
 def dump_mc(mc, indent=""):
     if isinstance(mc, (dict, _F)):
-        mck = mc.keys()
+        mck = list(mc.keys())
         mck.sort()
         for k in mck:
-            print indent, k, ":"
+            print(indent, k, ":")
             dump_mc(mc[k], indent + " ")
 
-    elif isinstance(mc, (int, float, str, unicode)):
-        print indent, mc
+    elif isinstance(mc, (int, float, str)):
+        print(indent, mc)
     elif hasattr(mc, 'nom'):
-        print indent, "OBJ(", mc.nom, ")"
+        print(indent, "OBJ(", mc.nom, ")")
     elif isinstance(mc, (list, tuple)):
-        print indent, "("
+        print(indent, "(")
         for obj in mc:
             dump_mc(obj, indent + "  ")
-        print indent, ")"
+        print(indent, ")")
     else:
-        print indent, repr(mc)
+        print(indent, repr(mc))
 
 
 def retrieve_model_param(modname):

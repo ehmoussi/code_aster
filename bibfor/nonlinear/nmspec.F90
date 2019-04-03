@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,14 +18,13 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmspec(model          , ds_material  , cara_elem  , list_load  , list_func_acti,& 
-                  nume_dof       , nume_dof_inva,&
+                  nume_dof       , nume_dof_inva, ds_system ,&
                   ds_constitutive,&
                   sddisc         , nume_inst    ,&
                   sddyna         , sderro       , ds_algopara,&
                   ds_measure     , &
                   hval_incr      , hval_algo    ,&
                   hval_meelem    , hval_measse  ,&
-                  hval_veelem    ,&
                   ds_posttimestep)
 !
 use NonLin_Datastructure_type
@@ -52,8 +51,9 @@ character(len=19), intent(in) :: sddyna
 character(len=24), intent(in) :: sderro
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
-character(len=19), intent(in) :: hval_veelem(*), hval_meelem(*), hval_measse(*)
+character(len=19), intent(in) :: hval_meelem(*), hval_measse(*)
 type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
 ! --------------------------------------------------------------------------------------------------
@@ -77,10 +77,10 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 ! In  sddyna           : datastructure for dynamic
 ! In  sderro           : datastructure for error management (events)
 ! In  ds_algopara      : datastructure for algorithm parameters
+! In  ds_system        : datastructure for non-linear system management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  hval_veelem      : hat-variable for elementary vectors
 ! In  hval_meelem      : hat-variable for elementary matrix
 ! In  hval_measse      : hat-variable for matrix
 ! IO  ds_posttimestep  : datastructure for post-treatment at each time step
@@ -119,14 +119,13 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 ! --------- Compute
             call nmflam(option         ,&
                         model          , ds_material  , cara_elem , list_load  , list_func_acti,&
-                        nume_dof       , nume_dof_inva,&
+                        nume_dof       , nume_dof_inva, ds_system ,&
                         ds_constitutive,&
                         sddisc         , nume_inst    ,& 
                         sddyna         , sderro       , ds_algopara,& 
                         ds_measure     ,&
                         hval_incr      , hval_algo    ,&
                         hval_meelem    , hval_measse  ,&
-                        hval_veelem    ,&
                         ds_posttimestep)
         endif
     endif
@@ -142,14 +141,13 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 ! --------- Compute
             call nmflam(option         ,&
                         model          , ds_material  , cara_elem , list_load  , list_func_acti,&
-                        nume_dof       , nume_dof_inva,&
+                        nume_dof       , nume_dof_inva, ds_system ,&
                         ds_constitutive,&
                         sddisc         , nume_inst    ,& 
                         sddyna         , sderro       , ds_algopara,& 
                         ds_measure     ,&
                         hval_incr      , hval_algo    ,&
                         hval_meelem    , hval_measse  ,&
-                        hval_veelem    ,&
                         ds_posttimestep)
         endif
     endif

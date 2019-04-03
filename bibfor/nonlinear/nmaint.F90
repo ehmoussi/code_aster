@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmaint(nume_dof, list_func_acti, sdnume,&
-                  vefint  , cnfint)
+subroutine nmaint(nume_dof, list_func_acti, sdnumz, ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -37,8 +36,8 @@ implicit none
 !
 character(len=24), intent(in) :: nume_dof
 integer, intent(in) :: list_func_acti(*)
-character(len=19), intent(in) :: sdnume
-character(len=19), intent(in) :: vefint, cnfint
+type(NL_DS_System), intent(in) :: ds_system
+character(len=*), intent(in) :: sdnumz
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,8 +50,7 @@ character(len=19), intent(in) :: vefint, cnfint
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  list_func_acti   : list of active functionnalities
 ! In  sdnume           : datastructure for dof positions
-! In  vefint           : elementary vectors for internal forces 
-! In  cnfint           : nodal field for internal forces 
+! In  ds_system        : datastructure for non-linear system management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,6 +61,7 @@ character(len=19), intent(in) :: vefint, cnfint
     aster_logical :: lendo
     real(kind=8), pointer :: v_cnfint(:) => null()
     integer, pointer :: v_endo(:) => null()
+    character(len=19):: vefint, cnfint, sdnume
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,7 +72,10 @@ character(len=19), intent(in) :: vefint, cnfint
 !
 ! - Initializations
 !
-    base  = 'V'
+    sdnume = sdnumz
+    vefint = ds_system%vefint
+    cnfint = ds_system%cnfint
+    base   = 'V'
     call vtzero(cnfint)
     lendo = isfonc(list_func_acti,'ENDO_NO')
 !

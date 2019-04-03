@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ POST_BORDET =MACRO(nom="POST_BORDET",
          b_nucl          =BLOC( condition = """equal_to("PROBA_NUCL", 'OUI')""",
                           PARAM =FACT(statut='o',
                                  M                =SIMP(statut='o',typ='R',val_min=0.E+0),
-                                 SIGM_REFE         =SIMP(statut='o',typ=(fonction_sdaster),val_min=0.E+0),
+                                 SIGM_REFE         =SIMP(statut='o',typ=fonction_sdaster,),
                                  VOLU_REFE        =SIMP(statut='o',typ='R',val_min=0.E+0),
                                  SIG_CRIT         =SIMP(statut='o',typ='R',val_min=0.E+0),
                                  SEUIL_REFE       =SIMP(statut='o',typ='R',val_min=0.E+0),
@@ -54,7 +54,7 @@ POST_BORDET =MACRO(nom="POST_BORDET",
          b_prop          =BLOC( condition = """equal_to("PROBA_NUCL", 'NON')""",
                           PARAM =FACT(statut='o',
                                  M                =SIMP(statut='o',typ='R',val_min=0.E+0),
-                                 SIGM_REFE         =SIMP(statut='o',typ=fonction_sdaster,val_min=0.E+0),
+                                 SIGM_REFE         =SIMP(statut='o',typ=fonction_sdaster,),
                                  VOLU_REFE        =SIMP(statut='o',typ='R',val_min=0.E+0),
                                  SIG_CRIT         =SIMP(statut='o',typ='R',val_min=0.E+0),
                                  SEUIL_REFE       =SIMP(statut='o',typ='R',val_min=0.E+0),

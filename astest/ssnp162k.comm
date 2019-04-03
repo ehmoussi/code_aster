@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -186,7 +186,7 @@ TRAC_1=AFFE_CHAR_MECA(
   )
 
 # CREATION DE LISTE D'INSTANT
-L_INST=DEFI_LIST_REEL(VALE=range(insfin+1))
+L_INST=DEFI_LIST_REEL(VALE=list(range(insfin+1)))
 
 # LISTE D'INSTANTS POUR LES TESTS DE RESULTATS
 linst=[0,insfin/4,insfin/2,3*insfin/4,insfin]

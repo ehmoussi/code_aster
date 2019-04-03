@@ -19,12 +19,12 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 Il y a un chargement de type convection dans les chargements appliqués.
 Ce n'est possible qu'avec THER_NON_LINE_MO.
 """),
 
-    85 : _(u"""
+    85 : _("""
    Arrêt : absence de convergence au numéro d'instant : %(i1)d
                                   lors de l'itération : %(i2)d
 """),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmassc(list_func_acti, sddyna, ds_contact, hval_veasse,&
-                  cnpilo      , cndonn)
+subroutine nmassc(list_func_acti, sddyna, ds_contact, hval_veasse, ds_system,&
+                  cnpilo        , cndonn)
 !
 use NonLin_Datastructure_type
 !
@@ -46,6 +46,7 @@ integer, intent(in) :: list_func_acti(*)
 character(len=19), intent(in) :: sddyna
 type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=19), intent(in) :: hval_veasse(*)
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: cnpilo, cndonn
 !
 ! --------------------------------------------------------------------------------------------------
@@ -60,6 +61,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 ! In  sddyna           : datastructure for dynamic
 ! In  ds_contact       : datastructure for contact management
 ! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  ds_system        : datastructure for non-linear system management
 ! In  cndonn           : name of nodal field for "given" forces
 ! In  cnpilo           : name of nodal field for "pilotage" forces
 !
@@ -124,7 +126,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 !
 ! - Add internal forces to second member
 !
-    call nonlinDSVectCombAddHat(hval_veasse, 'CNFINT', -1.d0, ds_vectcomb)
+    call nonlinDSVectCombAddAny(ds_system%cnfint, -1.d0, ds_vectcomb)
 !
 ! - Add Dirichlet boundary conditions - B.U
 !
@@ -160,7 +162,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
         endif
     endif
 !
-! - Force from sub-structuring
+! - Add Force from sub-structuring
 !
     if (l_macr) then
         call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTR', -1.d0, ds_vectcomb)

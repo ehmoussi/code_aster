@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     # Boucle sur les actions à effectuer
     for fOP in ACTION:
         occ = fOP.cree_dict_valeurs(fOP.mc_liste)
-        for mc, val in occ.items():
+        for mc, val in list(occ.items()):
             if val == None:
                 del occ[mc]
 
@@ -67,10 +67,10 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
         if occ['OPERATION'] == 'FILTRE':
             # peu importe le type, c'est la meme méthode d'appel
             opts = [occ[k]
-                    for k in ('VALE', 'VALE_I', 'VALE_C', 'VALE_K') if occ.has_key(k)]
+                    for k in ('VALE', 'VALE_I', 'VALE_C', 'VALE_K') if k in occ]
             kargs = {}
             for k in ('CRITERE', 'PRECISION'):
-                if occ.has_key(k):
+                if k in occ:
                     kargs[k] = occ[k]
 
             col = getattr(tab, occ['NOM_PARA'])
@@ -102,7 +102,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
         if occ['OPERATION'] == 'RENOMME':
             try:
                 tab.Renomme(*occ['NOM_PARA'])
-            except KeyError, msg:
+            except KeyError as msg:
                 UTMESS('F', 'TABLE0_3', valk=msg)
 
         # 5. Traitement du TRI
@@ -143,7 +143,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
             lval = force_list(occ['VALE'])
             if len(lpar) != len(lval):
                 UTMESS('F', 'TABLE0_14', valk=('NOM_PARA', 'VALE'))
-            dnew = dict(zip(lpar, lval))
+            dnew = dict(list(zip(lpar, lval)))
             # ajout de la ligne avec vérification des types
             tab.append(dnew)
             

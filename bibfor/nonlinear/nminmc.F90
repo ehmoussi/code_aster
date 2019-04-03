@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nminmc(fonact, lischa     , sddyna     , modele, ds_constitutive,&
-                  numedd, numfix     , ds_algopara, solalg,&
+                  numedd, numfix     , solalg     ,&
                   valinc, ds_material, carele     , sddisc, ds_measure     ,&
-                  meelem, measse     , veelem)
+                  meelem, measse     , ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/nmcmat.h"
 #include "asterfort/nmxmat.h"
 #include "asterfort/utmess.h"
+#include "asterfort/nmrigi.h"
 !
 integer :: fonact(*)
 character(len=19) :: lischa, sddyna
@@ -42,11 +43,10 @@ type(NL_DS_Material), intent(in) :: ds_material
 character(len=24) :: modele
 character(len=24) :: carele
 character(len=19) :: meelem(*), measse(*)
-character(len=19) :: veelem(*)
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: solalg(*), valinc(*)
 character(len=19) :: sddisc
 type(NL_DS_Measure), intent(inout) :: ds_measure
-type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! ----------------------------------------------------------------------
 !
@@ -65,13 +65,12 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR DEPLACEMENTS
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! In  ds_algopara      : datastructure for algorithm parameters
 ! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! OUT MEELEM : MATRICES ELEMENTAIRES
-! OUT VEELEM : VECTEURS ELEMENTAIRES
+! In  ds_system        : datastructure for non-linear system management
 ! OUT MEASSE : MATRICES ASSEMBLEES
 !
 ! ----------------------------------------------------------------------
@@ -124,8 +123,8 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     if (niv .ge. 2) then
         call utmess('I','MECANONLINE13_19')
     endif
-    call nmcmat('MEDIRI', ' ', ' ', .true._1,&
-                .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+    call nmcmat('MEDIRI', ' ', ' ', ASTER_TRUE,&
+                ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                 list_l_calc, list_l_asse)
 !
 ! --- MATRICE DE MASSE
@@ -143,8 +142,8 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         else
             opmass = 'MASS_MECA'
         endif
-        call nmcmat('MEMASS', opmass, ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MEMASS', opmass, ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
 !
     endif
@@ -157,8 +156,8 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
             call utmess('I','MECANONLINE13_21')
         endif
         oprigi = 'RIGI_MECA'
-        call nmcmat('MESSTR', oprigi, ' ', .true._1,&
-                    .true._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MESSTR', oprigi, ' ', ASTER_TRUE,&
+                    ASTER_TRUE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
@@ -166,11 +165,12 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
     if (lelas) then
         optrig = 'RIGI_MECA'
-! ----- PARAMETRE INUTILE POUR OPTION RIGI_MECA
         iterat = 0
-        call nmcmat('MERIGI', optrig, ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse)
+        call nmrigi(modele     , carele         ,&
+                    ds_material, ds_constitutive,&
+                    fonact     , iterat         , sddyna, ds_measure, ds_system,&
+                    valinc     , solalg,&
+                    optrig     , ldccvg)
         if (lvarc) then
             call utmess('A', 'MECANONLINE3_2')
         endif
@@ -180,8 +180,8 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
     if (lamor .and. .not.lktan) then
         optamo = 'AMOR_MECA'
-        call nmcmat('MEAMOR', optamo, ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MEAMOR', optamo, ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
 !
     endif
@@ -189,13 +189,13 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modele, ds_material, carele, ds_constitutive,&
-                    sddisc, sddyna, fonact, numins, iterat,&
-                    valinc, solalg, lischa,&
-                    numedd, numfix, ds_measure, ds_algopara,&
-                    nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                    list_l_calc, list_l_asse, lcfint, meelem, measse,&
-                    veelem, ldccvg)
+        call nmxmat(modele         , ds_material   , carele        ,&
+                    ds_constitutive, sddisc        , numins        ,&
+                    valinc         , solalg        , lischa        ,&
+                    numedd         , numfix        , ds_measure    ,&
+                    nb_matr        , list_matr_type, list_calc_opti,&
+                    list_asse_opti , list_l_calc   , list_l_asse   ,&
+                    meelem         , measse        , ds_system)
         if (ldccvg .gt. 0) then
             call utmess('F', 'MECANONLINE_1')
         endif

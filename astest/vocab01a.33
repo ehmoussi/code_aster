@@ -11,12 +11,12 @@ from Noyau.N_ETAPE import check_sdprod
 def getListOfCommands():
     """Build the list of operators"""
     from code_aster.Commands import commandStore
-    commands = [cmd for cmd in commandStore.values() if cmd.nom != 'VARIABLE']
+    commands = [cmd for cmd in list(commandStore.values()) if cmd.nom != 'VARIABLE']
     return commands
 
 def checkDefinition( commands ):
     """Check the definition of the catalog of the commands (see N_ENTITE.py)"""
-    print ">>> Vérification des catalogues de commandes..."
+    print(">>> Vérification des catalogues de commandes...")
     err = []
     for cmd in commands:
         cr = cmd.report()
@@ -30,12 +30,12 @@ def checkDefinition( commands ):
             err.append([cmd.nom, str(cr)])
 
     for name, msg in err:
-        print("La vérification du catalogue a échoué pour '{0}':\n{1}"
-              .format(name, msg))
+        print(("La vérification du catalogue a échoué pour '{0}':\n{1}"
+              .format(name, msg)))
     if err:
         raise TypeError("{0} erreurs sur {1} commandes."
                         .format(len(err), len(commands)))
-    print "    ok\n"
+    print("    ok\n")
 
 def check_sd_prod(cmd):
     """Check sd_prod function."""
@@ -47,7 +47,7 @@ def check_sd_prod(cmd):
 
 def get_entite( obj ):
     """Return the sub-objects of a composite object"""
-    ret = obj.entites.values()
+    ret = list(obj.entites.values())
     lsub = []
     for sub in ret:
         if sub.label in ("BLOC", "FACT"):
@@ -57,7 +57,7 @@ def get_entite( obj ):
 
 def checkDocStrings( commands ):
     """Extract and check the fr/ang docstrings"""
-    print ">>> Vérification des textes explicatifs des mots-clés..."
+    print(">>> Vérification des textes explicatifs des mots-clés...")
     lang = {}
     for cmd in commands:
         objs = [cmd] + get_entite( cmd )
@@ -65,7 +65,7 @@ def checkDocStrings( commands ):
             if getattr(entity, 'ang', None):
                 lang[id(entity)] = (entity.fr, entity.ang)
     assert len(lang) == 0, "'ang' is deprecated and not used anymore, please remove it"
-    print "    ok\n"
+    print("    ok\n")
 
 def extractKeywords( commands ):
     """Return the list of all the keywords (simple or factor)"""
@@ -77,7 +77,7 @@ def extractKeywords( commands ):
         cmdKwd[ name ] = words
     # reverse dict : commands that use a keyword
     kwdCmd = {}
-    for nom, words in cmdKwd.items():
+    for nom, words in list(cmdKwd.items()):
         for word in words:
             kwdCmd[ word ] = kwdCmd.get(word, set())
             kwdCmd[ word ].add(nom)
@@ -85,7 +85,7 @@ def extractKeywords( commands ):
 
 def sortedKeywords( kwdCmd ):
     """Build the sorted list of all keywords"""
-    allKwd = kwdCmd.keys()
+    allKwd = list(kwdCmd.keys())
     allKwd.sort()
     return allKwd
 
@@ -93,23 +93,23 @@ def printKeywordsUsage( commands, fileList=None ):
     """Print the usage of all the keywords"""
     kwdCmd = extractKeywords( commands )
     allKwd = sortedKeywords( kwdCmd )
-    print '\n Nombre total de mots cles = ', len( allKwd )
+    print('\n Nombre total de mots cles = ', len( allKwd ))
     lines = []
     for word in allKwd:
         cmds = list( kwdCmd[ word ] )
         cmds.sort()
         fmt = "{:<28} :: " + " / ".join( ["{:<18}"] * len(cmds) )
         lines.append( fmt.format(word, *cmds) )
-    print os.linesep.join(lines)
+    print(os.linesep.join(lines))
     if fileList:
         picline = '# person_in_charge: mathieu.courtois@edf.fr'
         open( fileList, 'wb').write( os.linesep.join([picline] + allKwd) )
         line = "\n    {:^60}"
-        print line.format( "*" * 60 )
-        print line.format( "Nom du fichier à recopier pour mettre à jour vocab01a.34" )
-        print line.format( fileList )
-        print line.format( "*" * 60 )
-        print "\n"
+        print(line.format( "*" * 60 ))
+        print(line.format( "Nom du fichier à recopier pour mettre à jour vocab01a.34" ))
+        print(line.format( fileList ))
+        print(line.format( "*" * 60 ))
+        print("\n")
     return allKwd
 
 
@@ -124,7 +124,7 @@ def vocab01_ops(self, EXISTANT, INFO, **kwargs):
     checkDefinition( commands )
     checkDocStrings( commands )
 
-    print ">>> Vérification des mots-clés..."
+    print(">>> Vérification des mots-clés...")
     fileList = None
     if INFO == 2:
         fileList = tempfile.NamedTemporaryFile( prefix="vocab01a_" ).name

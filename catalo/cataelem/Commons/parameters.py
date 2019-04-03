@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,12 +44,10 @@ PACCE_M = InputParameter(phys=PHY.DEPL_R,
 """)
 
 PACCKM1 = InputParameter(phys=PHY.DEPL_R,
-                         comment=""" ACCELERATION DU NOEUD ITERATION N+1 (POU_D_TGD)
-""")
+                         comment=""" Acceleration for Newton iteration N+1""")
 
 PACCPLU = InputParameter(phys=PHY.DEPL_R,
-                         comment=""" ACCELERATION DU NOEUD PAS N (POU_D_TGD)
-""")
+                         comment=""" Acceleration at end of current time step""")
 
 PALPHAR = InputParameter(phys=PHY.NEUT_R,
                          comment="""""")
@@ -153,8 +151,7 @@ PCAPOUF = InputParameter(phys=PHY.CAPOUF,
                          comment="""""")
 
 PCARCRI = InputParameter(phys=PHY.CARCRI,
-                         comment=""" PARAMETRES DE CONVERGENCE POUR MECA_NON_LINE
-""")
+                         comment=""" Convergence criteria for behaviours""")
 
 PCAR_AI = InputParameter(phys=PHY.N480_R,
                          comment=""" XFEM
@@ -284,11 +281,10 @@ PCOURB = InputParameter(phys=PHY.NEUT_R,
                         comment="""""")
 
 PDDEPLA = InputParameter(phys=PHY.DEPL_R,
-                         comment=""" INCREMENT DE DEPLACEMENT SOLUTION DE NEWTON
-""")
+                         comment=""" Displacement increment from Newton""")
 
 PDDEPLR = InputParameter(phys=PHY.DEPL_R,
-                         comment="""""")
+                         comment=""" To suppress""")
 
 PDDLIMC = InputParameter(phys=PHY.DDLI_C,
                          comment="""""")
@@ -357,22 +353,14 @@ PDEPLM = InputParameter(phys=PHY.DEPL_R, container='RESU!DEPL!NM1T',
 """)
 
 PDEPLMR = InputParameter(phys=PHY.DEPL_R,
-                         comment=""" PDEPLMR : DEPLACEMENTS GENERALISES EN THM INSTANT PRECEDENT
- DEPLACEMENTS POUR T-
-  PDEPLMR : DEPLACEMENTS INSTANT PRECEDENT
- DISPLACEMENT AT BEGINNING OF STEP
-""")
+                         comment=""" Displacement at beginning of current time step """)
 
 PDEPLNO = InputParameter(phys=PHY.DEPL_R,
                          comment=""" champ de deplacement nodal avec degres de libertes XFEM
 """)
 
 PDEPLPR = InputParameter(phys=PHY.DEPL_R,
-                         comment=""" INCREMENT DE DEPLACEMENT CUMULE DEPUIS LE DEBUT DU PAS DE TEMPS
- CHAMP INUTILE INITIALISE A 0 DANS NMMATR
- DISPLACEMENT FROM BEGINNING OF STEP
-  PDEPLPR : DEPLACEMENTS INSTANT ACTUEL
-""")
+                         comment=""" Increment of displacement from the beginning of current time step """)
 
 PDEPLR = InputParameter(phys=PHY.DEPL_R, container='RESU!DEPL!N',
                         comment="""  PDEPLR : DEPLACEMENTS INSTANT ACTUEL
@@ -629,13 +617,7 @@ PFTRC = InputParameter(phys=PHY.ADRSJEVN,
                        comment="""""")
 
 PGEOMER = InputParameter(phys=PHY.GEOM_R, container='MAIL!.COORDO',
-                         comment="""  PGEOMER : COORDONNEES DES NOEUDS
-  PGEOMER :  INITIAL GEOMETRY
- INITIAL GEOMETRY
-  PGEOMER : COORDONNEES DES NOEUDS
- COORDONNEES INITIALES DES NOEUDS
- PGEOMER : COORDONNEES DES NOEUDS
-""")
+                         comment=""" Initial coordinates of nodes (from mesh)""")
 
 PGLISS = InputParameter(phys=PHY.NEUT_I,
                         comment="""""")
@@ -687,18 +669,13 @@ PINFORR = InputParameter(phys=PHY.NEUT_R,
 """)
 
 PINSTMR = InputParameter(phys=PHY.INST_R,
-                         comment=""" VALEUR DE L'INSTANT T-
-  PINSTMR :  INSTANT PRECEDENT
-""")
+                         comment=""" Previous time """)
 
 PINSTPR = InputParameter(phys=PHY.INST_R,
-                         comment="""  PINSTPR :  INSTANT ACTUEL
- VALEUR DE L'INSTANT T+
-""")
+                         comment=""" Current time""")
 
 PITERAT = InputParameter(phys=PHY.NEUT_R,
-                         comment=""" ITERATION DE NEWTON COURANTE (ASSE_CORN/PMF)
-""")
+                         comment=""" Newton iteration""")
 
 PLAGRM = InputParameter(phys=PHY.NEUT_R,
                         comment="""""")
@@ -725,21 +702,13 @@ PMASSEL = InputParameter(phys=PHY.MDEP_R,
                          comment="""""")
 
 PMATERC = InputParameter(phys=PHY.ADRSJEVE, container='CHMA!.MATE_CODE',
-                         comment=""" PMATERC : CHAMP DE MATERIAU ISSU DE AFFE_MATERIAU
-  PMATERC : CHAMP DE MATERIAU
- PMATERC : MATERIAU_CODE
-  PMATERC : CHAMP DE MATERIAU
- MATERIAL INFO
- PMATERC: MATERIAU CODE
- CHAMP DE MATERIAU
-  PMATERC : CHAMP DE MATERIAU  BECAUSE DEFI_COQU_MULT
-""")
+                         comment=""" Parameters for material (AFFE_MATERIAU)""")
 
 PMEMCON = InputParameter(phys=PHY.NEUT_I,
                          comment="""""")
 
 PMULCOM  = InputParameter(phys=PHY.MULTCOMP,
-                          comment="""  Informations for non-linear comportment (*CRISTAL) """)
+                          comment="""  Informations for non-linear behaviour (*CRISTAL) """)
 
 PNEUK24 = InputParameter(phys=PHY.NEUT_K24,
                          comment="""""")
@@ -853,12 +822,10 @@ PRIGINS = InputParameter(phys=PHY.MDNS_R,
                          comment="""""")
 
 PROMK = InputParameter(phys=PHY.DEPL_R,
-                       comment=""" ROTATION DU NOEUD ITERATION N (POU_D_TGD)
-""")
+                       comment=""" Rotation for Newton iteration N+1""")
 
 PROMKM1 = InputParameter(phys=PHY.DEPL_R,
-                         comment=""" ROTATION DU NOEUD ITERATION N+1 (POU_D_TGD)
-""")
+                         comment=""" Rotation for Newton iteration N""")
 
 PROTATR = InputParameter(phys=PHY.ROTA_R,
                          comment="""  PROTATR : CHARGEMENT INTERNE DE TYPE ROTATION (REELS)
@@ -931,8 +898,7 @@ PSNO = InputParameter(phys=PHY.GEOM_R, container='MAIL!.COORDO',
 """)
 
 PSTADYN = InputParameter(phys=PHY.STAOUDYN,
-                         comment=""" CHAMP POUR DYNAMIQUE NEWMARK (POU_D_TGD)
-""")
+                         comment=""" Parameters for dynamic scheme (Newmark)""")
 
 PSTRXMP = InputParameter(phys=PHY.STRX_R,
                          comment=""" PSTRXMP : CHAMPS SPECIAL ELEMENTS DE STRUCTURE
@@ -1017,28 +983,11 @@ PT_EXTF = InputParameter(phys=PHY.TEMP_F,
 PT_EXTR = InputParameter(phys=PHY.TEMP_R,
                          comment="""""")
 
-PVARCMR = InputParameter(
-    phys=PHY.VARI_R, container='VOLA!&&CCPARA.VARI_INT_N',
-    comment=""" PVARCMR: VARIABLES DE COMMANDES POUR T-
- VARIABLES DE COMMANDES  POUR T-
-  PVARCPR : VARIABLES DE COMMANDE  A L INSTANT +
- PVARCMR : VARIABLES DE COMMANDES  POUR T-
-  PVARCMR : TEMPERATURES INSTANT PRECEDENT
-""")
+PVARCMR = InputParameter(phys=PHY.VARI_R, container='VOLA!&&CCPARA.VARI_INT_N',
+                         comment=""" External state variables at beginning of current time step """)
 
-PVARCRR = InputParameter(
-    phys=PHY.VARI_R, container='VOLA!&&CCPARA.VARI_INT_REF',
-    comment=""" PVARCPR : VARIABLES DE COMMANDES  DE REFERENCE
- PVARCRR : VARIABLES DE COMMANDES  DE REFERENCE
- VARIABLES DE COMMANDES  DE REFERENCE
- PVARCRR : VARIABLES DE COMMANDES  DE REFERENCE
-  PVARCRR : VARIABLE DE COMMANDE DE REFERENCE
-  PVARCRR : VARIABLES DE COMMANDE  DE REFERENCE
-  PVARCRR : TEMPERATURE DE REFERENCE
-  PVARCRR : VARIABLES DE COMMANDES  DE REFERENCE
-  PVARCRR : VARIABLES DE COMMANDE  DE REFERENCE
-  PVARCPR : VARIABLES DE COMMANDE  DE REFERENCE
-""")
+PVARCRR = InputParameter(phys=PHY.VARI_R, container='VOLA!&&CCPARA.VARI_INT_REF',
+                         comment=""" External state variables for reference values """)
 
 PVARIGR = InputParameter(phys=PHY.VARI_R, container='RESU!VARI_ELGA!N',
                          comment="""  PVARIGR : VARIABLES INTERNES
@@ -1046,8 +995,7 @@ PVARIGR = InputParameter(phys=PHY.VARI_R, container='RESU!VARI_ELGA!N',
 """)
 
 PVARIMP = InputParameter(phys=PHY.VARI_R,
-                         comment=""" VARIABLES INTERNES APRES ITERATIONS DE NEWTON PRECEDENTE POUR DE BORST
-""")
+                         comment=""" Internal state variables at previous Newton iteration """)
 
 PVARIPG = InputParameter(phys=PHY.VARI_R,
                          comment="""""")
@@ -1174,8 +1122,10 @@ PCASECT = OutputParameter(phys=PHY.NEUT_R, type='ELEM',
 
 PCODRET = OutputParameter(phys=PHY.CODE_I, type='ELEM',
                           comment=""" CODE RETOUR INTEGRATION COMPORTEMENT
- CODE RETOUR : 0 -> OK , 1 SINON
 """)
+
+PCOPRED = OutputParameter(phys=PHY.CODE_I, type='ELEM',
+                          comment=""" Indicator for complete prediction or not""")
 
 PCOGAOUT = OutputParameter(phys=PHY.SIEF_R, type='ELGA',
                            comment="""  PCOGAOUT : CHAMP DE CONTRAINTES ELGA NOUVEAU REPERE
@@ -1607,7 +1557,7 @@ PVECTUC = OutputParameter(phys=PHY.VDEP_C, type='RESL',
                           comment="""""")
 
 PVECTUR = OutputParameter(phys=PHY.VDEP_R, type='RESL',
-                          comment="""""")
+                          comment=""" Internal forces""")
 
 PVECTCR = OutputParameter(phys=PHY.VDEP_R, type='RESL',
                           comment="""Vector for contact""")

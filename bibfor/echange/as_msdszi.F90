@@ -2,7 +2,7 @@ subroutine as_msdszi(fid,mname,jname,numdt,numit,it,letype,lgtype,&
                      retype,rgtype,ncor,cret)
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
-! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -22,8 +22,8 @@ subroutine as_msdszi(fid,mname,jname,numdt,numit,it,letype,lgtype,&
 #include "asterf_config.h"
 #include "asterf_types.h"
 #include "med/msdszi.h"
-    character*(*)   mname,jname
-    aster_int   fid,numdt,numit,it,letype,lgtype,retype,rgtype,ncor,cret
+    character(len=*) :: mname,jname
+    aster_int :: fid,numdt,numit,it,letype,lgtype,retype,rgtype,ncor,cret
 
 #ifdef _DISABLE_MED
     call u2mess('F', 'FERMETUR_2')
@@ -38,10 +38,11 @@ subroutine as_msdszi(fid,mname,jname,numdt,numit,it,letype,lgtype,&
     write(6,*) '=== as_msdszi it=',it
 #endif
 
-#if med_int_kind != aster_int_kind
-    med_int :: fid4,numdt4,numit4,it4,letype4,lgtype4,&
-                       retype4,rgtype4,ncor4,cret4
-    fid4=to_med_int(fid)
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
+    med_idt :: fid4
+    med_int :: numdt4,numit4,it4,letype4,lgtype4,&
+               retype4,rgtype4,ncor4,cret4
+    fid4=to_med_idt(fid)
     numdt4=to_med_int(numdt)
     numit4=to_med_int(numit)
     it4=to_med_int(it)

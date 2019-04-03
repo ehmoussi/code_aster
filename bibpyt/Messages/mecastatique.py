@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  Le modèle contient des POU_D_EM avec des variables de commandes définies dans AFFE_MATERIAU.
  Le calcul linéaire n'est pas possible.
 
@@ -29,7 +29,7 @@ cata_msg = {
             COMPORTEMENT/RELATION='MULTIFIBRE'
 """),
 
-    25 : _(u"""
+    25 : _("""
  Le chargement contient plus d'une charge répartie.
  Le calcul n'est pas possible pour les modèles de poutre.
 """),

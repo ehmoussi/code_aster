@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,9 +23,7 @@ __all__ = ['Graph', 'AjoutParaCourbe']
 import sys
 import os
 import os.path
-import string
 import re
-import types
 import time
 import numpy
 
@@ -35,12 +33,11 @@ import aster_core
 
 from code_aster.Utilities import value_is_sequence
 
-
-if not sys.modules.has_key('Table'):
+if 'Table' not in sys.modules:
     try:
         from Utilitai import Table
     except ImportError:
-        import Table
+        from . import Table
 
 
 # ------------------------------------------------------------------------
@@ -310,7 +307,7 @@ class Graph(object):
                 kargs['dform'] = dform
             if opts != {}:
                 kargs['opts'] = opts
-        if not FORMAT in para.keys():
+        if not FORMAT in list(para.keys()):
             UTMESS('A', 'GRAPH0_3', valk=FORMAT)
         else:
             kargs['fmod'] = para[FORMAT]['mode']
@@ -358,14 +355,14 @@ class TraceGraph:
            à un format, exemple 'PILOTE' pour Xmgrace).
         """
         # attributs optionnels (au début pour éviter un écrasement maladroit !)
-        for k, v in opts.items():
+        for k, v in list(opts.items()):
             setattr(self, k, v)
 
         # Ouverture du(des) fichier(s)
         self.NomFich = []
-        if type(FICHIER) is types.StringType:
+        if type(FICHIER) is bytes or type(FICHIER) is str:
             self.NomFich.append(FICHIER)
-        elif type(FICHIER) in (types.ListType, types.TupleType):
+        elif type(FICHIER) in (list, tuple):
             self.NomFich = FICHIER[:]
         else:
             # dans ce cas, on écrira sur stdout (augmenter le 2 éventuellement)
@@ -411,7 +408,7 @@ class TraceGraph:
             'formR': '%12.5E',  # réels
             'formI': '%12d'     # entiers
         }
-        if dform != None and type(dform) == types.DictType:
+        if dform != None and type(dform) == dict:
             self.DicForm.update(dform)
 
         # let's go
@@ -443,13 +440,13 @@ class TraceGraph:
 # ------------------------------------------------------------------------
     def Entete(self):
         """Retourne l'entete"""
-        raise NotImplementedError, "Cette méthode doit être définie par la classe fille."
+        raise NotImplementedError("Cette méthode doit être définie par la classe fille.")
 # ------------------------------------------------------------------------
 
     def DescrCourbe(self, **args):
         """Retourne la chaine de caractères décrivant les paramètres de la courbe.
         """
-        raise NotImplementedError, "Cette méthode doit être définie par la classe fille."
+        raise NotImplementedError("Cette méthode doit être définie par la classe fille.")
 # ------------------------------------------------------------------------
 
     def Trace(self):
@@ -457,7 +454,7 @@ class TraceGraph:
         Met en page l'entete, la description des courbes et les valeurs selon
         le format et ferme le fichier.
         """
-        raise NotImplementedError, "Cette méthode doit être définie par la classe fille."
+        raise NotImplementedError("Cette méthode doit être définie par la classe fille.")
 
 
 # ------------------------------------------------------------------------------
@@ -811,7 +808,7 @@ class TraceXmgrace(TraceGraph):
 
         sn = str(args['NumSet'])
         descr = []
-        descr.append(string.replace("""
+        descr.append("""
 @    s0 hidden false
 @    s0 type xy
 @    s0 symbol size 1.000000
@@ -852,7 +849,7 @@ class TraceXmgrace(TraceGraph):
 @    s0 errorbar riser clip length 0.100000
 
 @    s0 comment ""
-""", ' s0 ', ' s' + sn + ' '))
+""".replace( ' s0 ', ' s' + sn + ' '))
         descr.append('@    s' + sn + ' symbol ' + symbol)
         descr.append('@    s' + sn + ' symbol color ' + color)
         descr.append('@    s' + sn + ' symbol skip ' + freqm)
@@ -951,7 +948,8 @@ class TraceXmgrace(TraceGraph):
         else:
             xmgr = aster_core.get_option('prog:xmgrace')
             nfwrk = self.NomFich[0] + '.wrk'
-            open(nfwrk, 'w').write('\n'.join(content))
+            with open(nfwrk, 'w') as f:
+                f.write('\n'.join(content))
             nfhard = self.NomFich[0] + '.hardcopy'
             # nom exact du pilote
             bg = pilo == 'INTERACTIF_BG'
@@ -964,7 +962,7 @@ class TraceXmgrace(TraceGraph):
                 lcmde = '%s %s' % (xmgr, nfwrk)
                 if bg:
                     lcmde += ' &'
-                if not os.environ.has_key('DISPLAY') or os.environ['DISPLAY'] == '':
+                if 'DISPLAY' not in os.environ or os.environ['DISPLAY'] == '':
                     os.environ['DISPLAY'] = ':0.0'
                     UTMESS('I', 'GRAPH0_7')
                 UTMESS('I', 'GRAPH0_8', valk=os.environ['DISPLAY'])
@@ -980,8 +978,10 @@ class TraceXmgrace(TraceGraph):
             iret = os.system(lcmde)
             if iret == 0 or os.path.exists(nfhard):
                 if pilo not in ('', 'X11'):
-                    new = open(nfhard, 'r').read()
-                    open(self.NomFich[0], 'a').write(new)
+                    with open(nfhard, 'rb') as f:
+                        new = f.read()
+                    with open(self.NomFich[0], 'ab') as f:
+                        f.write(new)
             else:
                 UTMESS('A', 'GRAPH0_9', valk=pilo)
         # menage
@@ -1202,12 +1202,12 @@ class TraceMatplotlib(TraceGraph):
             lab.set_fontsize(32)
         for lab in ax.yaxis.get_ticklabels():
             lab.set_fontsize(32)
-        plt.grid('on',which='both')
+        plt.grid(True, which='both')
 
 
         if len(liss_nappe)>0:
             tablefig = []
-            listAmor = liss_nappe.keys()
+            listAmor = list(liss_nappe.keys())
             listAmor.sort()
             listFreq = liss_nappe[listAmor[0]][0]
             for i in range(len(listFreq)):
@@ -1266,7 +1266,9 @@ class TraceMatplotlib(TraceGraph):
         legend.set_fontsize(40)
         legend.scale(1.3, 1.3)
 
+        aster_core.matfpe(-1)
         plt.savefig(fichier[0], format='png',bbox_inches='tight')
+        aster_core.matfpe(1)
 
 
 
@@ -1295,10 +1297,10 @@ def Tri(tri, lx, ly):
     dNumCol = {'X': 0, 'Y': 1}
     tab = numpy.array((lx, ly))
     tab = numpy.transpose(tab)
-    li = range(len(tri))
+    li = list(range(len(tri)))
     li.reverse()
     for i in li:
-        if tri[-i] in dNumCol.keys():
+        if tri[-i] in list(dNumCol.keys()):
             icol = dNumCol[tri[-i]]
             tab = numpy.take(tab, numpy.argsort(tab[:, icol]))
     return [tab[:, 0].tolist(), tab[:, 1].tolist()]
@@ -1319,8 +1321,8 @@ def AjoutParaCourbe(dCourbe, args):
         'FREQ_MARQUEUR': 'FreqM',
         'TRI': 'Tri',
     }
-    for mc, key in keys.items():
-        if args.has_key(mc):
+    for mc, key in list(keys.items()):
+        if mc in args:
             dCourbe[key] = args[mc]
 
 # ------------------------------------------------------------------------
@@ -1335,36 +1337,37 @@ def IniGrace(fich):
     y0 = None
     y1 = None
     if os.path.exists(fich) and os.stat(fich).st_size != 0:
+        assert not is_binary(fich), 'Can not append text to a binary file'
         os.rename(fich, fich + '.prev')
         fpre = open(fich + '.prev', 'r')
         fnew = open(fich,         'w')
         for line in fpre:
             ikeep = True
-            mat = re.search('@target g[0-9]+\.s([0-9]+)', line)
+            mat = re.search(r'@target g[0-9]+\.s([0-9]+)', line)
             if mat != None and int(mat.group(1)) > ns:
                 ns = int(mat.group(1))
-            mat = re.search('@[ ]+world[ ]+xmin[ ]+([\-\+\.0-9eEdD]+)', line)
+            mat = re.search(r'@[ ]+world[ ]+xmin[ ]+([\-\+\.0-9eEdD]+)', line)
             if mat != None:
                 try:
                     x0 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
-            mat = re.search('@[ ]+world[ ]+xmax[ ]+([\-\+\.0-9eEdD]+)', line)
+            mat = re.search(r'@[ ]+world[ ]+xmax[ ]+([\-\+\.0-9eEdD]+)', line)
             if mat != None:
                 try:
                     x1 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
-            mat = re.search('@[ ]+world[ ]+ymin[ ]+([\-\+\.0-9eEdD]+)', line)
+            mat = re.search(r'@[ ]+world[ ]+ymin[ ]+([\-\+\.0-9eEdD]+)', line)
             if mat != None:
                 try:
                     y0 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
-            mat = re.search('@[ ]+world[ ]+ymax[ ]+([\-\+\.0-9eEdD]+)', line)
+            mat = re.search(r'@[ ]+world[ ]+ymax[ ]+([\-\+\.0-9eEdD]+)', line)
             if mat != None:
                 try:
                     y1 = float(mat.group(1))
@@ -1380,3 +1383,16 @@ def IniGrace(fich):
         else:
             UTMESS('A', 'GRAPH0_11', valk=fich)
     return ns, x0, x1, y0, y1
+
+
+def is_binary(fname):
+    """Tell if a file appears to be binary (containing a NULL byte)
+    Note: UTF-16 files are reported as binary."""
+    fobj = open(fname, 'rb')
+    try:
+        for block in fobj:
+            if b'\0' in block:
+                return True
+    finally:
+        fobj.close()
+    return False

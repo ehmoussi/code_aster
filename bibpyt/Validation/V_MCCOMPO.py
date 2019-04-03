@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -63,18 +63,18 @@ class MCCOMPO:
         """
         self.cr = self.CR()
         self.cr.debut = self.txt_nat + self.nom
-        self.cr.fin = u"Fin " + self.txt_nat + self.nom
+        self.cr.fin = "Fin " + self.txt_nat + self.nom
         i = 0
         for child in self.mc_liste:
             i += 1
             if i > MAXSIZE:
-                print(MAXSIZE_MSGCHK.format(MAXSIZE, len(self.mc_liste)))
+                print((MAXSIZE_MSGCHK.format(MAXSIZE, len(self.mc_liste))))
                 break
             self.cr.add(child.report())
         self.state = 'modified'
         try:
             self.isvalid(cr='oui')
-        except AsException, e:
+        except AsException as e:
             if CONTEXT.debug:
                 traceback.print_exc()
             self.cr.fatal(' '.join((self.txt_nat, self.nom, str(e))))
@@ -124,12 +124,12 @@ class MCCOMPO:
         # Si restreint != 'oui',
         # on ajoute les couples {nom mot-clé:objet mot-clé} des mots-clés simples
         # possibles pour peu qu'ils aient une valeur par défaut
-        for k, v in self.definition.entites.items():
+        for k, v in list(self.definition.entites.items()):
             if v.label != 'SIMP':
                 continue
             if not v.defaut:
                 continue
-            if not dico.has_key(k):
+            if k not in dico:
                 dico[k] = v(nom=k, val=None, parent=self)
         # on ajoute l'objet detenteur de regles pour des validations plus
         # sophistiquees (a manipuler avec precaution)

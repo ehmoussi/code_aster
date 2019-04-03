@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,8 +22,8 @@
 
 from Noyau import N_FACT
 from Build import B_ENTITE
-import A_MCFACT
-import A_MCLIST
+from . import A_MCFACT
+from . import A_MCLIST
 
 
 class FACT(N_FACT.FACT, B_ENTITE.ENTITE):

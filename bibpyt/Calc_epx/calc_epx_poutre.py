@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,10 +60,10 @@ class POUTRE:
             groupe par groupe.
         """
 
-        for gr in self.dic_gma.keys():
+        for gr in list(self.dic_gma.keys()):
             vect = self.get_vecty_group_ma(gr)
             dic_orie = {'VX': vect[0], 'VY': vect[1], 'VZ': vect[2], }
-            if dic_gr_cara_supp.has_key(gr):
+            if gr in dic_gr_cara_supp:
                 dic_gr_cara_supp[gr].update(dic_orie)
             else:
                 dic_gr_cara_supp[gr] = dic_orie
@@ -77,7 +77,7 @@ class POUTRE:
         dic_gma = {}
         etapes = self.CARA_ELEM.etape.valeur
 
-        if not etapes.has_key('ORIENTATION'):
+        if 'ORIENTATION' not in etapes:
             return dic_gma
 
         orientation = tolist(etapes['ORIENTATION'])
@@ -85,19 +85,19 @@ class POUTRE:
         for ll in orientation:
             cara = ll['CARA']
             if cara in ['ANGL_VRIL', 'ANGL_NAUT', 'VECT_Y']:
-                if ll.has_key('GROUP_MA'):
+                if 'GROUP_MA' in ll:
                     group_ma = tolist(ll['GROUP_MA'])
                     a = ll['VALE']
                     for gr in group_ma:
-                        if not dic_gma.has_key(gr):
+                        if gr not in dic_gma:
                             dic_gma[gr] = {}
                         dic_gma[gr][cara] = a
 
-        for gr in dic_gma.keys():
-            if not dic_gma[gr].has_key('VECT_Y'):
-                if not dic_gma[gr].has_key('ANGL_VRIL'):
+        for gr in list(dic_gma.keys()):
+            if 'VECT_Y' not in dic_gma[gr]:
+                if 'ANGL_VRIL' not in dic_gma[gr]:
                     dic_gma[gr]['ANGL_VRIL'] = 0.0
-                if dic_gma[gr].has_key('ANGL_NAUT'):
+                if 'ANGL_NAUT' in dic_gma[gr]:
                     UTMESS('F', 'PLEXUS_10')
         return dic_gma
 
@@ -111,7 +111,7 @@ class POUTRE:
         from Calc_epx.calc_epx_utils import angle2vecty
         # VECT_Y : les données sont déjà sous la bonne forme
         vect_y0 = None
-        if self.dic_gma[group_ma].has_key('VECT_Y'):
+        if 'VECT_Y' in self.dic_gma[group_ma]:
             vect_y = self.dic_gma[group_ma]['VECT_Y']
         else:
             mailles = self.MApyt.gma[group_ma.strip()]

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,115 +21,115 @@
 
 cata_msg = {
 
-    1  : _(u"""
+    1  : _("""
  <Erreur> Échec dans l'intégration de la loi de comportement
 """),
 
-    2 : _(u"""
+    2 : _("""
  <Erreur> Échec dans le pilotage
 """),
 
-    3 : _(u"""
+    3 : _("""
  <Erreur> Le nombre maximum d'itérations de Newton est atteint
 """),
 
-    4 : _(u"""
+    4 : _("""
  <Erreur> Échec dans le traitement du contact discret
 """),
 
-    5 : _(u"""
+    5 : _("""
  <Erreur> Il n'y a pas assez de temps CPU pour continuer les pas de temps
 """),
 
-    6 : _(u"""
+    6 : _("""
  <Erreur> La matrice du système est singulière
 """),
 
-    7 : _(u"""
+    7 : _("""
  <Erreur> Il n'y a pas assez de temps CPU pour continuer les itérations de Newton
 """),
 
-    8 : _(u"""
+    8 : _("""
  <Erreur> Arrêt demandé par l'utilisateur.
 """),
 
-    9 : _(u"""
+    9 : _("""
  <Erreur> On dépasse le nombre de boucles de point fixe de géométrie.
  """),
 
-    10 : _(u"""
+    10 : _("""
  <Erreur> On dépasse le nombre de boucles de point fixe de frottement.
  """),
 
-    11 : _(u"""
+    11 : _("""
  <Erreur> On dépasse le nombre de boucles de point fixe de contact.
  """),
 
-    12 : _(u"""
+    12 : _("""
  <Erreur> Nombre maximum d'itérations atteint dans le solveur linéaire itératif.
  """),
 
-    13 : _(u"""
+    13 : _("""
  <Erreur> Une valeur non-physique a été atteinte (porosité négative ou supérieure à un par exemple).
  """),
 
-    20 : _(u"""
+    20 : _("""
  <Évènement> Instabilité détectée.
  """),
 
-    21 : _(u"""
+    21 : _("""
  <Évènement> Collision détectée.
  """),
 
-    22 : _(u"""
+    22 : _("""
  <Évènement> Interpénétration détectée.
  """),
 
-    23 : _(u"""
+    23 : _("""
  <Évènement> Divergence du résidu (DIVE_RESI).
  """),
 
-    24 : _(u"""
+    24 : _("""
  <Évènement> Valeur atteinte (DELTA_GRANDEUR).
  """),
 
-    25 : _(u"""
+    25 : _("""
  <Évènement> La loi de comportement est utilisée en dehors de son domaine de validité (VERI_BORNE).
  """),
 
-   26 : _(u"""
+   26 : _("""
  <Évènement> Divergence du résidu (RESI_MAXI).
  """),
 
-    30 : _(u"""
+    30 : _("""
  <Action> On arrête le calcul.
  """),
 
-    32: _(u"""
+    32: _("""
  <Action> On essaie d'autoriser des itérations de Newton supplémentaires.
 """),
 
-    33: _(u"""
+    33: _("""
  <Action> On essaie de découper le pas de temps.
 """),
 
-    34 : _(u"""
+    34 : _("""
  <Action> On essaie d'utiliser la solution de pilotage rejetée initialement.
  """),
 
-    35 : _(u"""
+    35 : _("""
  <Action> On essaie d'adapter le coefficient de pénalisation.
  """),
 
-    42 : _(u""" <Action><Échec> On a déjà choisi l'autre solution de pilotage."""),
+    42 : _(""" <Action><Échec> On a déjà choisi l'autre solution de pilotage."""),
 
-    43 : _(u""" <Action> On choisit l'autre solution de pilotage."""),
+    43 : _(""" <Action> On choisit l'autre solution de pilotage."""),
 
-    44 : _(u""" <Action><Échec> On ne peut plus adapter le coefficient de pénalisation (on atteint COEF_MAXI)."""),
+    44 : _(""" <Action><Échec> On ne peut plus adapter le coefficient de pénalisation (on atteint COEF_MAXI)."""),
 
-    45 : _(u""" <Action> On a adapté le coefficient de pénalisation."""),
+    45 : _(""" <Action> On a adapté le coefficient de pénalisation."""),
 
-    46 : _(u"""          Sur la zone <%(i1)d>, le coefficient de pénalisation adapté vaut <%(r1)13.6G>.
+    46 : _("""          Sur la zone <%(i1)d>, le coefficient de pénalisation adapté vaut <%(r1)13.6G>.
  """),
 
 }

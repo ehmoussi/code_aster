@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -428,13 +428,13 @@ for Raff in range(0,Nb_Raffinement):
 #================================================================================================
 
 
-print 'Norme L2 de l erreur= %e' %dicResu['NormeL2ErreurU']
+print('Norme L2 de l erreur= %e' %dicResu['NormeL2ErreurU'])
 
 PenteL2U=-math.log( NormeL2ErreurU[-1]/NormeL2ErreurU[-2])/math.log(2.)
 PenteL2P=-math.log( NormeL2ErreurP[-1]/NormeL2ErreurP[-2])/math.log(2.)
 
 
-print 'norme L2 U', NormeL2ErreurU
+print('norme L2 U', NormeL2ErreurU)
 
 
 sous_titreU='Element P%i, Ordre de convergence = %f '%(2 , PenteL2U)
@@ -449,10 +449,10 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                          ORDONNEE=NormeL2ErreurU,
                          ),
                      ),
-              TITRE='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N',
+              TITRE=r'Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N',
               SOUS_TITRE=sous_titreU,
               LEGENDE_X='h',
-              LEGENDE_Y='L\s2\N(Erreur)',
+              LEGENDE_Y=r'L\s2\N(Erreur)',
               ECHELLE_X='LOG',
               ECHELLE_Y='LOG',
               INFO=2,)
@@ -466,10 +466,10 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                          ORDONNEE=NormeL2ErreurP,
                          ),
                      ),
-              TITRE='Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N',
+              TITRE=r'Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N',
               SOUS_TITRE=sous_titreP,
               LEGENDE_X='h',
-              LEGENDE_Y='L\s2\N(Erreur)',
+              LEGENDE_Y=r'L\s2\N(Erreur)',
               ECHELLE_X='LOG',
               ECHELLE_Y='LOG',
               INFO=2,)

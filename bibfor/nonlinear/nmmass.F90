@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmmass(fonact, lischa, sddyna, numedd, ds_algopara,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmmass(lischa, sddyna, numedd,&
                   numfix, meelem, masse)
 !
 use NonLin_Datastructure_type
@@ -29,15 +30,12 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/mtdscr.h"
 #include "asterfort/ndynlo.h"
-#include "asterfort/nmassm.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/asmama.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: fonact(*)
-    character(len=19) :: lischa, sddyna
-    character(len=24) :: numedd, numfix
-    character(len=19) :: meelem(*)
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19) :: lischa, sddyna
+character(len=24) :: numedd, numfix
+character(len=19) :: meelem(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -61,7 +59,7 @@ implicit none
 !
     aster_logical :: ldyna, lexpl, limpl
     character(len=16) :: optass
-    character(len=19) :: masse
+    character(len=19) :: masse, memass, mediri
 !
 ! ----------------------------------------------------------------------
 !
@@ -72,6 +70,8 @@ implicit none
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
     lexpl = ndynlo(sddyna,'EXPLICITE')
     limpl = ndynlo(sddyna,'IMPLICITE')
+    call nmchex(meelem, 'MEELEM', 'MEMASS', memass)
+    call nmchex(meelem, 'MEELEM', 'MEDIRI', mediri)
 !
 ! --- ASSEMBLAGE DE LA MATRICE MASSE
 !
@@ -84,8 +84,11 @@ implicit none
             ASSERT(.false.)
         endif
         masse = '&&NMMASS.MASSENER'
-        call nmassm(fonact, lischa, numedd, numfix, ds_algopara,&
-                    'MEMASS', optass, meelem, masse)
+        if (optass .eq. ' ') then
+            call asmama(memass, ' ', numfix, lischa, masse)
+        else if (optass.eq.'AVEC_DIRICHLET') then
+            call asmama(memass, mediri, numedd, lischa, masse)
+        endif
         call mtdscr(masse)
     endif
 !

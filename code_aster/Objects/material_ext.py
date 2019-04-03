@@ -29,7 +29,8 @@ from libaster import Material
 from ..Utilities import injector
 
 
-class ExtendedMaterial(injector(Material), Material):
+@injector(Material)
+class ExtendedMaterial(object):
     cata_sdj = "SD.sd_mater.sd_mater"
 
     def __getinitargs__(self):

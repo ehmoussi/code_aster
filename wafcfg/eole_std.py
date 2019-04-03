@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ def configure(self):
 
     intel.configure(self)
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20181015')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190318')
     opts.with_prog_salome = True
     opts.with_prog_europlexus = True
 
@@ -49,7 +49,6 @@ def configure(self):
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
         'export LD_PRELOAD=/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_scalapack_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_intel_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_intel_thread.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_core.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_blacs_intelmpi_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64_lin/libiomp5.so',
         'export OPENBLAS_CORETYPE=SANDYBRIDGE',
-        'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-331/bin:$PATH',
     ])
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
@@ -58,8 +57,8 @@ def configure(self):
     self.env.TFELVERS = TFELVERS
 
     self.env.append_value('LIBPATH', [
-        YAMMROOT + '/prerequisites/Hdf5-1814/lib',
-        YAMMROOT + '/prerequisites/Medfichier-331/lib',
+        YAMMROOT + '/prerequisites/Hdf5-1103/lib',
+        YAMMROOT + '/prerequisites/Medfichier-400/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/lib',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/lib',
@@ -67,8 +66,8 @@ def configure(self):
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Hdf5-1814/include',
-        YAMMROOT + '/prerequisites/Medfichier-331/include',
+        YAMMROOT + '/prerequisites/Hdf5-1103/include',
+        YAMMROOT + '/prerequisites/Medfichier-400/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/include',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include',
@@ -87,3 +86,5 @@ def configure(self):
     opts.enable_mfront = True
 
     opts.enable_petsc = False
+    # sphinx with python3 not available
+    opts.enable_doc = False

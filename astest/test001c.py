@@ -18,7 +18,7 @@ mtest.readGibiFile("zzzz364a.mgib")
 coord = monMaillage.getCoordinates()
 
 # check readonly access
-print "coord[3] ", coord[3]
+print("coord[3] ", coord[3])
 test.assertEqual( coord[3], 1.0 )
 
 with test.assertRaises(TypeError):

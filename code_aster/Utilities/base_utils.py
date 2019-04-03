@@ -1,6 +1,6 @@
 # coding: utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -102,11 +102,15 @@ def value_is_sequence(value):
 
 def is_int(obj):
     """Tell if an object is an integer."""
-    return isinstance(obj, (int, long))
+    return isinstance(obj, (int, numpy.integer))
 
 def is_float(obj):
     """Tell if an object is a float number."""
-    return isinstance(obj, (float, Decimal))
+    return isinstance(obj, (float, Decimal, numpy.float))
+
+def is_float_or_int(obj):
+    """Tell if an object is a float or an integer."""
+    return is_float(obj) or is_int(obj)
 
 def is_complex(obj):
     """Tell if an object is complex number."""
@@ -118,7 +122,7 @@ def is_complex(obj):
 
 def is_str(obj):
     """Tell if an object is a string."""
-    return isinstance(obj, (str, unicode))
+    return isinstance(obj, str)
 
 def array_to_list(obj):
     """Convert an object to a list if possible (using `tolist()`) or keep it

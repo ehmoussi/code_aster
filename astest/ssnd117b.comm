@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -332,7 +332,7 @@ ResuIntgr={
 }
 
 Lpara=[('V2',1),('V3',2),('V5',3),('V6',4),('V7',5),('V8',6),]
-for nume_ordre in ResuIntgr.keys():
+for nume_ordre in list(ResuIntgr.keys()):
     for para,indx in Lpara:
         TEST_TABLE(TABLE=TABRES1,
             FILTRE=_F(NOM_PARA='NUME_ORDRE', CRIT_COMP='EQ', VALE_I= nume_ordre),

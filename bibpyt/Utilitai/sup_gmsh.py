@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 import os.path
-import string
 import os
 import copy
 import numpy as NP
@@ -29,7 +28,7 @@ try:
                                           PRE_GMSH)
     from code_aster.Cata.Syntax import _F
 except:
-    print 'Fonctionnalites Aster indisponibles'
+    print('Fonctionnalites Aster indisponibles')
 
 
 _CARAC = {
@@ -72,7 +71,7 @@ def Progress(L, **para):
     prec = 1.E-4
 
    # Calcul de N
-    if 'N' not in para.keys():
+    if 'N' not in list(para.keys()):
         r = float(para['r'])
         h = float(para['h'])
         N = log(1 + (r - 1) * L / h) / log(r)
@@ -80,14 +79,14 @@ def Progress(L, **para):
         return N
 
    # Calcul de h
-    elif 'h' not in para.keys():
+    elif 'h' not in list(para.keys()):
         r = float(para['r'])
         N = int(para['N'] + 0.5)
         h = L * (r - 1) / (r ** N - 1)
         return h
 
    # Calcul de r
-    elif 'r' not in para.keys():
+    elif 'r' not in list(para.keys()):
         h = float(para['h'])
         N = int(para['N'] + 0.5)
         a = L / h
@@ -96,7 +95,7 @@ def Progress(L, **para):
         else:
             x = a ** (1. / (N - 1))
 
-        for i in xrange(100):
+        for i in range(100):
             res = x ** N - a * x + a - 1
             if abs(res) < prec * (x - 1) * a:
                 return x
@@ -271,10 +270,10 @@ class Geometric:
         if self.relation:
             return (getattr(self.relation, attr))
         else:
-            if attr in self.parameters.keys():
+            if attr in list(self.parameters.keys()):
                 return self.parameters[attr]
             else:
-                raise AttributeError, attr
+                raise AttributeError(attr)
 
     def Root(self):
 
@@ -404,20 +403,20 @@ class Point(Geometric):
     def Object_meshing(self, num):
 
         ch = (
-            'Point(' + `num` + ') = {'
-            + `self.coor[0]` + ', '
-            + `self.coor[1]` + ', '
-            + `self.coor[2]` + ', '
-            + `self.md.size` + '};'
+            'Point(' + repr(num) + ') = {'
+            + repr(self.coor[0]) + ', '
+            + repr(self.coor[1]) + ', '
+            + repr(self.coor[2]) + ', '
+            + repr(self.md.size) + '};'
         )
         self.Gmsh_send(ch)
 
         if self.attractor:
             ch = (
-                'Attractor Point{' + `num` + '} = {'
-                + `self.attractor[0]`+','
-                + `self.attractor[1]`+','
-                + `1. / self.attractor[2]` + '};'
+                'Attractor Point{' + repr(num) + '} = {'
+                + repr(self.attractor[0])+','
+                + repr(self.attractor[1])+','
+                + repr(1. / self.attractor[2]) + '};'
             )
             self.Gmsh_send(ch)
 
@@ -455,12 +454,12 @@ class Line(Geometric):
     def Geometric_coincide(self, obj):
 
         nb_points = len(self.points)
-        if nb_points <> len(obj.points):
+        if nb_points != len(obj.points):
             raise Exception(
                 'To coincide, lines should have the same number of points')
 
          # same order of points
-        info = range(nb_points)
+        info = list(range(nb_points))
         for i in range(nb_points):
             p1 = self.points[i]
             p2 = obj.points[info[i]]
@@ -553,26 +552,26 @@ class Line(Geometric):
 
     def Object_meshing(self, num):
 
-        ch = self.type + '(' + `num` + ') = {'
+        ch = self.type + '(' + repr(num) + ') = {'
         for point in self.points:
-            ch = ch + `point.num` + ','
+            ch = ch + repr(point.num) + ','
         ch = ch[:-1] + '};'
         self.Gmsh_send(ch)
 
         if self.md.transfinite:
             ch = (
-                'Transfinite Line{' + `num` + '} = ' +
-                `self.md.number + 1` +
-                ' Using Progression ' + `self.md.progression` + ';'
+                'Transfinite Line{' + repr(num) + '} = ' +
+                repr(self.md.number + 1) +
+                ' Using Progression ' + repr(self.md.progression) + ';'
             )
             self.Gmsh_send(ch)
 
         if self.attractor:
             ch = (
-                'Attractor Line{' + `num` + '} = {'
-                + `self.attractor[0]`+','
-                + `self.attractor[1]`+','
-                + `1. / self.attractor[2]` + '};'
+                'Attractor Line{' + repr(num) + '} = {'
+                + repr(self.attractor[0])+','
+                + repr(self.attractor[1])+','
+                + repr(1. / self.attractor[2]) + '};'
             )
             self.Gmsh_send(ch)
 
@@ -593,7 +592,7 @@ def Curve(l_x, l_y, l_z=None):
     for x, y, z in map(None, l_x, l_y, l_z):
         l_P.append(Point(x, y, z))
 
-    line = apply(Line, l_P)
+    line = Line(*l_P)
     return line
 
 
@@ -670,7 +669,7 @@ class Surface(Geometric):
             pf = self.lines[-1].points[-1]
         if orie[-1] == -1:
             pf = self.lines[-1].points[0]
-        if pi <> pf:
+        if pi != pf:
             raise Exception("The loop is not closed")
 
         return orie
@@ -699,11 +698,11 @@ class Surface(Geometric):
             hole_order : same as line_order but with the internal holes
         """
 
-        if len(self.lines) <> len(obj.lines):
+        if len(self.lines) != len(obj.lines):
             raise Exception(
                 'To coincide, surfaces should have the same number of border lines')
 
-        if len(self.holes) <> len(obj.holes):
+        if len(self.holes) != len(obj.holes):
             raise Exception(
                 'To coincide, surfaces should have the same number of internal holes')
 
@@ -711,7 +710,7 @@ class Surface(Geometric):
         hole_order = []
         nb_holes = len(self.holes)
         for hole_1 in self.holes:
-            for i in xrange(nb_holes):
+            for i in range(nb_holes):
                 if i in hole_order:
                     continue
                 hole_2 = obj.holes[i]
@@ -725,7 +724,7 @@ class Surface(Geometric):
         line_order = []
         nb_lines = len(self.lines)
         for line_1 in self.lines:
-            for i in xrange(nb_lines):
+            for i in range(nb_lines):
                 if i in line_order:
                     continue
                 line_2 = obj.lines[i]
@@ -742,12 +741,12 @@ class Surface(Geometric):
         line_order = info[0]
         hole_order = info[1]
 
-        for i, j in map(None, xrange(len(line_order)), line_order):
+        for i, j in map(None, range(len(line_order)), line_order):
             l1 = self.lines[i]
             l2 = obj.lines[j]
             l1.Coincide(l2)
 
-        for i, j in map(None, xrange(len(hole_order)), hole_order):
+        for i, j in map(None, range(len(hole_order)), hole_order):
             h1 = self.holes[i]
             h2 = obj.holes[j]
             h1.Coincide(h2)
@@ -793,8 +792,8 @@ class Surface(Geometric):
                     "Transfinite surfaces require transfinite edges")
 
         if (
-            self.lines[0].md.number <> self.lines[2].md.number or
-            self.lines[1].md.number <> self.lines[3].md.number
+            self.lines[0].md.number != self.lines[2].md.number or
+            self.lines[1].md.number != self.lines[3].md.number
         ):
             raise Exception(
                 "Coupled edges should have the same number of elements")
@@ -811,25 +810,25 @@ class Surface(Geometric):
 
     # Creation of the surface
         if self.ruled:
-            ch = 'Ruled Surface(' + `num` + ') = {'
+            ch = 'Ruled Surface(' + repr(num) + ') = {'
         else:
-            ch = 'Plane Surface(' + `num` + ') = {'
+            ch = 'Plane Surface(' + repr(num) + ') = {'
         for loop in self.loops:
-            ch = ch + `loop.num` + ','
+            ch = ch + repr(loop.num) + ','
         ch = ch[:-1] + '};'
         self.Gmsh_send(ch)
 
     # Declaration of transfinite surface
         if self.md.transfinite:
-            ch = 'Transfinite Surface {' + `num` + '} = {'
+            ch = 'Transfinite Surface {' + repr(num) + '} = {'
             for summit in self.Summit():
-                ch = ch + `summit.num` + ','
+                ch = ch + repr(summit.num) + ','
             ch = ch[:-1] + '};'
             self.Gmsh_send(ch)
 
     # Recombine elements if requested
         if self.md.recombine:
-            self.Gmsh_send('Recombine Surface {' + `num` + '} ;')
+            self.Gmsh_send('Recombine Surface {' + repr(num) + '} ;')
 
 
 class LineLoop(Geometric):    # Used only during the meshing phase
@@ -846,9 +845,9 @@ class LineLoop(Geometric):    # Used only during the meshing phase
 
     def Object_meshing(self, num):
 
-        ch = 'Line Loop(' + `num` + ') = {'
+        ch = 'Line Loop(' + repr(num) + ') = {'
         for line, orie in map(None, self.surface.lines, self.surface.Boundary()):
-            ch = ch + `orie * line.num` + ','
+            ch = ch + repr(orie * line.num) + ','
         ch = ch[:-1] + '};'
         self.Gmsh_send(ch)
 
@@ -909,7 +908,7 @@ class Volume(Geometric):
 
     # each edge has to appear twice in the list of edges
         for edge in edges:
-            if edges.count(edge) <> 2:
+            if edges.count(edge) != 2:
                 raise Exception(
                     "The surface loop is not closed : each edge should appear twice")
 
@@ -936,11 +935,11 @@ class Volume(Geometric):
             hole_order    : same as surface_order but with the internal holes
         """
 
-        if len(self.surfaces) <> len(obj.surfaces):
+        if len(self.surfaces) != len(obj.surfaces):
             raise Exception(
                 'To coincide, volumes should have the same number of border surfaces')
 
-        if len(self.holes) <> len(obj.holes):
+        if len(self.holes) != len(obj.holes):
             raise Exception(
                 'To coincide, volumes should have the same number of internal holes')
 
@@ -948,7 +947,7 @@ class Volume(Geometric):
         hole_order = []
         nb_holes = len(self.holes)
         for hole_1 in self.holes:
-            for i in xrange(nb_holes):
+            for i in range(nb_holes):
                 if i in hole_order:
                     continue
                 hole_2 = obj.holes[i]
@@ -962,7 +961,7 @@ class Volume(Geometric):
         surface_order = []
         nb_surfaces = len(self.surfaces)
         for surface_1 in self.surfaces:
-            for i in xrange(nb_surfaces):
+            for i in range(nb_surfaces):
                 if i in surface_order:
                     continue
                 line_2 = obj.surfaces[i]
@@ -979,12 +978,12 @@ class Volume(Geometric):
         surface_order = info[0]
         hole_order = info[1]
 
-        for i, j in map(None, xrange(len(surface_order)), surface_order):
+        for i, j in map(None, range(len(surface_order)), surface_order):
             l1 = self.surfaces[i]
             l2 = obj.surfaces[j]
             l1.Coincide(l2)
 
-        for i, j in map(None, xrange(len(hole_order)), hole_order):
+        for i, j in map(None, range(len(hole_order)), hole_order):
             h1 = self.holes[i]
             h2 = obj.holes[j]
             h1.Coincide(h2)
@@ -1035,9 +1034,9 @@ class Volume(Geometric):
     def Object_meshing(self, num):
 
     # Creation of the volume
-        ch = 'Volume(' + `num` + ') = {'
+        ch = 'Volume(' + repr(num) + ') = {'
         for loop in self.loops:
-            ch = ch + `loop.num` + ','
+            ch = ch + repr(loop.num) + ','
         ch = ch[:-1] + '};'
         self.Gmsh_send(ch)
 
@@ -1056,9 +1055,9 @@ class Volume(Geometric):
                         top_summits.append(edge.points[0])
                         break
 
-            ch = 'Transfinite Volume {' + `num` + '} = {'
+            ch = 'Transfinite Volume {' + repr(num) + '} = {'
             for summit in bottom_summits + top_summits:
-                ch = ch + `summit.num` + ','
+                ch = ch + repr(summit.num) + ','
             ch = ch[:-1] + '};'
             self.Gmsh_send(ch)
 
@@ -1077,9 +1076,9 @@ class SurfaceLoop(Geometric):    # Used only during the meshing phase
 
     def Object_meshing(self, num):
 
-        ch = 'Surface Loop(' + `num` + ') = {'
+        ch = 'Surface Loop(' + repr(num) + ') = {'
         for surface in self.volume.surfaces:
-            ch = ch + `surface.num` + ','
+            ch = ch + repr(surface.num) + ','
         ch = ch[:-1] + '};'
         self.Gmsh_send(ch)
 
@@ -1172,7 +1171,7 @@ class Mesh_Descriptor:
         if self.relation:
             return (getattr(self.relation, attr))
         else:
-            if attr in self.parameters.keys():
+            if attr in list(self.parameters.keys()):
                 return self.parameters[attr]
             else:
                 raise AttributeError
@@ -1204,10 +1203,10 @@ class Mesh:
     def Physical(self, name, *l_lobj):
 
     # Checking the name
-        if type(name) <> type(' '):
+        if type(name) != type(' '):
             raise Exception(
                 'First argument should be the name of the physical')
-        if name in self.physicals.keys():
+        if name in list(self.physicals.keys()):
             raise Exception('Physical ' + name + ' already exists')
 
     # treating the case of list of lists parameters
@@ -1238,16 +1237,16 @@ class Mesh:
 
     # Creation of the physical
         self.num_ph = self.num_ph + 1
-        ch = name + '=' + `self.num_ph` + ';'
+        ch = name + '=' + repr(self.num_ph) + ';'
         self.command.append(ch)
         ch = 'Physical ' + cl + '(' + name + ') = {'
         for obj in l_obj:
-            ch = ch + `obj.num` + ','
+            ch = ch + repr(obj.num) + ','
         ch = ch[:-1] + '};'
         self.command.append(ch)
 
     # Name of the physical
-        name_gmsh = 'GM' + `self.num_ph`
+        name_gmsh = 'GM' + repr(self.num_ph)
         self.physicals[name] = name_gmsh
 
     def Save(self, file='fort.geo'):
@@ -1256,7 +1255,7 @@ class Mesh:
             os.remove(file)
 
         f = open(file, 'w')
-        f.write(string.joinfields(self.command, '\n'))
+        f.write('\n'.join(self.command))
         f.close()
 
     def View(self):
@@ -1280,7 +1279,7 @@ class Mesh:
 
         l_gma = []
         l_mcf = []
-        for gma in self.physicals.keys():
+        for gma in list(self.physicals.keys()):
             l_gma.append(_F(NOM=gma))
             l_mcf.append(_F(GROUP_MA=self.physicals[gma], NOM=gma))
 
@@ -1309,7 +1308,7 @@ class Mesh:
                     l_gno.append(gno[0])
 
             l_gma = []
-            for gma in self.physicals.keys():
+            for gma in list(self.physicals.keys()):
                 nom_gmsh = self.physicals[gma]
                 if nom_gmsh in l_gno:
                     l_gma.append(gma)
@@ -1348,7 +1347,7 @@ class Mesh:
         if MODI_QUAD == 'OUI' and self.order == 2:
             raise Exception('The finite elements are already of second order')
 
-        if MODI_QUAD == 'OUI' and self.order <> 2:
+        if MODI_QUAD == 'OUI' and self.order != 2:
             _SMESH01 = CREA_MAILLAGE(
                 MAILLAGE=_SMESH00,
                 LINE_QUAD=_F(TOUT='OUI')

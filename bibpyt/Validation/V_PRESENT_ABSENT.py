@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,10 +44,10 @@ class PRESENT_ABSENT:
         test = 1
         args = self.liste_to_dico(args)
         mc0 = self.mcs[0]
-        if args.has_key(mc0):
+        if mc0 in args:
             for mc in self.mcs[1:len(self.mcs)]:
-                if args.has_key(mc):
-                    text = text + u"- Le mot clé " + `mc0`+ u" étant présent, il faut que : " +\
+                if mc in args:
+                    text = text + "- Le mot clé " + repr(mc0)+ " étant présent, il faut que : " +\
                         mc + " soit absent" + '\n'
                     test = 0
         return text, test

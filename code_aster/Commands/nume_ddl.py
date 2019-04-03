@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -48,7 +48,7 @@ class NumberingCreation(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords, changed
                 in place.
         """
-        if keywords.has_key('MODELE'):
+        if 'MODELE' in keywords:
             self._result.setSupportModel(keywords['MODELE'])
             charge = keywords.get("CHARGE")
             if charge is not None:

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,11 +24,9 @@
     qui permet de spécifier les caractéristiques des mots clés simples
 """
 
-import types
-
-import N_ENTITE
-import N_MCSIMP
-from strfunc import ufmt
+from . import N_ENTITE
+from . import N_MCSIMP
+from .strfunc import ufmt
 
 
 class SIMP(N_ENTITE.ENTITE):
@@ -71,7 +69,7 @@ class SIMP(N_ENTITE.ENTITE):
         """
         N_ENTITE.ENTITE.__init__(self, validators)
         # Initialisation des attributs
-        if type(typ) == types.TupleType:
+        if type(typ) == tuple:
             self.type = typ
         else:
             self.type = (typ,)

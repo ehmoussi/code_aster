@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,13 +30,13 @@ def VALE_triang2array(vect_VALE, dim, dtype=None):
     """
     import numpy
     triang_sup = numpy.array(vect_VALE)
-    assert dim*(dim+1)/2 == len(triang_sup), \
+    assert dim*(dim+1) // 2 == len(triang_sup), \
         'Matrice non pleine : %d*(%d+1)/2 != %d' % (dim, dim, len(triang_sup))
 
     valeur = numpy.zeros([dim, dim], dtype=dtype)
     for i in range(1, dim+1):
         for j in range(1, i+1):
-            k = i*(i-1)/2 + j
+            k = i*(i-1) // 2 + j
             valeur[j-1, i-1]=triang_sup[k-1]
     valeur = valeur + numpy.transpose(valeur)
     for i in range(dim):
@@ -109,17 +109,17 @@ class macr_elem_dyna(ASSD):
         numpy.asarray(matrice)
 
         # On teste si la matrice python est de dimension 2
-        if (len(numpy.shape(matrice))<>2):
+        if (len(numpy.shape(matrice))!=2):
             raise AsException("La dimension de la matrice est incorrecte")
 
         # On teste si les tailles de la matrice jeveux et python sont identiques
-        if (tuple([desc[1],desc[1]])<>numpy.shape(matrice)) :
+        if (tuple([desc[1],desc[1]])!=numpy.shape(matrice)) :
             raise AsException("La dimension de la matrice est incorrecte")
         taille=desc[1]*desc[1]/2.0+desc[1]/2.0
         tmp=numpy.zeros([int(taille)])
         for j in range(desc[1]+1):
             for i in range(j):
-                k=j*(j-1)/2+i
+                k=j*(j-1) // 2 +i
                 tmp[k]=matrice[j-1,i]
         aster.putvectjev(nom_vale,len(tmp),tuple((
-            range(1,len(tmp)+1))),tuple(tmp),tuple(tmp),1)
+            list(range(1,len(tmp)+1)))),tuple(tmp),tuple(tmp),1)

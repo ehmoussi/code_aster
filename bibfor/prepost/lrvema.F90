@@ -20,7 +20,8 @@
 !
 subroutine lrvema(nomail, mfich, nochmd)
 !
-implicit none
+    use as_med_module, only: as_med_open
+    implicit none
 !
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
@@ -28,7 +29,6 @@ implicit none
 #include "asterfort/as_mfdfin.h"
 #include "asterfort/as_mfdncn.h"
 #include "asterfort/as_mficlo.h"
-#include "asterfort/as_mfiope.h"
 #include "asterfort/as_mmhnme.h"
 #include "asterfort/codent.h"
 #include "asterfort/dismoi.h"
@@ -141,7 +141,7 @@ character(len=64) :: nochmd
     endif
 !
     nomamd=' '
-    call as_mfiope(idfimd, nofimd, edlect, iaux)
+    call as_med_open(idfimd, nofimd, edlect, iaux)
     if (iaux .ne. 0) then
         lnomam = lxlgut(saux08)
         call utmess('F', 'MED_78', sk=saux08(1:lnomam))

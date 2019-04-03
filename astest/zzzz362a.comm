@@ -54,7 +54,7 @@ LN = FORMULE(VALE='Z+0.125',
              NOM_PARA=['X', 'Y', 'Z'],)
 
 FISBID = DEFI_FISS_XFEM(MAILLAGE = MA0,
-                        TYPE_DISCONTINUITE = 'INTERFACE', 
+                        TYPE_DISCONTINUITE = 'INTERFACE',
                         DEFI_FISS = _F(FONC_LN = LN,),
                         )
 
@@ -108,7 +108,7 @@ a    = 0.57
 b    = 0.57
 
 FISSLI = DEFI_FISS_XFEM(MAILLAGE = MAILLALI,
-                        TYPE_DISCONTINUITE = 'FISSURE', 
+                        TYPE_DISCONTINUITE = 'FISSURE',
                         DEFI_FISS = _F(FORM_FISS = 'ELLIPSE',
                                        DEMI_GRAND_AXE = a, # suivant x ellipse
                                        DEMI_PETIT_AXE = b, # suivant y ellipse
@@ -122,14 +122,14 @@ LNHAUT = FORMULE(VALE='Z-0.5',
                  NOM_PARA=['X', 'Y', 'Z'],)
 
 INTELI = DEFI_FISS_XFEM(MAILLAGE = MAILLALI,
-                        TYPE_DISCONTINUITE = 'INTERFACE', 
+                        TYPE_DISCONTINUITE = 'INTERFACE',
                         DEFI_FISS = _F(FONC_LN = LNHAUT,),)
 
 # ###################################################
 # Definition des modeles enrichis
 # ###################################################
 
-# MLMEX  : Modele Lineaire MEcanique Xfem 
+# MLMEX  : Modele Lineaire MEcanique Xfem
 MLMEX  = MODI_MODELE_XFEM(MODELE_IN = MLMES,
                           FISSURE = (FISSLI,INTELI),)
 
@@ -174,9 +174,9 @@ File31.close()
 File32.close()
 File33.close()
 
-ListLMEX  = [] # 31 <-> MLMEX 
+ListLMEX  = [] # 31 <-> MLMEX
 ListLMEXC = [] # 32 <-> MLMEXC
-ListLTHX  = [] # 33 <-> MLTHX 
+ListLTHX  = [] # 33 <-> MLTHX
 
 # 31 <-> ListLMEX  / MLMEX
 nommo  = '00000015'
@@ -216,13 +216,13 @@ for line in LinesFile33:
 
 ## pour debug
 #assert len(ListLMEX ) == len(ListLMEXC)
-#for i in xrange(len(ListLMEX )):
+#for i in range(len(ListLMEX )):
   #print ListLMEX[i] == ListLMEXC[i]
   #print ListLMEX[i]
   #print ListLMEXC[i]
 #print "&&"
 #assert len(ListLMEX ) == len(ListLTHX)
-#for i in xrange(len(ListLMEX )):
+#for i in range(len(ListLMEX )):
   #print ListLMEX[i] == ListLTHX[i]
   #print ListLMEX[i]
   #print ListLTHX[i]
@@ -244,7 +244,7 @@ if (len(ListLMEX ) > 0) and (len(ListLMEX ) == len(ListLMEXC)) : nobj_ok = 1
 TABTAIL1 = CREA_TABLE(TITRE = '',
                       LISTE = _F( LISTE_I = [nobj_ok], PARA = 'BOOLEEN'),)
 
-# TABTAIL2 -> entre MLMEX et MLTHX 
+# TABTAIL2 -> entre MLMEX et MLTHX
 nobj_ok = 0
 if (len(ListLMEX ) > 0) and (len(ListLMEX ) == len(ListLTHX )) : nobj_ok = 1
 TABTAIL2 = CREA_TABLE(TITRE = '',
@@ -264,8 +264,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 ## -------
 ## vale_ok == 1 si le "resume" (IMPR_CO/NIVEAU=-1) des .CELV
-## ou .VALE des cham_elem issus de TOPOSE et TOPOFA et contenus 
-## dans les deux modeles sont identiques (au nom du modele pres) 
+## ou .VALE des cham_elem issus de TOPOSE et TOPOFA et contenus
+## dans les deux modeles sont identiques (au nom du modele pres)
 ## vale_ok == 0 sinon
 ## -------
 
@@ -275,7 +275,7 @@ if (ListLMEX != []) and (ListLMEX == ListLMEXC) : vale_ok = 1
 TARESUM1 = CREA_TABLE(TITRE = '',
                       LISTE = _F( LISTE_I = [vale_ok], PARA = 'BOOLEEN'),)
 
-# TARESUM2 -> entre MLMEX et MLTHX 
+# TARESUM2 -> entre MLMEX et MLTHX
 vale_ok = 0
 if (ListLMEX != []) and (ListLMEX == ListLTHX ) : vale_ok = 1
 TARESUM2 = CREA_TABLE(TITRE = '',
@@ -304,9 +304,9 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 #
 # Rq :
 #
-# -> pour la definition du modele sain HM, il n'existe 
-#    pas d'elements PYRAM13 HM. On travaille donc sur le 
-#    maillage initial avant raffinement HOMARD, en 
+# -> pour la definition du modele sain HM, il n'existe
+#    pas d'elements PYRAM13 HM. On travaille donc sur le
+#    maillage initial avant raffinement HOMARD, en
 #    contrepartie le maillage ne contient pas de TETRA10.
 # -> pour la definition du modele enrichi HM, il n'existe
 #    pas d'elements cracktip. On travaille donc uniquement
@@ -339,7 +339,7 @@ MQHMS = AFFE_MODELE(MAILLAGE = MAILLAQU,
 # ###################################################
 
 INTEQU = DEFI_FISS_XFEM(MAILLAGE = MAILLAQU,
-                        TYPE_DISCONTINUITE = 'INTERFACE', 
+                        TYPE_DISCONTINUITE = 'INTERFACE',
                         DEFI_FISS = _F(FONC_LN = LNHAUT,),)
 
 # ###################################################
@@ -433,7 +433,7 @@ for line in LinesFile33:
 
 ## pour debug
 #assert len(ListQMEX) == len(ListQHMX)
-#for i in xrange(len(ListQMEX)):
+#for i in range(len(ListQMEX)):
   #print ListQMEX[i] == ListQHMX[i]
   #print ListQMEX[i]
   #print ListQHMX[i]
@@ -463,8 +463,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 ## -------
 ## vale_ok == 1 si le "resume" (IMPR_CO/NIVEAU=-1) des .CELV
-## ou .VALE des cham_elem issus de TOPOSE et TOPOFA et contenus 
-## dans les deux modeles sont identiques (au nom du modele pres) 
+## ou .VALE des cham_elem issus de TOPOSE et TOPOFA et contenus
+## dans les deux modeles sont identiques (au nom du modele pres)
 ## vale_ok == 0 sinon
 ## -------
 

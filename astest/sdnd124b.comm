@@ -53,7 +53,7 @@ def FctRp(p):
     return Sy + Kp*p/pow(1.0+pow(Kp*p/(Su-Sy),Puiss),1.0/Puiss)
 
 Lt_p  = NU.arange(0.0,U01*20.0,0.01)
-Lt_rp = map( FctRp , Lt_p )
+Lt_rp = list(map( FctRp , Lt_p ))
 Lt_p += Sy/Kp
 Lt_p = list(Lt_p)
 Lt_p.insert(0, 0.0)
@@ -305,7 +305,7 @@ ResuCalc = {
 30: ( 3.1500000000E+01,  3.7800091336E+02,  9.4341885317E-01, 1.9499811116E+03, ),
 }
 
-for nume_ordre in ResuIntgr.keys():
+for nume_ordre in list(ResuIntgr.keys()):
     TEST_FONCTION(
         VALEUR= (
             _F(FONCTION=Forc,  NOM_PARA='INST', VALE_PARA=ResuIntgr[nume_ordre][0],

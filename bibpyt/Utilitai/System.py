@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ __all__ = ["SYSTEM", "ExecCommand"]
 import sys
 import os
 import re
+import io
 import tempfile
 
 
@@ -68,7 +69,7 @@ class SYSTEM:
         self.verbose = kargs.get('verbose', True)
         self.debug = kargs.get('debug', False)
         self.cc_files = kargs.get('cc_files', None)
-        if kargs.has_key('maxcmdlen'):
+        if 'maxcmdlen' in kargs:
             self.MaxCmdLen = kargs['maxcmdlen']
 
     def _mess(self, msg, cod=''):
@@ -88,12 +89,12 @@ class SYSTEM:
         if self.cc_files:
             files.add(self.cc_files)
         for f in files:
-            if type(f) is file:
+            if isinstance(f, io.IOBase):
                 txt = ' '.join(['%s' % a for a in args])
                 f.write(txt.replace(os.linesep + ' ', os.linesep) + term)
                 f.flush()
             else:
-                print _('file object expected : %s / %s') % (type(f), repr(f))
+                print(_('file object expected : %s / %s') % (type(f), repr(f)))
 
     def VerbStart(self, cmd, verbose=None):
         """
@@ -159,7 +160,7 @@ class SYSTEM:
                         bg, 'follow_output : %s' % follow_output)
         self.VerbStart(alt_comment, verbose=verbose)
         if follow_output and verbose:
-            print os.linesep + _('Command output :')
+            print(os.linesep + _('Command output :'))
 
         fout = tempfile.NamedTemporaryFile()
         ferr = tempfile.NamedTemporaryFile()
@@ -177,9 +178,9 @@ class SYSTEM:
         # execution
         iret = os.system(new_cmd)
         fout.seek(0)
-        output = fout.read()
+        output = fout.read().decode()
         ferr.seek(0)
-        error = ferr.read()
+        error = ferr.read().decode()
         fout.close()
         ferr.close()
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ MATFRONT=DEFI_MATERIAU(
                       ELAS=_F(E=145000., NU=0.3,ALPHA=1e-5,),
                       MFRONT=_F( LISTE_COEF = (145000. , 0.3, Kcoef,ep0val,sig0val,h1,h2,H1star,H2star,A0,alphaD,delta1,delta2,0.,),),
                       )
-                               
+
 
 char=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,
                          100.,sigmap,
@@ -189,7 +189,7 @@ resuimpl=SIMU_POINT_MAT(MATER=MATFRONT,INFO=1,
                      ARCHIVAGE=_F(LIST_INST=listarch),
                      );
 
-IMPR_TABLE(TABLE=resuimpl, UNITE=38)
+IMPR_TABLE(TABLE=resuimpl, UNITE=44)
 
 epYYimpl=RECU_FONCTION(TABLE=resuimpl,
                    PARA_X='INST',
@@ -256,7 +256,7 @@ IMPR_FONCTION(
             _F(FONCTION=epYYexpl),
             _F(FONCTION=epYYimpl),
             ),
-            UNITE=41,
+            UNITE=45,
             PILOTE=pilote,
             TITRE='Espilon = f(INST)');
 

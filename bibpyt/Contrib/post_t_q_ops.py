@@ -50,7 +50,7 @@ def moy(t):
 # Output : XYZA = Coordinates of the point and Easting
 
 def InterpolFondFiss(s0, Coorfo):
-    n = len(Coorfo) / 4
+    n = len(Coorfo) // 4
     if (s0 < Coorfo[3]):
         xyz = [Coorfo[0], Coorfo[1], Coorfo[2], s0]
         return xyz
@@ -81,7 +81,7 @@ def InterpolFondFiss(s0, Coorfo):
 # Output : VDIRVNORi = local base at the point considered (6 coordinated )
 
 def InterpolBaseFiss(s0, Basefo, Coorfo):
-    n = len(Coorfo) / 4
+    n = len(Coorfo) // 4
     if (s0 < Coorfo[3]):
         VDIRVNORi = Basefo[0:6]
         return VDIRVNORi
@@ -210,12 +210,11 @@ def verif_type_fond_fiss(ndim, FOND_FISS):
 
 def get_noeud_fond_fiss(FOND_FISS):
     """ retourne la liste des noeuds de FOND_FISS"""
-    import string as S
     from Utilitai.Utmess import UTMESS
     Lnoff = FOND_FISS.sdj.FOND_NOEU.get()
     if Lnoff == None:
         UTMESS('F', 'RUPTURE0_11')
-    Lnoff = map(S.rstrip, Lnoff)
+    Lnoff = list(map(lambda x: x.rstrip(), Lnoff))
     return Lnoff
 
 #-------------------------------------------------------------------------
@@ -224,7 +223,6 @@ def get_noeud_fond_fiss(FOND_FISS):
 
 def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
     """ retourne la liste des noeuds de FOND_FISS a calculer"""
-    import string as S
     from Utilitai.Utmess import UTMESS
 
     NOEUD = args.get('NOEUD')
@@ -257,13 +255,13 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
             cnom = MAILLAGE.sdj.NOMNOE.get()
             if type(GROUP_NO) not in EnumTypes:
                 GROUP_NO = (GROUP_NO,)
-            for m in xrange(len(GROUP_NO)):
+            for m in range(len(GROUP_NO)):
                 ngrno = GROUP_NO[m].ljust(24).upper()
-                if ngrno not in collgrno.keys():
+                if ngrno not in list(collgrno.keys()):
                     UTMESS('F', 'RUPTURE0_13', valk=ngrno)
-                for i in xrange(len(collgrno[ngrno])):
+                for i in range(len(collgrno[ngrno])):
                     NO_AVEC.append(cnom[collgrno[ngrno][i] - 1])
-            NO_AVEC = map(S.rstrip, NO_AVEC)
+            NO_AVEC = list(map(lambda x: x.rstrip(), NO_AVEC))
         if NOEUD != None:
             if type(NOEUD) not in EnumTypes:
                 NO_AVEC = (NOEUD,)
@@ -274,13 +272,13 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
             cnom = MAILLAGE.sdj.NOMNOE.get()
             if type(SANS_GROUP_NO) not in EnumTypes:
                 SANS_GROUP_NO = (SANS_GROUP_NO,)
-            for m in xrange(len(SANS_GROUP_NO)):
+            for m in range(len(SANS_GROUP_NO)):
                 ngrno = SANS_GROUP_NO[m].ljust(24).upper()
-                if ngrno not in collgrno.keys():
+                if ngrno not in list(collgrno.keys()):
                     UTMESS('F', 'RUPTURE0_13', valk=ngrno)
-                for i in xrange(len(collgrno[ngrno])):
+                for i in range(len(collgrno[ngrno])):
                     NO_SANS.append(cnom[collgrno[ngrno][i] - 1])
-            NO_SANS = map(S.rstrip, NO_SANS)
+            NO_SANS = list(map(lambda x: x.rstrip(), NO_SANS))
         if SANS_NOEUD != None:
             if type(SANS_NOEUD) not in EnumTypes:
                 NO_SANS = (SANS_NOEUD,)
@@ -312,7 +310,6 @@ def get_coor_libre(self, Lnoff, RESULTAT, ndim):
 
     import numpy as NP
     from code_aster.Cata.Syntax import _F
-    import string as S
 
     POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
     DETRUIRE = self.get_cmd('DETRUIRE')
@@ -336,7 +333,7 @@ def get_coor_libre(self, Lnoff, RESULTAT, ndim):
     elif ndim == 3:
         zs = NP.array(tcoorf['COOR_Z'].values()['COOR_Z'][:nbt])
     ns = tcoorf['NOEUD'].values()['NOEUD'][:nbt]
-    ns = map(S.rstrip, ns)
+    ns = list(map(lambda x: x.rstrip(), ns))
     l_coorf = [[ns[i], xs[i], ys[i], zs[i]] for i in range(0, nbt)]
     l_coorf = [(i[0], i[1:]) for i in l_coorf]
 
@@ -413,7 +410,7 @@ def get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, dicVNOR, RESULTAT, MODEL
     mcfactV = []
     mcfactQ = []
 
-    for i in xrange(Nnocal):
+    for i in range(Nnocal):
         Porig = NP.array(d_coorf[Lnocal[i]])
         Pextr = Porig - (1.*hmax * dicVDIR[Lnocal[i]])
         PextrH = Porig +(1.*hmax * dicVDIR[Lnocal[i]])
@@ -544,7 +541,6 @@ def get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, dicVNOR, RESULTAT, MODEL
 #-------------------------------------------------------------------------
 def get_dico_levres(lev, FOND_FISS, ndim, Lnoff, Nnoff):
     "retourne ???"""
-    import string as S
     from Utilitai.Utmess import UTMESS
     if lev == 'sup':
         Nnorm = FOND_FISS.sdj.SUPNORM_NOEU.get()
@@ -553,7 +549,7 @@ def get_dico_levres(lev, FOND_FISS, ndim, Lnoff, Nnoff):
     elif lev == 'inf':
         Nnorm = FOND_FISS.sdj.INFNORM_NOEU.get()
 
-    Nnorm = map(S.rstrip, Nnorm)
+    Nnorm = list(map(lambda x: x.rstrip(), Nnorm))
 # pourquoi modifie t-on Nnoff dans ce cas, alors que rien n'est fait pour
 # les maillages libres ?
     if Lnoff[0] == Lnoff[-1] and ndim == 3:
@@ -569,7 +565,6 @@ def get_dico_levres(lev, FOND_FISS, ndim, Lnoff, Nnoff):
 def get_coor_regle(self, RESULTAT, ndim, Lnoff, Lnocal, dicoS, syme_char, dicoI):
     """retourne le dictionnaire des coordonnees des noeuds des lèvres pour les maillages regles"""
     import numpy as NP
-    import string as S
     import copy
     from code_aster.Cata.Syntax import _F
 
@@ -624,16 +619,16 @@ def get_coor_regle(self, RESULTAT, ndim, Lnoff, Lnocal, dicoS, syme_char, dicoI)
 
     tcoor = __NCOOR.EXTR_TABLE().NUME_ORDRE == dico['NUME_ORDRE'][0]
 
-    nbt = len(tcoor['NOEUD'].values()['NOEUD'])
-    xs = NP.array(tcoor['COOR_X'].values()['COOR_X'][:nbt])
-    ys = NP.array(tcoor['COOR_Y'].values()['COOR_Y'][:nbt])
+    nbt = len(list(tcoor['NOEUD'].values())['NOEUD'])
+    xs = NP.array(list(tcoor['COOR_X'].values())['COOR_X'][:nbt])
+    ys = NP.array(list(tcoor['COOR_Y'].values())['COOR_Y'][:nbt])
     if ndim == 2:
         zs = NP.zeros(nbt)
     elif ndim == 3:
         zs = NP.array(tcoor['COOR_Z'].values()['COOR_Z'][:nbt])
     ns = tcoor['NOEUD'].values()['NOEUD'][:nbt]
-    ns = map(S.rstrip, ns)
-    l_coor = [[ns[i], xs[i], ys[i], zs[i]] for i in xrange(nbt)]
+    ns = list(map(lambda x: x.rstrip(), ns))
+    l_coor = [[ns[i], xs[i], ys[i], zs[i]] for i in range(nbt)]
     l_coor = [(i[0], i[1:]) for i in l_coor]
 
     return (dict(l_coor), __NCOOR.EXTR_TABLE())
@@ -645,7 +640,7 @@ def get_absfon(Lnoff, Nnoff, d_coor):
     """ retourne le dictionnaire des Abscisses curvilignes du fond"""
     import numpy as NP
     absfon = [0, ]
-    for i in xrange(Nnoff - 1):
+    for i in range(Nnoff - 1):
         Pfon1 = NP.array(
             [d_coor[Lnoff[i]][0], d_coor[Lnoff[i]][1], d_coor[Lnoff[i]][2]])
         Pfon2 = NP.array(
@@ -654,7 +649,7 @@ def get_absfon(Lnoff, Nnoff, d_coor):
             NP.dot(NP.transpose(Pfon1 - Pfon2), Pfon1 - Pfon2)) + absfon[i]
         absfon.append(absf)
 
-    return dict([(Lnoff[i], absfon[i]) for i in xrange(Nnoff)])
+    return dict([(Lnoff[i], absfon[i]) for i in range(Nnoff)])
 
 #-------------------------------------------------------------------------
 #  Returns a list of bottom nodes, the list of lists perpendicular nodes """
@@ -683,7 +678,7 @@ def get_noeuds_perp_regle(Lnocal, d_coor, dicoS, dicoI, Lnoff, PREC_VIS_A_VIS, h
         itoti = 0
         NBTRLS = 0
         NBTRLI = 0
-        for k in xrange(20):
+        for k in range(20):
             if dicoS[ino][k] != '':
                 itots = itots + 1
                 Nsup = dicoS[ino][k]
@@ -800,7 +795,7 @@ def get_coor_xfem(args, FISSURE, ndim):
 
 #     Traitement du cas fond multiple
     Fissmult = FISSURE.sdj.FONDMULT.get()
-    Nbfiss = len(Fissmult) / 2
+    Nbfiss = len(Fissmult) // 2
     Numfiss = args.get('NUME_FOND')
     if Numfiss <= Nbfiss and (Nbfiss > 1 or TypeFond == 'FERME'):
         Ptinit = Fissmult[2 * (Numfiss - 1)]
@@ -817,7 +812,7 @@ def get_coor_xfem(args, FISSURE, ndim):
         absmax = Listfo[-1]
         Coorfo = [None] * 4 * Nnoff
         Vpropa = [None] * 3 * Nnoff
-        for i in xrange(Nnoff):
+        for i in range(Nnoff):
             absci = i * absmax / (Nnoff - 1)
             Coorfo[(4 * i):(4 * (i + 1))] = InterpolFondFiss(absci, Listfo)
             Vpropa[(6 * i):(6 * (i + 1))] = InterpolBaseFiss(
@@ -825,7 +820,7 @@ def get_coor_xfem(args, FISSURE, ndim):
     else:
         Coorfo = Listfo
         Vpropa = Basefo
-        Nnoff = len(Coorfo) / 4
+        Nnoff = len(Coorfo) // 4
 
     return (Coorfo, Vpropa, Nnoff)
 
@@ -846,7 +841,7 @@ def get_direction_xfem(Nnoff, Vpropa, Coorfo, ndim):
     if ndim == 3:
         VNOR[0] = NP.array([Vpropa[0], Vpropa[1], Vpropa[2]])
         VDIR[0] = NP.array([Vpropa[3 + 0], Vpropa[3 + 1], Vpropa[3 + 2]])
-        for i in xrange(1, Nnoff - 1):
+        for i in range(1, Nnoff - 1):
             absf = Coorfo[4 * i + 3]
             absfon.append(absf)
             VNOR[i] = NP.array(
@@ -881,7 +876,7 @@ def get_sauts_xfem(self, Nnoff, Coorfo, VDIR, hmax, NB_NOEUD_COUPE, dmax, __RESX
     MACR_LIGN_COUPE = self.get_cmd('MACR_LIGN_COUPE')
 
     mcfact = []
-    for i in xrange(Nnoff):
+    for i in range(Nnoff):
         Porig = NP.array([Coorfo[4 * i], Coorfo[4 * i + 1], Coorfo[4 * i + 2]])
         Pextr = Porig - hmax * VDIR[i]
 
@@ -911,19 +906,19 @@ def affiche_xfem(self, INFO, Nnoff, VNOR, VDIR):
 
     if INFO == 2:
         mcfact = []
-        mcfact.append(_F(PARA='NUM_PT', LISTE_I=range(Nnoff)))
+        mcfact.append(_F(PARA='NUM_PT', LISTE_I=list(range(Nnoff))))
         mcfact.append(
-            _F(PARA='VN_X', LISTE_R=[VNOR[i][0] for i in xrange(Nnoff)]))
+            _F(PARA='VN_X', LISTE_R=[VNOR[i][0] for i in range(Nnoff)]))
         mcfact.append(
-            _F(PARA='VN_Y', LISTE_R=[VNOR[i][1] for i in xrange(Nnoff)]))
+            _F(PARA='VN_Y', LISTE_R=[VNOR[i][1] for i in range(Nnoff)]))
         mcfact.append(
-            _F(PARA='VN_Z', LISTE_R=[VNOR[i][2] for i in xrange(Nnoff)]))
+            _F(PARA='VN_Z', LISTE_R=[VNOR[i][2] for i in range(Nnoff)]))
         mcfact.append(
-            _F(PARA='VP_X', LISTE_R=[VDIR[i][0] for i in xrange(Nnoff)]))
+            _F(PARA='VP_X', LISTE_R=[VDIR[i][0] for i in range(Nnoff)]))
         mcfact.append(
-            _F(PARA='VP_Y', LISTE_R=[VDIR[i][1] for i in xrange(Nnoff)]))
+            _F(PARA='VP_Y', LISTE_R=[VDIR[i][1] for i in range(Nnoff)]))
         mcfact.append(
-            _F(PARA='VP_Z', LISTE_R=[VDIR[i][2] for i in xrange(Nnoff)]))
+            _F(PARA='VP_Z', LISTE_R=[VDIR[i][2] for i in range(Nnoff)]))
         __resu2 = CREA_TABLE(LISTE=mcfact,
                              TITRE=' ' * 13 + 'VECTEUR NORMAL A LA FISSURE    -   DIRECTION DE PROPAGATION')
         aster.affiche('MESSAGE', __resu2.EXTR_TABLE().__repr__())
@@ -946,7 +941,6 @@ def affiche_traitement(FOND_FISS, Lnofon, ino):
 # Returns the table displacements perpendicular nodes """
 def get_tab(self, lev, ino, Tlib, Lno, TTSo, FOND_FISS, TYPE_MAILLAGE, tabl_depl, syme_char):
     """retourne la table des deplacements des noeuds perpendiculaires"""
-    import string as S
 
     if lev == 'sup' or (lev == 'inf' and syme_char == 'NON' and FOND_FISS):
 
@@ -955,7 +949,7 @@ def get_tab(self, lev, ino, Tlib, Lno, TTSo, FOND_FISS, TYPE_MAILLAGE, tabl_depl
                 tab = Tlib.INTITULE == 'l.coupe%i' % (ino + 1)
             else:
 #                Ls = [S.ljust(Lno[ino][i], 8) for i in range(len(Lno[ino]))]
-                Ls = [S.ljust(Lno[ino][i], 15) for i in range(len(Lno[ino]))]
+                Ls = [Lno[ino][i].ljust(15) for i in range(len(Lno[ino]))]
                 tab = tabl_depl.NOEUD == Ls
 
         else:
@@ -973,13 +967,13 @@ def get_liste_inst(tabsup, args):
 
     l_inst = None
     l_inst_tab = tabsup['INST'].values()['INST']
-    l_inst_tab = dict([(i, 0)
-                      for i in l_inst_tab]).keys()  # elimine les doublons
+    l_inst_tab = list(dict([(i, 0)
+                      for i in l_inst_tab]).keys())  # elimine les doublons
     l_inst_tab.sort()
     if args.get('LIST_ORDRE') != None or args.get('NUME_ORDRE') != None:
         l_ord_tab = tabsup['NUME_ORDRE'].values()['NUME_ORDRE']
         l_ord_tab.sort()
-        l_ord_tab = dict([(i, 0) for i in l_ord_tab]).keys()
+        l_ord_tab = list(dict([(i, 0) for i in l_ord_tab]).keys())
         d_ord_tab = [[l_ord_tab[i], l_inst_tab[i]]
                      for i in range(0, len(l_ord_tab))]
         d_ord_tab = [(i[0], i[1]) for i in d_ord_tab]
@@ -1033,13 +1027,13 @@ def get_liste_freq(tabsup, args):
 
     l_freq = None
     l_freq_tab = tabsup['FREQ'].values()['FREQ']
-    l_freq_tab = dict([(i, 0)
-                      for i in l_freq_tab]).keys()  # elimine les doublons
+    l_freq_tab = list(dict([(i, 0)
+                      for i in l_freq_tab]).keys())  # elimine les doublons
     l_freq_tab.sort()
     if args.get('LIST_ORDRE') != None or args.get('NUME_ORDRE') != None:
         l_ord_tab = tabsup['NUME_ORDRE'].values()['NUME_ORDRE']
         l_ord_tab.sort()
-        l_ord_tab = dict([(i, 0) for i in l_ord_tab]).keys()
+        l_ord_tab = list(dict([(i, 0) for i in l_ord_tab]).keys())
         d_ord_tab = [(l_ord_tab[i], l_freq_tab[i])
                      for i in range(0, len(l_ord_tab))]
         d_ord_tab = dict(d_ord_tab)
@@ -1058,7 +1052,7 @@ def get_liste_freq(tabsup, args):
     elif args.get('LIST_MODE') != None or args.get('NUME_MODE') != None:
         l_mod_tab = tabsup['NUME_MODE'].values()['NUME_MODE']
         l_mod_tab.sort()
-        l_mod_tab = dict([(i, 0) for i in l_mod_tab]).keys()
+        l_mod_tab = list(dict([(i, 0) for i in l_mod_tab]).keys())
         d_mod_tab = [(l_mod_tab[i], l_freq_tab[i])
                      for i in range(0, len(l_mod_tab))]
         d_mod_tab = dict(d_mod_tab)
@@ -1613,7 +1607,7 @@ def get_meth1(self, abscs, absch, abscq, coetd, isig, tgsig,isigt,ttgsig, isigtt
     sh = abs(th) * isigtt[:, 4:-1]
     sq = abs(tq) * isigtt[:, 4:-1]
 
-    tg1 = [max(vt[1.,:]), min(vt[1.,:]), max(vt[1.,:]), min(vt[1.,:]), max(vt[1.,:]), min(vt[1.,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1.,:]),]
+    tg1 = [max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]),]
 
     if INFO == 2:
         mcfact = []
@@ -1632,7 +1626,6 @@ def get_erreur(self, ndim, __tabi, type_para):
     En FEM/X-FEM, on ne retient que le K_MAX de la méthode 1."""
     from code_aster.Cata.Syntax import _F
     import aster
-    import string
     import numpy as NP
 
     CREA_TABLE = self.get_cmd('CREA_TABLE')
@@ -1646,12 +1639,12 @@ def get_erreur(self, ndim, __tabi, type_para):
 
     py_tab = __tabi.EXTR_TABLE()
 
-    nlines = len(py_tab.values()[py_tab.values().keys()[0]])
-    err = NP.zeros((index, nlines / 3))
+    nlines = len(py_tab.values()[list(py_tab.values().keys())[0]])
+    err = NP.zeros((index, nlines // 3))
     kmax = [0.] * index
     kmin = [0.] * index
 
-    for i in range(nlines / 3):
+    for i in range(nlines // 3):
         for j in range(index):
             kmax[j] = max(__tabi[labels[2 * j], 3 * i + 1], __tabi[
                           labels[2 * j], 3 * i + 2], __tabi[labels[2 * j], 3 * i + 3])
@@ -1828,10 +1821,8 @@ def post_t_q_ops(self, **args):
 
     """
     import aster
-    import string as S
     import numpy as NP
     from math import pi
-    from types import ListType, TupleType
     from code_aster.Cata.Syntax import _F
     from Utilitai.Table import Table, merge
     from SD.sd_mater import sd_compor1
@@ -1848,7 +1839,7 @@ def post_t_q_ops(self, **args):
     INFO = args.get("INFO")
     TITRE = args.get("TITRE")
 
-    EnumTypes = (ListType, TupleType)
+    EnumTypes = (list, tuple)
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
@@ -1875,7 +1866,7 @@ def post_t_q_ops(self, **args):
     MasquerAlarme('CALCULEL4_9')
 
 
-    if args.has_key('EVOL_THER'):
+    if 'EVOL_THER' in args:
         if args.get('EVOL_THER') != None:
             EVOL_THER = args.get('EVOL_THER')
 
@@ -1899,7 +1890,7 @@ def post_t_q_ops(self, **args):
     compor = sd_compor1('%-8s.CPT.%s' % (MATER.nom, ns))
     valk = [s.strip() for s in compor.VALK.get()]
     valr = compor.VALR.get()
-    dicmat = dict(zip(valk, valr))
+    dicmat = dict(list(zip(valk, valr)))
 
 #  PROPRIETES MATERIAUX INDEPENDANTES DE LA TEMPERATURE
     e = dicmat['E']
@@ -1909,8 +1900,8 @@ def post_t_q_ops(self, **args):
     Tempe3D = False
 
     if e == 0.0 and nu == 0.0:
-        list_oper = valk[: len(valk) / 2]
-        list_fonc = valk[len(valk) / 2:]
+        list_oper = valk[: len(valk) // 2]
+        list_fonc = valk[len(valk) // 2:]
 #     valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et
 #     et les noms des concepts de type [fonction] (ecrits derriere les operandes) dans une
 #     une seconde partie
@@ -1946,7 +1937,7 @@ def post_t_q_ops(self, **args):
                 (nom_fonc_nu.Parametres()['NOM_PARA'] != 'TEMP' and nom_fonc_nu_prol != 'CONSTANT')):
             UTMESS('F', 'RUPTURE1_67')
 
-        if dicmat.has_key('TEMP_DEF_ALPHA') and not EVOL_THER:
+        if 'TEMP_DEF_ALPHA' in dicmat and not EVOL_THER:
             nompar = ('TEMP',)
             valpar = (dicmat['TEMP_DEF_ALPHA'],)
             UTMESS('A', 'RUPTURE0_6', valr=valpar)
@@ -1962,7 +1953,7 @@ def post_t_q_ops(self, **args):
             else:
                 nu = valres[1]
 
-        if not dicmat.has_key('TEMP_DEF_ALPHA') and not EVOL_THER:
+        if 'TEMP_DEF_ALPHA' not in dicmat and not EVOL_THER:
             UTMESS('F', 'RUPTURE0_33')
 
     if FOND_FISS and EVOL_THER:
@@ -1970,7 +1961,7 @@ def post_t_q_ops(self, **args):
 # variable de commande)
         ndim = 3
         Tempe3D = True
-        resuth = S.ljust(EVOL_THER.nom, 8).rstrip()
+        resuth = EVOL_THER.nom.ljust(8).rstrip()
 
     if not Tempe3D:
 

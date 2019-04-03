@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,16 +19,11 @@
 !
 !
 interface
-    subroutine elraca(elrefz, ndim, nno, nnos, nbfpg,&
-                      fapg, nbpg, x, vol)
-        character(len=*) :: elrefz
-        integer :: ndim
-        integer :: nno
-        integer :: nnos
-        integer :: nbfpg
-        character(len=8) :: fapg(*)
-        integer :: nbpg(20)
-        real(kind=8) :: x(*)
-        real(kind=8) :: vol
+    subroutine elraca(elrefz, ndim, nno, nnos, nbfpg, fapg, nbpg, x, vol)
+        integer, parameter            :: nbfamx = 20
+        character(len=*), intent(in)  :: elrefz
+        integer, intent(out)          :: ndim, nno, nnos, nbfpg, nbpg(nbfamx)
+        real(kind=8), intent(out)     :: x(*), vol
+        character(len=8), intent(out) :: fapg(*)
     end subroutine elraca
 end interface
