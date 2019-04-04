@@ -21,59 +21,59 @@
 # aslint: disable=W4004
 
 cata_msg = {
-1 : _(u"""
+1 : _("""
 Vous avez demandé CODIFICATION = "UTILISATEUR"
 Dans cette version, la seule valeur disponible est "EC2". Le calcul ne sera pas
 effectué pour les autres valeurs.
 """),
 
-2 : _(u"""
+2 : _("""
 Vous avez demandé TYPE_STRUCTURE = "%(k1)s"
 Dans cette version, la seule valeur disponible est "2D". Le calcul ne sera pas
 effectué pour les autres valeurs.
 """),
 
-4 : _(u"""
+4 : _("""
  La liste NUME_ORDRE contient au moins une valeur répétée.
 """),
 
-5 : _(u"""
+5 : _("""
 La liste NOM_CAS contient au moins une valeur répétée.
 """),
 
-6 : _(u"""
+6 : _("""
 Un NOM_CAS indiqué n'appartient pas aux cas disponibles
 """),
 
-7 : _(u"""
+7 : _("""
 Un NUME_ORDRE indiqué n'appartient pas aux cas disponibles
 """),
 
-8 : _(u"""
+8 : _("""
 L'utilisation de COMBINAISON_FERRAILLAGE n'est possible qu'avec un seul MODELE
 """),
 
-9 : _(u"""
+9 : _("""
 Le cas '%(k1)s' existe déjà. Il sera écrasé.
 """),
 
-10 : _(u"""Nombre de cas : %(i1)d"""),
+10 : _("""Nombre de cas : %(i1)d"""),
 
-11 : _(u"""
+11 : _("""
 Liste d'instants       : %(k1)s
 correspondants aux cas : %(k2)s
 et aux numéros d'ordre : %(k3)s
 """),
 
-12 : _(u"""
+12 : _("""
 Type de combinaison :
     %(k1)s"""),
 
-13 : _(u"""
+13 : _("""
 Noms des cas présents :
     %(k1)s"""),
 
-14 : _(u"""
+14 : _("""
 Le mot clé facteur TYPE_STRUCTURE '%(k1)s' indiqué n'appartient pas aux cas disponibles
 """),
 
