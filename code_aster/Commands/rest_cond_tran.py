@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -34,9 +34,24 @@ class RestCondTran(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords["TYPE_RESU"] == "DYNA_TRANS":
-            self._result = FullTransientResultsContainer()
+        reuse = keywords.get("reuse")
+        if reuse is not None:
+            self._result = reuse
         else:
-            self._result = type(keywords["RESULTAT"])()
+            if keywords["TYPE_RESU"] == "DYNA_TRANS":
+                self._result = FullTransientResultsContainer()
+            else:
+                self._result = type(keywords["RESULTAT"])()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        modele = keywords["RESULTAT"].getModel()
+        if modele is not None:
+            self._result.appendModelOnAllRanks(modele)
+            self._result.update()
 
 REST_COND_TRAN = RestCondTran.run

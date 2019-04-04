@@ -33,7 +33,11 @@ class Compute(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = TableContainer()
+        reuse = keywords.get("reuse")
+        if reuse is not None:
+            self._result = reuse
+        else:
+            self._result = TableContainer()
 
     def post_exec(self, keywords):
         """Update the result

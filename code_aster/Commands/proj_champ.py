@@ -56,6 +56,10 @@ class FieldProjector(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        dofNum = keywords.get("NUME_DDL")
+        if dofNum is not None:
+            self._result.addFieldOnNodesDescription(dofNum.getFieldOnNodesDescription())
+
         if "RESULTAT" in keywords:
             if "MODELE_2" in keywords:
                 self._result.appendModelOnAllRanks(keywords["MODELE_2"])
