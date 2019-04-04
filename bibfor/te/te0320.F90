@@ -45,7 +45,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nbv_steel = 8
+    integer, parameter :: nbv_steel = 9
     integer, parameter :: nbv_zirc  = 5
     integer, parameter :: nb_nd_max = 9
     character(len=24) :: nomres
@@ -54,7 +54,7 @@ character(len=16), intent(in) :: option, nomte
     integer :: icodre(1)
     real(kind=8) :: metaac(nb_nd_max*nbv_steel), metazi(nb_nd_max*nbv_zirc)
     real(kind=8) :: zero, ms0(1), zalpha, zbeta
-    real(kind=8) :: tno0, phase_tot
+    real(kind=8) :: tno0, phase_tot, phase_ucold, phase_scold
     integer :: nb_node, nb_phase, nb_vari
     integer :: jv_compo, j, i_node, kpg, spt
     integer :: imate, itempe, iphasi, iphasn
@@ -102,6 +102,12 @@ character(len=16), intent(in) :: option, nomte
             isnan(zr(iphasi-1+nb_phase+SIZE_GRAIN))) then
             call utmess('F', 'META1_46')
         endif
+        phase_scold = phase_tot - zr(iphasi-1+PAUSTENITE)
+        phase_ucold = zr(iphasi-1+PSUMCOLD)
+        if (abs(phase_scold-phase_ucold) .gt. 1.d-2 .or. phase_ucold .eq. r8vide() ) then
+            call utmess('A', 'META1_49')
+            phase_ucold = phase_scold
+        endif
     else if (phase_type.eq.'ZIRC') then
 ! ----- All phases
         do j = 1, 3
@@ -121,7 +127,7 @@ character(len=16), intent(in) :: option, nomte
 !
     if (abs(phase_tot-1.d0) .gt. 1.d-2) then
         call utmess('A', 'META1_48', sr = phase_tot)
-    endif 
+    endif
 !
     if (phase_type .eq. 'ACIER') then
         nomres = 'MS0'
@@ -130,9 +136,10 @@ character(len=16), intent(in) :: option, nomte
                     1, nomres, ms0, icodre, 1)
         do i_node = 1, nb_node
             tno0 = zr(itempe+i_node-1)
-            do j = 1, 6
+            do j = 1, 7
                 metaac(nb_vari*(i_node-1)+j) = zr(iphasi-1+j)
             end do
+            metaac(nb_vari*(i_node-1)+PSUMCOLD) = phase_ucold
             metaac(nb_vari*(i_node-1)+nb_phase+TEMP_MARTENSITE) = ms0(1)
             metaac(nb_vari*(i_node-1)+nb_phase+STEEL_TEMP)      = tno0
             do j = 1, nb_vari

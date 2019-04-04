@@ -75,7 +75,7 @@ real(kind=8), intent(out) :: meta_curr(nb_phase+3)
     zero = 0.d0
     epsi = 1.d-10
     un   = 1.d0
-    ASSERT(nb_phase .eq. 5)
+    ASSERT(nb_phase .eq. 6)
 !
 ! - Get material parameters for steel
 !
@@ -249,5 +249,9 @@ real(kind=8), intent(out) :: meta_curr(nb_phase+3)
         zaust = 1.d0
     endif
     meta_curr(PAUSTENITE) = zaust
+!
+! - Compute sum of cold phases
+!
+    meta_curr(PSUMCOLD) = 1.d0 - zaust
 !
 end subroutine
