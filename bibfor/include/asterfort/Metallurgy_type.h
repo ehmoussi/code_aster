@@ -30,6 +30,7 @@
 #define PBAINITE         3
 #define PMARTENS         4
 #define PAUSTENITE       5
+#define PSUMCOLD         6
 ! For next ones: add total number of phases to access in internal state variable vector
 #define SIZE_GRAIN       1
 #define STEEL_TEMP       2
