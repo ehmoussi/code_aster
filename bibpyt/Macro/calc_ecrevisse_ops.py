@@ -199,22 +199,22 @@ def calc_ecrevisse_ops(self,
     # RECUPERATION DES MOTS-CLES FACTEURS
     dRESULTAT = RESULTAT[0].cree_dict_valeurs(RESULTAT[0].mc_liste)
     for i in list(dRESULTAT.keys()):
-        if dRESULTAT[i] == None:
+        if dRESULTAT[i] is None:
             del dRESULTAT[i]
 
     dECOULEMENT = ECOULEMENT[0].cree_dict_valeurs(ECOULEMENT[0].mc_liste)
     for i in list(dECOULEMENT.keys()):
-        if dECOULEMENT[i] == None:
+        if dECOULEMENT[i] is None:
             del dECOULEMENT[i]
 
     dMODELE_ECRE = MODELE_ECRE[0].cree_dict_valeurs(MODELE_ECRE[0].mc_liste)
     for i in list(dMODELE_ECRE.keys()):
-        if dMODELE_ECRE[i] == None:
+        if dMODELE_ECRE[i] is None:
             dMODELE_ECRE[i] = None  # del dMODELE_ECRE[i]
 
     dCONVERGENCE = CONVERGENCE[0].cree_dict_valeurs(CONVERGENCE[0].mc_liste)
     for i in list(dCONVERGENCE.keys()):
-        if dCONVERGENCE[i] == None:
+        if dCONVERGENCE[i] is None:
             del dCONVERGENCE[i]
 
     # INSTANTS
@@ -247,7 +247,7 @@ def calc_ecrevisse_ops(self,
     for k, fissure in enumerate(FISSURE):
         dFISSURE = fissure.cree_dict_valeurs(fissure.mc_liste)
         for i in list(dFISSURE.keys()):
-            if dFISSURE[i] == None:
+            if dFISSURE[i] is None:
                 del dFISSURE[i]
 
         # On cree les group_no correspondant aux group_ma des levres de la

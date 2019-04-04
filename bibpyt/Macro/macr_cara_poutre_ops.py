@@ -590,7 +590,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
 
         # Si len(l_group_ma_bord) > 1, alors il faut donner : 'LONGUEUR', 'MATERIAU', 'LIAISON'
         if ( len(l_group_ma_bord) > 1 ):
-            if ( (args['LONGUEUR']==None) or (args['MATERIAU']==None) or (args['LIAISON']==None) ):
+            if ( (args['LONGUEUR'] is None) or (args['MATERIAU'] is None) or (args['LIAISON'] is None) ):
                 UTMESS('F', 'POUTRE0_6')
         else:
             if ( (args['LONGUEUR']!=None) or (args['MATERIAU']!=None) or (args['LIAISON']!=None) ):

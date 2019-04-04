@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ def assemblage_ops(
         # Si le concept numeddl est dans self.sdprods
         # il doit etre  produit par la macro
         # il faudra donc appeler la commande NUME_DDL
-        if (MATR_ASSE == None):
+        if (MATR_ASSE is None):
             UTMESS('F', 'MATRICE0_5')
 
         lnume = 1
@@ -54,7 +54,7 @@ def assemblage_ops(
         # la construction des conditions de Dirichlet est indispensable...sauf si initialement
         # les matrices etaient construites sans aucune charge (peut etre le cas
         # en dynamique)
-        if ((VECT_ASSE != None) and (CHARGE == None)):
+        if ((VECT_ASSE != None) and (CHARGE is None)):
             UTMESS('A', 'MATRICE0_6')
 
     lrigel = 0
@@ -128,10 +128,10 @@ def assemblage_ops(
             if option == 'MASS_MECA':
                 masel = _a
                 lmasel = 1
-            
+
             if lnume == 0:
                 num = numeddl
-            
+
             # ici iocc est obligatoirement 1 vu le traitement précédent
             # et la non compatibilité des 4 options
             elif option in ('RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU', 'RIGI_FLUI_STRU'):
@@ -140,7 +140,7 @@ def assemblage_ops(
 
             elif iocc == 1 and option not in (
                 'RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU','RIGI_FLUI_STRU'):
-                
+
                 self.DeclareOut('num', numeddl)
                 if CHARGE != None:
                     num = NUME_DDL(MODELE=MODELE, CHARGE=CHARGE, INFO=info)
@@ -186,7 +186,7 @@ def assemblage_ops(
                                # globales
 
             except:
-                if (CHARGE == None):  # on ne peut pas construire de vecteur si on a aucune charge
+                if (CHARGE is None):  # on ne peut pas construire de vecteur si on a aucune charge
                     UTMESS('F', 'MATRICE0_8')
                 pass
 
@@ -215,7 +215,7 @@ def assemblage_ops(
                     motscles['INST'] = INST
 
             else:  # option == 'CHAR_ACOU':
-                if (CHAM_MATER == None):
+                if (CHAM_MATER is None):
                     UTMESS('F', 'MATRICE0_7')
                 else:
                     motscles['CHAM_MATER'] = CHAM_MATER

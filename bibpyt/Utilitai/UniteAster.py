@@ -93,7 +93,7 @@ class UniteAster:
         __tab = INFO_EXEC_ASTER(LISTE_INFO=('UNITE_LIBRE'))
         unit = __tab['UNITE_LIBRE', 1]
         DETRUIRE(CONCEPT=_F(NOM=__tab), INFO=1)
-        if nom == None:
+        if nom is None:
             nom = 'fort.' + str(unit)
 
         # Si la clé existe, c'est que le fichier n'était pas libre
@@ -194,7 +194,7 @@ class UniteAster:
         """Remet l'unité 'ul' dans son état initial.
         Si 'ul' est omis, toutes les unités sont remises dans leur état initial.
         """
-        if ul == None:
+        if ul is None:
             for uli, vul in list(self.infos.items()):
                 self.Etat(uli, etat=vul['etat_init'])
         else:

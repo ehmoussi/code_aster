@@ -730,7 +730,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
         iret, ibid, n_modele = aster.dismoi('MODELE', nomresu, 'RESULTAT', 'F')
         n_modele = n_modele.strip()
         if n_modele in ('', '#AUCUN'):
-            if MODELE == None:
+            if MODELE is None:
                 if (type_resu != 'mode_meca'):
                     UTMESS('F', 'POST0_9', valk=nomresu)
                 # si le résultat en entrée est un mode_meca et qu'il ne contient pas de modèle (il est obtenu par sous-structuration, par exemple)
@@ -746,7 +746,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
 
     elif CHAM_GD != None:
         mcORDR['TOUT_ORDRE'] = 'OUI'
-        if MODELE == None:
+        if MODELE is None:
             UTMESS('F', 'POST0_10')
         else:
             n_modele = MODELE.nom

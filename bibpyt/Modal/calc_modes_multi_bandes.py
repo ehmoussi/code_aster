@@ -62,7 +62,7 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
     # Recuperation parametres solveur lineaire
     dSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
     for i in list(dSolveur.keys()):
-        if dSolveur[i] == None:
+        if dSolveur[i] is None:
             del dSolveur[i]
     if 'TYPE_RESU' in dSolveur:  # because TYPE_RESU is a keyword with a 'global' position
         del dSolveur['TYPE_RESU']
@@ -125,7 +125,7 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
         nommod, old_prtk1 = recup_modele_partition(MATR_RIGI, dbg)
         sd_modele = None
         sd_modele = self.get_concept(nommod)
-        if (sd_modele == None):
+        if (sd_modele is None):
             assert(False)  # Pb, on arrive pas a recuperer le nom du modele
         if (old_prtk1 != None):
             motdimo = {}
@@ -399,7 +399,7 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
             aster.affiche('MESSAGE', 72 * '-')
     else:
         assert(False)  # Pb parametrage STURM
- 
+
     #-----------------------------------------------------------------------
     #
     # 3b. Concaténation des résultats

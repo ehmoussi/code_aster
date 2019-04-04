@@ -46,7 +46,7 @@ def rename_components_tmp(i, N_pas, label_cal, ch_param, RESU, __RS_I):
         j = ch_param.index(ch)
         chnew = ch + chN
         # Extraction par type de variable
-        if __RS_I[j] == None:
+        if __RS_I[j] is None:
             __RS_I[j] = CALC_TABLE(TABLE=RESU[i],
                                  TITRE=' ',
                                  ACTION=(_F(OPERATION='EXTR',
@@ -106,7 +106,7 @@ def TEST_ECART(self, ch_param2, label_cal, N_pas, Ncal, ch_param, __RSI, prec_ec
             __errrel = FORMULE(NOM_PARA=(nompar1, nompar2),
                 VALE=valfor,
                 relative_error=relative_error)
-            if __ersi == None:
+            if __ersi is None:
                 __ersi = CALC_TABLE(TABLE=__RSI[i],
                                     TITRE='__RSI' + str(j),
                                     ACTION=(

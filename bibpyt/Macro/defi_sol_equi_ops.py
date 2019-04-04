@@ -60,10 +60,10 @@ def fByrne (inst,GAMMA,E,NU,Y,RHO,N1):
     EpsiV=[]
     Ru=[]
 
-    # Boucle pour extraire et stocker les max de la liste des points positifs   
+    # Boucle pour extraire et stocker les max de la liste des points positifs
     for indice,valeur in enumerate(GAMMA):
         if valeur > 0 :
-            
+
            Liste_pos.append(valeur)
            Liste_ind_pos.append(indice)
         else:
@@ -77,19 +77,19 @@ def fByrne (inst,GAMMA,E,NU,Y,RHO,N1):
                 Liste_ind_pos =[]
 
 
-    # Boucle pour extraire et stocker les max de la liste des points negatifs        
+    # Boucle pour extraire et stocker les max de la liste des points negatifs
     for indice,valeur in enumerate(GAMMA):
         if valeur <0 :
-        
+
             Liste_neg.append(valeur)
-            Liste_ind_neg.append(indice) 
+            Liste_ind_neg.append(indice)
         else:
              if Liste_neg !=[]:
                 L_neg.append(abs(min(Liste_neg)))
                 L_neg_ind.append(inst[Liste_ind_neg[Liste_neg.index(min(Liste_neg))]])
                 Liste_neg =[]
                 Liste_ind_neg =[]
-                
+
     L=min(len(L_neg),len(L_pos))
 
      # Boucle pour remmettre tous les sommets (+ et -) dans la meme liste et stocker les instants des maximums et minimums
@@ -108,11 +108,11 @@ def fByrne (inst,GAMMA,E,NU,Y,RHO,N1):
         for k in range(L):
             instant.append(L_neg_ind[k])
             instant.append(L_pos_ind[k])
-    
-    # determiner la constante du module de recharge decharge proposée par Wu 2001   
+
+    # determiner la constante du module de recharge decharge proposée par Wu 2001
     K0=(10*N1+160)
-    
-    #initialisation des variables de déformations et ru 
+
+    #initialisation des variables de déformations et ru
     EpsiV.append(0)
     Ru.append(0)
 
@@ -129,8 +129,8 @@ def fByrne (inst,GAMMA,E,NU,Y,RHO,N1):
         Gam=GAM_MAX[i]
         DeltaEpsi=0.5*Gam*C1*exp(-1*C2*(EpsiV[i-1]/Gam))
         EpsiV.append(EpsiV[i-1]+DeltaEpsi)
-        Ru.append(1-exp(-1*K0*EpsiV[i])) 
-            
+        Ru.append(1-exp(-1*K0*EpsiV[i]))
+
     return Ru, EpsiV, instant
 
 #================================================
@@ -643,7 +643,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     legendeT = 's' + str(s) + 'v' + str(v) + 'a' + str(a)
     legende = '-acce' + str(a) + '-sol' + str(s) + '-cvar=' + str(v)
     if args['TABLE_MATER_ELAS'] != None:
-        nom_para_table_elas = ['Y','M','RHO','Emax','NU','AH','GDgam']        
+        nom_para_table_elas = ['Y','M','RHO','Emax','NU','AH','GDgam']
         if Byrne :
             nom_para_table_elas.append('N1')
         __TMAT = CALC_TABLE( TABLE=args['TABLE_MATER_ELAS'],
@@ -1296,7 +1296,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         for j in range(1, NCOU + 2):
 
             affmat.append(_F(GROUP_MA=__TMAT['M', j], MATER=tSOLH[j]))
-            if args['MAILLAGE'] == None:
+            if args['MAILLAGE'] is None:
               affmat.append(_F(GROUP_MA='L'+__TMAT['M', j], MATER=tSOLH[j]))
               #affmat.append(_F(GROUP_MA='G'+__TMAT['M', j], MATER=tSOLH[j]))
               #affmat.append(_F(GROUP_MA='D'+__TMAT['M', j], MATER=tSOLH[j]))
@@ -2280,7 +2280,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             __gam = [None] * (NCOU + 1)
             __tau = [None] * (NCOU + 1)
             __ru = [None] * (NCOU + 1)
-            __ev = [None] * (NCOU + 1)       
+            __ev = [None] * (NCOU + 1)
             __foy = [None] * (NCOU + 1)
             __axa.append(0)
             if ldevi=='OUI':
@@ -2419,7 +2419,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
                   __tau[k] = CALC_FONCTION(FFT=_F(FONCTION=__tauh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',);
                   if ldevi == 'OUI':
-                    __foy[k] = CALC_FONCTION(FFT=_F(FONCTION=__fyh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',); 
+                    __foy[k] = CALC_FONCTION(FFT=_F(FONCTION=__fyh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',);
                 else:
                   __gam[k] = CALC_FONCTION( LIST_PARA=__lfreq,
                           COMB_C=(_F(FONCTION=__eph, COEF_R=(2),), )    ,)
@@ -2625,11 +2625,11 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                          __ephYY,__ephYZ,__ephXY,
                                          __ftepYY,__ftepYZ,__ftepXY,
                                          )), INFO = 1)
-            
+
             #===================================
             # APPLICATION DE LA FONCTION BYRNE
             #===================================
-            if Byrne:            
+            if Byrne:
                 Ru,EpsiV,instant = fByrne(__gam[k].Absc(),__gam[k].Ordo(),__TMAT['E0', k],
                                         __TMAT['NU', k],__TMAT['Y', k],__TMAT['RHO', k],__TMAT['N1', k],)
 
@@ -2646,7 +2646,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                      ORDONNEE=tuple(EpsiV),
                                      ABSCISSE=tuple(instant,),
                                      PROL_DROITE='CONSTANT',
-                                     PROL_GAUCHE='CONSTANT',)               
+                                     PROL_GAUCHE='CONSTANT',)
 
         # construction des profils
         __paccx = [None] * num_dime
@@ -2704,7 +2704,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             if Byrne :
                 if rumax[k]>0.95:                          #condition dans le cas de la liquefaction pour avoir un G résiduel non nul
                    rat[iter].append(0.05)
-                else: 
+                else:
                  rat[iter].append(__GG[ind[k]](geff * gamax[k])*(1-(xsieff*rumax[k]))**0.5)
 
             else:
@@ -2840,7 +2840,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
             if Byrne:
                 __tabru = CREA_TABLE(FONCTION=_F(FONCTION=__prumax),)      #ajout des profils de rumax et ev max dans le fichier resu / unite=39
-                __tabev = CREA_TABLE(FONCTION=_F(FONCTION=__pevmax),)            
+                __tabev = CREA_TABLE(FONCTION=_F(FONCTION=__pevmax),)
 
             if dime == "2D":
                 __tabacc = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[0]),)

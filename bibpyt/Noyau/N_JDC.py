@@ -447,7 +447,7 @@ Causes possibles :
             if unite != None:
                 if os.path.exists("fort." + str(unite)):
                     fname = "fort." + str(unite)
-            if fname == None:
+            if fname is None:
                 raise AsException("Impossible de trouver le fichier correspondant"
                                   " a l unite %s" % unite)
             if not os.path.exists(fname):
@@ -475,7 +475,7 @@ Causes possibles :
         # message.debug(SUPERV, "set par_lot = %r", par_lot)
         if user_value:
             self.par_lot_user = par_lot
-        if self.appli == None:
+        if self.appli is None:
             # Pas d application maitre
             self.par_lot = par_lot
         else:
@@ -519,7 +519,7 @@ Causes possibles :
            Retourne le dictionnaire des concepts connus avant etape
            On tient compte des commandes qui modifient le contexte
            comme DETRUIRE ou les macros
-           Si etape == None, on retourne le contexte en fin de JDC
+           Si etape is None, on retourne le contexte en fin de JDC
         """
         # L'étape courante pour laquelle le contexte a été calculé est
         # mémorisée dans self.index_etape_courante

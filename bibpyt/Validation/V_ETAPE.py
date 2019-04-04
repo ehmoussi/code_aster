@@ -150,7 +150,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                         _('Opérateur non réentrant : ne pas utiliser reuse'))
                 valid = 0
 
-            if self.sd == None:
+            if self.sd is None:
                 # Le concept produit n'existe pas => erreur
                 if cr == 'oui':
                     self.cr.fatal(_("Concept retourné non défini"))
@@ -169,9 +169,9 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
         """
              Cette méthode met à jour le concept produit en fonction des conditions initiales :
 
-              1. Il n'y a pas de concept retourné (self.definition.sd_prod == None)
+              1. Il n'y a pas de concept retourné (self.definition.sd_prod is None)
 
-              2. Le concept retourné n existait pas (self.sd == None)
+              2. Le concept retourné n existait pas (self.sd is None)
 
               3. Le concept retourné existait. On change alors son type ou on le supprime
 
@@ -255,7 +255,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
             if valid:
                 self.sd = self.reuse
         else:
-            if sd_prod == None:  # Pas de concept retourné
+            if sd_prod is None:  # Pas de concept retourné
                 # Que faut il faire de l eventuel ancien sd ?
                 self.sd = None
             else:

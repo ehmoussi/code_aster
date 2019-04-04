@@ -69,7 +69,7 @@ def calc_matr_ifs_ops(self,MAILLAGE, MODELE,CHAR_CINE,NUME_DDL,
         _VISC_00  = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_VISC, RHO=0.0, AMOR_HYST=0.0,),);
 
 # Materiaux pour matrices de masse
-    if GROUP_MA_VISC == None:
+    if GROUP_MA_VISC is None:
         _MAT_MSE=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_11,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_00,),
@@ -89,7 +89,7 @@ def calc_matr_ifs_ops(self,MAILLAGE, MODELE,CHAR_CINE,NUME_DDL,
                                      _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_0,),),);
 
 # Materiaux pour matrices de raideur
-    if GROUP_MA_VISC == None:
+    if GROUP_MA_VISC is None:
         _MAT_MK1=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_0,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI,),

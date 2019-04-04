@@ -719,10 +719,10 @@ class CalcEssaiGmsh(CalcEssaiLogiciel):
         # si mode statique, on donne le champ NOEUD_CMP a la place de la
         # frequence
         for ind_ordr in range(len(afreq1)):
-            if afreq1[ind_ordr] == None:
+            if afreq1[ind_ordr] is None:
                 afreq1[ind_ordr] = noeud_cmp1[ind_ordr]
         for ind_ordr in range(len(afreq2)):
-            if afreq2[ind_ordr] == None:
+            if afreq2[ind_ordr] is None:
                 afreq2[ind_ordr] = noeud_cmp2[ind_ordr]
         mac_win.set_modes(afreq1, afreq2, mac)
 
@@ -842,7 +842,7 @@ class CalcEssaiSalomeCourbes(CalcEssaiSalome):
                 legende_x="Abscisses", legende_y="Ordonnées",
                 unite_x="ua", unite_y="ua"):
 
-        if l_legende == None:
+        if l_legende is None:
             l_legende = [' toto '] * len(ll_y)
 
         # Creation d'une table pour ranger les fonctions

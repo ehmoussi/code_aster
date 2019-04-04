@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -377,13 +377,13 @@ def test_fonction_ops(self, VALEUR, ATTRIBUT, **args):
             crit = dres['CRITERE']
             fct = dres['FONCTION']
             nompara = dres['NOM_PARA']
-            if nompara == None:
+            if nompara is None:
                 nompara = ''
             ref = dres['REFERENCE'] or 'NON_REGRESSION'
             other_ref = ref != 'NON_REGRESSION' and dres['REFERENCE'] or None
             ver = None
             legende = dres['LEGENDE']
-            if legende == None:
+            if legende is None:
                 legende = 'XXXX'
             nomfct = fct.get_name()
 
@@ -510,7 +510,7 @@ def test_fonction_ops(self, VALEUR, ATTRIBUT, **args):
                 # XXX il faut utiliser lafonc.Parametres() !
                 # Recuperation du .PROL de la fonction
                 fct_prol = lafonc.sdj.PROL.get_stripped()
-                if fct_prol == None:
+                if fct_prol is None:
                     UTMESS('F', 'PREPOST3_93')
 
                 nompu = ''
