@@ -63,7 +63,7 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
         for Fi in args['FILTRE']:
             dF = Fi.cree_dict_valeurs(Fi.mc_liste)
             for mc in list(dF.keys()):
-                if dF[mc] == None:
+                if dF[mc] is None:
                     del dF[mc]
             Filtre.append(dF)
     # format pour l'impression des filtres

@@ -137,7 +137,7 @@ class creation_donnees_homard:
 #
         message_erreur = None
 #
-        while message_erreur == None:
+        while message_erreur is None:
 #
 #     1. Les chaines liées aux numeros d'iteration
 #
@@ -327,7 +327,7 @@ class creation_donnees_homard:
                                 message_erreur += s_aux_2 + \
                                     "X maxi, %e." % zone["X_MAXI"]
                             if zone["Y_MINI"] > zone["Y_MAXI"]:
-                                if (message_erreur == None):
+                                if (message_erreur is None):
                                     message_erreur = ""
                                 message_erreur += s_aux_1 + \
                                     "Y mini, %e" % zone["Y_MINI"]
@@ -335,7 +335,7 @@ class creation_donnees_homard:
                                     "Y maxi, %e." % zone["Y_MAXI"]
                         if "Z_MINI" in zone:
                             if zone["Z_MINI"] > zone["Z_MAXI"]:
-                                if (message_erreur == None):
+                                if (message_erreur is None):
                                     message_erreur = ""
                                 message_erreur += s_aux_1 + \
                                     "Z mini, %e" % zone["Z_MINI"]
@@ -494,7 +494,7 @@ class creation_donnees_homard:
         """
         message_erreur = None
 #
-        while message_erreur == None:
+        while message_erreur is None:
 #
 #     1. Ouverture du fichier
 #
@@ -856,7 +856,7 @@ class creation_donnees_homard:
         """
         message_erreur = None
 #
-        while message_erreur == None:
+        while message_erreur is None:
 #
 #     1. Ouverture du fichier
 #

@@ -50,91 +50,91 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
     for j in EXCIT:
         dexct.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dexct[-1].keys()):
-            if dexct[-1][i] == None:
+            if dexct[-1][i] is None:
                 del dexct[-1][i]
     #
     dComp_incri = []
     for j in COMPORTEMENT_IMPL:
         dComp_incri.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dComp_incri[-1].keys()):
-            if dComp_incri[-1][i] == None:
+            if dComp_incri[-1][i] is None:
                 del dComp_incri[-1][i]
     #
     dComp_incre = []
     for j in COMPORTEMENT_EXPL:
         dComp_incre.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dComp_incre[-1].keys()):
-            if dComp_incre[-1][i] == None:
+            if dComp_incre[-1][i] is None:
                 del dComp_incre[-1][i]
     #
     dincri = []
     for j in INCR_IMPL:
         dincri.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dincri[-1].keys()):
-            if dincri[-1][i] == None:
+            if dincri[-1][i] is None:
                 del dincri[-1][i]
     #
     dincre = []
     for j in INCR_EXPL:
         dincre.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dincre[-1].keys()):
-            if dincre[-1][i] == None:
+            if dincre[-1][i] is None:
                 del dincre[-1][i]
     #
     dschi = []
     for j in SCHEMA_TEMPS_IMPL:
         dschi.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dschi[-1].keys()):
-            if dschi[-1][i] == None:
+            if dschi[-1][i] is None:
                 del dschi[-1][i]
     #
     dsche = []
     for j in SCHEMA_TEMPS_EXPL:
         dsche.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dsche[-1].keys()):
-            if dsche[-1][i] == None:
+            if dsche[-1][i] is None:
                 del dsche[-1][i]
     #
     dscheq = []
     for j in SCHEMA_TEMPS_EQUI:
         dscheq.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dscheq[-1].keys()):
-            if dscheq[-1][i] == None:
+            if dscheq[-1][i] is None:
                 del dscheq[-1][i]
     #
     dnew = []
     for j in NEWTON:
         dnew.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dnew[-1].keys()):
-            if dnew[-1][i] == None:
+            if dnew[-1][i] is None:
                 del dnew[-1][i]
     #
     dconv = []
     for j in CONVERGENCE:
         dconv.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dconv[-1].keys()):
-            if dconv[-1][i] == None:
+            if dconv[-1][i] is None:
                 del dconv[-1][i]
     #
     dini = []
     for j in ETAT_INIT:
         dini.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dini[-1].keys()):
-            if dini[-1][i] == None:
+            if dini[-1][i] is None:
                 del dini[-1][i]
     #
     dequi = []
     for j in EQUILIBRAGE:
         dequi.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dequi[-1].keys()):
-            if dequi[-1][i] == None:
+            if dequi[-1][i] is None:
                 del dequi[-1][i]
     #
     dsolv = []
     for j in SOLVEUR:
         dsolv.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dsolv[-1].keys()):
-            if dsolv[-1][i] == None:
+            if dsolv[-1][i] is None:
                 del dsolv[-1][i]
     #
     dobs = []
@@ -142,7 +142,7 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
         for j in OBSERVATION:
             dobs.append(j.cree_dict_valeurs(j.mc_liste))
             for i in list(dobs[-1].keys()):
-                if dobs[-1][i] == None:
+                if dobs[-1][i] is None:
                     del dobs[-1][i]
     #
     darch = []
@@ -150,7 +150,7 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
         for j in ARCHIVAGE:
             darch.append(j.cree_dict_valeurs(j.mc_liste))
             for i in list(darch[-1].keys()):
-                if darch[-1][i] == None:
+                if darch[-1][i] is None:
                     del darch[-1][i]
     #
     dener = []
@@ -158,7 +158,7 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
         for j in ENERGIE:
             dener.append(j.cree_dict_valeurs(j.mc_liste))
             for i in list(dener[-1].keys()):
-                if dener[-1][i] == None:
+                if dener[-1][i] is None:
                     del dener[-1][i]
     #
     __L0 = LIST_INST_BASCULE['VALE']

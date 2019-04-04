@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -327,31 +327,31 @@ mail_py.FromAster('Mail')
 COORD_3D=mail_py.cn
 
 iPouAllNode=mail_py.gno.get('AllNode') # permet de recuperer dans une liste les noeuds des noeuds appartemant
-#au groupe AllNode dans l'ordre de leur apparition dans le 'Mail', ex, [3, 5, 2, ...., 1000]. 
+#au groupe AllNode dans l'ordre de leur apparition dans le 'Mail', ex, [3, 5, 2, ...., 1000].
 #C'est a dire COORD_3D[2] est celle du noeud N2.
 iPouRP1=mail_py.gno.get('RP1')
 iPouRP2=mail_py.gno.get('RP2')
 
 C3DZ=zeros((len(COORD_3D),1))
-for i in range(len(C3DZ)):  
+for i in range(len(C3DZ)):
    C3DZ[i]=COORD_3D[i][2]
 
 C1DZ1=[]
 min=1112
 while (min!=1111):
    i=0
-   s=int((abs(C3DZ[i])+ajust)*Pow)/float(Pow) 
+   s=int((abs(C3DZ[i])+ajust)*Pow)/float(Pow)
    for i in range(len(C3DZ)):
       if (int((C3DZ[i]+ajust)*Pow)/float(Pow))==min:
          C3DZ[i]=1111
       elif( (int((C3DZ[i]+ajust)*Pow)/float(Pow)) < s ):
          s=int((C3DZ[i]+ajust)*Pow)/float(Pow)
-   if (min!=s):      
+   if (min!=s):
       min=s
       C1DZ1.append(min)
 
 C1D=zeros((len(C1DZ1)-1,3))
-for i in range(len(C1D)):  
+for i in range(len(C1D)):
    C1D[i][0]=0
    C1D[i][1]=0
    C1D[i][2]=C1DZ1[i]
@@ -361,7 +361,7 @@ def OrdreSect(z):
    jk=0
    while(C1D[jk][2]!=z):
       jk=jk+1
-   return jk 
+   return jk
 
 temps=NP.array([Tb,Tb_1,Tb_2])
 nbpas=temps.shape[0]
@@ -371,9 +371,9 @@ U1=[]
 U2=[]
 
 for i in range(nbpas):
-   
+
    pas = temps[i]
-   
+
    DEP=CREA_CHAMP(OPERATION='EXTR',
                TYPE_CHAM='NOEU_DEPL_R',
                RESULTAT=DLT,
@@ -387,14 +387,14 @@ for i in range(nbpas):
    Uprx = DEP.EXTR_COMP('DRX',['AllNode']).valeurs;
    Upry = DEP.EXTR_COMP('DRY',['AllNode']).valeurs;
    Uprz = DEP.EXTR_COMP('DRZ',['AllNode']).valeurs;
-   
+
    ACC=CREA_CHAMP(OPERATION='EXTR',
                   TYPE_CHAM='NOEU_DEPL_R',
                   RESULTAT=DLT,
                   NOM_CHAM='ACCE',
                   INST=pas,
                   PRECISION=1e-15,);
-  
+
    ddotUpx = ACC.EXTR_COMP('DX',['AllNode']).valeurs;
    ddotUpy = ACC.EXTR_COMP('DY',['AllNode']).valeurs;
    ddotUpz = ACC.EXTR_COMP('DZ',['AllNode']).valeurs;
@@ -424,8 +424,8 @@ for i in range(nbpas):
          ddotPUprz=ddotUprz[ind]
          ddotPUp.append([ddotPUpx, ddotPUpy, ddotPUpz, ddotPUprx, ddotPUpry, ddotPUprz])
          i=i+1
-      
-      elif (COORD_3D[i][2]>0+eps and COORD_3D[i][2]<0.05-eps): 
+
+      elif (COORD_3D[i][2]>0+eps and COORD_3D[i][2]<0.05-eps):
          PUpx=Upx[ind]-Uprz[ind]*COORD_3D[i][1]
          PUpy=Upy[ind]+Uprz[ind]*COORD_3D[i][0]
          PUpz=Upz[ind]-Upry[ind]*COORD_3D[i][0]+Uprx[ind]*COORD_3D[i][1]
@@ -435,7 +435,7 @@ for i in range(nbpas):
          ddotPUpz=ddotUpz[ind]-ddotUpry[ind]*COORD_3D[i][0]+ddotUprx[ind]*COORD_3D[i][1]
          ddotPUp.append([ddotPUpx, ddotPUpy, ddotPUpz])
          i=i+1
-      
+
       else:
          if (iPouAllNode[i]==iPouRP1 or iPouAllNode[i]==iPouRP2):
             PUpx=Upx[ind]
@@ -509,7 +509,7 @@ for i in range(nbpas):
                         _F(LISTE_R=dictPUprx,PARA='DRX'),
                         _F(LISTE_R=dictPUpry,PARA='DRY'),
                         _F(LISTE_R=dictPUprz,PARA='DRZ'),))
-   
+
    TA=CREA_TABLE(LISTE=(_F(LISTE_K=dictLNo,PARA='NOEUD'),
                      _F(LISTE_R=dictAccx,PARA='DX'),
                      _F(LISTE_R=dictAccy,PARA='DY'),
@@ -517,27 +517,27 @@ for i in range(nbpas):
                      _F(LISTE_R=dictAccrx,PARA='DRX'),
                      _F(LISTE_R=dictAccry,PARA='DRY'),
                      _F(LISTE_R=dictAccrz,PARA='DRZ'),))
-   
+
    DeplPUp=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
               OPERATION='EXTR',
               MAILLAGE=Mail,
               TABLE=TD,);
-      
+
    AccIni=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
            OPERATION='EXTR',
            MAILLAGE=Mail,
            TABLE=TA,);
-   
+
    FORCE1=PROD_MATR_CHAM(MATR_ASSE=RIGIDITE,
                   CHAM_NO=DeplPUp,
                   TITRE='PROD_MATR_CHAM1',);
 
    TBLf1=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                          INTITULE='f1',
-                         CHAM_GD=FORCE1, 
+                         CHAM_GD=FORCE1,
                          GROUP_NO='AllNode',
                          NOM_CMP=('DX','DY','DZ','DRX','DRY','DRZ',),),);
-   
+
    VARf1=TBLf1.EXTR_TABLE()
 
    FORCE2=PROD_MATR_CHAM(MATR_ASSE=MASSE,
@@ -546,15 +546,15 @@ for i in range(nbpas):
 
    TBLf2=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                          INTITULE='f2',
-                         CHAM_GD=FORCE2, 
+                         CHAM_GD=FORCE2,
                          GROUP_NO='AllNode',
                          NOM_CMP=('DX','DY','DZ','DRX','DRY','DRZ',),),);
-   
+
    VARf2=TBLf2.EXTR_TABLE()
-   
+
    Force = []
    for i in range(len(VARf1)):
-      if VARf1.DRX[i]==None:
+      if VARf1.DRX[i] is None:
          Force.append([-VARf1.DX[i]-VARf2.DX[i], -VARf1.DY[i]-VARf2.DY[i], -VARf1.DZ[i]-VARf2.DZ[i]]);
       else:
          Force.append([-VARf1.DX[i]-VARf2.DX[i], -VARf1.DY[i]-VARf2.DY[i], -VARf1.DZ[i]-VARf2.DZ[i], -VARf1.DRX[i]-VARf2.DRX[i], -VARf1.DRY[i]-VARf2.DRY[i], -VARf1.DRZ[i]-VARf2.DRZ[i]]);
@@ -566,7 +566,7 @@ for i in range(nbpas):
    dictCharge = []
    for i in range(len(VARf1)):
       j=i+1
-      if VARf1.DRX[i]==None:
+      if VARf1.DRX[i] is None:
          dictCharge.append({'NOEUD':'N%i'%j, 'FX':Force[i][0], 'FY':Force[i][1], 'FZ':Force[i][2],});
       else:
          dictCharge.append({'NOEUD':'N%i'%j, 'FX':Force[i][0], 'FY':Force[i][1], 'FZ':Force[i][2], 'MX':Force[i][3], 'MY':Force[i][4], 'MZ':Force[i][5],});
@@ -587,11 +587,11 @@ for i in range(nbpas):
                          PRECISION=1e-15,
                          GROUP_NO='AllNode',
                          NOM_CMP=('DX','DY','DZ', 'DRX', 'DRY', 'DRZ',),),);
-   
+
    TC=tableUc.EXTR_TABLE()
 
    for i in range(len(TC)):
-      if TC.DRX[i]==None:
+      if TC.DRX[i] is None:
          if pas==Tb:
             U0.append([PUp[i][0]+TC.DX[i], PUp[i][1]+TC.DY[i], PUp[i][2]+TC.DZ[i]]);
          elif pas==Tb_1:
@@ -605,7 +605,7 @@ for i in range(nbpas):
             U1.append([PUp[i][0]+TC.DX[i], PUp[i][1]+TC.DY[i], PUp[i][2]+TC.DZ[i], PUp[i][3]+TC.DRX[i], PUp[i][4]+TC.DRY[i], PUp[i][5]+TC.DRZ[i]]);
          elif pas==Tb_2:
             U2.append([PUp[i][0]+TC.DX[i], PUp[i][1]+TC.DY[i], PUp[i][2]+TC.DZ[i], PUp[i][3]+TC.DRX[i], PUp[i][4]+TC.DRY[i], PUp[i][5]+TC.DRZ[i]]);
-   
+
    DETRUIRE (CONCEPT=_F(NOM=DEP),);
    DETRUIRE (CONCEPT=_F(NOM=ACC),);
    DETRUIRE (CONCEPT=_F(NOM=TD),);
@@ -752,7 +752,7 @@ Bascule=DYNA_VIBRA(TYPE_CALCUL='TRAN', BASE_CALCUL='PHYS',
                    MATR_RIGI=RIGIDITE,
                    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
                                    GAMMA=0.5+alphab,
-                                   BETA=(1.0+alphab)**2/4,),   
+                                   BETA=(1.0+alphab)**2/4,),
                    ETAT_INIT=_F(DEPL=Dep0,
                                 VITE=Vit0,
                                 ),

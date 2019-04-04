@@ -62,14 +62,14 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
 
 
     MODELE = self['MODELE']
-    if MODELE == None:
+    if MODELE is None:
         n_modele = auto_modele
     else:
         n_modele = MODELE.nom
         if not n_modele == auto_modele :
             UTMESS('F', 'CALCPRESSION0_1')
-        
-        
+
+
     __model = self.get_concept(n_modele)
 
     # BLINDAGE : on poursuit le calcul uniquement que si le modèle n'est pas
@@ -89,7 +89,7 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
                         NOM_CHAM='SIEF_NOEU',
                         INST=INST,
                         )
-                        
+
     if  GEOMETRIE == 'DEFORMEE' :
         __depl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                             OPERATION='EXTR',
@@ -97,7 +97,7 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
                             NOM_CHAM='DEPL',
                             INST=INST,
                            )
-                            
+
         __mdepl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                              OPERATION='COMB',
                              COMB=_F(CHAM_GD=__depl,

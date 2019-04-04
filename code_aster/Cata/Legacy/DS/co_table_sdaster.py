@@ -94,7 +94,7 @@ class table_sdaster(ASSD):
         # récupération des paramètres
         #v_tblp = aster.getvectjev('%-19s.TBLP' % self.get_name())
         v_tblp = self.sdj.TBLP.get()
-        if v_tblp == None:
+        if v_tblp is None:
             # retourne une table vide
             return Table(titr=titr, nom=self.nom)
         tabnom=list(v_tblp)

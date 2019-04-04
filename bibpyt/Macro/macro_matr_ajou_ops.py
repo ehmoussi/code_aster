@@ -55,7 +55,7 @@ def macro_matr_ajou_ops(
             aster.affiche('MESSAGE', message)
     else:
         for flu in FLUIDE:
-            if flu['GROUP_MA'] == None:
+            if flu['GROUP_MA'] is None:
                 UTMESS('F', 'MATRICE0_1')
 
     IOCFLU = len(FLUIDE)
@@ -103,7 +103,7 @@ def macro_matr_ajou_ops(
     # <MODELE1_64> : DANS UN MODELE, IL N'Y A AUCUN ELEMENT AVEC RIGIDITE
     MasquerAlarme('MODELE1_63')
     MasquerAlarme('MODELE1_64')
-    
+
     __NOMINT = AFFE_MODELE(MAILLAGE=MAILLAGE,
                            AFFE=_F(GROUP_MA=GROUP_MA_INTERF,
                                    MODELISATION=MODELISATION,

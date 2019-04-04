@@ -198,7 +198,7 @@ class TableBase(object):
         if not is_sequence(para):
             para = [self.para, ]
             typ = [self.type, ]
-        if dform == None:
+        if dform is None:
             dform = DicForm.copy()
         if dform['chead'] is None:
             dform['chead'] = os.linesep.join([dform['ccom'],
@@ -294,7 +294,7 @@ class TableBase(object):
                     list(getattr(tnv, tnv.para[1]).values())],
             'Lab': tnv.para,
         }
-        if args['LEGENDE'] == None:
+        if args['LEGENDE'] is None:
             del args['LEGENDE']
         Graph.AjoutParaCourbe(dicC, args)
         graph.AjoutCourbe(**dicC)
@@ -455,7 +455,7 @@ class Table(TableBase):
             UTMESS('F', 'TABLE0_25', valk=(funct.__name__, '__call__'))
         if nom_para in self.para:
             UTMESS('F', 'TABLE0_24', valk=nom_para)
-        if l_para == None:
+        if l_para is None:
             if not hasattr(funct, 'nompar'):
                 UTMESS('F', 'TABLE0_25', valk=(funct.__name__, 'nompar'))
             l_para = funct.nompar
@@ -464,7 +464,7 @@ class Table(TableBase):
         not_found = ', '.join([p for p in l_para if not p in self.para])
         if not_found != '':
             UTMESS('F', 'TABLE0_27', valk=not_found)
-        if const == None:
+        if const is None:
             const = {}
         if type(const) is not dict:
             UTMESS('F', 'TABLE0_28', valk=('const', 'dict'))
@@ -504,7 +504,7 @@ class Table(TableBase):
            ORDRE : CROISSANT ou DECROISSANT
         """
         # par défaut, on prend tous les paramètres
-        if CLES == None:
+        if CLES is None:
             CLES = self.para[:]
         # vérification des arguments
         if not is_sequence(CLES):
@@ -938,12 +938,12 @@ class OrderableRow(object):
 
 def FMT(dform, nform, typAster=None, larg=0, val=''):
     """Retourne un format d'impression Python à partir d'un type Aster ('R','I',
-    'K8', 'K16'...). Si typAster==None, retourne dform[nform].
+    'K8', 'K16'...). Si typAster is None, retourne dform[nform].
        larg : largeur minimale du format (val permet de ne pas ajouter des blancs
        si la chaine à afficher est plus longue que le format, on prend le partie
        de ne pas tronquer les chaines)
     """
-    if typAster == None:
+    if typAster is None:
         fmt = dform[nform]
     elif typAster in ('I', 'R'):
         if nform == 'formK':
@@ -996,10 +996,10 @@ def merge(tab1, tab2, labels=[], restrict=False, format_r=None):
     # lignes a merger dans les deux tableaux
     dic1 = {}
     for cle in list(dlab1.keys()):
-        if dlab1[cle] == None or cle == ():
+        if dlab1[cle] is None or cle == ():
             bid = dlab1.pop(cle)
     for cle in list(dlab2.keys()):
-        if dlab2[cle] == None or cle == ():
+        if dlab2[cle] is None or cle == ():
             bid = dlab2.pop(cle)
     for cle in list(dlab2.keys()):
         if cle in dlab1:

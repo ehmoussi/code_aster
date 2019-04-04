@@ -560,7 +560,7 @@ def post_mac3coeur_ops(self, **args):
                 _num_grille = attr['NUME_GRILLE']
                 _extremum = attr['TYPE_RESU']
 
-                if (_extremum == None):
+                if (_extremum is None):
                     post = _num_grille
                     texte = 'sur la grille ' + str(post)
                 else:
@@ -937,7 +937,7 @@ def post_mac3coeur_ops(self, **args):
                 _extremum = attr['TYPE_RESU']
                 _autre = attr['TYPE_VISU']
 
-                if (_extremum == None):
+                if (_extremum is None):
                     post = _num_grille
                 else:
                     post = _extremum

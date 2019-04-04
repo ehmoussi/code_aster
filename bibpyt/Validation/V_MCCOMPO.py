@@ -115,7 +115,7 @@ class MCCOMPO:
         # on ajoute les couples {nom mot-clé:objet mot-clé} effectivement
         # présents
         for v in self.mc_liste:
-            if v == None:
+            if v is None:
                 continue
             k = v.nom
             dico[k] = v

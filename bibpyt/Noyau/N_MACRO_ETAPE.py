@@ -117,7 +117,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                         self, self.parent.g_context))
             else:
                 sd = self.get_sd_prod()
-                if sd != None and self.reuse == None:
+                if sd != None and self.reuse is None:
                     # On ne nomme le concept que dans le cas de non reutilisation
                     # d un concept
                     sd.set_name(nom)
@@ -148,7 +148,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
           La difference avec une etape ou une proc-etape tient a ce que
           le concept produit peut exister ou pas
 
-          Si sd_prod == None le concept produit n existe pas on retourne None
+          Si sd_prod is None le concept produit n existe pas on retourne None
 
           Deux cas :
            - cas 1 : sd_prod  n'est pas une fonction
@@ -194,7 +194,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
             # Elle sera traitee ulterieurement.
             self.sd = self.reuse
         else:
-            if sd_prod == None:
+            if sd_prod is None:
                 self.sd = None
             else:
                 self.sd = sd_prod(etape=self)
@@ -336,7 +336,7 @@ Causes possibles :
         #         etape fille. Cas semblable a Cas 3.
         # Cas 5 : Le concept est produit par une etape externe a la macro.
         #
-        if co.etape == None:
+        if co.etape is None:
             # Cas 1 : le concept est libre
             # On l'attache a la macro et on change son type dans le type demande
             # Recherche du mot cle simple associe au concept
@@ -636,7 +636,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
             return
         f, text = self.get_file(fic_origine=self.parent.nom, fname=fname)
         self.fichier_init = f
-        if f == None:
+        if f is None:
             return
         self.make_contexte(f, text)
 
@@ -749,7 +749,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         """
            Reinitialise l'etape avec un nouveau jdc parent new_jdc
         """
-        if self.sd and self.reuse == None:
+        if self.sd and self.reuse is None:
             self.parent.NommerSdprod(self.sd, self.sd.nom)
         for concept in self.sdprods:
             self.parent.NommerSdprod(concept, concept.nom)

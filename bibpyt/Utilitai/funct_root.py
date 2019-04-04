@@ -1,7 +1,7 @@
 # coding=utf-8
 # --------------------------------------------------------------------
 # Copyright (C) 1999, Wesley Phoa
-# Copyright (c) 2008 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (c) 2008 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ Given a univariate function f and a tuple bracket=(x1,x2) bracketing a root,
 find a root x of f using Ridder s method. Parameter fnvals=(f(x1),f(x2)) is optional.
     """
     x1, x2 = bracket
-    if fnvals == None:
+    if fnvals is None:
         f1, f2 = f(x1), f(x2)
     else:
         f1, f2 = fnvals

@@ -338,7 +338,7 @@ def countCase(comb):
         # Case number from MULTI_ELAS
         lst_nomcas = i_combo.get('NOM_CAS')
         lst_numord = i_combo.get('NUME_ORDRE')
-        if lst_nomcas == None:
+        if lst_nomcas is None:
             nmb_cas = nmb_cas + len(lst_numord)      # combinations number
         else:
             nmb_cas = nmb_cas + len(lst_nomcas)
@@ -364,7 +364,7 @@ def lstInst(ncas, comb, resultat):
         # Case number from MULTI_ELAS
         lst_nomcas = i_combo.get('NOM_CAS')
         lst_numord = i_combo.get('NUME_ORDRE')
-        if lst_nomcas == None:
+        if lst_nomcas is None:
             lst_combo = lst_numord
             key_name_combo = 'NUME_ORDRE'
         else:
@@ -412,7 +412,7 @@ def evolElasFromMulti(ncas, comb, lst_inst_value, resu, modele, caraelem):
         # Case number from MULTI_ELAS
         lst_nomcas = i_combo.get('NOM_CAS')
         lst_numord = i_combo.get('NUME_ORDRE')
-        if lst_nomcas == None:
+        if lst_nomcas is None:
             lst_combo = lst_numord                   # list with combinations
             key_name_combo = 'NUME_ORDRE'
         else:

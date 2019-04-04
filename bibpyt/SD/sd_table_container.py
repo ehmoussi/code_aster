@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ class sd_table_container(sd_table):
         assert shape[0] > 2  # la table à au moins 3 paramètres
         for n in param:
             col, dummy = self.get_column_name(n)
-            if col == None:
+            if col is None:
                 checker.err(self, "Paramètre %s manquant!" % (n))
 
             # on vérifie que les colonnes ne sont pas vides

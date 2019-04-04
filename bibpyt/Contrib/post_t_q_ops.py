@@ -30,7 +30,7 @@ def normalize(v):
 def complete(Tab):
     n = len(Tab)
     for i in range(n):
-        if Tab[i] == None:
+        if Tab[i] is None:
             Tab[i] = 0.
     return Tab
 
@@ -212,7 +212,7 @@ def get_noeud_fond_fiss(FOND_FISS):
     """ retourne la liste des noeuds de FOND_FISS"""
     from Utilitai.Utmess import UTMESS
     Lnoff = FOND_FISS.sdj.FOND_NOEU.get()
-    if Lnoff == None:
+    if Lnoff is None:
         UTMESS('F', 'RUPTURE0_11')
     Lnoff = list(map(lambda x: x.rstrip(), Lnoff))
     return Lnoff
@@ -1778,7 +1778,7 @@ def get_tabout(
     mcfact.append(_F(PARA='Td_MAX', LISTE_R=tg[2].tolist()))
     mcfact.append(_F(PARA='Td_MIN', LISTE_R=tg[3].tolist()))
 
-    if (ino == 0 and iord == 0) and inst == None:
+    if (ino == 0 and iord == 0) and inst is None:
         tabout = CREA_TABLE(LISTE=mcfact, TITRE=titre)
 
         get_erreur(self, ndim, tabout, type_para)
@@ -1876,7 +1876,7 @@ def post_t_q_ops(self, MODELISATION, FOND_FISS, FISSURE, MATER, RESULTAT,
         if cmpt[:4] == 'ELAS':
             phenom = cmpt
             break
-    if phenom == None:
+    if phenom is None:
         UTMESS('F', 'RUPTURE0_5')
     ns = '{:06d}'.format(ind)
 

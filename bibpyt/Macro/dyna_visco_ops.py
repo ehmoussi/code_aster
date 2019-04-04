@@ -43,7 +43,7 @@ def dyna_visco_ops(self,MODELE,CARA_ELEM,
 
     # La macro compte pour 1 dans la numérotation des commandes
     self.set_icmd(1)
-    
+
     # output results produced by the command
     if TYPE_RESU=='MODE':
         self.DeclareOut('_modes',self.sd)
@@ -59,8 +59,8 @@ def dyna_visco_ops(self,MODELE,CARA_ELEM,
     coef_fmax = 1.
     if 'COEF_FREQ_MAX' in args:
         coef_fmax = args['COEF_FREQ_MAX']
-  
-  
+
+
     list_FREQ=[]
 
     if FREQ:
@@ -93,21 +93,21 @@ def dyna_visco_ops(self,MODELE,CARA_ELEM,
 
     if MATER_ELAS:
         for n in MATER_ELAS:
-  
-            if n['MATER'] == None:
+
+            if n['MATER'] is None:
                 __new_matnv=DEFI_MATERIAU(ELAS=_F(E=n['E'],
                                                   NU=n['NU'],
                                                   RHO=n['RHO'],
                                                   AMOR_HYST=n['AMOR_HYST']),)
-  
+
                 motscles['AFFE'].append(_F(GROUP_MA=n['GROUP_MA'],
                                            MATER=__new_matnv),)
-  
+
             else:
                 motscles['AFFE'].append(_F(GROUP_MA=n['GROUP_MA'],
                                            MATER=n['MATER']),)
-  
-  
+
+
     for y in MATER_ELAS_FO:
         e0[ny]=y['E'](list_FREQ[0])
         eta0[ny]=y['AMOR_HYST'](list_FREQ[0])
@@ -238,7 +238,7 @@ def dyna_visco_ops(self,MODELE,CARA_ELEM,
 #       IS FINISHED, THE VERIFICATION PARAMETER IS SET BACK TO ITS ORIGINAL VALUE
         PreviousCheck = 'NON'
         if self.jdc.sdveri : PreviousCheck = 'OUI'
-       
+
         DEBUG(SDVERI='NON')
         dyna_harm=dyna_visco_harm(self, EXCIT, list_FREQ, _modes,
                                         MATER_ELAS_FO, __asseKg, __asseKgr, __asseMg, __listKv, e0, eta0, __num, **args)
@@ -262,37 +262,37 @@ def extr_matr_elim_lagr(self, matr_asse):
     #--        + commentaires dans sdll123a.comm        --#
     #--                                                 --#
     #-----------------------------------------------------#
-    
+
     iret,ibid,nom_nume = aster.dismoi('NOM_NUME_DDL',matr_asse.nom,'MATR_ASSE','F')
     Nume=aster.getvectjev(nom_nume.ljust(8)+'      .NUME.DELG        ' )
     ind_lag1=[]
     ind_nolag=[]
-    
+
     for i1 in range(len(Nume)) :
         if Nume[i1] > -0.5 :
             ind_nolag.append(i1)
         if (Nume[i1] < -0.5) & (Nume[i1] > -1.5):
             ind_lag1.append(i1)
-        
+
     nlag1=len(ind_lag1)
     nnolag=len(ind_nolag)
-    
+
     Z=NP.zeros((nnolag-nlag1,nnolag))
     C=NP.vstack((matr_lagr[ind_lag1][:,ind_nolag],Z))
     Q,R = NP.linalg.qr(NP.transpose(C))
-    
+
     dR=[]
     for i1 in range(len(R)) :
         dR.append(NP.abs(R[i1,i1]))
-      
+
     mdR=NP.max(dR)
     indz=[]
     for i1 in range(len(R)) :
         if NP.abs(R[i1,i1]) <= mdR*1.e-16 :
             indz.append(i1)
-        
+
     matr_sans_lagr=NP.dot(NP.transpose(Q[:][:,indz]),NP.dot(matr_lagr[ind_nolag][:,ind_nolag],Q[:][:,indz]))
-    
+
     #-- Fin elimination
 
     return matr_sans_lagr

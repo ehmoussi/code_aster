@@ -50,7 +50,7 @@ except:
         except:
             frame = sys.exc_info()[2].tb_frame.f_back
         while offset > 0:
-            if frame == None:
+            if frame is None:
                 return None
             frame = frame.f_back
             offset = offset - 1
@@ -62,7 +62,7 @@ def callee_where(niveau=4):
        recupere la position de l appel
     """
     frame = cur_frame(niveau)
-    if frame == None:
+    if frame is None:
         return 0, "inconnu", 0, {}
     try:
         # Python 2.7 compile function does not accept unicode filename, so we encode it
@@ -89,7 +89,7 @@ def AsType(a):
         return "I"
     if is_str(a):
         return "TXM"
-    if a == None:
+    if a is None:
         return None
     raise AsException("type inconnu: %r %s" % (a, type(a)))
 

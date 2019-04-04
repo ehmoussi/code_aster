@@ -269,7 +269,7 @@ def calc_gp_ops(self, **args):
 
 #    normale au plan de la fissure
         lnormale = self['FOND_FISS'].sdj.NORMALE.get()
-        if (lnormale == None):
+        if (lnormale is None):
             UTMESS('F', 'POST0_39')
 
 #    symetrie
