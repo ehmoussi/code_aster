@@ -3,7 +3,7 @@
  * @brief Interface python de DOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,6 +31,12 @@
 void exportDOFNumberingToPython() {
     using namespace boost::python;
 
+    class_< FieldOnNodesDescriptionInstance, FieldOnNodesDescriptionPtr,
+            bases< DataStructure > >( "FieldOnNodesDescription", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< FieldOnNodesDescriptionInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< FieldOnNodesDescriptionInstance,
+                                                            std::string >));
+
     void ( BaseDOFNumberingInstance::*f1 )( const ElementaryMatrixDisplacementDoublePtr & ) =
         &BaseDOFNumberingInstance::setElementaryMatrix;
     void ( BaseDOFNumberingInstance::*f2 )( const ElementaryMatrixDisplacementComplexPtr & ) =
@@ -46,6 +52,7 @@ void exportDOFNumberingToPython() {
     // fake initFactoryPtr: created by subclasses
     c1.def( "addFiniteElementDescriptor", &BaseDOFNumberingInstance::addFiniteElementDescriptor );
     c1.def( "computeNumbering", &BaseDOFNumberingInstance::computeNumbering );
+    c1.def( "getFieldOnNodesDescription", &BaseDOFNumberingInstance::getFieldOnNodesDescription );
     c1.def( "getFiniteElementDescriptors", &BaseDOFNumberingInstance::getFiniteElementDescriptors );
     c1.def( "isParallel", &BaseDOFNumberingInstance::isParallel );
     c1.def( "setElementaryMatrix", f1 );

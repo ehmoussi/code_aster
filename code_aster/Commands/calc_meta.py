@@ -47,10 +47,8 @@ class CalcMeta(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        modele = None
-        try:
-            modele = keywords["RESULTAT"].getModel()
-        except:
+        modele = keywords["RESULTAT"].getModel()
+        if modele is None:
             modele = keywords.get("MODELE")
         if modele is not None:
             self._result.appendModelOnAllRanks(modele)
