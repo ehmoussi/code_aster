@@ -25,6 +25,8 @@
 #       from your package manager.
 #       Example: apt-get install aspell-fr
 
+from supv002a import SUPV002
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ))
 
 # Que faire en cas d'erreur avec ce test ?
@@ -80,9 +82,9 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ))
 # uniquement le développeur.
 previous_errors = [
     # LE fameux LIGREL !
-    'LIGREL', 
+    'LIGREL',
     # Solveur PETSc
-    'breakdown', 
+    'breakdown',
     # Nom des fichiers de sortie d'Aster
     'error', 'export',
     # Pour paramètre mem_aster
@@ -98,9 +100,6 @@ previous_errors = [
     # Pour Code_Saturne (coupleur IFS)
     'USASTE',
     ]
-
-# this replaces 'import supv002a.33'
-exec(compile(open('fort.33').read(), 'fort.33', 'exec'), globals())
 
 # TEST_TABLE are included in the "macro-command"
 SUPV002(ERREUR=previous_errors,

@@ -39,23 +39,25 @@ from Execution.i18n import localization as LO
 from Execution.strfunc import ufmt, convert
 import Messages
 
-
 ENCODING = "utf-8"
 VALUES = MessageLog.default_args.copy()
 VALUES['ktout'] = 'xxxxxx'
 
-REI = re.compile('%\(i[0-9]+\)[\.0-9\-\+ ]*([a-zA-Z])', re.M)
-RER = re.compile('%\(r[0-9]+\)[\.0-9\-\+ ]*([a-zA-Z])', re.M)
-REK = re.compile('%\(k[0-9]+\)[\.0-9\-\+]*([a-zA-Z])', re.M)
-RE1 = re.compile('%\((.[^0-9].*?)\)[\.0-9\-\+ ]*[a-zA-Z]', re.M)
-RE2 = re.compile('%\(([^irk].*?)\)[\.0-9\-\+ ]*[a-zA-Z]', re.M)
+REI = re.compile(r'%\(i[0-9]+\)[\.0-9\-\+ ]*([a-zA-Z])', re.M)
+RER = re.compile(r'%\(r[0-9]+\)[\.0-9\-\+ ]*([a-zA-Z])', re.M)
+REK = re.compile(r'%\(k[0-9]+\)[\.0-9\-\+]*([a-zA-Z])', re.M)
+RE1 = re.compile(r'%\((.[^0-9].*?)\)[\.0-9\-\+ ]*[a-zA-Z]', re.M)
+RE2 = re.compile(r'%\(([^irk].*?)\)[\.0-9\-\+ ]*[a-zA-Z]', re.M)
 
 RE_UNAUTH = [
-    re.compile('([*#=\+\-!/\?<>&@]{4})', re.M),
+    re.compile(r'([*#=\+\-!/\?<>&@]{4})', re.M),
 ]
 
 try:
     import aster
+    from code_aster.Cata.Syntax import _F
+    from code_aster.Cata.Syntax import MACRO, SIMP
+    from code_aster.Cata.Commands import CREA_TABLE, TEST_TABLE
     loginfo = partial(aster.affiche, 'MESSAGE')
 except ImportError:
     def loginfo(msg):
@@ -162,10 +164,10 @@ class AspellCall(object):
         self.rdr = MPR.Process(target=read_file, args=(self.out, self.queue))
         self.rdr.start()
         init = self.queue.get()
-        assert 'aspell' in init.lower(), \
-            'aspell probably failed to start: \n%s' % init
+        assert 'aspell' in init.lower(), ('aspell probably failed to start: \n'
+                                          '%s' % init)
         # all characters except alphabetic ones are separators
-        self._rxspl = re.compile('[ _0123456789\W]+', re.M | re.I | re.UNICODE)
+        self._rxspl = re.compile(r'[ _0123456789\W]+', re.M | re.I | re.UNICODE)
 
     def __del__(self):
         """Close the pipe"""
@@ -197,6 +199,7 @@ class AspellCall(object):
         if not words:
             return words, resp
         self.inp.write(string + os.linesep)
+        self.inp.flush()
         while True:
             try:
                 resp.append(self.queue.get_nowait())
@@ -206,7 +209,7 @@ class AspellCall(object):
                     continue
                 break
         if len(resp) != len(words) + 1:
-            loginfo("warning: expected answer of aspell:\n words=%r\n resp=%r" \
+            loginfo("warning: expected answer of aspell:\n words=%r\n resp=%r"
                     % (words, resp))
         #logdbg and logdbg('resp: %r' % zip(words, resp))
         return words, resp
@@ -231,7 +234,7 @@ def get_cata_msg(catamess):
         UTMESS('F', 'CATAMESS_1',
                valk=("Encodage invalide pour le fichier de messages : '%s'" % catamess,
                      traceback.format_exc()))
-    except Exception as exc:
+    except Exception:
         UTMESS('F', 'CATAMESS_1',
                valk=("Nom du fichier de messages : '%s'" % catamess,
                      traceback.format_exc()))
@@ -257,11 +260,8 @@ def check_format(checker, catamess, idmess, msg, typ):
 def check_msg(checker, catamess, msg, key, lang):
     """Check a message."""
     idmess = "%s_%s" % (catamess, key)
-    # check type : unicode expected
-    if type(msg) is str:
-        if catamess != "vide":
-            checker.error("%s is str" % idmess)
-    elif type(msg) is not str:
+    # check type : a string expected
+    if type(msg) is not str:
         checker.error(lang, "%s has a wrong type" % idmess)
     if msg.strip() == '' and catamess != "vide":
         checker.error("%s is empty : use VIDE_1 for that!" % idmess)
@@ -277,7 +277,8 @@ def check_msg(checker, catamess, msg, key, lang):
         txt = ufmt(msg, VALUES)
     except Exception as exc:
         trace = repr(exc)
-        checker.error("%s can not be formatted :\nmessage: %r\n%s" % (idmess, msg, trace))
+        checker.error("%s can not be formatted :\nmessage: %r\n%s"
+                      % (idmess, msg, trace))
     # check arguments
     for typ in ('integer', 'real', 'string', 'other1', 'other2'):
         check_format(checker, catamess, idmess, msg, typ)
@@ -364,8 +365,6 @@ def supv002_ops(self, ERREUR, **kwargs):
         logdbg = loginfo
     if not kwargs.get('unittest'):
         self.set_icmd(1)
-        CREA_TABLE = self.get_cmd('CREA_TABLE')
-        TEST_TABLE = self.get_cmd('TEST_TABLE')
     # existing errors
     previous_errors = set(ERREUR)
     os.environ['LANG'] = 'fr_FR.utf8'
@@ -378,15 +377,15 @@ def supv002_ops(self, ERREUR, **kwargs):
     #LCATA = [osp.basename(osp.splitext(cata)[0]) for cata in glob(osp.join(msgdir, 'mecanonline9.py'))]
 
     # check for installation problem: http://bugs.python.org/issue3770
-    # do_check = True
-    # try:
-    #     MPR.Queue()
-    # except ImportError as exc:
-    #     if 'sem_open implementation' in str(exc):
-    #         do_check = False
-    #         print("\n  <A> Problem detected ! supv002a can not run on this machine\n\n")
+    do_check = True
+    try:
+        MPR.Queue()
+    except ImportError as exc:
+        if 'sem_open implementation' in str(exc):
+            do_check = False
+            print("\n  <A> Problem detected ! supv002a can not run on this machine\n\n")
     # FIXME temporarly disabled!
-    do_check = False
+    # do_check = False
     if do_check:
         try:
             aspell = AspellCall(get_personal_dict(), 'fr', ENCODING)
@@ -415,6 +414,7 @@ def supv002_ops(self, ERREUR, **kwargs):
         nberr = nbnew = 0
         nbwrn = len(previous_errors)
         warns = ''
+        errors = []
         torm = []
 
     if kwargs.get('unittest'):
@@ -474,7 +474,7 @@ if __name__ != '__main__':
     )
 else:
     # run as unittest
-    # PYTHONPATH=$PYTHONPATH:/home/courtois/dev/codeaster/install/std/lib/python2.7/site-packages
+    # PYTHONPATH=$PYTHONPATH:/home/courtois/dev/codeaster/install/std/lib/python3.6/site-packages
     # ASTER_ROOT=/opt/aster
     # python -i astest/supv002a.33
     #logdbg = loginfo
