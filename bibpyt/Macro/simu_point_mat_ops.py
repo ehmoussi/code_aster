@@ -218,6 +218,10 @@ def simu_point_mat_ops(
                         dico['NOM_VARC'] = 'PAUSTENI'
                         dico['VALE_FONC'] = lvarc[ivarc]['V5']
                         lmotcle.append(dico)
+                        dico = {}
+                        dico['NOM_VARC'] = 'PCOLDSUM'
+                        dico['VALE_FONC'] = lvarc[ivarc]['V6']
+                        lmotcle.append(dico)
                     else:
                         dico['NOM_VARC'] = lvarc[ivarc]['NOM_VARC']
                         dico['VALE_FONC'] = lvarc[ivarc]['VALE_FONC']
@@ -606,6 +610,7 @@ def simu_point_mat_ops(
                         lordo6 = lvarc[ivarc]['V6'].Ordo()
                         lordo7 = lvarc[ivarc]['V7'].Ordo()
                         lordo8 = lvarc[ivarc]['V8'].Ordo()
+                        lordo9 = lvarc[ivarc]['V9'].Ordo()
                         l_affe_cham = []
                         __CHV = [None] * len(labsc)
                         __CHN = [None] * len(labsc)
@@ -646,6 +651,10 @@ def simu_point_mat_ops(
                                                           NOM_CMP='X8',
                                                           VALE=lordo8[it],
                                                           ),
+                                                       _F(MAILLE='VOLUME',
+                                                          NOM_CMP='X9',
+                                                          VALE=lordo9[it],
+                                                          ),
                                                    ),),
                             dicoch = {}
                             __CHV[it] = CREA_CHAMP(
@@ -660,6 +669,7 @@ def simu_point_mat_ops(
                                     _F(CHAM_GD=__CHN[it], NOM_CMP='X6', NOM_CMP_RESU='V6', GROUP_MA='TOUT'),
                                     _F(CHAM_GD=__CHN[it], NOM_CMP='X7', NOM_CMP_RESU='V7', GROUP_MA='TOUT'),
                                     _F(CHAM_GD=__CHN[it], NOM_CMP='X8', NOM_CMP_RESU='V8', GROUP_MA='TOUT'),
+                                    _F(CHAM_GD=__CHN[it], NOM_CMP='X9', NOM_CMP_RESU='V9', GROUP_MA='TOUT'),
                                 ))
                             dicoch["CHAM_GD"] = __CHV[it]
                             dicoch["INST"] = time
