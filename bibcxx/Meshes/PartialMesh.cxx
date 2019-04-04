@@ -3,7 +3,7 @@
  * @brief Implementation de
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,6 +24,7 @@
 #include "Meshes/PartialMesh.h"
 #include "ParallelUtilities/MPIInfos.h"
 #include "aster_fort.h"
+#include <algorithm>
 
 #ifdef _USE_MPI
 
@@ -37,6 +38,8 @@ PartialMeshInstance::PartialMeshInstance( const std::string& name,
     _owner( getName() + ".POSSESSEUR" )
 {
     aster_comm_t* commWorld = aster_get_comm_world();
+    VectorString toFind2( toFind );
+    std::sort( toFind2.begin(), toFind2.end() );
 
     const int rank = getMPIRank();
     const int nbProcs = getMPINumberOfProcs();
@@ -48,7 +51,7 @@ PartialMeshInstance::PartialMeshInstance( const std::string& name,
     typedef std::map< std::string, VectorLong > MapStringVecInt;
     MapStringVecInt myMap, gatheredMap;
     int count = 1;
-    for( const auto& nameOfGrp : toFind )
+    for( const auto& nameOfGrp : toFind2 )
     {
         if( mesh->hasLocalGroupOfNodes( nameOfGrp ) )
         {
@@ -117,7 +120,7 @@ PartialMeshInstance::PartialMeshInstance( const std::string& name,
     meshCoords->updateValuePointers();
     const auto globalNum = mesh->getGlobalNodesNumbering();
     globalNum->updateValuePointer();
-    
+
     for( const auto& nodeNum : toSend )
     {
         coords.push_back( (*meshCoords)[ nodeNum*3 ] );
@@ -166,7 +169,7 @@ PartialMeshInstance::PartialMeshInstance( const std::string& name,
                                               buffer.begin(), buffer.end() );
         }
 
-        for( const auto& nameOfGrp : toFind )
+        for( const auto& nameOfGrp : toFind2 )
         {
             VectorLong& vecTmp = myMap[ nameOfGrp ];
             VectorLong& vecTmp2 = gatheredMap[ nameOfGrp ];
@@ -259,8 +262,8 @@ PartialMeshInstance::PartialMeshInstance( const std::string& name,
     for( int position = 1; position <= nbNodes; ++position )
         _nameOfNodes->add( position, std::string( "N" + std::to_string( position ) ) );
 
-    _groupsOfNodes->allocate( Permanent, toFind.size() );
-    for( const auto& nameOfGrp : toFind )
+    _groupsOfNodes->allocate( Permanent, toFind2.size() );
+    for( const auto& nameOfGrp : toFind2 )
     {
         const auto& toCopy = gatheredMap[ nameOfGrp ];
         _groupsOfNodes->allocateObjectByName( nameOfGrp, toCopy.size() );
