@@ -104,7 +104,7 @@ MODI_REPERE / RESULTAT / concept réentrant
     
     Conseils : Définissez un concept résultat différent en sortie de la commande.
 """),
-2 : _(u"""
+2 : _("""
   Une variable utilisée ou produite par MFront a dépassée les bornes physiques
   ou les bornes de corrélation de la loi de comportement.
 

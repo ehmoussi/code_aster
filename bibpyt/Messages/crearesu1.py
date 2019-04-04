@@ -20,9 +20,9 @@
 
 cata_msg = {
 
-    1 : _(u"""Les chargements de Dirichlet de type AFFE_CHAR_CINE sont ignorés pour CONV_CHAR."""),
+    1 : _("""Les chargements de Dirichlet de type AFFE_CHAR_CINE sont ignorés pour CONV_CHAR."""),
 
-    2 : _(u"""Les chargements de Dirichlet de type AFFE_CHAR_MECA sont ignorés pour CONV_CHAR."""),
+    2 : _("""Les chargements de Dirichlet de type AFFE_CHAR_MECA sont ignorés pour CONV_CHAR."""),
 
-    48 : _(u"""Plusieurs instants correspondent à celui spécifié dans la liste d'instants pour CONV_CHAR."""),
+    48 : _("""Plusieurs instants correspondent à celui spécifié dans la liste d'instants pour CONV_CHAR."""),
 }
