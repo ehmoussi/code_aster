@@ -353,6 +353,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.FieldOnNodesDescription` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FieldOnNodesDescription
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.FieldOnNodesDouble` object
 ================================================================================
 
@@ -605,10 +614,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.GenericDataFieldDouble` object
+:py:class:`~code_aster.Objects.GenericDataField` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.GenericDataFieldDouble
+.. autoclass:: code_aster.Objects.GenericDataField
    :show-inheritance:
    :members:
 
