@@ -194,7 +194,6 @@ def calc_transfert_ops(
     if REPERE=='RELATIF' :
         entrainement = args.get('ENTRAINEMENT'),
         for mentr in entrainement:
-            print "mentr", mentr
             s_entr = mentr
             for mm in entrain :
                 if s_entr[mm].getType()=="FONCTION_C":
