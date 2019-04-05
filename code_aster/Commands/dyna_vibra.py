@@ -68,7 +68,8 @@ class VibrationDynamics(ExecuteCommand):
         if keywords["BASE_CALCUL"] == "GENE":
             stiffnessMatrix = keywords["MATR_RIGI"]
             dofNum = stiffnessMatrix.getGeneralizedDOFNumbering()
-            if isinstance(self._result, HarmoGeneralizedResultsContainer):
+            if isinstance(self._result, HarmoGeneralizedResultsContainer) or \
+               isinstance(self._result, TransientGeneralizedResultsContainer):
                 self._result.setGeneralizedDOFNumbering(dofNum)
             else:
                 base = stiffnessMatrix.getModalBasis()
