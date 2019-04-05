@@ -43,6 +43,7 @@ from ..Objects import ElementaryMatrixDisplacementDouble, ElementaryMatrixTemper
 from ..Objects import Surface
 from ..Objects import MechanicalModeContainer
 from ..Objects import PCFieldOnMeshDouble, FieldOnElementsDouble, FieldOnNodesDouble
+from ..Objects import GenericDataField
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -84,6 +85,8 @@ class ExtrTable(ExecuteCommand):
             self._result = FieldOnElementsDouble()
         elif typeResu == 'CHAM_NO_SDASTER':
             self._result = FieldOnNodesDouble()
+        elif typeResu == 'CHAM_GD_SDASTER':
+            self._result = GenericDataField()
         else:
             raise NotImplementedError()
 

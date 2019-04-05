@@ -1,12 +1,13 @@
-subroutine cresol_wrap(solveu, base)
+subroutine cresol_wrap(solveu, base, xfem)
     implicit none
 #include "jeveux.h"
 #include "asterfort/cresol.h"
     character(len=19) :: solveu
     character(len=1) :: base
+    character(len=3) :: xfem
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -30,6 +31,6 @@ subroutine cresol_wrap(solveu, base)
 !
 ! ----------------------------------------------------------------------
 !
-    call cresol(solveu, base)
+    call cresol(solveu, base, xfem)
 !
 end subroutine

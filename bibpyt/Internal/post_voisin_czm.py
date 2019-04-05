@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,11 @@
 
 from code_aster.Cata.Syntax import OPER, SIMP
 from code_aster.Cata.DataStructure import carte_sdaster, evol_noli
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster import PCFieldOnMeshDouble
 
 
-POST_VOISIN_CZM = OPER(
+POST_VOISIN_CZM_CATA = OPER(
 
     nom="POST_VOISIN_CZM", op=189,
     docu="...", fr="...",
@@ -32,3 +34,19 @@ POST_VOISIN_CZM = OPER(
     RESULTAT=SIMP(statut='o', typ=evol_noli, max=1,),
 
 )
+
+class PostVoisinCzw(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.Table`.
+    """
+    command_name = "POST_VOISIN_CZM"
+    command_cata = POST_VOISIN_CZM_CATA
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = PCFieldOnMeshDouble(keywords["RESULTAT"].getMesh())
+
+POST_VOISIN_CZM = PostVoisinCzw.run

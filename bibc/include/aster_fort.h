@@ -225,8 +225,9 @@ void DEFSSPPSS(RCMFMC_WRAP,rcmfmc_wrap, const char*, STRING_SIZE, const char*, S
                                         ASTERINTEGER*, ASTERINTEGER*, const char*, STRING_SIZE,
                                         const char*, STRING_SIZE);
 
-#define CALLO_CRESOL_WRAP(a, b) CALLOO(CRESOL_WRAP, cresol_wrap, a, b)
-void DEFSS(CRESOL_WRAP,cresol_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE);
+#define CALLO_CRESOL_WRAP(a, b, c) CALLOOO(CRESOL_WRAP, cresol_wrap, a, b, c)
+void DEFSSS(CRESOL_WRAP,cresol_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
+            const char*, STRING_SIZE);
 
 #define CALLO_NUMERO_WRAP(a, b, c, d, e, f) CALLOOOOOO(NUMERO_WRAP, numero_wrap, a, b, c, d, e, f)
 void DEFSSSSSS(NUMERO_WRAP,numero_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,

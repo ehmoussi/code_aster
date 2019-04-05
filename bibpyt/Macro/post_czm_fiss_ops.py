@@ -59,9 +59,6 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
     #
     if OPTION == "LONGUEUR":
 
-    # Nom de la sortie
-        self.DeclareOut('TABLE_OUT', self.sd)
-
         # Mots cles specifiques au bloc "LONGUEUR"
         GROUP_MA = args['GROUP_MA']
         POINT_ORIG = args['POINT_ORIG']
@@ -239,8 +236,6 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
     # calcul de la triaxialite dans les elements massifs voisins de l'interface cohesive
     #
     elif OPTION == "TRIAXIALITE":
-
-        self.DeclareOut('CARTE_OUT', self.sd)
 
         CARTE_OUT = POST_VOISIN_CZM(RESULTAT=RESULTAT)
 
