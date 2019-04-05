@@ -66,3 +66,26 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         #The relationship defined forces are saved in position 2  for
         #RELA_EFFO_DEPL and RELA_EFFO_VITE nonlinearities
         return vint[:,1]
+    
+    def FORCE_AXIALE (self, inoli=-1):
+        """
+        Returns a 1D numpy array giving the evolution of the axial force at the archived instants"""
+
+        if not self.accessible():
+            raise AsException("Erreur dans tran_gene.FORCE_AXIALE() en PAR_LOT='OUI'")
+
+        inoli = self._check_input_inoli(inoli)
+
+        nltypes = self._type_nonl()
+        if not(nltypes[inoli-1] in ('ANTI_SISM', 'DIS_VISC', 'DIS_ECRO_TRAC' )) :
+            dummy = self.INFO_NONL()
+            raise AsException("The chosen nonlinearity index (%d) does not correspond to a ANTI_SISM, DIS_VISC, or DIS_ECRO_TRAC' nonlinearity\nThese are the only nonlinearities that calculate and save an axial force."%(inoli))
+
+
+        vint = self.VARI_INTERNE(inoli, describe=False)
+
+        #The axial forces are saved in position 1  for ANTI_SISM nonlinearities
+        if nltypes[inoli-1] == 'ANTI_SISM' : return vint[:,0]
+
+        #The axial forces are saved in position 8 for DIS_VISC and DIS_ECRO_TRAC nonlinearities
+        return vint[:,7]
