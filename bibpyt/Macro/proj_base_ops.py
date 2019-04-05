@@ -21,6 +21,7 @@ def proj_base_ops(self, **args):
     """
      Ecriture de la macro PROJ_BASE
     """
+    from code_aster.Objects import GeneralizedDOFNumbering
     BASE = args.get("BASE")
     NB_VECT = args.get("NB_VECT")
     MATR_ASSE_GENE = args.get("MATR_ASSE_GENE")
@@ -40,13 +41,14 @@ def proj_base_ops(self, **args):
     NUME_DDL_GENE = self.get_cmd('NUME_DDL_GENE')
     if numgen is None:
         _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
+    elif isinstance(numgen, GeneralizedDOFNumbering):
+        _num = numgen
+    elif isinstance(numgen, CO):
+    #self.DeclareOut('_num', numgen)
+        _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
+        self.register_result(_num, numgen)
     else:
-        if numgen.is_typco():
-            #self.DeclareOut('_num', numgen)
-            _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
-            self.register_result(_num, numgen)
-        else:
-            _num = numgen
+        assert( False )
 
     PROJ_MATR_BASE = self.get_cmd('PROJ_MATR_BASE')
     PROJ_VECT_BASE = self.get_cmd('PROJ_VECT_BASE')
