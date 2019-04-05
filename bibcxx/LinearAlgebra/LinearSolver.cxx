@@ -3,7 +3,7 @@
  * @brief Initialisation des renumeroteurs autorises pour les solvers
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -72,7 +72,9 @@ bool BaseLinearSolverInstance::build() {
     cmdSt.define( dict );
 
     std::string base( "G" );
-    CALLO_CRESOL_WRAP( newName, base );
+    std::string xfem( "   " );
+    if( _xfem ) xfem = "OUI";
+    CALLO_CRESOL_WRAP( newName, base, xfem );
     _isEmpty = false;
 
     return true;

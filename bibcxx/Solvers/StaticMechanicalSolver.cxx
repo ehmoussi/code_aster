@@ -67,6 +67,7 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
     }
     // Build the linear solver (sd_solver)
     _linearSolver->_commandName = "MECA_STATIQUE";
+    if( _supportModel->xfemPreconditioningEnable() ) _linearSolver->enableXfem();
     _linearSolver->build();
 
     BaseDOFNumberingPtr dofNum1;

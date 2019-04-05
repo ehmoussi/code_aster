@@ -3,7 +3,7 @@
  * @brief Implementation de ModelInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -122,6 +122,20 @@ bool ModelInstance::existsMultiFiberBeam() {
     JeveuxChar32 repk( " " );
     const std::string arret( "C" );
     const std::string questi( "EXI_STR2" );
+
+    CALLO_DISMOI( questi, getName(), typeco, &repi, repk, arret, &ier );
+    auto retour = trim( repk.toString() );
+    if ( retour == "OUI" )
+        return true;
+    return false;
+};
+
+bool ModelInstance::xfemPreconditioningEnable() {
+    const std::string typeco( "MODELE" );
+    ASTERINTEGER repi = 0, ier = 0;
+    JeveuxChar32 repk( " " );
+    const std::string arret( "C" );
+    const std::string questi( "PRE_COND_XFEM" );
 
     CALLO_DISMOI( questi, getName(), typeco, &repi, repk, arret, &ier );
     auto retour = trim( repk.toString() );
