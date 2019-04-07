@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,26 +15,28 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine op0005()
-    implicit none
 ! person_in_charge: j-pierre.lefebvre at edf.fr
 !
-!     LECTURE DE LA COMMANDE DEFI_MATERIAU
-!     STOCKAGE DANS UN OBJET DE TYPE MATERIAU NOUVELLE FORMULE
+subroutine op0005()
 !
+implicit none
 !
-! ----------------------------------------------------------------------
-!
-!
-!
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getmat.h"
 #include "asterc/getmjm.h"
 #include "asterc/getres.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/assert.h"
 #include "asterfort/aniver.h"
 #include "asterfort/codent.h"
 #include "asterfort/deprecated_material.h"
+#include "asterfort/mateGetList.h"
+#include "asterfort/mateReuseMngt.h"
+#include "asterfort/mateGetProperties.h"
+#include "asterfort/mateMFrontAddProperties.h"
+#include "asterfort/mateInfo.h"
 #include "asterfort/getvid.h"
 #include "asterfort/indk32.h"
 #include "asterfort/infmaj.h"
@@ -53,165 +55,131 @@ subroutine op0005()
 #include "asterfort/verif_loi_mater.h"
 #include "asterfort/wkvect.h"
 !
-    integer :: nbobm, jnbobj, niv, n1
-    integer :: jtypfo, irc, jvalrm, jvalcm, jvalkm, jnomrc
-    integer :: ind, ifm, i, k, nbrcme
-    integer :: nbr, nbc, nbk, nbk2
-    integer :: nbmati, jnorci, krc
-    character(len=6) :: nom
-    character(len=8) :: matout, matin, schout
-    character(len=16) :: typmat, materi, k16bid
+! --------------------------------------------------------------------------------------------------
+!
+!   DEFI_MATERIAU
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: i_mate_elas, i_mate_mfront, i_mate_add
+    integer :: ifm, niv
+    integer :: nb_prop
+    integer :: i_mate, jvalrm, jvalcm, jvalkm
+    integer :: mate_nb, mate_nb_read
+    integer :: nbr, nbc, nbk
+    integer :: mateREUSE_nb, mate_shift
+    character(len=8) :: mate, mateREUSE
+    character(len=16) :: k16bid
     character(len=19) :: noobrc
-    character(len=32) :: valk(4)
     character(len=32) :: nomrc
-    character(len=32), allocatable :: motcle(:)
-! ----------------------------------------------------------------------
+    character(len=32), pointer :: v_mate_read(:) => null()
+    character(len=32), pointer :: v_mateREUSE(:) => null()
+    character(len=32), pointer :: v_mate(:) => null()
+    aster_logical, pointer :: v_mate_func(:) => null()
+    aster_logical :: l_mfront_elas, l_elas, l_elas_func, l_elas_istr, l_elas_orth, l_elas_meta
+    aster_logical :: l_new_elas
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-!
-    call getres(matout, typmat, materi)
-!
-    nbrcme = -1
-    call getmat(nbrcme, k16bid)
-!
-    if (nbrcme .eq. 0) then
-        call utmess('F', 'MODELISA10_16')
-    else
-        allocate(motcle(nbrcme))
-        call getmat(nbrcme, motcle)
-    endif
-!
-    matin = ' '
-    nbmati = 0
-    call getvid(' ', 'MATER', scal=matin, nbret=n1)
-    if (n1 .ne. 0) then
-!
-! ------ ON VERIFIE QUE L'ON N'A QUE DES NOUVEAUX MATERIAUX
-!
-        call jeveuo(matin//'.MATERIAU.NOMRC', 'L', jnorci)
-        call jelira(matin//'.MATERIAU.NOMRC', 'LONMAX', nbmati)
-        do irc = 1, nbrcme
-            nomrc = motcle(irc)
-            ind = indk32 ( zk32(jnorci), nomrc, 1, nbmati )
-            if (ind .ne. 0) then
-                valk(1)=matin
-                valk(2)=nomrc
-                call utmess('F', 'MODELISA9_9', nk=2, valk=valk)
-            endif
-        enddo
-!
-! ------ ON COPIE TOUT SUR LA VOLATILE
-!
-        schout = '&&OP0005'
-        call jedupc('G', matin, 1, 'V', schout, .false._1)
-        call jeveuo(schout//'.MATERIAU.NOMRC', 'L', jnorci)
-        if (matout .eq. matin) call jedetc('G', matin, 1)
-    endif
-!
-! --- ON DUPLIQUE MATIN DANS MATOUT
-!
-    if (nbmati .ne. 0) then
-        call jedupc('V', schout, 1, 'G', matout, .false._1)
-        call jedetr(matout//'.MATERIAU.NOMRC')
-    endif
-!
-    call wkvect(matout//'.MATERIAU.NOMRC', 'G V K32', nbrcme+nbmati, jnomrc)
-!
-    do irc = 1, nbmati
-        zk32(jnomrc+irc-1) = zk32(jnorci+irc-1)
-    enddo
-!
-    call wkvect('&&OP0005.NBOBJE', 'V V I', nbrcme, jnbobj)
-    call wkvect('&&OP0005.TYPFON', 'V V L', nbrcme, jtypfo)
-!
-    krc = nbmati
-    do irc = 1, nbrcme
-        nomrc = motcle(irc)
-        call deprecated_material(nomrc)
-        ind = index(nomrc,'_FO')
-        if (ind .gt. 0) then
-            nomrc(ind:ind+2) = '   '
-            zl(jtypfo+irc-1) = .true.
-        else
-            zl(jtypfo+irc-1) = .false.
-        endif
-        krc = krc + 1
-        zk32(jnomrc+krc-1) = nomrc
-        call codent(krc, 'D0', nom)
-        noobrc=matout//'.CPT.'//nom
-!
-        ind=lxlgut(nomrc)+1
-        if (ind .gt. 32) then
-            call utmess('F','MODELISA9_83', sk=nomrc)
-        endif
-        if (zl(jtypfo+irc-1)) then
-            nomrc(ind:ind+2) = '_FO'
-        endif
-        call getmjm(nomrc, 1, 0, k16bid, k16bid, nbobm)
-        nbobm = - nbobm
-        if (nbobm .eq. 0) then
-            call utmess('F', 'MODELISA9_80', sk=nomrc)
-        endif
-!
-!       Pour les cas suivant, il faut créer ou pas une caractéristique matériau supplémentaire :
-!       THER_NL         :   Création si nécessaire d'une fonction pour stocker beta
-!                           (enthalpie volumique) calculee a partir de RHO_CP
-!       DIS_ECRO_TRAC   :   Création si nécessaire de ECRO, permettant de connaître le cas
-!                           traité par la loi.
-        if ((nomrc .eq. 'THER_NL') .or. &
-            (nomrc .eq. 'DIS_ECRO_TRAC') ) then
-            nbobm = nbobm + 1
-        endif
-!       Les objets .VALR, .VALC et .VALK sont sur-dimensionnes
-        call wkvect(noobrc//'.VALR', 'G V R', nbobm, jvalrm)
-        call wkvect(noobrc//'.VALC', 'G V C', nbobm, jvalcm)
-        call wkvect(noobrc//'.VALK', 'G V K16', 2*nbobm, jvalkm)
-!
-        call rcstoc(matout, nomrc, noobrc, nbobm, zr(jvalrm), zc(jvalcm),&
-                    zk16(jvalkm), nbr, nbc, nbk)
-        call jeecra(noobrc//'.VALR', 'LONUTI', nbr)
-        call jeecra(noobrc//'.VALC', 'LONUTI', nbc)
-        call jeecra(noobrc//'.VALK', 'LONUTI', nbr+nbc+2*nbk)
-    enddo
-!
     call infmaj()
     call infniv(ifm, niv)
 !
-    write (ifm,'(1X)')
-    write (ifm,'(1X,2A)') 'MATERIAU : ', matout
-    call jeveuo(matout//'.MATERIAU.NOMRC', 'L', jnomrc)
-    write (ifm,'(1X,A,A32)') 'RELATION DE COMPORTEMENT: ',zk32(jnomrc)
-    write (ifm,'(27X,A32)') (zk32(jnomrc+k-1),k=2,nbrcme)
-    write (ifm,'(1X)')
-!   niv=2
+! - Get result
+!
+    call getres(mate, k16bid, k16bid)
+!
+! - Get list of materials
+!
+    call mateGetList(mate_nb_read , v_mate_read  ,&
+                     l_mfront_elas,&
+                     l_elas       , l_elas_func  , l_elas_istr,&
+                     l_elas_orth  , l_elas_meta  ,&
+                     i_mate_elas  , i_mate_mfront)
+!
+! - Add a new material for elasticity from MFront
+!
+    mate_nb = mate_nb_read
+    l_new_elas = (l_mfront_elas .and.&
+                  .not. (l_elas .or. l_elas_istr .or. l_elas_orth .or. l_elas_meta))
+    if (l_new_elas) then
+        mate_nb = mate_nb + 1
+    endif
+!
+! - Manage REUSE
+!
+    call mateReuseMngt(mate     , mate_nb     , v_mate_read,&
+                       mateREUSE, mateREUSE_nb)
+    mate_nb = mate_nb + mateREUSE_nb
+!
+! - Create NOMRC object
+!
+    call wkvect(mate//'.MATERIAU.NOMRC', 'G V K32', mate_nb, vk32 = v_mate)
+!
+! - Copy old material parameters (from REUSE)
+!
+    if (mateREUSE_nb .gt. 0) then
+        call jeveuo(mateREUSE//'.MATERIAU.NOMRC', 'L', vk32 = v_mateREUSE)
+        v_mate(1:mateREUSE_nb) = v_mateREUSE(1:mateREUSE_nb)
+    endif
+!
+! - Save properties (standard)
+!
+    mate_shift = mateREUSE_nb
+    AS_ALLOCATE(vl = v_mate_func, size = mate_nb)
+    do i_mate = 1, mate_nb_read
+! ----- Get current keyword
+        nomrc = v_mate_read(i_mate)
+! ----- Get properties for one material factor keyword
+        call mateGetProperties(mate      , i_mate , nomrc,&
+                               mate_shift, v_mate ,&
+                               noobrc    , nb_prop, v_mate_func)
+! ----- Create properties for one material factor keyword
+        call wkvect(noobrc//'.VALR', 'G V R', nb_prop, jvalrm)
+        call wkvect(noobrc//'.VALC', 'G V C', nb_prop, jvalcm)
+        call wkvect(noobrc//'.VALK', 'G V K16', 2*nb_prop, jvalkm)
+! ----- Read properties for one material factor keyword
+        call rcstoc(mate, nomrc, noobrc, nb_prop, zr(jvalrm), zc(jvalcm),&
+                    zk16(jvalkm), nbr, nbc, nbk)
+! ----- Update length for one material factor keyword
+        call jeecra(noobrc//'.VALR', 'LONUTI', nbr)
+        call jeecra(noobrc//'.VALC', 'LONUTI', nbc)
+        call jeecra(noobrc//'.VALK', 'LONUTI', nbr+nbc+2*nbk)
+    end do
+!
+! - Add ELAS properties from MFront
+!
+    if (l_mfront_elas) then
+        i_mate_add = 0
+        if (l_new_elas) then
+            i_mate_add = mate_nb
+        endif
+        call mateMFrontAddProperties(mate         , v_mate_read,&
+                                     i_mate_mfront, i_mate_elas, i_mate_add ,&
+                                     l_elas       , l_elas_func, l_elas_istr, l_elas_orth)
+    endif
+!
+! - Debug write
+!
+    call jeveuo(mate//'.MATERIAU.NOMRC', 'L', vk32 = v_mate)
+    do i_mate = 1, mate_nb
+        call utmess('I', 'MATERIAL2_3', sk = v_mate(i_mate))
+    end do
     if (niv .eq. 2) then
-        do k = 1, nbrcme
-            call codent(k, 'D0', nom)
-            noobrc=matout//'.CPT.'//nom
-            call jeveuo(noobrc//'.VALR', 'L', jvalrm)
-            call jeveuo(noobrc//'.VALC', 'L', jvalcm)
-            call jeveuo(noobrc//'.VALK', 'L', jvalkm)
-            call jelira(noobrc//'.VALR', 'LONUTI', nbr)
-            call jelira(noobrc//'.VALC', 'LONUTI', nbc)
-            call jelira(noobrc//'.VALK', 'LONUTI', nbk2)
-            nbk=(nbk2-nbr-nbc)/2
-            write(ifm,'(1X,2A)') 'PARAMETRES DE LA RELATION : ',zk32(jnomrc+k-1)
-            write(ifm,'(5(3X,A16,5X))')     (zk16(jvalkm-1+i),i=1,nbr)
-            write(ifm,'(5(3X,G16.9,5X))')   (zr(jvalrm-1+i),i=1,nbr)
-            write(ifm,'(5(3X,A16,16X,5X))') (zk16(jvalkm-1+i),i=nbr+1,nbr+nbc)
-            write(ifm,'(5(3X,2G16.9))')     (zc(jvalcm-1+i),i=nbr+1,nbr+nbc)
-            write(ifm,'(5(3X,A16,5X))')     (zk16(jvalkm-1+i),i=nbr+nbc+1,nbr+nbc+nbk)
-            write(ifm,'(5(3X,A16,5X))')     (zk16(jvalkm-1+i),i=nbr+nbc+nbk+1,nbr+nbc+2*nbk)
-            write(ifm,'(1X)')
-        enddo
+        call mateInfo(mate, mate_nb)
     endif
 !
 !   Vérification que les paramètres matériaux de certaines lois sont corrects
-    call verif_loi_mater(matout)
-!   Calcul des valeurs propres de la matrice de hooke pour s'assurer de sa posivité
-    call aniver(matout)
+    call verif_loi_mater(mate)
+!   
+! - Compute eigenvalues for Hooke matrix (check stability)
 !
-    deallocate(motcle)
-
+    call aniver(mate, v_mate_func)
+!
+! - Cleaning
+!
+    AS_DEALLOCATE(vk32 = v_mate_read)
+    AS_DEALLOCATE(vl = v_mate_func)
+!
     call jedema()
 end subroutine

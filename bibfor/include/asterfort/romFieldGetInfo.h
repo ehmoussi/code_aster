@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romFieldGetInfo(model, field_name, field_refe, ds_field)
+    subroutine romFieldGetInfo(model, field_name, field_refe, ds_field, l_chck_)
         use Rom_Datastructure_type
-        character(len=8), intent(in)      :: model
-        character(len=24), intent(in)     :: field_refe, field_name
-        type(ROM_DS_Field), intent(inout) :: ds_field
+        character(len=8), intent(in)        :: model
+        character(len=24), intent(in)       :: field_refe, field_name
+        type(ROM_DS_Field), intent(inout)   :: ds_field
+        aster_logical, optional, intent(in) :: l_chck_
     end subroutine romFieldGetInfo
 end interface

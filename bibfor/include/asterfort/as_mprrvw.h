@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,8 @@ interface
     subroutine as_mprrvw(fid, nom, numdt, numit, dt,&
                          val, cret)
         character(len=*) :: nom
-        aster_int :: fid, numdt, numit, cret
+        med_idt :: fid
+        aster_int :: numdt, numit, cret
         real(kind=8) :: dt, val
     end subroutine as_mprrvw
 end interface

@@ -27,12 +27,13 @@ subroutine as_msevac(fid, nomest, nomatt, tyatmd, nbrcmp,&
 #include "asterfort/utmess.h"
 #include "med/msevac.h"
     character(len=*) :: nomest, nomatt
-    aster_int :: fid, tyatmd, nbrcmp, cret
+    med_idt :: fid 
+    aster_int :: tyatmd, nbrcmp, cret
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: tyatm4, nbrcm4, cret4
     fidm = to_med_idt(fid)

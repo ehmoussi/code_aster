@@ -29,12 +29,13 @@ subroutine as_mprcre(fid, nom, type, desc, dtunit,&
     character(len=*) :: nom
     character(len=*) :: desc
     character(len=*) :: dtunit
-    aster_int :: fid, cret, type
+    med_idt :: fid 
+    aster_int :: cret, type
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: cret4, typ4
     fidm = to_med_idt(fid)

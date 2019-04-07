@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_matr
+    integer :: i_matr, i_vect
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,6 +66,8 @@ implicit none
     do i_matr = 1,  ds_multipara%nb_matr
         call romMultiCoefInit(ds_multipara%nb_vari_coef, ds_multipara%matr_coef(i_matr))
     end do
-    call romMultiCoefInit(ds_multipara%nb_vari_coef, ds_multipara%vect_coef)
+    do i_vect = 1,  ds_multipara%nb_vect
+        call romMultiCoefInit(ds_multipara%nb_vari_coef, ds_multipara%vect_coef(i_vect))
+    end do
 !
 end subroutine

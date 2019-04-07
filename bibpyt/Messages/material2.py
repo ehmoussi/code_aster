@@ -17,9 +17,45 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#
-
 cata_msg = {
+
+    2  : _("""Il ne peut y avoir qu'un seul matériau de type MFront dans DEFI_MATERIAU."""),
+
+    3  : _("""Propriétés définies dans le matériau: %(k1)s.
+"""),
+
+    4  : _("""Paramètres des propriétés %(k1)s:"""),
+
+    5  : _("""
+Les caractéristiques élastiques de MFront sont anisotropes, mais pas celles du mot-clef ELAS.
+Il n'est pas possible de vérifier la cohérence des caractéristiques.
+"""),
+
+    6 : _("""
+Les caractéristiques élastiques de MFront sont isotropes, mais pas celles du mot-clef ELAS.
+Il n'est pas possible de vérifier la cohérence des caractéristiques.
+"""),
+
+    7 : _("""
+Les caractéristiques élastiques de MFront sont des fonctions, mais pas celles du mot-clef ELAS.
+Il n'est pas possible de vérifier la cohérence des caractéristiques.
+"""),
+
+    8  : _("""
+Les caractéristiques élastiques de MFront sont des scalaires, mais pas celles du mot-clef ELAS.
+Il n'est pas possible de vérifier la cohérence des caractéristiques.
+"""),
+
+
+    9  : _("""
+Pour le matériau %(k1)s, on cherche à redéfinir un mot clé déjà défini : %(k2)s
+L'utilisation de DEFI_MATERIAU en mode enrichissement ne permet que d'ajouter de nouvelles données.
+"""),
+
+    10 : _("""
+Vérification de la positivité de la matrice d'élasticité. Il faut renseigner le coefficient E_N dans les cas des déformations planes et de l'axisymétrie.
+On ne regarde donc que le cas des contraintes planes.
+"""),
 
     11 : _("""
  Erreur d'utilisation lors de l'affectation des variables de commande (AFFE_MATERIAU/AFFE_VARC):
@@ -28,6 +64,12 @@ cata_msg = {
    L'absence de ces deux mots clés n'est permise que pour NOM_VARC='TEMP'.
 """),
 
+   12 : _("""
+Les caractéristiques élastiques de MFront sont différentes de celles du mot-clef ELAS.
+MFront - Caractéristique: %(k1)s utilisant la fonction %(k3)s.
+ELAS   - Caractéristique: %(k2)s utilisant la fonction %(k4)s.
+On ne peut vérifier que la cohérence que si les deux fonctions ont le même nom.
+"""),
 
     13 : _("""
  Erreur d'utilisation (AFFE_MATERIAU/AFFE_VARC) :
@@ -37,6 +79,16 @@ cata_msg = {
  Conseil :
   Il faut corriger AFFE_MATERIAU.
 """),
+
+    14 : _("""
+Les caractéristiques élastiques de MFront sont différentes de celles du mot-clef ELAS.
+MFront - Caractéristique: %(k1)s utilisant la valeur %(r1)19.12e.
+ELAS   - Caractéristique: %(k2)s utilisant la valeur %(r2)19.12e.
+"""),
+
+    15 : _("""On ajoute les propriétés inexistantes dans le mot-clef facteur ELAS à partir des données de MFront."""),
+
+    16 : _("""On ne sait pas gérer le cas de l'élasticité orthotrope quand il y a un coefficient de dilatation thermique."""),
 
     20 : _("""
  La matrice d'élasticité orthotrope ou isotrope transverse est non définie positive

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ subroutine char_crea_ligf(mesh, ligrch, nb_elem_late, nb_noel_maxi)
 !
 ! ----- General objects
 !
-        call wkvect(ligrch//'.LGRF', 'G V K8', 2, vk8 = p_ligrch_lgrf)
+        call wkvect(ligrch//'.LGRF', 'G V K8', 3, vk8 = p_ligrch_lgrf)
         p_ligrch_lgrf(1) = mesh
         call wkvect(ligrch//'.NBNO', 'G V I', 1, vi = p_ligrch_nbno)
         p_ligrch_nbno(1) = 0

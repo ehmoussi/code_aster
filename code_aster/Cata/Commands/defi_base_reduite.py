@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -74,14 +74,16 @@ DEFI_BASE_REDUITE=OPER(
     b_type_rb       =BLOC(condition ="""(equal_to("OPERATION", 'GLOUTON'))""",
         NB_VARI_COEF    =SIMP(statut='o',typ='I', max = 1, val_min = 1),
         TYPE_VARI_COEF  =SIMP(statut='f',typ='TXM',defaut="DIRECT",into=("DIRECT",)),
-        b_direct       =BLOC(condition = """(equal_to("TYPE_VARI_COEF", 'DIRECT'))""",
-            VARI_PARA   = FACT( statut='f', min= 1, max=5,
+        ORTHO_BASE      =SIMP(statut='f',typ='TXM',defaut="NON", into=("OUI","NON",)),
+        TYPE_BASE       =SIMP(statut='f',typ='TXM',defaut="STANDARD",into=("IFS_STAB","STANDARD")),
+        b_direct        =BLOC(condition = """(equal_to("TYPE_VARI_COEF", 'DIRECT'))""",
+            VARI_PARA   = FACT( statut='f', min= 1, max='**', 
                 NOM_PARA        =SIMP(statut='o',typ='TXM',into=C_PARA_FONCTION(), max=1 ),
                 VALE_PARA       =SIMP(statut='o',typ='R', max = '**'),
                 VALE_INIT       =SIMP(statut='o',typ='R', max = 1),
                               ),
         ),
-        MATR_ASSE   = FACT( statut='f', min= 1, max=8,
+        MATR_ASSE   = FACT( statut='f', min= 1, max='**', 
             regles=(UN_PARMI('COEF_R','COEF_C','FONC_R','FONC_C' ),),
             MATRICE         =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,
                                matr_asse_temp_r,matr_asse_temp_c,
@@ -91,12 +93,17 @@ DEFI_BASE_REDUITE=OPER(
             FONC_R          =SIMP(statut='f',typ=(fonction_sdaster, formule), max = 1),
             FONC_C          =SIMP(statut='f',typ=(fonction_c, formule_c), max = 1),
                           ),
-        regles=(UN_PARMI('COEF_R','COEF_C',),),
-        VECTEUR         =SIMP(statut='f',typ=cham_no_sdaster),
-        COEF_C          =SIMP(statut='f',typ='C', max = 1),
-        COEF_R          =SIMP(statut='f',typ='R', max = 1),
+        VECT_ASSE   = FACT( statut='f', min= 1, max='**', 
+            regles=(UN_PARMI('COEF_R','COEF_C','FONC_R','FONC_C' ),),
+            VECTEUR         =SIMP(statut='f',typ=cham_no_sdaster),
+            COEF_C          =SIMP(statut='f',typ='C', max = 1),
+            COEF_R          =SIMP(statut='f',typ='R', max = 1),
+            FONC_R          =SIMP(statut='f',typ=(fonction_sdaster, formule), max = 1),
+            FONC_C          =SIMP(statut='f',typ=(fonction_c, formule_c), max = 1),
+                          ),
         SOLVEUR         =C_SOLVEUR('DYNA_LINE_HARM'),
-        NB_MODE         =SIMP(statut='f',typ='I'),
+        NB_MODE         =SIMP(statut='o',typ='I', max = 1, val_min = 1),
+        TOLE_GLOUTON    =SIMP(statut='f',typ='R', defaut=1.E-10),
     ),
 
     b_tronca       =BLOC(condition ="""(equal_to("OPERATION", 'TRONCATURE'))""",

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,35 +18,33 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1403
 !
-subroutine romMultiParaDSInit(ds_multipara)
+subroutine romGreedyAlgoDSInit(ds_solveDOM, ds_solveROM, ds_algoGreedy)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterc/r8vide.h"
-!
-type(ROM_DS_MultiPara), intent(out) :: ds_multipara
+type(ROM_DS_Solve), intent(in)       :: ds_solveDOM
+type(ROM_DS_Solve), intent(in)       :: ds_solveROM
+type(ROM_DS_AlgoGreedy), intent(out) :: ds_algoGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction - Initializations
 !
-! Initialisation of datastructure for multiparametric problems
+! Initialisation of datastructure for greedy algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Out ds_multipara     : datastructure for multiparametric problems
+! In  ds_solveDOM      : datastructure for datastructure to solve systems (DOM)
+! In  ds_solveROM      : datastructure for datastructure to solve systems (ROM)
+! Out ds_algoGreedy    : datastructure for Greedy algorithm
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_multipara%prod_mode(1)    = '&&OP0053.PRODMODE_1'
-    ds_multipara%prod_mode(2)    = '&&OP0053.PRODMODE_2'
-    ds_multipara%prod_mode(3)    = '&&OP0053.PRODMODE_3'
-    ds_multipara%prod_mode(4)    = '&&OP0053.PRODMODE_4'
-    ds_multipara%prod_mode(5)    = '&&OP0053.PRODMODE_5'
-    ds_multipara%prod_mode(6)    = '&&OP0053.PRODMODE_6'
-    ds_multipara%prod_mode(7)    = '&&OP0053.PRODMODE_7'
-    ds_multipara%prod_mode(8)    = '&&OP0053.PRODMODE_8'
+    ds_algoGreedy%coef_redu = '&&OP0053.COEF_REDU'
+    ds_algoGreedy%resi_vect = '&&OP0053.RESI_VECT'
+    ds_algoGreedy%solveDOM  = ds_solveDOM
+    ds_algoGreedy%solveROM  = ds_solveROM
 !
 end subroutine

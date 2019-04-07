@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ integer :: nbordr
 !     ------------------------------------------------------------------
 !                      C H A M P _ T H E R M O M E C A (ROM)
 !     ------------------------------------------------------------------
-    integer, parameter :: ncthme = 12
+    integer, parameter :: ncthme = 4
 
 !     ------------------------------------------------------------------
 !                      C H A M P _ M E C A N I Q U E
@@ -95,15 +95,7 @@ integer :: nbordr
             'TEMP            ',&
             'DEPL            ',&
             'FLUX_NOEU       ',&
-            'SIEF_NOEU       ',&
-            'PROD_BASE_MATR_1',&
-            'PROD_BASE_MATR_2',&
-            'PROD_BASE_MATR_3',&
-            'PROD_BASE_MATR_4',&
-            'PROD_BASE_MATR_5',&
-            'PROD_BASE_MATR_6',&
-            'PROD_BASE_MATR_7',&
-            'PROD_BASE_MATR_8'/)
+            'SIEF_NOEU       '/)
 
 !     ------------------------------------------------------------------
 !                      C H A M P _ M E C A N I Q U E

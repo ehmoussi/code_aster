@@ -27,12 +27,13 @@ subroutine as_msecre(fid, nomes, dim, nomms, tycell,&
 #include "asterfort/utmess.h"
 #include "med/msecre.h"
     character(len=*) :: nomes, nomms
-    aster_int :: fid, dim, tycell, tygems, tygees, cret
+    med_idt :: fid
+    aster_int :: dim, tycell, tygems, tygees, cret
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: dim4, tycel4, tygem4, tygee4, cret4
     fidm = to_med_idt(fid)

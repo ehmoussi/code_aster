@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romBaseClean(ds_empi)
 !
 use Rom_Datastructure_type
@@ -24,10 +25,9 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/as_deallocate.h"
+#include "asterfort/romFieldClean.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,8 +42,9 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     if (ds_empi%base_type .eq. 'LINEIQUE') then
-       AS_DEALLOCATE(vi = ds_empi%ds_lineic%v_nume_pl)
-       AS_DEALLOCATE(vi = ds_empi%ds_lineic%v_nume_sf)
+        AS_DEALLOCATE(vi = ds_empi%ds_lineic%v_nume_pl)
+        AS_DEALLOCATE(vi = ds_empi%ds_lineic%v_nume_sf)
     endif
+    call romFieldClean(ds_empi%ds_mode)
 !
 end subroutine

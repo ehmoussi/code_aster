@@ -26,14 +26,15 @@ subroutine as_mlclci(fid, nordr, k64, ityp, nbn,&
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "med/mlclci.h"
-    aster_int :: fid, nordr, ityp, nbn, cret, ndim, tymasu, nbmasu
+    med_idt :: fid
+    aster_int :: nordr, ityp, nbn, cret, ndim, tymasu, nbmasu
     character(len=64) :: k64, giname
     character(len=*) :: nomasu
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: nordr4, ityp4, nbn4, cret4, ndim4, tymas4, nbmas4
     fidm = to_med_idt(fid)

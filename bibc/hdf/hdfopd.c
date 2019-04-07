@@ -30,8 +30,11 @@
 #ifndef _DISABLE_HDF5
 #include <hdf5.h>
 #endif
+#ifndef _DISABLE_MED
+#include "med.h"
+#endif
 
-ASTERINTEGER DEFPSS(HDFOPD, hdfopd, ASTERINTEGER *idf, char *nomg,
+ASTERINTEGER DEFPSS(HDFOPD, hdfopd, med_idt *idf, char *nomg,
                     STRING_SIZE lg, char *nomd, STRING_SIZE ln)
 {
   ASTERINTEGER iret=-1;

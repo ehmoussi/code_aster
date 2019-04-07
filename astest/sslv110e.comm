@@ -90,7 +90,9 @@ CHAMDEPL=MECA_STATIQUE(MODELE=MO,
 
 FONDFISS=DEFI_FOND_FISS(MAILLAGE=MA,
                         SYME='OUI',
-                        FOND_FISS=_F(GROUP_NO='FONFIS'),
+                        FOND_FISS=_F(GROUP_MA='FONDFISS',
+                            GROUP_NO_ORIG='GNO1099',
+                        ),
                         LEVRE_SUP=_F(GROUP_MA='GRPRES'),
                         )
 
@@ -140,8 +142,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=7.1600000000000006E-05,
            NOM_PARA='G',
            TABLE=Gloc1,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=0.0,),
            )
 
 Ga_cal = 6.9828699868854E-05 
@@ -151,8 +153,8 @@ TEST_TABLE(
            
            NOM_PARA='G',
            TABLE=Gloc1,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=0.0,),
            )
 
 # dans la suite, on ne cherche pas a se comparer a la valeur analytique
@@ -164,8 +166,8 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
            VALE_REFE=6.9828699868854002E-05,
            NOM_PARA='G',
            TABLE=Gloc2,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=0.0,),
            )
 
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
@@ -174,8 +176,8 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
            VALE_REFE=6.9828699868854002E-05,
            NOM_PARA='G',
            TABLE=Gloc3,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=0.0,),
            )
 
 FIN()

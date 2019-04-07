@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,6 +60,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    WRITE(6,*) 'XT: ',base
 !
 ! - Get name of COOR_REDUIT table
 !
@@ -95,13 +96,12 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Get informations from field
 !
     ds_field = ds_empi%ds_mode
-    call romFieldGetInfo(model, field_name, field_refe, ds_field)
+    call romFieldGetInfo(model, field_name, field_refe, ds_empi%ds_mode)
 !
 ! - Save informations about empiric modes
 !
     ds_empi%base      = base
     ds_empi%tabl_coor = tabl_coor
-    ds_empi%ds_mode   = ds_field
     ds_empi%base_type = base_type
     ds_empi%axe_line  = axe_line
     ds_empi%surf_num  = surf_num

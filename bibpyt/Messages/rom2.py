@@ -52,7 +52,7 @@ cata_msg = {
 
    20 : _("""Lecture des données pour le calcul multi-paramétrique avec réduction de modèle."""),
 
-   21 : _("""Les matrices ne reposent pas toutes sur la même numérotation."""),
+   21 : _("""Les matrices et les vecteurs ne reposent pas toutes sur la même numérotation."""),
 
    22 : _("""Les matrices doivent être symétriques."""),
 
@@ -114,9 +114,7 @@ cata_msg = {
 
    52 : _("""Coefficient réduit pour le mode %(i1)d et le paramètre %(i2)d: (%(r1)19.12e,%(r2)19.12e)."""),
 
-   53 : _("""Évaluation du résidu initial."""),
-
-   54 : _("""Norme du résidu initial: %(r1)19.12e."""),
+   53 : _("""Initialisation de la numérotation pour STAB_IFS."""),
 
    55 : _("""Création du nouveau profil de numérotation du champ tronqué."""),
 

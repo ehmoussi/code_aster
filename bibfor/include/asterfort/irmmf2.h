@@ -23,7 +23,7 @@ interface
                       nofaex, tabaux, infmed, ifm)
         integer :: nbgrou
         integer :: nbrent
-        integer :: fid
+        med_idt :: fid
         character(len=*) :: nomamd
         integer :: typent
         character(len=24) :: nomgen(*)

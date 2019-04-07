@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -130,15 +130,15 @@ MAIB=CREA_MAILLAGE(MAILLAGE=MAI,
                                 PREF_NOEUD='QN',
                                 PREF_NUME=1,),);
 
-MAIB=MODI_MAILLAGE(reuse =MAIB,
-                   MAILLAGE=MAIB,
-                   MODI_MAILLE=_F(OPTION='NOEUD_QUART',
-                                  GROUP_MA_FOND='FONDFISS',),);
-
 MAIB=DEFI_GROUP(reuse =MAIB,
                 MAILLAGE=MAIB,
                 CREA_GROUP_NO=_F(GROUP_MA='FONDFISS',
                                  NOM='NOEUFOND',),);
+
+MAIB=MODI_MAILLAGE(reuse =MAIB,
+                   MAILLAGE=MAIB,
+                   MODI_MAILLE=_F(OPTION='NOEUD_QUART',
+                                  GROUP_NO_FOND='NOEUFOND',),);
 
 MATE=DEFI_MATERIAU(ELAS=_F(E=e,
                            NU=nu,),);

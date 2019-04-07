@@ -26,7 +26,8 @@ subroutine as_mmhmii(fid, indice, maa, dim, type,&
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "med/mmhmii.h"
-    aster_int :: fid, dim, cret, indice, type
+    med_idt :: fid 
+    aster_int :: dim, cret, indice, type
     character(len=64) :: maa
     character(len=200) :: desc
     character(len=16) :: descdt
@@ -35,7 +36,7 @@ subroutine as_mmhmii(fid, indice, maa, dim, type,&
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: dim4, cret4, indic4, type4, dimb4, typtr4
     med_int :: nbseq4, typre4

@@ -29,14 +29,14 @@ Ce n'est possible qu'avec THER_NON_LINE_MO.
                                   lors de l'itération : %(i2)d
 """),
 
-    94 : _(u"""Le champ de séchage issu du concept %(k1)s n'est pas calculé à l'instant %(i3)i"""),
+    94 : _("""Le champ de séchage issu du concept %(k1)s n'est pas calculé à l'instant %(i3)i"""),
 
-    96 : _(u"""Le séchage ne peut pas être mélangé à un autre comportement."""),
+    96 : _("""Le séchage ne peut pas être mélangé à un autre comportement."""),
 
-    97 : _(u"""EVOL_THER_SECH est un mot-clé obligatoire pour le séchage de type SECH_GRANGER et SECH_NAPPE."""),
+    97 : _("""EVOL_THER_SECH est un mot-clé obligatoire pour le séchage de type SECH_GRANGER et SECH_NAPPE."""),
 
-    98 : _(u"""Le concept %(k1)s  n'est pas un champ de température"""),
+    98 : _("""Le concept %(k1)s  n'est pas un champ de température"""),
 
-    99 : _(u"""Pour le séchage, le concept EVOL_THER %(k1)s  ne contient aucun champ de température."""),
+    99 : _("""Pour le séchage, le concept EVOL_THER %(k1)s  ne contient aucun champ de température."""),
 
 }

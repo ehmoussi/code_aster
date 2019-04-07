@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,9 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine romMultiParaDSInit(ds_multipara)
-        use Rom_Datastructure_type
-        type(ROM_DS_MultiPara), intent(out) :: ds_multipara
-    end subroutine romMultiParaDSInit
+    subroutine crcoch_getloads(list_load, nb_load, nb_ondp, v_ondp)
+        character(len=19), intent(in) :: list_load
+        integer, intent(out) :: nb_ondp, nb_load
+        character(len=8), pointer :: v_ondp(:)
+    end subroutine crcoch_getloads
 end interface

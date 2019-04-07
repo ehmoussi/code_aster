@@ -77,93 +77,17 @@ RINF3=DEFI_FONCTION(  NOM_PARA='ABSC',  VALE=( 0., 1.6465, 26.69, 3.125, ))
 
 RSUP3=DEFI_FONCTION(  NOM_PARA='ABSC',  VALE=( 0., 5.484,  26.69, 6.25,  ))
 
-#
-MA=DEFI_GROUP(reuse=MA,       MAILLAGE=MA,CREA_GROUP_NO=(
-                  _F(  NOM = 'GNO9',    NOEUD = ('NO9',   )),
-                  _F(  NOM = 'GNO1099', NOEUD = ('NO1099',)),
-                  _F(  NOM = 'GNO1259', NOEUD = ('NO1259',))))
 
 FISS1=DEFI_FOND_FISS(MAILLAGE=MA,
-                     FOND_FISS=_F(GROUP_NO = 'FONFIS',
+                     FOND_FISS=_F(GROUP_MA = 'FONDFISS',
                                   VECT_GRNO_ORIG=('GNO9','GNO1099',),
-                                  VECT_GRNO_EXTR=('GNO9','GNO1259',)),
+                                  VECT_GRNO_EXTR=('GNO9','GNO1259',),
+                                  GROUP_NO_ORIG='GNO1099',
+                                  ),
                      SYME='OUI',
                      LEVRE_SUP=_F(  GROUP_MA = 'GRPRES'),
 #                    NORMALE : (0. 0. -1.)
                     )
-
-#
-
-DIRTHE=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_DEPL_R',
-MAILLAGE=MA,AFFE=(
-
-_F( NOEUD = 'NO1099',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (   0.,  1.,   0., )),
-_F( NOEUD = 'NO1100',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = ( 1.179317256499E-2,  0.999930458122, -6.901613511348E-7, )),
-_F( NOEUD = 'NO1109',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = ( 2.36859145901E-2, 0.99971944937, -7.48663084624E-7, )),
-_F( NOEUD = 'NO1110',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (  3.557530548864518E-2, 0.9993669984, -8.0705889588E-7, )),
-_F( NOEUD = 'NO1119',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (  4.779550453478E-2,  0.998857141810344, -8.602249003425E-7,)),
-_F( NOEUD = 'NO1120',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (  6.00085536975E-2,  0.9981978628920,   -9.132622209886E-7, )),
-_F( NOEUD = 'NO1129',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (  7.27907250696E-2,  0.9973472365946, -9.595537304181E-7,)),
-_F( NOEUD = 'NO1130',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (  8.55609509400E-2, 0.9963329381653665, -1.0056877699E-6,)),
-_F( NOEUD = 'NO1139',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (9.918453646977099E-2,  0.9950690567614, -1.0436676714390E-6,)),
-_F( NOEUD = 'NO1140',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.1127895547059614,  0.9936188989487, -1.081452198921332E-6,)),
-_F( NOEUD = 'NO1149',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.127599323987627, 0.9918257974647879, -1.1097921538863E-6, )),
-_F( NOEUD = 'NO1150',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.1423806967442,  0.98981197062540, -1.137885130734487E-6,)),
-_F( NOEUD = 'NO1159',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.15883536533,  0.9873050828994536,  -1.155480184556449E-6,)),
-_F( NOEUD = 'NO1160',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.1752460300705,  0.9845246715766,  -1.172755123449773E-6,)),
-_F( NOEUD = 'NO1169',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.1939304564127,  0.9810152792256, -1.178790328103052E-6, )),
-_F( NOEUD = 'NO1170',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.2125447917068,  0.9771513247787, -1.184399490085882E-6, )),
-_F( NOEUD = 'NO1179',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.234321078943, 0.97215926265270, -1.178231125943736E-6,)),
-_F( NOEUD = 'NO1180',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.25598041011591, 0.966681969230, -1.171474674398351E-6,)),
-_F( NOEUD = 'NO1189',   NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.28204038425666, 0.9594025336880, -1.153018082547775E-6,)),
-_F( NOEUD = 'NO1190',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.30789387312520, 0.9514207076213, -1.133717351822309E-6,)),
-_F( NOEUD = 'NO1199',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.34000290092729, 0.9404243868380,  -1.103350045869629E-6,)),
-_F( NOEUD = 'NO1200',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.37172027641715, 0.92834478298701, -1.071711781358968E-6,)),
-_F( NOEUD = 'NO1209',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.412514103714, 0.91095121397135, -1.030637935993623E-6,)),
-_F( NOEUD = 'NO1210',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.452496650830, 0.89176610217359, -9.875371632507654E-7, )),
-_F( NOEUD = 'NO1219',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.505706033202, 0.86270586411714, -9.38488812133799E-7,)),
-_F( NOEUD = 'NO1220',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.557056573798,  0.83047454722399, -8.859908240844536E-7, )),
-_F( NOEUD = 'NO1229',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.626800840322, 0.7791795085665,  -8.345522018223497E-7,)),
-_F( NOEUD = 'NO1230',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.691846956434, 0.72204417376739,  -7.768582405135631E-7,)),
-_F( NOEUD = 'NO1239',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.777456481805, 0.628936736801652, -7.338168134564427E-7, )),
-_F( NOEUD = 'NO1240',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.850628269534, 0.52576757894423, -6.790357955460975E-7, )),
-_F( NOEUD = 'NO1249',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.92948733692, 0.36885402329297,  -6.62602115754982E-7, )),
-_F( NOEUD = 'NO1250',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = (0.979680441852, 0.20056478218087, -6.257333782485562E-7, )),
-_F( NOEUD = 'NO1259',    NOM_CMP = ('DX', 'DY', 'DZ',),
-  VALE = ( 1.,  0., 0., )))
-                       )
 
 #----------------------------------------------------------------------
 #                           COURONNE 1
@@ -197,7 +121,7 @@ GLOC2=CALC_G(  RESULTAT=CHAMDEPL,
 #----------------------------------------------------------------------
 #              TEST DE G(A) SUR LES 3 COURONNES
 #----------------------------------------------------------------------
-
+IMPR_TABLE(TABLE=GLOC0)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.050000000000000003,
@@ -205,8 +129,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=7.1710000000000003E-05,
            NOM_PARA='G',
            TABLE=GLOC0,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=0.0,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -215,8 +139,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=7.1710000000000003E-05,
            NOM_PARA='G',
            TABLE=GLOC1,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=0.0,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -225,8 +149,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=7.1710000000000003E-05,
            NOM_PARA='G',
            TABLE=GLOC2,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1099',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=0.0,),
            )
 
 #----------------------------------------------------------------------
@@ -239,8 +163,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=1.721E-05,
            NOM_PARA='G',
            TABLE=GLOC0,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1259',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=2.66827E+01,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -249,8 +173,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=1.721E-05,
            NOM_PARA='G',
            TABLE=GLOC1,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1259',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=2.66827E+01,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -259,8 +183,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=1.721E-05,
            NOM_PARA='G',
            TABLE=GLOC2,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1259',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=2.66827E+01,),
            )
 
 #----------------------------------------------------------------------
@@ -273,8 +197,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=5.215E-05,
            NOM_PARA='G',
            TABLE=GLOC0,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1179',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=1.78016E+01,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -283,8 +207,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=5.215E-05,
            NOM_PARA='G',
            TABLE=GLOC1,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1179',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=1.78016E+01,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -293,8 +217,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=5.215E-05,
            NOM_PARA='G',
            TABLE=GLOC2,
-           FILTRE=_F(NOM_PARA='NOEUD',
-                     VALE_K='NO1179',),
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                     VALE=1.78016E+01,),
            )
 FIN()
 #
