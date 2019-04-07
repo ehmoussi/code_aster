@@ -659,8 +659,8 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         globs = self.get_global_contexte()
         d.update(globs)
         try:
-            exec(code, globs, d)
-        except Exception as exc:
+            exec(code, d)
+        except Exception:
             raise AsException(traceback.format_exc())
 
     def get_global_contexte(self):
