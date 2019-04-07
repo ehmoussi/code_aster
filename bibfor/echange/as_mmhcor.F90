@@ -26,14 +26,15 @@ subroutine as_mmhcor(fid, maa, coo, modcoo, cret)
 #include "asterfort/utmess.h"
 #include "med/mmhcor.h"
     character(len=*) :: maa
-    aster_int :: fid, modcoo, cret
+    med_idt :: fid
+    aster_int :: modcoo, cret
     aster_int :: mdnont, mdnoit
     real(kind=8) :: coo(*)
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: modco4, cret4
     med_int :: mdnon4, mdnoi4

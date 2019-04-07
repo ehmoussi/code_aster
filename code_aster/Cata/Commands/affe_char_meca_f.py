@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ AFFE_CHAR_MECA_F=OPER(nom="AFFE_CHAR_MECA_F",op=7,sd_prod=char_meca,
                             'EFFE_FOND','FLUX_THM_REP',),),
          VERI_NORM       =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
          MODELE          =SIMP(statut='o',typ=modele_sdaster),
+         DOUBLE_LAGRANGE =SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="OUI"),
 
          DDL_IMPO        =FACT(statut='f',max='**',
            fr=tr("Impose à des noeuds une ou plusieurs valeurs de déplacement (ou de certaines grandeurs asscociées) fournies"

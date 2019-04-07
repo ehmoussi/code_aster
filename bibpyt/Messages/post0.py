@@ -230,7 +230,7 @@ Erreur d'utilisation dans MACR_LIGN_COUPE :
   Il faut renseigner le mot clé VECT_Y
 """),
 
-    51 : _(u"""
+    51 : _("""
 CALC_NEWMARK ne sait pas traiter des maillages 3D
 """),
 

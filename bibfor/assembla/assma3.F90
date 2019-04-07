@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -149,6 +149,16 @@ subroutine assma3(lmasym, lmesym, tt, igr, iel,&
             n2=zznema(ilima,numa,2)
             n3=zznema(ilima,numa,3)
             if ((n1.gt.0) .and. (n2.lt.0) .and. (n3.lt.0)) then
+!           -- POUR L'INSTANT ON NE VERIFIE PAS QUE N2 ET N3 NE
+!              PORTENT QUE LA CMP 'LAGR'
+                ellagr=1
+            endif
+!       TRAITEMENT DU CAS DES SIMPLES LAGRANGE
+!       --------------------------------------------------------------
+        else if ((ellagr.eq.0) .and. (nnoe.eq.2)) then
+            n1=zznema(ilima,numa,1)
+            n2=zznema(ilima,numa,2)
+            if ((n1.gt.0) .and. (n2.lt.0)) then
 !           -- POUR L'INSTANT ON NE VERIFIE PAS QUE N2 ET N3 NE
 !              PORTENT QUE LA CMP 'LAGR'
                 ellagr=1

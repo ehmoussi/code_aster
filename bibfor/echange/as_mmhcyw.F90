@@ -29,19 +29,19 @@ subroutine as_mmhcyw(fid, maa, conn, csize, switch,&
 #include "asterfort/utmess.h"
 #include "med/mmhcyw.h"
     character(len=*) :: maa
-    aster_int :: fid, conn(*), csize, typent, typgeo, typcon, cret
+    med_idt :: fid
+    aster_int :: conn(*), csize, typent, typgeo, typcon, cret
     aster_int :: n, switch, mdnont, mdnoit
     real(kind=8) :: mdnodt
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_int, allocatable :: conn4(:)
     med_idt :: fidm
     med_int :: typen4, typge4, typco4, cret4
     med_int :: n4, switc4, mdnon4, mdnoi4
-    aster_int :: ic
     mdnont = -1
     mdnoit = -1
     mdnodt = -1.d0

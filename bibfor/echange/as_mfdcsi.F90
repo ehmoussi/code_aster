@@ -26,14 +26,15 @@ subroutine as_mfdcsi(fid, cha, ind, numdt, numo,&
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "med/mfdcsi.h"
-    aster_int :: fid, ind, numdt, numo, cret
+    med_idt :: fid
+    aster_int :: ind, numdt, numo, cret
     character(len=*) :: cha
     real(kind=8) :: dt
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: ind4, numdt4, numo4, cret4
     fidm = to_med_idt(fid)

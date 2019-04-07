@@ -114,7 +114,8 @@ subroutine lrceme(chanom, nochmd, typech, nomamd, nomaas,&
     integer :: vali(2)
     integer :: ibid
     integer :: jcesl
-    integer :: ifm, nivinf, idfimd, nseqca
+    med_idt :: idfimd
+    integer :: ifm, nivinf, nseqca
     integer :: jnocmp, ncmprf, jcmpva, nbcmpa, iret, i, j, nncp
     integer :: edlect
     parameter (edlect=0)

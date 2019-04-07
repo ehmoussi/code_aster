@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_clean_pod(ds_para)
 !
 use Rom_Datastructure_type
@@ -23,10 +24,9 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/romBaseClean.h"
+#include "asterfort/romFieldClean.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,5 +41,8 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call romBaseClean(ds_para%ds_empi)
+    if (ds_para%l_reuse) then
+        call romFieldClean(ds_para%para_pod%ds_result_in%field)
+    endif
 !
 end subroutine

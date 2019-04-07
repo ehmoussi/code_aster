@@ -264,7 +264,7 @@ Il n'y a aucun degré de liberté de déplacement sur le modèle.
    Le critère RESI_COMP_RELA est interdit en dynamique. Utilisez un autre critère de convergence
 """),
 
-    54 : _(u"""L'usage de ARRET='NON' avec le contact implique d'utiliser REAC_GEOM = 'SANS'"""),
+    54 : _("""L'usage de ARRET='NON' avec le contact implique d'utiliser REAC_GEOM = 'SANS'"""),
 
     55 : _("""
   Vous utilisez l'indicateur de convergence RESI_REFE_RELA et une modélisation %(k1)s.

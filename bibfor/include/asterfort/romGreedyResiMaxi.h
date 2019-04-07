@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine romGreedyResiMaxi(ds_para_rb, i_coef_maxi)
+    subroutine romGreedyResiMaxi(ds_multipara, ds_algoGreedy, i_coef_maxi)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
+        type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+        type(ROM_DS_AlgoGreedy), intent(in) :: ds_algoGreedy
         integer, intent(out) :: i_coef_maxi
     end subroutine romGreedyResiMaxi
 end interface

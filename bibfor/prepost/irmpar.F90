@@ -48,7 +48,8 @@ subroutine irmpar(nomcon, ifichi, linopa)
 !     ------------------------------------------------------------------
 !
 !     ------------------------------------------------------------------
-    integer :: edleaj, idfimd, codret, hdfok, medok, jlnopa
+    integer :: edleaj, codret, hdfok, medok, jlnopa
+    med_idt :: idfimd
     integer :: nbpara, inopar
     integer :: typflo
     parameter (typflo=6)

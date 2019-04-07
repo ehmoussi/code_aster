@@ -39,6 +39,8 @@ cata_msg = {
 
    20 : _("""La base empirique contient des modes volumiques"""),
 
+   29 : _("""Le système global résultant utilise %(i1)d équations."""),
+
    30 : _("""Le système est une combinaison de %(i1)d matrices."""),
 
    31 : _("""Matrice réelle %(i1)d de nom %(k1)s."""),
@@ -80,4 +82,7 @@ cata_msg = {
    51 : _("""Nombre total de valeurs pour le paramètre: %(i1)d."""),
 
    52 : _("""Valeur initiale du paramètre : %(r1)19.12e."""),
+
+   60 : _("""Le second membre est une combinaison de %(i1)d vecteurs."""),
+
 }

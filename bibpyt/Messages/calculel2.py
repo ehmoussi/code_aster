@@ -170,7 +170,7 @@ Conseil :
   MACR_ECLA_PG(... NOM_CHAM=('SIEF_ELGA', 'VARI_ELGA'),
 """),
 
-    25: _(u"""
+    25: _("""
   Attention : %(i1)d mailles de type %(k1)s n'ont pas été projetées car la famille
   de points de Gauss sur le champ en question a une maille support 1D.
   

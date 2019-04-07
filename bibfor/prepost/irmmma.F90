@@ -39,7 +39,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-integer :: fid
+med_idt :: fid
 integer :: nbmail, nbtyp
 integer :: connex(*), typma(*), point(*)
 integer :: typgeo(*), nnotyp(*), nmatyp(MT_NTYMAX)

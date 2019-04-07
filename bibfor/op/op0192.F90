@@ -67,8 +67,8 @@ subroutine op0192()
     character(len=11) :: lcmpvm
     parameter ( lcmpvm = 'NOM_CMP_MED' )
 !
-    integer :: iaux, jaux, iret
-    integer :: iinst, idfimd
+    integer :: iaux, jaux, iret, iinst
+    med_idt :: idfimd
     integer :: unite, imaj, imin, irel
     integer :: codret, iver, typent
     integer :: numpt, numord

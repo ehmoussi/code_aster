@@ -29,13 +29,14 @@ subroutine as_mmhenw(fid, maa, num, n, typent,&
 #include "med/mmhenw.h"
     character(len=*) :: maa
     aster_int :: num(*)
-    aster_int :: fid, typent, typgeo, cret
+    med_idt :: fid
+    aster_int :: typent, typgeo, cret
     aster_int :: n, mdnont, mdnoit
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_int, allocatable :: num4(:)
     med_idt :: fidm
     med_int :: typen4, typge4, cret4

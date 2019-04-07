@@ -100,8 +100,8 @@ integer :: codret
     character(len=64)  :: nomamd
     character(len=200) :: nofimd
     character(len=255) :: kfic
-    integer :: nbtyp
-    integer :: ifm, nivinf, ifimed, lnomam
+    med_idt :: ifimed
+    integer :: nbtyp, ifm, nivinf, lnomam
     integer :: ncmpve, nvalec, nbprof, nbvato, ncmprf
     integer :: nbimpr, jnocm1, jnocm2, nbcmp2, icmp1, icmp2
     integer :: adcaii, adcaik

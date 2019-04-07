@@ -67,7 +67,8 @@ subroutine mdexpm(nofimd, idfimd, nomamd, existm, ndim,&
     parameter (ednstr=0)
 !
 !
-    integer :: idfimd, nbmaie
+    integer :: nbmaie
+    med_idt :: idfimd
     integer :: iaux, jaux, kaux, tyaux
 !
     character(len=8) :: saux08

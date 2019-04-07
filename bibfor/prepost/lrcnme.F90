@@ -100,7 +100,8 @@ subroutine lrcnme(chanom, nochmd, nomamd, nomaas, nomgd,&
     parameter ( nompro = 'LRCNME' )
 !
     integer :: iaux, iret, jcmpva, nbcmpa, nbcham, i, nbcmp, jcmp, junit
-    integer :: ibid, nseqca, tycha, idfimd, j
+    integer :: ibid, nseqca, tycha, j
+    med_idt :: idfimd
     integer :: jnocmp, ncmprf, ubid
     parameter(ubid=1)
     integer :: unbid(ubid)

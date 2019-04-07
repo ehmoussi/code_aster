@@ -117,7 +117,7 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      Veuillez vérifier la présence de cette colonne.
 """),
 
-    30 : _(u"""
+    30 : _("""
      Le modèle de visualisation (mot-clé MODELE_VISU) utilisé est un
      modèle X-FEM.
      

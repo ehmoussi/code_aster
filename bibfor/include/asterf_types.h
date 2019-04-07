@@ -37,6 +37,13 @@
 #define ASTER_TRUE to_aster_logical(.true.)
 #define ASTER_FALSE to_aster_logical(.false.)
 !
+#ifdef _DISABLE_HDF5
+#define HDF_HID_SIZE 4
+#endif
+#define hdf_int_kind HDF_HID_SIZE
+#define hid_t integer(kind=hdf_int_kind)
+#define to_hid_t(a) int(a, HDF_HID_SIZE)
+!
 #ifdef _DISABLE_MED
 #define MED_INT_SIZE 4
 #define MED_IDT_SIZE 4

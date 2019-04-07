@@ -26,13 +26,14 @@ subroutine as_mfafai(fid, maa, ind, fam, num,&
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "med/mfafai.h"
-    aster_int :: fid, num, cret, ind
+    med_idt :: fid
+    aster_int :: num, cret, ind
     character(len=*) :: maa, fam, gro(*)
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: num4
     med_int :: cret4, ind4

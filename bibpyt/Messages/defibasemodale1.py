@@ -19,17 +19,17 @@
 
 cata_msg = {
 
-    1 : _(u"""Quand on utilise une BASE_MODALE, il faut également donner les modes d'interface par MODE_INTF."""),
+    1 : _("""Quand on utilise une BASE_MODALE, il faut également donner les modes d'interface par MODE_INTF."""),
 
-    9 : _(u"""Le mot-clé NUME_REF est obligatoire quand DEFI_BASE_MODALE n'est pas ré-entrant."""),
+    9 : _("""Le mot-clé NUME_REF est obligatoire quand DEFI_BASE_MODALE n'est pas ré-entrant."""),
 
-    31 : _(u"""Il y a un problème de cohérence entre le nombre de concepts MODE_MECA et la liste des NMAX_MODE:
+    31 : _("""Il y a un problème de cohérence entre le nombre de concepts MODE_MECA et la liste des NMAX_MODE:
  Nombre de concepts MODE_MECA dans la liste MODE_MECA     : %(i1)d
  Nombre de valeurs de la liste NMAX_MODE                  : %(i2)d
  Les deux listes doivent avoir la même taille.
 """),
 
-    50 : _(u"""Le total des modes défini dans RITZ est nul. Il faut au moins un mode."""),
+    50 : _("""Le total des modes défini dans RITZ est nul. Il faut au moins un mode."""),
 
-    51 : _(u"""Il faut au moins un MODE_MECA a la première occurrence de RITZ."""),
+    51 : _("""Il faut au moins un MODE_MECA a la première occurrence de RITZ."""),
 }

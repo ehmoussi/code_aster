@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine romModeProd(nb_matr  , l_matr_name, l_matr_type, prod_mode,&
-                           mode_type, v_modec    , v_moder)
-        integer, intent(in) :: nb_matr
-        character(len=8), intent(in) :: l_matr_name(:)
-        character(len=1), intent(in) :: l_matr_type(:)
-        character(len=24), intent(in) :: prod_mode(:)
-        character(len=1), intent(in) :: mode_type
-        complex(kind=8), pointer, optional :: v_modec(:)
-        real(kind=8), pointer, optional :: v_moder(:)
-    end subroutine romModeProd
+    subroutine mateMFrontAddElasticity(l_mfront_func, l_mfront_anis,&
+                                       mate         , i_mate_add   ,&
+                                       mfront_nbvale, mfront_prop  ,&
+                                       mfront_valr  , mfront_valk)
+        aster_logical, intent(in) :: l_mfront_func, l_mfront_anis
+        character(len=8), intent(in) :: mate
+        integer, intent(in) :: i_mate_add
+        integer, intent(in) :: mfront_nbvale
+        character(len=16), intent(in) :: mfront_prop(16)
+        real(kind=8), intent(in) :: mfront_valr(16)
+        character(len=16), intent(in) :: mfront_valk(16)
+    end subroutine mateMFrontAddElasticity
 end interface
