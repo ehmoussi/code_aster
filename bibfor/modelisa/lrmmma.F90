@@ -44,7 +44,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-integer :: fid
+med_idt :: fid
 integer :: nbmail, nbnoma
 integer :: nbtyp
 integer :: nmatyp(MT_NTYMAX), numnoa(MT_NTYMAX, *), modnum(MT_NTYMAX)

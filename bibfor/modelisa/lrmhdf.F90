@@ -71,13 +71,13 @@ integer :: nbnoeu, nbmail, nbcoor
 !
     character(len=6), parameter :: nompro = 'LRMHDF'
     integer, parameter :: edlect=0
-    integer :: iaux, ifimed
+    integer :: iaux 
     integer :: nmatyp(MT_NTYMAX)
     integer :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX), nuanom(MT_NTYMAX, MT_NNOMAX)
     integer :: renumd(MT_NTYMAX), modnum(MT_NTYMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
     integer :: nbtyp
-    integer :: ndim, fid, codret
-    integer :: nbnoma
+    integer :: ndim, codret, nbnoma
+    med_idt :: fid, ifimed
     integer :: nbltit, nbgrno, nbgrma
     integer :: vlib(3), vfic(3), iret
     integer :: vali(3), hdfok, medok

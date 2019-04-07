@@ -25,7 +25,7 @@ subroutine as_mfivop(fid, nom, acces, major, minor, rel, cret)
 #include "asterfort/utmess.h"
 #include "asterfort/assert.h"
 #include "med/mfivop.h"
-    aster_int, intent(out) :: fid
+    med_idt, intent(out) :: fid
     character(len=*), intent(in) :: nom
     aster_int, intent(in) :: acces
     aster_int, intent(in) :: major
@@ -36,13 +36,13 @@ subroutine as_mfivop(fid, nom, acces, major, minor, rel, cret)
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: acces4, cret4, major4, minor4, rel4
 #endif
     cret = 0
     if (cret.eq.0) then
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
         acces4 = acces
         major4 = major
         minor4 = minor

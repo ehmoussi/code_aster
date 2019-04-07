@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,9 +68,10 @@ implicit none
         character(len=8)        :: model = ' '
 ! ----- Mesh
         character(len=8)        :: mesh  = ' '
-! ----- Number of components by node
-        integer                 :: nb_cmp_by_node = 0
-        character(len=8)        :: cmp_by_node(10) = ' '
+! ----- Components in the field
+        integer, pointer          :: v_equa_type(:) => null()
+        character(len=8), pointer :: v_list_cmp(:) => null()
+        integer                   :: nb_cmp = 0
 ! ----- Flag if has Lagrange multipliers
         aster_logical           :: l_lagr = ASTER_FALSE
 ! ----- Number of nodes with dof
@@ -95,6 +96,8 @@ implicit none
         character(len=24)       :: surf_num = ' '
 ! ----- Number of modes in base
         integer                 :: nb_mode = 0
+! ----- Number of modes max 
+        integer                 :: nb_mode_maxi = 0
 ! ----- Number of snapshots when created base
         integer                 :: nb_snap = 0
 ! ----- Datastructure for lineic base numbering
@@ -184,27 +187,36 @@ implicit none
 !
     type ROM_DS_MultiPara
 ! ----- Type of system to solve
-        character(len=1)        :: syst_type = ' '
-! ----- List of matrix for system
-        integer                 :: nb_matr = 0
-        character(len=8)        :: matr_name(8) = ' '
-        character(len=1)        :: matr_type(8) = ' '
-        type(ROM_DS_MultiCoef)  :: matr_coef(8)
-! ----- Second member for system
-        character(len=8)        :: vect_name = ' '
-        character(len=1)        :: vect_type = ' '
-        type(ROM_DS_MultiCoef)  :: vect_coef
+        character(len=1)                 :: syst_type = ' '
+! ----- List of matrices for system
+        integer                          :: nb_matr = 0
+        character(len=8), pointer        :: matr_name(:) => null()
+        character(len=8), pointer        :: matr_type(:) => null()
+        type(ROM_DS_MultiCoef), pointer  :: matr_coef(:) => null()
+! ----- List of vectors for system
+        integer                          :: nb_vect = 0
+        character(len=8), pointer        :: vect_name(:) => null()
+        character(len=8), pointer        :: vect_type(:) => null()
+        type(ROM_DS_MultiCoef), pointer  :: vect_coef(:) => null()
+! ----- Products matrix by current mode
+        character(len=24), pointer       :: matr_mode_curr(:) => null()
 ! ----- Products matrix by mode
-        character(len=24)       :: prod_mode(8) = ' '
+        character(len=24), pointer       :: prod_matr_mode(:) => null()
+! ----- Reduced Vector
+        character(len=24), pointer       :: vect_redu(:) => null()
+! ----- Reduced matrix
+        character(len=24), pointer       :: matr_redu(:) => null()
 ! ----- Variation of coefficients: number (by mode)
-        integer                 :: nb_vari_coef = 0
+        integer                          :: nb_vari_coef = 0
 ! ----- Variation of coefficients: type (DIRECT, ALEATOIRE, etc. )
-        character(len=24)       :: type_vari_coef = ' '
+        character(len=24)                :: type_vari_coef = ' '
 ! ----- Variation of coefficients: by parameter
-        integer                 :: nb_vari_para = 0
-        type(ROM_DS_VariPara)   :: vari_para(5)
+        integer                          :: nb_vari_para = 0
+        type(ROM_DS_VariPara), pointer   :: vari_para(:) => null()
 ! ----- Evaluation of coefficients
-        type(ROM_DS_EvalCoef)   :: evalcoef
+        type(ROM_DS_EvalCoef)            :: evalcoef
+! ----- Reference field
+        type(ROM_DS_Field)               :: field
     end type ROM_DS_MultiPara
 !
 ! - Parameters to solve systems
@@ -229,17 +241,8 @@ implicit none
         character(len=8)        :: model = ' '
 ! ----- Mesh
         character(len=8)        :: mesh  = ' '
-! ----- Name of field for read (NOM_CHAM)
-        character(len=24)       :: field_name = ' '
-! ----- A field for reference (to manipulate real field)
-        character(len=24)       :: field_refe = ' '
-! ----- Number of components by node
-        integer                 :: nb_cmp_by_node = 0
-        character(len=8)        :: cmp_by_node(10) = ' '
-! ----- Flag if has Lagrange multipliers
-        aster_logical           :: l_lagr = ASTER_FALSE
-! ----- Number of nodes with dof
-        integer                 :: nb_node = 0
+! ----- Field saved in
+        type(ROM_DS_Field)      :: field
     end type ROM_DS_Result
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (POD)
@@ -271,27 +274,42 @@ implicit none
 
     end type ROM_DS_ParaDBR_POD
 !
-! - Parameters for DEFI_BASE_REDUITE operator (RB)
+! - Algorithm Greedy
 !
-    type ROM_DS_ParaDBR_RB
+    type ROM_DS_AlgoGreedy
 ! ----- List of reduced components
         character(len=24)       :: coef_redu = ' '
-! ----- Residual = ' '
-        character(len=24)       :: vect_2mbr_init = ' '
+! ----- For residual
         character(len=1)        :: resi_type = ' '
         character(len=24)       :: resi_vect = ' '
         real(kind=8), pointer   :: resi_norm(:) => null()
         real(kind=8)            :: resi_refe = 0.d0
-! ----- Datastructure for solver's parameters
-        character(len=19)       :: solver = ' '
 ! ----- To solve complete system
         type(ROM_DS_Solve)      :: solveROM
 ! ----- To solve reduced system
         type(ROM_DS_Solve)      :: solveDOM
-! ----- Datastructure for multiparametric reduced problem
+! ----- Index of components FSI transient problem
+        integer                 :: nume_pres = 0
+        integer                 :: nume_phi  = 0
+    end type ROM_DS_AlgoGreedy
+!
+! - Parameters for DEFI_BASE_REDUITE operator (RB)
+!
+    type ROM_DS_ParaDBR_RB
+! ----- Datastructure for solver's parameters
+        character(len=19)       :: solver       = ' '
+! ----- Datastructure for multiparametric problem
         type(ROM_DS_MultiPara)  :: multipara
 ! ----- Maximum number of modes
         integer                 :: nb_mode_maxi = 0
+! ----- Flag to orthogonalize the basis 
+        aster_logical           :: l_ortho_base = ASTER_FALSE
+! ----- Flag to stabilize the basis for FSI transient problem
+        aster_logical           :: l_stab_fsi   = ASTER_FALSE
+! ----- Tolerance for greedy algorithm
+        real(kind=8)            :: tole_greedy  = 0.d0
+! ----- Datastructure for greedy algorithm
+        type(ROM_DS_AlgoGreedy) :: algoGreedy
     end type ROM_DS_ParaDBR_RB
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (TRUNCATION)

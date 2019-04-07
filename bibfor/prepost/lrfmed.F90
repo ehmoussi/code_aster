@@ -86,8 +86,9 @@ integer, intent(out) :: npas0
     integer :: renumd(MT_NTYMAX), nuanom(MT_NTYMAX, MT_NNOMAX)
     integer :: modnum(MT_NTYMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
     integer :: nto, nnu, jlist, nbordr
-    integer :: jnume, nis, npas, fid, major, minor, rel
-    integer :: iret, ifimed
+    integer :: jnume, nis, npas, major, minor, rel
+    med_idt :: fid, ifimed
+    integer :: iret
     integer :: i, j
     integer :: ipas, iaux2
     integer :: mfich, jinst, itps

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,8 +28,10 @@ implicit none
 #include "asterfort/cresol.h"
 #include "asterfort/infniv.h"
 #include "asterfort/getvis.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/romMultiParaRead.h"
 #include "asterfort/utmess.h"
+#include "asterfort/getvr8.h"
 !
 type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
@@ -47,6 +49,9 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 !
     integer :: ifm, niv
     integer :: nb_mode_maxi = 0, nocc
+    character(len=16) :: stab_fsi = ' ', ortho_base = ' '
+    aster_logical :: l_stab_fsi, l_ortho_base
+    real(kind=8) :: tole_greedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,9 +63,21 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! - Maximum number of modes
 !
     call getvis(' ', 'NB_MODE' , scal = nb_mode_maxi, nbret = nocc)
-    if (nocc .eq. 0) then
-        nb_mode_maxi = 0
-    endif
+    ASSERT(nocc .eq. 1 .and. nb_mode_maxi .ge. 1)
+!
+! - If we orthogonalize basis
+!
+    call getvtx(' ', 'ORTHO_BASE', scal = ortho_base)
+    l_ortho_base = ortho_base .eq. 'OUI'
+!
+! - If we stabilise the basis for FSI transient problem
+!
+    call getvtx(' ', 'TYPE_BASE', scal = stab_fsi)
+    l_stab_fsi = stab_fsi .eq. 'IFS_STAB'
+!
+! - Read tolerance
+!
+    call getvr8(' ', 'TOLE_GLOUTON', scal = tole_greedy)
 !
 ! - Read data for multiparametric problems
 !
@@ -73,5 +90,8 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! - Save parameters in datastructure
 !
     ds_para_rb%nb_mode_maxi = nb_mode_maxi
+    ds_para_rb%l_ortho_base = l_ortho_base
+    ds_para_rb%l_stab_fsi   = l_stab_fsi
+    ds_para_rb%tole_greedy  = tole_greedy
 !
 end subroutine

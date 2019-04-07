@@ -27,7 +27,8 @@ subroutine as_mfdfdi(fid, ind, cha, type, comp,&
 #include "asterfort/utmess.h"
 #include "med/mfdfdi.h"
     character(len=*) :: cha, comp, unit
-    aster_int :: fid, ind, type, cret, lmail, nseqca
+    med_idt :: fid 
+    aster_int :: ind, type, cret, lmail, nseqca
     character(len=64) :: nommai
     character(len=80) :: unidt
 !
@@ -37,7 +38,7 @@ subroutine as_mfdfdi(fid, ind, cha, type, comp,&
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: ind4, type4, cret4, nseqc4, lmai4
     fidm = to_med_idt(fid)

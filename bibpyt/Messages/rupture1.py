@@ -73,6 +73,18 @@ de modélisation FEM avec une fissure en configuration décollée.
 Veuillez indiquer les mots-clés R_INF et R_SUP (ou R_INF_FO et R_SUP_FO).
 """),
 
+    8: _("""
+Pour une modélisation 2D, le front de fissure doit être défini par un
+groupe contenant un noeud (mot-clé GROUP_NO). Le mot clé GROUP_MA 
+est réservé aux modélisations 3D.
+"""),
+
+    9: _("""
+Pour une modélisation 3D, le front de fissure doit être défini par un
+groupe de mailles (mot-clé GROUP_MA). Le mot clé GROUP_NO est réservé
+aux modélisations 2D.
+"""),
+
     10: _("""
 Le fond de fissure ne doit être défini que par un noeud.
 -> Risque et Conseil :

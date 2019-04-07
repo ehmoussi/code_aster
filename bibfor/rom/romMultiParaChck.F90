@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romMultiParaChck(ds_multipara)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romMultiParaChck(ds_multipara, l_stab_fsi)
 !
 use Rom_Datastructure_type
 !
@@ -27,10 +28,10 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/utmess.h"
+#include "asterfort/romFieldChck.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+aster_logical, intent(in) :: l_stab_fsi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,26 +42,41 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_multipara     : datastructure for multiparametric problems
+! In  l_stab_fsi       : flag for IFS stabilization
 !
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: syme
-    integer :: nb_matr, nb_vari_para, nb_vale_para
-    integer :: i_matr, i_vari_para
-    character(len=24) :: nume_dof_ref, nume_dof 
+    integer :: nb_matr, nb_vect, nb_vari_para, nb_vale_para, ndim
+    integer :: i_matr, i_vect, i_vari_para
+    character(len=24) :: nume_dof_ref, nume_dof
+    character(len=24) :: prchno_ref, prchno
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_matr      = ds_multipara%nb_matr
+    nb_vect      = ds_multipara%nb_vect
     nb_vari_para = ds_multipara%nb_vari_para
 !
-! - Check numbering
+! - Check numbering in matrix
 !
     if (ds_multipara%matr_name(1) .ne. ' ') then
         call dismoi('NOM_NUME_DDL', ds_multipara%matr_name(1), 'MATR_ASSE', repk=nume_dof_ref)
         do i_matr = 2, nb_matr
             call dismoi('NOM_NUME_DDL', ds_multipara%matr_name(i_matr), 'MATR_ASSE', repk=nume_dof)
             if (nume_dof .ne. nume_dof_ref) then
+                call utmess('F','ROM2_21')
+            endif
+        end do
+    endif
+!
+! - Check numbering in vector
+!
+    if (ds_multipara%vect_name(1) .ne. ' ') then
+        call dismoi('PROF_CHNO', ds_multipara%vect_name(1), 'CHAM_NO', repk=prchno_ref)
+        do i_vect = 2, nb_vect
+            call dismoi('PROF_CHNO', ds_multipara%vect_name(i_vect), 'CHAM_NO', repk=prchno)
+            if (prchno .ne. prchno_ref) then
                 call utmess('F','ROM2_21')
             endif
         end do
@@ -85,9 +101,11 @@ implicit none
                 call utmess('F','ROM2_25', sk = ds_multipara%matr_name(i_matr))
             endif
         end do
-        if (ds_multipara%vect_coef%l_func) then
-            call utmess('F','ROM2_31')
-        endif
+        do i_vect = 1, nb_vect
+            if (ds_multipara%vect_coef(i_vect)%l_func) then
+                call utmess('F','ROM2_31')
+            endif
+        end do
     endif
 !
 ! - Same number of values for each parameter
@@ -99,6 +117,19 @@ implicit none
                 call utmess('F','ROM2_29')
             endif
         end do
-    endif 
+    endif
+!
+! - Check composant PRES and PHI is in the model if we active l_stab_fsi
+!
+    if (l_stab_fsi) then
+        call dismoi('DIM_GEOM', ds_multipara%field%model, 'MODELE', repi=ndim)
+        if (ndim .eq. 2) then
+            call romFieldChck(ds_multipara%field, field_name_ = 'UPPHI_2D')
+        elseif (ndim .eq. 3) then
+            call romFieldChck(ds_multipara%field, field_name_ = 'UPPHI_3D')
+        else
+            ASSERT(ASTER_FALSE)
+        endif
+    end if
 !
 end subroutine

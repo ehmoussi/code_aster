@@ -45,7 +45,7 @@ contains
 !>  @param[in]      vers    med version number to be used, only for creation (optional)
 subroutine as_med_open(fid, nom, acces, cret, vers)
 !
-        aster_int, intent(out) :: fid
+        med_idt, intent(out) :: fid
         character(len=*), intent(in) :: nom
         aster_int, intent(in) :: acces
         aster_int, intent(out) :: cret

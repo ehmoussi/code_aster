@@ -28,13 +28,14 @@ subroutine as_mfdcre(fid, cha, nomamd, type, comp,&
 #include "med/mfdcre.h"
     character(len=*) :: cha, nomamd, comp, unit
     character(len=80) :: unidt
-    aster_int :: fid, ncomp, cret, type
+    med_idt :: fid
+    aster_int :: ncomp, cret, type
 !
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: ncomp4, cret4, type4
     unidt = ' '

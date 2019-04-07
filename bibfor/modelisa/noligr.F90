@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine noligr(ligrz, igrel, numel, nunoeu,&
                   code, inema, nbno, typlaz,jlgns,&
-                  rapide, jliel0, jlielc, jnema0, jnemac)
+                  rapide, jliel0, jlielc, jnema0, jnemac, l_lag1)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -51,6 +51,7 @@ subroutine noligr(ligrz, igrel, numel, nunoeu,&
     integer, intent(in), optional ::  jlielc
     integer, intent(in), optional ::  jnema0
     integer, intent(in), optional ::  jnemac
+    aster_logical, intent(in), optional :: l_lag1
 
 
 !
@@ -103,13 +104,22 @@ subroutine noligr(ligrz, igrel, numel, nunoeu,&
     integer :: ilag1, ilag2,jnema, jnema02, jnemac2
     integer :: jliel, jliel02, jlielc2
     integer :: kligr, lonigr, lgnema
-    aster_logical :: lrapid
+    aster_logical :: lrapid, l_lag1c
     integer, save :: iprem=0 , numpoi, numse3
 !-----------------------------------------------------------------------
+    if( present(l_lag1) ) then
+        l_lag1c = l_lag1
+    else
+        l_lag1c = .false.
+    endif
     iprem=iprem+1
     if (iprem.eq.1) then
         call jenonu(jexnom('&CATA.TM.NBNO', 'POI1'), numpoi)
-        call jenonu(jexnom('&CATA.TM.NBNO', 'SEG3'), numse3)
+        if(l_lag1c) then
+            call jenonu(jexnom('&CATA.TM.NBNO', 'SEG2'), numse3)
+        else
+            call jenonu(jexnom('&CATA.TM.NBNO', 'SEG3'), numse3)
+        endif
     endif
 
     typlag = typlaz
@@ -149,7 +159,11 @@ subroutine noligr(ligrz, igrel, numel, nunoeu,&
     if (code .eq. 1) then
         lgnema=2
     else
-        lgnema=4
+        if(l_lag1c) then
+            lgnema=3
+        else
+            lgnema=4
+        endif
     endif
 
 
@@ -166,7 +180,7 @@ subroutine noligr(ligrz, igrel, numel, nunoeu,&
 
     kligr = 0
     jliel=jliel02-1+zi(jlielc2-1+igrel)
-    
+
     kligr = kligr + 1
     inema = inema + 1
     zi(jliel-1+kligr) = -inema
@@ -185,13 +199,18 @@ subroutine noligr(ligrz, igrel, numel, nunoeu,&
 
     else if (code.eq.3) then
         zi(jnema-1+1) = nunoeu
-        zi(jnema-1+2) = -nbno+1
-        zi(jnema-1+3) = -nbno
-        zi(jnema-1+4) = numse3
         ASSERT(jlgns.ne.1)
-        zi(jlgns+nbno-2) = ilag1
-        zi(jlgns+nbno-1) = ilag2
-
+        if(l_lag1c) then
+            zi(jnema-1+2) = -nbno
+            zi(jnema-1+3) = numse3
+            zi(jlgns+nbno-1) = ilag1
+        else
+            zi(jnema-1+2) = -nbno+1
+            zi(jnema-1+3) = -nbno
+            zi(jnema-1+4) = numse3
+            zi(jlgns+nbno-2) = ilag1
+            zi(jlgns+nbno-1) = ilag2
+        endif
     else
         ASSERT(.false.)
     endif

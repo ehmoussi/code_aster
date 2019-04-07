@@ -142,31 +142,72 @@ L_INST=DEFI_LIST_REEL(         DEBUT=0.,INTERVALLE=(
                         )
 
 CHAMDEPL=STAT_NON_LINE(
-                            MODELE=MO,
-                        CHAM_MATER=CHMAT,EXCIT=(
-                             _F(
-                CHARGE = CLF), _F(
-                CHARGE = CLV,
-                FONC_MULT = RAMPE)),
-                         COMPORTEMENT=(_F(
-                RELATION = 'VMIS_ISOT_TRAC',
-                GROUP_MA = (
-                  'EPROUVET',  )),
-                         _F(
-                RELATION = 'ELAS',
-                GROUP_MA = (
-                  'PORTEPRO',  )),),
-                         INCREMENT=_F(
-                LIST_INST = L_INST),
-                            NEWTON=_F(
-                MATRICE = 'TANGENTE',
-                REAC_ITER = 5)
+                    MODELE=MO,
+                    CHAM_MATER=CHMAT,
+                    EXCIT=(
+                            _F(CHARGE = CLF),
+                            _F(CHARGE = CLV,
+                                FONC_MULT = RAMPE)
+                            ),
+                    COMPORTEMENT=(
+                        _F(
+                            RELATION = 'VMIS_ISOT_TRAC',
+                            GROUP_MA = ('EPROUVET',)
+                        ),
+                        _F(
+                            RELATION = 'ELAS',
+                            GROUP_MA = ('PORTEPRO',)
+                        ),
+                    ),
+                    INCREMENT=_F(
+                        LIST_INST = L_INST),
+                        NEWTON=_F(
+                            MATRICE = 'TANGENTE',
+                            REAC_ITER = 5)
               )
 
 CHAMDEPL=CALC_CHAMP(reuse=CHAMDEPL,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=('VARI_ELNO'),RESULTAT=CHAMDEPL)
 
+#####################################################################
+# CALCUL DE L ENERGIE TOTALE - TEST POUR LA COUVERTURE INFORMATIQUE
+#####################################################################
+ENER_TOT=POST_ELEM(     RESULTAT=CHAMDEPL,
+                        ENER_TOTALE=_F(  TOUT = 'OUI')
+                      )
 
-#
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC=327.186586978,
+           NOM_PARA='TOTALE',
+           TABLE=ENER_TOT,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=1.85095E+03,),
+           )
+
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC=1087.90737455,
+           NOM_PARA='TOTALE',
+           TABLE=ENER_TOT,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=3.08490E+03,),
+           )
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC=1883.11095792,
+           NOM_PARA='TOTALE',
+           TABLE=ENER_TOT,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=3.70190E+03,),
+           )
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC=2370.32464259,
+           NOM_PARA='TOTALE',
+           TABLE=ENER_TOT,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=3.94875E+03,),
+           )
+
+#####################################################################
+# DEFINITIONN DU FRONT DE FISSURE
+#####################################################################
 FOND=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                            FOND_FISS=_F( GROUP_NO = ('P0',)),
                             LEVRE_SUP=_F(GROUP_MA = 'LEVR_SUP',),

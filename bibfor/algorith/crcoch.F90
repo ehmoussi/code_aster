@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ subroutine crcoch()
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
+#include "asterfort/assert.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jedupo.h"
@@ -65,6 +66,8 @@ subroutine crcoch()
 #include "asterfort/vechme.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/crcoch_getloads.h"
 #include "blas/dcopy.h"
 !
     integer :: ibid, ier, icompt, iret, numini, numfin
@@ -72,102 +75,68 @@ subroutine crcoch()
     integer :: iad, jinst, jchout
     integer :: nbv(1), jrefe
     integer :: jcpt, nbr, ivmx, k, iocc, nboini
-    integer :: nondp, nchar, tnum(1)
-    integer :: nbordr1, nbordr2, jondp, jchar, jinf, jfon
-    integer :: neq, jchart, nchar2, jchou1, jchou2
-
-!
+    integer :: nb_ondp, nb_load, tnum(1)
+    integer :: nbordr1, nbordr2
+    integer :: neq, jchou1, jchou2
     real(kind=8) :: rbid, tps, prec, partps(3)
     complex(kind=8) :: cbid
-!
     character(len=1) :: typmat
     character(len=4) :: typabs
     character(len=8) :: k8b, resu, criter, matr
     character(len=8) :: materi, carele, blan8, noma
     character(len=16) :: type, oper
     character(len=19) :: nomch, listr8, list_load, resu19, profch
+    character(len=24) :: lload_name, lload_info, lload_func
     character(len=19) :: nomch1, nomch2
     character(len=24) :: linst, nsymb, typres, lcpt, londp
     character(len=24) :: matric(3)
     character(len=24) :: modele, mate, numedd, vecond
-    character(len=24) :: veonde, vaonde, charge, infoch, fomult
+    character(len=24) :: veonde, vaonde
     character(len=24) :: vechmp, vachmp, cnchmp, chargt
     real(kind=8), pointer :: val(:) => null()
+    character(len=8), pointer :: v_ondp(:) => null()
 !
     data linst,listr8,lcpt,londp/'&&CRCOCH_LINST','&&CRCOCH_LISR8',&
      &     '&&CPT_CRCOCH','&&CRCOCH_LONDP'/
 ! --- ------------------------------------------------------------------
     call jemarq()
 !
-    blan8 = ' '
-    list_load = ' '
-    nboini=10
+    blan8  = ' '
+    nboini = 10
     modele = ' '
     carele = ' '
     materi = ' '
     vecond = '&&CRCOCH_VECOND'
     veonde = '&&CRCOCH_VEONDE'
     vaonde = '&&CRCOCH_VAONDE'
-    charge = '&&CRCOCH.INFCHA    .LCHA'
-    infoch = '&&CRCOCH.INFCHA    .INFC'
-    fomult = '&&CRCOCH.INFCHA    .FCHA'
+    list_load = '&&CRCOCH.LISCHA'
     vechmp = '&&CRCOCH_VECHMP'
     vachmp = '&&CRCOCH_VACHMP'
     cnchmp = '&&CRCOCH_CNCHMP'
     chargt = '&&CRCOCH_CHARGT'
     nomch1 = '&&CRCOCH_NOMCH1'
     nomch2 = '&&CRCOCH_NOMCH2'
-    iocc=1
-!
-    call getres(resu, type, oper)
-    resu19=resu
-    call getvtx(' ', 'TYPE_RESU', scal=typres, nbret=n1)
-    
-    call getvid('CONV_CHAR', 'CHARGE', iocc=iocc, nbval=0, nbret=n1)
-    if (n1 .ne. 0) then
-        nchar = -n1
-        nondp = nchar
-        call wkvect(chargt, 'V V K8', nchar, jchart)
-        call wkvect(londp, 'V V K8', nondp, jondp)
-        call wkvect(charge, 'V V K24', nchar, jchar)
-        call getvid('CONV_CHAR','CHARGE',iocc=iocc,nbval=nchar,&
-                    vect=zk8(jchart),nbret=n1)
-        nondp = 0
-        nchar2 = 0
-        do j = 1, nchar
-          call jeexin(zk8(jchart+j-1)//'.CHME.ONDPL.DESC',iret)
-          if (iret .ne. 0) then 
-            nondp = nondp + 1
-            zk8(jondp+nondp-1) = zk8(jchart+j-1)
-          else
-            nchar2 = nchar2 + 1
-            zk24(jchar+nchar2-1) = zk8(jchart+j-1)
-          endif
-        end do
-        if (nondp .ne. 0) then 
-            call juveca(londp, nondp)
-            call jeveuo(londp, 'L', jondp)
-        endif
-        if (nchar2 .ne. 0) then 
-            call juveca(charge, nchar2)
-            call wkvect(infoch, 'V V I', 7+4*nchar2, jinf)
-            call wkvect(fomult, 'V V K24', nchar2, jfon)
-            zi(jinf)=nchar2
-            do j = 1, nchar2
-              zk24(jfon+j-1) = ' '
-              zi(jinf+nchar2+j) = 3
-            end do
-        endif
-    endif
-!
-    call rscrsd('G', resu, typres, nboini)
-!
-    call jelira(resu//'           .ORDR', 'LONUTI', nbordr1)
-!
     numini = -1
     icompt = -1
     profch = ' '
+    iocc   = 1
+    nb_load = 0
 !
+    call getres(resu, type, oper)
+    resu19=resu
+    call getvtx(' ', 'TYPE_RESU', scal=typres)
+!
+! - Get loads
+!
+    call getvid('CONV_CHAR', 'CHARGE', iocc=iocc, nbval=0, nbret=n1)
+    if (n1 .ne. 0) then
+        call crcoch_getloads(list_load, nb_load, nb_ondp, v_ondp)
+    endif
+!
+! - Create output datastructure
+!
+    call rscrsd('G', resu, typres, nboini)
+    call jelira(resu//'           .ORDR', 'LONUTI', nbordr1)
 !
 !        MOT CLE INST PRESENT :
     nis = 0
@@ -181,10 +150,9 @@ subroutine crcoch()
     if (nis.ne.0) then
         call wkvect(lcpt, 'V V I', nbinst, jcpt)
         call wkvect(linst, 'V V R', nbinst, jinst)
-        call getvr8('CONV_CHAR', typabs, iocc=iocc, nbval=nbinst, vect=zr(jinst),&
-                    nbret=n1)
-        call getvr8('CONV_CHAR', 'PRECISION', iocc=iocc, scal=prec, nbret=ibid)
-        call getvtx('CONV_CHAR', 'CRITERE', iocc=iocc, scal=criter, nbret=ibid)
+        call getvr8('CONV_CHAR', typabs, iocc=iocc, nbval=nbinst, vect=zr(jinst))
+        call getvr8('CONV_CHAR', 'PRECISION', iocc=iocc, scal=prec)
+        call getvtx('CONV_CHAR', 'CRITERE', iocc=iocc, scal=criter)
         call rsorac(resu,'LONUTI',0,rbid,k8b,cbid,rbid,k8b,nbv,1,ibid)
 !
         ivmx = rsmxno(resu)
@@ -197,7 +165,7 @@ subroutine crcoch()
                 nbr = 0
             endif
             if (nbr .lt. 0) then
-                call utmess('F', 'ALGORITH2_48')
+                call utmess('F', 'CREARESU1_48')
             else if (nbr.eq.0) then
                 zi(jcpt+k-1) = ivmx + 1
                 ivmx = ivmx + 1
@@ -231,26 +199,24 @@ subroutine crcoch()
         ivmx = rsmxno(resu)
         j = 0
         do k = 1, nbval
-            if (k .lt. numini) goto 40
-            if (k .gt. numfin) goto 40
+            if (k .lt. numini) cycle
+            if (k .gt. numfin) cycle
             j = j + 1
             zr(jinst-1+j) = val(k)
             if (nbv(1) .gt. 0) then
-                call rsorac(resu, typabs, ibid, val(k), k8b, cbid, prec, criter, tnum,&
-                            1, nbr)
+                call rsorac(resu, typabs, ibid, val(k), k8b, cbid, prec, criter, tnum, 1, nbr)
                 nume=tnum(1)
             else
                 nbr = 0
             endif
             if (nbr .lt. 0) then
-                call utmess('F', 'ALGORITH2_48')
+                call utmess('F', 'CREARESU1_48')
             else if (nbr.eq.0) then
                 zi(jcpt+j-1) = ivmx + 1
                 ivmx = ivmx + 1
             else
                 zi(jcpt+j-1) = nume
             endif
- 40         continue
         end do
     endif
 
@@ -297,7 +263,7 @@ subroutine crcoch()
         do ie = 1, neq
           zr(jchout+ie-1) = 0.D0
         end do
-        if (nondp .ne. 0) then
+        if (nb_ondp .ne. 0) then
             call jeexin(nomch1//'.VALE',iret)
             if (iret .eq. 0) then
               call vtcreb(nomch1, 'V', 'R', nume_ddlz = numedd)
@@ -306,37 +272,40 @@ subroutine crcoch()
             do ie = 1, neq
               zr(jchou1+ie-1) = 0.D0
             end do
-            call fondpl(modele, mate, numedd, neq, zk8(jondp),&
-                    nondp, vecond, veonde, vaonde, tps, zr(jchou1))
+            call fondpl(modele, mate, numedd, neq, v_ondp,&
+                        nb_ondp, vecond, veonde, vaonde, tps, zr(jchou1))
             do ie = 1, neq
               zr(jchout+ie-1) = zr(jchout+ie-1) - zr(jchou1+ie-1)
             end do
         endif
-        if (nchar2 .ne. 0) then
+        if (nb_load .ne. 0) then
+            lload_name = list_load(1:19)//'.LCHA'
+            lload_info = list_load(1:19)//'.INFC'
+            lload_func = list_load(1:19)//'.FCHA'
             call jeexin(nomch2//'.VALE',iret)
             if (iret .eq. 0) then
               call vtcreb(nomch2, 'V', 'R', nume_ddlz = numedd)
             endif
             call jeveuo(nomch2//'.VALE', 'E', jchou2)
             do ie = 1, neq
-              zr(jchou2+ie-1) = 0.D0
+                zr(jchou2+ie-1) = 0.D0
             end do
-            call vechme('S', modele, charge, infoch, partps,&
-                    carele, mate, vechmp)
+            call vechme('S', modele, lload_name, lload_info, partps,&
+                        carele, mate, vechmp)
             call asasve(vechmp, numedd, 'R', vachmp)
-            call ascova('D', vachmp, fomult, 'INST', tps, 'R', nomch2)
+            call ascova('D', vachmp, lload_func, 'INST', tps, 'R', nomch2)
             call jeveuo(nomch2//'.VALE', 'L', jchou2)
             do ie = 1, neq
-              zr(jchout+ie-1) = zr(jchout+ie-1) + zr(jchou2+ie-1)
+                zr(jchout+ie-1) = zr(jchout+ie-1) + zr(jchou2+ie-1)
             end do
         endif
 !
         call jeveuo(nomch//'.REFE', 'E', jrefe)
-        zk24(jrefe) = noma
-        zk24(jrefe+1) = profch
+        zk24(jrefe-1+1) = noma
+        zk24(jrefe-1+2) = profch
 
         call rsnoch(resu, nsymb, icompt)
-        call rsadpa(resu, 'E', 1, typabs, icompt, 0, sjv=iad, styp=k8b)
+        call rsadpa(resu, 'E', 1, typabs, icompt, 0, sjv=iad)
         zr(iad) = tps
         call rssepa(resu,icompt,modele(1:8),materi,carele,list_load)
         if (j .ge. 2) call jedema()
@@ -356,6 +325,8 @@ subroutine crcoch()
                             matric, ier)                  
         endif
     endif
+!
+    AS_DEALLOCATE(vk8 = v_ondp)
 !
     call jedema()
 end subroutine

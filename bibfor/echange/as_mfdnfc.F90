@@ -25,12 +25,13 @@ subroutine as_mfdnfc(fid, ind, n, cret)
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "med/mfdnfc.h"
-    aster_int :: fid, ind, cret, n
+    aster_int :: ind, cret, n
+    med_idt :: fid
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: ind4, cret4, n4
     fidm = to_med_idt(fid)

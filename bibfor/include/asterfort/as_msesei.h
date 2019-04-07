@@ -23,7 +23,7 @@ interface
     subroutine as_msesei(fid, imasup, nomaes, nvtymd, dimest,&
                          nomasu, medcel, nbnosu, nbmssu, tygems,&
                          nbattc, prespr, nbattv, codret)
-        aster_int :: fid
+        med_idt :: fid
         aster_int :: imasup
         character(len=*) :: nomaes
         aster_int :: nvtymd

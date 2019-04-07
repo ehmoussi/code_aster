@@ -91,7 +91,7 @@ subroutine irmpg1(nofimd, nomfpg, nbnoto, nbrepg, nbsp,&
     integer :: ifm, nivinf
     integer :: iaux, jaux, kaux
     integer :: nblopg
-    integer :: idfimd
+    med_idt :: idfimd
     integer :: typgel, nbrepl, ndim2
     integer :: lgnofa
 !

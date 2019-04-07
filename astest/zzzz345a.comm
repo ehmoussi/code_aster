@@ -1,0 +1,155 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+import numpy as np
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='OUI');
+
+nx=12;
+freq=1;
+n_cables=int(nx/freq)**2;
+l_cables=[]
+for cable in range(n_cables):
+    l_cables.append(['Cable%g'%cable,'Anc%g_1'%cable,'Anc%g_2'%cable])
+
+l_gma_cable=np.array(l_cables)[:,0]
+
+#Lecture du maillage, duplication des groupes de mailles
+
+MA=LIRE_MAILLAGE(UNITE=20,
+                 FORMAT='MED',
+                 VERI_MAIL=_F(VERIF='NON',),);
+
+MA=DEFI_GROUP(reuse =MA,
+              MAILLAGE=MA,
+              CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),);
+
+MOD=AFFE_MODELE(MAILLAGE=MA,
+                AFFE=(_F(GROUP_MA=('Beton','Encast','Press',),
+                         PHENOMENE='MECANIQUE',
+                         MODELISATION='3D',),
+                      _F(GROUP_MA=l_gma_cable,
+                         PHENOMENE='MECANIQUE',
+                         MODELISATION='BARRE',),
+                      ),);
+
+#Orientation de tous les elements de surface
+
+MA=MODI_MAILLAGE(reuse =MA,
+                 MAILLAGE=MA,
+                 ORIE_PEAU_3D=_F(GROUP_MA='Press'),
+                 );
+
+#Definition et effectation des materiaux
+
+BTN_GEN=DEFI_MATERIAU(ELAS=_F(E=30000e6,
+                              NU=0.2,
+                              RHO=2500.,),
+                      BPEL_BETON=_F(),);
+
+ACI_CAB=DEFI_MATERIAU(ELAS=_F(E=200000e6,
+                              NU=0.0,
+                              RHO=7800,),
+                      BPEL_ACIER=_F(),);
+
+
+MATER=AFFE_MATERIAU(MAILLAGE=MA,
+                    AFFE=(_F(GROUP_MA='Beton',
+                             MATER=BTN_GEN,),
+                          _F(GROUP_MA=l_gma_cable,
+                             MATER=ACI_CAB,),
+                             ),)
+
+#Definition et affectation des caracteristiques des elements de structure
+
+ELEM=AFFE_CARA_ELEM(MODELE=MOD,
+                    BARRE=_F(GROUP_MA=l_gma_cable,
+                             SECTION='CERCLE',
+                             CARA='R',
+                             VALE=0.005,),
+                    )
+
+l_kw=[]
+for cable in range(n_cables):
+    l_kw.append({'GROUP_MA':'Cable%g'%cable,'GROUP_NO_ANCRAGE':('Anc%g_1'%cable,'Anc%g_2'%cable)})
+
+DCBPG = DEFI_CABLE_BP(CHAM_MATER =MATER,
+                      MODELE     = MOD,
+                      TYPE_ANCRAGE   = ('PASSIF','PASSIF'),
+                      GROUP_MA_BETON = 'Beton',
+                      CARA_ELEM      = ELEM,
+                      DEFI_CABLE     = l_kw,
+                      TENSION_INIT=0.,
+                      RECUL_ANCRAGE=0.00,
+                      INFO=1,
+                      )
+
+# Chargement, et conditions aux limites
+
+GRAV=AFFE_CHAR_MECA(MODELE=MOD,
+                    DOUBLE_LAGRANGE='NON',
+                    PESANTEUR=_F(GRAVITE=9.81,DIRECTION=( 0., 0., -1.),),)
+
+APP=AFFE_CHAR_CINE(MODELE=MOD,
+                   MECA_IMPO=_F(GROUP_MA='Encast',
+                               DX=0.0,
+                               DY=0.0,
+                               DZ=0.0,),);
+
+PRESS=AFFE_CHAR_MECA(MODELE=MOD,
+                     DOUBLE_LAGRANGE='NON',
+                     PRES_REP=(_F(GROUP_MA='Press',
+                                  PRES=1e6),
+                               ),
+                     )
+
+PREC=AFFE_CHAR_MECA(MODELE=MOD,
+                    DOUBLE_LAGRANGE='NON',
+                    RELA_CINE_BP=(
+                                  _F(CABLE_BP=DCBPG,
+                                    SIGM_BPEL='NON',
+                                    RELA_CINE='OUI',),
+                                    ));
+
+RAMPE = DEFI_FONCTION(NOM_PARA = 'INST',
+                      VALE     = (0.,0.,1.0,1.0),
+                      PROL_DROITE = 'CONSTANT',
+                      )
+
+INST=DEFI_LIST_REEL(DEBUT=0.,
+                    INTERVALLE=_F(JUSQU_A=1,
+                                  NOMBRE=1,),);
+
+RESU=MECA_STATIQUE(MODELE=MOD,
+                   CHAM_MATER=MATER,
+                   CARA_ELEM=ELEM,
+                   SOLVEUR=_F(METHODE='MUMPS',),
+                   LIST_INST=INST,
+                   EXCIT=(_F(CHARGE=APP,),
+                          _F(CHARGE=GRAV,FONC_MULT=RAMPE),
+                          _F(CHARGE=PREC,FONC_MULT=RAMPE),
+                          _F(CHARGE=PRESS,FONC_MULT=RAMPE),
+                          ),
+                   OPTION='SANS',
+                   INFO=2,)
+
+TEST_RESU(RESU=_F(NUME_ORDRE=2,NOEUD='N4651',RESULTAT=RESU,NOM_CHAM='DEPL',NOM_CMP='DY',
+                  VALE_CALC=-4.45338330381704E-03,),)
+
+FIN();

@@ -21,7 +21,7 @@ interface
     subroutine lrmmfa(fid, nomamd, nbnoeu, grpnoe,&
                       gpptnn, grpmai, gpptnm, nbgrno, nbgrma,&
                       typgeo, nomtyp, nmatyp, prefix, infmed)
-        integer :: fid
+        med_idt :: fid
         character(len=*) :: nomamd
         integer :: nbnoeu
         character(len=24) :: grpnoe

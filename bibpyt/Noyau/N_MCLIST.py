@@ -238,7 +238,7 @@ class MCList(collections.UserList):
         for mcf in self:
             dico = mcf.cree_dict_valeurs(mcf.mc_liste)
             for i in list(dico.keys()):
-                if dico[i] == None:
+                if dico[i] is None:
                     del dico[i]
             dresu.append(dico)
         return dresu

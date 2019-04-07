@@ -28,7 +28,8 @@ subroutine as_mfdrpw(fid, cha, val, intlac, n,&
 #include "asterfort/utmess.h"
 #include "med/mfdrpw.h"
     character(len=*) :: cha, profil, locname
-    aster_int :: fid, n, pflmod, typent, typgeo, cret
+    med_idt :: fid
+    aster_int :: n, pflmod, typent, typgeo, cret
     aster_int :: intlac, numco, numdt, numo
     real(kind=8) :: dt
     real(kind=8) :: val(*)
@@ -36,7 +37,7 @@ subroutine as_mfdrpw(fid, cha, val, intlac, n,&
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: n4, pflmo4, typen4, typge4, cret4
     med_int :: intla4, numco4, numdt4, numo4

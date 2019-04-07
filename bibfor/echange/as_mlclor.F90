@@ -27,13 +27,14 @@ subroutine as_mlclor(fid, tr1, tr2, tr3, nbt,&
 #include "asterfort/utmess.h"
 #include "med/mlclor.h"
     real(kind=8) :: tr1(*), tr2(*), tr3(*)
-    aster_int :: fid, nbt, cret
+    med_idt :: fid
+    aster_int :: nbt, cret
     character(len=64) :: k64
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: nbt4, cret4
     fidm = to_med_idt(fid)

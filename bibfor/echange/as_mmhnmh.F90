@@ -26,13 +26,14 @@ subroutine as_mmhnmh(fid, n, cret)
 #include "asterfort/utmess.h"
 #include "med/mmhnmh.h"
 !
-    aster_int :: fid, n, cret
+    aster_int :: n, cret
+    med_idt :: fid
     med_int :: nm, cretm
 !
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
-    call mmhnmh(to_med_idt(fid), nm, cretm)
+    call mmhnmh(fid, nm, cretm)
     n = to_aster_int(nm)
     cret = to_aster_int(cretm)
 #endif

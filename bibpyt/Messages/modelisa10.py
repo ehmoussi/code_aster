@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     3 : _("""
@@ -73,10 +71,6 @@ MODELE_INTERFACE dans PROJ_SPEC_BASE
 La géométrie de la section utilisée n'est pas prévue par l'opérande SECTION = 'RECTANGLE' de AFFE_CARA_ELEM.
 L'un des bords est trop fin.
 Utilisez l'opérande SECTION = 'GENERALE'.
-"""),
-
-    16 : _("""
-Il est obligatoire de fournir au moins un comportement pour définir le matériau.
 """),
 
     17 : _("""

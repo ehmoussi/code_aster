@@ -25,13 +25,14 @@ subroutine as_mpfpfi(fid, indice, pro, n, cret)
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "med/mpfpfi.h"
-    aster_int :: fid, n, cret, indice
+    med_idt :: fid
+    aster_int :: n, cret, indice
     character(len=*) :: pro
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: n4, cret4, indic4
     fidm = to_med_idt(fid)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFieldGetInfo(model, field_name, field_refe, ds_field)
+subroutine romFieldGetInfo(model, field_name, field_refe, ds_field, l_chck_)
 !
 use Rom_Datastructure_type
 !
@@ -27,11 +27,13 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/modelNodeEF.h"
-#include "asterfort/romBaseComponents.h"
+#include "asterfort/romGetListComponents.h"
+#include "asterfort/romFieldChck.h"
 !
-character(len=8), intent(in)      :: model
-character(len=24), intent(in)     :: field_refe, field_name
-type(ROM_DS_Field), intent(inout) :: ds_field
+character(len=8), intent(in)        :: model
+character(len=24), intent(in)       :: field_refe, field_name
+type(ROM_DS_Field), intent(inout)   :: ds_field
+aster_logical, optional, intent(in) :: l_chck_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,17 +47,20 @@ type(ROM_DS_Field), intent(inout) :: ds_field
 ! In  field_name       : name of field (NOM_CHAM)
 ! In  field_refe       : field to analyse
 ! IO  ds_field         : datastructure for field
+! In  l_chck           : flag to check components
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_equa = 0, nb_node = 0, nb_cmp_by_node = 0
+    integer :: nb_equa = 0, nb_node = 0, nb_cmp = 0
     character(len=8)  :: mesh = ' '
-    character(len=8)  :: cmp_by_node(10) = ' '
-    aster_logical :: l_lagr = ASTER_FALSE
+    aster_logical :: l_lagr = ASTER_FALSE, l_chck
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    l_chck = ASTER_TRUE
+    if (present(l_chck_)) then
+        l_chck = l_chck_
+    endif
 !
 ! - Get main parameters
 !
@@ -66,22 +71,27 @@ type(ROM_DS_Field), intent(inout) :: ds_field
 !
     call modelNodeEF(model, nb_node)
 !
-! - Get components in field
+! - Get list of components in field
 !
-    call romBaseComponents(mesh          , nb_equa    ,&
-                           field_name    , field_refe ,&
-                           nb_cmp_by_node, cmp_by_node, l_lagr)
+    call romGetListComponents(field_refe          , nb_equa            ,&
+                              ds_field%v_equa_type, ds_field%v_list_cmp,&
+                              nb_cmp              , l_lagr)
 !
 ! - Save informations
 !
-    ds_field%field_name     = field_name
-    ds_field%field_refe     = field_refe
-    ds_field%mesh           = mesh
-    ds_field%model          = model
-    ds_field%nb_equa        = nb_equa
-    ds_field%nb_node        = nb_node
-    ds_field%nb_cmp_by_node = nb_cmp_by_node
-    ds_field%cmp_by_node    = cmp_by_node
-    ds_field%l_lagr         = l_lagr
+    ds_field%field_name  = field_name
+    ds_field%field_refe  = field_refe
+    ds_field%mesh        = mesh
+    ds_field%model       = model
+    ds_field%nb_equa     = nb_equa
+    ds_field%nb_node     = nb_node
+    ds_field%l_lagr      = l_lagr
+    ds_field%nb_cmp      = nb_cmp
+!
+! - Check components in field
+!
+    if (l_chck) then
+        call romFieldChck(ds_field)
+    endif
 !
 end subroutine

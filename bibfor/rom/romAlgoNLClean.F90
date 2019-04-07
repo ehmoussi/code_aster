@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romAlgoNLClean(ds_algorom)
 !
 use Rom_Datastructure_type
@@ -24,13 +25,10 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 #include "asterfort/as_deallocate.h"
+#include "asterfort/romBaseClean.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,18 +42,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_42')
-    endif
-!
     AS_DEALLOCATE(vi = ds_algorom%v_equa_int)
     if (ds_algorom%l_hrom_corref) then
         AS_DEALLOCATE(vi = ds_algorom%v_equa_sub)
     endif
+    call romBaseClean(ds_algorom%ds_empi)
 !
 end subroutine

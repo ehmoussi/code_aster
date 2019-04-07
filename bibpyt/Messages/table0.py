@@ -33,12 +33,12 @@ Paramètre %(k1)s inexistant dans la table %(k2)s.
 Opération RENOMME. Erreur : %(k1)s
 """),
 
-    4 : (u"""
+    4 : ("""
 NOM_PARA ne doit contenir qu'un seul nom de paramètres pour ajouter
 une colonne non constante.
 """),
 
-    5 : (u"""
+    5 : ("""
 Seuls les paramètres de types réels ou entiers sont imprimés au format NUMPY.
 
 Paramètres non supportés :
@@ -73,7 +73,7 @@ On attend %(i1)d paramètres.
 On attend %(i1)d champs dans le fichier.
 """),
 
-    14 : (u"""
+    14 : ("""
 Les listes %(k1)s et %(k2)s doivent avoir le même cardinal.
 """),
 

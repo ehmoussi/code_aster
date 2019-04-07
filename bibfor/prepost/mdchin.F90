@@ -72,7 +72,7 @@ subroutine mdchin(nofimd, idfimd, nochmd, typent, typgeo,&
     integer :: edlect
     parameter (edlect=0)
 !
-    integer :: idfimd
+    med_idt :: idfimd
     aster_logical :: dejouv
 !====
 ! 1. ON OUVRE LE FICHIER EN LECTURE

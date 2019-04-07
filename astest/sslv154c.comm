@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -85,7 +85,7 @@ LINST = DEFI_LIST_REEL   ( DEBUT      =  0.,
                                          );
 
 FISS=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
-                    FOND_FISS=_F(GROUP_NO='NFF3'),
+                    FOND_FISS=_F(GROUP_MA='LFF1'),
                     LEVRE_SUP=_F(GROUP_MA='LEVSUP'),
                     LEVRE_INF=_F(GROUP_MA='LEVINF'),
                     )

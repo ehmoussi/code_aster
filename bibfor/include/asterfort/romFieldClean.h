@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine romMultiParaProdModeSave(ds_multipara, ds_empi, i_mode)
+    subroutine romFieldClean(ds_field)
         use Rom_Datastructure_type
-        type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-        type(ROM_DS_Empi), intent(in) :: ds_empi
-        integer, intent(in) :: i_mode
-    end subroutine romMultiParaProdModeSave
+        type(ROM_DS_Field), intent(in) :: ds_field
+    end subroutine romFieldClean
 end interface

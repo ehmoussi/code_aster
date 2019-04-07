@@ -63,7 +63,8 @@ character(len=64) :: nochmd
 !
     integer :: iret, nmatyp, ncmp
     integer :: nbma, jnbtyp, jmatyp, nbtym, nbtv, codret
-    integer :: i, j, idfimd, iaux, jnbty2
+    med_idt :: idfimd
+    integer :: i, j, iaux, jnbty2
     integer :: vali(2), lnomam
     integer, parameter :: edlect=0,edconn=1,edmail=0,ednoda=0
     character(len=1) :: k1b
