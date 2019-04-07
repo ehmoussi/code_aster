@@ -25,13 +25,14 @@ subroutine as_mpfpsn(fid, pro, nbval, cret)
 #include "asterf.h"
 #include "asterfort/utmess.h"
 #include "med/mpfpsn.h"
-    aster_int :: fid, nbval, cret
+    med_idt :: fid
+    aster_int :: nbval, cret
     character(len=*) :: pro
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: nbval4, cret4
     fidm = to_med_idt(fid)

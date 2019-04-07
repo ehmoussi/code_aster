@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romMultiParaInit(ds_multipara)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romMultiParaInit(ds_multipara, nb_mode_maxi)
 !
 use Rom_Datastructure_type
 !
@@ -29,9 +30,8 @@ implicit none
 #include "asterfort/romMultiParaProdModeInit.h"
 #include "asterfort/romMultiParaCoefInit.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
+type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
+integer, intent(in) :: nb_mode_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,6 +42,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! IO  ds_multipara     : datastructure for multiparametric problems
+! In  nb_mode_maxi     : maximum number of empirical modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,9 +55,9 @@ implicit none
         call utmess('I', 'ROM2_19')
     endif
 !
-! - Prepare product [Matrix] x [Mode]
+! - Prepare product [Matrix] x [Mode], reduced Matrix and Reduced Vector
 !
-    call romMultiParaProdModeInit(ds_multipara)
+    call romMultiParaProdModeInit(ds_multipara, nb_mode_maxi)
 !
 ! - Initializations of coefficients
 !

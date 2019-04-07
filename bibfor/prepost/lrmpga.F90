@@ -101,7 +101,8 @@ subroutine lrmpga(nrofic, ligrel, nochmd, nbma, pgmail,&
     parameter (edcomp=2)
 !
     integer :: ifm, nivinf, ncmp, nbprof, jnopro
-    integer :: idfimd, codret, nloc, iret, igrel, jtyelm
+    med_idt :: idfimd
+    integer :: codret, nloc, iret, igrel, jtyelm
     integer :: j, nbgrel, jtypge, jnonpg, iprof, lgproa, codre2
     integer :: numte, i, ityg, ngaulu, npdt, jprof, ima2
     integer :: tygeo(ntygeo), nbpg, nbpgm

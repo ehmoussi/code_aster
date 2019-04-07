@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,6 +44,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
+#include "asterfort/loadGetNeumannType.h"
 !
 character(len=19), intent(in) :: list_load
 aster_logical, intent(in) :: l_load_user
@@ -67,28 +68,18 @@ character(len=1), optional, intent(in) :: base
     integer, parameter :: nb_info_maxi = 99
     character(len=24) :: list_info_type(nb_info_maxi)
     integer, parameter :: nbchmx = 99
-    integer, parameter :: nb_type_neum = 18
-    character(len=6), parameter :: nomlig(nb_type_neum) = (/'.FORNO','.F3D3D','.F2D3D','.F1D3D',&
-                                                      '.F2D2D','.F1D2D','.F1D1D','.PESAN',&
-                                                      '.ROTAT','.PRESS','.FELEC','.FCO3D',&
-                                                      '.FCO2D','.EPSIN','.FLUX ','.VEASS',&
-                                                      '.ONDPL','.SIINT'/)
-    integer :: i_type_neum
-    integer :: n1
-    integer :: npilo, nb_load
-    integer :: infmax, i_excit, i_load, iret, infc, j, i_load_new, iret_cable_cine
+    integer :: n1, npilo, nb_load
+    integer :: infmax, i_excit, i_load, iret, infc, j, i_load_new
     character(len=1) :: bas
     character(len=4) :: typcal
-    character(len=5) :: suffix
-    character(len=8) :: k8bid, load_type, func_para_inst, func_para_vite
-    character(len=8) :: const_func
+    character(len=8) :: k8bid, load_type, func_para_inst, const_func
     character(len=16) :: nomcmd, typesd, load_apply, load_keyword
     character(len=8) :: load_name, load_func, model, load_model
     character(len=24) :: info_type
     character(len=19) :: lisdbl, list_load_resu
     character(len=24) :: ligrch, lchin
     integer :: i_neum_lapl, i_diri_suiv
-    aster_logical :: l_func_c, l_zero_allowed, l_diri_undead
+    aster_logical :: l_func_c, l_zero_allowed, l_diri_undead, l_stat
     integer :: nb_info_type
     integer, pointer :: v_ll_infc(:) => null()
     integer, pointer :: v_llresu_info(:) => null()
@@ -106,6 +97,7 @@ character(len=1), optional, intent(in) :: base
 !
 ! - Initializations
 !
+    l_stat         = nomcmd .eq. 'STAT_NON_LINE'
     list_load_resu = ' '
     if (present(list_load_resu_)) then
         list_load_resu = list_load_resu_
@@ -296,97 +288,9 @@ character(len=1), optional, intent(in) :: base
 !
 ! --------- Add Neuman loads
 !
-            do i_type_neum = 1, nb_type_neum
-                if (nomlig(i_type_neum) .eq. '.VEASS') then
-                    suffix = '     '
-                else
-                    suffix = '.DESC'
-                endif
-                lchin = ligrch(1:13)//nomlig(i_type_neum)//suffix
-                call jeexin(lchin, iret)
-                info_type = 'RIEN'
-                if (iret .ne. 0) then
-                    if (nomlig(i_type_neum) .eq. '.VEASS') then
-                        func_para_inst = 'NON'
-                        func_para_vite = 'NON'
-                    else
-                        call dismoi('PARA_INST', lchin, 'CARTE', repk=func_para_inst)
-                        call dismoi('PARA_VITE', lchin, 'CARTE', repk=func_para_vite)
-                    endif
-                    if (nomlig(i_type_neum) .eq. '.ONDPL') then
-                        info_type = 'NEUM_ONDE'
-                    else if (nomlig(i_type_neum) .eq. '.SIINT') then
-                        info_type = 'NEUM_SIGM_INT'
-                    else if (load_apply .eq. 'FIXE_PILO') then
-                        if (nomlig(i_type_neum) .eq. '.VEASS') then
-                            info_type = 'NEUM_PILO'
-                        else
-                            if (load_type(5:7).eq.'_FO') then
-                                info_type = 'NEUM_PILO_F'
-                                if (func_para_inst(1:3) .eq. 'OUI') then
-                                    call utmess('F', 'CHARGES_28', sk=load_name)
-                                endif
-                            else
-                                info_type = 'NEUM_PILO'
-                            endif
-                        endif
-                    else if (load_apply .eq. 'SUIV_PILO') then
-                        if (nomlig(i_type_neum) .eq. '.VEASS') then
-                            info_type = 'NEUM_SUIP'
-                        else
-                            if (load_type(5:7).eq.'_FO') then
-                                info_type = 'NEUM_SUIP_F'
-                                if (func_para_inst(1:3) .eq. 'OUI') then
-                                    call utmess('F', 'CHARGES_28', sk=load_name)
-                                endif
-                            else
-                                info_type = 'NEUM_SUIP'
-                            endif
-                        endif
-                    else if (load_apply .eq. 'SUIV') then
-                        info_type = 'NEUM_SUIV'
-                    else if (load_apply .eq. 'FIXE_CSTE') then
-                        if (load_type(5:7).eq.'_FO') then
-                            if (func_para_inst(1:3) .eq. 'OUI') then
-                                info_type = 'NEUM_FT'
-                            else
-                                info_type = 'NEUM_FO'
-                            endif
-                        else
-                            info_type = 'NEUM_CSTE'
-                        endif
-                    else if (load_apply .eq. 'DIDI') then
-                        call jeexin(load_name//'.CHME.CIMPO.DESC', iret_cable_cine)
-                        if (iret_cable_cine .eq. 0 ) then
-                            call utmess('F', 'CHARGES_31', sk=load_name)
-                        endif
-                        if (load_type(5:7).eq.'_FO') then
-                            if (func_para_inst(1:3) .eq. 'OUI') then
-                                info_type = 'NEUM_FT'
-                            else
-                                info_type = 'NEUM_FO'
-                            endif
-                        else
-                            info_type = 'NEUM_CSTE'
-                        endif
-                    else
-                        ASSERT(.false.)
-                    endif
-                    if (func_para_vite .eq. 'OUI') then
-                        if (load_apply .ne. 'SUIV') then
-                            call utmess('F', 'CHARGES_55', sk=load_name)
-                        endif
-                        if (nomcmd .eq. 'STAT_NON_LINE') then
-                            call utmess('F', 'CHARGES_56', sk=load_name)
-                        endif
-                    endif
-                endif
-                if (info_type .ne. 'RIEN') then
-                    nb_info_type = nb_info_type + 1
-                    ASSERT(nb_info_type.lt.nb_info_maxi)
-                    list_info_type(nb_info_type) = info_type
-                endif
-            end do
+            call loadGetNeumannType(l_stat      , load_name   , ligrch        ,&
+                                    load_apply  , load_type   ,&
+                                    nb_info_type, nb_info_maxi, list_info_type)
 !
 ! --------- EVOL_CHAR
 !

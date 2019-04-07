@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romMultiParaDOMMatrCreate(ds_multipara, i_coef, syst_matr)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romMultiParaDOMMatrCreate(ds_multipara, i_coef, ds_solve)
 !
 use Rom_Datastructure_type
 !
@@ -30,11 +31,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/infniv.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-    integer, intent(in) :: i_coef
-    character(len=19), intent(in) :: syst_matr
+type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+integer, intent(in) :: i_coef
+type(ROM_DS_Solve), intent(in) :: ds_solve
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,7 +45,7 @@ implicit none
 !
 ! In  ds_multipara     : datastructure for multiparametric problems
 ! In  i_coef           : index of coefficient
-! In  syst_matr        : name of matrix
+! In  ds_solve         : datastructure to solve systems
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,6 +56,7 @@ implicit none
     character(len=24) :: matr_comb(nb_matr_maxi)
     integer :: i_coef_comb, i_matr, nb_matr
     aster_logical :: l_coefm_cplx
+    character(len=19) :: syst_matr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,8 +67,12 @@ implicit none
 !
 ! - Initializations
 !
+    syst_matr      = ds_solve%syst_matr
     nb_matr        = ds_multipara%nb_matr
     ASSERT(nb_matr .le. nb_matr_maxi)
+    type_comb(:)   = ' '
+    matr_comb(:)   = ' '
+    coef_comb(:)   = 0.d0
 !
 ! - Compute matrix
 !

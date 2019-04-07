@@ -21,7 +21,7 @@ interface
                       nomgen, nufaen, nomast, prefix, typgeo,&
                       nomtyp, nmatyp, infmed, ifm)
         integer :: nbrent
-        integer :: fid
+        med_idt :: fid
         character(len=*) :: nomamd
         integer :: typent
         integer :: nbgrou

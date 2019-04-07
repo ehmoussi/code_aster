@@ -21,6 +21,6 @@
 
 cata_msg = {
 
-    1 : _(u"""[%(i1)3d%%] Instant calculé :%(r1)12.5e, dernier instant archivé :%(r2)12.5e, au numéro d'ordre : %(i2)5d"""),
+    1 : _("""[%(i1)3d%%] Instant calculé :%(r1)12.5e, dernier instant archivé :%(r2)12.5e, au numéro d'ordre : %(i2)5d"""),
 
 }

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -87,6 +87,7 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
     integer :: nmocl
     parameter(nmocl=300)
     complex(kind=8) :: betac
+    character(len=3) :: klag2
     character(len=4) :: typval, typcoe
     character(len=24) :: valk(2)
     character(len=7) :: typcha
@@ -109,7 +110,7 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
     integer :: nbcmp, nec, nbnema, nbrela, nbteli, nbterm, nddla
     integer :: jliel0, jlielc, jnema0, jnemac, nbrela2, nbterm2
     character(len=3) :: rapide='OUI'
-    aster_logical :: detr_lisrel
+    aster_logical :: detr_lisrel, l_lag1
 
     integer :: niv, numel, nunewm, iexi, jlgns
     character(len=8), pointer :: lgrf(:) => null()
@@ -136,18 +137,37 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
     noma=lgrf(1)
     call dismoi('TYPE_CHARGE', charge, 'CHARGE', repk=typcha)
 !
+    l_lag1=.false.
+    if (getexm(' ' ,'DOUBLE_LAGRANGE').eq.1) then
+        call getvtx(' ', 'DOUBLE_LAGRANGE', scal=klag2)
+        if( klag2.eq.'NON' ) then
+            l_lag1=.true.
+        endif
+    endif
     if (typcha(1:4) .eq. 'MECA') then
         ligrch=charge//'.CHME.LIGRE'
         nomgd='DEPL_R'
-        nomte='D_DEPL_R_'
+        if( .not.l_lag1 ) then
+            nomte='D_DEPL_R_'
+        else
+            nomte='D_DEPL_RS'
+        endif
     else if (typcha(1:4).eq.'THER') then
         ligrch=charge//'.CHTH.LIGRE'
         nomgd='TEMP_R'
-        nomte='D_TEMP_R_'
+        if( .not.l_lag1 ) then
+            nomte='D_TEMP_R_'
+        else
+            nomte='D_TEMP_RS'
+        endif
     else if (typcha(1:4).eq.'ACOU') then
         ligrch=charge//'.CHAC.LIGRE'
         nomgd='PRES_C'
-        nomte='D_PRES_C_'
+        if( .not.l_lag1 ) then
+            nomte='D_PRES_C_'
+        else
+            ASSERT(.false.)
+        endif
     endif
 
     if (type_liai.ne.'LIN') then
@@ -324,7 +344,11 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
 !
         numel=0
         inema0=inema
-        nbno(1)=nbno(1)+2
+        if(l_lag1) then
+            nbno(1)=nbno(1)+1
+        else
+            nbno(1)=nbno(1)+2
+        endif
         do ino = 1, nbterm
             nomnoe=zk8(idnoeu+ino-1)
             call jenonu(jexnom(noma//'.NOMNOE', nomnoe), in)
@@ -351,7 +375,7 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
                 call noligr(ligrch, igrel, numel, in,&
                             3,inema, nbno(1), rlla(irela),jlgns,&
                             rapide=rapide,jliel0=jliel0,jlielc=jlielc,&
-                            jnema0=jnema0,jnemac=jnemac)
+                            jnema0=jnema0,jnemac=jnemac,l_lag1=l_lag1)
             else
                 call utmess('F', 'CHARGES2_33', sk=nomnoe)
             endif

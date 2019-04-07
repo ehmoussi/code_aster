@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,22 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine aniver(mater)
-!.======================================================================
-    implicit none
 !
-!      ANIVER --   CALCUL DES VALEURS PROPRES DE LA MATRICE
-!                  HOOKE POUR S'ASSURER QUE CELLE EST BIEN
-!                  DEFINIE POSITIVE DANS LE CAS DE L'ORTHOTROPIE
-!                  OU DE L'ISOTROPIE TRANSVERSE
+subroutine aniver(mate, v_mate_func)
 !
-!   ARGUMENT        E/S  TYPE         ROLE
-!    MATER          IN     K8       MATERIAU
+implicit none
 !
-!.========================= DEBUT DES DECLARATIONS ====================
-! -----  ARGUMENTS
-#include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/dortvp.h"
 #include "asterfort/indk16.h"
 #include "asterfort/jelira.h"
@@ -38,32 +28,40 @@ subroutine aniver(mater)
 #include "asterfort/rccome.h"
 #include "asterfort/utmess.h"
 #include "asterc/r8prem.h"
-    character(len=8) :: mater
-! -----  VARIABLES LOCALES
-    character(len=2) :: m2blan
-    character(len=2) :: k8bid
+!
+character(len=8), intent(in) :: mate
+aster_logical, pointer :: v_mate_func(:)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! DEFI_MATERIAU
+!
+! Compute eigenvalues for Hooke matrix (check stability)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  mate             : name of output datastructure
+! In  v_mate_func      : pointer to flags for function
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=2) :: m2blan, k8bid
     character(len=11) :: k11
     character(len=16) :: nomrc
     character(len=19) :: noobrc
-!
     real(kind=8) :: dorth(6, 6)
     real(kind=8) :: nu12, nu21, nu13, nu31, nu23, nu32
-!
-!
-!.========================= DEBUT DU CODE EXECUTABLE ==================
-!
-! ---- INITIALISATIONS
-!      ---------------
-!-----------------------------------------------------------------------
     integer :: iel, ien, iet, igln, iglt, igtn, iret
-    integer :: inuln, inult, inutn, jtypfo
-    integer ::  k, nbcrme, nbr, ndim
+    integer :: inuln, inult, inutn
+    integer ::  i_mate, mate_nb, nbr, ndim
     real(kind=8) :: c1, delta, deux, e1, e2, e3, g12
     real(kind=8) :: g13, g23, un, undemi, zero
     real(kind=8), pointer :: valr(:) => null()
     character(len=32), pointer :: vnomrc(:) => null()
     character(len=16), pointer :: valk(:) => null()
-!-----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
     zero = 0.0d0
     undemi = 0.5d0
     un = 1.0d0
@@ -86,27 +84,24 @@ subroutine aniver(mater)
 !
 ! --- RECUPERATION DU NOMBRE DE RELATIONS DE COMPORTEMENT :
 !     ---------------------------------------------------
-    call jelira(mater//'.MATERIAU.NOMRC', 'LONMAX', nbcrme)
+    call jelira(mate//'.MATERIAU.NOMRC', 'LONMAX', mate_nb)
 !
 ! --- RECUPERATION DU TABLEAU DES RELATIONS DE COMPORTEMENT :
 !     -----------------------------------------------------
-    call jeveuo(mater//'.MATERIAU.NOMRC', 'L', vk32=vnomrc)
-!
-! --- RECUPERATION DE L'INFORMATION MATERIAU FONCTION OU NON :
-!     ------------------------------------------------------
-    call jeveuo('&&OP0005.TYPFON', 'L', jtypfo)
+    call jeveuo(mate//'.MATERIAU.NOMRC', 'L', vk32=vnomrc)
+
 !
 ! --- BOUCLE SUR LES RELATIONS DE COMPORTEMENT :
 !     ----------------------------------------
-    do 20 k = 1, nbcrme
-        nomrc = vnomrc(k)
-        call rccome(mater, vnomrc(k), iret, k11_ind_nomrc=k11)
-        if ( iret .ne. 0 ) goto 20
-        noobrc = mater//k11
+    do i_mate = 1, mate_nb
+        nomrc = vnomrc(i_mate)(1:16)
+        call rccome(mate, vnomrc(i_mate), iret, k11_ind_nomrc=k11)
+        if ( iret .ne. 0 ) cycle
+        noobrc = mate//k11
 !
 ! --- SI LE MATERIAU N'EST PAS UNE FONCTION :
 !     -------------------------------------
-        if (.not.zl(jtypfo+k-1)) then
+        if (.not.(v_mate_func(i_mate))) then
 !
 ! ---   ON NE TRAITE QUE LES CAS ISOTROPE-TRANSVERSE ET ORTHOTROPE :
 !       ----------------------------------------------------------
@@ -167,8 +162,8 @@ subroutine aniver(mater)
 !           -----------------------
                     if (igln .eq. 0) then
                         ndim = 2
-                        if (ien .eq. 0) goto 20
-                        if (e3 .le. r8prem()) goto 20
+                        if (ien .eq. 0) cycle
+                        if (e3 .le. r8prem()) cycle
 !
                         c1 = e1/(un+nu12)
                         delta = un - nu12 - deux*nu13*nu13*e3/e1
@@ -192,8 +187,8 @@ subroutine aniver(mater)
 !           --------------------
                     else if (igln.ne.0) then
                         ndim = 3
-                        if (ien .eq. 0) goto 20
-                        if (e3 .le. r8prem()) goto 20
+                        if (ien .eq. 0) cycle
+                        if (e3 .le. r8prem()) cycle
 !
                         c1 = e1/(un+nu12)
                         delta = un - nu12 - deux*nu13*nu13*e3/e1
@@ -225,11 +220,11 @@ subroutine aniver(mater)
 !           ------------------------------------------------
                     if (igln .eq. 0) then
                         ndim = 2
-                        if (iet .eq. 0) goto 20
-                        if (e2 .le. r8prem()) goto 20
-                        if (e3 .le. r8prem()) goto 20
+                        if (iet .eq. 0) cycle
+                        if (e2 .le. r8prem()) cycle
+                        if (e3 .le. r8prem()) cycle
                         if (ien .eq. 0) then
-                            call utmess('A', 'ELEMENTS_9')
+                            call utmess('A', 'MATERIAL2_10')
                             goto 100
                         endif
 !
@@ -259,7 +254,7 @@ subroutine aniver(mater)
 !
 ! ---         TRAITEMENT DU CAS DES CONTRAINTES PLANES :
 !             ----------------------------------------
-100                      continue
+100                     continue
 !
                         dorth(:,:)=zero
 !
@@ -281,9 +276,9 @@ subroutine aniver(mater)
 !           --------------------
                     else if (igln.ne.0) then
                         ndim = 3
-                        if (iet .eq. 0) goto 20
-                        if (e2 .le. r8prem()) goto 20
-                        if (e3 .le. r8prem()) goto 20
+                        if (iet .eq. 0) cycle
+                        if (e2 .le. r8prem()) cycle
+                        if (e3 .le. r8prem()) cycle
                         if (ien .eq. 0) then
                             ndim = 2
 !
@@ -325,16 +320,10 @@ subroutine aniver(mater)
 ! ---         CALCUL DES VALEURS PROPRES DE LA MATRICE DORTH :
 !             ----------------------------------------------
                         call dortvp(ndim, nomrc, dorth, m2blan)
-!
                     endif
-!
                 endif
-!
             endif
-!
         endif
+    end do
 !
-20  end do
-!
-!.============================ FIN DE LA ROUTINE ======================
 end subroutine

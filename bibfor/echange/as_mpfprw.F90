@@ -26,14 +26,15 @@ subroutine as_mpfprw(fid, pflval, nbval, pro, cret)
 #include "asterfort/conv_int.h"
 #include "asterfort/utmess.h"
 #include "med/mpfprw.h"
-    aster_int :: fid, nbval, cret
+    med_idt :: fid
+    aster_int ::  nbval, cret
     aster_int :: pflval(*)
     character(len=*) :: pro
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: nbval4, cret4
     med_int, allocatable :: pflva4(:)

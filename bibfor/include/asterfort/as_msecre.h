@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 interface
     subroutine as_msecre(fid, nomes, dim, nomms, tycell,&
                       tygems, tygees, cret)
-        aster_int :: fid
+        med_idt :: fid
         character(len=*) :: nomes
         aster_int :: dim
         character(len=*) :: nomms

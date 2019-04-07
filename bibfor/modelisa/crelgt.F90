@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -113,7 +113,7 @@ subroutine crelgt(basez, ligrez)
 !
 ! ---  CREATION DU K8 QUI EST LE NOM DU MAILLAGE :
 !      -----------------------------------------
-    call wkvect(ligret//'.LGRF', base//' V K8', 2, jlgrf)
+    call wkvect(ligret//'.LGRF', base//' V K8', 3, jlgrf)
 !
 ! ---  CREATION DE L'ENTIER QUI EST LE NOMBRE DE MAILLES TARDIVES :
 !      ----------------------------------------------------------

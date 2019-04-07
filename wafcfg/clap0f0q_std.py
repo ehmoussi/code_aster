@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ def configure(self):
 #   for using metis with standard integer (since Metis_aster-510_aster4)
     self.env.append_value('CFLAGS', ['-DINTSIZE32'])
     self.env.append_value('OPT_ENV', [
-        'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-331/bin:$PATH'])
+        'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-400/bin:$PATH'])
     self.env['ADDMEM'] = 300
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
@@ -51,10 +51,10 @@ def configure(self):
     self.env.TFELVERS = TFELVERS
 
     self.env.append_value('LIBPATH', [
-        '/home/aster/public/lib_boost_1_55_0_gcc49/lib',
-        YAMMROOT + '/prerequisites/Python-2710/lib',
-        YAMMROOT + '/prerequisites/Hdf5-1814/lib',
-        YAMMROOT + '/prerequisites/Medfichier-331/lib',
+        ASTER_ROOT + '/public/lib_boost_1_55_0_gcc49/lib',
+        YAMMROOT + '/prerequisites/Python-365/lib',
+        YAMMROOT + '/prerequisites/Hdf5-1103/lib',
+        YAMMROOT + '/prerequisites/Medfichier-400/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/lib',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/lib',
@@ -64,9 +64,9 @@ def configure(self):
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Python-2710/include/python2.7',
-        YAMMROOT + '/prerequisites/Hdf5-1814/include',
-        YAMMROOT + '/prerequisites/Medfichier-331/include',
+        YAMMROOT + '/prerequisites/Python-365/include/python2.7',
+        YAMMROOT + '/prerequisites/Hdf5-1103/include',
+        YAMMROOT + '/prerequisites/Medfichier-400/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/include',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include',

@@ -28,13 +28,14 @@ subroutine as_msesei(fid, imasup, nomaes, nvtymd, dimest,&
 #include "asterfort/utmess.h"
 #include "med/msesei.h"
     character(len=*) :: nomaes, nomasu
-    aster_int :: fid, imasup, nvtymd, dimest, medcel, nbnosu
+    med_idt :: fid
+    aster_int :: imasup, nvtymd, dimest, medcel, nbnosu
     aster_int :: nbmssu, tygems, nbattc, prespr, nbattv, codret
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: imasu4, nvtym4, dimes4, medce4, nbnos4
     med_int :: nbmss4, tygem4, nbatc4, presp4, nbatv4, codre4

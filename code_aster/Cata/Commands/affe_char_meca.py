@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,6 +52,7 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
          EVOL_CHAR       =SIMP(statut='f',fr=tr("Champ de pression issu d'un autre calcul"),
                                typ=evol_char,min=1,max=1),
          LIAISON_EPX         =SIMP(statut='f',typ='TXM',into=("OUI",) ),
+         DOUBLE_LAGRANGE =SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="OUI"),
 
          PESANTEUR       =FACT(statut='f',max=1,fr=tr("Champ de pesanteur"),
             GROUP_MA         =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),

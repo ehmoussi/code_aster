@@ -105,7 +105,10 @@ RESU=MECA_STATIQUE(MODELE=MO,
 #-----------------------------------------------------------------------------------------------------------------------------
 
 FISS=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
-                    FOND_FISS=_F(GROUP_NO='NFF3'),
+                    FOND_FISS=_F(GROUP_MA='LFF1',
+                               GROUP_NO_ORIG='NFF1',
+                               GROUP_NO_EXTR='NFF2',
+                    ),
                     LEVRE_SUP=_F(GROUP_MA='LEVSUP'),
                     LEVRE_INF=_F(GROUP_MA='LEVINF'),
                     )

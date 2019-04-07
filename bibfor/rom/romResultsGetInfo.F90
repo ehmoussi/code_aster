@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romResultsGetInfo(result, field_name, model_user, ds_result)
+subroutine romResultsGetInfo(result, field_namez, model_user, ds_result)
 !
 use Rom_Datastructure_type
 !
@@ -31,10 +31,10 @@ implicit none
 #include "asterfort/rs_getfirst.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/modelNodeEF.h"
-#include "asterfort/romBaseComponents.h"
+#include "asterfort/romFieldGetInfo.h"
 !
 character(len=8), intent(in)  :: result
-character(len=16), intent(in) :: field_name
+character(len=*), intent(in) :: field_namez
 character(len=8), intent(in)  :: model_user
 type(ROM_DS_Result), intent(inout) :: ds_result
 !
@@ -54,16 +54,13 @@ type(ROM_DS_Result), intent(inout) :: ds_result
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: iret, nume_first
-    integer :: nb_equa = 0, nb_node = 0
+    integer :: nb_node = 0
     character(len=8)  :: model = ' ', mesh = ' '
-    character(len=24) :: field_refe = '&&ROM_COMP.FIELD'
-    integer :: nb_cmp_by_node
-    character(len=8) :: cmp_by_node(10)
-    aster_logical :: l_lagr
+    character(len=24) :: field_refe = '&&ROM_COMP.FIELD', field_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    field_name = field_namez
 !
 ! - Get information about model
 !
@@ -83,29 +80,20 @@ type(ROM_DS_Result), intent(inout) :: ds_result
     if (iret .ne. 0) then
         call utmess('F', 'ROM5_11', sk = field_name)
     endif
-    call dismoi('NB_EQUA'     , field_refe, 'CHAM_NO' , repi = nb_equa)
-    call dismoi('NOM_MAILLA'  , field_refe, 'CHAM_NO' , repk = mesh)
-!
-! - Get components in fields
-!
-    call romBaseComponents(mesh          , nb_equa    ,&
-                           field_name    , field_refe ,&
-                           nb_cmp_by_node, cmp_by_node, l_lagr)
+    call dismoi('NOM_MAILLA', field_refe, 'CHAM_NO', repk = mesh)
 !
 ! - Get number of nodes affected by model
 !
     call modelNodeEF(model, nb_node)
 !
+! - Get informations from (reference) field
+!
+    call romFieldGetInfo(model, field_name, field_refe, ds_result%field)
+!
 ! - Save parameters in datastructures
 !
-    ds_result%name           = result
-    ds_result%mesh           = mesh
-    ds_result%model          = model
-    ds_result%field_name     = field_name
-    ds_result%field_refe     = field_refe
-    ds_result%l_lagr         = l_lagr
-    ds_result%nb_cmp_by_node = nb_cmp_by_node
-    ds_result%cmp_by_node    = cmp_by_node
-    ds_result%nb_node        = nb_node
+    ds_result%name  = result
+    ds_result%mesh  = mesh
+    ds_result%model = model
 !
 end subroutine

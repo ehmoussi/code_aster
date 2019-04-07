@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
     1 : _("""
 Erreur utilisateur dans la commande CREA_CHAMP / EXTR / TABLE :
@@ -107,12 +105,6 @@ Erreur :
    ce qui est interdit.
    Point:       %(i1)d
    Sous-point : %(i2)d
-"""),
-
-    9 : _("""
-Erreur utilisateur :
-   Pour le matériau : %(k1)s, on cherche à redéfinir un mot clé déjà défini :
-   %(k2)s
 """),
 
     10 : _("""
@@ -363,13 +355,6 @@ Conseil:
  pour la maille  %(k1)s
 """),
 
-    80 : _("""
- Il n'y a aucun mot clé défini sous le comportement %(k1)s dans le fichier de
- commandes.
- Ce mot clé facteur n'apparaît donc pas dans l'écho des commandes.
- Ce mot clé facteur est inutile.
-"""),
-
     81 : _("""
   La maille de nom %(k1)s n'est pas de type SEG3 ou SEG4,
   elle ne sera pas affectée par %(k2)s
@@ -377,10 +362,6 @@ Conseil:
 
     82 : _("""
   GROUP_MA : %(k1)s
-"""),
-
-    83 : _("""
-Le nom du comportement '%(k1)s' est trop long, il dépasse les 32 caractères autorisés.
 """),
 
     84 : _("""

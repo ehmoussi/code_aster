@@ -27,7 +27,8 @@ subroutine as_mmhraw(fid, nomail, typgeo, nomatt, nbrval,&
 #include "asterfort/utmess.h"
 #include "med/mmhraw.h"
     character(len=*) :: nomail, nomatt
-    aster_int :: fid, typgeo, nbrval, codret
+    med_idt :: fid 
+    aster_int :: typgeo, nbrval, codret
     real(kind=8) :: tabval(*)
     aster_int :: numdt, numit
     parameter    (numdt = -1)
@@ -36,7 +37,7 @@ subroutine as_mmhraw(fid, nomail, typgeo, nomatt, nbrval,&
     call utmess('F', 'FERMETUR_2')
 #else
 !
-#if med_int_kind != aster_int_kind
+#if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind
     med_idt :: fidm
     med_int :: typge4, nbrva4, codre4, numdt4, numit4
     fidm = to_med_idt(fid)

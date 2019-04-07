@@ -42,7 +42,7 @@ from waflib import Build, Configure, Logs, Utils
 from waflib.Tools.c_config import DEFKEYS
 
 if sys.version_info.major < 3:
-    Logs.error("Python 2 not is yet supported. "
+    Logs.error("Python 2 is not supported anymore. "
                "Please upgrade to Python 3.5 or newer")
     sys.exit(1)
 

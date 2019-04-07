@@ -25,7 +25,6 @@ import numpy.linalg as LA
 
 import aster_core
 from .mac3coeur_coeur import CoeurFactory
-from scipy import stats
 from Utilitai.UniteAster import UniteAster
 
 UL=UniteAster()
@@ -512,30 +511,30 @@ def post_mac3coeur_ops(self, **args):
             valContactGrille.extend(valContactAssLameGrille)
             for quant in valQuantile :
                 liste_out.append({
-                    'LISTE_R' : stats.scoreatpercentile(valContactCuveGrille,quant),
+                    'LISTE_R' : N.percentile(valContactCuveGrille,quant),
                     'PARA'    : 'QuanLE_CU_G%d_%d'%(i+1,quant)
                     })
                 liste_out.append({
-                    'LISTE_R' : stats.scoreatpercentile(valContactAssLameGrille,quant),
+                    'LISTE_R' : N.percentile(valContactAssLameGrille,quant),
                     'PARA'    : 'QuanLE_AC_G%d_%d'%(i+1,quant)
                     })
                 liste_out.append({
-                    'LISTE_R' : stats.scoreatpercentile(valContactGrille,quant),
+                    'LISTE_R' : N.percentile(valContactGrille,quant),
                     'PARA'    : 'QuanLE_G%d_%d'%(i+1,quant)
                     })
         valContact = valContactCuve.ravel().tolist()
         valContact.extend(valContactAssLame.ravel())
         for quant in valQuantile :
             liste_out.append({
-                'LISTE_R' : stats.scoreatpercentile(valContactCuve.ravel(),quant),
+                'LISTE_R' : N.percentile(valContactCuve.ravel(),quant),
                 'PARA'    : 'QuanLE_CU_%d'%(quant,)
                 })
             liste_out.append({
-                'LISTE_R' : stats.scoreatpercentile(valContactAssLame.ravel(),quant),
+                'LISTE_R' : N.percentile(valContactAssLame.ravel(),quant),
                 'PARA'    : 'QuanLE_AC_%d'%(quant,)
                 })
             liste_out.append({
-                'LISTE_R' : stats.scoreatpercentile(valContact,quant),
+                'LISTE_R' : N.percentile(valContact,quant),
                 'PARA'    : 'QuanLE_%d'%(quant,)
                 })
 

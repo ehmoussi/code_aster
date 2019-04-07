@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,9 +56,9 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
 !
 ! - Get parameters in datastructure - General for DBR
 !
-    operation    = ds_para%operation
-    result_out   = ds_para%result_out
-    l_reuse      = ds_para%l_reuse
+    operation  = ds_para%operation
+    result_out = ds_para%result_out
+    l_reuse    = ds_para%l_reuse
 !
 ! - Print - General for DBR
 !
@@ -84,7 +84,7 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
         call dbr_para_info_tr(ds_para%para_tr)
 
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

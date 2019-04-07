@@ -1,5 +1,6 @@
+
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +21,7 @@
 !
 interface
     function hdfnbo(i, knom1)
-        integer :: i
+        med_idt :: i
         character(len=*) :: knom1
         integer :: hdfnbo
     end function hdfnbo

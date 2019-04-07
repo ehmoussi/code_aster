@@ -70,8 +70,8 @@ subroutine mdexma(nofimd, idfimd, nomamd, option, existm,&
     parameter (ednstr=0)
 !
 !
-    integer :: lnomam
-    integer :: idfimd, nbmaie
+    integer :: lnomam, nbmaie
+    med_idt :: idfimd
     integer :: iaux, jaux, kaux, tyaux
     integer :: vali(2)
 !

@@ -119,7 +119,7 @@ CHAMDEPL=MECA_STATIQUE(MODELE=MO,
 
 FISS=DEFI_FOND_FISS(MAILLAGE=MA,
                     SYME='OUI',
-                    FOND_FISS=_F(GROUP_NO='LFF',),
+                    FOND_FISS=_F(GROUP_MA='LFF',),
                     LEVRE_SUP=_F(GROUP_MA='LEVREINF',),
                     )
 

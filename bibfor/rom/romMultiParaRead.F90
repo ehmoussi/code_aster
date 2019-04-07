@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1003
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romMultiParaRead(ds_multipara)
 !
 use Rom_Datastructure_type
@@ -35,10 +37,10 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/romMultiCoefRead.h"
 #include "asterfort/romVariParaRead.h"
+#include "asterfort/romFieldGetInfo.h"
+#include "asterfort/as_allocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
+type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,11 +55,13 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_matr = 0
+    integer :: nb_matr = 0, nb_vect = 0
     integer :: i_matr, i_vect, i_vari_para, nbret, nb_vari_coef, nb_vari_para
-    character(len=1)  :: matr_type, vect_type, ktyp, matr_elem_type
+    character(len=1)  :: matr_type, vect_type, ktyp, matr_elem_type, vect_elem_type
     character(len=16) :: keywfact, type_vari_coef
-    character(len=8) :: matr_asse, vect_asse, gran_name
+    character(len=8) :: matr_asse, vect_asse, gran_name, model
+    character(len=19) :: prof_chno
+    character(len=24) :: field_name, vect_assez
     type(ROM_DS_MultiCoef) :: ds_multicoef
     type(ROM_DS_VariPara) :: ds_varipara
 !
@@ -77,6 +81,9 @@ implicit none
     matr_type = 'R'
     call getfac(keywfact, nb_matr)
     ASSERT(nb_matr .gt. 0)
+    AS_ALLOCATE(vk8 = ds_multipara%matr_name, size = nb_matr)
+    AS_ALLOCATE(vk8 = ds_multipara%matr_type, size = nb_matr)
+    allocate(ds_multipara%matr_coef(nb_matr))
     do i_matr = 1, nb_matr
         matr_asse      = ' '
         matr_elem_type = ' '
@@ -90,42 +97,68 @@ implicit none
             elseif (ktyp .eq. 'R') then
                 matr_elem_type = 'R'
             else
-                ASSERT(.false.)
-            endif   
+                ASSERT(ASTER_FALSE)
+            endif
         endif
         call romMultiCoefRead(ds_multicoef, keywfact, i_matr)
         ds_multipara%matr_name(i_matr) = matr_asse
         ds_multipara%matr_type(i_matr) = matr_elem_type
         ds_multipara%matr_coef(i_matr) = ds_multicoef
     end do
-    ds_multipara%nb_matr      = nb_matr
+    ds_multipara%nb_matr = nb_matr
+    AS_ALLOCATE(vk24 = ds_multipara%matr_mode_curr, size = nb_matr)
+    AS_ALLOCATE(vk24 = ds_multipara%prod_matr_mode, size = nb_matr)
+    AS_ALLOCATE(vk24 = ds_multipara%matr_redu, size = nb_matr)
 !
-! - Get informations about second member
+! - List of vectors
 !
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_23')
     endif
-    keywfact  = ' '
-    i_vect    = 1
-    call getvid(keywfact, 'VECTEUR', iocc=0, scal=vect_asse, nbret=nbret)
-    call dismoi('NOM_GD', vect_asse, 'CHAM_NO', repk=gran_name)
-    if (gran_name .eq. 'DEPL_R') then
-        vect_type = 'R'
-    elseif (gran_name .eq. 'DEPL_C') then
-        vect_type = 'C'
-    else
-        ASSERT(.false.)
-    endif
-    call romMultiCoefRead(ds_multicoef, keywfact, i_vect)
-    ds_multipara%vect_name = vect_asse
-    ds_multipara%vect_type = vect_type
-    ds_multipara%vect_coef = ds_multicoef
+    keywfact  = 'VECT_ASSE'
+    vect_type = 'R'
+    call getfac(keywfact, nb_vect)
+    ASSERT(nb_vect .gt. 0)
+    AS_ALLOCATE(vk8 = ds_multipara%vect_name, size = nb_vect)
+    AS_ALLOCATE(vk8 = ds_multipara%vect_type, size = nb_vect)
+    allocate(ds_multipara%vect_coef(nb_vect))
+    do i_vect = 1, nb_vect
+        vect_asse      = ' '
+        vect_elem_type = ' '
+        if (getexm(keywfact, 'VECTEUR') .eq. 1) then
+            call getvid(keywfact, 'VECTEUR', iocc=i_vect, scal=vect_asse, nbret=nbret)
+            ASSERT(nbret .gt. 0)
+            call dismoi('NOM_GD', vect_asse, 'CHAM_NO', repk=gran_name)
+            if (gran_name .eq. 'DEPL_C') then
+                vect_elem_type = 'C'
+                vect_type      = 'C'
+            elseif (gran_name .eq. 'DEPL_R') then
+                vect_elem_type = 'R'
+            else
+                ASSERT(.false.)
+            endif   
+        endif
+        call romMultiCoefRead(ds_multicoef, keywfact, i_vect)
+        ds_multipara%vect_name(i_vect) = vect_asse
+        ds_multipara%vect_type(i_vect) = vect_type
+        ds_multipara%vect_coef(i_vect) = ds_multicoef
+    end do
+    ds_multipara%nb_vect = nb_vect
+    AS_ALLOCATE(vk24 = ds_multipara%vect_redu, size = nb_vect)
+!
+! - Get informations from field
+!
+    vect_assez = vect_asse
+    call dismoi('PROF_CHNO', vect_assez, 'CHAM_NO', repk=prof_chno)
+    call dismoi('NOM_MODELE', prof_chno, 'PROF_CHNO', repk=model)
+    field_name = 'DEPL'
+    call romFieldGetInfo(model, field_name, vect_assez, ds_multipara%field, l_chck_ = ASTER_FALSE)
 !
 ! - Set system type
 !
-    ds_multipara%syst_type    = 'R'
+    ds_multipara%syst_type = 'R'
     if (vect_type .eq. 'C' .or. matr_type .eq. 'C') then
-        ds_multipara%syst_type    = 'C'
+        ds_multipara%syst_type = 'C'
     endif
 !
 ! - Read data for variations of multiparametric problems
@@ -145,6 +178,7 @@ implicit none
         endif
     endif
     ds_multipara%nb_vari_para = nb_vari_para
+    allocate(ds_multipara%vari_para(nb_vari_para))
     do i_vari_para = 1, nb_vari_para
         call romVariParaRead(ds_varipara, keywfact, i_vari_para)
         ds_multipara%vari_para(i_vari_para) = ds_varipara

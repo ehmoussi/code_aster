@@ -22,7 +22,7 @@ interface
                       typgeo, nomtyp, nnotyp, renumd, nmatyp,&
                       nommai, connex, typmai, prefix, infmed,&
                       modnum, numnoa)
-        integer :: fid
+        med_idt :: fid
         character(len=*) :: nomamd
         integer :: nbmail
         integer :: nbnoma

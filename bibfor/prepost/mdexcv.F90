@@ -71,8 +71,8 @@ subroutine mdexcv(nofimd, idfimd, nochmd, numpt, numord,&
     integer :: iterma
     parameter (iterma=1)
 !
-    integer :: idfimd, nbprof, iprof
-    integer :: iaux, npr, nip, ntmp
+    med_idt :: idfimd
+    integer :: nbprof, iprof, iaux, npr, nip, ntmp
 !
     character(len=8) :: saux08
     character(len=64) :: nompro, nomloc, nomamd

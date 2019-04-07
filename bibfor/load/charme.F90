@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,6 +63,7 @@ implicit none
 #include "asterfort/char_crea_neum.h"
 #include "asterfort/chveno.h"
 #include "asterfort/cormgi.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/initel.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeecra.h"
@@ -91,6 +92,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nb_dim, iret
+    character(len=3) :: klag2
     character(len=8) :: mesh, model
     character(len=16) :: keywordfact, command
     character(len=19) :: ligrch, ligrmo
@@ -401,6 +403,10 @@ implicit none
         call initel(ligrch)
         call jeveuo(ligrch//'.LGRF', 'E', vk8 = p_ligrch_lgrf)
         p_ligrch_lgrf(2) = model
+        call getvtx(' ', 'DOUBLE_LAGRANGE', scal=klag2)
+        if( klag2.eq.'NON' ) then
+            p_ligrch_lgrf(3) = 'LAG1'
+        endif
     endif
 !
 ! - Check mesh orientation (normals)

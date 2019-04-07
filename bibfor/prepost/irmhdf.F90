@@ -86,11 +86,12 @@ real(kind=8) :: coordo(*)
     aster_logical :: has_vers
     integer :: edmode, codret, vers(3), nbret
     character(len=8) :: tvers
-    integer :: nbtyp, fid
+    integer :: nbtyp 
+    med_idt :: fid, ifimed
     integer :: nmatyp(MT_NTYMAX), nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX)
     integer :: renumd(MT_NTYMAX), modnum(MT_NTYMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
     integer :: iaux, jaux, nuanom(MT_NTYMAX, MT_NNOMAX)
-    integer :: lnomam, ifimed
+    integer :: lnomam
     integer :: ifm, niv
     character(len=1) :: saux01
     character(len=6) :: saux06
