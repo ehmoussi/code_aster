@@ -21,7 +21,7 @@
 interface
     function hdfwsv(i, knom1, knom2, knom3, j,&
                     itab, k)
-        med_idt :: i
+        hid_t :: i
         character(len=*) :: knom1
         character(len=*) :: knom2
         character(len=*) :: knom3

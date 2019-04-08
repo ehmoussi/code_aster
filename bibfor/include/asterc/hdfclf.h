@@ -20,7 +20,7 @@
 !
 interface
     function hdfclf(i)
-        med_idt :: i
+        hid_t :: i
         integer :: hdfclf
     end function hdfclf
 end interface

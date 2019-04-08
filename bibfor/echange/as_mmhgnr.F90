@@ -23,7 +23,8 @@ subroutine as_mmhgnr(fid, nomail, typent, typgeo, tblogl,&
 #include "asterf_types.h"
 #include "asterfort/conv_int.h"
 #include "med/mmhgnr.h"
-    aster_int :: fid, typent, typgeo, n, cret, numdt, numo
+    med_idt :: fid
+    aster_int :: typent, typgeo, n, cret, numdt, numo
     aster_int :: tblogl(n)
     character(len=*) :: nomail
 #ifdef _DISABLE_MED

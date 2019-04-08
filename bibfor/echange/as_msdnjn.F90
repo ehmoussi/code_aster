@@ -21,8 +21,9 @@ subroutine as_msdnjn(fid,maa,n,cret)
 #include "asterf_config.h"
 #include "asterf_types.h"
 #include "med/msdnjn.h"
+    med_idt :: fid
     character(len=*) :: maa
-    aster_int :: fid, n, cret
+    aster_int :: n, cret
 
 #ifdef _DISABLE_MED
     call u2mess('F', 'FERMETUR_2')

@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,7 +18,8 @@
 #include "asterf_types.h"
 interface
     subroutine as_msdnjn(fid,maa,n,cret)
+        med_idt :: fid
         character(len=*) :: maa
-        aster_int :: fid, n, cret
+        aster_int :: n, cret
     end subroutine as_msdnjn
 end interface

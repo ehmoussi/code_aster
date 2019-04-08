@@ -20,7 +20,8 @@ interface
     subroutine as_msdcrr(fid,lmname,jname,numdt,numit,entlcl,&
                          geolcl,entdst,geodst,ncorr,corrtab,cret)
         character(len=*) :: lmname,jname
-        aster_int :: fid,numdt,numit,entlcl,geolcl,entdst
+        med_idt :: fid
+        aster_int :: numdt,numit,entlcl,geolcl,entdst
         aster_int :: geodst,ncorr,corrtab(*),cret
     end subroutine as_msdcrr
 end interface

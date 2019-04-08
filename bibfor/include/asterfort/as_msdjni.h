@@ -20,6 +20,7 @@ interface
     subroutine as_msdjni(fid,lmname,ind,jname,des,dom,&
                          rmname,nstep,ncor,cret)
         character(len=*) :: lmname,jname,des,rmname
-        aster_int :: fid,ind,dom,nstep,ncor,cret
+        med_idt :: fid
+        aster_int :: ind,dom,nstep,ncor,cret
     end subroutine as_msdjni
 end interface

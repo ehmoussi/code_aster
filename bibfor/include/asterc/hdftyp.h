@@ -21,7 +21,7 @@
 interface
     function hdftyp(i, knom1, j, knom2)
         integer :: j
-        med_idt :: i
+        hid_t :: i
         character(len=*) :: knom1
         character(len=*) :: knom2(j)
         integer :: hdftyp
