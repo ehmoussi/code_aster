@@ -20,7 +20,7 @@
 !
 interface
     function hdfopg(i, knom1)
-        med_idt :: i
+        hid_t :: i
         character(len=*) :: knom1
         integer :: hdfopg
     end function hdfopg

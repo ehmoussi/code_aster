@@ -21,7 +21,7 @@
 !
 interface
     function hdfnbo(i, knom1)
-        med_idt :: i
+        hid_t :: i
         character(len=*) :: knom1
         integer :: hdfnbo
     end function hdfnbo
