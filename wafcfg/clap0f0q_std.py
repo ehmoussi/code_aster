@@ -51,7 +51,6 @@ def configure(self):
     self.env.TFELVERS = TFELVERS
 
     self.env.append_value('LIBPATH', [
-        ASTER_ROOT + '/public/lib_boost_1_55_0_gcc49/lib',
         YAMMROOT + '/prerequisites/Python-365/lib',
         YAMMROOT + '/prerequisites/Hdf5-1103/lib',
         YAMMROOT + '/prerequisites/Medfichier-400/lib',
@@ -74,6 +73,11 @@ def configure(self):
         TFELHOME + '/include',
     ])
 
+    # waflib/extras/boost.py:check_boost forces /usr/lib/x86_64-linux-gnu
+    self.env.INCLUDES_BOOST = YAMMROOT + '/prerequisites/Boost-1580/include'
+    self.env.LIBPATH_BOOST = [YAMMROOT + '/prerequisites/Boost-1580/lib']
+    self.env.LIB_BOOST = ['boost_python-mt']
+
     # openblas from $ASTER_ROOT/public/lib embeds lapack
     opts.maths_libs = 'openblas'
 
@@ -86,6 +90,3 @@ def configure(self):
     opts.enable_mfront = True
 
     opts.enable_petsc = False
-
-    opts.boost_includes = '/home/aster/public/lib_boost_1_55_0_gcc49/include'
-    opts.boost_libs = '/home/aster/public/lib_boost_1_55_0_gcc49/lib'

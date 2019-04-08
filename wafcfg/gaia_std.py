@@ -66,6 +66,11 @@ def configure(self):
         TFELHOME + '/include',
     ])
 
+    # waflib/extras/boost.py:check_boost forces /usr/lib/x86_64-linux-gnu
+    self.env.INCLUDES_BOOST = YAMMROOT + '/prerequisites/Boost-1580/include'
+    self.env.LIBPATH_BOOST = [YAMMROOT + '/prerequisites/Boost-1580/lib']
+    self.env.LIB_BOOST = ['boost_python-mt']
+
     self.env.append_value('LIB', ('pthread', 'util'))
     self.env.append_value('LIB_SCOTCH', ('scotcherrexit'))
     # to fail if not found
