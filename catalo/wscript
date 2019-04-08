@@ -19,6 +19,7 @@
 
 import os
 import os.path as osp
+import platform
 from functools import partial
 from itertools import chain
 import shutil
@@ -114,10 +115,12 @@ def build_cata_ele(self, ojb, install_path):
     after= bldnode.make_node('fort.4').abspath()
     os.rename(before, after)
 
+    # memory value
+    memlim = 2047 if "32" in platform.architecture()[0] else 4096
     try:
         #  generate the command line
         exec_pyaster(self, comm.abspath(), cwd=bldnode.abspath(),
-                     args=['--memory=1600'])
+                     args=['--memory={0}'.format(memlim)])
     finally: # fort.4 -> .ojb
         os.rename(after, before)
 
@@ -164,10 +167,8 @@ def exec_pyaster(self, pyfile, args, **kwargs):
     environ['ASTER_ELEMENTSDIR'] = ''
     kwargs['output'] = Context.BOTH
     try:
-        out, err = self.cmd_and_log(cmds, env=environ, shell=True, quiet=0, **kwargs)
-        #Logs.warn(out)
-        #Logs.warn(err)
-    except Exception as err:
+        self.cmd_and_log(cmds, env=environ, shell=True, quiet=0, **kwargs)
+    except Errors.WafError as err:
         Logs.warn('stdout: %s' % err.stdout)
         Logs.warn('stderr: %s' % err.stderr)
         Logs.info('To run manually, use:')

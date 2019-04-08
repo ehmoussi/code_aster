@@ -40,7 +40,9 @@ def configure(self):
     official_programs.check_prerequisites_package(self, YAMMROOT, '20190315')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
-    self.env['ADDMEM'] = 350
+    # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
+    # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
+    self.env['ADDMEM'] = 1600
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
     TFELVERS = '3.1.1'

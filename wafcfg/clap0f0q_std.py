@@ -43,7 +43,9 @@ def configure(self):
     self.env.append_value('CFLAGS', ['-DINTSIZE32'])
     self.env.append_value('OPT_ENV', [
         'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-400/bin:$PATH'])
-    self.env['ADDMEM'] = 300
+    # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
+    # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
+    self.env['ADDMEM'] = 500
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
     TFELVERS = '3.1.1'
