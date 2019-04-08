@@ -47,7 +47,8 @@ subroutine lrmjoi_wrap(nomu, nofimd)
     character(len=24) :: titre, nommai, nomnoe, typmai, adapma, gpptnn, gpptnm
     character(len=64) :: valk(2)
 !
-    integer :: nbmail, nbnoeu, nbgrno, fid, ifimed, ndim, codret, vali(3)
+    med_idt :: fid, ifimed
+    integer :: nbmail, nbnoeu, nbgrno, ndim, codret, vali(3)
     integer :: iaux
     integer :: edlect
     parameter (edlect=0)

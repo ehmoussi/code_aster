@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2019  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -19,7 +19,8 @@
 interface
     subroutine as_mmhgnr(fid, nomail, typent, typgeo, tblogl,&
                          n, cret)
-        aster_int :: fid, typent, typgeo, n, cret, numdt, numo
+        med_idt :: fid
+        aster_int :: typent, typgeo, n, cret, numdt, numo
         aster_int :: tblogl(n)
         character(len=*) :: nomail
     end subroutine as_mmhgnr

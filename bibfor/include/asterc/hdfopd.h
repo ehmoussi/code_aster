@@ -20,7 +20,7 @@
 !
 interface
     function hdfopd(i, knom1, knom2)
-        med_idt :: i
+        hid_t :: i
         character(len=*) :: knom1
         character(len=*) :: knom2
         integer :: hdfopd
