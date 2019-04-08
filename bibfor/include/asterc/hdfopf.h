@@ -21,6 +21,6 @@
 interface
     function hdfopf(knom1)
         character(len=*) :: knom1
-        med_idt :: hdfopf
+        hid_t :: hdfopf
     end function hdfopf
 end interface
