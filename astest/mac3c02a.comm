@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ TABP1 = POST_MAC3COEUR(RESULTAT    =  RESU,
                               _F( FORMAT = 'GRACE', UNITE = 32, TYPE_RESU   = 'MAXI', TYPE_VISU = 'AMPLITUDE',),
                               _F( FORMAT = 'GRACE', UNITE = 33, TYPE_RESU   = 'MAXI', TYPE_VISU = 'MODULE',), 
                               _F( FORMAT = 'GRACE', UNITE = 34, TYPE_RESU   = 'MAXI', TYPE_VISU = 'VECTEUR',), 
-                              _F( FORMAT = 'GRACE', UNITE = 35, POSITION = 'A_B', CONCEPTION = 'AFA', TYPE_VISU = 'DEFORME',),
+                              _F( FORMAT = 'GRACE', UNITE = 35, POSITION = 'A_B', CONCEPTION = 'AFAXL_N4', TYPE_VISU = 'DEFORME',),
                               _F( FORMAT = 'TABLE', UNITE = 36, NOM_SITE='BIDON'), 
                              )
                )
@@ -67,7 +67,7 @@ TABP2 = POST_MAC3COEUR(RESULTAT    =  RES_LM,
                               #_F( FORMAT = 'GRACE', UNITE = 32, TYPE_RESU   = 'MAXI', TYPE_VISU = 'AMPLITUDE',),
                               #_F( FORMAT = 'GRACE', UNITE = 33, TYPE_RESU   = 'MAXI', TYPE_VISU = 'MODULE',), 
                               #_F( FORMAT = 'GRACE', UNITE = 34, TYPE_RESU   = 'MAXI', TYPE_VISU = 'VECTEUR',), 
-                              #_F( FORMAT = 'GRACE', UNITE = 35, POSITION = 'A_B', CONCEPTION = 'AFA', TYPE_VISU = 'DEFORME',),
+                              #_F( FORMAT = 'GRACE', UNITE = 35, POSITION = 'A_B', CONCEPTION = 'AFAXL_N4', TYPE_VISU = 'DEFORME',),
                               _F( FORMAT = 'TABLE', UNITE = 46, NOM_SITE='BIDON'), 
                               _F( FORMAT = 'TABLE', UNITE = 47, NOM_SITE='BIDON', FORMAT_R='STANDARD'), 
                ))
@@ -398,13 +398,13 @@ TEST_TABLE(VALE_CALC=3.91886481766,            TABLE=TABP1,NOM_PARA='QuanLE_G4_9
 TEST_TABLE(VALE_CALC=1.48148503345,            TABLE=TABP1,NOM_PARA='QuanLE_CU_G5_70',)
 
 TEST_TABLE(VALE_CALC=2.02272262524,   TABLE=TABP2,NOM_PARA='moyRhoCoeur')
-TEST_TABLE(VALE_CALC=2.02272262524,   TABLE=TABP2,NOM_PARA='moRAFA'[:16])
+TEST_TABLE(VALE_CALC=2.02272262524,   TABLE=TABP2,NOM_PARA='moRAFAXL_N4'[:16])
 TEST_TABLE(VALE_CALC=2.45794062397  ,          TABLE=TABP2,NOM_PARA='maxRhoCoeur',)
-TEST_TABLE(VALE_CALC=2.45794062397  ,          TABLE=TABP2,NOM_PARA='maRAFA'[:16],)
+TEST_TABLE(VALE_CALC=2.45794062397  ,          TABLE=TABP2,NOM_PARA='maRAFAXL_N4'[:16],)
 TEST_TABLE(VALE_CALC=3.4799232399,   TABLE=TABP2,NOM_PARA='moyGravCoeur',)
 TEST_TABLE(VALE_CALC=4.89594037282 ,          TABLE=TABP2,NOM_PARA='maxGravCoeur',)
 TEST_TABLE(VALE_CALC=1.80572073548,   TABLE=TABP2,NOM_PARA='sigGravCoeur',)
-TEST_TABLE(VALE_CALC=4.89594037282,            TABLE=TABP2,NOM_PARA='maGAFA'[:16],)
+TEST_TABLE(VALE_CALC=4.89594037282,            TABLE=TABP2,NOM_PARA='maGAFAXL_N4'[:16],)
 TEST_TABLE(VALE_CALC=0.910172783487,            TABLE=TABP2,NOM_PARA='maxDeplGrille2',)
 TEST_TABLE(VALE_CALC=1.79462636252 ,         TABLE=TABP2,NOM_PARA='maxDeplGrille3',)
 TEST_TABLE(VALE_CALC=2.15380696473 ,          TABLE=TABP2,NOM_PARA='maxDeplGrille4',)

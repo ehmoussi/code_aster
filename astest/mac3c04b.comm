@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',UNITE=29,
                       _F(FONC_X=DEPLF,FONC_Y=FORCF,LEGENDE='Calcul',MARQUEUR =   0,COULEUR =    4,STYLE = 1,),
                       ),
               BORNE_X=(0.,0.022),BORNE_Y=(0.,1200.),ECHELLE_X='LIN',ECHELLE_Y='LIN',GRILLE_X=0.002,GRILLE_Y=200.,LEGENDE_X='DY(m)',LEGENDE_Y='effort (N)',
-              TITRE='Recalage essai de flexion afa3gl_1300',)
+              TITRE='Recalage essai de flexion AFA3GL_1300',)
 
 TEST_TABLE(CRITERE='RELATIF',REFERENCE='SOURCE_EXTERNE',PRECISION=0.175,VALE_CALC=0.00307381288541,  VALE_REFE=0.00333051088571,NOM_PARA='DY',TABLE=POST1,FILTRE=_F(NOM_PARA='INST',VALE=0.0026,),)
 TEST_TABLE(CRITERE='RELATIF',REFERENCE='SOURCE_EXTERNE',PRECISION=0.175,VALE_CALC=0.00468766745464,  VALE_REFE=0.004936052096  ,NOM_PARA='DY',TABLE=POST1,FILTRE=_F(NOM_PARA='INST',VALE=0.0028,),)
