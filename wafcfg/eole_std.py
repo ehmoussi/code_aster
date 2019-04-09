@@ -43,7 +43,10 @@ def configure(self):
     opts.with_prog_salome = True
     opts.with_prog_europlexus = True
 
-    self.env['ADDMEM'] = 700
+    # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
+    # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
+    self.env['ADDMEM'] = 2500
+
     self.env.append_value('OPT_ENV', [
         'module unload mkl',
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
