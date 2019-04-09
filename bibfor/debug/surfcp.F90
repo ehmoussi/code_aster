@@ -85,6 +85,8 @@ integer, intent(in) :: unit_msg
         write (unit_msg,*) '<CONTACT> ... FORMULATION CONTINUE (MAILLEE)'
     else if (cont_form.eq.3) then
         write (unit_msg,*) '<CONTACT> ... FORMULATION XFEM (NON MAILLEE)'
+    else if (cont_form.eq.5) then
+        write (unit_msg,*) '<CONTACT> ... FORMULATION LAC (MAILLEE)'
     else
         ASSERT(.false.)
     endif
