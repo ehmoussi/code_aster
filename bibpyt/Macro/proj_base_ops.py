@@ -22,6 +22,7 @@ def proj_base_ops(self, **args):
      Ecriture de la macro PROJ_BASE
     """
     from code_aster.Objects import GeneralizedDOFNumbering
+    from code_aster.Commands.ExecuteCommand import CO
     BASE = args.get("BASE")
     NB_VECT = args.get("NB_VECT")
     MATR_ASSE_GENE = args.get("MATR_ASSE_GENE")
