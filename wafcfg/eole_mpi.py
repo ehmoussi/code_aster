@@ -53,7 +53,7 @@ def configure(self):
     ])
 
     self.env.prepend_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Parmetis_aster-403_aste3/include',
+        YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/MPI/include',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/MPI/include',
         YAMMROOT + '/prerequisites/Petsc_mpi-394_aster/include',
