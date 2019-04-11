@@ -34,7 +34,7 @@ import os.path as osp
 import platform
 import re
 import sys
-from optparse import SUPPRESS_HELP, OptionParser
+from argparse import ArgumentParser, SUPPRESS
 from warnings import simplefilter, warn
 
 import aster
@@ -46,14 +46,6 @@ from Execution.strfunc import convert
 
 RCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir, os.pardir,
                     'share', 'aster'))
-
-
-def check_value(option, opt, value, parser):
-    """Callback to check some values."""
-    if opt == '--command':
-        if not osp.isfile(value):
-            parser.error("option '%s' expects an existing file" % opt)
-    setattr(parser.values, option.dest, value)
 
 
 class CoreOptions(object):
@@ -71,95 +63,96 @@ class CoreOptions(object):
         """Initialisation."""
         self._dbg = False
         self.opts = None
-        self.args = None
         self.info = {}
-        self.parser = parser = OptionParser(usage=self.doc,
-                                            prog=osp.basename(sys.executable))
-        parser.add_option(
-            '--command', dest='fort1', type='str', metavar='FILE',
-            action='callback', callback=check_value,
+        self.parser = parser = ArgumentParser(usage=self.doc,
+                                              prog=osp.basename(sys.executable))
+        parser.add_argument(
+            '--command', dest='fort1', type=str, metavar='FILE',
+            action='store',
             help="Code_Aster command file")
-        parser.add_option(
-            '--stage_number', dest='stage_number', type='int', metavar='NUM',
+        parser.add_argument(
+            '--stage_number', dest='stage_number', type=int, metavar='NUM',
             action='store', default=1,
             help="Stage number in the Study")
-        parser.add_option(
-            '--memjeveux', dest='memjeveux', type='float', action='store',
+        parser.add_argument(
+            '--memjeveux', dest='memjeveux', type=float, action='store',
             help="maximum size of the memory taken by the execution "
                  "(in Mw, prefer use --memory option)")
-        parser.add_option(
-            '--memory', dest='memory', type='float', action='store',
+        parser.add_argument(
+            '--memory', dest='memory', type=float, action='store',
             help="maximum size of the memory taken by the execution (in MB)")
-        parser.add_option(
-            '--tpmax', dest='tpmax', type='float', action='store',
+        parser.add_argument(
+            '--tpmax', dest='tpmax', type=float, action='store',
             help="limit of the time of the execution (in seconds)")
-        parser.add_option(
-            '--numthreads', dest='numthreads', type='int', action='store', default=1,
+        parser.add_argument(
+            '--numthreads', dest='numthreads', type=int, action='store', default=1,
             help="maximum number of threads")
-        parser.add_option(
-            '--max_base', dest='maxbase', type='float', action='store',
+        parser.add_argument(
+            '--max_base', dest='maxbase', type=float, action='store',
             help="limit of the size of the results database")
-        parser.add_option(
+        parser.add_argument(
             '--dbgjeveux', dest='dbgjeveux', action='store_true',
             help="turn on some additional checkings in the memory management")
-        parser.add_option(
+        parser.add_argument(
             '--num_job', dest='jobid', action='store',
             help="job ID of the current execution")
-        parser.add_option(
+        parser.add_argument(
             '--mode', dest='mode', action='store',
             help="execution mode (interactive or batch)")
-        parser.add_option(
+        parser.add_argument(
             '--interact', dest='interact', action='store_true', default=False,
             help="as 'python -i' works, it allows to enter commands after the "
             "execution of the command file.")
 
-        parser.add_option(
-            '--rcdir', dest='rcdir', type='str', action='store', metavar='DIR',
+        parser.add_argument(
+            '--rcdir', dest='rcdir', type=str, action='store', metavar='DIR',
             default=RCDIR,
             help="directory containing resources (material properties, "
                  "additional data files...). Defaults to {0}".format(RCDIR))
         # rep_outils/rep_mat/rep_dex options are deprecated, replaced by rcdir
-        parser.add_option(
-            '--rep_outils', dest='repout', type='str', action='store', metavar='DIR',
-            help=SUPPRESS_HELP)
-        parser.add_option(
-            '--rep_mat', dest='repmat', type='str', action='store', metavar='DIR',
-            help=SUPPRESS_HELP)
-        parser.add_option(
-            '--rep_dex', dest='repdex', type='str', action='store', metavar='DIR',
-            help=SUPPRESS_HELP)
+        parser.add_argument(
+            '--rep_outils', dest='repout', type=str, action='store', metavar='DIR',
+            help=SUPPRESS)
+        parser.add_argument(
+            '--rep_mat', dest='repmat', type=str, action='store', metavar='DIR',
+            help=SUPPRESS)
+        parser.add_argument(
+            '--rep_dex', dest='repdex', type=str, action='store', metavar='DIR',
+            help=SUPPRESS)
 
-        parser.add_option(
-            '--rep_glob', dest='repglob', type='str', action='store', metavar='DIR',
+        parser.add_argument(
+            '--rep_glob', dest='repglob', type=str, action='store', metavar='DIR',
             default='.',
             help="directory of the results database")
-        parser.add_option(
-            '--rep_vola', dest='repvola', type='str', action='store', metavar='DIR',
+        parser.add_argument(
+            '--rep_vola', dest='repvola', type=str, action='store', metavar='DIR',
             default='.',
             help="directory of the temporary database")
 
-        parser.add_option(
+        parser.add_argument(
             '--suivi_batch', dest='suivi_batch', action='store_true', default=False,
             help="force to flush of the output after each line")
-        parser.add_option(
+        parser.add_argument(
             '--totalview', dest='totalview', action='store_true', default=False,
             help="required to run Code_Aster through the Totalview debugger")
-        parser.add_option(
+        parser.add_argument(
             '--syntax', dest='syntax', action='store_true', default=False,
             help="only check the syntax of the command file is done")
-        parser.add_option(
+        parser.add_argument(
             '--ORBInitRef', dest='ORBInitRef', action='store', default=None,
             help="store the SALOME session to connect")
 
     def parse_args(self, argv):
         """Analyse les arguments de la ligne de commmande."""
         argv = _bwc_arguments(argv)
-        self.opts, self.args = self.parser.parse_args(argv[1:])
+        # argv[0] is E_SUPERV.py
+        self.opts, ignored = self.parser.parse_known_args(argv[1:])
+
+        if self._dbg:
+            print("Read options: %r" % vars(self.opts))
+            print("Ignored arguments: %r" % ignored)
         self.default_values()
         self.init_info()
-        if self._dbg:
-            print('options   :', self.opts)
-            print('arguments :', self.args)
 
     def init_info(self):
         """Stocke les informations générales (machine, os...)."""
@@ -268,13 +261,15 @@ def _bwc_arguments(argv):
     if inew:
         return argv
     long_opts = (
-        'commandes', 'num_job', 'mode',
-        'rep_mat', 'rep_dex', 'rep_vola', 'rep_glob',
-        'memjeveux', 'tpmax', 'memory', 'max_base', 'ORBInitRef',
+        'commandes', 'stage_number',
+        'memjeveux', 'memory', 'tpmax', 'numthreads', 'max_base',
+        'num_job', 'mode', 'rcdir',
+        'ORBInitRef',
+        'rep_mat', 'rep_dex', 'rep_glob', 'rep_vola',
     )
     # boolean options
     long_opts_sw = (
-        'suivi_batch', 'interact', 'verif', 'totalview', 'dbgjeveux',
+        'dbgjeveux', 'interact', 'suivi_batch', 'totalview', 'verif',
     )
     # removed options
     long_opts_rm = ('rep', 'mem', 'mxmemdy', 'memory_stat', 'memjeveux_stat',
@@ -287,7 +282,6 @@ def _bwc_arguments(argv):
     }
     orig = argv[:]
     new = []
-    buffer = ''
     while len(orig) > 0:
         arg = orig.pop(0)
         larg = arg.lstrip('-').split('=', 1)
