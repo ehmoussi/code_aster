@@ -18,6 +18,7 @@ Table of contents
    installation
    devguide/edf-workflow
 
+   copyright
 
 ******************
 Indices and tables

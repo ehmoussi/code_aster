@@ -49,6 +49,9 @@ from ..Utilities import Singleton, convert, no_new_attributes
 from .logger import DEBUG, INFO, logger
 from .options import Options
 
+DEFAULT_MEMORY_LIMIT = 2047 if "32" in platform.architecture()[0] else 4096
+DEFAULT_TIME_LIMIT = 86400
+DEFAULT_BASE_SIZE_LIMIT = 48000
 RCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir, os.pardir,
                     os.pardir, os.pardir, 'share', 'aster'))
 
@@ -253,14 +256,14 @@ class ExecutionParameter(object, metaclass=Singleton):
             help="turn on running mode for testcase")
 
         parser.add_argument('--memory',
-            action='store', type=float, default=2047,
+            action='store', type=float, default=DEFAULT_MEMORY_LIMIT,
             help="memory limit in MB used for code_aster objects "
                  "(default: 2047 MB)")
         parser.add_argument('--tpmax',
-            action='store', type=float, default=86400,
+            action='store', type=float, default=DEFAULT_TIME_LIMIT,
             help="time limit of the execution in seconds (default: 1 day)")
         parser.add_argument('--maxbase',
-            action='store', type=float, default=48000,
+            action='store', type=float, default=DEFAULT_BASE_SIZE_LIMIT,
             help="size limit in MB for code_aster out-of-core files (glob.*, "
               "default: 48 GB)")
         parser.add_argument('--numthreads',

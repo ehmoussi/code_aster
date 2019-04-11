@@ -43,7 +43,10 @@ def configure(self):
     opts.with_prog_salome = True
     opts.with_prog_europlexus = True
 
-    self.env['ADDMEM'] = 700
+    # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
+    # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
+    self.env['ADDMEM'] = 2500
+
     self.env.append_value('OPT_ENV', [
         'module unload mkl',
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
@@ -74,6 +77,11 @@ def configure(self):
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include_seq',
         TFELHOME + '/include',
     ])
+
+    # waflib/extras/boost.py:check_boost forces /usr/lib/x86_64-linux-gnu
+    self.env.INCLUDES_BOOST = YAMMROOT + '/prerequisites/Boost-1580/include'
+    self.env.LIBPATH_BOOST = [YAMMROOT + '/prerequisites/Boost-1580/lib']
+    self.env.LIB_BOOST = ['boost_python-mt']
 
     self.env.append_value('LIB', ('pthread', 'util'))
     self.env.append_value('LIB_SCOTCH', ('scotcherrexit'))

@@ -22,7 +22,8 @@ subroutine as_msdjni(fid,lmname,ind,jname,des,dom,rmname,nstep,ncor,cret)
 #include "asterf_types.h"
 #include "med/msdjni.h"
     character(len=*) :: lmname,jname,des,rmname
-    aster_int :: fid,ind,dom,nstep,ncor,cret
+    med_idt :: fid
+    aster_int :: ind,dom,nstep,ncor,cret
 
 #ifdef _DISABLE_MED
     call u2mess('F', 'FERMETUR_2')
