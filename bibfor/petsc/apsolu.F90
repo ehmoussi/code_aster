@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,8 +52,11 @@ use saddle_point_module, only : update_double_lagrange
     integer :: jnequ, jnequl, jnuglp, jnugl, jprddl, nloc, nglo, rang
     integer :: nbproc, lmat, neq, fictif, bs,ieq,k
     integer :: iloc, iglo
+    integer :: jrefn, jdeeq, numno1, nucmp1
     integer, dimension(:), pointer :: nlgp => null(), nulg=> null(), prddl =>null()
+    logical :: ldebug
 !
+    character(len=8)  :: noma
     character(len=14) :: nonu
     character(len=19) :: nomat, nosolv
     character(len=24) :: precon
@@ -70,6 +73,7 @@ use saddle_point_module, only : update_double_lagrange
     mpi_int :: mrank, msize
 !----------------------------------------------------------------
     call jemarq()
+    ldebug=.false.
 !
 !     -- LECTURE DU COMMUN
     nomat = nomat_courant
@@ -164,6 +168,18 @@ use saddle_point_module, only : update_double_lagrange
 !
 !     -- REMISE A L'ECHELLE DES LAGRANGES DANS LA SOLUTION
     call mrconl('MULT', lmat, 0, 'R', rsolu, 1)
+!
+    if (ldebug) then
+        call jeveuo(nonu//'.NUME.REFN', 'L', jrefn)
+        noma = zk24(jrefn)
+        call jeveuo(nonu//'.NUME.DEEQ', 'L', jdeeq)
+        do ieq = 1, neq
+            numno1 = zi(jdeeq+2*(ieq-1))
+            nucmp1 = zi(jdeeq +2*(ieq-1) + 1)
+            write(19,*) numno1, nucmp1, rsolu(ieq)
+        end do
+        call flush(19)
+    endif
 !
     call jedema()
 !

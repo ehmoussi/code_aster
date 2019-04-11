@@ -32,6 +32,7 @@ subroutine cpysol(nomat, numddl, rsolu, debglo, vecpet, nbval)
 #include "asterfort/jenuno.h"
 #include "asterfort/jexatr.h"
 #include "asterfort/jexnum.h"
+#include "asterfort/mrconl.h"
 #include "asterc/loisem.h"
 #include "asterfort/wkvect.h"
 #include "asterc/asmpi_comm.h"
@@ -53,6 +54,7 @@ subroutine cpysol(nomat, numddl, rsolu, debglo, vecpet, nbval)
     integer :: iret1, iret2, jjoine, nbnoee, idprn1, idprn2, nec, dime
     integer :: nunoel, l, jjoinr, jnujoi1, jnujoi2, nbnoer, nddll, ntot
     integer :: numnoe
+    logical :: ldebug
 !
     integer(kind=4) :: n4r, n4e, iaux4, num4, numpr4
     mpi_int :: mrank, msize, iermpi, mpicou
@@ -77,6 +79,7 @@ subroutine cpysol(nomat, numddl, rsolu, debglo, vecpet, nbval)
     zzprno(ili,nunoel,l) = zi(idprn1-1+zi(idprn2+ili-1)+ (nunoel-1)* (nec+2)+l-1)
 !
     call jemarq()
+    ldebug=.false.
 !
     call asmpi_comm('GET', mpicou)
     if (loisem() .eq. 8) then
@@ -237,24 +240,26 @@ subroutine cpysol(nomat, numddl, rsolu, debglo, vecpet, nbval)
             enddo
         endif
     enddo
-! nsellenet
-!     call jeveuo(numddl//'.NUME.DEEQ', 'L', jdeeq)
-!     call jeveuo(numddl//'.NUME.REFN', 'L', jrefn)
-!     noma = zk24(jrefn)
-!     nonulg = noma//'.NULOGL'
-!     call jeveuo(nonulg, 'L', jmlogl)
-!     do iaux = 1, nloc
-!         if ( zi(jprddl + iaux - 1) .eq. rang ) then
-!             nuno1 = zi(jmlogl + zi(jdeeq + (iaux - 1) * 2) - 1)
-!             nucmp1 = zi(jdeeq + (iaux - 1) * 2 + 1)
-!             write(19,*) zi(jnulg + iaux - 1), rsolu(iaux)
-!        endif
-!      enddo
-! nsellenet
 !
 ! -- REMISE A L'ECHELLE DES LAGRANGES DANS LA SOLUTION
     call jeveuo(nomat//'.&INT', 'L', lmat)
     call mrconl('MULT', lmat, 0, 'R', rsolu, 1)
+    if(ldebug) then
+        call jeveuo(numddl//'.NUME.DEEQ', 'L', jdeeq)
+        call jeveuo(numddl//'.NUME.REFN', 'L', jrefn)
+        noma = zk24(jrefn)
+        nonulg = noma//'.NULOGL'
+        call jeveuo(nonulg, 'L', jmlogl)
+        do iaux = 1, nloc
+            if ( zi(jprddl + iaux - 1) .eq. rang ) then
+                nuno1 = zi(jdeeq + (iaux - 1) * 2)
+                if( nuno1.ne.0 ) nuno1 = zi(jmlogl + nuno1 - 1)+1
+                nucmp1 = zi(jdeeq + (iaux - 1) * 2 + 1)
+                write(30+rang,*) nuno1,nucmp1,rsolu(iaux)
+            endif
+        enddo
+        flush(30+rang)
+    endif
 
     call jedema()
 #endif
