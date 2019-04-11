@@ -11,6 +11,9 @@ Introduction
 The documentation is written in `reStructuredText`_ using the
 `Sphinx Documentation Generator <http://www.sphinx-doc.org>`_.
 
+The theme is based on `Python Docs Sphinx Theme
+<https://github.com/codeaster/python-docs-theme>`_ with a few modifications.
+
 See the Sphinx Documentation for details.
 
 
