@@ -25,7 +25,8 @@ subroutine as_msdcrr(fid,lmname,jname,numdt,numit,entlcl,&
 #include "asterfort/conv_int.h"
 #include "med/msdcrr.h"
     character(len=*) :: lmname,jname
-    aster_int :: fid,numdt,numit,entlcl,geolcl,entdst
+    med_idt :: fid
+    aster_int :: numdt,numit,entlcl,geolcl,entdst
     aster_int :: geodst,ncorr,corrtab(*),cret
 
 #ifdef _DISABLE_MED

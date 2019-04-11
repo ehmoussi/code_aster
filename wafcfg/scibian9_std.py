@@ -40,7 +40,9 @@ def configure(self):
     official_programs.check_prerequisites_package(self, YAMMROOT, '20190315')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
-    self.env['ADDMEM'] = 350
+    # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
+    # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
+    self.env['ADDMEM'] = 1600
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
     TFELVERS = '3.1.1'
@@ -65,6 +67,11 @@ def configure(self):
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include_seq',
         TFELHOME + '/include',
     ])
+
+    # waflib/extras/boost.py:check_boost forces /usr/lib/x86_64-linux-gnu
+    self.env.INCLUDES_BOOST = '/opt/boost/1.58.0/include'
+    self.env.LIBPATH_BOOST = ['/opt/boost/1.58.0/lib']
+    self.env.LIB_BOOST = ['boost_python-mt']
 
     self.env.append_value('LIB', ('pthread', 'util'))
     self.env.append_value('LIB_SCOTCH', ('scotcherrexit'))
