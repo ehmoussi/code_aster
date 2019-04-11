@@ -56,7 +56,7 @@ class JeveuxVectorInstance : public JeveuxObjectInstance, private AllowedJeveuxT
      *   il faut donc faire appel a JeveuxVectorInstance::updateValuePointer
      */
     JeveuxVectorInstance( const std::string &nom, JeveuxMemory mem = Permanent )
-        : JeveuxObjectInstance( nom, mem ), _valuePtr( NULL ){};
+        : JeveuxObjectInstance( nom, mem ), _valuePtr( nullptr ){};
 
     /**
      * @brief Destructeur
@@ -65,7 +65,7 @@ class JeveuxVectorInstance : public JeveuxObjectInstance, private AllowedJeveuxT
 #ifdef __DEBUG_GC__
         std::cout << "JeveuxVector.destr: " << _name << std::endl;
 #endif
-        _valuePtr = NULL;
+        _valuePtr = nullptr;
     };
 
     /**
@@ -98,14 +98,28 @@ class JeveuxVectorInstance : public JeveuxObjectInstance, private AllowedJeveuxT
      * @param i Indice dans le tableau Jeveux
      * @return la valeur du tableau Jeveux a la position i
      */
-    inline const ValueType &operator[]( const int &i ) const { return _valuePtr[i]; };
+    inline const ValueType &operator[]( const int &i ) const
+    {
+#ifdef _DEBUG_CXX
+        if( _valuePtr == nullptr )
+            throw std::runtime_error("Vector not allocated " + _name);
+#endif
+        return _valuePtr[i];
+    };
 
     /**
      * @brief Surcharge de l'operateur [] sans const (pour les lvalue)
      * @param i Indice dans le tableau Jeveux
      * @return la valeur du tableau Jeveux a la position i
      */
-    inline ValueType &operator[]( const int &i ) { return _valuePtr[i]; };
+    inline ValueType &operator[]( const int &i )
+    {
+#ifdef _DEBUG_CXX
+        if( _valuePtr == nullptr )
+            throw std::runtime_error("Vector not allocated " + _name);
+#endif
+        return _valuePtr[i];
+    };
 
     /**
      * @brief Fonction d'allocation d'un vecteur Jeveux
