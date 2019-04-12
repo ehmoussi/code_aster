@@ -147,7 +147,7 @@ for i in range(NCAL):
           else :
             Ti = Tmax
 
-          if timem <= .5 : 
+          if timem <= .5 :
             Tm = T0 + timem/tmax * (Tmax - T0)
           else :
             Tm = Tmax
@@ -163,7 +163,7 @@ for i in range(NCAL):
           tempi= DEFI_FONCTION (NOM_PARA='INST',NOM_RESU='TEMP',
                                 VALE=(timem,Ti,time,Ti));
 
-          print(('i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp))
+          print('i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp)
 
           # variation des coef du comportement avec la temperature
           # correction eventuelle des valeurs initiales du temps ti

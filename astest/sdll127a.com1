@@ -92,12 +92,12 @@ array_calc = NP.array(tmas)
 array_refe = NP.array(refe)
 erreur = NP.abs((array_calc - array_refe) / array_refe * 100.)
 
-print(('Masses référence:', array_refe))
-print(('Masses calculées:', array_calc))
-print(('Erreurs (%):', erreur))
-print(('Erreur maximale (%):', NP.max(erreur)))
+print('Masses référence:', array_refe)
+print('Masses calculées:', array_calc)
+print('Erreurs (%):', erreur)
+print('Erreur maximale (%):', NP.max(erreur))
 
-print(('Masse totale:', masse_refe, masse_totale, errtot, '%'))
+print('Masse totale:', masse_refe, masse_totale, errtot, '%')
 
 # C'est sur le dernier élément que l'erreur est la plus grande
 TEST_TABLE(REFERENCE='ANALYTIQUE',

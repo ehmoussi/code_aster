@@ -751,7 +751,7 @@ def post_endo_fiss_ops(self,
     for recherche in RECHERCHE:
         dRECHERCHE = recherche.cree_dict_valeurs(recherche.mc_liste)
         for i in list(dRECHERCHE.keys()):
-            if dRECHERCHE[i] == None:
+            if dRECHERCHE[i] is None:
                 del dRECHERCHE[i]
         l_dRECHERCHE.append(dRECHERCHE)
 

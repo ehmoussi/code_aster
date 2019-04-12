@@ -43,6 +43,7 @@ def configure(self):
         self.static_lib_pref()
     self.check_python()
     self.check_numpy()
+    self.check_asrun()
     if embed_py:
         self.revert_lib_pref()
         if self.env['LIB_PYEMBED']:
@@ -143,6 +144,18 @@ def check_numpy_version(self, minver=None):
 
     if not result:
         self.fatal('The NumPy version is too old, expecting %r' % (minver,))
+
+@Configure.conf
+def check_asrun(self):
+    if not self.env['PYTHON']:
+        self.fatal('load python tool first')
+    # getting python module
+    self.start_msg('Checking for asrun')
+    self.check_python_module('asrun')
+    import asrun
+    self.env.append_unique('CFG_PYTHONPATH',
+        [osp.normpath(osp.dirname(osp.dirname(asrun.__file__)))])
+    self.end_msg(asrun.__file__)
 
 @Configure.conf
 def check_optimization_python(self):

@@ -250,7 +250,7 @@ for (vale, noeud) in enumerate(liste_nom_noe) :
 
     nom_i = 'ACCE' + str(vale+1)
     nom_acc = noeud
-    print(("vale noeud", vale, noeud, nom_acc))
+    print("vale noeud", vale, noeud, nom_acc)
 
 
     ACC[vale]=RECU_FONCTION(TABLE=ACCEU,

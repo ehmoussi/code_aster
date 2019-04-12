@@ -101,7 +101,7 @@ class SYSTEM:
         Start message in verbose mode
         """
         Lm = self._LineLen
-        if verbose == None:
+        if verbose is None:
             verbose = self.verbose
         if verbose:
             pcmd = cmd
@@ -113,7 +113,7 @@ class SYSTEM:
         """
         End message in verbose mode
         """
-        if verbose == None:
+        if verbose is None:
             verbose = self.verbose
         if verbose:
             if iret == 0:
@@ -128,7 +128,7 @@ class SYSTEM:
         """
         End message in verbose mode
         """
-        if verbose == None:
+        if verbose is None:
             verbose = self.verbose
         if verbose:
             self._print(_('[ SKIP ]'))

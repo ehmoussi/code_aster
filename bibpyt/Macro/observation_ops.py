@@ -152,7 +152,7 @@ def observation_ops(self,
                 else:
                     TYPE_CHAM = 'NOEU_EPSI_R'
 
-        if TYPE_CHAM == None:
+        if TYPE_CHAM is None:
             UTMESS('F', 'UTILITAI8_24', valk=['NOEU_EPSI', nomcham])
         else:
             num_ordr = RESULTAT.getRanks()
@@ -202,7 +202,7 @@ def observation_ops(self,
                             l_noeud[i] = l_noeud[i].strip()
                         lnoeuds[str(nb_mcfact)] = l_noeud
 
-                if l_noeud == None:
+                if l_noeud is None:
                     UTMESS('F', 'MODELISA3_13', valk=['EPSI_MOYENNE'])
 
                 if TYPE_CHAM[-1:] == 'C':
@@ -632,7 +632,7 @@ def observation_ops(self,
                     except KeyError:
                         nomchamx = None
 
-                    if nomchamx == None or nomchamx == nomcham:
+                    if nomchamx is None or nomchamx == nomcham:
 
                         mcfact1 = {}
 
@@ -740,7 +740,7 @@ def observation_ops(self,
 # Recopie de __proj dans RESU si celle-ci
 # n'a pas encore ete faite via FILTRE
 #*************************************************
-        if resu_filtre == None:
+        if resu_filtre is None:
             RESU = PROJ_CHAMP(METHODE='COLLOCATION',
                               RESULTAT=__proj,
                               MODELE_1=modele,
@@ -895,17 +895,17 @@ def crea_repere_xy(vect_x, vect_y):
     """Calcul des angles nautiques a partir des directions vect_x et vect_y.
        Si vect_x != None et vect_y != None alors on impose le premier vecteur de base
            colineaire a vect_x et le deuxieme vecteur dans le plan (vect_x,vect_y)
-       Si vect_x != None et vect_y == None alors on impose le premier vecteur de base
+       Si vect_x != None et vect_y is None alors on impose le premier vecteur de base
            colineaire a vect_x
-       Si vect_x == None et vect_y != None alors on impose le deuxieme vecteur de base
+       Si vect_x is None et vect_y != None alors on impose le deuxieme vecteur de base
            colineaire a vect_y
-       Si vect_x == None et vect_y == None alors on ne fait rien
+       Si vect_x is None et vect_y is None alors on ne fait rien
     """
 
     import numpy
     from Utilitai.Utmess import UTMESS
 
-    if vect_x == None and vect_y == None:
+    if vect_x is None and vect_y is None:
         angl_naut = (0., 0., 0.)
     else:
         if vect_x and vect_y:

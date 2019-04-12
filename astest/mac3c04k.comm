@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -55,8 +55,8 @@ COMP_DCH = LIRE_FONCTION(UNITE=22,
                     NOM_PARA='DX',
                     PROL_DROITE='CONSTANT',
                     PROL_GAUCHE = 'CONSTANT',);
-# 
-# 
+
+
 COMPR=CALC_CHAMP(reuse =COMPR,
                  RESULTAT=COMPR,
                  FORCE=('FORC_NODA',),)
@@ -97,16 +97,16 @@ FORC2=RECU_FONCTION(
              PROL_GAUCHE='CONSTANT',)
 
 FORCC=CALC_FONCTION(COMB=_F(FONCTION=FORC2, COEF=-1.,),)
-# # 
-# # # l'activation des commandes suivantes permet
-# # # de tracer la courbe force-deplacement
+
+# l'activation des commandes suivantes permet
+# de tracer la courbe force-deplacement
 IMPR_FONCTION(FORMAT='XMGRACE',UNITE=29,
               COURBE=(_F(FONCTION=COMP_CH ,LEGENDE='essai compression - charge'  ,MARQUEUR =   0,COULEUR =    2,STYLE = 1,),
                       _F(FONCTION=COMP_DCH,LEGENDE='essai compression - decharge',MARQUEUR =   0,COULEUR =    2,STYLE = 1,),
                       _F(FONC_X=DEPLC,FONC_Y=FORCC,LEGENDE='Calcul',MARQUEUR =   0,COULEUR =    4,STYLE = 1,),
                        ),
               BORNE_X=(0.,1.3E-3),BORNE_Y=(0.,40000.),ECHELLE_X='LIN',ECHELLE_Y='LIN',GRILLE_X=0.2E-3,GRILLE_Y=10000.,LEGENDE_X='DX(mm)',LEGENDE_Y='effort (N)',
-              TITRE='Recalage essai de compression afa3glaai_1300',)
+              TITRE='Recalage essai de compression AFA3GLAAI_1300',)
 # 
 # 
 TEST_TABLE(CRITERE='RELATIF',REFERENCE='SOURCE_EXTERNE',PRECISION=0.03,  VALE_CALC=9.17857984993E-05,VALE_REFE=8.95016979526e-05,NOM_PARA='DX',TABLE=POST1,FILTRE=_F(NOM_PARA='INST',VALE=5.500E-4,),)

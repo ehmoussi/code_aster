@@ -146,7 +146,7 @@ for i in range(NCAL):
           else :
             Ti = Tmax
 
-          if timem <= .5 : 
+          if timem <= .5 :
             Tm = T0 + timem/tmax * (Tmax - T0)
           else :
             Tm = Tmax
@@ -162,7 +162,7 @@ for i in range(NCAL):
                    VALE=(  timem , Ti, time , Ti)
                    )
 
-          print(('i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp))
+          print('i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp)
 
           if i > 0 :
              SXM = SXM *(YOUN(Ti)/YOUN(Tm))

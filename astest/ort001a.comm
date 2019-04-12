@@ -71,7 +71,7 @@ MO_THER=AFFE_MODELE(MAILLAGE=MAIL,
 # and STATIONNAIRE='OUI', cf. R5.02.02.
 # So we use constant properties evaluated à TEMP=mean(Tint(t=0)) with THER_LINEAIRE
 temp_moy0 = G_input[:, 0].mean()
-print(('Température moyenne à t=0 :', temp_moy0))
+print('Température moyenne à t=0 :', temp_moy0)
 
 MAT_TH0=INCLUDE_MATERIAU(NOM_AFNOR=material,
                          TYPE_MODELE='REF',

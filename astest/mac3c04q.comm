@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -106,7 +106,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',UNITE=29,
                       _F(FONC_X=DEPLC,FONC_Y=FORCC,LEGENDE='calcul',MARQUEUR =   0,COULEUR =    4,STYLE = 1,),
                       ),
               BORNE_X=(0.,3.E-3),BORNE_Y=(0.,45000.),ECHELLE_X='LIN',ECHELLE_Y='LIN',GRILLE_X=0.2E-3,GRILLE_Y=10000.,LEGENDE_X='DX(mm)',LEGENDE_Y='effort (N)',
-              TITRE='Recalage essai de compression RFA900Zirlo',)
+              TITRE='Recalage essai de compression RFA900',)
 # 
 TEST_TABLE(CRITERE='RELATIF',REFERENCE='SOURCE_EXTERNE',PRECISION=0.62,  VALE_CALC=0.000109410438324,VALE_REFE=0.000285306869734,NOM_PARA='DX',TABLE=POST1,FILTRE=_F(NOM_PARA='INST',VALE=5.500E-4,),)
 TEST_TABLE(CRITERE='RELATIF',REFERENCE='SOURCE_EXTERNE',PRECISION=0.30, VALE_CALC=0.000905221809801,VALE_REFE=0.00127753540794 ,NOM_PARA='DX',TABLE=POST1,FILTRE=_F(NOM_PARA='INST',VALE=7.500E-4,),)

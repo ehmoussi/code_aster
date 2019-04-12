@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ def mode_iter_simult_prod(TYPE_RESU, **args ):
     # sinon on est dans le cas 'DYNAMIQUE' donc **args doit contenir les mots-clés
     # MATR_RIGI et (faculativement) MATR_AMOR, et on peut y accéder
     vale_rigi = args['MATR_RIGI']
-    if (vale_rigi== None) : # si MATR_RIGI non renseigné
+    if (vale_rigi is None) : # si MATR_RIGI non renseigné
        # on retourne un type fictif pour que le plantage aie lieu dans la lecture du catalogue
        return ASSD
     vale_amor = args.get('MATR_AMOR')
@@ -97,7 +97,7 @@ MODE_ITER_SIMULT_CATA=OPER(nom="MODE_ITER_SIMULT",op=  45, sd_prod= mode_iter_si
 
          b_dynam        =BLOC(condition = "TYPE_RESU == 'DYNAMIQUE'",
            MATR_RIGI          =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
-                                                    matr_asse_gene_r,matr_asse_gene_c,matr_asse_pres_r, 
+                                                    matr_asse_gene_r,matr_asse_gene_c,matr_asse_pres_r,
                                                     matr_asse_elim_r, ) ),
            MATR_MASS          =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_gene_r,matr_asse_pres_r,
                                                     matr_asse_temp_r, matr_asse_elim_r ) ),

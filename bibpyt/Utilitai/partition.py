@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: aimery.assire at edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
 import aster_core
 import aster
@@ -300,7 +300,7 @@ class MAIL_PY:
                 sys.exit()
 
         # Récupération d'une unité logique libre si besoin
-        if (unite == None):
+        if (unite is None):
             unite = LogicalUnitFile._get_free_number()
         name = LogicalUnitFile.filename_from_unit(unite)
         fileObject = LogicalUnitFile(unite, name, Action.Open, FileType.Ascii,

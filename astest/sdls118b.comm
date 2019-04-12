@@ -273,13 +273,13 @@ ssi_1=RECU_FONCTION(RESU_GENE=ssi_1_a,
                        NOEUD=( 'N11'  ),
                        INTERPOL='LIN',
                        TITRE='ACCELERATION AU CENTRE BAS DU RADIER',);
-                       
+
 DX11_1a = RECU_FONCTION(RESU_GENE=ssi_1_a,
                        NOM_CHAM='DEPL',
                        NOM_CMP='DX',
                        NOEUD=( 'N11'  ),
                        INTERPOL='LIN',
-                       TITRE='DEPLACEMENT AU CENTRE BAS DU RADIER',);                       
+                       TITRE='DEPLACEMENT AU CENTRE BAS DU RADIER',);
 
 ##Sans variabilite spatiale, la reponse en acceleration
 ##est egale au signal d'entree (le filtre h(w) vaut 1)
@@ -336,7 +336,7 @@ ssi_1b=RECU_FONCTION(RESU_GENE=ssi_1_b,
                        INTERPOL='LIN',
                        TITRE='ACCELERATION AU CENTRE BAS DU RADIER',);
 
-                      
+
 DX11_1b = RECU_FONCTION(RESU_GENE=ssi_1_b,
                        NOM_CHAM='DEPL',
                        NOM_CMP='DX',
@@ -344,7 +344,7 @@ DX11_1b = RECU_FONCTION(RESU_GENE=ssi_1_b,
                        INTERPOL='LIN',
                        TITRE='DEPLACEMENT AU CENTRE BAS DU RADIER',);
 
-                       
+
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.02794363058252,
                         CRITERE='RELATIF',
                         VALE_PARA=13.685672,
@@ -482,7 +482,7 @@ SRADBX3=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ssi_2b, LIST_FREQ = L_FREQ,
 
 
 amo, sro_sol = SRADBX0.Valeurs()
-print((amo, sro_sol))
+print(amo, sro_sol)
 sro_freq = sro_sol[0][0]
 sro_vale0 = sro_sol[0][1]
 amo, sro_sol = SRADBX1.Valeurs()

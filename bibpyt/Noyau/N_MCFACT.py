@@ -62,7 +62,7 @@ class MCFACT(N_MCCOMPO.MCCOMPO):
     def GETVAL(self, val):
         """
             Retourne la valeur effective du mot-clé en fonction
-            de la valeur donnée. Defaut si val == None
+            de la valeur donnée. Defaut si val is None
         """
         if (val is None and hasattr(self.definition, 'defaut')):
             return self.definition.defaut

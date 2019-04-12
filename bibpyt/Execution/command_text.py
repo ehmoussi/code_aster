@@ -91,7 +91,7 @@ class CommandTextVisitor(JDCVisitor):
         self._newline()
         self.curline.append("[...]")
         self._newline()
-        print((MAXSIZE_MSGKEEP.format(MAXSIZE, 'unknown')))
+        print(MAXSIZE_MSGKEEP.format(MAXSIZE, 'unknown'))
 
     def _add_indent(self):
         """Set the next indent spacing."""

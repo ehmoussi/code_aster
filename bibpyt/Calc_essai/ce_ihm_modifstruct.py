@@ -396,7 +396,7 @@ class InterfaceExpansion(Frame):
 
         objects = self.modif_struct.objects
         matr_rig = objects.get_matr(self.var_raid_name.get())
-        if matr_rig == None:
+        if matr_rig is None:
             disp_mess(("Il faut selectionner une matrice raideur "
                        "parmi celles proposées!"))
             retour = False

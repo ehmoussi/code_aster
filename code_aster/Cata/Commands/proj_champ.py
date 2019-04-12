@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ def proj_champ_prod(RESULTAT=None,CHAM_GD=None,METHODE=None,**args ):
         return (corresp_2_mailla, resultat_sdaster,
                 cham_no_sdaster, cham_elem)
 
-    if (RESULTAT == None and CHAM_GD == None) : return corresp_2_mailla
+    if (RESULTAT is None and CHAM_GD is None) : return corresp_2_mailla
     if  RESULTAT != None                      : return AsType(RESULTAT)
     if  CHAM_GD  != None and METHODE == 'SOUS_POINT' :
         return cham_elem

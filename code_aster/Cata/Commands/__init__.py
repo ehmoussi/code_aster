@@ -44,7 +44,7 @@ def _init_command(ctx, debug):
             if isinstance(obj, Command) or (modname == "variable" and
                                             objname == "VARIABLE"):
                 if debug:
-                    print(("DEBUG: Module {0}: add {1}".format(modname, objname)))
+                    print("DEBUG: Module {0}: add {1}".format(modname, objname))
                 curDict[objname] = obj
     ctx.update(curDict)
     return curDict

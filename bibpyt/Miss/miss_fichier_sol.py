@@ -110,7 +110,7 @@ def fichier_sol(tab, struct, param=None):
     # complément des paramètres du calcul
     spec_max_auto = False
     # Gestion automatique de certains parametres
-    if param and param.get('AUTO') == "OUI" and param.get('_auto_first_LT') == None:
+    if param and param.get('AUTO') == "OUI" and param.get('_auto_first_LT') is None:
         l_coor_nodes = struct.noeud_coor
         l_coor_x, l_coor_y, l_coor_z = l_coor_sort(l_coor_nodes)
         surf = param['SURF']
@@ -129,19 +129,19 @@ def fichier_sol(tab, struct, param=None):
         else:
             UTMESS('A', 'MISS0_43', valk='OFFSET_NB')
         if param['OPTION_DREF'] == "OUI":
-            if param['DREF'] == None:
+            if param['DREF'] is None:
                 param['DREF'] = dref_auto
             else:
                 UTMESS('A', 'MISS0_43', valk='DREF')
         if param['OPTION_RFIC'] == "OUI":
-            if param['RFIC'] == None:
+            if param['RFIC'] is None:
                 param['RFIC'] = rfic_auto
             else:
                 UTMESS('A', 'MISS0_43', valk='RFIC')
         else:
             param['RFIC'] = 0.
         if spec_max_auto:
-            if param['SPEC_MAX'] == None:
+            if param['SPEC_MAX'] is None:
                 param['SPEC_MAX'] = spec_max
             else:
                 UTMESS('A', 'MISS0_43', valk='SPEC_MAX')
@@ -154,7 +154,7 @@ def fichier_sol(tab, struct, param=None):
         if spec_max_auto:
             print('-    SPEC_MAX auto = ',param['SPEC_MAX'])
         # Pour Laplace-temps, on ne recalcule les parametre qu'une fois
-        if param['_auto_first_LT'] == None:
+        if param['_auto_first_LT'] is None:
             param['_auto_first_LT'] = False
     #
     if (param and param.get('OFFSET_MAX')) or (param and param.get('AUTO') == "OUI"):

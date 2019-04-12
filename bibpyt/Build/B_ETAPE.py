@@ -492,9 +492,9 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         """
             Cette methode retourne un reel aleatoire
         """
-        if self.jdc.alea == None:
+        if self.jdc.alea is None:
             # le generateur n'a pas ete initialise, on l'initialise
-            bidon = self.iniran(0)
+            self.iniran(0)
         valeur = self.jdc.alea.random()
         resu = (valeur, )
         return resu
@@ -506,8 +506,11 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         """
         from random import Random
         self.jdc.alea = Random(100)
-        self.jdc.alea.seed(jump)
-        return None
+        gen = self.jdc.alea
+        gen.seed(jump)
+        # similar to python2 `jumpahead` function
+        for _ in range(jump):
+            gen.random()
 
     def fiintf(self, coderr, nom_fonction, nom_param, val):
         """Cette methode permet d'appeler une formule python depuis le fortran.
@@ -626,7 +629,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
 
         valeur = self.get_valeur_motcle_pour_getvid(
             nom_motfac, iocc, nom_motcle)
-        if valeur == None:
+        if valeur is None:
             if CONTEXT.debug:
                 print("\tGETVID : valeur =", None)
             return 0, (), 1
@@ -719,7 +722,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         motfac = motfac.strip()
         if motfac != '':
             mcfact = self.get_mocle(motfac)
-            if mcfact == None:
+            if mcfact is None:
                 return ([], [])
             else:
                 mcfact = mcfact[iocc]

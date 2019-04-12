@@ -89,9 +89,9 @@ else:
    zmax = 5e-05;
 dim=zmax-zmin
 
-print(('Dimensions x',xmin,xmax))
-print(('Dimensions y',ymin,ymax))
-print(('Dimensions z',zmin,zmax))
+print('Dimensions x',xmin,xmax)
+print('Dimensions y',ymin,ymax)
+print('Dimensions z',zmin,zmax)
 
 haut = (zmax - zmin);
 
