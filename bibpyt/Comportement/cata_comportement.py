@@ -444,7 +444,7 @@ class KIT_META(KIT):
     nom_vari = property(get_nom_vari, "nom_vari")
 
 
-class CataLoiComportement(Singleton):
+class CataLoiComportement(metaclass=Singleton):
 
     """Catalogue de loi de comportement.
     Il s'agit juste d'un dictionnaire contenant les objets de type LoiComportement

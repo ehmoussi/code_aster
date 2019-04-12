@@ -55,7 +55,7 @@ DEFAULT_BASE_SIZE_LIMIT = 48000
 RCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir, os.pardir,
                     os.pardir, os.pardir, 'share', 'aster'))
 
-class ExecutionParameter(object, metaclass=Singleton):
+class ExecutionParameter(metaclass=Singleton):
     """This class stores and provides the execution parameters.
 
     The execution parameters are defined by reading the command line or using
