@@ -22,7 +22,7 @@
 import os
 
 from Noyau.N_types import is_complex, is_sequence, is_str
-from Utilitai.TestResult import testPrinter
+from Utilitai.TestResult import TestResult
 
 epsi = 1e-15
 
@@ -322,7 +322,7 @@ def AfficherResultat(dicoValeur, nomPara, ref, legende, crit, res, valPu, txt, l
                'erreur': str(errr) + pourcent + (16 - len(str(errr) + pourcent)) * ' ',
                'tole': str(curEpsr) + pourcent + (16 - len(str(curEpsr) + pourcent)) * ' ',
                }
-    if ref == "NON_REGRESSION" and not testPrinter.isVerif():
+    if ref == "NON_REGRESSION" and not TestResult().isVerif():
         current['testOk'] = "  - "
         current['tole'] = "-"
     txt.append(ligne_fct_4 % current)

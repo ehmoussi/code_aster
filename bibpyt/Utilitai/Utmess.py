@@ -70,7 +70,7 @@ def list_unit(code):
     return d.get(code, d['F'])
 
 
-class MESSAGE_LOGGER(Singleton):
+class MESSAGE_LOGGER(metaclass=Singleton):
 
     """Classe gérant l'impression de messages.
     On ne crée qu'une instance de ce type (singleton).
