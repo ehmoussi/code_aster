@@ -43,7 +43,7 @@ class fonction_class(ASSD):
             TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
             objev = '%-19s.PROL' % self.get_name()
             prol = self.sdj.PROL.get()
-            if prol == None:
+            if prol is None:
                 UTMESS('F', 'SDVERI_2', valk=[objev])
             dico = {
                 'INTERPOL': [prol[1][0:3], prol[1][4:7]],
@@ -106,7 +106,7 @@ class fonction_sdaster(fonction_class):
         if self.accessible():
             vale = '%-19s.VALE' % self.get_name()
             lbl = self.sdj.VALE.get()
-            if lbl == None:
+            if lbl is None:
                 UTMESS('F', 'SDVERI_2', valk=[vale])
             lbl = list(lbl)
             dim = len(lbl) // 2
@@ -191,7 +191,7 @@ class fonction_c(fonction_class):
         if self.accessible():
             vale = '%-19s.VALE' % self.get_name()
             lbl = self.sdj.VALE.get()
-            if lbl == None:
+            if lbl is None:
                 UTMESS('F', 'SDVERI_2', valk=[vale])
             lbl = list(lbl)
             dim = len(lbl) // 3
@@ -286,7 +286,7 @@ class nappe_sdaster(fonction_class):
         dicv = aster.getcolljev(nsd + '.VALE')
         # les cles de dicv sont 1,...,N (indice du parametre)
         lpar = aster.getvectjev(nsd + '.PARA')
-        if lpar == None:
+        if lpar is None:
             UTMESS('F', 'SDVERI_2', valk=[nsd + '.PARA'])
         lval = []
         for k in range(len(dicv)):
@@ -309,7 +309,7 @@ class nappe_sdaster(fonction_class):
         TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
         objev = '%-19s.PROL' % self.get_name()
         prol = aster.getvectjev(objev)
-        if prol == None:
+        if prol is None:
             UTMESS('F', 'SDVERI_2', valk=[objev])
         dico = {
             'INTERPOL': [prol[1][0:3], prol[1][4:7]],

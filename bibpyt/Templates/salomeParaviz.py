@@ -93,9 +93,9 @@ except:
 
     except:
         pass
-if view == None and 'CHOIX' == 'COURBE':
+if view is None and 'CHOIX' == 'COURBE':
     view = PV.CreateXYPlotView()
-if view == None and 'CHOIX' != 'COURBE':
+if view is None and 'CHOIX' != 'COURBE':
     view = PV.CreateRenderView()
 PV.SetActiveView(view)
 L = view.Representations

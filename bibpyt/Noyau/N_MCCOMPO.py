@@ -49,7 +49,7 @@ class MCCOMPO(N_OBJECT.OBJECT):
         # mais qui sont malgré tout des descendants de l'objet courant
         # (petits-fils, ...)
         args = self.valeur
-        if args == None:
+        if args is None:
             args = {}
         mc_liste = []
 

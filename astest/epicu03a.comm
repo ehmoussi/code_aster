@@ -76,7 +76,7 @@ MAIL = MODI_MAILLAGE ( reuse        = MAIL ,
                                         _F ( GROUP_MA = 'SEGINF'  ) ,
                                         _F ( GROUP_MA = 'SEGEXT'  ) ,
                                         _F ( GROUP_MA = 'SEGSUP'  ) ,
-                                        _F ( GROUP_MA = 'SEGINT'  ) 
+                                        _F ( GROUP_MA = 'SEGINT'  )
                                       )
                      )
 
@@ -86,15 +86,15 @@ MAIL = MODI_MAILLAGE ( reuse        = MAIL ,
 
 LAMB_MET = DEFI_FONCTION ( NOM_PARA    = 'TEMP',
 # DEB PARAM
-                           VALE        = ( 
-                     0.0, 0.0377, 
-                     20.0, 0.0377, 
-                     50.0, 0.0386, 
-                     100.0, 0.0399, 
-                     150.0, 0.0405, 
-                     200.0, 0.0405, 
-                     250.0, 0.0402, 
-                     300.0, 0.0395, 
+                           VALE        = (
+                     0.0, 0.0377,
+                     20.0, 0.0377,
+                     50.0, 0.0386,
+                     100.0, 0.0399,
+                     150.0, 0.0405,
+                     200.0, 0.0405,
+                     250.0, 0.0402,
+                     300.0, 0.0395,
                      350.0, 0.0387, ),
 # FIN PARAM
                            PROL_DROITE = 'LINEAIRE',
@@ -102,14 +102,14 @@ LAMB_MET = DEFI_FONCTION ( NOM_PARA    = 'TEMP',
 
 BETA_MET = DEFI_FONCTION ( NOM_PARA    = 'TEMP',
 # DEB PARAM
-                           VALE        = ( 
-                     0.0, 0.0, 
-                     50.0, 0.10619, 
-                     100.0, 0.29033, 
-                     150.0, 0.48291, 
-                     200.0, 0.68328, 
-                     250.0, 0.89216, 
-                     300.0, 1.10944, 
+                           VALE        = (
+                     0.0, 0.0,
+                     50.0, 0.10619,
+                     100.0, 0.29033,
+                     150.0, 0.48291,
+                     200.0, 0.68328,
+                     250.0, 0.89216,
+                     300.0, 1.10944,
                      350.0, 1.33506, ),
 ## FIN PARAM
                            PROL_DROITE = 'LINEAIRE',
@@ -142,15 +142,15 @@ MATH_MET = DEFI_MATERIAU ( THER_NL = _F ( LAMBDA = LMBD_MET,
 
 LAMB_REV = DEFI_FONCTION ( NOM_PARA    = 'TEMP',
 # DEB PARAM
-                           VALE        = ( 
-                     0.0, 0.0147, 
-                     20.0, 0.0147, 
-                     50.0, 0.0152, 
-                     100.0, 0.0158, 
-                     150.0, 0.0167, 
-                     200.0, 0.0172, 
-                     250.0, 0.018, 
-                     300.0, 0.0186, 
+                           VALE        = (
+                     0.0, 0.0147,
+                     20.0, 0.0147,
+                     50.0, 0.0152,
+                     100.0, 0.0158,
+                     150.0, 0.0167,
+                     200.0, 0.0172,
+                     250.0, 0.018,
+                     300.0, 0.0186,
                      350.0, 0.0193, ),
 ## FIN PARAM
                            PROL_DROITE = 'LINEAIRE',
@@ -158,14 +158,14 @@ LAMB_REV = DEFI_FONCTION ( NOM_PARA    = 'TEMP',
 
 BETA_REV = DEFI_FONCTION ( NOM_PARA    = 'TEMP',
 # DEB PARAM
-                           VALE        = ( 
-                     0.0, 0.0, 
-                     50.0, 0.11021, 
-                     100.0, 0.30133, 
-                     150.0, 0.50143, 
-                     200.0, 0.70813, 
-                     250.0, 0.91888, 
-                     300.0, 1.13291, 
+                           VALE        = (
+                     0.0, 0.0,
+                     50.0, 0.11021,
+                     100.0, 0.30133,
+                     150.0, 0.50143,
+                     200.0, 0.70813,
+                     250.0, 0.91888,
+                     300.0, 1.13291,
                      350.0, 1.34898, ),
 # FIN PARAM
                            PROL_DROITE = 'LINEAIRE',
@@ -212,7 +212,7 @@ a0 = 2.01373000
 a1 = -1.45143000E-2
 a2 = 1.3210000E-3
 a3 = -8.0777300E-5
-a4 = 1.60275000E-6 
+a4 = 1.60275000E-6
 a5 = -1.2661800E-8
 a6 = 3.5171600E-11
 
@@ -258,7 +258,7 @@ T_INT = FORMULE(VALE='thetais+theta1*exp(-INST/((polynom)*(trg*(1-(altitude+8.10
 # 2.5 AFFECTATION DU CHARGEMENT THERMIQUE
 
 T_EXT = DEFI_CONSTANTE ( VALE = 20.0 )
-H_EXT = DEFI_CONSTANTE ( VALE = 0.0 )  
+H_EXT = DEFI_CONSTANTE ( VALE = 0.0 )
 
 CHAR_TH = AFFE_CHAR_THER_F ( MODELE  = MO_THER,
 #
@@ -314,7 +314,7 @@ MAIL = MODI_MAILLAGE ( reuse        = MAIL ,
                                         _F ( GROUP_MA = 'SEGINF'  ) ,
                                         _F ( GROUP_MA = 'SEGEXT'  ) ,
                                         _F ( GROUP_MA = 'SEGSUP'  ) ,
-                                        _F ( GROUP_MA = 'SEGINT'  ) 
+                                        _F ( GROUP_MA = 'SEGINT'  )
                                       )
                      )
 
@@ -324,15 +324,15 @@ MAIL = MODI_MAILLAGE ( reuse        = MAIL ,
 
 E_MET = DEFI_FONCTION ( NOM_PARA    = 'TEMP',
 # DEB PARAM
-                        VALE        = ( 
-                     0.0, 205000.0, 
-                     20.0, 204000.0, 
-                     50.0, 203000.0, 
-                     100.0, 200000.0, 
-                     150.0, 197000.0, 
-                     200.0, 193000.0, 
-                     250.0, 189000.0, 
-                     300.0, 185000.0, 
+                        VALE        = (
+                     0.0, 205000.0,
+                     20.0, 204000.0,
+                     50.0, 203000.0,
+                     100.0, 200000.0,
+                     150.0, 197000.0,
+                     200.0, 193000.0,
+                     250.0, 189000.0,
+                     300.0, 185000.0,
                      350.0, 180000.0, ),
 # FIN PARAM
                         PROL_DROITE = 'LINEAIRE',
@@ -351,21 +351,21 @@ NUMET = DEFI_CONSTANTE ( VALE = 0.3 )
 
 ALPHAME0 = DEFI_FONCTION  ( NOM_PARA    = 'TEMP',
 # DEB PARAM
-                            VALE        = ( 
-                     0.0, 1.122e-05, 
-                     20.0, 1.122e-05, 
-                     50.0, 1.145e-05, 
-                     100.0, 1.179e-05, 
-                     150.0, 1.214e-05, 
-                     200.0, 1.247e-05, 
-                     250.0, 1.278e-05, 
-                     300.0, 1.308e-05, 
+                            VALE        = (
+                     0.0, 1.122e-05,
+                     20.0, 1.122e-05,
+                     50.0, 1.145e-05,
+                     100.0, 1.179e-05,
+                     150.0, 1.214e-05,
+                     200.0, 1.247e-05,
+                     250.0, 1.278e-05,
+                     300.0, 1.308e-05,
                      350.0, 1.34e-05, ),
 # FIN PARAM
                             PROL_DROITE = 'LINEAIRE',
                             PROL_GAUCHE = 'LINEAIRE' )
 
-# APPLICATION DU COEFFICIENT MULTIPLICATEUR 
+# APPLICATION DU COEFFICIENT MULTIPLICATEUR
 ALPHAMET = CALC_FONCTION (
              COMB        =_F ( FONCTION = ALPHAME0,
                                COEF     = 1.6 ),
@@ -384,15 +384,15 @@ MAME_MET = DEFI_MATERIAU ( ELAS_FO =_F (
 
 E_REV = DEFI_FONCTION ( NOM_PARA    = 'TEMP',
 # DEB PARAM
-                        VALE        = ( 
-                     0.0, 198500.0, 
-                     20.0, 197000.0, 
-                     50.0, 195000.0, 
-                     100.0, 191500.0, 
-                     150.0, 187500.0, 
-                     200.0, 184000.0, 
-                     250.0, 180000.0, 
-                     300.0, 176500.0, 
+                        VALE        = (
+                     0.0, 198500.0,
+                     20.0, 197000.0,
+                     50.0, 195000.0,
+                     100.0, 191500.0,
+                     150.0, 187500.0,
+                     200.0, 184000.0,
+                     250.0, 180000.0,
+                     300.0, 176500.0,
                      350.0, 172000.0, ),
 # FIN PARAM
                         PROL_DROITE = 'LINEAIRE',
@@ -411,21 +411,21 @@ NUREV = DEFI_CONSTANTE ( VALE = 0.3 )
 
 ALPHARE0 = DEFI_FONCTION  ( NOM_PARA    = 'TEMP',
 # DEB PARAM
-                            VALE        = ( 
-                     0.0, 1.64e-05, 
-                     20.0, 1.64e-05, 
-                     50.0, 1.654e-05, 
-                     100.0, 1.68e-05, 
-                     150.0, 1.704e-05, 
-                     200.0, 1.72e-05, 
-                     250.0, 1.75e-05, 
-                     300.0, 1.77e-05, 
+                            VALE        = (
+                     0.0, 1.64e-05,
+                     20.0, 1.64e-05,
+                     50.0, 1.654e-05,
+                     100.0, 1.68e-05,
+                     150.0, 1.704e-05,
+                     200.0, 1.72e-05,
+                     250.0, 1.75e-05,
+                     300.0, 1.77e-05,
                      350.0, 1.79e-05, ),
 # FIN PARAM
                             PROL_DROITE = 'LINEAIRE',
                             PROL_GAUCHE = 'LINEAIRE' )
 
-# APPLICATION DU COEFFICIENT MULTIPLICATEUR 
+# APPLICATION DU COEFFICIENT MULTIPLICATEUR
 ALPHAREV = CALC_FONCTION (
              COMB        =_F ( FONCTION = ALPHARE0,
                                COEF     = 1.6 ),
@@ -471,7 +471,7 @@ CHMAT_ME = AFFE_MATERIAU ( MAILLAGE = MAIL,
 
 PRESS0 = DEFI_FONCTION ( NOM_PARA    = 'INST',
 # DEB PARAM
-                        VALE        = ( 
+                        VALE        = (
                               0.0,15.61311,
                              10.01055,14.67456,
                              20.01332,13.72181,
@@ -817,7 +817,7 @@ PRESS0 = DEFI_FONCTION ( NOM_PARA    = 'INST',
                        PROL_GAUCHE = 'CONSTANT'
 # FIN PARAM
                       );
-# APPLICATION DU COEFFICIENT MULTIPLICATEUR 
+# APPLICATION DU COEFFICIENT MULTIPLICATEUR
 PRESS = CALC_FONCTION (
           COMB        =_F ( FONCTION = PRESS0,
                             COEF     = 1.6 ),
@@ -842,8 +842,8 @@ P_INT = CALC_FONCTION (
 
 # DEB PARAM
 RIMM = 2197.0
-EREV = 7.5 
-EMDB = 220.0 
+EREV = 7.5
+EMDB = 220.0
 # FIN PARAM
 
 # CONVERSION D'UNITE POUR LES PARAMETRES GEOMETRIQUES : mm -> m
@@ -906,18 +906,18 @@ SIG = MECA_STATIQUE(    MODELE = MO_MECA,
                         SOLVEUR    = ( _F(METHODE='MUMPS',
                                           MATR_DISTRIBUEE='NON',
                                           RESI_RELA=-1.0,
-                                          PCENT_PIVOT=100,),), 
+                                          PCENT_PIVOT=100,),),
                         LIST_INST=LINST_ME);
 
 SIG = CALC_CHAMP (reuse      = SIG,
          CONTRAINTE=('SIGM_ELNO'),
-         RESULTAT   = SIG,                  
+         RESULTAT   = SIG,
                  )
 #===== 4 - POST-TRAITEMENT : CALCUL DES FACTEURS D'INTENSITE  ==========
 #=====     DE CONTRAINTES PAR LA METHODE K-BETA               ==========
 
 # 4.1 RELEVE PREALABLE DES CONTRAINTES ET TEMPERATURE SUR LE SEGMENT
-#     D'APPUI DU DEFAUT  
+#     D'APPUI DU DEFAUT
 
 #     REMARQUES :
 #     LES CARACTERISTIQUES GEOMETRIQUES DE LA FISSURE SONT SAISIES DANS
@@ -940,10 +940,10 @@ LONGDEF = LDEF / 1.0E+3
 DEBFIS  = RVIR / 1.0E+3 + EPRE / 1.0E+3 + DEF_DEC
 EXTRABS = DEBFIS + PDEF / 1.0E+3 - DEF_DEC
 
-print(('PROFDEF = ',PROFDEF))
-print(('LONGDEF = ',LONGDEF))
-print(('DEBFIS  = ',DEBFIS))
-print(('EXTRABS = ',EXTRABS))
+print('PROFDEF = ',PROFDEF)
+print('LONGDEF = ',LONGDEF)
+print('DEBFIS  = ',DEBFIS)
+print('EXTRABS = ',EXTRABS)
 
 # 4.21DEFINITION D'UN NOUVEAU MATERIAU AVEC ECROUISSAGE ISOTROPE NON
 #     LINEAIRE POUR LE REVETEMENT
@@ -952,14 +952,14 @@ print(('EXTRABS = ',EXTRABS))
 # DEB PARAM NIV 1
 
 CTREV_01 = DEFI_FONCTION ( NOM_PARA = 'EPSI',
-                            VALE = ( 
-                     0.00187817259, 370.0, 
+                            VALE = (
+                     0.00187817259, 370.0,
                      1.00187817259, 370.0,),
                             PROL_DROITE = 'LINEAIRE',
                             PROL_GAUCHE = 'LINEAIRE')
 
 # CONVERSION D'UNITE SUR LA COURBE DE TRACTION : CONTRAINTE MPa -> Pa
-TRREV_01 = CALC_FONCTION ( 
+TRREV_01 = CALC_FONCTION (
                   COMB     =_F (FONCTION= CTREV_01,
                                 COEF     = 1.0E+6 ),
                             PROL_DROITE = 'LINEAIRE',
@@ -967,14 +967,14 @@ TRREV_01 = CALC_FONCTION (
 
 # DEB PARAM NIV 2
 CTREV_02 = DEFI_FONCTION ( NOM_PARA = 'EPSI',
-                            VALE = ( 
-                     0.001723237598, 330.0, 
+                            VALE = (
+                     0.001723237598, 330.0,
                      1.001723237598, 330.0,),
                             PROL_DROITE = 'LINEAIRE',
                             PROL_GAUCHE = 'LINEAIRE')
 
 # CONVERSION D'UNITE SUR LA COURBE DE TRACTION : CONTRAINTE MPa -> Pa
-TRREV_02 = CALC_FONCTION ( 
+TRREV_02 = CALC_FONCTION (
                   COMB     =_F (FONCTION= CTREV_02,
                                 COEF     = 1.0E+6 ),
                             PROL_DROITE = 'LINEAIRE',
@@ -982,14 +982,14 @@ TRREV_02 = CALC_FONCTION (
 
 # DEB PARAM NIV 3
 CTREV_03 = DEFI_FONCTION ( NOM_PARA = 'EPSI',
-                            VALE = ( 
-                     0.00152974504, 270.0, 
+                            VALE = (
+                     0.00152974504, 270.0,
                      1.00152974504, 270.0,),
                             PROL_DROITE = 'LINEAIRE',
                             PROL_GAUCHE = 'LINEAIRE')
 
 # CONVERSION D'UNITE SUR LA COURBE DE TRACTION : CONTRAINTE MPa -> Pa
-TRREV_03 = CALC_FONCTION ( 
+TRREV_03 = CALC_FONCTION (
                   COMB     =_F (FONCTION= CTREV_03,
                                 COEF     = 1.0E+6 ),
                             PROL_DROITE = 'LINEAIRE',
@@ -998,7 +998,7 @@ TRREV_03 = CALC_FONCTION (
 SIGM_REV = DEFI_NAPPE ( NOM_PARA    = 'TEMP',
 # DEB PARAM
                         PARA        = (  20.0,
-                    100.0, 
+                    100.0,
                     300.0, ),
 # FIN PARAM
                         FONCTION    = (
@@ -1023,16 +1023,16 @@ MAME_RE2 = DEFI_MATERIAU (ELAS_FO  =_F ( E              = YOUNGREV,
 # 4.2. PRISE EN COMPTE DES CONTRAINTES RESIDUELLES
 
 L_SG_L=DEFI_FONCTION(NOM_PARA='X',
-#      DEB PARAM 
-                               VALE        = ( 
-                     0.0, 0.0, 
-                     2197.0, 0.0, 
-                     2204.5, 0.0, 
-#                     2197.0, 200.0, 
-#                     2204.5, 200.0, 
-                     2204.51, 0.0, 
+#      DEB PARAM
+                               VALE        = (
+                     0.0, 0.0,
+                     2197.0, 0.0,
+                     2204.5, 0.0,
+#                     2197.0, 200.0,
+#                     2204.5, 200.0,
+                     2204.51, 0.0,
                      2424.5, 0.0, ),
-#      FIN PARAM 
+#      FIN PARAM
                                PROL_DROITE = 'LINEAIRE',
                                PROL_GAUCHE = 'LINEAIRE' )
 # CONVERSION D'UNITE SUR LA COURBE DE TRACTION : CONTRAINTE MPa -> Pa
@@ -1045,16 +1045,16 @@ L_SG_R_L = CALC_FONCTION (
 
 
 L_SG_C=DEFI_FONCTION(NOM_PARA='X',
-#      DEB PARAM 
-                               VALE        = ( 
-                     0.0, 0.0, 
-                     2197.0, 0.0, 
-                     2204.5, 0.0, 
-#                     2197.0, 156.0, 
-#                     2204.5, 156.0, 
-                     2204.51, 0.0, 
+#      DEB PARAM
+                               VALE        = (
+                     0.0, 0.0,
+                     2197.0, 0.0,
+                     2204.5, 0.0,
+#                     2197.0, 156.0,
+#                     2204.5, 156.0,
+                     2204.51, 0.0,
                      2424.5, 0.0, ),
-#      FIN PARAM 
+#      FIN PARAM
                                PROL_DROITE = 'LINEAIRE',
                                PROL_GAUCHE = 'LINEAIRE' )
 # CONVERSION D'UNITE SUR LA COURBE DE TRACTION : CONTRAINTE MPa -> Pa
@@ -1098,7 +1098,7 @@ FCT_L = FORMULE(VALE='SIYY+L_SG_R_L(COOR_X*1000)',
 FCT_C = FORMULE(VALE='SIZZ+L_SG_R_C(COOR_X*1000)',
                 L_SG_R_C=L_SG_R_C,
                 NOM_PARA=['COOR_X', 'SIZZ'],)
-#                 
+#
 
 S1_G=CALC_TABLE(TABLE=S1M_G,
                ACTION=(_F(OPERATION='OPER',
@@ -1130,7 +1130,7 @@ profondeur         = 0.005e0
 longueur_defaut    = 0.025e0
 ep_mdb=220.e-3
 
-# 4.3 CALCUL DES FACTEURS D'INTENSITE DE CONTRAINTES 
+# 4.3 CALCUL DES FACTEURS D'INTENSITE DE CONTRAINTES
 
 # 4.3.1 DEFAUT LONGITUDINAL
 
@@ -1152,7 +1152,7 @@ TB_LONGI = POST_K_BETA ( MAILLAGE  = MAIL,
 
 
 IMPR_TABLE(TABLE=TB_LONGI)
- 
+
 # Instant = 0s
 
 TEST_TABLE(REFERENCE = 'NON_DEFINI',

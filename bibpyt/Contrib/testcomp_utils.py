@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ def rename_components(i, N_pas, label_cal, ch_param, RESU, R_SI):
         j = ch_param.index(ch)
         chnew = ch + chN
         # Extraction par type de variable
-        if R_SI[j] == None:
+        if R_SI[j] is None:
             R_SI[j] = CALC_TABLE(TABLE=RESU[i],
                                  TITRE=' ',
                                  ACTION=(_F(OPERATION='EXTR',

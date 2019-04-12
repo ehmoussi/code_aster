@@ -138,7 +138,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
                 sd = self.get_sd_prod()
                 # On n'utilise pas self.definition.op_init car self.parent
                 # n'existe pas
-                if sd != None and self.reuse == None:
+                if sd != None and self.reuse is None:
                     # On ne nomme le concept que dans le cas de non reutilisation
                     # d un concept
                     sd.set_name(nom)
@@ -336,7 +336,7 @@ Causes possibles :
             if unite != None:
                 if os.path.exists("fort." + str(unite)):
                     fname = "fort." + str(unite)
-            if fname == None:
+            if fname is None:
                 raise AsException("Impossible de trouver le fichier correspondant"
                                   " a l unite %s" % unite)
             if not os.path.exists(fname):
@@ -403,7 +403,7 @@ Causes possibles :
         self.etape = self
         for mocle in self.mc_liste:
             mocle.reparent(self)
-        if self.sd and self.reuse == None:
+        if self.sd and self.reuse is None:
             self.sd.jdc = self.jdc
 
     def get_cmd(self, nomcmd):
@@ -437,7 +437,7 @@ Causes possibles :
         if self.sd:
             new_sd = self.sd.__class__(etape=new_etape)
             new_etape.sd = new_sd
-            if self.reuse == None:
+            if self.reuse is None:
                 new_etape.parent.NommerSdprod(new_sd, self.sd.nom)
             else:
                 new_sd.set_name(self.sd.nom)
@@ -448,7 +448,7 @@ Causes possibles :
         """
            Reinitialise le nommage du concept de l'etape lors d'un changement de jdc
         """
-        if self.sd and self.reuse == None:
+        if self.sd and self.reuse is None:
             self.parent.NommerSdprod(self.sd, self.sd.nom)
 
     def is_include(self):
@@ -508,12 +508,12 @@ def check_sdprod(command, func_prod, sd_prod, verbose=True):
                      .format(command, _name(sd_prod),
                              [_name(i) for i in allowed]))
     except Exception as exc:
-        print(("Error: {0}".format(exc)))
+        print("Error: {0}".format(exc))
         cr.fatal("Error: {0}: the 'sd_prod' function must support "
                  "the '__all__=True' argument".format(command))
     if not cr.estvide():
         if verbose:
-            print((str(cr)))
+            print(str(cr))
         raise TypeError(str(cr))
 
 def subtypes(cls):

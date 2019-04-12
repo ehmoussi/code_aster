@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ use petsc_data_module
     character(len=8) :: nomgd,noma,exilag
     integer :: tbloc, tbloc2
     character(len=24) :: precon
-    aster_logical :: leliml, ndiff, leliml2
+    aster_logical :: leliml, ndiff
     character(len=24), pointer :: slvk(:) => null()
     character(len=24), pointer :: refa(:) => null()
 
@@ -108,14 +108,15 @@ use petsc_data_module
 !
 !   --  Si ELIM_LAGR='NON', on regarde si la matrice n'est pas la matrice reduite
 !       associee a une matrice qui a utilise ELIM_LAGR='OUI'
-!       Si oui, on fixe tbloc = 1 
+!       Si oui, on fixe tbloc = 1
 !   ----------------------------------------------------------------------------------------------
-    leliml2=.false.
     if (.not.leliml) then
         call jeveuo(nomat//'.REFA', 'L', vk24=refa)
-        if (refa(20).ne.' ') leliml2=.true.
-        tbloc = 1
-        goto 999       
+        if (refa(20).ne.' ') then
+            tbloc = 1
+            if (dbg) write(6,*) 'apbloc tbloc impose a 1 car refa(20)=',refa(20)
+            goto 999
+        endif
     endif
 !
 !   -- 1. On ne peut utiliser tbloc > 1 que si TOUS les noeuds du maillage portent les memes ddls
@@ -193,12 +194,12 @@ use petsc_data_module
            enddo
        endif
     enddo
-! Si les entiers codés ne sont pas les mêmes sur tous le noeuds, on garde tbloc = 1 
-    if ( ndiff ) then 
-       tbloc = 1 
-    endif 
+! Si les entiers codés ne sont pas les mêmes sur tous le noeuds, on garde tbloc = 1
+    if ( ndiff ) then
+       tbloc = 1
+    endif
 
-999 continue 
+999 continue
 
 !   -- sauvegarde des informations calculees dans le common :
 !   ---------------------------------------------------------

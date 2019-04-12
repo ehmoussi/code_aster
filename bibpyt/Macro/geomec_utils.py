@@ -872,14 +872,14 @@ def verif_essais(COMPORTEMENT,
                            valk=(nom_tbref, SomListStr(table_ref.keys())))
 
                 typc = table_ref['TYPE']
-                logi_typc = [x == None for x in typc]
+                logi_typc = [x is None for x in typc]
                 logi_typc[0] = type(typc[0]) is str
 
                 if not logi_typc == [True] * len(typc):
                     UTMESS('F', 'COMPOR2_45', valk=(nom_tbref, 'TYPE'))
 
                 lege = table_ref['LEGENDE']
-                logi_lege = [x == None for x in lege]
+                logi_lege = [x is None for x in lege]
                 logi_lege[0] = type(lege[0]) is str
 
                 if not logi_lege == [True] * len(lege):

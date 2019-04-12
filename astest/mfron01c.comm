@@ -98,7 +98,7 @@ ACIER[2] =DEFI_MATERIAU(
                      MFRONT=_F(LISTE_COEF=(YOUNG,POISSON,delta[2][0],delta[2][1],R_I,R_0,B,K,W,C1_I,G1_0,C2_I,G2_0,N,UN_SUR_K,A_I,ETA,Q_M,Q_0,MU,
                                                 ),)
                                     ,)
-                                    
+
 
 typcal= [None]*ncal
 typcal[0]=['VISC_MEMO_NRAD','BRENT',0,' ',' ']
@@ -116,7 +116,7 @@ compor[2]=[{'RELATION':typcal[2][0],'NOM_ROUTINE':typcal[2][3],'UNITE_LIBRAIRIE'
 legende= [None]*ncal
 for index,ical in enumerate(typcal) :
    legende[index]=ical[0]+'_'+ical[1]+'_delta1='+str( int(delta[ical[2]][0]*10000.)/10000.)+'_delta2='+str( int(delta[ical[2]][0]*10000.)/10000.)
-print(('legende=',legende))
+print('legende=',legende)
 
 
 

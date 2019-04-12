@@ -127,7 +127,7 @@ RESU=STAT_NON_LINE(
     NEWTON=_F(MATRICE='TANGENTE', REAC_ITER=1,),
     CONVERGENCE=_F(
         ITER_GLOB_MAXI=15,
-        RESI_REFE_RELA=1.0E-06 , 
+        RESI_REFE_RELA=1.0E-06 ,
         EFFORT_REFE = 1.0,
         MOMENT_REFE = 1.0,
     ),
@@ -155,7 +155,7 @@ TEST_TABLE(TABLE=MASSE, NOM_PARA='MASSE', VALE_CALC=3.7742851573,)
 
 for ii in range(len(Instant)):
     itemps = Instant[ii]
-    print(("Instant   %d " % itemps))
+    print("Instant   %d " % itemps)
     # Matrice elementaire de rigidite
     MELRIG=CALC_MATR_ELEM(
         OPTION='RIGI_MECA',

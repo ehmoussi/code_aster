@@ -66,7 +66,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
         # Si le concept numeddl est dans self.sdprods
         # il doit etre  produit par la macro
         # il faudra donc appeler la commande NUME_DDL
-        if (MATR_ASSE == None):
+        if (MATR_ASSE is None):
             UTMESS('F', 'MATRICE0_5')
 
         numeddl_status = 'To_Create'
@@ -76,7 +76,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
         # la construction des conditions de Dirichlet est indispensable...sauf si initialement
         # les matrices etaient construites sans aucune charge (peut etre le cas
         # en dynamique)
-        if ((VECT_ASSE != None) and (CHARGE == None)):
+        if ((VECT_ASSE != None) and (CHARGE is None)):
             UTMESS('A', 'MATRICE0_6')
 
     lrigel = 0
@@ -152,14 +152,14 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
                 masel = _a
                 lmasel = 1
 
+
 # Create NUME_DDL
-            if (numeddl_status != 'OK'):
+            if numeddl_status != 'OK':
                 num = create_nume(self, numeddl_status, option, numeddl, _a, CHARGE, info, MODELE)
-                if (numeddl_status == 'To_Create') :
+                if numeddl_status == 'To_Create':
                      self.register_result(num, numeddl)
                 numeddl_status = 'OK'
 
-            self.DeclareOut('mm', m['MATRICE'])
             motscles = {'OPTION': option}
             if CHAR_CINE != None:
                 mm = ASSE_MATRICE(
@@ -199,7 +199,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
                                # globales
 
             except:
-                if (CHARGE == None):  # on ne peut pas construire de vecteur si on a aucune charge
+                if (CHARGE is None):  # on ne peut pas construire de vecteur si on a aucune charge
                     UTMESS('F', 'MATRICE0_8')
                 pass
 
@@ -228,7 +228,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
                     motscles['INST'] = INST
 
             else:  # option == 'CHAR_ACOU':
-                if (CHAM_MATER == None):
+                if (CHAM_MATER is None):
                     UTMESS('F', 'MATRICE0_7')
                 else:
                     motscles['CHAM_MATER'] = CHAM_MATER

@@ -38,7 +38,7 @@ def normalize(v):
 def complete(Tab):
     n = len(Tab)
     for i in range(n):
-        if Tab[i] == None:
+        if Tab[i] is None:
             Tab[i] = 0.
     return Tab
 
@@ -280,7 +280,7 @@ def get_noeud_fond_fiss(FOND_FISS):
     """ retourne la liste des noeuds de FOND_FISS"""
     from Utilitai.Utmess import UTMESS
     Lnoff = FOND_FISS.sdj.FOND_NOEU.get()
-    if Lnoff == None:
+    if Lnoff is None:
         UTMESS('F', 'RUPTURE0_11')
     Lnoff = list(map(lambda x: x.rstrip(), Lnoff))
     return Lnoff
@@ -1797,7 +1797,7 @@ def get_tabout(
     mcfact.append(_F(PARA='G_MAX', LISTE_R=kg[6].tolist()))
     mcfact.append(_F(PARA='G_MIN', LISTE_R=kg[7].tolist()))
 
-    if (ino == 0 and iord == 0) and inst == None:
+    if (ino == 0 and iord == 0) and inst is None:
         tabout = CREA_TABLE(LISTE=mcfact, TITRE=titre)
         tabout = get_erreur(self, ndim, tabout, type_para)
     elif iord == 0 and ino == 0 and inst != None:
@@ -1895,7 +1895,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
     # present dans la sd_resultat. Si MATER est renseigne, on ecrase
     # le materiau et on emet une alarme.
     CHAM_MATER = None
-    if MATER == None:
+    if MATER is None:
         if RESULTAT.getNumberOfRanks() == 0:
             RESULTAT.update()
         if RESULTAT.getNumberOfRanks() > 0:
@@ -1956,7 +1956,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
         if cmpt[:4] == 'ELAS':
             phenom = cmpt
             break
-    if phenom == None:
+    if phenom is None:
         UTMESS('F', 'RUPTURE0_5')
     ns = '{:06d}'.format(ind)
 

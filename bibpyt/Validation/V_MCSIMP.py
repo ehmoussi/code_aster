@@ -99,7 +99,7 @@ class MCSIMP:
             valid = 1
             v = self.valeur
             #  verification presence
-            if self.isoblig() and v == None:
+            if self.isoblig() and v is None:
                 if cr == 'oui':
                     self.cr.fatal(
                         _("Mot-clé : %s obligatoire non valorisé"), self.nom)

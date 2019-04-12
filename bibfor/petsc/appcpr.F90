@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -178,7 +178,7 @@ implicit none
         endif
     endif
 
-    if (precon == 'GAMG') then
+    if ((precon  ==  'ML') .or. (precon  ==  'BOOMER') .or. (precon == 'GAMG')) then
 !       -- CREATION DES MOUVEMENTS DE CORPS RIGIDE --
 !           * VECTEUR RECEPTABLE DES COORDONNEES AVEC TAILLE DE BLOC
 !

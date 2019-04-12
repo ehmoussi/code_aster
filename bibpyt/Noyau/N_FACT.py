@@ -105,7 +105,7 @@ class FACT(N_ENTITE.ENTITE):
                 par defaut du mot cle facteur
         """
         if val is None:
-            if self.defaut == None:
+            if self.defaut is None:
                 val = {}
             elif type(self.defaut) == tuple:
                 val = self.defaut

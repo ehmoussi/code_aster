@@ -368,8 +368,8 @@ EXX = Q0*K*cos(K*LONG)*sin(FREQ*TMAX)
 
 SXX = EY * EXX
 
-print(('EXX = ',EXX))
-print(('SXX = ',SXX))
+print('EXX = ',EXX)
+print('SXX = ',SXX)
 
 
 EXX = Q0*K*cos(K*LONG)*sin(FREQ*TMAX)

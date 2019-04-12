@@ -39,13 +39,13 @@ class ENTITE:
         """
             Cette méthode retourne la sous entite de nom nom et de type typ
             Les blocs sont explorés recursivement mais pas les mots cles facteurs
-            Si typ == None on ne vérifie pas le type. Sinon, on ne retourne la sous entité
+            Si typ is None on ne vérifie pas le type. Sinon, on ne retourne la sous entité
             que si elle est du bon type.
             Si aucune sous entite ne satisfait les criteres la methode retourne None
         """
         for k, v in list(self.entites.items()):
             if k == nom:
-                if typ == None:
+                if typ is None:
                     return v
                 elif isinstance(v, typ):
                     return v
