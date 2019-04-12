@@ -48,9 +48,6 @@
     &copy; <a href="{{ pathto('copyright') }}">{% trans %}Copyright{% endtrans %}</a> {{ copyright|e }}.
     <br />
 
-    {% include "footerdonate.html" %}
-    <br />
-
     {% trans last_updated=last_updated|e %}Last updated on {{ last_updated }}.{% endtrans %}
     {% if theme_issues_url %}{% trans pathto_bugs=theme_issues_url %}<a href="{{ theme_issues_url }}">Found a bug</a>?{% endtrans %}{% endif %}
     <br />
