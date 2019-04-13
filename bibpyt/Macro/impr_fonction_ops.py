@@ -78,7 +78,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
         if dC.get('LIST_PARA') and i0 == 0:
             i0 = iocc
         for mc in list(dC.keys()):
-            if dC[mc] == None:
+            if dC[mc] is None:
                 del dC[mc]
         Courbe.append(dC)
     if INFO == 2:
@@ -100,7 +100,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                 if typi in dCi:
                     obj = dCi[typi]
                     break
-            if obj == None:
+            if obj is None:
                 UTMESS('S', 'SUPERVIS_56')
             if typi in ('FONCTION', 'NAPPE', 'NAPPE_LISSEE') :
                 if obj.getType() == "NAPPE_SDASTER":
@@ -135,7 +135,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                 break
         if 'LEGENDE' not in dCi and hasattr(obj, 'get_name'):
             dCi['LEGENDE'] = obj.get_name()
-        if obj == None:
+        if obj is None:
             UTMESS('S', 'SUPERVIS_56')
 
         # 1.2. Extraction des valeurs

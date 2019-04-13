@@ -145,7 +145,7 @@ is_ok = 0
 try :
     U1A=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM1A, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MATERIAL1_56":
       is_ok = 1
@@ -175,7 +175,7 @@ is_ok = 0
 try :
     U1B=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM1B, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message.strip() == "MATERIAL1_2":
       is_ok = 1
@@ -206,7 +206,7 @@ is_ok = 0
 try :
     U2A=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM2A, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCULEL6_62":
       is_ok = 1
@@ -237,7 +237,7 @@ is_ok = 0
 try :
     U2B=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM2B, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MATERIAL1_56":
       is_ok = 1
@@ -268,7 +268,7 @@ is_ok = 0
 try :
     U2C=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM2C, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCULEL6_62":
       is_ok = 1
@@ -299,7 +299,7 @@ is_ok = 0
 try :
     U2D=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM2D, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MATERIAL1_2":
       is_ok = 1

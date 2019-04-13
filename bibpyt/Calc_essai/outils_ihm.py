@@ -1880,7 +1880,7 @@ class ObservationWindow(Frame):
                                 "du modele experimental")
 
         modele = self.objects.get_model(nom_modele)
-        if modele.kass == None or modele.mass == None:
+        if modele.kass is None or modele.mass is None:
             modele.get_matrices()
 
         proj = 'OUI'
@@ -2410,7 +2410,7 @@ class MacWindowFrame(Frame):
         titre.grid(row=1, column=0, columnspan=4, sticky='n')
 
         # Graphique
-        if size == None:
+        if size is None:
             size = (10, 100)
         self.mac = MacMode(self, height=size[0], width=size[1])
         self.mac.grid(row=0, column=0, sticky="news")

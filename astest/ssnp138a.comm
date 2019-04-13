@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,16 +30,16 @@ from math import *
 #*********************************************************
 #
 # LARGEUR DE L EPROUVETTE SELON X
-W = 0.2 
+W = 0.2
 #
 # HAUTEUR DE L EPROUVETTE SELON Y
-H = 0.5 
+H = 0.5
 #
 # NOMBRE D ELEMENTS SELON X
-NX = 100. 
+NX = 100.
 #
 # NOMBRE D ELEMENTS SELON Y
-NY = 100. 
+NY = 100.
 #
 # precision
 eps = sqrt((W/NX)**2+(H/NY)**2)
@@ -60,8 +60,8 @@ ACIER=DEFI_MATERIAU(ELAS=_F(E=E,NU=nu))
 #*********************************************************
 
 # ANGLES D INCLINAISON DE LA FISSURE (EN DEGRES)
-alphaf = [0., 15., 30., 45., 60.] 
-#alphaf = [30.] 
+alphaf = [0., 15., 30., 45., 60.]
+#alphaf = [30.]
 
 # DEFINITION DES COURONNES POUR LE CALCUL DES SIF
 RI=[0.1*A,   eps]
@@ -81,7 +81,7 @@ MAILLAGE=DEFI_GROUP(reuse =MAILLAGE,
                                    _F(NOM='ND',OPTION='ENV_SPHERE',POINT=(0.,+H/2.),PRECISION=eps/4.,RAYON=eps/4.),
                                    ),
                     INFO=2)
-                    
+
 MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAGE,
                      AFFE=_F(GROUP_MA=('SURF','LIG1','LIG3'),
                              PHENOMENE='MECANIQUE',
@@ -189,13 +189,13 @@ ct = -1
 for i in range(nbcalc) :
 
    # on passe pas un string pour que l evaluation de la fonction se fasse a chaque pas
-   alpha = str(eval('alphaf[i]*pi/180.'))
+   alpha = alphaf[i] * pi / 180.
 
    FISS[i]=DEFI_FISS_XFEM(MAILLAGE=MAILLAGE,
                           DEFI_FISS=_F(
                                        FORM_FISS  = 'SEGMENT',
-                                       PFON_ORIG  = (-A*cos(eval(alpha))/2,-A*sin(eval(alpha))/2, 0.),
-                                       PFON_EXTR  = ( A*cos(eval(alpha))/2, A*sin(eval(alpha))/2, 0.),
+                                       PFON_ORIG  = (-A*cos(alpha)/2,-A*sin(alpha)/2, 0.),
+                                       PFON_EXTR  = ( A*cos(alpha)/2, A*sin(alpha)/2, 0.),
                                        ),
                           TYPE_ENRI_FOND='GEOMETRIQUE',
                           NB_COUCHES=5,
@@ -219,8 +219,8 @@ for i in range(nbcalc) :
 
    # SOLUTION ANALYTIQUE (handbook tada p42)
    fab=1.0+0.128*(A/W)-0.288*(A/W)**2+1.525*(A/W)**3
-   K1REF=-PRES*sqrt(pi*A/2.)*fab*cos(eval(alpha))**2
-   K2REF=-PRES*sqrt(pi*A/2.)*fab*cos(eval(alpha))*sin(eval(alpha))
+   K1REF=-PRES*sqrt(pi*A/2.)*fab*cos(alpha)**2
+   K2REF=-PRES*sqrt(pi*A/2.)*fab*cos(alpha)*sin(alpha)
    GREF = (1-nu**2)/E*(K1REF**2+K2REF**2)
 
    for j in range(0,nbc) :
@@ -246,29 +246,29 @@ for i in range(nbcalc) :
       IMPR_TABLE(TABLE=SIF_1[k])
       IMPR_TABLE(TABLE=SIF_2[k])
       IMPR_TABLE(TABLE=TG_1[k])
-      
+
       ct = ct+1
       TEST_TABLE(TABLE=SIF_1[k],
                  NOM_PARA='K1',
                  VALE_CALC=VAL_CALC[ct], VALE_REFE=K1REF,
                  CRITERE='RELATIF',
-                  
-                 PRECISION=0.02, 
+
+                 PRECISION=0.02,
                  REFERENCE='ANALYTIQUE')
       ct = ct+1
       TEST_TABLE(TABLE=SIF_2[k],
                  NOM_PARA='K1',
                  VALE_CALC=VAL_CALC[ct], VALE_REFE=K1REF,
                  CRITERE='RELATIF',
-                  
-                 PRECISION=0.02,                  
+
+                 PRECISION=0.02,
                  REFERENCE='ANALYTIQUE')
       ct = ct+1
       TEST_TABLE(TABLE=TG_1[k],
                  NOM_PARA='G',
                  VALE_CALC=VAL_CALC[ct], VALE_REFE=GREF,
                  CRITERE='RELATIF',
-                  
+
                  PRECISION=0.02,
                  REFERENCE='ANALYTIQUE')
 
@@ -278,7 +278,7 @@ for i in range(nbcalc) :
                     NOM_PARA='K2',
                     VALE_CALC=VAL_CALC[ct], VALE_REFE=K2REF,
                     CRITERE='RELATIF',
-                    PRECISION=0.03, 
+                    PRECISION=0.03,
                     REFERENCE='ANALYTIQUE')
          ct = ct+1
          TEST_TABLE(TABLE=SIF_2[k],
@@ -300,7 +300,7 @@ for i in range(nbcalc) :
                     NOM_PARA='K2',
                     VALE_CALC=VAL_CALC[ct], VALE_REFE=K2REF,
                     CRITERE='ABSOLU',
-                     PRECISION=K1REF/1000., 
+                     PRECISION=K1REF/1000.,
                     REFERENCE='ANALYTIQUE')
 
    # K1 SUR LE 1er FOND
@@ -315,7 +315,7 @@ for i in range(nbcalc) :
               NOM_PARA='K1',
               VALE_CALC=VAL_CALC[ct], VALE_REFE=K1REF,
               CRITERE='RELATIF',
-               PRECISION=0.03, 
+               PRECISION=0.03,
               REFERENCE='ANALYTIQUE')
 
    if K2REF != 0. :
@@ -324,7 +324,7 @@ for i in range(nbcalc) :
                  NOM_PARA='K2',
                  VALE_CALC=VAL_CALC[ct], VALE_REFE=K2REF,
                  CRITERE='RELATIF',
-                  PRECISION=0.04, 
+                  PRECISION=0.04,
                  REFERENCE='ANALYTIQUE')
    else :
       ct = ct+1
@@ -332,7 +332,7 @@ for i in range(nbcalc) :
                  NOM_PARA='K2',
                  VALE_CALC=VAL_CALC[ct], VALE_REFE=K2REF,
                  CRITERE='ABSOLU',
-                  PRECISION=K1REF/1000., 
+                  PRECISION=K1REF/1000.,
                  REFERENCE='ANALYTIQUE')
 
 
@@ -348,7 +348,7 @@ for i in range(nbcalc) :
               NOM_PARA='K1',
               VALE_CALC=VAL_CALC[ct], VALE_REFE=K1REF,
               CRITERE='RELATIF',
-               PRECISION=0.02, 
+               PRECISION=0.02,
               REFERENCE='ANALYTIQUE');
 
    if K2REF != 0. :
@@ -357,7 +357,7 @@ for i in range(nbcalc) :
                 NOM_PARA='K2',
                 VALE_CALC=VAL_CALC[ct], VALE_REFE=K2REF,
                 CRITERE='RELATIF',
-                 PRECISION=0.04, 
+                 PRECISION=0.04,
                 REFERENCE='ANALYTIQUE')
 
    else :

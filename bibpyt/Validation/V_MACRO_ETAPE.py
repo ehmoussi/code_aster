@@ -129,9 +129,9 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
         """
              Cette méthode met à jour le concept produit en fonction des conditions initiales :
 
-              1. Il n'y a pas de concept retourné (self.definition.sd_prod == None)
+              1. Il n'y a pas de concept retourné (self.definition.sd_prod is None)
 
-              2. Le concept retourné n existait pas (self.sd == None)
+              2. Le concept retourné n existait pas (self.sd is None)
 
               3. Le concept retourné existait. On change alors son type ou on le supprime
 
@@ -186,7 +186,7 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
                 self.sd = self.reuse
         else:
             # Cas d'un concept non reutilise
-            if sd_prod == None:  # Pas de concept retourné
+            if sd_prod is None:  # Pas de concept retourné
                 # Que faut il faire de l eventuel ancien sd ?
                 self.sd = None
             else:

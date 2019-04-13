@@ -44,7 +44,7 @@ w2_2 = (k2_2/m2_2)**0.5
 f2_2 = w2_2/(2*math.pi)
 w2_3 = (k2_3/m2_3)**0.5
 f2_3 = w2_3/(2*math.pi)
-print((f1,f1s,f2_1,f2_2,f2_3))
+print(f1,f1s,f2_1,f2_2,f2_3)
 
 amor_supp = 0.07
 amor_equi = 0.05
@@ -69,20 +69,20 @@ MAILLAGE=CREA_MAILLAGE(MAILLAGE=MAILLAG0,
 
 ACCELERO = FORMULE(VALE='sin((INST)*20.*2.*pi)',
                    NOM_PARA='INST',)
- 
+
 L_INST=DEFI_LIST_REEL(  DEBUT=0.,
-                           INTERVALLE=_F(  JUSQU_A = 1.0,  PAS = 0.0001)) 
+                           INTERVALLE=_F(  JUSQU_A = 1.0,  PAS = 0.0001))
 
 ACCE = CALC_FONC_INTERP( FONCTION=ACCELERO, LIST_PARA=L_INST,
         NOM_PARA='INST',
         NOM_RESU='ACCE',
         PROL_GAUCHE='EXCLU', PROL_DROITE='LINEAIRE',
         INTERPOL='LIN',
-        TITRE=' FONCTION' )   
+        TITRE=' FONCTION' )
 
 L_FREQ = DEFI_LIST_REEL(  DEBUT=0.1,
-                           INTERVALLE=_F(  JUSQU_A = 50.,  PAS = 0.1)) 
-                           
+                           INTERVALLE=_F(  JUSQU_A = 50.,  PAS = 0.1))
+
 ####################
 ## MODELE A
 MOD_A=AFFE_MODELE(  MAILLAGE=MAILLAGE,AFFE=(
@@ -96,7 +96,7 @@ MOD_A=AFFE_MODELE(  MAILLAGE=MAILLAGE,AFFE=(
 #
 CARA_A=AFFE_CARA_ELEM(  MODELE=MOD_A,
                           DISCRET=(_F(  GROUP_MA = ('N02',),
-                                        CARA = 'M_T_D_N',  VALE = (m1+m2)),    
+                                        CARA = 'M_T_D_N',  VALE = (m1+m2)),
                                    _F(  GROUP_MA = ('N02',),
                                         CARA = 'K_T_D_N',  VALE = (0.,0.,0.,)),
                                    _F(  GROUP_MA=('ELN1'),  CARA = 'K_T_D_L',
@@ -109,38 +109,38 @@ CON_A=AFFE_CHAR_MECA( MODELE=MOD_A,
                         DDL_IMPO=(_F( GROUP_NO = 'N01', DX = 0., DY = 0., DZ = 0.),
                                   _F( GROUP_NO = 'N02', DX = 0., DY = 0.),),
                          )
-                         
+
 RIGI_ELA=CALC_MATR_ELEM(  MODELE=MOD_A,        OPTION='RIGI_MECA',
                             CARA_ELEM=CARA_A,   CHARGE=CON_A   )
 
 MASS_ELA=CALC_MATR_ELEM( MODELE=MOD_A,    OPTION='MASS_MECA_DIAG',
                             CARA_ELEM=CARA_A,   CHARGE=CON_A   )
-                            
+
 AMOR_ELA=CALC_MATR_ELEM( MODELE=MOD_A,    OPTION='AMOR_MECA',
-                            CARA_ELEM=CARA_A,   CHARGE=CON_A   )                            
+                            CARA_ELEM=CARA_A,   CHARGE=CON_A   )
 
 NUME_A=NUME_DDL(  MATR_RIGI=RIGI_ELA )
 
 #
 RIGI_A=ASSE_MATRICE(  MATR_ELEM=RIGI_ELA,   NUME_DDL=NUME_A  )
 MASS_A=ASSE_MATRICE(  MATR_ELEM=MASS_ELA,   NUME_DDL=NUME_A  )
-AMOR_A=ASSE_MATRICE(  MATR_ELEM=AMOR_ELA,   NUME_DDL=NUME_A  )        
+AMOR_A=ASSE_MATRICE(  MATR_ELEM=AMOR_ELA,   NUME_DDL=NUME_A  )
 
 MONO_XA=CALC_CHAR_SEISME(   MATR_MASS=MASS_A,   DIRECTION=( 0., 0., 1.,),
                               MONO_APPUI='OUI'
-                             )       
-                             
+                             )
+
 TRAN_LA=DYNA_VIBRA( TYPE_CALCUL='TRAN',
                     BASE_CALCUL='PHYS',
-                    MATR_MASS=MASS_A,    
+                    MATR_MASS=MASS_A,
                     MATR_RIGI=RIGI_A,
                     MATR_AMOR = AMOR_A,
                     INCREMENT=_F( LIST_INST = L_INST),
                     EXCIT=_F(  VECT_ASSE = MONO_XA,  FONC_MULT = ACCE),
-                           )   
-                
-ACCE0 = DEFI_CONSTANTE(VALE = 1.E-8) 
-                
+                           )
+
+ACCE0 = DEFI_CONSTANTE(VALE = 1.E-8)
+
 # CALCUL SANS IPM, POUR INFORMATION
 #
 # table2 = MACR_SPECTRE(MAILLAGE = MAILLAGE,
@@ -161,25 +161,25 @@ ACCE0 = DEFI_CONSTANTE(VALE = 1.E-8)
 #                      IMPRESSION=_F(FORMAT = 'TABLEAU',
 #                                    UNITE = 27)
 # )
-     
-TAB =  CREA_TABLE(RESU =_F(RESULTAT = TRAN_LA, 
+
+TAB =  CREA_TABLE(RESU =_F(RESULTAT = TRAN_LA,
                             NOM_CHAM ='ACCE',
                             TOUT_CMP='OUI',
                             TOUT='OUI',
-                            ),                  
-) 
-     
+                            ),
+)
+
 tabl_spe = CALC_SPECTRE_IPM(MAILLAGE = MAILLAGE,
                      AMOR_SPEC = 0.05,
                      EQUIPEMENT =(_F(NOM='NOEUD2',
                                   GROUP_NO='N02',
                                 RAPPORT_MASSE_TOTALE = lbd,
                                 COEF_MASS_EQUIP = (m2_1/m2,m2_2/m2,m2_3/m2),
-                                FREQ_EQUIP = (f2_1,f2_2,f2_3), 
+                                FREQ_EQUIP = (f2_1,f2_2,f2_3),
                                 FREQ_SUPPORT  = f1,
                                 AMOR_SUPPORT = amor_supp,
                                 AMOR_EQUIP = (amor_equi,amor_equi,amor_equi)
-                                 ),),  
+                                 ),),
                      LIST_INST = L_INST,
                      CALCUL ='RELATIF',
                      LIST_FREQ = L_FREQ,
@@ -192,7 +192,7 @@ tabl_spe = CALC_SPECTRE_IPM(MAILLAGE = MAILLAGE,
 # Validation ABSOL/RELATIF avec un "faux" relatif avec entrainement nul
 #
 
-ACCE00 = DEFI_CONSTANTE(VALE = 0.) 
+ACCE00 = DEFI_CONSTANTE(VALE = 0.)
 
 tabl_rel = CALC_SPECTRE_IPM(MAILLAGE = MAILLAGE,
                      AMOR_SPEC = 0.05,
@@ -200,11 +200,11 @@ tabl_rel = CALC_SPECTRE_IPM(MAILLAGE = MAILLAGE,
                                   GROUP_NO='N02',
                                 RAPPORT_MASSE_TOTALE = lbd,
                                 COEF_MASS_EQUIP = (m2_1/m2,m2_2/m2,m2_3/m2),
-                                FREQ_EQUIP = (f2_1,f2_2,f2_3), 
+                                FREQ_EQUIP = (f2_1,f2_2,f2_3),
                                 FREQ_SUPPORT  = f1,
                                 AMOR_SUPPORT = amor_supp,
                                 AMOR_EQUIP = (amor_equi,amor_equi,amor_equi)
-                                 ),),  
+                                 ),),
                      LIST_INST = L_INST,
                      CALCUL ='RELATIF',
                      LIST_FREQ = L_FREQ,
@@ -219,11 +219,11 @@ tabl_abs = CALC_SPECTRE_IPM(MAILLAGE = MAILLAGE,
                                   GROUP_NO='N02',
                                 RAPPORT_MASSE_TOTALE = lbd,
                                 COEF_MASS_EQUIP = (m2_1/m2,m2_2/m2,m2_3/m2),
-                                FREQ_EQUIP = (f2_1,f2_2,f2_3), 
+                                FREQ_EQUIP = (f2_1,f2_2,f2_3),
                                 FREQ_SUPPORT  = f1,
                                 AMOR_SUPPORT = amor_supp,
                                 AMOR_EQUIP = (amor_equi,amor_equi,amor_equi)
-                                 ),),  
+                                 ),),
                      LIST_INST = L_INST,
                      CALCUL ='ABSOLU',
                      LIST_FREQ = L_FREQ,
@@ -237,14 +237,14 @@ tabl_abs = CALC_SPECTRE_IPM(MAILLAGE = MAILLAGE,
 
 ACCELER2 = FORMULE(VALE='sin((INST+0.00001)*20.*2.*pi)',
                    NOM_PARA='INST',)
- 
+
 
 ACCE2 = CALC_FONC_INTERP( FONCTION=ACCELER2, LIST_PARA=L_INST,
         NOM_PARA='INST',
         NOM_RESU='ACCE',
         PROL_GAUCHE='EXCLU', PROL_DROITE='LINEAIRE',
         INTERPOL='LIN',
-        TITRE=' FONCTION' )   
+        TITRE=' FONCTION' )
 
 
 tabl_cor = CALC_SPECTRE_IPM(MAILLAGE = MAILLAGE,
@@ -253,11 +253,11 @@ tabl_cor = CALC_SPECTRE_IPM(MAILLAGE = MAILLAGE,
                                   GROUP_NO='N02',
                                 RAPPORT_MASSE_TOTALE = lbd,
                                 COEF_MASS_EQUIP = (m2_1/m2,m2_2/m2,m2_3/m2),
-                                FREQ_EQUIP = (f2_1,f2_2,f2_3), 
+                                FREQ_EQUIP = (f2_1,f2_2,f2_3),
                                 FREQ_SUPPORT  = f1,
                                 AMOR_SUPPORT = amor_supp,
                                 AMOR_EQUIP = (amor_equi,amor_equi,amor_equi)
-                                 ),),  
+                                 ),),
                      LIST_INST = L_INST,
                      CALCUL ='RELATIF',
                      LIST_FREQ = L_FREQ,
@@ -268,8 +268,8 @@ tabl_cor = CALC_SPECTRE_IPM(MAILLAGE = MAILLAGE,
 )
 
 
-#IMPR_TABLE(TABLE=tabl_spe,FORMAT='TABLEAU',UNITE=28);  
-  
+#IMPR_TABLE(TABLE=tabl_spe,FORMAT='TABLEAU',UNITE=28);
+
 TEST_TABLE(TABLE=tabl_spe,
              NOM_PARA='IPM NOEUD2 5%',
              FILTRE=_F(NOM_PARA='FREQ NOEUD2',
@@ -286,7 +286,7 @@ TEST_TABLE(TABLE=tabl_spe,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(1.47444236774 ),
              VALE_REFE=(1.44050E+00, ),
-             PRECISION=3.E-2,)        
+             PRECISION=3.E-2,)
 
 TEST_TABLE(TABLE=tabl_spe,
              NOM_PARA='IPM NOEUD2 5%',
@@ -295,7 +295,7 @@ TEST_TABLE(TABLE=tabl_spe,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(1.93646256141 ),
              VALE_REFE=(1.93754E+00, ),
-             PRECISION=1.E-3,)       
+             PRECISION=1.E-3,)
 
 TEST_TABLE(TABLE=tabl_spe,
              NOM_PARA='IPM NOEUD2 5%',
@@ -304,8 +304,8 @@ TEST_TABLE(TABLE=tabl_spe,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(3.40805094425 ),
              VALE_REFE=(3.39816E+00 , ),
-             PRECISION=0.5E-2,)             
-             
+             PRECISION=0.5E-2,)
+
 TEST_TABLE(TABLE=tabl_spe,
              NOM_PARA='IPM NOEUD2 5%',
              FILTRE=_F(NOM_PARA='FREQ NOEUD2',
@@ -314,7 +314,7 @@ TEST_TABLE(TABLE=tabl_spe,
              VALE_CALC=(1.46576034744 ),
              VALE_REFE=(1.46011E+00, ),
              PRECISION=1.E-2,)
-             
+
 TEST_TABLE(TABLE=tabl_spe,
              NOM_PARA='IPM NOEUD2 5%',
              FILTRE=_F(NOM_PARA='FREQ NOEUD2',
@@ -323,7 +323,7 @@ TEST_TABLE(TABLE=tabl_spe,
              VALE_CALC=(1.06939373897 ),
              VALE_REFE=(1.08058E+00, ),
              PRECISION=1.1E-2,)
-             
+
 TEST_TABLE(TABLE=tabl_spe,
              NOM_PARA='IPM NOEUD2 5%',
              FILTRE=_F(NOM_PARA='FREQ NOEUD2',
@@ -331,8 +331,8 @@ TEST_TABLE(TABLE=tabl_spe,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(0.992295681197 ),
              VALE_REFE=(1.00117E+00, ),
-             PRECISION=0.9E-2,)             
-             
+             PRECISION=0.9E-2,)
+
 TEST_TABLE(TABLE=tabl_spe,
              NOM_PARA='IPM NOEUD2 5%',
              FILTRE=_F(NOM_PARA='FREQ NOEUD2',
@@ -340,8 +340,8 @@ TEST_TABLE(TABLE=tabl_spe,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(0.927037728394 ),
              VALE_REFE=(9.29183E-01, ),
-             PRECISION=0.3E-2,)             
-             
+             PRECISION=0.3E-2,)
+
 TEST_TABLE(TABLE=tabl_spe,
              NOM_PARA='IPM NOEUD2 5%',
              FILTRE=_F(NOM_PARA='FREQ NOEUD2',
@@ -349,8 +349,8 @@ TEST_TABLE(TABLE=tabl_spe,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(0.879024239638 ),
              VALE_REFE=(8.71687E-01, ),
-             PRECISION=1.E-2,)             
-             
+             PRECISION=1.E-2,)
+
 TEST_TABLE(TABLE=tabl_spe,
              NOM_PARA='IPM NOEUD2 5%',
              FILTRE=_F(NOM_PARA='FREQ NOEUD2',
@@ -359,7 +359,7 @@ TEST_TABLE(TABLE=tabl_spe,
              VALE_CALC=(0.849115746399 ),
              VALE_REFE=(8.33936E-01, ),
              PRECISION=1.9E-2,)
-             
+
 #
 # Validation ABSOLU/RELATIF :
 #
@@ -370,7 +370,7 @@ TEST_TABLE(TABLE=tabl_rel,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(4.32903700772 ),
              VALE_REFE=(4.32903700772, ),
-             PRECISION=1.E-6,)       
+             PRECISION=1.E-6,)
 
 TEST_TABLE(TABLE=tabl_rel,
              NOM_PARA='IPM NOEUD2 5%',
@@ -379,8 +379,8 @@ TEST_TABLE(TABLE=tabl_rel,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(14.1068833704 ),
              VALE_REFE=(14.1068833704 , ),
-             PRECISION=1.E-6,)             
-             
+             PRECISION=1.E-6,)
+
 TEST_TABLE(TABLE=tabl_rel,
              NOM_PARA='IPM NOEUD2 5%',
              FILTRE=_F(NOM_PARA='FREQ NOEUD2',
@@ -397,7 +397,7 @@ TEST_TABLE(TABLE=tabl_abs,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(4.32903700772 ),
              VALE_REFE=(4.32903700772, ),
-             PRECISION=1.E-6,)       
+             PRECISION=1.E-6,)
 
 TEST_TABLE(TABLE=tabl_abs,
              NOM_PARA='IPM NOEUD2 5%',
@@ -406,8 +406,8 @@ TEST_TABLE(TABLE=tabl_abs,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(14.1068833704 ),
              VALE_REFE=(14.1068833704 , ),
-             PRECISION=1.E-6,)             
-             
+             PRECISION=1.E-6,)
+
 TEST_TABLE(TABLE=tabl_abs,
              NOM_PARA='IPM NOEUD2 5%',
              FILTRE=_F(NOM_PARA='FREQ NOEUD2',
@@ -426,7 +426,7 @@ TEST_TABLE(TABLE=tabl_cor,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(1.93485146496 ),
              VALE_REFE=(1.93754E+00, ),
-             PRECISION=2.E-3,)       
+             PRECISION=2.E-3,)
 
 TEST_TABLE(TABLE=tabl_cor,
              NOM_PARA='IPM NOEUD2 5%',
@@ -435,8 +435,8 @@ TEST_TABLE(TABLE=tabl_cor,
              REFERENCE='AUTRE_ASTER',
              VALE_CALC=(3.40311455827 ),
              VALE_REFE=(3.39816E+00 , ),
-             PRECISION=0.5E-2,)             
-             
+             PRECISION=0.5E-2,)
+
 TEST_TABLE(TABLE=tabl_cor,
              NOM_PARA='IPM NOEUD2 5%',
              FILTRE=_F(NOM_PARA='FREQ NOEUD2',
@@ -455,24 +455,24 @@ TEST_TABLE(TABLE=tabl_cor,
 #                           GROUP_MA =('N02','N03','N04','N05')
 #                           ))
 #                      )
-#                     
+#
 # CON_B=AFFE_CHAR_MECA( MODELE=MOD_B,
 #                          DDL_IMPO=(_F(  GROUP_NO = 'ENCASTRE',
 #                                         DX = 0., DY = 0., DZ = 0.),
 #                                    _F(  GROUP_NO = 'DY',   DY = 0.),
 #                                    _F(  GROUP_NO = 'DZ',   DX = 0.))
-#                           )                    
-#                          
-# 
+#                           )
+#
+#
 # CARA_B=AFFE_CARA_ELEM(  MODELE=MOD_B,
 #                            DISCRET=(_F(  GROUP_MA = ('N02',),
 #                                          CARA = 'M_T_D_N',  VALE = m1),
 #                                     _F(  GROUP_MA = ('N03',),
-#                                          CARA = 'M_T_D_N',  VALE = m2_1),     
+#                                          CARA = 'M_T_D_N',  VALE = m2_1),
 #                                     _F(  GROUP_MA = ('N04',),
-#                                          CARA = 'M_T_D_N',  VALE = m2_2),   
+#                                          CARA = 'M_T_D_N',  VALE = m2_2),
 #                                     _F(  GROUP_MA = ('N05',),
-#                                          CARA = 'M_T_D_N',  VALE = m2_3),        
+#                                          CARA = 'M_T_D_N',  VALE = m2_3),
 #                                     _F(  GROUP_MA = ('N02',  'N03','N04','N05'),
 #                                          CARA = 'K_T_D_N',  VALE = (0.,0.,0.,)),
 #                                     _F(  GROUP_MA=('ELN1'),  CARA = 'K_T_D_L',
@@ -482,41 +482,41 @@ TEST_TABLE(TABLE=tabl_cor,
 #                                     _F(  GROUP_MA=('ELN3'),  CARA = 'K_T_D_L',
 #                                          VALE = (0., 0., k2_2,),  REPERE = 'GLOBAL'),
 #                                     _F(  GROUP_MA=('ELN4'),  CARA = 'K_T_D_L',
-#                                          VALE = (0., 0., k2_3,),  REPERE = 'GLOBAL'),     
+#                                          VALE = (0., 0., k2_3,),  REPERE = 'GLOBAL'),
 #                                     _F(  GROUP_MA=('AMN1'),  CARA = 'A_T_D_L',
 #                                          VALE = (0., 0., c1,),  REPERE = 'GLOBAL'),
 #                                     _F(  GROUP_MA=('AMN2'),  CARA = 'A_T_D_L',
 #                                          VALE = (0., 0., c2_1,),  REPERE = 'GLOBAL'),
 #                                     _F(  GROUP_MA=('AMN3'),  CARA = 'A_T_D_L',
-#                                          VALE = (0., 0., c2_2,),  REPERE = 'GLOBAL'),    
+#                                          VALE = (0., 0., c2_2,),  REPERE = 'GLOBAL'),
 #                                     _F(  GROUP_MA=('AMN4'),  CARA = 'A_T_D_L',
-#                                          VALE = (0., 0., c2_3,),  REPERE = 'GLOBAL'),                                            
+#                                          VALE = (0., 0., c2_3,),  REPERE = 'GLOBAL'),
 #                                          )
 #                           )
-#       
+#
 # RIGI_ELB=CALC_MATR_ELEM(  MODELE=MOD_B,        OPTION='RIGI_MECA',
 #                              CARA_ELEM=CARA_B,   CHARGE=CON_B  )
-# 
+#
 # MASS_ELB=CALC_MATR_ELEM( MODELE=MOD_B,    OPTION='MASS_MECA_DIAG',
 #                              CARA_ELEM=CARA_B,   CHARGE=CON_B  )
-# 
+#
 # AMOR_ELB=CALC_MATR_ELEM( MODELE=MOD_B,    OPTION='AMOR_MECA',
-#                              CARA_ELEM=CARA_B,   CHARGE=CON_B   )  
-#                                                
+#                              CARA_ELEM=CARA_B,   CHARGE=CON_B   )
+#
 # NUME_B=NUME_DDL(  MATR_RIGI=RIGI_ELB )
-# 
+#
 # RIGI_B=ASSE_MATRICE(  MATR_ELEM=RIGI_ELB,   NUME_DDL=NUME_B  )
 # MASS_B=ASSE_MATRICE(  MATR_ELEM=MASS_ELB,   NUME_DDL=NUME_B  )
 # AMOR_B=ASSE_MATRICE(  MATR_ELEM=AMOR_ELB,   NUME_DDL=NUME_B  )
-#       
+#
 # MONO_XB=CALC_CHAR_SEISME(   MATR_MASS=MASS_B,   DIRECTION=( 0., 0., 1.,),
 #                                MONO_APPUI='OUI'
-#                               )         
-# 
+#                               )
+#
 # #-----------------------------------------------------------------------
 # # CALCULS TRANSITOIRES DIRECTS
 # #-----------------------------------------------------------------------
-# 
+#
 # TRAN_LB=DYNA_VIBRA(TYPE_CALCUL='TRAN',
 #                      BASE_CALCUL='PHYS',
 #                      MATR_MASS=MASS_B,
@@ -526,7 +526,7 @@ TEST_TABLE(TABLE=tabl_cor,
 #                      INCREMENT=_F( LIST_INST = L_INST),
 #                      EXCIT=_F(  VECT_ASSE = MONO_XB,  FONC_MULT = ACCE)
 #                             )
-#        
+#
 # table = MACR_SPECTRE(MAILLAGE = MAILLAGE,
 #                       PLANCHER = _F( NOM='N02',
 #                                      GROUP_NO='N02'),
@@ -544,5 +544,5 @@ TEST_TABLE(TABLE=tabl_cor,
 #                       ),
 #                       IMPRESSION=_F(FORMAT = 'TABLEAU',
 #                                     UNITE = 29)
-#  )                  
+#  )
 FIN()

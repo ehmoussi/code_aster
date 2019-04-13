@@ -124,11 +124,11 @@ class MACRO(N_ENTITE.ENTITE):
             self.regles = (regles,)
         self.fichier_ini = fichier_ini
         # Attribut op_init : Fonction a appeler a la construction de l
-        # operateur sauf si == None
+        # operateur sauf si is None
         self.op_init = op_init
         self.entites = args
         current_cata = CONTEXT.get_current_cata()
-        if niveau == None:
+        if niveau is None:
             self.niveau = None
             current_cata.enregistre(self)
         else:

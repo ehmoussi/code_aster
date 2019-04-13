@@ -82,7 +82,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     if CONE:
         dCONE = CONE[0].cree_dict_valeurs(CONE[0].mc_liste)
         for i in list(dCONE.keys()):
-            if dCONE[i] == None:
+            if dCONE[i] is None:
                 del dCONE[i]
 
         RAYON = dCONE['RAYON']
@@ -113,7 +113,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     for j in DEFI_CABLE:
         dDEFI_CABLE.append(j.cree_dict_valeurs(j.mc_liste))
         for i in list(dDEFI_CABLE[-1].keys()):
-            if dDEFI_CABLE[-1][i] == None:
+            if dDEFI_CABLE[-1][i] is None:
                 del dDEFI_CABLE[-1][i]
 
     # BOUCLE SUR LES FACTEURS DU MOT-CLE "DEFI_CABLE"
@@ -302,7 +302,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 
 #    dRelaxation=RELAXATION[0].cree_dict_valeurs(RELAXATION[0].mc_liste)
 #    for i in dRelaxation.keys():
-#      if dRelaxation[i]==None : del dRelaxation[i]
+#      if dRelaxation[i] is None : del dRelaxation[i]
 #  if TYPE_RELAX!='SANS':
     __DC = DEFI_CABLE_OP(MODELE=MODELE,
                          CHAM_MATER=CHAM_MATER,

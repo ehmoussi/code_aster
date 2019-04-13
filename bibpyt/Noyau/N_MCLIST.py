@@ -209,7 +209,7 @@ class MCList(collections.UserList):
            l'étape a été trouvée
            XXX double emploi avec self.etape ???
         """
-        if self.parent == None:
+        if self.parent is None:
             return None
         return self.parent.get_etape()
 

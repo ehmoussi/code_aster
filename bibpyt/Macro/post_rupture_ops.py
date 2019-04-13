@@ -191,7 +191,7 @@ def caract_mater(self, mater):
         if cmpt[:4] == 'ELAS':
             phenom = cmpt
             break
-    if phenom == None:
+    if phenom is None:
         UTMESS('F', 'RUPTURE0_5')
     ns = '{:06d}'.format(ind)
     compor = sd_compor1('%-8s.CPT.%s' % (mater.nom, ns))

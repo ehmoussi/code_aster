@@ -485,10 +485,10 @@ def macr_spectre_ops(
     l_bat = [i for i in l_batiment if i != None]
     l_com = [i for i in l_commentaire if i != None]
     if l_bat != []:
-        l_bat2 = ['-' if i == None else i for i in l_batiment]
+        l_bat2 = ['-' if i is None else i for i in l_batiment]
         lListe.append(_F(LISTE_K=l_bat2,TYPE_K='K24', PARA='BATIMENT'))
     if l_com !=[]:
-        l_com2 = ['-' if i == None else i for i in l_commentaire]
+        l_com2 = ['-' if i is None else i for i in l_commentaire]
         lListe.append(_F(LISTE_K=l_com2,TYPE_K='K24', PARA='COMMENTAIRE'))
         
     tab = CREA_TABLE(LISTE=lListe, TITRE=titre)

@@ -828,7 +828,7 @@ class Modele:
            deviendra self.nume_ddl. C'est utile pour les modeles experimentaux
            pour lesquels le ddl est pipo.
         """
-        if self.nume_ddl == None:
+        if self.nume_ddl is None:
             for nume_name, nume in list(self.objects.nume_ddl.items()):
                 model = aster.getvectjev(nume_name.ljust(14) + ".NUME.LILI")
                 if not model:
@@ -846,7 +846,7 @@ class Modele:
            deviendra self.nume_ddl. C'est utile pour les modeles experimentaux
            pour lesquels le ddl est pipo.
         """
-        if self.mass == None or self.kass == None:
+        if self.mass is None or self.kass is None:
             for matr_name, matr in list(self.objects.matrices.items()):
                 iret, ibid, nom_modele = aster.dismoi(
                     'NOM_MODELE', matr_name, 'MATR_ASSE', 'F')
@@ -858,7 +858,7 @@ class Modele:
                         self.mass = matr
                         self.mass_name = matr_name
 
-        if self.mass == None or self.kass == None:
+        if self.mass is None or self.kass is None:
             self.mess.disp_mess(
                 "On ne trouve pas de matrices associees au modele" + self.nom)
             self.mess.disp_mess(

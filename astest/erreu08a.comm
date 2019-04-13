@@ -119,7 +119,7 @@ try :
                                        ITER_GLOB_MAXI=10));
 
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CONTACT_93":
       is_ok = 1

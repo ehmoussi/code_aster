@@ -71,7 +71,7 @@ from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
 from ..Objects import DataStructure, ResultNaming
 from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
-from ..Utilities import Singleton, deprecated, import_object, no_new_attributes
+from ..Utilities import deprecated, import_object, no_new_attributes
 from ..Utilities.outputs import (command_header, command_result,
                                  command_separator, command_text, command_time,
                                  decorate_name)

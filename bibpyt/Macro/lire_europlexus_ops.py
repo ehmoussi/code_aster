@@ -318,7 +318,7 @@ le mot-clé %s""" % mc_cara)
             for j in self.EXCIT:
                 dExcit.append(j.cree_dict_valeurs(j.mc_liste))
                 for i in list(dExcit[-1].keys()):
-                    if dExcit[-1][i] == None:
+                    if dExcit[-1][i] is None:
                         del dExcit[-1][i]
 
         resu = LIRE_RESU(**lire_resu)

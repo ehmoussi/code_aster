@@ -90,7 +90,7 @@ class CataComportementError(Exception):
 
 
 def force_to_tuple(value):
-    """Retourne systématiquement un tuple (vide si value==None)."""
+    """Retourne systématiquement un tuple (vide si value is None)."""
     if value is None:
         return tuple()
     return force_tuple(value)
@@ -444,7 +444,7 @@ class KIT_META(KIT):
     nom_vari = property(get_nom_vari, "nom_vari")
 
 
-class CataLoiComportement(Singleton):
+class CataLoiComportement(metaclass=Singleton):
 
     """Catalogue de loi de comportement.
     Il s'agit juste d'un dictionnaire contenant les objets de type LoiComportement
@@ -599,7 +599,7 @@ class CataLoiComportement(Singleton):
             print('catalc.get_symmetry - args =', loi)
         comport = self.get(loi)
         return comport.syme_matr_tang
-        
+
     def get_deformldc(self, loi):
         """Retourne la nature de la déformation en entrée de la ldc
 

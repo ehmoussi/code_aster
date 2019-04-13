@@ -64,7 +64,7 @@ is_ok = 0
 try :
    DEF1=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CHMAT1,  EXCIT=_F(CHARGE = CHARGT)  )
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCULEL6_62":
       is_ok = 1
@@ -99,7 +99,7 @@ is_ok = 0
 try :
    DEF3=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CHMAT3,  EXCIT=_F(CHARGE = CHARGT)  )
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCULEL6_62":
       is_ok = 1
@@ -124,7 +124,7 @@ is_ok = 0
 try :
    DEF4=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CHMAT4,  EXCIT=_F(CHARGE = CHARGT)  )
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCULEL6_62":
       is_ok = 1
@@ -147,7 +147,7 @@ try :
     CHAR_FI=AFFE_CHAR_MECA(MODELE=MO,
                        FORCE_INTERNE=_F(GROUP_MA=('CARRE','BORD1'), FX=4.0,),);
 except AsterError as err:
-   print((fmt_raison % str(err)))
+   print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MODELISA6_96":
       is_ok = 1

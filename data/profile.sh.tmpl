@@ -1,5 +1,27 @@
 # created by waf using data/wscript
 
+remove_path()
+{
+    # usage: remove_path value pattern1 [pattern2 [...]]
+    #     Returns the 'value' with excluding the given patterns.
+    #     Example of use: export PATH=$(remove_path "${PATH}" ${HOME}/local)
+    if [ ${#} -lt 2 ]
+    then
+        echo ${1}
+        return
+    fi
+    local values=${1}
+    shift
+
+    local i
+    for i in ${@}
+    do
+        values=$(echo ${values} | tr ":" "\n" | grep -v -F ${i} | tr "\n" ":" | sed -e "s%:\+%:%g;s%^:%%g;s%:$%%g")
+    done
+
+    echo ${values}
+}
+
 @OPT_ENV@
 
 LD_LIBRARY_PATH=.:$ASTER_VERSION_DIR/lib:\
@@ -8,17 +30,18 @@ LD_LIBRARY_PATH=.:$ASTER_VERSION_DIR/lib:\
 $LD_LIBRARY_PATH
 export LD_LIBRARY_PATH
 
+# This module was used in SALOME 8 for Python 2.
+PYTHONPATH=$(remove_path "${PYTHONPATH}" Subprocess)
+
 PYTHONPATH=\
 .:@ASTERLIBDIR@:\
 @CFG_PYTHONPATH@:\
 $PYTHONPATH
 export PYTHONPATH
 
-# do not change PYTHONHOME under the SALOME environment
-if [ -z "${ABSOLUTE_APPLI_PATH}" ]; then
-    PYTHONHOME=@PYTHONHOME@
-    export PYTHONHOME
-fi
+# sometimes one should not change PYTHONHOME under SALOME environment...
+PYTHONHOME=@PYTHONHOME@
+export PYTHONHOME
 
 # as PYTHONHOME is changed, path to 'python' must preceed all others if a
 # subprocess calls it

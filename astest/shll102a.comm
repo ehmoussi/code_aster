@@ -147,10 +147,10 @@ ASSEMBLAGE(MODELE=MODELE,
 nddl=rig.shape[0]
 
 print("D")
-print((len(d)))
+print(len(d))
 i=0
 for ddd in d:
-   print((i,ddd))
+   print(i,ddd)
    i=i+1
 print("\n")
 
@@ -191,7 +191,7 @@ for NTRIM in tours:
 
   FREQ=NTRIM/60.
   OM = ((FREQ * 2) * pi );
-  print(('nbtour ', NTRIM))
+  print('nbtour ', NTRIM)
 
   malou = balou * OM**2
   F[25]= malou

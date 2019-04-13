@@ -25,6 +25,8 @@
 #       from your package manager.
 #       Example: apt-get install aspell-fr
 
+from supv002a import SUPV002
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ))
 
 # Que faire en cas d'erreur avec ce test ?
@@ -98,10 +100,6 @@ previous_errors = [
     # Pour Code_Saturne (coupleur IFS)
     'USASTE',
     ]
-
-import os
-os.rename('fort.33', 'fort33.py')
-from fort33 import SUPV002
 
 # TEST_TABLE are included in the "macro-command"
 SUPV002(ERREUR=previous_errors,

@@ -1100,7 +1100,7 @@ def a_creer_seulement_dans(obj, l_autorises):
             assert 0, ("non autorise : ", autor)
 
     if not OK:
-        print(("l_autorises=", l_autorises))
-        print(("l1=", l1))
+        print("l_autorises=", l_autorises)
+        print("l1=", l1)
         assert 0, ("l'objet ", obj, "doit etre cree dans les fichiers de type:",
                    l_autorises)

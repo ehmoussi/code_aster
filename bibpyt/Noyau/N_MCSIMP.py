@@ -77,7 +77,7 @@ class MCSIMP(N_OBJECT.OBJECT):
     def GETVAL(self, val):
         """
             Retourne la valeur effective du mot-clé en fonction
-            de la valeur donnée. Defaut si val == None
+            de la valeur donnée. Defaut si val is None
         """
         if (val is None and hasattr(self.definition, 'defaut')):
             val = self.definition.defaut

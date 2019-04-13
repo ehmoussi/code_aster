@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -161,9 +161,9 @@ class sd_dyna_gene_nl(AsBase):
     TYPE = AsVI()
 
     def u_dime_nl(self):
-        
-        if self.TYPE.lonmax == None : return (0, 0, 0)
-        
+
+        if self.TYPE.lonmax is None : return (0, 0, 0)
+
         nbnoli  = self.TYPE.lonmax
         vindex  = self.VIND.get()
         nbvint  = vindex[-1]-1

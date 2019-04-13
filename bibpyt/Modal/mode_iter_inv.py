@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ def mode_iter_inv_prod(TYPE_RESU, **args ):
     # sinon on est dans le cas 'DYNAMIQUE' donc **args doit contenir les mots-clés
     # MATR_RIGI et (faculativement) MATR_AMOR, et on peut y accéder
     vale_rigi = args['MATR_RIGI']
-    if (vale_rigi== None) : # si MATR_RIGI non renseigné
+    if (vale_rigi is None) : # si MATR_RIGI non renseigné
        # on retourne un type fictif pour que le plantage aie lieu dans la lecture du catalogue
        return ASSD
     vale_amor = args.get('MATR_AMOR')

@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist verif_interact sequential
 
 F comm supv002a.comm D 1
-F libr supv002a.33 D 33
+F nom supv002a.py D 0

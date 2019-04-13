@@ -500,7 +500,7 @@ class EUROPLEXUS:
                     continue
                 if cle not in cata_cara_elem:
                     UTMESS('F', 'PLEXUS_18', valk=cle)
-                if cata_cara_elem[cle] == None:
+                if cata_cara_elem[cle] is None:
                     continue
                 [epx, mode_from_cara] = export_cara(cle, epx,
                                               cara_elem_struc[cle],
