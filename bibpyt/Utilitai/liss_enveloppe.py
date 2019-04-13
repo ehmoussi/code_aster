@@ -585,9 +585,9 @@ def lissage_spectres(nappe=nappe, fmin=0.2, fmax=35.5, nb_pts=50, l_freq=[], pre
 
     # Limitation de la bande de fréquence
     if fmin != None or fmax != None:
-        if fmin == None:
+        if fmin is None:
             fmin = min(nappe_up.listFreq)
-        if fmax == None:
+        if fmax is None:
             fmax = max(nappe_up.listFreq)
         filter = filtreBandWidth(lower=fmin, upper=fmax)
         nappe_up.filtre(filter)

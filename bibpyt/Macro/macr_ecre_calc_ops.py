@@ -78,27 +78,27 @@ def macr_ecre_calc_ops(self, **args):
     # RECUPERATION DES MOTS-CLES FACTEURS
     dFISSURE = FISSURE[0].cree_dict_valeurs(FISSURE[0].mc_liste)
     for i in list(dFISSURE.keys()):
-        if dFISSURE[i] == None:
+        if dFISSURE[i] is None:
             del dFISSURE[i]
 
     dECOULEMENT = ECOULEMENT[0].cree_dict_valeurs(ECOULEMENT[0].mc_liste)
     for i in list(dECOULEMENT.keys()):
-        if dECOULEMENT[i] == None:
+        if dECOULEMENT[i] is None:
             del dECOULEMENT[i]
 
     dTEMPERATURE = TEMPERATURE[0].cree_dict_valeurs(TEMPERATURE[0].mc_liste)
     for i in list(dTEMPERATURE.keys()):
-        if dTEMPERATURE[i] == None:
+        if dTEMPERATURE[i] is None:
             del dTEMPERATURE[i]
 
     dMODELE_ECRE = MODELE_ECRE[0].cree_dict_valeurs(MODELE_ECRE[0].mc_liste)
     for i in list(dMODELE_ECRE.keys()):
-        if dMODELE_ECRE[i] == None:
+        if dMODELE_ECRE[i] is None:
             del dMODELE_ECRE[i]
 
     dCONVERGENCE = CONVERGENCE[0].cree_dict_valeurs(CONVERGENCE[0].mc_liste)
     for i in list(dCONVERGENCE.keys()):
-        if dCONVERGENCE[i] == None:
+        if dCONVERGENCE[i] is None:
             del dCONVERGENCE[i]
 
     if debug:

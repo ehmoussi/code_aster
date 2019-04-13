@@ -50,7 +50,7 @@ except:
         except:
             frame = sys.exc_info()[2].tb_frame.f_back
         while offset > 0:
-            if frame == None:
+            if frame is None:
                 return None
             frame = frame.f_back
             offset = offset - 1
@@ -62,7 +62,7 @@ def callee_where(niveau=4):
        recupere la position de l appel
     """
     frame = cur_frame(niveau)
-    if frame == None:
+    if frame is None:
         return 0, "inconnu", 0, {}
     try:
         # Python 2.7 compile function does not accept unicode filename, so we encode it
@@ -89,7 +89,7 @@ def AsType(a):
         return "I"
     if is_str(a):
         return "TXM"
-    if a == None:
+    if a is None:
         return None
     raise AsException("type inconnu: %r %s" % (a, type(a)))
 
@@ -195,18 +195,17 @@ def import_object(uri):
     return object
 
 
-class Singleton(object):
-
-    """Singleton implementation in python."""
-    # add _singleton_id attribute to the class to be independant of import
+class Singleton(type):
+    """Singleton implementation in python (Metaclass)."""
+    # add _singleton_id attribute to the subclasses to be independant of import
     # path used
     __inst = {}
 
-    def __new__(cls, *args, **kargs):
+    def __call__(cls, *args, **kws):
         cls_id = getattr(cls, '_singleton_id', cls)
-        if Singleton.__inst.get(cls_id) is None:
-            Singleton.__inst[cls_id] = object.__new__(cls)
-        return Singleton.__inst[cls_id]
+        if cls_id not in cls.__inst:
+            cls.__inst[cls_id] = super(Singleton, cls).__call__(*args, **kws)
+        return cls.__inst[cls_id]
 
 
 class Enum(object):

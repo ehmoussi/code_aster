@@ -98,7 +98,7 @@ del tmpf
 
 fchoc_cine = kn_choc * (((d_adap2-jeu_choc)+NP.abs(d_adap2-jeu_choc))/2)
 err_globale_F_adap2 = NP.sqrt( NP.sum((fchoc_adap2-fchoc_cine)**2) / NP.sum(fchoc_cine**2) ) *100
-print(('err_globale_F_adap2', err_globale_F_adap2))
+print('err_globale_F_adap2', err_globale_F_adap2)
 #####################################################################
 
 ############################################################

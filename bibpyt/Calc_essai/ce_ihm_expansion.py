@@ -328,14 +328,14 @@ class InterfaceCorrelation(Frame):
         """! Demande le lancement de la macro MACRO_EXPANS dans calc_proj_resu
         """
         # Validité des donnees :
-        if self.resu_num == None or self.resu_exp == None:
+        if self.resu_num is None or self.resu_exp is None:
             self.mess.disp_mess("Il manque des données pour le calcul")
             return
-        if self.resu_num.modele == None:
+        if self.resu_num.modele is None:
             self.mess.disp_mess(
                 "Il manque le modele associe au résultat numérique")
             return
-        if self.resu_exp.modele == None:
+        if self.resu_exp.modele is None:
             self.mess.disp_mess(
                 "Il manque le modele associe au résultat expérimental")
             return

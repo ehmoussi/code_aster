@@ -47,7 +47,7 @@ class OBJECT:
            l'étape a été trouvée
            XXX double emploi avec self.etape ???
         """
-        if self.parent == None:
+        if self.parent is None:
             return None
         return self.parent.get_etape()
 
@@ -89,7 +89,7 @@ class OBJECT:
     def GETVAL(self, val):
         """
             Retourne la valeur effective du mot-clé en fonction
-            de la valeur donnée. Defaut si val == None
+            de la valeur donnée. Defaut si val is None
         """
         if (val is None and hasattr(self.definition, 'defaut')):
             return self.definition.defaut

@@ -39,7 +39,7 @@ from cmath import sqrt as csqrt
 from cmath import exp as cexp
 import numpy as NP
 import aster_core
-from Utilitai.random_signal_utils import (calc_dsp_FR, calc_dsp_KT, 
+from Utilitai.random_signal_utils import (calc_dsp_FR, calc_dsp_KT,
                acce_filtre_CP, ACCE2SROM, dsp_filtre_CP)
 import aster
 
@@ -47,8 +47,8 @@ import aster
 # COHERENCY MATRIX
 # --------------------------------------------------------------------
 def CALC_COHE(freq, **kwargs):
-#    Frequency is in rad/s: freq= f*2*pi 
-#    kwargs: VITE_ONDE, PARA_ALPHA, TYPE, MAILLAGE, 
+#    Frequency is in rad/s: freq= f*2*pi
+#    kwargs: VITE_ONDE, PARA_ALPHA, TYPE, MAILLAGE,
     model = kwargs['TYPE']
     nom_mail = kwargs['MAILLAGE']
     nom_group_inter = kwargs['GROUP_NO_INTERF']
@@ -66,7 +66,7 @@ def CALC_COHE(freq, **kwargs):
         VITE_ONDE = kwargs['VITE_ONDE']
         alpha = kwargs['PARA_ALPHA']
         COHE = NP.exp(- (DIST2 * (alpha * freq / VITE_ONDE)**2.))
-     #----ABRAHAMSON ROCK (EPRI)      
+     #----ABRAHAMSON ROCK (EPRI)
     elif model == 'ABRAHAMSON' :
         p_a1 = 1.647
         p_a2 = 1.01
@@ -161,12 +161,12 @@ def calc_dist2(noe_interf):
     DY = YR - YRT
     DIST = DX**2 + DY**2
     return DIST
-      
+
 
 # -------------------------------------------------------------------
 # CORRELATION MATRIX
 # --------------------------------------------------------------------
-def CALC_CORRE(rho, dim, RATIO_HV = 1.0): 
+def CALC_CORRE(rho, dim, RATIO_HV = 1.0):
     if dim == 2:
         Mat_cor = NP.matrix([[1.0 ,rho ],[rho ,1.0]])
     elif dim == 3:
@@ -179,7 +179,7 @@ def CALC_CORRE(rho, dim, RATIO_HV = 1.0):
 def DSP2ACCE_ND(f_dsp, data_cohe, rv=None):
    # ----------------------------------
    # IN: f_dsp: dsp function for of list frequencies lw2 on (0, OM)
-   #     rv: realisation des N (2) vecteurs 
+   #     rv: realisation des N (2) vecteurs
    #         de variables aleatoires gaussiennes complexe
    #     cohe : coherency matrix or correlation coefficient
    # OUT: Xt: trajectoire du processus gaussien stationnaire normalise (m=0, ect=1)
@@ -189,29 +189,29 @@ def DSP2ACCE_ND(f_dsp, data_cohe, rv=None):
     DW = lw2[1] - lw2[0]
     nbfreq2 = len(lw2)
     nbfreq = nbfreq2 * 2
-    if data_cohe['TYPE'] == 'COEF_CORR': 
+    if data_cohe['TYPE'] == 'COEF_CORR':
         cohec = data_cohe['MAT_COHE']
         dim = cohec.shape[0]
     else :
-        liste_nom, l2 = get_group_nom_coord(data_cohe['GROUP_NO_INTERF'], 
-                                       data_cohe['MAILLAGE']) 
+        liste_nom, l2 = get_group_nom_coord(data_cohe['GROUP_NO_INTERF'],
+                                       data_cohe['MAILLAGE'])
         dim = len(liste_nom)
-    CS = NP.array([0.0+0j] * dim * nbfreq)    
-    CS.resize(nbfreq, dim)  
-    Xt = NP.array([0.0] * dim * nbfreq)    
-    Xt.resize(dim, nbfreq)  
- 
-    if rv == None:
+    CS = NP.array([0.0+0j] * dim * nbfreq)
+    CS.resize(nbfreq, dim)
+    Xt = NP.array([0.0] * dim * nbfreq)
+    Xt.resize(dim, nbfreq)
+
+    if rv is None:
         vecc1 = (NP.random.normal(0.0,1.,nbfreq2*dim) + 1j*NP.random.normal(0.0,1.,nbfreq2*dim))
         vecc2 = (NP.random.normal(0.0,1.,nbfreq2*dim) + 1j*NP.random.normal(0.0,1.,nbfreq2*dim))
-        vecc1.resize(dim, nbfreq2) 
-        vecc2.resize(dim, nbfreq2) 
+        vecc1.resize(dim, nbfreq2)
+        vecc2.resize(dim, nbfreq2)
     elif rv != None:
-        rva = NP.array(rv)       
+        rva = NP.array(rv)
         vecc1 = rva[:,:nbfreq2]
         vecc2 = rva[:,nbfreq2:]
     for (iifr) in range(nbfreq2):
-        if data_cohe['TYPE'] != 'COEF_CORR': 
+        if data_cohe['TYPE'] != 'COEF_CORR':
             cohec = CALC_COHE(lw2[iifr], **data_cohe)
             aster_core.matfpe(-1)
             eigv, vec = NP.linalg.eig(cohec)
@@ -234,8 +234,8 @@ def DSP2ACCE_ND(f_dsp, data_cohe, rv=None):
 
     CS = NP.transpose(CS)
     SX = NP.fft.ifft(CS,nbfreq,1) * nbfreq
-    ha = NP.exp(-1.j * pi * NP.arange(nbfreq) * (1. - 1. / nbfreq))      
-    for kkk in range(dim): 
+    ha = NP.exp(-1.j * pi * NP.arange(nbfreq) * (1. - 1. / nbfreq))
+    for kkk in range(dim):
         Xt[kkk]=sqrt(DW) * (SX[kkk] * ha).real
     return Xt.tolist()
 
@@ -258,7 +258,7 @@ def gene_traj_gauss_evol_ND(self, data_cohe, rv=None, **kwargs):
     fp = kwargs['FREQ_PENTE']
     TYPE = kwargs['TYPE_DSP']
 
-    if data_cohe['TYPE'] == 'COEF_CORR':  
+    if data_cohe['TYPE'] == 'COEF_CORR':
         cohec = data_cohe['MAT_COHE']
     else :
         cohec = CALC_COHE(DW*10., **data_cohe)
@@ -267,8 +267,8 @@ def gene_traj_gauss_evol_ND(self, data_cohe, rv=None, **kwargs):
         aster_core.matfpe(1)
 
     dim = cohec.shape[0]
-    Xt = NP.array([0.0]*dim*nbfreq)    
-    Xt.resize(dim, nbfreq) 
+    Xt = NP.array([0.0]*dim*nbfreq)
+    Xt.resize(dim, nbfreq)
 
     if TYPE == 'FR':
         R0 = kwargs['para_R0']
@@ -286,13 +286,13 @@ def gene_traj_gauss_evol_ND(self, data_cohe, rv=None, **kwargs):
             l_FIT = l_FIT * l_ALPHA
         else:
             mof = NP.trapz(dsp_fr_refe * l_FIT, self.sampler.liste_w2) * 2.
-    if rv == None:
+    if rv is None:
 #        rv = NP.random.normal(0.0, 1., nbfreq) + \
 #            1j * NP.random.normal(0.0, 1., nbfreq)
       vecc1=(NP.random.normal(0.0,1.,nbfreq2*dim) + 1j*NP.random.normal(0.0,1.,nbfreq2*dim))
       vecc2=(NP.random.normal(0.0,1.,nbfreq2*dim) + 1j*NP.random.normal(0.0,1.,nbfreq2*dim))
-      vecc1.resize(dim, nbfreq2) 
-      vecc2.resize(dim, nbfreq2) 
+      vecc1.resize(dim, nbfreq2)
+      vecc2.resize(dim, nbfreq2)
     else:
         rva=NP.array(rv)
         vecc1 = rva[:,0: nbfreq2]
@@ -322,7 +322,7 @@ def gene_traj_gauss_evol_ND(self, data_cohe, rv=None, **kwargs):
             # constante de normalisation pour que ecart_type=1 a pour tout t
             S_cst = mof / (NP.trapz(dsp * l_FIT, self.sampler.liste_w2) * 2.)
             vale_dsp = calc_dsp_FR(self.sampler.liste_w2,
-                       fgt, amo, R0, R2, self.FREQ_CORNER, So=S_cst) * l_FIT   
+                       fgt, amo, R0, R2, self.FREQ_CORNER, So=S_cst) * l_FIT
 
         vsin = 1.j * NP.sin(self.sampler.liste_w2 * tii)
         vcos = NP.cos(self.sampler.liste_w2 * tii)
@@ -393,7 +393,7 @@ def itersimcor_SRO(self, FONC_DSP, data_cohe, **SRO_args):
             acce = acce_filtre_CP(acce, dt, self.FREQ_FILTRE)
         f_acce = t_fonction(
              self.sampler.liste_temps, acce, para=self.modulator.para_fonc_modul)
-        f_sroi = ACCE2SROM(self, f_acce, amort, freq_sro, 2, 
+        f_sroi = ACCE2SROM(self, f_acce, amort, freq_sro, 2,
                                  SRO_args['METHODE_SRO'])
         liste_valesro.append(f_sroi.vale_y)
 
@@ -548,7 +548,7 @@ def itersimcortir_SRO(self, FONC_DSP, data_cohe, NB_TIR, **SRO_args):
     l_dsp = [FONC_DSP]
     liste_valesro = []
     liste_Xt = []
-    for nbtir in range(NB_TIR):    
+    for nbtir in range(NB_TIR):
         Xt = DSP2ACCE_ND(FONC_DSP, data_cohe, list_rv[nbtir])
         liste_Xt.extend(Xt)
     for acce in liste_Xt:
@@ -557,7 +557,7 @@ def itersimcortir_SRO(self, FONC_DSP, data_cohe, NB_TIR, **SRO_args):
             acce = acce_filtre_CP(acce, dt, self.FREQ_FILTRE)
         f_acce = t_fonction(
              self.sampler.liste_temps, acce, para=self.modulator.para_fonc_modul)
-        f_sroi = ACCE2SROM(self, f_acce, amort, freq_sro, 2, 
+        f_sroi = ACCE2SROM(self, f_acce, amort, freq_sro, 2,
                                  SRO_args['METHODE_SRO'])
         liste_valesro.append(f_sroi.vale_y)
     if SRO_args['TYPE_ITER'] == 'SPEC_MEDIANE':
@@ -594,7 +594,7 @@ def itersimcortir_SRO(self, FONC_DSP, data_cohe, NB_TIR, **SRO_args):
 
         liste_valesro = []
         liste_Xt = []
-        for nbtir in range(NB_TIR):    
+        for nbtir in range(NB_TIR):
             Xt = DSP2ACCE_ND(f_dsp, data_cohe, list_rv[nbtir])
             liste_Xt.extend(Xt)
         for acce in liste_Xt:

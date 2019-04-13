@@ -68,7 +68,7 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
     if ielas == 1 and ifour == 1:
         UTMESS('F', 'ELASMULT0_1')
 
-    if (numeddl in self.sdprods) or (numeddl == None):
+    if (numeddl in self.sdprods) or (numeddl is None):
         # Si le concept numeddl est dans self.sdprods ou n est pas nommé
         # il doit etre  produit par la macro
         # il faudra donc appeler la commande NUME_DDL
@@ -158,7 +158,7 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
                               RENUM          =SOLVEUR['RENUM'],
                               )
 
-        if m['VECT_ASSE'] == None:
+        if m['VECT_ASSE'] is None:
             motscles = {}
             l_calc_varc = False
             if CHAM_MATER:

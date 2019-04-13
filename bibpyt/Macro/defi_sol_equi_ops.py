@@ -641,7 +641,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
     legendeT = 's' + str(s) + 'v' + str(v) + 'a' + str(a)
     legende = '-acce' + str(a) + '-sol' + str(s) + '-cvar=' + str(v)
-    if args.get('TABLE_MATER_ELAS') != None:
+    if args.get('TABLE_MATER_ELAS') is not None:
         nom_para_table_elas = ['Y','M','RHO','Emax','NU','AH','GDgam']
         if Byrne :
             nom_para_table_elas.append('N1')
@@ -1294,7 +1294,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
         for j in range(1, NCOU + 2):
 
             affmat.append(_F(GROUP_MA=__TMAT['M', j], MATER=tSOLH[j]))
-            if "MAILLAGE" not in args or args['MAILLAGE'] is None:
+            if args.get("MAILLAGE") is None:
               affmat.append(_F(GROUP_MA='L'+__TMAT['M', j], MATER=tSOLH[j]))
               #affmat.append(_F(GROUP_MA='G'+__TMAT['M', j], MATER=tSOLH[j]))
               #affmat.append(_F(GROUP_MA='D'+__TMAT['M', j], MATER=tSOLH[j]))

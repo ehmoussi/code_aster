@@ -80,7 +80,7 @@ CARBUR = FORMULE(VALE='SIG_GRIFFITH(X)',
 
 # essais de la formule et impression des quelques valeurs
 for i in range(20):
-   print(('Sig-Griffith',CARBUR(1)))
+   print('Sig-Griffith',CARBUR(1))
 
 CHBID=CREA_CHAMP(TYPE_CHAM='ELGA_GEOM_R', OPERATION='AFFE',MODELE=MODEL2, PROL_ZERO='OUI',
               AFFE=_F( TOUT='OUI',  NOM_CMP=('X',),   VALE=1.),);
@@ -104,7 +104,7 @@ CHGRIF=CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F', OPERATION='AFFE', MODELE=MODEL2,PROL_
 for itirage in range(ntirage):
 
     print('================================')
-    print(('- tirage numero ',itirage, '----'))
+    print('- tirage numero ',itirage, '----')
     print('================================')
 
     CHGRIR=CREA_CHAMP(TYPE_CHAM ='ELGA_NEUT_R', OPERATION ='EVAL',CHAM_F= CHGRIF,CHAM_PARA = CHBID);
@@ -115,7 +115,7 @@ for itirage in range(ntirage):
         t2=instants[step+1]
         t1=instants[step]
         print('--------------------------------')
-        print(('step=',step,'t=',t2))
+        print('step=',step,'t=',t2)
         print('--------------------------------')
         # extraction of the field of stress tensor at gauss points
         VAR2=CREA_CHAMP(TYPE_CHAM='ELGA_VARI_R',OPERATION='EXTR', RESULTAT=RESUV2,
@@ -159,7 +159,7 @@ for itirage in range(ntirage):
     DETRUIRE(CONCEPT=_F(NOM=CHGRIR,),);
     # fin de la boucle sur les tirages
 
-print(('list of rupture time',listrup))
+print('list of rupture time',listrup)
 
 # proba rupture
 n=len(listrup)
@@ -170,8 +170,8 @@ for i in range(n):
    P[i]=(i+0.5)/n
    S[i]=SIGMOY2(listrup2[i])
 
-print(('Pobability of failure',P))
-print(('Stress',S))
+print('Pobability of failure',P)
+print('Stress',S)
 
 if n > 1 :
     PROBAS=DEFI_FONCTION(  NOM_PARA='SIGM', ABSCISSE=S,  ORDONNEE=P , VERIF='NON'   )

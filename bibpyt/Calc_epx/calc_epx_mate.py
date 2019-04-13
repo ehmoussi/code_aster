@@ -103,7 +103,7 @@ def export_mate(epx, CHAM_MATER, COMPORTEMENT, INTERFACES, dicOrthotropie):
     #           creation des couples MATERIAU/RELATION et des group_ma associés
     dic_mate_rela = {}
     for gr in list(dic_comportement.keys()):
-        if dic_comportement[gr]['MATER'] == None:
+        if dic_comportement[gr]['MATER'] is None:
             UTMESS('F', 'PLEXUS_32', gr)
         relation = dic_comportement[gr]['RELATION']
         nom_mater = dic_comportement[gr]['NOM_MATER']

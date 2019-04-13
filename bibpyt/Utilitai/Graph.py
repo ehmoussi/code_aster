@@ -142,9 +142,9 @@ class Graph(object):
         dx = max(self.BBXmax - self.BBXmin, 0.01 * self.BBXmax)
         if dx == 0.:
             dx = 1.e-6
-        if force or self.Min_X == None:
+        if force or self.Min_X is None:
             self.Min_X = self.BBXmin - marge * dx / 2.
-        if force or self.Max_X == None:
+        if force or self.Max_X is None:
             self.Max_X = self.BBXmax + marge * dx / 2.
         return
 
@@ -161,9 +161,9 @@ class Graph(object):
         dy = max(self.BBYmax - self.BBYmin, 0.01 * self.BBYmax)
         if dy == 0.:
             dy = 1.e-6
-        if force or self.Min_Y == None:
+        if force or self.Min_Y is None:
             self.Min_Y = self.BBYmin - marge * dy / 2.
-        if force or self.Max_Y == None:
+        if force or self.Max_Y is None:
             self.Max_Y = self.BBYmax + marge * dy / 2.
         return
 
@@ -299,7 +299,7 @@ class Graph(object):
             kargs['opts'] = opts
         else:
             kargs = self.LastTraceArgs.copy()
-            if FORMAT == None:
+            if FORMAT is None:
                 FORMAT = self.LastTraceFormat
             if FICHIER != None:
                 kargs['FICHIER'] = FICHIER
@@ -377,9 +377,9 @@ class TraceGraph:
         # objet Graph sous-jacent
         self.Graph = graph
         # si Min/Max incohérents
-        if graph.Min_X == None or graph.Max_X == None or graph.Min_X > graph.Max_X:
+        if graph.Min_X is None or graph.Max_X is None or graph.Min_X > graph.Max_X:
             graph.SetExtremaX(marge=0.05, force=True)
-        if graph.Min_Y == None or graph.Max_Y == None or graph.Min_Y > graph.Max_Y:
+        if graph.Min_Y is None or graph.Max_Y is None or graph.Min_Y > graph.Max_Y:
             graph.SetExtremaY(marge=0.05, force=True)
 
         if graph.Echelle_X == 'LOG':

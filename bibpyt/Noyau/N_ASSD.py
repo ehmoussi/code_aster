@@ -218,7 +218,7 @@ class ASSD(object):
     def par_lot(self):
         """Conserver uniquement pour la compatibilite avec le catalogue v9 dans eficas."""
         # XXX eficas
-        if not hasattr(self, 'jdc') or self.jdc == None:
+        if not hasattr(self, 'jdc') or self.jdc is None:
             val = None
         else:
             val = self.jdc.par_lot

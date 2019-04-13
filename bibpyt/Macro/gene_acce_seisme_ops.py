@@ -100,10 +100,14 @@ class GeneAcceParameters(object):
                 if "ACCE_MAX" in keys: del keys['ACCE_MAX']
 
         others = list(kwargs.keys())
-        if others.count("MODULATION") != 0: others.remove('MODULATION')
-        if others.count("COEF_CORR") != 0: others.remove('COEF_CORR')
-        if others.count("MATR_COHE") != 0: others.remove('MATR_COHE')
-        if others.count("PHASE") != 0: others.remove('PHASE')
+        if "MODULATION" in others:
+            others.remove('MODULATION')
+        if "COEF_CORR" in others:
+            others.remove('COEF_CORR')
+        if "MATR_COHE" in others:
+            others.remove('MATR_COHE')
+        if "PHASE" in others:
+            others.remove('PHASE')
  #  # SimulationKeys and MethodKeys
         if 'COEF_CORR' in kwargs:
             corr_keys = {}
@@ -129,30 +133,35 @@ class GeneAcceParameters(object):
             GeneratorKeys = kwargs.get('DSP')[0]
             method_keys = GeneratorKeys.cree_dict_valeurs(
                 GeneratorKeys.mc_liste)
-            if others.count("DSP") != 0: others.remove('DSP')
+            if "DSP" in others:
+                others.remove('DSP')
         else:
             self.cas = 'SPECTRE'
             self.simulation_keys.update({'TYPE_ITER': 'MOYENNE'})
             if kwargs.get('SPEC_FRACTILE'):
                 GeneratorKeys = kwargs.get('SPEC_FRACTILE')[0]
                 self.simulation_keys.update({'SPEC_METHODE': 'SPEC_FRACTILE'})
-                if others.count("SPEC_FRACTILE") != 0: others.remove('SPEC_FRACTILE')
+                if "SPEC_FRACTILE" in others:
+                    others.remove('SPEC_FRACTILE')
             elif kwargs.get('SPEC_MEDIANE'):
                 GeneratorKeys = kwargs.get('SPEC_MEDIANE')[0]
                 self.simulation_keys.update({'SPEC_METHODE': 'SPEC_MEDIANE'})
                 self.simulation_keys.update({'TYPE_ITER': 'MEDIANE'})
-                if others.count("SPEC_MEDIANE") != 0: others.remove('SPEC_MEDIANE')
+                if "SPEC_MEDIANE" in others:
+                    others.remove('SPEC_MEDIANE')
                 if kwargs.get('NB_TIRAGE') == 1:
                     UTMESS('F', 'SEISME_38')
             elif kwargs.get('SPEC_MOYENNE'):
                 GeneratorKeys = kwargs.get('SPEC_MOYENNE')[0]
                 self.simulation_keys.update({'SPEC_METHODE': 'SPEC_MEDIANE'})
-                if others.count("SPEC_MOYENNE") != 0: others.remove('SPEC_MOYENNE')
+                if "SPEC_MOYENNE" in others:
+                    others.remove('SPEC_MOYENNE')
                 if kwargs.get('NB_TIRAGE') == 1:
                     UTMESS('F', 'SEISME_38')
             elif kwargs.get('SPEC_UNIQUE'):
                 GeneratorKeys = kwargs.get('SPEC_UNIQUE')[0]
-                if others.count("SPEC_UNIQUE") != 0: others.remove('SPEC_UNIQUE')
+                if "SPEC_UNIQUE" in others:
+                    others.remove('SPEC_UNIQUE')
                 self.simulation_keys.update({'SPEC_METHODE': 'SPEC_UNIQUE'})
             method_keys = GeneratorKeys.cree_dict_valeurs(
                 GeneratorKeys.mc_liste)
@@ -262,7 +271,7 @@ class GeneratorDSP(Generator):
         self.DSP_args.update({
             'FREQ_FOND': self.method_params.get('FREQ_FOND'),
             'AMORT': self.method_params.get('AMOR_REDUIT')})
-        if self.FREQ_CORNER == None:
+        if self.FREQ_CORNER is None:
             self.FREQ_CORNER = 0.05 * self.DSP_args['FREQ_FOND']
         # Il faut calculer le facteur de pic si la donnee = PGA
         # pour obtenir sigma et multiplier la modulation avec cette valeur
@@ -326,7 +335,7 @@ class GeneratorSpectrum(Generator):
 
     def prepare_data(self):
         """prepare data for Spectrum class"""
-        if self.FREQ_CORNER == None:
+        if self.FREQ_CORNER is None:
             self.FREQ_CORNER = 0.0
         if 'NB_ITER' in self.method_params:
             dico_err = {'ERRE_ZPA': list(self.method_params.get('ERRE_ZPA')),

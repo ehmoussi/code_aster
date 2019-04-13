@@ -293,7 +293,7 @@ nom_nume = NUMEDDL.getName().strip()
 Nume=aster.getvectjev(nom_nume.ljust(8)+'      .NUME.DELG        ' )
 ind_lag1=[]
 ind_nolag=[]
-print(("Nume=",Nume))
+print("Nume=",Nume)
 
 for i1 in range(len(Nume)) :
   if Nume[i1] > -0.5 :
@@ -356,7 +356,7 @@ i=1
 j=0
 for vp in vpreal:
  if vp>1.e2:
-   print(("vp %4d : %6.6f" %(i,vp)))
+   print("vp %4d : %6.6f" %(i,vp))
    i=i+1
  j=j+1
  dij=j-i

@@ -219,7 +219,7 @@ class CoreOptions(object):
         if type(value) in (str, str):
             value = convert(value)
         if self._dbg:
-            print(("<CoreOptions.get_option> option={0!r} value={1!r}".format(option, value)))
+            print("<CoreOptions.get_option> option={0!r} value={1!r}".format(option, value))
         return value
 
     def set_option(self, option, value):

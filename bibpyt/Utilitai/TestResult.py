@@ -25,6 +25,7 @@ import re
 from functools import partial
 from glob import glob
 
+from Noyau import N_utils
 
 _trans = str.maketrans('e', 'E')
 
@@ -34,14 +35,17 @@ def _fortran(srepr):
     return srepr.translate(_trans)
 
 
-class TestResult(object):
+class TestResult(metaclass=N_utils.Singleton):
 
     """This class provides the feature to print the testcase results.
     A singleton object is created to avoid to repeat some global tasks.
     """
+    _singleton_id = 'Utilitai.TestResult'
 
     def __init__(self):
         """Initialization"""
+        # TODO imported by code_aster < aster_core < here < Utmess < code_aster
+        # to be solved!
         try:
             import aster
             from Utilitai.Utmess import UTMESS
@@ -165,8 +169,8 @@ def testresu_print(type_ref, legend, label, skip, relative,
     val : computed value (same type as ref)
     compare : order of magnitude
     """
-    lines = testPrinter.showResult(type_ref, legend, label, skip, relative,
-                                   tole, ref, val, compare)
+    lines = TestResult().showResult(type_ref, legend, label, skip, relative,
+                                    tole, ref, val, compare)
     return lines
 
 
@@ -177,11 +181,7 @@ def _internal_print(text):
 
 def _internal_mess(a, b):
     """UTMESS replacement for unittest"""
-    print(('<{0}> message {1}').format(a, b))
-
-
-# Creation of the singleton instance
-testPrinter = TestResult()
+    print('<{0}> message {1}'.format(a, b))
 
 
 if __name__ == '__main__':

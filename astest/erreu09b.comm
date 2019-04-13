@@ -140,7 +140,7 @@ except TimeLimitError as msg:
    assert msg.id_message in ("MECANONLINE9_1", "MECANONLINE9_2"), msg.id_message
    is_ok = 1
 
-print(("Restore time limit to {0} s".format(tpmax)))
+print("Restore time limit to {0} s".format(tpmax))
 params.set_option("tpmax", tpmax)
 
 

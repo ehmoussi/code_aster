@@ -153,7 +153,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                 for j in args[cle]:
                     dMotCle.append(j.cree_dict_valeurs(j.mc_liste))
                     for k in list(dMotCle[-1].keys()):
-                        if dMotCle[-1][k] == None:
+                        if dMotCle[-1][k] is None:
                             del dMotCle[-1][k]
                 motscles[cle] = dMotCle
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -241,7 +241,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
         for j in EXCIT:
             dExcit.append(j.cree_dict_valeurs(j.mc_liste))
             for i in list(dExcit[-1].keys()):
-                if dExcit[-1][i] == None:
+                if dExcit[-1][i] is None:
                     del dExcit[-1][i]
     dExcit.append(_F(CHARGE=_ifsCharMeca),)
 
@@ -260,7 +260,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
         for j in ETAT_INIT:
             dEtatInit.append(j.cree_dict_valeurs(j.mc_liste))
             for i in list(dEtatInit[-1].keys()):
-                if dEtatInit[-1][i] == None:
+                if dEtatInit[-1][i] is None:
                     del dEtatInit[-1][i]
 
     # ======================================#

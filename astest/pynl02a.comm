@@ -116,7 +116,7 @@ for i_inst in range(1,len(l_inst)) :
    inst = l_inst[i_inst]
    print(' ')
    print('        ####################################')
-   print(('             instant de calcul ',inst))
+   print('             instant de calcul ',inst)
    print('        ####################################')
    print(' ')
 
@@ -465,7 +465,7 @@ for i_inst in range(1,len(l_inst)) :
       Residu[IterNewton-1]  = residu_haut / residu_bas
       ResiduX[IterNewton-1] = residu_haut
 
-      print(('RESI_GLOB_RELA et RESI_GLOB_MAXI ',Residu[IterNewton-1],ResiduX[IterNewton-1]))
+      print('RESI_GLOB_RELA et RESI_GLOB_MAXI ',Residu[IterNewton-1],ResiduX[IterNewton-1])
 
       # estimation de la convergence
       if Residu[IterNewton-1] <= ResiGlobRela :
@@ -491,10 +491,10 @@ for i_inst in range(1,len(l_inst)) :
 
       DETRUIRE(CONCEPT=_F(NOM=(MT_EL,MT_AS,M_AS,F_AS),),INFO=1)
 
-   print(('instant ',inst))
+   print('instant ',inst)
    print('IterNewton | Resi_Glob_rela   | Resi_Glob_Maxi  | Convergence')
    for i in range(0,IterNewton) :
-       print(('     %d     |   %e   |   %e  |    %d ' %(i,Residu[i],ResiduX[i],Conv[i])))
+       print('     %d     |   %e   |   %e  |    %d ' %(i,Residu[i],ResiduX[i],Conv[i]))
 
    if Conv[IterNewton-1] != 1 :
       print('echec de la convergence des iteration de Newton')

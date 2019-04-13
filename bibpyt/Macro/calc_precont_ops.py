@@ -25,10 +25,10 @@
         #de calcul.
         #Renvoie les instants finaux des nb_etapes -1
     #"""
-    
+
     #nb_inst_dispo = len(list_inst)-1
     #if nb_inst_dispo < nb_etapes : return None
-    
+
     #inst_out = []
     #N = nb_inst_dispo
     #ind = 0
@@ -112,14 +112,14 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     if ETAT_INIT:
         dEtatInit = ETAT_INIT[0].cree_dict_valeurs(ETAT_INIT[0].mc_liste)
         for i in list(dEtatInit.keys()):
-            if dEtatInit[i] == None:
+            if dEtatInit[i] is None:
                 del dEtatInit[i]
     else:
         dEtatInit = None
 
     # Teste si INST_INIT est donné ou bien recalcule __TMIN
-    if dIncrement['INST_INIT'] == None:
-        if reuse == None:
+    if dIncrement['INST_INIT'] is None:
+        if reuse is None:
             __TMIN = __L1[0]
         else:
             __dico = reuse.LIST_VARI_ACCES()
@@ -128,7 +128,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         __TMIN = dIncrement['INST_INIT']
 
     # Teste si INST_FIN est donné ou bien recalcule __TMAX
-    if dIncrement['INST_FIN'] == None:
+    if dIncrement['INST_FIN'] is None:
         __TMAX = __L1[-1]
     else:
         __TMAX = dIncrement['INST_FIN']
@@ -136,9 +136,9 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     # Teste si INST_INIT est bien plus petit que INST_FIN
     if __TMAX <= __TMIN:
         UTMESS('F', 'CABLE0_1')
-        
+
     for i in list(dIncrement.keys()):
-            if dIncrement[i] == None:
+            if dIncrement[i] is None:
                 del dIncrement[i]
 
     # Preparation de  la liste d'instant __L2 allant de __TMIN a __TMAX
@@ -180,7 +180,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         __LSTR0 = DEFI_LIST_REEL(DEBUT=__TMIN,
                                 INTERVALLE=_F(JUSQU_A=__TMAX, NOMBRE=1),)
         __LST0 = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__LSTR0),)
-        
+
 
         # __LST et __FCT sont utilisés pour les etapes 2 et 3
         __LSTR = DEFI_LIST_REEL(VALE=__L2,)
@@ -200,24 +200,24 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             motscle4['NEWTON'] = args['NEWTON']
             motscle5['NEWTON'] = args['NEWTON']
     #     for j in dNewton.keys():
-    #       if dNewton[j]==None : del dNewton[j]
+    #       if dNewton[j] is None : del dNewton[j]
 
         dConvergence = CONVERGENCE[
             0].cree_dict_valeurs(CONVERGENCE[0].mc_liste)
         for i in list(dConvergence.keys()):
-            if dConvergence[i] == None:
+            if dConvergence[i] is None:
                 del dConvergence[i]
 
         dSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
         for i in list(dSolveur.keys()):
-            if dSolveur[i] == None:
+            if dSolveur[i] is None:
                 del dSolveur[i]
 
         if RECH_LINEAIRE:
             dRech_lin = RECH_LINEAIRE[0].cree_dict_valeurs(
                 RECH_LINEAIRE[0].mc_liste)
             for i in list(dRech_lin.keys()):
-                if dRech_lin[i] == None:
+                if dRech_lin[i] is None:
                     del dRech_lin[i]
         else:
             dRech_lin = None
@@ -314,7 +314,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         for j in COMPORTEMENT:
             dComp_incr.append(j.cree_dict_valeurs(j.mc_liste))
             for i in list(dComp_incr[-1].keys()):
-                if dComp_incr[-1][i] == None:
+                if dComp_incr[-1][i] is None:
                     del dComp_incr[-1][i]
         dComp_incr0 = copy.copy(dComp_incr)
         dComp_incr1 = copy.copy(dComp_incr)
@@ -447,7 +447,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         for j in EXCIT:
             dExcit.append(j.cree_dict_valeurs(j.mc_liste))
             for i in list(dExcit[-1].keys()):
-                if dExcit[-1][i] == None:
+                if dExcit[-1][i] is None:
                     del dExcit[-1][i]
 
         if CABLE_BP_INACTIF:
@@ -580,7 +580,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
                 actif = 0
                 ancr1_passif = 1
-                
+
                 for j in range(2):
                     if __typ_ancr[j].strip() == 'PASSIF':
                         if j == 0:
@@ -656,35 +656,35 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                         UTMESS('F', 'CABLE0_5')
                     else:
                         info['GROUP_NO'] = __nom_noeu[0].strip()
-                    
+
                     info_actif_actif.append(info)
 
             # DETRUIRE(CONCEPT=_F(NOM=__TCAB1))
-        
+
         dExcit = []
         for j in EXCIT:
             dExcit.append(j.cree_dict_valeurs(j.mc_liste))
             for i in list(dExcit[-1].keys()):
-                if dExcit[-1][i] == None:
+                if dExcit[-1][i] is None:
                     del dExcit[-1][i]
 
         assert(len(motscle3) > 0)
-        
-        
+
+
         # determination des instants finaux de chaque étape
-        
+
         nb_inst_dispo = len(__L2) -1
         nb_etapes = 1
-        
+
         if __ActifActif:
             nb_etapes +=1
         if __recul_exists:
             nb_etapes +=1
-        
+
         if nb_etapes == 1:
             t_fin_etape1 = __TMAX
             t_fin_etape2 = None
-            
+
         elif nb_etapes == 2:
             #if nb_inst_dispo < nb_etapes:
                 #__L2[-1:-1] = [__TINT]
@@ -693,14 +693,14 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                 #[t_fin_etape1]=calc_etape(nb_etapes, __L2)
             #t_fin_etape2 = __TMAX
             #t_fin_etape3 = None
-            
+
             # -------------------
             __L2[-1:-1] = [__TINT]
             t_fin_etape1 = __TINT
             t_fin_etape2 = __TMAX
             t_fin_etape3 = None
             #--------------------
-            
+
         elif nb_etapes == 3:
             #if nb_etapes - nb_inst_dispo == 2:
                 #__L2[-1:-1] = [__TINT, __TINT2]
@@ -713,24 +713,24 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             #else:
                 #[t_fin_etape1,t_fin_etape2]=calc_etape(nb_etapes, __L2)
             #t_fin_etape3 = __TMAX
-            
+
             #------------------------------
             __L2[-1:-1] = [__TINT, __TINT2]
             t_fin_etape1 = __TINT
             t_fin_etape2 = __TINT2
             t_fin_etape3 = __TMAX
             #------------------------------
-            
+
         __LSTR = DEFI_LIST_REEL(VALE=__L2,)
         __LST  = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__LSTR),)
         dIncrement['LIST_INST'] = __LST
-        
+
         # construction des fonctions multiplicatrices
-        
+
         __FCT1 = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
                               NOM_PARA='INST',
                               VALE=(__TMIN, 0.0, t_fin_etape1, 1.0),)
-        
+
         if __recul_exists :
             if nb_etapes ==2:
                 __FCTREC = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
@@ -740,16 +740,16 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                 __FCTREC = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
                                        NOM_PARA='INST',
                                        VALE=(t_fin_etape2, 0.0, t_fin_etape3, 1.0),)
-        
+
         if CABLE_BP_INACTIF:
             _C_CI = AFFE_CHAR_MECA(MODELE=MODELE, **motscle6)
             dExcit.append(_F(CHARGE=_C_CI,))
-        
+
         # pour recul d'ancrage
         _C_RA = AFFE_CHAR_MECA(MODELE=MODELE, **motscle5)
         dExcit2 = copy.copy(dExcit)
-        
-        
+
+
         if __ActifActif:
             dExcit1a = copy.copy(dExcit)
             dExcit1b = copy.copy(dExcit)
@@ -763,7 +763,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             _C_CAc = AFFE_CHAR_MECA(MODELE=MODELE, VECT_ASSE=__CH1a,)
             _C_CAd = AFFE_CHAR_MECA(MODELE=MODELE, VECT_ASSE=__CH1b,)
             dExcit1a.append(_F(CHARGE=_C_CAc, FONC_MULT = __FCT1))
-            
+
             _C_CAe = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2)
             _C_CAf = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2)
             dExcit1a.append(_F(CHARGE=_C_CAe,))
@@ -774,11 +774,11 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             _C_CAb = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2b)
             dExcit1a.append(_F(CHARGE=_C_CAa,TYPE_CHARGE='DIDI'))
             dExcit1b.append(_F(CHARGE=_C_CAb,TYPE_CHARGE='DIDI'))
-            
+
             if __recul_exists:
                 dExcit2.append(_F(CHARGE=_C_RA, TYPE_CHARGE='DIDI',
                                   FONC_MULT = __FCTREC),)
-            
+
         else:
             dExcit1 = copy.copy(dExcit)
             # force de tension
@@ -787,12 +787,12 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                           **motscle3)
             _C_CA1 = AFFE_CHAR_MECA(MODELE=MODELE, VECT_ASSE=__CH1,)
             dExcit1.append(_F(CHARGE=_C_CA1, FONC_MULT = __FCT1),)
-            
+
             # blocage glissement aux noeuds d'ancrage opposés
             # et liaisons cables-béton
             _C_CA = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2)
             dExcit1.append(_F(CHARGE=_C_CA, TYPE_CHARGE='DIDI'),)
-            
+
             if __recul_exists:
                 dExcit2.append(_F(CHARGE=_C_RA, TYPE_CHARGE='DIDI',
                                   FONC_MULT = __FCTREC),)
@@ -821,32 +821,32 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             # en effet ceci peut se produire si on impose une force moins forte
             # que celle obtenue a la fin du premier calcul en cas de subdivision
             # des pas de temps
-            
+
             __RESREA=CALC_CHAMP(
                     FORCE=('REAC_NODA',),
                     RESULTAT=RES,);
-            
+
             __REAC1 = CREA_CHAMP( OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
                           RESULTAT=__RESREA, NOM_CHAM='REAC_NODA',
                           INST=t_fin_etape1)
-            
-            
+
+
             rapMax = 0.
             for dic in info_actif_actif:
                 grno = dic['GROUP_NO']
                 GLIS = __REAC1.EXTR_COMP('GLIS',[grno]).valeurs
                 rap = abs(GLIS[0])/dic['tension']
-                                   
+
                 if rap > rapMax:
                     rapMax = rap
-            
+
             __FCT2 = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
                                    NOM_PARA='INST',
                                    VALE=(t_fin_etape1, rapMax, t_fin_etape2, 1.0),)
-            
+
             dExcit1b.append(_F(CHARGE=_C_CAd, FONC_MULT = __FCT2))
-            
-            
+
+
             dIncrement['INST_FIN'] = t_fin_etape2
 
             RES = STAT_NON_LINE(reuse=RES,
@@ -884,12 +884,12 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                                 TITRE=TITRE,
                                 EXCIT=dExcit1,
                                 **motscle4)
-            
-            
+
+
         if __recul_exists:
-            
+
             dIncrement['INST_FIN'] = __TMAX
-            
+
             RES = STAT_NON_LINE(reuse=RES,
                                 ETAT_INIT=_F(EVOL_NOLI=RES),
                                 MODELE=MODELE,

@@ -181,7 +181,7 @@ def bloc_cara(typ_carel, l_elem, epx, group, select, directive, mot_cle_aster,
                     else:
                         UTMESS('F', 'PLEXUS_56', valk=(typ_carel, mc_aster))
 
-            if mot_cle_epx_select == None:
+            if mot_cle_epx_select is None:
                 mot_cle_epx_select = mot_cle_epx[i_dic]
                 directive_select = directive[i_dic]
                 val_cle_select = val_cle
@@ -196,7 +196,7 @@ def bloc_cara(typ_carel, l_elem, epx, group, select, directive, mot_cle_aster,
                     raise Exception('Erreur dev : Incohérence des donnees')
             l_cara.extend(cara)
             l_vale.extend(vale)
-    if mot_cle_epx_select == None:
+    if mot_cle_epx_select is None:
         UTMESS('F','PLEXUS_52',valk = [typ_carel])
     bloc_donnees = BLOC_DONNEES(mot_cle_epx_select, l_group=group,
                                 val_cle=val_cle_select,

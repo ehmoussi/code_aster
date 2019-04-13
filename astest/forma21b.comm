@@ -286,9 +286,9 @@ for num_calc in range(0,nb_calc1) :
 
 # IMPRESSION DANS LE FICHIER MESSAGE DES RESULATS
    print('**************')
-   print(('CONVERGENCE DE L ENERGIE = ',energie_vs_raff_NUM[:num_calc1]))
+   print('CONVERGENCE DE L ENERGIE = ',energie_vs_raff_NUM[:num_calc1])
    print('**************')
-   print(('ERREUR EN ENERGIE = ',erenergie_vs_raff_NUM[:num_calc1]))
+   print('ERREUR EN ENERGIE = ',erenergie_vs_raff_NUM[:num_calc1])
 #
 
 # IMPRESSION MED DES RESULATS

@@ -47,7 +47,7 @@ def simu_point_mat_ops(
     STAT_NON_LINE = self.get_cmd('STAT_NON_LINE')
     IMPR_RESU = self.get_cmd('IMPR_RESU')
     from code_aster.Commands import CALC_POINT_MAT
-    
+
     from code_aster.Cata.Syntax import _F
     from Utilitai.UniteAster import UniteAster
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
@@ -275,7 +275,7 @@ def simu_point_mat_ops(
         if SIGM_IMPOSE:
             SIG = dict(SIGM_IMPOSE[0])
             for i in CMP_SIG:
-                if SIG.get(i) == None:
+                if SIG.get(i) is None:
                     SIG[i] = __fonczero
         else:
             for i in range(nbsig):
@@ -415,7 +415,7 @@ def simu_point_mat_ops(
 #     --MASSIF : orientation du materiau (monocristal, orthotropie)
         if MASSIF:
             ANGMAS = dict(MASSIF[0])
-            if ANGMAS["ANGL_REP"] == None:
+            if ANGMAS["ANGL_REP"] is None:
                 __CARA = AFFE_CARA_ELEM(MODELE=__MO, MASSIF=_F(
                     MAILLE='VOLUME', ANGL_EULER=ANGMAS["ANGL_EULER"]),)
             else:

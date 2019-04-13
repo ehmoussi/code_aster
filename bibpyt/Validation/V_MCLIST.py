@@ -108,7 +108,7 @@ class MCList:
             for i in self.data:
                 j += 1
                 if j > MAXSIZE:
-                    print((MAXSIZE_MSGCHK.format(MAXSIZE, len(self.data))))
+                    print(MAXSIZE_MSGCHK.format(MAXSIZE, len(self.data)))
                     break
                 self.cr.add(i.report())
         elif len(self) == 1:
