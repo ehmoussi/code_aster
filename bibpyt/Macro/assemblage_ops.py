@@ -90,11 +90,12 @@ def assemblage_ops(
                     UTMESS('F', 'MATRICE0_10')
                 motscles['RIGI_MECA'] = rigel
             if option == 'AMOR_MECA':
-                if (not lrigel or not lmasel):
+                if (not lrigel):
                     UTMESS('F', 'MATRICE0_11')
                 if CHAM_MATER is not None:
                     motscles['RIGI_MECA'] = rigel
-                    motscles['MASS_MECA'] = masel
+                    if (lmasel):
+                        motscles['MASS_MECA'] = masel
             if CHARGE is not None:
                 if option[0:9] != 'RIGI_GEOM':
                     motscles['CHARGE'] = CHARGE
