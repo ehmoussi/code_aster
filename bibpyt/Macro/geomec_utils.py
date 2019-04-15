@@ -204,7 +204,7 @@ def verif_essais(COMPORTEMENT,
     # ---
     # Essai TRIA_DR_M_D
     # ---
-    if ESSAI_TRIA_DR_M_D != None:
+    if ESSAI_TRIA_DR_M_D is not None:
 
         typ_essai   = "ESSAI_TRIA_DR_M_D"
         List_essais+= ESSAI_TRIA_DR_M_D.List_F()
@@ -256,7 +256,7 @@ def verif_essais(COMPORTEMENT,
     # ---
     # Essai TRIA_ND_M_D
     # ---
-    if ESSAI_TRIA_ND_M_D != None:
+    if ESSAI_TRIA_ND_M_D is not None:
 
         typ_essai    = "ESSAI_TRIA_ND_M_D"
         List_essais += ESSAI_TRIA_ND_M_D.List_F()
@@ -319,7 +319,7 @@ def verif_essais(COMPORTEMENT,
     # ---
     # Essai CISA_DR_C_D
     # ---
-    if ESSAI_CISA_DR_C_D != None:
+    if ESSAI_CISA_DR_C_D is not None:
 
         typ_essai    = "ESSAI_CISA_DR_C_D"
         List_essais += ESSAI_CISA_DR_C_D.List_F()
@@ -389,7 +389,7 @@ def verif_essais(COMPORTEMENT,
     # ---
     # Essai TRIA_ND_C_F
     # ---
-    if ESSAI_TRIA_ND_C_F != None:
+    if ESSAI_TRIA_ND_C_F is not None:
 
         typ_essai    = "ESSAI_TRIA_ND_C_F"
         List_essais += ESSAI_TRIA_ND_C_F.List_F()
@@ -519,7 +519,7 @@ def verif_essais(COMPORTEMENT,
     # ---
     # Essai TRIA_DR_C_D
     # ---
-    if ESSAI_TRIA_DR_C_D != None:
+    if ESSAI_TRIA_DR_C_D is not None:
 
         typ_essai    = "ESSAI_TRIA_DR_C_D"
         List_essais += ESSAI_TRIA_DR_C_D.List_F()
@@ -606,7 +606,7 @@ def verif_essais(COMPORTEMENT,
     # ---
     # Essai TRIA_ND_C_D
     # ---
-    if ESSAI_TRIA_ND_C_D != None:
+    if ESSAI_TRIA_ND_C_D is not None:
 
         typ_essai    = "ESSAI_TRIA_ND_C_D"
         List_essais += ESSAI_TRIA_ND_C_D.List_F()
@@ -686,7 +686,7 @@ def verif_essais(COMPORTEMENT,
     # ---
     # Essai OEDO_DR_C_F
     # ---
-    if ESSAI_OEDO_DR_C_F != None:
+    if ESSAI_OEDO_DR_C_F is not None:
 
         typ_essai    = "ESSAI_OEDO_DR_C_F"
         List_essais += ESSAI_OEDO_DR_C_F.List_F()
@@ -775,7 +775,7 @@ def verif_essais(COMPORTEMENT,
     # ---
     # Essai ISOT_DR_C_F
     # ---
-    if ESSAI_ISOT_DR_C_F != None:
+    if ESSAI_ISOT_DR_C_F is not None:
 
         typ_essai    = "ESSAI_ISOT_DR_C_F"
         List_essais += ESSAI_ISOT_DR_C_F.List_F()
@@ -845,7 +845,7 @@ def verif_essais(COMPORTEMENT,
     # ---
     # Essai "XXX"
     # ---
-    # if ESSAI_XXX != None :
+    # if ESSAI_XXX is not None :
     #
     #  typ_essai    = "ESSAI_XXX"
     #  List_essais += ESSAI_XXX.List_F() ...

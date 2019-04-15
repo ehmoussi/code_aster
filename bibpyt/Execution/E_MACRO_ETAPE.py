@@ -98,7 +98,7 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
             # "publie" les concepts produits par la macro
             self.update_context(self.parent.g_context)
 
-            if self.icmd != None:
+            if self.icmd is not None:
                 self.AfficheFinCommande()
             else:
                 self.AfficheFinCommande(avec_temps=False)
@@ -197,7 +197,7 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
 
             if hasattr(self, 'postexec'):
                 self.postexec(self)
-            if self.icmd != None:
+            if self.icmd is not None:
                 self.AfficheFinCommande()
             else:
                 self.AfficheFinCommande(avec_temps=False)
@@ -219,7 +219,7 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
         if self.nom != 'DETRUIRE':
             s_obj = set()
             for etape in self.etapes:
-                if etape.sd != None and etape.sd.nom != None and etape.sd.nom[:1] == '.':
+                if etape.sd is not None and etape.sd.nom is not None and etape.sd.nom[:1] == '.':
                     s_obj.add(etape.sd)
             # au cas où self.sd serait arrivé dans s_obj
             s_obj.discard(self.sd)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,55 +44,55 @@ def affe_cara_elem_ops(self, MODELE, INFO, VERIF,
     if ( INFO ):    motclef_cara_elem['INFO']     = INFO
     if ( VERIF ):   motclef_cara_elem['VERIF']    = VERIF
     #
-    if POUTRE != None:
+    if POUTRE is not None:
         motclef_cara_elem['POUTRE']         = POUTRE.List_F()
     #
-    if BARRE != None:
+    if BARRE is not None:
         motclef_cara_elem['BARRE']          = BARRE.List_F()
     #
-    if COQUE != None:
+    if COQUE is not None:
         motclef_cara_elem['COQUE']          = COQUE.List_F()
     #
-    if CABLE != None:
+    if CABLE is not None:
         motclef_cara_elem['CABLE']          = CABLE.List_F()
     #
-    if DISCRET != None:
+    if DISCRET is not None:
         motclef_cara_elem['DISCRET']        = DISCRET.List_F()
     #
-    if DISCRET_2D != None:
+    if DISCRET_2D is not None:
         motclef_cara_elem['DISCRET_2D']     = DISCRET_2D.List_F()
     #
-    if ORIENTATION != None:
+    if ORIENTATION is not None:
         motclef_cara_elem['ORIENTATION']    = ORIENTATION.List_F()
     #
-    if MASSIF != None:
+    if MASSIF is not None:
         motclef_cara_elem['MASSIF']         = MASSIF.List_F()
     #
-    if POUTRE_FLUI != None:
+    if POUTRE_FLUI is not None:
         motclef_cara_elem['POUTRE_FLUI']    = POUTRE_FLUI.List_F()
     #
-    if GRILLE != None:
+    if GRILLE is not None:
         motclef_cara_elem['GRILLE']         = GRILLE.List_F()
     #
-    if MEMBRANE != None:
+    if MEMBRANE is not None:
         motclef_cara_elem['MEMBRANE']       = MEMBRANE.List_F()
     #
-    if RIGI_PARASOL != None:
+    if RIGI_PARASOL is not None:
         motclef_cara_elem['RIGI_PARASOL']   = RIGI_PARASOL.List_F()
     #
-    if RIGI_MISS_3D != None:
+    if RIGI_MISS_3D is not None:
         motclef_cara_elem['RIGI_MISS_3D']   = RIGI_MISS_3D.List_F()
     #
-    if MASS_AJOU != None:
+    if MASS_AJOU is not None:
         motclef_cara_elem['MASS_AJOU']      = MASS_AJOU.List_F()
     #
-    if MASS_REP != None:
+    if MASS_REP is not None:
         motclef_cara_elem['MASS_REP']       = MASS_REP.List_F()
     #
-    if GEOM_FIBRE != None:
+    if GEOM_FIBRE is not None:
         motclef_cara_elem['GEOM_FIBRE']     = GEOM_FIBRE
     #
-    if MULTIFIBRE != None:
+    if MULTIFIBRE is not None:
         motclef_cara_elem['MULTIFIBRE']     = MULTIFIBRE.List_F()
     #
     nomres = CARA_ELEM( **motclef_cara_elem )

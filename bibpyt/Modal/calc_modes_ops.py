@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
     from Modal.calc_modes_amelioration import calc_modes_amelioration
     from Modal.calc_modes_post import calc_modes_post
     from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
-    
+
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
@@ -52,7 +52,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
     sturm     = None
     if (AMELIORATION=='OUI'):
         if OPTION in ('SEPARE', 'AJUSTE', 'PROCHE'):
-          assert(False)   
+          assert(False)
         stop_erreur='NON'
         sturm      ='NON'
         # Warnings from op/op0045.F90 & algeline/vpcntl.F90
@@ -131,15 +131,15 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
 
         if lmatphys:
             norme_mode = None
-            if args['NORM_MODE'] != None:
+            if args['NORM_MODE'] is not None:
                 norme_mode = args['NORM_MODE']
             filtre_mode = None
-            if args['FILTRE_MODE'] != None:
+            if args['FILTRE_MODE'] is not None:
                 filtre_mode = args['FILTRE_MODE']
             impression = None
-            if args['IMPRESSION'] != None:
+            if args['IMPRESSION'] is not None:
                 impression = args['IMPRESSION']
-            if (norme_mode != None) or (filtre_mode != None) or (impression != None):
+            if (norme_mode is not None) or (filtre_mode is not None) or (impression is not None):
                 modes = calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression)
 
 

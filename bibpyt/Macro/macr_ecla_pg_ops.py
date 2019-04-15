@@ -57,13 +57,13 @@ def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,
     typ2 = AsType(RESU_INIT).__name__
     if TOUT_ORDRE:
         motscles['TOUT_ORDRE'] = TOUT_ORDRE
-    if NUME_ORDRE != None:
+    if NUME_ORDRE is not None:
         motscles['NUME_ORDRE'] = NUME_ORDRE
     if LIST_ORDRE:
         motscles['LIST_ORDRE'] = LIST_ORDRE
     if LIST_INST:
         motscles['LIST_INST'] = LIST_INST
-    if INST != None:
+    if INST is not None:
         motscles['INST'] = INST
 
     self.DeclareOut('resu2', RESULTAT)

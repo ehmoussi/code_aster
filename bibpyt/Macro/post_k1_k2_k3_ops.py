@@ -317,7 +317,7 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
 #        construction de la liste des noeuds "AVEC" et des noeuds "SANS"
         NO_SANS = []
         NO_AVEC = []
-        if GROUP_NO != None:
+        if GROUP_NO is not None:
             collgrno = MAILLAGE.sdj.GROUPENO.get()
             cnom = MAILLAGE.sdj.NOMNOE.get()
             if type(GROUP_NO) not in EnumTypes:
@@ -329,12 +329,12 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
                 for i in range(len(collgrno[ngrno])):
                     NO_AVEC.append(cnom[collgrno[ngrno][i] - 1])
             NO_AVEC = list(map(lambda x: x.rstrip(), NO_AVEC))
-        if NOEUD != None:
+        if NOEUD is not None:
             if type(NOEUD) not in EnumTypes:
                 NO_AVEC = (NOEUD,)
             else:
                 NO_AVEC = NOEUD
-        if SANS_GROUP_NO != None:
+        if SANS_GROUP_NO is not None:
             collgrno = MAILLAGE.sdj.GROUPENO.get()
             cnom = MAILLAGE.sdj.NOMNOE.get()
             if type(SANS_GROUP_NO) not in EnumTypes:
@@ -346,7 +346,7 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
                 for i in range(len(collgrno[ngrno])):
                     NO_SANS.append(cnom[collgrno[ngrno][i] - 1])
             NO_SANS = list(map(lambda x: x.rstrip(), NO_SANS))
-        if SANS_NOEUD != None:
+        if SANS_NOEUD is not None:
             if type(SANS_NOEUD) not in EnumTypes:
                 NO_SANS = (SANS_NOEUD,)
             else:
@@ -431,7 +431,7 @@ def get_direction(Nnoff, ndim, DTANOR, DTANEX, Lnoff, FOND_FISS):
         dicVNOR = dict([(Lnoff[0], VNOR[0])])
     elif ndim == 3:
         VNOR[0] = NP.array([Basefo[0], Basefo[1], Basefo[2]])
-        if DTANOR != None:
+        if DTANOR is not None:
             VDIR[0] = NP.array(DTANOR)
         else:
             VDIR[0] = NP.array([Basefo[3], Basefo[4], Basefo[5]])
@@ -445,7 +445,7 @@ def get_direction(Nnoff, ndim, DTANOR, DTANEX, Lnoff, FOND_FISS):
         i = Nnoff - 1
         VNOR[i] = NP.array(
             [Basefo[6 * i], Basefo[6 * i + 1], Basefo[6 * i + 2]])
-        if DTANEX != None:
+        if DTANEX is not None:
             VDIR[i] = NP.array(DTANEX)
         else:
             VDIR[i] = NP.array(
@@ -757,7 +757,7 @@ def get_coor_xfem(args, FISSURE, ndim):
     elif Numfiss > Nbfiss:
         UTMESS('F', 'RUPTURE1_38', vali=[Nbfiss, Numfiss])
 
-    if NB_POINT_FOND != None and ndim == 3:
+    if NB_POINT_FOND is not None and ndim == 3:
         Nnoff = NB_POINT_FOND
         absmax = Listfo[-1]
         Coorfo = [None] * 4 * Nnoff
@@ -922,7 +922,7 @@ def get_liste_inst(tabsup, args):
     l_inst_tab = list(dict([(i, 0)
                       for i in l_inst_tab]).keys())  # elimine les doublons
     l_inst_tab.sort()
-    if args['LIST_ORDRE'] != None or args['NUME_ORDRE'] != None:
+    if args['LIST_ORDRE'] is not None or args['NUME_ORDRE'] is not None:
         l_ord_tab = tabsup['NUME_ORDRE'].values()['NUME_ORDRE']
         l_ord_tab.sort()
         l_ord_tab = list(dict([(i, 0) for i in l_ord_tab]).keys())
@@ -930,9 +930,9 @@ def get_liste_inst(tabsup, args):
                      for i in range(0, len(l_ord_tab))]
         d_ord_tab = [(i[0], i[1]) for i in d_ord_tab]
         d_ord_tab = dict(d_ord_tab)
-        if args['NUME_ORDRE'] != None:
+        if args['NUME_ORDRE'] is not None:
             l_ord = args['NUME_ORDRE']
-        elif args['LIST_ORDRE'] != None:
+        elif args['LIST_ORDRE'] is not None:
             l_ord = args['LIST_ORDRE'].sdj.VALE.get()
         l_inst = []
         for ord in l_ord:
@@ -942,12 +942,12 @@ def get_liste_inst(tabsup, args):
                 UTMESS('F', 'RUPTURE0_37', vali=ord)
         PRECISION = 1.E-6
         CRITERE = 'ABSOLU'
-    elif args['INST'] != None or args['LIST_INST'] != None:
+    elif args['INST'] is not None or args['LIST_INST'] is not None:
         CRITERE = args['CRITERE']
         PRECISION = args['PRECISION']
-        if args['INST'] != None:
+        if args['INST'] is not None:
             l_inst = args['INST']
-        elif args['LIST_INST'] != None:
+        elif args['LIST_INST'] is not None:
             l_inst = args['LIST_INST'].Valeurs()
 
         if type(l_inst) == tuple:
@@ -982,16 +982,16 @@ def get_liste_freq(tabsup, args):
     l_freq_tab = list(dict([(i, 0)
                       for i in l_freq_tab]).keys())  # elimine les doublons
     l_freq_tab.sort()
-    if args['LIST_ORDRE'] != None or args['NUME_ORDRE'] != None:
+    if args['LIST_ORDRE'] is not None or args['NUME_ORDRE'] is not None:
         l_ord_tab = tabsup['NUME_ORDRE'].values()['NUME_ORDRE']
         l_ord_tab.sort()
         l_ord_tab = list(dict([(i, 0) for i in l_ord_tab]).keys())
         d_ord_tab = [(l_ord_tab[i], l_freq_tab[i])
                      for i in range(0, len(l_ord_tab))]
         d_ord_tab = dict(d_ord_tab)
-        if args['NUME_ORDRE'] != None:
+        if args['NUME_ORDRE'] is not None:
             l_ord = list(args['NUME_ORDRE'])
-        elif args['LIST_ORDRE'] != None:
+        elif args['LIST_ORDRE'] is not None:
             l_ord = args['LIST_ORDRE'].sdj.VALE.get()
         l_freq = []
         for ord in l_ord:
@@ -1001,16 +1001,16 @@ def get_liste_freq(tabsup, args):
                 UTMESS('F', 'RUPTURE0_37', vali=ord)
         PRECISION = 1.E-6
         CRITERE = 'ABSOLU'
-    elif args['LIST_MODE'] != None or args['NUME_MODE'] != None:
+    elif args['LIST_MODE'] is not None or args['NUME_MODE'] is not None:
         l_mod_tab = tabsup['NUME_MODE'].values()['NUME_MODE']
         l_mod_tab.sort()
         l_mod_tab = list(dict([(i, 0) for i in l_mod_tab]).keys())
         d_mod_tab = [(l_mod_tab[i], l_freq_tab[i])
                      for i in range(0, len(l_mod_tab))]
         d_mod_tab = dict(d_mod_tab)
-        if args['NUME_MODE'] != None:
+        if args['NUME_MODE'] is not None:
             l_mod = args['NUME_MODE']
-        elif args['LIST_MODE'] != None:
+        elif args['LIST_MODE'] is not None:
             l_mod = args['LIST_MODE'].sdj.VALE.get()
         l_freq = []
         for mod in l_mod:
@@ -1020,12 +1020,12 @@ def get_liste_freq(tabsup, args):
                 UTMESS('F', 'RUPTURE0_74', vali=mod)
         PRECISION = 1.E-6
         CRITERE = 'ABSOLU'
-    elif args['FREQ'] != None or args['LIST_FREQ'] != None:
+    elif args['FREQ'] is not None or args['LIST_FREQ'] is not None:
         CRITERE = args['CRITERE']
         PRECISION = args['PRECISION']
-        if args['FREQ'] != None:
+        if args['FREQ'] is not None:
             l_freq = list(args['FREQ'])
-        elif args['LIST_FREQ'] != None:
+        elif args['LIST_FREQ'] is not None:
             l_freq = args['LIST_FREQ'].Valeurs()
 
         if type(l_freq) == tuple:
@@ -1055,7 +1055,7 @@ def get_liste_freq(tabsup, args):
 def affiche_instant(inst, type_para):
     import aster
 
-    if inst != None:
+    if inst is not None:
         if type_para == 'FREQ':
             texte = "#" + "=" * 80 + "\n" + "==> FREQUENCE: %f" % inst
         else:
@@ -1257,7 +1257,7 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
 
     # Si NB_POINT_FOND est renseigne : interpolation de la varc
     NB_POINT_FOND = args['NB_POINT_FOND']
-    if NB_POINT_FOND != None and ndim == 3:
+    if NB_POINT_FOND is not None and ndim == 3:
         Nnoff = NB_POINT_FOND
         absmax = Listfo[-1]
         ValeVrc = [None] * Nnoff
@@ -1769,7 +1769,7 @@ def get_tabout(
 
     mcfact = []
 
-    if TITRE != None:
+    if TITRE is not None:
         titre = TITRE
     else:
         titre = get_titre_concept()
@@ -1807,18 +1807,18 @@ def get_tabout(
     if (ino == 0 and iord == 0) and inst is None:
         tabout = CREA_TABLE(LISTE=mcfact, TITRE=titre)
         get_erreur(self, ndim, tabout, type_para)
-    elif iord == 0 and ino == 0 and inst != None:
+    elif iord == 0 and ino == 0 and inst is not None:
         mcfact = [_F(PARA='NUME_ORDRE', LISTE_I=nume)] + mcfact
         mcfact = [_F(PARA=type_para, LISTE_R=[inst, ] * 3)] + mcfact
         tabout = CREA_TABLE(LISTE=mcfact, TITRE=titre)
         get_erreur(self, ndim, tabout, type_para)
     else:
-        if inst != None:
+        if inst is not None:
             mcfact = [_F(PARA='NUME_ORDRE', LISTE_I=nume)] + mcfact
             mcfact = [_F(PARA=type_para, LISTE_R=[inst, ] * 3)] + mcfact
         __tabi = CREA_TABLE(LISTE=mcfact,)
         npara = ['K1']
-        if inst != None:
+        if inst is not None:
             npara.append(type_para)
         if not FISSURE and MODELISATION == '3D':
             npara.append('NOEUD_FOND')
@@ -1891,9 +1891,9 @@ def post_k1_k2_k3_ops(self, FOND_FISS, FISSURE, RESULTAT,
 
     # On recupere le materiau et le nom de la modelisation
     nom_fiss = ''
-    if FOND_FISS != None:
+    if FOND_FISS is not None:
         nom_fiss = FOND_FISS.nom
-    if FISSURE != None:
+    if FISSURE is not None:
         nom_fiss = FISSURE.nom
     assert nom_fiss != ''
     mater, MODELISATION = aster.postkutil(RESULTAT.nom, nom_fiss)
@@ -1962,7 +1962,7 @@ def post_k1_k2_k3_ops(self, FOND_FISS, FISSURE, RESULTAT,
 
         # erreur fatale si le MCS MATER est renseigne car on n'autorise que la
         # surcharge par un materiau constant
-        if args['MATER'] != None:
+        if args['MATER'] is not None:
             UTMESS('F', 'RUPTURE0_6', valk=MATER.nom)
 
 #       valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et

@@ -30,7 +30,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 # VERIFICATIONS
 #
 # --------------------------------------------------------------------
-    if BASE != None:
+    if BASE is not None:
         assert COMMAND == 'DYNA_LINE_HARM'
         assert BASE in ('GENE', 'PHYS')
 
@@ -56,7 +56,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
                    'INFO_MODE',
                    'MODE_ITER_SIMULT',
                    'MODE_ITER_INV',
-                   'MODE_ITER_INV_SM',             
+                   'MODE_ITER_INV_SM',
                    'CALC_ERC_DYN',
                    ):
         _type = 'SD'

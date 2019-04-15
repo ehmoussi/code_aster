@@ -96,10 +96,10 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         nom_cmd = self.definition.nom.ljust(8)
         nom_concept = " "
         type_concept = " "
-        if self.sd != None:
+        if self.sd is not None:
             nom_concept = self.sd.get_name().ljust(8)
             type_concept = self.sd.__class__.__name__.upper()
-        assert(nom_concept != None), "getres : nom_concept est Vide (None)"
+        assert(nom_concept is not None), "getres : nom_concept est Vide (None)"
         if CONTEXT.debug:
             print("\tGETRES : nom_concept =", '"' + nom_concept + '"')
             print("\tGETRES : type_concept =", '"' + type_concept + '"')
@@ -203,7 +203,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                 for mot_fac in l_mot_fac:
                     mcsimp = mot_fac.get_entite(
                         nom=nom_motcle, typ=N_SIMP.SIMP)
-                    if mcsimp != None:
+                    if mcsimp is not None:
                         break
         return mcsimp
 
@@ -221,7 +221,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         if CONTEXT.debug:
             prbanner("getexm '%s' '%s' " % (nom_motfac, nom_motcle))
 
-        presence = int(self.get_mcsimp(nom_motfac, nom_motcle) != None)
+        presence = int(self.get_mcsimp(nom_motfac, nom_motcle) is not None)
         if CONTEXT.debug:
             print('\tGETEXM : ', "presence = ", presence)
         return presence
@@ -301,7 +301,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             raise AsException("le couple mcfact =" + nom_motfac + " mcsimp =" +
                               nom_motcle + " n existe pas dans le catalogue")
 
-        if nom_motfac != None and nom_motfac != '':
+        if nom_motfac is not None and nom_motfac != '':
         # on doit rechercher la ième occurrence du MCF nom_motfac
             try:
                 motfac = self.get_mocle(nom_motfac)[iocc]
@@ -730,7 +730,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             mcfact = self
         # On a trouvé le mot cle facteur
         dico_mcsimp = mcfact.cree_dict_valeurs(mcfact.mc_liste)
-        if self.nom == 'TEST_RESU' and dico_mcsimp.get('VALE_C') != None:
+        if self.nom == 'TEST_RESU' and dico_mcsimp.get('VALE_C') is not None:
             pass
         lmc = []
         lty = []

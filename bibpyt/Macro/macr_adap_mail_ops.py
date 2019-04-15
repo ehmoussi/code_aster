@@ -222,7 +222,7 @@ def argument_maillage(INFO, args, mot_cle, mode_homard):
     dico["Action"] = "Rien"
 #
     if (mot_cle in args):
-        if (args[mot_cle] != None):
+        if (args[mot_cle] is not None):
         # print "==> args[",mot_cle,"] =",args[mot_cle]
             dico["Nom_ASTER"] = args[mot_cle]
             if (mode_homard in ("MODI", "ADAP")):
@@ -258,15 +258,15 @@ def argument_pilotage(INFO, args):
     dico = {}
 #
     dico["Usage_champ"] = "INDICATEUR"
-    if (args["RESULTAT_N"] != None):
+    if (args["RESULTAT_N"] is not None):
         dico["RESULTAT"] = args["RESULTAT_N"]
         dico["NOM_CHAM"] = args["NOM_CHAM"]
-        if (args["NUME_ORDRE"] != None):
+        if (args["NUME_ORDRE"] is not None):
             dico["NUME_ORDRE"] = args["NUME_ORDRE"]
-        if (args["INST"] != None):
+        if (args["INST"] is not None):
             dico["INST"] = args["INST"]
             for cle in ["PRECISION", "CRITERE"]:
-                if (args[cle] != None):
+                if (args[cle] is not None):
                     dico[cle] = args[cle]
     else:
         dico["CHAM_GD"] = args["CHAM_GD"]
@@ -278,7 +278,7 @@ def argument_pilotage(INFO, args):
     # print "==> dico[\"NOM_CHAM_MED\"] =", dico["NOM_CHAM_MED"]
 #
     if "NOM_CMP" in args:
-        if args["NOM_CMP"] != None:
+        if args["NOM_CMP"] is not None:
             if not type(args["NOM_CMP"]) in EnumTypes:
                 l_aux = [args["NOM_CMP"]]
             else:
@@ -332,15 +332,15 @@ def argument_champ(INFO, le_champ, usage_champ, iaux):
 # A.2 Definition du champ a mettre a jour
 #
     if (usage_champ == "MAJ_CHAM"):
-        if (le_champ["RESULTAT"] != None):
+        if (le_champ["RESULTAT"] is not None):
             l_aux.append("RESULTAT")
             l_aux.append("NOM_CHAM")
-            if (le_champ["NUME_ORDRE"] != None):
+            if (le_champ["NUME_ORDRE"] is not None):
                 dico["NUME_ORDRE"] = le_champ["NUME_ORDRE"]
-            elif (le_champ["INST"] != None):
+            elif (le_champ["INST"] is not None):
                 dico["INST"] = le_champ["INST"]
                 for cle in ["PRECISION", "CRITERE"]:
-                    if (le_champ[cle] != None):
+                    if (le_champ[cle] is not None):
                         dico[cle] = le_champ[cle]
         else:
             l_aux.append("CHAM_GD")
@@ -362,7 +362,7 @@ def argument_champ(INFO, le_champ, usage_champ, iaux):
 # A.5 Ajout des eventuels noms de composantes
 #
     if (usage_champ == "MAJ_CHAM"):
-        if le_champ["NOM_CMP"] != None:
+        if le_champ["NOM_CMP"] is not None:
             if not type(le_champ["NOM_CMP"]) in EnumTypes:
                 l_aux = [le_champ["NOM_CMP"]]
             else:
@@ -419,7 +419,7 @@ def argument_zone(INFO, args):
         # print zone, "de type", type(zone)
         dico = {}
         for aux in l_aux:
-            if (zone[aux] != None):
+            if (zone[aux] is not None):
                 dico[aux] = zone[aux]
         # print dico
         liste_zones.append(dico)
@@ -491,7 +491,7 @@ def argument_historique(INFO, args):
 #
     for mot_cle in ("UNITE_HIST_IN", "UNITE_HIST_OUT"):
         if mot_cle in args:
-            if (args[mot_cle] != None):
+            if (args[mot_cle] is not None):
                 dico_unites[mot_cle] = args[mot_cle]
 #
     if (INFO >= 3):
@@ -660,7 +660,7 @@ def champ_imprime_0(INFO, dico_pilo, liste_champs):
                 if on_a_le_champ:
                     for cle in ["NUME_ORDRE", "INST"]:
                         if cle in dico:
-                            if (dico[cle] != None):
+                            if (dico[cle] is not None):
                                 if cle in dico_pilo:
                                     if (dico_pilo[cle] != dico[cle]):
                                         on_a_le_champ = 0
@@ -723,7 +723,7 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
     dico_configuration["version_perso"] = version_perso
     if "UNITE" in args:
         UNITE = args["UNITE"]
-        if (UNITE != None):
+        if (UNITE is not None):
             saux = "fort.%d" % UNITE
             fichier_conf_suppl = os.path.join(Rep_Calc_ASTER, saux)
             dico_configuration["fichier_conf_suppl"] = fichier_conf_suppl
@@ -756,7 +756,7 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
             if "NUME_ORDRE" in dico:
                 l_aux.append("NUME_ORDRE")
             for cle in l_aux:
-                if (dico[cle] != None):
+                if (dico[cle] is not None):
                     dico_aux[cle] = dico[cle]
             dico_configuration["Indicateur"] = dico_aux
 #    if dico_configuration.has_key("Indicateur") :
@@ -792,7 +792,7 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
                     l_aux.append(cle)
             for cle in l_aux:
                 if cle in dico:
-                    if (dico[cle] != None):
+                    if (dico[cle] is not None):
                         dico_aux[cle] = dico[cle]
             # print dico_aux
             if prem:
@@ -1245,7 +1245,7 @@ def macr_adap_mail_ops(self,
 #
             if usage_champ in args:
 #
-                if args[usage_champ] != None:
+                if args[usage_champ] is not None:
                     les_champs = args[usage_champ]
                     for le_champ in les_champs:
                         dico, iaux = argument_champ(
@@ -1256,7 +1256,7 @@ def macr_adap_mail_ops(self,
         # print "\n.. Debut de 2.1.5."
 #
         if "ZONE" in args:
-            if args["ZONE"] != None:
+            if args["ZONE"] is not None:
                 liste_zones = argument_zone(INFO, args)
 #
 # 2.1.6. ==> Les historiques
@@ -1281,7 +1281,7 @@ def macr_adap_mail_ops(self,
 #
     # print "\n.. Debut de 2.3.1."
 #
-    if (MAILLAGE_FRONTIERE != None):
+    if (MAILLAGE_FRONTIERE is not None):
 #
         dico = {}
         dico["Type_Maillage"] = "MAILLAGE_FRONTIERE"
@@ -1293,7 +1293,7 @@ def macr_adap_mail_ops(self,
     # print "\n.. Debut de 2.3.2."
 #
     if "FRONTIERE_ANALYTIQUE" in args:
-        if args["FRONTIERE_ANALYTIQUE"] != None:
+        if args["FRONTIERE_ANALYTIQUE"] is not None:
             liste_front_analytiques = argument_frontiere_analytique(
                 INFO, args)
 #
@@ -1512,7 +1512,7 @@ def macr_adap_mail_ops(self,
             motscsi = {}
             for cle in ["RESULTAT", "NOM_CHAM", "CHAM_GD", "NUME_ORDRE", "INST", "PRECISION", "CRITERE", "NOM_CHAM_MED"]:
                 if cle in dico:
-                    if (dico[cle] != None):
+                    if (dico[cle] is not None):
                         motscsi[cle] = dico[cle]
             if "COMPOSANTE" in dico:
                 if (len(dico["COMPOSANTE"]) == 1):
@@ -1568,7 +1568,7 @@ def macr_adap_mail_ops(self,
             file_print(Rep_Calc_HOMARD_global)
 #    if ( mode_homard == "ADAP" ) :
 #      if args.has_key("MAJ_CHAM") :
-#        if args["MAJ_CHAM"] != None :
+#        if args["MAJ_CHAM"] is not None :
 #          import time
 #          time.sleep(3600)
 #
@@ -1587,7 +1587,7 @@ def macr_adap_mail_ops(self,
     # os.system(commande)
 #
         # print "LOGICIEL =", LOGICIEL
-        if (LOGICIEL != None):
+        if (LOGICIEL is not None):
             homard = str(LOGICIEL)
         else:
             homard = aster_core.get_option("prog:homard")
@@ -1687,7 +1687,7 @@ def macr_adap_mail_ops(self,
                 nom_cham = dico["CHAM_GD"]
             else:
                 nom_cham = None
-            if (nom_cham != None):
+            if (nom_cham is not None):
                 # print ".... dico :", dico
 #
 # 8.2.1. ==> Constantes
@@ -1698,7 +1698,7 @@ def macr_adap_mail_ops(self,
                 motscsi = {}
                 for cle in ["NUME_ORDRE", "INST", "PRECISION", "CRITERE"]:
                     if cle in dico:
-                        if (dico[cle] != None):
+                        if (dico[cle] is not None):
                             motscsi[cle] = dico[cle]
                 if "NUME_ORDRE" in dico:
                     motscsi["NUME_PT"] = dico["NUME_ORDRE"]

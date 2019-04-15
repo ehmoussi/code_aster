@@ -80,7 +80,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     for Ci in COURBE:
         iocc += 1
         dC = Ci.cree_dict_valeurs(Ci.mc_liste)
-        if 'LIST_PARA' in dC and dC['LIST_PARA'] != None and i0 == 0:
+        if 'LIST_PARA' in dC and dC['LIST_PARA'] is not None and i0 == 0:
             i0 = iocc
         for mc in list(dC.keys()):
             if dC[mc] is None:
@@ -374,28 +374,28 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
 
     # 2.0. Surcharge des propriétés du graphique et des axes
     # (bloc quasiment identique dans Table)
-    if args['TITRE'] != None:
+    if args['TITRE'] is not None:
         graph.Titre = args['TITRE']
-    if args['SOUS_TITRE'] != None:
+    if args['SOUS_TITRE'] is not None:
         graph.SousTitre = args['SOUS_TITRE']
     if FORMAT in ('XMGRACE', 'AGRAF','LISS_ENVELOP'):
-        if args['BORNE_X'] != None:
+        if args['BORNE_X'] is not None:
             graph.Min_X = args['BORNE_X'][0]
             graph.Max_X = args['BORNE_X'][1]
-        if args['BORNE_Y'] != None:
+        if args['BORNE_Y'] is not None:
             graph.Min_Y = args['BORNE_Y'][0]
             graph.Max_Y = args['BORNE_Y'][1]
-        if args['LEGENDE_X'] != None:
+        if args['LEGENDE_X'] is not None:
             graph.Legende_X = args['LEGENDE_X']
-        if args['LEGENDE_Y'] != None:
+        if args['LEGENDE_Y'] is not None:
             graph.Legende_Y = args['LEGENDE_Y']
-        if args['ECHELLE_X'] != None:
+        if args['ECHELLE_X'] is not None:
             graph.Echelle_X = args['ECHELLE_X']
-        if args['ECHELLE_Y'] != None:
+        if args['ECHELLE_Y'] is not None:
             graph.Echelle_Y = args['ECHELLE_Y']
-        if args['GRILLE_X'] != None:
+        if args['GRILLE_X'] is not None:
             graph.Grille_X = args['GRILLE_X']
-        if args['GRILLE_Y'] != None:
+        if args['GRILLE_Y'] is not None:
             graph.Grille_Y = args['GRILLE_Y']
 
     kargs = {

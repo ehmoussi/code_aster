@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ def calc_transfert_ops(
     entrain=['DX','DY',]
 
 
-    if RESULTAT_Z !=None :
+    if RESULTAT_Z is not None :
         l_resu.append(RESULTAT_Z)
         compo.append('Z')
         entrain.append('DZ')
@@ -85,7 +85,7 @@ def calc_transfert_ops(
 
 #Recu fonction pour le noeud entree
     lst_entr=[]
-    if ENTREE != None :
+    if ENTREE is not None :
         for entr in ENTREE:
             motsentr = {}
             n_entr = entr.val
@@ -338,11 +338,11 @@ def calc_transfert_ops(
     d_signal={}
     STEST=[]
 # On recupere les signaux donnes par l'utilisateur
-    if SIGNAL!= None :
+    if SIGNAL is not None :
         type_resu = SIGNAL['TYPE_RESU']
         l_signal=['MESURE_X','MESURE_Y']
 
-        if RESULTAT_Z !=None :
+        if RESULTAT_Z is not None :
              l_signal.append('MESURE_Z')
 
 #On cree un dictionnaire pour ranger les signaux calcules. Pour chaque signal sera associe les valeurs : (freq, Re,Im)

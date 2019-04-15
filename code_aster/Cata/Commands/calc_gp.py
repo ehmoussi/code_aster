@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ def calc_gp_prod(self,TRANCHE_2D,GPMAX, **args):
     if TRANCHE_2D['ZONE_MAIL']== "NON":
         if TRANCHE_2D.get('CHAMP_VISU'):
           self.type_sdprod(TRANCHE_2D['CHAMP_VISU'], cham_elem)
-  if GPMAX !=None:
+  if GPMAX is not None:
      self.type_sdprod(GPMAX, table_sdaster)
   return table_sdaster
 

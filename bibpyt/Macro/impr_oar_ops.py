@@ -110,7 +110,7 @@ class XMLNode:
         self.commentaire = commentaire
         self.param = listOpt
         self.arbre = list()
-        if valeur != None:
+        if valeur is not None:
             self.addValue(valeur)  # None n'est pas 0 !
 
     def getCommentaire(self):

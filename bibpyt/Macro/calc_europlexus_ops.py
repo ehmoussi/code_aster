@@ -236,7 +236,7 @@ class EUROPLEXUS:
             self.CHAM_MATER = CHAM_MATER
         #
         # Recherche dans le jdc la création du concept CARA_ELEM
-        if ( self.CARA_ELEM != None ):
+        if ( self.CARA_ELEM is not None ):
             FindEtape = False
             self.CARA_ELEM_CONCEPT = self.CARA_ELEM
             nomsd = self.CARA_ELEM.get_name()
@@ -649,14 +649,14 @@ class EUROPLEXUS:
             lnoeuds = set()
             lmailles = set()
             for courbe in courbe_fact:
-                if courbe['GROUP_NO'] != None:
+                if courbe['GROUP_NO'] is not None:
                     grno = courbe['GROUP_NO']
                     if type(grno) == tuple:
                         for el in grno:
                             lnoeuds.add(el)
                     else:
                         lnoeuds.add(grno)
-                elif courbe['GROUP_MA'] != None:
+                elif courbe['GROUP_MA'] is not None:
                     grma = courbe['GROUP_MA']
                     if type(grma) == tuple:
                         for el in grma:

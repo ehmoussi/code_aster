@@ -49,7 +49,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
     self.DeclareOut('dyna_harm',self.sd)
 
 
-    if args['NOM_CHAM']!=None:
+    if args['NOM_CHAM'] is not None:
         NOM_CHAM = args['NOM_CHAM']
     if isinstance(NOM_CHAM,str):
         NOM_CHAM = (NOM_CHAM,) # convert the string into a tuple
@@ -66,7 +66,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
     for i in range(0,len(charge)):
         ddl = charge[i].sdj.CHME.FORNO.VALE.get()
 
-        if ddl!=None: # if no nodal force is found, one does not achieve the following treatment
+        if ddl is not None: # if no nodal force is found, one does not achieve the following treatment
             l_force_nodale = True
             no_force = charge[i].sdj.CHME.LIGRE.NEMA.get()
 

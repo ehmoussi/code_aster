@@ -196,7 +196,7 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
                     for par, cell in list(row.items()):
                         if type(cell) in (str, str):
                             cell = cell.strip()
-                            if aster.getvectjev('%-19s.PROL' % cell) != None:
+                            if aster.getvectjev('%-19s.PROL' % cell) is not None:
                                 dfon.append(['%-19s' % cell, par])
                 # impression des fonctions trouvées
                 for f, par in dfon:

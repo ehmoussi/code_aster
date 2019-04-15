@@ -98,13 +98,13 @@ class MCList(collections.UserList):
         for child in obj.mc_liste:
             if child.isBLOC():
                 resu = child.get_child(name)
-                if resu != None:
+                if resu is not None:
                     return resu
         # Phase 3 : on cherche dans les entites possibles pour les défauts
         for k, v in list(obj.definition.entites.items()):
             # if k == name: return v.defaut
             if k == name:
-                if v.defaut != None:
+                if v.defaut is not None:
                     return v(None, k, None)
         # si on passe ici, c'est que l'on demande un fils qui n'est pas possible --> erreur
         # print "Erreur : %s ne peut etre un descendant de %s" %(name,self.nom)

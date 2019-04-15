@@ -237,7 +237,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
 
     if 'DSP' in args:
-      if args['DSP']!=None  :
+      if args['DSP'] is not None  :
         TSM = args['DUREE']
       else :
         del args['DSP']
@@ -252,7 +252,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     # type de modelisation : 2D ou 3D
     dime = "2D"
     if "FONC_SIGNAL_X" in args:
-        if args['FONC_SIGNAL_X']!=None  :
+        if args['FONC_SIGNAL_X'] is not None  :
             dime = "3D"
 
     if dime == "2D":
@@ -274,15 +274,15 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         # Possibilite d utiliser des masses penalisées :
         # lmassp ='OUI' ou 'NON'
       if dime == "2D":
-          if args['UNITE_TRAN_INIT'] != None :
+          if args['UNITE_TRAN_INIT'] is not None :
             ltranin = 'OUI'
             input = 'RA'
             lliaison = 'NON'
-            if args['MASS_PENA'] != None:
+            if args['MASS_PENA'] is not None:
               lmassp = 'OUI'
         # Possibilite d utiliser une longueur caracteristique :
         # llcara ='OUI' ou 'NON'
-            if args['LONG_CARA'] != None :
+            if args['LONG_CARA'] is not None :
               llcara = 'OUI'
 
 # Possibilite de faire une verification en temporel avec coeff Rayleigh :
@@ -326,7 +326,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
     grma_subst = args['GROUP_MA_SUBSTR']
     grma_colon = args['GROUP_MA_COL']
-    #if args['GROUP_MA_LATE'] != None:
+    #if args['GROUP_MA_LATE'] is not None:
     #  grma_late = args['GROUP_MA_LATE']
     #else:
     grma_late = 'LATE'
@@ -474,7 +474,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                + ' non multiple de 4')
        aster.affiche('MESSAGE', text)
 
-    if args['FREQ_COUP'] != None:
+    if args['FREQ_COUP'] is not None:
         fcoup = args['FREQ_COUP']
     else:
         fcoup = fmax
@@ -526,7 +526,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 ### Option DSP
     if 'DSP' in args  :
 
-      if args['LIST_FREQ_SPEC_OSCI'] != None:
+      if args['LIST_FREQ_SPEC_OSCI'] is not None:
         __SAX[0] = CALC_FONCTION(
           SPEC_OSCI=_F(FONCTION= __fonc_dsp, NATURE_FONC     ='DSP',DUREE=TSM ,
                        METHODE='RICE', NATURE = 'ACCE',
@@ -560,7 +560,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
           COMB=_F(FONCTION=__fonc_acce[n], COEF=coefu * coefzpa))
 
 
-        if args['LIST_FREQ_SPEC_OSCI'] != None:
+        if args['LIST_FREQ_SPEC_OSCI'] is not None:
           __SAX[n] = CALC_FONCTION(
             SPEC_OSCI=_F(FONCTION=__ACCEX[n],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
         else:
@@ -642,7 +642,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
     legendeT = 's' + str(s) + 'v' + str(v) + 'a' + str(a)
     legende = '-acce' + str(a) + '-sol' + str(s) + '-cvar=' + str(v)
-    if args['TABLE_MATER_ELAS'] != None:
+    if args['TABLE_MATER_ELAS'] is not None:
         nom_para_table_elas = ['Y','M','RHO','Emax','NU','AH','GDgam']
         if Byrne :
             nom_para_table_elas.append('N1')
@@ -719,7 +719,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         __lpara = DEFI_LIST_REEL(VALE=tuple(l_para))
 
         for j in range(1, nbmat + 1):
-            if args['LIST_EPSI'] != None:
+            if args['LIST_EPSI'] is not None:
               __GG[j] = CALC_FONCTION(
               COMB=_F(FONCTION=__GG0[j], COEF=1.), LIST_PARA=args['LIST_EPSI'],
               NOM_PARA='EPSI', NOM_RESU='G_Gmax',
@@ -814,7 +814,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             CMP2 = 'DX'
 
 # Lecture du maillage
-    if args['MAILLAGE'] != None:
+    if args['MAILLAGE'] is not None:
       if dime == "2D":
           __mailla = CREA_MAILLAGE(MAILLAGE=mail0,
                                  CREA_POI1=(
@@ -1613,7 +1613,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 ######## cas classique et DSP
         else:
           if dime == "2D":
-              if args['LIST_FREQ'] != None:
+              if args['LIST_FREQ'] is not None:
                 __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
                                        MODELE=__MODELE,
                                        CHAM_MATER=__CHAMPMAH,
@@ -1649,7 +1649,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                                   ),
                                        )
           else:
-              if args['LIST_FREQ'] != None:
+              if args['LIST_FREQ'] is not None:
                 __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
                                        MODELE=__MODELE,
                                        CHAM_MATER=__CHAMPMAH,
@@ -1940,7 +1940,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                           FONCTION=__formFDT2[n],
                                           INTERPOL='LIN',
                                           PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
-            elif args['LIST_FREQ'] != None:
+            elif args['LIST_FREQ'] is not None:
               __FDT_RACL[n] = CALC_FONC_INTERP(NOM_PARA='FREQ',
                                           LIST_PARA=args['LIST_FREQ'],
                                           FONCTION=__formFDT[n],
@@ -2014,7 +2014,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                     PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
                 DETRUIRE(CONCEPT=_F(NOM=__AX_RAf[n],))
 
-                if args['LIST_FREQ_SPEC_OSCI'] != None:
+                if args['LIST_FREQ_SPEC_OSCI'] is not None:
                   __SAX_RA[n] = CALC_FONCTION(
                     SPEC_OSCI=_F(FONCTION=__AX_RA[n],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                 else:
@@ -2029,7 +2029,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT', )
               DETRUIRE(CONCEPT=_F(NOM= __AHX_RAf,))
 
-              if args['LIST_FREQ_SPEC_OSCI'] != None:
+              if args['LIST_FREQ_SPEC_OSCI'] is not None:
                 __SAX_RA[n] = CALC_FONCTION(
                   SPEC_OSCI=_F(FONCTION= __PAX_RA, NATURE_FONC ='DSP', DUREE = TSM,
                            METHODE ='RICE', NATURE = 'ACCE', LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],
@@ -2133,7 +2133,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             #MODIF POR DSP: calcul des DSP puis SRO
             if 'DSP' in args:
 
-              if args['LIST_FREQ_SPEC_OSCI'] != None:
+              if args['LIST_FREQ_SPEC_OSCI'] is not None:
 
                 __SAX_CL[n] = CALC_FONCTION(
                    SPEC_OSCI=_F(FONCTION=__PAX_CL, NATURE_FONC ='DSP', DUREE = TSM,
@@ -2152,7 +2152,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                              METHODE ='RICE', NATURE = 'ACCE',  AMOR_REDUIT=0.05,NORME=9.81))
             else:
 
-                if args['LIST_FREQ_SPEC_OSCI'] != None:
+                if args['LIST_FREQ_SPEC_OSCI'] is not None:
                   __SAX_CL[n] = CALC_FONCTION(
                     SPEC_OSCI=_F(FONCTION=__AX_CL[n],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                   __SAX_BH[n] = CALC_FONCTION(
@@ -2188,7 +2188,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
         # Calcul des contraintes et deformations dans tous les elements de
         # la colonne
-        if args['LIST_FREQ'] != None:
+        if args['LIST_FREQ'] is not None:
           __DYNHARM = CALC_CHAMP(
             RESULTAT=__DYNHARM,
             reuse=__DYNHARM,
@@ -2937,7 +2937,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             for k in range(1, NCOU + 1):
                 if dime == "2D":
                     if 'DSP' in args:
-                      if args['LIST_FREQ_SPEC_OSCI'] != None:
+                      if args['LIST_FREQ_SPEC_OSCI'] is not None:
                         __SPEC[k] = CALC_FONCTION(
                             SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,
                             LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
@@ -2945,7 +2945,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                         __SPEC[k] = CALC_FONCTION(
                             SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,  NORME=9.81))
                     else:
-                      if args['LIST_FREQ_SPEC_OSCI'] != None:
+                      if args['LIST_FREQ_SPEC_OSCI'] is not None:
                         __SPEC[k] = CALC_FONCTION(
                             SPEC_OSCI=_F(FONCTION=__axa[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                       else:
@@ -2953,7 +2953,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                             SPEC_OSCI=_F(FONCTION=__axa[k], AMOR_REDUIT=0.05, NORME=9.81))
 
                 elif dime == "3D":
-                    if args['LIST_FREQ_SPEC_OSCI'] != None:
+                    if args['LIST_FREQ_SPEC_OSCI'] is not None:
                           __SPECX[k] = CALC_FONCTION(
                             SPEC_OSCI=_F(FONCTION=__axaX[k],AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                           __SPECY[k] = CALC_FONCTION(
@@ -3577,7 +3577,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
                 __AX_CLv = CALC_FONCTION(
                     COMB=(_F(FONCTION=__AXrCLv, COEF=1.,), _F(FONCTION=__AX_RA, COEF=1.,),), LIST_PARA=__linst,)
-                if args['LIST_FREQ_SPEC_OSCI'] != None:
+                if args['LIST_FREQ_SPEC_OSCI'] is not None:
                   __SAX_CLv = CALC_FONCTION(
                     SPEC_OSCI=_F(FONCTION=__AX_CLv,AMOR_REDUIT=0.05,LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                 else:

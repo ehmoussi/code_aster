@@ -373,7 +373,7 @@ def test_compor_ops(
         TEMP_FIN = args['TEMP_FIN']
         NB_VARI = args['NB_VARI']
 
-        if args['INST_FIN'] != None:
+        if args['INST_FIN'] is not None:
             INST_FIN = args['INST_FIN']
 
         NCAL = len(LIST_MATER)
@@ -400,7 +400,7 @@ def test_compor_ops(
 
         __zero = DEFI_CONSTANTE(VALE=0.)
 
-        if args['SUPPORT'] != None:
+        if args['SUPPORT'] is not None:
             motscles['SUPPORT'] = args['SUPPORT']
 
         __U = SIMU_POINT_MAT(MATER=MATER, INFO=INFO,
@@ -455,7 +455,7 @@ def test_compor_ops(
                 # cas particuliers
                 if COMPORTEMENT.List_F()[0]['RELATION'] == 'VMIS_CINE_LINE':
 
-                    if args['D_SIGM_EPSI'] != None:
+                    if args['D_SIGM_EPSI'] is not None:
                         D_SIGM_EPSI = args['D_SIGM_EPSI']
                     else:
                         raise 'erreur'
@@ -463,14 +463,14 @@ def test_compor_ops(
                     Vim[0:5] = Vim[0:5] * D_SIGM_EPSI(Ti) / D_SIGM_EPSI(Tm)
 
                 if COMPORTEMENT.List_F()[0]['RELATION'] == 'VMIS_ECMI_LINE':
-                    if args['C_PRAG'] != None:
+                    if args['C_PRAG'] is not None:
                         C_PRAG = args['C_PRAG']
                     else:
                         raise 'erreur'
                     Vim[2:7] = Vim[2:7] * C_PRAG(Ti) / C_PRAG(Tm)
 
                 if COMPORTEMENT.List_F()[0]['RELATION'] == 'VMIS_ECMI_TRAC':
-                    if args['C_PRAG'] != None:
+                    if args['C_PRAG'] is not None:
                         C_PRAG = args['C_PRAG']
                     else:
                         raise 'erreur'
@@ -554,7 +554,7 @@ def test_compor_ops(
                        FILTRE=_F(NOM_PARA='INST', VALE=time),
                        REFERENCE='AUTRE_ASTER',)
             if (NB_VARI > 0):
-                if VARI_TEST != None:
+                if VARI_TEST is not None:
                     for j in range(len(VARI_TEST)):
                         nomvari = VARI_TEST[j]
                         if abs(__U[nomvari, i + 1]) > epsi:
@@ -587,7 +587,7 @@ def test_compor_ops(
         POISSON = args['POISSON']
 
         # Discretisation du calcul
-        if args['LIST_NPAS'] != None:
+        if args['LIST_NPAS'] is not None:
             LIST_NPAS = args['LIST_NPAS']
         else:
             LIST_NPAS = 4 * [1] + [1, 5, 25]
@@ -596,12 +596,12 @@ def test_compor_ops(
         # les differents calculs effectues et les precisions sur chaque
         # TEST_RESU
         label_cal = ['_Pa_', '_Th_', '_sym_', '_rot_'] + (Ncal - 4) * ['_N']
-        if args['LIST_TOLE'] != None:
+        if args['LIST_TOLE'] is not None:
             LIST_TOLE = args['LIST_TOLE']
         else:
             LIST_TOLE = 4 * [1.E-10] + [1.E-1] + (Ncal - 5) * [1.E-2] + [1.E-8]
 
-        if args['PREC_ZERO'] != None:
+        if args['PREC_ZERO'] is not None:
             PREC_ZERO = args['PREC_ZERO']
         else:
             PREC_ZERO = len(VARI_TEST) * [1.E-10]
@@ -617,7 +617,7 @@ def test_compor_ops(
         # liste d'archivage
         __tempsar = DEFI_LIST_REEL(VALE=[t_0 * i for i in range(9)],)
 
-        if args['MODELISATION'] != None:
+        if args['MODELISATION'] is not None:
             modelisation = args['MODELISATION']
         else:
             modelisation = "3D"
@@ -672,7 +672,7 @@ def test_compor_ops(
         ldicoeps.append(dicoeps)
         motscles['EPSI_IMPOSE'] = ldicoeps
 
-        if args['SUPPORT'] != None:
+        if args['SUPPORT'] is not None:
             if modelisation == "C_PLAN":
                 motscles['MODELISATION'] = 'C_PLAN'
                 motscles['SUPPORT'] = 'ELEMENT'

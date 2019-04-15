@@ -42,7 +42,7 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
     # type de traitement
 
     #
-    if (MAX != None):
+    if (MAX is not None):
         # liste des t_fonction
         l_cofonc = MAX['FONCTION']
         if type(l_cofonc) not in (list, tuple):
@@ -146,13 +146,13 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
         C_out = CREA_TABLE(**dprod)
 
     #
-    if (ECART_TYPE != None):
+    if (ECART_TYPE is not None):
         __ff = ECART_TYPE['FONCTION'].convert()
-        if ECART_TYPE['INST_INIT'] != None:
+        if ECART_TYPE['INST_INIT'] is not None:
             tini = ECART_TYPE['INST_INIT']
         else:
             tini = __ff.vale_x[0]
-        if ECART_TYPE['INST_FIN'] != None:
+        if ECART_TYPE['INST_FIN'] is not None:
             tfin = ECART_TYPE['INST_FIN']
         else:
             tfin = __ff.vale_x[-1]
@@ -183,7 +183,7 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
         )
 
     #
-    if (RMS != None):
+    if (RMS is not None):
         RMS = list(RMS)
         sigm = []
         tmpi = []
@@ -192,11 +192,11 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
         meth = []
         for i_rms in RMS:
             __ff = i_rms['FONCTION'].convert()
-            if i_rms['INST_INIT'] != None:
+            if i_rms['INST_INIT'] is not None:
                 tini = i_rms['INST_INIT']
             else:
                 tini = __ff.vale_x[0]
-            if i_rms['INST_FIN'] != None:
+            if i_rms['INST_FIN'] is not None:
                 tfin = i_rms['INST_FIN']
             else:
                 tfin = __ff.vale_x[-1]
@@ -223,7 +223,7 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
                            )
 
     #
-    if (NORME != None):
+    if (NORME is not None):
         __ff = NORME['FONCTION'].convert()
         norme = []
         for __fi in __ff.l_fonc:
@@ -234,9 +234,9 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
                            )
 
     #
-    if (NOCI_SEISME != None):
+    if (NOCI_SEISME is not None):
         l_table = []
-        if NOCI_SEISME['SPEC_OSCI'] != None:
+        if NOCI_SEISME['SPEC_OSCI'] is not None:
             # cas intensité spectrale d'une nappe de SRO
             # la seule option licite est INTE_SPEC
 # intensite spectrale, il est prudent de verifier la norme de la nappe sur laquelle \
@@ -264,17 +264,17 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
             l_table.append(_F(LISTE_R=ffin, PARA='FREQ_FIN'))
             l_table.append(_F(LISTE_R=amor, PARA='AMOR_REDUIT'))
             l_table.append(_F(LISTE_R=insp, PARA='INTE_SPECT'))
-        if NOCI_SEISME['FONCTION'] != None:
+        if NOCI_SEISME['FONCTION'] is not None:
             # cas fonction
             l_table.append(
                 _F(LISTE_K=NOCI_SEISME['FONCTION'].nom, PARA='FONCTION'))
             __ac = NOCI_SEISME['FONCTION'].convert()
             option = NOCI_SEISME['OPTION']
-            if NOCI_SEISME['INST_INIT'] != None:
+            if NOCI_SEISME['INST_INIT'] is not None:
                 tdeb = NOCI_SEISME['INST_INIT']
             else:
                 tdeb = __ac.vale_x[0]
-            if NOCI_SEISME['INST_FIN'] != None:
+            if NOCI_SEISME['INST_FIN'] is not None:
                 tfin = NOCI_SEISME['INST_FIN']
             else:
                 tfin = __ac.vale_x[-1]
@@ -294,9 +294,9 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
                             'PRECISION'], NOCI_SEISME['CRITERE'])
             __aa = __aa.cut(tdeb, tfin, NOCI_SEISME[
                             'PRECISION'], NOCI_SEISME['CRITERE'])
-            if NOCI_SEISME['FREQ'] != None:
+            if NOCI_SEISME['FREQ'] is not None:
                 l_freq = NOCI_SEISME['FREQ']
-            elif NOCI_SEISME['LIST_FREQ'] != None:
+            elif NOCI_SEISME['LIST_FREQ'] is not None:
                 l_freq = NOCI_SEISME['LIST_FREQ'].Valeurs()
             else:
                 # fréquences par défaut

@@ -592,7 +592,7 @@ class InterSpectre:
     def extr_inte_spec(self, resu=None, intersp=1):
         """!Extraction d'une matrice inter-spectrale a partir d'une sd_interspectre
            Verification de la coherence entre les ddl de l'inter-spectre et du concept resultat
-            - Si resi!= None, on peut associer les numeros d'ordre de l'IS a des DDL du resu,
+            - Si resi is not None, on peut associer les numeros d'ordre de l'IS a des DDL du resu,
             - Si intersp = 1, on a un vrai inter-spectre. Si = 0, alors c'est une FRF ou une coherence
               (exemple, CALC_SEPC calcule des FRF mais rend un concept de type inter-spectre).
               Dans ce cas, on ne calcule pas la partie symetrique de la matrice."""

@@ -63,15 +63,15 @@ def macr_spectre_ops(
         liste_no = []
         clefs = list(plancher.keys())
         if ('NOEUD' in clefs):
-            if plancher['NOEUD'] != None:
+            if plancher['NOEUD'] is not None:
                 if type(plancher['NOEUD']) == str:
                     liste_no.append(plancher['NOEUD'])
                 else:
                     for noeud in plancher['NOEUD']:
                         liste_no.append(noeud)
         if ('GROUP_NO' in clefs):
-            if plancher['GROUP_NO'] != None:
-                assert (MAILLAGE != None)
+            if plancher['GROUP_NO'] is not None:
+                assert (MAILLAGE is not None)
                 if type(plancher['GROUP_NO']) == str:
                     noms_no = [l_nodes[n - 1].strip()
                                for n in dic_gpno[plancher['GROUP_NO'].ljust(24)]]
@@ -86,7 +86,7 @@ def macr_spectre_ops(
         l_batiment.append(plancher['BATIMENT'])
         l_commentaire.append(plancher['COMMENTAIRE'])
 
-    if AMOR_SPEC != None and type(AMOR_SPEC) not in EnumType:
+    if AMOR_SPEC is not None and type(AMOR_SPEC) not in EnumType:
         AMOR_SPEC = (AMOR_SPEC,)
     #
     if NOM_CHAM == 'ACCE':
@@ -117,7 +117,7 @@ def macr_spectre_ops(
                 for resu in RESU:
                     # Etape 1: Récupération des fonctions
                     motscles = {}
-                    if resu['RESU_GENE'] != None:
+                    if resu['RESU_GENE'] is not None:
                         if CALCUL == 'ABSOLU' and NOM_CHAM == 'ACCE':
                             motscles['MULT_APPUI'] = args.get('MULT_APPUI')
                         #
@@ -131,10 +131,10 @@ def macr_spectre_ops(
                                               NOEUD=node,
                                               **motscles
                                               )
-                    elif args.get('MULT_APPUI') != None:
+                    elif args.get('MULT_APPUI') is not None:
                         UTMESS('F', 'SPECTRAL0_13')
                     #
-                    if resu['RESULTAT'] != None:
+                    if resu['RESULTAT'] is not None:
                         motscles['RESULTAT'] = resu['RESULTAT']
                         __spo = RECU_FONCTION(
                             NOM_CHAM=NOM_CHAM,
@@ -147,7 +147,7 @@ def macr_spectre_ops(
                             **motscles
                         )
                     #
-                    if resu['TABLE'] != None:
+                    if resu['TABLE'] is not None:
                         # 2 formats de table possible. Avec les colonnes :
                         #   INST NOEUD NOM_CHAM NOM_CMP VALE
                         #   INST NOEUD NOM_CHAM DX DY DZ
@@ -193,7 +193,7 @@ def macr_spectre_ops(
                         if CALCUL == 'RELATIF':
                             # Combinaison avec fonction d'accélération
                             motscles = {}
-                            if LIST_INST != None:
+                            if LIST_INST is not None:
                                 motscles['LIST_PARA'] = LIST_INST
                             __spo = CALC_FONCTION(
                                 COMB=(_F(FONCTION=__spo, COEF=1.0),
@@ -204,9 +204,9 @@ def macr_spectre_ops(
 
                         # Etape 3: Calcul des spectres d'oscillateur
                         motscles = {}
-                        if FREQ != None:
+                        if FREQ is not None:
                             motscles['FREQ'] = FREQ
-                        if LIST_FREQ != None:
+                        if LIST_FREQ is not None:
                             motscles['LIST_FREQ'] = LIST_FREQ
                         __spo = CALC_FONCTION(
                             SPEC_OSCI=_F(FONCTION=__spo,
@@ -220,7 +220,7 @@ def macr_spectre_ops(
                         if CALCUL == 'ABSOLU':
                             # On retranche les deplacements d entrainement
                             motscles = {}
-                            if LIST_INST != None:
+                            if LIST_INST is not None:
                                 motscles['LIST_PARA'] = LIST_INST
                             __spo = CALC_FONCTION(
                                 COMB=(_F(FONCTION=__spo, COEF=1.0),
@@ -248,7 +248,7 @@ def macr_spectre_ops(
                         mcfCMBz.append(
                             _F(FONCTION=spo, COEF=1. / float(nbresu),))
                     motscles = {}
-                    if LIST_FREQ != None:
+                    if LIST_FREQ is not None:
                         motscles['LIST_PARA'] = LIST_FREQ
                     if dd == 'X':
                         __moy_x[indexn] = CALC_FONCTION(
@@ -272,7 +272,7 @@ def macr_spectre_ops(
             # -------------------------------------------------------------------------------------
             #
             # impressions en chaque noeud
-            if NOM_CHAM == 'ACCE' and IMPRESSION != None:
+            if NOM_CHAM == 'ACCE' and IMPRESSION is not None:
                 if IMPRESSION['TOUT'] == 'OUI':
                     __moyxa = [None] * len(AMOR_SPEC)
                     __moyya = [None] * len(AMOR_SPEC)
@@ -380,7 +380,7 @@ def macr_spectre_ops(
             dico_glob['DH_max'].append(DRmH)
         #
         # Etape 5: Impression des courbes
-        if NOM_CHAM == 'ACCE' and IMPRESSION != None:
+        if NOM_CHAM == 'ACCE' and IMPRESSION is not None:
             motscles = {}
             dI = IMPRESSION[0].cree_dict_valeurs(IMPRESSION[0].mc_liste)
             if 'PILOTE' in dI:
@@ -472,8 +472,8 @@ def macr_spectre_ops(
                          NUME_LIGN=list(range(nb_plancher+1,nb_plancher+nb_amor+1))))
 
     lListe.append(_F(LISTE_K=l_plancher, TYPE_K='K24', PARA='NOM'))
-    l_bat = [i for i in l_batiment if i != None]
-    l_com = [i for i in l_commentaire if i != None]
+    l_bat = [i for i in l_batiment if i is not None]
+    l_com = [i for i in l_commentaire if i is not None]
     if l_bat != []:
         l_bat2 = ['-' if i is None else i for i in l_batiment]
         lListe.append(_F(LISTE_K=l_bat2,TYPE_K='K24', PARA='BATIMENT'))

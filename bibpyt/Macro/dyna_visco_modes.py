@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ def dyna_visco_modes(self, TYPE_RESU, TYPE_MODE, list_FREQ, fmax, RESI_RELA,
        Macro-command DYNA_VISCO,
        function to compute the eigenmodes of the structure
     """
-    
+
     from Macro.dyna_visco_modes_calc import dyna_visco_modes_calc
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
@@ -36,13 +36,13 @@ def dyna_visco_modes(self, TYPE_RESU, TYPE_MODE, list_FREQ, fmax, RESI_RELA,
 
     if TYPE_RESU=='MODE' :
         self.DeclareOut('_modes',self.sd)
-    if (TYPE_RESU=='HARM' and args['MODE_MECA']!=None):
+    if (TYPE_RESU=='HARM' and args['MODE_MECA'] is not None):
         self.DeclareOut('_modes',args['MODE_MECA'])
 
-  
+
     i=0
     nmode=5
-  
+
 # EIGENMODES COMPUTATION
 
     freq1=list_FREQ[0]

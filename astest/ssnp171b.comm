@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='OUI');              
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='OUI');
 #----------------------------------------------
 #                   PARAMETRES
 #----------------------------------------------
@@ -79,7 +79,7 @@ COULOM = 0. ;
 ALGOLAG='VERSION1' ;
 
 # K1 ANALYTIQUES DU TEST DE BUI
-if not contact : 
+if not contact :
    K1REF = 0.8862925 * A**(3/2.)
 else :
    K1REF = 0.9648017 * A**(3/2.)
@@ -130,7 +130,7 @@ MAILLAG1=DEFI_GROUP( reuse =MAILLAG1,
                                         RAYON=PRECIS),
                                     ),
                       INFO=1, );
-                      
+
 if blocage == 2 :
    MAILLAG1=DEFI_GROUP( reuse =MAILLAG1,
                         MAILLAGE=MAILLAG1,
@@ -147,7 +147,7 @@ if blocage == 2 :
                                        ),
                       INFO=1, );
 
-                   
+
 MAILLAG1=DEFI_GROUP( reuse =MAILLAG1,
                      MAILLAGE=MAILLAG1,
                      CREA_GROUP_NO=(_F(NOM='NFISSU',
@@ -185,19 +185,19 @@ LT = FORMULE(VALE='abs(Y*sin(ALPHA)+X*cos(ALPHA))-A',
              ALPHA=ALPHA,
              A=A,
              NOM_PARA=['X', 'Y'],)
-             
+
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT,
                                     FONC_LN=LN,),
                     GROUP_MA_ENRI='VOL',
                     TYPE_ENRI_FOND='GEOMETRIQUE',RAYON_ENRI=0.5,
-                    )             
+                    )
 
 #----------------------------------------------
 #               MODELE FISSURE
 #----------------------------------------------
 
-         
+
 if not contact :
    MODELEK=MODI_MODELE_XFEM(MODELE_IN=MODELEIN,
                          FISSURE=FISS,
@@ -208,15 +208,15 @@ else :
                          CONTACT='STANDARD',DECOUPE_FACETTE='SOUS_ELEMENTS',
                          INFO=1,);
    CTXFEM = DEFI_CONTACT(MODELE  = MODELEK,
-                          FORMULATION    = 'XFEM', 
+                          FORMULATION    = 'XFEM',
                           #ELIM_ARETE = 'ELIM',
                           ZONE = (_F(INTEGRATION   = 'NOEUD',
                                      FISS_MAIT     = FISS,
                                      #ALGO_LAGR     = 'VERSION2',
                                      ),));
-                         
+
 MA_XFEM=POST_MAIL_XFEM(MODELE=MODELEK,);
-                    
+
 #----------------------------------------------
 #                   MATERIAU
 #----------------------------------------------
@@ -230,7 +230,7 @@ CHAMPMA1=AFFE_MATERIAU(MAILLAGE=MAILLAG1,
                        AFFE=_F(TOUT='OUI',
                                MATER=ACIER,
                                ),);
-                               
+
 #----------------------------------------------
 #         BLOCAGE DES MODES RIGIDES
 #----------------------------------------------
@@ -255,7 +255,7 @@ elif blocage == 2 :
                                       _F(GROUP_NO=('NOEUD1','NOEUD1S',),
                                          DDL=('DY','DY',),
                                          COEF_MULT=(1.0,1.0),
-                                         COEF_IMPO=0.0,),                       
+                                         COEF_IMPO=0.0,),
                                       _F(GROUP_NO=('NOEUD2','NOEUD2S',),
                                          DDL=('DX','DX',),
                                          COEF_MULT=(1.0,1.0),
@@ -305,8 +305,8 @@ else :
                                ),
                     ARCHIVAGE=_F(CHAM_EXCLU='VARI_ELGA',),
                     INFO=1,);
-                    
- 
+
+
 #----------------------------------------------
 #         EDITION DE FICHIER XMGRACE
 #----------------------------------------------
@@ -325,7 +325,7 @@ if False and contact :
   tab2 = (tab1.COOR_X > -1.1*cos(ALPHA))
   tab3 = (tab2.COOR_X < 1.1*cos(ALPHA))
   tab3.sort('COOR_X')
-  tab4 = (tab3.LAGS_C != None).values()
+  tab4 = (tab3.LAGS_C is not None).values()
   X    = tab4['COOR_X']
   LAGS = tab4['LAGS_C']
   f=open('/home/G31256/courbe_lag.dat','w')
@@ -364,7 +364,7 @@ IMPR_RESU(FORMAT='GMSH',UNITE=37,
 
 IMPR_RESU(FORMAT='GMSH',UNITE=37,
           RESU=_F(RESULTAT=RESU1,NOM_CHAM=('DEPL'),),);
-          
+
 #------------------------------------------------------------------------
 # POST-TRAITEMENT : CALCUL DES SIFS PAR LA METHODE ENERGETIQUE AVEC X-FEM
 #------------------------------------------------------------------------
@@ -384,7 +384,7 @@ for i in range(0,n) :
                INFO=1,);
 
    #IMPR_TABLE(TABLE=SIF1[i],);
-   
+
    SIF2[i]=CALC_G(
                RESULTAT=RESU1,NUME_ORDRE=1,
                OPTION='CALC_K_G',
@@ -394,7 +394,7 @@ for i in range(0,n) :
                         ),
                INFO=1,);
 
-   #IMPR_TABLE(TABLE=SIF2[i],);   
+   #IMPR_TABLE(TABLE=SIF2[i],);
 
 #
 #tests exhaustifs sur le fond en ouverture
@@ -418,7 +418,7 @@ for i in range(0,n) :
                    VALE_CALC=K2_CALC[i],
               CRITERE='ABSOLU',
               PRECISION=0.002,
-              REFERENCE='ANALYTIQUE',);              
+              REFERENCE='ANALYTIQUE',);
    TEST_TABLE(TABLE=SIF2[i],
               NOM_PARA='G',
               VALE_REFE=GREF,
