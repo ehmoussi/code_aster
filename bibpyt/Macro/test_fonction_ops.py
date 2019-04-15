@@ -366,7 +366,7 @@ def test_fonction_ops(self, VALEUR, ATTRIBUT, **args):
     txt = ['', ]
     txt.append(ligne_separatrice)
 
-    if VALEUR != None:
+    if VALEUR is not None:
         # Boucle sur les VALEURS
         for val in VALEUR:
             dres = val.cree_dict_valeurs(val.mc_liste)
@@ -388,7 +388,7 @@ def test_fonction_ops(self, VALEUR, ATTRIBUT, **args):
             nomfct = fct.get_name()
 
             # Transformation de nompara en liste
-            if (not is_sequence(nompara)) and nompara != None:
+            if (not is_sequence(nompara)) and nompara is not None:
                 nompara = [nompara, ]
 
             # La fonction est directement de dres['FONCTION']
@@ -413,7 +413,7 @@ def test_fonction_ops(self, VALEUR, ATTRIBUT, **args):
             # - "fonction" sur un intervalle
             # - "formule",
             # - "fonction" ou "nappe"
-            if (type(lafonc) == fonction_sdaster) and intervalle != None:
+            if (type(lafonc) == fonction_sdaster) and intervalle is not None:
                 # XXX il faut utiliser lafonc.Parametres() !
                 # XXX ne sert à rien, CALC_FONCTION prend les paramètres de la fonction normalement
                 fctProl = lafonc.sdj.PROL.get()
@@ -637,7 +637,7 @@ def test_fonction_ops(self, VALEUR, ATTRIBUT, **args):
                                         crit, res, valLastPara, txt, label=False)
             txt.append(' ')
 
-    if ATTRIBUT != None:
+    if ATTRIBUT is not None:
         first_affiche_ligne1 = True
         resu_test_attr = ' OK '
         # Boucle sur le mot-cle ATTRIBUT
@@ -655,7 +655,7 @@ def test_fonction_ops(self, VALEUR, ATTRIBUT, **args):
             pos = 0
             # Cas particulier d'une nappe qui a 2 dimensions
             if typeFct == 'NAPPE':
-                if para != None:
+                if para is not None:
                     # Recherche de la fonction liee a para
                     precPara = dres['PREC_PARA']
                     critPara = dres['CRIT_PARA']

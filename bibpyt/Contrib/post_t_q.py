@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ POST_T_Q=MACRO(nom="POST_T_Q",
          NB_NOEUD_COUPE=SIMP(statut='f',typ='I',defaut=5,val_min = 3),
 
 #        bloc correspondant a la donnee du fond de fissure pour les fissures maillees
-         b_fond_fiss   =BLOC (condition="FOND_FISS!= None",
+         b_fond_fiss   =BLOC (condition="FOND_FISS is not None",
 
               b_no_mod =BLOC (condition="AsType(RESULTAT)!= mode_meca",
 
@@ -64,7 +64,7 @@ POST_T_Q=MACRO(nom="POST_T_Q",
                          ),
 
 #        bloc correspondant a la donnee de la fissure pour les fissures X-FEM
-         b_fissure     =BLOC (condition="FISSURE!= None",
+         b_fissure     =BLOC (condition="FISSURE is not None",
                          NB_POINT_FOND = SIMP(statut='f',typ='I' ,),
                          NUME_FOND     = SIMP(statut='f',typ='I',defaut=1),
                          ABSC_CURV_MAXI=SIMP(statut='f',typ='R',
@@ -88,7 +88,7 @@ POST_T_Q=MACRO(nom="POST_T_Q",
          LIST_MODE       =SIMP(statut='f',typ=listis_sdaster),
          FREQ          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
          LIST_FREQ     =SIMP(statut='f',typ=listr8_sdaster),
-             b_acce_reel     =BLOC(condition="(FREQ!=None) or (LIST_FREQ!=None)",
+             b_acce_reel     =BLOC(condition="(FREQ is not None) or (LIST_FREQ is not None)",
                CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
                b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
                    PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
@@ -102,7 +102,7 @@ POST_T_Q=MACRO(nom="POST_T_Q",
          LIST_ORDRE    =SIMP(statut='f',typ=listis_sdaster),
          INST          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
          LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
-             b_acce_reel     =BLOC(condition="(INST != None)or(LIST_INST != None)",
+             b_acce_reel     =BLOC(condition="(INST is not None)or(LIST_INST is not None)",
                CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
                b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
                    PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),

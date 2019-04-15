@@ -405,7 +405,7 @@ def post_mac3coeur_ops(self, **args):
     #                                          MOT-CLE FACTEUR LAME
     # "
 
-    if (POST_LAME != None):
+    if (POST_LAME is not None):
 
         valjeuac = {}
         valjeucu = {}
@@ -581,7 +581,7 @@ def post_mac3coeur_ops(self, **args):
     # "
     #                                          MOT-CLE FACTEUR DEFORMATION
     # "
-    if (POST_DEF != None):
+    if (POST_DEF is not None):
 
         valdefac = {}
         valdirYac = {}

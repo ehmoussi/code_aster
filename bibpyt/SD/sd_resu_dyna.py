@@ -51,7 +51,7 @@ class sd_resu_dyna(AsBase):
         # Convert into a simple python list by looping over the dictionnary
         # keys
         REFDColl = [REFDColl[i] for i in list(REFDColl.keys())]
-        # assert (True in [Val != None for Val in REFDColl])
+        # assert (True in [Val is not None for Val in REFDColl])
         # Check each of the REFD entries, one by one
         for REFDEntry in REFDColl:
             CheckREFDEntry(self, REFDEntry, checker)

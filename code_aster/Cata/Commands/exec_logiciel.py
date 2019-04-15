@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,11 +27,11 @@ from code_aster.Cata.Commons import *
 def exec_logiciel_prod(self, SALOME, MAILLAGE, **args):
     if args.get('__all__'):
         return (None, maillage_sdaster)
-    if SALOME != None:
+    if SALOME is not None:
         if len(SALOME.get('NOM_PARA') or []) != len(SALOME.get('VALE') or []):
             raise AsException(tr("SALOME: NOM_PARA et VALE doivent avoir le "
                                  "même cardinal"))
-    if MAILLAGE != None:
+    if MAILLAGE is not None:
         return maillage_sdaster
     return None
 

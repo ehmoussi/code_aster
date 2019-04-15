@@ -105,7 +105,7 @@ class TableBase(object):
             'dform': DicForm.copy(),
             'mode': para[FORMAT]['mode'],
         }
-        if dform != None and type(dform) is dict:
+        if dform is not None and type(dform) is dict:
             kargs['dform'].update(dform)
         # ajout des options
         kargs.update(opts)
@@ -129,7 +129,7 @@ class TableBase(object):
                 lvp = list(getattr(self, p).values())
                 lvn = []
                 for it in lvp:
-                    if it != None and lvn.count(it) == 0:
+                    if it is not None and lvn.count(it) == 0:
                         lvn.append(it)
                 lvn.sort()
                 lvd.append(lvn)
@@ -156,14 +156,14 @@ class TableBase(object):
         """Impression au format TABLEAU ou ASTER
         """
         # fichier ou stdout
-        if kargs.get('FICHIER') != None:
+        if kargs.get('FICHIER') is not None:
             f = open(kargs['FICHIER'], kargs['mode'])
         else:
             f = sys.stdout
         # ecriture
         f.write(self.ReprTable(**kargs) + '\n')
         # fermeture
-        if kargs.get('FICHIER') != None:
+        if kargs.get('FICHIER') is not None:
             f.close()
 
     def ImprNumpy(self, **kargs):
@@ -660,9 +660,9 @@ class Table(TableBase):
                 d[mc] = vals
             else:
                 d['NUME_LIGN'] = [
-                    j + 1 for j in range(len(vals)) if vals[j] != None]
+                    j + 1 for j in range(len(vals)) if vals[j] is not None]
                 d[mc] = [
-                    v for v in vals if v != None]
+                    v for v in vals if v is not None]
             if len(d[mc]) == 0:
                 UTMESS('I', 'TABLE0_34', valk=self.para[i])
             else:
@@ -707,7 +707,7 @@ class Table(TableBase):
         newx = list(newx)
         newx.sort()
         for x in newx:
-            if x != None:
+            if x is not None:
                 d = {lpz: x, }
                 taux = (getattr(self, px) == x)
                 for dz in taux.rows:
@@ -774,28 +774,28 @@ class Colonne(TableBase):
             crit = max(VALE)
         else:
             crit = VALE
-        return self._extract(lambda v: v != None and v <= crit)
+        return self._extract(lambda v: v is not None and v <= crit)
 
     def __lt__(self, VALE):
         if is_sequence(VALE):
             crit = max(VALE)
         else:
             crit = VALE
-        return self._extract(lambda v: v != None and v < crit)
+        return self._extract(lambda v: v is not None and v < crit)
 
     def __ge__(self, VALE):
         if is_sequence(VALE):
             crit = min(VALE)
         else:
             crit = VALE
-        return self._extract(lambda v: v != None and v >= crit)
+        return self._extract(lambda v: v is not None and v >= crit)
 
     def __gt__(self, VALE):
         if is_sequence(VALE):
             crit = min(VALE)
         else:
             crit = VALE
-        return self._extract(lambda v: v != None and v > crit)
+        return self._extract(lambda v: v is not None and v > crit)
 
     def __eq__(self, VALE, CRITERE='RELATIF', PRECISION=0.):
         if not is_sequence(VALE):
@@ -817,7 +817,7 @@ class Colonne(TableBase):
         """
         if not is_str(regexp):
             return self._extract(lambda v: False)
-        return self._extract(lambda v: v != None and re.search(regexp, v) != None)
+        return self._extract(lambda v: v is not None and re.search(regexp, v) is not None)
 
     def __ne__(self, VALE, CRITERE='RELATIF', PRECISION=0.):
         if not is_sequence(VALE):
@@ -875,7 +875,7 @@ class Colonne(TableBase):
 
     def not_none_values(self):
         """Renvoie la liste des valeurs non 'None'"""
-        return [val for val in list(self.values()) if val != None]
+        return [val for val in list(self.values()) if val is not None]
 
     # équivalences avec les opérateurs dans Aster
     LE = __le__
@@ -1061,7 +1061,7 @@ def typaster(obj, prev=None, strict=False):
             else:
                 raise TypeError("La longueur de la chaine %s est incompatible avec le type %s" \
                     % (repr(obj), repr(prev)))
-        elif strict:   # prev != None et typobj != prev et strict
+        elif strict:   # prev is not None et typobj != prev et strict
             raise TypeError("La valeur %s n'est pas de type %s" % (
                 repr(obj), repr(prev)))
         elif prev in ('I', 'R') and typobj in ('I', 'R'):
@@ -1119,7 +1119,7 @@ def _func_test_abs(v, VALE, PRECISION):
     """Retourne True si v est parmi VALE à PRECISION près en absolu
     """
     for x in VALE:
-        if v != None and (x - PRECISION <= v <= x + PRECISION):
+        if v is not None and (x - PRECISION <= v <= x + PRECISION):
             return True
     return False
 
@@ -1129,7 +1129,7 @@ def _func_test_rela(v, VALE, PRECISION):
     """
     for x in VALE:
         sign = float(x > 0.) or -1.
-        if v != None and (sign * x * (1. - PRECISION) <= sign * v <= sign * x * (1. + PRECISION)):
+        if v is not None and (sign * x * (1. - PRECISION) <= sign * v <= sign * x * (1. + PRECISION)):
             return True
     return False
 

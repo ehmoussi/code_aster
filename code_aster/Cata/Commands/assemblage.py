@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ def assemblage_prod(self,NUME_DDL,MATR_ASSE,VECT_ASSE,**args):
   if NUME_DDL.is_typco():
     self.type_sdprod(NUME_DDL,nume_ddl_sdaster)
 
-  if MATR_ASSE !=None:
+  if MATR_ASSE is not None:
       for m in MATR_ASSE:
         opti=m['OPTION']
         if opti in ( "RIGI_MECA","RIGI_FLUI_STRU",
@@ -54,7 +54,7 @@ def assemblage_prod(self,NUME_DDL,MATR_ASSE,VECT_ASSE,**args):
 
         self.type_sdprod(m['MATRICE'],t)
 
-  if VECT_ASSE !=None:
+  if VECT_ASSE is not None:
       for v in VECT_ASSE:
         self.type_sdprod(v['VECTEUR'],cham_no_sdaster)
 

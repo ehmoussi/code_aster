@@ -116,7 +116,7 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
             raise FonctionError('Vous ne pouvez utiliser qu' + "'" + \
                 'un mot clef pour definir la longueur de recouvrement des echantillons')
         for i1 in range(3):
-            if l_ech_t[i1] != None:
+            if l_ech_t[i1] is not None:
                 if i1 == 0:
                     l_ech = int(numpy.floor(l_ech_t[i1] / dt))
                 elif i1 == 1:
@@ -129,7 +129,7 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
                 'echantillon inferieure a la longueur totale de l' + \
                 "'" + 'acquisition')
         for i1 in range(3):
-            if recouvr_t[i1] != None:
+            if recouvr_t[i1] is not None:
                 if i1 == 0:
                     recouvr = int(numpy.floor(recouvr_t[i1] / dt))
                 elif i1 == 1:

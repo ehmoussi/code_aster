@@ -103,17 +103,17 @@ class GeneAcceParameters(object):
         others.remove('MATR_COHE')
         others.remove('PHASE')
  #  # SimulationKeys and MethodKeys
-        if kwargs['COEF_CORR'] != None:
+        if kwargs['COEF_CORR'] is not None:
             corr_keys = {}
             corr_keys['TYPE'] = 'COEF_CORR'
             corr_keys['COEF_CORR'] = kwargs.get('COEF_CORR')
             corr_keys['RATIO_HV'] = None
-            if kwargs.get('SPEC_FRACTILE')!= None:
+            if kwargs.get('SPEC_FRACTILE') is not None:
                 corr_keys['RATIO_HV'] = kwargs.get('RATIO_HV')
-        elif kwargs['MATR_COHE'] != None:
+        elif kwargs['MATR_COHE'] is not None:
              ckeys = kwargs.get('MATR_COHE')[0]
              corr_keys = ckeys.cree_dict_valeurs(ckeys.mc_liste)
-        elif kwargs['PHASE'] != None:
+        elif kwargs['PHASE'] is not None:
              ckeys = kwargs.get('PHASE')[0]
              corr_keys = ckeys.cree_dict_valeurs(ckeys.mc_liste)
              corr_keys['TYPE'] = 'PHASE'
@@ -156,7 +156,7 @@ class GeneAcceParameters(object):
                 GeneratorKeys.mc_liste)
         self.method_keys = {}
         for key in method_keys:
-            if method_keys[key] != None:
+            if method_keys[key] is not None:
                 self.method_keys[key] = method_keys[key]
         if 'NB_ITER' in self.method_keys :
             self.simulation_keys.update({'NB_ITER':
@@ -287,7 +287,7 @@ class GeneratorDSP(Generator):
 
     def build_DSP(self):
         """build DSP for DSP class"""
-        if self.FREQ_PENTE != None:
+        if self.FREQ_PENTE is not None:
             self.DSP_args.update({'FREQ_CORNER': self.FREQ_CORNER,
                                   'FREQ_PENTE': self.FREQ_PENTE,
                                   'TYPE_DSP': 'KT'})
@@ -385,7 +385,7 @@ class GeneratorSpectrum(Generator):
         self.DSP_args.update({'FONC_DSP': fonc_dsp,
                               'TYPE_DSP': 'SC', 'FC': 0.05})
         self.SRO_args['FONC_SPEC'] = f_spec_ref
-        if self.FREQ_PENTE != None:
+        if self.FREQ_PENTE is not None:
             self.DSP_args['TYPE_DSP'] = 'FR'
             vop, amo, R0, R2, f_FIT = DSP2FR(self.DSP_args['FONC_DSP'],
                                              self.DSP_args['FC'])
@@ -453,7 +453,7 @@ class Sampler(object):
             DW = 2. * OM / self.NB_POIN
             TT = (self.NB_POIN - 1) * self.DT
        # on calcule la duree de simulation si NB_POIN donne
-        elif self.NB_POIN != None:
+        elif self.NB_POIN is not None:
             if self.NB_POIN % 2 != 0:
                 self.NB_POIN = self.NB_POIN + 1
             TT = (self.NB_POIN - 1) * self.DT
@@ -816,7 +816,7 @@ class SimulatorSPECVector(Simulator):
         if self.TYPE == 'COEF_CORR':
             rho = self.DEFI_COHE['COEF_CORR']
             aster_core.matfpe(-1)
-            if self.DEFI_COHE['RATIO_HV'] != None:
+            if self.DEFI_COHE['RATIO_HV'] is not None:
                 dim = 3
                 RS = (1./self.DEFI_COHE['RATIO_HV'])**2
                 Mat_cohe = NP.linalg.cholesky(CALC_CORRE(rho, dim, RS))
@@ -1074,7 +1074,7 @@ class SimulatorSPECPhase(Simulator):
                            self.DEFI_COHE['GROUP_NO_INTERF'],
                            self.DEFI_COHE['MAILLAGE'])
         self.DEFI_COHE.update({ 'NOEUDS_INTERF' : l2})
-        if self.DEFI_COHE['COOR_REFE'] ==  None:
+        if self.DEFI_COHE['COOR_REFE'] is None:
             coord_ref = get_no_refe(self.DEFI_COHE)
             self.DEFI_COHE.update({ 'COOR_REFE' : coord_ref})
             UTMESS('I', 'SEISME_77', valr=(coord_ref[0], coord_ref[1], coord_ref[2] ))
@@ -1210,7 +1210,7 @@ class SimulatorDSPPhase(Simulator):
                              self.DEFI_COHE['GROUP_NO_INTERF'],
                              self.DEFI_COHE['MAILLAGE'])
         self.DEFI_COHE.update({ 'NOEUDS_INTERF' : l2})
-        if self.DEFI_COHE['COOR_REFE'] ==  None:
+        if self.DEFI_COHE['COOR_REFE'] is None:
             coord_ref = get_no_refe(self.DEFI_COHE)
             UTMESS('I', 'SEISME_77', valr=(coord_ref[0], coord_ref[1], coord_ref[2] ))
 

@@ -69,7 +69,7 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
     if not type_matr_B == 'SYMETRI':
         lsym = False
     if TYPE_RESU == 'DYNAMIQUE':
-        if args['MATR_AMOR']!=None:
+        if args['MATR_AMOR'] is not None:
             iret, ibid, type_matr_C = aster.dismoi('TYPE_MATRICE', args['MATR_AMOR'].nom, 'MATR_ASSE', 'F')
             if not type_matr_C == 'SYMETRI':
                 lsym = False
@@ -100,43 +100,43 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
 
 
     ##############################################################################
-    # 2. PERFORM THE IMPROVEMENT OF THE MODES WITH MODE_ITER_INV / OPTION='PROCHE'        
+    # 2. PERFORM THE IMPROVEMENT OF THE MODES WITH MODE_ITER_INV / OPTION='PROCHE'
     DETRUIRE( CONCEPT=_F(NOM = modes),
               INFO=1 )
 
     motcles  = {}
     matrices = {}
-    
+
     # read the input matrices
     if TYPE_RESU == 'DYNAMIQUE':
         type_vp = 'FREQ'
         matrices['MATR_RIGI']   = args['MATR_RIGI']
         matrices['MATR_MASS']   = args['MATR_MASS']
-        if args['MATR_AMOR']!=None:
+        if args['MATR_AMOR'] is not None:
             matrices['MATR_AMOR']= args['MATR_AMOR']
-    
+
     elif TYPE_RESU == 'MODE_FLAMB':
         type_vp = 'CHAR_CRIT'
         matrices['MATR_RIGI']      = args['MATR_RIGI']
         matrices['MATR_RIGI_GEOM'] = args['MATR_RIGI_GEOM']
-    
+
     elif TYPE_RESU == 'GENERAL':
         type_vp = 'CHAR_CRIT'
         matrices['MATR_A'] = args['MATR_A']
         matrices['MATR_B'] = args['MATR_B']
-    
+
     motcles.update(matrices)
-    
+
     #################################################################
-    
+
     motcles_calc_vp = {}
-    
+
     motcles_calc_vp[type_vp] = list_vp
-    
+
     motcles['CALC_'+type_vp] = _F(OPTION = 'PROCHE',
                                   **motcles_calc_vp
                                   )
-    
+
     #################################################################
     # read the keyword SOLVEUR (linear solver)
     solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
@@ -148,8 +148,8 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
         solveur.pop('FREQ')
     motcles['SOLVEUR']=_F(**solveur) # if this line is commented,
                                       # one will use the default keywords for SOLVEUR
-    
-    
+
+
     #################################################################
     # read the keyword VERI_MODE
 #
@@ -169,14 +169,14 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
                               PREC_SHIFT=VERI_MODE['PREC_SHIFT']
                               )
     #################################################################
-    if TITRE != None:
+    if TITRE is not None:
         motcles['TITRE'] = TITRE
-    
+
     #################################################################
-    
+
     modes=MODE_ITER_INV( TYPE_RESU = TYPE_RESU,
                          INFO      = INFO,
                          **motcles
                         )
-    
+
     return modes

@@ -123,7 +123,7 @@ def observation_ops(self,
                             NOM_PARA='FREQ',)
         afreq = __freq.EXTR_TABLE().Array('NUME_ORDRE', 'FREQ')
         # noms des matrices
-        if MATR_RIGI != None or MATR_MASS != None:
+        if MATR_RIGI is not None or MATR_MASS is not None:
             # recherche du nume_ddl associe
             iret, ibid, nom_nume_ddl = aster.dismoi(
                 'NOM_NUME_DDL', MATR_RIGI.nom, 'MATR_ASSE', 'F')
@@ -149,7 +149,7 @@ def observation_ops(self,
 #***********************************************
 
     resu_epsi = None
-    if EPSI_MOYENNE != None:
+    if EPSI_MOYENNE is not None:
         for nomcham in NOM_CHAM:
             if nomcham == 'EPSI_NOEU':
                 if isinstance(RESULTAT, dyna_harmo):
@@ -200,7 +200,7 @@ def observation_ops(self,
                     val_masque = masque_lu
                 masque.append(val_masque)
                 for typ in ['NOEUD', 'GROUP_NO', 'MAILLE', 'GROUP_MA']:
-                    if epsi_moye[typ] != None:
+                    if epsi_moye[typ] is not None:
                         l_noeud = find_no(mayanum, {typ: epsi_moye[typ]})
                         nb_mcfact = nb_mcfact + 1
                         for i in range(len(l_noeud)):
@@ -335,10 +335,10 @@ def observation_ops(self,
                             for cmp_vari in l_cmp_vari:
                                 if cmp_vari not in masque_mc:
                                     if cmp == cmp_vari and not vu:
-                                        if EPSI_MOYENNE[mcfacta]['MAILLE'] != None:
+                                        if EPSI_MOYENNE[mcfacta]['MAILLE'] is not None:
                                             entite = str(
                                                 'MAILLE : ' + str(EPSI_MOYENNE[mcfacta]['MAILLE']))
-                                        if EPSI_MOYENNE[mcfacta]['GROUP_MA'] != None:
+                                        if EPSI_MOYENNE[mcfacta]['GROUP_MA'] is not None:
                                             entite = str(
                                                 'GROUP_MA : ' + str(EPSI_MOYENNE[mcfacta]['GROUP_MA']))
                                         UTMESS('A', 'OBSERVATION_8', vali=[
@@ -470,7 +470,7 @@ def observation_ops(self,
 #                         REPERE   = 'UTILISATEUR',
 #                         ANGL_NAUT = (alpha, beta, gamma), )
 #                    )
-        if MODIF_REPERE != None:
+        if MODIF_REPERE is not None:
             num_ordr = __proj.LIST_VARI_ACCES()['NUME_ORDRE']
 
             for modif_rep in MODIF_REPERE:
@@ -609,7 +609,7 @@ def observation_ops(self,
 # Phase de selection des DDL de mesure
 #*************************************************
         resu_filtre = None
-        if FILTRE != None:
+        if FILTRE is not None:
             num_ordr = __proj.LIST_VARI_ACCES()['NUME_ORDRE']
 
             __chamf = [None] * len(indice)
@@ -902,11 +902,11 @@ def crea_repere(chnorm, ind_no, vect):
 
 def crea_repere_xy(vect_x, vect_y):
     """Calcul des angles nautiques a partir des directions vect_x et vect_y.
-       Si vect_x != None et vect_y != None alors on impose le premier vecteur de base
+       Si vect_x is not None et vect_y is not None alors on impose le premier vecteur de base
            colineaire a vect_x et le deuxieme vecteur dans le plan (vect_x,vect_y)
-       Si vect_x != None et vect_y is None alors on impose le premier vecteur de base
+       Si vect_x is not None et vect_y is None alors on impose le premier vecteur de base
            colineaire a vect_x
-       Si vect_x is None et vect_y != None alors on impose le deuxieme vecteur de base
+       Si vect_x is None et vect_y is not None alors on impose le deuxieme vecteur de base
            colineaire a vect_y
        Si vect_x is None et vect_y is None alors on ne fait rien
     """

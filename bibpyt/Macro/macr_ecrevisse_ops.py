@@ -678,10 +678,10 @@ def macr_ecrevisse_ops(self, reuse,
     #
 
     # Creation du concept de la table en sortie
-    if (T_TABL_RES != None):
+    if (T_TABL_RES is not None):
         dprod = T_TABL_RES.dict_CREA_TABLE()
         TABL_RES = CREA_TABLE(**dprod)
-    if (T_DEB_RES != None):
+    if (T_DEB_RES is not None):
         debprod = T_DEB_RES.dict_CREA_TABLE()
         DEB_RES = CREA_TABLE(**debprod)
 

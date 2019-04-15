@@ -29,8 +29,8 @@ def proj_champ_prod(RESULTAT=None,CHAM_GD=None,METHODE=None,**args ):
                 cham_no_sdaster, cham_elem)
 
     if (RESULTAT is None and CHAM_GD is None) : return corresp_2_mailla
-    if  RESULTAT != None                      : return AsType(RESULTAT)
-    if  CHAM_GD  != None and METHODE == 'SOUS_POINT' :
+    if  RESULTAT is not None                      : return AsType(RESULTAT)
+    if  CHAM_GD  is not None and METHODE == 'SOUS_POINT' :
         return cham_elem
     else :
         return AsType(CHAM_GD)

@@ -85,7 +85,7 @@ class LireEPX():
         macro = CONTEXT.get_current_step()
         #
         # Recherche dans le jdc la création du concept CARA_ELEM
-        if ( self.CARA_ELEM != None ):
+        if ( self.CARA_ELEM is not None ):
             FindEtape = False
             self.CARA_ELEM_CONCEPT = self.CARA_ELEM
             nomsd = self.CARA_ELEM.get_name()

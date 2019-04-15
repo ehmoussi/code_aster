@@ -252,7 +252,7 @@ def calc_gp_ops(self, **args):
 
 # mult=Coefficient multiplicatif suivant la symetrie du probleme
     mult = 1.
-    if self['TRANCHE_2D'] != None:
+    if self['TRANCHE_2D'] is not None:
         TRANCHE_2D = self['TRANCHE_2D']
         if ndim != 2:
             UTMESS('F', 'RUPTURE1_19', ['TRANCHE_2D', '2D'])
@@ -315,7 +315,7 @@ def calc_gp_ops(self, **args):
 
 # Definition de la sortie facultative GP_MAX
     GPMAX = self['GPMAX']
-    if GPMAX != None:
+    if GPMAX is not None:
         self.DeclareOut('tabgpmax', GPMAX)
 # Creation des colonnes de la table de sortie gpmax
         tabinstmax = []
@@ -366,7 +366,7 @@ def calc_gp_ops(self, **args):
                 index1 = tabgp[i * nbcop:(i + 1) * nbcop].index(maxinst)
                 index = index1 + i * nbcop
                 tabmax[index] = 1
-                if GPMAX != None:
+                if GPMAX is not None:
                     tabinstmax.append(tabinst[index])
                     tabcopmax.append(tabcop[index])
                     tabenelmax.append(tabenel[index])
@@ -501,7 +501,7 @@ def calc_gp_ops(self, **args):
                 index1 = tabgp[i * nbcop:(i + 1) * nbcop].index(maxinst)
                 index = index1 + i * nbcop
                 tabmax[index] = 1
-                if GPMAX != None:
+                if GPMAX is not None:
                     tabinstmax.append(tabinst[index])
                     tabcopmax.append(tabcop[index])
                     tabenelmax.append(tabenel[index])
@@ -551,7 +551,7 @@ def calc_gp_ops(self, **args):
             index1 = tabgp[nbcoptot * i:nbcoptot * (i + 1)].index(maxinst)
             index = index1 + i * nbcoptot
             tabmax[index] = 1
-            if GPMAX != None:
+            if GPMAX is not None:
                 tabinstmax.append(tabinst[index])
                 tabcopmax.append(tabcop[index])
                 tabenelmax.append(tabenel[index])
@@ -572,7 +572,7 @@ def calc_gp_ops(self, **args):
                         _F(PARA='GP',        LISTE_R=tabgp,),
                         _F(PARA='MAX_INST',  LISTE_I=tabmax,),
                         ),)
-    if GPMAX != None:
+    if GPMAX is not None:
         tabgpmax = CREA_TABLE(LISTE=(
             _F(PARA='INST',      LISTE_R=tabinstmax),
             _F(PARA='ZONE',      LISTE_K=tabcopmax,),

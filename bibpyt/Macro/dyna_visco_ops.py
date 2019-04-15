@@ -51,7 +51,7 @@ def dyna_visco_ops(self,MODELE,CARA_ELEM,
     if TYPE_RESU=='HARM':
         self.DeclareOut('dyna_harm',self.sd)
 
-        if args['MODE_MECA']!=None:
+        if args['MODE_MECA'] is not None:
             MODE_MECA = args['MODE_MECA']
             self.DeclareOut('_modes',MODE_MECA)
 

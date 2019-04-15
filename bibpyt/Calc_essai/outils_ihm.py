@@ -1550,7 +1550,7 @@ class DispFRFDialogue(Toplevel):
 
     def prep_calc(self, num_resu, resu, param):
         """ Calcul des FRF associees a une base de mode et une excitation "marteau".
-            Pour les calculs de modification structurale (sumail != None), calcul du depl interne"""
+            Pour les calculs de modification structurale (sumail is not None), calcul du depl interne"""
         from code_aster.Cata.Commands import DEPL_INTERNE
         mdo = self.ce_objects
         if isinstance(self.modes_couple, ModeMeca):
@@ -2200,7 +2200,7 @@ class CalcEssaiXmgr(Xmgr):
 
         # Lancement de xmgrace
         shell = self.xmgrace + ' -noask '
-        if options != None:
+        if options is not None:
             shell += options
         shell += ' -graph ' + repr(gr_max - 1) + ' -npipe ' + self.nom_pipe
 

@@ -89,7 +89,7 @@ def macro_elas_mult_ops(self, MODELE, CHAM_MATER, CARA_ELEM, NUME_DDL,
         if lnume:
             # On peut passer des mots cles egaux a None. Ils sont ignores
             motscles = {}
-            if numeddl != None:
+            if numeddl is not None:
                 self.DeclareOut('num', numeddl)
                 num = NUME_DDL(MATR_RIGI=__nomrig, **motscles)
             else:

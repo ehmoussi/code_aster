@@ -27,7 +27,7 @@ def calc_champ_prod(RESULTAT,**args):
    if args.get('__all__'):
        return (resultat_sdaster, )
 
-   if AsType(RESULTAT) != None : return AsType(RESULTAT)
+   if AsType(RESULTAT) is not None : return AsType(RESULTAT)
    raise AsException("type de concept resultat non prevu : RESULTAT=%s (type %s)" \
         % (RESULTAT, type(RESULTAT)))
 

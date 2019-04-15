@@ -127,7 +127,7 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
         sd_modele = self.get_concept(nommod)
         if (sd_modele is None):
             assert(False)  # Pb, on arrive pas a recuperer le nom du modele
-        if (old_prtk1 != None):
+        if (old_prtk1 is not None):
             motdimo = {}
             motdimo['reuse'] = sd_modele
             motdimo['MODELE'] = sd_modele
@@ -418,7 +418,7 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
     # anciennes valeurs pour continuer la suite du fichier de commande.
     #----------------------------------------------------------------------
     if (nbproc > 1):
-        if (old_prtk1 != None):
+        if (old_prtk1 is not None):
             motdimo = {}
             motdimo['reuse'] = sd_modele
             motdimo['MODELE'] = sd_modele
@@ -458,11 +458,11 @@ def recup_modele_partition(MATR_RIGI, dbg):
     vprtk = None
     vpartit = nommod[0:8] + '.PARTIT'
     sd_partitb = aster.getvectjev(vpartit)
-    if (sd_partitb != None):
+    if (sd_partitb is not None):
         nompart = sd_partitb[0]
-        if (nompart != None):
+        if (nompart is not None):
             vprtk = aster.getvectjev(nompart[0:8] + '.PRTK')
-            if (vprtk != None):
+            if (vprtk is not None):
                 old_prtk_buff = vprtk[0]
                 old_prtk1 = old_prtk_buff.strip()
     if (dbg):

@@ -182,7 +182,7 @@ class JDC:
         )
 
         tpmax = aster_core.get_option("tpmax")
-        if tpmax != None:
+        if tpmax is not None:
             cpu_restant = tpmax - elapsed_total
         else:
             cpu_restant = 0.

@@ -157,14 +157,14 @@ class ETAPE:
 
         # impression du fichier .code : compte rendu des commandes et
         # mots clés activés par l'ETAPE
-        if self.jdc.fico != None:
+        if self.jdc.fico is not None:
             fcode = CodeVisitor(self.jdc.fico)
             self.accept(fcode)
             aster.affiche('CODE', fcode.get_text())
 
         if voir:
             # Affichage numero de la commande (4 digits)
-            if self.sd != None:
+            if self.sd is not None:
                 type_concept = self.sd.__class__.__name__
             else:
                 type_concept = '-'
@@ -175,7 +175,7 @@ class ETAPE:
                                              self._identifier))
 
             UTMESS('I', 'SUPERVIS2_70')
-            if self.icmd != None:
+            if self.icmd is not None:
                 UTMESS('I', 'SUPERVIS2_71', vali=self.icmd, valk=type_concept)
                 UTMESS('I', 'SUPERVIS2_70')
             else:

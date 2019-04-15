@@ -49,7 +49,7 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
     CREA_TABLE       = self.get_cmd('CREA_TABLE')
 
-    if AMOR_SPEC!=None and type(AMOR_SPEC) not in EnumType: AMOR_SPEC=(AMOR_SPEC,)
+    if AMOR_SPEC is not None and type(AMOR_SPEC) not in EnumType: AMOR_SPEC=(AMOR_SPEC,)
 
     ### construction de la liste des noeuds à traiter
     planch_nodes={}
@@ -67,14 +67,14 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
         liste_no=[]
         clefs = list(plancher.keys())
         if ( 'NOEUD' in clefs ):
-            if plancher['NOEUD'] != None :
+            if plancher['NOEUD'] is not None :
                 if type(plancher['NOEUD'])==str:
                     liste_no.append(plancher['NOEUD'])
                 else :
                     for noeud in plancher['NOEUD'] : liste_no.append(noeud)
         if ( 'GROUP_NO' in clefs ):
-            if plancher['GROUP_NO'] != None :
-                assert ( MAILLAGE != None )
+            if plancher['GROUP_NO'] is not None :
+                assert ( MAILLAGE is not None )
                 if type(plancher['GROUP_NO'])==str:
                     noms_no =[l_nodes[n-1].strip() for n in dic_gpno[plancher['GROUP_NO'].ljust(24)]]
                     liste_no=liste_no+noms_no
@@ -85,13 +85,13 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
         planch_nodes[plancher['NOM']]=liste_no
         l_plancher.append(plancher['NOM'])
 
-        if plancher['AMOR_EQUIP']!=None and type(plancher['AMOR_EQUIP']) not in EnumType: AMOR_EQUI=(plancher['AMOR_EQUIP'],)
+        if plancher['AMOR_EQUIP'] is not None and type(plancher['AMOR_EQUIP']) not in EnumType: AMOR_EQUI=(plancher['AMOR_EQUIP'],)
         else: AMOR_EQUI=plancher['AMOR_EQUIP']
-        if plancher['AMOR_SUPPORT']!=None and type(plancher['AMOR_SUPPORT']) not in EnumType: AMOR_SUPP=(plancher['AMOR_SUPPORT'],)
+        if plancher['AMOR_SUPPORT'] is not None and type(plancher['AMOR_SUPPORT']) not in EnumType: AMOR_SUPP=(plancher['AMOR_SUPPORT'],)
         else: AMOR_SUPP=plancher['AMOR_SUPPORT']
-        if plancher['RAPPORT_MASSE_TOTALE']!=None and type(plancher['RAPPORT_MASSE_TOTALE']) not in EnumType: RAP_MAS=(plancher['RAPPORT_MASSE_TOTALE'],)
+        if plancher['RAPPORT_MASSE_TOTALE'] is not None and type(plancher['RAPPORT_MASSE_TOTALE']) not in EnumType: RAP_MAS=(plancher['RAPPORT_MASSE_TOTALE'],)
         else: RAP_MAS=plancher['RAPPORT_MASSE_TOTALE']
-        if plancher['FREQ_SUPPORT']!=None and type(plancher['FREQ_SUPPORT']) not in EnumType: FREQ_SUPP=(plancher['FREQ_SUPPORT'],)
+        if plancher['FREQ_SUPPORT'] is not None and type(plancher['FREQ_SUPPORT']) not in EnumType: FREQ_SUPP=(plancher['FREQ_SUPPORT'],)
         else: FREQ_SUPP=plancher['FREQ_SUPPORT']
         FREQ_EQUI    = plancher['FREQ_EQUIP']
         RAP_MAS_COEF = plancher['COEF_MASS_EQUIP']
@@ -125,7 +125,7 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
             l_fonc=[]
             for resu in RESU :
                 # Etape 1: Récupération des fonctions
-                # if resu['RESU_GENE'] != None :
+                # if resu['RESU_GENE'] is not None :
                     # __ACCE_E=RECU_FONCTION(NOM_CHAM     = 'ACCE',
                             # TOUT_ORDRE   = 'OUI',
                             # NOM_CMP      = 'DZ',
@@ -135,7 +135,7 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
                             # NOEUD        = node ,
                             # RESU_GENE    = resu['RESU_GENE']
                         # )
-                # if resu['RESULTAT'] !=None :
+                # if resu['RESULTAT'] is not None :
                     # __ACCE_E=RECU_FONCTION(
                             # NOM_CHAM     = 'ACCE',
                             # TOUT_ORDRE   = 'OUI',
@@ -146,7 +146,7 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
                             # NOEUD        = node ,
                             # RESULTAT     = resu['RESULTAT']
                         # )
-                if resu['TABLE'] !=None :
+                if resu['TABLE'] is not None :
                     # 2 formats de table possible. Avec les colonnes :
                     #   INST NOEUD NOM_CHAM NOM_CMP VALE
                     #   INST NOEUD NOM_CHAM DX DY DZ
@@ -184,7 +184,7 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
                 if CALCUL=='RELATIF' :
                     # Combinaison avec fonction d'accélération
                     motscles={}
-                    if LIST_INST!=None : motscles['LIST_PARA']=LIST_INST
+                    if LIST_INST is not None : motscles['LIST_PARA']=LIST_INST
                     __ACCE_E=CALC_FONCTION(
                         COMB=(  _F(FONCTION=__ACCE_E, COEF= 1.0  ),
                                 _F(FONCTION=resu['ACCE_Z'], COEF= 1.0),),
@@ -237,8 +237,8 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
                 #
                 # calcul de spectres corriges
                 motscles={}
-                if FREQ     !=None : motscles['FREQ']     =FREQ
-                if LIST_FREQ!=None : motscles['LIST_FREQ']=LIST_FREQ
+                if FREQ     is not None : motscles['FREQ']     =FREQ
+                if LIST_FREQ is not None : motscles['LIST_FREQ']=LIST_FREQ
                 __Spec=[None]*len(AMOR_SPEC);
                 for amor in range(len(AMOR_SPEC)): # eviter la boucle ??
                     __Spec[amor] = CALC_FONCTION(

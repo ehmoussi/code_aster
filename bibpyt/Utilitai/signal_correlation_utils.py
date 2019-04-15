@@ -206,7 +206,7 @@ def DSP2ACCE_ND(f_dsp, data_cohe, rv=None):
         vecc2 = (NP.random.normal(0.0,1.,nbfreq2*dim) + 1j*NP.random.normal(0.0,1.,nbfreq2*dim))
         vecc1.resize(dim, nbfreq2)
         vecc2.resize(dim, nbfreq2)
-    elif rv != None:
+    elif rv is not None:
         rva = NP.array(rv)
         vecc1 = rva[:,:nbfreq2]
         vecc2 = rva[:,nbfreq2:]

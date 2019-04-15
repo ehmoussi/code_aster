@@ -47,7 +47,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
         if cara in Lcara:
             return Lvale[Lcara.index(cara)]
         else:
-            if valdefaut != None :
+            if valdefaut is not None :
                 return valdefaut
             else:
                 raise AsException("Erreur de syntaxe dans la commande")
@@ -64,7 +64,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
     sizeErr = tr("les cardinaux de CARA et VALE sont différents.")
     defErr = tr("mauvaise définition de {prop!r}.")
     # - - - - - - - - - - - - - - -
-    if POUTRE != None:
+    if POUTRE is not None:
         for i in range(len(POUTRE)):
             i1 = i + 1
             mclf = POUTRE[i]
@@ -194,7 +194,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                         vale =  mclf[caraCoude]
                         check( vale > 0.0, defErr, 'POUTRE', i1, caraCoude)
     # - - - - - - - - - - - - - - -
-    if BARRE != None:
+    if BARRE is not None:
         for i in range(len(BARRE)):
             i1 = i + 1
             mclf = BARRE[i]
@@ -232,7 +232,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                     vale = valeurCara('A' , cara, vale)
                     check( vale > 0.0, defErr, 'BARRE', i1, 'A')
     # - - - - - - - - - - - - - - -
-    if COQUE != None:
+    if COQUE is not None:
         for i in range(len(COQUE)):
             i1 = i + 1
             mclf = COQUE[i]
@@ -249,7 +249,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                 vale =  mclf['COQUE_NCOU']
                 check( vale > 0,   defErr, 'COQUE', i1, 'COQUE_NCOU')
     # - - - - - - - - - - - - - - -
-    if CABLE != None:
+    if CABLE is not None:
         for i in range(len(CABLE)):
             i1 = i + 1
             mclf = CABLE[i]
@@ -257,13 +257,13 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                 vale =  mclf['SECTION']
                 check( vale>0.0, defErr, 'CABLE', i1, 'SECTION')
     # - - - - - - - - - - - - - - -
-    if DISCRET != None:
+    if DISCRET is not None:
         pass
     # - - - - - - - - - - - - - - -
-    if DISCRET_2D != None:
+    if DISCRET_2D is not None:
         pass
     # - - - - - - - - - - - - - - -
-    if GRILLE != None:
+    if GRILLE is not None:
         for i in range(len(GRILLE)):
             i1 = i + 1
             mclf = GRILLE[i]
@@ -271,7 +271,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                 vale =  mclf['SECTION']
                 check( vale>=0.0, defErr, 'GRILLE', i1, 'SECTION')
     # - - - - - - - - - - - - - - -
-    if MASS_REP != None:
+    if MASS_REP is not None:
         for i in range(len(MASS_REP)):
             i1 = i + 1
             mclf = MASS_REP[i]

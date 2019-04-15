@@ -108,12 +108,12 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
     n_substr = 0
     n_epais = 0
     # Mode manuel :
-    if COUCHE != None:
+    if COUCHE is not None:
         for Ci in COUCHE:
             dC = Ci.cree_dict_valeurs(Ci.mc_liste)
             if dC.get("SUBSTRATUM") == "OUI":
                 n_substr += 1
-            if dC.get("EPAIS") != None:
+            if dC.get("EPAIS") is not None:
                 n_epais += 1
             l_couche.append(dC)
         if n_substr != 1:
@@ -126,7 +126,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
     grma_interf = None
     arg_grno = False
     arg_grma = False
-    if COUCHE_AUTO != None:
+    if COUCHE_AUTO is not None:
         ll_mate = []
         l_epais = []
         enfonce = False
@@ -252,7 +252,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
     # Verification avec l'interface FEM-BEM
     nb_noeud = 0
     verif = False
-    if ((grma_interf != None) and enfonce and (COUCHE_AUTO != None)):
+    if ((grma_interf is not None) and enfonce and (COUCHE_AUTO is not None)):
         coor_z_interf = recu_coor_z(noma,grma_interf,'group_ma',tole_r)
         max_z_interf = coor_z_interf[0]
         min_z_interf = coor_z_interf[-1]
@@ -285,7 +285,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
 
 
     #Generation table sol en mode auto
-    if (COUCHE_AUTO != None):
+    if (COUCHE_AUTO is not None):
         couche = {}
         nbc = 0
         idc = 1
@@ -453,7 +453,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
             couche["EPAIS"] = None
             l_couche.append(couche)
 
-    if ((COUCHE_AUTO != None) and enfonce):
+    if ((COUCHE_AUTO is not None) and enfonce):
         # Verification entre base de l'interface et couches de sol
         min_z_input_r = round(min_z_input,tole_r)
         prof = Z0
@@ -504,7 +504,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
             UTMESS("F", "MISS0_2", valk=str(tuple(unused)))
 
     # 4. surcharge par le titre fourni
-    if TITRE != None:
+    if TITRE is not None:
         if type(TITRE) not in (list, tuple):
             TITRE = [TITRE]
         tab.titr = os.linesep.join(TITRE)

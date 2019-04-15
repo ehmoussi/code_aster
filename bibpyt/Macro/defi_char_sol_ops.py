@@ -75,10 +75,10 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
     if args['CHARGEMENT'] != 'ONDE_PLANE':
        lforcn = 'OUI'
 
-    if args['UNITE_TRAN_INIT'] != None :
+    if args['UNITE_TRAN_INIT'] is not None :
       ltranin = 'OUI'
       if "AXE" in args:
-        if args['AXE']!=None  :
+        if args['AXE'] is not None  :
           dime = "3D"
           if args['NOM_CMP'] == 'DX':
             if lforcn != 'OUI' :
@@ -95,7 +95,7 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                 nompar='Y'
             else:
               nompar=args['AXE']
-        
+
           if args['NOM_CMP'] == 'DY':
             if lforcn != 'OUI' :
               nompar=args['AXE']
@@ -107,23 +107,23 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                 if args['NOM_PARA']=='Y'  :
                   nompar='Y'
           dire = (0., 0., 1.)
-          if nompar == 'Y' :   
-            dire = (0., 1., 0.)  
-          if nompar == 'X' :   
-            dire = (1., 0., 0.)       
+          if nompar == 'Y' :
+            dire = (0., 1., 0.)
+          if nompar == 'X' :
+            dire = (1., 0., 0.)
 
       print('dime=',dime)
       # Possibilite d utiliser une longueur caracteristique :
       # llcara ='OUI' ou 'NON'
-      if args['LONG_CARA'] != None :
+      if args['LONG_CARA'] is not None :
         llcara = 'OUI'
-    if args['RESU_INIT'] != None :
+    if args['RESU_INIT'] is not None :
       lresu = 'OUI'
 
 # Groupes de mailles et maillage
     iret,ibid,nom_mail = aster.dismoi('NOM_MAILLA',modele.nom,'MODELE','F')
     mail0 = self.get_concept(nom_mail)
-    
+
     #if dime == "3D":
     #    grma_tot = args['GROUP_MA_LIGNE']
 
@@ -132,7 +132,7 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
     if ltranin == 'OUI' :
       utranin = args['UNITE_TRAN_INIT']
 
-      if args['TABLE_MATER_ELAS'] != None:
+      if args['TABLE_MATER_ELAS'] is not None:
         __TMAT = CALC_TABLE( TABLE=args['TABLE_MATER_ELAS'],
          ACTION=_F(OPERATION='EXTR',NOM_PARA=('Y','M','RHO','Emax','NU','AH','GDgam')));
         tmat = __TMAT.EXTR_TABLE()
@@ -165,14 +165,14 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                INDIC_PARA=[6,1],INDIC_RESU=[6,NPC+1-k],
                    );
             l_para.append(z0-1.0*__TMAT['Y',NPC-1-k])
-                   
+
           else:
             __faccex0=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[6,1],INDIC_RESU=[6,2],
                    );
             l_para.append(z0)
-               
+
           __ffy1=CALC_FONCTION(COMB=(
                        _F(FONCTION=__faccex0,COEF=coef,),
                              ),
@@ -185,15 +185,15 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
 
           l_foncy1.append(__ffy1)
           l_foncy2.append(__ffy2)
-  
+
         __NSEISM1 = DEFI_NAPPE(NOM_PARA=nompar,
-          PARA= tuple(l_para),    
-          FONCTION=tuple(l_foncy1), 
+          PARA= tuple(l_para),
+          FONCTION=tuple(l_foncy1),
           );
 
         __NSEISM2 = DEFI_NAPPE(NOM_PARA=nompar,
-          PARA= tuple(l_para),    
-          FONCTION=tuple(l_foncy2), 
+          PARA= tuple(l_para),
+          FONCTION=tuple(l_foncy2),
           );
 
       else:
@@ -203,9 +203,9 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
         l_deplx = []
 
         l_group = []
-        if grma_gauch != None:
+        if grma_gauch is not None:
           l_group.append(grma_gauch)
-        if grma_droit != None:
+        if grma_droit is not None:
           l_group.append(grma_droit)
 
         for k in range(1, NPC):
@@ -230,27 +230,27 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                  INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                  INDIC_PARA=[3,1],INDIC_RESU=[3,2],
                    );
-             l_para.append(z0)           
+             l_para.append(z0)
           l_vitex.append(__fvitex)
           if llcara == 'OUI' :
             l_deplx.append(__fdeplx)
 
-        __FONCVX = DEFI_NAPPE(NOM_PARA='X', INTERPOL=('LIN','LIN',),                     
+        __FONCVX = DEFI_NAPPE(NOM_PARA='X', INTERPOL=('LIN','LIN',),
                                PROL_GAUCHE='CONSTANT', PROL_DROITE='CONSTANT',
                                PARA= tuple(l_para), FONCTION=tuple(l_vitex),);
         if llcara == 'OUI' :
-          __FONCDX = DEFI_NAPPE(NOM_PARA='X', INTERPOL=('LIN','LIN',),                     
+          __FONCDX = DEFI_NAPPE(NOM_PARA='X', INTERPOL=('LIN','LIN',),
                                PROL_GAUCHE='CONSTANT', PROL_DROITE='CONSTANT',
                                PARA= tuple(l_para), FONCTION=tuple(l_deplx),);
 
       #if ltranin == 'OUI' :
-      if dime == "2D": 
+      if dime == "2D":
             if args['NOM_CMP'] == 'DX':
                   if lforcn == 'OUI' :
                     Force_Nodale = []
-                    if grma_gauch != None:
+                    if grma_gauch is not None:
                       Force_Nodale.append(_F(GROUP_NO=grma_gauch,FY=__NSEISM1,),)
-                    if grma_droit != None:
+                    if grma_droit is not None:
                       Force_Nodale.append(_F(GROUP_NO=grma_droit,FY=__NSEISM2,),)
                     charout=AFFE_CHAR_MECA_F(MODELE=modele,
                       FORCE_NODALE=Force_Nodale,
@@ -258,14 +258,14 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                   else:
                     if llcara == 'OUI' :
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                         TYPE_ONDE = 'S',
                         DEPL_IMPO=__FONCDX,
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
                     else:
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                         TYPE_ONDE = 'S',
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
@@ -273,9 +273,9 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
             else:
                   if lforcn == 'OUI' :
                     Force_Nodale = []
-                    if grma_gauch != None:
+                    if grma_gauch is not None:
                       Force_Nodale.append(_F(GROUP_NO=grma_gauch,FX=__NSEISM1,),)
-                    if grma_droit != None:
+                    if grma_droit is not None:
                       Force_Nodale.append(_F(GROUP_NO=grma_droit,FX=__NSEISM2,),)
                     charout=AFFE_CHAR_MECA_F(MODELE=modele,
                       FORCE_NODALE=Force_Nodale,
@@ -283,35 +283,35 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                   else:
                     if llcara == 'OUI' :
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                         TYPE_ONDE = 'P',
                         DEPL_IMPO=__FONCDX,
                         FONC_SIGNAL = __FONCVX, GROUP_MA=(grma_gauch,grma_droit))
                           );
                     else:
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                         TYPE_ONDE = 'P',
                         FONC_SIGNAL = __FONCVX, GROUP_MA=(grma_gauch,grma_droit))
                           );
-      if dime == "3D": 
+      if dime == "3D":
             if args['NOM_CMP'] == 'DX':
                   if lforcn == 'OUI' :
                     Force_Nodale = []
                     if nompar=='Z' :
-                      if grma_gauch != None:
+                      if grma_gauch is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_gauch,FZ=__NSEISM1,),)
-                      if grma_droit != None:
+                      if grma_droit is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_droit,FZ=__NSEISM2,),)
                     if nompar=='X' :
-                      if grma_gauch != None:
+                      if grma_gauch is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_gauch,FX=__NSEISM1,),)
-                      if grma_droit != None:
+                      if grma_droit is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_droit,FX=__NSEISM2,),)
                     if nompar=='Y' :
-                      if grma_gauch != None:
+                      if grma_gauch is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_gauch,FY=__NSEISM1,),)
-                      if grma_droit != None:
+                      if grma_droit is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_droit,FY=__NSEISM2,),)
                     charout=AFFE_CHAR_MECA_F(MODELE=modele,
                       FORCE_ARETE=Force_Nodale,
@@ -319,14 +319,14 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                   else:
                     if llcara == 'OUI' :
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,), 
+                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),
                         TYPE_ONDE = typs, #'S',
                         DEPL_IMPO=__FONCDX,
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
                     else:
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),  
+                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),
                         TYPE_ONDE = typs, #'S',
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
@@ -335,27 +335,27 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                   if lforcn == 'OUI' :
                     if args['AXE']=='X'  :
                       Force_Nodale = []
-                      if grma_gauch != None:
+                      if grma_gauch is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_gauch,FX=__NSEISM1,),)
-                      if grma_droit != None:
+                      if grma_droit is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_droit,FX=__NSEISM2,),)
                       charout=AFFE_CHAR_MECA_F(MODELE=modele,
                         FORCE_ARETE=Force_Nodale,
-                        );   
+                        );
                     if args['AXE']=='Y'  :
                       Force_Nodale = []
-                      if grma_gauch != None:
+                      if grma_gauch is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_gauch,FY=__NSEISM1,),)
-                      if grma_droit != None:
+                      if grma_droit is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_droit,FY=__NSEISM2,),)
                       charout=AFFE_CHAR_MECA_F(MODELE=modele,
                         FORCE_ARETE=Force_Nodale,
                         );
                     if args['AXE']=='Z'  :
                       Force_Nodale = []
-                      if grma_gauch != None:
+                      if grma_gauch is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_gauch,FZ=__NSEISM1,),)
-                      if grma_droit != None:
+                      if grma_droit is not None:
                         Force_Nodale.append(_F(GROUP_MA=grma_droit,FZ=__NSEISM2,),)
                       charout=AFFE_CHAR_MECA_F(MODELE=modele,
                         FORCE_ARETE=Force_Nodale,
@@ -363,20 +363,20 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                   else:
                     if llcara == 'OUI' :
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),  
+                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),
                         TYPE_ONDE = 'P',
                         DEPL_IMPO=__FONCDX,
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
                     else:
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,), 
+                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),
                         TYPE_ONDE = 'P',
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
     else:
         if lforcn == 'OUI' :
-          if args['DDL_EXCLUS'] != None:
+          if args['DDL_EXCLUS'] is not None:
             __resuon=CREA_RESU(OPERATION='CONV_RESU',
                   TYPE_RESU='EVOL_CHAR', #'DYNA_TRANS',
                   CONV_RESU=_F(NUME_DDL=args['NUME_DDL'],
@@ -401,7 +401,7 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                 );
 
         else:
-          if args['MATR_RIGI'] != None: 
+          if args['MATR_RIGI'] is not None:
             __resuon=CREA_RESU(OPERATION='KUCV',
                   TYPE_RESU='EVOL_CHAR', #'DYNA_TRANS',
                   KUCV=_F(MATR_RIGI=args['MATR_RIGI'],
@@ -411,7 +411,7 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                           LIST_INST=args['LIST_INST'],
                           RESU_INIT=args['RESU_INIT'],),
                 );
-          else: 
+          else:
             __resuon=CREA_RESU(OPERATION='KUCV',
                   TYPE_RESU='EVOL_CHAR', #'DYNA_TRANS',
                   KUCV=_F(
