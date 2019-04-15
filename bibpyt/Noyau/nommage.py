@@ -153,7 +153,7 @@ def f_lineno(f):
     return line
 
 
-class NamingSystem(N_utils.Singleton):
+class NamingSystem(metaclass=N_utils.Singleton):
 
     """Cette classe définit un système de nommage dynamique des concepts."""
     _singleton_id = 'nommage.NamingSystem'

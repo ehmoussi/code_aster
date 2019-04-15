@@ -98,7 +98,7 @@ REGEXP_ORIG = re.compile('File [\'\"]*(.*?)[\'\"]*, *line ([0-9]+), *in (.*)')
 # from the logging module.
 
 
-class InfoLevel(Singleton):
+class InfoLevel(metaclass=Singleton):
 
     """Store informations level."""
     _singleton_id = 'N_info.InfoLevel'
