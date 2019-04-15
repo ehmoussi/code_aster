@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ subroutine adalig(ligrz,sd_partit1)
 #include "asterfort/asmpi_info.h"
 #include "asterfort/adalig_sd.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/jecrec.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/jedema.h"
@@ -36,6 +37,7 @@ subroutine adalig(ligrz,sd_partit1)
 #include "asterfort/jevtbl.h"
 #include "asterfort/jexatr.h"
 #include "asterfort/jexnum.h"
+#include "asterfort/gettco.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
@@ -68,6 +70,8 @@ subroutine adalig(ligrz,sd_partit1)
 
     character(len=19) :: ligr
     character(len=1) :: clas
+    character(len=8) :: noma
+    character(len=16) :: typsd='****'
     character(len=24) :: liel, tliel
     integer :: i, iret, nbtg, iad, iadp, iadt, iadtp, jliel, jtlie2
     integer ::  jtliel, igrel, itype, j, jtype
@@ -78,6 +82,7 @@ subroutine adalig(ligrz,sd_partit1)
     integer, pointer :: nteut(:) => null()
     integer, pointer :: teut(:) => null()
     mpi_int :: mrank, msize
+    aster_logical :: lhpc
 !----------------------------------------------------------------------
 
     call jemarq()
@@ -96,6 +101,14 @@ subroutine adalig(ligrz,sd_partit1)
         goto 999
     endif
 
+!   -- le maillage est-il distribué pour être en mode HPC
+!   ----------------------------------------------------
+    lhpc=ASTER_FALSE
+    call dismoi('NOM_MAILLA', ligr, 'LIGREL', repk=noma)
+    call gettco(noma, typsd)
+    if( typsd.eq.'MAILLAGE_P' ) then
+        lhpc=ASTER_TRUE
+    endif
 
 
 !   -- recopie de liel dans tliel et destruction de liel
@@ -157,8 +170,11 @@ subroutine adalig(ligrz,sd_partit1)
     nbelmx = int(jevtbl('TAILLE_GROUP_ELEM'))
     do ktype = 1, nbtype
         nbel = nteut(ktype)
-
-        nspaq=(nbel/nbproc)/nbelmx
+        if (lhpc) then
+            nspaq=nbel/nbelmx
+        else
+            nspaq=(nbel/nbproc)/nbelmx
+        endif
         ASSERT((nspaq*nbproc*nbelmx.le.nbel))
         if (nspaq*nbproc*nbelmx .lt. nbel) nspaq=nspaq+1
         nbg = nspaq*nbproc
