@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedResultsContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -63,7 +63,10 @@ private:
     JeveuxVector<ValueType>   _acceleration;
     /** @brief si résulte d'un proj_mesu_modal */
     ProjMesuPtr               _projM;
-
+    /** @brief Support Generalized DOFNumbering */
+    GeneralizedDOFNumberingPtr _genDOFNum;
+    /** @brief Support DOFNumbering */
+    DOFNumberingPtr _DOFNum;
 public:
     /**
      * @brief Constructeur
@@ -77,12 +80,34 @@ public:
         _displacement( JeveuxVector<ValueType>( getName() +".DEPL"  ) ),
         _velocity( JeveuxVector<ValueType>( getName() +".VITE"  ) ),
         _acceleration( JeveuxVector<ValueType>( getName() +".ACCE"  ) ),
-        _projM( new ProjMesuInstance( getName() + ".PROJM" ) )
+        _projM( new ProjMesuInstance( getName() + ".PROJM" ) ),
+        _genDOFNum( nullptr ),
+        _DOFNum( nullptr )
     {};
 
     GeneralizedResultsContainerInstance( const std::string &resuTyp ): 
         GeneralizedResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp )
     {};
+
+    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() const
+    {
+        return _genDOFNum;
+    };
+
+    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr& genDOFNum )
+    {
+        _genDOFNum = genDOFNum;
+    };
+
+    DOFNumberingPtr getDOFNumbering() const
+    {
+        return _DOFNum;
+    };
+
+    bool setDOFNumbering( const DOFNumberingPtr& DOFNum )
+    {
+        _DOFNum = DOFNum;
+    };
 };
 
 /** @typedef Définition d'un résultat généralisé à valeurs réelles */
@@ -142,8 +167,6 @@ private:
     JeveuxVectorLong    _ipsd;
     /** @brief Description des nonlinéarités (si mot-clé COMPORTEMENT) */
     NonLinearDescriptor _nonLinDesc;
-    /** @brief Support DOFNumbering */
-    DOFNumberingPtr     _dofNum;
 
 public:
     /**
@@ -170,19 +193,10 @@ public:
         _acceExcitFunction(  JeveuxVectorChar8( getName() +".FACC"  ) ),
         _veloExcitFunction(  JeveuxVectorChar8( getName() +".FVIT"  ) ),
         _displExcitFunction(  JeveuxVectorChar8( getName() +".FDEP"  ) ),
-        _ipsd( JeveuxVectorLong( getName() + ".IPSD" ) ),
-        _dofNum( nullptr )
+        _ipsd( JeveuxVectorLong( getName() + ".IPSD" ) )
     {};
 
-    DOFNumberingPtr getDOFNumbering() const
-    {
-        return _dofNum;
-    };
-
-    bool setDOFNumbering( const DOFNumberingPtr& dofNum )
-    {
-        _dofNum = dofNum;
-    };
+   
 };
 typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance >
     TransientGeneralizedResultsContainerPtr;
@@ -196,8 +210,7 @@ typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance >
 class HarmoGeneralizedResultsContainerInstance: public GeneralizedResultsContainerComplexInstance
 {
 private:
-    /** @brief Support DOFNumbering */
-    GeneralizedDOFNumberingPtr _dofNum;
+   
 
 public:
     /**
@@ -220,16 +233,6 @@ public:
     HarmoGeneralizedResultsContainerInstance( const std::string &name ):
         GeneralizedResultsContainerComplexInstance( name, "HARM_GENE" )
     {};
-
-    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() const
-    {
-        return _dofNum;
-    };
-
-    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr& dofNum )
-    {
-        _dofNum = dofNum;
-    };
 };
 
 typedef boost::shared_ptr< HarmoGeneralizedResultsContainerInstance >
