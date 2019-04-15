@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedResultsContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -57,8 +57,14 @@ void exportGeneralizedResultsContainerToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< TransientGeneralizedResultsContainerInstance,
                              std::string >) )
-        .def( "getDOFNumbering", &TransientGeneralizedResultsContainerInstance::getDOFNumbering )
-        .def( "setDOFNumbering", &TransientGeneralizedResultsContainerInstance::setDOFNumbering )
+        .def( "setGeneralizedDOFNumbering", 
+              &TransientGeneralizedResultsContainerInstance::setGeneralizedDOFNumbering )
+        .def( "getGeneralizedDOFNumbering",
+              &TransientGeneralizedResultsContainerInstance::getGeneralizedDOFNumbering )
+        .def( "setDOFNumbering", 
+              &TransientGeneralizedResultsContainerInstance::setDOFNumbering )
+        .def( "getDOFNumbering",
+              &TransientGeneralizedResultsContainerInstance::getDOFNumbering )
     ;
 
     class_< HarmoGeneralizedResultsContainerInstance,
@@ -74,5 +80,9 @@ void exportGeneralizedResultsContainerToPython()
               &HarmoGeneralizedResultsContainerInstance::getGeneralizedDOFNumbering )
         .def( "setGeneralizedDOFNumbering",
               &HarmoGeneralizedResultsContainerInstance::setGeneralizedDOFNumbering )
+        .def( "setDOFNumbering", 
+              &HarmoGeneralizedResultsContainerInstance::setDOFNumbering )
+        .def( "getDOFNumbering",
+              &HarmoGeneralizedResultsContainerInstance::getDOFNumbering )
     ;
 };

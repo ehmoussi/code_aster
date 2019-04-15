@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -25,7 +25,7 @@ from .ExecuteCommand import ExecuteCommand
 
 
 class ProjMesuModal(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.GeneralizedAssemblyMatrix`.
+    """Command PROJ_MESU_MODAL
     """
     command_name = "PROJ_MESU_MODAL"
 
@@ -54,7 +54,7 @@ class ProjMesuModal(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         base = keywords["MODELE_CALCUL"]["BASE"]
-        if isinstance(self._result, TransientGeneralizedResultsContainer):
+        if isinstance(self._result, TransientGeneralizedResultsContainer) or \
+           isinstance(self._result, HarmoGeneralizedResultsContainer)  :
             self._result.setDOFNumbering(base.getDOFNumbering())
-
 PROJ_MESU_MODAL = ProjMesuModal.run
