@@ -166,7 +166,7 @@ RESUMAT = STAT_NON_LINE (MODELE = MO, INFO=1,
                       COMPORTEMENT =_F(RELATION ='UMAT',DEFORMATION='GDEF_LOG',
                                     NB_VARI=1,
                                     LIBRAIRIE='libumat.so',
-                                    NOM_ROUTINE='umat'),
+                                    NOM_ROUTINE='umat1'),
                       INCREMENT =_F(LIST_INST =L_INST),
                       NEWTON    =_F(
                                 PREDICTION ='ELASTIQUE',

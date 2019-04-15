@@ -1,6 +1,6 @@
 C coding=utf-8
 C --------------------------------------------------------------------
-C Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+C Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 C This file is part of code_aster.
 C
 C code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@ C You should have received a copy of the GNU General Public License
 C along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------
 
-      SUBROUTINE SECOND(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,
+      SUBROUTINE umat2(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,
      1 RPL,DDSDDT,DRPLDE,DRPLDT,
      2 STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,
      3 NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,
