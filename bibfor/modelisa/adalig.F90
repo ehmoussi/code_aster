@@ -182,7 +182,9 @@ subroutine adalig(ligrz,sd_partit1)
         nbgrel = nbgrel + nbg
         lont = lont + nbel + nbg
     end do
-    ASSERT((nbgrel/nbproc)*nbproc.eq.nbgrel)
+    if (.not.lhpc) then
+        ASSERT((nbgrel/nbproc)*nbproc.eq.nbgrel)
+    endif
 
 
 !   -- Allocation du nouveau .LIEL
