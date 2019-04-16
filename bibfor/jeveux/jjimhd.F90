@@ -69,7 +69,8 @@ subroutine jjimhd(idfic, inat, crnom, ngrp, kattr,&
     integer :: ilorep, ideno, ilnom, ilmax, idehc
     parameter      ( ilorep=1,ideno=2,ilnom=3,ilmax=4,idehc=6)
 ! ----------------------------------------------------------------------
-    integer :: lg, iret, iddat, kadm, ladm, idg
+    integer :: lg, iret, kadm, ladm
+    hid_t :: iddat, idg
     character(len=24) :: nomatr
     parameter      ( nomatr = 'ATTRIBUTS JEVEUX' )
 ! DEB ------------------------------------------------------------------

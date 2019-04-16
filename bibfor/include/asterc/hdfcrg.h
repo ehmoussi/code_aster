@@ -23,6 +23,6 @@ interface
         hid_t :: i
         character(len=*) :: knom1
         character(len=*) :: knom2
-        integer :: hdfcrg
+        hid_t :: hdfcrg
     end function hdfcrg
 end interface

@@ -21,6 +21,6 @@
 interface
     function hdfclf(i)
         hid_t :: i
-        integer :: hdfclf
+        hid_t :: hdfclf
     end function hdfclf
 end interface
