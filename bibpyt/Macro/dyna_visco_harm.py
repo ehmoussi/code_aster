@@ -149,7 +149,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
 
     __lfor=PROJ_VECT_BASE(BASE=__modrs,
                           NUME_DDL_GENE=__ddlplein,
-                          VECT_ASSE=__assef,);
+                          VECT_ASSE=__assef, TYPE_VECT='FORC');
 
     DETRUIRE(CONCEPT = _F (NOM = __felem,) , )
     DETRUIRE(CONCEPT = _F (NOM = __assef,) , )
