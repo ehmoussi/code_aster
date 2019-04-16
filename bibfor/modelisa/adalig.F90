@@ -172,10 +172,11 @@ subroutine adalig(ligrz,sd_partit1)
         nbel = nteut(ktype)
         if (lhpc) then
             nspaq=nbel/nbelmx
+            ASSERT((nspaq*nbelmx.le.nbel))
         else
             nspaq=(nbel/nbproc)/nbelmx
+            ASSERT((nspaq*nbproc*nbelmx.le.nbel))
         endif
-        ASSERT((nspaq*nbproc*nbelmx.le.nbel))
         if (nspaq*nbproc*nbelmx .lt. nbel) nspaq=nspaq+1
         nbg = nspaq*nbproc
         gteut(ktype) = nbg
