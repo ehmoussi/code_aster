@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,9 +47,19 @@ mail = MODI_MAILLAGE(reuse =mail, MAILLAGE=mail,
 #
 eau   = DEFI_MATERIAU (FLUIDE=_F(RHO=1000.,  CELE_R=1500.));
 #
-beton = DEFI_MATERIAU( ELAS=_F( E= 3.6E+10, RHO= 2400. , NU= 0.2,
-                               )
-                      ) ;
+
+YOUNG =3.6E+10
+YOUNG_F = DEFI_FONCTION(NOM_PARA='NEUT1',
+                        VALE =(-1.e-9,-1.e-9,1.e+10,1.e+10),
+                        PROL_DROITE='LINEAIRE',
+                        PROL_GAUCHE='LINEAIRE',);
+
+RHO = DEFI_CONSTANTE(VALE=2400.)
+NU = DEFI_CONSTANTE(VALE=0.20)
+#beton = DEFI_MATERIAU( ELAS=_F( E= YOUNG, RHO= RHO , NU= NU,
+#                               )
+#                      ) ;
+beton  = DEFI_MATERIAU(ELAS_FO= _F(E=YOUNG_F, NU=NU, RHO=RHO),); 
 #
 # Pour la roche, on va utiliser les frontieres absorbantes avec raideur
 # LONG_CARA sert a definir la raideur equivalente et represente
@@ -88,6 +98,28 @@ ensemble  = AFFE_MODELE (MAILLAGE= mail,
                                 ),
                            );
 
+FYOUNG    = FORMULE(VALE='YOUNG + 0.*X + 0.*Y',
+                   NOM_PARA=('X','Y',),
+                   YOUNG=YOUNG,
+                    );
+
+CHGEOMG = CREA_CHAMP(TYPE_CHAM = 'NOEU_GEOM_R',
+                     OPERATION = 'EXTR',
+                     MAILLAGE  = mail,
+                     NOM_CHAM  = 'GEOMETRIE',);
+
+CHbeton_ = CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_F',
+                    OPERATION = 'AFFE',
+                    MODELE    = ensemble,
+                    AFFE      = _F(GROUP_MA = 'STRVOU',
+                                   NOM_CMP  = 'X1',
+                                   VALE_F   = FYOUNG,),);
+
+CHbeton  = CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R',
+                   OPERATION = 'EVAL',
+                   CHAM_F    = CHbeton_,
+                   CHAM_PARA = CHGEOMG,);
+
 #
 champmat = AFFE_MATERIAU    (MAILLAGE= mail,
                     AFFE =(
@@ -103,7 +135,11 @@ champmat = AFFE_MATERIAU    (MAILLAGE= mail,
                            _F(GROUP_MA= ('VOLSOL', 'TH_SOL'),
                                MATER   = roche ),
                            ),
-                               );
+                     AFFE_VARC=(_F(NOM_VARC='NEUT1',
+                                    CHAM_GD =CHbeton,
+                                    GROUP_MA='STRVOU',),
+                               ),
+                            );
 
 cond_lib = AFFE_CHAR_MECA( MODELE= ensemble,
            DDL_IMPO=_F(GROUP_NO='SLIBRE_N',  PRES=0., PHI=0.)
