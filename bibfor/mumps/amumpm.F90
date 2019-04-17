@@ -84,7 +84,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
     type(dmumps_struc), pointer :: dmpsk => null()
     type(zmumps_struc), pointer :: zmpsk => null()
     integer :: nsmdi, jsmhc, nsmhc, jdelg, n, n1, nz, nvale, jvale
-    integer :: nlong, jvale2, nzloc, kterm, iterm, ifm, niv, k
+    integer :: nlong, jvale2, nzloc, kterm, iterm, ifm, niv, k, ieq1, ieq2
     integer :: sym, iret, jcoll, iligl, jnulogl, ltot, iok, iok2, coltmp
     integer :: kzero, ibid, ifiltr, vali(2), nbproc, nfilt1, nfilt2
     integer :: nfilt3, isizemu, nsizemu, rang, esizemu, jpddl, jdeeq
@@ -358,6 +358,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 endif
                 procol = zi(jpddl + jcoll - 1)
                 prolig = zi(jpddl + iligl - 1)
+                lgive = .false.
                 if (nuno1.eq.0.or.nuno2.eq.0) then
                     lgive = (nuno1.eq.0.and.procol.eq.rang).or.&
                             (nuno2.eq.0.and.prolig.eq.rang).or.&
@@ -375,7 +376,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !
 !
 ! --- PARTIE TRIANGULAIRE INF. SI REEL
-            if( .not.lmhpc.or.(lmhpc.and.procol.eq.rang)) then
+            if( .not.lmhpc.or.(lmhpc.and.(procol.eq.rang.or.lgive)) ) then
             if (ltypr) then
                 raux=zr(jvale-1+kterm)
                 if (raux .ne. 0.d0) then
@@ -621,6 +622,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 endif
                 procol = zi(jpddl + jcoll - 1)
                 prolig = zi(jpddl + iligl - 1)
+                lgive = .false.
                 if (nuno1.eq.0.or.nuno2.eq.0) then
                     lgive = (nuno1.eq.0.and.procol.eq.rang).or.&
                             (nuno2.eq.0.and.prolig.eq.rang).or.&
@@ -668,9 +670,11 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 jcolg=to_mumps_int(iligg)
                 iligg=to_mumps_int(coltmp)
             endif
+            write(11+rang,*)'lgive', lgive, rang, prolig, procol, iligg, jcolg
+            write(11+rang,*)'lgive2', lnn, zi4(iok+kterm-1)
 !
 ! ---- PARTIE TRIANGULAIRE INF. TERME NON NUL
-            if( .not.lmhpc.or.(lmhpc.and.procol.eq.rang)) then
+            if( .not.lmhpc.or.(lmhpc.and.(procol.eq.rang.or.lgive)) ) then
             if (lnn) then
                 iterm=iterm+1
                 if (ldist.or.lmhpc) then
@@ -695,16 +699,19 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     endif
 !                   Writings to get the stiffness matrix wrt nodes and dof numbers
                     if (ldebug) then
-                        if (lmhpc) then
-                            nuno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
-                            nuno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
-                        else
-                            nuno1 = zi(jdeeq+2*(iligl-1))
-                            nuno2 = zi(jdeeq+2*(jcoll-1))
-                        endif
-                        nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
+                        nuno1 = zi(jdeeq+2*(iligl-1))
+                        nuno2 = zi(jdeeq+2*(jcoll-1))
+                        if( nuno1.ne.0 ) nuno1 = zi(jmlogl + nuno1 - 1) + 1
+                        if( nuno2.ne.0 ) nuno2 = zi(jmlogl + nuno2 - 1) + 1
+                        nucmp1 = zi(jdeeq +2*(iligl-1)+1)
                         nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
-                        write(11+rang,*) nuno2, nucmp2, nuno1, nucmp1, raux
+                        ieq1 = iligg
+                        ieq2 = jcolg
+!                         ieq1 = 0
+!                         ieq2 = 0
+!                         if(nuno1.eq.0) ieq1 = iligg
+!                         if(nuno2.eq.0) ieq2 = jcolg
+                        write(11+rang,*) nuno2, nucmp2, nuno1, nucmp1, raux, ieq2, ieq1
                     endif
                 else
                     if (type .eq. 'S') then
@@ -730,9 +737,15 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     if (ldebug) then
                         nuno1 = zi(jdeeq+2*(iligg-1))
                         nuno2 = zi(jdeeq+2*(jcolg-1))
-                        nucmp1 = zi(jdeeq +2*(iligg-1) + 1)
+                        nucmp1 = zi(jdeeq +2*(iligg-1)+1)
                         nucmp2 = zi(jdeeq +2*(jcolg-1)+1)
-                        write(11+rang,*) nuno2, nucmp2, nuno1, nucmp1, raux
+                        ieq1 = iligg
+                        ieq2 = jcolg
+!                         ieq1 = 0
+!                         ieq2 = 0
+!                         if(nuno1.eq.0) ieq1 = iligg
+!                         if(nuno2.eq.0) ieq2 = jcolg
+                        write(11+rang,*) nuno2, nucmp2, nuno1, nucmp1, raux, ieq2, ieq1
                     endif
                 endif
                 kzero=0
@@ -761,7 +774,7 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 
 !
 ! --- PARTIE TRIANGULAIRE SUP. SI REEL
-            if( .not.lmhpc.or.(lmhpc.and.prolig.eq.rang)) then
+            if( .not.lmhpc.or.(lmhpc.and.(prolig.eq.rang.or.lgive)) ) then
             if ((sym.eq.0) .and. (iligl.ne.jcoll)) then
 !
                 lnn=.false.
@@ -822,16 +835,19 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                         endif
 !                       Writings to get the stiffness matrix wrt nodes and dof numbers
                         if (ldebug) then
-                            if (lmhpc) then
-                                nuno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
-                                nuno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
-                            else
-                                nuno1 = zi(jdeeq+2*(iligl-1))
-                                nuno2 = zi(jdeeq+2*(jcoll-1))
-                            endif
+                            nuno1 = zi(jdeeq+2*(iligl-1))
+                            nuno2 = zi(jdeeq+2*(jcoll-1))
+                            if( nuno1.ne.0 ) nuno1 = zi(jmlogl + nuno1 - 1) + 1
+                            if( nuno2.ne.0 ) nuno2 = zi(jmlogl + nuno2 - 1) + 1
                             nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
                             nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
-                            write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, raux
+                            ieq1 = iligg
+                            ieq2 = jcolg
+!                             ieq1 = 0
+!                             ieq2 = 0
+!                             if(nuno1.eq.0) ieq1 = iligg
+!                             if(nuno2.eq.0) ieq2 = jcolg
+                            write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, raux, ieq1, ieq2
                         endif
                     else
                         if (type .eq. 'S') then
@@ -857,9 +873,15 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                         if (ldebug) then
                             nuno1 = zi(jdeeq+2*(iligg-1))
                             nuno2 = zi(jdeeq+2*(jcolg-1))
-                            nucmp1 = zi(jdeeq +2*(iligg-1) + 1)
+                            nucmp1 = zi(jdeeq +2*(iligg-1)+1)
                             nucmp2 = zi(jdeeq +2*(jcolg-1)+1)
-                            write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, raux
+                            ieq1 = iligg
+                            ieq2 = jcolg
+!                             ieq1 = 0
+!                             ieq2 = 0
+!                             if(nuno1.eq.0) ieq1 = iligg
+!                             if(nuno2.eq.0) ieq2 = jcolg
+                            write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, raux, ieq1, ieq2
                         endif
                     endif
                     if (eli2lg) then
