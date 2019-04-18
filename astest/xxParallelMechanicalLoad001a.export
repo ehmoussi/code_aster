@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification parallel
 
 F comm xxParallelMechanicalLoad001a.py D 1
-R nom  xxParallelMesh003a D 0
+F nom xxParallelMechanicalLoad001a.med D 0
+R nom xxParallelMesh003a D 0
