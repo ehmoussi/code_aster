@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -203,7 +203,7 @@ MGEN=PROJ_MATR_BASE(BASE=MODES,
 
 FGEN=PROJ_VECT_BASE(BASE=MODES,
                     NUME_DDL_GENE=NUMGEN,
-                    VECT_ASSE=VECTASC,);
+                    VECT_ASSE=VECTASC, TYPE_VECT='FORC');
 
 REPHARMG=DYNA_VIBRA(BASE_CALCUL='GENE',
                    TYPE_CALCUL='HARM',

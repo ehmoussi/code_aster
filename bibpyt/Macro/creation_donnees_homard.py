@@ -257,7 +257,7 @@ class creation_donnees_homard:
                     d_aux["CRIT_RAFF_MS"] = ("SeuilHMS",   1)
                     l_aux = list(d_aux.keys())
                     for mot_cle in l_aux:
-                        if self.mots_cles.get(mot_cle) != None:
+                        if self.mots_cles.get(mot_cle) is not None:
                             aux = self.mots_cles.get(mot_cle) * d_aux[mot_cle][1]
                             self.critere_raffinement = (d_aux[mot_cle][0], aux)
                             # print "... self.critere_raffinement = ", self.critere_raffinement
@@ -272,7 +272,7 @@ class creation_donnees_homard:
                     d_aux["CRIT_DERA_MS"] = ("SeuilBMS",   1)
                     l_aux = list(d_aux.keys())
                     for mot_cle in l_aux:
-                        if self.mots_cles.get(mot_cle) != None:
+                        if self.mots_cles.get(mot_cle) is not None:
                             aux = self.mots_cles.get(mot_cle) * d_aux[mot_cle][1]
                             self.critere_deraffinement = (
                                 d_aux[mot_cle][0], aux)
@@ -283,7 +283,7 @@ class creation_donnees_homard:
                 saux = " "
                 for mot_cle in ["NIVE_MIN", "NIVE_MAX", "DIAM_MIN"]:
                     if mot_cle in self.mots_cles:
-                        if self.mots_cles.get(mot_cle) != None:
+                        if self.mots_cles.get(mot_cle) is not None:
                             if mot_cle == "NIVE_MIN":
                                 aux = "NiveauMi"
                             elif mot_cle == "NIVE_MAX":
@@ -347,12 +347,12 @@ class creation_donnees_homard:
             if self.ModeHOMA == 3:
                 mot_cle = "DEGRE"
                 if mot_cle in self.mots_cles:
-                    if self.mots_cles.get(mot_cle) != None:
+                    if self.mots_cles.get(mot_cle) is not None:
                         self.ModDegre = self.mots_cles.get(mot_cle)
 #
                 mot_cle = "JOINT"
                 if mot_cle in self.mots_cles:
-                    if self.mots_cles.get(mot_cle) != None:
+                    if self.mots_cles.get(mot_cle) is not None:
                         self.CreJoint = self.mots_cles.get(mot_cle)
                     # print self.ModDegre, self.CreJoint
 #
@@ -369,7 +369,7 @@ class creation_donnees_homard:
 #
             break
 #
-        if message_erreur != None:
+        if message_erreur is not None:
             UTMESS("F", 'HOMARD0_2', valk=message_erreur)
 #
         return self.fic_homard_niter, self.fic_homard_niterp1
@@ -554,11 +554,11 @@ class creation_donnees_homard:
 #     5.1. Type d'adaptation
 #
                 self.ecrire_ligne_configuration_2("TypeRaff", self.TypeRaff)
-                if self.critere_raffinement != None:
+                if self.critere_raffinement is not None:
                     self.ecrire_ligne_configuration_2(
                         self.critere_raffinement[0], self.critere_raffinement[1])
                 self.ecrire_ligne_configuration_2("TypeDera", self.TypeDera)
-                if self.critere_deraffinement != None:
+                if self.critere_deraffinement is not None:
                     self.ecrire_ligne_configuration_2(
                         self.critere_deraffinement[0], self.critere_deraffinement[1])
 #
@@ -647,7 +647,7 @@ class creation_donnees_homard:
 #     5.5. L'usage de l'indicateur
 #
                 if "USAGE_CHAMP" in self.mots_cles:
-                    if self.mots_cles.get("USAGE_CHAMP") != None:
+                    if self.mots_cles.get("USAGE_CHAMP") is not None:
                         self.ecrire_ligne_configuration_2(
                             "CCModeFI", self.mots_cles.get("USAGE_CHAMP"))
 #
@@ -655,7 +655,7 @@ class creation_donnees_homard:
 #
                 for cle in ("GROUP_MA", "GROUP_NO"):
                     if cle in self.mots_cles:
-                        if self.mots_cles.get(cle) != None:
+                        if self.mots_cles.get(cle) is not None:
                             if not type(self.mots_cles.get(cle)) in EnumTypes:
                                 self.ecrire_ligne_configuration_2(
                                     "CCGroAda", self.mots_cles.get(cle))
@@ -674,7 +674,7 @@ class creation_donnees_homard:
 #
 #     5.8. L'eventuel maillage annexe
 #
-                if self.CCMaiAnn != None:
+                if self.CCMaiAnn is not None:
                     self.ecrire_ligne_configuration_0("Maillage d'autre degre")
                     self.ecrire_ligne_configuration_2("ModDegre", "oui")
                     self.ecrire_ligne_configuration_2(
@@ -736,7 +736,7 @@ class creation_donnees_homard:
                 self.ecrire_ligne_configuration_2(
                     "CCNoMFro", self.dico_configuration["NOM_MED_MAILLAGE_FRONTIERE"])
                 if "GROUP_MA_FRONT" in self.mots_cles:
-                    if self.mots_cles.get("GROUP_MA_FRONT") != None:
+                    if self.mots_cles.get("GROUP_MA_FRONT") is not None:
                         if not type(self.mots_cles.get("GROUP_MA_FRONT")) in EnumTypes:
                             self.ecrire_ligne_configuration_2(
                                 "CCGroFro", self.mots_cles.get("GROUP_MA_FRONT"))
@@ -809,7 +809,7 @@ class creation_donnees_homard:
             if "LANGUE" in self.mots_cles:
                 self.ecrire_ligne_configuration_2(
                     "Langue", self.mots_cles.get("LANGUE"))
-            if self.MessInfo != None:
+            if self.MessInfo is not None:
                 self.ecrire_ligne_configuration_2("MessInfo", self.MessInfo)
             if self.dico_configuration["version_perso"]:
                 VERSION_HOMARD = self.dico_configuration["VERSION_HOMARD"]
@@ -818,7 +818,7 @@ class creation_donnees_homard:
 #
 #     10. L'usage des mailles acceptees par HOMARD
 #
-            if self.elements_acceptes != None:
+            if self.elements_acceptes is not None:
                 self.ecrire_ligne_configuration_0(
                     "Les mailles acceptees par HOMARD")
                 self.ecrire_ligne_configuration_2(
@@ -842,7 +842,7 @@ class creation_donnees_homard:
             fichier.close()
             break
 #
-        if message_erreur != None:
+        if message_erreur is not None:
             message_erreur = "Ecriture de " + \
                 nomfic_global + ". " + message_erreur
             UTMESS("F", 'HOMARD0_2', valk=message_erreur)
@@ -875,7 +875,7 @@ class creation_donnees_homard:
             fichier.close()
             break
 #
-        if message_erreur != None:
+        if message_erreur is not None:
             UTMESS("F", 'HOMARD0_2', valk=message_erreur)
 #
         return nomfic_global

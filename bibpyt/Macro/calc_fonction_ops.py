@@ -830,9 +830,9 @@ class CalcFonction_DSP(CalcFonctionOper):
             'DUREE_PHASE_FORTE' : kw['DUREE'], 'FREQ_COUP' : freq_coup,
             'NORME' : kw['NORME'], 'AMORT' : kw['AMOR_REDUIT'],
             'FMIN' : f_min, 'FONC_SPEC':  f_in, 'NITER' : kw['NB_ITER']}
-        if kw['FREQ_PAS'] != None:
+        if kw['FREQ_PAS'] is not None:
             SRO_args['PAS'] = kw['FREQ_PAS']
-        elif kw['LIST_FREQ'] != None:
+        elif kw['LIST_FREQ'] is not None:
             l_freq = kw['LIST_FREQ'].Valeurs()
             if l_freq[0] <= 0.0:
                 UTMESS('F', 'FONCT0_43')
@@ -848,11 +848,11 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
         """Read keywords to build the data"""
         # CalcFonctionOper._build_list_fonc(self)
         kw = self.kw
-        if self.kw['NAPPE']!=None:
+        if self.kw['NAPPE'] is not None:
             self._build_list_fonc(mcsimp='NAPPE')
-        elif self.kw['FONCTION']!=None:
+        elif self.kw['FONCTION'] is not None:
             self._build_list_fonc(mcsimp='FONCTION')
-        elif self.kw['TABLE']!=None:
+        elif self.kw['TABLE'] is not None:
             lf_in = self._get_mcsimp('TABLE')
             para_fonc = {'PROL_DROITE': 'EXCLU', 'INTERPOL': ['LIN', 'LIN'], 'PROL_GAUCHE': 'EXCLU', 'NOM_RESU': 'TOUTRESU', 'NOM_PARA': 'FREQ'}
             para_napp = {'PROL_DROITE': 'EXCLU', 'INTERPOL': ['LIN', 'LIN'], 'PROL_GAUCHE': 'EXCLU', 'NOM_RESU': 'TOUTRESU', 'NOM_PARA': 'AMOR', 'NOM_PARA_FONC': 'FREQ'}
@@ -862,7 +862,7 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
             for tab in lf_in:
                 nom_para = tab.get_nom_para()
                 # print nom_para
-                if kw['LIST_AMOR']!=None:
+                if kw['LIST_AMOR'] is not None:
                     amor = kw['LIST_AMOR']
                 else:
                     amor = list(range(1,len(nom_para)))
@@ -889,9 +889,9 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
         kw = self.kw
         l_sp_nappe=[]
         # formatage selon les donnes d'entrees
-        if kw['FONCTION']!=None:
+        if kw['FONCTION'] is not None:
             f_in = self._lf[0]
-            if kw['LIST_AMOR']!=None:
+            if kw['LIST_AMOR'] is not None:
                 amor = kw['LIST_AMOR'][0]
             else:
                 amor = 0.
@@ -905,7 +905,7 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
             para['NOM_PARA'] = 'AMOR'
             para['NOM_PARA_FONC'] = para_fonc['NOM_PARA']
             l_sp_nappe = [sp_nappe]
-        elif kw['NAPPE']!=None or kw['TABLE']!=None:
+        elif kw['NAPPE'] is not None or kw['TABLE'] is not None:
             for i_nappe in range(len(self._lf)):
                 f_in = self._lf[i_nappe]
                 sp_nappe = LISS.nappe(listFreq=f_in.l_fonc[0].vale_x,

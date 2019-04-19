@@ -52,7 +52,7 @@ def calc_transfert_ops(
     entrain=['DX','DY',]
 
 
-    if RESULTAT_Z !=None :
+    if RESULTAT_Z is not None :
         l_resu.append(RESULTAT_Z)
         compo.append('Z')
         entrain.append('DZ')
@@ -78,7 +78,7 @@ def calc_transfert_ops(
 
 #Recu fonction pour le noeud entree
     lst_entr=[]
-    if ENTREE != None :
+    if ENTREE is not None :
         motsentr = ENTREE.copy()
         for rr in l_resu :
             if typ_resu  == "DYNA_TRANS" or typ_resu == "DYNA_HARMO":
@@ -321,11 +321,11 @@ def calc_transfert_ops(
     d_signal={}
     STEST=[]
 # On recupere les signaux donnes par l'utilisateur
-    if SIGNAL!= None :
+    if SIGNAL is not None :
         type_resu = SIGNAL['TYPE_RESU']
         l_signal=['MESURE_X','MESURE_Y']
 
-        if RESULTAT_Z !=None :
+        if RESULTAT_Z is not None :
              l_signal.append('MESURE_Z')
 
 #On cree un dictionnaire pour ranger les signaux calcules. Pour chaque signal sera associe les valeurs : (freq, Re,Im)

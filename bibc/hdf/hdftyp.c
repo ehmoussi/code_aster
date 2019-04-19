@@ -35,7 +35,7 @@
 #endif
 #define FALSE   0
 
-ASTERINTEGER DEFPSPS(HDFTYP, hdftyp, ASTERINTEGER *idf, char *nomgr, STRING_SIZE ln,
+ASTERINTEGER DEFPSPS(HDFTYP, hdftyp, hid_t *idf, char *nomgr, STRING_SIZE ln,
                                 ASTERINTEGER *nbnom, char *typ, STRING_SIZE ltp)
 {
 #ifndef _DISABLE_HDF5

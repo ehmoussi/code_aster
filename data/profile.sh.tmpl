@@ -30,8 +30,9 @@ LD_LIBRARY_PATH=.:$ASTER_VERSION_DIR/lib:\
 $LD_LIBRARY_PATH
 export LD_LIBRARY_PATH
 
-# This module was used in SALOME 8 for Python 2.
-PYTHONPATH=$(remove_path "${PYTHONPATH}" Subprocess)
+# This 'Subprocess' module was used in SALOME 8 for Python 2.
+# Exclude paths to 'python2.7'.
+PYTHONPATH=$(remove_path "${PYTHONPATH}" Subprocess python2.7)
 
 PYTHONPATH=\
 .:@ASTERLIBDIR@:\

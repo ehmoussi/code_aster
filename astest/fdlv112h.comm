@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -313,7 +313,8 @@ impegen=PROJ_MATR_BASE(BASE=BAMO,
                      
 vecxgen=PROJ_VECT_BASE(BASE=BAMO,
                      NUME_DDL_GENE=NDDLGEN,
-                     VECT_ASSE=vecasx,);
+                     VECT_ASSE=vecasx,
+                     TYPE_VECT='FORC');
 #
 lfreq = DEFI_LIST_REEL ( DEBUT = 0.,
                            INTERVALLE = _F( JUSQU_A = fmax,

@@ -148,7 +148,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     for i in range(len(motCleFactTuple)):
         cle = motCleFactTuple[i]
         if cle in args:
-            if args[cle] != None:
+            if args[cle] is not None:
                 dMotCle = []
                 for j in args[cle]:
                     dMotCle.append(j.cree_dict_valeurs(j.mc_liste))
@@ -237,7 +237,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     _ifsCharMeca = AFFE_CHAR_MECA(MODELE=MODELE,
                                   FORCE_NODALE=_F(**ifsCharMocle),)
     dExcit = []
-    if (EXCIT != None):
+    if (EXCIT is not None):
         for j in EXCIT:
             dExcit.append(j.cree_dict_valeurs(j.mc_liste))
             for i in list(dExcit[-1].keys()):
@@ -250,12 +250,12 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     # ---------------------------------- #
     dEtatInit = []
     dExtrInit = {}
-    if (ETAT_INIT != None):
-        if (ETAT_INIT['DEPL'] != None):
+    if (ETAT_INIT is not None):
+        if (ETAT_INIT['DEPL'] is not None):
             dExtrInit['DEPL'] = ETAT_INIT['DEPL']
-        if (ETAT_INIT['VITE'] != None):
+        if (ETAT_INIT['VITE'] is not None):
             dExtrInit['VITE'] = ETAT_INIT['VITE']
-        if (ETAT_INIT['ACCE'] != None):
+        if (ETAT_INIT['ACCE'] is not None):
             dExtrInit['ACCE'] = ETAT_INIT['ACCE']
         for j in ETAT_INIT:
             dEtatInit.append(j.cree_dict_valeurs(j.mc_liste))

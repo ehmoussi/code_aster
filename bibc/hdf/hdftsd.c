@@ -34,7 +34,7 @@
 #endif
 #define FALSE   0
 
-ASTERINTEGER DEFPSPP(HDFTSD, hdftsd, ASTERINTEGER *iddat, char *type, STRING_SIZE lt,
+ASTERINTEGER DEFPSPP(HDFTSD, hdftsd, hid_t *iddat, char *type, STRING_SIZE lt,
                 ASTERINTEGER *ltype, ASTERINTEGER *lv)
 {
   ASTERINTEGER iret=-1;

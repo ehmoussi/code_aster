@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ def evolutivo(fonc, val, nb_iter, err_min, nb_parents, nb_fils, sigma, borne_inf
     iter = 1
     # ici on demarre la boucle de minimisation de la fonction erreur
     while in_ciclo:
-        if graine != None:
+        if graine is not None:
             random.seed(graine)
         F = fils(P[-1], nb_parents, nb_fils, sigma, borne_inf, borne_sup)
 

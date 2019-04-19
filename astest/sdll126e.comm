@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -213,8 +213,8 @@ MG=PROJ_MATR_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,MATR_ASSE=MASSE,);
 KG=PROJ_MATR_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,MATR_ASSE=RIGIDITE,);
 CG=PROJ_MATR_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,MATR_ASSE=AMOGYRO,);
 
-FHGX=PROJ_VECT_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,VECT_ASSE=bal_Xass,);
-FHGY=PROJ_VECT_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,VECT_ASSE=bal_Yass,);
+FHGX=PROJ_VECT_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,VECT_ASSE=bal_Xass, TYPE_VECT='FORC');
+FHGY=PROJ_VECT_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,VECT_ASSE=bal_Yass, TYPE_VECT='FORC');
 
 GHAM=DYNA_VIBRA(TYPE_CALCUL='HARM',
                 BASE_CALCUL='GENE',

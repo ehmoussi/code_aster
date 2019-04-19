@@ -626,7 +626,7 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
 
         dmsg['header'] = ufmt(format['header'], dmsg)
         dmsg['commentaire'] = dcomm.get(dmsg['type_message'], '')
-        if re.search('^DVP', dmsg['id_message']) != None:
+        if re.search('^DVP', dmsg['id_message']) is not None:
             dmsg['commentaire'] += contacter_assistance
 
         dmsg['corps'] = ufmt(format['corps'], dmsg)

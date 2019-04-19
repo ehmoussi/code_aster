@@ -97,8 +97,8 @@ subroutine jeimhd(fichdf, clas)
     character(len=32) :: crnom, ngrp, nomcol
     character(len=80) :: nhdf
     integer :: ic, julist, ltypi, ilong, lonoi, iaddi(2), iadmi, iadmx
-    integer :: nbmax, jctab, idg, idgc, vali
-    hid_t :: idfic
+    integer :: nbmax, jctab, vali
+    hid_t :: idfic, idg, idgc
     integer :: lidbas
     parameter      ( lidbas = 20 )
 ! ----------------------------------------------------------------------

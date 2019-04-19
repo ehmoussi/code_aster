@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -163,7 +163,8 @@ PROJ_BASE(  BASE=MODE_MEC,
             MATR_ASSE_GENE=(
       _F(  MATRICE = CO("MASS_GEN"),  MATR_ASSE = MASSE),
       _F(  MATRICE = CO("RIGI_GEN"),  MATR_ASSE = RIGIDITE)),
-      VECT_ASSE_GENE=_F(  VECTEUR = CO("VECT_X"),    VECT_ASSE = MONO_X)
+      VECT_ASSE_GENE=_F(  VECTEUR = CO("VECT_X"),    VECT_ASSE = MONO_X,
+                          TYPE_VECT='FORC')
          )
 
 dt1 = 1.e-4
@@ -418,7 +419,7 @@ DERI_SEC = FORMULE(VALE='4.E+05',
 PROJ_BASE(  BASE=MODE_CS,   NB_VECT=2,MATR_ASSE_GENE=(
        _F(  MATRICE = CO("MASG_CS2"),  MATR_ASSE = MASS_CS),
        _F(  MATRICE = CO("RIGG_CS2"),  MATR_ASSE = RIGI_CS)),
-       VECT_ASSE_GENE=_F(  VECTEUR = CO("VECT_GC2"),  VECT_ASSE = VECTEUR)
+       VECT_ASSE_GENE=_F(  VECTEUR = CO("VECT_GC2"),  VECT_ASSE = VECTEUR, TYPE_VECT='FORC')
                 )
 
 TRA_GCS=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',

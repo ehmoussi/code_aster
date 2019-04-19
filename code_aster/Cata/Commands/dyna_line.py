@@ -30,9 +30,9 @@ def dyna_line_sdprod(self, TYPE_CALCUL, BASE_RESU=None, RESU_GENE=None, **args):
                 [None, mode_meca],
                 [None, tran_gene, harm_gene])
 
-    if BASE_RESU != None:
+    if BASE_RESU is not None:
         self.type_sdprod(BASE_RESU, mode_meca)
-    if RESU_GENE != None:
+    if RESU_GENE is not None:
         if TYPE_CALCUL == 'TRAN':
             self.type_sdprod(RESU_GENE, tran_gene)
         else:

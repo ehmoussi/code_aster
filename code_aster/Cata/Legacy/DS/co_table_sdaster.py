@@ -58,7 +58,7 @@ class table_sdaster(ASSD):
             raise AsException("Erreur dans table.TITRE en PAR_LOT='OUI'")
         #titj = aster.getvectjev('%-19s.TITR' % self.get_name())
         titj = self.sdj.TITR.get()
-        if titj != None:
+        if titj is not None:
             titr = '\n'.join(titj)
         else:
             titr = ''

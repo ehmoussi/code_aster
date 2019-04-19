@@ -73,7 +73,7 @@ def mes_concepts(list_concepts=[], base=None):
         if e.nom in ('INCLUDE', 'MACR_RECAL',):
             list_concepts = list(
                 mes_concepts(list_concepts=list_concepts, base=e))
-        elif (e.sd != None) and (e.parent.nom == 'INCLUDE'):
+        elif (e.sd is not None) and (e.parent.nom == 'INCLUDE'):
             nom_concept = e.sd.get_name()
             if not(nom_concept in list_concepts):
                 list_concepts.append(nom_concept)

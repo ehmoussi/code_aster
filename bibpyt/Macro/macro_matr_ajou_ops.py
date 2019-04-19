@@ -48,7 +48,7 @@ def macro_matr_ajou_ops(
         message = message + '                      sera affecte par la masse volumique RHO = ' + \
             str(FLUIDE[0]['RHO']) + ' \n'
         aster.affiche('MESSAGE', message)
-        if FLUIDE[0]['GROUP_MA'] != None:
+        if FLUIDE[0]['GROUP_MA'] is not None:
             message = '<I> <MACRO_MATR_AJOU> cas fluide simple : le group_ma dans lequel vous affectez la masse \n'
             message = message + \
                 'volumique RHO doit etre la reunion de GROUP_MA_INTERF et GROUP_MA_FLUIDE. \n'
@@ -117,11 +117,11 @@ def macro_matr_ajou_ops(
     affimp = []
     nflui = 0
     for DDL in DDL_IMPO:
-        if DDL['PRES_FLUIDE'] != None:
+        if DDL['PRES_FLUIDE'] is not None:
             nflui = nflui + 1
-            if DDL['NOEUD'] != None:
+            if DDL['NOEUD'] is not None:
                 mfact = _F(NOEUD=DDL['NOEUD'],   TEMP=DDL['PRES_FLUIDE'])
-            if DDL['GROUP_NO'] != None:
+            if DDL['GROUP_NO'] is not None:
                 mfact = _F(GROUP_NO=DDL['GROUP_NO'], TEMP=DDL['PRES_FLUIDE'])
             affimp.append(mfact)
     if nflui == 0:
@@ -135,22 +135,22 @@ def macro_matr_ajou_ops(
 #  potentielle
 #  commande CALC_MATR_AJOU, calcul de la masse ajoutee
 
-    if MATR_MASS_AJOU != None:
+    if MATR_MASS_AJOU is not None:
         solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
         mostcles = {}
-        if NUME_DDL_GENE != None:
+        if NUME_DDL_GENE is not None:
             mostcles['NUME_DDL_GENE'] = NUME_DDL_GENE
-        if INFO != None:
+        if INFO is not None:
             mostcles['INFO'] = INFO
-        if MODE_MECA != None:
+        if MODE_MECA is not None:
             mostcles['MODE_MECA'] = MODE_MECA
-        elif DEPL_IMPO != None:
+        elif DEPL_IMPO is not None:
             mostcles['CHAM_NO'] = DEPL_IMPO
-        elif MODELE_GENE != None:
+        elif MODELE_GENE is not None:
             mostcles['MODELE_GENE'] = MODELE_GENE
             mostcles['AVEC_MODE_STAT'] = AVEC_MODE_STAT
             mostcles['DIST_REFE'] = DIST_REFE
-        if NOEUD_DOUBLE != None:
+        if NOEUD_DOUBLE is not None:
             mostcles['NOEUD_DOUBLE'] = NOEUD_DOUBLE
 
         MASSAJ = CALC_MATR_AJOU(MODELE_FLUIDE=__NOMFLU,
@@ -165,13 +165,13 @@ def macro_matr_ajou_ops(
 
 #  ---------------------------------------------------------------
 #  calcul de l amortissement ajoute
-    if (MATR_AMOR_AJOU != None) or (MATR_RIGI_AJOU != None):
+    if (MATR_AMOR_AJOU is not None) or (MATR_RIGI_AJOU is not None):
 
 #  ---------------------------------------------------------------
 #  on definit un nouveau modele fluide pour calculer
 #  le potentiel stationnaire - AFFE_MODELE
         grma = [GROUP_MA_FLUIDE, ]
-        if ECOULEMENT != None:
+        if ECOULEMENT is not None:
             grma.append(ECOULEMENT['GROUP_MA_1'])
             grma.append(ECOULEMENT['GROUP_MA_2'])
             if type(ECOULEMENT) not in (list, tuple):
@@ -182,11 +182,11 @@ def macro_matr_ajou_ops(
                                        PHENOMENE='THERMIQUE'), )
         affimp = []
         for DDL in DDL_IMPO:
-            if DDL['PRES_SORTIE'] != None:
-                if DDL['NOEUD'] != None:
+            if DDL['PRES_SORTIE'] is not None:
+                if DDL['NOEUD'] is not None:
                     mfact = _F(
                         NOEUD=DDL['NOEUD'],   TEMP=DDL['PRES_SORTIE'])
-                if DDL['GROUP_NO'] != None:
+                if DDL['GROUP_NO'] is not None:
                     mfact = _F(
                         GROUP_NO=DDL['GROUP_NO'], TEMP=DDL['PRES_SORTIE'])
                 affimp.append(mfact)
@@ -207,16 +207,16 @@ def macro_matr_ajou_ops(
 
 #  ---------------------------------------------------------------
 #  calcul amortissement proprement dit
-    if MATR_AMOR_AJOU != None:
+    if MATR_AMOR_AJOU is not None:
         solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
         mostcles = {}
-        if NUME_DDL_GENE != None:
+        if NUME_DDL_GENE is not None:
             mostcles['NUME_DDL_GENE'] = NUME_DDL_GENE
-        if INFO != None:
+        if INFO is not None:
             mostcles['INFO'] = INFO
-        if MODE_MECA != None:
+        if MODE_MECA is not None:
             mostcles['MODE_MECA'] = MODE_MECA
-        elif DEPL_IMPO != None:
+        elif DEPL_IMPO is not None:
             mostcles['CHAM_NO'] = DEPL_IMPO
         else:
             UTMESS('F', 'MATRICE0_3')
@@ -233,16 +233,16 @@ def macro_matr_ajou_ops(
 
 #  ---------------------------------------------------------------
 #  calcul de la rigidite ajoutee
-    if MATR_RIGI_AJOU != None:
+    if MATR_RIGI_AJOU is not None:
         solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
         mostcles = {}
-        if NUME_DDL_GENE != None:
+        if NUME_DDL_GENE is not None:
             mostcles['NUME_DDL_GENE'] = NUME_DDL_GENE
-        if INFO != None:
+        if INFO is not None:
             mostcles['INFO'] = INFO
-        if MODE_MECA != None:
+        if MODE_MECA is not None:
             mostcles['MODE_MECA'] = MODE_MECA
-        elif DEPL_IMPO != None:
+        elif DEPL_IMPO is not None:
             mostcles['CHAM_NO'] = DEPL_IMPO
         else:
             UTMESS('F', 'MATRICE0_4')
@@ -259,26 +259,26 @@ def macro_matr_ajou_ops(
 
 #  ---------------------------------------------------------------
 #  boucle sur le nombre de vecteurs a projeter, commande CALC_FORC_AJOU
-    if FORC_AJOU != None:
+    if FORC_AJOU is not None:
         for FORCAJ in FORC_AJOU:
             solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
             mostcles = {}
-            if NUME_DDL_GENE != None:
+            if NUME_DDL_GENE is not None:
                 mostcles['NUME_DDL_GENE'] = NUME_DDL_GENE
-            if MODE_MECA != None:
+            if MODE_MECA is not None:
                 mostcles['MODE_MECA'] = MODE_MECA
-            elif MODELE_GENE != None:
+            elif MODELE_GENE is not None:
                 mostcles['MODELE_GENE'] = MODELE_GENE
                 mostcles['AVEC_MODE_STAT'] = AVEC_MODE_STAT
                 mostcles['DIST_REFE'] = DIST_REFE
-            if NOEUD_DOUBLE != None:
+            if NOEUD_DOUBLE is not None:
                 mostcles['NOEUD_DOUBLE'] = NOEUD_DOUBLE
-            if MODE_STAT != None:
+            if MODE_STAT is not None:
                 mostcles[
                     'MODE_STAT'] = MODE_STAT
-                if FORCAJ['NOEUD'] != None:
+                if FORCAJ['NOEUD'] is not None:
                     mostcles['NOEUD'] = FORCAJ['NOEUD']
-                if FORCAJ['GROUP_NO'] != None:
+                if FORCAJ['GROUP_NO'] is not None:
                     mostcles['GROUP_NO'] = FORCAJ['GROUP_NO']
             else:
                 mostcles['MONO_APPUI'] = MONO_APPUI

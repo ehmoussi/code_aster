@@ -33,7 +33,7 @@
 #include <hdf5.h>
 #endif
 
-ASTERINTEGER DEFPSPS(HDFWAT, hdfwat, ASTERINTEGER *iddat, char *nomat, STRING_SIZE ln,
+ASTERINTEGER DEFPSPS(HDFWAT, hdfwat, hid_t *iddat, char *nomat, STRING_SIZE ln,
                                 ASTERINTEGER *nbv, char *valat, STRING_SIZE lv)
 {
   ASTERINTEGER iret=-1;

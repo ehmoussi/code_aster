@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ def calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression):
 
     motscles = {}
 
-    if (lmatphys) & (norme_mode != None):
+    if (lmatphys) & (norme_mode is not None):
         modes = NORM_MODE(reuse=modes,
                           MODE=modes,
                           NORME=norme_mode['NORME'],
@@ -56,7 +56,7 @@ def calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression):
     lfiltre = False  # False if not specified by the user, or if matr_asse_gene_r,
                      # True otherwise
     if lmatphys:
-        if filtre_mode != None:
+        if filtre_mode is not None:
             lfiltre = True
         else:
             lfiltre = False
@@ -70,14 +70,14 @@ def calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression):
         motscles['FILTRE_MODE'] = _F(MODE=__modes_temp,
                                      TOUT_ORDRE='OUI')
 
-    if (lmatphys) & (impression != None):
+    if (lmatphys) & (impression is not None):
         motscles['IMPRESSION'] = _F(CUMUL=impression['CUMUL'],
                                     CRIT_EXTR=impression['CRIT_EXTR'])
 
     modes = EXTR_MODE(**motscles)
 
     # print all the modes parameters
-    if (lmatphys) & (impression != None):
+    if (lmatphys) & (impression is not None):
         if impression['TOUT_PARA'] == 'OUI':
             impr_tout = True
     if not lmatphys:

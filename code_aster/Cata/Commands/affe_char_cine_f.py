@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,8 +27,8 @@ def affe_char_cine_f_prod(MECA_IMPO,THER_IMPO,**args):
   if args.get('__all__'):
       return (char_cine_ther, char_cine_meca)
 
-  if MECA_IMPO != None  : return char_cine_meca
-  if THER_IMPO != None  : return char_cine_ther
+  if MECA_IMPO is not None  : return char_cine_meca
+  if THER_IMPO is not None  : return char_cine_ther
   raise AsException("type de concept resultat non prevu")
 
 AFFE_CHAR_CINE_F=OPER(nom="AFFE_CHAR_CINE_F",op= 101,sd_prod=affe_char_cine_f_prod,

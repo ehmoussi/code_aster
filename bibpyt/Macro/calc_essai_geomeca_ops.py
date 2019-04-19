@@ -60,7 +60,7 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     # Essai TRIA_DR_M_D
     # ---
-    if ESSAI_TRIA_DR_M_D != None:
+    if ESSAI_TRIA_DR_M_D is not None:
 
         nb_essai = len(ESSAI_TRIA_DR_M_D.List_F())
 
@@ -74,7 +74,7 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     # Essai TRIA_ND_M_D
     # ---
-    if ESSAI_TRIA_ND_M_D != None:
+    if ESSAI_TRIA_ND_M_D is not None:
 
         nb_essai = len(ESSAI_TRIA_ND_M_D.List_F())
 
@@ -88,7 +88,7 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     # Essai CISA_DR_C_D
     # ---
-    if ESSAI_CISA_DR_C_D != None:
+    if ESSAI_CISA_DR_C_D is not None:
 
         nb_essai = len(ESSAI_CISA_DR_C_D.List_F())
 
@@ -102,7 +102,7 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     # Essai TRIA_ND_C_F
     # ---
-    if ESSAI_TRIA_ND_C_F != None:
+    if ESSAI_TRIA_ND_C_F is not None:
 
         nb_essai = len(ESSAI_TRIA_ND_C_F.List_F())
 
@@ -116,7 +116,7 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     # Essai TRIA_ND_C_D
     # ---
-    if ESSAI_TRIA_ND_C_D != None:
+    if ESSAI_TRIA_ND_C_D is not None:
 
         nb_essai = len(ESSAI_TRIA_ND_C_D.List_F())
 
@@ -130,7 +130,7 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     # Essai TRIA_DR_C_D
     # ---
-    if ESSAI_TRIA_DR_C_D != None:
+    if ESSAI_TRIA_DR_C_D is not None:
 
         nb_essai = len(ESSAI_TRIA_DR_C_D.List_F())
 
@@ -144,7 +144,7 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     # Essai OEDO_DR_C_F
     # ---
-    if ESSAI_OEDO_DR_C_F != None:
+    if ESSAI_OEDO_DR_C_F is not None:
 
         nb_essai = len(ESSAI_OEDO_DR_C_F.List_F())
 
@@ -158,7 +158,7 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     # Essai ISOT_DR_C_F
     # ---
-    if ESSAI_ISOT_DR_C_F != None:
+    if ESSAI_ISOT_DR_C_F is not None:
 
         nb_essai = len(ESSAI_ISOT_DR_C_F.List_F())
 
@@ -172,5 +172,5 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     # ---
     # Essai 'XXX'
     # ---
-    # if ESSAI_XXX != None : ...
+    # if ESSAI_XXX is not None : ...
     return

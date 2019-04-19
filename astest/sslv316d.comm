@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -236,7 +236,7 @@ TEST_TABLE(TABLE=TABLSN[1],
            PRECISION=tol,
            TYPE_TEST='MAX',
            CRITERE='ABSOLU',
-           VALE_CALC=-5.03330016555E-15,
+           VALE_CALC=0,
 #           ORDRE_GRANDEUR=1.,
            VALE_REFE=0.0  )
 
@@ -246,7 +246,7 @@ TEST_TABLE(TABLE=TABLSN[1],
            PRECISION=tol,
            TYPE_TEST='MIN',
            CRITERE='ABSOLU',
-           VALE_CALC=-6.26235174828E-15,
+           VALE_CALC=0,
 #           ORDRE_GRANDEUR=1.,
            VALE_REFE=0.0  )
 
@@ -256,7 +256,7 @@ TEST_TABLE(TABLE=TABLST[1],
            PRECISION=tol,
            TYPE_TEST='MAX',
            CRITERE='ABSOLU',
-           VALE_CALC=2.97678548478E-15,
+           VALE_CALC=0,
 #           ORDRE_GRANDEUR=1.,
            VALE_REFE=0.0  )
 
@@ -266,7 +266,7 @@ TEST_TABLE(TABLE=TABLST[1],
            PRECISION=tol,
            TYPE_TEST='MIN',
            CRITERE='ABSOLU',
-           VALE_CALC=2.61943244872E-15,
+           VALE_CALC=0,
 #           ORDRE_GRANDEUR=1.,
            VALE_REFE=0.0  )
 
@@ -277,7 +277,7 @@ TEST_TABLE(TABLE=TABLSN[2],
            PRECISION=tol,
            TYPE_TEST='MAX',
            CRITERE='ABSOLU',
-           VALE_CALC=0.00882469350289,
+           VALE_CALC=0.008824693502888363,
            VALE_REFE=0.0  )
 
 TEST_TABLE(TABLE=TABLSN[2],
@@ -286,7 +286,7 @@ TEST_TABLE(TABLE=TABLSN[2],
            PRECISION=tol,
            TYPE_TEST='MIN',
            CRITERE='ABSOLU',
-           VALE_CALC=0.00882435625423,
+           VALE_CALC=0.008821394659676865,
            VALE_REFE=0.0  )
 
 TEST_TABLE(TABLE=TABLST[2],
@@ -295,7 +295,7 @@ TEST_TABLE(TABLE=TABLST[2],
            PRECISION=tol,
            TYPE_TEST='MAX',
            CRITERE='ABSOLU',
-           VALE_CALC=-6.49620714294E-06,
+           VALE_CALC=-6.4962071418955825E-06,
 #          ORDRE_GRANDEUR=1.,
            VALE_REFE=0.0  )
 
@@ -305,7 +305,7 @@ TEST_TABLE(TABLE=TABLST[2],
            PRECISION=tol,
            TYPE_TEST='MIN',
            CRITERE='ABSOLU',
-           VALE_CALC=-6.49627709976E-06,
+           VALE_CALC=-6.764797692029867E-06,
 #          ORDRE_GRANDEUR=1.,
            VALE_REFE=0.0  )
 
@@ -316,7 +316,7 @@ TEST_TABLE(TABLE=TABLSN[3],
            PRECISION=tol,
            TYPE_TEST='MAX',
            CRITERE='ABSOLU',
-           VALE_CALC=0.0422406279237,
+           VALE_CALC=0.042240627923720464,
            VALE_REFE=0.0  )
 
 TEST_TABLE(TABLE=TABLSN[3],
@@ -325,7 +325,7 @@ TEST_TABLE(TABLE=TABLSN[3],
            PRECISION=tol,
            TYPE_TEST='MIN',
            CRITERE='ABSOLU',
-           VALE_CALC=0.0422347261957,
+           VALE_CALC=0.04173209914543064,
            VALE_REFE=0.0  )
 
 TEST_TABLE(TABLE=TABLST[3],
@@ -334,7 +334,7 @@ TEST_TABLE(TABLE=TABLST[3],
            PRECISION=tol,
            TYPE_TEST='MAX',
            CRITERE='ABSOLU',
-           VALE_CALC=0.00313594813988,
+           VALE_CALC=0.0031359481398764225,
            VALE_REFE=0.0  )
 
 TEST_TABLE(TABLE=TABLST[3],
@@ -343,7 +343,7 @@ TEST_TABLE(TABLE=TABLST[3],
            PRECISION=tol,
            TYPE_TEST='MIN',
            CRITERE='ABSOLU',
-           VALE_CALC=0.00313593417077,
+           VALE_CALC=0.003134691202544622,
            VALE_REFE=0.0  )
 
 

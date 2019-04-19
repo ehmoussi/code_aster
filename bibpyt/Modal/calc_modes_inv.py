@@ -120,7 +120,7 @@ def calc_modes_inv(self, stop_erreur, sturm, TYPE_RESU, OPTION,  INFO, **args):
 
     #
 
-    if TITRE != None:
+    if TITRE is not None:
         motcles['TITRE'] = TITRE
 
     modes = MODE_ITER_INV(TYPE_RESU=TYPE_RESU,

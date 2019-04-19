@@ -113,7 +113,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
         if occ['OPERATION'] == 'COMB':
             tab2 = occ['TABLE'].EXTR_TABLE()
             lpar = []
-            if occ.get('NOM_PARA') != None:
+            if occ.get('NOM_PARA') is not None:
                 lpar = force_list(occ['NOM_PARA'])
                 for p in lpar:
                     if not p in tab.para:
@@ -268,7 +268,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
 
     # surcharge par le titre fourni
     tit = args.get('TITRE')
-    if tit != None:
+    if tit is not None:
         if type(tit) not in (list, tuple):
             tit = [tit]
         dprod['TITRE'] = tuple(['%-80s' % lig for lig in tit])

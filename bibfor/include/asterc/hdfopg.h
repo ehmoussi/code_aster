@@ -22,6 +22,6 @@ interface
     function hdfopg(i, knom1)
         hid_t :: i
         character(len=*) :: knom1
-        integer :: hdfopg
+        hid_t :: hdfopg
     end function hdfopg
 end interface

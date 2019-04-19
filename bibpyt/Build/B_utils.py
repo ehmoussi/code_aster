@@ -43,7 +43,7 @@ def RETLIST(v, mxval):
         # Il s'agit d'un tuple de longueur quelconque
         length = len(v)
         val = v
-    elif v != None:
+    elif v is not None:
         # Il s'agit d'un objet isole
         length = 1
         val = (v, )
@@ -62,7 +62,7 @@ def TraceGet(nom_fonction, nom_motfac, iocc, nom_motcle, tup, sortie=sys.stdout)
                    getxxxx
     """
     sortie.write("\t" + nom_fonction + " :")
-    assert(nom_motfac != None)
+    assert(nom_motfac is not None)
     sortie.write(" nom_motfac='" + nom_motfac + "'")
     sortie.write(" nom_motcle='" + nom_motcle + "'")
     sortie.write(" iocc= " + repr(iocc)+' :')

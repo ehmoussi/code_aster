@@ -138,7 +138,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
                 sd = self.get_sd_prod()
                 # On n'utilise pas self.definition.op_init car self.parent
                 # n'existe pas
-                if sd != None and self.reuse is None:
+                if sd is not None and self.reuse is None:
                     # On ne nomme le concept que dans le cas de non reutilisation
                     # d un concept
                     sd.set_name(nom)
@@ -333,7 +333,7 @@ Causes possibles :
         if self.jdc:
             return self.jdc.get_file(unite=unite, fic_origine=fic_origine, fname=fname)
         else:
-            if unite != None:
+            if unite is not None:
                 if os.path.exists("fort." + str(unite)):
                     fname = "fort." + str(unite)
             if fname is None:

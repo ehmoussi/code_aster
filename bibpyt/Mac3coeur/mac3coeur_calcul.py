@@ -361,7 +361,7 @@ class Mac3CoeurCalcul(object):
     def vessel_dilatation_load(self):
         """Return the loading due to the vessel dilatation"""
         char_dilat = self.coeur.dilatation_cuve(self.model, self.mesh,
-                               (self.char_init != None))
+                               (self.char_init is not None))
         return [_F(CHARGE=char_dilat,), ]
 
     @property

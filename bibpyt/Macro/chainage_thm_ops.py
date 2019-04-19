@@ -82,12 +82,12 @@ def chainage_thm_ops(self, TYPE_CHAINAGE, **args):
 
     INST = None
     if 'INST' in args:
-        if args['INST'] != None:
+        if args['INST'] is not None:
             INST = args['INST']
 
     b_type_resu_cham_no = False
     if 'TYPE_RESU' in args:
-        if args['TYPE_RESU'] != None:
+        if args['TYPE_RESU'] is not None:
             TYPE_RESU = args['TYPE_RESU']
         if (TYPE_RESU == "CHAM_NO"):
             b_type_resu_cham_no = True
