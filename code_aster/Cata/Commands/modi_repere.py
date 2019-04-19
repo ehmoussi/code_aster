@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,8 +27,8 @@ def modi_repere_prod(RESULTAT,CHAM_GD,**args):
   if args.get('__all__'):
       return (None, resultat_sdaster, cham_gd_sdaster)
 
-  if AsType(RESULTAT) != None : return AsType(RESULTAT)
-  if AsType(CHAM_GD)  != None : return AsType(CHAM_GD)
+  if AsType(RESULTAT) is not None : return AsType(RESULTAT)
+  if AsType(CHAM_GD)  is not None : return AsType(CHAM_GD)
 
 MODI_REPERE=OPER(nom="MODI_REPERE",op=191,sd_prod=modi_repere_prod,
                  reentrant='f:RESULTAT',

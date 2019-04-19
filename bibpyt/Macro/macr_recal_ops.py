@@ -136,7 +136,7 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=N
             LIST_CALC_TMP.append(m['PARA_X'])
             LIST_CALC_TMP.append(m['PARA_Y'])
             RESU_CALC.append(LIST_CALC_TMP)
-            if m['POIDS'] != None:
+            if m['POIDS'] is not None:
                 LIST_POIDS_TMP.append(m['POIDS'])
             LIST_POIDS_DEFAUT.append(1.)
         if len(LIST_POIDS_TMP) == 0:
@@ -470,7 +470,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
     # Dans le cas de la dynamique avec appariement manual des MAC, on passe la
     # flag correspondant a True
     if METHODE in ['HYBRIDE', 'LEVENBERG', 'GENETIQUE']:  # AAC --> j'ai modifie et donne la possibilite d'afficher la fenetre mac pour levenb et gene
-        if (DYNAMIQUE != None and DYNAMIQUE['APPARIEMENT_MANUEL'] == 'OUI'):
+        if (DYNAMIQUE is not None and DYNAMIQUE['APPARIEMENT_MANUEL'] == 'OUI'):
             CALCUL_ASTER.graph_mac = True
 
     # Instance de la classe gérant l'affichage des resultats du calcul de

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -237,9 +237,9 @@ PROJ_BASE(BASE=MODES,
                           _F(MATRICE=CO('cgene'),
                              MATR_ASSE=amorto),),
           VECT_ASSE_GENE=(_F(VECTEUR=CO('fgene'),
-                             VECT_ASSE=FASSE),
+                             VECT_ASSE=FASSE, TYPE_VECT='FORC'),
                           _F(VECTEUR=CO('monogene'),
-                             VECT_ASSE=mono_x),),
+                             VECT_ASSE=mono_x, TYPE_VECT='FORC'),),
           );
 #
 
@@ -267,9 +267,9 @@ VIT0=CREA_CHAMP( OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
 PROJ_BASE(BASE=MODES,
           STOCKAGE='DIAG',
           VECT_ASSE_GENE=(_F(VECTEUR=CO('depgene'),
-                             VECT_ASSE=DEP0),
+                             VECT_ASSE=DEP0, TYPE_VECT='DEPL'),
                           _F(VECTEUR=CO('vitgene'),
-                             VECT_ASSE=VIT0),),
+                             VECT_ASSE=VIT0, TYPE_VECT='VITE'),),
           );
 
 
@@ -317,13 +317,13 @@ for k in range(1,NF):
                        RESULTAT=EVOL,
                        NOM_CHAM='DEPL',
                        NOM_CMP='DX',
-                       VALE_CALC=-0.0458758836617,),
+                       VALE_CALC=-0.0458760352396,),
                     _F(GROUP_NO='P3',
                        INST=2.33,
                        RESULTAT=EVOL,
                        NOM_CHAM='DEPL',
                        NOM_CMP='DY',
-                       VALE_CALC=0.00565343303766,),
+                       VALE_CALC=0.00568737814334,),
                     _F(GROUP_NO='P3',
                        INST=2.33,
                        RESULTAT=EVOLT,
@@ -354,7 +354,7 @@ for k in range(1,NF):
     PROJ_BASE(BASE=MODES,
               STOCKAGE='DIAG',
               RESU_GENE=_F(RESULTAT=CO('resupro'),
-                           RESU=resunl),
+                           RESU=resunl, TYPE_VECT='FORC'),
              );
 
     DETRUIRE(INFO=1,CONCEPT=_F(NOM=(EVOL,EVOLgen)));
@@ -448,13 +448,13 @@ TEST_RESU(RESU=(_F(GROUP_NO='P3',
                    RESULTAT=EVOL,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=-0.0479736534653,),
+                   VALE_CALC=-0.0479746273861,),
                 _F(GROUP_NO='P3',
                    INST=2.34,
                    RESULTAT=EVOL,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DY',
-                   VALE_CALC=0.00640858056891,),
+                   VALE_CALC=0.00643831407138,),
                 _F(GROUP_NO='P3',
                    INST=2.34,
                    RESULTAT=EVOLT,

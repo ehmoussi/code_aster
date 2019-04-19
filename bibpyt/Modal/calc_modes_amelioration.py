@@ -75,7 +75,7 @@ def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
     if not type_matr_B == 'SYMETRI':
         lsym = False
     if TYPE_RESU == 'DYNAMIQUE':
-        if args['MATR_AMOR']!=None:
+        if args['MATR_AMOR'] is not None:
             iret, ibid, type_matr_C = aster.dismoi('TYPE_MATRICE', args['MATR_AMOR'].nom, 'MATR_ASSE', 'F')
             if not type_matr_C == 'SYMETRI':
                 lsym = False
@@ -118,7 +118,7 @@ def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
         type_vp = 'FREQ'
         matrices['MATR_RIGI']   = args['MATR_RIGI']
         matrices['MATR_MASS']   = args['MATR_MASS']
-        if args['MATR_AMOR']!=None:
+        if args['MATR_AMOR'] is not None:
             matrices['MATR_AMOR']= args['MATR_AMOR']
 
     elif TYPE_RESU == 'MODE_FLAMB':
@@ -175,7 +175,7 @@ def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
                               PREC_SHIFT=VERI_MODE['PREC_SHIFT']
                               )
     #################################################################
-    if TITRE != None:
+    if TITRE is not None:
         motcles['TITRE'] = TITRE
 
     #################################################################

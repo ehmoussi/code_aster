@@ -518,7 +518,7 @@ class nappe:
             #'Correction ZPA necessaire'
             if check != 0:
                 for s in range(0, self.getNbSpectres()):
-                    if zpa != None:
+                    if zpa is not None:
                         self.listSpec[s].dataVal[-1] = zpa
                     else:
                         self.listSpec[s].dataVal[-1] = max(l_zpa)
@@ -584,7 +584,7 @@ def lissage_spectres(nappe=nappe, fmin=0.2, fmax=35.5, nb_pts=50, l_freq=[], pre
     # nappe_up = copy.copy(nappe)
 
     # Limitation de la bande de fréquence
-    if fmin != None or fmax != None:
+    if fmin is not None or fmax is not None:
         if fmin is None:
             fmin = min(nappe_up.listFreq)
         if fmax is None:
@@ -599,7 +599,7 @@ def lissage_spectres(nappe=nappe, fmin=0.2, fmax=35.5, nb_pts=50, l_freq=[], pre
     # Mettre les valeurs en echelle log-log
     filter = filtreLogLog()
     nappe_up.filtre(filter)
-    if zpa != None:
+    if zpa is not None:
         zpa_log = math.log10(zpa) + 4.0
     else:
         zpa_log = None
@@ -781,7 +781,7 @@ def liss_enveloppe(l_nappes, option='CONCEPTION', nb_pts=50, coef_elarg=None,
                                           check=2, zpa=zpa)
             l_liss_nappe.append(liss_nappe)
         # Elargissement
-        if coef_elarg != None:
+        if coef_elarg is not None:
             l_liss_nappe = elargis_spectres(l_liss_nappe, coef_elarg)
         # Enveloppe
         env_nappe = enveloppe_nappe(l_liss_nappe)

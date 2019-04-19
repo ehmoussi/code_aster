@@ -76,14 +76,14 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
         # la construction des conditions de Dirichlet est indispensable...sauf si initialement
         # les matrices etaient construites sans aucune charge (peut etre le cas
         # en dynamique)
-        if ((VECT_ASSE != None) and (CHARGE is None)):
+        if ((VECT_ASSE is not None) and (CHARGE is None)):
             UTMESS('A', 'MATRICE0_6')
 
     lrigel = 0
     lmasel = 0
 
 # ASSEMBLAGE DES MATRICES
-    if MATR_ASSE != None:
+    if MATR_ASSE is not None:
         # import des commandes a utiliser dans la macro pour l'assemblage des
         # matrices
         CALC_MATR_ELEM = self.get_cmd('CALC_MATR_ELEM')
@@ -112,19 +112,20 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
                     UTMESS('F', 'MATRICE0_10')
                 motscles['RIGI_MECA'] = rigel
             if option == 'AMOR_MECA':
-                if (not lrigel or not lmasel):
+                if (not lrigel):
                     UTMESS('F', 'MATRICE0_11')
-                if CHAM_MATER != None:
+                if CHAM_MATER is not None:
                     motscles['RIGI_MECA'] = rigel
-                    motscles['MASS_MECA'] = masel
-            if CHARGE != None:
+                    if (lmasel):
+                        motscles['MASS_MECA'] = masel
+            if CHARGE is not None:
                 if option[0:9] != 'RIGI_GEOM':
                     motscles['CHARGE'] = CHARGE
-            if CHAM_MATER != None and option != 'RIGI_GEOM':
+            if CHAM_MATER is not None and option != 'RIGI_GEOM':
                 motscles['CHAM_MATER'] = CHAM_MATER
-            if CARA_ELEM != None:
+            if CARA_ELEM is not None:
                 motscles['CARA_ELEM'] = CARA_ELEM
-            if INST != None:
+            if INST is not None:
                 motscles['INST'] = INST
 
             try:
@@ -161,7 +162,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
                 numeddl_status = 'OK'
 
             motscles = {'OPTION': option}
-            if CHAR_CINE != None:
+            if CHAR_CINE is not None:
                 mm = ASSE_MATRICE(
                     MATR_ELEM=_a, NUME_DDL=num, CHAR_CINE=CHAR_CINE)
             else:
@@ -169,7 +170,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
             self.register_result(mm, m['MATRICE'])
 
 # ASSEMBLAGE DES VECTEURS
-    if VECT_ASSE != None:
+    if VECT_ASSE is not None:
         # import des commandes a utiliser dans la macro pour l'assemblage des
         # vecteurs
         CALC_VECT_ELEM = self.get_cmd('CALC_VECT_ELEM')
@@ -179,7 +180,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
             option = v['OPTION']
             motscles = {'OPTION': option}
 
-            if CHARGE != None:
+            if CHARGE is not None:
                 liste_toutes_charges = list(
                     CHARGE)  # on prend en compte les charges globales et on additionne les autres apres pour
                                                   # chaque vecteur
@@ -209,11 +210,11 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
 
             if (option == 'CHAR_MECA'):
 
-                if CARA_ELEM != None:
+                if CARA_ELEM is not None:
                     motscles['CARA_ELEM'] = CARA_ELEM
-                if CHAM_MATER != None:
+                if CHAM_MATER is not None:
                     motscles['CHAM_MATER'] = CHAM_MATER
-                if INST != None:
+                if INST is not None:
                     motscles['INST'] = INST
                 try:
                     motscles['MODE_FOURIER'] = v['MODE_FOURIER']
@@ -222,9 +223,9 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
 
             elif (option == 'CHAR_THER'):
 
-                if CARA_ELEM != None:
+                if CARA_ELEM is not None:
                     motscles['CARA_ELEM'] = CARA_ELEM
-                if INST != None:
+                if INST is not None:
                     motscles['INST'] = INST
 
             else:  # option == 'CHAR_ACOU':

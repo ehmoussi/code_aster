@@ -32,7 +32,7 @@
 #include <hdf5.h>
 #endif
 
-ASTERINTEGER DEFPPPP(HDFRSV, hdfrsv, ASTERINTEGER *idat, ASTERINTEGER *lsv,
+ASTERINTEGER DEFPPPP(HDFRSV, hdfrsv, hid_t *idat, ASTERINTEGER *lsv,
                      void *sv, ASTERINTEGER *icv)
 {
   ASTERINTEGER iret=-1;

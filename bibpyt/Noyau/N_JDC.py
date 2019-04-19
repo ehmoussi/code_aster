@@ -88,7 +88,7 @@ NONE = None
         self.procedure = procedure
         self.definition = definition
         self.cata = cata
-        if type(self.cata) != tuple and cata != None:
+        if type(self.cata) != tuple and cata is not None:
             self.cata = (self.cata,)
         self._build_reserved_kw_list()
         self.cata_ordonne_dico = cata_ord_dico
@@ -148,7 +148,7 @@ NONE = None
            compte-rendu self.cr
         """
         try:
-            if self.appli != None:
+            if self.appli is not None:
                 self.appli.affiche_infos(
                     'Compilation du fichier de commandes en cours ...')
             # Python 2.7 compile function does not accept unicode filename, so we encode it
@@ -213,7 +213,7 @@ Causes possibles :
                     if isinstance(sd, ASSD):
                         self.sds_dict[sdnom] = sd
 
-            if self.appli != None:
+            if self.appli is not None:
                 self.appli.affiche_infos(
                     'Interprétation du fichier de commandes en cours ...')
             # On sauve le contexte pour garder la memoire des constantes
@@ -227,7 +227,7 @@ Causes possibles :
             # len(self.g_context.keys()))
 
             CONTEXT.unset_current_step()
-            if self.appli != None:
+            if self.appli is not None:
                 self.appli.affiche_infos('')
 
         except InterruptParsingError:
@@ -359,14 +359,14 @@ Causes possibles :
             un concept préexistant.
 
             Deux cas possibles :
-                    - Cas 1 : etape.reuse != None : le concept est réutilisé
+                    - Cas 1 : etape.reuse is not None : le concept est réutilisé
                     - Cas 2 : l'étape appartient à une macro qui a déclaré un
                             concept de sortie qui doit etre produit par cette
                             etape.
             Dans le cas du JDC, le deuxième cas ne peut pas se produire.
         """
         sd = etape.get_sd_prod()
-        if sd != None and (etape.definition.reentrant[0] == 'n' or etape.reuse is None):
+        if sd is not None and (etape.definition.reentrant[0] == 'n' or etape.reuse is None):
             # ATTENTION : On ne nomme la SD que dans le cas de non reutilisation
             # d un concept. Commande non reentrante ou reuse absent.
             self.NommerSdprod(sd, nomsd)
@@ -444,7 +444,7 @@ Causes possibles :
             # recherche
             return self.appli.get_file(unite, fic_origine)
         else:
-            if unite != None:
+            if unite is not None:
                 if os.path.exists("fort." + str(unite)):
                     fname = "fort." + str(unite)
             if fname is None:

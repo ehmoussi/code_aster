@@ -379,7 +379,7 @@ def test_compor_ops(self, **args):
         TEMP_FIN = args.get('TEMP_FIN')
         NB_VARI = args.get('NB_VARI')
 
-        if args.get('INST_FIN') != None:
+        if args.get('INST_FIN') is not None:
             INST_FIN = args.get('INST_FIN')
 
         NCAL = len(LIST_MATER)
@@ -406,7 +406,7 @@ def test_compor_ops(self, **args):
 
         __zero = DEFI_CONSTANTE(VALE=0.)
 
-        if args.get('SUPPORT') != None:
+        if args.get('SUPPORT') is not None:
             motscles['SUPPORT'] = args.get('SUPPORT')
 
         __U = SIMU_POINT_MAT(MATER=MATER, INFO=INFO,
@@ -461,7 +461,7 @@ def test_compor_ops(self, **args):
                 # cas particuliers
                 if COMPORTEMENT[0]['RELATION'] == 'VMIS_CINE_LINE':
 
-                    if args.get('D_SIGM_EPSI') != None:
+                    if args.get('D_SIGM_EPSI') is not None:
                         D_SIGM_EPSI = args.get('D_SIGM_EPSI')
                     else:
                         raise 'erreur'
@@ -469,14 +469,14 @@ def test_compor_ops(self, **args):
                     Vim[0:5] = Vim[0:5] * D_SIGM_EPSI(Ti) / D_SIGM_EPSI(Tm)
 
                 if COMPORTEMENT[0]['RELATION'] == 'VMIS_ECMI_LINE':
-                    if args.get('C_PRAG') != None:
+                    if args.get('C_PRAG') is not None:
                         C_PRAG = args.get('C_PRAG')
                     else:
                         raise 'erreur'
                     Vim[2:7] = Vim[2:7] * C_PRAG(Ti) / C_PRAG(Tm)
 
                 if COMPORTEMENT[0]['RELATION'] == 'VMIS_ECMI_TRAC':
-                    if args.get('C_PRAG') != None:
+                    if args.get('C_PRAG') is not None:
                         C_PRAG = args.get('C_PRAG')
                     else:
                         raise 'erreur'
@@ -560,7 +560,7 @@ def test_compor_ops(self, **args):
                        FILTRE=_F(NOM_PARA='INST', VALE=time),
                        REFERENCE='AUTRE_ASTER',)
             if (NB_VARI > 0):
-                if VARI_TEST != None:
+                if VARI_TEST is not None:
                     for j in range(len(VARI_TEST)):
                         nomvari = VARI_TEST[j]
                         if abs(__U[nomvari, i + 1]) > epsi:
@@ -593,7 +593,7 @@ def test_compor_ops(self, **args):
         POISSON = args.get('POISSON')
 
         # Discretisation du calcul
-        if args.get('LIST_NPAS') != None:
+        if args.get('LIST_NPAS') is not None:
             LIST_NPAS = args.get('LIST_NPAS')
         else:
             LIST_NPAS = 4 * [1] + [1, 5, 25]
@@ -602,12 +602,12 @@ def test_compor_ops(self, **args):
         # les differents calculs effectues et les precisions sur chaque
         # TEST_RESU
         label_cal = ['_Pa_', '_Th_', '_sym_', '_rot_'] + (Ncal - 4) * ['_N']
-        if args.get('LIST_TOLE') != None:
+        if args.get('LIST_TOLE') is not None:
             LIST_TOLE = args.get('LIST_TOLE')
         else:
             LIST_TOLE = 4 * [1.E-10] + [1.E-1] + (Ncal - 5) * [1.E-2] + [1.E-8]
 
-        if args.get('PREC_ZERO') != None:
+        if args.get('PREC_ZERO') is not None:
             PREC_ZERO = args.get('PREC_ZERO')
         else:
             PREC_ZERO = len(VARI_TEST) * [1.E-10]
@@ -623,7 +623,7 @@ def test_compor_ops(self, **args):
         # liste d'archivage
         __tempsar = DEFI_LIST_REEL(VALE=[t_0 * i for i in range(9)],)
 
-        if args.get('MODELISATION') != None:
+        if args.get('MODELISATION') is not None:
             modelisation = args.get('MODELISATION')
         else:
             modelisation = "3D"
@@ -678,7 +678,7 @@ def test_compor_ops(self, **args):
         ldicoeps.append(dicoeps)
         motscles['EPSI_IMPOSE'] = ldicoeps
 
-        if args.get('SUPPORT') != None:
+        if args.get('SUPPORT') is not None:
             if modelisation == "C_PLAN":
                 motscles['MODELISATION'] = 'C_PLAN'
                 motscles['SUPPORT'] = 'ELEMENT'

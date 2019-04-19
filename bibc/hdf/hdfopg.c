@@ -29,13 +29,10 @@
 #ifndef _DISABLE_HDF5
 #include <hdf5.h>
 #endif
-#ifndef _DISABLE_MED
-#include "med.h"
-#endif
 
-ASTERINTEGER DEFPS(HDFOPG, hdfopg, med_idt *idf, char *nomgr, STRING_SIZE ln)
+hid_t DEFPS(HDFOPG, hdfopg, hid_t *idf, char *nomgr, STRING_SIZE ln)
 {
-  ASTERINTEGER iret=-1;
+  hid_t iret=-1;
 #ifndef _DISABLE_HDF5
   hid_t  idgrp,idfic;     
   char *nomd;
@@ -59,7 +56,7 @@ ASTERINTEGER DEFPS(HDFOPG, hdfopg, med_idt *idf, char *nomgr, STRING_SIZE ln)
   nomd[k+1] = '\0';
 
   if ((idgrp = H5Gopen2(idfic, nomd, H5P_DEFAULT)) >= 0) 
-    iret = (ASTERINTEGER) idgrp;
+    iret = idgrp;
   free (nomd);
 #else
   CALL_UTMESS("F", "FERMETUR_3");

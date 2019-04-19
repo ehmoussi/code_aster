@@ -60,7 +60,7 @@ class Xmgr:
         self.pipe = open(self.nom_pipe, 'a+')
 
         # Lancement de xmgrace
-        if options != None:
+        if options is not None:
             cmd = self.xmgrace + ' -noask ' + options + \
                 ' -graph ' + repr(gr_max - 1) + ' -npipe ' + self.nom_pipe
         else:

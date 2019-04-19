@@ -241,7 +241,7 @@ def fiabilite_mefisto(self, Rep_Calc_LOGICIEL_global,
 #
         f_stoch.Ecrit_Titre("Correlation matrix fictive")
 #    if args.has_key('MATRICE'):
-        if args["MATRICE"] != None:
+        if args["MATRICE"] is not None:
             if len(args["MATRICE"]) != nb_occu_variable ** 2:
 #        +' DU MOT CLE MATRICE DOIT ETRE EGAL A : '
 #        +str(nb_occu_variable**2))

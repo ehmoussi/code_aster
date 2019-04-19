@@ -215,7 +215,7 @@ class MAIL_PY:
         return co
 
     def get_coordonnees_noeuds(self, nom, nombre_noeuds):
-        assert self.ndim != None, """Dimension réelle du maillage non initialisée."""
+        assert self.ndim is not None, """Dimension réelle du maillage non initialisée."""
         lcoord = aster.getvectjev(nom)
         coordonnees_noeuds = NP.array(lcoord)
         nno = len(coordonnees_noeuds) // 3
@@ -764,7 +764,7 @@ class PARTITION:
 
         # Si _LST_MA est renseigné on extrait la liste des TMA correspondante
         # aux mailles de _LST_MA
-        if _LST_MA != None:
+        if _LST_MA is not None:
             _LST_TMA = NP.take(_LST_TMA, _LST_MA)
         else:
             _LST_MA = NP.arange(len(_LST_TMA))

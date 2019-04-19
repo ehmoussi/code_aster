@@ -29,9 +29,9 @@
 #include <hdf5.h>
 #endif
 
-ASTERINTEGER DEFS(HDFCRF, hdfcrf, char *nomfic, STRING_SIZE ln)
+hid_t DEFS(HDFCRF, hdfcrf, char *nomfic, STRING_SIZE ln)
 {
-  ASTERINTEGER iret=-1;
+  hid_t iret=-1;
 #ifndef _DISABLE_HDF5
   hid_t idfic; 
   int k;
@@ -49,7 +49,7 @@ ASTERINTEGER DEFS(HDFCRF, hdfcrf, char *nomfic, STRING_SIZE ln)
   if ( (idfic = H5Fcreate(nomf, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)) < 0) {
     iret= -1 ; 
   } else {
-    iret = (ASTERINTEGER) idfic;
+    iret = idfic;
   }
   free (nomf);
 #else

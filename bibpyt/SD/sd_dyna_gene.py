@@ -190,4 +190,4 @@ class sd_dyna_gene(sd_titre, sd_resu_dyna, sd_dyna_gene_common):
     def check_NONL(self, checker):
         desc      = self.DESC.get()
         nbnoli    = desc[2]
-        if nbnoli > 0 : assert(self.sd_nl != None)
+        if nbnoli > 0 : assert(self.sd_nl is not None)

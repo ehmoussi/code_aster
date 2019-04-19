@@ -98,9 +98,9 @@ def post_dyna_alea_ops(self, INFO, **args):
         from Utilitai.optimize import fmin
         from Utilitai.stats import normcdf, linregress
         FRAGILITE = args['FRAGILITE'][0]
-        if FRAGILITE['LIST_PARA'] != None:
+        if FRAGILITE['LIST_PARA'] is not None:
             liste_a = FRAGILITE['LIST_PARA'].sdj.VALE.get()
-        elif FRAGILITE['VALE'] != None:
+        elif FRAGILITE['VALE'] is not None:
             liste_a = FRAGILITE['VALE']
 
         Nba = len(liste_a)
@@ -133,7 +133,7 @@ def post_dyna_alea_ops(self, INFO, **args):
         if FRAGILITE['METHODE'] == "EMV":
         # 1) estimation paramètres maximum de vraisemblance
             if 'DEFA' not in dicta:
-                if FRAGILITE['SEUIL'] != None:
+                if FRAGILITE['SEUIL'] is not None:
                     liste_def = [fonc_def(vale, FRAGILITE['SEUIL'])
                                  for vale in liste_dem]
                 else:
@@ -177,12 +177,12 @@ def post_dyna_alea_ops(self, INFO, **args):
         # si calcul de fractiles (intervalles de confiance) par bootstrap
         x0 = xopt
         if FRAGILITE['METHODE'] == "EMV":
-            if FRAGILITE['FRACTILE'] != None:
+            if FRAGILITE['FRACTILE'] is not None:
                 if INFO == 2:
                     texte = 'FRACTILES A CALCULER PAR BOOTSTRAP ' + \
                         str(FRAGILITE['FRACTILE']) + '\n'
                     aster.affiche('MESSAGE', texte)
-                if FRAGILITE['NB_TIRAGE'] != None:
+                if FRAGILITE['NB_TIRAGE'] is not None:
                     Nboot = FRAGILITE['NB_TIRAGE']
                     if Nboot > Nbval:
                         UTMESS('F', 'PROBA0_11')
@@ -272,7 +272,7 @@ def post_dyna_alea_ops(self, INFO, **args):
 #     Repérer les couples d'indices selectionnés
 #     vérification de l'égalité du nombre d indices en i et j
 
-        if NUME_ORDRE_I != None:
+        if NUME_ORDRE_I is not None:
             l_ind_i = NUME_ORDRE_I
             if type(l_ind_i) not in EnumTypes:
                 l_ind_i = [l_ind_i]
@@ -289,7 +289,7 @@ def post_dyna_alea_ops(self, INFO, **args):
 
             # paramètres fixes de la table
             tabres.add_para(['NUME_ORDRE_I', 'NUME_ORDRE_J'], 'I')
-        elif NOEUD_I != None:
+        elif NOEUD_I is not None:
             l_ind_i = NOEUD_I
             l_cmp_i = INTERSPECTRE['NOM_CMP_I']
             if type(l_ind_i) not in EnumTypes:
@@ -365,7 +365,7 @@ def post_dyna_alea_ops(self, INFO, **args):
 #     Liste des moments spectraux
 
         l_moments = [0, 1, 2, 3, 4]
-        if MOMENT != None:
+        if MOMENT is not None:
             l_moments.extend(list(MOMENT))
             l_moments = list(set(l_moments))
 
@@ -471,7 +471,7 @@ def post_dyna_alea_ops(self, INFO, **args):
 
                 dlign['ECART'] = sqrt(val_mom[0])
 
-                if DUREE != None:
+                if DUREE is not None:
                     Ts = DUREE
                     vop = sqrt(val_mom[2] / val_mom[0]) / (2. * pi)
                     Nu = Ts * vop / (-log(FRACTILE))

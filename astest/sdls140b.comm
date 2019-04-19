@@ -962,8 +962,24 @@ DYNA1=LIRE_RESU(FORMAT='MED',
                   TOUT_ORDRE='OUI',
                   MODELE=MODELE0,);
 
+MODELES=AFFE_MODELE(MAILLAGE=mail,
+                   AFFE=(
+                         _F(GROUP_MA=('FOND_RG','FOND_RD',),
+                            PHENOMENE='MECANIQUE',
+                            MODELISATION='D_PLAN_ABSO',),
+                         ),
+                   );
+
+ASSEMBLAGE(MODELE=MODELES,
+           CHAM_MATER=CHAMPMAB,
+           NUME_DDL=CO('NUMEDDLB'),
+           MATR_ASSE=(_F(MATRICE=CO('RIGIDIB2'),
+                         OPTION='RIGI_MECA',),
+                      _F(MATRICE=CO('AMORTB2'),
+                         OPTION='AMOR_MECA',),),);
+
 XXB=PROJ_CHAMP(RESULTAT=DYNA0B,METHODE='COLLOCATION',  NOM_CHAM=('DEPL','VITE','ACCE','FORC_NODA','REAC_NODA'),
-              MODELE_1=MODELE0, MODELE_2=MODELE,
+              MODELE_1=MODELE0, MODELE_2=MODELES,
               VIS_A_VIS=(_F(GROUP_MA_2='FOND_RG',GROUP_MA_1='SURF', CAS_FIGURE='2D', TRANSF_GEOM_2=(FX,FY),),
                          _F(GROUP_MA_2='FOND_RD',GROUP_MA_1='SURF', CAS_FIGURE='2D', TRANSF_GEOM_2=(FX2,FY),),
                          ),
@@ -987,7 +1003,7 @@ EVOLCHSC=DEFI_CHAR_SOL (
    COEF=-1, #,
    RESU_INIT=XXB,
    DDL_EXCLUS='DX',
-   NUME_DDL=NUMEDDL,
+   NUME_DDL=NUMEDDLB,
    PRECISION=1.E-6,CRITERE='RELATIF',
    LIST_INST=LINST,
                 );
@@ -996,8 +1012,8 @@ EVOLCHSD=DEFI_CHAR_SOL (
    CHARGEMENT    ='ONDE_PLANE',
    MODELE        = MODELE,
    RESU_INIT=XXB,
-   MATR_RIGI=RIGIDITB,
-   MATR_AMOR=AMORTB,
+   MATR_RIGI=RIGIDIB2,
+   MATR_AMOR=AMORTB2,
    PRECISION=1.E-6,CRITERE='RELATIF',
    LIST_INST=LINST,
                 );
@@ -1064,7 +1080,7 @@ EVOLCHSE=DEFI_CHAR_SOL (
    NOM_CHAM_INIT='REAC_NODA',
    RESU_INIT=XXB,
    #DDL_EXCLUS='DX',
-   NUME_DDL=NUMEDDL,
+   NUME_DDL=NUMEDDLB,
    PRECISION=1.E-6,CRITERE='RELATIF',
    LIST_INST=LINST,
                 );
@@ -1161,7 +1177,7 @@ EVOLCHSF=DEFI_CHAR_SOL (
    COEF=1.E10, #,
    NOM_CHAM_INIT='ACCE',
    RESU_INIT=XXB,
-   NUME_DDL=NUMEDDL2,
+   NUME_DDL=NUMEDDLB,
    PRECISION=1.E-6,CRITERE='RELATIF',
    LIST_INST=LINST,
                 );

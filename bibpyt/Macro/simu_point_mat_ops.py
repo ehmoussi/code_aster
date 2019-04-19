@@ -69,13 +69,13 @@ def simu_point_mat_ops(
     if COMPORTEMENT:
         lcomp = COMPORTEMENT[0]
 
-    if SUPPORT != None:
+    if SUPPORT is not None:
         if SUPPORT == 'ELEMENT':
             itetra = 1
     if itetra == 0:
         if lcomp['DEFORMATION'] != 'PETIT':
             if 'GRAD_IMPOSE' in args:
-                if args['GRAD_IMPOSE'] != None:
+                if args['GRAD_IMPOSE'] is not None:
                     if lcomp['DEFORMATION'] != 'SIMO_MIEHE':
                         UTMESS('F', 'COMPOR2_22', valk=lcomp['DEFORMATION'])
                     itetra = 0
@@ -99,14 +99,14 @@ def simu_point_mat_ops(
             EPS = dict(EPSI_IMPOSE[0])
             ieps = 1
         if 'GRAD_IMPOSE' in args:
-            if args['GRAD_IMPOSE'] != None:
+            if args['GRAD_IMPOSE'] is not None:
                 FIJ = dict(args['GRAD_IMPOSE'][0])
                 igrd = 1
         if 'MATR_C1' in args:
-            if args['MATR_C1'] != None:
+            if args['MATR_C1'] is not None:
                 ic1c2 = 1
         if 'MATR_C2' in args:
-            if args['MATR_C2'] != None:
+            if args['MATR_C2'] is not None:
                 ic1c2 = 1
 
         motscles = {}
@@ -115,13 +115,13 @@ def simu_point_mat_ops(
                 motscles[i] = FIJ[i]
         elif ic1c2:
             if 'MATR_C1' in args:
-                if args['MATR_C1'] != None:
+                if args['MATR_C1'] is not None:
                     motscles['MATR_C1'] = args['MATR_C1']
             if 'MATR_C2' in args:
-                if args['MATR_C2'] != None:
+                if args['MATR_C2'] is not None:
                     motscles['MATR_C2'] = args['MATR_C2']
             if 'VECT_IMPO' in args:
-                if args['VECT_IMPO'] != None:
+                if args['VECT_IMPO'] is not None:
                     motscles['VECT_IMPO'] = args['VECT_IMPO']
         else:
             nbsig = 6
@@ -131,10 +131,10 @@ def simu_point_mat_ops(
                 inds = 0
                 inde = 0
                 if ieps:
-                    if EPS.get(ike) != None:
+                    if EPS.get(ike) is not None:
                         inde = 1
                 if isig:
-                    if SIG.get(iks) != None:
+                    if SIG.get(iks) is not None:
                         inds = 1
                 if inde * inds != 0:
                     UTMESS('F', 'COMPOR2_2', valk=iks)
@@ -146,17 +146,17 @@ def simu_point_mat_ops(
                     motscles[iks] = __fonczero
 #      Etat initial
         etatinit = 0
-        if SIGM_INIT != None:
+        if SIGM_INIT is not None:
             motscles['SIGM_INIT'] = SIGM_INIT
-        if EPSI_INIT != None:
+        if EPSI_INIT is not None:
             motscles['EPSI_INIT'] = EPSI_INIT
-        if VARI_INIT != None:
+        if VARI_INIT is not None:
             motscles['VARI_INIT'] = VARI_INIT
-        if NEWTON != None:
+        if NEWTON is not None:
             motscles['NEWTON'] = NEWTON
-        if CONVERGENCE != None:
+        if CONVERGENCE is not None:
             motscles['CONVERGENCE'] = CONVERGENCE
-        if MASSIF != None:
+        if MASSIF is not None:
             motscles['MASSIF'] = MASSIF
         if COMPORTEMENT:
             motscles['COMPORTEMENT'] = COMPORTEMENT
@@ -164,15 +164,15 @@ def simu_point_mat_ops(
         motscles['INCREMENT'] = INCREMENT
 
         if 'FORMAT_TABLE' in args:
-            if args['FORMAT_TABLE'] != None:
+            if args['FORMAT_TABLE'] is not None:
                 motscles['FORMAT_TABLE'] = args['FORMAT_TABLE']
 
         if 'OPER_TANGENT' in args:
-            if args['OPER_TANGENT'] != None:
+            if args['OPER_TANGENT'] is not None:
                 motscles['OPER_TANGENT'] = args['OPER_TANGENT']
 
         if 'NB_VARI_TABLE' in args:
-            if args['NB_VARI_TABLE'] != None:
+            if args['NB_VARI_TABLE'] is not None:
                 motscles['NB_VARI_TABLE'] = args['NB_VARI_TABLE']
 
         if ARCHIVAGE:
@@ -180,7 +180,7 @@ def simu_point_mat_ops(
 
             #     variables de commande
         if 'AFFE_VARC' in args:
-            if args['AFFE_VARC'] != None:
+            if args['AFFE_VARC'] is not None:
                 lvarc = args['AFFE_VARC']
                 nbvarc = len(lvarc)
                 lmotcle = []
@@ -231,9 +231,9 @@ def simu_point_mat_ops(
         self.DeclareOut('REPONSE', self.sd)
 
         Titre = 'CALC_POINT_MAT'
-        if ARCHIVAGE != None:
+        if ARCHIVAGE is not None:
 #         on ne prend en compte que ARCHIVAGE / LIST_INST
-            if ARCHIVAGE.get('LIST_INST') != None:
+            if ARCHIVAGE.get('LIST_INST') is not None:
                 __REP1 = CALC_POINT_MAT(
                     INFO=INFO, MATER=MATER, ANGLE=ANGLE, **motscles)
                 lr8 = ARCHIVAGE['LIST_INST']
@@ -260,7 +260,7 @@ def simu_point_mat_ops(
         SIG = {}
         MODELISATION = "3D"
         if 'MODELISATION' in args:
-            if args['MODELISATION'] != None:
+            if args['MODELISATION'] is not None:
                 MODELISATION = args['MODELISATION']
 
         if MODELISATION == "3D":
@@ -290,7 +290,7 @@ def simu_point_mat_ops(
         for index in range(nbsig):
             iks = CMP_SIG[index]
             ike = CMP_EPS[index]
-            if EPS.get(ike) != None and SIG[iks] != __fonczero:
+            if EPS.get(ike) is not None and SIG[iks] != __fonczero:
                 UTMESS('F', 'COMPOR2_3', valk=str(iks) + ' ' + str(ike))
 
 #     -- Definition du maillage
@@ -517,7 +517,7 @@ def simu_point_mat_ops(
 #     variables de commande
         mcvarc = []
         if 'AFFE_VARC' in args:
-            if args.get('AFFE_VARC') != None:
+            if args.get('AFFE_VARC') is not None:
                 lvarc = args['AFFE_VARC']
                 nbvarc = len(lvarc)
                 for ivarc in range(nbvarc):
@@ -699,7 +699,7 @@ def simu_point_mat_ops(
                         dico["NOM_VARC"] = "M_ACIER"
                     else:
                         dico["NOM_VARC"] = lvarc[ivarc]['NOM_VARC']
-                        if lvarc[ivarc].get('VALE_REF') != None:
+                        if lvarc[ivarc].get('VALE_REF') is not None:
                             dico["VALE_REF"] = lvarc[ivarc]['VALE_REF']
                     mcvarc.append(dico)
 #      -- Materiau et modele
@@ -725,7 +725,7 @@ def simu_point_mat_ops(
             etatinit = 1
             SIGINI = dict(SIGM_INIT[0])
             for i in list(SIGINI.keys()):
-                if SIGINI.get(i) != None:
+                if SIGINI.get(i) is not None:
                     LCSIG.append(i)
                     LVSIG.append(SIGINI[i])
 
@@ -845,7 +845,7 @@ def simu_point_mat_ops(
         motscles['NEWTON'] = NEWTON
 
         if 'RECH_LINEAIRE' in args:
-            if args.get('RECH_LINEAIRE') != None:
+            if args.get('RECH_LINEAIRE') is not None:
                 motscles['RECH_LINEAIRE'] = args['RECH_LINEAIRE']
 
         motscles['INCREMENT'] = INCREMENT
@@ -854,7 +854,7 @@ def simu_point_mat_ops(
             motscles['ARCHIVAGE'] = ARCHIVAGE
 
         if 'SUIVI_DDL' in args:
-            if args['SUIVI_DDL'] != None:
+            if args['SUIVI_DDL'] is not None:
                 motscles['SUIVI_DDL'] = args['SUIVI_DDL']
 
         if etatinit == 1:

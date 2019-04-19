@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -105,13 +105,13 @@ CARA_ELEM=OPER(nom="CARA_ELEM",sd_prod=cara_elem, op= 19,
                 regles = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut= 'f',typ= ma  ,validators= NoRepeat(),max= '**'),
                 GROUP_MA = SIMP(statut= 'f',typ= grma,validators= NoRepeat(),max= '**'),
-                b_maille = BLOC(condition = "MAILLE != None",
+                b_maille = BLOC(condition = "MAILLE is not None",
                     CARA = SIMP(statut= 'o',typ= 'TXM', min=2, max=4,
                         validators= NoRepeat() ,
                         fr= tr("R1, R2 sont des paramètres obligatoires"),
                         into= ("R1","R2","EP1","EP2") ),
                 ),
-                b_grma  = BLOC(condition = "GROUP_MA != None",
+                b_grma  = BLOC(condition = "GROUP_MA is not None",
                     CARA = SIMP(statut= 'o',typ= 'TXM', min=2, max= 4,
                         validators= NoRepeat(),
                         fr= tr("R_DEBUT, R_FIN sont des paramètres obligatoires"),

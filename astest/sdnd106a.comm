@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -108,7 +108,7 @@ PROJ_BASE(BASE=MODES,
                           _F(MATRICE=CO('K_GENERA'),
                              MATR_ASSE=K_ASSEMB,),),
           VECT_ASSE_GENE=_F(VECTEUR=CO('F_GENERA'),
-          VECT_ASSE=F_ASSEMB,),);
+          VECT_ASSE=F_ASSEMB, TYPE_VECT='FORC'),);
 
 
 OBSTA_F=DEFI_OBSTACLE(TYPE='PLAN_Z',);
