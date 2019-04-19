@@ -254,11 +254,11 @@ class SyntaxCheckerVisitor(object):
             nbMax = step.definition.get('max')
             if nbMax == "**":
                 nbMax = None
-            if nbMax != None and len(skwValue) > nbMax:
+            if nbMax is not None and len(skwValue) > nbMax:
                 debug_message2(step)
                 self.error(ValueError,
                            'At most {0} values are expected'.format(nbMax))
-            if nbMin != None and len(skwValue) < nbMin:
+            if nbMin is not None and len(skwValue) < nbMin:
                 debug_message2(step)
                 self.error(ValueError,
                            'At least {0} values are expected'.format(nbMin))
@@ -293,11 +293,11 @@ class SyntaxCheckerVisitor(object):
                         if not typeobj.checkInto(i, into):
                             self.error(ValueError, "Unexpected value: %s" % i)
 
-                    if valMax != None:
+                    if valMax is not None:
                         if not typeobj.checkMax(i, valMax):
                             self.error(ValueError, "Unexpected value: %s" % i)
 
-                    if valMin != None:
+                    if valMin is not None:
                         if not typeobj.checkMin(i, valMin):
                             self.error(ValueError, "Unexpected value: %s" % i)
 
@@ -315,11 +315,11 @@ class SyntaxCheckerVisitor(object):
                                "Unexpected value: {0!r}, must be in {1!r}"
                                    .format(i, step.definition["into"]))
             # val_min/val_max
-            if valMax != None and i > valMax:
+            if valMax is not None and i > valMax:
                 self.error(ValueError,
                            'Value must be smaller than {0}, {1} is not'
                                .format(valMax, i))
-            if valMin != None and i < valMin:
+            if valMin is not None and i < valMin:
                 self.error(ValueError,
                            'Value must be bigger than {0}, {1} is not'
                                .format(valMin, i))

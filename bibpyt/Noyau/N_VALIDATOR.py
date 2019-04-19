@@ -1301,7 +1301,7 @@ class CardVal(Valid):
 
     def valide_liste_partielle(self, liste_courante=None):
         validite = 1
-        if liste_courante != None:
+        if liste_courante is not None:
             if len(liste_courante) > self.max:
                 validite = 0
         return validite

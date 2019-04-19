@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,16 +30,16 @@ def calc_fonction_prod(self, DERIVE, EXTRACTION, INTEGRE, INVERSE, COMB, COMB_C,
    if args.get('__all__'):
        return (fonction_sdaster, fonction_c, nappe_sdaster)
 
-   if (INTEGRE     != None): return fonction_sdaster
-   if (DERIVE      != None): return fonction_sdaster
-   if (INVERSE     != None): return fonction_sdaster
-   if (COMB        != None):
+   if (INTEGRE     is not None): return fonction_sdaster
+   if (DERIVE      is not None): return fonction_sdaster
+   if (INVERSE     is not None): return fonction_sdaster
+   if (COMB        is not None):
       type_vale=AsType(COMB[0]['FONCTION'])
       for mcfact in COMB :
           if(AsType(mcfact['FONCTION'])!=type_vale):
              raise AsException("CALC_FONCTION/COMB : pas de types hétérogènes nappe/fonction")
       return type_vale
-   if (COMB_C      != None):
+   if (COMB_C      is not None):
       vale=COMB_C[0]['FONCTION']
       if(AsType(vale) == nappe_sdaster):
          for mcfact in COMB_C[1:] :
@@ -51,42 +51,42 @@ def calc_fonction_prod(self, DERIVE, EXTRACTION, INTEGRE, INVERSE, COMB, COMB_C,
              if(AsType(mcfact['FONCTION'])==nappe_sdaster):
                 raise AsException("CALC_FONCTION/COMB_C : pas de types hétérogènes nappe/fonction")
          return fonction_c
-   if (ENVELOPPE   != None): return AsType(ENVELOPPE[0]['FONCTION'])
-   if (FRACTILE    != None): return AsType(FRACTILE[0] ['FONCTION'])
-   if (MOYENNE    != None): return AsType(MOYENNE[0] ['FONCTION'])
-   if (EXTRACTION  != None): return fonction_sdaster
-   if (PROL_SPEC_OSCI   != None): return fonction_sdaster
-   if (SPEC_OSCI   != None):
+   if (ENVELOPPE   is not None): return AsType(ENVELOPPE[0]['FONCTION'])
+   if (FRACTILE    is not None): return AsType(FRACTILE[0] ['FONCTION'])
+   if (MOYENNE    is not None): return AsType(MOYENNE[0] ['FONCTION'])
+   if (EXTRACTION  is not None): return fonction_sdaster
+   if (PROL_SPEC_OSCI   is not None): return fonction_sdaster
+   if (SPEC_OSCI   is not None):
        if (SPEC_OSCI[0]['TYPE_RESU'] == "NAPPE"):
            return nappe_sdaster
        else:
-           if (SPEC_OSCI[0]['AMOR_REDUIT'] != None):
+           if (SPEC_OSCI[0]['AMOR_REDUIT'] is not None):
                if len(SPEC_OSCI[0]['AMOR_REDUIT']) == 1:
                    return fonction_sdaster
                else:
                    return nappe_sdaster
            else:
                return nappe_sdaster
-   if (DSP         != None): return fonction_sdaster
-   if (COMPOSE     != None): return fonction_sdaster
-   if (ASSE        != None): return fonction_sdaster
-   if (MULT        != None):
+   if (DSP         is not None): return fonction_sdaster
+   if (COMPOSE     is not None): return fonction_sdaster
+   if (ASSE        is not None): return fonction_sdaster
+   if (MULT        is not None):
       type_vale = AsType(MULT[0]['FONCTION'])
       for mcfact in MULT:
           if(AsType(mcfact['FONCTION']) != type_vale):
              raise AsException("CALC_FONCTION/MULT : pas de types hétérogènes nappe/fonction")
       return type_vale
-   if (FFT         != None):
+   if (FFT         is not None):
       vale=FFT[0]['FONCTION']
       if (AsType(vale) == fonction_sdaster )  : return fonction_c
       if (AsType(vale) == fonction_c) : return fonction_sdaster
-   if (INTERPOL_FFT   != None): return fonction_sdaster
-   if (CORR_ACCE   != None): return fonction_sdaster
-   if (COHERENCE   != None): return fonction_sdaster
-   if (LISS_ENVELOP!= None): return nappe_sdaster
-   if (REGR_POLYNOMIALE != None): return fonction_sdaster
-   if (PUISSANCE   != None): return AsType(PUISSANCE[0]['FONCTION'])
-   if (ABS         != None): return fonction_sdaster
+   if (INTERPOL_FFT   is not None): return fonction_sdaster
+   if (CORR_ACCE   is not None): return fonction_sdaster
+   if (COHERENCE   is not None): return fonction_sdaster
+   if (LISS_ENVELOP is not None): return nappe_sdaster
+   if (REGR_POLYNOMIALE is not None): return fonction_sdaster
+   if (PUISSANCE   is not None): return AsType(PUISSANCE[0]['FONCTION'])
+   if (ABS         is not None): return fonction_sdaster
    raise AsException("type de concept resultat non prevu")
 
 

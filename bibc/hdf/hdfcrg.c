@@ -31,10 +31,10 @@
 #include <hdf5.h>
 #endif
 
-ASTERINTEGER DEFPSS(HDFCRG, hdfcrg, ASTERINTEGER *idf, char *nomgp, STRING_SIZE lp,
+hid_t DEFPSS(HDFCRG, hdfcrg, hid_t *idf, char *nomgp, STRING_SIZE lp,
                char *nomgr, STRING_SIZE ln)
 {
-  ASTERINTEGER iret=-1;
+  hid_t iret=-1;
 #ifndef _DISABLE_HDF5
   hid_t  idgrp,idfic,lcpl_id,gcpl_id;     
   char *nomd;
@@ -65,7 +65,7 @@ ASTERINTEGER DEFPSS(HDFCRG, hdfcrg, ASTERINTEGER *idf, char *nomgp, STRING_SIZE 
   nomd[k+1] = '\0';
  
   if ((idgrp = H5Gcreate2(idfic, nomd, lcpl_id, gcpl_id, H5P_DEFAULT)) >= 0) 
-    iret = (ASTERINTEGER) idgrp;
+    iret = idgrp;
   free (nomd);
 #else
   CALL_UTMESS("F", "FERMETUR_3");

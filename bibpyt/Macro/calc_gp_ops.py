@@ -351,7 +351,7 @@ def calc_gp_ops(self, **args):
                 index1 = tabgp[i * nbcop:(i + 1) * nbcop].index(maxinst)
                 index = index1 + i * nbcop
                 tabmax[index] = 1
-                if GPMAX != None:
+                if GPMAX is not None:
                     tabinstmax.append(tabinst[index])
                     tabcopmax.append(tabcop[index])
                     tabenelmax.append(tabenel[index])
@@ -486,7 +486,7 @@ def calc_gp_ops(self, **args):
                 index1 = tabgp[i * nbcop:(i + 1) * nbcop].index(maxinst)
                 index = index1 + i * nbcop
                 tabmax[index] = 1
-                if GPMAX != None:
+                if GPMAX is not None:
                     tabinstmax.append(tabinst[index])
                     tabcopmax.append(tabcop[index])
                     tabenelmax.append(tabenel[index])
@@ -536,7 +536,7 @@ def calc_gp_ops(self, **args):
             index1 = tabgp[nbcoptot * i:nbcoptot * (i + 1)].index(maxinst)
             index = index1 + i * nbcoptot
             tabmax[index] = 1
-            if GPMAX != None:
+            if GPMAX is not None:
                 tabinstmax.append(tabinst[index])
                 tabcopmax.append(tabcop[index])
                 tabenelmax.append(tabenel[index])
@@ -557,7 +557,7 @@ def calc_gp_ops(self, **args):
                         _F(PARA='GP',        LISTE_R=tabgp,),
                         _F(PARA='MAX_INST',  LISTE_I=tabmax,),
                         ),)
-    if GPMAX != None:
+    if GPMAX is not None:
         tabgpmax = CREA_TABLE(LISTE=(
             _F(PARA='INST',      LISTE_R=tabinstmax),
             _F(PARA='ZONE',      LISTE_K=tabcopmax,),

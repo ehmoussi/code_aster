@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -129,47 +129,46 @@ VAL_CALC = [
     987.620724737,
     258254.976647,
     -987.620724738,
-    193362.497405,
-    193277.204068,
-    0.214569546833,
-    109607.390952,
-    109586.910695,
-    193359.428834,
-    193354.354763,
-    0.214386288541,
-    109680.33623,
-    109719.318724,
-    193811.355046,
-    112090.31528,
-    192737.320334,
-    112012.746727,
-    65102.1015554,
-    64975.5582369,
-    0.0714027581752,
-    110583.601656,
-    110570.552338,
-    65072.3020156,
-    65011.3611174,
-    0.0713704689803,
-    110679.657146,
-    110701.834818,
-    64565.2436612,
-    110661.358409,
-    64960.7180986,
-    111475.942005,
+    193309.34718944322,
+    193236.1982944456,
+    0.21448989316120362,
+    109628.06663640498,
+    109654.96937466106,
+    193341.4304983928,
+    193382.4747580303,
+    0.21432695146487973,
+    109651.85735800806,
+    109684.13219700608,
+    193802.79657961856,
+    112247.6215078358,
+    193331.08595208856,
+    111708.88217116825,
+    65111.998191356295,
+    65044.79439425379,
+    0.07145488718038014,
+    110641.99156057375,
+    110613.6596424306,
+    65084.97486958445,
+    65024.52261952133,
+    0.07138132965391189,
+    110686.44294776689,
+    110719.79339156173,
+    64587.4197578639,
+    110676.43688859518,
+    64921.238041692195,
+    111513.70555214328,
           ]
 ct = -1 
 
 for i in range(nbcalc) :
 
-   # on passe pas un string pour que l evaluation de la fonction se fasse a chaque pas
-   alpha = str(eval('alphaf[i]*pi/180.'))
+   alpha = alphaf[i]*pi/180.
 
    FISS[i]=DEFI_FISS_XFEM(MAILLAGE=MAILLAGE,
                           DEFI_FISS=_F(
                                        FORM_FISS  = 'SEGMENT',
-                                       PFON_ORIG  = (-A*cos(eval(alpha))/2,-A*sin(eval(alpha))/2, 0.),
-                                       PFON_EXTR  = ( A*cos(eval(alpha))/2, A*sin(eval(alpha))/2, 0.),
+                                       PFON_ORIG  = (-A*cos(alpha)/2,-A*sin(alpha)/2, 0.),
+                                       PFON_EXTR  = ( A*cos(alpha)/2, A*sin(alpha)/2, 0.),
                                        ),
                           TYPE_ENRI_FOND='GEOMETRIQUE',
                           NB_COUCHES=5,
@@ -193,8 +192,8 @@ for i in range(nbcalc) :
 
    # SOLUTION ANALYTIQUE (handbook tada p42)
    fab=1.0+0.128*(A/W)-0.288*(A/W)**2+1.525*(A/W)**3
-   K1REF=-PRES*sqrt(pi*A/2.)*fab*cos(eval(alpha))**2
-   K2REF=-PRES*sqrt(pi*A/2.)*fab*cos(eval(alpha))*sin(eval(alpha))
+   K1REF=-PRES*sqrt(pi*A/2.)*fab*cos(alpha)**2
+   K2REF=-PRES*sqrt(pi*A/2.)*fab*cos(alpha)*sin(alpha)
    GREF = (1-nu**2)/E*(K1REF**2+K2REF**2)
 
    for j in range(0,nbc) :

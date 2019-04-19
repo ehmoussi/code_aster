@@ -37,7 +37,7 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
     DEFI_GROUP = self.get_cmd('DEFI_GROUP')
 
     motscles = {}
-    if m['NOM_CMP'] != None:
+    if m['NOM_CMP'] is not None:
         motscles['NOM_CMP'] = m['NOM_CMP']
     else:
         motscles['TOUT_CMP'] = 'OUI'
@@ -58,7 +58,7 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
 
     # dictc=table (extraite de dictb) contenant uniquement des noeuds dans la
     # matière
-    if m['NOM_CMP'] != None:
+    if m['NOM_CMP'] is not None:
         dictc = getattr(dictb, m['NOM_CMP'][0]).NON_VIDE()
         lno_c2 = set(dictc.NOEUD.values())
     else:  # TOUT_CMP='OUI'
@@ -706,7 +706,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
 
     l_mode_meca_sans_modele = False
 
-    if RESULTAT != None:
+    if RESULTAT is not None:
         if 'NUME_ORDRE' in args:
             mcORDR['NUME_ORDRE'] = args['NUME_ORDRE']
         elif 'NUME_MODE' in args:
@@ -744,7 +744,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
         iret, ibid, l_mailla = aster.dismoi(
             'NOM_MAILLA', nomresu, 'RESULTAT', 'F')
 
-    elif CHAM_GD != None:
+    elif CHAM_GD is not None:
         mcORDR['TOUT_ORDRE'] = 'OUI'
         if MODELE is None:
             UTMESS('F', 'POST0_10')
@@ -755,7 +755,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
         n_cham = CHAM_GD.nom
         catagd = aster.getvectjev("&CATA.GD.NOMGD")
         desc = aster.getvectjev('%-19s.DESC' % n_cham)
-        if desc != None:
+        if desc is not None:
             nomgd = catagd[desc[0] - 1]
         else:
             celd = aster.getvectjev('%-19s.CELD' % n_cham)
@@ -930,10 +930,10 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     motscles['VIS_A_VIS'] = []
     if 'VIS_A_VIS' in args:
         for v in args['VIS_A_VIS']:
-            if v['GROUP_MA_1'] != None:
+            if v['GROUP_MA_1'] is not None:
                 motscles['VIS_A_VIS'].append(
                     _F(GROUP_MA_1=v['GROUP_MA_1'], TOUT_2='OUI'),)
-            elif v['MAILLE_1'] != None:
+            elif v['MAILLE_1'] is not None:
                 motscles['VIS_A_VIS'].append(
                     _F(MAILLE_1=v['MAILLE_1'], TOUT_2='OUI'),)
 
@@ -990,18 +990,18 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
             iocc = iocc + 1
             motscles = {}
             motscles['OPERATION'] = m['OPERATION']
-            if m['NOM_CMP'] != None:
+            if m['NOM_CMP'] is not None:
                 motscles['NOM_CMP'] = m['NOM_CMP']
-                if m['TRAC_NOR'] != None:
+                if m['TRAC_NOR'] is not None:
                     motscles['TRAC_NOR'] = m['TRAC_NOR']
-                elif m['TRAC_DIR'] != None:
+                elif m['TRAC_DIR'] is not None:
                     motscles['TRAC_DIR'] = m['TRAC_DIR']
                     motscles['DIRECTION'] = m['DIRECTION']
-            elif m['INVARIANT'] != None:
+            elif m['INVARIANT'] is not None:
                 motscles['INVARIANT'] = m['INVARIANT']
-            elif m['RESULTANTE'] != None:
+            elif m['RESULTANTE'] is not None:
                 motscles['RESULTANTE'] = m['RESULTANTE']
-            elif m['ELEM_PRINCIPAUX'] != None:
+            elif m['ELEM_PRINCIPAUX'] is not None:
                 motscles['ELEM_PRINCIPAUX'] = m['ELEM_PRINCIPAUX']
             else:
                 motscles['TOUT_CMP'] = 'OUI'
@@ -1020,7 +1020,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
                 groupe = newgrp
 
             # on definit l'intitulé
-            if m['INTITULE'] != None:
+            if m['INTITULE'] is not None:
                 intitl = m['INTITULE']
             elif m['TYPE'] in ('GROUP_NO', 'GROUP_MA'):
                 intitl = groupe

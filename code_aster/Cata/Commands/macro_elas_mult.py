@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,8 +32,8 @@ def macro_elas_mult_prod(self,NUME_DDL,CAS_CHARGE,**args ):
 
   if NUME_DDL is not None and isinstance(NUME_DDL, CO):
     self.type_sdprod(NUME_DDL,nume_ddl_sdaster)
-  if CAS_CHARGE[0]['NOM_CAS']      != None : return mult_elas
-  if CAS_CHARGE[0]['MODE_FOURIER'] != None : return fourier_elas
+  if CAS_CHARGE[0]['NOM_CAS']      is not None : return mult_elas
+  if CAS_CHARGE[0]['MODE_FOURIER'] is not None : return fourier_elas
   raise AsException("type de concept resultat non prevu")
 
 MACRO_ELAS_MULT=MACRO(nom="MACRO_ELAS_MULT",

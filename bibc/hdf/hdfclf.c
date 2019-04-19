@@ -28,11 +28,8 @@
 #ifndef _DISABLE_HDF5
 #include <hdf5.h>
 #endif
-#ifndef _DISABLE_MED
-#include "med.h"
-#endif
 
-ASTERINTEGER DEFP(HDFCLF, hdfclf, med_idt *idf)
+hid_t DEFP(HDFCLF, hdfclf, hid_t *idf)
 {
 #ifndef _DISABLE_HDF5
     hid_t idfic;

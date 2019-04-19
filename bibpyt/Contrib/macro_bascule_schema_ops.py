@@ -42,7 +42,7 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
     motscles = {}
     motscles['MODELE'] = MODELE
     motscles['CHAM_MATER'] = CHAM_MATER
-    if CARA_ELEM != None:
+    if CARA_ELEM is not None:
         motscles['CARA_ELEM'] = CARA_ELEM
 
     #

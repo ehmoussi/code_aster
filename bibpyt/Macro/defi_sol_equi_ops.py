@@ -271,7 +271,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
         # Possibilite d utiliser des masses penalisées :
         # lmassp ='OUI' ou 'NON'
       if dime == "2D":
-          if args.get('UNITE_TRAN_INIT') != None :
+          if args.get('UNITE_TRAN_INIT') is not None :
             ltranin = 'OUI'
             input = 'RA'
             lliaison = 'NON'
@@ -325,7 +325,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
     grma_subst = args['GROUP_MA_SUBSTR']
     grma_colon = args['GROUP_MA_COL']
-    #if args['GROUP_MA_LATE'] != None:
+    #if args['GROUP_MA_LATE'] is not None:
     #  grma_late = args['GROUP_MA_LATE']
     #else:
     grma_late = 'LATE'

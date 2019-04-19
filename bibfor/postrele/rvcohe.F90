@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ subroutine rvcohe(xdicmp, xdncmp, vcheff, i, ier)
     character(len=4) :: docu
     integer :: acheff, alneud, anumcp, anomcp, nbcmp
     integer :: nbgrpn, nbneud, grel, nbgrel, jceld, amod, mod
-    integer :: j, k, n1, ibid
+    integer :: j, k, n1, ibid, ngrn, iexi
     aster_logical :: chelok
     character(len=24), pointer :: grpn(:) => null()
 !
@@ -151,6 +151,16 @@ subroutine rvcohe(xdicmp, xdncmp, vcheff, i, ier)
                         nbret=n1)
             do k = 1, nbgrpn, 1
                 nomgrn = grpn(k)
+                iexi=0
+                ngrn=0
+                call jeexin(nmaich//'.GROUPENO', iexi)
+                if (iexi .eq. 0) then
+                    call utmess('F', 'POSTRELE_50', sk=nomgrn, si=i)
+                endif
+                call jelira(nmaich//'.GROUPENO', 'NUTIOC', ngrn)
+                if (ngrn .eq. 0) then
+                    call utmess('F', 'POSTRELE_50', sk=nomgrn, si=i)
+                endif
                 call jenonu(jexnom(nmaich//'.GROUPENO', nomgrn), n1)
                 if (n1 .eq. 0) then
                     call utmess('F', 'POSTRELE_50', sk=nomgrn, si=i)

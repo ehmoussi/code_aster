@@ -234,7 +234,7 @@ class ENTITE:
     def check_condition(self):
         """Vérifie l'attribut condition."""
         from .N_BLOC import block_utils
-        if self.condition != None:
+        if self.condition is not None:
             if type(self.condition) is not str:
                 self.cr.fatal(
                     _("L'attribut 'condition' doit être une chaine de caractères : %r"),
@@ -291,7 +291,7 @@ class ENTITE:
 
     def check_position(self):
         """Vérifie l'attribut position."""
-        if self.position != None:
+        if self.position is not None:
             # a priori, 'global_jdc' est aussi autorisée mais ça ne me semble
             # pas une bonne idée !
             self.cr.fatal(_("l'attribut 'position' n'est plus autorisé"))
@@ -299,7 +299,7 @@ class ENTITE:
 
     def check_defaut(self):
         """Vérifie l'attribut defaut."""
-        if self.defaut != None:
+        if self.defaut is not None:
             typeProto = TypeProtocol("type", typ=self.type)
             lval = listProto.adapt(self.defaut)
             for val in lval:

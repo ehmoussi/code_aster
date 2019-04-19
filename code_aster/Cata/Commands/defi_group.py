@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,11 +27,10 @@ def defi_group_prod(MAILLAGE,GRILLE,**args):
   if args.get('__all__'):
       return (maillage_sdaster, squelette, grille_sdaster, maillage_p_sdaster)
 
-  if ( MAILLAGE != None ) :
+  if MAILLAGE is not None:
      if AsType(MAILLAGE) == maillage_sdaster : return maillage_sdaster
      if AsType(MAILLAGE) == squelette : return squelette
-     if AsType(MAILLAGE) == maillage_p_sdaster : return maillage_p_sdaster
-  if ( GRILLE != None ) :
+  if GRILLE is not None:
      return grille_sdaster
   raise AsException("type de concept resultat non prevu")
 

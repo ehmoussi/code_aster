@@ -764,7 +764,7 @@ def post_endo_fiss_ops(self,
         if (OUVERTURE == 'OUI') and ('BORNE_MAX' not in list(dRECHERCHE.keys())):
             UTMESS('F', 'POST0_44')
 
-    if CHAM_GD != None:
+    if CHAM_GD is not None:
         build = 'champ'
         __ENDO = CHAM_GD
         inst = 1.
@@ -779,7 +779,7 @@ def post_endo_fiss_ops(self,
         nomresu = __RESUIN.nom
         dicResu = __RESUIN.LIST_PARA()
         dicVarAcc = __RESUIN.LIST_VARI_ACCES()
-        if args.get('NUME_ORDRE') != None:
+        if args.get('NUME_ORDRE') is not None:
             nume_ordre = args.get('NUME_ORDRE')
             if nume_ordre not in dicVarAcc['NUME_ORDRE']:
                 UTMESS('F', 'POST0_41')

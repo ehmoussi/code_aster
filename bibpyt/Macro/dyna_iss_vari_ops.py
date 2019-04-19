@@ -234,7 +234,7 @@ class GeneratorTRANS(Generator):
             self.liste_freq_sig.append(FREQ_INIT + FREQ_PAS * k)
         # si frequences de calcul donnees par l utilisateur
         FREQ_FIN = self.calc_params.get('FREQ_MAX')
-        if FREQ_FIN != None:
+        if FREQ_FIN is not None:
             if FREQ_FIN < FREQ_COUP:
                 text = ('FREQ_FIN =' + str(FREQ_FIN) + 'Hz < '
                         + 'FREQUENCE DE COUPURE ='

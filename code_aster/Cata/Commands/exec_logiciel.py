@@ -27,11 +27,11 @@ from code_aster.Cata.Commons import *
 def exec_logiciel_prod(self, SALOME, MAILLAGE, **args):
     if args.get('__all__'):
         return (None, maillage_sdaster)
-    if SALOME != None:
+    if SALOME is not None:
         if len(SALOME.get('NOM_PARA') or []) != len(SALOME.get('VALE') or []):
             raise AsException(tr("SALOME: NOM_PARA et VALE doivent avoir le "
                                  "même cardinal"))
-    if MAILLAGE != None:
+    if MAILLAGE is not None:
         return maillage_sdaster
     return None
 

@@ -59,7 +59,7 @@ def COURBES(listcourb, titre=' ', soustitre=' ', legx=' ', legy=' ', bornex=None
 
 # initialisation du trace de  courbes
 
-    if (fichier != None):
+    if (fichier is not None):
         graphe = xmgrace.Xmgr(10, ' -hardcopy -nosafe')
         print("Nombre de courbes  ", len(listcourb), " sur le fichier :", fichier)
 
@@ -70,7 +70,7 @@ def COURBES(listcourb, titre=' ', soustitre=' ', legx=' ', legy=' ', bornex=None
     graphe.Nouveau_graphe()
 
 # dimensionnement des axes
-    if bornex != None:
+    if bornex is not None:
         xmin = list(bornex)[0]
         xmax = list(bornex)[1]
         ctest1 = as_courbes.Courbe()
@@ -78,7 +78,7 @@ def COURBES(listcourb, titre=' ', soustitre=' ', legx=' ', legy=' ', bornex=None
         ctest1.y = [0.0, 0.0]
         graphe.Courbe(ctest1)
 
-    if borney != None:
+    if borney is not None:
         ymin = list(borney)[0]
         ymax = list(borney)[1]
         ctest2 = as_courbes.Courbe()
@@ -86,16 +86,16 @@ def COURBES(listcourb, titre=' ', soustitre=' ', legx=' ', legy=' ', bornex=None
         ctest2.y = [ymin, ymax]
         graphe.Courbe(ctest2)
 
-    if titre != None:
-        if soustitre != None:
+    if titre is not None:
+        if soustitre is not None:
             graphe.Titre(titre, soustitre)
         else:
             graphe.Titre(titre, ' ')
 
-    if legx != None:
+    if legx is not None:
         graphe.Axe_x(legx)
 
-    if legy != None:
+    if legy is not None:
         graphe.Axe_y(legy)
 
     k = 0
@@ -122,7 +122,7 @@ def COURBES(listcourb, titre=' ', soustitre=' ', legx=' ', legy=' ', bornex=None
         k = k + 1
         graphe.Send('REDRAW')
 
-    if (fichier != None):
+    if (fichier is not None):
         graphe.Sortie_EPS(fichier)
         graphe.Fermer()
     else:

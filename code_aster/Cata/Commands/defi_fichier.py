@@ -28,7 +28,7 @@ def DEFIC_prod(self,ACTION,UNITE,**args):
       return (None, entier)
 
   if ACTION == "ASSOCIER" or ACTION == "RESERVER":
-    if UNITE != None :
+    if UNITE is not None :
       return
     else :
       return entier
