@@ -22,7 +22,7 @@
 import os
 
 from Noyau.N_types import is_complex, is_sequence, is_str
-from Utilitai.TestResult import testPrinter
+from Utilitai.TestResult import TestResult
 
 epsi = 1e-15
 
