@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -377,10 +377,10 @@ BAMO1=DEFI_BASE_MODALE(RITZ=(_F(MODE_MECA=MODE1,
 NDDLGE1 = NUME_DDL_GENE( BASE= BAMO1, STOCKAGE= 'PLEIN',);
 
 VECGE1=PROJ_VECT_BASE(  BASE=BAMO1,  NUME_DDL_GENE=NDDLGE1,
-                            VECT_ASSE=VECAS1 );
+                            VECT_ASSE=VECAS1, TYPE_VECT='FORC' );
 
 VECGE2=PROJ_VECT_BASE(  BASE=BAMO1,  NUME_DDL_GENE=NDDLGE1,
-                            VECT_ASSE=VECAS2 );
+                            VECT_ASSE=VECAS2, TYPE_VECT='FORC' );
 
 MAEL1=MACR_ELEM_DYNA(  BASE_MODALE=BAMO1,
                        MATR_RIGI=MATR1,
@@ -834,7 +834,7 @@ TEST_RESU(RESU=(_F(INST=0.0,
 
 FIN();# coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify

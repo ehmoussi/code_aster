@@ -28,13 +28,10 @@
 #ifndef _DISABLE_HDF5
 #include <hdf5.h>
 #endif
-#ifndef _DISABLE_MED
-#include "med.h"
-#endif
 
-med_idt DEFS(HDFOPF, hdfopf, char *nomfic, STRING_SIZE ln)
+hid_t DEFS(HDFOPF, hdfopf, char *nomfic, STRING_SIZE ln)
 {
-  med_idt iret=-1;
+  hid_t iret=-1;
 #ifndef _DISABLE_HDF5
   hid_t idfic; 
   int k;
@@ -51,7 +48,7 @@ med_idt DEFS(HDFOPF, hdfopf, char *nomfic, STRING_SIZE ln)
   // désactive les impressions HDF dans stdout
   H5Eset_auto1(NULL,NULL);
   if ( (idfic = H5Fopen(nomf, H5F_ACC_RDONLY, H5P_DEFAULT)) >= 0) 
-    iret =  (med_idt) idfic;
+    iret =  idfic;
   free (nomf);
 #else
   CALL_UTMESS("F", "FERMETUR_3");

@@ -117,7 +117,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                         self, self.parent.g_context))
             else:
                 sd = self.get_sd_prod()
-                if sd != None and self.reuse is None:
+                if sd is not None and self.reuse is None:
                     # On ne nomme le concept que dans le cas de non reutilisation
                     # d un concept
                     sd.set_name(nom)
@@ -463,7 +463,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
             Ce travail est réalisé par le contexte supérieur (etape.parent)
             car dans certains cas, le concept ne doit pas etre fabriqué mais
             l'etape doit simplement utiliser un concept préexistant.
-                    - Cas 1 : etape.reuse != None : le concept est réutilisé
+                    - Cas 1 : etape.reuse is not None : le concept est réutilisé
                     - Cas 2 : l'étape appartient à une macro qui a déclaré un concept
                       de sortie qui doit etre produit par cette etape.
         """
@@ -500,7 +500,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
             etape.sdnom = sd.nom
             # pour l'ajouter au contexte de la macro
             self.g_context[sd.nom] = sd
-        elif etape.definition.reentrant[0] != 'n' and etape.reuse != None:
+        elif etape.definition.reentrant[0] != 'n' and etape.reuse is not None:
             # On est dans le cas d'une commande avec reutilisation d'un concept existant
             # get_sd_prod fait le necessaire : verifications, associations, etc. mais ne cree
             # pas un nouveau concept. Il retourne le concept reutilise
@@ -518,7 +518,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         else:
             # On est dans le cas de la creation d'un nouveau concept
             sd = etape.get_sd_prod()
-            if sd != None:
+            if sd is not None:
                 self.NommerSdprod(sd, nomsd)
         return sd
 
@@ -621,7 +621,7 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         """
         if type(self.definition.op_init) == types.FunctionType:
             self.definition.op_init(*(self, d))
-        if self.sd != None:
+        if self.sd is not None:
             d[self.sd.nom] = self.sd
         for co in self.sdprods:
             d[co.nom] = co

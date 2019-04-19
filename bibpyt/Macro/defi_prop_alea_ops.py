@@ -96,7 +96,7 @@ class Randomfield(object):
                        'LONG_CORR' : [],  'COORD' : None, 'XLISTE' : []}
         # XYZKeys
         liste_coord = []
-        if  kwargs.get('LONG_CORR_X') != None:
+        if  kwargs.get('LONG_CORR_X') is not None:
             self.dimx = kwargs.get('X_MAXI')-kwargs.get('X_MINI')
             self.Lcx = 0.5 * kwargs.get('LONG_CORR_X')   # the parameter of the Markov kernel is a=0.5*Lcorr
             cdict['RANGE'].append((kwargs.get('X_MINI'), kwargs.get('X_MAXI')))
@@ -107,7 +107,7 @@ class Randomfield(object):
             cdict['XLISTE'].append(xliste)
             liste_coord.append('X')
 
-        if  kwargs.get('LONG_CORR_Y') != None:
+        if  kwargs.get('LONG_CORR_Y') is not None:
             self.dimy = kwargs.get('Y_MAXI')-kwargs.get('Y_MINI')
             self.Lcy = 0.5 * kwargs.get('LONG_CORR_Y')
             cdict['RANGE'].append((kwargs.get('Y_MINI'), kwargs.get('Y_MAXI')))
@@ -118,7 +118,7 @@ class Randomfield(object):
             cdict['XLISTE'].append(yliste)
             liste_coord.append('Y')
 
-        if  kwargs.get('LONG_CORR_Z') != None:
+        if  kwargs.get('LONG_CORR_Z') is not None:
             self.dimz = kwargs.get('Z_MAXI')-kwargs.get('Z_MINI')
             self.Lcz = 0.5 * kwargs.get('LONG_CORR_Z')
             cdict['RANGE'].append((kwargs.get('Z_MINI'), kwargs.get('Z_MAXI')))
@@ -195,10 +195,10 @@ class Generator(object):
             vmax = vmax * 1.5
             v = np.arange(1.0, vmax, 0.01)
             veck = [  (1- Lc * vale * np.tan(0.5*vale)) * (Lc * vale + np.tan(0.5*vale))    for vale in v]
-            troots = self.find_roots(v, veck)   
+            troots = self.find_roots(v, veck)
         roots = troots[:nbmod]
         lamk = 2. * Lc * (1. + np.array(roots)**2 * Lc**2)**(-1)
-        print('NUMBER of ROOTS:', len(troots), 'RETAINED EIGENVALUES', nbmod)  
+        print('NUMBER of ROOTS:', len(troots), 'RETAINED EIGENVALUES', nbmod)
         phik =[]
         for (ii, vk) in enumerate(roots):
             if self.is_even(ii): # %even

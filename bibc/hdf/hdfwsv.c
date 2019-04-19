@@ -34,7 +34,7 @@
 #endif
 #include <stdlib.h>
 
-ASTERINTEGER DEFPSSSPSP(HDFWSV, hdfwsv, ASTERINTEGER *idf, char *nomg, STRING_SIZE lg,
+ASTERINTEGER DEFPSSSPSP(HDFWSV, hdfwsv, hid_t *idf, char *nomg, STRING_SIZE lg,
                         char *nomdts, STRING_SIZE ln, char *type, STRING_SIZE lt,
                         ASTERINTEGER *ltype, char *sv, STRING_SIZE toto, ASTERINTEGER *lsv)
 {

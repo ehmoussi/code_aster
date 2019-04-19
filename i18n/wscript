@@ -83,19 +83,22 @@ from waflib import Configure, TaskGen, Task, Errors, Logs
 
 def options(self):
     group = self.get_option_group('code_aster options')
-    group.add_option('--install-i18n', dest='install_i18n',
+    group.add_option('--disable-i18n', dest='enable_i18n',
+                    action='store_false', default=None,
+                    help='Disable I18N features')
+    group.add_option('--enable-i18n', dest='enable_i18n',
                     action='store_true', default=None,
-                    help='If the option is enabled, configure fails if a tool '
+                    help='Forces to fail if a tool '
                          'is missing to install or build the i18n files')
 
 def configure(self):
-    self.env['do_i18n_gettext'] = \
-        self.check_i18n_tool('msgfmt', 'MSGFMT') and \
-        self.check_i18n_tool('xgettext', 'XGETTEXT') and \
-        self.check_i18n_tool('msgmerge', 'MSGMERGE')
-    self.env['do_i18n_qtlinguist'] = \
-        self.check_i18n_tool('lrelease', 'LRELEASE', ['-version']) and \
-        self.check_i18n_tool('pylupdate4', 'PYLUPDATE', ['-version'])
+    self.env['do_i18n_gettext'] = (
+        self.check_i18n_tool('msgfmt', 'MSGFMT') and
+        self.check_i18n_tool('xgettext', 'XGETTEXT') and
+        self.check_i18n_tool('msgmerge', 'MSGMERGE'))
+    self.env['do_i18n_qtlinguist'] = (
+        self.check_i18n_tool('lrelease', 'LRELEASE', ['-version']) and
+        self.check_i18n_tool('pylupdate4', 'PYLUPDATE', ['-version']))
 
 def build(self):
     self(
@@ -118,21 +121,25 @@ def update_i18n(self):
 @Configure.conf
 def check_i18n_tool(self, program, varname, argtest=['-h']):
     """Check a tool for a i18n program and store it using varname"""
+    opts = self.options
     self.start_msg('Check for %s programs' % program)
     try:
         self.env.stash()
+        if opts.enable_i18n == False:
+            reason = "i18n disabled"
+            raise Errors.ConfigurationError(reason)
         reason = 'not found'
         self.find_program(program, var=varname)
         # check the tool works, at least it is callable
         try:
-            res = self.cmd_and_log(self.env[varname] + argtest)
+            self.cmd_and_log(self.env[varname] + argtest)
         except Errors.WafError:
             reason = '{} found but does not work!'.format(self.env[varname])
             raise Errors.ConfigurationError
     except Errors.ConfigurationError:
         self.env.revert()
         self.end_msg(reason, 'YELLOW')
-        if self.options.install_i18n is True:
+        if opts.enable_i18n is True:
             raise
     else:
         self.end_msg(self.env[varname])

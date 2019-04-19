@@ -32,7 +32,7 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
 
     INST = None
     if 'INST' in args:
-        if args['INST'] != None:
+        if args['INST'] is not None:
             INST = args['INST']
 
     b_type_resu_cham_no = False
@@ -116,7 +116,7 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
         b_inst_initial = True
 
     inst_coincident = False
-    if (INST != None):
+    if (INST is not None):
         if (INST < instp):
             UTMESS('F', 'CHAINAGE_6', valr=[INST], valk=[RESU_HYDR.nom])
         if abs(instp - INST) < prec:

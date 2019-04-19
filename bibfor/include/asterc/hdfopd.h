@@ -23,6 +23,6 @@ interface
         hid_t :: i
         character(len=*) :: knom1
         character(len=*) :: knom2
-        integer :: hdfopd
+        hid_t :: hdfopd
     end function hdfopd
 end interface

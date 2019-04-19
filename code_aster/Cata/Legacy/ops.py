@@ -68,13 +68,13 @@ def commun_DEBUT_POURSUITE(jdc, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, 
     jdc.set_par_lot(PAR_LOT, user_value=True)
     jdc.impr_macro = int(IMPR_MACRO == 'OUI')
     jdc.jxveri = int(
-        CODE != None or (DEBUG != None and DEBUG['JXVERI'] == 'OUI'))
-    jdc.sdveri = int(DEBUG != None and DEBUG['SDVERI'] == 'OUI')
+        CODE is not None or (DEBUG is not None and DEBUG['JXVERI'] == 'OUI'))
+    jdc.sdveri = int(DEBUG is not None and DEBUG['SDVERI'] == 'OUI')
     jdc.fico = None
     jdc.sd_checker = CheckLog()
     jdc.info_level = INFO
-    jdc.hist_etape = (DEBUG != None and DEBUG['HIST_ETAPE'] == 'OUI')
-    if CODE != None:
+    jdc.hist_etape = (DEBUG is not None and DEBUG['HIST_ETAPE'] == 'OUI')
+    if CODE is not None:
         jdc.fico = 'TEST'
     if aster_exists:
         if LANG:
@@ -413,9 +413,9 @@ def _detr_list_co(self, context):
             assert type(nom) in (
                 str, str), 'On attend une chaine de caractères : %s' % nom
             if len(nom.strip()) <= 8:
-                if self.jdc.sds_dict.get(nom) != None:
+                if self.jdc.sds_dict.get(nom) is not None:
                     list_co.add(self.jdc.sds_dict[nom])
-                elif context.get(nom) != None:
+                elif context.get(nom) is not None:
                     list_co.add(context[nom])
             # else uniquement destruction des objets jeveux
     return list_co
@@ -502,9 +502,9 @@ def build_formule(self, d):
                                     " : %s" % repr(para))
     if self.sd is None:
         return
-    if VALE != None:
+    if VALE is not None:
         texte = ''.join(VALE.splitlines())
-    elif VALE_C != None:
+    elif VALE_C is not None:
         texte = ''.join(VALE_C.splitlines())
     self.sd.setFormule(NOM_PARA, texte.strip())
 

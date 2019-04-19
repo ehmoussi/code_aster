@@ -72,7 +72,7 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
   initial = False
   formerTangent = False
 
-  if ETAT_INIT != None:
+  if ETAT_INIT is not None:
     unite = ETAT_INIT[0]['UNITE']
     nomCham = ETAT_INIT[0]['NOM_CHAM_MED']
 
@@ -154,7 +154,7 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
       NEWTON       = _F(MATRICE='TANGENTE', PAS_MINI_ELAS=2, REAC_ITER_ELAS=0),    # secant matrix
       )
 
-    if CARA_ELEM != None:
+    if CARA_ELEM is not None:
       para['CARA_ELEM'] = CARA_ELEM
 
     __UNLOAD = STAT_NON_LINE(**para)
@@ -212,7 +212,7 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
       ARCHIVAGE    = _F(INST=0),
       )
 
-    if CARA_ELEM != None: para['CARA_ELEM'] = CARA_ELEM
+    if CARA_ELEM is not None: para['CARA_ELEM'] = CARA_ELEM
 
     __INIT = STAT_NON_LINE(**para)
 
@@ -278,7 +278,7 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
         NEWTON       = _F(MATRICE='TANGENTE', REAC_ITER=1),
         ARCHIVAGE    = _F(INST=0),
         )
-      if CARA_ELEM != None: para['CARA_ELEM'] = CARA_ELEM
+      if CARA_ELEM is not None: para['CARA_ELEM'] = CARA_ELEM
 
 
       try:
@@ -341,7 +341,7 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
     NEWTON       =_F(MATRICE='TANGENTE', REAC_ITER=1, REAC_ITER_ELAS=0, PAS_MINI_ELAS=elasInc),
     )
 
-  if CARA_ELEM != None: para['CARA_ELEM'] = CARA_ELEM
+  if CARA_ELEM is not None: para['CARA_ELEM'] = CARA_ELEM
 
   if initial:
     if formerTangent:
@@ -357,7 +357,7 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
   # 6. Impression des résultats au format MED
   # -------------------------------------------------------------
 
-  if IMPR != None:
+  if IMPR is not None:
     unite = IMPR[0]['UNITE']
     filtre = IMPR[0]['FILTRE']
 
@@ -440,7 +440,7 @@ def Extract(COMPORTEMENT, baseField, cplField=None, **components):
     cplCmps  = []
 
     lawName = compor['RELATION']
-    if cplField != None and lawName in list(components.keys()):
+    if cplField is not None and lawName in list(components.keys()):
       for cmpName in components[lawName]:
         pos = viNames.index(cmpName)
         nbr = 'V%d' % (pos+1)

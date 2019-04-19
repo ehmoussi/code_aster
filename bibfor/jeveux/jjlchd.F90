@@ -44,8 +44,8 @@ subroutine jjlchd(id, ic, idfic, idts, ngrp)
 #include "asterfort/jjlide.h"
 #include "asterfort/jjlihd.h"
 #include "asterfort/utmess.h"
-    integer :: id, ic, idts
-    hid_t :: idfic
+    integer :: id, ic
+    hid_t :: idfic, idts
     character(len=*) :: ngrp
 ! ----------------------------------------------------------------------
     integer :: lk1zon, jk1zon, liszon, jiszon
@@ -86,11 +86,12 @@ subroutine jjlchd(id, ic, idfic, idts, ngrp)
     character(len=32) :: nomo, ngrc, d32
     character(len=8) :: nrep(2)
     character(len=1) :: genri, typei, typeb
-    integer :: itab(1), ida, jctab, nbob, ido, idgr, iconv
+    integer :: itab(1), jctab, nbob, iconv
     integer :: iadmi, ltypi, lonoi, ltypb, lon
-    integer :: ibacol, iret, k, ix, ixiadd, ixiadm, ixmarq, ixdeso, idgc
-    integer :: ibiadm, ibmarq, iblono, idt1, idt2, nbval, kitab, ixlono
+    integer :: ibacol, iret, k, ix, ixiadd, ixiadm, ixmarq, ixdeso
+    integer :: ibiadm, ibmarq, iblono, nbval, kitab, ixlono
     integer :: iadyn
+    hid_t :: idgr, idgc, idt1, idt2, ido, ida
     data             nrep / 'T_HCOD' , 'T_NOM' /
     data             d32 /'$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'/
 ! DEB ------------------------------------------------------------------

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ def dyna_iss_vari_prod(self, EXCIT_SOL,**args):
    if args.get('__all__'):
        return (tran_gene, interspectre)
 
-   if EXCIT_SOL !=None :
+   if EXCIT_SOL is not None :
        return tran_gene
    else:
       return  interspectre

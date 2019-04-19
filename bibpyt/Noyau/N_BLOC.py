@@ -117,7 +117,7 @@ class BLOC(N_ENTITE.ENTITE):
         dico = {}
         dico.update(block_utils(dico))
         dico.update(dict)
-        if self.condition != None:
+        if self.condition is not None:
             try:
                 test = eval(self.condition, globs, dico)
                 return test

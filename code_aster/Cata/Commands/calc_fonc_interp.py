@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ def calc_fonc_interp_prod(FONCTION, NOM_PARA_FONC, **args):
    elif AsType(FONCTION) == formule_c:
       return fonction_c
    elif AsType(FONCTION) == formule:
-      if NOM_PARA_FONC != None:
+      if NOM_PARA_FONC is not None:
          return nappe_sdaster
       return fonction_sdaster
    raise AsException("type de concept resultat non prevu")

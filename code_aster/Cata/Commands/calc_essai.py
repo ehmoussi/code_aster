@@ -47,11 +47,11 @@ def calc_essai_prod(self,RESU_IDENTIFICATION,
                 [None, interspectre],
                 [None] + list(MTYPES.values()))
 
-    if RESU_IDENTIFICATION != None:
+    if RESU_IDENTIFICATION is not None:
         for res in RESU_IDENTIFICATION:
             self.type_sdprod(res['TABLE'],interspectre)
 
-    if RESU_MODIFSTRU != None:
+    if RESU_MODIFSTRU is not None:
         for res in RESU_MODIFSTRU:
             for mc, typ in list(MTYPES.items()):
                 if res[mc]:

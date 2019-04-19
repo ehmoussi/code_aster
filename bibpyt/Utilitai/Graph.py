@@ -134,9 +134,9 @@ class Graph(object):
         bounding box +/- avec une 'marge'*(Max-Min)/2.
         x0,x1 permettent de modifier la bb.
         """
-        if x0 != None:
+        if x0 is not None:
             self.BBXmin = min([self.BBXmin, x0])
-        if x1 != None:
+        if x1 is not None:
             self.BBXmax = max([self.BBXmax, x1])
 
         dx = max(self.BBXmax - self.BBXmin, 0.01 * self.BBXmax)
@@ -153,9 +153,9 @@ class Graph(object):
         bounding box +/- avec une 'marge'*(Max-Min)/2.
         y0,y1 permettent de modifier la bb.
         """
-        if y0 != None:
+        if y0 is not None:
             self.BBYmin = min([self.BBYmin, y0])
-        if y1 != None:
+        if y1 is not None:
             self.BBYmax = max([self.BBYmax, y1])
 
         dy = max(self.BBYmax - self.BBYmin, 0.01 * self.BBYmax)
@@ -301,9 +301,9 @@ class Graph(object):
             kargs = self.LastTraceArgs.copy()
             if FORMAT is None:
                 FORMAT = self.LastTraceFormat
-            if FICHIER != None:
+            if FICHIER is not None:
                 kargs['FICHIER'] = FICHIER
-            if dform != None:
+            if dform is not None:
                 kargs['dform'] = dform
             if opts != {}:
                 kargs['opts'] = opts
@@ -369,7 +369,7 @@ class TraceGraph:
             self.NomFich = [None] * 2
         self.Fich = []
         for ff in self.NomFich:
-            if ff != None:
+            if ff is not None:
                 self.Fich.append(open(ff, fmod))
             else:
                 self.Fich.append(sys.stdout)
@@ -408,7 +408,7 @@ class TraceGraph:
             'formR': '%12.5E',  # réels
             'formI': '%12d'     # entiers
         }
-        if dform != None and type(dform) == dict:
+        if dform is not None and type(dform) == dict:
             self.DicForm.update(dform)
 
         # let's go
@@ -1190,9 +1190,9 @@ class TraceMatplotlib(TraceGraph):
             ax1.set_yscale('log')
 
         plt.title(g.Titre[0], fontsize=32)
-        if g.Min_X!=None and g.Max_X!=None:
+        if g.Min_X is not None and g.Max_X is not None:
             plt.xlim([g.Min_X,g.Max_X])
-        if g.Min_Y!=None and g.Max_Y!=None:
+        if g.Min_Y is not None and g.Max_Y is not None:
             plt.ylim([g.Min_Y,g.Max_Y])
         plt.xlabel(g.Legende_X, fontsize=32)
         plt.ylabel(g.Legende_Y, fontsize=32)
@@ -1344,31 +1344,31 @@ def IniGrace(fich):
         for line in fpre:
             ikeep = True
             mat = re.search(r'@target g[0-9]+\.s([0-9]+)', line)
-            if mat != None and int(mat.group(1)) > ns:
+            if mat is not None and int(mat.group(1)) > ns:
                 ns = int(mat.group(1))
             mat = re.search(r'@[ ]+world[ ]+xmin[ ]+([\-\+\.0-9eEdD]+)', line)
-            if mat != None:
+            if mat is not None:
                 try:
                     x0 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
             mat = re.search(r'@[ ]+world[ ]+xmax[ ]+([\-\+\.0-9eEdD]+)', line)
-            if mat != None:
+            if mat is not None:
                 try:
                     x1 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
             mat = re.search(r'@[ ]+world[ ]+ymin[ ]+([\-\+\.0-9eEdD]+)', line)
-            if mat != None:
+            if mat is not None:
                 try:
                     y0 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
             mat = re.search(r'@[ ]+world[ ]+ymax[ ]+([\-\+\.0-9eEdD]+)', line)
-            if mat != None:
+            if mat is not None:
                 try:
                     y1 = float(mat.group(1))
                     ikeep = False

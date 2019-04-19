@@ -68,7 +68,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
     def valid_sdnom(self, cr):
         """ Cette methode teste la validite du nom du concept produit par l'etape """
         valid = 1
-        if self.sd.nom != None:
+        if self.sd.nom is not None:
             if self.jdc and self.jdc.definition.code == 'ASTER' and len(self.sd.nom) > 8:
                 # le nom de la sd doit avoir une longueur <= 8 caractères pour
                 # ASTER

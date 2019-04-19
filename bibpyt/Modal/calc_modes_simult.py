@@ -42,7 +42,7 @@ def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args)
         type_vp = 'FREQ'
         matrices['MATR_RIGI'] = args['MATR_RIGI']
         matrices['MATR_MASS'] = args['MATR_MASS']
-        if args['MATR_AMOR'] != None:
+        if args['MATR_AMOR'] is not None:
             matrices['MATR_AMOR'] = args['MATR_AMOR']
 
     elif TYPE_RESU == 'MODE_FLAMB':
@@ -70,22 +70,22 @@ def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args)
     if OPTION == 'CENTRE':
         motcles_calc_vp[type_vp] = calc_vp[type_vp]
         if type_vp == 'FREQ':
-            if calc_vp['AMOR_REDUIT'] != None:
+            if calc_vp['AMOR_REDUIT'] is not None:
                 motcles_calc_vp['AMOR_REDUIT'] = calc_vp['AMOR_REDUIT']
         motcles_calc_vp[nmax_vp] = calc_vp[nmax_vp]
 
     if OPTION == 'BANDE':
         motcles_calc_vp[type_vp] = calc_vp[type_vp]
-        if calc_vp['TABLE_'+type_vp] != None:
+        if calc_vp['TABLE_'+type_vp] is not None:
             motcles_calc_vp['TABLE_'+type_vp] = calc_vp['TABLE_'+type_vp]
 
     motcles_calc_vp['SEUIL_' + type_vp] = calc_vp['SEUIL_' + type_vp]
 
-    if SOLVEUR_MODAL['DIM_SOUS_ESPACE'] != None:
+    if SOLVEUR_MODAL['DIM_SOUS_ESPACE'] is not None:
         motcles_calc_vp['DIM_SOUS_ESPACE'] = SOLVEUR_MODAL['DIM_SOUS_ESPACE']
-    if SOLVEUR_MODAL['COEF_DIM_ESPACE'] != None:
+    if SOLVEUR_MODAL['COEF_DIM_ESPACE'] is not None:
         motcles_calc_vp['COEF_DIM_ESPACE'] = SOLVEUR_MODAL['COEF_DIM_ESPACE']
-    if SOLVEUR_MODAL['APPROCHE'] != None:
+    if SOLVEUR_MODAL['APPROCHE'] is not None:
         motcles_calc_vp['APPROCHE'] = SOLVEUR_MODAL['APPROCHE']
 
     motcles['CALC_' + type_vp] = _F(OPTION=OPTION,
@@ -101,48 +101,48 @@ def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args)
     motcles_solveur_modal['METHODE'] = methode
 
     if methode == 'TRI_DIAG':
-        if SOLVEUR_MODAL['NMAX_ITER_ORTHO'] != None:
+        if SOLVEUR_MODAL['NMAX_ITER_ORTHO'] is not None:
             motcles_solveur_modal[
                 'NMAX_ITER_ORTHO'] = SOLVEUR_MODAL['NMAX_ITER_ORTHO']
-        if SOLVEUR_MODAL['PREC_ORTHO'] != None:
+        if SOLVEUR_MODAL['PREC_ORTHO'] is not None:
             motcles_solveur_modal[
                 'PREC_ORTHO'] = SOLVEUR_MODAL['PREC_ORTHO']
-        if SOLVEUR_MODAL['PREC_LANCZOS'] != None:
+        if SOLVEUR_MODAL['PREC_LANCZOS'] is not None:
             motcles_solveur_modal[
                 'PREC_LANCZOS'] = SOLVEUR_MODAL['PREC_LANCZOS']
-        if SOLVEUR_MODAL['NMAX_ITER_QR'] != None:
+        if SOLVEUR_MODAL['NMAX_ITER_QR'] is not None:
             motcles_solveur_modal[
                 'NMAX_ITER_QR'] = SOLVEUR_MODAL['NMAX_ITER_QR']
-        if SOLVEUR_MODAL['MODE_RIGIDE'] != None:
+        if SOLVEUR_MODAL['MODE_RIGIDE'] is not None:
             if SOLVEUR_MODAL['MODE_RIGIDE'] == 'OUI':
                 motcles['OPTION'] = 'MODE_RIGIDE'
             else:
                 motcles['OPTION'] = 'SANS'
     elif methode == 'JACOBI':
-        if SOLVEUR_MODAL['NMAX_ITER_BATHE'] != None:
+        if SOLVEUR_MODAL['NMAX_ITER_BATHE'] is not None:
             motcles_solveur_modal[
                 'NMAX_ITER_BATHE'] = SOLVEUR_MODAL['NMAX_ITER_BATHE']
-        if SOLVEUR_MODAL['PREC_BATHE'] != None:
+        if SOLVEUR_MODAL['PREC_BATHE'] is not None:
             motcles_solveur_modal[
                 'PREC_BATHE'] = SOLVEUR_MODAL['PREC_BATHE']
-        if SOLVEUR_MODAL['NMAX_ITER_JACOBI'] != None:
+        if SOLVEUR_MODAL['NMAX_ITER_JACOBI'] is not None:
             motcles_solveur_modal[
                 'NMAX_ITER_JACOBI'] = SOLVEUR_MODAL['NMAX_ITER_JACOBI']
-        if SOLVEUR_MODAL['PREC_JACOBI'] != None:
+        if SOLVEUR_MODAL['PREC_JACOBI'] is not None:
             motcles_solveur_modal[
                 'PREC_JACOBI'] = SOLVEUR_MODAL['PREC_JACOBI']
     elif methode == 'SORENSEN':
-        if SOLVEUR_MODAL['NMAX_ITER_SOREN'] != None:
+        if SOLVEUR_MODAL['NMAX_ITER_SOREN'] is not None:
             motcles_solveur_modal[
                 'NMAX_ITER_SOREN'] = SOLVEUR_MODAL['NMAX_ITER_SOREN']
-        if SOLVEUR_MODAL['PARA_ORTHO_SOREN'] != None:
+        if SOLVEUR_MODAL['PARA_ORTHO_SOREN'] is not None:
             motcles_solveur_modal[
                 'PARA_ORTHO_SOREN'] = SOLVEUR_MODAL['PARA_ORTHO_SOREN']
-        if SOLVEUR_MODAL['PREC_SOREN'] != None:
+        if SOLVEUR_MODAL['PREC_SOREN'] is not None:
             motcles_solveur_modal[
                 'PREC_SOREN'] = SOLVEUR_MODAL['PREC_SOREN']
     elif methode == 'QZ':
-        if SOLVEUR_MODAL['TYPE_QZ'] != None:
+        if SOLVEUR_MODAL['TYPE_QZ'] is not None:
             motcles_solveur_modal['TYPE_QZ'] = SOLVEUR_MODAL['TYPE_QZ']
 
     motcles.update(motcles_solveur_modal)
@@ -178,10 +178,10 @@ def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args)
 
     #
 
-    if args['STOP_BANDE_VIDE'] != None:
+    if args['STOP_BANDE_VIDE'] is not None:
         motcles['STOP_BANDE_VIDE'] = args['STOP_BANDE_VIDE']
 
-    if TITRE != None:
+    if TITRE is not None:
         motcles['TITRE'] = TITRE
 
     modes = MODE_ITER_SIMULT(TYPE_RESU=TYPE_RESU,

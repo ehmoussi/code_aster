@@ -36,7 +36,7 @@ def defi_list_freq_ops(self, **args):
     # 1. Construction de la liste des fréquences "de base"
     motscle = {}
     for key in args:
-        if args[key] != None:
+        if args[key] is not None:
             motscle[key] = args[key]
 
     __co_l_freq0 = DEFI_LIST_REEL(**motscle)

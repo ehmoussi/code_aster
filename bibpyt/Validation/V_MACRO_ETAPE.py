@@ -101,7 +101,7 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
                 # on retourne simplement l'indicateur valid
                 return valid
 
-            if self.sd != None:
+            if self.sd is not None:
                 valid = valid * self.valid_sdnom(cr)
 
             if self.definition.reentrant[0] == 'n' and self.reuse:

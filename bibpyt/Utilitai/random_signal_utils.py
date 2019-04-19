@@ -28,7 +28,7 @@ DSP2ACCE1D        ---      generation of trajectories of a stationary Gaussian p
 gene_traj_gauss_evol1D ---      generation of trajectories of a non stationary Gaussian process
 calc_dsp_KT            ---      construct KT PSD
 calc_dsp_FR            ---      construct rational PSD
-acce_filtre_CP         ---       high pass filter for seismic signals 
+acce_filtre_CP         ---       high pass filter for seismic signals
 DSP2SRO                ---       identify PSD from given response spectrum
 SRO2DSP                ---      determine response spectrum for a given PSD
 Acce2SRO               ---      calculate response spectrum of a seismic signal
@@ -211,7 +211,7 @@ def dsp_filtre_CP(f_in, fcorner, amoc=1.0):
 
 def calc_phase_delay(t, Xt, phase_data):
     # ---------------------------------------------------------
-    # IN : 1D signal Xt, phase delay data dt =dx/Vs, coordinates of N points 
+    # IN : 1D signal Xt, phase delay data dt =dx/Vs, coordinates of N points
     # OUT: ND signal with delay
     # ---------------------------------------------------------
     noe_interf = phase_data['NOEUDS_INTERF']
@@ -228,7 +228,7 @@ def calc_phase_delay(t, Xt, phase_data):
     X_out = []
     for line  in noe_interf:
         Xtv = list(Xt)
-        coord  = NP.array(line) - noe_refe 
+        coord  = NP.array(line) - noe_refe
         delay = 1. / Vs * NP.dot(NP.array(direction), coord)
         if delay < 0.0 :
             UTMESS('F', 'SEISME_78')
@@ -238,13 +238,13 @@ def calc_phase_delay(t, Xt, phase_data):
             Nphase = int(delay/dt)
             for ii in range(Nphase):
                 Xtv.insert(0, 0.0)
-                Xtv.pop()            
+                Xtv.pop()
         else :
             Xtv = [0.0] * len(Xtv)
             print('ATTENTION : le délai de phase est supérieur à la durée du signal')
 
         X_out.append(Xtv)
-   
+
     return X_out
 
 
@@ -332,7 +332,7 @@ def f_phase_forte(ta, acce, p1, p2):
     fract = cumener / ener
     n1 = NP.searchsorted(fract, p1)
     n2 = NP.searchsorted(fract, p2)
-    return n1, n2 
+    return n1, n2
 
 
 def f_ENER_qt(ta, acce, n1, n2):
@@ -600,7 +600,7 @@ def itersim_SRO(self, FONC_DSP, NB_TIRAGE=1, **SRO_args):
         f_acce = t_fonction(
             self.sampler.liste_temps, acce, para=self.modulator.para_fonc_modul)
         l_acce = [f_acce]
-        f_sroi = ACCE2SROM(self, f_acce, amort, freq_sro, 2, 
+        f_sroi = ACCE2SROM(self, f_acce, amort, freq_sro, 2,
                                  SRO_args['METHODE_SRO'])
         valesro = f_sroi.vale_y
 
@@ -613,7 +613,7 @@ def itersim_SRO(self, FONC_DSP, NB_TIRAGE=1, **SRO_args):
                 acce = acce_filtre_CP(acce, dt, self.FREQ_FILTRE)
             f_acce = t_fonction(
                 self.sampler.liste_temps, acce, para=self.modulator.para_fonc_modul)
-            f_sroi = ACCE2SROM(self, f_acce, amort, freq_sro, 2, 
+            f_sroi = ACCE2SROM(self, f_acce, amort, freq_sro, 2,
                                      SRO_args['METHODE_SRO'])
             liste_valesro.append(f_sroi.vale_y)
         if SRO_args['TYPE_ITER'] == 'SPEC_MEDIANE':
@@ -747,7 +747,7 @@ def SRO2DSP(FREQ_COUP, DUREE_PHASE_FORTE, FONC_SPEC, AMORT, FMIN, NORME, PAS=Non
 #      dsp_p= DSP_min/ wmin
     ii = 0
     while freqi < wmax:
-        if PAS != None:
+        if PAS is not None:
             freqi = freqi + PAS * 2. * pi
         else:
             if ii < len(LIST_FREQ):
@@ -988,10 +988,10 @@ def corrcoefmodel(Period, f_beta=None):
     # Le modele de Baker est defini pour  max(Periods)<=10.
 
 
-    if f_beta != None:
+    if f_beta is not None:
         if min(f_beta.vale_x) > 0.1:
-            UTMESS('F', 'SEISME_82') 
-        else : 
+            UTMESS('F', 'SEISME_82')
+        else :
             f_beta = f_beta.evalfonc(1. / Periods)
             vale_beta = f_beta.vale_y
 
@@ -1017,7 +1017,7 @@ def corrcoefmodel(Period, f_beta=None):
             else:
                 C4 = C1 + 0.5 * (sqrt(C3) - C3) * (1. + cos(pi * Tmin / 0.109))
                 Mat_Eps[ii, jj] = C4
-            if f_beta != None:
+            if f_beta is not None:
                 Mat_Eps[ii, jj] = Mat_Eps[
                     ii, jj] * vale_beta[ii] * vale_beta[jj]
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -245,7 +245,7 @@ PROJ_BASE(BASE=MODES,
                                 _F(MATRICE=CO('PAMO2'),
                                    MATR_ASSE=AMO2,),),
                 VECT_ASSE_GENE=_F(VECTEUR=CO('PRACTION'),
-                                  VECT_ASSE=VRACTION,),);
+                                  VECT_ASSE=VRACTION, TYPE_VECT='FORC'),);
 
 
 # TRANSITOIRE - METHODE EULER

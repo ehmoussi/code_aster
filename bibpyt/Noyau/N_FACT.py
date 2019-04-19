@@ -101,7 +101,7 @@ class FACT(N_ENTITE.ENTITE):
               - Si statut == 'f' il est facultatif et ses sous mots avec defaut ne
                 sont pas visibles
               - Si statut == 'c' il est cache ???
-              - Si defaut != None, on utilise cette valeur pour calculer la valeur
+              - Si defaut is not None, on utilise cette valeur pour calculer la valeur
                 par defaut du mot cle facteur
         """
         if val is None:

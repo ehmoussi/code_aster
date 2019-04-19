@@ -512,7 +512,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             if moloc.type not in ('ELEM', 'ELNO', 'ELGA'):
                 continue
             nomolo = moloc.name
-            assert nomolo != None, 'Il faut nommer explicitement tous les modes locaux crees dans les boucles.'
+            assert nomolo is not None, 'Il faut nommer explicitement tous les modes locaux crees dans les boucles.'
             nogd = moloc.physicalQuantity.name
             typept = moloc.type
             diff = moloc.diff
@@ -632,7 +632,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             if moloc.type not in ('VEC',):
                 continue
             nomolo = moloc.name
-            assert nomolo != None, 'Il faut nommer explicitement tous les modes locaux crees dans les boucles.'
+            assert nomolo is not None, 'Il faut nommer explicitement tous les modes locaux crees dans les boucles.'
             nogd = moloc.physicalQuantity.name
             molo1 = moloc.locatedComponents.name
             nomolo2 = note2 + nomolo
@@ -655,7 +655,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             if moloc.type not in ('MAT',):
                 continue
             nomolo = moloc.name
-            assert nomolo != None, 'Il faut nommer explicitement tous les modes locaux crees dans les boucles.'
+            assert nomolo is not None, 'Il faut nommer explicitement tous les modes locaux crees dans les boucles.'
             nogd = moloc.physicalQuantity.name
             molo1 = moloc.locatedComponents.name
             # forcément les mêmes LocatedComponents pour une matrice
@@ -1124,7 +1124,7 @@ def impr_param_options(nomfic, cel):
         dicmod = {}
         for moloc in modlocs:
             nomolo = moloc.name
-            assert nomolo != None, 'Il faut nommer explicitement tous les modes locaux crees dans les boucles.'
+            assert nomolo is not None, 'Il faut nommer explicitement tous les modes locaux crees dans les boucles.'
             nogd = moloc.physicalQuantity.name
             dicmod[nomolo] = nogd
 

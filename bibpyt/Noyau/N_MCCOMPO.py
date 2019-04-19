@@ -138,7 +138,7 @@ class MCCOMPO(N_OBJECT.OBJECT):
            Ordonne la liste suivant l'ordre du catalogue.
            Seulement pour IHM graphique
         """
-        if self.jdc and self.jdc.cata_ordonne_dico != None:
+        if self.jdc and self.jdc.cata_ordonne_dico is not None:
             liste_noms_mc_ordonnee = self.get_liste_mc_ordonnee_brute(
                 self.get_genealogie(), self.jdc.cata_ordonne_dico)
             return self.ordonne_liste_mc(mc_liste, liste_noms_mc_ordonnee)

@@ -216,8 +216,8 @@ PROJ_BASE(BASE=MODE_MEC,
           MATR_ASSE_GENE=(
            _F( MATRICE = CO("MASS_GEN"), MATR_ASSE = MASSE),
            _F( MATRICE = CO("RIGI_GEN"), MATR_ASSE = RIGIDITE)),VECT_ASSE_GENE=(
-           _F( VECTEUR = CO("VECT_X1"), VECT_ASSE = MULT_X1),
-           _F( VECTEUR = CO("VECT_X2"), VECT_ASSE = MULT_X2))
+           _F( VECTEUR = CO("VECT_X1"), VECT_ASSE = MULT_X1, TYPE_VECT='FORC'),
+           _F( VECTEUR = CO("VECT_X2"), VECT_ASSE = MULT_X2, TYPE_VECT='FORC'))
                           )
 
 #
@@ -363,9 +363,10 @@ PROJ_BASE(BASE=MODE_EXT,
           STOCKAGE='DIAG',
           MATR_ASSE_GENE=(
            _F( MATRICE = CO("MASS_EXT"), MATR_ASSE = MASSE),
-           _F( MATRICE = CO("RIGI_EXT"), MATR_ASSE = RIGIDITE)),VECT_ASSE_GENE=(
-           _F( VECTEUR = CO("VECT_EX1"), VECT_ASSE = MULT_X1),
-           _F( VECTEUR = CO("VECT_EX2"), VECT_ASSE = MULT_X2))
+           _F( MATRICE = CO("RIGI_EXT"), MATR_ASSE = RIGIDITE)),
+          VECT_ASSE_GENE=(
+           _F( VECTEUR = CO("VECT_EX1"), VECT_ASSE = MULT_X1, TYPE_VECT='FORC'),
+           _F( VECTEUR = CO("VECT_EX2"), VECT_ASSE = MULT_X2, TYPE_VECT='FORC'))
                           )
 TRAN_EXT=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                  MATR_MASS=MASS_EXT,   MATR_RIGI=RIGI_EXT,

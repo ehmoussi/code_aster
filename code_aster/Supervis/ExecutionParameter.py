@@ -258,10 +258,11 @@ class ExecutionParameter(metaclass=Singleton):
         parser.add_argument('--memory',
             action='store', type=float, default=DEFAULT_MEMORY_LIMIT,
             help="memory limit in MB used for code_aster objects "
-                 "(default: 2047 MB)")
+                 "(default: {0} MB)".format(DEFAULT_MEMORY_LIMIT))
         parser.add_argument('--tpmax',
             action='store', type=float, default=DEFAULT_TIME_LIMIT,
-            help="time limit of the execution in seconds (default: 1 day)")
+            help="time limit of the execution in seconds "
+                 "(default: {0} s)".format(DEFAULT_TIME_LIMIT))
         parser.add_argument('--maxbase',
             action='store', type=float, default=DEFAULT_BASE_SIZE_LIMIT,
             help="size limit in MB for code_aster out-of-core files (glob.*, "

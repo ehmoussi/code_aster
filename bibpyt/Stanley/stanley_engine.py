@@ -834,7 +834,7 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
         fp = tkinter.filedialog.askopenfile(
             mode='r', filetypes=[("Fichiers Stanley", "*.stn"), ("Tous", "*")], parent=interface.rootTk,
             title="Sélectionner le fichier contenant la configuration Stanley", initialdir='~/%s' % __rcstanley__)
-        if (fp != None):
+        if (fp is not None):
             fichier = fp.name
             res = self.Ouvrir_Fichier(fichier)
         return
@@ -876,7 +876,7 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
         fp = tkinter.filedialog.asksaveasfile(
             filetypes=[("Fichiers Stanley", "*.stn"), ("Tous", "*")], parent=interface.rootTk,
             title="Sélectionner le fichier contenant la configuration Stanley", initialdir='~/%s' % __rcstanley__)
-        if (fp != None):
+        if (fp is not None):
             if fp.name[-4:] != '.stn':
                 fichier = fp.name + '.stn'
             else:

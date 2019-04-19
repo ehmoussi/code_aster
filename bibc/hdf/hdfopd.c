@@ -34,10 +34,10 @@
 #include "med.h"
 #endif
 
-ASTERINTEGER DEFPSS(HDFOPD, hdfopd, med_idt *idf, char *nomg,
+hid_t DEFPSS(HDFOPD, hdfopd, hid_t *idf, char *nomg,
                     STRING_SIZE lg, char *nomd, STRING_SIZE ln)
 {
-  ASTERINTEGER iret=-1;
+  hid_t iret=-1;
 #ifndef _DISABLE_HDF5
   hid_t id,idfic,dapl_id; 
   int k,lg2;
@@ -68,7 +68,7 @@ ASTERINTEGER DEFPSS(HDFOPD, hdfopd, med_idt *idf, char *nomg,
   nom[k+1] = '\0';
 
   if ( (id = H5Dopen2(idfic,nom,dapl_id)) >= 0) 
-    iret = (ASTERINTEGER) id;
+    iret = id;
 
   free (nom);
 #else

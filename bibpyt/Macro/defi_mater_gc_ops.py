@@ -211,7 +211,7 @@ def Mazars_Unil(DMATER, args):
     UTMESS('I', 'COMPOR1_75', valk=(message0, message1, message2, message3))
     #
     return mclef
-    
+
 def Beton_GLRC(DMATER, args):
     """
     BETON_GLRC = Paramètres de la loi de comportement
@@ -228,7 +228,7 @@ def Beton_GLRC(DMATER, args):
     #
     # Obligatoire : Règlement de codification
     Regle = MATER['CODIFICATION']
-    
+
     if (Regle == 'EC2'):
         # Obligatoire CLASSE UNITE_CONTRAINTE
         if (MATER['UNITE_CONTRAINTE'] == "MPa"):
@@ -409,7 +409,7 @@ def Endo_Fiss_Exp(DMATER, args):
     (sig0, tau) = Ident_Endo_Fiss_Exp(FT, FC, beta)
     sigc = ConfinedTension(NU, sig0, tau, beta)
     # Paramètres de la fonction d'adoucissement
-    if MATER['P'] != None:
+    if MATER['P'] is not None:
         P = float(MATER['P'])
     else:
         G1 = float(MATER['G_INIT'])
@@ -417,9 +417,9 @@ def Endo_Fiss_Exp(DMATER, args):
         if P < 1:
             UTMESS('F', 'COMPOR1_93')
     #
-    if MATER['Q'] != None:
+    if MATER['Q'] is not None:
         Q = float(MATER['Q'])
-    elif MATER['Q_REL'] != None:
+    elif MATER['Q_REL'] is not None:
         qmax = (1.11375 + 0.565239 * P - 0.003322 * P ** 2) * \
             (1 - NP.exp(-1.98935 * P)) - 0.01
         Q = qmax * float(MATER['Q_REL'])
@@ -487,13 +487,13 @@ def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, BETON_G
     # contexte de la macro
     self.DeclareOut('Materiau', self.sd)
     #
-    if MAZARS != None:
+    if MAZARS is not None:
         mclef = Mazars_Unil(MAZARS[0], args)
-    if ACIER != None:
+    if ACIER is not None:
         mclef = Acier_Cine_Line(ACIER[0], args)
-    if ENDO_FISS_EXP != None:
+    if ENDO_FISS_EXP is not None:
         mclef = Endo_Fiss_Exp(ENDO_FISS_EXP[0], args)
-    if BETON_GLRC != None:
+    if BETON_GLRC is not None:
         mclef = Beton_GLRC(BETON_GLRC[0], args)
 
     Materiau = DEFI_MATERIAU(**mclef)

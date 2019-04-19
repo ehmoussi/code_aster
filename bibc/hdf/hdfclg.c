@@ -29,7 +29,7 @@
 #include <hdf5.h>
 #endif
 
-ASTERINTEGER DEFP(HDFCLG, hdfclg, ASTERINTEGER *idg)
+ASTERINTEGER DEFP(HDFCLG, hdfclg, hid_t *idg)
 {
 #ifndef _DISABLE_HDF5
    hid_t  idgrp;     

@@ -77,7 +77,7 @@ def calc_matr_ifs_ops(self, **args):
     _ELAS_11  = DEFI_MATERIAU(ELAS=_F(E=1.0, NU=NU_ELAS, RHO=1.0     , AMOR_HYST=0.0,),);
     _ELAS_00  = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_ELAS, RHO=0.0     , AMOR_HYST=0.0,),);
 
-    if GROUP_MA_VISC != None:
+    if GROUP_MA_VISC is not None:
         _VISC_0   = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_VISC, RHO=RHO_VISC, AMOR_HYST=0.0,),);
         _VISC_1   = DEFI_MATERIAU(ELAS=_F(E=1.0, NU=NU_VISC, RHO=RHO_VISC, AMOR_HYST=0.0,),);
         _VISC_00  = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_VISC, RHO=0.0, AMOR_HYST=0.0,),);
@@ -140,7 +140,7 @@ def calc_matr_ifs_ops(self, **args):
 
 # Calcul des matrices d'impédance
 
-    if GROUP_MA_IMPE != None:
+    if GROUP_MA_IMPE is not None:
         _CLIMPR=AFFE_CHAR_MECA(MODELE=MODELE, IMPE_FACE=_F(GROUP_MA=GROUP_MA_IMPE, IMPE=CHAR_IMPE_R,),);
         _CLIMPI=AFFE_CHAR_MECA(MODELE=MODELE, IMPE_FACE=_F(GROUP_MA=GROUP_MA_IMPE, IMPE=CHAR_IMPE_C,),);
         _ElIMPEr=CALC_MATR_ELEM(OPTION='IMPE_MECA',
@@ -179,7 +179,7 @@ def calc_matr_ifs_ops(self, **args):
                         CHAR_CINE=CHAR_CINE,)
     self.register_result(MASS_F, MASS_F_OUT)
 
-    if GROUP_MA_IMPE != None:
+    if GROUP_MA_IMPE is not None:
         MASS_FI=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=MASS_F, COEF_R=1.0,),
                                        _F(MATR_ASSE=IMPE_I, COEF_R=1.0,),),);
         self.register_result(MASS_FI, MASS_FI_OUT)
@@ -204,7 +204,7 @@ def calc_matr_ifs_ops(self, **args):
                         CHAR_CINE=CHAR_CINE,)
     self.register_result(RIGI_E, RIGI_E_OUT)
 
-    if GROUP_MA_VISC != None:
+    if GROUP_MA_VISC is not None:
         _ElRIGf1=CALC_MATR_ELEM(OPTION='RIGI_MECA',
                                 MODELE=MODELE,
                                 CHAM_MATER=_MAT_MK3,)

@@ -131,9 +131,9 @@ subroutine jelihd(nomf, fichdf, clas)
     parameter      ( nomatr = 'ATTRIBUTS JEVEUX',&
      &                 nomat2 = 'BASE GLOBALE JEVEUX' )
     integer :: ipgca, ltypi, lonoi, nbobj, ik32(1), jk32, ik8(1), jk8
-    integer :: idts, ltypb, nbval, iadmi, vali(2)
-    hid_t :: idfic
-    integer :: idos, kitab, idgr, idt1, idt2, idg, julist
+    integer :: ltypb, nbval, iadmi, vali(2)
+    hid_t :: idfic, idgr, idg, idts, idt1, idt2
+    integer :: idos, kitab, julist
     integer :: iret1, iret2, iret3, idco, lmarq
     equivalence     (ik32,k32),(ik8,k8)
     integer :: igenr(1), itype(1), idocu(1), iorig(1), irnom(4)
