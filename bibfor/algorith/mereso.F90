@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,6 +60,7 @@ subroutine mereso(result, modele, mate, carele, fomult,&
 #include "asterfort/rsadpa.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/rsnoch.h"
+#include "asterfort/utmess.h"
 #include "asterfort/uttcpu.h"
     integer :: itps
     aster_logical :: assmat
@@ -148,8 +149,8 @@ subroutine mereso(result, modele, mate, carele, fomult,&
 ! 5.3. ==> STOCKAGE DE LA SOLUTION, DEPL, DANS LA STRUCTURE DE RESULTAT
 !          EN TANT QUE CHAMP DE DEPLACEMENT A L'INSTANT COURANT
 !
-    write (ifm,100) 'DEPL', partps(1), itps
-!
+    call utmess('I', 'ARCHIVAGE_6', sk='DEPL', si=itps, sr=partps(1))
+    !
     call rsexch(' ', result, 'DEPL', itps, chdepl,&
                 iret)
 !
@@ -180,8 +181,5 @@ subroutine mereso(result, modele, mate, carele, fomult,&
         zr(jpara) = crtr(1)
     endif
     call uttcpu('CPU.OP0046.3', 'FIN', ' ')
-!
-    100 format(1p,3x,'CHAMP STOCKE : ',a16,' INSTANT : ',1pe12.5,&
-     &         '  NUMERO D''ORDRE : ',i5)
 !
 end subroutine
