@@ -23,7 +23,8 @@ subroutine dlnewi(result, force0, force1, lcrea, lamort,&
                   famor, fliai, t0, nchar, nveca,&
                   liad, lifo, modele, mate, carele,&
                   charge, infoch, fomult, numedd, nume,&
-                  solveu, criter, chondp, nondp, numrep, ds_energy)
+                  solveu, criter, chondp, nondp, numrep, ds_energy,&
+                  sd_obsv, mesh)
 !
 use NonLin_Datastructure_type
 !
@@ -68,6 +69,8 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/zerlag.h"
 #include "asterfort/dl_MatrixPrepare.h"
+#include "asterfort/nmobse.h"
+#include "asterfort/lobs.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -104,10 +107,11 @@ implicit none
 !  VAR : DEP0      : TABLEAU DES DEPLACEMENTS A L'INSTANT N
 !  VAR : VIT0      : TABLEAU DES VITESSES A L'INSTANT N
 !  VAR : ACC0      : TABLEAU DES ACCELERATIONS A L'INSTANT N
-! IN  NUMREP : NUMERO DE REUSE POUR LA TABLE PARA_CALC
+!  IN  NUMREP : NUMERO DE REUSE POUR LA TABLE PARA_CALC
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    
     integer :: iinteg, neq, imat(3), nchar, nveca, liad(*), nume, nondp
     integer :: numrep, nb_matr
     character(len=1) :: coef_type(3), resu_type
@@ -168,11 +172,13 @@ implicit none
     real(kind=8) :: tempm, temps
     integer :: vali(2)
     real(kind=8) :: valr(2)
-    aster_logical :: ener
+    aster_logical :: ener, l_obsv
     real(kind=8), pointer :: epl1(:) => null()
     real(kind=8), pointer :: fammo(:) => null()
     real(kind=8), pointer :: vien(:) => null()
-    real(kind=8), pointer :: vite(:) => null()
+    real(kind=8), pointer :: vite(:) => null() 
+    character(len=19), intent(inout) :: sd_obsv
+    character(len=*), intent(in) :: mesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -233,7 +239,7 @@ implicit none
 !
  10 continue
 !
-! 1.4. ==> ???
+! 1.4. ==> 
 !
 
     call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=k8b, arret = 'C', ier = ierc)
@@ -405,7 +411,7 @@ implicit none
                 t0, lcrea, typres, masse, rigid,&
                 amort, dep0, vit0, acc0, fexte,&
                 famor, fliai, numedd, nume, nbtyar,&
-                typear)
+                typear)               
 !
 !====
 ! 3. CALCUL
@@ -425,6 +431,7 @@ implicit none
     ipas = 0
     call uttcpu('CPU.DLNEWI.1', 'INIT', ' ')
     call uttcpu('CPU.DLNEWI.2', 'INIT', ' ')
+
     do igrpa = 1, nbgrpa
 !
 ! 3.2.1. ==> PREALABLES
@@ -491,6 +498,7 @@ implicit none
             temps = t0 + dt*ipepa
             tempm = t0 + dt* (ipepa-1)
             archiv = zi(jstoc+ipas-1)
+                        
             call dlnew0(result, force0, force1, iinteg, neq,&
                         istoc, iarchi, nbexci, nondp, nmodam,&
                         lamort, limped, lmodst, imat, masse,&
@@ -519,6 +527,16 @@ implicit none
                     last_prperc = perc
                 end if
             end if
+            !
+            
+            ! - SI OBSERVATION 
+!            
+            l_obsv = ASTER_FALSE
+            call lobs(sd_obsv, ipas, temps, l_obsv)
+            if (l_obsv) then
+                call nmobse(mesh, sd_obsv  , t0)   
+            endif
+
 !
 ! 3.2.5. ==> VERIFICATION DU TEMPS DE CALCUL RESTANT
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ type(NL_DS_InOut), intent(out) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  phenom           : phenomenon (MECA/THER/THNL)
+! In  phenom           : phenomenon (MECA/THER/THNL) /VIBR
 ! Out ds_inout         : datastructure for input/output management
 !
 ! --------------------------------------------------------------------------------------------------
@@ -87,6 +87,8 @@ type(NL_DS_InOut), intent(out) :: ds_inout
         call CreateInOutDS_T(ds_inout, ASTER_FALSE)
     elseif (phenom.eq.'THNL') then
         call CreateInOutDS_T(ds_inout, ASTER_TRUE)
+    elseif (phenom.eq.'VIBR') then
+        call CreateInOutDS_M(ds_inout)
     else
         ASSERT(.false.)
     endif

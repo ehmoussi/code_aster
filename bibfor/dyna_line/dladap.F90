@@ -22,7 +22,8 @@ subroutine dladap(result, tinit, lcrea, lamort, neq,&
                   vit0, acc0, fexte, famor, fliai,&
                   nchar, nveca, liad, lifo, modele,&
                   mate, carele, charge, infoch, fomult,&
-                  numedd, nume, numrep, ds_energy)
+                  numedd, nume, numrep, ds_energy,&
+                  sd_obsv, mesh)
 !
 use NonLin_Datastructure_type
 !
@@ -61,6 +62,9 @@ implicit none
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 #include "blas/dcopy.h"
+#include "asterfort/nmobse.h"
+#include "asterfort/lobs.h"
+#include "asterfort/nmchex.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -127,7 +131,7 @@ implicit none
     character(len=24) :: ndeeq
     real(kind=8) :: tps1(4), tfin
     real(kind=8) :: cmp, cdp, err, dti, dt1, dt2, dtmin, pas1
-    real(kind=8) :: temps, temp2, dtmax
+    real(kind=8) :: temps, temp2, dtmax, t_obs
     real(kind=8) :: dtarch, tarch, tarchi
     real(kind=8) :: epsi, r8val, freq, rtmp
     real(kind=8) :: tjob
@@ -139,8 +143,12 @@ implicit none
     integer :: nbpasc, ifnobi, ifcibi
     integer :: adeeq
     integer :: ibid
-    aster_logical :: ener
+    aster_logical :: ener, l_obsv
     real(kind=8), pointer :: vale(:) => null()
+    character(len=19), intent(inout) :: sd_obsv
+    character(len=*), intent(in) :: mesh
+    integer :: ipas_obs
+    integer :: idepmoi, ivitmoi, iaccmoi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -181,6 +189,11 @@ implicit none
     call wkvect('&&DLADAP.IND1', 'V V I', neq, jind1)
     call wkvect('&&DLADAP.IND2', 'V V I', neq, jind2)
     call jeveuo(ndeeq, 'L', adeeq)
+
+    call jeveuo('&&NMCH1P.DEPMOI    .VALE', 'E', idepmoi)
+    call jeveuo('&&NMCH1P.VITMOI    .VALE', 'E', ivitmoi)
+    call jeveuo('&&NMCH1P.ACCMOI    .VALE', 'E', iaccmoi)
+    
 !
     epsi = r8prem()
     npas = 0
@@ -342,6 +355,10 @@ implicit none
     last_prperc = 0
 !
     if (temps .lt. tfin) then
+        ! - observation
+        t_obs = temps
+        ipas_obs = ipas
+
         istoc = 0
         err = 100.d0
         nr = 0
@@ -503,6 +520,21 @@ implicit none
         call dcopy(neq, zr(jvit2), 1, zr(jvite), 1)
         call dcopy(neq, zr(jvip2), 1, zr(jvip1), 1)
         call dcopy(neq, zr(jacc2), 1, zr(jacce), 1)
+!
+! - observation
+        l_obsv = ASTER_FALSE
+        call lobs(sd_obsv, ipas_obs, t_obs, l_obsv)
+
+        if (l_obsv) then
+            ! stock depl/vite/acce dans le champ pour Observation
+            
+            call dcopy(neq, vale, 1, zr(idepmoi), 1)
+            call dcopy(neq, zr(jvit2), 1, zr(ivitmoi), 1)
+            call dcopy(neq, zr(jacc2), 1, zr(iaccmoi), 1)
+
+            ! make observation
+            call nmobse(mesh, sd_obsv  , t_obs)
+        endif
 !
 ! ------------- VERIFICATION DU TEMPS DE CALCUL RESTANT
         if (iveri .eq. 0) then
