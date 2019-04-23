@@ -744,6 +744,9 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=-2.679998717479E-03,
 LISTDIF=DEFI_LIST_REEL(  DEBUT=0.,INTERVALLE=(
                            _F(  JUSQU_A = 0.06,   PAS = 0.001),),)
 
+# test OBSERVATION dans DYNA_VIBRA avec DIFF_CENTRE
+trace = FORMULE ( VALE='DX+DY', NOM_PARA = ('DX','DY',),)
+
 TRAN_LI4=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                              ENERGIE=_F(),
                              MATR_MASS=MASSE,   MATR_RIGI=RIGIDITE,
@@ -751,8 +754,25 @@ TRAN_LI4=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                              INCREMENT=_F( LIST_INST=LISTDIF),
                              ARCHIVAGE=_F(  LIST_INST = LISTDIF,
                                     CHAM_EXCLU = ( 'VITE',  'ACCE', )),
-                     EXCIT=_F(  VECT_ASSE = MULT_X,  FONC_MULT = ACCELERO)
+                     EXCIT=_F(  VECT_ASSE = MULT_X,  FONC_MULT = ACCELERO),
+                        OBSERVATION=(_F(NOM_CHAM='DEPL',
+                                            NOM_CMP='DX',
+                                            PAS_OBSE=1,
+                                            GROUP_NO='MASSES',),
+                                     _F(NOM_CHAM='DEPL',
+                                            NOM_CMP='DY',
+                                            PAS_OBSE=1,
+                                            GROUP_NO='MASSES',),       
+                                     _F(NOM_CHAM='DEPL',
+                                            NOM_CMP=('DX','DY',),
+                                            PAS_OBSE=1,
+                                            GROUP_NO='MASSES',
+                                            EVAL_CMP='FORMULE',
+                                            FORMULE = trace,
+                                            EVAL_CHAM = 'MAX',),
+                                     ),
                            )
+
 LIST=DEFI_LIST_REEL(  DEBUT=0.06,
                         INTERVALLE=(_F(  JUSQU_A = 0.09,  PAS = 0.001),
                                     _F(  JUSQU_A = 0.11,  PAS = 0.001),),)

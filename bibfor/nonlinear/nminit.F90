@@ -79,7 +79,8 @@ implicit none
 #include "asterfort/nmlssv.h"
 #include "asterfort/nmnoli.h"
 #include "asterfort/nmnume.h"
-#include "asterfort/nmobsv.h"
+#include "asterfort/nmobse.h"
+#include "asterfort/nmobsw.h"
 #include "asterfort/nmpro2.h"
 #include "asterfort/nmrini.h"
 #include "asterfort/nonlinDSMaterialInit.h"
@@ -167,7 +168,7 @@ type(NL_DS_System), intent(inout) :: ds_system
     integer :: iret, ifm, niv
     real(kind=8) :: r8bid3(3)
     real(kind=8) :: instin
-    character(len=19) :: varc_prev, disp_prev, strx_prev
+    character(len=19) :: varc_prev, disp_prev, strx_prev, varc_curr, disp_curr, strx_curr
     aster_logical :: lacc0, lpilo, lmpas, lsstf, lerrt, lviss, lrefe, ldidi, l_obsv, l_ener, l_dyna
 !
 ! --------------------------------------------------------------------------------------------------
@@ -383,6 +384,9 @@ type(NL_DS_System), intent(inout) :: ds_system
     call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
     call nmchex(valinc, 'VALINC', 'STRMOI', strx_prev)
     call nmchex(valinc, 'VALINC', 'COMMOI', varc_prev)
+    call nmchex(valinc, 'VALINC', 'DEPPLU', disp_curr)
+    call nmchex(valinc, 'VALINC', 'STRPLU', strx_curr)
+    call nmchex(valinc, 'VALINC', 'COMPLU', varc_curr)
 !
 ! - Create observation datastructure
 !
@@ -413,12 +417,16 @@ type(NL_DS_System), intent(inout) :: ds_system
                 sdcriq)
 !
 ! - Make initial observation
-!
+! 
     l_obsv = ASTER_FALSE
     call lobs(sd_obsv, numins, instin, l_obsv)
     if (l_obsv) then
-        call nmobsv(mesh     , model      , sddisc         , sd_obsv, numins  ,&
-                    cara_elem, ds_material, ds_constitutive, valinc , ds_inout)
+        call nmobse(mesh     , sd_obsv  , instin,&
+                    cara_elem, model   , ds_material, ds_constitutive, disp_curr,&
+                    strx_curr , varc_curr)
+        if  (numins.eq.0) then            
+            call nmobsw(sd_obsv  , ds_inout  )  
+        endif          
     endif
 !
 ! - Update name of fields

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  phenom           : phenomenon (MECA/THER/THNL)
+! In  phenom           : phenomenon (MECA/THER/THNL) VIBR
 ! Out ds_inout         : datastructure for input/output management
 !
 ! --------------------------------------------------------------------------------------------------
@@ -50,14 +50,14 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (phenom.eq.'MECA') then
+    if ((phenom.eq.'MECA') .or. (phenom.eq.'VIBR')) then
 ! ----- Create list of parameters
         call nonlinDSTableIOSetPara(tableio_   = ds_inout%table_io,&
                                     nb_para_   = nb_para,&
                                     list_para_ = list_para,&
                                     type_para_ = type_para)
 ! ----- Create table in results datastructure
-        call nonlinDSTableIOCreate(ds_inout%result, 'PARA_CALC', ds_inout%table_io)
+        call nonlinDSTableIOCreate(ds_inout%result, 'PARA_CALC', ds_inout%table_io)  
     else
         ASSERT(ASTER_FALSE)
     endif

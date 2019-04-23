@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -101,19 +101,46 @@ TEMLI=DEFI_LIST_REEL(DEBUT=0.002, INTERVALLE=_F( JUSQU_A = .02, PAS = 0.002))
 #
 #-----------------------------------------------------------------------
 # 1 -ER NON AMORTI
+
+# test observation for dyna_vibra
+
 NEWNONA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                            MATR_MASS=MATRMASS,    MATR_RIGI=MATRRIGI,
                            SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                           INCREMENT=_F(  LIST_INST = TEMPLI),
                           ARCHIVAGE=_F(  LIST_INST = TEMLI),
-                            EXCIT=_F( VECT_ASSE = VECAS, FONC_MULT = FONC))
+                            EXCIT=_F( VECT_ASSE = VECAS, FONC_MULT = FONC),
+                            OBSERVATION=(_F(NOM_CHAM='DEPL',
+                                            NOM_CMP='DX',
+                                            PAS_OBSE=200,
+                                            NOEUD='N2',),),
+                          )
+
+trace = FORMULE ( VALE='DX+DY', NOM_PARA = ('DX','DY',),)
 
 WILNONA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                           MATR_MASS=MATRMASS,   MATR_RIGI=MATRRIGI,
                            SCHEMA_TEMPS=_F(SCHEMA='WILSON',),
                           INCREMENT=_F(  LIST_INST = TEMPLI),
                           ARCHIVAGE=_F(  LIST_INST = TEMLI),
-                            EXCIT=_F( VECT_ASSE = VECAS, FONC_MULT = FONC))
+                            EXCIT=_F( VECT_ASSE = VECAS, FONC_MULT = FONC),
+                        OBSERVATION=(_F(NOM_CHAM='DEPL',
+                                            NOM_CMP='DX',
+                                            PAS_OBSE=200,
+                                            NOEUD='N2',),
+                                     _F(NOM_CHAM='DEPL',
+                                            NOM_CMP='DY',
+                                            PAS_OBSE=200,
+                                            NOEUD='N2',),       
+                                     _F(NOM_CHAM='DEPL',
+                                            NOM_CMP=('DX','DY',),
+                                            PAS_OBSE=200,
+                                            NOEUD='N2',
+                                            EVAL_CMP='FORMULE',
+                                            FORMULE = trace,
+                                            EVAL_CHAM = 'MAX',),
+                                     ),
+                          )
 
 # 2 -ER AMORTI
 NEWAMOR=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',

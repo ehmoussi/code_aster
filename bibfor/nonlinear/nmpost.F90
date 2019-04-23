@@ -38,11 +38,13 @@ implicit none
 #include "asterfort/nmener.h"
 #include "asterfort/nmetca.h"
 #include "asterfort/nmleeb.h"
-#include "asterfort/nmobsv.h"
+#include "asterfort/nmobse.h"
 #include "asterfort/nmspec.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmrest_ecro.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmobsw.h"
 !
 integer :: numins
 character(len=8), intent(in) :: mesh
@@ -97,6 +99,7 @@ integer :: fonact(*)
     aster_logical :: l_mode_vibr, l_crit_stab, lerrt, lcont, lener, l_post_incr, l_obsv
     character(len=4) :: etfixe
     real(kind=8) :: time
+    character(len=19) :: varc_curr, disp_curr, strx_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -105,7 +108,13 @@ integer :: fonact(*)
     l_mode_vibr = isfonc(fonact,'MODE_VIBR')
     l_crit_stab = isfonc(fonact,'CRIT_STAB')
     lener       = isfonc(fonact,'ENERGIE')
-    l_post_incr = isfonc(fonact,'POST_INCR')
+    l_post_incr = isfonc(fonact,'POST_INCR')    
+!
+! - Extract variables
+!    
+    call nmchex(valinc, 'VALINC', 'DEPPLU', disp_curr)
+    call nmchex(valinc, 'VALINC', 'STRPLU', strx_curr)
+    call nmchex(valinc, 'VALINC', 'COMPLU', varc_curr)
 !
 ! - Observation ?
 !
@@ -167,10 +176,11 @@ integer :: fonact(*)
         endif
 !
 ! ----- Make observation
-!
+!        
         if (l_obsv) then
-            call nmobsv(mesh  , modele     , sddisc         , sd_obsv, numins,&
-                        carele, ds_material, ds_constitutive, valinc)
+            call nmobse(mesh     , sd_obsv  , time,&
+                        carele, modele   , ds_material, ds_constitutive, disp_curr,&
+                        strx_curr , varc_curr)
         endif
 !
 ! ----- End of timer for post-treatment

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,6 +61,17 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
+#include "asterfort/dvcrob.h"
+#include "asterfort/nmobsw.h"
+#include "asterfort/nmobse.h"
+#include "asterfort/lobs.h"
+#include "asterfort/nonlinDSInOutRead.h"
+#include "asterfort/nonlinDSInOutInit.h"
+#include "asterfort/nonlinDSInOutClean.h"
+#include "asterfort/nmch1p.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/vtcreb.h"
+#include "blas/dcopy.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -95,6 +106,8 @@ implicit none
     character(len=24) :: chvarc, chvref, chstru, compor
     complex(kind=8) :: calpha
     character(len=19) :: force0, force1
+    character(len=19) :: sd_obsv
+    type(NL_DS_InOut) :: ds_inout
     character(len=46) :: champs
     type(NL_DS_Energy) :: ds_energy
     aster_logical :: lamort, lcrea, lprem, exipou
@@ -102,6 +115,11 @@ implicit none
     character(len=8), pointer :: chexc(:) => null()
     data modele   /'                        '/
     data allschemes /'NEWMARK', 'WILSON', 'DIFF_CENTRE', 'ADAPT_ORDRE2'/
+    character(len=8) :: mesh
+    aster_logical :: l_obsv
+    integer, parameter :: zvalin = 28
+    character(len=19) :: valinc(zvalin)
+    character(len=19) :: depmoi, vitmoi, accmoi 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -140,22 +158,46 @@ implicit none
 ! 2. LES DONNEES DU CALCUL
 !====
 !
+!---CREATION et lecture DATA_STRUCTURE ds_inout pour observation
+
     call dltlec(result, modele, numedd, materi, mate,&
                 carael, carele, imat, masse, rigid,&
                 amort, lamort, nchar, nveca, infcha,&
                 charge, infoch, fomult, iaadve, ialifo,&
                 nondp, iondp, solveu, iinteg, t0,&
-                nume, numrep)
+                nume, numrep, ds_inout)
 !
     neq = zi(imat(1)+2)
 !
 !====
 ! 3. CREATION DES VECTEURS DE TRAVAIL SUR BASE VOLATILE
 !====
+!   NOUVEAUX OBJETS DEPL VITE ACCE DE DYNA_LINE_TRAN 
+! ----------------------------------------
+!     ancienne routine : nmcrch
+! --- CREATION DES CHAMPS DE BASE - ETAT EN T-
 !
-    call wkvect('&&COMDLT.DEPL0', 'V V R', neq, idepl0)
-    call wkvect('&&COMDLT.VITE0', 'V V R', neq, ivite0)
-    call wkvect('&&COMDLT.ACCE0', 'V V R', neq, iacce0)
+    call nmch1p(valinc)
+    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
+    call nmchex(valinc, 'VALINC', 'VITMOI', vitmoi)
+    call nmchex(valinc, 'VALINC', 'ACCMOI', accmoi)
+    
+    call vtcreb(depmoi, 'V', 'R', nume_ddlz = numedd)
+    call vtcreb(vitmoi, 'V', 'R', nume_ddlz = numedd)
+    call vtcreb(accmoi, 'V', 'R', nume_ddlz = numedd)
+
+!---lecture d adresse depl/vite/acce
+!
+    call jeveuo(depmoi//'.VALE', 'L', idepl0)  
+    call jeveuo(vitmoi//'.VALE', 'L', ivite0)    
+    call jeveuo(accmoi//'.VALE', 'L', iacce0)
+    
+!    ANCIENS OBJETS DEPL VITE ACCE DE DYNA_LINE_TRAN    
+!-----------------------------------------------------------
+!    call wkvect('&&COMDLT.DEPL0', 'V V R', neq, idepl0)
+!    call wkvect('&&COMDLT.VITE0', 'V V R', neq, ivite0)
+!    call wkvect('&&COMDLT.ACCE0', 'V V R', neq, iacce0)
+
     call wkvect('&&COMDLT.FEXTE', 'V V R', 2*neq, ifexte)
     call wkvect('&&COMDLT.FAMOR', 'V V R', 2*neq, ifamor)
     call wkvect('&&COMDLT.FLIAI', 'V V R', 2*neq, ifliai)
@@ -286,6 +328,7 @@ implicit none
     ds_energy%l_comp  = iret.gt.0
     ds_energy%command = 'DYNA_VIBRA'
     call nonlinDSEnergyInit(result, ds_energy)
+
     if (iret .eq. 0) then
         nomsym(4) = ' '
         nomsym(5) = ' '
@@ -303,6 +346,29 @@ implicit none
     end do
     call utmess('I', 'DYNAMIQUE_96', sk=champs)
 
+
+    
+! -  LECTURE DES DONNEES ET INITIALISATION POUR ds_inout
+!
+    call nonlinDSInOutRead('VIBR', result, ds_inout)    
+    call nonlinDSInOutInit('VIBR', ds_inout)
+    
+!--- Create observation datastructure
+! -  routine in stat_non_line : nmcrob => dvcrob 
+!
+    call dismoi('NOM_MAILLA', modele, 'MODELE', repk=mesh)
+    call dvcrob(mesh , modele,  ds_inout , materi, sd_obsv)
+
+! - Make initial observation
+
+    l_obsv = ASTER_FALSE    
+    call lobs(sd_obsv, nume, t0, l_obsv)    
+    if (l_obsv) then
+        call nmobse(mesh, sd_obsv  , t0)   
+        if (nume.eq.0) then
+            call nmobsw(sd_obsv  ,   ds_inout )
+        endif    
+    endif    
 !
 !====
 ! 6. INTEGRATION SELON LE TYPE SPECIFIE
@@ -316,7 +382,8 @@ implicit none
                     zr(ifamor), zr(ifliai), t0, nchar, nveca,&
                     zi(iaadve), zk24(ialifo), modele, mate, carele,&
                     charge, infoch, fomult, numedd, nume,&
-                    solveu, criter, zk8(iondp), nondp, numrep, ds_energy)
+                    solveu, criter, zk8(iondp), nondp, numrep, ds_energy,&
+                    sd_obsv, mesh)
 !
     else if (iinteg.eq.2) then
 !
@@ -326,7 +393,8 @@ implicit none
                     zr(ifamor), zr(ifliai), t0, nchar, nveca,&
                     zi(iaadve), zk24(ialifo), modele, mate, carele,&
                     charge, infoch, fomult, numedd, nume,&
-                    solveu, criter, zk8(iondp), nondp, numrep, ds_energy)
+                    solveu, criter, zk8(iondp), nondp, numrep, ds_energy,& 
+                    sd_obsv, mesh)
 !
     else if (iinteg.eq.3) then
 !
@@ -335,7 +403,8 @@ implicit none
                     zr(ivite0), zr(iacce0), zr(ifexte), zr(ifamor), zr(ifliai),&
                     t0, nchar, nveca, zi(iaadve), zk24(ialifo),&
                     modele, mate, carele, charge, infoch,&
-                    fomult, numedd, nume, numrep, ds_energy)
+                    fomult, numedd, nume, numrep, ds_energy,& 
+                    sd_obsv, mesh)
 !
     else if (iinteg.eq.4) then
 !
@@ -344,7 +413,8 @@ implicit none
                     zr(ivite0), zr(iacce0), zr(ifexte), zr(ifamor), zr(ifliai),&
                     nchar, nveca, zi(iaadve), zk24(ialifo), modele,&
                     mate, carele, charge, infoch, fomult,&
-                    numedd, nume, numrep, ds_energy)
+                    numedd, nume, numrep, ds_energy,& 
+                    sd_obsv, mesh)
 !
     endif
 !
@@ -428,6 +498,7 @@ implicit none
     endif
 !
     call nonlinDSEnergyClean(ds_energy)
+    call nonlinDSInOutClean(ds_inout)
 !
     call jedema()
 end subroutine
