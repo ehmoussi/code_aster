@@ -103,7 +103,7 @@ SIF0NPT=CREA_TABLE(LISTE=(_F(LISTE_R=(0.,1.0),PARA='ABSC_CURV'),
 da=2.0
 
 # ANGLE DE PROPAGATION IMPOSE
-beta=30.0/180.0*3.1415
+beta=30.0/180.0*pi
 print(sin(beta))
 
 # FUNCTION POUR IMPOSER L'ANGLE DE PROPAGATION CI-DESSUS
@@ -165,7 +165,7 @@ PROPA_FISS(MODELE=MODELE,
 
 #
 # idem, ms angle plus grand
-beta2=70.0/180.0*3.1415
+beta2=70.0/180.0*pi
 #
 ANGLE = FORMULE(VALE='0.0*G+beta2',
                 beta2=beta2,

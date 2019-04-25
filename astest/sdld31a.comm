@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ MO=AFFE_MODELE( MAILLAGE=MA,
                 PHENOMENE = 'MECANIQUE',
                 MODELISATION = 'DIS_T'),);
 
-omega0=2.*3.141592653589793*3.
+omega0=2.*pi*3.
 KK=omega0*omega0
 CARA_ELE=AFFE_CARA_ELEM(  MODELE=MO,
                           DISCRET=(_F(  CARA = 'K_T_D_L',  REPERE = 'GLOBAL', GROUP_MA = 'RESSORT',
