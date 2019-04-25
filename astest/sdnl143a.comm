@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -203,7 +203,7 @@ DYNA01=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
 
 # Comparaison avec CALHYPSO à T=21.8
 TEST_TABLE(
-           VALE_CALC = 271881.173311,
+           VALE_CALC = 271949.722195301,
            VALE_REFE = 277644.,
            REFERENCE = 'AUTRE_ASTER',
            PRECISION = 0.025,
@@ -219,7 +219,7 @@ TEST_TABLE(
 
 # Test de non-régression
 TEST_TABLE(
-           VALE_CALC = 189241.857455,
+           VALE_CALC = 189253.4292231312,
            NOM_PARA  = 'DRY',
            TABLE     = DYNA01,
            FILTRE    = (

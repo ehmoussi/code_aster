@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -189,7 +189,7 @@ sigma=1E6
 #==================================
 i=1
 a=a0+da_fiss*(i-1)
-KI_broek=sigma*sqrt(3.1415*a/cos(3.1415*a/W));
+KI_broek=sigma*sqrt(pi*a/cos(pi*a/W));
 TOL_K2=0.01*KI_broek
 
 #TEST sur KI
@@ -228,7 +228,7 @@ TEST_TABLE(TABLE=SIF_1,
 #==================================
 i=2
 a=a0+da_fiss*(i-1)
-KI_broek=sigma*sqrt(3.1415*a/cos(3.1415*a/W));
+KI_broek=sigma*sqrt(pi*a/cos(pi*a/W));
 TOL_K2=0.01*KI_broek
 
 #TEST sur KI
@@ -267,7 +267,7 @@ TEST_TABLE(TABLE=SIF_2,
 #==================================
 i=3
 a=a0+da_fiss*(i-1)
-KI_broek=sigma*sqrt(3.1415*a/cos(3.1415*a/W));
+KI_broek=sigma*sqrt(pi*a/cos(pi*a/W));
 TOL_K2=0.01*KI_broek
 
 #TEST sur KI
