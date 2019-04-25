@@ -34,7 +34,7 @@ def configure(self):
 
     opts.parallel = True
     gaia_std.configure(self)
-    self.env['ADDMEM'] = 700
+    self.env['ADDMEM'] = 1200
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/lib',
@@ -55,5 +55,3 @@ def configure(self):
     self.env.append_value('LIB_SCOTCH', ('ptscotch','ptscotcherr','ptscotcherrexit'))
 
     self.env.prepend_value('LINKFLAGS', ('-L/opt/intel/2019.0.045/impi/2019.0.117/intel64/libfabric/lib'))
-
-
