@@ -629,7 +629,7 @@ def remove_empty_lines(text):
 
 def remove_comments(text):
     """Remove Miss comments from `text`"""
-    recmt = re.compile('^\*')
+    recmt = re.compile(r'^\*')
     lines = [line for line in text.splitlines() if not recmt.search(line)]
     return os.linesep.join(lines)
 

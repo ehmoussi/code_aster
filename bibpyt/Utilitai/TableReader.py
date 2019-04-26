@@ -35,8 +35,8 @@ from Utilitai.utils import set_debug, _printDBG
 
 # Aster type : regular expression
 FMT = {
-    'I': '([0-9\-\+]+)',
-    'R': '([0-9\.,\-\+eEdD]+)',
+    'I': r'([0-9\-\+]+)',
+    'R': r'([0-9\.,\-\+eEdD]+)',
     'K': '(.{%(len)s})'
 }
 
