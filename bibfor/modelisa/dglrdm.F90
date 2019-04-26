@@ -48,7 +48,8 @@ subroutine dglrdm()
 !                 "RIGI_ACIER"= PENTE REPRISE DES RAIDEURS DES ACIERS
 !       PENTE/FLEXION : METHODE RETENUE POUR CALCULER LA PENTE D'ENDOMMAGEMENT
 !                 "UTIL" = RECALAGE A LA DEFO GENE MAX DE L'ELEMENT
-!                 "RIGI_INIT"= 
+!                 "RIGI_INIT"= RECALAGE AU DEBUT PHASE NON LINEAIRE
+!                 "RIGI_ACIER"= PENTE REPRISE DES ACIERS
 
 !       CISAIL  : RECALAGE PAR RAPPORT AU TEST DE CISAILLEMENT PUR
 !       INFO    : IMPRESSION DES PARAMETRES DE LA LOI GLRC_DM
@@ -273,7 +274,7 @@ subroutine dglrdm()
         hyst=amorh
     endif
 !
-! RECUPERATION DES MOTS CLES "CISAIL", "METHODE_ENDO" et "PENTE"
+! RECUPERATION DES MOTS CLES "CISAIL" et "PENTE"
 
 !   PENTE/TRACTION
     call getvtx('PENTE', 'TRACTION', iocc=1, scal=pentetrac, nbret=ibid1)
@@ -296,6 +297,10 @@ subroutine dglrdm()
     if (penteflex.eq.'UTIL')then
         call getvr8('PENTE', 'KAPPA_FLEX', iocc=1, scal=kapflex, nbret=ibid1)
         ipenteflex = 2
+    else if (penteflex .eq. 'RIGI_ACIER') then
+        ipenteflex = 3
+    else if (penteflex .eq. 'PLAS_ACIER') then
+        ipenteflex = 4
     else
         ipenteflex = 1
     endif
@@ -315,13 +320,14 @@ subroutine dglrdm()
     call dgseui(em, num, ef, nuf, eb, nub, ftj, h, icisai, nyt, dxd, myf, drd, pelast,&
                 pelasf)
 ! - DETERMINATION DES PENTES POST ELASTIQUE
-    call dgplas(ea, sya, eb, nub, ftj, num, nuf, a, b1, b, nyt, myf, dxd, drd, h,&
-                ipentetrac, icisai, emaxm, kapflex, nnap, rx, ry, np, dxp, pendt, drp, mp, pendf)
+    call dgplas(ea, sya, eb, nub, ftj, fcj, num, nuf, a, b1, b, nyt, myf, ef, dxd, drd, h,&
+                ipentetrac, ipenteflex, icisai, emaxm, kapflex, nnap, omx(1), rx, ry,&
+                np, dxp, pendt,drp, mp, pendf)
 ! - DETERMINATION DES PARAMETRES D ENDOMMAGEMENT
-    call dgendo(em, ef, h, ea(1), sya(1), fcj, ftj, epsi_c, omx(1), rx(1), & 
-                nyt, nyc, num, pendt, pelast,&
+    call dgendo(em, h, ea(1), sya(1), fcj, epsi_c, & 
+                nyt, nyc, num, pendt, pendf, pelast, pelasf,&
                 icisai, gt, gf, gc, ipentetrac,&
-                ipenteflex, kapflex, np, dxp, b, myf, alpha_c)
+                np, dxp, b,alpha_c)
 !---------------------------------------------------------------------------------------
 
 !-----REMPLISSAGE DU MATERIAU

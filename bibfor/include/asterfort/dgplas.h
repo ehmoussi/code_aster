@@ -15,21 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
 !
 interface
-    subroutine dgplas(ea, sya, eb, nub, ftj,&
+    subroutine dgplas(ea, sya, eb, nub, ftj, fcj,&
                       num, nuf, a, b1, b,&
-                      syt, syf, dxd, drd, h,&
-                      ipente, icisai, emaxm, emaxf, nnap,&
-                      rx, ry, np, dxp, pendt,&
+                      syt, syf, ef, dxd, drd, h,&
+                      ipentetrac, ipenteflex, icisai, emaxm, emaxf, nnap,&
+                      omx, rx, ry, np, dxp, pendt,&
                       drp, mp, pendf)
         real(kind=8) :: ea(*)
         real(kind=8) :: sya(*)
         real(kind=8) :: eb
         real(kind=8) :: nub
         real(kind=8) :: ftj
+        real(kind=8) :: fcj
         real(kind=8) :: num
         real(kind=8) :: nuf
         real(kind=8) :: a
@@ -37,14 +37,17 @@ interface
         real(kind=8) :: b
         real(kind=8) :: syt
         real(kind=8) :: syf
+        real(kind=8) :: ef
         real(kind=8) :: dxd
         real(kind=8) :: drd
         real(kind=8) :: h
-        integer :: ipente
+        integer :: ipentetrac
+        integer :: ipenteflex
         integer :: icisai
         real(kind=8) :: emaxm
         real(kind=8) :: emaxf
         integer :: nnap
+        real(kind=8) :: omx
         real(kind=8) :: rx(*)
         real(kind=8) :: ry(*)
         real(kind=8) :: np

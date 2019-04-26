@@ -18,38 +18,35 @@
 
 !
 !
+
+
 interface
-    subroutine dgendo(em, ef, h, ea, sya, fcj, ftj, epsi_c, omx, rx,&
-                      syt, syc, num, pendt, pelast,&
+    subroutine dgendo(em, h, ea, sya, fcj, epsi_c,&
+                      syt, syc, num, pendt, pendf, pelast, pelasf,&
                       icisai, gt,&
-                      gf, gc, ipentetrac, ipenteflex, kapflex, np, dxp,&
-                      b, myf, alpha_c)
+                      gf, gc, ipentetrac, np, dxp,&
+                      b, alpha_c)
         real(kind=8) :: em
-        real(kind=8) :: ef
         real(kind=8) :: h
         real(kind=8) :: ea
         real(kind=8) :: sya
         real(kind=8) :: fcj
-        real(kind=8) :: ftj
         real(kind=8) :: epsi_c
-        real(kind=8) :: omx
-        real(kind=8) :: rx
         real(kind=8) :: syt
         real(kind=8) :: syc
         real(kind=8) :: num
         real(kind=8) :: pendt
+        real(kind=8) :: pendf
         real(kind=8) :: pelast
+        real(kind=8) :: pelasf
         integer :: icisai
         real(kind=8) :: gt
         real(kind=8) :: gf
         real(kind=8) :: gc
         integer :: ipentetrac
-        integer :: ipenteflex
-        real(kind=8) :: kapflex
         real(kind=8) :: np
         real(kind=8) :: dxp
         real(kind=8) :: b
-        real(kind=8) :: myf
         real(kind=8) :: alpha_c
     end subroutine dgendo
 end interface
