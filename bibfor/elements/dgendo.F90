@@ -16,25 +16,25 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine dgendo(em, ef, h, ea, sya, fcj, ftj, epsi_c, omx, rx,&
-                  syt, syc, num, pendt, pelast,&
+subroutine dgendo(em, h, ea, sya, fcj, epsi_c, &
+                  syt, syc, num, pendt, pendf, pelast, pelasf,&
                   icisai, gt,&
-                  gf, gc, ipentetrac, ipenteflex, kapflex, np, dxp,&
-                  b, myf, alpha_c)
+                  gf, gc, ipentetrac, np, dxp,&
+                  b,alpha_c)
 !
     implicit none
 !
 ! PARAMETRES ENTRANTS
 #include "asterfort/utmess.h"
 #include "asterfort/dgendo1.h"
-#include "asterfort/calc_myf_gf.h"
-    integer :: icisai, ipentetrac, ipenteflex
-    real(kind=8) :: em, ef, h, syt, num, np, dxp, ea, sya, rx, omx
-    real(kind=8) :: pendt, pendc, pelast, fcj, ftj, epsi_c
-    real(kind=8) :: kapflex, b
+
+    integer :: icisai, ipentetrac
+    real(kind=8) :: em, h, syt, num, np, dxp, ea, sya
+    real(kind=8) :: pendt, pendf, pendc, pelast, pelasf, fcj, epsi_c
+    real(kind=8) :: b
 !
 ! PARAMETRES SORTANTS
-    real(kind=8) :: gt, gf, gc, syc, myf, alpha_c
+    real(kind=8) :: gt, gf, gc, syc, alpha_c
 !
 ! RESONSABLE
 ! ----------------------------------------------------------------------
@@ -53,10 +53,14 @@ subroutine dgendo(em, ef, h, ea, sya, fcj, ftj, epsi_c, omx, rx,&
 !       PENDT : PENTE POST ENDOMMAGEMENT EN MEMBRANNE
 !       PELAST: PENTE ELASTIQUE EN TRACTION
 !       ICISAI: INDICATEUR DE CISAILLEMENT
-!       IPENTE: OPTION DE CALCUL DES PENTES POST ENDOMMAGEMENT
+!       IPENTETRAC: OPTION DE CALCUL DES PENTES POST ENDOMMAGEMENT TR
 !               1 : RIGI_ACIER
 !               2 : PLAS_ACIER
 !               3 : UTIL
+!       IPENTEFLEX: OPTION DE CALCUL DES PENTES POST ENDOMMAGEMENT FL
+!               1 : RIGI_INIT
+!               2 : UTIL
+!               3 : RIGI_ACIER
 !       NP    : EFFORT A PLASTICITE
 !       DXP   : DEPLACEMENT A PLASTICITE
 ! OUT:
@@ -64,12 +68,10 @@ subroutine dgendo(em, ef, h, ea, sya, fcj, ftj, epsi_c, omx, rx,&
 !       GF    : GAMMA DE FLEXION
 !       GC    : GAMMA DE CISAILLEMENT
 !       SYC   : SEUIL D'ENDOMMAGEMENT EN COMPRESSION
-!       MYF   :
-!       ALPHA_C :
+!       ALPHA_C : DECALAGE SEUIL COMPRESSION
 ! ----------------------------------------------------------------------
 ! PARAMETRES INTERMEDIAIRES
-    real(kind=8) :: ya
-    real(kind=8) :: sytxy, dxd, efm
+    real(kind=8) :: sytxy, dxd
     
     alpha_c = 1.d0
 
@@ -99,12 +101,7 @@ subroutine dgendo(em, ef, h, ea, sya, fcj, ftj, epsi_c, omx, rx,&
                    gt, gc, syc, alpha_c)
     endif
 
-    ya = rx*h
-    efm = 1./12.*ef*h**3-2*ea*omx*(ya**2)
-    efm = efm*12/(h**3)
-    call calc_myf_gf(efm, ftj, fcj, h, ea, omx,& 
-                       ya, sya, ipenteflex, kapflex,&
-                       myf, gf)
+    gf = pendf/pelasf
 
     if (gt .lt. 1.d-3) then
         call utmess('A', 'ALGORITH6_4', sk='GAMMAT')
@@ -122,5 +119,4 @@ subroutine dgendo(em, ef, h, ea, sya, fcj, ftj, epsi_c, omx, rx,&
         call utmess('A', 'ALGORITH6_4', sk='ALPHAC')
         alpha_c = 1.d-3
     endif
-!
 end subroutine
