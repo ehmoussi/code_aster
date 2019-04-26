@@ -22,7 +22,6 @@
 # Note: the list of times has been limited.
 
 # required: data attributes
-
 import math
 import numpy
 # because some parameters may be 'repr'esented as `array` or `matrix`
@@ -173,7 +172,7 @@ for i in range(len(coupe_orig)):
                      LIGN_COUPE=_F(INTITULE='LIGNE',
                                    NOM_CMP=('TEMP',),
                                    TYPE='SEGMENT',
-                                   NB_POINTS=10.,
+                                   NB_POINTS=10,
                                    COOR_ORIG=coupe_orig[i],
                                    COOR_EXTR=coupe_extr[i],
                                   ),
