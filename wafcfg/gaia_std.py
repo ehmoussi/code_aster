@@ -40,7 +40,7 @@ def configure(self):
     official_programs.check_prerequisites_package(self, YAMMROOT, '20190122')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
-    self.env['ADDMEM'] = 850
+    self.env['ADDMEM'] = 1000
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
     TFELVERS = '3.1.1'
