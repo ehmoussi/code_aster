@@ -4,3 +4,7 @@ P testlist verification sequential
 
 F comm supv004a.comm D 1
 P ncpus 1
+
+# Cet argument est activé ici pour la couverture de code.
+# aslint: disable=E2003
+A args --hide-command
