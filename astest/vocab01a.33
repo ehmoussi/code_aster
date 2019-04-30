@@ -103,7 +103,8 @@ def printKeywordsUsage( commands, fileList=None ):
     print(os.linesep.join(lines))
     if fileList:
         picline = '# person_in_charge: mathieu.courtois@edf.fr'
-        open( fileList, 'wb').write( os.linesep.join([picline] + allKwd) )
+        with open(fileList, 'w') as fobj:
+            fobj.write( os.linesep.join([picline] + allKwd) )
         line = "\n    {:^60}"
         print(line.format( "*" * 60 ))
         print(line.format( "Nom du fichier à recopier pour mettre à jour vocab01a.34" ))
