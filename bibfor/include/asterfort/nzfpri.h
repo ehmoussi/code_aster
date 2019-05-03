@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,29 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nzfpri(deuxmu, trans, rprim, seuil, phasp,&
-                      nz, fmel, eta, unsurn, dt,&
-                      dp, fplas, fp, fd, fprim,&
-                      fdevi)
-        integer :: nz
-        real(kind=8) :: deuxmu
-        real(kind=8) :: trans
-        real(kind=8) :: rprim
-        real(kind=8) :: seuil
-        real(kind=8) :: phasp(5)
-        real(kind=8) :: fmel
-        real(kind=8) :: eta(nz)
-        real(kind=8) :: unsurn(nz)
-        real(kind=8) :: dt
-        real(kind=8) :: dp
-        real(kind=8) :: fplas
-        real(kind=8) :: fp(nz)
-        real(kind=8) :: fd(5)
-        real(kind=8) :: fprim
-        real(kind=8) :: fdevi
+    subroutine nzfpri(deuxmu  , trans, rprim , seuil ,&
+                      nb_phase, phase, zalpha,&
+                      fmel    , eta  , unsurn,&
+                      dt      , dp   , &
+                      fplas   , fp   , fd    ,&
+                      fprim   , fdevi)
+        real(kind=8), intent(in) :: deuxmu, trans, rprim, seuil
+        integer, intent(in) :: nb_phase
+        real(kind=8), intent(in) :: phase(nb_phase), zalpha
+        real(kind=8), intent(in) :: fmel, eta(nb_phase), unsurn(nb_phase), dt, dp
+        real(kind=8), intent(out) :: fplas, fp(nb_phase), fd(nb_phase), fprim, fdevi
     end subroutine nzfpri
 end interface

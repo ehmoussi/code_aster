@@ -369,6 +369,7 @@ ferrDatSlu = dict(
     ALPHA_CC = 1.0 ,
     UNITE_CONTRAINTE = 'Pa',
     TYPE_STRUCTURE = '2D',
+    UTIL_COMPR = 'OUI',
 )
 
 reslin = COMBINAISON_FERRAILLAGE (

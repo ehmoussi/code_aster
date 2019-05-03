@@ -171,7 +171,7 @@ class ETAPE:
 
             UTMESS('I', 'VIDE_1')
             UTMESS('I', 'SUPERVIS2_69',
-                   valk="_stg{0}_{1}".format(self._stage_number,
+                   valk="__stg{0}_{1}".format(self._stage_number,
                                              self._identifier))
 
             UTMESS('I', 'SUPERVIS2_70')

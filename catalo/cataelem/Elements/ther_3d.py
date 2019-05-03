@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,9 +34,9 @@ CCAMASS  = LocatedComponents(phys=PHY.CAMASS, type='ELEM',
     components=('C','ALPHA','BETA','KAPPA','X',
           'Y','Z',))
 
-
+# Reuse PHY.COMPOR from mechanical => names of components are strange
 CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA'))
+    components=('RELCOM','NBVARI','DEFORM','INCELA', 'C_PLAN'))
 
 
 NVITESR  = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',

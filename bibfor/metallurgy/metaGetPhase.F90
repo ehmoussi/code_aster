@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,8 +28,7 @@ implicit none
 !
 character(len=*), intent(in) :: fami
 character(len=1), intent(in) :: poum
-integer, intent(in) :: ipg
-integer, intent(in) :: ispg
+integer, intent(in) :: ipg, ispg
 integer, intent(in) :: meta_type
 integer, intent(in) :: nb_phase
 real(kind=8), optional, intent(out) :: phase_(*)
@@ -58,9 +57,9 @@ real(kind=8), optional, intent(in) :: tole_bound_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8), parameter :: steel(5) = (/'PFERRITE','PPERLITE',&
+    character(len=8), parameter :: steel(6) = (/'PFERRITE','PPERLITE',&
                                                 'PBAINITE','PMARTENS',&
-                                                'PAUSTENI'/)
+                                                'PAUSTENI','PCOLDSUM'/)
     character(len=8), parameter :: zirc(3)  = (/'ALPHPUR ','ALPHBETA',&
                                                 'BETA    '/)
     integer :: i_phase_c, i_phase, iret, nb_phase_c
@@ -80,34 +79,42 @@ real(kind=8), optional, intent(in) :: tole_bound_
 ! - Set cold phase
 !
     do i_phase = 1, nb_phase
-        if (meta_type.eq.1) then
+        if (meta_type .eq. META_STEEL) then
             call rcvarc('F', steel(i_phase), poum, fami, ipg,&
                         ispg, phase(i_phase), iret)
             if (iret .eq. 1) then
                 phase(i_phase) = 0.d0
             endif
-        elseif (meta_type.eq.2) then
+        elseif (meta_type .eq. META_ZIRC) then
             call rcvarc('F', zirc(i_phase), poum, fami, ipg,&
                         ispg, phase(i_phase), iret)
             if (iret .eq. 1) then
                 phase(i_phase) = 0.d0
             endif
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     end do
 !
-! - Sum of cold phase
+! - Sum of cold phases
 !
     zcold = 0.d0
-    do i_phase_c = 1, nb_phase_c
-        zcold = zcold + phase(i_phase_c)
-    end do
-    if (zcold .le. tole_bound) then
-        zcold = 0.d0
-    endif
-    if (zcold .ge. 1.d0) then
-        zcold = 1.d0
+    if (meta_type .eq. META_STEEL) then
+        call rcvarc('F', steel(6), poum, fami, ipg,&
+                    ispg, zcold, iret)
+        if (iret .eq. 1) then
+            zcold = 0.d0
+        endif
+    elseif (meta_type .eq. META_ZIRC) then
+        do i_phase_c = 1, nb_phase_c
+            zcold = zcold + phase(i_phase_c)
+        end do
+        if (zcold .le. tole_bound) then
+            zcold = 0.d0
+        endif
+        if (zcold .ge. 1.d0) then
+            zcold = 1.d0
+        endif
     endif
 !
 ! - Set hot phase

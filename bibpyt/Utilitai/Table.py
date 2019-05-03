@@ -930,7 +930,11 @@ class OrderableRow(object):
         # 'keys' attr should be the same one
         for col in self.keys:
             default = self.defaults[col]
-            if self.data.get(col, default) > other.data.get(col, default):
+            left = self.data.get(col, default)
+            left = left if left is not None else default
+            right = other.data.get(col, default)
+            right = right if right is not None else default
+            if left > right:
                 return False
         return True
 
@@ -947,8 +951,8 @@ def FMT(dform, nform, typAster=None, larg=0, val=''):
     elif typAster in ('I', 'R'):
         if nform == 'formK':
             # convertit %12.5E en %-12s
-            fmt = re.sub(
-                '([0-9]+)[\.0-9]*[diueEfFgG]+', '-\g<1>s', dform['form' + typAster])
+            fmt = re.sub(r'([0-9]+)[\.0-9]*[diueEfFgG]+',
+                         r'-\g<1>s', dform['form' + typAster])
         else:
             fmt = dform[nform]
     else:

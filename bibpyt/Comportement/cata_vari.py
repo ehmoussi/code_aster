@@ -470,6 +470,7 @@ DICT_NOM_VARI = {
     "SM5": _("SIMO_MIEHE, variable interne 5"),
     "SM6": _("SIMO_MIEHE, variable interne 6"),
     "STIL": _("FLUA_ENDO_PORO sulfo aluminates pour la def"),
+    "SUMCOLD": _("Somme des phases froides"),
     "SURF": _("contrainte de rupture par propagation,"),
     "TAILLE_GRAIN": _("taille de grain de la martensite"),
     "TANGENTE": _("Tangente au comportement"),
