@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! aslint: disable=W1501
 !
 subroutine lcgdpm(fami, kpg, ksp, ndim, imat,&
-                  compor, crit, instam, instap, fm,&
+                  compor, carcri, instam, instap, fm,&
                   df, sigm, vim, option, sigp,&
                   vip, dsigdf, iret)
 !
@@ -50,16 +50,16 @@ integer, intent(in) :: ksp
 integer, intent(in) :: ndim
 integer, intent(in) :: imat
 character(len=16), intent(in) :: compor(*)
-real(kind=8), intent(in) :: crit(*)
+real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: instam
 real(kind=8), intent(in) :: instap
 real(kind=8), intent(in) :: fm(3, 3)
 real(kind=8), intent(in) :: df(3, 3)
 real(kind=8), intent(in) :: sigm(*)
-real(kind=8), intent(in) :: vim(8)
+real(kind=8), intent(in) :: vim(*)
 character(len=16), intent(in) :: option
 real(kind=8), intent(out) :: sigp(*)
-real(kind=8), intent(out) :: vip(8)
+real(kind=8), intent(out) :: vip(*)
 real(kind=8), intent(out) :: dsigdf(6, 3, 3)
 integer, intent(out) :: iret
 !
@@ -140,7 +140,7 @@ integer, intent(out) :: iret
     do i = 1, 2*ndim
         sigp(i) = 0.d0
     end do
-    vip(1:8)            = 0.d0
+    vip(1:9)            = 0.d0
     dsigdf(1:6,1:3,1:3) = 0.d0
     iret                = 0
     resi                = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
@@ -192,7 +192,7 @@ integer, intent(out) :: iret
     call metaGetParaElas(poum, fami    , kpg     , ksp, imat,&
                          e_  = e, mu_  = mu, troisk_ = troisk,&
                          mum_ = mum)
-    plasti = vim(7)
+    plasti = vim(8)
 !
 ! - Mixture law (yield limit)
 !
@@ -372,7 +372,7 @@ integer, intent(out) :: iret
 ! 3.3 - DEFORMATIONS ELASTIQUES A L INSTANT PRECEDENT :
 ! BEM=DVTAUM/MUM+KR*TRBEM/3.D0
 !
-    xm = (jm**(-2.d0/3.d0))*(1.d0-2.d0*vim(8)/3.d0)
+    xm = (jm**(-2.d0/3.d0))*(1.d0-2.d0*vim(9)/3.d0)
     do i = 1, 6
         bem(i)=dvtaum(i)/mum+kr(i)*xm
     end do
@@ -427,14 +427,15 @@ integer, intent(out) :: iret
 !
         seuil=eqtel-(1.d0+mu*trans*trbel)*rmoy
         if (seuil .lt. 0.d0) then
-            vip(7)=0.d0
+            vip(8)=0.d0
             dp=0.d0
         else
-            vip(7)=1.d0
+            vip(8)=1.d0
             mutild=2.d0*mu*trbel/3.d0
-            call nzcalc(crit, phase, nb_phase, fmel, seuil,&
-                        dt, trans, hmoy, mutild, eta,&
-                        unsurn, dp, iret)
+            call nzcalc(carcri, nb_phase, phase, zalpha,&
+                        fmel  , seuil   , dt   , trans ,&
+                        hmoy  , mutild  , eta  , unsurn,&
+                        dp    , iret)
             if (iret .eq. 1) goto 999
 !
 ! DANS LE CAS NON LINEAIRE
@@ -474,9 +475,10 @@ integer, intent(out) :: iret
                         hmoy = (1.d0-fmel)*h(nb_phase)+hmoy
                     endif
                     seuil=eqtel-(1.d0+mu*trans*trbel)*rmoy
-                    call nzcalc(crit, phase, nb_phase, fmel, seuil,&
-                                dt, trans, hmoy, mutild, eta,&
-                                unsurn, dp, iret)
+                    call nzcalc(carcri, nb_phase, phase, zalpha,&
+                                fmel  , seuil   , dt   , trans ,&
+                                hmoy  , mutild  , eta  , unsurn,&
+                                dp    , iret)
                     if (iret .eq. 1) goto 999
                 end do
                 ASSERT((test.ne.1).or.(j.ne.maxval))
@@ -486,7 +488,7 @@ integer, intent(out) :: iret
 !
 ! 4.2.2 - CALCUL DE SIGMA
 !
-        plasti=vip(7)
+        plasti=vip(8)
         do i = 1, 6
             if (eqtel .gt. 0.d0) then
                 dvtaup(i)=dvtel(i)-mu*dp*trbel*dvtel(i)/eqtel
@@ -509,22 +511,22 @@ integer, intent(out) :: iret
                 vip(k)=0.d0
             endif
         end do
-        vip(6)=0.d0
+        vip(7)=0.d0
         if (phase(nb_phase) .gt. 0.d0) then
             if (l_hard_isotline) then
-                vip(6)=vip(6)+(1-fmel)*h(nb_phase)*vip(nb_phase)
+                vip(7)=vip(7)+(1-fmel)*h(nb_phase)*vip(nb_phase)
             endif
             if (l_hard_isotnlin) then
-                vip(6)=vip(6)+(1-fmel)*(r(nb_phase)-sy(nb_phase))
+                vip(7)=vip(7)+(1-fmel)*(r(nb_phase)-sy(nb_phase))
             endif
         endif
         if (zalpha .gt. 0.d0) then
             do k = 1, nb_phase-1
                 if (l_hard_isotline) then
-                    vip(6)=vip(6)+fmel*phase(k)*h(k)*vip(k)/zalpha
+                    vip(7)=vip(7)+fmel*phase(k)*h(k)*vip(k)/zalpha
                 endif
                 if (l_hard_isotnlin) then
-                    vip(6)=vip(6)+fmel*phase(k)*(r(k)-sy(k))/zalpha
+                    vip(7)=vip(7)+fmel*phase(k)*(r(k)-sy(k))/zalpha
                 endif
             end do
         endif
@@ -703,7 +705,7 @@ integer, intent(out) :: iret
                 if ((abs(sol(i)-xm)) .lt. (abs(sol(i-1)-xm))) xp=sol(i)
             end do
         endif
-        vip(8) = 3.d0*(1.d0-(jp**(2.d0/3.d0))*xp)/2.d0
+        vip(9) = 3.d0*(1.d0-(jp**(2.d0/3.d0))*xp)/2.d0
     endif
 !
 999 continue

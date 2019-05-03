@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine lcgdpm(fami, kpg, ksp, ndim, imat,&
-                      compor, crit, instam, instap, fm,&
+                      compor, carcri, instam, instap, fm,&
                       df, sigm, vim, option, sigp,&
                       vip, dsigdf, iret)
         character(len=*), intent(in) :: fami
@@ -29,16 +27,16 @@ interface
         integer, intent(in) :: ndim
         integer, intent(in) :: imat
         character(len=16), intent(in) :: compor(*)
-        real(kind=8), intent(in) :: crit(*)
+        real(kind=8), intent(in) :: carcri(*)
         real(kind=8), intent(in) :: instam
         real(kind=8), intent(in) :: instap
         real(kind=8), intent(in) :: fm(3, 3)
         real(kind=8), intent(in) :: df(3, 3)
         real(kind=8), intent(in) :: sigm(*)
-        real(kind=8), intent(in) :: vim(8)
+        real(kind=8), intent(in) :: vim(*)
         character(len=16), intent(in) :: option
         real(kind=8), intent(out) :: sigp(*)
-        real(kind=8), intent(out) :: vip(8)
+        real(kind=8), intent(out) :: vip(*)
         real(kind=8), intent(out) :: dsigdf(6, 3, 3)
         integer, intent(out) :: iret
     end subroutine lcgdpm

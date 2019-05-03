@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 subroutine nzisfw(fami, kpg, ksp, ndim, imat,&
-                  compor, crit, instam, instap, epsm,&
+                  compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, sigp,&
                   vip, dsidep, iret)
 !
@@ -49,16 +49,16 @@ integer, intent(in) :: ksp
 integer, intent(in) :: ndim
 integer, intent(in) :: imat
 character(len=16), intent(in) :: compor(*)
-real(kind=8), intent(in) :: crit(*)
+real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: instam
 real(kind=8), intent(in) :: instap
 real(kind=8), intent(in) :: epsm(*)
 real(kind=8), intent(in) :: deps(*)
 real(kind=8), intent(in) :: sigm(*)
-real(kind=8), intent(in) :: vim(7)
+real(kind=8), intent(in) :: vim(*)
 character(len=16), intent(in) :: option
 real(kind=8), intent(out) :: sigp(*)
-real(kind=8), intent(out) :: vip(7)
+real(kind=8), intent(out) :: vip(*)
 real(kind=8), intent(out) :: dsidep(6, 6)
 integer, intent(out) :: iret
 !
@@ -121,14 +121,14 @@ integer, intent(out) :: iret
     do i = 1, 2*ndim
         sigp(i) = 0.d0
     end do
-    vip(1:7)        = 0.d0
-    dsidep(1:6,1:6) = 0.d0
-    ndimsi          = 2*ndim
-    iret            = 0
-    resi            = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
-    rigi            = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
-    dt              = instap-instam
-    precr           = r8prem()
+    vip(1:IDX_I_IPLAS) = 0.d0
+    dsidep(1:6,1:6)    = 0.d0
+    ndimsi             = 2*ndim
+    iret               = 0
+    resi               = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
+    rigi               = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
+    dt                 = instap-instam
+    precr              = r8prem()
 !
 ! - Get metallurgy type
 !
@@ -176,7 +176,7 @@ integer, intent(out) :: iret
     call metaGetParaElas(poum, fami    , kpg     , ksp, imat,&
                          e_  = e, deuxmu_  = deuxmu, troisk_ = troisk,&
                          deuxmum_ = deumum)
-    plasti = vim(7)
+    plasti = vim(IDX_I_IPLAS)
     trans  = 0.d0
 !
 ! - Mixture law (yield limit)
@@ -351,13 +351,14 @@ integer, intent(out) :: iret
 !
         seuil= sieleq-(1.5d0*deuxmu*trans+1.d0)*rmoy
         if (seuil .lt. 0.d0) then
-            vip(7) = 0.d0
+            vip(IDX_I_IPLAS) = 0.d0
             dp = 0.d0
         else
-            vip(7) = 1.d0
-            call nzcalc(crit, phase, nb_phase, fmel, seuil,&
-                        dt, trans, hmoy, deuxmu, eta,&
-                        unsurn, dp, iret)
+            vip(IDX_I_IPLAS) = 1.d0
+            call nzcalc(carcri, nb_phase, phase, zalpha,&
+                        fmel  , seuil   , dt   , trans ,&
+                        hmoy  , deuxmu  , eta  , unsurn,&
+                        dp    , iret)
             if (iret .eq. 1) goto 999
 !
 ! DANS LE CAS NON LINEAIRE
@@ -367,8 +368,8 @@ integer, intent(out) :: iret
 !
                 do j = 1, maxval
                     test=0
-                    vip(1:5)   = vi(1:5) + dp
-                    hplus(1:5) = h(1:5)
+                    vip(1:nb_phase)   = vi(1:nb_phase) + dp
+                    hplus(1:nb_phase) = h(1:nb_phase)
                     call metaGetParaHardTrac(imat   , meta_type, nb_phase,&
                                              l_temp , temp     ,&
                                              vip    , h       , r)
@@ -395,11 +396,11 @@ integer, intent(out) :: iret
                         rmoy = (1.d0-fmel)*(r(nb_phase)-h(nb_phase)*dp)+rmoy
                         hmoy = (1.d0-fmel)*h(nb_phase)+hmoy
                     endif
-                    seuil= sieleq - (1.5d0*deuxmu*trans + 1.d0)*&
-                    rmoy
-                    call nzcalc(crit, phase, nb_phase, fmel, seuil,&
-                                dt, trans, hmoy, deuxmu, eta,&
-                                unsurn, dp, iret)
+                    seuil = sieleq - (1.5d0*deuxmu*trans + 1.d0)*rmoy
+                    call nzcalc(carcri, nb_phase, phase, zalpha,&
+                                fmel  , seuil   , dt   , trans ,&
+                                hmoy  , deuxmu  , eta  , unsurn,&
+                                dp    , iret)
                     if (iret .eq. 1) goto 999
                 end do
                 ASSERT((test.ne.1).or.(j.ne.maxval))
@@ -409,7 +410,7 @@ integer, intent(out) :: iret
 !
 ! 4.2.2 - CALCUL DE SIGMA
 !
-        plasti = vip(7)
+        plasti = vip(IDX_I_IPLAS)
         do i = 1, ndimsi
             dvsigp(i) = sigel(i) - 1.5d0*deuxmu*dp*sig0(i)
             dvsigp(i) = dvsigp(i)/(1.5d0*deuxmu*trans + 1.d0)
@@ -425,23 +426,23 @@ integer, intent(out) :: iret
                 vip(k)=0.d0
             endif
         end do
-        vip(6)=0.d0
+        vip(IDX_I_EPSEQ)=0.d0
         if (phase(nb_phase) .gt. 0.d0) then
             if (l_hard_isotline) then
-                vip(6)=vip(6)+(1-fmel)*h(nb_phase)*vip(nb_phase)
+                vip(IDX_I_EPSEQ)=vip(IDX_I_EPSEQ)+(1-fmel)*h(nb_phase)*vip(nb_phase)
             endif
             if (l_hard_isotnlin) then
-                vip(6)=vip(6)+(1-fmel)*(r(nb_phase)-sy(nb_phase))
+                vip(IDX_I_EPSEQ)=vip(IDX_I_EPSEQ)+(1-fmel)*(r(nb_phase)-sy(nb_phase))
             endif
         endif
 !
         if (zalpha .gt. 0.d0) then
             do k = 1, nb_phase-1
                 if (l_hard_isotline) then
-                    vip(6)=vip(6)+fmel*phase(k)*h(k)*vip(k)/ zalpha
+                    vip(IDX_I_EPSEQ)=vip(IDX_I_EPSEQ)+fmel*phase(k)*h(k)*vip(k)/ zalpha
                 endif
                 if (l_hard_isotnlin) then
-                    vip(6)=vip(6)+fmel*phase(k)*(r(k)-sy(k))/ zalpha
+                    vip(IDX_I_EPSEQ)=vip(IDX_I_EPSEQ)+fmel*phase(k)*(r(k)-sy(k))/ zalpha
                 endif
             end do
         endif
@@ -496,8 +497,10 @@ integer, intent(out) :: iret
                             ((dp/dt)**n0(nb_phase))
                         if (zalpha .gt. 0.d0) then
                             do k = 1, nb_phase-1
-                                if (phase(k) .gt. 0.d0) dv = dv+ fmel*( phase(k)/zalpha) *&
-                                                             (eta(k)/ n(k)/dt)*((dp/dt)**n0(k) )
+                                if (phase(k) .gt. 0.d0) then
+                                    dv = dv+ fmel*( phase(k)/zalpha)*&
+                                         (eta(k)/ n(k)/dt)*((dp/dt)**n0(k))
+                                endif
                             end do
                         endif
                     endif
@@ -505,7 +508,7 @@ integer, intent(out) :: iret
                     coef2 = (1.5d0*deuxmu*trans+1.d0)*coef2
                     coef2 = (1.5d0*deuxmu)+coef2
                     coef2 = 1/coef2 - dp/sieleq
-                    coef2 =((1.5d0*deuxmu)**2)*coef2
+                    coef2 = ((1.5d0*deuxmu)**2)*coef2
                 endif
             endif
             if (option(1:14) .eq. 'RIGI_MECA_TANG') then

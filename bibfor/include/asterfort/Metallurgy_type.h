@@ -42,8 +42,13 @@
 #define PALPHA2          2
 #define PBETA            3
 ! For next ones: add total number of phases to access in internal state variable vector
-#define ZIRC_TEMP        1 
+#define ZIRC_TEMP        1
 #define TIME_TRAN        2
+!
+! - Index for internal variables
+!
+#define IDX_I_EPSEQ      7
+#define IDX_I_IPLAS      8
 !
 ! - Kinetic
 !
