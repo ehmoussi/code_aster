@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 subroutine nzcifw(fami, kpg, ksp, ndim, imat,&
-                  compor, crit, instam, instap, epsm,&
+                  compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, sigp,&
                   vip, dsidep, iret)
 !
@@ -47,7 +47,7 @@ integer, intent(in) :: ksp
 integer, intent(in) :: ndim
 integer, intent(in) :: imat
 character(len=16), intent(in) :: compor(*)
-real(kind=8), intent(in) :: crit(*)
+real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: instam
 real(kind=8), intent(in) :: instap
 real(kind=8), intent(in) :: epsm(*)
@@ -174,7 +174,7 @@ integer, intent(out) :: iret
 !
 ! - Mixture law (yield limit)
 !
-    call metaGetParaMixture(poum  , fami     , kpg      , ksp   , imat,&
+    call metaGetParaMixture(poum  , fami     , kpg     , ksp   , imat,&
                             l_visc, meta_type, nb_phase, zalpha, fmel,&
                             sy)
 !
@@ -182,11 +182,11 @@ integer, intent(out) :: iret
 !
     coef_hard = (2.d0/3.d0)
     call metaGetParaHardLine(poum     , fami     , kpg, ksp, imat,&
-                             meta_type, nb_phase,&
+                             meta_type, nb_phase ,&
                              e        , coef_hard, h)
-    hmoy=0.d0
+    hmoy = 0.d0
     do k = 1, nb_phase
-        hmoy=hmoy+phase(k)*h(k)
+        hmoy = hmoy + phase(k)*h(k)
     end do
 !
     if (resi) then
@@ -216,7 +216,7 @@ integer, intent(out) :: iret
 ! 2.7 - CALCUL DE VIM+DG
 !
         do k = 1, nb_phase-1
-            dz(k)= phase(k)-phasm(k)
+            dz(k) = phase(k)-phasm(k)
             if (dz(k) .ge. 0.d0) then
                 dz1(k)=dz(k)
                 dz2(k)=0.d0
@@ -252,7 +252,6 @@ integer, intent(out) :: iret
                 endif
             end do
         end do
-!
 !
 !    -  MISE AU FORMAT DES CONTRAINTES DE RAPPEL
 !
@@ -346,7 +345,7 @@ integer, intent(out) :: iret
     else
         symoy = 0.d0
     endif
-    symoy =(1.d0-fmel)*sy(nb_phase)+fmel*symoy
+    symoy = (1.d0-fmel)*sy(nb_phase)+fmel*symoy
 !
 ! ********************************
 ! 3 - DEBUT DE L ALGORITHME
@@ -397,9 +396,10 @@ integer, intent(out) :: iret
             if (l_plas) then
                 dp=seuil/(1.5d0*deuxmu+(1.5d0*deuxmu*trans+1.d0)*rprim)
             else
-                call nzcalc(crit, phase, nb_phase, fmel, seuil,&
-                            dt, trans, rprim, deuxmu, eta,&
-                            unsurn, dp, iret)
+                call nzcalc(carcri, nb_phase, phase, zalpha,&
+                            fmel  , seuil   , dt   , trans ,&
+                            rprim , deuxmu  , eta  , unsurn,&
+                            dp    , iret)
                 if (iret .eq. 1) goto 999
             endif
         endif
@@ -487,9 +487,10 @@ integer, intent(out) :: iret
                              ((dp/dt)**n0(nb_phase))
                         if (zalpha .gt. 0.d0) then
                             do k = 1, nb_phase-1
-                                if (phase(k) .gt. 0.d0) dv = dv+ fmel*( phase(k)/zalpha) *&
-                                                             & (eta(k)/ n(k)/dt)*((dp/dt)**n0&
-                                                             &(k) )
+                                if (phase(k) .gt. 0.d0) then
+                                    dv = dv +&
+                                         fmel*(phase(k)/zalpha) * (eta(k)/ n(k)/dt)*((dp/dt)**n0(k))
+                                endif
                             end do
                         endif
                     endif
