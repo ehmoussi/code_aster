@@ -70,6 +70,14 @@ class CoreOptions(object):
             action='store',
             help="Code_Aster command file")
         parser.add_argument(
+            '--show-command', dest='show_command', action='store_true',
+            default=True,
+            help="show the content of the command file")
+        parser.add_argument(
+            '--hide-command', dest='show_command', action='store_false',
+            default=True,
+            help="hide the content of the command file")
+        parser.add_argument(
             '--stage_number', dest='stage_number', type=int, metavar='NUM',
             action='store', default=1,
             help="Stage number in the Study")
@@ -207,7 +215,7 @@ class CoreOptions(object):
             value = getattr(self.opts, option)
         else:
             value = self.info.get(option, default)
-        if type(value) in (str, str):
+        if type(value) is str:
             value = convert(value)
         if self._dbg:
             print("<CoreOptions.get_option> option={0!r} value={1!r}".format(option, value))

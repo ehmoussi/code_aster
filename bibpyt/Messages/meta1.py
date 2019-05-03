@@ -37,5 +37,5 @@ cata_msg = {
 
     48 : _("""Erreur dans CALC_META: La somme des phases vaut %(r1)12.4E."""),
 
-
+    49 : _("""La somme des phases froides donnée par l'utilisateur n'est pas égale à la somme des phases froides, on met la somme."""),
 }

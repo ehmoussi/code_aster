@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine nzcomp_prep(jv_mater, phase_type,&
-                       nb_vari , metaPara)
+subroutine nzcomp_prep(jv_mater, phase_type, metaPara)
 !
 use Metallurgy_type
 !
@@ -31,7 +30,6 @@ implicit none
 !
 integer, intent(in) :: jv_mater
 character(len=16), intent(in) :: phase_type
-integer, intent(out) :: nb_vari
 type(META_MaterialParameters), intent(out) :: metaPara
 !
 ! --------------------------------------------------------------------------------------------------
@@ -44,7 +42,6 @@ type(META_MaterialParameters), intent(out) :: metaPara
 !
 ! In  jv_mater            : coded material address
 ! In  phase_type          : type of phase
-! Out nb_vari             : number of internal state variable
 ! Out metaPara            : material parameters for metallurgy
 !
 ! --------------------------------------------------------------------------------------------------
@@ -58,9 +55,8 @@ type(META_MaterialParameters), intent(out) :: metaPara
         call metaSteelGetParameters(jv_mater, metaSteelPara)
 ! ----- Get material parameters for TRC curve   
         call metaSteelTRCGetParameters(jv_mater, metaSteelPara)
-        nb_vari = STEEL_NBVARI
     elseif (phase_type .eq. 'ZIRC') then
-        nb_vari = ZIRC_NBVARI
+! ----- Depending on temperature: too early here !
     else
         ASSERT(ASTER_FALSE)
     endif

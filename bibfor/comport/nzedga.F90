@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 subroutine nzedga(fami, kpg, ksp, ndim, imat,&
-                  compor, crit, instam, instap, epsm,&
+                  compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, sigp,&
                   vip, dsidep, iret)
 !
@@ -49,7 +49,7 @@ integer, intent(in) :: ksp
 integer, intent(in) :: ndim
 integer, intent(in) :: imat
 character(len=16), intent(in) :: compor(*)
-real(kind=8), intent(in) :: crit(*)
+real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: instam
 real(kind=8), intent(in) :: instap
 real(kind=8), intent(in) :: epsm(*)
@@ -73,7 +73,7 @@ integer, intent(out) :: iret
 ! IN  NDIM    : DIMENSION DE L'ESPACE
 ! IN  IMAT    : ADRESSE DU MATERIAU CODE
 ! IN  COMPOR  : COMPORTEMENT : RELCOM ET DEFORM
-! IN  CRIT    : CRITERES DE CONVERGENCE LOCAUX
+! IN  carcri    : carcriERES DE CONVERGENCE LOCAUX
 ! IN  INSTAM  : INSTANT DU CALCUL PRECEDENT
 ! IN  INSTAP  : INSTANT DU CALCUL
 ! IN  EPSM    : DEFORMATIONS A L'INSTANT DU CALCUL PRECEDENT
@@ -352,9 +352,10 @@ integer, intent(out) :: iret
             dp = 0.d0
         else
             vip(5) = 1.d0
-            call nzcalc(crit, phase, nb_phase, fmel, seuil,&
-                        dt, trans, hmoy, deuxmu, eta,&
-                        unsurn, dp, iret)
+            call nzcalc(carcri, nb_phase, phase, zalpha,&
+                        fmel  , seuil   , dt   , trans ,&
+                        hmoy  , deuxmu  , eta  , unsurn,&
+                        dp    , iret)
             if (iret .eq. 1) goto 999
 !
 ! DANS LE CAS NON LINEAIRE
@@ -392,9 +393,10 @@ integer, intent(out) :: iret
                         hmoy = (1.d0-fmel)*h(nb_phase)+hmoy
                     endif
                     seuil= sieleq - (1.5d0*deuxmu*trans + 1.d0)*rmoy
-                    call nzcalc(crit, phase, nb_phase, fmel, seuil,&
-                                dt, trans, hmoy, deuxmu, eta,&
-                                unsurn, dp, iret)
+                    call nzcalc(carcri, nb_phase, phase, zalpha,&
+                                fmel  , seuil   , dt   , trans ,&
+                                hmoy  , deuxmu  , eta  , unsurn,&
+                                dp    , iret)
                     if (iret .eq. 1) goto 999
                 end do
                 ASSERT((test.ne.1).or.(j.ne.maxval))

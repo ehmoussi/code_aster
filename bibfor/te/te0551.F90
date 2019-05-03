@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,10 +21,11 @@ subroutine te0551(option, nomte)
 implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/rcvalb.h"
-#include "asterfort/Metallurgy_type.h"
+#include "asterfort/tecach.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -42,12 +43,13 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i, idurt, iphasi
-    integer :: nno, imate, i_node
+    integer :: i, idurt, iphasi, iret
+    integer :: nb_node, imate, i_node, nb_vari
     integer :: icodre(5), kpg, spt
     real(kind=8) :: phase(5), valres(5), durtno
     character(len=8) :: fami, poum
     character(len=24) :: nomres(5)
+    integer :: jtab(6)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,10 +57,12 @@ character(len=16), intent(in) :: option, nomte
     kpg  = 1
     spt  = 1
     poum = '+'
-    call elrefe_info(fami='RIGI', nno=nno)
+    call elrefe_info(fami='RIGI', nno=nb_node)
 !
+    call tecach('OOO', 'PPHASIN', 'L', iret, nval=6, itab=jtab)
+    nb_vari = jtab(6)
+    iphasi  = jtab(1)
     call jevech('PMATERC', 'L', imate)
-    call jevech('PPHASIN', 'L', iphasi)
     call jevech('PDURT_R', 'E', idurt)
 !
 ! - Get material properties
@@ -74,9 +78,9 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Compute
 !
-    do i_node = 1, nno
+    do i_node = 1, nb_node
         do i = 1, 5
-            phase(i) = zr(iphasi+STEEL_NBVARI*(i_node-1)+i-1)
+            phase(i) = zr(iphasi+nb_vari*(i_node-1)+i-1)
         end do
         durtno = 0.d0
         do i = 1, 5

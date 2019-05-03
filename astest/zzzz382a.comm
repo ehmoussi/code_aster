@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -104,7 +104,7 @@ A=[None]*nbT
 
 for j,NTRIM in enumerate(tours):
     FREQ=NTRIM/60.
-    OM=(FREQ * 2) * 3.1415
+    OM=(FREQ * 2) * pi
 
     Ae[j]=CALC_MATR_ELEM(OPTION='AMOR_MECA',
                          MODELE=MODELE,
@@ -123,7 +123,7 @@ RG=[None]*nbT
 
 for j,NTRIM in enumerate(tours):
     FREQ=NTRIM/60.
-    OM=(FREQ * 2) * 3.1415
+    OM=(FREQ * 2) * pi
 
     Ge[j]=CALC_MATR_ELEM(OPTION='MECA_GYRO',
                          MODELE=MODELE,
@@ -144,7 +144,7 @@ GOM=[None]*nbT
 
 for j,NTRIM in enumerate(tours):
     FREQ=NTRIM/60.
-    OM=(FREQ * 2) * 3.1415
+    OM=(FREQ * 2) * pi
 
     GOM[j]=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=G[j],COEF_R=OM,),
                                   _F(MATR_ASSE=A[j],COEF_R=1,),),);

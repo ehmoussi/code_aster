@@ -422,18 +422,116 @@ for j in range(len(D_ref)) :
                        REFERENCE = 'ANALYTIQUE',
                        VALE_CALC = D_calc[j][i],),);
 
-Telu = CREA_TABLE( RESU = _F( RESULTAT = RESUELU,
+# Pour tester UTIL_COMPR = 'OUI'
+RESUELU = CALC_FERRAILLAGE( RESULTAT = RESUELU, reuse = RESUELU,
+                            CODIFICATION = 'EC2',
+                            TYPE_COMB = 'ELU',
+                            INST = (13),
+                            AFFE = (_F( TOUT = 'OUI',
+                                        C_INF = 0.04*C_M,
+                                        C_SUP = 0.04*C_M,
+                                        FYK = 500.e6/C_Pa,
+                                        FCK = 35.e6/C_Pa,
+                                        GAMMA_S = 1.15,
+                                        GAMMA_C = 1.5,
+                                        RHO_ACIER = 7800,
+                                        CLASSE_ACIER = "B",
+                                        UTIL_COMPR = 'OUI',
+                                        UNITE_CONTRAINTE = unite,
+                                        DNSTRA_CRIT = 6.e-3,
+                                        ALPHA_REINF = 1.,
+                                        ALPHA_SHEAR = 1.,
+                                        RHO_CRIT = 150,
+                                        ALPHA_STIRRUPS = 1.,
+                                        L_CRIT = 1*C_M,
+                                        ALPHA_CC = 1.0,),),);
+
+RESUELS = CALC_FERRAILLAGE( RESULTAT = RESUELS, reuse = RESUELS,
+                            CODIFICATION = 'EC2',
+                            TYPE_COMB = 'ELS',
+                            INST = (2),
+                            AFFE = (_F( TOUT = 'OUI',
+                                        C_INF = 0.04*C_M,
+                                        C_SUP = 0.04*C_M,
+                                        FCK = 35.e6/C_Pa,
+                                        SIGS_ELS = 400.0e6/C_Pa,
+                                        SIGC_ELS = 21e6/C_Pa,
+                                        ALPHA_E = 21.,
+                                        UTIL_COMPR = 'OUI',
+                                        RHO_ACIER = 7800,
+                                        UNITE_CONTRAINTE = unite,
+                                        DNSTRA_CRIT = 6.e-3,
+                                        ALPHA_REINF = 1.,
+                                        ALPHA_SHEAR = 1.,
+                                        RHO_CRIT=150.,
+                                        ALPHA_STIRRUPS = 1.,
+                                        L_CRIT = 1.*C_M,
+                                        ALPHA_CC = 1.),),);
+
+D_ref = [
+    [0.,            0.,            0.,            0.,            0.00563368522, 43.9427447848, 0.44819095820],
+];
+
+D_calc = [
+    [0.,            0.,            0.,            0.,            0.00563368522, 43.9427447848, 0.44819095820],
+];
+
+for i,ncmp in enumerate(COMP) :
+    if (D_ref[0][i] == 0):
+        TEST_RESU( RESU = _F( RESULTAT = RESUELU,
+                              INST = 13,
                               NOM_CHAM = 'FERRAILLAGE',
-                              TOUT_CMP = 'OUI',
-                              MAILLE = 'M1'),);
-
-IMPR_TABLE( UNITE = 8,TABLE = Telu, FORMAT = 'TABLEAU', SEPARATEUR = ';', TITRE ='');
-
-Tels = CREA_TABLE( RESU = _F( RESULTAT = RESUELS,
+                              NOM_CMP = ncmp,
+                              MAILLE = 'M1',
+                              LEGENDE = 'ELU',
+                              VALE_REFE = D_ref[0][i],
+                              VALE_CALC = D_calc[0][i],
+                              REFERENCE = 'ANALYTIQUE',
+                              ORDRE_GRANDEUR = 1.e-3,
+                              CRITERE = 'ABSOLU'),);
+    else: 
+        TEST_RESU( RESU = _F( RESULTAT = RESUELU,
+                              INST = 13,
                               NOM_CHAM = 'FERRAILLAGE',
-                              TOUT_CMP = 'OUI',
-                              MAILLE = 'M1'),);
+                              NOM_CMP = ncmp,
+                              MAILLE = 'M1',
+                              LEGENDE = 'ELU',
+                              VALE_REFE = D_ref[0][i],
+                              REFERENCE = 'ANALYTIQUE',
+                              PRECISION = 1e-4,
+                              VALE_CALC=D_calc[0][i]),);
 
-IMPR_TABLE( UNITE = 8, TABLE = Tels, FORMAT = 'TABLEAU', SEPARATEUR = ';', TITRE = '');
+D_ref = [
+    [0.00125,       0.00125,       0.,            0.,            0.00813186666, 160.92856,     0.86360183703],
+];
+
+D_calc = [
+    [0.00125,       0.00125,       0.,            0.,            0.00813186666, 160.92856,     0.86360183703],
+];
+
+for i,ncmp in enumerate(COMP) :
+    if (D_ref[0][i] == 0):
+        TEST_RESU( RESU = _F( RESULTAT = RESUELS,
+                              INST = 2,
+                              NOM_CHAM = 'FERRAILLAGE',
+                              NOM_CMP = ncmp,
+                              MAILLE = 'M1',
+                              LEGENDE = 'ELU',
+                              VALE_REFE = D_ref[0][i],
+                              VALE_CALC = D_calc[0][i],
+                              REFERENCE = 'ANALYTIQUE',
+                              ORDRE_GRANDEUR = 1.e-3,
+                              CRITERE = 'ABSOLU'),);
+    else: 
+        TEST_RESU( RESU = _F( RESULTAT = RESUELS,
+                              INST = 2,
+                              NOM_CHAM = 'FERRAILLAGE',
+                              NOM_CMP = ncmp,
+                              MAILLE = 'M1',
+                              LEGENDE = 'ELU',
+                              VALE_REFE = D_ref[0][i],
+                              REFERENCE = 'ANALYTIQUE',
+                              PRECISION = 1e-4,
+                              VALE_CALC=D_calc[0][i]),);
 
 FIN()

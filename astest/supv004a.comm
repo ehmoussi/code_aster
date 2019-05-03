@@ -17,9 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#
 # person_in_charge: mathieu.courtois at edf.fr
 
+# Note: "--hide-command" is used in the '.export' file.
+import sys
 import unittest
 
 

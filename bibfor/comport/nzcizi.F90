@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 subroutine nzcizi(fami, kpg, ksp, ndim, imat,&
-                  compor, crit, instam, instap, epsm,&
+                  compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, sigp,&
                   vip, dsidep, iret)
 !
@@ -47,7 +47,7 @@ integer, intent(in) :: ksp
 integer, intent(in) :: ndim
 integer, intent(in) :: imat
 character(len=16), intent(in) :: compor(*)
-real(kind=8), intent(in) :: crit(*)
+real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: instam
 real(kind=8), intent(in) :: instap
 real(kind=8), intent(in) :: epsm(*)
@@ -390,9 +390,10 @@ integer, intent(out) :: iret
                 dp=seuil/(1.5d0*deuxmu+(1.5d0*deuxmu*trans+1.d0)*&
                 rprim)
             else
-                call nzcalc(crit, phase, nb_phase, fmel, seuil,&
-                            dt, trans, rprim, deuxmu, eta,&
-                            unsurn, dp, iret)
+                call nzcalc(carcri, nb_phase, phase, zalpha,&
+                            fmel  , seuil   , dt   , trans ,&
+                            rprim , deuxmu  , eta  , unsurn,&
+                            dp    , iret)
                 if (iret .eq. 1) goto 999
             endif
         endif
