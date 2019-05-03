@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine zedgar(jv_mater ,&
+    subroutine zedgar(jv_mater , nb_phase,&
                       tm       , tp,&
                       time_curr, time_incr,&
                       meta_prev, meta_curr)
         integer, intent(in) :: jv_mater
+        integer, intent(in) :: nb_phase
         real(kind=8), intent(in) :: tm, tp
         real(kind=8), intent(in) :: time_curr, time_incr
         real(kind=8), intent(in) :: meta_prev(5)

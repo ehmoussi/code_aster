@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine zedgar(jv_mater ,&
+subroutine zedgar(jv_mater , nb_phase,&
                   tm       , tp,&
                   time_curr, time_incr,&
                   meta_prev, meta_curr)
@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/Metallurgy_type.h"
 !
 integer, intent(in) :: jv_mater
+integer, intent(in) :: nb_phase
 real(kind=8), intent(in) :: tm, tp
 real(kind=8), intent(in) :: time_curr, time_incr
 real(kind=8), intent(in) :: meta_prev(5)
@@ -50,6 +51,7 @@ real(kind=8), intent(out) :: meta_curr(5)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  jv_mater            : coded material address
+! In  nb_phase            : number of phases
 ! In  tm                  : previous temperature
 ! In  tp                  : current temperature
 ! In  time_curr           : current time
@@ -133,7 +135,7 @@ real(kind=8), intent(out) :: meta_curr(5)
 !
 ! - Evaluate value of time for temperature of transformation
 !
-    time_tran_p = meta_prev(TIME_TRAN)
+    time_tran_p = meta_prev(nb_phase+TIME_TRAN)
     call metaZircGetTime(zbetam   ,&
                          t1c      , t2c  ,&
                          t1r      , t2r  ,&
@@ -252,10 +254,10 @@ real(kind=8), intent(out) :: meta_curr(5)
 !
 ! - Update internal variables
 !
-    meta_curr(PALPHA1)   = zalph1p
-    meta_curr(PALPHA2)   = zalph2p
-    meta_curr(PBETA)     = zbetap
-    meta_curr(ZIRC_TEMP) = tp
-    meta_curr(TIME_TRAN) = time_tran
+    meta_curr(PALPHA1)            = zalph1p
+    meta_curr(PALPHA2)            = zalph2p
+    meta_curr(PBETA)              = zbetap
+    meta_curr(nb_phase+ZIRC_TEMP) = tp
+    meta_curr(nb_phase+TIME_TRAN) = time_tran
 !
 end subroutine

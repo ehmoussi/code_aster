@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -211,14 +211,14 @@ TEST_RESU(RESU=_F(RESULTAT=dyna,
                    NOM_CHAM='DEPL',
                    NOEUD='N0002',
                    NOM_CMP='DX',
-                   VALE_CALC=0.319065493681,
+                   VALE_CALC=0.31906496211665625,
                    ),)
 TEST_RESU(RESU=_F(RESULTAT=dyna,
                    INST= 1.,
                    NOM_CHAM='DEPL',
                    NOEUD='N0002',
                    NOM_CMP='DZ',
-                   VALE_CALC=-0.159532746841,
+                   VALE_CALC=-0.15953248105832818,
                    ),)
 
 # Test de non-régression
@@ -227,14 +227,14 @@ TEST_RESU(RESU=_F(RESULTAT=dyna,
                    NOM_CHAM='DEPL',
                    NOEUD='N0002',
                    NOM_CMP='DX',
-                   VALE_CALC=0.836123404232,
+                   VALE_CALC=0.836120871263743,
                    ),)
 TEST_RESU(RESU=_F(RESULTAT=dyna,
                    INST= 2.,
                    NOM_CHAM='DEPL',
                    NOEUD='N0002',
                    NOM_CMP='DZ',
-                   VALE_CALC=-0.418061702116,
+                   VALE_CALC=-0.4180604356318712,
                    ),)
 
 FIN();

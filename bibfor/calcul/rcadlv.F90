@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ implicit none
     integer :: lfct, imat, nbmat, code, kv, nbv, ipif2, kmat, inom
     real(kind=8) :: valres
     integer :: nbpamx, nbpar2, nbpart, ipar, ier
-    parameter (nbpamx=10)
+    parameter (nbpamx=15)
     real(kind=8) :: valpa2(nbpamx), valvrc
     character(len=8) :: nompa2(nbpamx), novrc
     parameter  ( lmat = 9 , lfct = 10)
@@ -188,7 +188,6 @@ implicit none
                     nompa2(nbpar2+ipar) = nompar(ipar)
                     valpa2(nbpar2+ipar) = valpar(ipar)
                 enddo
-
 !               -- 2.3 On evalue les fonctions de la liste :
 !               ----------------------------------------------------------
                 do kv=1,nbv

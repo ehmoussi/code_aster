@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/metaGetParaMixture.h"
 #include "asterfort/metaGetParaHardTrac.h"
 #include "asterfort/metaGetParaHardLine.h"
+#include "asterfort/Metallurgy_type.h"
 !
 character(len=16), intent(in) :: rela_comp
 integer, intent(in) :: lgpg 
@@ -114,7 +115,13 @@ real(kind=8), intent(out) :: trans
 !
 ! - Is elastic ?
 !
-    l_elas = zr(j_vari+lgpg*(kpg-1)+nb_phasis).lt.0.5d0
+    if (meta_type .eq. META_STEEL) then
+        l_elas = zr(j_vari+lgpg*(kpg-1)+(nb_phasis+1)).lt.0.5d0
+    elseif (meta_type .eq. META_ZIRC) then
+        l_elas = zr(j_vari+lgpg*(kpg-1)+nb_phasis).lt.0.5d0
+    else
+        ASSERT(ASTER_FALSE)
+    endif
 !
 ! - Mechanisms of comportment law
 !

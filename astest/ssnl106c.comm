@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -519,7 +519,7 @@ Hy    = 0.2
 Hz    = 0.1
 Long  = 1.0
 
-AireC = 3.141592653589793*(Rayon**2); InerC = 3.14159*(Rayon**4)/4
+AireC = pi*(Rayon**2); InerC = pi*(Rayon**4)/4
 AireR = Hy*Hz; InerR = Hy*(Hz**3)/12.0
 
 DeplaTr=7.5E-3

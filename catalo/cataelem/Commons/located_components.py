@@ -169,7 +169,7 @@ CPESANR = LocatedComponents(phys=PHY.PESA_R, type='ELEM',
                             components=('G', 'AG', 'BG', 'CG',))
 
 CPHASIN_ = LocatedComponents(phys=PHY.VAR2_R, type='ELEM',
-                             components=('V[6]',))
+                             components=('V[7]',))
 
 CRAYONF = LocatedComponents(phys=PHY.RAYO_F, type='ELEM',
                             components=('SIGMA', 'EPSIL', 'TPINF',))

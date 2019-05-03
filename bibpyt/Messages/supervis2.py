@@ -181,7 +181,7 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
             },
 
     # marks for the extraction of messages
-    69 : """.. _%(k1)s""",
+    69 : """.. %(k1)s""",
 
     # Affichage des commandes
     70 : """  # ------------------------------------------------------------------------------------------""",

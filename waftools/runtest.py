@@ -101,19 +101,13 @@ def runtest(self):
         Logs.info("running %s in '%s'" % (test, self.variant))
         ext = '.' + osp.basename(self.env['PREFIX']) + '.' + self.variant + '.output'
         fname = osp.join(dtmp, osp.basename(test) + ext)
-        fobj = open(fname, 'w')
         Logs.info("`- output in %s" % fname)
-        nook = False
-        proc = Popen(cmd, stdout=PIPE, bufsize=1)
-        for lineb in iter(proc.stdout.readline, b''):
-            line = lineb.decode(errors='replace')
-            fobj.write(line)
-            nook = nook or 'NOOK_TEST_RESU' in line
-            fobj.flush()
-        proc.stdout.close()
-        fobj.close()
+        with open(fname, 'w') as fobj:
+            proc = Popen(cmd, stdout=fobj, bufsize=1)
         retcode = proc.wait()
-        if nook:
+        with open(fname, 'r') as fobj:
+            text = fobj.read()
+        if 'NOOK_TEST_RESU' in text:
             retcode = 'nook'
         if retcode == 0:
             func = Logs.info

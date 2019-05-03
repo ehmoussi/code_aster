@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,24 +25,30 @@
 !
 ! - Phases for steel
 !
-#define STEEL_NBVARI     8
 #define PFERRITE         1
 #define PPERLITE         2
 #define PBAINITE         3
 #define PMARTENS         4
 #define PAUSTENITE       5
-#define SIZE_GRAIN       6
-#define STEEL_TEMP       7
-#define TEMP_MARTENSITE  8
+#define PSUMCOLD         6
+! For next ones: add total number of phases to access in internal state variable vector
+#define SIZE_GRAIN       1
+#define STEEL_TEMP       2
+#define TEMP_MARTENSITE  3
 !
 ! - Phases for zircaloy
 !
-#define ZIRC_NBVARI      5
 #define PALPHA1          1
 #define PALPHA2          2
 #define PBETA            3
-#define ZIRC_TEMP        4
-#define TIME_TRAN        5
+! For next ones: add total number of phases to access in internal state variable vector
+#define ZIRC_TEMP        1
+#define TIME_TRAN        2
+!
+! - Index for internal variables
+!
+#define IDX_I_EPSEQ      7
+#define IDX_I_IPLAS      8
 !
 ! - Kinetic
 !

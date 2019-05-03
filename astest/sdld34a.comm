@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -285,13 +285,13 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.999999866513,
                          PRECISION=1.E-4,
                          FONCTION=DXGEM2,),
                       _F(VALE_CALC=3.1415924177,
-                         VALE_REFE=3.1415926535897931,
+                         VALE_REFE=pi,
                          VALE_PARA=1.5,
                          REFERENCE='ANALYTIQUE',
                          PRECISION=1.E-6,
                          FONCTION=VX_DIS2,),
                       _F(VALE_CALC=3.141592417698,
-                         VALE_REFE=3.1415926535897931,
+                         VALE_REFE=pi,
                          VALE_PARA=1.5,
                          REFERENCE='ANALYTIQUE',
                          PRECISION=1.E-6,
