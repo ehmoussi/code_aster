@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -275,8 +275,8 @@ LR1=DEFI_LIST_REEL(         DEBUT=0.3,
 CARTE=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='CART_VAR2_R', MAILLAGE=MA,AFFE=(
 
                            _F(  TOUT = 'OUI',
-             NOM_CMP = ('V1', 'V2', 'V3', 'V4', 'V5',  'V6'),
-             VALE = (0.1,  0.08, 0.06, 0.0, 0.76, 0.0)),
+             NOM_CMP = ('V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7',),
+             VALE = (0.1,  0.08, 0.06, 0.0, 0.76, 0.0, 0.0)),
                            _F(  GROUP_MA = 'GMA3',
                                   NOM_CMP = ('V7', 'V2','V5'),
                                   VALE = (-1.1, 0.7, 0.14)),
@@ -498,7 +498,6 @@ THNL1=THER_NON_LINE(        MODELE=MO,
                                        FONC_MULT = FOE),
                                _F(  CHARGE = CHTH1B)),
                           CONVERGENCE=_F() )
-
 THNL1_EC=THER_NON_LINE(   MODELE=MO,
                           CHAM_MATER=CHMATNL,
                           EXCIT=(
@@ -532,10 +531,10 @@ THNL6=CALC_META(reuse=THNL6,
                 MODELE=MO,
                 CHAM_MATER=CHMATNL,
                 RESULTAT=THNL6,
+                OPTION='META_ELNO',
                 ETAT_INIT=_F(META_INIT_ELNO=CARTE),
                 COMPORTEMENT=_F(RELATION='ACIER',
-                             TOUT = 'OUI'),
-                OPTION='META_ELNO');
+                             TOUT = 'OUI'),);
 
 ENGENDRE_TEST (  CO = (THNL1, THNL6, THL10) )
 
@@ -544,7 +543,7 @@ TEST_RESU(RESU=(
                    TYPE_TEST='SOMM_ABS',
                    RESULTAT=THL10,
                    NOM_CHAM='META_ELNO',
-                   VALE_CALC=2218.5,
+                   VALE_CALC=2497.779999999936,
                    ),
                 _F(NUME_ORDRE=1,
                    TYPE_TEST='SOMM_ABS',
@@ -556,7 +555,7 @@ TEST_RESU(RESU=(
                    TYPE_TEST='SOMM_ABS',
                    RESULTAT=THL10,
                    NOM_CHAM='META_ELNO',
-                   VALE_CALC= 3481.12550737,
+                   VALE_CALC=3760.405507370081,
                    ),
                 _F(NUME_ORDRE=1,
                    TYPE_TEST='SOMM_ABS',
@@ -580,7 +579,7 @@ TEST_RESU(RESU=(
                    TYPE_TEST='SOMM_ABS',
                    RESULTAT=THL10,
                    NOM_CHAM='META_ELNO',
-                   VALE_CALC=3814.64201092,
+                   VALE_CALC=3824.2309300458555,
                    ),
                 _F(NUME_ORDRE=2,
                    TYPE_TEST='SOMM_ABS',
@@ -604,7 +603,7 @@ TEST_RESU(RESU=(
                    TYPE_TEST='SOMM_ABS',
                    RESULTAT=THNL6,
                    NOM_CHAM='META_ELNO',
-                   VALE_CALC=2218.5,
+                   VALE_CALC=2497.779999999936,
                    ),
                 _F(NUME_ORDRE=1,
                    TYPE_TEST='SOMM_ABS',
@@ -616,7 +615,7 @@ TEST_RESU(RESU=(
                    TYPE_TEST='SOMM_ABS',
                    RESULTAT=THNL6,
                    NOM_CHAM='META_ELNO',
-                   VALE_CALC=3382.50353162,
+                   VALE_CALC=3661.7835316230403,
                    ),
                 _F(NUME_ORDRE=1,
                    TYPE_TEST='SOMM_ABS',
@@ -641,9 +640,6 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=0,
                    ),
                 ),
           )
-
-
-
 
 FIN( )
 #

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -140,12 +140,13 @@ LR8=DEFI_LIST_REEL(    DEBUT=0.,
 
 DEFLISTT=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=       LR8)) 
 
-PHASINIT=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='CART_VAR2_R',
-                           MAILLAGE=MAIL,
-                           AFFE=_F(  TOUT = 'OUI',
-             NOM_CMP = ( 'V1', 'V2', 'V3', 'V4', 'V5',),
-             VALE = ( 0.0, 0.0, 0.0, 0.0, 10.,  ))
-                        )
+# To create META_ELNO (read in LIRE_RESU)
+#PHASINIT=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='CART_VAR2_R',
+#                           MAILLAGE=MAIL,
+#                           AFFE=_F(  TOUT = 'OUI',
+#             NOM_CMP = ( 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7',),
+#             VALE = ( 0.0, 0.0, 0.0, 0.0, 1.0, 0., 10.,  ))
+#                        )
 
 #TEMPE=THER_LINEAIRE(        MODELE=MOTH,
 #                            CHAM_MATER=CHMAT,
@@ -153,7 +154,6 @@ PHASINIT=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='CART_VAR2_R',
 #                                 EXCIT=_F(  CHARGE = CHTH),
 #                             INCREMENT=_F(  LIST_INST = DEFLISTT),
 #                             ETAT_INIT=_F(  VALE = 900.)
-
 #                        )
 
 
@@ -175,10 +175,8 @@ TEMPE=LIRE_RESU(TYPE_RESU='EVOL_THER',
                   FORMAT_MED=(
                   _F(NOM_CHAM='TEMP',
                      NOM_RESU='TEMPE',),
-
                   _F(NOM_CHAM='META_ELNO',
                      NOM_CHAM_MED='TEMPE___META_ELNO',),),
-
                   TOUT_ORDRE='OUI',);
 
 FBM1=DEFI_FONCTION(      NOM_PARA='TEMP',
@@ -474,7 +472,7 @@ TEST_RESU(CHAM_ELEM=(
                         ORDRE_GRANDEUR = 1.E-6),
                      _F(NOEUD='N13',
                         CRITERE='ABSOLU',
-                        NOM_CMP='V7',
+                        NOM_CMP='V8',
                         MAILLE='M1',
                         CHAM_GD=CHVAR24,
                         VALE_CALC=0.0E+00,
@@ -535,7 +533,7 @@ TEST_RESU(CHAM_ELEM=(
                         ),
                      _F(NOEUD='N13',
                         CRITERE='RELATIF',
-                        NOM_CMP='V7',
+                        NOM_CMP='V8',
                         MAILLE='M1',
                         CHAM_GD=CHVAR26,
                         VALE_CALC=1.0,
@@ -595,7 +593,7 @@ TEST_RESU(CHAM_ELEM=(
                         PRECISION=5.0000000000000001E-4,),
                      _F(NOEUD='N13',
                         CRITERE='RELATIF',
-                        NOM_CMP='V7',
+                        NOM_CMP='V8',
                         MAILLE='M1',
                         CHAM_GD=CHVAR40,
                         VALE_CALC=1.0,
@@ -654,7 +652,7 @@ TEST_RESU(CHAM_ELEM=(
                         PRECISION=8.0000000000000004E-4,),
                      _F(NOEUD='N13',
                         CRITERE='RELATIF',
-                        NOM_CMP='V7',
+                        NOM_CMP='V8',
                         MAILLE='M1',
                         CHAM_GD=CHVAR90,
                         VALE_CALC=1.0,

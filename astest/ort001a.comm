@@ -22,7 +22,6 @@
 # Note: the list of times has been limited.
 
 # required: data attributes
-
 import os
 import math
 import numpy

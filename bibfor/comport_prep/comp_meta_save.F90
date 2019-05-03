@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ type(META_PrepPara), intent(in) :: ds_comporMeta
     character(len=24) :: list_elem_affe
     aster_logical :: l_affe_all
     integer :: nb_elem_affe
-    integer :: i_comp, nb_comp
+    integer :: i_comp, nb_comp, nb_phase
     integer :: nb_vari, nume_comp
     character(len=16) :: phase_type, loi_meta, keywordfact
     character(len=16), pointer :: v_compor_valv(:) => null()
@@ -79,6 +79,7 @@ type(META_PrepPara), intent(in) :: ds_comporMeta
         loi_meta   = ds_comporMeta%v_comp(i_comp)%loi_meta
         nb_vari    = ds_comporMeta%v_comp(i_comp)%nb_vari
         nume_comp  = ds_comporMeta%v_comp(i_comp)%nume_comp
+        nb_phase   = ds_comporMeta%v_comp(i_comp)%nb_phase
 !
 ! ----- Set options in COMPOR <CARTE>
 !
@@ -86,6 +87,7 @@ type(META_PrepPara), intent(in) :: ds_comporMeta
         write (v_compor_valv(2),'(I16)') nb_vari
         v_compor_valv(3) = loi_meta
         write (v_compor_valv(4),'(I16)') nume_comp
+        write (v_compor_valv(5),'(I16)') nb_phase
 !
 ! ----- Get list of elements where comportment is defined
 !

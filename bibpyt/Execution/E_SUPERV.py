@@ -151,15 +151,17 @@ class SUPERV:
         """Construit et execute le jeu de commandes
         """
         fort1 = self.coreopts.get_option('fort1')
-        f = open(fort1, 'r')
-        text = f.read()
-        dash = "# " + "-" * 90
-        print(dash)
-        print(convert(_("""# Impression du contenu du fichier de commandes à exécuter :""")))
-        print(dash)
-        print(convert(text))
-        print(dash)
-        f.close()
+        with open(fort1, 'r') as fcomm:
+            text = fcomm.read()
+            if self.coreopts.get_option("show_command"):
+                dash = "# " + "-" * 90
+                print(dash)
+                print(convert(_("# Impression du contenu du fichier de "
+                                "commandes à exécuter :")))
+                print(dash)
+                print(convert(text))
+                print(dash)
+                sys.stdout.flush()
         args = {}
         self.jdc = self.JdC(procedure=text, cata=self.cata, nom=fort1,
                             context_ini=params, **args)

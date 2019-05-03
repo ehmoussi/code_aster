@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine nzcomp(jv_mater , metaPara , nume_comp,&
+subroutine nzcomp(jv_mater , metaPara , nume_comp, nb_phase,&
                   dt10     , dt21     , inst2    ,&
                   tno0     , tno1     , tno2     ,&
                   meta_prev, meta_curr)
@@ -35,7 +35,7 @@ implicit none
 !
 integer, intent(in) :: jv_mater
 type(META_MaterialParameters), intent(in) :: metaPara
-integer, intent(in) :: nume_comp
+integer, intent(in) :: nume_comp, nb_phase
 real(kind=8), intent(in) :: dt10, dt21, inst2
 real(kind=8), intent(in) :: tno0, tno1, tno2
 real(kind=8), intent(in) :: meta_prev(*)
@@ -52,6 +52,7 @@ real(kind=8), intent(out) :: meta_curr(*)
 ! In  jv_mater            : coded material address
 ! In  metaPara            : material parameters for metallurgy
 ! In  nume_comp           : index of behaviour law for metallurgy
+! In  nb_phase            : number of phases
 ! In  tno0                : temperature at time N-1
 ! In  tno1                : temperature at time N
 ! In  tno2                : temperature at time N+1
@@ -66,15 +67,15 @@ real(kind=8), intent(out) :: meta_curr(*)
     select case (nume_comp)
 !
     case (20002)
-        call zacier(metaPara%steel,&
+        call zacier(metaPara%steel, nb_phase,&
                     tno0, tno1, tno2,&
                     dt10, dt21,&
                     meta_prev, meta_curr)
     case (30001)
-       call zedgar(jv_mater,&
-                   tno1, tno2,&
-                   inst2, dt21,&
-                   meta_prev, meta_curr)
+        call zedgar(jv_mater, nb_phase,&
+                    tno1, tno2,&
+                    inst2, dt21,&
+                    meta_prev, meta_curr)
     case default
         ASSERT(ASTER_FALSE)
     end select

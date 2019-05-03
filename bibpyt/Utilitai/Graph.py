@@ -1280,13 +1280,14 @@ def ValCycl(val, vmin, vmax, vdef):
        - si val>vmax, on cycle tel que val=vmax+1 retourne vmin, etc.
        - si vmax<vmin, il n'y a pas de max
     """
-    v = val
-    if v < vmin:
-        v = vdef
+    if val is None:
+        val = vmin - 1
+    if val < vmin:
+        val = vdef
     if vmax < vmin:
-        return v
+        return val
     else:
-        return (((v - vmin) % (vmax + 1 - vmin)) + vmin)
+        return (((val - vmin) % (vmax + 1 - vmin)) + vmin)
 
 # ------------------------------------------------------------------------
 

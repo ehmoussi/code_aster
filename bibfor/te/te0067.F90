@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: dt10, dt21, inst2
     real(kind=8) :: tno1, tno0, tno2
     integer :: nno, i_node, itempe, itempa, jv_time
-    integer :: imate, nb_vari, nume_comp
+    integer :: imate, nb_vari, nume_comp, nb_phase
     integer :: itempi
     integer :: jv_phase_in, jv_phase_out, icompo
     integer :: jv_mater
@@ -73,14 +73,15 @@ character(len=16), intent(in) :: option, nomte
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PPHASNOU', 'E', jv_phase_out)
 !
-    phase_type = zk16(icompo)
+    phase_type = zk16(icompo-1+1)
     jv_mater   = zi(imate)
-    read (zk16(icompo+3),'(I16)') nume_comp
+    read (zk16(icompo-1+4),'(I16)') nume_comp
+    read (zk16(icompo-1+5),'(I16)') nb_phase
+    read (zk16(icompo-1+2),'(I16)') nb_vari
 !
 ! - Preparation
 !
-    call nzcomp_prep(jv_mater, phase_type,&
-                     nb_vari , metaPara)
+    call nzcomp_prep(jv_mater, phase_type, metaPara)
 !
 ! - Time parameters: 0 - 1 - 2
 !
@@ -96,7 +97,7 @@ character(len=16), intent(in) :: option, nomte
         tno0 = zr(itempa+i_node-1)
         tno2 = zr(itempi+i_node-1)
 ! ----- General switch
-        call nzcomp(jv_mater , metaPara , nume_comp,&
+        call nzcomp(jv_mater , metaPara , nume_comp, nb_phase,&
                     dt10     , dt21     , inst2    ,&
                     tno0     , tno1     , tno2     ,&
                     zr(jv_phase_in+nb_vari*(i_node-1)),&

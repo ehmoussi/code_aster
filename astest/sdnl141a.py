@@ -10,7 +10,7 @@ thetai  =  0.
 lstrech =  0
 
 def hunt(T,DEPTH,PROINF) :
-    PI    =numpy.arctan(1)*4
+    PI    =pi
     GRAVIT=9.81
     OMEGA =2.*PI/T
     if PROINF==1:
@@ -36,7 +36,7 @@ L=hunt(T,depth,proinf)
 
 # CINEMATIQUES ET FORCES
 def cinelin(XX,YY,ZZ,TEMPS,H,T,L,THETA,UC,THETAC,PROINF,DEPTH,LSTRECH)  :    
-    PI=3.1415
+    PI=pi
     GRAVIT=9.81
     OMEGA= 2.*PI/T 
     AA=H/2.
