@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -184,6 +184,38 @@ phaseA=DEFI_FONCTION(NOM_PARA='INST',VALE=(
  1.12000E+02    ,       0.00000E+00     ,
  1.76000E+02    ,       0.00000E+00     ,
  ))
+
+phaseC=DEFI_FONCTION(NOM_PARA='INST',VALE=(
+0.00E+000,0.0,
+6.00E+001,0.0,
+6.20E+001,0.0392,
+6.40E+001,0.078401,
+6.60E+001,0.117601,
+6.80E+001,0.156801,
+7.00E+001,0.196002,
+7.20E+001,0.235202,
+7.40E+001,0.274402,
+7.60E+001,0.313603,
+7.80E+001,0.352803,
+8.00E+001,0.392003,
+8.20E+001,0.431203,
+8.40E+001,0.470404,
+8.60E+001,0.509604,
+8.80E+001,0.548804,
+9.00E+001,0.588005,
+9.20E+001,0.627205,
+9.40E+001,0.666405,
+9.60E+001,0.705606,
+9.80E+001,0.744806,
+1.00E+002,0.784006,
+1.02E+002,0.823207,
+1.04E+002,0.862407,
+1.06E+002,0.901607,
+1.08E+002,0.940808,
+1.10E+002,0.980008,
+1.12E+002,1.0,
+1.76E+002,1.0,
+ ))
  
 transf=DEFI_FONCTION(NOM_PARA='INST',VALE=(
  0.00000E+00, 2.00000E+02, 
@@ -365,7 +397,7 @@ DEFLIST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=       L_INST))
 RESPM=SIMU_POINT_MAT(  
                 COMPORTEMENT=_F(RELATION = 'META_P_IL',RELATION_KIT = ('ACIER',)   ),
                 AFFE_VARC=(
-                          _F(V1=phase0,V2=phase0,V3=phase3,V4=phase0,V5=phaseA,V6=temp0,V7=temp,V8=transf,NOM_VARC='M_ACIER',),
+                          _F(V1=phase0,V2=phase0,V3=phase3,V4=phase0,V5=phaseA,V6=phaseC,V7=temp0,V8=temp,V9=transf,NOM_VARC='M_ACIER',),
                           _F(VALE_FONC=temp,
                               VALE_REF=900.,
                               NOM_VARC='TEMP',),),
