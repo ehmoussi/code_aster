@@ -145,7 +145,7 @@ On n'a pas trouvé le ddl DZ pour le noeud  %(k1)s .
 """),
 
     41 : _("""
- les listes DEPL_POST_FL et RIGI_POST_FL doivent avoir la même longueur
+ les listes AMOR_POST_FL, DEPL_POST_FL et RIGI_POST_FL doivent avoir la même longueur
 """),
 
     42 : _("""
