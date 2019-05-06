@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,13 +79,13 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
     integer           :: ino1, ino2, ind1, ind2, nbmode
     integer           :: info, vali, j, neq, mxlevel
     integer           :: nbchoc, nexcit, nl_type, tomove, k
-    integer           :: cntr, n2
+    integer           :: cntr, n2, n3
 !
     real(kind=8)      :: r8bid, gap, xjeu, sina, cosa
     real(kind=8)      :: sinb, cosb, sing, cosg, valr(10)
     real(kind=8)      :: kn, dist_no1, dist_no2, ddpilo(3), dpiglo(6)
     real(kind=8)      :: dpiloc(6), one, fn_crit, fn_postbuck, damp_normal
-    real(kind=8)      :: delta_u, def1, deft0, deft1, rigi1
+    real(kind=8)      :: delta_u, def1, deft0, deft1, rigi1, amor_fl
 !
     complex(kind=8)   :: cbid
 !
@@ -115,6 +115,7 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
     real(kind=8)     , pointer  :: def(:)           => null()
     real(kind=8)     , pointer  :: rigi(:)           => null()
     real(kind=8)     , pointer  :: deft(:)           => null()
+    real(kind=8)     , pointer  :: amor(:)           => null()
 
     character(len=8) , pointer  :: noeud(:)          => null()
 !
@@ -353,6 +354,7 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
        enddo
     endif
 
+
     call getvr8(motfac, 'RIGI_POST_FL', iocc=icomp, nbval=0, nbret=n2)
     call nlinivec(sd_nl, _BUCKLING_RIGI_NOR, (-n1+1), iocc=i, vr=rigi)
     rigi(1)=rigi1
@@ -380,6 +382,35 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
           call utmess('F', 'ALGORITH5_85') 
        endif
     enddo
+
+
+    call getvr8(motfac, 'AMOR_POST_FL', iocc=icomp, nbval=0, nbret=n2)
+    if ((n2.ne.n1).and.(n2.lt.0)) then
+        call utmess('F', 'ALGORITH5_41') 
+    endif
+
+    if (n2.lt.0) then
+       call nlinivec(sd_nl, _BUCKLING_AMOR, (-n2+1), iocc=i, vr=amor)
+    else
+       call nlinivec(sd_nl, _BUCKLING_AMOR, (-n1+1), iocc=i, vr=amor)
+    endif
+
+    call getvr8(motfac, 'AMOR_FL', iocc=icomp, scal=amor_fl, nbret=n3)
+    if (n3.gt.0) then
+       amor(1)=amor_fl
+    else
+       amor(1)=damp_normal
+    endif
+  
+    if (n2.lt.0) then
+       call getvr8(motfac, 'AMOR_POST_FL', iocc=icomp, nbval=-n2, vect=amor(2:(-n2+1)))
+   else
+        do j=2,(-n1+1)
+            amor(j)=amor(1)
+        enddo  
+    endif
+
+
 
 
     call getvid(motfac, 'OBSTACLE', iocc=icomp, scal=obst_typ, nbret=n1)
