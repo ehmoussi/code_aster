@@ -116,13 +116,7 @@ def build_libaster(self, shenv):
     if shenv.BUILD_MFRONT:
         uses.append('astermfront')
     # {bibfor, bibc, bibcxx}/*.o
-    if sys.platform != 'darwin':
-        libasterfor = ['asterbibfor']
-    else:
-        # OS X does not support more than 262144 bytes on a single command line (getconf ARG_MAX)
-        # To prevent "argument list too long" error (more than 7000 object files from Fortran), we need to split the archive
-        libasterfor = ['asterbibfor1' , 'asterbibfor2' , 'asterbibfor3']
-        # XXX try: OPTLIB_FLAGS="--whole-archive -llibbibfor1..."
+    libasterfor = ['asterbibfor%d' % i for i in range(shenv.NUM_BIBFOR)]
     self(
         features = 'cxx cxxshlib',
             name = 'asterlib',
@@ -130,8 +124,8 @@ def build_libaster(self, shenv):
           source = PYMAIN,
          defines = '_MAIN_=_unused_main_', #'_WITHOUT_PYMOD_',
              env = shenv.derive(),
-             use = ['PYEMBED', 'NUMPY'] + libasterfor + ['asterbibc',
-                    'asterbibcxx', 'CODE_ASTER_CORE'] + uses + ['CXX'],
+             use = (['PYEMBED', 'NUMPY'] + libasterfor + ['asterbibc',
+                    'asterbibcxx', 'CODE_ASTER_CORE'] + uses + ['CXX']),
     install_path = shenv.ASTERLIBDIR,
     )
     for submodule in ("aster", "_aster_core", "aster_fonctions", "med_aster"):

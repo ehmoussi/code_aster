@@ -26,6 +26,11 @@ import sys
 
 def options(self):
     self.load('compiler_fc')
+    group = self.get_option_group("code_aster options")
+    group.add_option('--num-bibfor', dest='num_bibfor', type=int,
+                    action='store', default=10,
+                    help="number of libraries to store fortran objects "
+                         "(default: 10)")
 
 def configure(self):
     self.load('compiler_fc')
@@ -50,6 +55,8 @@ def configure(self):
     self.check_fortran_types()
     self.check_fortran_preprocessor()
     self.check_optional_features()
+    # number of libs
+    self.env['NUM_BIBFOR'] = self.options.num_bibfor
 
 def build(self):
     env = self.all_envs[self.variant]
@@ -57,56 +64,21 @@ def build(self):
 
     uses = env['all_dependencies']
 
-    if sys.platform != 'darwin':
-        # Use only one archive on Linux
-        self(
-            features = 'fc',
-                name = 'asterbibfor',
-              source = get_srcs('**/*.F90'),
-                 env = env.derive(),
-                 use = uses,
-        )
-    else:
-        # On OS X, we need to split the archive so that the shell does not raise
-        # 'argument list too long' error
-        # 3000 objects is currently OK with OS X hardcoded ARG_MAX argument
-        allF90 = get_srcs('**/*.F90')
-        if len(allF90) > 9000:
-            raise Errors.WafError(
-                'There are more than 9000 object files in the Fortran library, '
-                'this is not supported currently when building on OS X, '
-                'please report this error at '
-                'https://bitbucket.org/code_aster/codeaster-src/issues',
-                len(allF90))
-        third = len(allF90) / 3
-        libF90_1 = allF90[:third]
-        libF90_2 = allF90[third:2 * third]
-        libF90_3 = allF90[2 * third:]
-        # Use the split archives on OS X
-        self(
-             features = 'fc fcstlib',
-                 name = 'asterbibfor1',
-               target = 'bibfor1',
-               source = libF90_1,
-                  env = env.derive(),
-                  use = uses,
-        )
-        self(
-             features = 'fc fcstlib',
-                 name = 'asterbibfor2',
-               target = 'bibfor2',
-               source = libF90_2,
-                  env = env.derive(),
-                  use = uses,
-        )
-        self(
-             features = 'fc fcstlib',
-                 name = 'asterbibfor3',
-               target = 'bibfor3',
-               source = libF90_3,
-                  env = env.derive(),
-                  use = uses,
-        )
+    # split object files in `NUM_BIBFOR` libs
+    allF90 = get_srcs('**/*.F90')
+    nblib = env['NUM_BIBFOR']
+    nbobj = len(allF90) // nblib
+    for i in range(nblib):
+        last = (i + 1) * nbobj
+        if i == nblib - 1:
+            last = len(allF90)
+        libF90 = allF90[i * nbobj:last]
+        self(features = 'fc fcshlib',
+             name = 'asterbibfor%d' % i,
+             target = 'bibfor%d' % i,
+             source = libF90,
+             env = env.derive(),
+             use = uses)
 
 ###############################################################################
 MAIN = "      program main\n      end program main\n"
