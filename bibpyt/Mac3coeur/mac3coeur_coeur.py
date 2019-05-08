@@ -1125,7 +1125,7 @@ class Coeur(object):
         mcf.extend(mtmp)
         return mcf
 
-    def dilatation_cuve(self, MODEL, MAILL,is_char_ini=False):
+    def dilatation_cuve(self, MODEL, MAILL,is_char_ini=False,maintien_grille=False):
         """Retourne les déplacements imposés aux noeuds modélisant les internes de cuves
         (supports inférieur (PIC ou FSC), supérieur (PSC) et cloisons)
         et traduisant les dilatations thermiques des internes et leurs deformations de natures mecaniques"""
@@ -1359,6 +1359,21 @@ class Coeur(object):
                                                        _F(GROUP_NO = 'P_CUV',
                                                           DX=_DthX,   ),),)
         else :
+          if maintien_grille :
+            _dilatation = AFFE_CHAR_MECA_F(MODELE=MODEL,
+                                       DDL_IMPO=(_F(GROUP_NO='FIX',
+                                                    DX=_DthXpic,
+                                                    DY=_DthYpic,
+                                                    DZ=_DthZpic),
+                                                 _F(GROUP_NO='PMNT_S',
+                                                    DY=_DthYpsc,
+                                                    DZ=_DthZpsc,),
+                                                 _F(GROUP_NO='LISPG',DY=_DthYpsc,DZ=_DthZpsc,),
+                                                 _F(GROUP_NO='P_CUV',
+                                                    DX=_DthX,
+                                                    DY=_DthY,
+                                                    DZ=_DthZ),),)
+          else :
             _dilatation = AFFE_CHAR_MECA_F(MODELE=MODEL,
                                        DDL_IMPO=(_F(GROUP_NO='FIX',
                                                     DX=_DthXpic,
@@ -1371,6 +1386,7 @@ class Coeur(object):
                                                     DX=_DthX,
                                                     DY=_DthY,
                                                     DZ=_DthZ),),)
+            
         return _dilatation
 
 
