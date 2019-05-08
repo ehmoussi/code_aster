@@ -115,6 +115,7 @@ class Mac3CoeurCalcul(object):
         self._use_archimede = None
         self.char_init = None
         self.etat_init = None
+        self._maintien_grille = None
 
         # cached properties
         self._init_properties()
@@ -360,7 +361,7 @@ class Mac3CoeurCalcul(object):
     def vessel_dilatation_load(self):
         """Return the loading due to the vessel dilatation"""
         char_dilat = self.coeur.dilatation_cuve(self.model, self.mesh,
-                               (self.char_init is not None))
+                               (self.char_init is not None),self._maintien_grille)
         return [_F(CHARGE=char_dilat,), ]
 
     @property
@@ -566,6 +567,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
         if self.keyw['TYPE_COEUR'][:4] == "MONO":
             self.subdivis = 5
         self.use_archimede = self.mcf['ARCHIMEDE']
+        self._maintien_grille = (self.mcf['MAINTIEN_GRILLE'] == 'OUI')
         super(Mac3CoeurDeformation, self)._prepare_data(noresu)
 
     @property
@@ -962,6 +964,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
     def _prepare_data(self,noresu=None):
         """Prepare the data for the calculation"""
         self.use_archimede = 'OUI'
+        self._maintien_grille = False
         if (not noresu) :
             self.res_def = self.keyw['RESU_DEF']
             if self.res_def :
