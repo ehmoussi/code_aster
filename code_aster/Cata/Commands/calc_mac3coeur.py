@@ -42,7 +42,8 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
          MAILLAGE_N   = SIMP(statut='f',typ=maillage_sdaster),      # MAILLAGE EN ATTENDANT MIEUX ???
          RESU_DEF     = SIMP(statut='f',typ=CO),
          FLUENCE_CYCLE = SIMP(statut='f',typ='R',max=1,defaut=0.),
-
+         TYPE_DEFORMATION =SIMP(statut='f',typ='TXM',defaut="PETIT",
+                                  into=("PETIT","GROT_GDEP")),
          ETAT_INITIAL = FACT(statut='f',max=1,
                           fr=tr("Estimation d'un etat initial a partir d un DAMAC"),
                UNITE_THYC   = SIMP(statut='f',typ=UnitType(), max=1, inout='in' ),            # Unite Logique du fichier THYC
