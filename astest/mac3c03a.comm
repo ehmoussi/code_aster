@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -91,7 +91,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.0271842433427,
+           VALE_CALC=0.022001272860905193,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='DY',
            TYPE_TEST='SOMM',
@@ -99,7 +99,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=-0.0271842433425 ,
+           VALE_CALC=-0.022001272860066378 ,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='DZ',
            TYPE_TEST='SOMM',
@@ -115,14 +115,14 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.0271842433427,
+           VALE_CALC=0.022001272860905193,
            NOM_PARA='DY',
            TYPE_TEST='SOMM',
            TABLE=TABI2_BA,
            )
 
 TEST_TABLE(
-           VALE_CALC=-0.0271842433425,
+           VALE_CALC=-0.022001272860066378,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='DZ',
            TYPE_TEST='SOMM',
@@ -130,7 +130,8 @@ TEST_TABLE(
            )
 
 TEST_TABLE(CRITERE='ABSOLU',
-           VALE_CALC=1.10057103069E-16,
+           VALE_CALC=0.,
+           ORDRE_GRANDEUR=0.01,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='DY',
            TYPE_TEST='SOMM',
@@ -138,7 +139,7 @@ TEST_TABLE(CRITERE='ABSOLU',
            )
 
 TEST_TABLE(
-           VALE_CALC=0.0230059249463,
+           VALE_CALC=0.02300594058952759,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='DX',
            TYPE_TEST='SOMM',
@@ -146,7 +147,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.0469315122727,
+           VALE_CALC=0.03307497419042083,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='DY',
            TYPE_TEST='SOMM',
@@ -154,7 +155,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=-0.0276183217885,
+           VALE_CALC=-0.022329158958011068,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='DZ',
            TYPE_TEST='SOMM',
@@ -170,7 +171,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=-0.0142948711321,
+           VALE_CALC=-0.012644189496675203,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='DY',
            TYPE_TEST='SOMM',
@@ -178,7 +179,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=-0.011945949312,
+           VALE_CALC=-0.011405018044697757,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='DZ',
            TYPE_TEST='SOMM',
@@ -186,7 +187,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.000159969416197,
+           VALE_CALC=0.00015440514374675282,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='V1',
            TYPE_TEST='MAX',
@@ -210,7 +211,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.000275537824715,
+           VALE_CALC=0.0002622270983682585,
            TOLE_MACHINE=1.E-3,
            NOM_PARA='V1',
            TYPE_TEST='MAX',
