@@ -155,6 +155,7 @@ class Mac3CoeurCalcul(object):
         # Note that times depends on niv_fluence and subdivis.
         self.times
         self.fluence_cycle = self.keyw['FLUENCE_CYCLE']
+        self._type_deformation = self.keyw['TYPE_DEFORMATION']
 
     def _run(self):
         """Run the calculation itself"""
@@ -455,7 +456,7 @@ class Mac3CoeurCalcul(object):
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
                                 # DEFORMATION='GROT_GDEP',),
-                                DEFORMATION='PETIT',),
+                                DEFORMATION=self._type_deformation,),
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
                              _F(RELATION='DIS_CHOC',
@@ -478,7 +479,7 @@ class Mac3CoeurCalcul(object):
             'COMPORTEMENT': (_F(RELATION='MULTIFIBRE',
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
-                                DEFORMATION='PETIT',
+                                DEFORMATION=self._type_deformation,
                                 ),
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
@@ -515,7 +516,7 @@ class Mac3CoeurCalcul(object):
             'COMPORTEMENT': (_F(RELATION='MULTIFIBRE',
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
-                                DEFORMATION='GROT_GDEP',
+                                DEFORMATION=self._type_deformation,
                                 ),
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),

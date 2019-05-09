@@ -33,6 +33,7 @@ RESU = CALC_MAC3COEUR( TYPE_COEUR    = 'TEST',
                        TABLE_N       =  tabn,
                        MAILLAGE_N    =  MA1,
                        RESU_DEF     =  CO('RES_LM'),
+                       TYPE_DEFORMATION = 'GROT_GDEP',
                        LAME          = _F( UNITE_THYC    =  32,
                                            ))
 
