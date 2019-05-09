@@ -78,10 +78,9 @@ def definir_chargement_transverse(cote, epaisseur, pos_thyc, force, prod):
     som_f = 0.0
     for k in range(kk, pos_thyc[0]):
         som_l = som_l + float(epaisseur[k])
-        som_f = som_f + prod * float(
-            force[k]) / float(epaisseur[k])
-    som_feq = som_l / \
-        (som_l + 0.5 * float(epaisseur[pos_thyc[0]])) * som_f
+        som_f = som_f + prod * float(force[k])
+    som_feq = som_f / \
+        (som_l + 0.25 * float(epaisseur[pos_thyc[0]]))
     defi_fonc.append(
         float(cote[kk]) - 0.5 * float(epaisseur[kk]) - eps)
     defi_fonc.append(som_feq)
@@ -97,11 +96,14 @@ def definir_chargement_transverse(cote, epaisseur, pos_thyc, force, prod):
         som_f = 0.0
         for k in range(pos_thyc[j] + 1, pos_thyc[j + 1]):
             som_l = som_l + float(epaisseur[k])
-            som_f = som_f + prod * float(
-                force[k]) / float(epaisseur[k])
-        som_feq = som_l / \
-            (som_l + 0.5 *
-             (float(epaisseur[pos_thyc[j]]) + float(epaisseur[pos_thyc[j + 1]]))) * som_f
+            #print('epaisseur = %s'%epaisseur[k])
+            som_f = som_f + prod * float(force[k])
+        #print('som_l = %f ; som_f = %f'%(som_l,som_f))
+        som_feq = som_f / \
+            (som_l + 0.25 *
+             (float(epaisseur[pos_thyc[j]]) + float(epaisseur[pos_thyc[j + 1]])))
+        #print('epaisseur avant = %s ; epaisseur apres = %s'%(epaisseur[pos_thyc[j]],epaisseur[pos_thyc[j + 1]]))
+        #print('cote grille avant = %s ; cote grille apres = %s'%(cote[pos_thyc[j]],cote[pos_thyc[j + 1]]))
         defi_fonc.append(
             float(cote[pos_thyc[j]]) + 0.5 * float(epaisseur[pos_thyc[j]]) - eps)
         defi_fonc.append(som_feq)
@@ -116,10 +118,9 @@ def definir_chargement_transverse(cote, epaisseur, pos_thyc, force, prod):
     som_f = 0.0
     for k in range(pos_thyc[len(pos_thyc) - 1] + 1, len(cote)):
         som_l = som_l + float(epaisseur[k])
-        som_f = som_f + prod * float(
-            force[k]) / float(epaisseur[k])
-    som_feq = som_l / \
-        (som_l + 0.5 * float(epaisseur[len(cote) - 1])) * som_f
+        som_f = som_f + prod * float(force[k])
+    som_feq = som_f / \
+        (som_l + 0.25 * float(epaisseur[len(cote) - 1]))
     defi_fonc.append(float(cote[pos_thyc[len(pos_thyc) - 1]]) + 0.5 * float(
         epaisseur[pos_thyc[len(pos_thyc) - 1]]) - eps)
     defi_fonc.append(som_feq)
@@ -176,6 +177,7 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
     #if (cote[0] != "Z(m)"):
         #raise KeyError("invalid cote axial")
     epaisseur = compute_ep_from_Z(cote)
+    #print('epaisseur = %s'%epaisseur)
     j = 0
     pos_thyc = []
     for i in range(2, len(cote)):
@@ -200,8 +202,8 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
     for i in range(0, coeur.NBAC):
         line = f.readline().split()
         line2 = f2.readline().split()
-        print('line = ',line)
-        print('line2 = ',line2)
+        #print('line = ',line)
+        #print('line2 = ',line2)
         posi_aster1 = coeur.position_fromthyc(int(line[0]),int(line[1]))
         posi_aster2 = coeur.position_fromthyc(int(line2[0]),int(line2[1]))
         if (posi_aster1 != posi_aster2):
@@ -244,7 +246,7 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
         posi_aster=coeur.position_fromthyc(int(line[0]),int(line[1]))
         idAC = coeur.position_todamac(posi_aster)
 
-        print(list(coeur.collAC.keys()))
+        #print(list(coeur.collAC.keys()))
 
         ac = coeur.collAC[idAC]
         KTOT = ac.K_GRM * \
