@@ -187,10 +187,7 @@ def get_ld_paths(self):
                            for name in ('LIBPATH', 'LIBPATH_CODE_ASTER_CORE', 'LIBDIR') if env[name]]))
     ld_path = [osp.join(env.ASTERLIBDIR, i) for i in ld_path]
     # add path where built libs are installed
-    try:
-        ld_path.insert(0, env.ASTERLIBDIR)
-    except Errors.WafError:# depends on --embed-* options
-        pass
+    ld_path.insert(0, env.ASTERLIBDIR)
     return [self.options.destdir + p for p in ld_path]
 
 def add_to_env_paths(environ, name, path):
