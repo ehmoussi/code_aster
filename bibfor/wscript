@@ -78,7 +78,8 @@ def build(self):
              target = 'bibfor%d' % i,
              source = libF90,
              env = env.derive(),
-             use = uses)
+             use = uses,
+             install_path = env.ASTERLIBDIR)
 
 ###############################################################################
 MAIN = "      program main\n      end program main\n"
