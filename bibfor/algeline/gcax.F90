@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,8 +49,6 @@ subroutine gcax(m, in, ip, ac, x,&
 30      continue
         y(i) = dtemp
         dtemp = x(i)
-!DIR$ IVDEP
-!DIR$ NOPREFETCH Y
         do 20 ki = kdeb, kfin
             y(ip(ki)) = y(ip(ki)) + ac(ki)*dtemp
 20      continue
