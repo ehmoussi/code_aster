@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 ! sd_nl data structure : Parameters <-> integer definitions
 ! -------------------------------------------------------------------------
 !
-#define _NL_NBPAR 78
+#define _NL_NBPAR 79
 
 #define _ANG_INIT 1
 #define _ANG_ROTA 2
@@ -99,6 +99,7 @@
 #define _BUCKLING_DEF_PLA 76
 #define _BUCKLING_RIGI_NOR 77
 #define _BUCKLING_DEF_TOT 78
+#define _BUCKLING_AMOR 79
 
 
 
@@ -137,7 +138,7 @@
 
 
 #define NBVARINT_CHOC 20
-#define NBVARINT_FLAM 11
+#define NBVARINT_FLAM 12
 #define NBVARINT_ANTS 8
 #define NBVARINT_DVIS 11
 #define NBVARINT_DECR 20

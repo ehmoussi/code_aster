@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -127,9 +127,11 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
             FNOR_CRIT   =     SIMP(statut='o',typ='R'),
             FNOR_POST_FL=     SIMP(statut='o',typ='R'),
             ENFO_FL     =     SIMP(statut='f',typ='R',defaut= 1.E-20),
+            AMOR_FL     =     SIMP(statut='f',typ='R'),
             LARG_PLAT   =     SIMP(statut='f',typ='R',defaut= 0.E+0),
             DEPL_POST_FL=     SIMP(statut='f',typ='R',max='**'),
             RIGI_POST_FL=     SIMP(statut='f',typ='R',max='**'),
+            AMOR_POST_FL=     SIMP(statut='f',typ='R',max='**'),
         ), # end b_buckling
 
 #       C.2.5 Anti-sismic disposition non linearity
