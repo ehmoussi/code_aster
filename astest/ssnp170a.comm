@@ -29,19 +29,19 @@ lisi=DEFI_LIST_REEL(DEBUT=0,
                                   PAS=1,),);
 LINST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=lisi,),
                          ECHEC=_F(EVENEMENT='ERREUR',
-                         ACTION='DECOUPE',),);                  
-RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,1,1),); 
+                         ACTION='DECOUPE',),);
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,1,1),);
 
 Mail=LIRE_MAILLAGE(UNITE=20,
                    FORMAT='MED',);
-                   
+
 Mail=MODI_MAILLAGE(reuse=Mail,
                    MAILLAGE=Mail,
-                   ORIE_PEAU_2D=_F(GROUP_MA=('Group_2','Group_1','Group_3','Group_4',),),);                       
+                   ORIE_PEAU_2D=_F(GROUP_MA=('Group_2','Group_1','Group_3','Group_4',),),);
 
 Mail2=CREA_MAILLAGE(MAILLAGE=Mail,
                     DECOUPE_LAC=_F(GROUP_MA_ESCL='Group_1',),)
-                    
+
 mat1=DEFI_MATERIAU(ELAS=_F(E=2000,
                            NU=0.3,),);
 
@@ -56,7 +56,7 @@ AFFE=AFFE_MATERIAU(MAILLAGE=Mail2,
                            MATER=mat1,),);
 
 DEFICO=DEFI_CONTACT(MODELE=MODI,
-                    INFO=1,
+                    INFO=2,
                     FORMULATION='CONTINUE',
                     ALGO_RESO_GEOM='NEWTON',
                     ALGO_RESO_CONT='NEWTON',
@@ -76,7 +76,7 @@ CHAR2= AFFE_CHAR_MECA(MODELE=MODI,
                              PRES_REP=_F(GROUP_MA='Group_4',
                              PRES=25,), );
 
- 
+
 
 RES=STAT_NON_LINE(INFO=2,
                   AFFICHAGE=_F(INFO_RESIDU='OUI',),
@@ -87,10 +87,10 @@ RES=STAT_NON_LINE(INFO=2,
                          _F(CHARGE=CHAR2,
                               FONC_MULT=RAMPE,
                             #TYPE_CHARGE='SUIV',
-                            ), ),  
+                            ), ),
                   CONTACT=DEFICO,
                   NEWTON=_F(MATRICE='TANGENTE',
-                            REAC_ITER=1,),    
+                            REAC_ITER=1,),
                   COMPORTEMENT=_F(RELATION='ELAS',
                                     DEFORMATION='PETIT',
                                   TOUT='OUI',),

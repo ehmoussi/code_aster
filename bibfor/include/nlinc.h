@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@
                  'PSI_DEL1', 'PSI_DEL2', 'RES_INTE', 'STIF_TAN', 'ROTR_DFK', &
                  'ROTR_FK ', 'SIGN_DYZ', 'SINCOS_A', 'SINCOS_B', 'SINCOS_G', &
                  'SS1_NAME', 'SS2_NAME', 'STIF_NOR', 'FEXT_MPI', 'BKLDEFT0', &
-                 'BKL_DEFP', 'BKL_RIGI', 'BKL_DEFT'/
+                 'BKL_DEFP', 'BKL_RIGI', 'BKL_DEFT', 'BKL_AMOR'/
 
 
     data partyp /'R  ', 'K24', 'R  ', 'R  ', 'R  ', &
@@ -62,7 +62,7 @@
                  'R  ', 'R  ', 'R  ', 'R  ', 'K24', &
                  'K24', 'R  ', 'R  ', 'R  ', 'R  ', &
                  'K24', 'K24', 'R  ', 'R  ', 'R  ', &
-                 'R  ', 'R  ', 'R  ' /  
+                 'R  ', 'R  ', 'R  ', 'R  ' /  
 
 ! -------------------------------------------------------------------------
 !   parind = -2 : vector global        ; = -1 : scalar global ;
@@ -84,6 +84,5 @@
                   2,  2,  1,  1,  1, &
                   1,  2,  2,  2,  2, &
                   1,  1,  1, -2,  1, &
-                  2,  2,  2/
-
+                  2,  2,  2,  2/
 
