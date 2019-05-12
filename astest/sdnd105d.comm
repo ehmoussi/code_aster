@@ -1,0 +1,268 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# PLASTIQUE
+# ----------------------------------------------------------------------
+#
+DEBUT(PAR_LOT = 'NON',CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI')) ######################" PAR_LOT = 'NON'"
+
+MAILLAG0=LIRE_MAILLAGE(FORMAT="ASTER", )
+
+MAILLAGE=CREA_MAILLAGE(MAILLAGE=MAILLAG0,
+    CREA_POI1=(
+        _F(NOM_GROUP_MA='AUTRE', GROUP_NO=('AUTRE',),),
+        _F(NOM_GROUP_MA='N02',   NOEUD=('N02',),),
+    ),
+)
+
+MAILLAGE=DEFI_GROUP(reuse =MAILLAGE,      ################ FAB 
+                MAILLAGE=MAILLAGE,
+                CREA_GROUP_NO=(_F(NOM='N02', NOEUD='N02',),
+                    ),);
+
+
+
+MODELE=AFFE_MODELE(  MAILLAGE=MAILLAGE,AFFE=(
+                  _F(  PHENOMENE = 'MECANIQUE', MODELISATION = 'DIS_TR',
+                         GROUP_MA = 'STRUC'),
+                       _F(  PHENOMENE = 'MECANIQUE', MODELISATION = 'DIS_TR',
+                         GROUP_MA = 'AUTRE'))                    )
+
+CON_LIM=AFFE_CHAR_MECA( MODELE=MODELE,DDL_IMPO=(
+                              _F(  GROUP_NO = 'ENCASTRE',
+                                         DX = 0., DY = 0., DZ = 0.,
+                                         DRX = 0., DRY = 0., DRZ = 0.),
+                                       _F(  GROUP_NO = 'AUTRE',
+                                                  DY = 0., DZ = 0.,
+                                         DRX = 0., DRY = 0., DRZ = 0.))
+                           )
+
+CARA_ELE=AFFE_CARA_ELEM(  MODELE=MODELE,DISCRET=(
+                       _F(  GROUP_MA = 'N02',
+                                 CARA = 'M_TR_N',
+                                 VALE = ( 1., 0., 1., 0., 0., 1., 0.,
+                                         0., 0., 0., 0., 0., 0., 0.,
+                                         0., 0., 0., 0., 0., 0., 0.,)),
+                       _F(  GROUP_MA = 'N02',
+                                 CARA = 'K_TR_N',
+                                 VALE = ( 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                                          0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                                          0.,)),
+                               _F(  GROUP_MA = 'STRUC',  CARA = 'K_TR_D_L',
+                                 VALE = ( 0.0000001, 0., 0., 0., 0., 0., ),
+                                 REPERE = 'GLOBAL'))                )
+
+#
+
+RIGI_ELE=CALC_MATR_ELEM(  MODELE=MODELE,  OPTION='RIGI_MECA',
+                              CARA_ELEM=CARA_ELE,  CHARGE=CON_LIM   )
+
+MASS_ELE=CALC_MATR_ELEM( MODELE=MODELE,  OPTION='MASS_MECA_DIAG',
+                              CARA_ELEM=CARA_ELE,  CHARGE=CON_LIM   )
+
+#
+
+NUMEDDL=NUME_DDL(  MATR_RIGI=RIGI_ELE)
+
+#
+
+RIGIDITE=ASSE_MATRICE(  MATR_ELEM=RIGI_ELE,  NUME_DDL=NUMEDDL  )
+
+MASSE=ASSE_MATRICE(  MATR_ELEM=MASS_ELE,  NUME_DDL=NUMEDDL  )
+
+#
+
+MODE_MEC=CALC_MODES(MATR_RIGI=RIGIDITE,
+                    OPTION='PLUS_PETITE',
+                    CALC_FREQ=_F(NMAX_FREQ=1,
+                                 ),
+                    MATR_MASS=MASSE,
+                    )
+
+
+#
+#-----------------------------------------------------------------------
+#
+
+PROJ_BASE(  BASE=MODE_MEC,
+            STOCKAGE='DIAG',
+            MATR_ASSE_GENE=(
+               _F(  MATRICE = CO("MASS_GEN"),
+                                MATR_ASSE = MASSE),
+               _F(  MATRICE = CO("RIGI_GEN"),
+                                MATR_ASSE = RIGIDITE))
+                                    )
+
+
+
+V0=2.828427125 
+
+
+VIT_INIT=CREA_CHAMP( OPERATION='AFFE', PROL_ZERO='OUI', TYPE_CHAM='NOEU_DEPL_R',
+MAILLAGE=MAILLAGE,
+                             NUME_DDL=NUMEDDL,
+                            AFFE=_F(  TOUT = 'OUI',
+                                   NOM_CMP = 'DX',
+                                   VALE = V0)
+                         )
+
+#
+NUMEGE=NUME_DDL_GENE(   BASE=MODE_MEC,
+                          STOCKAGE='DIAG' )
+
+#
+
+
+VIT_GENE=PROJ_VECT_BASE(  BASE=MODE_MEC,
+                              VECT_ASSE=VIT_INIT,
+                              TYPE_VECT='VITE',
+                             NUME_DDL_GENE=NUMEGE)
+
+#
+
+PLANY=DEFI_OBSTACLE(TYPE='PLAN_Y')
+
+#
+DEPL_POST_FL=[2., 3.,4.,5.]
+RIGI_POST_FL=[0.4,0.3,0.2,0.1]
+LARG_PLAT=1.
+ENFO_FL=1.
+AMOR_NOR=10.
+AMOR_FL=AMOR_NOR/2.
+AMOR_POST_FL=[AMOR_FL,AMOR_FL,AMOR_FL,AMOR_FL]
+
+TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
+                            MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
+                            SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
+                      ETAT_INIT=_F(  VITE = VIT_GENE),
+                      COMPORTEMENT=_F( RELATION='FLAMBAGE',
+                                       INTITULE='FLAMBAGE_SDND105a',
+                                       NOEUD_1 = 'N02',
+                                       OBSTACLE = PLANY,
+                                       NORM_OBST = (0., 1., 0.,),
+                                       ORIG_OBST = (0., 0., 0.,),
+                                       JEU = 1.,
+                                       RIGI_NOR = 1.,
+                                       FNOR_CRIT = 1.,
+                                       FNOR_POST_FL = 0.5,
+                                       LARG_PLAT =LARG_PLAT,
+                                       ENFO_FL = ENFO_FL,
+                                       DEPL_POST_FL=DEPL_POST_FL,
+                                       RIGI_POST_FL=RIGI_POST_FL,
+                                       AMOR_NOR=AMOR_NOR,
+                                       AMOR_FL=AMOR_FL,
+                                       AMOR_POST_FL=AMOR_POST_FL,
+                                       ),
+                      INCREMENT=_F(
+                                  INST_INIT = 0.,   INST_FIN = 1.,
+                                  PAS = 0.0002)
+                            )
+
+TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
+                      reuse=TRAN_GEN,  MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
+                      SCHEMA_TEMPS=_F(SCHEMA='ADAPT_ORDRE2',
+                                      PAS_MAXI = 0.001,
+                                      PAS_MINI = 2.E-8,),
+                      ETAT_INIT=_F(  RESULTAT = TRAN_GEN,
+                                  INST_INIT = 0.5),
+                      COMPORTEMENT=_F( RELATION='FLAMBAGE',
+                                       INTITULE='FLAMBAGE_SDND105a',
+                                       NOEUD_1 = 'N02',
+                                       OBSTACLE = PLANY,
+                                       NORM_OBST = (0., 1., 0.,),
+                                       ORIG_OBST = (0., 0., 0.,),
+                                       JEU = 1.,
+                                       RIGI_NOR = 1.,
+                                       FNOR_CRIT = 1.,
+                                       FNOR_POST_FL = 0.5,
+                                       LARG_PLAT =LARG_PLAT,
+                                       ENFO_FL = ENFO_FL,
+                                       DEPL_POST_FL=DEPL_POST_FL,
+                                       RIGI_POST_FL=RIGI_POST_FL,
+                                       AMOR_NOR=AMOR_NOR,
+                                       AMOR_FL=AMOR_FL,
+                                       AMOR_POST_FL=AMOR_POST_FL,
+
+                                       ),
+                      INCREMENT=_F(INST_FIN = 1.,  PAS = 0.0002,)
+                            )
+
+TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
+                      reuse=TRAN_GEN,  MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
+                      SCHEMA_TEMPS=_F(SCHEMA='DEVOGE', PAS_MINI=0.001, PAS_MAXI=0.001),
+                      ETAT_INIT=_F(  RESULTAT = TRAN_GEN),
+                      COMPORTEMENT=_F( RELATION='FLAMBAGE',
+                                       INTITULE='FLAMBAGE_SDND105a',
+                                       NOEUD_1 = 'N02',
+                                       OBSTACLE = PLANY,
+                                       NORM_OBST = (0., 1., 0.,),
+                                       ORIG_OBST = (0., 0., 0.,),
+                                       JEU = 1.,
+                                       RIGI_NOR = 1.,
+                                       FNOR_CRIT = 1.,
+                                       FNOR_POST_FL = 0.5,
+                                       LARG_PLAT =LARG_PLAT,
+                                       ENFO_FL = ENFO_FL,
+                                       DEPL_POST_FL=DEPL_POST_FL,
+                                       RIGI_POST_FL=RIGI_POST_FL,
+                                       AMOR_NOR=AMOR_NOR,
+                                       AMOR_FL=AMOR_FL,
+                                       AMOR_POST_FL=AMOR_POST_FL,
+                                       ),
+                      INCREMENT=_F(
+                                 INST_FIN = 9.,  PAS = 0.001)
+                            )
+
+
+
+TRAN=REST_GENE_PHYS(   RESU_GENE=TRAN_GEN,
+                       NOM_CHAM=('VITE'),
+                       )
+
+TABLE=POST_DYNA_MODA_T(   RESU_GENE=TRAN_GEN,
+                          CHOC=_F(  OPTION = 'IMPACT')
+                          )
+IMPR_TABLE(TABLE=TABLE)
+
+# references
+TEST_TABLE(
+           VALE_CALC=3.453940185362974,
+           NOM_PARA='ECRAS_RESI',
+           TABLE=TABLE,
+           FILTRE=(_F(NOM_PARA='CALCUL',
+                      VALE_K='FLAMBAGE',),
+                   _F(NOM_PARA='NOEUD',
+                      VALE_K='N02',),
+                   ),
+           )
+
+
+TEST_RESU(RESU=_F(INST=9.,
+                  RESULTAT=TRAN,
+                  NOM_CHAM='VITE',
+                  NOEUD='N02',
+                  NOM_CMP='DX',
+                  VALE_CALC=-0.09642082645651379,
+                  CRITERE=('ABSOLU', 'RELATIF'),
+                   ),
+          )
+
+
+FIN()
+#

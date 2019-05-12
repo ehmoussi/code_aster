@@ -25,4 +25,11 @@ cata_msg = {
     1 : _("""
 Cette maille n'est pas valable pour la méthode LAC de contact.
 """),
+
+    2 : _("""
+Vous essayer de faire un MODI_MAILLAGE après avoir fait CREA_MAILLAGE/DECOUPE_LAC sur ce même maillage.
+C'est interdit sauf pour les mots clés DEFORME et TRANSLATION uniquement.
+
+Conseil: Effectuez toutes les opérations MODI_MAILLAGE avant d'effectuer CREA_MAILLAGE/DECOUPE_LAC sur votre maillage.
+"""),
 }

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     real(kind=8)      :: dvitlo(3), xjeu, knorm, flim, fseuil
     real(kind=8)      :: rigifl, dnorm, dist1, dist2, cost
     real(kind=8)      :: sint, fn, flocal(3), defpla, vnorm, defmax
-    real(kind=8)      :: fgloba(3), enfo_fl, cnorm
+    real(kind=8)      :: fgloba(3), enfo_fl, cnorm, cfl
     real(kind=8)      :: deft0
     character(len=8)  :: sd_dtm, sd_nl, monmot, obst_typ
     character(len=19) :: nomres
@@ -96,6 +96,7 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
 
     real(kind=8)    , pointer :: def(:)   => null()
     real(kind=8)    , pointer :: deft(:)   => null()
+    real(kind=8)    , pointer :: amor(:)   => null()
 
     character(len=8), pointer :: nofdep(:)  => null()
     character(len=8), pointer :: nofvit(:)  => null()
@@ -213,6 +214,7 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     call nlget(sd_nl, _BUCKLING_DEF             , iocc=nl_ind, rscal=enfo_fl, buffer=buffnl)
     call nlget(sd_nl, _BUCKLING_DEF_PLA         , iocc=nl_ind, vr=def, buffer=buffnl)
     call nlget(sd_nl, _BUCKLING_DEF_TOT         , iocc=nl_ind, vr=deft, buffer=buffnl)
+    call nlget(sd_nl, _BUCKLING_AMOR            , iocc=nl_ind, vr=amor, buffer=buffnl)
     call nlget(sd_nl, _BUCKLING_DEF_TOT_0       , iocc=nl_ind, rscal=deft0, buffer=buffnl)
 
 !
@@ -223,6 +225,7 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     defpla = vint(start+8)
     rigifl = vint(start+9)
     defmax = vint(start+10)
+    cfl = vint(start+11)
     fn = 0.d0
 
     if (dnorm .le. 0.d0) then
@@ -233,7 +236,7 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         call mdflam(dnorm, dvitlo, knorm, cnorm, cost, sint,&
                     flim, fseuil, rigifl, defpla, fn,&
                     flocal, vnorm, defmax ,enfo_fl, def,&
-                    deft0, deft)
+                    deft0, deft, amor, cfl)
 
 
 !       --- Conversion to the global (physical) reference
@@ -274,6 +277,7 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     vint(start+8 ) = defpla
     vint(start+9 ) = rigifl
     vint(start+10) = defmax
+    vint(start+11) = cfl
 
     if (multi_support) then
         AS_DEALLOCATE(vr=coedep)
