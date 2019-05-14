@@ -214,7 +214,6 @@ def calc_bt_ops(self,
 
         AS = np.zeros([len(Mesh_[:, 0]), len(regions)], dtype=bool)
         mean_CQ = np.ones([len(regions), 1])*1000000    # Average angle
-        # mean_CQ[:] = np.nan
         c_VC = np.zeros([len(regions), 2])
 
         i_ = 0
@@ -232,19 +231,45 @@ def calc_bt_ops(self,
 
                 reduced_ang = red_ang_disp(angle_[AS[:, i_]])
 
-                Sin_ = sum(np.sin(reduced_ang))
-                Cos_ = sum(np.cos(reduced_ang))
+                if angle_disp_test(reduced_ang):
 
-                if Sin_ > 0 and Cos_ > 0:
-                    mean_CQ[i_, 0] = np.arctan2(Sin_, Cos_)
-                elif Cos_ < 0:
-                    mean_CQ[i_, 0] = np.arctan2(Sin_, Cos_) + pi
-                elif Sin_ < 0 and Cos_ > 0:
-                    mean_CQ[i_, 0] = np.arctan2(Sin_, Cos_) + 2*pi
+                    try:
+                        mean_CQ[i_, 0] = loess(X, Y, reduced_ang)
+
+                    except:
+
+                        Sin_ = sum(np.sin(reduced_ang))
+                        Cos_ = sum(np.cos(reduced_ang))
+
+                        if Sin_ > 0 and Cos_ > 0:
+                            mean_CQ[i_, 0] = np.arctan2(Sin_, Cos_)
+                        elif Cos_ < 0:
+                            mean_CQ[i_, 0] = np.arctan2(Sin_, Cos_) + pi
+                        elif Sin_ < 0 and Cos_ > 0:
+                            mean_CQ[i_, 0] = np.arctan2(Sin_, Cos_) + 2*pi
+
+                else:
+
+                    Sin_ = sum(np.sin(reduced_ang))
+                    Cos_ = sum(np.cos(reduced_ang))
+
+                    if Sin_ > 0 and Cos_ > 0:
+                        mean_CQ[i_, 0] = np.arctan2(Sin_, Cos_)
+                    elif Cos_ < 0:
+                        mean_CQ[i_, 0] = np.arctan2(Sin_, Cos_) + pi
+                    elif Sin_ < 0 and Cos_ > 0:
+                        mean_CQ[i_, 0] = np.arctan2(Sin_, Cos_) + 2*pi
 
             i_ = i_ + 1
 
         return mean_CQ
+    #==============================================================================
+    def angle_disp_test(angle):
+        if (max(angle)-min(angle)) >= 0.0001:
+            return False
+        else:
+            return True
+
     #==============================================================================
     def ar2tuple(a):
         """
@@ -749,13 +774,17 @@ def calc_bt_ops(self,
             N_L[j_, 0] = int(N_o_S[key])
             j_ = j_ + 1
 
-
-
-
-
-
         return GS_nodes[np.isnan(B_[:, 0]) == False,:], N_Con_Mat, N_o_S, N_S, N_L
 
+
+    #==============================================================================
+    def find_nearest(array, value):
+        """
+
+        """
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return array[idx]
 
     #==============================================================================
     def Grid_sq(div_):
@@ -794,7 +823,6 @@ def calc_bt_ops(self,
 
 
 
-
     #==============================================================================
     def get_intersect(a1, a2, b1, b2):
         """
@@ -821,7 +849,7 @@ def calc_bt_ops(self,
 
 
     #==============================================================================
-    def grid_interp(Coord_, Data_, x_d, y_d):
+    def grid_interp(Coord_, Data_, x_d, y_d, __Holes, __Nodes):
         """
         Description:
         Creates a grid interpolation of a given data.
@@ -835,16 +863,20 @@ def calc_bt_ops(self,
         grid_y .- Y coordinates of the interpolation points
         grid_z1 .- interpolated data
         """
-        # from Utilitai.griddata_local import griddata
-        from scipy.interpolate import griddata
+        from Utilitai.griddata_local import griddata
 
-        # Defining the grid
-        grid_x, grid_y = np.mgrid[max(Coord_[:, 0]): min(Coord_[:, 0]): x_d, \
+        grid_x, grid_y = np.mgrid[min(Coord_[:, 0]): max(Coord_[:, 0]): x_d, \
                                   min(Coord_[:, 1]): max(Coord_[:, 1]): y_d]
 
-        grid_z1 = griddata(Coord_, Data_,
-                          (grid_x, grid_y), method = 'nearest')    # Interpolation
+        A = np.ones((len(grid_x[:, 0]), len(grid_x[0,:])), dtype=bool)
+        if len(__Holes) > 0:
+            for key in __Holes.keys():
+                for i_ in range(len(grid_x[:, 0])):
+                    for j_ in range(len(grid_x[0,:])):
+                        if is_inpolygon([grid_x[i_, j_], grid_y[i_, j_]], __Nodes[__Holes[key], 1:3], 0):
+                            A[i_, j_] = False
 
+        grid_z1 = griddata(Coord_, Data_, grid_x, grid_y, A)
         return grid_x, grid_y, grid_z1
 
 
@@ -879,19 +911,11 @@ def calc_bt_ops(self,
 
             B = False
 
-        elif (max(C)-min(C)) > 0.1/os.sys.float_info.epsilon:
-
-            B = False
-
-        elif (ratio_ < os.sys.float_info.epsilon) or (min(abs(A)) < 10**-6):
-
-
+        elif (min(abs(A)) < 10**-6):
             B = False
 
         else:
             B = True
-
-
 
         return B
 
@@ -1175,33 +1199,6 @@ def calc_bt_ops(self,
             (N_path[Con_Mat[:, 1], 1] - N_path[Con_Mat[:, 0], 1])**2)
 
         return a
-
-
-    #==============================================================================
-    def lists_(File, directory, Name_, type_):
-        """
-        File = Con_Mat
-        Name_ = ('Connectivity_%d.txt' % (i_))
-        """
-
-        file = open(directory + '//aster_model//' + Name_, 'w')
-
-        if len(File.shape) == 1:
-            for i_ in range(len(File)):
-                if type_ == 1:
-                    file.write('%.8f' % (File[i_]))
-                elif type_ == 0:
-                    file.write('%d' % (File[i_]))
-                file.write('\n')
-
-        else:
-            for i_ in range(len(File[:, 0])):
-                for j_ in range(len(File[0,:])):
-                    if type_ == 1:
-                        file.write('%.8f    ' % (File[i_, j_]))
-                    elif type_ == 0:
-                        file.write('%.8f    ' % (File[i_, j_]))
-                file.write('\n')
 
 
     #==============================================================================
@@ -1651,7 +1648,7 @@ def calc_bt_ops(self,
 
 
     #==============================================================================
-    def voronoi_finite_polygons_2d(vor, radius=None):
+    def voronoi_finite_polygons_2d(vc, vr):
         """
         Description:
             Reconstruct infinite voronoi regions in a 2D diagram to finite regions.
@@ -1666,6 +1663,37 @@ def calc_bt_ops(self,
                 of input vertices, with 'points at infinity' appended to the
                 end.
         """
+        new_regions1 = []
+
+        for r in vr:
+            new_regions1.append(vr[r])
+
+        new_points = np.zeros((len(vc), 2))
+        i_ = 0
+        for P1 in vc:
+            new_points[i_,:] = P1
+            i_ = i_ + 1
+
+
+        return new_points, new_regions1
+
+    #==============================================================================
+    def voronoi_finite_polygons_2d_B(vor, radius=None):
+        """
+        Description:
+            Reconstruct infinite voronoi regions in a 2D diagram to finite regions.
+        Input:
+            vor .- Voronoi
+            radius .- float, optional. Distance to 'points at infinity'.
+        Output:
+            regions .- list of tuples
+                Indices of vertices in each revised Voronoi regions.
+            vertices .- list of tuples
+                Coordinates for revised Voronoi vertices. Same as coordinates
+                of input vertices, with 'points at infinity' appended to the
+                end.
+        """
+
         if vor.points.shape[1] != 2:
             raise ValueError("Requires 2D input")
 
@@ -1786,7 +1814,6 @@ def calc_bt_ops(self,
 
     #==============================================================================
     def op_top(GS_nodes, Con_Mat, E_sections,  Ec, Es, FC, FY, Forces, N_o_S, N_S, N_L, percent):
-        # op_top(GS_nodes, Con_Mat, E_sections,  Ec, Es, FC, FY, Forces, N_o_S, N_o_L, N_S, N_L, percent)
         """
         Description:
             Topology optimisation.  Reduce the quantity of elements contained in a
@@ -1850,8 +1877,6 @@ def calc_bt_ops(self,
     def op_top_node(GS_nodes, Con_Mat, AREAS, Forces, Ec, Es, FC, FY, N_o_S, N_S, N_L,
                     percent, GROUP_S, GROUP_F, INIT_ALEA, percent1):
 
-
-     # op_top
         """
         Description:
             Topology optimisation.  Reduce the quantity of elements contained in a
@@ -1917,9 +1942,6 @@ def calc_bt_ops(self,
         else:
             random.seed(INIT_ALEA)
             random.shuffle(Sort_nodes)
-
-
-
 
         Order[0:(j_1)] =  Order1[0:(j_1)]
 
@@ -2026,13 +2048,11 @@ def calc_bt_ops(self,
             percent .- percento to erase for the topology optimisation
 
         """
-        op_global
         Elem_prin = int(    # Number of elements to erase
                 round((1. - percent)*len(Con_Mat[:, 0]), 0))
 
 
 
-        start = time.time()
         j_ = 0
         Title_ = 'S'
 
@@ -2201,24 +2221,13 @@ def calc_bt_ops(self,
                 __Forces = run_truss_computation_(i_, GS_nodes, Con_Mat, E_sections, __Forces, N_o_S, Ec, Es, FC, FY, N_S, N_L, UNITE_MAILLAGE)
 
 
-
-
-
             if Conv_ <= GC:
                 break
-
-
-        end = time.time()
 
         if (Conv_ > GC) and (i_ >= (max_iter-1)):
             UTMESS('F', 'CALCBT_7')
 
-
-
         E_length = Length_(GS_nodes, Con_Mat)
-
-
-
 
         __Forces = np.ones([len(Con_Mat[:, 0])])
         ST_MESH = mesh_create2(GS_nodes, Con_Mat, N_o_S, __Forces, Title_, UNITE_MAILLAGE, __GROUP_S, __GROUP_F)
@@ -2324,7 +2333,6 @@ def calc_bt_ops(self,
         """
 
         """
-        # ang = angle_[AS[:, i_]]
         ang = ang[np.isnan(ang) == False]
         ad_1 = np.max(ang) - np.min(ang)
 
@@ -2405,11 +2413,6 @@ def calc_bt_ops(self,
         Output:
             Array containing the forces of all bar in the model
         """
-
-
-
-
-
 
         __truss = LIRE_MAILLAGE(FORMAT='ASTER',
                         UNITE=UNITE_MAILLAGE)
@@ -2571,11 +2574,6 @@ def calc_bt_ops(self,
             Array containing the forces of all bar in the model
         """
 
-
-
-
-
-
         __truss = LIRE_MAILLAGE(FORMAT='ASTER',
                         UNITE=UNITE_MAILLAGE)
 
@@ -2728,7 +2726,6 @@ def calc_bt_ops(self,
             Connectivity matrix
 
         """
-        # Nonodes = GS_nodes
         PP = N_o_Comb(len(Nonodes[:, 0]), 2)    # Possible permutations
         Links_ = np.zeros((PP, 2))
         Links_[:] = np.nan
@@ -2853,15 +2850,18 @@ def calc_bt_ops(self,
     # Local Maxima
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    def local_pnv(Nodes_, p_n_stress, x_d, y_d):
+    def local_pnv(Nodes_, p_n_stress, x_d, __PAS_ITERPOL_X, y_d, __PAS_ITERPOL_Y, __Holes):
         """
         Local peaks and valleys
 
         """
-        grid_x, grid_y, grid_I = grid_interp(Nodes_[:, 1:3], p_n_stress[:, 1], x_d, y_d)
+
+        grid_x, grid_y, grid_I = grid_interp(Nodes_[:, 1:3], p_n_stress[:, 1], __PAS_ITERPOL_X, __PAS_ITERPOL_Y,
+                                 __Holes, __Nodes)
         P_S_I, V_S_I = local_max(grid_x, grid_y, grid_I)
 
-        grid_x, grid_y, grid_III = grid_interp(Nodes_[:, 1:3], p_n_stress[:, 3], x_d, y_d)
+        grid_x, grid_y, grid_III = grid_interp(Nodes_[:, 1:3], p_n_stress[:, 3], __PAS_ITERPOL_X,
+                                 __PAS_ITERPOL_Y, __Holes, __Nodes)
         P_S_III, V_S_III = local_max(grid_x, grid_y, grid_III)
 
 
@@ -2902,8 +2902,7 @@ def calc_bt_ops(self,
         """
 
         """
-        # from Utilitai.voronoi_local import Voronoi
-        from scipy.spatial import Voronoi
+        from Utilitai.voronoi_local import Voronoi
 
         int_nodes = np.zeros((len(SUPPORTS[:, 0])+len(__FORCES[:, 0]), 4))
         int_nodes[0:len(SUPPORTS[:, 0]),:] = SUPPORTS
@@ -2936,13 +2935,13 @@ def calc_bt_ops(self,
         if len(Holes) > 0:
             points_d2 = double_nodes(N_Bound, A, L_M, 0.0001, 0)
             points_d1 = double_nodes(N_Bound, Bound, L_M, 0.0001, 0)
-            vor = Voronoi(np.concatenate((points_d1, points_d2), axis=0))    # Compute Voronoi tesselation
+            vc, vr = Voronoi(unique_local(np.concatenate((points_d1, points_d2), axis=0)))
+
         else:
-
             points_d1 = double_nodes(N_Bound, Bound, L_M, 0.0001, 0)
-            vor = Voronoi(points_d1)    # Compute Voronoi tesselation
+            vc, vr = Voronoi(np.concatenate((points_d1, Nodes_[__FORCES[:, 0]-1, 1:3]), axis=0))
 
-        regions, vertices = voronoi_finite_polygons_2d(vor)    # Finite tesselation
+        vertices, regions = voronoi_finite_polygons_2d(vc, vr)
 
 
         return regions, vertices
@@ -2982,18 +2981,20 @@ def calc_bt_ops(self,
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # Secondary elements
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    def second_(N_Bound, Bound, Nodes_, SUPPORTS, N_path, V_S_III, P_S_I, Holes, Leng_max, tolerance, Opt1, __CORNERS):
+    def second_(N_Bound, Bound, Nodes_, SUPPORTS, __FORCES, N_path, V_S_III, P_S_I,
+                Holes, Leng_max, tolerance, Opt1, __CORNERS):
 
         """
 
         """
         if Opt1 == 1:
-            GS_nodes = unique_local(np.round(np.concatenate((N_path, P_S_I, V_S_III, Nodes_[__CORNERS, 1:3]), axis = 0), 3))
+            GS_nodes = unique_local(np.round(np.concatenate((N_path, P_S_I, V_S_III, Nodes_[__CORNERS, 1:3],
+                                                             Nodes_[__FORCES[:, 0]-1, 1:3]), axis = 0), 3))
 
         elif Opt1 == 0:
-            GS_nodes = unique_local(np.round(np.concatenate((N_path, P_S_I, Nodes_[__CORNERS, 1:3]), axis = 0), 3))
+            GS_nodes = unique_local(np.round(np.concatenate((N_path, P_S_I, Nodes_[__CORNERS, 1:3],
+                                                             Nodes_[__FORCES[:, 0]-1, 1:3]), axis = 0), 3))
 
-        GS_nodes
 
         W_ = weight_(GS_nodes, Nodes_, SUPPORTS+1)
 
@@ -3091,7 +3092,6 @@ def calc_bt_ops(self,
     # Base model definition
     #=========================================================================
 
-    start = time.time()
 
     mm = partition.MAIL_PY()
     mm.FromAster(__MAIL)
@@ -3145,7 +3145,6 @@ def calc_bt_ops(self,
     __steel = ACIER
     __concre = BETON
 
-    end = time.time()
 
     #=========================================================================
     # Errors in the inputs
@@ -3171,14 +3170,14 @@ def calc_bt_ops(self,
     #=========================================================================
     # Ground structure
     #=========================================================================
-    start = time.time()
 
     # Local peaks and valleys
 
     Lines_x = complex(0, 1 + __max_dimx/__PAS_ITERPOL_X)
     Lines_y = complex(0, 1 + __max_dimy/__PAS_ITERPOL_Y)
 
-    __L_M, __P_S_I, __V_S_III = local_pnv(__Nodes, p_n_stress, Lines_x, Lines_y)
+    __L_M, __P_S_I, __V_S_III = local_pnv(__Nodes, p_n_stress, Lines_x, __PAS_ITERPOL_X, Lines_y, __PAS_ITERPOL_Y,
+                              __Holes)
 
 
     # Voronoi division
@@ -3212,11 +3211,6 @@ def calc_bt_ops(self,
     # Initial strut path
     __N_path = ini_s_path(__Nodes, __U, __V, __SUPPORTS, __FORCES, vertices, regions, __V_S_III[A_ == False], 1, __N_Bound[:, 1:3], __Bound)
 
-    end = time.time()
-
-
-    start = time.time()
-
 
     __CORNERS = np.ones((n), dtype=int) * -1
     if len(__Holes) > 0:
@@ -3240,7 +3234,6 @@ def calc_bt_ops(self,
     else:
         A = np.zeros((len(__P_S_I[:, 0])), dtype=bool)
 
-
     __int_nodes = np.zeros((len(__SUPPORTS[:, 0])+len(__FORCES[:, 0]) + n, 4))
     __int_nodes[0:len(__SUPPORTS[:, 0]),:] = __Nodes[__SUPPORTS[:, 0] - 1,:]
     __int_nodes[len(__SUPPORTS[:, 0]):(len(__SUPPORTS[:, 0]) + len(__FORCES[:, 0])),:] = __Nodes[__FORCES[:, 0] - 1,:]
@@ -3248,28 +3241,16 @@ def calc_bt_ops(self,
 
 
     __W_ = weight_(__P_S_I[A == False], __Nodes, __int_nodes)
-    end = time.time()
-
-
-
-
-    start = time.time()
 
     __P_S_I_1 = merge_nodes(__P_S_I[A == False], TOLERANCE2, __W_)
-    end = time.time()
-
-
-
-
-    start = time.time()
 
     __W_ = weight_(__N_path, __Nodes, __int_nodes)
     __N_path_1 = merge_nodes(__N_path, TOLERANCE2/2, __W_)
-    end = time.time()
 
 
 
-    __GS_nodes, __N_o_S, __Con_Mat = second_(__N_Bound, __Bound, __Nodes, __int_nodes,
+
+    __GS_nodes, __N_o_S, __Con_Mat = second_(__N_Bound, __Bound, __Nodes, __int_nodes, __FORCES,
                                              __N_path_1, __P_S_I_1, __V_S_III[A_ == False],
                                              __Holes, __MAXLON, TOLERANCE2/2, 0, __CORNERS) #1
 
