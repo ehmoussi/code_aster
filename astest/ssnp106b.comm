@@ -17,9 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# Macro-command: CALC_BT 
-# Test 1.1: Trimmed wall plane stresses 
-    
+# Macro-command: CALC_BT
+# Test 1.1: Trimmed wall plane stresses
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
 # ----------------------------------------------------------------#
@@ -40,10 +40,10 @@ MODEL = AFFE_MODELE(AFFE = _F(GROUP_MA = 'tutte',
                               MODELISATION = ('D_PLAN', ),
                               PHENOMENE = 'MECANIQUE'),
                       MAILLAGE = MESH)
-                      
+
 BETON = DEFI_MATERIAU(ELAS = _F(E = 2100000000.0,
                                  NU = 0.2))
-                                 
+
 ACIER = DEFI_MATERIAU(ELAS = _F(E = 21000000000.0,
                                  NU = 0.3))
 
@@ -71,56 +71,22 @@ FMULT = DEFI_FONCTION(NOM_PARA = 'INST',
                     VALE = (0., 0.,
                           1., 1.,),
                     PROL_DROITE = 'LINEAIRE',);
-                    
+
 # ----------------------------------------------------------------#
 # Static solution
 # ----------------------------------------------------------------#
 
 RESU = MECA_STATIQUE(CHAM_MATER = MATERI,
-                     EXCIT = _F(CHARGE = BC, 
+                     EXCIT = _F(CHARGE = BC,
                                 FONC_MULT = FMULT),
                      MODELE = MODEL,
                      LIST_INST = LINST
                        )
-                     
+
 
 # --------------------------------------------------------------------------#
 # Strut and tie model with the "section" method or the topological method
 # --------------------------------------------------------------------------#
-STM_TOPO = CALC_BT(RESULTAT = RESU,
-              RESU_BT = CO('RES_TOPO'),
-              INST = 1.,
-              DDL_IMPO=(_F(GROUP_NO = 'SUP_1',
-                           DX = 0,
-                           DY = 0),
-                    _F(GROUP_NO= 'SUP_2',
-                           DY = 0)
-                  ),
-              FORCE_NODALE=_F(
-                        GROUP_NO = 'LOAD_1',
-                        FY=-3000000.0
-                         ),
-              BETON = BETON,
-              ACIER = ACIER,
-              GROUP_MA_EXT = 'SKIN1',
-              GROUP_MA_INT = 'SKIN2',
-              SCHEMA = 'TOPO',
-              SIGMA_C = 35000000,
-              SIGMA_Y = 500000000,                        
-              PAS_X = 0.05 ,
-              PAS_Y = 0.05,
-              TOLE_BASE = 0.26,
-              NMAX_ITER = 200,
-              RESI_RELA_TOPO = 0.00001,
-              RESI_RELA_SECTION = 0.000001,
-              CRIT_SECTION = 0.5,
-              CRIT_ELIM = 0.8,
-              SECTION_MINI = 1e-6,
-              LONGUEUR_MAX = 7,
-              INIT_ALEA = 2,
-              );                   
-
-        
 STM_SEC = CALC_BT(RESULTAT = RESU,
               RESU_BT = CO('RES_SEC'),
               INST = 1.,
@@ -140,8 +106,8 @@ STM_SEC = CALC_BT(RESULTAT = RESU,
               GROUP_MA_INT = 'SKIN2',
               SCHEMA = 'SECTION',
               SIGMA_C = 35000000,
-              SIGMA_Y = 500000000,                        
-              PAS_X = 0.05 ,
+              SIGMA_Y = 500000000,
+              PAS_X = 0.05,
               PAS_Y = 0.05,
               TOLE_BASE = 0.26,
               NMAX_ITER = 200,
@@ -149,76 +115,108 @@ STM_SEC = CALC_BT(RESULTAT = RESU,
               CRIT_SECTION = 0.5,
               SECTION_MINI = 1e-6,
               LONGUEUR_MAX = 7,
-              );  
-              
+              )
+
+STM_TOPO = CALC_BT(RESULTAT = RESU,
+              RESU_BT = CO('RES_TOPO'),
+              INST = 1.,
+              DDL_IMPO=(_F(GROUP_NO = 'SUP_1',
+                           DX = 0,
+                           DY = 0),
+                    _F(GROUP_NO= 'SUP_2',
+                           DY = 0)
+                  ),
+              FORCE_NODALE=_F(
+                        GROUP_NO = 'LOAD_1',
+                        FY=-3000000.0
+                         ),
+              BETON = BETON,
+              ACIER = ACIER,
+              GROUP_MA_EXT = 'SKIN1',
+              GROUP_MA_INT = 'SKIN2',
+              SCHEMA = 'TOPO',
+              SIGMA_C = 35000000,
+              SIGMA_Y = 500000000,
+              PAS_X = 0.05,
+              PAS_Y = 0.05,
+              TOLE_BASE = 0.26,
+              NMAX_ITER = 200,
+              RESI_RELA_TOPO = 0.00001,
+              RESI_RELA_SECTION = 0.000001,
+              CRIT_SECTION = 0.2,
+              CRIT_ELIM = 0.5,
+              SECTION_MINI = 1e-6,
+              LONGUEUR_MAX = 7,
+              INIT_ALEA = 2,
+              )
 
 # ----------------------------------------------------------------#
 # Print results
 # ----------------------------------------------------------------#
 
 #IMPR_TABLE(
-          #TABLE = STM_TOPO, 
+          #TABLE = STM_TOPO,
           #UNITE = 36
-        #) 
+        #)
 
 #IMPR_TABLE(
-          #TABLE = STM_SEC, 
+          #TABLE = STM_SEC,
           #UNITE = 35
-        #) 
+        #)
 
 #IMPR_RESU(
-           #FORMAT = 'MED', 
+           #FORMAT = 'MED',
            #RESU   = (_F(RESULTAT = RESU ),
-                    #_F(RESULTAT = RES_TOPO ), 
-                    #_F(RESULTAT = RES_SEC )),                     
+                    #_F(RESULTAT = RES_TOPO ),
+                    #_F(RESULTAT = RES_SEC )),
            #UNITE  = 80
-           #) 
-          
+           #)
+
 # ----------------------------------------------------------------#
 # Non-regression test
 # ----------------------------------------------------------------#
 
-TEST_TABLE(VALE_CALC   =  -0.0012119973452198308,
+TEST_TABLE(VALE_CALC   =  3194656.438357948,
            NOM_PARA = 'N',
            TABLE = STM_SEC,
-           FILTRE = _F(NOM_PARA = 'L', 
-                       VALE = 4.29564E+00,),
-           );
-
-TEST_TABLE(VALE_CALC   = 1.00000E-06,
-           NOM_PARA = 'A',
-           TABLE = STM_SEC,
-           FILTRE = _F(NOM_PARA = 'L', 
-                       VALE = 6.92026E+00,),
-           );
-
-TEST_TABLE(VALE_CALC   = 4.75,
-           NOM_PARA = 'COORD_X NOEUD_I',
-           TABLE = STM_SEC,
-           FILTRE = _F(NOM_PARA = 'L', 
-                       VALE = 5.10000E+00,),
-           );   
-
-
-TEST_TABLE(VALE_CALC   = -1921302.8129295707,
-           NOM_PARA = 'N',
-           TABLE = STM_TOPO,
-           FILTRE = _F(NOM_PARA = 'L', 
-                       VALE = 5.21081E+00,),
-           );
-
-TEST_TABLE(VALE_CALC   =  1E-06,
-           NOM_PARA = 'A',
-           TABLE = STM_TOPO,
-           FILTRE = _F(NOM_PARA = 'L', 
-                       VALE = 2.15000E+00,),
-           );
-
-TEST_TABLE(VALE_CALC   = 7.00000E+00,
-           NOM_PARA = 'COORD_X NOEUD_I',
-           TABLE = STM_TOPO,
-           FILTRE = _F(NOM_PARA = 'L', 
+           FILTRE = _F(NOM_PARA = 'L',
                        VALE = 6.55000E+00,),
-           );  
-         
+           );
+
+TEST_TABLE(VALE_CALC   = 6.38931E-03,
+           NOM_PARA = 'A',
+           TABLE = STM_SEC,
+           FILTRE = _F(NOM_PARA = 'L',
+                       VALE = 6.55000E+00,),
+           );
+
+TEST_TABLE(VALE_CALC   = 4.50000E-01,
+           NOM_PARA = 'COORD_X NOEUD_I',
+           TABLE = STM_SEC,
+           FILTRE = _F(NOM_PARA = 'L',
+                       VALE = 6.55000E+00,),
+           );
+
+
+TEST_TABLE(VALE_CALC   = -2.29562E+06,
+           NOM_PARA = 'N',
+           TABLE = STM_TOPO,
+           FILTRE = _F(NOM_PARA = 'L',
+                       VALE = 5.19277E+00,),
+           );
+
+TEST_TABLE(VALE_CALC   =  6.55892E-02,
+           NOM_PARA = 'A',
+           TABLE = STM_TOPO,
+           FILTRE = _F(NOM_PARA = 'L',
+                       VALE = 5.19277E+00,),
+           );
+
+TEST_TABLE(VALE_CALC   = 4.75000E+00,
+           NOM_PARA = 'COORD_X NOEUD_I',
+           TABLE = STM_TOPO,
+           FILTRE = _F(NOM_PARA = 'L',
+                       VALE = 5.19277E+00,),
+           );
+
 FIN()

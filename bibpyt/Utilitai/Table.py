@@ -162,6 +162,7 @@ class TableBase(object):
             f = sys.stdout
         # ecriture
         f.write(self.ReprTable(**kargs) + '\n')
+        f.flush()
         # fermeture
         if kargs.get('FICHIER') is not None:
             f.close()

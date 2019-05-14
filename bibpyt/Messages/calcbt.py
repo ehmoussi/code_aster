@@ -50,7 +50,7 @@ CALC_BT : Seules les modélisations D_PLAN et C_PLAN sont acceptées.
 """),
     
    10: _(u"""
-CALC_BT : La structure treillis n'as pas pu être générée. Une augmentation dans la valeur LONGUEUR_MAX est conseillée. 
+CALC_BT : La structure treillis n'a pas pu être générée. Une augmentation dans la valeur LONGUEUR_MAX est conseillée. 
 """),
 
   
