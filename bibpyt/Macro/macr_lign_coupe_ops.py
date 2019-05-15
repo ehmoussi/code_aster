@@ -1014,6 +1014,9 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
                 motscles['INVARIANT'] = m['INVARIANT']
             elif m['RESULTANTE'] is not None:
                 motscles['RESULTANTE'] = m['RESULTANTE']
+                if m['MOMENT'] is not None:
+                    motscles['MOMENT'] = m['MOMENT']
+                    motscles['POINT'] = m['POINT']
             elif m['ELEM_PRINCIPAUX'] is not None:
                 motscles['ELEM_PRINCIPAUX'] = m['ELEM_PRINCIPAUX']
             else:
