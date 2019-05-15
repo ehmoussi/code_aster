@@ -31,6 +31,7 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
 
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
+#include "asterfort/ap_on_off.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/asmpi_info.h"
@@ -63,6 +64,7 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
     real(kind=8), dimension(:), pointer :: val => null()
     character(len=16) :: typsd='****'
     character(len=19) :: cn19, pfchno, nommai
+    aster_logical :: petscInit
 !
 !----------------------------------------------------------------
 !     Variables PETSc
@@ -72,6 +74,7 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
     PetscInt :: low, high
     PetscScalar :: xx(1)
     PetscOffset :: xidx
+    PetscBool :: done
 !----------------------------------------------------------------
     call jemarq()
 !
@@ -101,6 +104,11 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
 !   Nombre de ddls m'appartenant (pour PETSc)
     ndprop = count( pddl(1:nloc) == rang )
 !
+    call PetscInitialized(done, ierr)
+    ASSERT(ierr.eq.0)
+    if( .not.done ) then
+        call ap_on_off('ON')
+    endif
     call VecCreate(mpicomm, assembly, ierr)
     ASSERT(ierr.eq.0)
     call VecSetSizes(assembly, to_petsc_int(ndprop), to_petsc_int(nglo), ierr)
