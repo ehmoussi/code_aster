@@ -64,7 +64,8 @@ class MechanicalLoadDefinition(ExecuteCommand):
             elif key in load_types:
                 raise NotImplementedError("Type of load {0!r} not yet "
                                       "implemented in parallel".format(key))
-        return list(nodeGroups)
+        # must be sorted to be identical on all procs
+        return sorted(list(nodeGroups))
 
     def _hasDirichletLoadings(self, keywords):
         """return True if instance has Dirichlet loadings"""

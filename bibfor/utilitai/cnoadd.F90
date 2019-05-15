@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 subroutine cnoadd(chno, chnop)
-      implicit none
-      character(len=*), intent(in) :: chno, chnop
+    implicit none
+    character(len=*), intent(in) :: chno, chnop
 !----------------------------------------------------------------
 ! BUT :
 ! pour un cham_no (chno) provenant d'un assemblage,
@@ -38,16 +38,15 @@ subroutine cnoadd(chno, chnop)
 #include "asterfort/gettco.h"
 #include "asterfort/assert.h"
 #include "asterfort/asmpi_comm_vect.h"
+#include "asterfort/asmpi_info.h"
 #ifdef _USE_MPI
-      integer :: jnbjoi,nbjoin,numpro,jjointe,jjointr
-      integer :: lgenvo,jtmpe,jtmpr,iaux,jaux,neq,lgrecep
-      integer :: ibid,jvale,k
-      character(len=4)  :: chnbjo,kbid,ktyp
-      character(len=8)  :: k8bid
-      character(len=24) :: nonbjo,nojoinr
-      character(len=14) :: numddl
-      character(len=16) :: typsd='****'
-      character(len=19) :: cn19,pfchno,cn19p,nommai
+    integer :: rang, nbproc
+    integer :: iaux, jvale, jprddl, nbeq
+    mpi_int :: mrank, msize
+    character(len=8)  :: k8bid
+    character(len=14) :: numddl
+    character(len=16) :: typsd='****'
+    character(len=19) :: cn19, pfchno, nommai, cn19p
 !----------------------------------------------------------------
     call jemarq()
 
@@ -56,7 +55,6 @@ subroutine cnoadd(chno, chnop)
     cn19=chno
     cn19p=chnop
     call copisd('CHAMP','V',cn19,cn19p)
-
 
 !   si le maillage support n'est pas distribué, on sort
 !   ---------------------------------------------------
@@ -69,38 +67,23 @@ subroutine cnoadd(chno, chnop)
         goto 9999
     endif
 
-
-    nonbjo = numddl//'.NUME.NBJO'
-    call jeveuo(nonbjo, 'L', jnbjoi)
-    nbjoin = zi(jnbjoi)
-
+    call jeveuo(numddl//'.NUME.PDDL', 'L', jprddl)
+    call jelira(numddl//'.NUME.PDDL', 'LONMAX', nbeq, k8bid)
+!
+    call asmpi_info(rank = mrank, size = msize)
+    rang = to_aster_int(mrank)
+    nbproc = to_aster_int(msize)
     call jeveuo(cn19p//'.VALE','E',jvale)
-    call jelira(cn19p//'.VALE','TYPE',cval=ktyp)
-    ASSERT(ktyp.eq.'R')
-    call jelira(cn19p//'.VALE','LONMAX',neq)
 
-
-!     on annule les ddl que l'on ne possède pas (les valeurs sont fausses)
-!     --------------------------------------------------------------------
-    do iaux=1,nbjoin
-        numpro=zi(jnbjoi+iaux)
-        if ( numpro.ne.-1 ) then
-            call codent(iaux-1,'G',chnbjo)
-            nojoinr = numddl//'.NUMER'//chnbjo(1:3)
-            call jeveuo(nojoinr, 'L', jjointr)
-            call jelira(nojoinr, 'LONMAX', lgrecep, k8bid)
-            ASSERT(lgrecep .gt. 0)
-
-            do k=1,lgrecep
-                zr(jvale-1+zi(jjointr-1+k))=0.d0
-            enddo
+    do iaux=1, nbeq
+        if( zi(jprddl+iaux-1).ne.rang ) then
+            zr(jvale-1+iaux) = 0.d0
         endif
     enddo
 
-
 9999 continue
 
-      call jedema()
+    call jedema()
 #endif
 
-      end
+    end

@@ -62,7 +62,7 @@ use petsc_data_module
 !     VARIABLES LOCALES
     integer :: nsmdi, nsmhc, nz, nvalm, nlong
     integer :: jdxi1, jdxi2, jdval1, jdval2, jvalm, jvalm2
-    integer :: k, ilig, nzdeb, nzfin,bs
+    integer :: k, ilig, nzdeb, nzfin,bs, ieq1, ieq2
     integer :: iterm, jterm, nbterm, neq2
     integer :: nbloc, kbloc, k1, k2, k3
     integer :: jrefn,jdeeq,numno1,numno2,nucmp1,nucmp2,rang
@@ -226,7 +226,11 @@ use petsc_data_module
                 numno2 = zi(jdeeq+2*(jcol1-1))
                 nucmp1 = zi(jdeeq +2*(ilig-1) + 1)
                 nucmp2 = zi(jdeeq +2*(jcol1-1)+1)
-                write(11+rang,*) numno2, nucmp2, numno1, nucmp1, valm, to_aster_int(jcol1), ilig
+                ieq1 = 0
+                ieq2 = 0
+                if(numno1.eq.0) ieq1 = ilig
+                if(numno2.eq.0) ieq2 = jcol1
+                write(11+rang,*) numno2, nucmp2, numno1, nucmp1, valm, ieq2, ieq1
             endif
 ! ======
 ! bloc D
@@ -245,7 +249,11 @@ use petsc_data_module
                     numno2 = zi(jdeeq+2*(jcol1-1))
                     nucmp1 = zi(jdeeq +2*(ilig-1) + 1)
                     nucmp2 = zi(jdeeq +2*(jcol1-1)+1)
-                    write(11+rang,*) numno1, nucmp1, numno2, nucmp2, valm, ilig, to_aster_int(jcol1)
+                    ieq1 = 0
+                    ieq2 = 0
+                    if(numno1.eq.0) ieq1 = ilig
+                    if(numno2.eq.0) ieq2 = jcol1
+                    write(11+rang,*) numno1, nucmp1, numno2, nucmp2, valm, ieq1, ieq2
                 endif
             endif
         end do
@@ -299,7 +307,11 @@ use petsc_data_module
                     numno2 = zi(jdeeq+2*(jcol1-1))
                     nucmp1 = zi(jdeeq +2*(ilig-1) + 1)
                     nucmp2 = zi(jdeeq +2*(jcol1-1)+1)
-                    write(11+rang,*) numno1, nucmp1, numno2, nucmp2, valm, ilig, to_aster_int(jcol1)
+                    ieq1 = 0
+                    ieq2 = 0
+                    if(numno1.eq.0) ieq1 = ilig
+                    if(numno2.eq.0) ieq2 = jcol1
+                    write(11+rang,*) numno1, nucmp1, numno2, nucmp2, valm, ieq1, ieq2
                 endif
             else
 !               -- On ignore les lignes après high2
