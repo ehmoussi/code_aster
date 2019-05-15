@@ -37,7 +37,7 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20180830')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190507')
 
 #   for using metis with standard integer (since Metis_aster-510_aster4)
     self.env.append_value('CFLAGS', ['-DINTSIZE32'])
@@ -45,8 +45,8 @@ def configure(self):
         'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-400/bin:$PATH'])
     self.env['ADDMEM'] = 300
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
-    TFELVERS = '3.1.1'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
+    TFELVERS = '3.2.1'
     self.env.TFELHOME = TFELHOME
     self.env.TFELVERS = TFELVERS
 

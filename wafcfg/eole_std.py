@@ -39,7 +39,7 @@ def configure(self):
 
     intel.configure(self)
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20181015')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190507')
     opts.with_prog_salome = True
     opts.with_prog_europlexus = True
 
@@ -49,8 +49,8 @@ def configure(self):
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
         'export OPENBLAS_CORETYPE=SANDYBRIDGE'])
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
-    TFELVERS = '3.1.1'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
+    TFELVERS = '3.2.1'
     self.env.TFELHOME = TFELHOME
     self.env.TFELVERS = TFELVERS
 
