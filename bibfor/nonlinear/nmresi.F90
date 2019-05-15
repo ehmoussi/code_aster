@@ -58,6 +58,7 @@ implicit none
 #include "asterfort/romAlgoNLCorrEFMecaResidual.h"
 #include "asterfort/nmequi.h"
 #include "asterfort/utmess.h"
+#include "asterfort/ap_assembly_vector.h"
 !
 character(len=8), intent(in) :: mesh
 integer, intent(in) :: list_func_acti(*)
@@ -119,7 +120,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     character(len=19) :: profch=' '
     character(len=19) :: varc_prev=' ', disp_prev=' '
     character(len=19) :: cndiri=' ', cnbudi=' ', cnfext=' ', cnfexp=' '
-    character(len=19) :: cnrefe=' ', cnfinp=' '
+    character(len=19) :: cnrefe=' ', cnfinp=' ', cndirp=' ', cnbudp=' '
     character(len=19) :: cndfdo=' ', cnequi = ' ', cndipi = ' ', cnsstr = ' '
     real(kind=8) :: vale_equi=0.d0, vale_refe=0.d0, vale_varc=0.d0
     integer :: r_rela_indx=0, r_resi_indx=0, r_equi_indx=0
@@ -193,6 +194,8 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     cndfdo = '&&CNCHAR.DFDO'
     cnfexp = '&&NMRESI.CNFEXP'
     cnfinp = '&&NMRESI.CNFINP'
+    cndirp = '&&NMRESI.CNDIRP'
+    cnbudp = '&&NMRESI.CNBUDP'
 !
 ! - Compute external forces
 !
@@ -225,20 +228,25 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 !
 ! --- COMPLETION DES CHAMPS PRODUITS PAR ASSEMBLAGE :
 #ifdef _USE_MPI
+    call ap_assembly_vector(cnbudi)
     call cnoadd(cnfext, cnfexp)
     call cnoadd(ds_system%cnfint, cnfinp)
+    call cnoadd(cndiri, cndirp)
+    call cnoadd(cnbudi, cnbudp)
 #else
     cnfexp = cnfext
     cnfinp = ds_system%cnfint
+    cndirp = cndiri
+    cnbudp = cnbudi
 #endif
 !
 ! - Compute lack of balance forces
 !
     cnequi = '&&CNCHAR.DONN'
     call nmequi(l_disp     , l_pilo, l_macr, cnequi,&
-                cnfinp     , cnfexp, cndiri, cnsstr,&
+                cnfinp     , cnfexp, cndirp, cnsstr,&
                 ds_contact,&
-                cnbudi     , cndfdo,&
+                cnbudp     , cndfdo,&
                 cndipi     , eta)
 !
 ! - Compute RESI_COMP_RELA
@@ -251,7 +259,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 ! - Access to fields
 !
     call jeveuo(cnfinp(1:19)//'.VALE', 'L', vr=v_cnfint)
-    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=v_cndiri)
+    call jeveuo(cndirp(1:19)//'.VALE', 'L', vr=v_cndiri)
     call jeveuo(cnfexp(1:19)//'.VALE', 'L', vr=v_cnfext)
     if (l_varc_init) then
         call jeveuo(ds_material%fvarc_init(1:19)//'.VALE', 'L', vr=v_fvarc_init)
