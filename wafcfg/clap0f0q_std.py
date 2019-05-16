@@ -63,7 +63,7 @@ def configure(self):
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Python-365/include/python2.7',
+        YAMMROOT + '/prerequisites/Python-365/include/python3.6',
         YAMMROOT + '/prerequisites/Hdf5-1103/include',
         YAMMROOT + '/prerequisites/Medfichier-400/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
