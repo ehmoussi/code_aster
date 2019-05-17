@@ -41,8 +41,11 @@ def configure(self):
 
 #   for using metis with standard integer (since Metis_aster-510_aster4)
     self.env.append_value('CFLAGS', ['-DINTSIZE32'])
+ 
+#   adjust PATH to find gcc 4.9.2 in Mfront build
     self.env.append_value('OPT_ENV', [
-        'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-400/bin:$PATH'])
+        'export PATH=/home/aster/public/gcc_4_9_2/bin:' + YAMMROOT + '/prerequisites/Medfichier-400/bin:$PATH'])
+
     self.env['ADDMEM'] = 300
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
