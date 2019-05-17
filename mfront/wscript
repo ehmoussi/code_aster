@@ -161,7 +161,7 @@ def check_mfront(self):
         self.safe_remove('CXXFLAGS_MFRONT', flag)
         # these options are not relevant for C
         self.env.append_value('CXXFLAGS_MFRONT_ONLY', flag)
-    self.check_mfront_version( (3, 1, 1) )
+    self.check_mfront_version( (3, 2, 1) )
     self.check_mfront_libs()
     self.check_mfront_py()
     self.check_cxx11_abi()

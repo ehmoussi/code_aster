@@ -37,18 +37,21 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20180830')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190507')
 
 #   for using metis with standard integer (since Metis_aster-510_aster4)
     self.env.append_value('CFLAGS', ['-DINTSIZE32'])
+ 
+#   adjust PATH to find gcc 4.9.2 in Mfront build
     self.env.append_value('OPT_ENV', [
-        'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-400/bin:$PATH'])
+        'export PATH=/home/aster/public/gcc_4_9_2/bin:' + YAMMROOT + '/prerequisites/Medfichier-400/bin:$PATH'])
+
     # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
     # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
     self.env['ADDMEM'] = 500
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
-    TFELVERS = '3.1.1'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
+    TFELVERS = '3.2.1'
     self.env.TFELHOME = TFELHOME
     self.env.TFELVERS = TFELVERS
 
@@ -65,7 +68,7 @@ def configure(self):
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Python-365/include/python2.7',
+        YAMMROOT + '/prerequisites/Python-365/include/python3.6',
         YAMMROOT + '/prerequisites/Hdf5-1103/include',
         YAMMROOT + '/prerequisites/Medfichier-400/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',

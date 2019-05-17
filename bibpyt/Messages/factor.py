@@ -31,6 +31,28 @@ cata_msg = {
   Elle contient %(i2)d termes non nuls si elle est symétrique et %(i3)d termes non nuls si elle n'est pas symétrique.
   Soit un taux de remplissage de  %(r1)6.3f %%."""),
 
+   9: _("""
+Attention, le critère de détection de singularité (paramètre SOLVEUR/NPREC) est trop relâché: %(i1)d.
+La valeur par défaut est 8. Au pire il peut monter jusqu'à 11. Avec une valeur négative, il débranche même complètement
+l'algorithme de détection de singularité.
+
+Avec cette valeur particulière, certains problèmes de mise en données (degré de liberté mal bloqué, condition limite redondante...)
+ne seront alors pas détectés. Vous risquer donc de résoudre un problème différent de celui escompté.
+
+D'autre part, certains algorithmes peuvent alors produire des résultats incorrects si il n'existe pas d'autres garde-fous
+algorithmiques ou si ceux-ci sont débranchés. Parmi ces garde-fous il y'a, par exemple, les paramètres:
+    * RESI_RELA du bloc SOLVEUR si METHODE='MUMPS'(pour tous les opérateurs), 
+    * RESI_GLOB_RELA du bloc CONVERGENCE (pour les opérateurs STAT/DYNA_NON_LINE)...
+Conseils:
+   * Vérifiez votre mise en données (conditions limites, coefficients matériaux...) ou votre maillage (mailles étirées)
+     afin de bien vérifier qu'elle est licite et qu'elle correspond à ce que vous souhaitez. 
+   * Assurez-vous qu'au moins un autre critère d'arrêt reste fonctionnel (avec une valeur raisonnable !) afin d'assurer une
+     qualité minimale à la solution.
+
+Remarque:
+   * Pour plus d'informations sur ce sujet on pourra lire la notice U2.08.03 dédiée aux solveurs linéaires.
+ 
+"""),
 
     10: _("""
 Problème : la matrice est singulière ou presque singulière :
@@ -70,7 +92,6 @@ Risques et conseils :
      Sinon, contactez l'équipe de développement.
 
 """),
-
     11: _("""
 Problème : la matrice est singulière ou presque singulière :
   Lors de la factorisation de la matrice, on a rencontré un problème

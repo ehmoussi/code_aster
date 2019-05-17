@@ -147,7 +147,7 @@ RMS1=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT1))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-3,
-           VALE_CALC=24.53402099869,
+           VALE_CALC=24.54077404114525,
            VALE_REFE=ecart1,
            NOM_PARA='ECART_TYPE',
            TABLE=RMS1,)
@@ -156,7 +156,7 @@ RMS2=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT2))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-3,
-           VALE_CALC=24.511101667386,
+           VALE_CALC=24.50423290442604,
            VALE_REFE=ecart2,
            NOM_PARA='ECART_TYPE',
            TABLE=RMS2,)
@@ -188,7 +188,7 @@ POST=POST_DYNA_ALEA(INTERSPECTRE=_F(
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-3,
-           VALE_CALC=24.533990160634,
+           VALE_CALC=24.54075596244365,
            VALE_REFE=ecart1,
            NOM_PARA='ECART',
            TABLE=POST,
@@ -201,7 +201,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-3,
-           VALE_CALC=24.511061958607,
+           VALE_CALC=24.50407267865486,
            VALE_REFE=ecart2,
            NOM_PARA='ECART',
            TABLE=POST,
@@ -214,7 +214,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC=601.91667320208,
+           VALE_CALC=602.2487032082136,
            VALE_REFE=ecart1**2,
            NOM_PARA='LAMBDA_00',
            TABLE=POST,
@@ -227,7 +227,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=2.E-3,
-           VALE_CALC=600.79215833867,
+           VALE_CALC=600.4495778407996,
            VALE_REFE=ecart2**2,
            NOM_PARA='LAMBDA_00',
            TABLE=POST,
@@ -239,7 +239,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 TEST_TABLE(
-           VALE_CALC=2.9715340902364E+05,
+           VALE_CALC=296787.1803588476,
            NOM_PARA='LAMBDA_01',
            TABLE=POST,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE_I',
@@ -251,7 +251,7 @@ TEST_TABLE(
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC= 5.6615782323665E+05,
+           VALE_CALC= 566603.0787818199,
            VALE_REFE=300.*300.*2.*pi,
            NOM_PARA='LAMBDA_01',
            TABLE=POST,
@@ -279,7 +279,7 @@ RMS11=INFO_FONCTION( RMS=_F(  FONCTION = MF11))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC=0.95620272988400,
+           VALE_CALC=0.9579852776224238,
            VALE_REFE=1.334183*sqrt(300./(fmax-fmin)),
            NOM_PARA='RMS',
            TABLE=RMS11,)
@@ -297,7 +297,7 @@ RMS12=INFO_FONCTION( RMS=_F(  FONCTION = MF12))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC=0.64657565186914,
+           VALE_CALC=0.6456895024079085,
            VALE_REFE=8.966604E-1*sqrt(300./(fmax-fmin)),
            NOM_PARA='RMS',
            TABLE=RMS12,)
@@ -313,7 +313,7 @@ RMS22=INFO_FONCTION( RMS=_F(  FONCTION = MF22))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC=0.72006902056685,
+           VALE_CALC=0.7199761839806726,
            VALE_REFE=1.E+00*sqrt(300./(fmax-fmin)),
            NOM_PARA='RMS',
            TABLE=RMS22,)
@@ -354,56 +354,56 @@ v2=NP.sqrt(RHO*1.005)*NP.exp(1j*2*pi*150.*T)
 # CES TESTS NE SONT PAS EFFECTUES SUR DES QUANTITES QUI ONT CONVERGES
 # STATISTIQUEMENT => GRANDE TOLERANCE
 
-TEST_FONCTION(VALEUR=(_F(VALE_CALC= 0.74375120,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC= 0.74208265240925,
                          VALE_REFE=log(2.),
                          CRITERE='ABSOLU',
                          VALE_PARA=10.0,
                          REFERENCE='ANALYTIQUE',
                          PRECISION=log(1.3),
                          FONCTION=LOGF11,),
-                      _F(VALE_CALC= -2.8438E-03,
+                      _F(VALE_CALC= -0.05826462418058,
                          VALE_REFE=log(1.005),
                          CRITERE='ABSOLU',
                          VALE_PARA=150.0,
                          REFERENCE='ANALYTIQUE',
                          PRECISION=log(1.3),
                          FONCTION=LOGF11,),
-                      _F(VALE_CALC= 0.25106157,
+                      _F(VALE_CALC= 0.22125680220473,
                          VALE_REFE=log(abs(v1)),
                          CRITERE='ABSOLU',
                          VALE_PARA=10.0,
                          REFERENCE='ANALYTIQUE',
                          PRECISION=log(1.3),
                          FONCTION=LOGF12,),
-                      _F(VALE_CALC= 108.240721,
+                      _F(VALE_CALC= 101.7162486460,
                          VALE_REFE=atan(v1.imag/v1.real)/pi*180,
                          CRITERE='ABSOLU',
                          VALE_PARA=10.0,
                          REFERENCE='ANALYTIQUE',
                          PRECISION=20.0,
                          FONCTION=PF12,),
-                      _F(VALE_CALC= -0.0993768,
+                      _F(VALE_CALC= -0.11413044369222,
                          VALE_REFE=log(abs(v2)),
                          CRITERE='ABSOLU',
                          VALE_PARA=150.0,
                          REFERENCE='ANALYTIQUE',
                          PRECISION=log(1.3),
                          FONCTION=LOGF12,),
-                      _F(VALE_CALC= -98.207200,
+                      _F(VALE_CALC= -89.55869822347,
                          VALE_REFE=atan(v2.imag/v2.real)/pi*180,
                          CRITERE='ABSOLU',
                          VALE_PARA=150.0,
                          REFERENCE='ANALYTIQUE',
                          PRECISION=20.0,
                          FONCTION=PF12,),
-                      _F(VALE_CALC= -0.11122027,
+                      _F(VALE_CALC= -0.11168728955547,
                          VALE_REFE=log(1.),
                          CRITERE='ABSOLU',
                          VALE_PARA=10.0,
                          REFERENCE='ANALYTIQUE',
                          PRECISION=log(1.3),
                          FONCTION=LOGF22,),
-                      _F(VALE_CALC= 8.2145E-03,
+                      _F(VALE_CALC= 0.04883525967654,
                          VALE_REFE=log(1.),
                          CRITERE='ABSOLU',
                          VALE_PARA=150.0,
@@ -443,7 +443,7 @@ RMS1=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT1))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC= 24.521304467681,
+           VALE_CALC= 24.57589803975244,
            VALE_REFE=ecart1,
            NOM_PARA='ECART_TYPE',
            TABLE=RMS1,)
@@ -452,7 +452,7 @@ RMS2=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT2))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC= 24.523297188708,
+           VALE_CALC= 24.468165686539027,
            VALE_REFE=ecart2,
            NOM_PARA='ECART_TYPE',
            TABLE=RMS2,)
@@ -488,7 +488,7 @@ RMS1=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT1))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC=18.999607751619,
+           VALE_CALC=18.97522932552841,
            VALE_REFE=sqrt(180.*2.),
            NOM_PARA='ECART_TYPE',
            TABLE=RMS1,)
@@ -497,7 +497,7 @@ RMS2=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT2))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC= 13.378191266421,
+           VALE_CALC= 13.413858243716051,
            VALE_REFE=sqrt(90.*2.),
            NOM_PARA='ECART_TYPE',
            TABLE=RMS2,)
@@ -533,7 +533,7 @@ RMS1=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT1))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-3,
-           VALE_CALC= 24.53402099869,
+           VALE_CALC= 24.54077404114525,
            VALE_REFE=ecart1,
            NOM_PARA='ECART_TYPE',
            TABLE=RMS1,)
@@ -542,7 +542,7 @@ RMS2=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT2))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-3,
-           VALE_CALC= 24.511101667386,
+           VALE_CALC= 24.50423290442604,
            VALE_REFE=ecart2,
            NOM_PARA='ECART_TYPE',
            TABLE=RMS2,)
@@ -573,7 +573,7 @@ RMS1=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT1))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC= 24.484601430223,
+           VALE_CALC= 24.539689403196824,
            VALE_REFE=ecart1,
            NOM_PARA='ECART_TYPE',
            TABLE=RMS1,)
@@ -582,7 +582,7 @@ RMS2=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT2))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC= 24.556762345767,
+           VALE_CALC= 24.500657679732054,
            VALE_REFE=ecart2,
            NOM_PARA='ECART_TYPE',
            TABLE=RMS2,)
@@ -622,7 +622,7 @@ RMS1=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT1))
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            TOLE_MACHINE=1.E-4,
            PRECISION=1.E-2,
-           VALE_CALC= 24.554013398335,
+           VALE_CALC= 24.517049295131528,
            VALE_REFE=ecart1,
            NOM_PARA='ECART_TYPE',
            TABLE=RMS1,)
@@ -632,7 +632,7 @@ RMS2=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT2))
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            TOLE_MACHINE=1.E-3,
            PRECISION=1.E-2,
-           VALE_CALC= 24.488424818679,
+           VALE_CALC= 24.52549387588845,
            VALE_REFE=ecart2,
            NOM_PARA='ECART_TYPE',
            TABLE=RMS2,)
@@ -668,7 +668,7 @@ RMS1=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT1))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=2.E-3,
-           VALE_CALC= 24.525965348383,
+           VALE_CALC= 24.561640523095626,
            VALE_REFE=ecart1,
            TOLE_MACHINE=5.E-6,          # ajustement pour clap0f0q
            NOM_PARA='ECART_TYPE',
@@ -678,7 +678,7 @@ RMS2=INFO_FONCTION( ECART_TYPE=_F(  FONCTION = FONCT2))
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-3,
-           VALE_CALC= 24.516899249614,
+           VALE_CALC= 24.4810126442193,
            VALE_REFE=ecart2,
            TOLE_MACHINE=5.E-4,          # ajustement pour clap0f0q
            NOM_PARA='ECART_TYPE',

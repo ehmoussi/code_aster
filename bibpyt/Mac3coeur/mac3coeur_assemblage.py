@@ -70,7 +70,11 @@ class Assemblage(object):
         # Poussee d Archimede de chaque élément
         'AFEBSU_1', 'AFGRE_1', 'AFGRM_1', 'AFTG_1', 'AFCRA_1', 'AFEBIN_1',
     ]
-    optionnal_parameters = []
+    optionnal_parameters = [
+        # Dilatation des grilles due a burnup thermique + alpha_thermique + fluence
+        'dilatBU','AL_DIL',
+
+      ]
 
     def __init__(self, typ_coeur):
         """Initialisation d'un type d'assemblage."""
