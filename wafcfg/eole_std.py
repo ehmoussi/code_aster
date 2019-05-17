@@ -73,6 +73,7 @@ def configure(self):
         TFELHOME + '/include',
     ])
 
+    self.env.append_value('LINKFLAGS', ('--no-keep-memory'))
     self.env.append_value('LIB', ('pthread', 'util'))
     self.env.append_value('LIB_SCOTCH', ('scotcherrexit'))
     # to fail if not found
