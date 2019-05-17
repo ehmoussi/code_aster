@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,13 @@ PERM_MAC3COEUR = MACRO(nom="PERM_MAC3COEUR",
                        sd_prod=evol_noli,
 
          TYPE_COEUR_N   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4")),
+         b_type_lignen = BLOC( condition = """is_in("TYPE_COEUR_N", ("LIGNE900","LIGNE1300","LIGNEN4"))""",
+                    NB_ASSEMBLAGE_N = SIMP(statut='o',typ='I',max=1 ),
+                    ),
          TYPE_COEUR_NP1 = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4")),
+         b_type_lignep = BLOC(condition = """is_in("TYPE_COEUR_NP1", ("LIGNE900","LIGNE1300","LIGNEN4"))""",
+                    NB_ASSEMBLAGE_NP1 = SIMP(statut='o',typ='I',max=1 ),
+                    ),
          TABLE_N      = SIMP(statut='o',typ=table_sdaster,max='**'),         # TABLE INITIALE DES DAMAC A L INSTANT N
          RESU_N       = SIMP(statut='o',typ=evol_noli,max='**'),             # RESULTAT A L INSTANT N A PERMUTER
          TABLE_NP1    = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N+1

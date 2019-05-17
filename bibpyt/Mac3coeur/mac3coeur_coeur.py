@@ -59,14 +59,14 @@ class Coeur(object):
         # du coefficient de dilatation des internes de cuve
         'ALPH1', 'ALPH2',
         # Post-traitement des lames
-        'nomContactAssLame', 'nomContactCuve',
+        #'nomContactAssLame', 'nomContactCuve',
     ]
     _time = ('T0', 'T0b', 'T1', 'T2', 'T3',
              'T4', 'T5', 'T6', 'T7', 'T8', 'T8b', 'T9',)
     _subtime = ('N0', 'N0b', 'N1', 'N2', 'N3',
                 'N4', 'N5', 'N6', 'N7', 'N8', 'N8b', 'N9')
 
-    def __init__(self, name, typ_coeur, macro, datg):
+    def __init__(self, name, typ_coeur, macro, datg, longueur=None):
         """Initialisation d'un type de coeur."""
         self.name = name
         self.macro = macro
@@ -81,6 +81,7 @@ class Coeur(object):
         self._para = {}
         self._keys = {}.fromkeys(self.required_parameters)
         self._init_from_attrs()
+        self.longueur = longueur
 
     def _init_from_attrs(self):
         """Initialisation à partir des attributs de classe."""
@@ -93,6 +94,12 @@ class Coeur(object):
         if self._para.get(para) is None:
             raise KeyError("parameter not defined : '%s'" % para)
         return self._para.get(para)
+
+    def get_contactAssLame(self) :
+        return self.nomContactAssLame
+
+    def get_contactCuve(self) :
+        return self.nomContactCuve
 
     def get_geom_coeur(self):
         """Retourne la géométrie du coeur."""
@@ -111,7 +118,11 @@ class Coeur(object):
         raise NotImplementedError
 
     def get_length(self) :
-        return len(self.ALPHA_MAC)
+        if self.longueur :
+            l = len(self.ALPHA_MAC[:self.longueur])
+        else :
+            l = len(self.ALPHA_MAC)
+        return l
 
     def get_letter(self,index) :
         return self.ALPHA_MAC[index]
@@ -762,7 +773,7 @@ class Coeur(object):
         self.sub_temps_simu['N8b'] = 2 * subdivis * 2
         self.sub_temps_simu['N9'] = 1
 
-    def definition_fluence(self, fluence, MAILLAGE, fluence_cycle):
+    def definition_fluence(self, fluence, MAILLAGE, fluence_cycle,lame=False):
         """Return the time evolution of the field of fluence"""
         assert self.temps_simu[
             'T0'] is not None, '`definition_time` must be called first!'
@@ -843,9 +854,18 @@ class Coeur(object):
         mcf1=[]
         for ac in list(self.collAC.values()):
             (lgma,cyc) = ac.liste_gma_fluence()
+            # pour calcul lame : on prend le nombre de cycle (e.g. assemblage neuf : 0)
+            # pour calcul deformation : le nombre de cycle est celui donne
+            #                           dans le DAMAC (donc en fin de cycle)
+            #                           (e.g. assemblage neuf : 1)
+            #                           il faut donc retrancher 1 au nombre de cycles
+            if lame :
+                nb_cycle = cyc
+            else :
+                nb_cycle = cyc-1
             mtmpm = _F(GROUP_MA=lgma,NOM_CMP='INST', VALE=0.)
-            mtmp0 = _F(GROUP_MA=lgma,NOM_CMP='INST', VALE=(cyc-1)*fluence_cycle)
-            mtmp1 = _F(GROUP_MA=lgma,NOM_CMP='INST', VALE=(cyc-1)*fluence_cycle+fluence)
+            mtmp0 = _F(GROUP_MA=lgma,NOM_CMP='INST', VALE=nb_cycle*fluence_cycle)
+            mtmp1 = _F(GROUP_MA=lgma,NOM_CMP='INST', VALE=nb_cycle*fluence_cycle+fluence)
             mcfm.append(mtmpm)
             mcf0.append(mtmp0)
             mcf1.append(mtmp1)
@@ -903,6 +923,30 @@ class Coeur(object):
 
         return _FLUENC
 
+    def mcf_crea_champ_dil(self):
+        from code_aster.Cata.Syntax import _F
+        # DEFI_CONSTANT = self.macro.get_cmd('DEFI_CONSTANT')
+        #AAA modifier Tref => -Tref
+        mcf = []
+        
+        for ac in self.collAC.values():
+            # boucle sur les grilles
+            Ttmp_val = self.TP_REF
+            try :
+              _alpha = ac._para['AL_DIL']
+              _dilatbu = ac._para['dilatBU']
+            except KeyError :
+              _alpha = 1.
+              _dilatbu = [0.]*ac._para['NBGR']
+            for igr in range(0, ac._para['NBGR']):
+                Ttmp_val = self.TP_REF - _dilatbu[igr]/_alpha
+                mtmp =  (_F(NOM_CMP='TEMP',
+                            GROUP_MA='DI_' + ac.idAST + str(igr + 1),
+                            VALE = Ttmp_val)),
+                mcf.extend(mtmp)
+
+        return mcf
+
     def definition_champ_temperature(self, MAILLAGE):
         """Return the time evolution of the field of temperature"""
         assert self.temps_simu[
@@ -945,7 +989,32 @@ class Coeur(object):
             TYPE_CHAM='NOEU_TEMP_F', MAILLAGE=MAILLAGE, OPERATION='AFFE',
             AFFE=(_F(GROUP_NO=('T_GUIDE', 'EBOSUP', 'EBOINF', 'CRAYON', 'ELA', 'DIL', 'MAINTIEN',), NOM_CMP='TEMP', VALE_F=_F_TP1_1,),),)
 
-        #
+        _CHTEM1N=CREA_CHAMP( OPERATION='ASSE', TYPE_CHAM='NOEU_NEUT_F', MAILLAGE=MAILLAGE,
+                            ASSE=_F( GROUP_NO=('T_GUIDE', 'EBOSUP', 'EBOINF', 'CRAYON', 'ELA', 'DIL', 'MAINTIEN',), CHAM_GD = _CHTEM11,
+                                                NOM_CMP = ('TEMP',),  NOM_CMP_RESU = ('X1',)),  )
+        
+        _CHXN=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_GEOM_R',
+                NOM_CHAM='GEOMETRIE', MAILLAGE=MAILLAGE )
+        
+        _CHTEM1A = CREA_CHAMP(OPERATION='EVAL', CHAM_F = _CHTEM1N, CHAM_PARA = _CHXN, TYPE_CHAM='NOEU_NEUT_R',)
+        
+        _CHTEM1B = CREA_CHAMP( OPERATION='ASSE', TYPE_CHAM='NOEU_TEMP_R', MAILLAGE=MAILLAGE,
+                            ASSE=_F( GROUP_NO=('T_GUIDE', 'EBOSUP', 'EBOINF', 'CRAYON', 'ELA', 'DIL', 'MAINTIEN',), CHAM_GD = _CHTEM1A,
+                                                NOM_CMP = ('X1',),  NOM_CMP_RESU = ('TEMP',)),  )
+
+        # champ de dilatation du a l'irradiation des grilles
+        mcf_champ_dil = self.mcf_crea_champ_dil()
+    
+        _CHTEM1D = CREA_CHAMP(
+            TYPE_CHAM='NOEU_TEMP_R', MAILLAGE=MAILLAGE, OPERATION='AFFE',
+            AFFE=mcf_champ_dil,)
+
+        _CHTEM10 = CREA_CHAMP(OPERATION = 'ASSE',
+                        MAILLAGE = MAILLAGE,TYPE_CHAM ='NOEU_TEMP_R',
+                        ASSE =
+                        (_F( CHAM_GD = _CHTEM1B, GROUP_NO = ('T_GUIDE', 'EBOSUP', 'EBOINF', 'CRAYON', 'ELA', 'MAINTIEN',),),
+                         _F( CHAM_GD = _CHTEM1D, GROUP_MA = 'DIL' ),),)
+         #
         # TEMPERATURE EN PHASE ARRET A FROID           #
         #
 
@@ -1012,7 +1081,7 @@ class Coeur(object):
         _CHTH_1 = CREA_RESU(
             TYPE_RESU='EVOL_THER', NOM_CHAM='TEMP', OPERATION='AFFE',
             AFFE=(
-                _F(CHAM_GD=_CHTEM11, INST=-1, PRECISION=1.E-6),
+                _F(CHAM_GD=_CHTEM10, INST=-1, PRECISION=1.E-6),
                 _F(CHAM_GD=_CHTEM41, INST=-0.75, PRECISION=1.E-6),
                 _F(CHAM_GD=_CHTEM41, INST=-0.25, PRECISION=1.E-6),
                 _F(CHAM_GD=_CHTEM11, INST=0., PRECISION=1.E-6),
@@ -1053,20 +1122,47 @@ class Coeur(object):
         _M_BCR = DEFI_MATERIAU( DIS_CONTACT = _F( RIGI_NOR = 1.E9, JEU=.0),);
 
         mcf_affe_mater = self.mcf_coeur_mater(_M_RES,_M_BCR)
+        mcf_affe_varc = self.mcf_coeur_varc(FLUENCE,CHTH)
         # Affectation des materiau dans le coeur
         _A_MAT = AFFE_MATERIAU(MAILLAGE=MAILLAGE,
-                               AFFE_VARC=(_F(NOM_VARC='IRRA',
-                                             TOUT='OUI',
-                                             EVOL=FLUENCE,
-                                             PROL_DROITE='CONSTANT'),
-                                          _F(NOM_VARC='TEMP',
-                                             TOUT='OUI',
-                                             EVOL=CHTH,
-                                             PROL_DROITE='CONSTANT',
-                                             VALE_REF=self.TP_REF)),
+                               AFFE_VARC=mcf_affe_varc,
                                AFFE=mcf_affe_mater,
                                AFFE_COMPOR=self.mcf_compor_fibre(GFF))
         return _A_MAT
+
+    def mcf_coeur_varc(self, FLUENCE,CHTH):
+        from code_aster.Cata.Syntax import _F
+        mcf = []
+        #variable de commande d'irradiation
+        _VARCIRR = (_F(NOM_VARC='IRRA',
+                       TOUT='OUI',
+                       EVOL=FLUENCE,
+                       PROL_DROITE='CONSTANT'),
+                    _F(NOM_VARC='TEMP',
+                       TOUT='OUI',
+                       EVOL=CHTH,
+                       PROL_DROITE='CONSTANT',
+                       VALE_REF=self.TP_REF))
+        mcf.extend(_VARCIRR)
+        for ac in self.collAC.values():
+            # boucle sur les grilles
+            Ttmp = self.TP_REF 
+            try :
+              _alpha = ac._para['AL_DIL']
+              _dilatbu = ac._para['dilatBU']
+            except KeyError :
+              _alpha = 1.
+              _dilatbu = [0.]*ac._para['NBGR']
+            for igr in range(0, ac._para['NBGR']):
+                Ttmp = self.TP_REF - _dilatbu[igr]/_alpha
+                mtmp =  (_F(NOM_VARC='TEMP',
+                            GROUP_MA='DI_' + ac.idAST + str(igr + 1),
+                            EVOL=CHTH,
+                            PROL_DROITE='CONSTANT',
+                            VALE_REF=Ttmp)),
+                mcf.extend(mtmp)
+
+        return mcf
 
     def mcf_compor_fibre(self, GFF):
         from code_aster.Cata.Syntax import _F
@@ -1112,21 +1208,15 @@ class Coeur(object):
             mtmp = (
                 _F(GROUP_MA=('GT_' + ac.idAST + '_M',
                    'GT_' + ac.idAST + '_E',), MATER=_MAT_BID,),
-                _F(GROUP_MA='GR_' + ac.idAST,                                  MATER=_MAT_GR,),)
+                _F(GROUP_MA='GR_' + ac.idAST, MATER=_MAT_GR,),
+                _F(GROUP_MA='DI_' + ac.idAST, MATER=ac.mate.mate['DIL'],),
+                )
             mcf.extend(mtmp)
-            # ATTENTION ici on definit pour tout le group_ma 'DIL' le materiau de type ac.collAC.
-            # Cette affectation concerne le calcul avec dilatation thermique des grilles et de la cuve.
-            # C'est donc le dernier qui sera pris en compte car aujourd'hui on considere que l'ensemble
-            # se dilate de la meme facon.
-            # On repete en ecrasant a chaque fois avec la meme valeur pour tout
-            # le groupe DIL
-        mtmp = (_F(GROUP_MA='DIL', MATER=ac.mate.mate['DIL'],),)
-        mcf.extend(mtmp)
         mtmp = (_F(GROUP_MA = 'CREIC', MATER = _M_BCR,),)
         mcf.extend(mtmp)
         return mcf
 
-    def dilatation_cuve(self, MODEL, MAILL,is_char_ini=False):
+    def dilatation_cuve(self, MODEL, MAILL,is_char_ini=False,maintien_grille=False):
         """Retourne les déplacements imposés aux noeuds modélisant les internes de cuves
         (supports inférieur (PIC ou FSC), supérieur (PSC) et cloisons)
         et traduisant les dilatations thermiques des internes et leurs deformations de natures mecaniques"""
@@ -1411,6 +1501,21 @@ class Coeur(object):
                                                        _F(GROUP_NO = 'P_CUV',
                                                           DX=_DthX,   ),),)
         else :
+          if maintien_grille :
+            _dilatation = AFFE_CHAR_MECA_F(MODELE=MODEL,
+                                       DDL_IMPO=(_F(GROUP_NO='FIX',
+                                                    DX=_DthXpic,
+                                                    DY=_DthYpic,
+                                                    DZ=_DthZpic),
+                                                 _F(GROUP_NO='PMNT_S',
+                                                    DY=_DthYpsc,
+                                                    DZ=_DthZpsc,),
+                                                 _F(GROUP_NO='LISPG',DY=_DthYpsc,DZ=_DthZpsc,),
+                                                 _F(GROUP_NO='P_CUV',
+                                                    DX=_DthX,
+                                                    DY=_DthY,
+                                                    DZ=_DthZ),),)
+          else :
             _dilatation = AFFE_CHAR_MECA_F(MODELE=MODEL,
                                        DDL_IMPO=(_F(GROUP_NO='FIX',
                                                     DX=_DthXpic,
@@ -1423,6 +1528,7 @@ class Coeur(object):
                                                     DX=_DthX,
                                                     DY=_DthY,
                                                     DZ=_DthZ),),)
+            
         return _dilatation
 
 

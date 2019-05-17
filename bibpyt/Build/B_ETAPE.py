@@ -508,9 +508,6 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         self.jdc.alea = Random(100)
         gen = self.jdc.alea
         gen.seed(jump)
-        # similar to python2 `jumpahead` function
-        for _ in range(jump):
-            gen.random()
 
     def fiintf(self, coderr, nom_fonction, nom_param, val):
         """Cette methode permet d'appeler une formule python depuis le fortran.
