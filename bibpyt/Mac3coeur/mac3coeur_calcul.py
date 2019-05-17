@@ -116,6 +116,8 @@ class Mac3CoeurCalcul(object):
         self.char_init = None
         self.etat_init = None
         self._maintien_grille = None
+        self._lame=False
+
 
         # cached properties
         self._init_properties()
@@ -205,7 +207,11 @@ class Mac3CoeurCalcul(object):
     @cached_property
     def coeur(self):
         """Return the `Coeur` object"""
-        return _build_coeur(self.keyw['TYPE_COEUR'], self.macro,
+        if self.keyw['TYPE_COEUR'][:5] == 'LIGNE' : 
+            return _build_coeur(self.keyw['TYPE_COEUR'], self.macro,
+                            self.keyw['TABLE_N'],self.keyw['NB_ASSEMBLAGE'])
+        else :
+            return _build_coeur(self.keyw['TYPE_COEUR'], self.macro,
                             self.keyw['TABLE_N'])
 
     @coeur.setter
@@ -289,7 +295,7 @@ class Mac3CoeurCalcul(object):
         """Return the evolution of the fluence fields"""
         if self.etat_init :
             assert (self.fluence_cycle == 0.)
-        return self.coeur.definition_fluence(self.niv_fluence, self.mesh,self.fluence_cycle)
+        return self.coeur.definition_fluence(self.niv_fluence, self.mesh,self.fluence_cycle,self._lame)
 
     @property
     @cached_property
@@ -847,7 +853,8 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         """Initialize all the cached properties to NULL"""
         super(Mac3CoeurLame, self)._init_properties()
         self._layer_load = NULL
-
+        self._lame=True
+        
     @property
     @cached_property
     def layer_load(self):
@@ -859,7 +866,10 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         self._init_properties()
         self.mesh = self.set_from_resu('mesh', resu)
         self.model = self.set_from_resu('model', resu)
-        self.coeur = _build_coeur(self.keyw['TYPE_COEUR'], self.macro, table)
+        if self.keyw['TYPE_COEUR'][:5] == 'LIGNE' :
+            self.coeur = _build_coeur(self.keyw['TYPE_COEUR'], self.macro, table,self.keyw['NB_ASSEMBLAGE'])
+        else :
+            self.coeur = _build_coeur(self.keyw['TYPE_COEUR'], self.macro, table)
         # initializations
         self.coeur.recuperation_donnees_geom(self.mesh)
         self.times
@@ -1149,7 +1159,7 @@ class Mac3CoeurEtatInitial(Mac3CoeurLame):
 
 
 # helper functions
-def _build_coeur(typ_coeur, macro, sdtab):
+def _build_coeur(typ_coeur, macro, sdtab,longueur=None):
     """Return a `Coeur` object of the given type"""
     rcdir = aster_core.get_option("rcdir")
     datg = osp.join(rcdir, "datg")
@@ -1158,7 +1168,7 @@ def _build_coeur(typ_coeur, macro, sdtab):
     tab = sdtab.EXTR_TABLE()
     name = tab.para[0]
     tab.Renomme(name, 'idAC')
-    coeur = factory.get(typ_coeur)(name, typ_coeur, macro, datg)
+    coeur = factory.get(typ_coeur)(name, typ_coeur, macro, datg, longueur)
     coeur.init_from_table(tab)
     return coeur
 

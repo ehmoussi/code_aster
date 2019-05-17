@@ -36,7 +36,11 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
                        op=OPS("Mac3coeur.mac3coeur_calcul.calc_mac3coeur_ops"),
                        sd_prod=calc_mac3coeur_prod,
 
-         TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4")),
+         TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4") ),
+         #b_type_ligne = BLOC(condition = """is_in("TYPE_COEUR", ("LIGNE900","LIGNE1300","LIGNEN4")""",
+         b_type_ligne = BLOC(condition = """is_in("TYPE_COEUR", ("LIGNE900","LIGNE1300","LIGNEN4"))""",
+                   NB_ASSEMBLAGE = SIMP(statut='o',typ='I',max=1 ),
+                    ),
          # TYPE DE COEUR A CONSIDERER
          TABLE_N      = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N
          MAILLAGE_N   = SIMP(statut='f',typ=maillage_sdaster),      # MAILLAGE EN ATTENDANT MIEUX ???

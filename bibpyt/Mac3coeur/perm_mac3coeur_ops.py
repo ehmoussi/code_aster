@@ -48,6 +48,12 @@ def perm_mac3coeur_ops(self, **args):
 
     _typ_coeur_N = self['TYPE_COEUR_N']
     _typ_coeur_P = self['TYPE_COEUR_NP1']
+    _long_ligne_N = None
+    _long_ligne_P = None
+    if _typ_coeur_N[:5] == 'LIGNE' :
+      _long_ligne_N = self['NB_ASSEMBLAGE_N']
+    if _typ_coeur_P[:5] == 'LIGNE' :
+      _long_ligne_P = self['NB_ASSEMBLAGE_NP1']
     _TAB_N = self['TABLE_N']
     _l_tabn1 = []
     for el in _TAB_N :
@@ -74,7 +80,7 @@ def perm_mac3coeur_ops(self, **args):
 
     # et on renomme la colonne qui identifie les assemblages
         _tabn1.Renomme(name, 'idAC')
-        _coeur = coeur_factory.get(_typ_coeur_N)(name, _typ_coeur_N, self, datg)
+        _coeur = coeur_factory.get(_typ_coeur_N)(name, _typ_coeur_N, self, datg,_long_ligne_N)
         _coeur.init_from_table(_tabn1)
         _l_coeur.append(_coeur)
 
@@ -87,7 +93,7 @@ def perm_mac3coeur_ops(self, **args):
 
     # et on renomme la colonne qui identifie les assemblages
     _tabp1.Renomme(namep1, 'idAC')
-    _coeurp1 = coeur_factory.get(_typ_coeur_P)(namep1, _typ_coeur_P, self, datg)
+    _coeurp1 = coeur_factory.get(_typ_coeur_P)(namep1, _typ_coeur_P, self, datg,_long_ligne_P)
     _coeurp1.init_from_table(_tabp1)
 
     _MA1 = self['MAILLAGE_NP1']
