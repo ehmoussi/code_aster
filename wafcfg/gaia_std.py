@@ -66,6 +66,8 @@ def configure(self):
         TFELHOME + '/include',
     ])
 
+    # to reduce memory consumption during the link stage
+    opts.num_bibfor = 10
     self.env.append_value('LINKFLAGS', ('--no-keep-memory'))
     self.env.append_value('LIB', ('pthread', 'util'))
     self.env.append_value('LIB_SCOTCH', ('scotcherrexit'))
