@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -115,6 +115,8 @@ def build_as_shared(self, shenv):
     if shenv.BUILD_MFRONT:
         uses.append('astermfront')
 
+    nblib = max(1, shenv.NUM_BIBFOR)
+    libasterfor = ['asterbibfor%d' % i for i in range(nblib)]
     self(
         features = 'c cshlib',
             name = 'asterlib',
@@ -122,7 +124,8 @@ def build_as_shared(self, shenv):
           source = get_srcs('**/*.c', excl=['supervis/python.c']),
          defines = '_WITHOUT_PYMOD_',
              env = shenv.derive(),
-             use = ['PYEMBED', 'NUMPY', 'asterbibfor', 'asterbibcxx'] + uses + ['CXX'],
+             use = (['PYEMBED', 'NUMPY'] + libasterfor + ['asterbibcxx']
+                    + uses + ['CXX']),
     install_path = shenv.ASTERLIBDIR,
     )
 
@@ -183,12 +186,8 @@ def build_as_embeded(self, stenv):
     main = 'main' if stenv.FC_MAIN == -1 or 'ifort' in stenv.FC_NAME.lower() else stenv.FC_MAIN
 
     tgt = (self.variant == 'release' and stenv.ASTERBINOPT) or stenv.ASTERBINDBG
-    if sys.platform != 'darwin':
-        libasterfor = ['asterbibfor']
-    else:
-        # OS X does not support more than 262144 bytes on a single command line (getconf ARG_MAX)
-        # To prevent "argument list too long" error (more than 7000 object files from Fortran), we need to split the archive
-        libasterfor = ['asterbibfor1' , 'asterbibfor2' , 'asterbibfor3']
+    nblib = max(1, stenv.NUM_BIBFOR)
+    libasterfor = ['asterbibfor%d' % i for i in range(nblib)]
     self(
         features = 'c fcprogram pyembed',
           target = tgt,
