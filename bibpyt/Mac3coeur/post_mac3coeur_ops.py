@@ -390,13 +390,17 @@ def post_mac3coeur_ops(self, **args):
     POST_DEF = self['DEFORMATION']
     _inst = self['INST']
     _TAB_N = self['TABLE']
+    if _typ_coeur[:5] == 'LIGNE' :
+      _longueur = self['NB_ASSEMBLAGE']
+    else :
+      _longueur=None
 
     _table = _TAB_N.EXTR_TABLE()
     nameCoeur = _table.para[0]
 
 # et on renomme la colonne qui identifie les assemblages
     _table.Renomme(nameCoeur, 'idAC')
-    _coeur = coeur_factory.get(_typ_coeur)(nameCoeur, _typ_coeur, self, datg)
+    _coeur = coeur_factory.get(_typ_coeur)(nameCoeur, _typ_coeur, self, datg,_longueur)
     _coeur.init_from_table(_table,mater=False)
     tableCreated = False
 
@@ -423,9 +427,9 @@ def post_mac3coeur_ops(self, **args):
 
         UTMESS('I', 'COEUR0_5')
         k = 0
-        dim = len(_coeur.nomContactCuve)
+        dim = len(_coeur.get_contactCuve())
 
-        for name in _coeur.nomContactCuve:
+        for name in _coeur.get_contactCuve() :
 
             _TAB2 = CREA_TABLE(
                 RESU=_F(RESULTAT=_RESU, NOM_CHAM='VARI_ELGA', NOM_CMP='V8', GROUP_MA=name, INST=_inst))
@@ -464,10 +468,10 @@ def post_mac3coeur_ops(self, **args):
 
         UTMESS('I', 'COEUR0_4')
         k = 0
-        dim = len(_coeur.nomContactAssLame)
+        dim = len(_coeur.get_contactAssLame())
 
         if dim != 0:
-            for name in _coeur.nomContactAssLame:
+            for name in _coeur.get_contactAssLame():
                 _TAB1 = CREA_TABLE(
                     RESU=_F(RESULTAT=_RESU, NOM_CHAM='VARI_ELGA', NOM_CMP='V8', GROUP_MA=name, INST=_inst))
                 _TAB1 = CALC_TABLE(reuse=_TAB1, TABLE=_TAB1,
@@ -495,9 +499,9 @@ def post_mac3coeur_ops(self, **args):
         valContactCuve = []
         valContactAssLame = []
         # pour table globale
-        for name in _coeur.nomContactCuve:
+        for name in _coeur.get_contactCuve() :
             valContactCuve.append(valjeucu[name])
-        for name in _coeur.nomContactAssLame:
+        for name in _coeur.get_contactAssLame() :
             valContactAssLame.append(valjeuac[name])
         valContactCuve=N.array(valContactCuve)
         valContactAssLame=N.array(valContactAssLame)
@@ -574,7 +578,7 @@ def post_mac3coeur_ops(self, **args):
                 # liste des parametres a afficher (dans l'ordre)
                 # Rq : on affiche la premiere occurence de 'COOR_X'
                 l_para = ['COOR_X', ] + \
-                    _coeur.nomContactAssLame + _coeur.nomContactCuve
+                    _coeur.get_contactAssLame() + _coeur.get_contactCuve()
 
                 IMPR_TABLE(UNITE=_unit, TABLE=_TAB3, NOM_PARA=l_para,FORMAT_R='E12.6',)
 
@@ -726,7 +730,7 @@ def post_mac3coeur_ops(self, **args):
         maxRho=0.
         maxRhoParType = {}
         listeGravite = []
-        maxGravite = 0.
+        maxGravite = -1.
         maxGraviteParType = {}
         maxDeplGrille = [0]*nbGrille
         locMaxDeplGrille = [None]*nbGrille
@@ -762,7 +766,7 @@ def post_mac3coeur_ops(self, **args):
             YG8 = valdirZac[name_AC_aster][8 - 1]
             # YG9 = valdirZac[name_AC_aster][9 - 1]
             # YG10 = valdirZac[name_AC_aster][10 - 1]
-            if (_typ_coeur == '900'):
+            if (_typ_coeur == '900' or _typ_coeur == 'LIGNE900'):
                 XG9 = 0.
                 XG10 = 0.
                 YG9 = 0.
@@ -782,7 +786,7 @@ def post_mac3coeur_ops(self, **args):
                 cosGrille.append(compute_cos_alpha(posGrille[i],posGrille[i+1],posGrille[i+2]))
             gravite = K_star*N.sum(1.-N.array(cosGrille))
             normeDepl = N.sqrt(N.array(XG)**2+N.array(YG)**2)
-            Milieu = AC.typeAC
+            Milieu = AC.typeAC[:10]
             MinX = min(valdirYac[name_AC_aster])
             MaxX = max(valdirYac[name_AC_aster])
             CCX = MaxX - MinX
