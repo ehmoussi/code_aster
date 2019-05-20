@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,9 @@ subroutine op0036()
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
+#include "asterfort/assert.h"
 #include "asterfort/ctresu.h"
+#include "asterfort/gettco.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
@@ -39,17 +41,19 @@ subroutine op0036()
 #include "asterfort/titre.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    integer :: iocc, ni, nr, nk, i, j, ir, jvale, jp, ndim, jt
+    integer :: iocc, ni, nr, nk, ir, jvale, jp, ndim, jt
     integer :: nocc, nocc2, nindi, iii, dimmax, jy, jlng,  jd
-    integer :: jtrav1, jtrav2, jtrav3, jtrav4, jtrav5, npar
-    integer :: longco, nocc3
+    integer :: jtrav1, jtrav2, jtrav3, jtrav4, jtrav5, jtrav6, npar
+    integer :: nocc3, nco
+    integer :: icol, ncol, nval, iligmax, ii, jj, length
+    aster_logical :: is_list_co, is_tab_conteneur
     complex(kind=8) :: cbid
     character(len=1) :: kbid
     character(len=3) :: ntyp
     character(len=8) :: resu
     character(len=16) :: concep, nomcmd
     character(len=19) :: nfct
-    character(len=24) :: trav, ldbl, indic, ltyp, work
+    character(len=24) :: trav, ldbl, indic, ltyp, work, typco, typtab
     character(len=24) :: vectcr, vectci, nmpar, nmpar1, nmparf(2), nmparc(3)
     integer :: ivcr, ivci
     character(len=24), pointer :: prol(:) => null()
@@ -77,56 +81,124 @@ subroutine op0036()
 ! --- CAS: LISTE
 !     ==========
     if (nocc .ne. 0) then
-        call wkvect(work, 'V V I', nocc, jlng)
-        call wkvect(ldbl, 'V V K24', nocc, jd)
-        call wkvect(ltyp, 'V V K8', nocc, jy)
-        dimmax=0
+!       Calculer ncol le nombre de colonnes de la table
+        ncol = 0 
+!
+!       Est-on en train de créer une table container ? 
+        call getvtx(' ', 'TYPE_TABLE', scal=typtab )
+        is_tab_conteneur = ( trim(typtab) == 'TABLE_CONTENEUR') 
 !
         do iocc = 1, nocc
+           call getvis('LISTE', 'LISTE_I', iocc=iocc, nbval=0, nbret=ni)
+           call getvr8('LISTE', 'LISTE_R', iocc=iocc, nbval=0, nbret=nr)
+           call getvtx('LISTE', 'LISTE_K', iocc=iocc, nbval=0, nbret=nk)
+           call getvid('LISTE', 'LISTE_CO', iocc=iocc, nbval=0, nbret=nco)
+           if ( ni + nr + nk < 0 ) then 
+              ncol = ncol + 1 
+           else if ( nco < 0 ) then 
+              ncol = ncol + 2
+           endif 
+        enddo
+!
+        call wkvect(work, 'V V I', iocc, jlng)
+        call wkvect(ldbl, 'V V K24', ncol, jd)
+        call wkvect(ltyp, 'V V K8', ncol, jy)
+
+        dimmax=0
+!
+        icol = 0 
+        do iocc = 1, nocc
+            icol=icol+1
             call getvtx('LISTE', 'PARA', iocc=iocc, scal=nmpar, nbret=jp)
-            zk24(jd+iocc-1) = nmpar
             call getvis('LISTE', 'LISTE_I', iocc=iocc, nbval=0, nbret=ni)
             call getvis('LISTE', 'NUME_LIGN', iocc=iocc, nbval=0, nbret=nindi)
             call getvr8('LISTE', 'LISTE_R', iocc=iocc, nbval=0, nbret=nr)
             call getvtx('LISTE', 'LISTE_K', iocc=iocc, nbval=0, nbret=nk)
             call getvtx('LISTE', 'TYPE_K', iocc=iocc, scal=ntyp, nbret=jt)
+            call getvid('LISTE', 'LISTE_CO', iocc=iocc, nbval=0, nbret=nco)
+!           La liste courante est-elle une liste de concepts ? 
+!           Si oui, on crée deux colonnes dans la table (nom_sd et type_concept)
+!           Si non, on utilise le nom de paramètre fourni par l'utilisateur
+            is_list_co=( nco < 0)
+            if (is_list_co) then 
+               if (.not. is_tab_conteneur) then 
+                   call utmess('F','UTILITAI2_18')
+               endif 
+               zk24(jd+icol-1) = "NOM_SD"
+               zk24(jd+icol+1-1) = "TYPE_OBJET"
+            else 
+               zk24(jd+icol-1) = nmpar
+            endif 
 !
+!           Nombre de termes dans la liste fournie par l'utilisateur  (nval)
+            nval=-ni-nr-nk-nco
             if (nindi .ne. 0) then
-                if ((-ni-nr-nk) .ne. (-nindi)) then
+                if ((nval) .ne. (-nindi)) then
                     call utmess('F', 'UTILITAI2_75')
                 endif
-                call wkvect(indic, 'V V I', -nindi, iii)
-                longco=0
-                call getvis('LISTE', 'NUME_LIGN', iocc=iocc, nbval=-nindi, vect=zi(iii),&
+                call wkvect(indic, 'V V I', nval, iii)
+                iligmax=0
+                call getvis('LISTE', 'NUME_LIGN', iocc=iocc, nbval=nval, vect=zi(iii),&
                             nbret=ir)
-                do i = 1, -nindi
-                    longco=max(longco,zi(iii+i-1))
+                do ii = 1, nval
+                    iligmax=max(iligmax,zi(iii+ii-1))
                 end do
                 call jedetr(indic)
-                zi(jlng+iocc-1)=longco
+                zi(jlng+icol-1)=iligmax
+                if (is_list_co) then 
+                    zi(jlng+icol+1-1)=iligmax
+                endif 
             else
-                zi(jlng+iocc-1)=-ni-nr-nk
+                zi(jlng+icol-1)=nval
+                if (is_list_co) then 
+                    zi(jlng+icol+1-1)=nval
+                endif 
             endif
-            dimmax=max(dimmax,zi(jlng+iocc-1))
+            dimmax=max(dimmax,zi(jlng+icol-1))
 !
             if (ni .ne. 0) then
-                zk8(jy+iocc-1)='I'
+                zk8(jy+icol-1)='I'
             else if (nr.ne.0) then
-                zk8(jy+iocc-1)='R'
+                zk8(jy+icol-1)='R'
             else if (nk.ne.0) then
                 if (ntyp(2:2) .eq. '8') then
-                    zk8(jy+iocc-1)='K8'
+                    zk8(jy+icol-1)='K8'
                 else if (ntyp(2:2).eq.'1') then
-                    zk8(jy+iocc-1)='K16'
+                    zk8(jy+icol-1)='K16'
                 else if (ntyp(2:2).eq.'2') then
-                    zk8(jy+iocc-1)='K24'
+                    zk8(jy+icol-1)='K24'
                 endif
+            else if (nco.ne.0) then 
+                zk8(jy+icol-1)='K24'
+                zk8(jy+icol+1-1)='K24'
             endif
 !
+            if (is_list_co) then
+               icol=icol+1 
+            endif 
         end do
 !
+!       Vérifier que les noms de paramètres sont uniques 
+        
+        do ii = 1, ncol
+           nmpar1=zk24(jd+ii-1)
+           do jj = 1, ncol
+              nmpar=zk24(jd+jj-1)
+              if ((nmpar.eq.nmpar1) .and. (jj.ne.ii)) then
+                    call utmess('F', 'UTILITAI2_76', nk=1, valk=nmpar)
+                endif
+           enddo  
+        enddo  
+!       Si on a utilisé une liste de concepts pour créer une table_container,
+!       vérifier que l'utilisateur a fourni une liste de paramètre "NOM_OBJET"
+        if ( is_list_co ) then 
+            if ( count(zk24(jd-1+1:jd-1+ncol)=="NOM_OBJET")/=1 ) then 
+               call utmess('F', 'UTILITAI2_19')
+            endif
+        endif 
+!
 !       ---CREATION DE LA TABLE
-        call tbcrsv(resu, 'G', nocc, zk24(jd), zk8(jy),&
+        call tbcrsv(resu, 'G', ncol, zk24(jd), zk8(jy),&
                     dimmax)
 !
         do iocc = 1, nocc
@@ -135,12 +207,8 @@ subroutine op0036()
             call getvr8('LISTE', 'LISTE_R', iocc=iocc, nbval=0, nbret=nr)
             call getvtx('LISTE', 'LISTE_K', iocc=iocc, nbval=0, nbret=nk)
             call getvtx('LISTE', 'PARA', iocc=iocc, scal=nmpar, nbret=jp)
-            do j = 1, nocc
-                nmpar1 = zk24(jd+j-1)
-                if ((nmpar.eq.nmpar1) .and. (j.ne.iocc)) then
-                    call utmess('F', 'UTILITAI2_76')
-                endif
-            end do
+            call getvid('LISTE', 'LISTE_CO', iocc=iocc, nbval=0, nbret=nco)
+            
 !
             if (nindi .ne. 0) then
                 nindi=-nindi
@@ -148,9 +216,9 @@ subroutine op0036()
                 call getvis('LISTE', 'NUME_LIGN', iocc=iocc, nbval=nindi, vect=zi(iii),&
                             nbret=ir)
             else
-                call wkvect(indic, 'V V I', (-ni-nr-nk), iii)
-                do i = 1, (-ni-nr-nk)
-                    zi(iii+i-1)=i
+                call wkvect(indic, 'V V I', (-ni-nr-nk-nco), iii)
+                do ii = 1, (-ni-nr-nk-nco)
+                    zi(iii+ii-1)=ii
                 end do
             endif
 !
@@ -206,6 +274,32 @@ subroutine op0036()
                                 [0.d0], [cbid], zk24(jtrav5), 'R', zi(iii))
                 endif
             endif
+!
+!           LISTE DE CONCEPTS :
+!           ------------------
+!           On ajoute 2 colonnes : TYPE_OBJET, NOM_SD 
+!           L'utilisateur doit avoir fourni une colonne NOM_OBJET contenant une clé pour chaque 
+!           concept de la liste donnée avec le mot-clé LIST_CO
+            if ( nco .ne. 0 ) then 
+                nco=-nco
+                call wkvect(trav, 'V V K24', nco, jtrav6)
+                call getvid('LISTE', 'LISTE_CO', iocc=iocc, nbval=nco, vect=zk24(jtrav6), &
+                             nbret=ir)
+                nmpar="NOM_SD"
+                call tbajco(resu, nmpar, 'K24', nco, [0],&
+                                [0.d0], [cbid], zk24(jtrav6), 'R', zi(iii))
+                do ii = 1, nco
+                   call gettco( zk24(jtrav6+ii-1), typco )
+                   length=lxlgut(typco)
+                   if (typco(length-7:length) == "_SDASTER") then 
+                       typco=typco(1:length-8)
+                   endif 
+                   zk24(jtrav6+ii-1)=typco
+                enddo 
+                nmpar="TYPE_OBJET"
+                call tbajco(resu, nmpar, 'K24', nco, [0],&
+                                [0.d0], [cbid], zk24(jtrav6), 'R', zi(iii))
+            endif 
             call jedetr(trav)
             call jedetr(indic)
         end do
@@ -249,9 +343,9 @@ subroutine op0036()
             vectci='&&OP0036.VCI'
             call wkvect(vectcr, 'V V R', ndim/3, ivcr)
             call wkvect(vectci, 'V V R', ndim/3, ivci)
-            do i = 1, ndim/3
-                zr(ivcr+i-1)= zr(jvale-1+ndim/3+2*i-1)
-                zr(ivci+i-1)= zr(jvale-1+ndim/3+2*i)
+            do ii = 1, ndim/3
+                zr(ivcr+ii-1)= zr(jvale-1+ndim/3+2*ii-1)
+                zr(ivci+ii-1)= zr(jvale-1+ndim/3+2*ii)
             end do
             call tbajco(resu, nmparc(1), 'R', ndim/3, [0],&
                         zr(jvale), [cbid], kbid, 'R', [-1])
