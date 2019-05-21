@@ -66,9 +66,8 @@ character(len=19), optional, intent(in) :: list_load_resu_
 !
     integer, parameter :: nb_info_maxi = 99
     character(len=24) :: list_info_type(nb_info_maxi)
-    integer, parameter :: nbchmx = 99
     integer :: n1, npilo, nb_load
-    integer :: infmax, i_excit, i_load, iret, infc, j, i_load_new
+    integer :: i_excit, i_load, iret, i_load_new
     character(len=4) :: typcal
     character(len=8) :: k8bid, load_type, func_para_inst, const_func
     character(len=16) :: nomcmd, typesd, load_apply, load_keyword
@@ -97,7 +96,6 @@ character(len=19), optional, intent(in) :: list_load_resu_
         list_load_resu = list_load_resu_
     endif
     nb_load        = 0
-    infmax         = 0
     const_func     = '&&NMDOME'
     lisdbl         = '&&NMDOME.LISDBL'
     l_func_c       = ASTER_FALSE
@@ -279,102 +277,12 @@ character(len=19), optional, intent(in) :: list_load_resu_
                 ASSERT(nb_info_type.lt.nb_info_maxi)
                 list_info_type(nb_info_type) = info_type
             endif
-!
-! --------- Add Neuman loads
-!
+! --------- Get Neumann loads
             call loadGetNeumannType(l_stat      , load_name   , ligrch        ,&
                                     load_apply  , load_type   ,&
-                                    nb_info_type, nb_info_maxi, list_info_type)
-!
-! --------- EVOL_CHAR
-!
-            info_type = 'RIEN'
-            lchin = ligrch(1:13)//'.EVOL.CHAR'
-            call jeexin(lchin, iret)
-            if (iret .ne. 0) then
-                if (load_apply .eq. 'SUIV') then
-                    info_type = 'NEUM_SUIV'
-                else if (load_apply .eq. 'FIXE_CSTE') then
-                    info_type = 'NEUM_CSTE'
-                else if (load_apply .eq. 'FIXE_PILO') then
-                    call utmess('F', 'CHARGES_34', sk=load_name)
-                else if (load_apply .eq. 'DIDI') then
-                    call utmess('F', 'CHARGES_31', sk=load_name)
-                else if (load_apply .eq. 'SUIV_PILO') then
-                    call utmess('F', 'CHARGES_34', sk=load_name)
-                else
-                    ASSERT(.false.)
-                endif
-            endif
-            if (info_type .ne. 'RIEN') then
-                nb_info_type = nb_info_type + 1
-                ASSERT(nb_info_type.lt.nb_info_maxi)
-                list_info_type(nb_info_type) = info_type
-            endif
-!
-! --------- EXCIT_SOL
-!
-            info_type = 'RIEN'
-            lchin = ligrch(1:13)//'.VEISS'
-            call jeexin(lchin, iret)
-            if (iret .ne. 0) then
-                if (nomcmd .eq. 'STAT_NON_LINE') then
-                    call utmess('F', 'CHARGES_50', sk=load_name)
-                endif
-                if (load_apply .eq. 'SUIV') then
-                    call utmess('F', 'CHARGES_51', sk=load_name)
-                elseif (load_apply .eq. 'DIDI') then
-                    call utmess('F', 'CHARGES_52', sk=load_name)
-                else if (load_apply .eq. 'FIXE_PILO') then
-                    call utmess('F', 'CHARGES_34', sk=load_name)
-                else if (load_apply .eq. 'FIXE_CSTE') then
-                    if (load_type(5:6) .eq. '_F') then
-                        call utmess('F', 'CHARGES_53', sk=load_name)
-                    endif
-                    if (load_func .ne. const_func) then
-                        call utmess('F', 'CHARGES_54', sk=load_name)
-                    endif
-                    info_type = 'EXCIT_SOL'
-                else if (load_apply .eq. 'SUIV_PILO') then
-                    call utmess('F', 'CHARGES_34', sk=load_name)
-                else
-                    ASSERT(.false.)
-                endif
-            endif
-            if (info_type .ne. 'RIEN') then
-                nb_info_type = nb_info_type + 1
-                ASSERT(nb_info_type.lt.nb_info_maxi)
-                list_info_type(nb_info_type) = info_type
-            endif
-!
-! --------- LAPLACE
-!
-            infc = 0
-            info_type = 'RIEN'
-            do j = 1, nbchmx
-                lchin(1:17) = ligrch(1:13)//'.FL1'
-                call codent(j, 'D0', lchin(18:19))
-                lchin = lchin(1:19)//'.DESC'
-                call jeexin(lchin, iret)
-                if (iret .ne. 0) then
-                    infc = infc + 1
-                else
-                    exit
-                endif
-            end do
-            if (infc .ne. 0) then
-                i_neum_lapl = max(infmax,infc)
-                info_type = 'NEUM_LAPL'
-            endif
-            if (info_type .ne. 'RIEN') then
-                nb_info_type = nb_info_type + 1
-                ASSERT(nb_info_type.lt.nb_info_maxi)
-                list_info_type(nb_info_type) = info_type
-            endif
-!
+                                    nb_info_type, nb_info_maxi, list_info_type,&
+                                    i_neum_lapl)
 ! --------- Add new load(s) in list
-!
-            
             if (nb_info_type .gt. 0) then
                 i_load_new = i_load_new+1
                 call liscad('MECA'      , list_load     , i_load_new, load_name, load_func, &
