@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,6 @@ subroutine pcfact(matas, nequ, in, ip, ac,&
                 enddo
 !               -- TERME DIAGONAL
                 cumul = ac(jfin)
-!DIR$ IVDEP
                 do ki = jdeb, jfin - 1
                     prc(ki) = prc(ki)*prc(in(ip(ki)))
                     cumul = cumul - prc(ki)*vect(ip(ki))

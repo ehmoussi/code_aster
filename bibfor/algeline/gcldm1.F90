@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -80,8 +80,6 @@ subroutine gcldm1(m, in, ip, prec, x, y, perm, xtrav, ytrav)
         fac = ytrav(i)
 !
 !        ---- PROCEDURE A LA MAIN
-!DIR$ IVDEP
-!DIR$ NOPREFETCH Y
         do 30 ki = kdeb, kfin
             ytrav(ip(ki)) = ytrav(ip(ki))-prec(ki)*fac
 30      continue

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,6 +29,9 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                        op=OPS("Mac3coeur.post_mac3coeur_ops.post_mac3coeur_ops"),
 
            TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4")),
+           b_type_ligne = BLOC(condition = """is_in("TYPE_COEUR", ("LIGNE900","LIGNE1300","LIGNEN4"))""",
+                    NB_ASSEMBLAGE = SIMP(statut='o',typ='I',max=1 ),
+                    ),
            RESULTAT     = SIMP(statut='o',typ=evol_noli),                             # SD_RESULTAT
            TABLE        = SIMP(statut='o',typ=table_sdaster),                         # TABLE DES DAMAC A L INSTANT N
            INST         = SIMP(statut='o',typ='R', max=1),                            # INSTANT

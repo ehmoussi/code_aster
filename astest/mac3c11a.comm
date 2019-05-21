@@ -1,0 +1,151 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# UTILISATION : COMPARAISON DE LA SIMULATION NUMERIQUE D'UN ASSEMBLAGE
+#               COMBUSTIBLE EN FLEXION AVEC LES RESULTATS EXPERIMENTAUX
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='OUI',PAR_LOT='NON')
+
+tabn = LIRE_TABLE(UNITE      = 38,
+                  FORMAT     = 'LIBRE',
+                  SEPARATEUR = '\t')
+
+MA1=LIRE_MAILLAGE(FORMAT='MED',UNITE=20,INFO=2);
+MA1=DEFI_GROUP(
+  reuse=MA1,
+  MAILLAGE=MA1,
+  CREA_GROUP_NO=_F(GROUP_MA='CR_A_A'))
+
+FLEX = CALC_MAC3COEUR(TYPE_COEUR  = 'MONO_FROID',
+                      TABLE_N     =  tabn,
+                      MAILLAGE_N  =  MA1,
+                      DEFORMATION = _F(UNITE_THYC   = 32,
+                                       NIVE_FLUENCE = 0.,
+                                       TYPE_MAINTIEN = 'FORCE',
+                                       FORCE_MAINTIEN =9000.,
+                                       #MAINTIEN_GRILLE = 'OUI',
+                                       ARCHIMEDE      = 'NON',
+                                       ),)
+POST_V=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+                        INTITULE='DY',
+                        RESULTAT =FLEX,
+                        NOM_CHAM ='DEPL',
+                        NOM_CMP = ('DY','DZ'),
+                        GROUP_NO=('LISPG',),
+                        ))
+
+IMPR_TABLE(TABLE=POST_V)
+
+FLEX=CALC_CHAMP(reuse =FLEX,
+             RESULTAT=FLEX,
+             #GROUP_MA = (
+               #'GC_A_A',
+               #'GT_A_A',
+               #'DI_A_A'
+               #),
+             FORCE=('FORC_NODA',),)
+
+IMPR_RESU(
+  FORMAT = 'RESULTAT',
+  RESU=_F(
+    RESULTAT = FLEX,
+    NOM_CHAM = 'FORC_NODA',
+    GROUP_NO = 'GRIL_6'
+    )
+  )
+#IMPR_RESU(
+  #FORMAT = 'RESULTAT',
+  #RESU=_F(
+    #RESULTAT = FLEX,
+    #NOM_CHAM = 'DEPL',
+    #NOM_CMP = ('DY','DZ'),
+    ##GROUP_NO = 'GRIL_6'
+    #)
+  #)
+
+POSTP=[None]*10
+efforts = []
+ig = []
+
+for i in range(10) :
+
+  POSTP[i] = POST_RELEVE_T(
+     ACTION=_F(INTITULE='FORCE',
+               GROUP_NO=('GRIL_%d'%(i+1)),
+               RESULTAT=FLEX,
+               NOM_CHAM='FORC_NODA',
+               RESULTANTE=('DX','DY','DZ'),
+               REPERE='GLOBAL',
+               INST=0.005,
+               OPERATION='EXTRACTION',),)
+  tab = POSTP[i]
+  efforts.append(tab['DY',1])
+  ig.append(i+1)
+
+print(efforts)
+
+
+POSTC = POST_RELEVE_T(
+     ACTION=_F(INTITULE='FORCE',
+               GROUP_NO=('CR_A_A'),
+               RESULTAT=FLEX,
+               NOM_CHAM='FORC_NODA',
+               RESULTANTE=('DX','DY','DZ'),
+               REPERE='GLOBAL',
+               INST=0.005,
+               OPERATION='EXTRACTION',),)
+
+IMPR_TABLE(TABLE=POSTC)
+
+fgrille = CREA_TABLE(LISTE=(
+  _F(LISTE_R=efforts,PARA='EFFORT'),
+  _F(LISTE_I=ig,PARA='N_GRILLE'),
+  ))
+
+TEST_TABLE(
+  CRITERE='RELATIF',
+  VALE_CALC=1000,
+  VALE_REFE=1000,
+  REFERENCE='ANALYTIQUE',
+  NOM_PARA='EFFORT',
+  TABLE=fgrille,
+  FILTRE=_F(NOM_PARA='N_GRILLE',VALE_I=6),)
+
+TEST_TABLE(
+  CRITERE='RELATIF',
+  VALE_CALC=1000,  
+  VALE_REFE=1000,
+  REFERENCE='ANALYTIQUE',
+  NOM_PARA='EFFORT',
+  TABLE=fgrille,
+  TYPE_TEST='SOMM',)
+
+TEST_TABLE(
+  CRITERE='RELATIF',
+  #ORDRE_GRANDEUR = 1000.,
+  VALE_REFE=500,
+  REFERENCE='ANALYTIQUE',
+  VALE_CALC=499.14169801901033,  
+  PRECISION = 5.e-3,
+  NOM_PARA='DY',
+  TABLE=POSTC,
+  TYPE_TEST='SOMM',)
+
+
+FIN()

@@ -39,23 +39,18 @@ def configure(self):
 
     intel.configure(self)
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20190318')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190507')
     opts.with_prog_salome = True
     opts.with_prog_europlexus = True
 
-    # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
-    # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
-    self.env['ADDMEM'] = 2500
-
+    self.env['ADDMEM'] = 700
     self.env.append_value('OPT_ENV', [
         'module unload mkl',
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
-        'export LD_PRELOAD=/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_scalapack_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_intel_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_intel_thread.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_core.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_blacs_intelmpi_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64_lin/libiomp5.so',
-        'export OPENBLAS_CORETYPE=SANDYBRIDGE',
-    ])
+        'export OPENBLAS_CORETYPE=SANDYBRIDGE'])
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
-    TFELVERS = '3.1.1'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
+    TFELVERS = '3.2.1'
     self.env.TFELHOME = TFELHOME
     self.env.TFELVERS = TFELVERS
 

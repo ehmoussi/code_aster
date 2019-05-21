@@ -97,6 +97,9 @@ subroutine cresol(solveu, basz, xfem)
     eximc=getexm(nomsol,'NPREC')
     if (eximc .eq. 1) then
         call getvis(nomsol, 'NPREC', iocc=1, scal=nprec, nbret=ibid)
+        if ((nprec.lt.0).or.(nprec.gt.11)) then
+          call utmess('A', 'FACTOR_9',si=nprec)
+        endif
         if (kstop .eq. 'OUI') then
             istop = 0
         else if (kstop.eq.'NON') then
@@ -152,6 +155,7 @@ subroutine cresol(solveu, basz, xfem)
 !     SOLVEUR LINEAIRE
 ! ------------------------------------------------------
 !
+
     if (method .eq. 'MUMPS') then
 !     -----------------------------
         call crsvmu(nomsol, solveu, istop, nprec,&

@@ -115,6 +115,9 @@ class Mac3CoeurCalcul(object):
         self._use_archimede = None
         self.char_init = None
         self.etat_init = None
+        self._maintien_grille = None
+        self._lame=False
+
 
         # cached properties
         self._init_properties()
@@ -154,6 +157,7 @@ class Mac3CoeurCalcul(object):
         # Note that times depends on niv_fluence and subdivis.
         self.times
         self.fluence_cycle = self.keyw.get('FLUENCE_CYCLE')
+        self._type_deformation = self.keyw.get('TYPE_DEFORMATION')
 
     def _run(self):
         """Run the calculation itself"""
@@ -204,7 +208,11 @@ class Mac3CoeurCalcul(object):
     @cached_property
     def coeur(self):
         """Return the `Coeur` object"""
-        return _build_coeur(self.keyw['TYPE_COEUR'], self.macro,
+        if self.keyw['TYPE_COEUR'][:5] == 'LIGNE' : 
+            return _build_coeur(self.keyw['TYPE_COEUR'], self.macro,
+                            self.keyw['TABLE_N'],self.keyw['NB_ASSEMBLAGE'])
+        else :
+            return _build_coeur(self.keyw['TYPE_COEUR'], self.macro,
                             self.keyw['TABLE_N'])
 
     @coeur.setter
@@ -288,7 +296,7 @@ class Mac3CoeurCalcul(object):
         """Return the evolution of the fluence fields"""
         if self.etat_init :
             assert (self.fluence_cycle == 0.)
-        return self.coeur.definition_fluence(self.niv_fluence, self.mesh,self.fluence_cycle)
+        return self.coeur.definition_fluence(self.niv_fluence, self.mesh,self.fluence_cycle,self._lame)
 
     @property
     @cached_property
@@ -361,7 +369,7 @@ class Mac3CoeurCalcul(object):
     def vessel_dilatation_load(self):
         """Return the loading due to the vessel dilatation"""
         char_dilat = self.coeur.dilatation_cuve(self.model, self.mesh,
-                               (self.char_init is not None))
+                               (self.char_init is not None),self._maintien_grille)
         return [_F(CHARGE=char_dilat,), ]
 
     @property
@@ -455,7 +463,7 @@ class Mac3CoeurCalcul(object):
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
                                 # DEFORMATION='GROT_GDEP',),
-                                DEFORMATION='PETIT',),
+                                DEFORMATION=self._type_deformation,),
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
                              _F(RELATION='DIS_CHOC',
@@ -478,7 +486,7 @@ class Mac3CoeurCalcul(object):
             'COMPORTEMENT': (_F(RELATION='MULTIFIBRE',
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
-                                DEFORMATION='PETIT',
+                                DEFORMATION=self._type_deformation,
                                 ),
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
@@ -515,7 +523,7 @@ class Mac3CoeurCalcul(object):
             'COMPORTEMENT': (_F(RELATION='MULTIFIBRE',
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
-                                DEFORMATION='GROT_GDEP',
+                                DEFORMATION=self._type_deformation,
                                 ),
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
@@ -567,6 +575,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
         if self.keyw['TYPE_COEUR'][:4] == "MONO":
             self.subdivis = 5
         self.use_archimede = self.mcf['ARCHIMEDE']
+        self._maintien_grille = (self.mcf['MAINTIEN_GRILLE'] == 'OUI')
         super(Mac3CoeurDeformation, self)._prepare_data(noresu)
 
     @property
@@ -846,7 +855,8 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         """Initialize all the cached properties to NULL"""
         super(Mac3CoeurLame, self)._init_properties()
         self._layer_load = NULL
-
+        self._lame=True
+        
     @property
     @cached_property
     def layer_load(self):
@@ -858,7 +868,10 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         self._init_properties()
         self.mesh = self.set_from_resu('mesh', resu)
         self.model = self.set_from_resu('model', resu)
-        self.coeur = _build_coeur(self.keyw['TYPE_COEUR'], self.macro, table)
+        if self.keyw['TYPE_COEUR'][:5] == 'LIGNE' :
+            self.coeur = _build_coeur(self.keyw['TYPE_COEUR'], self.macro, table,self.keyw['NB_ASSEMBLAGE'])
+        else :
+            self.coeur = _build_coeur(self.keyw['TYPE_COEUR'], self.macro, table)
         # initializations
         self.coeur.recuperation_donnees_geom(self.mesh)
         self.times
@@ -958,12 +971,13 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
 
         __RESFIN = CREA_RESU(**self.cr(_pdt_ini_out,depl_tot_ini))
         CREA_RESU(**self.cr(_pdt_fin_out,depl_tot_fin,reuse=__RESFIN))
-        self.macro.register_result(__RESFIN, self.res_def)
+        self.res_def=__RESFIN
 
 
     def _prepare_data(self,noresu=None):
         """Prepare the data for the calculation"""
         self.use_archimede = 'OUI'
+        self._maintien_grille = False
         if (not noresu) :
             self.res_def = self.keyw.get('RESU_DEF')
             if self.res_def :
@@ -1147,7 +1161,7 @@ class Mac3CoeurEtatInitial(Mac3CoeurLame):
 
 
 # helper functions
-def _build_coeur(typ_coeur, macro, sdtab):
+def _build_coeur(typ_coeur, macro, sdtab,longueur=None):
     """Return a `Coeur` object of the given type"""
     rcdir = aster_core.get_option("rcdir")
     datg = osp.join(rcdir, "datg")
@@ -1156,7 +1170,7 @@ def _build_coeur(typ_coeur, macro, sdtab):
     tab = sdtab.EXTR_TABLE()
     name = tab.para[0]
     tab.Renomme(name, 'idAC')
-    coeur = factory.get(typ_coeur)(name, typ_coeur, macro, datg)
+    coeur = factory.get(typ_coeur)(name, typ_coeur, macro, datg, longueur)
     coeur.init_from_table(tab)
     return coeur
 

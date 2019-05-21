@@ -164,6 +164,12 @@ STATIQUE=CALC_CHAMP(reuse= STATIQUE,
                     NOM_CAS = 'CHARGE NUMERO 5',
                     FORCE='REAC_NODA',);
 
+STATIQUE=CALC_CHAMP(reuse= STATIQUE,
+                    RESULTAT = STATIQUE,
+                    NOM_CAS = 'CHARGE NUMERO 5',
+                    CONTRAINTE='EFGE_NOEU',
+                    GROUP_MA = 'PORTI1');
+
 TEST_RESU(RESU=_F(REFERENCE='ANALYTIQUE',
                   RESULTAT=STATIQUE,
                   NOM_CHAM='REAC_NODA',
@@ -185,6 +191,15 @@ TAB_REAC=POST_RELEVE_T(
             )
 IMPR_TABLE ( TABLE = TAB_REAC)
 
+tab1=MACR_LIGN_COUPE(RESULTAT=STATIQUE,
+                     NOM_CHAM='EFGE_NOEU',
+                     LIGN_COUPE=(_F(TYPE='GROUP_NO',
+                                    GROUP_NO='PORTI1',
+                                    INTITULE='ligne1',
+                                    DISTANCE_MAX=0.1,
+                                    RESULTANTE=('NXX','NYY','NXY',),
+                                    MOMENT=('MXX','MYY','MXY',),
+                                    POINT=(10.,12.,0.,),),),);
 
 TEST_TABLE(CRITERE='ABSOLU',
            VALE_CALC=3.2588441172265E-06,
