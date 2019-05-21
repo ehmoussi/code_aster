@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -76,7 +76,7 @@ class LACQ4Q4D(Element):
         OP.RIGI_CONT(te=567,
             para_in=((SP.PCONFR, LC.CCONFR),(SP.PDEPL_M, DDL_MECA),
                      (SP.PDEPL_P, DDL_MECA),(SP.PGEOMER, NGEOMER),
-                     (SP.PSNO, NGEOMER), (SP.PDDEPLA, DDL_MECA ),
+                     (SP.PSNO, NGEOMER),
                      ),
             para_out=( (SP.PMATUUR, MMATUUR),
                      ),        
@@ -84,7 +84,7 @@ class LACQ4Q4D(Element):
         OP.CHAR_MECA_CONT(te=568,
             para_in=((SP.PCONFR, LC.CCONFR),(SP.PDEPL_M, DDL_MECA),
                      (SP.PDEPL_P, DDL_MECA),(SP.PGEOMER, NGEOMER),
-                     (SP.PSNO, NGEOMER), (SP.PDDEPLA, DDL_MECA ),
+                     (SP.PSNO, NGEOMER),
                      ),
             para_out=((SP.PVECTCR, MVECTUR), (SP.PVECTFR, MVECTUR),),
         ),

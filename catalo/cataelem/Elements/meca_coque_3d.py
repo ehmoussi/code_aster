@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -425,7 +425,7 @@ class TemplateElement(Element):
         OP.FULL_MECA(te=414,
             para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                      (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
-                     (SP.PDDEPLA, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
+                     (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
                      (SP.PMATERC, LC.CMATERC), (OP.FULL_MECA.PNBSP_I, ENBSP_I),
@@ -507,7 +507,7 @@ class TemplateElement(Element):
         OP.RAPH_MECA(te=414,
             para_in=((OP.RAPH_MECA.PCACO3D, CCACO3D), (SP.PCACOQU, CCACOQU),
                      (SP.PCARCRI, LC.CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
-                     (OP.RAPH_MECA.PCONTMR, ECONTPG), (SP.PDDEPLA, DDL_MECA),
+                     (OP.RAPH_MECA.PCONTMR, ECONTPG), 
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
                      (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
@@ -626,7 +626,7 @@ class TemplateElement(Element):
         OP.RIGI_MECA_TANG(te=414,
             para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                      (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
-                     (SP.PDDEPLA, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
+                     (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
                      (SP.PMATERC, LC.CMATERC), (OP.RIGI_MECA_TANG.PNBSP_I, ENBSP_I),

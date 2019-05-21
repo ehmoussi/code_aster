@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ subroutine nmelcv(mesh          , model         ,&
                   disp_prev     , vite_prev     ,&
                   acce_prev     , vite_curr     ,&
                   time_prev     , time_curr     ,&
-                  disp_cumu_inst, disp_newt_curr,&
+                  disp_cumu_inst,&
                   vect_elem_cont, vect_elem_fric)
 !
 use NonLin_Datastructure_type
@@ -52,7 +52,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=19), intent(in) :: disp_prev, vite_prev, acce_prev, vite_curr
 character(len=19), intent(in) :: time_prev, time_curr
-character(len=19), intent(in) :: disp_cumu_inst, disp_newt_curr
+character(len=19), intent(in) :: disp_cumu_inst
 character(len=19), intent(out) :: vect_elem_cont, vect_elem_fric
 !
 ! --------------------------------------------------------------------------------------------------
@@ -75,7 +75,6 @@ character(len=19), intent(out) :: vect_elem_cont, vect_elem_fric
 ! In  time_prev        : previous time
 ! In  time_curr        : current time
 ! In  disp_cumu_inst   : displacement increment from beginning of current time
-! In  disp_newt_curr   : displacement solution for current Newton step
 ! Out vect_elem_cont   : elementary vectors for contact
 ! Out vect_elem_cont   : elementary vectors for friction
 !
@@ -122,7 +121,7 @@ character(len=19), intent(out) :: vect_elem_cont, vect_elem_fric
         call nmelco_prep('VECT'   ,&
                          mesh     , model    , ds_material, ds_contact,&
                          disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
-                         disp_newt_curr,nbin     , lpain    , lchin    ,&
+                         nbin     , lpain    , lchin    ,&
                          option   , time_prev, time_curr , ds_constitutive)
 ! ----- <LIGREL> for contact elements
         ligrel = ds_contact%ligrel_elem_cont

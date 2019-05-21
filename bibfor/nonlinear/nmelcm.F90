@@ -87,7 +87,7 @@ character(len=19), intent(out) :: matr_elem
     character(len=16) :: option
     aster_logical :: l_cont_lac, l_all_verif, l_xfem_czm, l_xthm
     character(len=19) :: disp_prev, vite_prev, acce_prev, vite_curr, varc_prev, varc_curr
-    character(len=19) :: disp_cumu_inst, disp_newt_curr
+    character(len=19) :: disp_cumu_inst
     character(len=19) :: time_prev, time_curr
 !
 ! --------------------------------------------------------------------------------------------------
@@ -107,7 +107,6 @@ character(len=19), intent(out) :: matr_elem
 ! - Get hat variables
 !
     call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst)
-    call nmchex(hval_algo, 'SOLALG', 'DDEPLA', disp_newt_curr)
     call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
     call nmchex(hval_incr, 'VALINC', 'VITMOI', vite_prev)
     call nmchex(hval_incr, 'VALINC', 'ACCMOI', acce_prev)
@@ -135,7 +134,7 @@ character(len=19), intent(out) :: matr_elem
         call nmelco_prep('MATR'   ,&
                          mesh     , model    , ds_material, ds_contact,&
                          disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
-                         disp_newt_curr, nbin     , lpain    , lchin    ,&
+                         nbin     , lpain    , lchin    ,&
                          option   , time_prev, time_curr , ds_constitutive,&
                          ccohes   , xcohes)
 ! ----- <LIGREL> for contact elements
