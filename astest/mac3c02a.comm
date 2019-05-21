@@ -33,6 +33,7 @@ RESU = CALC_MAC3COEUR( TYPE_COEUR    = 'TEST',
                        TABLE_N       =  tabn,
                        MAILLAGE_N    =  MA1,
                        RESU_DEF     =  CO('RES_LM'),
+                       TYPE_DEFORMATION = 'GROT_GDEP',
                        LAME          = _F( UNITE_THYC    =  32,
                                            ))
 
@@ -328,7 +329,6 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
            VALE_REFE= 1000*val7,
            NOM_PARA ='CU_AB_E',
            TABLE=TAB30,
-           TOLE_MACHINE = 1.E-5,
            FILTRE=_F(NOM_PARA='COOR_X',
                      VALE=2.18074),
            )

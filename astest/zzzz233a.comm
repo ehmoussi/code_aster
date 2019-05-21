@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ TAB_MLE2=POST_DYNA_ALEA( FRAGILITE=(_F(TABL_RESU=TAB2,
                          TITRE = 'courbe 2', INFO=2, );
 
 # tests
-TEST_TABLE(VALE_CALC=0.357545130,
+TEST_TABLE(VALE_CALC=0.3575451304092581,
            NOM_PARA='AM',
            TABLE=TAB_MLE,)
 
@@ -84,7 +84,7 @@ TEST_TABLE(VALE_CALC=0.403975691542,
 #           )
 
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC= 3.31235876E-04,
+           VALE_CALC= 0.02836815301046902,
            NOM_PARA='0.5',
            TABLE=TAB_MLE,
            FILTRE=_F(CRITERE='RELATIF',
@@ -92,7 +92,7 @@ TEST_TABLE(CRITERE='RELATIF',
                      VALE=0.20000000000000001,),
            )
 
-TEST_TABLE(VALE_CALC=0.090855784221153,
+TEST_TABLE(VALE_CALC=0.26579213893769094,
            NOM_PARA='1.0',
            TABLE=TAB_MLE,
            FILTRE=_F(CRITERE='RELATIF',
@@ -142,7 +142,7 @@ TEST_TABLE(CRITERE='RELATIF',
                      VALE=0.2,),
            )
 
-TEST_TABLE(VALE_CALC=6.09521E-01,
+TEST_TABLE(VALE_CALC=0.6095208435265016,
            NOM_PARA='PFA',
            TABLE=TAB_REG,
            FILTRE=_F(CRITERE='RELATIF',

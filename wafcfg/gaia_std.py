@@ -37,13 +37,13 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20190320')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190507')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env['ADDMEM'] = 1000
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
-    TFELVERS = '3.1.1'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
+    TFELVERS = '3.2.1'
     self.env.TFELHOME = TFELHOME
     self.env.TFELVERS = TFELVERS
 
