@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,6 @@ implicit none
 #include "asterfort/titred.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/deprecated_keyw.h"
     character(len=1) :: niv, st, base
     character(len=*) :: nomcon, nomcha, nomobj, motfac, formr
     integer :: iocc
@@ -103,7 +102,6 @@ implicit none
         call jeveuo('&&TITRE .TAMPON.ENTREE', 'E', ldon)
         call jeveuo('&&TITRE .LONGUEUR', 'E', llon)
     else
-        call deprecated_keyw('TITRE')
 !        --- TITRE UTILISATEUR ---
         call wkvect('&&TITRE .TAMPON.ENTREE', 'V V K80', nbtitr, ldon)
         call wkvect('&&TITRE .LONGUEUR     ', 'V V I  ', nbtitr, llon)
