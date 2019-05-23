@@ -164,4 +164,5 @@ extern "C" void DEFS( WRITE33HEADER, write33header, const char *fileName, STRING
     char *cFileName = MakeCStrFromFStr( (char*)fileName, lenF );
     std::ofstream ofs( cFileName );
     ofs.write( reinterpret_cast< const char * >( EMPTY_FILE_3_3 ), sizeof( EMPTY_FILE_3_3 ) );
+    ofs.close();
 }

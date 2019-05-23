@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
 
 MAIL=LIRE_MAILLAGE(UNITE=20, FORMAT='MED',);
@@ -75,27 +75,10 @@ RESUTY=STAT_NON_LINE(
     SOLVEUR=_F(METHODE='MUMPS', ),
 )
 
-
-NomFicMed  = './REPE_OUT/sief_elga.med'
-NomFicDump = './REPE_OUT/sief_elga.dump'
-ftmp       = './REPE_OUT/tmp.dump'
-
-unit = DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=NomFicMed, ACCES='NEW', TYPE='LIBRE')
-IMPR_RESU(FORMAT='MED',UNITE=unit,
+IMPR_RESU(
+    FORMAT='MED',
     RESU=_F(RESULTAT=RESUTY, CARA_ELEM=CAREL,
             GROUP_MA=('TOUT',), NOM_CHAM =("SIEF_ELGA",), NOM_CMP=('SIXX',),),
-)
-DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
-DETRUIRE(CONCEPT=_F(NOM=unit,),)
-
-EXEC_LOGICIEL(
-    LOGICIEL="mdump3 {0} NODALE FULL_INTERLACE 1 | sed '1,20d'> {1}".format(NomFicMed, NomFicDump),
-    SHELL='OUI')
-
-TEST_FICHIER(
-    FICHIER     = NomFicDump,
-    NB_VALE     =  122354,
-    VALE_CALC   =  27965091700.3,
 )
 
 FIN()
