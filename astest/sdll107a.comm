@@ -1705,13 +1705,13 @@ REP2=RECU_FONCTION(    INTE_SPEC=INTERS,
                     NUME_ORDRE_I = 2,
                       )
 
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.10075246,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.09978293123949,
                          VALE_REFE=0.10000000000000001,
                          REFERENCE='NON_DEFINI',
                          VALE_PARA=2.0,
                          PRECISION=0.10000000000000001,
                          FONCTION=REP1,),
-                      _F(VALE_CALC=0.02317516,
+                      _F(VALE_CALC=0.02582628020341,
                          VALE_REFE=0.025000000000000001,
                          REFERENCE='NON_DEFINI',
                          VALE_PARA=2.0,
@@ -1892,7 +1892,7 @@ TEST_TABLE(VALE_CALC=0.5,
 # attention : le comportement du generateur de nombres aleatoires
 # (module random) a change entre la version 2.2 de python et la
 # version 2.3. Les resultats s en trouvent un peu affectes.
-TEST_TABLE(VALE_CALC=2.3952571718236E-05,
+TEST_TABLE(VALE_CALC=2.6864241591119437E-05,
          NOM_PARA='ECART_TYPE',
          TABLE=TT,
          FILTRE=(_F(NOM_PARA='CALCUL',
@@ -1902,7 +1902,7 @@ TEST_TABLE(VALE_CALC=2.3952571718236E-05,
                  ),
          )
 
-TEST_TABLE(VALE_CALC=2.3953796924052E-05,
+TEST_TABLE(VALE_CALC=2.6866698925900486E-05,
          NOM_PARA='RMS',
          TABLE=TT,
          FILTRE=(_F(NOM_PARA='CALCUL',
@@ -1912,7 +1912,7 @@ TEST_TABLE(VALE_CALC=2.3953796924052E-05,
                  ),
          )
 
-TEST_TABLE(VALE_CALC=23.953796924052,
+TEST_TABLE(VALE_CALC=26.866698925900497,
          NOM_PARA='RMS_T_TOTAL',
          TABLE=TT,
          FILTRE=(_F(NOM_PARA='CALCUL',
@@ -1996,11 +1996,8 @@ REP3=RECU_FONCTION(    INTE_SPEC=INT2,
                     NUME_ORDRE_I = 1,
                       )
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=4.489358E-08,                         #7.390728E-08
-                        VALE_REFE=4.49E-08,                             #7.40E-08
-                        REFERENCE='NON_DEFINI',
+TEST_FONCTION(VALEUR=_F(VALE_CALC=1.703444119384E-07,                         #7.390728E-08
                         VALE_PARA=4.2000000000000002,
-                        PRECISION=1.E-2,
                         FONCTION=REP3,),
                 )
 

@@ -37,7 +37,7 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20190315')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20190513')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0',
                                        '-Wno-literal-suffix'])
@@ -45,8 +45,8 @@ def configure(self):
     # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
     self.env['ADDMEM'] = 600
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
-    TFELVERS = '3.1.1'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
+    TFELVERS = '3.2.1'
     self.env.TFELHOME = TFELHOME
     self.env.TFELVERS = TFELVERS
 

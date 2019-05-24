@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -85,7 +85,9 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
                     PRESENT_PRESENT("TRAC_DIR","DIRECTION"),
                     EXCLUS("TRAC_DIR","TRAC_NOR"),
                     PRESENT_PRESENT("TRAC_DIR","NOM_CMP"),
-                    PRESENT_PRESENT("TRAC_NOR","NOM_CMP"),),
+                    PRESENT_PRESENT("TRAC_NOR","NOM_CMP"),
+                    ENSEMBLE('MOMENT','POINT'),
+                    PRESENT_PRESENT('MOMENT','RESULTANTE'),),
 
            INTITULE        =SIMP(statut='f',typ='TXM',),
            TYPE            =SIMP(statut='f',typ='TXM',max=1,
@@ -97,7 +99,11 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
            NOM_CMP         =SIMP(statut='f',typ='TXM',max='**'),
            INVARIANT       =SIMP(statut='f',typ='TXM',into=("OUI",),),
            ELEM_PRINCIPAUX =SIMP(statut='f',typ='TXM',into=("OUI",),),
-           RESULTANTE      =SIMP(statut='f',typ='TXM',max='**',into=("DX","DY","DZ")),
+           RESULTANTE      =SIMP(statut='f',typ='TXM',max='**',into=("DX","DY","DZ","NXX","NYY","NXY")),
+
+           MOMENT          =SIMP(statut='f',typ='TXM',max='**',into=("DRX","DRY","DRZ","MXX","MYY","MXY")),
+           POINT           =SIMP(statut='f',typ='R',max='**'),
+
            TRAC_NOR        =SIMP(statut='f',typ='TXM',into=("OUI",)),
            TRAC_DIR        =SIMP(statut='f',typ='TXM',into=("OUI",)),
            DIRECTION       =SIMP(statut='f',typ='R',max='**'),

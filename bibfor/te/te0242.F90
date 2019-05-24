@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -137,7 +137,6 @@ subroutine te0242(option, nomte)
 !
                 ij = imattt - 1
                 do i = 1, nno
-!DIR$ IVDEP
                     do j = 1, nno
                         ij = ij + 1
                         mt(c(ise,i),c(ise,j)) = mt(&
@@ -173,7 +172,6 @@ subroutine te0242(option, nomte)
 !
                 ij = imattt - 1
                 do i = 1, nno
-!DIR$ IVDEP
                     do j = 1, nno
                         ij = ij + 1
                         mt(c(ise,i),c(ise,j)) = mt(&
