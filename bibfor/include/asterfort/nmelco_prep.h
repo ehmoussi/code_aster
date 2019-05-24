@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ interface
     subroutine nmelco_prep(calc_type,&
                            mesh     , model    , ds_material, ds_contact,&
                            disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
-                           disp_newt_curr,nbin     , lpain    , lchin    ,&
+                           nbin     , lpain    , lchin    ,&
                            option   , time_prev, time_curr , ds_constitutive,&
                            ccohes_  , xcohes_)
         use NonLin_Datastructure_type
@@ -34,7 +34,6 @@ interface
         character(len=19), intent(in) :: acce_prev
         character(len=19), intent(in) :: vite_curr
         character(len=19), intent(in) :: disp_cumu_inst
-        character(len=19), intent(in) :: disp_newt_curr
         integer, intent(in) :: nbin
         character(len=8), intent(out) :: lpain(nbin)
         character(len=19), intent(out) :: lchin(nbin)

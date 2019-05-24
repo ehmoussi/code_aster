@@ -1387,13 +1387,12 @@ def IniGrace(fich):
 
 
 def is_binary(fname):
-    """Tell if a file appears to be binary (containing a NULL byte)
-    Note: UTF-16 files are reported as binary."""
-    fobj = open(fname, 'rb')
-    try:
-        for block in fobj:
-            if b'\0' in block:
-                return True
-    finally:
-        fobj.close()
+    """Tell if a file appears to be binary.
+    All non UTF-8 files are considered binary.
+    """
+    with open(fname, 'rb') as fobj:
+        try:
+            fobj.read().decode('utf-8')
+        except UnicodeDecodeError:
+            return True
     return False

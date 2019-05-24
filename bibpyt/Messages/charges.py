@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     1 : _("""
@@ -151,10 +149,6 @@ Le chargement FORCE_SOL ne peut pas être de type Dirichlet différentiel.
 
     53 : _("""
 Le chargement FORCE_SOL ne peut pas être une fonction.
-"""),
-
-    54 : _("""
-Le chargement FORCE_SOL ne doit pas avoir de fonction multiplicatrice.
 """),
 
     55 : _("""

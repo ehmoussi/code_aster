@@ -119,7 +119,8 @@ def build_libaster(self, shenv):
     if shenv.BUILD_MFRONT:
         uses.append('astermfront')
     # {bibfor, bibc, bibcxx}/*.o
-    libasterfor = ['asterbibfor%d' % i for i in range(shenv.NUM_BIBFOR)]
+    nblib = max(1, shenv.NUM_BIBFOR)
+    libasterfor = ['asterbibfor%d' % i for i in range(nblib)]
     self(
         features = 'cxx cxxshlib',
             name = 'asterlib',
