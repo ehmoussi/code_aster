@@ -26,7 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
-#include "asterfort/gnomsd.h"
+#include "asterfort/licrsd_save.h"
 #include "asterfort/CreateInOutDS_M.h"
 #include "asterfort/CreateInOutDS_T.h"
 !
@@ -47,7 +47,6 @@ type(NL_DS_InOut), intent(out) :: ds_inout
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=19) :: list_load_resu
-    character(len=24) :: noobj
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,9 +73,7 @@ type(NL_DS_InOut), intent(out) :: ds_inout
 !
 ! - Generate name of list of loads saved in results datastructure
 !
-    noobj = '12345678'//'.1234'//'.EXCIT'
-    call gnomsd(' ', noobj, 10, 13)
-    list_load_resu = noobj(1:19)
+    call licrsd_save(list_load_resu)
     ds_inout%list_load_resu = list_load_resu
 !
 ! - Specific parameters

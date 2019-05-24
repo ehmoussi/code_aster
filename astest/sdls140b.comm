@@ -17,7 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',), DEBUG=_F(SDVERI='NON'));
+
+# SDVERI is too much expensive
 
 Esol = 18885000000.0;
 
@@ -225,7 +227,9 @@ ONDEP2=AFFE_CHAR_MECA_F(MODELE=MODELE,
 #------------------------------------------------------------------
 
 
+# SDVERI only for this (issue28868)
 
+DEBUG(SDVERI='OUI')
 CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
                   TYPE_RESU='DYNA_TRANS',
                   CONV_CHAR=_F(MATR_RIGI=RIGI,
@@ -244,6 +248,8 @@ CHA_ON2=CREA_RESU(OPERATION='CONV_RESU',
                           LIST_INST=LINST,
                           RESU_INIT=CHA_ON),
                 );
+
+DEBUG(SDVERI='NON')
 
 EVOL_CH=AFFE_CHAR_MECA(MODELE=MODELE,
                         EVOL_CHAR=CHA_ON2,);
