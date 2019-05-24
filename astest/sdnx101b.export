@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification parallel
 
 F comm sdnx101b.comm D 1
+F comm sdnx101b.com1 D 1
 F mmed sdnx101a.mmed D 20
