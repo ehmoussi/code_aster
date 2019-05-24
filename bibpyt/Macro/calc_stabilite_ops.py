@@ -40,6 +40,7 @@ def calc_stabilite_ops(self, **args):
 
     # On importe les definitions des commandes a utiliser dans la macro
     EXTR_TABLE = self.get_cmd('EXTR_TABLE')
+    CREA_TABLE = self.get_cmd('CREA_TABLE')
 
     t_mnl = args['MODE_NON_LINE'].EXTR_TABLE()
     nbord = len(t_mnl.rows)
@@ -47,9 +48,9 @@ def calc_stabilite_ops(self, **args):
 
     rows_tab = []
     t_res = Table(rows=rows_tab,
-                        para=t_mnl.para,
-                        typ= t_mnl.type,
-                        titr='Table extraite')
+                  para=t_mnl.para,
+                  typ= t_mnl.type,
+                  titr='Table extraite')
 
     if FILTRE:
         if FILTRE[0]['NUME_ORDRE']:
@@ -176,7 +177,7 @@ def calc_stabilite_ops(self, **args):
         DETRUIRE = self.get_cmd('DETRUIRE')
         DETRUIRE(CONCEPT=_F(NOM=args['MODE_NON_LINE']), INFO=1)
 
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
+   
     tab = t_res.dict_CREA_TABLE()
     t_resu = CREA_TABLE(TYPE_TABLE='TABLE_CONTENEUR', **tab)
 

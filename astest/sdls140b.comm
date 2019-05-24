@@ -1018,6 +1018,28 @@ EVOLCHSD=DEFI_CHAR_SOL (
    LIST_INST=LINST,
                 );
 
+CHAONCD1=CREA_RESU(OPERATION='CONV_CHAR',
+                  TYPE_RESU='DYNA_TRANS',
+                  CONV_CHAR=_F(MATR_RIGI=RIGIDITB,
+                          CHARGE=(EVOLCHSC,EVOLCHSD),
+                          PRECISION=1.E-6,CRITERE='RELATIF',
+                          LIST_INST=LINST,),
+                );
+
+CHAONCD2=CREA_RESU(OPERATION='CONV_RESU',
+                  TYPE_RESU='EVOL_CHAR',
+                  CONV_RESU=_F(
+                          MATR_RIGI=RIGIDITB, 
+                          NOM_CHAM_INIT='DEPL',
+                          COEF=1.0,
+                          PRECISION=1.E-6,CRITERE='RELATIF',
+                          LIST_INST=LINST,
+                          RESU_INIT=CHAONCD1),
+                );
+
+EVOCHSCD=AFFE_CHAR_MECA(MODELE=MODELE,
+                        EVOL_CHAR=CHAONCD2,);
+
 BlancS4=DYNA_VIBRA(BASE_CALCUL='PHYS',
                   TYPE_CALCUL='TRAN',
                   MODELE=MODELE,
@@ -1029,8 +1051,9 @@ BlancS4=DYNA_VIBRA(BASE_CALCUL='PHYS',
                   INCREMENT=_F(LIST_INST=LINST,),
                   EXCIT=(
                          _F(  CHARGE = ONDES1B),
-                         _F(  CHARGE = EVOLCHSC),
-                         _F(  CHARGE = EVOLCHSD),
+                         #_F(  CHARGE = EVOLCHSC),
+                         #_F(  CHARGE = EVOLCHSD),
+                         _F(  CHARGE = EVOCHSCD),
                          ),
                  );
 

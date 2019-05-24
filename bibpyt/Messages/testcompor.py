@@ -17,28 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-"""
-Configuration using Intel compilers
 
-Use automatically MPI wrappers if opt.parallel was previously set.
+cata_msg = {
 
-You may want to add the following line in your ``wafcfg/`` file to reduce
-the memory consumption during link::
+    1 : _("""TEST_COMPOR
+La liste de réels fournie par le mot-clé PREC_ZERO doit être de la même
+longueur que la liste du mot-clé VARI_TEST.
+"""),
 
-    self.env.append_value('LINKFLAGS', ('--no-keep-memory'))
 
-or set the environment variable before running ``./waf configure``::
-
-    export LINKFLAGS=--no-keep-memory
-"""
-
-def configure(self):
-    opts = self.options
-    mpi = 'mpi' if opts.parallel else ''
-    # Configure.find_program uses first self.environ, then os.environ
-    self.environ['FC'] = mpi + 'ifort'
-    self.environ['CC'] = mpi + 'icc'
-    self.environ['CXX'] = mpi + 'icpc'
-
-    # choose a consistent boost toolset
-    opts.boost_toolset = 'intel'
+}

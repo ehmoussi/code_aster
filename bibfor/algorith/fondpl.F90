@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ subroutine fondpl(modele, mate, numedd, neq, chondp,&
 #include "asterfort/mecact.h"
 #include "asterfort/reajre.h"
 !
-    integer :: i, ibid, iret, j,   jvaond
+    integer :: i, ibid, iret, j,  jvaond
     integer :: nchond, neq, npain
     character(len=8) :: lpain(5), lpaout(1), chondp(nchond)
     character(len=24) :: modele, mate, numedd, vecond
@@ -47,9 +47,9 @@ subroutine fondpl(modele, mate, numedd, neq, chondp,&
 !-----------------------------------------------------------------------
     call jemarq()
 !
-    do 10 i = 1, neq
+    do i = 1, neq
         foonde(i) = 0.d0
-10  end do
+    end do
 !
     chinst = '&&CHINST'
     call mecact('V', chinst, 'MODELE', modele(1:8)//'.MODELE', 'INST_R',&
@@ -73,7 +73,7 @@ subroutine fondpl(modele, mate, numedd, neq, chondp,&
     lpaout(1) = 'PVECTUR'
     lchout(1) = vecond
 !
-    do 30 i = 1, nchond
+    do i = 1, nchond
         call exisd('CARTE', chondp(i)//'.CHME.ONDPL', iret)
         call exisd('CARTE', chondp(i)//'.CHME.ONDPR', ibid)
         if (iret .ne. 0 .and. ibid .ne. 0) then
@@ -92,14 +92,13 @@ subroutine fondpl(modele, mate, numedd, neq, chondp,&
             call jeveuo(vaonde, 'L', jvaond)
             call jeveuo(zk24(jvaond) (1:19)//'.VALE', 'L', vr=vale)
 !
-            do 20 j = 1, neq
+            do j = 1, neq
                 foonde(j) = foonde(j) + vale(j)
-20          continue
+            end do
             call detrsd('CHAMP_GD', zk24(jvaond) (1:19))
 !
         endif
-30  end do
-!
+    end do
 !
     call jedema()
 end subroutine

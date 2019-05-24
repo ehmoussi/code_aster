@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -59,8 +59,10 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
         b_matr_tran_phys= BLOC(condition = """equal_to("TYPE_CALCUL", 'TRAN') and equal_to("BASE_CALCUL", 'PHYS')""",
         MATR_MASS       =     SIMP(statut='o',typ=(matr_asse_depl_r),),
         MATR_RIGI       =     SIMP(statut='o',typ=(matr_asse_depl_r),),
-        MATR_AMOR       =     SIMP(statut='f',typ=(matr_asse_depl_r),),),
-
+        MATR_AMOR       =     SIMP(statut='f',typ=(matr_asse_depl_r),),
+        OBSERVATION     =     C_OBSERVATION('DYNAVIBRA'),
+        ),
+        
         # Reduced (generalized) basis, transient calculation
         b_matr_tran_gene= BLOC(condition = """equal_to("TYPE_CALCUL", 'TRAN') and equal_to("BASE_CALCUL", 'GENE')""",
         MATR_MASS       =     SIMP(statut='o',typ=(matr_asse_gene_r),),

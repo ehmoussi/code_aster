@@ -254,6 +254,14 @@ Ne renseignez pas le mot-clé COMPORTEMENT/%(k2)s, afin de sélectionner l'algor
   Assurez-vous que les rotations ne soient pas très grandes au risque de résultats faux.
 """),
 
+    48: _("""
+  Option activée :  <%(k1)s>  pour les <%(k2)s>
+  Alarme :
+  La modélisation DKT n'est compatible avec DEFORMATION='GROT_GDEP' que lorsque RELATION = 'ELAS' est utilisé.
+  Pour prendre en compte correctement les grands déplacements, et surtout les grandes rotations, 
+  il est recommandé d’utiliser la modélisation COQUE_3D, avec DEFORMATION='GROT_GDEP'.
+"""),
+
     53: _("""
  ECRO_LINE : la plasticité parfaite n'est pas autorisée !
              Par conséquent la pente d'écrouissage H doit être strictement positive.

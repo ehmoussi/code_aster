@@ -133,6 +133,9 @@ def build(self):
                                  indent=4, separators=(',', ': ')),
         **dict_conv
     )
+    # without substitution
+    self.install_files(self.env.ASTERDATADIR, ["post_install"],
+                       chmod=Utils.O755)
     # install files from data repository
     if self.env.data_path:
         data_path = osp.relpath(self.env.data_path,

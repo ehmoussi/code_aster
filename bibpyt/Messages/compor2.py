@@ -308,6 +308,11 @@ Risques & conseils :
 
     53 : _("""Maille: %(k1)-8s - Nombre de variables internes précédent: %(i1)d - Nombre de variables internes courant: %(i2)d"""),
 
+    54: _("""
+Erreur lors de la vérification de la cohérence entre les champs de contrainte.
+
+On a affiché ci-dessus la liste des mailles pour lesquelles le nombre de sous-points est différent.
+"""),
 
     70: _("""
 #---------------------------------------------------------------------------------------------------------------------------
