@@ -35,6 +35,7 @@ pipeline {
                 sh "[ -e waf_std ] || ln -s waf_variant waf_std"
                 sh '''#!/bin/bash -l
                 source $HOME/dev/codeaster/devtools/etc/env_unstable.sh
+                ./waf_std distclean
                 ./waf_std configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/std
                 ./waf_std -j 4 install
                 '''
@@ -44,6 +45,7 @@ pipeline {
                 sh "[ -e waf_mpi ] || ln -s waf_variant waf_mpi"
                 sh '''#!/bin/bash -l
                 source $HOME/dev/codeaster/devtools/etc/env_unstable_mpi.sh
+                ./waf_mpi distclean
                 ./waf_mpi configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/mpi
                 ./waf_mpi -j 4 install
                 '''
