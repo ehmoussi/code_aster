@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -120,6 +120,7 @@ CHAR_MECA_TEMP_R = Option(
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'THM'),)),
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.ABSO,'OUI'),)),
 #     Les elements d'interface ne sont pas concernes (issue24099) :
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.INTERFACE,'OUI'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.FLUIDE,'OUI'),)),
