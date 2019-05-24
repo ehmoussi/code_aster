@@ -26,11 +26,15 @@ import sys
 
 def options(self):
     self.load('compiler_fc')
+    default_nblib = 0 if sys.platform != 'darwin' else 3
     group = self.get_option_group("code_aster options")
     group.add_option('--num-bibfor', dest='num_bibfor', type=int,
-                    action='store', default=10,
-                    help="number of libraries to store fortran objects "
-                         "(default: 10)")
+                    action='store', default=0, metavar='NUM',
+                    help="number of libraries to store fortran objects. "
+                         "0: only uses '.o', 1: builds one static lib, "
+                         ">1: builds several shared libs "
+                         "(default: {0})"
+                         .format(default_nblib))
 
 def configure(self):
     self.load('compiler_fc')
@@ -67,13 +71,23 @@ def build(self):
     # split object files in `NUM_BIBFOR` libs
     allF90 = get_srcs('**/*.F90')
     nblib = env['NUM_BIBFOR']
+    if type(nblib) is not int:
+        raise Errors.WafError("'--num-bibfor' not defined. "
+                              "Please run './waf configure'")
+    if nblib == 0:
+        fclib = ''
+    elif nblib == 1:
+        fclib = 'fcstlib'
+    else:
+        fclib = 'fcshlib'
+    nblib = max(1, nblib)
     nbobj = len(allF90) // nblib
     for i in range(nblib):
         last = (i + 1) * nbobj
         if i == nblib - 1:
             last = len(allF90)
         libF90 = allF90[i * nbobj:last]
-        self(features = 'fc fcshlib',
+        self(features = 'fc ' + fclib,
              name = 'asterbibfor%d' % i,
              target = 'bibfor%d' % i,
              source = libF90,

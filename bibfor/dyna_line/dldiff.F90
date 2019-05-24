@@ -22,7 +22,8 @@ subroutine dldiff(result, force1, lcrea, lamort, neq,&
                   vit0, acc0, fexte, famor, fliai,&
                   t0, nchar, nveca, liad, lifo,&
                   modele, mate, carele, charge, infoch,&
-                  fomult, numedd, nume, numrep, ds_energy)
+                  fomult, numedd, nume, numrep, ds_energy,&
+                  sd_obsv, mesh)
 !
 use NonLin_Datastructure_type
 !
@@ -53,6 +54,8 @@ implicit none
 #include "asterfort/uttcpu.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/nmobse.h"
+#include "asterfort/lobs.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -121,8 +124,10 @@ implicit none
     real(kind=8) :: r8bid
     integer :: vali(2)
     real(kind=8) :: valr(2)
-    aster_logical :: ener
+    aster_logical :: ener, l_obsv
     real(kind=8), pointer :: vale(:) => null()
+    character(len=19), intent(inout) :: sd_obsv
+    character(len=*), intent(in) :: mesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -310,6 +315,14 @@ implicit none
                     last_prperc = perc
                 end if
             end if
+
+            ! - SI OBSERVATION 
+            
+            l_obsv = ASTER_FALSE
+            call lobs(sd_obsv, ipas, temps, l_obsv)
+            if (l_obsv) then
+                call nmobse(mesh, sd_obsv  , temps)
+            endif
 !
 !
 ! 3.5. ==> VERIFICATION DU TEMPS DE CALCUL RESTANT

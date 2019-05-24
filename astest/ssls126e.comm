@@ -31,7 +31,7 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI',),
-      IGNORE_ALARM=('SUPERVIS_9','CALCULEL6_77'))
+      IGNORE_ALARM=('CALCULEL6_77'))
 
 print_results = True
 

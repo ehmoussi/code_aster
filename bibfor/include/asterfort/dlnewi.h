@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,8 @@ interface
                       famor, fliai, t0, nchar, nveca,&
                       liad, lifo, modele, mate, carele,&
                       charge, infoch, fomult, numedd, nume,&
-                      solveu, criter, chondp, nondp, numrep, ds_energy)
+                      solveu, criter, chondp, nondp, numrep, ds_energy,&
+                      sd_obsv, mesh)
         use NonLin_Datastructure_type
         integer :: nondp
         character(len=8) :: result
@@ -65,5 +66,7 @@ interface
         character(len=8) :: chondp(nondp)
         integer :: numrep
         type(NL_DS_Energy), intent(inout) :: ds_energy
+        character(len=19), intent(inout) :: sd_obsv
+        character(len=*), intent(in) :: mesh
     end subroutine dlnewi
 end interface
