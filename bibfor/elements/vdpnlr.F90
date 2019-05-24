@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -152,7 +152,6 @@ subroutine vdpnlr(option, nomte, codret)
     real(kind=8) :: vrigrc ( 2601 ), vrigri ( 2601 )
     real(kind=8) :: knn
     integer :: iup, ium
-    integer :: iud
     real(kind=8) :: b1su ( 5 , 51 ), b2su ( 5 , 51 )
     real(kind=8) :: b1sum ( 5 , 51 ), b2sum ( 5 , 51 )
     real(kind=8) :: b1src ( 2 , 51 , 4 )
@@ -380,11 +379,6 @@ subroutine vdpnlr(option, nomte, codret)
 !---- A L INSTANT PLUS  ( DEPUIS LE PAS PRECEDENT PAS PRECEDENT )
 !
     call jevech('PDEPLPR', 'L', iup)
-!______________________________________________________________________
-!
-!---- ENTRE DEUX ITERATIONS
-!
-    call jevech('PDDEPLA', 'L', iud)
 !
 !______________________________________________________________________
 !

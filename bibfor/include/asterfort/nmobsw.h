@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,18 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmobsv(meshz     , modelz     , sddisc         , sd_obsv  , nume_time,&
-                      cara_elemz, ds_material, ds_constitutive, valinc   , ds_inout  )
+    subroutine nmobsw(sd_obsv  , ds_inout  )
         use NonLin_Datastructure_type
-        character(len=*), intent(in) :: meshz
         character(len=19), intent(in) :: sd_obsv
-        integer, intent(in) :: nume_time
-        character(len=19), intent(in) :: sddisc
-        character(len=*), intent(in) :: cara_elemz
-        type(NL_DS_Material), intent(in) :: ds_material
-        character(len=*), intent(in) :: modelz
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19), intent(in) :: valinc(*)
         type(NL_DS_InOut), optional, intent(in) :: ds_inout
-    end subroutine nmobsv
+    end subroutine nmobsw
 end interface

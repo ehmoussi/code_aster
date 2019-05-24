@@ -77,7 +77,7 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
     character(len=8) :: repons
     aster_logical :: l_one_elem, l_elem_bound
     character(len=24) :: ligrmo
-    character(len=8) :: partit
+    character(len=8) :: partit, ext_dkt
     mpi_int :: nb_proc, mpicou
     aster_logical :: l_auto_elas, l_auto_deborst, l_comp_erre
 !
@@ -168,6 +168,17 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
             texte(1) = defo_comp
             texte(2) = 'COQUE_3D'
             call utmess('A', 'COMPOR1_47', nk = 2, valk = texte)
+        endif
+!
+! ----- Check if DKT+GROT_GDEP is activated
+!
+        call dismoi('MODELISATION', model, 'MODELE', repk=ext_dkt)
+        if ( (ext_dkt(1:3) .eq. 'DKT') .and. (ext_dkt(1:4) .ne. 'DKTG') ) then
+            if ((defo_comp .eq. 'GROT_GDEP') .and. (rela_comp(1:4).ne.'ELAS')) then
+                texte(1) = defo_comp
+                texte(2) = 'DKT'
+                call utmess('F', 'COMPOR1_48', nk = 2, valk = texte)
+            endif
         endif
 !
         call lcdiscard(rela_comp_py)

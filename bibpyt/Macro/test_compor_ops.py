@@ -35,7 +35,7 @@ from code_aster.Commands import (CALC_FONCTION, CALC_TABLE, DEBUG,
 from code_aster.Cata.Syntax import _F
 from Contrib.testcomp_utils import relative_error, vect_prod_rot
 from Contrib.veri_matr_tang import VERI_MATR_TANG
-from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
+from Utilitai.Utmess import MasquerAlarme, RetablirAlarme, UTMESS
 
 
 def rename_components_tmp(i, N_pas, label_cal, ch_param, RESU, __RS_I):
@@ -608,7 +608,9 @@ def test_compor_ops(self, **args):
             LIST_TOLE = 4 * [1.E-10] + [1.E-1] + (Ncal - 5) * [1.E-2] + [1.E-8]
 
         if args.get('PREC_ZERO') is not None:
-            PREC_ZERO = args.get('PREC_ZERO')
+            PREC_ZERO = args['PREC_ZERO']
+            if len(PREC_ZERO) != len(VARI_TEST):
+                UTMESS('F','TESTCOMPOR_1')
         else:
             PREC_ZERO = len(VARI_TEST) * [1.E-10]
 

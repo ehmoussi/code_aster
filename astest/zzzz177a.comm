@@ -263,6 +263,22 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.0,
                          FONCTION=DIFF,),
                       ),
               )
+# Test de création d'une table à partir d'une liste de concepts
+TB11=CREA_TABLE(LISTE=(_F(LISTE_CO=(TB1,FCT)),
+                       _F(LISTE_K=('Table1', 'Fonction'), PARA=('NOM_OBJET')),
+                       _F(LISTE_I=(1,2), PARA='Indice'),
+                      ),
+                TYPE_TABLE='TABLE_CONTENEUR',
+               )
+IMPR_TABLE(TABLE=TB11)
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC_I=2,
+           VALE_REFE_I=2,
+           NOM_PARA='Indice',
+           TABLE=TB11,
+           FILTRE=_F(NOM_PARA='NOM_OBJET',
+                     VALE_K='Fonction',),
+           )
 
 # Validation de la reunion de deux tables (merge) par
 # CALC_TABLE OPERATION=COMB
@@ -531,6 +547,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=7.4,
            VALE_REFE=7.4,
            TABLE=tcc1,
-           )  
+           ) 
+
                                           
 FIN();

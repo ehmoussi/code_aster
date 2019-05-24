@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,8 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
                   amort, lamort, nchar, nveca, lischa,&
                   charge, infoch, fomult, iaadve, ialifo,&
                   nondp, iondp, solveu, iinteg, t0,&
-                  nume, numrep)
+                  nume, numrep, ds_inout)
+use NonLin_Datastructure_type                  
 !
 implicit none
 !
@@ -47,6 +48,7 @@ implicit none
 #include "asterfort/rcmfmc.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/nonlinDSInOutCreate.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -109,6 +111,7 @@ implicit none
     character(len=8) :: blan8
     character(len=16) :: method, k16bid
     character(len=19) :: channo
+    type(NL_DS_InOut), intent(out) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -118,7 +121,7 @@ implicit none
     lamort = .true.
     amort = ' '
 !
-    call infniv(ifm, niv)
+    call infniv(ifm, niv)  
 !
 !====
 ! 2. LES DONNEES DU CALCUL
@@ -130,7 +133,7 @@ implicit none
 !
 ! 2.3. ==> CALCUL DES ENERGIES
 !
-    call wkvect('&&COMDLT.ENER      .VALE', 'V V R', 6, iener)
+    call wkvect('&&COMDLT.ENER      .VALE', 'V V R', 6, iener) 
 !
 ! 2.4. ==> --- LES MATRICES ---
     call getvid(' ', 'MATR_RIGI', scal=rigid, nbret=nr)
@@ -310,9 +313,16 @@ implicit none
 ! 4.4. ==> L'INSTANT INITIAL ET SON NUMERO D'ORDRE SI REPRISE
 !
     call dltp0(t0, nume)
+
 !
 ! --- RECUPERATION NUMERO REUSE - TABLE PARA_CALC
 !
     call nmarnr(result, 'PARA_CALC', numrep)
 !
+! 4.5. ==> pour OBSERVATION
+!   
+! - Create input/output management datastructure
+!
+    call nonlinDSInOutCreate('VIBR', ds_inout)
+ 
 end subroutine

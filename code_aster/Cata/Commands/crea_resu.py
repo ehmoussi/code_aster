@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -354,8 +354,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,
              CRITERE       =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
            ),
          ), # fin bloc b_comb_evol_char
-
-         b_char_evol_char= BLOC(condition = """equal_to("OPERATION", 'CONV_CHAR') and is_in('TYPE_RESU', 'DYNA_TRANS')""",
+         b_char_evol_char= BLOC(condition = """equal_to("OPERATION", 'CONV_CHAR') and is_in('TYPE_RESU', ('EVOL_CHAR', 'DYNA_TRANS'))""",
            CONV_CHAR      =FACT(statut='o',max=1,
              CHARGE       =SIMP(statut='o',typ=(char_meca,),max='**'),
              MATR_RIGI    =SIMP(statut='o',typ=matr_asse_depl_r,),

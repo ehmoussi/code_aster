@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,17 +42,24 @@ CREA_TABLE=OPER(nom="CREA_TABLE",op=36,sd_prod=crea_table_prod,
                 reentrant='n',
 
            regles=(EXCLUS('FONCTION','LISTE','RESU'),),
-
+           
            LISTE=FACT(statut='f',max='**',
                  fr=tr("Creation d'une table a partir de listes"),
-                 regles=(UN_PARMI('LISTE_I','LISTE_R','LISTE_K')),
-                        PARA     =SIMP(statut='o',typ='TXM'),
+                 regles=(UN_PARMI('LISTE_I','LISTE_R','LISTE_K', 'LISTE_CO'),
+                         ),
+                  b_liste_irk=BLOC(condition=""" not exists("LISTE_CO")""",
+                                PARA     =SIMP(statut='o',typ='TXM'),),
                         TYPE_K   =SIMP(statut='f',typ='TXM',defaut='K8',
                                     into=('K8','K16','K24')),
                         NUME_LIGN=SIMP(statut='f',typ='I',max='**'),
                         LISTE_I  =SIMP(statut='f',typ='I',max='**'),
                         LISTE_R  =SIMP(statut='f',typ='R',max='**'),
                         LISTE_K  =SIMP(statut='f',typ='TXM', max='**'),
+                        LISTE_CO =SIMP(statut='f',typ=(matr_asse_gene_r, 
+                        matr_elem_depl_r, vect_elem_depl_r, matr_elem_temp_r, 
+                        vect_elem_temp_r, cham_gd_sdaster, cham_no_sdaster, 
+                        carte_sdaster, cham_elem, mode_meca, table_sdaster, 
+                        fonction_sdaster, fonction_c, nappe_sdaster), max='**'),
            ),
            FONCTION=FACT(statut='f',
                     fr=tr("Creation d'une table a partir d'une fonction"),
