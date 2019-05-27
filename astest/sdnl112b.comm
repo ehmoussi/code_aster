@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -628,7 +628,7 @@ IMPR_TABLE(  TABLE=T_04_001 )
 
 # LES VALEURS DE NON-REGRESSION SONT PAR RAPPORT A LA 13.1
 
-TEST_TABLE(VALE_CALC=4.94009213587E-08,
+TEST_TABLE(VALE_CALC=7.749214527642179E-08,#4.94009213587E-08,
            NOM_PARA='DOMM_CUMU',
            TABLE=T_04_001,
            TOLE_MACHINE=0.02, # Variabilité de 2% justifiée en raison de l'utilisation d'un chargement
