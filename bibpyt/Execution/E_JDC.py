@@ -287,7 +287,7 @@ class JDC:
         """
         d = {}
         for key, value in list(context.items()):
-            if key in ('aster', 'aster_core', '__builtins__'):
+            if key in ('aster', 'aster_core', '__builtins__', 'jdc'):
                 continue
             if type(value) in (types.ModuleType, type, types.FunctionType):
                 continue
@@ -311,6 +311,8 @@ class JDC:
             except:
                 # Si on ne peut pas pickler value on ne le met pas dans le
                 # contexte filtré
+                print("WARNING: can not pickle object: {0} {1}"
+                      .format(key, type(value)))
                 pass
         self.save_pickled_attrs(d)
         if self.info_level > 1:
