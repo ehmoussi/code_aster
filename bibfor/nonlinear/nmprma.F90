@@ -76,6 +76,8 @@ type(NL_DS_System), intent(in) :: ds_system
 integer :: numins
 type(NL_DS_Contact), intent(inout) :: ds_contact
 character(len=19) :: maprec, matass
+character(len=8) :: partit
+aster_logical :: ldist
 integer :: faccvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
@@ -139,7 +141,6 @@ integer :: faccvg, ldccvg
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
     aster_logical :: list_l_asse(20), list_l_calc(20)
     aster_logical :: l_contact_adapt,l_cont_cont
-    character(len=8) ::  kmpic1
     real(kind=8) ::  minmat=0.0, maxmat=0.0,exponent_val=0.0
 !
 ! --------------------------------------------------------------------------------------------------
@@ -294,11 +295,9 @@ integer :: faccvg, ldccvg
 !            write (6,*) "l_contact_adapt", &
 !                l_contact_adapt,ds_contact%update_init_coefficient
         if ((nint(ds_contact%update_init_coefficient) .eq. 0) .and. l_contact_adapt) then
-            call dismoi('MPI_COMPLET', matass, 'MATR_ASSE', repk=kmpic1)
-            if (kmpic1 .eq. 'NON') then
-                call sdmpic('MATR_ASSE', matass)
-            endif
-            call echmat(matass, ASTER_FALSE, minmat, maxmat)
+            call dismoi('PARTITION', modelz, 'MODELE', repk=partit)
+            ldist = partit .ne. ' '
+            call echmat(matass, ldist, minmat, maxmat)
             ds_contact%max_coefficient = maxmat
             if (abs(log(minmat)) .ne. 0.0) then
 
