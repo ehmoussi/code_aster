@@ -537,7 +537,7 @@ implicit none
 
                             ilag = zi(inuno2+ili-1) + nunoel - 1
                             ilag = ilag - nb_node
-                            zi(iddlag+2* (ilag-1)+1) = -zi(iddlag+3* ( ilag-1)+1 )*nddlb
+                            zi(iddlag+2* (ilag-1)+1) = -zi(iddlag+2* ( ilag-1)+1 )*nddlb
                         endif
                     end do
                 endif
