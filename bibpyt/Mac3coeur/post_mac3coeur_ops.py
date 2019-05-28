@@ -391,7 +391,7 @@ def post_mac3coeur_ops(self, **args):
     _inst = args.get('INST')
     _TAB_N = args.get('TABLE')
     if _typ_coeur[:5] == 'LIGNE' :
-      _longueur = self.get('NB_ASSEMBLAGE')
+      _longueur = args.get('NB_ASSEMBLAGE')
     else :
       _longueur=None
 

@@ -171,7 +171,7 @@ implicit none
                         else
                             ilag  = nb_lagr + i_node
                             nob   = zi(iddlag+ (ilag-1)*2)
-                            nddlb = zi(iddlag+ (ilag-1)*2+1)
+                            nddlb = -zi(iddlag+ (ilag-1)*2+1)
                             p_deeq(2*(i_equ-1)+1) = nob
                             p_deeq(2*(i_equ-1)+2) = nddlb
                             p_delg(i_equ) = -1
