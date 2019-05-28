@@ -310,8 +310,8 @@ RESU1=MECA_STATIQUE(MODELE=MODELEK,
 #------------------------------------------------------------------------
 
 # recuperation du nombre de fonds de fissure
-dict = NB_FOND.EXTR_TABLE().values()
-nb_fond = dict['NOMBRE'][0]
+values = NB_FOND.EXTR_TABLE().values()
+nb_fond = values['NOMBRE'][0]
 
 n=len(RI)
 SIF = [None] * n * nb_fond
@@ -399,21 +399,21 @@ for i in range(n) :
    for j in range(nb_fond) :
       k = i*nb_fond + j
       for itest in ltest :
-         ct = ct +1 
+         ct = ct +1
          TEST_TABLE(TABLE=SIF[k],
                     NOM_PARA='K1',
                     TYPE_TEST=itest,
-                    VALE_CALC=VAL_CALC[ct], VALE_REFE=K1REF,    
+                    VALE_CALC=VAL_CALC[ct], VALE_REFE=K1REF,
                     PRECISION=0.01 ,
                     REFERENCE='ANALYTIQUE')
 
 for j in range(nb_fond) :
       for itest in ltest :
-         ct = ct +1 
+         ct = ct +1
          TEST_TABLE(TABLE=SIF2[j],
                     NOM_PARA='K1',
                     TYPE_TEST=itest,
-                    VALE_CALC=VAL_CALC[ct], VALE_REFE=K1REF,    
+                    VALE_CALC=VAL_CALC[ct], VALE_REFE=K1REF,
                     PRECISION=0.01 ,
                     REFERENCE='ANALYTIQUE')
 
@@ -438,13 +438,13 @@ for j in range(nb_fond) :
       TEST_TABLE(TABLE=PK[j],
                  NOM_PARA='K1',
                  TYPE_TEST=itest,
-                 VALE_CALC=VAL_CALC[ct], VALE_REFE=K1REF,    
+                 VALE_CALC=VAL_CALC[ct], VALE_REFE=K1REF,
                  PRECISION=0.01 ,
                  REFERENCE='ANALYTIQUE')
-        
-# -------------------------------------------------------------   
-#            POST-TRAITEMENT POUR LA VISUALISATION X-FEM   
-# -------------------------------------------------------------   
+
+# -------------------------------------------------------------
+#            POST-TRAITEMENT POUR LA VISUALISATION X-FEM
+# -------------------------------------------------------------
 
 MA_XFEM=POST_MAIL_XFEM(MODELE= MODELEK,
                        INFO  = 2)
@@ -452,7 +452,7 @@ MA_XFEM=POST_MAIL_XFEM(MODELE= MODELEK,
 MOD_VISU=AFFE_MODELE(MAILLAGE=MA_XFEM,
                      AFFE=_F(TOUT='OUI',
                               PHENOMENE='MECANIQUE',
-                              MODELISATION='3D',),) 
+                              MODELISATION='3D',),)
 
 RES_XFEM=POST_CHAM_XFEM(MODELE_VISU = MOD_VISU,
                         RESULTAT    = RESU1,
@@ -462,5 +462,5 @@ IMPR_RESU(FORMAT='GMSH',
           RESU=_F(RESULTAT=RES_XFEM,
                   NOM_CHAM=('DEPL'),
                   ),);
- 
+
 FIN()

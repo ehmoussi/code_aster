@@ -141,7 +141,7 @@ for i in range(NCAL-1):
 
           print('i=',i, ' instant=', time, ' Temperature=',Ti)
 
-          list = DEFI_LIST_REEL(DEBUT=timem,
+          listinst = DEFI_LIST_REEL(DEBUT=timem,
                       INTERVALLE=(_F(JUSQU_A=time,NOMBRE=1,),),);
 
           RESU[i]=SIMU_POINT_MAT(COMPORTEMENT=_F(RELATION=compor,),
@@ -153,7 +153,7 @@ for i in range(NCAL-1):
                                         VALE_FONC=TIMP,
                                         VALE_REF=TREF),
                                         ),
-                                 INCREMENT=_F(LIST_INST = list, ),
+                                 INCREMENT=_F(LIST_INST = listinst, ),
                                  NEWTON=_F(REAC_ITER=1,),
                                  EPSI_IMPOSE=_F(EPXX=epsimp),
                                  EPSI_INIT=_F(EPXX=EXM, EPYY=0.,EPZZ=0.,EPXY=0.,EPXZ=0.,EPYZ=0.),
@@ -164,7 +164,7 @@ for i in range(NCAL-1):
           IMPR_TABLE(TABLE=RESU[i]);
 
           DETRUIRE ( CONCEPT =  _F (NOM =epsimp),);
-          DETRUIRE ( CONCEPT =  _F (NOM =list),);
+          DETRUIRE ( CONCEPT =  _F (NOM =listinst),);
 
           NOMPARA='VMIS'
           TCOMPR =CALC_TABLE(TABLE=U,ACTION=(

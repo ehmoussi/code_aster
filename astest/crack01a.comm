@@ -180,8 +180,8 @@ IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=RE_VISU))
 #----------------------------------------------------------------------
 
 NB_FOND=RECU_TABLE(CO=fiss_1,NOM_TABLE='NB_FOND_FISS')
-dict = NB_FOND.EXTR_TABLE().values()
-nb_fond = dict['NOMBRE'][0]
+values = NB_FOND.EXTR_TABLE().values()
+nb_fond = values['NOMBRE'][0]
 DETRUIRE(CONCEPT=_F(NOM=NB_FOND),INFO=1)
 
 G1 = [None]*nb_fond
