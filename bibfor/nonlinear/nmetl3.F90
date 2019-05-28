@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,6 +34,8 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcomp.h"
+#include "asterfort/sgcomp.h"
+
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -143,6 +145,13 @@ implicit none
 !
             if (field_type .eq. 'SIEF_ELGA') then
                 call nmsigi(ligrmo, compor, field_algo(1:19))
+                ! VERIFICATION DU NOMBRE DES SOUS POINTS
+                if (l_state_init) then
+                    call sgcomp(compor, field_algo, ligrmo, iret)
+                    if (iret .eq. 1) then
+                        call utmess('F', 'MECANONLINE5_58')
+                    endif
+                endif
             endif
 !
 ! --------- Check internal variables

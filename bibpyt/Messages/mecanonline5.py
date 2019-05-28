@@ -280,4 +280,15 @@ Il n'y a aucun degré de liberté de déplacement sur le modèle.
 De manière générale, PREDICTION = 'DEPL_CALCULE' est là pour éviter de devoir factoriser une matrice et gagner en temps de calcul. 
 Mais les limitations (problèmes de conditions limites) font que cette fonctionnalité n'est pas à recommander et qu'on lui préférera par exemple un PREDICTION='ELASTIQUE'.
 """),
+
+    58 : _("""
+A cause des erreurs précédentes, le code s'arrête.
+  Vous voulez "poursuivre" un calcul non-linéaire (STAT_NON_LINE ou DYNA_NON_LINE).
+  Pour cela, vous précisez un état initial (mot clé ETAT_INIT).
+  Pour le calcul du premier pas de temps, le champ des contraintes du début du pas est pris
+  dans le concept EVOL_NOLI fourni ou par le champ SIGM.
+  On a comparé son nombre des sous-points avec celui correspondant au mot-clef COMPORTEMENT, 
+  il y a incohérence.
+"""),
+
 }

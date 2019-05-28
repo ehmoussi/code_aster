@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,6 +73,8 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
         result_type = 'EVOL_NOLI'
     elseif (phenom.eq.'THER') then
         result_type = 'EVOL_THER'
+    elseif (phenom.eq.'VIBR') then
+        result_type = 'DYNA_TRANS'
     else
         ASSERT(.false.)
     endif
@@ -157,15 +159,26 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
     else
         ds_inout%criterion = criterion
     endif
-    call getvr8(keywf, 'INST'          , iocc=1, scal=user_time, nbret = nocc)
-    ds_inout%user_time   = user_time
-    ds_inout%l_user_time = nocc.gt.0
+    
     call getvis(keywf, 'NUME_ORDRE'    , iocc=1, scal=user_nume, nbret = nocc)
     ds_inout%user_nume   = user_nume
     ds_inout%l_user_nume = nocc.gt.0
-    call getvr8(keywf, 'INST_ETAT_INIT', iocc=1, scal=stin_time, nbret = nocc)
-    ds_inout%stin_time   = stin_time
-    ds_inout%l_stin_time = nocc.gt.0
+    
+    if (phenom.eq.'VIBR') then
+        call getvr8(keywf, 'INST_INIT' , iocc=1, scal=user_time, nbret = nocc)
+        ds_inout%user_time   = user_time
+        ds_inout%l_user_time = nocc.gt.0
+        ds_inout%stin_time   = user_time
+        ds_inout%l_stin_time = nocc.gt.0
+    else    
+        ! MECA or THER
+        call getvr8(keywf, 'INST'          , iocc=1, scal=user_time, nbret = nocc)
+        ds_inout%user_time   = user_time
+        ds_inout%l_user_time = nocc.gt.0
+        call getvr8(keywf, 'INST_ETAT_INIT', iocc=1, scal=stin_time, nbret = nocc)
+        ds_inout%stin_time   = stin_time
+        ds_inout%l_stin_time = nocc.gt.0
+    endif
 !
  99 continue
 !

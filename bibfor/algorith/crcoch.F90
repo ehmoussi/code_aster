@@ -251,8 +251,7 @@ subroutine crcoch()
         partps(3) = r8vide()
         call rsexch(' ', resu, nsymb, icompt, nomch, iret)
         if (iret .eq. 0) then
-            call rsadpa(resu, 'L', 1, typabs, icompt,&
-                        0, sjv=iad, styp=k8b)
+            call rsadpa(resu, 'L', 1, typabs, icompt, 0, sjv=iad)
         else if (iret .eq. 110) then
             call rsagsd(resu, 0)
             call rsexch(' ', resu, nsymb, icompt, nomch, iret)
@@ -261,21 +260,21 @@ subroutine crcoch()
         endif
         call jeveuo(nomch//'.VALE', 'E', jchout)
         do ie = 1, neq
-          zr(jchout+ie-1) = 0.D0
+            zr(jchout+ie-1) = 0.d0
         end do
         if (nb_ondp .ne. 0) then
             call jeexin(nomch1//'.VALE',iret)
             if (iret .eq. 0) then
-              call vtcreb(nomch1, 'V', 'R', nume_ddlz = numedd)
+                call vtcreb(nomch1, 'V', 'R', nume_ddlz = numedd)
             endif
             call jeveuo(nomch1//'.VALE', 'E', jchou1)
             do ie = 1, neq
-              zr(jchou1+ie-1) = 0.D0
+                zr(jchou1+ie-1) = 0.d0
             end do
             call fondpl(modele, mate, numedd, neq, v_ondp,&
                         nb_ondp, vecond, veonde, vaonde, tps, zr(jchou1))
             do ie = 1, neq
-              zr(jchout+ie-1) = zr(jchout+ie-1) - zr(jchou1+ie-1)
+                zr(jchout+ie-1) = zr(jchout+ie-1) - zr(jchou1+ie-1)
             end do
         endif
         if (nb_load .ne. 0) then
@@ -284,11 +283,11 @@ subroutine crcoch()
             lload_func = list_load(1:19)//'.FCHA'
             call jeexin(nomch2//'.VALE',iret)
             if (iret .eq. 0) then
-              call vtcreb(nomch2, 'V', 'R', nume_ddlz = numedd)
+                call vtcreb(nomch2, 'V', 'R', nume_ddlz = numedd)
             endif
             call jeveuo(nomch2//'.VALE', 'E', jchou2)
             do ie = 1, neq
-                zr(jchou2+ie-1) = 0.D0
+                zr(jchou2+ie-1) = 0.d0
             end do
             call vechme('S', modele, lload_name, lload_info, partps,&
                         carele, mate, vechmp)

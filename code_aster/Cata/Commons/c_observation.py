@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,11 +25,13 @@ from code_aster.Cata.DataStructure import *
 
 def C_OBSERVATION(PHYSIQUE) :
 
-        assert PHYSIQUE in ('MECANIQUE','THERMIQUE')
+        assert PHYSIQUE in ('MECANIQUE','THERMIQUE','DYNAVIBRA')
         _meca = False
         _ther = False
+        _dyna = False
         _meca = PHYSIQUE == 'MECANIQUE'
         _ther = PHYSIQUE == 'THERMIQUE'
+        _dyna = PHYSIQUE == 'DYNAVIBRA'
 
 # Select nodal fields
         _BlocNode  = {}
@@ -59,6 +61,11 @@ def C_OBSERVATION(PHYSIQUE) :
         _Keywords['LIST_INST']      = SIMP(statut='f',typ=listr8_sdaster)
         _Keywords['PAS_OBSE']       = SIMP(statut='f',typ='I')
         _Keywords['CRITERE']        = SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") )
+        
+        if _dyna :
+            _Keywords['NOM_CHAM'] = SIMP(statut='o',typ='TXM',max=1,
+                                   into=("DEPL","VITE","ACCE",)) 
+
         if _meca :
             _Keywords['NOM_CHAM'] = SIMP(statut='o',typ='TXM',max=1,
                                    into=("CONT_NOEU","FORC_NODA","CONT_ELEM",

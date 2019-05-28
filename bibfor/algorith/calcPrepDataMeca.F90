@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,6 +44,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/gcncon.h"
 #include "asterfort/nmvcre.h"
+#include "asterfort/sgcomp.h"
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: mate
@@ -126,6 +127,10 @@ character(len=19), intent(out) :: vevarc_curr
 ! - Check and put stress in "hat-variables"
 !
     if (sigm_prev .ne. ' ') then
+        call sgcomp(ds_constitutive%compor, sigm_prev, ligrmo, iret)
+        if (iret .eq. 1) then
+            call utmess('F', 'CALCUL1_6')
+        endif
         call chpver('F', sigm_prev, 'ELGA', 'SIEF_R', iret)
         call nmcha0('VALINC', 'SIGMOI', sigm_prev, hval_incr)
     endif
