@@ -15,21 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine loadGetNeumannType(l_stat      , load_name   , ligrch        ,&
-                                  load_apply  , load_type   ,&
-                                  nb_info_type, nb_info_maxi, list_info_type,&
-                                  i_neum_lapl)
-        aster_logical, intent(in) :: l_stat
-        character(len=8), intent(in) :: load_name
-        character(len=19), intent(in) :: ligrch
-        character(len=16), intent(in) :: load_apply
-        character(len=8), intent(in) :: load_type
-        integer, intent(inout) :: nb_info_type
-        integer, intent(in) :: nb_info_maxi
-        character(len=24), intent(inout)  :: list_info_type(nb_info_maxi)
-        integer, intent(out) :: i_neum_lapl
-    end subroutine loadGetNeumannType
+    subroutine dvcrob(mesh , modele,  ds_inout , materi, sd_obsv)
+        use NonLin_Datastructure_type
+        character(len=*), intent(in) :: mesh
+        character(len=*), intent(in) :: modele
+        type(NL_DS_InOut), intent(in) :: ds_inout
+        character(len=8),intent(in) :: materi
+        character(len=19), intent(out) :: sd_obsv
+    end subroutine dvcrob
 end interface

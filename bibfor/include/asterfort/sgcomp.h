@@ -15,21 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
+
+!
 !
 interface
-    subroutine loadGetNeumannType(l_stat      , load_name   , ligrch        ,&
-                                  load_apply  , load_type   ,&
-                                  nb_info_type, nb_info_maxi, list_info_type,&
-                                  i_neum_lapl)
-        aster_logical, intent(in) :: l_stat
-        character(len=8), intent(in) :: load_name
-        character(len=19), intent(in) :: ligrch
-        character(len=16), intent(in) :: load_apply
-        character(len=8), intent(in) :: load_type
-        integer, intent(inout) :: nb_info_type
-        integer, intent(in) :: nb_info_maxi
-        character(len=24), intent(inout)  :: list_info_type(nb_info_maxi)
-        integer, intent(out) :: i_neum_lapl
-    end subroutine loadGetNeumannType
+    subroutine sgcomp(compor_curr, sigm, ligrel_currz, iret, &
+                      type_stop)
+        character(len=*), intent(in) :: compor_curr
+        character(len=*), intent(in) :: sigm
+        character(len=*), intent(in) :: ligrel_currz
+        integer, intent(out) :: iret
+        character(len=1), optional, intent(in) :: type_stop
+    end subroutine sgcomp
 end interface

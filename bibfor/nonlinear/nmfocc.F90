@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -80,7 +80,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
     character(len=8) :: mesh
     character(len=19) :: vect_elem_cont, vect_elem_fric
     character(len=19) :: vect_asse_cont, vect_asse_fric
-    character(len=19) :: disp_prev, disp_cumu_inst, disp_newt_curr, vite_prev, acce_prev, vite_curr
+    character(len=19) :: disp_prev, disp_cumu_inst, vite_prev, acce_prev, vite_curr
     character(len=19) :: varc_prev, varc_curr, time_prev, time_curr
 !
 ! --------------------------------------------------------------------------------------------------
@@ -108,7 +108,6 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
     call nmchex(hval_incr, 'VALINC', 'ACCMOI', acce_prev)
     call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
     call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst)
-    call nmchex(hval_algo, 'SOLALG', 'DDEPLA', disp_newt_curr)
     vect_elem_cont = ds_contact%veeltc
     vect_elem_fric = ds_contact%veeltf
     vect_asse_cont = ds_contact%cneltc
@@ -135,7 +134,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
                     disp_prev     , vite_prev     ,&
                     acce_prev     , vite_curr     ,&
                     time_prev     , time_curr     ,&
-                    disp_cumu_inst, disp_newt_curr,&
+                    disp_cumu_inst, &
                     vect_elem_cont, vect_elem_fric)
         call assvec('V', vect_asse_cont, 1, vect_elem_cont, [1.d0], nume_dof, ' ', 'ZERO', 1)
         if (l_fric) then

@@ -23,8 +23,10 @@ from SD.sd_table import sd_table
 from SD.sd_vect_elem import sd_vect_elem
 from SD.sd_matr_elem import sd_matr_elem
 from SD.sd_cham_elem import sd_cham_elem
+from SD.sd_cham_no import sd_cham_no
 # from SD.sd_mode_meca import sd_mode_meca
 from SD.sd_dyna_phys import sd_dyna_phys
+from SD.sd_fonction import sd_fonction
 # --------------------------------------------------------------------
 # sd_table contenant les colonnes nommée "NOM_OBJET","TYPE_OBJET",
 # et "NOM_SD"
@@ -56,7 +58,7 @@ class sd_table_container(sd_table):
             data = col.data.get()
             if data is not None:
                 if col.data.lonuti != shape[1]:
-                    checker.err(self, "Taille inconsitante %d!=%d" %
+                    checker.err(self, "Taille inconsistante %d!=%d" %
                                (col.data.lonuti, shape[1]))
 
         # on vérifie le contenu de la colonne NOM_SD
@@ -86,5 +88,20 @@ class sd_table_container(sd_table):
                 # si CARA_CHOC existe, on vérifie que son contenu est une table
                     sdc = sd_table(lnom3[k])
                     sdc.check(checker)
+            elif lnom1[k][:8] == 'FONCTION':
+                sd5 = sd_fonction(lnom2[k])
+                sd5.check(checker)
+            elif lnom1[k][:10] == 'FONCTION_C':
+                sd5 = sd_fonction(lnom2[k])
+                sd5.check(checker)
+            elif lnom1[k][:5] == 'NAPPE':
+                sd5 = sd_fonction(lnom2[k])
+                sd5.check(checker)
+            elif lnom1[k][:7] == 'CHAM_NO':
+                sd5 = sd_cham_no(lnom2[k])
+                sd5.check(checker)
+            elif lnom1[k][:5] == 'TABLE':
+                sd5 = sd_table(lnom2[k])
+                sd5.check(checker)
             else:
                 assert 0, lnom1[k]

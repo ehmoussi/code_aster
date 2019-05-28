@@ -891,7 +891,10 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
 #-----------------------------------------------------------------------
 #               TRANSITOIRE DIRECT PAS DE TEMPS ADAPTATIF
 #-----------------------------------------------------------------------
-#
+# test OBSERVATION dans DYNA_VIBRA avec ADAPT_ORDRE2
+
+trace = FORMULE ( VALE='DX+DY', NOM_PARA = ('DX','DY',),)
+
 DYNAADAP=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                             MATR_MASS=MATRMASS,   MATR_RIGI=MATRRIGI,
                             MATR_AMOR=MATRAMOR,
@@ -901,7 +904,24 @@ DYNAADAP=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                                     FONC_MULT = FONCTIO1),
                             INCREMENT=_F( INST_INIT = 0., INST_FIN = 1.5,
                                           PAS = 0.001,),
-                            ARCHIVAGE=_F(  PAS_ARCH = 1))
+                            ARCHIVAGE=_F(  PAS_ARCH = 1),
+                        OBSERVATION=(_F(NOM_CHAM='DEPL',
+                                            NOM_CMP='DX',
+                                            PAS_OBSE=200,
+                                            NOEUD='N2',),
+                                     _F(NOM_CHAM='DEPL',
+                                            NOM_CMP='DY',
+                                            PAS_OBSE=200,
+                                            NOEUD='N2',),       
+                                     _F(NOM_CHAM='DEPL',
+                                            NOM_CMP=('DX','DY',),
+                                            PAS_OBSE=200,
+                                            NOEUD='N2',
+                                            EVAL_CMP='FORMULE',
+                                            FORMULE = trace,
+                                            EVAL_CHAM = 'MAX',),
+                                     ),
+                        )
 
 DEPLADAP=RECU_FONCTION(   NOEUD='N5',   NOM_CMP='DX',   NOM_CHAM='DEPL',
                             RESULTAT=DYNAADAP,  LIST_INST=LISTR8,

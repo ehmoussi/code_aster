@@ -18,7 +18,8 @@
 !
 subroutine loadGetNeumannType(l_stat      , load_name   , ligrch        ,&
                               load_apply  , load_type   ,&
-                              nb_info_type, nb_info_maxi, list_info_type)
+                              nb_info_type, nb_info_maxi, list_info_type,&
+                              i_neum_lapl)
 !
 implicit none
 !
@@ -29,6 +30,7 @@ implicit none
 #include "asterfort/jeexin.h"
 #include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/codent.h"
 !
 aster_logical, intent(in) :: l_stat
 character(len=8), intent(in) :: load_name
@@ -38,6 +40,7 @@ character(len=8), intent(in) :: load_type
 integer, intent(inout) :: nb_info_type
 integer, intent(in) :: nb_info_maxi
 character(len=24), intent(inout)  :: list_info_type(nb_info_maxi)
+integer, intent(out) :: i_neum_lapl
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,17 +55,18 @@ character(len=24), intent(inout)  :: list_info_type(nb_info_maxi)
 ! In  ligrch         : LIGREL (list of elements) where apply load
 ! IO  nb_info_type   : number of type of loads to assign (list)
 ! IO  list_info_type : list of type of loads to assign (list)
-! 
+! Out i_neum_lapl    : special index for Laplace load
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer, parameter :: nb_lapl_maxi = 99
     integer, parameter :: nb_type_neum = 18
     character(len=6), parameter :: ligr_name(nb_type_neum) = (/'.FORNO','.F3D3D','.F2D3D','.F1D3D',&
                                                                '.F2D2D','.F1D2D','.F1D1D','.PESAN',&
                                                                '.ROTAT','.PRESS','.FELEC','.FCO3D',&
                                                                '.FCO2D','.EPSIN','.FLUX ','.VEASS',&
                                                                '.ONDPL','.SIINT'/)
-    integer :: i_type_neum, iret, iret_cable_cine
+    integer :: i_type_neum, iret, iret_cable_cine, infc, i_lapl
     character(len=5) :: suffix, para_inst, para_vite
     character(len=24) :: info_type, lchin
     aster_logical :: l_para_inst, l_para_vite
@@ -167,6 +171,87 @@ character(len=24), intent(inout)  :: list_info_type(nb_info_maxi)
                 endif
             endif
         endif
+! ----- Add load
+        if (info_type .ne. 'RIEN') then
+            nb_info_type = nb_info_type + 1
+            ASSERT(nb_info_type.lt.nb_info_maxi)
+            list_info_type(nb_info_type) = info_type
+        endif
+! ----- For EVOL_CHAR case
+        info_type = 'RIEN'
+        lchin = ligrch(1:13)//'.EVOL.CHAR'
+        call jeexin(lchin, iret)
+        if (iret .ne. 0) then
+            if (load_apply .eq. 'SUIV') then
+                info_type = 'NEUM_SUIV'
+            else if (load_apply .eq. 'FIXE_CSTE') then
+                info_type = 'NEUM_CSTE'
+            else if (load_apply .eq. 'FIXE_PILO') then
+                call utmess('F', 'CHARGES_34', sk=load_name)
+            else if (load_apply .eq. 'DIDI') then
+                call utmess('F', 'CHARGES_31', sk=load_name)
+            else if (load_apply .eq. 'SUIV_PILO') then
+                call utmess('F', 'CHARGES_34', sk=load_name)
+            else
+                ASSERT(ASTER_FALSE)
+            endif
+        endif
+! ----- Add load
+        if (info_type .ne. 'RIEN') then
+            nb_info_type = nb_info_type + 1
+            ASSERT(nb_info_type.lt.nb_info_maxi)
+            list_info_type(nb_info_type) = info_type
+        endif
+! ----- For EXCIT_SOL case
+        info_type = 'RIEN'
+        lchin = ligrch(1:13)//'.VEISS'
+        call jeexin(lchin, iret)
+        if (iret .ne. 0) then
+            if (l_stat) then
+                call utmess('F', 'CHARGES_50', sk=load_name)
+            endif
+            if (load_apply .eq. 'SUIV') then
+                call utmess('F', 'CHARGES_51', sk=load_name)
+            elseif (load_apply .eq. 'DIDI') then
+                call utmess('F', 'CHARGES_52', sk=load_name)
+            else if (load_apply .eq. 'FIXE_PILO') then
+                call utmess('F', 'CHARGES_34', sk=load_name)
+            else if (load_apply .eq. 'FIXE_CSTE') then
+                if (load_type(5:6) .eq. '_F') then
+                    call utmess('F', 'CHARGES_53', sk=load_name)
+                endif
+                info_type = 'EXCIT_SOL'
+            else if (load_apply .eq. 'SUIV_PILO') then
+                call utmess('F', 'CHARGES_34', sk=load_name)
+            else
+                ASSERT(ASTER_FALSE)
+            endif
+        endif
+! ----- Add load
+        if (info_type .ne. 'RIEN') then
+            nb_info_type = nb_info_type + 1
+            ASSERT(nb_info_type.lt.nb_info_maxi)
+            list_info_type(nb_info_type) = info_type
+        endif
+! ----- For LAPLACE case
+        infc = 0
+        info_type = 'RIEN'
+        do i_lapl = 1, nb_lapl_maxi
+            lchin(1:17) = ligrch(1:13)//'.FL1'
+            call codent(i_lapl, 'D0', lchin(18:19))
+            lchin = lchin(1:19)//'.DESC'
+            call jeexin(lchin, iret)
+            if (iret .ne. 0) then
+                infc = infc + 1
+            else
+                exit
+            endif
+        end do
+        if (infc .ne. 0) then
+            i_neum_lapl = max(0, infc)
+            info_type   = 'NEUM_LAPL'
+        endif
+! ----- Add load
         if (info_type .ne. 'RIEN') then
             nb_info_type = nb_info_type + 1
             ASSERT(nb_info_type.lt.nb_info_maxi)

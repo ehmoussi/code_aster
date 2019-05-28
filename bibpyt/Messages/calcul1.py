@@ -47,6 +47,11 @@ A cause des erreurs précédentes, le code s'arrête.
   Le champ des variables internes fourni à CALCUL n'est pas cohérent avec le comportement donné par le mot-clef COMPORTEMENT.
 """),
 
+    6 : _("""
+A cause des erreurs précédentes, le code s'arrête.
+Le champ des contraintes fourni à CALCUL n'est pas cohérent à propos du nombre des sous-points.
+"""),
+
     7 : _("""
 Le modèle contient des éléments qui ne supportent pas les champs de type variables internes.
 """),

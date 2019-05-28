@@ -60,7 +60,7 @@ character(len=8), pointer :: v_ondp(:)
     character(len=16) :: load_keyword, load_apply
     real(kind=8) ::  coef_r
     aster_logical ::  l_stat
-    integer :: iocc, nocc, iret
+    integer :: iocc, nocc, iret, i_neum_lapl
     integer :: i_load, i_load_dble
     integer :: nb_info_type
     character(len=8) :: load_name, load_type, load_func, const_func = '&&NMDOME'
@@ -132,25 +132,25 @@ character(len=8), pointer :: v_ondp(:)
             if (iret .ne. 0) then
                 nb_ondp  = nb_ondp + 1
                 v_ondp(nb_ondp) = load_name
-            else
-! ------------- Get NEUMANN loads
-                call loadGetNeumannType(l_stat      , load_name   , ligrch        ,&
-                                        load_apply  , load_type   ,&
-                                        nb_info_type, nb_info_maxi, list_info_type)
-! ------------- Create constant function
-                nomf19 = const_func
-                call jeexin(nomf19//'.PROL', iret)
-                if (iret .eq. 0) then
-                    coef_r = 1.d0
-                    call focste(const_func, 'TOUTRESU', coef_r, 'V')
-                endif
-                load_func = const_func
-                load_func = ' '
-! ------------- Add new load(s) in list
-                if (nb_info_type .gt. 0) then
-                    call liscad('MECA'      , list_load     , i_load, load_name, load_func,&
-                                nb_info_type, list_info_type)
-                endif
+            endif
+! --------- Get NEUMANN loads
+            call loadGetNeumannType(l_stat      , load_name   , ligrch        ,&
+                                    load_apply  , load_type   ,&
+                                    nb_info_type, nb_info_maxi, list_info_type,&
+                                    i_neum_lapl )
+! --------- Create constant function
+            nomf19 = const_func
+            call jeexin(nomf19//'.PROL', iret)
+            if (iret .eq. 0) then
+                coef_r = 1.d0
+                call focste(const_func, 'TOUTRESU', coef_r, 'V')
+            endif
+            load_func = const_func
+            load_func = ' '
+! --------- Add new load(s) in list
+            if (nb_info_type .gt. 0) then
+                call liscad('MECA'      , list_load     , i_load, load_name, load_func,&
+                            nb_info_type, list_info_type, i_neum_laplz = i_neum_lapl)
             endif
         end do
     endif
