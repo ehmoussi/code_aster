@@ -51,9 +51,9 @@ def perm_mac3coeur_ops(self, **args):
     _long_ligne_N = None
     _long_ligne_P = None
     if _typ_coeur_N[:5] == 'LIGNE' :
-      _long_ligne_N = self.get('NB_ASSEMBLAGE_N')
+      _long_ligne_N = args.get('NB_ASSEMBLAGE_N')
     if _typ_coeur_P[:5] == 'LIGNE' :
-      _long_ligne_P = self.get('NB_ASSEMBLAGE_NP1')
+      _long_ligne_P = args.get('NB_ASSEMBLAGE_NP1')
     _TAB_N = args.get('TABLE_N')
     _l_tabn1 = []
     for el in _TAB_N :

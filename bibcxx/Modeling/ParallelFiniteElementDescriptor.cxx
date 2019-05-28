@@ -3,7 +3,7 @@
  * @brief Implementation de ParallelFiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -258,11 +258,13 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
     _numberOfDelayedNumberedConstraintNodes->allocate( memType, 1 );
     (*_numberOfDelayedNumberedConstraintNodes)[0] = nbDelayedNodes;
 
+    const auto param = FEDesc->getParameters();
     // Creation du .LGRF en y mettant les noms du maillage et modele d'origine
-    _parameters->allocate( memType, 2 );
+    _parameters->allocate( memType, 3 );
     const auto& pMesh = mesh->getParallelMesh();
     (*_parameters)[0] = pMesh->getName();
     (*_parameters)[1] = model->getName();
+    (*_parameters)[2] = (*param)[2];
     auto docu = FEDesc->getParameters()->getInformationParameter();
     _parameters->setInformationParameter( docu );
     /** @todo ajouter un assert sur le maillage sous-jacent au modele */

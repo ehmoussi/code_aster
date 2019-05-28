@@ -670,8 +670,6 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                 jcolg=to_mumps_int(iligg)
                 iligg=to_mumps_int(coltmp)
             endif
-            write(11+rang,*)'lgive', lgive, rang, prolig, procol, iligg, jcolg
-            write(11+rang,*)'lgive2', lnn, zi4(iok+kterm-1)
 !
 ! ---- PARTIE TRIANGULAIRE INF. TERME NON NUL
             if( .not.lmhpc.or.(lmhpc.and.(procol.eq.rang.or.lgive)) ) then
@@ -705,12 +703,10 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                         if( nuno2.ne.0 ) nuno2 = zi(jmlogl + nuno2 - 1) + 1
                         nucmp1 = zi(jdeeq +2*(iligl-1)+1)
                         nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
-                        ieq1 = iligg
-                        ieq2 = jcolg
-!                         ieq1 = 0
-!                         ieq2 = 0
-!                         if(nuno1.eq.0) ieq1 = iligg
-!                         if(nuno2.eq.0) ieq2 = jcolg
+                        ieq1 = to_mumps_int(zi(jnugll+iligl-1)+1)
+                        ieq2 = to_mumps_int(zi(jnugll+jcoll-1)+1)
+                        if(nuno1.ne.0) ieq1 = 0
+                        if(nuno2.ne.0) ieq2 = 0
                         write(11+rang,*) nuno2, nucmp2, nuno1, nucmp1, raux, ieq2, ieq1
                     endif
                 else
@@ -739,12 +735,10 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                         nuno2 = zi(jdeeq+2*(jcolg-1))
                         nucmp1 = zi(jdeeq +2*(iligg-1)+1)
                         nucmp2 = zi(jdeeq +2*(jcolg-1)+1)
-                        ieq1 = iligg
-                        ieq2 = jcolg
-!                         ieq1 = 0
-!                         ieq2 = 0
-!                         if(nuno1.eq.0) ieq1 = iligg
-!                         if(nuno2.eq.0) ieq2 = jcolg
+                        ieq1 = to_mumps_int(zi(jnugll+iligl-1)+1)
+                        ieq2 = to_mumps_int(zi(jnugll+jcoll-1)+1)
+                        if(nuno1.ne.0) ieq1 = 0
+                        if(nuno2.ne.0) ieq2 = 0
                         write(11+rang,*) nuno2, nucmp2, nuno1, nucmp1, raux, ieq2, ieq1
                     endif
                 endif
@@ -841,12 +835,10 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                             if( nuno2.ne.0 ) nuno2 = zi(jmlogl + nuno2 - 1) + 1
                             nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
                             nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
-                            ieq1 = iligg
-                            ieq2 = jcolg
-!                             ieq1 = 0
-!                             ieq2 = 0
-!                             if(nuno1.eq.0) ieq1 = iligg
-!                             if(nuno2.eq.0) ieq2 = jcolg
+                            ieq1 = to_mumps_int(zi(jnugll+iligl-1)+1)
+                            ieq2 = to_mumps_int(zi(jnugll+jcoll-1)+1)
+                            if(nuno1.ne.0) ieq1 = 0
+                            if(nuno2.ne.0) ieq2 = 0
                             write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, raux, ieq1, ieq2
                         endif
                     else
@@ -875,12 +867,10 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                             nuno2 = zi(jdeeq+2*(jcolg-1))
                             nucmp1 = zi(jdeeq +2*(iligg-1)+1)
                             nucmp2 = zi(jdeeq +2*(jcolg-1)+1)
-                            ieq1 = iligg
-                            ieq2 = jcolg
-!                             ieq1 = 0
-!                             ieq2 = 0
-!                             if(nuno1.eq.0) ieq1 = iligg
-!                             if(nuno2.eq.0) ieq2 = jcolg
+                            ieq1 = to_mumps_int(zi(jnugll+iligl-1)+1)
+                            ieq2 = to_mumps_int(zi(jnugll+jcoll-1)+1)
+                            if(nuno1.ne.0) ieq1 = 0
+                            if(nuno2.ne.0) ieq2 = 0
                             write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, raux, ieq1, ieq2
                         endif
                     endif
