@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ encast=AFFE_CHAR_MECA(MODELE=modele,
 fonc=DEFI_FONCTION(NOM_PARA='INST',
                    VALE=(0.0,0.0,2.0,2.0,),);
 
-list=DEFI_LIST_REEL(DEBUT=0.0,
+listinst=DEFI_LIST_REEL(DEBUT=0.0,
                     INTERVALLE=(_F(JUSQU_A=1.0,
                                    NOMBRE=10,),
                 _F(JUSQU_A=1.07,
@@ -86,7 +86,7 @@ res=STAT_NON_LINE(MODELE=modele,
                             FONC_MULT=fonc,),),
                   COMPORTEMENT=_F(RELATION='MULTIFIBRE',
                                DEFORMATION='PETIT',),
-                  INCREMENT=_F(LIST_INST=list,),
+                  INCREMENT=_F(LIST_INST=listinst,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   CRIT_STAB=_F(),
                   );

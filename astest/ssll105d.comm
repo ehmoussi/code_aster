@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ fonc=DEFI_FONCTION(NOM_PARA='INST',
 list0=DEFI_LIST_REEL(DEBUT=0.0,
                     INTERVALLE=_F(JUSQU_A=1.0,
                                   NOMBRE=10,),);
-list=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = list0,),
+listinst=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = list0,),
                     ECHEC=_F(EVENEMENT='INSTABILITE',ACTION='CONTINUE',),);
 
 
@@ -73,7 +73,7 @@ res=STAT_NON_LINE(MODELE=modele,
                             FONC_MULT=fonc,),),
                   COMPORTEMENT=_F(RELATION='ELAS',
                                DEFORMATION='PETIT',),
-                  INCREMENT=_F(LIST_INST=list,),
+                  INCREMENT=_F(LIST_INST=listinst,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0,2),),
                   );
@@ -114,7 +114,7 @@ res2L=STAT_NON_LINE(MODELE=modele,
                             FONC_MULT=fonc,),),
                   COMPORTEMENT=_F(RELATION='ELAS',
                                DEFORMATION='PETIT',),
-                  INCREMENT=_F(LIST_INST=list,),
+                  INCREMENT=_F(LIST_INST=listinst,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='LDLT'),
                   CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0, 1),),
@@ -128,7 +128,7 @@ res2F=STAT_NON_LINE(MODELE=modele,
                             FONC_MULT=fonc,),),
                   COMPORTEMENT=_F(RELATION='ELAS',
                                DEFORMATION='PETIT',),
-                  INCREMENT=_F(LIST_INST=list,),
+                  INCREMENT=_F(LIST_INST=listinst,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='MULT_FRONT'),
                   CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0., 1.),),
@@ -141,7 +141,7 @@ res2M=STAT_NON_LINE(MODELE=modele,
                             FONC_MULT=fonc,),),
                   COMPORTEMENT=_F(RELATION='ELAS',
                                DEFORMATION='PETIT',),
-                  INCREMENT=_F(LIST_INST=list,),
+                  INCREMENT=_F(LIST_INST=listinst,),
                   NEWTON=_F(MATRICE='TANGENTE',),
                   SOLVEUR=_F(METHODE='MUMPS'),
                   CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0., 1.),),

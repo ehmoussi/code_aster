@@ -181,7 +181,7 @@ for i in range(NCAL):
                                         GRAN_FO = GRAND,),
                                  );
 
-          list = DEFI_LIST_REEL(DEBUT=timem,
+          listinst = DEFI_LIST_REEL(DEBUT=timem,
                       INTERVALLE=(_F(JUSQU_A=time,NOMBRE=1,),),);
 
           RESU[i]=SIMU_POINT_MAT(COMPORTEMENT=_F(RELATION=compor,),
@@ -193,7 +193,7 @@ for i in range(NCAL):
                                                 VALE_REF=TREF),
                                              _F(NOM_VARC='IRRA',
                                                 VALE_FONC=FLU_IMP)),
-                                 INCREMENT=_F(LIST_INST = list, ),
+                                 INCREMENT=_F(LIST_INST = listinst, ),
                                  NEWTON=_F( PREDICTION='ELASTIQUE',
                                              MATRICE='TANGENTE',
                                              REAC_ITER=1,),
@@ -216,7 +216,7 @@ for i in range(NCAL):
           IMPR_TABLE(TABLE=RESU[i]);
 
           DETRUIRE ( CONCEPT =  _F (NOM =epsimp),);
-          DETRUIRE ( CONCEPT =  _F (NOM =list),);
+          DETRUIRE ( CONCEPT =  _F (NOM =listinst),);
           DETRUIRE ( CONCEPT =  _F (NOM =(fluxi,tempi)),);
 
           TEST_TABLE(TABLE=RESU[i],

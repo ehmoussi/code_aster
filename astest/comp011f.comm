@@ -251,7 +251,7 @@ for i in range(NCAL):
                                        TEMP_0_C  = 20.,),);
 
 
-          list = DEFI_LIST_REEL(DEBUT=timem,
+          listinst = DEFI_LIST_REEL(DEBUT=timem,
                       INTERVALLE=(_F(JUSQU_A=time,NOMBRE=1,),),);
 
           CHMTH[i]=AFFE_MATERIAU(MAILLAGE=MA,
@@ -287,7 +287,7 @@ for i in range(NCAL):
                                  EXCIT=(_F(CHARGE=CHRGE[i]),
                                         _F(CHARGE=LIAISON2),),
                                  COMPORTEMENT=_F(RELATION     = compor,),
-                                 INCREMENT=_F(LIST_INST=list,),
+                                 INCREMENT=_F(LIST_INST=listinst,),
                                  NEWTON=_F(REAC_INCR=1,
                                  REAC_ITER=1,),
                                  );
@@ -320,7 +320,7 @@ for i in range(NCAL):
                              EXCIT=(_F(CHARGE=CHRGE[i]),_F(CHARGE=LIAISON2),),
                              ETAT_INIT = _F(DEPL=EM, SIGM= SM1, VARI = VM),
                              COMPORTEMENT=_F(RELATION     = compor,),
-                             INCREMENT=_F(LIST_INST=list,),
+                             INCREMENT=_F(LIST_INST=listinst,),
                              NEWTON=_F(REAC_INCR=1,
                              REAC_ITER=1,),
                             );
@@ -359,7 +359,7 @@ for i in range(NCAL):
 
           DETRUIRE ( CONCEPT =  _F (NOM =epsimp),);
           DETRUIRE ( CONCEPT =  _F (NOM =Ei),);
-          DETRUIRE ( CONCEPT =  _F (NOM =list),);
+          DETRUIRE ( CONCEPT =  _F (NOM =listinst),);
           DETRUIRE ( CONCEPT =  _F (NOM =CHRGE[i]),);
           DETRUIRE ( CONCEPT =  _F (NOM =LIAISON2),);
 

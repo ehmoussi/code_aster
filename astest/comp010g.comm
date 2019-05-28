@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -203,14 +203,14 @@ for i in range(NCAL):
                                   S     = S_T(Ti))
                                  );
 
-          list = DEFI_LIST_REEL(DEBUT=timem,
+          listinst = DEFI_LIST_REEL(DEBUT=timem,
                       INTERVALLE=(_F(JUSQU_A=time,NOMBRE=1,),),);
 
           RESU[i]=SIMU_POINT_MAT(COMPORTEMENT=_F(RELATION=compor,
                                               ITER_INTE_MAXI=100,),
                                  MATER=MATER[i],
                                  SUPPORT='POINT',
-                                 INCREMENT=_F(LIST_INST = list, ),
+                                 INCREMENT=_F(LIST_INST = listinst, ),
                                  NEWTON=_F( PREDICTION='ELASTIQUE',
                                              MATRICE='TANGENTE',
                                              REAC_ITER=1,),
@@ -234,7 +234,7 @@ for i in range(NCAL):
           IMPR_TABLE(TABLE=RESU[i]);
 
           DETRUIRE ( CONCEPT =  _F (NOM =epsimp),);
-          DETRUIRE ( CONCEPT =  _F (NOM =list),);
+          DETRUIRE ( CONCEPT =  _F (NOM =listinst),);
 
           TEST_TABLE(TABLE=RESU[i],
                      NOM_PARA='VMIS',
