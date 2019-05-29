@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ subroutine rc32t()
 #include "jeveux.h"
 #include "asterfort/jemarq.h"
 #include "asterc/getfac.h"
+#include "asterfort/compr8.h"
 #include "asterfort/jecrec.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvid.h"
@@ -367,11 +368,11 @@ subroutine rc32t()
                     tminsp(kk) = vale(1)
                     tmaxsp(kk) = vale(1)
                 else
-                    if (r3(kk) .lt. tremin(kk)) then
+                    if (compr8(r3(kk),'LT',tremin(kk),prec(1),1)) then 
                         tremin(kk) = r3(kk)
                         tminsp(kk) = vale(1)
                     endif
-                    if (r3(kk) .gt. tremax(kk)) then
+                    if (compr8(r3(kk),'GT',tremax(kk),prec(1),1)) then 
                         tremax(kk) = r3(kk)
                         tmaxsp(kk) = vale(1)
                     endif
@@ -397,11 +398,11 @@ subroutine rc32t()
                     tminsn(kk) = vale(1)
                     tmaxsn(kk) = vale(1)
                 else
-                    if (r3b(kk) .lt. treminb(kk)) then
+                    if (compr8(r3b(kk),'LT',treminb(kk),prec(1),1)) then 
                         treminb(kk) = r3b(kk)
                         tminsn(kk) = vale(1)
                     endif
-                    if (r3b(kk) .gt. tremaxb(kk)) then
+                    if (compr8(r3b(kk),'GT',tremaxb(kk),prec(1),1)) then
                         tremaxb(kk) = r3b(kk)
                         tmaxsn(kk) = vale(1)
                     endif
