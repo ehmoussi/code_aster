@@ -33,10 +33,10 @@ interface
         real(kind=8), intent(in) :: epsm(*)
         real(kind=8), intent(in) :: deps(*)
         real(kind=8), intent(in) :: sigm(*)
-        real(kind=8), intent(in) :: vim(37)
+        real(kind=8), intent(in) :: vim(*)
         character(len=16), intent(in) :: option
         real(kind=8), intent(out) :: sigp(*)
-        real(kind=8), intent(out) :: vip(37)
+        real(kind=8), intent(out) :: vip(*)
         real(kind=8), intent(out) :: dsidep(6, 6)
         integer, intent(out) :: iret
     end subroutine nzcifw
