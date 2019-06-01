@@ -18,7 +18,7 @@
 
 subroutine calc_myf_gf(em, ftj, fcj, h, ea, omx, & 
                        ya, sya, ipenteflex, kappa_flex,&
-                       myf, gf)
+                       myf, pendf)
 ! 
     implicit none
 !
@@ -31,7 +31,7 @@ subroutine calc_myf_gf(em, ftj, fcj, h, ea, omx, &
     integer :: ipenteflex
 !
 ! PARAMETRES SORTANTS
-    real(kind=8) :: gf, myf
+    real(kind=8) :: pendf, myf
 !
 ! RESONSABLE
 ! ----------------------------------------------------------------------
@@ -53,7 +53,7 @@ subroutine calc_myf_gf(em, ftj, fcj, h, ea, omx, &
 !               2 : PLAS_ACIER
 !               3 : UTIL
 ! OUT:
-!       GF    : GAMMA DE FLEXION
+!       PENDF : PENTE NON LINEAIRE DE FLEXION
 !       MYF   : MOMENT DE FLEXION
 ! ----------------------------------------------------------------------
 ! PARAMETRES INTERMEDIAIRES
@@ -65,14 +65,15 @@ subroutine calc_myf_gf(em, ftj, fcj, h, ea, omx, &
     real(kind=8) :: kappa2, pendt_cc, pendt_d, dpent, kappa_r, momen_r
     real(kind=8) :: area, coef, darea_min, aread, darea, c, e0, pendt
 
-    c= 1.d0
+! c est fixe en dur mais devra prochainement etre laisse a l'utilisateur
+    c= 5.d0
     
     e_t=ftj/em
     e_c=-fcj/em
     e_u=(1.d0+c)*e_t
     kappa_y = (2.d0*e_t)/h
     
-    kappa_test = min(-2.d0*e_c/h,2*e_u/h)
+    kappa_test = max(-2.d0*e_c/h,2*e_u/h)
     !ASSERT(kappa_test .gt. kappa_y)
     
     pentelf = ((1.d0/12.d0)*em*(h**3)+2.d0*ea*omx*(ya**2))
@@ -103,7 +104,6 @@ subroutine calc_myf_gf(em, ftj, fcj, h, ea, omx, &
                              effort, moment)
             call calc_moment(0.d0, kappa, em, ftj, fcj, c, h, ea, omx, ya, sya, 1,&
                             effort, moelas)
-            
             dmom = abs(moment-moelas)/moelas
             if (dmom .lt. 5.d0/100.d0)then
                 ind_s = i
@@ -222,6 +222,6 @@ subroutine calc_myf_gf(em, ftj, fcj, h, ea, omx, &
         ASSERT(.false.)
     endif
 
-    gf = pendt_f/pentelf
+    pendf = pendt_f
 !
 end subroutine
