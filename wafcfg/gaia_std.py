@@ -24,6 +24,7 @@ Configuration for Gaia
 
 waf configure --use-config=gaia_std --prefix=../install/std
 waf install -p
+
 """
 
 import os
@@ -41,6 +42,14 @@ def configure(self):
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env['ADDMEM'] = 1000
+
+    self.env.append_value('OPT_ENV', [
+        'export LD_PRELOAD='
+        '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_lp64.so:'
+        '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_thread.so:'
+        '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_core.so:'
+        '/opt/intel/2019.0.045/compilers_and_libraries/linux/lib/intel64/libiomp5.so',
+    ])
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
     TFELVERS = '3.2.1'
