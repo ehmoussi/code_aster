@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm zzzz413b.comm D 1
+F comm zzzz413b.com1 D 1
 F mgib zzzz413b.med  D 20

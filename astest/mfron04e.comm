@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,8 +109,8 @@ prec_ecart=[[1.E-10, 1.E-10, 0.02,     1.E-10],
             [1.E-10, 1.E-10, 0.02,   1.E-10],
             [1.E-10, 1.E-10, 1.E-10,  1.E-10]]
 vale_calc=[
-  [0.0E+00,             0.0E+00,             0.0190015638553,     0.0E+00],
-  [0.00    ,            0.0,                 0.0112942150369,     0.0E+00],
+  [0.0E+00,             0.0E+00,             0.0183648497087,     0.0E+00],
+  [0.00    ,            0.0,                 0.0101290459789,     0.0E+00],
   [0.0E+00,             0.0E+00,             0.0E+00,             0.0E+00],
     ]
 

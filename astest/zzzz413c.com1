@@ -1,0 +1,55 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+POURSUITE(CODE='OUI', DEBUG=_F(SDVERI='OUI'))
+
+EXEC_LOGICIEL(
+    LOGICIEL="mdump fort.80 NODALE FULL_INTERLACE 1 | sed '1,20d'> dump.txt",
+    SHELL='OUI')
+
+TEST_FICHIER(
+    FICHIER="dump.txt",
+    NB_VALE=42909,
+    VALE_CALC=-8.63646007133E+12,
+)
+
+LGroupe = [
+    ('GRaidSurf',    23984, -4.65786935225E+12,),
+    ('GRaidSurfSem',  7817,  6.45420833395E+11,),
+    ('GRaidSurfAme', 17903, -5.30329018512E+12,),
+    ('GBeton',       13877,  2.22184182527E+11,),
+    ('GToleSurf',     7820, -4.63193195493E+12,),
+    ('GAcierLongi',   2436,  4.31157054898E+11,),
+]
+
+for grp, nbvale, valec in LGroupe:
+    NomFicMed = './REPE_OUT/plancher_scs_%s.med' % grp
+    EXEC_LOGICIEL(
+        LOGICIEL="mdump {0} NODALE FULL_INTERLACE 1 | sed '1,20d'> dump.txt"
+                 .format(NomFicMed),
+        SHELL='OUI')
+
+    TEST_FICHIER(
+        FICHIER="dump.txt",
+        NB_VALE=nbvale,
+        VALE_CALC=valec,
+    )
+
+
+FIN()
