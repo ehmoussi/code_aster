@@ -24,6 +24,7 @@ Configuration for Scibian 9  MPI
 
 waf_mpi configure --use-config=scibian9_mpi --prefix=../install/mpi
 waf_mpi install -p
+
 """
 
 import gaia_std
@@ -35,6 +36,16 @@ def configure(self):
     opts.parallel = True
     gaia_std.configure(self)
     self.env['ADDMEM'] = 1200
+
+    self.env.append_value('OPT_ENV', [
+        'export LD_PRELOAD='
+        '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_scalapack_lp64.so:'
+        '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_lp64.so:'
+        '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_thread.so:'
+        '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_core.so:'
+        '/opt/intel/2019.0.045/compilers_and_libraries/linux/lib/intel64/libiomp5.so:'
+        '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_blacs_intelmpi_lp64.so',
+    ])
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/lib',
