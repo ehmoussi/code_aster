@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -152,7 +152,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=7,
                    RESULTAT=REPONSE,
                    NOM_CHAM='SIEF_ELGA',
                    NOM_CMP='SIYY',
-                   VALE_CALC=0.499999991452,
+                   VALE_CALC=0.5000004088684564,
                    MAILLE='M1',),
                 _F(NUME_ORDRE=7,
                    POINT=1,

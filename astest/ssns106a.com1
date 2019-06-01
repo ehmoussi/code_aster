@@ -191,7 +191,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=8261.08073973,
+           VALE_CALC=9035.259115074074,
            NOM_PARA='VAL_PARA',
            TABLE=TAB_G_RA,
            FILTRE=_F(NOM_PARA='NOM_PARA',
@@ -215,7 +215,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.00125146425927,
+           VALE_CALC=0.34566566442116703,
            NOM_PARA='VAL_PARA',
            TABLE=TAB_G_RA,
            FILTRE=_F(NOM_PARA='NOM_PARA',
@@ -240,7 +240,8 @@ MAT_G_PA=DEFI_GLRC(RELATION='GLRC_DM',
                              OMY=8.E-4,
                              RX=0.8,
                              RY=0.8,),),
-                   PENTE=_F(TRACTION='PLAS_ACIER'),
+                   PENTE=_F(TRACTION='PLAS_ACIER',
+                            FLEXION='PLAS_ACIER'),
                    RHO=2700.0,
                    AMOR_ALPHA=5.e-05,
                    AMOR_BETA=4.0,
@@ -358,7 +359,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=8261.08073973,
+           VALE_CALC=6737.407007468165,
            NOM_PARA='VAL_PARA',
            TABLE=TAB_G_PA,
            FILTRE=_F(NOM_PARA='NOM_PARA',
@@ -382,7 +383,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.00125146425927,
+           VALE_CALC=0.23507998496810334,
            NOM_PARA='VAL_PARA',
            TABLE=TAB_G_PA,
            FILTRE=_F(NOM_PARA='NOM_PARA',
@@ -550,7 +551,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.218244164833,
+           VALE_CALC=0.2213810112412963,
            NOM_PARA='VAL_PARA',
            TABLE=TAB_G_UT,
            FILTRE=_F(NOM_PARA='NOM_PARA',
@@ -697,7 +698,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=8261.08073973,
+           VALE_CALC=9035.259115074074,
            NOM_PARA='VAL_PARA',
            TABLE=TAB_G_CI,
            FILTRE=_F(NOM_PARA='NOM_PARA',
@@ -721,7 +722,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.00125146425927,
+           VALE_CALC=0.34566566442116703,
            NOM_PARA='VAL_PARA',
            TABLE=TAB_G_CI,
            FILTRE=_F(NOM_PARA='NOM_PARA',

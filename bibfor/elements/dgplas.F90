@@ -16,11 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine dgplas(ea, sya, eb, nub, ftj,&
+
+subroutine dgplas(ea, sya, eb, nub, ftj,fcj,&
                   num, nuf, a, b1, b,&
-                  syt, syf, dxd, drd, h,&
-                  ipente, icisai, emaxm, emaxf, nnap,&
-                  rx, ry, np, dxp, pendt,&
+                  syt, syf, ef, dxd, drd, h,&
+                  ipentetrac, ipenteflex, icisai, emaxm, emaxf, nnap,&
+                  omx, rx, ry, np, dxp, pendt,&
                   drp, mp, pendf)
 !
 ! aslint: disable=W1504
@@ -29,12 +30,13 @@ subroutine dgplas(ea, sya, eb, nub, ftj,&
 ! PARAMETRES ENTRANTS
 #include "asterfort/dgmmax.h"
 #include "asterfort/dgmpla.h"
+#include "asterfort/calc_myf_gf.h"
 #include "asterfort/utmess.h"
-    integer :: nnap, ilit, icisai, ipente
+    integer :: nnap, ilit, icisai, ipentetrac, ipenteflex
 !
-    real(kind=8) :: ea(*), sya(*), eb, nub, num, nuf, w, emaxm, emaxf
-    real(kind=8) :: a, b1, b, syt, syf, dxd, drd, h, c, rx(*), ry(*)
-    real(kind=8) :: rmesg(2), ftj
+    real(kind=8) :: ea(*), sya(*), eb, nub, num, nuf, w, emaxm, emaxf, ef
+    real(kind=8) :: a, b1, b, syt, syf, dxd, drd, h, c, omx, rx(*), ry(*)
+    real(kind=8) :: rmesg(2), ftj, fcj
 !
 ! PARAMETRES SORTANTS
     real(kind=8) :: pendt, pendf
@@ -57,14 +59,17 @@ subroutine dgplas(ea, sya, eb, nub, ftj,&
 !       B1
 !       B        : SECTIONS DES ACIERS
 !       SYT      : SEUIL D'ENDOMMAGEMENT EN TRACTION
-!       SYF      : SEUIL D'ENDOMMAGEMENT EN FLEXION
 !       DXD      : DEPLACEMENT A L'APPARITION DE L'ENDOMMAGEMENT
 !       DRD      : ROTATION A L'APPARITION DE L'ENDOMMAGEMENT
 !       H        : EPAISSEUR DE LA PLAQUE
-!       IPENTE   : OPTION DE CALCUL DES PENTES POST ENDOMMAGEMENT
+!       IPENTETRAC   : OPTION DE CALCUL DES PENTES POST ENDOMMAGEMENT TR
 !                  1 : RIGI_ACIER
 !                  2 : PLAS_ACIER
 !                  3 : UTIL
+!       IPENTEFLEX   : OPTION DE CALCUL DES PENTES POST ENDOMMAGEMENT FL
+!                  1 : RIGI_INIT
+!                  2 : UTIL
+!                  3 : RIGI_ACIER
 !       ICISAI   : INDICATEUR DE CISAILLEMENT
 !       EMAXM    : DEFO GENE MAX EN MEMBRANE
 !       EMAXF    : DEFO GENE MAX EN FLEXION
@@ -79,12 +84,15 @@ subroutine dgplas(ea, sya, eb, nub, ftj,&
 ! OUT:
 !       PENDT    : PENTE POST ENDOMMAGEMENT EN MEMBRANNE
 !       PENDF    : PENTE POST ENDOMMAGEMENT EN FLEXION
+
+! IN/OUT :
+!       SYF      : SEUIL D'ENDOMMAGEMENT EN FLEXION
 ! ----------------------------------------------------------------------
 !
-    real(kind=8) :: np, dxp, mp, drp
+    real(kind=8) :: np, dxp, mp, drp, ya, efm
 !
-! - DETERMINATION DE LA PENTE POST ENDOMMAGEMENT EN MEMBRANNE
-    if (ipente .eq. 3) then
+! - DETERMINATION DE LA PENTE POST ENDOMMAGEMENT EN TRACTION
+    if (ipentetrac .eq. 3) then
         if (emaxm .lt. dxd) then
             rmesg(1)=emaxm
             rmesg(2)=dxd
@@ -93,9 +101,9 @@ subroutine dgplas(ea, sya, eb, nub, ftj,&
         dxp=emaxm
         np=b*dxp
         pendt=(np-syt)/(dxp-dxd)
-    else if (ipente .eq. 1) then
+    else if (ipentetrac .eq. 1) then
         pendt=b
-    else if (ipente .eq. 2) then
+    else if (ipentetrac .eq. 2) then
         dxp=sya(1)/ea(1)
         do ilit = 2,nnap
             if (sya(ilit)/ea(ilit) .lt. dxp) then
@@ -108,9 +116,9 @@ subroutine dgplas(ea, sya, eb, nub, ftj,&
 !
 ! - ESSAI DE CISAILLEMENT PUR DANS LE PLAN
     if (icisai .eq. 1) then
-        if (ipente .eq. 1) then
+        if (ipentetrac .eq. 1) then
             pendt=b
-        else if (ipente .eq. 3) then
+        else if (ipentetrac .eq. 3) then
             if (emaxm .lt. dxd) then
                 rmesg(1)=emaxm
                 rmesg(2)=dxd
@@ -118,36 +126,37 @@ subroutine dgplas(ea, sya, eb, nub, ftj,&
             endif
             dxp=emaxm
             np=b*dxd+ftj/3.d0
-        else if (ipente .eq. 2) then
+        else if (ipentetrac .eq. 2) then
             dxp=sqrt(2.d0)*dxp+2.d0*dxd
             np=b*dxp+ftj/3.d0
         endif
     endif
 !
 ! - DETERMINATION DE LA PENTE POST ENDOMMAGEMENT EN FLEXION
-    if (ipente .eq. 3) then
-        if (emaxf .lt. drd) then
-            rmesg(1)=emaxf
-            rmesg(2)=drd
-            call utmess('F', 'ALGORITH6_5', nr=2, valr=rmesg)
-        endif
-        drp=emaxf
-        call dgmmax(eb, nub, num, nuf, h,&
-                    a, b1, b, mp, drp,&
-                    w, c)
-        pendf=(mp-syf)/(drp-drd)
-    else if (ipente .eq. 1) then
+
+
+    if (ipenteflex .eq. 3) then
         drp=0.d0
         call dgmmax(eb, nub, num, nuf, h,&
                     a, b1, b, mp, drp,&
                     w, c)
         pendf=c
-    else if (ipente .eq. 2) then
+    else if (ipenteflex .eq. 4) then
+! PLAS_ACIER
         call dgmpla(eb, nub, ea, sya, num,&
                     nuf, h, a, b1, b,&
                     nnap, rx, ry, mp, drp,&
                     w)
         pendf=(mp-syf)/(drp-drd)
+    else     
+        ya = rx(1)*h
+        efm = 1./12.*ef*h**3-2*ea(1)*omx*(ya**2)
+        efm = efm*12/(h**3)
+        call calc_myf_gf(efm, ftj, fcj, h, ea(1), omx,& 
+                       ya, sya(1), ipenteflex, emaxf,&
+                       syf, pendf)
+        
     endif
 !
 end subroutine
+
