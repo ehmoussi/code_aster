@@ -21,7 +21,7 @@
 interface
     subroutine calc_myf_gf(em, ftj, fcj, h, ea, omx, & 
                            ya, sya, ipenteflex, kappa_flex,&
-                           myf, gf)
+                           myf, pendf)
         real(kind=8) :: em
         real(kind=8) :: ftj
         real(kind=8) :: fcj
@@ -33,6 +33,6 @@ interface
         integer :: ipenteflex
         real(kind=8) :: kappa_flex
         real(kind=8) :: myf
-        real(kind=8) :: gf
+        real(kind=8) :: pendf
     end subroutine calc_myf_gf
 end interface

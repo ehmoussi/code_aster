@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -144,23 +144,22 @@ angle0=0.
 angles=[angle0,angle2] + (Ncal-2)*[angle0]
 
 # les precisions sur chaque TEST_RESU
-prec_ecart=[[1.E-10, 1.E-10, 1.E-10,  1.E-10],
+prec_ecart=[
             [1.E-10, 4.E-8,  1.E-8,   1.E-10],
-            [1.E-10, 1.E-10, 1.E-10,  1.E-10]]
+            [1.E-10, 5.E-9, 1.E-9,  1.E-10]]
 vale_calc=[
-  [0.0E+00,             0.0E+00,             0.0E+00,             0.0E+00],
   [2.6372563740117E-14, 3.5832287690377E-15, 3.7287755594394E-09, 0.0E+00],
   [0.0E+00,             0.0E+00,             0.0E+00,             0.0E+00],
     ]
 
 
 prec_tgt=2.e-2
-prec_zero=[1.E-10, 0.01, 0.01]
+prec_zero=[0.01, 0.01]
 
 # les quantites (invariants...) sur lequels portent les calculs d'erreur et les test_resu
-ch_param2=['V1','VMIS','TRACE']
+ch_param2=['VMIS','TRACE']
 # coefficients pour ch_param2 pour calculer l'erreur sur le cas "Pa"
-coef_para=[1.,C_Pa,C_Pa]
+coef_para=[C_Pa,C_Pa]
 
 # definition de la temperature imposee
 TIMP=DEFI_FONCTION(
@@ -181,7 +180,7 @@ SECHIMP=DEFI_FONCTION(
 ##################################################################################
 
 # les quantites extraites du calcul
-ch_param=['V1','VMIS','TRACE','SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ']
+ch_param=['VMIS','TRACE','SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ']
 
 # resultats
 RESU=[None]*Ncal
