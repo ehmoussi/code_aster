@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -219,23 +219,6 @@ TEST_RESU(RESU=(_F(INST=1.,
                    NOM_CMP='V1',
                    VALE_CALC=0.,
                    CRITERE='ABSOLU',
-                   MAILLE='MA1',),
-                _F(INST=1.,
-                   RESULTAT=SOLNL1,
-                   NOM_CHAM='VARI_ELNO',
-                   NOEUD='NO1',
-                   NOM_CMP='V2',
-#                  -- La valeur suivante est un peu imprecise a cause de la formule:
-#                     q = mat(4) + mat(7) * meq**mat(5) (routine nmtacr.F90)
-#                     Ici mat(5)=0.3 et meq est presque nul (1.e-20).
-#                     La "courbe" q=f(meq) a une tangente verticale pour meq=0+
-#                     Une toute petite imprecision sur meq entraine une erreur significative
-#                     sur q, puis sur la variable interne V2.
-#                     Ce probleme disparait des que meq >> 0. Ce qui explique que le meme
-#                     TEST_RESU a l'instant t=2 est tres precis (=> pas besoin de TOLE_MACHINE)
-#                     Pour plus de details, voir la reponse a issue24687.
-                   TOLE_MACHINE=2.e-6,
-                   VALE_CALC=64.8002445651,
                    MAILLE='MA1',),
                 ),
           )
