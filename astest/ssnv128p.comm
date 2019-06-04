@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ CHA2=DEFI_CONTACT(MODELE=MO,
                           SEUIL_INIT=1e-1,
                           ALGO_FROT ='STANDARD',
                           COEF_CONT =1.e2,
-                          COEF_FROT =1.e2,
+                          COEF_FROT =1.e5,
                              ADAPTATION    = 'ADAPT_COEF',
                            ),
                               );
@@ -146,7 +146,6 @@ U2M=STAT_NON_LINE(MODELE     = MO,
                   CONVERGENCE= _F(ARRET = 'OUI',
                                  ITER_GLOB_MAXI = 15,
                                  RESI_GLOB_RELA = 1.0E-4),
-                  INFO=2,INFO_DBG = 'MECANONLINE',
                );
 
 
@@ -286,4 +285,3 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
 
 FIN();
 #
-
