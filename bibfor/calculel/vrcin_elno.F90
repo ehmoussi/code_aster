@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,13 +18,13 @@
 
 subroutine vrcin_elno(nomch, cesmod, chs)
     implicit none
-#include "asterfort/assert.h"
 #include "asterfort/cnocns.h"
 #include "asterfort/cnsces.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/utmess.h"
     character(len=19), intent(in) :: nomch, cesmod, chs
 ! person_in_charge: sam.cuvilliez at edf.fr
 !-----------------------------------------------------------------------
@@ -40,16 +40,20 @@ subroutine vrcin_elno(nomch, cesmod, chs)
 !-----------------------------------------------------------------------
 !
     character(len=8) :: tych
-    character(len=19) :: cns1
+    character(len=19) :: cns1, valk(2)
 !
 !-----------------------------------------------------------------------
 !
     call jemarq()
 !
-!   seul les cham_no sont autorises 
+!   seuls les cham_no sont autorises 
     call dismoi('TYPE_CHAMP', nomch, 'CHAMP', repk=tych)
-    ASSERT(tych .eq. 'NOEU')
-!
+    if(tych .ne. 'NOEU')then
+        valk(1)=nomch
+        valk(2)=tych
+        call utmess('F', 'RUPTURE0_20', nk=2, valk=valk)
+    endif
+
 !   passage cham_no -> cham_elem_s / ELNO
     cns1='&&VRCINE.CNS1'
     call cnocns(nomch, 'V', cns1)
