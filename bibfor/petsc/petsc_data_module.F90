@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 2016 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 2016 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,13 +51,12 @@ private
  integer, parameter, public :: nmxins=5
  character(len=19), public  :: nomats(nmxins), nosols(nmxins), nomat_courant
  character(len=14), public  :: nonus(nmxins),nonu_courant
- Mat, public :: ap(nmxins)
+ Mat, public :: ap(nmxins) 
  KSP, public :: kp(nmxins)
  Vec, public :: b, x
 
 ! Les variables suivantes sont utilisees par les preconditionneurs multigrille
  integer(kind=4), public :: tblocs(nmxins)
-! type(p_int4), target, public :: new_ieqs(nmxins), old_ieqs(nmxins)
 !
 !----------------------------------------------------------------
 ! Variables globales pour la définition d'un preconditionneur
@@ -169,14 +168,6 @@ subroutine mat_record ( matas, solveu, kptsc )
     nomats(kptsc) = matas
     nonus(kptsc) = nu
     nosols(kptsc) = solveu
-!  Initialisation par défaut
-!  la veritable initialisation sera faite en appelant apbloc
-!    tblocs(kptsc) = -1
-!    fictifs(kptsc) = -1
-!    new_ieqs(kptsc)%pi4 => null()
-!    old_ieqs(kptsc)%pi4 => null()
-  else
-    !  La matrice est deja enregistree, on ne fait rien
   endif
 !
 end subroutine mat_record

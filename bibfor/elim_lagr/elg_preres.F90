@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,10 +25,12 @@ use elg_data_module
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/copisd.h"
+#include "asterfort/detrsd.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/elg_calc_matk_red.h"
-#include "asterfort/gcncon.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/prere1.h"
@@ -37,10 +39,11 @@ use elg_data_module
 !-----------------------------------------------------------------------
 !
     character(len=19) :: matas1, solve1
+    character(len=8) :: metres
     character(len=*) :: base, matpre
     integer :: istop, iret
     character(len=19) :: matas2, solve2
-    integer ::   npvneg
+    integer ::   npvneg, iexi
     character(len=24), pointer :: slvk(:) => null()
     character(len=24), pointer :: refa(:) => null()
 !
@@ -49,12 +52,18 @@ use elg_data_module
 !
 !
 !   -- ON CREE LA MATRICE (REDUITE) MATAS2
-    call gcncon('_', matas2)
+!   Si elle existe déjà, on la détruit 
+    matas2="ELG_"//matas1(5:19)
+    call jeexin(matas2//'.REFA', iexi)
+    if (iexi .gt. 0) then
+         call dismoi('METH_RESO', matas2, 'MATR_ASSE', repk=metres)
+    endif
+    call detrsd( "MATR_ASSE", matas2) 
     call elg_gest_data('NOTE', matas1, matas2, ' ')
     call elg_calc_matk_red(matas1, solve1, matas2, 'V')
 !
 !   -- ON DUPLIQUE SOLVE1 EN CHANGEANT ELIM_LAGR: OUI -> NON
-    call gcncon('_', solve2)
+    solve2="ELG_"//solve1(5:19)
     call copisd('SOLVEUR', 'V', solve1, solve2)
     call jeveuo(solve2//'.SLVK', 'L', vk24=slvk)
     slvk(13)='NON'

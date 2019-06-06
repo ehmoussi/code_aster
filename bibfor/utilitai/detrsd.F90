@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 subroutine detrsd(typesd, nomsd)
 !
-use elg_data_module
 !
 implicit none
 !
@@ -408,7 +407,6 @@ implicit none
                 call apetsc('DETR_MAT', ' ', matas, [0.d0], ' ',&
                             0, ibid, iret)
             endif
-            call elg_gest_data('EFFACE', ' ', matas, ' ')
         endif
 !
         call jedetr(matas//'.CCID')

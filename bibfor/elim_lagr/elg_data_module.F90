@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,8 +44,7 @@ integer, parameter :: nmax_ctxt = 5
 !     KE est l'indice à utiliser dans le tableau elg_ctxt(:)
 !     C'est la variable "sensible" que l'on doit "positionner" avec
 !     beaucoup de soins.
-!     Aujourd'hui, KE est positionné au début de preres.f et au début
-!     de resoud.f
+!     Aujourd'hui, KE est positionné au début de preres.f 
 integer(kind=4), public :: ke
 !     Tableau d'objets de type elim_lagr_ctxt.
 !     Chaque objet contient toutes les données nécessaires pour
@@ -67,18 +66,12 @@ public :: elg_gest_data
 !             ! A    0  !   (L)    (c)
 !
 !   1) on calcule T = noyau de A
-!   2) on calcule X0 solution particulière de : A*X=c
-!      X0 = A' * ( R'*R \ c )
-!      où R est obtenu par :
-!        Q,R = qr(A') ; R=R(1:n2,1:n2)
-!        R est tel que :
-!           A*A' = R'*R
-!           R est triangulaire supérieure
-!
+!   2) on calcule X0 solution particulière de : A*X=c, 
+!       on cherche ensuite X sous la forme X=X0+TY 
 !   3) On résoud le sytème "réduit" :
 !       [T'*B*T]*Y = T'*(b - B*X0)
 !   4) On peut alors calculer X=X0 + T*Y
-!   5) On peut alors calculer L = (R'*R) \ A*(b - B*X)
+!   5) On peut alors calculer L = (A*A') \ A*(b - B*X)
 !   6) La solution complète est : [X, L]
 !
 !   Dimensions des matrices et vecteurs :
@@ -106,28 +99,15 @@ public :: elg_gest_data
 !  mais on "pointe" sur celles de la matrice MATRIG2
 !
 !----------------------------------------------------------------------
-! Remarque :
-!  la factorisation R=qr(A') n'est utile que pour le calcul de x0 quand
-!  c != 0 et pour le calcul des coefficents de Lagrange.
-!  Dans le cadre des calculs modaux, cette factorisation est inutile.
-!
-!----------------------------------------------------------------------
 ! Correspondance entre les variables :
 ! ------------------------------------
 ! B      -> MatB
 ! A'     -> Ctrans
 ! T      -> Tfinal
 ! T'*B*T -> Kproj
-! R      -> RCt
 ! X0     -> VX0
 ! b      -> VecB
 ! c      -> VecC
-!
-! Réalité :
-! ---------
-! * RCt est rectangle de dimensions (n1, n2)
-!     RCt contient  R dans ses 1ères lignes.
-!     RCt est prolongé par 0.
 !----------------------------------------------------------------------
 contains
 !
@@ -157,7 +137,7 @@ subroutine elg_gest_data (action, mat1, mat2, rigi1)
     character(len=*), intent(in)  :: action, mat1, mat2, rigi1
 #ifdef _HAVE_PETSC
 !   Local variables
-    integer :: k, ktrou, iprem
+    integer :: k, ktrou, iprem, kpos
 !
     save iprem
     data iprem / 0 /
@@ -180,26 +160,41 @@ subroutine elg_gest_data (action, mat1, mat2, rigi1)
     endif
 !
     if (action .eq. 'NOTE') then
-        ktrou=0
-!       -- on cherche une place libre
-        do k = 1, nmax_ctxt
-            if (elg_context(k)%full_matas .eq. ' ') then
-                ktrou=k
-                goto 1
-            endif
+!       La matrice mat1 a-t-elle déjà été enregistrée ? 
+        kpos=1
+        do while ((trim(mat1)/=elg_context(kpos)%full_matas).and.(kpos<=nmax_ctxt))
+           kpos=kpos+1
         enddo
-  1     continue
-        ASSERT(ktrou.gt.0)
-        ke=ktrou
-        elg_context(ke)%full_matas=mat1
-        elg_context(ke)%reduced_matas=mat2
-        elg_context(ke)%k_matas=rigi1
+        if ( kpos<= nmax_ctxt) then 
+           ke = kpos
+!          On vérifie que la matrice de rigidité enregistrée a bien le même nom
+!          que la matrice rigi1 fournie en entrée de la routine 
+           ASSERT( elg_context(ke)%k_matas==rigi1)
+!          La matrice réduite n'est pas forcément la même 
+           elg_context(ke)%reduced_matas=mat2
+        elseif (kpos > nmax_ctxt) then 
+!           la matrice n'a jamais été rencontrée 
+            ktrou=0
+!       -- on cherche une place libre
+            do k = 1, nmax_ctxt
+                if (elg_context(k)%full_matas .eq. ' ') then
+                    ktrou=k
+                    goto 1
+                endif
+            enddo
+  1         continue
+            ASSERT(ktrou.gt.0)
+            ke=ktrou
+            elg_context(ke)%full_matas=mat1
+            elg_context(ke)%reduced_matas=mat2
+            elg_context(ke)%k_matas=rigi1
+        endif
     endif
 !
 !
     if (action .eq. 'CHERCHE') then
         ktrou=0
-        do k = 1, 5
+        do k = 1, nmax_ctxt
             if (elg_context(k)%full_matas .eq. mat1) then
                 ktrou=k
                 goto 2
@@ -211,11 +206,10 @@ subroutine elg_gest_data (action, mat1, mat2, rigi1)
   2     continue
     endif
 !
-!
-    if (action .eq. 'EFFACE') then
+   if (action .eq. 'EFFACE') then
         ASSERT(mat1.eq.' ')
         ktrou=0
-        do k = 1, 5
+        do k = 1, nmax_ctxt
             if (elg_context(k)%reduced_matas .eq. mat2) then
                 ktrou=k
                 goto 3

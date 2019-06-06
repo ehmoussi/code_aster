@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@ module elg_context_type
 !
 #include "asterf_types.h"
 #include "asterf_petsc.h"
-!
 !
 ! person_in_charge: natacha.bereux at edf.fr
 !
@@ -48,6 +47,10 @@ integer :: nphys
     Mat :: kproj
 ! Matrice des contraintes
     Mat :: matc
+! Matrice CC^T (utile seulement pour la reconstruction des Lagranges)
+    Mat :: cct
+! KSP (pour la reconstruction des Lagranges)
+    KSP :: ksp
 ! Matrice contenant la base du noyau de la matrice des contraintes
     Mat :: tfinal
 ! Matrice initiale B (c'est la matr_asse convertie au format PETSc) 
@@ -94,6 +97,8 @@ function new_elg_context() result ( elg_ctxt )
   elg_ctxt%vx0=PETSC_NULL_OBJECT
   elg_ctxt%vecb=PETSC_NULL_OBJECT
   elg_ctxt%vecc=PETSC_NULL_OBJECT
+  elg_ctxt%cct=PETSC_NULL_OBJECT
+  elg_ctxt%ksp=PETSC_NULL_OBJECT
 #else
   elg_ctxt%kproj=PETSC_NULL_MAT
   elg_ctxt%matc=PETSC_NULL_MAT
@@ -102,52 +107,97 @@ function new_elg_context() result ( elg_ctxt )
   elg_ctxt%vx0=PETSC_NULL_VEC
   elg_ctxt%vecb=PETSC_NULL_VEC
   elg_ctxt%vecc=PETSC_NULL_VEC
+  elg_ctxt%cct=PETSC_NULL_MAT
+  elg_ctxt%ksp=PETSC_NULL_KSP
 #endif
 end function new_elg_context
 !
-!
 ! Free object elg_ctxt
-!
-subroutine free_elg_context( elg_ctxt )
+! If keep_basis == .true., PETSc matrix tfinal
+! is not freed, and may be use for further computations 
+! 
+subroutine free_elg_context( elg_ctxt, keep_basis )
 !   Dummy argument
     type(elim_lagr_ctxt), intent(inout) :: elg_ctxt
+    logical, optional, intent(in)       :: keep_basis
 !
-    elg_ctxt%full_matas=' '
+    logical :: free_all 
+!
+    free_all = .true.
+    if ( present(keep_basis) ) then 
+        free_all = .not. keep_basis
+     endif 
+!
     elg_ctxt%reduced_matas=' '
-    elg_ctxt%k_matas=' '
 !
+    if ( elg_ctxt%kproj /= PETSC_NULL_MAT ) then 
     call MatDestroy(elg_ctxt%kproj, ierr)
     ASSERT( ierr == 0 )
+    endif
+    if ( elg_ctxt%matc /= PETSC_NULL_MAT ) then
     call MatDestroy(elg_ctxt%matc, ierr)
     ASSERT( ierr == 0 )
-    call MatDestroy(elg_ctxt%tfinal, ierr)
-    ASSERT( ierr == 0 )
+    endif
+    if ( elg_ctxt%matb /= PETSC_NULL_MAT ) then
     call MatDestroy(elg_ctxt%matb, ierr)
     ASSERT( ierr == 0 )
+    endif
+    if ( elg_ctxt%vx0 /= PETSC_NULL_VEC ) then
     call VecDestroy(elg_ctxt%vx0, ierr)
     ASSERT( ierr == 0 )
+    endif
+    if ( elg_ctxt%vecb /= PETSC_NULL_VEC ) then
     call VecDestroy(elg_ctxt%vecb, ierr)
     ASSERT( ierr == 0 )
+    endif
+    if ( elg_ctxt%vecc /= PETSC_NULL_VEC ) then
     call VecDestroy(elg_ctxt%vecc, ierr)
     ASSERT( ierr == 0 )
+    endif
 !
 #if PETSC_VERSION_LT(3,8,0)
   elg_ctxt%kproj=PETSC_NULL_OBJECT
   elg_ctxt%matc=PETSC_NULL_OBJECT
-  elg_ctxt%tfinal=PETSC_NULL_OBJECT
   elg_ctxt%matb=PETSC_NULL_OBJECT
   elg_ctxt%vx0=PETSC_NULL_OBJECT
   elg_ctxt%vecb=PETSC_NULL_OBJECT
   elg_ctxt%vecc=PETSC_NULL_OBJECT
+  elg_ctxt%ksp=PETSC_NULL_OBJECT
 #else
   elg_ctxt%kproj=PETSC_NULL_MAT
   elg_ctxt%matc=PETSC_NULL_MAT
-  elg_ctxt%tfinal=PETSC_NULL_MAT
   elg_ctxt%matb=PETSC_NULL_MAT
   elg_ctxt%vx0=PETSC_NULL_VEC
   elg_ctxt%vecb=PETSC_NULL_VEC
   elg_ctxt%vecc=PETSC_NULL_VEC
+  elg_ctxt%ksp=PETSC_NULL_KSP
 #endif
+!
+   if ( free_all ) then 
+    elg_ctxt%full_matas=' '
+    elg_ctxt%k_matas=' '
+    if ( elg_ctxt%tfinal /= PETSC_NULL_MAT ) then
+        call MatDestroy(elg_ctxt%tfinal, ierr)
+        ASSERT( ierr == 0 )
+    endif
+    if ( elg_ctxt%cct /= PETSC_NULL_MAT ) then
+        call MatDestroy(elg_ctxt%cct, ierr)
+        ASSERT( ierr == 0 )
+    endif
+    if ( elg_ctxt%ksp /= PETSC_NULL_KSP ) then
+        call KSPDestroy(elg_ctxt%ksp, ierr)
+        ASSERT( ierr == 0 )
+    endif
+#if PETSC_VERSION_LT(3,8,0)   
+   elg_ctxt%tfinal=PETSC_NULL_OBJECT
+   elg_ctxt%cct=PETSC_NULL_OBJECT
+   elg_ctxt%ksp=PETSC_NULL_OBJECT
+#else
+   elg_ctxt%tfinal=PETSC_NULL_MAT
+   elg_ctxt%cct=PETSC_NULL_MAT
+   elg_ctxt%ksp=PETSC_NULL_KSP
+#endif
+   endif 
 !
 end subroutine free_elg_context
 !
@@ -162,8 +212,9 @@ function new_elg_context() result ( elg_ctxt )
     elg_ctxt%nphys=0
 end function new_elg_context
 !
-subroutine free_elg_context( elg_ctxt )
+subroutine free_elg_context( elg_ctxt, keep_basis )
     type(elim_lagr_ctxt), intent(inout) :: elg_ctxt
+    logical, intent(in), optional :: keep_basis
     elg_ctxt%nphys=0
 end subroutine free_elg_context
 #endif
