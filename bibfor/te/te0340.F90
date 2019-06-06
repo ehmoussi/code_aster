@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -106,7 +106,7 @@ subroutine te0340(option, nomte)
             enddo
         enddo
     else
-        call utmess('F', 'ALGORITH17_2', sk=zk16(icompo+2))
+        call utmess('F', 'ALGORITH17_3', sk=zk16(icompo+2))
     endif
 !
 !     DEFINITION DES TANGENTES
