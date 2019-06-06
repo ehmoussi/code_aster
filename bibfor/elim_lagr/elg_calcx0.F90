@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@ use aster_petsc_module
 use elg_data_module
     implicit none
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=C1308
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
 #include "asterfort/asmpi_info.h"
@@ -42,21 +41,9 @@ use elg_data_module
 !     contrainte A*x0 = c (i.e. x0 est solution du problème de minimisation
 !     sous contrainte : min ||x||, Ax = c )
 !     On procède en 3 étapes :
-!     * calcul de A A' ( A' est ELIMLG/Ctrans )
-!     * résolution de y0 = ( A A' ) \ c (appel du Gradient Conjugué de PETSc)
+!     * calcul et factorisation de A A' (lors de la construction du elg_context)
+!     * résolution de y0 = ( A A' ) \ c 
 !     * calcul de x0 = A' * y0
-!
-!     Rq: La méthode originale de résolution est basée sur une
-!         factorisation QR préalable de A. La solution x0
-!         est obtenue par:
-!       z   = (L'*L) \  c  (par descente / remontée)
-!       x0  = A' * z
-!       avec :
-!     * Mat A'  : matrice des contraintes linéaires
-!       A' utilisée est ELIMLG/Ctrans
-!     * Mat L'  : matrice triangulaire supérieure
-!       L' utilisée est ELIMLG/RCt
-!       Remarque : L est telle que : A*A'=L'*L
 !
 !     * Vec VecC (second membre c)
 !       VecC utilisé est ELIMLG/VecC
@@ -65,9 +52,6 @@ use elg_data_module
 !----------------------------------------------------------------
 #ifdef _HAVE_PETSC
     Vec :: vy, y0
-    Mat :: cct
-    KSP :: ksp
-    PC  :: pc
     integer :: ifm, niv
     mpi_int :: mpicomm, rang, nbproc
     PetscInt :: its, reason
@@ -76,12 +60,10 @@ use elg_data_module
     real(kind=8) :: norm
     PetscScalar, parameter ::  neg_rone = -1.d0
     aster_logical :: info, debug = .false.
-    PetscReal :: aster_petsc_real
 !----------------------------------------------------------------
     call jemarq()
     call infniv(ifm, niv)
     info=niv.eq.2
-    aster_petsc_real = PETSC_DEFAULT_REAL
     !
 !   -- COMMUNICATEUR MPI DE TRAVAIL
     call asmpi_comm('GET_WORLD', mpicomm)
@@ -91,29 +73,6 @@ use elg_data_module
     call MatGetSize( elg_context(ke)%matc, nn, mm , ierr)
     ASSERT( ierr == 0 )
     ASSERT( mm > nn )
-!   -- Calcul de CCT = C * transpose(C)
-
-
-    call MatMatTransposeMult(elg_context(ke)%matc, elg_context(ke)%matc,&
-        MAT_INITIAL_MATRIX, aster_petsc_real, cct, ierr)
-    ASSERT( ierr == 0 )
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!         Create the linear solver and set options
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!
-!  Create linear solver context
-      call KSPCreate(PETSC_COMM_SELF,ksp,ierr)
-      ASSERT( ierr == 0 )
-!  Set operators. Here the matrix that defines the linear system
-!  also serves as the preconditioning matrix.
-!
-    call KSPSetOperators(ksp, cct, cct, ierr)
-    ASSERT( ierr == 0 )
-!
-!  Set linear solver options : here we choose CG solver
-      call KSPSetType(ksp, KSPCG, ierr)
-      ASSERT( ierr == 0 )
-!
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                      Solve the linear system
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -123,11 +82,11 @@ use elg_data_module
 !
     call VecDuplicate( elg_context(ke)%vecc, y0, ierr)
     ASSERT( ierr == 0 )
-    call KSPSolve( ksp, elg_context(ke)%vecc, y0, ierr)
+    call KSPSolve( elg_context(ke)%ksp, elg_context(ke)%vecc, y0, ierr)
     ASSERT( ierr == 0 )
 !
 !  Check the reason why KSP solver ended
-    call KSPGetConvergedReason(ksp, reason, ierr)
+    call KSPGetConvergedReason(elg_context(ke)%ksp, reason, ierr)
     ASSERT( ierr == 0 )
 !  Reason < 0 indicates a problem during the resolution
     if (reason<0) then
@@ -153,7 +112,7 @@ use elg_data_module
       ASSERT( ierr == 0 )
       call VecNorm(vy,norm_2,norm,ierr)
       ASSERT( ierr == 0 )
-      call KSPGetIterationNumber(ksp,its,ierr)
+      call KSPGetIterationNumber(elg_context(ke)%ksp,its,ierr)
       ASSERT( ierr == 0 )
 
       if (debug.and.rang==0) then
@@ -167,10 +126,6 @@ use elg_data_module
 !  Free work space.  All PETSc objects should be destroyed when they
 !  are no longer needed.
 
-      call KSPDestroy(ksp,ierr)
-      ASSERT( ierr == 0 )
-      call MatDestroy(cct,ierr)
-      ASSERT( ierr == 0 )
       call VecDestroy(y0, ierr)
       ASSERT( ierr == 0 )
 !
