@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,8 +40,8 @@ DEFI_CABLE_BP=MACRO(nom="DEFI_CABLE_BP",
                    UN_PARMI('NOEUD_ANCRAGE','GROUP_NO_ANCRAGE'),),
            MAILLE          =SIMP(statut='c',typ=ma,min=2,validators=NoRepeat(),max='**'),
            GROUP_MA        =SIMP(statut='f',typ=grma),
-           NOEUD_ANCRAGE   =SIMP(statut='c',typ=no  ,validators=NoRepeat(),max=2),
-           GROUP_NO_ANCRAGE=SIMP(statut='f',typ=grno,validators=NoRepeat(),max=2),
+           NOEUD_ANCRAGE   =SIMP(statut='c',typ=no  ,validators=NoRepeat(),min=2,max=2),
+           GROUP_NO_ANCRAGE=SIMP(statut='f',typ=grno,validators=NoRepeat(),min=2,max=2),
            TENSION_CT      =SIMP(statut='f',typ=table_sdaster),
          ),
          ADHERENT        =SIMP(statut='f',typ='TXM',defaut='OUI',into=("OUI","NON") ),
