@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504,W1501
+!
 subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                   vff2, idfde2, npg, iw, geom,&
                   typmod, option, mate, compor, crit,&
@@ -56,7 +57,7 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
 ! OUT CODRET  : CODE RETOUR
 ! ----------------------------------------------------------------------
 !
-! aslint: disable=W1306,W1504
+
     implicit none
 !
 #include "asterf_types.h"
@@ -99,7 +100,7 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
     real(kind=8) :: r, wg, epsgm(6, 2), epsgd(6, 2), gepsm(6, 3), geps(6, 3)
     real(kind=8) :: f(3, 3)
     real(kind=8) :: b(6, 3, 27), de(6), sigma(6), dsidep(6, 6, 2), t1, t2
-    real(kind=8) :: pin(6, 6)
+    real(kind=8) :: pin(6, 6), r8bid
     real(kind=8) :: p(6, 6), sigmam(6), epsrss(6), sigell(6), dist(nno2, 2)
     real(kind=8) :: z(3, 3), w(3), work(9), bary(ndim), baryo(ndim), scal(3)
     real(kind=8) :: dirr(ndim)
@@ -119,13 +120,14 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
     kpg=1
     spt=1
     poum='+'
+    r8bid = 0.d0
     call rcvalb(fami, kpg, spt, poum, mate,&
                 ' ', 'NON_LOCAL', 0, ' ', [0.d0],&
                 1, 'LONG_CARA', lc, k2, 1)
     c = lc(1)**2
-    do 5 g = 1, npg
+    do g = 1, npg
         cod(g)=0
-  5 end do
+    end do
 !
 ! INITIALISATION CAVINI + INCREMENTATION
 ! DU COMPTEUR D'ITERATION + L ELEMENT EST-IL POINTE?
@@ -135,19 +137,19 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
     nono=0.d0
     nini=0
 !
-8491 continue
+100 continue
 !
     nunu=0
 !
     if (resi) then
 !
         if (nini .eq. 0) then
-            do 782 gg = 1, npg
+            do gg = 1, npg
                 vip(8,gg) = vip(8,gg)+1.0d0
-782         continue
+            end do
         endif
 !
-        do 1783 kvois = 1, nbvois
+        do kvois = 1, nbvois
 !
             numav=livois(kvois)
             call tecach('OOO', 'PVARIMP', 'L', iret, iad=vivois,&
@@ -159,9 +161,9 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                     vivonu=vivois
                     kvoinu=kvois
                     if (nint(vip(2,1)) .eq. 0) then
-                        do 1773 gg = 1, npg
+                        do gg = 1, npg
                             vip(2,gg)=1.d0
-1773                     continue
+                        end do
                     endif
                     if (nint(vip(2,1)) .eq. 1) then
                         bary(1)=zr(vivonu-1+9)
@@ -177,9 +179,9 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                     vivonu=vivois
                     kvoinu=kvois
                     if (nint(vip(2,1)) .eq. 0) then
-                        do 1774 gg = 1, npg
+                        do gg = 1, npg
                             vip(2,gg)=1.0d0
-1774                     continue
+                        end do
                     endif
                     if (nint(vip(2,1)) .eq. 1) then
                         bary(1)=zr(vivonu-1+11)
@@ -189,19 +191,17 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                     endif
                 endif
             endif
-!
-1783     continue
+        end do
 !
         call r8inir(6, 0.d0, epsrss, 1)
         if (nint(vip(2,1)) .eq. 0) then
-!            call r8inir(6, 0.d0, epsrss, 1)
-            do 2118 kl = 1, ndimsi
-                do 2119 i = 1, nno2
+            do kl = 1, ndimsi
+                do i = 1, nno2
                     ll=kl+ndim+((i-1)*(ndim+ndimsi))
                     epsrss(kl)=epsrss(kl)+ddlm(ll)/dble(nno2)
                     epsrss(kl)=epsrss(kl)+ddld(ll)/dble(nno2)
-2119             continue
-2118         continue
+                end do
+            end do
             call dscal(ndimsi-3, 1.d0/rac2, epsrss(4), 1)
         endif
 !
@@ -210,25 +210,23 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
             scal(1)=0
             scal(2)=0
             scal(3)=0
-            do 7614 n = 1, nbsoco(kvoinu)
+            do n = 1, nbsoco(kvoinu)
                 pq=lisoco(kvoinu,n,1)
-                do 7663 i = 1, ndim
+                do i = 1, ndim
                     scal(n)=scal(n)+(geom(i,pq)-bary(i))**2.d0
-7663             continue
-7614         continue
+                end do
+            end do
             scal(1)=sqrt(scal(1))
             scal(2)=sqrt(scal(2))
             scal(3)=scal(1)+scal(2)
-            do 2618 kl = 1, ndimsi
-                do 2617 i = 1, nbsoco(kvoinu)
+            do kl = 1, ndimsi
+                do i = 1, nbsoco(kvoinu)
                     pq=lisoco(kvoinu,i,1)
                     ll=kl+ndim+((pq-1)*(ndim+ndimsi))
-                    epsrss(kl)=epsrss(kl)+(1.0d0-scal(i)/scal(3))*&
-                    ddlm(ll)
-                    epsrss(kl)=epsrss(kl)+(1.0d0-scal(i)/scal(3))*&
-                    ddld(ll)
-2617             continue
-2618         continue
+                    epsrss(kl)=epsrss(kl)+(1.0d0-scal(i)/scal(3))*ddlm(ll)
+                    epsrss(kl)=epsrss(kl)+(1.0d0-scal(i)/scal(3))*ddld(ll)
+                end do
+            end do
             call dscal(ndimsi-3, 1.d0/rac2, epsrss(4), 1)
         endif
 !
@@ -243,17 +241,17 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                    z, 3, work, reuss)
 !
         if (nini .eq. 0) then
-            do 5987 i = 1, ndim
+            do i = 1, ndim
                 dirr(i)=z(i,3)
-5987         continue
+            end do
         endif
 !
         if (nint(vip(2,1)) .eq. 1) then
             if (w(3) .gt. vim(4,1)) then
-                do 6354 i = 1, npg
+                do i = 1, npg
                     vip(2,i)=3.d0
                     vip(7,i)=vip(8,i)
-6354             continue
+                end do
             endif
         endif
 !
@@ -265,11 +263,10 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                     iteamm=0
                     nono=1.d0
                 endif
-                do 6355 i = 1, npg
+                do i = 1, npg
                     vip(2,i)=2.d0
                     vip(7,i)=vip(8,i)
-6355             continue
-!
+                end do
             endif
         endif
 !
@@ -280,15 +277,15 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
             if (nint(vip(2,1)) .eq. 2) then
                 bary(1)=0.d0
                 bary(2)=0.d0
-                do 5612 i = 1, ndim
+                do i = 1, ndim
                     bary(i)=0
-                    do 5611 n = 1, nno2
+                    do n = 1, nno2
                         bary(i)=bary(i)+geom(i,n)/nno2
-5611                 continue
-5612             continue
+                    end do
+                end do
             endif
 !
-            do 5614 n = 1, nno2
+            do n = 1, nno2
                 nfin=n+1
                 if (nfin .gt. nno2) then
                     nfin=nfin-nno2
@@ -296,21 +293,21 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                 scal(1)=0
                 scal(2)=0
                 scal(3)=0
-                do 5663 i = 1, ndim
+                do i = 1, ndim
                     scal(1)=scal(1)+dirr(i)*(geom(i,n)-bary(i))
                     scal(2)=scal(2)+dirr(i)*(geom(i,nfin)-bary(i))
-5663             continue
+                end do
                 scal(3)=scal(1)*scal(2)
                 if (scal(3) .lt. 0.d0) then
                     vrarr(n)=1
                 else
                     vrarr(n)=0
                 endif
-5614         continue
+            end do
 !
             if (nint(vip(2,1)) .eq. 2) then
 !
-                do 7636 n = 1, nno2
+                do n = 1, nno2
                     nfin=n+1
                     if (nfin .gt. nno2) then
                         nfin=nfin-nno2
@@ -321,57 +318,49 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                         scal(1)=0.d0
                         scal(2)=0.d0
                         scal(3)=0.d0
-                        do 7613 i = 1, ndim
-                            scal(1)=scal(1)+dirr(i)*(geom(i,n)-bary(i)&
-                            )
-                            scal(2)=scal(2)+dirr(i)*(geom(i,nfin)-&
-                            bary(i))
-7613                     continue
+                        do i = 1, ndim
+                            scal(1)=scal(1)+dirr(i)*(geom(i,n)-bary(i))
+                            scal(2)=scal(2)+dirr(i)*(geom(i,nfin)-bary(i))
+                        end do
                         scal(1)=sqrt(scal(1)**2.d0)
                         scal(2)=sqrt(scal(2)**2.d0)
                         scal(3)=scal(1)+scal(2)
-                        dist(n,1)= dist(n,1)+scal(2)*dirr(2)*(geom(1,&
-                        n)-bary(1))
-                        dist(n,1)= dist(n,1)+scal(1)*dirr(2)*(geom(1,&
-                        nfin)-bary(1))
-                        dist(n,1)= dist(n,1)-scal(2)*dirr(1)*(geom(2,&
-                        n)-bary(2))
-                        dist(n,1)= dist(n,1)-scal(1)*dirr(1)*(geom(2,&
-                        nfin)-bary(2))
+                        dist(n,1)= dist(n,1)+scal(2)*dirr(2)*(geom(1,n)-bary(1))
+                        dist(n,1)= dist(n,1)+scal(1)*dirr(2)*(geom(1,nfin)-bary(1))
+                        dist(n,1)= dist(n,1)-scal(2)*dirr(1)*(geom(2,n)-bary(2))
+                        dist(n,1)= dist(n,1)-scal(1)*dirr(1)*(geom(2,nfin)-bary(2))
                         dist(n,1)=dist(n,1)/scal(3)
                     endif
-7636             continue
+                end do
 !
-                do 5616 n = 1, nno2
+                do n = 1, nno2
                     nfin=n+1
                     if (nfin .gt. nno2) then
                         nfin=nfin-nno2
                     endif
                     if (vrarr(n) .eq. 1) then
-                        do 5615 kvois = 1, nbvois
+                        do kvois = 1, nbvois
                             nn=0
-                            do 5617 i = 1, nbsoco(kvois)
+                            do i = 1, nbsoco(kvois)
                                 if (lisoco(kvois,i,1) .eq. n) nn=nn+1
                                 if (lisoco(kvois,i,1) .eq. nfin) nn=nn+ 1
-5617                         continue
+                            end do
                             if (nn .eq. 2) then
-                                do 5618 gg = 1, npg
+                                do gg = 1, npg
                                     vip(nnn,gg)=livois(kvois)
-                                    vip(2*nnn-1,gg)=bary(1)+dist(n,1)*&
-                                    dirr(2)
-                                    vip(2*nnn,gg)=bary(2)-dist(n,1)*&
-                                    dirr(1)
-5618                             continue
+                                    vip(2*nnn-1,gg)=bary(1)+dist(n,1)*dirr(2)
+                                    vip(2*nnn,gg)=bary(2)-dist(n,1)*dirr(1)
+                                end do
                                 nnn=nnn+1
                             endif
-5615                     continue
+                        end do
                     endif
-5616             continue
+                end do
             endif
 !
             if (nint(vip(2,1)) .eq. 3) then
                 compar=0.d0
-                do 5636 n = 1, nno2
+                do n = 1, nno2
                     nfin=n+1
                     if (nfin .gt. nno2) then
                         nfin=nfin-nno2
@@ -382,74 +371,65 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                         scal(1)=0.d0
                         scal(2)=0.d0
                         scal(3)=0.d0
-                        do 5613 i = 1, ndim
-                            scal(1)=scal(1)+dirr(i)*(geom(i,n)-bary(i)&
-                            )
-                            scal(2)=scal(2)+dirr(i)*(geom(i,nfin)-&
-                            bary(i))
-5613                     continue
+                        do i = 1, ndim
+                            scal(1)=scal(1)+dirr(i)*(geom(i,n)-bary(i))
+                            scal(2)=scal(2)+dirr(i)*(geom(i,nfin)-bary(i))
+                        end do
                         scal(1)=sqrt(scal(1)**2.d0)
                         scal(2)=sqrt(scal(2)**2.d0)
                         scal(3)=scal(1)+scal(2)
-                        dist(n,1)= dist(n,1)+scal(2)*dirr(2)*(geom(1,&
-                        n)-bary(1))
-                        dist(n,1)= dist(n,1)+scal(1)*dirr(2)*(geom(1,&
-                        nfin)-bary(1))
-                        dist(n,1)= dist(n,1)-scal(2)*dirr(1)*(geom(2,&
-                        n)-bary(2))
-                        dist(n,1)= dist(n,1)-scal(1)*dirr(1)*(geom(2,&
-                        nfin)-bary(2))
+                        dist(n,1)= dist(n,1)+scal(2)*dirr(2)*(geom(1,n)-bary(1))
+                        dist(n,1)= dist(n,1)+scal(1)*dirr(2)*(geom(1,nfin)-bary(1))
+                        dist(n,1)= dist(n,1)-scal(2)*dirr(1)*(geom(2,n)-bary(2))
+                        dist(n,1)= dist(n,1)-scal(1)*dirr(1)*(geom(2,nfin)-bary(2))
                         dist(n,1)=dist(n,1)/scal(3)
                         dist(n,2)=dist(n,1)*dist(n,1)
                         compar=compar+dist(n,2)/2.d0
                     endif
-5636             continue
+                end do
 !
-                do 5637 n = 1, nno2
+                do n = 1, nno2
                     if (dist(n,2) .gt. compar) then
                         vrarr(n)=1
                     else
                         vrarr(n)=0
                     endif
-5637             continue
+                end do
                 scal(1)=0.d0
                 scal(2)=0.d0
                 scal(3)=0.d0
-                do 5626 n = 1, nno2
+                do n = 1, nno2
                     nfin=n+1
                     if (nfin .gt. nno2) then
                         nfin=nfin-nno2
                     endif
                     if (vrarr(n) .eq. 1) then
-                        do 5625 kvois = 1, nbvois
+                        do kvois = 1, nbvois
                             nn=0
-                            do 5627 i = 1, nbsoco(kvois)
+                            do i = 1, nbsoco(kvois)
                                 if (lisoco(kvois,i,1) .eq. n) nn=nn+1
                                 if (lisoco(kvois,i,1) .eq. nfin) nn=nn+ 1
-5627                         continue
+                            end do
                             if (nn .eq. 2) then
-                                do 5628 gg = 1, npg
+                                do gg = 1, npg
                                     vip(5,gg)=livois(kvois)
-                                    vip(9,gg)=bary(1)+dist(n,1)*dirr(&
-                                    2)
-                                    vip(10,gg)=bary(2)-dist(n,1)*dirr(&
-                                    1)
+                                    vip(9,gg)=bary(1)+dist(n,1)*dirr(2)
+                                    vip(10,gg)=bary(2)-dist(n,1)*dirr(1)
                                     vip(11,gg)=bary(1)
                                     vip(12,gg)=bary(2)
-5628                             continue
+                                end do
                                 scal(1)=bary(1)+dist(n,1)*dirr(2)
                                 scal(2)=bary(2)-dist(n,1)*dirr(1)
                                 nunu=1
                                 nnn=nnn+1
                             endif
-5625                     continue
+                        end do
                     endif
-5626             continue
+                end do
                 nini=0
                 if (nunu .eq. 1) then
                     scal(3)=(scal(1)-bary(1))*(bary(1)-baryo(1))
-                    scal(3)=scal(3)+(scal(2)-bary(2))*(bary(2)-baryo(&
-                    2))
+                    scal(3)=scal(3)+(scal(2)-bary(2))*(bary(2)-baryo(2))
                     if (scal(3) .lt. 0.d0) then
                         scal(3)=0.d0
                         scal(3)=scal(3)+(baryo(2)-bary(2))**(2.d0)
@@ -466,7 +446,7 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
         endif
     endif
 !
-    if (nini .eq. 1) goto 8491
+    if (nini .eq. 1) goto 100 
 ! IL FAUDRA PREVOIR DE POUVOIR SORTIR DU DOMAINE GEOMETRIQUE ADMIS
 !  AVEC UN CODRET = 2
 !
@@ -478,34 +458,34 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
 !
 !    POSITION DES INDICES POUR LES DEPLACEMENTS ET LES DEFORMATIONS
 !
-    do 10 n = 1, nno2
-        do 20 i = 1, ndim
+    do n = 1, nno2
+        do i = 1, ndim
             iu(i,n) = i + (n-1)*(ndim+ndimsi)
- 20     continue
-        do 30 kl = 1, ndimsi
+        end do
+        do kl = 1, ndimsi
             ie(kl,n) = kl + ndim + (n-1)*(ndim+ndimsi)
- 30     continue
- 10 end do
+        end do
+    end do
     os = (ndimsi+ndim)*nno2
-    do 40 n = 1, nno1-nno2
-        do 50 i = 1, ndim
+    do n = 1, nno1-nno2
+        do i = 1, ndim
             iu(i,n+nno2) = i + (n-1)*ndim + os
- 50     continue
- 40 end do
+        end do
+    end do
 !
 !
 !    EXTRACTION DES DEPLACEMENTS
 !
-    do 100 n = 1, nno1
-        do 110 i = 1, ndim
+    do n = 1, nno1
+        do i = 1, ndim
             deplm(i+(n-1)*ndim) = ddlm(iu(i,n))
             depld(i+(n-1)*ndim) = ddld(iu(i,n))
-110     continue
-100 end do
+        end do
+    end do
 !
 ! - CALCUL POUR CHAQUE POINT DE GAUSS
 !
-    do 1000 g = 1, npg
+    do g = 1, npg
 !
 !      CALCUL DES ELEMENTS GEOMETRIQUES DE L'EF POUR E-BARRE
 !
@@ -531,11 +511,10 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
 !
 !      DEFORMATIONS ET ECARTS EN FIN DE PAS DE TEMPS
 !
-        call daxpy(18, 1.d0, gepsm, 1, geps,&
-                   1)
-        do 200 kl = 1, ndimsi
+        call daxpy(18, 1.d0, gepsm, 1, geps, 1)
+        do  kl = 1, ndimsi
             de(kl) = epsgm(kl,2)+epsgd(kl,2)
-200     continue
+        end do
 !
 !      LOI DE COMPORTEMENT
 !
@@ -543,16 +522,18 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
         call dscal(3, rac2, sigmam(4), 1)
 !
         call r8inir(36, 0.d0, p, 1)
-        call r8inir(36, 0.d0, pin, 1)
-        pin(1,1)=nono
+        if (nono .gt. 0.d0) then
+            cod(g) = 1
+            goto 999
+        endif
 !
         call nmcomp('RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instam, instap,&
                     12, epsgm, epsgd, 6, sigmam,&
                     vim(1, g), option, angmas, 36, pin,&
-                    sigma, vip(1, g), 72, dsidep, 36,&
-                    p, cod(g))
-        if (cod(g) .eq. 1) goto 9000
+                    sigma, vip(1, g), 72, dsidep, 1,&
+                    [r8bid], cod(g))
+        if (cod(g) .eq. 1) goto 999
 !
         call r8inir(6, 1.d0, p, 7)
 !
@@ -561,35 +542,35 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
         if (resi) then
 !
 !        VECTEUR FINT:U
-            do 300 n = 1, nno1
-                do 310 i = 1, ndim
+            do n = 1, nno1
+                do i = 1, ndim
                     kk = iu(i,n)
                     t1 = 0
-                    do 320 kl = 1, ndimsi
+                    do kl = 1, ndimsi
                         t1 = t1 + sigma(kl)*b(kl,i,n)
-320                 continue
+                    end do
                     vect(kk) = vect(kk) + wg*t1
-310             continue
-300         continue
+                end do
+            end do
 !
 !        VECTEUR FINT:E
-            do 350 n = 1, nno2
-                do 360 kl = 1, ndimsi
+            do n = 1, nno2
+                do kl = 1, ndimsi
                     kk = ie(kl,n)
                     t1 = 0
-                    do 365 pq = 1, ndimsi
+                    do pq = 1, ndimsi
                         t1 = t1 + p(kl,pq)*de(pq)*vff2(n,g)
                         t1 = t1 - p(kl,pq)*sigma(pq)*vff2(n,g)
-365                 continue
+                    end do
                     t2 = 0
-                    do 370 i = 1, ndim
-                        do 375 pq = 1, ndimsi
+                    do i = 1, ndim
+                        do pq = 1, ndimsi
                             t2 = t2 + c*dfdi2(n,i)*p(kl,pq)*geps(pq,i)
-375                     continue
-370                 continue
+                        end do
+                    end do
                     vect(kk) = vect(kk) + wg*(t1+t2)
-360             continue
-350         continue
+                end do
+            end do
 !
 !        CONTRAINTES
             call dcopy(ndimsi, sigma, 1, sigp(1, g), 1)
@@ -602,75 +583,74 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
         if (rigi) then
 !
 !        MATRICE K:U(I,N),U(J,M)
-            do 500 n = 1, nno1
-                do 510 i = 1, ndim
+            do n = 1, nno1
+                do i = 1, ndim
                     os = nddl*(iu(i,n)-1)
-                    do 520 m = 1, nno1
-                        do 530 j = 1, ndim
+                    do m = 1, nno1
+                        do j = 1, ndim
                             kk = os+iu(j,m)
                             t1 = 0
-                            do 540 kl = 1, ndimsi
-                                do 550 pq = 1, ndimsi
+                            do kl = 1, ndimsi
+                                do pq = 1, ndimsi
                                     t1 = t1 + dsidep(kl,pq,1)*b(pq,j, m)*b(kl,i,n)
-550                             continue
-540                         continue
+                                end do
+                            end do
                             matr(kk) = matr(kk) + wg*t1
-530                     continue
-520                 continue
+                        end do
+                    end do
 !
 !        MATRICE K:U(I,N),E(PQ,M)
-                    do 600 m = 1, nno2
-                        do 610 pq = 1, ndimsi
+                    do m = 1, nno2
+                        do pq = 1, ndimsi
                             kk = os+ie(pq,m)
                             t1 = 0
                             matr(kk) = matr(kk) + wg*t1
-610                     continue
-600                 continue
-510             continue
-500         continue
+                        end do
+                    end do
+                end do
+            end do
 !
 !        MATRICE K:E(KL,N),U(J,M)
-            do 700 n = 1, nno2
-                do 710 kl = 1, ndimsi
+            do n = 1, nno2
+                do kl = 1, ndimsi
                     os = nddl*(ie(kl,n)-1)
-                    do 720 m = 1, nno1
-                        do 730 j = 1, ndim
+                    do m = 1, nno1
+                        do j = 1, ndim
                             kk = os+iu(j,m)
                             t1 = 0
-                            do 735 pq = 1, ndimsi
+                            do pq = 1, ndimsi
                                 t1=t1 - dsidep(kl,pq,1)*b(pq,j,m)*&
                                 vff2(n,g)
-735                         continue
+                            end do
                             matr(kk) = matr(kk) + wg*t1
-730                     continue
-720                 continue
-710             continue
-700         continue
+                        end do
+                    end do
+                end do
+            end do
 !
 !        MATRICE K:E(KL,N),E(PQ,M)
 !
-            do 800 n = 1, nno2
-                do 810 m = 1, nno2
+            do n = 1, nno2
+                do m = 1, nno2
                     t1 = vff2(n,g)*vff2(m,g)
-                    do 820 i = 1, ndim
+                    do i = 1, ndim
                         t1 = t1 + c*dfdi2(n,i)*dfdi2(m,i)
-820                 continue
-                    do 830 kl = 1, ndimsi
-                        do 835 pq = 1, ndimsi
+                    end do
+                    do kl = 1, ndimsi
+                        do pq = 1, ndimsi
                             kk = (ie(kl,n)-1)*nddl + ie(pq,m)
                             matr(kk) = matr(kk) + wg*t1*p(kl,pq)
-835                     continue
-830                 continue
-810             continue
-800         continue
-!
+                        end do
+                    end do
+                end do
+            end do
         endif
 !
-1000 end do
+    end do
 !
 ! - SYNTHESE DES CODES RETOUR
 !
-9000 continue
+999 continue
 !
     call codere(cod, npg, codret)
 !
