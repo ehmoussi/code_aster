@@ -992,7 +992,7 @@ integer :: codret
         call lc4047(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, wkout, typmod,&
+                    sigp, vip, typmod,&
                     icomp, nvi, dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
