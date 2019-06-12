@@ -130,6 +130,11 @@ class ENTITE:
                 txt = str(regle)
                 self.cr.fatal(
                     _("Argument(s) non permis : %r pour la règle : %s"), l, txt)
+            err = regle.verif_cata_regles(self.entites)
+            if err:
+                self.cr.fatal(_("Un mot-clé impliqué dans une règle %s ne "
+                                "avoir de valeur par défaut: %s"),
+                              str(regle), ', '.join(err))
 
     def check_definition(self, parent):
         """Verifie la definition d'un objet composite (commande, fact, bloc)."""
