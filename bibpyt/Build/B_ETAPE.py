@@ -23,7 +23,6 @@
 # Modules Python
 from reprlib import repr as reprlim
 import traceback
-from os import times
 
 # Module Eficas
 from Noyau.N_utils import prbanner, AsType
@@ -522,7 +521,6 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         """
         nom_param = tuple([p.strip() for p in nom_param])
         self._cache_func = getattr(self, '_cache_func', {})
-        self._cache_ctxt = getattr(self, '_cache_ctxt', (None, {}))
 
         if self._cache_func.get(nom_fonction):
             objet_sd = self._cache_func[nom_fonction]['fonction']
