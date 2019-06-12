@@ -62,7 +62,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
         MATR_AMOR       =     SIMP(statut='f',typ=(matr_asse_depl_r),),
         OBSERVATION     =     C_OBSERVATION('DYNAVIBRA'),
         ),
-        
+
         # Reduced (generalized) basis, transient calculation
         b_matr_tran_gene= BLOC(condition = """equal_to("TYPE_CALCUL", 'TRAN') and equal_to("BASE_CALCUL", 'GENE')""",
         MATR_MASS       =     SIMP(statut='o',typ=(matr_asse_gene_r),),
@@ -247,7 +247,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
         # 4. Archiving parameters
         b_dlt_prec  =  BLOC(condition="""equal_to("BASE_CALCUL", 'PHYS') and equal_to("TYPE_CALCUL", 'TRAN')""",
           ARCHIVAGE       = FACT(statut='f', max=1, regles=(EXCLUS('LIST_INST','INST'), AU_MOINS_UN('LIST_INST','INST','PAS_ARCH')),
-               PAS_ARCH    =     SIMP(statut='f',typ='I', defaut=1),
+               PAS_ARCH    =     SIMP(statut='f',typ='I'),
                LIST_INST   =     SIMP(statut='f',typ=(listr8_sdaster),),
                INST        =     SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
 
@@ -263,7 +263,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
         ), # end b_dlt_prec
         b_not_dlt_prec  =  BLOC(condition="""not equal_to("BASE_CALCUL", 'PHYS') and equal_to("TYPE_CALCUL", 'TRAN')""",
           ARCHIVAGE       = FACT(statut='f', max=1, regles=(EXCLUS('LIST_INST','INST'), AU_MOINS_UN('LIST_INST','INST','PAS_ARCH')),
-               PAS_ARCH    =     SIMP(statut='f',typ='I', defaut=1),
+               PAS_ARCH    =     SIMP(statut='f',typ='I'),
                LIST_INST   =     SIMP(statut='f',typ=(listr8_sdaster),),
                INST        =     SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
 #               CHAM_EXCLU  =     SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=2,into=("DEPL","VITE","ACCE"),),
