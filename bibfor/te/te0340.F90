@@ -34,7 +34,7 @@ subroutine te0340(option, nomte)
     character(len=16) :: option, nomte
 ! ......................................................................
 !    - FONCTION REALISEE:  CALCUL DES OPTIONS NON-LINEAIRES MECANIQUES
-!                          POUR LES ELEMENTS D'INTERFACE
+!                          POUR LES ELEMENTS CABLE-GAINE
 !    - ARGUMENTS:
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !                      NOMTE        -->  NOM DU TYPE ELEMENT

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,18 +16,21 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lccgad(fami, kpg, ksp, mat, option,&
-                  mu, su, glis, dde, vim,&
-                  vip, wkin)
+subroutine lccgad(BEHinteg,&
+                  fami, kpg, ksp, mat, option,&
+                  mu, su, glis, dde, vim, vip)
 !
+use Behaviour_type
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/rcvalb.h"
 !
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     integer :: mat, kpg, ksp
     real(kind=8) :: mu, su, glis, dde(2)
-    real(kind=8) :: vim(*), vip(*), wkin(2)
+    real(kind=8) :: vim(*), vip(*)
     character(len=16) :: option
     character(len=*) :: fami
 !
@@ -45,8 +48,9 @@ subroutine lccgad(fami, kpg, ksp, mat, option,&
 !      VIM     : VARIABLES INTERNES
 !                |1   : GLISSEMENT
 !                |2   : INDICATEUR GLISSEMENT
-!      WKIN    : TENSION CABLE
-!                COURBURE
+!      BEHinteg%elga%tenscab    : TENSION CABLE
+!      BEHinteg%elga%curvcab    : COURBURE CABLE
+!                                 
 !
 ! OUT : GLIS   : DELTA, SOLUTION DE LA MINIMISATION
 !       DDEDT : D(DELTA)/DT
@@ -97,8 +101,8 @@ subroutine lccgad(fami, kpg, ksp, mat, option,&
         poum = '+'
     endif
 !
-    n=wkin(1)
-    courb=wkin(2)
+    n=BEHinteg%elga%tenscab
+    courb=BEHinteg%elga%curvcab
 !
     call rcvalb(fami, kpg, ksp, poum, mat,&
                 ' ', 'CABLE_GAINE_FROT', 0, ' ', [0.d0],&

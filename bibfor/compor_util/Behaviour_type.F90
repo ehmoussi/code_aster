@@ -36,6 +36,10 @@ implicit none
     type Behaviour_Elga
 ! ----- Coordinates of current Gauss point
         real(kind=8) :: coorpg(3) = 0.d0
+! ----- For CABLE_GAINE elements : tension of the cable
+        real(kind=8) :: tenscab = 0.d0
+! ----- For CABLE_GAINE elements : curvature of the cable
+        real(kind=8) :: curvcab = 0.d0
     end type Behaviour_Elga
 
 !
