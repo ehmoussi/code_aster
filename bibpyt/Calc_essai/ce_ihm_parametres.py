@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: albert.alarcon at edf.fr
+# person_in_charge: fabien.banci at edf.fr
 
 # La classe InterfaceParametres gere les options et les logiciels de
 # Visualisation
@@ -49,11 +49,7 @@ TEMPLATESDIR = osp.dirname(Templates.__file__)
 
 import aster
 
-try:
-    from Stanley.gmsh import GMSH
-except ImportError:
-    # Mode standalone
-    from gmsh import GMSH
+from gmsh import GMSH
 
 #
 #
@@ -823,7 +819,7 @@ class CalcEssaiSalome(CalcEssaiLogiciel):
                       SALOME=dSALOME,
                       )
 
-        UTMESS('I', 'STANLEY_20')
+        UTMESS('I', 'CALCESSAI1_20')
 
 
 class CalcEssaiSalomeCourbes(CalcEssaiSalome):
@@ -917,7 +913,7 @@ class CalcEssaiSalomeCourbes(CalcEssaiSalome):
                       INFO=2,
                       )
 
-        UTMESS('I', 'STANLEY_20')
+        UTMESS('I', 'CALCESSAI1_20')
 
     def fermer(self):
         pass

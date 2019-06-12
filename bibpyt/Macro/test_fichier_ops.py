@@ -299,20 +299,6 @@ def test_iter(obj, function, verbose=False):
     chksum = hfile.hexdigest()
     return nbvalr, valr, nbvali, int(vali) % 2147483647, chksum
 
-
-def test_file(filename, regexp_ignore=[], type_test='SOMM', verbose=False):
-    """Raccourci pour tester rapidement un fichier (utilisé par stanley.py).
-    """
-    if type(regexp_ignore) not in (list, tuple):
-        regexp_ignore = [regexp_ignore, ]
-
-    fileobj = open(filename, 'r')
-    fileobj = regexp_filter(fileobj, regexp_ignore)
-
-    return test_iter(
-        fileobj, function=dict_func_test[type_test], verbose=verbose)
-
-
 if __name__ == '__main__':
     from optparse import OptionParser, OptionGroup
 
