@@ -219,8 +219,9 @@ implicit none
                     ' ', 'CABLE_GAINE_FROT', 0, ' ', [0.d0],&
                     1, nom, val, codm, 2)
         r=val(1)
-        wkin(1)=a*sigcab
-        wkin(2)=courb
+!
+        BEHinteg%elga%tenscab = a*sigcab
+        BEHinteg%elga%curvcab = courb
 !
         call nmcomp(BEHinteg,&
                     'RIGI', g, 1, ndim, typmod,&

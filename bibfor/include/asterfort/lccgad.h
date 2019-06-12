@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,11 @@
 !
 !
 interface
-    subroutine lccgad(fami, kpg, ksp, mat, option,&
-                      mu, su, glis, dde, vim,&
-                      vip, wkin)
+    subroutine lccgad(BEHinteg,&
+                      fami, kpg, ksp, mat, option,&
+                      mu, su, glis, dde, vim, vip)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         character(len=*) :: fami
         integer :: kpg
         integer :: ksp
@@ -33,6 +35,5 @@ interface
         real(kind=8) :: dde(2)
         real(kind=8) :: vim(*)
         real(kind=8) :: vip(*)
-        real(kind=8) :: wkin(2)
     end subroutine lccgad
 end interface

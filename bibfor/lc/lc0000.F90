@@ -861,10 +861,11 @@ integer :: codret
 
     case (152)
 !     CABLE_GAINE
-        call lc0152(fami, kpg, ksp, ndim, imate,&
+        call lc0152(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (165)
 !     FLUA_PORO_BETON
