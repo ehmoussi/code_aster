@@ -160,8 +160,8 @@ IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=RE_VISU))
 #----------------------------------------------------------------------
 
 NB_FOND=RECU_TABLE(CO=fiss_1,NOM_TABLE='NB_FOND_FISS')
-dict = NB_FOND.EXTR_TABLE().values()
-nb_fond = dict['NOMBRE'][0]
+values = NB_FOND.EXTR_TABLE().values()
+nb_fond = values['NOMBRE'][0]
 DETRUIRE(CONCEPT=_F(NOM=NB_FOND),INFO=1)
 
 GK1 = [None]*nb_fond
@@ -216,9 +216,9 @@ G_LOC=11.58648
 K1_REF=1.595769E6
 # POUR UN RADIAN
 G_REF=23.17296
- 
-# pour G obtenu avec l'operateur CALC_G, la valeur de non regression 
-# doit etre identique (a la multiplication pres par la longueur "ray" de 
+
+# pour G obtenu avec l'operateur CALC_G, la valeur de non regression
+# doit etre identique (a la multiplication pres par la longueur "ray" de
 # la fissure) entre les options CALC_G et CALC_K_G
 vale_calc_g1 = 11.2442850838
 vale_calc_g2 = 11.2509670624

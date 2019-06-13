@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ DEFI_CHAR_SOL = MACRO(nom="DEFI_CHAR_SOL",
    MODELE         = SIMP(statut='o', typ=(modele_sdaster),),
    regles=(UN_PARMI('UNITE_TRAN_INIT','RESU_INIT'),),
    UNITE_TRAN_INIT =SIMP(statut='f', typ=UnitType(), inout='in',),
-   RESU_INIT    =SIMP(statut='f',typ=(dyna_trans,evol_char)),
+   RESU_INIT    =SIMP(statut='f',typ=(dyna_trans,evol_char,evol_noli)),
 
    b_unite_tran = BLOC ( condition = """exists("UNITE_TRAN_INIT")""",
      LONG_CARA       =SIMP(statut='f',typ='R',

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -322,6 +322,11 @@ subroutine rc32env2(iocc1,iocc2, ke, lieu, fen)
                                     [cbid], k8b, crit, prec, 'YOUNG',&
                                     k8b, ibid, emin, cbid, k8b,&
                                     iret)
+                        if(iret.eq.1)then
+                            valk(1)=table5
+                            valk(2)='YOUNG'
+                            call utmess('F', 'POSTRCCM_1', nk=2, valk=valk)
+                        endif
                         call tbliva(table5, 1, val, [ibid], [tempmax],&
                                     [cbid], k8b, crit, prec, 'YOUNG',&
                                     k8b, ibid, emax, cbid, k8b,&

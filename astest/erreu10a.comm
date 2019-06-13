@@ -60,7 +60,7 @@ encast=AFFE_CHAR_MECA(MODELE=modele,
 fonc=DEFI_FONCTION(NOM_PARA='INST',
                    VALE=(0.0,0.0,1.0,1.0,),);
 
-list=DEFI_LIST_REEL(DEBUT=0.0,
+listinst=DEFI_LIST_REEL(DEBUT=0.0,
                     INTERVALLE=_F(JUSQU_A=1.0,
                                   NOMBRE=10,),);
 
@@ -71,7 +71,7 @@ effort2=AFFE_CHAR_MECA(MODELE=modele,
 #
 #  On teste l'arret propre EVENEMENT='INSTABILITE' sous DEFI_LIST_INST
 #
-list2=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = list),
+list2=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = listinst),
                         ECHEC=_F(EVENEMENT='INSTABILITE',ACTION='ARRET',),);
 import re
 fmt_raison='-'*80+"""

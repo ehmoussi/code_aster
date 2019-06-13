@@ -119,13 +119,13 @@ for i in range(NCAL):
                                           ALPHA=0.),
                                 );
 
-          list = DEFI_LIST_REEL(DEBUT=timem,
+          listinst = DEFI_LIST_REEL(DEBUT=timem,
                       INTERVALLE=(_F(JUSQU_A=time,NOMBRE=1,),),);
 
           RESU[i]=SIMU_POINT_MAT(COMPORTEMENT=_F(RELATION=compor,),
                                  MATER=MATER[i],
                                  SUPPORT='POINT',
-                                 INCREMENT=_F(LIST_INST = list, ),
+                                 INCREMENT=_F(LIST_INST = listinst, ),
                                  NEWTON=_F( PREDICTION='ELASTIQUE',
                                              MATRICE='TANGENTE',
                                              REAC_ITER=1,),
@@ -136,7 +136,7 @@ for i in range(NCAL):
           IMPR_TABLE(TABLE=RESU[i]);
 
           DETRUIRE ( CONCEPT =  _F (NOM =epsimp),);
-          DETRUIRE ( CONCEPT =  _F (NOM =list),);
+          DETRUIRE ( CONCEPT =  _F (NOM =listinst),);
 
           NOMPARA='VMIS'
           TCOMPR =CALC_TABLE(TABLE=U,ACTION=(

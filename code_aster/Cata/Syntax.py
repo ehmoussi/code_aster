@@ -66,4 +66,12 @@ class Translation(object):
             uarg = arg.decode('utf-8', 'replace')
         return self._func(uarg)
 
+    def __getstate__(self):
+        """Does not support pickling."""
+        return
+
+    def __setstate__(self, dummy):
+        """Does not support pickling."""
+
+
 tr = Translation()

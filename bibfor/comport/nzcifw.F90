@@ -53,10 +53,10 @@ real(kind=8), intent(in) :: instap
 real(kind=8), intent(in) :: epsm(*)
 real(kind=8), intent(in) :: deps(*)
 real(kind=8), intent(in) :: sigm(*)
-real(kind=8), intent(in) :: vim(37)
+real(kind=8), intent(in) :: vim(*)
 character(len=16), intent(in) :: option
 real(kind=8), intent(out) :: sigp(*)
-real(kind=8), intent(out) :: vip(37)
+real(kind=8), intent(out) :: vip(*)
 real(kind=8), intent(out) :: dsidep(6, 6)
 integer, intent(out) :: iret
 !
@@ -119,13 +119,13 @@ integer, intent(out) :: iret
     do i = 1, 2*ndim
         sigp(i) = 0.d0
     end do
-    vip(1:37)       = 0.d0
-    dsidep(1:6,1:6) = 0.d0
-    ndimsi          = 2*ndim
-    iret            = 0
-    resi            = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
-    rigi            = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
-    dt              = instap-instam
+    vip(1:IDX_C_IPLAS) = 0.d0
+    dsidep(1:6,1:6)    = 0.d0
+    ndimsi             = 2*ndim
+    iret               = 0
+    resi               = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
+    rigi               = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
+    dt                 = instap-instam
 !
 ! - Get metallurgy type
 !
@@ -170,7 +170,7 @@ integer, intent(out) :: iret
     call metaGetParaElas(poum, fami    , kpg     , ksp, imat,&
                          e_  = e, deuxmu_  = deuxmu, troisk_ = troisk,&
                          deuxmum_ = deumum)
-    plasti = vim(37)
+    plasti = vim(IDX_C_IPLAS)
 !
 ! - Mixture law (yield limit)
 !
@@ -230,7 +230,7 @@ integer, intent(out) :: iret
                 dvin=0.d0
                 do k = 1, nb_phase-1
                     l=i+(k-1)*6
-                    dvin = dvin + dz2(k)*(theta(4+k)*vim(l)-vim( 24+i))/phase(nb_phase)
+                    dvin = dvin + dz2(k)*(theta(4+k)*vim(l)-vim(24+i))/phase(nb_phase)
                 end do
                 vi(24+i) = vim(24+i)+dvin
                 if ((vi(24+i)*vim(24+i)) .lt. 0.d0) vi(24+i)=0.d0
@@ -388,10 +388,10 @@ integer, intent(out) :: iret
         seuil= sieleq-(1.5d0*deuxmu*trans+1.d0)*symoy
 !
         if (seuil .lt. 0.d0) then
-            vip(37) = 0.d0
+            vip(IDX_C_IPLAS) = 0.d0
             dp = 0.d0
         else
-            vip(37) = 1.d0
+            vip(IDX_C_IPLAS) = 1.d0
             rprim=3.d0*hmoy/2.d0
             if (l_plas) then
                 dp=seuil/(1.5d0*deuxmu+(1.5d0*deuxmu*trans+1.d0)*rprim)
@@ -406,7 +406,7 @@ integer, intent(out) :: iret
 !
 ! 4.2.2 - CALCUL DE SIGMA
 !
-        plasti=vip(37)
+        plasti=vip(IDX_C_IPLAS)
 !
         do i = 1, ndimsi
             dvsigp(i) = sigel(i) - 1.5d0*deuxmu*dp*sig0(i)

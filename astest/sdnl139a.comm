@@ -337,18 +337,18 @@ for i in range(len(C3DZ)):
    C3DZ[i]=COORD_3D[i][2]
 
 C1DZ1=[]
-min=1112
-while (min!=1111):
-   i=0
-   s=int((abs(C3DZ[i])+ajust)*Pow)/float(Pow)
+vmin = 1112
+while vmin != 1111:
+   i = 0
+   s = int((abs(C3DZ[i])+ajust)*Pow) / float(Pow)
    for i in range(len(C3DZ)):
-      if (int((C3DZ[i]+ajust)*Pow)/float(Pow))==min:
+      if (int((C3DZ[i]+ajust)*Pow) / float(Pow)) == vmin:
          C3DZ[i]=1111
-      elif( (int((C3DZ[i]+ajust)*Pow)/float(Pow)) < s ):
-         s=int((C3DZ[i]+ajust)*Pow)/float(Pow)
-   if (min!=s):
-      min=s
-      C1DZ1.append(min)
+      elif (int((C3DZ[i]+ajust)*Pow) / float(Pow)) < s:
+         s = int((C3DZ[i]+ajust)*Pow) / float(Pow)
+   if vmin != s:
+      vmin = s
+      C1DZ1.append(vmin)
 
 C1D=zeros((len(C1DZ1)-1,3))
 for i in range(len(C1D)):
