@@ -126,15 +126,15 @@ class ENTITE:
                 keyword = self.entites.get(mc)
                 if not isinstance(keyword, (SIMP, FACT)):
                     l.append(mc)
+            name = regle.__class__.__name__
             if l != []:
-                txt = str(regle)
-                self.cr.fatal(
-                    _("Argument(s) non permis : %r pour la règle : %s"), l, txt)
+                self.cr.fatal(_("Argument(s) non permis : %r pour la "
+                                "règle : %s"), l, name)
             err = regle.verif_cata_regles(self.entites)
             if err:
-                self.cr.fatal(_("Un mot-clé impliqué dans une règle %s ne "
-                                "avoir de valeur par défaut: %s"),
-                              str(regle), ', '.join(err))
+                self.cr.fatal(_("Un mot-clé impliqué dans une règle '%s' ne "
+                                "peut pas avoir de valeur par défaut: %s"),
+                              name, ', '.join(err))
 
     def check_definition(self, parent):
         """Verifie la definition d'un objet composite (commande, fact, bloc)."""
