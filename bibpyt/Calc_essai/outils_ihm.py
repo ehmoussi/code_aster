@@ -28,8 +28,6 @@ from subprocess import Popen
 
 import tkinter.font
 
-#from Stanley.xmgrace import Xmgr
-#from Stanley.as_courbes import Courbe
 from code_aster.Cata.Syntax import _F, ASSD
 
 from numpy import minimum, maximum, array, arange, log
