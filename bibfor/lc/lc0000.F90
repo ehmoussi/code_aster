@@ -986,10 +986,11 @@ integer :: codret
 !
     case (3053)
 !     ENDO_CARRE
-        call lc3053(fami, kpg, ksp, ndim, imate,&
+        call lc3053(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
 
 !
