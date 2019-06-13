@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -120,11 +120,9 @@ subroutine te0160(option, nomte)
         jacobi = sqrt(biline(nordre,zr(igeom),zr(iyty+kk),zr(igeom)))
         green = biline(nordre, w, zr(iyty+kk), zr(igeom))+ demi*biline( nordre, w, zr(iyty+kk), w)
         green = green/jacobi**2
-        nx = etraction*aire*green
+        nx = etraction*aire*(green-epsth)
         if (abs(nx) .lt. 1.d-6) then
             nx = preten
-        else
-            nx = nx - etraction*aire*epsth
         endif
 !       le cable a un module plus faible en compression qu'en traction
 !       le module de compression peut meme etre nul.

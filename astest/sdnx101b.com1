@@ -1,0 +1,85 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+POURSUITE(CODE='OUI')
+
+#
+#  Frequence du premier mode valeur par rapport à CALC_MODES
+#
+TAB_SPEC=RECU_TABLE(CO=EVOLMV,
+                    NOM_TABLE='ANALYSE_MODALE',);
+
+TEST_TABLE(
+           REFERENCE='AUTRE_ASTER',
+           NOM_PARA='FREQ',
+           TABLE=TAB_SPEC,
+           CRITERE=('RELATIF',),
+           VALE_CALC=3.0449128780401,
+           VALE_REFE=3.0449128780401,
+           FILTRE=(
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='TYPE_MODE',
+                      VALE_K='DEPL_VIBR',),
+                   _F(CRIT_COMP='EQ',
+                      NOM_PARA='NUME_MODE',
+                      VALE_I=1,),
+                   _F(NOM_PARA='INST',PRECISION=1.E-6,
+                      VALE=-5.0,),
+                   ),
+           )
+
+
+# Test des déplacements
+TEST_RESU(RESU=(_F(INST=0.0,
+                   RESULTAT=EVOL,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N739',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-5.1147260779637E-03,
+                   CRITERE=('RELATIF', 'RELATIF'),
+                   ),
+                _F(INST=0.0,
+                   RESULTAT=EVOL,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N731',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-5.1208255165533E-03,
+                   CRITERE=('RELATIF', 'RELATIF'),
+                   ),
+                _F(INST=tfin,
+                   RESULTAT=RESUGLO1,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N739',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-6.1940168081683E-03,
+                   CRITERE=('RELATIF', 'RELATIF'),
+                   ),
+                _F(INST=tfin,
+                   RESULTAT=RESUGLO1,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N1',
+                   NOM_CMP='DX',
+                   VALE_CALC=-4.9212278133102E-03,
+                   CRITERE=('RELATIF', 'RELATIF'),
+                   ),
+                ),
+          )
+
+
+FIN()

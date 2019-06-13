@@ -35,9 +35,10 @@
 
 """
 
-# Modules Python
-import re
+import builtins
 import linecache
+import re
+import warnings
 from functools import partial
 
 # Modules EFICAS
@@ -49,6 +50,7 @@ regex1 = r'=?\s*%s\s*\('
 # multiligne)
 pattern_comment = re.compile(r"^\s*#.*")
 
+UNRECOMMENDED = dir(builtins)
 
 def _GetNomConceptResultat(ope, level=2):
     """
@@ -88,7 +90,12 @@ def _GetNomConceptResultat(ope, level=2):
             list.reverse()
             # On suppose que le concept resultat a bien ete
             # isole en tete de la ligne de source
-            m = evalnom(l[0].strip(), f.f_locals)
+            found = l[0].strip()
+            if found in UNRECOMMENDED:
+                warnings.warn("Using '{0}' as result name is not recommended!"
+                              .format(found),
+                              RuntimeWarning, stacklevel=level + 1)
+            m = evalnom(found, f.f_locals)
             # print "NOMS ",m
             if m != []:
                 return m[-1]

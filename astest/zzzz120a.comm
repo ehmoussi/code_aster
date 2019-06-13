@@ -144,7 +144,7 @@ fonc=DEFI_FONCTION(NOM_PARA='INST',
                    NOM_RESU='TOUTRESU',
                    VALE=(0.0,0.0,5.0,5000000.0,),);
 
-list=DEFI_LIST_REEL(DEBUT=0.0,
+listinst=DEFI_LIST_REEL(DEBUT=0.0,
                     INTERVALLE=(_F(JUSQU_A=1.0,
                                    NOMBRE=1,),
                                 _F(JUSQU_A=2.0,
@@ -171,7 +171,7 @@ CALC=STAT_NON_LINE(MODELE=modele,
                               _F(RELATION='DIS_GOUJ2E_PLAS',
                                  DEFORMATION='PETIT',
                                  GROUP_MA='FILETS',),),
-                   INCREMENT=_F(LIST_INST=list,),
+                   INCREMENT=_F(LIST_INST=listinst,),
                    NEWTON=_F(REAC_ITER=3,),
                    CONVERGENCE=_F(ITER_GLOB_MAXI=20,),);
 
