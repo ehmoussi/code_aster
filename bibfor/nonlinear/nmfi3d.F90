@@ -138,11 +138,13 @@ implicit none
             sigmo(n) = sigm(n,kpg)
  12     continue
 !
+        BEHinteg%elga%coorpg = coopg(1:3,kpg)
+!
         call nmcomp(BEHinteg,&
                     'RIGI', kpg, 1, 3, typmod,&
                     mate, compor, crit, tm, tp,&
                     3, sum, dsu, 6, sigmo,&
-                    vim(1, kpg), option, angmas, 4, coopg(1, kpg),&
+                    vim(1, kpg), option, angmas, 4, [0.d0,0.d0,0.d0,0.d0],&
                     sigma, vip(1, kpg), 36, dsidep, 1,&
                     rbid, ibid)
 !

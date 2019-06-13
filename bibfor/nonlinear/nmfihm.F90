@@ -38,10 +38,10 @@ implicit none
     integer :: ndim, mate, npg, ipg, idf2, lgpg, nno1, nno2, nddl, iu(3, 16)
     integer :: ip(8)
     real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), dffr2(ndim-1, nno2, npg)
-    real(kind=8) :: wref(npg), geom(ndim, nno2), ddlm(nddl), ddld(nddl), tm, tp
+    real(kind=8) :: wref(npg), geom(ndim, nno2), ddlm(nddl), ddld(nddl)
     real(kind=8) :: sigm(2*ndim-1, npg), sigp(2*ndim-1, npg)
     real(kind=8) :: vect(nddl), matr(nddl*nddl)
-    real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
+    real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg), tm, tp
     character(len=8) :: typmod(*)
     character(len=16) :: option, compor(*)
 !-----------------------------------------------------------------------
@@ -84,11 +84,10 @@ implicit none
 !-----------------------------------------------------------------------
 !
     aster_logical :: resi, rigi, axi, ifhyme
-    integer :: i, j, kk, m, n, os, p, q, ibid, kpg, ncooro
+    integer :: i, j, kk, m, n, os, p, q, ibid, kpg
     real(kind=8) :: dsidep(6, 6), b(2*ndim-1, ndim+1, 2*nno1+nno2)
     real(kind=8) :: sigmo(6), sigma(6), epsm(6), deps(6), wg
     real(kind=8) :: coopg(ndim+1, npg), rot(ndim*ndim)
-    real(kind=8) :: coorot(ndim+ndim*ndim, npg)
     real(kind=8) :: crit(*), rbid(1), presgm, presgd, temp
     type(Behaviour_Integ) :: BEHinteg
 !
@@ -162,12 +161,11 @@ implicit none
 !       COOROT : COORDONNEES DU PG + MATRICE DE ROTATION
 !       (MATRICE UTILE POUR LES VI DE POST-TRAITEMENT DANS LA LDC)
         do j = 1, ndim
-            coorot(j,kpg)=coopg(j,kpg)
+            BEHinteg%elga%coorpg(j)=coopg(j,kpg)
         enddo
         do j = 1, ndim*ndim
-            coorot(ndim+j,kpg)=rot(j)
+            BEHinteg%elga%rotpg(j)=rot(j)
         enddo
-        ncooro=ndim+ndim*ndim
 !
 !       CONTRAINTES -
         call r8inir(6, 0.d0, sigmo, 1)
@@ -180,7 +178,8 @@ implicit none
                     'RIGI', kpg, 1, ndim, typmod,&
                     mate, compor, crit, tm, tp,&
                     6, epsm, deps, 6, sigmo,&
-                    vim(1, kpg), option, rbid, ncooro, coorot(1, kpg),&
+                    vim(1, kpg), option, rbid, 12, [0.d0,0.d0,0.d0,0.d0,&
+                    0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0],&
                     sigma, vip(1, kpg), 36, dsidep, 1,&
                     rbid, ibid)
 !

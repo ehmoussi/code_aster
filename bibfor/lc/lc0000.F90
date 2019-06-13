@@ -1089,16 +1089,18 @@ integer :: codret
                     sigp, vip, wkin, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7045)
-        call lc7045(fami, kpg, ksp, ndim, imate,&
+        call lc7045(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7048)
-        call lc7048(fami, kpg, ksp, ndim, imate,&
+        call lc7048(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7049)
         call lc7049(fami, kpg, ksp, ndim, imate,&
