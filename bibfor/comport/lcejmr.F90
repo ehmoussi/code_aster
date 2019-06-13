@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,14 +16,18 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lcejmr(fami, kpg, ksp, ndim, mate,&
+subroutine lcejmr(BEHinteg,&
+                  fami, kpg, ksp, ndim, mate,&
                   option, epsm, deps, sigmo, sigma,&
-                  dsidep, vim, vip, coorot, typmod,&
+                  dsidep, vim, vip, typmod,&
                   instam, instap)
 !
 ! person_in_charge: kyrylo.kazymyrenko at edf.fr
 !
-    implicit none
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterc/r8pi.h"
 #include "asterfort/matinv.h"
@@ -33,10 +37,11 @@ subroutine lcejmr(fami, kpg, ksp, ndim, mate,&
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     integer :: mate, ndim, kpg, ksp
     real(kind=8) :: epsm(6), deps(6)
     real(kind=8) :: sigmo(6), sigma(6), dsidep(6, 6)
-    real(kind=8) :: vim(*), vip(*), instam, instap, coorot(ndim+ndim*ndim)
+    real(kind=8) :: vim(*), vip(*), instam, instap
     character(len=8) :: typmod(*)
     character(len=16) :: option
     character(len=*) :: fami
@@ -68,7 +73,7 @@ subroutine lcejmr(fami, kpg, ksp, ndim, mate,&
     real(kind=8) :: delta(ndim), ddelta(ndim), ka, r0, rc, alpha, beta, rk, ra, rt
     real(kind=8) :: rt0, r8bid
     real(kind=8) :: offset(ndim), doffset(ndim), inst, valpar(ndim+1), rhof, visf, amin
-    real(kind=8) :: invrot(ndim, ndim), rigart
+    real(kind=8) :: coorot(ndim+ndim*ndim), invrot(ndim, ndim), rigart
     character(len=8) :: nompar(ndim+1)
     character(len=16) :: nom(nbpa)
     character(len=1) :: poum
@@ -160,6 +165,14 @@ subroutine lcejmr(fami, kpg, ksp, ndim, mate,&
     endif
 !
 ! DEFINITION DES PARAMETRES POUR LA RECUPERATION DES FONCTIONS
+    coorot = 0.d0
+    do i = 1, ndim
+        coorot(i) = BEHinteg%elga%coorpg(i)
+    enddo
+    do i = 1, ndim*ndim
+        coorot(ndim+i) = BEHinteg%elga%rotpg(i)
+    enddo
+!
     nompar(1)='INST'
     nompar(2)='X'
     nompar(3)='Y'

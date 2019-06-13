@@ -133,11 +133,13 @@ implicit none
         rbid = r8vide()
         code(kpg) = 0
 !
+        BEHinteg%elga%coorpg(1:2) = coopg(1:2,kpg)
+!
         call nmcomp(BEHinteg,&
                     'RIGI', kpg, 1, 2, typmod,&
                     mate, compor, crit, tm, tp,&
                     2, sum, dsu, 1, sigmo(1, kpg),&
-                    vim(1, kpg), option, angmas, 3, coopg( 1, kpg),&
+                    vim(1, kpg), option, angmas, 3, [0.d0,0.d0,0.d0],&
                     sigma(1, kpg), vip(1, kpg), 36, dsidep, 1,&
                     rbid, ibid)
 !
