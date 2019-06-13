@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -133,7 +133,7 @@ CONTACT  = DEFI_CONTACT(MODELE         = MO,
                             ALGO_CONT = 'PENALISATION',
                             #COEF_PENA_CONT = 1.E4,
                             ADAPTATION='ADAPT_COEF',PENE_MAXI=300,
-                            #COULOMB=0., 
+                            #COULOMB=0.,
                             ),
                           ),
                    );
@@ -201,12 +201,6 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_CALC=5.00000016389,
                    VALE_REFE=5.0,
                    PRECISION=1.E-3,),
-                _F(NUME_ORDRE=1,
-                   PARA='ITER_GLOB',
-                   VALE_CALC_I=2,
-                   RESULTAT=U,
-                   CRITERE='ABSOLU',
-                   ),
                 _F(NUME_ORDRE=3,
                    GROUP_NO='K',
                    REFERENCE='ANALYTIQUE',
