@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -128,8 +128,11 @@ subroutine pieigv(neps, tau, imate, vim, epsm,&
     nomres(1) = 'PENA_LAGR'
     call rcvala(imate, ' ', 'NON_LOCAL', 0, ' ',&
                 [0.d0], 1, nomres, valres, icodre,&
-                1)
-    r=valres(1)
+                0)
+    if (icodre(1) .ne. 0) then
+        valres(1) = 1.e3
+    endif
+    r = valres(1)
 !
 !    LECTURE DES CARACTERISTIQUES D'ENDOMMAGEMENT
     nomres(1) = 'D_SIGM_EPSI'

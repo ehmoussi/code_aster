@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     aster_logical, intent(in) :: grvi,resi
     character(len=*),intent(in) :: fami
     integer,intent(in) :: imate, kpg, ksp
-    type(gtn_material) :: mat 
+    type(gtn_material) :: mat
 ! ----------------------------------------------------------------------
 !  LOI GTN - LECTURE DES PARAMETRES MATERIAUX
 ! ----------------------------------------------------------------------
@@ -68,7 +68,7 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     mat%rk = valec(7)
     mat%p0 = valec(8)
     mat%gk = valec(9)
-    
+
 !  GTN
     call rcvalb(fami,kpg,ksp,poum,imate,' ','GTN', 0,' ',[0.d0],nben,nomen,valen,iok,2)
     mat%q1 = valen(1)
@@ -86,12 +86,19 @@ function lcgtn_material(fami,kpg,ksp,imate,resi,grvi) result(mat)
     mat%ve0 = merge(valvs(2),1.d0,iok(2).eq.0)
     mat%vm  = merge(valvs(3),0.5d0,iok(3).eq.0)
     mat%vd  = merge(valvs(4),1.d0,iok(4).eq.0)
-    
+
 !  Nonlocal
     if (grvi) then
-        call rcvalb(fami,kpg,ksp,poum,imate,' ','NON_LOCAL',0,' ',[0.d0],nbnl,nomnl,valnl,iok,2)
+        call rcvalb(fami,kpg,ksp,poum,imate,' ','NON_LOCAL',0,' ',[0.d0],&
+                    1,'C_GRAD_VARI',valnl(1),iok,2)
+        call rcvalb(fami,kpg,ksp,poum,imate,' ','NON_LOCAL',0,' ',[0.d0],&
+                    1,'PENA_LAGR',valnl(2),iok,0)
         mat%c     = valnl(1)
-        mat%r     = valnl(2)
+        if (iok(1) .ne. 0) then
+            mat%r = 1.e3
+        else
+            mat%r     = valnl(2)
+        endif
     else
         mat%c = 0
         mat%r = 0
