@@ -40,6 +40,8 @@ implicit none
         real(kind=8) :: tenscab = 0.d0
 ! ----- For CABLE_GAINE elements : curvature of the cable
         real(kind=8) :: curvcab = 0.d0
+! ----- For GRAD_VARI models : non-local variables PHI
+        real(kind=8) :: nonloc(2) = 0.d0
     end type Behaviour_Elga
 
 !

@@ -242,8 +242,8 @@ implicit none
             sigmam(kl) = sigm(kl,g)*rac2
 100     continue
 !
-        nonloc(1)= avp
-        nonloc(2)= c
+        BEHinteg%elga%nonloc(1) = avp
+        BEHinteg%elga%nonloc(2) = c
 !
         call nmcomp(BEHinteg,&
                     fami, g, 1, ndim, typmod,&
