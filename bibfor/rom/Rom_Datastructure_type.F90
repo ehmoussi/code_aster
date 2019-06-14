@@ -141,6 +141,9 @@ implicit none
         integer, pointer  :: v_equa_ridp(:) => null()
 ! ----- Flag for EF corrector?
         aster_logical     :: l_corr_ef = ASTER_FALSE
+! ----- Flag if table is given by user
+        aster_logical     :: l_tabl_user = ASTER_FALSE
+        character(len=19) :: tabl_user = ' '
     end type ROM_DS_ParaRRC
 !
 ! - Parameters for definition of multiparametric reduced problem - Evaluation

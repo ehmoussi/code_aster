@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,9 @@
 # --------------------------------------------------------------------
 # person_in_charge: mickael.abbas at edf.fr
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'),);
+
+
 
 # Read the mesh
 mesh=LIRE_MAILLAGE(FORMAT='MED',);
@@ -162,7 +164,12 @@ redu=CALC_CHAMP(reuse=redu,
                 RESULTAT=redu,
                 CONTRAINTE='SIEF_NOEU',);
 
+#IMPR_RESU(RESU=_F(RESULTAT=redu,),UNITE=35)
+#coorredp=RECU_TABLE(CO=redu,NOM_TABLE='COOR_REDUIT',);
+#IMPR_TABLE(TABLE=coorredp,UNITE=67)
+
 # Gappy-POD (reconstruction tout le domaine avec CORR_COMPLET)
+
 reduR = REST_REDUIT_COMPLET(
     MODELE           = model,
     RESULTAT_REDUIT  = redu, 
@@ -194,5 +201,33 @@ redu2=CALC_CHAMP(reuse=redu2,
                 RESULTAT=redu2,
                 CONTRAINTE='SIEF_NOEU',);
 
+
+# Test de TABL_COOR_REDUIT
+reduRe = LIRE_RESU(FORMAT='MED',
+                   MODELE=model_r,
+                   UNITE=35,
+                   TYPE_RESU='EVOL_NOLI',
+                   FORMAT_MED=(
+                     _F(NOM_CHAM='DEPL',
+                        NOM_RESU='redu',),
+                     _F(NOM_CHAM='SIEF_NOEU',
+                        NOM_RESU='redu',),),
+                   TOUT_ORDRE='OUI',);
+
+coorred2 = LIRE_TABLE(UNITE = 67)
+
+# Gappy-POD (reconstruction tout le domaine avec CORR_COMPLET)
+
+reduR2 = REST_REDUIT_COMPLET(
+    MODELE           = model,
+    RESULTAT_REDUIT  = redu, 
+    BASE_PRIMAL      = base_p,
+    BASE_DUAL        = base_d,
+    REST_DUAL        = 'OUI',
+    INFO             = 2,
+    GROUP_NO_INTERF  = 'INF',
+    CORR_COMPLET     = 'OUI',
+    TABL_COOR_REDUIT = coorred2,
+)
 
 FIN()
