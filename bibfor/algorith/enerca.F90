@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,9 +32,11 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mrmult.h"
+#include "asterfort/mtdscr.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/zerlag.h"
@@ -101,7 +103,7 @@ implicit none
 !
     integer :: iaux, neq, nbcol, long
     integer :: jdeeq, icvmoz
-    integer :: imasse, iamort, irigid
+    integer :: imasse, iamort, irigid, ier
     integer :: iumoy, iupmum, iumoyz, iupmuz
     integer :: ivmoy, ivpmvm
     integer :: ikumoy, imumoy, idesc
@@ -194,6 +196,10 @@ implicit none
 !   DE DEPLACEMENT
 ! - RECUPERATION DE LA MATRICE DE RIGIDITE POUR OBTENIR LES LAGRANGES
 ! --------------------------------------------------------------------
+        call jeexin( rigid//'.&INT', ier) 
+        if ( ier == 0 ) then 
+            call mtdscr(rigid)
+        endif 
         call jeveuo(rigid//'.&INT', 'L', irigid)
         neq=zi(irigid+2)
         call wkvect('&&ENERCA.DESC', 'V V K8', neq, idesc)

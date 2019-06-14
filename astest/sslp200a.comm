@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -490,6 +490,119 @@ CALC_CHAMP(reuse=MSLIN,
 
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=MSLIN,NOM_CHAM=('SIEF_ELGA','SIEQ_ELGA')))
 
+
+SIEQNO1=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='ELNO_SIEF_R', 
+                   RESULTAT=MSLIN, NOM_CHAM='SIEQ_ELNO', NUME_ORDRE=1)
+SIEQNO1B=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELNO_SIEF_R',
+                    MODELE=MO, PROL_ZERO='OUI',
+                    ASSE=_F(
+                             CHAM_GD=SIEQNO1,
+                             TOUT='OUI',
+                    NOM_CMP=('VMIS','TRESCA','PRIN_1','PRIN_2','PRIN_3','VMIS_SG','VECT_1_X',
+          'VECT_1_Y','VECT_1_Z','VECT_2_X','VECT_2_Y','VECT_2_Z',
+          'VECT_3_X','VECT_3_Y','VECT_3_Z','TRSIG')
+                      )
+                   )
+                   
+SIEQNO2=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='ELNO_SIEF_R', 
+                   RESULTAT=MSLIN, NOM_CHAM='SIEQ_ELNO', NUME_ORDRE=2)
+SIEQNO2B=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELNO_SIEF_R',
+                    MODELE=MO, PROL_ZERO='OUI',
+                    ASSE=_F(
+                             CHAM_GD=SIEQNO2,
+                             TOUT='OUI',
+                    NOM_CMP=('VMIS','TRESCA','PRIN_1','PRIN_2','PRIN_3','VMIS_SG','VECT_1_X',
+          'VECT_1_Y','VECT_1_Z','VECT_2_X','VECT_2_Y','VECT_2_Z',
+          'VECT_3_X','VECT_3_Y','VECT_3_Z','TRSIG')
+                      )
+                   )
+
+
+SIEQNO3=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='ELNO_SIEF_R', 
+                   RESULTAT=MSLIN, NOM_CHAM='SIEQ_ELNO', NUME_ORDRE=3)
+SIEQNO3B=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELNO_SIEF_R',
+                    MODELE=MO, PROL_ZERO='OUI',
+                    ASSE=_F(
+                             CHAM_GD=SIEQNO3,
+                             TOUT='OUI',
+                    NOM_CMP=('VMIS','TRESCA','PRIN_1','PRIN_2','PRIN_3','VMIS_SG','VECT_1_X',
+          'VECT_1_Y','VECT_1_Z','VECT_2_X','VECT_2_Y','VECT_2_Z',
+          'VECT_3_X','VECT_3_Y','VECT_3_Z','TRSIG')
+                      )
+                   )
+
+SIEQGA1=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='ELGA_SIEF_R', 
+                   RESULTAT=MSLIN, NOM_CHAM='SIEQ_ELGA', NUME_ORDRE=1)
+SIEQGA1B=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELGA_SIEF_R',
+                    MODELE=MO, PROL_ZERO='OUI',
+                    ASSE=_F(
+                             CHAM_GD=SIEQGA1,
+                             TOUT='OUI',
+                    NOM_CMP=('VMIS','TRESCA','PRIN_1','PRIN_2','PRIN_3','VMIS_SG','VECT_1_X',
+          'VECT_1_Y','VECT_1_Z','VECT_2_X','VECT_2_Y','VECT_2_Z',
+          'VECT_3_X','VECT_3_Y','VECT_3_Z','TRSIG')
+                      )
+                   )
+
+SIEQGA2=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='ELGA_SIEF_R', 
+                   RESULTAT=MSLIN, NOM_CHAM='SIEQ_ELGA', NUME_ORDRE=2)
+SIEQGA2B=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELGA_SIEF_R',
+                    MODELE=MO, PROL_ZERO='OUI',
+                    ASSE=_F(
+                             CHAM_GD=SIEQGA2,
+                             TOUT='OUI',
+                    NOM_CMP=('VMIS','TRESCA','PRIN_1','PRIN_2','PRIN_3','VMIS_SG','VECT_1_X',
+          'VECT_1_Y','VECT_1_Z','VECT_2_X','VECT_2_Y','VECT_2_Z',
+          'VECT_3_X','VECT_3_Y','VECT_3_Z','TRSIG')
+                      )
+                   )
+
+SIEQGA3=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='ELGA_SIEF_R', 
+                   RESULTAT=MSLIN, NOM_CHAM='SIEQ_ELGA', NUME_ORDRE=3)
+SIEQGA3B=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELGA_SIEF_R',
+                    MODELE=MO, PROL_ZERO='OUI',
+                    ASSE=_F(
+                             CHAM_GD=SIEQGA3,
+                             TOUT='OUI',
+                    NOM_CMP=('VMIS','TRESCA','PRIN_1','PRIN_2','PRIN_3','VMIS_SG','VECT_1_X',
+          'VECT_1_Y','VECT_1_Z','VECT_2_X','VECT_2_Y','VECT_2_Z',
+          'VECT_3_X','VECT_3_Y','VECT_3_Z','TRSIG')
+                      )
+                   )
+
+TEST_RESU(CHAM_ELEM=(_F(
+                        TYPE_TEST='SOMM_ABS',
+                        CHAM_GD=SIEQNO1B,
+                        VALE_CALC=1903241362.1200528,
+                       ),
+                     _F(
+                        TYPE_TEST='SOMM_ABS',
+                        CHAM_GD=SIEQNO2B,
+                        VALE_CALC=1929868361.0737085,
+                       ),
+                     _F(
+                        TYPE_TEST='SOMM_ABS',
+                        CHAM_GD=SIEQNO3B,
+                        VALE_CALC=1956497999.1422029,
+                       ),
+                     _F(
+                        TYPE_TEST='SOMM_ABS',
+                        CHAM_GD=SIEQGA1B,
+                        VALE_CALC=1573956491.8233175,
+                       ),
+                     _F(
+                        TYPE_TEST='SOMM_ABS',
+                        CHAM_GD=SIEQGA2B,
+                        VALE_CALC=1596022480.7712898,
+                       ),
+                     _F(
+                        TYPE_TEST='SOMM_ABS',
+                        CHAM_GD=SIEQGA3B,
+                        VALE_CALC=1618091061.1679206,
+                       ),
+                    )
+          )
+
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    TYPE_TEST='SOMM_ABS',
                    RESULTAT=MSLIN,
@@ -633,42 +746,6 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    RESULTAT=MSLIN,
                    NOM_CHAM='EPSI_ELNO',
                    VALE_CALC=288311799.534,
-                   ),
-                _F(NUME_ORDRE=1,
-                   TYPE_TEST='SOMM_ABS',
-                   RESULTAT=MSLIN,
-                   NOM_CHAM='SIEQ_ELNO',
-                   VALE_CALC=1903241562.39,
-                   ),
-                _F(NUME_ORDRE=2,
-                   TYPE_TEST='SOMM_ABS',
-                   RESULTAT=MSLIN,
-                   NOM_CHAM='SIEQ_ELNO',
-                   VALE_CALC=1929868561.36,
-                   ),
-                _F(NUME_ORDRE=3,
-                   TYPE_TEST='SOMM_ABS',
-                   RESULTAT=MSLIN,
-                   NOM_CHAM='SIEQ_ELNO',
-                   VALE_CALC=1956498199.44,
-                   ),
-                _F(NUME_ORDRE=1,
-                   TYPE_TEST='SOMM_ABS',
-                   RESULTAT=MSLIN,
-                   NOM_CHAM='SIEQ_ELGA',
-                   VALE_CALC=1573956649.12,
-                   ),
-                _F(NUME_ORDRE=2,
-                   TYPE_TEST='SOMM_ABS',
-                   RESULTAT=MSLIN,
-                   NOM_CHAM='SIEQ_ELGA',
-                   VALE_CALC=1596022638.07,
-                   ),
-                _F(NUME_ORDRE=3,
-                   TYPE_TEST='SOMM_ABS',
-                   RESULTAT=MSLIN,
-                   NOM_CHAM='SIEQ_ELGA',
-                   VALE_CALC=1618091218.46,
                    ),
                 _F(NUME_ORDRE=1,
                    TYPE_TEST='SOMM_ABS',

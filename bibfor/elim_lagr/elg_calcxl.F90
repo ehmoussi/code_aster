@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ use elg_data_module
 
     implicit none
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=C1308
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
 #include "asterfort/asmpi_info.h"
@@ -60,8 +59,6 @@ use elg_data_module
 !
 !================================================================
     mpi_int :: mpicomm, nbproc, rang
-    KSP :: ksp
-    PC :: pc
     integer :: ifm, niv
     real(kind=8) :: norm
     aster_logical :: info, debug=.false.
@@ -70,7 +67,6 @@ use elg_data_module
     PetscErrorCode :: ierr
     PetscScalar, parameter :: neg_rone=-1.d0
     PetscOffset :: xidxay, xidxl
-    Mat :: cct, atmp
     Vec :: bx, y, ay, xtmp
     PetscInt :: its
     PetscReal :: aster_petsc_real
@@ -118,23 +114,9 @@ use elg_data_module
     ASSERT( ierr==0 )
     call VecAXPY(y, neg_rone, bx, ierr)
     ASSERT( ierr==0 )
-!
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!         Create the linear solver
-! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!
-    call KSPCreate(PETSC_COMM_SELF, ksp, ierr)
-    ASSERT( ierr==0 )
-!
-!   Calcul de A*A'
-
-    call MatMatTransposeMult(elg_context(ke)%matc, elg_context(ke)%matc, MAT_INITIAL_MATRIX, &
-         aster_petsc_real, cct, ierr)
-    ASSERT( ierr==0 )
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                      Solve the linear system
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-! Methode CG
 ! On résout vlag = A'\ y en 2 étapes
 !  * AY = Ay
 !  * vlag = A A'\ Ay
@@ -146,18 +128,8 @@ use elg_data_module
       call MatMult(elg_context(ke)%matc, y, ay, ierr)
       ASSERT( ierr==0 )
 !
-!   -- Set linear solver (CG)
-!
-      call KSPSetType(ksp, KSPCG, ierr)
-      ASSERT( ierr==0 )
-!
-!   -- Set linear system
-!
-      call KSPSetOperators(ksp, cct , cct, ierr)
-      ASSERT( ierr==0 )
-!
 !   -- Solve the linear system
-      call KSPSolve( ksp, ay, vlag, ierr)
+      call KSPSolve( elg_context(ke)%ksp, ay, vlag, ierr)
       ASSERT( ierr==0 )
 !
 !   -- Free memory
@@ -166,15 +138,9 @@ use elg_data_module
 !
 !  Check the reason why KSP solver ended
 !
-      call KSPGetConvergedReason(ksp, reason, ierr)
+      call KSPGetConvergedReason(elg_context(ke)%ksp, reason, ierr)
       ASSERT( ierr==0 )
     if (reason<0) then
- !      call KSPGetOperators(ksp,atmp, petsc_null_object, ierr)
- !      call KSPGetRhs( ksp, xtmp, ierr)
- !      call VecView( xtmp, PETSC_VIEWER_STDOUT_SELF, ierr )
- !      call KSPGetSolution( ksp, xtmp, ierr)
- !      call VecView( xtmp, PETSC_VIEWER_STDOUT_SELF, ierr )
- !      call MatView( atmp, PETSC_VIEWER_STDOUT_SELF, ierr)
       call utmess('F','ELIMLAGR_8')
     endif
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -191,7 +157,7 @@ use elg_data_module
       ASSERT( ierr==0 )
       call VecNorm(xtmp,norm_2,norm,ierr)
       ASSERT( ierr==0 )
-      call KSPGetIterationNumber(ksp,its,ierr)
+      call KSPGetIterationNumber(elg_context(ke)%ksp,its,ierr)
       ASSERT( ierr==0 )
 
      if (debug .and. rang==0) then
@@ -209,10 +175,6 @@ use elg_data_module
     call VecDestroy(y, ierr)
     ASSERT( ierr==0 )
     call VecDestroy(ay, ierr)
-    ASSERT( ierr==0 )
-    call KSPDestroy(ksp, ierr)
-    ASSERT( ierr==0 )
-    call MatDestroy(cct, ierr)
     ASSERT( ierr==0 )
 !
     call jedema()

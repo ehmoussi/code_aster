@@ -132,6 +132,11 @@ Pour un calcul avec POST_K1_K2_K3, la lèvre supérieure de la fissure doit
 LEVRE_SUP. Vérifier la définition du fond de fissure.
 """),
 
+    20: _("""
+Le champ %(k1)s est un champ de type %(k2)s.
+POST_K1_K2_K3 ne peut prendre en charge que les CHAM_NO.
+"""),
+
     21: _("""
 Les noeuds ne sont pas en vis-à-vis dans le plan perpendiculaire
 au noeud %(k1)s.

@@ -124,7 +124,8 @@ cata_msg = {
     Le noyau de la matrice est un espace de dimension %(i1)d. On a construit une base de cet espace. 
     Norme de la matrice           : %(r1)f
     Norme de la base              : %(r2)f
-    Norme du produit matrice-base : %(r3)f  
+    Norme du produit matrice-base : %(r3)f 
+    Temps écoulé (secondes)       : %(r4)f
 """),
 
 }

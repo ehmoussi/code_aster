@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -71,29 +71,27 @@ subroutine get_nullbasis_trans( b, z )
     integer(kind=4), dimension(:), pointer :: permr_inv => null()
     real(kind=8), dimension(:), pointer    :: diag_u=> null()
     real(kind=8), dimension(:), pointer    :: rhs=> null() 
-    real(kind=8) :: t1, t2, tol, tolref, valref
+    real(kind=8) :: tol, tolref, valref
     integer ::  step, ifm, niv
     integer ::  jj, blocksize
     integer(kind=8) :: factors
     integer, dimension(:), pointer :: icol =>null()
     type(csc_store) :: cs
-    aster_logical :: debug = .false. 
     integer(kind=4), parameter :: un =1 
+    aster_logical :: debug
 
     call infniv( ifm, niv ) 
+    debug = (niv == 2 ) 
 !  -------------------------------------
 !  Factorisation LU de B => Pr B Pc = LU 
 !  -------------------------------------
-    !call CPU_time( t1 ) 
     m_4=int(b%m, kind=4) 
     n_4=int(b%n, kind=4) 
     nnz_4=int(b%nnz, kind=4) 
     call slu_factorize( m_4, n_4, nnz_4,b%values, b%rowind, b%colptr, factors, info ) 
     ASSERT( info == 0 ) 
-    !call CPU_time( t2 ) 
     if ( debug ) then
        print*, "ELG Factorisation LU (SuperLU dgtrf) de la matrice C^T de taille : ",  b%m, "x", b%n
-       print*, "ELG Temps CPU (s): ", t2-t1 
     endif 
 !  Récupération de L à partir de factors
     call slu_get_nnz_of_lower_factor( factors, nnz_l, info) 
@@ -163,7 +161,6 @@ subroutine get_nullbasis_trans( b, z )
     if ( debug ) then 
        print *, 'ELG Résolution (SuperLU dgtrs), taille des blocs : ', blocksize
     endif   
-    !call CPU_time(t1)
     jj = 0
     step = 0 
     do while( jj < l2t%n )
@@ -190,11 +187,9 @@ subroutine get_nullbasis_trans( b, z )
          call put_to_csc_store( rhs , ldrhs, nrhs, icol,  cs )
      end do 
 !
-     !call CPU_time(t2) 
      if ( debug ) then 
         print *, 'ELG Nombre de seconds membres : ', l2t%n
         print*,  'ELG Nombre de résolutions multi-seconds membres :', step 
-        print*,  'ELG Temps CPU (s) :', t2 - t1
      endif 
 !
 ! Stockage de T au format CSC 
@@ -212,6 +207,7 @@ subroutine get_nullbasis_trans( b, z )
     call permute_rows_of_csc_matrix(permr_inv, z) 
     call sort_rows_of_csc_matrix( z )
 !
+! 
     AS_DEALLOCATE(vi4=permr_inv) 
     AS_DEALLOCATE(vr=rhs)
     AS_DEALLOCATE(vi=icol)
