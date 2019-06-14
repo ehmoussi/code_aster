@@ -1,0 +1,15 @@
+syntax: glob
+*.o
+*.pyc
+*.bak
+*.orig
+
+syntax: regexp
+^build/
+^\.waf.?\-.*/
+^\.lock\-.*
+^\.hgignore
+^\.yamm/
+^waf_.*
+.*~$
+.*%$
