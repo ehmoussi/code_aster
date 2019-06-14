@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,15 +73,22 @@ subroutine build_elg_context( full_matas )
     logical :: k_mat_to_free
     character(len=19) :: nomat_save
     PetscErrorCode :: ierr 
+    PetscReal :: tol, val
+    PC :: pc 
+    Mat :: factor       
+    PetscInt :: ival,icntl
     k_mat_to_free = .false.
     !
     call infniv(ifm, niv)
     verbose = ( niv == 2 )
     ! Retrouve l'identifiant de l'objet elg_context associe
-    ! a la matrice full_matas
+    ! a la matrice full_matas. 
+    ! En effet, on a appelé elg_gest_data('NOTE', full_matas, reduced_matas) 
+    ! dans elg_preres.
     call elg_gest_data('CHERCHE', full_matas, ' ' , ' ')
     ! Alias vers cet objet
     elg_ctxt => elg_context( ke )
+    call free_elg_context( elg_ctxt, keep_basis=.true. )
     ! On recherche egalement l'identifiant de la matrice PETSc
     ! associée à full_matas
     kptsc = get_mat_id( full_matas )
@@ -93,6 +100,9 @@ subroutine build_elg_context( full_matas )
     ! le systeme aster complet (avec doubles multiplicateurs de Lagrange)
     ! La matrice est deja enregistree et possede l'id kptsc
     ! On prealloue la matrice PETSc correspondante
+    if ( ap(kptsc) /= PETSC_NULL_MAT )  then 
+        call MatDestroy( ap(kptsc), ierr ) 
+    endif
     call apalmc(kptsc)
     ! On copie les valeurs de la matr_asse dans la matrice PETSc
     call apmamc(kptsc)
@@ -175,11 +185,73 @@ subroutine build_elg_context( full_matas )
     ! On n'a plus besoin du saddle_point context 
     call free_saddle_point_context( sp_ctxt )
     !
+    if (elg_ctxt%tfinal == PETSC_NULL_MAT ) then
     ! Calcul de la base du noyau (appel SuperLU) 
-    call get_nullbasis( elg_ctxt%matc, elg_ctxt%tfinal )
+        if (verbose) then 
+          write(6,*) " -- Construction de la base du noyau "
+        endif
+        call get_nullbasis( elg_ctxt%matc, elg_ctxt%tfinal )
+    endif 
+    if ( elg_ctxt%cct == PETSC_NULL_MAT ) then 
+    !   -- Calcul de CCT = C * transpose(C)
+        if (verbose) then 
+          write(6,*) " -- Construction de CCT "
+        endif
+        call MatMatTransposeMult(elg_ctxt%matc, elg_ctxt%matc,&
+        MAT_INITIAL_MATRIX, PETSC_DEFAULT_REAL, elg_ctxt%cct, ierr)
+        ASSERT( ierr == 0 )
+        if (verbose) then 
+          write(6,*) " -- Factorisation de CCT "
+        endif
+    endif
+    if ( elg_ctxt%ksp == PETSC_NULL_KSP ) then
+    !  Create linear solver context
+        call KSPCreate(PETSC_COMM_SELF,elg_ctxt%ksp,ierr)
+        ASSERT( ierr == 0 )
+    !  Set operators. Here the matrix that defines the linear system
+    !  also serves as the preconditioning matrix.
+    !
+        call KSPSetOperators(elg_ctxt%ksp, elg_ctxt%cct, elg_ctxt%cct, ierr)
+        ASSERT( ierr == 0 )
+        tol = 1.e-7
+        call KSPSetTolerances(elg_ctxt%ksp,tol,PETSC_DEFAULT_REAL,&
+                      PETSC_DEFAULT_REAL,PETSC_DEFAULT_INTEGER,ierr)
+        ASSERT( ierr == 0 )
+        call KSPSetType(elg_ctxt%ksp,KSPPREONLY,ierr)
+        ASSERT( ierr == 0 )
+        call KSPGetPC(elg_ctxt%ksp,pc,ierr)
+        ASSERT( ierr == 0 )
+        call PCSetType(pc,PCLU,ierr)
+        ASSERT( ierr == 0 )
+        call PCFactorSetMatSolverType(pc,MATSOLVERMUMPS,ierr)
+        ASSERT( ierr == 0 )
+        call PCFactorSetUpMatSolverType(pc,ierr)
+        ASSERT( ierr == 0 )
+        call PCFactorGetMatrix(pc,factor,ierr)
+        ASSERT( ierr == 0 )
+    !     sequential ordering
+        icntl = 7
+        ival  = 2
+        call MatMumpsSetIcntl(factor,icntl,ival,ierr)
+        ASSERT( ierr == 0 )
+    !     threshhold for row pivot detection
+        icntl=24
+        ival=1
+        call MatMumpsSetIcntl(factor,icntl,ival,ierr)
+        ASSERT( ierr == 0 )
+        icntl = 3
+        val = 1.e-6
+        call MatMumpsSetCntl(factor,icntl,val,ierr)
+        ASSERT( ierr == 0 )
+        call KSPSetUp(elg_ctxt%ksp,ierr)
+        ASSERT( ierr == 0 )
+    endif 
     !
     ! Projection T'*(MatB*T) 
     !
+    if (verbose) then 
+          write(6,*) " -- Projection du problème sur la base du noyau "
+        endif
     call MatPtAP(elg_ctxt%matb, elg_ctxt%tfinal, MAT_INITIAL_MATRIX, 1.d0, &
         elg_ctxt%kproj, ierr)
     ASSERT( ierr == 0 )
@@ -199,6 +271,7 @@ subroutine get_nullbasis( c_mat, z_mat )
     aster_logical :: verbose, debug=.false.
     PetscErrorCode :: ierr
     integer :: ifm, niv
+    real (kind=8)::  t0,t1
     character(len=19) :: matas1
     type(csc_matrix) :: ct_csc, b_csc, z_csc
     Mat :: cz_mat
@@ -211,7 +284,7 @@ subroutine get_nullbasis( c_mat, z_mat )
     call infniv(ifm, niv)
     verbose= ( niv == 2 )
 !
-    
+    call CPU_time(t0)
 !   Conversion de c_mat au format CSR
     call matseq2csr(  c_mat, nn, ia, ja, val )
 !   Les tableaux obtenus définissent C^T au format CSC
@@ -239,9 +312,11 @@ subroutine get_nullbasis( c_mat, z_mat )
     ASSERT( ierr == 0 )
     call MatNorm( z_mat, NORM_FROBENIUS, z_nrm, ierr )
     ASSERT( ierr == 0 )
+    
+    call CPU_time(t1)
     if ( verbose ) then    
        call utmess('I', 'ELIMLAGR_13', si = to_aster_int(nn_z), &
-       nr=3, valr =(/c_nrm, z_nrm, cz_nrm /))
+       nr=4, valr =(/c_nrm, z_nrm, cz_nrm, t1-t0 /))
     endif 
     if (debug) then
         print*, "ELG Norme de C                             : ",  c_nrm

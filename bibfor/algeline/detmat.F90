@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine detmat()
+use elg_data_module
     implicit none
 ! ----------------------------------------------------------------------
 !
@@ -61,6 +62,10 @@ subroutine detmat()
 !       --  on detruit les matr_asse ainsi que les
 !           eventuelles instances mumps et petsc
         call detrsd('MATR_ASSE', matass)
+!
+!       -- on detruit les eventuelles structures creees pour eliminer les multiplicateurs
+!          de Lagrange  
+        call elg_gest_data('EFFACE', ' ', matass, ' ')
 !
  10     continue
     end do
