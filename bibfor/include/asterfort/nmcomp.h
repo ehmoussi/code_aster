@@ -26,7 +26,7 @@ interface
                       sigp, vip, ndsde, dsidep, nwkout,&
                       wkout, codret, mult_comp_, l_epsi_varc_)
         use Behaviour_type
-        type(Behaviour_Integ), intent(in) :: BEHinteg
+        type(Behaviour_Integ) :: BEHinteg
         character(len=*) :: fami
         integer :: kpg
         integer :: ksp

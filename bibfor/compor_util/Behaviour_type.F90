@@ -44,6 +44,8 @@ implicit none
         real(kind=8) :: curvcab = 0.d0
 ! ----- For GRAD_VARI models : non-local variables PHI
         real(kind=8) :: nonloc(2) = 0.d0
+! ----- For CZM_*_MIX behaviours : Lagrange penalty coefficient
+        real(kind=8) :: r = 0.d0
     end type Behaviour_Elga
 
 !

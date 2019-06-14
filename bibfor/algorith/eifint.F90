@@ -152,13 +152,15 @@ implicit none
                     'RIGI', g, 1, ndim, typmod,&
                     mat, compor, crit, instam, instap,&
                     3, mu, su, 1, rbid,&
-                    vim(1, g), option, rbid, 1, r,&
+                    vim(1, g), option, rbid, 1, [0.d0],&
                     de, vip(1, g), 36, ddedt, 1,&
                     rbid, cod(g))
         if (cod(g) .eq. 1) goto 9000
 !
 !
 !      FORCE INTERIEURE ET CONTRAINTES DE CAUCHY
+!
+        r = BEHinteg%elga%r
 !
         if (resi) then
 !
