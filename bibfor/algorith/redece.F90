@@ -42,7 +42,7 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
 !
-type(Behaviour_Integ), intent(in) :: BEHinteg
+type(Behaviour_Integ) :: BEHinteg
 character(len=*) :: fami
 !
 ! --------------------------------------------------------------------------------------------------

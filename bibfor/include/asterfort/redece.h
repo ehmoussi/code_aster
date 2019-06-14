@@ -27,7 +27,7 @@ interface
                       sigf, vinf, ndsde, dsde, nwkout,&
                       wkout, codret)
         use Behaviour_type
-        type(Behaviour_Integ), intent(in) :: BEHinteg
+        type(Behaviour_Integ) :: BEHinteg
         aster_logical, intent(in) :: l_epsi_varc
         integer :: nwkout
         integer :: ndsde

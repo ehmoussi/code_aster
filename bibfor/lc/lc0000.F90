@@ -165,7 +165,7 @@ implicit none
 #include "asterfort/lcRestoreStrain.h"
 #include "asterfort/assert.h"
 !
-type(Behaviour_Integ), intent(in) :: BEHinteg
+type(Behaviour_Integ) :: BEHinteg
 integer :: imate, ndim, nvi, kpg, ksp
 aster_logical, intent(in) :: l_epsi_varc
 integer :: neps, nsig, nwkin, nwkout, ndsde
@@ -1071,22 +1071,25 @@ integer :: codret
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7040)
-        call lc7040(fami, kpg, ksp, ndim, imate,&
+        call lc7040(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7041)
-        call lc7041(fami, kpg, ksp, ndim, imate,&
+        call lc7041(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7043)
-        call lc7043(fami, kpg, ksp, ndim, imate,&
+        call lc7043(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7045)
         call lc7045(BEHinteg,&
@@ -1103,22 +1106,25 @@ integer :: codret
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7049)
-        call lc7049(fami, kpg, ksp, ndim, imate,&
+        call lc7049(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7051)
-        call lc7051(fami, kpg, ksp, ndim, imate,&
+        call lc7051(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7056)
-        call lc7056(fami, kpg, ksp, ndim, imate,&
+        call lc7056(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7058)
 !     MFRONT

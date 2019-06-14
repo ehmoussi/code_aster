@@ -38,7 +38,7 @@ implicit none
 #include "asterfort/redece.h"
 #include "asterfort/lcidbg.h"
 !
-type(Behaviour_Integ), intent(in) :: BEHinteg
+type(Behaviour_Integ) :: BEHinteg
 integer :: kpg, ksp, ndim, imate, codret, icp, numlc
 integer :: neps, nsig, nwkin, nwkout, ndsde
 character(len=8) :: typmod(*)
