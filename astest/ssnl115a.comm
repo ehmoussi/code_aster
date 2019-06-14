@@ -1,0 +1,149 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+Young  = 210000.0
+Alpha  = 1.2e-05
+Scable = pi*(10.0**2)
+
+cable = DEFI_MATERIAU(
+    CABLE=_F(EC_SUR_E=0.001),
+    ELAS=_F(ALPHA=Alpha, E=Young, NU=0.3, RHO=8e-09)
+)
+
+mailc = LIRE_MAILLAGE(UNITE=20, FORMAT='ASTER'),
+
+model = AFFE_MODELE(
+    MAILLAGE=mailc,
+    AFFE=(
+       _F(GROUP_MA= 'CABLE', MODELISATION='CABLE', PHENOMENE='MECANIQUE'),
+    ),
+)
+
+caral = AFFE_CARA_ELEM(
+    MODELE=model,
+    CABLE=_F(GROUP_MA='CABLE', N_INIT=1.0, SECTION=Scable,),
+)
+
+insta = DEFI_LIST_REEL(
+    DEBUT=0.0,
+    INTERVALLE=_F(JUSQU_A=6, PAS=1.0),
+)
+
+linst = DEFI_LIST_INST(
+    DEFI_LIST=_F(LIST_INST=insta),
+    ECHEC=_F(ACTION='DECOUPE', SUBD_METHODE='AUTO', SUBD_PAS_MINI=1e-09),
+    METHODE='AUTO'
+)
+
+Temp0=CREA_CHAMP(
+    TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MODELE=model,
+    AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE=0,),
+)
+Tempa=CREA_CHAMP(
+    TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MODELE=model,
+    AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE=-30.0,),
+)
+Tempb=CREA_CHAMP(
+    TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MODELE=model,
+    AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE=-500.0,),
+)
+Tempc=CREA_CHAMP(
+    TYPE_CHAM='NOEU_TEMP_R', OPERATION='AFFE', MODELE=model,
+    AFFE=_F(TOUT='OUI', NOM_CMP='TEMP', VALE=-1000.0,),
+)
+
+Temper = CREA_RESU(
+    TYPE_RESU = 'EVOL_THER', NOM_CHAM='TEMP', OPERATION='AFFE',
+    AFFE=(
+        _F(CHAM_GD=Temp0,  INST=0.0),
+        _F(CHAM_GD=Tempa,  INST=(1.0, 2.0,),),
+        _F(CHAM_GD=Tempb,  INST=3.0),
+        _F(CHAM_GD=Tempa,  INST=(4.0, 5.0,),),
+        _F(CHAM_GD=Tempc,  INST=6.0),
+    ),
+)
+
+chmat = AFFE_MATERIAU(
+    MODELE=model,
+    AFFE=_F(GROUP_MA = 'CABLE', MATER=cable),
+    AFFE_VARC = _F(TOUT='OUI',NOM_VARC = 'TEMP',EVOL=Temper,VALE_REF=0.0,),
+)
+
+bloc = AFFE_CHAR_MECA(
+    DDL_IMPO=_F(DX=0, DY=0, DZ=0, GROUP_NO='fixCab'),
+    MODELE=model,
+)
+
+stnl=STAT_NON_LINE(
+    MODELE = model,
+    CHAM_MATER = chmat,
+    CARA_ELEM = caral,
+    EXCIT=_F(CHARGE=bloc),
+    COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',GROUP_MA = 'CABLE', RELATION='CABLE',),
+    INCREMENT = _F(LIST_INST = linst),
+)
+
+# INST   0     1 2 4 5    3       6
+LTemp =[ 0.0, -30.0,     -500.0, -1000.0 ]
+TEST_RESU(
+    RESU=_F(RESULTAT=stnl, NOM_CHAM='SIEF_ELGA', INST=1.0,
+            NOM_CMP='N',MAILLE='M1',POINT=1,
+            REFERENCE='ANALYTIQUE',
+            VALE_REFE=-Young*Alpha*Scable*LTemp[1],
+            VALE_CALC=-Young*Alpha*Scable*LTemp[1],),
+)
+TEST_RESU(
+    RESU=_F(RESULTAT=stnl, NOM_CHAM='SIEF_ELGA', INST=2.0,
+            NOM_CMP='N',MAILLE='M1',POINT=1,
+            REFERENCE='ANALYTIQUE',
+            VALE_REFE=-Young*Alpha*Scable*LTemp[1],
+            VALE_CALC=-Young*Alpha*Scable*LTemp[1],),
+)
+TEST_RESU(
+    RESU=_F(RESULTAT=stnl, NOM_CHAM='SIEF_ELGA', INST=3.0,
+            NOM_CMP='N',MAILLE='M1',POINT=1,
+            REFERENCE='ANALYTIQUE',
+            VALE_REFE=-Young*Alpha*Scable*LTemp[2],
+            VALE_CALC=-Young*Alpha*Scable*LTemp[2],),
+)
+TEST_RESU(
+    RESU=_F(RESULTAT=stnl, NOM_CHAM='SIEF_ELGA', INST=4.0,
+            NOM_CMP='N',MAILLE='M1',POINT=1,
+            REFERENCE='ANALYTIQUE',
+            VALE_REFE=-Young*Alpha*Scable*LTemp[1],
+            VALE_CALC=-Young*Alpha*Scable*LTemp[1],),
+)
+TEST_RESU(
+    RESU=_F(RESULTAT=stnl, NOM_CHAM='SIEF_ELGA', INST=5.0,
+            NOM_CMP='N',MAILLE='M1',POINT=1,
+            REFERENCE='ANALYTIQUE',
+            VALE_REFE=-Young*Alpha*Scable*LTemp[1],
+            VALE_CALC=-Young*Alpha*Scable*LTemp[1],),
+)
+TEST_RESU(
+    RESU=_F(RESULTAT=stnl, NOM_CHAM='SIEF_ELGA', INST=6.0,
+            NOM_CMP='N',MAILLE='M1',POINT=1,
+            REFERENCE='ANALYTIQUE',
+            VALE_REFE=-Young*Alpha*Scable*LTemp[3],
+            VALE_CALC=-Young*Alpha*Scable*LTemp[3],),
+)
+
+FIN()

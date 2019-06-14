@@ -291,7 +291,7 @@ for i in range(NCAL):
                             F_MRZ_RZ=0.75,               C_MRZ_RZ=0.75,
                             F_MTZ_TZ=0.75,               C_MTZ_TZ=0.75,),),
 
-          list = DEFI_LIST_REEL(DEBUT=timem,
+          listinst = DEFI_LIST_REEL(DEBUT=timem,
                       INTERVALLE=(_F(JUSQU_A=time,NOMBRE=1,),),);
 
           TIMP2=CREA_CHAMP(OPERATION='AFFE',
@@ -312,7 +312,7 @@ for i in range(NCAL):
                 TYPE_RESU='EVOL_THER',
                 NOM_CHAM='TEMP',
                 AFFE=_F(CHAM_GD = TIMP2,
-                        LIST_INST = list))
+                        LIST_INST = listinst))
 
           TEMP2=CALC_META(reuse=TEMP2,
                 MODELE=MOTH,
@@ -347,7 +347,7 @@ for i in range(NCAL):
                                      RELATION_KIT = 'ZIRC',
                                      ITER_INTE_MAXI = 100),
                         NEWTON=_F(MATRICE = 'TANGENTE', REAC_ITER = 1),
-                        INCREMENT=_F(LIST_INST = list),
+                        INCREMENT=_F(LIST_INST = listinst),
                         CONVERGENCE=_F(
                                         RESI_GLOB_RELA = 1.E-6,
                                         ITER_GLOB_MAXI = 25,
@@ -390,7 +390,7 @@ for i in range(NCAL):
                                      RELATION_KIT = 'ZIRC',
                                      ITER_INTE_MAXI = 100),
                         NEWTON=_F(MATRICE = 'TANGENTE', REAC_ITER = 1),
-                        INCREMENT=_F(LIST_INST = list),
+                        INCREMENT=_F(LIST_INST = listinst),
                         ETAT_INIT=_F(
                                      DEPL = DEPINI,
                                      SIGM = SIGINI,
@@ -408,7 +408,7 @@ for i in range(NCAL):
 
 
           DETRUIRE ( CONCEPT =  _F (NOM =epsimp),);
-          DETRUIRE ( CONCEPT =  _F (NOM =list),);
+          DETRUIRE ( CONCEPT =  _F (NOM =listinst),);
           DETRUIRE ( CONCEPT =  _F (NOM =(tempi)),);
           DETRUIRE ( CONCEPT =  _F (NOM =TIMP2),);
           DETRUIRE ( CONCEPT =  _F (NOM =PHASINI2),);

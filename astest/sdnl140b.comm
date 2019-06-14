@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ mail=DEFI_GROUP(reuse =mail,
                              _F(GROUP_MA='Bas_Encastre'),
                              _F(GROUP_MA='Clim_Bas'),
                              ))
-                               
+
 modele=AFFE_MODELE(MAILLAGE=mail,
                    AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
@@ -90,7 +90,7 @@ contact=DEFI_CONTACT(MODELE=modele,
                              SANS_GROUP_NO = ('Clim_Bas', ),
                              #DIST_APPA = 0.2,
                              COULOMB=0.2),);
-                             
+
 contac2=DEFI_CONTACT(MODELE=modele,
                      FORMULATION='CONTINUE',
                      FROTTEMENT='COULOMB',
@@ -104,7 +104,7 @@ contac2=DEFI_CONTACT(MODELE=modele,
                              GROUP_MA_ESCL='Bas_Contact',
                              CONTACT_INIT='OUI',
                              COEF_FROT=1.E6,COEF_CONT=1.E9,
-                             SANS_GROUP_NO = 'excl2', 
+                             SANS_GROUP_NO = 'excl2',
                              DIST_APPA = 0.2,
                              COULOMB=0.2),);
 
@@ -120,47 +120,47 @@ listinst=DEFI_LIST_REEL(DEBUT=0.,
                         INTERVALLE=(
                                     _F(JUSQU_A=.001,
                                       NOMBRE=10,),
-                                      
+
                                     _F(JUSQU_A=.002,
                                       NOMBRE=10,),
-                                      
+
                                     #_F(JUSQU_A=.001,
                                       #NOMBRE=nombre,),
-                                      
+
                                     _F(JUSQU_A=.006,
                                       NOMBRE=nombre,),
-                                      
+
                                     _F(JUSQU_A=.012,
                                       NOMBRE=nombre*10,),
-                                      
+
                                     _F(JUSQU_A=lfin1*10,
                                       NOMBRE=nombre*10,),
-                                      
+
                                     _F(JUSQU_A=.15,
                                       NOMBRE=nombre*1,),
-                                      
-                                      
+
+
                                       ));
 listarch=DEFI_LIST_REEL(DEBUT=0.,
                         INTERVALLE=(
                                     _F(JUSQU_A=.001,
                                       NOMBRE=10,),
-                                      
+
                                     _F(JUSQU_A=.002,
                                       NOMBRE=10,),
-                                      
+
                                     #_F(JUSQU_A=.001,
                                       #NOMBRE=nombre,),
-                                      
+
                                     _F(JUSQU_A=.006,
                                       NOMBRE=nombre,),
-                                      
+
                                     _F(JUSQU_A=.012,
                                       NOMBRE=nombre,),
-                                      
+
                                     _F(JUSQU_A=lfin1*10,
                                       NOMBRE=nombre,),
-                                      
+
                                     _F(JUSQU_A=.15,
                                       NOMBRE=nombre,),
                                       ));
@@ -169,29 +169,29 @@ listarc2=DEFI_LIST_REEL(DEBUT=0.,
                         INTERVALLE=(
                                     _F(JUSQU_A=.001,
                                       NOMBRE=10,),
-                                      
+
                                     _F(JUSQU_A=.002,
                                       NOMBRE=10,),
-                                      
+
                                     #_F(JUSQU_A=.001,
                                       #NOMBRE=nombre,),
-                                      
+
                                     _F(JUSQU_A=.006,
                                       NOMBRE=nombre,),
-                                      
+
                                     _F(JUSQU_A=.012,
                                       NOMBRE=nombre*10,),
-                                      
+
                                     _F(JUSQU_A=lfin1*10,
                                       NOMBRE=nombre*10,),
-                                      
+
                                     _F(JUSQU_A=.15,
                                       NOMBRE=nombre*1,),
                                       ));
 
-list=DEFI_LIST_INST(METHODE='MANUEL',
-                    DEFI_LIST=_F(LIST_INST=listinst,),
-                    ECHEC=_F(SUBD_PAS=2,SUBD_NIVEAU=12,),);
+list2=DEFI_LIST_INST(METHODE='MANUEL',
+                     DEFI_LIST=_F(LIST_INST=listinst,),
+                     ECHEC=_F(SUBD_PAS=2,SUBD_NIVEAU=12,),);
 
 evol1=DYNA_NON_LINE(MODELE=modele,
                        CHAM_MATER=affe_mat,
@@ -201,7 +201,7 @@ evol1=DYNA_NON_LINE(MODELE=modele,
                        CONTACT=contact,
                        COMPORTEMENT=_F(RELATION='ELAS',),
                        NEWTON=_F(REAC_ITER=1,),
-                       INCREMENT=_F(LIST_INST=list,
+                       INCREMENT=_F(LIST_INST=list2,
                        INST_FIN=0.0006,
                        ),
                        CONVERGENCE =_F(ITER_GLOB_MAXI=30,RESI_GLOB_RELA=5.E-4,),

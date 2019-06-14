@@ -128,6 +128,14 @@ class formule(ASSD):
         pas picklable."""
         d = ASSD.__getstate__(self)
         del d['code']
+        # remove from context objects that can not be pickled
+        # they will have to be recreated by user
+        ctxt = d['ctxt']
+        for name, obj in list(ctxt.items()):
+            try:
+                pickle.dumps(obj)
+            except pickle.PicklingError:
+                del ctxt[name]
         return d
 
     def supprime(self, force=False):

@@ -49,6 +49,7 @@
 !
 #define IDX_I_EPSEQ      7
 #define IDX_I_IPLAS      8
+#define IDX_C_IPLAS      43
 !
 ! - Kinetic
 !

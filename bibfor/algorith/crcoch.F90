@@ -68,6 +68,8 @@ subroutine crcoch()
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/crcoch_getloads.h"
+#include "asterfort/licrsd_save.h"
+#include "asterfort/liscpy.h"
 #include "blas/dcopy.h"
 !
     integer :: ibid, ier, icompt, iret, numini, numfin
@@ -85,7 +87,7 @@ subroutine crcoch()
     character(len=8) :: k8b, resu, criter, matr
     character(len=8) :: materi, carele, blan8, noma
     character(len=16) :: type, oper
-    character(len=19) :: nomch, listr8, list_load, resu19, profch
+    character(len=19) :: nomch, listr8, list_load, list_load_resu, resu19, profch
     character(len=24) :: lload_name, lload_info, lload_func
     character(len=19) :: nomch1, nomch2
     character(len=24) :: linst, nsymb, typres, lcpt, londp
@@ -110,6 +112,7 @@ subroutine crcoch()
     veonde = '&&CRCOCH_VEONDE'
     vaonde = '&&CRCOCH_VAONDE'
     list_load = '&&CRCOCH.LISCHA'
+    list_load_resu = ' '
     vechmp = '&&CRCOCH_VECHMP'
     vachmp = '&&CRCOCH_VACHMP'
     cnchmp = '&&CRCOCH_CNCHMP'
@@ -130,7 +133,10 @@ subroutine crcoch()
 !
     call getvid('CONV_CHAR', 'CHARGE', iocc=iocc, nbval=0, nbret=n1)
     if (n1 .ne. 0) then
+! ----- Create datastructure for list of loads
         call crcoch_getloads(list_load, nb_load, nb_ondp, v_ondp)
+! ----- Generate name of list of loads to save in results datastructure
+        call licrsd_save(list_load_resu)
     endif
 !
 ! - Create output datastructure
@@ -306,7 +312,10 @@ subroutine crcoch()
         call rsnoch(resu, nsymb, icompt)
         call rsadpa(resu, 'E', 1, typabs, icompt, 0, sjv=iad)
         zr(iad) = tps
-        call rssepa(resu,icompt,modele(1:8),materi,carele,list_load)
+! ----- Special copy of list of loads for save in results datastructure
+        call liscpy(list_load, list_load_resu, 'G')
+! ----- Save parameters in results datastructure
+        call rssepa(resu,icompt,modele(1:8),materi,carele,list_load_resu) 
         if (j .ge. 2) call jedema()
 !
     end do

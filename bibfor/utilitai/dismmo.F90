@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,16 +79,17 @@ subroutine dismmo(questi, nomobz, repi, repkz, ierd)
         call dismzc(questi, nolig, repi, repk, ierd)
 !
 !     -----------------------------------
-        elseif ((questi.eq.'DIM_GEOM') .or. (questi.eq.'NB_SM_MAILLA')&
-    .or. (questi.eq.'NB_SS_ACTI') .or. (questi.eq.'NB_NL_MAILLA')&
-    .or. (questi.eq.'AXIS') .or. (questi.eq.'EXI_AXIS') .or. (&
-    questi.eq.'CALC_RIGI') .or. (questi.eq.'PHENOMENE') .or. (&
-    questi.eq.'EXI_AMOR') .or. (questi.eq.'EXI_RDM') .or. (&
-    questi.eq.'EXI_POUX') .or. (questi(1:7).eq.'EXI_THM') .or.&
-    (questi.eq.'EXI_TUYAU') .or. (questi.eq.'EXI_COQ3D') .or. (&
-    questi.eq.'EXI_COQ1D') .or. (questi.eq.'EXI_PLAQUE') .or. (&
-    questi.eq.'EXI_COQUE') .or. (questi.eq.'EXI_GRILLE') .or. (&
-    questi.eq.'EXI_STRX') .or. (questi.eq.'EXI_STR2')) then
+    elseif ((questi.eq.'DIM_GEOM') .or. (questi.eq.'NB_SM_MAILLA')&
+            .or. (questi.eq.'NB_SS_ACTI') .or. (questi.eq.'NB_NL_MAILLA')&
+            .or. (questi.eq.'AXIS') .or. (questi.eq.'EXI_AXIS')&
+            .or. (questi.eq.'CALC_RIGI') .or. (questi.eq.'PHENOMENE')&
+            .or. (questi.eq.'EXI_AMOR') .or. (questi.eq.'EXI_RDM')&
+            .or. (questi.eq.'EXI_POUX') .or. (questi(1:7).eq.'EXI_THM')&
+            .or. (questi.eq.'EXI_TUYAU') .or. (questi.eq.'EXI_COQ3D')&
+            .or. (questi.eq.'EXI_COQ1D') .or. (questi.eq.'EXI_PLAQUE')&
+            .or. (questi.eq.'EXI_COQUE') .or. (questi.eq.'EXI_GRILLE')&
+            .or. (questi.eq.'EXI_STRX') .or. (questi.eq.'EXI_STR2')&
+            .or. (questi.eq.'PARTITION')) then
 !     -----------------------------------
         call dismlg(questi, nolig, repi, repk, ierd)
 !
@@ -146,8 +147,8 @@ subroutine dismmo(questi, nomobz, repi, repkz, ierd)
 30      continue
 !
 !     ------------------------------------------
-        elseif ((questi.eq.'NB_NO_MAILLA') .or. (questi.eq.'NB_MA_MAILLA')&
-    .or. (questi.eq.'NB_NO_SS_MAX')) then
+    elseif ((questi.eq.'NB_NO_MAILLA') .or. (questi.eq.'NB_MA_MAILLA')&
+            .or. (questi.eq.'NB_NO_SS_MAX')) then
 !     ------------------------------------------
         call dismma(questi, ma, repi, repk, ierd)
 !
@@ -228,7 +229,6 @@ subroutine dismmo(questi, nomobz, repi, repkz, ierd)
         else
             repk='NON'
         endif
-!
 !
     else
 !     ----
