@@ -128,8 +128,6 @@ subroutine free_elg_context( elg_ctxt, keep_basis )
         free_all = .not. keep_basis
      endif 
 !
-    elg_ctxt%reduced_matas=' '
-!
     if ( elg_ctxt%kproj /= PETSC_NULL_MAT ) then 
     call MatDestroy(elg_ctxt%kproj, ierr)
     ASSERT( ierr == 0 )
@@ -162,7 +160,6 @@ subroutine free_elg_context( elg_ctxt, keep_basis )
   elg_ctxt%vx0=PETSC_NULL_OBJECT
   elg_ctxt%vecb=PETSC_NULL_OBJECT
   elg_ctxt%vecc=PETSC_NULL_OBJECT
-  elg_ctxt%ksp=PETSC_NULL_OBJECT
 #else
   elg_ctxt%kproj=PETSC_NULL_MAT
   elg_ctxt%matc=PETSC_NULL_MAT
@@ -170,12 +167,13 @@ subroutine free_elg_context( elg_ctxt, keep_basis )
   elg_ctxt%vx0=PETSC_NULL_VEC
   elg_ctxt%vecb=PETSC_NULL_VEC
   elg_ctxt%vecc=PETSC_NULL_VEC
-  elg_ctxt%ksp=PETSC_NULL_KSP
 #endif
 !
    if ( free_all ) then 
     elg_ctxt%full_matas=' '
     elg_ctxt%k_matas=' '
+    elg_ctxt%reduced_matas=' '
+!
     if ( elg_ctxt%tfinal /= PETSC_NULL_MAT ) then
         call MatDestroy(elg_ctxt%tfinal, ierr)
         ASSERT( ierr == 0 )
