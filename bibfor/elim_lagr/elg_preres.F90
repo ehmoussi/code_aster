@@ -20,6 +20,8 @@ subroutine elg_preres(solve1, base, iret, matpre, matas1,&
                       npvneg, istop)
 !
 use elg_data_module
+use matrasse_module
+!
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -46,10 +48,22 @@ use elg_data_module
     integer ::   npvneg, iexi
     character(len=24), pointer :: slvk(:) => null()
     character(len=24), pointer :: refa(:) => null()
+    integer :: nlag1, nlag2, nphys
+    aster_logical :: elg_is_ok
 !
 !
     call jemarq()
 !
+!   L'élimination des Lagrange est elle licite ?
+!   Y a t il des Lagrange dans la matrice ? 
+!   Y a t il moins de Lagrange que de degrés de liberté "physiques" ?  
+!   A-t-on bien des double Lagrange ? 
+    nlag1 = get_num_of_dofs( lagrange1_dof, matas1 )
+    nlag2 = get_num_of_dofs( lagrange2_dof, matas1 )
+    nphys = get_num_of_dofs( physical_dof, matas1 )
+    elg_is_ok = (nlag1 == nlag2).and.(nlag1 > 0 ).and.( nlag1 < nphys)
+!
+    if ( elg_is_ok ) then 
 !
 !   -- ON CREE LA MATRICE (REDUITE) MATAS2
 !   Si elle existe déjà, on la détruit 
@@ -65,7 +79,7 @@ use elg_data_module
 !   -- ON DUPLIQUE SOLVE1 EN CHANGEANT ELIM_LAGR: OUI -> NON
     solve2="ELG_"//solve1(5:19)
     call copisd('SOLVEUR', 'V', solve1, solve2)
-    call jeveuo(solve2//'.SLVK', 'L', vk24=slvk)
+    call jeveuo(solve2//'.SLVK', 'E', vk24=slvk)
     slvk(13)='NON'
     call jeveuo(matas2//'.REFA', 'E', vk24=refa)
     refa(7)=solve2
@@ -74,6 +88,14 @@ use elg_data_module
     call prere1(' ', base, iret, matpre, matas2,&
                 npvneg, istop)
 !
+    else 
+!    -- ON APPELLE PRERE1 AVEC MATAS1 ET SOLVE1 
+!       EN AYANT REMIS ELIM_LAGR A 'NON'
+       call jeveuo(solve1//'.SLVK', 'E', vk24=slvk)
+       slvk(13)='NON' 
+       call prere1(solve1, base, iret, matpre, matas1,&
+                npvneg, istop)
+    endif
 !
     call jedema()
 end
