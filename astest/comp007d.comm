@@ -219,13 +219,13 @@ for i in range(1,NCAL+1):
                                           ALPHA=0.),
                                           TRACTION=_F(SIGM=COU_TRAC))
 
-          list = DEFI_LIST_REEL(DEBUT=timem,
+          listinst = DEFI_LIST_REEL(DEBUT=timem,
                       INTERVALLE=(_F(JUSQU_A=time,NOMBRE=1,),),);
 
           RESU[i]=SIMU_POINT_MAT(COMPORTEMENT=_F(RELATION=compor,),
                                  MATER=MATER[i],
                                  SUPPORT='POINT',
-                                 INCREMENT=_F(LIST_INST = list, ),
+                                 INCREMENT=_F(LIST_INST = listinst, ),
                                  NEWTON=_F( PREDICTION='ELASTIQUE',
                                              MATRICE='TANGENTE',
                                              REAC_ITER=1,),
@@ -235,7 +235,7 @@ for i in range(1,NCAL+1):
           # IMPR_TABLE(TABLE=RESU[i]);
 
           DETRUIRE ( CONCEPT =  _F (NOM =epsimp),);
-          DETRUIRE ( CONCEPT =  _F (NOM =list),);
+          DETRUIRE ( CONCEPT =  _F (NOM =listinst),);
           DETRUIRE ( CONCEPT =  _F (NOM =COU_TRAC),);
 
 

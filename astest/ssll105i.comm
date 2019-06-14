@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -152,10 +152,10 @@ TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
 fonc=DEFI_FONCTION(NOM_PARA='INST',
                    VALE=(0.0,0.0,2.0,2.0,),);
 
-list=DEFI_LIST_REEL(DEBUT=0.0,
+listinst=DEFI_LIST_REEL(DEBUT=0.0,
                     INTERVALLE=_F(JUSQU_A=1.0,NOMBRE=10))
 
-list1=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = list,),
+list1=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = listinst,),
                     ECHEC=_F(EVENEMENT='INSTABILITE',ACTION='CONTINUE',),);
 
 res=STAT_NON_LINE(MODELE=MODELE,

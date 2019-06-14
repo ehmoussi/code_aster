@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ real(kind=8), intent(in) :: temp, dtemp
 real(kind=8), intent(in) :: predef(*), dpred(*) 
 real(kind=8), intent(out) :: stress(6)
 real(kind=8), intent(out) :: statev(nvi)
-integer, intent(out) :: ndsde
+integer, intent(in) :: ndsde
 real(kind=8), intent(out) :: dsidep(6, 6)
 integer, intent(out) :: codret
 !
@@ -213,11 +213,11 @@ integer, intent(out) :: codret
 !
     call matrot(angmas, drott)
 !
-    do 100,i = 1,3
-    do 90,j = 1,3
-        drot(j,i) = drott(i,j)
- 90 continue
-100 continue
+    do i = 1,3
+        do j = 1,3
+            drot(j,i) = drott(i,j)
+        end do
+    end do
 !
     celent=0.d0
     npt=kpg
