@@ -31,6 +31,10 @@ cata_msg = {
          Comportement %(k1)s non implanté pour l'élément d'interface
 """),
 
+    3: _("""
+         Choix de déformation %(k1)s non disponible pour l'élément CABLE_GAINE
+"""),
+
     5 : _("""
   Le champ post-traité est un CHAM_ELEM, le calcul de moyenne ne fonctionne que
  sur les CHAM_NO. Pour les CHAM_ELEM utiliser POST_ELEM mot-clé INTEGRALE.

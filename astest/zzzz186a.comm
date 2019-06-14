@@ -327,7 +327,7 @@ IMPR_OAR(TYPE_CALC  = 'COMPOSANT',
 TEST_FICHIER(FICHIER='fort.38',
              NB_VALE=81,
              VALE_CALC=2019204496.04,
-             VALE_CALC_K='600d2cac9724fb08057384cf9f744c1b',
+             VALE_CALC_K='ab52738ea6e5998755f461ebe2e215c9',
              TOLE_MACHINE=1.E-3)
   # Réels :
   # Nombre de valeurs : 81                                      82
@@ -399,8 +399,8 @@ IMPR_OAR(TYPE_CALC='COMPOSANT',
 
 TEST_FICHIER(FICHIER='fort.38',
              NB_VALE=83,
-             VALE_CALC=2019204492.92,
-             VALE_CALC_K='7373264dd8a1beff5da3220e8976fb1c',
+             VALE_CALC=2.0192044910e+09,
+             VALE_CALC_K='51c424f3508920069d12be79284e6c95',
              TOLE_MACHINE=1.E-3)
 
 FIN();
