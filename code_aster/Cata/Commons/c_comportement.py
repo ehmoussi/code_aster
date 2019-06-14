@@ -29,6 +29,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                        'CALC_POINT_MAT','SIMU_POINT_MAT', 'DYNA_NON_LINE','STAT_NON_LINE','CALCUL','CALC_FORC_NONL',
                        'CALC_IFS_DNL','CALC_PRECONT','CREA_RESU','LIRE_RESU','MACR_ECREVISSE','TEST_COMPOR',None)
 
+    stcom='f'
     if COMMAND =='CALC_EUROPLEXUS':
         mcfact = FACT(statut='o',min=1,max='**',  #COMMUN#
 
@@ -245,7 +246,9 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                    fr=tr("Restauration d'écrouissage"),
                     POST_INCR    =SIMP(statut='f',typ='TXM',into=("REST_ECRO",), ),
                                   )
-        mcfact =   FACT(statut='f',min=1,max='**',
+        if COMMAND == 'CALC_PRECONT':
+            stcom = 'o'
+        mcfact =   FACT(statut=stcom,min=1,max='**',
                         regles=(PRESENT_ABSENT('TOUT','GROUP_MA','MAILLE'),),
             TOUT        = SIMP( statut='f',typ='TXM',into=("OUI",) ),
             GROUP_MA    = SIMP( statut='f',typ=grma,validators=NoRepeat(),max='**'),

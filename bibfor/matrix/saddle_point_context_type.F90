@@ -231,7 +231,7 @@ subroutine set_matrix_data( a_mat, ak_mat,  ctxt)
     ! 
     ! Local variables
     !
-    Mat, dimension(2) :: submat
+    Mat, dimension(1) :: submat
     PetscInt :: nsub
     !
     ASSERT( ( ctxt%data_model == distributed_data ).or.( ctxt%data_model == replicated_data ) )  
@@ -398,6 +398,10 @@ subroutine free_saddle_point_context( ctxt )
     ASSERT( ierr == 0 )
     call MatDestroy( ctxt%c_mat, ierr )
     ASSERT( ierr == 0 )
+    if ( ctxt%d_mat /= PETSC_NULL_MAT ) then 
+       call MatDestroy( ctxt%d_mat, ierr )
+    ASSERT( ierr == 0 )
+    endif
     call VecDestroy( ctxt%x1, ierr )
     ASSERT( ierr == 0 )
     call VecDestroy( ctxt%x2, ierr )

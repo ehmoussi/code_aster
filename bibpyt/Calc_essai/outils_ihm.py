@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: albert.alarcon at edf.fr
+# person_in_charge: fabien.banci at edf.fr
 
 import os
 import string
@@ -32,8 +32,6 @@ import tkinter.font
 from Calc_essai.cata_ce import DynaHarmo, ModeMeca
 from code_aster import AsterError
 from code_aster.Cata.Syntax import _F, ASSD
-from Stanley.as_courbes import Courbe
-from Stanley.xmgrace import Xmgr
 from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
 
 # from Calc_essai.ce_ihm_parametres import CalcEssaiSalome
@@ -2181,8 +2179,7 @@ class VecteurEntry:
 class CalcEssaiXmgr(Xmgr):
 
     """Une interface à Xmgrace pouvant être lancée
-    plusieurs fois en même temps (l'unique différence
-    avec la version Stanley)."""
+    plusieurs fois en même temps ."""
 
     def __init__(self, xmgr_idx, gr_max=10, options=None,
                  xmgrace=aster_core.get_option('prog:xmgrace')):
@@ -2207,7 +2204,7 @@ class CalcEssaiXmgr(Xmgr):
 
         # Teste le DISPLAY avant de lancer xmgrace...
         if 'DISPLAY' in os.environ:
-            UTMESS('I', 'STANLEY_9', valk=[shell])
+            UTMESS('I', 'CALCESSAI1_9', valk=[shell])
             Popen([shell], shell=True)
 
             # Mise a l'echelle des graphes
@@ -2223,7 +2220,7 @@ class CalcEssaiXmgr(Xmgr):
             self.Active(0)
 
         else:
-            UTMESS('A', 'STANLEY_3', valk=['XMGRACE'])
+            UTMESS('A', 'CALCESSAI1_3', valk=['XMGRACE'])
 
     def Ech_x(self, ech_x):
         """Place l'échelle sur x à NORMAL, LOGARITHMIC ou RECIPROCAL"""

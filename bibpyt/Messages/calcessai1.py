@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,3 +16,31 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+
+cata_msg = {
+
+    3 : _("""
+Aucune variable d'environnement DISPLAY définie !
+%(k1)s ne pourra pas fonctionner. On l'ignore.
+
+Si vous êtes en Interactif, cochez le bouton Suivi Interactif
+dans ASTK.
+
+Vous pouvez également préciser votre DISPLAY dans les arguments
+de la commande STANLEY :
+
+STANLEY(DISPLAY='adresse_IP:0.0');
+"""),
+
+    9 : _("""
+Exécution de %(k1)s
+"""),
+
+
+    20 : _("""
+Exécution terminée.
+"""),
+
+
+}
+
