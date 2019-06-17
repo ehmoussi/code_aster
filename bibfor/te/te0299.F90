@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -425,8 +425,9 @@ subroutine te0299(option, nomte)
           basloc((6*(ino-1)+1):(6*(ino-1)+6))=zr((ifond-1+1):(ifond-1+6))
         enddo
         call coor_cyl(ndim, nno, basloc, zr(igeom), ffp,&
-                      p(1:ndim,1:ndim), invp(1:ndim,1:ndim), rg, phig,&
+                      p, invp, rg, phig,&
                       l_not_zero)
+
 ! BRICOLAGE POUR CALCULER LE SIGNE DE K2 QUAND NDIM=2
         e1(:)=0.d0
         e1(1:ndim)=p(1:ndim,1)
@@ -503,7 +504,7 @@ subroutine te0299(option, nomte)
 !
     k1 = k1 * coefk
     k2 = k2 * coefk
-    if (e3(3) .lt. 0) k2=-k2
+!     if (e3(3) .lt. 0) k2=-k2
 !
 
 

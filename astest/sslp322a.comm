@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -193,7 +193,7 @@ for i in range(NPAS+1) :
 
 # TEST DE KI ET KII AU DERNIER PAS
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=1.23832928116,
+           VALE_CALC=1.0993600475053458,
            NOM_PARA='K1',
            TYPE_TEST='MAX',
            TABLE=SIF_35,
@@ -201,7 +201,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 # TEST DE KII PAR RAPPORT A KII MAILLAGE
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=-0.071044896344,
+           VALE_CALC=-0.07727282425418495,
            NOM_PARA='K2',
            TYPE_TEST='MAX',
            TABLE=SIF_35,
