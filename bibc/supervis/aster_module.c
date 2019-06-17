@@ -1944,7 +1944,7 @@ static char dismoi_doc[] =
 "     question     : texte de la question\n"
 "     concept      : nom du concept\n"
 "     type_concept : type du concept\n\n"
-"     codmes       :'F','E','A','I',...\n"
+"     codmes       : 'F' ou 'C'\n"
 "   Retourne :\n"
 "     iret         : 0 si ok, 1 en cas d'erreur\n"
 "     repi         : reponse entiere\n"
