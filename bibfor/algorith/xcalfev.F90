@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
 !
     integer :: i, j, k, ino, l, alp, nnops
     integer :: ndime, nno
-    real(kind=8) :: p(27,3,3), invp(27,3,3), p_g(ndim,ndim), invp_g(ndim,ndim)
+    real(kind=8) :: p(27,3,3), invp(27,3,3), p_g(3,3), invp_g(3,3)
     real(kind=8) :: dkdpo(ndim,ndim,2), dkdlo(3,3,2), fkpo(ndim,ndim), fk_gl(ndim,ndim)
     real(kind=8) :: rr ,th, r_n(27), t_n(27), fkpo_n(27,3,3)
     real(kind=8) :: fkpo_g(3,3), dkdgl_g(3,3,3), signe
@@ -158,7 +158,7 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
       call elrfvf(elrefp, xref((ndime*(ino-1)+1):(ndime*(ino-1)+ndime)),&
                   nnop, ff_n, nno)
       call coor_cyl(ndim, nnop, basloc, geom, ff_n,&
-                    p(ino,1:ndim,1:ndim), invp(ino,1:ndim,1:ndim),&
+                    p(ino,1:3,1:3), invp(ino,1:3,1:3),&
                     r_n(ino), t_n(ino), lbid)
     enddo
 !

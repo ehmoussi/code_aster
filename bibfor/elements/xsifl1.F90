@@ -186,7 +186,7 @@ subroutine xsifl1(elrefp, angl, basloc, coeff, coeff3, ddlm,&
          endif
 !       CALCUL DES COORDONNEES CYLINDRIQUES
          call coor_cyl(ndim, nnop, basloc, zr(igeom), ff,&
-                       p(1:ndim,1:ndim), invp(1:ndim,1:ndim), rg, tg, l_not_zero)
+                       p, invp, rg, tg, l_not_zero)
 !       ---------------------------------------------
 !       3) CALCUL DU DEPLACEMENT
 !       ---------------------------------------------

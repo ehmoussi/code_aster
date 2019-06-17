@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -178,7 +178,7 @@ IMPR_TABLE(TABLE=TAB);
 
 TEST_TABLE(REFERENCE='NON_DEFINI',
            PRECISION=0.050000000000000003,
-           VALE_CALC=2.79262299287,
+           VALE_CALC=2.7925641822741296,
            VALE_REFE=2.7999999999999998,
            NOM_PARA='COOR_Y',
            TYPE_TEST='MAX',

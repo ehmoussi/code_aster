@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -356,7 +356,7 @@ subroutine xsifel(elrefp, ndim, coorse, igeom, jheavt,&
         p(:,:)=0.d0
         invp(:,:)=0.d0
         call coor_cyl(ndim, nnop, basloc, zr(igeom), ff,&
-                      p(1:ndim,1:ndim), invp(1:ndim,1:ndim), rg, tg,&
+                      p, invp, rg, tg,&
                       l_not_zero)
 ! BRICOLAGE POUR CALCULER LE SIGNE DE K2 QUAND NDIM=2
         if (ndim.eq.2) then
