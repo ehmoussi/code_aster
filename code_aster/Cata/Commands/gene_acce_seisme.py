@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ GENE_ACCE_SEISME=MACRO(nom = "GENE_ACCE_SEISME",
 #           FREQ_PENTE    =SIMP(statut='f',typ='R',  fr=tr("pente pour l'evolution de la frequence centrale")),
         ),
          SPEC_MEDIANE    = FACT(statut='f',max=1,
-            regles=(ENSEMBLE('ERRE_ZPA','ERRE_MAX','ERRE_RMS'),EXCLUS('FREQ_PAS','LIST_FREQ'),),
+            regles=EXCLUS('FREQ_PAS','LIST_FREQ'),
             SPEC_OSCI     =SIMP(statut='o',typ=(fonction_sdaster),),
             AMOR_REDUIT   =SIMP(statut='o', typ='R', val_min=0.00001, val_max=1.),
             FREQ_PAS      =SIMP(statut='f',typ='R' , fr=tr("pas")),
@@ -84,7 +84,7 @@ GENE_ACCE_SEISME=MACRO(nom = "GENE_ACCE_SEISME",
             METHODE       =SIMP(statut='f',typ='TXM',defaut="HARMO",into=("NIGAM","HARMO") ),
         ),
          SPEC_MOYENNE    = FACT(statut='f',max=1,
-            regles=(ENSEMBLE('ERRE_ZPA','ERRE_MAX','ERRE_RMS'),EXCLUS('FREQ_PAS','LIST_FREQ'),),
+            regles=EXCLUS('FREQ_PAS','LIST_FREQ'),
             SPEC_OSCI     =SIMP(statut='o',typ=(fonction_sdaster),),
             AMOR_REDUIT   =SIMP(statut='o', typ='R', val_min=0.00001, val_max=1.),
             FREQ_PAS      =SIMP(statut='f',typ='R' , fr=tr("pas")),
@@ -96,7 +96,7 @@ GENE_ACCE_SEISME=MACRO(nom = "GENE_ACCE_SEISME",
             METHODE       =SIMP(statut='f',typ='TXM',defaut="HARMO",into=("NIGAM","HARMO") ),
         ),
          SPEC_UNIQUE    = FACT(statut='f',max=1,
-            regles=(ENSEMBLE('ERRE_ZPA','ERRE_MAX','ERRE_RMS'),EXCLUS('FREQ_PAS','LIST_FREQ'),),
+            regles=EXCLUS('FREQ_PAS','LIST_FREQ'),
             ERRE_ZPA      =SIMP(statut='f',typ='R' ,defaut=(1.,0.2), min=1,max=2,  fr=tr("coef et erreur maxi ZPA"),),
             ERRE_MAX      =SIMP(statut='f',typ='R' ,defaut=(0.5,0.2), min=1,max=2,  fr=tr("coef et erreur maxi global"),),
             ERRE_RMS      =SIMP(statut='f',typ='R' ,defaut=(0.5,0.2), min=1,max=2,  fr=tr("coef et erreur maxi rms"),),

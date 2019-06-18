@@ -246,7 +246,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
 
         # 4. Archiving parameters
         b_dlt_prec  =  BLOC(condition="""equal_to("BASE_CALCUL", 'PHYS') and equal_to("TYPE_CALCUL", 'TRAN')""",
-          ARCHIVAGE       = FACT(statut='f', max=1, regles=(EXCLUS('LIST_INST','INST'), AU_MOINS_UN('LIST_INST','INST','PAS_ARCH')),
+          ARCHIVAGE       = FACT(statut='f', max=1, regles=(EXCLUS('LIST_INST','INST'),),
                PAS_ARCH    =     SIMP(statut='f',typ='I'),
                LIST_INST   =     SIMP(statut='f',typ=(listr8_sdaster),),
                INST        =     SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
