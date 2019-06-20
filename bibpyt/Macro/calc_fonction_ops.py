@@ -535,7 +535,6 @@ class CalcFonction_COHERENCE(CalcFonctionOper):
         if FREQ_COUP is not None:
             if lfreq[-1] > FREQ_COUP:
                 N2 = NP.searchsorted(lfreq, FREQ_COUP)
-                print(self.kw['FREQ_COUP'], N2)
         f_cohe = fcohe[N1:N2]
         l_freq = lfreq[N1:N2]
         self.resu = t_fonction(l_freq, f_cohe.real, para)
@@ -749,27 +748,20 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
             l_nappe=[]
             for tab in lf_in:
                 nom_para = tab.get_nom_para()
-                # print nom_para
                 if kw['LIST_AMOR'] is not None:
                     amor = kw['LIST_AMOR']
                 else:
                     amor = list(range(1,len(nom_para)))
                 # error
-                if 'FREQ' not in nom_para:
-                    print('error')
+                assert 'FREQ' in nom_para, nom_para
                 nom_para.remove('FREQ')
-                # print dir(tab.EXTR_TABLE())
                 dico = tab.EXTR_TABLE().values()
                 l_fonc_f = []
                 for para in nom_para:
                     freq = dico['FREQ']
-                    # print freq
                     vale = dico[para]
-                    # print vale
                     l_fonc_f.append(t_fonction(freq,vale,para_fonc))
-                    # print 'fonction'
                 l_nappe.append(t_nappe(amor, l_fonc_f,para_napp))
-            # print 'nappe',l_nappe
             self._lf = l_nappe
 
     def _run(self):
@@ -789,7 +781,6 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
                               entete="")
             para_fonc = f_in.para
             para      = f_in.para.copy()
-            # print 'para',para
             para['NOM_PARA'] = 'AMOR'
             para['NOM_PARA_FONC'] = para_fonc['NOM_PARA']
             l_sp_nappe = [sp_nappe]

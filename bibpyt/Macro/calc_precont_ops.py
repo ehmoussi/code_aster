@@ -372,7 +372,6 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
         # need CENTRALISE?
         iret, repi, repk = aster.dismoi('PARTITION', __MOD, 'MODELE', 'C')
-        print("DEBUG:", iret, repi, repk)
         assert iret == 0, "Can not extract PARTITION type of the model."
         opts = {} if repk.strip() else {'DISTRIBUTION': _F(METHODE='CENTRALISE')}
 
