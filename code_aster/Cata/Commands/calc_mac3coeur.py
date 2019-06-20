@@ -53,7 +53,7 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
                UNITE_THYC   = SIMP(statut='f',typ=UnitType(), max=1, inout='in' ),            # Unite Logique du fichier THYC
                NIVE_FLUENCE =  SIMP(statut='o',typ='R',max=1), # FLUENCE MAXIMALE DANS LE COEUR
                TYPE_MAINTIEN = SIMP(statut='f',typ='TXM',into=("DEPL_PSC",),defaut="DEPL_PSC" ),
-               MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", ),defaut="NON" ),  
+               MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", "NON"),defaut="NON" ),
                ARCHIMEDE = SIMP(statut='f',typ='TXM',into=("OUI", ),defaut="OUI" ),
             ),
 
@@ -69,7 +69,7 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
                RESU_INIT    = SIMP(statut='f',typ=resultat_sdaster),
                NIVE_FLUENCE = SIMP(statut='o',typ='R',max=1), # FLUENCE MAXIMALE DANS LE COEUR
                UNITE_THYC      = SIMP(statut='o',typ=UnitType(), max=1, inout='in'),                   # Unite Logique du fichier THYC
-               MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", ),defaut="NON" ),  
+               MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", "NON"),defaut="NON" ),
 
                TYPE_MAINTIEN = SIMP(statut='o',typ='TXM',into=("FORCE","DEPL_PSC"), ),
 
@@ -86,7 +86,7 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
                RESU_INIT    = SIMP(statut='f',typ=resultat_sdaster),
                NIVE_FLUENCE = SIMP(statut='o',typ='R',max=1), # FLUENCE MAXIMALE DANS LE COEUR
                UNITE_THYC      = SIMP(statut='o',typ=UnitType(), max=1, inout='in'),                   # Unite Logique du fichier THYC
-               MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", ),defaut="NON" ),  
+               MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", "NON"),defaut="NON" ),
                TYPE_MAINTIEN = SIMP(statut='f',typ='TXM',into=("DEPL_PSC",),defaut="DEPL_PSC" ),
                ARCHIMEDE = SIMP(statut='f',typ='TXM',into=("OUI", ),defaut="OUI" ),
 

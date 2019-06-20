@@ -314,6 +314,9 @@ class ENTITE:
                     self.cr.fatal(
                         _("La valeur de l'attribut 'defaut' n'est pas "
                           "cohérente avec le type %r : %r"), self.type, val)
+                if self.into is not None and val not in self.into:
+                    self.cr.fatal(_("La valeur par défaut doit être dans les "
+                                    "valeurs autorisées par 'into' !"))
             if self.statut == 'o':
                 self.cr.fatal(_("Un mot-clé avec valeur par défaut doit être "
                                 "facultatif."))
