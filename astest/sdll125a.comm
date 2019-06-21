@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -331,8 +331,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    RESULTAT=lmod_12,
                    VALE_CALC=0.00166602492873,
                    VALE_REFE=1.5749E-3,
-                   CRITERE='RELATIF',
-                   PRECISION=0.070000000000000007,),
+                   CRITERE='ABSOLU'),
                 _F(NUME_ORDRE=4,
                    PARA='FREQ',
                    REFERENCE='SOURCE_EXTERNE',
