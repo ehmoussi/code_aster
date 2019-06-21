@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ subroutine cavini(ndim, nno, geom, vim, npg,&
 ! VIM(4,GG) = CONTRAINTE DE PROPAGATION AU PT DE GAUSS GG
 !
     implicit none
-#include "asterfort/carand.h"
+#include "asterc/getran.h"
 #include "asterfort/casurf.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
@@ -84,7 +84,7 @@ subroutine cavini(ndim, nno, geom, vim, npg,&
     endif
 !
     if (vim(3,1) .lt. 0.0001d0) then
-        call carand(randd, gr)
+        call getran(randd)
         ct1=0.d0
         ct1=0.d0-log(1.d0-randd)
         sa=0.d0
