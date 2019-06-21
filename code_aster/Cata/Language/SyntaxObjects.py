@@ -49,7 +49,7 @@ from .SyntaxUtils import (add_none_sdprod, block_utils, debug_message2,
                           sorted_dict, value_is_sequence)
 
 
-class SyntaxId(object):
+class SyntaxId:
     """Container of the id of syntax objects.
 
     This list of type identifiers can be extended but never change between
@@ -63,7 +63,7 @@ UNDEF = object()
 
 
 # Must stay identical to `AsterStudy.datamodel.general.ConversionLevel`
-class ConversionLevel(object):
+class ConversionLevel:
     """
     Enumerator for the level of conversion requirements.
 
@@ -169,7 +169,7 @@ class CataDefinition(OrderedDict):
             yield (key, self[key])
 
 
-class UIDMixing(object):
+class UIDMixing:
     """Sub class for UID based classes.
 
     Arguments:
@@ -263,7 +263,7 @@ class PartOfSyntax(UIDMixing):
     """
     def __init__(self, curDict):
         """Initialization"""
-        super(PartOfSyntax, self).__init__()
+        super().__init__()
         self._definition = CataDefinition(curDict)
         regles = curDict.get("regles")
         if regles and type(regles) not in (list, tuple):
