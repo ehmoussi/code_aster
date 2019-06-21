@@ -45,7 +45,7 @@ class CheckerError(Exception):
     """
 
     def __init__(self, orig, msg, stack):
-        super(CheckerError, self).__init__(msg)
+        super().__init__(msg)
         self._orig = orig
         self._msg = msg
         self._stack = "/".join(force_list(stack))
@@ -143,7 +143,7 @@ def isValidType(obj, expected):
     return False
 
 
-class SyntaxCheckerVisitor(object):
+class SyntaxCheckerVisitor:
 
     """This class walks along the tree of a Command object to check its syntax
 
@@ -355,11 +355,12 @@ class SyntaxCheckerVisitor(object):
                        "Too few factor keyword, at least {0} "
                        "occurrence(s) expected"
                            .format(step.definition.get('min', 0)))
-        if len(userDict) > step.definition.get('max', 1000000000):
+        max_occurences = step.definition.get('max', 1000000000)
+        if max_occurences != '**' and len(userDict) > max_occurences:
             self.error(ValueError,
                        "Too much factor keyword, at most {0} "
                        "occurrence(s) expected"
-                           .format(step.definition.get('max', 0)))
+                           .format(max_occurences))
 
         # loop on occurrences filled by the user
         for userOcc in userDict:
