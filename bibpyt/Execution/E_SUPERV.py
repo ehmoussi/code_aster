@@ -346,7 +346,7 @@ class SUPERV:
         if self.coreopts.get_option('totalview') == 1:
             supprimerRepertoire(os.getcwd())
         # post-run for testcases
-        if 'vale_calc' in self.coreopts.get_option("post", []):
+        if 'vale_calc' in (self.coreopts.get_option("post") or []):
             from Contrib import testcase_tools
             testcase_tools.testcase_post()
 
