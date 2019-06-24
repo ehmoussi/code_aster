@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -233,6 +233,21 @@ U0=STAT_NON_LINE(MODELE=MODELE,
                  );
 U0=CALC_CHAMP(reuse=U0,CONTRAINTE=('SIGM_ELNO',),CRITERES=('SIEQ_ELNO',),VARI_INTERNE=('VARI_ELNO'),RESULTAT=U0)
 
+M11_CUBE=POST_ELEM(INTEGRALE=_F(GROUP_MA='CUBE',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='M11',
+                                TYPE_MAILLE='3D',),
+                   RESULTAT=U0,
+                   LIST_INST=INST1);
+  
+IMPR_TABLE(UNITE=8,TABLE=M11_CUBE);
+
+TEST_TABLE(TABLE = M11_CUBE, 
+           NOM_PARA = 'VOL',
+           FILTRE =_F(NOM_PARA = 'INST', VALE = 0.0),
+           REFERENCE = 'ANALYTIQUE',
+           VALE_CALC = 1.0E6,
+           VALE_REFE = 1.0E6,)
 
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
