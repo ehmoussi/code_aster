@@ -510,8 +510,10 @@ class PartOfSyntax(UIDMixing):
     def undefined(cls, value):
         """Return *True* if the value is a null value (undefined keyword),
         *False* otherwise."""
-        return value is None or (isinstance(value, (list, tuple)) and
-                                 len(value) == 1 and value[0] is None)
+        return (value is None
+                or (isinstance(value, (list, tuple)) and
+                    (len(value) == 0 or (len(value) == 1 and value[0] is None))
+                    ))
 
     def is_list(self):
         """Tell if the value should be stored as list."""
