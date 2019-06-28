@@ -231,7 +231,7 @@ subroutine set_matrix_data( a_mat, ak_mat,  ctxt)
     ! 
     ! Local variables
     !
-    Mat, dimension(1) :: submat
+    Mat, dimension(2) :: submat
     PetscInt :: nsub
     !
     ASSERT( ( ctxt%data_model == distributed_data ).or.( ctxt%data_model == replicated_data ) )  
@@ -290,8 +290,10 @@ subroutine set_matrix_data( a_mat, ak_mat,  ctxt)
     end if  
     !
     if ( ctxt%data_model == replicated_data ) then 
-       call MatDestroy( submat(1), ierr ) 
-       ASSERT(ierr == 0)
+       call MatDestroy(submat(1), ierr ) 
+              ASSERT(ierr == 0)
+       call MatDestroy(submat(1), ierr ) 
+              ASSERT(ierr == 0)
     endif 
     ctxt%data_setup = .true.
     !

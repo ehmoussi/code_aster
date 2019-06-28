@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -249,7 +249,7 @@ IMPR_TABLE(TABLE=TABKNEUT)
 #---
 
 TEST_TABLE(
-           VALE_CALC=458585.503029,
+           VALE_CALC=458323.1594893226,
            NOM_PARA='K1',
            TABLE=TABK,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -257,7 +257,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=458585.503029,
+           VALE_CALC=458323.1594893226,
            NOM_PARA='K1',
            TABLE=TABK,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -265,7 +265,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=458585.503029,
+           VALE_CALC=458323.1594893226,
            NOM_PARA='K1',
            TABLE=TABK,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -273,7 +273,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=1141921.81028,
+           VALE_CALC=1139704.0925638918,
            NOM_PARA='K1',
            TABLE=TABK,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -285,7 +285,7 @@ TEST_TABLE(
 #---
 
 TEST_TABLE(
-           VALE_CALC=458585.503029,
+           VALE_CALC=458323.1594893235,
            NOM_PARA='K1',
            TABLE=TABKTEMP,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -293,7 +293,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=458585.503029,
+           VALE_CALC=458323.1594893235,
            NOM_PARA='K1',
            TABLE=TABKTEMP,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -301,7 +301,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=458585.503029,
+           VALE_CALC=458323.1594893235,
            NOM_PARA='K1',
            TABLE=TABKTEMP,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -309,7 +309,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=1141921.81028,
+           VALE_CALC=1139704.092563894,
            NOM_PARA='K1',
            TABLE=TABKTEMP,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -321,7 +321,7 @@ TEST_TABLE(
 #---
 
 TEST_TABLE(
-           VALE_CALC=458585.503029,
+           VALE_CALC=458323.1594893235,
            NOM_PARA='K1',
            TABLE=TABKNEUT,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -329,7 +329,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=458585.503029,
+           VALE_CALC=458323.1594893235,
            NOM_PARA='K1',
            TABLE=TABKNEUT,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -337,7 +337,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=458585.503029,
+           VALE_CALC=458323.1594893235,
            NOM_PARA='K1',
            TABLE=TABKNEUT,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -345,7 +345,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=1141921.81028,
+           VALE_CALC=1139704.092563894,
            NOM_PARA='K1',
            TABLE=TABKNEUT,
            FILTRE=_F(NOM_PARA='NUM_PT',

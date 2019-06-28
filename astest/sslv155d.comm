@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -189,21 +189,21 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.03,
-           VALE_CALC=308738.856066 ,
+           VALE_CALC=308742.58899909817 ,
            VALE_REFE=3.1534098547374451E5,
            NOM_PARA='K2',
            TABLE=CGX,)
            
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.05,
-           VALE_CALC=1125932.37802,
+           VALE_CALC=1125933.5253538364,
            VALE_REFE=1.176825720257336E6,
            NOM_PARA='K1',
            TABLE=PK,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.04,
-           VALE_CALC=325177.145457,
+           VALE_CALC=325175.53717721294,
            VALE_REFE=3.1534098547374451E5,
            NOM_PARA='K2',
            TABLE=PK,)           

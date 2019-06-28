@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -255,28 +255,28 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=25,
                    NOM_CHAM='SIGM_ELNO',
                    NOEUD='N6',
                    NOM_CMP='SIXX',
-                   VALE_CALC=-1.5494871284,
+                   VALE_CALC=-1.293694251104807,
                    MAILLE='M1',),
                 _F(NUME_ORDRE=182,
                    RESULTAT=RES1,
                    NOM_CHAM='SIGM_ELNO',
                    NOEUD='N6',
                    NOM_CMP='SIXX',
-                   VALE_CALC=-5.5494871284,
+                   VALE_CALC=-4.633365083499574,
                    MAILLE='M1',),
                 _F(NUME_ORDRE=282,
                    RESULTAT=RES1,
                    NOM_CHAM='SIGM_ELNO',
                    NOEUD='N6',
                    NOM_CMP='SIXX',
-                   VALE_CALC=-7.5494871284,
+                   VALE_CALC=-6.3032001276054945,
                    MAILLE='M1',),
                 _F(NUME_ORDRE=313,
                    RESULTAT=RES1,
                    NOM_CHAM='SIGM_ELNO',
                    NOEUD='N6',
                    NOM_CMP='SIXX',
-                   VALE_CALC=-5.0694871284,
+                   VALE_CALC=-4.232604599887976,
                    MAILLE='M1',),
                 ),
           )

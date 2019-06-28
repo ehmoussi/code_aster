@@ -21,8 +21,9 @@
 """
     %(prog)s [options]
 
-This script has be run after moving the installation directory of a code_aster
-version. It updates the few files that need the real path of the installation.
+This script has to be run after moving the installation directory of
+a code_aster version. It updates the few files that need the real path of
+the installation.
 """
 
 import argparse

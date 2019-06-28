@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ subroutine xcoocy(ndim, xg, pfon, p, rg, tg, l_not_zero)
 !
     integer :: ndim
     real(kind=8) :: rg, tg, xg(ndim), pfon(ndim)
-    real(kind=8) :: p(ndim,ndim)
+    real(kind=8) :: p(3,3)
     aster_logical :: l_not_zero
 !
 !
@@ -45,13 +45,14 @@ subroutine xcoocy(ndim, xg, pfon, p, rg, tg, l_not_zero)
     do i = 1, ndim
       og(i)=xg(i)-pfon(i)
     enddo
-    call xnormv(ndim, og, rg)
+!     call xnormv(ndim, og, rg)
     cosi=0.d0
     sinu=0.d0
     do i = 1, ndim
       cosi=cosi+p(i,1)*og(i)
       sinu=sinu+p(i,2)*og(i)
     enddo
+    rg = sqrt(cosi**2.d0 + sinu**2.d0)
 !    tg=he*abs(atan2(sinu,cosi))
     tg=atan2(sinu,cosi)
 !  - CETTE COMPARAISON POURRIE, IL FAUT L AMALIORER:

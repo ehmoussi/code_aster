@@ -42,22 +42,26 @@ def options(self):
     """To get the names of the testcases"""
     group = self.get_option_group("code_aster options")
     group.add_option('-n', '--name', dest='testname',
-                    action='append', default=None,
-                    help='name of testcases to run (as_run must be in PATH)')
+                     action='append', default=None,
+                     help='name of testcases to run (as_run must be in PATH)')
     group.add_option('--outputdir', action='store', default=None, metavar='DIR',
-                    help='directory to store the output files. A default value '
-                         'can be stored in ~/.hgrc under the section "aster"')
+                     help='directory to store the output files. A default '
+                          'value can be stored in ~/.hgrc under the section '
+                          '"aster"')
     group.add_option('--exectool', dest='exectool',
-                    action='store', default=None,
-                    help='run a testcase by passing additional arguments '
-                         '(possible values are "debugger", "env" + those '
-                         'defined in the as_run configuration)')
+                     action='store', default=None,
+                     help='run a testcase by passing additional arguments '
+                          '(possible values are "debugger", "env" + those '
+                          'defined in the as_run configuration)')
     group.add_option('--time_limit', dest='time_limit',
-                    action='store', default=None,
-                    help='override the time limit of the testcase')
+                     action='store', default=None,
+                     help='override the time limit of the testcase')
+    group.add_option('--args', action='append', metavar='ARGS',
+                     help="arguments passed to the code_aster executable "
+                          "(example: --args=--syntax)")
     group.add_option('--notify', dest='notify',
-                    action='store_true', default=False,
-                    help='send a desktop notification on completion')
+                     action='store_true', default=False,
+                     help='send a desktop notification on completion')
 
 def configure(self):
     """Store developer preferences"""
@@ -83,6 +87,8 @@ def runtest(self):
         args.append('--exectool=%s' % opts.exectool)
     if opts.time_limit:
         args.append('--run_params=time_limit={0}'.format(opts.time_limit))
+    if opts.args:
+        args.extend(['--run_params=args={0}'.format(arg) for arg in opts.args])
     dtmp = opts.outputdir or self.env['PREFS_OUTPUTDIR'] \
            or tempfile.mkdtemp(prefix='runtest_')
     try:
@@ -99,13 +105,14 @@ def runtest(self):
             cmd.extend(['-g', '--nodebug_stderr'])
         cmd.extend(args)
         Logs.info("running %s in '%s'" % (test, self.variant))
-        ext = '.' + osp.basename(self.env['PREFIX']) + '.' + self.variant + '.output'
-        fname = osp.join(dtmp, osp.basename(test) + ext)
-        Logs.info("`- output in %s" % fname)
-        with open(fname, 'w') as fobj:
-            proc = Popen(cmd, stdout=fobj, bufsize=1)
+        ext = '.' + osp.basename(self.env['PREFIX']) + '.' + self.variant
+        out = osp.join(dtmp, osp.basename(test) + ext) + '.output'
+        err = osp.join(dtmp, osp.basename(test) + ext) + '.error'
+        Logs.info("`- output in %s" % out)
+        with open(out, 'w') as fobj, open(err, 'w') as ferr:
+            proc = Popen(cmd, stdout=fobj, stderr=ferr, bufsize=1)
         retcode = proc.wait()
-        with open(fname, 'r') as fobj:
+        with open(out, 'r') as fobj:
             text = fobj.read()
         if 'NOOK_TEST_RESU' in text:
             retcode = 'nook'

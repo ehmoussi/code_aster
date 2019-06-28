@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -203,14 +203,14 @@ TAB= POST_RELEVE_T(ACTION=_F(INTITULE='test',
                                             OPERATION='EXTRACTION',),);
 
 TEST_TABLE(
-           VALE_CALC=2.59814937361,
+           VALE_CALC=2.5981520387557797,
            NOM_PARA='COOR_Y',
            TYPE_TEST='MAX',
            TABLE=TAB,
            )
 
 TEST_TABLE(
-           VALE_CALC=2.57761606036,
+           VALE_CALC=2.5776013469055403,
            NOM_PARA='COOR_Y',
            TYPE_TEST='MIN',
            TABLE=TAB,

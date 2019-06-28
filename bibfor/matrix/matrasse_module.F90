@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,9 +42,49 @@ private
   integer, parameter, public :: lagrange1_dof = 0, physical_dof = 1
   integer, parameter, public :: lagrange2_dof = 2
   !
-  public :: get_indices_of_dofs
+  public :: get_indices_of_dofs, get_num_of_dofs
   !
   contains
+    !
+    ! This function returns the number of degrees of freedom
+    ! with a selected type (physical_dof or lagrange1_dof or lagrange2_dof)
+    ! in a matrasse 
+    function get_num_of_dofs(type_dof, matass) result( ndof )
+      ! Dummy arguments
+    integer, intent(in)                     :: type_dof
+    character(len=19), intent(in)           :: matass
+    integer                                 :: ndof 
+    ! Local variables
+    character(len=14) :: nonu
+    integer, dimension(:), pointer :: delg => null()
+    integer :: nbeq, iret
+    !
+    call jemarq()
+    !
+    ASSERT((type_dof==physical_dof).or.(type_dof == lagrange1_dof).or.(type_dof == lagrange2_dof))
+    !
+    ! La matrice existe-t-elle ?
+    call jeexin(matass//'.REFA', iret)
+    ASSERT(iret > 0)
+    ! Quelle est sa taille ?
+    call dismoi('NB_EQUA', matass, 'MATR_ASSE', repi=nbeq)
+    ! Le tableau delg permet de distinguer ddls physiques/lagrange
+    call dismoi('NOM_NUME_DDL', matass, 'MATR_ASSE', repk=nonu)
+    call jeveuo(nonu//'.NUME.DELG', 'L', vi=delg)
+    !
+    ! Nombre de ddls sélectionnés
+    select case( type_dof )
+    case( physical_dof )
+       ndof = count( delg(1:nbeq) == 0)
+    case( lagrange1_dof )
+       ndof = count( delg(1:nbeq) == -1 )
+    case( lagrange2_dof )
+       ndof = count( delg(1:nbeq) == -2 )
+    end select
+    !
+    call jedema()
+    !
+    end function get_num_of_dofs
     !
     ! This function allocates, fills and returns an integer array with
     ! the (Fortran) indices of some selected dofs : one may select
@@ -126,7 +166,6 @@ private
         nlag2 = nlag2 + 1
         if ( type_dof == lagrange2_dof ) then
             ndof = ndof + 1
-         !   idof(ndof) = int(i, 4)
             idof(ndof)= i
         endif
       endif

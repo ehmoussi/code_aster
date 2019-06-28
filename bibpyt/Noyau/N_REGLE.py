@@ -80,3 +80,19 @@ class REGLE:
         else:
             raise Exception(
                 "Erreur ce n'est ni un dictionnaire ni une liste %s" % args)
+
+    def verif_cata_regles(self, entites):
+        """Vérifie que les mots-clés en jeu sont valides.
+
+        Un mot-clé avec une valeur par défaut ne peut pas être impliqué dans
+        une règle.
+
+        Arguments:
+            entites [dict]: Définition des mots-clés utilisés par la règle.
+        """
+        err = []
+        for key in self.mcs:
+            entity = entites[key]
+            if entity.defaut is not None:
+               err.append(key)
+        return err

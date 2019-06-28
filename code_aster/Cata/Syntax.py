@@ -40,7 +40,7 @@ else:
     from .Language.Syntax import _F, ListFact
 
 
-class Translation(object):
+class Translation:
     """Class to dynamically assign a translation function.
 
     The package Cata must stay independent. So the translation function will

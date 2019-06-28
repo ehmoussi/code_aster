@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -145,13 +145,13 @@ TAB = POST_RELEVE_T(ACTION=_F(INTITULE='Table pour coordonnees du fond',
                                OPERATION='EXTRACTION',),);
 
 TEST_TABLE(
-           VALE_CALC=42.1270132385,
+           VALE_CALC=42.109508771017595,
            NOM_PARA='COOR_X',
            TABLE=TAB,
            )
 
 TEST_TABLE(
-           VALE_CALC=20.6052755042,
+           VALE_CALC=20.6117455379575,
            NOM_PARA='COOR_Y',
            TABLE=TAB,
            )

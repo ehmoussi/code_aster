@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ K1ref = 1.5957e6
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.06,
-           VALE_CALC= 1.68241013796E6,
+           VALE_CALC= 1682482.3636702264,
            VALE_REFE=1.595700E6,
            NOM_PARA='K1',
            TYPE_TEST='MAX',
@@ -87,7 +87,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.05,
-           VALE_CALC= 1.67070318598E+06,
+           VALE_CALC= 1671075.8789433436,
            VALE_REFE=1.595700E6,
            NOM_PARA='K1',
            TYPE_TEST='MAX',
@@ -95,7 +95,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.01,
-           VALE_CALC= 1.60788748482E6,
+           VALE_CALC= 1607458.569834848,
            VALE_REFE=1.595700E6,
            NOM_PARA='K1',
            TYPE_TEST='MAX',

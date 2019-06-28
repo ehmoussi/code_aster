@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,6 @@ bloc_auto   =BLOC(fr                = tr("Subdivision de type automatique"),
 # Bloc pour decoupe manuel
 bloc_manu   =BLOC(fr                = tr("Subdivision de type manuel"),
                   condition         = """equal_to("SUBD_METHODE", 'MANUEL')""",
-                  regles            = (AU_MOINS_UN('SUBD_NIVEAU','SUBD_PAS_MINI'),),
                   SUBD_PAS          = SIMP(fr                = tr("Nombre de subdivision d'un pas de temps"),
                                            statut            = 'f',
                                            typ               = 'I',
@@ -355,9 +354,6 @@ ADAPTATION  =FACT(fr                = tr("Parametres de l'evenement declencheur 
                                            ),
                   b_adap_seuil      = BLOC(fr                = tr("Seuil d'adaptation"),
                                            condition         = """equal_to("EVENEMENT", 'SEUIL') """,
-                                           regles            = (PRESENT_PRESENT('NB_INCR_SEUIL','NOM_PARA',),
-                                                                PRESENT_PRESENT('NB_INCR_SEUIL','CRIT_COMP',),
-                                                                PRESENT_PRESENT('NB_INCR_SEUIL','CRIT_COMP',),),
                                            NB_INCR_SEUIL     = SIMP(statut          = 'f',
                                                                     typ             = 'I',
                                                                     defaut          =  2,
