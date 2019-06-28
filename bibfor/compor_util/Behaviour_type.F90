@@ -44,6 +44,8 @@ implicit none
     type Behaviour_Integ
 ! ----- Integration point parameters
         type(Behaviour_Elga)  :: elga
+! ----- Flag when GEOM external state variable is present
+        aster_logical         :: l_varext_geom = ASTER_FALSE
     end type Behaviour_Integ
 !
 ! - Type: for external comportement

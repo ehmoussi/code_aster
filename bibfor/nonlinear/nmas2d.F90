@@ -38,6 +38,7 @@ implicit none
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
 !
 integer :: nno, npg, imate, lgpg, codret, cod(9), npgs
 integer :: ipoids, ivf, idfde
@@ -121,6 +122,10 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
     rac2 = sqrt(2.d0)
     grand = .false.
     axi = typmod(1) .eq. 'AXIS'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     do i = 1, 3
         do j = 1, 3

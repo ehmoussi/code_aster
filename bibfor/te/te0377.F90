@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 ! --------------------------------------------------------------------
 
 subroutine te0377(option, nomte)
+!
+use Behaviour_type
 ! person_in_charge: josselin.delmas at edf.fr
 !
 !     BUT:
@@ -38,6 +40,7 @@ subroutine te0377(option, nomte)
 #include "asterfort/dfdm2d.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/elref7.h"
 #include "asterfort/ermeb2.h"
 #include "asterfort/ermes2.h"
@@ -106,6 +109,7 @@ subroutine te0377(option, nomte)
     character(len=8) :: nompar(3)
     character(len=16) :: phenom
     character(len=24) :: valk(2)
+    type(Behaviour_Integ) :: BEHinteg
 !
     aster_logical :: yapr, yaro
 !
@@ -116,7 +120,7 @@ subroutine te0377(option, nomte)
     data typnor / 'NRJ' /
 !
 ! ----------------------------------------------------------------------
-    1000 format(a,' :',(6(1x,1pe17.10)))
+111 format(a,' :',(6(1x,1pe17.10)))
 ! ----------------------------------------------------------------------
 ! 1 -------------- GESTION DES DONNEES ---------------------------------
 ! ----------------------------------------------------------------------
@@ -129,6 +133,10 @@ subroutine te0377(option, nomte)
     call jevech('PVOISIN', 'L', ivois)
     call jevech('PTEMPSR', 'L', jtime)
     inst=zr(jtime-1+1)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     call jevech('PERREUR', 'E', ierr)
 !
@@ -183,8 +191,6 @@ subroutine te0377(option, nomte)
     else
         ifovf = 0
     endif
-!GN      WRITE(IFM,2000) 'IFOVR', IFOVR
-!GN      WRITE(IFM,2000) 'IFOVF', IFOVF
 !
 ! 1.6. --- FORCES ET PRESSIONS AUX BORDS
 !
@@ -221,7 +227,7 @@ subroutine te0377(option, nomte)
         if (yapr .or. yaro) then
             rho = valres(nbpar)
         endif
-!GN        WRITE(IFM,1000) 'RHO, E, NU', RHO, E, NU
+!GN        WRITE(IFM,111) 'RHO, E, NU', RHO, E, NU
 !
     endif
 !
@@ -242,7 +248,7 @@ subroutine te0377(option, nomte)
         fpx=0.d0
         fpy=0.d0
     endif
-!GN      WRITE(IFM,1000) 'P',FPX,FPY,FPZ
+!GN      WRITE(IFM,111) 'P',FPX,FPY,FPZ
 !
 ! 2.3. --- CALCUL DE LA FORCE DE ROTATION ---
 !
@@ -255,8 +261,8 @@ subroutine te0377(option, nomte)
         fry(ipg) = 0.d0
         end do
     endif
-!GN      WRITE(IFM,1000) 'R X',(FRX(IPG),IPG = 1 , NPG)
-!GN      WRITE(IFM,1000) 'R Y',(FRY(IPG),IPG = 1 , NPG)
+!GN      WRITE(IFM,111) 'R X',(FRX(IPG),IPG = 1 , NPG)
+!GN      WRITE(IFM,111) 'R Y',(FRY(IPG),IPG = 1 , NPG)
 !
 ! 2.4. --- CALCUL DE LA FORCE VOLUMIQUE EVENTUELLE ---
 !
@@ -316,8 +322,8 @@ subroutine te0377(option, nomte)
 !
     if (ifovr .ne. 0 .or. ifovf .ne. 0) then
 !
-!GN          WRITE(IFM,1000) 'F X', FOVO(1)
-!GN          WRITE(IFM,1000) 'F Y', FOVO(2)
+!GN          WRITE(IFM,111) 'F X', FOVO(1)
+!GN          WRITE(IFM,111) 'F Y', FOVO(2)
         r8bid3(1) = r8bid3(1) + fovo(1)
         r8bid3(2) = r8bid3(2) + fovo(2)
 !
@@ -327,9 +333,9 @@ subroutine te0377(option, nomte)
 !
     ter1 = ter1 + ( r8bid3(1)**2 + r8bid3(2)**2 ) * poids
     if (niv .ge. 2) then
-        write(ifm,1000) 'POIDS', poids
-        write(ifm,1000) 'A2 + B2 ', r8bid3(1)**2 + r8bid3(2)**2
-        write(ifm,1000) '==> TER1', ter1
+        write(ifm,111) 'POIDS', poids
+        write(ifm,111) 'A2 + B2 ', r8bid3(1)**2 + r8bid3(2)**2
+        write(ifm,111) '==> TER1', ter1
     endif
 !
 ! ------- CALCUL DE LA NORME DE SIGMA SUR L'ELEMENT --------------------
@@ -381,7 +387,7 @@ subroutine te0377(option, nomte)
 !GN     >              IDFDXF, JGANOF )
 !GN      WRITE(IFM,2000) 'NDIMF',NDIMF
 !GN      WRITE(IFM,2000) 'NNOSF,NNOF,NPGF',NNOSF,NNOF,NPGF
-!GN      WRITE(IFM,1000) 'IPOIDF', (ZR(IPOIDF+IFA),IFA=0,NPGF-1)
+!GN      WRITE(IFM,111) 'IPOIDF', (ZR(IPOIDF+IFA),IFA=0,NPGF-1)
 !
 ! 3.2. --- BOUCLE SUR LES FACES DE LA MAILLE VOLUMIQUE --------------
 !
@@ -399,8 +405,8 @@ subroutine te0377(option, nomte)
 !
         call jenuno(jexnum('&CATA.TM.NOMTM', tyv), typmav)
         if (niv .ge. 2) then
-            write(ifm,1003) ifa, zi(ivois+ifa), typmav
-            1003 format (i2,'-EME FACE DE NUMERO',i10,' ==> TYPMAV = ', a)
+            write(ifm,113) ifa, zi(ivois+ifa), typmav
+113         format (i2,'-EME FACE DE NUMERO',i10,' ==> TYPMAV = ', a)
         endif
 !
 ! ----- CALCUL DE NORMALES, TANGENTES ET JACOBIENS AUX POINTS DE GAUSS
@@ -452,8 +458,8 @@ subroutine te0377(option, nomte)
                 ter2=ter2+0.5d0*hf*inte
             endif
             if (niv .ge. 2) then
-                write(ifm,1000) 'VOLU INTE', inte
-                write(ifm,1000) '==> TER2 ', ter2
+                write(ifm,111) 'VOLU INTE', inte
+                write(ifm,111) '==> TER2 ', ter2
             endif
 !
 ! ----------------------------------------------------------------------
@@ -491,8 +497,8 @@ subroutine te0377(option, nomte)
                 ter3=ter3+hf*inte
             endif
             if (niv .ge. 2) then
-                write(ifm,1000) 'SURF INTE', inte
-                write(ifm,1000) '==> TER3 ', ter3
+                write(ifm,111) 'SURF INTE', inte
+                write(ifm,111) '==> TER3 ', ter3
             endif
 !
 ! ----------------------------------------------------------------------

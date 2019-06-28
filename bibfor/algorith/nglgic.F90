@@ -38,6 +38,7 @@ implicit none
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmepsi.h"
+#include "asterfort/behaviourInit.h"
 !
 aster_logical,intent(in)       :: matsym
 character(len=8),intent(in)    :: typmod(*)
@@ -142,7 +143,10 @@ integer,intent(out)            :: codret
 ! Contraintes EF    : SIXX, .., SIYZ, SIGONF, SIP, SIGV_A, SIGV_L, SIGV_GX, ..., SIVG_GZ, 
 ! Deformations ldc  : R2*EPXX, ..., R2*EPZZ, A, L, GX, ..., GZ 
 
-
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 ! Tests de coherence
     ASSERT(nddl.eq.nno*ndim + nnob*4)
 

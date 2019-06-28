@@ -17,29 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine comcq1(fami  , kpg   , ksp   , imate   , compor,&
-                      carcri, instm , instp , eps     , deps  ,&
-                      sigm  , vim   , option, angmas  , sigp  ,&
-                      vip   , dsde  , codret, BEHinteg)
+    subroutine behaviourInit(BEHinteg)
         use Behaviour_type
-        character(len=*) :: fami
-        integer :: kpg
-        integer :: ksp
-        integer :: imate
-        character(len=16) :: compor(*)
-        real(kind=8) :: carcri(*)
-        real(kind=8) :: instm
-        real(kind=8) :: instp
-        real(kind=8) :: eps(4)
-        real(kind=8) :: deps(4)
-        real(kind=8) :: sigm(4)
-        real(kind=8) :: vim(*)
-        character(len=16) :: option
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: sigp(4)
-        real(kind=8) :: vip(*)
-        real(kind=8) :: dsde(6, 6)
-        integer :: codret
-        type(Behaviour_Integ), intent(in) :: BEHinteg
-    end subroutine comcq1
+        type(Behaviour_Integ), intent(out) :: BEHinteg
+    end subroutine behaviourInit
 end interface

@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/codere.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/behaviourInit.h"
 #include "blas/dgemm.h"
 #include "blas/dgemv.h"
     character(len=8) :: typmod(*)
@@ -93,6 +94,10 @@ implicit none
     if (rigi) dsidep = 0.d0
     if (resi) sigp = 0.d0
     cod = 0
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 !
 !

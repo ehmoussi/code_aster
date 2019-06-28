@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/reeref.h"
 #include "asterfort/vecini.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/xcinem.h"
 #include "asterfort/xcalc_heav.h"
 #include "asterfort/xcalc_code.h"
@@ -146,6 +147,10 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
                      jdfd2=jdfd2, jgano=jgano)
 !
     ASSERT(npg.eq.npgbis.and.ndim.eq.ndimb)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - Get coded integers for external state variables
 !

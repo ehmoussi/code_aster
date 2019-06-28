@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
 !
 character(len=*), intent(in) :: fami
 integer, intent(in) :: nno
@@ -123,6 +124,10 @@ integer, intent(inout) :: codret
     do kpg = 1, npg
         cod(kpg) = 0
     end do
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - Get coded integers for external state variables
 !

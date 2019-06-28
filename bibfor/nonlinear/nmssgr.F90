@@ -69,7 +69,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/r8inir.h"
-!
+#include "asterfort/behaviourInit.h"
 #include "asterfort/codere.h"
 #include "asterfort/hgfsca.h"
 #include "asterfort/lcdetf.h"
@@ -151,6 +151,10 @@ implicit none
     do kpg = 1, npg
        cod(kpg) = 0
     end do
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 !   Geometrical update (only used for B^T . sigma evaluation)
 !   geom_up = geometry at start of current iteration + zr(ideplp)

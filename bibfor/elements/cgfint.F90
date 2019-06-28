@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
     character(len=8) :: typmod(*)
     character(len=16) :: option, compor(*), compoz(7)
 !
@@ -110,6 +111,10 @@ implicit none
     resi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RAPH'
     rigi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RIGI'
     nddl = nno1*(ndim+1) + nno2
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 !
     ASSERT(compor(RELA_NAME).eq.'KIT_CG')

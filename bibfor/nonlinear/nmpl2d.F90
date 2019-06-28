@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/crirup.h"
 #include "asterfort/lcegeo.h"
 #include "asterfort/nmcomp.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
 !
@@ -108,6 +109,10 @@ aster_logical :: matsym
     rac2 = sqrt(2.d0)
     grand = .false.
     axi = typmod(1) .eq. 'AXIS'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - Get coded integers for external state variables
 !

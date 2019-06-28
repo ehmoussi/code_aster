@@ -45,6 +45,7 @@ implicit none
 #include "asterfort/pk2sig.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
 !
 character(len=16), intent(in) :: option
 character(len=8), intent(in) :: typmod(*)
@@ -131,6 +132,10 @@ integer, intent(inout) :: codret
     cplan       = ASTER_FALSE
     disp_curr(:) = 0.d0
     rela_comp    = compor(RELA_NAME)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - Get coded integers for external state variables
 !

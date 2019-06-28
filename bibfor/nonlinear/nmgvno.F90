@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/coefdg.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/nmepsi.h"
 #include "asterfort/nmgvdn.h"
 #include "asterfort/nmmabu.h"
@@ -114,6 +115,10 @@ implicit none
     rigi = option.eq.'RIGI_MECA_TANG'
     full = option(1:9).eq.'FULL_MECA'
     elas = option.eq.'FULL_MECA_ELAS' .or. option.eq.'RIGI_MECA_ELAS'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     if (elas) then
         full = .false.

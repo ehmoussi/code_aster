@@ -43,6 +43,7 @@ implicit none
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
 !
 ! ----------------------------------------------------------------------
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*
@@ -110,6 +111,10 @@ implicit none
         ASSERT(.false.)
     endif
     elgeom(:,:) = 0.d0
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! -----------------------------DECLARATION-----------------------------
     nddl = ndim*nno

@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/cavini.h"
 #include "asterfort/codere.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmepsb.h"
@@ -132,6 +133,10 @@ implicit none
     do g = 1, npg
         cod(g)=0
     end do
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! INITIALISATION CAVINI + INCREMENTATION
 ! DU COMPTEUR D'ITERATION + L ELEMENT EST-IL POINTE?

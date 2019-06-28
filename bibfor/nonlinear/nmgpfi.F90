@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/nmepsi.h"
 #include "asterfort/nmgpin.h"
 #include "asterfort/nmmalu.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"
@@ -113,6 +114,10 @@ real(kind=8) :: matr(*), fint(*)
     rbid = r8vide()
     rac2 = sqrt(2.d0)
     call r8inir(6, rbid, tbid, 1)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     ASSERT(nno.le.27)
     if (typmod(1) .eq. 'C_PLAN') then
