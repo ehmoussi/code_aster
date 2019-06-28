@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,23 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine mat_proto(fami, kpg, ksp, poum, imate, itface, nprops, props)
-!     but: Calculer les coef. materiau pour l'interface umat
-!       in   fami    : famille de point de gauss (rigi,mass,...)
-!       in   kpg,ksp : numero du (sous)point de gauss
-!       in   poum    : '+' /'-'
-!       in   nprops  : en entree : dimension du tableau props
-!       in   itface  : nom de l'interface de prototypage
-!       out  nprops  : en sortie : nombre de coefficients recuperes dans props
-!            props(*): coeficients du materiau
-! ======================================================================
-    implicit none
-
+!
+subroutine mat_proto(BEHinteg,&
+                     fami    , kpg, ksp, poum, imate, itface,&
+                     nprops  , props)
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterf_types.h"
 #include "asterc/r8nnem.h"
-#include "asterfort/r8inir.h"
 #include "asterfort/rcadlv.h"
 #include "asterfort/assert.h"
 #include "asterfort/rccoma.h"
@@ -39,58 +34,82 @@ subroutine mat_proto(fami, kpg, ksp, poum, imate, itface, nprops, props)
 #include "asterfort/utmess.h"
 #include "asterfort/metaGetPhase.h"
 #include "asterfort/metaGetType.h"
-
-    character(len=*), intent(in) :: fami
-    integer, intent(in)          :: kpg
-    integer, intent(in)          :: ksp
-    character(len=1), intent(in) :: poum
-    integer, intent(in)          :: imate
-    character(len=*), intent(in) :: itface
-    integer, intent(inout)       :: nprops
-    real(kind=8), intent(out)    :: props(*)
-!----------------------------------------------------------------------------
-
+!
+type(Behaviour_Integ), intent(in) :: BEHinteg
+character(len=*), intent(in) :: fami
+integer, intent(in)          :: kpg
+integer, intent(in)          :: ksp
+character(len=1), intent(in) :: poum
+integer, intent(in)          :: imate
+character(len=*), intent(in) :: itface
+integer, intent(inout)       :: nprops
+real(kind=8), intent(out)    :: props(*)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Behaviour (MFront/UMAT)
+!
+! Calculer les coef. materiau pour l'interface umat et mfront
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  BEHinteg         : parameters for integration of behaviour
+!       in   fami      : famille de point de gauss (rigi,mass,...)
+!       in   kpg,ksp   : numero du (sous)point de gauss
+!       in   poum      : '+' /'-'
+!       in   nprops    : en entree : dimension du tableau props
+!       in   itface    : nom de l'interface de prototypage
+!       out  nprops    : en sortie : nombre de coefficients recuperes dans props
+!            props(*)  : coeficients du materiau
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer      :: i, jadr,icodre, ncoef
-    real(kind=8) :: rundef
-
-!
     real(kind=8) :: phase(5), zalpha
-    integer     :: meta_type, nb_phasis
+    integer      :: meta_type, nb_phasis
     character(len=16) :: elas_keyword
-!----------------------------------------------------------------------------
-    rundef=r8nnem()
-
-!   -- Seulement UMAT et MFRONT
+    integer, parameter :: nb_para = 3
+    real(kind=8) :: para_vale(nb_para)
+    character(len=16), parameter :: para_name(nb_para) = (/'X', 'Y', 'Z'/)
+!
+! --------------------------------------------------------------------------------------------------
+!
     ASSERT(itface.eq.'UMAT' .or. itface.eq.'MFRONT')
-
-!   -- mise a "undef" du tableau resultat :
-    ASSERT(nprops.gt.0 .and. nprops.le.197)
-    call r8inir(nprops, rundef, props, 1)
-
-!   -- recuperation des valeurs et recopie dans props :
+    ASSERT(nprops .gt. 0 .and. nprops .le. 197)
+    props(1:nprops) = r8nnem()
+!
+! - Coordinates of current Gauss point
+!
+    para_vale = BEHinteg%elga%coorpg
+!
+! - Get material properties
+!
     call rccoma(imate, 'ELAS_META', 0, elas_keyword, icodre)
-    
-!    
-    if (icodre.eq.0) then
+    if (icodre .eq. 0) then
         call metaGetType(meta_type, nb_phasis)
-        call metaGetPhase(fami     , poum  , kpg   , ksp , meta_type,&
-                             nb_phasis, phase, zcold_ = zalpha)
-!
+        call metaGetPhase(fami     , poum , kpg   , ksp , meta_type,&
+                          nb_phasis, phase, zcold_ = zalpha)
         call rcadlv(fami, kpg, ksp, poum, imate, ' ', itface, &
-                    'LISTE_COEF',1, ['META'], [zalpha], jadr, ncoef, icodre, 1)
+                    'LISTE_COEF', 1, ['META'], [zalpha], jadr, ncoef, icodre, 1)
     else
-        call rcadlv(fami, kpg, ksp, poum, imate, ' ', itface,  &
-                    'LISTE_COEF',0, [' '], [0.d0], jadr, ncoef, icodre, 1)       
+        if (BEHinteg%l_varext_geom) then
+            call rcadlv(fami, kpg, ksp, poum, imate, ' ', itface,  &
+                        'LISTE_COEF',0, [' '], [0.d0], jadr, ncoef, icodre, 1)
+        else
+            call rcadlv(fami, kpg, ksp, poum, imate, ' ', itface,&
+                        'LISTE_COEF', nb_para, para_name, para_vale, jadr, ncoef, icodre, 1)
+        endif
     endif
 !
-    if (ncoef.le.nprops) then
-        do i=1,ncoef
-            props(i)=zr(jadr-1+i)
+! - Copy properties
+!
+    if (ncoef .le. nprops) then
+        do i = 1, ncoef
+            props(i) = zr(jadr-1+i)
         enddo
-        nprops=ncoef
+        nprops = ncoef
     else
-        nprops=-ncoef
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 
-    end
+    end subroutine

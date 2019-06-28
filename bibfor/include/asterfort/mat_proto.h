@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
-!
-          interface 
-            subroutine mat_proto(fami,kpg,ksp,poum,imate,itface,nprops,props)
-              character(len=*), intent(in) :: fami
-              integer, intent(in) :: kpg
-              integer, intent(in) :: ksp
-              character(len=1), intent(in) :: poum
-              integer, intent(in) :: imate
-              character(len=*), intent(in) :: itface
-              integer, intent(inout) :: nprops
-              real(kind=8), intent(out) :: props(*)
-            end subroutine mat_proto
-          end interface 
+interface
+    subroutine mat_proto(BEHinteg,&
+                         fami    , kpg, ksp, poum, imate, itface,&
+                         nprops  , props)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
+        character(len=*), intent(in) :: fami
+        integer, intent(in) :: kpg
+        integer, intent(in) :: ksp
+        character(len=1), intent(in) :: poum
+        integer, intent(in) :: imate
+        character(len=*), intent(in) :: itface
+        integer, intent(inout) :: nprops
+        real(kind=8), intent(out) :: props(*)
+    end subroutine mat_proto
+end interface 
