@@ -180,6 +180,10 @@ def get_revision_info(options, from_rev=None, rev="."):
 
 def version2tuple(vers_string):
     """1.7.9alpha --> (1, 7, 9, 'alpha')"""
+    numv = [i for i in vers_string.split() if (i.strip()[0]).isdigit()]
+    if not numv:
+        return []
+    vers_string = numv[-1]
     tupl0 = vers_string.split('.')
     val = []
     for v in tupl0:
