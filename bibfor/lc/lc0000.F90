@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1501,W1504
+! aslint: disable=W1501,W1504,W1306
 !
 subroutine lc0000(BEHinteg,&
                   fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
@@ -563,9 +563,10 @@ integer :: codret
                     nvi, dsidep, codret)
     case (50)
 !     UMAT
-        call lc0050(fami, kpg, ksp, ndim, typmod,&
-                    imate, compor, carcri, instam, instap,&
-                    neps, epsm, deps, nsig, sigm,&
+        call lc0050(BEHinteg,&
+                    fami    , kpg, ksp, ndim, typmod,&
+                    imate   , compor, carcri, instam, instap,&
+                    neps    , epsm, deps, nsig, sigm,&
                     nvi, vim, option, angmas, icomp,&
                     temp , dtemp , predef, dpred ,&
                     sigp, vip, ndsde, dsidep, codret)
@@ -583,12 +584,13 @@ integer :: codret
                     nvi, dsidep, codret)
     case (58)
 !     MFRONT
-        call lc0058(fami , kpg   , ksp   , ndim  , typmod,&
-                    imate, compor, carcri, instam, instap,&
-                    neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas,&
-                    temp , dtemp , predef, dpred ,&
-                    sigp , vip   , dsidep, codret)
+        call lc0058(BEHinteg,&
+                    fami    , kpg   , ksp   , ndim  , typmod,&
+                    imate   , compor, carcri, instam, instap,&
+                    neps    , epsm  , deps  , nsig  , sigm  ,&
+                    nvi     , vim   , option, angmas,&
+                    temp    , dtemp , predef, dpred ,&
+                    sigp    , vip   , dsidep, codret)
     case (59)
         call lc0059(fami, kpg, ksp, imate,&
                     compor, carcri, instam, instap, neps, epsm,&
@@ -922,12 +924,13 @@ integer :: codret
 
     case (1058)
 !     MFRONT
-        call lc1058(fami , kpg   , ksp   , ndim  , typmod,&
-                    imate, compor, carcri, instam, instap,&
-                    neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas,&
-                    temp , dtemp , predef, dpred ,&
-                    sigp , vip   , dsidep, codret)
+        call lc1058(BEHinteg,&
+                    fami    , kpg   , ksp   , ndim  , typmod,&
+                    imate   , compor, carcri, instam, instap,&
+                    neps    , epsm  , deps  , nsig  , sigm  ,&
+                    nvi     , vim   , option, angmas,&
+                    temp    , dtemp , predef, dpred ,&
+                    sigp    , vip   , dsidep, codret)
 
     case (1137)
 !     MONOCRISTAL, POLYCRISTAL
@@ -1113,12 +1116,13 @@ integer :: codret
                     nvi, dsidep, codret)
     case (7058)
 !     MFRONT
-        call lc7058(fami , kpg   , ksp   , ndim  , typmod,&
-                    imate, compor, carcri, instam, instap,&
-                    neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas,&
-                    temp , dtemp , predef, dpred ,&
-                    sigp , vip   , dsidep, codret)
+        call lc7058(BEHinteg,&
+                    fami    , kpg   , ksp   , ndim  , typmod,&
+                    imate   , compor, carcri, instam, instap,&
+                    neps    , epsm  , deps  , nsig  , sigm  ,&
+                    nvi     , vim   , option, angmas,&
+                    temp    , dtemp , predef, dpred ,&
+                    sigp    , vip   , dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - For KIT_DDI

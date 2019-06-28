@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,23 +41,27 @@ CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 #
 
 MAT=DEFI_MATERIAU( ELAS=_F(  E = 1.0,      NU = 0.3, ALPHA = 0.),
-                          THER=_F(  LAMBDA = 1.0,   RHO_CP = 0.0) )
+                   THER=_F(  LAMBDA = 1.0,   RHO_CP = 0.0) )
 
-#MAT2=DEFI_MATERIAU(      ELAS=_F( E = 1.0,  NU = 0.3),
-#           ECRO_LINE=_F( D_SIGM_EPSI = 0., SY = 10000.) )
+# To test dependancy of MFRONT parameters on geometry
+young = DEFI_FONCTION(NOM_PARA='X',VALE=(-10000, 1.0,+10000, 1.0),PROL_DROITE='CONSTANT')
+nu    = DEFI_FONCTION(NOM_PARA='X',VALE=(-10000, 0.3,+10000, 0.3),PROL_DROITE='CONSTANT')
+sy    = DEFI_FONCTION(NOM_PARA='Y',VALE=(-10000, 10000,+10000, 10000),PROL_DROITE='CONSTANT')
+h     = DEFI_FONCTION(NOM_PARA='Y',VALE=(-10000, 0.,+10000, 0.),PROL_DROITE='CONSTANT')
 
-#MAT2=DEFI_MATERIAU(      ELAS=_F( E = 1.0,  NU = 0.3),
- #                        MFRONT=_F(LISTE_COEF=(10000., 0., 1.0, 0.3,
- #                                       ),)
- #                               ,)
+
+MAT2=DEFI_MATERIAU(      ELAS=_F( E = 1.0,  NU = 0.3),
+                         MFRONT_FO=_F(LISTE_COEF=(sy,h,young,nu,
+                                        ),)
+                                ,)
 
 MAILL=LIRE_MAILLAGE(FORMAT="ASTER",   )
 
 CHMAT=AFFE_MATERIAU(  MAILLAGE=MAILL,
                           AFFE=_F(  TOUT = 'OUI',   MATER = MAT) )
 
-#CHMAT2=AFFE_MATERIAU(  MAILLAGE=MAILL,
-#                          AFFE=_F(  TOUT = 'OUI',   MATER = MAT2) )
+CHMAT2=AFFE_MATERIAU(  MAILLAGE=MAILL,
+                          AFFE=_F(  TOUT = 'OUI',   MATER = MAT2) )
 
 MODTH=AFFE_MODELE(  MAILLAGE=MAILL,
                         AFFE=_F( TOUT = 'OUI',   MODELISATION = 'PLAN',
@@ -137,19 +141,17 @@ RAMPE=DEFI_FONCTION(   NOM_PARA='INST',
 
 
 DEPLD2=STAT_NON_LINE( MODELE=MODME,
-                      CHAM_MATER=CHMAT,
+                      CHAM_MATER=CHMAT2,
                       EXCIT=_F( CHARGE = CHARMM,
                                 FONC_MULT = RAMPE),
-                      COMPORTEMENT=_F( RELATION = 'ELAS',
-                                       #RELATION='MFRONT',
-                                       #NOM_ROUTINE='asterplasticity',
-                                       #UNITE_LIBRAIRIE=39,
-                                       #ITER_INTE_MAXI = 30,
-                                       #RESI_INTE_MAXI = 1.E-8
-                                       ),
+                      COMPORTEMENT=_F( RELATION='MFRONT',
+                                       NOM_ROUTINE='asterplasticity',
+                                       UNITE_LIBRAIRIE=39,
+                                       ITER_INTE_MAXI = 30,
+                                       RESI_INTE_MAXI = 1.E-8),
                       INCREMENT=_F( LIST_INST = L_INST),
                       NEWTON=_F( MATRICE = 'TANGENTE',
-                                 REAC_ITER = 2),
+                                 REAC_ITER = 1),
                       CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,)
                             )
 
@@ -193,6 +195,17 @@ TEST_RESU(RESU=(_F(RESULTAT=TEMPGR,
                    VALE_CALC=-0.500)
                 ),
           )
+TEST_RESU(RESU=_F(INST=1.0,
+                   RESULTAT=DEPLD2,
+                  MAILLE='M1',
+                   POINT=1,
+                   NOM_CHAM='VARI_ELGA',
+                    REFERENCE='ANALYTIQUE',
+                   NOM_CMP='V1',
+                   VALE_CALC=-1.0,
+                    VALE_REFE=-1.0,
+                   ),)
+                   
 
 TEST_RESU(CHAM_NO=(_F(NOEUD='A',
                       CRITERE='RELATIF',
