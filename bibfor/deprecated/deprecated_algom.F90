@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,12 +42,9 @@ character(len=*), intent(in) :: algo
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (algo .eq. 'CALC_G_MULT_ELAS') then
-        vali = 14
-        valk = "type(RESULTAT)='MULT_ELAS'"
-    elseif (algo .eq. 'TITRE') then
-        vali = 14
-        valk = "mot-clef TITRE"
+    if (algo .eq. 'MON ALGO') then
+        vali = 15
+        valk = "MON ALGO"
     else
         goto 999
     endif

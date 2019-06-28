@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -295,7 +295,7 @@ end subroutine csc2csr
    ! Local variables 
    Mat :: at_mat 
    PetscInt :: nrow, ncol 
-   PetscInt, dimension(:), pointer :: rowptr_c, colind_c 
+   PetscInt, dimension(:), pointer :: rowptr_c=> null(), colind_c => null()
    integer :: jerr 
    PetscErrorCode :: ierr
 ! 
@@ -309,10 +309,6 @@ end subroutine csc2csr
 ! de  la ligne i de A^T (en convention C)
 ! Colind_c(k) = indice colonne (convention C) du terme stocké dans 
 ! values(k)   
-    allocate(rowptr_c(nrow+1), stat = jerr )  
-    ASSERT( jerr ==  0) 
-    allocate(colind_c(a_csc%nnz), stat = jerr )
-    ASSERT( jerr ==  0)
 ! Utilisation de A (CSC) <=> A^T (CSR) et passage en convention C
     call to_zero_based_indexing( a_csc ) 
     rowptr_c => a_csc%colptr(:)

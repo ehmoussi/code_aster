@@ -42,10 +42,10 @@ character(len=*), intent(in) :: option
 ! --------------------------------------------------------------------------------------------------
 !
     if (option .eq. 'VAEX_ELNO') then
-        vali = 14
+        vali = 15
         valk = "OPTION='VAEX_ELNO'"
     else if (option .eq. 'VAEX_ELGA') then
-        vali = 14
+        vali = 15
         valk = "OPTION='VAEX_ELGA'"
     else
         goto 999

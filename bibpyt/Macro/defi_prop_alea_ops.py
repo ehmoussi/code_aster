@@ -51,33 +51,43 @@ def defi_prop_alea_ops(self, **kwargs):
 
 def evaluate_KL1D(X1, DIM, RANGE, XLISTE, Ux, beta, mediane, pseed ):
         np.random.seed(pseed)
+        nb = len(Ux[0])
         x1 = (X1 - RANGE[0][0]) / DIM[0]
-        U1 = [np.interp(x1, XLISTE[0], term)  for term in Ux[0]]
-        Ux_1 = mediane * np.exp(beta*sum([ u1 * np.random.normal(0.0, 1.)  for u1 in U1 ]))
+        U1 = np.array([np.interp(x1, XLISTE[0], term) for term in Ux[0]])
+        rand = np.random.normal(0., 1., nb)
+        Ux_1 = mediane * np.exp(beta * np.sum(U1 * rand))
         return Ux_1
 
 
 def evaluate_KL2D(X1, X2, DIM, RANGE, XLISTE, Ux, beta, mediane, pseed ):
         np.random.seed(pseed)
+        nb = len(Ux[0])
         x1 = (X1 - RANGE[0][0]) / DIM[0]
         x2 = (X2 - RANGE[1][0]) / DIM[1]
         U1 = [np.interp(x1, XLISTE[0], term)  for term in Ux[0]]
         U2 = [np.interp(x2, XLISTE[1], term)  for term in Ux[1]]
-        Ux_12 = mediane * np.exp(beta*sum([ u1 * u2 * np.random.normal(0.0, 1.)  for u1 in U1  for u2 in U2]))
+        U1 = np.array(U1).reshape((nb, 1))
+        U2 = np.array(U2).reshape((1, nb))
+        rand = np.random.normal(0., 1., nb * nb)
+        Ux_12 = mediane * np.exp(beta * np.sum((U1 * U2).ravel() * rand))
         return Ux_12
 
 
 def evaluate_KL3D(X1, X2, X3, DIM, RANGE, XLISTE, Ux, beta, mediane, pseed ):
         np.random.seed(pseed)
+        nb = len(Ux[0])
         x1 = (X1 - RANGE[0][0]) / DIM[0]
         x2 = (X2 - RANGE[1][0]) / DIM[1]
         x3 = (X3 - RANGE[2][0]) / DIM[2]
         U1 = [np.interp(x1, XLISTE[0], term)  for term in Ux[0]]
         U2 = [np.interp(x2, XLISTE[1], term)  for term in Ux[1]]
         U3 = [np.interp(x3, XLISTE[2], term)  for term in Ux[2]]
-        Ux_123 = mediane * np.exp(beta*sum([ u1 * u2 * u3 * np.random.normal(0.0, 1.)     for u1 in U1  for u2 in U2  for u3 in U3]))
+        U1 = np.array(U1).reshape((nb, 1, 1))
+        U2 = np.array(U2).reshape((1, nb, 1))
+        U3 = np.array(U3).reshape((1, 1, nb))
+        rand = np.random.normal(0., 1., nb * nb * nb)
+        Ux_123 = mediane * np.exp(beta * np.sum((U1 * U2 * U3).ravel() * rand))
         return Ux_123
-
 
 
 class Randomfield(object):

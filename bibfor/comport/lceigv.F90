@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -122,9 +122,16 @@ subroutine lceigv(fami, kpg, ksp, ndim, neps, &
 !
     call rcvalb(fami, kpg, ksp, poum, imate,&
                 ' ', 'NON_LOCAL', 0, ' ', [0.d0],&
-                2, nomnl, valnl, iok, 2)
+                1,'C_GRAD_VARI',valnl(1),iok,2)
+    call rcvalb(fami, kpg, ksp, poum, imate,&
+                ' ', 'NON_LOCAL', 0, ' ', [0.d0],&
+                1,'PENA_LAGR',valnl(2),iok,0)
     c = valnl(1)
-    r = valnl(2)
+    if (iok(1) .ne. 0) then
+        r = 1.e3
+    else
+        r = valnl(2)
+    endif
 !
 !
 ! -- MAJ DES DEFORMATIONS ET PASSAGE AUX DEFORMATIONS REELLES 3D

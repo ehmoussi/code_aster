@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,6 +46,10 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
 #include "asterfort/utflmd.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/teattr.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/jenuno.h"
+#include "asterfort/panbno.h"
     integer :: nbcmp, nuord, iocc, ichagd
     character(len=8) :: nomcmp(nbcmp), nomcp2(nbcmp), modele, lieu
     character(len=19) :: chpost, resu, cespoi, ligrel
@@ -82,19 +86,21 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
     integer :: iret, nbma, nbmai, i, jcesl, jcesd, jpoil, jpoid
     integer :: nucmp, jcmpgd, ncmpm, iad, jintr, jintk
     integer :: ipt, nbsp, nbpt, icmp, ima, nbpara
-    integer :: ico, ind1, ind2, ifm, niv
+    integer :: ico, ind1, ind2, ifm, niv, ier, type_cell, nbnott(3)
     real(kind=8) :: vol, val, inst, volpt
     complex(kind=8) :: cbid
-    character(len=8) :: noma, k8b, nomgd, nomva
+    character(len=8) :: noma, k8b, nomgd, nomva, type_inte
     character(len=4) :: dejain
     character(len=19) :: cesout
-    character(len=24) :: valk(3)
-    aster_logical :: exist
+    character(len=24) :: valk(3), nomte
+    aster_logical :: exist, l_red
     real(kind=8), pointer :: pdsm(:) => null()
     character(len=8), pointer :: cesk(:) => null()
     real(kind=8), pointer :: cesv(:) => null()
     real(kind=8), pointer :: poiv(:) => null()
     integer, pointer :: repe(:) => null()
+    integer, pointer :: v_model_elem(:) => null()
+    integer, pointer :: v_type_cell(:) => null()
 ! -------------------------------------------------------------------------
     call jemarq()
     cbid=(0.d0,0.d0)
@@ -185,6 +191,8 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
     endif
 !
 !
+    call jeveuo(modele//'.MAILLE', 'L', vi = v_model_elem)
+    call jeveuo(noma//'.TYPMAIL', 'L', vi = v_type_cell)
 ! --- CALCUL DE L'INTEGRALE ET DE LA MOYENNE(=INTEGRALE/VOLUME):
     do icmp = 1, nbcmp
         nucmp=indik8(zk8(jcmpgd),nomcmp(icmp),1,ncmpm)
@@ -195,6 +203,19 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
             if (repe(2*(ima-1)+1).eq.0) cycle
             nbpt=zi(jcesd-1+5+4*(ima-1)+1)
             nbsp=zi(jcesd-1+5+4*(ima-1)+2)
+            l_red = ASTER_FALSE
+            if (v_model_elem(ima) .ne. 0) then
+                call jenuno(jexnum('&CATA.TE.NOMTE', v_model_elem(ima)), nomte)
+                call teattr('C', 'INTTHM', type_inte, ier, typel=nomte)
+                if (ier .eq. 0) then 
+                    l_red = type_inte .eq. 'RED'
+                    if (l_red) then
+                        type_cell = v_type_cell(ima)
+                        call panbno(type_cell, nbnott)
+                        ! nbpt = nbpt - nbnott(1)
+                    endif
+                endif
+            endif
             if (nbsp .gt. 1) then
                 call utmess('F', 'UTILITAI8_60')
             endif
@@ -218,9 +239,16 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
                     ASSERT(nbpt.ge.1)
                     volpt=pdsm(ima)/nbpt
                 endif
+                
+                if (.NOT. l_red) then
+                    vol=vol+volpt
+                else if ((l_red) .AND. (ipt< nbpt - nbnott(1) + 1) ) then
+                    vol=vol+volpt
+                endif
+
                 ico=ico+1
-                vol=vol+volpt
             end do
+
         end do
         if (ico .eq. 0) then
             valk(3)=nomcmp(icmp)

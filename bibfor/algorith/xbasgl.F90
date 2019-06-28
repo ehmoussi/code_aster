@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ subroutine xbasgl(ndim, basloc, ipt, p, invp)
 !
     integer :: ndim, ipt
     real(kind=8) :: basloc(*)
-    real(kind=8) :: p(ndim,ndim), invp(ndim,ndim)
+    real(kind=8) :: p(3,3), invp(3,3)
 !
 !
 !
@@ -39,8 +39,8 @@ subroutine xbasgl(ndim, basloc, ipt, p, invp)
 !
 !----------------------------------------------------------------
 !
-    integer :: i
-    real(kind=8) :: e1(3), e2(3), e3(3), norme, det
+    integer :: i, j
+    real(kind=8) :: e1(3), e2(3), e3(3), norme
 !----------------------------------------------------------------
 !
     if (.not.(ndim.eq.2.or.ndim.eq.3)) then
@@ -64,12 +64,17 @@ subroutine xbasgl(ndim, basloc, ipt, p, invp)
 !    if (ndim.eq.3) call provec(e2, e3, e1)
 !
 !  *  CALCUL DE LA MATRICE DE PASSAGE P TQ 'GLOBAL' = P * 'LOCAL'
-    p(1:ndim,1)=e1(1:ndim)
-    p(1:ndim,2)=e2(1:ndim)
-    if (ndim.eq.3) p(1:ndim,3)=e3(1:ndim)
+    p(:,1)=e1(:)
+    p(:,2)=e2(:)
+    p(:,3)=e3(:)
+    do i = 1, 3
+        do j = 1, 3
+            invp(i,j)=p(j,i)
+        end do
+    end do
 !
 !  *  VERIFICATION QUE LA BASE EST ORTHONORMEE (DETERMINANT DE P VAUT BIEN 1)
-     call matinv('C', ndim, p, invp, det)
+!      call matinv('C', ndim, p, invp, det)
 !    det = det_mat(ndim,p)
 !    if (abs((abs(det)-1.d0)).gt.1.d-5) then
 !  *  SI LE DETERMINANT N EST PAS 1 XCALFEV A SANS DOUTE ETE APPELEE AVEC UNE BASE NULLE

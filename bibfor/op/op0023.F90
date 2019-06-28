@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,11 @@ subroutine op0023()
     character(len=16) :: nomfi
 !     ------------------------------------------------------------------
 !     TEST DU MECANISME DE NAN
-    call getvtx(' ', 'TEST_NAN', scal=repons, nbret=n)
+    repons = 'NON'
+    call getvtx(' ', 'TEST_NAN', scal=repons, nbval=0, nbret=n)
+    if ( n .eq. 1) then
+        call getvtx(' ', 'TEST_NAN', scal=repons)
+    endif
     if (repons .eq. 'OUI') then
         tstnan = r8nnem ( )
         resnan = tstnan*1.d0

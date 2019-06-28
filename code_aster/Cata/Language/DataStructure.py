@@ -27,10 +27,11 @@ the return of the class method `getType()` of datastructures.
 Ex.: maillage_sdaster.getType() = Mesh().getType() = "MAILLAGE"
 """
 
+import warnings
 from collections import UserDict
 
 
-class DataStructure(object):
+class DataStructure:
     """Base class for all datastructures"""
     _deepcopy_callback = None
 
@@ -119,11 +120,23 @@ class PythonVariable(UserDict, DataStructure):
         """Compare two objects."""
         return self is other
 
+    def __lt__(self, other):
+        """Comparison will be relevant when it will become a Variable"""
+        warnings.warn("Comparing 'PythonVariable' may return unexpected "
+                      "results", RuntimeWarning)
+        return True
+
+    def __gt__(self, other):
+        """Comparison will be relevant when it will become a Variable"""
+        warnings.warn("Comparing 'PythonVariable' may return unexpected "
+                      "results", RuntimeWarning)
+        return True
+
     def __repr__(self):
         return "<PythonVariable at 0x{:x}>".format(id(self))
 
 
-class ValueCheckMixing(object):
+class ValueCheckMixing:
     @staticmethod
     def checkValue(value):
         # None means undefined: type is valid
@@ -235,7 +248,7 @@ class formule_c(formule):
     pass
 
 # Objects provided in the header of cata.py
-class GEOM(object):
+class GEOM:
 
     @classmethod
     def getType(cls):

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -111,7 +111,7 @@ GLOC=CALC_G(RESULTAT=RESU,
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.05,
-           VALE_CALC=11.806048975,
+           VALE_CALC=11.765731245611631,
            VALE_REFE=11.58648,
            NOM_PARA='G',
            TABLE=GLOC,
@@ -121,7 +121,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.01,
-           VALE_CALC=11.5319381189,
+           VALE_CALC=11.537057288150427,
            VALE_REFE=11.58648,
            NOM_PARA='G',
            TABLE=GLOC,
@@ -130,8 +130,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.06,
-           VALE_CALC=10.9497902751,
+           PRECISION=0.065,
+           VALE_CALC=10.878328926623045,
            VALE_REFE=11.58648,
            NOM_PARA='G',
            TABLE=GLOC,
@@ -141,7 +141,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.02,
-           VALE_CALC=11.4970176392 ,
+           VALE_CALC=11.450682055417737 ,
            VALE_REFE=11.58648,
            NOM_PARA='G',
            TABLE=GLOC,
@@ -149,13 +149,13 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_I=15,),
            )
 
-TEST_TABLE(VALE_CALC=11.806048975,
+TEST_TABLE(VALE_CALC=11.765731245611631,
            NOM_PARA='G',
            TYPE_TEST='MAX',
            TABLE=GLOC,
            )
 
-TEST_TABLE(VALE_CALC=10.1992872775,
+TEST_TABLE(VALE_CALC=10.14376437877956,
            NOM_PARA='G',
            TYPE_TEST='MIN',
            TABLE=GLOC,
