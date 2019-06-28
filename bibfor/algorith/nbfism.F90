@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvala.h"
 #include "asterfort/utmess.h"
+#include "asterfort/behaviourInit.h"
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
 #include "blas/dscal.h"
@@ -142,6 +143,10 @@ character(len=16) :: compor(*), option
     rac2 = sqrt(2.d0)
     ndu = ndim
     if (axi) ndu = 3
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - REACTUALISATION DE LA GEOMETRIE ET EXTRACTION DES CHAMPS
     do na = 1, nno1

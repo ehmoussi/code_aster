@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/lcdetf.h"
 #include "asterfort/lcegeo.h"
 #include "asterfort/nmcomp.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/nmgrtg.h"
 #include "asterfort/pk2sig.h"
@@ -131,6 +132,10 @@ integer, intent(inout) :: codret
     cplan        = typmod(1) .eq. 'C_PLAN'
     disp_curr(:) = 0.d0
     rela_comp    = compor(RELA_NAME)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - Get coded integer for external state variable
 !

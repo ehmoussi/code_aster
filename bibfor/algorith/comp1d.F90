@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/jevech.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/behaviourInit.h"
 !
 character(len=*) :: fami
 character(len=16) :: option
@@ -96,6 +97,10 @@ real(kind=8) :: vim(*), vip(*), sigx, sigxp, epsx, depx, etan
     sigm(1)=sigx
     typmod(1) = 'COMP1D '
     typmod(2) = '        '
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 !
 ! ---    PARAMETRES EN ENTREE

@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/gedisc.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/utmess.h"
     integer :: ndim, mate, npg, ipg, idf2, lgpg, nno1, nno2, nddl, iu(3, 16)
     integer :: ip(8)
@@ -94,6 +95,10 @@ implicit none
     axi = .false.
     resi = option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
     rigi = option(1:9).eq.'FULL_MECA'.or.option(1:10).eq.'RIGI_MECA_'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! IFHYME = TRUE  : CALCUL COUPLE HYDRO-MECA
 ! IFHYME = FALSE : CALCUL MECA SANS HYDRO ET ELIMINATION DES DDL DE PRES

@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/gdt.h"
 #include "asterfort/hsaco.h"
 #include "asterfort/jacbm1.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/jevech.h"
 #include "asterfort/jevete.h"
 #include "asterfort/jm1dn1.h"
@@ -208,6 +209,10 @@ implicit none
     typmod(1) = 'C_PLAN  '
     typmod(2) = '        '
     codret=0
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! DEB
 !

@@ -33,6 +33,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/lcidbg.h"
+#include "asterfort/behaviourInit.h"
 !
 character(len=16), intent(in) :: option, compor(*)
 integer, intent(in) :: j_mater
@@ -101,6 +102,10 @@ integer, intent(out) :: retcom
     ksp         = 1
     dsdeme(:,:) = 0.d0
     retcom      = 0
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - Integration of mechanical behaviour
 !

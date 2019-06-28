@@ -37,6 +37,7 @@ implicit none
 #include "asterfort/pmat.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
+#include "asterfort/behaviourInit.h"
 #include "blas/ddot.h"
 !
 aster_logical :: resi, rigi
@@ -134,6 +135,10 @@ character(len=16) :: compor(*), option
     axi = typmod(1).eq.'AXIS'
     nddl = nno1*ndim + nno2 + nno3
     rac2 = sqrt(2.d0)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - EXTRACTION DES CHAMPS
     do na = 1, nno1

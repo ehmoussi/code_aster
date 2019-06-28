@@ -60,6 +60,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vrcinp.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/nonlinDSConvergenceCreate.h"
 #include "asterfort/nonlinDSAlgoParaCreate.h"
 #include "asterfort/Behaviour_type.h"
@@ -131,6 +132,14 @@ implicit none
     itemax      = ASTER_FALSE
     liccvg(1:5) = 0
 !
+! - Prepare CALCUL parameters for external state variables
+!
+    call vrcinp(1, 0.d0, 0.d0)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
 ! - Create convergence management datastructure
 !
     call nonlinDSConvergenceCreate(ds_conv)
@@ -160,10 +169,6 @@ implicit none
 !
     call pmmaco(mater, nbmat, codi)
     call jeveut(codi//'.CODI', 'L', imate)
-!
-! - External state variables
-!
-    call vrcinp(1, 0.d0, 0.d0)
 !
 !     INITIALISATIONS SD
 !

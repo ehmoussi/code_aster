@@ -27,6 +27,7 @@ implicit none
 #include "jeveux.h"
 #include "asterc/r8vide.h"
 #include "asterfort/btdfn.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/btdmsn.h"
 #include "asterfort/btdmsr.h"
 #include "asterfort/btkb.h"
@@ -98,6 +99,10 @@ implicit none
     nbv = 2
     nomres(1) = 'E'
     nomres(2) = 'NU'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     call jevete('&INEL.'//nomte(1:8)//'.DESI', ' ', lzi)
     nb1 = zi(lzi-1+1)

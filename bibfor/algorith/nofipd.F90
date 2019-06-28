@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/tanbul.h"
 #include "asterfort/uthk.h"
 #include "asterfort/utmess.h"
+#include "asterfort/behaviourInit.h"
 #include "blas/ddot.h"
 aster_logical :: resi, rigi
 integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, lgpg
@@ -135,6 +136,10 @@ character(len=16) :: compor(*), option, nomte
     axi = typmod(1).eq.'AXIS'
     nddl = nno1*ndim + nno2 + nno3*ndim
     rac2 = sqrt(2.d0)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     call uthk(nomte, geomi, hk, ndim, 1)
     stab = 1.d-4*hk*hk

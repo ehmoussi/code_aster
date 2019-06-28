@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmfici.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/behaviourInit.h"
 #include "blas/ddot.h"
     integer :: nno, nddl, npg, lgpg, mate, codret
     real(kind=8) :: wref(npg), vff(nno, npg), dfde(2, nno, npg), crit(*)
@@ -84,6 +85,10 @@ implicit none
 !
     resi = option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
     rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! --- ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
 ! --- INITIALISE A R8VIDE (ON NE S'EN SERT PAS)

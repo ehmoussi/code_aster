@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/dfdm2d.h"
 #include "asterfort/dfdm3d.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/indent.h"
 #include "asterfort/lcegeo.h"
 #include "asterfort/matinv.h"
@@ -157,6 +158,10 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
                      jdfd2=jdfd2, jgano=jgano)
 !
     ASSERT(npg.eq.npgbis.and.ndim.eq.ndimb)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - Get coded integers for external state variables
 !

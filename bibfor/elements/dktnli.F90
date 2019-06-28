@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/dsxhlt.h"
 #include "asterfort/dxmate.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/gquad4.h"
 #include "asterfort/gtria3.h"
 #include "asterfort/jevech.h"
@@ -199,6 +200,10 @@ implicit none
                      jpoids=ipoids, jcoopg=icoopg, jvf=ivf, jdfde=idfdx, jdfd2=idfd2,&
                      jgano=jgano)
 !
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
     deux = 2.d0
     rac2 = sqrt(deux)
     codret = 0
@@ -222,8 +227,7 @@ implicit none
 !
     call jevech('PMATERC', 'L', imate)
 !
-    call tecach('OOO', 'PCONTMR', 'L', iret, nval=7,&
-                itab=jtab)
+    call tecach('OOO', 'PCONTMR', 'L', iret, nval=7, itab=jtab)
     nbsp=jtab(7)
     icontm=jtab(1)
     ASSERT(npg.eq.jtab(3))

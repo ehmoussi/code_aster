@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/eicine.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/behaviourInit.h"
     character(len=8) :: typmod(*)
     character(len=16) :: option, compor(*)
 !
@@ -99,6 +100,10 @@ implicit none
     do g = 1, npg
         cod(g)=0
     end do
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     call r8inir(3, 0.d0, su, 1)
     call r8inir(3, 0.d0, mu, 1)

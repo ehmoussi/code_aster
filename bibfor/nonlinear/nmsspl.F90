@@ -67,7 +67,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/r8inir.h"
-!
+#include "asterfort/behaviourInit.h"
 #include "asterfort/bmatmc.h"
 #include "asterfort/btdbpr.h"
 #include "asterfort/codere.h"
@@ -149,6 +149,10 @@ implicit none
     do kpg = 1, npg
        cod(kpg) = 0
     end do
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     nbinco = nno*3
     resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'

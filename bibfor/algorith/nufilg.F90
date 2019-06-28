@@ -32,6 +32,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/codere.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/dsde2d.h"
 #include "asterfort/nmcomp.h"
@@ -148,6 +149,10 @@ implicit none
     nddl = nnod*ndim + nnop
     ndu = ndim
     if (axi) ndu = 3
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - REACTUALISATION DE LA GEOMETRIE ET EXTRACTION DES CHAMPS
     do na = 1, nnod

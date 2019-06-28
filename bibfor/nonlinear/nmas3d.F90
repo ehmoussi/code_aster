@@ -46,6 +46,7 @@ implicit none
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
 !
 integer :: nno, imate, lgpg, codret, nbpg1
 integer :: ipoids, ivf, idfde
@@ -138,6 +139,10 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     rac2 = sqrt(2.d0)
     grand = .false.
     calbn = .false.
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - Get coded integers for external state variables
 !

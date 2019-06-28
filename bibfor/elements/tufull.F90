@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/mavec.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/poutre_modloc.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rccoma.h"
 #include "asterfort/rcvalb.h"
@@ -109,6 +110,10 @@ implicit none
     typmod(1) = 'C_PLAN  '
     typmod(2) = '        '
     codret = 0
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! --- ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
 ! --- INITIALISE A 0.d0 (ON NE S'EN SERT PAS)

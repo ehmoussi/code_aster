@@ -31,6 +31,7 @@ implicit none
 #include "asterc/r8vide.h"
 #include "asterfort/codere.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/gedisc.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmfisa.h"
@@ -79,6 +80,10 @@ implicit none
     axi = typmod(1) .eq. 'AXIS'
     resi = option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
     rigi = option(1:9).eq.'FULL_MECA'.or.option(1:10).eq.'RIGI_MECA_'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! --- ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
 ! --- INITIALISE A R8VIDE (ON NE S'EN SERT PAS)

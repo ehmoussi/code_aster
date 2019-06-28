@@ -16,10 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine comcq1(fami  ,kpg   ,ksp   ,imate ,compor,&
-                  carcri,instm ,instp ,eps   ,deps  ,&
-                  sigm  ,vim   ,option,angmas,sigp  ,&
-                  vip   ,dsde  ,codret)
+subroutine comcq1(fami  , kpg   , ksp   , imate   , compor,&
+                  carcri, instm , instp , eps     , deps  ,&
+                  sigm  , vim   , option, angmas  , sigp  ,&
+                  vip   , dsde  , codret, BEHinteg)
 !
 use Behaviour_type
 !
@@ -36,7 +36,7 @@ implicit none
     real(kind=8) :: vim(*), vip(*), sigp(4), dsde(6, 6), carcri(*), lc(1)
     real(kind=8) :: instm, instp,  wkout(1)
     character(len=8) :: typmod(2)
-    type(Behaviour_Integ) :: BEHinteg
+    type(Behaviour_Integ), intent(in) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
