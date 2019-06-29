@@ -41,7 +41,7 @@ def configure(self):
     official_programs.check_prerequisites_package(self, YAMMROOT, '20190507')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
-    self.env['ADDMEM'] = 1000
+    self.env['ADDMEM'] = 1100
 
     self.env.append_value('OPT_ENV', [
         'export LD_PRELOAD='

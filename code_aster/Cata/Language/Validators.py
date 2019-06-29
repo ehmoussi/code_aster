@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ from functools import partial
 from .SyntaxUtils import force_list
 
 
-class Validator(object):
+class Validator:
     """Abstract class for validators."""
 
     def __init__(self, *args, **kwargs):
@@ -54,7 +54,7 @@ class LongStr(Validator):
     """Check that the length of string."""
 
     def __init__(self, *args, **kwargs):
-        super(LongStr, self).__init__(*args)
+        super().__init__(*args)
         assert len(args) == 2, "Exactly two arguments required for LongStr."
         assert (type(args[0]), type(args[1])) == (int, int), (
             "LongStr arguments must be 'int'")
@@ -75,7 +75,7 @@ class AndVal(Validator):
     def __init__(self, *args, **kwargs):
         if type(args) in (list, tuple) and len(args) == 1:
             args = args[0]
-        super(AndVal, self).__init__(*args)
+        super().__init__(*args)
         for i in self.args:
             assert isinstance(i, Validator), (
                 "Arguments of AndVal must be Validator objects.")
@@ -93,7 +93,7 @@ class OrVal(Validator):
     def __init__(self, *args, **kwargs):
         if type(args) in (list, tuple) and len(args) == 1:
             args = args[0]
-        super(OrVal, self).__init__(*args)
+        super().__init__(*args)
         for i in self.args:
             assert isinstance(i, Validator), (
                 "Arguments of OrVal must be Validator objects.")
@@ -135,7 +135,7 @@ class OrdList(Validator):
     """
 
     def __init__(self, *args, **kwargs):
-        super(OrdList, self).__init__()
+        super().__init__()
         assert len(args) <= 1, "At most one argument is required for OrdList."
         reverse = kwargs.get('reverse', False)
         if len(args) == 1 and args[0] != 'croissant':
@@ -166,7 +166,7 @@ class Together(Validator):
     """
 
     def __init__(self, *args, **kwargs):
-        super(Together, self).__init__(*args)
+        super().__init__(*args)
         assert len(args) == 1, "Exactly one argument is required for Together."
 
     def check(self, values):
@@ -184,7 +184,7 @@ class Absent(Validator):
     """
 
     def __init__(self, *args, **kwargs):
-        super(Absent, self).__init__(*args)
+        super().__init__(*args)
         assert len(args) == 1, "Exactly one argument is required for Absent."
 
     def check(self, values):
@@ -202,7 +202,7 @@ class Compulsory(Validator):
     """
 
     def __init__(self, *args, **kwargs):
-        super(Compulsory, self).__init__(*args)
+        super().__init__(*args)
         assert len(args) == 1, (
             "Exactly one argument is required for Compulsory.")
 
@@ -222,7 +222,7 @@ class NotEqualTo(Validator):
     """
 
     def __init__(self, *args, **kwargs):
-        super(NotEqualTo, self).__init__(*args)
+        super().__init__(*args)
         assert len(args) == 1, ("Exactly one argument is required "
                                 "for NotEqualTo.")
 

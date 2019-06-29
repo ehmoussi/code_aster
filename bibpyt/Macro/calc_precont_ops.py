@@ -365,8 +365,16 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         # 1.5 Modele contenant uniquement les cables de precontrainte
         # ---------------------------------------------------------
         objma = MODELE.getSupportMesh()
+
+        # need CENTRALISE?
+        iret, repi, repk = aster.dismoi('PARTITION', MODELE.nom, 'MODELE', 'C')
+        assert iret == 0, "Can not extract PARTITION type of the model."
+        opts = {} if repk.strip() else {'DISTRIBUTION': _F(METHODE='CENTRALISE')}
+
         __M_CA = AFFE_MODELE(MAILLAGE=objma,
-                             AFFE=affe_mo)
+                             AFFE=affe_mo,
+                             **opts
+                             )
 
         # 1.6 Blocage de tous les noeuds des cables actifs
         # --------------------------------------------------

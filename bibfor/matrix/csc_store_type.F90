@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -106,8 +106,10 @@ subroutine free_csc_store( cs )
   do ii=1, cs%ncol
      call free_dyn_column( cs%pcol(ii) ) 
   enddo
+  deallocate( cs%pcol )
   deallocate( cs%rwork )
   deallocate( cs%iwork ) 
+  deallocate( cs%is_nz )
 end subroutine free_csc_store
 
 subroutine create_dyn_column( nnz, dc )

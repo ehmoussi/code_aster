@@ -24,7 +24,6 @@ It mainly converts new objects to old ones for backward compatibility.
 """
 
 import builtins
-import types
 
 from . import DataStructure as DS
 from . import ops
@@ -75,7 +74,7 @@ def OPS(kwargs):
     return kwargs
 
 
-class EMPTY_OPS(object):
+class EMPTY_OPS:
     pass
 
 

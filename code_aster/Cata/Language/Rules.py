@@ -36,7 +36,7 @@ def work_on_copy(func):
     return wrapper
 
 
-class Rule(object):
+class Rule:
     """Abstract class for rules."""
 
     def __init__(self, *curTuple):
@@ -67,7 +67,7 @@ class AtLeastOne(Rule):
     @work_on_copy
     def check(self, dictSyntax):
         """Check the rule"""
-        super(AtLeastOne, self).check(dictSyntax)
+        super().check(dictSyntax)
         if sum( self._not_none(dictSyntax) ) < 1:
             raise ValueError("At least one argument of {} must be defined".format(self.ruleArgs))
 
@@ -78,7 +78,7 @@ class ExactlyOne(Rule):
     @work_on_copy
     def check(self, dictSyntax):
         """Check the rule"""
-        super(ExactlyOne, self).check(dictSyntax)
+        super().check(dictSyntax)
         if sum( self._not_none(dictSyntax) ) != 1:
             raise ValueError("Exactly one argument of {} is required".format(self.ruleArgs))
 
@@ -89,7 +89,7 @@ class AtMostOne(Rule):
     @work_on_copy
     def check(self, dictSyntax):
         """Check the rule"""
-        super(AtMostOne, self).check(dictSyntax)
+        super().check(dictSyntax)
         if sum( self._not_none(dictSyntax) ) > 1:
             raise ValueError("At most one argument of {} can be defined".format(self.ruleArgs))
 
@@ -101,7 +101,7 @@ class IfFirstAllPresent(Rule):
     @work_on_copy
     def check(self, dictSyntax):
         """Check the rule"""
-        super(IfFirstAllPresent, self).check(dictSyntax)
+        super().check(dictSyntax)
         if self._firstExists(dictSyntax) and \
            sum( self._not_none(dictSyntax) ) != len(self.ruleArgs):
             raise ValueError("{} must be all defined".format(self.ruleArgs[1:]))
@@ -114,7 +114,7 @@ class OnlyFirstPresent(Rule):
     @work_on_copy
     def check(self, dictSyntax):
         """Check the rule"""
-        super(OnlyFirstPresent, self).check(dictSyntax)
+        super().check(dictSyntax)
         if self._firstExists(dictSyntax) and \
            sum( self._not_none(dictSyntax)[1:] ) != 0:
             raise ValueError("{} must be all undefined".format(self.ruleArgs[1:]))
@@ -127,6 +127,6 @@ class AllTogether(Rule):
     @work_on_copy
     def check(self, dictSyntax):
         """Check the rule"""
-        super(AllTogether, self).check(dictSyntax)
+        super().check(dictSyntax)
         if sum( self._not_none(dictSyntax) ) not in ( 0, len(self.ruleArgs) ):
             raise ValueError("{} must be all defined or all undefined".format(self.ruleArgs))

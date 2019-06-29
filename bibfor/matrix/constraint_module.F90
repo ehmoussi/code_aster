@@ -207,10 +207,16 @@ subroutine get_nullbasis_trans( b, z )
     call permute_rows_of_csc_matrix(permr_inv, z) 
     call sort_rows_of_csc_matrix( z )
 !
-! 
+! Libération de la mémoire 
+!
     AS_DEALLOCATE(vi4=permr_inv) 
     AS_DEALLOCATE(vr=rhs)
     AS_DEALLOCATE(vi=icol)
+    call free_csc_matrix( id ) 
+    call free_csc_matrix( t ) 
+    call free_csc_matrix( l1 )
+    call free_csc_matrix( l2t )
+!
 end subroutine get_nullbasis_trans
 !
 ! On entry, a is a csc_matrix 

@@ -173,7 +173,7 @@ TEST_TABLE(TABLE=GLO1,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(0.),
            PRECISION=0.11,
-           VALE_CALC=54737425.6312,
+           VALE_CALC=54752007.87967059,
            )
 
 # a l'abscisse curviligne 5.34881e-3 (point 8)
@@ -184,7 +184,7 @@ TEST_TABLE(TABLE=GLO1,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(5.34881e-3),
            PRECISION=0.02,
-           VALE_CALC=74416951.3646,
+           VALE_CALC=74423110.32240902,
            )
 
 # a l'abscisse curviligne 3.44482e-2 (point 25)
@@ -195,7 +195,7 @@ TEST_TABLE(TABLE=GLO1,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(3.44482e-2),
            PRECISION=0.01,
-           VALE_CALC=101903389.054,
+           VALE_CALC=101903847.56606053,
            )
 
 # a l'abscisse curviligne 5.36143e-2 (point 33)
@@ -206,7 +206,7 @@ TEST_TABLE(TABLE=GLO1,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(5.36143e-2),
            PRECISION=0.07,
-           VALE_CALC=96993514.5257,
+           VALE_CALC=96994254.22989388,
            )
 
 
@@ -297,7 +297,7 @@ TEST_TABLE(TABLE=GK2leg,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(0.),
            PRECISION=0.24,
-           VALE_CALC=54737425.6312,
+           VALE_CALC=54752007.87967063,
            )
 
 # a l'abscisse curviligne 5.34881e-3 (point 8)
@@ -308,7 +308,7 @@ TEST_TABLE(TABLE=GK2leg,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(5.34881e-3),
            PRECISION=0.08,
-           VALE_CALC=74416951.3646,
+           VALE_CALC=74423110.322409,
            )
 
 # a l'abscisse curviligne 3.44482e-2 (point 25)
@@ -319,7 +319,7 @@ TEST_TABLE(TABLE=GK2leg,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(3.44482e-2),
            PRECISION=0.02,
-           VALE_CALC=101903389.054,
+           VALE_CALC=101903847.56606053,
            )
 
 # a l'abscisse curviligne 5.36143e-2 (point 33)
@@ -330,7 +330,7 @@ TEST_TABLE(TABLE=GK2leg,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(5.36143e-2),
            PRECISION=0.07,
-           VALE_CALC=96993514.5257,
+           VALE_CALC=96994254.22989425,
            )
 
 
@@ -365,7 +365,7 @@ TEST_TABLE(TABLE=GK2lagno,
            REFERENCE='SOURCE_EXTERNE',
            VALE_REFE=K1ref(5.36143e-2),
            PRECISION=0.01,
-           VALE_CALC=104081098.486,
+           VALE_CALC=104081312.53943054,
            )
 
 FIN()

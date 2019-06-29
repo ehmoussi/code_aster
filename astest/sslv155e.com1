@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ TEST_RESU(RESU=_F(RESULTAT=RESU,
                   NOM_CMP='SIYY',
                   MAILLE='M646',
                   POINT=3,
-                  VALE_CALC=1168520.8533),)
+                  VALE_CALC=1168549.6209260903),)
 ## -> test sur le resultat produit par STAT_NON_LINE
 TEST_RESU(RESU=_F(RESULTAT=RESSNL,
                   NUME_ORDRE=1,
@@ -71,6 +71,6 @@ TEST_RESU(RESU=_F(RESULTAT=RESSNL,
                   NOM_CMP='SIYY',
                   MAILLE='M646',
                   POINT=3,
-                  VALE_CALC=1168520.85334),)
+                  VALE_CALC=1168549.6209311497),)
 
 FIN()

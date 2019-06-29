@@ -29,7 +29,7 @@ from .strfunc import get_encoding, to_unicode
 
 class AsException(Exception):
 
-    def __unicode__(self):
+    def to_str(self):
         args = []
         for x in self.args:
             ustr = to_unicode(x)
@@ -39,7 +39,7 @@ class AsException(Exception):
         return " ".join(args)
 
     def __str__(self):
-        return str(self).encode(get_encoding())
+        return self.to_str()
 
 
 class OpsError(AsException):

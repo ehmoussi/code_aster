@@ -179,11 +179,11 @@ k1ref = 8.3611195825061E+05
 k2ref_0 = 8.6435469393827E+05
 k3ref_90 = 6.7469786391964E+05
 
-# valeurs de ref calcule abtenus avec aster4
-k1calmax = 855621.125752
-k1calmin = 838924.763522
-k2calc = 834730.86792
-k3calc = 683680.778171
+# valeurs de ref calcule abtenus avec eole
+k1calmax = 855641.1782236944
+k1calmin = 838922.7142114817
+k2calc = 834970.5180428904
+k3calc = 683651.1178975893
 
 # ajout des colonnes 'angle' et valeurs de ref dans les tables
 

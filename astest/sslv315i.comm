@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -217,7 +217,7 @@ DISTMAX=2./3.
 TEST_TABLE(CRITERE='ABSOLU',
            REFERENCE='NON_DEFINI',
            PRECISION=0.66666666666666663,
-           VALE_CALC=0.254365074583,
+           VALE_CALC=0.2560811846615434,
            VALE_REFE=0.0,
            NOM_PARA='X1',
            TYPE_TEST='MAX',
@@ -228,7 +228,7 @@ TEST_TABLE(CRITERE='ABSOLU',
 TEST_TABLE(CRITERE='ABSOLU',
            REFERENCE='NON_DEFINI',
            PRECISION=0.66666666666666663,
-           VALE_CALC=0.35051451113,
+           VALE_CALC=0.3461001882764569,
            VALE_REFE=0.0,
            NOM_PARA='X1',
            TYPE_TEST='MIN',
@@ -239,7 +239,7 @@ TEST_TABLE(CRITERE='ABSOLU',
 TEST_TABLE(CRITERE='ABSOLU',
            REFERENCE='NON_DEFINI',
            PRECISION=0.66666666666666663,
-           VALE_CALC=0.344275906488,
+           VALE_CALC=0.34477953385256543,
            VALE_REFE=0.0,
            NOM_PARA='X1',
            TYPE_TEST='MAX',
@@ -250,7 +250,7 @@ TEST_TABLE(CRITERE='ABSOLU',
 TEST_TABLE(CRITERE='ABSOLU',
            REFERENCE='NON_DEFINI',
            PRECISION=0.66666666666666663,
-           VALE_CALC=0.232285093869,
+           VALE_CALC=0.2289412146233472,
            VALE_REFE=0.0,
            NOM_PARA='X1',
            TYPE_TEST='MIN',

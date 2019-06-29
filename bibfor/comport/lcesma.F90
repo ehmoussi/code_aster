@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,6 @@ subroutine lcesma(mat, fami, kpg, ksp, poum, lccrma)
     real(kind=8) :: valel(nbel), valnl(nbnl), alpha, temp, tref,rdum(1)
     real(kind=8) :: e, nu
     character(len=16),parameter,dimension(nbel) :: nomel=(/'E               ','NU              '/)
-    character(len=16),parameter,dimension(nbnl) :: nomnl=(/'C_GRAD_VARI     ','PENA_LAGR       '/)
     character(len=8) :: nomdum(1)
 ! ----------------------------------------------------------------------
     real(kind=8) :: lambda, deuxmu, troisk, gamma, rigmin, pc, pr, epsth
@@ -58,7 +57,6 @@ subroutine lcesma(mat, fami, kpg, ksp, poum, lccrma)
 ! - LECTURE DES PARAMETRES MECANIQUES
 !
     call rcvalb(fami,kpg,ksp,poum,mat,' ','ELAS'     ,0,nomdum,rdum,nbel,nomel,valel,iok,2)
-    call rcvalb(fami,kpg,ksp,poum,mat,' ','NON_LOCAL',0,nomdum,rdum,nbnl,nomnl,valnl,iok,2)
 
     e      = valel(1)
     nu     = valel(2)
@@ -66,8 +64,19 @@ subroutine lcesma(mat, fami, kpg, ksp, poum, lccrma)
     deuxmu = e / (1+nu)
     troisk = e / (1-2*nu)
     gamma  = 0.d0
+
+    call rcvalb(fami, kpg, ksp, poum, mat,&
+                ' ', 'NON_LOCAL', 0, nomdum, rdum,&
+                1,'C_GRAD_VARI',valnl(1),iok,2)
+    call rcvalb(fami, kpg, ksp, poum, mat,&
+                ' ', 'NON_LOCAL', 0, nomdum, rdum,&
+                1,'PENA_LAGR',valnl(2),iok,0)
     pc     = valnl(1)
-    pr     = valnl(2)
+    if (iok(1) .ne. 0) then
+        pr = 1.e3
+    else
+        pr     = valnl(2)
+    endif
 
     call lccrma(mat, fami, kpg, ksp, poum)
 
