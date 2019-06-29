@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ DEFI_SQUELETTE=OPER(nom="DEFI_SQUELETTE",op= 110,sd_prod=squelette,
                    PRESENT_PRESENT('GROUP_NO_1','SOUS_STRUC_1'),
                    PRESENT_PRESENT('GROUP_NO_2','SOUS_STRUC_2'),
                    PRESENT_PRESENT('SOUS_STRUC_1','SOUS_STRUC_2'),),
-           TOUT            =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI",) ),
+           TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
            GROUP_NO_1      =SIMP(statut='f',typ=grno),
            SOUS_STRUC_1    =SIMP(statut='f',typ='TXM' ),
            GROUP_NO_2      =SIMP(statut='f',typ=grno),

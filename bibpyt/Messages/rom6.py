@@ -25,7 +25,7 @@ cata_msg = {
 
    3  : _("""Initialisations pour le post-traitement du calcul réduit."""),
 
-   4  : _("""On ne trouve pas la table des coordonnées réduites dans la structure de données résultat. Vérifiez qu'il vient bien d'un calcul réduit."""),
+   4  : _("""On ne trouve pas la table des coordonnées réduites dans la structure de données résultat. Vérifiez qu'il vient bien d'un calcul réduit et que les résultats n'ont pas été produits par LIRE_RESU ou CREA_RESU."""),
 
    7  : _("""Le résultat sur le modèle complet sera de type %(k1)s."""),
 

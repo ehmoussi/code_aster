@@ -89,6 +89,7 @@ implicit none
             valk(2) = result
             call utmess('F', 'TABLE0_37', nk=2, valk=valk)
         endif
+        goto 999
     endif
 !
 ! - Access to objects

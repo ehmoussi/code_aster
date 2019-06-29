@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ subroutine xcalf2(he, lsng, lstg, baslog, fe,&
 !----------------------------------------------------------------
 !
     integer :: i, j, k
-    real(kind=8) :: p(2, 2), invp(2, 2)
+    real(kind=8) :: p(3, 3), invp(3, 3)
     real(kind=8) :: rg, tg, dgdpo(4, 2), dgdlo(4, 2)
 !
 !     RECUPERATION DE LA BASE LOCALE ASSOCIEE AU PT

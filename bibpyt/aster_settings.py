@@ -78,6 +78,10 @@ class CoreOptions(object):
             default=True,
             help="hide the content of the command file")
         parser.add_argument(
+            '--post', dest='post', action='append',
+            help="execute additional tasks for testcase. 'vale_calc': prints "
+                 "'.comm' files with calculated values.")
+        parser.add_argument(
             '--stage_number', dest='stage_number', type=int, metavar='NUM',
             action='store', default=1,
             help="Stage number in the Study")

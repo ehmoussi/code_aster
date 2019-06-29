@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -169,7 +169,6 @@ subroutine dyarc0(resuz, nbnosy, nbarch, lisarc, nbchex,&
 !
     call getvis(motcle, 'PAS_ARCH', iocc=iocc, scal=ipach, nbret=n1)
     if (n1 .ne. 0) then
-        ipach = 1
         do 20 k = ipach, nbordr(1), ipach
             zi(jarch+k-1) = 1
 20      continue

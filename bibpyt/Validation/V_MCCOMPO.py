@@ -127,7 +127,7 @@ class MCCOMPO:
         for k, v in list(self.definition.entites.items()):
             if v.label != 'SIMP':
                 continue
-            if not v.defaut:
+            if v.defaut is None:
                 continue
             if k not in dico:
                 dico[k] = v(nom=k, val=None, parent=self)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,6 @@ DEFI_SPEC_TURB=OPER(nom="DEFI_SPEC_TURB",op= 145,sd_prod=spectre_sdaster,
            VISC_CINE       =SIMP(statut='o',typ='R' ),
          ),
          SPEC_LONG_COR_2 =FACT(statut='f',
-           regles=(ENSEMBLE('FREQ_COUP','PHI0','BETA' ),),
            LONG_COR        =SIMP(statut='o',typ='R' ),
            PROF_VITE_FLUI  =SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule) ),
            FREQ_COUP       =SIMP(statut='f',typ='R',defaut= 0.1 ),
@@ -43,7 +42,6 @@ DEFI_SPEC_TURB=OPER(nom="DEFI_SPEC_TURB",op= 145,sd_prod=spectre_sdaster,
            BETA            =SIMP(statut='f',typ='R',defaut= 2.7 ),
          ),
          SPEC_LONG_COR_3 =FACT(statut='f',
-           regles=(ENSEMBLE('PHI0_1','BETA_1','PHI0_2','BETA_2','FREQ_COUP'),),
            LONG_COR        =SIMP(statut='o',typ='R' ),
            PROF_VITE_FLUI  =SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule) ),
            FREQ_COUP       =SIMP(statut='f',typ='R',defaut= 0.2 ),
@@ -53,7 +51,6 @@ DEFI_SPEC_TURB=OPER(nom="DEFI_SPEC_TURB",op= 145,sd_prod=spectre_sdaster,
            BETA_2          =SIMP(statut='f',typ='R',defaut= 3.5 ),
          ),
          SPEC_LONG_COR_4 =FACT(statut='f',
-           regles=(ENSEMBLE('BETA','GAMMA'),),
            LONG_COR        =SIMP(statut='o',typ='R' ),
            PROF_VITE_FLUI  =SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule) ),
            TAUX_VIDE       =SIMP(statut='o',typ='R' ),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ character(len=*), intent(in) :: mater
 ! --------------------------------------------------------------------------------------------------
 !
     if (mater .eq. 'XXX') then
-        vali = 14
+        vali = 15
         valk = "Le materiau 'XXX'"
     else
          goto 999

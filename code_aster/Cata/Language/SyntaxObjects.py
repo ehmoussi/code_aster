@@ -49,7 +49,7 @@ from .SyntaxUtils import (add_none_sdprod, block_utils, debug_message2,
                           sorted_dict, value_is_sequence)
 
 
-class SyntaxId(object):
+class SyntaxId:
     """Container of the id of syntax objects.
 
     This list of type identifiers can be extended but never change between
@@ -63,7 +63,7 @@ UNDEF = object()
 
 
 # Must stay identical to `AsterStudy.datamodel.general.ConversionLevel`
-class ConversionLevel(object):
+class ConversionLevel:
     """
     Enumerator for the level of conversion requirements.
 
@@ -178,7 +178,7 @@ class CataDefinition(OrderedDict):
             yield (key, self[key])
 
 
-class UIDMixing(object):
+class UIDMixing:
     """Sub class for UID based classes.
 
     Arguments:
@@ -272,7 +272,7 @@ class PartOfSyntax(UIDMixing):
     """
     def __init__(self, curDict):
         """Initialization"""
-        super(PartOfSyntax, self).__init__()
+        super().__init__()
         self._definition = CataDefinition(curDict)
         regles = curDict.get("regles")
         if regles and type(regles) not in (list, tuple):
@@ -519,8 +519,10 @@ class PartOfSyntax(UIDMixing):
     def undefined(cls, value):
         """Return *True* if the value is a null value (undefined keyword),
         *False* otherwise."""
-        return value is None or (isinstance(value, (list, tuple)) and
-                                 len(value) == 1 and value[0] is None)
+        return (value is None
+                or (isinstance(value, (list, tuple)) and
+                    (len(value) == 0 or (len(value) == 1 and value[0] is None))
+                    ))
 
     def is_list(self):
         """Tell if the value should be stored as list."""

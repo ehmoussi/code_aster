@@ -98,7 +98,7 @@ integer, intent(out) ::  nb_obje
     aster_logical :: l_lagr
     character(len=16) :: option
     character(len=19) :: varc_curr, disp_curr, sigm_curr, vari_curr
-    character(len=19) :: vari_prev, disp_prev, sigm_prev
+    character(len=19) :: vari_prev, disp_prev, sigm_prev, disp_cumu_inst
     integer :: iter_newt, ixfem, nb_subs_stat
     aster_logical :: l_meta_zirc, l_meta_acier, l_xfem, l_macr_elem
     integer :: ldccvg
@@ -212,9 +212,10 @@ integer, intent(out) ::  nb_obje
         if (.not. l_nonl) then
             call copisd('CHAMP_GD', 'V', sigm_prev, sigm_curr)
         endif
+        call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst )
         call vefnme(option                , model    , mate, cara_elem,&
                     ds_constitutive%compor, partps   , 0   , ligrmo   ,&
-                    varc_curr             , sigm_curr, ' ' , disp_curr, ' ',&
+                    varc_curr             , sigm_curr, ' ' , disp_prev, disp_cumu_inst,&
                     'G'                   , veforc)
     endif
 !

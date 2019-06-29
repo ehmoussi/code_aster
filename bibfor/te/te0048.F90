@@ -393,7 +393,7 @@ subroutine te0048(option, nomte)
                 p(:,:)=0.d0
                 invp(:,:)=0.d0
                 call coor_cyl(ndim, nnop, zr(ibalo), zr(igeom), ff,&
-                              p(1:ndim,1:ndim), invp(1:ndim,1:ndim), rg, phig,&
+                              p, invp, rg, phig,&
                               l_not_zero)
 !
 ! --------- champs singuliers
