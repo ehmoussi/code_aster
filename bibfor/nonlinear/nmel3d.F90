@@ -31,19 +31,20 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmgeom.h"
-#include "asterfort/calcExternalStateVariable2.h"
+#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/Behaviour_type.h"
 #include "asterfort/behaviourInit.h"
-    integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
-    character(len=8) :: typmod(*)
-    character(len=16) :: option, compor(*)
-    character(len=*) :: fami, poum
-    real(kind=8) :: geom(3, nno), crit(*)
-    real(kind=8) :: angmas(3)
-    real(kind=8) :: depl(1:3, 1:nno), dfdi(nno, 3)
-    real(kind=8) :: pff(6, nno, nno), def(6, nno, 3)
-    real(kind=8) :: sig(6, npg), vi(lgpg, npg), sigp(6)
-    real(kind=8) :: matuu(*), vectu(3, nno)
+!
+integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
+character(len=8) :: typmod(*)
+character(len=16) :: option, compor(*)
+character(len=*) :: fami, poum
+real(kind=8) :: geom(3, nno), crit(*)
+real(kind=8) :: angmas(3)
+real(kind=8) :: depl(1:3, 1:nno), dfdi(nno, 3)
+real(kind=8) :: pff(6, nno, nno), def(6, nno, 3)
+real(kind=8) :: sig(6, npg), vi(lgpg, npg), sigp(6)
+real(kind=8) :: matuu(*), vectu(3, nno)
 !.......................................................................
 !
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
@@ -81,29 +82,35 @@ implicit none
     real(kind=8) :: poids, tmp1, tmp2
     real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+    integer, parameter :: ndim = 3
+    real(kind=8) :: deplm(3*nno), deplp(3*nno)
 !
     integer :: indi(6), indj(6)
-    real(kind=8) :: rind(6), rac2
+    real(kind=8) :: rind(6)
     data    indi / 1 , 2 , 3 , 1 , 1 , 2 /
     data    indj / 1 , 2 , 3 , 2 , 3 , 3 /
     data    rind / 0.5d0,0.5d0,0.5d0,0.70710678118655d0,&
      &               0.70710678118655d0,0.70710678118655d0 /
-    data    rac2 / 1.4142135623731d0 /
 !
 !
 ! - INITIALISATION
 !
+    deplm(:) = 0.d0
+    deplp(:) = 0.d0
     grdepl = compor(3) .eq. 'GROT_GDEP'
 !
 ! - Initialisation of behaviour datastructure
 !
     call behaviourInit(BEHinteg)
 !
-! - Specific geometric parameters for some behaviours
+! - Prepare external state variables
 !
-    call calcExternalStateVariable2(nno    , npg   , 3  ,&
-                                    ivf    , &
-                                    geom   , coorga)
+    call behaviourPrepExternal(crit  , typmod,&
+                               nno   , npg   , ndim ,&
+                               ipoids, ivf   , idfde,&
+                               geom  , deplm , deplp,&
+                               coorga)
 !
     do kpg = 1, npg
 !

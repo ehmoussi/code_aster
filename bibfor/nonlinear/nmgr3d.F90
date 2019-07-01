@@ -38,7 +38,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/lcdetf.h"
-#include "asterfort/lcegeo.h"
+#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/nmgrtg.h"
@@ -54,7 +54,7 @@ integer, intent(in) :: imate
 integer, intent(in) :: nno, npg, lgpg
 integer, intent(in) :: ipoids, ivf, idfde
 real(kind=8), intent(in) :: vff(*)
-character(len=16), intent(in) :: compor(*)        
+character(len=16), intent(in) :: compor(*)
 real(kind=8), intent(in) :: carcri(*)
 character(len=16), intent(in) :: mult_comp
 real(kind=8), intent(in) :: instam, instap
@@ -106,7 +106,8 @@ integer, intent(inout) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: grand, axi, cplan
-    integer :: kpg, j, jvariext1, jvariext2, jstrainexte, ndim
+    integer :: kpg, j, jstrainexte
+    integer, parameter :: ndim = 3
     real(kind=8) :: dsidep(6, 6)
     real(kind=8) :: f_prev(3, 3), f_curr(3, 3)
     real(kind=8) :: epsg_prev(6), epsg_incr(6), epsg_curr(6)
@@ -123,7 +124,6 @@ integer, intent(inout) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ndim        = 3
     elgeom(:,:) = 0.d0
     wkout(1)    = 0.d0
     cod(:)      = 0
@@ -139,17 +139,15 @@ integer, intent(inout) :: codret
 !
 ! - Get coded integers for external state variables
 !
-    jvariext1   = nint(carcri(IVARIEXT1))
-    jvariext2   = nint(carcri(IVARIEXT2))
     jstrainexte = nint(carcri(ISTRAINEXTE))
 !
-! - Compute intrinsic external state variables
+! - Prepare external state variables
 !
-    call lcegeo(nno      , npg      , ndim     ,&
-                ipoids   , ivf      , idfde    ,&
-                typmod   , jvariext1, jvariext2,&
-                geom_init, coorga   ,&
-                disp_prev, disp_incr)
+    call behaviourPrepExternal(carcri   , typmod   ,&
+                               nno      , npg      , ndim     ,&
+                               ipoids   , ivf      , idfde    ,&
+                               geom_init, disp_prev, disp_incr,&
+                               coorga)
 !
 ! - Only isotropic material !
 !

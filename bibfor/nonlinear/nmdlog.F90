@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/dfdmip.h"
-#include "asterfort/lcegeo.h"
+#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmepsi.h"
 #include "asterfort/nmgrtg.h"
@@ -82,7 +82,7 @@ implicit none
 !
     aster_logical :: grand, axi, resi, rigi, matsym, cplan, lintbo
     parameter (grand = .true._1)
-    integer :: g, nddl, cod(27), ivf, jvariext1, jvariext2
+    integer :: g, nddl, cod(27), ivf
     integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff, iret
     character(len=8) :: typmod(*)
     character(len=*) :: fami
@@ -111,10 +111,7 @@ implicit none
         ASSERT(.false.)
     endif
     elgeom(:,:) = 0.d0
-!
-! - Initialisation of behaviour datastructure
-!
-    call behaviourInit(BEHinteg)
+
 !
 ! -----------------------------DECLARATION-----------------------------
     nddl = ndim*nno
@@ -125,18 +122,17 @@ implicit none
     resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
     rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
 !
-! - Get coded integers for external state variables
+! - Initialisation of behaviour datastructure
 !
-    jvariext1 = nint(carcri(IVARIEXT1))
-    jvariext2 = nint(carcri(IVARIEXT2))
+    call behaviourInit(BEHinteg)
 !
-! - Compute intrinsic external state variables
+! - Prepare external state variables
 !
-    call lcegeo(nno   , npg      , ndim     ,&
-                iw    , ivf      , idff     ,&
-                typmod, jvariext1, jvariext2,&
-                geomi , coorga   ,&
-                deplm , depld)
+    call behaviourPrepExternal(carcri, typmod,&
+                               nno   , npg   , ndim ,&
+                               iw    , ivf   , idff ,&
+                               geomi , deplm , depld,&
+                               coorga)
 !
 !--------------------------INITIALISATION------------------------
 !
