@@ -32,14 +32,14 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/codere.h"
 #include "asterfort/crirup.h"
-#include "asterfort/lcegeo.h"
+#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/behaviourInit.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
 !
 integer :: nno, npg, imate, lgpg, codret, cod(9), ipoids, ivf, idfde
-integer :: ivectu, ideplm, ideplp, ndim
+integer :: ivectu, ideplm, ideplp
 character(len=8) :: typmod(*)
 character(len=*) :: fami
 character(len=16) :: option
@@ -94,19 +94,18 @@ aster_logical :: matsym
 !.......................................................................
 !
     aster_logical :: grand, axi
-!
-    integer :: kpg, kk, kkd, n, i, m, j, j1, kl, jvariext1, jvariext2
-!
+    integer, parameter :: ndim = 2
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+    integer :: kpg, kk, kkd, n, i, m, j, j1, kl
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
     real(kind=8) :: poids, tmp, sig(6), rbid(1)
-    real(kind=8) :: elgeom(10, 9), rac2
+    real(kind=8) :: elgeom(10, 9)
     real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
-! - INITIALISATION
+! --------------------------------------------------------------------------------------------------
 !
     elgeom(:,:) = 0.d0
-    rac2 = sqrt(2.d0)
     grand = .false.
     axi = typmod(1) .eq. 'AXIS'
 !
@@ -114,18 +113,13 @@ aster_logical :: matsym
 !
     call behaviourInit(BEHinteg)
 !
-! - Get coded integers for external state variables
+! - Prepare external state variables
 !
-    jvariext1 = nint(carcri(IVARIEXT1))
-    jvariext2 = nint(carcri(IVARIEXT2))
-!
-! - Compute intrinsic external state variables
-!
-    call lcegeo(nno       , npg      , 2        ,&
-                ipoids    , ivf      , idfde    ,&
-                typmod    , jvariext1, jvariext2,&
-                geom      , coorga   ,&
-                zr(ideplm), zr(ideplp))
+    call behaviourPrepExternal(carcri , typmod    ,&
+                               nno    , npg       , ndim      ,&
+                               ipoids , ivf       , idfde     ,&
+                               geom   , zr(ideplm), zr(ideplp),&
+                               coorga)
 !
 ! - INITIALISATION CODES RETOURS
     do kpg = 1, npg
@@ -303,7 +297,6 @@ aster_logical :: matsym
 !
 !     POST_ITER='CRIT_RUPT'
     if (carcri(13) .gt. 0.d0) then
-        ndim=2
         call crirup(fami, imate, ndim, npg, lgpg,&
                     option, compor, sigp, vip, vim,&
                     instam, instap)

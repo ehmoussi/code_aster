@@ -38,7 +38,7 @@ implicit none
 #include "asterfort/elraga.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/invjac.h"
-#include "asterfort/lcegeo.h"
+#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/matini.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
@@ -64,12 +64,15 @@ real(kind=8) :: def(6, 3, nno)
 real(kind=8) :: sigm(78, nbpg1), sigp(78, nbpg1)
 real(kind=8) :: vim(lgpg, nbpg1), vip(lgpg, nbpg1)
 real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
-!.......................................................................
+!
+! --------------------------------------------------------------------------------------------------
 !
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
 !           EN HYPO-ELASTICITE EN 3D POUR LE HEXA8 SOUS INTEGRE
 !           STABILITE PAR ASSUMED STRAIN
-!.......................................................................
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  NNO     : NOMBRE DE NOEUDS DE L'ELEMENT
 ! IN  NBPG1   : NOMBRE DE POINTS DE GAUSS
 ! IN  POIDSG  : POIDS DES POINTS DE GAUSS
@@ -97,11 +100,13 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
 ! OUT VIP     : VARIABLES INTERNES    (RAPH_MECA ET FULL_MECA)
 ! OUT MATUU   : MATRICE DE RIGIDITE PROFIL (RIGI_MECA_TANG ET FULL_MECA)
 ! OUT VECTU   : FORCES NODALES (RAPH_MECA ET FULL_MECA)
-!.......................................................................
+!
+! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: grand, calbn, axi
     integer :: kpg, i, ii, ino, ia, j, k, kl, proj, cod(9), nbpg2
-    integer :: ndim, nnos, jgano, kp, iaa, jvariext1, jvariext2
+    integer :: nnos, jgano, kp, iaa, ndim2
+    integer, parameter :: ndim = 3
     real(kind=8) :: d(6, 6), f(3, 3), eps(6), deps(6), r, s, sigma(6), sign(6)
     real(kind=8) :: poids, poipg2(8), rbid(1)
     real(kind=8) :: elgeom(10, 9)
@@ -111,7 +116,8 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     real(kind=8) :: bn(6, 3, 8)
     real(kind=8) :: pqx(4), pqy(4), pqz(4)
     real(kind=8) :: dfdx(8), dfdy(8), dfdz(8)
-    real(kind=8) :: valres(2), nu, nub, rac2, den
+    real(kind=8) :: valres(2), nu, nub, den
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
     integer :: icodre(1)
     character(len=16) :: nomres(2)
     character(len=16) :: optios
@@ -122,8 +128,7 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
      &        1.d0,-1.d0,  1.d0,-1.d0, 1.d0,-1.d0, 1.d0,-1.d0,&
      &       -1.d0, 1.d0, -1.d0, 1.d0, 1.d0,-1.d0, 1.d0,-1.d0/
 !
-! - INITIALISATION
-!   ==============
+! --------------------------------------------------------------------------------------------------
 !
 !    PROJ : INDICATEUR DE LA PROJECTION
 !           0 AUCUNE
@@ -136,7 +141,6 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
         proj= 1
     endif
     elgeom(:,:) = 0.d0
-    rac2 = sqrt(2.d0)
     grand = .false.
     calbn = .false.
 !
@@ -144,18 +148,13 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
 !
     call behaviourInit(BEHinteg)
 !
-! - Get coded integers for external state variables
+! - Prepare external state variables
 !
-    jvariext1 = nint(carcri(IVARIEXT1))
-    jvariext2 = nint(carcri(IVARIEXT2))
-!
-! - Compute intrinsic external state variables
-!
-    call lcegeo(nno   , nbpg1    , 3        ,&
-                ipoids, ivf      , idfde    ,&
-                typmod, jvariext1, jvariext2,&
-                geom  , coorga   ,&
-                deplm , deplp)
+    call behaviourPrepExternal(carcri, typmod,&
+                               nno   , nbpg1 , ndim ,&
+                               ipoids, ivf   , idfde,&
+                               geom  , deplm , deplp,&
+                               coorga)
 !
 ! - INITIALISATION CODES RETOURS
     do kpg = 1, nbpg1
@@ -163,9 +162,9 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     end do
 !
 ! - INITIALISATION HEXAS8
-    call elraga('HE8', 'FPG8    ', ndim, nbpg2, coopg2,&
+    call elraga('HE8', 'FPG8    ', ndim2, nbpg2, coopg2,&
                 poipg2)
-    call elrefe_info(elrefe='HE8', fami='MASS', ndim=ndim, nno=nno, nnos=nnos,&
+    call elrefe_info(elrefe='HE8', fami='MASS', nno=nno, nnos=nnos,&
                      npg=nbpg2, jpoids=ipoid2, jvf=ivf2, jdfde=idfde2, jgano=jgano)
 !
 ! - CALCUL DES COEFFICIENTS BI (MOYENNE DES DERIVEES DES FCTS DE FORME)

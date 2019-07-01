@@ -31,25 +31,29 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmgeom.h"
-#include "asterfort/calcExternalStateVariable2.h"
-#include "asterfort/behaviourInit.h"
+#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/Behaviour_type.h"
-    integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
-    integer :: ivectu, idepl
-    character(len=8) :: typmod(*)
-    character(len=16) :: option, compor(*)
-    character(len=*) :: fami, poum
-    real(kind=8) :: geom(2, nno), crit(*)
-    real(kind=8) :: angmas(3)
-    real(kind=8) :: dfdi(nno, 2)
-    real(kind=8) :: pff(4, nno, nno), def(4, nno, 2)
-    real(kind=8) :: sig(4, npg), vi(lgpg, npg)
-    real(kind=8) :: matuu(*)
-!.......................................................................
+#include "asterfort/behaviourInit.h"
+!
+integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
+integer :: ivectu, idepl
+character(len=8) :: typmod(*)
+character(len=16) :: option, compor(*)
+character(len=*) :: fami, poum
+real(kind=8) :: geom(2, nno), crit(*)
+real(kind=8) :: angmas(3)
+real(kind=8) :: dfdi(nno, 2)
+real(kind=8) :: pff(4, nno, nno), def(4, nno, 2)
+real(kind=8) :: sig(4, npg), vi(lgpg, npg)
+real(kind=8) :: matuu(*)
+!
+! --------------------------------------------------------------------------------------------------
 !
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
 !           EN HYPER-ELASTICITE
-!.......................................................................
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  NNO     : NOMBRE DE NOEUDS DE L'ELEMENT
 ! IN  NPG     : NOMBRE DE POINTS DE GAUSS
 ! IN  POIDSG  : POIDS DES POINTS DE GAUSS
@@ -72,41 +76,44 @@ implicit none
 ! OUT VI      : VARIABLES INTERNES    (RAPH_MECA ET FULL_MECA)
 ! OUT MATUU   : MATRICE DE RIGIDITE PROFIL (RIGI_MECA_TANG ET FULL_MECA)
 ! OUT VECTU   : FORCES NODALES (RAPH_MECA ET FULL_MECA)
-!......................................................................
 !
+! --------------------------------------------------------------------------------------------------
 !
     integer :: kpg, kk, n, i, m, j, j1, kl, pq, kkd
+    integer, parameter :: ndim = 2
+    real(kind=8) :: deplm(2*nno), deplp(2*nno)
     aster_logical :: grdepl, axi, cplan
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), r, sigma(6), ftf, detf
     real(kind=8) :: poids, tmp1, tmp2, sigp(6)
     real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
     integer :: indi(4), indj(4)
-    real(kind=8) :: rind(4), rac2
+    real(kind=8) :: rind(4)
     data    indi / 1 , 2 , 3 , 1 /
     data    indj / 1 , 2 , 3 , 2 /
     data    rind / 0.5d0 , 0.5d0 , 0.5d0 , 0.70710678118655d0 /
-    data    rac2 / 1.4142135623731d0 /
 !
-!
-!
-!
-! - INITIALISATION
+! --------------------------------------------------------------------------------------------------
 !
     grdepl = compor(3).eq. 'GROT_GDEP'
     axi = typmod(1) .eq. 'AXIS'
     cplan = typmod(1) .eq. 'C_PLAN'
+    deplm(:) = 0.d0
+    deplp(:) = 0.d0
 !
 ! - Initialisation of behaviour datastructure
 !
     call behaviourInit(BEHinteg)
 !
-! - Specific geometric parameters for some behaviours
+! - Prepare external state variables
 !
-    call calcExternalStateVariable2(nno    , npg   , 2  ,&
-                                    ivf    , &
-                                    geom   , coorga)
+    call behaviourPrepExternal(crit  , typmod,&
+                               nno   , npg   , ndim ,&
+                               ipoids, ivf   , idfde,&
+                               geom  , deplm , deplp,&
+                               coorga)
 !
 ! - CALCUL POUR CHAQUE POINT DE GAUSS
 !
