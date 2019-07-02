@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,24 +15,30 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
 subroutine nmel3d(fami, poum, nno, npg, ipoids,&
                   ivf, idfde, geom, typmod, option,&
                   imate, compor, lgpg, crit, depl,&
                   angmas, dfdi, pff, def, sig,&
                   vi, matuu, vectu, codret)
-! aslint: disable=W1504
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmgeom.h"
+#include "asterfort/calcExternalStateVariable2.h"
+#include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
     integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
     character(len=8) :: typmod(*)
     character(len=16) :: option, compor(*)
     character(len=*) :: fami, poum
-    real(kind=8) :: geom(3, nno), crit(3)
+    real(kind=8) :: geom(3, nno), crit(*)
     real(kind=8) :: angmas(3)
     real(kind=8) :: depl(1:3, 1:nno), dfdi(nno, 3)
     real(kind=8) :: pff(6, nno, nno), def(6, nno, 3)
@@ -73,6 +79,8 @@ subroutine nmel3d(fami, poum, nno, npg, ipoids,&
     aster_logical :: grdepl
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), r, sigma(6), ftf, detf
     real(kind=8) :: poids, tmp1, tmp2
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
     integer :: indi(6), indj(6)
     real(kind=8) :: rind(6), rac2
@@ -87,7 +95,17 @@ subroutine nmel3d(fami, poum, nno, npg, ipoids,&
 !
     grdepl = compor(3) .eq. 'GROT_GDEP'
 !
-    do 10 kpg = 1, npg
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
+! - Specific geometric parameters for some behaviours
+!
+    call calcExternalStateVariable2(nno    , npg   , 3  ,&
+                                    ivf    , &
+                                    geom   , coorga)
+!
+    do kpg = 1, npg
 !
 ! - CALCUL DES ELEMENTS GEOMETRIQUES
 !
@@ -130,7 +148,9 @@ subroutine nmel3d(fami, poum, nno, npg, ipoids,&
 !
 ! - LOI DE COMPORTEMENT : S(E) ET DS/DE
 !
-        call nmcpel(fami, kpg, 1, poum, 3,&
+        BEHinteg%elga%coorpg = coorga(kpg,:)
+        call nmcpel(BEHinteg,&
+                    fami, kpg, 1, poum, 3,&
                     typmod, angmas, imate, compor, crit,&
                     option, eps, sigma, vi(1, kpg), dsidep,&
                     codret)
@@ -233,5 +253,5 @@ subroutine nmel3d(fami, poum, nno, npg, ipoids,&
 220             continue
             endif
         endif
- 10 end do
+    end do
 end subroutine

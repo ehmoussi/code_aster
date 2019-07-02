@@ -361,7 +361,8 @@ integer :: codret
 !
     case (1)
 !     ELAS
-        call lc0001(fami, kpg, ksp, ndim, imate,&
+        call lc0001(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     neps, deps, nsig, sigm, option,&
                     angmas, sigp, vip, typmod, ndsde,&
                     dsidep, codret)
@@ -947,7 +948,8 @@ integer :: codret
 !
     case (2001)
 !     ELAS
-        call lc2001(fami, kpg, ksp, ndim, imate,&
+        call lc2001(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     neps, deps, nsig, sigm, option,&
                     angmas, sigp, vip, typmod, ndsde,&
                     dsidep, codret)
