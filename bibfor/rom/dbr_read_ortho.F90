@@ -17,62 +17,56 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_tr(ds_para_tr, l_reuse)
+subroutine dbr_read_ortho(ds_para_ortho)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/romModeChck.h"
+#include "asterfort/getvid.h"
+#include "asterfort/getvr8.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
-aster_logical, intent(in) :: l_reuse
+type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: ds_para_ortho
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Some checks - Truncation
+! Read parameters - For truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para_tr       : datastructure for truncation parameters
-! In  l_reuse          : .true. if reuse
+! IO  ds_para_ortho    : datastructure for orthogonalization parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: model_rom, model_mode
-    character(len=8) :: mesh_rom, mesh_mode, base_init
-    type(ROM_DS_Field) :: ds_mode
+    integer :: nocc, ifm, niv
+    character(len=8) :: base_init = ' '
+    real(kind=8) :: alpha = 0.d0
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_mode    = ds_para_tr%ds_empi_init%ds_mode
-    model_mode = ds_mode%model
-    mesh_mode  = ds_mode%mesh
-    model_rom  = ds_para_tr%model_rom
-    call dismoi('NOM_MAILLA', model_rom, 'MODELE'  , repk = mesh_rom)
-    if (mesh_mode .ne. mesh_rom) then
-        call utmess('F', 'ROM6_12')
-    endif
-    if (model_mode .eq. model_rom) then
-        call utmess('F', 'ROM6_13')
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM5_28')
     endif
 !
-! - Check empiric mode
+! - Get parameters
 !
-    call romModeChck(ds_mode)
-!
-! - No reuse:
-!
-    base_init = ds_para_tr%base_init
-    if (l_reuse) then
-        if (base_init .ne. ' ') then
-            call utmess('F', 'ROM6_40')
-        endif
+    call getvid(' ', 'BASE', scal = base_init, nbret = nocc)
+    if (nocc .eq. 0) then
+        base_init = ' '
     endif
+    call getvr8(' ', 'ALPHA', scal = alpha, nbret = nocc)
+    ASSERT(nocc .eq. 1)
+!
+! - Save parameters in datastructure
+!
+    ds_para_ortho%alpha     = alpha
+    ds_para_ortho%base_init = base_init
 !
 end subroutine

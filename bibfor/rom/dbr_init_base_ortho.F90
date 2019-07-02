@@ -17,60 +17,76 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_tr(ds_para_tr, l_reuse)
+subroutine dbr_init_base_ortho(base, ds_para_ortho, l_reuse, ds_empi)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/romModeChck.h"
+#include "asterfort/romBaseGetInfo.h"
+#include "asterfort/rscrsd.h"
+#include "asterfort/romBaseDSCopy.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
+character(len=8), intent(in) :: base
+type(ROM_DS_ParaDBR_ORTHO), intent(inout) :: ds_para_ortho
 aster_logical, intent(in) :: l_reuse
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Some checks - Truncation
+! Prepare datastructure for empiric modes - For Orthogonalization
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para_tr       : datastructure for truncation parameters
+! In  base             : name of empiric base
+! IO  ds_para_ortho    : datastructure for orthogonalization parameters
 ! In  l_reuse          : .true. if reuse
+! IO  ds_empi          : datastructure for empiric modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: model_rom, model_mode
-    character(len=8) :: mesh_rom, mesh_mode, base_init
-    type(ROM_DS_Field) :: ds_mode
+    integer :: ifm, niv
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_mode    = ds_para_tr%ds_empi_init%ds_mode
-    model_mode = ds_mode%model
-    mesh_mode  = ds_mode%mesh
-    model_rom  = ds_para_tr%model_rom
-    call dismoi('NOM_MAILLA', model_rom, 'MODELE'  , repk = mesh_rom)
-    if (mesh_mode .ne. mesh_rom) then
-        call utmess('F', 'ROM6_12')
-    endif
-    if (model_mode .eq. model_rom) then
-        call utmess('F', 'ROM6_13')
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM2_60')
     endif
 !
-! - Check empiric mode
+! - Get informations about empiric base to orthogonalize
 !
-    call romModeChck(ds_mode)
-!
-! - No reuse:
-!
-    base_init = ds_para_tr%base_init
     if (l_reuse) then
-        if (base_init .ne. ' ') then
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM2_61')
+        endif
+        call romBaseGetInfo(base, ds_empi)
+    else
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM2_62')
+        endif
+        call romBaseGetInfo(ds_para_ortho%base_init, ds_para_ortho%ds_empi_init)
+    endif
+!
+! - Create empiric base (if necessary)
+!
+    if (.not. l_reuse) then
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM2_63')
+        endif
+        call rscrsd('G', base, 'MODE_EMPI', ds_para_ortho%ds_empi_init%nb_mode)
+        call romBaseDSCopy(ds_para_ortho%ds_empi_init, base, ds_empi)
+    endif
+!
+! - If reuse: check that name is the name between output result end keyword BASE
+!
+    if (l_reuse) then
+        if (ds_para_ortho%base_init .ne. base) then
             call utmess('F', 'ROM6_40')
         endif
     endif

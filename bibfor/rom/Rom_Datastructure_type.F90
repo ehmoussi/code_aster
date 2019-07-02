@@ -331,6 +331,18 @@ implicit none
         integer                 :: idx_gd = 0
     end type ROM_DS_ParaDBR_TR
 !
+! - Parameters for DEFI_BASE_REDUITE operator (ORTHO)
+!
+    type ROM_DS_ParaDBR_ORTHO
+! ----- Base to truncate
+        character(len=8)        :: base_init = ' '
+! ----- Datastructure for empiric modes
+        type(ROM_DS_Empi)       :: ds_empi_init
+! ----- Parameter for KAHAN-PARLETT algorithm
+        real(kind=8)            :: alpha = 0.d0
+
+    end type ROM_DS_ParaDBR_ORTHO
+!
 ! - Parameters for DEFI_BASE_REDUITE operator
 !
     type ROM_DS_ParaDBR
@@ -341,11 +353,13 @@ implicit none
 ! ----- Identificator for field in result datastructure
         character(len=24)        :: field_iden = ' '
 ! ----- Parameters for POD/POD_INCR method
-        type(ROM_DS_ParaDBR_POD) :: para_pod
+        type(ROM_DS_ParaDBR_POD)   :: para_pod
 ! ----- Parameters for RB method
-        type(ROM_DS_ParaDBR_RB ) :: para_rb
+        type(ROM_DS_ParaDBR_RB )   :: para_rb
 ! ----- Parameters for truncation method
-        type(ROM_DS_ParaDBR_TR ) :: para_tr
+        type(ROM_DS_ParaDBR_TR )   :: para_tr
+! ----- Parameters for orthogonalization method
+        type(ROM_DS_ParaDBR_ORTHO) :: para_ortho
 ! ----- Datastructure for empiric modes
         type(ROM_DS_Empi)        :: ds_empi
 ! ----- If operator is "reuse"

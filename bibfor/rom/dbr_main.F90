@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/dbr_main_podincr.h"
 #include "asterfort/dbr_main_rb.h"
 #include "asterfort/dbr_main_tr.h"
+#include "asterfort/dbr_main_ortho.h"
 !
 type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
@@ -63,6 +64,8 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
         call dbr_main_rb(ds_para%para_rb, ds_para%ds_empi)
     elseif (ds_para%operation .eq. 'TRONCATURE') then
         call dbr_main_tr(ds_para%para_tr, ds_para%ds_empi)
+    elseif (ds_para%operation .eq. 'ORTHO') then
+        call dbr_main_ortho(ds_para%para_ortho, ds_para%field_iden, ds_para%ds_empi)
     else
         ASSERT(.false.)
     endif

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_tr(ds_para_tr, l_reuse)
+subroutine dbr_chck_ortho(ds_para_ortho, l_reuse)
 !
 use Rom_Datastructure_type
 !
@@ -25,10 +25,9 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dismoi.h"
 #include "asterfort/romModeChck.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
+type(ROM_DS_ParaDBR_ORTHO), intent(in) :: ds_para_ortho
 aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
@@ -39,40 +38,21 @@ aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para_tr       : datastructure for truncation parameters
+! In  ds_para_ortho    : datastructure for orthogonalization parameters
 ! In  l_reuse          : .true. if reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: model_rom, model_mode
-    character(len=8) :: mesh_rom, mesh_mode, base_init
     type(ROM_DS_Field) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_mode    = ds_para_tr%ds_empi_init%ds_mode
-    model_mode = ds_mode%model
-    mesh_mode  = ds_mode%mesh
-    model_rom  = ds_para_tr%model_rom
-    call dismoi('NOM_MAILLA', model_rom, 'MODELE'  , repk = mesh_rom)
-    if (mesh_mode .ne. mesh_rom) then
-        call utmess('F', 'ROM6_12')
-    endif
-    if (model_mode .eq. model_rom) then
-        call utmess('F', 'ROM6_13')
-    endif
+    ds_mode = ds_para_ortho%ds_empi_init%ds_mode
 !
 ! - Check empiric mode
 !
-    call romModeChck(ds_mode)
-!
-! - No reuse:
-!
-    base_init = ds_para_tr%base_init
-    if (l_reuse) then
-        if (base_init .ne. ' ') then
-            call utmess('F', 'ROM6_40')
-        endif
+    if (.not. l_reuse) then
+        call romModeChck(ds_mode)
     endif
 !
 end subroutine

@@ -16,14 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine dbr_paraDSInit(ds_para_pod, ds_para_rb, ds_para_tr, ds_para_ortho,&
-                              ds_para)
+    subroutine dbr_chck_ortho(ds_para_ortho, l_reuse)
         use Rom_Datastructure_type
-        type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-        type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
-        type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
-        type(ROM_DS_ParaDBR_ORTHO), intent(in) :: ds_para_ortho
-        type(ROM_DS_ParaDBR), intent(out) :: ds_para
-    end subroutine dbr_paraDSInit
+            type(ROM_DS_ParaDBR_ORTHO), intent(in) :: ds_para_ortho
+            aster_logical, intent(in) :: l_reuse
+    end subroutine dbr_chck_ortho
 end interface
