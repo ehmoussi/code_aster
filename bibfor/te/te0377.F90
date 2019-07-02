@@ -41,6 +41,7 @@ use Behaviour_type
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/behaviourInit.h"
+#include "asterfort/calcExternalStateVariable2.h"
 #include "asterfort/elref7.h"
 #include "asterfort/ermeb2.h"
 #include "asterfort/ermes2.h"
@@ -77,7 +78,7 @@ use Behaviour_type
     integer :: iad
     integer :: ifovr, ifovf
     integer :: ipes, irot
-    integer :: iref1, iref2
+    integer :: iref1, iref2, ivf2
     integer :: ndim
     integer :: nno, nnos, npg, ipoids, ivf, idfde, jgano
     integer :: nnof, npgf
@@ -101,6 +102,10 @@ use Behaviour_type
     real(kind=8) :: tx(3), ty(3)
     real(kind=8) :: sig11(3), sig22(3), sig12(3)
     real(kind=8) :: e, nu, rho, valres(3)
+    real(kind=8) :: coorga(27,3)
+    integer, parameter :: nb_para = 3
+    real(kind=8) :: para_vale(nb_para)
+    character(len=16), parameter :: para_name(nb_para) = (/'X', 'Y', 'Z'/)
 !
     integer :: icodre(3)
     character(len=3) :: typnor
@@ -120,7 +125,7 @@ use Behaviour_type
     data typnor / 'NRJ' /
 !
 ! ----------------------------------------------------------------------
-111 format(a,' :',(6(1x,1pe17.10)))
+    111 format(a,' :',(6(1x,1pe17.10)))
 ! ----------------------------------------------------------------------
 ! 1 -------------- GESTION DES DONNEES ---------------------------------
 ! ----------------------------------------------------------------------
@@ -197,6 +202,11 @@ use Behaviour_type
     call jevech('PFORCE', 'L', iref1)
 !
     call jevech('PPRESS', 'L', iref2)
+    call elrefe_info(fami='FPG1', jvf=ivf2)
+    call calcExternalStateVariable2(nno    , 1   , ndim  ,&
+                                    ivf2   , &
+                                    zr(igeom), coorga)
+    BEHinteg%elga%coorpg = coorga(1,:)
 !
 ! 1.7. --- MATERIAU SI BESOIN
 !
@@ -216,8 +226,9 @@ use Behaviour_type
             nompar(nbpar) = 'RHO'
         endif
 !
+        para_vale(:) = BEHinteg%elga%coorpg
         call rcvalb('FPG1', 1, 1, '+', zi(imate),&
-                    ' ', phenom, 0, ' ', [0.d0],&
+                    ' ', phenom, nb_para, para_name, para_vale, &
                     nbpar, nompar, valres, icodre, 1)
 !
         if (typnor .eq. 'NRJ') then
@@ -385,8 +396,8 @@ use Behaviour_type
 !GN      CALL ELREF4 ( ELREFF,fami='RIGI',
 !GN     >              NDIMF, NNOF, NNOSF, NPGF, IPOIDF, IVFF,
 !GN     >              IDFDXF, JGANOF )
-!GN      WRITE(IFM,2000) 'NDIMF',NDIMF
-!GN      WRITE(IFM,2000) 'NNOSF,NNOF,NPGF',NNOSF,NNOF,NPGF
+!GN      WRITE(IFM,222) 'NDIMF',NDIMF
+!GN      WRITE(IFM,222) 'NNOSF,NNOF,NPGF',NNOSF,NNOF,NPGF
 !GN      WRITE(IFM,111) 'IPOIDF', (ZR(IPOIDF+IFA),IFA=0,NPGF-1)
 !
 ! 3.2. --- BOUCLE SUR LES FACES DE LA MAILLE VOLUMIQUE --------------
@@ -405,8 +416,8 @@ use Behaviour_type
 !
         call jenuno(jexnum('&CATA.TM.NOMTM', tyv), typmav)
         if (niv .ge. 2) then
-            write(ifm,113) ifa, zi(ivois+ifa), typmav
-113         format (i2,'-EME FACE DE NUMERO',i10,' ==> TYPMAV = ', a)
+            write(ifm,1003) ifa, zi(ivois+ifa), typmav
+            1003 format (i2,'-EME FACE DE NUMERO',i10,' ==> TYPMAV = ', a)
         endif
 !
 ! ----- CALCUL DE NORMALES, TANGENTES ET JACOBIENS AUX POINTS DE GAUSS

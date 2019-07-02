@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,25 +15,31 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmel2d(fami, poum, nno, npg, ipoids,&
                   ivf, idfde, geom, typmod, option,&
                   imate, compor, lgpg, crit, idepl,&
                   angmas, dfdi, pff, def, sig,&
                   vi, matuu, ivectu, codret)
-! aslint: disable=W1504
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmgeom.h"
+#include "asterfort/calcExternalStateVariable2.h"
+#include "asterfort/behaviourInit.h"
+#include "asterfort/Behaviour_type.h"
     integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
     integer :: ivectu, idepl
     character(len=8) :: typmod(*)
     character(len=16) :: option, compor(*)
     character(len=*) :: fami, poum
-    real(kind=8) :: geom(2, nno), crit(3)
+    real(kind=8) :: geom(2, nno), crit(*)
     real(kind=8) :: angmas(3)
     real(kind=8) :: dfdi(nno, 2)
     real(kind=8) :: pff(4, nno, nno), def(4, nno, 2)
@@ -73,6 +79,8 @@ subroutine nmel2d(fami, poum, nno, npg, ipoids,&
     aster_logical :: grdepl, axi, cplan
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), r, sigma(6), ftf, detf
     real(kind=8) :: poids, tmp1, tmp2, sigp(6)
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
     integer :: indi(4), indj(4)
     real(kind=8) :: rind(4), rac2
@@ -90,9 +98,19 @@ subroutine nmel2d(fami, poum, nno, npg, ipoids,&
     axi = typmod(1) .eq. 'AXIS'
     cplan = typmod(1) .eq. 'C_PLAN'
 !
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
+! - Specific geometric parameters for some behaviours
+!
+    call calcExternalStateVariable2(nno    , npg   , 2  ,&
+                                    ivf    , &
+                                    geom   , coorga)
+!
 ! - CALCUL POUR CHAQUE POINT DE GAUSS
 !
-    do 10 kpg = 1, npg
+    do kpg = 1, npg
 !
 ! - CALCUL DE LA TEMPERATURE AU POINT DE GAUSS
 ! -
@@ -139,7 +157,9 @@ subroutine nmel2d(fami, poum, nno, npg, ipoids,&
 !
 ! - LOI DE COMPORTEMENT : S(E) ET DS/DE
 !
-        call nmcpel(fami, kpg, 1, poum, 2,&
+        BEHinteg%elga%coorpg = coorga(kpg,:)
+        call nmcpel(BEHinteg,&
+                    fami, kpg, 1, poum, 2,&
                     typmod, angmas, imate, compor, crit,&
                     option, eps, sigma, vi(1, kpg), dsidep,&
                     codret)
@@ -235,5 +255,5 @@ subroutine nmel2d(fami, poum, nno, npg, ipoids,&
                 sig(4,kpg) = sigma(4)/rac2
             endif
         endif
- 10 end do
+    end do
 end subroutine

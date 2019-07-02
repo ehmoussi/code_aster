@@ -272,7 +272,8 @@ implicit none
         else if (type_comp .eq. 'COMP_ELAS') then
             call dcopy(ncmp, epsm, 1, eps, 1)
             call daxpy(ncmp, 1.d0, deps, 1, eps, 1)
-            call nmcpel(fami, kpg, 1, '+', ndim,&
+            call nmcpel(BEHinteg,&
+                        fami, kpg, 1, '+', ndim,&
                         typmod, ang, imate, compor, carcri,&
                         option, eps, sigp, zr(lvip), dsidep,&
                         iret)
@@ -307,7 +308,8 @@ implicit none
                         ssigp, zr(lsvip), 36, dsidep, 1,&
                         rbid, iret, mult_comp)
         else if (type_comp .eq. 'COMP_ELAS') then
-            call nmcpel(fami, kpg, 1, '+', ndim,&
+            call nmcpel(BEHinteg,&
+                        fami, kpg, 1, '+', ndim,&
                         typmod, ang, imate, compor, carcri,&
                         option, epsm, sigp, zr(lvip), dsidep,&
                         iret)
@@ -383,7 +385,8 @@ implicit none
     else if (type_comp .eq. 'COMP_ELAS') then
         call dcopy(6, epsm, 1, eps, 1)
         call daxpy(6, 1.d0, deps, 1, eps, 1)
-        call nmcpel(fami, kpg, 1, '+', ndim,&
+        call nmcpel(BEHinteg,&
+                        fami, kpg, 1, '+', ndim,&
                     typmod, ang, imate, compor, carcri,&
                     option, eps, sigp, zr(lvip), dsidep,&
                     iret)

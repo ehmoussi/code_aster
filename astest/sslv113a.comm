@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,19 +34,22 @@ MO=AFFE_MODELE(MAILLAGE=M,
                        PHENOMENE='MECANIQUE',
                        MODELISATION='AXIS',),);
 
-MA1=DEFI_MATERIAU(ELAS=_F(E=2.,
-                          NU=0.3,
-                          ALPHA=0.,),);
+young = DEFI_FONCTION(NOM_PARA='X',VALE=(0.90, 2.0,
+                                         1.51, 2.0,
+                                         1.52, 1.0, 
+                                         2.10, 1.0),)
+nu = DEFI_CONSTANTE(VALE=0.3)
+alpha = DEFI_CONSTANTE(VALE=0.)
+zero = DEFI_CONSTANTE(VALE=0.)
 
-MA2=DEFI_MATERIAU(ELAS=_F(E=1.,
-                          NU=0.3,
-                          ALPHA=0.,),);
+MA1=DEFI_MATERIAU(ELAS_FO=_F(E=young,
+                          NU=nu,
+                          ALPHA=alpha,TEMP_DEF_ALPHA=0.),);
 
 CM=AFFE_MATERIAU(MAILLAGE=M,
-                 AFFE=(_F(GROUP_MA='DOM1',
+                 AFFE=(_F(GROUP_MA='DOM',
                           MATER=MA1,),
-                       _F(GROUP_MA='DOM2',
-                          MATER=MA2,),),);
+                       ),);
 
 F1 = FORMULE(VALE="""
 1.15385*(2*-0.98097+0.91333)+2*0.76923*(-0.98097
@@ -82,9 +85,20 @@ CH=AFFE_CHAR_MECA(MODELE=MO,
                                  _F(GROUP_MA='GRMA4',
                                     FX=-2.,),),);
 
-RESU=MECA_STATIQUE(MODELE=MO,
+LISTR=DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=_F(JUSQU_A=1.0,
+                                   NOMBRE=1,),);
+                                   
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',
+                    VALE=(0.0 ,0.0 ,
+                          1.0 ,1.0 ,),);
+
+RESU=STAT_NON_LINE(MODELE=MO, 
                    CHAM_MATER=CM,
-                   EXCIT=_F(CHARGE=CH,),);
+                   COMPORTEMENT=_F(TOUT='OUI', RELATION='ELAS'),
+                   INCREMENT=_F(LIST_INST=LISTR),
+                   EXCIT=_F(CHARGE=CH,FONC_MULT=RAMPE),);
+
 
 RESU=CALC_ERREUR(reuse =RESU,
                  RESULTAT=RESU,
