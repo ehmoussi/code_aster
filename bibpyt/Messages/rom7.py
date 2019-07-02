@@ -72,4 +72,7 @@ Conseil: utilisez CALC_CHAMP pour calculer ce champ."""),
 
    30 : _("""La table des coordonnées réduites n'a pas le bon nombre de modes par rapport à la base empirique."""),
 
+   31 : _("""Paramètres spécifiques à la méthode d'orthogonalisation."""),
+
+   32 : _("""Paramètre pour l'algorithme: %(r1)13.6G."""), 
 }

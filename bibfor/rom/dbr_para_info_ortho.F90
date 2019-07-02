@@ -17,62 +17,39 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_tr(ds_para_tr, l_reuse)
+subroutine dbr_para_info_ortho(ds_para_ortho)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/romModeChck.h"
 !
-type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
-aster_logical, intent(in) :: l_reuse
+type(ROM_DS_ParaDBR_ORTHO), intent(in) :: ds_para_ortho
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Some checks - Truncation
+! Informations about DEFI_BASE_REDUITE parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para_tr       : datastructure for truncation parameters
-! In  l_reuse          : .true. if reuse
+! In  ds_para_ortho    : datastructure for orthogonalization parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: model_rom, model_mode
-    character(len=8) :: mesh_rom, mesh_mode, base_init
-    type(ROM_DS_Field) :: ds_mode
+    integer :: ifm, niv
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_mode    = ds_para_tr%ds_empi_init%ds_mode
-    model_mode = ds_mode%model
-    mesh_mode  = ds_mode%mesh
-    model_rom  = ds_para_tr%model_rom
-    call dismoi('NOM_MAILLA', model_rom, 'MODELE'  , repk = mesh_rom)
-    if (mesh_mode .ne. mesh_rom) then
-        call utmess('F', 'ROM6_12')
-    endif
-    if (model_mode .eq. model_rom) then
-        call utmess('F', 'ROM6_13')
-    endif
-!
-! - Check empiric mode
-!
-    call romModeChck(ds_mode)
-!
-! - No reuse:
-!
-    base_init = ds_para_tr%base_init
-    if (l_reuse) then
-        if (base_init .ne. ' ') then
-            call utmess('F', 'ROM6_40')
-        endif
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM7_31')
+        call utmess('I', 'ROM7_32', sr = ds_para_ortho%alpha)
     endif
 !
 end subroutine
