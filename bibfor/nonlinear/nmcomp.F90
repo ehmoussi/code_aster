@@ -17,12 +17,15 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine nmcomp(fami, kpg, ksp, ndim, typmod,&
-                  imate, compor, carcri, instam, instap,&
-                  neps, epsm, deps, nsig, sigm,&
-                  vim, option, angmas, nwkin, wkin,&
-                  sigp, vip, ndsde, dsidep, nwkout,&
-                  wkout, codret, mult_comp_, l_epsi_varc_)
+subroutine nmcomp(BEHinteg,&
+                  fami   , kpg, ksp, ndim, typmod,&
+                  imate  , compor, carcri, instam, instap,&
+                  neps   , epsm, deps, nsig, sigm,&
+                  vim    , option, angmas, nwkin, wkin,&
+                  sigp   , vip, ndsde, dsidep, nwkout,&
+                  wkout  , codret, mult_comp_, l_epsi_varc_)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -35,6 +38,7 @@ implicit none
 #include "asterfort/redece.h"
 #include "asterfort/lcidbg.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 integer :: kpg, ksp, ndim, imate, codret, icp, numlc
 integer :: neps, nsig, nwkin, nwkout, ndsde
 character(len=8) :: typmod(*)
@@ -48,10 +52,14 @@ real(kind=8) :: angmas(*)
 character(len=16), optional, intent(in) :: mult_comp_
 aster_logical, optional, intent(in) :: l_epsi_varc_
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
 !     INTEGRATION DES LOIS DE COMPORTEMENT NON LINEAIRE POUR LES
 !     ELEMENTS ISOPARAMETRIQUES EN PETITES OU GRANDES DEFORMATIONS
 !
+! --------------------------------------------------------------------------------------------------
+!
+! In  BEHinteg       : parameters for integration of behaviour
 ! IN  FAMI,KPG,KSP  : FAMILLE ET NUMERO DU (SOUS)POINT DE GAUSS
 !     NDIM    : DIMENSION DE L'ESPACE
 !               3 : 3D , 2 : D_PLAN ,AXIS OU  C_PLAN
@@ -112,7 +120,7 @@ aster_logical, optional, intent(in) :: l_epsi_varc_
 ! -SINON (DEFORMATION = PETIT OU PETIT_REAC OU GDEF_...)
 !   EPSM(6), DEPS(6)  SONT LES DEFORMATIONS (LINEARISEES OU GREEN OU ..)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 !    POUR LES UTILITAIRES DE CALCUL TENSORIEL
     integer :: ndt, ndi
@@ -122,6 +130,8 @@ aster_logical, optional, intent(in) :: l_epsi_varc_
     character(len=16) :: optio2, mult_comp
     aster_logical :: cp, convcp
     integer :: cpl, nvv, ncpmax
+!
+! --------------------------------------------------------------------------------------------------
 !
     codret = 0
     l_epsi_varc = ASTER_TRUE
@@ -157,7 +167,8 @@ aster_logical, optional, intent(in) :: l_epsi_varc_
 !
 !     BOUCLE POUR ETABLIR LES CONTRAINTES PLANES
     do icp = 1, ncpmax
-        call redece(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
+        call redece(BEHinteg,&
+                    fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                     imate, compor, mult_comp, carcri, instam, instap,&
                     neps, epsm, deps, nsig, sigm,&
                     vim, option, angmas, nwkin, wkin,&

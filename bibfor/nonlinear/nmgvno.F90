@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
                   iw, vff1, vff2, idfde1, idfde2,&
                   geom, typmod, option, mat, compor,&
@@ -23,10 +24,9 @@ subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
                   ddld, angmas, sigm, vim, sigp,&
                   vip, matr, vect, codret)
 !
+use Behaviour_type
 !
-!
-! aslint: disable=W1504
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -102,6 +102,7 @@ subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
     real(kind=8) :: di, char, r8bid(1)
     real(kind=8) :: dfdi2(8*3)
     real(kind=8) :: critd(20)
+    type(Behaviour_Integ) :: BEHinteg
 !
     data  nom /'C_GRAD_VARI'/
 !
@@ -239,7 +240,8 @@ subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
         nonloc(1)= avp
         nonloc(2)= c
 !
-        call nmcomp(fami, g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    fami, g, 1, ndim, typmod,&
                     mat, compor, crit, instam, instap,&
                     6, epsm, epsd, 6, sigmam,&
                     vim(1, g), option, angmas, 2, nonloc,&

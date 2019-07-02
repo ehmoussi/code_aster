@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,8 @@ subroutine calcme(option, j_mater, ndim  , typmod, angl_naut,&
                   congem, vintm  ,&
                   congep, vintp  ,&
                   dsdeme, retcom )
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -90,6 +92,7 @@ integer, intent(out) :: retcom
     integer, parameter :: ndsdeme = 36
     integer ::  kpg, ksp
     character(len=8) :: fami
+    type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -101,7 +104,8 @@ integer, intent(out) :: retcom
 !
 ! - Integration of mechanical behaviour
 !
-    call nmcomp(fami          , kpg                , ksp      , ndim  , typmod        ,&
+    call nmcomp(BEHinteg      ,&
+                fami          , kpg                , ksp      , ndim  , typmod        ,&
                 j_mater       , compor             , carcri   , instam, instap        ,&
                 neps          , defgem(addeme+ndim), deps     , nsig  , congem(adcome),&
                 vintm         , option             , angl_naut, nwkin , wkin          ,&

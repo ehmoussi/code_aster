@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
                    fami,   nno,    npg, ipoids,    ivf,&
                   idfde,  geom, typmod, option,  imate,&
                  compor,  lgpg,   crit, instam, instap,&
                   deplm, deplp, angmas,   sigm,    vim,&
                  sigp,    vip,  matuu,  vectu, codret)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
 !
 ! Non-linear Solid-Shell Petit (small) Linear deformation
 !
@@ -82,8 +86,7 @@ subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
 #include "asterfort/tpsivp_shb.h"
 #include "asterfort/utbtab.h"
 !
-! aslint: disable=W1504
-!
+
     aster_logical, intent(in) :: hexa
     aster_logical, intent(in) :: shb6
     aster_logical, intent(in) :: shb8
@@ -129,6 +132,7 @@ subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
     real(kind=8), dimension(3,3) :: f, fp, fpl, fplt, pgl, pglt, work
     real(kind=8), dimension(6,6) :: cmatgl, cmatlo, dsidep, pglqo, work66
     real(kind=8), dimension(81,81) :: btdb
+    type(Behaviour_Integ) :: BEHinteg
 !
 ! ......................................................................
 !
@@ -324,7 +328,8 @@ subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
 !      'ndim' is set to 2 because of 'typmod' = C_PLAN hypothesis
 !       To be noticed for 3D ISO elements:
 !        - 'nwkin' is set to 10 instead of 1 here
-       call nmcomp(fami       , kpg        , 1     , 2     , typmod   ,&
+       call nmcomp(BEHinteg   ,&
+                   fami       , kpg        , 1     , 2     , typmod   ,&
                    imate      , compor     , crit  , instam, instap   ,&
                    6          , eps        , deps  , 6     , sigm_norm,&
                    vim(1, kpg), option     , angmas, 1     , [0.d0]   ,&

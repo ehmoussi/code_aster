@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine redece(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
+subroutine redece(BEHinteg,&
+                  fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   imate, compor, mult_comp, carcri, instam, instap,&
                   neps, epsdt, depst, nsig, sigd,&
                   vind, option, angmas, nwkin, wkin,&
@@ -26,6 +27,7 @@ subroutine redece(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   wkout, codret)
 !
 use calcul_module, only : ca_iredec_, ca_td1_, ca_tf1_, ca_timed1_, ca_timef1_
+use Behaviour_type
 !
 implicit none
 !
@@ -40,12 +42,21 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
 !
-! ======================================================================
+type(Behaviour_Integ), intent(in) :: BEHinteg
+character(len=*) :: fami
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     INTEGRATION DES LOIS DE COMPORTEMENT NON LINEAIRE POUR LES
 !     ELEMENTS ISOPARAMETRIQUES EN PETITES OU GRANDES DEFORMATIONS
-! ======================================================================
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! ROUTINE DE REDECOUPAGE LOCAL DU PAS dE TEMPS
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  BEHinteg       : parameters for integration of behaviour
 !       - SI CARCRI(5) = -N  EN CAS DE NON-CONVERGENCE LOCALE ON EFFECTU
 !                          UN REDECOUPAGE DU PAS DE TEMPS EN N PALIERS
 !                          L ORDRE D EXECUTION ETANT REMONTE EN ARGUMENT
@@ -128,7 +139,7 @@ implicit none
 !   EPSDT(6), DEPST(6)  SONT LES DEFORMATIONS TOTALES
 !                      (LINEARISEES OU GREEN OU ..)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: imate, ndim, ndt, ndi, nvi, kpg, ksp, numlc
     integer :: neps, nsig, nwkin, nwkout, ndsde
@@ -144,10 +155,11 @@ implicit none
     character(len=16) :: compor(*), option
     character(len=16), intent(in) :: mult_comp
     character(len=8) :: typmod(*)
-    character(len=*) :: fami
+
     aster_logical :: cp
 !
-!       ----------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
 !       VARIABLES LOCALES POUR LE REDECOUPAGE DU PAS DE TEMPS
 !               TD      INSTANT T
 !               TF      INSTANT T+DT
@@ -162,7 +174,8 @@ implicit none
 !               ICOMP           COMPORTEUR POUR LE REDECOUPAGE DU PAS DE
 !                                    TEMPS
 !               RETURN1 EN CAS DE NON CONVERGENCE LOCALE
-!       ----------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: icomp, npal, ipal, codret, k
     real(kind=8) :: eps(neps), deps(neps), sd(nsig)
@@ -170,8 +183,9 @@ implicit none
     real(kind=8) :: deltat, td, tf
 !       ----------------------------------------------------------------
     common /tdim/   ndt  , ndi
-!       ----------------------------------------------------------------
-!       ----------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 !       -- POUR LES VARIABLES DE COMMANDE :
     ca_iredec_=1
     ca_timed1_=instam
@@ -213,7 +227,8 @@ implicit none
         icomp = -1
     endif
 !
-    call lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
+    call lc0000(BEHinteg,&
+                fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                 imate, compor, mult_comp, carcri, instam, instap,&
                 neps, epsdt, depst, nsig, sigd,&
                 vind, option, angmas, nwkin, wkin,&
@@ -281,7 +296,8 @@ implicit none
         endif
 !
 !
-        call lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
+        call lc0000(BEHinteg,&
+                    fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                     imate, compor, mult_comp, carcri, td, tf,&
                     neps, eps, deps, nsig, sd,&
                     vind, option, angmas, nwkin, wkin,&

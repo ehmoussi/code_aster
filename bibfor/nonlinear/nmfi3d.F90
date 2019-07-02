@@ -1,6 +1,6 @@
 ! --------------------------------------------------------------------
 ! Copyright (C) 2007 NECS - BRUNO ZUBER   WWW.NECS.FR
-! Copyright (C) 2007 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 2007 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1504
 
 subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
                   vff, dfde, mate, option, geom,&
@@ -23,9 +24,10 @@ subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
                   ktan, vim, vip, crit, compor,&
                   matsym, coopg, tm, tp, codret)
 !
+use Behaviour_type
 !
-! aslint: disable=,W1504
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
 #include "asterfort/codere.h"
@@ -74,6 +76,7 @@ subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
     real(kind=8) :: sum(3), dsu(3), dsidep(6, 6), poids
     real(kind=8) :: rbid(1)
     real(kind=8) :: angmas(3)
+    type(Behaviour_Integ) :: BEHinteg
 !
     character(len=8) :: typmod(2)
     data typmod /'3D','ELEMJOIN'/
@@ -130,7 +133,8 @@ subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
             sigmo(n) = sigm(n,kpg)
  12     continue
 !
-        call nmcomp('RIGI', kpg, 1, 3, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', kpg, 1, 3, typmod,&
                     mate, compor, crit, tm, tp,&
                     3, sum, dsu, 6, sigmo,&
                     vim(1, kpg), option, angmas, 4, coopg(1, kpg),&

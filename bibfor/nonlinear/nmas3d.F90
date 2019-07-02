@@ -24,6 +24,8 @@ subroutine nmas3d(fami, nno, nbpg1, ipoids, ivf,&
                   dfdi, def, sigp, vip, matuu,&
                   vectu, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -112,6 +114,8 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     integer :: icodre(1)
     character(len=16) :: nomres(2)
     character(len=16) :: optios
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
     data h/ 1.d0, 1.d0, -1.d0,-1.d0,-1.d0,-1.d0, 1.d0, 1.d0,&
      &        1.d0,-1.d0, -1.d0, 1.d0,-1.d0, 1.d0, 1.d0,-1.d0,&
      &        1.d0,-1.d0,  1.d0,-1.d0, 1.d0,-1.d0, 1.d0,-1.d0,&
@@ -145,7 +149,7 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     call lcegeo(nno   , nbpg1    , 3        ,&
                 ipoids, ivf      , idfde    ,&
                 typmod, jvariext1, jvariext2,&
-                geom  ,&
+                geom  , coorga   ,&
                 deplm , deplp)
 !
 ! - INITIALISATION CODES RETOURS
@@ -251,7 +255,9 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
         optios = option
     endif
 !
-    call nmcomp(fami, kpg, 1, 3, typmod,&
+    BEHinteg%elga%coorpg = coorga(kpg,:)
+    call nmcomp(BEHinteg,&
+                fami, kpg, 1, 3, typmod,&
                 imate, compor, carcri, instam, instap,&
                 6, eps, deps, 6, sign,&
                 vim(1, kpg), optios, angmas, 10, elgeom(1, kpg),&

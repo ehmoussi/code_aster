@@ -29,6 +29,8 @@ subroutine nmgr2d(option   , typmod    ,&
                   matsym   , matuu     , vectu    ,&
                   codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -115,6 +117,8 @@ integer, intent(inout) :: codret
     integer :: cod(9)
     real(kind=8) :: dfdi(nno,2), pff(4,nno,nno), def(4,nno,2)
     character(len=16) :: rela_comp
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -139,7 +143,8 @@ integer, intent(inout) :: codret
     call lcegeo(nno      , npg      , ndim     ,&
                 ipoids   , ivf      , idfde    ,&
                 typmod   , jvariext1, jvariext2,&
-                geom_init, disp_prev, disp_incr)
+                geom_init, coorga   ,&
+                disp_prev, disp_incr)
 !
 ! - Only isotropic material !
 !
@@ -153,6 +158,7 @@ integer, intent(inout) :: codret
 !
     do kpg = 1, npg
 !
+        BEHinteg%elga%coorpg = coorga(kpg,:)
         epsg_prev(1:6) = 0.d0
         epsg_incr(1:6) = 0.d0
         epsg_curr(1:6) = 0.d0
@@ -196,7 +202,8 @@ integer, intent(inout) :: codret
                 endif
             endif
 ! --------- Compute behaviour
-            call nmcomp(fami       , kpg        , 1        , ndim  , typmod        ,&
+            call nmcomp(BEHinteg   ,&
+                        fami       , kpg        , 1        , ndim  , typmod        ,&
                         imate      , compor     , carcri   , instam, instap        ,&
                         6          , epsg_prev  , epsg_incr, 6     , sigm_norm     ,&
                         vim(1, kpg), option     , angl_naut, 10    , elgeom(1, kpg),&
@@ -213,7 +220,8 @@ integer, intent(inout) :: codret
                 goto 999
             endif
 ! --------- Compute behaviour
-            call nmcomp(fami       , kpg        , 1        , ndim  , typmod        ,&
+            call nmcomp(BEHinteg   ,&
+                        fami       , kpg        , 1        , ndim  , typmod        ,&
                         imate      , compor     , carcri   , instam, instap        ,&
                         9          , f_prev     , f_curr   , 6     , sigm_norm     ,&
                         vim(1, kpg), option     , angl_naut, 10    , elgeom(1, kpg),&
@@ -223,7 +231,7 @@ integer, intent(inout) :: codret
                 goto 999
             endif
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
 !
 ! ----- Compute internal forces vector and rigidity matrix

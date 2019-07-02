@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306
+!
 subroutine calcul(stop, option_, ligrel_, nin, lchin,&
                   lpain, nou, lchou, lpaou, base,&
                   mpic)
-! aslint: disable=W1306
+!
 use calcul_module, only : ca_iainel_, ca_ialiel_, ca_iaobtr_, ca_iaopds_,&
      ca_iaoppa_, ca_igr_, ca_illiel_, ca_ininel_,&
      ca_jcteat_, ca_lcteat_, ca_nbelgr_, ca_nbgr_, &
@@ -27,14 +28,14 @@ use calcul_module, only : ca_iainel_, ca_ialiel_, ca_iaobtr_, ca_iaopds_,&
      ca_nuop_, ca_ligrel_, ca_option_, ca_iactif_,&
      ca_ldist_, ca_ldgrel_, ca_rang_, ca_nbproc_, ca_numsd_,&
      ca_lparal_, ca_paral_, ca_iel_, ca_ctempl_
+!
 implicit none
-
-! person_in_charge: jacques.pellet at edf.fr
-
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getres.h"
 #include "asterc/indik8.h"
+#include "asterc/r8nnem.h"
 #include "asterfort/alchlo.h"
 #include "asterfort/alrslt.h"
 #include "asterfort/asmpi_barrier.h"

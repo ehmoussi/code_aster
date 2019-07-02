@@ -24,6 +24,8 @@ subroutine nmpl2d(fami, nno, npg, ipoids, ivf,&
                   matsym, dfdi, def, sigp, vip,&
                   matuu, ivectu, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -97,6 +99,8 @@ aster_logical :: matsym
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
     real(kind=8) :: poids, tmp, sig(6), rbid(1)
     real(kind=8) :: elgeom(10, 9), rac2
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
 ! - INITIALISATION
 !
@@ -112,10 +116,10 @@ aster_logical :: matsym
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno   , npg      , 2        ,&
-                ipoids, ivf      , idfde    ,&
-                typmod, jvariext1, jvariext2,&
-                geom  ,&
+    call lcegeo(nno       , npg      , 2        ,&
+                ipoids    , ivf      , idfde    ,&
+                typmod    , jvariext1, jvariext2,&
+                geom      , coorga   ,&
                 zr(ideplm), zr(ideplp))
 !
 ! - INITIALISATION CODES RETOURS
@@ -172,7 +176,9 @@ aster_logical :: matsym
 !
 !
 ! - LOI DE COMPORTEMENT
-        call nmcomp(fami, kpg, 1, 2, typmod,&
+        BEHinteg%elga%coorpg = coorga(kpg,:)
+        call nmcomp(BEHinteg,&
+                    fami, kpg, 1, 2, typmod,&
                     imate, compor, carcri, instam, instap,&
                     6, eps, deps, 6, sign,&
                     vim(1, kpg), option, angmas, 10, elgeom(1, kpg),&

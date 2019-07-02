@@ -20,6 +20,7 @@
 subroutine op0033()
 !
 use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
@@ -97,6 +98,7 @@ implicit none
     integer :: lvim, lvip, lvim2, lsvip, lnomvi
     type(NL_DS_Conv) :: ds_conv
     type(NL_DS_AlgoPara) :: ds_algopara
+    type(Behaviour_Integ) :: BEHinteg
 !
     data sddisc  /'&&OP0033.SDDISC'/
     data sdcrit  /'&&OP0033.SDCRIT'/
@@ -252,7 +254,8 @@ implicit none
         endif
         if (type_comp .eq. 'COMP_INCR') then
             call dcopy(nbvari, zr(lvim), 1, zr(lvim2), 1)
-            call nmcomp(fami, kpg, ksp, ndim, typmod,&
+            call nmcomp(BEHinteg,&
+                        fami, kpg, ksp, ndim, typmod,&
                         imate, compor, carcri, instam, instap,&
                         ncmp, epsm, deps, 6, sigm,&
                         zr(lvim2), opt2, ang, 10, work,&
@@ -291,7 +294,8 @@ implicit none
         opt2='RIGI_MECA_TANG'
         call dcopy(nbvari, zr(lvim), 1, zr(lsvip), 1)
         if (type_comp .eq. 'COMP_INCR') then
-            call nmcomp(fami, kpg, ksp, ndim, typmod,&
+            call nmcomp(BEHinteg,&
+                        fami, kpg, ksp, ndim, typmod,&
                         imate, compor, carcri, instam, instap,&
                         6, epsm, deps, 6, sigm,&
                         zr(lsvip), opt2, ang, 10, work,&
@@ -364,7 +368,8 @@ implicit none
     liccvg(2) = 0
     if (type_comp .eq. 'COMP_INCR') then
         call dcopy(nbvari, zr(lvim), 1, zr(lvim2), 1)
-        call nmcomp(fami, kpg, ksp, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    fami, kpg, ksp, ndim, typmod,&
                     imate, compor, carcri, instam, instap,&
                     6, epsm, deps, 6, sigm,&
                     zr(lvim2), option, ang, 10, work,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
-! aslint: disable=W1504
 !
 interface
-    subroutine nmcpla(fami, kpg, ksp, ndim, typmod,&
+    subroutine nmcpla(BEHinteg,&
+                      fami, kpg, ksp, ndim, typmod,&
                       imat, compor_plas, compor_creep, carcri, timed, timef,&
                       neps, epsdt, depst, nsig, sigd,&
                       vind, option, nwkin, wkin, sigf,&
                       vinf, ndsde, dsde, nwkout, wkout,&
                       iret)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         integer :: ndsde
         character(len=*) :: fami
         integer :: kpg

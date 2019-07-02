@@ -17,11 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lc0115(fami, kpg, ksp, ndim, imate,&
+    subroutine lc0115(BEHinteg,&
+                      fami, kpg, ksp, ndim, imate,&
                       compor, carcri, instam, instap, epsm,&
                       deps, sigm, vim, option, angmas,&
                       sigp, vip, typmod, icomp,&
                       nvi, dsidep, codret)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
         integer, intent(in) :: ksp

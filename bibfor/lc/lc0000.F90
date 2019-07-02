@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1501,W1504
 !
-subroutine lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
+subroutine lc0000(BEHinteg,&
+                  fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   imate, compor, mult_comp, carcri,&
                   instam, instap,&
                   neps, epsm, deps, nsig, sigm,&
@@ -27,6 +28,7 @@ subroutine lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   nvi, nwkout, wkout, codret)
 !
 use calcul_module, only : calcul_status, ca_nbcvrc_
+use Behaviour_type
 !
 implicit none
 !
@@ -163,6 +165,7 @@ implicit none
 #include "asterfort/lcRestoreStrain.h"
 #include "asterfort/assert.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 integer :: imate, ndim, nvi, kpg, ksp
 aster_logical, intent(in) :: l_epsi_varc
 integer :: neps, nsig, nwkin, nwkout, ndsde
@@ -182,13 +185,14 @@ integer :: icomp
 integer :: numlc
 integer :: codret
 !
-! ======================================================================
+! --------------------------------------------------------------------------------------------------
+!
 !     INTEGRATION DES LOIS DE COMPORTEMENT NON LINEAIRE POUR LES
 !     ELEMENTS ISOPARAMETRIQUES EN PETITES OU GRANDES DEFORMATIONS
-! ======================================================================
-!     ARGUMENTS
-! ======================================================================
 !
+! --------------------------------------------------------------------------------------------------
+!
+! In  BEHinteg       : parameters for integration of behaviour
 ! IN  FAMI,KPG,KSP  : FAMILLE ET NUMERO DU (SOUS)POINT DE GAUSS
 !     NDIM    : DIMENSION DE L'ESPACE
 !               3 : 3D , 2 : D_PLAN ,AXIS OU  C_PLAN
@@ -269,7 +273,8 @@ integer :: codret
 !             ICOMP           COMPTEUR POUR LE REDECOUPAGE DU PAS DE
 !                                  TEMPS
 !             RETURN1 EN CAS DE NON CONVERGENCE LOCALE
-!     ----------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: tabcod(60), variextecode(2)
     integer, parameter :: npred = 8
@@ -277,8 +282,8 @@ integer :: codret
     real(kind=8) :: epsth(neps), depsth(neps)
     real(kind=8) :: temp, dtemp
     real(kind=8) :: predef(npred), dpred(npred)
-!     ----------------------------------------------------------------
-!     ------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! - Compute mechanical strain with PTOT external state variable
 !
@@ -351,8 +356,6 @@ integer :: codret
     endif
 !
 ! --------------------------------------------------------------------------------------------------
-!
-
 !
     select case (numlc)
 !
@@ -823,7 +826,8 @@ integer :: codret
                     nvi, dsidep, codret)
     case (115)
 !     META_LEMA_ANI
-        call lc0115(fami, kpg, ksp, ndim, imate,&
+        call lc0115(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
@@ -1121,7 +1125,8 @@ integer :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     case (8028)
-        call lc8028(fami, kpg, ksp, ndim, imate,&
+        call lc8028(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas,sigp, nvi, vip, nwkin,&
@@ -1129,7 +1134,8 @@ integer :: codret
                     dsidep, nwkout, wkout, codret)
 !
     case (8029)
-        call lc8029(fami, kpg, ksp, ndim, imate,&
+        call lc8029(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas,sigp, nvi, vip, nwkin,&
@@ -1137,7 +1143,8 @@ integer :: codret
                     dsidep, nwkout, wkout, codret)
 !
     case (8057)
-        call lc8057(fami, kpg, ksp, ndim, imate,&
+        call lc8057(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas,sigp, nvi, vip, nwkin,&
@@ -1145,7 +1152,8 @@ integer :: codret
                     dsidep, nwkout, wkout, codret)
 !
     case (8146)
-        call lc8146(fami, kpg, ksp, ndim, imate,&
+        call lc8146(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas,sigp, nvi, vip, nwkin,&
@@ -1153,7 +1161,8 @@ integer :: codret
                     dsidep, nwkout, wkout, codret)
 !
     case (8331)
-        call lc8331(fami, kpg, ksp, ndim, imate,&
+        call lc8331(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas,sigp, nvi, vip, nwkin,&

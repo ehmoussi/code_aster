@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,11 @@
 
 subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
                   btsig, ktan, codret)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8vide.h"
@@ -186,6 +190,7 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
 !    integer :: iniv,
     integer :: multicel,pcontr
     character(len=4) :: fami = 'RIGI'
+    type(Behaviour_Integ) :: BEHinteg
 !     ------------------------------------------------------------------
 !
 
@@ -452,7 +457,8 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
                 do pcontr =1,5
                     zr(icontp+icpg+pcontr)=0.0
                 enddo    
-                call nmcomp('RIGI', ipg, ksp, 2, typmod,&
+                call nmcomp(BEHinteg,&
+                            'RIGI', ipg, ksp, 2, typmod,&
                             zi(imate), zk16(icompo), zr(icarcr), instm, instp,&
                             4, eps2d, deps2d, 4, sigm,&
                             zr(ivarim+ivpg), opt, angmas, 1, [0.d0],&

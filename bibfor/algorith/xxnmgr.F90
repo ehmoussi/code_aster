@@ -25,6 +25,8 @@ subroutine xxnmgr(elrefp, elrese, ndim, coorse, igeom,&
                   idepl, lsn, lst, nfiss, heavn,&
                   sigp, vi, matuu, ivectu, codret, jstno)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -116,6 +118,8 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     real(kind=8) :: fmm(3, 3)
     real(kind=8) :: fk(27,3,3), dkdgl(27,3,3,3), ka, mu
     aster_logical :: grdepl, axi, cplan, resi, rigi
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
     integer :: indi(6), indj(6)
     real(kind=8) :: rind(6), rind1(6), rac2, angmas(3)
@@ -164,7 +168,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     call lcegeo(nno      , npg      , ndim     ,&
                 ipoids   , ivf      , idfde    ,&
                 typmod   , jvariext1, jvariext2,&
-                zr(igeom))
+                zr(igeom), coorga)
 !
     do n = 1, nnop
         call indent(n, ddls, ddlm, nnops, dec(n))
@@ -346,8 +350,10 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
 !       INTEGRATION
 !
+        BEHinteg%elga%coorpg = coorga(kpg,:)
         call r8inir(6, 0.0d0, sigma, 1)
-        call nmcomp('XFEM', idecpg+kpg, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'XFEM', idecpg+kpg, 1, ndim, typmod,&
                     imate, compor, carcri, instam, instap,&
                     6, epsm, deps, 6, sign,&
                     vi(1, kpg), option, angmas, 10, elgeom(1, kpg),&

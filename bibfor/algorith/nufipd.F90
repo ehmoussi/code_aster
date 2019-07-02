@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+!
 subroutine nufipd(ndim, nno1, nno2, npg, iw,&
                   vff1, vff2, idff1, vu, vp,&
                   geomi, typmod, option, mate, compor,&
@@ -23,9 +24,10 @@ subroutine nufipd(ndim, nno1, nno2, npg, iw,&
                   ddld, angmas, sigm, vim, sigp,&
                   vip, resi, rigi, mini, vect,&
                   matr, codret)
-! person_in_charge: sebastien.fayolle at edf.fr
-! aslint: disable=W1306,W1504
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/calkbb.h"
@@ -40,20 +42,20 @@ subroutine nufipd(ndim, nno1, nno2, npg, iw,&
 #include "asterfort/tanbul.h"
 #include "asterfort/utmess.h"
 #include "blas/ddot.h"
-    aster_logical :: resi, rigi, mini
-    integer :: ndim, nno1, nno2, npg, iw, idff1, lgpg
-    integer :: mate
-    integer :: vu(3, 27), vp(27)
-    integer :: codret
-    real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg)
-    real(kind=8) :: instm, instp
-    real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
-    real(kind=8) :: sigm(2*ndim+1, npg), sigp(2*ndim+1, npg)
-    real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
-    real(kind=8) :: vect(*), matr(*)
-    real(kind=8) :: crit(*)
-    character(len=8) :: typmod(*)
-    character(len=16) :: compor(*), option
+aster_logical :: resi, rigi, mini
+integer :: ndim, nno1, nno2, npg, iw, idff1, lgpg
+integer :: mate
+integer :: vu(3, 27), vp(27)
+integer :: codret
+real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg)
+real(kind=8) :: instm, instp
+real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
+real(kind=8) :: sigm(2*ndim+1, npg), sigp(2*ndim+1, npg)
+real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
+real(kind=8) :: vect(*), matr(*)
+real(kind=8) :: crit(*)
+character(len=8) :: typmod(*)
+character(len=16) :: compor(*), option
 !-----------------------------------------------------------------------
 !          CALCUL DES FORCES INTERNES POUR LES ELEMENTS
 !          INCOMPRESSIBLES POUR LES PETITES DEFORMATIONS
@@ -117,6 +119,7 @@ subroutine nufipd(ndim, nno1, nno2, npg, iw,&
     real(kind=8) :: alpha, trepst
     real(kind=8) :: dsbdep(2*ndim, 2*ndim), kbb(ndim, ndim), kbp(ndim, nno2)
     real(kind=8) :: kce(nno2, nno2), rce(nno2)
+    type(Behaviour_Integ) :: BEHinteg
 !
     parameter    (grand = .false._1)
     data         idev / 2.d0,-1.d0,-1.d0, 0.d0, 0.d0, 0.d0,&
@@ -219,7 +222,8 @@ subroutine nufipd(ndim, nno1, nno2, npg, iw,&
         end do
 !
 ! - APPEL A LA LOI DE COMPORTEMENT
-        call nmcomp('RIGI', g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     6, epsm, deps, 6, sigmam,&
                     vim(1, g), option, angmas, 10, tampon,&

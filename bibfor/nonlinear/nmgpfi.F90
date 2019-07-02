@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
                   angmas, instm, instp, deplm, depld,&
                   sigm, vim, sigp, vip, fint,&
                   matr, codret)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -98,6 +100,7 @@ real(kind=8) :: matr(*), fint(*)
     real(kind=8) :: jm, jd, jp, fm(3, 3), fd(3, 3), coef
     real(kind=8) :: sigmam(6), taup(6), dsidep(6, 3, 3)
     real(kind=8) :: rac2, rbid, tbid(6), t1, t2
+    type(Behaviour_Integ) :: BEHinteg
 !
     parameter (grand = .true._1)
     data    vij  / 1, 4, 5,&
@@ -182,7 +185,8 @@ real(kind=8) :: matr(*), fint(*)
         call dcopy(ndim*2, sigm(1, g), 1, sigmam, 1)
 !
         cod(g) = 0
-        call nmcomp(fami, g, 1, 3, typmod,&
+        call nmcomp(BEHinteg,&
+                    fami, g, 1, 3, typmod,&
                     mate, compor, crit, instm, instp,&
                     9, fm, fd, 6, sigmam,&
                     vim(1, g), option, angmas, 10, tampon,&

@@ -25,6 +25,28 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                   matr, vect, codret, dfdi2, livois,&
                   nbvois, numa, lisoco, nbsoco)
 !
+use Behaviour_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterfort/assert.h"
+#include "asterfort/cavini.h"
+#include "asterfort/codere.h"
+#include "asterfort/dfdmip.h"
+#include "asterfort/nmcomp.h"
+#include "asterfort/nmepsb.h"
+#include "asterfort/nmepsi.h"
+#include "asterfort/nmmabu.h"
+#include "asterfort/r8inir.h"
+#include "asterfort/rcvalb.h"
+#include "asterfort/tecach.h"
+#include "blas/daxpy.h"
+#include "blas/dcopy.h"
+#include "blas/dscal.h"
+#include "blas/dspev.h"
+!
 ! CALCUL  RAPH_MECA, RIGI_MECA_* ET FULL_MECA_* POUR GRAD_SIGM(2D ET 3D)
 !
 ! IN  NDIM    : DIMENSION DES ELEMENTS
@@ -58,25 +80,6 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
 ! ----------------------------------------------------------------------
 !
 
-    implicit none
-!
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/assert.h"
-#include "asterfort/cavini.h"
-#include "asterfort/codere.h"
-#include "asterfort/dfdmip.h"
-#include "asterfort/nmcomp.h"
-#include "asterfort/nmepsb.h"
-#include "asterfort/nmepsi.h"
-#include "asterfort/nmmabu.h"
-#include "asterfort/r8inir.h"
-#include "asterfort/rcvalb.h"
-#include "asterfort/tecach.h"
-#include "blas/daxpy.h"
-#include "blas/dcopy.h"
-#include "blas/dscal.h"
-#include "blas/dspev.h"
     common  /trucit/iteamm
     character(len=8) :: typmod(*), fami, poum
     character(len=16) :: option, compor(*)
@@ -104,6 +107,7 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
     real(kind=8) :: p(6, 6), sigmam(6), epsrss(6), sigell(6), dist(nno2, 2)
     real(kind=8) :: z(3, 3), w(3), work(9), bary(ndim), baryo(ndim), scal(3)
     real(kind=8) :: dirr(ndim)
+    type(Behaviour_Integ) :: BEHinteg
 !
 ! ----------------------------------------------------------------------
 !
@@ -527,7 +531,8 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
             goto 999
         endif
 !
-        call nmcomp('RIGI', g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instam, instap,&
                     12, epsgm, epsgd, 6, sigmam,&
                     vim(1, g), option, angmas, 36, pin,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: sebastien.fayolle at edf.fr
 ! aslint: disable=W1306,W1504
 !
 subroutine nbfilg(ndim, nno1, nno2, nno3, npg,&
@@ -25,6 +24,8 @@ subroutine nbfilg(ndim, nno1, nno2, nno3, npg,&
                   instm, instp, ddlm, ddld, angmas,&
                   sigm, vim, sigp, vip, resi,&
                   rigi, vect, matr, matsym, codret)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -125,6 +126,7 @@ character(len=16) :: compor(*), option
     real(kind=8) :: idev(6, 6), kr(6)
     real(kind=8) :: tampon(10), id(3, 3), rbid(1)
     real(kind=8) :: am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa
+    type(Behaviour_Integ) :: BEHinteg
 !
     parameter    (grand = .true._1)
     data         vij  / 1, 4, 5,&
@@ -240,7 +242,8 @@ character(len=16) :: compor(*), option
                     logl, ftm, ftp, epsml, deps,&
                     tn, resi, cod(g))
 !
-        call nmcomp('RIGI', g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     6, epsml, deps, 6, tn,&
                     vim(1, g), option, angmas, 10, tampon,&
