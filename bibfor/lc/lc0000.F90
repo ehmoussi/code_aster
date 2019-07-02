@@ -566,7 +566,6 @@ integer :: codret
                     nvi, vim, option, angmas, icomp,&
                     temp , dtemp , predef, dpred ,&
                     sigp, vip, ndsde, dsidep, codret)
-                    
     case (54)
         call lc0054(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
@@ -584,7 +583,7 @@ integer :: codret
         call lc0058(fami , kpg   , ksp   , ndim  , typmod,&
                     imate, compor, carcri, instam, instap,&
                     neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas, &
+                    nvi  , vim   , option, angmas,&
                     temp , dtemp , predef, dpred ,&
                     sigp , vip   , dsidep, codret)
     case (59)
@@ -827,7 +826,7 @@ integer :: codret
         call lc0115(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (120)
 !     BETON_DOUBLE_DP
@@ -862,31 +861,31 @@ integer :: codret
                     nvi, dsidep, codret)
     case (165)
 !     FLUA_PORO_BETON
-        call lc0165(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, &
-                    nvi, dsidep, codret)
+        call lc0165(fami  , kpg   , ksp   , ndim  , imate,&
+                    compor, instam, instap, epsm  ,&
+                    deps  , sigm  , vim   , option,&
+                    sigp  , vip   , typmod, &
+                    dsidep, codret)
     case (166)
 !     ENDO_PORO_BETON
-        call lc0166(fami, kpg, ksp, ndim, imate,&
-                    compor,  instam, instap, epsm,&
-                    deps, sigm, vim, option, &
-                    sigp, vip,  typmod, &
-                     dsidep, codret)
+        call lc0166(fami  , kpg   , ksp   , ndim  , imate,&
+                    compor, instam, instap, epsm  ,&
+                    deps  , sigm  , vim   , option,&
+                    sigp  , vip   , typmod,&
+                    dsidep, codret)
     case (167)
 !     FLUA_ENDO_PORO
-        call lc0167(fami, kpg, ksp, ndim, imate,&
-                    compor,  instam, instap, epsm,&
-                    deps, sigm, vim, option, &
-                    sigp, vip,  typmod, &
+        call lc0167(fami  , kpg   , ksp   , ndim  , imate,&
+                    compor, instam, instap, epsm  ,&
+                    deps  , sigm  , vim   , option,&
+                    sigp  , vip   , typmod,&
                     dsidep, codret)
     case (168)
 !     RGI_BETON
-        call lc0168(fami, kpg, ksp, ndim, imate,&
-                    compor,  instam, instap, epsm,&
-                    deps, sigm, vim, option, &
-                    sigp, vip, typmod, &
+        call lc0168(fami  , kpg   , ksp   , ndim  , imate,&
+                    compor, instam, instap, epsm  ,&
+                    deps  , sigm  , vim   , option,&
+                    sigp  , vip   , typmod,&
                     dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -1113,7 +1112,7 @@ integer :: codret
         call lc7058(fami , kpg   , ksp   , ndim  , typmod,&
                     imate, compor, carcri, instam, instap,&
                     neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas, &
+                    nvi  , vim   , option, angmas,&
                     temp , dtemp , predef, dpred ,&
                     sigp , vip   , dsidep, codret)
 !
@@ -1161,7 +1160,6 @@ integer :: codret
                     wkin, typmod,icomp, ndsde,&
                     dsidep, nwkout, wkout, codret)
 !
-!
 ! --------------------------------------------------------------------------------------------------
 ! - For metallurgy/steel
 ! --------------------------------------------------------------------------------------------------
@@ -1205,7 +1203,7 @@ integer :: codret
         call lc9999(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case default
         call utmess('F', 'COMPOR1_43', si=numlc)
