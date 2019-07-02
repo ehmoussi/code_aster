@@ -18,12 +18,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmcomp(fami, kpg, ksp, ndim, typmod,&
+    subroutine nmcomp(BEHinteg,&
+                      fami, kpg, ksp, ndim, typmod,&
                       imate, compor, carcri, instam, instap,&
                       neps, epsm, deps, nsig, sigm,&
                       vim, option, angmas, nwkin, wkin,&
                       sigp, vip, ndsde, dsidep, nwkout,&
                       wkout, codret, mult_comp_, l_epsi_varc_)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         character(len=*) :: fami
         integer :: kpg
         integer :: ksp

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+!
 subroutine nmfihm(ndim, nddl, nno1, nno2, npg,&
                   lgpg, ipg, wref, vff1, vff2,&
                   idf2, dffr2, mate, option, geom,&
@@ -23,10 +24,10 @@ subroutine nmfihm(ndim, nddl, nno1, nno2, npg,&
                   sigp, vect, matr, vim, vip,&
                   tm, tp, crit, compor, typmod)
 !
-! person_in_charge: jerome.laverne at edf.fr
+use Behaviour_type
 !
-! aslint: disable=W1306,W1504
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/ejcine.h"
 #include "asterfort/gedisc.h"
@@ -88,6 +89,7 @@ subroutine nmfihm(ndim, nddl, nno1, nno2, npg,&
     real(kind=8) :: coopg(ndim+1, npg), rot(ndim*ndim)
     real(kind=8) :: coorot(ndim+ndim*ndim, npg)
     real(kind=8) :: crit(*), rbid(1), presgm, presgd, temp
+    type(Behaviour_Integ) :: BEHinteg
 !
     axi = .false.
     resi = option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
@@ -169,7 +171,8 @@ subroutine nmfihm(ndim, nddl, nno1, nno2, npg,&
         enddo
 !
 ! - APPEL A LA LOI DE COMPORTEMENT
-        call nmcomp('RIGI', kpg, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', kpg, 1, ndim, typmod,&
                     mate, compor, crit, tm, tp,&
                     6, epsm, deps, 6, sigmo,&
                     vim(1, kpg), option, rbid, ncooro, coorot(1, kpg),&

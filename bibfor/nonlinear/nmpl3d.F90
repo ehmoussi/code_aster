@@ -24,6 +24,8 @@ subroutine nmpl3d(fami  , nno  , npg   , ipoids, ivf   ,&
                   matsym, dfdi , def   , sigp  , vip   ,&
                   matuu , vectu, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -110,6 +112,8 @@ integer, intent(inout) :: codret
     real(kind=8) :: rbid(1), sig(6)
     real(kind=8) :: poids, tmp, rac2
     real(kind=8) :: elgeom(10, 27)
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -130,7 +134,7 @@ integer, intent(inout) :: codret
     call lcegeo(nno   , npg      , 3        ,&
                 ipoids, ivf      , idfde    ,&
                 typmod, jvariext1, jvariext2,&
-                geom  ,&
+                geom  , coorga   ,&
                 deplm , deplp )
 !
 ! - Loop on Gauss points
@@ -177,7 +181,9 @@ integer, intent(inout) :: codret
 !
 ! ----- Compute behaviour
 !
-        call nmcomp(fami       , kpg        , 1        , 3     , typmod        ,&
+        BEHinteg%elga%coorpg = coorga(kpg,:)
+        call nmcomp(BEHinteg   ,&
+                    fami       , kpg        , 1        , 3     , typmod        ,&
                     imate      , compor     , carcri     , instam, instap        ,&
                     6          , eps        , deps     , 6     , sigm_norm     ,&
                     vim(1, kpg), option     , angmas   , 10    , elgeom(1, kpg),&

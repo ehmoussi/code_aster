@@ -24,6 +24,8 @@ subroutine nmdlog(fami, option, typmod, ndim, nno,&
                   deplm, depld, sigm, vim, sigp,&
                   vip, fint, matuu, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -80,7 +82,7 @@ implicit none
     aster_logical :: grand, axi, resi, rigi, matsym, cplan, lintbo
     parameter (grand = .true._1)
     integer :: g, nddl, cod(27), ivf, jvariext1, jvariext2
-    integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff
+    integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff, iret
     character(len=8) :: typmod(*)
     character(len=*) :: fami
     character(len=16) :: option
@@ -97,6 +99,8 @@ implicit none
     real(kind=8) :: gn(3, 3), lamb(3), logl(3), rbid(1)
     real(kind=8) :: def(2*ndim, nno, ndim), pff(2*ndim, nno, nno)
     real(kind=8) :: dsidep(6, 6), pk2(6), pk2m(6)
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
 !-----------------------------TEST AVANT CALCUL---------------------
 !
@@ -126,7 +130,7 @@ implicit none
     call lcegeo(nno   , npg      , ndim     ,&
                 iw    , ivf      , idff     ,&
                 typmod, jvariext1, jvariext2,&
-                geomi ,&
+                geomi , coorga   ,&
                 deplm , depld)
 !
 !--------------------------INITIALISATION------------------------
@@ -170,7 +174,9 @@ implicit none
 !
         call r8inir(36, 0.d0, dtde, 1)
         call r8inir(6, 0.d0, tp, 1)
-        call nmcomp(fami, g, 1, ndim, typmod,&
+        BEHinteg%elga%coorpg = coorga(g,:)
+        call nmcomp(BEHinteg,&
+                    fami, g, 1, ndim, typmod,&
                     mate, compor, carcri, instm, instp,&
                     6, epsml, deps, 6, tn,&
                     vim(1, g), option, angmas, 10, elgeom(1, g),&
@@ -186,9 +192,12 @@ implicit none
                     lgpg, vip(1, g), ndim, fp, g,&
                     dtde, sigm(1, g), cplan, fami, mate,&
                     instp, angmas, gn, lamb, logl,&
-                    sigp(1, g), dsidep, pk2m, pk2, cod(g))
+                    sigp(1, g), dsidep, pk2m, pk2, iret)
 !
-        if (cod(g) .ne. 0) goto 999
+        if (iret .eq. 1) then
+            cod(g) = 1
+            goto 999
+        end if
 !
 !     CALCUL DE LA MATRICE DE RIGIDITE ET DE LA FORCE INTERIEURE
 !     CONFG LAGRANGIENNE COMME NMGR3D / NMGR2D

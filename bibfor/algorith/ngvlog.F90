@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine ngvlog(fami, option, typmod, ndim, nno, &
                     nnob,npg, nddl, iw, vff, &
                     vffb, idff,idffb,geomi, compor, &
@@ -28,34 +29,30 @@ use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
                         gdlog_rigeo, gdlog_nice_cauchy, gdlog_delete
  
 use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
-
-
-    implicit none
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmepsi.h"
-
-
-! aslint: disable=W1504
-
-    aster_logical,intent(in)       :: matsym
-    character(len=8),intent(in)    :: typmod(*)
-    character(len=*),intent(in)    :: fami
-    character(len=16),intent(in)   :: option, compor(*)
-    integer,intent(in)             :: ndim,nno,nnob,npg,nddl,lgpg
-    integer,intent(in)             :: mate,iw,idff,idffb
-    real(kind=8),intent(in)        :: geomi(ndim,nno), crit(*), instm, instp
-    real(kind=8),intent(in)        :: vff(nno, npg),vffb(nnob, npg)
-    real(kind=8),intent(in)        :: angmas(3), ddlm(nddl), ddld(nddl), siefm(3*ndim+2, npg)
-    real(kind=8),intent(in)        :: vim(lgpg, npg)
-    real(kind=8),intent(out)       :: fint(nddl),matr(nddl,nddl),siefp(3*ndim+2, npg),vip(lgpg,npg)
-    integer,intent(out)            :: codret
-
-
-
+!
+aster_logical,intent(in)       :: matsym
+character(len=8),intent(in)    :: typmod(*)
+character(len=*),intent(in)    :: fami
+character(len=16),intent(in)   :: option, compor(*)
+integer,intent(in)             :: ndim,nno,nnob,npg,nddl,lgpg
+integer,intent(in)             :: mate,iw,idff,idffb
+real(kind=8),intent(in)        :: geomi(ndim,nno), crit(*), instm, instp
+real(kind=8),intent(in)        :: vff(nno, npg),vffb(nnob, npg)
+real(kind=8),intent(in)        :: angmas(3), ddlm(nddl), ddld(nddl), siefm(3*ndim+2, npg)
+real(kind=8),intent(in)        :: vim(lgpg, npg)
+real(kind=8),intent(out)       :: fint(nddl),matr(nddl,nddl),siefp(3*ndim+2, npg),vip(lgpg,npg)
+integer,intent(out)            :: codret
+!
 ! ----------------------------------------------------------------------
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*
 !           EN GRANDES DEFORMATIONS 2D (D_PLAN ET AXI) ET 3D 
@@ -122,6 +119,7 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
     real(kind=8)  :: kefgu(2+ndim,2*ndim),kefgg(2+ndim,2+ndim)
     real(kind=8)  :: rbid=0.d0
     real(kind=8)  :: tbid(6)=(/0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
+    type(Behaviour_Integ) :: BEHinteg
 ! ----------------------------------------------------------------------
 
 
@@ -215,7 +213,8 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
         silcm(neu+1:neu+neg) = siefm(neu+1:neu+neg,g)
 
         ! Comportement
-        call nmcomp(fami, g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    fami, g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     neu+neg, eplcm, eplcp-eplcm, neu+neg, silcm,&
                     vim(1,g), option, angmas, 1,[rbid],&
@@ -291,4 +290,3 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
     call gdlog_delete(gdlp)
 
 end subroutine
-

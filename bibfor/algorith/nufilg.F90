@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,8 @@ subroutine nufilg(ndim, nnod, nnop, npg, iw,&
                   ddld, angmas, sigm, vim, sigp,&
                   vip, resi, rigi, vect, matr,&
                   matsym, codret)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -123,6 +125,7 @@ implicit none
     real(kind=8) :: sigtr
     real(kind=8) :: alpha, trepst
     real(kind=8) :: dsbdep(2*ndim, 2*ndim)
+    type(Behaviour_Integ) :: BEHinteg
 !
     parameter    (grand = .true._1)
     data         vij  / 1, 4, 5,&
@@ -232,7 +235,8 @@ implicit none
             goto 999
         endif
 !
-        call nmcomp('RIGI', g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     6, epsml, deps, 6, tn,&
                     vim(1, g), option, angmas, 10, tampon,&

@@ -18,13 +18,16 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine redece(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
+    subroutine redece(BEHinteg,&
+                      fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                       imate, compor, mult_comp, carcri, instam, instap,&
                       neps, epsdt, depst, nsig, sigd,&
                       vind, option, angmas, nwkin, wkin,&
                       cp, numlc, &
                       sigf, vinf, ndsde, dsde, nwkout,&
                       wkout, codret)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         aster_logical, intent(in) :: l_epsi_varc
         integer :: nwkout
         integer :: ndsde

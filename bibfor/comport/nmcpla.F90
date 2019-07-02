@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine nmcpla(fami, kpg   , ksp  , ndim  , typmod,&
+subroutine nmcpla(BEHinteg,&
+                  fami, kpg   , ksp  , ndim  , typmod,&
                   imat, compor_plas, compor_creep, carcri , timed , timef ,&
                   neps, epsdt , depst, nsig  , sigd  ,&
                   vind, option, nwkin, wkin  , sigf  ,&
@@ -25,6 +26,7 @@ subroutine nmcpla(fami, kpg   , ksp  , ndim  , typmod,&
                   iret)
 !
 use calcul_module, only : ca_ctempl_, ca_ctempr_, ca_ctempm_, ca_ctempp_
+use Behaviour_type
 !
 implicit none
 !
@@ -44,6 +46,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 integer :: imat, ndim, kpg, ksp, iret
 integer :: neps, nsig, nwkin, nwkout, ndsde
 character(len=16), intent(in) :: compor_plas(*)
@@ -215,7 +218,8 @@ character(len=8) :: typmod(*)
 ! ----- Solve creep law
 !
         l_epsi_varc = ASTER_TRUE
-        call nmcomp(fami, kpg, ksp, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    fami, kpg, ksp, ndim, typmod,&
                     imat, compor_creep, carcri, timed, timef  ,&
                     neps, epsdt, depst2, nsig, sigd,&
                     vind, option, angmas, nwkin, wkin,&
@@ -287,7 +291,8 @@ character(len=8) :: typmod(*)
 !
     l_epsi_varc = ASTER_FALSE
     idx_vi_plas = nvi_flua + 1
-    call nmcomp(fami, kpg, ksp, ndim, typmod,&
+    call nmcomp(BEHinteg,&
+                fami, kpg, ksp, ndim, typmod,&
                 imat, compor_plas, carcri, timed, timef  ,&
                 neps, epsdt, deps, nsig, sigd,&
                 vind(idx_vi_plas), option, angmas, nwkin, wkin,&

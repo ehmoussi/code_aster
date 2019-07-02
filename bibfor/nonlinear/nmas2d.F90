@@ -24,6 +24,8 @@ subroutine nmas2d(fami, nno, npg, ipoids, ivf,&
                   dfdi, def, sigp, vip, matuu,&
                   vectu, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -94,6 +96,8 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
     real(kind=8) :: poids, tmp, sig(6), rbid(1)
     real(kind=8) :: elgeom(10, 9)
     real(kind=8) :: rac2
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
 !     AJ. VARIABLES
     real(kind=8) :: jac, sigas(4, 4), pqx, pqy, defc(4, 4, 2)
@@ -134,7 +138,7 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
     call lcegeo(nno   , npg      , 2        ,&
                 ipoids, ivf      , idfde    ,&
                 typmod, jvariext1, jvariext2,&
-                geom  ,&
+                geom  , coorga   ,&
                 deplm , deplp)
 !
 ! - INITIALISATION CODES RETOURS
@@ -219,7 +223,9 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
         optios = option
     endif
 !
-    call nmcomp(fami, kpg, 1, 2, typmod,&
+    BEHinteg%elga%coorpg = coorga(kpg,:)
+    call nmcomp(BEHinteg,&
+                fami, kpg, 1, 2, typmod,&
                 imate, compor, carcri, instam, instap,&
                 6, eps, deps, 6, sign,&
                 vim(1, kpg), optios, angmas, 10, elgeom(1, kpg),&

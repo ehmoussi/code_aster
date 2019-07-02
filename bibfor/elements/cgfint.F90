@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@ subroutine cgfint(ndim, nno1, nno2, npg, wref,&
                   iu, iuc, im, a, sigm,&
                   vim, sigp, vip, matr, vect,&
                   codret)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -97,6 +99,7 @@ implicit none
     real(kind=8) :: angmas(3), val(1), wkin(2), wkout(1)
     character(len=16) :: nom(1)
     character(len=1) :: poum
+    type(Behaviour_Integ) :: BEHinteg
 !
     data nom /'PENA_LAGR'/
 ! ----------------------------------------------------------------------
@@ -214,7 +217,8 @@ implicit none
         wkin(1)=a*sigcab
         wkin(2)=courb
 !
-        call nmcomp('RIGI', g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', g, 1, ndim, typmod,&
                     mat, compoz, crit, instam, instap,&
                     1, [mu], [gliss], 1, [0.d0],&
                     vim(nbvica+1, g), option, [0.d0], 2, wkin,&

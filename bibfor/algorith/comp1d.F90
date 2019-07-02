@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine comp1d(fami, kpg, ksp, option, sigx,&
                   epsx, depx, angmas, vim, vip,&
                   sigxp, etan, codret)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/jevech.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
-    character(len=*) :: fami
-    character(len=16) :: option
-    integer :: codret, kpg, ksp
-    real(kind=8) :: angmas(3)
-    real(kind=8) :: vim(*), vip(*), sigx, sigxp, epsx, depx, etan
+!
+character(len=*) :: fami
+character(len=16) :: option
+integer :: codret, kpg, ksp
+real(kind=8) :: angmas(3)
+real(kind=8) :: vim(*), vip(*), sigx, sigxp, epsx, depx, etan
 !
 !     INTEGRATION DE LOIS DE COMPORTEMENT NON LINEAIRES
 !     POUR DES ELEMENTS 1D PAR UNE METHODE INSPIREE DE CELLE DE DEBORST
@@ -64,13 +69,8 @@ subroutine comp1d(fami, kpg, ksp, option, sigx,&
 ! OUT SIGXP     : CONTRAINTES A L'INSTANT PLUS
 !     ETAN      : MODULE TANGENT DIRECTION X
 !     CODRET    : CODE RETOUR NON NUL SI SIGYY OU SIGZZ NON NULS
-! ----------------------------------------------------------------------
 !
-!
-!
-!
-!
-! *************** DECLARATION DES VARIABLES LOCALES ********************
+! --------------------------------------------------------------------------------------------------
 !
     integer :: imate, iinstm
     integer :: iinstp, icompo, icarcr
@@ -81,16 +81,11 @@ subroutine comp1d(fami, kpg, ksp, option, sigx,&
     real(kind=8) :: sigm(6), sigp(6), eps(6), deps(6)
 !
     character(len=8) :: typmod(2)
+    type(Behaviour_Integ) :: BEHinteg
 !
-! *********** FIN DES DECLARATIONS DES VARIABLES LOCALES ***************
+! --------------------------------------------------------------------------------------------------
 !
-! ********************* DEBUT DE LA SUBROUTINE *************************
-!
-!
-!
-! ---    INITIALISATIONS :
     zero = 0.0d0
-!
     call r8inir(6, zero, eps, 1)
     call r8inir(6, zero, sigm, 1)
     call r8inir(6, zero, sigp, 1)
@@ -118,7 +113,8 @@ subroutine comp1d(fami, kpg, ksp, option, sigx,&
     call r8inir(270, zero, lc, 1)
 !
 ! -    APPEL A LA LOI DE COMPORTEMENT
-    call nmcomp(fami, kpg, ksp, 2, typmod,&
+    call nmcomp(BEHinteg,&
+                fami, kpg, ksp, 2, typmod,&
                 zi(imate), zk16(icompo), zr(icarcr), zr(iinstm), zr(iinstp),&
                 6, eps, deps, 6, sigm,&
                 vim, option, angmas, 270, lc,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306
+!
 subroutine nmfi2d(npg, lgpg, mate, option, geom,&
                   deplm, ddepl, sigmo, sigma, fint,&
                   ktan, vim, vip, tm, tp,&
                   crit, compor, typmod, codret)
 !
+use Behaviour_type
 !
-! aslint: disable=W1306
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8vide.h"
@@ -72,6 +74,7 @@ subroutine nmfi2d(npg, lgpg, mate, option, geom,&
     real(kind=8) :: sum(2), dsu(2), poids
     real(kind=8) :: crit(*)
     real(kind=8) :: angmas(3)
+    type(Behaviour_Integ) :: BEHinteg
 !
     axi = typmod(1) .eq. 'AXIS'
     resi = option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
@@ -125,7 +128,8 @@ subroutine nmfi2d(npg, lgpg, mate, option, geom,&
         rbid = r8vide()
         code(kpg) = 0
 !
-        call nmcomp('RIGI', kpg, 1, 2, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', kpg, 1, 2, typmod,&
                     mate, compor, crit, tm, tp,&
                     2, sum, dsu, 1, sigmo(1, kpg),&
                     vim(1, kpg), option, angmas, 3, coopg( 1, kpg),&
