@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ character(len=16), intent(in) :: defo_comp_py
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: notype, texte(3), type_elem, type_elem2
+    character(len=16) :: notype, texte(3), model_type, model_type2
     character(len=8) :: mesh, name_elem, grille
     character(len=19) :: ligrmo
     integer :: nutyel
@@ -142,10 +142,9 @@ character(len=16), intent(in) :: defo_comp_py
 !
 ! --------- Type of modelization
 !
-            call teattr('C', 'TYPMOD', type_elem, iret, typel=notype)
+            call teattr('C', 'TYPMOD', model_type, iret, typel=notype)
             if (iret .eq. 0) then
-                call teattr('C', 'TYPMOD2', type_elem2, iret, typel=notype)
-                if (type_elem(1:6) .eq. 'COMP3D') then
+                if (model_type .eq. '3D') then
                     call lctest(defo_comp_py, 'MODELISATION', '3D', irett)
                     if (irett .eq. 0) then
                         texte(1) = notype
@@ -153,8 +152,9 @@ character(len=16), intent(in) :: defo_comp_py
                         texte(3) = defo_comp
                         call utmess('F', 'COMPOR5_23', nk=3, valk=texte)
                     endif
-                else if (type_elem(1:6).eq.'COMP1D') then
-                    if (type_elem2 .eq. 'PMF') then
+                else if (model_type .eq. '1D') then
+                    call teattr('C', 'TYPMOD2', model_type2, iret, typel=notype)
+                    if (model_type2 .eq. 'PMF') then
                         call lctest(defo_comp_py, 'MODELISATION', 'PMF', irett)
                         if (irett .eq. 0) then
                             texte(1) = notype
@@ -177,12 +177,14 @@ character(len=16), intent(in) :: defo_comp_py
                         endif
                     endif
                 else
-                    call lctest(defo_comp_py, 'MODELISATION', type_elem, irett)
-                    if (irett .eq. 0) then
-                        texte(1) = notype
-                        texte(2) = name_elem
-                        texte(3) = defo_comp
-                        call utmess('F', 'COMPOR5_23', nk=3, valk=texte)
+                    call lctest(defo_comp_py, 'MODELISATION', model_type, irett)
+                    if (model_type .ne. '0D') then
+                        if (irett .eq. 0) then
+                            texte(1) = notype
+                            texte(2) = name_elem
+                            texte(3) = defo_comp
+                            call utmess('F', 'COMPOR5_23', nk=3, valk=texte)
+                        endif
                     endif
                 endif
             endif

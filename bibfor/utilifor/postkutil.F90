@@ -80,8 +80,8 @@ subroutine postkutil(nomres, nomfis, repmat, repmod)
     integer :: cpt_ma_fon, cpt_ma_noe, imaf, j, ima1, ima2, cpt_dbl
     integer :: nbma_tmp, nbma_fon
     character(len=8) :: nommod, nomchm, noma, vk8_typmod(4)
-    character(len=8) :: vk8_modeli(4), vk8_mater(5)
-    character(len=8) :: k8typmo, k8model, k8mater, k8noeu, k8typma
+    character(len=8) :: vk8_mater(5)
+    character(len=8) :: k8typmo, k8mater, k8noeu, k8typma
     character(len=16) :: ktyel
     character(len=19) :: chmat, cesmat, cnxinv
     character(len=24) :: mesmai, limafo
@@ -95,9 +95,8 @@ subroutine postkutil(nomres, nomfis, repmat, repmod)
     character(len=8), pointer :: v8fiss(:) => null()
     character(len=8), pointer :: vnofon(:) => null()
 !
-    data vk8_typmod/ 'COMP3D',   'AXIS', 'D_PLAN', 'C_PLAN'/
-    data vk8_modeli/     '3D',   'AXIS', 'D_PLAN', 'C_PLAN'/
-    data vin_modeli/        3,        2,        2,        2/
+    data vk8_typmod/ '3D',   'AXIS', 'D_PLAN', 'C_PLAN'/
+    data vin_modeli/   3,        2,        2,        2/
 !
 !   --------------------------------------------------------------------
 !   debut
@@ -311,7 +310,6 @@ subroutine postkutil(nomres, nomfis, repmat, repmod)
     enddo
     ASSERT( imodeli .gt. 0 )
     k8typmo = vk8_typmod(imodeli)
-    k8model = vk8_modeli(imodeli)
     ASSERT( ndim .eq. vin_modeli(imodeli) )
 !
 !   recup du materiau sur la 1ere maille de vmafon
@@ -353,7 +351,7 @@ subroutine postkutil(nomres, nomfis, repmat, repmod)
 !   --------------------------------------------------------------------
 !
     repmat = k8mater
-    repmod = k8model
+    repmod = k8typmo
 !
 !   --------------------------------------------------------------------
 !   menage
