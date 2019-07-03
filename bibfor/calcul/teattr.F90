@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,12 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine teattr(kstop, noattr, vattr, iret, typel)
+subroutine teattr(kstop, noattr, vattr, iret_, typel)
 
 use calcul_module, only : calcul_status, ca_jcteat_, ca_lcteat_, ca_nomte_
 
 implicit none
-! person_in_charge: jacques.pellet at edf.fr
 
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -33,11 +32,11 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
 
-    character(len=1), intent(in) :: kstop
-    character(len=*), intent(in) :: noattr
-    character(len=*), intent(out) :: vattr
-    integer, intent(out) :: iret
-    character(len=*), intent(in), optional :: typel
+character(len=1), intent(in) :: kstop
+character(len=*), intent(in) :: noattr
+character(len=*), intent(out) :: vattr
+integer, optional, intent(out) :: iret_
+character(len=*), intent(in), optional :: typel
 
 !---------------------------------------------------------------------
 ! but : Recuperer la valeur d'un attribut d'un type_element
@@ -60,7 +59,7 @@ implicit none
 !-----------------------------------------------------------------------
     character(len=16) :: nomt2, noatt2, vattr2
     character(len=24) :: valk(2)
-    integer :: jcte, n1, nbattr, k, ite
+    integer :: jcte, n1, nbattr, k, ite, iret
     aster_logical :: apelje
 !----------------------------------------------------------------------
     if (present(typel)) then
@@ -110,6 +109,8 @@ implicit none
         valk(1) = noatt2
         valk(2) = nomt2
         call utmess('F', 'CALCUL_28', nk=2, valk=valk)
+    else
+        ASSERT(present(iret_))
     endif
     ASSERT(kstop.eq.'C')
     goto 3
@@ -119,5 +120,9 @@ implicit none
     vattr=vattr2
 
   3 continue
+
+    if (present(iret_)) then
+        iret_ = iret
+    endif
 
 end subroutine
