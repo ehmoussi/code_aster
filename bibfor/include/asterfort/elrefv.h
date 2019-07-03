@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,26 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine elrefv(nomte, famil, ndim, nno, nno2,&
-                      nnos, npg, ipoids, ivf, ivf2,&
-                      idfde, idfde2, jgano, jgano2)
-        character(len=16) :: nomte
-        character(len=4) :: famil
-        integer :: ndim
-        integer :: nno
-        integer :: nno2
-        integer :: nnos
-        integer :: npg
-        integer :: ipoids
-        integer :: ivf
-        integer :: ivf2
-        integer :: idfde
-        integer :: idfde2
-        integer :: jgano
-        integer :: jgano2
+    subroutine elrefv(fami    , ndim    ,&
+                      nnoL    , nnoQ    , nnos,&
+                      npg     , jv_poids,&
+                      jv_vfL  , jv_vfQ  ,&
+                      jv_dfdeL, jv_dfdeQ,&
+                      jv_ganoL, jv_ganoQ)
+        character(len=4), intent(in) :: fami
+        integer, intent(out) :: ndim, nnos
+        integer, intent(out) :: npg, jv_poids
+        integer, intent(out) :: nnoL, jv_vfL, jv_dfdeL, jv_ganoL
+        integer, intent(out) :: nnoQ, jv_vfQ, jv_dfdeQ, jv_ganoQ
     end subroutine elrefv
 end interface
