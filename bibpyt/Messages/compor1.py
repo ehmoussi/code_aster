@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     1: _("""
@@ -248,15 +246,11 @@ Ne renseignez pas le mot-clé COMPORTEMENT/%(k2)s, afin de sélectionner l'algor
 """),
 
     47: _("""
-  Option activée :  <%(k1)s>  pour les <%(k2)s>
-  Alarme :
   L'algorithme de réactualisation des grandes rotations est tel que les rotations doivent être inférieures à 2 pi radians.
   Assurez-vous que les rotations ne soient pas très grandes au risque de résultats faux.
 """),
 
     48: _("""
-  Option activée :  <%(k1)s>  pour les <%(k2)s>
-  Alarme :
   La modélisation DKT n'est compatible avec DEFORMATION='GROT_GDEP' que lorsque RELATION = 'ELAS' est utilisé.
   Pour prendre en compte correctement les grands déplacements, et surtout les grandes rotations, 
   il est recommandé d’utiliser la modélisation COQUE_3D, avec DEFORMATION='GROT_GDEP'.
