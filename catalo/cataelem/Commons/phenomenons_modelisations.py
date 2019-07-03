@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ phen = MECANIQUE
 phen.add('2D_BARRE', Modelisation(dim=(1,2), code='2DB',
     attrs=(
         (AT.POUTRE,'OUI'),
-        (AT.TYPMOD,'COMP1D'),
+        (AT.TYPMOD,'1D'),
         (AT.EFGE,'OUI'),
         (AT.SIGM,'NON'),
     ),
@@ -46,6 +46,7 @@ phen.add('2D_BARRE', Modelisation(dim=(1,2), code='2DB',
 
 phen.add('2D_DIS_T', Modelisation(dim=(-1,2), code='2DT',
     attrs=(
+        (AT.TYPMOD,'0D'),
         (AT.EFGE,'OUI'),
         (AT.SIGM,'NON'),
     ),
@@ -56,6 +57,7 @@ phen.add('2D_DIS_T', Modelisation(dim=(-1,2), code='2DT',
 
 phen.add('2D_DIS_TR', Modelisation(dim=(-1,2), code='2TR',
     attrs=(
+        (AT.TYPMOD,'0D'),
         (AT.EFGE,'OUI'),
         (AT.SIGM,'NON'),
     ),
@@ -66,6 +68,7 @@ phen.add('2D_DIS_TR', Modelisation(dim=(-1,2), code='2TR',
 
 phen.add('2D_FLUIDE', Modelisation(dim=(2,2), code='2FL',
     attrs=(
+        (AT.TYPMOD,'PLAN'),
         (AT.FLUIDE,'OUI'),
     ),
     elements=(
@@ -80,6 +83,7 @@ phen.add('2D_FLUIDE', Modelisation(dim=(2,2), code='2FL',
 
 phen.add('2D_FLUI_ABSO', Modelisation(dim=(1,2), code='2FA',
     attrs=(
+        (AT.TYPMOD,'PLAN'),
         (AT.FLUIDE,'OUI'),
         (AT.ABSO,'OUI'),
     ),
@@ -90,6 +94,7 @@ phen.add('2D_FLUI_ABSO', Modelisation(dim=(1,2), code='2FA',
 
 phen.add('2D_FLUI_PESA', Modelisation(dim=(2,2), code='2FP',
     attrs=(
+        (AT.TYPMOD,'PLAN'),
         (AT.FLUIDE,'OUI'),
         (AT.PESA,'OUI'),
     ),
@@ -103,6 +108,7 @@ phen.add('2D_FLUI_PESA', Modelisation(dim=(2,2), code='2FP',
 
 phen.add('2D_FLUI_STRU', Modelisation(dim=(1,2), code='FS2',
     attrs=(
+        (AT.TYPMOD,'PLAN'),
         (AT.FLUIDE,'OUI'),
         (AT.FSI,'OUI'),
     ),
@@ -114,7 +120,7 @@ phen.add('2D_FLUI_STRU', Modelisation(dim=(1,2), code='FS2',
 phen.add('3D', Modelisation(dim=(3,3), code='3D_',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
     ),
     elements=(
         (MT.HEXA8     , EL.MECA_HEXA8),
@@ -139,7 +145,7 @@ phen.add('3D', Modelisation(dim=(3,3), code='3D_',
 phen.add('3D1XH', Modelisation(dim=(3,3), code='3X1',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XH'),
     ),
@@ -161,7 +167,7 @@ phen.add('3D1XH', Modelisation(dim=(3,3), code='3X1',
 phen.add('3D1XHT', Modelisation(dim=(3,3), code='3X3',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XHT'),
     ),
@@ -177,7 +183,7 @@ phen.add('3D1XHT', Modelisation(dim=(3,3), code='3X3',
 phen.add('3D1XT', Modelisation(dim=(3,3), code='3X2',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XT'),
     ),
@@ -193,7 +199,7 @@ phen.add('3D1XT', Modelisation(dim=(3,3), code='3X2',
 phen.add('3D2XHT', Modelisation(dim=(3,3), code='3X6',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XHT'),
     ),
@@ -209,7 +215,7 @@ phen.add('3D2XHT', Modelisation(dim=(3,3), code='3X6',
 phen.add('3D2XT', Modelisation(dim=(3,3), code='3X5',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XT'),
     ),
@@ -225,7 +231,7 @@ phen.add('3D2XT', Modelisation(dim=(3,3), code='3X5',
 phen.add('3DXH1', Modelisation(dim=(3,3), code='3XA',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XH1'),
     ),
@@ -241,7 +247,7 @@ phen.add('3DXH1', Modelisation(dim=(3,3), code='3XA',
 phen.add('3DXH2', Modelisation(dim=(3,3), code='3XB',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XH2'),
     ),
@@ -257,7 +263,7 @@ phen.add('3DXH2', Modelisation(dim=(3,3), code='3XB',
 phen.add('3DXH2C', Modelisation(dim=(3,3), code='3XE',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XH2C'),
         (AT.CONTACT,'OUI'),
@@ -273,7 +279,7 @@ phen.add('3DXH2C', Modelisation(dim=(3,3), code='3XE',
 phen.add('3DXH3', Modelisation(dim=(3,3), code='3XC',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XH3'),
     ),
@@ -289,7 +295,7 @@ phen.add('3DXH3', Modelisation(dim=(3,3), code='3XC',
 phen.add('3DXH3C', Modelisation(dim=(3,3), code='3XF',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XH3C'),
         (AT.CONTACT,'OUI'),
@@ -305,7 +311,7 @@ phen.add('3DXH3C', Modelisation(dim=(3,3), code='3XF',
 phen.add('3DXH4', Modelisation(dim=(3,3), code='3XD',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XH4'),
     ),
@@ -321,7 +327,7 @@ phen.add('3DXH4', Modelisation(dim=(3,3), code='3XD',
 phen.add('3DXH4C', Modelisation(dim=(3,3), code='3XG',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XH4C'),
         (AT.CONTACT,'OUI'),
@@ -337,7 +343,7 @@ phen.add('3DXH4C', Modelisation(dim=(3,3), code='3XG',
 phen.add('3DXHC', Modelisation(dim=(3,3), code='3X7',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XHC'),
         (AT.XLAG,'NOEUD'),
@@ -358,7 +364,7 @@ phen.add('3DXHC', Modelisation(dim=(3,3), code='3X7',
 phen.add('3DXHC3', Modelisation(dim=(3,3), code='3XH',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XHC3'),
         (AT.XLAG,'NOEUD'),
@@ -375,7 +381,7 @@ phen.add('3DXHC3', Modelisation(dim=(3,3), code='3XH',
 phen.add('3DXHTC', Modelisation(dim=(3,3), code='3X9',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XHTC'),
         (AT.XLAG,'NOEUD'),
@@ -396,7 +402,7 @@ phen.add('3DXHTC', Modelisation(dim=(3,3), code='3X9',
 phen.add('3DXTC', Modelisation(dim=(3,3), code='3X8',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.LXFEM,'OUI'),
         (AT.XFEM,'XTC'),
         (AT.XLAG,'NOEUD'),
@@ -416,6 +422,7 @@ phen.add('3DXTC', Modelisation(dim=(3,3), code='3X8',
 
 phen.add('3D_ABSO', Modelisation(dim=(2,3), code='3DA',
     attrs=(
+        (AT.TYPMOD,'3D'),
         (AT.ABSO,'OUI'),
     ),
     elements=(
@@ -427,6 +434,9 @@ phen.add('3D_ABSO', Modelisation(dim=(2,3), code='3DA',
     )))
 
 phen.add('3D_DIL', Modelisation(dim=(3,3), code='D3D',
+    attrs=(
+        (AT.TYPMOD,'3D'),
+    ),
     elements=(
         (MT.TETRA10   , EL.T10_3D),
         (MT.PENTA15   , EL.P15_3D),
@@ -441,6 +451,7 @@ phen.add('3D_FAISCEAU', Modelisation(dim=(3,3), code='3DF',
 
 phen.add('3D_FLUIDE', Modelisation(dim=(3,3), code='3FL',
     attrs=(
+        (AT.TYPMOD,'3D'),
         (AT.FLUIDE,'OUI'),
     ),
     elements=(
@@ -476,7 +487,7 @@ phen.add('3D_FLUI_ABSO', Modelisation(dim=(2,3), code='3FA',
 phen.add('3D_GRAD_VARI', Modelisation(dim=(3,3), code='3DV',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.TYPMOD2,'GRADVARI'),
     ),
     elements=(
@@ -492,8 +503,9 @@ phen.add('3D_GRAD_VARI', Modelisation(dim=(3,3), code='3DV',
 phen.add('3D_GRAD_INCO', Modelisation(dim=(3,3), code='3GI',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.INCO  ,'C5GV'),
+        (AT.TYPMOD2,'GRADVARI'),
     ),
     elements=(
         (MT.HEXA20    , EL.GVI_3D_HE20),
@@ -508,7 +520,7 @@ phen.add('3D_GRAD_INCO', Modelisation(dim=(3,3), code='3GI',
 phen.add('3D_GVNO', Modelisation(dim=(3,3), code='3GN',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.TYPMOD2,'GDVARINO'),
     ),
     elements=(
@@ -523,6 +535,7 @@ phen.add('3D_GVNO', Modelisation(dim=(3,3), code='3GN',
 
 phen.add('3D_HH2D', Modelisation(dim=(3,3), code='3Z4',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -540,6 +553,7 @@ phen.add('3D_HH2D', Modelisation(dim=(3,3), code='3Z4',
 
 phen.add('3D_HH2MD', Modelisation(dim=(3,3), code='3A3',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -557,6 +571,7 @@ phen.add('3D_HH2MD', Modelisation(dim=(3,3), code='3A3',
 
 phen.add('3D_HH2MS', Modelisation(dim=(3,3), code='3R9',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -574,6 +589,7 @@ phen.add('3D_HH2MS', Modelisation(dim=(3,3), code='3R9',
 
 phen.add('3D_HH2M_SI', Modelisation(dim=(3,3), code='3M1',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -590,6 +606,7 @@ phen.add('3D_HH2M_SI', Modelisation(dim=(3,3), code='3M1',
 
 phen.add('3D_HH2S', Modelisation(dim=(3,3), code='3Z3',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -607,6 +624,7 @@ phen.add('3D_HH2S', Modelisation(dim=(3,3), code='3Z3',
 
 phen.add('3D_HH2SUDA', Modelisation(dim=(3,3), code='3AD',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.TYPMOD3,'SUSHI'),
         (AT.MECA   ,'NON'),
@@ -621,6 +639,7 @@ phen.add('3D_HH2SUDA', Modelisation(dim=(3,3), code='3AD',
 
 phen.add('3D_HHD', Modelisation(dim=(3,3), code='3Z2',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -638,6 +657,7 @@ phen.add('3D_HHD', Modelisation(dim=(3,3), code='3Z2',
 
 phen.add('3D_HHM', Modelisation(dim=(3,3), code='3H1',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -654,6 +674,7 @@ phen.add('3D_HHM', Modelisation(dim=(3,3), code='3H1',
 
 phen.add('3D_HHMD', Modelisation(dim=(3,3), code='3H6',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -671,6 +692,7 @@ phen.add('3D_HHMD', Modelisation(dim=(3,3), code='3H6',
 
 phen.add('3D_HHMS', Modelisation(dim=(3,3), code='3R1',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -688,6 +710,7 @@ phen.add('3D_HHMS', Modelisation(dim=(3,3), code='3R1',
 
 phen.add('3D_HHS', Modelisation(dim=(3,3), code='3Z1',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -705,6 +728,7 @@ phen.add('3D_HHS', Modelisation(dim=(3,3), code='3Z1',
 
 phen.add('3D_HM', Modelisation(dim=(3,3), code='3H2',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -722,6 +746,7 @@ phen.add('3D_HM', Modelisation(dim=(3,3), code='3H2',
 
 phen.add('3D_HMD', Modelisation(dim=(3,3), code='3H7',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -740,6 +765,7 @@ phen.add('3D_HMD', Modelisation(dim=(3,3), code='3H7',
 
 phen.add('3D_HMS', Modelisation(dim=(3,3), code='3R2',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -758,6 +784,7 @@ phen.add('3D_HMS', Modelisation(dim=(3,3), code='3R2',
 
 phen.add('3D_HM_SI', Modelisation(dim=(3,3), code='3M2',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -775,6 +802,7 @@ phen.add('3D_HM_SI', Modelisation(dim=(3,3), code='3M2',
 
 phen.add('3D_HM_XH', Modelisation(dim=(3,3), code='3XL',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -794,6 +822,7 @@ phen.add('3D_HM_XH', Modelisation(dim=(3,3), code='3XL',
 
 phen.add('3D_HM_XH1', Modelisation(dim=(3,3), code='3XM',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -813,6 +842,7 @@ phen.add('3D_HM_XH1', Modelisation(dim=(3,3), code='3XM',
 
 phen.add('3D_HM_XH2', Modelisation(dim=(3,3), code='3XN',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -832,6 +862,7 @@ phen.add('3D_HM_XH2', Modelisation(dim=(3,3), code='3XN',
 
 phen.add('3D_HM_XH3', Modelisation(dim=(3,3), code='3XO',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -851,6 +882,7 @@ phen.add('3D_HM_XH3', Modelisation(dim=(3,3), code='3XO',
 
 phen.add('3D_HM_XHC', Modelisation(dim=(3,3), code='3XP',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -870,6 +902,7 @@ phen.add('3D_HM_XHC', Modelisation(dim=(3,3), code='3XP',
 
 phen.add('3D_HM_XH2C', Modelisation(dim=(3,3), code='3XQ',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -889,6 +922,7 @@ phen.add('3D_HM_XH2C', Modelisation(dim=(3,3), code='3XQ',
 
 phen.add('3D_HM_XH3C', Modelisation(dim=(3,3), code='3XR',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -908,6 +942,7 @@ phen.add('3D_HM_XH3C', Modelisation(dim=(3,3), code='3XR',
 
 phen.add('3D_HM_XHC3', Modelisation(dim=(3,3), code='3XS',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -927,6 +962,7 @@ phen.add('3D_HM_XHC3', Modelisation(dim=(3,3), code='3XS',
 
 phen.add('3D_HM_XH2C3', Modelisation(dim=(3,3), code='3XT',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -946,6 +982,7 @@ phen.add('3D_HM_XH2C3', Modelisation(dim=(3,3), code='3XT',
 
 phen.add('3D_HM_XH3C3', Modelisation(dim=(3,3), code='3XU',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -965,6 +1002,7 @@ phen.add('3D_HM_XH3C3', Modelisation(dim=(3,3), code='3XU',
 
 phen.add('3D_HM_XH_D', Modelisation(dim=(3,3), code='3XJ',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -983,6 +1021,7 @@ phen.add('3D_HM_XH_D', Modelisation(dim=(3,3), code='3XJ',
 
 phen.add('3D_HM_XH_S', Modelisation(dim=(3,3), code='3XK',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1001,6 +1040,7 @@ phen.add('3D_HM_XH_S', Modelisation(dim=(3,3), code='3XK',
 
 phen.add('3D_HM_XH_SI', Modelisation(dim=(3,3), code='3XI',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1019,6 +1059,7 @@ phen.add('3D_HM_XH_SI', Modelisation(dim=(3,3), code='3XI',
 
 phen.add('3D_HS', Modelisation(dim=(3,3), code='EH3',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -1038,7 +1079,7 @@ phen.add('3D_INCO_UP', Modelisation(dim=(3,3), code='3UP',
     attrs=(
         (AT.NBSIGM,'6'),
         (AT.INCO,'C2'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
     ),
     elements=(
         (MT.HEXA20    , EL.MIUP_HEXA20),
@@ -1056,7 +1097,7 @@ phen.add('3D_INCO_UPG', Modelisation(dim=(3,3), code='3DI',
     attrs=(
         (AT.NBSIGM,'6'),
         (AT.INCO,'C3'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
     ),
     elements=(
         (MT.HEXA20    , EL.MINC_HEXA20),
@@ -1071,7 +1112,7 @@ phen.add('3D_INCO_UPGB', Modelisation(dim=(3,3), code='3DB',
     attrs=(
         (AT.NBSIGM,'6'),
         (AT.INCO,'C3B'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
     ),
     elements=(
         (MT.HEXA20    , EL.MBNC_HEXA20),
@@ -1086,7 +1127,7 @@ phen.add('3D_INCO_UPO', Modelisation(dim=(3,3), code='3OS',
     attrs=(
         (AT.NBSIGM,'6'),
         (AT.INCO,'C2O'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
     ),
     elements=(
         (MT.HEXA8     , EL.MINCOS_HEXA8),
@@ -1101,7 +1142,7 @@ phen.add('3D_INCO_UPO', Modelisation(dim=(3,3), code='3OS',
 
 phen.add('3D_INTERFACE', Modelisation(dim=(3,3), code='3EI',
     attrs=(
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.TYPMOD2,'INTERFAC'),
         (AT.INTERFACE,'OUI'),
     ),
@@ -1112,7 +1153,7 @@ phen.add('3D_INTERFACE', Modelisation(dim=(3,3), code='3EI',
 
 phen.add('3D_INTERFACE_S', Modelisation(dim=(3,3), code='3IS',
     attrs=(
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.TYPMOD2,'INTERFAC'),
         (AT.INTERFACE,'OUI'),
     ),
@@ -1123,7 +1164,7 @@ phen.add('3D_INTERFACE_S', Modelisation(dim=(3,3), code='3IS',
 
 phen.add('3D_JOINT', Modelisation(dim=(3,3), code='3FI',
     attrs=(
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.TYPMOD2,'ELEMJOIN'),
         (AT.INTERFACE,'OUI'),
     ),
@@ -1136,7 +1177,7 @@ phen.add('3D_JOINT', Modelisation(dim=(3,3), code='3FI',
 
 phen.add('3D_JOINT_HYME', Modelisation(dim=(3,3), code='3FH',
     attrs=(
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
         (AT.TYPMOD2,'EJ_HYME'),
         (AT.INTERFACE,'OUI'),
     ),
@@ -1148,7 +1189,7 @@ phen.add('3D_JOINT_HYME', Modelisation(dim=(3,3), code='3FH',
 phen.add('3D_SI', Modelisation(dim=(3,3), code='3DS',
     attrs=(
         (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
+        (AT.TYPMOD,'3D'),
     ),
     elements=(
         (MT.HEXA20    , EL.MECA_HEXS20),
@@ -1161,6 +1202,7 @@ phen.add('3D_SI', Modelisation(dim=(3,3), code='3DS',
 
 phen.add('3D_THH2D', Modelisation(dim=(3,3), code='3A1',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -1178,6 +1220,7 @@ phen.add('3D_THH2D', Modelisation(dim=(3,3), code='3A1',
 
 phen.add('3D_THH2MD', Modelisation(dim=(3,3), code='3A2',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1195,6 +1238,7 @@ phen.add('3D_THH2MD', Modelisation(dim=(3,3), code='3A2',
 
 phen.add('3D_THH2MS', Modelisation(dim=(3,3), code='3R8',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1212,6 +1256,7 @@ phen.add('3D_THH2MS', Modelisation(dim=(3,3), code='3R8',
 
 phen.add('3D_THH2S', Modelisation(dim=(3,3), code='3R7',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -1229,6 +1274,7 @@ phen.add('3D_THH2S', Modelisation(dim=(3,3), code='3R7',
 
 phen.add('3D_THHD', Modelisation(dim=(3,3), code='3H8',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -1246,6 +1292,7 @@ phen.add('3D_THHD', Modelisation(dim=(3,3), code='3H8',
 
 phen.add('3D_THHM', Modelisation(dim=(3,3), code='3H4',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1262,6 +1309,7 @@ phen.add('3D_THHM', Modelisation(dim=(3,3), code='3H4',
 
 phen.add('3D_THHMD', Modelisation(dim=(3,3), code='3H9',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1279,6 +1327,7 @@ phen.add('3D_THHMD', Modelisation(dim=(3,3), code='3H9',
 
 phen.add('3D_THHMS', Modelisation(dim=(3,3), code='3R5',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1296,6 +1345,7 @@ phen.add('3D_THHMS', Modelisation(dim=(3,3), code='3R5',
 
 phen.add('3D_THHS', Modelisation(dim=(3,3), code='3R4',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -1313,6 +1363,7 @@ phen.add('3D_THHS', Modelisation(dim=(3,3), code='3R4',
 
 phen.add('3D_THM', Modelisation(dim=(3,3), code='3H5',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1329,6 +1380,7 @@ phen.add('3D_THM', Modelisation(dim=(3,3), code='3H5',
 
 phen.add('3D_THMD', Modelisation(dim=(3,3), code='3H0',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1346,6 +1398,7 @@ phen.add('3D_THMD', Modelisation(dim=(3,3), code='3H0',
 
 phen.add('3D_THMS', Modelisation(dim=(3,3), code='3R6',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1363,6 +1416,7 @@ phen.add('3D_THMS', Modelisation(dim=(3,3), code='3R6',
 
 phen.add('3D_THVD', Modelisation(dim=(3,3), code='3I3',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -1379,6 +1433,7 @@ phen.add('3D_THVD', Modelisation(dim=(3,3), code='3I3',
 
 phen.add('3D_THVS', Modelisation(dim=(3,3), code='3R3',
     attrs=(
+        (AT.TYPMOD ,'3D'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -1424,6 +1479,7 @@ phen.add('AXIS_ELDI', Modelisation(dim=(2,2), code='ADI',
 
 phen.add('AXIS_FLUIDE', Modelisation(dim=(2,2), code='AXF',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.FLUIDE,'OUI'),
         (AT.AXIS,'OUI'),
     ),
@@ -1439,6 +1495,7 @@ phen.add('AXIS_FLUIDE', Modelisation(dim=(2,2), code='AXF',
 
 phen.add('AXIS_FLUI_STRU', Modelisation(dim=(1,2), code='FSA',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.FLUIDE,'OUI'),
         (AT.AXIS,'OUI'),
         (AT.FSI,'OUI'),
@@ -1484,6 +1541,7 @@ phen.add('AXIS_GRAD_INCO', Modelisation(dim=(2,2), code='AGI',
         (AT.NBSIGM,'4'),
         (AT.TYPMOD,'AXIS'),
         (AT.INCO  ,'C5GV'),
+        (AT.TYPMOD2,'GRADVARI'),
     ),
     elements=(
         (MT.SEG3      , EL.MEAXSE3),
@@ -1506,6 +1564,7 @@ phen.add('AXIS_GVNO', Modelisation(dim=(2,2), code='AGN',
 
 phen.add('AXIS_HH2D', Modelisation(dim=(2,2), code='AZ4',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -1522,6 +1581,7 @@ phen.add('AXIS_HH2D', Modelisation(dim=(2,2), code='AZ4',
 
 phen.add('AXIS_HH2MD', Modelisation(dim=(2,2), code='AA3',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1538,6 +1598,7 @@ phen.add('AXIS_HH2MD', Modelisation(dim=(2,2), code='AA3',
 
 phen.add('AXIS_HH2MS', Modelisation(dim=(2,2), code='AR2',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1554,6 +1615,7 @@ phen.add('AXIS_HH2MS', Modelisation(dim=(2,2), code='AR2',
 
 phen.add('AXIS_HH2S', Modelisation(dim=(2,2), code='AZ3',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -1570,6 +1632,7 @@ phen.add('AXIS_HH2S', Modelisation(dim=(2,2), code='AZ3',
 
 phen.add('AXIS_HHD', Modelisation(dim=(2,2), code='AZ2',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -1586,6 +1649,7 @@ phen.add('AXIS_HHD', Modelisation(dim=(2,2), code='AZ2',
 
 phen.add('AXIS_HHM', Modelisation(dim=(2,2), code='AH1',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1601,6 +1665,7 @@ phen.add('AXIS_HHM', Modelisation(dim=(2,2), code='AH1',
 
 phen.add('AXIS_HHMD', Modelisation(dim=(2,2), code='AH6',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1617,6 +1682,7 @@ phen.add('AXIS_HHMD', Modelisation(dim=(2,2), code='AH6',
 
 phen.add('AXIS_HHMS', Modelisation(dim=(2,2), code='AR1',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1633,6 +1699,7 @@ phen.add('AXIS_HHMS', Modelisation(dim=(2,2), code='AR1',
 
 phen.add('AXIS_HHS', Modelisation(dim=(2,2), code='AZ1',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -1649,6 +1716,7 @@ phen.add('AXIS_HHS', Modelisation(dim=(2,2), code='AZ1',
 
 phen.add('AXIS_HM', Modelisation(dim=(2,2), code='AH2',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1664,6 +1732,7 @@ phen.add('AXIS_HM', Modelisation(dim=(2,2), code='AH2',
 
 phen.add('AXIS_HMD', Modelisation(dim=(2,2), code='AH7',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1680,6 +1749,7 @@ phen.add('AXIS_HMD', Modelisation(dim=(2,2), code='AH7',
 
 phen.add('AXIS_HMS', Modelisation(dim=(2,2), code='AR3',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1773,6 +1843,7 @@ phen.add('AXIS_INTERFACE_S', Modelisation(dim=(2,2), code='AIS',
 
 phen.add('AXIS_JHMS', Modelisation(dim=(2,2), code='JH2',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -1810,6 +1881,7 @@ phen.add('AXIS_SI', Modelisation(dim=(2,2), code='AXS',
 
 phen.add('AXIS_THH2D', Modelisation(dim=(2,2), code='AA1',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -1826,6 +1898,7 @@ phen.add('AXIS_THH2D', Modelisation(dim=(2,2), code='AA1',
 
 phen.add('AXIS_THH2MD', Modelisation(dim=(2,2), code='AA2',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1842,6 +1915,7 @@ phen.add('AXIS_THH2MD', Modelisation(dim=(2,2), code='AA2',
 
 phen.add('AXIS_THH2MS', Modelisation(dim=(2,2), code='AR7',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1858,6 +1932,7 @@ phen.add('AXIS_THH2MS', Modelisation(dim=(2,2), code='AR7',
 
 phen.add('AXIS_THH2S', Modelisation(dim=(2,2), code='AR5',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -1874,6 +1949,7 @@ phen.add('AXIS_THH2S', Modelisation(dim=(2,2), code='AR5',
 
 phen.add('AXIS_THHD', Modelisation(dim=(2,2), code='AH8',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -1890,6 +1966,7 @@ phen.add('AXIS_THHD', Modelisation(dim=(2,2), code='AH8',
 
 phen.add('AXIS_THHMD', Modelisation(dim=(2,2), code='AH9',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1906,6 +1983,7 @@ phen.add('AXIS_THHMD', Modelisation(dim=(2,2), code='AH9',
 
 phen.add('AXIS_THHMS', Modelisation(dim=(2,2), code='AR6',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1922,6 +2000,7 @@ phen.add('AXIS_THHMS', Modelisation(dim=(2,2), code='AR6',
 
 phen.add('AXIS_THHS', Modelisation(dim=(2,2), code='AR4',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -1938,6 +2017,7 @@ phen.add('AXIS_THHS', Modelisation(dim=(2,2), code='AR4',
 
 phen.add('AXIS_THM', Modelisation(dim=(2,2), code='AH5',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1953,6 +2033,7 @@ phen.add('AXIS_THM', Modelisation(dim=(2,2), code='AH5',
 
 phen.add('AXIS_THMD', Modelisation(dim=(2,2), code='AH0',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1969,6 +2050,7 @@ phen.add('AXIS_THMD', Modelisation(dim=(2,2), code='AH0',
 
 phen.add('AXIS_THMS', Modelisation(dim=(2,2), code='AR8',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -1985,6 +2067,7 @@ phen.add('AXIS_THMS', Modelisation(dim=(2,2), code='AR8',
 
 phen.add('AXIS_THVD', Modelisation(dim=(2,2), code='AG3',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -2001,6 +2084,7 @@ phen.add('AXIS_THVD', Modelisation(dim=(2,2), code='AG3',
 
 phen.add('AXIS_THVS', Modelisation(dim=(2,2), code='AR9',
     attrs=(
+        (AT.TYPMOD,'AXIS'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -2119,7 +2203,7 @@ phen.add('AXIS_XTC', Modelisation(dim=(2,2), code='AX5',
 phen.add('BARRE', Modelisation(dim=(1,3), code='BAR',
     attrs=(
         (AT.POUTRE,'OUI'),
-        (AT.TYPMOD,'COMP1D'),
+        (AT.TYPMOD,'1D'),
         (AT.EFGE,'OUI'),
         (AT.SIGM,'NON'),
     ),
@@ -2129,6 +2213,7 @@ phen.add('BARRE', Modelisation(dim=(1,3), code='BAR',
 
 phen.add('CABLE', Modelisation(dim=(1,3), code='CAB',
     attrs=(
+        (AT.TYPMOD,'1D'),
         (AT.POUTRE,'OUI'),
         (AT.EFGE,'OUI'),
         (AT.SIGM,'NON'),
@@ -2140,7 +2225,7 @@ phen.add('CABLE', Modelisation(dim=(1,3), code='CAB',
 phen.add('CABLE_GAINE', Modelisation(dim=(1,3), code='1GC',
     attrs=(
         (AT.POUTRE,'OUI'),
-        (AT.TYPMOD,'COMP1D'),
+        (AT.TYPMOD,'1D'),
         (AT.EFGE,'OUI'),
         (AT.SIGM,'NON'),
     ),
@@ -2150,6 +2235,7 @@ phen.add('CABLE_GAINE', Modelisation(dim=(1,3), code='1GC',
 
 phen.add('CABLE_POULIE', Modelisation(dim=(1,3), code='CAP',
     attrs=(
+        (AT.TYPMOD,'1D'),
         (AT.POUTRE,'OUI'),
         (AT.EFGE,'OUI'),
         (AT.SIGM,'NON'),
@@ -2855,6 +2941,7 @@ phen.add('C_PLAN_XT', Modelisation(dim=(2,2), code='CX2',
 
 phen.add('DIS_T', Modelisation(dim=(-1,3), code='DIT',
     attrs=(
+        (AT.TYPMOD,'0D'),
         (AT.EFGE,'OUI'),
         (AT.SIGM,'NON'),
     ),
@@ -2865,6 +2952,7 @@ phen.add('DIS_T', Modelisation(dim=(-1,3), code='DIT',
 
 phen.add('DIS_TR', Modelisation(dim=(-1,3), code='DTR',
     attrs=(
+        (AT.TYPMOD,'0D'),
         (AT.EFGE,'OUI'),
         (AT.SIGM,'NON'),
     ),
@@ -3027,6 +3115,7 @@ phen.add('D_PLAN2XTC', Modelisation(dim=(2,2), code='DX8',
 
 phen.add('D_PLAN_2DG', Modelisation(dim=(2,2), code='D2G',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.D_PLAN,'OUI'),
     ),
     elements=(
@@ -3036,6 +3125,7 @@ phen.add('D_PLAN_2DG', Modelisation(dim=(2,2), code='D2G',
 
 phen.add('D_PLAN_ABSO', Modelisation(dim=(1,2), code='DPA',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.ABSO,'OUI'),
     ),
     elements=(
@@ -3045,6 +3135,7 @@ phen.add('D_PLAN_ABSO', Modelisation(dim=(1,2), code='DPA',
 
 phen.add('D_PLAN_DIL', Modelisation(dim=(2,2), code='D2D',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.D_PLAN,'OUI'),
     ),
     elements=(
@@ -3087,6 +3178,7 @@ phen.add('D_PLAN_GRAD_INCO', Modelisation(dim=(2,2), code='DGI',
         (AT.D_PLAN,'OUI'),
         (AT.TYPMOD,'D_PLAN'),
         (AT.INCO  ,'C5GV'),
+        (AT.TYPMOD2,'GRADVARI'),
     ),
     elements=(
         (MT.SEG3      , EL.MEPLSE3),
@@ -3109,6 +3201,7 @@ phen.add('D_PLAN_GVNO', Modelisation(dim=(2,2), code='DGN',
 
 phen.add('D_PLAN_HH2D', Modelisation(dim=(2,2), code='DZ4',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -3125,6 +3218,7 @@ phen.add('D_PLAN_HH2D', Modelisation(dim=(2,2), code='DZ4',
 
 phen.add('D_PLAN_HH2MD', Modelisation(dim=(2,2), code='DA3',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3141,6 +3235,7 @@ phen.add('D_PLAN_HH2MD', Modelisation(dim=(2,2), code='DA3',
 
 phen.add('D_PLAN_HH2MS', Modelisation(dim=(2,2), code='DR3',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3157,6 +3252,7 @@ phen.add('D_PLAN_HH2MS', Modelisation(dim=(2,2), code='DR3',
 
 phen.add('D_PLAN_HH2M_SI', Modelisation(dim=(2,2), code='DM2',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3189,6 +3285,7 @@ phen.add('D_PLAN_HH2S', Modelisation(dim=(2,2), code='DZ3',
 
 phen.add('D_PLAN_HH2SUDA', Modelisation(dim=(2,2), code='2DA',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.TYPMOD3,'SUSHI'),
         (AT.MECA   ,'NON'),
@@ -3205,6 +3302,7 @@ phen.add('D_PLAN_HH2SUDA', Modelisation(dim=(2,2), code='2DA',
 
 phen.add('D_PLAN_HHD', Modelisation(dim=(2,2), code='DZ2',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -3221,6 +3319,7 @@ phen.add('D_PLAN_HHD', Modelisation(dim=(2,2), code='DZ2',
 
 phen.add('D_PLAN_HHM', Modelisation(dim=(2,2), code='DH1',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3236,6 +3335,7 @@ phen.add('D_PLAN_HHM', Modelisation(dim=(2,2), code='DH1',
 
 phen.add('D_PLAN_HHMD', Modelisation(dim=(2,2), code='DH6',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3252,6 +3352,7 @@ phen.add('D_PLAN_HHMD', Modelisation(dim=(2,2), code='DH6',
 
 phen.add('D_PLAN_HHMS', Modelisation(dim=(2,2), code='DR2',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3268,6 +3369,7 @@ phen.add('D_PLAN_HHMS', Modelisation(dim=(2,2), code='DR2',
 
 phen.add('D_PLAN_HHS', Modelisation(dim=(2,2), code='DZ1',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -3284,6 +3386,7 @@ phen.add('D_PLAN_HHS', Modelisation(dim=(2,2), code='DZ1',
 
 phen.add('D_PLAN_HM', Modelisation(dim=(2,2), code='DH2',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3299,6 +3402,7 @@ phen.add('D_PLAN_HM', Modelisation(dim=(2,2), code='DH2',
 
 phen.add('D_PLAN_HMD', Modelisation(dim=(2,2), code='DH7',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3315,6 +3419,7 @@ phen.add('D_PLAN_HMD', Modelisation(dim=(2,2), code='DH7',
 
 phen.add('D_PLAN_HMS', Modelisation(dim=(2,2), code='DR1',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3331,6 +3436,7 @@ phen.add('D_PLAN_HMS', Modelisation(dim=(2,2), code='DR1',
 
 phen.add('D_PLAN_HM_P', Modelisation(dim=(2,2), code='DHB',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.TYPMOD3,'STEADY'),
         (AT.MECA   ,'OUI'),
@@ -3347,6 +3453,7 @@ phen.add('D_PLAN_HM_P', Modelisation(dim=(2,2), code='DHB',
 
 phen.add('D_PLAN_HM_SI', Modelisation(dim=(2,2), code='DM1',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3362,6 +3469,7 @@ phen.add('D_PLAN_HM_SI', Modelisation(dim=(2,2), code='DM1',
 
 phen.add('D_PLAN_HM_XH', Modelisation(dim=(2,2), code='DXI',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3379,6 +3487,7 @@ phen.add('D_PLAN_HM_XH', Modelisation(dim=(2,2), code='DXI',
 
 phen.add('D_PLAN_HM_XH1', Modelisation(dim=(2,2), code='DXM',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3396,6 +3505,7 @@ phen.add('D_PLAN_HM_XH1', Modelisation(dim=(2,2), code='DXM',
 
 phen.add('D_PLAN_HM_XH2', Modelisation(dim=(2,2), code='DXN',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3413,6 +3523,7 @@ phen.add('D_PLAN_HM_XH2', Modelisation(dim=(2,2), code='DXN',
 
 phen.add('D_PLAN_HM_XH3', Modelisation(dim=(2,2), code='DXO',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3430,6 +3541,7 @@ phen.add('D_PLAN_HM_XH3', Modelisation(dim=(2,2), code='DXO',
 
 phen.add('D_PLAN_HM_XHC', Modelisation(dim=(2,2), code='DXP',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3448,6 +3560,7 @@ phen.add('D_PLAN_HM_XHC', Modelisation(dim=(2,2), code='DXP',
 
 phen.add('D_PLAN_HM_XH2C', Modelisation(dim=(2,2), code='DXQ',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3466,6 +3579,7 @@ phen.add('D_PLAN_HM_XH2C', Modelisation(dim=(2,2), code='DXQ',
 
 phen.add('D_PLAN_HM_XH3C', Modelisation(dim=(2,2), code='DXR',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3484,6 +3598,7 @@ phen.add('D_PLAN_HM_XH3C', Modelisation(dim=(2,2), code='DXR',
 
 phen.add('D_PLAN_HM_XHC3', Modelisation(dim=(2,2), code='DXS',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3502,6 +3617,7 @@ phen.add('D_PLAN_HM_XHC3', Modelisation(dim=(2,2), code='DXS',
 
 phen.add('D_PLAN_HM_XH2C3', Modelisation(dim=(2,2), code='DXT',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3520,6 +3636,7 @@ phen.add('D_PLAN_HM_XH2C3', Modelisation(dim=(2,2), code='DXT',
 
 phen.add('D_PLAN_HM_XH3C3', Modelisation(dim=(2,2), code='DXU',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3538,6 +3655,7 @@ phen.add('D_PLAN_HM_XH3C3', Modelisation(dim=(2,2), code='DXU',
 
 phen.add('D_PLAN_HM_XH_D', Modelisation(dim=(2,2), code='DXK',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3555,6 +3673,7 @@ phen.add('D_PLAN_HM_XH_D', Modelisation(dim=(2,2), code='DXK',
 
 phen.add('D_PLAN_HM_XH_S', Modelisation(dim=(2,2), code='DXL',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3572,6 +3691,7 @@ phen.add('D_PLAN_HM_XH_S', Modelisation(dim=(2,2), code='DXL',
 
 phen.add('D_PLAN_HM_XH_SI', Modelisation(dim=(2,2), code='DXJ',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -3589,6 +3709,7 @@ phen.add('D_PLAN_HM_XH_SI', Modelisation(dim=(2,2), code='DXJ',
 
 phen.add('D_PLAN_HS', Modelisation(dim=(2,2), code='DHA',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'NON'),
@@ -3673,6 +3794,7 @@ phen.add('D_PLAN_SI', Modelisation(dim=(2,2), code='DPS',
 
 phen.add('D_PLAN_THH2D', Modelisation(dim=(2,2), code='DA1',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -3689,6 +3811,7 @@ phen.add('D_PLAN_THH2D', Modelisation(dim=(2,2), code='DA1',
 
 phen.add('D_PLAN_THH2MD', Modelisation(dim=(2,2), code='DA2',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -3705,6 +3828,7 @@ phen.add('D_PLAN_THH2MD', Modelisation(dim=(2,2), code='DA2',
 
 phen.add('D_PLAN_THH2MS', Modelisation(dim=(2,2), code='DR7',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -3721,6 +3845,7 @@ phen.add('D_PLAN_THH2MS', Modelisation(dim=(2,2), code='DR7',
 
 phen.add('D_PLAN_THH2S', Modelisation(dim=(2,2), code='DR5',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -3737,6 +3862,7 @@ phen.add('D_PLAN_THH2S', Modelisation(dim=(2,2), code='DR5',
 
 phen.add('D_PLAN_THHD', Modelisation(dim=(2,2), code='DH8',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -3753,6 +3879,7 @@ phen.add('D_PLAN_THHD', Modelisation(dim=(2,2), code='DH8',
 
 phen.add('D_PLAN_THHMD', Modelisation(dim=(2,2), code='DH9',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -3769,6 +3896,7 @@ phen.add('D_PLAN_THHMD', Modelisation(dim=(2,2), code='DH9',
 
 phen.add('D_PLAN_THHMS', Modelisation(dim=(2,2), code='DR6',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.D_PLAN,'OUI'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
@@ -3785,6 +3913,7 @@ phen.add('D_PLAN_THHMS', Modelisation(dim=(2,2), code='DR6',
 
 phen.add('D_PLAN_THHS', Modelisation(dim=(2,2), code='DR4',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -3801,6 +3930,7 @@ phen.add('D_PLAN_THHS', Modelisation(dim=(2,2), code='DR4',
 
 phen.add('D_PLAN_THM', Modelisation(dim=(2,2), code='DH5',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -3816,6 +3946,7 @@ phen.add('D_PLAN_THM', Modelisation(dim=(2,2), code='DH5',
 
 phen.add('D_PLAN_THMD', Modelisation(dim=(2,2), code='DH0',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -3832,6 +3963,7 @@ phen.add('D_PLAN_THMD', Modelisation(dim=(2,2), code='DH0',
 
 phen.add('D_PLAN_THMS', Modelisation(dim=(2,2), code='DR8',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'OUI'),
@@ -3848,6 +3980,7 @@ phen.add('D_PLAN_THMS', Modelisation(dim=(2,2), code='DR8',
 
 phen.add('D_PLAN_THVD', Modelisation(dim=(2,2), code='DG3',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -3864,6 +3997,7 @@ phen.add('D_PLAN_THVD', Modelisation(dim=(2,2), code='DG3',
 
 phen.add('D_PLAN_THVS', Modelisation(dim=(2,2), code='DR9',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'NON'),
         (AT.THER   ,'OUI'),
@@ -4042,6 +4176,7 @@ phen.add('D_PLAN_XT', Modelisation(dim=(2,2), code='DX2',
 
 phen.add('FLUI_STRU', Modelisation(dim=(3,3), code='FLS',
     attrs=(
+        (AT.TYPMOD,'3D'),
         (AT.FLUIDE,'OUI'),
         (AT.FSI,'OUI'),
     ),
@@ -4056,7 +4191,7 @@ phen.add('FLUI_STRU', Modelisation(dim=(3,3), code='FLS',
 phen.add('GRILLE_EXCENTRE', Modelisation(dim=(2,3), code='GRC',
     attrs=(
         (AT.GRILLE,'OUI'),
-        (AT.TYPMOD,'COMP1D'),
+        (AT.TYPMOD,'1D'),
         (AT.COQUE,'OUI'),
         (AT.SOUS_POINT,'OUI'),
     ),
@@ -4068,7 +4203,7 @@ phen.add('GRILLE_EXCENTRE', Modelisation(dim=(2,3), code='GRC',
 phen.add('GRILLE_MEMBRANE', Modelisation(dim=(2,3), code='GRM',
     attrs=(
         (AT.GRILLE,'OUI'),
-        (AT.TYPMOD,'COMP1D'),
+        (AT.TYPMOD,'1D'),
         (AT.COQUE,'OUI'),
     ),
     elements=(
@@ -4127,6 +4262,7 @@ phen.add('PLAN_INTERFACE_S', Modelisation(dim=(2,2), code='PIS',
 
 phen.add('PLAN_JHMS', Modelisation(dim=(2,2), code='JH1',
     attrs=(
+        (AT.TYPMOD,'D_PLAN'),
         (AT.TYPMOD2,'THM'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
@@ -4175,7 +4311,7 @@ phen.add('POU_D_E', Modelisation(dim=(1,3), code='PDE',
 phen.add('POU_D_EM', Modelisation(dim=(1,3), code='PFM',
     attrs=(
         (AT.POUTRE,'OUI'),
-        (AT.TYPMOD,'COMP1D'),
+        (AT.TYPMOD,'1D'),
         (AT.TYPMOD2,'PMF'),
         (AT.EULER,'OUI'),
         (AT.EFGE,'OUI'),
@@ -4208,7 +4344,7 @@ phen.add('POU_D_TG', Modelisation(dim=(1,3), code='PDG',
 phen.add('POU_D_TGM', Modelisation(dim=(1,3), code='PGM',
     attrs=(
         (AT.POUTRE,'OUI'),
-        (AT.TYPMOD,'COMP1D'),
+        (AT.TYPMOD,'1D'),
         (AT.TYPMOD2,'PMF'),
         (AT.EFGE,'OUI'),
         (AT.SOUS_POINT,'OUI'),

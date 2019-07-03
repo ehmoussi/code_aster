@@ -28,7 +28,7 @@ loi = LoiComportement(
     nb_vari        = 0,
     nom_vari       = None,
     mc_mater       = None,
-    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN','PMF',
+    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN','PMF','1D',
         ),
     deformation    = ('GROT_GDEP',),
     algo_inte      = ('SANS_OBJET',),
