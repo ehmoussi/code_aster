@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,12 +37,14 @@ subroutine te0477(option, nomte)
 #include "blas/dcopy.h"
 !
 #include "asterfort/elrefe_info.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/nmssgr.h"
 #include "asterfort/nmsspl.h"
 #include "asterfort/nmtstm.h"
 #include "asterfort/sshini.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
     character(len=16) :: option
     character(len=16) :: nomte
@@ -140,6 +142,15 @@ subroutine te0477(option, nomte)
 !
 !      'GROT_GDEP' deformation model (large transformations / small strains)
 !
+
+!
+! --- - Check
+!
+        if (zk16(icompo-1+RELA_NAME) .eq. 'ELAS') then
+            call utmess('F', 'COMPOR1_15')
+        endif
+
+
 !      Geometrical update :
 !           Geometry at last converged increment
 !           + displacement at beginning of new increment
