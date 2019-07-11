@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,7 +36,8 @@ MODMECA=AFFE_MODELE(MAILLAGE=MAIL,
                             MODELISATION='SHB',),);
 
 MAT=DEFI_MATERIAU(ELAS=_F(E=1.2E+6,
-                          NU=0.,),);
+                          NU=0.,),
+                   ECRO_LINE=_F(D_SIGM_EPSI=1.0,SY=1E15),);
 
 CHM=AFFE_MATERIAU(MAILLAGE=MAIL,
                   AFFE=_F(TOUT='OUI',
@@ -58,7 +59,7 @@ NONLIN=STAT_NON_LINE(MODELE=MODMECA,
                      CHAM_MATER=CHM,
                      EXCIT=_F(CHARGE=CHARGT,
                               TYPE_CHARGE='FIXE_PILO',),
-                     COMPORTEMENT=_F(RELATION='ELAS',
+                     COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',
                                   DEFORMATION='GROT_GDEP',
                                   TOUT='OUI',),
                      INCREMENT=_F(LIST_INST=LISTPILO,),
