@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine cfbord(char, noma)
+!
+subroutine cfbord(sdcont, mesh)
     implicit none
 #include "jeveux.h"
 #include "asterfort/cfdisi.h"
@@ -24,8 +24,9 @@ subroutine cfbord(char, noma)
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
-    character(len=8) :: char
-    character(len=8) :: noma
+!
+    character(len=8), intent(in) :: sdcont
+    character(len=8), intent(in) :: mesh
 !
 ! ----------------------------------------------------------------------
 !
@@ -36,17 +37,10 @@ subroutine cfbord(char, noma)
 ! ----------------------------------------------------------------------
 !
 !
-! IN  CHAR   : NOM UTILISATEUR DU CONCEPT DE CHARGE
-! IN  NOMA   : NOM DU MAILLAGE
-! IN  NOMO   : NOM DU MODELE
-! IN  MOTFAC : MOT-CLE FACTEUR (VALANT 'CONTACT')
-! IN  NDIM   : NOMBRE DE DIMENSIONS DU PROBLEME
-! IN  NZOCO  : NOMBRE DE ZONES DE CONTACT
-! OUT LIGRET : LIGREL D'ELEMENTS TARDIFS DU CONTACT
+! IN  SDCONT   : NOM UTILISATEUR DU CONCEPT DE CHARGE
+! IN  MESH   : NOM DU MAILLAGE
 !
-!
-!
-!
+
     character(len=24) :: defico, contma
     integer ::  jmaco
     integer :: ndimg, nmaco, vali(2)
@@ -60,12 +54,12 @@ subroutine cfbord(char, noma)
 !
 ! --- INITIALISATIONS
 !
-    defico = char(1:8)//'.CONTACT'
+    defico = sdcont(1:8)//'.CONTACT'
     contma = defico(1:16)//'.MAILCO'
 !
 ! --- LECTURE DES STRUCTURES DE DONNEES
 !
-    call jeveuo(noma//'.TYPMAIL', 'L', vi=typmail)
+    call jeveuo(mesh//'.TYPMAIL', 'L', vi=typmail)
     call jeveuo(contma, 'L', jmaco)
     call jeveuo('&CATA.TM.TMDIM', 'L', vi=tmdim)
 !
@@ -76,7 +70,7 @@ subroutine cfbord(char, noma)
 !
 ! --- VERIFICATION DE LA COHERENCE DES DIMENSIONS
 !
-    do 10 ima = 1, nmaco
+    do ima = 1, nmaco
         nummai = zi(jmaco -1 + ima)
         nutyp = typmail(nummai)
         ndimma = tmdim(nutyp)
@@ -85,7 +79,7 @@ subroutine cfbord(char, noma)
             vali(2) = ndimg
             call utmess('F', 'CONTACT2_11', ni=2, vali=vali)
         endif
-10  end do
+    end do
 !
     call jedema()
 !
