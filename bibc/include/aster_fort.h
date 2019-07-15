@@ -50,6 +50,10 @@ extern void DEFSSSPSSP(DISMOI, dismoi, const char *,STRING_SIZE,
                        const char *,STRING_SIZE, const char *,STRING_SIZE, ASTERINTEGER *,
                        char *,STRING_SIZE, const char *,STRING_SIZE, ASTERINTEGER *);
 
+#define CALL_GMARDM(a,b,c) CALLSSP(GMARDM,gmardm,a,b,c)
+extern void DEFSSP(GMARDM, gmardm, const char *,STRING_SIZE,
+                       const char *,STRING_SIZE, ASTERINTEGER *);
+
 #define CALL_POSTKUTIL(a,b,c,d) CALLSSSS(POSTKUTIL,postkutil,a,b,c,d)
 extern void DEFSSSS(POSTKUTIL,postkutil,char *,STRING_SIZE,char *,STRING_SIZE,
                     char *,STRING_SIZE,char *,STRING_SIZE);

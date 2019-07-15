@@ -1983,6 +1983,31 @@ PyObject *args;
 }
 
 /* ---------------------------------------------------------------------- */
+static PyObject * aster_gmardm(self, args)
+PyObject *self; /* Not used */
+PyObject *args;
+{
+    char *nomgrm, *modele;
+    char *Fnom, *Fmod;
+    ASTERINTEGER iret;
+    PyObject *res;
+
+    if (!PyArg_ParseTuple(args, "ss", &nomgrm, &modele))
+        return NULL;
+
+    Fnom = MakeFStrFromCStr(nomgrm, 32);
+    Fmod = MakeFStrFromCStr(modele, 32);
+    CALL_GMARDM(Fnom, Fmod, &iret);
+
+    res = Py_BuildValue("i", (int)iret);
+
+    FreeStr(Fnom);
+    FreeStr(Fmod);
+
+    return res;
+}
+
+/* ---------------------------------------------------------------------- */
 static char postkutil_doc[] =
 "Interface d'appel a la routine fortran postkutil.\n"
 "   usage: materiau, modelisa = aster.postkutil(resu, fiss) \n\n"
@@ -2660,6 +2685,7 @@ static PyMethodDef aster_methods[] = {
                 {"mdnoch",       aster_mdnoch,       METH_VARARGS},
                 {"rcvale",       aster_rcvale,       METH_VARARGS, rcvale_doc},
                 {"dismoi",       aster_dismoi,       METH_VARARGS, dismoi_doc},
+                {"gmardm",       aster_gmardm,       METH_VARARGS},
                 {"postkutil",    aster_postkutil,    METH_VARARGS, postkutil_doc},
                 {"get_option_dependency", aster_getoptdep, METH_VARARGS, getoptdep_doc},
                 {"argv",         aster_argv,         METH_VARARGS},
