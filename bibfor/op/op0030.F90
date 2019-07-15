@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ implicit none
 !
     integer :: iret, nb_dim
     character(len=4) :: vale_type
-    character(len=8) :: mesh, model, sdcont 
+    character(len=8) :: mesh, model, sdcont
     character(len=16) :: k16dummy, command
     character(len=19) :: ligrmo, ligret, ligrel, ligrch
     integer :: cont_form
@@ -107,7 +107,7 @@ implicit none
 !
     call defContactCreateObjects(sdcont)
 !
-! - Read and create datastructures 
+! - Read and create datastructures
 !
     if (cont_form .eq. 4) then
         call caliun(sdcont, mesh, model)

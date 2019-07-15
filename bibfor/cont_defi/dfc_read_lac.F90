@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    l_elim_coq3d = .false.
+    l_elim_coq3d = ASTER_FALSE
 !
 ! - Read zone: nodes and elements
 !
@@ -91,7 +91,7 @@ implicit none
 !
 ! - Elements and nodes parameters
 !
-    call typeco(sdcont, mesh) 
+    call typeco(sdcont, mesh)
 !
 ! - Some checks : ONE NODE IS COMMON TO TWO SLAVE SURFACES
 !
