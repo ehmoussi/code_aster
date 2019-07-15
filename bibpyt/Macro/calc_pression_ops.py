@@ -72,13 +72,18 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
 
     __model = self.get_concept(n_modele)
 
-    # BLINDAGE : on poursuit le calcul uniquement que si le modèle n'est pas
-    # un élément de structure
+    # BLINDAGE : on poursuit le calcul uniquement que si le groupe n'a pas de
+    # élément de structure
     iret, ibid, test_structure = aster.dismoi(
         'EXI_RDM', __model.nom, 'MODELE', 'F')
-    if test_structure == 'OUI':
-        UTMESS('F', 'CALCPRESSION0_3')
-    else:
+    # si non dans tout le modele
+    if test_structure == 'NON':
+        iret, dim, rbid = aster.dismoi('DIM_GEOM', __model.nom, 'MODELE', 'F')
+    else :
+    # si oui dans le modele, ensuite check toutes les mailles dans les group_ma
+        for igrm in range(len(GROUP_MA)):
+            iret = aster.gmardm(GROUP_MA[igrm], __model.nom)
+            if iret == 1 : UTMESS('F', 'CALCPRESSION0_3')
         iret, dim, rbid = aster.dismoi('DIM_GEOM', __model.nom, 'MODELE', 'F')
 
 # Corps de la commande
