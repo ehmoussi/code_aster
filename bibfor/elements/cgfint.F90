@@ -97,7 +97,7 @@ implicit none
     real(kind=8) :: r, mu, epsm, deps, wg, l(3), de(1), ddedt, t1
     real(kind=8) :: b(4, 3), gliss
     real(kind=8) :: sigcab, dsidep, dde(2), ddedn, courb
-    real(kind=8) :: angmas(3), val(1), wkin(2), wkout(1)
+    real(kind=8) :: angmas(3), val(1)
     character(len=16) :: nom(1)
     character(len=1) :: poum
     type(Behaviour_Integ) :: BEHinteg
@@ -227,9 +227,8 @@ implicit none
                     'RIGI', g, 1, ndim, typmod,&
                     mat, compoz, crit, instam, instap,&
                     1, [mu], [gliss], 1, [0.d0],&
-                    vim(nbvica+1, g), option, [0.d0], 2, wkin,&
-                    de, vip(nbvica+1, g), 36, dde, 1,&
-                    wkout, cod(g))
+                    vim(nbvica+1, g), option, [0.d0], &
+                    de, vip(nbvica+1, g), 36, dde, cod(g))
         if (cod(g) .eq. 1) goto 999
 !
 !      FORCE INTERIEURE ET CONTRAINTES DE CAUCHY

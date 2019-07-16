@@ -96,8 +96,8 @@ implicit none
     real(kind=8) :: vim(lgpg, npg), sigp(2*ndim, npg), vip(lgpg, npg)
     real(kind=8) :: matuu(*), fint(ndim*nno)
     real(kind=8) :: geomm(3*27), geomp(3*27), fm(3, 3), fp(3, 3), deplt(3*27)
-    real(kind=8) :: r, poids, elgeom(10, 27), tn(6), tp(6), deps(6)
-    real(kind=8) :: gn(3, 3), lamb(3), logl(3), rbid(1)
+    real(kind=8) :: r, poids, tn(6), tp(6), deps(6)
+    real(kind=8) :: gn(3, 3), lamb(3), logl(3)
     real(kind=8) :: def(2*ndim, nno, ndim), pff(2*ndim, nno, nno)
     real(kind=8) :: dsidep(6, 6), pk2(6), pk2m(6)
     real(kind=8) :: coorga(27,3)
@@ -110,8 +110,6 @@ implicit none
     if (compor(5)(1:7) .eq. 'DEBORST') then
         ASSERT(.false.)
     endif
-    elgeom(:,:) = 0.d0
-
 !
 ! -----------------------------DECLARATION-----------------------------
     nddl = ndim*nno
@@ -180,9 +178,8 @@ implicit none
                     fami, g, 1, ndim, typmod,&
                     mate, compor, carcri, instm, instp,&
                     6, epsml, deps, 6, tn,&
-                    vim(1, g), option, angmas, 10, elgeom(1, g),&
-                    tp, vip(1, g), 36, dtde, 1,&
-                    rbid, cod(g), mult_comp)
+                    vim(1, g), option, angmas, &
+                    tp, vip(1, g), 36, dtde, cod(g), mult_comp)
 !
 !        TEST SUR LES CODES RETOUR DE LA LOI DE COMPORTEMENT
 !

@@ -178,10 +178,8 @@ implicit none
                     'RIGI', kpg, 1, ndim, typmod,&
                     mate, compor, crit, tm, tp,&
                     6, epsm, deps, 6, sigmo,&
-                    vim(1, kpg), option, rbid, 12, [0.d0,0.d0,0.d0,0.d0,&
-                    0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0,0.d0],&
-                    sigma, vip(1, kpg), 36, dsidep, 1,&
-                    rbid, ibid)
+                    vim(1, kpg), option, rbid, &
+                    sigma, vip(1, kpg), 36, dsidep, ibid)
 !
 ! - CONTRAINTE ET EFFORTS INTERIEURS
 !

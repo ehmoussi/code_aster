@@ -21,9 +21,8 @@ subroutine lc8331(BEHinteg,&
                   fami, kpg, ksp, ndim, imate,&
                   compor, mult_comp, carcri, instam, instap, neps,&
                   epsm, deps, nsig, sigm, vim,&
-                  option, angmas,sigp, nvi, vip, nwkin,&
-                  wkin, typmod,icomp, ndsde,&
-                  dsidep, nwkout, wkout, codret)
+                  option, angmas,sigp, nvi, vip, &
+                  typmod, icomp, ndsde, dsidep, codret)
 !
 use Behaviour_type
 !
@@ -56,11 +55,7 @@ real(kind=8), intent(in) :: angmas(*)
 real(kind=8), intent(out) :: sigp(*)
 integer, intent(in) :: nvi
 real(kind=8), intent(out) :: vip(*)
-integer, intent(in) :: nwkin
-real(kind=8), intent(in) :: wkin(nwkin)
 character(len=8), intent(in) :: typmod(*)
-integer, intent(in) :: nwkout
-real(kind=8), intent(out) :: wkout(nwkout)
 integer, intent(in) :: icomp
 integer, intent(in) :: ndsde
 real(kind=8), intent(out) :: dsidep(*)
@@ -74,7 +69,6 @@ integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: wkinp(10)
     character(len=16) :: compor_creep(20), compor_plas(20)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -82,30 +76,25 @@ integer, intent(out) :: codret
     call kitPrepBehaviour(compor, compor_creep, compor_plas)
 !
     if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-        wkinp(1)  = 1.d0
         call nmcomp(BEHinteg,&
                     fami, kpg, ksp, ndim, typmod,&
                     imate, compor_creep, carcri, instam, instap  ,&
                     neps, epsm, deps, nsig, sigm,&
-                    vim, option, angmas, nwkin, wkinp,&
-                    sigp, vip, ndsde, dsidep, nwkout,&
-                    wkout, codret)
+                    vim, option, angmas, &
+                    sigp, vip, ndsde, dsidep, codret)
         call nmcomp(BEHinteg,&
                     fami, kpg, ksp, ndim, typmod,&
                     imate, compor_plas, carcri, instam, instap  ,&
                     neps, epsm, deps, nsig, sigm,&
-                    vim, option, angmas, nwkin, wkinp,&
-                    sigp, vip, ndsde, dsidep, nwkout,&
-                    wkout, codret)
+                    vim, option, angmas, &
+                    sigp, vip, ndsde, dsidep, codret)
     else if (option(1:9).eq.'RIGI_MECA') then
-        wkinp(1)  = 1.d0
         call nmcomp(BEHinteg,&
                     fami, kpg, ksp, ndim, typmod,&
                     imate, compor_creep, carcri, instam, instap  ,&
                     neps, epsm, deps, nsig, sigm,&
-                    vim, option, angmas, nwkin, wkinp,&
-                    sigp, vip, ndsde, dsidep, nwkout,&
-                    wkout, codret)
+                    vim, option, angmas, &
+                    sigp, vip, ndsde, dsidep, codret)
     endif
 !
 end subroutine

@@ -33,8 +33,8 @@ implicit none
     character(len=16) :: option, compor(*)
     integer :: codret, kpg, ksp, imate
     real(kind=8) :: angmas(3), sigm(4), eps(4), deps(4)
-    real(kind=8) :: vim(*), vip(*), sigp(4), dsde(6, 6), carcri(*), lc(1)
-    real(kind=8) :: instm, instp,  wkout(1)
+    real(kind=8) :: vim(*), vip(*), sigp(4), dsde(6, 6), carcri(*)
+    real(kind=8) :: instm, instp
     character(len=8) :: typmod(2)
     type(Behaviour_Integ), intent(in) :: BEHinteg
 !
@@ -53,8 +53,7 @@ implicit none
                 fami, kpg, ksp, 2, typmod,&
                 imate, compor, carcri, instm, instp,&
                 4, eps, deps, 4, sigm,&
-                vim, option, angmas, 1, lc,&
-                sigp, vip, 36, dsde, 1,&
-                wkout, codret)
+                vim, option, angmas, &
+                sigp, vip, 36, dsde, codret)
 !
 end subroutine

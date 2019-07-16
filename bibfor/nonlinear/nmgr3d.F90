@@ -114,7 +114,7 @@ integer, intent(inout) :: codret
     real(kind=8) :: detf_prev, detf_curr
     real(kind=8) :: disp_curr(3*nno)
     real(kind=8) :: r, sigma(6), sigm_norm(6), poids, maxeps
-    real(kind=8) :: elgeom(10, 27), wkout(1), angl_naut(3)
+    real(kind=8) :: angl_naut(3)
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     integer :: cod(27)
     real(kind=8) :: dfdi(nno, 3), pff(6,nno,nno), def(6,nno,3) 
@@ -124,8 +124,6 @@ integer, intent(inout) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    elgeom(:,:) = 0.d0
-    wkout(1)    = 0.d0
     cod(:)      = 0
     grand       = ASTER_TRUE
     axi         = ASTER_FALSE
@@ -216,9 +214,9 @@ integer, intent(inout) :: codret
                         fami       , kpg        , 1        , ndim  , typmod        ,&
                         imate      , compor     , carcri   , instam, instap        ,&
                         6          , epsg_prev  , epsg_incr, 6     , sigm_norm     ,&
-                        vim(1, kpg), option     , angl_naut, 10    , elgeom(1, kpg),&
-                        sigma      , vip(1, kpg), 36       , dsidep, 1             ,&
-                        wkout      , cod(kpg)   , mult_comp)
+                        vim(1, kpg), option     , angl_naut                        ,&
+                        sigma      , vip(1, kpg), 36       , dsidep                ,&
+                        cod(kpg)   , mult_comp)
             if (cod(kpg) .eq. 1) then
                 goto 999
             endif
@@ -227,9 +225,9 @@ integer, intent(inout) :: codret
                         fami       , kpg        , 1        , ndim  , typmod        ,&
                         imate      , compor     , carcri   , instam, instap        ,&
                         9          , f_prev     , f_curr   , 6     , sigm_norm     ,&
-                        vim(1, kpg), option     , angl_naut, 10    , elgeom(1, kpg),&
-                        sigma      , vip(1, kpg), 36       , dsidep, 1             ,&
-                        wkout      , cod(kpg)   , mult_comp)
+                        vim(1, kpg), option     , angl_naut                        ,&
+                        sigma      , vip(1, kpg), 36       , dsidep                ,&
+                        cod(kpg)   , mult_comp)
             if (cod(kpg) .eq. 1) then
                 goto 999
             endif

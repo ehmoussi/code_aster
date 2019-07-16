@@ -21,9 +21,9 @@ subroutine nmcomp(BEHinteg,&
                   fami   , kpg, ksp, ndim, typmod,&
                   imate  , compor, carcri, instam, instap,&
                   neps   , epsm, deps, nsig, sigm,&
-                  vim    , option, angmas, nwkin, wkin,&
-                  sigp   , vip, ndsde, dsidep, nwkout,&
-                  wkout  , codret, mult_comp_, l_epsi_varc_)
+                  vim    , option, angmas, &
+                  sigp   , vip, ndsde, dsidep, &
+                  codret , mult_comp_, l_epsi_varc_)
 !
 use Behaviour_type
 !
@@ -40,14 +40,13 @@ implicit none
 !
 type(Behaviour_Integ) :: BEHinteg
 integer :: kpg, ksp, ndim, imate, codret, icp, numlc
-integer :: neps, nsig, nwkin, nwkout, ndsde
+integer :: neps, nsig, ndsde
 character(len=8) :: typmod(*)
 character(len=*) :: fami
 character(len=16) :: compor(*), option
 real(kind=8) :: carcri(*), instam, instap
 real(kind=8) :: epsm(*), deps(*), dsidep(*)
 real(kind=8) :: sigm(*), vim(*), sigp(*), vip(*)
-real(kind=8) :: wkin(nwkin), wkout(nwkout)
 real(kind=8) :: angmas(*)
 character(len=16), optional, intent(in) :: mult_comp_
 aster_logical, optional, intent(in) :: l_epsi_varc_
@@ -83,8 +82,6 @@ aster_logical, optional, intent(in) :: l_epsi_varc_
 !     ANGMAS  : LES TROIS ANGLES DU MOT_CLEF MASSIF (AFFE_CARA_ELEM),
 !               + UN REEL QUI VAUT 0 SI NAUTIQUIES OU 2 SI EULER
 !               + LES 3 ANGLES D'EULER
-!     NWKIN   : DIMENSION DE WKIN
-!     WKIN    : TABLEAU DE TRAVAIL EN ENTREE(SUIVANT MODELISATION)
 !
 ! OUT SIGP    : CONTRAINTES A L'INSTANT ACTUEL
 ! VAR VIP     : VARIABLES INTERNES
@@ -92,8 +89,6 @@ aster_logical, optional, intent(in) :: l_epsi_varc_
 !                OUT : EN T+
 !     NDSDE   : DIMENSION DE DSIDEP
 !     DSIDEP  : OPERATEUR TANGENT DSIG/DEPS OU DSIG/DF
-!     NWKOUT  : DIMENSION DE WKOUT
-!     WKOUT   : TABLEAU DE TRAVAIL EN SORTIE (SUIVANT MODELISATION)
 !     CODRET  : CODE RETOUR LOI DE COMPORMENT :
 !               CODRET=0 : TOUT VA BIEN
 !               CODRET=1 : ECHEC DANS L'INTEGRATION DE LA LOI
@@ -171,10 +166,8 @@ aster_logical, optional, intent(in) :: l_epsi_varc_
                     fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                     imate, compor, mult_comp, carcri, instam, instap,&
                     neps, epsm, deps, nsig, sigm,&
-                    vim, option, angmas, nwkin, wkin,&
-                    cp, numlc,&
-                    sigp, vip, ndsde, dsidep, nwkout,&
-                    wkout, codret)
+                    vim, option, angmas, cp, numlc,&
+                    sigp, vip, ndsde, dsidep, codret)
 !
 !       VERIFIER LA CONVERGENCE DES CONTRAINTES PLANES ET
 !       SORTIR DE LA BOUCLE SI NECESSAIRE

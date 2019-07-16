@@ -125,7 +125,7 @@ character(len=16) :: compor(*), option
     real(kind=8) :: iddid, devdi(6), iddev(6)
     real(kind=8) :: ftr(3, 3), t1, t2
     real(kind=8) :: idev(6, 6), kr(6)
-    real(kind=8) :: tampon(10), id(3, 3), rbid(1)
+    real(kind=8) :: id(3, 3)
     real(kind=8) :: am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa
     type(Behaviour_Integ) :: BEHinteg
 !
@@ -251,9 +251,8 @@ character(len=16) :: compor(*), option
                     'RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     6, epsml, deps, 6, tn,&
-                    vim(1, g), option, angmas, 10, tampon,&
-                    tp, vip(1, g), 36, dtde, 1,&
-                    rbid, cod(g))
+                    vim(1, g), option, angmas, &
+                    tp, vip(1, g), 36, dtde, cod(g))
 !
 ! - DSIDEP = 2dS/dC = dS/dE_GL
 !

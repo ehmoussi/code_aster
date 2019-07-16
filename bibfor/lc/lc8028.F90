@@ -21,9 +21,8 @@ subroutine lc8028(BEHinteg,&
                   fami, kpg, ksp, ndim, imate,&
                   compor, mult_comp, carcri, instam, instap, neps,&
                   epsm, deps, nsig, sigm, vim,&
-                  option, angmas,sigp, nvi, vip, nwkin,&
-                  wkin, typmod,icomp, ndsde,&
-                  dsidep, nwkout, wkout, codret)
+                  option, angmas,sigp, nvi, vip, &
+                  typmod, icomp, ndsde, dsidep, codret)
 !
 use Behaviour_type
 !
@@ -56,11 +55,7 @@ real(kind=8), intent(in) :: angmas(*)
 real(kind=8), intent(out) :: sigp(*)
 integer, intent(in) :: nvi
 real(kind=8), intent(out) :: vip(*)
-integer, intent(in) :: nwkin
-real(kind=8), intent(in) :: wkin(nwkin)
 character(len=8), intent(in) :: typmod(*)
-integer, intent(in) :: nwkout
-real(kind=8), intent(out) :: wkout(nwkout)
 integer, intent(in) :: icomp
 integer, intent(in) :: ndsde
 real(kind=8), intent(out) :: dsidep(*)
@@ -83,11 +78,10 @@ integer, intent(out) :: codret
 ! - Compute behaviour
 !
     call nmcpla(BEHinteg,&
-                fami, kpg   , ksp  , ndim  , typmod,&
-                imate, compor_plas, compor_creep, carcri , instam , instap ,&
-                neps, epsm  , deps, nsig  , sigm  ,&
-                vim, option, nwkin, wkin  , sigp  ,&
-                vip, ndsde , dsidep , nwkout, wkout ,&
-                codret)
+                fami, kpg, ksp, ndim, typmod, imate, &
+                compor_plas, compor_creep, carcri, &
+                instam, instap, neps, epsm, deps, &
+                nsig, sigm, vim, option, &
+                sigp, vip, ndsde, dsidep, codret)
 !
 end subroutine

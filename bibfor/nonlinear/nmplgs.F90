@@ -104,7 +104,6 @@ implicit none
     real(kind=8) :: r, wg, epsgm(6, 2), epsgd(6, 2), gepsm(6, 3), geps(6, 3)
     real(kind=8) :: f(3, 3)
     real(kind=8) :: b(6, 3, 27), de(6), sigma(6), dsidep(6, 6, 2), t1, t2
-    real(kind=8) :: pin(6, 6), r8bid
     real(kind=8) :: p(6, 6), sigmam(6), epsrss(6), sigell(6), dist(nno2, 2)
     real(kind=8) :: z(3, 3), w(3), work(9), bary(ndim), baryo(ndim), scal(3)
     real(kind=8) :: dirr(ndim)
@@ -125,7 +124,6 @@ implicit none
     kpg=1
     spt=1
     poum='+'
-    r8bid = 0.d0
     call rcvalb(fami, kpg, spt, poum, mate,&
                 ' ', 'NON_LOCAL', 0, ' ', [0.d0],&
                 1, 'LONG_CARA', lc, k2, 1)
@@ -540,9 +538,8 @@ implicit none
                     'RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instam, instap,&
                     12, epsgm, epsgd, 6, sigmam,&
-                    vim(1, g), option, angmas, 36, pin,&
-                    sigma, vip(1, g), 72, dsidep, 1,&
-                    [r8bid], cod(g))
+                    vim(1, g), option, angmas, &
+                    sigma, vip(1, g), 72, dsidep, cod(g))
         if (cod(g) .eq. 1) goto 999
 !
         call r8inir(6, 1.d0, p, 7)

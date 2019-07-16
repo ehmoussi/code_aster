@@ -96,7 +96,6 @@ real(kind=8) :: matr(*), fint(*)
     integer :: lij(3, 3), vij(3, 3), ia, ja, na, ib, jb, nb, g, kk, os, ija
     integer :: nddl, ndu, vu(3, 27)
     integer :: cod(27)
-    real(kind=8) :: tampon(10), wkout(1)
     real(kind=8) :: geomm(3*27), geomp(3*27), r, w
     real(kind=8) :: jm, jd, jp, fm(3, 3), fd(3, 3), coef
     real(kind=8) :: sigmam(6), taup(6), dsidep(6, 3, 3)
@@ -145,7 +144,6 @@ real(kind=8) :: matr(*), fint(*)
 !
     call r8inir(6, 0.d0, taup, 1)
     call r8inir(54, 0.d0, dsidep, 1)
-    call r8inir(10, 0.d0, tampon, 1)
     cod(:)=0
 !
 !
@@ -194,9 +192,8 @@ real(kind=8) :: matr(*), fint(*)
                     fami, g, 1, 3, typmod,&
                     mate, compor, crit, instm, instp,&
                     9, fm, fd, 6, sigmam,&
-                    vim(1, g), option, angmas, 10, tampon,&
-                    taup, vip( 1, g), 54, dsidep, 1,&
-                    wkout, cod(g), mult_comp)
+                    vim(1, g), option, angmas, &
+                    taup, vip( 1, g), 54, dsidep, cod(g), mult_comp)
 !
         if (cod(g) .eq. 1) then
             codret = 1

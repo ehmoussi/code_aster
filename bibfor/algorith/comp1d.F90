@@ -78,7 +78,6 @@ real(kind=8) :: vim(*), vip(*), sigx, sigxp, epsx, depx, etan
 !
     real(kind=8) :: dsidep(6, 6)
     real(kind=8) :: zero
-    real(kind=8) :: lc(10, 27), wkout(1)
     real(kind=8) :: sigm(6), sigp(6), eps(6), deps(6)
 !
     character(len=8) :: typmod(2)
@@ -111,20 +110,14 @@ real(kind=8) :: vim(*), vip(*), sigx, sigxp, epsx, depx, etan
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
 !
-! ---    INITIALISATION DES TABLEAUX
-!
-!
-!
-    call r8inir(270, zero, lc, 1)
 !
 ! -    APPEL A LA LOI DE COMPORTEMENT
     call nmcomp(BEHinteg,&
                 fami, kpg, ksp, 2, typmod,&
                 zi(imate), zk16(icompo), zr(icarcr), zr(iinstm), zr(iinstp),&
                 6, eps, deps, 6, sigm,&
-                vim, option, angmas, 270, lc,&
-                sigp, vip, 36, dsidep, 1,&
-                wkout, codret)
+                vim, option, angmas, &
+                sigp, vip, 36, dsidep, codret)
 !
     sigxp=sigp(1)
     etan=dsidep(1,1)

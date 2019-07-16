@@ -107,10 +107,9 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), sigma(6), ftf, detf
     real(kind=8) :: tmp1, tmp2, sigp(6)
     real(kind=8) :: xg(ndim), xe(ndim), ff(nnop), jac
-    real(kind=8) :: rbid33(3, 3), rbid1(1)
+    real(kind=8) :: rbid33(3, 3)
     real(kind=8) :: dfdi(nnop, ndim), pff(6, nnop, nnop)
     real(kind=8) :: def(6, nnop, ndim*(1+nfh+nfe*ndim)), r
-    real(kind=8) :: elgeom(10, 27)
     real(kind=8) :: fk(27,3,3), dkdgl(27,3,3,3), ka, mu
     aster_logical :: grdepl, axi, cplan
     real(kind=8) :: coorga(27,3)
@@ -130,7 +129,6 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !     TELLE SORTE QU'ILS NE PRENNENT PAS EN COMPTE LES DDL SUR LES
 !     NOEUDS MILIEU
 !
-    elgeom(:,:) = 0.d0
 !     NOMBRE DE DDL DE DEPLACEMENT À CHAQUE NOEUD
     call xnbddl(ndim, nfh, nfe, ddlc, ddld, ddls, singu)
 !     RECUPERATION DU NOMBRE DE NOEUDS SOMMETS DE L'ELEMENT PARENT
@@ -359,9 +357,8 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
                     'XFEM', idecpg+kpg, 1, ndim, typmod,&
                     imate, compor, carcri, instam, instap,&
                     6, eps, deps, 6, sign,&
-                    vi(1, kpg), option, angmas, 10, elgeom(1, kpg),&
-                    sigma, vip(1, kpg), 36, dsidep, 1,&
-                    rbid1, codret)
+                    vi(1, kpg), option, angmas, &
+                    sigma, vip(1, kpg), 36, dsidep, codret)
 !
 ! - CALCUL DE LA MATRICE DE RIGIDITE
 !

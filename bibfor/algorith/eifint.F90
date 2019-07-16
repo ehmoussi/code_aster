@@ -152,9 +152,8 @@ implicit none
                     'RIGI', g, 1, ndim, typmod,&
                     mat, compor, crit, instam, instap,&
                     3, mu, su, 1, rbid,&
-                    vim(1, g), option, rbid, 1, [0.d0],&
-                    de, vip(1, g), 36, ddedt, 1,&
-                    rbid, cod(g))
+                    vim(1, g), option, rbid, &
+                    de, vip(1, g), 36, ddedt, cod(g))
         if (cod(g) .eq. 1) goto 9000
 !
 !

@@ -22,10 +22,9 @@ subroutine lc0000(BEHinteg,&
                   imate, compor, mult_comp, carcri,&
                   instam, instap,&
                   neps, epsm, deps, nsig, sigm,&
-                  vim, option, angmas, nwkin, wkin,&
-                  cp, numlc, &
+                  vim, option, angmas, cp, numlc, &
                   sigp, vip, ndsde, dsidep, icomp,&
-                  nvi, nwkout, wkout, codret)
+                  nvi, codret)
 !
 use calcul_module, only : calcul_status, ca_nbcvrc_
 use Behaviour_type
@@ -168,10 +167,9 @@ implicit none
 type(Behaviour_Integ) :: BEHinteg
 integer :: imate, ndim, nvi, kpg, ksp
 aster_logical, intent(in) :: l_epsi_varc
-integer :: neps, nsig, nwkin, nwkout, ndsde
+integer :: neps, nsig, ndsde
 real(kind=8) :: carcri(*), angmas(3)
 real(kind=8) :: instam, instap
-real(kind=8) :: wkin(nwkin), wkout(nwkout)
 real(kind=8) :: epsm(neps), deps(neps)
 real(kind=8) :: sigm(nsig), sigp(nsig)
 real(kind=8) :: vim(nvi), vip(nvi)
@@ -216,8 +214,6 @@ integer :: codret
 !     ANGMAS  : LES TROIS ANGLES DU MOT_CLEF MASSIF (AFFE_CARA_ELEM),
 !               + UN REEL QUI VAUT 0 SI NAUTIQUIES OU 2 SI EULER
 !               + LES 3 ANGLES D'EULER
-!     NWKIN   : DIMENSION DE WKIN
-!     WKIN    : TABLEAU DE TRAVAIL EN ENTREE(SUIVANT MODELISATION)
 !     CP      : LOGIQUE = VRAI EN CONTRAINTES PLANES DEBORST
 !     NUMLC   : NUMERO DE LOI DE COMPORTEMENT ISSUE DU CATALOGUE DE LC
 !     ICOMP   : COMPTEUR DE REDECOUPAGE PRODUIT PAR REDECE
@@ -229,8 +225,6 @@ integer :: codret
 !                OUT : EN T+
 !     NDSDE   : DIMENSION DE DSIDEP
 !     DSIDEP  : OPERATEUR TANGENT DSIG/DEPS OU DSIG/DF
-!     NWKOUT  : DIMENSION DE WKOUT
-!     WKOUT   : TABLEAU DE TRAVAIL EN SORTIE (SUIVANT MODELISATION)
 !     CODRET  : CODE RETOUR LOI DE COMPORMENT :
 !               CODRET=0 : TOUT VA BIEN
 !               CODRET=1 : ECHEC DANS L'INTEGRATION DE LA LOI
@@ -1145,45 +1139,40 @@ integer :: codret
                     fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
+                    option, angmas,sigp, nvi, vip,&
+                    typmod, icomp, ndsde, dsidep, codret)
 !
     case (8029)
         call lc8029(BEHinteg,&
                     fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
+                    option, angmas,sigp, nvi, vip, &
+                    typmod, icomp, ndsde, dsidep, codret)
 !
     case (8057)
         call lc8057(BEHinteg,&
                     fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
+                    option, angmas,sigp, nvi, vip, &
+                    typmod,icomp, ndsde, dsidep, codret)
 !
     case (8146)
         call lc8146(BEHinteg,&
                     fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
+                    option, angmas,sigp, nvi, vip, &
+                    typmod, icomp, ndsde, dsidep, codret)
 !
     case (8331)
         call lc8331(BEHinteg,&
                     fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
+                    option, angmas,sigp, nvi, vip, &
+                    typmod, icomp, ndsde, dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - For metallurgy/steel

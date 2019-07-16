@@ -125,7 +125,7 @@ implicit none
     real(kind=8) :: detfpl, nharm, poids
     real(kind=8) :: r, rac2, unsrac2, tmp
     real(kind=8) :: eps(6), epsi(6), deps(6), sigma(6), sigmag(6), sigm_norm(6)
-    real(kind=8) :: rbid(1), para(2)
+    real(kind=8) :: para(2)
     real(kind=8) :: dfdi(1:nno, 1:3)
     real(kind=8) :: fglo(1:3, 1:nno)
     real(kind=8) :: bg(6,81)
@@ -330,15 +330,12 @@ implicit none
 ! ---- Compute behaviour
 !
 !      'ndim' is set to 2 because of 'typmod' = C_PLAN hypothesis
-!       To be noticed for 3D ISO elements:
-!        - 'nwkin' is set to 10 instead of 1 here
        call nmcomp(BEHinteg   ,&
-                   fami       , kpg        , 1     , 2     , typmod   ,&
-                   imate      , compor     , crit  , instam, instap   ,&
-                   6          , eps        , deps  , 6     , sigm_norm,&
-                   vim(1, kpg), option     , angmas, 1     , [0.d0]   ,&
-                   sigma      , vip(1, kpg), 36    , dsidep, 1        ,&
-                   rbid       , cod(kpg))
+                   fami, kpg, 1, 2, typmod, &
+                   imate, compor, crit, instam, instap, &
+                   6, eps, deps, 6, sigm_norm, &
+                   vim(1, kpg), option, angmas, &
+                   sigma, vip(1, kpg), 36, dsidep, cod(kpg))
 !
        if (cod(kpg) .eq. 1) then
           goto 999

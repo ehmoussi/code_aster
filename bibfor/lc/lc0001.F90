@@ -82,9 +82,6 @@ character(len=16) :: mcmate
 !                             'FULL_MECA'     > DSIDEP(T+DT) , SIG(T+DT)
 !                             'RAPH_MECA'     > SIG(T+DT)
 !                             'RIGI_MECA_IMPLEX' > DSIDEP(T), SIGEXTR
-!               WKIN  TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES
-!                       AUX LOIS DE COMPORTEMENT (DIMENSION MAXIMALE
-!                       FIXEE EN DUR)
 !               ANGMAS
 !       OUT     SIGP    CONTRAINTE A T+DT
 !               VIP    VARIABLES INTERNES A T+DT + INDICATEUR ETAT T+DT

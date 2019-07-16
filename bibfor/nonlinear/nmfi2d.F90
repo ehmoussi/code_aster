@@ -71,7 +71,7 @@ implicit none
     integer :: ndim, nno, nnos, ipoids, ivf, idfde, jgano
 !     COORDONNEES POINT DE GAUSS + POIDS : X,Y,W => 1ER INDICE
     real(kind=8) :: coopg(3, npg)
-    real(kind=8) :: dsidep(6, 6), b(2, 8), rbid(1)
+    real(kind=8) :: dsidep(6, 6), b(2, 8)
     real(kind=8) :: sum(2), dsu(2), poids
     real(kind=8) :: crit(*)
     real(kind=8) :: angmas(3)
@@ -130,7 +130,6 @@ implicit none
 ! CALCUL DE LA CONTRAINTE DANS L'ELEMENT AINSI QUE LA DERIVEE
 ! DE CELLE-CI PAR RAPPORT AU SAUT DE DEPLACEMENT (SIGMA ET DSIDEP)
 !
-        rbid = r8vide()
         code(kpg) = 0
 !
         BEHinteg%elga%coorpg(1:2) = coopg(1:2,kpg)
@@ -139,9 +138,8 @@ implicit none
                     'RIGI', kpg, 1, 2, typmod,&
                     mate, compor, crit, tm, tp,&
                     2, sum, dsu, 1, sigmo(1, kpg),&
-                    vim(1, kpg), option, angmas, 3, [0.d0,0.d0,0.d0],&
-                    sigma(1, kpg), vip(1, kpg), 36, dsidep, 1,&
-                    rbid, ibid)
+                    vim(1, kpg), option, angmas, &
+                    sigma(1, kpg), vip(1, kpg), 36, dsidep, ibid)
 !
 !
 ! CALCUL DES FINT (B_T SIGMA )

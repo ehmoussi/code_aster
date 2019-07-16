@@ -92,7 +92,7 @@ implicit none
     real(kind=8) :: dsidep(6, 9), drdy(12, 12), kel(6, 6), cimpo(6, 12), ym(12)
     real(kind=8) :: work(10), sdeps(6), ssigp(6), smatr(36), r1(12)
     real(kind=8) :: matper(36), varia(2*36), epsilo, pgl(3, 3), vimp33(3, 3)
-    real(kind=8) :: vimp2(3, 3), coef, jm, jp, jd, rbid(1), coefextra
+    real(kind=8) :: vimp2(3, 3), coef, jm, jp, jd, coefextra
     aster_logical :: finpas, itemax, conver
     character(len=19) :: nomvi
     character(len=19) :: vim, vip, vim2, svip
@@ -263,9 +263,8 @@ implicit none
                         fami, kpg, ksp, ndim, typmod,&
                         imate, compor, carcri, instam, instap,&
                         ncmp, epsm, deps, 6, sigm,&
-                        zr(lvim2), opt2, ang, 10, work,&
-                        sigp, zr(lvip), 6*ncmp, dsidep, 1,&
-                        rbid, iret, mult_comp)
+                        zr(lvim2), opt2, ang, &
+                        sigp, zr(lvip), 6*ncmp, dsidep, iret, mult_comp)
             if (compor(DEFO) .eq. 'SIMO_MIEHE') then
                 call dscal(2*ndim, 1.d0/jp, sigp, 1)
             endif
@@ -304,9 +303,8 @@ implicit none
                         fami, kpg, ksp, ndim, typmod,&
                         imate, compor, carcri, instam, instap,&
                         6, epsm, deps, 6, sigm,&
-                        zr(lsvip), opt2, ang, 10, work,&
-                        ssigp, zr(lsvip), 36, dsidep, 1,&
-                        rbid, iret, mult_comp)
+                        zr(lsvip), opt2, ang, &
+                        ssigp, zr(lsvip), 36, dsidep, iret, mult_comp)
         else if (type_comp .eq. 'COMP_ELAS') then
             call nmcpel(BEHinteg,&
                         fami, kpg, 1, '+', ndim,&
@@ -379,9 +377,8 @@ implicit none
                     fami, kpg, ksp, ndim, typmod,&
                     imate, compor, carcri, instam, instap,&
                     6, epsm, deps, 6, sigm,&
-                    zr(lvim2), option, ang, 10, work,&
-                    sigp, zr(lvip), 36, dsidep, 1,&
-                    rbid, iret, mult_comp)
+                    zr(lvim2), option, ang, &
+                    sigp, zr(lvip), 36, dsidep, iret, mult_comp)
     else if (type_comp .eq. 'COMP_ELAS') then
         call dcopy(6, epsm, 1, eps, 1)
         call daxpy(6, 1.d0, deps, 1, eps, 1)

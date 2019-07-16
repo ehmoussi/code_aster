@@ -74,7 +74,7 @@ implicit none
     real(kind=8) :: deplm(42), deplp(42)
     real(kind=8) :: epsi(5), depsi(5), eps2d(4), deps2d(4)
     real(kind=8) :: dtild(5, 5), sgmtd(5), effint(42), vecl(48), vecll(51)
-    real(kind=8) :: sign(4), sigma(4), dsidep(6, 6), angmas(3), rbid(1)
+    real(kind=8) :: sign(4), sigma(4), dsidep(6, 6), angmas(3)
     real(kind=8) :: matc(5,5),valpar
     aster_logical :: vecteu, matric
     type(Behaviour_Integ) :: BEHinteg
@@ -295,9 +295,8 @@ implicit none
                                 'MASS', intsn, ksp, 2, typmod,&
                                 zi(imate), zk16(icompo), zr(icarcr), zr(iinstm), zr(iinstp),&
                                 4, eps2d, deps2d, 4, sign,&
-                                zr(ivarim+k2), option, angmas, 1, [0.d0],&
-                                sigma, zr(ivarip+k2), 36, dsidep, 1,&
-                                rbid, cod)
+                                zr(ivarim+k2), option, angmas, &
+                                sigma, zr(ivarip+k2), 36, dsidep, cod)
 !           COD=1 : ECHEC INTEGRATION LOI DE COMPORTEMENT
 !           COD=3 : C_PLAN DEBORST SIGZZ NON NUL
                     if (cod .ne. 0) then

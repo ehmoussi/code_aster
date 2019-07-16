@@ -102,7 +102,7 @@ implicit none
     real(kind=8) :: etildm ( 5 )
     real(kind=8) :: eps2d ( 4 ), deps2d ( 4 )
     real(kind=8) :: sign ( 4 ), sigma ( 4 ), dsidep ( 6 , 6 )
-    real(kind=8) :: detild ( 5 ), rbid(1)
+    real(kind=8) :: detild ( 5 )
     real(kind=8) :: gxz, gyz
     real(kind=8) :: stlis ( 5 , 4 )
     real(kind=8) :: bars ( 9 , 9 )
@@ -729,9 +729,8 @@ implicit none
                             'MASS', intsn, ksp, 2, typmod,&
                             zi(imate), zk16(icompo), zr(icarcr), zr(iinstm), zr(iinstp),&
                             4, eps2d, deps2d, 4, sign,&
-                            zr(ivarim+k2), option, angmas, 1, [0.d0],&
-                            sigma, zr(ivarip+k2), 36, dsidep, 1,&
-                            rbid, cod)
+                            zr(ivarim+k2), option, angmas, &
+                            sigma, zr(ivarip+k2), 36, dsidep, cod)
 !
                 if (phenom .eq. 'ELAS') then
                     nbv = 2

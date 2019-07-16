@@ -122,7 +122,7 @@ character(len=16) :: compor(*), option
     real(kind=8) :: gradgp(3), c(1)
     real(kind=8) :: t1, t2
     real(kind=8) :: kr(6)
-    real(kind=8) :: tampon(10), id(3, 3), rbid(1)
+    real(kind=8) :: id(3, 3)
     real(kind=8) :: am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa
     type(Behaviour_Integ) :: BEHinteg
 !
@@ -254,9 +254,8 @@ character(len=16) :: compor(*), option
                     'RIGI', g, 1, 3, typmod,&
                     mate, compor, crit, instm, instp,&
                     9, ftm, ftd, 2*ndim, sigm_ldc,&
-                    vim(1, g), option, angmas, 10, tampon,&
-                    taup, vip( 1, g), 54, dsidep, 1,&
-                    rbid, cod(g))
+                    vim(1, g), option, angmas, &
+                    taup, vip( 1, g), 54, dsidep, cod(g))
 !
         if (cod(g) .eq. 1) then
             codret = 1
