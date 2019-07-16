@@ -89,7 +89,7 @@ implicit none
     integer :: nno
     parameter (nno=4)
 !            NNO:    NOMBRE DE NOEUDS DE L'ELEMENT
-    real(kind=8) :: distn, angmas(3), wk(1)
+    real(kind=8) :: distn, angmas(3)
 !
 ! --------- VARIABLES LOCALES :
 !  -- GENERALITES :
@@ -465,9 +465,8 @@ implicit none
                             'RIGI', ipg, ksp, 2, typmod,&
                             zi(imate), zk16(icompo), zr(icarcr), instm, instp,&
                             4, eps2d, deps2d, 4, sigm,&
-                            zr(ivarim+ivpg), opt, angmas, 1, [0.d0],&
-                            zr(icontp+ icpg), zr(ivarip+ivpg), 36, dsidep, 1,&
-                            wk, cod)
+                            zr(ivarim+ivpg), opt, angmas, &
+                            zr(icontp+ icpg), zr(ivarip+ivpg), 36, dsidep, cod)
 !
 !            DIVISION DE LA CONTRAINTE DE CISAILLEMENT PAR SQRT(2)
 !            POUR STOCKER LA VALEUR REELLE

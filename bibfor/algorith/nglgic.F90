@@ -132,7 +132,6 @@ integer,intent(out)            :: codret
     real(kind=8)  :: kefuu(2*ndim,2*ndim),kefug(2*ndim,2+ndim),kefuq(2*ndim,2    )
     real(kind=8)  :: kefgu(2+ndim,2*ndim),kefgg(2+ndim,2+ndim),kefgq(2+ndim,2    )
     real(kind=8)  :: kefqu(2     ,2*ndim),kefqg(2     ,2+ndim),kefqq(2     ,2    )
-    real(kind=8)  :: rbid=0.d0
     real(kind=8)  :: tbid(6)=(/0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
     type(Behaviour_Integ) :: BEHinteg
 ! ----------------------------------------------------------------------
@@ -249,9 +248,8 @@ integer,intent(out)            :: codret
                     fami, g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     neu+neg, eplcm, eplcp-eplcm, neu+neg, silcm,&
-                    vim(1,g), option, angmas, 1,[rbid],&
-                    silcp, vip(1,g), (neu+neg)*(neu+neg), dsde, 1,&
-                    [rbid], cod(g))
+                    vim(1,g), option, angmas, &
+                    silcp, vip(1,g), (neu+neg)*(neu+neg), dsde, cod(g))
         if (cod(g) .eq. 1) goto 999
 
         ! Archivage des contraintes mecaniques en t+ (tau tilda) dans les vi

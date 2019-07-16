@@ -99,8 +99,8 @@ implicit none
     real(kind=8) :: deplm(3*27), depld(3*27), dfdi1(27, 3)
     real(kind=8) :: avm, avd, avp, agm(3), agd(3), agp(3), bp
     real(kind=8) :: r, wg, epsm(6), epsd(6), f(3, 3), b(6, 3, 27)
-    real(kind=8) :: nonloc(2), sigmam(6), sigma(6), dsidep(6, 6, 4), t1, t2
-    real(kind=8) :: di, char, r8bid(1)
+    real(kind=8) :: sigmam(6), sigma(6), dsidep(6, 6, 4), t1, t2
+    real(kind=8) :: di, char
     real(kind=8) :: dfdi2(8*3)
     real(kind=8) :: critd(20)
     type(Behaviour_Integ) :: BEHinteg
@@ -129,8 +129,6 @@ implicit none
     axi = typmod(1) .eq. 'AXIS'
     nddl = nno1*ndim + nno2
     ndimsi = 2*ndim
-!
-    call r8inir(2, 0.d0, nonloc, 1)
 !
 !      NOM(1) = 'C_GRAD_VARI'
 !
@@ -249,9 +247,8 @@ implicit none
                     fami, g, 1, ndim, typmod,&
                     mat, compor, crit, instam, instap,&
                     6, epsm, epsd, 6, sigmam,&
-                    vim(1, g), option, angmas, 2, nonloc,&
-                    sigma, vip(1, g), 6*6*4, dsidep, 1,&
-                    r8bid, cod(g))
+                    vim(1, g), option, angmas, &
+                    sigma, vip(1, g), 6*6*4, dsidep, cod(g))
 !
         if (cod(g) .eq. 1) goto 9000
 !

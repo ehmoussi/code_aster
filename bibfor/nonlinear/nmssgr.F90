@@ -127,7 +127,7 @@ implicit none
     real(kind=8) :: r, rac2, unsrac2, tmp
     real(kind=8) :: dfdi(1:nno, 1:3)
     real(kind=8) :: eps(6), epsm(6), epsp(6), sigma(6), sigm_norm(6)
-    real(kind=8) :: rbid(1), para(2)
+    real(kind=8) :: para(2)
     real(kind=8) :: geom_up(3,nno)
     real(kind=8), dimension(3,3) :: f, fp, fpl, fplt, pgl, pglt, pgl_up, work
     real(kind=8), dimension(6,6) :: dsidep
@@ -355,16 +355,13 @@ implicit none
 !      Glut / End
 !
 !      'ndim' is set to 2 because of 'typmod' = C_PLAN hypothesis 
-!      To be noticed for 3D ISO elements:
-!        - deps is used instead of epsp with deps = epsp - epsm
-!        - 'nwkin' is set to 10 instead of 1 here
+!      For 3D ISO elements : deps is used instead of epsp with deps=epsp-epsm
        call nmcomp(BEHinteg,&
-                       fami,        kpg,      1,      2,    typmod,&
-                        imate,     compor,   crit, instam,    instap,&
-                            6,       epsm,   epsp,      6, sigm_norm,&
-                   vim(1,kpg),     option, angmas,      1,    [0.d0],&
-                        sigma, vip(1,kpg),     36, dsidep,         1,&
-                         rbid,   cod(kpg))
+                   fami, kpg, 1, 2, typmod, &
+                   imate, compor, crit, instam, instap, &
+                   6, epsm, epsp, 6, sigm_norm, &
+                   vim(1,kpg), option, angmas, &
+                   sigma, vip(1,kpg), 36, dsidep, cod(kpg))
 !
        if (cod(kpg) .eq. 1) then
           goto 999

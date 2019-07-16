@@ -19,11 +19,10 @@
 interface
     subroutine lc8146(BEHinteg,&
                       fami, kpg, ksp, ndim, imate,&
-                  compor, mult_comp, carcri, instam, instap, neps,&
-                  epsm, deps, nsig, sigm, vim,&
-                  option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                  dsidep, nwkout, wkout, codret)
+                      compor, mult_comp, carcri, instam, instap, neps,&
+                      epsm, deps, nsig, sigm, vim,&
+                      option, angmas,sigp, nvi, vip, &
+                      typmod, icomp, ndsde, dsidep, codret)
         use Behaviour_type
         type(Behaviour_Integ), intent(in) :: BEHinteg
         character(len=*), intent(in) :: fami
@@ -46,11 +45,7 @@ interface
         real(kind=8), intent(in) :: angmas(*)
         real(kind=8), intent(out) :: sigp(*)
         real(kind=8), intent(out) :: vip(*)
-        integer, intent(in) :: nwkin
-        real(kind=8), intent(in) :: wkin(nwkin)
         character(len=8), intent(in) :: typmod(*)
-        integer, intent(in) :: nwkout
-        real(kind=8), intent(out) :: wkout(nwkout)
         integer, intent(in) :: icomp
         integer, intent(in) :: nvi
         integer, intent(in) :: ndsde

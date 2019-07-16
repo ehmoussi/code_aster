@@ -336,9 +336,8 @@ implicit none
                             'RIGI', igau, ksp, 2, typmod,&
                             zi(imate), zk16(icompo), zr(icarcr), instm, instp,&
                             6, eps2d, deps2d, 6, sign,&
-                            zr(ivarim+k2), option, angmas, 1, [0.d0],&
-                            sigma, zr( ivarip+k2), 36, dsidep, 1,&
-                            rbid(1), cod)
+                            zr(ivarim+k2), option, angmas, &
+                            sigma, zr( ivarip+k2), 36, dsidep, cod)
 !
                 if (phenom .eq. 'ELAS') then
                     nbv = 2

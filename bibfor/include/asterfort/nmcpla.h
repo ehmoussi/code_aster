@@ -18,12 +18,11 @@
 !
 interface
     subroutine nmcpla(BEHinteg,&
-                      fami, kpg, ksp, ndim, typmod,&
-                      imat, compor_plas, compor_creep, carcri, timed, timef,&
-                      neps, epsdt, depst, nsig, sigd,&
-                      vind, option, nwkin, wkin, sigf,&
-                      vinf, ndsde, dsde, nwkout, wkout,&
-                      iret)
+                      fami, kpg, ksp, ndim, typmod, imat, &
+                      compor_plas, compor_creep, carcri, &
+                      timed, timef, neps, epsdt, depst, &
+                      nsig, sigd, vind, option, &
+                      sigf, vinf, ndsde, dsde, iret)
         use Behaviour_type
         type(Behaviour_Integ), intent(in) :: BEHinteg
         integer :: ndsde
@@ -45,13 +44,9 @@ interface
         real(kind=8) :: sigd(6)
         real(kind=8) :: vind(*)
         character(len=16) :: option
-        integer :: nwkin
-        real(kind=8) :: wkin(*)
         real(kind=8) :: sigf(6)
         real(kind=8) :: vinf(*)
         real(kind=8) :: dsde(ndsde)
-        integer :: nwkout
-        real(kind=8) :: wkout(*)
         integer :: iret
     end subroutine nmcpla
 end interface

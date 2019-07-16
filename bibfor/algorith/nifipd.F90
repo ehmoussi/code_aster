@@ -118,7 +118,6 @@ character(len=16) :: compor(*), option
     real(kind=8) :: iddid, devdi(6), iddev(6)
     real(kind=8) :: t1, t2
     real(kind=8) :: idev(6, 6), kr(6)
-    real(kind=8) :: tampon(10), rbid(1)
     type(Behaviour_Integ) :: BEHinteg
 !
     parameter    (grand = .false._1)
@@ -245,9 +244,8 @@ character(len=16) :: compor(*), option
                     'RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     6, epsm, deps, 6, sigmam,&
-                    vim(1, g), option, angmas, 10, tampon,&
-                    sigma, vip(1, g), 36, dsidep, 1,&
-                    rbid, cod(g))
+                    vim(1, g), option, angmas, &
+                    sigma, vip(1, g), 36, dsidep, cod(g))
 !
         if (cod(g) .eq. 1) then
             codret = 1

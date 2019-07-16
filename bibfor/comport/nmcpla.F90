@@ -18,12 +18,11 @@
 ! aslint: disable=W1504
 !
 subroutine nmcpla(BEHinteg,&
-                  fami, kpg   , ksp  , ndim  , typmod,&
-                  imat, compor_plas, compor_creep, carcri , timed , timef ,&
-                  neps, epsdt , depst, nsig  , sigd  ,&
-                  vind, option, nwkin, wkin  , sigf  ,&
-                  vinf, ndsde , dsde , nwkout, wkout ,&
-                  iret)
+                  fami, kpg, ksp, ndim, typmod, imat, &
+                  compor_plas, compor_creep, carcri, &
+                  timed, timef, neps, epsdt, depst, &
+                  nsig, sigd, vind, option, &
+                  sigf, vinf, ndsde, dsde, iret)
 !
 use calcul_module, only : ca_ctempl_, ca_ctempr_, ca_ctempm_, ca_ctempp_
 use Behaviour_type
@@ -48,12 +47,11 @@ implicit none
 !
 type(Behaviour_Integ), intent(in) :: BEHinteg
 integer :: imat, ndim, kpg, ksp, iret
-integer :: neps, nsig, nwkin, nwkout, ndsde
+integer :: neps, nsig, ndsde
 character(len=16), intent(in) :: compor_plas(*)
 character(len=16), intent(in) :: compor_creep(*)
 real(kind=8), intent(in) :: carcri(*)
 real(kind=8) :: timed, timef, tempd, tempf, tref
-real(kind=8) :: wkin(*), wkout(*)
 real(kind=8) :: epsdt(6), depst(6)
 real(kind=8) :: sigd(6), sigf(6)
 real(kind=8) :: vind(*), vinf(*)
@@ -110,9 +108,6 @@ character(len=8) :: typmod(*)
 !                                 (ITER_INTE_PAS == ITEDEC)
 !                                 0 = PAS DE REDECOUPAGE
 !                                 N = NOMBRE DE PALIERS
-!               WKIN  TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES
-!                       AUX LOIS DE COMPORTEMENT (DIMENSION MAXIMALE
-!                       FIXEE EN DUR)
 !               TIMED   INSTANT T
 !               TIMEF   INSTANT T+DT
 !               EPSDT   DEFORMATION TOTALE A T
@@ -222,9 +217,9 @@ character(len=8) :: typmod(*)
                     fami, kpg, ksp, ndim, typmod,&
                     imat, compor_creep, carcri, timed, timef  ,&
                     neps, epsdt, depst2, nsig, sigd,&
-                    vind, option, angmas, nwkin, wkin,&
-                    sigf2, vinf, ndsde, dsde, nwkout,&
-                    wkout, iret, l_epsi_varc_ = l_epsi_varc)
+                    vind, option, angmas, &
+                    sigf2, vinf, ndsde, dsde, &
+                    iret, l_epsi_varc_ = l_epsi_varc)
 !
 ! ----- Get material parameters
 !
@@ -295,9 +290,9 @@ character(len=8) :: typmod(*)
                 fami, kpg, ksp, ndim, typmod,&
                 imat, compor_plas, carcri, timed, timef  ,&
                 neps, epsdt, deps, nsig, sigd,&
-                vind(idx_vi_plas), option, angmas, nwkin, wkin,&
-                sigf, vinf(idx_vi_plas), ndsde, dsde, nwkout,&
-                wkout, retcom, l_epsi_varc_ = l_epsi_varc)
+                vind(idx_vi_plas), option, angmas, &
+                sigf, vinf(idx_vi_plas), ndsde, dsde, &
+                retcom, l_epsi_varc_ = l_epsi_varc)
     if (retcom .eq. 1) then
         iret = 1
         goto 999

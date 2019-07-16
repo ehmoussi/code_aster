@@ -98,14 +98,12 @@ aster_logical :: matsym
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     integer :: kpg, kk, kkd, n, i, m, j, j1, kl
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
-    real(kind=8) :: poids, tmp, sig(6), rbid(1)
-    real(kind=8) :: elgeom(10, 9)
+    real(kind=8) :: poids, tmp, sig(6)
     real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    elgeom(:,:) = 0.d0
     grand = .false.
     axi = typmod(1) .eq. 'AXIS'
 !
@@ -180,9 +178,8 @@ aster_logical :: matsym
                     fami, kpg, 1, 2, typmod,&
                     imate, compor, carcri, instam, instap,&
                     6, eps, deps, 6, sign,&
-                    vim(1, kpg), option, angmas, 10, elgeom(1, kpg),&
-                    sigma, vip(1, kpg), 36, dsidep, 1,&
-                    rbid, cod(kpg), mult_comp)
+                    vim(1, kpg), option, angmas, &
+                    sigma, vip(1, kpg), 36, dsidep, cod(kpg), mult_comp)
 !
         if (cod(kpg) .eq. 1) then
             goto 999

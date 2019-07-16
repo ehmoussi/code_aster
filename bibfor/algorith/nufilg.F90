@@ -122,7 +122,7 @@ implicit none
     real(kind=8) :: iddid
     real(kind=8) :: ftr(3, 3), t1, t2
     real(kind=8) :: idev(6, 6), kr(6)
-    real(kind=8) :: tampon(10), id(3, 3), rbid(1)
+    real(kind=8) :: id(3, 3)
     real(kind=8) :: sigtr
     real(kind=8) :: alpha, trepst
     real(kind=8) :: dsbdep(2*ndim, 2*ndim)
@@ -244,9 +244,8 @@ implicit none
                     'RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     6, epsml, deps, 6, tn,&
-                    vim(1, g), option, angmas, 10, tampon,&
-                    tp, vip(1, g), 36, dtde, 1,&
-                    rbid, cod(g))
+                    vim(1, g), option, angmas, &
+                    tp, vip(1, g), 36, dtde, cod(g))
 !
 ! - DSIDEP = 2dS/dC = dS/dE_GL
         call poslog(resi, rigi, tn, tp, ftm,&

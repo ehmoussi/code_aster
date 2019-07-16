@@ -75,7 +75,6 @@ implicit none
     integer :: code(9), ni, mj, kk, p, q, kpg, ibid, n
     real(kind=8) :: b(3, 60), sigmo(6), sigma(6)
     real(kind=8) :: sum(3), dsu(3), dsidep(6, 6), poids
-    real(kind=8) :: rbid(1)
     real(kind=8) :: angmas(3)
     type(Behaviour_Integ) :: BEHinteg
 !
@@ -144,9 +143,8 @@ implicit none
                     'RIGI', kpg, 1, 3, typmod,&
                     mate, compor, crit, tm, tp,&
                     3, sum, dsu, 6, sigmo,&
-                    vim(1, kpg), option, angmas, 4, [0.d0,0.d0,0.d0,0.d0],&
-                    sigma, vip(1, kpg), 36, dsidep, 1,&
-                    rbid, ibid)
+                    vim(1, kpg), option, angmas, &
+                    sigma, vip(1, kpg), 36, dsidep, ibid)
 !
         if (resi) then
 !

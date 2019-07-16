@@ -109,15 +109,13 @@ integer, intent(inout) :: codret
     integer :: kpg, kk, i_node, i_dim, m, j, j1, kl, kkd, i_tens
     integer :: cod(27)
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sigm_norm(6)
-    real(kind=8) :: rbid(1), sig(6)
+    real(kind=8) :: sig(6)
     real(kind=8) :: poids, tmp
-    real(kind=8) :: elgeom(10, 27)
     real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    elgeom(:,:) = 0.d0
     grand       = ASTER_FALSE
     cod         = 0
 !
@@ -180,11 +178,11 @@ integer, intent(inout) :: codret
         BEHinteg%elga%coorpg = coorga(kpg,:)
         call nmcomp(BEHinteg   ,&
                     fami       , kpg        , 1        , 3     , typmod        ,&
-                    imate      , compor     , carcri     , instam, instap        ,&
+                    imate      , compor     , carcri   , instam, instap        ,&
                     6          , eps        , deps     , 6     , sigm_norm     ,&
-                    vim(1, kpg), option     , angmas   , 10    , elgeom(1, kpg),&
-                    sigma      , vip(1, kpg), 36       , dsidep, 1             ,&
-                    rbid       , cod(kpg)   , mult_comp)
+                    vim(1, kpg), option     , angmas                           ,&
+                    sigma      , vip(1, kpg), 36       , dsidep                ,&
+                    cod(kpg)   , mult_comp)
         if (cod(kpg) .eq. 1) then
             goto 999
         endif

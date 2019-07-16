@@ -108,8 +108,7 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     integer :: nnos, jgano, kp, iaa, ndim2
     integer, parameter :: ndim = 3
     real(kind=8) :: d(6, 6), f(3, 3), eps(6), deps(6), r, s, sigma(6), sign(6)
-    real(kind=8) :: poids, poipg2(8), rbid(1)
-    real(kind=8) :: elgeom(10, 9)
+    real(kind=8) :: poids, poipg2(8)
     real(kind=8) :: jac, sigas(6, 8), invja(3, 3), bi(3, 8), hx(3, 4)
     real(kind=8) :: gam(4, 8), coopg2(24), h(8, 4), dh(4, 24)
     real(kind=8) :: qplus(72), qmoins(72), dq(72)
@@ -140,7 +139,6 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     else
         proj= 1
     endif
-    elgeom(:,:) = 0.d0
     grand = .false.
     calbn = .false.
 !
@@ -264,9 +262,8 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
                 fami, kpg, 1, 3, typmod,&
                 imate, compor, carcri, instam, instap,&
                 6, eps, deps, 6, sign,&
-                vim(1, kpg), optios, angmas, 10, elgeom(1, kpg),&
-                sigma, vip(1, kpg), 36, d, 1,&
-                rbid, cod(kpg), mult_comp)
+                vim(1, kpg), optios, angmas, &
+                sigma, vip(1, kpg), 36, d, cod(kpg), mult_comp)
 !
 ! - ERREUR D'INTEGRATION
     if (cod(kpg) .eq. 1) then

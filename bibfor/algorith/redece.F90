@@ -21,10 +21,8 @@ subroutine redece(BEHinteg,&
                   fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   imate, compor, mult_comp, carcri, instam, instap,&
                   neps, epsdt, depst, nsig, sigd,&
-                  vind, option, angmas, nwkin, wkin,&
-                  cp, numlc, &
-                  sigf, vinf, ndsde, dsde, nwkout,&
-                  wkout, codret)
+                  vind, option, angmas, cp, numlc, &
+                  sigf, vinf, ndsde, dsde, codret)
 !
 use calcul_module, only : ca_iredec_, ca_td1_, ca_tf1_, ca_timed1_, ca_timef1_
 use Behaviour_type
@@ -99,8 +97,6 @@ character(len=*) :: fami
 !     ANGMAS  : LES TROIS ANGLES DU MOT_CLEF MASSIF (AFFE_CARA_ELEM),
 !               + UN REEL QUI VAUT 0 SI NAUTIQUIES OU 2 SI EULER
 !               + LES 3 ANGLES D'EULER
-!     NWKIN   : DIMENSION DE WKIN
-!     WKIN    : TABLEAU DE TRAVAIL EN ENTREE(SUIVANT MODELISATION)
 !     CP      : LOGIQUE = VRAI EN CONTRAINTES PLANES DEBORST
 !     NUMLC   : NUMERO DE LOI DE COMPORTEMENT ISSUE DU CATALOGUE DE LC
 !
@@ -110,8 +106,6 @@ character(len=*) :: fami
 !                OUT : A LA FIN DU PAS DE TEMPS T+
 !     NDSDE   : DIMENSION DE DSDE
 !     DSDE    : OPERATEUR TANGENT DSIG/DEPS OU DSIG/DF
-!     NWKOUT  : DIMENSION DE WKOUT
-!     WKOUT   : TABLEAU DE TRAVAIL EN SORTIE (SUIVANT MODELISATION)
 !     CODRET  : CODE RETOUR LOI DE COMPORMENT :
 !               CODRET=0 : TOUT VA BIEN
 !               CODRET=1 : ECHEC DANS L'INTEGRATION DE LA LOI
@@ -142,11 +136,10 @@ character(len=*) :: fami
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: imate, ndim, ndt, ndi, nvi, kpg, ksp, numlc
-    integer :: neps, nsig, nwkin, nwkout, ndsde
+    integer :: neps, nsig, ndsde
     aster_logical, intent(in) :: l_epsi_varc
     real(kind=8) :: carcri(*), angmas(*)
     real(kind=8) :: instam, instap
-    real(kind=8) :: wkin(nwkin), wkout(nwkout)
     real(kind=8) :: epsdt(neps), depst(neps)
     real(kind=8) :: sigd(nsig), sigf(nsig)
     real(kind=8) :: vind(*), vinf(*)
@@ -231,10 +224,9 @@ character(len=*) :: fami
                 fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                 imate, compor, mult_comp, carcri, instam, instap,&
                 neps, epsdt, depst, nsig, sigd,&
-                vind, option, angmas, nwkin, wkin,&
-                cp, numlc, &
+                vind, option, angmas, cp, numlc, &
                 sigf, vinf, ndsde, dsde, icomp,&
-                nvi, nwkout, wkout, codret)
+                nvi, codret)
 !
     if (codret .eq. 1) then
         goto 1
@@ -300,10 +292,9 @@ character(len=*) :: fami
                     fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                     imate, compor, mult_comp, carcri, td, tf,&
                     neps, eps, deps, nsig, sd,&
-                    vind, option, angmas, nwkin, wkin,&
-                    cp, numlc, &
+                    vind, option, angmas, cp, numlc, &
                     sigf, vinf, ndsde, dsdelo, icomp,&
-                    nvi, nwkout, wkout, codret)
+                    nvi, codret)
 !
         if (codret .eq. 1) then
             goto 1

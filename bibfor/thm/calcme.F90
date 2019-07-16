@@ -84,10 +84,6 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nwkin = 1
-    integer, parameter :: nwkout = 1
-    real(kind=8), parameter :: wkin(1) = 0.d0
-    real(kind=8), parameter :: wkout(1) = 0.d0
     integer, parameter :: nsig = 6
     integer, parameter :: neps = 6
     integer, parameter :: ndsdeme = 36
@@ -113,9 +109,8 @@ integer, intent(out) :: retcom
                 fami          , kpg                , ksp      , ndim  , typmod        ,&
                 j_mater       , compor             , carcri   , instam, instap        ,&
                 neps          , defgem(addeme+ndim), deps     , nsig  , congem(adcome),&
-                vintm         , option             , angl_naut, nwkin , wkin          ,&
-                congep(adcome), vintp              , ndsdeme  , dsdeme, nwkout        ,&
-                wkout         , retcom)
+                vintm         , option             , angl_naut                        ,&
+                congep(adcome), vintp              , ndsdeme  , dsdeme, retcom         )
 !
 ! - If integration has failed
 !

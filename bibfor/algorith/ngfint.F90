@@ -79,7 +79,7 @@ implicit none
     integer :: nepg, g, i, cod(npg)
     real(kind=8) :: sigm(neps,npg), sigp(neps,npg)
     real(kind=8) :: epsm(neps,npg), epsd(neps,npg)
-    real(kind=8) :: dsidep(neps,neps,npg), dum(1)
+    real(kind=8) :: dsidep(neps,neps,npg)
     real(kind=8) :: ktgb(0:neps*npg*nddl-1)
     type(Behaviour_Integ) :: BEHinteg
 ! ----------------------------------------------------------------------
@@ -123,9 +123,8 @@ implicit none
                     fami, g, 1, ndim, typmod,&
                     mat, compor, crit, instam, instap,&
                     neps, epsm(:,g), epsd(:,g), neps, sigm(:,g),&
-                    vim(1, g), option, angmas, 1, dum(1),&
-                    sigp(:,g), vip(1, g), neps*neps, dsidep(:,:,g), 1,&
-                    dum(1), cod(g))
+                    vim(1, g), option, angmas, &
+                    sigp(:,g), vip(1, g), neps*neps, dsidep(:,:,g), cod(g))
         if (cod(g) .eq. 1) goto 900
     end do
 !

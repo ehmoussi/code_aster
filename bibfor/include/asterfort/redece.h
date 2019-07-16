@@ -22,16 +22,12 @@ interface
                       fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                       imate, compor, mult_comp, carcri, instam, instap,&
                       neps, epsdt, depst, nsig, sigd,&
-                      vind, option, angmas, nwkin, wkin,&
-                      cp, numlc, &
-                      sigf, vinf, ndsde, dsde, nwkout,&
-                      wkout, codret)
+                      vind, option, angmas, cp, numlc, &
+                      sigf, vinf, ndsde, dsde, codret)
         use Behaviour_type
         type(Behaviour_Integ) :: BEHinteg
         aster_logical, intent(in) :: l_epsi_varc
-        integer :: nwkout
         integer :: ndsde
-        integer :: nwkin
         integer :: nsig
         integer :: neps
         character(len=*) :: fami
@@ -51,13 +47,11 @@ interface
         real(kind=8) :: vind(*)
         character(len=16) :: option
         real(kind=8) :: angmas(*)
-        real(kind=8) :: wkin(nwkin)
         aster_logical :: cp
         integer :: numlc
         real(kind=8) :: sigf(nsig)
         real(kind=8) :: vinf(*)
         real(kind=8) :: dsde(ndsde)
-        real(kind=8) :: wkout(nwkout)
         integer :: codret
     end subroutine redece
 end interface
