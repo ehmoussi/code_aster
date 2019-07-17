@@ -17,10 +17,18 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dpotrf(uplo, n, a, lda, info)
-        integer,intent(in) :: lda, n
-        integer,intent(out) :: info
-        real(kind=8),intent(inout) :: a(lda,*)
-        character(len=1),intent(in) :: uplo
-    end subroutine dpotrf
+    subroutine dsyrk(uplo, trans, n, k, alpha, a, lda, beta, c, ldc)
+!
+        character(len=1), intent(in) :: uplo
+        character(len=1), intent(in) :: trans
+        integer, intent(in) :: n
+        integer, intent(in) :: k
+        integer, intent(in) :: lda
+        integer, intent(in) :: ldc
+        real(kind=8), intent(in) :: alpha
+        real(kind=8), intent(in) :: beta
+        real(kind=8), intent(in) :: a(lda, *)
+        real(kind=8), intent(inout) :: c(ldc, *)
+!
+    end subroutine dsyrk
 end interface

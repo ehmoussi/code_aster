@@ -16,11 +16,18 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine dpotrf(uplo, n, a, lda, info)
-        integer,intent(in) :: lda, n
+    subroutine dsytrs(uplo, n, nhrs, a, lda, ipiv, b, ldb, info)
+        integer,intent(in) :: n
+        integer,intent(in) :: nhrs
+        integer,intent(in) :: lda
+        integer,intent(in) :: ldb
         integer,intent(out) :: info
-        real(kind=8),intent(inout) :: a(lda,*)
+        blas_int,intent(in) :: ipiv(*)
+        real(kind=8),intent(in) :: a(lda,*)
+        real(kind=8),intent(inout) :: b(ldb,*)
         character(len=1),intent(in) :: uplo
-    end subroutine dpotrf
+    end subroutine dsytrs
 end interface

@@ -15,12 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+
 !
+!
+#include "asterf_types.h"
+
 interface
-    subroutine dpotrf(uplo, n, a, lda, info)
-        integer,intent(in) :: lda, n
-        integer,intent(out) :: info
-        real(kind=8),intent(inout) :: a(lda,*)
-        character(len=1),intent(in) :: uplo
-    end subroutine dpotrf
+    subroutine dsysv(uplo, n, nrhs, a, lda, ipiv,&
+                     b, ldb, work, lwork, info)
+        character(len=1), intent(in) :: uplo
+        integer, intent(in) :: ldb
+        integer, intent(in) :: lda
+        integer, intent(in) :: n
+        integer, intent(in) :: nrhs
+        real(kind=8) ,intent(inout) :: a(lda, *)
+        blas_int ,intent(out) :: ipiv(*)
+        real(kind=8) ,intent(inout) :: b(ldb, *)
+        integer, intent(in) :: lwork
+        real(kind=8), intent(inout) :: work(*)
+        blas_int, intent(out) :: info
+    end subroutine dsysv
 end interface

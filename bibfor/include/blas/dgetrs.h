@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dpotrf(uplo, n, a, lda, info)
-        integer,intent(in) :: lda, n
+    subroutine dgetrs(trans, n, nhrs, a, lda, ipiv, b, ldb, info)
+        character(len=1),intent(in) :: trans
+        integer,intent(in) :: lda, n, nhrs, ipiv(*), ldb
         integer,intent(out) :: info
-        real(kind=8),intent(inout) :: a(lda,*)
-        character(len=1),intent(in) :: uplo
-    end subroutine dpotrf
+        real(kind=8),intent(inout) :: a(lda,*), b(ldb,*)
+    end subroutine dgetrs
 end interface
