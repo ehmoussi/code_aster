@@ -15,12 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+
+!
 !
 interface
-    subroutine dpotrf(uplo, n, a, lda, info)
-        integer,intent(in) :: lda, n
+    subroutine dpotrs(uplo, n, nhrs, a, lda, b, ldb, info)
+        integer,intent(in) :: n
+        integer,intent(in) :: nhrs
+        integer,intent(in) :: lda
+        integer,intent(in) :: ldb
         integer,intent(out) :: info
-        real(kind=8),intent(inout) :: a(lda,*)
+        real(kind=8),intent(in) :: a(lda,*)
+        real(kind=8),intent(inout) :: b(ldb,*)
         character(len=1),intent(in) :: uplo
-    end subroutine dpotrf
+    end subroutine dpotrs
 end interface
