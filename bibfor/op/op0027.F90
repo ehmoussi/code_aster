@@ -57,12 +57,12 @@ subroutine op0027()
     integer :: nbmxpa
     parameter (nbmxpa = 20)
 !
-    integer :: livi(nbmxpa), coor, iord, iadfis
+    integer :: livi(nbmxpa), iord, iadfis
     real(kind=8) :: livr(nbmxpa), time, g(1)
     complex(kind=8) :: livc(nbmxpa)
     character(len=24) :: livk(nbmxpa)
 !
-    character(len=16) :: option, k16bid, typdis, linopa(nxpara)
+    character(len=16) :: option, k16bid, linopa(nxpara)
     integer :: ier, ifond, ifiss, nbpara, ndim, numfon, ibid, lfond
     aster_logical :: lmoda = .false.
 ! 
