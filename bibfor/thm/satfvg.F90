@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine satfvg(sr   , pr    , n, m, pc,&
+subroutine satfvg(sr   , pr    , n, m,pentree, pc,&
                   satur, dsatur)
 !
 !
 implicit none
 !
-    real(kind=8), intent(in) :: sr, pr, n, m, pc
+    real(kind=8), intent(in) :: sr, pr, n, m, pc,pentree
     real(kind=8), intent(out) :: satur, dsatur
 !
 ! --------------------------------------------------------------------------------------------------
@@ -37,13 +37,14 @@ implicit none
 ! In  pr           : parameter P
 ! In  m            : parameter M (with M=1-1/N)
 ! In  n            : parameter N
+! In  pentree      : parameter entry pressure
 ! In  pc           : capillary pressure
 ! Out satur        : saturation
 ! Out dsatur       : derivative of saturation (/pc)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    satur  = sr+(1-sr)*((pc/pr)**n+1.d0)**(-m)
-    dsatur = -n*m*((1.d0-sr)/pr)*(((pc/pr)**n+1.d0)**(-m-1.d0))*&
-            ((pc/pr)**(n-1.d0))
+    satur  = sr+(1-sr)*(((pc-pentree)/pr)**n+1.d0)**(-m)
+    dsatur = -n*m*((1.d0-sr)/pr)*((((pc-pentree)/pr)**n+1.d0)**(-m-1.d0))*&
+            (((pc-pentree)/pr)**(n-1.d0))
 end subroutine
