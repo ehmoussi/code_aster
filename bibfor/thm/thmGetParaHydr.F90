@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,14 +43,15 @@ integer, intent(in) :: j_mater
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_para_vgm = 5 
+    integer, parameter :: nb_para_vgm = 6 
     real(kind=8) :: para_vale_vgm(nb_para_vgm)
     integer :: icodre_vgm(nb_para_vgm)
     character(len=16), parameter :: para_name_vgm(nb_para_vgm) =(/'VG_N    ',&
                                                                   'VG_PR   ',&
                                                                   'VG_SR   ',&
                                                                   'VG_SMAX ',&
-                                                                  'VG_SATUR' /)
+                                                                  'VG_SATUR',&
+                                                                  'VG_PENTR'/)
     integer, parameter :: nb_para = 1 
     real(kind=8) :: para_vale(nb_para)
     integer :: icodre(nb_para)
@@ -72,6 +73,7 @@ integer, intent(in) :: j_mater
         ds_thm%ds_material%hydr%sr     = para_vale_vgm(3)
         ds_thm%ds_material%hydr%smax   = para_vale_vgm(4)
         ds_thm%ds_material%hydr%satuma = para_vale_vgm(5)
+        ds_thm%ds_material%hydr%pentree = para_vale_vgm(6)
         if (icodre_vgm(1) .eq. 1) then
             call utmess('F', 'THM1_94')
         endif
