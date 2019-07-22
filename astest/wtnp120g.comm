@@ -47,7 +47,7 @@ PR = 2.E6
 SR = 0.4
 SMAX = 0.999
 SATUC = 1.
-PE = 0.E5
+PE = 2.E5
 
 #*********************************************************
 # CI
@@ -186,10 +186,10 @@ INST1=DEFI_LIST_REEL(DEBUT=0.0,
  _F( JUSQU_A = T5000ANS   , NOMBRE = 15 ),           #DT=200 ANS
  _F( JUSQU_A = T8000ANS   , NOMBRE = 10 ),           #DT=300 ANS
  _F( JUSQU_A = T10_000ANS , NOMBRE = 5 ),            #DT=400 ANS
- _F( JUSQU_A = T20_000ANS , NOMBRE = 40 ),           #DT=500 ANS
- _F( JUSQU_A = T40_000ANS , NOMBRE = 64 ),           #DT=625 ANS
- _F( JUSQU_A = T60_000ANS , NOMBRE = 50 ),           #DT=800 ANS
- _F( JUSQU_A = T100_000ANS , NOMBRE = 80 ),          #DT=1000 ANS
+ _F( JUSQU_A = T20_000ANS , NOMBRE = 20 ),           #DT=500 ANS
+ _F( JUSQU_A = T40_000ANS , NOMBRE = 32 ),           #DT=625 ANS
+ _F( JUSQU_A = T60_000ANS , NOMBRE = 25 ),           #DT=800 ANS
+ _F( JUSQU_A = T100_000ANS , NOMBRE = 40 ),          #DT=1000 ANS
  _F( JUSQU_A = T200_000ANS , NOMBRE = 50 ),          #DT=2000 ANS
  _F( JUSQU_A = T400_000ANS , NOMBRE = 40 ),          #DT=5000 ANS
  _F( JUSQU_A = T500_000ANS , NOMBRE = 20 ),          #DT=15000 ANS
@@ -444,12 +444,11 @@ if METHODE == 'EF' :
                    NOM_CHAM='DEPL',
                    NOEUD='N3',
                    NOM_CMP='PRE1',
-                   VALE_CALC=-9.95754248E+05,
+                   VALE_CALC=-995729.8224868318 ,
                    VALE_REFE=-9.95754E5,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
            )
-
 
  TEST_RESU(RESU=_F(INST=3.1536000000E10,
                    REFERENCE='NON_DEFINI',
@@ -457,7 +456,7 @@ if METHODE == 'EF' :
                    NOM_CHAM='DEPL',
                    NOEUD='N3',
                    NOM_CMP='PRE1',
-                   VALE_CALC=-7.22026680E+05,
+                   VALE_CALC=-721265.2730639455,
                    VALE_REFE=-7.22030E5,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
@@ -469,8 +468,8 @@ if METHODE == 'EF' :
                    NOM_CHAM='DEPL',
                    NOEUD='N3',
                    NOM_CMP='PRE1',
-                   VALE_CALC= 270374.3394703255,
-                   VALE_REFE=270374.,
+                   VALE_CALC=446183.73558946495,
+                   VALE_REFE=446184.,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
            )
@@ -480,7 +479,7 @@ if METHODE == 'EF' :
                    NOM_CHAM='DEPL',
                    NOEUD='N303',
                    NOM_CMP='PRE1',
-                   VALE_CALC=-9.99999020E+05,
+                   VALE_CALC=-999999.1027913451,
                    VALE_REFE=-1.00000E6,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
@@ -492,7 +491,7 @@ if METHODE == 'EF' :
                    NOM_CHAM='DEPL',
                    NOEUD='N303',
                    NOM_CMP='PRE1',
-                   VALE_CALC=-1.00095609E+06,
+                   VALE_CALC=-1000656.9322105744,
                    VALE_REFE=-1.00000E6,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
@@ -503,8 +502,8 @@ if METHODE == 'EF' :
                    NOM_CHAM='DEPL',
                    NOEUD='N303',
                    NOM_CMP='PRE1',
-                   VALE_CALC= -30682.781052608072,
-                   VALE_REFE= -30683.,
+                   VALE_CALC= -62935.35918385946,
+                   VALE_REFE= -62935.,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
            )
@@ -514,7 +513,7 @@ if METHODE == 'EF' :
                    NOM_CHAM='DEPL',
                    NOEUD='N393',
                    NOM_CMP='PRE1',
-                   VALE_CALC=-9.99999000E+05,
+                   VALE_CALC=-999999.0000062884,
                    VALE_REFE=-1.00000E6,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
@@ -526,7 +525,7 @@ if METHODE == 'EF' :
                    NOM_CHAM='DEPL',
                    NOEUD='N393',
                    NOM_CMP='PRE1',
-                   VALE_CALC=-1.00009464E+06,
+                   VALE_CALC=-1000064.7649276713,
                    VALE_REFE=-1.00000E6,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
@@ -537,8 +536,8 @@ if METHODE == 'EF' :
                    NOM_CHAM='DEPL',
                    NOEUD='N393',
                    NOM_CMP='PRE1',
-                   VALE_CALC= -923352.8573279586,
-                   VALE_REFE=-923353.,
+                   VALE_CALC=-925905.0596872474,
+                   VALE_REFE=-925905.,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
            )
