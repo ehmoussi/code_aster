@@ -75,20 +75,6 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     real(kind=8), pointer :: v_sdappa_gapi(:) => null()
     character(len=24) :: sdappa_coef
     real(kind=8), pointer :: v_sdappa_coef(:) => null()
-    character(len=24) :: sdappa_apli
-    integer, pointer :: v_sdappa_apli(:) => null()
-    character(len=24) :: sdappa_apnp
-    integer, pointer :: v_sdappa_apnp(:) => null()
-    character(len=24) :: sdappa_apts
-    real(kind=8), pointer :: v_sdappa_apts(:) => null()
-    character(len=24) :: sdappa_ap2m
-    real(kind=8), pointer :: v_sdappa_ap2m(:) => null()
-    character(len=24) :: sdappa_wpat
-    real(kind=8), pointer :: v_sdappa_wpat(:) => null()
-    character(len=24) :: sdappa_poid
-    real(kind=8), pointer :: v_sdappa_poid(:) => null()
-    character(len=24) :: sdappa_nmcp
-    integer, pointer :: v_sdappa_nmcp(:) => null()
     integer, pointer :: v_mesh_lpatch(:) => null()
     integer :: nb_pair, jv_geom
     integer, pointer :: v_mesh_connex(:)  => null()
@@ -148,23 +134,8 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     sdappa = ds_contact%sdcont_solv(1:14)//'.APPA'
     sdappa_gapi = sdappa(1:19)//'.GAPI'
     sdappa_coef = sdappa(1:19)//'.COEF'
-    sdappa_apli = sdappa(1:19)//'.APLI'
-    sdappa_apnp = sdappa(1:19)//'.APNP'
-    sdappa_apts = sdappa(1:19)//'.APTS'
-    sdappa_ap2m = sdappa(1:19)//'.AP2M'
-    sdappa_wpat = sdappa(1:19)//'.WPAT'
-    sdappa_poid = sdappa(1:19)//'.POID'
-    sdappa_nmcp = sdappa(1:19)//'.NMCP'
     call jeveuo(sdappa_gapi, 'E', vr = v_sdappa_gapi)
     call jeveuo(sdappa_coef, 'E', vr = v_sdappa_coef)
-    call jeveuo(sdappa_wpat, 'L', vr = v_sdappa_wpat)
-    call jeveuo(sdappa_nmcp, 'E', vi = v_sdappa_nmcp)
-    call jeveuo(sdappa_poid, 'E', vr = v_sdappa_poid)
-    call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
-    call jeveuo(sdappa_apnp, 'L', vi = v_sdappa_apnp)
-    call jeveuo(sdappa_apts, 'L', vr = v_sdappa_apts)
-    call jeveuo(sdappa_ap2m, 'L', vr = v_sdappa_ap2m)
-    call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
 !
 ! - Compute mean square gaps and weights of intersections
 !
@@ -180,12 +151,9 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
         cont_init = mminfi(ds_contact%sdcont_defi, 'CONTACT_INIT', i_cont_zone)
 ! ----- Loop on patches
         do i_patch = 1, nb_patch
-!
             gap            = v_sdappa_gapi(j_patch-2+i_patch)
             indi_cont_prev = v_sdcont_stat(j_patch-2+i_patch)
-!
 ! --------- Compute new status
-!
             if (isnan(gap)) then
                 indi_cont_curr = -1
             else
@@ -205,12 +173,10 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! ----------------- No initial contact
                     indi_cont_curr = 0
                 else
-                    ASSERT(.false.)
+                    ASSERT(ASTER_FALSE)
                 endif
             endif
-!
 ! --------- Save new status
-!
             v_sdcont_stat(j_patch-2+i_patch) = indi_cont_curr
         end do
     end do
