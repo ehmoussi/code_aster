@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm sdnv100f.comm D 1
+F comm sdnv100f.com1 D 1
 F mmed sdnv100f.mmed D 20
