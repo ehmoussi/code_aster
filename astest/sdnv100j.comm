@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,20 +17,35 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# ET BASCULE DE SCHEMA EN TEMPS
-
-
-# CALCUL AVEC BASCULES DE SCHEMA
-DEBUT(CODE=_F(
-              NIV_PUB_WEB='INTERNET',),IGNORE_ALARM=('DYNAMIQUE_3'),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IGNORE_ALARM=('DYNAMIQUE_3'),);
 
 from Contrib.macro_bascule_schema_cata import MACRO_BASCULE_SCHEMA
 
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#  CALCUL TEST ELEMENTS DISCRETS DE CONTACT EN DYNAMIQUE
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Length of beam
+length = 0.2
 
-MAILO=LIRE_MAILLAGE(FORMAT='MED',);
+# Material properties
+young = 2.E11
+nu    = 0.
+rho   = 8000.
+
+# Speed of sound in steel
+cele  = sqrt((young * (1.-nu))/(rho * (1.+nu)*(1.-2.*nu)))
+
+# Initial displacement
+dispIni = 2.E-3
+
+# Initial speed
+viteIni = -100.
+
+# Initial time of contact
+tau0 = 2.E-3/abs(viteIni)
+
+# Final time of contact
+tau1 = tau0 + 2.*length/cele
+
+# Mesh
+MAILO=LIRE_MAILLAGE(FORMAT='MED',)
 
 MAILL=CREA_MAILLAGE(MAILLAGE=MAILO,
                     CREA_POI1=_F(NOM_GROUP_MA='BASE',
@@ -40,38 +55,14 @@ MAILL=DEFI_GROUP(reuse =MAILL,
                  MAILLAGE=MAILL,
                  CREA_GROUP_NO=_F(GROUP_MA='BARRE',),);
 
+# Model
 MODE=AFFE_MODELE(MAILLAGE=MAILL,
-                 
                  AFFE=(_F(GROUP_MA='BARRE',
                           PHENOMENE='MECANIQUE',
                           MODELISATION='3D',),
                        _F(GROUP_MA='BASE',
                           PHENOMENE='MECANIQUE',
                           MODELISATION='DIS_T',),),);
-
-ACIER=DEFI_MATERIAU(ELAS=_F(E=2.E11,
-                            NU=0.0,
-                            RHO=8000.,),);
-
-# ACIER=DEFI_MATERIAU(ELAS=_F(E=2.E11,
-#                             NU=0.3,
-#                             RHO=8000.,),
-#                    ECRO_LINE=_F(D_SIGM_EPSI = 2000.E6,
-#                                   SY = 80.E6));
-
-MATCHO=DEFI_MATERIAU(DIS_CONTACT=_F(RIGI_NOR=1.E10,
-                                    JEU=0.,),);
-
-CM=AFFE_MATERIAU(MAILLAGE=MAILL,
-                 AFFE=(_F(GROUP_MA='BARRE',
-                          MATER=ACIER,),
-                       _F(GROUP_MA='BASE',
-                          MATER=MATCHO,),),);
-
-CH=AFFE_CHAR_MECA(MODELE=MODE,
-                  DDL_IMPO=_F(GROUP_MA='BARRE',
-                              DX=0.,
-                              DY=0.,),);
 
 CAR=AFFE_CARA_ELEM(MODELE=MODE,
                     DISCRET=(_F(GROUP_MA='BASE',
@@ -85,29 +76,53 @@ CAR=AFFE_CARA_ELEM(MODELE=MODE,
                     ORIENTATION=_F(GROUP_MA='BASE',
                                    CARA='VECT_X_Y',
                                    VALE=(0.,0.,-1.,0.,1.,0.,),),);
-# ************* CHAMP DE VITESSE INITIALE ***************
 
-CHAMP1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
-                  OPERATION='AFFE',
-                  MAILLAGE=MAILL,
-                  AFFE=_F(
-                  GROUP_NO='BARRE',
-                  NOM_CMP=('DX','DY','DZ',),
-                  VALE=(0.0,0.0,-100.,),),);
-# ************* CHAMP DE DEPLACEMENT INITIAL ************
+# Material
+ACIER=DEFI_MATERIAU(
+                ELAS=_F( E = young, NU = nu,  RHO = rho)
+                        )
 
+MATCHO=DEFI_MATERIAU(DIS_CONTACT=_F(RIGI_NOR=1.E10,
+                                    JEU=0.,),);
+
+CM=AFFE_MATERIAU(MAILLAGE=MAILL,
+                 AFFE=(_F(GROUP_MA='BARRE',
+                          MATER=ACIER,),
+                       _F(GROUP_MA='BASE',
+                          MATER=MATCHO,),),);
+
+# Loads
+CH=AFFE_CHAR_MECA(MODELE=MODE,
+                  DDL_IMPO=_F(GROUP_MA='BARRE',
+                              DX=0.,
+                              DY=0.,),);
+
+RAMPE=DEFI_FONCTION(   NOM_PARA='INST',
+            PROL_GAUCHE='CONSTANT',   PROL_DROITE='CONSTANT',
+            VALE=(0.0,        1.0,
+                  0.0001,     1.0,
+                  0.00010001, 0.0,) )
+
+# Initial displacement
 CHAMP2=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                   OPERATION='AFFE',
                   MAILLAGE=MAILL,
                   AFFE=_F(
                   GROUP_NO='BARRE',
                   NOM_CMP=('DX','DY','DZ',),
-                  VALE=(0.0,0.0,0.002,),),);
+                  VALE=(0.0,0.0,dispIni,),),);
 
-RAMPE=DEFI_FONCTION(NOM_PARA='INST',
-                    VALE=(0.0,1.0,0.0001,1.0,0.00010001,0.0,),
-                    PROL_DROITE='CONSTANT',
-                    PROL_GAUCHE='CONSTANT',);
+# Initial speed
+CHAMP1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                  OPERATION='AFFE',
+                  MAILLAGE=MAILL,
+                  AFFE=_F(
+                  GROUP_NO='BARRE',
+                  NOM_CMP=('DX','DY','DZ',),
+                  VALE=(0.0,0.0, viteIni,),),);
+
+
+
 #
 # CONDITION DE COURANT = (.005 m)/(5000 m/s) = 1e-6 s
 # UNIQUEMENT SUR LES ELEMENTS ISOPARAMETRIQUES
@@ -130,10 +145,6 @@ L_EXP=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=_F(JUSQU_A=temfin, PAS=DT_EXP,),);
 
 L_BAS=DEFI_LIST_REEL(VALE=(temfi1, temfi2, temfi3),);
 
-#L_ARCH=DEFI_LIST_REEL(DEBUT=0.,
-#                      INTERVALLE=_F(JUSQU_A=temfi,
-#                                    PAS=DT2,),);
-#
 #---------------------------------------------------#
 #                                                   #
 # RESOLUTION DYNAMIQUE                              #
@@ -155,10 +166,6 @@ U = MACRO_BASCULE_SCHEMA(MODELE=MODE,
                                  _F(RELATION='ELAS',     GROUP_MA='BARRE',),),
                  COMPORTEMENT_EXPL   =(_F(RELATION='DIS_CHOC', GROUP_MA='BASE',),
                                  _F(RELATION='ELAS',     GROUP_MA='BARRE',),),
-#                  COMPORTEMENT_IMPL  =(_F(RELATION='DIS_CHOC', GROUP_MA='BASE',),
-#                                  _F(RELATION='VMIS_ISOT_LINE',     GROUP_MA='BARRE',),),
-#                  COMPORTEMENT_EXPL   =(_F(RELATION='DIS_CHOC', GROUP_MA='BASE',),
-#                                  _F(RELATION='VMIS_ISOT_LINE',     GROUP_MA='BARRE',),),
                  EXCIT      =_F(CHARGE=CH, FONC_MULT=RAMPE,),
                  NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1,),
                  ETAT_INIT=_F(DEPL=CHAMP2, VITE=CHAMP1,),
@@ -214,87 +221,5 @@ VI5=RECU_FONCTION(RESULTAT=U,
 
 tpost=POST_ELEM(ENER_CIN=_F(TOUT='OUI',),
                 RESULTAT=U,);
-
-
-TEST_RESU(RESU=(_F(INST=1.0E-05,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=U,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N5',
-                   NOM_CMP='DZ',
-                   VALE_CALC= 1.0E-03,
-                   VALE_REFE=1.E-3,
-                   PRECISION=1.E-6,),
-                _F(INST=2.4E-05,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=U,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N100',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-4.0E-04,
-                   VALE_REFE=-3.8E-4,
-                   PRECISION=0.053,),
-                _F(INST=8.0E-05,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=U,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N5',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-8.2322212281782E-04,
-                   VALE_REFE=-8.0E-4,
-                   PRECISION=0.03, ),
-                _F(INST=1.2E-4,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=U,
-                   NOM_CHAM='VITE',
-                   NOEUD='N5',
-                   NOM_CMP='DZ',
-                   VALE_CALC=115.271589459,
-                   VALE_REFE=100.0,
-                   PRECISION=0.153, ),
-                _F(INST=1.2E-4,
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=U,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N5',
-                   NOM_CMP='DZ',
-                   VALE_CALC= 0.00200146781751,
-                   VALE_REFE=2.E-3,
-                   PRECISION=0.001, ),
-                ),
-          )
-
-#
-# Test de l energie cinetique
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-6,
-           VALE_CALC=800.0,
-           VALE_REFE=800.0,
-           NOM_PARA='TOTALE',
-           TABLE=tpost,
-           FILTRE=(_F(NOM_PARA='LIEU',
-                      VALE_K='MAILL',),
-                   _F(CRITERE='ABSOLU',
-                      PRECISION=1.E-08,
-                      NOM_PARA='INST',
-                      VALE=5.0E-06,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.024,
-           VALE_CALC=780.962944516,
-           VALE_REFE=800.0,
-           NOM_PARA='TOTALE',
-           TABLE=tpost,
-           FILTRE=(_F(NOM_PARA='LIEU',
-                      VALE_K='MAILL',),
-                   _F(CRITERE='ABSOLU',
-                      PRECISION=1.E-08,
-                      NOM_PARA='INST',
-                      VALE=1.2E-4,),
-                   ),
-           )
 
 FIN();
