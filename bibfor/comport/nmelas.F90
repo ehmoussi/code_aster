@@ -147,7 +147,7 @@ type(Behaviour_Integ), intent(in) :: BEHinteg
 !
     call get_elas_para(fami    , imate, '-', kpg, ksp, &
                        elas_id , elas_keyword,&
-                       e = em, nu = num, BEHinteg = BEHinteg)
+                       e_ = em, nu_ = num, BEHinteg = BEHinteg)
     deumum = em/(1.d0+num)
 !
     if (inco) then
@@ -158,7 +158,7 @@ type(Behaviour_Integ), intent(in) :: BEHinteg
 !
     call get_elas_para(fami    , imate, '+', kpg, ksp, &
                        elas_id , elas_keyword,&
-                       e = e, nu = nu, BEHinteg = BEHinteg)
+                       e_ = e, nu_ = nu, BEHinteg = BEHinteg)
 !
     if (inco) then
         deuxmu = 2.d0*e/3.d0
