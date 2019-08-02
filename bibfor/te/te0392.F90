@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -212,7 +212,7 @@ subroutine te0392(option, nomte)
     ispg = 1
     call get_elas_para('RIGI', zi(imate), '+', ipg, ispg,&
                        elas_id  , elas_keyword,&
-                       nu = nu, nu12 = nu12)
+                       nu_ = nu, nu12_ = nu12)
     if (elas_id .eq. 1) then
         nub = nu/(1.d0-nu)
     else

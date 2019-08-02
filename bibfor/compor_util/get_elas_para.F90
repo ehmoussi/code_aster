@@ -20,10 +20,10 @@
 subroutine get_elas_para(fami    , j_mater, poum, ipg, ispg, &
                          elas_id , elas_keyword,&
                          time    , temp,&
-                         e       , nu  , g,&
-                         e1      , e2  , e3,&
-                         nu12    , nu13, nu23,&
-                         g1      , g2  , g3,&
+                         e_      , nu_  , g_   ,&
+                         e1_     , e2_  , e3_  ,&
+                         nu12_   , nu13_, nu23_,&
+                         g1_     , g2_  , g3_  ,&
                          BEHinteg)
 !
 use Behaviour_type
@@ -42,10 +42,10 @@ integer, intent(in) :: elas_id
 character(len=16), intent(in) :: elas_keyword
 real(kind=8), optional, intent(in) :: time
 real(kind=8), optional, intent(in) :: temp
-real(kind=8), optional, intent(out) :: e, nu, g
-real(kind=8), optional, intent(out) :: e1,e2, e3
-real(kind=8), optional, intent(out) :: nu12, nu13, nu23
-real(kind=8), optional, intent(out) :: g1, g2, g3
+real(kind=8), optional, intent(out) :: e_, nu_, g_
+real(kind=8), optional, intent(out) :: e1_,e2_, e3_
+real(kind=8), optional, intent(out) :: nu12_, nu13_, nu23_
+real(kind=8), optional, intent(out) :: g1_, g2_, g3_
 type(Behaviour_Integ), optional, intent(in) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
@@ -56,31 +56,31 @@ type(Behaviour_Integ), optional, intent(in) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  fami           : Gauss family for integration point rule
-! In  j_mater        : coded material address
-! In  time           : current time
-! In  time           : current temperature
-! In  poum           : '-' or '+' for parameters evaluation (previous or current temperature)
-! In  ipg            : current point gauss
-! In  ispg           : current "sous-point" gauss
-! In  elas_id        : Type of elasticity
+! In  fami             : Gauss family for integration point rule
+! In  j_mater          : coded material address
+! In  time             : current time
+! In  time             : current temperature
+! In  poum             : '-' or '+' for parameters evaluation (previous or current temperature)
+! In  ipg              : current point gauss
+! In  ispg             : current "sous-point" gauss
+! In  elas_id          : Type of elasticity
 !                 1 - Isotropic
 !                 2 - Orthotropic
 !                 3 - Transverse isotropic
-! In  elas_keyword   : keyword factor linked to type of elasticity parameters
-! Out e              : Young modulus (isotropic)
-! Out nu             : Poisson ratio (isotropic)
-! Out e1             : Young modulus - Direction 1 (Orthotropic/Transverse isotropic)
-! Out e2             : Young modulus - Direction 2 (Orthotropic)
-! Out e3             : Young modulus - Direction 3 (Orthotropic/Transverse isotropic)
-! Out nu12           : Poisson ratio - Coupling 1/2 (Orthotropic/Transverse isotropic)
-! Out nu13           : Poisson ratio - Coupling 1/3 (Orthotropic/Transverse isotropic)
-! Out nu23           : Poisson ratio - Coupling 2/3 (Orthotropic)
-! Out g1             : shear ratio (Orthotropic)
-! Out g2             : shear ratio (Orthotropic)
-! Out g3             : shear ratio (Orthotropic)
-! Out g              : shear ratio (isotropic/Transverse isotropic)
-! In  BEHinteg       : parameters for integration of behaviour
+! In  elas_keyword     : keyword factor linked to type of elasticity parameters
+! Out e                : Young modulus (isotropic)
+! Out nu               : Poisson ratio (isotropic)
+! Out e1               : Young modulus - Direction 1 (Orthotropic/Transverse isotropic)
+! Out e2               : Young modulus - Direction 2 (Orthotropic)
+! Out e3               : Young modulus - Direction 3 (Orthotropic/Transverse isotropic)
+! Out nu12             : Poisson ratio - Coupling 1/2 (Orthotropic/Transverse isotropic)
+! Out nu13             : Poisson ratio - Coupling 1/3 (Orthotropic/Transverse isotropic)
+! Out nu23             : Poisson ratio - Coupling 2/3 (Orthotropic)
+! Out g1               : shear ratio (Orthotropic)
+! Out g2               : shear ratio (Orthotropic)
+! Out g3               : shear ratio (Orthotropic)
+! Out g                : shear ratio (isotropic/Transverse isotropic)
+! In  BEHinteg         : parameters for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -92,15 +92,18 @@ type(Behaviour_Integ), optional, intent(in) :: BEHinteg
     character(len=8) :: para_name(5)
     real(kind=8) :: para_vale(5)
     integer :: nbres, nb_para
+    real(kind=8), parameter :: un = 1.d0
     real(kind=8) :: c10, c01, c20, k
-    real(kind=8) :: un
+    real(kind=8) :: e, nu, g
+    real(kind=8) :: e1, e2, e3
+    real(kind=8) :: nu12, nu13, nu23
+    real(kind=8) :: g1, g2, g3
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    un             = 1.d0
-    nb_para        = 0
-    para_name(1:2) = ' '
-    para_vale(1:2) = 0.d0
+    nb_para    = 0
+    para_name  = ' '
+    para_vale  = 0.d0
     if (present(time)) then
         nb_para   = nb_para + 1
         para_name(nb_para) = 'INST'
@@ -127,14 +130,12 @@ type(Behaviour_Integ), optional, intent(in) :: BEHinteg
 !
 ! - Get elastic parameters
 !
-    if (elas_id.eq.1) then
+    if (elas_id .eq. 1) then
         if (elas_keyword.eq.'ELAS_HYPER') then
             call hypmat(fami, ipg, ispg, poum, j_mater,&
                         c10, c01, c20, k)
             nu = (3.d0*k-4.0d0*(c10+c01))/(6.d0*k+4.0d0*(c10+c01))
-            if (present(e)) then
-                e  = 4.d0*(c10+c01)*(un+nu)
-            endif
+            e  = 4.d0*(c10+c01)*(un+nu)
         else
             nomres(1) = 'E'
             nomres(2) = 'NU'
@@ -142,16 +143,11 @@ type(Behaviour_Integ), optional, intent(in) :: BEHinteg
             call rcvalb(fami, ipg, ispg, poum, j_mater,&
                         ' ', elas_keyword, nb_para, para_name, [para_vale],&
                         nbres, nomres, valres, icodre, 1)
-            if (present(e)) then
-                e  = valres(1)
-            endif
+            e  = valres(1)
             nu = valres(2)
         endif
-        if (present(g)) then
-            ASSERT(present(nu))
-            g = 1.d0/((1.d0+nu)*(1.d0-2.d0*nu))
-        endif
-    elseif (elas_id.eq.2) then
+        g = 1.d0/((1.d0+nu)*(1.d0-2.d0*nu))
+    elseif (elas_id .eq. 2) then
         nomres(1) = 'E_L'
         nomres(2) = 'E_T'
         nomres(3) = 'E_N'
@@ -174,7 +170,7 @@ type(Behaviour_Integ), optional, intent(in) :: BEHinteg
         g1 = valres(7)
         g2 = valres(8)
         g3 = valres(9)
-    elseif (elas_id.eq.3) then
+    elseif (elas_id .eq. 3) then
         nomres(1) = 'E_L'
         nomres(2) = 'E_N'
         nomres(3) = 'NU_LT'
@@ -190,7 +186,44 @@ type(Behaviour_Integ), optional, intent(in) :: BEHinteg
         nu13 = valres(4)
         g    = valres(5)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
-
+!
+! - Output
+    if (present(e_)) then
+        e_ = e
+    endif
+    if (present(nu_)) then
+        nu_ = nu
+    endif
+    if (present(g_)) then
+        g_ = g
+    endif
+    if (present(e1_)) then
+        e1_ = e1
+    endif
+    if (present(e2_)) then
+        e2_ = e2
+    endif
+    if (present(e3_)) then
+        e3_ = e3
+    endif
+    if (present(g1_)) then
+        g1_ = g1
+    endif
+    if (present(g2_)) then
+        g2_ = g2
+    endif
+    if (present(g3_)) then
+        g3_ = g3
+    endif
+    if (present(nu12_)) then
+        nu12_ = nu12
+    endif
+    if (present(nu13_)) then
+        nu13_ = nu13
+    endif
+    if (present(nu23_)) then
+        nu23_ = nu23
+    endif
 end subroutine

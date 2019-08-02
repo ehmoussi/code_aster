@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,10 +73,10 @@ implicit none
     call get_elas_para(fami, mater    , poum, ipg, ispg, &
                        elas_id  , elas_keyword,&
                        time = time,&
-                       e = e      , nu = nu    , g = g,&
-                       e1 = e1    , e2 = e2    , e3 = e3,& 
-                       nu12 = nu12, nu13 = nu13, nu23 = nu23,&
-                       g1 = g1    , g2 = g2    , g3 = g3)
+                       e_ = e      , nu_ = nu    , g_ = g,&
+                       e1_ = e1    , e2_ = e2    , e3_ = e3,& 
+                       nu12_ = nu12, nu13_ = nu13, nu23_ = nu23,&
+                       g1_ = g1    , g2_ = g2    , g3_ = g3)
 !
 ! - Compute Hooke matrix
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -90,14 +90,14 @@ implicit none
 !
     call get_elas_para(fami, imat, '-', kpg, ksp,&
                        elas_id  , elas_keyword,&
-                       e = youngm, nu = num)
+                       e_ = youngm, nu_ = num)
     ASSERT(elas_id.eq.1)
     mum     = youngm/(2.d0*(1.d0+num))
     troiskm = youngm/(1.d0-2.d0*num)
 !
     call get_elas_para(fami, imat, c1, kpg, ksp,&
                        elas_id  , elas_keyword,&
-                       e = young, nu = nu)
+                       e_ = young, nu_ = nu)
     ASSERT(elas_id.eq.1)
     mu      = young/(2.d0*(1.d0+nu))
     troisk  = young/(1.d0-2.d0*nu)

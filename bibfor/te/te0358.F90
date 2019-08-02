@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -179,7 +179,7 @@ character(len=16), intent(in) :: nomte
         call get_elas_id(j_mater, elas_id, elas_keyword)
         call get_elas_para(fami, j_mater , '+', ipg, ispg,&
                            elas_id  , elas_keyword,&
-                           e  = young , nu = nu)
+                           e_ = young , nu_ = nu)
         ASSERT(elas_id.eq.1)
         deuxmu = young/(1.d0+nu)
 !
