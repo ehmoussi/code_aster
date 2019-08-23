@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504,W1306
 !
-subroutine epsthm(l_axi    , ndim     ,&
+subroutine epsthm(ds_thm   , l_axi    , ndim     ,&
                   addeme   , addep1   , addep2  , addete   ,&
                   nno      , nnos     ,&
                   dimuel   , dimdef   , nddls   , nddlm    ,&
@@ -28,7 +28,6 @@ subroutine epsthm(l_axi    , ndim     ,&
                   epsm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -37,6 +36,7 @@ implicit none
 #include "asterfort/cabthm.h"
 #include "asterfort/assert.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 aster_logical, intent(in) :: l_axi
 integer, intent(in) :: ndim
 integer, intent(in) :: addeme, addep1, addep2, addete
@@ -59,31 +59,32 @@ real(kind=8), intent(out) :: epsm(6,27)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_axi        : flag is axisymmetric model
-! In  ndim         : dimension of element (2 ou 3)
-! In  addeme       : adress of mechanic dof in vector and matrix (generalized quantities)
-! In  addep1       : adress of first hydraulic dof in vector and matrix (generalized quantities)
-! In  addep2       : adress of second hydraulic dof in vector and matrix (generalized quantities)
-! In  addete       : adress of thermic dof in vector and matrix (generalized quantities)
-! In  nno          : number of nodes (all)
-! In  nnos         : number of nodes (not middle ones)
-! In  dimuel       : number of dof for element
-! In  dimdef       : number of generalized strains
-! In  nddls        : number of dof at nodes (not middle ones)
-! In  nddlm        : number of dof at nodes (middle ones)
-! In  nddl_meca    : number of dof for mechanical quantity
-! In  nddl_p1      : number of dof for first hydraulic quantity
-! In  nddl_p2      : number of dof for second hydraulic quantity
-! In  npi          : number of Gauss points
-! In  elem_coor    : coordinates of nodes for current element
-! In  disp         : displacement at nodes for current element
-! In  jv_poids     : JEVEUX adress for weight of Gauss points (linear shape functions)
-! In  jv_poids2    : JEVEUX adress for weight of Gauss points (quadratic shape functions)
-! In  jv_func      : JEVEUX adress for shape functions (linear shape functions)
-! In  jv_func2     : JEVEUX adress for shape functions (quadratic shape functions)
-! In  jv_dfunc     : JEVEUX adress for derivative of shape functions (linear shape functions)
-! In  jv_dfunc2    : JEVEUX adress for derivative of shape functions (quadratic shape functions)
-! Out epsm         : mechanical strains at Gauss points on current element
+! In  ds_thm           : datastructure for THM
+! In  l_axi            : flag is axisymmetric model
+! In  ndim             : dimension of element (2 ou 3)
+! In  addeme           : adress of mechanic dof in vector and matrix (generalized quantities)
+! In  addep1           : adress of first hydraulic dof in vector and matrix (generalized quantities)
+! In  addep2           : adress of second hydraulic dof in vector and matrix (generalized quantitie)
+! In  addete           : adress of thermic dof in vector and matrix (generalized quantities)
+! In  nno              : number of nodes (all)
+! In  nnos             : number of nodes (not middle ones)
+! In  dimuel           : number of dof for element
+! In  dimdef           : number of generalized strains
+! In  nddls            : number of dof at nodes (not middle ones)
+! In  nddlm            : number of dof at nodes (middle ones)
+! In  nddl_meca        : number of dof for mechanical quantity
+! In  nddl_p1          : number of dof for first hydraulic quantity
+! In  nddl_p2          : number of dof for second hydraulic quantity
+! In  npi              : number of Gauss points
+! In  elem_coor        : coordinates of nodes for current element
+! In  disp             : displacement at nodes for current element
+! In  jv_poids         : JEVEUX adress for weight of Gauss points (linear shape functions)
+! In  jv_poids2        : JEVEUX adress for weight of Gauss points (quadratic shape functions)
+! In  jv_func          : JEVEUX adress for shape functions (linear shape functions)
+! In  jv_func2         : JEVEUX adress for shape functions (quadratic shape functions)
+! In  jv_dfunc         : JEVEUX adress for derivative of shape functions (linear shape functions)
+! In  jv_dfunc2        : JEVEUX adress for derivative of shape functions (quadratic shape functions)
+! Out epsm             : mechanical strains at Gauss points on current element
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -102,7 +103,7 @@ real(kind=8), intent(out) :: epsm(6,27)
 !
     do kpi = 1 , npi
 ! ----- Compute [B] matrix for generalized strains
-        call cabthm(l_axi    , ndim     ,&
+        call cabthm(ds_thm   , l_axi    , ndim     ,&
                     nddls    , nddlm    ,&
                     nddl_meca, nddl_p1  , nddl_p2,&
                     nno      , nnos     ,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,24 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface 
-    subroutine thmCpl003(option, angl_naut,&
-                      j_mater  ,&
-                      ndim  , nbvari   ,&
-                      dimdef, dimcon   ,&
-                      adcote, adcp11   , adcp12, & 
-                      addete, addep1   , &
-                      temp  , p1       ,&
-                      dtemp , dp1      ,&
-                      deps  , epsv     , depsv ,&
-                      tbiot ,&
-                      phi   , rho11    , satur ,&
-                      pvp   , h11      , h12   ,&
-                      congem, congep   ,&       
-                      vintm , vintp    , dsde,& 
-                      retcom)
+    subroutine thmCpl003(ds_thm, option, angl_naut,&
+                         j_mater  ,&
+                         ndim  , nbvari   ,&
+                         dimdef, dimcon   ,&
+                         adcote, adcp11   , adcp12, & 
+                         addete, addep1   , &
+                         temp  , p1       ,&
+                         dtemp , dp1      ,&
+                         deps  , epsv     , depsv ,&
+                         tbiot ,&
+                         phi   , rho11    , satur ,&
+                         pvp   , h11      , h12   ,&
+                         congem, congep   ,&       
+                         vintm , vintp    , dsde,& 
+                         retcom)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: angl_naut(3)
         integer, intent(in) :: j_mater, ndim, nbvari

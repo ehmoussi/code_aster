@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,17 +17,17 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xfnoda(imate, mecani, press1, enrmec, dimenr,&
+subroutine xfnoda(ds_thm, imate, mecani, press1, enrmec, dimenr,&
                   dimcon, ndim, dt, fnoevo, congem,&
                   r, enrhyd, nfh)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/rcvalb.h"
+type(THM_DS), intent(inout) :: ds_thm
     aster_logical :: fnoevo
     integer :: mecani(5), press1(7), enrmec(3), dimenr, dimcon
     integer :: ndim, imate, yaenrm, adenme

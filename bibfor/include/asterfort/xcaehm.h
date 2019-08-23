@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,21 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
 interface 
-    subroutine xcaehm(nomte, l_axi, l_steady, type_elem, inte_type,&
+    subroutine xcaehm(ds_thm, nomte, l_axi, l_steady, type_elem, inte_type,&
                       mecani, press1, press2, tempe, dimdef,&
                       dimcon, nmec, np1, np2, ndim,&
                       nno, nnos, nnom, npi, npg,&
                       nddls, nddlm, dimuel, ipoids, ivf,&
                       idfde, ddld, ddlm, ddlp, enrmec, nenr,&
                       dimenr, nnop, nnops, nnopm, enrhyd, ddlc, nfh)
+        use THM_type
+        type(THM_DS), intent(inout) :: ds_thm
         character(len=16) :: nomte
         character(len=3), intent(out) :: inte_type
         integer :: mecani(5)

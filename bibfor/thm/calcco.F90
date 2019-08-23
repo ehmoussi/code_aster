@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,25 +18,24 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcco(l_steady,&
-                  option  , angl_naut,&
-                  j_mater ,&
-                  ndim    , nbvari   ,&
-                  dimdef  , dimcon   ,&
-                  adcome  , adcote   , adcp11, adcp12, adcp21, adcp22,&
-                  addeme  , addete   , addep1, addep2,&
-                  temp    , p1       , p2    ,&
-                  dtemp   , dp1      , dp2   ,&
-                  deps    , epsv     , depsv ,&
-                  tbiot   ,&
-                  phi     , rho11    , satur ,&
-                  pad     , pvp      , h11   , h12   ,&
-                  congem  , congep   ,&
-                  vintm   , vintp    , dsde  ,& 
+subroutine calcco(ds_thm , l_steady ,&
+                  option , angl_naut,&
+                  j_mater,&
+                  ndim   , nbvari   ,&
+                  dimdef , dimcon   ,&
+                  adcome , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                  addeme , addete   , addep1, addep2,&
+                  temp   , p1       , p2    ,&
+                  dtemp  , dp1      , dp2   ,&
+                  deps   , epsv     , depsv ,&
+                  tbiot  ,&
+                  phi    , rho11    , satur ,&
+                  pad    , pvp      , h11   , h12   ,&
+                  congem , congep   ,&
+                  vintm  , vintp    , dsde  ,& 
                   retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -53,6 +52,7 @@ implicit none
 #include "asterfort/thmGetParaCoupling.h"
 #include "asterfort/THM_type.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 aster_logical, intent(in) :: l_steady
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: angl_naut(3)
@@ -80,6 +80,7 @@ integer, intent(out)  :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! In  option           : option to compute
 ! In  l_steady         : .true. for no-transient problem
 ! In  angl_naut        : nautical angles
@@ -147,13 +148,14 @@ integer, intent(out)  :: retcom
 !
 ! - Get parameters for coupling
 !
-    call thmGetParaCoupling(j_mater, temp)
+    call thmGetParaCoupling(ds_thm, j_mater, temp)
 !
 ! - Compute
 !
     select case (ds_thm%ds_behaviour%nume_thmc)
     case (LIQU_SATU)
-        call thmCpl001(l_steady, option, angl_naut,&
+        call thmCpl001(ds_thm,&
+                       l_steady, option, angl_naut,&
                        ndim    , nbvari, &
                        dimdef  , dimcon,&
                        adcome  , adcote, bdcp11,& 
@@ -167,7 +169,8 @@ integer, intent(out)  :: retcom
                        vintm   , vintp , dsde,&
                        retcom)
     case (GAZ)
-        call thmCpl002(option, angl_naut,&
+        call thmCpl002(ds_thm,&
+                       option, angl_naut,&
                        ndim  , nbvari, &
                        dimdef, dimcon,&
                        adcome, adcote, adcp11,& 
@@ -181,7 +184,8 @@ integer, intent(out)  :: retcom
                        vintm , vintp , dsde,&
                        retcom)
     case (LIQU_VAPE)
-        call thmCpl003(option, angl_naut,&
+        call thmCpl003(ds_thm,&
+                       option, angl_naut,&
                        j_mater  ,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
@@ -197,7 +201,8 @@ integer, intent(out)  :: retcom
                        vintm , vintp    , dsde  ,& 
                        retcom)
     case (LIQU_VAPE_GAZ)
-        call thmCpl004(option, angl_naut,&
+        call thmCpl004(ds_thm,&
+                       option, angl_naut,&
                        j_mater,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
@@ -213,7 +218,8 @@ integer, intent(out)  :: retcom
                        vintm , vintp    , dsde  ,&
                        retcom)
     case (LIQU_GAZ)
-        call thmCpl005(option, angl_naut,&
+        call thmCpl005(ds_thm,&
+                       option, angl_naut,&
                        j_mater,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
@@ -228,7 +234,8 @@ integer, intent(out)  :: retcom
                        vintm , vintp    , dsde  ,&
                        retcom)
     case (LIQU_GAZ_ATM)
-        call thmCpl006(option, angl_naut,&
+        call thmCpl006(ds_thm,&
+                       option, angl_naut,&
                        j_mater,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
@@ -243,36 +250,38 @@ integer, intent(out)  :: retcom
                        vintm , vintp    , dsde  ,&
                        retcom)
     case (LIQU_AD_GAZ_VAPE)
-        call thmCpl009(option   , angl_naut,&
-                       j_mater  ,&
-                       ndim     , nbvari   ,&
-                       dimdef   , dimcon   ,&
-                       adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
-                       addeme   , addete   , addep1, addep2,&
-                       temp     , p1       , p2    ,&
-                       dtemp    , dp1      , dp2   ,&
-                       deps     , epsv     , depsv ,&
-                       tbiot    ,&
-                       phi      , rho11    , satur ,&
-                       pad      , pvp      , h11   , h12   ,&
-                       congem   , congep   ,&
-                       vintm    , vintp    , dsde  ,&
+        call thmCpl009(ds_thm ,&
+                       option , angl_naut,&
+                       j_mater,&
+                       ndim   , nbvari   ,&
+                       dimdef , dimcon   ,&
+                       adcome , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                       addeme , addete   , addep1, addep2,&
+                       temp   , p1       , p2    ,&
+                       dtemp  , dp1      , dp2   ,&
+                       deps   , epsv     , depsv ,&
+                       tbiot  ,&
+                       phi    , rho11    , satur ,&
+                       pad    , pvp      , h11   , h12   ,&
+                       congem , congep   ,&
+                       vintm  , vintp    , dsde  ,&
                        retcom)
     case (LIQU_AD_GAZ)
-        call thmCpl010(option   , angl_naut,&
-                       j_mater  ,&
-                       ndim     , nbvari   ,&
-                       dimdef   , dimcon   ,&
-                       adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
-                       addeme   , addete   , addep1, addep2,&
-                       temp     , p1       , p2    ,&
-                       dtemp    , dp1      , dp2   ,&
-                       deps     , epsv     , depsv ,&
-                       tbiot    ,&
-                       phi      , rho11    , satur ,&
-                       pad      , pvp      , h11   , h12   ,&
-                       congem   , congep   ,&
-                       vintm    , vintp    , dsde  ,&
+        call thmCpl010(ds_thm ,&
+                       option , angl_naut,&
+                       j_mater,&
+                       ndim   , nbvari   ,&
+                       dimdef , dimcon   ,&
+                       adcome , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                       addeme , addete   , addep1, addep2,&
+                       temp   , p1       , p2    ,&
+                       dtemp  , dp1      , dp2   ,&
+                       deps   , epsv     , depsv ,&
+                       tbiot  ,&
+                       phi    , rho11    , satur ,&
+                       pad    , pvp      , h11   , h12   ,&
+                       congem , congep   ,&
+                       vintm  , vintp    , dsde  ,&
                        retcom)
     case default
         ASSERT(ASTER_FALSE)

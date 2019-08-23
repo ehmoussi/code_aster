@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,16 +16,17 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine sigmap(satur, signe, tbiot, dp2, dp1,&
-                  sigmp)
+subroutine sigmap(ds_thm,&
+                  satur , signe, tbiot, dp2, dp1,&
+                  sigmp )
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
 #include "asterf_types.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 real(kind=8), intent(in) :: signe, tbiot(6), satur, dp1, dp2
 real(kind=8), intent(out) :: sigmp(6)
 !
@@ -37,6 +38,7 @@ real(kind=8), intent(out) :: sigmp(6)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  signe            : sign for saturation
 ! In  tbiot            : tensor of Biot
 ! In  satur            : value of saturation

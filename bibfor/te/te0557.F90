@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,18 +20,15 @@
 subroutine te0557(option, nomte)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
-#include "asterf_types.h"    
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/elelin.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterfort/tecach.h"
 #include "asterfort/tecael.h"
@@ -78,18 +75,15 @@ character(len=16) :: option, nomte
     integer :: nfimax
     parameter    (nfimax=10)
     integer :: fisc(2*nfimax), fisco(2*nfimax)
+    type(THM_DS) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
-!
-! - Init THM module
-!
-    call thmModuleInit()
+
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel()
+    call thmGetElemModel(ds_thm)
     if (ds_thm%ds_elem%l_weak_coupling) then
         call utmess('F', 'CHAINAGE_12')
     endif
@@ -322,7 +316,8 @@ character(len=16) :: option, nomte
 !
 !   CALCUL DES SECONDS MEMBRES POUR LA FRACTURE
 ! 
-       call xasshv_frac(nddls, nddlm, nnop, nnops,&
+       call xasshv_frac(ds_thm,&
+                        nddls, nddlm, nnop, nnops,&
                         lact, elrefp, elrefc, elc, contac,&
                         dimuel, nface, npgf, nbspg, nptf,&
                         jcohes, jptint, igeom, jbasec,&
@@ -362,5 +357,4 @@ character(len=16) :: option, nomte
                    mat, zr(jv_cont), nddlm, nfiss, jfisno, .true._1, contac)
     endif
 !
-    call jedema()
 end subroutine

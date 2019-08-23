@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine xcalfh(option, ndim, dimcon,&
+    subroutine xcalfh(ds_thm,&
+                      option, ndim, dimcon,&
                       addep1, adcp11, addeme, congep, dsde,&
                       grap1, rho11, gravity, tperm, &
                       dimenr,&
                       adenhy, nfh)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         integer :: dimenr
         integer :: dimcon
         character(len=16) :: option

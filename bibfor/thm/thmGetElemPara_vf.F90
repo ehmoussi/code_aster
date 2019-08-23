@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,13 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmGetElemPara_vf(l_axi    , l_steady , l_vf     ,&
-                             type_elem, ndim     ,&
-                             mecani   , press1   , press2   , tempe  ,&
-                             dimdef   , dimcon   , dimuel ,&
-                             nno      , nnos     , nface    )
+subroutine thmGetElemPara_vf(ds_thm   , l_axi , l_steady , l_vf   ,&
+                             type_elem, ndim  ,&
+                             mecani   , press1, press2   , tempe  ,&
+                             dimdef   , dimcon, dimuel   ,&
+                             nno      , nnos  , nface    )
+!
+use THM_type
 !
 implicit none
 !
@@ -34,6 +36,7 @@ implicit none
 #include "asterfort/thmGetElemRefe.h"
 #include "asterfort/elrefe_info.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 aster_logical, intent(out) :: l_axi, l_steady, l_vf
 character(len=8), intent(out) :: type_elem(2)
 integer, intent(out) :: ndim
@@ -49,6 +52,7 @@ integer, intent(out) :: nno, nnos, nface
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! Out l_axi            : flag is axisymmetric model
 ! Out l_vf             : flag for finite volume
 ! Out l_steady         : .true. for steady state
@@ -100,13 +104,13 @@ integer, intent(out) :: nno, nnos, nface
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, l_steady, ndim, type_elem)
-    ASSERT(l_vf)    
+    call thmGetElemModel(ds_thm, l_axi, l_vf, l_steady, ndim, type_elem)
+    ASSERT(l_vf)
 !
 ! - Get generalized coordinates
 !
-    call thmGetGene(l_steady, l_vf, ndim,&
-                    mecani  , press1, press2, tempe)
+    call thmGetGene(ds_thm, l_steady, l_vf, ndim,&
+                    mecani, press1, press2, tempe)
 !
 ! - Get dimensions of generalized vectors
 !

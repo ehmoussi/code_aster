@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine cabthm(l_axi    , ndim     ,&
+subroutine cabthm(ds_thm   , l_axi    , ndim   ,&
                   nddls    , nddlm    ,&
                   nddl_meca, nddl_p1  , nddl_p2,&
                   nno      , nnos     , &
@@ -33,7 +33,6 @@ subroutine cabthm(l_axi    , ndim     ,&
                   b        )
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -43,6 +42,7 @@ implicit none
 #include "asterfort/dfdm2d.h"
 #include "asterfort/dfdm3d.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 aster_logical, intent(in) :: l_axi
 integer, intent(in) :: ndim, nddls, nddlm
 integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
@@ -78,6 +78,7 @@ real(kind=8), intent(out) :: b(dimdef, dimuel)
 !       DT|                                |               |
 !          ------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  l_axi            : flag is axisymmetric model
 ! In  ndim             : dimension of element (2 ou 3)
 ! In  nddls            : number of dof at nodes (not middle ones)

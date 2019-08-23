@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine vipvp1(ndim  , nbvari,&
+subroutine vipvp1(ds_thm,&
+                  ndim  , nbvari,&
                   dimcon,&
                   adcp11, adcp12, advico, vicpvp,&
                   congem, &
@@ -30,12 +31,12 @@ subroutine vipvp1(ndim  , nbvari,&
                   retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
 #include "asterc/r8prem.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: ndim, dimcon, nbvari
 integer, intent(in) :: adcp11, adcp12
 integer, intent(in) :: advico, vicpvp
@@ -58,6 +59,7 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  ndim             : dimension of space (2 or 3)
 ! In  nbvari           : total number of internal state variables
 ! In  dimcon           : dimension of generalized stresses vector

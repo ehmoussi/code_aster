@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmEvalSatuFinal(j_mater, p1    ,&
-                            satur  , dsatur, retcom)
+subroutine thmEvalSatuFinal(ds_thm , j_mater, p1    ,&
+                            satur  , dsatur , retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -30,6 +29,7 @@ implicit none
 #include "asterfort/satuvg.h"
 #include "asterfort/THM_type.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: p1
 real(kind=8), intent(out) :: satur, dsatur
@@ -43,11 +43,12 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater      : coded material address
-! In  p1           : capillary pressure - At end of current step
-! Out satur        : saturation
-! Out dsatur       : derivative of saturation (/pc)
-! Out retcom       : return code for error
+! In  ds_thm           : datastructure for THM
+! In  j_mater          : coded material address
+! In  p1               : capillary pressure - At end of current step
+! Out satur            : saturation
+! Out dsatur           : derivative of saturation (/pc)
+! Out retcom           : return code for error
 !                     2 - If saturation doesn't belon to ]0,1[
 !
 ! --------------------------------------------------------------------------------------------------
@@ -64,7 +65,7 @@ integer, intent(out) :: retcom
     para_vale(:) = 0.d0
     hydr         = ds_thm%ds_behaviour%rela_hydr
     if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-        call satuvg(p1, satur, dsatur)
+        call satuvg(ds_thm, p1, satur, dsatur)
         ASSERT(ds_thm%ds_behaviour%satur_type .ne. SATURATED)
 !
     else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then        

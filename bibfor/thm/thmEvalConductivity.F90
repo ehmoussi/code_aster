@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmEvalConductivity(angl_naut, ndim  , j_mater,&
+subroutine thmEvalConductivity(ds_thm   ,&
+                               angl_naut, ndim  , j_mater,&
                                satur    , phi   , &
                                lambs    , dlambs, lambp , dlambp,&
                                tlambt   , tlamct, tdlamt)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/telamb.h"
 #include "asterfort/tlambc.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: ndim
@@ -51,6 +52,7 @@ real(kind=8), intent(out) :: tdlamt(ndim, ndim)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  j_mater          : coded material address
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
@@ -103,14 +105,14 @@ real(kind=8), intent(out) :: tdlamt(ndim, ndim)
 !
 ! - Compute tensor of thermal conductivity
 !
-    call telamb(angl_naut, ndim, tlambt)
+    call telamb(ds_thm, angl_naut, ndim, tlambt)
 !
 ! - Compute tensor of thermal conductivity (constant part)
 !
-    call tlambc(angl_naut, ndim, tlamct)
+    call tlambc(ds_thm, angl_naut, ndim, tlamct)
 !
 ! - Compute tensor of derivatives (by temperature) for thermal conductivity
 !
-    call tdlamb(angl_naut, ndim, tdlamt)
+    call tdlamb(ds_thm, angl_naut, ndim, tdlamt)
 !
 end subroutine

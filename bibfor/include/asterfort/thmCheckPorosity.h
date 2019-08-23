@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine thmCheckPorosity(j_mater, meca)
+    subroutine thmCheckPorosity(j_mater, meca, ds_thm)
+        use THM_type
         integer, intent(in) :: j_mater
         character(len=16), intent(in) :: meca
+        type(THM_DS), intent(in) :: ds_thm
     end subroutine thmCheckPorosity
 end interface 

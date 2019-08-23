@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmGetParaBiot(j_mater)
+subroutine thmGetParaBiot(j_mater, ds_thm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -29,6 +28,7 @@ implicit none
 #include "asterfort/THM_type.h"
 !
 integer, intent(in) :: j_mater
+type(THM_DS), intent(inout) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -38,7 +38,8 @@ integer, intent(in) :: j_mater
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater      : coded material address
+! In  j_mater          : coded material address
+! IO  ds_thm           : datastructure for THM
 !
 ! --------------------------------------------------------------------------------------------------
 !

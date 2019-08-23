@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
+subroutine erhmv2(ds_thm, axi, perman, deltat, dimdep, dimdef,&
                   nmec, np1, np2, ndim, nno,&
                   nnos, npg, nddls, nddlm,&
                   dimuel, ipoids, ivf, idfde, ipoid2,&
@@ -26,6 +26,8 @@ subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
                   unsurm, fpx, fpy, frx, fry,&
                   addeme, addep1,&
                   addep2, addete, tm2h1v)
+!
+use THM_type
 !
 implicit none
 !
@@ -45,6 +47,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! IN AXI     : AXISYMETRIQUE OU NON ?
 ! IN PERMAN  : PERMANENT OU NON ?
 ! IN DELTAT  : PAS DE TEMPS (SI INSTATIONNAIRE)
@@ -97,6 +100,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    type(THM_DS), intent(inout) :: ds_thm
     aster_logical :: axi, perman
     integer :: dimuel
     integer :: ndim, nno, nnos, dimdep, dimdef, nmec, np1, np2
@@ -141,7 +145,7 @@ implicit none
 !
         kpi = ipi
 ! ----- Compute [B] matrix for generalized strains
-        call cabthm(axi      , ndim   ,&
+        call cabthm(ds_thm   , axi      , ndim   ,&
                     nddls    , nddlm ,&
                     nmec     , np1   , np2    ,&
                     nno      , nnos  , &

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine refthm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
+subroutine refthm(ds_thm   ,&
+                  jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                   mecani   , press1   , press2   , tempe    ,&
                   nno      , nnos     , npi      , npg      ,&
                   elem_coor, dt       , dimdef   , dimcon   , dimuel ,&
@@ -27,7 +28,6 @@ subroutine refthm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                   b        , r        , vectu )
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -41,6 +41,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 integer, intent(in) :: jv_mater
 integer, intent(in) :: ndim
 aster_logical, intent(in) :: l_axi
@@ -68,38 +69,39 @@ real(kind=8), intent(out) :: vectu(dimuel)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  jv_mater     : coded material address
-! In  ndim         : dimension of element (2 ou 3)
-! In  l_axi        : flag is axisymmetric model
-! In  l_steady     : .true. for steady state
-! In  fnoevo       : .true. if compute in non-linear operator (transient terms)
-! In  mecani       : parameters for mechanic
-! In  press1       : parameters for hydraulic (first pressure)
-! In  press1       : parameters for hydraulic (second pressure)
-! In  tempe        : parameters for thermic
-! In  nno          : number of nodes (all)
-! In  nnos         : number of nodes (not middle ones)
-! In  npi          : number of Gauss points for linear 
-! In  npg          : number of Gauss points
-! In  elem_coor    : coordinates of nodes for current element
-! In  dt           : time increment
-! In  dimdef       : number of generalized strains
-! In  dimcon       : dimension of generalized stresses vector
-! In  dimuel       : number of dof for element
-! In  jv_poids     : JEVEUX adress for weight of Gauss points (linear shape functions)
-! In  jv_poids2    : JEVEUX adress for weight of Gauss points (quadratic shape functions)
-! In  jv_func      : JEVEUX adress for shape functions (linear shape functions)
-! In  jv_func2     : JEVEUX adress for shape functions (quadratic shape functions)
-! In  jv_dfunc     : JEVEUX adress for derivative of shape functions (linear shape functions)
-! In  jv_dfunc2    : JEVEUX adress for derivative of shape functions (quadratic shape functions)
-! In  nddls        : number of dof at nodes (not middle ones)
-! In  nddlm        : number of dof at nodes (middle ones)
-! In  nddl_meca    : number of dof for mechanical quantity
-! In  nddl_p1      : number of dof for first hydraulic quantity
-! In  nddl_p2      : number of dof for second hydraulic quantity
-! Out b            : [B] matrix for generalized strains
-! Out r            : stress vector
-! Out vectu        : nodal force vector (FORC_NODA)
+! IO  ds_thm           : datastructure for THM
+! In  jv_mater         : coded material address
+! In  ndim             : dimension of element (2 ou 3)
+! In  l_axi            : flag is axisymmetric model
+! In  l_steady         : .true. for steady state
+! In  fnoevo           : .true. if compute in non-linear operator (transient terms)
+! In  mecani           : parameters for mechanic
+! In  press1           : parameters for hydraulic (first pressure)
+! In  press1           : parameters for hydraulic (second pressure)
+! In  tempe            : parameters for thermic
+! In  nno              : number of nodes (all)
+! In  nnos             : number of nodes (not middle ones)
+! In  npi              : number of Gauss points for linear 
+! In  npg              : number of Gauss points
+! In  elem_coor        : coordinates of nodes for current element
+! In  dt               : time increment
+! In  dimdef           : number of generalized strains
+! In  dimcon           : dimension of generalized stresses vector
+! In  dimuel           : number of dof for element
+! In  jv_poids         : JEVEUX adress for weight of Gauss points (linear shape functions)
+! In  jv_poids2        : JEVEUX adress for weight of Gauss points (quadratic shape functions)
+! In  jv_func          : JEVEUX adress for shape functions (linear shape functions)
+! In  jv_func2         : JEVEUX adress for shape functions (quadratic shape functions)
+! In  jv_dfunc         : JEVEUX adress for derivative of shape functions (linear shape functions)
+! In  jv_dfunc2        : JEVEUX adress for derivative of shape functions (quadratic shape functions)
+! In  nddls            : number of dof at nodes (not middle ones)
+! In  nddlm            : number of dof at nodes (middle ones)
+! In  nddl_meca        : number of dof for mechanical quantity
+! In  nddl_p1          : number of dof for first hydraulic quantity
+! In  nddl_p2          : number of dof for second hydraulic quantity
+! Out b                : [B] matrix for generalized strains
+! Out r                : stress vector
+! Out vectu            : nodal force vector (FORC_NODA)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -173,7 +175,7 @@ real(kind=8), intent(out) :: vectu(dimuel)
 ! --------- Compute
             if (vale_refe .ne. r8vide()) then
                 sigtm(i_dim+dimcon*(kpi-1)) = vale_refe
-                call fnothm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
+                call fnothm(ds_thm, jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                             mecani   , press1   , press2   , tempe    ,&
                             nno      , nnos     , npi      , npg      ,&
                             elem_coor, dt       , dimdef   , dimcon   , dimuel ,&

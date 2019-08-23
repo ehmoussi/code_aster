@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine calcva(kpi   , ndim  ,&
+subroutine calcva(ds_thm, kpi   , ndim     ,&
                   defgem, defgep,&
                   addeme, addep1, addep2   , addete,&
                   depsv , epsv  , deps     ,&
@@ -29,7 +29,6 @@ subroutine calcva(kpi   , ndim  ,&
 !
 use calcul_module, only : ca_ctempr_, ca_ctempm_, ca_ctempp_
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -40,6 +39,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterc/r8prem.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: kpi, ndim
 real(kind=8), intent(in) :: defgem(*), defgep(*)
 integer, intent(in) :: addeme, addep1, addep2, addete
@@ -57,27 +57,28 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  kpi          : current Gauss point
-! In  ndim         : dimension of space (2 or 3)
-! In  defgem       : generalized strains - At begin of current step
-! In  defgep       : generalized strains - At end of current step
-! In  addeme       : index of mechanic quantities in generalized tensors
-! In  addep1       : index of first hydraulic quantities in generalized tensors
-! In  addep2       : index of second hydraulic quantities in generalized tensors
-! In  addete       : index of thermic quantities in generalized tensors
-! Out depsv        : increment of mechanic strains (deviatoric part)
-! Out epsv         : increment of mechanic strains (deviatoric part) at end of current step
-! Out deps         : increment of mechanic strains (deviatoric part)
-! Out temp         : temperature at end of current step
-! Out dtemp        : increment of temperature
-! Out grad_temp    : gradient of temperature
-! Out p1           : capillary pressure at end of current step
-! Out dp1          : increment of capillary pressure
-! Out grad_p1      : gradient of capillary pressure
-! Out p2           : gaz pressure at end of current step
-! Out dp2          : increment of gaz pressure
-! Out grad_p2      : gradient of gaz pressure
-! Out retcom       : 1 if error, 0 otherwise
+! In  ds_thm           : datastructure for THM
+! In  kpi              : current Gauss point
+! In  ndim             : dimension of space (2 or 3)
+! In  defgem           : generalized strains - At begin of current step
+! In  defgep           : generalized strains - At end of current step
+! In  addeme           : index of mechanic quantities in generalized tensors
+! In  addep1           : index of first hydraulic quantities in generalized tensors
+! In  addep2           : index of second hydraulic quantities in generalized tensors
+! In  addete           : index of thermic quantities in generalized tensors
+! Out depsv            : increment of mechanic strains (deviatoric part)
+! Out epsv             : increment of mechanic strains (deviatoric part) at end of current step
+! Out deps             : increment of mechanic strains (deviatoric part)
+! Out temp             : temperature at end of current step
+! Out dtemp            : increment of temperature
+! Out grad_temp        : gradient of temperature
+! Out p1               : capillary pressure at end of current step
+! Out dp1              : increment of capillary pressure
+! Out grad_p1          : gradient of capillary pressure
+! Out p2               : gaz pressure at end of current step
+! Out dp2              : increment of gaz pressure
+! Out grad_p2          : gradient of gaz pressure
+! Out retcom           : 1 if error, 0 otherwise
 !
 ! --------------------------------------------------------------------------------------------------
 !

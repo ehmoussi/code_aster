@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xhmsat(option, &
+subroutine xhmsat(ds_thm, option, &
                   ndim, dimenr,&
                   dimcon, nbvari, addeme,&
                   adcome, &
@@ -29,7 +29,6 @@ subroutine xhmsat(option, &
                   yaenrh, adenhy, nfh)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -47,6 +46,7 @@ implicit none
 #include "asterfort/virhol.h"
 #include "asterfort/tebiot.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer :: ndim, dimcon, nbvari
 integer :: adcome, adcp11, nfh
 integer :: addeme, addep1, retcom
@@ -129,7 +129,8 @@ real(kind=8) :: dsde(dimcon, dimenr)
 !
 ! - Prepare initial parameters for coupling law
 !
-    call inithm(angl_naut, tbiot , phi0 ,&
+    call inithm(ds_thm   ,&
+                angl_naut, tbiot , phi0 ,&
                 epsv     , depsv ,&
                 epsvm    , cs    , mdal , dalal,&
                 alpha0   , alphfi, cbiot, unsks)
@@ -140,7 +141,7 @@ real(kind=8) :: dsde(dimcon, dimenr)
         (option(1:9).eq.'FULL_MECA')) then
 ! ----- Compute porosity and save it in internal state variables
         if (ds_thm%ds_elem%l_dof_meca) then
-            call viporo(nbvari,&
+            call viporo(ds_thm, nbvari,&
                         advico, vicphi,&
                         dt    , dp1   , dp2   ,&
                         deps  , depsv ,&
@@ -177,8 +178,8 @@ real(kind=8) :: dsde(dimcon, dimenr)
 ! --- ACTUALISATION DE CS ET ALPHFI -----------------------------------
 ! =====================================================================
     if (ds_thm%ds_elem%l_dof_meca) then
-        call dilata(angl_naut, phi, tbiot, alphfi)
-        call unsmfi(phi, tbiot, cs)
+        call dilata(ds_thm, angl_naut, phi, tbiot, alphfi)
+        call unsmfi(ds_thm, phi, tbiot, cs)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************
@@ -191,7 +192,7 @@ real(kind=8) :: dsde(dimcon, dimenr)
 ! --- CALCUL DES CONTRAINTES DE PRESSIONS ------------------------------
 ! ======================================================================
         if (ds_thm%ds_elem%l_dof_meca) then
-            call sigmap(satur, signe, tbiot, dp2, dp1, sigmp)
+            call sigmap(ds_thm, satur, signe, tbiot, dp2, dp1, sigmp)
             do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
             end do
@@ -216,7 +217,7 @@ real(kind=8) :: dsde(dimcon, dimenr)
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DE SIGMAP ------------------------------------
 ! ======================================================================
-            call dspdp1(signe, tbiot, satur, dsdp1)
+            call dspdp1(ds_thm, signe, tbiot, satur, dsdp1)
             do i = 1, 3
                 dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1) + dsdp1(i)
             end do
