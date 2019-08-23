@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! person_in_charge: daniele.colombo at ifpen.fr
 ! aslint: disable=W1504,W1306
 !
-subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
+subroutine xassha_frac(ds_thm,&
+                       nddls, nddlm, nnop, nnops,&
                        lact, elrefp, elrefc, elc, contac,&
                        dimuel, nface, npgf, nbspg, nptf,&
                        jcohes, jptint, igeom, jbasec,&
@@ -26,8 +27,11 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
                        compor, jmate, ndim, idepm, idepd, jcoheo, incoca,&
                        pla, rela, algocr, jheavn, ncompn, ifiss,&
                        nfiss, nfh, jheafa, ncomph, pos)
-    implicit none 
-    
+!
+use THM_type
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
@@ -55,7 +59,8 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
 ! ACTUALISATION DES VARIABLES INTERNES (OPTION XCVBCA)
 !
 ! ----------------------------------------------------------------------
-
+! IO  ds_thm           : datastructure for THM
+type(THM_DS), intent(inout) :: ds_thm
     integer :: nddls, nnop, dimuel, i, ndim, nnops, lact(16)
     integer :: nddlm, contac, jmate, ncompv, nvec, pla(27), incoca
     integer :: nface, npgf, nbspg, isspg, nptf
@@ -75,23 +80,24 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
     real(kind=8) :: dsidep(6,6), delta(6), p(3,3), r
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
     character(len=16):: compor(*)
+
 !
 ! - Get parameters for behaviour
 !
-    call thmGetBehaviour(compor)
+    call thmGetBehaviour(compor, ds_thm)
 !
 ! - Get parameters for internal variables
 !
-    call thmGetBehaviourVari()
+    call thmGetBehaviourVari(ds_thm)
 !
 ! - Some checks between behaviour and model
 !
-    call thmGetBehaviourChck()
+    call thmGetBehaviourChck(ds_thm)
 !
 ! - Get parameters for coupling
 !
     temp = 0.d0
-    call thmGetParaCoupling(zi(jmate), temp)
+    call thmGetParaCoupling(ds_thm, zi(jmate), temp)
 !
     call matini(nnops, 3, 0.d0, dfdic)
     call matini(16, 3, 0.d0, dffc)
@@ -145,7 +151,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
                  end do
                  nvec=1
                  job='ACTU_VI'
-                 call xfract(nvec, nnop, nnops, nddls, nddlm,&
+                 call xfract(ds_thm, nvec, nnop, nnops, nddls, nddlm,&
                              ndim, pla, zr(idepd), zr(idepm),&
                              ffp, ffc, dffc, saut, gradpf,&
                              q1, q2, dpf, q1m, q2m, sautm,&
@@ -166,7 +172,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
 !                CALCUL DE LA VARIABLE INTERNE (MASSE VOLUMIQUE DU LIQUIDE 
 !                CIRCULANT DANS LA FRACTURE)
                  job='ACTU_VI'                    
-                 call xvinhm(zi(jmate), ndim,&
+                 call xvinhm(ds_thm, zi(jmate), ndim,&
                              cohes, dpf, saut, sautm, nd, lamb,&
                              w11m, rho11m, alpha, job, pf,&
                              rho11, w11, ipgf, rela, dsidep,&
@@ -197,7 +203,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
                    call xhlan5(ino, idepd, idepm, ibid, lact, ndim,&
                                pla, wsautm, nvec, champ, job, dpf)
 !
-                   call xhmsa6(ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
+                   call xhmsa6(ds_thm, ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
                                tau1, tau2, cohes, job, rela,&
                                alpha, dsidep, sigma, p, am, raug,&
                                wsautm, dpf, rho110)

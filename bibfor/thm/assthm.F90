@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! aslint: disable=W1504,W1306
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine assthm(option   , j_mater  ,&
+subroutine assthm(ds_thm   , option   , j_mater  ,&
                   l_axi    , l_steady ,&
                   typmod   , inte_type, angl_naut,&
                   ndim     , nbvari   ,&
@@ -39,7 +39,6 @@ subroutine assthm(option   , j_mater  ,&
                   matuu    , vectu    , codret)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -60,6 +59,7 @@ implicit none
 #include "asterfort/thmSelectMatrix.h"
 #include "asterfort/thmGetBehaviourChck.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 integer, parameter :: dimmat = 120
 character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
@@ -97,6 +97,7 @@ integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! In  option           : name of option to compute
 ! In  j_mater          : coded material address
 ! In  l_axi            : flag is axisymmetric model
@@ -182,15 +183,15 @@ integer, intent(out) :: codret
 !
 ! - Get parameters for behaviour
 !
-    call thmGetBehaviour(compor)
+    call thmGetBehaviour(compor, ds_thm)
 !
 ! - Get parameters for internal variables
 !
-    call thmGetBehaviourVari()
+    call thmGetBehaviourVari(ds_thm)
 !
 ! - Some checks between behaviour and model
 !
-    call thmGetBehaviourChck()
+    call thmGetBehaviourChck(ds_thm)
 !
 ! - Get storage parameters for behaviours
 !
@@ -198,7 +199,7 @@ integer, intent(out) :: codret
 !
 ! - Get initial parameters (THM_INIT)
 !
-    call thmGetParaInit(j_mater, l_check_ = ASTER_TRUE)
+    call thmGetParaInit(j_mater, ds_thm, l_check_ = ASTER_TRUE)
 !
 ! - Time parameters
 !
@@ -207,7 +208,8 @@ integer, intent(out) :: codret
 !
 ! - Create matrix for selection of dof
 !
-    call thmSelectMatrix(ndim  , dimdef, inte_type,&
+    call thmSelectMatrix(ds_thm,&
+                         ndim  , dimdef, inte_type,&
                          addeme, addete, addep1   , addep2,&
                          a     , as    ,&
                          c     , cs    )
@@ -227,7 +229,7 @@ integer, intent(out) :: codret
     do ipi = 1, npi
         kpi = ipi
 ! ----- Compute [B] matrix for generalized strains
-        call cabthm(l_axi    , ndim     ,&
+        call cabthm(ds_thm   , l_axi    , ndim   ,&
                     nddls    , nddlm    ,&
                     nddl_meca, nddl_p1  , nddl_p2,&
                     nno      , nnos     ,&
@@ -251,7 +253,7 @@ integer, intent(out) :: codret
         end do
 ! ----- Compute generalized stresses and derivatives at current Gauss point
         if (l_steady) then
-            call equthp(option   , j_mater  ,&
+            call equthp(ds_thm   , option   , j_mater  ,&
                         typmod   , angl_naut,&
                         ndim     , nbvari   ,&
                         kpi      , npg      ,&
@@ -264,7 +266,7 @@ integer, intent(out) :: codret
                         time_prev, time_curr,&
                         r        , drds     , dsde  , codret)
         else
-            call equthm(option   , j_mater  ,&
+            call equthm(ds_thm   , option   , j_mater  ,&
                         typmod   , angl_naut, parm_theta,&
                         ndim     , nbvari   ,&
                         kpi      , npg      ,&

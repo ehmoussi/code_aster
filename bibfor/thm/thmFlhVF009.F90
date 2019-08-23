@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,14 +17,13 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmFlhVF009(option, j_mater, ifa, &
+subroutine thmFlhVF009(ds_thm, option, j_mater, ifa, &
                        t     , p1     , p2 , pvp, pad ,&
                        rho11 , h11    , h12,&
                        satur , dsatur , & 
                        valfac, valcen)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -35,6 +34,7 @@ implicit none
 #include "asterfort/thmEvalFickAir.h"
 #include "asterfort/thmEvalPermLiquGaz.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
 integer, intent(in) :: ifa
@@ -52,6 +52,7 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  option           : option to compute
 ! In  j_mater          : coded material address
 ! In  ifa              : index of current face
@@ -187,7 +188,8 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 !
 ! - Evaluate permeability for liquid and gaz
 !
-    call thmEvalPermLiquGaz(j_mater, satur , p2, t,&
+    call thmEvalPermLiquGaz(ds_thm ,&
+                            j_mater, satur , p2, t,&
                             permli , dperml,&
                             permgz , dperms, dpermp)
 ! 
@@ -251,7 +253,7 @@ real(kind=8), intent(inout) :: valfac(6, 14, 6)
 !
 ! - Compute some derivatives
 !
-    call hmderp(yavp  , t     ,&
+    call hmderp(ds_thm, yavp  , t     ,&
                 pvp   , pad   ,&
                 rho11 , rho12 , h11  , h12,&
                 dp11p1, dp11p2, dp11t,&

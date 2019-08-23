@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 subroutine te0588(option, nomte)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -80,6 +79,7 @@ implicit none
     character(len=16) :: phenom, elref
     real(kind=8) :: rho(1), rbid(1)
     aster_logical :: axi, perman, fnoevo
+    type(THM_DS) :: ds_thm
 ! =====================================================================
 !  CETTE ROUTINE FAIT UN CALCUL EN HM AVEC XFEM
 !  25 = (9 DEF MECA) + (9 DEF HEAV MECA) + 4 POUR P1 + 3 pour P1 HEAV
@@ -147,21 +147,18 @@ implicit none
 ! --- RECUPERATION DE LA GEOMETRIE ET POIDS DES POINTS D'INTEGRATION --
 ! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
 ! =====================================================================
-!
-! - Init THM module
-!
-    call thmModuleInit()
+
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel()
+    call thmGetElemModel(ds_thm)
     if (ds_thm%ds_elem%l_weak_coupling) then
         call utmess('F', 'CHAINAGE_12')
     endif
 ! INITIALISATION POUR XFEM
 !
     call xhmini(nomte, nfh, ddld, ddlm, ddlp, nfiss, ddlc, contac)
-    call xcaehm(nomte, axi, perman, typmod, modint,&
+    call xcaehm(ds_thm, nomte, axi, perman, typmod, modint,&
                 mecani, press1, press2, tempe, dimdef,&
                 dimcon, nmec, np1, np2, ndim,&
                 nno, nnos, nnom, npi, npg,&
@@ -273,7 +270,8 @@ implicit none
         retloi = 0
         dimmat = nddls*nnop
         if (option(1:9) .eq. 'RIGI_MECA') then
-            call xasshm(nno, npg, npi, ipoids, ivf,&
+            call xasshm(ds_thm,&
+                        nno, npg, npi, ipoids, ivf,&
                         idfde, igeom, zr(igeom), zr(icarcr), zr(ideplm),&
                         zr(ideplm), zr(icontm), zr(icontm), zr(ivarim), zr(ivarim),&
                         defgem, defgep, drds, drdsr, dsde,&
@@ -291,7 +289,8 @@ implicit none
             do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
             end do
-            call xasshm(nno, npg, npi, ipoids, ivf,&
+            call xasshm(ds_thm,&
+                        nno, npg, npi, ipoids, ivf,&
                         idfde, igeom, zr(igeom), zr(icarcr), zr(ideplm),&
                         zr(ideplp), zr(icontm), zr(icontp), zr(ivarim), zr(ivarip),&
                         defgem, defgep, drds, drdsr, dsde,&
@@ -372,7 +371,8 @@ implicit none
 ! ======================================================================
         call jevech('PVECTUR', 'E', ivectu)
 !
-        call xfnohm(fnoevo, dt, nno, npg, ipoids,&
+        call xfnohm(ds_thm,&
+                    fnoevo, dt, nno, npg, ipoids,&
                     ivf, idfde, zr(igeom), zr(icontm), b,&
                     dfdi, dfdi2, r, zr(ivectu), zi(imate),&
                     mecani, press1, dimcon, nddls, nddlm,&

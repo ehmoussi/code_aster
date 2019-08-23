@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine matthm(ndim, axi, nno1, nno2, dimuel,&
+    subroutine matthm(ds_thm, ndim, axi, nno1, nno2, dimuel,&
                       dimdef, iu, ip, ipf, iq,&
                       addep1,&
                       addlh1, vff1, vff2, dffr2, wref,&
                       geom, ang, wi, q)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         integer :: dimdef
         integer :: dimuel
         integer :: nno2

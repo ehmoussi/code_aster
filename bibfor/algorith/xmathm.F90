@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,15 +18,17 @@
 ! person_in_charge: daniele.colombo at ifpen.fr
 ! aslint: disable=W1504
 !
-subroutine xmathm(ndim,&
+subroutine xmathm(ds_thm, ndim,&
                   nnops, nnop, nddls, nddlm, ffc,&
                   pla, nd, jac, ffp, ffp2, dt, ta, saut,&
                   dffc, rho11, gradpf, mmat,&
                   dsidep, p, r, jheavn, ncompn, ifiss,&
                   nfiss, nfh, ifa, jheafa, ncomph)
 !
+use THM_type
+!
 implicit none
-!   
+!
 #include "asterfort/xmmatc.h"
 #include "asterfort/xmmatb.h"
 #include "asterfort/xmmatu.h"
@@ -41,6 +43,7 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
+type(THM_DS), intent(inout) :: ds_thm
     integer :: nnops, nnop, nddls, nddlm, ndim, pla(27)
     integer :: jheavn, ncompn, nfiss, ifiss, nfh, ifa, jheafa, ncomph
     real(kind=8) :: ffc(16), nd(3), jac, ffp(27)
@@ -63,7 +66,7 @@ implicit none
                 jheavn, ncompn, ifiss, nfiss, nfh,&
                 ifa, jheafa, ncomph)
 !
-    call xmmata(ndim, nnops, nnop, nddls, nddlm, saut,&
+    call xmmata(ds_thm, ndim, nnops, nnop, nddls, nddlm, saut,&
                 nd, pla, ffc, dffc, mmat, rho11,&
                 gradpf, ffp, dt, ta, jac,&
                 jheavn, ncompn, ifiss, nfiss,&

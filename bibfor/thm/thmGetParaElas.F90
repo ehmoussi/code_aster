@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmGetParaElas(j_mater, kpi, temp, ndim)
+subroutine thmGetParaElas(j_mater, kpi, temp, ndim, ds_thm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -35,6 +34,7 @@ integer, intent(in) :: j_mater
 integer, intent(in) :: kpi
 real(kind=8), intent(in) :: temp
 integer, intent(in) :: ndim
+type(THM_DS), intent(inout) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,10 +44,11 @@ integer, intent(in) :: ndim
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater      : coded material address
-! In  kpi          : current Gauss point
-! In  temp         : current temperature
-! In  ndim         : dimension of element (2 ou 3)
+! In  j_mater          : coded material address
+! In  kpi              : current Gauss point
+! In  temp             : current temperature
+! In  ndim             : dimension of element (2 ou 3)
+! IO  ds_thm           : datastructure for THM
 !
 ! --------------------------------------------------------------------------------------------------
 !

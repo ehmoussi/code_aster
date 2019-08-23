@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1504
 !
-subroutine dplvga(ndim  , dimcon,&
+subroutine dplvga(ds_thm,&
+                  ndim  , dimcon,&
                   rho11 , rho12 , rgaz  , kh,&
                   congem, adcp11, adcp12,&
                   temp  , pad   ,&
@@ -26,10 +28,10 @@ subroutine dplvga(ndim  , dimcon,&
                   dp11t , dp12t , dp21t)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: ndim, dimcon
 real(kind=8), intent(in) :: rho11, rho12, rgaz, kh
 integer, intent(in) :: adcp11, adcp12
@@ -47,6 +49,7 @@ real(kind=8), intent(out) :: dp11t, dp12t, dp21t
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  ndim             : dimension of space (2 or 3)
 ! In  dimcon           : dimension of generalized stresses vector
 ! In  rho11            : volumic mass of liquid

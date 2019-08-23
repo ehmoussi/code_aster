@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine fonoei(ndim, dt, fnoevo, dimdef, dimcon,&
+subroutine fonoei(ds_thm, ndim, dt, fnoevo, dimdef, dimcon,&
                   addeme,&
                   addep1, addep2, addlh1, adcome,&
                   adcp11, &
@@ -24,7 +24,6 @@ subroutine fonoei(ndim, dt, fnoevo, dimdef, dimcon,&
                   r)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -35,6 +34,7 @@ implicit none
 !
 !
 ! ======================================================================
+! In  ds_thm           : datastructure for THM
 ! IN NDIM  : DIMENSION ESPACE
 ! IN DT    : INCREMENT DE TEMPS
 ! IN FNOEVO : APPLE DEPUIS STAT_NON_LINE
@@ -52,6 +52,7 @@ implicit none
 ! ======================================================================
 ! OUT R : VECTEUR FORCES EXTERIEURES
 ! ======================================================================
+    type(THM_DS), intent(in) :: ds_thm
     aster_logical :: fnoevo
     integer :: dimdef, dimcon
     integer :: ndim

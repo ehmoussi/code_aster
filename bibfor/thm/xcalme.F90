@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xcalme(option, ndim, dimenr,&
+subroutine xcalme(ds_thm,&
+                  option, ndim, dimenr,&
                   dimcon, addeme, adcome, congep,&
                   dsde, deps, angl_naut)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -34,6 +34,7 @@ implicit none
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE MECANIQUES
 ! ======================================================================
 !
+type(THM_DS), intent(in) :: ds_thm
     real(kind=8), intent(in) :: angl_naut(3)
 
     integer :: ndim, dimenr, dimcon, addeme
@@ -78,7 +79,7 @@ implicit none
 !
 ! ----- Compute thermic quantities
 !
-        call thmTherElas(angl_naut, mdal, dalal)
+        call thmTherElas(ds_thm, angl_naut, mdal, dalal)
 !
         if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
             do i = 1, 3

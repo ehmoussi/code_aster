@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine thmEvalPermLiquGaz(j_mater, satur       , p2, temp,&
+    subroutine thmEvalPermLiquGaz(ds_thm ,&
+                                  j_mater, satur       , p2, temp,&
                                   krl    , dkrl_dsatur ,&
                                   krg_   , dkrg_dsatur_, dkrg_dp2_)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         integer, intent(in) :: j_mater
         real(kind=8), intent(in) :: satur, p2, temp
         real(kind=8), intent(out) :: krl, dkrl_dsatur

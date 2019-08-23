@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmCpl001(perman, option, angl_naut,&
+subroutine thmCpl001(ds_thm,&
+                     perman, option, angl_naut,&
                      ndim  , nbvari, &
                      dimdef, dimcon,&
                      adcome, adcote, adcp11,& 
@@ -33,7 +34,6 @@ subroutine thmCpl001(perman, option, angl_naut,&
                      retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -62,6 +62,7 @@ implicit none
 #include "asterfort/virhol.h"
 #include "asterfort/THM_type.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 aster_logical, intent(in) :: perman
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: angl_naut(3)
@@ -88,6 +89,7 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  perman           : .true. for no-transient problem
 ! In  option           : option to compute
 ! In  angl_naut        : nautical angles
@@ -204,7 +206,8 @@ integer, intent(out) :: retcom
 !
 ! - Prepare initial parameters for coupling law
 !
-    call inithm(angl_naut, tbiot , phi0 ,&
+    call inithm(ds_thm   ,&
+                angl_naut, tbiot , phi0 ,&
                 epsv     , depsv ,&
                 epsvm    , cs    , mdal , dalal,&
                 alpha0   , alphfi, cbiot, unsks)
@@ -223,9 +226,9 @@ integer, intent(out) :: retcom
             if (ds_thm%ds_elem%l_jhms) then
                 phi = vintp(advico+vicphi)
             else
-            call viporo(nbvari,&
+            call viporo(ds_thm, nbvari,&
                         advico, vicphi,&
-                            dtemp , dp1   , dp2   ,&
+                        dtemp , dp1   , dp2   ,&
                         deps  , depsv ,&
                         signe , satur , unsks , phi0,&
                         cs    , tbiot , cbiot ,&
@@ -273,13 +276,13 @@ integer, intent(out) :: retcom
 ! - Update differential thermal expansion ratio
 !
     if (ds_thm%ds_elem%l_dof_meca .and. .not. ds_thm%ds_elem%l_jhms) then
-        call dilata(angl_naut, phi, tbiot, alphfi)
+        call dilata(ds_thm, angl_naut, phi, tbiot, alphfi)
     endif
 !
 ! - Update Biot modulus
 !
     if (ds_thm%ds_elem%l_dof_meca .and. .not. ds_thm%ds_elem%l_jhms) then
-        call unsmfi(phi, tbiot, cs)
+        call unsmfi(ds_thm, phi, tbiot, cs)
     endif
 !
 ! ==================================================================================================
@@ -317,7 +320,8 @@ integer, intent(out) :: retcom
 !
     if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
         if (ds_thm%ds_elem%l_dof_meca .and. .not. ds_thm%ds_elem%l_jhms) then
-            call sigmap(satur, signe, tbiot, dp2, dp1,&
+            call sigmap(ds_thm,&
+                        satur, signe, tbiot, dp2, dp1,&
                         sigmp)
             do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
@@ -353,7 +357,7 @@ integer, intent(out) :: retcom
 !
         if (ds_thm%ds_elem%l_dof_meca .and. .not. ds_thm%ds_elem%l_jhms) then
 ! --------- Derivative of _pressure part_ of stresses by capillary pressure
-            call dspdp1(signe, tbiot, satur, dsdp1)
+            call dspdp1(ds_thm, signe, tbiot, satur, dsdp1)
             do i = 1, 3
                 dsde(adcome+6+i-1,addep1) = dsde(adcome+6+i-1,addep1) +&
                                             dsdp1(i)

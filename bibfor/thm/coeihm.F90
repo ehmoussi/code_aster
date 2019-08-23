@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine coeihm(option, l_steady, l_resi, l_matr, j_mater,&
+subroutine coeihm(ds_thm, option, l_steady, l_resi, l_matr, j_mater,&
                   time_prev, time_curr, nomail,&
                   ndim, dimdef, dimcon, nbvari, &
                   addeme, adcome,&
@@ -28,7 +28,6 @@ subroutine coeihm(option, l_steady, l_resi, l_matr, j_mater,&
                   drde, retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -46,6 +45,7 @@ implicit none
 #include "asterfort/thmEvalGravity.h"
 #include "asterfort/THM_type.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 integer, intent(in) :: j_mater
 character(len=8), intent(in) :: nomail
 character(len=16), intent(in) :: option
@@ -73,6 +73,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! IN OPTION : OPTION DE CALCUL
 ! IN l_steady : l_steadyENT ?
 ! IN l_resi   : FULL_MECA OU RAPH_MECA ?
@@ -161,13 +162,13 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! - Update unknowns
 !
-    call calcva(kpi   , ndim-1,&
+    call calcva(ds_thm, kpi   , ndim-1,&
                 defgem, defgep,&
-                addeme, addep1, addep2   , addete,&
-                depsv , epsv  , deps     ,&
-                t     , dt, grat,&
-                p1    , dp1    , grap1 ,&
-                p2    , dp2    , grap2 ,&
+                addeme, addep1, addep2, addete,&
+                depsv , epsv  , deps  ,&
+                t     , dt    , grat  ,&
+                p1    , dp1   , grap1 ,&
+                p2    , dp2   , grap2 ,&
                 retcom)
 !
 ! - Mechanic - Not fully coupled
@@ -177,15 +178,15 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! - Get hydraulic parameters
 !
-    call thmGetParaHydr(j_mater)
+    call thmGetParaHydr(j_mater, ds_thm)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
-    call thmGetParaBiot(j_mater)
+    call thmGetParaBiot(j_mater, ds_thm)
 !
 ! - Compute Biot tensor
 !
-    call tebiot(angl_naut, tbiot)
+    call tebiot(ds_thm, angl_naut, tbiot)
 !
 ! - Compute generalized stresses and matrix for mechanical behaviour
 !
@@ -193,7 +194,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
         (meca.ne.'CZM_EXP_REG')) then
         call utmess('F', 'ALGORITH17_10', sk=meca)
     endif
-    call coeime(j_mater, nomail, option, l_resi,&
+    call coeime(ds_thm, j_mater, nomail, option, l_resi,&
                 l_matr, ndim, dimdef, dimcon, &
                 addeme, addep1, &
                 nbvari, npg, npi,&
@@ -210,7 +211,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! - Compute generalized stresses and matrix for coupled quantities
 !
-    call calcco(l_steady,&
+    call calcco(ds_thm  , l_steady ,&
                 option  , angl_naut,&
                 j_mater  ,&
                 ndim-1  , nbvari   ,&
@@ -232,12 +233,13 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! - Evaluation of final saturation
 !
-    call thmEvalSatuFinal(j_mater, p1    ,&
-                          satur  , dsatur, retcom)
+    call thmEvalSatuFinal(ds_thm, j_mater, p1    ,&
+                          satur , dsatur , retcom)
 !
 ! - Evaluate thermal conductivity
 !
-    call thmEvalConductivity(angl_naut, ndim  , j_mater , &
+    call thmEvalConductivity(ds_thm   ,&
+                             angl_naut, ndim  , j_mater , &
                              satur    , phi   , &
                              lambs    , dlambs, lambp , dlambp,&
                              tlambt   , tlamct, tdlamt)
@@ -248,7 +250,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! - (re)-compute Biot tensor
 !
-    call tebiot(angl_naut, tbiot)
+    call tebiot(ds_thm, angl_naut, tbiot)
 !
 ! - Get parameters
 !
@@ -261,7 +263,8 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
         tperm(i,i) = tlint
     end do
     if (ds_thm%ds_elem%l_dof_pre1) then
-        call calcfh(option, l_steady, ndim  , j_mater,&
+        call calcfh(ds_thm,&
+                    option, l_steady, ndim  , j_mater,&
                     dimdef, dimcon,&
                     addep1, addep2,&
                     adcp11, adcp12, adcp21 , adcp22,&

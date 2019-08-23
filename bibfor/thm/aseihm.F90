@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine aseihm(option, l_axi, ndim, nno1, nno2,&
+subroutine aseihm(ds_thm, option, l_axi, ndim, nno1, nno2,&
                   npi, npg, dimuel, dimdef, dimcon,&
                   nbvari, j_mater, iu, ip, ipf,&
                   iq, mecani, press1, press2, tempe,&
@@ -26,6 +26,8 @@ subroutine aseihm(option, l_axi, ndim, nno1, nno2,&
                   varip, nomail, wref, geom, ang,&
                   compor, l_steady, vectu, matuu,&
                   retcom)
+!
+use THM_type
 !
 implicit none
 !
@@ -42,7 +44,8 @@ implicit none
 !           CONTRAINTES GENERALISEES, DES VARIABLES INTERNES
 !           ET/OU DE L'OPERATEUR TANGENT ELEMENTAIRE
 !......................................................................
-! =====================================================================
+!
+! IO  ds_thm           : datastructure for THM
 ! IN OPTION  : OPTION DE CALCUL
 ! IN AXI     : AXISYMETRIQUE ?
 ! IN NDIM    : DIMENSION DE L'ESPACE
@@ -93,6 +96,7 @@ implicit none
 !
 !......................................................................
 !
+    type(THM_DS), intent(inout) :: ds_thm
     integer :: ndim, nno1, nno2, npi, npg, dimuel, dimdef, dimcon, nbvari
     integer :: mecani(8), press1(9), press2(9), tempe(5)
     integer :: j_mater
@@ -124,19 +128,19 @@ implicit none
 !
 ! - Get parameters for behaviour
 !
-    call thmGetBehaviour(compor)
+    call thmGetBehaviour(compor, ds_thm)
 !
 ! - Get parameters for internal variables
 !
-    call thmGetBehaviourVari()
+    call thmGetBehaviourVari(ds_thm)
 !
 ! - Some checks between behaviour and model
 !
-    call thmGetBehaviourChck()
+    call thmGetBehaviourChck(ds_thm)
 !
 ! - Get initial parameters (THM_INIT)
 !
-    call thmGetParaInit(j_mater, l_check_ = ASTER_TRUE)
+    call thmGetParaInit(j_mater, ds_thm, l_check_ = ASTER_TRUE)
 !
 ! =====================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU ET OPTION ---
@@ -178,7 +182,7 @@ implicit none
 ! --- CALCUL DE LA MATRICE DE PASSAGE DDL -> DEFORMATIONS GENERALISEES
 ! =====================================================================
 !
-        call matthm(ndim, l_axi, nno1, nno2, dimuel,&
+        call matthm(ds_thm, ndim, l_axi, nno1, nno2, dimuel,&
                     dimdef, iu, ip, ipf, iq,&
                     addep1,&
                     addlh1, vff1(1, kpi), vff2(1, kpi), dffr2(1, 1, kpi), wref(kpi),&
@@ -201,7 +205,7 @@ implicit none
 ! --- INTEGRATION DES LOIS DE COMPORTEMENT ----------------------------
 ! =====================================================================
 !
-        call coeihm(option, l_steady, l_resi, l_matr, j_mater,&
+        call coeihm(ds_thm, option, l_steady, l_resi, l_matr, j_mater,&
                     time_prev, time_curr, nomail,&
                     ndim, dimdef, dimcon, nbvari,&
                     addeme, adcome,&

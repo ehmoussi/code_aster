@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmCompEpsiElga()
+subroutine thmCompEpsiElga(ds_thm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -35,11 +34,17 @@ implicit none
 #include "asterfort/thmGetGene.h"
 #include "asterfort/thmGetElemIntegration.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
+!
 ! --------------------------------------------------------------------------------------------------
 !
 ! THM - Compute
 !
 ! EPSI_ELGA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! IO  ds_thm           : datastructure for THM
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,7 +71,7 @@ implicit none
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, l_steady, ndim)
+    call thmGetElemModel(ds_thm, l_axi, l_vf, l_steady, ndim)
 !
 ! - Cannot compute for finite volume
 !
@@ -78,8 +83,8 @@ implicit none
 !
 ! - Get generalized coordinates
 !
-    call thmGetGene(l_steady, l_vf  , ndim  ,&
-                    mecani  , press1, press2, tempe)
+    call thmGetGene(ds_thm, l_steady, l_vf  , ndim ,&
+                    mecani, press1  , press2, tempe)
 !
 ! - Get reference elements
 !
@@ -117,11 +122,11 @@ implicit none
 !
 ! - Compute strains
 !
-    call epsthm(l_axi    , ndim       ,&
-                addeme   , addep1     , addep2  , addete   ,&
+    call epsthm(ds_thm   , l_axi      , ndim       ,&
+                addeme   , addep1     , addep2     , addete   ,&
                 nno      , nnos       , &
-                dimuel   , dimdef     , nddls   , nddlm    ,&
-                nddl_meca, nddl_p1    , nddl_p2 ,&
+                dimuel   , dimdef     , nddls      , nddlm    ,&
+                nddl_meca, nddl_p1    , nddl_p2    ,&
                 npi      , zr(jv_geom), zr(jv_disp),&
                 jv_poids , jv_poids2  ,&
                 jv_func  , jv_func2   , jv_dfunc, jv_dfunc2,&

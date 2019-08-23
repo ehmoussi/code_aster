@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,12 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmEvalPermLiquGaz(j_mater, satur       , p2, temp,&
+subroutine thmEvalPermLiquGaz(ds_thm ,&
+                              j_mater, satur       , p2, temp,&
                               krl    , dkrl_dsatur ,&
                               krg_   , dkrg_dsatur_, dkrg_dp2_)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/permvg.h"
 #include "asterfort/THM_type.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: satur, p2, temp
 real(kind=8), intent(out) :: krl, dkrl_dsatur
@@ -46,6 +47,7 @@ real(kind=8), optional, intent(out) :: krg_, dkrg_dsatur_, dkrg_dp2_
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  j_mater          : coded material address
 ! In  satur            : saturation
 ! In  temp             : temperature
@@ -80,12 +82,12 @@ real(kind=8), optional, intent(out) :: krg_, dkrg_dsatur_, dkrg_dp2_
     para_vale(:) = 0.d0
 !
     if (ds_thm%ds_behaviour%rela_hydr .eq. 'HYDR_VGM') then
-        call permvg(satur,&
-                    krl  , dkrl_dsatur, krg_, dkrg_dsatur_)
+        call permvg(ds_thm, satur,&
+                    krl   , dkrl_dsatur, krg_, dkrg_dsatur_)
         dkrg_dp2_ = 0.d0
     else if (ds_thm%ds_behaviour%rela_hydr .eq. 'HYDR_VGC') then
-        call permvc(satur,&
-                    krl  , dkrl_dsatur, krg_, dkrg_dsatur_)
+        call permvc(ds_thm, satur,&
+                    krl   , dkrl_dsatur, krg_, dkrg_dsatur_)
         dkrg_dp2_ = 0.d0
     else if (ds_thm%ds_behaviour%rela_hydr .eq. 'HYDR_UTIL') then
         para_vale(1) = satur
@@ -132,7 +134,7 @@ real(kind=8), optional, intent(out) :: krg_, dkrg_dsatur_, dkrg_dp2_
             dkrl_dsatur  = resu_vale(2)
         endif
     else
-        ASSERT(.false.)     
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

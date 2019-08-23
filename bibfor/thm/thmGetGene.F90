@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmGetGene(l_steady, l_vf  , ndim,&
-                      mecani  , press1, press2, tempe)
+subroutine thmGetGene(ds_thm, l_steady, l_vf  , ndim,&
+                      mecani, press1  , press2, tempe)
 !
-use THM_module
+use THM_type
 !
 implicit none
 !
@@ -27,13 +27,10 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-aster_logical, intent(in) :: l_steady
-aster_logical, intent(in) :: l_vf
+type(THM_DS), intent(in) :: ds_thm
+aster_logical, intent(in) :: l_steady, l_vf
 integer, intent(in)  :: ndim
-integer, intent(out) :: mecani(5)
-integer, intent(out) :: press1(7)
-integer, intent(out) :: press2(7)
-integer, intent(out) :: tempe(5)
+integer, intent(out) :: mecani(5), press1(7), press2(7), tempe(5)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,13 +40,17 @@ integer, intent(out) :: tempe(5)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Out mecani       : parameters for mechanic
+! In  ds_thm           : datastructure for THM
+! In  l_steady         : flag for no-transient problem
+! In  l_vf             : flag for finite volume
+! In  ndim             : dimension of space (2 or 3)
+! Out mecani           : parameters for mechanic
 !                    (1) - Flag if physic exists (1 if exists)
 !                    (2) - Adress of first component in generalized strain vector
 !                    (3) - Adress of first component in generalized stress vector
 !                    (4) - Number of components for strains
 !                    (5) - Number of components for stresses
-! Out press1       : parameters for hydraulic (first pressure)
+! Out press1           : parameters for hydraulic (first pressure)
 !                    (1) - Flag if physic exists (1 if exists)
 !                    (2) - Number of phases
 !                    (3) - Adress of first component in generalized strain vector
@@ -57,7 +58,7 @@ integer, intent(out) :: tempe(5)
 !                    (5) - Adress of first component in vector of gen. stress for second phase
 !                    (6) - Number of components for strains
 !                    (7) - Number of components for stresses (for each phase)
-! Out press1       : parameters for hydraulic (second pressure)
+! Out press1           : parameters for hydraulic (second pressure)
 !                    (1) - Flag if physic exists (1 if exists)
 !                    (2) - Number of phases
 !                    (3) - Adress of first component in generalized strain vector
@@ -65,7 +66,7 @@ integer, intent(out) :: tempe(5)
 !                    (5) - Adress of first component in vector of gen. stress for second phase
 !                    (6) - Number of components for strains
 !                    (7) - Number of components for stresses (for each phase)
-! Out tempe        : parameters for thermic
+! Out tempe            : parameters for thermic
 !                    (1) - Flag if physic exists (1 if exists)
 !                    (2) - Adress of first component in generalized strain vector
 !                    (3) - Adress of first component in generalized stress vector

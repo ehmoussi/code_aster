@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface 
-    subroutine thmSelectMeca(p1    , dp1    , p2    , dp2   , satur    , tbiot,&
+    subroutine thmSelectMeca(ds_thm,&
+                             p1    , dp1    , p2    , dp2   , satur    , tbiot,&
                              option, j_mater, ndim  , typmod, angl_naut,&
                              carcri, instam , instap, dtemp ,&
                              addeme, addete , adcome, addep1, addep2,&
@@ -27,6 +27,8 @@ interface
                              congem, vintm  ,&
                              congep, vintp  ,&
                              dsde  , retcom)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         integer, intent(in) :: j_mater
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)

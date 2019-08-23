@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 subroutine te0012(option, nomte)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -73,6 +72,7 @@ character(len=16) :: option, nomte
     real(kind=8) :: trace, alfa, wgt, masvit(81), masdep(81)
     real(kind=8) :: vect1(81), vect2(81)
     integer :: mecani(5), press1(7), press2(7), tempe(5), idec
+    type(THM_DS) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -82,18 +82,14 @@ character(len=16) :: option, nomte
     nddl = 3*nno
     nvec = nddl* (nddl+1)/2
 !
-! - Module initialization
-!
-    call thmModuleInit()
-!
 ! - Get model of finite element
 !
-    call thmGetElemModel()
+    call thmGetElemModel(ds_thm)
 !
 ! - Get generalized coordinates
 !
-    call thmGetGene(.false._1, .false._1, 3,&
-                    mecani, press1, press2, tempe)
+    call thmGetGene(ds_thm, ASTER_FALSE, ASTER_FALSE, 3    ,&
+                    mecani, press1     , press2     , tempe)
 
     if (lteatt('TYPMOD2','THM')) then
         idec = press1(1) + press2(1) + tempe(1)
@@ -181,8 +177,7 @@ character(len=16) :: option, nomte
             end do
         endif
 !
-        else if (option.eq.'MASS_MECA_DIAG' .or.&
-     &         option.eq.'MASS_MECA_EXPLI' ) then
+    else if (option.eq.'MASS_MECA_DIAG' .or. option.eq.'MASS_MECA_EXPLI' ) then
 !
         call jevech('PMATUUR', 'E', imatuu)
 !

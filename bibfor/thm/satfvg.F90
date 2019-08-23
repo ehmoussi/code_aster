@@ -15,15 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine satfvg(sr   , pr    , n, m,pentree, pc,&
-                  satur, dsatur)
 !
+subroutine satfvg(sr   , pr    , n, m, pentree, pc,&
+                  satur, dsatur)
 !
 implicit none
 !
-    real(kind=8), intent(in) :: sr, pr, n, m, pc,pentree
-    real(kind=8), intent(out) :: satur, dsatur
+real(kind=8), intent(in) :: sr, pr, n, m, pc, pentree
+real(kind=8), intent(out) :: satur, dsatur
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,4 +46,5 @@ implicit none
     satur  = sr+(1-sr)*(((pc-pentree)/pr)**n+1.d0)**(-m)
     dsatur = -n*m*((1.d0-sr)/pr)*((((pc-pentree)/pr)**n+1.d0)**(-m-1.d0))*&
             (((pc-pentree)/pr)**(n-1.d0))
+!
 end subroutine
