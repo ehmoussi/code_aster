@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -90,7 +90,7 @@ real(kind=8), intent(out) :: cbiot, unsks
     emmag = ds_thm%ds_material%hydr%emmag
     if (ds_thm%ds_elem%l_dof_meca .or. ds_thm%ds_elem%l_weak_coupling) then
 ! ----- Compute inverse of bulk modulus (solid matrix)
-        if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
+        if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT .and. .not.ds_thm%ds_elem%l_jhms) then
             young  = ds_thm%ds_material%elas%e
             nu     = ds_thm%ds_material%elas%nu
             alpha0 = ds_thm%ds_material%ther%alpha
