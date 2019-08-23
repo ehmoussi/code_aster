@@ -81,13 +81,11 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer, parameter :: nsig = 6, neps = 6, ndsdeme = 36
     integer, parameter :: nwkin = 1
     integer, parameter :: nwkout = 1
     real(kind=8), parameter :: wkin(1) = 0.d0
     real(kind=8), parameter :: wkout(1) = 0.d0
-    integer, parameter :: nsig = 6
-    integer, parameter :: neps = 6
-    integer, parameter :: ndsdeme = 36
     integer ::  kpg, ksp
     character(len=8) :: fami
 !

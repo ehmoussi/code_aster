@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1501,W1504,W1306
 !
-subroutine assesu(option   , j_mater  ,&
+subroutine assesu(ds_thm   , option   , j_mater  ,&
                   type_elem, &
                   ndim     , nbvari   ,&
                   nno      , nnos     , nface ,&
@@ -33,7 +33,6 @@ subroutine assesu(option   , j_mater  ,&
                   matuu    , vectu)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -57,6 +56,7 @@ implicit none
 #include "asterfort/thmGetBehaviourChck.h"
 #include "asterfort/Behaviour_type.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 integer, parameter :: maxfa=6
 character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
@@ -86,6 +86,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! In  option           : name of option to compute
 ! In  j_mater          : coded material address
 ! In  l_axi            : flag is axisymmetric model
@@ -402,15 +403,15 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Get parameters for behaviour
 !
-    call thmGetBehaviour(compor)
+    call thmGetBehaviour(compor, ds_thm)
 !
 ! - Get parameters for internal variables
 !
-    call thmGetBehaviourVari()
+    call thmGetBehaviourVari(ds_thm)
 !
 ! - Some checks between behaviour and model
 !
-    call thmGetBehaviourChck()
+    call thmGetBehaviourChck(ds_thm)
 !
 ! - Get storage parameters for behaviours
 !
@@ -421,7 +422,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Get initial parameters (THM_INIT)
 !
-    call thmGetParaInit(j_mater, l_check_ = ASTER_TRUE)
+    call thmGetParaInit(j_mater, ds_thm, l_check_ = ASTER_TRUE)
 !
 ! - Compute geometric parameters for current cell
 !
@@ -450,7 +451,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Compute generalized stresses and derivatives
 !
-    call comthm_vf(option     , j_mater    ,&
+    call comthm_vf(ds_thm     , option     , j_mater    ,&
                    type_elem  , angl_naut  ,&
                    ndim       , nbvari     ,&
                    dimdef     , dimcon     ,&
@@ -491,7 +492,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
             end do
         end do
 ! ----- Compute generalized stresses and derivatives
-        call comthm_vf(option        , j_mater       ,&
+        call comthm_vf(ds_thm        , option        , j_mater,&
                        type_elem     , angl_naut     ,&
                        ndim          , nbvari        ,&
                        dimdef        , dimcon        ,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine thmFlh006(option, perman , ndim  , j_mater,&
+    subroutine thmFlh006(ds_thm, option, perman , ndim  , j_mater,&
                            dimdef, dimcon ,&
                            addep1, adcp11 ,&
                            addeme, addete ,&
@@ -28,6 +28,8 @@ interface
                            rho11 ,&
                            satur , dsatur, gravity, tperm,&
                            congep, dsde)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         character(len=16), intent(in) :: option
         aster_logical, intent(in) :: perman
         integer, intent(in) :: j_mater

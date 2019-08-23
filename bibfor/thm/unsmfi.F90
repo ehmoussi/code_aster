@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine unsmfi(phi, tbiot, cs)
+subroutine unsmfi(ds_thm, phi, tbiot, cs)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -27,6 +26,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/THM_type.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 real(kind=8), intent(in) :: phi
 real(kind=8), intent(in) :: tbiot(6)
 real(kind=8), intent(out) :: cs
@@ -39,6 +39,7 @@ real(kind=8), intent(out) :: cs
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  phi              : current porosity
 ! In  tbiot            : tensor of Biot
 ! Out cs               : Biot modulus of solid matrix

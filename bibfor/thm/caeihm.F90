@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine caeihm(nomte, l_axi, l_steady, mecani, press1,&
+subroutine caeihm(ds_thm, nomte, l_axi, l_steady, mecani, press1,&
                   press2, tempe, dimdef, dimcon, ndim,&
                   nno1, nno2, npi, npg, dimuel,&
                   iw, ivf1, idf1, ivf2, idf2,&
@@ -25,7 +25,6 @@ subroutine caeihm(nomte, l_axi, l_steady, mecani, press1,&
                   inte_type)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -36,6 +35,7 @@ implicit none
 #include "asterfort/lteatt.h"
 #include "asterfort/thmGetElemIntegration.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 character(len=3), intent(out) :: inte_type
 !
 ! --------------------------------------------------------------------------------------------------
@@ -44,6 +44,7 @@ character(len=3), intent(out) :: inte_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! IN NOMTE   : NOM DU TYPE D'ELEMENT
 ! IN AXI     : AXI ?
 ! OUT PERMAN : MODELISATION HM PERMAMENTE ?
@@ -109,9 +110,7 @@ character(len=3), intent(out) :: inte_type
 !
     call thmGetElemIntegration(l_vf, inte_type = inte_type)
 !
-    if (lteatt('AXIS','OUI')) then
-        l_axi = .true.
-    endif
+    l_axi = lteatt('AXIS','OUI')
 ! ======================================================================
 ! --- ADAPTATION AU MODE D'INTEGRATION ---------------------------------
 ! --- DEFINITION DE L'ELEMENT (NOEUDS, SOMMETS, POINTS DE GAUSS) -------

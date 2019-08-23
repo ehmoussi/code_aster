@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmCompSiefElno()
+subroutine thmCompSiefElno(ds_thm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -34,13 +33,18 @@ implicit none
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/thmGetGene.h"
 #include "asterfort/thmGetElemIntegration.h"
-
+!
+type(THM_DS), intent(inout) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! THM - Compute
 !
 ! SIEF_ELNO
+!
+! --------------------------------------------------------------------------------------------------
+!
+! IO  ds_thm           : datastructure for THM
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +63,7 @@ implicit none
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, l_steady, ndim)
+    call thmGetElemModel(ds_thm, l_axi, l_vf, l_steady, ndim)
 !
 ! - Get type of integration
 !
@@ -67,8 +71,8 @@ implicit none
 !
 ! - Get generalized coordinates
 !
-    call thmGetGene(l_steady, l_vf  , ndim  ,&
-                    mecani  , press1, press2, tempe)
+    call thmGetGene(ds_thm, l_steady, l_vf  , ndim  ,&
+                    mecani, press1  , press2, tempe)
     nvim   = mecani(5)
 !
 ! - Get reference elements

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmComputeResidual(parm_theta, gravity,&
+subroutine thmComputeResidual(ds_thm    , parm_theta, gravity,&
                               ndim      ,&
                               dimdef    , dimcon ,&
                               mecani    , press1 , press2, tempe, &
@@ -26,12 +26,12 @@ subroutine thmComputeResidual(parm_theta, gravity,&
                               r         )
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
 #include "asterf_types.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 real(kind=8), intent(in)  :: parm_theta, gravity(3)
 integer, intent(in) :: ndim
 integer, intent(in) :: dimdef, dimcon
@@ -48,6 +48,7 @@ real(kind=8), intent(out) :: r(dimdef+1)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  parm_theta       : parameter PARM_THETA
 ! In  gravity          : gravity
 ! In  ndim             : dimension of space (2 or 3)

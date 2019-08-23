@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: josselin.delmas at edf.fr
 !
 subroutine te0497(option, nomte)
+!
+use THM_type
 !
 implicit none
 !
@@ -125,6 +126,7 @@ character(len=16), intent(in) :: option, nomte
     character(len=8) :: valk(2)
 !
     aster_logical :: yapr, yaro
+    type(THM_DS) :: ds_thm
 !
     data nomre1 / 'RHO','BIOT_COEF' /
     data nomr13 / 'RHO','BIOT_L','BIOT_N','BIOT_T'/
@@ -151,7 +153,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get all parameters for current element
 !
-    call thmGetElemPara(l_axi    , l_steady ,&
+    call thmGetElemPara(ds_thm   , l_axi    , l_steady ,&
                         type_elem, inte_type, ndim     ,&
                         mecani   , press1   , press2   , tempe  ,&
                         dimdep   , dimdef   , dimcon   , dimuel ,&
@@ -484,7 +486,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! 2.3. --- TERME VOLUMIQUE ---
 !
-    call erhmv2(l_axi, l_steady, deltat, dimdep, dimdef,&
+    call erhmv2(ds_thm, l_axi, l_steady, deltat, dimdep, dimdef,&
                 nddl_meca, nddl_p1, nddl_p2, ndim, nno,&
                 nnos, npg, nddls, nddlm,&
                 dimuel, jv_poids, jv_func, jv_dfunc, jv_poids2,&

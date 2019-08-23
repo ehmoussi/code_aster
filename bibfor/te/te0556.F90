@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,22 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine te0556(option, nomte)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
-#include "asterf_types.h"   
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/elelin.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterfort/tecach.h"
 #include "asterfort/tecael.h"
@@ -44,9 +42,7 @@ implicit none
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/utmess.h"
 !
-    character(len=16) :: option, nomte
-!
-! person_in_charge: daniele.colombo at ifpen.fr
+character(len=16) :: option, nomte
 !
 !
 !         CALCUL DES MATRICES DE CONTACT POUR MODELE HM-XFEM
@@ -80,18 +76,15 @@ implicit none
     integer :: nfimax
     parameter    (nfimax=10)
     integer :: fisc(2*nfimax), fisco(2*nfimax)
+    type(THM_DS) :: ds_thm
 !  
 !......................................................................
 !
-    call jemarq()
-!
-! - Init THM module
-!
-    call thmModuleInit()
+
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel()
+    call thmGetElemModel(ds_thm)
     if (ds_thm%ds_elem%l_weak_coupling) then
         call utmess('F', 'CHAINAGE_12')
     endif
@@ -133,17 +126,16 @@ implicit none
     jlsn = 1
     ncomph = 1
 !
-    do i = 1, 2*nfimax                                         
-        fisco(i)=0                                             
-        fisc(i)=0                                              
-    end do                                                     
+    do i = 1, 2*nfimax
+        fisco(i)=0
+        fisc(i)=0
+    end do
 !
     if (nfiss .gt. 1) then
         call jevech('PFISNO', 'L', jfisno)
         call jevech('PHEAVNO', 'L', jheano)
         call jevech('PHEA_FA', 'L', jheafa)
-        call tecach('OOO', 'PHEA_FA', 'L', iret, nval=2,&
-                    itab=jtab)
+        call tecach('OOO', 'PHEA_FA', 'L', iret, nval=2, itab=jtab)
         ncomph = jtab(2)
         call jevech('PFISCO', 'L', jfisco)
         call jevech('PLSN', 'L', jlsn)
@@ -172,20 +164,15 @@ implicit none
 !
 !     NB COMPOSANTES DES MODES LOCAUX
 !     ASSOCIES AUX CHAMPS DANS LE CATALOGUE
-    call tecach('OOO', 'PDONCO', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PDONCO', 'L', iret, nval=2, itab=jtab)
     ncompd = jtab(2)
-    call tecach('OOO', 'PPINTER', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PPINTER', 'L', iret, nval=2, itab=jtab)
     ncompp = jtab(2)
-    call tecach('OOO', 'PAINTER', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PAINTER', 'L', iret, nval=2, itab=jtab)
     ncompa = jtab(2)
-    call tecach('OOO', 'PBASECO', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PBASECO', 'L', iret, nval=2, itab=jtab)
     ncompb = jtab(2)
-    call tecach('OOO', 'PCFACE', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PCFACE', 'L', iret, nval=2, itab=jtab)
     ncompc = jtab(2)
 !
 !   ON RECUPERE L'ELEMENT PRINCIPAL ...
@@ -296,8 +283,7 @@ implicit none
           call jevech('PMATERC', 'L', jmate)
           call jevech('PCOHES', 'L', jcohes)
           call jevech('PCOHESO', 'E', jcoheo)
-          call tecach('OOO', 'PCOHES', 'L', iret, nval=3,&
-                      itab=jtab)
+          call tecach('OOO', 'PCOHES', 'L', iret, nval=3, itab=jtab)
           if(contac.eq.2) ncompv = jtab(2)/jtab(3)
           if(contac.eq.3) ncompv = jtab(2)
        else
@@ -337,7 +323,8 @@ implicit none
                 end do
              endif
 !
-             call xasshm_frac(nddls, nddlm, nnop, nnops,&
+             call xasshm_frac(ds_thm,&
+                              nddls, nddlm, nnop, nnops,&
                               lact, elrefp, elrefc, elc, contac,&
                               dimuel, nptf,&
                               jptint, igeom, jbasec,&
@@ -389,5 +376,4 @@ implicit none
 
     endif
 !
-    call jedema()
 end subroutine

@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmGetParaHydr(j_mater)
+subroutine thmGetParaHydr(j_mater, ds_thm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -30,6 +29,7 @@ implicit none
 #include "asterfort/THM_type.h"
 !
 integer, intent(in) :: j_mater
+type(THM_DS), intent(inout) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -39,7 +39,8 @@ integer, intent(in) :: j_mater
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater      : coded material address
+! In  j_mater          : coded material address
+! IO  ds_thm           : datastructure for THM
 !
 ! --------------------------------------------------------------------------------------------------
 !

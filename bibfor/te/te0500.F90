@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 ! --------------------------------------------------------------------
 !
 subroutine te0500(option, nomte)
+!
+use THM_type
 !
 implicit none
 !
@@ -102,6 +104,7 @@ character(len=16) :: option, nomte
     data nomre3 / 'E'          /
     data nomrr3 / 'E_L','E_N' /
     data nomrr4 / 'E_L','E_T' /
+    type(THM_DS) :: ds_thm
 !
 ! ------------------------------------------------------------------
 !
@@ -109,7 +112,7 @@ character(len=16) :: option, nomte
 !
 ! - Get all parameters for current element
 !
-    call thmGetElemPara(l_axi    , l_steady ,&
+    call thmGetElemPara(ds_thm   , l_axi    , l_steady ,&
                         type_elem, inte_type, ndim     ,&
                         mecani   , press1   , press2   , tempe  ,&
                         dimdep   , dimdef   , dimcon   , dimuel ,&
@@ -144,8 +147,7 @@ character(len=16) :: option, nomte
 ! 3.3 CONTRAINTES ( T- ET T+ )
 !
     call jevech('PCONTGM', 'L', isigam)
-    call tecach('ONO', 'PCONTGP', 'L', iret, nval=3,&
-                itab=itab)
+    call tecach('ONO', 'PCONTGP', 'L', iret, nval=3, itab=itab)
 !
     isigap = itab(1)
     nbcmp = itab(2)/npi

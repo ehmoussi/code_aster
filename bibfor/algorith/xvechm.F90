@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: daniele.colombo at ifpen.fr
 ! aslint: disable=W1504
 !
-subroutine xvechm(nnops, ddls, ddlm, ndim, pla,&
+subroutine xvechm(ds_thm, nnops, ddls, ddlm, ndim, pla,&
                   saut, sautm, nd, ffc, w11, w11m, jac,&
                   q1, dt, ta, q1m, ta1, q2, q2m, dffc,&
                   rho11, gradpf, rho11m, gradpfm, ffp2,&
@@ -26,6 +26,8 @@ subroutine xvechm(nnops, ddls, ddlm, ndim, pla,&
                   nnop, delta, lamb, am, r, p, psup,&
                   pinf, pf, ncompn, jheavn, ifiss, nfiss,&
                   nfh, ifa, jheafa, ncomph)
+!
+use THM_type
 !
 implicit none
 !
@@ -42,7 +44,7 @@ implicit none
 ! CALCUL DES SECONDS MEMBRES VECT
 !
 ! ----------------------------------------------------------------------
-
+type(THM_DS), intent(inout) :: ds_thm
     integer :: nnops, ddls, ddlm, ndim, pla(27), nnop
     integer :: ncompn, jheavn , nfiss, ncomph, ifiss, ifa, jheafa, nfh
     real(kind=8) :: saut(3), sautm(3), nd(3), ffc(16)
@@ -54,7 +56,7 @@ implicit none
     real(kind=8) :: lamb(3), am(3), r, p(3,3)
 !
 !
-    call xvecha(ndim, pla, nnops, saut,&
+    call xvecha(ds_thm, ndim, pla, nnops, saut,&
                 sautm, nd, ffc, w11, w11m, jac,&
                 q1, q1m, q2, q2m, dt, ta, ta1,&
                 dffc, rho11, gradpf, rho11m,&

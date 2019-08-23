@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0313(option, nomte)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -37,7 +36,8 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/Behaviour_type.h"
-    character(len=16) :: option, nomte
+!
+character(len=16) :: option, nomte
 !
 !
 ! =====================================================================
@@ -68,6 +68,7 @@ implicit none
     real(kind=8) :: ang(24)
     character(len=3) :: modint
     character(len=8) :: nomail
+    type(THM_DS) :: ds_thm
 !
 ! =====================================================================
     integer :: li
@@ -106,21 +107,18 @@ implicit none
 ! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
 ! =====================================================================
 !
-!
-! - Init THM module
-!
-    call thmModuleInit()
+
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel()
+    call thmGetElemModel(ds_thm)
     if (ds_thm%ds_elem%l_weak_coupling) then
         call utmess('F', 'CHAINAGE_12')
     endif
 !
 ! - Preparation
 !
-    call caeihm(nomte, axi, perman, mecani, press1,&
+    call caeihm(ds_thm, nomte, axi, perman, mecani, press1,&
                 press2, tempe, dimdef, dimcon, ndim,&
                 nno1, nno2, npi, npg, dimuel,&
                 ipoids, ivf1, idf1, ivf2, idf2,&
@@ -187,7 +185,7 @@ implicit none
 !
 !
         if (option(1:9) .eq. 'RIGI_MECA') then
-            call aseihm(option, axi, ndim, nno1, nno2,&
+            call aseihm(ds_thm, option, axi, ndim, nno1, nno2,&
                         npi, npg, dimuel, dimdef, dimcon,&
                         nbvari, zi(imate), iu, ip, ipf,&
                         iq, mecani, press1, press2, tempe,&
@@ -200,7 +198,7 @@ implicit none
             do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
             end do
-            call aseihm(option, axi, ndim, nno1, nno2,&
+            call aseihm(ds_thm, option, axi, ndim, nno1, nno2,&
                         npi, npg, dimuel, dimdef, dimcon,&
                         nbvari, zi(imate), iu, ip, ipf,&
                         iq, mecani, press1, press2, tempe,&
@@ -245,7 +243,7 @@ implicit none
 ! ======================================================================
         call jevech('PVECTUR', 'E', ivectu)
 !
-        call fneihm(fnoevo, dt, perman, nno1, nno2,&
+        call fneihm(ds_thm, fnoevo, dt, perman, nno1, nno2,&
                     npi, npg, zr(ipoids), iu, ip,&
                     ipf, iq, zr(ivf1), zr(ivf2), zr(idf2),&
                     zr(igeom), ang, zr( icontm), r, zr(ivectu),&

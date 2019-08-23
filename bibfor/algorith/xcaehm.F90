@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,13 +18,15 @@
 ! aslint: disable=W1504
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xcaehm(nomte, l_axi, l_steady, type_elem, inte_type,&
+subroutine xcaehm(ds_thm, nomte, l_axi, l_steady, type_elem, inte_type,&
                   mecani, press1, press2, tempe, dimdef,&
                   dimcon, nmec, np1, np2, ndim,&
                   nno, nnos, nnom, npi, npg,&
                   nddls, nddlm, dimuel, ipoids, ivf,&
                   idfde, ddld, ddlm, ddlp, enrmec, nenr,&
                   dimenr, nnop, nnops, nnopm, enrhyd, ddlc, nfh)
+!
+use THM_type
 !
 implicit none
 !
@@ -34,6 +36,7 @@ implicit none
 #include "asterfort/xgrdhm.h"
 #include "asterfort/xitghm.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 integer :: nfh
 integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
 integer :: nno, nnos, nnom
@@ -49,6 +52,7 @@ character(len=8), intent(out) :: type_elem(2)
 ! --- BUT : PREPARATION DU CALCUL SUR UN ELEMENT THM -------------------
 ! ======================================================================
 !
+! IO  ds_thm           : datastructure for THM
 ! IN NOMTE   : NOM DU TYPE D'ELEMENT
 ! IN AXI     : AXI ?
 ! IN NFH     : NOMBRE DE DDL HEAVISIDE PAR NOEUD
@@ -93,7 +97,7 @@ character(len=8), intent(out) :: type_elem(2)
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, l_steady, ndim, type_elem)
+    call thmGetElemModel(ds_thm, l_axi, l_vf, l_steady, ndim, type_elem)
 !
 ! - Get type of integration
 !

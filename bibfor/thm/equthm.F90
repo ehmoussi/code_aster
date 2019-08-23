@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine equthm(option   , j_mater  ,&
+subroutine equthm(ds_thm   , option   , j_mater  ,&
                   typmod   , angl_naut, parm_theta,&
                   ndim     , nbvari   ,&
                   kpi      , npg      ,&
@@ -32,7 +32,6 @@ subroutine equthm(option   , j_mater  ,&
                   r        , drds     , dsde      , retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -41,6 +40,7 @@ implicit none
 #include "asterfort/thmComputeResidual.h"
 #include "asterfort/thmComputeMatrix.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
 character(len=8), intent(in) :: typmod(2)
@@ -67,6 +67,7 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! In  option           : name of option- to compute
 ! In  j_mater          : coded material address
 ! In  typmod           : type of modelization (TYPMOD2)
@@ -150,7 +151,7 @@ integer, intent(out) :: retcom
 !
 ! - Compute generalized stresses and derivatives at current Gauss point
 !
-    call comthm(l_steady ,&
+    call comthm(ds_thm   , l_steady ,&
                 option   , j_mater  ,&
                 typmod   , angl_naut,&  
                 ndim     , nbvari   ,&
@@ -171,7 +172,7 @@ integer, intent(out) :: retcom
 ! - Compute non-linear residual
 !
     if ((option(1:9).eq.'FULL_MECA') .or. (option(1:9).eq.'RAPH_MECA')) then
-        call thmComputeResidual(parm_theta, gravity,&
+        call thmComputeResidual(ds_thm    , parm_theta, gravity,&
                                 ndim      ,&
                                 dimdef    , dimcon ,&
                                 mecani    , press1 , press2, tempe, &
@@ -183,7 +184,7 @@ integer, intent(out) :: retcom
 ! - Compute derivative
 !
     if ((option(1:9) .eq. 'RIGI_MECA') .or. (option(1:9) .eq. 'FULL_MECA')) then
-        call thmComputeMatrix(parm_theta, gravity,&
+        call thmComputeMatrix(ds_thm    , parm_theta, gravity,&
                               ndim      ,&
                               dimdef    , dimcon ,&
                               mecani    , press1 , press2, tempe,&

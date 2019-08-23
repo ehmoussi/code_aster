@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
-!
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcco(l_steady,&
+    subroutine calcco(ds_thm  , l_steady ,&
                       option  , angl_naut,&
                       j_mater ,&
                       ndim    , nbvari   ,&
@@ -36,6 +34,8 @@ interface
                       congem  , congep   ,&
                       vintm   , vintp    , dsde  ,& 
                       retcom)
+        use THM_type
+        type(THM_DS), intent(inout) :: ds_thm
         aster_logical, intent(in) :: l_steady
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: angl_naut(3)

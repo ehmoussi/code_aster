@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine fnothm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
+subroutine fnothm(ds_thm   , jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                   mecani   , press1   , press2   , tempe    ,&
                   nno      , nnos     , npi      , npg      ,&
                   elem_coor, deltat   , dimdef   , dimcon   , dimuel ,&
@@ -27,6 +27,8 @@ subroutine fnothm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
                   nddls    , nddlm    , nddl_meca, nddl_p1  , nddl_p2,&
                   congem   , b        , r        , vectu )
 !
+use THM_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -34,6 +36,7 @@ implicit none
 #include "asterfort/cabthm.h"
 #include "asterfort/fonoda.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 integer, intent(in) :: jv_mater
 integer, intent(in) :: ndim
 aster_logical, intent(in) :: l_axi
@@ -62,40 +65,41 @@ real(kind=8), intent(out) :: vectu(dimuel)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  jv_mater     : coded material address
-! In  ndim         : dimension of element (2 ou 3)
-! In  l_axi        : flag is axisymmetric model
-! In  l_steady     : .true. for steady state
-! In  fnoevo       : .true. if compute in non-linear operator (transient terms)
-! In  mecani       : parameters for mechanic
-! In  press1       : parameters for hydraulic (first pressure)
-! In  press1       : parameters for hydraulic (second pressure)
-! In  tempe        : parameters for thermic
-! In  nno          : number of nodes (all)
-! In  nnos         : number of nodes (not middle ones)
-! In  npi          : number of Gauss points for linear 
-! In  npg          : number of Gauss points
-! In  elem_coor    : coordinates of nodes for current element
-! In  deltat       : time increment
-! In  dimdef       : number of generalized strains
-! In  dimcon       : dimension of generalized stresses vector
-! In  dimuel       : number of dof for element
-! In  jv_poids     : JEVEUX adress for weight of Gauss points (linear shape functions)
-! In  jv_poids2    : JEVEUX adress for weight of Gauss points (quadratic shape functions)
-! In  jv_func      : JEVEUX adress for shape functions (linear shape functions)
-! In  jv_func2     : JEVEUX adress for shape functions (quadratic shape functions)
-! In  jv_dfunc     : JEVEUX adress for derivative of shape functions (linear shape functions)
-! In  jv_dfunc2    : JEVEUX adress for derivative of shape functions (quadratic shape functions)
-! In  nddls        : number of dof at nodes (not middle ones)
-! In  nddlm        : number of dof at nodes (middle ones)
-! In  nddl_meca    : number of dof for mechanical quantity
-! In  nddl_p1      : number of dof for first hydraulic quantity
-! In  nddl_p2      : number of dof for second hydraulic quantity
-! IO  congem       : generalized stresses at the beginning of time step
+! IO  ds_thm           : datastructure for THM
+! In  jv_mater         : coded material address
+! In  ndim             : dimension of element (2 ou 3)
+! In  l_axi            : flag is axisymmetric model
+! In  l_steady         : .true. for steady state
+! In  fnoevo           : .true. if compute in non-linear operator (transient terms)
+! In  mecani           : parameters for mechanic
+! In  press1           : parameters for hydraulic (first pressure)
+! In  press1           : parameters for hydraulic (second pressure)
+! In  tempe            : parameters for thermic
+! In  nno              : number of nodes (all)
+! In  nnos             : number of nodes (not middle ones)
+! In  npi              : number of Gauss points for linear 
+! In  npg              : number of Gauss points
+! In  elem_coor        : coordinates of nodes for current element
+! In  deltat           : time increment
+! In  dimdef           : number of generalized strains
+! In  dimcon           : dimension of generalized stresses vector
+! In  dimuel           : number of dof for element
+! In  jv_poids         : JEVEUX adress for weight of Gauss points (linear shape functions)
+! In  jv_poids2        : JEVEUX adress for weight of Gauss points (quadratic shape functions)
+! In  jv_func          : JEVEUX adress for shape functions (linear shape functions)
+! In  jv_func2         : JEVEUX adress for shape functions (quadratic shape functions)
+! In  jv_dfunc         : JEVEUX adress for derivative of shape functions (linear shape functions)
+! In  jv_dfunc2        : JEVEUX adress for derivative of shape functions (quadratic shape functions)
+! In  nddls            : number of dof at nodes (not middle ones)
+! In  nddlm            : number of dof at nodes (middle ones)
+! In  nddl_meca        : number of dof for mechanical quantity
+! In  nddl_p1          : number of dof for first hydraulic quantity
+! In  nddl_p2          : number of dof for second hydraulic quantity
+! IO  congem           : generalized stresses at the beginning of time step
 !                    => output sqrt(2) on SIG_XY, SIG_XZ, SIG_YZ
-! IO  b            : [B] matrix for generalized strains
-! IO  r            : stress vector
-! Out vectu        : nodal force vector (FORC_NODA)
+! IO  b                : [B] matrix for generalized strains
+! IO  r                : stress vector
+! Out vectu            : nodal force vector (FORC_NODA)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -131,7 +135,7 @@ real(kind=8), intent(out) :: vectu(dimuel)
     do kpi = 1, npg
         r(1:dimdef+1) = 0.d0
 ! ----- Compute [B] matrix for generalized strains
-        call cabthm(l_axi    , ndim     ,&
+        call cabthm(ds_thm   , l_axi    , ndim     ,&
                     nddls    , nddlm    ,&
                     nddl_meca, nddl_p1  , nddl_p2,&
                     nno      , nnos     , &
@@ -145,9 +149,9 @@ real(kind=8), intent(out) :: vectu(dimuel)
                     poids    , poids2   ,&
                     b        )
 ! ----- Compute stress vector {R} 
-        call fonoda(jv_mater, ndim  , l_steady, fnoevo,&
-                    mecani  , press1, press2  , tempe,&
-                    dimdef  , dimcon, dt      , congem((kpi-1)*dimcon+1),&
+        call fonoda(ds_thm, jv_mater, ndim  , l_steady, fnoevo,&
+                    mecani, press1  , press2, tempe,&
+                    dimdef, dimcon  , dt    , congem((kpi-1)*dimcon+1),&
                     r)
 ! ----- Compute residual = [B]^T.{R} 
         do i = 1, dimuel

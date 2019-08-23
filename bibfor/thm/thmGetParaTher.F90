@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmGetParaTher(j_mater, kpi, temp)
+subroutine thmGetParaTher(j_mater, kpi, temp, ds_thm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -32,6 +31,7 @@ implicit none
 integer, intent(in) :: j_mater
 integer, intent(in) :: kpi
 real(kind=8), intent(in) :: temp
+type(THM_DS), intent(inout) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,9 +41,10 @@ real(kind=8), intent(in) :: temp
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater      : coded material address
-! In  kpi          : current Gauss point
-! In  temp         : current temperature
+! In  j_mater          : coded material address
+! In  kpi              : current Gauss point
+! In  temp             : current temperature
+! IO  ds_thm           : datastructure for THM
 !
 ! --------------------------------------------------------------------------------------------------
 !
