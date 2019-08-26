@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -347,7 +347,7 @@ subroutine vrcin1(modele, chmat, carele, inst, codret, nompar)
 !
             if (l_xfem) then
 !               simple recopie du champ produit par xvrcin
-                call celces(celtmp, 'V', chs, copy_nan='NON')
+                call celces(celtmp, 'V', chs, l_copy_nan_=ASTER_FALSE)
                 call detrsd('CHAM_ELEM', celtmp)
 !
 !           soit le champ provient de PROJ_CHAMP / METHODE='SOUS_POINT'

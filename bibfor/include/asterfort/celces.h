@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
-    subroutine celces(celz, basez, cesz, copy_nan)
-        character(len=*) :: celz
-        character(len=*) :: basez
-        character(len=*) :: cesz
-        character(len=*), optional, intent(in) :: copy_nan
+    subroutine celces(celz, basez, cesz, l_copy_nan_)
+        character(len=*), intent(in) :: celz, cesz, basez
+        aster_logical, optional, intent(in) :: l_copy_nan_
     end subroutine celces
 end interface
