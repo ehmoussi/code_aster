@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,4 +28,4 @@ def C_PARA_FONCTION() : return  ( #COMMUN#
                    "INST","X","Y","Z","EPSI","META","FREQ","PULS","DSP",
                    "AMOR","ABSC","SIGM","HYDR","SECH","PORO","SAT",
                    "PGAZ","PCAP","PLIQ","PVAP","PAD","VITE","ENDO",
-                   "NORM","EPAIS","NEUT1","NEUT2","XF","YF","ZF", "NUME_ORDRE")
+                   "NORM","EPAIS","NEUT1","NEUT2","NEUT3","NEUT4","XF","YF","ZF", "NUME_ORDRE")
