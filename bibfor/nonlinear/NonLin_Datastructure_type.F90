@@ -34,7 +34,7 @@ implicit none
 
 !
 ! - Type: column for table
-! 
+!
     type NL_DS_Column
         character(len=16)  :: name
         character(len=16)  :: title(3)
@@ -51,7 +51,7 @@ implicit none
     end type NL_DS_Column
 !
 ! - Type: table in output datastructure
-! 
+!
     type NL_DS_TableIO
 ! ----- Name of result datastructure
         character(len=8)           :: result = ' '
@@ -68,8 +68,8 @@ implicit none
         character(len=8), pointer  :: type_para(:) => null()
     end type NL_DS_TableIO
 !
-! - Type: table 
-! 
+! - Type: table
+!
     type NL_DS_Table
 ! ----- Number of active columns
         integer                :: nb_cols
@@ -96,7 +96,7 @@ implicit none
     end type NL_DS_Table
 !
 ! - Type: print
-! 
+!
     type NL_DS_Print
         aster_logical :: l_print
         type(NL_DS_Table) :: table_cvg
@@ -110,7 +110,7 @@ implicit none
     end type NL_DS_Print
 !
 ! - Type: residuals
-! 
+!
     type NL_DS_Resi
         character(len=16) :: type
         character(len=24) :: col_name
@@ -123,7 +123,7 @@ implicit none
     end type NL_DS_Resi
 !
 ! - Type: reference residuals
-! 
+!
     type NL_DS_RefeResi
         character(len=16) :: type
         real(kind=8)      :: user_para
@@ -131,7 +131,7 @@ implicit none
     end type NL_DS_RefeResi
 !
 ! - Type: convergence management
-! 
+!
     type NL_DS_Conv
         integer :: nb_resi
         integer :: nb_resi_maxi = 7
@@ -151,7 +151,7 @@ implicit none
     end type NL_DS_Conv
 !
 ! - Type: Line search parameters
-! 
+!
     type NL_DS_LineSearch
         character(len=16) :: method
         real(kind=8)      :: resi_rela
@@ -162,7 +162,7 @@ implicit none
     end type NL_DS_LineSearch
 !
 ! - Type: algorithm parameters
-! 
+!
     type NL_DS_AlgoPara
         character(len=16)      :: method
         character(len=16)      :: matrix_pred
@@ -197,7 +197,7 @@ implicit none
 !                       RESU: field from result datastructure
 !                       READ: field from ETAT_INIT field by field
     type NL_DS_Field
-        character(len=16) :: type           
+        character(len=16) :: type
         character(len=8)  :: gran_name
         character(len=8)  :: field_read
         character(len=4)  :: disc_type
@@ -208,11 +208,11 @@ implicit none
         aster_logical     :: l_obsv
         character(len=24) :: algo_name
         character(len=24) :: init_name
-        character(len=4)  :: init_type                                                              
+        character(len=4)  :: init_type
     end type NL_DS_Field
 !
 ! - Type: input/output management
-! 
+!
     type NL_DS_InOut
         character(len=8)  :: result
         aster_logical     :: l_temp_nonl
@@ -245,7 +245,7 @@ implicit none
     end type NL_DS_InOut
 !
 ! - Type: loop management
-! 
+!
     type NL_DS_Loop
         character(len=4)  :: type
         integer           :: counter
@@ -256,7 +256,7 @@ implicit none
     end type NL_DS_Loop
 !
 ! - Type: contact management
-! 
+!
     type NL_DS_Contact
 ! ----- Flag for contact (CONTACT keyword is present)
         aster_logical     :: l_contact   = ASTER_FALSE
@@ -369,7 +369,7 @@ implicit none
     end type NL_DS_Contact
 !
 ! - Type: timer management
-! 
+!
     type NL_DS_Timer
 ! ----- Type of timer
         character(len=9)  :: type
@@ -380,7 +380,7 @@ implicit none
     end type NL_DS_Timer
 !
 ! - Type: device for measure
-! 
+!
     type NL_DS_Device
 ! ----- Type of device
         character(len=10) :: type
@@ -402,7 +402,7 @@ implicit none
     end type NL_DS_Device
 !
 ! - Type: measure and statistics management
-! 
+!
     type NL_DS_Measure
 ! ----- Output in table
         aster_logical      :: l_table
@@ -428,7 +428,7 @@ implicit none
     end type NL_DS_Measure
 !
 ! - Type: energy management
-! 
+!
     type NL_DS_Energy
 ! ----- Flag for energy computation
         aster_logical         :: l_comp
@@ -439,7 +439,7 @@ implicit none
     end type NL_DS_Energy
 !
 ! - Type: for external comportement
-! 
+!
     type NL_DS_ComporExte
 ! ----- Flag for UMAT law
         aster_logical      :: l_umat
@@ -462,7 +462,7 @@ implicit none
     end type NL_DS_ComporExte
 !
 ! - Type: for comportement
-! 
+!
     type NL_DS_Compor
         character(len=16) :: rela_comp
         character(len=16) :: defo_comp
@@ -478,7 +478,7 @@ implicit none
     end type NL_DS_Compor
 !
 ! - Type: for preparation of comportment
-! 
+!
     type NL_DS_ComporPrep
 ! ----- Number of comportements
         integer                         :: nb_comp
@@ -491,7 +491,7 @@ implicit none
     end type NL_DS_ComporPrep
 !
 ! - Type: for parameters for constitutive laws
-! 
+!
     type NL_DS_ComporPara
         aster_logical :: l_comp_external
         integer       :: type_matr_t
@@ -513,7 +513,7 @@ implicit none
     end type NL_DS_ComporPara
 !
 ! - Type: for preparation of parameters for constitutive laws
-! 
+!
     type NL_DS_ComporParaPrep
 ! ----- Number of comportements
         integer                         :: nb_comp
@@ -525,7 +525,7 @@ implicit none
     end type NL_DS_ComporParaPrep
 !
 ! - Type: constitutive laws management
-! 
+!
     type NL_DS_Constitutive
 ! ----- Name of field for constitutive laws
         character(len=24)     :: compor      = ' '
@@ -548,7 +548,7 @@ implicit none
     end type NL_DS_Constitutive
 !
 ! - Type: selection list
-! 
+!
     type NL_DS_SelectList
 ! ----- List of values
         integer               :: nb_value   = 0
@@ -564,7 +564,7 @@ implicit none
     end type NL_DS_SelectList
 !
 ! - Type: spectral analysis for stability
-! 
+!
     type NL_DS_Stability
 ! ----- Use geometric matrix (only CRIT_STAB)
         aster_logical             :: l_geom_matr = ASTER_FALSE
@@ -584,7 +584,7 @@ implicit none
     end type NL_DS_Stability
 !
 ! - Type: spectral analysis
-! 
+!
     type NL_DS_Spectral
 ! ----- Name of option to compute
         character(len=16)      :: option = ' '
@@ -606,7 +606,7 @@ implicit none
     end type NL_DS_Spectral
 !
 ! - Type: post_treatment at each time step
-! 
+!
     type NL_DS_PostTimeStep
 ! ----- Table in output datastructure
         type(NL_DS_TableIO)   :: table_io
@@ -622,7 +622,7 @@ implicit none
     end type NL_DS_PostTimeStep
 !
 ! - Type: material properties
-! 
+!
     type NL_DS_Material
 ! ----- Field of material parameters
         character(len=24) :: field_mate = ' '
@@ -639,7 +639,7 @@ implicit none
     end type NL_DS_Material
 !
 ! - Type: combine vectors
-! 
+!
     type NL_DS_VectComb
         integer            :: nb_vect = 0
         real(kind=8)       :: vect_coef(20)
@@ -668,5 +668,18 @@ implicit none
 ! ----- Elementary rigidity matrix
         character(len=19)     :: merigi = ' '
     end type NL_DS_System
+!
+! - Type: error indicators' management
+!
+    type NL_DS_ErrorIndic
+! ----- THM error (S. Meunier)
+        aster_logical :: l_erre_thm   = ASTER_FALSE
+        real(kind=8) :: erre_thm_loca = 0.d0
+        real(kind=8) :: erre_thm_glob = 0.d0
+        real(kind=8) :: parm_theta    = 0.d0
+! ----- Nondimensionalization 
+        real(kind=8) :: adim_p        = 0.d0
+        real(kind=8) :: adim_l        = 0.d0
+    end type NL_DS_ErrorIndic
 !
 end module

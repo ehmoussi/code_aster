@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdoet(model , compor, list_func_acti, nume_ddl   , sdpilo  ,&
-                  sddyna, sdcriq, hval_algo     , l_acce_zero, ds_inout)
+subroutine nmdoet(model , compor       , list_func_acti, nume_ddl   , sdpilo  ,&
+                  sddyna, ds_errorindic, hval_algo     , l_acce_zero, ds_inout)
 !
 use NonLin_Datastructure_type
 !
@@ -48,7 +48,7 @@ implicit none
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: compor
-character(len=24), intent(in) :: sdcriq
+type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 character(len=24), intent(in) :: nume_ddl
 character(len=19), intent(in) :: sddyna
 character(len=19), intent(in) :: sdpilo
@@ -72,7 +72,7 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
 ! In  sddyna           : dynamic parameters datastructure
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  sdpilo           : continuation ("PILOTAGE") parameters datastructure
-! In  sdcriq           : datastructure for quality indicators
+! IO  ds_errorindic    : datastructure for error indicator
 ! IO  ds_inout         : datastructure for input/output management
 ! Out l_acce_zero      : .true. if initial acceleration must been computed
 !
@@ -86,8 +86,8 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
     character(len=8) :: calcri, stin_evol
     character(len=24) :: typpil, typsel
     character(len=19) :: depold
-    character(len=24) :: champ1, champ2, dep2, dep1, errthm
-    integer :: jinst, jerrt
+    character(len=24) :: champ1, champ2, dep2, dep1
+    integer :: jv_para
     aster_logical :: l_pilo, lpiarc, l_cont_cont
     aster_logical :: l_expl_gene, l_reuse, l_erre_thm
     aster_logical :: l_zero, l_acti, l_ener
@@ -245,8 +245,8 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
         end do
         call jeveuo(sdpilo(1:19)//'.PLIR', 'E', vr=plir)
         call rsadpa(stin_evol, 'L', 1, 'COEF_MULT', init_nume,&
-                    0, sjv=jinst, istop=0)
-        coefav = zr(jinst)
+                    0, sjv=jv_para, istop=0)
+        coefav = zr(jv_para)
         if (coefav .ne. 0.d0 .and. coefav .ne. r8vide()) then
             plir(6) = coefav
         endif
@@ -255,15 +255,12 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
 ! - LECTURE DES INDICATEURS D'ERREUR EN TEMPS EN THM
 !
     if (l_stin_evol .and. l_erre_thm) then
-        errthm = sdcriq(1:19)//'.ERRT'
-        call jeveuo(errthm, 'E', jerrt)
         call rsadpa(stin_evol, 'L', 1, 'ERRE_TPS_LOC', init_nume,&
-                    0, sjv=jinst, istop=0)
-        zr(jerrt-1+1) = zr(jinst)
+                    0, sjv=jv_para, istop=0)
+        ds_errorindic%erre_thm_loca = zr(jv_para)
         call rsadpa(stin_evol, 'L', 1, 'ERRE_TPS_GLOB', init_nume,&
-                    0, sjv=jinst, istop=0)
-        zr(jerrt-1+2) = zr(jinst)
-!
+                    0, sjv=jv_para, istop=0)
+        ds_errorindic%erre_thm_glob = zr(jv_para)
     endif
 !
 ! - CAS DE LA DYNAMIQUE: VITESSE ET ACCELERATION INITIALES

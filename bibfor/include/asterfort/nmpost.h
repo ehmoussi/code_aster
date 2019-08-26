@@ -17,41 +17,40 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
-                      ds_constitutive , numins  , ds_material, ds_system,&
-                      ds_contact, ds_algopara, fonact  ,&
-                      ds_measure, sddisc , &
-                      sd_obsv, sderro  , sddyna, ds_posttimestep     , valinc  ,&
-                      solalg , meelem  , measse, veasse  ,&
-                      ds_energy, sdcriq  , eta   , lischa)
+    subroutine nmpost(model          , mesh           , cara_elem      , list_load,&
+                      numedof        , numfix         , ds_system      ,&
+                      ds_constitutive, ds_material   ,&
+                      ds_contact     , ds_algopara    , list_func_acti ,&
+                      ds_measure     , sddisc         , nume_inst      , eta      ,&
+                      sd_obsv        , sderro         , sddyna         , &
+                      hval_incr      , hval_algo      ,&
+                      hval_meelem    , hval_measse    , hval_veasse    ,&
+                      ds_energy      , ds_errorindic  ,&
+                      ds_posttimestep)
         use NonLin_Datastructure_type
-        character(len=24) :: modele
+        character(len=24), intent(in) :: model
         character(len=8), intent(in) :: mesh
-        character(len=24) :: numedd
-        character(len=24) :: numfix
-        character(len=24) :: carele
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        character(len=24), intent(in) :: cara_elem
+        character(len=19), intent(in) :: list_load
+        character(len=24), intent(in) :: numedof, numfix
         type(NL_DS_System), intent(in) :: ds_system
-        integer :: numins
+        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Contact), intent(inout) :: ds_contact
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-        integer :: fonact(*)
+        integer, intent(in) :: list_func_acti(*)
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19) :: sddisc
+        character(len=19), intent(in) :: sddisc
+        integer, intent(in) :: nume_inst
+        real(kind=8), intent(in) :: eta
         character(len=19), intent(in) :: sd_obsv
-        character(len=24) :: sderro
-        character(len=24) :: sdieto
-        character(len=19) :: sddyna
-        character(len=19) :: lischa
-        type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: meelem(*)
-        character(len=19) :: measse(*)
-        character(len=19) :: veasse(*)
+        character(len=24), intent(in) :: sderro
+        character(len=19), intent(in) :: sddyna
+        character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        character(len=19), intent(in) :: hval_meelem(*), hval_measse(*)
+        character(len=19), intent(in) :: hval_veasse(*)
         type(NL_DS_Energy), intent(inout) :: ds_energy
-        character(len=24) :: sdcriq
-        real(kind=8) :: eta
+        type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
+        type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     end subroutine nmpost
 end interface

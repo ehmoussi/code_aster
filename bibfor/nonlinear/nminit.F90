@@ -18,13 +18,13 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nminit(mesh       , model         , mate       , cara_elem      , list_load ,&
-                  numedd     , numfix        , ds_algopara, ds_constitutive, maprec    ,&
-                  solver     , numins        , sddisc     , sdnume         , sdcrit    ,&
-                  ds_material, list_func_acti, sdpilo     , sddyna         , ds_print  ,&
-                  sd_suiv    , sd_obsv       , sderro     , ds_posttimestep, ds_inout  ,&
-                  ds_energy  , ds_conv       , sdcriq     , valinc         , solalg    ,&
-                  measse     , veelem        , meelem     , veasse         , ds_contact,&
+subroutine nminit(mesh       , model         , mate         , cara_elem      , list_load ,&
+                  numedd     , numfix        , ds_algopara  , ds_constitutive, maprec    ,&
+                  solver     , numins        , sddisc       , sdnume         , sdcrit    ,&
+                  ds_material, list_func_acti, sdpilo       , sddyna         , ds_print  ,&
+                  sd_suiv    , sd_obsv       , sderro       , ds_posttimestep, ds_inout  ,&
+                  ds_energy  , ds_conv       , ds_errorindic, valinc         , solalg    ,&
+                  measse     , veelem        , meelem       , veasse         , ds_contact,&
                   ds_measure , ds_algorom    , ds_system)
 !
 use NonLin_Datastructure_type
@@ -35,7 +35,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/accel0.h"
 #include "asterfort/assert.h"
-#include "asterfort/cetule.h"
 #include "asterfort/cfmxsd.h"
 #include "asterfort/cucrsd.h"
 #include "asterfort/diinit.h"
@@ -88,6 +87,7 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/nonlinDSPrintSepLine.h"
 #include "asterfort/nonlinDSDynamicInit.h"
+#include "asterfort/nonlinDSErrorIndicInit.h"
 !
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
@@ -116,7 +116,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 type(NL_DS_InOut), intent(inout) :: ds_inout
 type(NL_DS_Energy), intent(inout) :: ds_energy
 type(NL_DS_Conv), intent(inout) :: ds_conv
-character(len=24) :: sdcriq
+type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 character(len=19) :: valinc(*)
 character(len=19) :: solalg(*)
 character(len=19) :: measse(*)
@@ -152,6 +152,7 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! IO  ds_inout         : datastructure for input/output management
 ! IO  ds_energy        : datastructure for energy management
 ! IO  ds_inout         : datastructure for input/output management
+! IO  ds_errorindic    : datastructure for error indicator
 ! Out sd_obsv          : datastructure for observation parameters
 ! Out sd_suiv          : datastructure for dof monitoring parameters
 ! IO  ds_print         : datastructure for printing parameters
@@ -165,11 +166,11 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret, ifm, niv
-    real(kind=8) :: r8bid3(3)
+    integer :: ifm, niv
     real(kind=8) :: instin
     character(len=19) :: varc_prev, disp_prev, strx_prev, varc_curr, disp_curr, strx_curr
-    aster_logical :: lacc0, lpilo, lmpas, lsstf, lerrt, lviss, lrefe, ldidi, l_obsv, l_ener, l_dyna
+    aster_logical :: lacc0, lpilo, lmpas, lsstf, lviss, lrefe, ldidi, l_obsv, l_ener, l_dyna
+    aster_logical :: l_erre_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -211,24 +212,24 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! - Prepare active functionnalities information
 !
-    call nmfonc(ds_conv       , ds_algopara    , solver   , model     , ds_contact     ,&
-                list_load     , sdnume         , sddyna   , sdcriq    , mate           ,&
-                ds_inout      , ds_constitutive, ds_energy, ds_algorom, ds_posttimestep,&
+    call nmfonc(ds_conv       , ds_algopara    , solver   , model        , ds_contact     ,&
+                list_load     , sdnume         , sddyna   , ds_errorindic, mate           ,&
+                ds_inout      , ds_constitutive, ds_energy, ds_algorom   , ds_posttimestep,&
                 list_func_acti)
 !
 ! - Check compatibility of some functionnalities
 !
     call exfonc(list_func_acti, ds_algopara, solver, ds_contact, sddyna,& 
                 mate          , model)
-    lpilo  = isfonc(list_func_acti,'PILOTAGE' )
-    lmpas  = ndynlo(sddyna,'MULTI_PAS' )
-    lsstf  = isfonc(list_func_acti,'SOUS_STRUC')
-    lerrt  = isfonc(list_func_acti,'ERRE_TEMPS_THM')
-    lviss  = ndynlo(sddyna,'VECT_ISS' )
-    lrefe  = isfonc(list_func_acti,'RESI_REFE')
-    ldidi  = isfonc(list_func_acti,'DIDI')
-    l_ener = isfonc(list_func_acti,'ENERGIE')
-    l_dyna = ndynlo(sddyna,'DYNAMIQUE')
+    lpilo      = isfonc(list_func_acti,'PILOTAGE' )
+    lmpas      = ndynlo(sddyna,'MULTI_PAS' )
+    lsstf      = isfonc(list_func_acti,'SOUS_STRUC')
+    l_erre_thm = isfonc(list_func_acti,'ERRE_TEMPS_THM')
+    lviss      = ndynlo(sddyna,'VECT_ISS' )
+    lrefe      = isfonc(list_func_acti,'RESI_REFE')
+    ldidi      = isfonc(list_func_acti,'DIDI')
+    l_ener     = isfonc(list_func_acti,'ENERGIE')
+    l_dyna     = ndynlo(sddyna,'DYNAMIQUE')
 !
 ! - Initialization for reduced method
 !
@@ -239,8 +240,7 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! - Prepare contact solving datastructure
 !
     if (ds_contact%l_meca_cont) then
-        call cfmxsd(mesh      , model, numedd, list_func_acti, sddyna,&
-                    ds_contact)
+        call cfmxsd(mesh, model, numedd, list_func_acti, sddyna, ds_contact)
     endif
 !
 ! --- CREATION DE LA STRUCTURE DE LIAISON_UNILATERALE
@@ -271,6 +271,12 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
     call nonlinDSInOutInit('MECA', ds_inout)
 !
+! - Initializations for error indicator management
+!
+    if (l_erre_thm) then
+        call nonlinDSErrorIndicInit(model, ds_constitutive, ds_errorindic)
+    endif
+!
 ! --- CREATION DES VECTEURS D'INCONNUS
 !
     call nmcrch(numedd, list_func_acti, sddyna, ds_contact, valinc,&
@@ -298,7 +304,7 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! - Read initial state
 !
     call nmdoet(model , ds_constitutive%compor, list_func_acti, numedd, sdpilo,&
-                sddyna, sdcriq, solalg, lacc0 , ds_inout)
+                sddyna, ds_errorindic         , solalg        , lacc0 , ds_inout)
 !
 ! - Create time discretization and storing datastructures
 !
@@ -411,33 +417,27 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! - Prepare storing
 !
-    call nmnoli(sddisc        , sderro, ds_constitutive, ds_print   , sdcrit  ,&
-                list_func_acti, sddyna, model          , ds_material,&
-                cara_elem     , sdpilo, ds_measure     , ds_energy  , ds_inout,&
-                sdcriq)
+    call nmnoli(sddisc        , sderro, ds_print   , sdcrit     ,&
+                list_func_acti, sddyna, model      , ds_material,&
+                cara_elem     , sdpilo, ds_measure , ds_energy  , ds_inout,&
+                ds_errorindic)
 !
 ! - Make initial observation
-! 
+!
     l_obsv = ASTER_FALSE
     call lobs(sd_obsv, numins, instin, l_obsv)
     if (l_obsv) then
         call nmobse(mesh     , sd_obsv  , instin,&
-                    cara_elem, model   , ds_material, ds_constitutive, disp_curr,&
-                    strx_curr , varc_curr)
-        if  (numins.eq.0) then            
-            call nmobsw(sd_obsv  , ds_inout  )  
-        endif          
+                    cara_elem, model    , ds_material, ds_constitutive, disp_curr,&
+                    strx_curr, varc_curr)
+        if (numins.eq.0) then
+            call nmobsw(sd_obsv, ds_inout)
+        endif
     endif
 !
 ! - Update name of fields
 !
     call nmetpl(ds_inout, sd_suiv, sd_obsv)
-!
-! --- CREATION DE LA TABLE DES GRANDEURS
-!
-    if (lerrt) then
-        call cetule(model, r8bid3, iret)
-    endif
 !
 ! --- CALCUL DU SECOND MEMBRE INITIAL POUR MULTI-PAS
 !
