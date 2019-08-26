@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -188,6 +188,7 @@ mode_rig =CALC_MODES( MATR_RIGI= MATRIGI,
                       IMPRESSION=_F()
                      );
                        
+
 TEST_RESU(RESU=(
     _F(   RESULTAT = mode_rig,        PARA = 'FREQ',
             CRITERE = 'RELATIF',
@@ -207,6 +208,13 @@ TEST_RESU(RESU=(
              ),
                          ),
                );
+
+# Test for computation without loads in statics (#28905)
+
+stat = MECA_STATIQUE(MODELE     = modele,
+                     CHAM_MATER = champmat,
+                     CARA_ELEM  = cara_ele)
+
 
 
 FIN( );

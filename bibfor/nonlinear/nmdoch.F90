@@ -118,6 +118,8 @@ character(len=19), optional, intent(in) :: list_load_resu_
     l_zero_allowed = ASTER_FALSE
     if (l_load_user) then
         l_zero_allowed = nomcmd.eq.'DYNA_NON_LINE'.or.&
+                         nomcmd.eq.'STAT_NON_LINE'.or.&
+                         nomcmd.eq.'MECA_STATIQUE'.or.&
                          nomcmd.eq.'CALC_FORC_NONL'.or.&
                          nomcmd.eq.'CALC_CHAMP'.or.&
                          nomcmd.eq.'POST_ELEM'.or.&
