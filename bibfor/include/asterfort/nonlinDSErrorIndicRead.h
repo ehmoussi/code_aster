@@ -17,14 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmetca(model , mesh     , mate         , hval_incr,&
-                      sddisc, nume_inst, ds_errorindic)
+    subroutine nonlinDSErrorIndicRead(ds_errorindic)
         use NonLin_Datastructure_type
-        character(len=8), intent(in) :: mesh
-        character(len=24), intent(in) :: model, mate
-        character(len=19), intent(in) :: hval_incr(*)
-        character(len=19), intent(in) :: sddisc
-        integer, intent(in) :: nume_inst
         type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
-    end subroutine nmetca
+    end subroutine nonlinDSErrorIndicRead
 end interface

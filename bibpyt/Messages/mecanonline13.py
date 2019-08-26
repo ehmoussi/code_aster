@@ -156,6 +156,8 @@ cata_msg = {
 
    73  : _("""  Assemblage des matrices élémentaires des macro-éléments."""),
 
+   74  : _(""" Initialisations pour les critères de qualité."""),
+
    76  : _("""  Calcul de la matrice pour l'accélération initiale."""),
 
    77  : _("""  Résolution du système global."""),
@@ -171,6 +173,8 @@ cata_msg = {
    84  : _("""  Calcul des matrices élémentaires pour les charges suiveuses."""),
 
    85  : _("""  Calcul des matrices élémentaires des macro-éléments."""),
+
+   87  : _(""" Calcul de l'indicateur d'erreur en THM."""),
 
    86  : _(""" Initialisations pour la gestion de l'énergie."""),
 

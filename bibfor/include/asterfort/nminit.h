@@ -17,13 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nminit(mesh       , model         , mate       , cara_elem      , list_load ,&
-                      numedd     , numfix        , ds_algopara, ds_constitutive, maprec    ,&
-                      solver     , numins        , sddisc     , sdnume         , sdcrit    ,&
-                      ds_material, list_func_acti, sdpilo     , sddyna         , ds_print  ,&
-                      sd_suiv    , sd_obsv       , sderro     , ds_posttimestep, ds_inout  ,&
-                      ds_energy  , ds_conv       , sdcriq     , valinc         , solalg    ,&
-                      measse     , veelem        , meelem     , veasse         , ds_contact,&
+    subroutine nminit(mesh       , model         , mate         , cara_elem      , list_load ,&
+                      numedd     , numfix        , ds_algopara  , ds_constitutive, maprec    ,&
+                      solver     , numins        , sddisc       , sdnume         , sdcrit    ,&
+                      ds_material, list_func_acti, sdpilo       , sddyna         , ds_print  ,&
+                      sd_suiv    , sd_obsv       , sderro       , ds_posttimestep, ds_inout  ,&
+                      ds_energy  , ds_conv       , ds_errorindic, valinc         , solalg    ,&
+                      measse     , veelem        , meelem       , veasse         , ds_contact,&
                       ds_measure , ds_algorom    , ds_system)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
@@ -54,7 +54,7 @@ interface
         type(NL_DS_InOut), intent(inout) :: ds_inout
         type(NL_DS_Energy), intent(inout) :: ds_energy
         type(NL_DS_Conv), intent(inout) :: ds_conv
-        character(len=24) :: sdcriq
+        type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: measse(*)
