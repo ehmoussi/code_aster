@@ -54,7 +54,7 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
          #  --------------------------------------------------
          # un mot clé caché qui ne sert qu'à boucler sur les VARC possibles :
          LIST_NOM_VARC =SIMP(statut='c',typ='TXM', max='**', defaut=("TEMP","GEOM","CORR","IRRA","HYDR","SECH","EPSA",
-                                                           "M_ACIER","M_ZIRC","NEUT1","NEUT2","PTOT","DIVU",)),
+                                                           "M_ACIER","M_ZIRC","NEUT1","NEUT2","NEUT3","PTOT","DIVU",)),
 
          AFFE_VARC    =FACT(statut='f',max='**',
           regles=(PRESENT_ABSENT('TOUT','GROUP_MA','MAILLE'),
@@ -68,7 +68,7 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
           MAILLE          =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**'),
 
           NOM_VARC        =SIMP(statut='o',typ='TXM', into=("TEMP","GEOM","CORR","IRRA","HYDR","SECH","EPSA",
-                               "M_ACIER","M_ZIRC","NEUT1","NEUT2","PTOT","DIVU",)),
+                               "M_ACIER","M_ZIRC","NEUT1","NEUT2","NEUT3","PTOT","DIVU",)),
           CHAM_GD        =SIMP(statut='f',typ=cham_gd_sdaster,),
           EVOL            =SIMP(statut='f',typ=evol_sdaster,),
 
@@ -89,7 +89,7 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
 
          ),
 
-         #  mots clés cachés pour les variables de commande NEUT1/NEUT2 :
+         #  mots clés cachés pour les variables de commande NEUT* :
          #  --------------------------------------------------------------
          VARC_NEUT1   =FACT(statut='c',
            NOM_VARC        =SIMP(statut='c',typ='TXM',defaut="NEUT1"),
@@ -102,6 +102,12 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
            GRANDEUR        =SIMP(statut='c',typ='TXM',defaut="NEUT_R"),
            CMP_GD          =SIMP(statut='c',typ='TXM',max=1,min=1,defaut=("X1")),
            CMP_VARC        =SIMP(statut='c',typ='TXM',max=1,min=1,defaut=("NEUT2")),
+         ),
+         VARC_NEUT3   =FACT(statut='c',
+           NOM_VARC        =SIMP(statut='c',typ='TXM',defaut="NEUT3"),
+           GRANDEUR        =SIMP(statut='c',typ='TXM',defaut="NEUT_R"),
+           CMP_GD          =SIMP(statut='c',typ='TXM',max=1,min=1,defaut=("X1")),
+           CMP_VARC        =SIMP(statut='c',typ='TXM',max=1,min=1,defaut=("NEUT3")),
          ),
 
          #  mots clés cachés pour variable de commande TEMP :
