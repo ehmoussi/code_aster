@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,10 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
                   igthet, fno, nfiss, jheavn, jstno, incr)
 !
 !
-    implicit none
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/nmplru.h"
@@ -47,6 +50,7 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
 #include "asterfort/xcalc_heav.h"
 #include "asterfort/xcalc_code.h"
 #include "asterfort/xcalfev_wrap.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/xkamat.h"
 #include "asterfort/xnbddl.h"
 !
@@ -105,7 +109,7 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
     aster_logical :: grdepl, cp, axi, l_temp_noeu
     integer :: irese, ddli, nnoi, indeni, nnops, ifiss
     integer :: iret1, iret2, iret3
-!
+    type(Behaviour_Integ) :: BEHinteg
 !
     real(kind=8) :: tini, prod1, dsigin(6, 3), sigin(6), epsref(6), epsp(6)
     real(kind=8) :: mu, nu(1), e(1)
@@ -120,6 +124,9 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
     data    fami   /'BID','XINT','XINT','BID','XINT','XINT'/
 !
 !
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 !     VERIF QUE LES TABLEAUX LOCAUX DYNAMIQUES NE SONT PAS TROP GRANDS
 !     (VOIR CRS 1404)
@@ -488,7 +495,8 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
             crit(9) = 300
             crit(8) = 1.d-3
 
-            call nmelnl('XFEM', kpg+idecpg, 1, '+', ndim,&
+            call nmelnl(BEHinteg,&
+                        'XFEM', kpg+idecpg, 1, '+', ndim,&
                         typmod, matcod, compor, crit, oprupt,&
                         eps, sigl, rbid, dsidep, energi) 
 

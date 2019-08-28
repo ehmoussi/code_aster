@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,8 @@
 !
 subroutine calcExternalStateVariable2(nno    , npg   , ndim  ,&
                                       jv_func, &
-                                      geom   , typmod)
-!
-use calcul_module, only : ca_vext_coorga_
+                                      geom   , &
+                                      coorga)
 !
 implicit none
 !
@@ -30,14 +29,14 @@ implicit none
 !
 integer, intent(in) :: nno, npg, ndim
 integer, intent(in) :: jv_func
-character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: geom(ndim, nno)
+real(kind=8), intent(out) :: coorga(27,3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Behaviour - Compute intrinsic external state variables
 !
-! Case: coordinates of Gauss points (COORGA)
+! Case: coordinates of Gauss points
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,29 +46,24 @@ real(kind=8), intent(in) :: geom(ndim, nno)
 ! In  jv_poids         : JEVEUX adress for weight of Gauss points
 ! In  jv_func          : JEVEUX adress for shape functions
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
-! In  typmod           : type of modelization (TYPMOD2)
 ! In  geom             : initial coordinates of nodes
+! Out coorga           : coordinates of all integration points
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: laxi
     integer :: i, k, kpg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    laxi = typmod(1) .eq. 'AXIS'
-    ca_vext_coorga_(:,:) = 0.d0
+    coorga(:,:) = 0.d0
     ASSERT(npg .le. 27)
 !
-    if (.not. laxi) then
-        do kpg = 1, npg
-            do i = 1, ndim
-                do k = 1, nno
-                    ca_vext_coorga_(kpg, i) = ca_vext_coorga_(kpg, i) +&
-                                              geom(i,k)*zr(jv_func-1+nno*(kpg-1)+k)
-                end do
+    do kpg = 1, npg
+        do i = 1, ndim
+            do k = 1, nno
+                coorga(kpg, i) = coorga(kpg, i) + geom(i,k)*zr(jv_func-1+nno*(kpg-1)+k)
             end do
         end do
-    endif
+    end do
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -71,7 +71,7 @@ aster_logical, intent(out) :: l_elem_bound
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: notype, type_elem, comp_rela_elem, type_elem2
+    character(len=16) :: notype, model_type, comp_rela_elem, model_type2
     character(len=8) :: mesh
     integer :: nutyel, nb_cmp_maxi
     integer :: j_cesd, j_cesl
@@ -144,46 +144,41 @@ aster_logical, intent(out) :: l_elem_bound
         if (iad .gt. 0) then
 !
             l_one_elem = .true.
-!
 ! --------- Comportment on element
-!
             comp_rela_elem = cesv(iad)
             if (comp_rela_elem .eq. ' ') then
                 l_auto_elas = .true.
             endif
-!
 ! --------- Access to element type
-!
             nutyel = maille(nume_elem)
             call jenuno(jexnum('&CATA.TE.NOMTE', nutyel), notype)
-!
 ! --------- Type of modelization
-!
-            call teattr('C', 'TYPMOD', type_elem, iret, typel=notype)
-            call teattr('C', 'TYPMOD2', type_elem2, iret2, typel=notype)
+            call teattr('C', 'TYPMOD' , model_type , iret, typel=notype)
+            
             if (iret .eq. 0) then
-                if (type_elem(1:6) .eq. 'C_PLAN') then
+                if (model_type  .eq. 'C_PLAN') then
                     call lctest(rela_comp_py, 'MODELISATION', 'C_PLAN', irett)
                     if (irett .eq. 0) then
                         l_auto_deborst = .true.
                     endif
-                else if (type_elem(1:6).eq.'COMP1D') then
+                else if (model_type .eq. '1D') then
                     call lctest(rela_comp_py, 'MODELISATION', '1D', irett)
                     if (irett .eq. 0) then
                         l_auto_deborst = .true.
                     endif
-                else if (type_elem(1:6).eq.'COMP3D') then
+                else if (model_type .eq.'3D') then
                     call lctest(rela_comp_py, 'MODELISATION', '3D', irett)
                     if (irett .eq. 0) then
                         l_comp_erre = .true.
                     else
-                        call lctest(rela_comp_py, 'MODELISATION', type_elem2, irett)
-                        if (irett .eq. 0 .and. type_elem2 .ne. 'NON_DEFINI') then
+                        call teattr('C', 'TYPMOD2', model_type2, iret2, typel=notype)
+                        call lctest(rela_comp_py, 'MODELISATION', model_type2, irett)
+                        if (irett .eq. 0 .and. model_type2 .ne. 'NON_DEFINI') then
                             l_comp_erre = .true.
                         endif
                     endif
                 else
-                    call lctest(rela_comp_py, 'MODELISATION', type_elem, irett)
+                    call lctest(rela_comp_py, 'MODELISATION', model_type, irett)
                     if (irett .eq. 0) then
                         l_comp_erre = .true.
                     endif
@@ -192,7 +187,7 @@ aster_logical, intent(out) :: l_elem_bound
         endif
     enddo
 !
-! - De borst
+! - Deborst algorithm
 !
     if (l_to_affect) then
         if (l_auto_deborst) then

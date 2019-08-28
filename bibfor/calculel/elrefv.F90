@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine elrefv(nomte, famil, ndim, nno, nno2,&
-                  nnos, npg, ipoids, ivf, ivf2,&
-                  idfde, idfde2, jgano, jgano2)
-    implicit none
-#include "asterfort/elref1.h"
-#include "asterfort/elrefe_info.h"
-    character(len=16) :: nomte
-    character(len=4) :: famil
-    integer :: ndim, nno, nnos, npg, ipoids, ivf, idfde, jgano
-    integer :: nno2, ivf2, idfde2, jgano2
 !
+subroutine elrefv(fami    , ndim    ,&
+                  nnoL    , nnoQ    , nnos,&
+                  npg     , jv_poids,&
+                  jv_vfL  , jv_vfQ  ,&
+                  jv_dfdeL, jv_dfdeQ,&
+                  jv_ganoL, jv_ganoQ)
+!
+implicit none
+!
+#include "asterfort/elref1.h"
+#include "asterfort/assert.h"
+#include "asterfort/elrefe_info.h"
+!
+character(len=4), intent(in) :: fami
+integer, intent(out) :: ndim, nnos
+integer, intent(out) :: npg, jv_poids
+integer, intent(out) :: nnoL, jv_vfL, jv_dfdeL, jv_ganoL
+integer, intent(out) :: nnoQ, jv_vfQ, jv_dfdeQ, jv_ganoQ
 !
 ! ---------------------------------------------------------------------
 ! BUT: RECUPERER DANS UNE ROUTINE TE00IJ LES ADRESSES DANS ZR
@@ -59,42 +66,51 @@ subroutine elrefv(nomte, famil, ndim, nno, nno2,&
 !                 ATTENTION : LES 2 1ERS TERMES SONT LES
 !                             DIMMENSIONS DE LA MATRICE: NNO2 ET NPG
 !   -------------------------------------------------------------------
-    character(len=8) :: elrefe, elref2
+    character(len=8) :: elrefeL, elrefeQ
 !
+! - Get ELREFE (quadratic)
 !
-    call elref1(elrefe)
+    call elref1(elrefeQ)
 !
-    call elrefe_info(elrefe=elrefe,fami=famil,ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+! - Get pointer for quadratic elrefe
 !
-    if (elrefe .eq. 'TR3' .or. elrefe .eq. 'QU4') then
+    call elrefe_info(elrefe = elrefeQ, fami   = fami    , &
+                     ndim   = ndim   , nno    = nnoQ    , nnos  = nnos    ,&
+                     npg    = npg    , jpoids = jv_poids,&
+                     jvf    = jv_vfQ , jdfde  = jv_dfdeQ, jgano = jv_ganoQ)
 !
-! --- CAS LINEAIRE
+! - Get ELREFE (linear)
 !
-        call elrefe_info(elrefe=elrefe,fami=famil,ndim=ndim,nno=nno2,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf2,jdfde=idfde2,jgano=jgano2)
+    if (elrefeQ .eq. 'TR3' .or. elrefeQ .eq. 'QU4') then
+! ----- Already linear
+        elrefeL = elrefeQ
     else
-!
-! --- CAS QUADRATIQUE
-!
-        if (elrefe .eq. 'TR6') then
-            elref2 = 'TR3'
-        else if (elrefe .eq. 'QU8') then
-            elref2 = 'QU4'
-        else if (elrefe .eq. 'H20') then
-            elref2 = 'HE8'
-        else if (elrefe .eq. 'T10') then
-            elref2 = 'TE4'
-        else if (elrefe .eq. 'P15') then
-            elref2 = 'PE6'
-        else if (elrefe .eq. 'S15') then
-            elref2 = 'SH6'
-        else if (elrefe .eq. 'P13') then
-            elref2 = 'PY5'
+! ----- Find linear support
+        if (elrefeQ .eq. 'TR6') then
+            elrefeL = 'TR3'
+        else if (elrefeQ .eq. 'QU8') then
+            elrefeL = 'QU4'
+        else if (elrefeQ .eq. 'H20') then
+            elrefeL = 'HE8'
+        else if (elrefeQ .eq. 'T10') then
+            elrefeL = 'TE4'
+        else if (elrefeQ .eq. 'P15') then
+            elrefeL = 'PE6'
+        else if (elrefeQ .eq. 'S15') then
+            elrefeL = 'SH6'
+        else if (elrefeQ .eq. 'P13') then
+            elrefeL = 'PY5'
+        else
+            WRITE(6,*) 'No linear reference: ',elrefeQ
+            ASSERT(ASTER_FALSE)
         endif
-        call elrefe_info(elrefe=elref2,fami=famil,ndim=ndim,nno=nno2,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf2,jdfde=idfde2,jgano=jgano2)
     endif
 !
+! - Get pointers for linear elrefe
+!
+    call elrefe_info(elrefe = elrefeL, fami   = fami    , &
+                     ndim   = ndim   , nno    = nnoL    , nnos  = nnos    ,&
+                     npg    = npg    , jpoids = jv_poids,&
+                     jvf    = jv_vfL , jdfde  = jv_dfdeL, jgano = jv_ganoL)
 !
 end subroutine

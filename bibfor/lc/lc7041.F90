@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lc7041(fami, kpg, ksp, ndim, imate,&
+subroutine lc7041(BEHinteg,&
+                  fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
-                  sigp, vip, wkinout, typmod, icomp,&
+                  sigp, vip, typmod, icomp,&
                   nvi, dsidep, codret)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -28,6 +31,7 @@ implicit none
 !
 ! aslint: disable=W1504,W0104
 !
+    type(Behaviour_Integ), intent(inout) :: BEHinteg
     character(len=*), intent(in) :: fami
     integer, intent(in) :: kpg
     integer, intent(in) :: ksp
@@ -45,7 +49,6 @@ implicit none
     real(kind=8), intent(in) :: angmas(3)
     real(kind=8), intent(out) :: sigp(6)
     real(kind=8), intent(out) :: vip(*)
-    real(kind=8), intent(inout) :: wkinout(*)
     character(len=8), intent(in) :: typmod(*)
     integer, intent(in) :: icomp
     integer, intent(in) :: nvi
@@ -64,11 +67,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    r=wkinout(1)
+    r=BEHinteg%elga%r
     codret = 0
     call lceitc(fami, kpg, ksp, imate, option,&
                 epsm, deps, sigp, dsidep, vim,&
                 vip, r)
-    wkinout(1)=r
+    BEHinteg%elga%r=r
 !
 end subroutine

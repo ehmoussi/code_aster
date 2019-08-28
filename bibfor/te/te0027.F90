@@ -30,8 +30,11 @@ subroutine te0027(option, nomte)
 !          ---> NOMTE  : NOM DU TYPE ELEMENT
 !
 ! ----------------------------------------------------------------------
-! CORPS DU PROGRAMME
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 !
 ! DECLARATION PARAMETRES D'APPELS
 #include "asterf_types.h"
@@ -49,6 +52,7 @@ subroutine te0027(option, nomte)
 #include "asterfort/rcvarc.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/behaviourInit.h"
 !
     character(len=16) :: option, nomte
 !
@@ -73,6 +77,7 @@ subroutine te0027(option, nomte)
     real(kind=8) :: dudm(3, 4), dfdm(3, 4), dtdm(3, 4), der(4), dvdm(3, 4)
     real(kind=8) :: energi(2), rho(1), om, omo
     real(kind=8) :: ecin, prod3, prod4, accele(3), e(1), nu(1), mu
+    type(Behaviour_Integ) :: BEHinteg
 !
     aster_logical :: grand, fonc, incr, epsini
 !
@@ -90,6 +95,10 @@ subroutine te0027(option, nomte)
     epsini = .false.
     typmod(1) = '3D      '
     typmod(2) = ' '
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     fami = 'RIGI'
     call elrefe_info(fami=fami, ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
@@ -376,7 +385,8 @@ subroutine te0027(option, nomte)
             crit(9) = 300
             crit(8) = 1.d-3
 !
-            call nmelnl(fami, kp, 1, '+',&
+            call nmelnl(BEHinteg,&
+                        fami, kp, 1, '+',&
                         ndim, typmod, matcod, compor, crit,&
                         oprupt, eps, sigl, rbid, dsidep,&
                         energi)

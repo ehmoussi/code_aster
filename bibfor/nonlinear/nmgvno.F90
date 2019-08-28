@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
                   iw, vff1, vff2, idfde1, idfde2,&
                   geom, typmod, option, mat, compor,&
@@ -23,10 +24,9 @@ subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
                   ddld, angmas, sigm, vim, sigp,&
                   vip, matr, vect, codret)
 !
+use Behaviour_type
 !
-!
-! aslint: disable=W1504
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -34,6 +34,7 @@ subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
 #include "asterfort/coefdg.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/nmepsi.h"
 #include "asterfort/nmgvdn.h"
 #include "asterfort/nmmabu.h"
@@ -98,10 +99,11 @@ subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
     real(kind=8) :: deplm(3*27), depld(3*27), dfdi1(27, 3)
     real(kind=8) :: avm, avd, avp, agm(3), agd(3), agp(3), bp
     real(kind=8) :: r, wg, epsm(6), epsd(6), f(3, 3), b(6, 3, 27)
-    real(kind=8) :: nonloc(2), sigmam(6), sigma(6), dsidep(6, 6, 4), t1, t2
-    real(kind=8) :: di, char, r8bid(1)
+    real(kind=8) :: sigmam(6), sigma(6), dsidep(6, 6, 4), t1, t2
+    real(kind=8) :: di, char
     real(kind=8) :: dfdi2(8*3)
     real(kind=8) :: critd(20)
+    type(Behaviour_Integ) :: BEHinteg
 !
     data  nom /'C_GRAD_VARI'/
 !
@@ -114,6 +116,10 @@ subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
     full = option(1:9).eq.'FULL_MECA'
     elas = option.eq.'FULL_MECA_ELAS' .or. option.eq.'RIGI_MECA_ELAS'
 !
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
     if (elas) then
         full = .false.
     endif
@@ -123,8 +129,6 @@ subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
     axi = typmod(1) .eq. 'AXIS'
     nddl = nno1*ndim + nno2
     ndimsi = 2*ndim
-!
-    call r8inir(2, 0.d0, nonloc, 1)
 !
 !      NOM(1) = 'C_GRAD_VARI'
 !
@@ -236,15 +240,15 @@ subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
             sigmam(kl) = sigm(kl,g)*rac2
 100     continue
 !
-        nonloc(1)= avp
-        nonloc(2)= c
+        BEHinteg%elga%nonloc(1) = avp
+        BEHinteg%elga%nonloc(2) = c
 !
-        call nmcomp(fami, g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    fami, g, 1, ndim, typmod,&
                     mat, compor, crit, instam, instap,&
                     6, epsm, epsd, 6, sigmam,&
-                    vim(1, g), option, angmas, 2, nonloc,&
-                    sigma, vip(1, g), 6*6*4, dsidep, 1,&
-                    r8bid, cod(g))
+                    vim(1, g), option, angmas, &
+                    sigma, vip(1, g), 6*6*4, dsidep, cod(g))
 !
         if (cod(g) .eq. 1) goto 9000
 !

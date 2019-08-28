@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -348,6 +348,76 @@ TEST_RESU(RESU=(
                 ),
           );
 
+
+
+# Test calcul hyper-réduit/complet - TABL_COOR_REDUIT
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduR2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.497612858925,
+                   VALE_CALC=0.500115502937,
+                   PRECISION = 0.0055
+                   ),
+                _F(RESULTAT=reduR2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=-0.736173981172,
+                   VALE_CALC=-0.740033569251,
+                   PRECISION=0.0055
+                   ),
+                _F(RESULTAT=reduR2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=1.5401647755,
+                   VALE_CALC=1.54821923637,
+                   PRECISION=0.0055
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduR2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIXX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2531.65556515,
+                   VALE_REFE=-2526.26537982,
+                   PRECISION=0.0022
+                   ),
+                _F(RESULTAT=reduR2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIYY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2530.01379624,
+                   VALE_REFE=-2524.79824979,
+                   PRECISION=0.0021
+                   ),
+                _F(RESULTAT=reduR2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIZZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2337.63426835,
+                   VALE_REFE=-2327.65322131,
+                   PRECISION=0.0043
+                   ),
+                ),
+          );
 
 
 FIN()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,16 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine get_elas_para(fami     , j_mater, poum, ipg, ispg, &
-                         elas_id  , elas_keyword,&
-                         time     , temp,&
-                         e   , nu  , g,&
-                         e1  , e2  , e3,&
-                         nu12, nu13, nu23,&
-                         g1  , g2  , g3)
+subroutine get_elas_para(fami    , j_mater, poum, ipg, ispg, &
+                         elas_id , elas_keyword,&
+                         time    , temp,&
+                         e       , nu  , g,&
+                         e1      , e2  , e3,&
+                         nu12    , nu13, nu23,&
+                         g1      , g2  , g3,&
+                         BEHinteg)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -31,29 +34,19 @@ implicit none
 #include "asterfort/hypmat.h"
 #include "asterfort/rcvalb.h"
 !
-
-!
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: j_mater
-    character(len=*), intent(in) :: poum
-    integer, intent(in) :: ipg
-    integer, intent(in) :: ispg
-    integer, intent(in) :: elas_id
-    character(len=16), intent(in) :: elas_keyword
-    real(kind=8), optional, intent(in) :: time
-    real(kind=8), optional, intent(in) :: temp
-    real(kind=8), optional, intent(out) :: e
-    real(kind=8), optional, intent(out) :: nu
-    real(kind=8), optional, intent(out) :: g
-    real(kind=8), optional, intent(out) :: e1
-    real(kind=8), optional, intent(out) :: e2
-    real(kind=8), optional, intent(out) :: e3
-    real(kind=8), optional, intent(out) :: nu12
-    real(kind=8), optional, intent(out) :: nu13
-    real(kind=8), optional, intent(out) :: nu23
-    real(kind=8), optional, intent(out) :: g1
-    real(kind=8), optional, intent(out) :: g2
-    real(kind=8), optional, intent(out) :: g3
+character(len=*), intent(in) :: fami
+integer, intent(in) :: j_mater
+character(len=*), intent(in) :: poum
+integer, intent(in) :: ipg, ispg
+integer, intent(in) :: elas_id
+character(len=16), intent(in) :: elas_keyword
+real(kind=8), optional, intent(in) :: time
+real(kind=8), optional, intent(in) :: temp
+real(kind=8), optional, intent(out) :: e, nu, g
+real(kind=8), optional, intent(out) :: e1,e2, e3
+real(kind=8), optional, intent(out) :: nu12, nu13, nu23
+real(kind=8), optional, intent(out) :: g1, g2, g3
+type(Behaviour_Integ), optional, intent(in) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,30 +56,31 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  fami         : Gauss family for integration point rule
-! In  j_mater      : coded material address
-! In  time         : current time
-! In  time         : current temperature
-! In  poum         : '-' or '+' for parameters evaluation (previous or current temperature)
-! In  ipg          : current point gauss
-! In  ispg         : current "sous-point" gauss
-! In  elas_id      : Type of elasticity
+! In  fami           : Gauss family for integration point rule
+! In  j_mater        : coded material address
+! In  time           : current time
+! In  time           : current temperature
+! In  poum           : '-' or '+' for parameters evaluation (previous or current temperature)
+! In  ipg            : current point gauss
+! In  ispg           : current "sous-point" gauss
+! In  elas_id        : Type of elasticity
 !                 1 - Isotropic
 !                 2 - Orthotropic
 !                 3 - Transverse isotropic
-! In  elas_keyword : keyword factor linked to type of elasticity parameters
-! Out e            : Young modulus (isotropic)
-! Out nu           : Poisson ratio (isotropic)
-! Out e1           : Young modulus - Direction 1 (Orthotropic/Transverse isotropic)
-! Out e2           : Young modulus - Direction 2 (Orthotropic)
-! Out e3           : Young modulus - Direction 3 (Orthotropic/Transverse isotropic)
-! Out nu12         : Poisson ratio - Coupling 1/2 (Orthotropic/Transverse isotropic)
-! Out nu13         : Poisson ratio - Coupling 1/3 (Orthotropic/Transverse isotropic)
-! Out nu23         : Poisson ratio - Coupling 2/3 (Orthotropic)
-! Out g1           : shear ratio (Orthotropic)
-! Out g2           : shear ratio (Orthotropic)
-! Out g3           : shear ratio (Orthotropic)
-! Out g            : shear ratio (isotropic/Transverse isotropic)
+! In  elas_keyword   : keyword factor linked to type of elasticity parameters
+! Out e              : Young modulus (isotropic)
+! Out nu             : Poisson ratio (isotropic)
+! Out e1             : Young modulus - Direction 1 (Orthotropic/Transverse isotropic)
+! Out e2             : Young modulus - Direction 2 (Orthotropic)
+! Out e3             : Young modulus - Direction 3 (Orthotropic/Transverse isotropic)
+! Out nu12           : Poisson ratio - Coupling 1/2 (Orthotropic/Transverse isotropic)
+! Out nu13           : Poisson ratio - Coupling 1/3 (Orthotropic/Transverse isotropic)
+! Out nu23           : Poisson ratio - Coupling 2/3 (Orthotropic)
+! Out g1             : shear ratio (Orthotropic)
+! Out g2             : shear ratio (Orthotropic)
+! Out g3             : shear ratio (Orthotropic)
+! Out g              : shear ratio (isotropic/Transverse isotropic)
+! In  BEHinteg       : parameters for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -95,8 +89,8 @@ implicit none
     character(len=16) :: nomres(nbresm)
     real(kind=8) :: valres(nbresm)
 !
-    character(len=8) :: para_name(2)
-    real(kind=8) :: para_vale(2)
+    character(len=8) :: para_name(5)
+    real(kind=8) :: para_vale(5)
     integer :: nbres, nb_para
     real(kind=8) :: c10, c01, c20, k
     real(kind=8) :: un
@@ -116,6 +110,19 @@ implicit none
         nb_para   = nb_para + 1
         para_name(nb_para) = 'TEMP'
         para_vale(nb_para) = temp
+    endif
+    if (present(BEHinteg)) then
+        if (.not.BEHinteg%l_varext_geom) then
+            nb_para   = nb_para + 1
+            para_name(nb_para) = 'X'
+            para_vale(nb_para) = BEHinteg%elga%coorpg(1)
+            nb_para   = nb_para + 1
+            para_name(nb_para) = 'Y'
+            para_vale(nb_para) = BEHinteg%elga%coorpg(2)
+            nb_para   = nb_para + 1
+            para_name(nb_para) = 'Z'
+            para_vale(nb_para) = BEHinteg%elga%coorpg(3)
+        endif
     endif
 !
 ! - Get elastic parameters

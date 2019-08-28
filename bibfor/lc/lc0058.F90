@@ -17,12 +17,15 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine lc0058(fami , kpg   , ksp   , ndim  , typmod,&
-                  imate, compor, carcri, instam, instap,&
-                  neps , epsm  , deps  , nsig  , sigm  ,&
-                  nvi  , vim   , option, angmas,&
-                  temp , dtemp , predef, dpred ,&
-                  sigp , vip   , dsidep, codret)
+subroutine lc0058(BEHinteg,&
+                  fami    , kpg   , ksp   , ndim  , typmod,&
+                  imate   , compor, carcri, instam, instap,&
+                  neps    , epsm  , deps  , nsig  , sigm  ,&
+                  nvi     , vim   , option, angmas,&
+                  temp    , dtemp , predef, dpred ,&
+                  sigp    , vip   , dsidep, codret)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -39,6 +42,7 @@ implicit none
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg, ksp, ndim
 character(len=8), intent(in) :: typmod(*)
@@ -69,6 +73,7 @@ integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  BEHinteg         : parameters for integration of behaviour
 ! In  fami             : Gauss family for integration point rule
 ! In  kpg              : current point gauss
 ! In  ksp              : current "sous-point" gauss
@@ -137,7 +142,8 @@ integer, intent(out) :: codret
 !
 ! - Get material properties
 !
-    call mfront_get_mater_value(rela_comp, jvariext1, jvariext2,&
+    call mfront_get_mater_value(BEHinteg ,&
+                                rela_comp, jvariext1, jvariext2,&
                                 fami     , kpg      , ksp      , imate,&
                                 nprops   , props)
 !
@@ -185,10 +191,6 @@ integer, intent(out) :: codret
     end do
 !
 !    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-!!        if (ca_iactif_ .ne. 2) then
-!!            call tecael(iadzi, iazk24, noms=0)
-!!            nume_elem = zi(iadzi)
-!!        endif
 !        write(6,*)' '
 !        write(6,*)'AVANT APPEL MFRONT, INSTANT=',time(2)+dtime
 !        write(6,*)'DEFORMATIONS INSTANT PRECEDENT STRAN='
@@ -234,13 +236,13 @@ integer, intent(out) :: codret
                               drot, pnewdt, nummod)
     endif
 !
-!    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-!        write(6,*)' '
-!        write(6,*)'APRES APPEL MFRONT, STRESS='
-!        write(6,'(6(1X,E11.4))') (sigp(i),i=1,ntens)
-!        write(6,*)'APRES APPEL MFRONT, STATEV='
-!        write(6,'(10(1X,E11.4))')(vip(i),i=1,nstatv)
-!    endif
+    !if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+    !    write(6,*)' '
+    !    write(6,*)'APRES APPEL MFRONT, STRESS='
+    !    write(6,'(6(1X,E11.4))') (sigp(i),i=1,ntens)
+    !    write(6,*)'APRES APPEL MFRONT, STATEV='
+    !    write(6,'(10(1X,E11.4))')(vip(i),i=1,nstatv)
+    !endif
 !
 ! - Convert stresses
 !
@@ -251,23 +253,23 @@ integer, intent(out) :: codret
 ! - Convert matrix
 !
     if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-       call r8inir(36, 0.d0, dsidep, 1)
-       call lcicma(ddsdde, ntens, ntens, ntens, ntens, &
+        call r8inir(36, 0.d0, dsidep, 1)
+        call lcicma(ddsdde, ntens, ntens, ntens, ntens, &
                    1, 1, dsidep, 6, 6, 1, 1)
-       do i = 1, 6
-           do j = 4, 6
-               dsidep(i,j) = dsidep(i,j)*rac2
-           end do
-       end do
-       do i = 4, 6
-           do j = 1, 6
-               dsidep(i,j) = dsidep(i,j)*rac2
-           end do
-       end do
-!               write(6,*)'APRES APPEL MFRONT,OPERATEUR TANGENT DSIDEP='
-!               do i = 1, 6
-!                   write(6,'(6(1X,E11.4))') (dsidep(i,j),j=1,6)
-!               end do
+        do i = 1, 6
+            do j = 4, 6
+                dsidep(i,j) = dsidep(i,j)*rac2
+            end do
+        end do
+        do i = 4, 6
+            do j = 1, 6
+                dsidep(i,j) = dsidep(i,j)*rac2
+            end do
+        end do
+        !write(6,*)'APRES APPEL MFRONT,OPERATEUR TANGENT DSIDEP='
+        !do i = 1, 6
+        !    write(6,'(6(1X,E11.4))') (dsidep(i,j),j=1,6)
+        !end do
     endif
 !
 ! - Return code from MFront

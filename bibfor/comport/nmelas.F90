@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmelas(fami, kpg, ksp, ndim, typmod,&
+!
+subroutine nmelas(BEHinteg,&
+                  fami, kpg, ksp, ndim, typmod,&
                   imate, deps, sigm, option, sigp,&
                   vip, dsidep, iret)
+!
+use Behaviour_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/rcvalb.h"
+#include "asterfort/rcvarc.h"
+#include "asterfort/verift.h"
+#include "asterfort/get_elas_para.h"
+!
+type(Behaviour_Integ), intent(in) :: BEHinteg
 !
 !     REALISE LA LOI DE VON MISES ISOTROPE ET ELASTIQUE POUR LES
 !     ELEMENTS ISOPARAMETRIQUES EN PETITES DEFORMATIONS
@@ -45,11 +58,6 @@ subroutine nmelas(fami, kpg, ksp, ndim, typmod,&
 !               = 0  => ECHEC DANS L'INTEGRATION DE LA LOI
 !
 !
-    implicit none
-#include "asterf_types.h"
-#include "asterfort/rcvalb.h"
-#include "asterfort/rcvarc.h"
-#include "asterfort/verift.h"
     aster_logical :: cplan, inco
     integer :: ndim, imate, kpg, ksp, iret, ndimsi
     integer :: k, l, iret2, iret3, iret4, iret5, icodre(3)
@@ -63,6 +71,8 @@ subroutine nmelas(fami, kpg, ksp, ndim, typmod,&
     character(len=6) :: epsa(6)
     character(len=8) :: typmod(*)
     character(len=16) :: nomres(3), option
+    integer, parameter :: elas_id = 1
+    character(len=16), parameter :: elas_keyword = 'ELAS'
 !-----------------------------------------------------------------------
     data kron/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/
     data epsa/'EPSAXX','EPSAYY','EPSAZZ','EPSAXY','EPSAXZ','EPSAYZ'/
@@ -135,11 +145,9 @@ subroutine nmelas(fami, kpg, ksp, ndim, typmod,&
         defap(k) = defap(k)*rac2
     end do
 !
-    call rcvalb(fami, kpg, ksp, '-', imate,&
-                ' ', 'ELAS', 0, ' ', [0.d0],&
-                2, nomres(1), valres(1), icodre(1), 2)
-    em = valres(1)
-    num = valres(2)
+    call get_elas_para(fami    , imate, '-', kpg, ksp, &
+                       elas_id , elas_keyword,&
+                       e = em, nu = num, BEHinteg = BEHinteg)
     deumum = em/(1.d0+num)
 !
     if (inco) then
@@ -148,11 +156,9 @@ subroutine nmelas(fami, kpg, ksp, ndim, typmod,&
         troikm = em/(1.d0-2.d0*num)
     endif
 !
-    call rcvalb(fami, kpg, ksp, '+', imate,&
-                ' ', 'ELAS', 0, ' ', [0.d0],&
-                2, nomres(1), valres(1), icodre(1), 2)
-    e = valres(1)
-    nu = valres(2)
+    call get_elas_para(fami    , imate, '+', kpg, ksp, &
+                       elas_id , elas_keyword,&
+                       e = e, nu = nu, BEHinteg = BEHinteg)
 !
     if (inco) then
         deuxmu = 2.d0*e/3.d0

@@ -33,7 +33,7 @@ DEFI_BASE_REDUITE=OPER(
     BASE = SIMP(statut='f',typ=mode_empi,
                 fr=tr("Objet qui sera enrichi des nouveaux instants calculés")),
 
-    OPERATION = SIMP(statut='f',typ='TXM',defaut="POD",into=("POD","POD_INCR",'GLOUTON','TRONCATURE',)),
+    OPERATION = SIMP(statut='f',typ='TXM',defaut="POD",into=("POD","POD_INCR",'GLOUTON','TRONCATURE',"ORTHO")),
 
     b_pod  = BLOC(condition ="""(equal_to("OPERATION", 'POD'))""",
         RESULTAT         =SIMP(statut='o',typ=resultat_sdaster),
@@ -108,6 +108,10 @@ DEFI_BASE_REDUITE=OPER(
 
     b_tronca       =BLOC(condition ="""(equal_to("OPERATION", 'TRONCATURE'))""",
         MODELE_REDUIT = SIMP(statut='o',typ=modele_sdaster),
+    ),
+
+    b_ortho        =BLOC(condition ="""(equal_to("OPERATION", 'ORTHO'))""",
+        ALPHA         = SIMP(statut='f',typ='R', defaut=0.717),
     ),
 
     INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),

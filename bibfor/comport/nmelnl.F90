@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,34 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmelnl(fami, kpg, ksp, poum,&
+!
+subroutine nmelnl(BEHinteg,&
+                  fami, kpg, ksp, poum,&
                   ndim, typmod, imate, compor, crit,&
                   option, eps, sig, vi, dsidep,&
                   energi)
 !
+use Behaviour_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterc/r8prem.h"
+#include "asterfort/ecpuis.h"
+#include "asterfort/nmcri1.h"
+#include "asterfort/nmcri2.h"
+#include "asterfort/nmelru.h"
+#include "asterfort/rcfonc.h"
+#include "asterfort/rctrac.h"
+#include "asterfort/rcvala.h"
+#include "asterfort/rcvalb.h"
+#include "asterfort/rcvarc.h"
+#include "asterfort/utmess.h"
+#include "asterfort/verift.h"
+#include "asterfort/zerofr.h"
+#include "asterfort/get_elas_para.h"
+!
+type(Behaviour_Integ), intent(in) :: BEHinteg
 !     REALISE LA LOI DE HENCKY POUR LES ELEMENTS ISOPARAMETRIQUES
 !
 ! IN  NDIM    : DIMENSION DE L'ESPACE
@@ -42,24 +64,7 @@ subroutine nmelnl(fami, kpg, ksp, poum,&
 ! OUT ENERGI(2)  : DERIVEE DE L'ENERGIE LIBRE / TEMPERATURE
 ! ----------------------------------------------------------------------
 ! CORPS DU PROGRAMME
-! aslint: disable=
-    implicit none
-!
-! DECLARATION PARAMETRES D'APPELS
-#include "asterf_types.h"
-#include "asterc/r8prem.h"
-#include "asterfort/ecpuis.h"
-#include "asterfort/nmcri1.h"
-#include "asterfort/nmcri2.h"
-#include "asterfort/nmelru.h"
-#include "asterfort/rcfonc.h"
-#include "asterfort/rctrac.h"
-#include "asterfort/rcvala.h"
-#include "asterfort/rcvalb.h"
-#include "asterfort/rcvarc.h"
-#include "asterfort/utmess.h"
-#include "asterfort/verift.h"
-#include "asterfort/zerofr.h"
+
     integer :: kpg, ksp, ndim, imate, iret, isec, ihyd
     character(len=*) :: fami, poum
     character(len=8) :: typmod(*)
@@ -80,6 +85,8 @@ subroutine nmelnl(fami, kpg, ksp, poum,&
     real(kind=8) :: p, rp, rprim, g, coef, epsi, airerp
     real(kind=8) :: approx, prec, x, kron(6), divu, biot
     real(kind=8) :: coco, dp0, rprim0, xap, precr
+    integer, parameter :: elas_id = 1
+    character(len=16), parameter :: elas_keyword = 'ELAS'
 !
 !====================================================================
 !---COMMONS NECESSAIRES A HENCKY C_PLAN (NMCRI1)
@@ -137,10 +144,10 @@ subroutine nmelnl(fami, kpg, ksp, poum,&
     call rcvarc(' ', 'SECH', 'REF', fami, kpg,&
                 ksp, secref, iret)
     if (iret .ne. 0) secref=0.d0
+    call get_elas_para(fami    , imate, poum, kpg, ksp, &
+                       elas_id , elas_keyword,&
+                       e = e, nu = nu, BEHinteg = BEHinteg)
     if (elas .or. line .or. puis) then
-        call rcvalb(fami, kpg, ksp, poum, imate,&
-                    ' ', 'ELAS', 0, ' ', [0.d0],&
-                    2, nomres, valres, icodre, 2)
         call rcvalb(fami, kpg, ksp, poum, imate,&
                     ' ', 'ELAS', 0, ' ', [0.d0],&
                     1, nomres(3), valres(3), icodre(3), 0)
@@ -150,16 +157,10 @@ subroutine nmelnl(fami, kpg, ksp, poum,&
                     jvale, nbvale, valres(1))
         call rcvalb(fami, kpg, ksp, poum, imate,&
                     ' ', 'ELAS', 0, ' ', [0.d0],&
-                    1, nomres(2), valres(2), icodre(2), 2)
-!
-        call rcvalb(fami, kpg, ksp, poum, imate,&
-                    ' ', 'ELAS', 0, ' ', [0.d0],&
                     1, nomres(3), valres(3), icodre(3), 0)
+        e = valres(1)
         if (icodre(3) .ne. 0) valres(3)=0.d0
     endif
-!
-    e = valres(1)
-    nu = valres(2)
 !
     deuxmu = e/(1.d0+nu)
     if (abs(nu- 0.5d0) .ge. epsi) then

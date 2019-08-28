@@ -32,7 +32,11 @@ subroutine te0096(option, nomte)
 ! ----------------------------------------------------------------------
 ! CORPS DU PROGRAMME
 ! aslint: disable=W1501
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 !
 ! DECLARATION PARAMETRES D'APPELS
 #include "asterf_types.h"
@@ -51,6 +55,7 @@ subroutine te0096(option, nomte)
 #include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/tecach.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/utmess.h"
 !
     character(len=16) :: option, nomte
@@ -83,6 +88,7 @@ subroutine te0096(option, nomte)
     integer :: nno, nnos, ncmp, jgano
     integer :: i, j, k, kk, l, m, kp, ndim, compt, nbvari
     integer :: ij, ij1, matcod, i1, iret, iret1, npg1
+    type(Behaviour_Integ) :: BEHinteg
 !
     aster_logical :: grand, axi, cp, fonc, incr, epsini
 !
@@ -104,6 +110,10 @@ subroutine te0096(option, nomte)
     kpg=1
     spt=1
     poum='+'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     if (lteatt('AXIS','OUI')) then
         typmod(1) = 'AXIS'
@@ -428,7 +438,8 @@ subroutine te0096(option, nomte)
             crit(3) = 1.d-3
             crit(9) = 300
             crit(8) = 1.d-3
-            call nmelnl(fami, kp, 1, '+',&
+            call nmelnl(BEHinteg,&
+                        fami, kp, 1, '+',&
                         ndim, typmod, matcod, compor, crit,&
                         oprupt, eps, sigl, rbid, dsidep,&
                         energi)

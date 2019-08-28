@@ -1,6 +1,6 @@
 ! --------------------------------------------------------------------
 ! Copyright (C) 2007 NECS - BRUNO ZUBER   WWW.NECS.FR
-! Copyright (C) 2007 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 2007 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1504
 
 subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
                   vff, dfde, mate, option, geom,&
@@ -23,15 +24,17 @@ subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
                   ktan, vim, vip, crit, compor,&
                   matsym, coopg, tm, tp, codret)
 !
+use Behaviour_type
 !
-! aslint: disable=,W1504
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
 #include "asterfort/codere.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmfici.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/behaviourInit.h"
 #include "blas/ddot.h"
     integer :: nno, nddl, npg, lgpg, mate, codret
     real(kind=8) :: wref(npg), vff(nno, npg), dfde(2, nno, npg), crit(*)
@@ -72,8 +75,8 @@ subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
     integer :: code(9), ni, mj, kk, p, q, kpg, ibid, n
     real(kind=8) :: b(3, 60), sigmo(6), sigma(6)
     real(kind=8) :: sum(3), dsu(3), dsidep(6, 6), poids
-    real(kind=8) :: rbid(1)
     real(kind=8) :: angmas(3)
+    type(Behaviour_Integ) :: BEHinteg
 !
     character(len=8) :: typmod(2)
     data typmod /'3D','ELEMJOIN'/
@@ -81,6 +84,10 @@ subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
 !
     resi = option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
     rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! --- ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
 ! --- INITIALISE A R8VIDE (ON NE S'EN SERT PAS)
@@ -130,12 +137,14 @@ subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
             sigmo(n) = sigm(n,kpg)
  12     continue
 !
-        call nmcomp('RIGI', kpg, 1, 3, typmod,&
+        BEHinteg%elga%coorpg = coopg(1:3,kpg)
+!
+        call nmcomp(BEHinteg,&
+                    'RIGI', kpg, 1, 3, typmod,&
                     mate, compor, crit, tm, tp,&
                     3, sum, dsu, 6, sigmo,&
-                    vim(1, kpg), option, angmas, 4, coopg(1, kpg),&
-                    sigma, vip(1, kpg), 36, dsidep, 1,&
-                    rbid, ibid)
+                    vim(1, kpg), option, angmas, &
+                    sigma, vip(1, kpg), 36, dsidep, ibid)
 !
         if (resi) then
 !

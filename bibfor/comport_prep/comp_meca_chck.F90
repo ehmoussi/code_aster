@@ -68,18 +68,15 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
     character(len=24) :: list_elem_affe
     aster_logical :: l_affe_all
     integer :: nb_elem_affe
-    character(len=16) :: texte(2)
     character(len=16) :: defo_comp, rela_comp, rela_thmc, type_cpla
     character(len=16) :: rela_comp_py, defo_comp_py
-    integer :: iret
     character(len=16) :: keywordfact
-    integer :: i_comp, nb_comp
-    character(len=8) :: repons
+    integer :: i_comp, nb_comp, exte_defo
     aster_logical :: l_one_elem, l_elem_bound
     character(len=24) :: ligrmo
-    character(len=8) :: partit, ext_dkt
+    character(len=8) :: partit
     mpi_int :: nb_proc, mpicou
-    aster_logical :: l_auto_elas, l_auto_deborst, l_comp_erre
+    aster_logical :: l_auto_elas, l_auto_deborst, l_comp_erre, l_mfront
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -98,21 +95,18 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
 ! - Loop on occurrences of COMPORTEMENT
 !
     do i_comp = 1, nb_comp
-!
 ! ----- Get list of elements where comportment is defined
-!
         call comp_read_mesh(mesh          , keywordfact, i_comp        ,&
                             list_elem_affe, l_affe_all , nb_elem_affe)
-!
 ! ----- Get infos
-!
         rela_comp = ds_compor_prep%v_comp(i_comp)%rela_comp
         defo_comp = ds_compor_prep%v_comp(i_comp)%defo_comp
         type_cpla = ds_compor_prep%v_comp(i_comp)%type_cpla
         rela_thmc = ds_compor_prep%v_comp(i_comp)%kit_comp(1)
-!
+        l_mfront  = ds_compor_prep%v_exte(i_comp)%l_mfront_offi .or.&
+                    ds_compor_prep%v_exte(i_comp)%l_mfront_proto
+        exte_defo = ds_compor_prep%v_exte(i_comp)%strain_model
 ! ----- Detection of specific cases
-!
         if (rela_comp .eq. 'ENDO_HETEROGENE') then
             ligrmo = model//'.MODELE'
             call dismoi('PARTITION', ligrmo, 'LIGREL', repk=partit)
@@ -120,20 +114,14 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
                 call utmess('F', 'CALCULEL_25', sk=model)
             endif
          endif
-!
 ! ----- Warning if ELASTIC comportment and initial state
-!
         if (l_etat_init .and. rela_comp(1:10).eq.'ELAS_VMIS_') then
             call utmess('A', 'COMPOR1_61')
         endif
-!
 ! ----- Coding comportment (Python)
-!
         call lccree(1, rela_comp, rela_comp_py)
         call lccree(1, defo_comp, defo_comp_py)
-!
 ! ----- Check comportment/model with Comportement.py
-!
         call nmdovm(model       , l_affe_all  , list_elem_affe, nb_elem_affe  , full_elem_s,&
                     rela_comp_py, type_cpla   , l_auto_elas   , l_auto_deborst, l_comp_erre,&
                     l_one_elem  , l_elem_bound)
@@ -145,41 +133,12 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
             endif
         endif
         ds_compor_prep%v_comp(i_comp)%type_cpla = type_cpla
-!
-! ----- Check comportment/deformation with Comportement.py
-!
-        call lctest(rela_comp_py, 'DEFORMATION', defo_comp, iret)
-        if (iret .eq. 0) then
-            texte(1) = defo_comp
-            texte(2) = rela_comp
-            call utmess('F', 'COMPOR1_44', nk = 2, valk = texte)
-        endif
-!
-! ----- Check deformation with Comportement.py
-!
+! ----- Check strain model
         call nmdovd(model         , l_affe_all  , l_auto_deborst,&
                     list_elem_affe, nb_elem_affe, full_elem_s   ,&
-                    defo_comp     , defo_comp_py)
-!
-! ----- Check if COQUE_3D+GROT_GDEP is activated
-!
-        call dismoi('EXI_COQ3D', model, 'MODELE', repk=repons)
-        if ( (repons .eq. 'OUI') .and. (defo_comp .eq. 'GROT_GDEP') ) then
-            texte(1) = defo_comp
-            texte(2) = 'COQUE_3D'
-            call utmess('A', 'COMPOR1_47', nk = 2, valk = texte)
-        endif
-!
-! ----- Check if DKT+GROT_GDEP is activated
-!
-        call dismoi('MODELISATION', model, 'MODELE', repk=ext_dkt)
-        if ( (ext_dkt(1:3) .eq. 'DKT') .and. (ext_dkt(1:4) .ne. 'DKTG') ) then
-            if ((defo_comp .eq. 'GROT_GDEP') .and. (rela_comp(1:4).ne.'ELAS')) then
-                texte(1) = defo_comp
-                texte(2) = 'DKT'
-                call utmess('F', 'COMPOR1_48', nk = 2, valk = texte)
-            endif
-        endif
+                    l_mfront      , exte_defo   ,&
+                    defo_comp     , defo_comp_py,&
+                    rela_comp     , rela_comp_py)
 !
         call lcdiscard(rela_comp_py)
         call lcdiscard(defo_comp_py)

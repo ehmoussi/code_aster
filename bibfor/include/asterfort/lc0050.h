@@ -17,18 +17,21 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
-                      imate, compor, crit, instam, instap,&
-                      neps, epsm, deps, nsig, sigm,&
-                      nvi, vim, option, angmas, icomp,&
-                      temp , dtemp , predef, dpred ,&
-                      stress, statev, ndsde, dsidep, codret)
+    subroutine lc0050(BEHinteg,&
+                      fami   , kpg   , ksp   , ndim  , typmod,&
+                      imate  , compor, carcri, instam, instap,&
+                      neps   , epsm  , deps  , nsig  , sigm  ,&
+                      nvi    , vim   , option, angmas, icomp ,&
+                      temp   , dtemp , predef, dpred ,&
+                      stress , statev, ndsde , dsidep, codret)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg, ksp, ndim
         character(len=8), intent(in) :: typmod(*)
         integer, intent(in) :: imate
         character(len=16), intent(in) :: compor(*)
-        real(kind=8), intent(in) :: crit(*)
+        real(kind=8), intent(in) :: carcri(*)
         real(kind=8), intent(in) :: instam, instap
         integer, intent(in) :: neps, nsig, nvi
         real(kind=8), intent(in) :: epsm(6), deps(6)

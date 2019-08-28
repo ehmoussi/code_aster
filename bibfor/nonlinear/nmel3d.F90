@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,29 +15,36 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
 subroutine nmel3d(fami, poum, nno, npg, ipoids,&
                   ivf, idfde, geom, typmod, option,&
                   imate, compor, lgpg, crit, depl,&
                   angmas, dfdi, pff, def, sig,&
                   vi, matuu, vectu, codret)
-! aslint: disable=W1504
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmgeom.h"
-    integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
-    character(len=8) :: typmod(*)
-    character(len=16) :: option, compor(*)
-    character(len=*) :: fami, poum
-    real(kind=8) :: geom(3, nno), crit(3)
-    real(kind=8) :: angmas(3)
-    real(kind=8) :: depl(1:3, 1:nno), dfdi(nno, 3)
-    real(kind=8) :: pff(6, nno, nno), def(6, nno, 3)
-    real(kind=8) :: sig(6, npg), vi(lgpg, npg), sigp(6)
-    real(kind=8) :: matuu(*), vectu(3, nno)
+#include "asterfort/behaviourPrepExternal.h"
+#include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
+!
+integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
+character(len=8) :: typmod(*)
+character(len=16) :: option, compor(*)
+character(len=*) :: fami, poum
+real(kind=8) :: geom(3, nno), crit(*)
+real(kind=8) :: angmas(3)
+real(kind=8) :: depl(1:3, 1:nno), dfdi(nno, 3)
+real(kind=8) :: pff(6, nno, nno), def(6, nno, 3)
+real(kind=8) :: sig(6, npg), vi(lgpg, npg), sigp(6)
+real(kind=8) :: matuu(*), vectu(3, nno)
 !.......................................................................
 !
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
@@ -73,21 +80,39 @@ subroutine nmel3d(fami, poum, nno, npg, ipoids,&
     aster_logical :: grdepl
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), r, sigma(6), ftf, detf
     real(kind=8) :: poids, tmp1, tmp2
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+    integer, parameter :: ndim = 3
+    real(kind=8) :: deplm(3*nno), deplp(3*nno)
 !
     integer :: indi(6), indj(6)
-    real(kind=8) :: rind(6), rac2
+    real(kind=8) :: rind(6)
     data    indi / 1 , 2 , 3 , 1 , 1 , 2 /
     data    indj / 1 , 2 , 3 , 2 , 3 , 3 /
     data    rind / 0.5d0,0.5d0,0.5d0,0.70710678118655d0,&
      &               0.70710678118655d0,0.70710678118655d0 /
-    data    rac2 / 1.4142135623731d0 /
 !
 !
 ! - INITIALISATION
 !
+    deplm(:) = 0.d0
+    deplp(:) = 0.d0
     grdepl = compor(3) .eq. 'GROT_GDEP'
 !
-    do 10 kpg = 1, npg
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
+! - Prepare external state variables
+!
+    call behaviourPrepExternal(crit  , typmod,&
+                               nno   , npg   , ndim ,&
+                               ipoids, ivf   , idfde,&
+                               geom  , deplm , deplp,&
+                               coorga)
+!
+    do kpg = 1, npg
 !
 ! - CALCUL DES ELEMENTS GEOMETRIQUES
 !
@@ -130,7 +155,9 @@ subroutine nmel3d(fami, poum, nno, npg, ipoids,&
 !
 ! - LOI DE COMPORTEMENT : S(E) ET DS/DE
 !
-        call nmcpel(fami, kpg, 1, poum, 3,&
+        BEHinteg%elga%coorpg = coorga(kpg,:)
+        call nmcpel(BEHinteg,&
+                    fami, kpg, 1, poum, 3,&
                     typmod, angmas, imate, compor, crit,&
                     option, eps, sigma, vi(1, kpg), dsidep,&
                     codret)
@@ -233,5 +260,5 @@ subroutine nmel3d(fami, poum, nno, npg, ipoids,&
 220             continue
             endif
         endif
- 10 end do
+    end do
 end subroutine

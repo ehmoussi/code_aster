@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,64 +15,80 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1003
+!
 subroutine te0545(option, nomte)
 !
+implicit none
 !
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/assert.h"
+#include "asterfort/Behaviour_type.h"
 #include "asterfort/elrefv.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/ngfint.h"
-#include "asterfort/ngvlog.h"
 #include "asterfort/nglgic.h"
+#include "asterfort/ngvlog.h"
 #include "asterfort/nmgvmb.h"
 #include "asterfort/nmtstm.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rcangm.h"
 #include "asterfort/teattr.h"
-#include "asterfort/lteatt.h"
 #include "asterfort/tecach.h"
 #include "blas/dcopy.h"
 #include "blas/dgemv.h"
 !
-    character(len=16) :: option, nomte
-! ......................................................................
-!    - FONCTION REALISEE:  CALCUL DES OPTIONS NON-LINEAIRES MECANIQUES
-!                          EN 2D (CPLAN ET DPLAN) ET AXI
-!                          POUR LES ELEMNTS GRAD_VARI
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ......................................................................
+character(len=16), intent(in) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: 3D_GRAD_INCO, 3D_GRAD_VARI
+!           D_PLAN_GRAD_INCO, D_PLAN_GRAD_VARI
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
     character(len=8) :: typmod(2)
+    character(len=16) :: defo_comp
     aster_logical :: resi, rigi, axi,matsym=ASTER_FALSE
-    integer :: nno, nnob, npg, ndim, nddl, neps, lgpg
-    integer :: ipoids, ivf, idfde, ivfb, idfdeb
+    integer :: nnoQ, nnoL, npg, ndim, nddl, neps, lgpg
+    integer :: jv_poids, jv_vfQ, jv_dfdeQ, jv_vfL, jv_dfdeL
     integer :: imate, icontm, ivarim, iinstm, iinstp, ideplm, ideplp, icompo
     integer :: ivectu, icontp, ivarip, imatuu, icarcr, ivarix, igeom, icoret
-    integer :: iret, nnos, jgano, jganob, itab(7)
+    integer :: iret, nnos, jv_ganoQ, jv_ganoL, itab(7)
     integer :: i
     real(kind=8) :: xyz(3)=0.d0, angmas(7)
     real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
 !
-
-! - INITIALISATION
+! --------------------------------------------------------------------------------------------------
 !
     resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
     rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
-    call teattr('S', 'TYPMOD', typmod(1), iret)
-    typmod(2) = 'GRADVARI'
-    axi = typmod(1).eq.'AXIS'
-
-
-
-    call elrefv(nomte, 'RIGI', ndim, nno, nnob,&
-                nnos, npg, ipoids, ivf, ivfb,&
-                idfde, idfdeb, jgano, jganob)
-
 !
+! - Type of modelling
+!
+    call teattr('S', 'TYPMOD' , typmod(1))
+    call teattr('S', 'TYPMOD2', typmod(2))
+    axi       = typmod(1).eq.'AXIS'
+!
+! - Get parameters of element
+!
+    call elrefv('RIGI'  , ndim    ,&
+                nnoL    , nnoQ    , nnos,&
+                npg     , jv_poids,&
+                jv_vfL  , jv_vfQ  ,&
+                jv_dfdeL, jv_dfdeQ,&
+                jv_ganoL, jv_ganoQ)
 !
 ! - PARAMETRES EN ENTREE ET DIMENSION
 !
@@ -86,14 +102,15 @@ subroutine te0545(option, nomte)
     call jevech('PCARCRI', 'L', icarcr)
     call jevech('PINSTMR', 'L', iinstm)
     call jevech('PINSTPR', 'L', iinstp)
-
     call tecach('OOO', 'PDEPLPR', 'L', iret, nval=2, itab=itab)
     nddl = itab(2)
 !
+! - Behaviour
+!
+    defo_comp = zk16(icompo-1+DEFO)
 !
 ! - PARAMETRES EN SORTIE
 !
-
     if (rigi) then
 !         call nmtstm(zr(icarcr), imatuu, matsym)
         matsym = .false.
@@ -114,70 +131,56 @@ subroutine te0545(option, nomte)
         icoret=1
     endif
 !
-!
 !    NOMBRE DE VARIABLES INTERNES
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=itab)
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=itab)
     lgpg = max(itab(6),1)*itab(7)
-!
 !
 !    ESTIMATION VARIABLES INTERNES A L'ITERATION PRECEDENTE
     if (resi) then
         call jevech('PVARIMP', 'L', ivarix)
         zr(ivarip:ivarip-1+npg*lgpg) = zr(ivarix:ivarix-1+npg*lgpg)
     endif
-!
-!
 !    BARYCENTRE ET ORIENTATION DU MASSIF
     do i = 1,ndim
-        xyz(i) = sum(zr(igeom-1+i:igeom-1+(nno-1)*ndim+i:ndim))/nno
+        xyz(i) = sum(zr(igeom-1+i:igeom-1+(nnoQ-1)*ndim+i:ndim))/nnoQ
     end do
     call rcangm(ndim, xyz, angmas)
 !
-!
-!
 ! - CALCUL DES FORCES INTERIEURES ET MATRICES TANGENTES
 !
-     if (zk16(icompo+2) (1:8).eq.'GDEF_LOG') then
+    if (defo_comp .eq. 'GDEF_LOG') then
         if (lteatt('INCO','C5GV')) then
-            call nglgic('RIGI', option, typmod, ndim, nno,nnob,&
-                       npg,nddl, ipoids, zr(ivf), zr(ivfb),idfde,idfdeb,&
+            call nglgic('RIGI', option, typmod, ndim, nnoQ,nnoL,&
+                       npg,nddl, jv_poids, zr(jv_vfQ), zr(jv_vfL),jv_dfdeQ,jv_dfdeL,&
                        zr(igeom),zk16(icompo), zi(imate), lgpg,&
                        zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
                        zr( ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
                        zr( ivarip), zr(ivectu), zr(imatuu), zi(icoret))
-
-
-
-
         else
-            call ngvlog('RIGI', option, typmod, ndim, nno,nnob,&
-                   npg,nddl, ipoids, zr(ivf), zr(ivfb),idfde,idfdeb,&
+            call ngvlog('RIGI', option, typmod, ndim, nnoQ,nnoL,&
+                   npg,nddl, jv_poids, zr(jv_vfQ), zr(jv_vfL),jv_dfdeQ,jv_dfdeL,&
                    zr(igeom),zk16(icompo), zi(imate), lgpg,&
                    zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
                    zr( ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
                    zr( ivarip), zr(ivectu), zr(imatuu), zi(icoret))
-
         endif
 
-
-
-     else if (zk16(icompo+2) (1:5) .eq. 'PETIT') then
-        call nmgvmb(ndim, nno, nnob, npg, axi,&
-                    zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
-                    ipoids, nddl, neps, b, w,&
+    else if (defo_comp(1:5) .eq. 'PETIT') then
+        call nmgvmb(ndim, nnoQ, nnoL, npg, axi,&
+                    zr(igeom), zr(jv_vfQ), zr(jv_vfL), jv_dfdeQ, jv_dfdeL,&
+                    jv_poids, nddl, neps, b, w,&
                     ni2ldc)
-                    
         call ngfint(option, typmod, ndim, nddl, neps,&
                     npg, w, b, zk16(icompo), 'RIGI',&
                     zi(imate), angmas, lgpg, zr(icarcr), zr(iinstm),&
                     zr(iinstp), zr(ideplm), zr(ideplp), ni2ldc, zr(icontm),&
                     zr(ivarim), zr(icontp), zr(ivarip), zr(ivectu), zr(imatuu),&
                     zi(icoret))
-
         deallocate(b)
         deallocate(w)
         deallocate(ni2ldc)
-     endif
+    else
+        ASSERT(ASTER_FALSE)
+    endif
 !
 end subroutine

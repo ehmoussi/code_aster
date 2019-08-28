@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,27 +16,31 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lckimp(ndim, typmod, option, mat, epsm,&
-                  deps, vim, nonloc, sig, vip,&
-                  dsidep)
+subroutine lckimp(BEHinteg,&
+                  ndim, typmod, option, mat, epsm,&
+                  deps, vim, sig, vip, dsidep)
 !
+use Behaviour_type
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvala.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     character(len=8) :: typmod
     character(len=16) :: option
     integer :: ndim, mat
-    real(kind=8) :: epsm(6), deps(6), vim(2), nonloc(3)
+    real(kind=8) :: epsm(6), deps(6), vim(2)
     real(kind=8) :: vip(2), sig(6), dsidep(6, 6, 4)
 !
 !     -----------------------------------------------------------------
 !     ENDOMMAGEMENT FRAGILE ENDO_CARRE POUR GVNO
 !     -----------------------------------------------------------------
+!     IN  BEHinteg%elga%nonloc  VARIABLES NON LOCALES
 !     IN  NDIM    DIMENSION DE L'ESPACE
 !     IN  TYPMOD  TYPE DE MODELISATION
 !     IN  OPTION  OPTION DE CALCUL
@@ -47,7 +51,6 @@ subroutine lckimp(ndim, typmod, option, mat, epsm,&
 !     IN  EPSM    CHAMP DE DEFORMATION EN T- ET PHIM=EPSM(7)
 !     IN  DEPS    INCREMENT DU CHAMP DE DEFORMATION ET DPHI=DEPS(7)
 !     IN  VIM     VARIABLES INTERNES EN T-
-!     IN  NONLOC  VARIABLES NON LOCALES
 !     OUT VIP     DENSITE DE FISSURATION
 !     OUT SIG     CONTRAINTE
 !     OUT DSIDEP  MATRICES TANGENTES
@@ -119,7 +122,7 @@ subroutine lckimp(ndim, typmod, option, mat, epsm,&
         eps(3) = coplan * (eps(1)+eps(2))
     endif
 !
-    phi = nonloc(1)
+    phi = BEHinteg%elga%nonloc(1)
 !
 !     -- ENERGIE DE DEFORMATION ET CONTRAINTE ELASTIQUE
 !

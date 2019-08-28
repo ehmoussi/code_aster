@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,16 +16,23 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmcpel(fami, kpg, ksp, poum, ndim,&
+subroutine nmcpel(BEHinteg,&
+                  fami, kpg, ksp, poum, ndim,&
                   typmod, angmas, imate, compor, crit,&
                   option, eps, sig, vi, dsidep,&
                   codret)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "asterfort/hypela.h"
 #include "asterfort/nmelnl.h"
 #include "asterfort/nmorth.h"
 #include "asterfort/rccoma.h"
 #include "asterfort/utmess.h"
+
+type(Behaviour_Integ), intent(in) :: BEHinteg
     integer :: kpg, ksp, ndim, imate, codret
     real(kind=8) :: angmas(3), crit(3), eps(6), sig(6), vi(*), dsidep(6, 6)
     character(len=*) :: fami, poum
@@ -93,7 +100,8 @@ subroutine nmcpel(fami, kpg, ksp, poum, ndim,&
         crit_loca(3) = crit(3)
         crit_loca(8) = crit(3)
         crit_loca(9) = 10
-        call nmelnl(fami, kpg, ksp, poum, ndim,&
+        call nmelnl(BEHinteg,&
+                    fami, kpg, ksp, poum, ndim,&
                     typmod, imate, compor, crit_loca, option,&
                     eps, sig, vi(1), dsidep, energi)
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lc7045(fami, kpg, ksp, ndim, imate,&
+subroutine lc7045(BEHinteg,&
+                  fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
-                  sigp, vip, wkin, typmod, icomp,&
+                  sigp, vip, typmod, icomp,&
                   nvi, dsidep, codret)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -28,6 +31,7 @@ implicit none
 !
 ! aslint: disable=W1504,W0104
 !
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     character(len=*), intent(in) :: fami
     integer, intent(in) :: kpg
     integer, intent(in) :: ksp
@@ -45,7 +49,6 @@ implicit none
     real(kind=8), intent(in) :: angmas(*)
     real(kind=8), intent(out) :: sigp(6)
     real(kind=8), intent(out) :: vip(*)
-    real(kind=8), intent(in) :: wkin(*)
     character(len=8), intent(in) :: typmod(*)
     integer, intent(in) :: icomp
     integer, intent(in) :: nvi
@@ -61,8 +64,9 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     codret = 0
-    call lcejmr(fami, kpg, ksp, ndim, imate,&
+    call lcejmr(BEHinteg,&
+                fami, kpg, ksp, ndim, imate,&
                 option, epsm, deps, sigm, sigp,&
-                dsidep, vim, vip, wkin, typmod,&
+                dsidep, vim, vip, typmod,&
                 instam, instap)
 end subroutine

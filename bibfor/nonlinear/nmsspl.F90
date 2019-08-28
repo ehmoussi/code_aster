@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
                    fami,   nno,    npg, ipoids,    ivf,&
                   idfde,  geom, typmod, option,  imate,&
                  compor,  lgpg,   crit, instam, instap,&
                   deplm, deplp, angmas,   sigm,    vim,&
                  sigp,    vip,  matuu,  vectu, codret)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
 !
 ! Non-linear Solid-Shell Petit (small) Linear deformation
 !
@@ -63,7 +67,7 @@ subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
 !
 #include "asterf_types.h"
 #include "asterfort/r8inir.h"
-!
+#include "asterfort/behaviourInit.h"
 #include "asterfort/bmatmc.h"
 #include "asterfort/btdbpr.h"
 #include "asterfort/codere.h"
@@ -82,8 +86,7 @@ subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
 #include "asterfort/tpsivp_shb.h"
 #include "asterfort/utbtab.h"
 !
-! aslint: disable=W1504
-!
+
     aster_logical, intent(in) :: hexa
     aster_logical, intent(in) :: shb6
     aster_logical, intent(in) :: shb8
@@ -122,13 +125,14 @@ subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
     real(kind=8) :: detfpl, nharm, poids
     real(kind=8) :: r, rac2, unsrac2, tmp
     real(kind=8) :: eps(6), epsi(6), deps(6), sigma(6), sigmag(6), sigm_norm(6)
-    real(kind=8) :: rbid(1), para(2)
+    real(kind=8) :: para(2)
     real(kind=8) :: dfdi(1:nno, 1:3)
     real(kind=8) :: fglo(1:3, 1:nno)
     real(kind=8) :: bg(6,81)
     real(kind=8), dimension(3,3) :: f, fp, fpl, fplt, pgl, pglt, work
     real(kind=8), dimension(6,6) :: cmatgl, cmatlo, dsidep, pglqo, work66
     real(kind=8), dimension(81,81) :: btdb
+    type(Behaviour_Integ) :: BEHinteg
 !
 ! ......................................................................
 !
@@ -145,6 +149,10 @@ subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
     do kpg = 1, npg
        cod(kpg) = 0
     end do
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     nbinco = nno*3
     resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
@@ -322,14 +330,12 @@ subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
 ! ---- Compute behaviour
 !
 !      'ndim' is set to 2 because of 'typmod' = C_PLAN hypothesis
-!       To be noticed for 3D ISO elements:
-!        - 'nwkin' is set to 10 instead of 1 here
-       call nmcomp(fami       , kpg        , 1     , 2     , typmod   ,&
-                   imate      , compor     , crit  , instam, instap   ,&
-                   6          , eps        , deps  , 6     , sigm_norm,&
-                   vim(1, kpg), option     , angmas, 1     , [0.d0]   ,&
-                   sigma      , vip(1, kpg), 36    , dsidep, 1        ,&
-                   rbid       , cod(kpg))
+       call nmcomp(BEHinteg   ,&
+                   fami, kpg, 1, 2, typmod, &
+                   imate, compor, crit, instam, instap, &
+                   6, eps, deps, 6, sigm_norm, &
+                   vim(1, kpg), option, angmas, &
+                   sigma, vip(1, kpg), 36, dsidep, cod(kpg))
 !
        if (cod(kpg) .eq. 1) then
           goto 999

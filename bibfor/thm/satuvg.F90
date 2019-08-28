@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: satuma, n, m, pr, smax, sr
-    real(kind=8) :: s1max, pcmax, dpcmax
+    real(kind=8) :: s1max, pcmax, dpcmax,pentree
     real(kind=8) :: usn, usm, b1, c1, dsatur
 !
 ! --------------------------------------------------------------------------------------------------
@@ -59,6 +59,7 @@ implicit none
     sr     = ds_thm%ds_material%hydr%sr
     smax   = ds_thm%ds_material%hydr%smax
     satuma = ds_thm%ds_material%hydr%satuma
+    pentree = ds_thm%ds_material%hydr%pentree
     m      = 1.d0-1.d0/n
     usn    = 1.d0/n
     usm    = 1.d0/m
@@ -66,8 +67,8 @@ implicit none
 !
 ! - Compute capillary pressure (and its derivative)
 !
-    call pcapvg(sr   , pr    , usm, usn, s1max,&
-                pcmax, dpcmax)
+    call pcapvg(sr   , pr, pentree, usm, usn, s1max,&
+                pcmax, dpcmax)  
 !
 ! - Regularization by first order hyperbola
 !
@@ -76,8 +77,8 @@ implicit none
 ! - Compute saturation (and its derivative)
 !
     if ((pc .gt. pcmax)) then
-        call satfvg(sr , pr, n, m, pc,&
-                    satur, dsatur)
+        call satfvg(sr , pr, n, m,pentree, pc,&
+                    satur, dsatur)  
     else
         satur  = 1.d0-b1/(c1-pc)
         dsatur = -b1/((c1-pc)**2.d0)

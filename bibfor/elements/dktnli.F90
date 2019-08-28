@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,11 @@
 
 subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
                   btsig, ktan, codret)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8vide.h"
@@ -38,6 +42,7 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
 #include "asterfort/dsxhlt.h"
 #include "asterfort/dxmate.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/gquad4.h"
 #include "asterfort/gtria3.h"
 #include "asterfort/jevech.h"
@@ -84,7 +89,7 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
     integer :: nno
     parameter (nno=4)
 !            NNO:    NOMBRE DE NOEUDS DE L'ELEMENT
-    real(kind=8) :: distn, angmas(3), wk(1)
+    real(kind=8) :: distn, angmas(3)
 !
 ! --------- VARIABLES LOCALES :
 !  -- GENERALITES :
@@ -186,6 +191,7 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
 !    integer :: iniv,
     integer :: multicel,pcontr
     character(len=4) :: fami = 'RIGI'
+    type(Behaviour_Integ) :: BEHinteg
 !     ------------------------------------------------------------------
 !
 
@@ -193,6 +199,10 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
     call elrefe_info(fami='RIGI', ndim=ndim, nno=nnoel, nnos=nnos, npg=npg,&
                      jpoids=ipoids, jcoopg=icoopg, jvf=ivf, jdfde=idfdx, jdfd2=idfd2,&
                      jgano=jgano)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     deux = 2.d0
     rac2 = sqrt(deux)
@@ -217,8 +227,7 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
 !
     call jevech('PMATERC', 'L', imate)
 !
-    call tecach('OOO', 'PCONTMR', 'L', iret, nval=7,&
-                itab=jtab)
+    call tecach('OOO', 'PCONTMR', 'L', iret, nval=7, itab=jtab)
     nbsp=jtab(7)
     icontm=jtab(1)
     ASSERT(npg.eq.jtab(3))
@@ -452,12 +461,12 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
                 do pcontr =1,5
                     zr(icontp+icpg+pcontr)=0.0
                 enddo    
-                call nmcomp('RIGI', ipg, ksp, 2, typmod,&
+                call nmcomp(BEHinteg,&
+                            'RIGI', ipg, ksp, 2, typmod,&
                             zi(imate), zk16(icompo), zr(icarcr), instm, instp,&
                             4, eps2d, deps2d, 4, sigm,&
-                            zr(ivarim+ivpg), opt, angmas, 1, [0.d0],&
-                            zr(icontp+ icpg), zr(ivarip+ivpg), 36, dsidep, 1,&
-                            wk, cod)
+                            zr(ivarim+ivpg), opt, angmas, &
+                            zr(icontp+ icpg), zr(ivarip+ivpg), 36, dsidep, cod)
 !
 !            DIVISION DE LA CONTRAINTE DE CISAILLEMENT PAR SQRT(2)
 !            POUR STOCKER LA VALEUR REELLE

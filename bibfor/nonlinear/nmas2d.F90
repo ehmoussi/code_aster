@@ -24,18 +24,21 @@ subroutine nmas2d(fami, nno, npg, ipoids, ivf,&
                   dfdi, def, sigp, vip, matuu,&
                   vectu, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/calsta.h"
+#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/codere.h"
 #include "asterfort/dfda2d.h"
 #include "asterfort/iniqs4.h"
-#include "asterfort/lcegeo.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
 !
 integer :: nno, npg, imate, lgpg, codret, cod(9), npgs
 integer :: ipoids, ivf, idfde
@@ -89,11 +92,13 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
 !.......................................................................
 !
     aster_logical :: grand, axi
-    integer :: kpg, kk, kkd, n, i, m, j, j1, kl, kpgs, proj, jvariext1, jvariext2
+    integer :: kpg, kk, kkd, n, i, m, j, j1, kl, kpgs, proj
+    integer, parameter :: ndim = 2
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
-    real(kind=8) :: poids, tmp, sig(6), rbid(1)
-    real(kind=8) :: elgeom(10, 9)
-    real(kind=8) :: rac2
+    real(kind=8) :: poids, tmp, sig(6)
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
 !     AJ. VARIABLES
     real(kind=8) :: jac, sigas(4, 4), pqx, pqy, defc(4, 4, 2)
@@ -112,11 +117,10 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
 !           0 AUCUNE
 !           1 OPTIMAL BENDING
 !           2 INCOMPRESSIBLE
-    elgeom(:,:) = 0.d0
-    proj = 2
-    rac2 = sqrt(2.d0)
-    grand = .false.
-    axi = typmod(1) .eq. 'AXIS'
+    proj        = 2
+    grand       = ASTER_FALSE
+    axi         = typmod(1) .eq. 'AXIS'
+    cod(1:npg)  = 0
 !
     do i = 1, 3
         do j = 1, 3
@@ -124,23 +128,17 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
         end do
     end do
 !
-! - Get coded integers for external state variables
+! - Initialisation of behaviour datastructure
 !
-    jvariext1 = nint(carcri(IVARIEXT1))
-    jvariext2 = nint(carcri(IVARIEXT2))
+    call behaviourInit(BEHinteg)
 !
-! - Compute intrinsic external state variables
+! - Prepare external state variables
 !
-    call lcegeo(nno   , npg      , 2        ,&
-                ipoids, ivf      , idfde    ,&
-                typmod, jvariext1, jvariext2,&
-                geom  ,&
-                deplm , deplp)
-!
-! - INITIALISATION CODES RETOURS
-    do kpg = 1, npg
-        cod(kpg) = 0
-    end do
+    call behaviourPrepExternal(carcri, typmod ,&
+                               nno   , npg    , ndim ,&
+                               ipoids, ivf    , idfde,&
+                               geom  , deplm  , deplp,&
+                               coorga)
 !
 ! - INITIALISATION QUAS4
     call iniqs4(nno, sdfde, sdfdk, poi2sg, coopg)
@@ -219,12 +217,13 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
         optios = option
     endif
 !
-    call nmcomp(fami, kpg, 1, 2, typmod,&
+    BEHinteg%elga%coorpg = coorga(kpg,:)
+    call nmcomp(BEHinteg,&
+                fami, kpg, 1, 2, typmod,&
                 imate, compor, carcri, instam, instap,&
                 6, eps, deps, 6, sign,&
-                vim(1, kpg), optios, angmas, 10, elgeom(1, kpg),&
-                sigma, vip(1, kpg), 36, dsidep, 1,&
-                rbid, cod(kpg), mult_comp)
+                vim(1, kpg), optios, angmas, &
+                sigma, vip(1, kpg), 36, dsidep, cod(kpg), mult_comp)
 !
 ! - ERREUR D'INTEGRATION
     if (cod(kpg) .eq. 1) then

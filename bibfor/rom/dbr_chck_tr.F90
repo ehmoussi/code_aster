@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ aster_logical, intent(in) :: l_reuse
 !
 ! - No reuse:
 !
-    base_init  = ds_para_tr%base_init
+    base_init = ds_para_tr%base_init
     if (l_reuse) then
         if (base_init .ne. ' ') then
             call utmess('F', 'ROM6_40')
