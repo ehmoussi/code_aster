@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,7 +50,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    
 !
     character(len=16) :: keyw
     aster_logical :: l_error
@@ -69,11 +68,9 @@ implicit none
     i_zone  = 1
     keyw    = keyw_
     keyw_type=keyw_type_
-
 !
 ! ----- Loop on contact zones
 !
-
         do i_zone = 1, nb_cont_zone
 !
 ! ----------------- Read value (depends on type)
@@ -82,7 +79,7 @@ implicit none
                     vale_i         = 0
                     vale_r         = 0.d0
                     vale_k         = ' '
-                    write (6,*)  keyw_type
+!                    write (6,*)  keyw_type
                     if (keyw_type .eq. 'I') then
                         call getvis(keywf, keyw, iocc=i_zone, scal=vale_i, nbret=noc)
                     else if (keyw_type .eq.'T') then
@@ -92,10 +89,10 @@ implicit none
                     else
                         ASSERT(.false.)
                     endif
-                    
+
                     if (noc .ne. 0) then
-                     
-                    
+
+
                         if (i_zone .eq. 1) then
                             vale_refe_i = vale_i
                             vale_refe_r = vale_r

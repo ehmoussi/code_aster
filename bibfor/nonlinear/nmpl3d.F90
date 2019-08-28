@@ -24,22 +24,22 @@ subroutine nmpl3d(fami  , nno  , npg   , ipoids, ivf   ,&
                   matsym, dfdi , def   , sigp  , vip   ,&
                   matuu , vectu, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/codere.h"
 #include "asterfort/crirup.h"
-#include "asterfort/lcegeo.h"
+#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
 !
 character(len=*), intent(in) :: fami
-integer, intent(in) :: nno
-integer, intent(in) :: npg
-integer, intent(in) :: ipoids
-integer, intent(in) :: ivf
-integer, intent(in) :: idfde
+integer, intent(in) :: nno, npg
+integer, intent(in) :: ipoids, ivf, idfde
 real(kind=8), intent(in) :: geom(3, nno)
 character(len=8), intent(in) :: typmod(*)
 character(len=16), intent(in) :: option
@@ -104,34 +104,32 @@ integer, intent(inout) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: grand
+    integer, parameter :: ndim = 3
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
     integer :: kpg, kk, i_node, i_dim, m, j, j1, kl, kkd, i_tens
-    integer :: cod(27), ndim, jvariext1, jvariext2
+    integer :: cod(27)
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sigm_norm(6)
-    real(kind=8) :: rbid(1), sig(6)
-    real(kind=8) :: poids, tmp, rac2
-    real(kind=8) :: elgeom(10, 27)
+    real(kind=8) :: sig(6)
+    real(kind=8) :: poids, tmp
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    elgeom(:,:) = 0.d0
-    rac2  = sqrt(2.d0)
-    grand = .false._1
-    do kpg = 1, npg
-        cod(kpg) = 0
-    end do
+    grand       = ASTER_FALSE
+    cod         = 0
 !
-! - Get coded integers for external state variables
+! - Initialisation of behaviour datastructure
 !
-    jvariext1 = nint(carcri(IVARIEXT1))
-    jvariext2 = nint(carcri(IVARIEXT2))
+    call behaviourInit(BEHinteg)
 !
-! - Compute intrinsic external state variables
+! - Prepare external state variables
 !
-    call lcegeo(nno   , npg      , 3        ,&
-                ipoids, ivf      , idfde    ,&
-                typmod, jvariext1, jvariext2,&
-                geom  ,&
-                deplm , deplp )
+    call behaviourPrepExternal(carcri , typmod,&
+                               nno    , npg   , ndim ,&
+                               ipoids , ivf   , idfde,&
+                               geom   , deplm , deplp,&
+                               coorga)
 !
 ! - Loop on Gauss points
 !
@@ -177,12 +175,14 @@ integer, intent(inout) :: codret
 !
 ! ----- Compute behaviour
 !
-        call nmcomp(fami       , kpg        , 1        , 3     , typmod        ,&
-                    imate      , compor     , carcri     , instam, instap        ,&
+        BEHinteg%elga%coorpg = coorga(kpg,:)
+        call nmcomp(BEHinteg   ,&
+                    fami       , kpg        , 1        , 3     , typmod        ,&
+                    imate      , compor     , carcri   , instam, instap        ,&
                     6          , eps        , deps     , 6     , sigm_norm     ,&
-                    vim(1, kpg), option     , angmas   , 10    , elgeom(1, kpg),&
-                    sigma      , vip(1, kpg), 36       , dsidep, 1             ,&
-                    rbid       , cod(kpg)   , mult_comp)
+                    vim(1, kpg), option     , angmas                           ,&
+                    sigma      , vip(1, kpg), 36       , dsidep                ,&
+                    cod(kpg)   , mult_comp)
         if (cod(kpg) .eq. 1) then
             goto 999
         endif
@@ -289,7 +289,6 @@ integer, intent(inout) :: codret
 ! - For POST_ITER='CRIT_RUPT'
 !
     if (carcri(13) .gt. 0.d0) then
-        ndim = 3
         call crirup(fami, imate, ndim, npg, lgpg,&
                     option, compor, sigp, vip, vim,&
                     instam, instap)

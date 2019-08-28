@@ -15,16 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!aslint: disable=W1504,W0104
-
-subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
-                  imate, compor, crit, instam, instap,&
-                  neps, epsm, deps, nsig, sigm,&
-                  nvi, vim, option, angmas, icomp, &
-                  temp , dtemp , predef, dpred ,&
-                  stress, statev, ndsde, dsidep, codret)
+! aslint: disable=W1504,W0104
+!
+subroutine lc0050(BEHinteg,&
+                  fami   , kpg   , ksp   , ndim  , typmod,&
+                  imate  , compor, carcri, instam, instap,&
+                  neps   , epsm  , deps  , nsig  , sigm  ,&
+                  nvi    , vim   , option, angmas, icomp ,&
+                  temp   , dtemp , predef, dpred ,&
+                  stress , statev, ndsde , dsidep, codret)
 !
 use calcul_module, only : ca_iactif_
+use Behaviour_type
 !
 implicit none
 !
@@ -46,12 +48,13 @@ implicit none
 #include "blas/dscal.h"
 #include "asterfort/umatPrepareStrain.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg, ksp, ndim
 character(len=8), intent(in) :: typmod(*)
 integer, intent(in) :: imate
 character(len=16), intent(in) :: compor(*)
-real(kind=8), intent(in) :: crit(*)
+real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: instam, instap
 integer, intent(in) :: neps, nsig, nvi
 real(kind=8), intent(in) :: epsm(6), deps(6)
@@ -75,9 +78,11 @@ integer, intent(out) :: codret
 ! UMAT : INTERFACE POUR ROUTINE D'INTEGRATION LOI DE COMPORTEMENT UMAT
 !
 ! --------------------------------------------------------------------------------------------------
-!     
-!       IN   FAMI    FAMILLE DE POINT DE GAUSS (RIGI,MASS,...)
-!            KPG,KSP NUMERO DU (SOUS)POINT DE GAUSS
+! 
+! In  BEHinteg         : parameters for integration of behaviour
+! In  fami             : Gauss family for integration point rule
+! In  kpg              : current point gauss
+! In  ksp              : current "sous-point" gauss
 !            NDIM    DIMENSION DE L ESPACE (3D=3,2D=2,1D=1)
 !            IMATE    ADRESSE DU MATERIAU CODE
 !            COMPOR    COMPORTEMENT DE L ELEMENT
@@ -193,7 +198,9 @@ integer, intent(out) :: codret
     end if
 !
 !   LECTURE DES PROPRIETES MATERIAU (MOT-CLE UMAT[_FO] DE DEFI_MATERIAU)
-    call mat_proto(fami, kpg, ksp, '+', imate, compor(1), nprops, props)
+    call mat_proto(BEHinteg,&
+                   fami    , kpg  , ksp, '+', imate, compor(1),&
+                   nprops  , props)
 !
 !   PREPARATION DES DEFORMATIONS EN ENTREE DE LA LOI
     call umatPrepareStrain(neps , epsm , deps ,&
@@ -252,7 +259,7 @@ integer, intent(out) :: codret
 !
     pnewdt=1.d0
 !!
-    pfumat = int(crit(16))
+    pfumat = int(carcri(16))
     if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
 !
         call dcopy(nsig, sigm, 1, stress, 1)

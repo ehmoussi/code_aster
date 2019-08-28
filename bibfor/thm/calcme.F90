@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,11 +26,14 @@ subroutine calcme(option, j_mater, ndim  , typmod, angl_naut,&
                   congep, vintp  ,&
                   dsdeme, retcom )
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/lcidbg.h"
+#include "asterfort/behaviourInit.h"
 !
 character(len=16), intent(in) :: option, compor(*)
 integer, intent(in) :: j_mater
@@ -81,15 +84,12 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nwkin = 1
-    integer, parameter :: nwkout = 1
-    real(kind=8), parameter :: wkin(1) = 0.d0
-    real(kind=8), parameter :: wkout(1) = 0.d0
     integer, parameter :: nsig = 6
     integer, parameter :: neps = 6
     integer, parameter :: ndsdeme = 36
     integer ::  kpg, ksp
     character(len=8) :: fami
+    type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -99,14 +99,18 @@ integer, intent(out) :: retcom
     dsdeme(:,:) = 0.d0
     retcom      = 0
 !
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
 ! - Integration of mechanical behaviour
 !
-    call nmcomp(fami          , kpg                , ksp      , ndim  , typmod        ,&
+    call nmcomp(BEHinteg      ,&
+                fami          , kpg                , ksp      , ndim  , typmod        ,&
                 j_mater       , compor             , carcri   , instam, instap        ,&
                 neps          , defgem(addeme+ndim), deps     , nsig  , congem(adcome),&
-                vintm         , option             , angl_naut, nwkin , wkin          ,&
-                congep(adcome), vintp              , ndsdeme  , dsdeme, nwkout        ,&
-                wkout         , retcom)
+                vintm         , option             , angl_naut                        ,&
+                congep(adcome), vintp              , ndsdeme  , dsdeme, retcom         )
 !
 ! - If integration has failed
 !

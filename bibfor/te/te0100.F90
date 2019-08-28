@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -165,14 +165,6 @@ character(len=16), intent(in) :: option, nomte
     if (option(1:16) .eq. 'RIGI_MECA_IMPLEX') then
         call jevech('PCONTXR', 'E', icontp)
         call dcopy(npg*4, zr(icontm), 1, zr(icontp), 1)
-    endif
-!
-! - Check
-!
-    if (defo_comp .eq. 'GROT_GDEP') then
-        if (lteatt('C_PLAN','OUI') .and. rela_comp .eq. 'ELAS') then
-            call utmess('F', 'COMPOR1_15')
-        endif
     endif
 !
 ! - HYPER-ELASTICITE

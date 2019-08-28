@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine lcbrgm(ndim, typmod, imate, epsm, deps,&
                   vim, option, sig, vip, dsidpt,&
-                  proj, cdrett)
+                  codret)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/r8inir.h"
+#include "asterfort/rcvala.h"
+#include "blas/daxpy.h"
+#include "blas/dcopy.h"
 !
 ! LOI DE COMPORTEMENT ELASTIQUE ENDO HETEROGENE
 ! (AVEC REGULARIS. DES CONTRAINTES)
@@ -47,19 +55,13 @@ subroutine lcbrgm(ndim, typmod, imate, epsm, deps,&
 !                 9   -> COORX POINTE DE FISSURE (APRES RUPT PROPA)
 !                 10  -> COORY POINTE DE FISSURE (APRES RUPT PROPA)
 ! OUT DSIDPT  : MATRICE TANGENTE
-! OUT PROJ    : NE SERT PLUS A RIEN
 ! ----------------------------------------------------------------------
-    implicit none
-#include "asterf_types.h"
-#include "asterfort/r8inir.h"
-#include "asterfort/rcvala.h"
-#include "blas/daxpy.h"
-#include "blas/dcopy.h"
+
     character(len=8) :: typmod(*)
     character(len=16) :: option
-    integer :: ndim, imate, cdrett
+    integer :: ndim, imate, codret
     real(kind=8) :: epsm(12), deps(12), vim(*)
-    real(kind=8) :: sig(6), vip(*), dsidpt(6, 6, 2), proj(6, 6)
+    real(kind=8) :: sig(6), vip(*), dsidpt(6, 6, 2)
 ! ----------------------------------------------------------------------
 !
 !
@@ -87,19 +89,13 @@ subroutine lcbrgm(ndim, typmod, imate, epsm, deps,&
 !
 ! -- OPTION ET MODELISATION
 !
-!
+    codret = 0
     resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
     rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
 !
     cplan = (typmod(1).eq.'C_PLAN  ')
     ndimsi = 2*ndim
 !
-! -- COUPURE ISOTROPE DE LA REGULARISATION SI ENDOMMAGEMENT SATURE :
-! A PREVOIR UN PROJECTEUR EVENTUEL
-!
-    if (nint(proj(1,1)) .eq. 1) then
-        cdrett=nint(proj(1,1))
-    endif
 ! -- LECTURE DES CARACTERISTIQUES ELASTIQUES
 !
     nomres(1) = 'E'
@@ -123,9 +119,9 @@ subroutine lcbrgm(ndim, typmod, imate, epsm, deps,&
         call daxpy(ndimsi, 1.d0, deps(7), 1, epsr,&
                    1)
     endif
-    do 50 k = 1, ndimsi
+    do k = 1, ndimsi
         dsidpt(k,k,1) = 0.d0
- 50 continue
+    end do
 !
 !
 !
@@ -136,9 +132,9 @@ subroutine lcbrgm(ndim, typmod, imate, epsm, deps,&
 ! -- CALCUL DES CONTRAINTES ELASTIQUES
 !
     treps = eps(1)+eps(2)+eps(3)
-    do 60 k = 1, ndimsi
+    do k = 1, ndimsi
         sigel(k) = lambda*treps*kron(k) + deuxmu*eps(k)
- 60 end do
+    end do
 !
 ! ======================================================================
 !                 INTEGRATION DE LA LOI DE COMPORTEMENT
@@ -164,9 +160,9 @@ subroutine lcbrgm(ndim, typmod, imate, epsm, deps,&
             etat = 0
         endif
 !
-        do 30 k = 1, ndimsi
+        do k = 1, ndimsi
             sig(k) = (1-d) * sigel(k)
- 30     continue
+        end do
 !
         vip(1) = d
         vip(2) = etat
@@ -184,27 +180,26 @@ subroutine lcbrgm(ndim, typmod, imate, epsm, deps,&
     if (rigi) then
         call r8inir(72, 0.d0, dsidpt, 1)
         fd = 1.d0-d
-        do 100 k = 1, 3
-            do 110 l = 1, 3
+        do k = 1, 3
+            do l = 1, 3
                 dsidpt(k,l,1) = fd*lambda
-110         continue
-100     continue
-        do 120 k = 1, ndimsi
+            end do
+        end do
+        do k = 1, ndimsi
             dsidpt(k,k,1) = dsidpt(k,k,1) + fd*deuxmu
-120     continue
-!
+        end do
         if (cplan) then
-            do 300 k = 1, ndimsi
-                if (k .eq. 3) goto 300
-                do 310 l = 1, ndimsi
-                    if (l .eq. 3) goto 310
-                    dsidpt(k,l,1)=dsidpt(k,l,1) - 1.d0/dsidpt(3,3,1)*&
-                    dsidpt(k,3,1)*dsidpt(3,l,1)
-310             continue
-300         continue
+            do k = 1, ndimsi
+                if (k .ne. 3) then
+                    do l = 1, ndimsi
+                        if (l .ne. 3) then
+                            dsidpt(k,l,1)=dsidpt(k,l,1) - 1.d0/dsidpt(3,3,1)*&
+                            dsidpt(k,3,1)*dsidpt(3,l,1)
+                        endif
+                    end do
+                endif
+            end do
         endif
-!
-!
     endif
 !
 end subroutine

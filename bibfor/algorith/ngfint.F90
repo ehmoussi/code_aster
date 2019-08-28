@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine ngfint(option, typmod, ndim, nddl, neps,&
                   npg, w, b, compor, fami,&
                   mat, angmas, lgpg, crit, instam,&
@@ -23,14 +24,16 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
                   vim, sigmap, vip, fint, matr,&
                   codret)
 !
-! aslint: disable=W1504
-    implicit none
+use Behaviour_type
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/behaviourInit.h"
 #include "blas/dgemm.h"
 #include "blas/dgemv.h"
     character(len=8) :: typmod(*)
@@ -76,8 +79,9 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
     integer :: nepg, g, i, cod(npg)
     real(kind=8) :: sigm(neps,npg), sigp(neps,npg)
     real(kind=8) :: epsm(neps,npg), epsd(neps,npg)
-    real(kind=8) :: dsidep(neps,neps,npg), dum(1)
+    real(kind=8) :: dsidep(neps,neps,npg)
     real(kind=8) :: ktgb(0:neps*npg*nddl-1)
+    type(Behaviour_Integ) :: BEHinteg
 ! ----------------------------------------------------------------------
 !
 ! - INITIALISATION
@@ -90,6 +94,10 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
     if (rigi) dsidep = 0.d0
     if (resi) sigp = 0.d0
     cod = 0
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 !
 !
@@ -111,12 +119,12 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
 !
 !    LOI DE COMPORTEMENT EN CHAQUE POINT DE GAUSS
     do g = 1, npg
-        call nmcomp(fami, g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    fami, g, 1, ndim, typmod,&
                     mat, compor, crit, instam, instap,&
                     neps, epsm(:,g), epsd(:,g), neps, sigm(:,g),&
-                    vim(1, g), option, angmas, 1, dum(1),&
-                    sigp(:,g), vip(1, g), neps*neps, dsidep(:,:,g), 1,&
-                    dum(1), cod(g))
+                    vim(1, g), option, angmas, &
+                    sigp(:,g), vip(1, g), neps*neps, dsidep(:,:,g), cod(g))
         if (cod(g) .eq. 1) goto 900
     end do
 !

@@ -16,9 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine mfront_get_mater_value(rela_comp, jvariext1, jvariext2,&
+subroutine mfront_get_mater_value(BEHinteg ,&
+                                  rela_comp, jvariext1, jvariext2,&
                                   fami     , kpg      , ksp, imate, &
                                   nprops   , props)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -27,13 +30,13 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/mat_proto.h"
-#include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/metaGetPhase.h"
 #include "asterfort/isdeco.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 character(len=16), intent(in) :: rela_comp
 integer, intent(in) :: jvariext1, jvariext2
 character(len=*), intent(in) :: fami
@@ -49,6 +52,7 @@ real(kind=8), intent(out) :: props(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  BEHinteg         : parameters for integration of behaviour
 ! In  rela_comp        : RELATION comportment
 ! In  jvariext1        : first coded integer for external state variable
 ! In  jvariext2        : second coded integer for external state variable
@@ -68,6 +72,9 @@ real(kind=8), intent(out) :: props(*)
     real(kind=8) :: zalpha
     integer      :: nb_phasis, meta_type
     integer      :: tabcod(60), variextecode(2)
+    integer, parameter :: nb_para = 3
+    real(kind=8) :: para_vale(nb_para)
+    character(len=16), parameter :: para_name(nb_para) = (/'X', 'Y', 'Z'/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,20 +84,27 @@ real(kind=8), intent(out) :: props(*)
     call isdeco(variextecode, tabcod, 60)
     nbcoef = 0
 !
+! - Coordinates of current Gauss point
+!
+    para_vale = BEHinteg%elga%coorpg
+!
+! - Get parameters
+!
     if (rela_comp .eq. 'MFRONT') then
-        call mat_proto(fami, kpg, ksp, '+', imate, rela_comp, nprops, props)
+        call mat_proto(BEHinteg,&
+                       fami    , kpg, ksp, '+', imate, rela_comp,&
+                       nprops  , props)
     else
 ! ----- Get the number and the names of the material properties
         call mfront_get_mater_prop(rela_comp, nbcoef, nomres)
         ASSERT(nbcoef <= npropmax)
 ! ----- Get the properties values (enter under 'rela_comp' in DEFI_MATERIAU)
-        call r8inir(nbcoef, r8nnem(), props, 1)
+        props(1:nprops) = r8nnem()
         if (tabcod(ZFERRITE) .eq. 1) then
             meta_type = 1
             nb_phasis = 5
-            call metaGetPhase(fami     , '+', kpg, ksp,&
-                                 meta_type,&
-                                 nb_phasis, zcold_   = zalpha)
+            call metaGetPhase(fami     , '+', kpg, ksp, meta_type,&
+                              nb_phasis, zcold_   = zalpha)
             do i = 1, nbcoef
                 if (nomres(i)(1:4) .eq. 'meta') then
                     call rcvalb(fami, 1, 1, '+', imate,&
@@ -107,9 +121,15 @@ real(kind=8), intent(out) :: props(*)
             nb_phasis = 3
             call utmess('F', 'COMPOR4_24')
         else
-            call rcvalb(fami, kpg, ksp, '+', imate, &
-                        ' ', rela_comp, 0, ' ', [0.d0], &
-                        nbcoef, nomres, propl, codrel, 1)
+            if (BEHinteg%l_varext_geom) then
+                call rcvalb(fami, kpg, ksp, '+', imate, &
+                            ' ', rela_comp, 0, ' ', [0.d0], &
+                            nbcoef, nomres, propl, codrel, 1)
+            else
+                call rcvalb(fami, kpg, ksp, '+', imate, &
+                            ' ', rela_comp, nb_para, para_name, para_vale, &
+                            nbcoef, nomres, propl, codrel, 1)
+            endif
         endif
 ! ----- Count the number of properties (but there are all compulsory)
         nprops = 0

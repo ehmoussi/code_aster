@@ -72,6 +72,8 @@ cata_msg = {
 
    27 : _("""Lecture des paramètres pour la méthode GLOUTON."""),
 
+   28 : _("""Lecture des paramètres pour la méthode d'orthogonalisation."""),
+
    29 : _("""Lecture des paramètres pour la méthode de troncature."""),
 
    30 : _("""Vérification des paramètres pour le calcul non-linéaire avec réduction de modèle."""),
@@ -141,6 +143,8 @@ cata_msg = {
    70 : _("""La dynamique est interdite avec la réduction de modèle."""),
 
    71 : _("""Le contact est interdit avec la réduction de modèle."""),
+
+   72 : _("""Orthogonalisation de la base empirique."""),
 
    80 : _("""Vérification de la conformité de la table des coordonnées réduites fournies par l'utilisateur."""),
 

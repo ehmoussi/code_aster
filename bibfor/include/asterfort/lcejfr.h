@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,12 @@
 !
 !
 interface
-    subroutine lcejfr(fami, kpg, ksp, ndim, mate,&
+    subroutine lcejfr(BEHinteg,&
+                      fami, kpg, ksp, ndim, mate,&
                       option, epsm, deps, sigma, dsidep,&
-                      vim, vip, coorot, typmod, instam,&
-                      instap)
+                      vim, vip, typmod, instam, instap)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         integer :: ndim
         character(len=*) :: fami
         integer :: kpg
@@ -35,7 +37,6 @@ interface
         real(kind=8) :: dsidep(6, 6)
         real(kind=8) :: vim(*)
         real(kind=8) :: vip(*)
-        real(kind=8) :: coorot(ndim+ndim*ndim)
         character(len=8) :: typmod(*)
         real(kind=8) :: instam
         real(kind=8) :: instap

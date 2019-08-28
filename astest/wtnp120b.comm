@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,6 +47,7 @@ PR = 2.E6
 SR = 0.4
 SMAX = 0.999
 SATUC = 1.
+PE = 0.E5
 
 #*********************************************************
 # CI
@@ -86,11 +87,11 @@ TMILLION    =3.1536E13
 #TFIN=TMILLION
 
 
-TINJ=T10_000ANS
+#TINJ=T10_000ANS
+#TFIN=T10_000ANS
 
-TFIN=T10_000ANS
-
-
+TINJ=T100_000ANS
+TFIN=T100_000ANS
 
 LISPOST=DEFI_LIST_REEL(VALE=(
           T1ANS,
@@ -98,7 +99,7 @@ LISPOST=DEFI_LIST_REEL(VALE=(
           T100ANS,
           T1000ANS,
           T10_000ANS,
-#          T100_000ANS,
+          T100_000ANS,
 #          T500_000ANS,
 #          TMILLION,
           ));
@@ -279,7 +280,8 @@ MATER=DEFI_MATERIAU(ELAS=_F(E=5.15E8,
                                 VG_PR   = PR,
                                 VG_SR   = SR,
                                 VG_SMAX = SMAX,
-                                VG_SATUR= SATUC,
+                                VG_SATUR= SATUC,       
+                                VG_PENTR = PE  ,
                                 FICKV_T=ZERO,
                                 FICKA_T= FICKWAR,
                                 FICKA_S  = FAS   ,
@@ -448,6 +450,7 @@ if METHODE == 'EF' :
                    PRECISION=1.E-2,),
            )
 
+
  TEST_RESU(RESU=_F(INST=3.1536000000E10,
                    REFERENCE='NON_DEFINI',
                    RESULTAT=U0,
@@ -460,6 +463,17 @@ if METHODE == 'EF' :
                    PRECISION=1.E-2,),
            )
 
+ TEST_RESU(RESU=_F(INST=3.1536000000E12,
+                   REFERENCE='NON_DEFINI',
+                   RESULTAT=U0,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N3',
+                   NOM_CMP='PRE1',
+                   VALE_CALC= 270374.3394703255,
+                   VALE_REFE=270374.,
+                   CRITERE='RELATIF',
+                   PRECISION=1.E-2,),
+           )
  TEST_RESU(RESU=_F(INST=3.1536000E7,
                    REFERENCE='NON_DEFINI',
                    RESULTAT=U0,
@@ -467,7 +481,7 @@ if METHODE == 'EF' :
                    NOEUD='N303',
                    NOM_CMP='PRE1',
                    VALE_CALC=-9.99999020E+05,
-                   VALE_REFE=-9.99999E5,
+                   VALE_REFE=-1.00000E6,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
            )
@@ -479,11 +493,21 @@ if METHODE == 'EF' :
                    NOEUD='N303',
                    NOM_CMP='PRE1',
                    VALE_CALC=-1.00095609E+06,
-                   VALE_REFE=-1.000960E6,
+                   VALE_REFE=-1.00000E6,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
            )
-
+ TEST_RESU(RESU=_F(INST=3.1536000000E12,
+                   REFERENCE='NON_DEFINI',
+                   RESULTAT=U0,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N303',
+                   NOM_CMP='PRE1',
+                   VALE_CALC= -30682.781052608072,
+                   VALE_REFE= -30683.,
+                   CRITERE='RELATIF',
+                   PRECISION=1.E-2,),
+           )
  TEST_RESU(RESU=_F(INST=3.1536000E7,
                    REFERENCE='NON_DEFINI',
                    RESULTAT=U0,
@@ -491,7 +515,7 @@ if METHODE == 'EF' :
                    NOEUD='N393',
                    NOM_CMP='PRE1',
                    VALE_CALC=-9.99999000E+05,
-                   VALE_REFE=-9.99999E5,
+                   VALE_REFE=-1.00000E6,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
            )
@@ -503,79 +527,18 @@ if METHODE == 'EF' :
                    NOEUD='N393',
                    NOM_CMP='PRE1',
                    VALE_CALC=-1.00009464E+06,
-                   VALE_REFE=-1.000090E6,
+                   VALE_REFE=-1.00000E6,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
            )
-
-#=================PG======================
- TEST_RESU(RESU=_F(INST=3.1536000E7,
-                   REFERENCE='NON_DEFINI',
-                   RESULTAT=U0,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N3',
-                   NOM_CMP='PRE2',
-                   VALE_CALC= 4.39542792E+03,
-                   VALE_REFE=4395.4300000000003,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-2,),
-           )
-
- TEST_RESU(RESU=_F(INST=3.1536000000E10,
-                   REFERENCE='NON_DEFINI',
-                   RESULTAT=U0,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N3',
-                   NOM_CMP='PRE2',
-                   VALE_CALC= 2.79797425E+05,
-                   VALE_REFE=2.79794E5,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-2,),
-           )
-
- TEST_RESU(RESU=_F(INST=3.1536000E7,
-                   REFERENCE='NON_DEFINI',
-                   RESULTAT=U0,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N303',
-                   NOM_CMP='PRE2',
-                   VALE_CALC= 3.42484668E-11,
-                   VALE_REFE=3.42443E-11,
-                   CRITERE='ABSOLU',),
-           )
-
- TEST_RESU(RESU=_F(INST=3.1536000000E10,
-                   REFERENCE='NON_DEFINI',
-                   RESULTAT=U0,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N303',
-                   NOM_CMP='PRE2',
-                   VALE_CALC= 2.77610196E-06,
-                   VALE_REFE=2.7881999999999998E-06,
-                   CRITERE='RELATIF',
-                   PRECISION=1.E-2,),
-           )
-
- TEST_RESU(RESU=_F(INST=3.1536000E7,
+ TEST_RESU(RESU=_F(INST=3.1536000000E12,
                    REFERENCE='NON_DEFINI',
                    RESULTAT=U0,
                    NOM_CHAM='DEPL',
                    NOEUD='N393',
-                   NOM_CMP='PRE2',
-                   VALE_CALC= 3.06647948E-16,
-                   VALE_REFE=3.9567899999999999E-16,
-                   CRITERE='ABSOLU',
-                   PRECISION=1.E-2,),
-           )
-
- TEST_RESU(RESU=_F(INST=3.1536000000E10,
-                   REFERENCE='NON_DEFINI',
-                   RESULTAT=U0,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N393',
-                   NOM_CMP='PRE2',
-                   VALE_CALC= 1.60213154E-07,
-                   VALE_REFE=1.6021400000000001E-07,
+                   NOM_CMP='PRE1',
+                   VALE_CALC= -923352.8573279586,
+                   VALE_REFE=-923353.,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
            )
@@ -583,3 +546,4 @@ if METHODE == 'EF' :
 else :
  abort()
 FIN();
+

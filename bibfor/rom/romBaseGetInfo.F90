@@ -60,7 +60,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    WRITE(6,*) 'XT: ',base
 !
 ! - Get name of COOR_REDUIT table
 !

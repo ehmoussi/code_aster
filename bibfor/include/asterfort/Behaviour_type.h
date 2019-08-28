@@ -109,7 +109,7 @@
 !
 #define ELTSIZE1  1
 #define ELTSIZE2  2
-#define COORGA    3
+#define XXXXXXXX  3
 #define GRADVELO  4
 #define HYGR      5
 #define NEUT1     6

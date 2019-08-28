@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+!
 subroutine nofipd(ndim, nno1, nno2, nno3, npg,&
                   iw, vff1, vff2, vff3, idff1,&
                   vu, vp, vpi, geomi, typmod,&
@@ -23,9 +24,10 @@ subroutine nofipd(ndim, nno1, nno2, nno3, npg,&
                   crit, instm, instp, ddlm, ddld,&
                   angmas, sigm, vim, sigp, vip,&
                   resi, rigi, vect, matr, codret)
-! person_in_charge: sebastien.fayolle at edf.fr
-! aslint: disable=W1306,W1504
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/codere.h"
@@ -37,21 +39,22 @@ subroutine nofipd(ndim, nno1, nno2, nno3, npg,&
 #include "asterfort/tanbul.h"
 #include "asterfort/uthk.h"
 #include "asterfort/utmess.h"
+#include "asterfort/behaviourInit.h"
 #include "blas/ddot.h"
-    aster_logical :: resi, rigi
-    integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, lgpg
-    integer :: mate
-    integer :: vu(3, 27), vp(27), vpi(3, 27)
-    integer :: codret
-    real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
-    real(kind=8) :: instm, instp
-    real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
-    real(kind=8) :: sigm(2*ndim+1, npg), sigp(2*ndim+1, npg)
-    real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
-    real(kind=8) :: vect(*), matr(*)
-    real(kind=8) :: crit(*)
-    character(len=8) :: typmod(*)
-    character(len=16) :: compor(*), option, nomte
+aster_logical :: resi, rigi
+integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, lgpg
+integer :: mate
+integer :: vu(3, 27), vp(27), vpi(3, 27)
+integer :: codret
+real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
+real(kind=8) :: instm, instp
+real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
+real(kind=8) :: sigm(2*ndim+1, npg), sigp(2*ndim+1, npg)
+real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
+real(kind=8) :: vect(*), matr(*)
+real(kind=8) :: crit(*)
+character(len=8) :: typmod(*)
+character(len=16) :: compor(*), option, nomte
 !-----------------------------------------------------------------------
 !          CALCUL DES FORCES INTERNES POUR LES ELEMENTS
 !          INCOMPRESSIBLES POUR LES PETITES DEFORMATIONS
@@ -114,10 +117,10 @@ subroutine nofipd(ndim, nno1, nno2, nno3, npg,&
     real(kind=8) :: ddev(6, 6), devd(6, 6), dddev(6, 6)
     real(kind=8) :: t1, t2
     real(kind=8) :: idev(6, 6)
-    real(kind=8) :: tampon(10), rbid(1)
     real(kind=8) :: alpha, trepst
     real(kind=8) :: dsbdep(2*ndim, 2*ndim)
     real(kind=8) :: stab, hk
+    type(Behaviour_Integ) :: BEHinteg
 !
     parameter    (grand = .false._1)
     data         idev / 2.d0,-1.d0,-1.d0, 0.d0, 0.d0, 0.d0,&
@@ -132,6 +135,10 @@ subroutine nofipd(ndim, nno1, nno2, nno3, npg,&
     axi = typmod(1).eq.'AXIS'
     nddl = nno1*ndim + nno2 + nno3*ndim
     rac2 = sqrt(2.d0)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     call uthk(nomte, geomi, hk, ndim, 1)
     stab = 1.d-4*hk*hk
@@ -235,12 +242,12 @@ subroutine nofipd(ndim, nno1, nno2, nno3, npg,&
         end do
 !
 ! - APPEL A LA LOI DE COMPORTEMENT
-        call nmcomp('RIGI', g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     6, epsm, deps, 6, sigmam,&
-                    vim(1, g), option, angmas, 10, tampon,&
-                    sigma, vip(1, g), 36, dsidep, 1,&
-                    rbid, cod(g))
+                    vim(1, g), option, angmas, &
+                    sigma, vip(1, g), 36, dsidep, cod(g))
 !
         if (cod(g) .eq. 1) then
             codret = 1

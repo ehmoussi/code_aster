@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -76,9 +76,9 @@ implicit none
                            nb_cont_zone)
     elseif (cont_form .eq. 5) then
         call dfc_read_lac (sdcont, keywf       , mesh, model, model_ndim  ,&
-                           ligret, nb_cont_zone)                      
+                           ligret, nb_cont_zone)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

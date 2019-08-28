@@ -15,49 +15,42 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lc0165(fami, kpg, ksp, ndim, imate,&
-                  compor, carcri, instam, instap, epsm,&
-                  deps, sigm, vim, option, angmas,&
-                  sigp, vip, wkin, typmod, &
-                  nvi, dsidep, codret)
+! person_in_charge: etienne.grimal at edf.fr
+!
+subroutine lc0165(fami  , kpg   , ksp   , ndim  , imate ,&
+                  compor, instam, instap, epsm  ,&
+                  deps  , sigm  , vim   , option,&
+                  sigp  , vip   , typmod,&
+                  dsidep, codret)
+!
 implicit none
+!
 #include "asterfort/cfluendo3d.h"
 !
-! person_in_charge: etienne.grimal at edf.fr
-! aslint: disable=W1504,W0104
-!.......................................................................
-!     BUT: LOI DE FLUAGE FLUA_PORO_BETON
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg, ksp, ndim, imate
+character(len=16), intent(in) :: compor(*)
+real(kind=8), intent(in) :: instam, instap
+real(kind=8), intent(in) :: epsm(6), deps(6), sigm(6)
+real(kind=8), intent(in) :: vim(*)
+character(len=16), intent(in) :: option
+real(kind=8), intent(out) :: sigp(6), vip(*)
+character(len=8), intent(in) :: typmod(*)
+real(kind=8), intent(out) :: dsidep(6,6)
+integer, intent(out) :: codret
 !
-!          RELATION : 'FLUA_PORO_BETON'
+! --------------------------------------------------------------------------------------------------
 !
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: ndim
-    integer, intent(in) :: imate
-    character(len=16), intent(in) :: compor(*)
-    real(kind=8), intent(in) :: carcri(*)
-    real(kind=8), intent(in) :: instam
-    real(kind=8), intent(in) :: instap
-    real(kind=8), intent(in) :: epsm(6)
-    real(kind=8), intent(in) :: deps(6)
-    real(kind=8), intent(in) :: sigm(6)
-    real(kind=8), intent(in) :: vim(*)
-    character(len=16), intent(in) :: option
-    real(kind=8), intent(in) :: angmas(*)
-    real(kind=8), intent(out) :: sigp(6)
-    real(kind=8), intent(out) :: vip(*)
-    real(kind=8), intent(in) :: wkin(*)
-    character(len=8), intent(in) :: typmod(*)
-    integer, intent(in) :: nvi
-    real(kind=8), intent(out) :: dsidep(6,6)
-    integer, intent(out) :: codret
-
-    call cfluendo3d(fami, kpg, ksp, ndim, imate,&
-                compor, instam, instap, epsm,&
-                deps, sigm, vim, option,&
-                sigp, vip, typmod,&
-                dsidep, codret) 
+! Behaviour
+!
+! FLUA_PORO_BETON
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call cfluendo3d(fami  , kpg   , ksp   , ndim  , imate,&
+                    compor, instam, instap, epsm  ,&
+                    deps  , sigm  , vim   , option,&
+                    sigp  , vip   , typmod,&
+                    dsidep, codret) 
 !
 end subroutine

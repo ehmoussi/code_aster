@@ -29,6 +29,8 @@ subroutine nmgr3d(option   , typmod    ,&
                   matsym   , matuu     , vectu    ,&
                   codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -36,13 +38,14 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/lcdetf.h"
-#include "asterfort/lcegeo.h"
+#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/nmgrtg.h"
 #include "asterfort/pk2sig.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
 !
 character(len=16), intent(in) :: option
 character(len=8), intent(in) :: typmod(*)
@@ -51,7 +54,7 @@ integer, intent(in) :: imate
 integer, intent(in) :: nno, npg, lgpg
 integer, intent(in) :: ipoids, ivf, idfde
 real(kind=8), intent(in) :: vff(*)
-character(len=16), intent(in) :: compor(*)        
+character(len=16), intent(in) :: compor(*)
 real(kind=8), intent(in) :: carcri(*)
 character(len=16), intent(in) :: mult_comp
 real(kind=8), intent(in) :: instam, instap
@@ -103,24 +106,24 @@ integer, intent(inout) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: grand, axi, cplan
-    integer :: kpg, j, jvariext1, jvariext2, jstrainexte, ndim
+    integer :: kpg, j, jstrainexte
+    integer, parameter :: ndim = 3
     real(kind=8) :: dsidep(6, 6)
     real(kind=8) :: f_prev(3, 3), f_curr(3, 3)
     real(kind=8) :: epsg_prev(6), epsg_incr(6), epsg_curr(6)
     real(kind=8) :: detf_prev, detf_curr
     real(kind=8) :: disp_curr(3*nno)
     real(kind=8) :: r, sigma(6), sigm_norm(6), poids, maxeps
-    real(kind=8) :: elgeom(10, 27), wkout(1), angl_naut(3)
+    real(kind=8) :: angl_naut(3)
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     integer :: cod(27)
     real(kind=8) :: dfdi(nno, 3), pff(6,nno,nno), def(6,nno,3) 
     character(len=16) :: rela_comp
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ndim        = 3
-    elgeom(:,:) = 0.d0
-    wkout(1)    = 0.d0
     cod(:)      = 0
     grand       = ASTER_TRUE
     axi         = ASTER_FALSE
@@ -128,18 +131,21 @@ integer, intent(inout) :: codret
     disp_curr(:) = 0.d0
     rela_comp    = compor(RELA_NAME)
 !
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
 ! - Get coded integers for external state variables
 !
-    jvariext1   = nint(carcri(IVARIEXT1))
-    jvariext2   = nint(carcri(IVARIEXT2))
     jstrainexte = nint(carcri(ISTRAINEXTE))
 !
-! - Compute intrinsic external state variables
+! - Prepare external state variables
 !
-    call lcegeo(nno      , npg      , ndim     ,&
-                ipoids   , ivf      , idfde    ,&
-                typmod   , jvariext1, jvariext2,&
-                geom_init, disp_prev, disp_incr)
+    call behaviourPrepExternal(carcri   , typmod   ,&
+                               nno      , npg      , ndim     ,&
+                               ipoids   , ivf      , idfde    ,&
+                               geom_init, disp_prev, disp_incr,&
+                               coorga)
 !
 ! - Only isotropic material !
 !
@@ -153,6 +159,7 @@ integer, intent(inout) :: codret
 !
     do kpg = 1, npg
 !
+        BEHinteg%elga%coorpg = coorga(kpg,:)
         epsg_prev(1:6) = 0.d0
         epsg_incr(1:6) = 0.d0
         epsg_curr(1:6) = 0.d0
@@ -170,7 +177,6 @@ integer, intent(inout) :: codret
                     kpg      , ipoids, ivf , idfde , disp_curr,&
                     .false._1, poids , dfdi, f_curr, epsg_curr,&
                     r)
-
 !
 ! ----- Stresses: convert Cauchy to PK2
 !
@@ -204,27 +210,29 @@ integer, intent(inout) :: codret
                 endif
             endif
 ! --------- Compute behaviour
-            call nmcomp(fami       , kpg        , 1        , ndim  , typmod        ,&
+            call nmcomp(BEHinteg   ,&
+                        fami       , kpg        , 1        , ndim  , typmod        ,&
                         imate      , compor     , carcri   , instam, instap        ,&
                         6          , epsg_prev  , epsg_incr, 6     , sigm_norm     ,&
-                        vim(1, kpg), option     , angl_naut, 10    , elgeom(1, kpg),&
-                        sigma      , vip(1, kpg), 36       , dsidep, 1             ,&
-                        wkout      , cod(kpg)   , mult_comp)
+                        vim(1, kpg), option     , angl_naut                        ,&
+                        sigma      , vip(1, kpg), 36       , dsidep                ,&
+                        cod(kpg)   , mult_comp)
             if (cod(kpg) .eq. 1) then
                 goto 999
             endif
         elseif (jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_L) then
-            call nmcomp(fami       , kpg        , 1        , ndim  , typmod        ,&
+            call nmcomp(BEHinteg   ,&
+                        fami       , kpg        , 1        , ndim  , typmod        ,&
                         imate      , compor     , carcri   , instam, instap        ,&
                         9          , f_prev     , f_curr   , 6     , sigm_norm     ,&
-                        vim(1, kpg), option     , angl_naut, 10    , elgeom(1, kpg),&
-                        sigma      , vip(1, kpg), 36       , dsidep, 1             ,&
-                        wkout      , cod(kpg)   , mult_comp)
+                        vim(1, kpg), option     , angl_naut                        ,&
+                        sigma      , vip(1, kpg), 36       , dsidep                ,&
+                        cod(kpg)   , mult_comp)
             if (cod(kpg) .eq. 1) then
                 goto 999
             endif
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
 ! ----- Compute internal forces vector and rigidity matrix
         call nmgrtg(ndim , nno   , poids , kpg   , vff      ,&

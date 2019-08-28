@@ -17,12 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lc1058(fami , kpg   , ksp   , ndim  , typmod,&
-                      imate, compor, carcri, instam, instap,&
-                      neps , epsm  , deps  , nsig  , sigm  ,&
-                      nvi  , vim   , option, angmas,&
-                      temp , dtemp , predef, dpred ,&
-                      sigp , vip   , dsidep, codret)
+    subroutine lc1058(BEHinteg,&
+                      fami    , kpg   , ksp   , ndim  , typmod,&
+                      imate   , compor, carcri, instam, instap,&
+                      neps    , epsm  , deps  , nsig  , sigm  ,&
+                      nvi     , vim   , option, angmas,&
+                      temp    , dtemp , predef, dpred ,&
+                      sigp    , vip   , dsidep, codret)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg, ksp, ndim
         character(len=8), intent(in) :: typmod(*)

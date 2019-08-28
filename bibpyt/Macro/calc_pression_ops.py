@@ -45,13 +45,15 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
         UTMESS('A', 'CALCPRESSION0_1')
         model = RESULTAT.getModel()
 
-
-    # BLINDAGE : on poursuit le calcul uniquement que si le modèle n'est pas
-    # un élément de structure
+    # BLINDAGE : on poursuit le calcul uniquement que si le groupe n'a pas
+    # d'élément de structure
     test_structure = aster.dismoi('EXI_RDM', model.getName(), 'MODELE', 'F')[-1]
-    if test_structure == 'OUI':
-        UTMESS('F', 'CALCPRESSION0_3')
-
+    # si oui dans le modele, ensuite check toutes les mailles dans les group_ma
+    if test_structure != 'NON':
+        for igrm in range(len(GROUP_MA)):
+            iret = aster.gmardm(GROUP_MA[igrm], model.getName())
+            if iret == 1:
+                UTMESS('F', 'CALCPRESSION0_3')
     dim = aster.dismoi('DIM_GEOM', model.getName(), 'MODELE', 'F')[1]
 
 # Corps de la commande

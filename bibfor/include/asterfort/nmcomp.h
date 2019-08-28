@@ -18,12 +18,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmcomp(fami, kpg, ksp, ndim, typmod,&
+    subroutine nmcomp(BEHinteg,&
+                      fami, kpg, ksp, ndim, typmod,&
                       imate, compor, carcri, instam, instap,&
                       neps, epsm, deps, nsig, sigm,&
-                      vim, option, angmas, nwkin, wkin,&
-                      sigp, vip, ndsde, dsidep, nwkout,&
-                      wkout, codret, mult_comp_, l_epsi_varc_)
+                      vim, option, angmas, &
+                      sigp, vip, ndsde, dsidep, &
+                      codret, mult_comp_, l_epsi_varc_)
+        use Behaviour_type
+        type(Behaviour_Integ) :: BEHinteg
         character(len=*) :: fami
         integer :: kpg
         integer :: ksp
@@ -42,14 +45,10 @@ interface
         real(kind=8) :: vim(*)
         character(len=16) :: option
         real(kind=8) :: angmas(*)
-        integer :: nwkin
-        real(kind=8) :: wkin(nwkin)
         real(kind=8) :: sigp(*)
         real(kind=8) :: vip(*)
         integer :: ndsde
         real(kind=8) :: dsidep(*)
-        integer :: nwkout
-        real(kind=8) :: wkout(nwkout)
         integer :: codret
         character(len=16), optional, intent(in) :: mult_comp_
         aster_logical, optional, intent(in) :: l_epsi_varc_

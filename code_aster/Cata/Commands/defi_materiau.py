@@ -2066,6 +2066,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                                            VG_PR   = SIMP(statut='f',typ='R'),
                                            VG_SMAX = SIMP(statut='f',typ='R'),
                                            VG_SATUR = SIMP(statut='f',typ='R'),
+                                           VG_PENTR = SIMP(statut='f',typ='R',defaut= 0.),
 # ---------------------------------------------------------------------------------
 # -------------------   DONNEES FACULTATIVES   ------------------------------------
 # ---------------------------------------------------------------------------------
@@ -2571,6 +2572,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                                            VG_PR    = SIMP(statut='f',typ='R'),
                                            VG_SMAX  = SIMP(statut='f',typ='R'),
                                            VG_SATUR = SIMP(statut='f',typ='R'),
+                                           VG_PENTR  = SIMP(statut='f',typ='R',defaut= 0.),
 #
                                            FICKV_T          = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
                                            FICKA_T          = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -2748,6 +2750,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                                            VG_PR    = SIMP(statut='f',typ='R'),
                                            VG_SMAX  = SIMP(statut='f',typ='R'),
                                            VG_SATUR = SIMP(statut='f',typ='R'),
+                                           VG_PENTR  = SIMP(statut='f',typ='R',defaut= 0.),
 #
                                            FICKV_T          = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
 # ---------------------------------------------------------------------------------
@@ -2936,6 +2939,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                                            VG_PR    = SIMP(statut='f',typ='R'),
                                            VG_SMAX  = SIMP(statut='f',typ='R'),
                                            VG_SATUR = SIMP(statut='f',typ='R'),
+                                           VG_PENTR  = SIMP(statut='f',typ='R',defaut= 0.),
 #
                                            FICKV_T          = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),
                                            FICKA_T          = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule)),

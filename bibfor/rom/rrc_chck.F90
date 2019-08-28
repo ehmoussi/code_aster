@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ implicit none
 #include "asterfort/romModeChck.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -38,7 +38,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters
+! IO  ds_para          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,7 +50,11 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     if (ds_para%tabl_name .eq. ' ') then
-        call utmess('F', 'ROM6_4')
+        if (ds_para%l_tabl_user) then
+            ds_para%tabl_name = ds_para%tabl_user
+        else
+            call utmess('F', 'ROM6_4')
+        endif
     endif
 !
 ! - Get parameters

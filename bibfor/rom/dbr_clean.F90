@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ implicit none
 #include "asterfort/dbr_clean_pod.h"
 #include "asterfort/dbr_clean_rb.h"
 #include "asterfort/dbr_clean_tr.h"
+#include "asterfort/dbr_clean_ortho.h"
 !
 type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
@@ -48,8 +49,10 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
         call dbr_clean_rb(ds_para)
     elseif (ds_para%operation .eq. 'TRONCATURE') then
         call dbr_clean_tr(ds_para)
+    elseif (ds_para%operation .eq. 'ORTHO') then
+        call dbr_clean_ortho(ds_para)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

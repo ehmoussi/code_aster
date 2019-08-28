@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine vdxnlr(option, nomte, xi, rig, nb1,&
                   codret)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8vide.h"
 #include "asterfort/btdfn.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/btdmsn.h"
 #include "asterfort/btdmsr.h"
 #include "asterfort/btkb.h"
@@ -69,9 +74,10 @@ subroutine vdxnlr(option, nomte, xi, rig, nb1,&
     real(kind=8) :: deplm(42), deplp(42)
     real(kind=8) :: epsi(5), depsi(5), eps2d(4), deps2d(4)
     real(kind=8) :: dtild(5, 5), sgmtd(5), effint(42), vecl(48), vecll(51)
-    real(kind=8) :: sign(4), sigma(4), dsidep(6, 6), angmas(3), rbid(1)
+    real(kind=8) :: sign(4), sigma(4), dsidep(6, 6), angmas(3)
     real(kind=8) :: matc(5,5),valpar
     aster_logical :: vecteu, matric
+    type(Behaviour_Integ) :: BEHinteg
 !-----------------------------------------------------------------------
     integer :: i, ib, icarcr, icompo, icontm, icontp, icou
     integer :: ideplm, ideplp, iinstm, iinstp, imate, inte, intsn
@@ -93,6 +99,10 @@ subroutine vdxnlr(option, nomte, xi, rig, nb1,&
     nbv = 2
     nomres(1) = 'E'
     nomres(2) = 'NU'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     call jevete('&INEL.'//nomte(1:8)//'.DESI', ' ', lzi)
     nb1 = zi(lzi-1+1)
@@ -281,12 +291,12 @@ subroutine vdxnlr(option, nomte, xi, rig, nb1,&
                 cisail=0.d0
 
                 if (phenom.eq.'ELAS') then
-                    call nmcomp('MASS', intsn, ksp, 2, typmod,&
+                    call nmcomp(BEHinteg,&
+                                'MASS', intsn, ksp, 2, typmod,&
                                 zi(imate), zk16(icompo), zr(icarcr), zr(iinstm), zr(iinstp),&
                                 4, eps2d, deps2d, 4, sign,&
-                                zr(ivarim+k2), option, angmas, 1, [0.d0],&
-                                sigma, zr(ivarip+k2), 36, dsidep, 1,&
-                                rbid, cod)
+                                zr(ivarim+k2), option, angmas, &
+                                sigma, zr(ivarip+k2), 36, dsidep, cod)
 !           COD=1 : ECHEC INTEGRATION LOI DE COMPORTEMENT
 !           COD=3 : C_PLAN DEBORST SIGZZ NON NUL
                     if (cod .ne. 0) then

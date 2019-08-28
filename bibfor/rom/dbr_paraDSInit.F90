@@ -18,7 +18,8 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1403
 !
-subroutine dbr_paraDSInit(ds_para_pod, ds_para_rb, ds_para_tr, ds_para)
+subroutine dbr_paraDSInit(ds_para_pod, ds_para_rb, ds_para_tr, ds_para_ortho,&
+                          ds_para)
 !
 use Rom_Datastructure_type
 !
@@ -29,6 +30,7 @@ implicit none
 type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
 type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
 type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
+type(ROM_DS_ParaDBR_ORTHO), intent(in) :: ds_para_ortho
 type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
@@ -42,12 +44,14 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 ! In  ds_para_pod      : datastructure for POD parameters
 ! In  ds_para_rb       : datastructure for RB parameters
 ! In  ds_para_tr       : datastructure for truncation parameters
+! In  ds_para_ortho    : datastructure for orthogonalization parameters
 ! Out ds_para          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_para%para_pod = ds_para_pod
-    ds_para%para_rb  = ds_para_rb
-    ds_para%para_tr  = ds_para_tr
+    ds_para%para_pod   = ds_para_pod
+    ds_para%para_rb    = ds_para_rb
+    ds_para%para_tr    = ds_para_tr
+    ds_para%para_ortho = ds_para_ortho
 !
 end subroutine
