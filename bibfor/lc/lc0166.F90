@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,35 +15,40 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lc0166(fami, kpg, ksp, ndim, imate,&
-                  compor,  instam, instap, epsm,&
-                  deps, sigm, vim, option, &
-                  sigp, vip,  typmod, &
-                   dsidep, codret)
-implicit none
-#include "asterfort/cfluendo3d.h"
-
-!
 ! person_in_charge: etienne.grimal at edf.fr
-!.......................................................................
-!     BUT: LOI D'ENDOMMAGEMENT ENDO_PORO_BETON
 !
-!          RELATION : 'ENDO_PORO_BETON'
-    integer :: imate, ndim, kpg, ksp, codret
-    real(kind=8) :: instam, instap
-    real(kind=8) :: epsm(6), deps(6)
-    real(kind=8) :: sigm(6), sigp(6)
-    real(kind=8) :: vim(*), vip(*)
-    real(kind=8) :: dsidep(6, 6)
-    character(len=16) :: compor(*), option
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
+subroutine lc0166(fami  , kpg   , ksp   , ndim  , imate,&
+                  compor, instam, instap, epsm  ,&
+                  deps  , sigm  , vim   , option,&
+                  sigp  , vip   , typmod,&
+                  dsidep, codret)
+!
+implicit none
+!
+#include "asterfort/cfluendo3d.h"
+!
+character(len=*), intent(in) :: fami
+integer, intent(in) :: imate, ndim, kpg, ksp
+real(kind=8), intent(in)  :: instam, instap
+real(kind=8), intent(in)  :: epsm(6), deps(6)
+real(kind=8), intent(in)  :: sigm(6), vim(*)
+real(kind=8), intent(out) :: vip(*), sigp(6), dsidep(6, 6)
+character(len=16), intent(in) :: compor(*), option
+character(len=8), intent(in) :: typmod(*)
+integer, intent(out) :: codret
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Behaviour
+!
+! ENDO_PORO_BETON
+!
+! --------------------------------------------------------------------------------------------------
 !
     call cfluendo3d(fami, kpg, ksp, ndim, imate,&
-                compor, instam, instap, epsm,&
-                deps, sigm, vim, option,&
-                sigp, vip, typmod,&
-                dsidep, codret)
+                    compor, instam, instap, epsm,&
+                    deps, sigm, vim, option,&
+                    sigp, vip, typmod,&
+                    dsidep, codret)
 !
 end subroutine

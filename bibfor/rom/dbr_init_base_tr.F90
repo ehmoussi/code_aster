@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -89,6 +89,14 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         endif
         call rscrsd('G', base, 'MODE_EMPI', ds_para_tr%ds_empi_init%nb_mode)
         call romBaseDSCopy(ds_para_tr%ds_empi_init, base, ds_empi)
+    endif
+!
+! - If reuse: check that name is the name between output result end keyword BASE
+!
+    if (l_reuse) then
+        if (ds_para_tr%base_init .ne. base) then
+            call utmess('F', 'ROM6_40')
+        endif
     endif
 !
 end subroutine

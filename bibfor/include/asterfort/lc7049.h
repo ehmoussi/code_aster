@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,11 +21,14 @@
 ! aslint: disable=W1504
 !
 interface
-    subroutine lc7049(fami, kpg, ksp, ndim, imate,&
+    subroutine lc7049(BEHinteg,&
+                      fami, kpg, ksp, ndim, imate,&
                       compor, carcri, instam, instap, epsm,&
                       deps, sigm, vim, option, angmas,&
-                      sigp, vip, wkinout, typmod, icomp,&
+                      sigp, vip, typmod, icomp,&
                       nvi, dsidep, codret)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(inout) :: BEHinteg 
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
         integer, intent(in) :: ksp
@@ -43,7 +46,6 @@ interface
         real(kind=8), intent(in) :: angmas(3)
         real(kind=8), intent(out) :: sigp(6)
         real(kind=8), intent(out) :: vip(*)
-        real(kind=8), intent(inout) :: wkinout(*)
         character(len=8), intent(in) :: typmod(*)
         integer, intent(in) :: icomp
         integer, intent(in) :: nvi

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,25 +16,29 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lc0001(fami, kpg, ksp, ndim, imate,&
+subroutine lc0001(BEHinteg,&
+                  fami, kpg, ksp, ndim, imate,&
                   neps, deps, nsig, sigm, option,&
                   angmas, sigp, vip, typmod, ndsde,&
                   dsidep, codret)
-    implicit none
+use Behaviour_type
+!
+implicit none
+!
 #include "asterfort/assert.h"
 #include "asterfort/nmelas.h"
 #include "asterfort/nmorth.h"
 #include "asterfort/rccoma.h"
-    integer :: imate, ndim, kpg, ksp, codret, icodre
-    integer :: neps, nsig, ndsde
-    real(kind=8) :: angmas(3), deps(neps), sigm(nsig), sigp(nsig)
-    real(kind=8) :: vip(1), dsidep(ndsde)
-    character(len=16) :: option
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
-    character(len=16) :: mcmate
 !
-
+type(Behaviour_Integ), intent(in) :: BEHinteg
+integer :: imate, ndim, kpg, ksp, codret, icodre
+integer :: neps, nsig, ndsde
+real(kind=8) :: angmas(3), deps(neps), sigm(nsig), sigp(nsig)
+real(kind=8) :: vip(1), dsidep(ndsde)
+character(len=16) :: option
+character(len=8) :: typmod(*)
+character(len=*) :: fami
+character(len=16) :: mcmate
 !
 ! ======================================================================
 !.......................................................................
@@ -78,9 +82,6 @@ subroutine lc0001(fami, kpg, ksp, ndim, imate,&
 !                             'FULL_MECA'     > DSIDEP(T+DT) , SIG(T+DT)
 !                             'RAPH_MECA'     > SIG(T+DT)
 !                             'RIGI_MECA_IMPLEX' > DSIDEP(T), SIGEXTR
-!               WKIN  TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES
-!                       AUX LOIS DE COMPORTEMENT (DIMENSION MAXIMALE
-!                       FIXEE EN DUR)
 !               ANGMAS
 !       OUT     SIGP    CONTRAINTE A T+DT
 !               VIP    VARIABLES INTERNES A T+DT + INDICATEUR ETAT T+DT
@@ -96,7 +97,8 @@ subroutine lc0001(fami, kpg, ksp, ndim, imate,&
 !
     if (mcmate .eq. 'ELAS') then
 !
-        call nmelas(fami, kpg, ksp, ndim, typmod,&
+        call nmelas(BEHinteg,&
+                    fami, kpg, ksp, ndim, typmod,&
                     imate, deps, sigm, option, sigp,&
                     vip, dsidep, codret)
 !

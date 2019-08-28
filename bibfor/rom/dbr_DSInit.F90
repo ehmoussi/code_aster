@@ -45,12 +45,13 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(ROM_DS_ParaDBR_POD) :: ds_para_pod
-    type(ROM_DS_ParaDBR_RB)  :: ds_para_rb
-    type(ROM_DS_ParaDBR_TR)  :: ds_para_tr
-    type(ROM_DS_Solve)       :: ds_solveROM, ds_solveDOM
-    type(ROM_DS_MultiPara)   :: ds_multipara
-    type(ROM_DS_AlgoGreedy)  :: ds_algoGreedy
+    type(ROM_DS_ParaDBR_POD)   :: ds_para_pod
+    type(ROM_DS_ParaDBR_RB)    :: ds_para_rb
+    type(ROM_DS_ParaDBR_TR)    :: ds_para_tr
+    type(ROM_DS_ParaDBR_ORTHO) :: ds_para_ortho
+    type(ROM_DS_Solve)         :: ds_solveROM, ds_solveDOM
+    type(ROM_DS_MultiPara)     :: ds_multipara
+    type(ROM_DS_AlgoGreedy)    :: ds_algoGreedy
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,6 +75,7 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! - Initialization of datastructures for parameters
 !
-    call dbr_paraDSInit(ds_para_pod, ds_para_rb, ds_para_tr, ds_para)
+    call dbr_paraDSInit(ds_para_pod, ds_para_rb, ds_para_tr, ds_para_ortho,&
+                        ds_para)
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,6 @@ integer, intent(out) :: istrainexte
 !                        0 - MFront is small strains
 !                        1 - MFront use F (SIMO_MIEHE)
 !                        1 - MFront use F (SIMO_MIEHE)
-
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,26 +62,6 @@ integer, intent(out) :: istrainexte
     istrainexte  = 0
 !
     if (l_mfront_offi .or. l_mfront_proto) then
-! ----- Check compatibility
-        if (strain_model .eq. MFRONT_STRAIN_SMALL) then
-            if (defo_comp .ne. 'PETIT' .and.&
-                defo_comp .ne. 'PETIT_REAC' .and.&
-                defo_comp .ne. 'GDEF_LOG' .and.&
-                defo_comp .ne. 'GROT_GDEP' ) then
-                call utmess('F', 'COMPOR4_35', sk = defo_comp)
-            endif
-        endif
-        if (strain_model .eq. MFRONT_STRAIN_SIMOMIEHE) then
-            if (defo_comp .ne. 'SIMO_MIEHE' ) then
-                call utmess('F', 'COMPOR4_35', sk = defo_comp)
-            endif
-        endif
-        if (strain_model .eq. MFRONT_STRAIN_GROTGDEP) then
-            if (defo_comp .ne. 'GROT_GDEP' .and.&
-                defo_comp .ne. 'PETIT' ) then
-                call utmess('F', 'COMPOR4_35', sk = defo_comp)
-            endif
-        endif
 ! ----- Indicator for large strains
         istrainexte = MFRONT_STRAIN_SMALL
         if (strain_model .eq. MFRONT_STRAIN_SIMOMIEHE ) then

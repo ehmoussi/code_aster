@@ -31,6 +31,33 @@ implicit none
 !
 
 !
+! - Type: for integration point parameters
+! 
+    type Behaviour_Elga
+! ----- Coordinates of current Gauss point
+        real(kind=8) :: coorpg(3) = 0.d0
+! ----- For *_JOINT_HYME models : kinematic matrix
+        real(kind=8) :: rotpg(3*3) = 0.d0
+! ----- For CABLE_GAINE elements : tension of the cable
+        real(kind=8) :: tenscab = 0.d0
+! ----- For CABLE_GAINE elements : curvature of the cable
+        real(kind=8) :: curvcab = 0.d0
+! ----- For GRAD_VARI models : non-local variables PHI
+        real(kind=8) :: nonloc(2) = 0.d0
+! ----- For CZM_*_MIX behaviours : Lagrange penalty coefficient
+        real(kind=8) :: r = 0.d0
+    end type Behaviour_Elga
+
+!
+! - Type: for integration of behaviour
+! 
+    type Behaviour_Integ
+! ----- Integration point parameters
+        type(Behaviour_Elga)  :: elga
+! ----- Flag when GEOM external state variable is present
+        aster_logical         :: l_varext_geom = ASTER_FALSE
+    end type Behaviour_Integ
+!
 ! - Type: for external comportement
 ! 
     type Behaviour_External
@@ -58,27 +85,27 @@ implicit none
 ! 
     type Behaviour_Parameters
 ! ----- Keyword RELATION
-        character(len=16) :: rela_comp = ' '
+        character(len=16) :: rela_comp       = ' '
 ! ----- Keyword DEFORMATION
-        character(len=16) :: defo_comp = ' '
+        character(len=16) :: defo_comp       = ' '
 ! ----- Keyword COMP_INCR/COMP_ELAS
-        character(len=16) :: type_comp = ' '
+        character(len=16) :: type_comp       = ' '
 ! ----- Keyword DEBORST
-        character(len=16) :: type_cpla = ' '
+        character(len=16) :: type_cpla       = ' '
 ! ----- Keyword KIT
-        character(len=16) :: kit_comp(4) = ' '
+        character(len=16) :: kit_comp(4)     = ' '
 ! ----- Keyword COMPOR
-        character(len=16) :: mult_comp = ' '
+        character(len=16) :: mult_comp       = ' '
 ! ----- Keyword POST_ITER
-        character(len=16) :: post_iter = ' '
+        character(len=16) :: post_iter       = ' '
 ! ----- Type of strain transmitted to the behaviour law : 'OLD', 'MECANIQUE' or 'TOTALE'
-        character(len=16) :: defo_ldc
+        character(len=16) :: defo_ldc        = ' '
 ! ----- Total number of internal state variables
-        integer           :: nb_vari = 0
+        integer           :: nb_vari         = 0
 ! ----- Number of internal state variables for kit
         integer           :: nb_vari_comp(4) = 0
 ! ----- Index of law for kit
-        integer           :: nume_comp(4) = 0
+        integer           :: nume_comp(4)    = 0
     end type Behaviour_Parameters
 !
 ! - Type: criteria for behaviour

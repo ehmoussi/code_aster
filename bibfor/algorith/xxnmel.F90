@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+! person_in_charge: samuel.geniaut at edf.fr
+!
 subroutine xxnmel(poum, elrefp, elrese, ndim, coorse,&
                   igeom, he, nfh, ddlc, ddlm,&
                   nnops, nfe, basloc, nnop, npg,&
@@ -24,8 +26,10 @@ subroutine xxnmel(poum, elrefp, elrese, ndim, coorse,&
                   sig, vi, matuu, ivectu, codret,&
                   nfiss, heavn, jstno)
 !
-! aslint: disable=W1306,W1504
-    implicit none
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -45,21 +49,21 @@ subroutine xxnmel(poum, elrefp, elrese, ndim, coorse,&
 #include "asterfort/xcalc_heav.h"
 #include "asterfort/xcalc_code.h"
 #include "asterfort/xcalfev_wrap.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/xkamat.h"
 #include "asterfort/iimatu.h"
 #include "asterfort/xnbddl.h"
-    integer :: nnop, nfiss, codret, ddlc, ddlm
-    integer :: idecpg, idepl, igeom, imate, ivectu, nnops
-    integer :: lgpg, ndim, nfe, nfh, npg, heavn(nnop, 5)
-    integer :: jstno
-    real(kind=8) :: basloc(3*ndim*nnop), coorse(*), crit(*), he(nfiss)
-    real(kind=8) :: lsn(nnop), lst(nnop), sig(2*ndim, npg)
-    real(kind=8) :: matuu(*), vi(lgpg, npg)
-    character(len=*) :: poum
-    character(len=8) :: elrefp, elrese, typmod(*), fami_se
-    character(len=16) :: option, compor(*)
 !
-! person_in_charge: samuel.geniaut at edf.fr
+integer :: nnop, nfiss, codret, ddlc, ddlm
+integer :: idecpg, idepl, igeom, imate, ivectu, nnops
+integer :: lgpg, ndim, nfe, nfh, npg, heavn(nnop, 5)
+integer :: jstno
+real(kind=8) :: basloc(3*ndim*nnop), coorse(*), crit(*), he(nfiss)
+real(kind=8) :: lsn(nnop), lst(nnop), sig(2*ndim, npg)
+real(kind=8) :: matuu(*), vi(lgpg, npg)
+character(len=*) :: poum
+character(len=8) :: elrefp, elrese, typmod(*), fami_se
+character(len=16) :: option, compor(*)
 !
 !.......................................................................
 !
@@ -114,6 +118,7 @@ subroutine xxnmel(poum, elrefp, elrese, ndim, coorse,&
     integer :: nbsig
     real(kind=8) :: bary(3), repere(7), d(36), instan
     aster_logical :: grdepl, axi, cplan
+    type(Behaviour_Integ) :: BEHinteg
 !
     integer :: indi(6), indj(6)
     real(kind=8) :: rind(6), rac2, angmas(3)
@@ -124,6 +129,10 @@ subroutine xxnmel(poum, elrefp, elrese, ndim, coorse,&
     data    rac2 / 1.4142135623731d0 /
     data    angmas /0.d0, 0.d0, 0.d0/
 !--------------------------------------------------------------------
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 !     ATTENTION, EN 3D, ZR(IDEPL) ET ZR(VECTU) SONT DIMENSIONNÉS DE
 !     TELLE SORTE QU'ILS NE PRENNENT PAS EN COMPTE LES DDL SUR LES
@@ -441,7 +450,8 @@ subroutine xxnmel(poum, elrefp, elrese, ndim, coorse,&
 !       DE DONNER LA POSITION DU POINT DE GAUSS COURRANT DANS LA
 !       FAMILLE 'XFEM'
         ipg = idecpg + kpg
-        call nmcpel('XFEM', ipg, 1, poum, ndim,&
+        call nmcpel(BEHinteg,&
+                    'XFEM', ipg, 1, poum, ndim,&
                     typmod, angmas, imate, compor, crit,&
                     option, eps, sigma, vi(1, kpg), dsidep,&
                     codret)

@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/dbr_para_info_pod.h"
 #include "asterfort/dbr_para_info_rb.h"
 #include "asterfort/dbr_para_info_tr.h"
+#include "asterfort/dbr_para_info_ortho.h"
 !
 type(ROM_DS_ParaDBR), intent(in) :: ds_para
 !
@@ -82,6 +83,9 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
 
     elseif (operation .eq. 'TRONCATURE') then
         call dbr_para_info_tr(ds_para%para_tr)
+
+    elseif (operation .eq. 'ORTHO') then
+        call dbr_para_info_ortho(ds_para%para_ortho)
 
     else
         ASSERT(ASTER_FALSE)

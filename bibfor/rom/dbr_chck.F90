@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/dbr_chck_pod.h"
 #include "asterfort/dbr_chck_rb.h"
 #include "asterfort/dbr_chck_tr.h"
+#include "asterfort/dbr_chck_ortho.h"
 !
 type(ROM_DS_ParaDBR), intent(in) :: ds_para
 !
@@ -60,6 +61,8 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
         call dbr_chck_rb(ds_para%operation, ds_para%para_rb, ds_para%l_reuse)
     elseif (ds_para%operation .eq. 'TRONCATURE') then
         call dbr_chck_tr(ds_para%para_tr, ds_para%l_reuse)
+    elseif (ds_para%operation .eq. 'ORTHO') then
+        call dbr_chck_ortho(ds_para%para_ortho, ds_para%l_reuse)
     else
         ASSERT(.false.)
     endif

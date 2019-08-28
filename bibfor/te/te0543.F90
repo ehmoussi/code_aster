@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
-character(len=16) :: option, nomte
+character(len=16), intent(in) :: option, nomte
 ! ......................................................................
 !    - FONCTION REALISEE:  CALCUL DES COEFFICIENTS A0 ET A1
 !                          POUR LE PILOTAGE PAR CRITERE ELASTIQUE
@@ -49,6 +49,7 @@ character(len=16) :: option, nomte
     integer :: jgano, ndim, nno, nnos, npg, lgpg, jtab(7), itype
     integer :: ipoids, ivf, idfde, igeom, imate, jvariext1, jvariext2, icarcr
     integer :: icontm, ivarim, icopil, iborne, ictau
+    real(kind=8) :: coorga(27,3)
     integer :: ideplm, iddepl, idepl0, idepl1, icompo, iret
 !
 ! - TYPE DE MODELISATION
@@ -109,10 +110,10 @@ character(len=16) :: option, nomte
     if (compor .eq. 'BETON_DOUBLE_DP') then
         jvariext1 = nint(zr(icarcr-1+IVARIEXT1))
         jvariext2 = nint(zr(icarcr-1+IVARIEXT2))
-        call lcegeo(nno      , npg      , ndim     ,&
-                    ipoids   , ivf      , idfde    ,&
-                    typmod   , jvariext1, jvariext2,&
-                    zr(igeom),&
+        call lcegeo(nno       , npg      , ndim     ,&
+                    ipoids    , ivf      , idfde    ,&
+                    typmod    , jvariext1, jvariext2,&
+                    zr(igeom) , coorga   ,&
                     zr(ideplm), zr(iddepl))
     endif
 !

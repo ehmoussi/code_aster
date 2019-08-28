@@ -17,12 +17,15 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine lc1058(fami , kpg   , ksp   , ndim  , typmod,&
-                  imate, compor, carcri, instam, instap,&
-                  neps , epsm  , deps  , nsig  , sigm  ,&
-                  nvi  , vim   , option, angmas,&
-                  temp , dtemp , predef, dpred ,&
-                  sigp , vip   , dsidep, codret)
+subroutine lc1058(BEHinteg,&
+                  fami    , kpg   , ksp   , ndim  , typmod,&
+                  imate   , compor, carcri, instam, instap,&
+                  neps    , epsm  , deps  , nsig  , sigm  ,&
+                  nvi     , vim   , option, angmas,&
+                  temp    , dtemp , predef, dpred ,&
+                  sigp    , vip   , dsidep, codret)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -43,6 +46,7 @@ implicit none
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg, ksp, ndim
 character(len=8), intent(in) :: typmod(*)
@@ -73,6 +77,7 @@ integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  BEHinteg         : parameters for integration of behaviour
 ! In  fami             : Gauss family for integration point rule
 ! In  kpg              : current point gauss
 ! In  ksp              : current "sous-point" gauss
@@ -138,7 +143,8 @@ integer, intent(out) :: codret
 !
 ! - Get material properties
 !
-    call mfront_get_mater_value(rela_comp, jvariext1, jvariext2,&
+    call mfront_get_mater_value(BEHinteg ,&
+                                rela_comp, jvariext1, jvariext2,&
                                 fami     , kpg      , ksp      , imate,&
                                 nprops   , props)
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,8 +57,7 @@ character(len=16), intent(out) :: type_cpla
 !
     integer :: iret
     character(len=1) :: model_dim_s
-    character(len=16) :: principal, model_thm, model_type, answer
-    aster_logical :: l_axis, l_dplan
+    character(len=16) :: principal, model_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,21 +70,15 @@ character(len=16), intent(out) :: type_cpla
 !
     call teattr('C', 'TYPMOD'         , model_type , iret, typel = elem_type_name)
     call teattr('C', 'PRINCIPAL'      , principal  , iret, typel = elem_type_name)
-    call teattr('C', 'TYPMOD2'        , model_thm  , iret, typel = elem_type_name)
     call teattr('C', 'DIM_TOPO_MODELI', model_dim_s, iret, typel = elem_type_name)
     read(model_dim_s,'(I1)') model_dim
-    call teattr('C', 'AXIS           ', answer, iret, typel = elem_type_name)
-    l_axis  = answer .eq. 'OUI'
-    call teattr('C', 'D_PLAN         ', answer, iret, typel = elem_type_name)
-    l_dplan = answer .eq. 'OUI'
 !
 ! - Select modelisation for MFront
 !
     if (principal .eq. 'OUI') then
-        if ( model_type .eq. 'COMP3D' ) then
+        if ( model_type .eq. '3D' ) then
             model_mfront = '_Tridimensional'
         elseif ( model_type .eq. 'C_PLAN' ) then
-! Deborst algorithm
             if (l_mfront_cp) then
                 model_mfront = '_PlaneStress'
                 type_cpla    = 'ANALYTIQUE'
@@ -98,25 +91,10 @@ character(len=16), intent(out) :: type_cpla
             model_mfront = '_PlaneStrain'
         elseif ( model_type .eq. 'AXIS' ) then
             model_mfront = '_Axisymmetrical'
-        elseif ( model_type .eq. 'COMP1D' ) then
-! Deborst algorithm
+        elseif ( model_type .eq. '1D' ) then
             model_mfront = '_Axisymmetrical'
             model_dim    = 2
             type_cpla    = 'DEBORST'
-        elseif ( model_thm .eq. 'THM' ) then
-            if (model_dim .eq. 2) then
-                if (l_axis) then
-                    model_mfront = '_Axisymmetrical'
-                elseif (l_dplan) then
-                    model_mfront = '_PlaneStrain'
-                else
-                    ASSERT(ASTER_FALSE)
-                endif
-            elseif (model_dim .eq. 3) then
-                model_mfront = '_Tridimensional'
-            else
-                ASSERT(ASTER_FALSE)
-            endif
         else
             model_mfront = model_type
             codret = 2

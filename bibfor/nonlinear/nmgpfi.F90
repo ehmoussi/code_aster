@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
                   sigm, vim, sigp, vip, fint,&
                   matr, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -37,6 +39,7 @@ implicit none
 #include "asterfort/nmepsi.h"
 #include "asterfort/nmgpin.h"
 #include "asterfort/nmmalu.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"
@@ -93,11 +96,11 @@ real(kind=8) :: matr(*), fint(*)
     integer :: lij(3, 3), vij(3, 3), ia, ja, na, ib, jb, nb, g, kk, os, ija
     integer :: nddl, ndu, vu(3, 27)
     integer :: cod(27)
-    real(kind=8) :: tampon(10), wkout(1)
     real(kind=8) :: geomm(3*27), geomp(3*27), r, w
     real(kind=8) :: jm, jd, jp, fm(3, 3), fd(3, 3), coef
     real(kind=8) :: sigmam(6), taup(6), dsidep(6, 3, 3)
     real(kind=8) :: rac2, rbid, tbid(6), t1, t2
+    type(Behaviour_Integ) :: BEHinteg
 !
     parameter (grand = .true._1)
     data    vij  / 1, 4, 5,&
@@ -110,6 +113,10 @@ real(kind=8) :: matr(*), fint(*)
     rbid = r8vide()
     rac2 = sqrt(2.d0)
     call r8inir(6, rbid, tbid, 1)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     ASSERT(nno.le.27)
     if (typmod(1) .eq. 'C_PLAN') then
@@ -137,7 +144,6 @@ real(kind=8) :: matr(*), fint(*)
 !
     call r8inir(6, 0.d0, taup, 1)
     call r8inir(54, 0.d0, dsidep, 1)
-    call r8inir(10, 0.d0, tampon, 1)
     cod(:)=0
 !
 !
@@ -182,12 +188,12 @@ real(kind=8) :: matr(*), fint(*)
         call dcopy(ndim*2, sigm(1, g), 1, sigmam, 1)
 !
         cod(g) = 0
-        call nmcomp(fami, g, 1, 3, typmod,&
+        call nmcomp(BEHinteg,&
+                    fami, g, 1, 3, typmod,&
                     mate, compor, crit, instm, instp,&
                     9, fm, fd, 6, sigmam,&
-                    vim(1, g), option, angmas, 10, tampon,&
-                    taup, vip( 1, g), 54, dsidep, 1,&
-                    wkout, cod(g), mult_comp)
+                    vim(1, g), option, angmas, &
+                    taup, vip( 1, g), 54, dsidep, cod(g), mult_comp)
 !
         if (cod(g) .eq. 1) then
             codret = 1

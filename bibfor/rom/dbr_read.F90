@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/dbr_read_rb.h"
 #include "asterfort/dbr_read_tr.h"
 #include "asterfort/gcucon.h"
+#include "asterfort/dbr_read_ortho.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/infniv.h"
@@ -87,14 +88,16 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
         call dbr_read_rb(ds_para%para_rb)
     elseif (operation .eq. 'TRONCATURE') then
         call dbr_read_tr(ds_para%para_tr)
+    elseif (operation .eq. 'ORTHO') then
+        call dbr_read_ortho(ds_para%para_ortho)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Save parameters in datastructure
 !
-    ds_para%operation    = operation
-    ds_para%result_out   = result_out
-    ds_para%l_reuse      = l_reuse
+    ds_para%operation  = operation
+    ds_para%result_out = result_out
+    ds_para%l_reuse    = l_reuse
 !
 end subroutine

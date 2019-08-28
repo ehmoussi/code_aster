@@ -1,0 +1,479 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
+
+# MODELISATION A : FEM - TRACTION (FACE SUP, LEVRES, CHAMP ASYMPTOTIQUE)
+
+#----------------------------------------------
+#             MAILLAGE : hexa_cla_5_30_50.mgib
+#----------------------------------------------
+
+MAILLAGE=LIRE_MAILLAGE(FORMAT='MED',INFO=1,);
+
+MAILLAGE=DEFI_GROUP(reuse =MAILLAGE,
+                    MAILLAGE=MAILLAGE,
+                    CREA_GROUP_NO=(_F(GROUP_MA='LEVSUP',),
+                                   _F(GROUP_MA='LEVINF',),
+                                   _F(GROUP_MA='FONFIS',),
+                                   _F(GROUP_MA='VOL',),
+                                   _F(DIFFE=('LEVSUP','FONFIS'),NOM='LEVS',),
+                                   _F(DIFFE=('LEVINF','FONFIS'),NOM='LEVI',),
+                                   _F(DIFFE=('VOL','LEVSUP','LEVINF'),NOM='VOLB',),                    
+                                    ),);
+
+#----------------------------------------------
+#                   MODELE 
+#----------------------------------------------
+
+MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAGE,
+                   AFFE=_F(GROUP_MA=('VOLSUP','VOLINF','LEVSUP','LEVINF','SURFSUP','SURFINF','FONFIS',),
+                            PHENOMENE='MECANIQUE',
+                            MODELISATION='3D',),);
+
+MAILLAGE=MODI_MAILLAGE(reuse =MAILLAGE,
+                       MAILLAGE=MAILLAGE,
+                       ORIE_PEAU_3D=_F(GROUP_MA=('LEVSUP','LEVINF','SURFSUP','SURFINF'),),
+                       );
+
+#----------------------------------------------
+#                   MATERIAU
+#----------------------------------------------
+
+E=205000.E6
+nu=0.
+ACIER=DEFI_MATERIAU(ELAS=_F(E=E,NU=nu,RHO=7800.0,),);
+
+CHAMPMA=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
+                       MODELE=MODELEIN,
+                       AFFE=(_F(GROUP_MA=('VOLSUP','VOLINF','LEVSUP','LEVINF','SURFSUP','SURFINF','FONFIS',),
+                                MATER=ACIER,
+                                ),
+                             ),);
+
+#----------------------------------------------
+#                   CHARGEMENTS 
+#----------------------------------------------
+
+#                   1) TRACTION
+
+PRES=-1.E6 
+CHARBL1=AFFE_CHAR_MECA(MODELE=MODELEIN,
+                   DDL_IMPO=(_F(NOEUD='N4265',DX=0.0,DY=0.0,DZ=0.0,),
+                             _F(NOEUD='N3751',DZ=0.0,),
+                             _F(NOEUD='N4256',DX=0.0,DZ=0.0,),),);
+                             
+CHF1=AFFE_CHAR_MECA(MODELE=MODELEIN,PRES_REP=_F(GROUP_MA=('SURFSUP','SURFINF',),PRES=PRES,),);
+
+
+
+#                   2) CHAMP AUXILAIRE MODE I
+
+R = FORMULE(VALE='sqrt((Y-5.)**2+(Z-15.)**2)',
+            NOM_PARA=['X', 'Y', 'Z'],)
+T = FORMULE(VALE='atan2(Z-15.,-Y+5.)',
+            NOM_PARA=['X', 'Y', 'Z'],)
+   
+coef=(1+nu)/(E*sqrt(2.*pi))
+
+# FORMULES GENERALES DU MODE I
+OUAUX1 = FORMULE(VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,Z)))',
+                 coef=coef,
+                 R=R,
+                 T=T,
+                 nu=nu,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+UAUX2 = FORMULE(VALE=' coef*sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,Z)))',
+                coef=coef,
+                R=R,
+                T=T,
+                nu=nu,
+                NOM_PARA=['X', 'Y', 'Z'],)
+UAUX3 = FORMULE(VALE='0.',
+                NOM_PARA=['X', 'Y', 'Z'],)
+
+# FORMULES POUR LES NOEUDS DE LA LEVRE SUP (MOINS LE FOND DE FISSURE) : THETA=PI 
+OUAUX1S = FORMULE(VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(pi/2.)*(3.-4.*nu-cos(pi))',
+                  coef=coef,
+                  R=R,
+                  nu=nu,
+                  NOM_PARA=['X', 'Y', 'Z'],)
+UAUX2S = FORMULE(VALE=' coef*sqrt(R(X,Y,Z))*sin(pi/2.)*(3.-4.*nu-cos(pi))',
+                 coef=coef,
+                 R=R,
+                 nu=nu,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+UAUX3S = FORMULE(VALE='0.',
+                 NOM_PARA=['X', 'Y', 'Z'],)
+
+# FORMULES POUR LES NOEUDS DE LA LEVRE INF (MOINS LE FOND DE FISSURE) : THETA=-PI 
+OUAUX1I = FORMULE(VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(-pi/2.)*(3.-4.*nu-cos(-pi))',
+                  coef=coef,
+                  R=R,
+                  nu=nu,
+                  NOM_PARA=['X', 'Y', 'Z'],)
+UAUX2I = FORMULE(VALE=' coef*sqrt(R(X,Y,Z))*sin(-pi/2.)*(3.-4.*nu-cos(-pi))',
+                 coef=coef,
+                 R=R,
+                 nu=nu,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+UAUX3I = FORMULE(VALE='0.',
+                 NOM_PARA=['X', 'Y', 'Z'],)
+
+CHARBL2=AFFE_CHAR_MECA(MODELE=MODELEIN,DDL_IMPO=_F(GROUP_MA='FONFIS',DX=0.0,DY=0.0,DZ=0.0,),);
+                             
+CHF2=AFFE_CHAR_MECA_F(MODELE=MODELEIN,DDL_IMPO=(_F(GROUP_NO='VOLB',DX=UAUX3,DY=OUAUX1,DZ=UAUX2,),
+                                               _F(GROUP_NO='LEVS',DX=UAUX3S,DY=OUAUX1S,DZ=UAUX2S,),
+                                               _F(GROUP_NO='LEVI',DX=UAUX3I,DY=OUAUX1I,DZ=UAUX2I,),
+                                               ),);              
+              
+#                   3) PRESSION CONSTANTE SUR LES LEVRES
+CHPRES=AFFE_CHAR_MECA(MODELE=MODELEIN,PRES_REP=_F(GROUP_MA=('LEVSUP','LEVINF',),PRES=1.e6,),);
+
+#                   4) PRESSION FONCTION SUR LES LEVRES
+PRESF = FORMULE(VALE='1.e6*(1.-X)',
+                NOM_PARA=['X', 'Y', 'Z'],)
+CHPRESF=AFFE_CHAR_MECA_F(MODELE=MODELEIN,PRES_REP=_F(GROUP_MA=('LEVSUP','LEVINF',),PRES=PRESF,),);
+
+
+              
+#----------------------------------------------
+#                   RESOLUTIONS
+#----------------------------------------------
+
+UTOT1=MECA_STATIQUE(MODELE=MODELEIN,
+                   CHAM_MATER=CHAMPMA,              
+                   EXCIT=(_F(CHARGE=CHARBL1,),
+                          _F(CHARGE=CHF1,),),
+                   INST=1.0,
+                   INFO=1,);
+
+UTOT2=MECA_STATIQUE(MODELE=MODELEIN,
+                   CHAM_MATER=CHAMPMA,              
+                   EXCIT=(_F(CHARGE=CHARBL2,),
+                          _F(CHARGE=CHF2,),),
+                   INST=1.0,
+                   INFO=1,);
+
+UTOT3=MECA_STATIQUE(MODELE=MODELEIN,
+                   CHAM_MATER=CHAMPMA,              
+                   EXCIT=(_F(CHARGE=CHARBL1,),
+                          _F(CHARGE=CHPRES,),),
+                   INST=1.0,
+                   INFO=1,);
+
+UTOT4=MECA_STATIQUE(MODELE=MODELEIN,
+                   CHAM_MATER=CHAMPMA,              
+                   EXCIT=(_F(CHARGE=CHARBL1,),
+                          _F(CHARGE=CHPRESF,),),
+                   INST=1.0,
+                   INFO=1,);
+
+IMPR_RESU(FORMAT='GMSH',UNITE=37,RESU=_F(RESULTAT=UTOT4,NOM_CHAM='DEPL'))
+
+#------------------------------------------------------------------------
+# POST-TRAITEMENT : CALCUL DES SIFS PAR LA METHODE ENERGETIQUE AVEC X-FEM
+#------------------------------------------------------------------------
+
+FISS=DEFI_FISSURE(MAILLAGE=MAILLAGE, SYME='NON',
+                    FOND_FISS=_F(GROUP_MA='FONFIS',),
+                    LEVRE_SUP=_F(GROUP_MA='LEVSUP',),
+                    LEVRE_INF=_F(GROUP_MA='LEVINF',),
+                    )
+
+
+# TEST AVEC PLUSIEURS COURONNES
+RI=[2. , 0.666 , 1. , 1. , 1. , 2.1]
+RS=[4. , 1.666 , 2. , 3. , 4. , 3.9]
+
+nbc=len(RI)
+SIF1 = [None]*(nbc+1)
+SIF2 = [None]*(nbc+1)
+SIF3 = [None]*(nbc+1)
+SIF4 = [None]*(nbc+1)
+
+for i in range(0,nbc) :
+   
+   SIF1[i]=CALC_H(RESULTAT=UTOT1,
+                  OPTION='CALC_K_G',
+                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
+                               LISSAGE_G='LAGRANGE',),
+                  THETA=_F(R_INF=RI[i],
+                           R_SUP=RS[i],
+                           FOND_FISS=FISS,),);
+
+   IMPR_TABLE(TABLE=SIF1[i],);
+
+   SIF2[i]=CALC_H(RESULTAT=UTOT2,
+                  OPTION='CALC_K_G',
+                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
+                               LISSAGE_G='LAGRANGE',),
+                  THETA=_F(R_INF=RI[i],
+                           R_SUP=RS[i],
+                  FOND_FISS=FISS,),);
+
+   IMPR_TABLE(TABLE=SIF2[i],);
+
+   SIF3[i]=CALC_H(RESULTAT=UTOT3,
+                  OPTION='CALC_K_G',
+                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
+                               LISSAGE_G='LAGRANGE',),
+                  THETA=_F(R_INF=RI[i],
+                           R_SUP=RS[i],
+                  FOND_FISS=FISS,),);
+
+   IMPR_TABLE(TABLE=SIF3[i],);
+
+   SIF4[i]=CALC_H(RESULTAT=UTOT4,
+                  OPTION='CALC_K_G',
+                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
+                               LISSAGE_G='LAGRANGE',),
+                  THETA=_F(R_INF=RI[i],
+                           R_SUP=RS[i],
+                  FOND_FISS=FISS,),);
+
+   IMPR_TABLE(TABLE=SIF4[i],);
+
+SIF1[nbc]=CALC_H(RESULTAT=UTOT1,
+                  OPTION='CALC_K_G',
+                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
+                               LISSAGE_G='LAGRANGE',),
+                  THETA=_F(FOND_FISS=FISS,),);
+
+IMPR_TABLE(TABLE=SIF1[nbc],);
+
+SIF2[nbc]=CALC_H(RESULTAT=UTOT2,
+                  OPTION='CALC_K_G',
+                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
+                               LISSAGE_G='LAGRANGE',),
+                  THETA=_F(FOND_FISS=FISS,),);
+
+IMPR_TABLE(TABLE=SIF2[nbc],);
+
+SIF3[nbc]=CALC_H(RESULTAT=UTOT3,
+                  OPTION='CALC_K_G',
+                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
+                               LISSAGE_G='LAGRANGE',),
+                  THETA=_F(FOND_FISS=FISS,),);
+
+IMPR_TABLE(TABLE=SIF3[nbc],);
+
+SIF4[nbc]=CALC_H(RESULTAT=UTOT4,
+                  OPTION='CALC_K_G',
+                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
+                               LISSAGE_G='LAGRANGE',),
+                  THETA=_F(FOND_FISS=FISS,),);
+
+IMPR_TABLE(TABLE=SIF4[nbc],);
+
+for i in range(0,nbc+1) :
+
+   TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=0.0001,
+           VALE_CALC=123456789.0,
+           VALE_REFE=123456789.0,
+           CRITERE='RELATIF',
+           NOM_PARA='G',
+           TABLE=SIF1[i],)
+
+   TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=0.0001,
+           VALE_CALC=123456789.0,
+           VALE_REFE=123456789.0,
+           CRITERE='RELATIF',
+           NOM_PARA='G',
+           TABLE=SIF2[i],)
+
+   TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=0.0001,
+           VALE_CALC=123456789.0,
+           VALE_REFE=123456789.0,
+           CRITERE='RELATIF',
+           NOM_PARA='G',
+           TABLE=SIF3[i],)
+
+   TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=0.0001,
+           VALE_CALC=123456789.0,
+           VALE_REFE=123456789.0,
+           CRITERE='RELATIF',
+           NOM_PARA='G',
+           TABLE=SIF4[i],)
+
+
+"""
+for i in range(0,nbc+1) :
+   TEST_TABLE(TABLE=SIF1[i],
+              NOM_PARA='G',
+              TYPE_TEST='MAX', 
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),              
+              VALE_CALC=123456789.0,
+              CRITERE='RELATIF',
+              PRECISION=0.0001,   
+              REFERENCE='ANALYTIQUE',);
+
+"""
+
+"""   
+#                   SOLUTIONS ANALYTIQUES DE K1 :
+# POUR LES CHARGEMENT 1 & 3 : VOIR CHABOCHE P.53
+a=5
+b=10
+coef1=(pi*a)/(2.*b)
+fab=sqrt(tan(coef1)/coef1)*(0.752+0.37*(1.-sin(coef1))**3+2.02*a/b)/cos(coef1)
+K1REF1=-PRES*sqrt(pi*a)*fab
+
+# POUR LE CHARGEMENT 2
+K1REF2=1.
+
+# POUR LE CHARGEMENT 4, NON-REGRESSION
+# AU POINT INITIAL DU FOND DE FISSURE
+K1REF4I=5.99e6
+# AU POINT FINAL DU FOND DE FISSURE
+K1REF4F=4.52e6
+
+VAL_CALC = [  1.0514480546308E+07   ,
+              1.0514480391423E+07   ,
+              0.99998690646747      ,
+              0.99998690488054      ,
+              1.0514482438164E+07   ,
+              1.0514482283279E+07   ,
+              5.9900375379745E+06   ,
+              4.5244448273165E+06   ,
+              1.0498324215508E+07   ,
+              1.0498324051997E+07   ,
+              0.99827917453184      ,
+              0.99827916431404      ,
+              1.0498517267469E+07   ,
+              1.0498517103835E+07   ,
+              5.9827850802906E+06   ,
+              4.5157321079825E+06   ,
+              1.0509491702831E+07   ,
+              1.0509491549706E+07   ,
+              1.0001625894541       ,
+              1.0001625874183       ,
+              1.0509482717637E+07   ,
+              1.0509482564503E+07   ,
+              5.9878466751173E+06   ,
+              4.5216359700926E+06   ,
+              1.0511669166655E+07   ,
+              1.0511669012676E+07   ,
+              1.0000581142959       ,
+              1.0000581124807       ,
+              1.0511666247867E+07   ,
+              1.0511666093883E+07   ,
+              5.9888057607205E+06   ,
+              4.5228604144255E+06   ,
+              1.0512817598453E+07   ,
+              1.0512817444193E+07   ,
+              1.0000454674603       ,
+              1.0000454657267       ,
+              1.0512815864625E+07   ,
+              1.0512815710362E+07   ,
+              5.989307250338E+06    ,
+              4.5235085415527E+06   ,
+              1.0514457252612E+07   ,
+              1.0514457097782E+07   ,
+              0.99998123666540      ,
+              0.99998123507470      ,
+              1.0514459563251E+07   ,
+              1.0514459408421E+07   ,
+              5.9900341212632E+06   ,
+              4.524425369112E+06    ,
+              1.0492020677104E+07   ,
+              1.0492020505783E+07   ,
+              0.99746597320430      ,
+              0.99746595806601      ,
+              1.0492304431554E+07   ,
+              1.0492304259512E+07   ,
+              5.9798081648442E+06   ,
+              4.512496183805E+06    ,]
+              
+for i in range(0,nbc+1) :
+   TEST_TABLE(TABLE=SIF1[i],
+              NOM_PARA='K1',
+              TYPE_TEST='MAX', 
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),              
+              VALE_CALC=VAL_CALC[i*8+0], VALE_REFE=K1REF1,
+              CRITERE='RELATIF',
+              PRECISION=0.065,   
+              REFERENCE='ANALYTIQUE',);
+
+   TEST_TABLE(TABLE=SIF1[i],
+              NOM_PARA='K1',
+              TYPE_TEST='MIN', 
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),              
+              VALE_CALC=VAL_CALC[i*8+1], VALE_REFE=K1REF1,
+              CRITERE='RELATIF',
+              PRECISION=0.065,   
+              REFERENCE='ANALYTIQUE',);
+              
+   TEST_TABLE(TABLE=SIF2[i],
+              NOM_PARA='K1',
+              TYPE_TEST='MAX',               
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),
+              VALE_CALC=VAL_CALC[i*8+2], VALE_REFE=K1REF2,
+              CRITERE='RELATIF',
+              PRECISION=0.003,   
+              REFERENCE='ANALYTIQUE',);
+
+   TEST_TABLE(TABLE=SIF2[i],
+              NOM_PARA='K1',
+              TYPE_TEST='MIN', 
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),              
+              VALE_CALC=VAL_CALC[i*8+3], VALE_REFE=K1REF2,
+              CRITERE='RELATIF',
+              PRECISION=0.003,   
+              REFERENCE='ANALYTIQUE',);           
+
+   TEST_TABLE(TABLE=SIF3[i],
+              NOM_PARA='K1',
+              TYPE_TEST='MAX',               
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),
+              VALE_CALC=VAL_CALC[i*8+4], VALE_REFE=K1REF1,
+              CRITERE='RELATIF',
+              PRECISION=0.065,   
+              REFERENCE='ANALYTIQUE',);
+
+   TEST_TABLE(TABLE=SIF3[i],
+              NOM_PARA='K1',
+              TYPE_TEST='MIN', 
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),              
+              VALE_CALC=VAL_CALC[i*8+5], VALE_REFE=K1REF1,
+              CRITERE='RELATIF',
+              PRECISION=0.065,   
+              REFERENCE='ANALYTIQUE',);
+
+   TEST_TABLE(TABLE=SIF4[i],
+              NOM_PARA='K1',
+              FILTRE=(_F(NOM_PARA='NUM_PT',VALE_I=1,),
+                     _F(NOM_PARA='NUME_ORDRE',VALE_I=1),),
+              VALE_CALC=VAL_CALC[i*8+6],
+              CRITERE='RELATIF',
+              );
+
+   TEST_TABLE(TABLE=SIF4[i],
+              NOM_PARA='K1',
+              FILTRE=(_F(NOM_PARA='NUM_PT',VALE_I=6,),
+              _F(NOM_PARA='NUME_ORDRE',VALE_I=1),),
+              VALE_CALC=VAL_CALC[i*8+7],
+              CRITERE='RELATIF',
+              );
+"""
+FIN();

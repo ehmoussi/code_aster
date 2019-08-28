@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,35 +15,45 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmel2d(fami, poum, nno, npg, ipoids,&
                   ivf, idfde, geom, typmod, option,&
                   imate, compor, lgpg, crit, idepl,&
                   angmas, dfdi, pff, def, sig,&
                   vi, matuu, ivectu, codret)
-! aslint: disable=W1504
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmgeom.h"
-    integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
-    integer :: ivectu, idepl
-    character(len=8) :: typmod(*)
-    character(len=16) :: option, compor(*)
-    character(len=*) :: fami, poum
-    real(kind=8) :: geom(2, nno), crit(3)
-    real(kind=8) :: angmas(3)
-    real(kind=8) :: dfdi(nno, 2)
-    real(kind=8) :: pff(4, nno, nno), def(4, nno, 2)
-    real(kind=8) :: sig(4, npg), vi(lgpg, npg)
-    real(kind=8) :: matuu(*)
-!.......................................................................
+#include "asterfort/behaviourPrepExternal.h"
+#include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
+!
+integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
+integer :: ivectu, idepl
+character(len=8) :: typmod(*)
+character(len=16) :: option, compor(*)
+character(len=*) :: fami, poum
+real(kind=8) :: geom(2, nno), crit(*)
+real(kind=8) :: angmas(3)
+real(kind=8) :: dfdi(nno, 2)
+real(kind=8) :: pff(4, nno, nno), def(4, nno, 2)
+real(kind=8) :: sig(4, npg), vi(lgpg, npg)
+real(kind=8) :: matuu(*)
+!
+! --------------------------------------------------------------------------------------------------
 !
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
 !           EN HYPER-ELASTICITE
-!.......................................................................
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  NNO     : NOMBRE DE NOEUDS DE L'ELEMENT
 ! IN  NPG     : NOMBRE DE POINTS DE GAUSS
 ! IN  POIDSG  : POIDS DES POINTS DE GAUSS
@@ -66,33 +76,48 @@ subroutine nmel2d(fami, poum, nno, npg, ipoids,&
 ! OUT VI      : VARIABLES INTERNES    (RAPH_MECA ET FULL_MECA)
 ! OUT MATUU   : MATRICE DE RIGIDITE PROFIL (RIGI_MECA_TANG ET FULL_MECA)
 ! OUT VECTU   : FORCES NODALES (RAPH_MECA ET FULL_MECA)
-!......................................................................
 !
+! --------------------------------------------------------------------------------------------------
 !
     integer :: kpg, kk, n, i, m, j, j1, kl, pq, kkd
+    integer, parameter :: ndim = 2
+    real(kind=8) :: deplm(2*nno), deplp(2*nno)
     aster_logical :: grdepl, axi, cplan
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), r, sigma(6), ftf, detf
     real(kind=8) :: poids, tmp1, tmp2, sigp(6)
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
     integer :: indi(4), indj(4)
-    real(kind=8) :: rind(4), rac2
+    real(kind=8) :: rind(4)
     data    indi / 1 , 2 , 3 , 1 /
     data    indj / 1 , 2 , 3 , 2 /
     data    rind / 0.5d0 , 0.5d0 , 0.5d0 , 0.70710678118655d0 /
-    data    rac2 / 1.4142135623731d0 /
 !
-!
-!
-!
-! - INITIALISATION
+! --------------------------------------------------------------------------------------------------
 !
     grdepl = compor(3).eq. 'GROT_GDEP'
     axi = typmod(1) .eq. 'AXIS'
     cplan = typmod(1) .eq. 'C_PLAN'
+    deplm(:) = 0.d0
+    deplp(:) = 0.d0
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
+! - Prepare external state variables
+!
+    call behaviourPrepExternal(crit  , typmod,&
+                               nno   , npg   , ndim ,&
+                               ipoids, ivf   , idfde,&
+                               geom  , deplm , deplp,&
+                               coorga)
 !
 ! - CALCUL POUR CHAQUE POINT DE GAUSS
 !
-    do 10 kpg = 1, npg
+    do kpg = 1, npg
 !
 ! - CALCUL DE LA TEMPERATURE AU POINT DE GAUSS
 ! -
@@ -139,7 +164,9 @@ subroutine nmel2d(fami, poum, nno, npg, ipoids,&
 !
 ! - LOI DE COMPORTEMENT : S(E) ET DS/DE
 !
-        call nmcpel(fami, kpg, 1, poum, 2,&
+        BEHinteg%elga%coorpg = coorga(kpg,:)
+        call nmcpel(BEHinteg,&
+                    fami, kpg, 1, poum, 2,&
                     typmod, angmas, imate, compor, crit,&
                     option, eps, sigma, vi(1, kpg), dsidep,&
                     codret)
@@ -235,5 +262,5 @@ subroutine nmel2d(fami, poum, nno, npg, ipoids,&
                 sig(4,kpg) = sigma(4)/rac2
             endif
         endif
- 10 end do
+    end do
 end subroutine
