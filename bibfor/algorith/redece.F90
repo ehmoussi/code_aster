@@ -17,15 +17,15 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine redece(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
+subroutine redece(BEHinteg,&
+                  fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   imate, compor, mult_comp, carcri, instam, instap,&
                   neps, epsdt, depst, nsig, sigd,&
-                  vind, option, angmas, nwkin, wkin,&
-                  cp, numlc, &
-                  sigf, vinf, ndsde, dsde, nwkout,&
-                  wkout, codret)
+                  vind, option, angmas, cp, numlc, &
+                  sigf, vinf, ndsde, dsde, codret)
 !
 use calcul_module, only : ca_iredec_, ca_td1_, ca_tf1_, ca_timed1_, ca_timef1_
+use Behaviour_type
 !
 implicit none
 !
@@ -40,12 +40,21 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
 !
-! ======================================================================
+type(Behaviour_Integ) :: BEHinteg
+character(len=*) :: fami
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     INTEGRATION DES LOIS DE COMPORTEMENT NON LINEAIRE POUR LES
 !     ELEMENTS ISOPARAMETRIQUES EN PETITES OU GRANDES DEFORMATIONS
-! ======================================================================
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! ROUTINE DE REDECOUPAGE LOCAL DU PAS dE TEMPS
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  BEHinteg       : parameters for integration of behaviour
 !       - SI CARCRI(5) = -N  EN CAS DE NON-CONVERGENCE LOCALE ON EFFECTU
 !                          UN REDECOUPAGE DU PAS DE TEMPS EN N PALIERS
 !                          L ORDRE D EXECUTION ETANT REMONTE EN ARGUMENT
@@ -88,8 +97,6 @@ implicit none
 !     ANGMAS  : LES TROIS ANGLES DU MOT_CLEF MASSIF (AFFE_CARA_ELEM),
 !               + UN REEL QUI VAUT 0 SI NAUTIQUIES OU 2 SI EULER
 !               + LES 3 ANGLES D'EULER
-!     NWKIN   : DIMENSION DE WKIN
-!     WKIN    : TABLEAU DE TRAVAIL EN ENTREE(SUIVANT MODELISATION)
 !     CP      : LOGIQUE = VRAI EN CONTRAINTES PLANES DEBORST
 !     NUMLC   : NUMERO DE LOI DE COMPORTEMENT ISSUE DU CATALOGUE DE LC
 !
@@ -99,8 +106,6 @@ implicit none
 !                OUT : A LA FIN DU PAS DE TEMPS T+
 !     NDSDE   : DIMENSION DE DSDE
 !     DSDE    : OPERATEUR TANGENT DSIG/DEPS OU DSIG/DF
-!     NWKOUT  : DIMENSION DE WKOUT
-!     WKOUT   : TABLEAU DE TRAVAIL EN SORTIE (SUIVANT MODELISATION)
 !     CODRET  : CODE RETOUR LOI DE COMPORMENT :
 !               CODRET=0 : TOUT VA BIEN
 !               CODRET=1 : ECHEC DANS L'INTEGRATION DE LA LOI
@@ -128,14 +133,13 @@ implicit none
 !   EPSDT(6), DEPST(6)  SONT LES DEFORMATIONS TOTALES
 !                      (LINEARISEES OU GREEN OU ..)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: imate, ndim, ndt, ndi, nvi, kpg, ksp, numlc
-    integer :: neps, nsig, nwkin, nwkout, ndsde
+    integer :: neps, nsig, ndsde
     aster_logical, intent(in) :: l_epsi_varc
     real(kind=8) :: carcri(*), angmas(*)
     real(kind=8) :: instam, instap
-    real(kind=8) :: wkin(nwkin), wkout(nwkout)
     real(kind=8) :: epsdt(neps), depst(neps)
     real(kind=8) :: sigd(nsig), sigf(nsig)
     real(kind=8) :: vind(*), vinf(*)
@@ -144,10 +148,11 @@ implicit none
     character(len=16) :: compor(*), option
     character(len=16), intent(in) :: mult_comp
     character(len=8) :: typmod(*)
-    character(len=*) :: fami
+
     aster_logical :: cp
 !
-!       ----------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
 !       VARIABLES LOCALES POUR LE REDECOUPAGE DU PAS DE TEMPS
 !               TD      INSTANT T
 !               TF      INSTANT T+DT
@@ -162,7 +167,8 @@ implicit none
 !               ICOMP           COMPORTEUR POUR LE REDECOUPAGE DU PAS DE
 !                                    TEMPS
 !               RETURN1 EN CAS DE NON CONVERGENCE LOCALE
-!       ----------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: icomp, npal, ipal, codret, k
     real(kind=8) :: eps(neps), deps(neps), sd(nsig)
@@ -170,8 +176,9 @@ implicit none
     real(kind=8) :: deltat, td, tf
 !       ----------------------------------------------------------------
     common /tdim/   ndt  , ndi
-!       ----------------------------------------------------------------
-!       ----------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 !       -- POUR LES VARIABLES DE COMMANDE :
     ca_iredec_=1
     ca_timed1_=instam
@@ -213,13 +220,13 @@ implicit none
         icomp = -1
     endif
 !
-    call lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
+    call lc0000(BEHinteg,&
+                fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                 imate, compor, mult_comp, carcri, instam, instap,&
                 neps, epsdt, depst, nsig, sigd,&
-                vind, option, angmas, nwkin, wkin,&
-                cp, numlc, &
+                vind, option, angmas, cp, numlc, &
                 sigf, vinf, ndsde, dsde, icomp,&
-                nvi, nwkout, wkout, codret)
+                nvi, codret)
 !
     if (codret .eq. 1) then
         goto 1
@@ -281,13 +288,13 @@ implicit none
         endif
 !
 !
-        call lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
+        call lc0000(BEHinteg,&
+                    fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                     imate, compor, mult_comp, carcri, td, tf,&
                     neps, eps, deps, nsig, sd,&
-                    vind, option, angmas, nwkin, wkin,&
-                    cp, numlc, &
+                    vind, option, angmas, cp, numlc, &
                     sigf, vinf, ndsde, dsdelo, icomp,&
-                    nvi, nwkout, wkout, codret)
+                    nvi, codret)
 !
         if (codret .eq. 1) then
             goto 1

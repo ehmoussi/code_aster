@@ -15,10 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine vdpnlr(option, nomte, codret)
 ! aslint: disable=W1501
-    implicit none
+!
+subroutine vdpnlr(option, nomte, codret)
+!
+use Behaviour_type
+!
+implicit none
 !
 #include "jeveux.h"
 #include "asterc/r8vide.h"
@@ -28,6 +31,7 @@ subroutine vdpnlr(option, nomte, codret)
 #include "asterfort/gdt.h"
 #include "asterfort/hsaco.h"
 #include "asterfort/jacbm1.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/jevech.h"
 #include "asterfort/jevete.h"
 #include "asterfort/jm1dn1.h"
@@ -98,7 +102,7 @@ subroutine vdpnlr(option, nomte, codret)
     real(kind=8) :: etildm ( 5 )
     real(kind=8) :: eps2d ( 4 ), deps2d ( 4 )
     real(kind=8) :: sign ( 4 ), sigma ( 4 ), dsidep ( 6 , 6 )
-    real(kind=8) :: detild ( 5 ), rbid(1)
+    real(kind=8) :: detild ( 5 )
     real(kind=8) :: gxz, gyz
     real(kind=8) :: stlis ( 5 , 4 )
     real(kind=8) :: bars ( 9 , 9 )
@@ -199,11 +203,16 @@ subroutine vdpnlr(option, nomte, codret)
     real(kind=8) :: rac2, angmas(3)
     real(kind=8) :: valres ( 26 )
     real(kind=8) :: cisail
+    type(Behaviour_Integ) :: BEHinteg
 !
     rac2 = sqrt(2.d0)
     typmod(1) = 'C_PLAN  '
     typmod(2) = '        '
     codret=0
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! DEB
 !
@@ -716,12 +725,12 @@ subroutine vdpnlr(option, nomte, codret)
 ! -    APPEL A LA LOI DE COMPORTEMENT
                 ksp= (icou-1)*npge + inte
 !
-                call nmcomp('MASS', intsn, ksp, 2, typmod,&
+                call nmcomp(BEHinteg,&
+                            'MASS', intsn, ksp, 2, typmod,&
                             zi(imate), zk16(icompo), zr(icarcr), zr(iinstm), zr(iinstp),&
                             4, eps2d, deps2d, 4, sign,&
-                            zr(ivarim+k2), option, angmas, 1, [0.d0],&
-                            sigma, zr(ivarip+k2), 36, dsidep, 1,&
-                            rbid, cod)
+                            zr(ivarim+k2), option, angmas, &
+                            sigma, zr(ivarip+k2), 36, dsidep, cod)
 !
                 if (phenom .eq. 'ELAS') then
                     nbv = 2

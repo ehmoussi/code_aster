@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,63 +15,81 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1003
+!
 subroutine te0508(option, nomte)
 !
+implicit none
 !
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
-!
 #include "asterfort/assert.h"
+#include "asterfort/Behaviour_type.h"
 #include "asterfort/elrefv.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lggvfc.h"
+#include "asterfort/lgicfc.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/ngforc.h"
 #include "asterfort/nmgvmb.h"
-#include "asterfort/lggvfc.h"
-#include "asterfort/lgicfc.h"
 #include "asterfort/teattr.h"
 #include "asterfort/tecach.h"
 #include "asterfort/terefe.h"
-
-    character(len=16) :: option, nomte
-! ......................................................................
-!    - FONCTION REALISEE:  OPTIONS FORC_NODA ET REFE_FORC_NODA
-!                          POUR MODELISATIONS GRAD_VARI et GRAD_INCO
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ......................................................................
-    character(len=8) :: typmod
+!
+character(len=16), intent(in) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: 3D_GRAD_INCO, 3D_GRAD_VARI
+!           D_PLAN_GRAD_INCO, D_PLAN_GRAD_VARI
+!
+! Options: FORC_NODA, REFE_FORC_NODA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=16) :: defo_comp
+    character(len=8) :: typmod(2)
     aster_logical :: axi,grand,inco,refe
-    integer :: nno, nnob, npg, ndim, nddl, neps,itab(2)
-    integer :: iret, nnos, jgano, ipoids, ivf, idfde, ivfb, idfdeb, jganob
+    integer :: nnoQ, nnoL, npg, ndim, nddl, neps,itab(2)
+    integer :: iret, nnos, jv_ganoQ, jv_poids, jv_vfQ, jv_dfdeQ, jv_vfL, jv_dfdeL, jv_ganoL
     integer :: igeom, icont, ivectu, idepl, icompo
     real(kind=8) :: sigref, varref, lagref,epsref
     real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
     real(kind=8),allocatable:: sref(:)
     real(kind=8),allocatable:: ddl(:)
-    
-! ----------------------------------------------------------------------
-
-! Option calculee et nature de l'element fini
-    call teattr('S', 'TYPMOD', typmod, iret)
-    inco  = lteatt('INCO','C5GV')
-    axi   = typmod.eq.'AXIS'
+!
+! --------------------------------------------------------------------------------------------------
+!
     refe  = option.eq.'REFE_FORC_NODA'
-
-
-! - Caracteristiques de l'element
-    call elrefv(nomte, 'RIGI', ndim, nno, nnob,&
-                nnos, npg, ipoids, ivf, ivfb,&
-                idfde, idfdeb, jgano, jganob)
+!
+! - Type of modelling
+!
+    call teattr('S', 'TYPMOD', typmod(1))
+    typmod(2) = ' '
+    inco      = lteatt('INCO','C5GV')
+    axi       = typmod(1) .eq. 'AXIS'
+!
+! - Get parameters of element
+!
+    call elrefv('RIGI'  , ndim    ,&
+                nnoL    , nnoQ    , nnos,&
+                npg     , jv_poids,&
+                jv_vfL  , jv_vfQ  ,&
+                jv_dfdeL, jv_dfdeQ,&
+                jv_ganoL, jv_ganoQ)
     neps = merge(3*ndim+4,3*ndim+2,inco)
 
 
 ! Parametres de l'option et nbr de ddl
     call jevech('PGEOMER', 'L', igeom)
-    call jevech('PCOMPOR', 'L', icompo)
+
     call tecach('OOO', 'PVECTUR', 'E', iret, nval=2, itab=itab)
     ivectu = itab(1)
     nddl = itab(2)
@@ -85,15 +103,18 @@ subroutine te0508(option, nomte)
         ddl = 0
     end if
 
-    grand = zk16(icompo+2)(1:8).eq.'GDEF_LOG'
-
-
+!
+! - Behaviour
+!
+    call jevech('PCOMPOR', 'L', icompo)
+    defo_comp = zk16(icompo-1+DEFO)
+    grand = defo_comp(1:8).eq.'GDEF_LOG'
 
 ! -------------------------!
 !   GRAD_INCO + GDEF_LOG   !
 ! -------------------------!
 
-    if (inco .and. grand) then  
+    if (inco .and. grand) then
          
         if (refe) then 
             call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)
@@ -110,15 +131,15 @@ subroutine te0508(option, nomte)
                               0.d0, 0.d0, 0.d0]
             endif
 
-            call lgicfc(refe,ndim, nno, nnob, npg, nddl, axi, &
-                        zr(igeom),ddl, zr(ivf),zr(ivfb), idfde, idfdeb,&
-                        ipoids,transpose(spread(sref,1,npg)),&
+            call lgicfc(refe,ndim, nnoQ, nnoL, npg, nddl, axi, &
+                        zr(igeom),ddl, zr(jv_vfQ),zr(jv_vfL), jv_dfdeQ, jv_dfdeL,&
+                        jv_poids,transpose(spread(sref,1,npg)),&
                         zr(ivectu))
 
         else
-            call lgicfc(refe,ndim, nno, nnob, npg, nddl, axi, &
-                        zr(igeom),zr(idepl), zr(ivf),zr(ivfb), idfde, idfdeb,&
-                        ipoids,zr(icont),zr(ivectu))
+            call lgicfc(refe,ndim, nnoQ, nnoL, npg, nddl, axi, &
+                        zr(igeom),zr(idepl), zr(jv_vfQ),zr(jv_vfL), jv_dfdeQ, jv_dfdeL,&
+                        jv_poids,zr(icont),zr(ivectu))
         
         endif
 
@@ -143,15 +164,15 @@ subroutine te0508(option, nomte)
                             sigref,lagref,varref,0.d0,0.d0,0.d0]
             endif
 
-            call lggvfc(refe,ndim, nno, nnob, npg, nddl, axi, &
-                        zr(igeom),ddl, zr(ivf),zr(ivfb), idfde, idfdeb,&
-                        ipoids,transpose(spread(sref,1,npg)),&
+            call lggvfc(refe,ndim, nnoQ, nnoL, npg, nddl, axi, &
+                        zr(igeom),ddl, zr(jv_vfQ),zr(jv_vfL), jv_dfdeQ, jv_dfdeL,&
+                        jv_poids,transpose(spread(sref,1,npg)),&
                         zr(ivectu))
 
         else
-            call lggvfc(refe,ndim, nno, nnob, npg, nddl, axi, &
-                        zr(igeom),zr(idepl), zr(ivf),zr(ivfb), idfde, idfdeb,&
-                        ipoids,zr(icont),zr(ivectu))
+            call lggvfc(refe,ndim, nnoQ, nnoL, npg, nddl, axi, &
+                        zr(igeom),zr(idepl), zr(jv_vfQ),zr(jv_vfL), jv_dfdeQ, jv_dfdeL,&
+                        jv_poids,zr(icont),zr(ivectu))
        
         endif
     
@@ -162,9 +183,9 @@ subroutine te0508(option, nomte)
 ! -------------------------!
 
     else if (.not.inco .and. .not.grand) then  
-        call nmgvmb(ndim, nno, nnob, npg, axi,&
-                    zr(igeom), zr(ivf), zr(ivfb), idfde, idfdeb,&
-                    ipoids, nddl, neps, b, w,ni2ldc)
+        call nmgvmb(ndim, nnoQ, nnoL, npg, axi,&
+                    zr(igeom), zr(jv_vfQ), zr(jv_vfL), jv_dfdeQ, jv_dfdeL,&
+                    jv_poids, nddl, neps, b, w,ni2ldc)
 
         if (refe) then
             call terefe('SIGM_REFE', 'MECA_GRADVARI', sigref)

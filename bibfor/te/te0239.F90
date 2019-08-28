@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,11 @@ subroutine te0239(option, nomte)
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! ......................................................................
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -39,6 +43,7 @@ subroutine te0239(option, nomte)
 #include "asterfort/effi.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/jevech.h"
 #include "asterfort/matdtd.h"
 #include "asterfort/mattge.h"
@@ -72,6 +77,7 @@ subroutine te0239(option, nomte)
     integer :: ipoids, ivf, idfdk, igeom, imate
     integer :: nbpar, cod, iret, ksp
     aster_logical :: vecteu, matric, testl1, testl2
+    type(Behaviour_Integ) :: BEHinteg
 !
     parameter (npge=3)
 !
@@ -87,6 +93,10 @@ subroutine te0239(option, nomte)
     angmas(1) = r8nnem()
     angmas(2) = r8nnem()
     angmas(3) = r8nnem()
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 !
     vecteu = ((option.eq.'FULL_MECA') .or. (option.eq.'RAPH_MECA'))
@@ -276,7 +286,7 @@ subroutine te0239(option, nomte)
                             zk16(icompo), zr(icarcr), zr(iinstm), zr(iinstp), eps2d,&
                             deps2d,  sigm2d, zr(ivarim+k2),&
                             option, angmas, sigp2d, zr( ivarip+k2), dsidep,&
-                            cod)
+                            cod, BEHinteg)
                 if (vecteu) then
                     do  i = 1, 4
                         zr(icontp+k1+i-1)=sigp2d(i)

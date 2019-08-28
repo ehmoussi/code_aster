@@ -20,6 +20,7 @@
 subroutine op0033()
 !
 use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
@@ -59,6 +60,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vrcinp.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/nonlinDSConvergenceCreate.h"
 #include "asterfort/nonlinDSAlgoParaCreate.h"
 #include "asterfort/Behaviour_type.h"
@@ -90,13 +92,14 @@ implicit none
     real(kind=8) :: dsidep(6, 9), drdy(12, 12), kel(6, 6), cimpo(6, 12), ym(12)
     real(kind=8) :: work(10), sdeps(6), ssigp(6), smatr(36), r1(12)
     real(kind=8) :: matper(36), varia(2*36), epsilo, pgl(3, 3), vimp33(3, 3)
-    real(kind=8) :: vimp2(3, 3), coef, jm, jp, jd, rbid(1), coefextra
+    real(kind=8) :: vimp2(3, 3), coef, jm, jp, jd, coefextra
     aster_logical :: finpas, itemax, conver
     character(len=19) :: nomvi
     character(len=19) :: vim, vip, vim2, svip
     integer :: lvim, lvip, lvim2, lsvip, lnomvi
     type(NL_DS_Conv) :: ds_conv
     type(NL_DS_AlgoPara) :: ds_algopara
+    type(Behaviour_Integ) :: BEHinteg
 !
     data sddisc  /'&&OP0033.SDDISC'/
     data sdcrit  /'&&OP0033.SDCRIT'/
@@ -129,6 +132,14 @@ implicit none
     itemax      = ASTER_FALSE
     liccvg(1:5) = 0
 !
+! - Prepare CALCUL parameters for external state variables
+!
+    call vrcinp(1, 0.d0, 0.d0)
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
 ! - Create convergence management datastructure
 !
     call nonlinDSConvergenceCreate(ds_conv)
@@ -158,10 +169,6 @@ implicit none
 !
     call pmmaco(mater, nbmat, codi)
     call jeveut(codi//'.CODI', 'L', imate)
-!
-! - External state variables
-!
-    call vrcinp(1, 0.d0, 0.d0)
 !
 !     INITIALISATIONS SD
 !
@@ -252,19 +259,20 @@ implicit none
         endif
         if (type_comp .eq. 'COMP_INCR') then
             call dcopy(nbvari, zr(lvim), 1, zr(lvim2), 1)
-            call nmcomp(fami, kpg, ksp, ndim, typmod,&
+            call nmcomp(BEHinteg,&
+                        fami, kpg, ksp, ndim, typmod,&
                         imate, compor, carcri, instam, instap,&
                         ncmp, epsm, deps, 6, sigm,&
-                        zr(lvim2), opt2, ang, 10, work,&
-                        sigp, zr(lvip), 6*ncmp, dsidep, 1,&
-                        rbid, iret, mult_comp)
+                        zr(lvim2), opt2, ang, &
+                        sigp, zr(lvip), 6*ncmp, dsidep, iret, mult_comp)
             if (compor(DEFO) .eq. 'SIMO_MIEHE') then
                 call dscal(2*ndim, 1.d0/jp, sigp, 1)
             endif
         else if (type_comp .eq. 'COMP_ELAS') then
             call dcopy(ncmp, epsm, 1, eps, 1)
             call daxpy(ncmp, 1.d0, deps, 1, eps, 1)
-            call nmcpel(fami, kpg, 1, '+', ndim,&
+            call nmcpel(BEHinteg,&
+                        fami, kpg, 1, '+', ndim,&
                         typmod, ang, imate, compor, carcri,&
                         option, eps, sigp, zr(lvip), dsidep,&
                         iret)
@@ -291,14 +299,15 @@ implicit none
         opt2='RIGI_MECA_TANG'
         call dcopy(nbvari, zr(lvim), 1, zr(lsvip), 1)
         if (type_comp .eq. 'COMP_INCR') then
-            call nmcomp(fami, kpg, ksp, ndim, typmod,&
+            call nmcomp(BEHinteg,&
+                        fami, kpg, ksp, ndim, typmod,&
                         imate, compor, carcri, instam, instap,&
                         6, epsm, deps, 6, sigm,&
-                        zr(lsvip), opt2, ang, 10, work,&
-                        ssigp, zr(lsvip), 36, dsidep, 1,&
-                        rbid, iret, mult_comp)
+                        zr(lsvip), opt2, ang, &
+                        ssigp, zr(lsvip), 36, dsidep, iret, mult_comp)
         else if (type_comp .eq. 'COMP_ELAS') then
-            call nmcpel(fami, kpg, 1, '+', ndim,&
+            call nmcpel(BEHinteg,&
+                        fami, kpg, 1, '+', ndim,&
                         typmod, ang, imate, compor, carcri,&
                         option, epsm, sigp, zr(lvip), dsidep,&
                         iret)
@@ -364,16 +373,17 @@ implicit none
     liccvg(2) = 0
     if (type_comp .eq. 'COMP_INCR') then
         call dcopy(nbvari, zr(lvim), 1, zr(lvim2), 1)
-        call nmcomp(fami, kpg, ksp, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    fami, kpg, ksp, ndim, typmod,&
                     imate, compor, carcri, instam, instap,&
                     6, epsm, deps, 6, sigm,&
-                    zr(lvim2), option, ang, 10, work,&
-                    sigp, zr(lvip), 36, dsidep, 1,&
-                    rbid, iret, mult_comp)
+                    zr(lvim2), option, ang, &
+                    sigp, zr(lvip), 36, dsidep, iret, mult_comp)
     else if (type_comp .eq. 'COMP_ELAS') then
         call dcopy(6, epsm, 1, eps, 1)
         call daxpy(6, 1.d0, deps, 1, eps, 1)
-        call nmcpel(fami, kpg, 1, '+', ndim,&
+        call nmcpel(BEHinteg,&
+                        fami, kpg, 1, '+', ndim,&
                     typmod, ang, imate, compor, carcri,&
                     option, eps, sigp, zr(lvip), dsidep,&
                     iret)

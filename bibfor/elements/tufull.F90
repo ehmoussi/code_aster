@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,11 @@
 subroutine tufull(option, nomte, nbrddl, deplm, deplp,&
                   b, ktild, effint, pass, vtemp,&
                   codret)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8pi.h"
@@ -36,6 +40,7 @@ subroutine tufull(option, nomte, nbrddl, deplm, deplp,&
 #include "asterfort/mavec.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/poutre_modloc.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rccoma.h"
 #include "asterfort/rcvalb.h"
@@ -86,6 +91,7 @@ subroutine tufull(option, nomte, nbrddl, deplm, deplp,&
     integer :: jnbspi, iret, ksp
     integer :: ndim, nnos, jcoopg, idfdk, jdfd2, jgano
     aster_logical :: vecteu, matric
+    type(Behaviour_Integ) :: BEHinteg
 !
     integer, parameter :: nb_cara1 = 2
     real(kind=8) :: vale_cara1(nb_cara1)
@@ -104,6 +110,10 @@ subroutine tufull(option, nomte, nbrddl, deplm, deplp,&
     typmod(1) = 'C_PLAN  '
     typmod(2) = '        '
     codret = 0
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! --- ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
 ! --- INITIALISE A 0.d0 (ON NE S'EN SERT PAS)
@@ -322,12 +332,12 @@ subroutine tufull(option, nomte, nbrddl, deplm, deplp,&
 !
 ! -    APPEL A LA LOI DE COMPORTEMENT
                 ksp=(icou-1)*(2*nbsec+1) + isect
-                call nmcomp('RIGI', igau, ksp, 2, typmod,&
+                call nmcomp(BEHinteg,&
+                            'RIGI', igau, ksp, 2, typmod,&
                             zi(imate), zk16(icompo), zr(icarcr), instm, instp,&
                             6, eps2d, deps2d, 6, sign,&
-                            zr(ivarim+k2), option, angmas, 1, [0.d0],&
-                            sigma, zr( ivarip+k2), 36, dsidep, 1,&
-                            rbid(1), cod)
+                            zr(ivarim+k2), option, angmas, &
+                            sigma, zr( ivarip+k2), 36, dsidep, cod)
 !
                 if (phenom .eq. 'ELAS') then
                     nbv = 2

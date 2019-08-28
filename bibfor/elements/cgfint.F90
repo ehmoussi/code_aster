@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,8 @@ subroutine cgfint(ndim, nno1, nno2, npg, wref,&
                   vim, sigp, vip, matr, vect,&
                   codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -38,6 +40,7 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/behaviourInit.h"
     character(len=8) :: typmod(*)
     character(len=16) :: option, compor(*), compoz(7)
 !
@@ -94,9 +97,10 @@ implicit none
     real(kind=8) :: r, mu, epsm, deps, wg, l(3), de(1), ddedt, t1
     real(kind=8) :: b(4, 3), gliss
     real(kind=8) :: sigcab, dsidep, dde(2), ddedn, courb
-    real(kind=8) :: angmas(3), val(1), wkin(2), wkout(1)
+    real(kind=8) :: angmas(3), val(1)
     character(len=16) :: nom(1)
     character(len=1) :: poum
+    type(Behaviour_Integ) :: BEHinteg
 !
     data nom /'PENA_LAGR'/
 ! ----------------------------------------------------------------------
@@ -107,6 +111,10 @@ implicit none
     resi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RAPH'
     rigi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RIGI'
     nddl = nno1*(ndim+1) + nno2
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 !
     ASSERT(compor(RELA_NAME).eq.'KIT_CG')
@@ -211,15 +219,16 @@ implicit none
                     ' ', 'CABLE_GAINE_FROT', 0, ' ', [0.d0],&
                     1, nom, val, codm, 2)
         r=val(1)
-        wkin(1)=a*sigcab
-        wkin(2)=courb
 !
-        call nmcomp('RIGI', g, 1, ndim, typmod,&
+        BEHinteg%elga%tenscab = a*sigcab
+        BEHinteg%elga%curvcab = courb
+!
+        call nmcomp(BEHinteg,&
+                    'RIGI', g, 1, ndim, typmod,&
                     mat, compoz, crit, instam, instap,&
                     1, [mu], [gliss], 1, [0.d0],&
-                    vim(nbvica+1, g), option, [0.d0], 2, wkin,&
-                    de, vip(nbvica+1, g), 36, dde, 1,&
-                    wkout, cod(g))
+                    vim(nbvica+1, g), option, [0.d0], &
+                    de, vip(nbvica+1, g), 36, dde, cod(g))
         if (cod(g) .eq. 1) goto 999
 !
 !      FORCE INTERIEURE ET CONTRAINTES DE CAUCHY

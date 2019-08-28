@@ -15,18 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1501,W1504
+! aslint: disable=W1501,W1504,W1306
 !
-subroutine lc0000(fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
+subroutine lc0000(BEHinteg,&
+                  fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
                   imate, compor, mult_comp, carcri,&
                   instam, instap,&
                   neps, epsm, deps, nsig, sigm,&
-                  vim, option, angmas, nwkin, wkin,&
-                  cp, numlc, &
+                  vim, option, angmas, cp, numlc, &
                   sigp, vip, ndsde, dsidep, icomp,&
-                  nvi, nwkout, wkout, codret)
+                  nvi, codret)
 !
 use calcul_module, only : calcul_status, ca_nbcvrc_
+use Behaviour_type
 !
 implicit none
 !
@@ -163,12 +164,12 @@ implicit none
 #include "asterfort/lcRestoreStrain.h"
 #include "asterfort/assert.h"
 !
+type(Behaviour_Integ) :: BEHinteg
 integer :: imate, ndim, nvi, kpg, ksp
 aster_logical, intent(in) :: l_epsi_varc
-integer :: neps, nsig, nwkin, nwkout, ndsde
+integer :: neps, nsig, ndsde
 real(kind=8) :: carcri(*), angmas(3)
 real(kind=8) :: instam, instap
-real(kind=8) :: wkin(nwkin), wkout(nwkout)
 real(kind=8) :: epsm(neps), deps(neps)
 real(kind=8) :: sigm(nsig), sigp(nsig)
 real(kind=8) :: vim(nvi), vip(nvi)
@@ -182,13 +183,14 @@ integer :: icomp
 integer :: numlc
 integer :: codret
 !
-! ======================================================================
+! --------------------------------------------------------------------------------------------------
+!
 !     INTEGRATION DES LOIS DE COMPORTEMENT NON LINEAIRE POUR LES
 !     ELEMENTS ISOPARAMETRIQUES EN PETITES OU GRANDES DEFORMATIONS
-! ======================================================================
-!     ARGUMENTS
-! ======================================================================
 !
+! --------------------------------------------------------------------------------------------------
+!
+! In  BEHinteg       : parameters for integration of behaviour
 ! IN  FAMI,KPG,KSP  : FAMILLE ET NUMERO DU (SOUS)POINT DE GAUSS
 !     NDIM    : DIMENSION DE L'ESPACE
 !               3 : 3D , 2 : D_PLAN ,AXIS OU  C_PLAN
@@ -212,8 +214,6 @@ integer :: codret
 !     ANGMAS  : LES TROIS ANGLES DU MOT_CLEF MASSIF (AFFE_CARA_ELEM),
 !               + UN REEL QUI VAUT 0 SI NAUTIQUIES OU 2 SI EULER
 !               + LES 3 ANGLES D'EULER
-!     NWKIN   : DIMENSION DE WKIN
-!     WKIN    : TABLEAU DE TRAVAIL EN ENTREE(SUIVANT MODELISATION)
 !     CP      : LOGIQUE = VRAI EN CONTRAINTES PLANES DEBORST
 !     NUMLC   : NUMERO DE LOI DE COMPORTEMENT ISSUE DU CATALOGUE DE LC
 !     ICOMP   : COMPTEUR DE REDECOUPAGE PRODUIT PAR REDECE
@@ -225,8 +225,6 @@ integer :: codret
 !                OUT : EN T+
 !     NDSDE   : DIMENSION DE DSIDEP
 !     DSIDEP  : OPERATEUR TANGENT DSIG/DEPS OU DSIG/DF
-!     NWKOUT  : DIMENSION DE WKOUT
-!     WKOUT   : TABLEAU DE TRAVAIL EN SORTIE (SUIVANT MODELISATION)
 !     CODRET  : CODE RETOUR LOI DE COMPORMENT :
 !               CODRET=0 : TOUT VA BIEN
 !               CODRET=1 : ECHEC DANS L'INTEGRATION DE LA LOI
@@ -269,7 +267,8 @@ integer :: codret
 !             ICOMP           COMPTEUR POUR LE REDECOUPAGE DU PAS DE
 !                                  TEMPS
 !             RETURN1 EN CAS DE NON CONVERGENCE LOCALE
-!     ----------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: tabcod(60), variextecode(2)
     integer, parameter :: npred = 8
@@ -277,8 +276,8 @@ integer :: codret
     real(kind=8) :: epsth(neps), depsth(neps)
     real(kind=8) :: temp, dtemp
     real(kind=8) :: predef(npred), dpred(npred)
-!     ----------------------------------------------------------------
-!     ------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! - Compute mechanical strain with PTOT external state variable
 !
@@ -352,13 +351,12 @@ integer :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
-!
     select case (numlc)
 !
     case (1)
 !     ELAS
-        call lc0001(fami, kpg, ksp, ndim, imate,&
+        call lc0001(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     neps, deps, nsig, sigm, option,&
                     angmas, sigp, vip, typmod, ndsde,&
                     dsidep, codret)
@@ -560,13 +558,13 @@ integer :: codret
                     nvi, dsidep, codret)
     case (50)
 !     UMAT
-        call lc0050(fami, kpg, ksp, ndim, typmod,&
-                    imate, compor, carcri, instam, instap,&
-                    neps, epsm, deps, nsig, sigm,&
+        call lc0050(BEHinteg,&
+                    fami    , kpg, ksp, ndim, typmod,&
+                    imate   , compor, carcri, instam, instap,&
+                    neps    , epsm, deps, nsig, sigm,&
                     nvi, vim, option, angmas, icomp,&
                     temp , dtemp , predef, dpred ,&
                     sigp, vip, ndsde, dsidep, codret)
-                    
     case (54)
         call lc0054(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
@@ -581,12 +579,13 @@ integer :: codret
                     nvi, dsidep, codret)
     case (58)
 !     MFRONT
-        call lc0058(fami , kpg   , ksp   , ndim  , typmod,&
-                    imate, compor, carcri, instam, instap,&
-                    neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas, &
-                    temp , dtemp , predef, dpred ,&
-                    sigp , vip   , dsidep, codret)
+        call lc0058(BEHinteg,&
+                    fami    , kpg   , ksp   , ndim  , typmod,&
+                    imate   , compor, carcri, instam, instap,&
+                    neps    , epsm  , deps  , nsig  , sigm  ,&
+                    nvi     , vim   , option, angmas,&
+                    temp    , dtemp , predef, dpred ,&
+                    sigp    , vip   , dsidep, codret)
     case (59)
         call lc0059(fami, kpg, ksp, imate,&
                     compor, carcri, instam, instap, neps, epsm,&
@@ -824,10 +823,11 @@ integer :: codret
                     nvi, dsidep, codret)
     case (115)
 !     META_LEMA_ANI
-        call lc0115(fami, kpg, ksp, ndim, imate,&
+        call lc0115(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (120)
 !     BETON_DOUBLE_DP
@@ -855,38 +855,39 @@ integer :: codret
 
     case (152)
 !     CABLE_GAINE
-        call lc0152(fami, kpg, ksp, ndim, imate,&
+        call lc0152(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (165)
 !     FLUA_PORO_BETON
-        call lc0165(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, &
-                    nvi, dsidep, codret)
+        call lc0165(fami  , kpg   , ksp   , ndim  , imate,&
+                    compor, instam, instap, epsm  ,&
+                    deps  , sigm  , vim   , option,&
+                    sigp  , vip   , typmod, &
+                    dsidep, codret)
     case (166)
 !     ENDO_PORO_BETON
-        call lc0166(fami, kpg, ksp, ndim, imate,&
-                    compor,  instam, instap, epsm,&
-                    deps, sigm, vim, option, &
-                    sigp, vip,  typmod, &
-                     dsidep, codret)
+        call lc0166(fami  , kpg   , ksp   , ndim  , imate,&
+                    compor, instam, instap, epsm  ,&
+                    deps  , sigm  , vim   , option,&
+                    sigp  , vip   , typmod,&
+                    dsidep, codret)
     case (167)
 !     FLUA_ENDO_PORO
-        call lc0167(fami, kpg, ksp, ndim, imate,&
-                    compor,  instam, instap, epsm,&
-                    deps, sigm, vim, option, &
-                    sigp, vip,  typmod, &
+        call lc0167(fami  , kpg   , ksp   , ndim  , imate,&
+                    compor, instam, instap, epsm  ,&
+                    deps  , sigm  , vim   , option,&
+                    sigp  , vip   , typmod,&
                     dsidep, codret)
     case (168)
 !     RGI_BETON
-        call lc0168(fami, kpg, ksp, ndim, imate,&
-                    compor,  instam, instap, epsm,&
-                    deps, sigm, vim, option, &
-                    sigp, vip, typmod, &
+        call lc0168(fami  , kpg   , ksp   , ndim  , imate,&
+                    compor, instam, instap, epsm  ,&
+                    deps  , sigm  , vim   , option,&
+                    sigp  , vip   , typmod,&
                     dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -919,12 +920,13 @@ integer :: codret
 
     case (1058)
 !     MFRONT
-        call lc1058(fami , kpg   , ksp   , ndim  , typmod,&
-                    imate, compor, carcri, instam, instap,&
-                    neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas,&
-                    temp , dtemp , predef, dpred ,&
-                    sigp , vip   , dsidep, codret)
+        call lc1058(BEHinteg,&
+                    fami    , kpg   , ksp   , ndim  , typmod,&
+                    imate   , compor, carcri, instam, instap,&
+                    neps    , epsm  , deps  , nsig  , sigm  ,&
+                    nvi     , vim   , option, angmas,&
+                    temp    , dtemp , predef, dpred ,&
+                    sigp    , vip   , dsidep, codret)
 
     case (1137)
 !     MONOCRISTAL, POLYCRISTAL
@@ -941,7 +943,8 @@ integer :: codret
 !
     case (2001)
 !     ELAS
-        call lc2001(fami, kpg, ksp, ndim, imate,&
+        call lc2001(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     neps, deps, nsig, sigm, option,&
                     angmas, sigp, vip, typmod, ndsde,&
                     dsidep, codret)
@@ -977,10 +980,11 @@ integer :: codret
 !
     case (3053)
 !     ENDO_CARRE
-        call lc3053(fami, kpg, ksp, ndim, imate,&
+        call lc3053(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
 
 !
@@ -993,7 +997,7 @@ integer :: codret
         call lc4047(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, wkout, typmod,&
+                    sigp, vip, typmod,&
                     icomp, nvi, dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -1061,106 +1065,114 @@ integer :: codret
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7040)
-        call lc7040(fami, kpg, ksp, ndim, imate,&
+        call lc7040(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7041)
-        call lc7041(fami, kpg, ksp, ndim, imate,&
+        call lc7041(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7043)
-        call lc7043(fami, kpg, ksp, ndim, imate,&
+        call lc7043(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7045)
-        call lc7045(fami, kpg, ksp, ndim, imate,&
+        call lc7045(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7048)
-        call lc7048(fami, kpg, ksp, ndim, imate,&
+        call lc7048(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7049)
-        call lc7049(fami, kpg, ksp, ndim, imate,&
+        call lc7049(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7051)
-        call lc7051(fami, kpg, ksp, ndim, imate,&
+        call lc7051(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7056)
-        call lc7056(fami, kpg, ksp, ndim, imate,&
+        call lc7056(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (7058)
 !     MFRONT
-        call lc7058(fami , kpg   , ksp   , ndim  , typmod,&
-                    imate, compor, carcri, instam, instap,&
-                    neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas, &
-                    temp , dtemp , predef, dpred ,&
-                    sigp , vip   , dsidep, codret)
+        call lc7058(BEHinteg,&
+                    fami    , kpg   , ksp   , ndim  , typmod,&
+                    imate   , compor, carcri, instam, instap,&
+                    neps    , epsm  , deps  , nsig  , sigm  ,&
+                    nvi     , vim   , option, angmas,&
+                    temp    , dtemp , predef, dpred ,&
+                    sigp    , vip   , dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - For KIT_DDI
 ! --------------------------------------------------------------------------------------------------
 !
     case (8028)
-        call lc8028(fami, kpg, ksp, ndim, imate,&
+        call lc8028(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
+                    option, angmas,sigp, nvi, vip,&
+                    typmod, icomp, ndsde, dsidep, codret)
 !
     case (8029)
-        call lc8029(fami, kpg, ksp, ndim, imate,&
+        call lc8029(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
+                    option, angmas,sigp, nvi, vip, &
+                    typmod, icomp, ndsde, dsidep, codret)
 !
     case (8057)
-        call lc8057(fami, kpg, ksp, ndim, imate,&
+        call lc8057(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
+                    option, angmas,sigp, nvi, vip, &
+                    typmod,icomp, ndsde, dsidep, codret)
 !
     case (8146)
-        call lc8146(fami, kpg, ksp, ndim, imate,&
+        call lc8146(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
+                    option, angmas,sigp, nvi, vip, &
+                    typmod, icomp, ndsde, dsidep, codret)
 !
     case (8331)
-        call lc8331(fami, kpg, ksp, ndim, imate,&
+        call lc8331(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
-!
+                    option, angmas,sigp, nvi, vip, &
+                    typmod, icomp, ndsde, dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - For metallurgy/steel
@@ -1205,7 +1217,7 @@ integer :: codret
         call lc9999(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case default
         call utmess('F', 'COMPOR1_43', si=numlc)

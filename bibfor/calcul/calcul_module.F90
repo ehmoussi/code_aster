@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 module calcul_module
 implicit none
-! person_in_charge: mickael.abbas at edf.fr
+
 #include "asterf_types.h"
 
 !    Ce module contient quelques variables "globales" utilisees
@@ -268,12 +269,10 @@ implicit none
 !======================================================================
     real(kind=8) :: ca_vext_eltsize1_
     real(kind=8) :: ca_vext_eltsize2_(9)
-    real(kind=8) :: ca_vext_coorga_(27,3)
     real(kind=8) :: ca_vext_gradvelo_(9)
     real(kind=8) :: ca_vext_hygrm_, ca_vext_hygrp_
 !     ca_vext_eltsize1_ : size of element
 !     ca_vext_eltsize2_ : size of element (for ENDO_PORO_BETON)
-!     ca_vext_coorga_   : coordinates of Gauss points
 !     ca_vext_gradvelo_ : gradient of velocity
 !     ca_vext_hygrm_  and ca_vext_hygrp_: hygrometry 
 !======================================================================

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306
+!
 subroutine nmfi2d(npg, lgpg, mate, option, geom,&
                   deplm, ddepl, sigmo, sigma, fint,&
                   ktan, vim, vip, tm, tp,&
                   crit, compor, typmod, codret)
 !
+use Behaviour_type
 !
-! aslint: disable=W1306
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8vide.h"
 #include "asterfort/codere.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/gedisc.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmfisa.h"
@@ -68,14 +71,19 @@ subroutine nmfi2d(npg, lgpg, mate, option, geom,&
     integer :: ndim, nno, nnos, ipoids, ivf, idfde, jgano
 !     COORDONNEES POINT DE GAUSS + POIDS : X,Y,W => 1ER INDICE
     real(kind=8) :: coopg(3, npg)
-    real(kind=8) :: dsidep(6, 6), b(2, 8), rbid(1)
+    real(kind=8) :: dsidep(6, 6), b(2, 8)
     real(kind=8) :: sum(2), dsu(2), poids
     real(kind=8) :: crit(*)
     real(kind=8) :: angmas(3)
+    type(Behaviour_Integ) :: BEHinteg
 !
     axi = typmod(1) .eq. 'AXIS'
     resi = option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
     rigi = option(1:9).eq.'FULL_MECA'.or.option(1:10).eq.'RIGI_MECA_'
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! --- ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
 ! --- INITIALISE A R8VIDE (ON NE S'EN SERT PAS)
@@ -122,15 +130,16 @@ subroutine nmfi2d(npg, lgpg, mate, option, geom,&
 ! CALCUL DE LA CONTRAINTE DANS L'ELEMENT AINSI QUE LA DERIVEE
 ! DE CELLE-CI PAR RAPPORT AU SAUT DE DEPLACEMENT (SIGMA ET DSIDEP)
 !
-        rbid = r8vide()
         code(kpg) = 0
 !
-        call nmcomp('RIGI', kpg, 1, 2, typmod,&
+        BEHinteg%elga%coorpg(1:2) = coopg(1:2,kpg)
+!
+        call nmcomp(BEHinteg,&
+                    'RIGI', kpg, 1, 2, typmod,&
                     mate, compor, crit, tm, tp,&
                     2, sum, dsu, 1, sigmo(1, kpg),&
-                    vim(1, kpg), option, angmas, 3, coopg( 1, kpg),&
-                    sigma(1, kpg), vip(1, kpg), 36, dsidep, 1,&
-                    rbid, ibid)
+                    vim(1, kpg), option, angmas, &
+                    sigma(1, kpg), vip(1, kpg), 36, dsidep, ibid)
 !
 !
 ! CALCUL DES FINT (B_T SIGMA )

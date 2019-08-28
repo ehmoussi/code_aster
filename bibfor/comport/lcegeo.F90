@@ -19,7 +19,8 @@
 subroutine lcegeo(nno     , npg      , ndim     ,&
                   jv_poids, jv_func  , jv_dfunc ,&
                   typmod  , jvariext1, jvariext2,&
-                  geom    , deplm_   , ddepl_)
+                  geom    , coorga   ,&
+                  deplm_  , ddepl_)
 !
 implicit none
 !
@@ -37,6 +38,7 @@ integer, intent(in) :: jv_poids, jv_func, jv_dfunc
 character(len=8), intent(in) :: typmod(2)
 integer, intent(in) :: jvariext1, jvariext2
 real(kind=8), intent(in) :: geom(ndim, nno)
+real(kind=8), intent(out) :: coorga(27,3)
 real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -59,6 +61,7 @@ real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
 ! In  geom             : initial coordinates of nodes
 ! In  deplm            : displacements of nodes at beginning of time step
 ! In  ddepl            : displacements of nodes since beginning of time step
+! Out coorga           : coordinates of all integration points
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -81,11 +84,9 @@ real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
 !
 ! - Coordinates of Gauss points
 !
-    if (tabcod(COORGA) .eq. 1) then
-        call calcExternalStateVariable2(nno    , npg   , ndim  ,&
-                                        jv_func, &
-                                        geom   , typmod)
-    endif
+    call calcExternalStateVariable2(nno    , npg   , ndim  ,&
+                                    jv_func, &
+                                    geom   , coorga)
 !
 ! - Gradient of velocity
 !

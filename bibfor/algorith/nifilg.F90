@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,8 @@ subroutine nifilg(ndim, nnod, nnog, nnop, npg,&
                   sigm, vim, sigp, vip, resi,&
                   rigi, vect, matr, matsym, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -41,6 +43,7 @@ implicit none
 #include "asterfort/prelog.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
+#include "asterfort/behaviourInit.h"
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
 #include "blas/dscal.h"
@@ -124,8 +127,9 @@ character(len=16) :: compor(*), option
     real(kind=8) :: iddid, devdi(6), iddev(6)
     real(kind=8) :: ftr(3, 3), t1, t2
     real(kind=8) :: idev(6, 6), kr(6)
-    real(kind=8) :: tampon(10), id(3, 3), rbid(1)
+    real(kind=8) :: id(3, 3)
     real(kind=8) :: am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa
+    type(Behaviour_Integ) :: BEHinteg
 !
     parameter    (grand = .true._1)
     data         vij  / 1, 4, 5,&
@@ -148,6 +152,10 @@ character(len=16) :: compor(*), option
     nddl = nnod*ndim + nnog + nnop
     ndu = ndim
     if (axi) ndu = 3
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - REACTUALISATION DE LA GEOMETRIE ET EXTRACTION DES CHAMPS
     do na = 1, nnod
@@ -249,12 +257,12 @@ character(len=16) :: compor(*), option
             goto 999
         endif
 !
-        call nmcomp('RIGI', g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     6, epsml, deps, 6, tn,&
-                    vim(1, g), option, angmas, 10, tampon,&
-                    tp, vip(1, g), 36, dtde, 1,&
-                    rbid, cod(g))
+                    vim(1, g), option, angmas, &
+                    tp, vip(1, g), 36, dtde, cod(g))
 !
 ! - DSIDEP = 2dS/dC = dS/dE_GL
 !

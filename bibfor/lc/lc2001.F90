@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lc2001(fami, kpg, ksp, ndim, imate,&
+! aslint: disable=W0104
+!
+subroutine lc2001(BEHinteg,&
+                  fami, kpg, ksp, ndim, imate,&
                   neps, deps, nsig, sigm, option,&
                   angmas, sigp, vip, typmod, ndsde,&
                   dsidep, codret)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -28,25 +32,24 @@ implicit none
 #include "asterfort/nmorth.h"
 #include "asterfort/rccoma.h"
 !
-! aslint: disable=W0104
-!
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: ndim
-    integer, intent(in) :: imate
-    integer, intent(in) :: neps
-    real(kind=8), intent(in) :: deps(neps)
-    integer, intent(in) :: nsig
-    real(kind=8), intent(in) :: sigm(nsig)
-    character(len=16), intent(in) :: option
-    real(kind=8), intent(in) :: angmas(3)
-    real(kind=8), intent(out) :: sigp(nsig)
-    real(kind=8), intent(out) :: vip(1)
-    character(len=8), intent(in) :: typmod(*)
-    integer, intent(in) :: ndsde
-    real(kind=8), intent(out) :: dsidep(ndsde)
-    integer, intent(out) :: codret
+type(Behaviour_Integ), intent(in) :: BEHinteg
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+integer, intent(in) :: ndim
+integer, intent(in) :: imate
+integer, intent(in) :: neps
+real(kind=8), intent(in) :: deps(neps)
+integer, intent(in) :: nsig
+real(kind=8), intent(in) :: sigm(nsig)
+character(len=16), intent(in) :: option
+real(kind=8), intent(in) :: angmas(3)
+real(kind=8), intent(out) :: sigp(nsig)
+real(kind=8), intent(out) :: vip(1)
+character(len=8), intent(in) :: typmod(*)
+integer, intent(in) :: ndsde
+real(kind=8), intent(out) :: dsidep(ndsde)
+integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,7 +67,8 @@ implicit none
     call rccoma(imate, 'ELAS', 1, mcmate, icodre)
     ASSERT(icodre.eq.0)
     if (mcmate .eq. 'ELAS') then
-        call nmelas(fami, kpg, ksp, ndim, typmod,&
+        call nmelas(BEHinteg,&
+                    fami, kpg, ksp, ndim, typmod,&
                     imate, deps, sigm, option, sigp,&
                     vip, dsidep, codret)
     else 

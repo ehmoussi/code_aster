@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: jerome.laverne at edf.fr
+! aslint: disable=W1504
+!
 subroutine eifint(ndim, axi, nno1, nno2, npg,&
                   wref, vff1, vff2, dffr2, geom,&
                   ang, typmod, option, mat, compor,&
@@ -23,16 +25,16 @@ subroutine eifint(ndim, axi, nno1, nno2, npg,&
                   ddld, iu, im, vim, sigp,&
                   vip, matr, vect, codret)
 !
-! person_in_charge: jerome.laverne at edf.fr
+use Behaviour_type
 !
-! aslint: disable=W1504
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/codere.h"
 #include "asterfort/eicine.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/behaviourInit.h"
     character(len=8) :: typmod(*)
     character(len=16) :: option, compor(*)
 !
@@ -85,6 +87,7 @@ subroutine eifint(ndim, axi, nno1, nno2, npg,&
     integer :: nddl, g, cod(27), n, i, m, j, k, l, os, kk
     real(kind=8) :: rbid(1), r(1), mu(3), su(3), wg, b(3, 3, 18), de(6)
     real(kind=8) :: ddedt(6, 6), t1
+    type(Behaviour_Integ) :: BEHinteg
 ! ----------------------------------------------------------------------
 !
 !
@@ -94,9 +97,13 @@ subroutine eifint(ndim, axi, nno1, nno2, npg,&
     rigi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RIGI'
     nddl = nno1*2*ndim + nno2*ndim
 !
-    do 5 g = 1, npg
+    do g = 1, npg
         cod(g)=0
-  5 end do
+    end do
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
     call r8inir(3, 0.d0, su, 1)
     call r8inir(3, 0.d0, mu, 1)
@@ -141,16 +148,18 @@ subroutine eifint(ndim, axi, nno1, nno2, npg,&
 !       4. D(DELTA)/DT EST RENVOYE DANS DSIDEP(1:3,1:3) : DDEDT
 !       5. R (PENALISATION) EST RENVOYE DANS TAMPON(1)  : R
 !
-        call nmcomp('RIGI', g, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'RIGI', g, 1, ndim, typmod,&
                     mat, compor, crit, instam, instap,&
                     3, mu, su, 1, rbid,&
-                    vim(1, g), option, rbid, 1, r,&
-                    de, vip(1, g), 36, ddedt, 1,&
-                    rbid, cod(g))
+                    vim(1, g), option, rbid, &
+                    de, vip(1, g), 36, ddedt, cod(g))
         if (cod(g) .eq. 1) goto 9000
 !
 !
 !      FORCE INTERIEURE ET CONTRAINTES DE CAUCHY
+!
+        r = BEHinteg%elga%r
 !
         if (resi) then
 !

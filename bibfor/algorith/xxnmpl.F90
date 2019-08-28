@@ -26,6 +26,8 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
                   lsn, lst, idecpg, sig, vi,&
                   matuu, ivectu, codret, nfiss, heavn, jstno)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -40,6 +42,7 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/reeref.h"
 #include "asterfort/vecini.h"
+#include "asterfort/behaviourInit.h"
 #include "asterfort/xcinem.h"
 #include "asterfort/xcalc_heav.h"
 #include "asterfort/xcalc_code.h"
@@ -61,6 +64,7 @@ real(kind=8) :: basloc(3*ndim*nnop), carcri(*), he(nfiss)
 real(kind=8) :: lsn(nnop), lst(nnop), coorse(*)
 real(kind=8) :: vi(lgpg, npg), vip(lgpg, npg), sig(2*ndim, npg), matuu(*)
 real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
+!
 !.......................................................................
 !
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
@@ -103,12 +107,13 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), sigma(6), ftf, detf
     real(kind=8) :: tmp1, tmp2, sigp(6)
     real(kind=8) :: xg(ndim), xe(ndim), ff(nnop), jac
-    real(kind=8) :: rbid33(3, 3), rbid1(1)
+    real(kind=8) :: rbid33(3, 3)
     real(kind=8) :: dfdi(nnop, ndim), pff(6, nnop, nnop)
     real(kind=8) :: def(6, nnop, ndim*(1+nfh+nfe*ndim)), r
-    real(kind=8) :: elgeom(10, 27)
     real(kind=8) :: fk(27,3,3), dkdgl(27,3,3,3), ka, mu
     aster_logical :: grdepl, axi, cplan
+    real(kind=8) :: coorga(27,3)
+    type(Behaviour_Integ) :: BEHinteg
 !
     integer :: indi(6), indj(6)
     real(kind=8) :: rind(6), rac2, angmas(3)
@@ -124,7 +129,6 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !     TELLE SORTE QU'ILS NE PRENNENT PAS EN COMPTE LES DDL SUR LES
 !     NOEUDS MILIEU
 !
-    elgeom(:,:) = 0.d0
 !     NOMBRE DE DDL DE DEPLACEMENT À CHAQUE NOEUD
     call xnbddl(ndim, nfh, nfe, ddlc, ddld, ddls, singu)
 !     RECUPERATION DU NOMBRE DE NOEUDS SOMMETS DE L'ELEMENT PARENT
@@ -142,6 +146,10 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
     ASSERT(npg.eq.npgbis.and.ndim.eq.ndimb)
 !
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
+!
 ! - Get coded integers for external state variables
 !
     jvariext1 = nint(carcri(IVARIEXT1))
@@ -152,7 +160,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     call lcegeo(nno      , npg      , ndim     ,&
                 ipoids   , ivf      , idfde    ,&
                 typmod   , jvariext1, jvariext2,&
-                zr(igeom))
+                zr(igeom), coorga)
 !
     do n = 1, nnop
         call indent(n, ddls, ddlm, nnops, dec(n))
@@ -343,13 +351,14 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
             sign(m) = sigm(m,kpg)*rac2
         end do
 !
+        BEHinteg%elga%coorpg = coorga(kpg,:)
         call r8inir(6, 0.0d0, sigma, 1)
-        call nmcomp('XFEM', idecpg+kpg, 1, ndim, typmod,&
+        call nmcomp(BEHinteg,&
+                    'XFEM', idecpg+kpg, 1, ndim, typmod,&
                     imate, compor, carcri, instam, instap,&
                     6, eps, deps, 6, sign,&
-                    vi(1, kpg), option, angmas, 10, elgeom(1, kpg),&
-                    sigma, vip(1, kpg), 36, dsidep, 1,&
-                    rbid1, codret)
+                    vi(1, kpg), option, angmas, &
+                    sigma, vip(1, kpg), 36, dsidep, codret)
 !
 ! - CALCUL DE LA MATRICE DE RIGIDITE
 !

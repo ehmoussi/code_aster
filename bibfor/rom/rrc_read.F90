@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,6 +53,9 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     character(len=16) :: k16bid = ' ', answer
     character(len=24) :: grnode_int
     aster_logical :: l_prev_dual, l_corr_ef
+    aster_logical :: l_tabl_user = ASTER_FALSE
+    character(len=8)  :: tabl_user = ' '
+    integer :: nocc = 0
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -96,6 +99,11 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
     call getvid(' ', 'MODELE', scal = model_dom)
 !
+! - Get parameters
+!
+    call getvid(' ', 'TABL_COOR_REDUIT', scal = tabl_user, nbret = nocc)
+    l_tabl_user = nocc .gt. 0
+!
 ! - Save parameters in datastructure
 !
     ds_para%result_rom    = result_rom
@@ -106,5 +114,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     ds_para%grnode_int    = grnode_int
     ds_para%l_prev_dual   = l_prev_dual
     ds_para%l_corr_ef     = l_corr_ef
+    ds_para%l_tabl_user   = l_tabl_user
+    ds_para%tabl_user     = tabl_user
 !
 end subroutine

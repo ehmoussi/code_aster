@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,5 +45,6 @@ REST_REDUIT_COMPLET=OPER(nom="REST_REDUIT_COMPLET",op=54,
                             BASE_DUAL= SIMP(statut='o',typ=mode_empi,max=1)),
     CORR_COMPLET     = SIMP(statut='f',typ='TXM',defaut='NON',into=('OUI','NON')),
     INFO             = SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
+    TABL_COOR_REDUIT = SIMP(statut='f',typ=table_sdaster),
     TITRE            = SIMP(statut='f',typ='TXM'),
 ) ;
