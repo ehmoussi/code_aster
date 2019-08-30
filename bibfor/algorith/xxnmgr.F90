@@ -37,7 +37,6 @@ implicit none
 #include "asterfort/dfdm3d.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/indent.h"
-#include "asterfort/lcegeo.h"
 #include "asterfort/matinv.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
@@ -66,13 +65,14 @@ real(kind=8) :: lsn(nnop), lst(nnop), coorse(*)
 real(kind=8) :: vi(lgpg, npg), vip(lgpg, npg), sigp(2*ndim, npg), matuu(*)
 real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
-!.......................................................................
+! --------------------------------------------------------------------------------------------------
 !
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
 !           EN GRANDE ROTATION ET PETITE DEFORMATION AVEC X-FEM EN 2D
 !
 !     TRAVAIL EFFECTUE EN COLLABORATION AVEC I.F.P.
-!.......................................................................
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  ELREFP  : ÉLÉMENT DE RÉFÉRENCE PARENT
 ! IN  NDIM    : DIMENSION DE L'ESPACE
@@ -101,11 +101,12 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 ! OUT VI      : VARIABLES INTERNES    (RAPH_MECA ET FULL_MECA)
 ! OUT MATUU   : MATRICE DE RIGIDITE PROFIL (RIGI_MECA_TANG ET FULL_MECA)
 ! OUT VECTU   : FORCES NODALES (RAPH_MECA ET FULL_MECA)
-!......................................................................
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: i, ig, j, j1, k, kk, kkd, kpg, l, m, mn, n, nn
     integer :: ddls, ddld, ddldn, cpt, dec(nnop), hea_se
-    integer :: idfde, ipoids, ivf, jcoopg, jdfd2, jgano, jvariext1, jvariext2
+    integer :: idfde, ipoids, ivf, jcoopg, jdfd2, jgano
     integer :: ndimb, nno, nnops, nnos, npgbis
     integer :: singu, alp, ii, jj
     real(kind=8) :: f(3, 3), fm(3, 3), fr(3, 3), epsm(6), epsp(6), deps(6)
@@ -130,7 +131,8 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     data    rac2 / 1.4142135623731d0 /
     data    angmas /0.d0, 0.d0, 0.d0/
     data    rind1 / 0.5d0 , 0.5d0 , 0.5d0 , 1.d0, 1.d0, 1.d0 /
-!--------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
 !     NOMBRE DE DDL DE DEPLACEMENT À CHAQUE NOEUD
     call xnbddl(ndim, nfh, nfe, ddlc, ddld, ddls, singu)
@@ -160,17 +162,12 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
     call behaviourInit(BEHinteg)
 !
-! - Get coded integers for external state variables
+! - Prepare external state variables
 !
-    jvariext1 = nint(carcri(IVARIEXT1))
-    jvariext2 = nint(carcri(IVARIEXT2))
-!
-! - Compute intrinsic external state variables
-!
-    call lcegeo(nno      , npg      , ndim     ,&
-                ipoids   , ivf      , idfde    ,&
-                typmod   , jvariext1, jvariext2,&
-                zr(igeom), coorga)
+    call behaviourPrepExternal(carcri   , typmod,&
+                               nno      , npg   , ndim ,&
+                               ipoids   , ivf   , idfde,&
+                               zr(igeom), coorga)
 !
     do n = 1, nnop
         call indent(n, ddls, ddlm, nnops, dec(n))
