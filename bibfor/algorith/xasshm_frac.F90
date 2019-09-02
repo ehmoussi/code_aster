@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! aslint: disable=W1504,W1306
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
+subroutine xasshm_frac(ds_thm,&
+                       nddls, nddlm, nnop, nnops,&
                        lact, elrefp, elrefc, elc, contac,&
                        dimuel, nptf,&
                        jptint, igeom, jbasec,&
@@ -29,8 +30,11 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
                        pla, algocr, rela, ifa, ipgf, matri,&
                        cohes, coheo, jheavn, ncompn, ifiss,&
                        nfiss, nfh, jheafa, ncomph, pos)
-implicit none 
-    
+!
+use THM_type
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/xfract.h"
@@ -64,7 +68,8 @@ implicit none
 ! CALCUL DES MATRICES POUR LE FRACTURE (OPTION RIGI_CONT)
 !
 ! ----------------------------------------------------------------------
-
+! IO  ds_thm           : datastructure for THM
+type(THM_DS), intent(inout) :: ds_thm
     integer :: nddls, nnop, dimuel, i, ndim, nnops, jheavn
     integer :: nddlm, contac, jmate, ncompv, nvec, pla(27), ncompn
     integer :: nptf, nfiss, jcohes, jcoheo
@@ -87,6 +92,7 @@ implicit none
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
     character(len=16):: compor(*)
 
+
 !   DETERMINATION DES CONSTANTES TEMPORELLES (INSTANT+THETA SCHEMA)
     dt = rinstp-rinstm
     parm_theta = carcri(PARM_THETA_THM)
@@ -94,24 +100,24 @@ implicit none
 !
 ! - Get parameters for behaviour
 !
-    call thmGetBehaviour(compor)
+    call thmGetBehaviour(compor, ds_thm)
 !
 ! - Get parameters for internal variables
 !
-    call thmGetBehaviourVari()
+    call thmGetBehaviourVari(ds_thm)
 !
 ! - Some checks between behaviour and model
 !
-    call thmGetBehaviourChck()
+    call thmGetBehaviourChck(ds_thm)
 !
 ! - Get parameters for coupling
 !
     temp = 0.d0
-    call thmGetParaCoupling(zi(jmate), temp)
+    call thmGetParaCoupling(ds_thm, zi(jmate), temp)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
-    call thmGetParaBiot(zi(jmate))
+    call thmGetParaBiot(zi(jmate), ds_thm)
 
 !   INITIALISATION DE LA DIMENSION DE LA MATRICE DE TRAVAIL
 !
@@ -151,7 +157,7 @@ implicit none
 !
            nvec=2
            job='MATRICE'
-           call xfract(nvec, nnop, nnops, nddls, nddlm,&
+           call xfract(ds_thm, nvec, nnop, nnops, nddls, nddlm,&
                        ndim, pla, zr(idepd), zr(idepm),&
                        ffp, ffc, dffc, saut, gradpf,&
                        q1, q2, dpf, q1m, q2m, sautm,&
@@ -172,15 +178,15 @@ implicit none
 !          CALCUL DE LA VARIABLE INTERNE (MASSE VOLUMIQUE DU LIQUIDE 
 !          CIRCULANT DANS LA FRACTURE)
 !
-           job='MATRICE'                    
-           call xvinhm(zi(jmate), ndim,&
+           job='MATRICE'
+           call xvinhm(ds_thm, zi(jmate), ndim,&
                        cohes, dpf, saut, sautm, nd, lamb,&
                        w11m, rho11m, alpha, job, pf,&
                        rho11, w11, ipgf, rela, dsidep,&
                        delta, r, am)
 !
 !          CALCUL DES MATRICES (CF. DOC R7.02.18)
-           call xmathm(ndim,&
+           call xmathm(ds_thm, ndim,&
                        nnops, nnop, nddls, nddlm, ffc,&
                        pla, nd, jac, ffp, ffp2, dt, parm_theta, saut,&
                        dffc, rho11, gradpf, matri,&
@@ -207,7 +213,7 @@ implicit none
 !
            nvec=2
            job='MATRICE'
-           call xfract(nvec, nnop, nnops, nddls, nddlm,&
+           call xfract(ds_thm, nvec, nnop, nnops, nddls, nddlm,&
                        ndim, pla, zr(idepd), zr(idepm),&
                        ffp, ffc, dffc, saut, gradpf,&
                        q1, q2, dpf, q1m, q2m, sautm,&
@@ -233,7 +239,7 @@ implicit none
                     cohes(i) = zr(jcohes+ncompv*nnops*(pos(ino)-1)+ncompv*(ino-1)-1+i)
                 end do
 !
-                call xhmsa6(ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
+                call xhmsa6(ds_thm, ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
                             tau1, tau2, cohes, job, rela,&
                             alpha, dsidep, sigma, p, am, raug,&
                             wsautm, dpf, rho110)
@@ -274,7 +280,7 @@ implicit none
                        jheavn, ncompn, ifiss, nfiss, nfh,&
                        ifa, jheafa, ncomph)
 !
-           call xmmata(ndim, nnops, nnop, nddls, nddlm, saut,&
+           call xmmata(ds_thm, ndim, nnops, nnop, nddls, nddlm, saut,&
                        nd, pla, ffc, dffc, matri, rho11, &
                        gradpf, ffp, dt, parm_theta, jac,&
                        jheavn, ncompn, ifiss, nfiss,&

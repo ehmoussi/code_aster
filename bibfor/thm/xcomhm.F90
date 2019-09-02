@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! person_in_charge: daniele.colombo at ifpen.fr
 ! aslint: disable=W1504,W1306
 !
-subroutine xcomhm(option, j_mater, time_curr,&
+subroutine xcomhm(ds_thm,&
+                  option, j_mater, time_curr,&
                   ndim, dimdef, dimcon, nbvari,&
                   addeme, adcome, addep1, adcp11,&
                   addep2, addete, defgem,&
@@ -28,7 +29,6 @@ subroutine xcomhm(option, j_mater, time_curr,&
                   angl_naut, yaenrh, adenhy, nfh)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -47,6 +47,7 @@ implicit none
 #include "asterfort/thmEvalGravity.h"
 #include "asterfort/tebiot.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 integer :: retcom, kpi, npg, nfh
 integer :: ndim, dimdef, dimcon, nbvari, j_mater
 integer :: addeme, addep1, addep2, addete
@@ -113,7 +114,7 @@ real(kind=8) :: angl_naut(3)
 !
 ! - Update unknowns
 !
-    call calcva(kpi   , ndim  ,&
+    call calcva(ds_thm, kpi   , ndim  ,&
                 defgem, defgep,&
                 addeme, addep1, addep2   , addete,&
                 depsv , epsv  , deps     ,&
@@ -127,29 +128,29 @@ real(kind=8) :: angl_naut(3)
 !
 ! - Get hydraulic parameters
 !
-    call thmGetParaHydr(j_mater)
+    call thmGetParaHydr(j_mater, ds_thm)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
-    call thmGetParaBiot(j_mater)
+    call thmGetParaBiot(j_mater, ds_thm)
 !
 ! - Compute Biot tensor
 !
-    call tebiot(angl_naut, tbiot)
+    call tebiot(ds_thm, angl_naut, tbiot)
 !
 ! - Get elastic parameters
 !
-    call thmGetParaElas(j_mater, kpi, t, ndim)
-    call thmMatrHooke(angl_naut)
+    call thmGetParaElas(j_mater, kpi, t, ndim, ds_thm)
+    call thmMatrHooke(ds_thm, angl_naut)
 !
 ! - Get thermic parameters
 !
-    call thmGetParaTher(j_mater, kpi, t)
+    call thmGetParaTher(j_mater, kpi, t, ds_thm)
 
 ! ======================================================================
 ! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
 ! ======================================================================
-    call xhmsat(option,&
+    call xhmsat(ds_thm, option,&
                 ndim, dimenr,&
                 dimcon, nbvari, addeme,&
                 adcome,&
@@ -167,7 +168,7 @@ real(kind=8) :: angl_naut(3)
 !  C'EST A DIRE SI KPI<NPG
 ! ======================================================================
     if (ds_thm%ds_elem%l_dof_meca .and. kpi .le. npg) then
-        call xcalme(option, ndim, dimenr,&
+        call xcalme(ds_thm, option, ndim, dimenr,&
                     dimcon, addeme, adcome, congep,&
                     dsde, deps, angl_naut)
         if (retcom .ne. 0) then
@@ -177,7 +178,7 @@ real(kind=8) :: angl_naut(3)
 !
 ! - Get permeability tensor
 !
-    call thmGetPermeabilityTensor(ndim , angl_naut, j_mater, phi, vintp(1),&
+    call thmGetPermeabilityTensor(ds_thm, ndim , angl_naut, j_mater, phi, vintp(1),&
                                   tperm)
 !
 ! - Compute gravity
@@ -187,7 +188,7 @@ real(kind=8) :: angl_naut(3)
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT
 ! ======================================================================
     if ((ds_thm%ds_elem%l_dof_pre1).and.(yaenrh.eq.1)) then
-        call xcalfh(option, ndim, dimcon,&
+        call xcalfh(ds_thm, option, ndim, dimcon,&
                     addep1, adcp11, addeme, congep, dsde,&
                     grap1, rho11, gravity, tperm, &
                     dimenr,&

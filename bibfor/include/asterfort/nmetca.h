@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,15 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmetca(modele, noma, ds_material, sddisc, sdcriq,&
-                      numins, valinc)
+    subroutine nmetca(model , mesh     , mate         , hval_incr,&
+                      sddisc, nume_inst, ds_errorindic)
         use NonLin_Datastructure_type
-        character(len=24) :: modele
-        character(len=8) :: noma
-        type(NL_DS_Material), intent(in) :: ds_material
-        character(len=19) :: sddisc
-        character(len=24) :: sdcriq
-        integer :: numins
-        character(len=19) :: valinc(*)
+        character(len=8), intent(in) :: mesh
+        character(len=24), intent(in) :: model, mate
+        character(len=19), intent(in) :: hval_incr(*)
+        character(len=19), intent(in) :: sddisc
+        integer, intent(in) :: nume_inst
+        type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
     end subroutine nmetca
 end interface

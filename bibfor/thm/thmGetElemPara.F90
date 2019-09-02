@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine thmGetElemPara(l_axi    , l_steady ,&
+subroutine thmGetElemPara(ds_thm   , l_axi    , l_steady ,&
                           type_elem, inte_type, ndim     ,&
                           mecani   , press1   , press2   , tempe  ,&
                           dimdep   , dimdef   , dimcon   , dimuel ,&
@@ -28,6 +28,8 @@ subroutine thmGetElemPara(l_axi    , l_steady ,&
                           jv_poids , jv_func  , jv_dfunc ,&
                           jv_poids2, jv_func2 , jv_dfunc2,&
                           jv_gano)
+!
+use THM_type
 !
 implicit none
 !
@@ -40,6 +42,7 @@ implicit none
 #include "asterfort/thmGetElemRefe.h"
 #include "asterfort/thmGetElemInfo.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 aster_logical, intent(out) :: l_axi, l_steady
 character(len=8), intent(out) :: type_elem(2)
 character(len=3), intent(out) :: inte_type
@@ -61,6 +64,7 @@ integer, intent(out) :: jv_gano
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! Out l_axi            : flag is axisymmetric model
 ! Out l_steady         : .true. for steady state
 ! Out type_elem        : type of element
@@ -127,17 +131,17 @@ integer, intent(out) :: jv_gano
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, l_steady, ndim, type_elem)
+    call thmGetElemModel(ds_thm, l_axi, l_vf, l_steady, ndim, type_elem)
     ASSERT(.not. l_vf)
 !
 ! - Get type of integration
 !
-    call thmGetElemIntegration(l_vf, inte_type)     
+    call thmGetElemIntegration(l_vf, inte_type)
 !
 ! - Get generalized coordinates
 !
-    call thmGetGene(l_steady, l_vf, ndim,&
-                    mecani  , press1, press2, tempe)
+    call thmGetGene(ds_thm, l_steady, l_vf  , ndim ,&
+                    mecani, press1  , press2, tempe)
 !
 ! - Get reference elements
 !

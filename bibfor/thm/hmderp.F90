@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine hmderp(yavp  , t     ,&
+subroutine hmderp(ds_thm, yavp  , t     ,&
                   pvp   , pad   ,&
                   rho11 , rho12 , h11  , h12,&
                   dp11p1, dp11p2, dp11t,&
@@ -30,12 +30,12 @@ subroutine hmderp(yavp  , t     ,&
                   dp1pt , dp2pt , dtpt)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
 #include "asterf_types.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 aster_logical, intent(in) :: yavp
 real(kind=8), intent(in) :: t, pvp, pad
 real(kind=8), intent(in) :: rho11, rho12, h11, h12
@@ -55,6 +55,7 @@ real(kind=8), intent(out) :: dp1pt(2), dp2pt(2), dtpt(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  yavp             : flag for steam
 ! In  t                : temperature - At end of current step
 ! In  pvp              : steam pressure

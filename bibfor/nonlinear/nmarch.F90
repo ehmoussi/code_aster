@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmarch(numins         , modele  , ds_material, carele, fonact   ,&
-                  ds_constitutive, ds_print, sddisc     , sdcrit,&
-                  ds_measure     , sderro  , sddyna     , sdpilo, ds_energy,&
-                  ds_inout       , sdcriq  , ds_algorom_)
+subroutine nmarch(numins    , modele       , ds_material, carele, fonact   ,&
+                  ds_print  , sddisc       , sdcrit,&
+                  ds_measure, sderro       , sddyna     , sdpilo, ds_energy,&
+                  ds_inout  , ds_errorindic, ds_algorom_)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -53,8 +53,8 @@ type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Energy), intent(in) :: ds_energy
 character(len=19) :: sddisc, sdcrit, sddyna, sdpilo
-type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-character(len=24) :: sderro, sdcriq
+character(len=24) :: sderro
+type(NL_DS_ErrorIndic), intent(in) :: ds_errorindic
 character(len=24) :: modele, carele
 type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
@@ -73,10 +73,9 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 ! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
-! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  SDCRIT : VALEUR DES CRITERES DE CONVERGENCE
-! IN  SDCRIQ : SD CRITERE QUALITE
+! In  ds_errorindic    : datastructure for error indicator
 ! IN  SDERRO : SD ERREUR
 ! IN  SDDYNA : SD DEDIEE A LA DYNAMIQUE
 ! IN  SDPILO : SD PILOTAGE
@@ -167,9 +166,9 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
 ! ----- Storing parameters
 !
-        call nmarc0(result, modele        , ds_material    , carele, fonact,&
-                    sdcrit, sddyna        , ds_constitutive, sdcriq,&
-                    sdpilo, list_load_resu, nume_store     , instan)
+        call nmarc0(result, modele        , ds_material  , carele, fonact,&
+                    sdcrit, sddyna        , ds_errorindic,&
+                    sdpilo, list_load_resu, nume_store   , instan)
 !
 ! ----- Stroring fields
 !

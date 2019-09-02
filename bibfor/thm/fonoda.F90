@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,19 +16,20 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine fonoda(jv_mater, ndim  , l_steady, fnoevo,&
+subroutine fonoda(ds_thm,&
+                  jv_mater, ndim  , l_steady, fnoevo,&
                   mecani  , press1, press2  , tempe ,&
                   dimdef  , dimcon, dt      , congem,&
                   r)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/thmEvalGravity.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: jv_mater
 integer, intent(in) :: ndim
 aster_logical, intent(in) :: fnoevo
@@ -47,20 +48,21 @@ real(kind=8), intent(out) :: r(dimdef+1)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  jv_mater     : coded material address
-! In  ndim         : dimension of element (2 ou 3)
-! In  fnoevo       : .true. if compute in non-linear operator (transient terms)
-! In  l_steady     : .true. for steady state
-! In  mecani       : parameters for mechanic
-! In  press1       : parameters for hydraulic (first pressure)
-! In  press1       : parameters for hydraulic (second pressure)
-! In  tempe        : parameters for thermic
-! In  dimdef       : number of generalized strains
-! In  dimcon       : number of generalized stresses
-! In  dt           : time increment
-! IO  congem       : generalized stresses at the beginning of time step
+! In  ds_thm           : datastructure for THM
+! In  jv_mater         : coded material address
+! In  ndim             : dimension of element (2 ou 3)
+! In  fnoevo           : .true. if compute in non-linear operator (transient terms)
+! In  l_steady         : .true. for steady state
+! In  mecani           : parameters for mechanic
+! In  press1           : parameters for hydraulic (first pressure)
+! In  press1           : parameters for hydraulic (second pressure)
+! In  tempe            : parameters for thermic
+! In  dimdef           : number of generalized strains
+! In  dimcon           : number of generalized stresses
+! In  dt               : time increment
+! IO  congem           : generalized stresses at the beginning of time step
 !                    => output sqrt(2) on SIG_XY, SIG_XZ, SIG_YZ
-! Out r            : stress vector
+! Out r                : stress vector
 !
 ! --------------------------------------------------------------------------------------------------
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine te0558(option, nomte)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -29,8 +29,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/elelin.h"
 #include "asterfort/elref1.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterfort/tecach.h"
 #include "asterfort/tecael.h"
@@ -42,10 +40,7 @@ implicit none
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/utmess.h"
 !
-    character(len=16) :: option, nomte
-!
-! person_in_charge: daniele.colombo at ifpen.fr
-!
+character(len=16) :: option, nomte
 !
 !         CALCUL DES MATRICES DE CONTACT POUR MODELE HM-XFEM
 !
@@ -74,18 +69,15 @@ implicit none
     integer :: nfimax
     parameter    (nfimax=10)
     integer :: fisc(2*nfimax), fisco(2*nfimax)
+    type(THM_DS) :: ds_thm
 ! 
 !......................................................................
 !
-    call jemarq()
-!
-! - Init THM module
-!
-    call thmModuleInit()
+
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel()
+    call thmGetElemModel(ds_thm)
     if (ds_thm%ds_elem%l_weak_coupling) then
         call utmess('F', 'CHAINAGE_12')
     endif
@@ -217,22 +209,22 @@ implicit none
        endif                                              
 !                                                         
        nfisc2 = 0                                         
-       do jfiss = ifiss+1, nfiss                          
-!   STOCKAGE DES FISSURES QUI SE BRANCHENT SUR IFISS      
-          kfiss = fisco(2*jfiss-1)                        
-          do i = nfisc+1, nfisc+nfisc2                    
-             if (fisc(2*(i-1)+1) .eq. kfiss) then         
-                nfisc2 = nfisc2 + 1                       
-                fisc(2*(nfisc+nfisc2-1)+1) = jfiss        
-                fisc(2*(nfisc+nfisc2)) = fisco(2*jfiss)   
-             endif                                        
-          end do                                                                      
-          if (kfiss .eq. ifiss) then                                                  
-             nfisc2 = nfisc2 + 1                                                      
-             fisc(2*(nfisc+nfisc2-1)+1) = jfiss                                       
-             fisc(2*(nfisc+nfisc2)) = fisco(2*jfiss)                                  
-          endif                                                                       
-       end do                                                                         
+       do jfiss = ifiss+1, nfiss
+!   STOCKAGE DES FISSURES QUI SE BRANCHENT SUR IFISS
+          kfiss = fisco(2*jfiss-1)
+          do i = nfisc+1, nfisc+nfisc2
+             if (fisc(2*(i-1)+1) .eq. kfiss) then
+                nfisc2 = nfisc2 + 1
+                fisc(2*(nfisc+nfisc2-1)+1) = jfiss
+                fisc(2*(nfisc+nfisc2)) = fisco(2*jfiss)
+             endif
+          end do
+          if (kfiss .eq. ifiss) then
+             nfisc2 = nfisc2 + 1
+             fisc(2*(nfisc+nfisc2-1)+1) = jfiss
+             fisc(2*(nfisc+nfisc2)) = fisco(2*jfiss)
+          endif
+       end do
     end do
 !
     do ifiss = 1, nfiss
@@ -321,7 +313,8 @@ implicit none
 !
 !   ACTUALISATION DES VARIABLES INTERNES POUR LA FRACTURE
 !
-       call xassha_frac(nddls, nddlm, nnop, nnops,&
+       call xassha_frac(ds_thm,&
+                        nddls, nddlm, nnop, nnops,&
                         lact, elrefp, elrefc, elc, contac,&
                         dimuel, nface, npgf, nbspg, nptf,&
                         jcohes, jptint, igeom, jbasec,&
@@ -343,5 +336,4 @@ implicit none
 !   ENREGISTREMENT DES CHAMPS DE SORTIE
     zi(jout1)=incoca
 !
-    call jedema()
 end subroutine

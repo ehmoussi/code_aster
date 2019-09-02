@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! aslint: disable=W1504,W1306
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xfnohm(fnoevo, deltat, nno, npg, ipoids,&
+subroutine xfnohm(ds_thm,&
+                  fnoevo, deltat, nno, npg, ipoids,&
                   ivf, idfde, geom, congem, b,&
                   dfdi, dfdi2, r, vectu, imate,&
                   mecani, press1, dimcon, nddls, nddlm,&
@@ -28,7 +29,6 @@ subroutine xfnohm(fnoevo, deltat, nno, npg, ipoids,&
                   enrmec, enrhyd, nfiss, nfh, jfisno)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -41,6 +41,8 @@ implicit none
 #include "asterfort/xfnoda.h"
 #include "asterfort/xlinhm.h"
 #include "jeveux.h"
+
+    type(THM_DS), intent(inout) :: ds_thm
     aster_logical :: fnoevo, axi
     integer :: nno, npg, imate, dimenr, dimcon, nddls, nddlm
     integer :: dimuel, nmec, np1, ndim, ipoids, ivf, kpi, i, n
@@ -205,7 +207,8 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DE LA MATRICE B AU POINT DE GAUSS -------------------------
 ! ======================================================================
-            call xcabhm(nddls, nddlm, nnop, nnops, nnopm,&
+            call xcabhm(ds_thm,&
+                        nddls, nddlm, nnop, nnops, nnopm,&
                         dimuel, ndim, kpi, ff, ff2,&
                         dfdi, dfdi2, b, nmec,&
                         addeme, addep1, np1, axi,&
@@ -213,7 +216,7 @@ implicit none
                         nno, geom, yaenrm, adenme, dimenr,&
                         he, heavn, yaenrh, adenhy, nfiss, nfh)
 ! ======================================================================
-            call xfnoda(imate, mecani, press1, enrmec, dimenr,&
+            call xfnoda(ds_thm, imate, mecani, press1, enrmec, dimenr,&
                         dimcon, ndim, dt, fnoevo, congem(npg*(ise-1)*dimcon+(kpi-1)*dimcon+1),&
                         r, enrhyd, nfh)
 ! ======================================================================

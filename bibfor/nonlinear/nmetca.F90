@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,22 +16,19 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine nmetca(modele, noma, ds_material, sddisc, sdcriq,&
-                  numins, valinc)
+subroutine nmetca(model , mesh     , mate         , hval_incr,&
+                  sddisc, nume_inst, ds_errorindic)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/calcul.h"
-#include "asterfort/cetule.h"
-#include "asterfort/dbgcal.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/diinst.h"
 #include "asterfort/exisd.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
@@ -42,144 +39,120 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/utmess.h"
 !
-character(len=8) :: noma
-character(len=24) :: modele, sdcriq
-type(NL_DS_Material), intent(in) :: ds_material
-character(len=19) :: valinc(*)
-integer :: numins
-character(len=19) :: sddisc
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: model, mate
+character(len=19), intent(in) :: hval_incr(*)
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: nume_inst
+type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! MECA_NON_LINE - Error indicators
 !
-! CALCUL DE L'INDICATEUR D'ERREUR TEMPORELLE POUR LES MODELISATIONS
-! HM SATUREES AVEC COMPORTEMENT MECANIQUE ELASTIQUE
+! Evaluate THM error (SM)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! In  ds_material      : datastructure for material parameters
-! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  SDERRO : SD ERREUR
-! IN  NUMINS : NUMERO INSTANT COURANT
-! IN  NOMA   : MAILLAGE SOUS-TENDU PAR LE MAILLAGE
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SDCRIQ : SD CRITERE QUALITE
+! In  mesh             : name of mesh
+! In  model            : name of model
+! In  mate             : name of material characteristics (field)
+! In  hval_incr        : hat-variable for incremental values
+! In  sddisc           : datastructure for time discretization
+! In  nume_inst        : index of current time step
+! IO  ds_errorindic    : datastructure for error indicator
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbout, nbin
-    parameter    (nbout=1, nbin=6)
+    integer :: ifm, niv
+    integer, parameter :: nbout = 1
+    integer, parameter :: nbin = 6
     character(len=8) :: lpaout(nbout), lpain(nbin)
     character(len=19) :: lchout(nbout), lchin(nbin)
-!
-    integer :: npara
-    parameter  ( npara = 2 )
+    integer, parameter :: npara  = 2
     character(len=8) :: licmp(npara)
     real(kind=8) :: rcmp(npara)
-!
-    integer :: codret, iret
+    integer :: iret
     character(len=1) :: base
-    character(len=24) :: ligrmo, chgeom
-    character(len=24) :: chtime
-    character(len=24) :: cartca
-    character(len=19) :: sigmam, sigmap, chelem
+    character(len=24) :: ligrmo, chgeom, chtime, cartca
+    character(len=19) :: sigm_prev, sigm_curr, chelem
     real(kind=8) :: somme(1)
-    real(kind=8) :: instap, instam, deltat
-    real(kind=8) :: longc, presc
-    character(len=24) :: errthm
-    integer :: jerrt
+    real(kind=8) :: time_curr, time_prev, deltat
     real(kind=8) :: r8bid
-    real(kind=8) :: taberr(2), tbgrca(3)
+    real(kind=8) :: taberr(2)
     character(len=16) :: option
-    aster_logical :: debug
-    integer :: ifmdbg, nivdbg
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('PRE_CALCUL', ifmdbg, nivdbg)
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE13_87')
+    endif
 !
-! --- INITIALISATIONS
+! - Initializations
 !
     option = 'ERRE_TEMPS_THM'
-    ligrmo = modele(1:8)//'.MODELE'
-    if (nivdbg .ge. 2) then
-        debug = .true.
-    else
-        debug = .false.
-    endif
-    base = 'V'
+    ligrmo = model(1:8)//'.MODELE'
+    base   = 'V'
     cartca = '&&NMETCA.GRDCA'
-    chelem = '&&NMETCA_ERRE_TEMPS'
+    chelem = '&&NMETCA.ERRE'
 !
-! --- INSTANTS
+! - Times
 !
-    instap = diinst(sddisc,numins)
-    instam = diinst(sddisc,numins-1)
-    deltat = instap-instam
+    time_curr = diinst(sddisc, nume_inst)
+    time_prev = diinst(sddisc, nume_inst-1)
+    deltat    = time_curr-time_prev
 !
-! --- RECUPERATION TABLEAU GRANDEURS
+! - Previous errors
 !
-    call cetule(modele, tbgrca, codret)
-    longc = tbgrca(1)
-    presc = tbgrca(2)
+    taberr(1) = ds_errorindic%erre_thm_loca
+    taberr(2) = ds_errorindic%erre_thm_glob
 !
-! --- ERREUR PRECEDENTE
+! - Stresses
 !
-    errthm = sdcriq(1:19)//'.ERRT'
-    call jeveuo(errthm, 'E', jerrt)
-    taberr(1) = zr(jerrt-1+1)
-    taberr(2) = zr(jerrt-1+2)
+    call nmchex(hval_incr, 'VALINC', 'SIGMOI', sigm_prev)
+    call nmchex(hval_incr, 'VALINC', 'SIGPLU', sigm_curr)
 !
-! --- CONTRAINTES
+! - For geometry
 !
-    call nmchex(valinc, 'VALINC', 'SIGMOI', sigmam)
-    call nmchex(valinc, 'VALINC', 'SIGPLU', sigmap)
+    call megeom(model, chgeom)
 !
-! --- CARTE GEOMETRIE
+! - For time
 !
-    call megeom(modele, chgeom)
+    call mechti(mesh, time_curr, r8bid, r8bid, chtime)
 !
-! --- CARTE DES PARAMETRES TEMPORELS
-!
-    call mechti(noma, instap, r8bid, r8bid, chtime)
-!
-! --- CARTE DES PARAMETRES
+! - For parameters
 !
     licmp(1) = 'X1'
     licmp(2) = 'X2'
-    rcmp(1) = longc
-    rcmp(2) = presc
-!
+    rcmp(1)  = ds_errorindic%adim_l
+    rcmp(2)  = ds_errorindic%adim_p
     call mecact(base, cartca, 'MODELE', ligrmo, 'NEUT_R',&
                 ncmp=npara, lnomcmp=licmp, vr=rcmp)
 !
-! --- CALCUL DES INDICATEURS LOCAUX PAR ELEMENT
+! - Input fields
 !
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom(1:19)
     lpain(2) = 'PMATERC'
-    lchin(2) = ds_material%field_mate(1:19)
+    lchin(2) = mate(1:19)
     lpain(3) = 'PCONTGP'
-    lchin(3) = sigmap(1:19)
+    lchin(3) = sigm_curr(1:19)
     lpain(4) = 'PCONTGM'
-    lchin(4) = sigmam(1:19)
+    lchin(4) = sigm_prev(1:19)
     lpain(5) = 'PTEMPSR'
     lchin(5) = chtime(1:19)
     lpain(6) = 'PGRDCA'
     lchin(6) = cartca(1:19)
 !
+! - Output fields
+!
     lpaout(1) = 'PERREUR'
     lchout(1) = chelem
 !
-! --- APPEL A CALCUL
+! - Compute
 !
-    if (debug) then
-        call dbgcal(option, ifmdbg, nbin, lpain, lchin,&
-                    nbout, lpaout, lchout)
-    endif
     call calcul('C', option, ligrmo, nbin, lchin,&
                 lpain, nbout, lchout, lpaout, base,&
                 'OUI')
@@ -187,32 +160,20 @@ character(len=19) :: sddisc
     call exisd('CHAMP_GD', lchout(1), iret)
     if (iret .eq. 0) then
         call utmess('F', 'CALCULEL2_88', sk=option)
-        goto 999
     endif
 !
-! --- PASSAGE A UNE VALEUR GLOBALE EN ESPACE
+! - Compute
 !
     call mesomm(lchout(1), 1, vr=somme)
-!
-! --- INDICATEUR D'ERREUR LOCAL EN TEMPS / GLOBAL EN ESPACE
-!
     taberr(1) = sqrt(deltat*somme(1))
-!
-! --- INDICATEUR D'ERREUR GLOBAL EN TEMPS / GLOBAL EN ESPACE
-!
     taberr(2) = sqrt(taberr(2)**2 + taberr(1)**2)
+    ds_errorindic%erre_thm_loca = taberr(1)
+    ds_errorindic%erre_thm_glob = taberr(2)
 !
-! --- SAUVEGARDE
+! - Clean
 !
-    zr(jerrt-1+1) = taberr(1)
-    zr(jerrt-1+2) = taberr(2)
-!
-999 continue
-!
-! --- MENAGE
-!
-    call detrsd('CARTE', '&&NMETCA.GRDCA')
-    call detrsd('CHAMP_GD', '&&NMETCA_ERRE_TEMPS_THM')
+    call detrsd('CARTE'   , cartca)
+    call detrsd('CHAMP_GD', chelem)
 !
     call jedema()
 !

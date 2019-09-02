@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine calcva(kpi   , ndim  ,&
+    subroutine calcva(ds_thm, kpi   , ndim     ,&
                       defgem, defgep,&
                       addeme, addep1, addep2   , addete,&
                       depsv , epsv  , deps     ,&
@@ -28,6 +26,8 @@ interface
                       p1    , dp1   , grad_p1  ,&
                       p2    , dp2   , grad_p2  ,&
                       retcom)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         integer, intent(in) :: kpi, ndim
         real(kind=8), intent(in) :: defgem(*), defgep(*)
         integer, intent(in) :: addeme, addep1, addep2, addete

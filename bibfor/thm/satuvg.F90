@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine satuvg(pc, satur, dsatur_)
 !
+subroutine satuvg(ds_thm, pc, satur, dsatur_)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -28,11 +26,10 @@ implicit none
 #include "asterfort/reguh1.h"
 #include "asterfort/satfvg.h"
 !
-! --------------------------------------------------------------------------------------------------
-!
-    real(kind=8), intent(in) :: pc
-    real(kind=8), intent(out) :: satur 
-    real(kind=8), optional, intent(out) :: dsatur_
+type(THM_DS), intent(in) :: ds_thm
+real(kind=8), intent(in) :: pc
+real(kind=8), intent(out) :: satur 
+real(kind=8), optional, intent(out) :: dsatur_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,9 +39,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  pc           : capillary pressure
-! Out satur        : saturation
-! Out dsatur       : derivative of saturation (/pc)
+! In  ds_thm           : datastructure for THM
+! In  pc               : capillary pressure
+! Out satur            : saturation
+! Out dsatur           : derivative of saturation (/pc)
 !
 ! --------------------------------------------------------------------------------------------------
 !

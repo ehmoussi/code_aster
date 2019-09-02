@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine inithm(angl_naut, tbiot , phi0 ,&
+subroutine inithm(ds_thm   ,&
+                  angl_naut, tbiot , phi0 ,&
                   epsv     , depsv ,&
                   epsvm    , cs0   , mdal , dalal,&
                   alpha0   , alphfi, cbiot, unsks)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -35,15 +35,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/THM_type.h"
 !
-real(kind=8), intent(in) :: angl_naut(3)
-real(kind=8), intent(in) :: tbiot(6)
-real(kind=8), intent(in) :: phi0
-real(kind=8), intent(in) :: epsv, depsv
-real(kind=8), intent(out) :: epsvm
-real(kind=8), intent(out) :: cs0
-real(kind=8), intent(out) :: dalal, mdal(6)
-real(kind=8), intent(out) :: alphfi, alpha0
-real(kind=8), intent(out) :: cbiot, unsks
+type(THM_DS), intent(in) :: ds_thm
+real(kind=8), intent(in) :: angl_naut(3), tbiot(6), phi0, epsv, depsv
+real(kind=8), intent(out) :: epsvm, cs0, dalal, mdal(6), alphfi, alpha0, cbiot, unsks
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,6 +47,7 @@ real(kind=8), intent(out) :: cbiot, unsks
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
 !                        (2) Beta  - counterclockwise around Y1
@@ -90,7 +85,7 @@ real(kind=8), intent(out) :: cbiot, unsks
     emmag = ds_thm%ds_material%hydr%emmag
     if (ds_thm%ds_elem%l_dof_meca .or. ds_thm%ds_elem%l_weak_coupling) then
 ! ----- Compute inverse of bulk modulus (solid matrix)
-        if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
+        if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT .and. .not.ds_thm%ds_elem%l_jhms) then
             young  = ds_thm%ds_material%elas%e
             nu     = ds_thm%ds_material%elas%nu
             alpha0 = ds_thm%ds_material%ther%alpha
@@ -100,11 +95,11 @@ real(kind=8), intent(out) :: cbiot, unsks
         endif
         if (.not.ds_thm%ds_elem%l_jhms) then
 ! --------- Compute Biot modulus
-            call unsmfi(phi0, tbiot, cs0)
+            call unsmfi(ds_thm, phi0, tbiot, cs0)
 ! --------- Compute differential thermal expansion ratio
-            call dilata(angl_naut, phi0, tbiot, alphfi)
+            call dilata(ds_thm, angl_naut, phi0, tbiot, alphfi)
 ! --------- Compute thermic quantities
-            call thmTherElas(angl_naut, mdal, dalal)
+            call thmTherElas(ds_thm, angl_naut, mdal, dalal)
         endif
     else
         if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
@@ -118,7 +113,7 @@ real(kind=8), intent(out) :: cbiot, unsks
         else if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ORTH) then
             cs0   = emmag
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !

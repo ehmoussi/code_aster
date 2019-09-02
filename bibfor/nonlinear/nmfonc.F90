@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmfonc(ds_conv       , ds_algopara    , solver   , model     , ds_contact     ,&
-                  list_load     , sdnume         , sddyna   , sdcriq    , mate           ,&
-                  ds_inout      , ds_constitutive, ds_energy, ds_algorom, ds_posttimestep,&
+subroutine nmfonc(ds_conv       , ds_algopara    , solver   , model        , ds_contact     ,&
+                  list_load     , sdnume         , sddyna   , ds_errorindic, mate           ,&
+                  ds_inout      , ds_constitutive, ds_energy, ds_algorom   , ds_posttimestep,&
                   list_func_acti)
 !
 use NonLin_Datastructure_type
@@ -55,7 +55,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=19), intent(in) :: list_load
 character(len=19), intent(in) :: sdnume
 character(len=19), intent(in) :: sddyna
-character(len=24), intent(in) :: sdcriq
+type(NL_DS_ErrorIndic), intent(in) :: ds_errorindic
 character(len=24), intent(in) :: mate
 type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
@@ -82,7 +82,7 @@ integer, intent(inout) :: list_func_acti(*)
 ! In  list_load        : name of datastructure for list of loads
 ! In  sdnume           : datastructure for dof positions
 ! In  sddyna           : dynamic parameters datastructure
-! In  sdcriq           : datastructure for quality indicators
+! In  ds_errorindic    : datastructure for error indicator
 ! In  mate             : name of material characteristics (field)
 ! In  ds_inout         : datastructure for input/output management
 ! In  ds_constitutive  : datastructure for constitutive laws management
@@ -102,7 +102,7 @@ integer, intent(inout) :: list_func_acti(*)
     aster_logical :: l_load_undead, l_load_laplace, l_load_elim, l_load_didi
     character(len=8) :: k8bid, repk
     character(len=16) :: command, k16bid, matr_distr
-    character(len=24) :: solv_type, solv_precond, sdcriq_errt
+    character(len=24) :: solv_type, solv_precond
     aster_logical :: l_stat, l_dyna
     aster_logical :: l_newt_cont, l_newt_frot, l_newt_geom
     aster_logical :: l_dyna_expl, l_cont, l_unil
@@ -360,9 +360,9 @@ integer, intent(inout) :: list_func_acti(*)
 ! - THM time error
 !
     if (l_stat) then
-        sdcriq_errt = sdcriq(1:19)//'.ERRT'
-        call jeexin(sdcriq_errt, iret)
-        if (iret .ne. 0) list_func_acti(21) = 1
+        if (ds_errorindic%l_erre_thm) then 
+            list_func_acti(21) = 1
+        endif
     endif
 !
 ! - IMPLEX algorithm

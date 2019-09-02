@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! aslint: disable=W1504
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xequhm(imate, option, ta, ta1, ndim,&
+subroutine xequhm(ds_thm,&
+                  imate, option, ta, ta1, ndim,&
                   kpi, npg, dimenr,&
                   enrmec, dimdef, dimcon, nbvari, defgem,&
                   congem, vintm, defgep, congep, vintp,&
@@ -27,7 +28,6 @@ subroutine xequhm(imate, option, ta, ta1, ndim,&
                   dsde, retcom, angmas, enrhyd, nfh)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -63,7 +63,7 @@ implicit none
 ! OUT DRDE    : TABLEAU DE LA MATRICE TANGENTE AU POINT DE GAUSS
 ! OUT         : RETCOM RETOUR DES LOIS DE COMPORTEMENT
 ! ======================================================================
-
+type(THM_DS), intent(inout) :: ds_thm
     integer :: imate, ndim, nbvari, kpi, npg, dimdef, dimcon, retcom
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: addeme, adcome, addete, i, j
@@ -134,7 +134,7 @@ implicit none
 !
     retcom = 0
 !
-    call xcomhm(option, imate, rinstp, &
+    call xcomhm(ds_thm, option, imate, rinstp, &
                 ndim, dimdef, dimcon, nbvari, &
                 addeme, adcome, addep1, adcp11,&
                 addep2, addete, defgem, &

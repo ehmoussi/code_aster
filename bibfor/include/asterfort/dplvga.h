@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dplvga(ndim  , dimcon,&
+    subroutine dplvga(ds_thm,&
+                      ndim  , dimcon,&
                       rho11 , rho12 , rgaz  , kh,&
                       congem, adcp11, adcp12,&
                       temp  , pad   ,&
@@ -25,6 +26,8 @@ interface
                       dp12p1, dp12p2,&
                       dp21p1, dp21p2,&
                       dp11t , dp12t , dp21t)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         integer, intent(in) :: ndim, dimcon
         real(kind=8), intent(in) :: rho11, rho12, rgaz, kh
         integer, intent(in) :: adcp11, adcp12
