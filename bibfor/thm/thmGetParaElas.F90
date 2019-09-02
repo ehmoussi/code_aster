@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmGetParaElas(j_mater, kpi, temp, ndim)
+subroutine thmGetParaElas(j_mater, kpi, temp, ndim, ds_thm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -35,6 +34,7 @@ integer, intent(in) :: j_mater
 integer, intent(in) :: kpi
 real(kind=8), intent(in) :: temp
 integer, intent(in) :: ndim
+type(THM_DS), intent(inout) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,10 +44,11 @@ integer, intent(in) :: ndim
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater      : coded material address
-! In  kpi          : current Gauss point
-! In  temp         : current temperature
-! In  ndim         : dimension of element (2 ou 3)
+! In  j_mater          : coded material address
+! In  kpi              : current Gauss point
+! In  temp             : current temperature
+! In  ndim             : dimension of element (2 ou 3)
+! IO  ds_thm           : datastructure for THM
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,18 +68,18 @@ integer, intent(in) :: ndim
     call get_elas_para(fami, j_mater, '+', kpi, 1, &
                        ds_thm%ds_material%elas%id , ds_thm%ds_material%elas%keyword,&
                        temp = temp,&
-                       e = ds_thm%ds_material%elas%e,&
-                       nu = ds_thm%ds_material%elas%nu,&
-                       e1 = ds_thm%ds_material%elas%e_l,&
-                       e2 = ds_thm%ds_material%elas%e_t,&
-                       e3 = ds_thm%ds_material%elas%e_n,&
-                       nu12 = ds_thm%ds_material%elas%nu_lt,&
-                       nu13 = ds_thm%ds_material%elas%nu_ln,&
-                       nu23 = ds_thm%ds_material%elas%nu_tn,&
-                       g1 = ds_thm%ds_material%elas%g_lt,&
-                       g2 = ds_thm%ds_material%elas%g_ln,&
-                       g3 = ds_thm%ds_material%elas%g_tn,&
-                       g  = g)
+                       e_ = ds_thm%ds_material%elas%e,&
+                       nu_ = ds_thm%ds_material%elas%nu,&
+                       e1_ = ds_thm%ds_material%elas%e_l,&
+                       e2_ = ds_thm%ds_material%elas%e_t,&
+                       e3_ = ds_thm%ds_material%elas%e_n,&
+                       nu12_ = ds_thm%ds_material%elas%nu_lt,&
+                       nu13_ = ds_thm%ds_material%elas%nu_ln,&
+                       nu23_ = ds_thm%ds_material%elas%nu_tn,&
+                       g1_ = ds_thm%ds_material%elas%g_lt,&
+                       g2_ = ds_thm%ds_material%elas%g_ln,&
+                       g3_ = ds_thm%ds_material%elas%g_tn,&
+                       g_  = g)
     if (ds_thm%ds_material%elas%id .eq. 3) then
         ds_thm%ds_material%elas%g_ln = g
         ds_thm%ds_material%elas%g    = g

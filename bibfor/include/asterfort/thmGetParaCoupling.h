@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine thmGetParaCoupling(j_mater, temp)
+    subroutine thmGetParaCoupling(ds_thm, j_mater, temp)
+        use THM_type
+        type(THM_DS), intent(inout) :: ds_thm
         integer, intent(in) :: j_mater
         real(kind=8), intent(in) :: temp
     end subroutine thmGetParaCoupling

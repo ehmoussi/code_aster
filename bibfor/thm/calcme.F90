@@ -84,9 +84,7 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nsig = 6
-    integer, parameter :: neps = 6
-    integer, parameter :: ndsdeme = 36
+    integer, parameter :: nsig = 6, neps = 6, ndsdeme = 36
     integer ::  kpg, ksp
     character(len=8) :: fami
     type(Behaviour_Integ) :: BEHinteg

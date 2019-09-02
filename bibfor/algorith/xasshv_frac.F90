@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! aslint: disable=W1504,W1306
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
+subroutine xasshv_frac(ds_thm,&
+                       nddls, nddlm, nnop, nnops,&
                        lact, elrefp, elrefc, elc, contac,&
                        dimuel, nface, npgf, nbspg, nptf,&
                        jcohes, jptint, igeom, jbasec,&
@@ -27,8 +28,11 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                        compor, jmate, ndim, idepm, idepd, pla,&
                        algocr, rela, jheavn, ncompn, ifiss, nfiss,&
                        nfh, jheafa, ncomph, pos)
-implicit none 
-    
+!
+use THM_type
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/matini.h"
@@ -63,7 +67,9 @@ implicit none
 ! CALCUL DES MATRICES POUR LE FRACTURE (OPTION RIGI_CONT)
 !
 ! ----------------------------------------------------------------------
+! IO  ds_thm           : datastructure for THM
 
+type(THM_DS), intent(inout) :: ds_thm
     integer :: nddls, nnop, dimuel, i, ndim, nnops
     integer :: nddlm, contac, jmate, ncompv, nvec, pla(27), pos(16)
     integer :: nface, npgf, nbspg, isspg, nptf, cface(30,6)
@@ -86,6 +92,7 @@ implicit none
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
     character(len=16):: compor(*)
 
+
 !   DETERMINATION DES CONSTANTES TEMPORELLES (INSTANT+THETA SCHEMA)
     dt = rinstp-rinstm
     parm_theta = carcri(PARM_THETA_THM)
@@ -93,24 +100,24 @@ implicit none
 !
 ! - Get parameters for behaviour
 !
-    call thmGetBehaviour(compor)
+    call thmGetBehaviour(compor, ds_thm)
 !
 ! - Get parameters for internal variables
 !
-    call thmGetBehaviourVari()
+    call thmGetBehaviourVari(ds_thm)
 !
 ! - Some checks between behaviour and model
 !
-    call thmGetBehaviourChck()
+    call thmGetBehaviourChck(ds_thm)
 !
 ! - Get parameters for coupling
 !
     temp = 0.d0
-    call thmGetParaCoupling(zi(jmate), temp)
+    call thmGetParaCoupling(ds_thm, zi(jmate), temp)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
-    call thmGetParaBiot(zi(jmate)) 
+    call thmGetParaBiot(zi(jmate), ds_thm)
 !
     call matini(nnops, 3, 0.d0, dfdic)
     call matini(16, 3, 0.d0, dffc)
@@ -166,7 +173,7 @@ implicit none
 !
                   nvec=2
                   job='VECTEUR'
-                  call xfract(nvec, nnop, nnops, nddls, nddlm,&
+                  call xfract(ds_thm, nvec, nnop, nnops, nddls, nddlm,&
                               ndim, pla, zr(idepd), zr(idepm),&
                               ffp, ffc, dffc, saut, gradpf,&
                               q1, q2, dpf, q1m, q2m, sautm,&
@@ -187,8 +194,8 @@ implicit none
 !                CALCUL DE LA VARIABLE INTERNE (MASSE VOLUMIQUE DU LIQUIDE 
 !                CIRCULANT DANS LA FRACTURE)
 !
-                 job='VECTEUR'                    
-                 call xvinhm(zi(jmate), ndim,&
+                 job='VECTEUR'
+                 call xvinhm(ds_thm, zi(jmate), ndim,&
                             cohes, dpf, saut, sautm, nd, lamb,&
                             w11m, rho11m, alpha, job, pf,&
                             rho11, w11, ipgf, rela, dsidep,&
@@ -196,7 +203,7 @@ implicit none
 !
 !                CALCUL DES SECONDS MEMBRES (CF. DOC R7.02.18)
 !
-                 call xvechm(nnops, nddls, nddlm, ndim, pla,&
+                 call xvechm(ds_thm, nnops, nddls, nddlm, ndim, pla,&
                              saut, sautm, nd, ffc, w11, w11m, jac,&
                              q1, dt, parm_theta, q1m, ta1, q2, q2m, dffc,&
                              rho11, gradpf, rho11m, gradpfm, ffp2,&
@@ -207,7 +214,7 @@ implicit none
              else if (nint(rela) .eq. 5) then
                 nvec=2
                 job='VECTEUR'
-                call xfract(nvec, nnop, nnops, nddls, nddlm,&
+                call xfract(ds_thm, nvec, nnop, nnops, nddls, nddlm,&
                             ndim, pla, zr(idepd), zr(idepm),&
                             ffp, ffc, dffc, saut, gradpf,&
                             q1, q2, dpf, q1m, q2m, sautm,&
@@ -248,7 +255,7 @@ implicit none
                    call xhlan5(ino, idepd, idepm, ibid, lact, ndim,&
                                pla, wsautm, nvec, champ, job, dpf)
 !
-                   call xhmsa6(ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
+                   call xhmsa6(ds_thm, ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
                                tau1, tau2, cohes, job, rela,&
                                alpha, dsidep, sigma, p, am, raug,&
                                wsautm, dpf, rho110)
@@ -274,7 +281,7 @@ implicit none
 ! --- CALCUL DES MATRICES HYDROS
 !              
 !
-                call xvecha(ndim, pla, nnops, saut,&
+                call xvecha(ds_thm, ndim, pla, nnops, saut,&
                             sautm, nd, ffc, w11, w11m, jac,&
                             q1, q1m, q2, q2m, dt, parm_theta, ta1,&
                             dffc, rho11, gradpf, rho11m,&

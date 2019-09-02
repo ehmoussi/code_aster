@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0082(option, nomte)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -72,6 +71,7 @@ character(len=16) :: option, nomte
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: idec, iret
     aster_logical :: l_axi
+    type(THM_DS) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,18 +80,14 @@ character(len=16) :: option, nomte
     nddl = 2 * nno
     nvec = nddl * ( nddl + 1 ) / 2
 !
-! - Module initialization
-!
-    call thmModuleInit()
-!
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi_ = l_axi)
+    call thmGetElemModel(ds_thm, l_axi_ = l_axi)
 !
 ! - Get generalized coordinates
 !
-    call thmGetGene(.false._1, .false._1, 2,&
-                    mecani, press1, press2, tempe)
+    call thmGetGene(ds_thm, ASTER_FALSE, ASTER_FALSE, 2    ,&
+                    mecani, press1     , press2     , tempe)
     if (lteatt('TYPMOD2','THM')) then
         idec = press1(1) + press2(1) + tempe(1)
     else

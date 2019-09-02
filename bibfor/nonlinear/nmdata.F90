@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdata(model    , mesh      , mate      , cara_elem  , ds_constitutive,&
-                  list_load, solver    , ds_conv   , sddyna     , ds_posttimestep,&
-                  ds_energy, sdcriq    , ds_print  , ds_algopara,&
-                  ds_inout , ds_contact, ds_measure, ds_algorom)
+subroutine nmdata(model    , mesh         , mate      , cara_elem  , ds_constitutive,&
+                  list_load, solver       , ds_conv   , sddyna     , ds_posttimestep,&
+                  ds_energy, ds_errorindic, ds_print  , ds_algopara,&
+                  ds_inout , ds_contact   , ds_measure, ds_algorom)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -34,7 +34,6 @@ implicit none
 #include "asterfort/getvid.h"
 #include "asterfort/ndcrdy.h"
 #include "asterfort/ndlect.h"
-#include "asterfort/nmcrer.h"
 #include "asterfort/nmdocn.h"
 #include "asterfort/nonlinDSContactRead.h"
 #include "asterfort/nonlinDSPrintRead.h"
@@ -48,9 +47,9 @@ implicit none
 #include "asterfort/nmdomt_ls.h"
 #include "asterfort/nmdopo.h"
 #include "asterfort/nmdorc.h"
-#include "asterfort/nmetdo.h"
 #include "asterfort/nmlect.h"
 #include "asterfort/utmess.h"
+#include "asterfort/nonlinDSErrorIndicRead.h"
 #include "asterfort/nonlinDSPrintSepLine.h"
 !
 character(len=*), intent(out) :: model
@@ -64,13 +63,13 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 character(len=19) :: sddyna
 type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 type(NL_DS_Energy), intent(inout) :: ds_energy
-character(len=24) :: sdcriq
 type(NL_DS_Print), intent(inout) :: ds_print
 type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 type(NL_DS_InOut), intent(inout) :: ds_inout
 type(NL_DS_Contact), intent(inout) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -91,7 +90,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IO  ds_posttimestep  : datastructure for post-treatment at each time step
 ! IO  ds_energy        : datastructure for energy management
-! OUT SDCRIQ : SD CRITERE QUALITE
+! IO  ds_errorindic    : datastructure for error indicator
 ! IO  ds_print         : datastructure for printing parameters
 ! IO  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_inout         : datastructure for input/output management
@@ -185,11 +184,10 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
     call nonlinDSMeasureRead(ds_measure)
 !
-! --- LECTURE DES DONNEES CRITERE QUALITE
+! - Read parameters for error indicator
 !
     if (nomcmd .eq. 'STAT_NON_LINE') then
-        call nmcrer(ds_constitutive%carcri, sdcriq)
-        call nmetdo(sdcriq)
+        call nonlinDSErrorIndicRead(ds_errorindic)
     endif
 !
 ! - Read parameters for printing

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,44 +26,49 @@ implicit none
 #include "asterfort/jenuno.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
+#include "asterfort/dismoi.h"
 !
 aster_logical :: iden_nume
 character(len=*), intent(in) :: pchn1, pchn2
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: ob1, ob2, k241, k242
-    integer :: l1, l2, k1, k2
-    aster_logical :: l_iden
+    character(len=24) :: lili1, lili2, ligr_name1, ligr_name2
+    character(len=24) :: prno1
+    integer :: nb_lili1, nb_lili2, prno_length
+    integer :: i_lili1, i_lili2
+    aster_logical :: l_same_ligr
 !
 ! --------------------------------------------------------------------------------------------------
 !
     iden_nume = ASTER_TRUE
-    ob1 = pchn1(1:19)//'.LILI'
-    ob2 = pchn2(1:19)//'.LILI'
-    call jelira(ob1, 'NOMUTI', l1)
-    call jelira(ob2, 'NOMUTI', l2)
-    if (l1 .ne. l2) then
-        iden_nume = ASTER_FALSE
-        goto 999
-    endif
+    lili1 = pchn1(1:19)//'.LILI'
+    lili2 = pchn2(1:19)//'.LILI'
+    prno1 = pchn1(1:19)//'.PRNO'
+    call jelira(lili1, 'NOMUTI', nb_lili1)
+    call jelira(lili2, 'NOMUTI', nb_lili2)
 !
-    do k1 = 1, l1
-        call jenuno(jexnum(ob1, k1), k241)
-        l_iden = ASTER_FALSE
-        do k2 = 1, l2
-            call jenuno(jexnum(ob2, k2), k242)
-            if (k241 .eq. k242) then
-                l_iden = ASTER_TRUE
-                exit
+    do i_lili1 = 2, nb_lili1
+        call jenuno(jexnum(lili1, i_lili1), ligr_name1)
+        l_same_ligr = ASTER_FALSE
+        do i_lili2 = 2, nb_lili2
+            call jenuno(jexnum(lili2, i_lili2), ligr_name2)
+            if (ligr_name1 .eq. ligr_name2) then
+                l_same_ligr = ASTER_TRUE
             endif
         end do
-        if (.not. l_iden) then
-            iden_nume = ASTER_FALSE
-            goto 999
+! ----- LIGREL Not found but no dof 
+        if (.not. l_same_ligr) then
+            call jelira(jexnum(prno1, i_lili1), 'LONMAX', prno_length)
+            if (prno_length .eq. 0) then
+                l_same_ligr = ASTER_TRUE
+            endif
+        endif
+        if (.not. l_same_ligr) then
+            exit
         endif
     end do
 !
-999 continue
+    iden_nume = l_same_ligr
 !
 end function

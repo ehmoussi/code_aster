@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmGetElemModel(l_axi_, l_vf_, l_steady_, ndim_, type_elem_)
+subroutine thmGetElemModel(ds_thm, l_axi_, l_vf_, l_steady_, ndim_, type_elem_)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -29,6 +28,7 @@ implicit none
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 aster_logical, optional, intent(out) :: l_axi_, l_steady_, l_vf_
 integer, optional, intent(out) :: ndim_
 character(len=8), optional, intent(out) :: type_elem_(2)
@@ -41,6 +41,7 @@ character(len=8), optional, intent(out) :: type_elem_(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! Out l_axi            : flag is axisymmetric model
 ! Out l_vf             : flag for finite volume
 ! Out l_steady         : .true. for steady state

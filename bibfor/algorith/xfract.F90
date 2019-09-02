@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: daniele.colombo at ifpen.fr
-! aslint: disable=W1504
+! aslint: disable=W1504,W1306
 !
-subroutine xfract(nvec, nnop, nnops, nddls, nddlm,&
+subroutine xfract(ds_thm, nvec, nnop, nnops, nddls, nddlm,&
                   ndim, pla, deplp, deplm,&
                   ffp, ffc, dffc, saut, gradpf,&
                   q1, q2, dpf, q1m, q2m, sautm,&
@@ -29,7 +29,6 @@ subroutine xfract(nvec, nnop, nnops, nddls, nddlm,&
                   ncomph, contac, depl0, depl1, lambm, pfm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -50,6 +49,7 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
+type(THM_DS), intent(inout) :: ds_thm
     integer, intent(in) :: jmate, dimuel, nfiss, jheavn, ncompn
     integer, intent(in) :: nvec, nnop, nnops, nddls, nddlm, ndim
     integer, intent(in) :: pla(27), ncomph
@@ -71,7 +71,7 @@ implicit none
 !
     ASSERT(nvec.gt.0.and.nvec.le.3)
 
-    call thmGetParaInit(jmate)    
+    call thmGetParaInit(jmate, ds_thm)
     t=ds_thm%ds_parainit%temp_init
 !
 !   ========================================================================    

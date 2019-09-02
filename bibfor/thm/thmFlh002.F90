@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmFlh002(option, perman , ndim,&
+subroutine thmFlh002(ds_thm, option, perman , ndim,&
                      dimdef, dimcon ,&
                      addep1, adcp11 , addeme, addete,&
                      t     , p1     , grap1 ,&
@@ -25,7 +25,6 @@ subroutine thmFlh002(option, perman , ndim,&
                      congep, dsde)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -34,6 +33,7 @@ implicit none
 #include "asterfort/hmderp.h"
 #include "asterfort/utmess.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 character(len=16), intent(in) :: option
 aster_logical, intent(in) :: perman
 integer, intent(in) :: ndim, dimdef, dimcon
@@ -51,6 +51,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  option           : option to compute
 ! In  perman           : .flag. for no-transient problem
 ! In  ndim             : dimension of space (2 or 3)

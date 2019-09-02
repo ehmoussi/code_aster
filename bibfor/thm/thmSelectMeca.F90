@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine thmSelectMeca(p1    , dp1    , p2    , dp2   , satur    , tbiot,&
+subroutine thmSelectMeca(ds_thm,&
+                         p1    , dp1    , p2    , dp2   , satur    , tbiot,&
                          option, j_mater, ndim  , typmod, angl_naut,&
                          carcri, instam , instap, dtemp ,&
                          addeme, addete , adcome, addep1, addep2,&
@@ -28,7 +29,6 @@ subroutine thmSelectMeca(p1    , dp1    , p2    , dp2   , satur    , tbiot,&
                          dsde  , retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -41,6 +41,7 @@ implicit none
 #include "asterfort/thmCheckPorosity.h"
 #include "asterfort/thmMecaSpecial.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: j_mater
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
@@ -65,6 +66,7 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  p1               : capillary pressure - At end of current step
 ! In  dp1              : increment of capillary pressure
 ! In  p2               : gaz pressure - At end of current step
@@ -131,13 +133,13 @@ integer, intent(out) :: retcom
 !
 ! - Check porosity
 !
-    call thmCheckPorosity(j_mater, meca)
+    call thmCheckPorosity(j_mater, meca, ds_thm)
 !
 ! - Select
 !
     if (nume_meca .eq. 0) then
 ! ----- Special behaviours
-        call thmMecaSpecial(option , meca     , nume_thmc,&
+        call thmMecaSpecial(ds_thm , option   , meca     ,&
                             p1     , dp1      , p2       , dp2   , satur, tbiot,&
                             j_mater, ndim     , typmod   , carcri, &
                             addeme , adcome   , addep1   , addep2,&
@@ -150,9 +152,9 @@ integer, intent(out) :: retcom
     elseif (nume_meca .eq. 1) then
 ! ----- Elasticity
         ASSERT(meca .eq. 'ELAS')
-        call thmMecaElas(option, angl_naut, dtemp,&
+        call thmMecaElas(ds_thm, option, angl_naut, dtemp    ,&
                          adcome, dimcon,&
-                         deps  , congep, dsdeme, ther_meca)
+                         deps  , congep, dsdeme   , ther_meca)
 
 
     elseif (nume_meca .ge. 100) then

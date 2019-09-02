@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,18 +16,19 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmSelectMatrix(ndim  , dimdef, inte_type,&
+subroutine thmSelectMatrix(ds_thm,&
+                           ndim  , dimdef, inte_type,&
                            addeme, addete, addep1   , addep2,&
                            a     , as    ,&
                            c     , cs    )
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
 #include "asterfort/assert.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: ndim, dimdef
 character(len=3), intent(in) :: inte_type
 integer, intent(in) :: addeme, addete, addep1, addep2
@@ -42,6 +43,7 @@ real(kind=8), intent(out) :: c(21), cs(21)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  ndim             : dimension of space (2 or 3)
 ! In  dimdef           : dimension of generalized strains vector
 ! In  inte_type        : type of integration - classical, lumped (D), reduced (R)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine nmdoet(model , compor, list_func_acti, nume_ddl   , sdpilo  ,&
-                      sddyna, sdcriq, hval_algo     , l_acce_zero, ds_inout)
+    subroutine nmdoet(model , compor       , list_func_acti, nume_ddl   , sdpilo  ,&
+                      sddyna, ds_errorindic, hval_algo     , l_acce_zero, ds_inout)
         use NonLin_Datastructure_type
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: compor
-        character(len=24), intent(in) :: sdcriq
+        type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
         character(len=24), intent(in) :: nume_ddl
         character(len=19), intent(in) :: sddyna
         character(len=19), intent(in) :: sdpilo

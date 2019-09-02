@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine viporo(nbvari,&
+subroutine viporo(ds_thm, nbvari,&
                   advico, vicphi,&
                   dtemp , dp1   , dp2   ,&
                   deps  , depsv ,&
@@ -28,13 +28,13 @@ subroutine viporo(nbvari,&
                   phi   , phim  , retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/THM_type.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: nbvari
 integer, intent(in) :: advico, vicphi
 real(kind=8), intent(in) :: dtemp, dp1, dp2
@@ -55,6 +55,7 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  nbvari           : total number of internal state variables
 ! In  advico           : index of first internal state variable for coupling law 
 ! In  vicphi           : index of internal state variable for porosity

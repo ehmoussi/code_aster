@@ -128,8 +128,8 @@ def old_complex(value):
         if value[0] == 'RI':
             value = complex(value[1], value[2])
         elif value[0] == 'MP':
-            value = complex(value[1] * math.cos(value[2]),
-                            value[1] * math.sin(value[2]))
+            value = complex(value[1] * math.cos(value[2] * math.pi / 180.),
+                            value[1] * math.sin(value[2] * math.pi / 180.))
     return value
 
 def enable_0key(values):

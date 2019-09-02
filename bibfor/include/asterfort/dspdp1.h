@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine dspdp1(signe, tbiot, satur, dsdp1)
+    subroutine dspdp1(ds_thm, signe, tbiot, satur, dsdp1)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         real(kind=8), intent(in) :: signe, tbiot(6), satur
         real(kind=8), intent(out) :: dsdp1(6)
     end subroutine dspdp1

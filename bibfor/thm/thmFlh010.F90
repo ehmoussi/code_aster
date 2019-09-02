@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine thmFlh010(option, perman, ndim  , j_mater,&
+subroutine thmFlh010(ds_thm, option, perman, ndim  , j_mater,&
                      dimdef, dimcon,&
                      addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
                      addeme, addete, &
@@ -29,7 +29,6 @@ subroutine thmFlh010(option, perman, ndim  , j_mater,&
                      congep, dsde)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -41,6 +40,7 @@ implicit none
 #include "asterfort/thmEvalFickSteam.h"
 #include "asterfort/thmEvalFickAir.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 character(len=16), intent(in) :: option
 aster_logical, intent(in) :: perman
 integer, intent(in) :: j_mater
@@ -62,6 +62,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  option           : option to compute
 ! In  perman           : .flag. for no-transient problem
 ! In  ndim             : dimension of space (2 or 3)
@@ -201,7 +202,8 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Evaluate permeability for liquid and gaz
 !
-    call thmEvalPermLiquGaz(j_mater, satur, p2, t,&
+    call thmEvalPermLiquGaz(ds_thm ,&
+                            j_mater, satur, p2, t,&
                             permli , dperml ,&
                             permgz , dperms , dpermp)
 ! 
@@ -263,7 +265,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Compute some derivatives for LIQU_AD_GAZ_VAPE and LIQU_AD_GAZ
 !
-    call hmderp(yavp  , t     ,&
+    call hmderp(ds_thm, yavp  , t     ,&
                 pvp   , pad   ,&
                 rho11 , rho12 , h11  , h12,&
                 dp11p1, dp11p2, dp11t,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmCompLoad(option, nomte)
+subroutine thmCompLoad(option, nomte, ds_thm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -33,7 +32,8 @@ implicit none
 #include "asterfort/thmGetGene.h"
 #include "asterfort/thmGetElemIntegration.h"
 !
-    character(len=16), intent(in) :: option, nomte
+character(len=16), intent(in) :: option, nomte
+type(THM_DS), intent(inout) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,8 +43,9 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  option       : name of option to compute
-! In  nomte        : type of finite element
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+! IO  ds_thm           : datastructure for THM
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,7 +67,7 @@ implicit none
 !
 ! - Get model of finite element
 !
-    call thmGetElemModel(l_axi, l_vf, l_steady, ndim)
+    call thmGetElemModel(ds_thm, l_axi, l_vf, l_steady, ndim)
     ASSERT(.not. l_vf)
 !
 ! - Get type of integration
@@ -75,8 +76,8 @@ implicit none
 !
 ! - Get generalized coordinates
 !
-    call thmGetGene(l_steady, l_vf  , ndim  ,&
-                    mecani  , press1, press2, tempe)
+    call thmGetGene(ds_thm, l_steady, l_vf  , ndim  ,&
+                    mecani, press1  , press2, tempe)
 !
 ! - Get reference elements
 !

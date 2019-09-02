@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! aslint: disable=W1504,W1306
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xcabhm(nddls, nddlm, nnop, nnops, nnopm,&
+subroutine xcabhm(ds_thm,&
+                  nddls, nddlm, nnop, nnops, nnopm,&
                   dimuel, ndim, kpi, ff, ff2,&
                   dfdi, dfdi2, b, nmec,&
                   addeme, addep1, np1, axi,&
@@ -27,7 +28,6 @@ subroutine xcabhm(nddls, nddlm, nnop, nnops, nnopm,&
                   he, heavn, yaenrh, adenhy, nfiss, nfh)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -91,7 +91,7 @@ implicit none
 !
 ! =====================================================================================
 ! =====================================================================================
-
+    type(THM_DS), intent(in) :: ds_thm
     aster_logical :: axi
     integer :: nddls, nddlm, nmec, np1, ndim, nnop, i, n, kk
     integer :: nnops, nnopm, kpi, dimuel, heavn(nnop,5)
