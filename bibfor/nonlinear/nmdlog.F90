@@ -125,7 +125,7 @@ implicit none
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri, typmod,&
+    call behaviourPrepExteElem(carcri, typmod,&
                                nno   , npg   , ndim ,&
                                iw    , ivf   , idff ,&
                                geomi , coorga,&

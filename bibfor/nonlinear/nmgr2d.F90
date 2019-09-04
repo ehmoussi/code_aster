@@ -140,7 +140,7 @@ integer, intent(inout) :: codret
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri   , typmod   ,&
+    call behaviourPrepExteElem(carcri   , typmod   ,&
                                nno      , npg      , ndim ,&
                                ipoids   , ivf      , idfde,&
                                geom_init, coorga   ,&

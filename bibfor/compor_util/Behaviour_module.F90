@@ -25,7 +25,7 @@ implicit none
 ! ==================================================================================================
 private :: varcIsGEOM
 public  :: behaviourInit,&
-           behaviourPrepExternal
+           behaviourPrepExteElem
 ! ==================================================================================================
 private
 #include "jeveux.h"
@@ -65,9 +65,9 @@ subroutine behaviourInit(BEHinteg)
 end subroutine
 ! --------------------------------------------------------------------------------------------------
 !
-! behaviourPrepExternal
+! behaviourPrepExteElem
 !
-! Prepare external state variables
+! Prepare external state variables - For element
 !
 ! In  carcri           : parameters for comportment
 ! In  typmod           : type of modelisation
@@ -83,7 +83,7 @@ end subroutine
 ! Out coorga           : coordinates of all integration points
 !
 ! --------------------------------------------------------------------------------------------------
-subroutine behaviourPrepExternal(carcri  , typmod ,&
+subroutine behaviourPrepExteElem(carcri  , typmod ,&
                                  nno     , npg    , ndim    ,&
                                  jv_poids, jv_func, jv_dfunc,&
                                  geom    , coorga ,&
