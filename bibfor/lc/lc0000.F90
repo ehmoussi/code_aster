@@ -28,6 +28,7 @@ subroutine lc0000(BEHinteg,&
 !
 use calcul_module, only : calcul_status, ca_nbcvrc_
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -157,8 +158,6 @@ implicit none
 #include "asterfort/lc9999.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcpto.h"
-#include "asterfort/isdeco.h"
-#include "asterfort/calcExternalStateVariable5.h"
 #include "asterfort/lcExternalStateVariable.h"
 #include "asterfort/lcPrepareStrain.h"
 #include "asterfort/lcRestoreStrain.h"
@@ -270,7 +269,6 @@ integer :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: tabcod(60), variextecode(2)
     integer, parameter :: npred = 8
     character(len=16) :: defo_ldc, defo_comp
     real(kind=8) :: epsth(neps), depsth(neps)
@@ -279,6 +277,8 @@ integer :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call behaviourPrepExteGauss(carcri, fami, kpg, ksp, imate)
+!
 ! - Compute mechanical strain with PTOT external state variable
 !
     if (calcul_status() .eq. 3) then
@@ -286,16 +286,6 @@ integer :: codret
             call vrcpto(compor, deps, neps, fami, kpg,&
                         ksp, imate)
         endif
-    endif
-!
-! - Prepare some external state variables
-!
-    tabcod(:) = 0
-    variextecode(1) = nint(carcri(IVARIEXT1))
-    variextecode(2) = nint(carcri(IVARIEXT2))
-    call isdeco(variextecode, tabcod, 60)
-    if (tabcod(HYGR) .eq. 1) then
-        call calcExternalStateVariable5(fami, kpg, ksp, imate)
     endif
 !
 ! - Prepare input strain for the behaviour law

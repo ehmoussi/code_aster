@@ -40,7 +40,6 @@ use Behaviour_module
 #include "asterfort/dfdm2d.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/calcExternalStateVariable2.h"
 #include "asterfort/elref7.h"
 #include "asterfort/ermeb2.h"
 #include "asterfort/ermes2.h"
@@ -202,9 +201,8 @@ use Behaviour_module
 !
     call jevech('PPRESS', 'L', iref2)
     call elrefe_info(fami='FPG1', jvf=ivf2)
-    call calcExternalStateVariable2(nno    , 1   , ndim  ,&
-                                    ivf2   , &
-                                    zr(igeom), coorga)
+    call prepCoorGauss(nno , 1        , ndim  ,&
+                       ivf2, zr(igeom), coorga)
     BEHinteg%elga%coorpg = coorga(1,:)
 !
 ! 1.7. --- MATERIAU SI BESOIN
@@ -416,7 +414,7 @@ use Behaviour_module
         call jenuno(jexnum('&CATA.TM.NOMTM', tyv), typmav)
         if (niv .ge. 2) then
             write(ifm,103) ifa, zi(ivois+ifa), typmav
-            103 format (i2,'-EME FACE DE NUMERO',i10,' ==> TYPMAV = ', a)
+103 format (i2,'-EME FACE DE NUMERO',i10,' ==> TYPMAV = ', a)
         endif
 !
 ! ----- CALCUL DE NORMALES, TANGENTES ET JACOBIENS AUX POINTS DE GAUSS
