@@ -15,17 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1306
 !
 module Behaviour_module
 ! ==================================================================================================
 use Behaviour_type
-use calcul_module, only : ca_jvcnom_, ca_nbcvrc_
+use calcul_module, only : ca_jvcnom_, ca_nbcvrc_,&
+                          ca_vext_eltsize1_, ca_vext_eltsize2_,&
+                          ca_vext_gradvelo_, ca_vext_hygrm_, ca_vext_hygrp_
 ! ==================================================================================================
 implicit none
 ! ==================================================================================================
-private :: varcIsGEOM
+private :: varcIsGEOM,&
+           prepEltSize1, prepGradVelo, prepEltSize2, prepHygrometry
 public  :: behaviourInit,&
-           behaviourPrepExteElem
+           behaviourPrepExteElem, prepCoorGauss, behaviourPrepExteGauss
 ! ==================================================================================================
 private
 #include "jeveux.h"
@@ -33,12 +37,19 @@ private
 #include "asterfort/Behaviour_type.h"
 #include "asterc/r8nnem.h"
 #include "asterc/indik8.h"
+#include "asterc/r8vide.h"
 #include "asterfort/isdeco.h"
-#include "asterfort/calcExternalStateVariable1.h"
-#include "asterfort/calcExternalStateVariable2.h"
-#include "asterfort/calcExternalStateVariable3.h"
-#include "asterfort/calcExternalStateVariable4.h"
+#include "asterfort/assert.h"
+#include "asterfort/matinv.h"
+#include "asterfort/nmgeom.h"
+#include "asterfort/mgauss.h"
+#include "asterfort/pmat.h"
 #include "asterfort/utmess.h"
+#include "asterfort/dfdm3d.h"
+#include "asterfort/dfdm2d.h"
+#include "asterfort/rcvalb.h"
+#include "blas/daxpy.h"
+#include "blas/dcopy.h"
 ! ==================================================================================================
 contains
 ! ==================================================================================================
@@ -103,8 +114,6 @@ subroutine behaviourPrepExteElem(carcri  , typmod ,&
 !   ------------------------------------------------------------------------------------------------
     coorga = r8nnem()
 !
-! - Get coded integers for external state variables
-!
     jvariext1 = nint(carcri(IVARIEXT1))
     jvariext2 = nint(carcri(IVARIEXT2))
     tabcod(:) = 0
@@ -115,16 +124,18 @@ subroutine behaviourPrepExteElem(carcri  , typmod ,&
 ! - Element size 1
 !
     if (tabcod(ELTSIZE1) .eq. 1) then
-        call calcExternalStateVariable1(nno     , npg    , ndim    ,&
-                                        jv_poids, jv_func, jv_dfunc,&
-                                        geom    , typmod )
+        call prepEltSize1(nno     , npg    , ndim    ,&
+                          jv_poids, jv_func, jv_dfunc,&
+                          geom    , typmod )
     endif
 !
-! - Coordinates of Gauss points
+! - Element size 2
 !
-    call calcExternalStateVariable2(nno    , npg   , ndim  ,&
-                                    jv_func, &
-                                    geom   , coorga)
+    if (tabcod(ELTSIZE2) .eq. 1) then
+        call prepEltSize2(nno     , npg   , ndim,&
+                          jv_dfunc,&
+                          geom    , typmod)
+    endif
 !
 ! - Gradient of velocity
 !
@@ -132,17 +143,336 @@ subroutine behaviourPrepExteElem(carcri  , typmod ,&
         if (.not.present(deplm_) .or. .not.present(ddepl_)) then
             call utmess('F', 'COMPOR2_26')
         endif
-        call calcExternalStateVariable3(nno     , npg    , ndim    ,&
-                                        jv_poids, jv_func, jv_dfunc,&
-                                        geom    , deplm_ , ddepl_ )
+        call prepGradVelo(nno     , npg    , ndim    ,&
+                          jv_poids, jv_func, jv_dfunc,&
+                          geom    , deplm_ , ddepl_ )
     endif
 !
-! - Element size 2
+! - Coordinates of Gauss points
 !
-    if (tabcod(ELTSIZE2) .eq. 1) then
-        call calcExternalStateVariable4(nno     , npg   , ndim,&
-                                        jv_dfunc,&
-                                        geom    , typmod)
+    call prepCoorGauss(nno    , npg   , ndim  ,&
+                       jv_func, &
+                       geom   , coorga)
+!
+! - Total pressure
+!
+    call prepCoorGauss(nno    , npg   , ndim  ,&
+                       jv_func, &
+                       geom   , coorga)
+!   ------------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! behaviourPrepExteGauss
+!
+! Prepare external state variables - For gauss point
+!
+! In  carcri           : parameters for comportment
+! In  fami             : Gauss family for integration point rule
+! In  kpg              : current point gauss
+! In  ksp              : current "sous-point" gauss
+! In  imate            : coded material address
+!
+! --------------------------------------------------------------------------------------------------
+subroutine behaviourPrepExteGauss(carcri, fami, kpg, ksp, imate)
+!   ------------------------------------------------------------------------------------------------
+! - Parameters
+    real(kind=8), intent(in) :: carcri(*)
+    character(len=*), intent(in) :: fami
+    integer, intent(in) :: kpg, ksp, imate
+! - Local
+    integer :: jvariext1, jvariext2
+    integer :: tabcod(60), variextecode(2)
+!   ------------------------------------------------------------------------------------------------
+
+    jvariext1 = nint(carcri(IVARIEXT1))
+    jvariext2 = nint(carcri(IVARIEXT2))
+    tabcod(:) = 0
+    variextecode(1) = jvariext1
+    variextecode(2) = jvariext2
+    call isdeco(variextecode, tabcod, 60)
+    if (tabcod(HYGR) .eq. 1) then
+        call prepHygrometry(fami, kpg, ksp, imate)
+    endif
+!   ------------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! prepEltSize1
+!
+! Compute intrinsic external state variables - Size of element (ELTSIZE1)
+!
+! In  nno              : number of nodes 
+! In  npg              : number of Gauss points 
+! In  ndim             : dimension of problem (2 or 3)
+! In  jv_poids         : JEVEUX adress for weight of Gauss points
+! In  jv_func          : JEVEUX adress for shape functions
+! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
+! In  typmod           : type of modelization (TYPMOD2)
+! In  geom             : initial coordinates of nodes
+!
+! --------------------------------------------------------------------------------------------------
+subroutine prepEltSize1(nno     , npg    , ndim    ,&
+                        jv_poids, jv_func, jv_dfunc,&
+                        geom    , typmod)
+!   ------------------------------------------------------------------------------------------------
+! - Parameters
+    integer, intent(in) :: nno, npg, ndim
+    integer, intent(in) :: jv_poids, jv_func, jv_dfunc
+    character(len=8), intent(in) :: typmod(2)
+    real(kind=8), intent(in) :: geom(ndim, nno)
+! - Local
+    aster_logical :: l_axi
+    integer :: kpg, k, i
+    real(kind=8) :: lc, dfdx(27), dfdy(27), dfdz(27), poids, r
+    real(kind=8) :: volume, surfac
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+!   ------------------------------------------------------------------------------------------------
+    l_axi = typmod(1) .eq. 'AXIS'
+!
+    if (typmod(1)(1:2) .eq. '3D') then
+        volume = 0.d0
+        do kpg = 1, npg
+            call dfdm3d(nno, kpg, jv_poids, jv_dfunc, geom,&
+                        poids, dfdx, dfdy, dfdz)
+            volume = volume + poids
+        end do
+        if (npg .ge. 9) then
+            lc = volume ** 0.33333333333333d0
+        else
+            lc = rac2 * volume ** 0.33333333333333d0
+        endif
+    elseif (typmod(1)(1:6).eq.'D_PLAN' .or. typmod(1)(1:4).eq.'AXIS') then
+        surfac = 0.d0
+        do kpg = 1, npg
+            k = (kpg-1)*nno
+            call dfdm2d(nno, kpg, jv_poids, jv_dfunc, geom,&
+                        poids, dfdx, dfdy)
+            if (l_axi) then
+                r = 0.d0
+                do i = 1, nno
+                    r = r + geom(1,i)*zr(jv_func+i+k-1)
+                end do
+                poids = poids*r
+            endif
+            surfac = surfac + poids
+        end do
+!
+        if (npg .ge. 5) then
+            lc = surfac ** 0.5d0
+        else
+            lc = rac2 * surfac ** 0.5d0
+        endif
+!
+    elseif (typmod(1)(1:6).eq.'C_PLAN') then
+        lc = r8vide()
+    else
+        ASSERT(ASTER_FALSE)
+    endif
+!
+    ca_vext_eltsize1_ = lc
+!   ------------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! prepEltSize2
+!
+! Compute intrinsic external state variables - Size of element (ELTSIZE2)
+!
+! In  nno              : number of nodes 
+! In  npg              : number of Gauss points
+! In  ndim             : dimension of problem (2 or 3)
+! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
+! In  typmod2          : type of modelization (TYPMOD2)
+! In  geom             : initial coordinates of nodes
+!
+! --------------------------------------------------------------------------------------------------
+subroutine prepEltSize2(nno     , npg   , ndim,&
+                        jv_dfunc,&
+                        geom    , typmod)
+!   ------------------------------------------------------------------------------------------------
+! - Parameters
+    integer, intent(in) :: nno, npg, ndim
+    integer, intent(in) :: jv_dfunc
+    character(len=8), intent(in) :: typmod(2)
+    real(kind=8), intent(in) :: geom(ndim, nno)
+! - Local
+    integer :: kpg, i, j, k, jj, iret
+    real(kind=8) :: l(3, 3)
+    real(kind=8) :: inv(3, 3), det, de, dn, dk
+!   ------------------------------------------------------------------------------------------------
+    if (typmod(1)(1:2) .eq. '3D') then
+        do kpg = 1, npg
+            do i = 1, 3
+                l(1,i) = 0.d0
+                l(2,i) = 0.d0
+                l(3,i) = 0.d0
+                do  j = 1, nno
+                    k = 3*nno*(kpg-1)
+                    jj = 3*(j-1)
+                    de = zr(jv_dfunc-1+k+jj+1)
+                    dn = zr(jv_dfunc-1+k+jj+2)
+                    dk = zr(jv_dfunc-1+k+jj+3)
+                    l(1,i) = l(1,i) + de*geom(i,j)
+                    l(2,i) = l(2,i) + dn*geom(i,j)
+                    l(3,i) = l(3,i) + dk*geom(i,j)
+                end do
+            end do
+! --------- inversion de la matrice l
+            iret = 0
+            det  = 0.d0
+            inv  = 0.d0
+            do i = 1, 3
+                inv(i,i) = 1.d0
+            end do
+            call mgauss('NCVP', l, inv, 3, 3,&
+                        3, det, iret)
+            do i = 1, 3
+                do j = 1, 3
+                    ca_vext_eltsize2_(3*(i-1)+j)=inv(i,j)
+                end do
+            end do
+        end do
+    else
+        ca_vext_eltsize2_(:) = r8vide()
+    endif
+!   ------------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! prepGradVelo
+!
+! Compute intrinsic external state variables - Gradient of velocity (GRADVELO)
+!
+! In  nno              : number of nodes 
+! In  npg              : number of Gauss points 
+! In  ndim             : dimension of problem (2 or 3)
+! In  jv_poids         : JEVEUX adress for weight of Gauss points
+! In  jv_func          : JEVEUX adress for shape functions
+! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
+! In  geom             : initial coordinates of nodes
+! In  deplm            : displacements of nodes at beginning of time step
+! In  ddepl            : displacements of nodes since beginning of time step
+!
+! --------------------------------------------------------------------------------------------------
+subroutine prepGradVelo(nno     , npg    , ndim    ,&
+                        jv_poids, jv_func, jv_dfunc,&
+                        geom    , deplm  , ddepl   )
+!   ------------------------------------------------------------------------------------------------
+! - Parameters
+    integer, intent(in) :: nno, npg, ndim
+    integer, intent(in) :: jv_poids, jv_func, jv_dfunc
+    real(kind=8), intent(in) :: geom(ndim, nno)
+    real(kind=8), intent(in) :: deplm(ndim, nno), ddepl(ndim, nno)
+! - Local
+    integer :: nddl, kpg, i, j
+    real(kind=8) :: l(3, 3), fmm(3, 3), df(3, 3), f(3, 3), r8bid, r
+    real(kind=8) :: deplp(3, 27), geomm(3, 27), epsbid(6)
+    real(kind=8) :: dfdi(nno, 3)
+    real(kind=8), parameter :: id(9) =(/1.d0,0.d0,0.d0, 0.d0,1.d0,0.d0, 0.d0,0.d0,1.d0/)
+!   ------------------------------------------------------------------------------------------------
+    nddl = ndim*nno
+    ca_vext_gradvelo_(:) = 0.d0
+!
+    call dcopy(nddl, geom, 1, geomm, 1)
+    call daxpy(nddl, 1.d0, deplm, 1, geomm, 1)
+    call dcopy(nddl, deplm, 1, deplp, 1)
+    call daxpy(nddl, 1.d0, ddepl, 1, deplp, 1)
+    do kpg = 1, npg
+        call nmgeom(ndim, nno, .false._1, .true._1, geom,&
+                    kpg, jv_poids, jv_func, jv_dfunc, deplp,&
+                    .true._1, r8bid, dfdi, f, epsbid,&
+                    r)
+        call nmgeom(ndim, nno, .false._1, .true._1, geomm,&
+                    kpg, jv_poids, jv_func, jv_dfunc, ddepl,&
+                    .true._1, r8bid, dfdi, df, epsbid,&
+                    r)
+        call daxpy(9, -1.d0, id, 1, df, 1)
+        call matinv('S', 3, f, fmm, r8bid)
+        call pmat(3, df, fmm, l)
+        do i = 1, 3
+            do j = 1, 3
+                ca_vext_gradvelo_(3*(i-1)+j)=l(i,j)
+            end do
+        end do
+    end do
+!   ------------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! prepCoorGauss
+!
+! Compute intrinsic external state variables - Coordinates of Gauss points
+!
+! In  nno              : number of nodes 
+! In  npg              : number of Gauss points 
+! In  ndim             : dimension of problem (2 or 3)
+! In  jv_func          : JEVEUX adress for shape functions
+! In  geom             : initial coordinates of nodes
+! Out coorga           : coordinates of all integration points
+!
+! --------------------------------------------------------------------------------------------------
+subroutine prepCoorGauss(nno    , npg , ndim  ,&
+                         jv_func, geom, coorga)
+!   ------------------------------------------------------------------------------------------------
+! - Parameters
+    integer, intent(in) :: nno, npg, ndim
+    integer, intent(in) :: jv_func
+    real(kind=8), intent(in) :: geom(ndim, nno)
+    real(kind=8), intent(out) :: coorga(27,3)
+! - Local
+    integer :: i, k, kpg
+!   ------------------------------------------------------------------------------------------------
+    coorga(:,:) = 0.d0
+    ASSERT(npg .le. 27)
+!
+    do kpg = 1, npg
+        do i = 1, ndim
+            do k = 1, nno
+                coorga(kpg, i) = coorga(kpg, i) + geom(i,k)*zr(jv_func-1+nno*(kpg-1)+k)
+            end do
+        end do
+    end do
+!   ------------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! prepHygrometry
+!
+! Compute intrinsic external state variables - Hygrometry
+!
+! In  fami             : Gauss family for integration point rule
+! In  kpg              : current point gauss
+! In  ksp              : current "sous-point" gauss
+! In  imate            : coded material address
+!
+! --------------------------------------------------------------------------------------------------
+subroutine prepHygrometry(fami, kpg, ksp, imate)
+!   ------------------------------------------------------------------------------------------------
+! - Parameters
+    character(len=*), intent(in) :: fami
+    integer, intent(in) :: kpg, ksp, imate
+! - Local
+    integer           :: codret(1)
+    real(kind=8)      :: valres(1)
+    character(len=16) :: nomres(1)
+!   ------------------------------------------------------------------------------------------------
+    nomres(1) = 'FONC_DESORP'
+    call rcvalb(fami, kpg, ksp, '-', imate,&
+                ' ', 'ELAS', 0, ' ', [0.d0],&
+                1, nomres, valres, codret, 0)
+    if (codret(1) .eq. 0) then
+        ca_vext_hygrm_ = valres(1)
+    else
+        call utmess('F', 'COMPOR2_94')
+    endif
+    call rcvalb(fami, kpg, ksp, '+', imate,&
+                ' ', 'ELAS', 0, ' ', [0.d0],&
+                1, nomres, valres, codret, 0)
+    if (codret(1) .eq. 0) then
+        ca_vext_hygrp_ = valres(1)
+    else
+        call utmess('F', 'COMPOR2_94')
     endif
 !   ------------------------------------------------------------------------------------------------
 end subroutine
