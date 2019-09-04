@@ -105,7 +105,7 @@ real(kind=8) :: matuu(*)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(crit  , typmod,&
+    call behaviourPrepExteElem(crit  , typmod,&
                                nno   , npg   , ndim ,&
                                ipoids, ivf   , idfde,&
                                geom  , coorga)
