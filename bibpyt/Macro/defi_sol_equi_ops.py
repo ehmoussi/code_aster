@@ -609,7 +609,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                          PROL_GAUCHE='CONSTANT',
                         )
 
-        __ACCEX0[n] = CALC_FONCTION(COMB=(
+        #__ACCEX0[n] = CALC_FONCTION(COMB=(
+        __VITEX0 = CALC_FONCTION(COMB=(
                            _F(FONCTION=__FCI01FX, COEF=1.0/sqrt(2.0*pi*fmax) ),
                                  ),
                             LIST_PARA=__linst,
@@ -617,10 +618,29 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                             PROL_GAUCHE='CONSTANT',
                              );
 
-        __ACCEX0H[n] = CALC_FONCTION(FFT=_F(FONCTION=__ACCEX0[n], METHODE='COMPLET',))
+        #__ACCEX0H[n] = CALC_FONCTION(FFT=_F(FONCTION=__ACCEX0[n], METHODE='COMPLET',))
+        __VITEX0H = CALC_FONCTION(FFT=_F(FONCTION=__VITEX0, METHODE='COMPLET',))
+
+        const_context = {'VITEX0H':__VITEX0H}
+        __fACCX0H = FORMULE(NOM_PARA='FREQ',
+                    VALE_C='(0.+1.j )*2.0*pi*FREQ*VITEX0H(FREQ)',
+                    **const_context)
+
+        __ACCEX0H[n] = CALC_FONC_INTERP(NOM_PARA='FREQ',
+                                       LIST_PARA=__lfreq,
+                                       FONCTION=__fACCX0H,
+                                       INTERPOL='LIN',
+                                       PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
+
+        __ACCEX0[n] = CALC_FONCTION(FFT=_F(FONCTION=__ACCEX0H[n], METHODE='COMPLET', SYME='NON',),
+                                           PROL_DROITE='CONSTANT',)
 
         if input == 'CL' :
-            __VITEX[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__ACCEX0[n], ))
+            #__VITEX[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__ACCEX0[n], ))
+            __VITEX[n] = CALC_FONCTION(COMB=_F(FONCTION=__VITEX0, COEF=1.0 ),
+                            LIST_PARA=__linst, 
+                            PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',
+                             );
         if input == 'RA' :
             __VITEX[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__ACCEX[n], ))
 
@@ -1977,18 +1997,11 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
             if 'DSP'  in args:
               if input == 'CL':
-                if args['CHARGEMENT'] == 'MONO_APPUI':
-                  __AHX_RA[n] = CALC_FONCTION(
-                      MULT=(_F(FONCTION= __AHX[n],), _F(FONCTION=__FDT_RACL[n],), ), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                else:
-                  __AHX_RA[n] = CALC_FONCTION(
-                      MULT=(_F(FONCTION= __ACCEX0H[n],), _F(FONCTION=__FDT_RACL[n],), ), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                __AHX_RA[n] = CALC_FONCTION(MULT=(_F(FONCTION= __AHX[n],), _F(FONCTION=__FDT_RACL[n],), ), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
               elif input == 'RA':
-                  __AHX_RA[n]  = CALC_FONCTION(COMB_C=_F(FONCTION=__AHX[n], COEF_R = 1.), LIST_PARA=__lfreq,   NOM_PARA='FREQ',);
-
+                __AHX_RA[n]  = CALC_FONCTION(COMB_C=_F(FONCTION=__AHX[n], COEF_R = 1.), LIST_PARA=__lfreq,   NOM_PARA='FREQ',);
 
             else:
-
                 if input == 'CL':
                   if args['CHARGEMENT'] == 'MONO_APPUI':
                     __AHX_RA[n] = CALC_FONCTION(
@@ -1996,7 +2009,6 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                   else:
                     __AHX_RA[n] = CALC_FONCTION(
                         MULT=(_F(FONCTION= __ACCEX0H[n],), _F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-
                 if input == 'RA':
                     __AHX_RA[n] = CALC_FONCTION(
                         MULT=(_F(FONCTION=__AHX[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
@@ -2939,11 +2951,14 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                     if 'DSP' in args:
                       if args['LIST_FREQ_SPEC_OSCI'] is not None:
                         __SPEC[k] = CALC_FONCTION(
-                            SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,
-                            LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
+                            SPEC_OSCI=_F(FONCTION=__paxa[k], NATURE_FONC ='DSP', DUREE = TSM,
+                                     METHODE ='RICE', NATURE = 'ACCE',AMOR_REDUIT=0.05,
+                                     LIST_FREQ=args['LIST_FREQ_SPEC_OSCI'],NORME=9.81))
                       else:
                         __SPEC[k] = CALC_FONCTION(
-                            SPEC_OSCI=_F(FONCTION=__paxa[k], AMOR_REDUIT=0.05,  NORME=9.81))
+                            SPEC_OSCI=_F(FONCTION=__paxa[k], NATURE_FONC ='DSP', DUREE = TSM,
+                                     METHODE ='RICE', NATURE = 'ACCE',
+                                     AMOR_REDUIT=0.05, NORME=9.81))
                     else:
                       if args['LIST_FREQ_SPEC_OSCI'] is not None:
                         __SPEC[k] = CALC_FONCTION(
