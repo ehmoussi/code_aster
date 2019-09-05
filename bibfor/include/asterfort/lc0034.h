@@ -15,17 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
-! aslint: disable=W1504
 !
 interface
-    subroutine lc0034(fami, kpg, ksp, ndim, imate,&
+    subroutine lc0034(BEHinteg,&
+                      fami, kpg, ksp, ndim, imate,&
                       compor, carcri, instam, instap, epsm,&
                       deps, sigm, vim, option, angmas,&
                       sigp, vip, typmod, icomp,&
                       nvi, dsidep, codret)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
         integer, intent(in) :: ksp

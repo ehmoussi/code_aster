@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine plasti(fami, kpg, ksp, typmod, imate,&
-                  compor, carcri, instam, instap, &
-                  epsdt, depst, sigm,&
-                  vim, option, angmas, sigp, vip,&
-                  dsidep, icomp, nvi, codret, mult_compor_)
+! aslint: disable=W1504
+!
+subroutine plasti(BEHinteg    ,&
+                  fami        , kpg   , ksp   , typmod, imate,&
+                  compor      , carcri, instam, instap, &
+                  epsdt       , depst , sigm  ,&
+                  vim         , option, angmas, sigp  , vip,&
+                  dsidep      , icomp , nvi   , codret,&
+                  mult_compor_)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -38,34 +43,35 @@ implicit none
 #include "asterfort/get_varc.h"
 #include "blas/dcopy.h"
 !
-! aslint: disable=W1504
+type(Behaviour_Integ), intent(in) :: BEHinteg
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg, ksp, imate
+character(len=16), intent(in) :: compor(*)
+real(kind=8), intent(in) :: carcri(*)
+real(kind=8), intent(in) :: instam, instap
+real(kind=8), intent(in) :: epsdt(9), depst(9)
+real(kind=8), intent(in) :: sigm(6), vim(*)
+character(len=16), intent(in) :: option
+real(kind=8), intent(in) :: angmas(3)
+real(kind=8), intent(out) :: sigp(6), vip(*)
+character(len=8), intent(in) :: typmod(*)
+integer, intent(in) :: icomp
+integer, intent(in) :: nvi
+real(kind=8), intent(out) :: dsidep(6, *)
+integer, intent(out) :: codret
+character(len=16), optional, intent(in) :: mult_compor_
 !
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: imate
-    character(len=16), intent(in) :: compor(*)
-    real(kind=8), intent(in) :: carcri(*)
-    real(kind=8), intent(in) :: instam
-    real(kind=8), intent(in) :: instap
-    real(kind=8), intent(in) :: epsdt(9)
-    real(kind=8), intent(in) :: depst(9)
-    real(kind=8), intent(in) :: sigm(6)
-    real(kind=8), intent(in) :: vim(*)
-    character(len=16), intent(in) :: option
-    real(kind=8), intent(in) :: angmas(3)
-    real(kind=8), intent(out) :: sigp(6)
-    real(kind=8), intent(out) :: vip(*)
-
-    character(len=8), intent(in) :: typmod(*)
-    integer, intent(in) :: icomp
-    integer, intent(in) :: nvi
-    real(kind=8), intent(out) :: dsidep(6, *)
-    integer, intent(out) :: codret
-    character(len=16), optional, intent(in) :: mult_compor_
+! --------------------------------------------------------------------------------------------------
 !
-!     INTEGRATION DE LOIS DE COMPORTEMENT ELASTO PLASTIQUE ET VISCO
-!     PLASTIQUE PAR UNE MATHODE DE NEWTON (DISCRETISATION IMPLICITE)
+! Behaviour - The PLASTI environment (prefer MFront !)
+!
+! Main subroutine
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  BEHinteg         : parameters for integration of behaviour
+!
+! --------------------------------------------------------------------------------------------------
 !
 !     CALCUL DES CONTRAINTES           = SIGF(T+DT)
 !     CALCUL DES VARIABLES INTERNES    = VINF(T+DT)
@@ -140,20 +146,17 @@ implicit none
 !     POUR LE MONOCRISTAL, DIMENSIONS MAX
 !     NSG=NOMBRE DE SYSTEMES DE GLISSEMENT MAXIMUM
 !     NFS=NOMBRE DE FAMILLES DE SYSTEMES DE GLISSEMENT MAXIMUM
-
-    integer :: nmat, nsg, nfs, nrm, iret
-    parameter  ( nsg=30)
-    parameter  ( nfs=5)
-    parameter  ( nrm=nfs*nsg+6)
-    parameter  ( nmat=90)
 !
+! --------------------------------------------------------------------------------------------------
+!
+    integer, parameter :: nmat = 90, nsg = 30, nfs = 5, nrm = nfs*nsg+6
+    integer :: iret
     character(len=3) :: matcst
     character(len=7) :: etatd, etatf
     character(len=8) :: mod, typma
     character(len=16) :: rela_compor, defo_compor, mult_compor
     character(len=24) :: cpmono(5*nmat+1)
     aster_logical :: l_temp
-!
     integer :: ndt, ndi, nr, itmax, irtet
     integer :: nbcomm(nmat, 3), numhsr(1), irr, decirr, nbsyst, decal, gdef
     real(kind=8) :: toler, epsi, materd(nmat, 2), materf(nmat, 2)
@@ -161,18 +164,15 @@ implicit none
     real(kind=8) :: seuil, theta, dt, devg(6), devgii
     real(kind=8) :: vp(3), vecp(3, 3), pgl(3, 3)
     real(kind=8) :: toutms(nfs, nsg, 6), hsr(nsg, nsg), drdy(nrm*nrm)
-
     real(kind=8) :: tempd, tempf, tref
 !     POUR BETON_BURGER - ATTENTION DIMENSION MAXI POUR CE MODELE
     real(kind=8) :: yd(21), yf(21)
     parameter  ( epsi = 1.d-15 )
     aster_logical :: resi, rigi
-!     ----------------------------------------------------------------
     common /tdim/   ndt  , ndi
     common/polycr/irr,decirr,nbsyst,decal,gdef
-!     ----------------------------------------------------------------
 !
-! --  INITIALISATION DES PARAMETRES DE CONVERGENCE ET ITERATIONS
+! --------------------------------------------------------------------------------------------------
 !
     codret = 0
     itmax = int(carcri(1))
@@ -184,7 +184,6 @@ implicit none
     if (present(mult_compor_)) then
         mult_compor = mult_compor_
     endif
-
     mod = typmod(1)
     dt = instap - instam
     resi = option(1:9).eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
@@ -210,7 +209,8 @@ implicit none
 !
 ! --  RECUPERATION COEF MATERIAU A T ET/OU T+DT
 !
-    call lcmate(fami, kpg, ksp, compor, mod,&
+    call lcmate(BEHinteg,&
+                fami, kpg, ksp, compor, mod,&
                 imate, nmat, tempd, tempf, tref, 0,&
                 typma, hsr, materd, materf, matcst,&
                 nbcomm, cpmono, angmas, pgl, itmax,&

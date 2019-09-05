@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,24 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
-! aslint: disable=W1504
 !
 interface
-    subroutine lc0031(fami, kpg, ksp, ndim, imate,&
-                      compor, crit, instam, instap, neps,&
+    subroutine lc0031(BEHinteg    ,&
+                      fami, kpg, ksp, ndim, imate,&
+                      compor, carcri, instam, instap, neps,&
                       epsm, deps, sigm, vim, option,&
                       angmas, sigp, vip, typmod,&
                       icomp, nvi, dsidep, codret)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         character(len=*) :: fami
         integer :: kpg
         integer :: ksp
         integer :: ndim
         integer :: imate
         character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         real(kind=8) :: instam
         real(kind=8) :: instap
         integer :: neps

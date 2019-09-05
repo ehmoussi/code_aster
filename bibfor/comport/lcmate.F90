@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,42 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lcmate(fami, kpg, ksp, comp, mod,&
+! aslint: disable=W1504,W0104
+!
+subroutine lcmate(BEHinteg,&
+                  fami, kpg, ksp, comp, mod,&
                   imat, nmat, tempd, tempf, tref, impexp,&
                   typma, hsr, materd, materf, matcst,&
                   nbcomm, cpmono, angmas, pgl, itmax,&
                   toler, ndt, ndi, nr, crit,&
                   nvi, vind, nfs, nsg, toutms,&
                   nhsr, numhsr, sigd, mult_comp_)
-! aslint: disable=W1504
-    implicit   none
+!
+use Behaviour_type
+!
+implicit none
+!
+#include "asterfort/assert.h"
+#include "asterfort/cvmmat.h"
+#include "asterfort/haymat.h"
+#include "asterfort/hbrmat.h"
+#include "asterfort/hujma2.h"
+#include "asterfort/irrmat.h"
+#include "asterfort/lcmatt.h"
+#include "asterfort/lcmmap.h"
+#include "asterfort/lcmmat.h"
+#include "asterfort/lglmat.h"
+#include "asterfort/lkimat.h"
+#include "asterfort/srimat.h"
+#include "asterfort/matect.h"
+#include "asterfort/rslmat.h"
+#include "asterfort/rsvmat.h"
+#include "asterfort/vecmat.h"
+!
+type(Behaviour_Integ), intent(in) :: BEHinteg
+!
 !       RECUPERATION DU MATERIAU A TEMPF ET TEMPD
+! In  BEHinteg         : parameters for integration of behaviour
 !       IN  FAMI   :  FAMILLE DE POINT DE GAUSS (RIGI,MASS,...)
 !           KPG,KSP:  NUMERO DU (SOUS)POINT DE GAUSS
 !           COMP   :  COMPORTEMENT
@@ -55,22 +80,7 @@ subroutine lcmate(fami, kpg, ksp, comp, mod,&
 !           HSR    : MATRICE D'INTERACTION POUR L'ECROUISSAGE ISOTROPE
 !                    UTILISEE SEULEMENT POUR LE MONOCRISTAL IMPLICITE
 !       ----------------------------------------------------------------
-#include "asterfort/assert.h"
-#include "asterfort/cvmmat.h"
-#include "asterfort/haymat.h"
-#include "asterfort/hbrmat.h"
-#include "asterfort/hujma2.h"
-#include "asterfort/irrmat.h"
-#include "asterfort/lcmatt.h"
-#include "asterfort/lcmmap.h"
-#include "asterfort/lcmmat.h"
-#include "asterfort/lglmat.h"
-#include "asterfort/lkimat.h"
-#include "asterfort/srimat.h"
-#include "asterfort/matect.h"
-#include "asterfort/rslmat.h"
-#include "asterfort/rsvmat.h"
-#include "asterfort/vecmat.h"
+
     integer :: imat, nmat, ndt, ndi, nr, nvi, i, itmax, kpg, ksp, impexp
     real(kind=8) :: materd(nmat, 2), materf(nmat, 2), tempd, tempf, tref
     real(kind=8) :: vind(*), pgl(3, 3), angmas(3), toler, crit(*), sigd(6)
