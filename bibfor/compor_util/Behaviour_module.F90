@@ -26,7 +26,7 @@ implicit none
 ! ==================================================================================================
 private :: varcIsGEOM,&
            prepEltSize1, prepGradVelo, prepEltSize2, prepHygrometry
-public  :: behaviourInit,&
+public  :: behaviourInit, behaviourInitPoint,&
            behaviourPrepExteElem, prepCoorGauss, behaviourPrepExteGauss
 ! ==================================================================================================
 private
@@ -72,6 +72,33 @@ subroutine behaviourInit(BEHinteg)
     BEHinteg%elem%eltsize1  = r8nnem()
     BEHinteg%elem%eltsize2  = r8nnem()
     BEHinteg%elem%gradvelo  = r8nnem()
+!   ------------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! behaviourInitPoint
+!
+! Initialisation of behaviour datastructure - Special for SIMU_POINT_MAT
+!
+! In  carcri           : parameters for comportment
+! In  fami             : Gauss family for integration point rule
+! In  kpg              : current point gauss
+! In  ksp              : current "sous-point" gauss
+! In  imate            : coded material address
+! IO  BEHinteg         : parameters for integration of behaviour
+!
+! --------------------------------------------------------------------------------------------------
+subroutine behaviourInitPoint(carcri, fami, kpg, ksp, imate, BEHinteg)
+!   ------------------------------------------------------------------------------------------------
+! - Parameters
+    real(kind=8), intent(in) :: carcri(*)
+    character(len=*), intent(in) :: fami
+    integer, intent(in) :: kpg, ksp, imate
+    type(Behaviour_Integ), intent(inout) :: BEHinteg
+! - Local
+!   ------------------------------------------------------------------------------------------------
+    BEHinteg%elem%gradvelo  = 0.d0
+    call behaviourPrepExteGauss(carcri, fami, kpg, ksp, imate, BEHinteg)
 !   ------------------------------------------------------------------------------------------------
 end subroutine
 ! --------------------------------------------------------------------------------------------------
