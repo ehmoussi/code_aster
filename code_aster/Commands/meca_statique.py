@@ -20,12 +20,11 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import (GenericMechanicalLoad, KinematicsLoad,
-                       StaticMechanicalSolver)
-from ..Objects import ParallelMechanicalLoad
-from ..Utilities import unsupported
-from .ExecuteCommand import ExecuteCommand
-from .common_keywords import create_solver
+                       ParallelMechanicalLoad, StaticMechanicalSolver)
+from ..Utilities import force_list, unsupported
 from .calc_champ import CALC_CHAMP
+from .common_keywords import create_solver
+from .ExecuteCommand import ExecuteCommand
 
 
 class MechanicalSolver(ExecuteCommand):
@@ -82,14 +81,9 @@ class MechanicalSolver(ExecuteCommand):
         if listInst != None:
             mechaSolv.setTimeStepManager(listInst.getValues())
 
-        fkw = keywords["EXCIT"]
-        if isinstance(fkw, dict):
-            self._addLoad(mechaSolv, fkw)
-        elif isinstance(fkw, (list, tuple)):
-            for curDict in fkw:
-                self._addLoad(mechaSolv, curDict)
-        else:
-            assert False
+        fkw = force_list(keywords.get("EXCIT", []))
+        for curDict in fkw:
+            self._addLoad(mechaSolv, curDict)
 
         solver = create_solver(keywords.get("SOLVEUR"))
         mechaSolv.setLinearSolver(solver)
