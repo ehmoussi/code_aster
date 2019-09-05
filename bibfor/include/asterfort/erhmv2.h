@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
-!
 #include "asterf_types.h"
 !
 interface 
-    subroutine erhmv2(axi, perman, deltat, dimdep, dimdef,&
+    subroutine erhmv2(ds_thm, axi, perman, deltat, dimdep, dimdef,&
                       nmec, np1, np2, ndim, nno,&
                       nnos, npg, nddls, nddlm,&
                       dimuel, ipoids, ivf, idfde, ipoid2,&
@@ -29,6 +27,8 @@ interface
                       unsurm, fpx, fpy, frx, fry,&
                       addeme, addep1,&
                       addep2, addete, tm2h1v)
+        use THM_type
+        type(THM_DS), intent(inout) :: ds_thm
         integer :: dimuel
         integer :: nnos
         integer :: nno

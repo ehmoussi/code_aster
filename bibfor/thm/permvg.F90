@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine permvg(satur,&
-                  krl  , dkrl_dsatur, krg, dkrg_dsatur)
+subroutine permvg(ds_thm, satur,&
+                  krl   , dkrl_dsatur, krg, dkrg_dsatur)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -28,6 +27,7 @@ implicit none
 #include "asterfort/regup1.h"
 #include "asterfort/regup2.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 real(kind=8), intent(in) :: satur
 real(kind=8), intent(out) :: krl, dkrl_dsatur
 real(kind=8), intent(out) :: krg, dkrg_dsatur
@@ -40,6 +40,7 @@ real(kind=8), intent(out) :: krg, dkrg_dsatur
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  satur            : saturation
 ! Out krl              : value of kr(liquid)
 ! Out dkrl_dsatur      : value of d(kr(liquid))/dSatur

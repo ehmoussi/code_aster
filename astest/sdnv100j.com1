@@ -1,0 +1,100 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+POURSUITE(CODE='OUI')
+
+# Test displacements
+TEST_RESU(RESU=(_F(INST=1.0E-05,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=1.0E-03,
+                   VALE_REFE=1.E-3,),
+                _F(INST=2.4E-05,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N100',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-4.0E-04,
+                   VALE_REFE=-4.0E-04,),
+                _F(INST=8.0E-05,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-0.000823222122817805,
+                   VALE_REFE=-8.0E-4,
+                   PRECISION=0.030),
+                _F(INST=1.2E-4,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='VITE',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=115.27158945887308,
+                   VALE_REFE=100.0,
+                   PRECISION=0.153),
+                _F(INST=1.2E-4,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.00200146781751189,
+                   VALE_REFE=2.E-3,
+                   PRECISION=0.0008),
+                ),
+          )
+
+# Test de l energie cinetique
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-6,
+           VALE_CALC=800.0,
+           VALE_REFE=800.0,
+           NOM_PARA='TOTALE',
+           TABLE=tpost,
+           FILTRE=(_F(NOM_PARA='LIEU',
+                      VALE_K='MAILL',),
+                   _F(CRITERE='ABSOLU',
+                      PRECISION=1.E-08,
+                      NOM_PARA='INST',
+                      VALE=5.0E-06,),
+                   ),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=0.024,
+           VALE_CALC=780.9629445155903,
+           VALE_REFE=800.0,
+           NOM_PARA='TOTALE',
+           TABLE=tpost,
+           FILTRE=(_F(NOM_PARA='LIEU',
+                      VALE_K='MAILL',),
+                   _F(CRITERE='ABSOLU',
+                      PRECISION=1.E-08,
+                      NOM_PARA='INST',
+                      VALE=1.2E-4,),
+                   ),
+           )
+
+FIN()

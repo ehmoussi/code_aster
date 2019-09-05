@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 subroutine te0515(option, nomte)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -61,22 +60,18 @@ character(len=16), intent(in) :: option, nomte
     character(len=8) :: type_elem(2)
     integer :: li
     aster_logical :: l_axi, l_vf, l_steady
+    type(THM_DS) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
-!
-! - Init THM module
-!
-    call thmModuleInit()
 ! 
 ! - Get all parameters for current element - Finite volume version
 !
-    call thmGetElemPara_vf(l_axi    , l_steady , l_vf  ,&
-                           type_elem, ndim     ,&
-                           mecani   , press1   , press2, tempe,&
-                           dimdef   , dimcon   , dimuel,&
-                           nno      , nnos     , nface )
+    call thmGetElemPara_vf(ds_thm   , l_axi , l_steady , l_vf  ,&
+                           type_elem, ndim  ,&
+                           mecani   , press1, press2, tempe,&
+                           dimdef   , dimcon, dimuel,&
+                           nno      , nnos  , nface )
     ASSERT(l_vf)
 !
 ! - Non-linear options
@@ -112,7 +107,7 @@ character(len=16), intent(in) :: option, nomte
         endif
         retloi = 0
         if (option(1:14) .eq. 'RIGI_MECA_TANG') then
-            call assesu(option      , zi(imate) ,&
+            call assesu(ds_thm      , option    , zi(imate) ,&
                         type_elem   ,&
                         ndim        , nbvari    ,&
                         nno         , nnos      , nface ,&
@@ -130,7 +125,7 @@ character(len=16), intent(in) :: option, nomte
             do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
             end do
-            call assesu(option      , zi(imate) ,&
+            call assesu(ds_thm      , option    , zi(imate) ,&
                         type_elem   ,&
                         ndim        , nbvari    ,&
                         nno         , nnos      , nface ,&

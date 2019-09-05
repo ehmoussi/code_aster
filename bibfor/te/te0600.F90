@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 subroutine te0600(option, nomte)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -34,7 +33,7 @@ implicit none
 #include "asterfort/thmCompGravity.h"
 #include "asterfort/thmCompNonLin.h"
 !
-    character(len=16), intent(in) :: option, nomte
+character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,55 +48,58 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call thmModuleInit()
+    type(THM_DS) :: ds_thm
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! =====================================================================
 ! --- 2. OPTIONS : RIGI_MECA_TANG , FULL_MECA , RAPH_MECA -------------
 ! =====================================================================
     if ((option(1:9).eq.'RIGI_MECA' ) .or. (option(1:9).eq.'RAPH_MECA' ) .or.&
         (option(1:9).eq.'FULL_MECA' )) then
-        call thmCompNonLin(option)
+        call thmCompNonLin(option, ds_thm)
     endif
 ! =====================================================================
 ! --- 3. OPTION : CHAR_MECA_PESA_R ------------------------------------
 ! =====================================================================
     if (option .eq. 'CHAR_MECA_PESA_R') then
-        call thmCompGravity()
+        call thmCompGravity(ds_thm)
     endif
 ! =====================================================================
 ! --- 4. OPTIONS : CHAR_MECA_FR2D2D OU CHAR_MECA_FR3D3D ---------------
 ! =====================================================================
     if (option .eq. 'CHAR_MECA_FR3D3D' .or. option .eq. 'CHAR_MECA_FR2D2D') then
-        call thmCompLoad(option, nomte)
+        call thmCompLoad(option, nomte, ds_thm)
     endif
 ! ======================================================================
 ! --- 5. OPTION : FORC_NODA --------------------------------------------
 ! ======================================================================
     if (option .eq. 'FORC_NODA') then
-        call thmCompForcNoda()
+        call thmCompForcNoda(ds_thm)
     endif
 ! ======================================================================
 ! --- 6. OPTION : REFE_FORC_NODA ---------------------------------------
 ! ======================================================================
     if (option .eq. 'REFE_FORC_NODA') then
-        call thmCompRefeForcNoda()
+        call thmCompRefeForcNoda(ds_thm)
     endif
 ! ======================================================================
 ! --- 7. OPTION : SIEF_ELNO --------------------------------------------
 ! ======================================================================
     if (option .eq. 'SIEF_ELNO') then
-        call thmCompSiefElno()
+        call thmCompSiefElno(ds_thm)
     endif
 ! ======================================================================
 ! --- 8. OPTION : VARI_ELNO --------------------------------------------
 ! ======================================================================
     if (option .eq. 'VARI_ELNO') then
-        call thmCompVariElno()
+        call thmCompVariElno(ds_thm)
     endif
 ! ======================================================================
 ! --- 9. OPTION : EPSI_ELGA --------------------------------------------
 ! ======================================================================
     if (option .eq. 'EPSI_ELGA') then
-        call thmCompEpsiElga()
+        call thmCompEpsiElga(ds_thm)
     endif
 !
 end subroutine

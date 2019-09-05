@@ -15,15 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine pcapvg(sr, pr,pentree, usm, usn, s1,&
-                  pc, dpcds)
 !
+subroutine pcapvg(sr, pr   , pentree, usm, usn, s1,&
+                  pc, dpcds)
 !
 implicit none
 !
-    real(kind=8), intent(in) :: sr, pr, usm, usn, s1,pentree
-    real(kind=8), intent(out) :: pc, dpcds
+real(kind=8), intent(in) :: sr, pr, usm, usn, s1, pentree
+real(kind=8), intent(out) :: pc, dpcds
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -35,12 +34,12 @@ implicit none
 !
 ! In  sr           : parameter SR
 ! In  pr           : parameter P
+! In  pentree      : parameter entry pressure
 ! In  usm          : parameter 1/M (with M=1-1/N)
 ! In  usn          : parameter 1/N
 ! In  s1           : (saturation-SMAX)/(1-SMAX)
 ! Out pc           : capillary pressure
 ! Out dpcds        : first derivative of capillary pressure
-! In  pentree      : parameter entry pressure
 !
 ! --------------------------------------------------------------------------------------------------
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! aslint: disable=W1504,W1306
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xasshm(nno, npg, npi, ipoids, ivf,&
+subroutine xasshm(ds_thm,&
+                  nno, npg, npi, ipoids, ivf,&
                   idfde, igeom, geom, carcri, deplm,&
                   deplp, contm, contp, varim, varip,&
                   defgem, defgep, drds, drdsr, dsde,&
@@ -34,7 +35,6 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
                   nfiss, nfh, jfisno, work1, work2)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -60,24 +60,27 @@ implicit none
 #include "asterfort/thmGetParaInit.h"
 #include "asterfort/thmGetBehaviourChck.h"
 #include "asterfort/Behaviour_type.h"
-    integer :: dimmat, npg, dimuel
-    integer :: npi, ipoids, ivf, idfde, j_mater, dimdef, dimcon, nnop
-    integer :: nbvari, nddls, nddlm, nmec, np1, ndim, codret
-    integer :: mecani(5), press1(7), press2(7), tempe(5)
-    integer ::  nfiss, nfh, jfisno
-    integer :: addeme, addep1, ii, jj, in, jheavn
-    integer :: kpi, ipi
-    integer :: i, j, n, k, kji, nb_vari_meca
-    real(kind=8) :: geom(ndim, nnop), carcri(*), poids
-    real(kind=8) :: deplp(dimuel), deplm(dimuel)
-    real(kind=8) :: matuu(dimuel*dimuel), matri(dimmat, dimmat)
-    real(kind=8) :: rinstp, rinstm, vectu(dimuel)
-    real(kind=8) :: defgem(dimdef), defgep(dimdef)
-    real(kind=8) :: dt, parm_theta, ta1
-    real(kind=8) :: angmas(3)
-    aster_logical :: axi
-    character(len=3) :: modint
-    character(len=16) :: option, compor(*)
+
+
+type(THM_DS), intent(inout) :: ds_thm
+integer :: dimmat, npg, dimuel
+integer :: npi, ipoids, ivf, idfde, j_mater, dimdef, dimcon, nnop
+integer :: nbvari, nddls, nddlm, nmec, np1, ndim, codret
+integer :: mecani(5), press1(7), press2(7), tempe(5)
+integer ::  nfiss, nfh, jfisno
+integer :: addeme, addep1, ii, jj, in, jheavn
+integer :: kpi, ipi
+integer :: i, j, n, k, kji, nb_vari_meca
+real(kind=8) :: geom(ndim, nnop), carcri(*), poids
+real(kind=8) :: deplp(dimuel), deplm(dimuel)
+real(kind=8) :: matuu(dimuel*dimuel), matri(dimmat, dimmat)
+real(kind=8) :: rinstp, rinstm, vectu(dimuel)
+real(kind=8) :: defgem(dimdef), defgep(dimdef)
+real(kind=8) :: dt, parm_theta, ta1
+real(kind=8) :: angmas(3)
+aster_logical :: axi
+character(len=3) :: modint
+character(len=16) :: option, compor(*)
 !
 ! DECLARATION POUR XFEM
     integer :: nnops, nnopm
@@ -220,24 +223,24 @@ implicit none
 !
 ! - Get parameters for behaviour
 !
-    call thmGetBehaviour(compor)
+    call thmGetBehaviour(compor, ds_thm)
 !
 ! - Get parameters for internal variables
 !
-    call thmGetBehaviourVari()
+    call thmGetBehaviourVari(ds_thm)
 !
 ! - Some checks between behaviour and model
 !
-    call thmGetBehaviourChck()
+    call thmGetBehaviourChck(ds_thm)
 !
 ! - Get parameters for coupling
 !
     temp = 0.d0
-    call thmGetParaCoupling(j_mater, temp)
+    call thmGetParaCoupling(ds_thm, j_mater, temp)
 !
 ! - Get initial parameters (THM_INIT)
 !
-    call thmGetParaInit(j_mater, l_check_ = ASTER_TRUE)
+    call thmGetParaInit(j_mater, ds_thm, l_check_ = ASTER_TRUE)
 !
 !     RECUPERATION DE LA CONNECTIVITE FISSURE - DDL HEAVISIDES
 !     ATTENTION !!! FISNO PEUT ETRE SURDIMENTIONNE
@@ -326,7 +329,8 @@ implicit none
 ! =====================================================================
 ! --- CALCUL DE LA MATRICE B AU POINT D'INTEGRATION -------------------
 ! =====================================================================
-            call xcabhm(nddls, nddlm, nnop, nnops, nnopm,&
+            call xcabhm(ds_thm,&
+                        nddls, nddlm, nnop, nnops, nnopm,&
                         dimuel, ndim, kpi, ff, ff2,&
                         dfdi, dfdi2, b, nmec, &
                         addeme, addep1, np1, axi,&
@@ -364,7 +368,7 @@ implicit none
                 congem(i) = contm(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
                 congep(i) = contp(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
             end do
-            call xequhm(j_mater, option, parm_theta, ta1, ndim,&
+            call xequhm(ds_thm, j_mater, option, parm_theta, ta1, ndim,&
                         kpi, npg, dimenr, enrmec,&
                         dimdef, dimcon, nbvari, defgem, congem,&
                         vintm, defgep, congep,&

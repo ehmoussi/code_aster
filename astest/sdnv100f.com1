@@ -1,0 +1,178 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+POURSUITE(CODE='OUI')
+
+# Test displacements
+TEST_RESU(RESU=(_F(INST=1.0E-05,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=1.0E-03,
+                   VALE_REFE=1.E-3,),
+                _F(INST=2.4E-05,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N100',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-4.0E-04,
+                   VALE_REFE=-4.0E-04,),
+                _F(INST=8.0E-05,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-0.0008218412554052237,
+                   VALE_REFE=-8.0E-4,
+                   PRECISION=0.028),
+                _F(INST=1.2E-4,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='VITE',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=103.600819718,
+                   VALE_REFE=100.0,
+                   PRECISION=0.037),
+                _F(INST=1.2E-4,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.001914510317028367,
+                   VALE_REFE=2.E-3,
+                   PRECISION=0.043),
+                ),
+          )
+
+# Test de l energie cinetique
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-4,
+           VALE_CALC=800.0,
+           VALE_REFE=800.0,
+           NOM_PARA='TOTALE',
+           TABLE=tpost,
+           FILTRE=(_F(NOM_PARA='LIEU',
+                      VALE_K=MAILL.getName(),),
+                   _F(CRITERE='ABSOLU',
+                      PRECISION=1.E-08,
+                      NOM_PARA='INST',
+                      VALE=1.E-06,),
+                   ),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=9.E-3,
+           VALE_CALC=793.021708136,
+           VALE_REFE=800.0,
+           NOM_PARA='TOTALE',
+           TABLE=tpost,
+           FILTRE=(_F(NOM_PARA='LIEU',
+                      VALE_K=MAILL.getName(),),
+                   _F(CRITERE='ABSOLU',
+                      PRECISION=1.E-08,
+                      NOM_PARA='INST',
+                      VALE=1.2E-4,),
+                   ),
+           )
+
+# Lumped mass matrix
+TEST_RESU(RESU=(_F(INST=1.0E-05,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=UDIAG,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=1.0E-03,
+                   VALE_REFE=1.E-3,),
+                _F(INST=2.4E-05,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=UDIAG,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N100',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-4.0E-04,
+                   VALE_REFE=-4.0E-04,),
+                _F(INST=8.0E-05,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=UDIAG,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-0.0008156762683767055,
+                   VALE_REFE=-8.0E-4,
+                   PRECISION=0.020),
+                _F(INST=1.2E-4,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=UDIAG,
+                   NOM_CHAM='VITE',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=129.12251877686649,
+                   VALE_REFE=100.0,
+                   PRECISION=0.3),
+                _F(INST=1.2E-4,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=UDIAG,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N5',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.0018423738839537475,
+                   VALE_REFE=2.E-3,
+                   PRECISION=0.079),
+                ),
+          )
+
+# Test de l energie cinetique
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-4,
+           VALE_CALC=800.0,
+           VALE_REFE=800.0,
+           NOM_PARA='TOTALE',
+           TABLE=tpostDIA,
+           FILTRE=(_F(NOM_PARA='LIEU',
+                      VALE_K=MAILL.getName(),),
+                   _F(CRITERE='ABSOLU',
+                      PRECISION=1.E-08,
+                      NOM_PARA='INST',
+                      VALE=1.E-06,),
+                   ),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=0.03,
+           VALE_CALC=779.675804308,
+           VALE_REFE=800.0,
+           NOM_PARA='TOTALE',
+           TABLE=tpostDIA,
+           FILTRE=(_F(NOM_PARA='LIEU',
+                      VALE_K=MAILL.getName(),),
+                   _F(CRITERE='ABSOLU',
+                      PRECISION=1.E-08,
+                      NOM_PARA='INST',
+                      VALE=1.2E-4,),
+                   ),
+           )
+
+FIN()

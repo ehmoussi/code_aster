@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504,W1306
 !
-subroutine coeime(j_mater, nomail, option, l_resi,&
+subroutine coeime(ds_thm, j_mater, nomail, option, l_resi,&
                   l_matr, ndim, dimdef, dimcon,&
                   addeme, addep1,&
                   nbvari, npg, npi,&
@@ -26,7 +26,6 @@ subroutine coeime(j_mater, nomail, option, l_resi,&
                   retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -36,6 +35,7 @@ implicit none
 #include "asterfort/lcjohm.h"
 #include "asterfort/rcvalb.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: j_mater
 character(len=8), intent(in) :: nomail
 character(len=16), intent(in) :: option
@@ -57,6 +57,7 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! IN MECA   : COMPORTEMENT MECA
 ! IN IMATE  : CODE MATERIAU
 ! IN RESI   : FULL_MECA OU RAPH_MECA

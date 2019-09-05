@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmCompNonLin(option)
+subroutine thmCompNonLin(option, ds_thm)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -34,6 +33,7 @@ implicit none
 #include "asterfort/Behaviour_type.h"
 !
 character(len=16), intent(in) :: option
+type(THM_DS), intent(inout) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,6 +44,7 @@ character(len=16), intent(in) :: option
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  option           : name of option to compute
+! In  ds_thm           : datastructure for THM
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,7 +71,7 @@ character(len=16), intent(in) :: option
 !
 ! - Get all parameters for current element
 !
-    call thmGetElemPara(l_axi    , l_steady ,&
+    call thmGetElemPara(ds_thm   , l_axi    , l_steady ,&
                         type_elem, inte_type, ndim     ,&
                         mecani   , press1   , press2   , tempe  ,&
                         dimdep   , dimdef   , dimcon   , dimuel ,&
@@ -138,7 +139,7 @@ character(len=16), intent(in) :: option
 !
 ! - Compute
 !
-    call assthm(option         , zi(jv_mater) ,&
+    call assthm(ds_thm         , option       , zi(jv_mater) ,&
                 l_axi          , l_steady     ,&
                 type_elem      , inte_type    , angl_naut,&
                 ndim           , nbvari       ,&

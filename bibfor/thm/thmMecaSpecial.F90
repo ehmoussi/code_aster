@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine thmMecaSpecial(option , meca     , nume_thmc,&
+subroutine thmMecaSpecial(ds_thm , option   , meca     , &
                           p1     , dp1      , p2       , dp2   , satur, tbiot,&
                           j_mater, ndim     , typmod   , carcri,&
                           addeme , adcome   , addep1   , addep2,&
@@ -28,7 +28,6 @@ subroutine thmMecaSpecial(option , meca     , nume_thmc,&
                           dsde   , ther_meca, retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -40,8 +39,9 @@ implicit none
 #include "asterfort/dsipdp.h"
 #include "asterfort/lchbr2.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 character(len=16), intent(in) :: option, meca
-integer, intent(in) :: j_mater, nume_thmc
+integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: carcri(*)
@@ -63,9 +63,9 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  option           : option to compute
 ! In  meca             : mechanical law for THM
-! In  nume_thmc        : index of coupling law for THM
 ! In  p1               : capillary pressure - At end of current step
 ! In  dp1              : increment of capillary pressure
 ! In  p2               : gaz pressure - At end of current step
@@ -180,7 +180,7 @@ integer, intent(out) :: retcom
         endif
     elseif (meca .eq. 'HOEK_BROWN_TOT') then
 ! ----- Preparation for HOEK_BROWN_TOT
-        call dsipdp(nume_thmc,&
+        call dsipdp(ds_thm,&
                     adcome, addep1, addep2  ,&
                     dimcon, dimdef, dsde    ,&
                     dspdp1, dspdp2, l_dspdp2)

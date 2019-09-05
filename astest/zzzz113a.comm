@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,10 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 # Definition of model (cube in steel)
 mesh = LIRE_MAILLAGE(UNITE=20)
 
+mesh = DEFI_GROUP(reuse         = mesh,
+                  MAILLAGE      = mesh,
+                  CREA_GROUP_NO = _F(GROUP_MA = 'Top'))
+
 model = AFFE_MODELE(AFFE=_F(MODELISATION=('3D', ), PHENOMENE='MECANIQUE', TOUT='OUI'), MAILLAGE=mesh)
 
 steel = DEFI_MATERIAU(ELAS=_F(E=2.1e+11, NU=0.3, RHO=7800.0))
@@ -36,10 +40,12 @@ ETop = AFFE_CHAR_MECA(DDL_IMPO=_F(DZ=0.1, GROUP_MA=('Top', )), MODELE=model)
 
 EModal = AFFE_CHAR_MECA(DDL_IMPO=(_F(GROUP_MA=('Left', 'Bottom'), LIAISON='ENCASTRE'), _F(DZ=0.1, GROUP_MA=('Top', ))), MODELE=model)
 
-# Compute modes with BC: EModal
+EForcN = AFFE_CHAR_MECA(FORCE_NODALE=_F(FX=0., GROUP_NO=('Top', )), MODELE=model)
 
+
+# Compute modes with BC: EModal
 ASSEMBLAGE(CHAM_MATER=fieldmat, 
-           CHARGE=(EModal,),
+           CHARGE=(EModal,EForcN),
            MODELE=model,
            MATR_ASSE=(_F(MATRICE=CO('AsseK'), OPTION='RIGI_MECA'), 
                       _F(MATRICE=CO('AsseM'), OPTION='MASS_MECA')),  
@@ -49,7 +55,7 @@ modes = CALC_MODES(MATR_MASS=AsseM, MATR_RIGI=AsseK)
 
 # Compute new matrixes with BC: EBottom and ETop
 ASSEMBLAGE(CHAM_MATER=fieldmat, 
-           CHARGE=(EBottom, ETop), 
+           CHARGE=(EBottom, ETop, EForcN), 
            MODELE=model,
            MATR_ASSE=(_F(MATRICE=CO('AsseK2'), OPTION='RIGI_MECA'), 
                       _F(MATRICE=CO('AsseM2'), OPTION='MASS_MECA')),  
@@ -88,5 +94,15 @@ resu = DYNA_NON_LINE(AMOR_MODAL=_F(AMOR_REDUIT=(0.05, ), MODE_MECA=modes1, NB_MO
                      MODELE=model, 
                      SCHEMA_TEMPS=_F(FORMULATION='DEPLACEMENT', SCHEMA='NEWMARK'))
 
+
+# Non-linear dynamic with modal damping: test with FORCE_NODALE (#29009)
+resu2 = DYNA_NON_LINE(AMOR_MODAL=_F(AMOR_REDUIT=(0.05, ), MODE_MECA=modes1, NB_MODE=1), 
+                     CHAM_MATER=fieldmat, 
+                     COMPORTEMENT=_F(DEFORMATION='PETIT', RELATION='ELAS', TOUT='OUI'), 
+                     CONVERGENCE=_F(RESI_GLOB_MAXI=1e-05),
+                     EXCIT=(_F(CHARGE=EBottom), _F(CHARGE=EForcN), _F(CHARGE=ETop, FONC_MULT=rampe)), 
+                     INCREMENT=_F(LIST_INST=listr), 
+                     MODELE=model, 
+                     SCHEMA_TEMPS=_F(FORMULATION='DEPLACEMENT', SCHEMA='NEWMARK'))
 
 FIN();

@@ -230,7 +230,7 @@ integer, intent(out) :: codret
         call get_elas_id(imate, elas_id, elas_keyword)
         call get_elas_para(fami     , imate, '-', kpg, ksp, &
                            elas_id  , elas_keyword,&
-                           e = young, nu = nu)
+                           e_ = young, nu_ = nu)
         call lcsmelas(stran, dstran , ddsdde,&
                       nmat = 0, young_ = young, nu_ = nu)
     endif

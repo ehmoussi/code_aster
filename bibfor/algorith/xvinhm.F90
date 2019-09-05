@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,14 +18,13 @@
 ! aslint: disable=W1504
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xvinhm(jmate, ndim,&
+subroutine xvinhm(ds_thm, jmate, ndim,&
                   cohes, dpf, saut, sautm, nd, lamb,&
                   w11m, rho11m, alpha, job, pf,&
                   rho11, w11, ipgf, rela, dsidep,&
                   delta, r, am)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !    
@@ -45,6 +44,7 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
+type(THM_DS), intent(inout) :: ds_thm
     integer :: jmate, ndim, i, ipgf
     real(kind=8) :: cliq, vim(2), vip(2), cohes(5), rho11, rho11m
     real(kind=8) :: dsidep(6, 6), delta(6), eps, vim2(9), vip2(9), rela

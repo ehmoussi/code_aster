@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface 
-    subroutine xfnohm(fnoevo, deltat, nno,&
+    subroutine xfnohm(ds_thm,&
+                      fnoevo, deltat, nno,&
                       npg, ipoids, ivf, idfde,&
                       geom, congem, b, dfdi, dfdi2,&
                       r, vectu, imate, mecani, press1,&
@@ -30,6 +28,8 @@ interface
                       nnops, nnopm, igeom, jpintt, jpmilt,&
                       jheavn, lonch, cnset, heavt, enrmec, enrhyd,&
                       nfiss, nfh, jfisno)
+        use THM_type
+        type(THM_DS), intent(inout) :: ds_thm
         integer :: nnops
         integer :: nnop
         integer :: dimenr

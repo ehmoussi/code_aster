@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,21 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine thmMecaSpecial(option , meca     , nume_thmc,&
-                              p1     , dp1      , p2       , dp2   , satur, tbiot,&
-                              j_mater, ndim     , typmod   , carcri,&
-                              addeme , adcome   , addep1   , addep2,&
+    subroutine thmMecaSpecial(ds_thm , option   , meca  ,&
+                              p1     , dp1      , p2    , dp2   , satur, tbiot,&
+                              j_mater, ndim     , typmod, carcri,&
+                              addeme , adcome   , addep1, addep2,&
                               dimdef , dimcon   ,&
                               defgem , deps     ,&
                               congem , vintm    ,&
                               congep , vintp    ,&
                               dsde   , ther_meca, retcom)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         character(len=16), intent(in) :: option, meca
-        integer, intent(in) :: j_mater, nume_thmc
         real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
+        integer, intent(in) :: j_mater
         character(len=8), intent(in) :: typmod(2)
         real(kind=8), intent(in) :: carcri(*)
         integer, intent(in) :: ndim, dimdef, dimcon, addeme, adcome, addep1, addep2

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmEvalSatuInit(j_mater, p1m   , p1   ,&
-                           satm   , satur  , dsatur, retcom)
+subroutine thmEvalSatuInit(ds_thm, j_mater, p1m   , p1    ,&
+                           satm  , satur  , dsatur, retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -31,6 +30,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/THM_type.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: p1m, p1
 real(kind=8), intent(out) :: satm, satur, dsatur
@@ -44,14 +44,15 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater      : coded material address
-! In  p1m          : capillary pressure - At beginning of step
-! In  p1           : capillary pressure - At end of current step
-! Out satm         : saturation at beginning of step
-! Out satur        : saturation
-! Out dsatur       : derivative of saturation (/pc)
-! Out retcom       : return code for error
-!                     2 - If saturation doesn't belon to ]0,1[
+! In  ds_thm           : datastructure for THM
+! In  j_mater          : coded material address
+! In  p1m              : capillary pressure - At beginning of step
+! In  p1               : capillary pressure - At end of current step
+! Out satm             : saturation at beginning of step
+! Out satur            : saturation
+! Out dsatur           : derivative of saturation (/pc)
+! Out retcom           : return code for error
+!                         2 - If saturation doesn't belon to ]0,1[
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,8 +72,8 @@ integer, intent(out) :: retcom
         (ds_thm%ds_behaviour%rela_hydr.eq.'HYDR_VGC')) then
         satm  = 0.d0
         satur = 0.d0
-        call satuvg(p1m, satm)
-        call satuvg(p1 , satur, dsatur)
+        call satuvg(ds_thm, p1m, satm)
+        call satuvg(ds_thm, p1 , satur, dsatur)
         if (satm .gt. 1.d0 .or. satm .lt. 0.d0) then
             retcom = 2
         endif
