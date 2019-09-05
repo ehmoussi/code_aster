@@ -483,39 +483,45 @@ integer :: codret
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (30)
-        call lc0030(fami, kpg, ksp, ndim, imate,&
+        call lc0030(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, &
                     typmod, icomp, nvi, dsidep,&
                     codret)
     case (31)
-        call lc0031(fami, kpg, ksp, ndim, imate,&
+        call lc0031(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, typmod,&
                     icomp, nvi, dsidep, codret)
     case (32)
-        call lc0032(fami, kpg, ksp, ndim, imate,&
+        call lc0032(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, typmod, icomp, nvi,&
                     dsidep, codret)
     case (33)
-        call lc0033(fami, kpg, ksp, ndim, imate,&
+        call lc0033(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, &
                     typmod, icomp, nvi, dsidep,&
                     codret)
     case (34)
-        call lc0034(fami, kpg, ksp, ndim, imate,&
+        call lc0034(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (35)
-        call lc0035(fami, kpg, ksp, ndim, imate,&
+        call lc0035(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
@@ -577,7 +583,8 @@ integer :: codret
                     temp    , dtemp , predef, dpred ,&
                     sigp    , vip   , dsidep, codret)
     case (59)
-        call lc0059(fami, kpg, ksp, imate,&
+        call lc0059(BEHinteg,&
+                    fami, kpg, ksp, imate,&
                     compor, carcri, instam, instap, neps, epsm,&
                     deps, nsig, sigm, nvi, vim, option, angmas,&
                     sigp, vip,&
@@ -828,7 +835,8 @@ integer :: codret
                     nvi, dsidep, codret)
     case (137)
 !     MONOCRISTAL, POLYCRISTAL
-        call lc0137(fami, kpg, ksp, ndim, imate,&
+        call lc0137(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, &
@@ -920,7 +928,8 @@ integer :: codret
 
     case (1137)
 !     MONOCRISTAL, POLYCRISTAL
-        call lc1137(fami, kpg, ksp, ndim, imate,&
+        call lc1137(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, &

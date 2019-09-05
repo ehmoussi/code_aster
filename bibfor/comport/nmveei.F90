@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmveei(fami, kpg, ksp, ndim, typmod,&
-                  imate, compor, crit, instam, instap,&
+!
+subroutine nmveei(BEHinteg,&
+                  fami, kpg, ksp, ndim, typmod,&
+                  imate, compor, carcri, instam, instap,&
                   epsm, deps, sigm, vim, option,&
                   sigp, vip, dsidep, iret)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/lcdvmi.h"
@@ -37,13 +42,15 @@ subroutine nmveei(fami, kpg, ksp, ndim, typmod,&
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
-    integer :: ndim, imate, iret, kpg, ksp
-    character(len=16) :: compor(*), option
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
-    real(kind=8) :: crit(*), instam, instap, tm, tp, tref
-    real(kind=8) :: epsm(6), deps(6)
-    real(kind=8) :: sigm(6), vim(*), sigp(6), vip(*), dsidep(6, 6)
+!
+type(Behaviour_Integ), intent(in) :: BEHinteg
+integer :: ndim, imate, iret, kpg, ksp
+character(len=16) :: compor(*), option
+character(len=8) :: typmod(*)
+character(len=*) :: fami
+real(kind=8) :: carcri(*), instam, instap, tm, tp, tref
+real(kind=8) :: epsm(6), deps(6)
+real(kind=8) :: sigm(6), vim(*), sigp(6), vip(*), dsidep(6, 6)
 ! ----------------------------------------------------------------------
 !     INTEGRATION DE LA LOI DE COMPORTEMENT VISCO PLASTIQUE DE
 !     CHABOCHE AVEC ENDOMAGEMENT
@@ -54,6 +61,7 @@ subroutine nmveei(fami, kpg, ksp, ndim, typmod,&
 !-- ARGUMENTS
 !------------
 !
+! In  BEHinteg         : parameters for integration of behaviour
 ! IN  FAMI    FAMILLE DE POINT DE GAUSS (RIGI,MASS,...)
 ! IN  KPG,KSP NUMERO DU (SOUS)POINT DE GAUSS
 ! IN  NDIM    : DIMENSION DE L'ESPACE
@@ -154,12 +162,12 @@ subroutine nmveei(fami, kpg, ksp, ndim, typmod,&
 !
 !-- 1. INITIALISATIONS :
 !----------------------
-    itmax = int(crit(1))
+    itmax = int(carcri(1))
     ier=0
     iret=0
 !
     if (itmax .le. 0) itmax = -itmax
-    toler = crit(3)
+    toler = carcri(3)
     loi = compor(1)
     mod = typmod(1)
     cplan = typmod(1) .eq. 'C_PLAN'
@@ -188,11 +196,12 @@ subroutine nmveei(fami, kpg, ksp, ndim, typmod,&
         call utmess('F', 'COMPOR5_43')
     endif
 !
-    call lcmate(fami, kpg, ksp, compor, mod,&
+    call lcmate(BEHinteg,&
+                fami, kpg, ksp, compor, mod,&
                 imate, nmat, tm, tp, tref, 0,&
                 typma, hsr, matm, mate, matcst,&
                 nbcomm, cpmono, angmas, pgl, itmax,&
-                toler, ndt, ndi, nrv, crit,&
+                toler, ndt, ndi, nrv, carcri,&
                 nvi, vind, nfs, nsg, toutms,&
                 1, numhsr, sigm)
     ASSERT(ndt.eq.nb.or.nvi.eq.ni.or.nrv.eq.nr)
@@ -273,7 +282,7 @@ subroutine nmveei(fami, kpg, ksp, ndim, typmod,&
             if (.not.cplan) then
                 call nmvend(fami, kpg, ksp, matm, mate,&
                             nmat, dt, deps, sigm,&
-                            vim, ndim, crit, dammax, etatf,&
+                            vim, ndim, carcri, dammax, etatf,&
                             p, np, beta, nb, iter,&
                             ier)
                 isimp=1

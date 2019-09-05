@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,42 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmvprk(fami, kpg, ksp, ndim, typmod,&
+! aslint: disable=W1504
+!
+subroutine nmvprk(BEHinteg    ,&
+                  fami, kpg, ksp, ndim, typmod,&
                   imat, comp, crit, timed, timef,&
                   neps, epsdt, depst, sigd, vind,&
                   opt, angmas, sigf, vinf, dsde,&
                   iret, mult_comp_)
-! aslint: disable=W1504
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
+#include "jeveux.h"
+#include "asterfort/calsig.h"
+#include "asterfort/gerpas.h"
+#include "asterfort/lcdpeq.h"
+#include "asterfort/lcmate.h"
+#include "asterfort/lcopli.h"
+#include "asterfort/lcrkin.h"
+#include "asterfort/lcrksg.h"
+#include "asterfort/lcsmelas.h"
+#include "blas/dcopy.h"
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Behaviour - The RUNGE_KUTTA environment (prefer MFront !)
+!
+! Main subroutine
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  BEHinteg         : parameters for integration of behaviour
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     INTEGRATION DE LOIS DE COMPORTEMENT ELASTO-VISCOPLASTIQUE
 !     PAR UNE METHODE DE RUNGE KUTTA
 !             AVEC    .N VARIABLES INTERNES
@@ -94,18 +122,9 @@ subroutine nmvprk(fami, kpg, ksp, ndim, typmod,&
 !     MULTIPLIES PAR RACINE DE 2 > PRISE EN COMPTE DES DOUBLES
 !     PRODUITS TENSORIELS ET CONSERVATION DE LA SYMETRIE
 !
-!     ----------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-#include "jeveux.h"
-#include "asterfort/calsig.h"
-#include "asterfort/gerpas.h"
-#include "asterfort/lcdpeq.h"
-#include "asterfort/lcmate.h"
-#include "asterfort/lcopli.h"
-#include "asterfort/lcrkin.h"
-#include "asterfort/lcrksg.h"
-#include "asterfort/lcsmelas.h"
-#include "blas/dcopy.h"
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     character(len=*) :: fami
     integer :: imat, ndim, ndt, ndi, nr, nvi, kpg, ksp, i, nbphas, itmax
     integer :: nmat, ioptio, idnr, nsg, nfs, nhsr, neps
@@ -138,7 +157,7 @@ subroutine nmvprk(fami, kpg, ksp, ndim, typmod,&
     common /meti/   meting
     common/polycr/irr,decirr,nbsyst,decal,gdef
 !
-! --    INITIALISATION DES PARAMETRES DE CONVERGENCE ET ITERATIONS
+! --------------------------------------------------------------------------------------------------
 !
     itmax = int(crit(1))
     toler = crit(3)
@@ -162,7 +181,8 @@ subroutine nmvprk(fami, kpg, ksp, ndim, typmod,&
 ! --  RECUPERATION COEF(TEMP(T))) LOI ELASTO-PLASTIQUE A T ET/OU T+DT
 !                    NB DE CMP DIRECTES/CISAILLEMENT + NB VAR. INTERNES
 !
-    call lcmate(fami, kpg, ksp, comp, mod,&
+    call lcmate(BEHinteg,&
+                fami, kpg, ksp, comp, mod,&
                 imat, nmat, rbid, rbid, rbid, 1,&
                 typma, hsr, materd, materf, matcst,&
                 nbcomm, cpmono, angmas, pgl, 0,&
@@ -237,15 +257,10 @@ subroutine nmvprk(fami, kpg, ksp, ndim, typmod,&
 !
 !     OPERATEUR TANGENT = ELASTIQUE OU SECANT (ENDOMMAGEMENT)
     if (materf(nmat,1) .eq. 0) then
-!
         call lcopli('ISOTROPE', mod, materf(1, 1), dsde)
-!
-    else if (materf(nmat,1).eq.1) then
-!
+    else if (materf(nmat,1) .eq. 1) then
         call lcopli('ORTHOTRO', mod, materf(1, 1), dsde)
-!
     endif
-!
 !
 999 continue
 end subroutine
