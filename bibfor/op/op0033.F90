@@ -240,6 +240,11 @@ implicit none
     if (defimp .lt. 2) then
         call dscal(3, rac2, valimp(4), 1)
     endif
+
+!
+! - Initialisation of behaviour datastructure - Special for SIMU_POINT_MAT
+!
+    call behaviourInitPoint(carcri, fami, kpg, ksp, imate, BEHinteg)
 !
 !        6 CMP DE EPSI OU 9 CMP DE GRAD DONNEES : PAS BESOIN DE NEWTON
     if ((defimp.ge.1) .and. (abs(carcri(2)).lt.0.1d0)) then

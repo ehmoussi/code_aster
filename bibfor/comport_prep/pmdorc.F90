@@ -149,7 +149,6 @@ character(len=16), intent(out) :: type_comp, mult_comp
 !
     if (ds_compor_para%v_para(1)%jvariext1 .ne. 0) then
         call utmess('A', 'COMPOR2_12')
-        ds_compor_para%v_para(1)%jvariext1 = 0
     endif
 !
 ! - Set in <CARTE>
