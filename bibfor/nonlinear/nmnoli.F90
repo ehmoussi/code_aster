@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmnoli(sddisc, sderro, ds_constitutive, ds_print   , sdcrit  ,&
-                  fonact, sddyna, modele         , ds_material,&
-                  carele, sdpilo, ds_measure     , ds_energy  , ds_inout,&
-                  sdcriq)
+subroutine nmnoli(sddisc       , sderro, ds_print  , sdcrit     ,&
+                  fonact       , sddyna, modele    , ds_material,&
+                  carele       , sdpilo, ds_measure, ds_energy  , ds_inout,&
+                  ds_errorindic)
 !
 use NonLin_Datastructure_type
 !
@@ -37,12 +37,11 @@ implicit none
 #include "asterfort/utmess.h"
 !
 character(len=19) :: sddisc, sdcrit, sddyna, sdpilo
-type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Energy), intent(in) :: ds_energy
 character(len=24) :: sderro
 character(len=24) :: modele, carele
 type(NL_DS_Material), intent(in) :: ds_material
-character(len=24) :: sdcriq
+type(NL_DS_ErrorIndic), intent(in) :: ds_errorindic
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_InOut), intent(inout) :: ds_inout
 integer :: fonact(*)
@@ -59,7 +58,6 @@ type(NL_DS_Print), intent(in) :: ds_print
 ! IN  NOMA   : NOM DU MAILLAGE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! In  ds_print         : datastructure for printing parameters
-! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IO  ds_inout         : datastructure for input/output management
@@ -68,7 +66,7 @@ type(NL_DS_Print), intent(in) :: ds_print
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDERRO : SD ERREUR
 ! In  ds_energy        : datastructure for energy management
-! IN  SDCRIQ : SD CRITERE QUALITE
+! In  ds_errorindic    : datastructure for error indicator
 ! IN  MODELE : NOM DU MODELE
 ! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
@@ -126,10 +124,10 @@ type(NL_DS_Print), intent(in) :: ds_print
 !
     if (.not.lreuse) then
         call utmess('I', 'ARCHIVAGE_4')
-        call nmarch(numins         , modele  , ds_material, carele, fonact   ,&
-                    ds_constitutive, ds_print, sddisc, sdcrit,&
-                    ds_measure     , sderro  , sddyna, sdpilo, ds_energy,&
-                    ds_inout       , sdcriq  )
+        call nmarch(numins    , modele       , ds_material, carele, fonact   ,&
+                    ds_print  , sddisc       , sdcrit,&
+                    ds_measure, sderro       , sddyna     , sdpilo, ds_energy,&
+                    ds_inout  , ds_errorindic)
     endif
 !
 end subroutine

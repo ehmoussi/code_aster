@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmCpl003(option, angl_naut,&
+subroutine thmCpl003(ds_thm,&
+                     option, angl_naut,&
                      j_mater,&
                      ndim  , nbvari   ,&
                      dimdef, dimcon   ,&
@@ -35,7 +36,6 @@ subroutine thmCpl003(option, angl_naut,&
                      retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -71,6 +71,7 @@ implicit none
 #include "asterfort/thmEvalSatuInit.h"
 #include "asterfort/thmEvalSatuMiddle.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: j_mater, ndim, nbvari
@@ -97,7 +98,7 @@ integer, intent(out)  :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
+! In  ds_thm           : datastructure for THM
 ! In  option           : option to compute
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
@@ -222,8 +223,8 @@ integer, intent(out)  :: retcom
 !
 ! - Evaluation of initial saturation
 !
-    call thmEvalSatuInit(j_mater, p1m   , p1    ,&
-                         saturm , satur  , dsatur, retcom)
+    call thmEvalSatuInit(ds_thm, j_mater, p1m   , p1    ,&
+                         saturm, satur  , dsatur, retcom)
 !
 ! - Evaluation of initial porosity
 !
@@ -241,7 +242,8 @@ integer, intent(out)  :: retcom
 !
 ! - Prepare initial parameters for coupling law
 !
-    call inithm(angl_naut, tbiot , phi0 ,&
+    call inithm(ds_thm   ,&
+                angl_naut, tbiot , phi0 ,&
                 epsv     , depsv ,&
                 epsvm    , cs    , mdal , dalal,&
                 alpha0   , alphfi, cbiot, unsks)
@@ -279,7 +281,8 @@ integer, intent(out)  :: retcom
 ! - Compute steam pressure (no dissolved air)
 !
     if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        call vipvp1(ndim  , nbvari,&
+        call vipvp1(ds_thm,&
+                    ndim  , nbvari,&
                     dimcon,&
                     adcp11, adcp12, advico, vicpvp,&
                     congem, &
@@ -301,8 +304,8 @@ integer, intent(out)  :: retcom
 !
 ! - Evaluation of "middle" saturation (only LIQU_VAPE)
 !
-    call thmEvalSatuMiddle(j_mater, pvp-p1,&
-                           satur  , dsatur, retcom)
+    call thmEvalSatuMiddle(ds_thm, j_mater, pvp-p1,&
+                           satur , dsatur , retcom)
 
     if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine thmGetElemPara_vf(l_axi    , l_steady , l_vf  ,&
-                                 type_elem, ndim     ,&
-                                 mecani   , press1   , press2, tempe,&
-                                 dimdef   , dimcon   , dimuel,&
-                                 nno      , nnos     , nface )
+    subroutine thmGetElemPara_vf(ds_thm   , l_axi , l_steady , l_vf  ,&
+                                 type_elem, ndim  ,&
+                                 mecani   , press1, press2   , tempe,&
+                                 dimdef   , dimcon, dimuel   ,&
+                                 nno      , nnos  , nface )
+        use THM_type
+        type(THM_DS), intent(inout) :: ds_thm
         aster_logical, intent(out) :: l_axi, l_steady, l_vf
         character(len=8), intent(out) :: type_elem(2)
         integer, intent(out) :: ndim

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! aslint: disable=W1504,W1306
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine calcft(option, angl_naut,&
+subroutine calcft(ds_thm, option, angl_naut,&
                   ndim  , dimdef   , dimcon,&
                   adcote, &
                   addeme, addete   , addep1, addep2,&
@@ -31,7 +31,6 @@ subroutine calcft(option, angl_naut,&
                   congep, dsde)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -39,6 +38,7 @@ implicit none
 #include "asterfort/unsmfi.h"
 #include "asterfort/THM_type.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: ndim, dimdef, dimcon
@@ -63,6 +63,7 @@ real(kind=8), intent(inout) :: congep(1:dimcon), dsde(1:dimcon, 1:dimdef)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  option           : name of option- to compute
 ! In  angl_naut        : nautical angles
 ! In  ndim             : dimension of space (2 or 3)
@@ -139,8 +140,8 @@ real(kind=8), intent(inout) :: congep(1:dimcon), dsde(1:dimcon, 1:dimdef)
     biot(3,2) = biot(2,3)
 !
     if (ds_thm%ds_elem%l_dof_meca) then
-        call dilata(angl_naut, phi, tbiot, alphfi)
-        call unsmfi(phi, tbiot, cs)
+        call dilata(ds_thm, angl_naut, phi, tbiot, alphfi)
+        call unsmfi(ds_thm, phi, tbiot, cs)
     else
         alphfi = 0.d0
         cs = 0.d0

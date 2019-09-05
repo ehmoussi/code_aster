@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine xvecha(ndim, pla, nnops, saut,&
+    subroutine xvecha(ds_thm, ndim, pla, nnops, saut,&
                       sautm, nd, ffc, w11, w11m, jac,&
                       q1, q1m, q2, q2m, dt, ta, ta1,&
                       dffc, rho11, gradpf, rho11m,&
                       gradpfm, vect)
-                           
+        use THM_type
+        type(THM_DS), intent(inout) :: ds_thm
         integer :: ndim
         integer :: pla(27)
         integer :: nnops

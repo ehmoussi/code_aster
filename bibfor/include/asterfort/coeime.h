@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine coeime(j_mater, nomail, option, l_resi,&
+    subroutine coeime(ds_thm, j_mater, nomail, option, l_resi,&
                       l_matr, ndim, dimdef, dimcon, &
                       addeme, addep1,&
                       nbvari, npg, npi,&
                       defgep, defgem, sigm, sigp, varim,&
                       varip, ouvh, tlint, drde, kpi,&
                       retcom)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         integer, intent(in) :: j_mater
         character(len=8), intent(in) :: nomail
         character(len=16), intent(in) :: option

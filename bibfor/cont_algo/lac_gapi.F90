@@ -136,21 +136,23 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     sdappa_gapi = sdappa(1:19)//'.GAPI'
     sdappa_coef = sdappa(1:19)//'.COEF'
     sdappa_nmcp = sdappa(1:19)//'.NMCP'
-    sdappa_apli = sdappa(1:19)//'.APLI'
-    sdappa_apnp = sdappa(1:19)//'.APNP'
-    sdappa_apts = sdappa(1:19)//'.APTS'
-    sdappa_ap2m = sdappa(1:19)//'.AP2M'
-    sdappa_wpat = sdappa(1:19)//'.WPAT'
     sdappa_poid = sdappa(1:19)//'.POID'
     call jeveuo(sdappa_gapi, 'E', vr = v_sdappa_gapi)
     call jeveuo(sdappa_coef, 'E', vr = v_sdappa_coef)
     call jeveuo(sdappa_nmcp, 'E', vi = v_sdappa_nmcp)
-    call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
-    call jeveuo(sdappa_apnp, 'L', vi = v_sdappa_apnp)
-    call jeveuo(sdappa_apts, 'L', vr = v_sdappa_apts)
-    call jeveuo(sdappa_ap2m, 'L', vr = v_sdappa_ap2m)
-    call jeveuo(sdappa_wpat, 'L', vr = v_sdappa_wpat)
     call jeveuo(sdappa_poid, 'E', vr = v_sdappa_poid)
+    if (nb_cont_pair .ne. 0) then
+        sdappa_apli = sdappa(1:19)//'.APLI'
+        sdappa_apnp = sdappa(1:19)//'.APNP'
+        sdappa_apts = sdappa(1:19)//'.APTS'
+        sdappa_ap2m = sdappa(1:19)//'.AP2M'
+        sdappa_wpat = sdappa(1:19)//'.WPAT'
+        call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
+        call jeveuo(sdappa_apnp, 'L', vi = v_sdappa_apnp)
+        call jeveuo(sdappa_apts, 'L', vr = v_sdappa_apts)
+        call jeveuo(sdappa_ap2m, 'L', vr = v_sdappa_ap2m)
+        call jeveuo(sdappa_wpat, 'L', vr = v_sdappa_wpat)
+    endif
 !
 ! - Compute mean square gap and weight of intersection on contact pairs
 !
@@ -211,7 +213,6 @@ type(NL_DS_Contact), intent(in) :: ds_contact
             v_sdappa_gapi(i_patch) = v_sdappa_gapi(i_patch)/patch_weight_c(i_patch)
             v_sdappa_coef(i_patch) = patch_weight_c(i_patch)/v_sdappa_wpat(i_patch)
             v_sdappa_poid(i_patch) = patch_weight_c(i_patch)
-            
         end if
     end do
 !

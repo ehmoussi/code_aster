@@ -17,16 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmdata(model    , mesh      , mate      , cara_elem  , ds_constitutive,&
-                      list_load, solver    , ds_conv   , sddyna     , ds_posttimestep,&
-                      ds_energy, sdcriq    , ds_print  , ds_algopara,&
-                      ds_inout , ds_contact, ds_measure, ds_algorom)
+    subroutine nmdata(model    , mesh         , mate      , cara_elem  , ds_constitutive,&
+                      list_load, solver       , ds_conv   , sddyna     , ds_posttimestep,&
+                      ds_energy, ds_errorindic, ds_print  , ds_algopara,&
+                      ds_inout , ds_contact   , ds_measure, ds_algorom)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
-        character(len=*), intent(out) :: model
-        character(len=*), intent(out) :: mesh
-        character(len=*), intent(out) :: mate
-        character(len=*), intent(out) :: cara_elem
+        character(len=*), intent(out) :: model, mesh, mate, cara_elem
         type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
         character(len=*), intent(out) :: list_load
         character(len=*), intent(out) :: solver
@@ -34,7 +31,7 @@ interface
         character(len=19) :: sddyna
         type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         type(NL_DS_Energy), intent(inout) :: ds_energy
-        character(len=24) :: sdcriq
+        type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
         type(NL_DS_Print), intent(inout) :: ds_print
         type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
         type(NL_DS_InOut), intent(inout) :: ds_inout

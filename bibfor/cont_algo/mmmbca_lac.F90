@@ -85,14 +85,10 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     integer, pointer :: v_sdcont_stat(:) => null()
     character(len=24) :: sdcont_lagc
     real(kind=8), pointer :: v_sdcont_lagc(:) => null()
-    character(len=24) :: sdcont_ddlc
-    integer, pointer :: v_sdcont_ddlc(:) => null()
     character(len=24) :: sdappa_gapi
     real(kind=8), pointer :: v_sdappa_gapi(:) => null()
     character(len=24) :: sdappa_coef
     real(kind=8), pointer :: v_sdappa_coef(:) => null()
-    character(len=24) :: sdappa_apli
-    integer, pointer :: v_sdappa_apli(:) => null()
     integer :: jv_geom
     real(kind=8), pointer :: v_disp_curr(:)  => null()
     integer, pointer :: v_mesh_lpatch(:) => null()
@@ -133,20 +129,16 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     sdcont_stat = ds_contact%sdcont_solv(1:14)//'.STAT'
     sdcont_lagc = ds_contact%sdcont_solv(1:14)//'.LAGC'
-    sdcont_ddlc = ds_contact%sdcont_solv(1:14)//'.DDLC'
     call jeveuo(sdcont_stat, 'E', vi = v_sdcont_stat)
     call jeveuo(sdcont_lagc, 'E', vr = v_sdcont_lagc)
-    call jeveuo(sdcont_ddlc, 'L', vi = v_sdcont_ddlc)
 !
 ! - Get pairing datastructure
 !
     sdappa = ds_contact%sdcont_solv(1:14)//'.APPA'
     sdappa_gapi = sdappa(1:19)//'.GAPI'
     sdappa_coef = sdappa(1:19)//'.COEF'
-    sdappa_apli = sdappa(1:19)//'.APLI'
     call jeveuo(sdappa_gapi, 'E', vr = v_sdappa_gapi)
     call jeveuo(sdappa_coef, 'E', vr = v_sdappa_coef)
-    call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
 !
 ! - Access to displacement field to get contact Lagrangien multiplier
 !

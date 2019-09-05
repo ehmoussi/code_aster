@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1306
+! aslint: disable=W1306,W1504
 !
-subroutine matthm(ndim, axi, nno1, nno2, dimuel,&
+subroutine matthm(ds_thm, ndim, axi, nno1, nno2, dimuel,&
                   dimdef, iu, ip, ipf, iq,&
                   addep1,&
                   addlh1, vff1, vff2, dffr2, wref,&
                   geom, ang, wi, q)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -38,6 +37,7 @@ implicit none
 !           GENERALISEES
 !.......................................................................
 ! =====================================================================
+! In  ds_thm           : datastructure for THM
 ! IN NDIM    : DIMENSION DE L'ESPACE
 ! IN AXI     : .TRUE. SI AXISYMETRIE
 ! IN NNO1    : NOMBRE DE NOEUDS DE LA FAMILLE 1
@@ -62,7 +62,7 @@ implicit none
 !......................................................................
 !
 !
-
+    type(THM_DS), intent(in) :: ds_thm
     integer :: ndim, nno1, nno2, dimuel, dimdef
     integer :: iu(3, 18), ip(2, 9), ipf(2, 2, 9), iq(2, 2, 9)
     integer :: addep1, addlh1

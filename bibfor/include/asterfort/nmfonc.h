@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmfonc(ds_conv       , ds_algopara    , solver   , model     , ds_contact     ,&
-                      list_load     , sdnume         , sddyna   , sdcriq    , mate           ,&
-                      ds_inout      , ds_constitutive, ds_energy, ds_algorom, ds_posttimestep,&
+    subroutine nmfonc(ds_conv       , ds_algopara    , solver   , model        , ds_contact     ,&
+                      list_load     , sdnume         , sddyna   , ds_errorindic, mate           ,&
+                      ds_inout      , ds_constitutive, ds_energy, ds_algorom   , ds_posttimestep,&
                       list_func_acti)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
@@ -32,7 +32,7 @@ interface
         character(len=19), intent(in) :: list_load
         character(len=19), intent(in) :: sdnume
         character(len=19), intent(in) :: sddyna
-        character(len=24), intent(in) :: sdcriq
+        type(NL_DS_ErrorIndic), intent(in) :: ds_errorindic
         character(len=24), intent(in) :: mate
         type(NL_DS_InOut), intent(in) :: ds_inout
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive

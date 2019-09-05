@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,35 +17,65 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#CAS_TEST__: SDNV100G (idem SDNV100C avec compliance)
-#METHODE DE CONTACT : CONTINUE (EN DEPLACEMENT)
-#MODELE D'INTERFACE MULTI-NIVEAU AVEC COMPLIANCE
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-DEBUT(CODE=_F(
-NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
+# Length of beam
+length = 0.2
+
+# Material properties
+young = 2.E11
+nu    = 0.
+rho   = 8000.
+
+# Speed of sound in steel
+cele  = sqrt((young * (1.-nu))/(rho * (1.+nu)*(1.-2.*nu)))
+
+# Initial displacement
+dispIni = 2.E-3
+
+# Initial speed
+viteIni = -100.
+
+# Initial time of contact
+tau0 = 2.E-3/abs(viteIni)
+
+# Final time of contact
+tau1 = tau0 + 2.*length/cele
+
+# Time step
+DT = 2e-06
+
+# Coefficients for Newmark scheme
+NewBeta  = 0.3025
+NewGamma = 0.6
+
+# Mesh
 MAILL=LIRE_MAILLAGE(FORMAT='MED')
 # Pour eviter les "TOLE MACHINE", on perturbe legerement la geometrie du maillage :
 MODI_MAILLAGE(reuse =MAILL, MAILLAGE=MAILL, DEFORME=_F(OPTION='TRAN', ALEA=1.e-8,),)
 
-MAILL=DEFI_GROUP(reuse =MAILL,
+MAILL=DEFI_GROUP(reuse=MAILL,
                  MAILLAGE=MAILL,
-                 CREA_GROUP_NO=(_F(GROUP_MA='VSOL',),
-                                _F(GROUP_MA='POUTRE',),),);
-
-MODE=AFFE_MODELE(MAILLAGE=MAILL,
-
-                 AFFE=_F(TOUT='OUI',
-                         PHENOMENE='MECANIQUE',
-                         MODELISATION='3D',),);
+                 CREA_GROUP_NO=(
+                      _F(  GROUP_MA = 'VSOL',   ),
+                      _F(  GROUP_MA = 'POUTRE', ),)
+                 )
 
 MAILL=MODI_MAILLAGE(reuse =MAILL,
                     MAILLAGE=MAILL,
                     ORIE_PEAU_3D=_F(GROUP_MA=('SSOL','FACEINF',),),
                     );
 
-ACIER=DEFI_MATERIAU(ELAS=_F(E=200000000000.0,
-                            NU=0.0,
-                            RHO=8000.0,),);
+# Model
+MODE=AFFE_MODELE(MAILLAGE=MAILL,
+                 AFFE=_F(TOUT='OUI',
+                         PHENOMENE='MECANIQUE',
+                         MODELISATION='3D',),);
+
+# Material
+ACIER=DEFI_MATERIAU(
+                ELAS=_F( E = young, NU = nu,  RHO = rho)
+                        )
 
 ACONTA=DEFI_MATERIAU(ELAS=_F(E=1e+16,
                              NU=0.0,
@@ -57,6 +87,7 @@ CM=AFFE_MATERIAU(MAILLAGE=MAILL,
                        _F(GROUP_MA='VSOL',
                           MATER=ACONTA,),),);
 
+# Loads
 CH=AFFE_CHAR_MECA(MODELE=MODE,
                   DDL_IMPO=(_F(TOUT='OUI',
                                DX=0.0,
@@ -66,6 +97,13 @@ CH=AFFE_CHAR_MECA(MODELE=MODE,
                                DY=0.0,
                                DZ=0.0,),),);
 
+RAMPE=DEFI_FONCTION(   NOM_PARA='INST',
+            PROL_GAUCHE='CONSTANT',   PROL_DROITE='CONSTANT',
+            VALE=(0.0,        1.0,
+                  0.0001,     1.0,
+                  0.00010001, 0.0,) )
+
+# Contact
 CH2     = DEFI_CONTACT(MODELE         = MODE,
                        FORMULATION    = 'DISCRETE',
                        RESI_ABSO      = 1e-08,
@@ -77,190 +115,62 @@ CH2     = DEFI_CONTACT(MODELE         = MODE,
                                ),
                       );
 
+# Initial displacement
+CHAMP2=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_DEPL_R',
+MAILLAGE=MAILL,AFFE=(
+           _F( GROUP_NO = 'POUTRE',   NOM_CMP = ('DX', 'DY', 'DZ',),
+                                     VALE = (  0.0,  0.0,  0.0, )),
+           _F( GROUP_NO = 'VSOL',     NOM_CMP = ('DX', 'DY', 'DZ',),
+                                     VALE = (  0.0,  0.0,  0.0, ))))
 
-# ************* CHAMP DE VITESSE INITIALE ***************
+# Initial speed
+CHAMP1=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_DEPL_R',
+MAILLAGE=MAILL,AFFE=(
+           _F( GROUP_NO = 'POUTRE',   NOM_CMP = ('DX', 'DY', 'DZ',),
+                                     VALE = (  0.0,  0.0,  viteIni,)),
+           _F( GROUP_NO = 'VSOL',     NOM_CMP = ('DX', 'DY', 'DZ',),
+                                     VALE = (  0.0,  0.0,  0., ))))
 
-CHAMP1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
-                  OPERATION='AFFE',
-                  MAILLAGE=MAILL,
-                  AFFE=(
-                  _F(GROUP_NO='POUTRE',
-                     NOM_CMP=('DX','DY','DZ',),
-                     VALE=(0.0,0.0,-100.0,),),
-                  _F(GROUP_NO='VSOL',
-                     NOM_CMP=('DX','DY','DZ',),
-                     VALE=(0.0,0.0,0.0,),),),);
-
-# ************* CHAMP DE DEPLACEMENT INITIAL ************
-
-CHAMP2=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
-                  OPERATION='AFFE',
-                  MAILLAGE=MAILL,
-                  AFFE=(
-                  _F(GROUP_NO='POUTRE',
-                     NOM_CMP=('DX','DY','DZ',),
-                     VALE=(0.0,0.0,0.0,),),
-                  _F(GROUP_NO='VSOL',
-                     NOM_CMP=('DX','DY','DZ',),
-                     VALE=(0.0,0.0,0.0,),),),);
-
-RAMPE=DEFI_FONCTION(NOM_PARA='INST',
-                    VALE=
-                    (0.0,1.0,0.0001,1.0,0.00010001,0.0,),
-                    PROL_DROITE='CONSTANT',
-                    PROL_GAUCHE='CONSTANT',);
-#
-DT = 2e-06;
-
-
+# Time step management
 L_INST=DEFI_LIST_REEL(DEBUT=0.0,
                       INTERVALLE=_F(JUSQU_A=0.00014,
                                     PAS=DT,),);
-#
+# Time step during contact phase
+L_CONT=DEFI_LIST_REEL(   DEBUT=tau0,
+             INTERVALLE=_F( JUSQU_A = tau1,  PAS = DT))
 
-L_CONT=DEFI_LIST_REEL(DEBUT=1e-05,
-                      INTERVALLE=_F(JUSQU_A=0.0001,
-                                    PAS=DT,),);
-#
-ALF = 0.3025;
+# Non-linear dynamic
+U = DYNA_NON_LINE(MODELE       = MODE,  
+                  CHAM_MATER   = CM,
+                  EXCIT        = _F(CHARGE=CH, FONC_MULT=RAMPE,),
+                  CONTACT      = CH2,
+                  ETAT_INIT    = _F(DEPL = CHAMP2,VITE = CHAMP1),
+                  COMPORTEMENT = _F( RELATION = 'ELAS',),
+                  INCREMENT    = _F( INST_INIT = 0.,LIST_INST = L_INST),
+                  SCHEMA_TEMPS = _F(SCHEMA='NEWMARK',FORMULATION='DEPLACEMENT',
+                                    BETA = NewBeta, GAMMA = NewGamma),
+                  NEWTON       = _F( MATRICE = 'TANGENTE',  REAC_ITER = 1),
+                  CONVERGENCE  = _F(ITER_GLOB_MAXI = 20),)
 
-#
-DEL = 0.6;
+# Post-treatment: energies
+EPOTPS=POST_ELEM(ENER_POT=_F(TOUT='OUI',), RESULTAT=U,)
 
-#
+IMPR_TABLE(TABLE=EPOTPS,)
 
-U=DYNA_NON_LINE(MODELE=MODE,
-                CHAM_MATER=CM,
-                EXCIT=(_F(CHARGE=CH,
-                          FONC_MULT=RAMPE,),
-                       ),
-                CONTACT  = CH2,
-                COMPORTEMENT=_F(RELATION='ELAS',),
-                ETAT_INIT=_F(DEPL=CHAMP2,
-                             VITE=CHAMP1,),
-                INCREMENT=_F(LIST_INST=L_INST,
-                             INST_INIT=0.0,),
-                SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
-                                FORMULATION='DEPLACEMENT',
-                                BETA=ALF,GAMMA=DEL,),
-                NEWTON=_F(MATRICE='TANGENTE',
-                          REAC_ITER=1,),
-                SOLVEUR=_F(
-                           METHODE='MULT_FRONT',),
-                CONVERGENCE=_F(ITER_GLOB_MAXI=20,),);
+ECITPS=POST_ELEM(ENER_CIN=_F(TOUT='OUI',), RESULTAT=U,)
 
-#############
-############# CONTRAINTES SIEF_ELGA OBTENUES DU RESULTAT
-#############
+IMPR_TABLE(TABLE=ECITPS,)
 
-
+# Post-treatment: integral of speed during contact
 VITECONT=RECU_FONCTION(RESULTAT=U,
-                       LIST_INST=L_CONT,
                        NOM_CHAM='VITE',
                        NOM_CMP='DZ',
                        NOEUD='N5',
+                       LIST_INST=L_CONT,
                        TITRE='VITE',);
 
-IMPR_FONCTION(FORMAT='TABLEAU',
-              COURBE=_F(FONCTION=VITECONT,),
-              UNITE=8,);
+VC=CALC_FONCTION(COMB=_F(FONCTION=VITECONT, COEF=12500.,));
 
-VC=CALC_FONCTION(COMB=_F(FONCTION=VITECONT,
-                         COEF=12500.0,),);
-
-MVC=CALC_FONCTION(INTEGRE=_F(FONCTION=VC,),);
-
-EPOTPS=POST_ELEM(ENER_POT=_F(TOUT='OUI',),
-                 RESULTAT=U,);
-
-IMPR_TABLE(TABLE=EPOTPS,);
-
-ECITPS=POST_ELEM(ENER_CIN=_F(TOUT='OUI',),
-                 RESULTAT=U,);
-
-IMPR_TABLE(TABLE=ECITPS,);
-
-DE100=RECU_FONCTION(RESULTAT=U,
-                    NOM_CHAM='DEPL',
-                    NOM_CMP='DZ',
-                    NOEUD='N100',
-                    TITRE='DEPL',);
-
-VI100=RECU_FONCTION(RESULTAT=U,
-                    NOM_CHAM='VITE',
-                    NOM_CMP='DZ',
-                    NOEUD='N100',
-                    TITRE='VITE',);
-
-DE5=RECU_FONCTION(RESULTAT=U,
-                  NOM_CHAM='DEPL',
-                  NOM_CMP='DZ',
-                  NOEUD='N5',
-                  TITRE='DEPL',);
-
-VI5=RECU_FONCTION(RESULTAT=U,
-                  NOM_CHAM='VITE',
-                  NOM_CMP='DZ',
-                  NOEUD='N5',
-                  TITRE='VITE',);
-
-TEST_RESU(RESU=_F(NUME_ORDRE=20,
-                  REFERENCE='ANALYTIQUE',
-                  RESULTAT=U,
-                  NOM_CHAM='DEPL',
-                  NOEUD='N5',
-                  NOM_CMP='DZ',
-                  VALE_CALC=-0.00200000009594,
-                  VALE_REFE=-2.E-3,
-                  PRECISION=1.E-4,),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=20,
-                  REFERENCE='ANALYTIQUE',
-                  RESULTAT=U,
-                  NOM_CHAM='DEPL',
-                  NOEUD='N100',
-                  NOM_CMP='DZ',
-                  VALE_CALC=-0.00399999988096,
-                  VALE_REFE=-4.0E-3,
-                  PRECISION=1.E-4,),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=40,
-                  REFERENCE='ANALYTIQUE',
-                  RESULTAT=U,
-                  NOM_CHAM='DEPL',
-                  NOEUD='N100',
-                  NOM_CMP='DZ',
-                  VALE_CALC=-0.00399828851742,
-                  VALE_REFE=-4.0E-3,
-                  PRECISION=1.E-3,),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=50,
-                  REFERENCE='ANALYTIQUE',
-                  RESULTAT=U,
-                  NOM_CHAM='DEPL',
-                  NOEUD='N5',
-                  NOM_CMP='DZ',
-                  VALE_CALC=-0.00200000009594,
-                  VALE_REFE=-2.E-3,
-
-                  PRECISION=1.E-4,),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=60,
-                  REFERENCE='ANALYTIQUE',
-                  RESULTAT=U,
-                  NOM_CHAM='DEPL',
-                  NOEUD='N100',
-                  NOM_CMP='DZ',
-                  VALE_CALC=-2.49329359767E-07,
-                  VALE_REFE=0.0,
-                  CRITERE='ABSOLU',
-                  PRECISION=1.E-4,),
-          )
-
-#
+MVC=CALC_FONCTION(INTEGRE=_F(FONCTION=VC,))
 
 FIN();

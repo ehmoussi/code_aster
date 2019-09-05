@@ -1,0 +1,85 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+POURSUITE(CODE='OUI')
+
+# Test displacement
+TEST_RESU(RESU=_F(INST = 2.E-5,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=U,
+                  NOM_CHAM='DEPL',
+                  NOEUD='N5',
+                  NOM_CMP='DZ',
+                  VALE_CALC=-2.0E-3,
+                  VALE_REFE=-2.0E-3,),
+          )
+
+TEST_RESU(RESU=_F(INST = 1.E-4,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=U,
+                  NOM_CHAM='DEPL',
+                  NOEUD='N5',
+                  NOM_CMP='DZ',
+                  VALE_CALC=-2.0E-3,
+                  VALE_REFE=-2.0E-3,),
+          )
+
+TEST_RESU(RESU=_F(INST = 2.E-5,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=U,
+                  NOM_CHAM='DEPL',
+                  NOEUD='N100',
+                  NOM_CMP='DZ',
+                  VALE_CALC=-2.0E-3,
+                  VALE_REFE=-2.0E-3,),
+          )
+
+TEST_RESU(RESU=_F(INST = 4.E-5,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=U,
+                  NOM_CHAM='DEPL',
+                  NOEUD='N100',
+                  NOM_CMP='DZ',
+                  VALE_CALC=-4.0E-3,
+                  VALE_REFE=-4.0E-3,),
+          )
+
+TEST_RESU(RESU=_F(INST = 1.2E-4,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=U,
+                  NOM_CHAM='DEPL',
+                  NOEUD='N100',
+                  NOM_CMP='DZ',
+                  VALE_CALC= 2.01517240E-07,
+                  VALE_REFE=0.0,
+                  CRITERE='ABSOLU',
+                  PRECISION=1.E-3,),
+          )
+
+# Test integral of speed during contact
+TEST_FONCTION(VALEUR=_F(VALE_CALC = 0.00305885413073,
+                        VALE_REFE = 0.0,
+                        PRECISION = 0.004,
+                        CRITERE   = 'ABSOLU',
+                        VALE_PARA = 1.E-4,
+                        REFERENCE = 'ANALYTIQUE',
+                        NOM_PARA  = 'INST',
+                        FONCTION  = MVC,),
+              )
+
+FIN()

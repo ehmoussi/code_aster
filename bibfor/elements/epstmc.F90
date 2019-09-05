@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -155,7 +155,7 @@ implicit none
             call get_elas_para(fami     , j_mater, poum, kpg, ksp, &
                                elas_id  , elas_keyword,&
                                time     = instan,&
-                               e   = e, nu = nu )
+                               e_   = e, nu_ = nu )
             troisk = e/(1.d0-2.d0*nu)
             epsi_varc(1) = biot/troisk*ptot
             epsi_varc(2) = epsi_varc(1)

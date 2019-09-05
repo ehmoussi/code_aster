@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine thmGetElemPara(l_axi    , l_steady ,&
+    subroutine thmGetElemPara(ds_thm   , l_axi    , l_steady ,&
                               type_elem, inte_type, ndim     ,&
                               mecani   , press1   , press2   , tempe  ,&
                               dimdep   , dimdef   , dimcon   , dimuel ,&
@@ -30,6 +28,8 @@ interface
                               jv_poids , jv_func  , jv_dfunc ,&
                               jv_poids2, jv_func2 , jv_dfunc2,&
                               jv_gano)
+        use THM_type
+        type(THM_DS), intent(inout) :: ds_thm
         aster_logical, intent(out) :: l_axi, l_steady
         character(len=8), intent(out) :: type_elem(2)
         character(len=3), intent(out) :: inte_type

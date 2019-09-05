@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine thmFlhVF010(option, j_mater, ifa,&
+    subroutine thmFlhVF010(ds_thm, option, j_mater, ifa,&
                               t     , p1    , p2     , pvp, pad ,&
                               rho11 , h11   , h12    ,&
                               satur , dsatur, & 
                               valfac, valcen)
+        use THM_type
+        type(THM_DS), intent(in) :: ds_thm
         character(len=16), intent(in) :: option
         integer, intent(in) :: j_mater
         integer, intent(in) :: ifa

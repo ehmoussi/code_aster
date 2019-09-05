@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,20 +25,10 @@ implicit none
 !
 #include "asterfort/utmess.h"
 !
-real(kind=8), intent(in) :: rho0
-real(kind=8), intent(in) :: rho11
-real(kind=8), intent(in) :: rho12
-real(kind=8), intent(in) :: rho21
-real(kind=8), intent(in) :: rho22
-real(kind=8), intent(in) :: satur
-real(kind=8), intent(in) :: phi
-real(kind=8), intent(in) :: csigm
-real(kind=8), intent(in) :: cp11
-real(kind=8), intent(in) :: cp12
-real(kind=8), intent(in) :: cp21
-real(kind=8), intent(in) :: cp22
-real(kind=8), intent(in) :: temp
-real(kind=8), intent(in) :: dalal
+real(kind=8), intent(in) :: rho0, rho11, rho12, rho21, rho22
+real(kind=8), intent(in) :: satur, phi, csigm
+real(kind=8), intent(in) :: cp11, cp12, cp21, cp22
+real(kind=8), intent(in) :: temp, dalal
 real(kind=8), intent(out) :: coeps
 integer, intent(out) :: retcom
 !

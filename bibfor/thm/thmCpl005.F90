@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmCpl005(option, angl_naut,&
+subroutine thmCpl005(ds_thm,&
+                     option, angl_naut,&
                      j_mater,&
                      ndim  , nbvari   ,&
                      dimdef, dimcon   ,&
@@ -34,7 +35,6 @@ subroutine thmCpl005(option, angl_naut,&
                      retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -71,6 +71,7 @@ implicit none
 #include "asterfort/visatu.h"
 #include "asterfort/thmEvalSatuInit.h"
 !
+type(THM_DS), intent(in) :: ds_thm
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: j_mater, ndim, nbvari
@@ -96,6 +97,7 @@ integer, intent(out)  :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_thm           : datastructure for THM
 ! In  option           : option to compute
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
@@ -210,8 +212,8 @@ integer, intent(out)  :: retcom
 !
 ! - Evaluation of initial saturation
 !
-    call thmEvalSatuInit(j_mater, p1m   , p1    ,&
-                         saturm , satur  , dsatur, retcom)
+    call thmEvalSatuInit(ds_thm, j_mater, p1m   , p1    ,&
+                         saturm, satur  , dsatur, retcom)
 !
 ! - Evaluation of initial porosity
 !
@@ -227,7 +229,8 @@ integer, intent(out)  :: retcom
 !
 ! - Prepare initial parameters for coupling law
 !
-    call inithm(angl_naut, tbiot , phi0 ,&
+    call inithm(ds_thm   ,&
+                angl_naut, tbiot , phi0 ,&
                 epsv     , depsv ,&
                 epsvm    , cs    , mdal , dalal,&
                 alpha0   , alphfi, cbiot, unsks)
@@ -243,7 +246,7 @@ integer, intent(out)  :: retcom
     if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
 ! ----- Compute standard porosity
         if (ds_thm%ds_elem%l_dof_meca) then
-            call viporo(nbvari,&
+            call viporo(ds_thm, nbvari,&
                         advico, vicphi,&
                         dtemp , dp1   , dp2   ,&
                         deps  , depsv ,&
@@ -290,13 +293,13 @@ integer, intent(out)  :: retcom
 ! - Update differential thermal expansion ratio
 !
     if (ds_thm%ds_elem%l_dof_meca) then
-        call dilata(angl_naut, phi, tbiot, alphfi)
+        call dilata(ds_thm, angl_naut, phi, tbiot, alphfi)
     endif
 !
 ! - Update Biot modulus
 !
     if (ds_thm%ds_elem%l_dof_meca) then
-        call unsmfi(phi, tbiot, cs)
+        call unsmfi(ds_thm, phi, tbiot, cs)
     endif
 !
 ! ==================================================================================================
@@ -347,7 +350,8 @@ integer, intent(out)  :: retcom
 !
     if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
         if (ds_thm%ds_elem%l_dof_meca) then
-            call sigmap(satur, signe, tbiot, dp2, dp1,&
+            call sigmap(ds_thm,&
+                        satur , signe, tbiot, dp2, dp1,&
                         sigmp)
             do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
@@ -385,9 +389,9 @@ integer, intent(out)  :: retcom
 !
         if (ds_thm%ds_elem%l_dof_meca) then
 ! --------- Derivative of _pressure part_ of stresses by capillary pressure
-            call dspdp1(signe, tbiot, satur, dsdp1)
+            call dspdp1(ds_thm, signe, tbiot, satur, dsdp1)
 ! --------- Derivative of _pressure part_ of stress by total gaz pressure
-            call dspdp2(tbiot, dsdp2)
+            call dspdp2(ds_thm, tbiot, dsdp2)
             do i = 1, 3
                 dsde(adcome+6+i-1,addep1) = dsde(adcome+6+i-1,addep1) +&
                                             dsdp1(i)

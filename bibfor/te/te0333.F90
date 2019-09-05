@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -204,7 +204,7 @@ implicit none
         call get_elas_id(zi(imate), elas_id, elas_keyword)
         call get_elas_para('RIGI', zi(imate), '+', igau, 1,&
                            elas_id  , elas_keyword,&
-                           time = time, temp = tempg, e = e, nu = nu)
+                           time = time, temp = tempg, e_ = e, nu_ = nu)
         ASSERT(elas_id.eq.1)
 !
 ! ----- Compute creep strains (current Gauss point)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504, W1306
 !
-subroutine comthm(l_steady ,&
+subroutine comthm(ds_thm   , l_steady ,&
                   option   , j_mater  ,&
                   type_elem, angl_naut,&   
                   ndim     , nbvari   ,&
@@ -34,7 +34,6 @@ subroutine comthm(l_steady ,&
                   dsde     , gravity  , retcom)
 !
 use THM_type
-use THM_module
 !
 implicit none
 !
@@ -56,6 +55,7 @@ implicit none
 #include "asterfort/thmEvalConductivity.h"
 #include "asterfort/THM_type.h"
 !
+type(THM_DS), intent(inout) :: ds_thm
 aster_logical, intent(in) :: l_steady
 character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
@@ -85,6 +85,7 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! IO  ds_thm           : datastructure for THM
 ! In  l_steady         : flag for no-transient problem
 ! In  option           : name of option- to compute
 ! In  j_mater          : coded material address
@@ -134,7 +135,7 @@ integer, intent(out) :: retcom
 !
 ! - Update unknowns
 !
-    call calcva(kpi   , ndim  ,&
+    call calcva(ds_thm, kpi   , ndim  ,&
                 defgem, defgep,&
                 addeme, addep1 , addep2   , addete,&
                 depsv , epsv   , deps     ,&
@@ -148,30 +149,30 @@ integer, intent(out) :: retcom
 !
 ! - Get hydraulic parameters
 !
-    call thmGetParaHydr(j_mater)
+    call thmGetParaHydr(j_mater, ds_thm)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
-    call thmGetParaBiot(j_mater)
+    call thmGetParaBiot(j_mater, ds_thm)
 !
 ! - Compute Biot tensor
 !
-    call tebiot(angl_naut, tbiot)
+    call tebiot(ds_thm, angl_naut, tbiot)
 !
 ! - Get elastic parameters
 !
     if (ds_thm%ds_elem%l_dof_meca .or. ds_thm%ds_elem%l_weak_coupling) then
-        call thmGetParaElas(j_mater, kpi, temp, ndim)
-        call thmMatrHooke(angl_naut)
+        call thmGetParaElas(j_mater, kpi, temp, ndim, ds_thm)
+        call thmMatrHooke(ds_thm, angl_naut)
     endif
 !
 ! - Get thermic parameters
 !
-    call thmGetParaTher(j_mater, kpi, temp)
+    call thmGetParaTher(j_mater, kpi, temp, ds_thm)
 !
 ! - Compute generalized stresses and matrix for coupled quantities
 !
-    call calcco(l_steady,&
+    call calcco(ds_thm  , l_steady,&
                 option  , angl_naut,&
                 j_mater ,&
                 ndim    , nbvari   ,&
@@ -194,7 +195,8 @@ integer, intent(out) :: retcom
 ! - Main select subroutine to integrate mechanical behaviour
 !
     if (ds_thm%ds_elem%l_dof_meca .and. kpi .le. npg) then
-        call thmSelectMeca(p1       , dp1      ,&
+        call thmSelectMeca(ds_thm   ,&
+                           p1       , dp1      ,&
                            p2       , dp2      ,&
                            satur    , tbiot    ,&
                            option   , j_mater  , ndim  , type_elem, angl_naut,&
@@ -213,19 +215,20 @@ integer, intent(out) :: retcom
 !
 ! - Evaluation of final saturation
 !
-    call thmEvalSatuFinal(j_mater, p1    ,&
-                          satur  , dsatur, retcom)
+    call thmEvalSatuFinal(ds_thm, j_mater, p1    ,&
+                          satur , dsatur , retcom)
 !
 ! - Evaluate thermal conductivity
 !
-    call thmEvalConductivity(angl_naut, ndim  , j_mater, &
+    call thmEvalConductivity(ds_thm   ,&
+                             angl_naut, ndim  , j_mater, &
                              satur    , phi   , &
                              lambs    , dlambs, lambp , dlambp,&
                              tlambt   , tlamct, tdlamt)
 !
 ! - Get permeability tensor
 !
-    call thmGetPermeabilityTensor(ndim , angl_naut, j_mater, phi, vintp(1),&
+    call thmGetPermeabilityTensor(ds_thm, ndim , angl_naut, j_mater, phi, vintp(1),&
                                   tperm)
 !
 ! - Compute gravity
@@ -235,7 +238,8 @@ integer, intent(out) :: retcom
 ! - Compute flux and stress for hydraulic
 !
     if (ds_thm%ds_elem%l_dof_pre1) then
-        call calcfh(option   , l_steady, ndim  , j_mater,&
+        call calcfh(ds_thm   ,&
+                    option   , l_steady, ndim  , j_mater,&
                     dimdef   , dimcon  ,&
                     addep1   , addep2  ,&
                     adcp11   , adcp12  , adcp21 , adcp22,&
@@ -253,7 +257,8 @@ integer, intent(out) :: retcom
 ! - Compute flux and stress for thermic
 !
     if (ds_thm%ds_elem%l_dof_ther) then
-        call calcft(option, angl_naut,&
+        call calcft(ds_thm,&
+                    option, angl_naut,&
                     ndim  , dimdef   , dimcon,&
                     adcote, &
                     addeme, addete   , addep1, addep2,&

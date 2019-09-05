@@ -146,7 +146,7 @@ type(Behaviour_Integ), intent(in) :: BEHinteg
     if (iret .ne. 0) secref=0.d0
     call get_elas_para(fami    , imate, poum, kpg, ksp, &
                        elas_id , elas_keyword,&
-                       e = e, nu = nu, BEHinteg = BEHinteg)
+                       e_ = e, nu_ = nu, BEHinteg = BEHinteg)
     if (elas .or. line .or. puis) then
         call rcvalb(fami, kpg, ksp, poum, imate,&
                     ' ', 'ELAS', 0, ' ', [0.d0],&

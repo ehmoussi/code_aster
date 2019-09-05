@@ -20,10 +20,10 @@ interface
     subroutine get_elas_para(fami    , j_mater     , poum, ipg, ispg, &
                              elas_id , elas_keyword,&
                              time    , temp        ,&
-                             e       , nu          , g   ,&
-                             e1      , e2          , e3  ,&
-                             nu12    , nu13        , nu23,&
-                             g1      , g2          , g3  ,&
+                             e_      , nu_  , g_   ,&
+                             e1_     , e2_  , e3_  ,&
+                             nu12_   , nu13_, nu23_,&
+                             g1_     , g2_  , g3_  ,&
                              BEHinteg)
         use Behaviour_type
         character(len=*), intent(in) :: fami
@@ -34,10 +34,10 @@ interface
         character(len=16), intent(in) :: elas_keyword
         real(kind=8), optional, intent(in) :: time
         real(kind=8), optional, intent(in) :: temp
-        real(kind=8), optional, intent(out) :: e, nu, g
-        real(kind=8), optional, intent(out) :: e1,e2, e3
-        real(kind=8), optional, intent(out) :: nu12, nu13, nu23
-        real(kind=8), optional, intent(out) :: g1, g2, g3
+        real(kind=8), optional, intent(out) :: e_, nu_, g_
+        real(kind=8), optional, intent(out) :: e1_,e2_, e3_
+        real(kind=8), optional, intent(out) :: nu12_, nu13_, nu23_
+        real(kind=8), optional, intent(out) :: g1_, g2_, g3_
         type(Behaviour_Integ), optional, intent(in) :: BEHinteg
     end subroutine get_elas_para
 end interface
