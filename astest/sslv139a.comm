@@ -133,7 +133,7 @@ TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
                   NUME_MODE=10,
                   REFERENCE='ANALYTIQUE',
                   RESULTAT=RES_NORM,
-                  VALE_CALC=-848467.4364780696,
+                  VALE_CALC=-848467.4364780696,TOLE_MACHINE = 1.6E-4,
                   VALE_REFE=-8.49350940E+05,
                   PRECISION=2.E-3,),)
 
