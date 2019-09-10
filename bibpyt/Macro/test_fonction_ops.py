@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: nicolas.sellenet at edf.fr
+# person_in_charge: nicolas.pignet at edf.fr
 
 import os
 
@@ -45,7 +45,7 @@ ligne_att_3 = """ %(testOk)s TEST_ATTRIBUTS """
 
 ligne_separatrice = 80 * '-'
 
-ligne_intspc   = """ ---- INTERSPECTRE        %(nom_para)s"""
+ligne_intspc = """ ---- INTERSPECTRE        %(nom_para)s"""
 ligne_intspc_1 = """      %(nom)s %(val_para)s"""
 
 list_fct = ['REFERENCE', 'LEGENDE',
@@ -133,7 +133,7 @@ def TesterValeur(nomPara, valPu, valRef, res, epsi, crit, sSigne):
 
     return {'testOk': testOk, 'erreur': err, 'epsilon': curEps, 'valeurRef': vtc}
 
-#------------------------------------------
+# ------------------------------------------
 
 
 def RoundValues(crit, res, vtc, err, curEps, nreg=False):
@@ -155,7 +155,7 @@ def RoundValues(crit, res, vtc, err, curEps, nreg=False):
     """
     import math
     # valeur calculee, valeur de reference:
-    #--------------------------------------
+    # --------------------------------------
     res2 = """%20.15E """ % res
     vtc2 = """%20.15E """ % vtc
 
@@ -180,7 +180,7 @@ def RoundValues(crit, res, vtc, err, curEps, nreg=False):
     ndigit = min(ndigit, 15)  # limite de la double présision
 
     # arrondi des 2 valeurs rest et vtc :
-    #------------------------------------
+    # ------------------------------------
     chndec = "%25." + str(ndigit) + "E"
     rest = chndec % res
     rest = rest.strip()
@@ -188,7 +188,7 @@ def RoundValues(crit, res, vtc, err, curEps, nreg=False):
     vtct = vtct.strip()
 
     # écriture éventuelle sans exposant :
-    #---------------------------------------------
+    # ---------------------------------------------
     def sansExp(res, rest, crit, ndigit):
         ares = abs(res)
         if ares >= 0.01 and ares < 1.e5:
@@ -209,7 +209,7 @@ def RoundValues(crit, res, vtc, err, curEps, nreg=False):
     vtcr = sansExp(vtc, vtct, crit, ndigit)
 
     # erreur et tolerance:
-    #--------------------
+    # --------------------
     listEpsiOut = []
     listEpsiIn = [err, curEps]
     for erin in listEpsiIn:
@@ -231,7 +231,7 @@ def RoundValues(crit, res, vtc, err, curEps, nreg=False):
     curEpsr = listEpsiOut[1]
 
     return (resr, vtcr, errr, curEpsr)
-#------------------------------------------
+# ------------------------------------------
 
 
 def AfficherResultat(dicoValeur, nomPara, ref, legende, crit, res, valPu, txt, label=True):
@@ -388,7 +388,7 @@ def test_fonction_ops(self, **args):
             legende = dres['LEGENDE']
             if legende is None:
                 legende = 'XXXX'
-            nomfct = fct.get_name()
+            nomfct = fct.getName()
 
             # Transformation de nompara en liste
             if (not is_sequence(nompara)) and nompara is not None:
@@ -465,7 +465,7 @@ def test_fonction_ops(self, **args):
                 # que ceux passes a la fonction TEST_FONCTION
                 if len(nompara) != len(paramFormule):
                     ier = 160
-                    UTMESS('A+', 'FONCT0_9', valk=(lafonc.get_name()))
+                    UTMESS('A+', 'FONCT0_9', valk=(lafonc.getName()))
                     UTMESS('A', 'FONCT0_14', vali=(
                         len(nompara), len(paramFormule)))
                     return 0.
@@ -490,13 +490,13 @@ def test_fonction_ops(self, **args):
                             else:
                                 ier = 120
                                 UTMESS(
-                                    'A+', 'FONCT0_9', valk=(lafonc.get_name()))
+                                    'A+', 'FONCT0_9', valk=(lafonc.getName()))
                                 UTMESS('A', 'FONCT0_15', valk=nompara)
                                 res = 0.
                         i = i + 1
                     if nParamOrdo[iPN] == '':
                         ier = 130
-                        UTMESS('A+', 'FONCT0_9', valk=(lafonc.get_name()))
+                        UTMESS('A+', 'FONCT0_9', valk=(lafonc.getName()))
                         UTMESS('A', 'FONCT0_16', valk=paramFormule)
                         UTMESS('A', 'FONCT0_17', valk=nompara)
                         return 0.
@@ -541,14 +541,14 @@ def test_fonction_ops(self, **args):
                                 if vParamOrdo[iPN] != '':
                                     ier = 120
                                     UTMESS(
-                                        'A+', 'FONCT0_9', valk=(lafonc.get_name()))
+                                        'A+', 'FONCT0_9', valk=(lafonc.getName()))
                                     UTMESS('A', 'FONCT0_15', valk=nompara)
                                 else:
                                     vParamOrdo[iPN] = valpu[iPU]
                             i = i + 1
                         if vParamOrdo[iPN] == '':
                             ier = 130
-                            UTMESS('A+', 'FONCT0_9', valk=(lafonc.get_name()))
+                            UTMESS('A+', 'FONCT0_9', valk=(lafonc.getName()))
                             UTMESS('A', 'FONCT0_16', valk=paramNappe)
                             UTMESS('A', 'FONCT0_17', valk=nompara)
                     res = lafonc(vParamOrdo[0], vParamOrdo[1])
@@ -626,7 +626,7 @@ def test_fonction_ops(self, **args):
                     crit, res, valLastPara, txt)
                 if other_ref:
                     AfficherResultat(DictRef, nomLastPara, ref, legende,
-                                        crit, res, valLastPara, txt, label=False)
+                                     crit, res, valLastPara, txt, label=False)
             txt.append(' ')
 
     if ATTRIBUT is not None:
@@ -729,7 +729,7 @@ def test_fonction_ops(self, **args):
                 resu_test_attr = 'NOOK'
 
             # Construction de l'affichage
-            nomFct = fonction.get_name()
+            nomFct = fonction.getName()
 
             # ligne 1 (affichée qu'à la première occurrence)
             current = {}
