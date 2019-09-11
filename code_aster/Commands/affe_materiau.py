@@ -88,7 +88,7 @@ class MaterialAssignment(ExecuteCommand):
             raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
 
         fkw = keywords.get("AFFE_COMPOR")
-        if fkw != None:
+        if fkw is not None:
             if isinstance(fkw, dict):
                 self._addBehaviour(fkw)
             elif type(fkw) in (list, tuple):
@@ -105,7 +105,7 @@ class MaterialAssignment(ExecuteCommand):
 
         inputVarOnMesh = InputVariableOnMesh(mesh)
         fkw = keywords.get("AFFE_VARC")
-        if fkw != None:
+        if fkw is not None:
             if isinstance(fkw, dict):
                 self._addInputVariable(inputVarOnMesh, fkw, mesh)
             elif type(fkw) in (list, tuple):
@@ -142,9 +142,9 @@ class MaterialAssignment(ExecuteCommand):
         kwGrMa = fkw.get("GROUP_MA")
         mater = fkw["COMPOR"]
 
-        if kwTout != None:
+        if kwTout is not None:
             self._result.addBehaviourOnAllMesh(mater)
-        elif kwGrMa != None:
+        elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
                 self._result.addBehaviourOnGroupOfElements(mater, grp)
@@ -194,21 +194,21 @@ class MaterialAssignment(ExecuteCommand):
             raise TypeError("Input Variable not allowed")
 
         inputVar = obj(mesh)
-        if valeRef != None:
+        if valeRef is not None:
             inputVar.setReferenceValue(valeRef)
 
-        if chamGd != None:
+        if chamGd is not None:
             inputVar.setInputValuesField(chamGd)
 
-        if evol != None:
+        if evol is not None:
             evolParam = EvolutionParameter(evol)
             nomCham = fkw.get("NOM_CHAM")
-            if nomCham != None: evolParam.setFieldName(nomCham)
+            if nomCham is not None: evolParam.setFieldName(nomCham)
             foncInst = fkw.get("FONC_INST")
-            if foncInst != None: evolParam.setTimeFunction(foncInst)
+            if foncInst is not None: evolParam.setTimeFunction(foncInst)
 
             prolDroite = fkw.get("PROL_DROITE")
-            if prolDroite != None:
+            if prolDroite is not None:
                 if prolDroite == "EXCLU":
                     evolParam.prohibitRightExtension()
                 if prolDroite == "CONSTANT":
@@ -217,7 +217,7 @@ class MaterialAssignment(ExecuteCommand):
                     evolParam.setLinearRightExtension()
 
             prolGauche = fkw.get("PROL_GAUCHE")
-            if prolGauche != None:
+            if prolGauche is not None:
                 if prolGauche == "EXCLU":
                     evolParam.prohibitLeftExtension()
                 if prolGauche == "CONSTANT":
@@ -227,13 +227,13 @@ class MaterialAssignment(ExecuteCommand):
 
             inputVar.setEvolutionParameter(evolParam)
 
-        if kwTout != None:
+        if kwTout is not None:
             inputVarOnMesh.addInputVariableOnAllMesh(inputVar)
-        elif kwMail != None:
+        elif kwMail is not None:
             kwMail = force_list(kwMail)
             for elem in kwMail:
                 inputVarOnMesh.addInputVariableOnElement(inputVar, elem)
-        elif kwGrMa != None:
+        elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
                 inputVarOnMesh.addInputVariableOnGroupOfElements(inputVar, grp)
@@ -248,12 +248,12 @@ class MaterialAssignment(ExecuteCommand):
         if type(mater) is not list:
             mater = list(mater)
 
-        if kwTout != None:
+        if kwTout is not None:
             self._result.addMaterialsOnAllMesh(mater)
-        elif kwGrMa != None:
+        elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
             self._result.addMaterialsOnGroupOfElements(mater, kwGrMa)
-        elif kwMail != None:
+        elif kwMail is not None:
             kwMail = force_list(kwMail)
             self._result.addMaterialsOnElement(mater, kwMail)
         else:
