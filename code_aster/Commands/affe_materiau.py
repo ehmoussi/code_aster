@@ -41,7 +41,8 @@ from .ExecuteCommand import ExecuteCommand
 from ..Objects import TemperatureInputVariable, GeometryInputVariable, CorrosionInputVariable
 from ..Objects import IrreversibleDeformationInputVariable, ConcreteHydratationInputVariable
 from ..Objects import IrradiationInputVariable, SteelPhasesInputVariable
-from ..Objects import ZircaloyPhasesInputVariable, Neutral1InputVariable, Neutral2InputVariable
+from ..Objects import ZircaloyPhasesInputVariable
+from ..Objects import Neutral1InputVariable, Neutral2InputVariable, Neutral3InputVariable
 from ..Objects import ConcreteDryingInputVariable, TotalFluidPressureInputVariable
 from ..Objects import VolumetricDeformationInputVariable, InputVariableOnMesh
 from ..Objects import MaterialOnMeshBuilder, EvolutionParameter
@@ -181,6 +182,8 @@ class MaterialAssignment(ExecuteCommand):
             obj = Neutral1InputVariable
         elif nomVarc == "NEUT2":
             obj = Neutral2InputVariable
+        elif nomVarc == "NEUT3":
+            obj = Neutral3InputVariable
         elif nomVarc == "SECH":
             obj = ConcreteDryingInputVariable
         elif nomVarc == "PTOT":
