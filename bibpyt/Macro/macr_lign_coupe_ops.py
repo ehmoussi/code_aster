@@ -678,7 +678,8 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
 
     # La valeur par défaut n'est pas dans le catalogue, sinon le mot-clé devient
     # obligatoire dans AsterStudy
-    UNITE_MAILLAGE = args.get("UNITE_MAILLAGE") or 25
+    UL = UniteAster()
+    UNITE_MAILLAGE = args.get("UNITE_MAILLAGE") or UL.Libre()
 
     # On importe les definitions des commandes a utiliser dans la macro
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
@@ -891,11 +892,10 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
 
     resu_mail, arcgma, angles, nbno = crea_mail_lig_coup(
         dime, lignes, groups, arcs)
-    UL = UniteAster()
+
     nomFichierSortie = UL.Nom(UNITE_MAILLAGE)
-    fproc = open(nomFichierSortie, 'w')
-    fproc.write(os.linesep.join(resu_mail))
-    fproc.close()
+    with open(nomFichierSortie, 'w') as fproc:
+        fproc.write(os.linesep.join(resu_mail))
     UL.EtatInit(UNITE_MAILLAGE)
 
     # Lecture du maillage de seg2 contenant toutes les lignes de coupe
