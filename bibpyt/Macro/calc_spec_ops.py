@@ -57,8 +57,7 @@ def calc_spec_ops(self, **args):
     ECHANT = args.get("ECHANT")
     INTERSPE = args.get("INTERSPE")
     TRANSFERT = args.get("TRANSFERT")
-    TITRE = args.get("TITRE")
-    INFO = args.get("INFO")
+
     if TAB_ECHANT is not None and type(TAB_ECHANT) not in (list, tuple):
         TAB_ECHANT = TAB_ECHANT,
     if ECHANT is not None and type(ECHANT) not in (list, tuple):
@@ -68,16 +67,12 @@ def calc_spec_ops(self, **args):
     if TRANSFERT is not None and type(TRANSFERT) not in (list, tuple):
         TRANSFERT = TRANSFERT,
 
-    commande = 'CALC_SPEC'
-
-    ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
     DEFI_INTE_SPEC = self.get_cmd('DEFI_INTE_SPEC')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
 
 # --- Verifications sur les entrees --#
@@ -200,8 +195,6 @@ def calc_spec_ops(self, **args):
             values = fonc_py[i1].Valeurs()
             temp = list(values[0]) + list(values[1])
             long_fonc.append(len(temp))
-        print "long_fonc", long_fonc
-        #long_fonc = [len(fonc_py[i1].VALE.get()) for i1 in range(len(fonc_py))]
 
         N_fen = int(
             numpy.floor((numpy.minimum.reduce(long_fonc) // 2 - l_ech) // (l_ech - recouvr)) + 1)
@@ -304,7 +297,6 @@ def calc_spec_ops(self, **args):
 
     if INTERSPE:
         nb_ord = len(list_ord)
-        dimh = (nb_ord * (nb_ord + 1)) // 2
         l_fc = []
         nume_i1 = []
         nume_j1 = []
