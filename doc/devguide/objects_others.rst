@@ -188,6 +188,10 @@ Documentation of all other types.
    :show-inheritance:
    :members:
 
+.. autoclass:: code_aster.Objects.Neutral3InputVariable
+   :show-inheritance:
+   :members:
+
 .. autoclass:: code_aster.Objects.SteelPhasesInputVariable
    :show-inheritance:
    :members:
