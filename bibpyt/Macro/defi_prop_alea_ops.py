@@ -27,7 +27,6 @@ import traceback
 
 from math import pi, ceil, exp, sqrt, log
 import numpy as np
-import pickle
 import aster_core
 from code_aster.Commands import FORMULE
 from Utilitai.Utmess import UTMESS
@@ -42,7 +41,7 @@ def defi_prop_alea_ops(self, **kwargs):
     # création de l'objet generator
     generator = Generator.factory(self, params)
     try:
-        generator.run()
+        return generator.run()
     except Exception as err:
         trace = ''.join(traceback.format_tb(sys.exc_info()[2]))
         UTMESS('F', 'SUPERVIS2_5', valk=('DEFI_PROP_ALEA', trace, str(err)))
@@ -165,7 +164,7 @@ class Generator(object):
 
     def __init__(self, macro, params):
         """Constructor Base class"""
-        self.name = macro.sd.nom
+#       self.name = macro.sd.nom
         self.macro = macro
         self.mediane = params.mediane
         self.cas = params.cas
@@ -229,22 +228,33 @@ class Generator1(Generator):
         KL_data1  = self.eval_eigfunc(self.data['XLISTE'][0], Lcx1/dimx1, nbmod1)
         self.Ux1 = [ np.sqrt(leig) * np.array(veig)  for (leig, veig) in KL_data1 ]
 
-
     def run(self):
         self.compute_KL()
-        self.macro.DeclareOut('formule_out', self.macro.sd)
-        data = {'user_func': evaluate_KL1D, 'XLISTE': self.data['XLISTE'],
-                'DIM': self.data['DIM'],  'RANGE': self.data['RANGE'], 'Ux' : (self.Ux1,),
-                'mediane':  self.mediane , 'beta' : self.beta, 'seed': self.seed }
+
         if self.coord == ['X']:
-            formule_out = FORMULE(NOM_PARA=('X'), VALE="user_func(X,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)" )
+            formule_out = FORMULE(
+                NOM_PARA=('X'), VALE="user_func(X,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)",
+                user_func=evaluate_KL1D, XLISTE=self.data['XLISTE'],
+                DIM=self.data['DIM'],  RANGE=self.data['RANGE'], Ux=(
+                    self.Ux1,),
+                mediane=self.mediane, beta=self.beta, seed=self.seed)
         elif self.coord == ['Y']:
-            formule_out = FORMULE(NOM_PARA=('Y'), VALE="user_func(Y,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)" )
+            formule_out = FORMULE(
+                NOM_PARA=('Y'), VALE="user_func(Y,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)",
+                user_func=evaluate_KL1D, XLISTE=self.data['XLISTE'],
+                DIM=self.data['DIM'],  RANGE=self.data['RANGE'], Ux=(
+                    self.Ux1,),
+                mediane=self.mediane, beta=self.beta, seed=self.seed)
         elif self.coord == ['Z']:
-            formule_out = FORMULE(NOM_PARA=('Z'), VALE="user_func(Z,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)" )
+            formule_out = FORMULE(
+                NOM_PARA=('Z'), VALE="user_func(Z,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)",
+                user_func=evaluate_KL1D, XLISTE=self.data['XLISTE'],
+                DIM=self.data['DIM'],  RANGE=self.data['RANGE'], Ux=(
+                    self.Ux1,),
+                mediane=self.mediane, beta=self.beta, seed=self.seed)
         else:
             raise ValueError('unknown configuration')
-        formule_out.set_context(pickle.dumps(data))
+        return formule_out
 
 
 
@@ -266,23 +276,34 @@ class Generator2(Generator):
         KL_data2  = self.eval_eigfunc(self.data['XLISTE'][1], Lcx2/dimx2, nbmod2)
         self.Ux2 = [ np.sqrt(leig) * np.array(veig)  for (leig, veig) in KL_data2 ]
 
-
     def run(self):
         self.compute_KL()
-        self.macro.DeclareOut('formule_out', self.macro.sd)
-        data = {'user_func': evaluate_KL2D, 'XLISTE': self.data['XLISTE'],
-                'DIM': self.data['DIM'],  'RANGE': self.data['RANGE'], 'Ux' : (self.Ux1, self.Ux2),
-                'mediane':  self.mediane , 'beta' : self.beta, 'seed': self.seed }
+
         print('X,Y', self.coord)
-        if self.coord == ['X','Y']:
-            formule_out = FORMULE(NOM_PARA= ('X','Y'), VALE="user_func(X,Y,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)" )
-        elif self.coord == ['X','Z']:
-            formule_out = FORMULE(NOM_PARA= ('X','Z'), VALE="user_func(X,Z,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)" )
-        elif self.coord == ['Y','Z']:
-            formule_out = FORMULE(NOM_PARA= ('Y','Z'), VALE="user_func(Y,Z,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)" )
+        if self.coord == ['X', 'Y']:
+            formule_out = FORMULE(NOM_PARA=(
+                'X', 'Y'), VALE="user_func(X,Y,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)",
+                user_func=evaluate_KL2D, XLISTE=self.data['XLISTE'],
+                DIM=self.data['DIM'],  RANGE=self.data['RANGE'], Ux=(
+                    self.Ux1, self.Ux2),
+                mediane=self.mediane, beta=self.beta, seed=self.seed)
+        elif self.coord == ['X', 'Z']:
+            formule_out = FORMULE(NOM_PARA=(
+                'X', 'Z'), VALE="user_func(X,Z,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)",
+                user_func=evaluate_KL2D, XLISTE=self.data['XLISTE'],
+                DIM=self.data['DIM'],  RANGE=self.data['RANGE'], Ux=(
+                    self.Ux1, self.Ux2),
+                mediane=self.mediane, beta=self.beta, seed=self.seed)
+        elif self.coord == ['Y', 'Z']:
+            formule_out = FORMULE(NOM_PARA=(
+                'Y', 'Z'), VALE="user_func(Y,Z,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)",
+                user_func=evaluate_KL2D, XLISTE=self.data['XLISTE'],
+                DIM=self.data['DIM'],  RANGE=self.data['RANGE'], Ux=(
+                    self.Ux1, self.Ux2),
+                mediane=self.mediane, beta=self.beta, seed=self.seed)
         else:
             raise ValueError('unknown configuration')
-        formule_out.set_context(pickle.dumps(data))
+        return formule_out
 
 
 
@@ -314,12 +335,13 @@ class Generator3(Generator):
                                  Lcx3/dimx3, nbmod3)
         self.Ux3 = [ np.sqrt(leig) * np.array(veig)  for (leig, veig) in KL_data3 ]
 
-
     def run(self):
         self.compute_KL()
-        self.macro.DeclareOut('formule_out', self.macro.sd)
-        data = {'user_func': evaluate_KL3D, 'XLISTE': self.data['XLISTE'],
-                'DIM': self.data['DIM'],  'RANGE': self.data['RANGE'], 'Ux' : (self.Ux1, self.Ux2 ,self.Ux3),
-                'mediane':  self.mediane , 'beta' : self.beta, 'seed': self.seed }
-        formule_out = FORMULE(NOM_PARA=('X', 'Y', 'Z'), VALE="user_func(X, Y, Z, DIM, RANGE, XLISTE, Ux, beta, mediane, seed)" )
-        formule_out.set_context(pickle.dumps(data))
+
+        formule_out = FORMULE(NOM_PARA=(
+            'X', 'Y', 'Z'), VALE="user_func(X, Y, Z, DIM, RANGE, XLISTE, Ux, beta, mediane, seed)",
+            user_func=evaluate_KL3D, XLISTE=self.data['XLISTE'],
+            DIM=self.data['DIM'],  RANGE=self.data['RANGE'], Ux=(
+                self.Ux1, self.Ux2, self.Ux3),
+            mediane=self.mediane, beta=self.beta, seed=self.seed)
+        return formule_out

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,12 +18,12 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-import pickle
 import numpy as NP
 
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Commands.ExecuteCommand import UserMacro
 
 
 def user_func(X, vx, vy):
@@ -34,23 +34,16 @@ def macro_test_ops(self, VALE, **kwargs):
     """Macro de test."""
     from code_aster.Commands import FORMULE
 
-    ier = 0
-    self.set_icmd(1)
-    self.DeclareOut('result', self.sd)
-
     vale_x = NP.arange(5.)
-    vale_y = NP.arange(5.) * 2
-    data = {'user_func': user_func,
-            'vale_x': vale_x,
-            'vale_y': vale_y * VALE}
+    vale_y = NP.arange(5.) * 2 * VALE
 
-    result = FORMULE(NOM_PARA='X', VALE='user_func(X, vale_x, vale_y)')
-    result.set_context(pickle.dumps(data))
+    result = FORMULE(NOM_PARA='X', VALE='user_func(X, vale_x, vale_y)',
+             user_func=user_func, vale_x=vale_x, vale_y=vale_y)
 
-    return ier
+    return result
 
 
-MACRO_TEST=FORM(
+MACRO_TEST_CATA=FORM(
     nom="MACRO_TEST",
     op=macro_test_ops,
     sd_prod=formule,
@@ -58,3 +51,6 @@ MACRO_TEST=FORM(
     regles=(UN_PARMI('VALE', 'VALE_C',),),
     VALE=SIMP(statut='o', typ='R'),
 )
+
+MACRO_TEST = UserMacro("MACRO_TEST", MACRO_TEST_CATA,
+                       macro_test_ops)

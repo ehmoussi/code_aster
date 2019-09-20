@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# MODELISATION C : 
+# MODELISATION C :
 # CALCUL AVEC SOUS-STRUCTURATION
 # PALIERS NON SYMETRIQUES
 # EFFET GYROSCOPIQUE
@@ -46,7 +46,7 @@ MODELE=AFFE_MODELE(MAILLAGE=MAIL,
                             GROUP_MA=('MA_DISTR'),
                             PHENOMENE='MECANIQUE',
                             MODELISATION='DIS_TR',
-                           ),           
+                           ),
                         ),
                   );
 
@@ -62,8 +62,8 @@ MAT=DEFI_MATERIAU(
 
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
-                    AFFE=(                         
-                           _F(GROUP_MA='MAT1',MATER=MAT,),                         
+                    AFFE=(
+                           _F(GROUP_MA='MAT1',MATER=MAT,),
                          ),
                    );
 
@@ -75,7 +75,7 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
 KXX1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='KXX1',
                        VALE=(
-                                0.0,1e+12,                              
+                                0.0,1e+12,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -84,7 +84,7 @@ KXX1=DEFI_FONCTION(NOM_PARA='INST',
 KXY1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='KXY1',
                        VALE=(
-                                0.0,1000000000.0,                               
+                                0.0,1000000000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -94,7 +94,7 @@ KXY1=DEFI_FONCTION(NOM_PARA='INST',
 KYX1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='KYX1',
                        VALE=(
-                                0.0,2000000000.0,                               
+                                0.0,2000000000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -104,7 +104,7 @@ KYX1=DEFI_FONCTION(NOM_PARA='INST',
 KYY1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='KYY1',
                        VALE=(
-                                0.0,1e+12,                              
+                                0.0,1e+12,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -115,7 +115,7 @@ KYY1=DEFI_FONCTION(NOM_PARA='INST',
 AXX1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='AXX1',
                        VALE=(
-                                0.0,70000.0,                            
+                                0.0,70000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -124,7 +124,7 @@ AXX1=DEFI_FONCTION(NOM_PARA='INST',
 AXY1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='AXY1',
                        VALE=(
-                                0.0,50000.0,                            
+                                0.0,50000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -133,7 +133,7 @@ AXY1=DEFI_FONCTION(NOM_PARA='INST',
 AYX1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='AYX1',
                        VALE=(
-                                0.0,70000.0,                            
+                                0.0,70000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -143,7 +143,7 @@ AYX1=DEFI_FONCTION(NOM_PARA='INST',
 AYY1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='AYY1',
                        VALE=(
-                                0.0,50000.0,                            
+                                0.0,50000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -155,7 +155,7 @@ AYY1=DEFI_FONCTION(NOM_PARA='INST',
 MXX1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='MXX1',
                        VALE=(
-                                0.0,0,                          
+                                0.0,0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -164,7 +164,7 @@ MXX1=DEFI_FONCTION(NOM_PARA='INST',
 MXY1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='MXY1',
                        VALE=(
-                                0.0,0,                          
+                                0.0,0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -173,7 +173,7 @@ MXY1=DEFI_FONCTION(NOM_PARA='INST',
 MYX1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='MYX1',
                        VALE=(
-                                0.0,0,                          
+                                0.0,0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -183,7 +183,7 @@ MYX1=DEFI_FONCTION(NOM_PARA='INST',
 MYY1=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='MYY1',
                        VALE=(
-                                0.0,0,                          
+                                0.0,0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -195,7 +195,7 @@ MYY1=DEFI_FONCTION(NOM_PARA='INST',
 KXX2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='KXX2',
                        VALE=(
-                                0.0,1e+12,                              
+                                0.0,1e+12,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -204,7 +204,7 @@ KXX2=DEFI_FONCTION(NOM_PARA='INST',
 KXY2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='KXY2',
                        VALE=(
-                                0.0,1000000000.0,                               
+                                0.0,1000000000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -214,7 +214,7 @@ KXY2=DEFI_FONCTION(NOM_PARA='INST',
 KYX2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='KYX2',
                        VALE=(
-                                0.0,2000000000.0,                               
+                                0.0,2000000000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -224,7 +224,7 @@ KYX2=DEFI_FONCTION(NOM_PARA='INST',
 KYY2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='KYY2',
                        VALE=(
-                                0.0,1e+12,                              
+                                0.0,1e+12,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -235,7 +235,7 @@ KYY2=DEFI_FONCTION(NOM_PARA='INST',
 AXX2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='AXX2',
                        VALE=(
-                                0.0,70000.0,                            
+                                0.0,70000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -244,7 +244,7 @@ AXX2=DEFI_FONCTION(NOM_PARA='INST',
 AXY2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='AXY2',
                        VALE=(
-                                0.0,50000.0,                            
+                                0.0,50000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -254,7 +254,7 @@ AYX2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='AYX2',
                        VALE=(
                                 0.0,70000.0,
-                                
+
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -264,7 +264,7 @@ AYX2=DEFI_FONCTION(NOM_PARA='INST',
 AYY2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='AYY2',
                        VALE=(
-                                0.0,50000.0,                            
+                                0.0,50000.0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -276,7 +276,7 @@ AYY2=DEFI_FONCTION(NOM_PARA='INST',
 MXX2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='MXX2',
                        VALE=(
-                                0.0,0,                          
+                                0.0,0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -285,7 +285,7 @@ MXX2=DEFI_FONCTION(NOM_PARA='INST',
 MXY2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='MXY2',
                        VALE=(
-                                0.0,0,                          
+                                0.0,0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -294,7 +294,7 @@ MXY2=DEFI_FONCTION(NOM_PARA='INST',
 MYX2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='MYX2',
                        VALE=(
-                                0.0,0,                          
+                                0.0,0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -304,7 +304,7 @@ MYX2=DEFI_FONCTION(NOM_PARA='INST',
 MYY2=DEFI_FONCTION(NOM_PARA='INST',
                        NOM_RESU='MYY2',
                        VALE=(
-                                0.0,0,                          
+                                0.0,0,
                             ),
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
@@ -327,63 +327,63 @@ for i, nbTour in enumerate(tours):
                                            SECTION='CERCLE',
                                            VARI_SECT='CONSTANT',
                                            CARA=('R','EP'),
-                                           VALE=(0.1,0.1,),                                        
+                                           VALE=(0.1,0.1,),
                                           ),
-                                                                                                                                                                                
+
                                         _F(MAILLE='E2Z1',
                                            SECTION='CERCLE',
                                            VARI_SECT='CONSTANT',
                                            CARA=('R','EP'),
-                                           VALE=(0.1,0.1,),                                                                                        
+                                           VALE=(0.1,0.1,),
                                           ),
-                                        
+
                                         _F(MAILLE='E3Z1',
                                            SECTION='CERCLE',
                                            VARI_SECT='CONSTANT',
                                            CARA=('R','EP'),
-                                           VALE=(0.1,0.1,),                                                                         
+                                           VALE=(0.1,0.1,),
                                           ),
-                                        
+
                                         _F(MAILLE='E4Z1',
                                            SECTION='CERCLE',
                                            VARI_SECT='CONSTANT',
                                            CARA=('R','EP'),
-                                           VALE=(0.1,0.1,),                                        
+                                           VALE=(0.1,0.1,),
                                           ),
 
                                         _F(MAILLE='E5Z1',
-                                           SECTION='CERCLE',           
+                                           SECTION='CERCLE',
                                            VARI_SECT='CONSTANT',
                                            CARA=('R','EP'),
-                                           VALE=(0.1,0.1,),                                                                               
+                                           VALE=(0.1,0.1,),
                                           ),
-                                        
+
                                         _F(MAILLE='E6Z1',
-                                           SECTION='CERCLE',               
+                                           SECTION='CERCLE',
                                            VARI_SECT='CONSTANT',
                                            CARA=('R','EP'),
-                                           VALE=(0.1,0.1,),                                        
+                                           VALE=(0.1,0.1,),
                                           ),
-                                                
+
                                         _F(MAILLE='E7Z1',
                                            SECTION='CERCLE',
                                            VARI_SECT='CONSTANT',
                                            CARA=('R','EP'),
-                                           VALE=(0.1,0.1,),                                        
+                                           VALE=(0.1,0.1,),
                                           ),
-                                                
+
                                         _F(MAILLE='E8Z1',
                                            SECTION='CERCLE',
                                            VARI_SECT='CONSTANT',
                                            CARA=('R','EP'),
-                                           VALE=(0.1,0.1,),                                        
+                                           VALE=(0.1,0.1,),
                                           ),
-                                        
+
                                      ),
 
-                              
+
                               DISCRET=(
-                                                
+
                                                 _F(
                                 CARA='K_TR_L',
                                 MAILLE='SP1',
@@ -400,7 +400,7 @@ for i, nbTour in enumerate(tours):
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0),
-                                                   
+
                                                    ),
 
                                                 _F(
@@ -419,7 +419,7 @@ for i, nbTour in enumerate(tours):
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0),
-                                                   
+
                                                    ),
 
                                                 _F(
@@ -438,9 +438,9 @@ for i, nbTour in enumerate(tours):
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0),
-                                                   
+
                                                    ),
-                                                
+
                                                 _F(
                                 CARA='K_TR_L',
                                 MAILLE='SP2',
@@ -457,7 +457,7 @@ for i, nbTour in enumerate(tours):
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0),
-                                                   
+
                                                    ),
 
                                                 _F(
@@ -476,7 +476,7 @@ for i, nbTour in enumerate(tours):
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0),
-                                                   
+
                                                    ),
 
                                                 _F(
@@ -495,26 +495,26 @@ for i, nbTour in enumerate(tours):
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0,
                                       0,0,0,0,0,0,0,0,0,0,0,0),
-                                                   
+
                                                    ),
                                                 #palier de torsion
-                                        
+
 
 #butee
-                                        
+
 #supports simplifies
-                                          
+
                                         ),
-                                        
+
                         );
 
 
 # DEFINITION DES CONDITIONS AUX LIMITES RELLES
 
 BCR=AFFE_CHAR_MECA(MODELE=MODELE,
-                      DDL_IMPO=(                        
+                      DDL_IMPO=(
                         _F(GROUP_NO='NOENCAS',DRY=0.0,DRX=0.0,DRZ=0.0,DZ=0.0,DX=0.0,DY=0.0,),
-                        _F(GROUP_NO=('NO_AR'),DZ=0,DRZ=0.0,),                                             
+                        _F(GROUP_NO=('NO_AR'),DZ=0,DRZ=0.0,),
                                ),
                   );
 
@@ -610,7 +610,7 @@ for j,NTRIM in enumerate(tours):
                                 MODELE=MODELE,
                                 CHAM_MATER=CHMAT,
                                 CARA_ELEM=CEK[j],);
-        
+
         RG[j]=ASSE_MATRICE(MATR_ELEM=RGe[j],NUME_DDL=NDDL[j]);
 
 

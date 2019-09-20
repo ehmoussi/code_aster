@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe InputVariableDefinitionInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -133,6 +133,11 @@ struct Neutral1InputVariableTraits {
 
 struct Neutral2InputVariableTraits {
     constexpr static const char *name = "NEUT2";
+};
+
+struct Neutral3InputVariableTraits
+{
+   constexpr static const char* name = "NEUT3";
 };
 
 struct ConcreteDryingInputVariableTraits {
@@ -299,6 +304,8 @@ typedef InputVariableDefinitionInstance< Neutral1InputVariableTraits >
     Neutral1InputVariableInstance;
 typedef InputVariableDefinitionInstance< Neutral2InputVariableTraits >
     Neutral2InputVariableInstance;
+typedef InputVariableDefinitionInstance< Neutral3InputVariableTraits >
+    Neutral3InputVariableInstance;
 typedef InputVariableDefinitionInstance< ConcreteDryingInputVariableTraits >
     ConcreteDryingInputVariableInstance;
 typedef InputVariableDefinitionInstance< TotalFluidPressureInputVariableTraits >
@@ -319,6 +326,8 @@ typedef boost::shared_ptr< SteelPhasesInputVariableInstance > SteelPhasesInputVa
 typedef boost::shared_ptr< ZircaloyPhasesInputVariableInstance > ZircaloyPhasesInputVariablePtr;
 typedef boost::shared_ptr< Neutral1InputVariableInstance > Neutral1InputVariablePtr;
 typedef boost::shared_ptr< Neutral2InputVariableInstance > Neutral2InputVariablePtr;
+typedef boost::shared_ptr< Neutral3InputVariableInstance > Neutral3InputVariablePtr;
+
 typedef boost::shared_ptr< ConcreteDryingInputVariableInstance > ConcreteDryingInputVariablePtr;
 typedef boost::shared_ptr< TotalFluidPressureInputVariableInstance >
     TotalFluidPressureInputVariablePtr;

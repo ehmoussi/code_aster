@@ -55,11 +55,9 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     from code_aster.Cata.Syntax import _F
     import aster
     from Utilitai.Utmess import UTMESS
-    ier = 0
 
     # On importe les definitions des commandes a utiliser dans la macro
     DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    IMPR_RESU = self.get_cmd('IMPR_RESU')
     from code_aster.Commands import DEFI_CABLE_OP
 
     # La macro compte pour 1 dans la numerotation des commandes
@@ -74,8 +72,6 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     #                  Début de la Macro :
 
     motscles = {}
-
-    keys = list(args.keys())
 
     # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "CONE"
 
@@ -111,7 +107,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "DEFI_CABLE"
     dDEFI_CABLE = []
     for j in DEFI_CABLE:
-        dDEFI_CABLE.append(j.cree_dict_valeurs(j.mc_liste))
+        dDEFI_CABLE.append(j)
         for i in list(dDEFI_CABLE[-1].keys()):
             if dDEFI_CABLE[-1][i] is None:
                 del dDEFI_CABLE[-1][i]
