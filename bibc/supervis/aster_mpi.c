@@ -65,8 +65,8 @@ void aster_mpi_init(int argc, char **argv)
 {
     /*! MPI initialization */
 #ifdef _USE_MPI
-
     printf("MPI_Init...\n");
+    int isdone;
 #ifdef OPEN_MPI
     void *handle = 0;
     int mode = RTLD_NOW | RTLD_GLOBAL;
@@ -81,7 +81,13 @@ void aster_mpi_init(int argc, char **argv)
     if (!handle) handle = dlopen("libmpi.so.0", mode);
     if (!handle) handle = dlopen("libmpi.so",   mode);
 #endif
-    AS_ASSERT(MPI_Init(&argc, &argv) == MPI_SUCCESS);
+    MPI_Initialized(&isdone);
+    if(! isdone) {
+        printf("calling MPI_Init...\n");
+        AS_ASSERT(MPI_Init(&argc, &argv) == MPI_SUCCESS);
+    } else {
+        printf("MPI is already initialized.\n");
+    }
     AS_ASSERT(atexit(terminate) == 0);
     /* set the error handler */
     AS_ASSERT(MPI_Comm_create_errhandler(errhdlr_func, &errhdlr) == MPI_SUCCESS);
@@ -768,12 +774,16 @@ void terminate( void )
     ASTERINTEGER dummy=0;
     printf("End of the Code_Aster execution\n");
 #ifdef _USE_MPI
+    int isdone;
     if ( gErrFlg == 0 ) {
         /* see help of asabrt */
-        CALL_ASMPI_CHECK(&dummy);
         printf("Code_Aster MPI exits normally\n");
-        MPI_Errhandler_free(&errhdlr);
-        MPI_Finalize();
+        MPI_Finalized(&isdone);
+        if (! isdone) {
+            CALL_ASMPI_CHECK(&dummy);
+            MPI_Errhandler_free(&errhdlr);
+            MPI_Finalize();
+        }
     } else {
         printf("Code_Aster MPI exits with errors\n");
     }
