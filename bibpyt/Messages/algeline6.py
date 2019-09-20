@@ -462,7 +462,20 @@ numéro    charge critique    amortissement    NB_ITER    précision    NB_ITER 
     90: _("""Aucun shift ne peut être appliqué.
 """),
 
-    91: _("""Problème de factorisation de Arnoldi.
+    91: _("""
+Problème interne ARPACK: Problème dans la factorisation d'Arnoldi.
+
+Ce message est un message d'erreur développeur.
+Contactez le support technique.
+
+Conseils:
+   Ce problème numérique ponctuel peut parfois se résoudre:
+   - en changeant de solveur linéaire (mot-clé SOLVEUR=_F(METHODE='MUMPS' ou 'MULT_FRONT')),
+   - si le solveur MUMPS est utilisé, en changeant son paramétrage numérique
+     (par exemple: SOLVEUR=_F(METHODE='MUMPS', ELIM_LAGR='NON'),
+   - en jouant sur le parallélisme MPI (activation ou non, nombre de processus MPI...),
+   - en changeant de solveur modal (METHODE='TRI_DIAG' plutôt que 'SORENSEN'),
+   - en modifiant la stratégie de calcul modal.
 """),
 
     92: _(""" On modifie la valeur de décalage de %(r2)12.5E %%

@@ -678,7 +678,8 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
 
     # La valeur par défaut n'est pas dans le catalogue, sinon le mot-clé devient
     # obligatoire dans AsterStudy
-    UNITE_MAILLAGE = args.get("UNITE_MAILLAGE") or 25
+    UL = UniteAster()
+    UNITE_MAILLAGE = args.get("UNITE_MAILLAGE") or UL.Libre()
 
     # On importe les definitions des commandes a utiliser dans la macro
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
@@ -891,11 +892,10 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
 
     resu_mail, arcgma, angles, nbno = crea_mail_lig_coup(
         dime, lignes, groups, arcs)
-    UL = UniteAster()
+
     nomFichierSortie = UL.Nom(UNITE_MAILLAGE)
-    fproc = open(nomFichierSortie, 'w')
-    fproc.write(os.linesep.join(resu_mail))
-    fproc.close()
+    with open(nomFichierSortie, 'w') as fproc:
+        fproc.write(os.linesep.join(resu_mail))
     from code_aster.RunManager import ReservedUnitUsed
     ReservedUnitUsed(UNITE_MAILLAGE)
 
