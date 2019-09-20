@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 # Pour des raisons de performances, on force SDVERI='NON'.
-DEBUT(   CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'));
+DEBUT(   CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'), PAR_LOT='NON');
 
 MAIL0=LIRE_MAILLAGE(FORMAT='MED',);
 MAIL = CREA_MAILLAGE(MAILLAGE=MAIL0,
@@ -330,190 +330,25 @@ ASSEMBLAGE(MODELE=MODELE1,
                               OPTION='CHAR_MECA',
                               CHARGE=CHPE12),),);
 
-
-MODE1=CALC_MODES( OPTION='BANDE',
-                  MATR_RIGI=MATR1,
-                  MATR_MASS=MATM1,
-                  CALC_FREQ=_F( FREQ=(3., 20., 31., 41.), ),
-                 )
-
-MODSTA1=MODE_STATIQUE(MATR_RIGI=MATR1,
+VECAB=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                          OPERATION='ASSE',
+                          NUME_DDL= NUME1,
+                          MODELE=MODELE1,
+                          ASSE=(_F(TOUT='OUI',
+                                   CHAM_GD=VECAS2,
+                                   CUMUL='OUI',
+                                   COEF_R=0.,
+                                   ),),
+                          ); 
+                     
+FORCT=CREA_RESU(OPERATION='AFFE',
+                      TYPE_RESU='DYNA_TRANS',
+                      MATR_RIGI=MATR1,
                       MATR_MASS=MATM1,
-                      MODE_STAT=_F(GROUP_NO='PSI0',
-                                   # AVEC_CMP=('DX','DY','DZ'),
-                                   TOUT_CMP='OUI',
-                                   ),
-                                  );
+                      NOM_CHAM='DEPL',
+                      AFFE=(_F(CHAM_GD=VECAB,INST=0.0,),),); 
 
-INTERDY1=DEFI_INTERF_DYNA(  NUME_DDL=NUME1,
-            INTERFACE=_F( NOM = 'DROITE',
-                       TYPE = 'CRAIGB',
-                       GROUP_NO = ('PSI0',))
-           );
-
-BAMO1=DEFI_BASE_MODALE(RITZ=(_F(MODE_MECA=MODE1,
-                                NMAX_MODE=120,),
-                             _F(MODE_INTF=MODSTA1,
-                                NMAX_MODE=1999,),
-                             ),
-                       INTERF_DYNA=INTERDY1,
-                       NUME_REF=NUME1,);
-
-
-NDDLGE1 = NUME_DDL_GENE( BASE= BAMO1, STOCKAGE= 'PLEIN',);
-
-VECGE1=PROJ_VECT_BASE(  BASE=BAMO1,  NUME_DDL_GENE=NDDLGE1,
-                            VECT_ASSE=VECAS1, TYPE_VECT='FORC' );
-
-VECGE2=PROJ_VECT_BASE(  BASE=BAMO1,  NUME_DDL_GENE=NDDLGE1,
-                            VECT_ASSE=VECAS2, TYPE_VECT='FORC' );
-
-MAEL1=MACR_ELEM_DYNA(  BASE_MODALE=BAMO1,
-                       MATR_RIGI=MATR1,
-                       MATR_MASS=MATM1,
-                       MATR_AMOR=MATA1,
-                       SANS_GROUP_NO='SRADIER',
-                       CAS_CHARGE=(
-                                 _F(NOM_CAS='CHP1',
-                                    VECT_ASSE_GENE=VECGE1,),
-                                 _F(NOM_CAS='CHP2',
-                                    VECT_ASSE_GENE=VECGE2,),
-                                   ),
-                     );
-
-MAYADYN=DEFI_MAILLAGE(DEFI_SUPER_MAILLE=(
-                          _F(MACR_ELEM=MAEL1,
-                             SUPER_MAILLE='STAT1',),
-                          _F(MACR_ELEM=MAEL2,
-                             SUPER_MAILLE='STAT2',),
-                                         ),
-                      RECO_GLOBAL=_F(TOUT='OUI',),
-                      DEFI_NOEUD=_F(TOUT='OUI',
-                                     INDEX=(1,0,1,8,),),);
-
-MAILB=ASSE_MAILLAGE(MAILLAGE_1=MAIL,
-                    MAILLAGE_2=MAYADYN,
-                    OPERATION='SOUS_STR',);
-
-
-CHMATB=AFFE_MATERIAU(MAILLAGE=MAILB,
-                     AFFE=(_F(GROUP_MA='LIGRAD',
-                              MATER=MAT_C,),
-                           _F(GROUP_MA='PSI0',
-                              MATER=BETARM,),
-                           ),
-                     );
-
-MODELB=AFFE_MODELE(MAILLAGE=MAILB,
-                   AFFE_SOUS_STRUC=_F(SUPER_MAILLE=('STAT1','STAT2',),
-                                      PHENOMENE='MECANIQUE',),
-                   AFFE=(_F(GROUP_MA='LIGRAD',
-                           PHENOMENE='MECANIQUE',
-                           MODELISATION='DIS_T',),
-                         _F(GROUP_MA='PSI0',
-                           PHENOMENE='MECANIQUE',
-                           MODELISATION='DIS_TR',),
-                        ),
-                    DISTRIBUTION=_F(METHODE='GROUP_ELEM'),
-                  );
-#
-# ----------------------------------------------------------------------
-# AFFECTATION DES CARACTERISTIQUES ELEMENTAIRES RIGI_MISS_3D
-ELEMB=AFFE_CARA_ELEM(MODELE=MODELB,
-                    DISCRET=(
-                             _F(GROUP_MA='PSI0',
-                                CARA='K_TR_D_N',
-                                VALE=(0.,0.,0.,0.,0.,0.,),),
-                             _F(GROUP_MA='PSI0',
-                                CARA='A_TR_D_N',
-                                VALE=(0.,0.,0.,0.,0.,0.,),),
-                             _F(GROUP_MA='PSI0',
-                                CARA='M_TR_D_N',
-                                VALE=(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.),),
-                             _F(GROUP_MA='LIGRAD',
-                                CARA='K_T_D_L',
-                                VALE=(1e+15,1e+15,1e+15,),),
-                             _F(GROUP_MA='LIGRAD',
-                                CARA='A_T_D_L',
-                                VALE=(0.,0.,0.,),),
-                             _F(GROUP_MA='LIGRAD',
-                                REPERE='GLOBAL',
-                                CARA='M_T_L',
-                                VALE=
-                                (0.01,0.0,0.01,0.0,0.0,0.01,0.00,0.0,0.0,0.01,
-                                 0.0,0.00,0.0,0.0,0.01,0.0,0.0,0.0,0.0,0.0,0.01,
-                                 ),
-                               ),
-                             ),
-                        );
-
-COND_LIB=AFFE_CHAR_MECA(MODELE=MODELB,
-                        LIAISON_SOLIDE=(
-                                        _F(GROUP_NO='SRADIER',),
-                                        ),
-                        );
-
-ASSEMBLAGE(MODELE=MODELB,
-                CHAM_MATER=CHMATB,
-                CARA_ELEM=ELEMB,
-                CHARGE=COND_LIB,
-                NUME_DDL=CO('NUMEROTB'),
-                MATR_ASSE=(_F(MATRICE=CO('MATRRIGB'),
-                              OPTION='RIGI_MECA',),
-                           _F(MATRICE=CO('MATRMASB'),
-                              OPTION='MASS_MECA',),),);
-
-#
-# CALCUL DES MODES SUR TAPIS DE RESSORTS:
-#---------------------------------------------
-
-MASSTOT=POST_ELEM(MODELE=MODELB,
-                  CHAM_MATER=CHMATB,
-                  CARA_ELEM=ELEMB,
-                  TITRE='MASSES',
-                  MASS_INER=(_F(TOUT='OUI',),
-                             _F(GROUP_MA=('LIGRAD'),),
-                            ),
-                  )
-
-IMPR_TABLE(TABLE=MASSTOT,);
-
-
-MODEB=CALC_MODES(MATR_RIGI=MATRRIGB,
-                 OPTION='BANDE',
-                 CALC_FREQ=_F(FREQ=(0.1,20.,30.,60.,),
-                              ),
-                 MATR_MASS=MATRMASB,
-                 )
-
-
-CHAPP=AFFE_CHAR_MECA(MODELE=MODELB,
-                      PESANTEUR= _F(GRAVITE=9.81,
-                                    DIRECTION=(0.,0.,-1.,),),);
-#
-
-
-tfin = 3.
-dt = 0.01
-TEMPL2A=DEFI_LIST_REEL(DEBUT=0.0,
-                      INTERVALLE=_F(JUSQU_A=tfin,
-                                    PAS=dt,),);
-
-
-TEMPL2B=DEFI_LIST_REEL(DEBUT=0.01,
-                      INTERVALLE=_F(JUSQU_A=tfin,
-                                    PAS=dt,),);
-
-L_INST=DEFI_LIST_REEL(DEBUT=-10.0,
-                      INTERVALLE=_F(JUSQU_A=0.0,
-                                    NOMBRE=10,),);
-#
-# EVOLUTIONS
-# ACCELEROGRAMME DE SOL ACCE
-
-
-FC1 = DEFI_FONCTION(NOM_PARA='INST',
-                    VALE=(-10., 1.0, 100.0, 1.0, ),);
+DETRUIRE(INFO=1,CONCEPT=_F(NOM=(VECAB)));
 
 ACCE1=DEFI_FONCTION(NOM_PARA='INST',
                     VALE=
@@ -657,7 +492,233 @@ ACCE1=DEFI_FONCTION(NOM_PARA='INST',
                            -0.06106,9.96,-0.08536,9.97,-0.11346,9.98,-0.1446,9.99,-0.1616,10.0,-0.17295,),);
 
 ACCE=CALC_FONCTION(COMB=_F(FONCTION=ACCE1,
-                           COEF=3.5,),);
+                           COEF=3.5,),); 
+
+dt=0.01
+
+N=301
+
+for k in range(1,N):
+    instk = k*dt
+
+    VECAB=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                          OPERATION='ASSE',
+                          NUME_DDL= NUME1,
+                          MODELE=MODELE1,
+                          ASSE=(_F(TOUT='OUI',
+                                   CHAM_GD=VECAS2,
+                                   CUMUL='OUI',
+                                   COEF_R=ACCE(instk),
+                                   ),),
+                          ); 
+
+    FORCT=CREA_RESU(reuse=FORCT, 
+                      RESULTAT=FORCT,
+                      OPERATION='AFFE',
+                      TYPE_RESU='DYNA_TRANS',
+                      MATR_RIGI=MATR1,
+                      MATR_MASS=MATM1,
+                      NOM_CHAM='DEPL',
+                      AFFE=(_F(CHAM_GD=VECAB,INST=instk,),),);
+                          
+    DETRUIRE(INFO=1,CONCEPT=_F(NOM=(VECAB)));
+
+
+MODE1=CALC_MODES( OPTION='BANDE',
+                  MATR_RIGI=MATR1,
+                  MATR_MASS=MATM1,
+                  CALC_FREQ=_F( FREQ=(3., 20., 31., 41.), ),
+                 )
+
+MODSTA1=MODE_STATIQUE(MATR_RIGI=MATR1,
+                      MATR_MASS=MATM1,
+                      MODE_STAT=_F(GROUP_NO='PSI0',
+                                   # AVEC_CMP=('DX','DY','DZ'),
+                                   TOUT_CMP='OUI',
+                                   ),
+                                  );
+
+INTERDY1=DEFI_INTERF_DYNA(  NUME_DDL=NUME1,
+            INTERFACE=_F( NOM = 'DROITE',
+                       TYPE = 'CRAIGB',
+                       GROUP_NO = ('PSI0',))
+           );
+
+BAMO1=DEFI_BASE_MODALE(RITZ=(_F(MODE_MECA=MODE1,
+                                NMAX_MODE=120,),
+                             _F(MODE_INTF=MODSTA1,
+                                NMAX_MODE=1999,),
+                             ),
+                       INTERF_DYNA=INTERDY1,
+                       NUME_REF=NUME1,);
+
+
+NDDLGE1 = NUME_DDL_GENE( BASE= BAMO1, STOCKAGE= 'PLEIN',);
+
+VECGE1=PROJ_VECT_BASE(  BASE=BAMO1,  NUME_DDL_GENE=NDDLGE1,
+                            VECT_ASSE=VECAS1, TYPE_VECT='FORC' );
+
+VECGE2=PROJ_VECT_BASE(  BASE=BAMO1,  NUME_DDL_GENE=NDDLGE1,
+                            VECT_ASSE=VECAS2, TYPE_VECT='FORC' );
+
+PROJ_BASE(BASE=BAMO1,
+              STOCKAGE='PLEIN',
+              RESU_GENE=_F(RESULTAT=CO('forpro'), TYPE_VECT='FORC',
+                           RESU=FORCT),
+             );
+
+MAEL1=MACR_ELEM_DYNA(  BASE_MODALE=BAMO1,
+                       MATR_RIGI=MATR1,
+                       MATR_MASS=MATM1,
+                       MATR_AMOR=MATA1,
+                       SANS_GROUP_NO='SRADIER',
+                       CAS_CHARGE=(
+                                 _F(NOM_CAS='CHP1',
+                                    VECT_ASSE_GENE=VECGE1,),
+                                 _F(NOM_CAS='CHP2',
+                                    #VECT_ASSE_GENE=VECGE2,),
+                                    RESU_GENE=forpro,),
+                                 _F(NOM_CAS='CHP3',
+                                    VECT_ASSE_GENE=VECGE2,),
+                                    #RESU_GENE=forpro,),
+                                   ),
+                     );
+
+MAYADYN=DEFI_MAILLAGE(DEFI_SUPER_MAILLE=(
+                          _F(MACR_ELEM=MAEL1,
+                             SUPER_MAILLE='STAT1',),
+                          _F(MACR_ELEM=MAEL2,
+                             SUPER_MAILLE='STAT2',),
+                                         ),
+                      RECO_GLOBAL=_F(TOUT='OUI',),
+                      DEFI_NOEUD=_F(TOUT='OUI',
+                                     INDEX=(1,0,1,8,),),);
+
+MAILB=ASSE_MAILLAGE(MAILLAGE_1=MAIL,
+                    MAILLAGE_2=MAYADYN,
+                    OPERATION='SOUS_STR',);
+
+
+CHMATB=AFFE_MATERIAU(MAILLAGE=MAILB,
+                     AFFE=(_F(GROUP_MA='LIGRAD',
+                              MATER=MAT_C,),
+                           _F(GROUP_MA='PSI0',
+                              MATER=BETARM,),
+                           ),
+                     );
+
+MODELB=AFFE_MODELE(MAILLAGE=MAILB,
+                   AFFE_SOUS_STRUC=_F(SUPER_MAILLE=('STAT1','STAT2',),
+                                      PHENOMENE='MECANIQUE',),
+                   AFFE=(_F(GROUP_MA='LIGRAD',
+                           PHENOMENE='MECANIQUE',
+                           MODELISATION='DIS_T',),
+                         _F(GROUP_MA='PSI0',
+                           PHENOMENE='MECANIQUE',
+                           MODELISATION='DIS_TR',),
+                        ),
+                    DISTRIBUTION=_F(METHODE='GROUP_ELEM'),
+                  );
+#
+# ----------------------------------------------------------------------
+# AFFECTATION DES CARACTERISTIQUES ELEMENTAIRES RIGI_MISS_3D
+ELEMB=AFFE_CARA_ELEM(MODELE=MODELB,
+                    DISCRET=(
+                             _F(GROUP_MA='PSI0',
+                                CARA='K_TR_D_N',
+                                VALE=(0.,0.,0.,0.,0.,0.,),),
+                             _F(GROUP_MA='PSI0',
+                                CARA='A_TR_D_N',
+                                VALE=(0.,0.,0.,0.,0.,0.,),),
+                             _F(GROUP_MA='PSI0',
+                                CARA='M_TR_D_N',
+                                VALE=(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.),),
+                             _F(GROUP_MA='LIGRAD',
+                                CARA='K_T_D_L',
+                                VALE=(1e+15,1e+15,1e+15,),),
+                             _F(GROUP_MA='LIGRAD',
+                                CARA='A_T_D_L',
+                                VALE=(0.,0.,0.,),),
+                             _F(GROUP_MA='LIGRAD',
+                                REPERE='GLOBAL',
+                                CARA='M_T_L',
+                                VALE=
+                                (0.01,0.0,0.01,0.0,0.0,0.01,0.00,0.0,0.0,0.01,
+                                 0.0,0.00,0.0,0.0,0.01,0.0,0.0,0.0,0.0,0.0,0.01,
+                                 ),
+                               ),
+                             ),
+                        );
+
+COND_LIB=AFFE_CHAR_MECA(MODELE=MODELB,
+                        LIAISON_SOLIDE=(
+                                        _F(GROUP_NO='SRADIER',),
+                                        ),
+                        );
+
+ASSEMBLAGE(MODELE=MODELB,
+                CHAM_MATER=CHMATB,
+                CARA_ELEM=ELEMB,
+                CHARGE=COND_LIB,
+                NUME_DDL=CO('NUMEROTB'),
+                MATR_ASSE=(_F(MATRICE=CO('MATRRIGB'),
+                              OPTION='RIGI_MECA',),
+                           _F(MATRICE=CO('MATRMASB'),
+                              OPTION='MASS_MECA',),),);
+
+#
+# CALCUL DES MODES SUR TAPIS DE RESSORTS:
+#---------------------------------------------
+
+MASSTOT=POST_ELEM(MODELE=MODELB,
+                  CHAM_MATER=CHMATB,
+                  CARA_ELEM=ELEMB,
+                  TITRE='MASSES',
+                  MASS_INER=(_F(TOUT='OUI',),
+                             _F(GROUP_MA=('LIGRAD'),),
+                            ),
+                  )
+
+IMPR_TABLE(TABLE=MASSTOT,);
+
+
+MODEB=CALC_MODES(MATR_RIGI=MATRRIGB,
+                 OPTION='BANDE',
+                 CALC_FREQ=_F(FREQ=(0.1,20.,30.,60.,),
+                              ),
+                 MATR_MASS=MATRMASB,
+                 )
+
+
+CHAPP=AFFE_CHAR_MECA(MODELE=MODELB,
+                      PESANTEUR= _F(GRAVITE=9.81,
+                                    DIRECTION=(0.,0.,-1.,),),);
+#
+
+
+tfin = 3.
+dt = 0.01
+TEMPL2A=DEFI_LIST_REEL(DEBUT=0.0,
+                      INTERVALLE=_F(JUSQU_A=tfin,
+                                    PAS=dt,),);
+
+
+TEMPL2B=DEFI_LIST_REEL(DEBUT=0.01,
+                      INTERVALLE=_F(JUSQU_A=tfin,
+                                    PAS=dt,),);
+
+L_INST=DEFI_LIST_REEL(DEBUT=-10.0,
+                      INTERVALLE=_F(JUSQU_A=0.0,
+                                    NOMBRE=10,),);
+#
+# EVOLUTIONS
+# ACCELEROGRAMME DE SOL ACCE
+
+
+FC1 = DEFI_FONCTION(NOM_PARA='INST',
+                    VALE=(-10., 1.0, 100.0, 1.0, ),);
+
+
 #  LECTURE DES CHARGES NODALES
 
 CHFONO=AFFE_CHAR_MECA(MODELE=MODELB,
@@ -731,7 +792,7 @@ EVOL=DYNA_NON_LINE(reuse=EVOL,MODELE=MODELB,
                       SOUS_STRUC=(
                         _F( CAS_CHARGE = 'CHP1', SUPER_MAILLE = 'STAT1',
                             ),
-                        _F( CAS_CHARGE = 'CHP2', SUPER_MAILLE = 'STAT1',
+                        _F( CAS_CHARGE = 'CHP3', SUPER_MAILLE = 'STAT1',
                             FONC_MULT=ACCE,
                             ),
                                  ),
@@ -740,6 +801,38 @@ EVOL=DYNA_NON_LINE(reuse=EVOL,MODELE=MODELB,
                                  _F(RELATION='DIS_CHOC',
                                     GROUP_MA='LIGRAD',),),
                       ETAT_INIT=_F(INST=0.0,
+                                   EVOL_NOLI=EVOL,),
+                      INCREMENT=_F(LIST_INST=DEFLIST, INST_FIN=2.7,
+                      ),
+                      SCHEMA_TEMPS=_F(SCHEMA='HHT',ALPHA=-0.0,
+                                      FORMULATION='DEPLACEMENT'),
+                      NEWTON=_F(REAC_ITER=1,),
+                      CONVERGENCE=_F(RESI_GLOB_RELA=1e-06,
+                                     ITER_GLOB_MAXI=10,),
+                      ARCHIVAGE=_F(LIST_INST=TEMPL2A,),);
+
+EVOL=DYNA_NON_LINE(reuse=EVOL,MODELE=MODELB,
+                      CHAM_MATER=CHMATB,
+                      CARA_ELEM=ELEMB,
+                      AMOR_MODAL=_F(MODE_MECA = MODEB,
+                                  REAC_VITE = 'OUI',
+                                  AMOR_REDUIT = 0.05),
+                      EXCIT=(
+                             _F(CHARGE=COND_LIB,),
+                             _F(CHARGE=CHAPP,),
+                             _F(CHARGE=CHFONO,
+                                FONC_MULT=ACCE,),),
+                      SOUS_STRUC=(
+                        _F( CAS_CHARGE = 'CHP1', SUPER_MAILLE = 'STAT1',
+                            ),
+                        _F( CAS_CHARGE = 'CHP2', SUPER_MAILLE = 'STAT1',
+                            ),
+                                 ),
+                      COMPORTEMENT=(_F(RELATION='ELAS',
+                                    TOUT='OUI',),
+                                 _F(RELATION='DIS_CHOC',
+                                    GROUP_MA='LIGRAD',),),
+                      ETAT_INIT=_F(INST=2.7,
                                    EVOL_NOLI=EVOL,),
                       INCREMENT=_F(LIST_INST=DEFLIST,
                       ),

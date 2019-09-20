@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -80,7 +80,7 @@ subroutine comp81(nomres, basmod, raidf, noma)
     real(kind=8) :: rbndyn, rbndef
 !
     character(len=8) :: nomo, blanc, lintf, k8bid, chmat, chcar, nogdsi
-    character(len=8) :: nomcas, vectas
+    character(len=8) :: nomcas, vectas, resuge
     character(len=24) :: gnex
     character(len=14) :: numddl
     character(len=19) :: nu
@@ -354,23 +354,32 @@ subroutine comp81(nomres, basmod, raidf, noma)
         call jecrec(nomres//'.LICH', 'G V K8', 'NO', 'CONTIG', 'CONSTANT',&
                     nocc)
         call jeecra(nomres//'.LICA', 'LONMAX', 2*nbmtot)
-        call jeecra(nomres//'.LICH', 'LONMAX', 2)
+        call jeecra(nomres//'.LICH', 'LONMAX', 3)
 !
         do iocc = 1, nocc
             call getvtx('CAS_CHARGE', 'NOM_CAS', iocc=iocc, scal=nomcas, nbret=n1)
             call getvid('CAS_CHARGE', 'VECT_ASSE_GENE', iocc=iocc, scal=vectas, nbret=n1)
+            if (n1 .eq. 0) then
+                call getvid('CAS_CHARGE', 'RESU_GENE', iocc=iocc, scal=resuge, nbret=n1)
+                vectas = ' '
+            else
+                resuge = ' '
+            endif
             call jecroc(jexnom(nomres//'.LICA', nomcas))
             call jecroc(jexnom(nomres//'.LICH', nomcas))
             call jenonu(jexnom(nomres//'.LICA', nomcas), icas)
             call jeveuo(jexnum(nomres//'.LICA', icas), 'E', ialica)
             call jeveuo(jexnum(nomres//'.LICH', icas), 'E', ialich)
-            call jeveuo(vectas//'           .VALE', 'L', vr=vale)
-            do ie = 1, nbmtot
-                zr(ialica+ie-1) = vale(ie)
-                zr(ialica+nbmtot+ie-1) = vale(ie)
-            end do
+            if (vectas .ne. ' ') then  
+                call jeveuo(vectas//'           .VALE', 'L', vr=vale)
+                do ie = 1, nbmtot
+                    zr(ialica+ie-1) = vale(ie)
+                    zr(ialica+nbmtot+ie-1) = vale(ie)
+                end do
+            endif
             zk8(ialich)='NON_SUIV'
             zk8(ialich+1)=vectas
+            zk8(ialich+2)=resuge
             zi(iadesm-1+7)=icas
         end do
     endif
