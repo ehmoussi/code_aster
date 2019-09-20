@@ -153,6 +153,15 @@ void exportInputVariableDefinitionToPython() {
               make_constructor(&initFactoryPtr< Neutral2InputVariableInstance, const BaseMeshPtr &,
                                                 const std::string & >));
 
+    class_< Neutral3InputVariableInstance,
+           Neutral3InputVariablePtr,
+           bases<GenericInputVariableInstance>>("Neutral3InputVariable", no_init)
+        .def("__init__",
+            make_constructor(&initFactoryPtr<Neutral3InputVariableInstance, const BaseMeshPtr&>))
+        .def("__init__",
+            make_constructor( &initFactoryPtr<Neutral3InputVariableInstance, const BaseMeshPtr&,
+                                              const std::string&>));
+
     class_< ConcreteDryingInputVariableInstance, ConcreteDryingInputVariablePtr,
             bases< GenericInputVariableInstance > >( "ConcreteDryingInputVariable", no_init )
         .def( "__init__",
@@ -269,6 +278,13 @@ void exportInputVariableDefinitionToPython() {
                 Neutral2InputVariablePtr > );
     c3.def( "addInputVariableOnElement",
             &InputVariableOnMeshInstance::addInputVariableOnElement< Neutral2InputVariablePtr > );
+    c3.def("addInputVariableOnAllMesh",
+           &InputVariableOnMeshInstance::addInputVariableOnAllMesh< Neutral3InputVariablePtr> );
+    c3.def(
+      "addInputVariableOnGroupOfElements",
+      &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< Neutral3InputVariablePtr > );
+    c3.def("addInputVariableOnElement",
+           &InputVariableOnMeshInstance::addInputVariableOnElement< Neutral3InputVariablePtr > );
     c3.def(
         "addInputVariableOnAllMesh",
         &InputVariableOnMeshInstance::addInputVariableOnAllMesh< ConcreteDryingInputVariablePtr > );
