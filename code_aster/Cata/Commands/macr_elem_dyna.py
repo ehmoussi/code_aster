@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,8 +68,9 @@ MACR_ELEM_DYNA=OPER(nom="MACR_ELEM_DYNA",op=  81,sd_prod=macr_elem_dyna,
              AMOR_SOL        =SIMP(statut='f',typ='R',defaut=0.E+0 ),
              MATR_IMPE_INIT  =SIMP(statut='f',typ=matr_asse_gene_c ),
            ),
-         CAS_CHARGE      =FACT(statut='f',max='**',
+         CAS_CHARGE      =FACT(statut='f',max='**',regles=(UN_PARMI('VECT_ASSE_GENE','RESU_GENE'),),
            NOM_CAS         =SIMP(statut='o',typ='TXM'),
-           VECT_ASSE_GENE  =SIMP(statut='o',typ=vect_asse_gene ),
+           VECT_ASSE_GENE  =SIMP(statut='f',typ=vect_asse_gene ),
+           RESU_GENE       =SIMP(statut='f',typ=tran_gene ),
          ),
 )  ;

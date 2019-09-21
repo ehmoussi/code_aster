@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -249,7 +249,7 @@ subroutine assvss(base, vec, vecel, nu, vecpro,&
         call dismoi('NOM_MAILLA', mo, 'MODELE', repk=ma)
         call jeveuo(mo//'.MODELE    .SSSA', 'L', vi=sssa)
         call ssvalv('DEBUT', nomcas, mo, ma, 0,&
-                    idresl, ncmpel)
+                    idresl, ncmpel, instap)
         call jelira(vecel//'.RELC', 'NUTIOC', nbchar)
         call jeveuo(fomult, 'L', jfonct)
 !
@@ -269,7 +269,7 @@ subroutine assvss(base, vec, vecel, nu, vecpro,&
                 call jeveuo(jexnum(ma//'.SUPMAIL', ima), 'L', iamail)
                 call jelira(jexnum(ma//'.SUPMAIL', ima), 'LONMAX', nnoe)
                 call ssvalv(' ', nomcas, mo, ma, ima,&
-                            idresl, ncmpel)
+                            idresl, ncmpel, instap)
                 nomacr=vnomacr(ima)
                 call dismoi('NOM_NUME_DDL', nomacr, 'MACR_ELEM_STAT', repk=num2)
                 call jeveuo(nomacr//'.CONX', 'L', vi=conx)
@@ -316,7 +316,7 @@ subroutine assvss(base, vec, vecel, nu, vecpro,&
             end do
         end do
         call ssvalv('FIN', nomcas, mo, ma, 0,&
-                    idresl, ncmpel)
+                    idresl, ncmpel, instap)
     endif
 !
 !

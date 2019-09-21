@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,6 +55,7 @@ subroutine calimc(chargz)
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/rsorac.h"
+#include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
@@ -86,7 +87,7 @@ subroutine calimc(chargz)
     integer :: j3, jj,   k,  n2
     integer :: nbec, nbmdef, nbmdyn, nbmode(1), nbnde2, nbndef, nbndyn
     integer :: nbnoe, nbntot, nbterm, nec, nec2, neq, nliai, nueq
-    integer :: nmc
+    integer :: nmc, nbmdy2
     real(kind=8) :: beta, rbid, vale, zero
     complex(kind=8), pointer :: coec(:) => null()
     real(kind=8), pointer :: coer(:) => null()
@@ -170,9 +171,13 @@ subroutine calimc(chargz)
         call jeveuo(lintf//'.IDC_DEFO', 'L', vi=idc_defo)
 ! On recupere le nbre de modes statiques dans la base
         call dismoi('NB_MODES_STA', basemo, 'RESULTAT', repi=nbmdef)
+        call dismoi('NB_MODES_DYN', basemo, 'RESULTAT', repi=nbmdy2)
         call jelira(macrel//'.LINO', 'LONMAX', nbntot)
         nbmdyn = nbmode(1)-nbmdef
         nec = nbmode(1)/nbntot
+        if (nec .eq. 0) then
+            call utmess('F', 'ALGORITH_52')
+        endif
         nbndyn = nbmdyn/nec
         nbndef = nbntot-nbndyn
         nbnde2 = nbmdef/nec

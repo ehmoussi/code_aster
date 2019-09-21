@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ subroutine pemica(champ, long, vr, nbmail, nummai,&
     character(len=19) :: champ2, ligrel
     aster_logical :: first
     real(kind=8) :: ar(6), br(6), vecpro(3, 3), valpro(3), tol, toldyn
-    real(kind=8) :: v1(3), v2(3), v3(3), jacaux(3), ixpr2, iypr2
+    real(kind=8) :: v1(3), v2(3), v3(3), jacaux(6), ixpr2, iypr2
 !     ------------------------------------------------------------------
 !-----------------------------------------------------------------------
     integer :: i, ibid, icage, icoef, idecgr, iel, im
@@ -72,6 +72,7 @@ subroutine pemica(champ, long, vr, nbmail, nummai,&
     real(kind=8), pointer :: celv(:) => null()
 !-----------------------------------------------------------------------
     call jemarq()
+    
     champ2 = champ
     rddg = r8rddg()
     epsi = 1.d-12
@@ -192,6 +193,14 @@ subroutine pemica(champ, long, vr, nbmail, nummai,&
         pgz = vr(4) - orig(3)
     endif
 !
+!       --- INERTIES DE LA STRUCTURE --- 
+!           ixx = celv(idecgr+(k-1)*longt+4)
+!           Iyy = celv(idecgr+(k-1)*longt+5)
+!           Izz = celv(idecgr+(k-1)*longt+6)
+!           Ixy = celv(idecgr+(k-1)*longt+7)
+!           Ixz = celv(idecgr+(k-1)*longt+8)
+!           Iyz = celv(idecgr+(k-1)*longt+9)
+!
     if (nbmail .le. 0) then
         do 202 j = 1, nbgr
             mode=celd(celd(4+j) +2)
@@ -205,28 +214,28 @@ subroutine pemica(champ, long, vr, nbmail, nummai,&
                 dx = celv(idecgr+(k-1)*longt+1) - vr(2)
                 dy = celv(idecgr+(k-1)*longt+2) - vr(3)
                 dz = celv(idecgr+(k-1)*longt+3) - vr(4)
-!
-!              --- INERTIES DE LA STRUCTURE ---
-                ixx = celv(idecgr+(k-1)*longt+4)
-                iyy = celv(idecgr+(k-1)*longt+5)
-                izz = celv(idecgr+(k-1)*longt+6)
-                ixy = celv(idecgr+(k-1)*longt+7)
-                ixz = celv(idecgr+(k-1)*longt+8)
-                iyz = celv(idecgr+(k-1)*longt+9)
-                vr(5) = vr(5) + ixx + masse*(dy*dy + dz*dz)
-                vr(6) = vr(6) + iyy + masse*(dx*dx + dz*dz)
-                vr(7) = vr(7) + izz + masse*(dx*dx + dy*dy)
-                vr(8) = vr(8) + ixy + masse*dx*dy
-                vr(9) = vr(9) + ixz + masse*dx*dz
-                vr(10) = vr(10) + iyz + masse*dy*dz
+!                
+                vr(5) = vr(5)   + celv(idecgr+(k-1)*longt+4) + masse*(dy*dy + dz*dz)
+                vr(6) = vr(6)   + celv(idecgr+(k-1)*longt+5) + masse*(dx*dx + dz*dz)
+                vr(7) = vr(7)   + celv(idecgr+(k-1)*longt+6) + masse*(dx*dx + dy*dy)
+                vr(8) = vr(8)   + celv(idecgr+(k-1)*longt+7) + masse*dx*dy
+                vr(9) = vr(9)   + celv(idecgr+(k-1)*longt+8) + masse*dx*dz
+                vr(10) = vr(10) + celv(idecgr+(k-1)*longt+9) + masse*dy*dz
+                
                 if (icage .ne. 0) then
                     ixpr2 = celv(idecgr+(k-1)*longt+10)
                     iypr2 = celv(idecgr+(k-1)*longt+11)
+                    ixx = celv(idecgr+(k-1)*longt+4)
+                    iyy = celv(idecgr+(k-1)*longt+5)
+                    izz = celv(idecgr+(k-1)*longt+6)
+                    ixy = celv(idecgr+(k-1)*longt+7)
+                    ixz = celv(idecgr+(k-1)*longt+8)
+                    iyz = celv(idecgr+(k-1)*longt+9)
                     ASSERT(long.ge.27)
-                    vr(26) = vr(26) + ixpr2 + dy*(3.0d0*ixx+iyy) + masse*dy*(dx*dx+dy*dy) + 2.0d0&
-                             &*dx*ixy
-                    vr(27) = vr(27) + iypr2 + dx*(3.0d0*iyy+ixx) + masse*dx*(dx*dx+dy*dy) + 2.0d0&
-                             &*dy*ixy
+                    vr(26) = vr(26) + ixpr2 + dy*(3.0d0*ixx+iyy) + masse*dy*(dx*dx+dy*dy) &
+                                    + 2.0d0*dx*ixy
+                    vr(27) = vr(27) + iypr2 + dx*(3.0d0*iyy+ixx) + masse*dx*(dx*dx+dy*dy) &
+                                    + 2.0d0*dy*ixy
                 endif
 !
 204         continue
@@ -250,27 +259,26 @@ subroutine pemica(champ, long, vr, nbmail, nummai,&
                     dy = celv(idecgr+(k-1)*longt+2) - vr(3)
                     dz = celv(idecgr+(k-1)*longt+3) - vr(4)
 !
-!                 --- INERTIES DE LA STRUCTURE ---
-                    ixx = celv(idecgr+(k-1)*longt+4)
-                    iyy = celv(idecgr+(k-1)*longt+5)
-                    izz = celv(idecgr+(k-1)*longt+6)
-                    ixy = celv(idecgr+(k-1)*longt+7)
-                    ixz = celv(idecgr+(k-1)*longt+8)
-                    iyz = celv(idecgr+(k-1)*longt+9)
-                    vr(5) = vr(5) + ixx + masse*(dy*dy + dz*dz)
-                    vr(6) = vr(6) + iyy + masse*(dx*dx + dz*dz)
-                    vr(7) = vr(7) + izz + masse*(dx*dx + dy*dy)
-                    vr(8) = vr(8) + ixy + masse*dx*dy
-                    vr(9) = vr(9) + ixz + masse*dx*dz
-                    vr(10) = vr(10) + iyz + masse*dy*dz
+                    vr(5)  = vr(5)  + celv(idecgr+(k-1)*longt+4) + masse*(dy*dy + dz*dz)
+                    vr(6)  = vr(6)  + celv(idecgr+(k-1)*longt+5) + masse*(dx*dx + dz*dz)
+                    vr(7)  = vr(7)  + celv(idecgr+(k-1)*longt+6) + masse*(dx*dx + dy*dy)
+                    vr(8)  = vr(8)  + celv(idecgr+(k-1)*longt+7) + masse*dx*dy
+                    vr(9)  = vr(9)  + celv(idecgr+(k-1)*longt+8) + masse*dx*dz
+                    vr(10) = vr(10) + celv(idecgr+(k-1)*longt+9) + masse*dy*dz
                     if (icage .ne. 0) then
                         ixpr2 = celv(idecgr+(k-1)*longt+10)
                         iypr2 = celv(idecgr+(k-1)*longt+11)
+                        ixx = celv(idecgr+(k-1)*longt+4)
+                        iyy = celv(idecgr+(k-1)*longt+5)
+                        izz = celv(idecgr+(k-1)*longt+6)
+                        ixy = celv(idecgr+(k-1)*longt+7)
+                        ixz = celv(idecgr+(k-1)*longt+8)
+                        iyz = celv(idecgr+(k-1)*longt+9)
                         ASSERT(long.ge.27)
-                        vr(26) = vr(26) + ixpr2 + dy*(3.0d0*ixx+iyy) + masse*dy*(dx*dx+dy*dy) + 2&
-                                 &.0d0*dx*ixy
-                        vr(27) = vr(27) + iypr2 + dx*(3.0d0*iyy+ixx) + masse*dx*(dx*dx+dy*dy) + 2&
-                                 &.0d0*dy*ixy
+                        vr(26) = vr(26) + ixpr2 + dy*(3.0d0*ixx+iyy) + masse*dy*(dx*dx+dy*dy) &
+                                        + 2.0d0*dx*ixy
+                        vr(27) = vr(27) + iypr2 + dx*(3.0d0*iyy+ixx) + masse*dx*(dx*dx+dy*dy) &
+                                        + 2.0d0*dy*ixy
                     endif
                     goto 210
 214             continue
@@ -338,7 +346,7 @@ subroutine pemica(champ, long, vr, nbmail, nummai,&
         v3(1) = vecpro(1,2)
         v3(2) = vecpro(2,2)
         v3(3) = vecpro(3,2)
-        call orien2(v1, v2, v3, angl)
+         call orien2(v1, v2, v3, angl)
         vr(11) = valpro(1)
         vr(12) = valpro(2)
         vr(13) = valpro(3)

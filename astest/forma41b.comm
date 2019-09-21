@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#  MODELISATION B : CALCUL CHAINE THERMO-HYDRATATION-SECHAGE-MECANIQUE
+#  MODELISATION A : CALCUL ELASTIQUE
+#--------------------------------------------------------
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'));
 
 #--------------------------------------------------------------
@@ -35,17 +37,18 @@ MA=DEFI_GROUP(reuse =MA,
                              _F(OPTION='NOEUD_ORDO',
                                 NOM='COUPE',
                                 GROUP_MA='COUPE',),
-                             _F(OPTION='NOEUD_ORDO',
+              _F(OPTION='NOEUD_ORDO',
                                 NOM='COUPE2',
                                 GROUP_MA='COUPE2',),
-                             _F(OPTION='NOEUD_ORDO',
+              _F(OPTION='NOEUD_ORDO',
                                 NOM='LONH',
                                 GROUP_MA='LONH',),
-                             _F(OPTION='NOEUD_ORDO',
+              _F(OPTION='NOEUD_ORDO',
                                 NOM='LONB',
                                 GROUP_MA='LONB',),
                              _F(GROUP_MA='SYME_X',),
                              _F(GROUP_MA='SYME_Z',),),);
+
 
 MALINE=CREA_MAILLAGE(MAILLAGE=MA,
                      QUAD_LINE=_F(TOUT='OUI',),);
@@ -54,6 +57,56 @@ MODTHER=AFFE_MODELE(MAILLAGE=MALINE,
                     AFFE=_F(GROUP_MA=('BETON','DEVANT','COTE','BAS','HAUT',),
                             PHENOMENE='THERMIQUE',
                             MODELISATION='3D_DIAG',),);
+
+MO=AFFE_MODELE(MAILLAGE=MA,
+               AFFE=(_F(GROUP_MA=('BETON','SYME_Z','SYME_X','FORCE',),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='3D',),
+                     _F(GROUP_MA=('HA32','HA8',),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='BARRE',),),);
+
+MO2=AFFE_MODELE(MAILLAGE=MA,
+               AFFE=(_F(GROUP_MA=('BETON','SYME_Z','SYME_X','FORCE',),
+                        PHENOMENE='THERMIQUE',
+                        MODELISATION='3D',),),);
+
+#--------------------------------------------------------------
+# 2- DEFINITION DES PARAMETRES MATERIAUX 
+#  ET CARACTERISTIQUES GEOMETRIQUES DES ELEMENTS DE STRUCTURE
+#--------------------------------------------------------------
+# MECANIQUE
+CARAMECA=AFFE_CARA_ELEM(MODELE=MO,
+                        BARRE=(_F(GROUP_MA='HA32',
+                                  SECTION='CERCLE',
+                                  CARA='R',
+                                  VALE=1.60000E-2,),
+                               _F(GROUP_MA='HA8',
+                                  SECTION='CERCLE',
+                                  CARA='R',
+                                  VALE=0.40000E-2,),),);
+
+YOUNG=DEFI_FONCTION(NOM_PARA='TEMP',VALE=(0,30E10,
+                                          100,40E10,
+                          ),PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+POISSON=DEFI_CONSTANTE(VALE=0.2,);
+
+DILAT=DEFI_CONSTANTE(VALE=1.2E-6,);
+
+RHOF=DEFI_CONSTANTE(VALE = 2400.,)
+
+BETON=DEFI_MATERIAU(ELAS_FO=_F(E=YOUNG,
+                               NU=POISSON,
+                               RHO=RHOF,
+                               TEMP_DEF_ALPHA=20,
+                               ALPHA=DILAT,
+                               B_ENDOGE=9E-5,
+                               K_DESSIC=8E-6,),);
+
+ACIER=DEFI_MATERIAU(ELAS=_F(E=200000.E+6,
+                            NU=0.0,),);
+
 #--------------------------------
 #THERMIQUE
 #CAPACITE THERMIQUE BETON ET BOIS J/m3.deg C
@@ -122,6 +175,7 @@ AFF=CALC_FONC_INTERP(FONCTION=AA,
                      LIST_PARA_FONC=LL,
                      PROL_DROITE_FONC='CONSTANT',
                      PROL_GAUCHE_FONC='EXCLU',);
+
 #DEFINITION DE LA CONDUCTIVITE ET DE L ENTHALPIE
 
 CONDBET=DEFI_CONSTANTE(VALE=LAMBDA,);
@@ -147,12 +201,19 @@ THBET=DEFI_MATERIAU(THER_HYDR=_F(LAMBDA=CONDBET,
                                     QSR_K=Ar,
                                     TEMP_0_C=20,),);
 
+
+
+# CALCUL DE THERMO-HYDRATATION
+
 MABETTH=AFFE_MATERIAU(MAILLAGE=MALINE,
                       AFFE=_F(GROUP_MA='BETON',
                               MATER=THBET,),);
 
 LISTARCH=DEFI_LIST_REEL(DEBUT=0,
-                        INTERVALLE=(_F(JUSQU_A=864000,
+                        INTERVALLE=(
+                                     #_F(JUSQU_A=24*2*3600,
+                                      # NOMBRE=2,),   # mériterait d'être stocké (mais change val ref contrainte)
+                                    _F(JUSQU_A=864000,
                                        NOMBRE=1,),
                                     _F(JUSQU_A=2592000,
                                        NOMBRE=10,),
@@ -167,8 +228,9 @@ LISTINST=DEFI_LIST_REEL(DEBUT=0,
                                        NOMBRE=10,),
                                     _F(JUSQU_A=8640000,
                                        NOMBRE=5,),),);
+
 TEMP_EXT=DEFI_FONCTION(NOM_PARA='INST',VALE=(864000,20,
-                             2592000,40,
+                                             2592000,40,
                              ),PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
 TEMP20=DEFI_CONSTANTE(VALE=20,);
@@ -191,226 +253,7 @@ RESUTH = CALC_CHAMP(reuse= RESUTH,
                     RESULTAT = RESUTH,
                     THERMIQUE='HYDR_NOEU' )
 #----------------------------------------
-#SECHAGE
 
-CHARSECH=AFFE_CHAR_THER(MODELE=MODTHER,
-                        TEMP_IMPO=(_F(GROUP_MA='HAUT',
-                                      TEMP=70,),
-                                   _F(GROUP_MA='BAS',
-                                      TEMP=50,),),);
-
-RESUSEC=THER_NON_LINE(MODELE=MODTHER,
-                      CHAM_MATER=MABETTH,
-                      COMPORTEMENT=_F(RELATION='SECH_GRANGER',),
-                      EVOL_THER_SECH=RESUTH,
-                      EXCIT=_F(CHARGE=CHARSECH,),
-                      INCREMENT=_F(LIST_INST=LISTARCH,),
-                      ETAT_INIT=_F(VALE=120,),);
-
-#----------------------------------
-#MECANIQUE
-
-MO=AFFE_MODELE(MAILLAGE=MA,
-               AFFE=(_F(GROUP_MA=('BETON','SYME_Z','SYME_X','FORCE',),
-                        PHENOMENE='MECANIQUE',
-                        MODELISATION='3D',),
-                     _F(GROUP_MA=('HA32','HA8',),
-                        PHENOMENE='MECANIQUE',
-                        MODELISATION='BARRE',),),);
-MO2=AFFE_MODELE(MAILLAGE=MA,
-               AFFE=(_F(GROUP_MA=('BETON','SYME_Z','SYME_X','FORCE',),
-                        PHENOMENE='THERMIQUE',
-                        MODELISATION='3D',),),);
-#--------------------------------------------------------------
-# 2- DEFINITION DES PARAMETRES MATERIAUX
-#  ET CARACTERISTIQUES GEOMETRIQUES DES ELEMENTS DE STRUCTURE
-#--------------------------------------------------------------
-
-CARAMECA=AFFE_CARA_ELEM(MODELE=MO,
-                        BARRE=(_F(GROUP_MA='HA32',
-                                  SECTION='CERCLE',
-                                  CARA='R',
-                                  VALE=1.60000E-2,),
-                               _F(GROUP_MA='HA8',
-                                  SECTION='CERCLE',
-                                  CARA='R',
-                                  VALE=0.40000E-2,),),);
-
-YOUNG=DEFI_FONCTION(NOM_PARA='TEMP',VALE=(0,30E10,
-                          100,40E10,
-                          ),PROL_DROITE='LINEAIRE',PROL_GAUCHE='LINEAIRE',);
-
-POISSON=DEFI_CONSTANTE(VALE=0.2,);
-
-DILAT=DEFI_CONSTANTE(VALE=1.2E-6,);
-RHOF=DEFI_CONSTANTE(VALE = 2400.,)
-
-BETON=DEFI_MATERIAU(ELAS_FO=_F(E=YOUNG,
-                               NU=POISSON,
-                               RHO=RHOF,
-                               TEMP_DEF_ALPHA=20,
-                               ALPHA=DILAT,
-                               B_ENDOGE=9E-5,
-                               K_DESSIC=8E-6,),);
-
-ACIER=DEFI_MATERIAU(ELAS=_F(E=200000.E+6,
-                            NU=0.3,),);
-
-SECPROJ=PROJ_CHAMP(PROJECTION='OUI',
-                   RESULTAT=RESUSEC,
-                   MAILLAGE_1=MALINE,
-                   MAILLAGE_2=MA,);
-
-THPROJ=PROJ_CHAMP(PROJECTION='OUI',
-                  RESULTAT=RESUTH,
-                  MODELE_1=MODTHER,
-                  MODELE_2=MO2,);
-
-
-CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
-                    AFFE=(_F(GROUP_MA='BETON',
-                             MATER=BETON,),
-                          _F(GROUP_MA=('HA32','HA8',),
-                             MATER=ACIER,),),
-                    AFFE_VARC=(_F(GROUP_MA='BETON',
-                                  NOM_VARC='TEMP',
-                                  EVOL=THPROJ,
-                                  VALE_REF=20,),
-                               _F(GROUP_MA='BETON',
-                                  NOM_VARC='HYDR',
-                                  EVOL=THPROJ,),
-                               _F(GROUP_MA='BETON',
-                                  NOM_VARC='SECH',
-                                  EVOL=SECPROJ,
-                                  VALE_REF=120,),),);
-
-#--------------------------------------------------------------
-# 3- DEFINITION DES CHARGEMENTS
-#--------------------------------------------------------------
-
-CLIM=AFFE_CHAR_MECA(MODELE=MO,
-                    DDL_IMPO=(_F(GROUP_MA='APPUI',
-                                 DY=0.,),
-                              _F(GROUP_MA='SYME_X',
-                                 DX=0.,),
-                              _F(GROUP_MA='SYME_Z',
-                                 DZ=0.,),),);
-
-CHARGEF=AFFE_CHAR_MECA(MODELE=MO,
-                       FORCE_ARETE=_F(GROUP_MA='FORCE',
-                                      FY=-38400.,),);
-
-#--------------------------------------------------------------
-# 4- RESOLUTION DU PROBLEME
-#--------------------------------------------------------------
-
-L_INST=DEFI_LIST_REEL(VALE=(0.,864000.,2592000.,4320000.,8640000.,),);
-
-RESUSTA=MECA_STATIQUE(MODELE=MO,
-                      CHAM_MATER=CHMAT,
-                      CARA_ELEM=CARAMECA,
-                      EXCIT=_F(CHARGE=CLIM,),
-                      LIST_INST=L_INST,
-                      INST_FIN=4320000,);
-
-RESUSTA=MECA_STATIQUE(reuse =RESUSTA,
-                      RESULTAT=RESUSTA,
-                      MODELE=MO,
-                      CHAM_MATER=CHMAT,
-                      CARA_ELEM=CARAMECA,
-                      EXCIT=(_F(CHARGE=CLIM,),
-                             _F(CHARGE=CHARGEF,),),
-                      LIST_INST=L_INST,);
-
-RESUSTA=CALC_CHAMP(reuse =RESUSTA,
-                   RESULTAT=RESUSTA,
-                   GROUP_MA='BETON',
-                   CONTRAINTE=('SIEF_ELNO','SIEF_NOEU',),
-                   DEFORMATION=('EPSI_NOEU','EPVC_NOEU','EPME_ELNO',),
-                   FORCE='FORC_NODA',);
-
-IMPR_RESU(FORMAT='MED',
-          RESU=(_F(RESULTAT=RESUSTA,),
-                _F(RESULTAT=SECPROJ,),
-                _F(RESULTAT=THPROJ,),),);
-
-IMPR_RESU(FORMAT='MED',
-          RESU=(_F(RESULTAT=RESUTH,),
-                _F(RESULTAT=RESUSEC,),),);
-
-CONTG=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
-                              INTITULE='sixx',
-                              RESULTAT=RESUSTA,
-                              NOM_CHAM='SIEF_ELNO',
-                              NUME_ORDRE=5,
-                              GROUP_NO='G',
-                              NOM_CMP='SIXX',),);
-
-CONTC=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
-                              INTITULE='sixx',
-                              RESULTAT=RESUSTA,
-                              NOM_CHAM='SIEF_ELNO',
-                              NUME_ORDRE=5,
-                              GROUP_NO='C',
-                              NOM_CMP='SIXX',),);
-
-VC_G=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
-                             INTITULE='epvc',
-                             RESULTAT=RESUSTA,
-                             NOM_CHAM='EPVC_NOEU',
-                             NUME_ORDRE=5,
-                             GROUP_NO='G',
-                             NOM_CMP=('EPTHER_L','EPSECH','EPHYDR'),),);
-
-VC_C=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
-                             INTITULE='epvc',
-                             RESULTAT=RESUSTA,
-                             NOM_CHAM='EPVC_NOEU',
-                             NUME_ORDRE=5,
-                             GROUP_NO='C',
-                             NOM_CMP=('EPTHER_L','EPSECH','EPHYDR'),),);
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-2,
-           VALE_CALC=-4.0E-04,
-           VALE_REFE=-4.0E-4,
-           NOM_PARA='EPSECH',
-           TABLE=VC_C,)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-2,
-           VALE_CALC= 2.40000000E-05,
-           VALE_REFE=2.4000000000000001E-05,
-           NOM_PARA='EPTHER_L',
-           TABLE=VC_C,)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.040000000000000001,
-           VALE_CALC=-8.28252451E-05,
-           VALE_REFE=-8.5500000000000005E-05,
-           NOM_PARA='EPHYDR',
-           TABLE=VC_C,)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-2,
-           VALE_CALC=-5.60000000E-04,
-           VALE_REFE=-5.5999999999999995E-4,
-           NOM_PARA='EPSECH',
-           TABLE=VC_G,)
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=0.040000000000000001,
-           VALE_CALC=-8.28232651E-05,
-           VALE_REFE=-8.5500000000000005E-05,
-           NOM_PARA='EPHYDR',
-           TABLE=VC_G,)
-
-TEST_TABLE(REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-2,
-           VALE_CALC= 1.72748150E+08,
-           VALE_REFE=1.74470000E8,
-           NOM_PARA='SIXX',
-           TABLE=CONTG,)
 
 
 FIN();
