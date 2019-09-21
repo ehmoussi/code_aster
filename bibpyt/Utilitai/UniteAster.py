@@ -47,8 +47,7 @@ class UniteAster:
             unit = ul.valeur
         except AttributeError:
             unit = int(ul)
-        logical_unit = LogicalUnitFile.from_number(unit)
-        return logical_unit.filename if logical_unit else "fort.{}".format(unit)
+        return LogicalUnitFile.filename_from_unit(unit)
 
     def Unite(self, nom):
         """Retourne l'unité logique associée au fichier `nom`.

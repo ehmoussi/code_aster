@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine ssvalv(statut, nomcas, mo, ma, isma,&
-                  idresl, long)
+                  idresl, long, instap)
 !
 ! INSPI  SSVALM
     implicit none
@@ -29,6 +29,7 @@ subroutine ssvalv(statut, nomcas, mo, ma, isma,&
 #include "asterfort/dismoi.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
+#include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/matrot.h"
@@ -42,6 +43,7 @@ subroutine ssvalv(statut, nomcas, mo, ma, isma,&
     character(len=*) :: statut
     character(len=8) :: nomcas
     integer :: isma, idresl
+    real(kind=8), optional :: instap
 ! ----------------------------------------------------------------------
 !     BUT:
 !
@@ -85,6 +87,9 @@ subroutine ssvalv(statut, nomcas, mo, ma, isma,&
     integer :: i, iadesm, ialica, ialich, ianmcr
     integer :: idres2, iret, j, jsma, long, nbsma
     integer :: nbssa, nddle, nddli, nddlt, nmxval
+    integer :: nbinst, jresu, jinst
+    character(len=19) :: resuge
+    real(kind=8) :: inst1, inst2, coecor
     real(kind=8), pointer :: para_r(:) => null()
     integer, pointer :: sssa(:) => null()
 !-----------------------------------------------------------------------
@@ -148,10 +153,38 @@ subroutine ssvalv(statut, nomcas, mo, ma, isma,&
         call jeveuo(jexnom(nomacr//'.LICA', nomcas), 'L', ialica)
 !
         if (rota(1:3) .eq. 'NON') then
+            if (zk8(ialich-1+2) .eq. ' ' .and. present(instap)) then
+                resuge=zk8(ialich-1+3)
+                call jelira(resuge//'.DISC', 'LONMAX', nbinst)
+                call jeveuo(resuge//'.DISC', 'L', jinst)
+                call jeveuo(resuge//'.DEPL', 'L', jresu)
+                do j = 1, nbinst
+                    if ((instap-1.e-12) .le. zr(jinst+j-1)) goto 10
+                end do
+10              continue
+                if (j.eq.1) then
+                    do i = nddli+1, nddlt
+                        zr(idresl-1+i)= zr(jresu-1+i)
+                    end do
+                elseif (j .le. nbinst) then
+                    inst1 = zr(jinst+j-2)
+                    inst2 = zr(jinst+j-1)
+                    coecor = (instap-inst1)/(inst2-inst1)
+                    do i = nddli+1, nddlt
+                        zr(idresl-1+i)= coecor*zr(jresu-1+(j-1)*nddle+i)&
+                                       +(1.d0-coecor)*zr(jresu-1+(j-2)*nddle+i)
+                    end do
+                else
+                    do i = nddli+1, nddlt
+                        zr(idresl-1+i)= zr(jresu-1+(nbinst-1)*nddle+i)
+                    end do
+                endif 
+            else
 !         RECOPIE DU VECTEUR DEJA CONDENSE :
-            do i = nddli+1, nddlt
-                zr(idresl-1+i)= zr(ialica-1+nddlt+i)
-            end do
+                do i = nddli+1, nddlt
+                    zr(idresl-1+i)= zr(ialica-1+nddlt+i)
+                end do          
+            endif
 !
         else if (rota(1:3).eq.'OUI') then
 !         ROTATION:

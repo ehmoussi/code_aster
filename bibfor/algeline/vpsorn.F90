@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -203,7 +203,7 @@ subroutine vpsorn(lmasse, ldynfa, nbeq, nbvect, nfreq,&
     else if (info.eq.-9) then
         call utmess('F', 'ALGELINE3_75')
     else if ((info.eq.-9999).and.(niv.ge.1)) then
-        call utmess('I', 'ALGELINE6_91')
+        call utmess('F', 'ALGELINE6_91')
     else if (info.lt.0) then
         vali (1) = info
         call utmess('F', 'ALGELINE5_48', si=vali(1))

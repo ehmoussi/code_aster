@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm forma41a.comm D 1
-F libr forma41a.20 D 20
+F comm forma41a.com1 D 1
+F mmed forma41a.mmed D 20

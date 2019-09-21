@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),); #IMPR_MACRO='OUI');
+DEBUT(PAR_LOT='NON', CODE=_F(NIV_PUB_WEB='INTERNET',),); #IMPR_MACRO='OUI');
 
 #PRE_GIBI(UNITE_MAILLAGE=22);
 
@@ -292,15 +292,16 @@ LBEW, LBNS = F_FONC()
 
 #N=200
 #N=128
-N=64
+N=64.
 dt=0.05
 TFIN=N*dt
+FMAX=0.5/dt
 
 linst = DEFI_LIST_REEL ( DEBUT = 0.,
                           INTERVALLE = (
                                       _F(
-                                         JUSQU_A = (N-1)*dt,
-                                         PAS=1*dt,
+                                         JUSQU_A = (N-1.)*dt,
+                                         PAS=1.*dt,
                                          ),
                                        ),
                            );
@@ -313,35 +314,69 @@ ACCEY=CALC_FONCTION(COMB=_F(FONCTION=LBEW,
                                COEF=1.5,),
                        LIST_PARA=linst,);
 
-vitex=CALC_FONCTION(INTEGRE=_F(FONCTION=ACCEX,));
+df=1./TFIN
 
-deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=vitex,));
+fc0=0.05
+                     
+accx0=CALC_FONCTION(CORR_ACCE=_F(  FONCTION = ACCEX, FREQ_FILTRE=fc0, METHODE="FILTRAGE") )
+accy0=CALC_FONCTION(CORR_ACCE=_F(  FONCTION = ACCEY, FREQ_FILTRE=fc0, METHODE="FILTRAGE") )
+                      
+XFF0=CALC_FONCTION( FFT=_F( FONCTION = accx0, METHODE='COMPLET',) );
+YFF0=CALC_FONCTION( FFT=_F( FONCTION = accy0, METHODE='COMPLET',) );
 
-deplxF = FORMULE(VALE='deplx0(INST)-(INST*deplx0(TFIN-dt)/(TFIN-dt))',
-                 deplx0=deplx0,
-                 TFIN=TFIN,
-                 dt=dt,
-                 NOM_PARA='INST',)
+fc = 31.0*df
 
-deplx=CALC_FONC_INTERP(FONCTION=deplxF, NOM_PARA = 'INST',
+lfreq= DEFI_LIST_REEL ( DEBUT = 0.,
+                        INTERVALLE = _F(JUSQU_A = FMAX-df,
+                                        PAS = df,),
+                      );
+                      
+lfreq1= DEFI_LIST_REEL ( DEBUT = df,
+                        INTERVALLE = _F(JUSQU_A = FMAX-df,
+                                        PAS = df,),
+                      );
+                      
+pi=3.141592654
+
+invAF=FORMULE(NOM_PARA='FREQ',pi=pi,
+            VALE_C='(-1.0-0j)/((2.0*pi*FREQ)*(2.0*pi*FREQ))')
+
+invA=CALC_FONC_INTERP(FONCTION=invAF, NOM_PARA = 'FREQ',
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
-                        LIST_PARA=linst);
+                        LIST_PARA=lfreq1); 
+                      
+FILTRE = DEFI_FONCTION(NOM_PARA='FREQ',
+                       VALE_C=(0., 0., 0., df, 1., 0., fc, 1., 0., (fc+df), 0., 0.),
+                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',) 
+                       
+XFF = CALC_FONCTION(MULT=(_F(FONCTION=XFF0,), _F(FONCTION=invA), _F(FONCTION=FILTRE,)), LIST_PARA=lfreq, NOM_PARA='FREQ',)
 
-vitey=CALC_FONCTION(INTEGRE=_F(FONCTION=ACCEY,));
+YFF = CALC_FONCTION(MULT=(_F(FONCTION=YFF0,), _F(FONCTION=invA), _F(FONCTION=FILTRE,)), LIST_PARA=lfreq, NOM_PARA='FREQ',)
 
-deply0=CALC_FONCTION(INTEGRE=_F(FONCTION=vitey,));
 
-deplyF = FORMULE(VALE='deply0(INST)-(INST*deply0(TFIN-dt)/(TFIN-dt))',
-                 deply0=deply0,
-                 TFIN=TFIN,
-                 dt=dt,
-                 NOM_PARA='INST',)
+deplx1 = CALC_FONCTION(FFT=_F(FONCTION=XFF, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
 
-deply=CALC_FONC_INTERP(FONCTION=deplyF, NOM_PARA = 'INST',
-                        PROL_DROITE='CONSTANT',
-                        PROL_GAUCHE='CONSTANT',
-                        LIST_PARA=linst);
+deply1 = CALC_FONCTION(FFT=_F(FONCTION=YFF, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+
+fTCx = DEFI_CONSTANTE(VALE=deplx1(0))
+fTCy = DEFI_CONSTANTE(VALE=deply1(0))
+
+deplx = CALC_FONCTION(COMB=(
+                            _F(FONCTION=deplx1, COEF=1.0,),
+                            _F(FONCTION=fTCx, COEF=-1.0,)
+                                    ),
+                            LIST_PARA=linst, NOM_PARA='INST',
+                            PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+                         )
+                         
+deply = CALC_FONCTION(COMB=(
+                            _F(FONCTION=deply1, COEF=1.0,),
+                            _F(FONCTION=fTCy, COEF=-1.0,)
+                                    ),
+                            LIST_PARA=linst, NOM_PARA='INST',
+                            PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+                         )
 
 freqspec = DEFI_LIST_REEL ( DEBUT = 0.1,
                           INTERVALLE = (
@@ -1140,32 +1175,32 @@ IMPR_FONCTION(FORMAT='TABLEAU', #'AGRAF',
 
 
 TEST_FONCTION(VALEUR=(
-                      _F(VALE_CALC=0.58667021960025,
+                      _F(VALE_CALC=0.59844739083006,
                          VALE_REFE=0.60,
                          VALE_PARA=(0.05, 1.6),
                          REFERENCE='SOURCE_EXTERNE',
-                         PRECISION=4.0E-2,
+                         PRECISION=0.5E-2,
                          NOM_PARA=('AMOR', 'FREQ'),
                          FONCTION=SRADBX5,),
-                      _F(VALE_CALC=0.59329891365412,
+                      _F(VALE_CALC=0.66695465402201,
                          VALE_REFE=0.687,
                          VALE_PARA=(0.05, 2.8),
                          REFERENCE='SOURCE_EXTERNE',
-                         PRECISION=15.0E-2,
+                         PRECISION=3.0E-2,
                          NOM_PARA=('AMOR', 'FREQ'),
                          FONCTION=SRADBY5,),
-                      _F(VALE_CALC=2.383516873909,
+                      _F(VALE_CALC=2.480035084342,
                          VALE_REFE=2.57,
                          VALE_PARA=(0.05, 1.7),
                          REFERENCE='SOURCE_EXTERNE',
-                         PRECISION=0.1,
+                         PRECISION=4.0E-2,
                          NOM_PARA=('AMOR', 'FREQ'),
                          FONCTION=SBKX5,),
-                      _F(VALE_CALC=2.292234659536,
+                      _F(VALE_CALC=2.496926081944,
                          VALE_REFE=3.37,
                          VALE_PARA=(0.05, 1.8),
                          REFERENCE='SOURCE_EXTERNE',
-                         PRECISION=0.4,
+                         PRECISION=0.26,
                          NOM_PARA=('AMOR', 'FREQ'),
                          FONCTION=SBKY5,),
                       ),
