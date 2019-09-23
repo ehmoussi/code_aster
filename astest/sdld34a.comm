@@ -160,6 +160,15 @@ MODES_G=CALC_MODES(TYPE_RESU='GENERAL',
                                     ),
                    )
 
+MODES_G2=CALC_MODES(TYPE_RESU='GENERAL',
+                   OPTION='TOUT',
+                   MATR_B=MASSE,
+                   MATR_A=RIGIDITE,
+                   SOLVEUR_MODAL=_F(METHODE='QZ',
+                                    ),
+                   NORM_MODE=_F(INFO=1,NORME='TRAN',),
+                   )
+
 # FREQUENCE PROPRE
 f0 = sqrt( k/m ) / (2*pi)
 # VALEUR PROPRE CORRESPONDANTE
