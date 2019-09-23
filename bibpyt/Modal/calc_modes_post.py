@@ -33,59 +33,45 @@ def calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression):
     NORM_MODE = self.get_cmd('NORM_MODE')
     IMPR_RESU = self.get_cmd('IMPR_RESU')
     EXTR_MODE = self.get_cmd('EXTR_MODE')
-    IMPR_RESU = self.get_cmd('IMPR_RESU')
     DETRUIRE = self.get_cmd('DETRUIRE')
 
     motscles = {}
 
-    if (lmatphys) & (norme_mode is not None):
+    # for all the types
+    if (norme_mode is not None):
         modes = NORM_MODE(reuse=modes,
                           MODE=modes,
                           NORME=norme_mode['NORME'],
                           INFO=norme_mode['INFO'],
                           )
 
-    # copy the modes concept in a temporary concept, in order to free its name
-    __modes_temp = EXTR_MODE(FILTRE_MODE=_F(MODE=modes,
-                                            TOUT_ORDRE='OUI'))
-    DETRUIRE(CONCEPT=_F(NOM=modes),
-             INFO=1)
-
-    impr_tout = False
-
-    lfiltre = False  # False if not specified by the user, or if matr_asse_gene_r,
-                     # True otherwise
+    # ONLY for (TYPE_RESU == 'DYNAMIQUE' + the matrices are physical)
     if lmatphys:
+    # copy the modes concept in a temporary concept, in order to free its name
+        __modes_temp = EXTR_MODE(FILTRE_MODE=_F(MODE=modes,
+                                                TOUT_ORDRE='OUI'))
+        DETRUIRE(CONCEPT=_F(NOM=modes),
+                 INFO=1)
+
+        impr_tout = False
         if filtre_mode is not None:
-            lfiltre = True
+            motscles['FILTRE_MODE'] = _F(MODE=__modes_temp,
+                                         CRIT_EXTR=filtre_mode['CRIT_EXTR'],
+                                         SEUIL=filtre_mode['SEUIL'])
         else:
-            lfiltre = False
-    else:
-        lfiltre = False
-    if lfiltre:
-        motscles['FILTRE_MODE'] = _F(MODE=__modes_temp,
-                                     CRIT_EXTR=filtre_mode['CRIT_EXTR'],
-                                     SEUIL=filtre_mode['SEUIL'])
-    else:
-        motscles['FILTRE_MODE'] = _F(MODE=__modes_temp,
-                                     TOUT_ORDRE='OUI')
+            motscles['FILTRE_MODE'] = _F(MODE=__modes_temp,
+                                         TOUT_ORDRE='OUI')
+        if (impression is not None):
+            motscles['IMPRESSION'] = _F(CUMUL=impression['CUMUL'],
+                                        CRIT_EXTR=impression['CRIT_EXTR'])
+    
+        modes = EXTR_MODE(**motscles)
 
-    if (lmatphys) & (impression is not None):
-        motscles['IMPRESSION'] = _F(CUMUL=impression['CUMUL'],
-                                    CRIT_EXTR=impression['CRIT_EXTR'])
-
-    modes = EXTR_MODE(**motscles)
-
-    # print all the modes parameters
-    if (lmatphys) & (impression is not None):
-        if impression['TOUT_PARA'] == 'OUI':
-            impr_tout = True
-    if not lmatphys:
-        impr_tout = True
-    if impr_tout:
-        IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=modes,
-                          TOUT_ORDRE='OUI',
-                          TOUT_CHAM='NON',
-                          TOUT_PARA='OUI',))
+        if (impression is not None):
+            if impression['TOUT_PARA'] == 'OUI':
+                IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=modes,
+                                             TOUT_ORDRE='OUI',
+                                             TOUT_CHAM='NON',
+                                             TOUT_PARA='OUI',))
 
     return modes
