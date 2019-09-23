@@ -39,6 +39,8 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
     from Modal.calc_modes_post import calc_modes_post
     from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
 
+    #NORM_MODE = self.get_cmd('NORM_MODE')
+
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
@@ -141,6 +143,25 @@ def calc_modes_ops(self, TYPE_RESU, OPTION,
                 impression = args['IMPRESSION']
             if (norme_mode is not None) or (filtre_mode is not None) or (impression is not None):
                 modes = calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression)
+
+    #elif (TYPE_RESU == 'MODE_FLAMB'):
+    else:
+        norme_mode = None
+        if args['NORM_MODE'] is not None:
+            norme_mode = args['NORM_MODE']
+        lmatphys = False
+        filtre_mode = None
+        impression = None
+        if (norme_mode is not None):
+            modes = calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression)
+
+        #if args['NORM_MODE'] is not None:
+        #    norme_mode = args['NORM_MODE']
+        #    modes = NORM_MODE(  reuse=modes,
+        #                        MODE=modes,
+        #                        NORME=norme_mode['NORME'],
+        #                        INFO=norme_mode['INFO'],
+        #                        )
 
 
     return ier
