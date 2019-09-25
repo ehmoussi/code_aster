@@ -17,9 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: david.haboussa at edf.fr
-
-
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
 MAIL0 = LIRE_MAILLAGE(FORMAT="ASTER",)
@@ -112,7 +109,7 @@ for i in range(nb_calcul):
                        NOM_CMP='SIYY',
                        REFERENCE='ANALYTIQUE',
                        VALE_REFE=500.0,
-                       VALE_CALC=499.999999999637,
+                       VALE_CALC=499.9998720053985,
                        PRECISION=1.E-3,
                        MAILLE='M1',),
                     _F(NUME_ORDRE=6,
