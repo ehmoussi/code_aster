@@ -20,11 +20,10 @@
 interface
     subroutine lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
                       modnum, nuanom, numnoa)
-        integer :: nbtyp
-        character(len=8) :: nomtyp(MT_NTYMAX)
-        integer :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX)
-        integer :: renumd(MT_NTYMAX), modnum(MT_NTYMAX)
-        integer :: nuanom(MT_NTYMAX, MT_NNOMAX)
-        integer :: numnoa(MT_NTYMAX, MT_NNOMAX)
+        integer, intent(out) :: nbtyp
+        integer, intent(out) :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX), renumd(MT_NTYMAX)
+        integer, intent(out) :: modnum(MT_NTYMAX)
+        integer, intent(out) :: nuanom(MT_NTYMAX, MT_NNOMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
+        character(len=8), intent(out) :: nomtyp(MT_NTYMAX)
     end subroutine lrmtyp
 end interface

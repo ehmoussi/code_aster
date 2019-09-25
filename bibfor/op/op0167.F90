@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine op0167()
-    implicit none
-! person_in_charge: jacques.pellet at edf.fr
 ! aslint: disable=W1501
+!
+subroutine op0167()
+implicit none
+
+
 !     OPERATEUR CREA_MAILLAGE
 !     ------------------------------------------------------------------
 !
@@ -33,6 +34,7 @@ subroutine op0167()
 #include "asterfort/chcoma.h"
 #include "asterfort/chcomb.h"
 #include "asterfort/cm1518.h"
+#include "asterfort/cm0408.h"
 #include "asterfort/cm2027.h"
 #include "asterfort/cmcovo.h"
 #include "asterfort/cmcrea.h"
@@ -239,12 +241,13 @@ subroutine op0167()
     endif
 !
 ! ----------------------------------------------------------------------
-!          TRAITEMENT DES MOTS CLES "PENTA15_18","HEXA20_27"
+!          TRAITEMENT DES MOTS CLES "PENTA15_18","HEXA20_27","TETRA4_8"
 ! ----------------------------------------------------------------------
 !
-    do k = 1, 2
+    do k = 1, 3
         if (k .eq. 1) motfac='HEXA20_27'
         if (k .eq. 2) motfac='PENTA15_18'
+        if (k .eq. 3) motfac='TETRA4_8'
         call getfac(motfac, nbmoma)
         if (nbmoma .gt. 0) then
             if (nn1 .eq. 0) then
@@ -289,6 +292,9 @@ subroutine op0167()
                             ndinit)
             else if (motfac.eq.'PENTA15_18') then
                 call cm1518(nomain, nomaou, nbma, zi(jlima), prefix,&
+                            ndinit)
+            else if (motfac.eq.'TETRA4_8') then
+                call cm0408(nomain, nomaou, nbma, zi(jlima), prefix,&
                             ndinit)
             endif
             goto 350
