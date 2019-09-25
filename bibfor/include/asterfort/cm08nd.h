@@ -15,10 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
 !
-
-! Total number of mesh types
-#define MT_NTYMAX 71
-! Maximum number of nodes of all elements
-#define MT_NNOMAX 27
+interface
+    subroutine cm08nd(nb_node_mesh, add_node_total, prefix, ndinit, &
+                      nb_list_elem, nbno_fac, nbfac_modi, nomipe,&
+                      mesh_out, coor)
+        integer, intent(in) :: nb_list_elem, nbno_fac, nbfac_modi
+        integer, intent(in) :: nb_node_mesh, add_node_total, ndinit
+        integer, intent(in) :: nomipe(nbno_fac, nbfac_modi*nb_list_elem)
+        real(kind=8), intent(inout) :: coor(3, *)
+        character(len=8) , intent(in) :: prefix
+        character(len=8), intent(in) :: mesh_out
+    end subroutine cm08nd
+end interface

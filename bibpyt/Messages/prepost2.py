@@ -168,6 +168,10 @@ Le filtre TYPE_MAILLE a éliminée %(i1)d mailles .
  L'élément PENTA18 est inexistant dans IDEAS, il est converti en PENTA15.
 """),
 
+    86 : _("""
+ L'élément TETRA8 est inexistant dans IDEAS, il est converti en TETRA4.
+"""),
+
     93 : _("""
  on ne sait pas écrire les mailles de type  %(k1)s
 """),

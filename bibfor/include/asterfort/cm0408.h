@@ -15,10 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
 !
-
-! Total number of mesh types
-#define MT_NTYMAX 71
-! Maximum number of nodes of all elements
-#define MT_NNOMAX 27
+interface
+    subroutine cm0408(mesh_in, mesh_out, nb_list_elem, list_elem, prefix,&
+                      ndinit)
+        integer, intent(in) :: ndinit, nb_list_elem, list_elem(nb_list_elem)
+        character(len=8), intent(in) :: mesh_in, mesh_out
+        character(len=8), intent(in) :: prefix
+    end subroutine cm0408
+end interface
