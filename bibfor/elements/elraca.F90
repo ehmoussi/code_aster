@@ -61,8 +61,8 @@ implicit none
     if (elrefa .eq. 'HE8') then
         vol = 8.d0
 !
-        nbfpg = 7
-        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 5, 16]
+        nbfpg = 8
+        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 5, 16, 64]
 !
         fapg(1) = 'NOEU'
         fapg(2) = 'NOEU_S'
@@ -71,12 +71,13 @@ implicit none
         fapg(5) = 'FPG27'
         fapg(6) = 'SHB5'
         fapg(7) = 'FPG8NOS'
+        fapg(8) = 'FPG64'
 !
     else if (elrefa.eq.'H20') then
         vol = 8.d0
 !
-        nbfpg = 7
-        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 16, 20]
+        nbfpg = 8
+        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 16, 20, 64]
 !
         fapg(1) = 'NOEU'
         fapg(2) = 'NOEU_S'
@@ -85,18 +86,20 @@ implicit none
         fapg(5) = 'FPG27'
         fapg(6) = 'FPG8NOS'
         fapg(7) = 'SHB20'
+        fapg(8) = 'FPG64'
 !
     else if (elrefa.eq.'H27') then
         vol = 8.d0
 !
-        nbfpg = 5
-        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27]
+        nbfpg = 6
+        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 64]
 !
         fapg(1) = 'NOEU'
         fapg(2) = 'NOEU_S'
         fapg(3) = 'FPG1'
         fapg(4) = 'FPG8'
         fapg(5) = 'FPG27'
+        fapg(6) = 'FPG64'
 !
     else if (elrefa.eq.'TE4') then
         vol = 1.d0/6.d0

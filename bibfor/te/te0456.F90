@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,44 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0456(nomopt, nomte)
-! aslint: disable=W0104
-    implicit none
-#include "asterfort/utmess.h"
+!
+use HHO_type
+use HHO_postpro_module, only : hhoPostMeca
+use HHO_init_module, only : hhoInfoInitCell
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/elrefe_info.h"
+!
+! --------------------------------------------------------------------------------------------------
+!  HHO
+!  Post-Processing for mecanic
+! --------------------------------------------------------------------------------------------------
+!
     character(len=16) :: nomte, nomopt
-    call utmess('F', 'FERMETUR_8')
+!
+! --- Local variables
+!
+    type(HHO_Data) :: hhoData
+    type(HHO_Cell) :: hhoCell
+    integer :: nbnodes
+! --------------------------------------------------------------------------------------------------
+!
+! --- Retrieve HHO informations
+!
+    call hhoInfoInitCell(hhoCell, hhoData)
+!
+    call elrefe_info(fami='RIGI', nno=nbnodes)
+!
+    if (nomopt == 'HHO_DEPL_MECA') then
+! --- post-traitement
+        call hhoPostMeca(hhoCell, hhoData, nbnodes)
+    else
+        ASSERT(ASTER_FALSE)
+    end if
+!
 end subroutine

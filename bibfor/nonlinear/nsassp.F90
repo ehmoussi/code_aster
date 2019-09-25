@@ -69,7 +69,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 !
     integer :: ifm, niv
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnffpi, cndfpi
-    aster_logical :: l_macr, l_pilo
+    aster_logical :: l_macr, l_pilo, l_hho
     type(NL_DS_VectComb) :: ds_vectcomb
     aster_logical :: l_unil_pena
 !
@@ -93,6 +93,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 !
     l_macr = isfonc(list_func_acti,'MACR_ELEM_STAT')
     l_pilo = isfonc(list_func_acti,'PILOTAGE')
+    l_hho  = isfonc(list_func_acti,'HHO')
 !
 ! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
@@ -153,7 +154,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 !
 ! - Add internal forces to second member
 !
-    if (ds_algorom%phase.eq.'CORR_EF') then
+    if (ds_algorom%phase.eq.'CORR_EF' .or. l_hho) then
         call nonlinDSVectCombAddAny(ds_system%cnfint, -1.d0, ds_vectcomb)
     else
         call nonlinDSVectCombAddAny(ds_system%cnfnod, -1.d0, ds_vectcomb)

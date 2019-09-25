@@ -21,9 +21,10 @@ interface
                            sddyna     , nume_dof       , &
                            ds_material, ds_constitutive, ds_system     , ds_measure,&
                            time_prev  , time_curr      , iter_newt     ,&
-                           hval_incr  , hval_algo      ,&
+                           hval_incr  , hval_algo      , hhoField      ,&
                            ldccvg     , sdnume_)
-        use NonLin_Datastructure_type        
+        use NonLin_Datastructure_type
+        use HHO_type 
         character(len=24), intent(in) :: model, cara_elem
         integer, intent(in) :: list_func_acti(*)
         character(len=19), intent(in) :: sddyna
@@ -35,6 +36,7 @@ interface
         real(kind=8), intent(in) :: time_prev, time_curr
         integer, intent(in) :: iter_newt
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        type(HHO_Field), intent(in) :: hhoField
         integer, intent(out) :: ldccvg
         character(len=19), optional, intent(in) :: sdnume_
     end subroutine nmfint_pred

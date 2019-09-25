@@ -20,10 +20,11 @@
 subroutine nmfint(model         , cara_elem      ,&
                   ds_material   , ds_constitutive,&
                   list_func_acti, iter_newt      , ds_measure, ds_system,&
-                  hval_incr     , hval_algo      ,&
+                  hval_incr     , hval_algo      , hhoField,&
                   ldccvg        , sddynz_)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -43,6 +44,7 @@ integer, intent(in) :: iter_newt
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+type(HHO_Field), intent(in) :: hhoField
 integer, intent(out) :: ldccvg
 character(len=*), optional, intent(in) :: sddynz_
 !
@@ -65,6 +67,7 @@ character(len=*), optional, intent(in) :: sddynz_
 ! In  ds_system        : datastructure for non-linear system management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
+! In  hhoField         : datastructure for HHO
 ! Out ldccvg           : indicator from integration of behaviour
 !                -1 : PAS D'INTEGRATION DU COMPORTEMENT
 !                 0 : CAS DE FONCTIONNEMENT NORMAL
@@ -74,7 +77,7 @@ character(len=*), optional, intent(in) :: sddynz_
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_xfem, l_macr_elem
+    aster_logical :: l_xfem, l_macr_elem, l_hho
     integer :: iter
     character(len=1) :: base
     character(len=16) :: option
@@ -105,6 +108,7 @@ character(len=*), optional, intent(in) :: sddynz_
 !
     l_xfem      = isfonc(list_func_acti, 'XFEM')
     l_macr_elem = isfonc(list_func_acti, 'MACR_ELEM_STAT')
+    l_hho       = isfonc(list_func_acti, 'HHO')
 !
 ! - Elementaries
 !
@@ -118,10 +122,10 @@ character(len=*), optional, intent(in) :: sddynz_
 !
 ! - Computation
 !
-    call merimo(base           , l_xfem   , l_macr_elem,&
+    call merimo(base           , l_xfem   , l_macr_elem, l_hho,&
                 model          , cara_elem, mate       , iter ,&
                 ds_constitutive, varc_refe,&
-                hval_incr      , hval_algo,&
+                hval_incr      , hval_algo, hhoField,&
                 option         , merigi   ,vefint      ,&
                 ldccvg         , sddyna)
 !

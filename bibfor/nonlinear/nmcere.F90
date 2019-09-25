@@ -25,6 +25,7 @@ subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     , &
                   ldccvg         , ds_system , matr_asse)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -121,6 +122,7 @@ type(NL_DS_System), intent(in) :: ds_system
     real(kind=8), pointer :: deppt(:) => null()
     real(kind=8), pointer :: du0(:) => null()
     real(kind=8), pointer :: du1(:) => null()
+    type(HHO_Field) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -190,7 +192,7 @@ type(NL_DS_System), intent(in) :: ds_system
     call nmfint(model         , cara_elem      ,&
                 ds_material   , ds_constitutive,&
                 list_func_acti, iter_newt      , ds_measure, ds_system,&
-                valint        , solalt         ,&
+                valint        , solalt         , hhoField,&
                 ldccvg   )
 !
 ! - Assemble internal forces

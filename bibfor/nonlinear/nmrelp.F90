@@ -24,6 +24,7 @@ subroutine nmrelp(model          , nume_dof   , ds_material   , cara_elem, ds_sy
                   sddyna_)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -128,6 +129,7 @@ character(len=19), intent(in), optional :: sddyna_
     integer :: ifm, niv
     real(kind=8), pointer :: vale(:) => null()
     type(NL_DS_System) :: ds_system2
+    type(HHO_Field) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -288,7 +290,7 @@ character(len=19), intent(in), optional :: sddyna_
         call nmfint(model         , cara_elem      ,&
                     ds_material   , ds_constitutive,&
                     list_func_acti, iter_newt      , ds_measure, ds_system2,&
-                    valint(1, act), solalt         ,&
+                    valint(1, act), solalt         , hhoField, &
                     ldccvg        , sddyna)
         call nmaint(nume_dof, list_func_acti, sdnume, ds_system2)
 ! ----- Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA

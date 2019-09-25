@@ -699,7 +699,34 @@ PMASDIA = InputParameter(phys=PHY.POSI, container='VOLA!&&CCPARA.MASS_MECA_D',
 """)
 
 PMASSEL = InputParameter(phys=PHY.MDEP_R,
-                         comment="""""")
+                         comment="""Elementary mass matrix (for AMOR_MECA)""")
+
+PMAELS1 = InputParameter(phys=PHY.MDEP_R,
+                         comment="""Elementary matrix to combine (for HHO)""")
+
+PMAELS2 = InputParameter(phys=PHY.MDEP_R,
+                         comment="""Elementary matrix to combine (for HHO)""")
+
+PMAELNS1 = InputParameter(phys=PHY.MDNS_R,
+                         comment="""Elementary matrix to combine (for HHO)""")
+
+PMAELNS2 = InputParameter(phys=PHY.MDNS_R,
+                         comment="""Elementary matrix to combine (for HHO)""")
+
+PVEELE1 = InputParameter(phys=PHY.VDEP_R,
+                         comment="""Elementary vector to combine (for HHO)""")
+
+PVEELE2 = InputParameter(phys=PHY.VDEP_R,
+                         comment="""Elementary vector to combine (for HHO)""")
+
+PVEELE3 = InputParameter(phys=PHY.VDEP_R,
+                         comment="""Elementary vector to combine (for HHO)""")
+
+PVEELE4 = InputParameter(phys=PHY.VDEP_R,
+                         comment="""Elementary vector to combine (for HHO)""")
+
+PCMBHHO = InputParameter(phys=PHY.NEUT_R,
+                         comment="""Information for combine matrix/vector (for HHO)""")
 
 PMATERC = InputParameter(phys=PHY.ADRSJEVE, container='CHMA!.MATE_CODE',
                          comment=""" Parameters for material (AFFE_MATERIAU)""")

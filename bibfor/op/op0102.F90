@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,13 @@
 ! --------------------------------------------------------------------
 
 subroutine op0102()
-    implicit none
+!
+implicit none
 !
 !      OPERATEUR :     CALC_CHAR_CINE
 !
-!
-! ----------DECLARATIONS
-!
+
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getres.h"
 #include "asterfort/calvci.h"
@@ -40,8 +40,6 @@ subroutine op0102()
     character(len=16) :: type, oper
 !
 ! --------- FONCTIONS EXTERNES
-!
-!
 !
     real(kind=8) :: inst
 !
@@ -78,8 +76,8 @@ subroutine op0102()
     call dismoi('NOM_GD_SI', nomgd, 'GRANDEUR', repk=nomgds)
 !
 ! --- CREATION DU CHAMNO ET AFFECTATION DU CHAMNO
-    call calvci(vcine, nomnu, nbchci, zk8(ilichc), inst,&
-                'G')
+    call calvci(vcine, nomnu      , nbchci, zk8(ilichc), inst,&
+                'G'  , ASTER_FALSE)
 !
 !
     call jedema()

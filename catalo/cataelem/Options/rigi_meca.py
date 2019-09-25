@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,6 +40,9 @@ comment="""  PCAORIE : ORIENTATION LOCALE D'UN ELEMENT DE POUTRE OU DE TUYAU  ""
 PNBSP_I  = InputParameter(phys=PHY.NBSP_I, container='CARA!.CANBSP',
 comment="""  PNBSP_I :  NOMBRE DE SOUS_POINTS  """)
 
+PCONTMR = InputParameter(phys=PHY.SIEF_R)
+
+PVARIMR  = InputParameter(phys=PHY.VARI_R)
 
 PCOMPOR  = InputParameter(phys=PHY.COMPOR)
 
@@ -84,6 +87,32 @@ PCACO3D  = OutputParameter(phys=PHY.CACO3D, type='ELEM',
 comment=""" NE SERT QUE POUR COQUE_3D """)
 
 
+# For HHO
+PCELLMR  = InputParameter(phys=PHY.CELL_R,
+comment=""" HHO - degres de liberte de la cellule""")
+
+PCELLIR  = InputParameter(phys=PHY.CELL_R,
+comment=""" HHO - degres de liberte de la cellule""")
+
+PCSMTIR  = OutputParameter(phys=PHY.N6480R, type='ELEM',
+comment=""" HHO - matrice cellule pour condensation statique""")
+
+PCSRTIR  = OutputParameter(phys=PHY.CELL_R, type='ELEM',
+comment=""" HHO - 2nd membre cellule pour condensation statique""")
+
+PCHHOGT  = InputParameter(phys=PHY.N6480R,
+comment=""" HHO - matrice du gradient local""")
+
+PCHHOST  = InputParameter(phys=PHY.N6480R,
+comment=""" HHO - matrice de la stabilisation locale""")
+
+PVARIPR  = OutputParameter(phys=PHY.VARI_R, type='ELGA',
+comment=""" VARIABLES INTERNES POUR T+ """)
+
+PCONTPR  = OutputParameter(phys=PHY.SIEF_R, type='ELGA',
+comment=""" VECTEUR DES CONTRAINTES POUR T+ """)
+
+
 RIGI_MECA = Option(
     para_in=(
            PBASLOR,
@@ -94,6 +123,7 @@ RIGI_MECA = Option(
         SP.PCAGNBA,
         SP.PCAGNPO,
         SP.PCAMASS,
+        SP.PCARCRI,
            PCAORIE,
         SP.PCAPOUF,
         SP.PCINFDI,
@@ -109,17 +139,37 @@ RIGI_MECA = Option(
            PLSN,
            PLST,
         SP.PMATERC,
+        SP.PMULCOM,
            PNBSP_I,
            PPINTTO,
            PPMILTO,
            PSTANO,
         SP.PTEMPSR,
+        SP.PITERAT,
+        SP.PINSTMR,
+        SP.PINSTPR,
+        SP.PVARCMR,
+        SP.PVARCRR,
+        SP.PDEPLMR,
+        SP.PDEPLPR,
+           PCONTMR,
            PVARCPR,
+           PVARIMR,
+           PCELLMR,
+           PCELLIR,
+           PCHHOGT,
+           PCHHOST,
     ),
     para_out=(
            PCACO3D,
         SP.PMATUNS,
         SP.PMATUUR,
+        SP.PVECTUR,
+        SP.PCODRET,
+           PCSMTIR,
+           PCSRTIR,
+           PCONTPR,
+           PVARIPR,
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),

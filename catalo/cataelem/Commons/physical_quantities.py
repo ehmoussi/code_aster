@@ -448,6 +448,9 @@ CARCRI   = PhysicalQuantity(type='R',
        'POSTINCR',
        'STRAIN',
        'VARIEXT2',
+       'HHO_COEF',
+       'HHO_STAB',
+       'HHO_CALC',
     ),
     comment="""  CARCRI Type :R Critere de convergence d'un probleme non-lineaire materiel
     (pour 1 point de Gauss)
@@ -464,13 +467,16 @@ CARCRI   = PhysicalQuantity(type='R',
        VARIEXT1 : entier code 1 pour les variables d'etat externe (MFront)
        THETATHM : parametre THETA pour la THM
        POSTITER : type de critere POST_ITER : 0=rien, 1=CRIT_RUPT
-       LC_EXT[3]: pointeurs vers routines externes (UMAT / MFRONT) 
+       LC_EXT[3]: pointeurs vers routines externes (UMAT / MFRONT)
        MATRNSYM : 1 si la matrice est non-symetrique
        ALPHATHM : parametre ALPHA pour la THM (volumes finis)
        LC_EXT[2]: pointeurs vers routines externes (UMAT / MFRONT) => materiaux
        POSTINCR : type de critere POST_INCR : 0=rien, 1=REST_ECRO
        STRAIN   : modele de deformation pour MFront
        VARIEXT2 : entier code 2 pour les variables d'etat externe (MFront)
+       HHO_COEF : coefficient de stabilisation HHO
+       HHO_STAB : methode pour choisr le parametre de stabilisation HHO
+       HHO_CALC : precalcul des opérateurs HHO
 """)
 
 
@@ -483,6 +489,17 @@ CASECT   = PhysicalQuantity(type='K8',
        NOM : nom d'un objet cara-poutre
 """)
 
+CELL_R   = PhysicalQuantity(type='R',
+    components=(
+       'HHO[20]', 'HHO_U[20]', 'HHO_V[20]', 'HHO_W[20]',
+    ),
+    comment="""  CELL_R Type:R DDL de la cellule pour HHO
+       HHO[20] : 1, X, Y, Z, X^2, Y^2, Z^2, XY, XZ, YZ, X^3, Y^3, ...
+       HHO : degres de liberte HHO - HHO[20]: (cas scalaire)
+       HHO_U : degres de liberte HHO - HHO[20]:  (cas vect-U)
+       HHO_V : degres de liberte HHO - HHO[20]:  (cas vect-V)
+       HHO_W : degres de liberte HHO - HHO[20]:  (cas vect-W)
+""")
 
 CHGREPER = PhysicalQuantity(type='R',
     components=(
@@ -743,6 +760,7 @@ list_cmp_depl=(
   'V3[3]',      'PRES1[3]',   'PRES2[3]',   'PRES3[3]',   'SIGN',       'SITX',
   'SITY',       'LH1',        'SIXX',       'SIYY',       'SIZZ',       'SIXY',
   'DAMG',       'PTOT',       'PIX',        'PIY',        'PIZ',
+  'HHO[60]',    'HHO_U[6]',   'HHO_V[6]',   'HHO_W[6]',
 )
 comment_depl= """  DEPL_R/_C/_F  Deplacement reel, complexe ou fonction
        DX, DY, DZ : translation suivant X, Y ET Z (repere global)
@@ -808,6 +826,10 @@ comment_depl= """  DEPL_R/_C/_F  Deplacement reel, complexe ou fonction
        PIX     : projete du gradient de pression suivantx (methode OSGS)
        PIY     : projete du gradient de pression suivanty (methode OSGS)
        PIZ     : projete du gradient de pression suivantz (methode OSGS)
+       HHO_U : degres de liberté HHO: 1, X, Y, X2, Y2, XY (X, Y plan face) dir1
+       HHO_V : degres de liberté HHO: 1, X, Y, X2, Y2, XY (X, Y plan face) dir2
+       HHO_W : degres de liberté HHO: 1, X, Y, X2, Y2, XY (X, Y plan face) dir3
+       HHO   : degres de liberté HHO: 1, X, Y, X2, Y2, XY (X, Y plan face) scal
 """
 
 DEPL_R   = PhysicalQuantity(type='R',
@@ -1654,6 +1676,19 @@ FORC_R   = PhysicalQuantity(type='R',
        PLAN :
 """)
 
+REAC_R   = PhysicalQuantity(type='R',
+    components=(
+       'DX',
+       'DY',
+       'DZ',
+    ),
+    comment="""  REAC_R Type:R Reaction (ponctuelle, lineique, surfacique ou volumique)
+    appliquee sur un modele mecanique
+       DX : composante suivant OX de la reaction
+       DY : composante suivant OY de la reaction
+       DZ : composante suivant OZ de la reaction
+""")
+
 
 FREQ_R   = PhysicalQuantity(type='R',
     components=(
@@ -2093,6 +2128,10 @@ N2448R   = PhysicalQuantity(type='R',
        'X[2448]',
     ),)
 
+N6480R   = PhysicalQuantity(type='R',
+    components=(
+       'X[6480]',
+    ),)
 
 N480_I   = PhysicalQuantity(type='I',
     components=(
@@ -2158,15 +2197,14 @@ N960_I   = PhysicalQuantity(type='I',
     components=(
        'X[960]',
     ),
-    comment="""  N1080I Type:I Grandeur ''neutre'' de type I
+    comment="""  N960_I Type:I Grandeur ''neutre'' de type I
        La signification des composantes varie d'une option a l'autre. Cette
        grandeur ''passe-partout'' ne sert qu'a eviter l'introduction de
        nombreuses grandeurs sans grand interet.
        X(1)   : composante 1
        ...
-       X(1080) : composante 1080
+       X(960) : composante 960
 """)
-
 
 NBSP_I   = PhysicalQuantity(type='I',
     components=(
@@ -2258,6 +2296,19 @@ NEUT_K8  = PhysicalQuantity(type='K8',
        Z(1)  : composante 1
        ...
        Z(30) : composante 30
+""")
+
+N120_K8  = PhysicalQuantity(type='K8',
+    components=(
+       'Z[120]',
+    ),
+    comment="""  NEUT_K8 Type:K8 Grandeur ''neutre'' de type K8
+       La signification des composantes varie d'une option a l'autre. Cette
+       grandeur ''passe-partout'' ne sert qu'a eviter l'introduction de
+       nombreuses grandeurs sans grand interet.
+       Z(1)  : composante 1
+       ...
+       Z(120) : composante 120
 """)
 
 
@@ -3484,6 +3535,7 @@ TEMP_R   = PhysicalQuantity(type='R',
        'DTX',
        'DTY',
        'DTZ',
+       'HHO[6]',
     ),
     comment="""  TEMP_R Type:R Temperature inconnue du phenomene thermique
        TEMP : temperature
@@ -3497,6 +3549,7 @@ TEMP_R   = PhysicalQuantity(type='R',
        DTX : derivee de la temperature selon x (n'est pas un ddl)
        DTY : derivee de la temperature selon y (n'est pas un ddl)
        DTZ : derivee de la temperature selon z (n'est pas un ddl)
+       HHO : degres de liberté HHO - HHO[6]: 1, X, Y, X2, Y2,XY (X,Y plan face)
 """)
 
 

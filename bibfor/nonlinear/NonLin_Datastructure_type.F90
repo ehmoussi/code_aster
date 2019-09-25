@@ -177,6 +177,7 @@ implicit none
         aster_logical          :: l_dyna
         character(len=8)       :: result_prev_disp
         aster_logical          :: l_matr_rigi_syme
+        aster_logical          :: l_precalc_hho
     end type NL_DS_AlgoPara
 !
 ! - Type: fields for input/output management
@@ -217,12 +218,12 @@ implicit none
         character(len=8)  :: result
         aster_logical     :: l_temp_nonl
         integer           :: nb_field
-        integer           :: nb_field_maxi = 19
-        type(NL_DS_Field) :: field(19)
+        integer           :: nb_field_maxi = 21
+        type(NL_DS_Field) :: field(21)
         character(len=8)  :: stin_evol
         aster_logical     :: l_stin_evol
-        aster_logical     :: l_field_acti(19)
-        aster_logical     :: l_field_read(19)
+        aster_logical     :: l_field_acti(21)
+        aster_logical     :: l_field_read(21)
         aster_logical     :: l_state_init
         aster_logical     :: l_reuse
         integer           :: didi_nume
@@ -297,15 +298,15 @@ implicit none
         character(len=8)  :: ligrel_dof_rela = ' '
 ! ----- Name of <CHELEM> - Input field
         character(len=19) :: field_input = ' '
-! ----- NUME_DOF for discrete friction methods 
+! ----- NUME_DOF for discrete friction methods
         character(len=14) :: nume_dof_frot = ' '
-! ----- NUME_DOF for unil methods 
+! ----- NUME_DOF for unil methods
         character(len=14) :: nume_dof_unil = ' '
-! ----- Fields for CONT_NODE 
+! ----- Fields for CONT_NODE
         character(len=19) :: field_cont_node  = ' '
         character(len=19) :: fields_cont_node = ' '
         character(len=19) :: field_cont_perc  = ' '
-! ----- Fields for CONT_ELEM 
+! ----- Fields for CONT_ELEM
         character(len=19) :: field_cont_elem  = ' '
         character(len=19) :: fields_cont_elem = ' '
 ! ----- Loops
@@ -408,17 +409,17 @@ implicit none
         aster_logical      :: l_table
 ! ----- Table in results datastructures
         type(NL_DS_Table)  :: table
-        integer            :: indx_cols(2*23)
+        integer            :: indx_cols(2*26)
 ! ----- List of timers
         integer            :: nb_timer
-        integer            :: nb_timer_maxi = 7
-        type(NL_DS_Timer)  :: timer(7)
+        integer            :: nb_timer_maxi = 8
+        type(NL_DS_Timer)  :: timer(8)
 ! ----- List of devices
         integer            :: nb_device
-        integer            :: nb_device_maxi = 23
-        type(NL_DS_Device) :: device(23)
+        integer            :: nb_device_maxi = 26
+        type(NL_DS_Device) :: device(26)
         integer            :: nb_device_acti
-        aster_logical      :: l_device_acti(23)
+        aster_logical      :: l_device_acti(26)
 ! ----- Some special times
         real(kind=8)       :: store_mean_time
         real(kind=8)       :: iter_mean_time
@@ -647,7 +648,7 @@ implicit none
     end type NL_DS_VectComb
 !
 ! - Type: non-linear system
-! 
+!
     type NL_DS_System
 ! ----- Flag to compute nodal force at prediction
         aster_logical         :: l_pred_cnfnod = ASTER_FALSE
