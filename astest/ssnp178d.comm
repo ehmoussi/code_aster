@@ -1,0 +1,175 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+########################################################################
+#          TEST DE VERIFICATION EN PLASTICITE INCOMPRESSIBLE           #
+#                       MEMBRANE DE COOK                               #
+########################################################################
+
+DEBUT(PAR_LOT='OUI', CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'),)
+
+
+mesh = LIRE_MAILLAGE(FORMAT='MED')
+
+mesh = MODI_MAILLAGE(reuse=mesh, MAILLAGE=mesh,
+                     ORIE_PEAU_2D=_F(GROUP_MA=('Encast', 'load',),),)
+
+E = 70
+mater = DEFI_MATERIAU(
+    ECRO_LINE=_F(D_SIGM_EPSI=0.13474, SY=0.243), ELAS=_F(E=E, NU=0.4999)
+)
+
+fieldmat = AFFE_MATERIAU(
+    AFFE=_F(MATER=(mater, ), TOUT='OUI'), MAILLAGE=mesh,
+)
+
+rampe = DEFI_FONCTION(NOM_PARA='INST', VALE=(
+    0.0, 0.0, 1.0, 1.0), PROL_DROITE='LINEAIRE', PROL_GAUCHE='EXCLU',)
+
+listr = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=(
+    _F(JUSQU_A=0.4, NOMBRE=1),
+    _F(JUSQU_A=0.8, NOMBRE=4),
+    _F(JUSQU_A=0.95, NOMBRE=6),
+    _F(JUSQU_A=1.0, NOMBRE=4),
+),)
+
+times = DEFI_LIST_INST(
+    DEFI_LIST=_F(LIST_INST=listr),
+    ECHEC=_F(ACTION='DECOUPE', EVENEMENT='ERREUR', SUBD_NIVEAU=4)
+)
+
+# Nombre de calculs :
+nb_calcul = 2
+model_ = ['D_PLAN_HHO_121', 'D_PLAN_HHO_222']
+
+AY = [2.191028993521375, 2.14311672021993]
+AX = [-1.6776058352999696, -1.6228309893177866]
+AT = [-0.6420691050111974, -0.6026278395863994]
+CY = [0.3534234536862735, 0.3542740218651234]
+CX = [-0.029223410354370333, -0.030278363178674213]
+CT = [0.4132436624158596, 0.41457799613746965]
+
+for i in range(nb_calcul):
+
+    model = AFFE_MODELE(
+        AFFE=_F(MODELISATION=(model_[i], ), PHENOMENE='MECANIQUE', TOUT='OUI'),
+        MAILLAGE=mesh
+    )
+
+    depl = AFFE_CHAR_CINE(
+        MECA_IMPO=_F(DX=0.0, DY=0.0, GROUP_MA=('Encast', )), MODELE=model, INFO=1,
+    )
+
+    load = AFFE_CHAR_MECA(
+        FORCE_CONTOUR=_F(FY=0.1125, GROUP_MA=('load', )), MODELE=model
+    )
+
+    resnonl = STAT_NON_LINE(
+        CHAM_MATER=fieldmat,
+        COMPORTEMENT=_F(DEFORMATION='PETIT',
+                        RELATION='VMIS_ISOT_LINE', TOUT='OUI'),
+        CONVERGENCE=_F(ITER_GLOB_MAXI=10, RESI_GLOB_RELA=1e-6),
+        EXCIT=(
+            _F(CHARGE=depl, TYPE_CHARGE='FIXE_CSTE'),
+            _F(CHARGE=load, FONC_MULT=rampe,
+               TYPE_CHARGE='FIXE_CSTE'),
+        ),
+        INCREMENT=_F(LIST_INST=times),
+        MODELE=model,
+        NEWTON=_F(MATRICE='TANGENTE', PREDICTION='TANGENTE', REAC_ITER=1,),
+        SOLVEUR=_F(METHODE='MUMPS'),
+        HHO=_F(STABILISATION='MANUEL', COEF_STAB=10*E,),
+        INFO=1,
+    )
+
+    resnonl = CALC_CHAMP(
+        reuse=resnonl,
+        CHAM_MATER=fieldmat,
+        CRITERES=('SIEQ_NOEU',),
+        MODELE=model,
+        RESULTAT=resnonl,
+    )
+
+    TEST_RESU(RESU=_F(INST=1.0,
+                      GROUP_NO=('A', ),
+                      REFERENCE='AUTRE_ASTER',
+                      RESULTAT=resnonl,
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='DY',
+                      VALE_CALC=AY[i],
+                      VALE_REFE=2.13651,
+                      CRITERE='RELATIF',
+                      PRECISION=3.E-2,),
+              )
+
+    TEST_RESU(RESU=_F(INST=1.0,
+                      GROUP_NO=('A', ),
+                      REFERENCE='AUTRE_ASTER',
+                      RESULTAT=resnonl,
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='DX',
+                      VALE_CALC=AX[i],
+                      VALE_REFE=-1.61818,
+                      CRITERE='RELATIF',
+                      PRECISION=4.E-2,),
+              )
+
+    TEST_RESU(RESU=_F(INST=1.0,
+                      GROUP_NO=('A',),
+                      RESULTAT=resnonl,
+                      NOM_CHAM='SIEQ_NOEU',
+                      NOM_CMP='TRSIG',
+                      VALE_CALC=AT[i],
+                      CRITERE='RELATIF',),
+              )
+
+    TEST_RESU(RESU=_F(INST=1.0,
+                      GROUP_NO=('C', ),
+                      RESULTAT=resnonl,
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='DY',
+                      VALE_CALC=CY[i],
+                      CRITERE='RELATIF',),
+              )
+
+    TEST_RESU(RESU=_F(INST=1.0,
+                      GROUP_NO=('C', ),
+                      RESULTAT=resnonl,
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='DX',
+                      VALE_CALC=CX[i],
+                      CRITERE='RELATIF',),
+              )
+
+    TEST_RESU(RESU=_F(INST=1.0,
+                      GROUP_NO=('C', ),
+                      RESULTAT=resnonl,
+                      NOM_CHAM='SIEQ_NOEU',
+                      NOM_CMP='TRSIG',
+                      VALE_CALC=CT[i],
+                      CRITERE='RELATIF',),
+              )
+
+    DETRUIRE(CONCEPT=_F(NOM=(model, resnonl, depl, load,),),
+             INFO=1,)
+
+#IMPR_RESU(FORMAT='MED', RESU=_F( RESULTAT=resnonl), UNITE=80)
+
+
+FIN()
