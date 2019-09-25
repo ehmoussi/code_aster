@@ -1,0 +1,144 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: david.haboussa at edf.fr
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+MAIL0 = LIRE_MAILLAGE(FORMAT="ASTER",)
+
+MAIL1 = CREA_MAILLAGE(MAILLAGE=MAIL0,
+                      LINE_QUAD=_F(TOUT='OUI',),)
+
+MAIL = CREA_MAILLAGE(MAILLAGE=MAIL1,
+                     HEXA20_27=_F(TOUT='OUI',
+                                  PREF_NOEUD='NV',
+                                  PREF_NUME=1,),
+                     INFO=1,)
+
+MAT = DEFI_MATERIAU(
+    ELAS=_F(E=200.E+3, NU=.3),
+    PRAGER=_F(C=20.E+3),
+    ECRO_LINE=_F(D_SIGM_EPSI=40.E+3, SY=400.)
+)
+
+CM = AFFE_MATERIAU(MAILLAGE=MAIL,
+                   AFFE=_F(TOUT='OUI', MATER=MAT))
+
+FDEPL = DEFI_FONCTION(
+    NOM_PARA='INST',
+    PROL_DROITE='EXCLU',
+    PROL_GAUCHE='EXCLU',
+
+    VALE=(
+        0.,     0.0,
+        1.,     2.E-3,
+        2.,     4.5E-3,
+        3.,     0.1E-3,
+        4.,     -2.0E-3,
+    )
+)
+
+L_INST = DEFI_LIST_REEL(DEBUT=0., INTERVALLE=(
+    _F(JUSQU_A=1.,    NOMBRE=2),
+    _F(JUSQU_A=2.,    NOMBRE=2),
+    _F(JUSQU_A=3.,    NOMBRE=2),
+    _F(JUSQU_A=4.,    NOMBRE=2))
+)
+
+
+# Nombre de calculs :
+nb_calcul = 2
+model = ['3D_HHO_121', '3D_HHO_222']
+
+
+for i in range(nb_calcul):
+
+    MOMECA = AFFE_MODELE(MAILLAGE=MAIL,
+                         AFFE=_F(TOUT='OUI', MODELISATION=model[i], PHENOMENE='MECANIQUE'))
+
+    CHMECA = AFFE_CHAR_CINE(
+        MODELE=MOMECA, MECA_IMPO=(
+            _F(MAILLE='DEVANT',  DZ=0.),
+            _F(MAILLE='BAS',    DY=0.),
+            _F(MAILLE='HAUT',   DY=1.),
+            _F(MAILLE='GAUCHE', DX=0.))
+    )
+
+    U = STAT_NON_LINE(MODELE=MOMECA,
+                      CHAM_MATER=CM,
+                      EXCIT=_F(CHARGE=CHMECA,
+                               FONC_MULT=FDEPL),
+                      COMPORTEMENT=_F(RELATION='VMIS_ECMI_LINE'),
+                      INCREMENT=_F(LIST_INST=L_INST),
+                      SOLVEUR=_F(METHODE='MUMPS',),
+                      CONVERGENCE=_F(RESI_GLOB_RELA=1.E-6)
+                      )
+
+    U = CALC_CHAMP(reuse=U, CONTRAINTE=('SIGM_ELNO'),
+                   VARI_INTERNE=('VARI_ELNO'), RESULTAT=U)
+
+    TEST_RESU(RESU=(_F(NUME_ORDRE=2,
+                       RESULTAT=U,
+                       NOM_CHAM='SIGM_ELNO',
+                       NOEUD='N1',
+                       NOM_CMP='SIYY',
+                       REFERENCE='ANALYTIQUE',
+                       VALE_REFE=400.0,
+                       VALE_CALC=400.0000000000007,
+                       PRECISION=1.E-3,
+                       MAILLE='M1',),
+                    _F(NUME_ORDRE=4,
+                       RESULTAT=U,
+                       NOM_CHAM='SIGM_ELNO',
+                       NOEUD='N1',
+                       NOM_CMP='SIYY',
+                       REFERENCE='ANALYTIQUE',
+                       VALE_REFE=500.0,
+                       VALE_CALC=499.999999999637,
+                       PRECISION=1.E-3,
+                       MAILLE='M1',),
+                    _F(NUME_ORDRE=6,
+                       RESULTAT=U,
+                       NOM_CHAM='SIGM_ELNO',
+                       NOEUD='N1',
+                       NOM_CMP='SIYY',
+                       REFERENCE='ANALYTIQUE',
+                       VALE_REFE=-380.0,
+                       VALE_CALC=-380.0000000000965,
+                       PRECISION=1.E-3,
+                       MAILLE='M1',),
+                    _F(NUME_ORDRE=8,
+                       RESULTAT=U,
+                       NOM_CHAM='SIGM_ELNO',
+                       NOEUD='N1',
+                       NOM_CMP='SIYY',
+                       REFERENCE='ANALYTIQUE',
+                       VALE_REFE=-464.0,
+                       VALE_CALC=-463.9999999980259,
+                       PRECISION=1.E-3,
+                       MAILLE='M1',),
+                    ),
+              )
+
+    DETRUIRE(CONCEPT=_F(NOM=(U, MOMECA, CHMECA),),
+             INFO=1,)
+
+FIN()
