@@ -23,9 +23,10 @@ interface
                            ds_material   , ds_constitutive, ds_system,&
                            ds_measure    , ds_inout       ,&
                            sddisc        , nume_inst      ,&
-                           hval_incr     , hval_algo      ,&
+                           hval_incr     , hval_algo      ,hhoField,&
                            hval_veelem   , hval_veasse)
         use NonLin_Datastructure_type
+        use HHO_type
         integer, intent(in) :: list_func_acti(*)
         character(len=24), intent(in) :: model, cara_elem, nume_dof
         character(len=19), intent(in) :: list_load, sddyna
@@ -34,6 +35,7 @@ interface
         type(NL_DS_System), intent(in) :: ds_system
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(NL_DS_InOut), intent(in) :: ds_inout
+        type(HHO_Field), intent(in) :: hhoField
         character(len=19), intent(in) :: sddisc
         integer, intent(in) :: nume_inst
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)

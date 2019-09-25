@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 ! aslint: disable=W1504
 !
     integer :: i, j, kl, ivtn
-    real(kind=8) :: trav(6, 6), trav2(6, 6)
+    real(kind=8) :: trav(6, 6), trav2(6, 6), sig(6)
     real(kind=8) :: pes(6, 6), tp2(6), fr(3, 3), detf
     real(kind=8) :: tl(3, 3, 3, 3), tls(6, 6), epse(4), d1(4, 4)
     real(kind=8) :: feta(4), xi(3, 3), me(3, 3, 3, 3)
@@ -102,6 +102,7 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
     pk2m = 0.d0
     pk2p = 0.d0
     codret = 0
+    sig = 0.d0
 !
 !     CALCUL DES PRODUITS SYMETR. DE F PAR N
     if (resi) then
@@ -157,7 +158,8 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 !        POUR LA RIGIDITE GEOMETRIQUE : CALCUL AVEC LES PK2
         tp2 = 0.d0
         if (.not.resi) then
-            call pk2sig(ndim, fm, detf, pk2m, sigm, -1)
+            sig(1:2*ndim) = sigm(1:2*ndim)
+            call pk2sig(ndim, fm, detf, pk2m, sig, -1)
             do kl = 4, 2*ndim
                 pk2m(kl)=pk2m(kl)*rac2
             end do

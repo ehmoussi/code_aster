@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -99,6 +99,12 @@ real(kind=8), optional, intent(in) :: valr_
         call utmess('I', 'MEASURE1_25', si = vali_)
     elseif (indx_mesg .eq. 26) then
         call utmess('I', 'MEASURE1_26', si = vali_)
+    elseif (indx_mesg .eq. 27) then
+        call utmess('I', 'MEASURE1_27', sk = time_string)
+    elseif (indx_mesg .eq. 28) then
+        call utmess('I', 'MEASURE1_28', sk = time_string)
+    elseif (indx_mesg .eq. 29) then
+        call utmess('I', 'MEASURE1_29', sk = time_string)
     else
         WRITE(6,*) 'IndxMesg: ',indx_mesg
         ASSERT(ASTER_FALSE)

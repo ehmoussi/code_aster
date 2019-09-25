@@ -25,10 +25,12 @@ subroutine nminit(mesh       , model         , mate         , cara_elem      , l
                   sd_suiv    , sd_obsv       , sderro       , ds_posttimestep, ds_inout  ,&
                   ds_energy  , ds_conv       , ds_errorindic, valinc         , solalg    ,&
                   measse     , veelem        , meelem       , veasse         , ds_contact,&
-                  ds_measure , ds_algorom    , ds_system)
+                  ds_measure , ds_algorom    , ds_system    , hhoField)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
+use HHO_type
+use HHO_Meca_module, only : hhoMecaInit
 !
 implicit none
 !
@@ -127,6 +129,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 type(NL_DS_System), intent(inout) :: ds_system
+type(HHO_Field), intent(inout) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -163,6 +166,7 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! IO  ds_algorom       : datastructure for ROM parameters
 ! IO  ds_system        : datastructure for non-linear system management
 ! IO  list_func_acti   : list of active functionnalities
+! IO  hhoField         : datastructure for HHO
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -170,7 +174,7 @@ type(NL_DS_System), intent(inout) :: ds_system
     real(kind=8) :: instin
     character(len=19) :: varc_prev, disp_prev, strx_prev, varc_curr, disp_curr, strx_curr
     aster_logical :: lacc0, lpilo, lmpas, lsstf, lviss, lrefe, ldidi, l_obsv, l_ener, l_dyna
-    aster_logical :: l_erre_thm
+    aster_logical :: l_erre_thm, l_hho
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -219,7 +223,7 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! - Check compatibility of some functionnalities
 !
-    call exfonc(list_func_acti, ds_algopara, solver, ds_contact, sddyna,& 
+    call exfonc(list_func_acti, ds_algopara, solver, ds_contact, sddyna,&
                 mate          , model)
     lpilo      = isfonc(list_func_acti,'PILOTAGE' )
     lmpas      = ndynlo(sddyna,'MULTI_PAS' )
@@ -230,6 +234,13 @@ type(NL_DS_System), intent(inout) :: ds_system
     ldidi      = isfonc(list_func_acti,'DIDI')
     l_ener     = isfonc(list_func_acti,'ENERGIE')
     l_dyna     = ndynlo(sddyna,'DYNAMIQUE')
+    l_hho      = isfonc(list_func_acti,'HHO')
+!
+! - Initializations for HHO
+!
+    if (l_hho) then
+        call hhoMecaInit(model, list_load, list_func_acti, hhoField)
+    endif
 !
 ! - Initialization for reduced method
 !
@@ -347,7 +358,7 @@ type(NL_DS_System), intent(inout) :: ds_system
     if (ldidi) then
         call nmdidi(ds_inout, model , list_load, numedd, valinc,&
                     veelem  , veasse)
-    endif 
+    endif
 !
 ! --- CREATION DE LA SD POUR ARCHIVAGE DES INFORMATIONS DE CONVERGENCE
 !

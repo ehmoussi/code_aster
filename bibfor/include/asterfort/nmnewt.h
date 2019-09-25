@@ -19,6 +19,7 @@
 interface
     subroutine nmnewt(mesh       , model    , numins         , numedd    , numfix   ,&
                       ds_material, cara_elem, ds_constitutive, list_load , ds_system,&
+                      hhoField ,&
                       ds_algopara, fonact   , ds_measure     , sderro    , ds_print ,&
                       sdnume     , sddyna   , sddisc         , sdcrit    , sdsuiv   ,&
                       sdpilo     , ds_conv  , solveu         , maprec    , matass   ,&
@@ -27,6 +28,7 @@ interface
                       nbiter  )
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
+        use HHO_type
         character(len=8), intent(in) :: mesh
         character(len=24), intent(in) :: model
         integer :: numins
@@ -40,6 +42,7 @@ interface
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         integer :: fonact(*)
         type(NL_DS_Measure), intent(inout) :: ds_measure
+        type(HHO_Field), intent(in) :: hhoField
         character(len=24) :: sderro
         type(NL_DS_Print), intent(inout) :: ds_print
         character(len=19) :: sdnume

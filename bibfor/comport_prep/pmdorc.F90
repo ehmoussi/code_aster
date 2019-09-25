@@ -120,7 +120,7 @@ character(len=16), intent(out) :: type_comp, mult_comp
     if (l_kit_thm) then
         call utmess('F', 'COMPOR2_7')
     endif
-!  
+!
 ! - Save informations in the field <COMPOR>
 !
     call setBehaviourTypeValue(ds_compor_prep%v_comp, l_compor_ = compor(1:COMPOR_SIZE))
@@ -155,9 +155,7 @@ character(len=16), intent(out) :: type_comp, mult_comp
 ! - Set in <CARTE>
 !
     carcri(1:CARCRI_SIZE) = 0.d0
-    call setBehaviourParaValue(ds_compor_para%v_para,&
-                               ds_compor_para%parm_theta_thm,&
-                               ds_compor_para%parm_alpha_thm,&
+    call setBehaviourParaValue(ds_compor_para%v_para, ds_compor_para,&
                                l_carcri_ = carcri(1:CARCRI_SIZE))
 !
 ! - Cleaning

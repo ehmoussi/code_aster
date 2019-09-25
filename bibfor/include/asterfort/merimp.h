@@ -17,13 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine merimp(l_xfem         ,&
+    subroutine merimp(l_xfem         , l_hho, &
                       model          , cara_elem, mate  , sddyna, iter_newt,&
                       ds_constitutive, varc_refe,&
-                      hval_incr      , hval_algo, caco3d,&
+                      hval_incr      , hval_algo, hhoField, caco3d,&
                       mxchin         , lpain    , lchin , nbin)
         use NonLin_Datastructure_type
-        aster_logical, intent(in) :: l_xfem
+        use HHO_type
+        aster_logical, intent(in) :: l_xfem, l_hho
         character(len=24), intent(in) :: model, cara_elem
         character(len=*), intent(in) :: mate
         character(len=19), intent(in) :: sddyna
@@ -31,6 +32,7 @@ interface
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=24), intent(in) :: varc_refe
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        type(HHO_Field), intent(in) :: hhoField
         character(len=24), intent(in) :: caco3d
         integer, intent(in) :: mxchin
         character(len=8), intent(inout) :: lpain(mxchin)

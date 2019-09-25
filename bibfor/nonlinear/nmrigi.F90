@@ -20,10 +20,11 @@
 subroutine nmrigi(modelz         , cara_elem,&
                   ds_material    , ds_constitutive,&
                   list_func_acti , iter_newt      , sddyna, ds_measure, ds_system,&
-                  hval_incr      , hval_algo      ,&
+                  hval_incr      , hval_algo      , hhoField, &
                   optioz         , ldccvg)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -46,6 +47,7 @@ character(len=19), intent(in) :: sddyna
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+type(HHO_Field), intent(in) :: hhoField
 character(len=*), intent(in) :: optioz
 integer, intent(out) :: ldccvg
 !
@@ -65,6 +67,7 @@ integer, intent(out) :: ldccvg
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_system        : datastructure for non-linear system management
+! In  hhoField         : datastructure for HHO
 ! IN  ITERAT : NUMERO D'ITERATION
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
@@ -82,7 +85,7 @@ integer, intent(out) :: ldccvg
     character(len=1) :: base
     character(len=24) :: model
     character(len=16) :: optrig
-    aster_logical :: lendo, l_xfem, l_macr_elem
+    aster_logical :: lendo, l_xfem, l_macr_elem, l_hho
     character(len=24) :: mate, varc_refe
     integer :: iter
 !
@@ -108,6 +111,7 @@ integer, intent(out) :: ldccvg
     l_xfem      = isfonc(list_func_acti, 'XFEM')
     l_macr_elem = isfonc(list_func_acti, 'MACR_ELEM_STAT')
     lendo       = isfonc(list_func_acti,'ENDO_NO')
+    l_hho       = isfonc(list_func_acti, 'HHO')
 !
 ! - Elementaries
 !
@@ -129,10 +133,10 @@ integer, intent(out) :: ldccvg
 !
 ! - Computation
 !
-    call merimo(base           , l_xfem   , l_macr_elem,&
+    call merimo(base           , l_xfem   , l_macr_elem, l_hho, &
                 model          , cara_elem, mate       , iter_newt+1,&
                 ds_constitutive, varc_refe,&
-                hval_incr      , hval_algo,&
+                hval_incr      , hval_algo, hhoField, &
                 optrig         , merigi   , vefint     ,&
                 ldccvg         , sddyna)
 !

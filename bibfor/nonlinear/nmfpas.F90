@@ -19,9 +19,10 @@
 !
 subroutine nmfpas(fonact, sddyna, sdpilo, sddisc, nbiter,&
                   numins, eta   , valinc, solalg, veasse, ds_system,&
-                  ds_contact)
+                  ds_contact, hhoField)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -47,6 +48,7 @@ integer :: nbiter, numins
 integer :: fonact(*)
 type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Contact), intent(in) :: ds_contact
+type(HHO_Field), intent(in) :: hhoField
 !
 ! ----------------------------------------------------------------------
 !
@@ -70,8 +72,8 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 ! In  ds_system        : datastructure for non-linear system management
 !
 !
-    aster_logical :: ldyna, lmpas
-    aster_logical :: lpilo
+    aster_logical :: ldyna, lmpas, l_hho, lpilo
+
     character(len=19) :: depmoi, varmoi, sigmoi, commoi, vitmoi, accmoi
     character(len=19) :: depplu, varplu, sigplu, complu, vitplu, accplu
     character(len=19) :: depdel, depold, strmoi, strplu
@@ -87,6 +89,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
     lpilo = isfonc(fonact,'PILOTAGE')
     lmpas = ndynlo(sddyna,'MULTI_PAS')
+    l_hho = isfonc(fonact,'HHO')
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
@@ -122,6 +125,12 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     call copisd('CHAMP_GD', 'V', varplu, varmoi)
     call copisd('VARI_COM', 'V', complu, commoi)
     call copisd('CHAMP_GD', 'V', strplu, strmoi)
+!
+! - For HHO
+!
+    if (l_hho) then
+        call copisd('CHAMP_GD', 'V', hhoField%fieldCurr_cell, hhoField%fieldPrev_cell)
+    endif
 !
 ! --- ETAT AU DEBUT DU NOUVEAU PAS DE TEMPS EN DYNAMIQUE
 !

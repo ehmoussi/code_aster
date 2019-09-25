@@ -20,9 +20,10 @@ interface
     subroutine nmfint(model         , cara_elem      ,&
                       ds_material   , ds_constitutive,&
                       list_func_acti, iter_newt      , ds_measure, ds_system,&
-                      hval_incr     , hval_algo      ,&
+                      hval_incr     , hval_algo      , hhoField,&
                       ldccvg        , sddynz_)
         use NonLin_Datastructure_type
+        use HHO_type   
         character(len=24), intent(in) :: model, cara_elem
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
@@ -31,6 +32,7 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        type(HHO_Field), intent(in) :: hhoField
         integer, intent(out) :: ldccvg
         character(len=*), optional, intent(in) :: sddynz_
     end subroutine nmfint

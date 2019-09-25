@@ -105,7 +105,7 @@ Conseil :
     19 : _("""
 La variable de commande %(k1)s est présente dans le champ de matériau fourni à CALC_VECT_ELEM.
 Attention : les chargements induits par les variables de commande ne sont pas calculés par
-CALC_VECT_ELEM. Pour en tenir compte, il faut utiliser l'opérateur CALCUL.   
+CALC_VECT_ELEM. Pour en tenir compte, il faut utiliser l'opérateur CALCUL.
 """),
 
     22 : _("""
@@ -167,13 +167,13 @@ PROJ_CHAMP / METHODE='ECLA_PG' :
  A cause des alarmes précédentes, l'option SING_ELEM n'est pas calculée.
 """),
 
-    37 : _("""
- Attention : Certains ddls sont "imposés" plusieurs fois par AFFE_CHAR_CINE.
- Pour ces ddls, la valeur imposée sera la SOMME des différentes valeurs imposées.
- Ce n'est peut-être pas ce qui est voulu.
+#     37 : _("""
+#  Attention : Certains ddls sont "imposés" plusieurs fois par AFFE_CHAR_CINE.
+#  Pour ces ddls, la valeur imposée sera la SOMME des différentes valeurs imposées.
+#  Ce n'est peut-être pas ce qui est voulu.
 
- Exemple d'un ddl imposé plusieurs fois :
-"""),
+#  Exemple d'un ddl imposé plusieurs fois :
+# """),
 
     38 : _("""
  on ne traite pas le type_scalaire: %(k1)s

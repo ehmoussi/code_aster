@@ -73,4 +73,10 @@ cata_msg = {
 
     26 : _("""    * Nombre d'itérations de Newton                     : %(i1)d"""),
 
+    27 : _("""    * Temps condensation statique HHO                   : %(k1)s"""),
+
+    28 : _("""    * Temps combinaison HHO                             : %(k1)s"""),
+
+    29 : _("""    * Temps pré-calcul opérateurs HHO                   : %(k1)s"""),
 }
+

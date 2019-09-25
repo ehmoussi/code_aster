@@ -27,6 +27,7 @@ subroutine calcCalcMeca(nb_option   , list_option    , &
                         nb_obje_maxi, obje_name      , obje_sdname, nb_obje)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -95,7 +96,7 @@ integer, intent(out) ::  nb_obje
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_matr, l_nonl, l_varc_prev, l_varc_curr, l_forc_noda
-    aster_logical :: l_lagr
+    aster_logical :: l_lagr, l_hho
     character(len=16) :: option
     character(len=19) :: varc_curr, disp_curr, sigm_curr, vari_curr
     character(len=19) :: vari_prev, disp_prev, sigm_prev, disp_cumu_inst
@@ -104,7 +105,9 @@ integer, intent(out) ::  nb_obje
     integer :: ldccvg
     real(kind=8) :: partps(3)
     character(len=19) :: ligrmo
+    character(len=32) :: answer
     type(NL_DS_System) :: ds_system
+    type(HHO_Field) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -121,6 +124,8 @@ integer, intent(out) ::  nb_obje
     l_xfem      = ixfem .ne. 0
     call dismoi('NB_SS_ACTI', model, 'MODELE', repi=nb_subs_stat)
     l_macr_elem = nb_subs_stat .gt. 0
+    call dismoi('EXI_HHO', model, 'MODELE', repk=answer)
+    l_hho = (answer == 'OUI')
 !
 ! - Name of variables
 !
@@ -189,10 +194,10 @@ integer, intent(out) ::  nb_obje
         ds_system%merigi = merigi
         ds_system%vefint = vefint
         iter_newt = 1
-        call merimo('G'            , l_xfem   , l_macr_elem,&
+        call merimo('G'            , l_xfem   , l_macr_elem, l_hho, &
                     model          , cara_elem, mate       , iter_newt,&
                     ds_constitutive, varc_refe,&
-                    hval_incr      , hval_algo,&
+                    hval_incr      , hval_algo, hhoField, &
                     option         , merigi   , vefint     ,&
                     ldccvg         )
     endif

@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine op0018()
 !
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "asterc/getfac.h"
@@ -62,9 +62,6 @@ subroutine op0018()
 #include "asterfort/fetcrf.h"
 #include "asterfort/fetskp.h"
 !
-! person_in_charge: jacques.pellet at edf.fr
-!
-!
 ! --------------------------------------------------------------------------------------------------
 !
 ! COMMAND:  AFFE_MODELE
@@ -91,7 +88,7 @@ subroutine op0018()
     integer, pointer :: p_list_elem(:) => null()
     integer :: nb_elem
     aster_logical :: l_elem, l_grandeur_cara
-    aster_logical :: l_calc_rigi, l_veri_elem, l_need_neigh
+    aster_logical :: l_calc_rigi, l_veri_elem, l_need_neigh, l_hho
     integer :: ielem, iaffe
     integer :: vali(4), ico, imodel, idx_modelisa
     integer, pointer :: p_cata_dim(:) => null()
@@ -473,6 +470,17 @@ subroutine op0018()
 !
     call dismoi('BESOIN_VOISIN', ligrel, 'LIGREL', repk=repk)
     l_need_neigh = repk.eq.'OUI'
+!
+! - HHO should be alone
+!
+    call dismoi('EXI_HHO', ligrel, 'LIGREL', repk=repk)
+    l_hho = repk .eq. 'OUI'
+    if (l_hho) then
+        call dismoi('EXI_NO_HHO', ligrel, 'LIGREL', repk=repk)
+        if (repk .eq. 'OUI') then
+            call utmess('F','MODELE1_10')
+        endif
+    endif
 !
 ! - Create SD_VOISINAGE if necessary
 !
