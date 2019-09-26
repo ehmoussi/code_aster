@@ -41,6 +41,9 @@ def configure(self):
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env['ADDMEM'] = 1100
+    self.env.append_value('OPT_ENV', [
+        'module load ifort/2019.0.045 icc/2019.0.045 mkl/2019.0.045'
+    ])
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
     TFELVERS = '3.2.1'
