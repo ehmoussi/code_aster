@@ -36,6 +36,10 @@ def configure(self):
     gaia_std.configure(self)
     self.env['ADDMEM'] = 1200
 
+    self.env.append_value('OPT_ENV_FOOTER', [
+        'module load impi/2019.0.045'
+    ])
+
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/MPI/lib',
