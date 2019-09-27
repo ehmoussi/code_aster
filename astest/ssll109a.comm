@@ -1,0 +1,163 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: francesco.bettonte at edf.fr
+
+DEBUT(CODE = _F(NIV_PUB_WEB = 'INTERNET'))
+
+MA = LIRE_MAILLAGE(FORMAT = 'MED',
+                   UNITE = 17)
+
+MA_SECT = LIRE_MAILLAGE(FORMAT = 'MED',
+                        UNITE = 18)
+
+MA = DEFI_GROUP(reuse = MA,
+                MAILLAGE = MA,
+                CREA_GROUP_NO = _F(TOUT_GROUP_MA = 'OUI',))
+
+MO = AFFE_MODELE(MAILLAGE = MA,
+                 AFFE = _F(GROUP_MA = 'AB',
+                           PHENOMENE = 'MECANIQUE',
+                           MODELISATION = 'POU_D_TGM',),)
+
+MAT = DEFI_MATERIAU(ELAS = _F(E = 200000.0E+6,
+                              NU = 0.3,))
+
+GF = DEFI_GEOM_FIBRE(SECTION = _F(GROUP_FIBRE = 'SECF',
+                                  GROUP_MA_SECT = 'SECT',
+                                  MAILLAGE_SECT = MA_SECT,
+                                  COOR_AXE_POUTRE = (0.,0.)))
+
+
+COMPF = DEFI_COMPOR(GEOM_FIBRE = GF,MATER_SECT = MAT,
+                    MULTIFIBRE = _F(GROUP_FIBRE = 'SECF',
+                                    MATER = MAT,
+                                    RELATION = 'ELAS',))
+
+
+CH_MAT = AFFE_MATERIAU(MAILLAGE = MA,
+                       AFFE = _F(TOUT = 'OUI',
+                                 MATER = MAT,),
+                       AFFE_COMPOR = _F(TOUT = 'OUI',
+                                        COMPOR = COMPF))
+
+CARACT = AFFE_CARA_ELEM(MODELE = MO,
+                        POUTRE = _F(GROUP_MA = 'AB',
+                                    SECTION = 'GENERALE',
+                                    CARA = ('A','IY','IZ','AY','AZ','JX','JG',),
+                                    VALE = (0.0003375,
+                                            1.51874999999999975E-007,
+                                            5.63835937500000244E-010,
+                                            1.2,
+                                            1.2,
+                                            2.19201e-09,
+                                            0.0,),),
+                        GEOM_FIBRE = GF,
+                        MULTIFIBRE = _F(GROUP_MA = 'AB',
+                                        GROUP_FIBRE = 'SECF'),)
+
+LIAISON = AFFE_CHAR_MECA(MODELE = MO,
+                         DDL_IMPO = (_F(GROUP_NO = 'PA',
+                                        DX = 0.0,
+                                        DY = 0.0,
+                                        DRX = 0.0,
+                                        DRY = 0.0,
+                                        DRZ = 0.0,),
+                                     _F(GROUP_NO = 'AB',
+                                        DZ = 0.0,),),)
+
+FORCE = AFFE_CHAR_MECA(MODELE = MO,
+                       FORCE_NODALE = (
+                           _F(GROUP_NO = 'PB', FX =  50  ),
+                           _F(GROUP_NO = 'PB', FY = -200 ),
+                       ))
+
+FO_MU = DEFI_FONCTION(NOM_PARA = 'INST',
+                      VALE = (
+                          0.0, 0.0,
+                          1.0, 1.0,
+                          2.0, 0.0,
+                      ),
+                      PROL_DROITE = 'EXCLU',
+                      PROL_GAUCHE = 'EXCLU',)
+
+L_INST = DEFI_LIST_REEL(DEBUT = 0.0,
+                        INTERVALLE = (_F(JUSQU_A = 2,
+                                         NOMBRE = 200,)))
+
+RESU = STAT_NON_LINE(MODELE = MO,
+                     CHAM_MATER = CH_MAT,
+                     CARA_ELEM = CARACT,
+                     EXCIT = (_F(CHARGE = LIAISON,),
+                              _F(CHARGE = FORCE, FONC_MULT = FO_MU,),
+                     ),
+                     SOLVEUR = _F(METHODE = 'MUMPS'),
+                     COMPORTEMENT = _F(RELATION = 'MULTIFIBRE',
+                                       DEFORMATION = 'PETIT',
+                                       RIGI_GEOM = 'OUI',
+                                       GROUP_MA = 'AB',),
+                     INCREMENT = _F(LIST_INST = L_INST),
+                     NEWTON = _F(MATRICE = 'TANGENTE',
+                                 REAC_ITER = 1,),
+                     CONVERGENCE = _F(RESI_GLOB_RELA = 1e-06,
+                                      ITER_GLOB_MAXI = 20,))
+
+
+TAB_DX = POST_RELEVE_T(ACTION = _F(RESULTAT = RESU,
+                                   OPERATION = 'EXTRACTION',
+                                   NOM_CHAM = 'DEPL',
+                                   NOM_CMP = 'DX',
+                                   INTITULE = 'DX',
+                                   INST = 1.0,
+                                   GROUP_NO = 'AB',))
+
+def solution(z) :
+    
+    FX = 50
+    FY = 200
+    E = 200000E+6
+    IY = 5.63835937500000244E-010
+    l0 = 0.5
+    l = l0 # Approx
+    r = FX/FY
+    e = sqrt(FY/(E*IY))
+    
+    return r*(-z + ((1/e)*(sin(e*z)+tan(e*l)*(1-cos(e*z)))))
+
+POS = [0.5, 0.45, 0.4, 0.35, 0.30,
+       0.25, 0.2, 0.15, 0.1, 0.05]
+
+REFE = [solution(y) for y in POS]
+
+CALC = [0.02235342864871973, 0.018988208021676882, 0.01569282984844571, 0.012536855043076998, 9.589279976702034E-3,
+        6.918250682640775E-3, 4.590773206426804E-3, 2.672419422101435E-3, 1.2270281254575474E-3, 3.1640178916478995E-4]
+
+for i, (vrefe, vcalc) in enumerate(zip(REFE, CALC)):
+    
+    TEST_TABLE(REFERENCE = 'ANALYTIQUE',
+               PRECISION = 1.E-2,
+               TOLE_MACHINE = 1.E-06,
+               VALE_CALC = vcalc,
+               VALE_REFE = vrefe,
+               NOM_PARA = 'DX',
+               TABLE = TAB_DX,
+               FILTRE = _F(NOM_PARA = 'NOEUD',
+                           VALE_K = 'N%d'%(i+1),))
+    
+FIN()

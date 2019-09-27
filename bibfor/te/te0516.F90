@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,6 +56,7 @@ subroutine te0516(option, nomte)
 #include "asterfort/pmfmats.h"
 #include "asterfort/pmfmcf.h"
 #include "asterfort/porea1.h"
+#include "asterfort/porea3.h"
 #include "asterfort/pouex7.h"
 #include "asterfort/poutre_modloc.h"
 #include "asterfort/tecach.h"
@@ -64,6 +65,7 @@ subroutine te0516(option, nomte)
 #include "asterfort/utpslg.h"
 #include "asterfort/utpvgl.h"
 #include "asterfort/utpvlg.h"
+#include "asterfort/Behaviour_type.h"
 #include "blas/ddot.h"
 #include "blas/dscal.h"
 !
@@ -93,7 +95,7 @@ subroutine te0516(option, nomte)
     real(kind=8) :: ksi1, d1b3(2, 3), sigfib, mflex(4)
     real(kind=8) :: carsec(6)
 !
-    aster_logical :: vecteu, matric, reactu
+    aster_logical :: vecteu, matric, reactu, isgrot
 !
     character(len=4) :: fami
     character(len=8) :: mator
@@ -200,20 +202,34 @@ subroutine te0516(option, nomte)
         call utmess('F', 'ELEMENTS4_14', sk=nomte)
     endif
 !
+    if (zk16(icompo+2).ne.'PETIT' .and. zk16(icompo-1+RIGI_GEOM).eq.'OUI') then
+       valk(1) = nomte
+       valk(2) = zk16(icompo+2)
+       call utmess('F', 'ELEMENTS4_15', nk=2, valk=valk)
+    endif   
 !   geometrie eventuellement reactualisee :
-    reactu = zk16(icompo+2).eq.'GROT_GDEP'
+    reactu = zk16(icompo+2).eq.'GROT_GDEP' .or. zk16(icompo-1+RIGI_GEOM).eq.'OUI'
+    isgrot = zk16(icompo+2).eq.'GROT_GDEP'
+
     if (reactu) then
-!       recuperation du 3eme angle nautique au temps t-
-        gamma = zr(istrxm+18-1)
-!       calcul de PGL,XL et ANGP
-        call porea1(nno, nc, zr(ideplm), zr(ideplp), zr(igeom+1),&
-                    gamma, vecteu, pgl, xl, angp)
-!       sauvegarde des angles nautiques
-        if (vecteu) then
+!      recuperation du 3eme angle nautique au temps t-
+       gamma = zr(istrxm+18-1)
+!      calcul de PGL,XL et ANGP
+       if (isgrot) then
+!         Rotation sur iteration non convergee
+          call porea1(nno, nc, zr(ideplm), zr(ideplp), zr(igeom+1),&
+               gamma, vecteu, pgl, xl, angp)
+       else
+!         Rotation sur dernier pas convergee
+          call porea3(nno, nc, zr(ideplm), zr(ideplp), zr(igeom+1),&
+               gamma, vecteu, pgl, xl, angp)
+       endif
+!      sauvegarde des angles nautiques
+       if (vecteu) then
             zr(istrxp+16-1) = angp(1)
             zr(istrxp+17-1) = angp(2)
             zr(istrxp+18-1) = angp(3)
-        endif
+       endif
     else
         ang1(1) = zr(iorien-1+1)
         ang1(2) = zr(iorien-1+2)
@@ -291,7 +307,7 @@ subroutine te0516(option, nomte)
 !           - apres calcul de deps, on le stocke dans strxpr
 !       les deformations sont stockes a partir de la 8eme position
         kk=ncomp*(kp-1)+ncomp2
-        if (.not. reactu) then
+        if (.not. isgrot) then
 !           calcul classique des deformations à partir de DU
             do i = 1, nc
                 do j = 1, 2*nc
@@ -453,8 +469,9 @@ subroutine te0516(option, nomte)
     enddo
 !
     if (matric) then
-!       Calcul de la matrice de correction des GR
-        if (reactu) then
+       if (reactu) then
+          if (isgrot) then
+!           Calcul de la matrice de correction des GR
 !           rappel :
 !               le calcul de la matrice de correction kc est fait a part, on tient compte à
 !               posteriori des rotations modérées entre deux iterations
@@ -504,8 +521,9 @@ subroutine te0516(option, nomte)
             rigge0(11,13) = rigge0(11,13) + mflex(3)*0.5d0
             rigge0(12,11) = rigge0(12,11) - mflex(4)*0.5d0
             rigge0(13,11) = rigge0(13,11) + mflex(3)*0.5d0
-!           On remet tout dans rg0
-            call lcsovn(2*nc*2*nc, rg0, rigge0, rg0)
+            endif
+!       On remet tout dans rg0
+        call lcsovn(2*nc*2*nc, rg0, rigge0, rg0)
         endif
         call mavec(rg0, 2*nc, klv, dimklv)
     endif
