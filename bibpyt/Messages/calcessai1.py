@@ -22,14 +22,6 @@ cata_msg = {
     3 : _("""
 Aucune variable d'environnement DISPLAY définie !
 %(k1)s ne pourra pas fonctionner. On l'ignore.
-
-Si vous êtes en Interactif, cochez le bouton Suivi Interactif
-dans ASTK.
-
-Vous pouvez également préciser votre DISPLAY dans les arguments
-de la commande STANLEY :
-
-STANLEY(DISPLAY='adresse_IP:0.0');
 """),
 
     9 : _("""
@@ -43,4 +35,3 @@ Exécution terminée.
 
 
 }
-
