@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,6 +54,7 @@ subroutine w039c3(carele, modele, ifi, form, titre, aunoeud)
     character(len=19) :: chrmed(3)
     character(len=64) :: nommed(3)
     character(len=85) :: titrz,messk(3)
+    character(len=16) :: field_type = 'Unknown'
     aster_logical :: l3d
     data  nomcmp / 'X' , 'Y' , 'Z' /
 ! ----------------------------------------------------------------------
@@ -127,16 +128,16 @@ subroutine w039c3(carele, modele, ifi, form, titre, aunoeud)
     if (form .eq. 'MED') then
 !     -------------------------
         call irceme(ifi, nommed(1), chrmed(1), typech, modele, 0, nomcmp, ' ', ' ', 0,&
-                    0.d0, 0, 0, [0], sdcarm, sdcarm, iret)
+                    0.d0, 0, 0, [0], sdcarm, sdcarm, field_type, iret)
         ASSERT(iret.eq.0)
 !
         call irceme(ifi, nommed(2), chrmed(2), typech, modele, 0, nomcmp, ' ', ' ', 0,&
-                    0.d0, 0, 0, [0], sdcarm, sdcarm, iret)
+                    0.d0, 0, 0, [0], sdcarm, sdcarm, field_type, iret)
         ASSERT(iret.eq.0)
 !
         if (l3d) then
             call irceme(ifi, nommed(3), chrmed(3), typech, modele, 0, nomcmp, ' ', ' ', 0,&
-                        0.d0, 0, 0, [0], sdcarm, sdcarm, iret)
+                        0.d0, 0, 0, [0], sdcarm, sdcarm, field_type, iret)
             ASSERT(iret.eq.0)
         endif
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -250,7 +250,7 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
             call ircnme(ifichi, nochmd, chanom, typech, modele,&
                         nbrcmp, nomcmp, partie, numpt, instan,&
                         numord, nbnoec, linoec, sdcarm, carael,&
-                        codret)
+                        nomsym, codret)
         else if (typech(1:2).eq.'EL') then
             if ((nomsym.eq.'VARI_ELGA') .and. lvarie) then
                 call irvari(ifichi, nochmd, chanom, typech, modele,&
@@ -267,16 +267,15 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
             call irceme(ifichi, nochmd, chanom, typech, modele,&
                         nbrcmp, nomcmp, ' ', partie, numpt,&
                         instan, numord, nbmaec, limaec, sdcarm,&
-                        carael, codret)
+                        carael, nomsym, codret)
             if (codret_vari .ne. 0 .and. codret .eq. 0) then
                 codret = codret_vari
             endif
         else if (typech(1:4).eq.'CART') then
-!
             call irceme(ifichi, nochmd, chanom, typech, modele,&
                         nbrcmp, nomcmp, ' ', partie, numpt,&
                         instan, numord, nbmaec, limaec, sdcarm,&
-                        carael, codret)
+                        carael, nomsym, codret)
         else
             codret = 1
             call utmess('A', 'MED_92', sk=typech(1:4))

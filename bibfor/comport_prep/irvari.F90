@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -124,11 +124,13 @@ integer, intent(out) :: codret
     character(len=19), parameter :: compor_info = '&&IRVARI.INFO'
     integer, pointer :: v_info(:) => null()
     integer, pointer :: v_zone(:) => null()
+    character(len=16) :: field_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
+    field_type = 'VARI_ELGA'
     ASSERT(field_loca .eq. 'ELGA')
     codret = 0
     ligrel = model//'.MODELE'
@@ -169,7 +171,6 @@ integer, intent(out) :: codret
         codret = 300
         goto 999
     endif
-
 !
 ! - Access to <CARTE> COMPOR
 !
@@ -278,7 +279,7 @@ integer, intent(out) :: codret
     call irceme(ifi, nomres, vari_elgr, field_loca, model,&
                 nb_cmp_sele, cmp_name_sele, label_med, partie, numpt,&
                 instan, nume_store, nbmaec, limaec, cara_elem,&
-                carael, codret)
+                carael, field_type, codret)
 !
 999 continue
 !

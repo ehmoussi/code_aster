@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: nicolas.sellenet at edf.fr
 !
 subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
                   nomamd, nbimpr, caimpi, caimpk, sdcarm,&
                   carael)
 !
-    use as_med_module, only: as_med_open
-    implicit none
+use as_med_module, only: as_med_open
+implicit none
 !
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
@@ -153,6 +152,7 @@ character(len=80) :: caimpk(3, nbimpr)
 !
     call lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
                 modnum, nuanom, numnoa)
+
 !
 !   CREATION DES ELEMENTS DE STRUCTURES DANS LE FICHIER MED
 !   UN ELEMENT DE STRUCTURE EST DEFINIT PAR UNE PAIRE :
