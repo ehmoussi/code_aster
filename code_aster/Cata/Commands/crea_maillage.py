@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ CREA_MAILLAGE=OPER(nom="CREA_MAILLAGE",op= 167,sd_prod=maillage_sdaster,
             reentrant='n',fr=tr("Crée un maillage à partir d'un maillage existant"),
          regles=(UN_PARMI('COQU_VOLU', 'CREA_FISS', 'CREA_MAILLE', 'CREA_POI1',
                          'ECLA_PG', 'HEXA20_27', 'LINE_QUAD', 'MODI_MAILLE',
-                        'QUAD_LINE', 'REPERE','RESTREINT','PENTA15_18','GEOM_FIBRE', 'DECOUPE_LAC'),),
+                        'QUAD_LINE', 'REPERE','RESTREINT','PENTA15_18','TETRA4_8','GEOM_FIBRE', 'DECOUPE_LAC'),),
 
 
 
@@ -114,6 +114,14 @@ CREA_MAILLAGE=OPER(nom="CREA_MAILLAGE",op= 167,sd_prod=maillage_sdaster,
            PREF_NUME       =SIMP(statut='f',typ='I',defaut= 1 ),
          ),
          PENTA15_18     =FACT(statut='f',fr=tr("Passage PENTA15 -> PENTA18"),
+           regles=(AU_MOINS_UN('TOUT','MAILLE','GROUP_MA' ),),
+           TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
+           MAILLE          =SIMP(statut='c',typ=ma,validators=NoRepeat(),max='**'),
+           GROUP_MA        =SIMP(statut='f',typ=grma  ,validators=NoRepeat(),max='**'),
+           PREF_NOEUD      =SIMP(statut='f',typ='TXM',defaut="NS"),
+           PREF_NUME       =SIMP(statut='f',typ='I',defaut= 1 ),
+         ),
+         TETRA4_8     =FACT(statut='f',fr=tr("Passage TETRA4 -> TETRA8"),
            regles=(AU_MOINS_UN('TOUT','MAILLE','GROUP_MA' ),),
            TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
            MAILLE          =SIMP(statut='c',typ=ma,validators=NoRepeat(),max='**'),

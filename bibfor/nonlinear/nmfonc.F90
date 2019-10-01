@@ -462,6 +462,13 @@ integer, intent(inout) :: list_func_acti(*)
         list_func_acti(58) = 1
     endif
 !
+! - HHO ?
+!
+    call dismoi('EXI_HHO', model, 'MODELE', repk=repk)
+    if (repk .eq. 'OUI') then
+        list_func_acti(68) = 1
+    endif
+!
 ! - Print
 !
     if (niv .ge. 2) then
@@ -617,6 +624,9 @@ integer, intent(inout) :: list_func_acti(*)
         endif
         if (isfonc(list_func_acti,'THM')) then
             call utmess('I', 'MECANONLINE14_45')
+        endif
+        if (isfonc(list_func_acti,'HHO')) then
+            call utmess('I', 'MECANONLINE14_32')
         endif
         if (isfonc(list_func_acti,'ENDO_NO')) then
             call utmess('I', 'MECANONLINE14_46')

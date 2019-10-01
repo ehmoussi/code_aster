@@ -98,12 +98,25 @@
 !
 ! Size
 !
-#define CARCRI_SIZE    23
+#define CARCRI_SIZE    26
 !
 ! Slots: for external state variables
 !
 #define IVARIEXT1      11
 #define IVARIEXT2      23
+!
+! Slots: for HHO parameters
+!
+#define HHO_COEF       24
+#define HHO_STAB       25
+#define HHO_CALC       26
+!
+! type for HHO parameters
+!
+#define HHO_STAB_AUTO 1
+#define HHO_STAB_MANU 2
+#define HHO_CALC_YES  1
+#define HHO_CALC_NO   2
 !
 !        type of external state variables
 !

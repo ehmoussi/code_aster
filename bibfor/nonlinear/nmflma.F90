@@ -27,6 +27,7 @@ subroutine nmflma(typmat, mod45 , l_hpp  , ds_algopara, modelz,&
                   ldccvg, matass, matgeo)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -135,6 +136,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
     character(len=19) :: depplu, vitplu, accplu, sigplu, varplu, valin2(zvalin)
     integer :: nmax
     integer :: nb_matr
+    type(HHO_Field) :: hhoField
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20), modlag
     aster_logical :: list_l_asse(20), list_l_calc(20)
@@ -231,7 +233,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
                     ds_material, ds_constitutive,&
                     fonact     , iterat         ,&
                     sddyna     , ds_measure     ,ds_system,&
-                    valin2     , solalg,&
+                    valin2     , solalg, hhoField,&
                     optrig     , ldccvg)
     endif
 !

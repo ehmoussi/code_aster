@@ -33,11 +33,11 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
 !
-integer :: nbtyp
-integer :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX), renumd(MT_NTYMAX)
-integer :: modnum(MT_NTYMAX)
-integer :: nuanom(MT_NTYMAX, MT_NNOMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
-character(len=8) :: nomtyp(MT_NTYMAX)
+integer, intent(out) :: nbtyp
+integer, intent(out) :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX), renumd(MT_NTYMAX)
+integer, intent(out) :: modnum(MT_NTYMAX)
+integer, intent(out) :: nuanom(MT_NTYMAX, MT_NNOMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
+character(len=8), intent(out) :: nomtyp(MT_NTYMAX)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,6 +70,7 @@ character(len=8) :: nomtyp(MT_NTYMAX)
                                                          'TETRA10 ','PENTA6  ','PENTA15 ',&
                                                          'PENTA18 ','PYRAM5  ','PYRAM13 ',&
                                                          'HEXA8   ','HEXA20  ','HEXA27  ',&
+                                                         'TETRA8  ','TRIA4   ',           &
                                                          'TR3QU4  ','QU4TR3  ','TR6TR3  ',&
                                                          'TR3TR6  ','TR6QU4  ','QU4TR6  ',&
                                                          'TR6QU8  ','QU8TR6  ','TR6QU9  ',&
@@ -93,6 +94,7 @@ character(len=8) :: nomtyp(MT_NTYMAX)
                                                 310, 306, 315,&
                                                 318, 305, 313,&
                                                 308, 320, 327,&
+                                                0  , 0  ,     &
                                                 0  , 0  , 0  ,&
                                                 0  , 0  , 0  ,&
                                                 0  , 0  , 0  ,&

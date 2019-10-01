@@ -23,6 +23,7 @@ subroutine nmchht(model    , ds_material, cara_elem     , ds_constitutive,&
                   hval_incr, hval_algo  , hval_measse   , ds_inout)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -106,6 +107,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     integer :: iter_newt, ldccvg, nmax
     character(len=4) :: mode
     type(NL_DS_System) :: ds_system
+    type(HHO_Field) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -213,7 +215,7 @@ type(NL_DS_InOut), intent(in) :: ds_inout
     call nmfint(model         , cara_elem      ,&
                 ds_material   , ds_constitutive,&
                 list_func_acti, iter_newt      , ds_measure, ds_system,&
-                hval_incr     , hval_algo      ,&
+                hval_incr     , hval_algo      , hhoField,&
                 ldccvg        , sddyna)
     call nmaint(nume_dof, list_func_acti, sdnume, ds_system)
 !

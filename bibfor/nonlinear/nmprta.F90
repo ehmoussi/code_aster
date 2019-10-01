@@ -21,13 +21,14 @@
 subroutine nmprta(mesh, model    , nume_dof , numfix     , ds_material, cara_elem,&
                   ds_constitutive, list_load, ds_algopara, solveu     , ds_system,&
                   list_func_acti , ds_print , ds_measure , ds_algorom , sddisc,&
-                  nume_inst      , hval_incr, hval_algo  , matass     , maprec,&
+                  nume_inst      , hval_incr, hval_algo  , hhoField, matass     , maprec,&
                   ds_contact     , sddyna   , hval_meelem, hval_measse, hval_veelem,&
                   hval_veasse    , sdnume   , ldccvg     , faccvg,&
                   rescvg    )
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -63,6 +64,7 @@ character(len=19) :: list_load, solveu, sddisc, sddyna, sdnume
 character(len=24) :: model, cara_elem
 character(len=24) :: nume_dof, numfix
 character(len=19) :: hval_algo(*), hval_incr(*)
+type(HHO_Field), intent(in) :: hhoField
 type(NL_DS_Contact), intent(inout) :: ds_contact
 character(len=19) :: hval_veelem(*), hval_veasse(*)
 character(len=19) :: hval_meelem(*), hval_measse(*)
@@ -169,7 +171,7 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
                 ds_algopara, list_load  , nume_dof      , numfix    , solveu         ,&
                 ds_system  , ds_print   , ds_measure    , ds_algorom, sddisc         ,&
                 sddyna     , nume_inst  , list_func_acti, ds_contact, hval_incr      ,&
-                hval_algo  , hval_meelem, hval_measse   , maprec    , matass         ,&
+                hval_algo  , hhoField, hval_meelem, hval_measse   , maprec    , matass         ,&
                 faccvg     , ldccvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
@@ -204,7 +206,7 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
                      sddyna     , nume_dof       , &
                      ds_material, ds_constitutive, ds_system     , ds_measure,&
                      time_prev  , time_curr      , iter_newt     ,&
-                     hval_incr  , hval_algo      ,&
+                     hval_incr  , hval_algo      , hhoField,&
                      ldccvg     , sdnume)
     if (ldccvg .eq. 1) then
         goto 999

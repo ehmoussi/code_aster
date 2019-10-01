@@ -21,10 +21,12 @@ interface
                       ds_algopara, lischa  , numedd     , numfix    , solveu,&
                       ds_system  , ds_print, ds_measure , ds_algorom, sddisc,&
                       sddyna     , numins  , fonact     , ds_contact, valinc,&
-                      solalg     , meelem  , measse      ,maprec    , matass,&
+                      solalg     , hhoField, meelem  , measse      ,maprec    , matass,&
                       faccvg     , ldccvg)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
+        use HHO_type
+
         character(len=8), intent(in) :: mesh
         character(len=*) :: modelz
         character(len=24) :: carele
@@ -36,6 +38,7 @@ interface
         character(len=24) :: numfix
         character(len=19) :: solveu
         type(NL_DS_Print), intent(inout) :: ds_print
+        type(HHO_Field), intent(in) :: hhoField
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         type(NL_DS_System), intent(in) :: ds_system

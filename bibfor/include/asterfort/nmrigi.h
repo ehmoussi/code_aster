@@ -20,9 +20,10 @@ interface
     subroutine nmrigi(modelz         , cara_elem,&
                       ds_material    , ds_constitutive,&
                       list_func_acti , iter_newt      , sddyna, ds_measure, ds_system,&
-                      hval_incr      , hval_algo      ,&
+                      hval_incr      , hval_algo      , hhoField,&
                       optioz         , ldccvg)
         use NonLin_Datastructure_type
+        use HHO_type
         character(len=*), intent(in) :: modelz
         character(len=24), intent(in) :: cara_elem
         type(NL_DS_Material), intent(in) :: ds_material
@@ -33,6 +34,7 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        type(HHO_Field), intent(in) :: hhoField
         character(len=*), intent(in) :: optioz
         integer, intent(out) :: ldccvg
     end subroutine nmrigi

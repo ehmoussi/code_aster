@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
 !
 interface
     subroutine pk2sig(ndim, f, jac, pk2, sig,&
                       ind)
-        integer :: ndim
-        real(kind=8) :: f(3, 3)
-        real(kind=8) :: jac
-        real(kind=8) :: pk2(2*ndim)
-        real(kind=8) :: sig(2*ndim)
-        integer :: ind
+        integer, intent(in) :: ndim, ind
+        real(kind=8), intent(in) :: f(3,3), jac
+        real(kind=8), intent(inout) :: pk2(2*ndim), sig(2*ndim)
     end subroutine pk2sig
 end interface

@@ -26,15 +26,18 @@ interface
                       sddisc         , ds_print   , ds_measure,&
                       ds_algorom     , sddyna     , sdnume    ,&
                       sderro         , matass     , maprec    ,&
-                      valinc         , solalg     , meelem    ,&
+                      valinc         , solalg     , hhoField  , meelem,&
                       measse         , veasse     , lerrit)
         use NonLin_Datastructure_type
         use ROM_Datastructure_type
+        use HHO_type
+
         character(len=8), intent(in) :: mesh
         character(len=24) :: modele
         character(len=24) :: numedd
         character(len=24) :: numfix
         type(NL_DS_Material), intent(in) :: ds_material
+        type(HHO_Field), intent(in) :: hhoField
         character(len=24) :: carele
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=19) :: lischa

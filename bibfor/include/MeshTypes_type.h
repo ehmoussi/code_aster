@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 
-! Total number of mesh types 
-#define MT_NTYMAX 69
+! Total number of mesh types
+#define MT_NTYMAX 71
 ! Maximum number of nodes of all elements
 #define MT_NNOMAX 27

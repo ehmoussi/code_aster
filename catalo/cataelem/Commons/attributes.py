@@ -21,9 +21,9 @@
 
 from cataelem.Tools.base_objects import Attribute, objects_from_context
 
-#--------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 # Remarques importantes :
-#------------------------
+# ------------------------
 # Les 10 attributs suivants (qui ont "auto=True") sont "automatiques".
 # Ils se déduisent d'informations données dans le catalogue phenomenons_modelisations.py
 # et dans le catalogue mesh_types.py
@@ -36,10 +36,10 @@ from cataelem.Tools.base_objects import Attribute, objects_from_context
 # Les commentaires (comment=...) sont très importants. Ce sont eux qui "définissent" les attributs.
 # Pour l'instant, ces commentaires ne sont pas stockés dans les objets jeveux '&CATA....'
 #
-#--------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 DIM_TOPO_MAILLE = Attribute(auto=True, value=('0', '1', '2', '3'),
-                 comment="""
+                            comment="""
   DIM_TOPO_MAILLE : dimension topologique de la maille.
                      POI1 : 0 ; SEG: 1 ; TRIA/QUAD : 2 ; HEXA/PENTA/TETRA/PYRA:3
   Cet attribut est obtenu a partir du parametre "dim" du catalogue mesh_types
@@ -47,7 +47,7 @@ DIM_TOPO_MAILLE = Attribute(auto=True, value=('0', '1', '2', '3'),
 """)
 
 
-PHENO = Attribute(auto=True,value=(
+PHENO = Attribute(auto=True, value=(
                   'AC',
                   'ME',
                   'PR',
@@ -76,24 +76,24 @@ MODELI = Attribute(auto=True, value=(
                    'FS2',
                    'FSA',
                    'PFI',
-                  # ...
+                   # ...
                    ),
                    comment="""
   MODELI :  'code' de la modelisaton
   Si un element appartient a plusieurs modelisations : MODELI='###'
 """)
 
-TYPMA = Attribute(auto=True,value=(
+TYPMA = Attribute(auto=True, value=(
                   'POI',
                   'SE2',
                   'TE4',
-                # ...
+                  # ...
                   ),
                   comment="""
 TYPMA  =  'code' du type_maille
 """)
 
-ALIAS8 = Attribute(auto=True, value=( 'MEDTRSE2',),
+ALIAS8 = Attribute(auto=True, value=('MEDTRSE2',),
                    comment="""
   ALIAS8 : chaine formee par concatenation de 3 codes  :
            ALIAS(1:2) : code du phenomene
@@ -136,7 +136,7 @@ DIM_TOPO_MODELI = Attribute(auto=True, value=(
 
 
 PRINCIPAL = Attribute(auto=True, value=('OUI',),
-                            comment="""
+                      comment="""
   PRINCIPAL = 'OUI' :
   L'element est "principal" pour la modelisation (i.e. ce n'est pas un element de "bord").
   La dimension toplogique de sa maille (DIM_TOPO_MAILLE) est identique a celle de sa
@@ -175,7 +175,7 @@ DISCRET = Attribute(auto=True, value=(
   On reconnait les modelisations "discretes" au fait que DIM__(1)=-1
   Les elements d'une modelisations discrete sont TOUS "principaux" (voir PRINCIPAL).
 """)
-#--------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 
 ABSO = Attribute(value=(
@@ -240,7 +240,6 @@ C_PLAN = Attribute(value=(
 """)
 
 
-
 D_PLAN = Attribute(value=(
                    'OUI',
                    ),
@@ -278,9 +277,9 @@ FOURIER = Attribute(value=(
 """)
 
 FLUIDE = Attribute(value=(
-                    'OUI',
-                    ),
-                    comment="""
+    'OUI',
+),
+    comment="""
   FLUIDE =  'OUI' : l'element est destine a une etude d'un fluide
 """)
 
@@ -293,9 +292,9 @@ FROTTEMENT = Attribute(value=(
 """)
 
 FSI = Attribute(value=(
-                    'OUI',
-                    ),
-                    comment="""
+    'OUI',
+),
+    comment="""
   FSI =  'OUI' : l'element est destine a une etude IFS
 """)
 
@@ -384,7 +383,6 @@ METH_CONTINUE = Attribute(value=(
 """)
 
 
-
 NBSIGM = Attribute(value=(
                    '4',
                    '6',
@@ -396,9 +394,9 @@ NBSIGM = Attribute(value=(
 """)
 
 PESA = Attribute(value=(
-                    'OUI',
-                    ),
-                    comment="""
+    'OUI',
+),
+    comment="""
   PESA =  'OUI' : l'element est destine a une etude fluide à surface libre
 """)
 
@@ -435,18 +433,18 @@ TUYAU = Attribute(value=(
 """)
 
 MECA = Attribute(value=(
-                  'OUI',
-                  'NON',
-                  ),
-                  comment="""
+    'OUI',
+    'NON',
+),
+    comment="""
   MECA  =  'OUI' :  l'element est en mécanique.
 """)
 
 THER = Attribute(value=(
-                  'OUI',
-                  'NON',
-                  ),
-                  comment="""
+    'OUI',
+    'NON',
+),
+    comment="""
   THER  =  'OUI' :  l'element est en thermique.
 """)
 
@@ -507,6 +505,10 @@ TYPMOD2 = Attribute(value=(
                     'INTERFAC',
                     'PMF',
                     'THM',
+                    'HHO111',
+                    'HHO121',
+                    'HHO222',
+                    'HHO232',
                     ),
                     comment="""
   TYPMOD2 : Complement au type de  modelisation utilise pour integrer les lois de comportement TYPMOD
@@ -518,6 +520,7 @@ TYPMOD2 = Attribute(value=(
            ELEMDISC l'element utilise des comportements d'elements a discontinuite interne
            PMF      l'element fait appel a des comportements 1D PMF (GROT_GDEP PERMIS)
            THM      themo-hydro-mechanic
+           HHO      Hybrid High-Order elements
 """)
 
 TYPMOD3 = Attribute(value=(

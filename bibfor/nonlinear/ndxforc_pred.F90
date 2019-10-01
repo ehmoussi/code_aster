@@ -29,6 +29,7 @@ subroutine ndxforc_pred(list_func_acti,&
                         hval_measse   , ldccvg)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -98,6 +99,7 @@ integer, intent(out) :: ldccvg
     real(kind=8) :: time_prev, time_curr
     aster_logical :: l_impe, l_ammo, l_macr
     integer :: iter_newt
+    type(HHO_Field) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -185,7 +187,7 @@ integer, intent(out) :: ldccvg
                      sddyna     , nume_dof       , &
                      ds_material, ds_constitutive, ds_system     , ds_measure,&
                      time_prev  , time_curr      , iter_newt     ,&
-                     hval_incr  , hval_algo      ,&
+                     hval_incr  , hval_algo      , hhoField      ,&
                      ldccvg     )
 !
 end subroutine

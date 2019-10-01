@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -106,6 +106,25 @@ comment=""" VARIABLES INTERNES POUR T+ """)
 PCACO3D  = OutputParameter(phys=PHY.CACO3D, type='ELEM',
 comment=""" COQUE_3D (ROTATION FICTIVE AUTOUR DE LA NORMALE) """)
 
+# For HHO
+PCELLMR  = InputParameter(phys=PHY.CELL_R,
+comment=""" HHO - degres de liberte de la cellule""")
+
+PCELLIR  = InputParameter(phys=PHY.CELL_R,
+comment=""" HHO - degres de liberte de la cellule""")
+
+PCSMTIR  = OutputParameter(phys=PHY.N6480R, type='ELEM',
+comment=""" HHO - matrice cellule pour condensation statique""")
+
+PCSRTIR  = OutputParameter(phys=PHY.CELL_R, type='ELEM',
+comment=""" HHO - 2nd membre cellule pour condensation statique""")
+
+PCHHOGT  = InputParameter(phys=PHY.N6480R,
+comment=""" HHO - matrice du gradient local""")
+
+PCHHOST  = InputParameter(phys=PHY.N6480R,
+comment=""" HHO - matrice de la stabilisation locale""")
+
 
 FULL_MECA = Option(
     para_in=(
@@ -161,6 +180,10 @@ FULL_MECA = Option(
         SP.PVITENT,
         SP.PVITKM1,
         SP.PVITPLU,
+           PCELLMR,
+           PCELLIR,
+           PCHHOGT,
+           PCHHOST,
     ),
     para_out=(
            PCACO3D,
@@ -171,6 +194,8 @@ FULL_MECA = Option(
         SP.PSTRXPR,
            PVARIPR,
         SP.PVECTUR,
+           PCSMTIR,
+           PCSRTIR,
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),

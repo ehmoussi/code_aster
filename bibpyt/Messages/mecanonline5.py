@@ -291,4 +291,29 @@ A cause des erreurs précédentes, le code s'arrête.
   il y a incohérence.
 """),
 
+    60 : _("""La formulation HHO est incompatible avec le contact."""),
+
+    61 : _("""La formulation HHO est incompatible avec les liaisons unilatérales."""),
+
+    62 : _("""La formulation HHO est incompatible avec le pilotage."""),
+
+    63 : _("""La formulation HHO est incompatible avec la recherche linéaire."""),
+
+    64 : _("""La formulation HHO est incompatible avec la dynamique."""),
+
+    65 : _("""La formulation HHO est incompatible avec la réduction de modèle."""),
+
+    66 : _("""La formulation HHO est incompatible avec XFEM."""),
+
+    67 : _("""La formulation HHO est incompatible avec les macro-éléments."""),
+
+    68 : _(""" Il n'est pas possible actuellement de calculer des modes de flambement (CRIT_FLAMB) ou des modes vibratoires (MODE_VIBR) si on utilise la formulation HHO."""),
+
+    69 : _("""La formulation HHO est incompatible avec les chargements suiveurs."""),
+
+    70 : _("""La formulation HHO est incompatible avec ETAT_INIT."""),
+
+    71 : _("""La formulation HHO est incompatible en reprise de calcul."""),
+
+
 }

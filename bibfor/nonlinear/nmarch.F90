@@ -24,6 +24,7 @@ subroutine nmarch(numins    , modele       , ds_material, carele, fonact   ,&
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
+use HHO_postpro_module, only : hhoPostDeplMeca
 !
 implicit none
 !
@@ -89,7 +90,7 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
     integer :: iret, nume_store
     real(kind=8) :: instan
     character(len=8) :: result
-    aster_logical :: force, lprint
+    aster_logical :: force, lprint, l_hho
     character(len=19) :: k19bid, list_load_resu
     character(len=4) :: etcalc
     integer :: nume_reuse
@@ -98,6 +99,7 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
     result         = ds_inout%result
     list_load_resu = ds_inout%list_load_resu
+    l_hho          = isfonc(fonact, 'HHO')
 !
 ! - Loop state.
 !
@@ -110,7 +112,7 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
 ! - Storing
 !
-    if (etcalc .eq. 'CONV') then 
+    if (etcalc .eq. 'CONV') then
         force = .true.
     endif
     if (etcalc .eq. 'STOP') then
@@ -174,6 +176,12 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
         call nmarce(ds_inout, result  , sddisc, instan, nume_store,&
                     force   , ds_print)
+!
+! ----- If HHO, we compute a post_processing
+!
+        if(l_hho) then
+            call hhoPostDeplMeca(modele, result, nume_store)
+        end if
 !
 ! ----- Storing reduced parameters table (ROM)
 !

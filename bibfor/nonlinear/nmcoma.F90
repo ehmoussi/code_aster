@@ -25,12 +25,14 @@ subroutine nmcoma(mesh          , modelz         , ds_material,&
                   sddyna        , ds_print       , ds_measure ,&
                   ds_algorom    , numins         , iter_newt  ,&
                   list_func_acti, ds_contact     , hval_incr  ,&
-                  hval_algo     , meelem         , measse     ,&
+                  hval_algo     , hhoField       , meelem     , measse,&
                   maprec        , matass         , faccvg     ,&
                   ldccvg        , sdnume)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
+use HHO_type
+use HHO_comb_module, only : hhoPrepMatrix
 !
 implicit none
 !
@@ -76,6 +78,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
 character(len=19) :: meelem(*)
 character(len=19) :: hval_algo(*), hval_incr(*)
 character(len=19) :: measse(*)
+type(HHO_Field), intent(in) :: hhoField
 integer :: numins, iter_newt
 type(NL_DS_Contact), intent(inout) :: ds_contact
 character(len=19) :: maprec, matass
@@ -109,6 +112,7 @@ integer :: faccvg, ldccvg
 ! IN  ITERAT : NUMERO D'ITERATION
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
+! In  hhoField         : datastructure for HHO
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
 ! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
 ! OUT LFINT  : .TRUE. SI FORCES INTERNES CALCULEES
@@ -130,7 +134,7 @@ integer :: faccvg, ldccvg
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: reasma, lcamor, l_diri_undead, l_rom, l_cont_elem
-    aster_logical :: ldyna, lamor, l_neum_undead, lcrigi, lcfint, larigi
+    aster_logical :: ldyna, lamor, l_neum_undead, lcrigi, lcfint, larigi, l_hho
     character(len=16) :: metcor, metpre
     character(len=16) :: optrig, optamo
     character(len=19) :: matr_elem, rigid
@@ -168,6 +172,7 @@ integer :: faccvg, ldccvg
     l_neum_undead = isfonc(list_func_acti,'NEUM_UNDEAD')
     l_diri_undead = isfonc(list_func_acti,'DIRI_UNDEAD')
     l_cont_elem   = isfonc(list_func_acti,'ELT_CONTACT')
+    l_hho         = isfonc(list_func_acti,'HHO')
 !
 ! --- RE-CREATION DU NUME_DDL OU PAS
 !
@@ -185,10 +190,10 @@ integer :: faccvg, ldccvg
         call nmchra(sddyna, renume, optamo, lcamor)
     endif
 !
-! --- OPTION DE CALCUL POUR MERIMO
+! - Select option for compute matrixes
 !
-    call nmchoi('CORRECTION', sddyna, numins, list_func_acti, metpre,&
-                metcor      , reasma, lcamor, optrig        , lcrigi,&
+    call nmchoi('CORRECTION', sddyna, numins, list_func_acti, reasma, metpre,&
+                metcor      ,  lcamor, optrig        , lcrigi,&
                 larigi      , lcfint)
 !
 ! - Compute internal forces
@@ -197,7 +202,7 @@ integer :: faccvg, ldccvg
         call nmfint(model         , cara_elem      ,&
                     ds_material   , ds_constitutive,&
                     list_func_acti, iter_newt      , ds_measure, ds_system,&
-                    hval_incr     , hval_algo      ,&
+                    hval_incr     , hval_algo      , hhoField,&
                     ldccvg        , sddyna)
     endif
 !
@@ -268,6 +273,14 @@ integer :: faccvg, ldccvg
         ASSERT(reasma)
     endif
 !
+! - For HHO: assembly rigidity and condensation
+!
+    if (l_hho) then
+        call hhoPrepMatrix(modelz, ds_material%field_mate, ds_system%merigi, ds_system%vefint, &
+                           rigid, hhoField, list_func_acti, meelem, numedd, lischa, ds_algopara, &
+                           ds_system, ds_measure, l_cond = ASTER_FALSE, l_asse = ASTER_TRUE)
+    endif
+!
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
@@ -278,12 +291,6 @@ integer :: faccvg, ldccvg
                     nb_matr        , list_matr_type, list_calc_opti,&
                     list_asse_opti , list_l_calc   , list_l_asse   ,&
                     meelem         , measse        , ds_system)
-    endif
-!
-! --- ERREUR SANS POSSIBILITE DE CONTINUER
-!
-    if (ldccvg .eq. 1) then
-        goto 999
     endif
 !
 ! --- CALCUL DE LA MATRICE ASSEMBLEE GLOBALE

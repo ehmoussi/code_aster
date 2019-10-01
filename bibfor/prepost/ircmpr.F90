@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -105,7 +105,7 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
     parameter ( nompro = 'IRCMPR' )
 !
     integer :: ifm, nivinf, j, i
-    integer :: iaux, ima, nbno, nbma
+    integer :: iaux, ima, nbno, nbma, ite8, ite4
     integer :: nbmail, iadcnx, ilcnx
     integer :: codret,  jco
     integer ::  adefma
@@ -154,6 +154,9 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
 !
 ! 1.3.1. ==> COMPLEMENTS POUR UN CHAMP AUX NOEUDS
 !
+    call jenonu(jexnom('&CATA.TM.NOMTM', 'TETRA4'), ite4)
+    call jenonu(jexnom('&CATA.TM.NOMTM', 'TETRA8'), ite8)
+!
     if (typech(1:4) .eq. 'NOEU') then
 !
         nbimpr = 1
@@ -163,7 +166,7 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
         call wkvect(ncaimk, 'V V K80', iaux, adcaik)
 !
 !       ON CREE UN TABLEAU QUI PERMET DE DETECTER L'EXISTENCE DE NOEUDS
-!       CENTRE (APPARTENANT AUX MAILLES DE TYPE TRIA7,QUAD9,PENTA18 OU
+!       CENTRE (APPARTENANT AUX MAILLES DE TYPE TRIA7,QUAD9,PENTA18, TETRA8 OU
 !       HEXA27)
 !
         call jeveuo(nomaas//'.TYPMAIL', 'L', vi=dtyp)
@@ -176,6 +179,15 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
             noeu_centr(i)=0
         end do
 !
+        do i = 1, nbma
+            if (dtyp(i) .eq. ite8) then
+                jco=iadcnx+zi(ilcnx+i-1)-1
+                do j = 1, 4
+                    noeu_centr(1+zi(jco+4+j-1)-1)=1
+                end do
+            endif
+        end do
+!
 ! 1.3.2. ==> COMPLEMENTS POUR DES CHAMPS AUX ELEMENTS
 !
     else if (typech(1:2).eq.'EL') then
@@ -184,7 +196,11 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
         call jelira(nomaas//'.TYPMAIL', 'LONMAX', nbmail)
         call wkvect('&&IRCMPR.TYPMA', 'V V I', nbmail, adtyp2)
         do ima = 1, nbmail
-            zi(adtyp2+ima-1)=nadtypm(ima)
+            if (nadtypm(ima) .eq. ite8) then
+                zi(adtyp2+ima-1)=ite4
+            else
+                zi(adtyp2+ima-1)=nadtypm(ima)
+            endif
         end do
         if (typech(1:4) .eq. 'ELGA') then
             call jeveuo(modele//'.MAILLE', 'L', adefma)

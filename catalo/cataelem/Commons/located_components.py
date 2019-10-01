@@ -54,7 +54,8 @@ CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
                                          'ITEDEC', 'INTLOC', 'PERTURB', 'TOLDEBO',
                                          'ITEDEBO', 'RESIRADI', 'VARIEXT1', 'THETATHM',
                                          'POSTITER', 'LC_EXT[3]', 'MATRNSYM', 'ALPHATHM',
-                                         'LC_EXT2[2]', 'POSTINCR', 'STRAIN','VARIEXT2'))
+                                         'LC_EXT2[2]', 'POSTINCR', 'STRAIN','VARIEXT2',
+                                         'HHO_COEF', 'HHO_STAB', 'HHO_CALC',))
 
 CCDTAU = LocatedComponents(phys=PHY.PILO_R, type='ELEM',
                            components=('A0',))
@@ -78,6 +79,9 @@ CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
                                          'KIT1NVAR', 'KIT2NVAR', 'KIT3NVAR', 'KIT4NVAR',
                                          'DEFO_LDC',
                                          ))
+
+CCMBHHO = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
+                            components=('X[8]',))
 
 CCOMPO2 = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
                             components=('NBVARI',))

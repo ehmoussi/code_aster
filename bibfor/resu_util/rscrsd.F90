@@ -63,7 +63,7 @@ integer :: nbordr
 !     ------------------------------------------------------------------
     parameter (ncmec1=38)
     parameter (ncmec2=53)
-    parameter (ncmec3=34)
+    parameter (ncmec3=36)
     parameter (ncmuti=40)
     parameter (ncmeca=ncmec1+ncmec2+ncmec3+ncmuti)
     character(len=16) :: chmec1(ncmec1)
@@ -155,7 +155,8 @@ integer :: nbordr
      & 'COHE_ELEM',       'INDC_ELEM',       'SECO_ELEM',&
      & 'VARC_ELGA',       'FERRAILLAGE',     'EPVC_NOEU',&
      & 'EPFD_NOEU',       'EPFP_NOEU',       'PDIL_ELGA',&
-     & 'MATE_ELGA',       'MATE_ELEM'/
+     & 'MATE_ELGA',       'MATE_ELEM',       'HHO_CELL ',&
+     & 'HHO_FACE '/
 !
 !      '1234567890123456','1234567890123456','1234567890123456',
     data chmuti/&

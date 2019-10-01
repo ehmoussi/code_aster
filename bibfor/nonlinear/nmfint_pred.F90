@@ -21,10 +21,11 @@ subroutine nmfint_pred(model      , cara_elem      , list_func_acti,&
                        sddyna     , nume_dof       , &
                        ds_material, ds_constitutive, ds_system     , ds_measure,&
                        time_prev  , time_curr      , iter_newt     ,&
-                       hval_incr  , hval_algo      ,&
+                       hval_incr  , hval_algo      , hhoField      ,&
                        ldccvg     , sdnume_)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -48,6 +49,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 real(kind=8), intent(in) :: time_prev, time_curr
 integer, intent(in) :: iter_newt
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+type(HHO_Field), intent(in) :: hhoField
 integer, intent(out) :: ldccvg
 character(len=19), optional, intent(in) :: sdnume_
 !
@@ -74,6 +76,7 @@ character(len=19), optional, intent(in) :: sdnume_
 ! In  iter_newt        : index of current Newton iteration
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
+! In  hhoField         : datastructure for HHO
 ! Out ldccvg           : indicator from integration of behaviour
 !                -1 : PAS D'INTEGRATION DU COMPORTEMENT
 !                 0 : CAS DE FONCTIONNEMENT NORMAL
@@ -114,7 +117,7 @@ character(len=19), optional, intent(in) :: sdnume_
         call nmfint(model         , cara_elem      ,&
                     ds_material   , ds_constitutive,&
                     list_func_acti, iter_newt      , ds_measure, ds_system,&
-                    hval_incr     , hval_algo      ,&
+                    hval_incr     , hval_algo      , hhoField,&
                     ldccvg        , sddyna)
         if (ldccvg .eq. 0) then
             call nmaint(nume_dof, list_func_acti, sdnume, ds_system)

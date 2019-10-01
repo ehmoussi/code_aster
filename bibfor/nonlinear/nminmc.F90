@@ -23,6 +23,7 @@ subroutine nminmc(fonact, lischa     , sddyna     , modele, ds_constitutive,&
                   meelem, measse     , ds_system)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -79,6 +80,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
     aster_logical :: lmacr, ldyna, lexpl
     aster_logical :: lamor, lktan, lelas, lvarc, lcfint, lamra
     integer :: ifm, niv
+    type(HHO_Field) :: hhoField
     integer :: numins, iterat, ldccvg
     integer :: nb_matr
     character(len=16) :: optrig, optamo
@@ -169,7 +171,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
         call nmrigi(modele     , carele         ,&
                     ds_material, ds_constitutive,&
                     fonact     , iterat         , sddyna, ds_measure, ds_system,&
-                    valinc     , solalg,&
+                    valinc     , solalg, hhoField,&
                     optrig     , ldccvg)
         if (lvarc) then
             call utmess('A', 'MECANONLINE3_2')
