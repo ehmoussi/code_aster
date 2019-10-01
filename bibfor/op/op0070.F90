@@ -21,6 +21,8 @@ subroutine op0070()
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
+use HHO_type
+use HHO_Meca_module, only : hhoPreCalcMeca
 !
 implicit none
 !
@@ -54,6 +56,7 @@ implicit none
 #include "asterfort/onerrf.h"
 #include "asterfort/titre.h"
 #include "asterfort/setTimeListProgressBar.h"
+#include "asterfort/isfonc.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -115,6 +118,8 @@ implicit none
     type(NL_DS_Material)     :: ds_material
     type(NL_DS_ErrorIndic)   :: ds_errorindic
     type(NL_DS_System)       :: ds_system
+    type(HHO_Field)          :: hhoField
+    aster_logical            :: l_hho = ASTER_FALSE
 !
 ! --- VARIABLES CHAPEAUX
 !
@@ -179,7 +184,7 @@ implicit none
                 sd_suiv    , sd_obsv   , sderro       , ds_posttimestep, ds_inout  ,&
                 ds_energy  , ds_conv   , ds_errorindic, valinc         , solalg    ,&
                 measse     , veelem    , meelem       , veasse         , ds_contact,&
-                ds_measure , ds_algorom, ds_system)
+                ds_measure , ds_algorom, ds_system    , hhoField)
 !
 ! - Launch timer for total time
 !
@@ -194,6 +199,13 @@ implicit none
     limpl = ndynlo(sddyna,'IMPLICITE')
     lexpl = ndynlo(sddyna,'EXPLICITE')
     lstat = ndynlo(sddyna,'STATIQUE' )
+!
+! --- Si formulation HHO: On precalcule des opérateurs
+!
+    l_hho = isfonc(fonact, 'HHO')
+    if(l_hho .and. ds_algopara%l_precalc_hho ) then
+        call hhoPreCalcMeca(model, hhoField, ds_constitutive, ds_measure)
+    end if
 !
 ! ======================================================================
 !  DEBUT DU PAS DE TEMPS
@@ -226,6 +238,7 @@ implicit none
     else if (lstat.or.limpl) then
         call nmnewt(mesh       , model    , numins         , numedd    , numfix   ,&
                     ds_material, cara_elem, ds_constitutive, list_load , ds_system,&
+                    hhoField, &
                     ds_algopara, fonact   , ds_measure     , sderro    , ds_print ,&
                     sdnume     , sddyna   , sddisc         , sdcrit    , sd_suiv  ,&
                     sdpilo     , ds_conv  , solver         , maprec    , matass   ,&
@@ -327,7 +340,7 @@ implicit none
     ASSERT(etcalc.eq.'CONT')
     call nmfpas(fonact    , sddyna, sdpilo, sddisc, nbiter,&
                 numins    , eta   , valinc, solalg, veasse, ds_system,&
-                ds_contact)
+                ds_contact, hhoField)
     numins = numins + 1
 !
     goto 200
@@ -379,6 +392,6 @@ implicit none
 !
     call nmmeng(fonact,&
                 ds_algorom, ds_print, ds_measure     ,&
-                ds_energy , ds_inout, ds_posttimestep)
+                ds_energy , ds_inout, ds_posttimestep, hhoField)
 !
 end subroutine

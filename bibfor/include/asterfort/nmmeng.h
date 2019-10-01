@@ -18,10 +18,11 @@
 !
 interface
     subroutine nmmeng(list_func_acti,&
-                      ds_algorom    , ds_print, ds_measure     ,&
-                      ds_energy     , ds_inout, ds_posttimestep)
+                      ds_algorom    , ds_print, ds_measure,&
+                      ds_energy     , ds_inout, ds_posttimestep, hhoField)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
+        use HHO_type
         integer, intent(in) :: list_func_acti(*)
         type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
         type(NL_DS_Print), intent(inout) :: ds_print
@@ -29,5 +30,6 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(NL_DS_InOut), intent(inout) :: ds_inout
         type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
+        type(HHO_Field), intent(in) :: hhoField
     end subroutine nmmeng
 end interface

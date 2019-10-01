@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcvci(charge, infoch, fomult, numedd, depmoi,&
-                  instap, cncine)
-
-    implicit none
+!
+subroutine nmcvci(model , hhoField,&
+                  charge, infoch  , fomult, numedd, depmoi,&
+                  instap, cncine  )
+!
+use HHO_type
+!
+implicit none
 !
 !
 ! BUT : CALCULER LE CHAM_NO CNCINE QUI CONTIENT  L'INCREMENT DE
@@ -42,21 +45,28 @@ subroutine nmcvci(charge, infoch, fomult, numedd, depmoi,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/vtcmbl.h"
 #include "asterfort/vtcreb.h"
+#include "asterfort/dismoi.h"
+
+character(len=24), intent(in) :: model
+type(HHO_Field), intent(in) :: hhoField
     character(len=24) :: charge, infoch, fomult, numedd
     character(len=19) :: depmoi, cncine
     character(len=24) :: l2cnci(2), cncinm, cncinp
-    character(len=8) :: char1
+    character(len=8) :: char1, answer
     real(kind=8) :: instap, coefr(2)
     integer :: neq, ieq, neq2, iret, jinfc, ichar
     integer :: nbchar, jlchar
     character(len=1) :: typch(2)
-    aster_logical :: lvcine
+    aster_logical :: lvcine, l_hho
     integer, pointer :: dlci(:) => null()
     real(kind=8), pointer :: cncim(:) => null()
     real(kind=8), pointer :: vale(:) => null()
 !----------------------------------------------------------------------
 !
     call jemarq()
+
+    call dismoi('EXI_HHO', model, 'MODELE', repk=answer)
+    l_hho = answer .eq. 'OUI'
 !
 !     -- CREATION DE CNCINE = 0. PARTOUT :
 !     --------------------------------------
@@ -99,8 +109,12 @@ subroutine nmcvci(charge, infoch, fomult, numedd, depmoi,&
 !
 !     CALCUL DE UIMP+ :
 !     ---------------------
-    call ascavc(charge, infoch, fomult, numedd, instap,&
-                cncinp)
+    if (l_hho) then
+        call ascavc(charge, infoch  , fomult, numedd, instap, cncinp,&
+                    l_hho , hhoField)
+    else
+        call ascavc(charge, infoch, fomult, numedd, instap, cncinp)
+    endif
     call jeveuo(cncinp(1:19)//'.DLCI', 'L', vi=dlci)
 !
 !

@@ -90,10 +90,11 @@ character(len=*) :: nomamd
     integer :: codret
     integer :: ipoin, ityp, letype
     integer :: ino
-    integer :: ima
+    integer :: ima, ite04, ite08, itr03, itr04
     integer :: jnomma(MT_NTYMAX), jnumma(MT_NTYMAX), jcnxma(MT_NTYMAX)
     integer :: ifm, niv
     character(len=8) :: saux08
+    aster_logical :: lnocen
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -111,6 +112,29 @@ character(len=*) :: nomamd
     do ima = 1, nbmail
         nmatyp(typma(ima)) = nmatyp(typma(ima)) + 1
     end do
+!
+!     ON TRAITE LE TETRA8, ON OUBLIE LES 4 DERNIERS NOEUDS
+!     ON L'IMPRIME COMME UN TETRA4
+!     POUR LE TRIA4, ON OUBLIE LE NOEUD CENTRAL (LE DERNIER)
+!     ON L'IMPRIME COMME UN TRIA3
+    lnocen = ASTER_FALSE
+    call jenonu(jexnom('&CATA.TM.NOMTM', 'TETRA8'), ite08)
+    call jenonu(jexnom('&CATA.TM.NOMTM', 'TETRA4'), ite04)
+    call jenonu(jexnom('&CATA.TM.NOMTM', 'TRIA4'), itr04)
+    call jenonu(jexnom('&CATA.TM.NOMTM', 'TRIA3'), itr03)
+    if (nmatyp(ite08) .ne. 0) then
+        nmatyp(ite04)=nmatyp(ite04)+nmatyp(ite08)
+        nmatyp(ite08)=0
+        lnocen = ASTER_TRUE
+    endif
+    if (nmatyp(itr04) .ne. 0) then
+        nmatyp(itr03)=nmatyp(itr03)+nmatyp(itr04)
+        nmatyp(itr04)=0
+        lnocen = ASTER_TRUE
+    endif
+    if (lnocen) then
+        call utmess('A', 'PREPOST_86')
+    endif
 !
 ! 2.2. ==> ON VERIFIE QUE L'ON SAIT ECRIRE LES MAILLES PRESENTES DANS
 !          LE MAILLAGE
@@ -150,9 +174,12 @@ character(len=*) :: nomamd
 !
     do ima = 1, nbmail
         ityp = typma(ima)
-!       ON TRAITE LES PENTA18 EN OUBLIANT
-!       LES NOEUDS DU CENTRE ET LES SEG4 EN OUBLIANT
-!       LES 2 NOEUDS CENTRAUX:
+!     POUR LE TETRA8, ON OUBLIE LES 4 DERNIERS NOEUDS
+!     ON L'IMPRIME COMME UN TETRA4
+!     POUR LE TRIA4, ON OUBLIE LE NOEUD CENTRAL (LE DERNIER)
+!     ON L'IMPRIME COMME UN TRIA3
+        if (ityp .eq. ite08) ityp=ite04
+        if (ityp .eq. itr04) ityp=itr03
         ipoin = point(ima)
         nmatyp(ityp) = nmatyp(ityp) + 1
 !       NOM DE LA MAILLE DE TYPE ITYP DANS VECT NOM MAILLES
@@ -164,8 +191,7 @@ character(len=*) :: nomamd
 !          ENTRE ASTER ET MED EST IDENTIQUE:
         if (modnum(ityp) .eq. 0) then
             do ino = 1, nnotyp(ityp)
-                zi(jcnxma(ityp)-1+(nmatyp(ityp)-1)*nnotyp(ityp)+ino) =&
-                    connex(ipoin-1+ino)
+                zi(jcnxma(ityp)-1+(nmatyp(ityp)-1)*nnotyp(ityp)+ino) = connex(ipoin-1+ino)
             end do
 !       II) POUR LES TYPES DE MAILLE DONT LA NUMEROTATION DES NOEUDS
 !          ENTRE ASTER ET MED EST DIFFERENTE (CF LRMTYP):

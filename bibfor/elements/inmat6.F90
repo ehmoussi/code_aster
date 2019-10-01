@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,12 +53,12 @@ subroutine inmat6(elrefa, fapg, mganos)
 !     CAS DU SHB8 ET DU SHB6 NON INVERSIBLE
     if (fapg .eq. 'SHB5' .or. fapg .eq. 'SHB6') then
         call r8inir(nbnomx*nbnomx, 0.d0, mganos, 1)
-        do 10 i = 1, nnos/2
+        do i = 1, nnos/2
             mganos(1,i) = 1.d0
-10      continue
-        do 20 i = nnos/2+1, nnos
+        end do
+        do i = nnos/2+1, nnos
             mganos(5,i) = 1.d0
-20      continue
+        end do
         elref2 = elrefa
         goto 100
     endif
@@ -82,9 +82,9 @@ subroutine inmat6(elrefa, fapg, mganos)
         elref2 = 'SH6'
     else if (elrefa.eq.'P13') then
         elref2 = 'PY5'
-    else if (elrefa.eq.'T10') then
+    else if ((elrefa.eq.'T10') .or. (elrefa.eq.'TE8')) then
         elref2 = 'TE4'
-    else if ((elrefa.eq.'TR6') .or. (elrefa.eq.'TR7')) then
+    else if ((elrefa.eq.'TR4') .or. (elrefa.eq.'TR6') .or. (elrefa.eq.'TR7')) then
         elref2 = 'TR3'
     else if ((elrefa.eq.'QU8') .or. (elrefa.eq.'QU9')) then
         elref2 = 'QU4'
@@ -97,35 +97,35 @@ subroutine inmat6(elrefa, fapg, mganos)
 !
 !     CALCUL DES MATRICES M ET P :
 !     ----------------------------
-    do 30 i = 1, nnos*nnos
+    do i = 1, nnos*nnos
         m(i) = 0.d0
-30  end do
+    end do
 !
-    do 70 kp = 1, npg
-        do 40,kdim = 1,ndim
-        xg(kdim) = xpg(ndim* (kp-1)+kdim)
-40      continue
+    do kp = 1, npg
+        do kdim = 1,ndim
+            xg(kdim) = xpg(ndim* (kp-1)+kdim)
+        end do
         call elrfvf(elref2, xg, nbnomx, ff, nno)
         ln = (kp-1)*nnos
-        do 60 i = 1, nnos
+        do i = 1, nnos
             p(ln+i) = ff(i)
-            do 50 j = 1, nnos
+            do j = 1, nnos
                 lm = nnos* (i-1) + j
                 m(lm) = m(lm) + ff(i)*ff(j)
-50          continue
-60      continue
-70  end do
+            end do
+        end do
+    end do
 !
 !     CALCUL DE LA MATRICE M-1*P :
 !     ----------------------------
     call mgauss('NFVP', m, p, nnos, nnos,&
                 npg, det, iret)
 !
-    do 90 i = 1, nnos
-        do 80 kp = 1, npg
+    do i = 1, nnos
+        do kp = 1, npg
             mganos(kp,i) = p((kp-1)*nnos+i)
-80      continue
-90  end do
+        end do
+    end do
 !
 100  continue
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -139,5 +139,24 @@ type(ROM_DS_AlgoPara), optional, intent(inout) :: ds_algorom_
     else
         ASSERT(.false.)
     endif
+!
+    ds_algopara%l_precalc_hho = ASTER_FALSE
+    if (getexm('HHO','OPTIMISATION') == 1) then
+!
+        call getvtx('HHO', 'OPTIMISATION', iocc = 1, nbval=0, nbret = iret)
+!
+        if(iret == -1) then
+            call getvtx('HHO', 'OPTIMISATION', iocc = 1, scal=answer, nbret = iret)
+            ASSERT(iret == 1)
+            if(answer == "MEMOIRE") then
+                ds_algopara%l_precalc_hho = ASTER_FALSE
+            elseif(answer == "TEMPS") then
+                ds_algopara%l_precalc_hho = ASTER_TRUE
+            else
+                ASSERT(ASTER_FALSE)
+            end if
+        end if
+!
+    end if
 !
 end subroutine

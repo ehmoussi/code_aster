@@ -27,6 +27,7 @@ subroutine nmprca(mesh, modele, numedd         , numfix     , ds_material, carel
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -134,6 +135,7 @@ character(len=19) :: depest
     integer, pointer :: delg(:) => null()
     real(kind=8), pointer :: v_gamma(:) => null()
     real(kind=8), pointer :: v_vect(:) => null()
+    type(HHO_Field) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -164,7 +166,7 @@ character(len=19) :: depest
                 ds_algopara, lischa  , numedd, numfix, solveu, ds_system,&
                 ds_print, ds_measure, ds_algorom, sddisc,&
                 sddyna     , numins  , fonact, ds_contact,&
-                valinc     , solalg  , meelem, measse,&
+                valinc     , solalg  , hhoField, meelem, measse,&
                 maprec     , matass  , faccvg, ldccvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER

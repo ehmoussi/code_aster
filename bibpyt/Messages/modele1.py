@@ -60,6 +60,8 @@ Sur les éléments quelconques on peut obtenir des résultats faux.
 
     9 : _("""Liste des mailles affectées pour la modélisation:"""),
 
+    10 : _("""Le modèle contient un mélange d'éléments HHO et non HHO. Ce n'est pas possible."""),
+
     14 : _("""
 Le modèle contient un mélange d'éléments finis 2D (plan Oxy) et 3D
 

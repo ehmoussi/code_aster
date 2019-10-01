@@ -52,7 +52,7 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_implex, l_resi_comp, l_stat, l_dyna
+    aster_logical :: l_implex, l_resi_comp, l_stat, l_dyna, l_hho
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,6 +67,7 @@ type(NL_DS_System), intent(inout) :: ds_system
     l_resi_comp = isfonc(list_func_acti,'RESI_COMP')
     l_stat      = ndynlo(sddyna,'STATIQUE')
     l_dyna      = ndynlo(sddyna,'DYNAMIQUE')
+    l_hho       = isfonc(list_func_acti,'HHO')
 !
 ! - Activation
 !
@@ -86,6 +87,11 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! - Full prediction
 !
     ds_system%l_pred_full = ASTER_TRUE
+!
+    if(l_hho) then
+        ! Désactivation de FORC_NODA en prédiction
+        ds_system%l_pred_cnfnod = ASTER_FALSE
+    end if
 !
 ! - Create fields
 !

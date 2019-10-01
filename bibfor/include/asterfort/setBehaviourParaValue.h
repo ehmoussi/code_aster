@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine setBehaviourParaValue(v_para   , parm_theta_thm, parm_alpha_thm, i_comp_,&
-                                     l_carcri_, v_carcri_)
+    subroutine setBehaviourParaValue(v_para , ds_compor_para, &
+                                     i_comp_, l_carcri_     , v_carcri_)
         use Behaviour_type
         type(Behaviour_Criteria), pointer :: v_para(:)
-        real(kind=8), intent(in) :: parm_theta_thm, parm_alpha_thm
+        type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
         integer, optional, intent(in) :: i_comp_
         real(kind=8), intent(out), optional :: l_carcri_(:)
         real(kind=8), pointer, optional :: v_carcri_(:)

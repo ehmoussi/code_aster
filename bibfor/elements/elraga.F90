@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -88,12 +88,12 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
 !     -----------------------------------------
     if (fapg .eq. 'NOEU') then
         ASSERT(nbpg.eq.nno)
-        do 10,ino = 1,nno
-        hpg(ino) = vol/nno
-        if (ndim .ge. 1) xpg(ino) = xno(ndim* (ino-1)+1)
-        if (ndim .ge. 2) ypg(ino) = xno(ndim* (ino-1)+2)
-        if (ndim .eq. 3) zpg(ino) = xno(ndim* (ino-1)+3)
-10      continue
+        do ino = 1,nno
+            hpg(ino) = vol/nno
+            if (ndim .ge. 1) xpg(ino) = xno(ndim* (ino-1)+1)
+            if (ndim .ge. 2) ypg(ino) = xno(ndim* (ino-1)+2)
+            if (ndim .eq. 3) zpg(ino) = xno(ndim* (ino-1)+3)
+        end do
         goto 170
     endif
 !
@@ -122,11 +122,11 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
         if (ndim .ge. 1) xpg(1) = 0.d0
         if (ndim .ge. 2) ypg(1) = 0.d0
         if (ndim .eq. 3) zpg(1) = 0.d0
-        do 30,ino = 1,nno
-        if (ndim .ge. 1) xpg(1) = xpg(1) + xno(ndim* (ino-1)+1)
-        if (ndim .ge. 2) ypg(1) = ypg(1) + xno(ndim* (ino-1)+2)
-        if (ndim .eq. 3) zpg(1) = zpg(1) + xno(ndim* (ino-1)+3)
-30      continue
+        do ino = 1,nno
+            if (ndim .ge. 1) xpg(1) = xpg(1) + xno(ndim* (ino-1)+1)
+            if (ndim .ge. 2) ypg(1) = ypg(1) + xno(ndim* (ino-1)+2)
+            if (ndim .eq. 3) zpg(1) = zpg(1) + xno(ndim* (ino-1)+3)
+        end do
         if (ndim .ge. 1) xpg(1) = xpg(1)/nno
         if (ndim .ge. 2) ypg(1) = ypg(1)/nno
         if (ndim .eq. 3) zpg(1) = zpg(1)/nno
@@ -140,7 +140,13 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
 !
         npar = 0
 !
-        if (fapg .eq. 'FPG8') then
+        if (fapg .eq. 'FPG1') then
+! --------- FORMULE DE QUADRATURE DE GAUSS A 1 POINTS ( ORDRE 1 )
+            xpg(1) = zero
+            ypg(1) = zero
+            zpg(1) = zero
+            hpg(1) = 8.d0
+        else if (fapg .eq. 'FPG8') then
 ! --------- FORMULE DE QUADRATURE DE GAUSS A 2 POINTS DANS CHAQUE
 !           DIRECTION ( ORDRE 3 )
             npar = 2
@@ -159,6 +165,18 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             h(1) = 0.555555555555556d0
             h(2) = 0.888888888888889d0
             h(3) = h(1)
+        else if (fapg.eq.'FPG64') then
+! --------- FORMULE DE QUADRATURE DE GAUSS A 4 POINTS DANS CHAQUE
+!           DIRECTION ( ORDRE 7 )
+            npar = 4
+            a(1) = -0.339981043584856d0
+            a(2) = -a(1)
+            a(3) = -0.861136311594052d0
+            a(4) = -a(3)
+            h(1) = 0.652145154862546d0
+            h(2) = h(1)
+            h(3) = 0.347854845137453d0
+            h(4) = h(3)
 !
         else if (fapg.eq.'FPG8NOS') then
 ! ------- POUR LES POINTS DE GAUSS -------------------------------------
@@ -672,18 +690,18 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
 !
 !       TRAITEMENT POUR LES FAPG NON SHB
         npi = 0
-        do 90 ix = 1, npx
-            do 80 iy = 1, npyz
+        do ix = 1, npx
+            do iy = 1, npyz
                 npi = npi + 1
                 xpg(npi) = a(ix)
                 ypg(npi) = aty(iy)
                 zpg(npi) = atz(iy)
                 hpg(npi) = h(ix)*ht(iy)
-80          continue
-90      continue
+            end do
+        end do
 !
 !     ------------------------------------------------------------------
-    else if (elrefa.eq.'TE4' .or. elrefa.eq.'T10') then
+    else if (elrefa.eq.'TE4' .or. elrefa.eq.'TE8' .or. elrefa.eq.'T10') then
 !
         if (fapg .eq. 'FPG4') then
 !
@@ -694,13 +712,13 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             bb = (5.d0+3.d0*rac5)/20.d0
             hh = un/24.d0
             npi = 0
-            do 100 i = 1, 4
+            do i = 1, 4
                 npi = npi + 1
                 xpg(npi) = aa
                 ypg(npi) = aa
                 zpg(npi) = aa
                 hpg(npi) = hh
-100          continue
+            end do
             zpg(2) = bb
             ypg(3) = bb
             xpg(4) = bb
@@ -719,15 +737,74 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             ypg(1) = aa
             zpg(1) = aa
             hpg(1) = h1
-            do 110 i = 2, 5
+            do i = 2, 5
                 xpg(i) = bb
                 ypg(i) = bb
                 zpg(i) = bb
                 hpg(i) = h2
-110          continue
+            end do
             zpg(3) = cc
             ypg(4) = cc
             xpg(5) = cc
+!
+        else if (fapg.eq.'FPG11') then
+!
+! --------- FORMULE A 11 POINTS :  (CF DUNAVANT)
+!                   ORDRE 4 EN X Y Z
+            xpg(1) = 0.097204644587583d0
+            ypg(1) = 0.106604172561993d0
+            zpg(1) = 0.684390415453040d0
+            hpg(1) = 0.106468034155490d0 / 6.d0
+!
+            xpg(2) = 0.029569495206479d0
+            ypg(2) = 0.329232959742646d0
+            zpg(2) = 0.317903560213394d0
+            hpg(2) = 0.110234232428497d0 / 6.d0
+!
+            xpg(3) = 0.432710239047768d0
+            ypg(3) = 0.103844116410993d0
+            zpg(3) = 0.353823239209297d0
+            hpg(3) = 0.154976116016246d0 / 6.d0
+!
+            xpg(4) = 0.240276664928072d0
+            ypg(4) = 0.304448402434496d0
+            zpg(4) = 0.126801725915392d0
+            hpg(4) = 0.193410812049634d0 / 6.d0
+!
+            xpg(5) = 0.129411373788910d0
+            ypg(5) = 0.538007203916185d0
+            zpg(5) = 0.330190414837464d0
+            hpg(5) = 0.076162715245558d0 / 6.d0
+!
+            xpg(6) = 0.121541991333927d0
+            ypg(6) = 0.008991260093335d0
+            zpg(6) = 0.306493988429690d0
+            hpg(6) = 0.079426680068025d0 / 6.d0
+!
+            xpg(7) = 0.450765876091276d0
+            ypg(7) = 0.432953490481355d0
+            zpg(7) = 0.059456616299433d0
+            hpg(7) = 0.069469965937635d0 / 6.d0
+!
+            xpg(8) = 0.419266313879513d0
+            ypg(8) = 0.053341239535745d0
+            zpg(8) = 0.047781435559086d0
+            hpg(8) = 0.059933185146559d0 / 6.d0
+!
+            xpg(9) = 0.067223294893383d0
+            ypg(9) = 0.741228882093622d0
+            zpg(9) = 0.035183929773598d0
+            hpg(9) = 0.055393798871576d0 / 6.d0
+!
+            xpg(10) = 0.752508507009654d0
+            ypg(10) = 0.081404918402859d0
+            zpg(10) = 0.068099370938206d0
+            hpg(10) = 0.055273369155936d0 / 6.d0
+!
+            xpg(11) = 0.040490506727590d0
+            ypg(11) = 0.174694058697230d0
+            zpg(11) = 0.013560701879802d0
+            hpg(11) = 0.039251090924839d0 / 6.d0
 !
         else if (fapg.eq.'FPG15') then
 !
@@ -800,31 +877,150 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             zpg(15) = xpg(10)
             hpg(15) = 5.0d0/567.0d0
 !
+        else if (fapg.eq.'FPG23') then
+!
+! --------- FORMULE A 23 POINTS :  (CF DUNAVANT)
+!                   ORDRE 6 EN X Y Z
+            xpg(1) = 0.038836084344884d0
+            ypg(1) = 0.024318974248143d0
+            zpg(1) = 0.902928799013611d0
+            hpg(1) = 0.001182632475277d0
+!
+            xpg(2) = 0.064769436930053d0
+            ypg(2) = 0.267844198183576d0
+            zpg(2) = 0.636767508558514d0
+            hpg(2) = 0.005251568313784d0
+!
+            xpg(3) = 0.064775160447105d0
+            ypg(3) = 0.023467795573055d0
+            zpg(3) = 0.390862050671012d0
+            hpg(3) = 0.004038547812907d0
+!
+            xpg(4) = 0.277903669330078d0
+            ypg(4) = 0.063732895294998d0
+            zpg(4) = 0.594909689021796d0
+            hpg(4) = 0.008148345983740d0
+!
+            xpg(5) = 0.066098662414680d0
+            ypg(5) = 0.083678814060055d0
+            zpg(5) = 0.630054555110990d0
+            hpg(5) = 0.008838887318028d0
+!
+            xpg(6) = 0.325119658577025d0
+            ypg(6) = 0.329379718549198d0
+            zpg(6) = 0.326833504619046d0
+            hpg(6) = 0.007206549449246d0
+!
+            xpg(7) = 0.319194280348931d0
+            ypg(7) = 0.304169265349782d0
+            zpg(7) = 0.044383344357208d0
+            hpg(7) = 0.011189302702093d0
+!
+            xpg(8) = 0.328388171231222d0
+            ypg(8) = 0.038288670738245d0
+            zpg(8) = 0.320287433697693d0
+            hpg(8) = 0.009970224610238d0
+!
+            xpg(9) = 0.055099022490726d0
+            ypg(9) = 0.351939197334705d0
+            zpg(9) = 0.381084308906310d0
+            hpg(9) = 0.010435745880219d0
+!
+            xpg(10) = 0.124649963637486d0
+            ypg(10) = 0.152103811309931d0
+            zpg(10) = 0.201234567364421d0
+            hpg(10) = 0.010722336995515d0
+!
+            xpg(11) = 0.065924923160010d0
+            ypg(11) = 0.624321363553430d0
+            zpg(11) = 0.253593674743200d0
+            hpg(11) = 0.007265066343438d0
+!
+            xpg(12) = 0.007354523838069d0
+            ypg(12) = 0.211297658581586d0
+            zpg(12) = 0.251184495277530d0
+            hpg(12) = 0.003760944546357d0
+!
+            xpg(13) = 0.617455720147269d0
+            ypg(13) = 0.063199980942570d0
+            zpg(13) = 0.258449148983926d0
+            hpg(13) = 0.007768855687763d0
+!
+            xpg(14) = 0.279420052945988d0
+            ypg(14) = 0.255820784264986d0
+            zpg(14) = 0.269569929633272d0
+            hpg(14) = 0.018766567415678d0
+!
+            xpg(15) = 0.287725094826464d0
+            ypg(15) = 0.577345781389727d0
+            zpg(15) = 0.064620638073369d0
+            hpg(15) = 0.008989168438052d0
+!
+            xpg(16) = 0.594717301875796d0
+            ypg(16) = 0.065177992763370d0
+            zpg(16) = 0.066603298007603d0
+            hpg(16) = 0.008294771681919d0
+!
+            xpg(17) = 0.066789599781738d0
+            ypg(17) = 0.530063275481017d0
+            zpg(17) = 0.076992717100967d0
+            hpg(17) = 0.010511060314253d0
+!
+            xpg(18) = 0.626540201708882d0
+            ypg(18) = 0.248449540118895d0
+            zpg(18) = 0.062115533183599d0
+            hpg(18) = 0.007858005078710d0
+!
+            xpg(19) = 0.060010583020269d0
+            ypg(19) = 0.213041183236186d0
+            zpg(19) = 0.025842686260703d0
+            hpg(19) = 0.004250720711174d0
+!
+            xpg(20) = 0.275786300469851d0
+            ypg(20) = 0.053996140835915d0
+            zpg(20) = 0.060016149166169d0
+            hpg(20) = 0.006619016274847d0
+!
+            xpg(21) = 0.051325206165203d0
+            ypg(21) = 0.841138951662319d0
+            zpg(21) = 0.037264752138356d0
+            hpg(21) = 0.002654246530834d0
+!
+            xpg(22) = 0.040576051066818d0
+            ypg(22) = 0.008781957777519d0
+            zpg(22) = 0.088600350468910d0
+            hpg(22) = 0.001737222620616d0
+!
+            xpg(23) = 0.903770001332182d0
+            ypg(23) = 0.022865823814023d0
+            zpg(23) = 0.029335721083179d0
+            hpg(23) = 0.001206879481978d0
+!
         else if (fapg.eq.'FPG4NOS') then
 ! ------- POUR LES POINTS DE GAUSS -------------------------------------
             aa = (5.d0-rac5)/20.d0
             bb = (5.d0+3.d0*rac5)/20.d0
             hh = un/24.d0
             npi = 0
-            do 140 i = 1, 4
+            do i = 1, 4
                 npi = npi + 1
                 xpg(npi) = aa
                 ypg(npi) = aa
                 zpg(npi) = aa
                 hpg(npi) = hh
-140          continue
+            end do
             zpg(2) = bb
             ypg(3) = bb
             xpg(4) = bb
 ! ------- POUR LES SOMMETS ---------------------------------------------
-            do 260,ino = 1,nnos
-            hpg(ino+4) = vol/nnos
+            do ino = 1,nnos
+                hpg(ino+4) = vol/nnos
 ! ---------- ON UTILISE LE FAIT QUE LES SOMMETS SONT TOUJOURS ----------
 ! ---------- NUMEROTES EN PREMIER --------------------------------------
-            xpg(ino+4) = xno(ndim* (ino-1)+1)
-            if (ndim .ge. 2) ypg(ino+4) = xno(ndim* (ino-1)+2)
-            if (ndim .eq. 3) zpg(ino+4) = xno(ndim* (ino-1)+3)
-260          continue
+                xpg(ino+4) = xno(ndim* (ino-1)+1)
+                if (ndim .ge. 2) ypg(ino+4) = xno(ndim* (ino-1)+2)
+                if (ndim .eq. 3) zpg(ino+4) = xno(ndim* (ino-1)+3)
+            end do
         endif
 !
 !     ------------------------------------------------------------------
@@ -1072,7 +1268,7 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
         endif
 !
 !     ------------------------------------------------------------------
-        else if (elrefa.eq.'TR3' .or. elrefa.eq.'TR6' .or. elrefa.eq.'TR7'&
+        else if (elrefa.eq.'TR3' .or. elrefa.eq.'TR4' .or. elrefa.eq.'TR6' .or. elrefa.eq.'TR7'&
     ) then
 !
         if (fapg .eq. 'FPG1') then
@@ -1493,7 +1689,10 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
         else if (elrefa.eq.'SE2' .or. elrefa.eq.'SE3' .or. elrefa.eq.'SE4'&
     ) then
 !
-        if (fapg .eq. 'FPG2') then
+        if (fapg .eq. 'FPG1') then
+            xpg(1) = zero
+            hpg(1) = deux
+        else if (fapg .eq. 'FPG2') then
             xpg(1) = 0.577350269189626d0
             xpg(2) = -xpg(1)
             hpg(1) = un

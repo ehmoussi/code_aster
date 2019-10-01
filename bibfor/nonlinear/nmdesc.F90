@@ -26,11 +26,12 @@ subroutine nmdesc(mesh           , modele     , numedd    ,&
                   sddisc         , ds_print   , ds_measure,&
                   ds_algorom     , sddyna     , sdnume    ,&
                   sderro         , matass     , maprec    ,&
-                  valinc         , solalg     , meelem    ,&
+                  valinc         , solalg     , hhoField, meelem,&
                   measse         , veasse     , lerrit)
 !
 use NonLin_Datastructure_type
 use ROM_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -64,6 +65,7 @@ type(NL_DS_System), intent(in) :: ds_system
 character(len=24) :: sderro
 integer :: fonact(*)
 character(len=19) :: meelem(*)
+type(HHO_Field), intent(in) :: hhoField
 character(len=19) :: solalg(*), valinc(*)
 character(len=19) :: measse(*), veasse(*)
 type(NL_DS_Print), intent(inout) :: ds_print
@@ -146,7 +148,7 @@ aster_logical :: lerrit
                 sddyna    , ds_print       , ds_measure ,&
                 ds_algorom, numins         , iterat     ,&
                 fonact    , ds_contact     , valinc     ,&
-                solalg    , meelem         , measse     ,&
+                solalg    , hhoField       , meelem     , measse,&
                 maprec    , matass         , faccvg     ,&
                 ldccvg    , sdnume)
 !

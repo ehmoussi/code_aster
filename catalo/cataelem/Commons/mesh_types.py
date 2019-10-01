@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ from cataelem.Tools.base_objects import MeshType, Elrefe, objects_from_context
 #   OP0150, LRMMMA, LRMMFA, LRMMDI, LRMHDF, LRCAME, IRMHDF, IRCMPR,    %
 #   IRCMPE, IRCAME                                                     %
 #                                                                      %
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 #------------------------------------------------------------
@@ -258,7 +258,9 @@ TE4.addLocation('FPG1', 1)
 TE4.addLocation('FPG4', 4)
 TE4.addLocation('FPG4NOS', 8)
 TE4.addLocation('FPG5', 5)
+TE4.addLocation('FPG11', 11)
 TE4.addLocation('FPG15', 15)
+TE4.addLocation('FPG23', 23)
 TE4.addLocation('XFEM90', 90)
 TE4.addLocation('XFEM180', 180)
 TE4.addLocation('XFEM270', 270)
@@ -458,6 +460,39 @@ H27.addLocation('FPG27', 27)
 H27.addLocation('FPG64', 64)
 HEXA27.addElrefe(H27)
 
+#------------------------------------------------------------
+TETRA8 = MeshType(nbno=8, dim=3, code='TE8')
+
+TE8 = Elrefe()
+TE8.addLocation('NOEU', 4)
+TE8.addLocation('NOEU_S', 4)
+TE8.addLocation('FPG1', 1)
+TE8.addLocation('FPG4', 4)
+TE8.addLocation('FPG4NOS', 8)
+TE8.addLocation('FPG5', 5)
+TE8.addLocation('FPG11', 11)
+TE8.addLocation('FPG15', 15)
+TETRA8.addElrefe(TE8)
+
+#------------------------------------------------------------
+TRIA4 = MeshType(nbno=4, dim=2, code='TR4')
+
+TR4 = Elrefe()
+TR4.addLocation('NOEU', 6)
+TR4.addLocation('NOEU_S', 3)
+TR4.addLocation('FPG1', 1)
+TR4.addLocation('FPG3', 3)
+TR4.addLocation('FPG3NOS', 6)
+TR4.addLocation('FPG4', 4)
+TR4.addLocation('FPG6', 6)
+TR4.addLocation('FPG7', 7)
+TR4.addLocation('FPG12', 12)
+TR4.addLocation('FPG13', 13)
+TR4.addLocation('FPG16', 16)
+TR4.addLocation('XFEM36', 36)
+TR4.addLocation('XFEM72', 72)
+TR4.addLocation('SIMP', 6)
+TRIA4.addElrefe(TR4)
 
 #------------------------------------------------------------
 TR3QU4 = MeshType(nbno=7, dim=2, code='TQ7')

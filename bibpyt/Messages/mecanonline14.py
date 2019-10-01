@@ -83,6 +83,8 @@ cata_msg = {
 
     31 : _("""  Activation d'éléments de contact."""),
 
+    32 : _("""  Activation des éléments HHO."""),
+
     33 : _("""  Activation d'éléments de type DIS_CHOC."""),
 
     34 : _("""  Activation d'éléments de structure en grandes rotations."""),

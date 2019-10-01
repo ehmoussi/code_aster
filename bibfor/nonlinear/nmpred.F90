@@ -21,12 +21,13 @@
 subroutine nmpred(mesh           , modele  , numedd     , numfix    , ds_material, carele  ,&
                   ds_constitutive, lischa  , ds_algopara, solveu    , ds_system  ,&
                   fonact         , ds_print, ds_measure , ds_algorom, sddisc     ,&
-                  sdnume         , sderro  , numins     , valinc    , solalg     ,&
+                  sdnume         , sderro  , numins     , valinc    , solalg     , hhoField,&
                   matass         , maprec  , ds_contact , sddyna    ,&
                   meelem         , measse  , veelem     , veasse    , lerrit)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -53,6 +54,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=19) :: lischa, solveu, sddisc, sddyna, sdnume
 character(len=24) :: modele, carele
 character(len=24) :: numedd, numfix
+type(HHO_Field), intent(in) :: hhoField
 type(NL_DS_Contact), intent(inout) :: ds_contact
 type(NL_DS_System), intent(in) :: ds_system
 character(len=24) :: sderro
@@ -127,7 +129,7 @@ aster_logical :: lerrit
         call nmprta(mesh      , modele    , numedd         , numfix     , ds_material, carele,&
                     ds_constitutive, lischa    , ds_algopara, solveu, ds_system,&
                     fonact         , ds_print       , ds_measure , ds_algorom , sddisc,&
-                    numins    , valinc         , solalg     , matass     , maprec,&
+                    numins    , valinc         , solalg     , hhoField, matass     , maprec,&
                     ds_contact, sddyna         , meelem     , measse     , veelem,&
                     veasse    , sdnume         , ldccvg     , faccvg,&
                     rescvg    )

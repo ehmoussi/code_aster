@@ -60,7 +60,6 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp
     real(kind=8), pointer :: v_carcri(:) => null()
-    real(kind=8) :: parm_theta_thm, parm_alpha_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,11 +70,6 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
 ! - Access to <CARTE>
 !
     call jeveuo(carcri//'.VALV', 'E', vr = v_carcri)
-!
-! - Get SCHEMA_THM
-!
-    parm_theta_thm = ds_compor_para%parm_theta_thm
-    parm_alpha_thm = ds_compor_para%parm_alpha_thm
 !
 ! - Loop on occurrences of COMPORTEMENT
 !
@@ -88,8 +82,8 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
 !
 ! ----- Set in <CARTE>
 !
-        call setBehaviourParaValue(ds_compor_para%v_para, parm_theta_thm, parm_alpha_thm, i_comp,&
-                                   v_carcri_ = v_carcri)
+        call setBehaviourParaValue(ds_compor_para%v_para, ds_compor_para,&
+                                   i_comp, v_carcri_ = v_carcri)
 !
 ! ----- Affect in <CARTE>
 !
@@ -101,7 +95,7 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
                         limanu = v_elem_affe)
             call jedetr(list_elem_affe)
         endif
-
+!
     enddo
 !
     call jedetr(carcri//'.NCMP')
