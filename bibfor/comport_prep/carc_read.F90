@@ -43,6 +43,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/exicp.h"
+#include "asterfort/getHHOPara.h"
 #include "asterfort/getExternalBehaviourPara.h"
 #include "asterfort/getBehaviourAlgo.h"
 #include "asterfort/getBehaviourPara.h"
@@ -416,5 +417,9 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%parm_theta_thm = parm_theta_thm
         ds_compor_para%parm_alpha_thm = parm_alpha_thm
     endif
+!
+! - Get HHO parameters
+!
+    call getHHOPara(ds_compor_para)
 !
 end subroutine

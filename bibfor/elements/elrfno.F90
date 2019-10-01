@@ -40,6 +40,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nnos_ = 0, ndim_ = 0
+    real(kind=8), parameter :: untiers = 1.d0 / 3.d0
 !
     if(present(coorno)) then
         coorno = 0.d0
@@ -230,6 +231,25 @@ implicit none
                 coorno(2,5:10) = [ 0.5d0,  0.d0,  0.5d0, 0.5d0, 0.d0,  0.d0]
                 coorno(3,5:10) = [ 0.5d0,  0.5d0, 0.d0,  0.d0,  0.5d0, 0.d0]
             end if
+        case('TE8')
+            nno   = 8
+            nnos_ = 4
+            ndim_ = 3
+!
+            if(present(coorno)) then
+!
+!   NOEUDS SOMMETS
+!
+                coorno(1,1:4)=[ 0.d0,  0.d0,  0.d0, +1.d0]
+                coorno(2,1:4)=[+1.d0,  0.d0,  0.d0,  0.d0]
+                coorno(3,1:4)=[ 0.d0, +1.d0,  0.d0,  0.d0]
+!
+!   NOEUDS MILIEUX DES FACES
+!
+                coorno(1,5:8) = [    0.d0,  untiers,  untiers,  untiers]
+                coorno(2,5:8) = [ untiers,  untiers,  untiers,     0.d0]
+                coorno(3,5:8) = [ untiers,  untiers,     0.d0,  untiers]
+            end if
         case('PY5')
             nno   = 5
             nnos_ = 5
@@ -271,6 +291,15 @@ implicit none
                 coorno(1,1:nno) = [0.d0, +1.d0,  0.d0]
                 coorno(2,1:nno) = [0.d0,  0.d0, +1.d0]
             end if
+        case('TR4')
+            nno   = 4
+            nnos_ = 3
+            ndim_ = 2
+!
+            if(present(coorno)) then
+                coorno(1,1:nno) = [0.d0, +1.d0,  0.d0, untiers]
+                coorno(2,1:nno) = [0.d0,  0.d0, +1.d0, untiers]
+            end if
         case('TR6')
             nno   = 6
             nnos_ = 3
@@ -286,8 +315,8 @@ implicit none
             ndim_ = 2
 !
             if(present(coorno)) then
-                coorno(1,1:nno) = [0.d0, +1.d0,  0.d0, 0.5d0, 0.5d0, 0.d0,  1.0d0/3.0d0]
-                coorno(2,1:nno) = [0.d0,  0.d0, +1.d0, 0.d0 , 0.5d0, 0.5d0, 1.0d0/3.0d0]
+                coorno(1,1:nno) = [0.d0, +1.d0,  0.d0, 0.5d0, 0.5d0, 0.d0,  untiers]
+                coorno(2,1:nno) = [0.d0,  0.d0, +1.d0, 0.d0 , 0.5d0, 0.5d0, untiers]
             end if
         case('QU4')
             nno   = 4

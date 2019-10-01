@@ -20,6 +20,7 @@
 !
 subroutine nmnewt(mesh       , model    , numins         , numedd    , numfix   ,&
                   ds_material, cara_elem, ds_constitutive, list_load , ds_system,&
+                  hhoField ,&
                   ds_algopara, fonact   , ds_measure     , sderro    , ds_print ,&
                   sdnume     , sddyna   , sddisc         , sdcrit    , sdsuiv   ,&
                   sdpilo     , ds_conv  , solveu         , maprec    , matass   ,&
@@ -29,6 +30,8 @@ subroutine nmnewt(mesh       , model    , numins         , numedd    , numfix   
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
+use HHO_type
+use HHO_statcond_module, only: hhoMecaDecondOP
 !
 implicit none
 !
@@ -82,6 +85,7 @@ type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: fonact(*)
 type(NL_DS_Measure), intent(inout) :: ds_measure
+type(HHO_Field), intent(in) :: hhoField
 character(len=24) :: sderro
 type(NL_DS_Print), intent(inout) :: ds_print
 character(len=19) :: sdnume
@@ -146,7 +150,7 @@ integer :: nbiter
     integer :: ifm, niv
     integer :: niveau, iterat
     aster_logical :: lerrit
-    aster_logical :: l_loop_exte, l_cont_disc, l_cont, l_hrom_corref
+    aster_logical :: l_loop_exte, l_cont_disc, l_cont, l_hrom_corref, l_hho
     character(len=4) :: etnewt, etfixe
     real(kind=8) :: time
 !
@@ -167,6 +171,7 @@ integer :: nbiter
     l_cont_disc   = isfonc(fonact, 'CONT_DISCRET')
     l_cont        = isfonc(fonact, 'CONTACT')
     l_hrom_corref = isfonc(fonact, 'HROM_CORR_EF')
+    l_hho         = isfonc(fonact, 'HHO')
 !
 ! - Reset events
 !
@@ -199,7 +204,7 @@ integer :: nbiter
                 sdsuiv     , sddyna         ,&
                 ds_contact , ds_conv        ,&
                 sdnume     , numedd         , solveu,&
-                valinc     , solalg)
+                valinc     , solalg         , hhoField)
 !
 ! - Compute forces for second member when constant in time step
 !
@@ -209,7 +214,7 @@ integer :: nbiter
                      ds_material, ds_constitutive, ds_system,&
                      ds_measure , ds_inout       ,&
                      sddisc     , numins         ,&
-                     valinc     , solalg         ,&
+                     valinc     , solalg         , hhoField ,&
                      veelem     , veasse)
 !
 ! ======================================================================
@@ -248,7 +253,7 @@ integer :: nbiter
     call nmpred(mesh,     model, numedd   , numfix     , ds_material, cara_elem,&
                 ds_constitutive, list_load, ds_algopara, solveu     , ds_system,&
                 fonact         , ds_print , ds_measure , ds_algorom , sddisc   ,&
-                sdnume         , sderro   , numins     , valinc     , solalg   ,&
+                sdnume         , sderro   , numins     , valinc     , solalg   ,hhoField,&
                 matass         , maprec   , ds_contact , sddyna     , &
                 meelem         , measse   , veelem     , veasse     , lerrit)
 !
@@ -277,6 +282,11 @@ integer :: nbiter
                 ds_contact     , valinc   , solalg     , veelem    , veasse     ,&
                 eta            , ds_conv  , ds_system  , lerrit)
 !
+! --- DECONDENSATION STATIQUE SI HHO
+    if(l_hho) then
+        call hhoMecaDecondOP(model, solalg, hhoField, ds_measure)
+    end if
+!
     if (lerrit) goto 315
 !
 ! --- CALCUL DES FORCES APRES CORRECTION
@@ -284,8 +294,8 @@ integer :: nbiter
     call nmfcor(model          , numedd    , ds_material, cara_elem  , ds_system,&
                 ds_constitutive, list_load , fonact     , ds_algopara, numins,&
                 iterat         , ds_measure, sddisc     , sddyna     , sdnume,&
-                sderro         , ds_contact, valinc     , solalg,&
-                veelem         , veasse    , measse     , matass,&
+                sderro         , ds_contact, valinc     , solalg     , hhoField,&
+                meelem         , veelem     , veasse    , measse     , matass,&
                 lerrit)
 !
     if (lerrit) goto 315
@@ -312,7 +322,7 @@ integer :: nbiter
 !
 ! - Evaluate events at current Newton iteration
 !
-    call nmcvgn(sddisc, sderro, valinc, ds_contact)   
+    call nmcvgn(sddisc, sderro, valinc, ds_contact)
 !
 ! - Print during Newton loop
 !
@@ -322,7 +332,7 @@ integer :: nbiter
 ! - Stop Newton iterations
 !
     call nmleeb(sderro, 'NEWT', etnewt)
-    
+
     if (etnewt .ne. 'CONT') then
         goto 330
     endif
@@ -339,7 +349,7 @@ integer :: nbiter
                 sddisc         , ds_print   , ds_measure,&
                 ds_algorom     , sddyna     , sdnume    ,&
                 sderro         , matass     , maprec    ,&
-                valinc         , solalg     , meelem    ,&
+                valinc         , solalg     , hhoField  , meelem,&
                 measse         , veasse     , lerrit)
 !
     if (lerrit) goto 315

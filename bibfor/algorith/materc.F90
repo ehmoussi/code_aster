@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine materc(matmas, matrig, matamo, numnu, amor, nommes,&
                   lfreqs,nbfreq, matobs, obsdim, gamma, alpha,eval)
 !
 !
-    implicit none
+    implicit none 
 !
 ! ----------------------------------------------------------------------
 !
@@ -137,7 +137,7 @@ subroutine materc(matmas, matrig, matamo, numnu, amor, nommes,&
     call dismoi('NB_EC', nomgd, 'GRANDEUR', repi=nec1)
 !
 ! --- ON CONSIDERE QUE LE NOMBRE D'ENTIERS CODES POUR LA MESURE EST 5
-    nec2=5
+    nec2=nec1
 !
 ! --- RECUPERATION DES MAILLAGES NUM/EXP ET CONCEPTS ASSOCIES
     call dismoi('NOM_MAILLA', matmas, 'MATR_ASSE', repk=mainum)

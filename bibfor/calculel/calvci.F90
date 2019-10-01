@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine calvci(nomci, nume_ddlz, nbchci, lchci, inst,&
-                  base)
-    implicit none
-! person_in_charge: jacques.pellet at edf.fr
 !
+subroutine calvci(nomci, nume_ddlz, nbchci   , lchci, inst,&
+                  base , l_hho    , hhoField_)
+!
+use HHO_type
+use HHO_Dirichlet_module
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -43,10 +45,12 @@ subroutine calvci(nomci, nume_ddlz, nbchci, lchci, inst,&
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 !
-    character(len=*) :: nomci, lchci(*), nume_ddlz
-    character(len=1) :: base
-    real(kind=8) :: inst
-    integer :: nbchci
+character(len=*) :: nomci, lchci(*), nume_ddlz
+character(len=1) :: base
+real(kind=8) :: inst
+integer :: nbchci
+aster_logical, intent(in) :: l_hho
+type(HHO_Field), intent(in), optional :: hhoField_
 ! ----------------------------------------------------------------------
 ! BUT  :  CALCUL DU CHAM_NO CONTENANT UN VECTEUR LE CINEMATIQUE
 ! ---     ASSOCIE A UNE LISTE DE CHAR_CINE_* A UN INSTANT INST
@@ -112,6 +116,12 @@ subroutine calvci(nomci, nume_ddlz, nbchci, lchci, inst,&
     valr(1)=inst
     cnoimp='&&CALVCI.CNOIMP'
     cnsimp='&&CALVCI.CNSIMP'
+!
+! - For HHO
+!
+    if (l_hho) then
+        ASSERT(present(hhoField_))
+    endif
 !
 ! - Get informations about NUME_DDL
 !
@@ -229,18 +239,23 @@ subroutine calvci(nomci, nume_ddlz, nbchci, lchci, inst,&
 !           -- CAS FONCTION :
 !           -----------------
                 else if (fonc) then
-                    nomf = zk8(jafcv-1+i_affe_cine)
-                    nomp(1)='INST'
-                    nomp(2)='X'
-                    nomp(3)='Y'
-                    nomp(4)='Z'
-                    valp(1)=inst
-                    valp(2)=vale(1+3*(i_node-1)+0)
-                    valp(3)=vale(1+3*(i_node-1)+1)
-                    valp(4)=vale(1+3*(i_node-1)+2)
-                    call fointe('F ', nomf, 4, nomp, valp,&
-                                res, ier)
-                    zr(ivvale-1+i_eq) = res
+                    if (l_hho) then
+                        call hhoDiriFuncApply(hhoField_, i_affe_cine, res)
+                        zr(ivvale-1+i_eq) = res
+                    else
+                        nomf = zk8(jafcv-1+i_affe_cine)
+                        nomp(1)='INST'
+                        nomp(2)='X'
+                        nomp(3)='Y'
+                        nomp(4)='Z'
+                        valp(1)=inst
+                        valp(2)=vale(1+3*(i_node-1)+0)
+                        valp(3)=vale(1+3*(i_node-1)+1)
+                        valp(4)=vale(1+3*(i_node-1)+2)
+                        call fointe('F ', nomf, 4, nomp, valp,&
+                                    res, ier)
+                        zr(ivvale-1+i_eq) = res
+                    endif
                 else
                     call utmess('F', 'CALCULEL_37')
                 endif

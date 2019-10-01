@@ -25,6 +25,7 @@ subroutine ndxprm(modelz, ds_material, carele    , ds_constitutive, ds_algopara,
                   maprec, matass     , faccvg    , ldccvg)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -116,6 +117,7 @@ integer :: faccvg, ldccvg
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
     aster_logical :: list_l_asse(20), list_l_calc(20)
+    type(HHO_Field) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -196,7 +198,7 @@ integer :: faccvg, ldccvg
         call nmrigi(modelz     , carele,&
                     ds_material, ds_constitutive,&
                     fonact     , iterat         , sddyna, ds_measure, ds_system,&
-                    valinc     , solalg         ,&
+                    valinc     , solalg         , hhoField, &
                     optrig     , ldccvg)
     endif
 !

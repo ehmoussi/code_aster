@@ -22,41 +22,45 @@ subroutine nmprma(mesh       , modelz     , ds_material, carele    , ds_constitu
                   ds_algopara, lischa     , numedd    , numfix         , solveu, ds_system,&
                   ds_print   , ds_measure , ds_algorom, sddisc         ,&
                   sddyna     , numins     , fonact    , ds_contact     ,&
-                  valinc     , solalg     , meelem    , measse,&
+                  valinc     , solalg     , hhoField  , meelem    , measse,&
                   maprec     , matass     , faccvg    , ldccvg)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
+use HHO_type
+use HHO_comb_module, only : hhoPrepMatrix
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterc/r8prem.h"
+#include "asterfort/asmari.h"
 #include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/echmat.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
+#include "asterfort/mtdscr.h"
 #include "asterfort/ndynlo.h"
-#include "asterfort/nmelcm.h"
+#include "asterfort/nmchex.h"
 #include "asterfort/nmchoi.h"
 #include "asterfort/nmchra.h"
 #include "asterfort/nmchrm.h"
 #include "asterfort/nmcmat.h"
+#include "asterfort/nmdebg.h"
+#include "asterfort/nmelcm.h"
 #include "asterfort/nmimck.h"
 #include "asterfort/nmmatr.h"
-#include "asterfort/echmat.h"
 #include "asterfort/nmrenu.h"
+#include "asterfort/nmrigi.h"
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nmxmat.h"
 #include "asterfort/preres.h"
-#include "asterfort/mtdscr.h"
-#include "asterfort/cfdisl.h"
-#include "asterfort/sdmpic.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/utmess.h"
-#include "asterfort/asmari.h"
-#include "asterfort/nmrigi.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
+#include "asterfort/sdmpic.h"
+#include "asterfort/utmess.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: fonact(*)
@@ -68,6 +72,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_Print), intent(inout) :: ds_print
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(HHO_Field), intent(in) :: hhoField
 character(len=24) :: numedd, numfix
 character(len=19) :: sddisc, sddyna, lischa, solveu
 character(len=19) :: solalg(*), valinc(*)
@@ -102,6 +107,7 @@ integer :: faccvg, ldccvg
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! In  ds_algorom       : datastructure for ROM parameters
 ! In  ds_system        : datastructure for non-linear system management
+! In  hhoField         : datastructure for HHO
 ! IN  SOLVEU : SOLVEUR
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
@@ -129,7 +135,7 @@ integer :: faccvg, ldccvg
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: reasma, renume, lmhpc
-    aster_logical :: lcrigi, lcfint, lcamor, larigi
+    aster_logical :: lcrigi, lcfint, lcamor, larigi, l_hho
     aster_logical :: ldyna, lamor, l_neum_undead, l_diri_undead, l_rom, l_cont_elem
     character(len=3) :: mathpc
     character(len=16) :: metcor, metpre
@@ -159,6 +165,7 @@ integer :: faccvg, ldccvg
     l_diri_undead = isfonc(fonact,'DIRI_UNDEAD')
     l_rom         = isfonc(fonact,'ROM')
     l_cont_elem   = isfonc(fonact,'ELT_CONTACT')
+    l_hho         = isfonc(fonact,'HHO')
 !
 ! - Initializations
 !
@@ -187,10 +194,10 @@ integer :: faccvg, ldccvg
         call nmchra(sddyna, renume, optamo, lcamor)
     endif
 !
-! --- OPTION DE CALCUL POUR MERIMO
+! - Select option for compute matrixes
 !
-    call nmchoi('PREDICTION', sddyna, numins, fonact, metpre,&
-                metcor, reasma, lcamor, optrig, lcrigi,&
+    call nmchoi('PREDICTION', sddyna, numins, fonact, reasma, metpre,&
+                metcor, lcamor, optrig, lcrigi,&
                 larigi, lcfint)
 !
     if (lcfint) then
@@ -213,7 +220,7 @@ integer :: faccvg, ldccvg
         call nmrigi(modelz     , carele         ,&
                     ds_material, ds_constitutive, &
                     fonact     , iterat         , sddyna, ds_measure, ds_system,&
-                    valinc     , solalg,&
+                    valinc     , solalg, hhoField, &
                     optrig     , ldccvg)
         if (larigi) then
             call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
@@ -258,6 +265,14 @@ integer :: faccvg, ldccvg
         endif
     endif
 !
+! - For HHO: assembly rigidity and condensation
+!
+    if (l_hho) then
+        call hhoPrepMatrix(modelz, ds_material%field_mate, ds_system%merigi, ds_system%vefint, &
+                           rigid, hhoField, fonact, meelem, numedd, lischa, ds_algopara, ds_system,&
+                           ds_measure, l_cond = ASTER_TRUE, l_asse = ASTER_TRUE)
+    endif
+!
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
@@ -269,10 +284,6 @@ integer :: faccvg, ldccvg
                     list_asse_opti , list_l_calc   , list_l_asse   ,&
                     meelem         , measse        , ds_system)
     endif
-!
-! --- ERREUR SANS POSSIBILITE DE CONTINUER
-!
-    if (ldccvg .eq. 1) goto 999
 !
 ! --- CALCUL DE LA MATRICE ASSEMBLEE GLOBALE
 !
@@ -302,22 +313,22 @@ integer :: faccvg, ldccvg
             ldist = partit .ne. ' '
             call echmat(matass, ldist, lmhpc, minmat, maxmat)
             ds_contact%max_coefficient = maxmat
-            if (abs(log(minmat)) .ne. 0.0) then
+            if (abs(log(minmat)) .ge. r8prem()) then
 
-                if (abs(log(maxmat))/abs(log(minmat)) .lt. 4.0) then
+                if (abs(log(maxmat))/abs(log(minmat)) .lt. 4.0d0) then
 !                     Le rapport d'arete max/min est
 !  un bon compromis pour initialiser le coefficient
                     ds_contact%estimated_coefficient =&
                     ((1.D3*ds_contact%arete_max)/(1.D-2*ds_contact%arete_min))
-                    ds_contact%update_init_coefficient = 1.0
+                    ds_contact%update_init_coefficient = 1.0d0
                 else
-                    exponent_val = min(abs(log(minmat)),abs(log(maxmat)))/10
-                    ds_contact%estimated_coefficient = 10**(exponent_val)
-                    ds_contact%update_init_coefficient = 1.0
+                    exponent_val = min(abs(log(minmat)),abs(log(maxmat)))/10.d0
+                    ds_contact%estimated_coefficient = 10.d0**(exponent_val)
+                    ds_contact%update_init_coefficient = 1.0d0
                 endif
             else
                ds_contact%estimated_coefficient = 1.d16*ds_contact%arete_min
-                    ds_contact%update_init_coefficient = 1.0
+                    ds_contact%update_init_coefficient = 1.0d0
             endif
 !             write (6,*) "min,max,coef estime,abs(log(maxmat))/abs(log(minmat))", &
 !                 minmat,maxmat,ds_contact%estimated_coefficient,abs(log(maxmat))/abs(log(minmat))

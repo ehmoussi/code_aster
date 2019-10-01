@@ -17,13 +17,14 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine merimp(l_xfem         ,&
+subroutine merimp(l_xfem         , l_hho, &
                   model          , cara_elem, mate  , sddyna, iter_newt,&
                   ds_constitutive, varc_refe,&
-                  hval_incr      , hval_algo, caco3d,&
+                  hval_incr      , hval_algo, hhoField, caco3d,&
                   mxchin         , lpain    , lchin , nbin)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -46,7 +47,7 @@ implicit none
 #include "asterfort/nmvcex.h"
 #include "asterfort/xajcin.h"
 !
-aster_logical, intent(in) :: l_xfem
+aster_logical, intent(in) :: l_xfem, l_hho
 character(len=24), intent(in) :: model, cara_elem
 character(len=*), intent(in) :: mate
 character(len=19), intent(in) :: sddyna
@@ -54,6 +55,7 @@ integer, intent(in) :: iter_newt
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24), intent(in) :: varc_refe
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+type(HHO_Field), intent(in) :: hhoField
 character(len=24), intent(in) :: caco3d
 integer, intent(in) :: mxchin
 character(len=8), intent(inout) :: lpain(mxchin)
@@ -69,6 +71,7 @@ integer, intent(out) :: nbin
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  l_xfem           : flag for XFEM elements
+! In  l_hho            : flag for HHO elements
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
@@ -78,6 +81,7 @@ integer, intent(out) :: nbin
 ! In  varc_refe        : name of reference command variables vector
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
+! In  hhoField         : Field for HHO method
 ! In  caco3d           : name of field for COQUE_3D (field of normals)
 ! In  mxchin           : maximum number of input fields
 ! IO  lpain            : list of input parameters
@@ -317,6 +321,23 @@ integer, intent(out) :: nbin
         nbin = nbin + 1
         lpain(nbin) = 'PACCMOI'
         lchin(nbin) = acce_prev(1:19)
+    endif
+!
+! - HHO
+!
+    if (l_hho) then
+        nbin = nbin + 1
+        lpain(nbin) = 'PCELLMR'
+        lchin(nbin) = hhoField%fieldPrev_cell
+        nbin = nbin + 1
+        lpain(nbin) = 'PCELLIR'
+        lchin(nbin) = hhoField%fieldIncr_cell
+        nbin = nbin+1
+        lpain(nbin) = 'PCHHOGT'
+        lchin(nbin) = hhoField%fieldOUT_cell_GT
+        nbin = nbin+1
+        lpain(nbin) = 'PCHHOST'
+        lchin(nbin) = hhoField%fieldOUT_cell_ST
     endif
 !
     call jedema()

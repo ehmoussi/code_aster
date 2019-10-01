@@ -24,9 +24,10 @@ interface
                       sd_suiv    , sd_obsv       , sderro       , ds_posttimestep, ds_inout  ,&
                       ds_energy  , ds_conv       , ds_errorindic, valinc         , solalg    ,&
                       measse     , veelem        , meelem       , veasse         , ds_contact,&
-                      ds_measure , ds_algorom    , ds_system)
+                      ds_measure , ds_algorom    , ds_system    , hhoField)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
+        use HHO_type
         character(len=8), intent(in) :: mesh
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: mate
@@ -65,5 +66,6 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
         type(NL_DS_System), intent(inout) :: ds_system
+        type(HHO_Field), intent(inout) :: hhoField
     end subroutine nminit
 end interface

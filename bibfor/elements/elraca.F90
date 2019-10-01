@@ -61,8 +61,8 @@ implicit none
     if (elrefa .eq. 'HE8') then
         vol = 8.d0
 !
-        nbfpg = 7
-        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 5, 16]
+        nbfpg = 8
+        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 5, 16, 64]
 !
         fapg(1) = 'NOEU'
         fapg(2) = 'NOEU_S'
@@ -71,12 +71,13 @@ implicit none
         fapg(5) = 'FPG27'
         fapg(6) = 'SHB5'
         fapg(7) = 'FPG8NOS'
+        fapg(8) = 'FPG64'
 !
     else if (elrefa.eq.'H20') then
         vol = 8.d0
 !
-        nbfpg = 7
-        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 16, 20]
+        nbfpg = 8
+        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 16, 20, 64]
 !
         fapg(1) = 'NOEU'
         fapg(2) = 'NOEU_S'
@@ -85,32 +86,52 @@ implicit none
         fapg(5) = 'FPG27'
         fapg(6) = 'FPG8NOS'
         fapg(7) = 'SHB20'
+        fapg(8) = 'FPG64'
 !
     else if (elrefa.eq.'H27') then
         vol = 8.d0
 !
-        nbfpg = 5
-        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27]
+        nbfpg = 6
+        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 64]
 !
         fapg(1) = 'NOEU'
         fapg(2) = 'NOEU_S'
         fapg(3) = 'FPG1'
         fapg(4) = 'FPG8'
         fapg(5) = 'FPG27'
+        fapg(6) = 'FPG64'
 !
     else if (elrefa.eq.'TE4') then
         vol = 1.d0/6.d0
 !
-        nbfpg = 7
-        nbpg(1:nbfpg) = [nno, nnos, 1, 4, 5, 15, 8]
+        nbfpg = 9
+        nbpg(1:nbfpg) = [nno, nnos, 1, 4, 5, 11, 15, 23, 8]
 !
         fapg(1) = 'NOEU'
         fapg(2) = 'NOEU_S'
         fapg(3) = 'FPG1'
         fapg(4) = 'FPG4'
         fapg(5) = 'FPG5'
-        fapg(6) = 'FPG15'
-        fapg(7) = 'FPG4NOS'
+        fapg(6) = 'FPG11'
+        fapg(7) = 'FPG15'
+        fapg(8) = 'FPG23'
+        fapg(9) = 'FPG4NOS'
+!
+    else if (elrefa.eq.'TE8') then
+        vol = 1.d0/6.d0
+!
+        nbfpg = 9
+        nbpg(1:nbfpg) = [nno, nnos, 1, 4, 5, 11, 15, 23, 8]
+!
+        fapg(1) = 'NOEU'
+        fapg(2) = 'NOEU_S'
+        fapg(3) = 'FPG1'
+        fapg(4) = 'FPG4'
+        fapg(5) = 'FPG5'
+        fapg(6) = 'FPG11'
+        fapg(7) = 'FPG15'
+        fapg(8) = 'FPG23'
+        fapg(9) = 'FPG4NOS'
 !
     else if (elrefa.eq.'T10') then
         vol = 1.d0/6.d0
@@ -199,8 +220,27 @@ implicit none
         fapg(6) = 'FPG27'
         fapg(7) = 'FPG5NOS'
 !
-
     else if (elrefa.eq.'TR3') then
+        vol = 1.d0/2.d0
+!
+        nbfpg = 13
+        nbpg(1:nbfpg) = [nno, nnos, 1, 3, 4, 6, 7, 12, 3, 6, 13, 16, 6]
+!
+        fapg(1) = 'NOEU'
+        fapg(2) = 'NOEU_S'
+        fapg(3) = 'FPG1'
+        fapg(4) = 'FPG3'
+        fapg(5) = 'FPG4'
+        fapg(6) = 'FPG6'
+        fapg(7) = 'FPG7'
+        fapg(8) = 'FPG12'
+        fapg(9) = 'COT3'
+        fapg(10) = 'FPG3NOS'
+        fapg(11) = 'FPG13'
+        fapg(12) = 'FPG16'
+        fapg(13) = 'SIMP'
+!
+    else if (elrefa.eq.'TR4') then
         vol = 1.d0/2.d0
 !
         nbfpg = 13

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
     character(len=24) :: sdcont_defi
     aster_logical :: l_cont_xfem, l_frot_xfem, l_xfem_czm, l_cont
     aster_logical :: l_dyna, l_muap, l_strx
-    aster_logical :: l_ener
+    aster_logical :: l_ener, l_hho
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,6 +69,7 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
     l_ener      = isfonc(list_func_acti,'ENERGIE' )
     l_cont_xfem = isfonc(list_func_acti,'CONT_XFEM' )
     l_cont      = isfonc(list_func_acti,'CONTACT' )
+    l_hho       = isfonc(list_func_acti,'HHO' )
     if (l_cont_xfem) then
         l_frot_xfem = isfonc(list_func_acti,'FROT_XFEM')
         l_xfem_czm  = cfdisl(sdcont_defi,'EXIS_XFEM_CZM')
@@ -80,8 +81,8 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
     call SetIOField(ds_inout, 'SIEF_ELGA'   , l_acti_ = ASTER_TRUE)
     call SetIOField(ds_inout, 'EPSI_ELGA'   , l_acti_ = ASTER_TRUE)
     call SetIOField(ds_inout, 'VARI_ELGA'   , l_acti_ = ASTER_TRUE)
-    call SetIOField(ds_inout, 'FORC_NODA'   , l_acti_ = ASTER_TRUE)    
-    call SetIOField(ds_inout, 'COMPORTEMENT', l_acti_ = ASTER_TRUE) 
+    call SetIOField(ds_inout, 'FORC_NODA'   , l_acti_ = ASTER_TRUE)
+    call SetIOField(ds_inout, 'COMPORTEMENT', l_acti_ = ASTER_TRUE)
 !
 ! - Dynamic: VITE/ACCE
 !
@@ -132,6 +133,13 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
     if (l_ener) then
         call SetIOField(ds_inout, 'FORC_AMOR', l_acti_ = ASTER_TRUE)
         call SetIOField(ds_inout, 'FORC_LIAI', l_acti_ = ASTER_TRUE)
+    endif
+!
+! - HHO
+!
+    if (l_hho) then
+        call SetIOField(ds_inout, 'HHO_CELL', l_acti_ = ASTER_TRUE)
+        call SetIOField(ds_inout, 'HHO_FACE', l_acti_ = ASTER_TRUE)
     endif
 !
 end subroutine

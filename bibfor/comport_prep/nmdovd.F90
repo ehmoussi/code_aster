@@ -84,7 +84,7 @@ character(len=16), intent(in) :: rela_comp, rela_comp_py
     integer, pointer :: v_repe(:) => null()
     integer, pointer :: v_elem_affe(:) => null()
     integer, pointer :: v_liel(:) => null()
-    aster_logical :: l_coq3d, l_dkt, l_dktg, l_shell
+    aster_logical :: l_coq3d, l_dkt, l_dktg, l_shell, l_hho
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -148,14 +148,19 @@ character(len=16), intent(in) :: rela_comp, rela_comp_py
             elem_type_nume = v_liel(nb_elem_grel)
             call jenuno(jexnum('&CATA.TE.NOMTE', elem_type_nume), elem_type_name)
 ! --------- Get modelisation
-            call teattr('C', 'TYPMOD', model_type, iret, typel = elem_type_name)
+            call teattr('C', 'TYPMOD' , model_type , iret, typel = elem_type_name)
+            call teattr('C', 'TYPMOD2', model_type2, iret, typel = elem_type_name)
             l_coq3d = lteatt('MODELI','CQ3', typel = elem_type_name)
             l_dkt   = lteatt('MODELI','DKT', typel = elem_type_name)
             l_dktg  = lteatt('MODELI','DTG', typel = elem_type_name)
             l_shell = lteatt('COQUE' ,'OUI', typel = elem_type_name)
+            l_hho   = model_type2(1:3) .eq. 'HHO'
 ! --------- Specific checks
             if (l_coq3d .and. (defo_comp .eq. 'GROT_GDEP') ) then
                 call utmess('A', 'COMPOR1_47')
+            endif
+            if (l_hho .and. (defo_comp .eq. 'SIMO_MIEHE' .or. defo_comp .eq. 'PETIT_REAC') ) then
+                call utmess('F', 'COMPOR1_49')
             endif
             if (l_dkt .and. .not. l_dktg ) then
                 if ((defo_comp .eq. 'GROT_GDEP') .and. (rela_comp(1:4).ne.'ELAS')) then
@@ -199,7 +204,6 @@ character(len=16), intent(in) :: rela_comp, rela_comp_py
                         call utmess('F', 'COMPOR5_23', nk=3, valk=texte)
                     endif
                 else if (model_type .eq. '1D') then
-                    call teattr('C', 'TYPMOD2', model_type2, iret, typel=elem_type_name)
                     if (model_type2 .eq. 'PMF') then
                         call lctest(defo_comp_py, 'MODELISATION', 'PMF', irett)
                         if (irett .eq. 0) then

@@ -89,6 +89,11 @@ integer, intent(out) :: nb_cmp
     p_carcri_valv(2) = 0
     p_carcri_valv(3) = 1.d-6
     p_carcri_valv(4) = 1.d0
+    p_carcri_valv(4) = 1.d0
+    p_carcri_valv(HHO_COEF) = 0.d0
+    p_carcri_valv(HHO_STAB) = real(HHO_STAB_AUTO, kind=8)
+    p_carcri_valv(HHO_CALC) = real(HHO_CALC_NO, kind=8)
+
 !
     nb_cmp = nb_cmp_max
 

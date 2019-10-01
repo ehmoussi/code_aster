@@ -3,7 +3,7 @@
  * @brief Implementation de DiscreteProblem
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -214,7 +214,7 @@ FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad(
     std::string funcLoadName = listOfFunctions->getName();
     funcLoadName.resize( 24, ' ' );
 
-    CALLO_ASCAVC( lLoadName, infLoadName, funcLoadName, dofNumName, &time, resuName );
+    CALLO_ASCAVC_WRAP( lLoadName, infLoadName, funcLoadName, dofNumName, &time, resuName );
 
     return retour;
 };

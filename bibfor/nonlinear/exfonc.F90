@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,11 +65,12 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     integer :: reac_incr, reac_iter
     aster_logical :: l_cont, lallv, l_cont_cont, l_cont_disc, lpena, leltc, l_cont_lac, l_iden_rela
     aster_logical :: l_pilo, l_line_search, lmacr, l_unil, l_diri_undead, l_cont_xfem
-    aster_logical :: l_vibr_mode, l_buckling, lexpl, lxfem, lmodim, l_mult_front
+    aster_logical :: l_vibr_mode, l_buckling, lexpl, l_xfem, lmodim, l_mult_front
     aster_logical :: l_cont_gcp, lpetsc, lamg, limpex, l_matr_distr, lgcpc
     aster_logical :: londe, l_dyna, l_grot_gdep, l_newt_krylov, l_mumps, l_rom
     aster_logical :: l_energy, lproj, lmatdi, lldsp, l_comp_rela, lammo, lthms, limpl
-    aster_logical :: l_unil_pena, l_cont_acti
+    aster_logical :: l_unil_pena, l_cont_acti, l_hho, l_undead
+    aster_logical :: l_state_init, l_reuse
     character(len=24) :: typilo, metres, char24
     character(len=16) :: reli_meth, matrix_pred, partit
     character(len=3) :: mfdet
@@ -82,7 +83,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! - Active functionnalites
 !
-    lxfem           = isfonc(list_func_acti,'XFEM')
+    l_xfem           = isfonc(list_func_acti,'XFEM')
     l_cont_cont     = isfonc(list_func_acti,'CONT_CONTINU')
     l_cont_disc     = isfonc(list_func_acti,'CONT_DISCRET')
     l_cont_xfem     = isfonc(list_func_acti,'CONT_XFEM')
@@ -115,6 +116,10 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     l_mult_front    = isfonc(list_func_acti,'MULT_FRONT')
     l_diri_undead   = isfonc(list_func_acti,'DIRI_UNDEAD')
     l_matr_distr    = isfonc(list_func_acti,'MATR_DISTRIBUEE')
+    l_hho           = isfonc(list_func_acti,'HHO')
+    l_undead        = isfonc(list_func_acti,'NEUM_UNDEAD') .or. isfonc(list_func_acti,'DIRI_UNDEAD')
+    l_state_init    = isfonc(list_func_acti,'ETAT_INIT')
+    l_reuse         = isfonc(list_func_acti,'REUSE')
 !
 ! - Get algorithm parameters
 !
@@ -165,7 +170,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! - Contact (CONTINUE)
 !
     if (l_cont_cont) then
-        if (l_pilo .and. (.not.lxfem)) then
+        if (l_pilo .and. (.not.l_xfem)) then
             call utmess('F', 'MECANONLINE3_92')
         endif
         if (l_line_search) then
@@ -289,7 +294,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         if (l_pilo) then
             call utmess('F', 'MECANONLINE5_25')
         endif
-        if (lxfem) then
+        if (l_xfem) then
             call utmess('F', 'MECANONLINE5_28')
         endif
         if (limpex) then
@@ -375,6 +380,47 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         if (l_vibr_mode .or. l_buckling) then
             ASSERT(slvi(6) .ge. 0)
             slvi(6)=2
+        endif
+    endif
+!
+! - HHO
+!
+    if (l_hho) then
+        if (l_cont) then
+            call utmess('F', 'MECANONLINE5_60')
+        endif
+        if (l_unil) then
+            call utmess('F', 'MECANONLINE5_61')
+        endif
+        if (l_pilo) then
+            call utmess('F', 'MECANONLINE5_62')
+        endif
+        if (l_line_search) then
+            call utmess('F', 'MECANONLINE5_63')
+        endif
+        if (l_dyna) then
+            call utmess('F', 'MECANONLINE5_64')
+        endif
+        if (l_rom) then
+            call utmess('F', 'MECANONLINE5_65')
+        endif
+        if (l_xfem) then
+            call utmess('F', 'MECANONLINE5_66')
+        endif
+        if (lmacr) then
+            call utmess('F', 'MECANONLINE5_67')
+        endif
+        if (l_vibr_mode .or. l_buckling) then
+            call utmess('F', 'MECANONLINE5_68')
+        endif
+        if (l_undead) then
+            call utmess('F', 'MECANONLINE5_69')
+        endif
+        if (l_reuse) then
+            call utmess('F', 'MECANONLINE5_70')
+        endif
+        if (l_state_init) then
+            call utmess('F', 'MECANONLINE5_71')
         endif
     endif
 !

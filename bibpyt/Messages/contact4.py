@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -35,15 +34,15 @@ Conseil:
 
     4 : _("""
 Contact LAC
-        ALGO_CONT='LAC' ne fonctionne pas avec le frottement. 
+        ALGO_CONT='LAC' ne fonctionne pas avec le frottement.
 """),
 
     5 : _("""
 Contact LAC
-         On ne détecte pas le bon nombre de mailles esclaves. 
+         On ne détecte pas le bon nombre de mailles esclaves.
          Conseil :
-             Cette erreur est probablement dû au fait que vous avez inversé les rôles maîtres et esclaves. 
-             Vérifiez que votre GROUP_MA_ESCL est bien celui utilisé par DECOUPE_LAC de CREA_MAILLAGE.  
+             Cette erreur est probablement dû au fait que vous avez inversé les rôles maîtres et esclaves.
+             Vérifiez que votre GROUP_MA_ESCL est bien celui utilisé par DECOUPE_LAC de CREA_MAILLAGE.
 """),
 
 }

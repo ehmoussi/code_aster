@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -85,6 +85,7 @@ character(len=*), intent(in) :: func_name_z
 !       LAPLACE            :  FORCE DE LAPLACE
 !       DIDI               :  FORCE DE TYPE DIFF. DIRICHLET
 !       THM                :  MODELISATION THM
+!       HHO                :  MODELISATION HHO
 !       MACR_ELEM_STAT     :  MACRO-ELEMENTS STATIQUES
 !       ENDO_NO            :  MODELISATION ENDO AUX NOEUDS *_GVNO
 !
@@ -210,6 +211,8 @@ character(len=*), intent(in) :: func_name_z
         isfonc = list_func_acti(30).eq.1
     else if (func_name.eq.'THM') then
         isfonc = list_func_acti(37).eq.1
+    else if (func_name.eq.'HHO') then
+        isfonc = list_func_acti(68).eq.1
     else if (func_name.eq.'REUSE') then
         isfonc = list_func_acti(39).eq.1
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine ascavc(lchar, infcha, fomult, numedd, inst, vci)
+subroutine ascavc(lchar , infcha   , fomult, numedd, inst, vci,&
+                  l_hho_, hhoField_)
+!
+use HHO_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/ascova.h"
 #include "asterfort/assert.h"
@@ -34,13 +38,16 @@ implicit none
 #include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/rgndas.h"
+#include "asterfort/utmess.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 !
 character(len=24) :: lchar, infcha, fomult
 character(len=*) :: vci, numedd
 real(kind=8) :: inst
-!
+aster_logical, intent(in), optional :: l_hho_
+type(HHO_Field), intent(in), optional :: hhoField_
 ! ----------------------------------------------------------------------
 ! BUT  :  CALCUL DU CHAM_NO CONTENANT LE VECTEUR LE CINEMATIQUE
 ! ---     ASSOCIE A LA LISTE DE CHAR_CINE_* LCHAR A UN INSTANT INST
@@ -63,6 +70,7 @@ real(kind=8) :: inst
     character(len=19) :: charci, chamno, vci2
     character(len=24) :: vachci
     character(len=8) :: charge
+    aster_logical :: l_hho
     integer, pointer :: dlci(:) => null()
     data chamno/'&&ASCAVC.???????'/
     data vachci/'&&ASCAVC.LISTE_CI'/
@@ -78,6 +86,13 @@ real(kind=8) :: inst
 !
 !
     newnom='.0000000'
+!
+! - For HHO
+!
+    l_hho = ASTER_FALSE
+    if (present(l_hho_)) then
+        l_hho = l_hho_
+    endif
 !
     call jedetr(vachci)
     call jedetr(vci2//'.DLCI')
@@ -125,7 +140,13 @@ real(kind=8) :: inst
                 chamno(10:16) = newnom(2:8)
                 call corich('E', chamno, ichar, ibid)
                 zk24(ilchno-1+ichci) = chamno
-                call calvci(chamno, numedd, 1, charge, inst, 'V')
+                if (l_hho) then
+                    call calvci(chamno, numedd, 1, charge, inst, &
+                                'V',l_hho, hhoField_)
+                else
+                    call calvci(chamno, numedd, 1, charge, inst, &
+                                'V',l_hho)
+                endif
                 call jeveuo(chamno//'.DLCI', 'L', vi=dlci)
 !           --- COMBINAISON DES DLCI (OBJET CONTENANT DES 0 OU DES 1),
 !           --- LES 1 ETANT POUR LES DDL CONTRAINT
@@ -143,12 +164,12 @@ real(kind=8) :: inst
     endif
 !
 !     -- SI UN DDL A ETE ELIMINE PLUSIEURS FOIS :
-    !if (ieqmul .gt. 0) then
-    !    call utmess('A', 'CALCULEL3_37')
-    !    call rgndas(numedd, ieqmul, l_print = .true.,&
-    !                type_equaz = tyddl)
-    !    ASSERT(tyddl.eq.'A')
-    !endif
+!    if (ieqmul .gt. 0) then
+!        call utmess('A', 'CALCULEL3_37')
+!        call rgndas(numedd, ieqmul, l_print = .true.,&
+!                    type_equaz = tyddl)
+!        ASSERT(tyddl.eq.'A')
+!    endif
 !
 !
 !
