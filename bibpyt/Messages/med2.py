@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     2 : _("""
@@ -78,6 +76,11 @@ format MED.
 
   Conseil : Pour que cette impression soit possible, il vous faut
             faire une demande d'évolution.
+"""),
+
+    12 : _("""
+Le modèle contient des éléments de structure. Or le champ  %(k1)s n'a pas la bonne structure pour être imprimé sur ce format.
+Il ne faut pas imprimer ce champ ou faire deux IMPR_RESU différents.
 """),
 
 }

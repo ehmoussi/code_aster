@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,6 +60,7 @@ subroutine w039c1(carte, ifi, form, ligrel, titre)
     character(len=19) :: cart1, cel2, ces2
     character(len=64) :: nommed
     character(len=8) :: kbid, ma, tsca, nomgd, modele, typech, sdcarm
+    character(len=16) :: field_type = 'Unknown'
     real(kind=8), pointer :: cesv(:) => null()
     integer, pointer :: ptma(:) => null()
     integer, pointer :: zones(:) => null()
@@ -207,7 +208,7 @@ subroutine w039c1(carte, ifi, form, ligrel, titre)
         call irceme(ifi, nommed, cel2, typech, modele,&
                     0, ' ', ' ', ' ', 0,&
                     0.d0, 0, 0, [0], sdcarm, sdcarm,&
-                    iret)
+                    field_type, iret)
         ASSERT(iret.eq.0)
 
 
