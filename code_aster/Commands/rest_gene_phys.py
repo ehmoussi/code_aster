@@ -20,7 +20,8 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import FullTransientResultsContainer, FullHarmonicResultsContainer
-from ..Objects import MechanicalModeContainer
+from ..Objects import TransientGeneralizedResultsContainer, HarmoGeneralizedResultsContainer
+from ..Objects import MechanicalModeContainer, GeneralizedModeContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -35,12 +36,14 @@ class RestGenePhys(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords["RESU_GENE"].getType() == "TRAN_GENE":
+        if isinstance(keywords["RESU_GENE"], TransientGeneralizedResultsContainer):
             self._result = FullTransientResultsContainer()
-        elif keywords["RESU_GENE"].getType() == "HARM_GENE":
+        elif isinstance(keywords["RESU_GENE"], HarmoGeneralizedResultsContainer):
             self._result = FullHarmonicResultsContainer()
-        elif keywords["RESU_GENE"].getType() == "MODE_GENE":
+        elif isinstance(keywords["RESU_GENE"], GeneralizedModeContainer):
             self._result = MechanicalModeContainer()
+        else:
+            raise Exception("Unknown result type")
 
     def post_exec(self, keywords):
         """Execute the command.
@@ -48,20 +51,22 @@ class RestGenePhys(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if keywords["RESU_GENE"].getType() in ["HARM_GENE","TRAN_GENE"]:
-            dofNum = keywords["RESU_GENE"].getDOFNumbering()
+        resu_gene = keywords["RESU_GENE"]
+        if isinstance(resu_gene, (TransientGeneralizedResultsContainer,
+                                    HarmoGeneralizedResultsContainer)):
+            dofNum = resu_gene.getDOFNumbering()
             if dofNum is not None:
                 self._result.setDOFNumbering(dofNum)
                 self._result.appendModelOnAllRanks(dofNum.getSupportModel())
-#        if keywords["RESU_GENE"].getType() == "HARM_GENE":
-#            dofNum = keywords["RESU_GENE"].getGeneralizedDOFNumbering()
-#            basis = dofNum.getModalBasis()
-#            dofNum2 = basis.getDOFNumbering()
-#        if keywords["RESU_GENE"].getType() in ["HARM_GENE","TRAN_GENE"]:
-#            dofNum = keywords["RESU_GENE"].getDOFNumbering()
-#            basis = dofNum.getModalBasis()
-#            dofNum2 = basis.getDOFNumbering()
-#            if dofNum2 is not None:
-#                self._result.appendModelOnAllRanks(dofNum2.getSupportModel())
+        elif isinstance(resu_gene, GeneralizedModeContainer):
+            matrRigi = resu_gene.getStiffnessMatrix()
+            if matrRigi is not None:
+                modalBasis = matrRigi.getModalBasis()
+                dofNum = modalBasis.getDOFNumbering()
+                if dofNum is not None:
+                    self._result.setDOFNumbering(dofNum)
+        else:
+            raise Exception("Unknown result type")
+
 
 REST_GENE_PHYS = RestGenePhys.run
