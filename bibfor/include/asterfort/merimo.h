@@ -19,15 +19,16 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine merimo(base           , l_xfem   , l_macr_elem,&
+    subroutine merimo(base           , l_xfem   , l_macr_elem, l_hho,&
                       model          , cara_elem, mate       , iter_newt,&
                       ds_constitutive, varc_refe,&
-                      hval_incr      , hval_algo,&
+                      hval_incr      , hval_algo, hhoField, &
                       optioz         , merigi   , vefint   ,&
                       ldccvg         , sddynz_)
         use NonLin_Datastructure_type
+        use HHO_type
         character(len=1), intent(in) :: base
-        aster_logical, intent(in) :: l_xfem, l_macr_elem
+        aster_logical, intent(in) :: l_xfem, l_macr_elem, l_hho
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: cara_elem
         character(len=*), intent(in) :: mate
@@ -35,6 +36,7 @@ interface
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=24), intent(in) :: varc_refe
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        type(HHO_Field), intent(in) :: hhoField
         character(len=*), intent(in) :: optioz
         character(len=19), intent(in) :: merigi, vefint
         integer, intent(out) :: ldccvg

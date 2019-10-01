@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ subroutine te0008(option, nomte)
 #include "asterfort/tecach.h"
 #include "asterfort/terefe.h"
 #include "blas/daxpy.h"
+#include "blas/dcopy.h"
 !
     character(len=16) :: option, nomte
 !
@@ -54,7 +55,7 @@ subroutine te0008(option, nomte)
     integer :: ipoids, ivf, idfde, jgano
     integer :: igeom, ivectu
     integer :: idepl, icomp, icontm
-    integer :: i, j, iretd, iretc
+    integer :: i, j, iretd, iretc, nbinco
 !
 ! ----------------------------------------------------------------------
 !
@@ -65,7 +66,8 @@ subroutine te0008(option, nomte)
 !
     zero = 0.d0
     nharm = zero
-    ASSERT(nno*ndim.le.81)
+    nbinco = nno * ndim
+    ASSERT(nbinco.le.81)
 !
 ! --- NOMBRE DE CONTRAINTES ASSOCIE A L'ELEMENT
 !
@@ -78,18 +80,14 @@ subroutine te0008(option, nomte)
 ! --- PARAMETRE EN ENTREE: GEROMETRIE
 !
     call jevech('PGEOMER', 'L', igeom)
-    do 30 i = 1, ndim*nno
-        geo(i) = zr(igeom-1+i)
-30  end do
+    call dcopy(nbinco, zr(igeom), 1, geo, 1)
 !
     if (option .eq. 'FORC_NODA') then
         call tecach('ONO', 'PDEPLMR', 'L', iretd, iad=idepl)
         call tecach('ONO', 'PCOMPOR', 'L', iretc, iad=icomp)
         if ((iretd.eq.0) .and. (iretc.eq.0)) then
             if (zk16(icomp+2)(1:6) .ne. 'PETIT ') then
-                do 20 i = 1, ndim*nno
-                    geo(i) = geo(i) + zr(idepl-1+i)
-20              continue
+                call daxpy(nbinco, 1.d0, zr(idepl), 1, geo, 1)
             endif
         endif
 !
@@ -105,34 +103,31 @@ subroutine te0008(option, nomte)
 !
 ! ----- AFFECTATION DU VECTEUR EN SORTIE
 !
-        do 10 i = 1, ndim*nno
-            zr(ivectu+i-1) = bsigm(i)
-10      continue
+        call dcopy(nbinco, bsigm, 1, zr(ivectu), 1)
 !
     else if (option.eq.'REFE_FORC_NODA') then
 !
         call terefe('SIGM_REFE', 'MECA_ISO', sigref)
 !
         call r8inir(nbsig*npg1, 0.d0, sigtmp, 1)
-        call r8inir(ndim*nno, 0.d0, ftemp, 1)
+        call r8inir(nbinco, 0.d0, ftemp, 1)
 !
-        do 200 i = 1, nbsig*npg1
+        do i = 1, nbsig*npg1
 !
             sigtmp(i) = sigref
             call bsigmc(nno, ndim, nbsig, npg1, ipoids,&
                         ivf, idfde, geo, nharm, sigtmp,&
                         bsigm)
 !
-            do 21 j = 1, ndim*nno
+            do j = 1, nbinco
                 ftemp(j) = ftemp(j)+abs(bsigm(j))
-21          continue
+            end do
 !
             sigtmp(i) = 0.d0
 !
-200      continue
+        end do
 !
-        call daxpy(ndim*nno, 1.d0/npg1, ftemp, 1, zr(ivectu),&
-                   1)
+        call daxpy(nbinco, 1.d0/npg1, ftemp, 1, zr(ivectu), 1)
 !
     endif
 !

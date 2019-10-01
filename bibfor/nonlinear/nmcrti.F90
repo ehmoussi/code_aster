@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
     aster_logical :: l_line_search
     aster_logical :: l_cont, l_fric, l_cont_disc, l_cont_cont,l_cont_lac
     aster_logical :: l_loop_cont, l_loop_fric, l_loop_geom, l_newt_geom
-    aster_logical :: l_all_verif, l_device_acti
+    aster_logical :: l_all_verif, l_device_acti, l_hho
     type(NL_DS_Table) :: table
 !
 ! --------------------------------------------------------------------------------------------------
@@ -88,8 +88,9 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
     l_loop_fric   = isfonc(list_func_acti, 'BOUCLE_EXT_FROT')
     l_loop_geom   = isfonc(list_func_acti, 'BOUCLE_EXT_GEOM')
     l_newt_geom   = isfonc(list_func_acti, 'GEOM_NEWTON')
+    l_hho         = isfonc(list_func_acti, 'HHO' )
     if (l_cont) then
-        l_all_verif = cfdisl(ds_contact%sdcont_defi, 'ALL_VERIF')    
+        l_all_verif = cfdisl(ds_contact%sdcont_defi, 'ALL_VERIF')
         l_fric      = cfdisl(ds_contact%sdcont_defi, 'FROTTEMENT')
     endif
 !
@@ -110,6 +111,11 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
     if (l_line_search) then
         call ActivateDevice(ds_measure, 'LineSearch')
     endif
+    if (l_hho) then
+        call ActivateDevice(ds_measure, 'HHO_Cond')
+        call ActivateDevice(ds_measure, 'HHO_Comb')
+        call ActivateDevice(ds_measure, 'HHO_Prep')
+    end if
 !
 ! - Activate devices for contact (10)
 !
@@ -172,7 +178,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
                     table%l_cols_acti(i_col) = .true._1
                     ASSERT(table%cols(i_col)%name(1:6) .eq. 'Count_')
                 endif
-            endif   
+            endif
         end do
 !
 ! ----- Activate state and memory

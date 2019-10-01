@@ -25,34 +25,36 @@ subroutine nmnpas(mesh          , model          , cara_elem,&
                   sdsuiv        , sddyna         ,&
                   ds_contact    , ds_conv        ,&
                   sdnume        , nume_dof       , solver   ,&
-                  hval_incr     , hval_algo )
+                  hval_incr     , hval_algo      , hhoField)
 !
 use NonLin_Datastructure_type
+use HHO_type
+use HHO_init_module, only : hhoInitializeCellValues
 !
 implicit none
 !
-#include "asterf_types.h"
-#include "jeveux.h"
 #include "asterc/isnnem.h"
 #include "asterc/r8vide.h"
+#include "asterf_types.h"
+#include "asterfort/SetResi.h"
+#include "asterfort/cldual_maj.h"
+#include "asterfort/cont_init.h"
 #include "asterfort/copisd.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/initia.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/cldual_maj.h"
-#include "asterfort/cont_init.h"
 #include "asterfort/ndnpas.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmimin.h"
 #include "asterfort/nmnkft.h"
 #include "asterfort/nmvcle.h"
-#include "asterfort/SetResi.h"
 #include "asterfort/nonlinDSMaterialTimeStep.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/utmess.h"
 #include "asterfort/nonlinInitDisp.h"
+#include "asterfort/utmess.h"
+#include "jeveux.h"
 !
 character(len=8) :: mesh
 character(len=24), intent(in) :: model, cara_elem
@@ -71,6 +73,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 character(len=19), intent(in) :: sdnume, solver
 character(len=24), intent(in)  :: nume_dof
 character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
+type(HHO_Field), intent(in) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -103,7 +106,7 @@ character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: ldyna, lnkry, l_cont, l_diri_undead
+    aster_logical :: ldyna, lnkry, l_cont, l_diri_undead, l_hho
     integer :: ifm, niv
     character(len=19) :: disp_prev, vari_prev, vari_curr
 !
@@ -120,6 +123,7 @@ character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
     l_cont        = isfonc(list_func_acti,'CONTACT')
     lnkry         = isfonc(list_func_acti,'NEWTON_KRYLOV')
     l_diri_undead = isfonc(list_func_acti,'DIRI_UNDEAD')
+    l_hho         = isfonc(list_func_acti,'HHO')
 !
 ! - Get hat variables
 !
@@ -139,6 +143,12 @@ character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
 !
     call nonlinInitDisp(list_func_acti, sdnume   , nume_dof,&
                         hval_algo     , hval_incr)
+!
+! - For HHO (initialize the increment for the cell to zero)
+!
+    if (l_hho) then
+        call hhoInitializeCellValues(hhoField%fieldIncr_cell, 0.d0)
+    endif
 !
 ! - Update dualized relations for non-linear Dirichlet boundary conditions (undead)
 !

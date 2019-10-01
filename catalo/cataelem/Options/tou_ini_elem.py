@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,6 +52,8 @@ PFLUN_R  = OutputParameter(phys=PHY.FLUN_R, type='ELEM')
 
 PNEUT_F  = OutputParameter(phys=PHY.NEUT_F, type='ELEM')
 
+PCELL_R  = OutputParameter(phys=PHY.CELL_R, type='ELEM')
+
 
 TOU_INI_ELEM = Option(
     para_in=(
@@ -68,6 +70,7 @@ TOU_INI_ELEM = Option(
            PCOEH_R,
            PFLUN_R,
            PNEUT_F,
+           PCELL_R,
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),)),

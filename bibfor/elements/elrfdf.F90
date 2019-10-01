@@ -491,6 +491,26 @@ implicit none
             dff(3,4) = zero
 !
 !         ------------------------------------------------------------------
+        case('TE8')
+!
+            x0 = x(1)
+            y0 = x(2)
+            z0 = x(3)
+!
+            dff(1,1) = zero
+            dff(2,1) = un
+            dff(3,1) = zero
+            dff(1,2) = zero
+            dff(2,2) = zero
+            dff(3,2) = un
+            dff(1,3) = -un
+            dff(2,3) = -un
+            dff(3,3) = -un
+            dff(1,4) = un
+            dff(2,4) = zero
+            dff(3,4) = zero
+            dff(1:3,5:8) = zero
+!
         case('T10')
 !
             x0 = x(1)
@@ -680,6 +700,17 @@ implicit none
             dff(2,2) = zero
             dff(1,3) = zero
             dff(2,3) = +un
+!
+        case('TR4')
+!
+            dff(1,1) = -un
+            dff(2,1) = -un
+            dff(1,2) = +un
+            dff(2,2) = zero
+            dff(1,3) = zero
+            dff(2,3) = +un
+            dff(1,4) = zero
+            dff(2,4) = zero
 !
         case('TR6')
 !

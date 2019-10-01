@@ -159,4 +159,12 @@ La charge %(k1)s dépend de la vitesse: elle doit être suiveuse.
 La charge %(k1)s dépend de la vitesse: elle ne peut être utilisable qu'en dynamique.
 """),
 
+    57: _("""
+    AFFE_CHAR_CINE:
+Vous essayez d'appliquer un déplacement selon DZ à une modélisation qui n'est pas 3D.
+
+Conseil: Vérifié vos conditions aux limites.
+"""),
+
+
 }

@@ -19,8 +19,9 @@
 interface
     subroutine nmfpas(fonact, sddyna, sdpilo, sddisc, nbiter,&
                       numins, eta, valinc, solalg, veasse, ds_system,&
-                      ds_contact)
+                      ds_contact, hhoField)
         use NonLin_Datastructure_type
+        use HHO_type
         integer :: fonact(*)
         character(len=19) :: sddyna
         character(len=19) :: sdpilo
@@ -33,5 +34,6 @@ interface
         character(len=19) :: veasse(*)
         type(NL_DS_System), intent(in) :: ds_system
         type(NL_DS_Contact), intent(in) :: ds_contact
+        type(HHO_Field), intent(in) :: hhoField
     end subroutine nmfpas
 end interface

@@ -314,8 +314,8 @@ void DEFSSSSPSS(ASCOVA,ascova, const char*, STRING_SIZE, const char*, STRING_SIZ
                                const ASTERDOUBLE*,
                                const char*, STRING_SIZE, const char*, STRING_SIZE );
 
-#define CALLO_ASCAVC(a, b, c, d, e, f) CALLOOOOPO(ASCAVC, ascavc, a, b, c, d, e, f)
-void DEFSSSSPS(ASCAVC,ascavc, const char*, STRING_SIZE, const char*, STRING_SIZE,
+#define CALLO_ASCAVC_WRAP(a, b, c, d, e, f) CALLOOOOPO(ASCAVC_WRAP, ascavc_wrap, a, b, c, d, e, f)
+void DEFSSSSPS(ASCAVC_WRAP,ascavc_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
                               const char*, STRING_SIZE, const char*, STRING_SIZE,
                               const ASTERDOUBLE*, const char*, STRING_SIZE );
 

@@ -24,11 +24,13 @@ interface
                       sddyna        , ds_print       , ds_measure ,&
                       ds_algorom    , numins         , iter_newt  ,&
                       list_func_acti, ds_contact     , hval_incr  ,&
-                      hval_algo     , meelem         , measse     ,&
+                      hval_algo     , hhoField       , meelem     , measse,&
                       maprec        , matass         , faccvg     ,&
                       ldccvg        , sdnume)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
+        use HHO_type
+
         character(len=8), intent(in) :: mesh
         character(len=*) :: modelz
         type(NL_DS_Material), intent(in) :: ds_material
@@ -50,6 +52,7 @@ interface
         type(NL_DS_Contact), intent(inout) :: ds_contact
         character(len=19) :: hval_incr(*)
         character(len=19) :: hval_algo(*)
+        type(HHO_Field), intent(in) :: hhoField
         character(len=19) :: meelem(*)
         character(len=19) :: measse(*)
         character(len=19) :: maprec

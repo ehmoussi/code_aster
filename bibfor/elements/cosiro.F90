@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ subroutine cosiro(nomte, param, loue, sens, goun,&
     ASSERT(goun.eq.'G' .or. goun.eq.'N')
 !
 !     -- ADRESSE DU CHAMP LOCAL A MODIFIER + NBPT + NBSP
-    call tecach('NOO', param, loue, iret, nval=7,&
+    call tecach('NNO', param, loue, iret, nval=7,&
                 itab=itab)
     ASSERT(iret.eq.0 .or. iret.eq.1)
 !

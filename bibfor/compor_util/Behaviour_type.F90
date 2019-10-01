@@ -22,17 +22,18 @@ module Behaviour_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Behaviour - Define types 
+! Behaviour - Define types
 !
 ! --------------------------------------------------------------------------------------------------
 !
 
 !
 ! - Type: for integration point parameters
-! 
+!
     type Behaviour_Elga
 ! ----- Coordinates of current Gauss point
         real(kind=8) :: coorpg(3) = 0.d0
@@ -50,7 +51,7 @@ implicit none
 
 !
 ! - Type: for integration of behaviour
-! 
+!
     type Behaviour_Integ
 ! ----- Integration point parameters
         type(Behaviour_Elga)  :: elga
@@ -59,7 +60,7 @@ implicit none
     end type Behaviour_Integ
 !
 ! - Type: for external comportement
-! 
+!
     type Behaviour_External
 ! ----- Flag for UMAT law
         aster_logical      :: l_umat = ASTER_FALSE
@@ -82,7 +83,7 @@ implicit none
     end type Behaviour_External
 !
 ! - Type: parameters for behaviour
-! 
+!
     type Behaviour_Parameters
 ! ----- Keyword RELATION
         character(len=16) :: rela_comp       = ' '
@@ -109,7 +110,7 @@ implicit none
     end type Behaviour_Parameters
 !
 ! - Type: criteria for behaviour
-! 
+!
     type Behaviour_Criteria
         integer                   :: type_matr_t = 0
         real(kind=8)              :: parm_theta = 0.d0
@@ -140,19 +141,23 @@ implicit none
     end type Behaviour_Criteria
 !
 ! - Type: for preparation of parameters for constitutive laws
-! 
+!
     type Behaviour_PrepCrit
 ! ----- Number of factor keywords
         integer                           :: nb_comp = 0
 ! ----- Parameters for THM scheme
         real(kind=8)                      :: parm_alpha_thm = 0.d0
         real(kind=8)                      :: parm_theta_thm = 0.d0
+! ----- HHO parameters
+        real(kind=8)                      :: hho_coef_stab = 0.d0
+        real(kind=8)                      :: hho_type_stab = 0.d0
+        real(kind=8)                      :: hho_type_calc = 0.d0
 ! ----- List of parameters
         type(Behaviour_Criteria), pointer :: v_para(:)
     end type Behaviour_PrepCrit
 !
 ! - Type: for preparation of comportment
-! 
+!
     type Behaviour_PrepPara
 ! ----- Number of factor keywords
         integer                             :: nb_comp = 0

@@ -1534,7 +1534,7 @@ phen.add('AXIS_GRAD_VARI', Modelisation(dim=(2,2), code='AXV',
         (MT.TRIA6     , EL.MVAXTR6),
         (MT.QUAD8     , EL.MVAXQS8),
     )))
-        
+
 phen.add('AXIS_GRAD_INCO', Modelisation(dim=(2,2), code='AGI',
     attrs=(
         (AT.AXIS,'OUI'),
@@ -5315,12 +5315,67 @@ phen.add('XFEM_GG_T_T_C', Modelisation(dim=(2,2), code='Y51',
         (MT.TRIA3     , EL.MEDPT3T_XH),
     )))
 
+phen.add('3D_HHO_222', Modelisation(dim=(3,3), code='3D_',
+    attrs=(
+        (AT.TYPMOD2, 'HHO222'),
+        (AT.NBSIGM,'6'),
+        (AT.TYPMOD,'3D'),
+    ),
+    elements=(
+        (MT.HEXA27    , EL.MECA3DH27_HHO222),
+        (MT.TETRA8    , EL.MECA3DTE8_HHO222),
+        (MT.QUAD9     , EL.MECA3DQU9_HHO2_F),
+        (MT.TRIA4     , EL.MECA3DTR4_HHO2_F),
+    )))
+
+
+phen.add('3D_HHO_121', Modelisation(dim=(3,3), code='3D_',
+    attrs=(
+        (AT.TYPMOD2, 'HHO121'),
+        (AT.NBSIGM,'6'),
+        (AT.TYPMOD,'3D'),
+    ),
+    elements=(
+        (MT.HEXA27    , EL.MECA3DH27_HHO121),
+        (MT.TETRA8    , EL.MECA3DTE8_HHO121),
+        (MT.QUAD9     , EL.MECA3DQU9_HHO1_F),
+        (MT.TRIA4     , EL.MECA3DTR4_HHO1_F),
+    )))
+
+
+phen.add('D_PLAN_HHO_222', Modelisation(dim=(2,2), code='DPL',
+    attrs=(
+        (AT.TYPMOD2,'HHO222'),
+        (AT.D_PLAN,'OUI'),
+        (AT.TYPMOD, 'D_PLAN'),
+        (AT.NBSIGM,'4'),
+    ),
+    elements=(
+        (MT.QUAD8    , EL.MECA_DPQ8_HHO222),
+        (MT.TRIA6    , EL.MECA_DPT6_HHO222),
+        (MT.SEG3     , EL.MECA_2D_HHO2_F),
+    )))
+
+phen.add('D_PLAN_HHO_121', Modelisation(dim=(2,2), code='DPL',
+    attrs=(
+        (AT.TYPMOD2,'HHO121'),
+        (AT.D_PLAN,'OUI'),
+        (AT.TYPMOD, 'D_PLAN'),
+        (AT.NBSIGM,'4'),
+    ),
+    elements=(
+        (MT.QUAD8    , EL.MECA_DPQ8_HHO121),
+        (MT.TRIA6    , EL.MECA_DPT6_HHO121),
+        (MT.SEG3     , EL.MECA_2D_HHO1_F),
+    )))
+
 
 ############################################################
 # Pour le phenomene : THERMIQUE :
 ############################################################
 THERMIQUE = Phenomenon(code='TH')
 phen = THERMIQUE
+
 
 phen.add('3D', Modelisation(dim=(3,3), code='3D_',
     elements=(

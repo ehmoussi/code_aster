@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -319,16 +319,19 @@ subroutine ircecs(ifi, ligrel, nbgrel, longr, ncmpmx,&
                         call jenuno(jexnum('&CATA.TM.NOMTM', itype), ktype)
                         if (ktype .eq. 'TRIA7') then
                             nnoe = nnoe - 1
-                            lnocen=.true.
+                            lnocen = ASTER_TRUE
                         else if (ktype .eq. 'QUAD9') then
                             nnoe = nnoe - 1
-                            lnocen=.true.
+                            lnocen = ASTER_TRUE
                         else if (ktype .eq. 'PENTA18') then
                             nnoe = nnoe - 3
-                            lnocen=.true.
+                            lnocen = ASTER_TRUE
                         else if (ktype .eq. 'HEXA27') then
                             nnoe = nnoe - 7
-                            lnocen=.true.
+                            lnocen = ASTER_TRUE
+                        else if (ktype .eq. 'TETRA8') then
+                            nnoe = nnoe - 4
+                            lnocen = ASTER_TRUE
                         else if (ktype .eq. 'SEG4') then
                             nnoe = nnoe - 2
                             call jenonu(jexnom('&CATA.TM.NOMTM', 'SEG2'), itseg2)

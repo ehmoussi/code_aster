@@ -17,14 +17,15 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine merimo(base           , l_xfem   , l_macr_elem,&
+subroutine merimo(base           , l_xfem   , l_macr_elem, l_hho, &
                   model          , cara_elem, mate       , iter_newt,&
                   ds_constitutive, varc_refe,&
-                  hval_incr      , hval_algo,&
+                  hval_incr      , hval_algo, hhoField, &
                   optioz         , merigi   , vefint     ,&
                   ldccvg         , sddynz_)
 !
 use NonLin_Datastructure_type
+use HHO_type
 !
 implicit none
 !
@@ -46,13 +47,14 @@ implicit none
 #include "asterfort/redetr.h"
 !
 character(len=1), intent(in) :: base
-aster_logical, intent(in) :: l_xfem, l_macr_elem
+aster_logical, intent(in) :: l_xfem, l_macr_elem, l_hho
 character(len=24), intent(in) :: model, cara_elem
 character(len=*), intent(in) :: mate
 integer, intent(in) :: iter_newt
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 character(len=24), intent(in) :: varc_refe
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+type(HHO_Field), intent(in) :: hhoField
 character(len=*), intent(in) :: optioz
 character(len=19), intent(in) :: merigi, vefint
 integer, intent(out) :: ldccvg
@@ -69,6 +71,7 @@ character(len=*), optional, intent(in) :: sddynz_
 ! In  base             : JEVEUX base to create objects
 ! In  l_xfem           : flag for XFEM elements
 ! In  l_macr_elem      : flag for macro-elements
+! In  l_hho            : flag for HHO elements
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  mate             : name of material characteristics (field)
@@ -77,6 +80,7 @@ character(len=*), optional, intent(in) :: sddynz_
 ! In  varc_refe        : name of reference command variables vector
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
+! In  hhoField         : datastructure for HHO
 ! In  option           : name of option to compute
 ! In  merigi           : name of elementary matrices for tangent matrix
 ! In  vefint           : elementary vectors for internal forces
@@ -129,10 +133,10 @@ character(len=*), optional, intent(in) :: sddynz_
 !
 ! - Input fields
 !
-    call merimp(l_xfem         ,&
+    call merimp(l_xfem         , l_hho, &
                 model          , cara_elem, mate  , sddyna, iter_newt,&
                 ds_constitutive, varc_refe,&
-                hval_incr      , hval_algo, caco3d,&
+                hval_incr      , hval_algo, hhoField, caco3d,&
                 mxchin         , lpain    , lchin , nbin)
 !
 ! - Prepare flags
@@ -149,6 +153,10 @@ character(len=*), optional, intent(in) :: sddynz_
         l_codret = ASTER_FALSE
         l_sigmex = ASTER_FALSE
         l_codpre = ASTER_FALSE
+!
+        if (l_hho) then
+            l_vefint = ASTER_TRUE
+        end if
     else if (option(1:16) .eq. 'RIGI_MECA_IMPLEX') then
         l_merigi = ASTER_TRUE
         l_vefint = ASTER_FALSE
@@ -161,6 +169,10 @@ character(len=*), optional, intent(in) :: sddynz_
         l_codret = ASTER_FALSE
         l_sigmex = ASTER_FALSE
         l_codpre = ASTER_FALSE
+!
+        if (l_hho) then
+            l_vefint = ASTER_TRUE
+        end if
     else if (option(1:9) .eq. 'RAPH_MECA') then
         l_merigi = ASTER_FALSE
         l_vefint = ASTER_TRUE
@@ -242,6 +254,18 @@ character(len=*), optional, intent(in) :: sddynz_
         lchout(nbout) = ds_constitutive%code_pred(1:19)
         ich_codret = nbout
     endif
+!
+! - Prepare output for HHO
+!
+    if (l_hho) then
+        nbout = nbout+1
+        lpaout(nbout) = 'PCSMTIR'
+        lchout(nbout) = hhoField%fieldOUT_cell_MT
+        nbout = nbout+1
+        lpaout(nbout) = 'PCSRTIR'
+        lchout(nbout) = hhoField%fieldOUT_cell_RT
+    endif
+!
     ASSERT(nbout.le.mxchout)
     ASSERT(nbin.le.mxchin)
 !

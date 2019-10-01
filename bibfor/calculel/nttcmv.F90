@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -134,7 +134,7 @@ character(len=24) :: matass, cndirp, cnchci, cnchtp
 !
         cnchci = ' '
         call ascavc(lload_name, lload_info, lload_func, nume_dof, tpsnp1,&
-                    cnchci)
+                    cnchci, ASTER_FALSE)
 !
 ! --- CHARGEMENTS THERMIQUES                                 ---> CNCHTP
 !            RQ : POUR LE CALCUL THERMIQUE, LES ARGUMENTS VTEMPP,

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,8 +42,8 @@ type(NL_DS_Measure), intent(out) :: ds_measure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_device_defi = 23
-    integer, parameter :: nb_timer_defi = 7
+    integer, parameter :: nb_device_defi = 26
+    integer, parameter :: nb_timer_defi = 8
     integer :: i_device, i_timer, i_col
     aster_logical :: l_time, l_count
     type(NL_DS_Table) :: table
@@ -55,14 +55,14 @@ type(NL_DS_Measure), intent(out) :: ds_measure
     character(len=9), parameter :: timer_type(nb_timer_defi) = (/&
                     'Time_Step','Newt_Iter','Store    ',&
                     'Post     ','Total    ','CPU_1    ',&
-                    'CPU_2    '/)
+                    'CPU_2    ','CPU_3    '/)
 !
 ! - Internal name of timer
 !
     character(len=24), parameter :: cpu_name(nb_timer_defi) = (/&
                     'CPU.NMTIME.PAS','CPU.NMTIME.ITE','CPU.NMTIME.ARC',&
                     'CPU.NMTIME.PST','CPU.NMTIME.TOT','CPU.NMTIME.TM1',&
-                    'CPU.NMTIME.TM2'/)
+                    'CPU.NMTIME.TM2','CPU.NMTIME.TM3'/)
 !
 ! - Type of device
 !
@@ -74,7 +74,8 @@ type(NL_DS_Measure), intent(out) :: ds_measure
                     'Cont_Prep ','Cont_Elem ','Matr_Asse ',&
                     'Cont_NCont','Cont_NFric','LineSearch',&
                     'Cont_Cycl1','Cont_Cycl2','Cont_Cycl3',&
-                    'Cont_Cycl4','Other     '/)
+                    'Cont_Cycl4','HHO_Cond  ','HHO_Comb  ',&
+                    'HHO_Prep  ','Other     '/)
 !
 ! - Timer linked to device
 !
@@ -86,7 +87,8 @@ type(NL_DS_Measure), intent(out) :: ds_measure
                     'CPU_1    ','CPU_1    ','CPU_2    ',&
                     'NoTimer  ','NoTimer  ','NoTimer  ',&
                     'NoTimer  ','NoTimer  ','NoTimer  ',&
-                    'NoTimer  ','NoTimer  '/)
+                    'NoTimer  ','CPU_3    ','CPU_3    ',&
+                    'CPU_3    ','NoTimer  '/)
 !
 ! - Flag for counter add or not
 !
@@ -98,7 +100,8 @@ type(NL_DS_Measure), intent(out) :: ds_measure
                     .true. , .true., .true.,&
                     .false.,.false., .true.,&
                     .true. , .true., .true.,&
-                    .true. , .true./)
+                    .true. , .true., .true.,&
+                    .true. , .true. /)
 !
 ! - Flag for time measure: 2 by device - First = Step / Second = Total computation
 !
@@ -110,7 +113,8 @@ type(NL_DS_Measure), intent(out) :: ds_measure
                     13, 13, 14, 14, 12, 12,&
                      0,  0,  0,  0,  0,  0,&
                      0,  0,  0,  0,  0,  0,&
-                     0,  0, 17,  0/)
+                     0,  0, 27, 27, 28, 28,&
+                     0, 29,  17,  0 /)
 !
 ! - Flag for count measure: 2 by device - First = Step / Second = Total computation
 !
@@ -122,7 +126,8 @@ type(NL_DS_Measure), intent(out) :: ds_measure
                     13, 13,  0,  0,  0,  0,&
                     18, 18, 19, 19, 24, 24,&
                     20, 20, 21, 21, 22, 22,&
-                    23, 23,  0,  0/)
+                    23, 23,  0,  0,  0 , 0,&
+                     0,  0,  0,  0/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -211,7 +216,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
             table%indx_vale(i_col) = i_device
         endif
         ASSERT(i_col .le. table%nb_cols_maxi)
-        
+
     end do
 !
 ! - Other column: state and memory
@@ -235,7 +240,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
 !
 ! - Save table
 !
-    ds_measure%table = table  
+    ds_measure%table = table
 !
 ! - Checks
 !
