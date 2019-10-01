@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedModeContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -44,5 +44,8 @@ void exportGeneralizedModeContainerToPython() {
         .def( "setGeneralizedDOFNumbering",
               &GeneralizedModeContainerInstance::setGeneralizedDOFNumbering )
         .def( "setStiffnessMatrix", c1 )
-        .def( "setStiffnessMatrix", c2 );
+        .def( "setStiffnessMatrix", c2 )
+        .def( "getDampingMatrix", &GeneralizedModeContainerInstance::getDampingMatrix )
+        .def( "getStiffnessMatrix", &GeneralizedModeContainerInstance::getStiffnessMatrix );
+
 };

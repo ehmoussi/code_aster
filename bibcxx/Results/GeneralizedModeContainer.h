@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedModeContainer
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -82,6 +82,14 @@ class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
     };
 
     /**
+     * @brief Get the damping matrix
+     * @param matr GeneralizedAssemblyMatrixDoublePtr
+     */
+    GeneralizedAssemblyMatrixDoublePtr getDampingMatrix( void ) const {
+        return _dampingMatrix;
+    };
+
+    /**
      * @brief Set support GeneralizedDOFNumering
      */
     bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr &dofNum ) {
@@ -110,6 +118,14 @@ class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
         _rigidityDoubleMatrix = nullptr;
         _rigidityComplexMatrix = matr;
         return true;
+    };
+
+    /**
+     * @brief Get the stiffness matrix
+     * @param matr GeneralizedAssemblyMatrixDoublePtr
+     */
+    GeneralizedAssemblyMatrixDoublePtr getStiffnessMatrix( void ) const {
+        return _rigidityDoubleMatrix;
     };
 
     bool update() { return ResultsContainerInstance::update(); };
