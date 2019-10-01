@@ -15,12 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
                   ncmprf, ncmpve, ntlcmp, nbvato, nbenec,&
                   lienec, adsd, adsl, nomaas, modele,&
-                  typgeo, nomtyp, ntproa, chanom, sdcarm)
-! person_in_charge: nicolas.sellenet at edf.fr
+                  typgeo, nomtyp, ntproa, chanom, sdcarm,&
+                  field_type)
 !_______________________________________________________________________
 !     ECRITURE D'UN CHAMP -  FORMAT MED - CREATION DU PROFIL
 !        -  -       -               -                 --
@@ -39,6 +40,7 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
 !       MODELE : SD MODELE
 !       TYPGEO : TYPE GEOMETRIQUE DE MAILLE ASSOCIEE AU TYPE ASTER
 !       NOMTYP : NOM DES TYPES DE MAILLES ASTER
+! In  field_type       : type of field (symbolic name in result datastructure)
 !     SORTIES :
 !       NBIMPR : NOMBRE D'IMPRESSIONS A REALISER
 !       NCAIMI : STRUCTURE ASSOCIEE AU TABLEAU CAIMPI
@@ -96,6 +98,7 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
     character(len=8) :: nomtyp(*)
     character(len=19) :: chanom
     character(len=24) :: ncaimi, ncaimk
+character(len=16), intent(in) :: field_type
 !
 ! 0.2. ==> COMMUNS
 !
@@ -104,10 +107,10 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
     character(len=6) :: nompro
     parameter ( nompro = 'IRCMPR' )
 !
-    integer :: ifm, nivinf, j, i
+    integer :: ifm, nivinf, i, j, jco
     integer :: iaux, ima, nbno, nbma
     integer :: nbmail, iadcnx, ilcnx
-    integer :: codret,  jco
+    integer :: codret
     integer ::  adefma
     integer :: adcaii, adcaik
     integer :: adproa, adprom, adexic, adpror
@@ -131,10 +134,10 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
     call infniv(ifm, nivinf)
 !
     if (nivinf .gt. 1) then
-        write (ifm,1001) 'DEBUT DE '//nompro
+        write (ifm,101) 'DEBUT DE '//nompro
         call utflsh(codret)
     endif
-    1001 format(/,4x,10('='),a,10('='),/)
+    101 format(/,4x,10('='),a,10('='),/)
 !
 !               12   345678   9012345678901234
     ntprom = '&&'//nompro//'.PROFIL_MED     '
@@ -227,7 +230,7 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
                     nbenec, lienec, adsd, adsl, nbimpr,&
                     ncaimi, ncaimk, zi(iaux), zi(adtyp2), typgeo,&
                     nomtyp, typech, zi(adproa), zi(adprom), zi(adpror),&
-                    zi(adauxi), chanom, sdcarm)
+                    zi(adauxi), chanom, sdcarm, field_type)
 !
     endif
 !
@@ -244,7 +247,7 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
     call jedetr('&&IRCMPR.TYPMA')
 !
     if (nivinf .gt. 1) then
-        write (ifm,1001) 'FIN DE '//nompro
+        write (ifm,101) 'FIN DE '//nompro
     endif
 !
 end subroutine
