@@ -39,7 +39,7 @@ class ExtendedModel(object):
         Returns:
             dict: Internal state.
         """
-        return (self.getSupportMesh(), )
+        return (self.getMesh(), )
 
     def __setstate__(self, state):
         """Restore internal state.

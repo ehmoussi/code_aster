@@ -3,7 +3,7 @@
  * @brief Implementation de ParallelMechanicalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,7 +35,7 @@ ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance(
     DataStructure( name, 8, "CHAR_MECA" ),
     _FEDesc( new ParallelFiniteElementDescriptorInstance
                     ( getName() + ".CHME.LIGRE", load->getMechanicalLoadDescription()._FEDesc,
-                      load->getSupportModel()->getPartialMesh(), model ) ),
+                      load->getModel()->getPartialMesh(), model ) ),
     _cimpo( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.CIMPO", _FEDesc ) ),
     _cmult( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.CMULT", _FEDesc ) ),
     _type( getName() + ".TYPE" ),

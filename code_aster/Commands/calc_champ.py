@@ -54,7 +54,7 @@ class ComputeAdditionalField(ExecuteCommand):
                     modele = None
             if modele is None:
                 try:
-                    modele = keywords["RESULTAT"].getDOFNumbering().getSupportModel()
+                    modele = keywords["RESULTAT"].getDOFNumbering().getModel()
                 except:
                     modele = None
             if modele is not None:

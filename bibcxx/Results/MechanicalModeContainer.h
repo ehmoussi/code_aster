@@ -125,7 +125,7 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
         return _rigidityDispDMatrix;
     };
 
-   
+
     /**
      * @brief Get the rigidity matrix
      */
@@ -247,7 +247,7 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
         return _massDispDMatrix;
     };
 
-   
+
     /**
      * @brief Get the mass matrix
      */
@@ -375,9 +375,9 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
 
         if ( numeDdl != nullptr )
         {
-            const auto model = numeDdl->getSupportModel();
+            const auto model = numeDdl->getModel();
             if ( model != nullptr )
-                _mesh = model->getSupportMesh();
+                _mesh = model->getMesh();
         }
         return ResultsContainerInstance::update();
     };

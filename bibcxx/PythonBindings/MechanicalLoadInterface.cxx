@@ -3,7 +3,7 @@
  * @brief Interface python de MechanicalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -53,7 +53,7 @@ void exportMechanicalLoadToPython() {
                   &initFactoryPtr< GenericMechanicalLoadInstance, std::string, ModelPtr >))
         .def( "getFiniteElementDescriptor",
               &GenericMechanicalLoadInstance::getFiniteElementDescriptor )
-        .def( "getSupportModel", &GenericMechanicalLoadInstance::getSupportModel,
+        .def( "getModel", &GenericMechanicalLoadInstance::getModel,
               return_value_policy< copy_const_reference >() );
 
     class_< NodalForceDoubleInstance, NodalForceDoubleInstance::MechanicalLoadPtr,

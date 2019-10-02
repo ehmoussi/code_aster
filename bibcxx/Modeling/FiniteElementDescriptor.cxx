@@ -3,7 +3,7 @@
  * @brief Implementation de FiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -47,12 +47,12 @@ FiniteElementDescriptorInstance::FiniteElementDescriptorInstance( const std::str
 #ifdef _USE_MPI
 void
 FiniteElementDescriptorInstance::transferDofDescriptorFrom( FiniteElementDescriptorPtr &other ) {
-    if ( !getSupportMesh()->isPartial() )
+    if ( !getMesh()->isPartial() )
         throw std::runtime_error(
             "the mesh associated to finiteElementDescriptorInstance is not a partial mesh" );
     const PartialMeshPtr partialMesh =
-        boost::static_pointer_cast< PartialMeshInstance >( getSupportMesh() );
-    if ( partialMesh->getParallelMesh() != other->getSupportMesh() )
+        boost::static_pointer_cast< PartialMeshInstance >( getMesh() );
+    if ( partialMesh->getParallelMesh() != other->getMesh() )
         throw std::runtime_error(
             "parallel mesh associated to partial mesh of FiniteElementDescriptorInstance \n"
             "does not correspond to other FiniteElementDescriptorInstance mesh" );

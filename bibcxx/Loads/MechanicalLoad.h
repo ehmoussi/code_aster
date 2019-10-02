@@ -5,7 +5,7 @@
  * @file MechanicalLoad.h
  * @author Natacha Bereux
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -324,7 +324,7 @@ class GenericMechanicalLoadInstance : public DataStructure {
 
         /** @brief Constructeur */
         MecaLoad( const std::string &name, const ModelPtr &currentModel )
-            : _supportModel( currentModel ), _mesh( _supportModel->getSupportMesh() ),
+            : _supportModel( currentModel ), _mesh( _supportModel->getMesh() ),
               _temperatureField( name + ".TEMPE.TEMP" ), _modelName( name + ".MODEL.NOMO" ),
               _nameOfAssemblyVector( name + ".VEASS" ), _veiss( name + ".VEISS" ),
               _evolChar( name + ".EVOL.CHAR" ),
@@ -413,7 +413,7 @@ class GenericMechanicalLoadInstance : public DataStructure {
     /**
      * @brief Get the support model
      */
-    const ModelPtr &getSupportModel() const {
+    const ModelPtr &getModel() const {
         if ( ( !_mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
             throw std::runtime_error( "Support model of current load is empty" );
         return _mecaLoad._supportModel;
@@ -479,7 +479,7 @@ class MechanicalLoadInstance : public GenericMechanicalLoadInstance {
             throw std::runtime_error( "Model is empty" );
 
         // Get the type of MeshEntity
-        BaseMeshPtr currentMesh = _mecaLoad._supportModel->getSupportMesh();
+        BaseMeshPtr currentMesh = _mecaLoad._supportModel->getMesh();
         // If the support MeshEntity is not given, the quantity is set on the whole mesh
         if ( nameOfGroup.size() == 0 && Traits::isAllowedOnWholeMesh ) {
             _supportMeshEntity = MeshEntityPtr( new AllMeshEntities() );

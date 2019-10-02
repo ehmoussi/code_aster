@@ -79,7 +79,7 @@ class RestSousStrucOper(ExecuteCommand):
                     if mat is None: mat = macroElem.getComplexStiffnessMatrix()
                     if mat is None: mat = macroElem.getDoubleStiffnessMatrix()
                     if mat is not None:
-                        modele = mat.getDOFNumbering().getSupportModel()
+                        modele = mat.getDOFNumbering().getModel()
                         self._result.appendModelOnAllRanks(modele)
 
 

@@ -27,7 +27,7 @@ model.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                            code_aster.Modelings.Tridimensional)
 model.build()
 
-testMesh = model.getSupportMesh()
+testMesh = model.getMesh()
 test.assertEqual(testMesh.getType(), "MAILLAGE_P")
 
 model.debugPrint(rank+30)
@@ -38,7 +38,7 @@ acier.debugPrint(8)
 
 affectMat = code_aster.MaterialOnMesh(pMesh)
 
-testMesh2 = affectMat.getSupportMesh()
+testMesh2 = affectMat.getMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")
 
 affectMat.addMaterialOnAllMesh(acier)

@@ -92,7 +92,7 @@ class DynaLineFEM:
         return self.keywords["MODELE"]
     def getMaillage(self):
         """return the mesh"""
-        return self.getModele().getSupportMesh()
+        return self.getModele().getMesh()
     def getNumeddl(self):
         """return dof numbering associated to elementary stiffnesses"""
         if hasattr(self, "_DynaLineFEM__numeddl"):

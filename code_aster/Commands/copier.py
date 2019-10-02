@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -42,7 +42,7 @@ class Copier(ExecuteCommand):
                 other.getElementaryCharacteristics())
         elif isinstance(other, ResultsContainer):
             # do not support several models
-            mesh = other.getModel().getSupportMesh()
+            mesh = other.getModel().getMesh()
             self._result = type(other)()
             self._result.setMesh(mesh)
         else:
@@ -54,7 +54,7 @@ class Copier(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         if isinstance(self._result, Model):
-            self._result.setSupportMesh(keywords['CONCEPT'].getSupportMesh())
+            self._result.setSupportMesh(keywords['CONCEPT'].getMesh())
 
 
 COPIER = Copier.run

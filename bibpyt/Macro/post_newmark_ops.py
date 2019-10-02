@@ -84,7 +84,7 @@ def post_newmark_ops(self, **args):
     __model = RESULTAT.getModel()
   except:
     raise NameError("No model")
-  __mail = __model.getSupportMesh()
+  __mail = __model.getMesh()
 
   iret, dim, rbid = aster.dismoi('DIM_GEOM', __mail.nom, 'MAILLAGE', 'F')
   if dim == 3:

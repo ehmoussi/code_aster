@@ -3,7 +3,7 @@
  * @brief Implementation de CalculationInputVariablesInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,7 +33,7 @@ CalculationInputVariablesInstance::CalculationInputVariablesInstance(
         _varRef( new FieldOnElementsDoubleInstance( _model->getName() + ".CHVCREF" ) ),
         _varInst( new FieldOnElementsDoubleInstance( getName() + ".TOUT" ) ),
         _timeValue(
-          new PCFieldOnMeshDoubleInstance( getName() + ".INST", _model->getSupportMesh() ) ),
+          new PCFieldOnMeshDoubleInstance( getName() + ".INST", _model->getMesh() ) ),
         _currentTime( -1.0 ), _pTot( _mater->existsCalculationInputVariable( "PTOT" ) ),
         _hydr( _mater->existsCalculationInputVariable( "HYDR" ) ),
         _sech( _mater->existsCalculationInputVariable( "SECH" ) ),
@@ -61,7 +61,7 @@ void CalculationInputVariablesInstance::compute( const double &time )
 
     std::string comp( "INST_R" );
     _timeValue->allocate( Permanent, comp );
-    PCFieldZone a( _model->getSupportMesh() );
+    PCFieldZone a( _model->getMesh() );
     PCFieldValues< double > b( {"INST"}, {time} );
     _timeValue->setValueOnZone( a, b );
 };

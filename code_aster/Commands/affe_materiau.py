@@ -67,7 +67,7 @@ class MaterialAssignment(ExecuteCommand):
         if "MAILLAGE" in keywords:
             mesh = keywords["MAILLAGE"]
         else:
-            mesh = model.getSupportMesh()
+            mesh = model.getMesh()
         self._result = MaterialOnMesh(mesh)
         if model is not None:
             self._result.setModel(model)
@@ -101,7 +101,7 @@ class MaterialAssignment(ExecuteCommand):
         if "MAILLAGE" in keywords:
             mesh = keywords["MAILLAGE"]
         else:
-            mesh = keywords["MODELE"].getSupportMesh()
+            mesh = keywords["MODELE"].getMesh()
 
         inputVarOnMesh = InputVariableOnMesh(mesh)
         fkw = keywords.get("AFFE_VARC")

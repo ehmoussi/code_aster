@@ -57,7 +57,7 @@ del mesh
 with test.assertRaises(NameError):
     mesh
 
-mesh2 = model.getSupportMesh()
+mesh2 = model.getMesh()
 test.assertTrue(mesh2.hasGroupOfElements('Tout'))
 
 # Vérification du debug

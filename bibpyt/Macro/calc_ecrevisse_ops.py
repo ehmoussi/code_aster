@@ -242,7 +242,7 @@ def calc_ecrevisse_ops(self, **args):
 
     # ON CREE LES GROUP_NO ORDONNES DES LEVRES DE FISSURE
     #     Liste des noms des groupes de noeuds du maillage :
-    mesh = MODELE_MECA.getSupportMesh()
+    mesh = MODELE_MECA.getMesh()
     _lgno = map(lambda x: x[0], mesh.LIST_GROUP_NO())
 
     for k, fissure in enumerate(FISSURE):
@@ -254,13 +254,13 @@ def calc_ecrevisse_ops(self, **args):
         # On cree les group_no correspondant aux group_ma des levres de la
         # fissure dans le cas ou ils n'existent pas deja
         if not dFISSURE['GROUP_MA'][0] in _lgno:
-            DEFI_GROUP(reuse=MODELE_MECA.getSupportMesh(),
-                       MAILLAGE=MODELE_MECA.getSupportMesh(),
+            DEFI_GROUP(reuse=MODELE_MECA.getMesh(),
+                       MAILLAGE=MODELE_MECA.getMesh(),
                        CREA_GROUP_NO=_F(GROUP_MA=(dFISSURE['GROUP_MA'][0]),),)
 
         if not dFISSURE['GROUP_MA'][1] in _lgno:
-            DEFI_GROUP(reuse=MODELE_MECA.getSupportMesh(),
-                       MAILLAGE=MODELE_MECA.getSupportMesh(),
+            DEFI_GROUP(reuse=MODELE_MECA.getMesh(),
+                       MAILLAGE=MODELE_MECA.getMesh(),
                        CREA_GROUP_NO=_F(GROUP_MA=(dFISSURE['GROUP_MA'][1]),),)
 
         # Test sur le nombre de caracteres du nom des group_ma
@@ -270,8 +270,8 @@ def calc_ecrevisse_ops(self, **args):
         # Creation des group_no ordonnes des levres des fissures
         _nom_gno_1 = '_' + dFISSURE['GROUP_MA'][0]
         if not _nom_gno_1 in _lgno:
-            DEFI_GROUP(reuse=MODELE_MECA.getSupportMesh(),
-                       MAILLAGE=MODELE_MECA.getSupportMesh(),
+            DEFI_GROUP(reuse=MODELE_MECA.getMesh(),
+                       MAILLAGE=MODELE_MECA.getMesh(),
                        CREA_GROUP_NO=_F(OPTION='SEGM_DROI_ORDO',
                                         NOM=_nom_gno_1,
                                         GROUP_NO=dFISSURE['GROUP_MA'][0],
@@ -285,8 +285,8 @@ def calc_ecrevisse_ops(self, **args):
 
         _nom_gno_2 = '_' + dFISSURE['GROUP_MA'][1]
         if not _nom_gno_2 in _lgno:
-            DEFI_GROUP(reuse=MODELE_MECA.getSupportMesh(),
-                       MAILLAGE=MODELE_MECA.getSupportMesh(),
+            DEFI_GROUP(reuse=MODELE_MECA.getMesh(),
+                       MAILLAGE=MODELE_MECA.getMesh(),
                        CREA_GROUP_NO=_F(OPTION='SEGM_DROI_ORDO',
                                         NOM=_nom_gno_2,
                                         GROUP_NO=dFISSURE['GROUP_MA'][1],

@@ -802,7 +802,7 @@ def post_endo_fiss_ops(self,
         if model is None:
             __mail = __RESUIN.getMesh()
         else:
-            __mail = __RESUIN.getModel().getSupportMesh()
+            __mail = __RESUIN.getModel().getMesh()
 
     dime = __mail.sdj.DIME.get()[5]
 
