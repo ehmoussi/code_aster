@@ -34,30 +34,6 @@ from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 #==============================================================================
 def calc_bt_ops(self,
-                RESU_BT,
-                RESULTAT,
-                INST,
-                DDL_IMPO,
-                FORCE_NODALE,
-                BETON,
-                ACIER,
-                GROUP_MA_EXT,
-                GROUP_MA_INT,
-                SCHEMA,
-                PAS_X,
-                PAS_Y,
-                TOLE_BASE,
-                TOLE_BT,
-                NMAX_ITER,
-                RESI_RELA_TOPO,
-                RESI_RELA_SECTION,
-                CRIT_SECTION,
-                CRIT_ELIM,
-                SECTION_MINI,
-                LONGUEUR_MAX,
-                SIGMA_C,
-                SIGMA_Y,
-                INIT_ALEA,
                 **args):
     """
        macro CALC_BT
@@ -76,14 +52,35 @@ def calc_bt_ops(self,
     CREA_CHAMP =  self.get_cmd('CREA_CHAMP')
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
     DETRUIRE = self.get_cmd('DETRUIRE')
+    
+    RESU_BT = args.get("RESU_BT")
+    RESULTAT = args.get("RESULTAT")
+    INST = args.get("INST")
+    DDL_IMPO = args.get("DDL_IMPO")
+    FORCE_NODALE = args.get("FORCE_NODALE")
+    BETON = args.get("BETON")
+    ACIER = args.get("ACIER")
+    GROUP_MA_EXT = args.get("GROUP_MA_EXT")
+    GROUP_MA_INT = args.get("GROUP_MA_INT")
+    SCHEMA = args.get("SCHEMA")
+    PAS_X = args.get("PAS_X")
+    PAS_Y = args.get("PAS_Y")
+    TOLE_BASE = args.get("TOLE_BASE")
+    TOLE_BT = args.get("TOLE_BT")
+    NMAX_ITER = args.get("NMAX_ITER")
+    RESI_RELA_TOPO = args.get("RESI_RELA_TOPO")
+    RESI_RELA_SECTION = args.get("RESI_RELA_SECTION")
+    CRIT_SECTION = args.get("CRIT_SECTION")
+    CRIT_ELIM = args.get("CRIT_ELIM")
+    SECTION_MINI = args.get("SECTION_MINI")
+    LONGUEUR_MAX = args.get("LONGUEUR_MAX")
+    SIGMA_C = args.get("SIGMA_C")
+    SIGMA_Y = args.get("SIGMA_Y")
+    INIT_ALEA = args.get("INIT_ALEA")
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # Le concept sortant (de type table_sdaster) est nomme 'TABLE' dans le
     # contexte de la macro
-    self.DeclareOut('TABLE', self.sd)
-    self.DeclareOut('__resu', RESU_BT)
 
     #=========================================================================
     # Inputs
@@ -134,8 +131,7 @@ def calc_bt_ops(self,
     __FY = SIGMA_Y
 
     iret, ibid, n_mail = aster.dismoi('NOM_MAILLA', RESULTAT.nom, 'RESULTAT', 'F')
-    __MAIL = self.get_concept(n_mail)
-
+    __MAIL = RESULTAT.getModel().getSupportMesh()
     __resu = CALC_CHAMP(
                       CONTRAINTE=('SIGM_ELNO', ),
                       CRITERES=('SIEQ_NOEU', ),
@@ -2126,7 +2122,6 @@ def calc_bt_ops(self,
                 fproc = open(nomFichierSortie, 'w')
                 fproc.write(os.linesep.join(ST_MESH))
                 fproc.close()
-                UL.EtatInit(UNITE_MAILLAGE)
                 # med_create(directory)
 
 
@@ -2215,7 +2210,6 @@ def calc_bt_ops(self,
                 fproc = open(nomFichierSortie, 'w')
                 fproc.write(os.linesep.join(ST_MESH))
                 fproc.close()
-                UL.EtatInit(UNITE_MAILLAGE)
 
 
                 __Forces = run_truss_computation_(i_, GS_nodes, Con_Mat, E_sections, __Forces, N_o_S, Ec, Es, FC, FY, N_S, N_L, UNITE_MAILLAGE)
@@ -2239,7 +2233,6 @@ def calc_bt_ops(self,
         fproc = open(nomFichierSortie, 'w')
         fproc.write(os.linesep.join(ST_MESH))
         fproc.close()
-        UL.EtatInit(UNITE_MAILLAGE)
         __Forces, __resu, __truss, __strainE = run_truss_computation_1(i_, GS_nodes, Con_Mat, E_sections, __Forces,
                                                                         N_o_S, Ec, Es, FC, FY, N_S, N_L, UNITE_MAILLAGE)
 
@@ -3060,7 +3053,6 @@ def calc_bt_ops(self,
             elif (i_ + 1) < len(GROUP_C.keys()):
                 motscles['CREA_GROUP_NO'].append(_F(GROUP_MA=(GROUP_C[key], ), NOM=GROUP_C[key], OPTION='NOEUD_ORDO', ORIGINE='SANS'),)
                 __A.append(GROUP_C[key])
-
         motscles1['DETR_GROUP_NO'].append(_F(NOM=(__A)),)
         # Defining nodal groups
         __SKIN = DEFI_GROUP(reuse=__MAIL, MAILLAGE=__MAIL,**motscles)
@@ -3271,3 +3263,7 @@ def calc_bt_ops(self,
                                                                         __CONVER2, __MELIM,
                                                                         __GROUP_S, __GROUP_F, INIT_ALEA,
                                                                         __GROUP_S, __GROUP_F)
+
+    self.register_result(__resu, RESU_BT)
+
+    return TABLE
