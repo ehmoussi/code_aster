@@ -36,16 +36,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
     from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
 
     args = _F(args)
-    SOLVEUR = args.get("SOLVEUR")
-    SOLVEUR_MODAL = args.get("SOLVEUR_MODAL")
     VERI_MODE = args.get("VERI_MODE")
-    TITRE = args.get("TITRE")
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
-    self.DeclareOut('modes', self.sd)
-
     l_multi_bandes = False # logical indicating if the computation is performed
                            # for DYNAMICAL modes on several bands
 
