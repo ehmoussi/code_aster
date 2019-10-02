@@ -60,7 +60,7 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
     self.DeclareOut('C_out', self.sd)
 
     # on recupere le concept maillage
-    MAILLAGE = RESULTAT.getModel().getSupportMesh()
+    MAILLAGE = RESULTAT.getModel().getMesh()
 
     # Creation du groupe de noeuds 'PDECOL'
     DEFI_GROUP(reuse=MAILLAGE, MAILLAGE=MAILLAGE,

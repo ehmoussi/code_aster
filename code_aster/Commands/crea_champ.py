@@ -46,11 +46,11 @@ class FieldCreator(ExecuteCommand):
         resultat = keywords.get("RESULTAT")
         if mesh is None:
             if model is not None:
-                mesh = model.getSupportMesh()
+                mesh = model.getMesh()
             elif caraElem is not None:
-                mesh = caraElem.getModel().getSupportMesh()
+                mesh = caraElem.getModel().getMesh()
             elif charge is not None:
-                mesh = charge.getSupportModel().getSupportMesh()
+                mesh = charge.getModel().getMesh()
             elif resultat is not None:
                 mesh = resultat.getMesh()
 

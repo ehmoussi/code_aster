@@ -332,7 +332,7 @@ def macr_ecrevisse_ops(self, **args):
                         raise TypeError("Unexpected type for mesh entity: {0}".format(meshEntity))
                     dictToAdd["MATER"] = item.getVectorOfMaterial()
                     motclefmater['AFFE'].append(dictToAdd)
-                motclefmater['MAILLAGE'] = CHAM_MATER.getSupportMesh()
+                motclefmater['MAILLAGE'] = CHAM_MATER.getMesh()
 
                 # Set external state variables
                 motclefmater['AFFE_VARC'] = []

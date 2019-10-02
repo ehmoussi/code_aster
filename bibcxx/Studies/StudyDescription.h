@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StudyDescription
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -126,7 +126,7 @@ class StudyDescriptionInstance {
     /**
      * @brief Obtenir le modèle de l'étude
      */
-    const ModelPtr &getSupportModel() const { return _supportModel; };
+    const ModelPtr &getModel() const { return _supportModel; };
 };
 
 /**

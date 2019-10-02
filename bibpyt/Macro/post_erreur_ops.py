@@ -68,7 +68,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
     # récupération du maillage inclus dans le modele
     iret,ibid,nom_mail = aster.dismoi('NOM_MAILLA', MODELE.nom, 'MODELE', 'F')
     nom_mail = nom_mail.strip()
-    __MA = MODELE.getSupportMesh()
+    __MA = MODELE.getMesh()
 
     # récupération de la dimension géométrique
     iret,dime,kbid = aster.dismoi('DIM_GEOM', __MA.nom, 'MAILLAGE', 'F')

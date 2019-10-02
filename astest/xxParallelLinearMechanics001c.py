@@ -18,7 +18,7 @@ monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                               code_aster.Modelings.Tridimensional)
 monModel.build()
 
-testMesh = monModel.getSupportMesh()
+testMesh = monModel.getMesh()
 test.assertEqual(testMesh.getType(), "MAILLAGE_P")
 
 acier = DEFI_MATERIAU(ELAS = _F(E = 2.e11,
@@ -28,7 +28,7 @@ affectMat = code_aster.MaterialOnMesh(pMesh)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.buildWithoutInputVariables()
 
-testMesh2 = affectMat.getSupportMesh()
+testMesh2 = affectMat.getMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")
 
 charCine = code_aster.KinematicsMechanicalLoad()

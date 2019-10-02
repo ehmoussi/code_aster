@@ -144,7 +144,7 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
     if not(nom_modele_2 in mod_hyd_autorise):
         UTMESS('F', 'CHAINAGE_3', valk=[nom_modele_2, 'd arrivée'])
 
-    __maillage_h = MODELE_HYDR.getSupportMesh()
+    __maillage_h = MODELE_HYDR.getMesh()
 
     linst = [instm, instp]
 

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -44,7 +44,7 @@ class CalcErcDyn(ExecuteCommand):
         """
         matrRigi = keywords["MATR_RIGI"]
         dofNum = matrRigi.getDOFNumbering()
-        self._result.appendModelOnAllRanks(dofNum.getSupportModel())
+        self._result.appendModelOnAllRanks(dofNum.getModel())
 
 
 CALC_ERC_DYN = CalcErcDyn.run

@@ -145,7 +145,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
         if isinstance(modes, GeneralizedModeContainer):
             modes.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
         elif isinstance(modes, MechanicalModeContainer):
-            model = matrRigi.getDOFNumbering().getSupportModel()
+            model = matrRigi.getDOFNumbering().getModel()
             modes.appendModelOnAllRanks(model)
         else:
             modes.setDOFNumbering(matrRigi.getDOFNumbering())

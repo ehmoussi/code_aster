@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StaticMechanicalContext
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -75,7 +75,7 @@ class StaticMechanicalContext {
           _aMatrix( new AssemblyMatrixDisplacementDoubleInstance( Temporary ) ),
           _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() ),
           _varCom( new CalculationInputVariablesInstance(
-              _discreteProblem->getStudyDescription()->getSupportModel(),
+              _discreteProblem->getStudyDescription()->getModel(),
               _discreteProblem->getStudyDescription()->getMaterialOnMesh(),
               _discreteProblem->getStudyDescription()->getElementaryCharacteristics(),
               _discreteProblem->getStudyDescription()->getCodedMaterial() ) ){};

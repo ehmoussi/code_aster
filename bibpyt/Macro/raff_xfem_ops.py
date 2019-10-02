@@ -23,7 +23,7 @@ def get_nom_maillage_sdfiss(FISS):
     import aster
     from Utilitai.Utmess import UTMESS
 
-    nom_ma = FISS.getSupportMesh()
+    nom_ma = FISS.getMesh()
     return nom_ma
 
 
@@ -64,7 +64,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
     nbfiss = len(FISSURE)
 
     # on recupere le concept maillage "associe a la sd"
-    MA = FISSURE[0].getSupportMesh()
+    MA = FISSURE[0].getMesh()
     nom_ma = get_nom_maillage_sdfiss(FISSURE[0])
 
     # on verifie que toutes les fissures/interfaces sont rattachees au meme

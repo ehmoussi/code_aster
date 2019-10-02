@@ -38,7 +38,7 @@ class ExtendedMaterialOnMesh(object):
         """Returns the argument required to reinitialize a MaterialOnMesh
         object during unpickling.
         """
-        return (self.getName(), self.getSupportMesh())
+        return (self.getName(), self.getMesh())
 
     def __getstate__(self):
         """Return internal state.

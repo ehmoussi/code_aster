@@ -208,7 +208,7 @@ class Mac3CoeurCalcul(object):
     @cached_property
     def coeur(self):
         """Return the `Coeur` object"""
-        if self.keyw['TYPE_COEUR'][:5] == 'LIGNE' : 
+        if self.keyw['TYPE_COEUR'][:5] == 'LIGNE' :
             return _build_coeur(self.keyw['TYPE_COEUR'], self.macro,
                             self.keyw['TABLE_N'],self.keyw['NB_ASSEMBLAGE'])
         else :
@@ -554,7 +554,7 @@ class Mac3CoeurCalcul(object):
         """Extract a parameter from a result"""
         assert what in ('mesh', 'model')
         if what == "mesh":
-            return resu.getModel().getSupportMesh()
+            return resu.getModel().getMesh()
         else:
             return resu.getModel()
 
@@ -856,7 +856,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         super(Mac3CoeurLame, self)._init_properties()
         self._layer_load = NULL
         self._lame=True
-        
+
     @property
     @cached_property
     def layer_load(self):

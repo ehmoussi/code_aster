@@ -3,7 +3,7 @@
  * @brief Implementation de ElementaryCharacteristicsInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,7 +30,7 @@
 
 ElementaryCharacteristicsInstance::ElementaryCharacteristicsInstance( const std::string name,
                                                                       const ModelPtr &model )
-    : DataStructure( name, 8, "CARA_ELEM" ), _model( model ), _mesh( model->getSupportMesh() ),
+    : DataStructure( name, 8, "CARA_ELEM" ), _model( model ), _mesh( model->getMesh() ),
       _numberOfSubpoints( new PCFieldOnMeshLongInstance( getName() + ".CANBSP", _mesh ) ),
       _curveBeam( new PCFieldOnMeshDoubleInstance( getName() + ".CARARCPO", _mesh ) ),
       _cable( new PCFieldOnMeshDoubleInstance( getName() + ".CARCABLE", _mesh ) ),

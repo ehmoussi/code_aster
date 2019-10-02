@@ -232,9 +232,9 @@ class MechanicalModeComplexContainerInstance : public MechanicalModeContainerIns
             numeDdl = _rigidityPressDMatrix->getDOFNumbering();
 
         if ( numeDdl != nullptr ) {
-            const auto model = numeDdl->getSupportModel();
+            const auto model = numeDdl->getModel();
             if ( model != nullptr )
-                _mesh = model->getSupportMesh();
+                _mesh = model->getMesh();
         }
         return ResultsContainerInstance::update();
     };

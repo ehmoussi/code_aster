@@ -59,7 +59,7 @@ void exportModelToPython() {
         .def( "existsThm", &ModelInstance::existsThm )
         .def( "existsMultiFiberBeam", &ModelInstance::existsMultiFiberBeam )
         .def( "getSaneModel", &ModelInstance::getSaneModel )
-        .def( "getSupportMesh", &ModelInstance::getSupportMesh )
+        .def( "getMesh", &ModelInstance::getMesh )
         .def( "getSplittingMethod", &ModelInstance::getSplittingMethod )
         .def( "getGraphPartitioner", &ModelInstance::getGraphPartitioner )
         .def( "setSaneModel", &ModelInstance::setSaneModel )

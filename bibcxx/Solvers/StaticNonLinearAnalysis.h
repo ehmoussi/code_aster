@@ -6,7 +6,7 @@
  * @brief Definition of the static non linear analysis
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -117,7 +117,7 @@ class StaticNonLinearAnalysisInstance : public GenericSolver {
             throw std::runtime_error( "Model is empty" );
         // Define the support Mesh Entity
         MeshEntityPtr supportMeshEntity;
-        BaseMeshPtr currentMesh = _supportModel->getSupportMesh();
+        BaseMeshPtr currentMesh = _supportModel->getMesh();
         // If the support MeshEntity is not given, the behaviour is set on the whole mesh
         if ( nameOfGroup.size() == 0 ) {
             supportMeshEntity = MeshEntityPtr( new AllMeshEntities() );

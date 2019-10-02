@@ -95,7 +95,7 @@ class BaseDOFNumberingInstance : public DataStructure
         template< typename T >
         ModelPtr operator()( const T& operand ) const
         {
-            return operand->getSupportModel();
+            return operand->getModel();
         };
     };
 
@@ -313,7 +313,7 @@ class BaseDOFNumberingInstance : public DataStructure
     /**
      * @brief Get model
      */
-    ModelPtr getSupportModel()
+    ModelPtr getModel()
     {
         if( _supportModel != nullptr )
             return _supportModel;
@@ -446,7 +446,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
     void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
 
     {
-        if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+        if ( currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
@@ -458,7 +458,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
     void setElementaryMatrix( const ElementaryMatrixDisplacementComplexPtr &currentMatrix )
 
     {
-        if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+        if ( currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
@@ -470,7 +470,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
     void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
 
     {
-        if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+        if ( currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
@@ -482,7 +482,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
     void setElementaryMatrix( const ElementaryMatrixPressureComplexPtr &currentMatrix )
 
     {
-        if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+        if ( currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
@@ -492,7 +492,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
      * @param currentModel Model support de la numerotation
      */
     void setSupportModel( const ModelPtr &currentModel ) {
-        if ( currentModel->getSupportMesh()->isParallel() )
+        if ( currentModel->getMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
         BaseDOFNumberingInstance::setSupportModel( currentModel );
     };

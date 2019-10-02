@@ -33,7 +33,7 @@ PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
     const ElementaryCharacteristicsPtr &cara )
     : DataStructure( jeveuxName, 8, "CABL_PRECONT" ), _model( model ), _mater( mater ),
       _cara( cara ),
-      _mesh( boost::static_pointer_cast< MeshInstance >( _model->getSupportMesh() ) ),
+      _mesh( boost::static_pointer_cast< MeshInstance >( _model->getMesh() ) ),
       _sigin( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.SIGIN", _mesh ) ),
       _cableBP( new TableInstance( getName() + "CABLEBP    " ) ),
       _cableGL( new TableInstance( getName() + "CABLEGL    " ) ),
