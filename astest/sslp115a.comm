@@ -24,10 +24,8 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 ##CALCUL THERMIQUE
 #####################
 
-#Maillage mecanique
-MAILMECA=LIRE_MAILLAGE(UNITE=20,
-                       FORMAT='MED',
-                        );
+#Maillage mécanique
+MAILMECA=LIRE_MAILLAGE(FORMAT='MED')
 
 # Barsoum pour les 2 fonds de fissure
 MAILMECA=MODI_MAILLAGE(reuse =MAILMECA,
@@ -38,20 +36,20 @@ MAILMECA=MODI_MAILLAGE(reuse =MAILMECA,
                        MAILLAGE=MAILMECA,
                        MODI_MAILLE=_F(OPTION='NOEUD_QUART',GROUP_NO_FOND='H',),)
 
-TEMPVARX=DEFI_FONCTION(NOM_PARA='X',VALE=(-100,260,
-                                           0,130,
-                                           22,100,
-                                           100,200),);
+TEMPVARX=DEFI_FONCTION(NOM_PARA='X',VALE=(-100.,260.,
+                                             0.,130.,
+                                            22.,100.,
+                                           100.,200.),)
 
 CHP_TEMP=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_F',
                      MAILLAGE=MAILMECA,
                      AFFE=_F(TOUT = 'OUI',
-                     NOM_CMP = 'TEMP',
-                     VALE_F = TEMPVARX))
+                             NOM_CMP = 'TEMP',
+                             VALE_F = TEMPVARX))
 
 CTE250=DEFI_FONCTION(NOM_PARA='X',
-                     VALE=(-100,250,
-                            100,250),);
+                     VALE=(-100.,250.,
+                            100.,250.))
 
 CHTEMP0=CREA_CHAMP( OPERATION='AFFE',
                     TYPE_CHAM='NOEU_TEMP_F',
@@ -62,7 +60,7 @@ CHTEMP0=CREA_CHAMP( OPERATION='AFFE',
 
 #Calcul thermique
 LIST1=DEFI_LIST_REEL(DEBUT=0,
-                     INTERVALLE=_F(JUSQU_A=2,NOMBRE=2,),);
+                     INTERVALLE=_F(JUSQU_A=2,NOMBRE=2))
 
 RESUTHER=CREA_RESU(OPERATION='AFFE',
                    TYPE_RESU='EVOL_THER',
@@ -79,12 +77,12 @@ RESUTHER=CREA_RESU(OPERATION='AFFE',
 MO=AFFE_MODELE(MAILLAGE=MAILMECA,
                AFFE=_F(TOUT='OUI',
                        PHENOMENE='MECANIQUE',
-                       MODELISATION='D_PLAN',),);
+                       MODELISATION='D_PLAN'))
 
 ##Materiau dependant de la temperature
 MAMEC=DEFI_MATERIAU(ELAS=_F(E=210000,
                             NU=0.3,
-                            ALPHA=10e-6,),);
+                            ALPHA=10e-6))
 
 MAMECA=AFFE_MATERIAU(MAILLAGE=MAILMECA,
                      AFFE=_F(TOUT='OUI',
@@ -92,13 +90,13 @@ MAMECA=AFFE_MATERIAU(MAILLAGE=MAILMECA,
                      AFFE_VARC=_F(TOUT='OUI',
                                   NOM_VARC='TEMP',
                                   EVOL = RESUTHER,
-                                  VALE_REF=250,),);
+                                  VALE_REF=250))
 ##Chargement : encastrement
 ENCASTRE=AFFE_CHAR_MECA(MODELE=MO,
                         DDL_IMPO=_F(GROUP_NO='Contour',
                                     DX=0,
-                                    DY=0,),);
-##Chargement : fissure fermee
+                                    DY=0))
+##Chargement : fissure fermée
 BLOCFISS=AFFE_CHAR_MECA(MODELE=MO,
                         LIAISON_GROUP=(_F(GROUP_NO_1='lev_sup',
                                           GROUP_NO_2='lev_inf',
@@ -113,45 +111,42 @@ BLOCFISS=AFFE_CHAR_MECA(MODELE=MO,
                                           COEF_MULT_1=1,
                                           DDL_2='DY',
                                           COEF_MULT_2=-1,
-                                          COEF_IMPO=0,),),);
+                                          COEF_IMPO=0)))
 
 INSTMECA=DEFI_LIST_REEL(DEBUT=-1,
-                        INTERVALLE=(_F(JUSQU_A=0,PAS=1,),
-                                    _F(JUSQU_A=1,PAS=1,),),);
+                        INTERVALLE=(_F(JUSQU_A=0,PAS=1),
+                                    _F(JUSQU_A=1,PAS=1)))
 
 ##Calcul thermomecanique avec fissure fermee pour extraction des contraintes
 RESUMECA=STAT_NON_LINE(MODELE=MO,
                        CHAM_MATER=MAMECA,
-                       EXCIT=(_F(CHARGE=ENCASTRE,),
-                              _F(CHARGE=BLOCFISS,),),
-                       COMPORTEMENT=_F(RELATION='ELAS',),
-                       INCREMENT=_F(LIST_INST=INSTMECA,),);
+                       EXCIT=(_F(CHARGE=ENCASTRE),
+                              _F(CHARGE=BLOCFISS)),
+                       COMPORTEMENT=_F(RELATION='ELAS'),
+                       INCREMENT=_F(LIST_INST=INSTMECA))
 
 RESUMECA=CALC_CHAMP(reuse=RESUMECA,
                     RESULTAT=RESUMECA,
-                    CONTRAINTE=('SIEF_ELNO','SIEF_NOEU',),
-                    DEFORMATION=('EPSI_ELGA','EPSP_ELNO',),
-#                    CRITERES=('SIEQ_ELGA',),
-                    VARI_INTERNE=('VARI_ELNO',),);
+                    CONTRAINTE=('SIEF_ELNO','SIEF_NOEU'))
 
 ##Extraction des contraintes au noeuds et points de Gauss
 SIEFELGA=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
                     OPERATION='EXTR',
                     RESULTAT=RESUMECA,
                     NOM_CHAM='SIEF_ELGA',
-                    INST=1,);
+                    INST=1,)
 
 SIEFELNO=CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
                     OPERATION='EXTR',
                     RESULTAT=RESUMECA,
                     NOM_CHAM='SIEF_ELNO',
-                    INST=1,);
+                    INST=1,)
 
 SIEFNOEU=CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
                     OPERATION='EXTR',
                     RESULTAT=RESUMECA,
                     NOM_CHAM='SIEF_NOEU',
-                    INST=1,);
+                    INST=1,)
 
 ##Calcul thermomecanique sans etat init ouverture de la fissure
 RESOUVFI=STAT_NON_LINE(MODELE=MO,
@@ -178,269 +173,629 @@ MAMECA2=AFFE_MATERIAU(MAILLAGE=MAILMECA,
 ## Resolution ouverture de la fissure en presence d'un champ de contrainte residuelle
 RESUINI=STAT_NON_LINE(MODELE=MO,
                       CHAM_MATER=MAMECA2,
-                      EXCIT=(_F(CHARGE=ENCASTRE,),),
-                      COMPORTEMENT=_F(RELATION='ELAS',),
-                      ETAT_INIT=_F(SIGM=SIEFELGA,),
+                      EXCIT=_F(CHARGE=ENCASTRE),
+                      COMPORTEMENT=_F(RELATION='ELAS'),
+                      ETAT_INIT=_F(SIGM=SIEFELGA),
+                      #ETAT_INIT=_F(EVOL_NOLI=RESUMECA), # --> NOOK sur CALC_G
                       CONVERGENCE=_F(RESI_GLOB_MAXI=1.E-10),
-                      INCREMENT=_F(LIST_INST=LIST3),);
+                      INCREMENT=_F(LIST_INST=LIST3))
 
-## Calcul postraitement
-RESUINI=CALC_CHAMP(reuse=RESUINI,
-                   RESULTAT=RESUINI,
-                   DEFORMATION=('EPSI_ELGA','EPSP_ELNO',),
-#                   CRITERES=('SIEQ_ELGA',),
-                   VARI_INTERNE=('VARI_ELNO',),);
+# ----------------------------------------------------------------------
+#       POST-TRAITEMENT DE MECANIQUE DE LA RUPTURE
+# ----------------------------------------------------------------------
 
-## Calcul de G en utilisant les couronnes precedemment definies (dans le calcul thermique)
-# et les differentes possibilites de l'etat initial.
-##Definition du fond de fissure et des couronnes pour reutilisation dans resuini
-FISS1=DEFI_FOND_FISS(MAILLAGE=MAILMECA, SYME='NON',
-                     FOND_FISS=_F(GROUP_NO='G',),
-                     LEVRE_SUP=_F(GROUP_MA='lev_sup',),
-                     LEVRE_INF=_F(GROUP_MA='lev_inf',),);
+## Calcul de G sur différentes couronnes
+# selon les differentes possibilites de l'etat initial.
 
-# defintion de 3 couronnes pour le champ theta
+
+# Définition du fond de fissure
+FISS=DEFI_FOND_FISS(MAILLAGE=MAILMECA,
+                     FOND_FISS=_F(GROUP_NO='G'),
+                     LEVRE_SUP=_F(GROUP_MA='lev_sup'),
+                     LEVRE_INF=_F(GROUP_MA='lev_inf'),
+                     SYME='NON')
+
+
+# definition de 3 couronnes pour le champ theta
 #---------------------------------------------
 
-#Rinf1 = 1.009
-#Rsup1 = 2.05
-Rinf1 = 0.
-Rsup1 = 0.5
+# couronne n°1 : 2h-4h
+Rinf1 = 1.009
+Rsup1 = 2.05
 
+# couronne n°2 : 4h-8h
 Rinf2 = 2.05
 Rsup2 = 4.228
 
+# couronne n°3 : 8h-16h
 Rinf3 = 4.228
 Rsup3 = 9.0
 
 
+# Calcul de G à partir du RESOUVFI (valeur de référence)
+#-------------------------------------------------------
 
-
-# Calcul de G pour les 3 couronnes, a partir de SIEF_ELGA
-#--------------------------------------------------------
-
-GINGA1=CALC_G(THETA=_F(
-                       R_INF=Rinf1,
-                       FOND_FISS=FISS1,
-                       R_SUP=Rsup1,),
-              RESULTAT=RESUINI,
-              INST=3,
-#              COMPORTEMENT=_F(RELATION='ELAS'),
-              ETAT_INIT =_F(SIGM=SIEFELGA),
-#              CALCUL_CONTRAINTE='NON',
-              OPTION='CALC_G')
-
-GINGA2=CALC_G(THETA=_F(
-                       R_INF=Rinf2,
-                       FOND_FISS=FISS1,
-                       R_SUP=Rsup2,),
-              RESULTAT=RESUINI,
-              INST=3,
-#              COMPORTEMENT=_F(RELATION='ELAS'),
-              ETAT_INIT =_F(SIGM=SIEFELGA),
-#              CALCUL_CONTRAINTE='NON',
-              OPTION='CALC_G')
-
-GINGA3=CALC_G(THETA=_F(
-                       R_INF=Rinf3,
-                       FOND_FISS=FISS1,
-                       R_SUP=Rsup3,),
-              RESULTAT=RESUINI,
-              INST=3,
-#              COMPORTEMENT=_F(RELATION='ELAS'),
-              ETAT_INIT =_F(SIGM=SIEFELGA),
-#              CALCUL_CONTRAINTE='NON',
-              OPTION='CALC_G')
-
-# Calcul de G pour les 3 couronnes, a partir de SIEF_NOEU
-#--------------------------------------------------------
-
-GINNO1=CALC_G(THETA=_F(
-                       R_INF=Rinf1,
-                       FOND_FISS=FISS1,
-                       R_SUP=Rsup1,),
-             RESULTAT=RESUINI,
-             INST=3,
-             ETAT_INIT =_F(SIGM=SIEFNOEU),
-             OPTION='CALC_G')
-
-GINNO2=CALC_G(THETA=_F(
-                       R_INF=Rinf2,
-                       FOND_FISS=FISS1,
-                       R_SUP=Rsup2,),
-             RESULTAT=RESUINI,
-             INST=3,
-             ETAT_INIT =_F(SIGM=SIEFNOEU),
-             OPTION='CALC_G')
-
-GINNO3=CALC_G(THETA=_F(
-                       R_INF=Rinf3,
-                       FOND_FISS=FISS1,
-                       R_SUP=Rsup3,),
-              RESULTAT=RESUINI,
-              INST=3,
-              ETAT_INIT =_F(SIGM=SIEFNOEU),
-              OPTION='CALC_G')
-
-# Calcul de G pour les 3 couronnes, a partir de SIEF_ELNO
-#--------------------------------------------------------
-
-GINELNO1=CALC_G(THETA=_F(
-                         R_INF=Rinf1,
-                         FOND_FISS=FISS1,
-                         R_SUP=Rsup1,),
-                RESULTAT=RESUINI,
-                INST=3,
-                ETAT_INIT=_F(SIGM=SIEFELNO),
-                OPTION='CALC_G')
-
-GINELNO2=CALC_G(THETA=_F(
-                         R_INF=Rinf2,
-                         FOND_FISS=FISS1,
-                         R_SUP=Rsup2,),
-                RESULTAT=RESUINI,
-                INST=3,
-                ETAT_INIT=_F(SIGM=SIEFELNO),
-                OPTION='CALC_G')
-
-GINELNO3=CALC_G(THETA=_F(
-                         R_INF=Rinf3,
-                         FOND_FISS=FISS1,
-                         R_SUP=Rsup3,),
-                RESULTAT=RESUINI,
-                INST=3,
-                ETAT_INIT=_F(SIGM=SIEFELNO),
-                OPTION='CALC_G')
-
-# Calcul de G et K pour les 3 couronnes, a partir de SIEF_ELNO
-#------------------------------------------------------------
-
-GINELNK1=CALC_G(THETA=_F(FOND_FISS=FISS1,
-                        R_INF=Rinf1,
-                        R_SUP=Rsup1),
-                RESULTAT=RESUINI,
-                INST=3,
-                ETAT_INIT =_F(SIGM=SIEFELNO),
-                OPTION='CALC_K_G')
-
-GINELNK2=CALC_G(THETA=_F(FOND_FISS=FISS1,
-                        R_INF=Rinf2,
-                        R_SUP=Rsup2),
-                RESULTAT=RESUINI,
-                INST=3,
-                ETAT_INIT =_F(SIGM=SIEFELNO),
-                OPTION='CALC_K_G')
-
-GINELNK3=CALC_G(THETA=_F(FOND_FISS=FISS1,
-                        R_INF=Rinf3,
-                        R_SUP=Rsup3),
-                RESULTAT=RESUINI,
-                INST=3,
-                ETAT_INIT =_F(SIGM=SIEFELNO),
-                OPTION='CALC_K_G')
-
-# Calcul de G et K pour les 3 couronnes, a partir de SIEF_ELGA
-#------------------------------------------------------------
-
-GINGAK1=CALC_G(THETA=_F(FOND_FISS=FISS1,
-                        R_INF=Rinf1,
-                        R_SUP=Rsup1),
-                RESULTAT=RESUINI,
-                INST=3,
-                ETAT_INIT =_F(SIGM=SIEFELGA),
-                OPTION='CALC_K_G')
-
-GINGAK2=CALC_G(THETA=_F(FOND_FISS=FISS1,
-                        R_INF=Rinf2,
-                        R_SUP=Rsup2),
-                RESULTAT=RESUINI,
-                INST=3,
-                ETAT_INIT =_F(SIGM=SIEFELGA),
-                OPTION='CALC_K_G')
-
-GINGAK3=CALC_G(THETA=_F(FOND_FISS=FISS1,
-                        R_INF=Rinf3,
-                        R_SUP=Rsup3),
-                RESULTAT=RESUINI,
-                INST=3,
-                ETAT_INIT =_F(SIGM=SIEFELGA),
-                OPTION='CALC_K_G')
-# Calcul de G a partir du RESOUVFI
-#---------------------------------
-
-GTHER3=CALC_G(THETA=_F(
-                       R_INF=Rinf3,
-                       FOND_FISS=FISS1,
-                       R_SUP=Rsup3,),
+GTHER1=CALC_G(OPTION='CALC_G',
               RESULTAT=RESOUVFI,
               INST=1,
-              OPTION='CALC_G')
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf1,
+                       R_SUP=Rsup1,),
+              )
+
+GTHER2=CALC_G(OPTION='CALC_G',
+              RESULTAT=RESOUVFI,
+              INST=1,
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf2,
+                       R_SUP=Rsup2,),
+              )
+
+GTHER3=CALC_G(OPTION='CALC_G',
+              RESULTAT=RESOUVFI,
+              INST=1,
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf3,
+                       R_SUP=Rsup3,),
+              )
+
+IMPR_TABLE(TABLE=GTHER1)
+IMPR_TABLE(TABLE=GTHER2)
+IMPR_TABLE(TABLE=GTHER3)
 
 
+# Calcul de G avec état initial pour les 3 couronnes, à partir de SIEF_ELGA
+#--------------------------------------------------------------------------
+
+GINGA1=CALC_G(OPTION='CALC_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFELGA),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf1,
+                       R_SUP=Rsup1,)
+              )
+
+GINGA2=CALC_G(OPTION='CALC_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFELGA),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf2,
+                       R_SUP=Rsup2,),
+              )
+
+GINGA3=CALC_G(OPTION='CALC_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFELGA),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf3,
+                       R_SUP=Rsup3,),
+              )
+
+IMPR_TABLE(TABLE=GINGA1)
+IMPR_TABLE(TABLE=GINGA2)
+IMPR_TABLE(TABLE=GINGA3)
+
+
+# Calcul de G avec état initial pour les 3 couronnes, à partir de SIEF_ELNO
+#-------------------------------------------------------------------------
+
+GINELNO1=CALC_G(OPTION='CALC_G',
+                RESULTAT=RESUINI,
+                INST=3,
+                ETAT_INIT=_F(SIGM=SIEFELNO),
+                THETA=_F(FOND_FISS=FISS,
+                         R_INF=Rinf1,
+                         R_SUP=Rsup1,)
+              )
+
+GINELNO2=CALC_G(OPTION='CALC_G',
+                RESULTAT=RESUINI,
+                INST=3,
+                ETAT_INIT=_F(SIGM=SIEFELNO),
+                THETA=_F(FOND_FISS=FISS,
+                         R_INF=Rinf2,
+                         R_SUP=Rsup2,)
+              )
+
+GINELNO3=CALC_G(OPTION='CALC_G',
+                RESULTAT=RESUINI,
+                INST=3,
+                ETAT_INIT=_F(SIGM=SIEFELNO),
+                THETA=_F(FOND_FISS=FISS,
+                         R_INF=Rinf3,
+                         R_SUP=Rsup3,)
+              )
+
+IMPR_TABLE(TABLE=GINELNO1)
+IMPR_TABLE(TABLE=GINELNO2)
+IMPR_TABLE(TABLE=GINELNO3)
+
+
+# Calcul de G avec état initial pour les 3 couronnes, à partir de SIEF_NOEU
+#---------------------------------------------------------------------------
+
+GINNO1=CALC_G(OPTION='CALC_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFNOEU),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf1,
+                       R_SUP=Rsup1,)
+              )
+
+GINNO2=CALC_G(OPTION='CALC_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFNOEU),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf2,
+                       R_SUP=Rsup2,)
+              )
+
+GINNO3=CALC_G(OPTION='CALC_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFNOEU),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf3,
+                       R_SUP=Rsup3,)
+              )
+
+IMPR_TABLE(TABLE=GINNO1)
+IMPR_TABLE(TABLE=GINNO2)
+IMPR_TABLE(TABLE=GINNO3)
+
+
+# Calcul de K à partir du RESOUVFI (valeur de référence)
+#-------------------------------------------------------
+
+KTHER1=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESOUVFI,
+              INST=1,
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf1,
+                       R_SUP=Rsup1,),
+              )
+
+KTHER2=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESOUVFI,
+              INST=1,
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf2,
+                       R_SUP=Rsup2,),
+              )
+
+KTHER3=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESOUVFI,
+              INST=1,
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf3,
+                       R_SUP=Rsup3,),
+              )
+
+IMPR_TABLE(TABLE=KTHER1)
+IMPR_TABLE(TABLE=KTHER2)
+IMPR_TABLE(TABLE=KTHER3)
+
+
+# Calcul de K avec état initial pour les 3 couronnes, à partir de SIEF_ELGA
+#--------------------------------------------------------------------------
+
+KINGA1=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFELGA),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf1,
+                       R_SUP=Rsup1,)
+              )
+
+KINGA2=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFELGA),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf2,
+                       R_SUP=Rsup2,)
+              )
+
+KINGA3=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFELGA),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf3,
+                       R_SUP=Rsup3,)
+              )
+
+IMPR_TABLE(TABLE=KINGA1)
+IMPR_TABLE(TABLE=KINGA2)
+IMPR_TABLE(TABLE=KINGA3)
+
+
+# Calcul de K avec état initial pour les 3 couronnes, à partir de SIEF_ELNO
+#-------------------------------------------------------------------------------
+
+KINELNO1=CALC_G(OPTION='CALC_K_G',
+                RESULTAT=RESUINI,
+                INST=3,
+                ETAT_INIT=_F(SIGM=SIEFELNO),
+                THETA=_F(FOND_FISS=FISS,
+                         R_INF=Rinf1,
+                         R_SUP=Rsup1,)
+              )
+
+KINELNO2=CALC_G(OPTION='CALC_K_G',
+                RESULTAT=RESUINI,
+                INST=3,
+                ETAT_INIT=_F(SIGM=SIEFELNO),
+                THETA=_F(FOND_FISS=FISS,
+                         R_INF=Rinf2,
+                         R_SUP=Rsup2,)
+              )
+
+KINELNO3=CALC_G(OPTION='CALC_K_G',
+                RESULTAT=RESUINI,
+                INST=3,
+                ETAT_INIT=_F(SIGM=SIEFELNO),
+                THETA=_F(FOND_FISS=FISS,
+                         R_INF=Rinf3,
+                         R_SUP=Rsup3,)
+              )
+
+IMPR_TABLE(TABLE=KINELNO1)
+IMPR_TABLE(TABLE=KINELNO2)
+IMPR_TABLE(TABLE=KINELNO3)
+
+
+# Calcul de K avec état initial pour les 3 couronnes, à partir de SIEF_NOEU
+#---------------------------------------------------------------------------
+
+KINNO1=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFNOEU),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf1,
+                       R_SUP=Rsup1,)
+              )
+
+KINNO2=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFNOEU),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf2,
+                       R_SUP=Rsup2,)
+              )
+
+KINNO3=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESUINI,
+              INST=3,
+              ETAT_INIT=_F(SIGM=SIEFNOEU),
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=Rinf3,
+                       R_SUP=Rsup3,)
+              )
+            
 # POST_K1_K2_K3
 #--------------
 
-KTHER=POST_K1_K2_K3(FOND_FISS=FISS1,
-                    RESULTAT=RESOUVFI)
+PKTHER=POST_K1_K2_K3(FOND_FISS=FISS,
+                     RESULTAT=RESOUVFI,
+                     INST=1.)
 
-KMECA=POST_K1_K2_K3(FOND_FISS=FISS1,
-                    RESULTAT=RESUINI)
+PKMECA=POST_K1_K2_K3(FOND_FISS=FISS,
+                     RESULTAT=RESUINI,
+                     INST=3.)
 
-IMPR_TABLE(TABLE=KTHER,UNITE=9)
-IMPR_TABLE(TABLE=KMECA,UNITE=9)
-IMPR_TABLE(TABLE=GTHER3,UNITE=9)
-IMPR_TABLE(TABLE=GINGA1,UNITE=11)
-IMPR_TABLE(TABLE=GINGA2,UNITE=11)
-IMPR_TABLE(TABLE=GINGA3,UNITE=11)
-IMPR_TABLE(TABLE=GINGAK1,UNITE=11)
-IMPR_TABLE(TABLE=GINGAK2,UNITE=11)
-IMPR_TABLE(TABLE=GINGAK3,UNITE=11)
-IMPR_TABLE(TABLE=GINELNK1,UNITE=12)
-IMPR_TABLE(TABLE=GINELNK2,UNITE=12)
-IMPR_TABLE(TABLE=GINELNK3,UNITE=12)
-IMPR_TABLE(TABLE=GINELNO1,UNITE=12)
-IMPR_TABLE(TABLE=GINELNO2,UNITE=12)
-IMPR_TABLE(TABLE=GINELNO3,UNITE=12)
+IMPR_TABLE(TABLE=PKTHER)
+IMPR_TABLE(TABLE=PKMECA)
 
+# ---------------------------------------------------------------------
+#                VERIFICATIONS DES VALEURS
+# ---------------------------------------------------------------------
 
-## Verification des resultats
-TEST_TABLE(PRECISION=0.02,
-           VALE_CALC=55.3956139743,
-           VALE_REFE=55.359999999999999,
-           REFERENCE='SOURCE_EXTERNE',
+# G de CALC_G 
+# -----------
+
+# valeurs de référence (thermique)
+Gther1=55.3629
+Gther2=55.3649
+Gther3=55.3651
+
+TEST_TABLE(TABLE=GTHER3,
            NOM_PARA='G',
-           TABLE=GINGA1,)
+           VALE_CALC=55.3650585586, # pour la non-régression
+           )
 
-TEST_TABLE(PRECISION=0.02,
-           VALE_CALC=55.3956139599,
-           VALE_REFE=55.359999999999999,
-           REFERENCE='SOURCE_EXTERNE',
+## Verification des resultats sur Ginga : on se compare à 
+# la référence Gther (à couronne identique) avec une prec = 0.01%
+prec_G=0.01e-2
+TEST_TABLE(TABLE=GINGA1,
            NOM_PARA='G',
-           TABLE=GINELNK1,)
+           VALE_REFE=Gther1,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3677994141, # pour la non-régression
+           )
 
-TEST_TABLE(PRECISION=0.02,
-           VALE_CALC=3575.49668679,
-           VALE_REFE=3576,
-           REFERENCE='SOURCE_EXTERNE',
+TEST_TABLE(TABLE=GINGA2,
+           NOM_PARA='G',
+           VALE_REFE=Gther2,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3698472592, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=GINGA3,
+           NOM_PARA='G',
+           VALE_REFE=Gther3,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3700925586, # pour la non-régression
+           )
+
+## Verification des resultats sur Ginelno : on se compare à 
+# la référence Gther (à couronne identique) avec une prec = 0.01%
+TEST_TABLE(TABLE=GINELNO1,
+           NOM_PARA='G',
+           VALE_REFE=Gther1,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3677994141, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=GINELNO2,
+           NOM_PARA='G',
+           VALE_REFE=Gther2,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3698472592, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=GINELNO3,
+           NOM_PARA='G',
+           VALE_REFE=Gther3,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3700925586, # pour la non-régression
+           )
+
+
+
+## Verification des resultats sur Ginno : on se compare à 
+# la référence Gther (à couronne identique) avec une prec = 0.01%
+
+TEST_TABLE(TABLE=GINNO1,
+           NOM_PARA='G',
+           VALE_REFE=Gther1,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3631529876, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=GINNO2,
+           NOM_PARA='G',
+           VALE_REFE=Gther2,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3651253306, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=GINNO3,
+           NOM_PARA='G',
+           VALE_REFE=Gther3,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3652760921, # pour la non-régression
+           )
+
+
+# G de CALC_K_G 
+# -------------
+
+# on utilise les memes valeurs de référence
+
+TEST_TABLE(TABLE=KTHER3,
+           NOM_PARA='G',
+           VALE_CALC=55.3650585586, # pour la non-régression
+           )
+
+## Verification des resultats sur Ginga : on se compare à 
+# la référence Gther (à couronne identique) avec une prec = 0.01%
+TEST_TABLE(TABLE=KINGA1,
+           NOM_PARA='G',
+           VALE_REFE=Gther1,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3678000485, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=KINGA2,
+           NOM_PARA='G',
+           VALE_REFE=Gther2,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.369847958, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=KINGA3,
+           NOM_PARA='G',
+           VALE_REFE=Gther3,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3700924267, # pour la non-régression
+           )
+
+## Verification des resultats sur Ginelno : on se compare à 
+# la référence Gther (à couronne identique) avec une prec = 0.01%
+TEST_TABLE(TABLE=KINELNO1,
+           NOM_PARA='G',
+           VALE_REFE=Gther1,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3678000485, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=KINELNO2,
+           NOM_PARA='G',
+           VALE_REFE=Gther2,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.369847958, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=KINELNO3,
+           NOM_PARA='G',
+           VALE_REFE=Gther3,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3700924267, # pour la non-régression
+           )
+
+
+
+## Verification des resultats sur Ginno : on se compare à 
+# la référence Gther (à couronne identique) avec une prec = 0.01%
+
+TEST_TABLE(TABLE=KINNO1,
+           NOM_PARA='G',
+           VALE_REFE=Gther1,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3631545044, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=KINNO2,
+           NOM_PARA='G',
+           VALE_REFE=Gther2,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3651260324, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=KINNO3,
+           NOM_PARA='G',
+           VALE_REFE=Gther3,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_G,
+           VALE_CALC=55.3652759467, # pour la non-régression
+           )
+
+# K de CALC_K_G 
+# -------------
+
+# K1 : valeurs de référence (thermique)
+Kther1=3574.36
+Kther2=3574.43
+Kther3=3574.44
+
+TEST_TABLE(TABLE=KTHER3,
            NOM_PARA='K1',
-           TABLE=GINELNK1,)
+           VALE_CALC=3574.43570722, # pour la non-régression
+           )
 
-TEST_TABLE(PRECISION=0.02,
-           VALE_CALC=55.3651253306,
-           VALE_REFE=55.359999999999999,
-           REFERENCE='SOURCE_EXTERNE',
-           NOM_PARA='G',
-           TABLE=GINNO2,)
+## Verification des resultats sur Kinga : on se compare à 
+# la référence Kther (à couronne identique) avec une prec = 0.005%
+prec_K=prec_G/2.
+TEST_TABLE(TABLE=KINGA1,
+           NOM_PARA='K1',
+           VALE_REFE=Kther1,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_K,
+           VALE_CALC=3574.52827527, # pour la non-régression
+           )
 
-TEST_TABLE(PRECISION=0.02,
-           VALE_CALC=55.3700925586,
-           VALE_REFE=55.359999999999999,
-           REFERENCE='SOURCE_EXTERNE',
-           NOM_PARA='G',
-           TABLE=GINELNO3,)
+TEST_TABLE(TABLE=KINGA2,
+           NOM_PARA='K1',
+           VALE_REFE=Kther2,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_K,
+           VALE_CALC=3574.59663605, # pour la non-régression
+           )
 
-TEST_TABLE(VALE_CALC=55.3650585586,
-           NOM_PARA='G',
-           TABLE=GTHER3,)
+TEST_TABLE(TABLE=KINGA3,
+           NOM_PARA='K1',
+           VALE_REFE=Kther3,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_K,
+           VALE_CALC=3574.60403343, # pour la non-régression
+           )
 
-FIN();
+## Verification des resultats sur Kinelno : on se compare à 
+# la référence Kther (à couronne identique) avec une prec = 0.005%
+TEST_TABLE(TABLE=KINELNO1,
+           NOM_PARA='K1',
+           VALE_REFE=Kther1,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_K,
+           VALE_CALC=3574.52827527, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=KINELNO2,
+           NOM_PARA='K1',
+           VALE_REFE=Kther2,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_K,
+           VALE_CALC=3574.59663605, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=KINELNO3,
+           NOM_PARA='K1',
+           VALE_REFE=Kther3,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_K,
+           VALE_CALC=3574.60403343, # pour la non-régression
+           )
+
+
+## Verification des resultats sur Kinno : on se compare à 
+# la référence Kther (à couronne identique) avec une prec = 0.005%
+TEST_TABLE(TABLE=KINNO1,
+           NOM_PARA='K1',
+           VALE_REFE=Kther1,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_K,
+           VALE_CALC=3574.37182015, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=KINNO2,
+           NOM_PARA='K1',
+           VALE_REFE=Kther2,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_K,
+           VALE_CALC=3574.43772861, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=KINNO3,
+           NOM_PARA='K1',
+           VALE_REFE=Kther3,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_K,
+           VALE_CALC=3574.44271774, # pour la non-régression
+           )
+
+# K de POST_K1_K2_K3 
+# ------------------
+
+# K1 : valeurs de référence pour POST_K1_K2_K3 (thermique)
+Kpk1=3576.75
+
+TEST_TABLE(TABLE=PKTHER,
+           NOM_PARA='K1',
+           VALE_CALC=3576.7530857, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=PKMECA,
+           NOM_PARA='K1',
+           VALE_REFE=Kpk1,
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=prec_K,
+           VALE_CALC=3576.7530857, # pour la non-régression
+           )
+
+FIN()
