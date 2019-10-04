@@ -157,11 +157,42 @@
 #define PARM_ALPHA_THM 18
 #define PARM_THETA_THM 12
 !
-! Slots: strain model for MFRONT
+! --------------------------------------------------------------------------------------------------
 !
-#define ISTRAINEXTE    22
+! For external solvers (UMAT/MFRONT)
 !
-!        type of strain model for MFRONT
+! Slots in field <CARCRI>
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Strain model for (MFRONT only)
+!
+#define EXTE_STRAIN              22
+!
+! Pointer to function (UMAT/MFRONT)
+!
+#define EXTE_PTR                 16
+!
+! Number and name of external state variables (MFRONT only)
+!
+#define EXTE_ESVA_NB             14
+#define EXTE_ESVA_PTR_NAME       15
+!
+! Number and name of material properties (MFRONT only)
+!
+#define EXTE_PROP_NB             20
+#define EXTE_PROP_PTR_NAME       19
+!
+! --------------------------------------------------------------------------------------------------
+!
+! For external solvers (UMAT/MFRONT)
+!
+! Constants
+!
+! --------------------------------------------------------------------------------------------------
+!
+!
+! Type of strain model (MFRONT only)
 !
 #define MFRONT_STRAIN_SMALL          0
 #define MFRONT_STRAIN_SIMOMIEHE      1

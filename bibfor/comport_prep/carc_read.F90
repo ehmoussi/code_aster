@@ -92,7 +92,7 @@ aster_logical, intent(in), optional :: l_implex_
     integer :: nb_elem_affe
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
     integer :: cptr_nameprop=0, cptr_nbprop=0
-    integer :: jvariext1 = 0, jvariext2 = 0, jstrainexte = 0
+    integer :: jvariext1 = 0, jvariext2 = 0, exte_strain = 0
     character(len=16) :: texte(3)=(/ ' ',' ',' '/)
     integer, pointer :: v_model_elem(:) => null()
     character(len=16) :: algo_inte
@@ -321,10 +321,10 @@ aster_logical, intent(in), optional :: l_implex_
                                       cptr_nbvarext, cptr_namevarext,&
                                       jvariext1    , jvariext2)
 ! ----- Get model of strains for external programs (MFRONT)
-        jstrainexte = 0
+        exte_strain = 0
         call getExternalStrainModel(l_mfront_offi, l_mfront_proto,&
                                     paraExte,&
-                                    defo_comp, jstrainexte)
+                                    defo_comp, exte_strain)
 ! ----- Discard
         call lcdiscard(comp_code_py)
         call lcdiscard(meca_code_py)
@@ -353,7 +353,7 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%v_crit(i_comp)%cptr_nameprop    = cptr_nameprop
         ds_compor_para%v_crit(i_comp)%jvariext1        = jvariext1
         ds_compor_para%v_crit(i_comp)%jvariext2        = jvariext2
-        ds_compor_para%v_crit(i_comp)%jstrainexte      = jstrainexte
+        ds_compor_para%v_crit(i_comp)%exte_strain      = exte_strain
         ds_compor_para%v_crit(i_comp)%paraExte         = paraExte
     end do
 !

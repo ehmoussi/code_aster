@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ subroutine testExternalBehaviour(carcri, l_mfront, l_umat)
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/Behaviour_type.h"
 !
 real(kind=8), intent(in) :: carcri(*)
 aster_logical, intent(out) :: l_mfront, l_umat
@@ -42,8 +43,8 @@ aster_logical, intent(out) :: l_mfront, l_umat
     l_mfront = ASTER_FALSE
     l_umat = ASTER_FALSE
 !
-    if (nint(carcri(16)) .ne. 0) then
-        if (nint(carcri(15)) .ne. 0) then
+    if (nint(carcri(EXTE_PTR)) .ne. 0) then
+        if (nint(carcri(EXTE_ESVA_PTR_NAME)) .ne. 0) then
             l_mfront = ASTER_TRUE
         else
             l_umat = ASTER_TRUE

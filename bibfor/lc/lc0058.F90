@@ -105,7 +105,7 @@ integer, intent(out) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: npropmax = 197
-    integer :: nprops, nstatv, j, i, pfcmfr, nummod, jvariext1, jvariext2, jstrainexte
+    integer :: nprops, nstatv, j, i, pfcmfr, nummod, jvariext1, jvariext2, strain_model
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     real(kind=8), parameter :: usrac2 = sqrt(2.d0)*0.5d0
     real(kind=8) :: drot(3, 3), dstran(9), props(npropmax)
@@ -127,13 +127,13 @@ integer, intent(out) :: codret
     nprops         = npropmax
     rela_comp      = compor(RELA_NAME)
     defo_comp      = compor(DEFO)
-    pfcmfr         = nint(carcri(16))
+    pfcmfr         = nint(carcri(EXTE_PTR))
     jvariext1      = nint(carcri(IVARIEXT1))
     jvariext2      = nint(carcri(IVARIEXT2))
-    jstrainexte    = nint(carcri(ISTRAINEXTE))
+    strain_model   = nint(carcri(EXTE_STRAIN))
     l_simomiehe    = defo_comp .eq. 'SIMO_MIEHE'
     l_grotgdep     = ASTER_FALSE
-    if (jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_L) then
+    if (strain_model .eq. MFRONT_STRAIN_GROTGDEP_L) then
         l_grotgdep     = ASTER_TRUE
     endif
     l_czm          = typmod(2).eq.'ELEMJOIN'

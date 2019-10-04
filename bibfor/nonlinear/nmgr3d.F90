@@ -105,7 +105,7 @@ integer, intent(inout) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: grand, axi, cplan
-    integer :: kpg, j, jstrainexte
+    integer :: kpg, j, strain_model
     integer, parameter :: ndim = 3
     real(kind=8) :: dsidep(6, 6)
     real(kind=8) :: f_prev(3, 3), f_curr(3, 3)
@@ -135,7 +135,7 @@ integer, intent(inout) :: codret
 !
 ! - Get coded integers for external state variables
 !
-    jstrainexte = nint(carcri(ISTRAINEXTE))
+    strain_model = nint(carcri(EXTE_STRAIN))
 !
 ! - Prepare external state variables
 !
@@ -193,8 +193,8 @@ integer, intent(inout) :: codret
 !
 ! ----- Compute behaviour
 !
-        if ((jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_S) .or. &
-            (jstrainexte .eq. 0)) then
+        if ((strain_model .eq. MFRONT_STRAIN_GROTGDEP_S) .or. &
+            (strain_model .eq. 0)) then
 ! --------- Check "small strains"
             maxeps = 0.d0
             do j = 1, 6
@@ -217,7 +217,7 @@ integer, intent(inout) :: codret
             if (cod(kpg) .eq. 1) then
                 goto 999
             endif
-        elseif (jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_L) then
+        elseif (strain_model .eq. MFRONT_STRAIN_GROTGDEP_L) then
             call nmcomp(BEHinteg   ,&
                         fami       , kpg        , 1        , ndim  , typmod        ,&
                         imate      , compor     , carcri   , instam, instap        ,&

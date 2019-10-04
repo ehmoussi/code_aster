@@ -156,7 +156,7 @@ implicit none
         integer                   :: cptr_nameprop    = 0
         integer                   :: jvariext1        = 0
         integer                   :: jvariext2        = 0
-        integer                   :: jstrainexte      = 0
+        integer                   :: exte_strain      = 0
     end type Behaviour_Crit
 !
 ! - Behaviour - Preparation - Map for criteria of behaviours (CARCRI)

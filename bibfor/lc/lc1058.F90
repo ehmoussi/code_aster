@@ -132,7 +132,7 @@ integer, intent(out) :: codret
     nprops         = npropmax
     rela_comp      = compor(RELA_NAME)
     defo_comp      = compor(DEFO)
-    pfcmfr         = nint(carcri(16))
+    pfcmfr         = nint(carcri(EXTE_PTR))
     jvariext1      = nint(carcri(IVARIEXT1))
     jvariext2      = nint(carcri(IVARIEXT2))
     l_simomiehe    = defo_comp .eq. 'SIMO_MIEHE'

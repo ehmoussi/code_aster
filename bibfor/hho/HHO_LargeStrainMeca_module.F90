@@ -1013,7 +1013,7 @@ contains
 !
 ! ----- Get coded integer for external state variable
 !
-        jstrainexte = nint(carcri(ISTRAINEXTE))
+        jstrainexte = nint(carcri(EXTE_STRAIN))
 !
 ! ----- Compute PK2 at T-
 !
