@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -109,7 +109,7 @@ character(len=19), intent(in) :: compor_info
     character(len=255) :: libr_name, subr_name
     character(len=16) :: model_mfront, notype
     integer :: model_dim
-    type(Behaviour_External), pointer :: v_exte(:) => null()
+    type(Behaviour_ParaExte), pointer :: v_paraExte(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -165,11 +165,11 @@ character(len=19), intent(in) :: compor_info
     if (present(compor_cart_)) then
         call comp_ntvari(model_ = model_, compor_cart_ = compor_cart_, compor_info = compor_info,&
                          nt_vari = nt_vari, nb_vari_maxi = nb_vari_maxi,&
-                         nb_zone = nb_zone2, v_exte = v_exte)
+                         nb_zone = nb_zone2, v_paraExte = v_paraExte)
     elseif (present(compor_list_)) then
         call comp_ntvari(compor_list_ = compor_list_, compor_info = compor_info,&
                          nt_vari = nt_vari, nb_vari_maxi = nb_vari_maxi,&
-                         nb_zone = nb_zone2, v_exte = v_exte)
+                         nb_zone = nb_zone2, v_paraExte = v_paraExte)
     else
         ASSERT(.false.)
     endif
@@ -194,25 +194,21 @@ character(len=19), intent(in) :: compor_info
     end do
 ! 
     do i_elem = 1, nb_elem_mesh
-!
 ! ----- Get current zone
-!
         if (present(compor_cart_)) then
             i_zone = v_compor_ptma(i_elem)
             if (i_zone .eq. 0) then
-                l_zone_read = .true.
+                l_zone_read = ASTER_TRUE
             else
                 ASSERT(i_zone .ne. 0)
                 l_zone_read = v_zone_read(i_zone) .eq. 1
             endif
         else
             i_zone      = 1
-            l_zone_read = .false._1
+            l_zone_read = ASTER_FALSE
         endif
         if (.not. l_zone_read) then
-!
 ! --------- Get parameters
-!
             if (present(compor_cart_)) then
                 rela_comp    = v_compor_vale(nb_cmp_max*(i_zone-1)+RELA_NAME)
                 defo_comp    = v_compor_vale(nb_cmp_max*(i_zone-1)+DEFO)
@@ -244,48 +240,38 @@ character(len=19), intent(in) :: compor_info
                     read (compor_list_(MECA_NVAR),'(I16)') nb_vari_meca
                 endif
             endif
-!
 ! --------- Detection of specific cases
-!
             call comp_meca_l(rela_comp, 'KIT_THM' , l_kit_thm)
             call comp_meca_l(rela_comp, 'KIT_META', l_kit_meta)
             call comp_meca_l(rela_comp, 'CRISTAL' , l_cristal)
             if (present(compor_list_)) then
-                l_pmf = .false._1
+                l_pmf = ASTER_FALSE
             else
                 nutyel = v_model_elem(i_elem)
                 if (nutyel .eq. 0) then
-                    l_pmf = .false._1
+                    l_pmf = ASTER_FALSE
                 else
                     call jenuno(jexnum('&CATA.TE.NOMTE', nutyel), notype)
                     l_pmf = lteatt('TYPMOD2','PMF', typel = notype)
                 endif
             endif
-!
 ! --------- Parameters for external constitutive laws
-!
-            l_umat         = v_exte(i_zone)%l_umat
-            l_mfront_proto = v_exte(i_zone)%l_mfront_proto
-            l_mfront_offi  = v_exte(i_zone)%l_mfront_offi
-            subr_name      = v_exte(i_zone)%subr_name
-            libr_name      = v_exte(i_zone)%libr_name
-            model_mfront   = v_exte(i_zone)%model_mfront
-            model_dim      = v_exte(i_zone)%model_dim
+            l_umat         = v_paraExte(i_zone)%l_umat
+            l_mfront_proto = v_paraExte(i_zone)%l_mfront_proto
+            l_mfront_offi  = v_paraExte(i_zone)%l_mfront_offi
+            subr_name      = v_paraExte(i_zone)%subr_name
+            libr_name      = v_paraExte(i_zone)%libr_name
+            model_mfront   = v_paraExte(i_zone)%model_mfront
+            model_dim      = v_paraExte(i_zone)%model_dim
             l_prot_comp    = l_mfront_proto .or. l_umat
-!
 ! --------- Exception for name of internal variables
-!
             call comp_meca_exc2(l_cristal, l_prot_comp, l_pmf, &
                                 l_excl   , vari_excl)
-!
 ! --------- Save names of relation
-!
             v_rela(3*(i_zone-1) + 1) = rela_comp
             v_rela(3*(i_zone-1) + 2) = defo_comp
             v_rela(3*(i_zone-1) + 3) = type_cpla
-!
 ! --------- Save name of internal variables
-!
             call jeecra(jexnum(compor_info(1:19)//'.VARI', i_zone), 'LONMAX', nb_vari)
             call jeveuo(jexnum(compor_info(1:19)//'.VARI', i_zone), 'E', vk16 = v_vari)
             call comp_meca_name(nb_vari   , nb_vari_meca,&
@@ -294,9 +280,7 @@ character(len=19), intent(in) :: compor_info
                                 rela_comp , defo_comp   , kit_comp     , type_cpla, post_iter,&
                                 libr_name , subr_name   , model_mfront , model_dim,&
                                 v_vari)
-!
 ! --------- Save current zone
-!
             v_zone_read(i_zone) = 1
             nb_zone_acti        = nb_zone_acti + 1
         endif
@@ -313,7 +297,7 @@ character(len=19), intent(in) :: compor_info
     v_info(4) = nt_vari
     v_info(5) = nb_zone_acti
 !
-    deallocate(v_exte)
+    deallocate(v_paraExte)
     AS_DEALLOCATE(vi = v_zone_read)
 !
     call jedema()

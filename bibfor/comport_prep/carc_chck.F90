@@ -52,15 +52,11 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
 ! - Loop on occurrences of COMPORTEMENT
 !
     do i_comp = 1, nb_comp
-!
 ! ----- Detection of specific cases
-!
-        call comp_meca_l(ds_compor_para%v_para(i_comp)%rela_comp, 'MFRONT_PROTO', l_mfront_proto)
-        call comp_meca_l(ds_compor_para%v_para(i_comp)%rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
-!
+        call comp_meca_l(ds_compor_para%v_crit(i_comp)%rela_comp, 'MFRONT_PROTO', l_mfront_proto)
+        call comp_meca_l(ds_compor_para%v_crit(i_comp)%rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
 ! ----- Ban if RELATION = MFRONT and ITER_INTE_PAS negative
-!
-        if (ds_compor_para%v_para(i_comp)%iter_inte_pas .lt. 0.d0) then
+        if (ds_compor_para%v_crit(i_comp)%iter_inte_pas .lt. 0.d0) then
             if (l_mfront_offi .or. l_mfront_proto) then
                 call utmess('F', 'COMPOR1_95')
             end if

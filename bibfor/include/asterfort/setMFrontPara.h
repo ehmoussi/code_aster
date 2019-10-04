@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine setMFrontPara(v_para, i_comp)
+    subroutine setMFrontPara(v_crit, i_comp)
         use Behaviour_type
-        type(Behaviour_Criteria), pointer :: v_para(:)
+        type(Behaviour_Crit), pointer :: v_crit(:)
         integer, intent(in) :: i_comp
     end subroutine setMfrontPara
 end interface

@@ -30,16 +30,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
 ! - Behaviour - Integration - Parameters on element
 !
     type Behaviour_Elem
 ! ----- Size of element
-        real(kind=8) :: eltsize1 = 0.d0
+        real(kind=8) :: eltsize1         = 0.d0
 ! ----- Size of element for ENDO_PORO_BETON
-        real(kind=8) :: eltsize2(9) = 0.d0
+        real(kind=8) :: eltsize2(9)      = 0.d0
 ! ----- Gradient of velocity for *CRISTAL
-        real(kind=8) :: gradvelo(9) = 0.d0
+        real(kind=8) :: gradvelo(9)      = 0.d0
 ! ----- Coordinates of all Gauss points
         real(kind=8) :: coor_elga(27, 3) = 0.d0
     end type Behaviour_Elem
@@ -47,8 +46,6 @@ implicit none
 ! - Behaviour - Integration - Parameters on current Gauss point
 !
     type Behaviour_Elga
-! ----- Coordinates of current Gauss point
-        real(kind=8) :: coorpg(3) = 0.d0
 ! ----- For *_JOINT_HYME models : kinematic matrix
         real(kind=8) :: rotpg(3*3) = 0.d0
 ! ----- For CABLE_GAINE elements : tension of the cable
@@ -56,12 +53,12 @@ implicit none
 ! ----- For CABLE_GAINE elements : curvature of the cable
         real(kind=8) :: curvcab    = 0.d0
 ! ----- For GRAD_VARI models : non-local variables PHI
-        real(kind=8) :: nonloc(2) = 0.d0
+        real(kind=8) :: nonloc(2)  = 0.d0
 ! ----- For CZM_*_MIX behaviours : Lagrange penalty coefficient
-        real(kind=8) :: r = 0.d0
+        real(kind=8) :: r          = 0.d0
 ! ----- Hygrometry
-        real(kind=8) :: hygr_prev = 0.d0
-        real(kind=8) :: hygr_curr = 0.d0
+        real(kind=8) :: hygr_prev  = 0.d0
+        real(kind=8) :: hygr_curr  = 0.d0
     end type Behaviour_Elga
 !
 ! - Behaviour - Integration
@@ -81,33 +78,32 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
-! - Type: for external comportement
-!
-    type Behaviour_External
+! - Behaviour - Preparation - Parameters for external behaviours
+! 
+    type Behaviour_ParaExte
 ! ----- Flag for UMAT law
-        aster_logical      :: l_umat = ASTER_FALSE
+        aster_logical      :: l_umat         = ASTER_FALSE
 ! ----- Flag for non-official MFront law
         aster_logical      :: l_mfront_proto = ASTER_FALSE
 ! ----- Flag for official MFront law
-        aster_logical      :: l_mfront_offi = ASTER_FALSE
+        aster_logical      :: l_mfront_offi  = ASTER_FALSE
 ! ----- Name of subroutine for external law
-        character(len=255) :: subr_name = ' '
+        character(len=255) :: subr_name      = ' '
 ! ----- Name of library for external law
-        character(len=255) :: libr_name = ' '
+        character(len=255) :: libr_name      = ' '
 ! ----- Model for MFront law
-        character(len=16)  :: model_mfront = ' '
+        character(len=16)  :: model_mfront   = ' '
 ! ----- Number of dimension for MFront law
-        integer            :: model_dim = 0
+        integer            :: model_dim      = 0
 ! ----- Number of internal variables for UMAT
-        integer            :: nb_vari_umat = 0
+        integer            :: nb_vari_umat   = 0
 ! ----- Identifier for strains model
-        integer            :: strain_model = 0
-    end type Behaviour_External
+        integer            :: strain_model   = 0
+    end type Behaviour_ParaExte
 !
-! - Type: parameters for behaviour
-!
-    type Behaviour_Parameters
+! - Behaviour - Preparation - Parameters for behaviour
+! 
+    type Behaviour_Para
 ! ----- Keyword RELATION
         character(len=16) :: rela_comp       = ' '
 ! ----- Keyword DEFORMATION
@@ -130,41 +126,41 @@ implicit none
         integer           :: nb_vari_comp(4) = 0
 ! ----- Index of law for kit
         integer           :: nume_comp(4)    = 0
-    end type Behaviour_Parameters
+    end type Behaviour_Para
 !
-! - Type: criteria for behaviour
-!
-    type Behaviour_Criteria
-        integer                   :: type_matr_t = 0
-        real(kind=8)              :: parm_theta = 0.d0
-        integer                   :: iter_inte_pas = 0
-        real(kind=8)              :: vale_pert_rela = 0.d0
-        real(kind=8)              :: resi_deborst_max = 0.d0
-        integer                   :: iter_deborst_max = 0
-        real(kind=8)              :: resi_radi_rela = 0.d0
-        integer                   :: ipostiter = 0
-        integer                   :: ipostincr = 0
-        integer                   :: iveriborne = 0
-        aster_logical             :: l_matr_unsymm = ASTER_FALSE
-        real(kind=8)              :: algo_inte_r = 0.d0
-        real(kind=8)              :: resi_inte_rela = 0.d0
-        real(kind=8)              :: iter_inte_maxi = 0.d0
-        integer                   :: cptr_fct_ldc = 0
-        integer                   :: cptr_nbvarext = 0
-        integer                   :: cptr_namevarext = 0
-        integer                   :: cptr_nbprop = 0
-        integer                   :: cptr_nameprop = 0
-        integer                   :: jvariext1 = 0
-        integer                   :: jvariext2 = 0
-        integer                   :: jstrainexte = 0
+! - Behaviour - Preparation - Criteria for behaviour
+! 
+    type Behaviour_Crit
 ! ----- Keyword RELATION
         character(len=16)         :: rela_comp = ' '
-! ----- External behaviour
-        type(Behaviour_External)  :: comp_exte
-    end type Behaviour_Criteria
+! ----- Parameters for external behaviours
+        type(Behaviour_ParaExte)  :: paraExte
+        integer                   :: type_matr_t      = 0
+        real(kind=8)              :: parm_theta       = 0.d0
+        integer                   :: iter_inte_pas    = 0
+        real(kind=8)              :: vale_pert_rela   = 0.d0
+        real(kind=8)              :: resi_deborst_max = 0.d0
+        integer                   :: iter_deborst_max = 0
+        real(kind=8)              :: resi_radi_rela   = 0.d0
+        integer                   :: ipostiter        = 0
+        integer                   :: ipostincr        = 0
+        integer                   :: iveriborne       = 0
+        aster_logical             :: l_matr_unsymm    = ASTER_FALSE
+        real(kind=8)              :: algo_inte_r      = 0.d0
+        real(kind=8)              :: resi_inte_rela   = 0.d0
+        real(kind=8)              :: iter_inte_maxi   = 0.d0
+        integer                   :: cptr_fct_ldc     = 0
+        integer                   :: cptr_nbvarext    = 0
+        integer                   :: cptr_namevarext  = 0
+        integer                   :: cptr_nbprop      = 0
+        integer                   :: cptr_nameprop    = 0
+        integer                   :: jvariext1        = 0
+        integer                   :: jvariext2        = 0
+        integer                   :: jstrainexte      = 0
+    end type Behaviour_Crit
 !
-! - Type: for preparation of parameters for constitutive laws
-!
+! - Behaviour - Preparation - Map for criteria of behaviours (CARCRI)
+! 
     type Behaviour_PrepCrit
 ! ----- Number of factor keywords
         integer                           :: nb_comp = 0
@@ -175,21 +171,21 @@ implicit none
         real(kind=8)                      :: hho_coef_stab = 0.d0
         real(kind=8)                      :: hho_type_stab = 0.d0
         real(kind=8)                      :: hho_type_calc = 0.d0
-! ----- List of parameters
-        type(Behaviour_Criteria), pointer :: v_para(:)
+! ----- List of criteria (by keyword COMPORTEMENT)
+        type(Behaviour_Crit), pointer     :: v_crit(:)
     end type Behaviour_PrepCrit
 !
-! - Type: for preparation of comportment
+! - Behaviour - Preparation - Map for parameters of behaviours (COMPOR)
 !
     type Behaviour_PrepPara
 ! ----- Number of factor keywords
         integer                             :: nb_comp = 0
 ! ----- List of parameters
-        type(Behaviour_Parameters), pointer :: v_comp(:)
-! ----- List of external behaviours
-        type(Behaviour_External), pointer   :: v_exte(:)
+        type(Behaviour_Para), pointer       :: v_para(:)     => null()
+! ----- List of parameters for external behaviours
+        type(Behaviour_ParaExte), pointer   :: v_paraExte(:) => null()
 ! ----- Flag for IMPLEX method
         aster_logical                       :: l_implex = ASTER_FALSE
     end type Behaviour_PrepPara
-
+!
 end module

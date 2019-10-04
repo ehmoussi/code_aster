@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ integer, pointer :: v_model_elem(:)
 character(len=16), intent(in) :: rela_comp
 character(len=16), intent(in) :: kit_comp(4)
 aster_logical, intent(out) :: l_comp_external
-type(Behaviour_External), intent(inout)   :: comp_exte
+type(Behaviour_ParaExte), intent(inout)   :: comp_exte
 character(len=16), optional, intent(in) :: keywf_
 integer, optional, intent(in) :: i_comp_
 integer, optional, intent(in) :: elem_type_
@@ -48,7 +48,7 @@ character(len=16), optional, intent(out) :: type_cpla_out_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Preparation of comportment (mechanics)
+! Preparation of behaviour (mechanics)
 !
 ! Get parameters for external programs (MFRONT/UMAT)
 !

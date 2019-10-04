@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine setMFrontPara(v_para, i_comp)
+subroutine setMFrontPara(v_crit, i_comp)
 !
 use Behaviour_type
 !
@@ -29,23 +29,23 @@ implicit none
 #include "asterc/mfront_set_outofbounds_policy.h"
 #include "asterfort/assert.h"
 !
-type(Behaviour_Criteria), pointer :: v_para(:)
+type(Behaviour_Crit), pointer :: v_crit(:)
 integer, intent(in) :: i_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Preparation of comportment (mechanics)
+! Preparation of behaviour (mechanics)
 !
 ! Set parameters for MFront
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  v_para           : list of informations to save
+! In  v_crit           : list of informations to save
 ! In  i_comp           : index in previous list
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type(Behaviour_External) :: comp_exte
+    type(Behaviour_ParaExte) :: paraExte
     real(kind=8) :: iter_inte_maxi, resi_inte_rela
     integer:: iveriborne
     aster_logical :: l_mfront_proto, l_mfront_offi
@@ -54,15 +54,15 @@ integer, intent(in) :: i_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    iveriborne      = v_para(i_comp)%iveriborne
-    resi_inte_rela  = v_para(i_comp)%resi_inte_rela
-    iter_inte_maxi  = v_para(i_comp)%iter_inte_maxi
-    comp_exte       = v_para(i_comp)%comp_exte
-    l_mfront_offi   = comp_exte%l_mfront_offi
-    l_mfront_proto  = comp_exte%l_mfront_proto
-    libr_name       = comp_exte%libr_name 
-    subr_name       = comp_exte%subr_name
-    model_mfront    = comp_exte%model_mfront
+    iveriborne     = v_crit(i_comp)%iveriborne
+    resi_inte_rela = v_crit(i_comp)%resi_inte_rela
+    iter_inte_maxi = v_crit(i_comp)%iter_inte_maxi
+    paraExte       = v_crit(i_comp)%paraExte
+    l_mfront_offi  = paraExte%l_mfront_offi
+    l_mfront_proto = paraExte%l_mfront_proto
+    libr_name      = paraExte%libr_name 
+    subr_name      = paraExte%subr_name
+    model_mfront   = paraExte%model_mfront
 !
 ! - Set values
 !

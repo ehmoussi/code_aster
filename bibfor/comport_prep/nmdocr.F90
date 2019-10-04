@@ -96,6 +96,6 @@ aster_logical, intent(in) :: l_implex
 !
 ! - Cleaning
 !
-    deallocate(ds_compor_para%v_para)
+    deallocate(ds_compor_para%v_crit)
 !
 end subroutine

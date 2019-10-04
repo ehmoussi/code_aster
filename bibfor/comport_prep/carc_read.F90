@@ -84,7 +84,7 @@ aster_logical, intent(in), optional :: l_implex_
     character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
     character(len=16) :: defo_comp=' ',  rela_comp=' '
     character(len=16) :: thmc_comp=' ', hydr_comp=' ', ther_comp=' ', meca_comp=' '
-    aster_logical :: l_kit_thm=ASTER_FALSE, l_kit_ddi = ASTER_FALSE, l_thm = ASTER_FALSE
+    aster_logical :: l_kit_thm=ASTER_FALSE, l_kit_ddi = ASTER_FALSE, l_exist_thm = ASTER_FALSE
     aster_logical :: l_kit = ASTER_FALSE, l_implex = ASTER_FALSE
     aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi
     character(len=24) :: list_elem_affe
@@ -97,16 +97,16 @@ aster_logical, intent(in), optional :: l_implex_
     integer, pointer :: v_model_elem(:) => null()
     character(len=16) :: algo_inte
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
-    type(Behaviour_External) :: comp_exte
+    type(Behaviour_ParaExte) :: paraExte
 !
 ! --------------------------------------------------------------------------------------------------
 !
     list_elem_affe = '&&CARCREAD.LIST'
-    keywordfact = 'COMPORTEMENT'
-    nb_comp     = ds_compor_para%nb_comp
-    mesh        = ' '
-    l_implex    = ASTER_FALSE
-    l_thm       = ASTER_FALSE
+    keywordfact    = 'COMPORTEMENT'
+    nb_comp        = ds_compor_para%nb_comp
+    mesh           = ' '
+    l_implex       = ASTER_FALSE
+    l_exist_thm    = ASTER_FALSE
     if (present(l_implex_)) then
         l_implex = l_implex_
     endif
@@ -121,32 +121,23 @@ aster_logical, intent(in), optional :: l_implex_
 ! - Read informations
 !
     do i_comp = 1, nb_comp
-!
 ! ----- Get parameters
-!
         call getvtx(keywordfact, 'RELATION'   , iocc = i_comp, scal = rela_comp)
         call getvtx(keywordfact, 'DEFORMATION', iocc = i_comp, scal = defo_comp)
-!
 ! ----- Detection of specific cases
-!
         call comp_meca_l(rela_comp, 'KIT'         , l_kit)
         call comp_meca_l(rela_comp, 'KIT_THM'     , l_kit_thm)
         call comp_meca_l(rela_comp, 'KIT_DDI'     , l_kit_ddi)
         call comp_meca_l(rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
         call comp_meca_l(rela_comp, 'MFRONT_PROTO', l_mfront_proto)
-
         if (l_kit_thm) then
-            l_thm = ASTER_TRUE
+            l_exist_thm = ASTER_TRUE
         endif
-!
 ! ----- For KIT
-!
         if (l_kit) then
             call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
         endif
-!
 ! ----- Get mechanics part
-!
         if (l_kit_thm) then
             thmc_comp = kit_comp(1)
             ther_comp = kit_comp(2)
@@ -157,9 +148,7 @@ aster_logical, intent(in), optional :: l_implex_
         else
             meca_comp = rela_comp
         endif
-!
 ! ----- Coding comportment (Python)
-!
         call comp_meca_code(rela_comp_    = rela_comp   ,&
                             defo_comp_    = defo_comp   ,&
                             kit_comp_     = kit_comp    ,&
@@ -168,10 +157,8 @@ aster_logical, intent(in), optional :: l_implex_
                             rela_code_py_ = rela_code_py,&
                             defo_code_py_ = defo_code_py,&
                             meca_code_py_ = meca_code_py)
-!
 ! ----- Symmetric or not ?
-!
-        l_matr_unsymm = .false.
+        l_matr_unsymm = ASTER_FALSE
         call lcsymm(rela_code_py, answer)
         l_matr_unsymm = l_matr_unsymm .or. answer .eq. 'No'
         call lcsymm(meca_code_py, answer)
@@ -182,16 +169,12 @@ aster_logical, intent(in), optional :: l_implex_
         if (iret .ne. 0) then
             l_matr_unsymm = l_matr_unsymm .or. answer .eq. 'NON'
         endif
-!
 ! ----- Get ITER_INTE_PAS
-!
         call getvis(keywordfact, 'ITER_INTE_PAS', iocc = i_comp, scal=iter_inte_pas, nbret=iret)
         if (iret .eq. 0) then
             iter_inte_pas = 0
         endif
-!
 ! ----- Get ITER_CPLAN_MAXI/RESI_CPLAN_MAXI/RESI_CPLAN_RELA (Deborst method)
-!
         resi_deborst_max = 1.d-6
         iter_deborst_max = 1
         call getvis(keywordfact, 'ITER_CPLAN_MAXI', iocc = i_comp, scal = iter_deborst_max)
@@ -202,9 +185,7 @@ aster_logical, intent(in), optional :: l_implex_
         else
             call getvr8(keywordfact, 'RESI_CPLAN_RELA', iocc = i_comp, scal = resi_deborst_max)
         endif
-!
 ! ----- Get TYPE_MATR_TANG/VALE_PERT_RELA
-!
         vale_pert_rela = 0.d0
         type_matr_t    = 0
         type_matr_tang = ' '
@@ -229,9 +210,7 @@ aster_logical, intent(in), optional :: l_implex_
                 call utmess('F', 'COMPOR1_46', nk = 2, valk = texte)
             endif
         endif
-!
 ! ----- Get TYPE_MATR_TANG/VALE_PERT_RELA - <IMPLEX>
-!
         if (l_implex) then
             method = 'IMPLEX'
             if ((type_matr_t.ne.0) .and. (rela_comp.ne.'SANS')) then
@@ -248,14 +227,10 @@ aster_logical, intent(in), optional :: l_implex_
                 call utmess('F', 'COMPOR1_46', nk = 2, valk = texte)
             endif
         endif
-!
 ! ----- Get PARM_THETA (for viscous laws)
-!
         parm_theta = 1.d0
         call getvr8(keywordfact, 'PARM_THETA', iocc = i_comp, scal = parm_theta)
-!
 ! ----- Get RESI_RADI_RELA
-!
         if (type_matr_t .eq. 0) then
             call getvr8(keywordfact, 'RESI_RADI_RELA', iocc = i_comp, scal = resi_radi_rela,&
                         nbret = iret)
@@ -263,9 +238,7 @@ aster_logical, intent(in), optional :: l_implex_
                 resi_radi_rela = -10.d0
             endif
         endif
-!
 ! ----- Get POST_ITER
-!
         ipostiter = 0
         if (getexm(keywordfact,'POST_ITER') .eq. 1) then
             post_iter = ' '
@@ -278,9 +251,7 @@ aster_logical, intent(in), optional :: l_implex_
                 endif
             endif
         endif
-!
 ! ----- Get POST_INCR
-!
         ipostincr = 0
         if (getexm(keywordfact,'POST_INCR') .eq. 1) then
             post_incr = ' '
@@ -291,9 +262,7 @@ aster_logical, intent(in), optional :: l_implex_
                endif
             endif
         endif
-!
 ! ----- Get VERI_BORNE
-!
         iveriborne = 0
         if (getexm(keywordfact,'VERI_BORNE') .eq. 1) then
             call getvtx(keywordfact, 'VERI_BORNE', iocc = i_comp, scal = veri_borne, nbret = iret )
@@ -309,106 +278,88 @@ aster_logical, intent(in), optional :: l_implex_
                 endif
             endif
         endif
-!
 ! ----- Get parameters for external programs (MFRONT/UMAT)
-!
         call getExternalBehaviourPara(mesh           , v_model_elem, rela_comp, kit_comp,&
-                                      l_comp_external, comp_exte,&
+                                      l_comp_external, paraExte,&
                                       keywordfact    , i_comp)
-!
 ! ----- Get list of elements where comportment is defined
-!
         plane_stress = ASTER_FALSE
         if (present(model_)) then
             call comp_read_mesh(mesh          , keywordfact, i_comp      ,&
                                 list_elem_affe, l_affe_all , nb_elem_affe)
             plane_stress = exicp(model_, l_affe_all, list_elem_affe, nb_elem_affe)
         endif
-!
 ! ----- Get ALGO_INTE
-!
         algo_inte_r = 0.d0
         call getBehaviourAlgo(plane_stress, rela_comp   ,&
                               rela_code_py, meca_code_py,&
                               keywordfact , i_comp      ,&
                               algo_inte   , algo_inte_r)
-!
 ! ----- Get function pointers for external programs (MFRONT/UMAT)
-!
         cptr_fct_ldc    = 0
         cptr_nbvarext   = 0
         cptr_namevarext = 0
         cptr_nbprop     = 0
         cptr_nameprop   = 0
         if (l_comp_external) then
-            call getExternalBehaviourPntr(comp_exte,&
+            call getExternalBehaviourPntr(paraExte,&
                                           cptr_fct_ldc ,&
                                           cptr_nbvarext, cptr_namevarext,&
                                           cptr_nbprop  , cptr_nameprop)
         endif
-!
 ! ----- Get RESI_INTE_RELA/ITER_INTE_MAXI
-!
         resi_inte_rela = 0.d0
         iter_inte_maxi = 0
         call getBehaviourPara(l_mfront_offi , l_mfront_proto, l_kit_thm,&
                               keywordfact   , i_comp        , algo_inte,&
                               iter_inte_maxi, resi_inte_rela)
-!
 ! ----- Get external state variables
-!
         jvariext1 = 0
         jvariext2 = 0
         call getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                       l_mfront_offi, l_mfront_proto ,&
                                       cptr_nbvarext, cptr_namevarext,&
                                       jvariext1    , jvariext2)
-!
 ! ----- Get model of strains for external programs (MFRONT)
-!
         jstrainexte = 0
         call getExternalStrainModel(l_mfront_offi, l_mfront_proto,&
-                                    comp_exte,&
+                                    paraExte,&
                                     defo_comp, jstrainexte)
-!
 ! ----- Discard
-!
         call lcdiscard(comp_code_py)
         call lcdiscard(meca_code_py)
         call lcdiscard(rela_code_py)
         call lcdiscard(defo_code_py)
-!
 ! ----- Save options in list
-!
-        ds_compor_para%v_para(i_comp)%type_matr_t      = type_matr_t
-        ds_compor_para%v_para(i_comp)%parm_theta       = parm_theta
-        ds_compor_para%v_para(i_comp)%iter_inte_pas    = iter_inte_pas
-        ds_compor_para%v_para(i_comp)%vale_pert_rela   = vale_pert_rela
-        ds_compor_para%v_para(i_comp)%resi_deborst_max = resi_deborst_max
-        ds_compor_para%v_para(i_comp)%iter_deborst_max = iter_deborst_max
-        ds_compor_para%v_para(i_comp)%resi_radi_rela   = resi_radi_rela
-        ds_compor_para%v_para(i_comp)%ipostiter        = ipostiter
-        ds_compor_para%v_para(i_comp)%ipostincr        = ipostincr
-        ds_compor_para%v_para(i_comp)%iveriborne       = iveriborne
-        ds_compor_para%v_para(i_comp)%rela_comp        = rela_comp
-        ds_compor_para%v_para(i_comp)%l_matr_unsymm    = l_matr_unsymm
-        ds_compor_para%v_para(i_comp)%algo_inte_r      = algo_inte_r
-        ds_compor_para%v_para(i_comp)%resi_inte_rela   = resi_inte_rela
-        ds_compor_para%v_para(i_comp)%iter_inte_maxi   = iter_inte_maxi
-        ds_compor_para%v_para(i_comp)%cptr_fct_ldc     = cptr_fct_ldc
-        ds_compor_para%v_para(i_comp)%cptr_nbvarext    = cptr_nbvarext
-        ds_compor_para%v_para(i_comp)%cptr_namevarext  = cptr_namevarext
-        ds_compor_para%v_para(i_comp)%cptr_nbprop      = cptr_nbprop
-        ds_compor_para%v_para(i_comp)%cptr_nameprop    = cptr_nameprop
-        ds_compor_para%v_para(i_comp)%jvariext1        = jvariext1
-        ds_compor_para%v_para(i_comp)%jvariext2        = jvariext2
-        ds_compor_para%v_para(i_comp)%jstrainexte      = jstrainexte
-        ds_compor_para%v_para(i_comp)%comp_exte        = comp_exte
+        ds_compor_para%v_crit(i_comp)%type_matr_t      = type_matr_t
+        ds_compor_para%v_crit(i_comp)%parm_theta       = parm_theta
+        ds_compor_para%v_crit(i_comp)%iter_inte_pas    = iter_inte_pas
+        ds_compor_para%v_crit(i_comp)%vale_pert_rela   = vale_pert_rela
+        ds_compor_para%v_crit(i_comp)%resi_deborst_max = resi_deborst_max
+        ds_compor_para%v_crit(i_comp)%iter_deborst_max = iter_deborst_max
+        ds_compor_para%v_crit(i_comp)%resi_radi_rela   = resi_radi_rela
+        ds_compor_para%v_crit(i_comp)%ipostiter        = ipostiter
+        ds_compor_para%v_crit(i_comp)%ipostincr        = ipostincr
+        ds_compor_para%v_crit(i_comp)%iveriborne       = iveriborne
+        ds_compor_para%v_crit(i_comp)%rela_comp        = rela_comp
+        ds_compor_para%v_crit(i_comp)%l_matr_unsymm    = l_matr_unsymm
+        ds_compor_para%v_crit(i_comp)%algo_inte_r      = algo_inte_r
+        ds_compor_para%v_crit(i_comp)%resi_inte_rela   = resi_inte_rela
+        ds_compor_para%v_crit(i_comp)%iter_inte_maxi   = iter_inte_maxi
+        ds_compor_para%v_crit(i_comp)%cptr_fct_ldc     = cptr_fct_ldc
+        ds_compor_para%v_crit(i_comp)%cptr_nbvarext    = cptr_nbvarext
+        ds_compor_para%v_crit(i_comp)%cptr_namevarext  = cptr_namevarext
+        ds_compor_para%v_crit(i_comp)%cptr_nbprop      = cptr_nbprop
+        ds_compor_para%v_crit(i_comp)%cptr_nameprop    = cptr_nameprop
+        ds_compor_para%v_crit(i_comp)%jvariext1        = jvariext1
+        ds_compor_para%v_crit(i_comp)%jvariext2        = jvariext2
+        ds_compor_para%v_crit(i_comp)%jstrainexte      = jstrainexte
+        ds_compor_para%v_crit(i_comp)%paraExte         = paraExte
     end do
 !
 ! - Read SCHEMA_THM
-!
-    if (l_thm) then
+
+    if (l_exist_thm) then
         keywordfact    = 'SCHEMA_THM'
         parm_theta_thm = 1.d0
         call getvr8(keywordfact, 'PARM_THETA', iocc = 1, scal = parm_theta_thm, nbret = iret)

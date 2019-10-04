@@ -51,7 +51,7 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Preparation of comportment (mechanics)
+! Preparation of behaviour (mechanics)
 !
 ! Check with Comportement.py
 !
@@ -99,13 +99,13 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
         call comp_read_mesh(mesh          , keywordfact, i_comp        ,&
                             list_elem_affe, l_affe_all , nb_elem_affe)
 ! ----- Get infos
-        rela_comp = ds_compor_prep%v_comp(i_comp)%rela_comp
-        defo_comp = ds_compor_prep%v_comp(i_comp)%defo_comp
-        type_cpla = ds_compor_prep%v_comp(i_comp)%type_cpla
-        rela_thmc = ds_compor_prep%v_comp(i_comp)%kit_comp(1)
-        l_mfront  = ds_compor_prep%v_exte(i_comp)%l_mfront_offi .or.&
-                    ds_compor_prep%v_exte(i_comp)%l_mfront_proto
-        exte_defo = ds_compor_prep%v_exte(i_comp)%strain_model
+        rela_comp = ds_compor_prep%v_para(i_comp)%rela_comp
+        defo_comp = ds_compor_prep%v_para(i_comp)%defo_comp
+        type_cpla = ds_compor_prep%v_para(i_comp)%type_cpla
+        rela_thmc = ds_compor_prep%v_para(i_comp)%kit_comp(1)
+        l_mfront  = ds_compor_prep%v_paraExte(i_comp)%l_mfront_offi .or.&
+                    ds_compor_prep%v_paraExte(i_comp)%l_mfront_proto
+        exte_defo = ds_compor_prep%v_paraExte(i_comp)%strain_model
 ! ----- Detection of specific cases
         if (rela_comp .eq. 'ENDO_HETEROGENE') then
             ligrmo = model//'.MODELE'
@@ -132,7 +132,7 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
                 call utmess('F', 'COMPOR1_59', si=i_comp)
             endif
         endif
-        ds_compor_prep%v_comp(i_comp)%type_cpla = type_cpla
+        ds_compor_prep%v_para(i_comp)%type_cpla = type_cpla
 ! ----- Check strain model
         call nmdovd(model         , l_affe_all  , l_auto_deborst,&
                     list_elem_affe, nb_elem_affe, full_elem_s   ,&
