@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine setBehaviourTypeValue(v_comp   , i_comp_  ,&
+subroutine setBehaviourTypeValue(v_para   , i_comp_  ,&
                                  l_compor_, v_compor_)
 !
 use Behaviour_type
@@ -30,20 +30,20 @@ implicit none
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/Behaviour_type.h"
 !
-type(Behaviour_Parameters), pointer :: v_comp(:)
+type(Behaviour_Para), pointer :: v_para(:)
 integer, optional, intent(in) :: i_comp_
 character(len=16), intent(out), optional :: l_compor_(:)
 character(len=16), pointer, optional :: v_compor_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Preparation of comportment (mechanics)
+! Preparation of behaviour (mechanics)
 !
 ! Save informations in the field <COMPOR>
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  v_comp           : list of informations to save
+! In  v_para           : list of informations to save
 ! In  i_comp           : index in previous list
 ! In  l_compor         : liste of components for <CARTE> COMPOR - (SIMU_POIN_MAT)
 ! In  v_compor         : liste of components for <CARTE> COMPOR - (*_NON_LINE)
@@ -60,88 +60,88 @@ character(len=16), pointer, optional :: v_compor_(:)
         i_comp = i_comp_
     endif
 !
-    call comp_meca_l(v_comp(i_comp)%rela_comp, 'PMF'     , l_pmf)
-    call comp_meca_l(v_comp(i_comp)%rela_comp, 'KIT_THM' , l_kit_thm)
-    call comp_meca_l(v_comp(i_comp)%rela_comp, 'KIT_DDI' , l_kit_ddi)
-    call comp_meca_l(v_comp(i_comp)%rela_comp, 'KIT_META', l_kit_meta)
-    call comp_meca_l(v_comp(i_comp)%rela_comp, 'KIT_CG'  , l_kit_cg)
+    call comp_meca_l(v_para(i_comp)%rela_comp, 'PMF'     , l_pmf)
+    call comp_meca_l(v_para(i_comp)%rela_comp, 'KIT_THM' , l_kit_thm)
+    call comp_meca_l(v_para(i_comp)%rela_comp, 'KIT_DDI' , l_kit_ddi)
+    call comp_meca_l(v_para(i_comp)%rela_comp, 'KIT_META', l_kit_meta)
+    call comp_meca_l(v_para(i_comp)%rela_comp, 'KIT_CG'  , l_kit_cg)
 !
     if (present(v_compor_)) then
         v_compor_(1:COMPOR_SIZE) = 'VIDE'
-        v_compor_(RELA_NAME) = v_comp(i_comp)%rela_comp
-        write (v_compor_(NVAR),'(I16)') v_comp(i_comp)%nb_vari
-        v_compor_(DEFO) = v_comp(i_comp)%defo_comp
-        v_compor_(INCRELAS) = v_comp(i_comp)%type_comp
-        v_compor_(PLANESTRESS) = v_comp(i_comp)%type_cpla
+        v_compor_(RELA_NAME) = v_para(i_comp)%rela_comp
+        write (v_compor_(NVAR),'(I16)') v_para(i_comp)%nb_vari
+        v_compor_(DEFO) = v_para(i_comp)%defo_comp
+        v_compor_(INCRELAS) = v_para(i_comp)%type_comp
+        v_compor_(PLANESTRESS) = v_para(i_comp)%type_cpla
         if (.not.l_pmf) then
-            write (v_compor_(NUME),'(I16)') v_comp(i_comp)%nume_comp(1)
+            write (v_compor_(NUME),'(I16)') v_para(i_comp)%nume_comp(1)
         endif
-        v_compor_(MULTCOMP) = v_comp(i_comp)%mult_comp
-        v_compor_(POSTITER) = v_comp(i_comp)%post_iter
-        v_compor_(DEFO_LDC) = v_comp(i_comp)%defo_ldc
+        v_compor_(MULTCOMP) = v_para(i_comp)%mult_comp
+        v_compor_(POSTITER) = v_para(i_comp)%post_iter
+        v_compor_(DEFO_LDC) = v_para(i_comp)%defo_ldc
         if (l_kit_thm) then
-            v_compor_(THMC_NAME) = v_comp(i_comp)%kit_comp(1)
-            v_compor_(THER_NAME) = v_comp(i_comp)%kit_comp(2)
-            v_compor_(HYDR_NAME) = v_comp(i_comp)%kit_comp(3)
-            v_compor_(MECA_NAME) = v_comp(i_comp)%kit_comp(4)
-            write (v_compor_(THMC_NUME),'(I16)') v_comp(i_comp)%nume_comp(1)
-            write (v_compor_(THER_NUME),'(I16)') v_comp(i_comp)%nume_comp(2)
-            write (v_compor_(HYDR_NUME),'(I16)') v_comp(i_comp)%nume_comp(3)
-            write (v_compor_(MECA_NUME),'(I16)') v_comp(i_comp)%nume_comp(4)
-            write (v_compor_(THMC_NVAR),'(I16)') v_comp(i_comp)%nb_vari_comp(1)
-            write (v_compor_(THER_NVAR),'(I16)') v_comp(i_comp)%nb_vari_comp(2)
-            write (v_compor_(HYDR_NVAR),'(I16)') v_comp(i_comp)%nb_vari_comp(3)
-            write (v_compor_(MECA_NVAR),'(I16)') v_comp(i_comp)%nb_vari_comp(4)
+            v_compor_(THMC_NAME) = v_para(i_comp)%kit_comp(1)
+            v_compor_(THER_NAME) = v_para(i_comp)%kit_comp(2)
+            v_compor_(HYDR_NAME) = v_para(i_comp)%kit_comp(3)
+            v_compor_(MECA_NAME) = v_para(i_comp)%kit_comp(4)
+            write (v_compor_(THMC_NUME),'(I16)') v_para(i_comp)%nume_comp(1)
+            write (v_compor_(THER_NUME),'(I16)') v_para(i_comp)%nume_comp(2)
+            write (v_compor_(HYDR_NUME),'(I16)') v_para(i_comp)%nume_comp(3)
+            write (v_compor_(MECA_NUME),'(I16)') v_para(i_comp)%nume_comp(4)
+            write (v_compor_(THMC_NVAR),'(I16)') v_para(i_comp)%nb_vari_comp(1)
+            write (v_compor_(THER_NVAR),'(I16)') v_para(i_comp)%nb_vari_comp(2)
+            write (v_compor_(HYDR_NVAR),'(I16)') v_para(i_comp)%nb_vari_comp(3)
+            write (v_compor_(MECA_NVAR),'(I16)') v_para(i_comp)%nb_vari_comp(4)
         endif
         if (l_kit_ddi) then
-            v_compor_(CREEP_NAME) = v_comp(i_comp)%kit_comp(1)
-            v_compor_(PLAS_NAME)  = v_comp(i_comp)%kit_comp(2)
-            v_compor_(COUPL_NAME) = v_comp(i_comp)%kit_comp(3)
-            v_compor_(CPLA_NAME)  = v_comp(i_comp)%kit_comp(4)
-            write (v_compor_(CREEP_NUME),'(I16)') v_comp(i_comp)%nume_comp(3)
-            write (v_compor_(PLAS_NUME),'(I16)')  v_comp(i_comp)%nume_comp(2)
-            write (v_compor_(CREEP_NVAR),'(I16)') v_comp(i_comp)%nb_vari_comp(1)
-            write (v_compor_(PLAS_NVAR),'(I16)')  v_comp(i_comp)%nb_vari_comp(2)
+            v_compor_(CREEP_NAME) = v_para(i_comp)%kit_comp(1)
+            v_compor_(PLAS_NAME)  = v_para(i_comp)%kit_comp(2)
+            v_compor_(COUPL_NAME) = v_para(i_comp)%kit_comp(3)
+            v_compor_(CPLA_NAME)  = v_para(i_comp)%kit_comp(4)
+            write (v_compor_(CREEP_NUME),'(I16)') v_para(i_comp)%nume_comp(3)
+            write (v_compor_(PLAS_NUME),'(I16)')  v_para(i_comp)%nume_comp(2)
+            write (v_compor_(CREEP_NVAR),'(I16)') v_para(i_comp)%nb_vari_comp(1)
+            write (v_compor_(PLAS_NVAR),'(I16)')  v_para(i_comp)%nb_vari_comp(2)
         endif
-        v_compor_(KIT1_NAME) = v_comp(i_comp)%kit_comp(1)
+        v_compor_(KIT1_NAME) = v_para(i_comp)%kit_comp(1)
         if (l_kit_meta) then
-            v_compor_(META_NAME)  = v_comp(i_comp)%kit_comp(1)
+            v_compor_(META_NAME)  = v_para(i_comp)%kit_comp(1)
         endif
         if (l_kit_cg) then
-            v_compor_(CABLE_NAME)   = v_comp(i_comp)%kit_comp(1)
-            v_compor_(SHEATH_NAME)  = v_comp(i_comp)%kit_comp(2)
+            v_compor_(CABLE_NAME)   = v_para(i_comp)%kit_comp(1)
+            v_compor_(SHEATH_NAME)  = v_para(i_comp)%kit_comp(2)
         endif
     endif
     if (present(l_compor_)) then
         l_compor_(1:COMPOR_SIZE) = 'VIDE'
-        l_compor_(RELA_NAME) = v_comp(i_comp)%rela_comp
-        write (l_compor_(NVAR),'(I16)') v_comp(i_comp)%nb_vari
-        l_compor_(DEFO) = v_comp(i_comp)%defo_comp
-        l_compor_(INCRELAS) = v_comp(i_comp)%type_comp
-        l_compor_(PLANESTRESS) = v_comp(i_comp)%type_cpla
+        l_compor_(RELA_NAME) = v_para(i_comp)%rela_comp
+        write (l_compor_(NVAR),'(I16)') v_para(i_comp)%nb_vari
+        l_compor_(DEFO) = v_para(i_comp)%defo_comp
+        l_compor_(INCRELAS) = v_para(i_comp)%type_comp
+        l_compor_(PLANESTRESS) = v_para(i_comp)%type_cpla
         if (.not.l_pmf) then
-            write (l_compor_(NUME),'(I16)') v_comp(i_comp)%nume_comp(1)
+            write (l_compor_(NUME),'(I16)') v_para(i_comp)%nume_comp(1)
         endif
-        l_compor_(MULTCOMP) = v_comp(i_comp)%mult_comp
-        l_compor_(POSTITER) = v_comp(i_comp)%post_iter
-        l_compor_(DEFO_LDC) = v_comp(i_comp)%defo_ldc
+        l_compor_(MULTCOMP) = v_para(i_comp)%mult_comp
+        l_compor_(POSTITER) = v_para(i_comp)%post_iter
+        l_compor_(DEFO_LDC) = v_para(i_comp)%defo_ldc
         if (l_kit_ddi) then
-            l_compor_(CREEP_NAME) = v_comp(i_comp)%kit_comp(1)
-            l_compor_(PLAS_NAME)  = v_comp(i_comp)%kit_comp(2)
-            l_compor_(COUPL_NAME) = v_comp(i_comp)%kit_comp(3)
-            l_compor_(CPLA_NAME)  = v_comp(i_comp)%kit_comp(4)
-            write (l_compor_(CREEP_NUME),'(I16)') v_comp(i_comp)%nume_comp(3)
-            write (l_compor_(PLAS_NUME),'(I16)')  v_comp(i_comp)%nume_comp(2)
-            write (l_compor_(CREEP_NVAR),'(I16)') v_comp(i_comp)%nb_vari_comp(1)
-            write (l_compor_(PLAS_NVAR),'(I16)')  v_comp(i_comp)%nb_vari_comp(2)
+            l_compor_(CREEP_NAME) = v_para(i_comp)%kit_comp(1)
+            l_compor_(PLAS_NAME)  = v_para(i_comp)%kit_comp(2)
+            l_compor_(COUPL_NAME) = v_para(i_comp)%kit_comp(3)
+            l_compor_(CPLA_NAME)  = v_para(i_comp)%kit_comp(4)
+            write (l_compor_(CREEP_NUME),'(I16)') v_para(i_comp)%nume_comp(3)
+            write (l_compor_(PLAS_NUME),'(I16)')  v_para(i_comp)%nume_comp(2)
+            write (l_compor_(CREEP_NVAR),'(I16)') v_para(i_comp)%nb_vari_comp(1)
+            write (l_compor_(PLAS_NVAR),'(I16)')  v_para(i_comp)%nb_vari_comp(2)
         endif
-        l_compor_(KIT1_NAME) = v_comp(i_comp)%kit_comp(1)
+        l_compor_(KIT1_NAME) = v_para(i_comp)%kit_comp(1)
         if (l_kit_meta) then
-            l_compor_(META_NAME)  = v_comp(i_comp)%kit_comp(1)
+            l_compor_(META_NAME)  = v_para(i_comp)%kit_comp(1)
         endif
         if (l_kit_cg) then
-            l_compor_(CABLE_NAME)   = v_comp(i_comp)%kit_comp(1)
-            l_compor_(SHEATH_NAME)  = v_comp(i_comp)%kit_comp(2)
+            l_compor_(CABLE_NAME)   = v_para(i_comp)%kit_comp(1)
+            l_compor_(SHEATH_NAME)  = v_para(i_comp)%kit_comp(2)
         endif
     endif
 !
