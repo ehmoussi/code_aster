@@ -47,6 +47,7 @@ implicit none
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
 #include "asterfort/umatPrepareStrain.h"
+#include "asterfort/Behaviour_type.h"
 !
 type(Behaviour_Integ), intent(in) :: BEHinteg
 character(len=*), intent(in) :: fami
@@ -259,7 +260,7 @@ integer, intent(out) :: codret
 !
     pnewdt=1.d0
 !!
-    pfumat = int(carcri(16))
+    pfumat = int(carcri(EXTE_PTR))
     if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
 !
         call dcopy(nsig, sigm, 1, stress, 1)

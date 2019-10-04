@@ -81,7 +81,8 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
     call r8inir(nb_varc_maxi, 0.d0, dpred, 1)
 !
 ! Get the ExternalStateVariables declared in the mfront law
-    call mfront_get_external_state_variable(int(carcri(14)), int(carcri(15)),&
+    call mfront_get_external_state_variable(int(carcri(EXTE_ESVA_NB)),&
+                                            int(carcri(EXTE_ESVA_PTR_NAME)),&
                                             list_varc      , nb_varc)
 !
     ASSERT(nb_varc .le. nb_varc_maxi)
