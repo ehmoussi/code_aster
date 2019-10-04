@@ -39,7 +39,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/lcdetf.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/nmgrtg.h"
@@ -142,10 +141,10 @@ integer, intent(inout) :: codret
 ! - Prepare external state variables
 !
     call behaviourPrepExternal(carcri   , typmod   ,&
-                               nno      , npg      , ndim     ,&
-                               ipoids   , ivf      , idfde    ,&
-                               geom_init, disp_prev, disp_incr,&
-                               coorga)
+                               nno      , npg      , ndim ,&
+                               ipoids   , ivf      , idfde,&
+                               geom_init, coorga   ,&
+                               disp_prev, disp_incr)
 !
 ! - Only isotropic material !
 !

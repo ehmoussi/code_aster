@@ -32,7 +32,6 @@ implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/calsta.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/codere.h"
 #include "asterfort/dfda2d.h"
 #include "asterfort/iniqs4.h"
@@ -134,11 +133,11 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri, typmod ,&
-                               nno   , npg    , ndim ,&
-                               ipoids, ivf    , idfde,&
-                               geom  , deplm  , deplp,&
-                               coorga)
+    call behaviourPrepExternal(carcri, typmod,&
+                               nno   , npg   , ndim ,&
+                               ipoids, ivf   , idfde,&
+                               geom  , coorga,&
+                               deplm , deplp)
 !
 ! - INITIALISATION QUAS4
     call iniqs4(nno, sdfde, sdfdk, poi2sg, coopg)

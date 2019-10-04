@@ -39,7 +39,6 @@ implicit none
 #include "asterfort/elraga.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/invjac.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/matini.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
@@ -151,8 +150,8 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     call behaviourPrepExternal(carcri, typmod,&
                                nno   , nbpg1 , ndim ,&
                                ipoids, ivf   , idfde,&
-                               geom  , deplm , deplp,&
-                               coorga)
+                               geom  , coorga,&
+                               deplm , deplp)
 !
 ! - INITIALISATION CODES RETOURS
     do kpg = 1, nbpg1

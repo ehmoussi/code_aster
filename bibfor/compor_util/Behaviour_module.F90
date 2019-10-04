@@ -24,7 +24,8 @@ use calcul_module, only : ca_jvcnom_, ca_nbcvrc_
 implicit none
 ! ==================================================================================================
 private :: varcIsGEOM
-public  :: behaviourInit
+public  :: behaviourInit,&
+           behaviourPrepExternal
 ! ==================================================================================================
 private
 #include "jeveux.h"
@@ -32,8 +33,15 @@ private
 #include "asterfort/Behaviour_type.h"
 #include "asterc/r8nnem.h"
 #include "asterc/indik8.h"
+#include "asterfort/isdeco.h"
+#include "asterfort/calcExternalStateVariable1.h"
+#include "asterfort/calcExternalStateVariable2.h"
+#include "asterfort/calcExternalStateVariable3.h"
+#include "asterfort/calcExternalStateVariable4.h"
+#include "asterfort/utmess.h"
 ! ==================================================================================================
 contains
+! ==================================================================================================
 ! --------------------------------------------------------------------------------------------------
 !
 ! behaviourInit
@@ -53,6 +61,89 @@ subroutine behaviourInit(BEHinteg)
     endif
     BEHinteg%elga%coorpg = r8nnem()
     call varcIsGEOM(BEHinteg%l_varext_geom)
+!   ------------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! behaviourPrepExternal
+!
+! Prepare external state variables
+!
+! In  carcri           : parameters for comportment
+! In  typmod           : type of modelisation
+! In  nno              : number of nodes 
+! In  npg              : number of Gauss points 
+! In  ndim             : dimension of problem (2 or 3)
+! In  jv_poids         : JEVEUX adress for weight of Gauss points
+! In  jv_func          : JEVEUX adress for shape functions
+! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
+! In  geom             : initial coordinates of nodes
+! In  deplm            : displacements of nodes at beginning of time step
+! In  ddepl            : displacements of nodes since beginning of time step
+! Out coorga           : coordinates of all integration points
+!
+! --------------------------------------------------------------------------------------------------
+subroutine behaviourPrepExternal(carcri  , typmod ,&
+                                 nno     , npg    , ndim    ,&
+                                 jv_poids, jv_func, jv_dfunc,&
+                                 geom    , coorga ,&
+                                 deplm_  , ddepl_)
+!   ------------------------------------------------------------------------------------------------
+! - Parameters
+    real(kind=8), intent(in) :: carcri(*)
+    character(len=8), intent(in) :: typmod(2)
+    integer, intent(in) :: nno, npg, ndim
+    integer, intent(in) :: jv_poids, jv_func, jv_dfunc
+    real(kind=8), intent(in) :: geom(ndim, nno)
+    real(kind=8), intent(out) :: coorga(27,3)
+    real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
+! - Local
+    integer :: jvariext1, jvariext2
+    integer :: tabcod(60), variextecode(2)
+!   ------------------------------------------------------------------------------------------------
+    coorga = r8nnem()
+!
+! - Get coded integers for external state variables
+!
+    jvariext1 = nint(carcri(IVARIEXT1))
+    jvariext2 = nint(carcri(IVARIEXT2))
+    tabcod(:) = 0
+    variextecode(1) = jvariext1
+    variextecode(2) = jvariext2
+    call isdeco(variextecode, tabcod, 60)
+!
+! - Element size 1
+!
+    if (tabcod(ELTSIZE1) .eq. 1) then
+        call calcExternalStateVariable1(nno     , npg    , ndim    ,&
+                                        jv_poids, jv_func, jv_dfunc,&
+                                        geom    , typmod )
+    endif
+!
+! - Coordinates of Gauss points
+!
+    call calcExternalStateVariable2(nno    , npg   , ndim  ,&
+                                    jv_func, &
+                                    geom   , coorga)
+!
+! - Gradient of velocity
+!
+    if (tabcod(GRADVELO) .eq. 1) then
+        if (.not.present(deplm_) .or. .not.present(ddepl_)) then
+            call utmess('F', 'COMPOR2_26')
+        endif
+        call calcExternalStateVariable3(nno     , npg    , ndim    ,&
+                                        jv_poids, jv_func, jv_dfunc,&
+                                        geom    , deplm_ , ddepl_ )
+    endif
+!
+! - Element size 2
+!
+    if (tabcod(ELTSIZE2) .eq. 1) then
+        call calcExternalStateVariable4(nno     , npg   , ndim,&
+                                        jv_dfunc,&
+                                        geom    , typmod)
+    endif
 !   ------------------------------------------------------------------------------------------------
 end subroutine
 ! --------------------------------------------------------------------------------------------------
@@ -87,6 +178,5 @@ subroutine varcIsGEOM(l_varext_geom)
     endif
 !   ------------------------------------------------------------------------------------------------
 end subroutine
-! ==================================================================================================
 !
 end module Behaviour_module

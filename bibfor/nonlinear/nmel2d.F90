@@ -32,7 +32,6 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmgeom.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/Behaviour_type.h"
 !
 integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
@@ -81,7 +80,6 @@ real(kind=8) :: matuu(*)
 !
     integer :: kpg, kk, n, i, m, j, j1, kl, pq, kkd
     integer, parameter :: ndim = 2
-    real(kind=8) :: deplm(2*nno), deplp(2*nno)
     aster_logical :: grdepl, axi, cplan
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), r, sigma(6), ftf, detf
     real(kind=8) :: poids, tmp1, tmp2, sigp(6)
@@ -100,8 +98,6 @@ real(kind=8) :: matuu(*)
     grdepl = compor(3).eq. 'GROT_GDEP'
     axi = typmod(1) .eq. 'AXIS'
     cplan = typmod(1) .eq. 'C_PLAN'
-    deplm(:) = 0.d0
-    deplp(:) = 0.d0
 !
 ! - Initialisation of behaviour datastructure
 !
@@ -112,8 +108,7 @@ real(kind=8) :: matuu(*)
     call behaviourPrepExternal(crit  , typmod,&
                                nno   , npg   , ndim ,&
                                ipoids, ivf   , idfde,&
-                               geom  , deplm , deplp,&
-                               coorga)
+                               geom  , coorga)
 !
 ! - CALCUL POUR CHAQUE POINT DE GAUSS
 !

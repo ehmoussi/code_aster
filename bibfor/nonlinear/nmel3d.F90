@@ -32,7 +32,6 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmgeom.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/Behaviour_type.h"
 !
 integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
@@ -84,8 +83,6 @@ real(kind=8) :: matuu(*), vectu(3, nno)
     type(Behaviour_Integ) :: BEHinteg
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     integer, parameter :: ndim = 3
-    real(kind=8) :: deplm(3*nno), deplp(3*nno)
-!
     integer :: indi(6), indj(6)
     real(kind=8) :: rind(6)
     data    indi / 1 , 2 , 3 , 1 , 1 , 2 /
@@ -96,8 +93,6 @@ real(kind=8) :: matuu(*), vectu(3, nno)
 !
 ! - INITIALISATION
 !
-    deplm(:) = 0.d0
-    deplp(:) = 0.d0
     grdepl = compor(3) .eq. 'GROT_GDEP'
 !
 ! - Initialisation of behaviour datastructure
@@ -109,8 +104,7 @@ real(kind=8) :: matuu(*), vectu(3, nno)
     call behaviourPrepExternal(crit  , typmod,&
                                nno   , npg   , ndim ,&
                                ipoids, ivf   , idfde,&
-                               geom  , deplm , deplp,&
-                               coorga)
+                               geom  , coorga)
 !
     do kpg = 1, npg
 !
