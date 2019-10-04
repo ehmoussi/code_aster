@@ -33,7 +33,6 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/codere.h"
 #include "asterfort/crirup.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
@@ -113,11 +112,11 @@ aster_logical :: matsym
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri , typmod    ,&
-                               nno    , npg       , ndim      ,&
-                               ipoids , ivf       , idfde     ,&
-                               geom   , zr(ideplm), zr(ideplp),&
-                               coorga)
+    call behaviourPrepExternal(carcri    , typmod    ,&
+                               nno       , npg       , ndim ,&
+                               ipoids    , ivf       , idfde,&
+                               geom      , coorga    ,&
+                               zr(ideplm), zr(ideplp))
 !
 ! - INITIALISATION CODES RETOURS
     do kpg = 1, npg

@@ -17,46 +17,24 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
-    1 : _("""
-   SIMU_POINT_MAT : Le type de DEFORMATION choisi,  <%(k1)s>, est actuellement incompatible avec SUPPORT=POINT.
-    On utilise donc SUPPORT=ELEMENT.
-"""),
+    1 : _("""Le type de DEFORMATION <%(k1)s>, est actuellement incompatible avec SUPPORT=POINT. On utilise donc SUPPORT=ELEMENT."""),
 
-    2 : _("""
-   SIMU_POINT_MAT : Erreur, on ne peut avoir à la fois SIGM et EPSI imposés sur la composante <%(k1)s>
-"""),
+    2 : _("""On ne peut avoir à la fois SIGM et EPSI imposés sur la composante <%(k1)s>."""),
 
-    3 : _("""
-   SIMU_POINT_MAT : Erreur, on doit avoir une seule composante donnée parmi  <%(k1)s>
-"""),
+    3 : _("""On doit avoir une seule composante donnée parmi <%(k1)s>."""),
 
-    4 : _("""
-   SIMU_POINT_MAT : Problème a l'inversion de la matrice jacobienne.
-   On tente de subdiviser le pas de temps
-"""),
+    4 : _("""Problème lors de l'inversion de la matrice jacobienne. On tente de subdiviser le pas de temps."""),
 
-    5 : _("""
-   SIMU_POINT_MAT : nombre d'itérations maximum atteint.
-   On tente de subdiviser le pas de temps
-"""),
+    5 : _("""Le nombre maximum d'itérations a été atteint. On tente de subdiviser le pas de temps."""),
 
-    6 : _("""
-   POLYCRISTAL : nombre de phases trop grand (le nombre maximum de phases vaut actuellement 1000).
-   Faire une demande d'évolution pour lever cette limitation si nécessaire.
-"""),
+    6 : _("""Le nombre de phases est trop grand."""),
 
-    7 : _("""
-   On ne peut pas utiliser les KIT_THM dans SIMU_POINT_MAT.
-"""),
+    7 : _("""On ne peut pas utiliser les KIT_THM dans SIMU_POINT_MAT."""),
 
-    8 : _("""
-   DEFI_COMPOR : la somme des fractions volumiques est très différente de 1.0 : <%(r1).15E>
-   Vérifiez FRAC_VOL pour toutes les occurrences du mot clé POLYCRISTAL.
-"""),
+    8 : _("""La somme des fractions volumiques est très différente de 1.0, elle vaut <%(r1).15E>. 
+Vérifiez FRAC_VOL pour toutes les occurrences du mot clé POLYCRISTAL."""),
 
     9 : _("""
 Les déformations deviennent trop grandes : <%(r1)E>
@@ -139,10 +117,9 @@ Erreur lors de la vérification de la cohérence entre les champs de variables i
 Le maillage sur lequel s'appuie le modèle et le maillage du champ des variables internes ne sont pas les mêmes.
 """),
 
-    25 : _("""
-   On ne peut pas utiliser la variable de commande intrinsèque <%(k1)s> dans MFront car ce n'est pas un scalaire.
-"""),
+    25 : _("""On ne peut pas utiliser la variable de commande intrinsèque <%(k1)s> dans MFront car ce n'est pas un scalaire."""),
 
+    26 : _("""La variable de commande correspondant au gradient de vélocité ne peut pas être utilisée pour ce comportement."""),
 
     27: _("""
 Erreur lors de la vérification de la cohérence entre les champs de variables internes.

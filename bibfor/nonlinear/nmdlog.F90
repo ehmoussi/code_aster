@@ -33,7 +33,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/dfdmip.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmepsi.h"
 #include "asterfort/nmgrtg.h"
@@ -129,8 +128,8 @@ implicit none
     call behaviourPrepExternal(carcri, typmod,&
                                nno   , npg   , ndim ,&
                                iw    , ivf   , idff ,&
-                               geomi , deplm , depld,&
-                               coorga)
+                               geomi , coorga,&
+                               deplm , depld)
 !
 !--------------------------INITIALISATION------------------------
 !

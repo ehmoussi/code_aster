@@ -32,7 +32,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/codere.h"
 #include "asterfort/crirup.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
@@ -125,11 +124,11 @@ integer, intent(inout) :: codret
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri , typmod,&
-                               nno    , npg   , ndim ,&
-                               ipoids , ivf   , idfde,&
-                               geom   , deplm , deplp,&
-                               coorga)
+    call behaviourPrepExternal(carcri, typmod,&
+                               nno   , npg   , ndim ,&
+                               ipoids, ivf   , idfde,&
+                               geom  , coorga,&
+                               deplm , deplp)
 !
 ! - Loop on Gauss points
 !
