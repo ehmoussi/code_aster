@@ -288,9 +288,9 @@ POURSUITE(CODE='OUI',
 # nbtest=4
 # Nombre de remaillage
 Nb_Raffinement=6;
-TitreU      ='Erreur ||\\qU\\sh\\N-\\2U\\N\\Q || en norme L\\s2\\N, maillages en triangles'
+TitreU      =r'Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en triangles'
 
-TitreP      ='Erreur ||\\qP\\sh\\N-\\2P\\N\\Q || en norme L\\s2\\N, maillages en triangles'
+TitreP      =r'Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en triangles'
 
 Legende      ='Cas TRIA 6'
 
@@ -504,7 +504,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                 TITRE=TitreU,
                 SOUS_TITRE=sous_titreU,
                 LEGENDE_X='h',
-                LEGENDE_Y='L\\s2\\N(Erreur)',
+                LEGENDE_Y=r'L\s2\N(Erreur)',
                 ECHELLE_X='LOG',
                 ECHELLE_Y='LOG',
                 INFO=2,)
@@ -522,7 +522,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
               TITRE=TitreP,
               SOUS_TITRE=sous_titreP,
               LEGENDE_X='h',
-              LEGENDE_Y='L\\s2\\N(Erreur)',
+              LEGENDE_Y=r'L\s2\N(Erreur)',
               ECHELLE_X='LOG',
               ECHELLE_Y='LOG',
               INFO=2,)
