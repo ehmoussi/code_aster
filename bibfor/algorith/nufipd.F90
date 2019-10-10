@@ -26,6 +26,7 @@ subroutine nufipd(ndim, nno1, nno2, npg, iw,&
                   matr, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -41,7 +42,6 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/tanbul.h"
 #include "asterfort/utmess.h"
-#include "asterfort/behaviourInit.h"
 #include "blas/ddot.h"
 aster_logical :: resi, rigi, mini
 integer :: ndim, nno1, nno2, npg, iw, idff1, lgpg

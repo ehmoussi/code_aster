@@ -27,6 +27,7 @@ subroutine nifism(ndim, nno1, nno2, nno3, npg,&
                   resi, rigi, vect, matr, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -40,7 +41,6 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvala.h"
 #include "asterfort/utmess.h"
-#include "asterfort/behaviourInit.h"
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
 #include "blas/dscal.h"

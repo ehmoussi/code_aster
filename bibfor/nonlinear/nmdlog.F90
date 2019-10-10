@@ -25,6 +25,7 @@ subroutine nmdlog(fami, option, typmod, ndim, nno,&
                   vip, fint, matuu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -43,7 +44,6 @@ implicit none
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 ! ----------------------------------------------------------------------
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*

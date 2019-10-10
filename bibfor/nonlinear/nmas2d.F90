@@ -25,6 +25,7 @@ subroutine nmas2d(fami, nno, npg, ipoids, ivf,&
                   vectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -38,7 +39,6 @@ implicit none
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 integer :: nno, npg, imate, lgpg, codret, cod(9), npgs
 integer :: ipoids, ivf, idfde

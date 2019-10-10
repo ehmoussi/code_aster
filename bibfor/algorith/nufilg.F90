@@ -27,12 +27,12 @@ subroutine nufilg(ndim, nnod, nnop, npg, iw,&
                   matsym, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/codere.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/dsde2d.h"
 #include "asterfort/nmcomp.h"

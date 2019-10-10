@@ -25,6 +25,7 @@ subroutine nmsspl( hexa,  shb6,   shb8, icoopg,&
                  sigp,    vip,  matuu,  vectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -67,7 +68,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/r8inir.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/bmatmc.h"
 #include "asterfort/btdbpr.h"
 #include "asterfort/codere.h"

@@ -25,6 +25,7 @@ subroutine nmas3d(fami, nno, nbpg1, ipoids, ivf,&
                   vectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -46,7 +47,6 @@ implicit none
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 integer :: nno, imate, lgpg, codret, nbpg1
 integer :: ipoids, ivf, idfde

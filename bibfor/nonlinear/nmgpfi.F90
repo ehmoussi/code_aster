@@ -25,6 +25,7 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
                   matr, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -39,7 +40,6 @@ implicit none
 #include "asterfort/nmepsi.h"
 #include "asterfort/nmgpin.h"
 #include "asterfort/nmmalu.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"

@@ -25,6 +25,7 @@ subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
                   matsym, coopg, tm, tp, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -34,7 +35,6 @@ implicit none
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmfici.h"
 #include "asterfort/r8inir.h"
-#include "asterfort/behaviourInit.h"
 #include "blas/ddot.h"
     integer :: nno, nddl, npg, lgpg, mate, codret
     real(kind=8) :: wref(npg), vff(nno, npg), dfde(2, nno, npg), crit(*)
@@ -106,7 +106,7 @@ implicit none
         endif
     endif
 !
-    do 10 kpg = 1, npg
+    do kpg = 1, npg
 !
 ! CALCUL DE LA MATRICE B DONNANT LES SAUT PAR ELEMENTS A PARTIR DES
 ! DEPLACEMENTS AUX NOEUDS , AINSI QUE LE POIDS DES PG :
@@ -133,9 +133,9 @@ implicit none
 !
 !       CONTRAINTES -
         call r8inir(6, 0.d0, sigmo, 1)
-        do 12 n = 1, 3
+        do n = 1, 3
             sigmo(n) = sigm(n,kpg)
- 12     continue
+        end do
 !
         BEHinteg%elga%coorpg = coopg(1:3,kpg)
 !
@@ -149,15 +149,13 @@ implicit none
         if (resi) then
 !
 !         CONTRAINTES +
-            do 11 n = 1, 3
+            do n = 1, 3
                 sigp(n,kpg) = sigma(n)
- 11         continue
-!
+            end do
 !         FORCES INTERIEURES
-            do 20 ni = 1, nddl
+            do ni = 1, nddl
                 fint(ni) = fint(ni) + poids*ddot(3,b(1,ni),1,sigma,1)
- 20         continue
-!
+            end do
         endif
 !
 ! MATRICE TANGENTE
@@ -168,37 +166,34 @@ implicit none
 !
 !           STOCKAGE SYMETRIQUE
                 kk = 0
-                do 50 ni = 1, nddl
-                    do 52 mj = 1, ni
+                do ni = 1, nddl
+                    do mj = 1, ni
                         kk = kk+1
-                        do 60 p = 1, 3
-                            do 62 q = 1, 3
+                        do p = 1, 3
+                            do q = 1, 3
                                 ktan(kk) = ktan(kk) + poids*b(p,ni)* dsidep(p,q)*b(q,mj)
- 62                         continue
- 60                     continue
- 52                 continue
- 50             continue
+                            end do
+                        end do
+                    end do
+                end do
 !
             else
 !
 !           STOCKAGE COMPLET
                 kk = 0
-                do 51 ni = 1, nddl
-                    do 53 mj = 1, nddl
+                do ni = 1, nddl
+                    do mj = 1, nddl
                         kk = kk+1
-                        do 61 p = 1, 3
-                            do 63 q = 1, 3
+                        do p = 1, 3
+                            do q = 1, 3
                                 ktan(kk) = ktan(kk) + poids*b(p,ni)* dsidep(p,q)*b(q,mj)
- 63                         continue
- 61                     continue
- 53                 continue
- 51             continue
-!
+                            end do
+                        end do
+                    end do
+                end do
             endif
-!
         endif
-!
- 10 end do
+    end do
 !
     if (resi) call codere(code, npg, codret)
 end subroutine

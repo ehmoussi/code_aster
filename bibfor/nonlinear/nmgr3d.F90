@@ -30,6 +30,7 @@ subroutine nmgr3d(option   , typmod    ,&
                   codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -45,7 +46,6 @@ implicit none
 #include "asterfort/pk2sig.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 character(len=16), intent(in) :: option
 character(len=8), intent(in) :: typmod(*)

@@ -27,6 +27,7 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
                   matuu, ivectu, codret, nfiss, heavn, jstno)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -42,7 +43,6 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/reeref.h"
 #include "asterfort/vecini.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/xcinem.h"
 #include "asterfort/xcalc_heav.h"
 #include "asterfort/xcalc_code.h"

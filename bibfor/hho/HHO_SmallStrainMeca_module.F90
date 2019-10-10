@@ -26,6 +26,7 @@ use HHO_type
 use HHO_utils_module
 use HHO_eval_module
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -33,7 +34,6 @@ private
 #include "asterf_types.h"
 #include "asterfort/HHO_size_module.h"
 #include "asterfort/assert.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/codere.h"
 #include "asterfort/dmatmc.h"
 #include "asterfort/nbsigm.h"

@@ -24,6 +24,7 @@ subroutine nmel2d(fami, poum, nno, npg, ipoids,&
                   vi, matuu, ivectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -33,7 +34,6 @@ implicit none
 #include "asterfort/nmgeom.h"
 #include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
 integer :: ivectu, idepl
