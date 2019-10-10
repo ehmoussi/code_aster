@@ -169,3 +169,6 @@
 #define MFRONT_STRAIN_UNDETERMINATED 3
 #define MFRONT_STRAIN_GROTGDEP_S     4
 #define MFRONT_STRAIN_GROTGDEP_L     5
+
+! Set to 1 to activate DEBUG (careful, very verbose, at each Gauss point !)
+#define LDC_PREP_DEBUG               0
