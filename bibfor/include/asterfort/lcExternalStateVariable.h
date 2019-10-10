@@ -17,11 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine  lcExternalStateVariable(carcri, compor, time_curr,&
+    subroutine  lcExternalStateVariable(BEHinteg,&
+                                        carcri, compor, time_curr,&
                                         fami  , kpg      , ksp, imate, &
                                         neps  , epsth    , depsth, &
                                         temp  , dtemp, &
                                         predef, dpred )
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         real(kind=8), intent(in) :: carcri(*)
         character(len=16), intent(in) :: compor(*)
         real(kind=8), intent(in) :: time_curr

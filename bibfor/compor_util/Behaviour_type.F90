@@ -30,6 +30,20 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+!
+! - Behaviour - Integration - Parameters on element
+!
+    type Behaviour_Elem
+! ----- Size of element
+        real(kind=8) :: eltsize1 = 0.d0
+! ----- Size of element for ENDO_PORO_BETON
+        real(kind=8) :: eltsize2(9) = 0.d0
+! ----- Gradient of velocity for *CRISTAL
+        real(kind=8) :: gradvelo(9) = 0.d0
+! ----- Coordinates of all Gauss points
+        real(kind=8) :: coor_elga(27, 3) = 0.d0
+    end type Behaviour_Elem
+!
 ! - Behaviour - Integration - Parameters on current Gauss point
 !
     type Behaviour_Elga
@@ -38,13 +52,16 @@ implicit none
 ! ----- For *_JOINT_HYME models : kinematic matrix
         real(kind=8) :: rotpg(3*3) = 0.d0
 ! ----- For CABLE_GAINE elements : tension of the cable
-        real(kind=8) :: tenscab = 0.d0
+        real(kind=8) :: tenscab    = 0.d0
 ! ----- For CABLE_GAINE elements : curvature of the cable
-        real(kind=8) :: curvcab = 0.d0
+        real(kind=8) :: curvcab    = 0.d0
 ! ----- For GRAD_VARI models : non-local variables PHI
         real(kind=8) :: nonloc(2) = 0.d0
 ! ----- For CZM_*_MIX behaviours : Lagrange penalty coefficient
         real(kind=8) :: r = 0.d0
+! ----- Hygrometry
+        real(kind=8) :: hygr_prev = 0.d0
+        real(kind=8) :: hygr_curr = 0.d0
     end type Behaviour_Elga
 !
 ! - Behaviour - Integration
@@ -52,6 +69,8 @@ implicit none
     type Behaviour_Integ
 ! ----- Parameters on Gauss point
         type(Behaviour_Elga)  :: elga
+! ----- Parameters on Element
+        type(Behaviour_Elem)  :: elem
 ! ----- Flag when GEOM external state variable is present
         aster_logical         :: l_varext_geom = ASTER_FALSE
     end type Behaviour_Integ

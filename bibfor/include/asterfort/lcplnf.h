@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,16 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lcplnf(rela_comp, vind, nbcomm, nmat, cpmono,&
-                      materd, materf, iter, nvi, itmax,&
+    subroutine lcplnf(BEHinteg, &
+                      rela_comp, vind, nbcomm, nmat, cpmono,&
+                      materf, iter, nvi, itmax,&
                       toler, pgl, nfs, nsg, toutms,&
                       hsr, dt, dy, yd, yf,&
                       vinf, sigd, sigf,&
                       deps, nr, mod, timef,&
                       indi, vins, codret)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         integer :: nsg
         integer :: nfs
         integer :: nvi
@@ -32,7 +35,6 @@ interface
         real(kind=8) :: vind(*)
         integer :: nbcomm(nmat, 3)
         character(len=24) :: cpmono(5*nmat+1)
-        real(kind=8) :: materd(nmat, 2)
         real(kind=8) :: materf(nmat, 2)
         integer :: iter
         integer :: itmax

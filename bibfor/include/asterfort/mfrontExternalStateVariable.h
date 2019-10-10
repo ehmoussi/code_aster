@@ -17,10 +17,13 @@
 ! --------------------------------------------------------------------
 
 interface
-    subroutine  mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
-                                            irets, ireth, &
-                                            sechm, sechp, hydrm, hydrp, time_curr, &
-                                            predef, dpred)
+    subroutine  mfrontExternalStateVariable(BEHinteg,&
+                                            carcri  , rela_comp, fami , kpg  , ksp      ,&
+                                            irets   , ireth    , &
+                                            sechm   , sechp    , hydrm, hydrp, time_curr,&
+                                            predef  , dpred)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         real(kind=8), intent(in) :: carcri(*)
         character(len=16), intent(in) :: rela_comp
         character(len=*), intent(in) :: fami

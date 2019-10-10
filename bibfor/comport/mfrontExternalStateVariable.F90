@@ -16,12 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
-                                         irets, ireth, &
-                                         sechm, sechp, hydrm, hydrp, time_curr,&
-                                         predef, dpred)
+subroutine mfrontExternalStateVariable(BEHinteg,&
+                                       carcri  , rela_comp, fami, kpg, ksp, &
+                                       irets   , ireth    , &
+                                       sechm   , sechp    , hydrm, hydrp, time_curr,&
+                                       predef  , dpred)
 !
-use calcul_module, only : ca_vext_eltsize1_, ca_vext_hygrm_, ca_vext_hygrp_
+use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -33,6 +35,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/rcvarc.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 real(kind=8), intent(in) :: carcri(*)
 character(len=16), intent(in) :: rela_comp
 character(len=*), intent(in) :: fami
@@ -49,6 +52,7 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  BEHinteg         : parameters for integration of behaviour
 ! In  carcri           : parameters for comportment
 ! In  rela_comp        : name of comportment definition
 ! In  fami             : Gauss family for integration point rule
@@ -108,14 +112,14 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
                     dpred(i_varc)  = vrcp-vrcm
                 else
                     if (list_varc(i_varc) .eq. 'ELTSIZE1') then
-                        predef(i_varc) = ca_vext_eltsize1_
+                        predef(i_varc) = BEHinteg%elem%eltsize1
                     endif
                     if (list_varc(i_varc) .eq. 'TIME') then
                         predef(i_varc) = time_curr
                     endif
                     if (list_varc(i_varc) .eq. 'HYGR') then
-                        predef(i_varc) = ca_vext_hygrm_
-                        dpred(i_varc)  = ca_vext_hygrp_-ca_vext_hygrm_
+                        predef(i_varc) = BEHinteg%elga%hygr_prev
+                        dpred(i_varc)  = BEHinteg%elga%hygr_curr - BEHinteg%elga%hygr_prev
                     endif
                     if ((list_varc(i_varc) .ne. 'HYGR') .and. &
                         (list_varc(i_varc) .ne. 'ELTSIZE1') .and.&

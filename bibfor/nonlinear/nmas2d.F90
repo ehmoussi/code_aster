@@ -96,7 +96,6 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
     real(kind=8) :: poids, tmp, sig(6)
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
 !     AJ. VARIABLES
@@ -134,9 +133,9 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
 ! - Prepare external state variables
 !
     call behaviourPrepExteElem(carcri, typmod,&
-                               nno   , npg   , ndim ,&
-                               ipoids, ivf   , idfde,&
-                               geom  , coorga,&
+                               nno   , npg     , ndim ,&
+                               ipoids, ivf     , idfde,&
+                               geom  , BEHinteg,&
                                deplm , deplp)
 !
 ! - INITIALISATION QUAS4
@@ -216,7 +215,6 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
         optios = option
     endif
 !
-    BEHinteg%elga%coorpg = coorga(kpg,:)
     call nmcomp(BEHinteg,&
                 fami, kpg, 1, 2, typmod,&
                 imate, compor, carcri, instam, instap,&

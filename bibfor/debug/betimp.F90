@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine betimp(nmat, mater, sig, vind, vinf,&
+subroutine betimp(BEHinteg,&
+                  nmat, mater, sig, vind, vinf,&
                   nseui1, nseui2, nseui3, nseui4,&
                   sige, sigd)
 !
-use calcul_module, only : ca_vext_eltsize1_
+use Behaviour_type
 !
 implicit none
 !
@@ -60,7 +61,7 @@ implicit none
 !       IN  SIGE   :  CONTRAINTE ELASTIQUE
 !       IN  SIGD   :  CONTRAINTE A L'INSTANT PRECEDENT
 !       ----------------------------------------------------------------
-
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     integer :: nmat, nseui4, ifm, niv
     integer :: nseui1, nseui2, nseui3
     real(kind=8) :: pc, pt, sig(6), sige(6), sigd(6), dev(6), lc
@@ -108,7 +109,7 @@ implicit none
 ! --- LONGUEUR CARACTERISTIQUE POUR LOI BETON LC
 !
     if (mater(9,2) .lt. zero) then
-        lc = ca_vext_eltsize1_
+        lc = BEHinteg%elem%eltsize1
     else
         lc = mater(9,2)
     endif
@@ -128,7 +129,8 @@ implicit none
 !
     pc = vind(1)
     pt = vind(2)
-    call betfpp(mater, nmat, pc, pt,&
+    call betfpp(BEHinteg,&
+                mater, nmat, pc, pt,&
                 3, fc, ft, dfcdlc, dftdlt,&
                 kuc, kut, ke)
 !
@@ -188,7 +190,8 @@ implicit none
 !
     pc = vinf(1)
     pt = vinf(2)
-    call betfpp(mater, nmat, pc, pt,&
+    call betfpp(BEHinteg,&
+                mater, nmat, pc, pt,&
                 3, fc, ft, dfcdlc, dftdlt,&
                 kuc, kut, ke)
 !

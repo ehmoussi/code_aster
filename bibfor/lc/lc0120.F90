@@ -17,16 +17,20 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504,W0104
 !
-subroutine lc0120(fami, kpg, ksp, ndim, imate, l_epsi_varc,&
+subroutine lc0120(BEHinteg,&
+                  fami, kpg, ksp, ndim, imate, l_epsi_varc,&
                   compor, crit, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
                   sigp, vip, typmod, icomp,&
                   nvi, dsidep, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterfort/plasbe.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 integer :: imate, ndim, kpg, ksp, codret, icomp, nvi
 real(kind=8) :: crit(*), angmas(*)
 real(kind=8) :: instam, instap
@@ -39,7 +43,8 @@ character(len=8) :: typmod(*)
 character(len=*) :: fami
 aster_logical, intent(in) :: l_epsi_varc
 !
-    call plasbe(fami, kpg, ksp, typmod, imate, l_epsi_varc,&
+    call plasbe(BEHinteg,&
+                fami, kpg, ksp, typmod, imate, l_epsi_varc,&
                 crit, epsm, deps, sigm, vim,&
                 option, sigp, vip, dsidep,&
                 icomp, nvi, codret)

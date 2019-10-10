@@ -163,7 +163,7 @@ implicit none
 #include "asterfort/lcRestoreStrain.h"
 #include "asterfort/assert.h"
 !
-type(Behaviour_Integ) :: BEHinteg
+type(Behaviour_Integ), intent(inout) :: BEHinteg
 integer :: imate, ndim, nvi, kpg, ksp
 aster_logical, intent(in) :: l_epsi_varc
 integer :: neps, nsig, ndsde
@@ -189,7 +189,7 @@ integer :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  BEHinteg       : parameters for integration of behaviour
+! IO  BEHinteg         : parameters for integration of behaviour
 ! IN  FAMI,KPG,KSP  : FAMILLE ET NUMERO DU (SOUS)POINT DE GAUSS
 !     NDIM    : DIMENSION DE L'ESPACE
 !               3 : 3D , 2 : D_PLAN ,AXIS OU  C_PLAN
@@ -277,7 +277,11 @@ integer :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call behaviourPrepExteGauss(carcri, fami, kpg, ksp, imate)
+
+!
+! - Prepare external state variables - For gauss point
+!
+    call behaviourPrepExteGauss(carcri, fami, kpg, ksp, imate, BEHinteg)
 !
 ! - Compute mechanical strain with PTOT external state variable
 !
@@ -306,11 +310,12 @@ integer :: codret
         if (.not. l_large_strains) then
 !
 !       * Compute "thermic" strains for some external state variables
-            call lcExternalStateVariable(carcri, compor, instap, &
-                                         fami  , kpg   , ksp   , imate, &
-                                         neps  , epsth , depsth, &
-                                         temp  , dtemp  , &
-                                         predef, dpred )
+            call lcExternalStateVariable(BEHinteg,&
+                                         carcri  , compor, instap, &
+                                         fami    , kpg   , ksp   , imate, &
+                                         neps    , epsth , depsth, &
+                                         temp    , dtemp , &
+                                         predef  , dpred )
 !
 !       * Subtract to get mechanical strain
 !       (epsm and deps become mechanical strains)
@@ -828,7 +833,8 @@ integer :: codret
                     nvi, dsidep, codret)
     case (120)
 !     BETON_DOUBLE_DP
-        call lc0120(fami, kpg, ksp, ndim, imate, l_epsi_varc,&
+        call lc0120(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate, l_epsi_varc,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&

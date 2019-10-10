@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lcmmro(omp, nvi, vind, vinf)
+subroutine lcmmro(BEHinteg, omp, nvi, vind, vinf)
 !
-use calcul_module, only : ca_vext_gradvelo_
+use Behaviour_type
 !
 implicit none
 !
@@ -28,6 +28,7 @@ implicit none
 
 !     Stockage variables internes rotation reseau
 !     ----------------------------------------------------------------
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     integer :: i, j, nvi, k
     real(kind=8) :: omp(3), dtheta, iden(3, 3), nax(3, 3), q(3, 3)
     real(kind=8) :: omegap(3, 3), omegae(3, 3), omega(3, 3), dq(3, 3)
@@ -43,7 +44,7 @@ implicit none
 !
     do i = 1, 3
         do j = 1, 3
-            l(i,j)=ca_vext_gradvelo_(3*(i-1)+j)
+            l(i,j)=BEHinteg%elem%gradvelo(3*(i-1)+j)
         end do
     end do
     do i = 1, 3

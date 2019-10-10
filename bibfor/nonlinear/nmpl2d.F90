@@ -98,7 +98,6 @@ aster_logical :: matsym
     integer :: kpg, kk, kkd, n, i, m, j, j1, kl
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
     real(kind=8) :: poids, tmp, sig(6)
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
@@ -115,7 +114,7 @@ aster_logical :: matsym
     call behaviourPrepExteElem(carcri    , typmod    ,&
                                nno       , npg       , ndim ,&
                                ipoids    , ivf       , idfde,&
-                               geom      , coorga    ,&
+                               geom      , BEHinteg  ,&
                                zr(ideplm), zr(ideplp))
 !
 ! - INITIALISATION CODES RETOURS
@@ -172,7 +171,7 @@ aster_logical :: matsym
 !
 !
 ! - LOI DE COMPORTEMENT
-        BEHinteg%elga%coorpg = coorga(kpg,:)
+!
         call nmcomp(BEHinteg,&
                     fami, kpg, 1, 2, typmod,&
                     imate, compor, carcri, instam, instap,&

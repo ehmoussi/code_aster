@@ -117,7 +117,6 @@ integer, intent(inout) :: codret
     integer :: cod(9)
     real(kind=8) :: dfdi(nno,2), pff(4,nno,nno), def(4,nno,2)
     character(len=16) :: rela_comp
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
@@ -143,7 +142,7 @@ integer, intent(inout) :: codret
     call behaviourPrepExteElem(carcri   , typmod   ,&
                                nno      , npg      , ndim ,&
                                ipoids   , ivf      , idfde,&
-                               geom_init, coorga   ,&
+                               geom_init, BEHinteg ,&
                                disp_prev, disp_incr)
 !
 ! - Only isotropic material !
@@ -158,7 +157,6 @@ integer, intent(inout) :: codret
 !
     do kpg = 1, npg
 !
-        BEHinteg%elga%coorpg = coorga(kpg,:)
         epsg_prev(1:6) = 0.d0
         epsg_incr(1:6) = 0.d0
         epsg_curr(1:6) = 0.d0

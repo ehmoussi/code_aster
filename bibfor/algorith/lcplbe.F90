@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,12 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1501
 !
-subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
+subroutine lcplbe(BEHinteg,&
+                  toler, itmax, nmat, materf, nvi,&
                   vind, sigf, vinf, nseuil,&
                   irteti)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -66,7 +69,7 @@ implicit none
 !       OUT VINF   :  VARIABLES INTERNES A T+DT
 !           IRTETI = 1:  CONTROLE DU REDECOUPAGE DU PAS DE TEMPS
 !       ----------------------------------------------------------------
-
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     integer :: nmat, nseuil
 !
     integer :: itmax, nprojs, nessai, osci
@@ -124,7 +127,8 @@ implicit none
 !
     pc = vind(1)
     pt = vind(2)
-    call betfpp(materf, nmat, pc, pt,&
+    call betfpp(BEHinteg,&
+                materf, nmat, pc, pt,&
                 3, fc0, ft0, dfcdlc, dftdlt,&
                 kuc, kut, ke)
 !
@@ -162,7 +166,8 @@ implicit none
 !
             pc = vind(1)
             pt = vind(2)
-            call betfpp(materf, nmat, pc, pt,&
+            call betfpp(BEHinteg,&
+                        materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -223,7 +228,8 @@ implicit none
 !
             pc = vind(1) + dpc
             pt = vind(2) + dpt
-            call betfpp(materf, nmat, pc, pt,&
+            call betfpp(BEHinteg,&
+                        materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -334,7 +340,8 @@ implicit none
 !
             pc = vind(1)
             pt = vind(2)
-            call betfpp(materf, nmat, pc, pt,&
+            call betfpp(BEHinteg,&
+                        materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -389,7 +396,8 @@ implicit none
 !
             pc = vind(1) + dpc
             pt = vind(2) + dpt
-            call betfpp(materf, nmat, pc, pt,&
+            call betfpp(BEHinteg,&
+                        materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -497,7 +505,8 @@ implicit none
 !
             pc = vind(1)
             pt = vind(2)
-            call betfpp(materf, nmat, pc, pt,&
+            call betfpp(BEHinteg,&
+                        materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -559,7 +568,8 @@ implicit none
 !
             pc = vind(1) + dpc
             pt = vind(2) + dpt
-            call betfpp(materf, nmat, pc, pt,&
+            call betfpp(BEHinteg,&
+                        materf, nmat, pc, pt,&
                         nessai, fc, ft, dfcdlc, dftdlt,&
                         kuc, kut, ke)
 !
@@ -662,7 +672,8 @@ implicit none
         ftrac1 = zero
         pc = vind(1)
         pt = vind(2)
-        call betfpp(materf, nmat, pc, pt,&
+        call betfpp(BEHinteg,&
+                    materf, nmat, pc, pt,&
                     nseuil, fc, ft, dfcdlc, dftdlt,&
                     kuc, kut, ke)
 !
@@ -771,7 +782,8 @@ implicit none
 !
         pc = vind(1) + dpc
         pt = vind(2) + dpt
-        call betfpp(materf, nmat, pc, pt,&
+        call betfpp(BEHinteg,&
+                    materf, nmat, pc, pt,&
                     nseuil, fc, ft, dfcdlc, dftdlt,&
                     kuc, kut, ke)
 !

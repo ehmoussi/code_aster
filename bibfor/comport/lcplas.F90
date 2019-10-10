@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lcplas(fami, kpg, ksp, loi, toler,&
+! aslint: disable=W1504
+!
+subroutine lcplas(BEHinteg,&
+                  fami, kpg, ksp, loi, toler,&
                   itmax, mod, imat, nmat, materd,&
                   materf, nr, nvi, timed, timef,&
                   deps, epsd, sigd, vind, sigf,&
@@ -24,8 +26,12 @@ subroutine lcplas(fami, kpg, ksp, loi, toler,&
                   nfs, nsg, toutms, hsr, icomp,&
                   codret, theta, vp, vecp, seuil,&
                   devg, devgii, drdy, crit)
-! aslint: disable=W1504
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
+type(Behaviour_Integ), intent(in) :: BEHinteg
 !     INTEGRATION IMPLICITE DES COMPORTEMENTS. CALCUL DE SIGF,VINF,DSDE
 !     ----------------------------------------------------------------
 !     ARGUMENTS
@@ -107,8 +113,7 @@ subroutine lcplas(fami, kpg, ksp, loi, toler,&
                     deltat, sigf, vinf, irtet)
         if (irtet .gt. 0) goto 1
 !
-        elseif (( loi(1:10) .eq. 'HOEK_BROWN' ).or. ( loi(1:14) .eq.&
-    'HOEK_BROWN_EFF' ))then
+    elseif (( loi(1:10) .eq. 'HOEK_BROWN' ).or. ( loi(1:14) .eq. 'HOEK_BROWN_EFF' ))then
         call lchobr(toler, itmax, mod, nmat, materf,&
                     nr, nvi, deps, sigd, vind,&
                     seuil, vp, vecp, icomp, sigf,&
@@ -126,7 +131,8 @@ subroutine lcplas(fami, kpg, ksp, loi, toler,&
 !       CAS GENERAL : RESOLUTION PAR NEWTON
 !       ----------------------------------------------------------------
     else
-        call lcplnl(fami, kpg, ksp, loi, toler,&
+        call lcplnl(BEHinteg,&
+                    fami, kpg, ksp, loi, toler,&
                     itmax, mod, imat, nmat, materd,&
                     materf, nr, nvi, timed, timef,&
                     deps, epsd, sigd, vind, comp,&

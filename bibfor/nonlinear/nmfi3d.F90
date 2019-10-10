@@ -137,7 +137,7 @@ implicit none
             sigmo(n) = sigm(n,kpg)
         end do
 !
-        BEHinteg%elga%coorpg = coopg(1:3,kpg)
+        BEHinteg%elem%coor_elga(kpg,1:3) = coopg(1:3,kpg)
 !
         call nmcomp(BEHinteg,&
                     'RIGI', kpg, 1, 3, typmod,&

@@ -100,7 +100,6 @@ use Behaviour_module
     real(kind=8) :: tx(3), ty(3)
     real(kind=8) :: sig11(3), sig22(3), sig12(3)
     real(kind=8) :: e, nu, rho, valres(3)
-    real(kind=8) :: coorga(27,3)
     integer, parameter :: nb_para = 3
     real(kind=8) :: para_vale(nb_para)
     character(len=16), parameter :: para_name(nb_para) = (/'X', 'Y', 'Z'/)
@@ -202,8 +201,7 @@ use Behaviour_module
     call jevech('PPRESS', 'L', iref2)
     call elrefe_info(fami='FPG1', jvf=ivf2)
     call prepCoorGauss(nno , 1        , ndim  ,&
-                       ivf2, zr(igeom), coorga)
-    BEHinteg%elga%coorpg = coorga(1,:)
+                       ivf2, zr(igeom), BEHinteg)
 !
 ! 1.7. --- MATERIAU SI BESOIN
 !
@@ -223,7 +221,7 @@ use Behaviour_module
             nompar(nbpar) = 'RHO'
         endif
 !
-        para_vale(:) = BEHinteg%elga%coorpg
+        para_vale(:) = BEHinteg%elem%coor_elga(1,:)
         call rcvalb('FPG1', 1, 1, '+', zi(imate),&
                     ' ', phenom, nb_para, para_name, para_vale, &
                     nbpar, nompar, valres, icodre, 1)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
+    subroutine pipepe(BEHinteg,&
+                      pilo, ndim, nno, npg, ipoids,&
                       ivf, idfde, geom, typmod, mate,&
                       compor, lgpg, deplm, sigm, vim,&
                       ddepl, depl0, depl1, copilo,&
                       iborne, ictau)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         integer :: lgpg
         integer :: npg
         integer :: ndim

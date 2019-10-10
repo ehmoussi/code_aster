@@ -18,10 +18,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine plasbe(fami, kpg, ksp, typmod, imat, l_epsi_varc,&
+    subroutine plasbe(BEHinteg,&
+                      fami, kpg, ksp, typmod, imat, l_epsi_varc,&
                       crit, epsdt, depst, sigd, vind,&
                       opt, sigf, vinf, dsde,&
                       icomp, nvi, irteti)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         aster_logical, intent(in) :: l_epsi_varc
         character(len=*) :: fami
         integer :: kpg
