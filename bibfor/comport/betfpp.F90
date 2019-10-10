@@ -16,13 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine betfpp(materf, nmat, pc, pt,&
+subroutine betfpp(BEHinteg,&
+                  materf, nmat, pc, pt,&
                   nseuil, fc, ft, dfcdlc, dftdlt,&
                   kuc, kut, ke)
 !
-use calcul_module, only : ca_vext_eltsize1_
+use Behaviour_type
 !
 implicit none
+!
 !       BETON_DOUBLE_DP: CONVEXE ELASTO PLASTIQUE POUR (MATER,SIG,P1,P2)
 !                   AVEC UN SEUIL EN COMPRESSION ET UN SEUIL EN TRACTION
 !       CALCUL DES VALEURS DES COURBES D'ADOUCISSEMENT ET DES DERIVES
@@ -52,6 +54,7 @@ implicit none
     parameter       ( zero  = 0.d0   )
     parameter       ( d13   =  .33333333333333d0 )
 !
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     integer :: nmat, nseuil
     real(kind=8) :: materf(nmat, 2)
     real(kind=8) :: pc, pt, dfcdlc, dftdlt, kuc, kut
@@ -90,7 +93,7 @@ implicit none
 ! --- LONGUEUR CARACTERISTIQUE POUR LOI BETON LC
 !
     if (materf(9,2) .lt. zero) then
-        lc = ca_vext_eltsize1_
+        lc = BEHinteg%elem%eltsize1
     else
         lc = materf(9,2)
     endif

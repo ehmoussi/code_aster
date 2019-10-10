@@ -51,8 +51,13 @@ character(len=16), intent(in) :: option, nomte
     integer :: jgano, ndim, nno, nnos, npg, lgpg, jtab(7), itype
     integer :: ipoids, ivf, idfde, igeom, imate, icarcr
     integer :: icontm, ivarim, icopil, iborne, ictau
-    real(kind=8) :: coorga(27,3)
     integer :: ideplm, iddepl, idepl0, idepl1, icompo, iret
+    type(Behaviour_Integ) :: BEHinteg
+
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - TYPE DE MODELISATION
 !
@@ -108,10 +113,10 @@ character(len=16), intent(in) :: option, nomte
 ! - Prepare external state variables
 !
     if (rela_comp .eq. 'BETON_DOUBLE_DP') then
-        call behaviourPrepExteElem(zr(icarcr), typmod,&
-                                   nno       , npg   , ndim ,&
-                                   ipoids    , ivf   , idfde,&
-                                   zr(igeom) , coorga)
+        call behaviourPrepExteElem(zr(icarcr), typmod  ,&
+                                   nno       , npg     , ndim ,&
+                                   ipoids    , ivf     , idfde,&
+                                   zr(igeom) , BEHinteg)
     endif
 !
 ! PARAMETRES EN SORTIE
@@ -124,7 +129,8 @@ character(len=16), intent(in) :: option, nomte
                     zr(ivarim), zr(iddepl), zr(idepl0), zr(idepl1),&
                     zr(ictau), zr(icopil))
     else
-        call pipepe(pilo, ndim, nno, npg, ipoids,&
+        call pipepe(BEHinteg,&
+                    pilo, ndim, nno, npg, ipoids,&
                     ivf, idfde, zr( igeom), typmod, zi(imate),&
                     zk16(icompo), lgpg, zr(ideplm), zr( icontm), zr(ivarim),&
                     zr(iddepl), zr(idepl0), zr(idepl1), zr( icopil),&

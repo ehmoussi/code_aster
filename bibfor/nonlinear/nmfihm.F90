@@ -161,7 +161,7 @@ implicit none
 !       COOROT : COORDONNEES DU PG + MATRICE DE ROTATION
 !       (MATRICE UTILE POUR LES VI DE POST-TRAITEMENT DANS LA LDC)
         do j = 1, ndim
-            BEHinteg%elga%coorpg(j)=coopg(j,kpg)
+            BEHinteg%elem%coor_elga(kpg,j) = coopg(j,kpg)
         enddo
         do j = 1, ndim*ndim
             BEHinteg%elga%rotpg(j)=rot(j)

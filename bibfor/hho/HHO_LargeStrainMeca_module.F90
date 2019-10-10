@@ -213,7 +213,6 @@ contains
         do ipg = 1, hhoQuadCellRigi%nbQuadPoints
             coorpg(1:3) = hhoQuadCellRigi%points(1:3,ipg)
             weight = hhoQuadCellRigi%weights(ipg)
-            BEHinteg%elga%coorpg(1:3) = coorpg(1:3)
            !print*, ipg, "qp", coorpg(1:3), weight
 !
 ! --------- Eval basis function at the quadrature point

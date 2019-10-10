@@ -132,7 +132,7 @@ implicit none
 !
         code(kpg) = 0
 !
-        BEHinteg%elga%coorpg(1:2) = coopg(1:2,kpg)
+        BEHinteg%elem%coor_elga(kpg,1:2) = coopg(1:2,kpg)
 !
         call nmcomp(BEHinteg,&
                     'RIGI', kpg, 1, 2, typmod,&

@@ -289,7 +289,8 @@ character(len=16), optional, intent(in) :: mult_compor_
 ! --        PREDICTION INCORRECTE > INTEGRATION ELASTO-PLASTIQUE SUR DT
             etatf = 'PLASTIC'
 !
-            call lcplas(fami, kpg, ksp, rela_compor, toler,&
+            call lcplas(BEHinteg,&
+                        fami, kpg, ksp, rela_compor, toler,&
                         itmax, mod, imate, nmat, materd,&
                         materf, nr, nvi, instam, instap,&
                         deps, epsd, sigm, vim, sigp,&

@@ -111,7 +111,6 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     real(kind=8) :: def(6, nnop, ndim*(1+nfh+nfe*ndim)), r
     real(kind=8) :: fk(27,3,3), dkdgl(27,3,3,3), ka, mu
     aster_logical :: grdepl, axi, cplan
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
     integer :: indi(6), indj(6)
@@ -151,10 +150,10 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExteElem(carcri   , typmod,&
-                               nno      , npg   , ndim ,&
-                               ipoids   , ivf   , idfde,&
-                               zr(igeom), coorga)
+    call behaviourPrepExteElem(carcri   , typmod  ,&
+                               nno      , npg     , ndim ,&
+                               ipoids   , ivf     , idfde,&
+                               zr(igeom), BEHinteg)
 !
     do n = 1, nnop
         call indent(n, ddls, ddlm, nnops, dec(n))
@@ -345,7 +344,6 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
             sign(m) = sigm(m,kpg)*rac2
         end do
 !
-        BEHinteg%elga%coorpg = coorga(kpg,:)
         call r8inir(6, 0.0d0, sigma, 1)
         call nmcomp(BEHinteg,&
                     'XFEM', idecpg+kpg, 1, ndim, typmod,&

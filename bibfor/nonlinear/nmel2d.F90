@@ -83,7 +83,6 @@ real(kind=8) :: matuu(*)
     aster_logical :: grdepl, axi, cplan
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), r, sigma(6), ftf, detf
     real(kind=8) :: poids, tmp1, tmp2, sigp(6)
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
@@ -105,10 +104,10 @@ real(kind=8) :: matuu(*)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExteElem(crit  , typmod,&
-                               nno   , npg   , ndim ,&
-                               ipoids, ivf   , idfde,&
-                               geom  , coorga)
+    call behaviourPrepExteElem(crit  , typmod  ,&
+                               nno   , npg     , ndim ,&
+                               ipoids, ivf     , idfde,&
+                               geom  , BEHinteg)
 !
 ! - CALCUL POUR CHAQUE POINT DE GAUSS
 !
@@ -159,7 +158,6 @@ real(kind=8) :: matuu(*)
 !
 ! - LOI DE COMPORTEMENT : S(E) ET DS/DE
 !
-        BEHinteg%elga%coorpg = coorga(kpg,:)
         call nmcpel(BEHinteg,&
                     fami, kpg, 1, poum, 2,&
                     typmod, angmas, imate, compor, crit,&

@@ -20,9 +20,7 @@
 module Behaviour_module
 ! ==================================================================================================
 use Behaviour_type
-use calcul_module, only : ca_jvcnom_, ca_nbcvrc_,&
-                          ca_vext_eltsize1_, ca_vext_eltsize2_,&
-                          ca_vext_gradvelo_, ca_vext_hygrm_, ca_vext_hygrp_
+use calcul_module, only : ca_jvcnom_, ca_nbcvrc_
 ! ==================================================================================================
 implicit none
 ! ==================================================================================================
@@ -67,11 +65,13 @@ subroutine behaviourInit(BEHinteg)
 ! - Parameters
     type(Behaviour_Integ), intent(out) :: BEHinteg
 !   ------------------------------------------------------------------------------------------------
-    if (LDC_PREP_DEBUG .eq. 1) then
-        WRITE(6,*) '<DEBUG> Initialization of datastructures'
-    endif
-    BEHinteg%elga%coorpg = r8nnem()
+    BEHinteg%elga%hygr_prev = r8nnem()
+    BEHinteg%elga%hygr_curr = r8nnem()
     call varcIsGEOM(BEHinteg%l_varext_geom)
+    BEHinteg%elem%coor_elga = r8nnem()
+    BEHinteg%elem%eltsize1  = r8nnem()
+    BEHinteg%elem%eltsize2  = r8nnem()
+    BEHinteg%elem%gradvelo  = r8nnem()
 !   ------------------------------------------------------------------------------------------------
 end subroutine
 ! --------------------------------------------------------------------------------------------------
@@ -89,15 +89,15 @@ end subroutine
 ! In  jv_func          : JEVEUX adress for shape functions
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
 ! In  geom             : initial coordinates of nodes
+! IO  BEHinteg         : parameters for integration of behaviour
 ! In  deplm            : displacements of nodes at beginning of time step
 ! In  ddepl            : displacements of nodes since beginning of time step
-! Out coorga           : coordinates of all integration points
 !
 ! --------------------------------------------------------------------------------------------------
 subroutine behaviourPrepExteElem(carcri  , typmod ,&
                                  nno     , npg    , ndim    ,&
                                  jv_poids, jv_func, jv_dfunc,&
-                                 geom    , coorga ,&
+                                 geom    , BEHinteg,&
                                  deplm_  , ddepl_)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
@@ -106,13 +106,12 @@ subroutine behaviourPrepExteElem(carcri  , typmod ,&
     integer, intent(in) :: nno, npg, ndim
     integer, intent(in) :: jv_poids, jv_func, jv_dfunc
     real(kind=8), intent(in) :: geom(ndim, nno)
-    real(kind=8), intent(out) :: coorga(27,3)
+    type(Behaviour_Integ), intent(inout) :: BEHinteg
     real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
 ! - Local
     integer :: jvariext1, jvariext2
     integer :: tabcod(60), variextecode(2)
 !   ------------------------------------------------------------------------------------------------
-    coorga = r8nnem()
 !
     jvariext1 = nint(carcri(IVARIEXT1))
     jvariext2 = nint(carcri(IVARIEXT2))
@@ -126,7 +125,7 @@ subroutine behaviourPrepExteElem(carcri  , typmod ,&
     if (tabcod(ELTSIZE1) .eq. 1) then
         call prepEltSize1(nno     , npg    , ndim    ,&
                           jv_poids, jv_func, jv_dfunc,&
-                          geom    , typmod )
+                          geom    , typmod , BEHinteg)
     endif
 !
 ! - Element size 2
@@ -134,7 +133,7 @@ subroutine behaviourPrepExteElem(carcri  , typmod ,&
     if (tabcod(ELTSIZE2) .eq. 1) then
         call prepEltSize2(nno     , npg   , ndim,&
                           jv_dfunc,&
-                          geom    , typmod)
+                          geom    , typmod, BEHinteg)
     endif
 !
 ! - Gradient of velocity
@@ -145,20 +144,14 @@ subroutine behaviourPrepExteElem(carcri  , typmod ,&
         endif
         call prepGradVelo(nno     , npg    , ndim    ,&
                           jv_poids, jv_func, jv_dfunc,&
-                          geom    , deplm_ , ddepl_ )
+                          geom    , deplm_ , ddepl_  ,&
+                          BEHinteg)
     endif
 !
 ! - Coordinates of Gauss points
 !
-    call prepCoorGauss(nno    , npg   , ndim  ,&
-                       jv_func, &
-                       geom   , coorga)
-!
-! - Total pressure
-!
-    call prepCoorGauss(nno    , npg   , ndim  ,&
-                       jv_func, &
-                       geom   , coorga)
+    call prepCoorGauss(nno    , npg , ndim    ,&
+                       jv_func, geom, BEHinteg)
 !   ------------------------------------------------------------------------------------------------
 end subroutine
 ! --------------------------------------------------------------------------------------------------
@@ -172,14 +165,16 @@ end subroutine
 ! In  kpg              : current point gauss
 ! In  ksp              : current "sous-point" gauss
 ! In  imate            : coded material address
+! IO  BEHinteg         : parameters for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
-subroutine behaviourPrepExteGauss(carcri, fami, kpg, ksp, imate)
+subroutine behaviourPrepExteGauss(carcri, fami, kpg, ksp, imate, BEHinteg)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
     real(kind=8), intent(in) :: carcri(*)
     character(len=*), intent(in) :: fami
     integer, intent(in) :: kpg, ksp, imate
+    type(Behaviour_Integ), intent(inout) :: BEHinteg
 ! - Local
     integer :: jvariext1, jvariext2
     integer :: tabcod(60), variextecode(2)
@@ -192,7 +187,7 @@ subroutine behaviourPrepExteGauss(carcri, fami, kpg, ksp, imate)
     variextecode(2) = jvariext2
     call isdeco(variextecode, tabcod, 60)
     if (tabcod(HYGR) .eq. 1) then
-        call prepHygrometry(fami, kpg, ksp, imate)
+        call prepHygrometry(fami, kpg, ksp, imate, BEHinteg)
     endif
 !   ------------------------------------------------------------------------------------------------
 end subroutine
@@ -210,17 +205,19 @@ end subroutine
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
 ! In  typmod           : type of modelization (TYPMOD2)
 ! In  geom             : initial coordinates of nodes
+! IO  BEHinteg         : parameters for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
 subroutine prepEltSize1(nno     , npg    , ndim    ,&
                         jv_poids, jv_func, jv_dfunc,&
-                        geom    , typmod)
+                        geom    , typmod , BEHinteg)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
     integer, intent(in) :: nno, npg, ndim
     integer, intent(in) :: jv_poids, jv_func, jv_dfunc
     character(len=8), intent(in) :: typmod(2)
     real(kind=8), intent(in) :: geom(ndim, nno)
+    type(Behaviour_Integ), intent(inout) :: BEHinteg
 ! - Local
     aster_logical :: l_axi
     integer :: kpg, k, i
@@ -270,7 +267,7 @@ subroutine prepEltSize1(nno     , npg    , ndim    ,&
         ASSERT(ASTER_FALSE)
     endif
 !
-    ca_vext_eltsize1_ = lc
+    BEHinteg%elem%eltsize1 = lc
 !   ------------------------------------------------------------------------------------------------
 end subroutine
 ! --------------------------------------------------------------------------------------------------
@@ -285,17 +282,19 @@ end subroutine
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
 ! In  typmod2          : type of modelization (TYPMOD2)
 ! In  geom             : initial coordinates of nodes
+! IO  BEHinteg         : parameters for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
-subroutine prepEltSize2(nno     , npg   , ndim,&
-                        jv_dfunc,&
-                        geom    , typmod)
+subroutine prepEltSize2(nno     , npg , ndim  ,&
+                        jv_dfunc, geom, typmod,&
+                        BEHinteg)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
     integer, intent(in) :: nno, npg, ndim
     integer, intent(in) :: jv_dfunc
     character(len=8), intent(in) :: typmod(2)
     real(kind=8), intent(in) :: geom(ndim, nno)
+    type(Behaviour_Integ), intent(inout) :: BEHinteg
 ! - Local
     integer :: kpg, i, j, k, jj, iret
     real(kind=8) :: l(3, 3)
@@ -329,12 +328,12 @@ subroutine prepEltSize2(nno     , npg   , ndim,&
                         3, det, iret)
             do i = 1, 3
                 do j = 1, 3
-                    ca_vext_eltsize2_(3*(i-1)+j)=inv(i,j)
+                    BEHinteg%elem%eltsize2(3*(i-1)+j)=inv(i,j)
                 end do
             end do
         end do
     else
-        ca_vext_eltsize2_(:) = r8vide()
+        BEHinteg%elem%eltsize2 = r8vide()
     endif
 !   ------------------------------------------------------------------------------------------------
 end subroutine
@@ -353,17 +352,20 @@ end subroutine
 ! In  geom             : initial coordinates of nodes
 ! In  deplm            : displacements of nodes at beginning of time step
 ! In  ddepl            : displacements of nodes since beginning of time step
+! IO  BEHinteg         : parameters for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
 subroutine prepGradVelo(nno     , npg    , ndim    ,&
                         jv_poids, jv_func, jv_dfunc,&
-                        geom    , deplm  , ddepl   )
+                        geom    , deplm  , ddepl   ,&
+                        BEHinteg)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
     integer, intent(in) :: nno, npg, ndim
     integer, intent(in) :: jv_poids, jv_func, jv_dfunc
     real(kind=8), intent(in) :: geom(ndim, nno)
     real(kind=8), intent(in) :: deplm(ndim, nno), ddepl(ndim, nno)
+    type(Behaviour_Integ), intent(inout) :: BEHinteg
 ! - Local
     integer :: nddl, kpg, i, j
     real(kind=8) :: l(3, 3), fmm(3, 3), df(3, 3), f(3, 3), r8bid, r
@@ -372,7 +374,7 @@ subroutine prepGradVelo(nno     , npg    , ndim    ,&
     real(kind=8), parameter :: id(9) =(/1.d0,0.d0,0.d0, 0.d0,1.d0,0.d0, 0.d0,0.d0,1.d0/)
 !   ------------------------------------------------------------------------------------------------
     nddl = ndim*nno
-    ca_vext_gradvelo_(:) = 0.d0
+    BEHinteg%elem%gradvelo = 0.d0
 !
     call dcopy(nddl, geom, 1, geomm, 1)
     call daxpy(nddl, 1.d0, deplm, 1, geomm, 1)
@@ -392,7 +394,7 @@ subroutine prepGradVelo(nno     , npg    , ndim    ,&
         call pmat(3, df, fmm, l)
         do i = 1, 3
             do j = 1, 3
-                ca_vext_gradvelo_(3*(i-1)+j)=l(i,j)
+                BEHinteg%elem%gradvelo(3*(i-1)+j) = l(i,j)
             end do
         end do
     end do
@@ -409,27 +411,28 @@ end subroutine
 ! In  ndim             : dimension of problem (2 or 3)
 ! In  jv_func          : JEVEUX adress for shape functions
 ! In  geom             : initial coordinates of nodes
-! Out coorga           : coordinates of all integration points
+! IO  BEHinteg         : parameters for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
-subroutine prepCoorGauss(nno    , npg , ndim  ,&
-                         jv_func, geom, coorga)
+subroutine prepCoorGauss(nno    , npg , ndim    ,&
+                         jv_func, geom, BEHinteg)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
     integer, intent(in) :: nno, npg, ndim
     integer, intent(in) :: jv_func
     real(kind=8), intent(in) :: geom(ndim, nno)
-    real(kind=8), intent(out) :: coorga(27,3)
+    type(Behaviour_Integ), intent(inout) :: BEHinteg
 ! - Local
     integer :: i, k, kpg
 !   ------------------------------------------------------------------------------------------------
-    coorga(:,:) = 0.d0
+    BEHinteg%elem%coor_elga = 0.d0
     ASSERT(npg .le. 27)
 !
     do kpg = 1, npg
         do i = 1, ndim
             do k = 1, nno
-                coorga(kpg, i) = coorga(kpg, i) + geom(i,k)*zr(jv_func-1+nno*(kpg-1)+k)
+                BEHinteg%elem%coor_elga(kpg, i) = BEHinteg%elem%coor_elga(kpg, i) +&
+                                                  geom(i,k)*zr(jv_func-1+nno*(kpg-1)+k)
             end do
         end do
     end do
@@ -445,13 +448,15 @@ end subroutine
 ! In  kpg              : current point gauss
 ! In  ksp              : current "sous-point" gauss
 ! In  imate            : coded material address
+! IO  BEHinteg         : parameters for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
-subroutine prepHygrometry(fami, kpg, ksp, imate)
+subroutine prepHygrometry(fami, kpg, ksp, imate, BEHinteg)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
     character(len=*), intent(in) :: fami
     integer, intent(in) :: kpg, ksp, imate
+    type(Behaviour_Integ), intent(inout) :: BEHinteg
 ! - Local
     integer           :: codret(1)
     real(kind=8)      :: valres(1)
@@ -462,7 +467,7 @@ subroutine prepHygrometry(fami, kpg, ksp, imate)
                 ' ', 'ELAS', 0, ' ', [0.d0],&
                 1, nomres, valres, codret, 0)
     if (codret(1) .eq. 0) then
-        ca_vext_hygrm_ = valres(1)
+        BEHinteg%elga%hygr_prev = valres(1)
     else
         call utmess('F', 'COMPOR2_94')
     endif
@@ -470,7 +475,7 @@ subroutine prepHygrometry(fami, kpg, ksp, imate)
                 ' ', 'ELAS', 0, ' ', [0.d0],&
                 1, nomres, valres, codret, 0)
     if (codret(1) .eq. 0) then
-        ca_vext_hygrp_ = valres(1)
+        BEHinteg%elga%hygr_curr = valres(1)
     else
         call utmess('F', 'COMPOR2_94')
     endif
@@ -493,7 +498,7 @@ subroutine varcIsGEOM(l_varext_geom)
     character(len=8), parameter :: varc_geom = 'X'
     integer :: varc_indx
 !   ------------------------------------------------------------------------------------------------
-    l_varext_geom = ASTER_FALSE
+   l_varext_geom = ASTER_FALSE
 !
 ! - Detect 'GEOM' external state variables
     if (ca_nbcvrc_ .eq. 0) then
@@ -501,10 +506,6 @@ subroutine varcIsGEOM(l_varext_geom)
     else
         varc_indx = indik8(zk8(ca_jvcnom_), varc_geom, 1, ca_nbcvrc_)
         l_varext_geom = varc_indx .ne. 0
-    endif
-!
-    if (LDC_PREP_DEBUG .eq. 1) then
-        WRITE(6,*) '<DEBUG> Detect GEOM in external state variables: ',l_varext_geom
     endif
 !   ------------------------------------------------------------------------------------------------
 end subroutine

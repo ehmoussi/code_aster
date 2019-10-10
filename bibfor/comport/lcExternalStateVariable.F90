@@ -16,11 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcExternalStateVariable(carcri, compor, time_curr,&
-                                   fami  , kpg   , ksp      , imate, &
-                                   neps  , epsth , depsth   , &
-                                   temp  , dtemp, &
-                                   predef, dpred )
+subroutine lcExternalStateVariable(BEHinteg,&
+                                   carcri  , compor, time_curr,&
+                                   fami    , kpg   , ksp      , imate, &
+                                   neps    , epsth , depsth   , &
+                                   temp    , dtemp, &
+                                   predef  , dpred )
+!
+use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -38,6 +42,7 @@ implicit none
 #include "asterfort/umatExternalStateVariable.h"
 #include "asterfort/testExternalBehaviour.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 real(kind=8), intent(in) :: carcri(*)
 character(len=16), intent(in) :: compor(*)
 real(kind=8), intent(in) :: time_curr
@@ -59,6 +64,7 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  BEHinteg         : parameters for integration of behaviour
 ! In  compor           : name of comportment definition (field)
 ! In  carcri           : parameters for comportment
 ! In  time_curr        : current step time
@@ -238,10 +244,11 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
 !     * For MFront
     if (l_mfront) then
         rela_comp = compor(RELA_NAME)
-        call mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
-                                         irets, ireth, &
-                                         sechm, sechp, hydrm, hydrp, time_curr,&
-                                         predef, dpred)
+        call mfrontExternalStateVariable(BEHinteg,&
+                                         carcri  , rela_comp, fami, kpg, ksp, &
+                                         irets   , ireth, &
+                                         sechm   , sechp, hydrm, hydrp, time_curr,&
+                                         predef  , dpred)
     endif
 !     * For UMAT
     if (l_umat) then

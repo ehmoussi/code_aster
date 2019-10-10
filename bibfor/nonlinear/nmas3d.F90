@@ -119,7 +119,6 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     integer :: icodre(1)
     character(len=16) :: nomres(2)
     character(len=16) :: optios
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
     data h/ 1.d0, 1.d0, -1.d0,-1.d0,-1.d0,-1.d0, 1.d0, 1.d0,&
      &        1.d0,-1.d0, -1.d0, 1.d0,-1.d0, 1.d0, 1.d0,-1.d0,&
@@ -147,10 +146,10 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExteElem(carcri, typmod,&
-                               nno   , nbpg1 , ndim ,&
-                               ipoids, ivf   , idfde,&
-                               geom  , coorga,&
+    call behaviourPrepExteElem(carcri, typmod  ,&
+                               nno   , nbpg1   , ndim ,&
+                               ipoids, ivf     , idfde,&
+                               geom  , BEHinteg,&
                                deplm , deplp)
 !
 ! - INITIALISATION CODES RETOURS
@@ -256,7 +255,6 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
         optios = option
     endif
 !
-    BEHinteg%elga%coorpg = coorga(kpg,:)
     call nmcomp(BEHinteg,&
                 fami, kpg, 1, 3, typmod,&
                 imate, compor, carcri, instam, instap,&

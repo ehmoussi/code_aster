@@ -79,7 +79,6 @@ real(kind=8) :: matuu(*), vectu(3, nno)
     aster_logical :: grdepl
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), r, sigma(6), ftf, detf
     real(kind=8) :: poids, tmp1, tmp2
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     integer, parameter :: ndim = 3
@@ -101,10 +100,10 @@ real(kind=8) :: matuu(*), vectu(3, nno)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExteElem(crit  , typmod,&
-                               nno   , npg   , ndim ,&
-                               ipoids, ivf   , idfde,&
-                               geom  , coorga)
+    call behaviourPrepExteElem(crit  , typmod  ,&
+                               nno   , npg     , ndim ,&
+                               ipoids, ivf     , idfde,&
+                               geom  , BEHinteg)
 !
     do kpg = 1, npg
 !
@@ -149,7 +148,6 @@ real(kind=8) :: matuu(*), vectu(3, nno)
 !
 ! - LOI DE COMPORTEMENT : S(E) ET DS/DE
 !
-        BEHinteg%elga%coorpg = coorga(kpg,:)
         call nmcpel(BEHinteg,&
                     fami, kpg, 1, poum, 3,&
                     typmod, angmas, imate, compor, crit,&

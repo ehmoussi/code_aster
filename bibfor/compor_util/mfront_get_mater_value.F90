@@ -86,7 +86,7 @@ real(kind=8), intent(out) :: props(*)
 !
 ! - Coordinates of current Gauss point
 !
-    para_vale = BEHinteg%elga%coorpg
+    para_vale = BEHinteg%elem%coor_elga(kpg,:)
 !
 ! - Get parameters
 !
