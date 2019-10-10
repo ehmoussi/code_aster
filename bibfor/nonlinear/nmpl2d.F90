@@ -25,6 +25,7 @@ subroutine nmpl2d(fami, nno, npg, ipoids, ivf,&
                   matuu, ivectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -34,7 +35,6 @@ implicit none
 #include "asterfort/crirup.h"
 #include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
 !

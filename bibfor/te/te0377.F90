@@ -19,7 +19,7 @@
 subroutine te0377(option, nomte)
 !
 use Behaviour_type
-! person_in_charge: josselin.delmas at edf.fr
+use Behaviour_module
 !
 !     BUT:
 !       CALCUL DE L'INDICATEUR D'ERREUR EN MECANIQUE 2D AVEC LA
@@ -40,7 +40,6 @@ use Behaviour_type
 #include "asterfort/dfdm2d.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/calcExternalStateVariable2.h"
 #include "asterfort/elref7.h"
 #include "asterfort/ermeb2.h"
@@ -416,8 +415,8 @@ use Behaviour_type
 !
         call jenuno(jexnum('&CATA.TM.NOMTM', tyv), typmav)
         if (niv .ge. 2) then
-            write(ifm,1003) ifa, zi(ivois+ifa), typmav
-            1003 format (i2,'-EME FACE DE NUMERO',i10,' ==> TYPMAV = ', a)
+            write(ifm,103) ifa, zi(ivois+ifa), typmav
+            103 format (i2,'-EME FACE DE NUMERO',i10,' ==> TYPMAV = ', a)
         endif
 !
 ! ----- CALCUL DE NORMALES, TANGENTES ET JACOBIENS AUX POINTS DE GAUSS

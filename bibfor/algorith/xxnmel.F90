@@ -27,6 +27,7 @@ subroutine xxnmel(poum, elrefp, elrese, ndim, coorse,&
                   nfiss, heavn, jstno)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -49,7 +50,6 @@ implicit none
 #include "asterfort/xcalc_heav.h"
 #include "asterfort/xcalc_code.h"
 #include "asterfort/xcalfev_wrap.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/xkamat.h"
 #include "asterfort/iimatu.h"
 #include "asterfort/xnbddl.h"

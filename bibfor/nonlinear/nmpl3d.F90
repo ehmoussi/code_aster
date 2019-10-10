@@ -25,6 +25,7 @@ subroutine nmpl3d(fami  , nno  , npg   , ipoids, ivf   ,&
                   matuu , vectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -35,7 +36,6 @@ implicit none
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 character(len=*), intent(in) :: fami
 integer, intent(in) :: nno, npg

@@ -30,9 +30,9 @@ subroutine te0239(option, nomte)
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
-!
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -43,7 +43,6 @@ implicit none
 #include "asterfort/effi.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/jevech.h"
 #include "asterfort/matdtd.h"
 #include "asterfort/mattge.h"

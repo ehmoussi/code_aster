@@ -30,6 +30,7 @@ use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
  
 use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -39,7 +40,6 @@ implicit none
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmepsi.h"
-#include "asterfort/behaviourInit.h"
 !
 aster_logical,intent(in)       :: matsym
 character(len=8),intent(in)    :: typmod(*)

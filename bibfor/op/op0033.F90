@@ -21,6 +21,7 @@ subroutine op0033()
 !
 use NonLin_Datastructure_type
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -60,7 +61,6 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vrcinp.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/nonlinDSConvergenceCreate.h"
 #include "asterfort/nonlinDSAlgoParaCreate.h"
 #include "asterfort/Behaviour_type.h"

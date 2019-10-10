@@ -26,6 +26,7 @@ subroutine xxnmgr(elrefp, elrese, ndim, coorse, igeom,&
                   sigp, vi, matuu, ivectu, codret, jstno)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -35,7 +36,6 @@ implicit none
 #include "asterfort/dfdm2d.h"
 #include "asterfort/dfdm3d.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/indent.h"
 #include "asterfort/lcegeo.h"
 #include "asterfort/matinv.h"

@@ -30,6 +30,7 @@ subroutine nmgr2d(option   , typmod    ,&
                   codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -40,7 +41,6 @@ implicit none
 #include "asterfort/lcdetf.h"
 #include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/nmgrtg.h"
 #include "asterfort/pk2sig.h"

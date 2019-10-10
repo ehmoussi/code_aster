@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
+!
 subroutine nmel3d(fami, poum, nno, npg, ipoids,&
                   ivf, idfde, geom, typmod, option,&
                   imate, compor, lgpg, crit, depl,&
@@ -23,9 +24,9 @@ subroutine nmel3d(fami, poum, nno, npg, ipoids,&
                   vi, matuu, vectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
-!
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -33,7 +34,6 @@ implicit none
 #include "asterfort/nmgeom.h"
 #include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
 character(len=8) :: typmod(*)

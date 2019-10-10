@@ -23,6 +23,7 @@ subroutine nmfi2d(npg, lgpg, mate, option, geom,&
                   crit, compor, typmod, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -31,7 +32,6 @@ implicit none
 #include "asterc/r8vide.h"
 #include "asterfort/codere.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/gedisc.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmfisa.h"
@@ -103,7 +103,7 @@ implicit none
     call gedisc(2, nno, npg, zr(ivf), geom,&
                 coopg)
 !
-    do 11 kpg = 1, npg
+    do kpg = 1, npg
 !
 ! CALCUL DE LA MATRICE B DONNANT LES SAUT PAR ELEMENTS A PARTIR DES
 ! DEPLACEMENTS AUX NOEUDS , AINSI QUE LE POIDS DES PG :
@@ -115,15 +115,15 @@ implicit none
 !
         call r8inir(2, 0.d0, sum, 1)
         call r8inir(2, 0.d0, dsu, 1)
-        do 10 j = 1, 8
+        do j = 1, 8
             sum(1) = sum(1) + b(1,j)*deplm(j)
             sum(2) = sum(2) + b(2,j)*deplm(j)
- 10     continue
+        end do
         if (resi) then
-            do 13 j = 1, 8
+            do j = 1, 8
                 dsu(1) = dsu(1) + b(1,j)*ddepl(j)
                 dsu(2) = dsu(2) + b(2,j)*ddepl(j)
- 13         continue
+            end do
         endif
 !
 ! -   APPEL A LA LOI DE COMPORTEMENT
@@ -146,11 +146,11 @@ implicit none
 !
         if (resi) then
 !
-            do 20 i = 1, 8
-                do 40 q = 1, 2
+            do i = 1, 8
+                do q = 1, 2
                     fint(i) = fint(i) + poids*b(q,i)*sigma(q,kpg)
- 40             continue
- 20         continue
+                end do
+            end do
 !
         endif
 !
@@ -159,19 +159,19 @@ implicit none
 !
         if (rigi) then
 !
-            do 50 i = 1, 8
-                do 52 j = 1, 8
-                    do 60 q = 1, 2
-                        do 62 s = 1, 2
+            do i = 1, 8
+                do j = 1, 8
+                    do q = 1, 2
+                        do s = 1, 2
                             ktan(i,j) = ktan(i,j)+ poids*b(q,i)* dsidep(q,s)*b(s,j)
- 62                     continue
- 60                 continue
- 52             continue
- 50         continue
+                        end do
+                    end do
+                end do
+            end do
 !
         endif
 !
- 11 end do
+    end do
 !
     if (resi) call codere(code, npg, codret)
 end subroutine

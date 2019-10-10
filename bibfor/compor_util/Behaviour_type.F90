@@ -26,13 +26,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Behaviour - Define types
+! Behaviour: types for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
-!
-! - Type: for integration point parameters
+! - Behaviour - Integration - Parameters on current Gauss point
 !
     type Behaviour_Elga
 ! ----- Coordinates of current Gauss point
@@ -48,16 +46,22 @@ implicit none
 ! ----- For CZM_*_MIX behaviours : Lagrange penalty coefficient
         real(kind=8) :: r = 0.d0
     end type Behaviour_Elga
-
 !
-! - Type: for integration of behaviour
+! - Behaviour - Integration
 !
     type Behaviour_Integ
-! ----- Integration point parameters
+! ----- Parameters on Gauss point
         type(Behaviour_Elga)  :: elga
 ! ----- Flag when GEOM external state variable is present
         aster_logical         :: l_varext_geom = ASTER_FALSE
     end type Behaviour_Integ
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Behaviour: types for preparation of behaviour (maps COMPOR and CARCRI)
+!
+! --------------------------------------------------------------------------------------------------
+!
 !
 ! - Type: for external comportement
 !

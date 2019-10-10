@@ -20,6 +20,7 @@ subroutine vdxnlr(option, nomte, xi, rig, nb1,&
                   codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -27,7 +28,6 @@ implicit none
 #include "jeveux.h"
 #include "asterc/r8vide.h"
 #include "asterfort/btdfn.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/btdmsn.h"
 #include "asterfort/btdmsr.h"
 #include "asterfort/btkb.h"

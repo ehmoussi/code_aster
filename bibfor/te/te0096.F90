@@ -31,9 +31,9 @@ subroutine te0096(option, nomte)
 !
 ! ----------------------------------------------------------------------
 ! CORPS DU PROGRAMME
-! aslint: disable=W1501
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -55,7 +55,6 @@ implicit none
 #include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/tecach.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/utmess.h"
 !
     character(len=16) :: option, nomte
@@ -141,14 +140,14 @@ implicit none
 !
 ! TEST SUR LA NULLITE DE THETA_FISSURE
     compt = 0
-    do 3 i = 1, nno
+    do i = 1, nno
         thet = 0.d0
-        do 2 j = 1, ndim
+        do j = 1, ndim
             thet = thet + abs(zr(ithet+ndim*(i-1)+j-1))
-  2     continue
+        end do
         if (thet .lt. epsi) compt = compt+1
-  3  continue
-    if (compt .eq. nno) goto 9999
+    end do
+    if (compt .eq. nno) goto 999
 !
 ! =====================================================================
 ! RECUPERATION DES CHAMPS LOCAUX
@@ -159,9 +158,9 @@ implicit none
     call jevech('PMATERC', 'L', imate)
     call jevech('PCOMPOR', 'L', icomp)
     matcod = zi(imate)
-    do 10 i = 1, 4
+    do i = 1, 4
         compor(i)= zk16(icomp+i-1)
- 10  continue
+    end do
 !
 ! RECUPERATION DU CHAMP LOCAL (CARTE) ASSOCIE AU PRE-EPSI
 ! CE CHAMP EST ISSU D UN CHARGEMENT PRE-EPSI
@@ -198,9 +197,9 @@ implicit none
         call tecach('ONO', 'PACCELE', 'L', iret, iad=iaccel)
     endif
 !
-    do 20 i = 1, ncmp*nno
+    do i = 1, ncmp*nno
         epsino(i) = 0.d0
- 20  continue
+    end do
 !
 ! =====================================================================
 ! MESSAGES D'ERREURS
@@ -215,42 +214,42 @@ implicit none
 ! RECUPERATION DES CHARGES ET PRE-DEFORMATIONS (CHARGEMENT PRE-EPSI)
 ! =====================================================================
     if (fonc) then
-        do 50 i = 1, nno
+        do i = 1, nno
             i1 = i-1
             ij = igeom+ndim*i1-1
-            do 30 j = 1, ndim
+            do j = 1, ndim
                 valpar(j) = zr(ij+j)
- 30         continue
-            do 40 j = 1, ndim
+            end do
+            do j = 1, ndim
                 kk = ndim*i1+j
                 call fointe('FM', zk8(iforf+j-1), 3, nompar, valpar,&
                             fno( kk), ier)
- 40         continue
+            end do
             if (epsini) then
-                do 45 j = 1, ncmp
+                do j = 1, ncmp
                     kk = ncmp*i1+j
                     call fointe('FM', zk8(iepsf+j-1), 3, nompar, valpar,&
                                 epsino(kk), ier)
- 45             continue
+                end do
             endif
- 50     continue
+        end do
     else
-        do 80 i = 1, nno
+        do i = 1, nno
             i1 = i-1
             ij = ndim*i1
             ij1 = iforc+ij-1
-            do 60 j = 1, ndim
+            do j = 1, ndim
                 fno(ij+j)= zr(ij1+j)
- 60         continue
+            end do
             if (epsini) then
                 ij = ncmp*i1
                 ij1 = iepsr+ij-1
-                do 70 j = 1, 3
+                do j = 1, 3
                     epsino(ij+j) = zr(ij1+j)
- 70             continue
+                end do
                 epsino(ij+4) = zr(ij1+4)*rac2
             endif
- 80     continue
+        end do
     endif
 !
     if (ivites .ne. 0) then
@@ -270,28 +269,28 @@ implicit none
                     ' ', phenom, 1, ' ', [rbid],&
                     1, 'RHO', rho, icodre(1), 1)
         if (ipesa .ne. 0) then
-            do 95 i = 1, nno
+            do i = 1, nno
                 ij = ndim*(i-1)
-                do 90 j = 1, ndim
+                do j = 1, ndim
                     kk = ij + j
                     fno(kk)=fno(kk)+rho(1)*zr(ipesa)*zr(ipesa+j)
- 90             continue
- 95         continue
+                end do
+            end do
         endif
         if (irota .ne. 0) then
             om = zr(irota)
-            do 105 i = 1, nno
+            do i = 1, nno
                 omo = 0.d0
                 ij = ndim*(i-1)
-                do 100 j = 1, ndim
+                do j = 1, ndim
                     omo = omo + zr(irota+j)* zr(igeom+ij+j-1)
-100             continue
-                do 103 j = 1, ndim
+                end do
+                do j = 1, ndim
                     kk = ij + j
                     fno(kk)=fno(kk)+rho(1)*om*om*(zr(igeom+kk-1)-omo*zr(&
                     irota+j))
-103             continue
-105         continue
+                end do
+            end do
         endif
     endif
 !
@@ -301,47 +300,45 @@ implicit none
 ! DE REFERENCE
 ! ======================================================================
 !
-    do 645 kp = 1, nno
-        call rcvarc(' ', 'TEMP', '+', 'NOEU', kp,&
-                    1, tn(kp), iret1)
-!
- 645  continue
+    do kp = 1, nno
+        call rcvarc(' ', 'TEMP', '+', 'NOEU', kp, 1, tn(kp), iret1)
+    end do
 !
 ! ======================================================================
 ! BOUCLE PRINCIPALE SUR LES POINTS DE GAUSS
 ! ======================================================================
 !
-    do 800 kp = 1, npg1
+    do kp = 1, npg1
 !
 ! INITIALISATIONS
         l = (kp-1)*nno
-        do 220 i = 1, 3
+        do i = 1, 3
             tgdm(i) = 0.d0
             accele(i) = 0.d0
-            do 200 j = 1, 3
+            do j = 1, 3
                 sr(i,j) = 0.d0
-200         continue
-            do 210 j = 1, 4
+            end do
+            do j = 1, 4
                 dudm(i,j) = 0.d0
                 dvdm(i,j) = 0.d0
                 dtdm(i,j) = 0.d0
                 dfdm(i,j) = 0.d0
-210         continue
+            end do
             dfdm(i,5) = 0.d0
             dtdm(i,5) = 0.d0
-220     continue
-        do 240 i = 1, 6
+        end do
+        do i = 1, 6
             sigl (i) = 0.d0
             sigin(i) = 0.d0
             epsin(i) = 0.d0
             epsp(i) = 0.d0
             eps(i) = 0.d0
             epsref(i)= 0.d0
-            do 230 j = 1, 3
+            do j = 1, 3
                 dsigin(i,j) = 0.d0
                 depsin(i,j) = 0.d0
-230         continue
-240     continue
+            end do
+        end do
 !
 ! ===========================================
 ! CALCUL DES ELEMENTS GEOMETRIQUES
@@ -354,28 +351,28 @@ implicit none
 ! - CALCULS DES GRADIENTS DE U (DUDM), DE THETA FISSURE (DTDM) ET DE
 !   LA FORCE VOLUMIQUE (DFDM),
 !   DE LA TEMPERATURE AUX POINTS DE GAUSS (TG) ET SON GRADIENT (TGDM)
-        do 320 i = 1, nno
+        do i = 1, nno
             i1 = i-1
             der(1) = dfdi(i)
             der(2) = dfdi(i+nno)
             der(4) = zr(ivf+l+i1)
             if (iret1 .eq. 0) then
-                do 309 j = 1, ndim
+                do j = 1, ndim
                     tgdm(j) = tgdm(j) + tn(i)*der(j)
-309             continue
+                end do
             endif
-            do 310 j = 1, ndim
+            do j = 1, ndim
                 ij1 = ndim*i1+j
                 ij = ij1 - 1
-                do 300 k = 1, ndim
+                do k = 1, ndim
                     dudm(j,k) = dudm(j,k) + zr(idepl+ij)*der(k)
                     dtdm(j,k) = dtdm(j,k) + zr(ithet+ij)*der(k)
                     dfdm(j,k) = dfdm(j,k) + fno(ij1)*der(k)
-300             continue
+                end do
                 if (ivites .ne. 0) then
-                    do 305 k = 1, ndim
+                    do k = 1, ndim
                         dvdm(j,k) = dvdm(j,k) + zr(ivites+ij)*der(k)
-305                 continue
+                    end do
                     dvdm(j,4) = dvdm(j,4) + zr(ivites+ij)*der(4)
                     accele(j) = accele(j) + zr(iaccel+ij)*der(4)
                     if (cp) then
@@ -385,8 +382,8 @@ implicit none
                 dudm(j,4) = dudm(j,4) + zr(idepl+ij)*der(4)
                 dtdm(j,4) = dtdm(j,4) + zr(ithet+ij)*der(4)
                 dfdm(j,4) = dfdm(j,4) + fno(ij1)*der(4)
-310         continue
-320     continue
+            end do
+        end do
 !
 ! =======================================================
 ! PRE DEFORMATIONS ET LEUR GRADIENT DEPSIN
@@ -394,26 +391,26 @@ implicit none
 ! =======================================================
 !
         if (epsini) then
-            do 420 i = 1, nno
+            do i = 1, nno
                 i1 = i-1
                 der(1) = dfdi(i)
                 der(2) = dfdi(i+nno)
                 der(3) = 0.d0
                 der(4) = zr(ivf+l+i1)
                 ij = ncmp*i1
-                do 400 j = 1, ncmp
+                do j = 1, ncmp
                     epsin(j) = epsin(j)+ epsino(ij+j)*der(4)
-400             continue
-                do 415 j = 1, ncmp
+                end do
+                do j = 1, ncmp
                     ij1 = ij+j
-                    do 410 k = 1, ndim
+                    do k = 1, ndim
                         depsin(j,k) = depsin(j,k)+epsino(ij1)*der(k)
-410                 continue
-415             continue
-420         continue
-            do 430 i = 1, ncmp
+                    end do
+                end do
+            end do
+            do i = 1, ncmp
                 eps(i) = eps(i)-epsin(i)
-430         continue
+            end do
         endif
 !
 ! =======================================================
@@ -426,13 +423,11 @@ implicit none
             call nmplru(fami, kp, 1, '+', ndim,&
                         typmod, matcod, compor, rbid, eps,&
                         epsp, rbid, energi)
-            do 435 i = 1, 3
+            do i = 1, 3
                 sigl(i)= zr(isigm+ncmp*(kp-1)+i-1)
-435         continue
+            end do
             sigl(4)= zr(isigm+ncmp*(kp-1)+3)*rac2
-!
         else
-!
             crit(1) = 300
             crit(2) = 0.d0
             crit(3) = 1.d-3
@@ -447,9 +442,9 @@ implicit none
             call tecach('NNO', 'PCONTGR', 'L', iret, iad=isigm)
             if (iret .eq. 0) then
                 call jevech('PCONTGR', 'L', isigm)
-                do 401 i = 1, 3
+                do i = 1, 3
                     sigl(i)= zr(isigm+ncmp*(kp-1)+i-1)
-401             continue
+                end do
                 sigl(4)= zr(isigm+ncmp*(kp-1)+3)*rac2
             endif
         endif
@@ -476,9 +471,9 @@ implicit none
 !
 ! CALCUL DE LA DIVERGENCE DU THETA FISSURE (DIVT)
         divt = 0.d0
-        do 437 i = 1, 3
+        do i = 1, 3
             divt = divt + dtdm(i,i)
-437     continue
+        end do
 !
 !
 ! =======================================================
@@ -487,7 +482,7 @@ implicit none
 ! =======================================================
 !
         if (isigi .ne. 0) then
-            do 460 i = 1, nno
+            do i = 1, nno
                 i1 = i-1
                 der(1) = dfdi(i)
                 der(2) = dfdi(i+nno)
@@ -496,25 +491,25 @@ implicit none
 !
 ! CALCUL DE SIGMA INITIAL
                 ij = isigi+ncmp*i1-1
-                do 440 j = 1, ncmp
+                do j = 1, ncmp
                     sigin(j) = sigin(j)+ zr(ij+j)*der(4)
-440             continue
+                end do
 !
 ! CALCUL DU GRADIENT DE SIGMA INITIAL
-                do 455 j = 1, ncmp
-                    do 450 k = 1, ndim
+                do j = 1, ncmp
+                    do k = 1, ndim
                         dsigin(j,k)=dsigin(j,k)+zr(ij+j)*der(k)
-450                 continue
-455             continue
-460         continue
+                    end do
+                end do
+            end do
 !
 ! TRAITEMENTS PARTICULIERS DES TERMES CROISES
-            do 463 i = 4, ncmp
+            do i = 4, ncmp
                 sigin(i) = sigin(i)*rac2
-                do 462 j = 1, ndim
+                do j = 1, ndim
                     dsigin(i,j) = dsigin(i,j)*rac2
-462             continue
-463         continue
+                end do
+            end do
 !
 ! CALCUL DE LA DEFORMATION DE REFERENCE
             call rccoma(matcod, 'ELAS', 1, phenom, icodre(1))
@@ -532,13 +527,11 @@ implicit none
             epsref(3)=-(1.d0/e(1))*(sigin(3)-(nu(1)*(sigin(1)+sigin(2))))
             epsref(4)=-(1.d0/mu)*sigin(4)
 !
-!
-!
 ! ENERGIE ELASTIQUE (expression WADIER)
 !
-            do 465 i = 1, ncmp
+            do i = 1, ncmp
                 energi(1) = energi(1) + (eps(i)-0.5d0*epsref(i))* sigin(i)
-465         continue
+            end do
         endif
 !
 !
@@ -568,15 +561,15 @@ implicit none
         prod3 = 0.d0
         prod4 = 0.d0
         if (ivites .ne. 0) then
-            do 487 j1 = 1, ndim
+            do j1 = 1, ndim
                 ecin = ecin + dvdm(j1,4)*dvdm(j1,4)
-487         continue
-            do 496 j1 = 1, ndim
-                do 497 j2 = 1, ndim
+            end do
+            do j1 = 1, ndim
+                do j2 = 1, ndim
                     prod3 = prod3 + accele(j1)*dudm(j1,j2)*dtdm(j2,4)
                     prod4 = prod4 + dvdm(j1,4)*dvdm(j1,j2)*dtdm(j2,4)
-497             continue
-496         continue
+                end do
+            end do
             ecin = 0.5d0*rho(1)*ecin
             prod3 = rho(1)*prod3
             prod4 = rho(1)*prod4
@@ -584,15 +577,15 @@ implicit none
 !
         prod = 0.d0
         prod2 = 0.d0
-        do 490 i = 1, 3
-            do 480 j = 1, 3
-                do 475 k = 1, 3
-                    do 470 m = 1, 3
+        do i = 1, 3
+            do j = 1, 3
+                do k = 1, 3
+                    do m = 1, 3
                         prod =prod+f(i,j)*sr(j,k)*dudm(i,m)*dtdm(m,k)
-470                 continue
-475             continue
-480         continue
-490     continue
+                    end do
+                end do
+            end do
+        end do
         prod = prod - ecin*divt + prod3 - prod4
         prod2 = poids*( prod - energi(1)*divt)
 !
@@ -604,11 +597,10 @@ implicit none
         if (iret1 .eq. 0) then
             prod = 0.d0
             prod2 = 0.d0
-            do 500 i = 1, ndim
+            do i = 1, ndim
                 prod = prod + tgdm(i)*dtdm(i,4)
-500         continue
+            end do
             prod2 = - poids*prod*energi(2)
-!
             tthe = tthe + prod2
         else
             tthe = 0.d0
@@ -620,13 +612,13 @@ implicit none
 ! =======================================================
 !
         prod2 = 0.d0
-        do 520 i = 1, ndim
+        do i = 1, ndim
             prod=0.d0
-            do 510 j = 1, ndim
+            do j = 1, ndim
                 prod = prod + dfdm(i,j)*dtdm(j,4)
-510         continue
+            end do
             prod2 = prod2 + dudm(i,4)*(prod+dfdm(i,4)*divt)*poids
-520     continue
+        end do
 !
         tfor = tfor + prod2
 !
@@ -639,18 +631,18 @@ implicit none
             prod1=0.d0
             prod2=0.d0
             if (isigi .ne. 0) then
-                do 670 i = 1, ncmp
-                    do 660 j = 1, ndim
+                do i = 1, ncmp
+                    do j = 1, ndim
                         prod1=prod1-(eps(i)-epsref(i))*dsigin(i,j)*&
                         dtdm(j,4)
-660                 continue
-670             continue
+                    end do
+                end do
             else if (epsini) then
-                do 671 i = 1, ncmp
-                    do 661 j = 1, ndim
+                do i = 1, ncmp
+                    do j = 1, ndim
                         prod2=prod2+sigl(i)*depsin(i,j)*dtdm(j,4)
-661                 continue
-671             continue
+                    end do
+                end do
             endif
             tini = tini + (prod1+prod2)*poids
 
@@ -659,15 +651,13 @@ implicit none
 ! ==================================================================
 ! FIN DE BOUCLE PRINCIPALE SUR LES POINTS DE GAUSS
 ! ==================================================================
-800  continue
+    end do
 !
 ! EXIT EN CAS DE THETA FISSURE NUL PARTOUT
-9999 continue
+999 continue
 !
 ! ASSEMBLAGE FINAL DES TERMES DE G OU DG
     
     zr(igthet) = tthe + tcla + tfor + tini
-    
-    
-    
+!
 end subroutine
