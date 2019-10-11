@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 subroutine irceme(ifi, nochmd, chanom, typech, modele,&
                   nbcmp, nomcmp, etiqcp, partie, numpt,&
                   instan, numord, nbmaec, limaec, sdcarm,&
-                  carael, codret)
+                  carael, field_type, codret)
 !_______________________________________________________________________
 ! person_in_charge: nicolas.sellenet at edf.fr
 !        IMPRESSION DU CHAMP CHANOM ELEMENT ENTIER/REEL
@@ -41,6 +41,7 @@ subroutine irceme(ifi, nochmd, chanom, typech, modele,&
 !       NBMAEC : NOMBRE DE MAILLES A ECRIRE (0, SI TOUTES LES MAILLES)
 !       LIMAEC : LISTE DES MAILLES A ECRIRE SI EXTRAIT
 !       SDCARM : CARA_ELEM (UTILE POUR LES SOUS-POINTS)
+! In  field_type       : type of field (symbolic name in result datastructure)
 !    SORTIES:
 !       CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
 ! -------------------------------------------------------------------
@@ -63,6 +64,7 @@ subroutine irceme(ifi, nochmd, chanom, typech, modele,&
     character(len=19) :: chanom
     character(len=64) :: nochmd
     character(len=*) :: nomcmp(*), partie, etiqcp
+    character(len=16), intent(in) :: field_type
 !
     integer :: nbcmp, numpt, numord
     integer :: nbmaec, cret
@@ -117,7 +119,7 @@ subroutine irceme(ifi, nochmd, chanom, typech, modele,&
                 nbcmp, nomcmp, etiqcp, partie, numpt,&
                 instan, numord, jcesk, jcesd, jcesc,&
                 jcesv, jcesl, nbmaec, limaec, sdcarm,&
-                carael, codret)
+                carael, field_type, codret)
 !
 !====
 ! 3. ON NETTOIE

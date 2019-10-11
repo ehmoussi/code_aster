@@ -72,10 +72,6 @@ subroutine as_mfdonp(fid, cha, numdt, numo, typent,&
     ! class4 = 1 <=> field type
     class4 = 1_4
     call mfioex(fidm, class4, oname, oexist4, cret4)
-    if( oexist4.ne.1 ) then
-        oname = trim(cha)
-        call mfioex(fidm, class4, oname, oexist4, cret4)
-    endif
     if (oexist4.eq.1) then
         call mfdonp(fidm, cha, numdt4, numo4, typen4,&
                     typge4, iterm4, noma, nompro, nomloc,&
@@ -90,10 +86,6 @@ subroutine as_mfdonp(fid, cha, numdt, numo, typent,&
     ! class = 1 <=> field type
     class = 1
     call mfioex(fid, class, oname, oexist, cret)
-    if( oexist4.ne.1 ) then
-        oname = trim(cha)
-        call mfioex(fidm, class, oname, oexist, cret)
-    endif
     if (oexist.eq.1) then
         call mfdonp(fid, cha, numdt, numo, typent,&
                     typgeo, iterma, noma, nompro, nomloc,&
