@@ -311,11 +311,11 @@ Contactez le support technique.
 """),
 
     95 : _("""
- vous avez utilise le mot clé ORIE_PEAU_2d alors que le problème est 3d. utilisez ORIE_PEAU_3d
-"""),
+ Vous avez utilisé le mot clé ORIE_PEAU_2D alors que le problème est tridimensionnel. utilisez ORIE_PEAU_3D
+ Il est possible que votre maillage soit plan, mais que les noeuds possèdent 3 coordonnées. """),
 
     96 : _("""
- vous avez utilise le mot clé ORIE_PEAU_3d alors que le problème est 2d. utilisez ORIE_PEAU_2d
+ vous avez utilisé le mot clé ORIE_PEAU_3D alors que le problème est 2d. utilisez ORIE_PEAU_2D
 """),
 
     97 : _("""

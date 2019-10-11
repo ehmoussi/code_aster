@@ -46,6 +46,9 @@ def configure(self):
         '/opt/intel/2019.0.045/compilers_and_libraries/linux/lib/intel64/libiomp5.so:'
         '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_blacs_intelmpi_lp64.so',
     ])
+    self.env.append_value('OPT_ENV_FOOTER', [
+        'module load impi/2019.0.045'
+    ])
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/lib',
