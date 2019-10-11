@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: nicolas.sellenet at edf.fr
 ! aslint: disable=W1504
 !
 subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
                   nbmaec, limaec, adsd, adsl, nbimpr,&
                   ncaimi, ncaimk, tyefma, typmai, typgeo,&
                   nomtyp, typech, profas, promed, prorec,&
-                  nroimp, chanom, sdcarm)
+                  nroimp, chanom, sdcarm, field_type)
 !
 implicit none
 !
@@ -40,6 +39,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/juveca.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/utmess.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
@@ -51,6 +51,7 @@ character(len=8) :: nomtyp(*), typech, sdcarm
 character(len=19) :: chanom
 character(len=24) :: ncaimi, ncaimk
 aster_logical :: exicmp(nbvato)
+character(len=16), intent(in) :: field_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,6 +73,7 @@ aster_logical :: exicmp(nbvato)
 !       TYPGEO : TYPE GEOMETRIQUE DE MAILLE ASSOCIEE AU TYPE ASTER
 !       NOMTYP : NOM DES TYPES DE MAILLES ASTER
 !       PROREC : PROFIL RECIPROQUE. AUXILIAIRE.
+! In  field_type       : type of field (symbolic name in result datastructure)
 !     SORTIES :
 !       NBIMPR : NOMBRE D'IMPRESSIONS
 !       NCAIMI : STRUCTURE ASSOCIEE AU TABLEAU CAIMPI
@@ -103,9 +105,9 @@ aster_logical :: exicmp(nbvato)
     integer, parameter :: nmaxfi = 10
     integer :: nugrfi(nmaxfi), nugrf2(nmaxfi)
     integer :: nmaty0(MT_NTYMAX), adraux(MT_NTYMAX)
-    integer :: ifm, niv, ibid, iret, iaux, jaux, kaux, ima, jcesd, laux
+    integer :: ifm, niv, ibid, iret, i_fpg, jaux, kaux, ima, jcesd, laux
     integer :: jcesc, jcesl, jcesv, nrefma
-    integer :: nrcmp, nrpg, nrsp, nbpg, nbsp, nval, typmas, nbimp0, nrimpr
+    integer :: nrcmp, nrpg, nrsp, nbpg, nbsp, nb_fpg, typmas, nbimp0, nrimpr
     integer :: nbtcou, nbqcou, nbsec, nbfib
     integer :: adcaii, adcaik, nbgrf
     integer :: nbgrf2, nbtcou2, nbqcou2, nbsec2, nbfib2, ima2
@@ -113,7 +115,7 @@ aster_logical :: exicmp(nbvato)
     character(len=16) :: nomfpg
     character(len=64) :: noprof
     aster_logical :: exicar, grfidt, elga_sp, okgrcq, oktuy
-    character(len=16), pointer :: tabnofpg(:) => null()
+    character(len=16), pointer :: fpg_name(:) => null()
     character(len=16), pointer :: nofpgma(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -135,7 +137,7 @@ aster_logical :: exicmp(nbvato)
 !    MAIS IL FAUT BIEN TENIR COMPTE DE LA NUMEROTATION DE REFERENCE
 !====
     laux = adsd + 1
-    do iaux = 1 , nbvato
+    do i_fpg = 1 , nbvato
         laux = laux + 4
         nbpg = zi(laux)
         nbsp = zi(laux+1)
@@ -143,10 +145,10 @@ aster_logical :: exicmp(nbvato)
             kaux = numcmp(nrcmp)
             do nrpg = 1 , nbpg
                 do nrsp = 1 , nbsp
-                    call cesexi('C', adsd, adsl, iaux, nrpg,&
+                    call cesexi('C', adsd, adsl, i_fpg, nrpg,&
                                 nrsp, kaux, jaux)
                     if (jaux .gt. 0) then
-                        exicmp(iaux) = .true.
+                        exicmp(i_fpg) = .true.
                         goto 21
                     endif
                 enddo
@@ -160,15 +162,15 @@ aster_logical :: exicmp(nbvato)
 !    UNE MAILLE EST PRESENTE SI ET SEULEMENT SI AU MOINS UNE COMPOSANTE
 !    Y EST DEFINIE ET SI ELLE FAIT PARTIE DU FILTRAGE DEMANDE
 !====
-    nval = 0
+    nb_fpg = 0
 !
 ! 3.1. ==> SANS FILTRAGE : C'EST LA LISTE DES MAILLES QUI POSSEDENT
 !          UNE COMPOSANTE VALIDE
     if (nbmaec .eq. 0) then
-        do iaux = 1 , nbvato
-            if (exicmp(iaux)) then
-                nval = nval + 1
-                profas(nval) = iaux
+        do i_fpg = 1 , nbvato
+            if (exicmp(i_fpg)) then
+                nb_fpg = nb_fpg + 1
+                profas(nb_fpg) = i_fpg
             endif
         enddo
 !
@@ -176,10 +178,10 @@ aster_logical :: exicmp(nbvato)
 !          UNE COMPOSANTE VALIDE
     else
         do jaux = 1 , nbmaec
-            iaux = limaec(jaux)
-            if (exicmp(iaux)) then
-                nval = nval + 1
-                profas(nval) = iaux
+            i_fpg = limaec(jaux)
+            if (exicmp(i_fpg)) then
+                nb_fpg = nb_fpg + 1
+                profas(nb_fpg) = i_fpg
             endif
         enddo
     endif
@@ -195,8 +197,8 @@ aster_logical :: exicmp(nbvato)
 ! 4.1. ==> TABLEAU DES CARACTERISATIONS ENTIERES DES IMPRESSIONS
 !          ALLOCATION INITIALE
     nbimp0 = 20
-    iaux = 10*nbimp0
-    call wkvect(ncaimi, 'V V I', iaux, adcaii)
+    i_fpg = 10*nbimp0
+    call wkvect(ncaimi, 'V V I', i_fpg, adcaii)
 !
 ! 4.2. ==> PARCOURS DES MAILLES QUI PASSENT LE FILTRE
     nbimpr = 0
@@ -204,7 +206,7 @@ aster_logical :: exicmp(nbvato)
 !     DE POINTS DE GAUSS
     if (typech(1:4) .eq. 'ELGA') then
         call celfpg(chanom, '&&IRCMPE.NOFPGMA', ibid)
-        AS_ALLOCATE(vk16=tabnofpg, size=nval)
+        AS_ALLOCATE(vk16=fpg_name, size=nb_fpg)
         call jeveuo('&&IRCMPE.NOFPGMA', 'L', vk16=nofpgma)
     endif
 !
@@ -218,8 +220,8 @@ aster_logical :: exicmp(nbvato)
         exicar=.true.
     endif
 !
-    do iaux = 1 , nval
-        ima = profas(iaux)
+    do i_fpg = 1 , nb_fpg
+        ima = profas(i_fpg)
         nrefma = tyefma(ima)
         !
         laux = adsd + 4*ima + 1
@@ -240,6 +242,7 @@ aster_logical :: exicmp(nbvato)
                         nbqcou, nbtcou, nbsec, nbfib, nbgrf, nugrfi)
             if (nbfib .ne. 0) imafib = ima
         endif
+
         !
         ! 4.2.1. ==> RECHERCHE D'UNE IMPRESSION SEMBLABLE
         do jaux = 1 , nbimpr
@@ -248,13 +251,13 @@ aster_logical :: exicmp(nbvato)
                 if (.not.exicar) then
                     ! si on n'a pas de cara_elem, le cas est simple
                     ! on compare le nom de la famille de pg et nbsp
-                    if (tabnofpg(jaux).eq.nomfpg .and. &
+                    if (fpg_name(jaux).eq.nomfpg .and. &
                         zi(adcaii+10*(jaux-1)+2).eq.nbsp) then
                         nrimpr = jaux
                         goto 423
                     endif
                 else
-                    if (tabnofpg(jaux) .eq. nomfpg) then
+                    if (fpg_name(jaux) .eq. nomfpg) then
                         ! Les différents cas : PMF, Coques, Tuyaux, Grille
                         if (nbfib .ne. 0) then
                             ! Pour les PMF, on compare aussi les groupes de fibres
@@ -292,6 +295,7 @@ aster_logical :: exicmp(nbvato)
                                 goto 423
                             endif
                         endif
+
                     endif
                 endif
             else
@@ -326,6 +330,9 @@ aster_logical :: exicmp(nbvato)
                 if ((nbsec.ge.1).and.(nbtcou.ge.1)) then
                     zi(jaux+3) = nbtcou
                     zi(jaux+4) = nbsec
+                    if (nbsp .ne. (2*nbsec+1)* (2*nbtcou+1)) then
+                        call utmess('F', 'MED2_12', sk = field_type)
+                    endif
                 ! Coques
                 else if ((nbqcou.ge.1).and.(nbsp.eq.3*nbqcou)) then
                     zi(jaux+3) = nbqcou
@@ -342,6 +349,9 @@ aster_logical :: exicmp(nbvato)
             else
                 zi(jaux+3) = 0
                 zi(jaux+4) = 0
+                if (nbsp .ne. nbfib) then
+                    call utmess('F', 'MED2_12', sk = field_type)
+                endif
             endif
         else
             zi(jaux+3) = 0
@@ -357,7 +367,7 @@ aster_logical :: exicmp(nbvato)
         zi(jaux+8) = typgeo(typmai(ima))
         !
         if (typech(1:4) .eq. 'ELGA') then
-            tabnofpg(nbimpr) = nomfpg
+            fpg_name(nbimpr) = nomfpg
         endif
         nrimpr = nbimpr
         !
@@ -371,7 +381,7 @@ aster_logical :: exicmp(nbvato)
     enddo
     !
     if (typech(1:4) .eq. 'ELGA') then
-        AS_DEALLOCATE(vk16=tabnofpg)
+        AS_DEALLOCATE(vk16=fpg_name)
         call jedetr('&&IRCMPE.NOFPGMA')
     endif
     if ( nbimpr.eq.0 ) then
@@ -389,17 +399,17 @@ aster_logical :: exicmp(nbvato)
 !                   IAUX EN NUMEROTATION ASTER, ON A SA POSITION DANS LE
 !                   TABLEAU DES VALEURS S'IL FAIT PARTIE DE LA LISTE
 !                   ET 0 SINON.
-    do iaux = 1 , nval
-        ima = profas(iaux)
-        prorec(ima) = iaux
+    do i_fpg = 1 , nb_fpg
+        ima = profas(i_fpg)
+        prorec(ima) = i_fpg
     enddo
 !
 ! 5.2. ==> ADRESSES DANS LE TABLEAU PROFAS
 !          ADRAUX(IAUX) = ADRESSE DE LA FIN DE LA ZONE DE L'IMPRESSION
 !                         PRECEDENTE, IAUX-1
     adraux(1) = 0
-    do iaux = 2 , nbimpr
-        adraux(iaux) = adraux(iaux-1) + zi(adcaii+10*(iaux-2)+6)
+    do i_fpg = 2 , nbimpr
+        adraux(i_fpg) = adraux(i_fpg-1) + zi(adcaii+10*(i_fpg-2)+6)
     enddo
 !
 ! 5.3. ==> DECOMPTE DU NOMBRE DE MAILLES PAR TYPE DE MAILLES ASTER
@@ -427,9 +437,9 @@ aster_logical :: exicmp(nbvato)
 ! 6. MEMORISATION DANS LES CARACTERISTIQUES DE L'IMPRESSION
 !====
 ! 6.1. ==> NOMBRE DE MAILLES DU MEME TYPE
-    do iaux = 1 , nbimpr
+    do i_fpg = 1 , nbimpr
 !
-        jaux = adcaii+10*(iaux-1)
+        jaux = adcaii+10*(i_fpg-1)
         typmas = zi(jaux+7)
 !                  CAIMPI(10,I) = NOMBRE DE MAILLES IDENTIQUES
         zi(jaux+9) = nmaty0(typmas)
@@ -437,10 +447,10 @@ aster_logical :: exicmp(nbvato)
     enddo
 !
 ! 6.2. ==> CARACTERISTIQUES CARACTERES
-    iaux = 3*nbimpr
-    call wkvect(ncaimk, 'V V K80', iaux, adcaik)
-    do iaux = 1 , nbimpr
-        jaux = adcaik+2*(iaux-1)
+    i_fpg = 3*nbimpr
+    call wkvect(ncaimk, 'V V K80', i_fpg, adcaik)
+    do i_fpg = 1 , nbimpr
+        jaux = adcaik+2*(i_fpg-1)
 !                  CAIMPK(1,I) = NOM DE LA LOCALISATION ASSOCIEE
         zk80(jaux) = ednoga
 !                  CAIMPK(2,I) = NOM DU PROFIL AU SENS MED
@@ -454,9 +464,9 @@ aster_logical :: exicmp(nbvato)
 !====
     kaux = 1
 !
-    do iaux = 1 , nbimpr
+    do i_fpg = 1 , nbimpr
 !
-        jaux = adcaii+10*(iaux-1)
+        jaux = adcaii+10*(i_fpg-1)
 !
 !       SI LE NOMBRE DE MAILLES A ECRIRE EST >0
         if (zi(jaux+6) .gt. 0) then
@@ -467,7 +477,7 @@ aster_logical :: exicmp(nbvato)
                 call ircmpf(nofimd, zi(jaux+6), promed(kaux), noprof)
 !
 !                  CAIMPK(2,I) = NOM DU PROFIL AU SENS MED
-                zk80(adcaik+3*(iaux-1)+1) = noprof
+                zk80(adcaik+3*(i_fpg-1)+1) = noprof
             endif
 !
 !         KAUX := POINTEUR PERMETTANT DE SE PLACER DANS PROMED
@@ -485,8 +495,8 @@ aster_logical :: exicmp(nbvato)
         else
             write (ifm,804)
         endif
-        do iaux = 1 , nbimpr
-            jaux = adcaii+10*(iaux-1)
+        do i_fpg = 1 , nbimpr
+            jaux = adcaii+10*(i_fpg-1)
             if (zi(jaux+6) .gt. 0) write (ifm, 802) nomtyp(zi(jaux+7)), zi(jaux+6),&
                                 zi(jaux+1), zi(jaux+2)
         enddo

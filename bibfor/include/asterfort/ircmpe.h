@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
@@ -25,7 +22,7 @@ interface
                       nbmaec, limaec, adsd, adsl, nbimpr,&
                       ncaimi, ncaimk, tyefma, typmai, typgeo,&
                       nomtyp, typech, profas, promed, prorec,&
-                      nroimp, chanom, sdcarm)
+                      nroimp, chanom, sdcarm, field_type)
         integer :: nbvato
         integer :: ncmpve
         character(len=*) :: nofimd
@@ -49,5 +46,6 @@ interface
         integer :: nroimp(nbvato)
         character(len=19) :: chanom
         character(len=8) :: sdcarm
+        character(len=16), intent(in) :: field_type
     end subroutine ircmpe
 end interface
