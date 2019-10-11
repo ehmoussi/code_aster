@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 subroutine ircnme(ifi, nochmd, chanom, typech, modele,&
                   nbcmp, nomcmp, partie, numpt, instan,&
                   numord, nbnoec, linoec, sdcarm, carael,&
-                  codret)
+                  field_type, codret)
 !_______________________________________________________________________
 ! person_in_charge: nicolas.sellenet at edf.fr
 !        IMPRESSION DU CHAMP CHANOM NOEUD ENTIER/REEL
@@ -40,6 +40,7 @@ subroutine ircnme(ifi, nochmd, chanom, typech, modele,&
 !       NBNOEC : NOMBRE DE NOEUDS A ECRIRE (O, SI TOUS LES NOEUDS)
 !       LINOEC : LISTE DES NOEUDS A ECRIRE SI EXTRAIT
 !       SDCARM : CARA_ELEM (UTILE POUR LES SOUS-POINTS)
+! In  field_type       : type of field (symbolic name in result datastructure)
 !    SORTIES:
 !       CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
 !_______________________________________________________________________
@@ -66,6 +67,7 @@ subroutine ircnme(ifi, nochmd, chanom, typech, modele,&
     integer :: linoec(*)
 !
     real(kind=8) :: instan
+    character(len=16), intent(in) :: field_type
 !
     integer :: codret
 !
@@ -109,7 +111,7 @@ subroutine ircnme(ifi, nochmd, chanom, typech, modele,&
                 nbcmp, nomcmp, ' ', partie, numpt,&
                 instan, numord, jcnsk, jcnsd, jcnsc,&
                 jcnsv, jcnsl, nbnoec, linoec, sdcarm,&
-                carael, codret)
+                carael, field_type, codret)
 !
 !====
 ! 3. ON NETTOIE

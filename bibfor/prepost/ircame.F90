@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: nicolas.sellenet at edf.fr
 ! aslint: disable=W1504
 !
 subroutine ircame(ifi, nochmd, chanom, typech, modele,&
                   nbcmp, nomcmp, etiqcp, partie, numpt,&
                   instan, numord, adsk, adsd, adsc,&
                   adsv, adsl, nbenec, lienec, sdcarm,&
-                  carael, codret)
+                  carael, field_type, codret)
 !
 implicit none
 !
@@ -59,6 +58,7 @@ integer :: nbenec
 integer :: lienec(*)
 integer :: typent, tygeom
 real(kind=8) :: instan
+character(len=16), intent(in) :: field_type
 integer :: codret
 !
 ! --------------------------------------------------------------------------------------------------
@@ -86,6 +86,7 @@ integer :: codret
 !       NBENEC : NOMBRE D'ENTITES A ECRIRE (O, SI TOUTES)
 !       LIENEC : LISTE DES ENTITES A ECRIRE SI EXTRAIT
 !       SDCARM : CARA_ELEM (UTILE POUR LES SOUS-POINTS)
+! In  field_type       : type of field (symbolic name in result datastructure)
 !     SORTIES:
 !       CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
 !
@@ -199,7 +200,8 @@ integer :: codret
     call ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
                 ncmprf, ncmpve, ntlcmp, nbvato, nbenec,&
                 lienec, adsd, adsl, nomaas, modele,&
-                typgeo, nomtyp, ntproa, chanom, sdcarm)
+                typgeo, nomtyp, ntproa, chanom, sdcarm,&
+                field_type)
 !
     if ( nbimpr.gt.0 ) then
         call jeveuo(ncaimi, 'L', adcaii)

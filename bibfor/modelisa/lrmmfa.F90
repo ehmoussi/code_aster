@@ -255,36 +255,37 @@ character(len=24) :: grpnoe, grpmai
                     ilmed = lxlgut(nomgrp)
                     if( ilmed.gt.24 ) then
                         valk(1) = nomgrp
-                        call utmess('F', 'MED_7', nk=1, valk=valk)
-                    endif
-                    nomgro = nomgrp(1:24)
-                    call lxnoac(nomgro, newgrm)
-                    if( nomgro.ne.newgrm ) then
-                        valk(1) = nomgro
-                        valk(2) = newgrm
-                        call utmess('A', 'MED_10', nk=2, valk=valk)
-                        nomgro = newgrm(1:24)
-                    endif
-                    call jenonu(jexnom(nomtmp, nomgro), num)
-                    if( num.eq.0 ) then
-                        if( bgrpno ) then
-                            nbgrno = nbgrno+1
-                            if( nbgrno.gt.nblim1 ) then
-                                call juagrn(nomtmp, 2*nblim1)
-                                nblim1 = 2*nblim1
-                            endif
-                        else
-                            nbgrma = nbgrma+1
-                            if( nbgrma.gt.nblim2 ) then
-                                call juagrn(nomtmp, 2*nblim2)
-                                nblim2 = 2*nblim2
-                            endif
+                        call utmess('A', 'MED_7', nk=1, valk=valk)
+                    else                   
+                        nomgro = nomgrp(1:24)
+                        call lxnoac(nomgro, newgrm)
+                        if( nomgro.ne.newgrm ) then
+                            valk(1) = nomgro
+                            valk(2) = newgrm
+                            call utmess('A', 'MED_10', nk=2, valk=valk)
+                            nomgro = newgrm(1:24)
                         endif
-                        call jecroc(jexnom(nomtmp, nomgro))
                         call jenonu(jexnom(nomtmp, nomgro), num)
+                        if( num.eq.0 ) then
+                            if( bgrpno ) then
+                                nbgrno = nbgrno+1
+                                if( nbgrno.gt.nblim1 ) then
+                                    call juagrn(nomtmp, 2*nblim1)
+                                    nblim1 = 2*nblim1
+                                endif
+                            else
+                                nbgrma = nbgrma+1
+                                if( nbgrma.gt.nblim2 ) then
+                                    call juagrn(nomtmp, 2*nblim2)
+                                    nblim2 = 2*nblim2
+                                endif
+                            endif
+                            call jecroc(jexnom(nomtmp, nomgro))
+                            call jenonu(jexnom(nomtmp, nomgro), num)
+                         endif
+                         ASSERT(num.ne.0)
+                         zi(jgrp+igrp-1) = num
                     endif
-                    ASSERT(num.ne.0)
-                    zi(jgrp+igrp-1) = num
                 enddo
             endif
         enddo
