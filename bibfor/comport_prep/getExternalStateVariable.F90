@@ -59,7 +59,7 @@ integer, intent(out) :: jvariext1, jvariext2
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nb_exte, i_exte, idummy1, idummy2, i_exte_list
-    integer, parameter :: nb_exte_list = 31
+    integer, parameter :: nb_exte_list = 32
     character(len=8) :: name_exte(8)
     integer :: variextecode(2)
     integer :: tabcod(60)
@@ -73,7 +73,7 @@ integer, intent(out) :: jvariext1, jvariext2
                                                                  'EPSAXY  ','EPSAXZ  ','EPSAYZ  ',&
                                                                  'PFERRITE','PPERLITE','PBAINITE',&
                                                                  'PMARTENS','ALPHPUR ','ALPHBET ',&
-                                                                 'TIME    '/)
+                                                                 'TIME    ','TEMPREFE'/)
     aster_logical, parameter :: l_allow_mfront(nb_exte_list) = (/.true.    ,.false.   ,.false.   ,&
                                                                  .false.   ,.true.    ,.true.    ,&
                                                                  .true.    ,.true.    ,.true.    ,&
@@ -84,7 +84,7 @@ integer, intent(out) :: jvariext1, jvariext2
                                                                  .true.    ,.true.    ,.true.    ,&
                                                                  .true.    ,.true.    ,.true.    ,&
                                                                  .true.    ,.true.    ,.true.    ,&
-                                                                 .true./)
+                                                                 .true.    ,.true./)
 !
 ! --------------------------------------------------------------------------------------------------
 !

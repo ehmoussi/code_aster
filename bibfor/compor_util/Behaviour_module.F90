@@ -202,26 +202,13 @@ end subroutine
 ! Initialisation of behaviour datastructure - Special for SIMU_POINT_MAT
 !
 ! In  carcri           : parameters for comportment
-! In  defo_ldc         : model for non-mechanical strains
-! In  imate            : coded material address
-! In  fami             : Gauss family for integration point rule
-! In  kpg              : current point gauss
-! In  ksp              : current "sous-point" gauss
-! In  neps             : number of components of strains
-! In  time_curr        : current time
 ! IO  BEHinteg         : parameters for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
-subroutine behaviourInitPoint(carcri, defo_ldc , imate   ,&
-                              fami  , kpg      , ksp     ,&
-                              neps  , time_curr, BEHinteg)
+subroutine behaviourInitPoint(carcri, BEHinteg)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
     real(kind=8), intent(in) :: carcri(*)
-    character(len=16), intent(in) :: defo_ldc
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg, ksp, imate, neps
-    real(kind=8), intent(in) :: time_curr
     type(Behaviour_Integ), intent(inout) :: BEHinteg
 !   ------------------------------------------------------------------------------------------------
     BEHinteg%elem%gradvelo  = 0.d0
@@ -513,6 +500,12 @@ subroutine behaviourPrepESVAExte(carcri, fami, kpg, ksp, BEHinteg)
             endif
         elseif (varc_name .eq. 'TIME') then
             BEHinteg%exte%predef(i_varc) = BEHinteg%time_curr
+        elseif (varc_name .eq. 'TEMPREFE') then
+            if (.not. BEHinteg%esva%l_temp) then
+                call utmess('F', 'COMPOR4_26', sk = varc_name)
+            else
+                BEHinteg%exte%predef(i_varc) = BEHinteg%esva%temp_refe
+            endif
         elseif (varc_name .eq. 'ELTSIZE1') then
             BEHinteg%exte%predef(i_varc) = BEHinteg%elem%eltsize1
         elseif (varc_name .eq. 'ELTSIZE2') then
@@ -543,15 +536,14 @@ end subroutine
 ! In  fami             : Gauss family for integration point rule
 ! In  kpg              : current point gauss
 ! In  ksp              : current "sous-point" gauss
-! In  imate            : coded material address
 ! IO  BEHesva          : parameters for external state variables
 !
 ! --------------------------------------------------------------------------------------------------
-subroutine getESVAPtot(fami, kpg, ksp, imate, neps, BEHesva)
+subroutine getESVAPtot(fami, kpg, ksp, BEHesva)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
     character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg, ksp, imate, neps
+    integer, intent(in) :: kpg, ksp
     type(Behaviour_ESVA), intent(inout) :: BEHesva
 ! - Local
     integer :: iret
@@ -710,7 +702,7 @@ subroutine behaviourPrepESVA(defo_ldc, imate   ,&
 ! - Get external state variables
 !
     if (ca_nbcvrc_ .ne. 0) then
-        call getESVAPtot(fami, kpg, ksp, imate, neps, BEHesva)
+        call getESVAPtot(fami, kpg, ksp, BEHesva)
         if (l_mfront .or. l_umat .or. defo_ldc .eq. 'MECANIQUE') then
             call getESVA(fami, kpg, ksp, imate, neps, BEHesva)
         endif
