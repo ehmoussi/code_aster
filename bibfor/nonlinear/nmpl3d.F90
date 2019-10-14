@@ -123,7 +123,7 @@ integer, intent(inout) :: codret
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExteElem(carcri, typmod  ,&
+    call behaviourPrepESVAElem(carcri, typmod  ,&
                                nno   , npg     , ndim ,&
                                ipoids, ivf     , idfde,&
                                geom  , BEHinteg,&

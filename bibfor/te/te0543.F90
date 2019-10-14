@@ -113,7 +113,7 @@ character(len=16), intent(in) :: option, nomte
 ! - Prepare external state variables
 !
     if (rela_comp .eq. 'BETON_DOUBLE_DP') then
-        call behaviourPrepExteElem(zr(icarcr), typmod  ,&
+        call behaviourPrepESVAElem(zr(icarcr), typmod  ,&
                                    nno       , npg     , ndim ,&
                                    ipoids    , ivf     , idfde,&
                                    zr(igeom) , BEHinteg)

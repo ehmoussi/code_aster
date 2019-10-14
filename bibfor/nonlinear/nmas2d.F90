@@ -132,7 +132,7 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExteElem(carcri, typmod,&
+    call behaviourPrepESVAElem(carcri, typmod,&
                                nno   , npg     , ndim ,&
                                ipoids, ivf     , idfde,&
                                geom  , BEHinteg,&

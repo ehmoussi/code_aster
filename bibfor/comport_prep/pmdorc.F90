@@ -145,12 +145,6 @@ character(len=16), intent(out) :: type_comp, mult_comp
 !
     call carc_chck(prepCrit)
 !
-! - Don't use external state variables for SIMU_POINT_MAT
-!
-    if (prepCrit%v_crit(1)%jvariext1 .ne. 0) then
-        call utmess('A', 'COMPOR2_12')
-    endif
-!
 ! - Set in <CARTE>
 !
     carcri(1:CARCRI_SIZE) = 0.d0

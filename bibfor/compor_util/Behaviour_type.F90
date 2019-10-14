@@ -30,6 +30,35 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! - Behaviour - Integration - External state variables
+! 
+    type Behaviour_ESVA
+! ----- Flags
+        aster_logical :: l_anel = ASTER_FALSE
+        aster_logical :: l_temp = ASTER_FALSE
+        aster_logical :: l_sech = ASTER_FALSE
+        aster_logical :: l_hydr = ASTER_FALSE
+        aster_logical :: l_hygr = ASTER_FALSE
+        aster_logical :: l_ptot = ASTER_FALSE
+! ----- Anelastic strains
+        real(kind=8)  :: anel_prev(6) = 0.d0, anel_curr(6) = 0.d0, anel_incr(6) = 0.d0
+! ----- Temperature
+        real(kind=8)  :: temp_prev = 0.d0, temp_curr = 0.d0, temp_incr = 0.d0, temp_refe = 0.d0
+! ----- Drying
+        real(kind=8)  :: sech_prev = 0.d0, sech_curr = 0.d0, sech_incr = 0.d0, sech_refe = 0.d0
+! ----- Hydratation
+        real(kind=8)  :: hydr_prev = 0.d0, hydr_curr = 0.d0, hydr_incr = 0.d0
+! ----- Hygrometry
+        real(kind=8)  :: hygr_prev = 0.d0, hygr_curr = 0.d0, hygr_incr = 0.d0
+! ----- Total pressure
+        real(kind=8)  :: ptot_prev = 0.d0, ptot_curr = 0.d0, ptot_incr = 0.d0
+! ----- Non-mechanical strains (external state variable as temperature)
+        real(kind=8)  :: epsi_varc(6) = 0.d0, depsi_varc(6) = 0.d0
+! ----- Thermic strains
+        real(kind=8)  :: epsthm = 0.d0, epsth_anism(3) = 0.d0, epsth_metam = 0.d0
+        real(kind=8)  :: epsthp = 0.d0, epsth_anisp(3) = 0.d0, epsth_metap = 0.d0
+    end type Behaviour_ESVA
+!
 ! - Behaviour - Integration - Parameters on element
 !
     type Behaviour_Elem
@@ -56,20 +85,40 @@ implicit none
         real(kind=8) :: nonloc(2)  = 0.d0
 ! ----- For CZM_*_MIX behaviours : Lagrange penalty coefficient
         real(kind=8) :: r          = 0.d0
-! ----- Hygrometry
-        real(kind=8) :: hygr_prev  = 0.d0
-        real(kind=8) :: hygr_curr  = 0.d0
     end type Behaviour_Elga
+!
+! - Behaviour - Integration - Parameters for external solver (UMAT, MFRONT)
+! 
+    type Behaviour_Exte
+! ----- Number of external state variables used in external solver
+        integer            :: nb_pred = 0
+! ----- Value of external state variables used in external solver
+        real(kind=8)       :: predef(EXTE_ESVA_NBMAXI) = 0.d0
+! ----- Incremental value of external state variables used in external solver
+        real(kind=8)       :: dpred(EXTE_ESVA_NBMAXI)  = 0.d0
+    end type Behaviour_Exte
 !
 ! - Behaviour - Integration
 !
     type Behaviour_Integ
+! ----- Current time
+        real(kind=8)          :: time_curr = 0.d0
+! ----- Coded integer to detect external state variables
+        integer               :: tabcod(60) = 0
 ! ----- Parameters on Gauss point
         type(Behaviour_Elga)  :: elga
-! ----- Parameters on Element
+! ----- Parameters on element
         type(Behaviour_Elem)  :: elem
+! ----- Parameters for external solvers (MFRONT, UMAT)
+        type(Behaviour_Exte)  :: exte
+! ----- Parameters for external state variables
+        type(Behaviour_ESVA)  :: esva
 ! ----- Flag when GEOM external state variable is present
         aster_logical         :: l_varext_geom = ASTER_FALSE
+! ----- Flag if MFront is used
+        aster_logical         :: l_mfront = ASTER_FALSE
+! ----- Flag if UMAT is used
+        aster_logical         :: l_umat   = ASTER_FALSE
     end type Behaviour_Integ
 !
 ! --------------------------------------------------------------------------------------------------

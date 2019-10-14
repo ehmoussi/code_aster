@@ -201,7 +201,7 @@ use Behaviour_module
     call jevech('PPRESS', 'L', iref2)
     call elrefe_info(fami='FPG1', jvf=ivf2)
     call prepCoorGauss(nno , 1        , ndim  ,&
-                       ivf2, zr(igeom), BEHinteg)
+                       ivf2, zr(igeom), BEHinteg%elem)
 !
 ! 1.7. --- MATERIAU SI BESOIN
 !
