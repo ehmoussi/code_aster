@@ -22,7 +22,6 @@ interface
                       imate   , compor, carcri, instam, instap,&
                       neps    , epsm  , deps  , nsig  , sigm  ,&
                       nvi     , vim   , option, angmas,&
-                      temp    , dtemp , predef, dpred ,&
                       sigp    , vip   , dsidep, codret)
         use Behaviour_type
         type(Behaviour_Integ), intent(in) :: BEHinteg
@@ -41,8 +40,6 @@ interface
         real(kind=8), intent(in) :: vim(*)
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: angmas(*)
-        real(kind=8), intent(in) :: temp, dtemp
-        real(kind=8), intent(in) :: predef(*), dpred(*)
         real(kind=8), intent(out) :: sigp(6)
         real(kind=8), intent(out) :: vip(nvi)
         real(kind=8), intent(out) :: dsidep(6, 6)

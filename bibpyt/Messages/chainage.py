@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-#
 # person_in_charge: sylvie.granet at edf.fr
 
 cata_msg = {
@@ -59,22 +57,8 @@ instant trouvé dans la SD résultat %(k1)s.
   Impression du champ %(k1)s à l'instant %(r1)e sur le modèle %(k2)s
 """),
 
-    8 : _("""
-  Les modélisations THM n'ont de sens qu'en petites déformations.
-  Choisissez COMPORTEMENT/DEFORMATION='PETIT'.
-"""),
-
-    9 : _("""
-  Vous n'avez pas choisi une loi de comportement mécanique autorisée pour les
-  modélisations THM : %(k1)s
-"""),
-
     10 : _("""
   Si vous faites du chaînage, il ne faut qu'un seul et unique modèle dans le résultat. Si vous en voulez plusieurs, faites une demande d'évolution.
-"""),
-
-    11 : _("""
-  On a trouvé une évolution de variable de commandes PTOT incomplète. Il manque un instant.
 """),
 
     12 : _("""

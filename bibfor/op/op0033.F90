@@ -83,7 +83,8 @@ implicit none
     integer :: igrad, nbvita
     character(len=4) :: fami, cargau
     character(len=8) :: typmod(2), mater(30), table, fonimp(9), typpar(ntamax)
-    character(len=16) :: option, compor(COMPOR_SIZE), nompar(ntamax), opt2, mult_comp, type_comp
+    character(len=16) :: option, compor(COMPOR_SIZE), nompar(ntamax), opt2
+    character(len=16) :: mult_comp, type_comp, defo_ldc
     character(len=19) :: codi, sddisc, k19b, sdcrit
     character(len=24) :: sderro
     real(kind=8) :: instam, instap, ang(7), r8b, carcri(CARCRI_SIZE), fem(9)
@@ -244,7 +245,10 @@ implicit none
 !
 ! - Initialisation of behaviour datastructure - Special for SIMU_POINT_MAT
 !
-    call behaviourInitPoint(carcri, fami, kpg, ksp, imate, BEHinteg)
+    read (compor(DEFO_LDC),'(A16)') defo_ldc
+    call behaviourInitPoint(carcri  , defo_ldc, imate   ,&
+                            fami    , kpg     , ksp     ,&
+                            6       , instap  , BEHinteg)
 !
 !        6 CMP DE EPSI OU 9 CMP DE GRAD DONNEES : PAS BESOIN DE NEWTON
     if ((defimp.ge.1) .and. (abs(carcri(2)).lt.0.1d0)) then

@@ -200,6 +200,9 @@
 #define MFRONT_STRAIN_UNDETERMINATED 3
 #define MFRONT_STRAIN_GROTGDEP_S     4
 #define MFRONT_STRAIN_GROTGDEP_L     5
-
+!
+! Maximum number of external state variables (UMAT/MFRONT)
+!
+#define EXTE_ESVA_NBMAXI             8
 ! Set to 1 to activate DEBUG (careful, very verbose, at each Gauss point !)
 #define LDC_PREP_DEBUG               0

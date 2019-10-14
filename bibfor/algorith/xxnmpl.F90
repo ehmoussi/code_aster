@@ -150,7 +150,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExteElem(carcri   , typmod  ,&
+    call behaviourPrepESVAElem(carcri   , typmod  ,&
                                nno      , npg     , ndim ,&
                                ipoids   , ivf     , idfde,&
                                zr(igeom), BEHinteg)
