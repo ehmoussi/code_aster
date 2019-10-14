@@ -93,6 +93,7 @@ def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
 
     motcles = tab.dict_CREA_TABLE()
     tab_out = CREA_TABLE(TYPE_TABLE='TABLE_CONTENEUR', **motcles)
-    for key, mod in toSave.iteritems():
+    
+    for key, mod in toSave.items():
         tab_out.addObject(key, mod)
     return tab_out
