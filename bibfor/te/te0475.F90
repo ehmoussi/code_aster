@@ -20,20 +20,17 @@ subroutine te0475(option, nomte)
 !
 use THM_type
 
-! aslint: disable=W0104
+!
     implicit none
 #include "jeveux.h"
 #include "asterfort/dimthm.h"
 #include "asterfort/fointe.h"
 #include "asterfort/jevech.h"
-#include "asterfort/utmess.h"
 #include "asterfort/assert.h"
-#include "asterfort/elrefe_info.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/thmGetElemRefe.h"
 #include "asterfort/thmGetElemInfo.h"
-#include "asterfort/lteatt.h"
-
+!
 character(len=16), intent(in) :: option, nomte
 !    
 ! Elementary computation
@@ -93,8 +90,7 @@ character(len=16), intent(in) :: option, nomte
     call dimthm(ds_thm,l_vf, ndim2, ndlno, ndlnm)
     !
 ! - Input/output fields
-!toto
-
+!
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PVECTUR', 'E', ires)
 !
@@ -138,7 +134,7 @@ character(len=16), intent(in) :: option, nomte
     endif
 
 ! ======================================================================
-
+!
 ! ======================================================================
 !Specif 3D
 ! ======================================================================
@@ -182,7 +178,7 @@ character(len=16), intent(in) :: option, nomte
         end do
 !
         jac = sqrt(nx*nx+ny*ny+nz*nz)
-!A MODIFIER
+!
 ! ======================================================================
 ! --- OPTION ECHA_THM_R
 ! ======================================================================
@@ -206,7 +202,7 @@ character(len=16), intent(in) :: option, nomte
                 napre1=0
                 napre2=1
                 natemp=2
-
+!
                 if (ds_thm%ds_elem%l_dof_meca) then
                     do i = 1, nnos
                         l = 6 * (i-1) -1
@@ -260,10 +256,7 @@ character(len=16), intent(in) :: option, nomte
                     zr(ires+l+5) = zr(ires+l+5) -&
                         zr(jv_poids+ipg-1) * deltat * flu2 * zr(jv_func2+ldec2+i-1) * jac
                 end do
-            else
             endif
-        else 
-                 write(6,*)'option ',option
         endif
     end do
 !
