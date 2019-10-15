@@ -153,43 +153,22 @@ use petsc_data_module
                 if (zi(jprddl+jcoll) .eq. rang) ndprop = ndprop+1
             end do
 !
-#if PETSC_VERSION_LT(3,8,0)
-            ASSERT( xlocal == PETSC_NULL_OBJECT )
-#else
             ASSERT( xlocal == PETSC_NULL_VEC )
-#endif
             call VecCreateMPI(mpicou, to_petsc_int(ndprop), to_petsc_int(neq), xlocal, ierr)
         else
             call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)
             neq=nsmdi
-!
-!
-#if PETSC_VERSION_LT(3,8,0)
-            ASSERT( xlocal == PETSC_NULL_OBJECT )
-#else
             ASSERT( xlocal == PETSC_NULL_VEC )
-#endif
             call VecCreateMPI(mpicou, PETSC_DECIDE, to_petsc_int(neq), xlocal, ierr)
         endif
         ASSERT(ierr.eq.0)
 !
-#if PETSC_VERSION_LT(3,8,0)
-            ASSERT( xscatt == PETSC_NULL_OBJECT )
-#else
-            ASSERT( xscatt == PETSC_NULL_VECSCATTER )
-#endif
-#if PETSC_VERSION_LT(3,8,0)
-            ASSERT( xglobal == PETSC_NULL_OBJECT )
-#else
-            ASSERT( xglobal == PETSC_NULL_VEC )
-#endif
-#if PETSC_VERSION_LT(3,8,0)
-#else
+        ASSERT( xscatt == PETSC_NULL_VECSCATTER )
+        ASSERT( xglobal == PETSC_NULL_VEC )
 ! Ne pas supprimer VecCreate: si xglobal vaut PETSC_NULL_VEC en entrée de VecScatterCreateToAll,
 ! il n'est pas alloué en sortie
         call VecCreate( mpicou, xglobal, ierr )
         ASSERT( ierr == 0 )
-#endif
         call VecScatterCreateToAll(xlocal, xscatt, xglobal, ierr)
         ASSERT(ierr.eq.0)
 !-----------------------------------------------------------------------

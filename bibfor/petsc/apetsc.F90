@@ -147,37 +147,16 @@ use elg_module
         call PetscInitializeFortran(ierr)
         ASSERT(ierr .eq. 0)
         do k = 1, nmxins
-#if PETSC_VERSION_LT(3,8,0) 
-            ap(k) = PETSC_NULL_OBJECT
-            kp(k) = PETSC_NULL_OBJECT
-#else
             ap(k) = PETSC_NULL_MAT
             kp(k) = PETSC_NULL_KSP
-#endif
             nomats(k) = ' '
             nosols(k) = ' '
             nonus(k) = ' '
             tblocs(k) = -1
         enddo
-#if PETSC_VERSION_LT(3,8,0) 
-  xlocal = PETSC_NULL_OBJECT
-#else
-  xlocal = PETSC_NULL_VEC
-#endif
-  call VecDestroy(xglobal, ierr)
-  ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
-  xglobal = PETSC_NULL_OBJECT
-#else
-  xglobal = PETSC_NULL_VEC
-#endif
-  call VecScatterDestroy(xscatt, ierr)
-  ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
-  xscatt = PETSC_NULL_OBJECT
-#else
-  xscatt = PETSC_NULL_VECSCATTER
-#endif
+        xlocal = PETSC_NULL_VEC
+        xglobal = PETSC_NULL_VEC
+        xscatt = PETSC_NULL_VECSCATTER
         spsomu = ' '
         spmat = ' '
         spsolv = ' '
