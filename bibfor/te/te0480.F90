@@ -28,7 +28,6 @@ implicit none
 #include "asterfort/fointe.h"
 #include "asterfort/jevech.h"
 #include "asterfort/vff2dn.h"
-#include "asterfort/lteatt.h"
 #include "asterfort/assert.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/thmGetElemRefe.h"
