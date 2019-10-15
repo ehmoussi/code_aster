@@ -119,12 +119,10 @@ implicit none
         chinst_prev = '&&VECHME.CH_INST_M'
         call mecact('V', chinst_prev, 'LIGREL', ligrel_model, 'INST_R  ',&
                     ncmp=1, nomcmp=nomcmp(1), sr=inst_prev)
-        call mecact('V', chtime     , 'LIGREL', ligrel_model, 'INST_R  ',&
-                    ncmp=1, nomcmp=nomcmp(1), sr=inst_curr)
         nomcmp(1) = 'INST'
         nomcmp(2) = 'DELTAT'
         nomcmp(3) = 'THETA'
-        time(1) = inst_prev
+        time(1) = inst_curr
         time(2) = inst_curr-inst_prev
         time(3) = inst_theta
         call mecact('V', chtime, 'LIGREL', ligrel_model, 'INST_R  ',&
