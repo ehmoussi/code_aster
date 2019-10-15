@@ -102,11 +102,7 @@ function get_mat_id( matas ) result ( kptsc )
         if ((nomats(k).eq.matas) .and. (nonus (k).eq.nu )) then
 ! si de plus le clone PETSc a ete cree, on verifie que les dimensions
 ! des matrices aster et petsc sont coherentes
-#if PETSC_VERSION_LT(3,8,0)
-          if ( ap(k) .ne. PETSC_NULL_OBJECT ) then
-#else
           if ( ap(k) .ne. PETSC_NULL_MAT ) then
-#endif
              call MatGetSize(ap(k), m, n, ierr)
              ASSERT(ierr.eq.0)
              ASSERT(m.eq.n)

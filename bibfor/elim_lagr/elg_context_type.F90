@@ -89,17 +89,6 @@ function new_elg_context() result ( elg_ctxt )
   elg_ctxt%full_matas=' '
   elg_ctxt%reduced_matas=' '
   elg_ctxt%k_matas=' '
-#if PETSC_VERSION_LT(3,8,0)
-  elg_ctxt%kproj=PETSC_NULL_OBJECT
-  elg_ctxt%matc=PETSC_NULL_OBJECT
-  elg_ctxt%tfinal=PETSC_NULL_OBJECT
-  elg_ctxt%matb=PETSC_NULL_OBJECT
-  elg_ctxt%vx0=PETSC_NULL_OBJECT
-  elg_ctxt%vecb=PETSC_NULL_OBJECT
-  elg_ctxt%vecc=PETSC_NULL_OBJECT
-  elg_ctxt%cct=PETSC_NULL_OBJECT
-  elg_ctxt%ksp=PETSC_NULL_OBJECT
-#else
   elg_ctxt%kproj=PETSC_NULL_MAT
   elg_ctxt%matc=PETSC_NULL_MAT
   elg_ctxt%tfinal=PETSC_NULL_MAT
@@ -109,7 +98,6 @@ function new_elg_context() result ( elg_ctxt )
   elg_ctxt%vecc=PETSC_NULL_VEC
   elg_ctxt%cct=PETSC_NULL_MAT
   elg_ctxt%ksp=PETSC_NULL_KSP
-#endif
 end function new_elg_context
 !
 ! Free object elg_ctxt
@@ -153,21 +141,12 @@ subroutine free_elg_context( elg_ctxt, keep_basis )
     ASSERT( ierr == 0 )
     endif
 !
-#if PETSC_VERSION_LT(3,8,0)
-  elg_ctxt%kproj=PETSC_NULL_OBJECT
-  elg_ctxt%matc=PETSC_NULL_OBJECT
-  elg_ctxt%matb=PETSC_NULL_OBJECT
-  elg_ctxt%vx0=PETSC_NULL_OBJECT
-  elg_ctxt%vecb=PETSC_NULL_OBJECT
-  elg_ctxt%vecc=PETSC_NULL_OBJECT
-#else
   elg_ctxt%kproj=PETSC_NULL_MAT
   elg_ctxt%matc=PETSC_NULL_MAT
   elg_ctxt%matb=PETSC_NULL_MAT
   elg_ctxt%vx0=PETSC_NULL_VEC
   elg_ctxt%vecb=PETSC_NULL_VEC
   elg_ctxt%vecc=PETSC_NULL_VEC
-#endif
 !
    if ( free_all ) then 
     elg_ctxt%full_matas=' '
@@ -186,15 +165,9 @@ subroutine free_elg_context( elg_ctxt, keep_basis )
         call KSPDestroy(elg_ctxt%ksp, ierr)
         ASSERT( ierr == 0 )
     endif
-#if PETSC_VERSION_LT(3,8,0)   
-   elg_ctxt%tfinal=PETSC_NULL_OBJECT
-   elg_ctxt%cct=PETSC_NULL_OBJECT
-   elg_ctxt%ksp=PETSC_NULL_OBJECT
-#else
    elg_ctxt%tfinal=PETSC_NULL_MAT
    elg_ctxt%cct=PETSC_NULL_MAT
    elg_ctxt%ksp=PETSC_NULL_KSP
-#endif
    endif 
 !
 end subroutine free_elg_context
