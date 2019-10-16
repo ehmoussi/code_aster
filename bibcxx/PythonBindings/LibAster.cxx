@@ -296,11 +296,13 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportGeneralizedModeContainerToPython();
 
 #ifdef _USE_MPI
+    /* These objects must be declared in Objects/__init__.py as
+       OnlyParallelObject for sequential version. */
     exportParallelMeshToPython();
     exportParallelDOFNumberingToPython();
     exportParallelMechanicalLoadToPython();
-    exportMPIInfosToPython();
 #endif /* _USE_MPI */
+    exportMPIInfosToPython();
 
     exportPartialMeshToPython();
     exportResultNamingToPython();
