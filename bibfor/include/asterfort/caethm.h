@@ -19,7 +19,10 @@
 !
 !
 interface
-    subroutine te0475(option, nomte)
-        character(len=16), intent(in) :: option, nomte
-    end subroutine te0475
+    subroutine caethm(char, noma, ligrmo, fonree)
+        character(len=8) :: char
+        character(len=19) :: ligrmo
+        character(len=8) :: noma
+        character(len=4) :: fonree
+    end subroutine caethm
 end interface

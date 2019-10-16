@@ -73,5 +73,8 @@ cata_msg = {
     12 : _("""
  Le type de la charge <%(k1)s> ne peut être traité dans cette commande
 """),
+    13 : _("""
+ La charge de nom <%(k1)s> doit être de type suiveuse (ECHANGE_THM).
+"""),
 
 }

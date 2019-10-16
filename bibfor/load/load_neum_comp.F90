@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -76,7 +76,7 @@ subroutine load_neum_comp(stop       , i_load    , load_name , load_nume  , load
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nb_type_neum
-    parameter (nb_type_neum=18)
+    parameter (nb_type_neum=19)
 !
     integer :: iexist, i_type_neum, nb_in_add, ibid
     character(len=16) :: load_option
@@ -122,6 +122,7 @@ subroutine load_neum_comp(stop       , i_load    , load_name , load_nume  , load
             if (load_option .eq. 'Copy_Load') then
                 call copisd('CHAMP_GD', base, load_ligrel(1:8), resu_elem)
             else
+
                 call calcul(stop , load_option, load_ligrel, nbin  , lchin,&
                             lpain, nbout      , resu_elem  , lpaout, base ,&
                             'OUI')

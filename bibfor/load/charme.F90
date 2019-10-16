@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/cafond.h"
 #include "asterfort/cafono.h"
 #include "asterfort/cafthm.h"
+#include "asterfort/caethm.h"
 #include "asterfort/cagene.h"
 #include "asterfort/cagrou.h"
 #include "asterfort/caimch.h"
@@ -145,6 +146,10 @@ implicit none
 ! ----- FLUX_THM_REP
 !
         call cafthm(load, mesh, ligrmo, vale_type)
+! ----- ECHA_THM
+!
+        call caethm(load, mesh, ligrmo, vale_type)
+!
 !
 ! ----- FORCE_SOL
 !
@@ -171,6 +176,10 @@ implicit none
 ! ----- FLUX_THM_REP
 !
         call cafthm(load, mesh, ligrmo, vale_type)
+!
+! ----- ECHA_THM
+!
+        call caethm(load, mesh, ligrmo, vale_type)
 ! --------------------------------------------------------------------------------------------------
     else
         ASSERT(.false.)
