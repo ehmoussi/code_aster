@@ -517,7 +517,7 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVC8 : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"getName",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT( "erreur d'utilisation detectee") ;
@@ -590,7 +590,7 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVR8 : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"getName",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT( "erreur d'utilisation detectee") ;
@@ -667,7 +667,7 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVIS : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"getName",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT( "erreur d'utilisation detectee") ;
@@ -743,7 +743,7 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVTX : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"getName",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT( "erreur d'utilisation detectee") ;
@@ -758,7 +758,7 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVTX : numero d'occurence (IOCC=%ld) \n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"getName",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT("erreur dans la partie Python");
@@ -827,7 +827,7 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVID : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"getName",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT( "erreur d'utilisation detectee") ;
