@@ -1,8 +1,3 @@
-
-#include "astercxx.h"
-
-#ifdef _USE_MPI
-
 #ifndef MPIINFOS_H_
 #define MPIINFOS_H_
 
@@ -11,7 +6,7 @@
  * @brief Fichier entete des fonctions informations MPI
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,7 +24,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
 
 /** @brief Get MPI number of procs */
 int getMPINumberOfProcs() ;
@@ -38,5 +32,3 @@ int getMPINumberOfProcs() ;
 int getMPIRank() ;
 
 #endif /* MPIINFOS_H_ */
-
-#endif /* _USE_MPI */

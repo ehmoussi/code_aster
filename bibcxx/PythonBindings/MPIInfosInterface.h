@@ -1,5 +1,3 @@
-#ifdef _USE_MPI
-
 #ifndef MPIINFOSINTERFACE_H_
 #define MPIINFOSINTERFACE_H_
 
@@ -8,7 +6,7 @@
  * @brief Fichier entete des utilitaires MPI en python
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,5 +32,3 @@
 void exportMPIInfosToPython();
 
 #endif /* MPIINFOSINTERFACE_H_ */
-
-#endif /* _USE_MPI */

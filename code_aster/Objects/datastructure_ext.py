@@ -85,3 +85,11 @@ DICT_SDJ = {
     "HarmoGeneralizedResultsContainer": "SD.sd_dyna_gene.sd_dyna_gene",
     "Material": "SD.sd_mater.sd_mater",
 }
+
+
+class OnlyParallelObject:
+    """This object is only available in parallel."""
+
+    def __init__(self, *args, **kwargs):
+        raise NameError("The object '{0}' is only available in parallel "
+                        "executions.".format(self.__class__.__name__))

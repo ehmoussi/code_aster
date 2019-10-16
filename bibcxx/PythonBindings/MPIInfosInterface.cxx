@@ -3,7 +3,7 @@
  * @brief Interface python de MPIInfos
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -23,12 +23,11 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <boost/python.hpp>
 #include "asterc_config.h"
 
-#ifdef _USE_MPI
-
 #include "PythonBindings/MPIInfosInterface.h"
-#include <boost/python.hpp>
+#include "ParallelUtilities/MPIInfos.h"
 
 void exportMPIInfosToPython() {
     using namespace boost::python;
@@ -36,5 +35,3 @@ void exportMPIInfosToPython() {
     def( "getMPINumberOfProcs", getMPINumberOfProcs );
     def( "getMPIRank", getMPIRank );
 };
-
-#endif /* _USE_MPI */
