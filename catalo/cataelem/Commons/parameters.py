@@ -202,7 +202,12 @@ PCOEFFR = InputParameter(phys=PHY.IMPE_R,
                          comment="""  PCOEFFR : COEF_MULT DE LA CHARGE,
            PRESENCE DE CHARGE REPARTIE POUR UNE MODELISATION POUTRE
 """)
-
+#echange THM ici
+PECHTHM = InputParameter(phys=PHY.ETHM_R,
+                         comment="""""")
+PCHTHMF = InputParameter(phys=PHY.ETHM_F,
+                         comment="""""")
+#
 PCOEFHF = InputParameter(phys=PHY.COEH_F,
                          comment="""""")
 
