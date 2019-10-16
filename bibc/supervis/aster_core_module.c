@@ -470,21 +470,9 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     char test = ' ';
     char *kvar;
     int i, iret, iexc=0;
-    PyObject *pModule, *args, *kwargs, *pyfname, *pFunc, *res;
+    PyObject *args, *kwargs, *pyfname, *pFunc, *res;
     PyObject *tup_valk, *tup_vali, *tup_valr;
     PyObject *etype, *eval, *etb;
-
-    /* this module should be cached! */
-    pModule = PyImport_ImportModule("Utilitai.Utmess");
-    if ( pModule == NULL )
-    {
-        fprintf(fileOut, "No module named 'Utilitai.Utmess'\n");
-        ASTERINTEGER ier=SIGABRT;
-        CALL_ASABRT( &ier );
-    }
-
-    /* Unlike UTMESS, MessageLog does not raise any exception, done later by uexcep. */
-    pFunc = PyObject_GetAttrString(pModule, "MessageLog");
 
     if ( PyErr_Occurred() ) {
         iexc = 1;
@@ -521,7 +509,7 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
        MYABORT("error the given filename in utprin");
     }
 
-    res = PyObject_Call(pFunc, args, kwargs);
+    res = PyObject_Call(get_sh_msglog(), args, kwargs);
     if (!res)
     {
        MYABORT("erreur lors de l'appel a MessageLog");
@@ -533,7 +521,6 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     Py_DECREF(pyfname);
     Py_DECREF(args);
     Py_XDECREF(kwargs);
-    Py_DECREF(pFunc);
     Py_DECREF(tup_valk);
     Py_DECREF(tup_vali);
     Py_DECREF(tup_valr);
