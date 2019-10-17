@@ -39,7 +39,6 @@ class sd_fond_fissure(AsBase):
     LNNO = Facultatif(sd_cham_no())
     LTNO = Facultatif(sd_cham_no())
     BASLOC = Facultatif(sd_cham_no())
-    FONDFISG = Facultatif(AsVR())
 
     def check_BASEFOND(self, checker):
         info = self.INFO.get_stripped()
