@@ -60,6 +60,8 @@ def recal_rayleigh(amor_reduit, f1, f2,):
   
 
 MA = LIRE_MAILLAGE(FORMAT = 'MED',);
+
+MA_PATCH = LIRE_MAILLAGE(FORMAT = 'MED',UNITE=21);
                                 
 MA = DEFI_GROUP(reuse=MA, MAILLAGE=MA, CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),);
                                 
@@ -337,5 +339,76 @@ TEST_TABLE(  TABLE=TAB_RESU,
               PRECISION=0.00001,
               CRITERE='RELATIF',
               VALE_ABS='NON',)
+
+TAB_RES2 = POST_NEWMARK(RESULTAT=DYNA_V,
+                 KY=ky,
+                 MAILLAGE_GLIS = MA_PATCH,
+                 GROUP_MA_GLIS = 'CERCLE',
+                 GROUP_MA_LIGNE = 'LIGNE',
+                 GROUP_MA_CALC=Tout)
+
+IMPR_TABLE(UNITE=38,TABLE=TAB_RES2)
+
+TEST_TABLE(  TABLE=TAB_RES2,
+              NOM_PARA='DEPL',
+              FILTRE=_F(NOM_PARA='INST',
+                        VALE= 6.00000E-01,
+                        CRITERE='RELATIF',
+                        ),
+              REFERENCE='NON_DEFINI',
+              VALE_REFE=9.44055232681E-05,
+              VALE_CALC=9.44055232681E-05,
+              PRECISION=0.00001,
+              CRITERE='RELATIF',
+              VALE_ABS='NON',)
+
+TEST_TABLE(  TABLE=TAB_RES2,
+              NOM_PARA='DEPL',
+              FILTRE=_F(NOM_PARA='INST',
+                        VALE= 9.00000E-01,
+                        CRITERE='RELATIF',
+                        ),
+              REFERENCE='NON_DEFINI',
+              VALE_REFE=0.000228145272925,
+              VALE_CALC=0.000228145272925,
+              PRECISION=0.00001,
+              CRITERE='RELATIF',
+              VALE_ABS='NON',)
+
+TAB_RES3 = POST_NEWMARK(RESULTAT=DYNA_V,
+                 KY=ky,
+                 MAILLAGE_GLIS = MA_PATCH,
+#                 GROUP_MA_GLISS = 'CERCLE',
+#                 GROUP_MA_LIGNE = 'LIGNE',
+                 GROUP_MA_CALC=Tout)
+
+IMPR_TABLE(UNITE=40,TABLE=TAB_RES3)
+
+TEST_TABLE(  TABLE=TAB_RES3,
+              NOM_PARA='DEPL',
+              FILTRE=_F(NOM_PARA='INST',
+                        VALE= 6.00000E-01,
+                        CRITERE='RELATIF',
+                        ),
+              REFERENCE='NON_DEFINI',
+              VALE_REFE=9.44055232681E-05,
+              VALE_CALC=9.44055232681E-05,
+              PRECISION=0.00001,
+              CRITERE='RELATIF',
+              VALE_ABS='NON',)
+
+TEST_TABLE(  TABLE=TAB_RES3,
+              NOM_PARA='DEPL',
+              FILTRE=_F(NOM_PARA='INST',
+                        VALE= 9.00000E-01,
+                        CRITERE='RELATIF',
+                        ),
+              REFERENCE='NON_DEFINI',
+              VALE_REFE=0.000228145272925,
+              VALE_CALC=0.000228145272925,
+              PRECISION=0.00001,
+              CRITERE='RELATIF',
+              VALE_ABS='NON',)
+
 
 FIN();
