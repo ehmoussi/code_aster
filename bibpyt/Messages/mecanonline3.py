@@ -33,7 +33,7 @@ cata_msg = {
 
 
     87 : _("""
-Le contact de type LAC n'est pas utilisable avec le préconditionneur LDLT_INC, il faut utiliser LDLT_SP.
+Le contact de type LAC n'est utilisable qu'avec le préconditionneur LDLT_SP pour les solveurs GCPC et PETSc.
 """),
 
     88 : _("""
