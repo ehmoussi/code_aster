@@ -33,6 +33,7 @@ cp /scif/apps/aster/share/aster/execute_codeaster ${wrkdir}/data/execute_codeast
 
 cat << EOF > ${script}
 #!/bin/bash
+# this script is executed from outside the container
 
 cp ${wrkdir}/data/aster_pkginfo.py ${instdir}/aster_pkginfo.py
 cp ${wrkdir}/data/config.txt ${instdir}/config.txt
@@ -46,6 +47,20 @@ rm -rf ${wrkdir}
 EOF
 chmod 755 ${script}
 
-printf "\n\nPlease copy/paste the following instructions to complete the "
+printf "\n\nDo you want to add this version in your local asrun/asterstudy "
+printf "installation ([y]/n)? "
+read yn
+case "${yn}" in
+    [Nn]* ) true;;
+    * ) printf "\nEach version appears with a label in asterstudy.\n"
+        printf "It must contain no spaces or special character. "
+        printf "It must end with '_mpi' or '_MPI' for parallel versions.\n"
+        printf "Enter a label: "
+        read label
+        printf "\nvers : ${label}:${instdir}\n" >> ${HOME}/.astkrc/prefs
+        ;;
+esac
+
+printf "\n\nPlease copy/paste the following line to complete the "
 printf "installation:\n\n"
-printf "   ${script}\n\n"
+printf "    ${script}\n\n"
