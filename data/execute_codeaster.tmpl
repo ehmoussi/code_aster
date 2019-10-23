@@ -22,6 +22,5 @@ echo
 
 set -x
 singularity exec \
-    --bind @PREFIX@:@PREFIX@ \
-    --bind $(pwd):/tmp ${image} \
+    @BIND_PREFIX@ --bind $(pwd):/tmp ${image} \
     /tmp/run_script

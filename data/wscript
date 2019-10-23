@@ -119,16 +119,14 @@ def configure_data(self):
 
 
 def build(self):
+    # src/srcbin distinction exists for exec mode (644 vs 755)
     src = ['CTestTestfile.cmake.tmpl', 'external_programs.js.tmpl']
     tgt = ['CTestTestfile.cmake', 'external_programs.js']
     if self.env.legacy:
         src.extend(['config.txt.tmpl', 'profile.sh.tmpl'])
         tgt.extend(['config.txt', 'profile.sh'])
-    srcbin = []
-    tgtbin = []
-    if self.env.singularityimage:
-        srcbin.append('execute_codeaster.tmpl')
-        tgtbin.append('execute_codeaster')
+    srcbin = ['execute_codeaster.tmpl', 'create_install_script']
+    tgtbin = ['execute_codeaster', 'create_install_script']
     try:
         dict_conv = pickle.loads(self.env['ASTER_ENVIRON'])
     except:
@@ -245,6 +243,9 @@ def env2dict(self, src):
     if env.singularityimage:
         dico['BIN_NODBG'] = 'execute_codeaster'
         dico['BIN_DBG'] = 'execute_codeaster'
+        dico['BIND_PREFIX'] = '--bind @PREFIX@:@PREFIX@'
+    else:
+        dico['BIND_PREFIX'] = ''
     self.end_msg("yes")
 
     self.start_msg('Build list of testcases')
