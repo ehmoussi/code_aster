@@ -42,7 +42,7 @@ chmod 755 ${instdir}/execute_codeaster
 echo '# empty' > ${instdir}/profile.sh
 
 [ -f ${instdir}/image ] && rm -f ${instdir}/image
-ln -s ${instdir}/${SINGULARITY_CONTAINER} ${instdir}/image
+ln -s ${SINGULARITY_CONTAINER} ${instdir}/image
 
 rm -rf ${wrkdir}
 EOF
