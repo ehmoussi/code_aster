@@ -39,6 +39,7 @@ cp ${wrkdir}/data/aster_pkginfo.py ${instdir}/aster_pkginfo.py
 cp ${wrkdir}/data/config.txt ${instdir}/config.txt
 cp ${wrkdir}/data/execute_codeaster ${instdir}/execute_codeaster
 chmod 755 ${instdir}/execute_codeaster
+echo '# empty' > ${instdir}/profile.sh
 
 [ -f ${instdir}/image ] && rm -f ${instdir}/image
 ln -s ${instdir}/${SINGULARITY_CONTAINER} ${instdir}/image
