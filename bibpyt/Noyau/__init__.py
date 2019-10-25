@@ -48,11 +48,3 @@ from .N_FACT import FACT
 # structures de données
 from . import asojb
 from .asojb import AsBase
-
-# Only the first MAXSIZE objects will be checked
-# This is used for the number of MCFACT, the number of MCSIMP and the number of
-# values in a MCSIMP.
-MAXSIZE = 500
-
-MAXSIZE_MSGCHK = ' <I> Only the first {0} occurrences (total: {1}) have been checked.'
-MAXSIZE_MSGKEEP = ' <I> Only the first {0} occurrences (total: {1}) have been printed.'
