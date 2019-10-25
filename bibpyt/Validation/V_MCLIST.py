@@ -31,8 +31,10 @@
 # Modules Python
 import traceback
 
+import aster_core
+from aster_core import MAXSIZE_MSGCHK
+
 # Modules EFICAS
-from Noyau import MAXSIZE, MAXSIZE_MSGCHK
 from Noyau import N_CR
 from Noyau.N_Exception import AsException
 from Noyau.strfunc import ufmt
@@ -47,7 +49,7 @@ class MCList:
 
        - txt_nat qui sert pour les comptes-rendus liés à cette classe
     """
-
+    maxcheck_done = False
     CR = N_CR.CR
     txt_nat = "Mot clé Facteur Multiple :"
 
@@ -105,10 +107,13 @@ class MCList:
                 debut="Mot-clé facteur multiple : " + self.nom,
                 fin="Fin Mot-clé facteur multiple : " + self.nom)
             j = 0
+            maxprint = aster_core.get_option("max_check")
             for i in self.data:
                 j += 1
-                if j > MAXSIZE:
-                    print(MAXSIZE_MSGCHK.format(MAXSIZE, len(self.data)))
+                if j > maxprint:
+                    if not MCList.maxcheck_done:
+                        MCList.maxcheck_done = True
+                        print(MAXSIZE_MSGCHK.format(maxprint, len(self.data)))
                     break
                 self.cr.add(i.report())
         elif len(self) == 1:

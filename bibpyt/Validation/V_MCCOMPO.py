@@ -28,8 +28,10 @@
 import os
 import traceback
 
+import aster_core
+from aster_core import MAXSIZE_MSGCHK
+
 # Modules EFICAS
-from Noyau import MAXSIZE, MAXSIZE_MSGCHK
 from Noyau import N_CR
 from Noyau.N_Exception import AsException
 from Noyau.strfunc import ufmt, to_unicode
@@ -41,7 +43,7 @@ class MCCOMPO:
         L'attribut mc_liste a été créé par une classe dérivée de la
         classe MCCOMPO du Noyau
     """
-
+    maxcheck_done = False
     CR = N_CR.CR
 
     def __init__(self):
@@ -65,10 +67,13 @@ class MCCOMPO:
         self.cr.debut = self.txt_nat + self.nom
         self.cr.fin = "Fin " + self.txt_nat + self.nom
         i = 0
+        maxcheck = aster_core.get_option("max_check")
         for child in self.mc_liste:
             i += 1
-            if i > MAXSIZE:
-                print(MAXSIZE_MSGCHK.format(MAXSIZE, len(self.mc_liste)))
+            if i > maxcheck:
+                if not MCCOMPO.maxcheck_done:
+                    MCCOMPO.maxcheck_done = True
+                    print(MAXSIZE_MSGCHK.format(maxcheck, len(self.mc_liste)))
                 break
             self.cr.add(child.report())
         self.state = 'modified'
