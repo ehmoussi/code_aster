@@ -28,7 +28,7 @@ CALC_H=OPER(nom="CALC_H",op=27,sd_prod=table_sdaster,
                   " et des facteurs d'intensité de contraintes."),
             reentrant='n',
          THETA          =FACT(statut='o',
-           FOND_FISS       =SIMP(statut='f',typ=fond_fiss,max=1),
+           FOND_FISS       =SIMP(statut='f',typ=fond_fissure,max=1),
            FISSURE         =SIMP(statut='f',typ=fiss_xfem,max=1),
            NB_POINT_FOND   =SIMP(statut='f',typ='I',val_min=2),
            regles=(
