@@ -349,6 +349,9 @@ class nappe_sdaster(fonction_class):
 class fond_fiss(ASSD):
     pass
 
+class fond_fissure(ASSD):
+    pass
+
 class gfibre_sdaster(ASSD):
     pass
 
