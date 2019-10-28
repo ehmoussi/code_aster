@@ -20,7 +20,7 @@ subroutine prjint(proj_tole       , elem_dime     , &
                   elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
                   elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
                   poin_inte       , inte_weight   , nb_poin_inte  ,&
-                  inte_neigh_)
+                  inte_neigh_, ierror_)
 !
 implicit none
 !
@@ -49,6 +49,7 @@ real(kind=8), intent(out) :: poin_inte(elem_dime-1,16)
 real(kind=8), intent(out) :: inte_weight
 integer, intent(out) :: nb_poin_inte
 integer, optional, intent(inout) :: inte_neigh_(4)
+integer, optional, intent(inout) :: ierror_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -89,6 +90,7 @@ integer, optional, intent(inout) :: inte_neigh_(4)
 !
     nb_poin_inte       = 0
     inte_weight        = 0.d0
+    iret               = 0
     poin_inte(:,:)     = 0.d0
     debug              = ASTER_FALSE
     node_line_coop(elem_dime-1,4) = 0.d0
@@ -221,7 +223,7 @@ integer, optional, intent(inout) :: inte_neigh_(4)
             pt(2) = poin_inte(2,i_node)
             pt(3) = 0.d0
             xe(:) = 0.d0
-            call reereg('S', elem_line_code,  4, coor,&
+            call reereg('C', elem_line_code,  4, coor,&
                         pt , elem_dime     , xe, test, proj_tole)
             if (test .eq. 1) then
                 iret = 1
@@ -245,6 +247,16 @@ integer, optional, intent(inout) :: inte_neigh_(4)
         call lcodrm(elem_dime, proj_tole, nb_poin_inte, poin_inte)
     endif
 !
+! - Check number of intersection point
+!
+    if (nb_poin_inte .gt. 8) then
+                iret = 1
+                nb_poin_inte                  = 0
+                poin_inte(1:elem_dime-1,1:16) = 0.d0
+                inte_neigh(1:4)               = 0
+                goto 99
+    end if
+!
 ! - Compute weight of intersection
 !
     call apinte_weight(elem_dime  , nb_poin_inte, poin_inte,&
@@ -261,6 +273,9 @@ integer, optional, intent(inout) :: inte_neigh_(4)
 !
     if (present(inte_neigh_)) then
         inte_neigh_(1:4) = inte_neigh(1:4)
+    endif
+    if (present(ierror_)) then
+        ierror_=iret
     endif
 !
 end subroutine
