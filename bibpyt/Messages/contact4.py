@@ -44,5 +44,12 @@ Contact LAC
              Cette erreur est probablement dû au fait que vous avez inversé les rôles maîtres et esclaves.
              Vérifiez que votre GROUP_MA_ESCL est bien celui utilisé par DECOUPE_LAC de CREA_MAILLAGE.
 """),
+    6 : _("""
+Contact appariement de type LAC
+         Une erreur non fatale est détectée lors de l'appariement de la maille esclave numéro %(i1)d et de la maille maître numéro %(i2)d .
+         Ce couple est ignoré, il y a potentiellement interpénétration entre ces deux mailles.
+         Conseil :
+             Vérifiez la qualité de l'appariement visuellement au niveau des mailles concernées.
+"""),
 
 }
