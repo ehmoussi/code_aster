@@ -30,15 +30,17 @@ sed -e 's/\(BIN_.*|.*|.*|\).*$/\1 execute_codeaster/g' \
     -e 's/\(BUILD_TYPE .*$\)/\1 container/g' \
     /scif/apps/aster/share/aster/config.txt > ${wrkdir}/data/config.txt
 cp /scif/apps/aster/share/aster/execute_codeaster ${wrkdir}/data/execute_codeaster
+cp -r /scif/apps/aster/lib/aster/code_aster ${wrkdir}/data/code_aster
 
 cat << EOF > ${script}
 #!/bin/bash
 # this script is executed from outside the container
 
-cp ${wrkdir}/data/aster_pkginfo.py ${instdir}/aster_pkginfo.py
-cp ${wrkdir}/data/config.txt ${instdir}/config.txt
-cp ${wrkdir}/data/execute_codeaster ${instdir}/execute_codeaster
+cp ${wrkdir}/data/aster_pkginfo.py ${instdir}/
+cp ${wrkdir}/data/config.txt ${instdir}/
+cp ${wrkdir}/data/execute_codeaster ${instdir}/
 chmod 755 ${instdir}/execute_codeaster
+cp -r ${wrkdir}/data/code_aster ${instdir}/
 echo '# empty' > ${instdir}/profile.sh
 
 [ -f ${instdir}/image ] && rm -f ${instdir}/image
