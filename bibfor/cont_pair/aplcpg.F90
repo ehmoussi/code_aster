@@ -26,6 +26,7 @@ subroutine aplcpg(mesh            , newgeo        , sdappa          , i_zone    
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/utmess.h"
 #include "jeveux.h"
 #include "asterc/r8nnem.h"
 #include "asterfort/jecrec.h"
@@ -98,7 +99,7 @@ character(len=24), intent(in) :: pair_method
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: list_pair(nb_elem_mast),li_nb_pt_inte_sl(nb_elem_mast), nbpatch_t, iret
+    integer :: list_pair(nb_elem_mast),li_nb_pt_inte_sl(nb_elem_mast), nbpatch_t, iret, vali(2)
     real(kind=8) :: li_pt_inte_sl(nb_elem_mast*16), li_pt_inte_ma(nb_elem_mast*16)
     real(kind=8) :: li_pt_gaus_ma(nb_elem_mast*72)
     integer :: elem_slav_nbnode, elem_slav_nume, elem_slav_dime, elem_slav_indx
@@ -460,7 +461,12 @@ character(len=24), intent(in) :: pair_method
                         elin_mast_nbnode, elem_mast_coor, elin_mast_code,&
                         elin_slav_nbnode, elem_slav_coor, elin_slav_code,&
                         poin_inte_sl       , inte_weight   , nb_poin_inte  ,&
-                        inte_neigh_ = inte_neigh)
+                        inte_neigh_ = inte_neigh, ierror_=iret)
+            if (iret .eq. 1) then
+                vali(1) = elem_slav_nume
+                vali(2) = elem_mast_nume
+                call utmess('A', 'CONTACT4_6', ni=2,vali=vali)
+            endif
             if (debug) then
                 write(*,*) "Intersection - Master: ", elem_mast_name
                 write(*,*) "Intersection - Slave : ", elem_slav_name
