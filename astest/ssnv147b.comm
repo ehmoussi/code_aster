@@ -137,7 +137,7 @@ REPONSE=STAT_NON_LINE( reuse=REPONSE,
                 REAC_ITER = 1,
                 REAC_ITER_ELAS = 1),
                 CONVERGENCE=_F(
-                RESI_GLOB_RELA = 1.E-6,
+                RESI_GLOB_RELA = 2.E-7,
                 ITER_GLOB_MAXI = 50)
              )
 
@@ -152,7 +152,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=7,
                    RESULTAT=REPONSE,
                    NOM_CHAM='SIEF_ELGA',
                    NOM_CMP='SIYY',
-                   VALE_CALC=0.5000004088684564,
+                   VALE_CALC=0.5,
                    MAILLE='M1',),
                 _F(NUME_ORDRE=7,
                    POINT=1,
