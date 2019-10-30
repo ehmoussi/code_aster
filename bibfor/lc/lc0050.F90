@@ -165,7 +165,7 @@ integer, intent(out) :: codret
             kinc = 0
         else
             call jevech('PITERAT', 'L', jv_iterat)
-            kinc = nint(zr(jv_iterat))
+            kinc = zi(jv_iterat)
         end if
         call tecael(iadzi, iazk24, noms=0)
         noel = zi(iadzi)
