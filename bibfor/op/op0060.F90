@@ -29,8 +29,8 @@ subroutine op0060()
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
 #include "asterfort/cncinv.h"
-#include "asterfort/fonbas.h"
-#include "asterfort/fonfis.h"
+#include "asterfort/fonbas2.h"
+#include "asterfort/fonfis2.h"
 #include "asterfort/fonimp.h"
 #include "asterfort/foninf2.h"
 #include "asterfort/fonlev.h"
@@ -62,7 +62,7 @@ subroutine op0060()
     character(len=13) :: motcl(8)
     character(len=16) :: typres, oper
     character(len=19) :: basfon, basloc, cnxinv, fontyp, lnno, ltno
-    character(len=24) :: valk(2), entnom, fondfi, fonoeu
+    character(len=24) :: valk(2), entnom, abscur, fonoeu
 ! DEB-------------------------------------------------------------------
 !
     call jemarq()
@@ -220,8 +220,8 @@ subroutine op0060()
     call jedetr(cnxinv)
 !
 !     ---------------------------------------------------------------
-!     CREATION DU VECTEUR .FONDFISS CONTENANT LES COORDONNEES ET LES
-!     ABSCISSES CURVILIGNES DES NOEUDS DU FOND
+!     CREATION DU VECTEUR .ABSCUR CONTENANT LES ABSCISSES
+!     CURVILIGNES DES NOEUDS DU FOND DE FISSURE
 !     ---------------------------------------------------------------
 !
 !     VECTEUR CONTENANT LES NOMS DES NOEUDS DU FOND DE FISSURE
@@ -236,11 +236,12 @@ subroutine op0060()
     else
         ASSERT(.FALSE.)
     endif
+!   
+!   CALCUL DE L'ABSCISSE CURVILIGNE ET STOCKAGE DANS LA SD .FONDFISSURE
+    abscur = resu//'.ABSCUR'
+    call fonfis2(noma, nbnoff, fonoeu, abscur)
 !
-    fondfi = resu//'.FONDFISS'
-    call fonfis(noma, nbnoff, fonoeu, fondfi)
-!
-!     ---------------------------------------------------------------
+!     --------------------------------------------------------------- 
 !     CREATION DE LA BASE LOCALE ET DES LEVEL SETS EN CHAQUE NOEUD
 !     ---------------------------------------------------------------
 !
@@ -255,7 +256,7 @@ subroutine op0060()
         basloc = resu//'.BASLOC'
         lnno = resu//'.LNNO'
         ltno = resu//'.LTNO'
-        call fonbas(noma, basfon, fontyp, fondfi, nbnoff,&
+        call fonbas2(noma, basfon, fontyp, fonoeu, nbnoff,&
                     basloc, lnno, ltno)
     endif
 !
