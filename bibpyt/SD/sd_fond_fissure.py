@@ -35,7 +35,7 @@ class sd_fond_fissure(AsBase):
     LEVRESUP_MAIL = Facultatif(AsVK8(SDNom(nomj='.LEVRESUP.MAIL'), ))
     INFO = AsVK8(SDNom(nomj='.INFO'), lonmax=4, )
     FOND_TAILLE_R = Facultatif(AsVR(SDNom(nomj='.FOND.TAILLE_R'),))
-    FONDFISS = AsVR()
+    ABSCUR = AsVR()
     LNNO = Facultatif(sd_cham_no())
     LTNO = Facultatif(sd_cham_no())
     BASLOC = Facultatif(sd_cham_no())
