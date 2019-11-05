@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,6 +68,11 @@ subroutine dismff(questi, nomobz, repi, repkz, ierd)
 !
         call jeveuo(nomob//'.INFO', 'L', jinfo)
         repk = zk8(jinfo-1+3)
+!
+    else if (questi.eq.'NOM_MAILLA') then
+!
+        call jeveuo(nomob//'.INFO', 'L', jinfo)
+        repk = zk8(jinfo-1+4)
 !
     else
 !

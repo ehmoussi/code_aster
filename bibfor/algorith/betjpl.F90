@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,9 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine betjpl(mod, nmat, mater, sig, vin,&
+subroutine betjpl(BEHinteg,&
+                  mod, nmat, mater, sig, vin,&
                   dsde)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 !       BETON_DOUBLE_DP: LOI ELASTO PLASTIQUE AVEC DOUBLE CRITERE DE
 !       PLASTICITE AVEC UN SEUIL EN COMPRESSION ET UN SEUIL EN TRACTION
 !       MATRICE SYMETRIQUE DE COMPORTEMENT TANGENT ELASTO_PLASTIQUE
@@ -45,6 +50,7 @@ subroutine betjpl(mod, nmat, mater, sig, vin,&
 #include "asterfort/lcsove.h"
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     integer :: nmat, nseuil
     real(kind=8) :: un, zero, rac2, deux, trois
     parameter       ( deux = 2.d0   )
@@ -104,7 +110,8 @@ subroutine betjpl(mod, nmat, mater, sig, vin,&
 !
 ! --  CALCUL DES ECROUISSAGES ET DERIVES DES COURBES D'ADOUCISSEMENT
 !
-    call betfpp(mater, nmat, pc, pt,&
+    call betfpp(BEHinteg,&
+                mater, nmat, pc, pt,&
                 nseuil, fc, ft, dfcdlc, dftdlt,&
                 kuc, kut, ke)
 !

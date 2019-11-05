@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lc0059(fami, kpg, ksp, imate,&
+! aslint: disable=W1504
+!
+subroutine lc0059(BEHinteg    ,&
+                  fami, kpg, ksp, imate,&
                   compor, carcri, instam, instap, neps, epsm,&
                   deps, nsig, sigm, nvi, vim, option, angmas,&
                   sigp, vip, &
                   typmod, icomp, dsidep, codret)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -28,39 +32,40 @@ implicit none
 #include "asterfort/srcomp.h"
 #include "asterfort/utlcal.h"
 !
-! aslint: disable=W1504
-!
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: imate
-    character(len=16), intent(in) :: compor(*)
-    real(kind=8), intent(in) :: carcri(*)
-    real(kind=8), intent(in) :: instam
-    real(kind=8), intent(in) :: instap
-    integer, intent(in) :: neps
-    integer, intent(in) :: nsig
-    real(kind=8), intent(in) :: epsm(neps)
-    real(kind=8), intent(in) :: deps(neps)
-    real(kind=8), intent(in) :: sigm(nsig)
-    integer, intent(in) :: nvi
-    real(kind=8), intent(in) :: vim(nvi)
-    character(len=16), intent(in) :: option
-    real(kind=8), intent(in) :: angmas(3)
-    real(kind=8), intent(out) :: sigp(nsig)
-    real(kind=8), intent(out) :: vip(nvi)
-    character(len=8), intent(in) :: typmod(*)
-    integer, intent(in) :: icomp
-    real(kind=8), intent(out) :: dsidep(6, 6)
-    integer, intent(out) :: codret
+type(Behaviour_Integ), intent(in) :: BEHinteg
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+integer, intent(in) :: imate
+character(len=16), intent(in) :: compor(*)
+real(kind=8), intent(in) :: carcri(*)
+real(kind=8), intent(in) :: instam
+real(kind=8), intent(in) :: instap
+integer, intent(in) :: neps
+integer, intent(in) :: nsig
+real(kind=8), intent(in) :: epsm(neps)
+real(kind=8), intent(in) :: deps(neps)
+real(kind=8), intent(in) :: sigm(nsig)
+integer, intent(in) :: nvi
+real(kind=8), intent(in) :: vim(nvi)
+character(len=16), intent(in) :: option
+real(kind=8), intent(in) :: angmas(3)
+real(kind=8), intent(out) :: sigp(nsig)
+real(kind=8), intent(out) :: vip(nvi)
+character(len=8), intent(in) :: typmod(*)
+integer, intent(in) :: icomp
+real(kind=8), intent(out) :: dsidep(6, 6)
+integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Behaviour
 !
-! lkr
+! LKR
 !
 ! --------------------------------------------------------------------------------------------------
+!
+! In  BEHinteg       : parameters for integration of behaviour
 !
 ! VARIABLES INTERNES DU MODELE :
 !         1.  RXIP      : VARIABLE D ECROUISSAGE MECA. PLASTIQUE
@@ -88,17 +93,15 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 ! 
     call utlcal('VALE_NOM', algo_inte, carcri(6))
-!
     if ((algo_inte(1:10).eq.'SPECIFIQUE') .or. (option(1:14).eq.'RIGI_MECA_TANG')) then
         call srcomp(typmod, imate, instam, instap, deps, sigm, vim,&
                     option, sigp, vip, dsidep, codret, nvi)
     else
-        
-        call plasti(fami, kpg, ksp, typmod, imate,&
+        call plasti(BEHinteg    ,&
+                    fami, kpg, ksp, typmod, imate,&
                     compor, carcri, instam, instap, &
                     epsm, deps, sigm,&
                     vim, option, angmas, sigp, vip,&
                     dsidep, icomp, nvi, codret)
     endif
-
 end subroutine

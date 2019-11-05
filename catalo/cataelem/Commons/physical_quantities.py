@@ -1725,7 +1725,26 @@ FTHM_R   = PhysicalQuantity(type='R',
        PTHER : fonction du flux de chaleur
 """)
 
+ETHM_R   = PhysicalQuantity(type='R',
+    components=( 
+       'COEF[4]',
+       'PRE[2]',
+    ),
+    comment="""  ETHM_R Type:R Coef Echange (modelisation THM)
+       COEF :C11 C12 C21 C22
+       PRE : PRE1 ext et PRE2 ext
 
+""")
+ETHM_F   = PhysicalQuantity(type='K8',
+    components=( 
+       'COEF[4]',
+       'PRE[2]',
+    ),
+    comment="""  ETHM_F Type:F Coef Echange (modelisation THM)
+       COEF :C11 C12 C21 C22
+       PRE : PRE1 ext et PRE2 ext
+
+""")
 G        = PhysicalQuantity(type='R',
     components=(
        'GTHETA',

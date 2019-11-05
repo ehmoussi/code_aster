@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,14 +17,20 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine lcplnl(fami, kpg, ksp, rela_comp, toler,&
+subroutine lcplnl(BEHinteg, &
+                  fami, kpg, ksp, rela_comp, toler,&
                   itmax, mod, imat, nmat, materd,&
                   materf, nr, nvi, timed, timef,&
                   deps, epsd, sigd, vind, comp,&
                   nbcomm, cpmono, pgl, nfs, nsg,&
                   toutms, hsr, sigf, vinf, icomp,&
                   codret, drdy, crit)
+!
+use Behaviour_type
+!
 implicit none
+!
+type(Behaviour_Integ), intent(in) :: BEHinteg
 !
 !     INTEGRATION ELASTO-PLASTIQUE ET VISCO-PLASTICITE
 !           SUR DT DE Y = ( SIG , VIN )
@@ -321,8 +327,9 @@ implicit none
     call lceqvn(ndt, yf(1), sigf)
 !
 !     POST-TRAITEMENTS POUR DES LOIS PARTICULIERES
-    call lcplnf(rela_comp, vind, nbcomm, nmat, cpmono,&
-                materd, materf, iter, nvi, itmax,&
+    call lcplnf(BEHinteg,&
+                rela_comp, vind, nbcomm, nmat, cpmono,&
+                materf, iter, nvi, itmax,&
                 toler, pgl, nfs, nsg, toutms,&
                 hsr, dt, dy, yd, yf,&
                 vinf, sigd, sigf,&

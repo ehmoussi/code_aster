@@ -46,6 +46,9 @@ def options(self):
     group.add_option('--nolegacy', dest='legacy',
                      action='store_false',
                      help='do not create legacy files')
+    group.add_option('--singularity-image', dest='singularityimage',
+                     default=None, action='store',
+                     help='Singularity image used for executions')
 
     group = self.get_option_group("Configuration options")
     group.add_option('--with-data', dest='with_data',
@@ -85,6 +88,11 @@ def options(self):
 def configure(self):
     self.add_os_flags('ADDMEM')
     self.env.legacy = self.options.legacy
+    self.env.singularityimage = self.options.singularityimage
+    if self.env.singularityimage:
+        self.start_msg('Singularity image')
+        self.end_msg(self.env.singularityimage)
+
     dict_conv = self.env2dict(osp.dirname(self.path.abspath()))
     self.env['ASTER_ENVIRON'] = pickle.dumps(dict_conv)
 
@@ -111,11 +119,14 @@ def configure_data(self):
 
 
 def build(self):
+    # src/srcbin distinction exists for exec mode (644 vs 755)
     src = ['CTestTestfile.cmake.tmpl', 'external_programs.js.tmpl']
     tgt = ['CTestTestfile.cmake', 'external_programs.js']
     if self.env.legacy:
         src.extend(['config.txt.tmpl', 'profile.sh.tmpl'])
         tgt.extend(['config.txt', 'profile.sh'])
+    srcbin = ['execute_codeaster.tmpl', 'create_install_script']
+    tgtbin = ['execute_codeaster', 'create_install_script']
     try:
         dict_conv = pickle.loads(self.env['ASTER_ENVIRON'])
     except:
@@ -133,6 +144,23 @@ def build(self):
                                  indent=4, separators=(',', ': ')),
         **dict_conv
     )
+    if srcbin:
+        self(
+            features='subst',
+            name='data_files',
+            source=srcbin,
+            target=tgtbin,
+            install_path=self.env.ASTERDATADIR,
+            vars=['ASTER_ENVIRON', 'EXTERNAL_PROGRAMS', 'install_tests'],
+            PROGRAMS_JSON=json.dumps(self.env['EXTERNAL_PROGRAMS'],
+                                    sort_keys=True, indent=4,
+                                     separators=(',', ': ')),
+            chmod=Utils.O755,
+            **dict_conv
+        )
+    if self.env.singularityimage:
+        self.symlink_as("${PREFIX}/share/aster/image", self.env.singularityimage)
+
     # without substitution
     self.install_files(self.env.ASTERDATADIR, ["post_install"],
                        chmod=Utils.O755)
@@ -210,6 +238,14 @@ def env2dict(self, src):
     dico['ASRUN_TMPDIR'] = env.ASRUN_TMPDIR
     dico['ASTERDATADIR'] = env['ASTERDATADIR']
     dico['ASTER_TAG'] = '.'.join([str(i) for i in env['ASTER_VERSION'][0]])
+    dico['BIN_NODBG'] = '{PREFIX}/bin/aster{astervers}'.format(**env)
+    dico['BIN_DBG'] = '{PREFIX}/bin/asterd{astervers}'.format(**env)
+    if env.singularityimage:
+        dico['BIN_NODBG'] = 'execute_codeaster'
+        dico['BIN_DBG'] = 'execute_codeaster'
+        dico['BIND_PREFIX'] = '--bind @PREFIX@:@PREFIX@'
+    else:
+        dico['BIND_PREFIX'] = ''
     self.end_msg("yes")
 
     self.start_msg('Build list of testcases')

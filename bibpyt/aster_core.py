@@ -56,6 +56,9 @@ from _aster_core import (
 __version__ = '.'.join(str(i) for i in aster_pkginfo.version_info.version)
 
 
+MAXSIZE_MSGCHK = ' <I> Only the first {0} occurrences (total: {1}) have been checked.'
+MAXSIZE_MSGKEEP = ' <I> Only the first {0} occurrences (total: {1}) have been printed.'
+
 def _is_initialized():
     return getattr(_aster_core, 'get_option', None) is not None
 

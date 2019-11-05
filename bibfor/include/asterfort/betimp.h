@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine betimp(nmat, mater, sig, vind, vinf,&
+    subroutine betimp(BEHinteg,&
+                      nmat, mater, sig, vind, vinf,&
                       nseui1, nseui2, nseui3, nseui4,&
                       sige, sigd)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         integer :: nmat
         real(kind=8) :: mater(nmat, 2)
         real(kind=8) :: sig(6)

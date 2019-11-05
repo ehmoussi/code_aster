@@ -16,8 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine mfront_get_mater_value(BEHinteg ,&
-                                  rela_comp, jvariext1, jvariext2,&
+subroutine mfront_get_mater_value(BEHinteg , rela_comp,&
                                   fami     , kpg      , ksp, imate, &
                                   nprops   , props)
 !
@@ -32,13 +31,11 @@ implicit none
 #include "asterfort/mat_proto.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/metaGetPhase.h"
-#include "asterfort/isdeco.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
 type(Behaviour_Integ), intent(in) :: BEHinteg
 character(len=16), intent(in) :: rela_comp
-integer, intent(in) :: jvariext1, jvariext2
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg, ksp, imate
 integer, intent(inout) :: nprops
@@ -71,22 +68,17 @@ real(kind=8), intent(out) :: props(*)
     real(kind=8) :: propl(npropmax)
     real(kind=8) :: zalpha
     integer      :: nb_phasis, meta_type
-    integer      :: tabcod(60), variextecode(2)
     integer, parameter :: nb_para = 3
     real(kind=8) :: para_vale(nb_para)
     character(len=16), parameter :: para_name(nb_para) = (/'X', 'Y', 'Z'/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    tabcod(:) = 0
-    variextecode(1) = jvariext1
-    variextecode(2) = jvariext2
-    call isdeco(variextecode, tabcod, 60)
     nbcoef = 0
 !
 ! - Coordinates of current Gauss point
 !
-    para_vale = BEHinteg%elga%coorpg
+    para_vale = BEHinteg%elem%coor_elga(kpg,:)
 !
 ! - Get parameters
 !
@@ -100,7 +92,7 @@ real(kind=8), intent(out) :: props(*)
         ASSERT(nbcoef <= npropmax)
 ! ----- Get the properties values (enter under 'rela_comp' in DEFI_MATERIAU)
         props(1:nprops) = r8nnem()
-        if (tabcod(ZFERRITE) .eq. 1) then
+        if (BEHinteg%tabcod(ZFERRITE) .eq. 1) then
             meta_type = 1
             nb_phasis = 5
             call metaGetPhase(fami     , '+', kpg, ksp, meta_type,&
@@ -116,7 +108,7 @@ real(kind=8), intent(out) :: props(*)
                                 1, nomres(i), propl(i), codrel(i), 1)
                 endif
             enddo
-        elseif (tabcod(ZALPHPUR) .eq. 1) then
+        elseif (BEHinteg%tabcod(ZALPHPUR) .eq. 1) then
             meta_type = 2
             nb_phasis = 3
             call utmess('F', 'COMPOR4_24')

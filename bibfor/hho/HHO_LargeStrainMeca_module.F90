@@ -26,6 +26,7 @@ use HHO_type
 use HHO_utils_module
 use HHO_eval_module
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -36,7 +37,6 @@ private
 #include "asterfort/Behaviour_type.h"
 #include "asterfort/HHO_size_module.h"
 #include "asterfort/assert.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/codere.h"
 #include "asterfort/desymt46.h"
 #include "asterfort/dmatmc.h"
@@ -213,7 +213,6 @@ contains
         do ipg = 1, hhoQuadCellRigi%nbQuadPoints
             coorpg(1:3) = hhoQuadCellRigi%points(1:3,ipg)
             weight = hhoQuadCellRigi%weights(ipg)
-            BEHinteg%elga%coorpg(1:3) = coorpg(1:3)
            !print*, ipg, "qp", coorpg(1:3), weight
 !
 ! --------- Eval basis function at the quadrature point
@@ -1014,7 +1013,7 @@ contains
 !
 ! ----- Get coded integer for external state variable
 !
-        jstrainexte = nint(carcri(ISTRAINEXTE))
+        jstrainexte = nint(carcri(EXTE_STRAIN))
 !
 ! ----- Compute PK2 at T-
 !

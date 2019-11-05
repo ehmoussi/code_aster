@@ -21,6 +21,7 @@ subroutine tufull(option, nomte, nbrddl, deplm, deplp,&
                   codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -40,7 +41,6 @@ implicit none
 #include "asterfort/mavec.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/poutre_modloc.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rccoma.h"
 #include "asterfort/rcvalb.h"

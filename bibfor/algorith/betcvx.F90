@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine betcvx(nmat, mater, sig, vind, vinf,&
+subroutine betcvx(BEHinteg,&
+                  nmat, mater, sig, vind, vinf,&
                   nvi, nseuil)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -50,7 +53,7 @@ implicit none
 !       IN  MATER  :  COEFFICIENTS MATERIAU A TEMP
 !       VAR NSEUIL :  SEUIL ELASTIQUE PRECEDENT / NOUVEAU SEUIL CALCULE
 !       ----------------------------------------------------------------
-
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     integer :: nvi, nmat, nseuil
     real(kind=8) :: pc, pt, sig(6), dev(6), vind(*), vinf(*)
     real(kind=8) :: mater(nmat, 2)
@@ -111,7 +114,8 @@ implicit none
 !
 ! ---   ECROUISSAGE EN TRACTION ET EN COMPRESSION
 !
-    call betfpp(mater, nmat, pc, pt,&
+    call betfpp(BEHinteg,&
+                mater, nmat, pc, pt,&
                 3, fc, ft, dfcdlc, dftdlt,&
                 kuc, kut, ke)
 !

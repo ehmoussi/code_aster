@@ -196,7 +196,7 @@ integer, intent(out) :: iret
 ! SEULEMENT SI ON EST EN COORDONNEES CYLINDRIQUES
 !
     if (zcylin) then
-        call edgrep(typmod, BEHinteg%elga%coorpg, anic, ani)
+        call edgrep(typmod, BEHinteg%elem%coor_elga(kpg,:), anic, ani)
     else
         do i = 1,6
             do k = 1,6

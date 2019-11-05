@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine pielas(ndim, npg, kpg, compor, typmod,&
+subroutine pielas(BEHinteg,&
+                  ndim, npg, kpg, compor, typmod,&
                   mate, lgpg, vim, epsm,&
                   epsp, epsd, sigma, etamin, etamax,&
                   tau, copilo)
 !
+use Behaviour_type
 !
-    implicit none
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/r8gaem.h"
 #include "asterfort/pipedo.h"
@@ -31,16 +34,18 @@ subroutine pielas(ndim, npg, kpg, compor, typmod,&
 #include "asterfort/pipepl.h"
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"
-    integer :: ndim, kpg, npg
-    integer :: mate
-    character(len=8) :: typmod(*)
-    character(len=16) :: compor(*)
-    integer :: lgpg
-    real(kind=8) :: vim(lgpg, npg)
-    real(kind=8) :: epsm(6), epsp(6), epsd(6)
-    real(kind=8) :: copilo(5, npg)
-    real(kind=8) :: etamin, etamax, tau
-    real(kind=8) :: sigma(6)
+!
+type(Behaviour_Integ), intent(in) :: BEHinteg
+integer :: ndim, kpg, npg
+integer :: mate
+character(len=8) :: typmod(*)
+character(len=16) :: compor(*)
+integer :: lgpg
+real(kind=8) :: vim(lgpg, npg)
+real(kind=8) :: epsm(6), epsp(6), epsd(6)
+real(kind=8) :: copilo(5, npg)
+real(kind=8) :: etamin, etamax, tau
+real(kind=8) :: sigma(6)
 !
 ! ----------------------------------------------------------------------
 !
@@ -84,8 +89,7 @@ subroutine pielas(ndim, npg, kpg, compor, typmod,&
 !
 ! --- CALCUL SUIVANT COMPORTEMENT
 !
-    if (compor(1).eq.'VMIS_ISOT_TRAC' .or. compor(1)&
-    .eq.'VMIS_ISOT_LINE') then
+    if (compor(1).eq.'VMIS_ISOT_TRAC' .or. compor(1) .eq.'VMIS_ISOT_LINE') then
         call pipepl(ndim, compor(1), typmod, tau, mate,&
                     sigma, vim(1, kpg), epsp, epsd, copilo(1, kpg),&
                     copilo(2, kpg), copilo(3, kpg), copilo(4, kpg), copilo(5, kpg))
@@ -119,7 +123,8 @@ subroutine pielas(ndim, npg, kpg, compor, typmod,&
         call daxpy(ndimsi, 1.d0, epsm, 1, epsp,&
                    1)
 !
-        call pipedp(kpg, 1, ndim, typmod, mate,&
+        call pipedp(BEHinteg,&
+                    kpg, 1, ndim, typmod, mate,&
                     epsm, sigma, vim(1, kpg), epsp, epsd,&
                     copilo(1, kpg), copilo(2, kpg))
 !

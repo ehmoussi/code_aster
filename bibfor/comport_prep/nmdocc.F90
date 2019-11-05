@@ -39,15 +39,13 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/infniv.h"
 !
-character(len=8), intent(in) :: model
-character(len=8), intent(in) :: chmate
-aster_logical, intent(in) :: l_etat_init
-aster_logical, intent(in) :: l_implex
+character(len=8), intent(in) :: model, chmate
+aster_logical, intent(in) :: l_etat_init, l_implex
 character(len=19), intent(in) :: compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Preparation of comportment (mechanics)
+! Preparation of behaviour (mechanics)
 !
 ! Get parameters from COMPORTEMENT keyword and prepare COMPOR <CARTE>
 !
@@ -124,7 +122,7 @@ character(len=19), intent(in) :: compor
 !
 ! - Cleaning
 !
-    deallocate(ds_compor_prep%v_comp)
-    deallocate(ds_compor_prep%v_exte)
+    deallocate(ds_compor_prep%v_para)
+    deallocate(ds_compor_prep%v_paraExte)
 !
 end subroutine

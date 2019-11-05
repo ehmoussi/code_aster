@@ -25,17 +25,16 @@ subroutine nmpl3d(fami  , nno  , npg   , ipoids, ivf   ,&
                   matuu , vectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/codere.h"
 #include "asterfort/crirup.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 character(len=*), intent(in) :: fami
 integer, intent(in) :: nno, npg
@@ -111,7 +110,6 @@ integer, intent(inout) :: codret
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sigm_norm(6)
     real(kind=8) :: sig(6)
     real(kind=8) :: poids, tmp
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
@@ -125,11 +123,11 @@ integer, intent(inout) :: codret
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri , typmod,&
-                               nno    , npg   , ndim ,&
-                               ipoids , ivf   , idfde,&
-                               geom   , deplm , deplp,&
-                               coorga)
+    call behaviourPrepESVAElem(carcri, typmod  ,&
+                               nno   , npg     , ndim ,&
+                               ipoids, ivf     , idfde,&
+                               geom  , BEHinteg,&
+                               deplm , deplp)
 !
 ! - Loop on Gauss points
 !
@@ -175,7 +173,6 @@ integer, intent(inout) :: codret
 !
 ! ----- Compute behaviour
 !
-        BEHinteg%elga%coorpg = coorga(kpg,:)
         call nmcomp(BEHinteg   ,&
                     fami       , kpg        , 1        , 3     , typmod        ,&
                     imate      , compor     , carcri   , instam, instap        ,&

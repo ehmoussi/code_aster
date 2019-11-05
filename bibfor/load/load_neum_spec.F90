@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -81,7 +81,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nb_type_neum
-    parameter (nb_type_neum=18)
+    parameter (nb_type_neum=19)
     character(len=6) :: object(nb_type_neum)
     character(len=7) :: para_r(nb_type_neum), para_f(nb_type_neum)
     character(len=16) :: option_f(nb_type_neum), option_r(nb_type_neum)
@@ -105,7 +105,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    '.F2D2D','.F1D2D','.F1D1D','.PESAN',&
                    '.ROTAT','.PRESS','.FELEC','.FCO3D',&
                    '.FCO2D','.EPSIN','.FLUX' ,'.VEASS',&
-                   '.SIINT','.EFOND'/
+                   '.SIINT','.EFOND','.ETHM'/
 !
 ! - Name of input parameter field (real coefficient)
 !
@@ -113,7 +113,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    'PFR2D2D','PFR1D2D','PFR1D1D','PPESANR',&
                    'PROTATR','PPRESSR','PFRELEC','PFRCO3D',&
                    'PFRCO2D','PEPSINR','PFLUXR' ,'       ',&
-                   '       ','PEFOND'/
+                   '       ','PEFOND', 'PECHTHM'/
 !
 ! - Name of option for dead load (real coefficient)
 !
@@ -121,7 +121,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    'CHAR_MECA_FR2D2D','CHAR_MECA_FR1D2D','CHAR_MECA_FR1D1D','CHAR_MECA_PESA_R',&
                    'CHAR_MECA_ROTA_R','CHAR_MECA_PRES_R','CHAR_MECA_FRELEC','CHAR_MECA_FRCO3D',&
                    'CHAR_MECA_FRCO2D','CHAR_MECA_EPSI_R','CHAR_MECA_FLUX_R','Copy_Load'       ,&
-                   'FORC_NODA       ','CHAR_MECA_EFON_R'/
+                   'FORC_NODA       ','CHAR_MECA_EFON_R','CHAR_ECHA_THM_R'/
 !
 ! - Name of option for undead load (real coefficient)
 !
@@ -129,7 +129,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    'No_Load         ','No_Load         ','CHAR_MECA_SR1D1D','CHAR_MECA_PESA_R',&
                    'CHAR_MECA_ROTA_R','CHAR_MECA_PRSU_R','No_Load         ','CHAR_MECA_SRCO3D',&
                    'No_Load         ','No_Load         ','No_Load         ','No_Load         ',&
-                   'No_Load         ','CHAR_MECA_EFON_R'/
+                   'No_Load         ','CHAR_MECA_EFON_R','CHAR_ECHA_THM_R'/
 !
 ! - Name of option for undead load matrix (real coefficient)
 !
@@ -137,7 +137,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    'No_Load         ','No_Load         ','No_Load         ','No_Load         ',&
                    'RIGI_MECA_RO    ','RIGI_MECA_PRSU_R','No_Load         ','RIGI_MECA_SRCO3D',&
                    'No_Load         ','No_Load         ','No_Load         ','No_Load         ',&
-                   'No_Load         ','RIGI_MECA_EFON_R'/
+                   'No_Load         ','RIGI_MECA_EFON_R','No_Load         '/
 !
 ! - Name of input parameter field (function coefficient)
 !
@@ -145,15 +145,15 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    'PFF2D2D','PFF1D2D','PFF1D1D','PPESANR',&
                    'PROTATR','PPRESSF','PFRELEC','PFFCO3D',&
                    'PFFCO2D','PEPSINF','PFLUXF' ,'       ',&
-                   '       ','PEFOND'/
+                   '       ','PEFOND', 'PCHTHMF'/
 !
-! - Name of option for dead load (function coefficient)
+! - Name of option for dead load (function coefficient) 
 !
     data option_f /'CHAR_MECA_FORC_F','CHAR_MECA_FF3D3D','CHAR_MECA_FF2D3D','CHAR_MECA_FF1D3D',&
                    'CHAR_MECA_FF2D2D','CHAR_MECA_FF1D2D','CHAR_MECA_FF1D1D','CHAR_MECA_PESA_R',&
                    'CHAR_MECA_ROTA_R','CHAR_MECA_PRES_F','CHAR_MECA_FRELEC','CHAR_MECA_FFCO3D',&
                    'CHAR_MECA_FFCO2D','CHAR_MECA_EPSI_F','CHAR_MECA_FLUX_F','Copy_Load',&
-                   'FORC_NODA       ','CHAR_MECA_EFON_F'/
+                   'FORC_NODA       ','CHAR_MECA_EFON_F','CHAR_ECHA_THM_F'/
 !
 ! - Name of option for undead load (function coefficient)
 !
@@ -161,7 +161,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    'No_Load         ','No_Load         ','CHAR_MECA_SF1D1D','No_Load         ',&
                    'No_Load         ','CHAR_MECA_PRSU_F','No_Load         ','CHAR_MECA_SFCO3D',&
                    'No_Load         ','No_Load         ','No_Load         ','No_Load         ',&
-                   'No_Load         ','CHAR_MECA_EFON_F'/
+                   'No_Load         ','CHAR_MECA_EFON_F','CHAR_ECHA_THM_F'/
 !
 ! - Name of option for undead load matrix (function coefficient)
 !
@@ -169,7 +169,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    'No_Load         ','No_Load         ','No_Load         ','No_Load         ',&
                    'No_Load         ','RIGI_MECA_PRSU_F','No_Load         ','RIGI_MECA_SFCO3D',&
                    'No_Load         ','No_Load         ','No_Load         ','No_Load         ',&
-                   'No_Load         ','RIGI_MECA_EFON_F'/
+                   'No_Load         ','RIGI_MECA_EFON_F','No_Load         '/
 !
 ! - Flag if load can been undead load type
 !
@@ -177,7 +177,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    .false.,.false.,.true. ,.true. ,&
                    .true. ,.true. ,.false.,.true. ,&
                    .false.,.false.,.false.,.false.,&
-                   .false.,.true. /
+                   .false.,.true.,.true. /
 !
 ! - Flag if load can been used for continuation methods
 !
@@ -185,7 +185,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    .true. ,.true. ,.true. ,.true. ,&
                    .false.,.true. ,.false.,.true. ,&
                    .true. ,.false.,.true. ,.true. ,&
-                   .false.,.true./
+                   .false.,.true.,.false./
 !
 ! - Type of matrix for undead load
 !
@@ -193,7 +193,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                    '       ','       ','       ','       ',&
                    'PMATUUR','PMATUNS','       ','PMATUNS',&
                    '       ','       ','       ','       ',&
-                   '       ','PMATUUR'/
+                   '       ','PMATUUR','       '/
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -294,6 +294,14 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
                 i_field_in = i_field_in+1
                 lpain(i_field_in) = 'PPREFFR'
                 lchin(i_field_in) = load_name//'.CHME.PREFF'
+            else if  (load_option .eq. 'CHAR_ECHA_THM_R') then
+                i_field_in = i_field_in+1
+                lpain(i_field_in) = 'PDEPLMR'
+                lchin(i_field_in) = load_name//'.CHME.DEPL_R'
+            else if  (load_option .eq. 'CHAR_ECHA_THM_F') then
+                i_field_in = i_field_in+1
+                lpain(i_field_in) = 'PDEPLMR'
+                lchin(i_field_in) = load_name//'.CHME.DEPL_R'
             endif
         else if (l_fonct_0.or.l_fonct_t) then
             i_field_in = i_field_in+1

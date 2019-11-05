@@ -32,7 +32,7 @@ subroutine op0060()
 #include "asterfort/fonbas.h"
 #include "asterfort/fonfis.h"
 #include "asterfort/fonimp.h"
-#include "asterfort/foninf.h"
+#include "asterfort/foninf2.h"
 #include "asterfort/fonlev.h"
 #include "asterfort/fonmai.h"
 #include "asterfort/fonnoe.h"
@@ -276,7 +276,7 @@ subroutine op0060()
 !     STOCKAGE D'INFOS UTILES DANS LA SD EN SORTIE
 !     ---------------------------------------------------------------
 !
-    call foninf(resu, typfon)
+    call foninf2(resu, typfon, noma)
 !
 !     ---------------------------------------------------------------
 !     IMPRESSIONS SI INFO=2

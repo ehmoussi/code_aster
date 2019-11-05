@@ -152,6 +152,12 @@ class CoreOptions(object):
         parser.add_argument(
             '--ORBInitRef', dest='ORBInitRef', action='store', default=None,
             help="store the SALOME session to connect")
+        parser.add_argument(
+            '--max_check', dest='max_check', type=int, action='store', default=500,
+            help="maximum number of occurrences to be checked, next are ignored")
+        parser.add_argument(
+            '--max_print', dest='max_print', type=int, action='store', default=500,
+            help="maximum number of keywords or values printed in commands echo")
 
     def parse_args(self, argv):
         """Analyse les arguments de la ligne de commmande."""

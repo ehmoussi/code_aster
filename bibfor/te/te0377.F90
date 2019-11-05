@@ -19,7 +19,7 @@
 subroutine te0377(option, nomte)
 !
 use Behaviour_type
-! person_in_charge: josselin.delmas at edf.fr
+use Behaviour_module
 !
 !     BUT:
 !       CALCUL DE L'INDICATEUR D'ERREUR EN MECANIQUE 2D AVEC LA
@@ -40,8 +40,6 @@ use Behaviour_type
 #include "asterfort/dfdm2d.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/behaviourInit.h"
-#include "asterfort/calcExternalStateVariable2.h"
 #include "asterfort/elref7.h"
 #include "asterfort/ermeb2.h"
 #include "asterfort/ermes2.h"
@@ -102,7 +100,6 @@ use Behaviour_type
     real(kind=8) :: tx(3), ty(3)
     real(kind=8) :: sig11(3), sig22(3), sig12(3)
     real(kind=8) :: e, nu, rho, valres(3)
-    real(kind=8) :: coorga(27,3)
     integer, parameter :: nb_para = 3
     real(kind=8) :: para_vale(nb_para)
     character(len=16), parameter :: para_name(nb_para) = (/'X', 'Y', 'Z'/)
@@ -203,10 +200,8 @@ use Behaviour_type
 !
     call jevech('PPRESS', 'L', iref2)
     call elrefe_info(fami='FPG1', jvf=ivf2)
-    call calcExternalStateVariable2(nno    , 1   , ndim  ,&
-                                    ivf2   , &
-                                    zr(igeom), coorga)
-    BEHinteg%elga%coorpg = coorga(1,:)
+    call prepCoorGauss(nno , 1        , ndim  ,&
+                       ivf2, zr(igeom), BEHinteg%elem)
 !
 ! 1.7. --- MATERIAU SI BESOIN
 !
@@ -226,7 +221,7 @@ use Behaviour_type
             nompar(nbpar) = 'RHO'
         endif
 !
-        para_vale(:) = BEHinteg%elga%coorpg
+        para_vale(:) = BEHinteg%elem%coor_elga(1,:)
         call rcvalb('FPG1', 1, 1, '+', zi(imate),&
                     ' ', phenom, nb_para, para_name, para_vale, &
                     nbpar, nompar, valres, icodre, 1)
@@ -416,8 +411,8 @@ use Behaviour_type
 !
         call jenuno(jexnum('&CATA.TM.NOMTM', tyv), typmav)
         if (niv .ge. 2) then
-            write(ifm,1003) ifa, zi(ivois+ifa), typmav
-            1003 format (i2,'-EME FACE DE NUMERO',i10,' ==> TYPMAV = ', a)
+            write(ifm,103) ifa, zi(ivois+ifa), typmav
+103 format (i2,'-EME FACE DE NUMERO',i10,' ==> TYPMAV = ', a)
         endif
 !
 ! ----- CALCUL DE NORMALES, TANGENTES ET JACOBIENS AUX POINTS DE GAUSS

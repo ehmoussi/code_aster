@@ -26,6 +26,7 @@ subroutine aplcpg(mesh            , newgeo        , sdappa          , i_zone    
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/utmess.h"
 #include "jeveux.h"
 #include "asterc/r8nnem.h"
 #include "asterfort/jecrec.h"
@@ -98,7 +99,7 @@ character(len=24), intent(in) :: pair_method
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: list_pair(nb_elem_mast),li_nb_pt_inte_sl(nb_elem_mast), nbpatch_t, iret
+    integer :: list_pair(nb_elem_mast),li_nb_pt_inte_sl(nb_elem_mast), nbpatch_t, iret, vali(2)
     real(kind=8) :: li_pt_inte_sl(nb_elem_mast*16), li_pt_inte_ma(nb_elem_mast*16)
     real(kind=8) :: li_pt_gaus_ma(nb_elem_mast*72)
     integer :: elem_slav_nbnode, elem_slav_nume, elem_slav_dime, elem_slav_indx
@@ -108,9 +109,9 @@ character(len=24), intent(in) :: pair_method
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
     integer :: nb_pair, nb_poin_inte
     integer :: i_mast_neigh, i_slav_start, i_mast_start, i_find_mast
-    integer :: i_slav_neigh
-    integer :: patch_indx, nb_next_alloc
-    real(kind=8) :: inte_weight, elem_slav_weight
+    integer :: i_slav_neigh, i_pair
+    integer :: patch_indx, nb_next_alloc, nbidx_ma, nbidx_sl
+    real(kind=8) :: inte_weight, elem_slav_weight, elem_slav_w, elem_slav_wref
     real(kind=8) :: poin_inte_sl(32)
     real(kind=8) :: poin_inte_ma(32)
     real(kind=8) :: poin_gauss_ma(74)
@@ -123,9 +124,11 @@ character(len=24), intent(in) :: pair_method
     integer :: slav_indx_mini, mast_indx_mini, slav_indx_maxi, mast_indx_maxi
     integer :: elem_neigh_indx, mast_find_indx, elem_slav_neigh, elem_mast_neigh
     aster_logical :: l_recup, debug
+    aster_logical, pointer :: flag_slav_mast(:) => null()
     integer, pointer :: mast_find_flag(:) => null()
     integer, pointer :: elem_mast_flag(:) => null()
     integer, pointer :: elem_slav_flag(:) => null()
+    integer, pointer :: w_slav_flag(:) => null()
     character(len=8) :: knuzo
     character(len=24) :: sdappa_slne, sdappa_mane
     integer, pointer :: v_sdappa_slne(:) => null()
@@ -195,9 +198,15 @@ character(len=24), intent(in) :: pair_method
 !
 ! - Objects for flags
 !
-    AS_ALLOCATE(vi=elem_slav_flag, size= slav_indx_maxi+1-slav_indx_mini)
-    AS_ALLOCATE(vi=mast_find_flag, size= mast_indx_maxi+1-mast_indx_mini)
-    AS_ALLOCATE(vi=elem_mast_flag, size= mast_indx_maxi+1-mast_indx_mini)
+    nbidx_sl = slav_indx_maxi+1-slav_indx_mini
+    nbidx_ma = mast_indx_maxi+1-mast_indx_mini
+    AS_ALLOCATE(vi=elem_slav_flag, size= nbidx_sl)
+    AS_ALLOCATE(vi=w_slav_flag, size= nbidx_sl)
+    AS_ALLOCATE(vi=mast_find_flag, size= nbidx_ma)
+    AS_ALLOCATE(vi=elem_mast_flag, size= nbidx_ma)
+    AS_ALLOCATE(vl=flag_slav_mast, size= nbidx_ma*nbidx_sl)
+    flag_slav_mast(:) = .false._1
+
     list_find_mast(1:nb_elem_mast) = 0
 !
 ! - Object for neighbours (inverse connectivity)
@@ -310,19 +319,25 @@ character(len=24), intent(in) :: pair_method
 !
 ! ----- Total weight for patch
 !
-        patch_weight_t(patch_indx) = patch_weight_t(patch_indx) + elem_slav_weight
+        if(w_slav_flag(elem_slav_indx).eq.0)then
+            patch_weight_t(patch_indx) = patch_weight_t(patch_indx) + elem_slav_weight
+            w_slav_flag(elem_slav_indx) = 1
+        endif
 !
 ! ----- Number of neighbours
 !
         if (elem_slav_dime .eq. 2) then
             nb_slav_neigh = 2
+            elem_slav_wref = 1.0
         elseif (elem_slav_code .eq. 'TR3' .or.&
                 elem_slav_code .eq. 'TR6') then
             nb_slav_neigh = 3
+            elem_slav_wref = 0.5
         elseif (elem_slav_code .eq. 'QU4' .or.&
                 elem_slav_code .eq. 'QU8' .or.&
                 elem_slav_code .eq. 'QU9') then
             nb_slav_neigh = 4
+            elem_slav_wref = 4.0
         else
             ASSERT(.false.)
         endif
@@ -367,6 +382,7 @@ character(len=24), intent(in) :: pair_method
         li_pt_inte_sl(:) = 0.0
         li_nb_pt_inte_sl(:) = 0
         nb_pair = 0
+        elem_slav_w = 0.0
         l_recup = .true.
 !
 ! ----- Loop on master elements
@@ -445,7 +461,12 @@ character(len=24), intent(in) :: pair_method
                         elin_mast_nbnode, elem_mast_coor, elin_mast_code,&
                         elin_slav_nbnode, elem_slav_coor, elin_slav_code,&
                         poin_inte_sl       , inte_weight   , nb_poin_inte  ,&
-                        inte_neigh_ = inte_neigh)
+                        inte_neigh_ = inte_neigh, ierror_=iret)
+            if (iret .eq. 1) then
+                vali(1) = elem_slav_nume
+                vali(2) = elem_mast_nume
+                call utmess('A', 'CONTACT4_6', ni=2,vali=vali)
+            endif
             if (debug) then
                 write(*,*) "Intersection - Master: ", elem_mast_name
                 write(*,*) "Intersection - Slave : ", elem_slav_name
@@ -462,6 +483,7 @@ character(len=24), intent(in) :: pair_method
                             elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
                             poin_inte_sl    , nb_poin_inte  ,poin_inte_ma,&
                             poin_gauss_ma   , iret)
+                elem_slav_w = elem_slav_w + inte_weight
             end if
 !
 ! --------- Add element paired
@@ -474,7 +496,6 @@ character(len=24), intent(in) :: pair_method
                 li_pt_inte_ma(1+(nb_pair-1)*16:(nb_pair-1)*16+16) = poin_inte_ma(1:16)
                 li_pt_gaus_ma(1+(nb_pair-1)*72:(nb_pair-1)*72+72) = poin_gauss_ma(1:72)
                 li_pt_inte_sl(1+(nb_pair-1)*16:(nb_pair-1)*16+16) = poin_inte_sl(1:16)
-                elem_mast_flag(elem_mast_indx) = 1
             end if
 !
 ! --------- Find neighbour of current master element
@@ -546,6 +567,19 @@ character(len=24), intent(in) :: pair_method
                              li_nbptsl_zmpi,li_ptintsl_zmpi, li_ptintma_zmpi,&
                              li_ptgausma_zmpi, nb_elem_slav, nb_elem_mast,&
                              nb_next_alloc)
+            elem_slav_flag(elem_slav_indx)  = 1
+            if (elem_slav_w .lt. elem_slav_wref-pair_tole) then
+                elem_slav_flag(elem_slav_indx)  = 3
+                flag_slav_mast(nbidx_ma*(elem_slav_indx-1)+1:nbidx_ma*(elem_slav_indx)) = .true._1
+                do i_pair=1, nb_pair
+                    elem_mast_indx = list_pair(i_pair)+1-mast_indx_mini
+                    flag_slav_mast(nbidx_ma*(elem_slav_indx-1)+elem_mast_indx)=.false._1
+                enddo
+            endif
+        else
+            elem_slav_flag(elem_slav_indx)  = 3
+            flag_slav_mast(nbidx_ma*(elem_slav_indx-1)+1:nbidx_ma*(elem_slav_indx)) = .true._1
+            flag_slav_mast(nbidx_ma*(elem_slav_indx-1)+elem_mast_indx)=.false._1
         end if
 !
 ! ----- Next elements
@@ -556,13 +590,15 @@ character(len=24), intent(in) :: pair_method
         do i_slav_neigh = 1, nb_slav_neigh
             elem_slav_neigh = v_sdappa_slne((elem_slav_indx-1)*4+i_slav_neigh)
             elem_neigh_indx = elem_slav_neigh+1-slav_indx_mini
+            elem_mast_indx = list_slav_master(i_slav_neigh)+1-mast_indx_mini
             if (debug) then
                 write(*,*)'Next elements - Current: ',i_slav_neigh,elem_slav_neigh,&
                    list_slav_master(i_slav_neigh), elem_slav_flag(elem_neigh_indx)
             end if
             if (elem_slav_neigh .ne. 0  .and.&
                 list_slav_master(i_slav_neigh).ne. 0 .and.&
-                elem_slav_flag(elem_neigh_indx) .ne. 1 ) then
+                (elem_slav_flag(elem_neigh_indx) .eq. 0 .or.&
+                 flag_slav_mast(nbidx_ma*(elem_neigh_indx-1)+elem_mast_indx)))then
                 elem_slav_start(nb_slav_start+1) = elem_slav_neigh
                 nb_slav_start                    = nb_slav_start+1
                 elem_slav_flag(elem_neigh_indx)  = 1
@@ -596,6 +632,8 @@ character(len=24), intent(in) :: pair_method
     AS_DEALLOCATE(vi=mast_find_flag)
     AS_DEALLOCATE(vi=elem_slav_flag)
     AS_DEALLOCATE(vi=elem_mast_flag)
+    AS_DEALLOCATE(vi=w_slav_flag)
+    AS_DEALLOCATE(vl=flag_slav_mast)
     AS_DEALLOCATE(vi=list_pair_zmpi)
     AS_DEALLOCATE(vi=li_nbptsl_zmpi)
     AS_DEALLOCATE(vr=li_ptintsl_zmpi)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -119,8 +119,14 @@ implicit none
         chinst_prev = '&&VECHME.CH_INST_M'
         call mecact('V', chinst_prev, 'LIGREL', ligrel_model, 'INST_R  ',&
                     ncmp=1, nomcmp=nomcmp(1), sr=inst_prev)
-        call mecact('V', chtime     , 'LIGREL', ligrel_model, 'INST_R  ',&
-                    ncmp=1, nomcmp=nomcmp(1), sr=inst_curr)
+        nomcmp(1) = 'INST'
+        nomcmp(2) = 'DELTAT'
+        nomcmp(3) = 'THETA'
+        time(1) = inst_curr
+        time(2) = inst_curr-inst_prev
+        time(3) = inst_theta
+        call mecact('V', chtime, 'LIGREL', ligrel_model, 'INST_R  ',&
+                    ncmp=3, lnomcmp=nomcmp, vr=time)
     else
         nomcmp(1) = 'INST'
         nomcmp(2) = 'DELTAT'

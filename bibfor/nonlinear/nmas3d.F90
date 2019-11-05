@@ -25,6 +25,7 @@ subroutine nmas3d(fami, nno, nbpg1, ipoids, ivf,&
                   vectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -38,7 +39,6 @@ implicit none
 #include "asterfort/elraga.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/invjac.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/matini.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
@@ -46,7 +46,6 @@ implicit none
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 integer :: nno, imate, lgpg, codret, nbpg1
 integer :: ipoids, ivf, idfde
@@ -120,7 +119,6 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     integer :: icodre(1)
     character(len=16) :: nomres(2)
     character(len=16) :: optios
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
     data h/ 1.d0, 1.d0, -1.d0,-1.d0,-1.d0,-1.d0, 1.d0, 1.d0,&
      &        1.d0,-1.d0, -1.d0, 1.d0,-1.d0, 1.d0, 1.d0,-1.d0,&
@@ -148,11 +146,11 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri, typmod,&
-                               nno   , nbpg1 , ndim ,&
-                               ipoids, ivf   , idfde,&
-                               geom  , deplm , deplp,&
-                               coorga)
+    call behaviourPrepESVAElem(carcri, typmod  ,&
+                               nno   , nbpg1   , ndim ,&
+                               ipoids, ivf     , idfde,&
+                               geom  , BEHinteg,&
+                               deplm , deplp)
 !
 ! - INITIALISATION CODES RETOURS
     do kpg = 1, nbpg1
@@ -257,7 +255,6 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
         optios = option
     endif
 !
-    BEHinteg%elga%coorpg = coorga(kpg,:)
     call nmcomp(BEHinteg,&
                 fami, kpg, 1, 3, typmod,&
                 imate, compor, carcri, instam, instap,&

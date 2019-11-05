@@ -50,7 +50,7 @@ type(Behaviour_PrepPara), intent(in) :: ds_compor_prep
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Preparation of comportment (mechanics)
+! Preparation of behaviour (mechanics)
 !
 ! Save informations in COMPOR <CARTE>
 !
@@ -97,25 +97,17 @@ type(Behaviour_PrepPara), intent(in) :: ds_compor_prep
 ! - Loop on occurrences of COMPORTEMENT
 !
     do i_comp = 1, nb_comp
-!
 ! ----- Detection of specific cases
-!
-        call comp_meca_l(ds_compor_prep%v_comp(i_comp)%rela_comp, 'CRISTAL', l_cristal)
-        call comp_meca_l(ds_compor_prep%v_comp(i_comp)%rela_comp, 'PMF'    , l_pmf)
-!
+        call comp_meca_l(ds_compor_prep%v_para(i_comp)%rela_comp, 'CRISTAL', l_cristal)
+        call comp_meca_l(ds_compor_prep%v_para(i_comp)%rela_comp, 'PMF'    , l_pmf)
 ! ----- Multifiber beams
-!
         if (l_pmf) then
-            l_is_pmf = .true.
+            l_is_pmf = ASTER_TRUE
         endif
-!
 ! ----- Get elements
-!
         call comp_read_mesh(mesh          , keywordfact, i_comp      ,&
                             list_elem_affe, l_affe_all , nb_elem_affe)
-!
 ! ----- Check if elements belong to model
-!
         nb_model_affe = 0
         if (nb_elem_affe .ne. 0) then
             call jeveuo(list_elem_affe, 'L', vi = v_elem_affe)
@@ -131,13 +123,9 @@ type(Behaviour_PrepPara), intent(in) :: ds_compor_prep
                 call utmess('A', 'COMPOR4_72', si = i_comp)
             endif
         endif
-!
 ! ----- Save informations in the field <COMPOR>
-!
-        call setBehaviourTypeValue(ds_compor_prep%v_comp, i_comp, v_compor_ = v_compor_valv)
-!
+        call setBehaviourTypeValue(ds_compor_prep%v_para, i_comp, v_compor_ = v_compor_valv)
 ! ----- Affect in <CARTE>
-!
         if (l_affe_all) then
             call nocart(compor, 1, nb_cmp)
         else

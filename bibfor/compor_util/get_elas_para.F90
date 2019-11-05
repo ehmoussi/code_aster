@@ -118,13 +118,13 @@ type(Behaviour_Integ), optional, intent(in) :: BEHinteg
         if (.not.BEHinteg%l_varext_geom) then
             nb_para   = nb_para + 1
             para_name(nb_para) = 'X'
-            para_vale(nb_para) = BEHinteg%elga%coorpg(1)
+            para_vale(nb_para) = BEHinteg%elem%coor_elga(ipg,1)
             nb_para   = nb_para + 1
             para_name(nb_para) = 'Y'
-            para_vale(nb_para) = BEHinteg%elga%coorpg(2)
+            para_vale(nb_para) = BEHinteg%elem%coor_elga(ipg,2)
             nb_para   = nb_para + 1
             para_name(nb_para) = 'Z'
-            para_vale(nb_para) = BEHinteg%elga%coorpg(3)
+            para_vale(nb_para) = BEHinteg%elem%coor_elga(ipg,3)
         endif
     endif
 !

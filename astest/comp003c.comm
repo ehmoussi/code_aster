@@ -40,11 +40,16 @@ POISSON=DEFI_FONCTION( NOM_PARA='TEMP',
 
 ALPHA=DEFI_CONSTANTE(VALE=1.0E-6);
 
+'''
 FONC1=DEFI_FONCTION( NOM_PARA='SECH',
                      PROL_DROITE='LINEAIRE',
                      PROL_GAUCHE='LINEAIRE',
                      VALE=(0.0, 0.0, 1.0, 1.0,)
                    )
+'''
+
+# Correction provisoire pour issue29103
+FONC1=DEFI_CONSTANTE(VALE=0.0)
 
 #parametres viscosite
 

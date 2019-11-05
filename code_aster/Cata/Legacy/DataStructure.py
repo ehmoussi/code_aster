@@ -50,6 +50,7 @@ from .DS.co_char_contact import char_contact
 from .DS.co_macr_elem_stat import macr_elem_stat
 from .DS.co_interspectre import interspectre
 from .DS.co_fond_fiss import fond_fiss
+from .DS.co_fond_fissure import fond_fissure
 from .DS.co_char_cine_meca import char_cine_meca
 from .DS.co_resultat_sdaster import (resultat_sdaster, comb_fourier, fourier_elas,
                                   fourier_ther, mult_elas, mode_empi,

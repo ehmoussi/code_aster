@@ -27,6 +27,7 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
                   matuu, ivectu, codret, nfiss, heavn, jstno)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -37,12 +38,10 @@ implicit none
 #include "asterfort/dfdm3d.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/indent.h"
-#include "asterfort/lcegeo.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/reeref.h"
 #include "asterfort/vecini.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/xcinem.h"
 #include "asterfort/xcalc_heav.h"
 #include "asterfort/xcalc_code.h"
@@ -103,7 +102,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     integer :: i, ig, j, j1, kkd, kl, kpg, l, m, n, nn, mn
     integer :: ddls, ddld, cpt, idfde, ipoids, ivf, dec(nnop)
     integer :: jcoopg, jdfd2, jgano, ndimb, nno, nnops, nnos, npgbis, hea_se
-    integer :: singu, alp, ii, jj, jvariext1, jvariext2
+    integer :: singu, alp, ii, jj
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), sigma(6), ftf, detf
     real(kind=8) :: tmp1, tmp2, sigp(6)
     real(kind=8) :: xg(ndim), xe(ndim), ff(nnop), jac
@@ -112,7 +111,6 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     real(kind=8) :: def(6, nnop, ndim*(1+nfh+nfe*ndim)), r
     real(kind=8) :: fk(27,3,3), dkdgl(27,3,3,3), ka, mu
     aster_logical :: grdepl, axi, cplan
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
     integer :: indi(6), indj(6)
@@ -150,17 +148,12 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
     call behaviourInit(BEHinteg)
 !
-! - Get coded integers for external state variables
+! - Prepare external state variables
 !
-    jvariext1 = nint(carcri(IVARIEXT1))
-    jvariext2 = nint(carcri(IVARIEXT2))
-!
-! - Compute intrinsic external state variables
-!
-    call lcegeo(nno      , npg      , ndim     ,&
-                ipoids   , ivf      , idfde    ,&
-                typmod   , jvariext1, jvariext2,&
-                zr(igeom), coorga)
+    call behaviourPrepESVAElem(carcri   , typmod  ,&
+                               nno      , npg     , ndim ,&
+                               ipoids   , ivf     , idfde,&
+                               zr(igeom), BEHinteg)
 !
     do n = 1, nnop
         call indent(n, ddls, ddlm, nnops, dec(n))
@@ -351,7 +344,6 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
             sign(m) = sigm(m,kpg)*rac2
         end do
 !
-        BEHinteg%elga%coorpg = coorga(kpg,:)
         call r8inir(6, 0.0d0, sigma, 1)
         call nmcomp(BEHinteg,&
                     'XFEM', idecpg+kpg, 1, ndim, typmod,&
