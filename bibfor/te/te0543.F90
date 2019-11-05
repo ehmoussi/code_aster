@@ -18,13 +18,15 @@
 !
 subroutine te0543(option, nomte)
 !
+use Behaviour_type
+use Behaviour_module
+!
 implicit none
 !
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
-#include "asterfort/lcegeo.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/pipeed.h"
 #include "asterfort/pipepe.h"
@@ -44,13 +46,18 @@ character(len=16), intent(in) :: option, nomte
 ! ......................................................................
 !
     character(len=8) :: typmod(2)
-    character(len=16) :: compor, pilo
+    character(len=16) :: rela_comp, pilo
 !
     integer :: jgano, ndim, nno, nnos, npg, lgpg, jtab(7), itype
-    integer :: ipoids, ivf, idfde, igeom, imate, jvariext1, jvariext2, icarcr
+    integer :: ipoids, ivf, idfde, igeom, imate, icarcr
     integer :: icontm, ivarim, icopil, iborne, ictau
-    real(kind=8) :: coorga(27,3)
     integer :: ideplm, iddepl, idepl0, idepl1, icompo, iret
+    type(Behaviour_Integ) :: BEHinteg
+
+!
+! - Initialisation of behaviour datastructure
+!
+    call behaviourInit(BEHinteg)
 !
 ! - TYPE DE MODELISATION
 !
@@ -92,29 +99,24 @@ character(len=16), intent(in) :: option, nomte
     call jevech('PCARCRI', 'L', icarcr)
 !
     pilo = zk16(itype)
-    compor = zk16(icompo)
+    rela_comp = zk16(icompo-1+RELA_NAME)
     if (pilo .eq. 'PRED_ELAS') then
         call jevech('PCDTAU', 'L', ictau)
         call jevech('PBORNPI', 'L', iborne)
     endif
 !
-!
 ! -- NOMBRE DE VARIABLES INTERNES
 !
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=jtab)
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
     lgpg = max(jtab(6),1)*jtab(7)
 !
-! - Compute intrinsic external state variables
+! - Prepare external state variables
 !
-    if (compor .eq. 'BETON_DOUBLE_DP') then
-        jvariext1 = nint(zr(icarcr-1+IVARIEXT1))
-        jvariext2 = nint(zr(icarcr-1+IVARIEXT2))
-        call lcegeo(nno       , npg      , ndim     ,&
-                    ipoids    , ivf      , idfde    ,&
-                    typmod    , jvariext1, jvariext2,&
-                    zr(igeom) , coorga   ,&
-                    zr(ideplm), zr(iddepl))
+    if (rela_comp .eq. 'BETON_DOUBLE_DP') then
+        call behaviourPrepESVAElem(zr(icarcr), typmod  ,&
+                                   nno       , npg     , ndim ,&
+                                   ipoids    , ivf     , idfde,&
+                                   zr(igeom) , BEHinteg)
     endif
 !
 ! PARAMETRES EN SORTIE
@@ -127,7 +129,8 @@ character(len=16), intent(in) :: option, nomte
                     zr(ivarim), zr(iddepl), zr(idepl0), zr(idepl1),&
                     zr(ictau), zr(icopil))
     else
-        call pipepe(pilo, ndim, nno, npg, ipoids,&
+        call pipepe(BEHinteg,&
+                    pilo, ndim, nno, npg, ipoids,&
                     ivf, idfde, zr( igeom), typmod, zi(imate),&
                     zk16(icompo), lgpg, zr(ideplm), zr( icontm), zr(ivarim),&
                     zr(iddepl), zr(idepl0), zr(idepl1), zr( icopil),&

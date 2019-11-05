@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine getExternalBehaviourPntr(comp_exte,&
+subroutine getExternalBehaviourPntr(paraExte,&
                                     cptr_fct_ldc ,&
                                     cptr_nbvarext, cptr_namevarext,&
                                     cptr_nbprop  , cptr_nameprop)
@@ -31,12 +31,9 @@ implicit none
 #include "asterc/mfront_get_pointers.h"
 #include "asterfort/assert.h"
 !
-type(Behaviour_External), intent(in) :: comp_exte
-integer, intent(out) :: cptr_fct_ldc
-integer, intent(out) :: cptr_nbvarext
-integer, intent(out) :: cptr_namevarext
-integer, intent(out) :: cptr_nbprop
-integer, intent(out) :: cptr_nameprop
+type(Behaviour_ParaExte), intent(in) :: paraExte
+integer, intent(out) :: cptr_fct_ldc, cptr_nbvarext
+integer, intent(out) :: cptr_namevarext, cptr_nbprop, cptr_nameprop
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,7 +43,7 @@ integer, intent(out) :: cptr_nameprop
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  comp_exte        : values defining external behaviour
+! In  paraExte         : values defining external behaviour
 ! Out cptr_fct_ldc     : pointer to behaviour law
 ! Out cptr_nbvarext    : pointer to number of external state variables
 ! Out cptr_namevarext  : pointer to name of external state variables
@@ -69,12 +66,12 @@ integer, intent(out) :: cptr_nameprop
 !
 ! - Get parameters
 !
-    l_mfront_offi   = comp_exte%l_mfront_offi
-    l_mfront_proto  = comp_exte%l_mfront_proto
-    l_umat          = comp_exte%l_umat
-    libr_name       = comp_exte%libr_name 
-    subr_name       = comp_exte%subr_name
-    model_mfront    = comp_exte%model_mfront
+    l_mfront_offi   = paraExte%l_mfront_offi
+    l_mfront_proto  = paraExte%l_mfront_proto
+    l_umat          = paraExte%l_umat
+    libr_name       = paraExte%libr_name 
+    subr_name       = paraExte%subr_name
+    model_mfront    = paraExte%model_mfront
 !
 ! - Get pointers
 !
@@ -86,7 +83,7 @@ integer, intent(out) :: cptr_nameprop
     elseif ( l_umat ) then
         call umat_get_function(libr_name, subr_name, cptr_fct_ldc)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

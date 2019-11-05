@@ -149,7 +149,6 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
         if (norme_mode is not None):
             modes = calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression)
 
-
     matrRigi = args.get("MATR_RIGI")
     if matrRigi is not None:
         if isinstance(modes, GeneralizedModeContainer):

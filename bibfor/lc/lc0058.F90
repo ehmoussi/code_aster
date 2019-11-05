@@ -22,7 +22,6 @@ subroutine lc0058(BEHinteg,&
                   imate   , compor, carcri, instam, instap,&
                   neps    , epsm  , deps  , nsig  , sigm  ,&
                   nvi     , vim   , option, angmas,&
-                  temp    , dtemp , predef, dpred ,&
                   sigp    , vip   , dsidep, codret)
 !
 use Behaviour_type
@@ -36,7 +35,6 @@ implicit none
 #include "asterfort/lceqvn.h"
 #include "asterfort/lcicma.h"
 #include "asterfort/matrot.h"
-#include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 #include "blas/dcopy.h"
@@ -58,8 +56,6 @@ integer, intent(in) :: nvi
 real(kind=8), intent(in) :: vim(*)
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: angmas(*)
-real(kind=8), intent(in) :: temp, dtemp
-real(kind=8), intent(in) :: predef(*), dpred(*)
 real(kind=8), intent(out) :: sigp(6)
 real(kind=8), intent(out) :: vip(nvi)
 real(kind=8), intent(out) :: dsidep(6, 6)
@@ -93,10 +89,6 @@ integer, intent(out) :: codret
 ! In  vim              : internal state variables at beginning of current step time
 ! In  option           : name of option to compute
 ! In  angmas           : nautical angles
-! In  temp             : temperature at beginning of current step time
-! In  dtemp            : increment of temperature during current step time
-! In  predef           : external state variables at beginning of current step time
-! In  dpred            : increment of external state variables during current step time
 ! Out sigm             : stresses at end of current step time
 ! Out vip              : internal state variables at end of current step time
 ! Out dsidep           : tangent matrix
@@ -105,7 +97,8 @@ integer, intent(out) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: npropmax = 197
-    integer :: nprops, nstatv, j, i, pfcmfr, nummod, jvariext1, jvariext2, jstrainexte
+    integer :: nprops, nstatv, j, i, pfcmfr, nummod
+    integer :: strain_model
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     real(kind=8), parameter :: usrac2 = sqrt(2.d0)*0.5d0
     real(kind=8) :: drot(3, 3), dstran(9), props(npropmax)
@@ -114,8 +107,9 @@ integer, intent(out) :: codret
     real(kind=8) :: stran(9)
     real(kind=8) :: dtime, pnewdt
     real(kind=8) :: drott(3, 3)
+    real(kind=8) :: temp, dtemp
     character(len=16) :: rela_comp, defo_comp
-    aster_logical :: l_simomiehe, l_grotgdep, l_czm
+    aster_logical :: l_simomiehe, l_grotgdep, l_czm, l_pred
     integer :: ntens, ndi
     common/tdim/  ntens  , ndi
 !
@@ -127,24 +121,36 @@ integer, intent(out) :: codret
     nprops         = npropmax
     rela_comp      = compor(RELA_NAME)
     defo_comp      = compor(DEFO)
-    pfcmfr         = nint(carcri(16))
-    jvariext1      = nint(carcri(IVARIEXT1))
-    jvariext2      = nint(carcri(IVARIEXT2))
-    jstrainexte    = nint(carcri(ISTRAINEXTE))
-    l_simomiehe    = defo_comp .eq. 'SIMO_MIEHE'
-    l_grotgdep     = ASTER_FALSE
-    if (jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_L) then
-        l_grotgdep     = ASTER_TRUE
-    endif
+    l_pred         = option(1:9) .eq. 'RIGI_MECA'
+!
+! - Finite element
+!
     l_czm          = typmod(2).eq.'ELEMJOIN'
     ASSERT(.not. l_czm)
+!
+! - Strain model
+!
+    strain_model   = nint(carcri(EXTE_STRAIN))
+    l_simomiehe    = defo_comp .eq. 'SIMO_MIEHE'
+    l_grotgdep     = ASTER_FALSE
+    if (strain_model .eq. MFRONT_STRAIN_GROTGDEP_L) then
+        l_grotgdep = ASTER_TRUE
+    endif
     ASSERT(.not. l_simomiehe)
+!
+! - Pointer to MFRONT function
+!
+    pfcmfr = int(carcri(EXTE_PTR))
+!
+! - Get temperature
+!
+    temp  = BEHinteg%esva%temp_prev
+    dtemp = BEHinteg%esva%temp_incr
 !
 ! - Get material properties
 !
-    call mfront_get_mater_value(BEHinteg ,&
-                                rela_comp, jvariext1, jvariext2,&
-                                fami     , kpg      , ksp      , imate,&
+    call mfront_get_mater_value(BEHinteg , rela_comp,&
+                                fami     , kpg      , ksp, imate,&
                                 nprops   , props)
 !
 ! - Get type of modelization
@@ -163,14 +169,14 @@ integer, intent(out) :: codret
 !
 ! - Prepare strains
 !
-    call mfrontPrepareStrain(l_simomiehe, l_grotgdep, option, &
-                             neps , epsm , deps ,&
-                             stran , dstran)
+    call mfrontPrepareStrain(l_simomiehe, l_grotgdep, l_pred,&
+                             neps       , epsm      , deps  ,&
+                             stran      , dstran)
 !
-! - Modify number of internal state variables
+! - Modify number of internal state variables: GDEF_LOG
 !
     if (defo_comp .eq. 'GDEF_LOG') then
-        nstatv = nvi-6
+        nstatv = nvi - 6
     else
         nstatv = nvi
     endif
@@ -221,18 +227,24 @@ integer, intent(out) :: codret
 ! - Call MFront
 !
     pnewdt = 1.d0
+    WRITE(6,*) 'PREDEF: ',BEHinteg%exte%predef(1:8),BEHinteg%exte%dpred(1:8)
+    WRITE(6,*) 'STRAN: ',stran(1:6),dstran(1:6)
     if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
         call dcopy(nsig, sigm, 1, sigp, 1)
         call dscal(3, usrac2, sigp(4), 1)
         call lceqvn(nstatv, vim, vip)
         call mfront_behaviour(pfcmfr, sigp, vip, ddsdde,&
-                              stran, dstran, dtime, temp, dtemp,&
-                              predef, dpred, ntens, nstatv, props,&
+                              stran, dstran, dtime,&
+                              temp, dtemp,&
+                              BEHinteg%exte%predef, BEHinteg%exte%dpred,&
+                              ntens, nstatv, props,&
                               nprops, drot, pnewdt, nummod)
     else if (option(1:9).eq. 'RIGI_MECA') then
-        call mfront_behaviour(pfcmfr, sigm, vim, ddsdde, stran,&
-                              dstran, dtime, temp, dtemp, predef,&
-                              dpred, ntens, nstatv, props, nprops,&
+        call mfront_behaviour(pfcmfr, sigm, vim, ddsdde,&
+                              stran, dstran, dtime,&
+                              temp, dtemp,&
+                              BEHinteg%exte%predef, BEHinteg%exte%dpred,&
+                              ntens, nstatv, props, nprops,&
                               drot, pnewdt, nummod)
     endif
 !
@@ -253,9 +265,9 @@ integer, intent(out) :: codret
 ! - Convert matrix
 !
     if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-        call r8inir(36, 0.d0, dsidep, 1)
+        dsidep(:,:) = 0.d0
         call lcicma(ddsdde, ntens, ntens, ntens, ntens, &
-                   1, 1, dsidep, 6, 6, 1, 1)
+                    1, 1, dsidep, 6, 6, 1, 1)
         do i = 1, 6
             do j = 4, 6
                 dsidep(i,j) = dsidep(i,j)*rac2
@@ -266,10 +278,6 @@ integer, intent(out) :: codret
                 dsidep(i,j) = dsidep(i,j)*rac2
             end do
         end do
-        !write(6,*)'APRES APPEL MFRONT,OPERATEUR TANGENT DSIDEP='
-        !do i = 1, 6
-        !    write(6,'(6(1X,E11.4))') (dsidep(i,j),j=1,6)
-        !end do
     endif
 !
 ! - Return code from MFront
@@ -282,7 +290,7 @@ integer, intent(out) :: codret
         else if (pnewdt .lt. -2.99d0 .and. pnewdt .gt. -3.01d0) then
             call utmess('F', 'MFRONT_2')
         else if (pnewdt .lt. -3.99d0 .and. pnewdt .gt. -4.01d0) then
-            codret=1
+            codret = 1
         else
             call utmess('F', 'MFRONT_3')
         endif

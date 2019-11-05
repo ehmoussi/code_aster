@@ -25,6 +25,7 @@ subroutine nmgvno(fami, ndim, nno1, nno2, npg,&
                   vip, matr, vect, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -34,7 +35,6 @@ implicit none
 #include "asterfort/coefdg.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/nmepsi.h"
 #include "asterfort/nmgvdn.h"
 #include "asterfort/nmmabu.h"
@@ -143,9 +143,9 @@ implicit none
 !
     c = val(1)
 !
-    do 5 g = 1, npg
+    do g = 1, npg
         cod(g)=0
-  5 end do
+    end do
 !
     if (rigi) call r8inir((nddl*(nddl+1))/2, 0.d0, matr, 1)
     if (full) call r8inir((nddl*(nddl+1))/2, 0.d0, matr, 1)
@@ -156,29 +156,29 @@ implicit none
 !
 !    EXTRACTION DES DEPLACEMENTS
 !
-    do 10 n = 1, nno1
-        do 20 i = 1, ndim
+    do n = 1, nno1
+        do i = 1, ndim
             deplm(i+(n-1)*ndim) = ddlm(iu(nno1*(i-1)+n))
             if (rigi) then
                 depld(i+(n-1)*ndim) = 0.d0
             else
                 depld(i+(n-1)*ndim) = ddld(iu(nno1*(i-1)+n))
             endif
- 20     continue
- 10 end do
+        end do
+    end do
 !
 ! - CREATION D'UN VECTEUR VALANT 0 POUR ABSENCE DE DEPLACEMENT
 !
-    do 30 n = 1, nno2
+    do n = 1, nno2
         critd(n) = 0.d0
-        do 40 i = 1, ndim
+        do i = 1, ndim
             critd(n) = critd(n) + abs(ddld(iu(nno1*(i-1)+n)))
- 40     continue
- 30 end do
+        end do
+    end do
 !
 ! - CALCUL POUR CHAQUE POINT DE GAUSS
 !
-    do 1000 g = 1, npg
+    do g = 1, npg
 !
 !      CALCUL DES ELEMENTS GEOMETRIQUES DE L'EF POUR A
 !
@@ -187,31 +187,31 @@ implicit none
                     dfdi2)
         avm = 0
         avd = 0
-        do 50 n = 1, nno2
+        do n = 1, nno2
             avm = avm + vff2(n,g)*ddlm(ia(n))
             avd = avd + vff2(n,g)*ddld(ia(n))
             if (rigi) then
                 avd = 0.d0
             endif
- 50     continue
+        end do
         avp = avm + avd
 !
         if (avp .gt. 1.d0) then
             avp = 1.d0
         endif
 !
-        do 60 i = 1, ndim
+        do i = 1, ndim
             agm(i) = 0
             agd(i) = 0
-            do 70 n = 1, nno2
+            do n = 1, nno2
                 agm(i) = agm(i) + dfdi2(nno2*(i-1)+n)*ddlm(ia(n))
                 agd(i) = agd(i) + dfdi2(nno2*(i-1)+n)*ddld(ia(n))
                 if (rigi) then
                     agd(i) = 0.d0
                 endif
- 70         continue
+            end do
             agp(i) = agm(i) + agd(i)
- 60     continue
+        end do
 !
 !      CALCUL DES ELEMENTS GEOMETRIQUES DE L'EF POUR U
 !
@@ -228,17 +228,17 @@ implicit none
         call nmmabu(ndim, nno1, .false._1, grand, dfdi1,&
                     b)
         if (axi) then
-            do 80 n = 1, nno1
+            do n = 1, nno1
                 b(3,1,n) = vff1(n,g)/r
- 80         continue
+            end do
         endif
 !
-        do 90 kl = 1, 3
+        do kl = 1, 3
             sigmam(kl) = sigm(kl,g)
- 90     continue
-        do 100 kl = 4, ndimsi
+        end do
+        do kl = 4, ndimsi
             sigmam(kl) = sigm(kl,g)*rac2
-100     continue
+        end do
 !
         BEHinteg%elga%nonloc(1) = avp
         BEHinteg%elga%nonloc(2) = c
@@ -250,7 +250,7 @@ implicit none
                     vim(1, g), option, angmas, &
                     sigma, vip(1, g), 6*6*4, dsidep, cod(g))
 !
-        if (cod(g) .eq. 1) goto 9000
+        if (cod(g) .eq. 1) goto 900
 !
 !      FORCE INTERIEURE ET CONTRAINTES DE CAUCHY
 !
@@ -258,41 +258,40 @@ implicit none
 !
 !        CONTRAINTES
 !
-            do 110 kl = 1, 3
+            do kl = 1, 3
                 sigp(kl,g) = sigma(kl)
-110         continue
-            do 120 kl = 4, ndimsi
+            end do
+            do kl = 4, ndimsi
                 sigp(kl,g) = sigma(kl)/rac2
-120         continue
+            end do
 !
             sigp(ndimsi+1,g) = dsidep(1,1,4)
             bp = sigp(ndimsi+1,g)
 !
 !        VECTEUR FINT:U
 !
-            do 130 n = 1, nno1
-                do 140 i = 1, ndim
+            do n = 1, nno1
+                do i = 1, ndim
                     kk = iu(nno1*(i-1)+n)
                     t1 = 0
-                    do 150 kl = 1, ndimsi
+                    do kl = 1, ndimsi
                         t1 = t1 + sigma(kl)*b(kl,i,n)
-150                 continue
+                    end do
                     vect(kk) = vect(kk) + wg*t1
-140             continue
-130         continue
+                end do
+            end do
 !
 !        VECTEUR FINT:A
 !
-            do 160 n = 1, nno2
+            do n = 1, nno2
                 t1 = vff2(n,g)*bp
                 t2 = 0
-                do 170 i = 1, ndim
+                do i = 1, ndim
                     t2 = t2 + c*dfdi2(nno2*(i-1)+n)*agp(i)
-170             continue
+                end do
                 kk = ia(n)
                 vect(kk) = vect(kk) + wg*(t2+t1)
-160         continue
-!
+            end do
         endif
 !
 !   CALCUL DE LA MATRICE DE RIGIDITE
@@ -302,57 +301,56 @@ implicit none
 !
 !        MATRICE K:U(I,N),U(J,M)
 !
-            do 180 n = 1, nno1
-                do 190 i = 1, ndim
+            do n = 1, nno1
+                do i = 1, ndim
                     os = ((iu(nno1*(i-1)+n)-1)*iu(nno1*(i-1)+n))/2
-                    do 200 m = 1, nno1
-                        do 210 j = 1, ndim
+                    do m = 1, nno1
+                        do j = 1, ndim
                             if (iu(nno1*(j-1)+m) .gt. iu(nno1*(i-1)+n)) goto 821
                             kk = os+iu(nno1*(j-1)+m)
                             t1 = 0
-                            do 220 kl = 1, ndimsi
-                                do 230 pq = 1, ndimsi
+                            do kl = 1, ndimsi
+                                do pq = 1, ndimsi
                                     t1 = t1+dsidep(kl,pq,1)*b(pq,j,m)* b(kl,i,n)
-230                             continue
-220                         continue
+                                end do
+                            end do
                             matr(kk) = matr(kk) + wg*t1
-210                     continue
-200                 continue
+                        end do
+                    end do
 821                 continue
-190             continue
-180         continue
+                end do
+            end do
 !
 !        MATRICES K:A(N),A(M) SI ENDO NON-NUL
 !
-            do 240 n = 1, nno2
+            do n = 1, nno2
                 osa = ((ia(n)-1)*ia(n))/2
-                do 250 m = 1, nno2
+                do m = 1, nno2
                     t1 = vff2(n,g)*vff2(m,g)*dsidep(1,1,3)
                     t2 = 0
-                    do 260 i = 1, ndim
+                    do i = 1, ndim
                         t2 = t2 + dfdi2(nno2*(i-1)+n)*dfdi2(nno2*(i-1) +m)
-260                 continue
+                    end do
                     t2 = c*t2
                     if (ia(m) .le. ia(n)) then
                         kk = osa+ia(m)
                         matr(kk) = matr(kk) + wg*(t2+t1)
                     endif
-250             continue
-240         continue
-!
+                end do
+            end do
         endif
 !
         if (rigi .or. full) then
 !
 !        MATRICES K:A(N),U(J,M)
 !
-            do 270 n = 1, nno2
-                do 280 m = 1, nno1
-                    do 290 j = 1, ndim
+            do n = 1, nno2
+                do m = 1, nno1
+                    do j = 1, ndim
                         t1 = 0
-                        do 300 kl = 1, ndimsi
+                        do kl = 1, ndimsi
                             t1 = t1 + dsidep(kl,1,2)*b(kl,j,m)
-300                     continue
+                        end do
                         t1 = vff2(n,g)*t1
                         if (ia(n) .ge. iu(nno1*(j-1)+m)) then
                             kk = ((ia(n)-1)*ia(n))/2 + iu(nno1*(j-1)+ m)
@@ -360,17 +358,17 @@ implicit none
                             kk = ( (iu(nno1*(j-1)+m)-1)*iu(nno1*(j-1)+ m) )/2 +ia(n )
                         endif
                         matr(kk) = matr(kk) + wg*t1
-290                 continue
-280             continue
-270         continue
+                    end do
+                end do
+            end do
 !
         endif
 !
         if (elas .or. rigi .or. full) then
 !
-            do 310 n = 1, nno2
+            do n = 1, nno2
                 osa = ((ia(n)-1)*ia(n))/2
-                do 320 m = 1, nno2
+                do m = 1, nno2
                     if (ia(m) .le. ia(n)) then
                         kk=osa+ia(m)
 !
@@ -400,20 +398,20 @@ implicit none
                             endif
                         endif
                     endif
-320             continue
-310         continue
+                end do
+            end do
 !
         endif
 !
         if (rigi .or. full) then
 !
-            do 330 n = 1, nno2
+            do n = 1, nno2
 !
                 char = ddld(ia(n))
 !
                 if (char .eq. 0.d0 .and. critd(n) .ne. 0.d0) then
-                    do 340 m = 1, nno1
-                        do 350 j = 1, ndim
+                    do m = 1, nno1
+                        do j = 1, ndim
                             if (ia(n) .ge. iu(nno1*(j-1)+m)) then
                                 kk=((ia(n)-1)*ia(n))/2 + iu(nno1*(j-1)&
                                 +m)
@@ -422,17 +420,14 @@ implicit none
                                 +m))/2+ia(n)
                             endif
                             matr(kk) = 0.d0
-350                     continue
-340                 continue
+                        end do
+                    end do
                 endif
-!
-330         continue
-!
+            end do
         endif
+    end do
 !
-1000 end do
-!
-9000 continue
+900 continue
 !
     call codere(cod, npg, codret)
 !

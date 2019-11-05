@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,15 +19,13 @@
 !
 interface
     subroutine comp_ntvari(model_ , compor_cart_, compor_list_, compor_info,&
-                           nt_vari, nb_vari_maxi, nb_zone     , v_exte)
+                           nt_vari, nb_vari_maxi, nb_zone     , v_paraExte)
         use Behaviour_type
         character(len=8), optional, intent(in) :: model_
         character(len=19), optional, intent(in) :: compor_cart_
         character(len=16), optional, intent(in) :: compor_list_(20)
         character(len=19), intent(in) :: compor_info
-        integer, intent(out) :: nt_vari
-        integer, intent(out) :: nb_vari_maxi
-        integer, intent(out) :: nb_zone
-        type(Behaviour_External), pointer :: v_exte(:)
+        integer, intent(out) :: nt_vari, nb_vari_maxi, nb_zone
+        type(Behaviour_ParaExte), pointer :: v_paraExte(:)
     end subroutine comp_ntvari
 end interface

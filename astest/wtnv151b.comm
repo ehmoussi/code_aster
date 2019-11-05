@@ -1,0 +1,748 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'));
+
+#############################################################
+# CALCUL ASTER HYDRIQUE 2D
+#############################################################
+
+
+SIPbet = 0.
+SIEFbet = -SIPbet
+
+
+
+T1H = 3600
+T1J = 24 * T1H
+T20J = 20 * T1J
+T200J = 200 * T1J
+
+###Lire le maillage
+#~ ***********************
+mesh = LIRE_MAILLAGE(UNITE=20)
+                
+#*********************************************************
+### Definition des caracteristiques fluides
+#**********************************************************
+
+VISCOLIQI=8.0E-4;
+
+VISCOLIQ=DEFI_CONSTANTE(VALE=8.0E-4,);
+
+VISCOGAZ=DEFI_CONSTANTE(VALE=0.0000005,);
+
+RHOW = 1000.
+RHOA = 1.2
+
+# PERMEABILITE A RECALER
+perm = 1.e-18
+KINT = DEFI_CONSTANTE(VALE=perm,);
+
+
+### Module d'Young
+#~ *******************
+Ebet = 44E9
+
+
+### Porosite et masses volumiques
+#~ **********************************
+
+poro = 0.085
+MAMOLVAP = 0.018
+R = 8.315
+SINI = 1.
+RHOH =  2213.5
+
+### Terme de couplage
+#~ ***********************
+BIOT = 1.0 #indeformable
+Nu = 0.0
+
+
+
+
+### Pression de vapeur initiale
+#~ *********************************
+PVP0 = 921.6
+
+mesh=DEFI_GROUP(reuse =mesh,
+                    MAILLAGE=mesh,
+                    CREA_GROUP_NO=(_F(GROUP_MA='HAUT'),
+                                   _F(GROUP_MA='DROITE'),
+                                   _F(GROUP_MA='GAUCHE'),
+                                   _F(GROUP_MA='BAS'),
+
+                                  ),
+                   );
+
+#Fonction de Pc linéaire
+
+
+LI1=DEFI_LIST_REEL(DEBUT=0,
+                      INTERVALLE=(
+                                  _F(JUSQU_A=1.E7,
+                                     NOMBRE=100,),),);
+LI2=DEFI_LIST_REEL(DEBUT=0.,
+                   INTERVALLE=_F(JUSQU_A=1.,
+                                 PAS=1.E-2,),);   
+
+SLO=FORMULE(NOM_PARA='PCAP',VALE='(1.-(PCAP*1.E-7))')
+SATUPC=CALC_FONC_INTERP(FONCTION=SLO,
+                        LIST_PARA=LI1,
+                        NOM_PARA='PCAP',
+                        PROL_DROITE='LINEAIRE',
+                        PROL_GAUCHE='LINEAIRE',)
+#~ 
+#~ 
+#~ 
+DSATPC=DEFI_CONSTANTE(VALE=-1.E-7,);
+
+
+
+PKL=DEFI_CONSTANTE(VALE=1.,);
+PDKL=DEFI_CONSTANTE(VALE=0.0,);
+#~ 
+PKG=DEFI_CONSTANTE(VALE=1.,);
+PDKG=DEFI_CONSTANTE(VALE=0.0,)
+
+### ETAT INITIAL 
+#~ *****************
+TREF = 293.
+TINI = 20.
+P2REF = 1.E5
+PC0 = 0.0
+P20 = 0.0
+
+
+
+
+INST = DEFI_LIST_REEL(
+    DEBUT=0.0,
+    INTERVALLE=(
+        _F(JUSQU_A =60, NOMBRE=50), 
+        _F(JUSQU_A =60*30, NOMBRE=100), 
+        _F(JUSQU_A =60*60, NOMBRE=100), 
+   
+ )
+)
+
+TIMES = DEFI_LIST_INST(
+    DEFI_LIST=_F(LIST_INST=INST),)
+
+
+
+
+
+#D_PLAN_THH2MS
+model = AFFE_MODELE(
+    AFFE=_F(MODELISATION=('D_PLAN_THH2MS', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=mesh
+)
+
+### Termes de diffusion 
+#~ ****************************************************************************************
+
+# Fick melange liquide
+
+FICKBET=DEFI_CONSTANTE(VALE=0.0,);
+
+# Fick melange gaz
+FadBET=DEFI_CONSTANTE(VALE=0.0,);
+                     
+# Coefficient de Henry pour la dissolution
+
+KHENRY=DEFI_CONSTANTE(VALE=1.30719E05,);
+
+
+### Fonction de saturation et sa derivee
+#************************************************
+
+
+                      
+FVPS = DEFI_CONSTANTE(VALE=0.0,);                   
+
+FAS = DEFI_CONSTANTE(VALE=0.0,);                   
+
+
+ALPHAL = DEFI_CONSTANTE(VALE=1.0480)
+
+
+#************************
+# Conductivite thermique (factice : T = cte)
+#************************
+LAMBLIQ=DEFI_CONSTANTE(VALE=0.0,);
+LAMB=DEFI_CONSTANTE(VALE=0.0,);
+LS_RB = FORMULE(VALE='( 0.15*SAT)',
+                NOM_PARA='SAT',);
+
+LSRB=CALC_FONC_INTERP(FONCTION=LS_RB,
+                      LIST_PARA=LI2,
+                      NOM_PARA='SAT',
+                      PROL_DROITE='CONSTANT',
+                      PROL_GAUCHE='CONSTANT',
+                      INFO=2,);
+DLSRB=DEFI_CONSTANTE(VALE=0.0,);
+LCTRB=DEFI_CONSTANTE(VALE=0.0);
+
+UN = DEFI_CONSTANTE(VALE=1.0)
+ZERO = DEFI_CONSTANTE(VALE=0.0)
+
+
+ENT11 = 0.0
+ENT12 = 0.0
+
+
+BETON = DEFI_MATERIAU(
+    COMP_THM='LIQU_AD_GAZ_VAPE',
+    ELAS=_F(ALPHA=0.0000000001, E= Ebet, NU=Nu),
+    THM_AIR_DISS=_F(COEF_HENRY=KHENRY, CP=0.0),
+    THM_DIFFU=_F(
+        BIOT_COEF=BIOT,
+        CP=1600.0,
+        D_LB_S=DLSRB,
+        FICKA_S=FAS,
+        FICKA_T=FICKBET,
+        FICKV_S=FVPS,
+        FICKV_T=FadBET,
+        LAMB_S=LSRB, 
+        LAMB_T=LAMBLIQ,
+        LAMB_CT=0.0,
+        PERM_IN=KINT,
+        PESA_X=0.0,
+        PESA_Y=0.0,
+        PESA_Z=0.0,
+        RHO=RHOH,
+        R_GAZ=8.315,
+        
+        SATU_PRES=SATUPC,
+        D_SATU_PRES=DSATPC,        
+        PERM_LIQU=UN,
+        D_PERM_LIQU_SATU=ZERO,
+        PERM_GAZ=UN,
+        D_PERM_SATU_GAZ=ZERO,
+        D_PERM_PRES_GAZ=ZERO,        
+        
+
+    ),
+    THM_GAZ=_F(CP=0.0, D_VISC_TEMP=ZERO, MASS_MOL=0.001, VISC=VISCOGAZ),
+    THM_INIT=_F(
+        PORO=poro, PRE1=0.0, PRE2=P2REF, PRES_VAPE=PVP0, TEMP=TREF
+    ),
+    THM_LIQU=_F(
+        ALPHA=ALPHAL,
+        CP=4180.0,
+        D_VISC_TEMP=ZERO,
+        RHO=RHOW,
+        UN_SUR_K=0.0,
+        VISC=VISCOLIQ
+    ),
+    THM_VAPE_GAZ=_F(CP=0.0, D_VISC_TEMP=ZERO, MASS_MOL=0.001, VISC=VISCOGAZ)
+)
+
+
+fieldmat = AFFE_MATERIAU(AFFE=_F(MATER=(BETON, ), TOUT='OUI'), MAILLAGE=mesh)
+
+#######################################
+#########CONDITIONS LIMITES############
+#######################################
+CHARGE = AFFE_CHAR_CINE(
+                    MECA_IMPO=(
+                    _F(DY=0.0, TOUT=('OUI')),#GROUP_MA=('BAS','HAUT')), 
+                    _F(TEMP=TINI, TOUT=('OUI')),#GROUP_MA=('DROITE', 'GAUCHE')), 
+                    _F(DX=0.0, TOUT=('OUI')),#GROUP_MA=('DROITE', 'GAUCHE') 
+                    #_F(PRE2=1.5E8, TOUT=('OUI'),),
+         ),
+    MODELE=model
+)
+
+
+
+
+EC11 = 1E-14
+
+FLUEC=AFFE_CHAR_MECA(MODELE=model,
+                    ECHANGE_THM =(
+                    _F(GROUP_MA=('DROITE', ),COEF_11=EC11,PRE1_EXT=1.5E8),
+                  ), );
+
+CHP = AFFE_CHAR_CINE(MODELE=model,
+                   MECA_IMPO=(
+                     _F(PRE1=8.E5, GROUP_MA=( 'DROITE', ),),
+                     _F(PRE2=0.0, GROUP_MA=( 'DROITE', ),),
+                           ), 
+    );
+
+
+##########################################
+########CONDITIONS INITIALES##############
+##########################################
+DEPL0 = CREA_CHAMP(
+    AFFE=(
+        _F(NOM_CMP=('PRE1', ), TOUT='OUI', VALE=(10000.0,)), 
+        _F(NOM_CMP=('PRE2', ), TOUT='OUI', VALE=(10000.0, )
+        ), _F(NOM_CMP=('TEMP', ), TOUT='OUI', VALE=(TINI,))
+    ),
+    MAILLAGE=mesh,
+    OPERATION='AFFE',
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+
+SIG0 = CREA_CHAMP(
+    AFFE=_F(
+        NOM_CMP=(
+            'SIXX', 'SIYY', 'SIZZ', 'SIPXX', 'SIPYY', 'SIPZZ', 'SIXY', 'SIXZ',
+            'SIYZ', 'SIPXY', 'SIPXZ', 'SIPYZ', 'M11', 'FH11X', 'FH11Y', 'M12',
+            'FH12X', 'FH12Y', 'M21', 'FH21X', 'FH21Y', 'M22', 'FH22X', 'FH22Y',
+            'ENT11', 'ENT12', 'ENT21', 'ENT22', 'QPRIM', 'FHTX', 'FHTY'
+        ),
+        TOUT='OUI',
+        VALE=(
+            SIEFbet, SIEFbet, SIEFbet, SIPbet, SIPbet, SIPbet, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, ENT11, ENT12, 0.0, 0.0, 0.0, 0.0, 0.0
+        )
+    ),
+    MODELE=model,
+    OPERATION='AFFE',
+    PROL_ZERO='OUI',
+    TYPE_CHAM='ELGA_SIEF_R'
+)
+
+
+#####################################
+########## RESOLUTION THM############
+#####################################
+RESU1 = STAT_NON_LINE(
+    CHAM_MATER=fieldmat,
+    COMPORTEMENT=_F(
+        RELATION='KIT_THH2M',
+        RELATION_KIT=('HYDR_UTIL', 'LIQU_AD_GAZ_VAPE', 'ELAS'),
+        TOUT='OUI'
+    ),
+    CONVERGENCE=_F(ITER_GLOB_MAXI=500,RESI_GLOB_RELA=1.E-6),
+    ETAT_INIT=_F(DEPL=DEPL0, SIGM=SIG0),
+    EXCIT=(_F(CHARGE=CHARGE),
+          _F(CHARGE=FLUEC,TYPE_CHARGE='SUIV'), #AVEC LE TERME D ECHANGE
+          ),
+    INCREMENT=_F(LIST_INST=TIMES),
+    METHODE='NEWTON',
+    MODELE=model,
+    NEWTON=_F(),
+    SOLVEUR=_F(METHODE='MUMPS'),  
+);
+
+
+      
+      
+##############################################
+#########PROBLEME DE LA THERMIQUE#############   
+##############################################
+# Maillage lineaire
+MAILLIN = CREA_MAILLAGE(
+                         MAILLAGE  = mesh,
+                         QUAD_LINE = _F(TOUT = 'OUI'),
+                       )
+
+# DEFINITION DES CHARGEMENTS ET DU MATERIAU ------------------------
+
+
+Lambda=DEFI_CONSTANTE(VALE=(RHOW*perm) /VISCOLIQI,);
+rhocp=DEFI_CONSTANTE(VALE=0.085*1.E-7*RHOW,)
+MATE=DEFI_MATERIAU(  THER_NL=_F(  RHO_CP = rhocp, LAMBDA = Lambda), );
+#
+# AFFECTATIONS: MATERIAU  MODELE  CHARGEMENT ----------------------
+#
+CHMAT=AFFE_MATERIAU(    MAILLAGE=MAILLIN,
+                           AFFE=_F(  TOUT = 'OUI',  MATER = MATE)
+                        )
+
+MOTH=AFFE_MODELE(   MAILLAGE=MAILLIN,
+                       AFFE=_F( TOUT = 'OUI', MODELISATION = 'PLAN_DIAG',
+                                        PHENOMENE = 'THERMIQUE')
+                     )
+
+
+CHTH=AFFE_CHAR_THER(   MODELE=MOTH,
+                        ECHANGE=(
+                            _F(  GROUP_MA = ('DROITE',), COEF_H =EC11 ,  TEMP_EXT = 1.5E8),
+                            )
+                        )
+                    
+CHTD=AFFE_CHAR_THER(   MODELE=MOTH,
+                       TEMP_IMPO=(
+                           _F(  GROUP_MA = ('DROITE',),  TEMP = 8.E5),
+                     )
+                        )
+
+# RESOLUTION THERMIQUE-----------------------------------------------------------
+#
+TEMPE=THER_NON_LINE(MODELE=MOTH,
+                   CHAM_MATER=CHMAT,
+                   EXCIT=_F(CHARGE=CHTH,),
+                   INCREMENT=_F(LIST_INST=TIMES,),
+                   ETAT_INIT=_F(VALE=10000.0,),
+                   NEWTON=_F(),
+                   CONVERGENCE=_F(ITER_GLOB_MAXI=500,),
+                   );                       
+
+
+
+# Post Traitement
+#
+# ANALYSE DES RESULTATS THERM ------------------------------------------------
+#
+
+tresu = POST_RELEVE_T(ACTION = _F (INTITULE='TEMPE', OPERATION = 'EXTRACTION', GROUP_NO = 'HAUT', RESULTAT=TEMPE, NOM_CHAM='TEMP',NOM_CMP='TEMP'));
+TITRE = 'Comparaison HH Thermique'
+ 
+IMPR_TABLE( TABLE=tresu,  TITRE=TITRE, NOM_PARA=('COOR_X', 'TEMP',), 
+            
+            FILTRE   = ( _F( NOM_PARA = 'INST',CRIT_COMP    = 'EQ' ,
+                             VALE=60.,
+                             PRECISION=0.0001),),
+             TRI=_F( NOM_PARA = ('COOR_X',), ORDRE = 'CROISSANT',), 
+             FORMAT='TABLEAU')
+
+IMPR_TABLE( TABLE=tresu, TITRE=TITRE, NOM_PARA=('COOR_X', 'TEMP',), 
+            
+            FILTRE   = ( _F( NOM_PARA = 'INST',CRIT_COMP    = 'EQ' ,
+                             VALE=1800.,
+                             PRECISION=0.0001),),
+             TRI=_F( NOM_PARA = ('COOR_X',), ORDRE = 'CROISSANT',), 
+             FORMAT='TABLEAU')
+             
+IMPR_TABLE( TABLE=tresu,  TITRE=TITRE, NOM_PARA=('COOR_X', 'TEMP',), 
+            
+            FILTRE   = ( _F( NOM_PARA = 'INST',CRIT_COMP    = 'EQ' ,
+                             VALE=3600.,
+                             PRECISION=0.0001),),
+             TRI=_F( NOM_PARA = ('COOR_X',), ORDRE = 'CROISSANT',), 
+             FORMAT='TABLEAU')
+
+#
+# ANALYSE DES RESULTATS HYDRAU THM ------------------------------------------------
+#
+
+tresu1 = POST_RELEVE_T(ACTION = _F ( INTITULE = 'tablepc', 
+                  OPERATION = 'EXTRACTION', GROUP_NO = 'HAUT',
+                   RESULTAT=RESU1,NOM_CHAM='DEPL', NOM_CMP='PRE1'));
+
+                   
+                   
+IMPR_TABLE( TABLE=tresu1,  TITRE=TITRE, NOM_PARA=('COOR_X', 'PRE1',), 
+            
+            FILTRE   = ( _F( NOM_PARA = 'INST',CRIT_COMP    = 'EQ' ,
+                             VALE=60.,
+                             PRECISION=0.0001),),
+             TRI=_F( NOM_PARA = ('COOR_X',), ORDRE = 'CROISSANT',), 
+             FORMAT='TABLEAU')
+
+IMPR_TABLE( TABLE=tresu1, TITRE=TITRE, NOM_PARA=('COOR_X', 'PRE1',), 
+            
+            FILTRE   = ( _F( NOM_PARA = 'INST',CRIT_COMP    = 'EQ' ,
+                             VALE=1800.,
+                             PRECISION=0.0001),),
+             TRI=_F( NOM_PARA = ('COOR_X',), ORDRE = 'CROISSANT',), 
+             FORMAT='TABLEAU')                          
+             
+IMPR_TABLE( TABLE=tresu1,  TITRE=TITRE, NOM_PARA=('COOR_X', 'PRE1',), 
+            
+            FILTRE   = ( _F( NOM_PARA = 'INST',CRIT_COMP    = 'EQ' ,
+                             VALE=3600.,
+                             PRECISION=0.0001),),
+             TRI=_F( NOM_PARA = ('COOR_X',), ORDRE = 'CROISSANT',), 
+             FORMAT='TABLEAU')
+             
+########################################################################################## 
+TEST_RESU(RESU=_F(INST=60.,
+                  RESULTAT=RESU1,
+                 REFERENCE='AUTRE_ASTER',
+                  NOM_CHAM='DEPL',
+                  NOEUD='N2',
+                  NOM_CMP='PRE1',
+                  VALE_CALC= 13442.59996853507,
+                  VALE_REFE = 1.34554E+04,
+                  CRITERE='RELATIF',
+                  PRECISION=0.05,
+                  ),
+          )
+TEST_RESU(RESU=_F(INST=1800.,
+                  RESULTAT=RESU1,
+                 REFERENCE='AUTRE_ASTER',
+                  NOM_CHAM='DEPL',
+                  NOEUD='N2',
+                  NOM_CMP='PRE1',
+                  VALE_CALC=31910.875215043005,
+                  VALE_REFE = 3.19389E+04,
+                  CRITERE='RELATIF',
+                  PRECISION=0.01,
+                  ),
+          )
+TEST_RESU(RESU=_F(INST=3600.,
+                  RESULTAT=RESU1,
+                 REFERENCE='AUTRE_ASTER',
+                  NOM_CHAM='DEPL',
+                  NOEUD='N2',
+                  NOM_CMP='PRE1',
+                  VALE_CALC=41063.01617749464,
+                  VALE_REFE =4.10866E+04,
+                  CRITERE='RELATIF',
+                  PRECISION=0.01,
+                  ),
+          )
+
+### VERIFICATION MODELE HH2M - LA MODELISATION EST LA MEME, ON VERIFIE JUSTE SUR 1 MN
+TFIN = 60.
+modhh2m = AFFE_MODELE(
+    AFFE=_F(MODELISATION=('D_PLAN_HH2MS', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=mesh
+)
+CH_HH2M = AFFE_CHAR_CINE(
+                    MECA_IMPO=(
+                    _F(DY=0.0, TOUT=('OUI')),
+                    _F(DX=0.0, TOUT=('OUI')),
+         ),
+    MODELE=modhh2m
+)
+FL_HH2M=AFFE_CHAR_MECA(MODELE=modhh2m,
+                    ECHANGE_THM =(
+                    _F(GROUP_MA=('DROITE', ),COEF_11=EC11,COEF_12=0.,PRE1_EXT=1.5E8,
+                                             COEF_21=0.,COEF_22=0.,PRE2_EXT=1.e5,),
+                  ), );
+
+
+DEPLHH2M = CREA_CHAMP(
+    AFFE=(
+        _F(NOM_CMP=('PRE1', ), TOUT='OUI', VALE=(10000.0,)), 
+        _F(NOM_CMP=('PRE2', ), TOUT='OUI', VALE=(10000.0, )
+        ), 
+    ),
+    MAILLAGE=mesh,
+    OPERATION='AFFE',
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+
+SIGHH2M = CREA_CHAMP(
+    AFFE=_F(
+        NOM_CMP=(
+            'SIXX', 'SIYY', 'SIZZ', 'SIPXX', 'SIPYY', 'SIPZZ', 'SIXY', 'SIXZ',
+            'SIYZ', 'SIPXY', 'SIPXZ', 'SIPYZ', 'M11', 'FH11X', 'FH11Y', 'M12',
+            'FH12X', 'FH12Y', 'M21', 'FH21X', 'FH21Y', 'M22', 'FH22X', 'FH22Y',
+            'ENT11', 'ENT12', 'ENT21', 'ENT22', 'QPRIM', 'FHTX', 'FHTY'
+        ),
+        TOUT='OUI',
+        VALE=(
+            SIEFbet, SIEFbet, SIEFbet, SIPbet, SIPbet, SIPbet, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, ENT11, ENT12, 0.0, 0.0, 0.0, 0.0, 0.0
+        )
+    ),
+    MODELE=modhh2m,
+    OPERATION='AFFE',
+    PROL_ZERO='OUI',
+    TYPE_CHAM='ELGA_SIEF_R'
+)
+R_HH2M = STAT_NON_LINE(
+    CHAM_MATER=fieldmat,
+    COMPORTEMENT=_F(
+        RELATION='KIT_HH2M',
+        RELATION_KIT=('HYDR_UTIL', 'LIQU_AD_GAZ_VAPE', 'ELAS'),
+        TOUT='OUI'
+    ),
+    CONVERGENCE=_F(ITER_GLOB_MAXI=10,RESI_GLOB_RELA=1.E-6),
+    ETAT_INIT=_F(DEPL=DEPLHH2M, SIGM=SIGHH2M),
+    EXCIT=(_F(CHARGE=CH_HH2M),
+          _F(CHARGE=FL_HH2M,TYPE_CHARGE='SUIV'), #AVEC LE TERME D ECHANGE
+          ),
+    INCREMENT=_F(LIST_INST=TIMES, INST_FIN=TFIN),
+    METHODE='NEWTON',
+    MODELE=modhh2m,
+    NEWTON=_F(),
+    SOLVEUR=_F(METHODE='MUMPS'),  
+);
+TEST_RESU(RESU=_F(INST=60.,
+                  RESULTAT=R_HH2M,
+                  REFERENCE='AUTRE_ASTER',
+                  NOM_CHAM='DEPL',
+                  NOEUD='N2',
+                  NOM_CMP='PRE1',
+                  VALE_CALC=13442.59,
+                  VALE_REFE = 1.34554E+04,
+                  CRITERE='RELATIF',
+                  PRECISION=0.05,
+                  ),
+          )
+          
+
+### VERIFICATION MODELE THH2 - LA MODELISATION EST LA MEME, ON VERIFIE JUSTE SUR 1 MN
+modthh2 = AFFE_MODELE(
+    AFFE=_F(MODELISATION=('D_PLAN_THH2S', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=mesh
+)
+
+FL_THH2=AFFE_CHAR_MECA(MODELE=modthh2,
+                    ECHANGE_THM =(
+                    _F(GROUP_MA=('DROITE', ),COEF_11=EC11,COEF_12=0.,PRE1_EXT=1.5E8,
+                                             COEF_21=0.,COEF_22=0.,PRE2_EXT=1.e5,),
+                  ), );
+
+CHTHH2 = AFFE_CHAR_CINE(
+                    MECA_IMPO=(
+                    _F(TEMP=TINI, TOUT=('OUI')),
+         ),
+                       MODELE=modthh2
+)
+
+D_THH2= CREA_CHAMP(
+    AFFE=(
+        _F(NOM_CMP=('TEMP', ), TOUT='OUI', VALE=TINI,), 
+        _F(NOM_CMP=('PRE1', ), TOUT='OUI', VALE=(10000.0,)), 
+        _F(NOM_CMP=('PRE2', ), TOUT='OUI', VALE=(10000.0, )
+        ), 
+    ),
+    MAILLAGE=mesh,
+    OPERATION='AFFE',
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+SIGTHH2 = CREA_CHAMP(
+    AFFE=_F(
+        NOM_CMP=(
+            'SIXX', 'SIYY', 'SIZZ', 'SIPXX', 'SIPYY', 'SIPZZ', 'SIXY', 'SIXZ',
+            'SIYZ', 'SIPXY', 'SIPXZ', 'SIPYZ', 'M11', 'FH11X', 'FH11Y', 'M12',
+            'FH12X', 'FH12Y', 'M21', 'FH21X', 'FH21Y', 'M22', 'FH22X', 'FH22Y',
+            'ENT11', 'ENT12', 'ENT21', 'ENT22', 'QPRIM', 'FHTX', 'FHTY'
+        ),
+        TOUT='OUI',
+        VALE=(
+            SIEFbet, SIEFbet, SIEFbet, SIPbet, SIPbet, SIPbet, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, ENT11, ENT12, 0.0, 0.0, 0.0, 0.0, 0.0
+        )
+    ),
+    MODELE=modthh2,
+    OPERATION='AFFE',
+    PROL_ZERO='OUI',
+    TYPE_CHAM='ELGA_SIEF_R'
+)
+R_THH2 = STAT_NON_LINE(
+    CHAM_MATER=fieldmat,
+    COMPORTEMENT=_F(
+        RELATION='KIT_THH2',
+        RELATION_KIT=('HYDR_UTIL', 'LIQU_AD_GAZ_VAPE'),
+        TOUT='OUI'
+    ),
+    CONVERGENCE=_F(ITER_GLOB_MAXI=10,RESI_GLOB_RELA=1.E-6),
+    ETAT_INIT=_F(DEPL=D_THH2, SIGM=SIGTHH2),
+    EXCIT=(_F(CHARGE=CHTHH2,),
+           _F(CHARGE=FL_THH2,TYPE_CHARGE='SUIV'), #AVEC LE TERME D ECHANGE
+          ),
+    INCREMENT=_F(LIST_INST=TIMES, INST_FIN=TFIN),
+    METHODE='NEWTON',
+    MODELE=modthh2,
+    NEWTON=_F(),
+    SOLVEUR=_F(METHODE='MUMPS'),  
+);          
+TEST_RESU(RESU=_F(INST=60.,
+                  RESULTAT=R_HH2M,
+                  REFERENCE='AUTRE_ASTER',
+                  NOM_CHAM='DEPL',
+                  NOEUD='N2',
+                  NOM_CMP='PRE1',
+                  VALE_CALC=13442.59,
+                  VALE_REFE = 1.34554E+04,
+                  CRITERE='RELATIF',
+                  PRECISION=0.05,
+                  ),
+          )          
+
+
+### VERIFICATION MODELE HH2 - LA MODELISATION EST LA MEME, ON VERIFIE JUSTE SUR 1 MN
+modhh2 = AFFE_MODELE(
+    AFFE=_F(MODELISATION=('D_PLAN_HH2S', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=mesh
+)
+
+FL_HH2=AFFE_CHAR_MECA(MODELE=modhh2,
+                    ECHANGE_THM =(
+                    _F(GROUP_MA=('DROITE', ),COEF_11=EC11,COEF_12=0.,PRE1_EXT=1.5E8,
+                                             COEF_21=0.,COEF_22=0.,PRE2_EXT=1.e5,),
+                  ), );
+
+
+D_HH2= CREA_CHAMP(
+    AFFE=(
+        _F(NOM_CMP=('PRE1', ), TOUT='OUI', VALE=(10000.0,)), 
+        _F(NOM_CMP=('PRE2', ), TOUT='OUI', VALE=(10000.0, ) ), 
+    ),
+    MAILLAGE=mesh,
+    OPERATION='AFFE',
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+SIGHH2 = CREA_CHAMP(
+    AFFE=_F(
+        NOM_CMP=(
+            'SIXX', 'SIYY', 'SIZZ', 'SIPXX', 'SIPYY', 'SIPZZ', 'SIXY', 'SIXZ',
+            'SIYZ', 'SIPXY', 'SIPXZ', 'SIPYZ', 'M11', 'FH11X', 'FH11Y', 'M12',
+            'FH12X', 'FH12Y', 'M21', 'FH21X', 'FH21Y', 'M22', 'FH22X', 'FH22Y',
+            'ENT11', 'ENT12', 'ENT21', 'ENT22', 'QPRIM', 'FHTX', 'FHTY'
+        ),
+        TOUT='OUI',
+        VALE=(
+            SIEFbet, SIEFbet, SIEFbet, SIPbet, SIPbet, SIPbet, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, ENT11, ENT12, 0.0, 0.0, 0.0, 0.0, 0.0
+        )
+    ),
+    MODELE=modhh2,
+    OPERATION='AFFE',
+    PROL_ZERO='OUI',
+    TYPE_CHAM='ELGA_SIEF_R'
+)
+R_HH2 = STAT_NON_LINE(
+    CHAM_MATER=fieldmat,
+    COMPORTEMENT=_F(
+        RELATION='KIT_HH2',
+        RELATION_KIT=('HYDR_UTIL', 'LIQU_AD_GAZ_VAPE'),
+        TOUT='OUI'
+    ),
+    CONVERGENCE=_F(ITER_GLOB_MAXI=10,RESI_GLOB_RELA=1.E-6),
+    ETAT_INIT=_F(DEPL=D_HH2, SIGM=SIGHH2),
+    EXCIT=(
+           _F(CHARGE=FL_HH2,TYPE_CHARGE='SUIV'), #AVEC LE TERME D ECHANGE
+          ),
+    INCREMENT=_F(LIST_INST=TIMES, INST_FIN=TFIN),
+    METHODE='NEWTON',
+    MODELE=modhh2,
+    NEWTON=_F(),
+    SOLVEUR=_F(METHODE='MUMPS'),  
+);
+TEST_RESU(RESU=_F(INST=60.,
+                  RESULTAT=R_HH2M,
+                  REFERENCE='AUTRE_ASTER',
+                  NOM_CHAM='DEPL',
+                  NOEUD='N2',
+                  NOM_CMP='PRE1',
+                  VALE_CALC=13442.59,
+                  VALE_REFE = 1.34554E+04,
+                  CRITERE='RELATIF',
+                  PRECISION=0.05,
+                  ),
+          ) 
+FIN();

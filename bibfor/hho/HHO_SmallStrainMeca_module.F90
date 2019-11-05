@@ -26,6 +26,7 @@ use HHO_type
 use HHO_utils_module
 use HHO_eval_module
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -33,7 +34,6 @@ private
 #include "asterf_types.h"
 #include "asterfort/HHO_size_module.h"
 #include "asterfort/assert.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/codere.h"
 #include "asterfort/dmatmc.h"
 #include "asterfort/nbsigm.h"
@@ -178,7 +178,6 @@ contains
         do ipg = 1, hhoQuadCellRigi%nbQuadPoints
             coorpg(1:3) = hhoQuadCellRigi%points(1:3,ipg)
             weight = hhoQuadCellRigi%weights(ipg)
-            BEHinteg%elga%coorpg = coorpg
             !print*, "qp", coorpg(1:3)
 ! --------- Eval basis function at the quadrature point
             call hhoBasisCell%BSEval(hhoCell, coorpg(1:3), 0, hhoData%grad_degree(), BSCEval)

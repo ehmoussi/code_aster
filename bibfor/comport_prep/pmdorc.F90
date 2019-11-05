@@ -69,8 +69,8 @@ character(len=16), intent(out) :: type_comp, mult_comp
     integer :: nbocc1, nbocc2, nbocc3
     character(len=16) :: keywordfact,rela_comp
     aster_logical :: l_etat_init, l_implex, l_kit_thm
-    type(Behaviour_PrepPara) :: ds_compor_prep
-    type(Behaviour_PrepCrit) :: ds_compor_para
+    type(Behaviour_PrepPara) :: prepPara
+    type(Behaviour_PrepCrit) :: prepCrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -94,36 +94,36 @@ character(len=16), intent(out) :: type_comp, mult_comp
 !
 ! - Create datastructure to prepare comportement
 !
-    call comp_meca_info(l_implex, ds_compor_prep)
-    if (ds_compor_prep%nb_comp .eq. 0) then
+    call comp_meca_info(l_implex, prepPara)
+    if (prepPara%nb_comp .eq. 0) then
         call utmess('F', 'COMPOR4_63')
     endif
 !
 ! - Read informations from command file
 !
-    call comp_meca_read(l_etat_init, ds_compor_prep)
+    call comp_meca_read(l_etat_init, prepPara)
 !
 ! - Count internal variables
 !
-    call comp_meca_cvar(ds_compor_prep)
+    call comp_meca_cvar(prepPara)
 !
 ! - Some properties
 !
-    nb_vari   = ds_compor_prep%v_comp(1)%nb_vari
-    rela_comp = ds_compor_prep%v_comp(1)%rela_comp
-    type_comp = ds_compor_prep%v_comp(1)%type_comp
-    mult_comp = ds_compor_prep%v_comp(1)%mult_comp
+    nb_vari   = prepPara%v_para(1)%nb_vari
+    rela_comp = prepPara%v_para(1)%rela_comp
+    type_comp = prepPara%v_para(1)%type_comp
+    mult_comp = prepPara%v_para(1)%mult_comp
 !
 ! - Detection of specific cases
 !
-    call comp_meca_l(rela_comp, 'KIT_THM'     , l_kit_thm)
+    call comp_meca_l(rela_comp, 'KIT_THM', l_kit_thm)
     if (l_kit_thm) then
         call utmess('F', 'COMPOR2_7')
     endif
 !
 ! - Save informations in the field <COMPOR>
 !
-    call setBehaviourTypeValue(ds_compor_prep%v_comp, l_compor_ = compor(1:COMPOR_SIZE))
+    call setBehaviourTypeValue(prepPara%v_para, l_compor_ = compor(1:COMPOR_SIZE))
 !
 ! - Prepare informations about internal variables
 !
@@ -135,33 +135,29 @@ character(len=16), intent(out) :: type_comp, mult_comp
 !
 ! - Create carcri informations objects
 !
-    call carc_info(ds_compor_para)
+    call carc_info(prepCrit)
 !
 ! - Read informations from command file
 !
-    call carc_read(ds_compor_para, l_implex_ = l_implex)
+    call carc_read(prepCrit, l_implex_ = l_implex)
 !
 ! - Some checks
 !
-    call carc_chck(ds_compor_para)
-!
-! - Don't use external state variables for SIMU_POINT_MAT
-!
-    if (ds_compor_para%v_para(1)%jvariext1 .ne. 0) then
-        call utmess('A', 'COMPOR2_12')
-        ds_compor_para%v_para(1)%jvariext1 = 0
-    endif
+    call carc_chck(prepCrit)
 !
 ! - Set in <CARTE>
 !
     carcri(1:CARCRI_SIZE) = 0.d0
-    call setBehaviourParaValue(ds_compor_para%v_para, ds_compor_para,&
+    call setBehaviourParaValue(prepCrit%v_crit,&
+                               prepCrit%parm_theta_thm, prepCrit%parm_alpha_thm,&
+                               prepCrit%hho_coef_stab , prepCrit%hho_type_stab ,&
+                               prepCrit%hho_type_calc,&
                                l_carcri_ = carcri(1:CARCRI_SIZE))
 !
 ! - Cleaning
 !
-    deallocate(ds_compor_prep%v_comp)
-    deallocate(ds_compor_para%v_para)
+    deallocate(prepPara%v_para)
+    deallocate(prepCrit%v_crit)
 !
     call jedema()
 !

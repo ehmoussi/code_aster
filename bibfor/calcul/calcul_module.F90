@@ -267,15 +267,6 @@ implicit none
 !     ca_ctempm_ : for previous temperature when coupled variable (non external state variable)
 !     ca_ctempp_ : for end temperature when coupled variable (non external state variable)
 !======================================================================
-    real(kind=8) :: ca_vext_eltsize1_
-    real(kind=8) :: ca_vext_eltsize2_(9)
-    real(kind=8) :: ca_vext_gradvelo_(9)
-    real(kind=8) :: ca_vext_hygrm_, ca_vext_hygrp_
-!     ca_vext_eltsize1_ : size of element
-!     ca_vext_eltsize2_ : size of element (for ENDO_PORO_BETON)
-!     ca_vext_gradvelo_ : gradient of velocity
-!     ca_vext_hygrm_  and ca_vext_hygrp_: hygrometry 
-!======================================================================
     integer :: ca_nfpgmx_
     parameter (ca_nfpgmx_=10)
     integer :: ca_nfpg_, ca_jfpgl_, ca_decala_(ca_nfpgmx_), ca_km_, ca_kp_, ca_kr_, ca_iredec_

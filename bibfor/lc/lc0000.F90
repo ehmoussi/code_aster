@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1501,W1504,W1306
+! aslint: disable=W1501,W1504
 !
 subroutine lc0000(BEHinteg,&
                   fami, kpg, ksp, ndim, typmod, l_epsi_varc,&
@@ -26,8 +26,9 @@ subroutine lc0000(BEHinteg,&
                   sigp, vip, ndsde, dsidep, icomp,&
                   nvi, codret)
 !
-use calcul_module, only : calcul_status, ca_nbcvrc_
+use calcul_module, only : calcul_status
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -156,15 +157,9 @@ implicit none
 #include "asterfort/lc31015.h"
 #include "asterfort/lc9999.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vrcpto.h"
-#include "asterfort/isdeco.h"
-#include "asterfort/calcExternalStateVariable5.h"
-#include "asterfort/lcExternalStateVariable.h"
-#include "asterfort/lcPrepareStrain.h"
-#include "asterfort/lcRestoreStrain.h"
 #include "asterfort/assert.h"
 !
-type(Behaviour_Integ) :: BEHinteg
+type(Behaviour_Integ), intent(inout) :: BEHinteg
 integer :: imate, ndim, nvi, kpg, ksp
 aster_logical, intent(in) :: l_epsi_varc
 integer :: neps, nsig, ndsde
@@ -178,7 +173,7 @@ character(len=16) :: compor(*), option
 character(len=16), intent(in) :: mult_comp
 character(len=8) :: typmod(*)
 character(len=*) :: fami
-aster_logical :: cp, l_large_strains
+aster_logical :: cp
 integer :: icomp
 integer :: numlc
 integer :: codret
@@ -190,7 +185,7 @@ integer :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  BEHinteg       : parameters for integration of behaviour
+! IO  BEHinteg         : parameters for integration of behaviour
 ! IN  FAMI,KPG,KSP  : FAMILLE ET NUMERO DU (SOUS)POINT DE GAUSS
 !     NDIM    : DIMENSION DE L'ESPACE
 !               3 : 3D , 2 : D_PLAN ,AXIS OU  C_PLAN
@@ -270,68 +265,35 @@ integer :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: tabcod(60), variextecode(2)
-    integer, parameter :: npred = 8
     character(len=16) :: defo_ldc, defo_comp
-    real(kind=8) :: epsth(neps), depsth(neps)
-    real(kind=8) :: temp, dtemp
-    real(kind=8) :: predef(npred), dpred(npred)
+    aster_logical :: l_pred, l_czm, l_defo_meca, l_large
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! - Compute mechanical strain with PTOT external state variable
+    read (compor(DEFO_LDC),'(A16)') defo_ldc
+    read (compor(DEFO),'(A16)') defo_comp
+    l_pred      = option(1:9) .eq. 'RIGI_MECA'
+    l_czm       = typmod(2) .eq. 'ELEMJOIN'
+    l_large     = defo_comp .eq. 'SIMO_MIEHE' .or. defo_comp .eq. 'GROT_GDEP'
+    l_defo_meca = defo_ldc .eq. 'MECANIQUE'
 !
-    if (calcul_status() .eq. 3) then
-        if (option(1:9) .ne. 'RIGI_MECA') then
-            call vrcpto(compor, deps, neps, fami, kpg,&
-                        ksp, imate)
-        endif
+! - Prepare parameters at Gauss point
+!
+    call behaviourPrepESVAGauss(carcri, defo_ldc, imate   ,&
+                                fami  , kpg     , ksp     ,&
+                                neps  , instap  , BEHinteg)
+!
+! - Prepare input strains for the behaviour law
+!
+    call behaviourPrepStrain(l_pred, l_czm        , l_large, l_defo_meca,&
+                             imate , fami         , kpg    , ksp        ,&
+                             neps  , BEHinteg%esva, epsm   , deps)
+!
+! - Prepare external state variables for external solvers (UMAT/MFRONT)
+!
+    if (BEHinteg%l_mfront .or. BEHinteg%l_umat) then
+        call behaviourPrepESVAExte(carcri, fami, kpg, ksp, BEHinteg)
     endif
-!
-! - Prepare some external state variables
-!
-    tabcod(:) = 0
-    variextecode(1) = nint(carcri(IVARIEXT1))
-    variextecode(2) = nint(carcri(IVARIEXT2))
-    call isdeco(variextecode, tabcod, 60)
-    if (tabcod(HYGR) .eq. 1) then
-        call calcExternalStateVariable5(fami, kpg, ksp, imate)
-    endif
-!
-! - Prepare input strain for the behaviour law
-!    -> If defo_ldc = 'MECANIQUE', prepare mechanical strain
-!    -> If defo_ldc = 'TOTALE' or 'OLD', keep total strain
-!
-!       * Check for external state variable
-!
-    if (ca_nbcvrc_ .eq. 0) then
-        goto 999
-    endif
-    
-    read (compor(21),'(A16)') defo_ldc
-    defo_comp = compor(3)
-    l_large_strains = (defo_comp .eq. 'SIMO_MIEHE') .or. (defo_comp .eq. 'GROT_GDEP')
-!
-    if (defo_ldc .eq. 'MECANIQUE') then 
-        if (.not. l_large_strains) then
-!
-!       * Compute "thermic" strains for some external state variables
-            call lcExternalStateVariable(carcri, compor, instap, &
-                                         fami  , kpg   , ksp   , imate, &
-                                         neps  , epsth , depsth, &
-                                         temp  , dtemp  , &
-                                         predef, dpred )
-!
-!       * Subtract to get mechanical strain
-!       (epsm and deps become mechanical strains)
-            call lcPrepareStrain(option, typmod,&
-                                 neps , epsth , depsth,&
-                                 epsm , deps)
-        endif
-
-    endif
-!
-999 continue
 !
 ! - Prepare index of behaviour law
 !
@@ -493,39 +455,45 @@ integer :: codret
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (30)
-        call lc0030(fami, kpg, ksp, ndim, imate,&
+        call lc0030(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, &
                     typmod, icomp, nvi, dsidep,&
                     codret)
     case (31)
-        call lc0031(fami, kpg, ksp, ndim, imate,&
+        call lc0031(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, typmod,&
                     icomp, nvi, dsidep, codret)
     case (32)
-        call lc0032(fami, kpg, ksp, ndim, imate,&
+        call lc0032(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, typmod, icomp, nvi,&
                     dsidep, codret)
     case (33)
-        call lc0033(fami, kpg, ksp, ndim, imate,&
+        call lc0033(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, &
                     typmod, icomp, nvi, dsidep,&
                     codret)
     case (34)
-        call lc0034(fami, kpg, ksp, ndim, imate,&
+        call lc0034(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (35)
-        call lc0035(fami, kpg, ksp, ndim, imate,&
+        call lc0035(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
@@ -559,12 +527,11 @@ integer :: codret
     case (50)
 !     UMAT
         call lc0050(BEHinteg,&
-                    fami    , kpg, ksp, ndim, typmod,&
+                    fami    , kpg   , ksp   , ndim  , typmod,&
                     imate   , compor, carcri, instam, instap,&
-                    neps    , epsm, deps, nsig, sigm,&
-                    nvi, vim, option, angmas, icomp,&
-                    temp , dtemp , predef, dpred ,&
-                    sigp, vip, ndsde, dsidep, codret)
+                    neps    , epsm  , deps  , nsig  , sigm  ,&
+                    nvi     , vim   , option, angmas,&
+                    sigp    , vip   , dsidep, codret)
     case (54)
         call lc0054(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
@@ -584,10 +551,10 @@ integer :: codret
                     imate   , compor, carcri, instam, instap,&
                     neps    , epsm  , deps  , nsig  , sigm  ,&
                     nvi     , vim   , option, angmas,&
-                    temp    , dtemp , predef, dpred ,&
                     sigp    , vip   , dsidep, codret)
     case (59)
-        call lc0059(fami, kpg, ksp, imate,&
+        call lc0059(BEHinteg,&
+                    fami, kpg, ksp, imate,&
                     compor, carcri, instam, instap, neps, epsm,&
                     deps, nsig, sigm, nvi, vim, option, angmas,&
                     sigp, vip,&
@@ -831,14 +798,16 @@ integer :: codret
                     nvi, dsidep, codret)
     case (120)
 !     BETON_DOUBLE_DP
-        call lc0120(fami, kpg, ksp, ndim, imate, l_epsi_varc,&
+        call lc0120(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate, l_epsi_varc,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (137)
 !     MONOCRISTAL, POLYCRISTAL
-        call lc0137(fami, kpg, ksp, ndim, imate,&
+        call lc0137(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, &
@@ -925,12 +894,12 @@ integer :: codret
                     imate   , compor, carcri, instam, instap,&
                     neps    , epsm  , deps  , nsig  , sigm  ,&
                     nvi     , vim   , option, angmas,&
-                    temp    , dtemp , predef, dpred ,&
                     sigp    , vip   , dsidep, codret)
 
     case (1137)
 !     MONOCRISTAL, POLYCRISTAL
-        call lc1137(fami, kpg, ksp, ndim, imate,&
+        call lc1137(BEHinteg,&
+                    fami, kpg, ksp, ndim, imate,&
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, &
@@ -1127,7 +1096,6 @@ integer :: codret
                     imate   , compor, carcri, instam, instap,&
                     neps    , epsm  , deps  , nsig  , sigm  ,&
                     nvi     , vim   , option, angmas,&
-                    temp    , dtemp , predef, dpred ,&
                     sigp    , vip   , dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -1227,12 +1195,7 @@ integer :: codret
 !
 ! - Restore total strain
 !
-    if (ca_nbcvrc_ .ne. 0) then
-        if ((defo_ldc .eq. 'MECANIQUE') .and. (.not. l_large_strains)) then
-            call lcRestoreStrain(option, typmod,&
-                                 neps , epsth , depsth,&
-                                 epsm , deps)
-        endif
-    endif
+    call behaviourRestoreStrain(l_czm, l_large      , l_defo_meca,&
+                                neps , BEHinteg%esva, epsm       , deps)
 !
 end subroutine

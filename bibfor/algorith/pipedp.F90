@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,12 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine pipedp(kpg, ksp, ndim, typmod, mate,&
+subroutine pipedp(BEHinteg,&
+                  kpg, ksp, ndim, typmod, mate,&
                   epsm, sigm, vim, epsp, epsd,&
                   a0, a1)
 !
+use Behaviour_type
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "asterc/matfpe.h"
 #include "asterfort/betfpp.h"
@@ -60,6 +63,7 @@ subroutine pipedp(kpg, ksp, ndim, typmod, mate,&
 !
 ! ----------------------------------------------------------------------
 !
+    type(Behaviour_Integ), intent(in) :: BEHinteg
     integer :: ndimsi, k, nrac1, nrac2
     aster_logical :: trac, comp, notrac, nocomp
     real(kind=8) :: trsigp, trsigd, sigelp(6), sigeld(6)
@@ -112,7 +116,8 @@ subroutine pipedp(kpg, ksp, ndim, typmod, mate,&
 !
     pc = vim(1)
     pt = vim(2)
-    call betfpp(materf, nmat, pc, pt,&
+    call betfpp(BEHinteg,&
+                materf, nmat, pc, pt,&
                 3, fc, ft, rbid, rbid,&
                 kuc, kut, ke)
 !

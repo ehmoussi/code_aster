@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine pielas(ndim, npg, kpg, compor, typmod,&
+    subroutine pielas(BEHinteg,&
+                      ndim, npg, kpg, compor, typmod,&
                       mate, lgpg, vim, epsm,&
                       epsp, epsd, sigma, etamin, etamax,&
                       tau, copilo)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         integer :: lgpg
         integer :: npg
         integer :: ndim

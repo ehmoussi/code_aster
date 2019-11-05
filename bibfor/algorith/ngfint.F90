@@ -25,6 +25,7 @@ subroutine ngfint(option, typmod, ndim, nddl, neps,&
                   codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -33,7 +34,6 @@ implicit none
 #include "asterfort/codere.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
-#include "asterfort/behaviourInit.h"
 #include "blas/dgemm.h"
 #include "blas/dgemv.h"
     character(len=8) :: typmod(*)

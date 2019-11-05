@@ -15,14 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
                   ise, nfh, ddlc, ddlm, nfe,&
                   basloc, nnop, idepl, lsn, lst,&
                   igthet, fno, nfiss, jheavn, jstno, incr)
 !
-!
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -50,7 +50,6 @@ implicit none
 #include "asterfort/xcalc_heav.h"
 #include "asterfort/xcalc_code.h"
 #include "asterfort/xcalfev_wrap.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/xkamat.h"
 #include "asterfort/xnbddl.h"
 !
@@ -213,12 +212,12 @@ implicit none
     if (isigi.ne.0) then
 !       Passage de la contrainte initiale aux noeuds des sous-elts
 !       dans un tableau local au sous-elt
-        do 100 i = 1, nno
-            do 110 j = 1, ncmp
+        do i = 1, nno
+            do j = 1, ncmp
                 sigse(ncmp*(i-1)+j) = &
                         zr(jsigse-1 + ncmp*nno*(ise-1) + ncmp*(i-1) + j)
-110         continue
-100     continue
+            end do
+        end do
 
     endif
 !
@@ -657,7 +656,6 @@ implicit none
 !   ------------------------------------------------------------------
 !
     zr(igthet) = zr(igthet) + tcla + tthe + tfor + tini
-
 
 !
 end subroutine

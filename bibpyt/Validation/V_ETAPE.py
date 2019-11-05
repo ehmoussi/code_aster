@@ -35,9 +35,11 @@ import traceback
 import re
 import warnings
 
+import aster_core
+from aster_core import MAXSIZE_MSGCHK
+
 # Modules EFICAS
 from . import V_MCCOMPO
-from Noyau import MAXSIZE, MAXSIZE_MSGCHK
 from Noyau.N_Exception import AsException
 from Noyau.N_utils import AsType
 from Noyau.strfunc import ufmt
@@ -47,6 +49,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
 
     """
     """
+    maxcheck_done = False
 
     def valid_child(self):
         """ Cette methode teste la validite des mots cles de l'etape """
@@ -294,10 +297,13 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
             self.cr.fatal(_('Etape : %s ligne : %r fichier : %r %s'),
                           self.nom, self.appel[0], self.appel[1], e)
         i = 0
+        maxcheck = aster_core.get_option("max_check")
         for child in self.mc_liste:
             i += 1
-            if i > MAXSIZE:
-                print(MAXSIZE_MSGCHK.format(MAXSIZE, len(self.mc_liste)))
+            if i > maxcheck:
+                if not ETAPE.maxcheck_done:
+                    ETAPE.maxcheck_done = True
+                    print(MAXSIZE_MSGCHK.format(maxcheck, len(self.mc_liste)))
                 break
             self.cr.add(child.report())
         return self.cr

@@ -71,15 +71,16 @@ Le comportement %(k1)s contient %(i1)d variables d'états externes (variables de
 
     22: _("""            Variable externe %(i1)d : %(k1)s"""),
 
-    23: _("""
-Le comportement utilise la variable d'état externe %(k1)s (variables de commande).
-Or elle n'a pas été définie dans AFFE_MATERIAU.
+    23: _("""Le comportement utilise la variable d'état externe %(k1)s (variables de commande). Or elle n'a pas été définie dans AFFE_MATERIAU.
 """),
 
     24: _("""
 Le comportement MFront utilise les phases du Zircaloy.
 Ce n'est actuellement pas possible.
 """),
+
+    25: _("""Le comportement utilise la variable d'état externe %(k1)s. Ce n'est actuellement pas possible avec un solveur externe (MFRONT ou UMAT)."""),
+
 
     35: _("""Le modèle de déformation utilisé dans MFront est incompatible avec %(k1)s."""),
 

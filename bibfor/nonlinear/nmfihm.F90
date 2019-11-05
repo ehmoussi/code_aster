@@ -25,6 +25,7 @@ subroutine nmfihm(ndim, nddl, nno1, nno2, npg,&
                   tm, tp, crit, compor, typmod)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -33,7 +34,6 @@ implicit none
 #include "asterfort/gedisc.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/utmess.h"
     integer :: ndim, mate, npg, ipg, idf2, lgpg, nno1, nno2, nddl, iu(3, 16)
     integer :: ip(8)
@@ -161,7 +161,7 @@ implicit none
 !       COOROT : COORDONNEES DU PG + MATRICE DE ROTATION
 !       (MATRICE UTILE POUR LES VI DE POST-TRAITEMENT DANS LA LDC)
         do j = 1, ndim
-            BEHinteg%elga%coorpg(j)=coopg(j,kpg)
+            BEHinteg%elem%coor_elga(kpg,j) = coopg(j,kpg)
         enddo
         do j = 1, ndim*ndim
             BEHinteg%elga%rotpg(j)=rot(j)

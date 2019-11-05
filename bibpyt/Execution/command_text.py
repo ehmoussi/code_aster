@@ -26,7 +26,9 @@ with their keywords.
 
 import os
 
-from Noyau import MAXSIZE, MAXSIZE_MSGKEEP
+import aster_core
+from aster_core import MAXSIZE_MSGKEEP
+
 from Noyau.N_ASSD import ASSD
 from Noyau.N_types import force_list, is_float
 
@@ -38,6 +40,7 @@ class CommandTextVisitor(JDCVisitor):
 
     """Visitor to print the text of the commands.
     """
+    maxprint_done = False
 
     def __init__(self, with_default=True, indent=2):
         """Initialization.
@@ -54,6 +57,7 @@ class CommandTextVisitor(JDCVisitor):
         self.sdname = None
         self._saved = {}
         self._count = 0
+        self._maxprint = aster_core.get_option("max_print")
 
     def save_buffer(self, obj):
         """Save the current state."""
@@ -91,7 +95,9 @@ class CommandTextVisitor(JDCVisitor):
         self._newline()
         self.curline.append("[...]")
         self._newline()
-        print(MAXSIZE_MSGKEEP.format(MAXSIZE, 'unknown'))
+        if not CommandTextVisitor.maxprint_done:
+            CommandTextVisitor.maxprint_done = True
+            print(MAXSIZE_MSGKEEP.format(self._maxprint, 'unknown'))
 
     def _add_indent(self):
         """Set the next indent spacing."""
@@ -149,7 +155,7 @@ class CommandTextVisitor(JDCVisitor):
             self.curline.append("(")
         self._add_indent()
         for i, data in enumerate(mclist.data):
-            if i > MAXSIZE:
+            if i > self._maxprint:
                 self._break()
                 break
             data.accept(self)
@@ -171,7 +177,7 @@ class CommandTextVisitor(JDCVisitor):
         i = 0
         for key, obj in list(node.definition.entites.items()):
             i += 1
-            if i > MAXSIZE:
+            if i > self._maxprint:
                 self._break()
                 break
             has_default = getattr(obj, 'defaut', None) is not None \
@@ -198,7 +204,7 @@ class CommandTextVisitor(JDCVisitor):
         for i, obj in enumerate(compo.mc_liste):
             obj.accept(self)
             seen.add(obj.nom)
-            if i > MAXSIZE:
+            if i > self._maxprint:
                 self._break()
                 break
             if i + 1 < numb:

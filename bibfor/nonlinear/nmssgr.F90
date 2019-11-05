@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
+! aslint: disable=W1504,W1306
 !
 subroutine nmssgr(  hexa,   shb6,   shb8, icoopg,&
                     fami,    nno,    npg, ipoids,    ivf,&
@@ -26,6 +26,7 @@ subroutine nmssgr(  hexa,   shb6,   shb8, icoopg,&
                   codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -69,7 +70,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/r8inir.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/codere.h"
 #include "asterfort/hgfsca.h"
 #include "asterfort/lcdetf.h"
@@ -160,16 +160,16 @@ implicit none
 !   geom_up = geometry at start of current iteration + zr(ideplp)
 !   zr(ideplp) is the cumulative displacement during the Newton iterations since T-
     if (resi) then
-       do 360 i = 1, nno
-          do 362 j = 1, 3
-             geom_up(j,i) = geom(j,i) + deplp(j,i)
-362       continue
-360     continue
+        do i = 1, nno
+            do j = 1, 3
+                geom_up(j,i) = geom(j,i) + deplp(j,i)
+            end do
+        end do
     endif
 !
 ! - Loop over Gauss points
 !
-    do 65 kpg = 1, npg
+    do kpg = 1, npg
         epsm(1:6)=0.d0
         epsp(1:6)=0.d0
 !
@@ -227,11 +227,11 @@ implicit none
 !         SHB8, SHB15 & SHB20 \ Start
 !
 !         pglt needed by tpsivp_shb to express epsm & epsp in local frame
-          do 91 i = 1, 3
-             do 81 j = 1, 3
+          do i = 1, 3
+             do j = 1, 3
                 pglt(j,i) = pgl(i,j)
-81           continue
-91        continue
+             end do
+          end do
 !
 ! ------- First call to nmgeom to evaluate epsm (strain at T-) in global frame
 !         To have equivalent code to original SHB code, grand is set to false
@@ -300,11 +300,11 @@ implicit none
 !         Expressing fp matrix from global to local frame
           call utbtab('ZERO', 3, 3, fp, pglt, work, fplt)
 !
-          do 201 i = 1, 3
-             do 110 j = 1, 3
+          do i = 1, 3
+             do j = 1, 3
                 fpl(i,j) = fplt(j,i)
-110          continue
-201       continue
+             end do
+          end do
 !
 !         SHB8, SHB15 & SHB20 \ End
 !
@@ -474,8 +474,7 @@ implicit none
                       sigp(1,kpg),  matsym, vectu)
 !
          endif
-!
-65  continue
+    end do
 !  ===============================================================
 !      End over Gauss point loop
 !  ===============================================================

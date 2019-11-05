@@ -60,12 +60,12 @@ integer, intent(out) :: i_neum_lapl
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: nb_lapl_maxi = 99
-    integer, parameter :: nb_type_neum = 18
+    integer, parameter :: nb_type_neum = 19
     character(len=6), parameter :: ligr_name(nb_type_neum) = (/'.FORNO','.F3D3D','.F2D3D','.F1D3D',&
                                                                '.F2D2D','.F1D2D','.F1D1D','.PESAN',&
                                                                '.ROTAT','.PRESS','.FELEC','.FCO3D',&
                                                                '.FCO2D','.EPSIN','.FLUX ','.VEASS',&
-                                                               '.ONDPL','.SIINT'/)
+                                                               '.ONDPL','.SIINT','.ETHM '/)
     integer :: i_type_neum, iret, iret_cable_cine, infc, i_lapl
     character(len=5) :: suffix, para_inst, para_vite
     character(len=24) :: info_type, lchin
@@ -99,6 +99,11 @@ integer, intent(out) :: i_neum_lapl
             else
                 call dismoi('PARA_INST', lchin, 'CARTE', repk=para_inst)
                 call dismoi('PARA_VITE', lchin, 'CARTE', repk=para_vite)
+            endif
+            if (ligr_name(i_type_neum) .eq. '.ETHM') then
+              if (.not.(load_apply .eq. 'SUIV')) then
+                  call utmess('F', 'CHARGES5_13', sk=load_name)
+              endif
             endif
             l_para_inst = para_inst .eq. 'OUI'
             l_para_vite = para_vite .eq. 'OUI'

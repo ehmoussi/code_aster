@@ -75,6 +75,12 @@ aster_logical, intent(out) :: l_inter
     debug   = ASTER_FALSE
     l_inter = ASTER_TRUE
 !
+
+    if(abs(mast_norm(1)*slav_norm(1)+mast_norm(2)*slav_norm(2)+mast_norm(3)*slav_norm(3)).lt.&
+           proj_tole) then
+        l_inter = ASTER_FALSE
+        go to 99
+    endif
     do i_node = 1, elem_mast_nbnode
 ! ----- Get coordinates of master nodes
         noma_coor(1:3) = 0.d0
@@ -139,5 +145,6 @@ aster_logical, intent(out) :: l_inter
             end if
         end if
     end do
+99 continue
 !
 end subroutine

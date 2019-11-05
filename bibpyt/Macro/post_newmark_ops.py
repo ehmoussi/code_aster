@@ -27,14 +27,12 @@ def post_newmark_ops(self,**args):
         (digure / barrage) au séisme par la méthode simplifiée de Newmark.
         Uniquement possible pour une modélisation 2D.
   """
-
   import aster
   import os,string,types
+  import copy
   from code_aster.Cata.Syntax import _F
   from Utilitai.Utmess import UTMESS, ASSERT
   import numpy as np
-  from Macro.macr_lign_coupe_ops import crea_mail_lig_coup
-  from Macro.post_endo_fiss_utils import crea_sd_mail
 
   ier= 0
   # La macro compte pour 1 dans la numerotation des commandes
@@ -50,14 +48,23 @@ def post_newmark_ops(self,**args):
   CALC_CHAMP        = self.get_cmd('CALC_CHAMP')
   CREA_TABLE        = self.get_cmd('CREA_TABLE')
   CALC_TABLE        = self.get_cmd('CALC_TABLE')
+  PROJ_CHAMP        = self.get_cmd('PROJ_CHAMP')
+  POST_RELEVE_T        = self.get_cmd('POST_RELEVE_T')
+  IMPR_RESU        = self.get_cmd('IMPR_RESU')
+  IMPR_TABLE        = self.get_cmd('IMPR_TABLE')
 
  ### RECUPERATION DU RESULTAT
   RESULTAT = args['RESULTAT']
 
  ### RECUPERATION DES POSITIONS DU CERCLE DE GLISSEMENT
-  r = args['RAYON']
-  posx = args['CENTRE_X']
-  posy = args['CENTRE_Y']
+  if args['RAYON'] is not None  :
+    TYPE = 'CERCLE'
+    r = args['RAYON']
+    posx = args['CENTRE_X']
+    posy = args['CENTRE_Y']
+  else : 
+    TYPE = "MAILLAGE"
+    __mail_2 = args['MAILLAGE_GLIS']
 
  ### RECUPERATION COEFFICIENT KY
   ky = args['KY']
@@ -87,41 +94,60 @@ def post_newmark_ops(self,**args):
   ## le RESULTAT
   __ch_mat = RESULTAT.getMaterialOnMesh()
 
-
- ### AJOUT DU GROUPE GLISSE DANS LE MAILLAGE
   __mail = DEFI_GROUP(reuse = __mail,
                 MAILLAGE = __mail,
-                CREA_GROUP_MA = _F(NOM = 'GLISSE_',
+                CREA_GROUP_MA = _F(NOM = 'ALL',
                                    #TYPE_MAILLE = '2D',
-                                   OPTION = 'SPHERE',
-                                   POINT = (posx, posy),
-                                   RAYON = r),)
+                                   UNION = grpma,),)
 
-  if len(grpma)>1:
+   ### AJOUT DU GROUPE GLISSE DANS LE MAILLAGE
+  if TYPE == 'CERCLE':
     __mail = DEFI_GROUP(reuse = __mail,
                   MAILLAGE = __mail,
-                  CREA_GROUP_MA = _F(NOM = 'ALL',
+                  CREA_GROUP_MA = _F(NOM = 'GLISSE_',
                                      #TYPE_MAILLE = '2D',
-                                     UNION = grpma,),)
+                                     OPTION = 'SPHERE',
+                                     POINT = (posx, posy),
+                                     RAYON = r),)
+
+  ### Si maillage de la zone de rupture fourni, il faut pouvoir trouver les mailles
+  elif TYPE == 'MAILLAGE':
+    if args['GROUP_MA_GLIS'] is not None :
+      __mail_2 = DEFI_GROUP(reuse = __mail_2,
+                  MAILLAGE = __mail_2,
+                  CREA_GROUP_MA = _F(NOM = 'RUPTURE',
+                                     UNION = args['GROUP_MA_GLIS'],),)
+    else :
+      __mail_2 = DEFI_GROUP(reuse = __mail_2,
+                  MAILLAGE = __mail_2,
+                  CREA_GROUP_MA = _F(NOM = 'RUPTURE',
+                                     TYPE_MAILLE='2D',
+                                     TOUT='OUI',),)
+
+    DEFI_GROUP(reuse=__mail,   MAILLAGE=__mail,
+                 CREA_GROUP_NO=  _F(  NOM = 'GLISSE_', OPTION = 'INCLUSION',
+                                      MAILLAGE_INCL = __mail_2,
+                                      GROUP_MA_INCL = 'RUPTURE',
+                                      GROUP_MA      = 'ALL',
+                                      CAS_FIGURE    = '2D'))
 
     __mail = DEFI_GROUP(reuse = __mail,
+                  MAILLAGE = __mail,
+                  CREA_GROUP_MA=_F( NOM = 'GLISSE_',OPTION='APPUI',
+                                    TYPE_APPUI='AU_MOINS_UN', GROUP_NO='GLISSE_',))
+
+  __mail = DEFI_GROUP(reuse = __mail,
                   MAILLAGE = __mail,
                   CREA_GROUP_MA = _F(NOM = 'GLISSE',
                                      #TYPE_MAILLE = '2D',
                                      INTERSEC = ('GLISSE_','ALL'),),)
-  else:
-    __mail = DEFI_GROUP(reuse = __mail,
-                  MAILLAGE = __mail,
-                  CREA_GROUP_MA = _F(NOM = 'GLISSE',
-                                     #TYPE_MAILLE = '2D',
-                                     INTERSEC = ('GLISSE_',grpma),),)
 
   __mail = DEFI_GROUP(reuse = __mail,
               MAILLAGE = __mail,
               CREA_GROUP_NO = _F( GROUP_MA = 'GLISSE')
             )
 
-#  IMPR_RESU(RESU=_F(MAILLAGE=__mail,),FORMAT='MED',UNITE=21)
+  #IMPR_RESU(RESU=_F(MAILLAGE=__mail,),FORMAT='ASTER',UNITE=6)
 
   __tabmas = POST_ELEM(RESULTAT=RESULTAT,
                       MASS_INER=_F(GROUP_MA='GLISSE'),)
@@ -131,6 +157,8 @@ def post_newmark_ops(self,**args):
   masse = __tabmas['MASSE',1]
   cdgx = __tabmas['CDG_X',1]
   cdgy = __tabmas['CDG_Y',1]
+
+#  print('masse = ',masse)
 
 ##############################################################################
 ##   METHODE : CALCUL DE L'ACCELERATION MOYENNE A PARTIR DE LA RESULTANTE
@@ -144,15 +172,115 @@ def post_newmark_ops(self,**args):
            FORCE = ('FORC_NODA'),
            );
 
-  __tabFLI = MACR_LIGN_COUPE(RESULTAT = __RESU3,
-                      NOM_CHAM = 'FORC_NODA',
-                      LIGN_COUPE = _F(TYPE = 'ARC',
-                                    OPERATION = 'EXTRACTION',
-                                    RESULTANTE   = ('DX','DY'),
-                                    NB_POINTS = 1000,
-                                    CENTRE = (posx, posy),
-                                    COOR_ORIG = (posx-r,posy),
-                                    ANGLE = 360.),)
+  if TYPE == 'CERCLE':
+    __tabFLI = MACR_LIGN_COUPE(RESULTAT = __RESU3,
+                        NOM_CHAM = 'FORC_NODA',
+                        LIGN_COUPE = _F(TYPE = 'ARC',
+                                      OPERATION = 'EXTRACTION',
+                                      RESULTANTE   = ('DX','DY'),
+                                      NB_POINTS = 1000,
+                                      CENTRE = (posx, posy),
+                                      COOR_ORIG = (posx-r,posy),
+                                      ANGLE = 360.),)
+
+#    IMPR_TABLE(TABLE = __tabFLI,UNITE=10)
+
+  elif TYPE == 'MAILLAGE':
+    if args['GROUP_MA_LIGNE'] is not None :
+
+      DEFI_GROUP(reuse=__mail_2,   MAILLAGE=__mail_2,
+                   CREA_GROUP_NO=  _F(  NOM = args['GROUP_MA_LIGNE'], OPTION = 'INCLUSION',
+                                        MAILLAGE_INCL = __mail,
+                                        GROUP_MA_INCL = 'ALL',
+                                        GROUP_MA      = args['GROUP_MA_LIGNE'],
+                                        CAS_FIGURE    = '2D'))
+
+#      IMPR_RESU(RESU=_F(MAILLAGE=__mail_2,),FORMAT='MED',UNITE=22)
+
+      __recou = PROJ_CHAMP(METHODE='COLLOCATION',
+                     RESULTAT=__RESU3,
+                     MAILLAGE_1=__mail,
+                     MAILLAGE_2=__mail_2,
+                     TYPE_CHAM='NOEU',
+                     NOM_CHAM='FORC_NODA',
+                     PROL_ZERO='OUI',
+#                     DISTANCE_MAX=0.1,
+                     )
+
+#      IMPR_RESU(RESU=_F(RESULTAT = __recou,),FORMAT='MED',UNITE=24)
+
+      __tabitm = POST_RELEVE_T(ACTION=_F(
+                                        INTITULE = 'RESU',
+                                        OPERATION = 'EXTRACTION', 
+                                        GROUP_NO = args['GROUP_MA_LIGNE'],
+                                        RESULTANTE   = ('DX','DY'),
+                                        RESULTAT = __recou,
+                                        NOM_CHAM = 'FORC_NODA',),
+                                        )
+
+    else :
+      seg=[]
+      iret, ibid, yaseg2 = aster.dismoi('EXI_SEG2', __mail_2.nom, 'MAILLAGE', 'F')
+      if yaseg2 == 'OUI':
+
+        seg.append('LIGNE_2')
+        __mail_2 = DEFI_GROUP(reuse = __mail_2,
+                    MAILLAGE = __mail_2,
+                    CREA_GROUP_MA = _F(NOM = 'LIGNE_2',
+                                       TYPE_MAILLE=('SEG2'),
+                                       TOUT='OUI',),)
+
+      iret, ibid, yaseg3 = aster.dismoi('EXI_SEG3', __mail_2.nom, 'MAILLAGE', 'F')
+      if yaseg3 == 'OUI':
+        seg.append('LIGNE_3')
+        __mail_2 = DEFI_GROUP(reuse = __mail_2,
+                    MAILLAGE = __mail_2,
+                    CREA_GROUP_MA = _F(NOM = 'LIGNE_3',
+                                       TYPE_MAILLE=('SEG3'),
+                                       TOUT='OUI',),)
+
+      DEFI_GROUP(reuse=__mail_2,   MAILLAGE=__mail_2,
+                   CREA_GROUP_NO=  _F(  NOM = 'LIGNE_', OPTION = 'INCLUSION',
+                                        MAILLAGE_INCL = __mail,
+                                        GROUP_MA_INCL = 'ALL',
+                                        GROUP_MA      = seg,
+                                        CAS_FIGURE    = '2D'))
+
+#      IMPR_RESU(RESU=_F(MAILLAGE=__mail_2,),FORMAT='MED',UNITE=23)
+
+      __recou = PROJ_CHAMP(METHODE='COLLOCATION',
+                     RESULTAT=__RESU3,
+                     MAILLAGE_1=__mail,
+                     MAILLAGE_2=__mail_2,
+                     TYPE_CHAM='NOEU',
+                     NOM_CHAM='FORC_NODA',
+                     PROL_ZERO='OUI',
+#                     DISTANCE_MAX=0.1,
+                     )
+
+#      IMPR_RESU(RESU=_F(RESULTAT = __recou,),FORMAT='MED',UNITE=25)
+
+      __tabitm = POST_RELEVE_T(ACTION=_F(
+                                        INTITULE = 'RESU',
+                                        OPERATION = 'EXTRACTION', 
+                                        GROUP_NO = 'LIGNE_',
+                                        RESULTANTE   = ('DX','DY'),
+                                        RESULTAT = __recou,
+                                        NOM_CHAM = 'FORC_NODA',),
+                                        )
+
+    dictab = __tabitm.EXTR_TABLE()
+    if 'RESU' in dictab.para:
+        del dictab['RESU']
+    if 'NOEUD' in dictab.para:
+        del dictab['NOEUD']
+    dprod = dictab.dict_CREA_TABLE()
+
+    __tabFLI = CREA_TABLE(**dprod)
+
+#    IMPR_TABLE(TABLE = __tabFLI,UNITE=10)
+
+
 
   fresu = __tabFLI.EXTR_TABLE()
   forcex = fresu.values()['DX']
@@ -171,6 +299,35 @@ def post_newmark_ops(self,**args):
                 NOM_PARA = 'INST',
                 ABSCISSE = time,
                 ORDONNEE = list(accxFLI)),
+
+# nettoyage des groupes crées dans les maillages
+
+  __mail = DEFI_GROUP(reuse = __mail,
+                MAILLAGE = __mail,
+                DETR_GROUP_MA = _F(NOM = ('GLISSE_','GLISSE','ALL'),),
+                DETR_GROUP_NO = _F(NOM = ('GLISSE'),),
+                )
+
+  if TYPE == 'MAILLAGE':
+    __mail = DEFI_GROUP(reuse = __mail,
+                  MAILLAGE = __mail,
+                  DETR_GROUP_NO = _F(NOM = ('GLISSE_'),),
+                  )
+    __mail_2 = DEFI_GROUP(reuse = __mail_2,
+                  MAILLAGE = __mail_2,
+                  DETR_GROUP_MA = _F(NOM = ('RUPTURE',),),)
+    if args['GROUP_MA_LIGNE'] is  None :
+      __mail_2 = DEFI_GROUP(reuse = __mail_2,
+                    MAILLAGE = __mail_2,
+                    DETR_GROUP_NO = _F(NOM = ('LIGNE_',),),)
+      if yaseg2 == 'OUI':
+        __mail_2 = DEFI_GROUP(reuse = __mail_2,
+                      MAILLAGE = __mail_2,
+                      DETR_GROUP_NO = _F(NOM = ('LIGNE_2',),),)
+      if yaseg3 == 'OUI':
+        __mail_2 = DEFI_GROUP(reuse = __mail_2,
+                      MAILLAGE = __mail_2,
+                      DETR_GROUP_NO = _F(NOM = ('LIGNE_3',),),)
 
 ###############################################################################
 ##    METHODE DE CORRECTION DE L'ACCELERATION POUR CALCUL DES DÉPLACEMENTS

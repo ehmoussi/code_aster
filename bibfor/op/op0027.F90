@@ -28,6 +28,7 @@ subroutine op0027()
     implicit none
 !
 !
+#include "asterfort/assert.h"
 #include "asterc/getres.h"
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -52,7 +53,7 @@ subroutine op0027()
 !
     integer :: nxpara
     parameter (nxpara = 15)
-    character(len=8) :: table, resu, modele, nomfis, litypa(nxpara), typfis, k8bid
+    character(len=8) :: table, resu, modele, nomfis, litypa(nxpara), typfis, k8bid ,mesh1, mesh2
 
     integer :: nbmxpa
     parameter (nbmxpa = 20)
@@ -80,11 +81,10 @@ subroutine op0027()
     call getvid(' ', 'RESULTAT', scal=resu, nbret=ier)
     call dismoi('MODELE', resu, 'RESULTAT', repk=modele)
     call dismoi('DIM_GEOM', modele, 'MODELE', repi=ndim)
-
+!
 !     RECUPERATION DE L'OPTION
 !
     call getvtx(' ', 'OPTION', scal=option, nbret=ier)
-
 !
 !     DETERMINATION DU TYPFIS = 'FONDFISS' OU 'FISSURE' OU 'THETA'
 !     ET RECUPERATION DE LA SD POUR DECRIRE LE FOND DE FISSURE : NOMFIS
@@ -98,6 +98,13 @@ subroutine op0027()
     else if (ifiss.eq.1) then
         typfis='FISSURE'
     endif
+!
+!   TEST POUR IDENTIFIER SI LE MEME MAILLAGE EST UTILISÉ DANS LA SD FOND_FISS
+!   ET LA SD RESU (test zzzz415a)
+
+    call dismoi('NOM_MAILLA',modele,'MODELE', repk=mesh1)
+    call dismoi('NOM_MAILLA',nomfis,'FOND_FISS', repk=mesh2)
+    ASSERT(mesh1 .eq. mesh2)
 !
 !     CREATION DE LA TABLE
 !

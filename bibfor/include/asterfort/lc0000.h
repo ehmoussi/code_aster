@@ -26,7 +26,7 @@ interface
                       sigp, vip, ndsde, dsidep, icomp,&
                       nvi, codret)
         use Behaviour_type
-        type(Behaviour_Integ) :: BEHinteg
+        type(Behaviour_Integ), intent(inout) :: BEHinteg
         aster_logical, intent(in) :: l_epsi_varc
         integer :: nvi
         integer :: ndsde

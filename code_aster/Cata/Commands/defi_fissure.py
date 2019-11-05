@@ -26,7 +26,7 @@ from code_aster.Cata.Commons import *
 
 DEFI_FISSURE=OPER(nom="DEFI_FISSURE",
                     op=60,
-                    sd_prod=fond_fiss,
+                    sd_prod=fond_fissure,
                     reentrant='n',
 
     MAILLAGE  = SIMP(statut='o',typ=maillage_sdaster ),
