@@ -21,7 +21,7 @@
 # POST_NEWMARK : calcul de stabilite ouvrage en remblai au seisme
 #-------------------------------------------------------
 
-def post_newmark_ops(self,**args):
+def post_newmark_ops(self, **args):
   """
         Macro commande pour évaluer la stabilité d'un ouvrage en remblai
         (digure / barrage) au séisme par la méthode simplifiée de Newmark.
@@ -37,7 +37,6 @@ def post_newmark_ops(self,**args):
   ier= 0
   # La macro compte pour 1 dans la numerotation des commandes
   self.set_icmd(1)
-  self.DeclareOut('tabout',self.sd)
 
   ### On importe les definitions des commandes a utiliser dans la macro
   DEFI_GROUP     = self.get_cmd('DEFI_GROUP')
@@ -54,6 +53,7 @@ def post_newmark_ops(self,**args):
   IMPR_TABLE        = self.get_cmd('IMPR_TABLE')
 
  ### RECUPERATION DU RESULTAT
+  args = _F(args)
   RESULTAT = args['RESULTAT']
 
  ### RECUPERATION DES POSITIONS DU CERCLE DE GLISSEMENT
@@ -62,7 +62,7 @@ def post_newmark_ops(self,**args):
     r = args['RAYON']
     posx = args['CENTRE_X']
     posy = args['CENTRE_Y']
-  else : 
+  else :
     TYPE = "MAILLAGE"
     __mail_2 = args['MAILLAGE_GLIS']
 
@@ -211,7 +211,7 @@ def post_newmark_ops(self,**args):
 
       __tabitm = POST_RELEVE_T(ACTION=_F(
                                         INTITULE = 'RESU',
-                                        OPERATION = 'EXTRACTION', 
+                                        OPERATION = 'EXTRACTION',
                                         GROUP_NO = args['GROUP_MA_LIGNE'],
                                         RESULTANTE   = ('DX','DY'),
                                         RESULTAT = __recou,
@@ -262,7 +262,7 @@ def post_newmark_ops(self,**args):
 
       __tabitm = POST_RELEVE_T(ACTION=_F(
                                         INTITULE = 'RESU',
-                                        OPERATION = 'EXTRACTION', 
+                                        OPERATION = 'EXTRACTION',
                                         GROUP_NO = 'LIGNE_',
                                         RESULTANTE   = ('DX','DY'),
                                         RESULTAT = __recou,
