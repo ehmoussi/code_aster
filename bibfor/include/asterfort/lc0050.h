@@ -21,9 +21,8 @@ interface
                       fami   , kpg   , ksp   , ndim  , typmod,&
                       imate  , compor, carcri, instam, instap,&
                       neps   , epsm  , deps  , nsig  , sigm  ,&
-                      nvi    , vim   , option, angmas, icomp ,&
-                      temp   , dtemp , predef, dpred ,&
-                      stress , statev, ndsde , dsidep, codret)
+                      nvi    , vim   , option, angmas,&
+                      stress , statev, dsidep, codret)
         use Behaviour_type
         type(Behaviour_Integ), intent(in) :: BEHinteg
         character(len=*), intent(in) :: fami
@@ -39,12 +38,8 @@ interface
         real(kind=8), intent(in) :: vim(*)
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: angmas(*)
-        integer, intent(in) :: icomp
-        real(kind=8), intent(in) :: temp, dtemp
-        real(kind=8), intent(in) :: predef(*), dpred(*) 
         real(kind=8), intent(out) :: stress(6)
         real(kind=8), intent(out) :: statev(nvi)
-        integer, intent(in) :: ndsde
         real(kind=8), intent(out) :: dsidep(6, 6)
         integer, intent(out) :: codret
     end subroutine lc0050

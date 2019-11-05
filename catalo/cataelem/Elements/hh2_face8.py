@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,6 +34,13 @@ DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
                              components=(
                              ('EN1', ('PRE[2]',)),
                              ('EN2', ()),))
+
+
+CCOECH= LocatedComponents(phys=PHY.ETHM_R, type='ELGA', location='RIGI',
+    components=('COEF[4]','PRE[2]',))
+CCOECHF= LocatedComponents(phys=PHY.ETHM_F, type='ELGA', location='RIGI',
+    components=('COEF[4]','PRE[2]',))
+
 
 
 EFLHN = LocatedComponents(phys=PHY.FLHN_R, type='ELGA', location='RIGI',
@@ -99,6 +106,16 @@ class HH2_FACE8(Element):
     )
     calculs = (
 
+        OP.CHAR_ECHA_THM_R(te=475,
+            para_in=((SP.PFLUXR, EFLUXE), (SP.PGEOMER, NGEOMER),(SP.PECHTHM, CCOECH),
+                     (SP.PTEMPSR, CTEMPSR), (SP.PDEPLMR, DDL_MECA),),
+            para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
+        OP.CHAR_ECHA_THM_F(te=475,
+            para_in=((SP.PFLUXF, CFLUXF), (SP.PGEOMER, NGEOMER),(SP.PCHTHMF, CCOECHF),
+                     (SP.PTEMPSR, CTEMPSR), (SP.PDEPLMR, DDL_MECA),),
+            para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
         OP.CHAR_MECA_FLUX_F(te=466,
                             para_in=(
                                 (SP.PFLUXF, CFLUXF), (SP.PGEOMER, NGEOMER),

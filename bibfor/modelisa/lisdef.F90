@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -134,7 +134,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
 ! ----------------------------------------------------------------------
 !
     integer :: nbtyth
-    parameter   (nbtyth = 28)
+    parameter   (nbtyth = 29)
     character(len=6) :: nomob(nbtyth)
     character(len=24) :: motcl(nbtyth)
     character(len=24) :: genre(nbtyth)
@@ -169,7 +169,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     '.VEASS'          ,'.F1D2D'          ,'.F3D3D'          ,&
      &     '.F2D2D'          ,'.F1D3D'          ,'.F2D3D'          ,&
      &     '.F1D1D'          ,'.FCO3D'          ,'.FCO2D'          ,&
-     &     '__VEAS'          ,'__VEAG'          /
+     &     '__VEAS'          ,'__VEAG'          ,'.ETHM'          /
 !
 ! --- MOT_CLEF DEFINISSANT LE CHARGEMENT DANS AFFE_CHAR_*
 !
@@ -183,7 +183,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     'VECT_ASSE_CHAR'  ,'FORCE_CONTOUR'   ,'FORCE_INTERNE#3D',&
      &     'FORCE_INTERNE#2D','FORCE_ARETE'     ,'FORCE_FACE'      ,&
      &     'FORCE_POUTRE'    ,'FORCE_COQUE#3D'  ,'FORCE_COQUE#2D'  ,&
-     &     'VECT_ASSE'       ,'VECT_ASSE_GENE'  /
+     &     'VECT_ASSE'       ,'VECT_ASSE_GENE'  ,'ECHA_THM' /
 !
 ! --- POSITION DANS L'ENTIER CODE POUR LE MOT_CLEF DE LA CHARGE
 !
@@ -197,7 +197,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     18                ,19                ,20                ,&
      &     21                ,22                ,23                ,&
      &     24                ,25                ,26                ,&
-     &     27                ,28                /
+     &     27                ,28                ,29         /
 !
 ! --- GENRE DE LA CHARGE
 !
@@ -211,7 +211,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     'VECT_ASSE_CHAR'  ,'NEUM_MECA'       ,'NEUM_MECA'       ,&
      &     'NEUM_MECA'       ,'NEUM_MECA'       ,'NEUM_MECA'       ,&
      &     'NEUM_MECA'       ,'NEUM_MECA'       ,'NEUM_MECA'       ,&
-     &     'VECT_ASSE'       ,'VECT_ASSE_GENE'  /
+     &     'VECT_ASSE'       ,'VECT_ASSE_GENE'  , 'NEUM_MECA'         /
 !
 ! --- POSITION DANS L'ENTIER CODE POUR LE GENRE DE LA CHARGE
 !
@@ -225,7 +225,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     13                ,03                ,03                ,&
      &     03                ,03                ,03                ,&
      &     03                ,03                ,03                ,&
-     &     04                ,15                /
+     &     04                ,15              ,03                /
 !
     data typlig /&
      &     'LIGRCH'          ,'LIGRCH'          ,&
@@ -237,7 +237,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     'LIGRMO'          ,'LIGRMO'          ,'LIGRMO'          ,&
      &     'LIGRMO'          ,'LIGRMO'          ,'LIGRMO'          ,&
      &     'LIGRMO'          ,'LIGRMO'          ,'LIGRMO'          ,&
-     &     ' '               ,' '               /
+     &     ' '               ,' '             , 'LIGRMO'             /
 !
 !
 ! --- NOM DE L'OPTION - CAS REEL
@@ -252,7 +252,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     ' '               ,'CHAR_MECA_FR1D2D','CHAR_MECA_FR3D3D',&
      &     'CHAR_MECA_FR2D2D','CHAR_MECA_FR1D3D','CHAR_MECA_FR2D3D',&
      &     'CHAR_MECA_FR1D1D','CHAR_MECA_FRCO3D','CHAR_MECA_FRCO2D',&
-     &     ' '               ,' '               /
+     &     ' '               ,' '               , 'CHAR_ECHA_THM_R'/
 !
 ! --- NOM DE L'OPTION - CAS COMPLEXE
 !
@@ -266,7 +266,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     ' '               ,' '               ,' '               ,&
      &     ' '               ,' '               ,' '               ,&
      &     'CHAR_MECA_FC1D1D',' '               ,' '               ,&
-     &     ' '               ,' '               /
+     &     ' '               ,' '            ,' '            /
 !
 ! --- NOM DE L'OPTION - CAS FONCTION REELLE
 !
@@ -280,7 +280,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     ' '               ,'CHAR_MECA_FF1D2D','CHAR_MECA_FF3D3D',&
      &     'CHAR_MECA_FF2D2D','CHAR_MECA_FF1D3D','CHAR_MECA_FF2D3D',&
      &     'CHAR_MECA_FF1D1D','CHAR_MECA_FFCO3D','CHAR_MECA_FFCO2D',&
-     &     ' '               ,' '               /
+     &     ' '               ,' '   , 'CHAR_ECHA_THM_F'/
 !
 ! --- NOM DU PARAMETRE - CAS REEL
 !
@@ -294,7 +294,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     ' '               ,'PFR1D2D'         ,'PFR3D3D'         ,&
      &     'PFR2D2D'         ,'PFR1D3D'         ,'PFR2D3D'         ,&
      &     'PFR1D1D'         ,'PFRCO3D'         ,'PFRCO2D'         ,&
-     &     ' '               ,' '               /
+     &     ' '               ,' '    ,'PECHTHM'            /
 !
 ! --- NOM DU PARAMETRE - CAS COMPLEXE
 !
@@ -308,7 +308,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     ' '               ,' '               ,' '               ,&
      &     ' '               ,' '               ,' '               ,&
      &     'PFC1D1D'         ,' '               ,' '               ,&
-     &     ' '               ,' '               /
+     &     ' '               ,' '             ,' '              /
 !
 ! --- NOM DU PARAMETRE - CAS FONCTION REELLE
 !
@@ -322,7 +322,7 @@ subroutine lisdef(oper, optkz, opti, valkz, vali)
      &     ' '               ,'PFF1D2D'         ,'PFF3D3D'         ,&
      &     'PFF2D2D'         ,'PFF1D3D'         ,'PFF2D3D'         ,&
      &     'PFF1D1D'         ,'PFFCO3D'         ,'PFFCO2D'         ,&
-     &     ' '               ,' '               /
+     &     ' '               ,' '     ,'PECHTHMF'            /
 !
 ! ----------------------------------------------------------------------
 !

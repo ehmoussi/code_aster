@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: kyrylo.kazymyrenko at edf.fr
+!
 subroutine lcejmr(BEHinteg,&
                   fami, kpg, ksp, ndim, mate,&
                   option, epsm, deps, sigmo, sigma,&
                   dsidep, vim, vip, typmod,&
                   instam, instap)
-!
-! person_in_charge: kyrylo.kazymyrenko at edf.fr
 !
 use Behaviour_type
 !
@@ -96,10 +95,10 @@ implicit none
 ! GRADIENT DE PRESSION ET PRESSION EN T- OU T+
     if (ifhyme) then
 !
-        do 10 n = 1, ndim-1
+        do n = 1, ndim-1
             gp(n) = epsm(ndim+n)
             if (resi) gp(n) = gp(n) + deps(ndim+n)
- 10     continue
+        end do
 !
         presg = epsm(2*ndim)
         if (resi) presg = presg + deps(2*ndim)
@@ -167,7 +166,7 @@ implicit none
 ! DEFINITION DES PARAMETRES POUR LA RECUPERATION DES FONCTIONS
     coorot = 0.d0
     do i = 1, ndim
-        coorot(i) = BEHinteg%elga%coorpg(i)
+        coorot(i) = BEHinteg%elem%coor_elga(kpg,i)
     enddo
     do i = 1, ndim*ndim
         coorot(ndim+i) = BEHinteg%elga%rotpg(i)

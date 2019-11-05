@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine setBehaviourTypeValue(v_comp   , i_comp_  ,&
+    subroutine setBehaviourTypeValue(v_para   , i_comp_  ,&
                                      l_compor_, v_compor_)
         use Behaviour_type
-        type(Behaviour_Parameters), pointer :: v_comp(:)
+        type(Behaviour_Para), pointer :: v_para(:)
         integer, optional, intent(in) :: i_comp_
         character(len=16), intent(out), optional :: l_compor_(:)
         character(len=16), pointer, optional :: v_compor_(:)

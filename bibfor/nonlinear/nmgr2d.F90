@@ -30,6 +30,7 @@ subroutine nmgr2d(option   , typmod    ,&
                   codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -38,9 +39,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/lcdetf.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/nmgrtg.h"
 #include "asterfort/pk2sig.h"
@@ -106,7 +105,7 @@ integer, intent(inout) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: grand, axi, cplan
-    integer :: kpg, j, jstrainexte, ndim
+    integer :: kpg, j, strain_model, ndim
     real(kind=8) :: dsidep(6, 6)
     real(kind=8) :: f_prev(3, 3), f_curr(3, 3)
     real(kind=8) :: epsg_prev(6), epsg_incr(6), epsg_curr(6)
@@ -118,7 +117,6 @@ integer, intent(inout) :: codret
     integer :: cod(9)
     real(kind=8) :: dfdi(nno,2), pff(4,nno,nno), def(4,nno,2)
     character(len=16) :: rela_comp
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
@@ -137,15 +135,15 @@ integer, intent(inout) :: codret
 !
 ! - Get coded integer for external state variable
 !
-    jstrainexte = nint(carcri(ISTRAINEXTE))
+    strain_model = nint(carcri(EXTE_STRAIN))
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri   , typmod   ,&
-                               nno      , npg      , ndim     ,&
-                               ipoids   , ivf      , idfde    ,&
-                               geom_init, disp_prev, disp_incr,&
-                               coorga)
+    call behaviourPrepESVAElem(carcri   , typmod   ,&
+                               nno      , npg      , ndim ,&
+                               ipoids   , ivf      , idfde,&
+                               geom_init, BEHinteg ,&
+                               disp_prev, disp_incr)
 !
 ! - Only isotropic material !
 !
@@ -159,7 +157,6 @@ integer, intent(inout) :: codret
 !
     do kpg = 1, npg
 !
-        BEHinteg%elga%coorpg = coorga(kpg,:)
         epsg_prev(1:6) = 0.d0
         epsg_incr(1:6) = 0.d0
         epsg_curr(1:6) = 0.d0
@@ -189,8 +186,8 @@ integer, intent(inout) :: codret
 !
 ! ----- Compute behaviour
 !
-        if ((jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_S) .or. &
-            (jstrainexte .eq. 0)) then
+        if ((strain_model .eq. MFRONT_STRAIN_GROTGDEP_S) .or. &
+            (strain_model .eq. 0)) then
 ! --------- Check "small strains"
             maxeps = 0.d0
             do j = 1, 6
@@ -213,7 +210,7 @@ integer, intent(inout) :: codret
             if (cod(kpg) .eq. 1) then
                 goto 999
             endif
-        elseif (jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_L) then
+        elseif (strain_model .eq. MFRONT_STRAIN_GROTGDEP_L) then
 ! --------- Jacobian must been positive !
             call lcdetf(ndim, f_curr, detf_curr)
             if (detf_curr .le. 1.D-6) then

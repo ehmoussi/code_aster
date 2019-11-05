@@ -149,7 +149,7 @@ implicit none
 ! DEFINITION DES PARAMETRES POUR LA RECUPERATION DES FONCTIONS
     coorot = 0.d0
     do i = 1, ndim
-        coorot(i) = BEHinteg%elga%coorpg(i)
+        coorot(i) = BEHinteg%elem%coor_elga(kpg,i)
     enddo
     do i = 1, ndim*ndim
         coorot(ndim+i) = BEHinteg%elga%rotpg(i)

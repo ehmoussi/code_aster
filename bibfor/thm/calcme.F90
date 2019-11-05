@@ -27,13 +27,13 @@ subroutine calcme(option, j_mater, ndim  , typmod, angl_naut,&
                   dsdeme, retcom )
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/lcidbg.h"
-#include "asterfort/behaviourInit.h"
 !
 character(len=16), intent(in) :: option, compor(*)
 integer, intent(in) :: j_mater

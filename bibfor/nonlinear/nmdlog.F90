@@ -25,6 +25,7 @@ subroutine nmdlog(fami, option, typmod, ndim, nno,&
                   vip, fint, matuu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -32,7 +33,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/dfdmip.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmepsi.h"
 #include "asterfort/nmgrtg.h"
@@ -43,7 +43,6 @@ implicit none
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 ! ----------------------------------------------------------------------
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*
@@ -100,7 +99,6 @@ implicit none
     real(kind=8) :: gn(3, 3), lamb(3), logl(3)
     real(kind=8) :: def(2*ndim, nno, ndim), pff(2*ndim, nno, nno)
     real(kind=8) :: dsidep(6, 6), pk2(6), pk2m(6)
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
 !-----------------------------TEST AVANT CALCUL---------------------
@@ -126,11 +124,11 @@ implicit none
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri, typmod,&
-                               nno   , npg   , ndim ,&
-                               iw    , ivf   , idff ,&
-                               geomi , deplm , depld,&
-                               coorga)
+    call behaviourPrepESVAElem(carcri, typmod  ,&
+                               nno   , npg     , ndim ,&
+                               iw    , ivf     , idff ,&
+                               geomi , BEHinteg,&
+                               deplm , depld)
 !
 !--------------------------INITIALISATION------------------------
 !
@@ -173,7 +171,6 @@ implicit none
 !
         call r8inir(36, 0.d0, dtde, 1)
         call r8inir(6, 0.d0, tp, 1)
-        BEHinteg%elga%coorpg = coorga(g,:)
         call nmcomp(BEHinteg,&
                     fami, g, 1, ndim, typmod,&
                     mate, compor, carcri, instm, instp,&

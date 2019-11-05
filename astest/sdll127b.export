@@ -7,3 +7,7 @@ P testlist verification sequential
 
 F comm sdll127b.comm D 1
 F mmed sdll127b.mmed D 20
+
+# Cover usage of these options
+# aslint: disable=E2003
+A args --max_print=5000 --max_check=5000

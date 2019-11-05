@@ -26,6 +26,7 @@ subroutine eifint(ndim, axi, nno1, nno2, npg,&
                   vip, matr, vect, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -34,7 +35,6 @@ implicit none
 #include "asterfort/eicine.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
-#include "asterfort/behaviourInit.h"
     character(len=8) :: typmod(*)
     character(len=16) :: option, compor(*)
 !
@@ -114,7 +114,7 @@ implicit none
 !
 ! - CALCUL POUR CHAQUE POINT DE GAUSS
 !
-    do 1000 g = 1, npg
+    do g = 1, npg
 !
 !      CALCUL DES ELEMENTS GEOMETRIQUES DE L'EF
 !
@@ -122,21 +122,21 @@ implicit none
                     vff2(1, g), wref(g), dffr2(1, 1, g), geom, ang,&
                     wg, b)
 !
-        do 150 i = 1, ndim
+        do i = 1, ndim
             su(i) = 0.d0
-            do 160 j = 1, ndim
-                do 161 n = 1, 2*nno1
+            do j = 1, ndim
+                do n = 1, 2*nno1
                     su(i) = su(i) + b(i,j,n)*(ddlm(iu(j,n))+ddld(iu(j, n)))
-161             continue
-160         continue
-150     continue
+                end do
+            end do
+        end do
 !
-        do 170 i = 1, ndim
+        do i = 1, ndim
             mu(i) = 0.d0
-            do 180 n = 1, nno2
+            do n = 1, nno2
                 mu(i) = mu(i) + vff2(n,g)*(ddlm(im(i,n))+ddld(im(i,n)) )
-180         continue
-170     continue
+            end do
+        end do
 !
 !
 !      LOI DE COMPORTEMENT
@@ -154,7 +154,7 @@ implicit none
                     3, mu, su, 1, rbid,&
                     vim(1, g), option, rbid, &
                     de, vip(1, g), 36, ddedt, cod(g))
-        if (cod(g) .eq. 1) goto 9000
+        if (cod(g) .eq. 1) goto 900
 !
 !
 !      FORCE INTERIEURE ET CONTRAINTES DE CAUCHY
@@ -164,32 +164,31 @@ implicit none
         if (resi) then
 !
 !        STOCKAGE DES CONTRAINTES
-            do 200 i = 1, ndim
+            do i = 1, ndim
                 sigp( i,g) = mu(i) + r(1)*(su(i)-de(i))
                 sigp(ndim+i,g) = su(i) - de(i)
-200         continue
+            end do
 !
 !        VECTEUR FINT:U
-            do 300 n = 1, 2*nno1
-                do 301 i = 1, ndim
+            do n = 1, 2*nno1
+                do i = 1, ndim
                     kk = iu(i,n)
                     t1 = 0
-                    do 320 k = 1, ndim
+                    do k = 1, ndim
                         t1 = t1 + b(k,i,n)*sigp(k,g)
-320                 continue
+                    end do
                     vect(kk) = vect(kk) + wg*t1
-301             continue
-300         continue
+                end do
+            end do
 !
 !        VECTEUR FINT:M
-            do 350 n = 1, nno2
-                do 351 i = 1, ndim
+            do n = 1, nno2
+                do i = 1, ndim
                     kk = im(i,n)
                     t1 = vff2(n,g)*sigp(ndim+i,g)
                     vect(kk) = vect(kk) + wg*t1
-351             continue
-350         continue
-!
+                end do
+            end do
         endif
 !
 !
@@ -259,12 +258,12 @@ implicit none
 !
         endif
 !
-1000 end do
+    end do
 !
 !
 ! - SYNTHESE DES CODES RETOUR
 !
-9000 continue
+900 continue
     call codere(cod, npg, codret)
 !
 end subroutine

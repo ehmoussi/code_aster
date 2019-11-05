@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set_prefix() {
+    local this=`readlink -n -f "$1"`
+    prefix=`dirname "${this}"`
+}
+
+set_prefix "$0"
+image=${prefix}/image
+
+cat << EOF > run_script
+cd /tmp
+. @PREFIX@/share/aster/profile.sh
+@PREFIX@/bin/aster ${@}
+EOF
+chmod 755 run_script
+
+echo "Commands executed inside the container by 'run_script':"
+echo ". @PREFIX@/share/aster/profile.sh"
+echo "@PREFIX@/bin/aster ${@}"
+echo
+
+set -x
+singularity exec \
+    @BIND_PREFIX@ --bind $(pwd):/tmp ${image} \
+    /tmp/run_script

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,15 +17,20 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine lcplnf(rela_comp, vind, nbcomm, nmat, cpmono,&
-                  materd, materf, iter, nvi, itmax,&
+subroutine lcplnf(BEHinteg, &
+                  rela_comp, vind, nbcomm, nmat, cpmono,&
+                  materf, iter, nvi, itmax,&
                   toler, pgl, nfs, nsg, toutms,&
                   hsr, dt, dy, yd, yf,&
                   vinf, sigd, sigf,&
                   deps, nr, mod, timef,&
                   indi, vins, codret)
 !
+use Behaviour_type
+!
 implicit none
+!
+type(Behaviour_Integ), intent(in) :: BEHinteg
 !   POST-TRAITEMENTS SPECIFIQUES AUX LOIS
 !
 !   CORRESPONDANCE ENTRE LES VARIABLES INTERNES ET LES EQUATIONS
@@ -42,7 +47,6 @@ implicit none
 !  IN
 !     LOI    :  NOM DE LA LOI
 !     VIND   :  VARIABLE INTERNES A T
-!     MATERD :  COEF MATERIAU A T
 !     MATERF :  COEF MATERIAU A T+DT
 !     NBCOMM :  INCIDES DES COEF MATERIAU
 !     NMAT   :  DIMENSION MATER ET DE NBCOMM
@@ -69,7 +73,7 @@ implicit none
 #include "asterfort/srilnf.h"
     integer :: ndt, nvi, nmat, ndi, nbcomm(nmat, 3), iter, itmax, nr, codret
     integer :: nfs, nsg, indi(7), i
-    real(kind=8) :: materd(nmat, 2), materf(nmat, 2), vins(nvi), timef
+    real(kind=8) :: materf(nmat, 2), vins(nvi), timef
     real(kind=8) :: pkc, m13, dtot, hookf(6, 6)
     real(kind=8) :: yd(*), vind(*), toler, pgl(3, 3), dt
     real(kind=8) :: toutms(nfs, nsg, 6), hsr(nsg, nsg), dy(*), yf(*), vinf(*)
@@ -86,7 +90,8 @@ implicit none
 !
     if ((rela_comp(1:8) .eq. 'MONOCRIS') .or. (rela_comp(1:8) .eq. 'MONO2RIS')) then
 ! ---    DEFORMATION PLASTIQUE EQUIVALENTE CUMULEE MACROSCOPIQUE
-        call lcdpec(vind, nbcomm, nmat, ndt, cpmono,&
+        call lcdpec(BEHinteg, &
+                    vind, nbcomm, nmat, ndt, cpmono,&
                     materf, iter, nvi, itmax, toler,&
                     pgl, nfs, nsg, toutms, hsr,&
                     dt, dy, yd, vinf,&

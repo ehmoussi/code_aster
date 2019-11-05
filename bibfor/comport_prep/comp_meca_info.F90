@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ type(Behaviour_PrepPara), intent(out) :: ds_compor_prep
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Preparation of comportment (mechanics)
+! Preparation of behaviour (mechanics)
 !
 ! Create datastructure to prepare comportement
 !
@@ -46,7 +46,7 @@ type(Behaviour_PrepPara), intent(out) :: ds_compor_prep
 !
     character(len=16) :: keywordfact
     integer :: nb_info_comp, nbocc_compor
-    type(Behaviour_Parameters) :: ds_comporPara
+    type(Behaviour_Para) :: ds_comporPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,8 +56,6 @@ type(Behaviour_PrepPara), intent(out) :: ds_compor_prep
 !
 ! - Initializations
 !
-    ds_compor_prep%v_comp   => null()
-    ds_compor_prep%v_exte   => null()
     ds_compor_prep%l_implex = l_implex
 !
 ! - Number of comportement information
@@ -74,21 +72,21 @@ type(Behaviour_PrepPara), intent(out) :: ds_compor_prep
 !
 ! - Allocate comportment informations objects 
 !
-    allocate(ds_compor_prep%v_comp(nb_info_comp))
+    allocate(ds_compor_prep%v_para(nb_info_comp))
 !
 ! - Allocate comportment informations objects (external: UMAT and MFront)
 !
-    allocate(ds_compor_prep%v_exte(nb_info_comp))
+    allocate(ds_compor_prep%v_paraExte(nb_info_comp))
 !
 ! - If nothing in COMPORTEMENT: all is elastic
 !
     call comp_meca_init(ds_comporPara)
     if (nbocc_compor .eq. 0) then
-        ds_compor_prep%v_comp(1) = ds_comporPara
-        ds_compor_prep%v_comp(1)%rela_comp = 'ELAS'
-        ds_compor_prep%v_comp(1)%defo_comp = 'PETIT'
-        ds_compor_prep%v_comp(1)%type_comp = 'COMP_ELAS'
-        ds_compor_prep%v_comp(1)%type_cpla = 'ANALYTIQUE'
+        ds_compor_prep%v_para(1) = ds_comporPara
+        ds_compor_prep%v_para(1)%rela_comp = 'ELAS'
+        ds_compor_prep%v_para(1)%defo_comp = 'PETIT'
+        ds_compor_prep%v_para(1)%type_comp = 'COMP_ELAS'
+        ds_compor_prep%v_para(1)%type_cpla = 'ANALYTIQUE'
     endif
 !
 end subroutine

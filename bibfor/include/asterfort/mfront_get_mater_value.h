@@ -17,14 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine mfront_get_mater_value(BEHinteg ,&
-                                      rela_comp, jvariext1, jvariext2,&
+    subroutine mfront_get_mater_value(BEHinteg , rela_comp,&
                                       fami     , kpg      , ksp, imate, &
                                       nprops   , props)
         use Behaviour_type
         type(Behaviour_Integ), intent(in) :: BEHinteg
         character(len=16), intent(in) :: rela_comp
-        integer, intent(in) :: jvariext1, jvariext2
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg, ksp, imate
         integer, intent(inout) :: nprops

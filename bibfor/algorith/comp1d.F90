@@ -21,6 +21,7 @@ subroutine comp1d(fami, kpg, ksp, option, sigx,&
                   sigxp, etan, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -28,7 +29,6 @@ implicit none
 #include "asterfort/jevech.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/r8inir.h"
-#include "asterfort/behaviourInit.h"
 !
 character(len=*) :: fami
 character(len=16) :: option

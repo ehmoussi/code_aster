@@ -108,7 +108,7 @@ cata_msg = {
 
    48 : _("""Valeur du coefficient complexe pour la matrice de nom %(k1)s : (%(r1)19.12e,%(r2)19.12e)."""),
 
-   49 : _("""La base empirique ne repose pas sur le même modèle sur le calcul non-linéaire."""),
+   49 : _("""La base empirique ne repose pas sur le même modèle sur le calcul non-linéaire. Si vous utilisez le mode d'intégration sur domaine réduit, vérifiez que vous avez bien tronqué les bases (OPERATION='TRONCATURE' dans la commande DEFI_BASE_REDUITE)."""),
 
    51 : _("""Valeur des paramètres pour la variation d'indice %(i1)d."""),
 

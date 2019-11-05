@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lcplas(fami, kpg, ksp, loi, toler,&
+    subroutine lcplas(BEHinteg, &
+                      fami, kpg, ksp, loi, toler,&
                       itmax, mod, imat, nmat, materd,&
                       materf, nr, nvi, timed, timef,&
                       deps, epsd, sigd, vind, sigf,&
@@ -27,6 +26,8 @@ interface
                       nfs, nsg, toutms, hsr, icomp,&
                       codret, theta, vp, vecp, seuil,&
                       devg, devgii, drdy, crit)
+        use Behaviour_type
+        type(Behaviour_Integ), intent(in) :: BEHinteg
         integer :: nsg
         integer :: nfs
         integer :: nr

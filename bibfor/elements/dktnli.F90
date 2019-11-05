@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
                   btsig, ktan, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -42,7 +43,6 @@ implicit none
 #include "asterfort/dsxhlt.h"
 #include "asterfort/dxmate.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/gquad4.h"
 #include "asterfort/gtria3.h"
 #include "asterfort/jevech.h"

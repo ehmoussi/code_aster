@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,26 +16,24 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine mfrontPrepareStrain(l_simomiehe, l_grotgdep, option, &
-                               neps , epsm , deps ,&
-                               stran , dstran , detf_)
+subroutine mfrontPrepareStrain(l_simomiehe, l_grotgdep, l_pred,&
+                               neps       , epsm      , deps  ,&
+                               stran      , dstran    , detf_)
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/r8inir.h"
 #include "asterfort/pmat.h"
 #include "asterfort/lcdetf.h"
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
 !
-aster_logical, intent(in) :: l_simomiehe, l_grotgdep
-character(len=16), intent(in) :: option
+aster_logical, intent(in) :: l_simomiehe, l_grotgdep, l_pred
 integer, intent(in) :: neps
 real(kind=8), intent(in) :: epsm(neps), deps(neps)
-real(kind=8), optional, intent(out) :: detf_
 real(kind=8), intent(out) :: stran(neps), dstran(neps)
+real(kind=8), optional, intent(out) :: detf_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,17 +44,18 @@ real(kind=8), intent(out) :: stran(neps), dstran(neps)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_simomiehe  : .true. if large strains with SIMO_MIEHE
-! In  l_grotgdep   : .true. if large strains with GROT_GDEP
-! In  option       : option of calcul : RIGI_MECA, FULL_MECA...
-! In  neps         : number of components of strains
-! In  epsm         : mechanical strains at T- for all kinematics but simo_miehe
-!                    total strains at T- for simo_miehe
-! In  deps         : incr of mechanical strains during step time for all kinematics but simo_miehe
-!                    incr of total strains during step time  for simo_miehe
-! Out stran        : mechanical strains at beginning of current step time for MFront
-! Out dstran       : increment of mechanical strains during step time for MFront
-! Out detf         : determinant of gradient
+! In  l_simomiehe      : .true. if large strains with SIMO_MIEHE
+! In  l_grotgdep       : .true. if large strains with GROT_GDEP
+! In  l_pred           : flag if prediction
+! In  option           : option of calcul : RIGI_MECA, FULL_MECA...
+! In  neps             : number of components of strains
+! In  epsm             : mechanical strains at T- for all kinematics but simo_miehe
+!                        total strains at T- for simo_miehe
+! In  deps             : incr of mechanical strains during step time for all but simo_miehe
+!                        incr of total strains during step time for simo_miehe
+! Out stran            : mechanical strains at beginning of current step time for MFront
+! Out dstran           : increment of mechanical strains during step time for MFront
+! Out detf             : determinant of gradient
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,15 +64,15 @@ real(kind=8), intent(out) :: stran(neps), dstran(neps)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call r8inir(neps, 0.d0, dstran, 1)
-    call r8inir(neps, 0.d0, stran, 1)
+    stran(1:neps)  = 0.d0
+    dstran(1:neps) = 0.d0
 !
     if (l_simomiehe) then
         ASSERT(neps .eq. 9)
         dfgrd0(:,:) = 0.d0
         dfgrd1(:,:) = 0.d0
         call dcopy(neps, epsm, 1, dfgrd0, 1)
-        if (option(1:9).eq. 'RIGI_MECA') then
+        if (l_pred) then
             call dcopy(neps, dfgrd0, 1, dfgrd1, 1)
         else
             call pmat(3, deps, dfgrd0, dfgrd1)
@@ -86,7 +85,7 @@ real(kind=8), intent(out) :: stran(neps), dstran(neps)
         dfgrd0(:,:) = 0.d0
         dfgrd1(:,:) = 0.d0
         call dcopy(neps, epsm, 1, dfgrd0, 1)
-        if (option(1:9).eq. 'RIGI_MECA') then
+        if (l_pred) then
             call dcopy(neps, epsm, 1, dfgrd1, 1)
         else
             call dcopy(neps, deps, 1, dfgrd1, 1)

@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
+!
 subroutine nmel3d(fami, poum, nno, npg, ipoids,&
                   ivf, idfde, geom, typmod, option,&
                   imate, compor, lgpg, crit, depl,&
@@ -23,17 +24,15 @@ subroutine nmel3d(fami, poum, nno, npg, ipoids,&
                   vi, matuu, vectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
-!
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmgeom.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
 character(len=8) :: typmod(*)
@@ -80,12 +79,9 @@ real(kind=8) :: matuu(*), vectu(3, nno)
     aster_logical :: grdepl
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), r, sigma(6), ftf, detf
     real(kind=8) :: poids, tmp1, tmp2
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     integer, parameter :: ndim = 3
-    real(kind=8) :: deplm(3*nno), deplp(3*nno)
-!
     integer :: indi(6), indj(6)
     real(kind=8) :: rind(6)
     data    indi / 1 , 2 , 3 , 1 , 1 , 2 /
@@ -96,8 +92,6 @@ real(kind=8) :: matuu(*), vectu(3, nno)
 !
 ! - INITIALISATION
 !
-    deplm(:) = 0.d0
-    deplp(:) = 0.d0
     grdepl = compor(3) .eq. 'GROT_GDEP'
 !
 ! - Initialisation of behaviour datastructure
@@ -106,11 +100,10 @@ real(kind=8) :: matuu(*), vectu(3, nno)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(crit  , typmod,&
-                               nno   , npg   , ndim ,&
-                               ipoids, ivf   , idfde,&
-                               geom  , deplm , deplp,&
-                               coorga)
+    call behaviourPrepESVAElem(crit  , typmod  ,&
+                               nno   , npg     , ndim ,&
+                               ipoids, ivf     , idfde,&
+                               geom  , BEHinteg)
 !
     do kpg = 1, npg
 !
@@ -155,7 +148,6 @@ real(kind=8) :: matuu(*), vectu(3, nno)
 !
 ! - LOI DE COMPORTEMENT : S(E) ET DS/DE
 !
-        BEHinteg%elga%coorpg = coorga(kpg,:)
         call nmcpel(BEHinteg,&
                     fami, kpg, 1, poum, 3,&
                     typmod, angmas, imate, compor, crit,&

@@ -16,10 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine plasbe(fami, kpg, ksp, typmod, imat, l_epsi_varc,&
+subroutine plasbe(BEHinteg,&
+                  fami, kpg, ksp, typmod, imat, l_epsi_varc,&
                   crit, epsdt, depst, sigd, vind,&
                   opt, sigf, vinf, dsde,&
                   icomp, nvi, irteti)
+!
+use Behaviour_type
 !
 implicit none
 !
@@ -166,6 +169,7 @@ implicit none
 !       PRODUITS TENSORIELS ET CONSERVATION DE LA SYMETRIE
 !
 !       ----------------------------------------------------------------
+type(Behaviour_Integ), intent(in) :: BEHinteg
     aster_logical, intent(in) :: l_epsi_varc
     integer :: imat, ndt, ndi, nr, nvi
     integer :: itmax, icomp
@@ -320,7 +324,7 @@ implicit none
 !
 ! --    PREDICTION ETAT ELASTIQUE A T+DT : F(SIG(T+DT),VIN(T)) = 0 ?
 !
-        call betcvx(nmat, materf, sigf, vind, vinf,&
+        call betcvx(BEHinteg, nmat, materf, sigf, vind, vinf,&
                     nvi, nseuil)
 !
         if (nseuil .ge. 0) then
@@ -330,12 +334,12 @@ implicit none
             etatf = 'PLASTIC'
 !
             nseui1 = nseuil
-            call lcplbe(toler, itmax, nmat, materf, nvi,&
+            call lcplbe(BEHinteg, toler, itmax, nmat, materf, nvi,&
                         vind, sigf, vinf, nseuil,&
                         irtet)
 !           GOTO (1), IRTET
 !
-            call betcvx(nmat, materf, sigf, vind, vinf,&
+            call betcvx(BEHinteg, nmat, materf, sigf, vind, vinf,&
                         nvi, nseuil)
             nseui2 = nseuil
 !
@@ -358,12 +362,12 @@ implicit none
                     nseuil = nseui2
                 endif
                 call lceqvn(ndt, sige, sigf)
-                call lcplbe(toler, itmax, nmat, materf, nvi,&
+                call lcplbe(BEHinteg, toler, itmax, nmat, materf, nvi,&
                             vind, sigf, vinf, nseuil,&
                             irtet)
 !              GOTO (1), IRTET
 !
-                call betcvx(nmat, materf, sigf, vind, vinf,&
+                call betcvx(BEHinteg, nmat, materf, sigf, vind, vinf,&
                             nvi, nseuil)
                 nseui3 = nseuil
             endif
@@ -383,12 +387,12 @@ implicit none
                     nseuil = nseui3
                 endif
                 call lceqvn(ndt, sige, sigf)
-                call lcplbe(toler, itmax, nmat, materf, nvi,&
+                call lcplbe(BEHinteg, toler, itmax, nmat, materf, nvi,&
                             vind, sigf, vinf, nseuil,&
                             irtet)
 !              GOTO (1), IRTET
 !
-                call betcvx(nmat, materf, sigf, vind, vinf,&
+                call betcvx(BEHinteg, nmat, materf, sigf, vind, vinf,&
                             nvi, nseuil)
                 nseui4 = nseuil
             endif
@@ -406,12 +410,12 @@ implicit none
                 nseuil = 22
                 nseui4 = nseuil
                 call lceqvn(ndt, sige, sigf)
-                call lcplbe(toler, itmax, nmat, materf, nvi,&
+                call lcplbe(BEHinteg, toler, itmax, nmat, materf, nvi,&
                             vind, sigf, vinf, nseuil,&
                             irtet)
 !             GOTO (1), IRTET
 !
-                call betcvx(nmat, materf, sigf, vind, vinf,&
+                call betcvx(BEHinteg, nmat, materf, sigf, vind, vinf,&
                             nvi, nseuil)
             endif
 !
@@ -448,7 +452,7 @@ implicit none
                 if (typma .eq. 'COHERENT') then
 ! PAS UTILISE ICI  CALL LCJELA ( LOI  , MOD ,  NMAT, MATERD,VIND, DSDE)
                 else if (typma .eq. 'VITESSE ') then
-                    call betjpl(mod, nmat, materd, sigd, vind,&
+                    call betjpl(BEHinteg, mod, nmat, materd, sigd, vind,&
                                 dsde)
                 endif
             endif
@@ -462,7 +466,7 @@ implicit none
                 if (typma .eq. 'COHERENT') then
 ! PAS UTILISE ICI  CALL LCJPLC ( LOI  , MOD ,  NMAT, MATERD, DSDE)
                 else if (typma .eq. 'VITESSE ') then
-                    call betjpl(mod, nmat, materd, sigf, vinf,&
+                    call betjpl(BEHinteg, mod, nmat, materd, sigf, vinf,&
                                 dsde)
                 endif
             endif
@@ -475,7 +479,7 @@ implicit none
     goto 999
   1 continue
     irteti = 1
-    call betimp(nmat, materf, sigf, vind, vinf,&
+    call betimp(BEHinteg, nmat, materf, sigf, vind, vinf,&
                 nseui1, nseui2, nseui3, nseui4,&
                 sige, sigd)
 !
