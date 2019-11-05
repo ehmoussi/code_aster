@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,14 +16,20 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lcdpec(vind, nbcomm, nmat, ndt, cpmono,&
+subroutine lcdpec(BEHinteg, &
+                  vind, nbcomm, nmat, ndt, cpmono,&
                   materf, iter, nvi, itmax, toler,&
                   pgl, nfs, nsg, toutms, hsr,&
                   dt, dy, yd, vinf, &
                   sigf, df, nr, mod,&
                   codret)
 ! aslint: disable=W1306,W1504
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
+type(Behaviour_Integ), intent(in) :: BEHinteg
 !     POST-TRAITEMENTS POUR LE MONOCRISTAL
 !     DEFORMATION PLASTIQUE EQUIVALENTE CUMULEE MACROSCOPIQUE
 !     RECALCUL DES 3 VARIABLES INTERNES PAR SYSTEME
@@ -270,7 +276,7 @@ subroutine lcdpec(vind, nbcomm, nmat, ndt, cpmono,&
 !
 !     ROTATION RESEAU DEBUT
     if (ir .eq. 1) then
-        call lcmmro(omp, nvi, vind, vinf)
+        call lcmmro(BEHinteg, omp, nvi, vind, vinf)
     endif
 ! ROTATION RESEAU FIN
 !

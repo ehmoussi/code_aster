@@ -25,20 +25,19 @@ subroutine nmas2d(fami, nno, npg, ipoids, ivf,&
                   vectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/calsta.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/codere.h"
 #include "asterfort/dfda2d.h"
 #include "asterfort/iniqs4.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
-#include "asterfort/behaviourInit.h"
 !
 integer :: nno, npg, imate, lgpg, codret, cod(9), npgs
 integer :: ipoids, ivf, idfde
@@ -97,7 +96,6 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
     real(kind=8) :: poids, tmp, sig(6)
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
 !     AJ. VARIABLES
@@ -134,11 +132,11 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri, typmod ,&
-                               nno   , npg    , ndim ,&
-                               ipoids, ivf    , idfde,&
-                               geom  , deplm  , deplp,&
-                               coorga)
+    call behaviourPrepESVAElem(carcri, typmod,&
+                               nno   , npg     , ndim ,&
+                               ipoids, ivf     , idfde,&
+                               geom  , BEHinteg,&
+                               deplm , deplp)
 !
 ! - INITIALISATION QUAS4
     call iniqs4(nno, sdfde, sdfdk, poi2sg, coopg)
@@ -217,7 +215,6 @@ real(kind=8) :: matuu(*), vectu(2, nno), angmas(3)
         optios = option
     endif
 !
-    BEHinteg%elga%coorpg = coorga(kpg,:)
     call nmcomp(BEHinteg,&
                 fami, kpg, 1, 2, typmod,&
                 imate, compor, carcri, instam, instap,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine comp_ntvari(model_ , compor_cart_, compor_list_, compor_info,&
-                       nt_vari, nb_vari_maxi, nb_zone     , v_exte)
+                       nt_vari, nb_vari_maxi, nb_zone     , v_paraExte)
 !
 use Behaviour_type
 !
@@ -41,10 +41,8 @@ character(len=8), optional, intent(in) :: model_
 character(len=19), optional, intent(in) :: compor_cart_
 character(len=16), optional, intent(in) :: compor_list_(20)
 character(len=19), intent(in) :: compor_info
-integer, intent(out) :: nt_vari
-integer, intent(out) :: nb_vari_maxi
-integer, intent(out) :: nb_zone
-type(Behaviour_External), pointer :: v_exte(:)
+integer, intent(out) :: nt_vari, nb_vari_maxi, nb_zone
+type(Behaviour_ParaExte), pointer :: v_paraExte(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,14 +51,14 @@ type(Behaviour_External), pointer :: v_exte(:)
 ! Count total of internal variables
 !
 ! --------------------------------------------------------------------------------------------------
-!
+
 ! In  model            : name of model
 ! In  compor_cart      : name of <CARTE> COMPOR
 ! In  compor_list      : name of list of COMPOR (for SIMU_POINT_MAT)
 ! Out nt_vari          : total number of internal variables (on all <CARTE> COMPOR)
 ! Out nb_vari_maxi     : maximum number of internal variables on all comportments"
 ! Out nb_zone          : number of affected zones
-! Out v_exte           : pointer to external constitutive laws parameters
+! Out v_paraExte       : pointer to external behaviours parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,7 +85,7 @@ type(Behaviour_External), pointer :: v_exte(:)
     nt_vari      = 0
     nb_vari_maxi = 0
     nb_zone      = 0
-    v_exte       => null()
+    v_paraExte   => null()
     if (present(model_)) then
         call jeveuo(model_//'.MAILLE', 'L', vi = v_model_elem)
     endif
@@ -116,19 +114,16 @@ type(Behaviour_External), pointer :: v_exte(:)
 !
 ! - Prepare objects for external constitutive laws
 !
-    allocate(v_exte(nb_zone))
+    allocate(v_paraExte(nb_zone))
 !
 ! - Count internal variables by comportment
 !
     do i_zone = 1, nb_zone
-!
         subr_name    = ' '
         libr_name    = ' '
         model_mfront = ' '
         model_dim    = 0
-!
 ! ----- Get parameters
-!
         if (present(compor_cart_)) then
             rela_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+RELA_NAME)
             defo_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+DEFO)
@@ -150,9 +145,7 @@ type(Behaviour_External), pointer :: v_exte(:)
             kit_comp(4) = compor_list_(KIT4_NAME)
             post_iter   = compor_list_(POSTITER)
         endif
-!
 ! ----- Find right TYPELEM
-!
         if (present(compor_cart_)) then
             type_affe = v_compor_desc(1+3+(i_zone-1)*2)
             indx_affe = v_compor_desc(1+4+(i_zone-1)*2)
@@ -191,18 +184,14 @@ type(Behaviour_External), pointer :: v_exte(:)
                 endif
             endif
         end do
-!
     20  continue
-!
 ! ----- Get parameters for external programs (MFRONT/UMAT)
-!
         call getExternalBehaviourPara(mesh           , v_model_elem  ,&
                                       rela_comp      , kit_comp      ,&
-                                      l_comp_external, v_exte(i_zone), elem_type_ = elem_type_nume,&
-                                      type_cpla_in_   = type_cpla)
-!
+                                      l_comp_external, v_paraExte(i_zone),&
+                                      elem_type_     = elem_type_nume,&
+                                      type_cpla_in_  = type_cpla)
 ! ----- Get number of internal variables
-!
         if (present(compor_cart_)) then
             read (v_compor_vale(nb_cmp_max*(i_zone-1)+2),'(I16)') nb_vari
         else

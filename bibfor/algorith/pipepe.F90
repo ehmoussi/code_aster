@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,13 +18,15 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
+subroutine pipepe(BEHinteg,&
+                  pilo, ndim, nno, npg, ipoids,&
                   ivf, idfde, geom, typmod, mate,&
                   compor, lgpg, deplm, sigm, vim,&
                   ddepl, depl0, depl1, copilo,&
                   iborne, ictau)
 !
-
+use Behaviour_type
+!
 implicit none
 !
 #include "jeveux.h"
@@ -37,6 +39,7 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "blas/dcopy.h"
 !
+type(Behaviour_Integ), intent(in) :: BEHinteg
 integer :: ndim, nno, npg
 integer :: mate, ipoids, ivf, idfde
 integer :: lgpg, iborne, ictau
@@ -132,7 +135,8 @@ real(kind=8) :: copilo(5, npg)
                 sigma(k) = sigma(k)*rac2
 70          continue
 !
-            call pielas(ndim, npg, kpg, compor, typmod,&
+            call pielas(BEHinteg,&
+                        ndim, npg, kpg, compor, typmod,&
                         mate, lgpg, vim, epsm,&
                         epsp, epsd, sigma, etamin, etamax,&
                         tau, copilo)

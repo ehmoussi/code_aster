@@ -27,6 +27,7 @@ subroutine nifilg(ndim, nnod, nnog, nnop, npg,&
                   rigi, vect, matr, matsym, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -43,7 +44,6 @@ implicit none
 #include "asterfort/prelog.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
-#include "asterfort/behaviourInit.h"
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
 #include "blas/dscal.h"

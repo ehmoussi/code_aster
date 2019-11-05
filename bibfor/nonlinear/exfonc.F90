@@ -204,7 +204,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
             call utmess('F', 'MECANONLINE3_99')
         elseif (l_matr_distr) then
             call utmess('F', 'CONTACT2_19')
-        elseif (lpetsc .and. .not. lldsp) then
+        elseif ((lpetsc .or. lgcpc).and. .not. lldsp) then
             call utmess('F', 'MECANONLINE3_87')
         endif
     endif

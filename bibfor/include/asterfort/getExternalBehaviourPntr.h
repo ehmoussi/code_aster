@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine getExternalBehaviourPntr(comp_exte,&
+    subroutine getExternalBehaviourPntr(paraExte,&
                                         cptr_fct_ldc ,&
                                         cptr_nbvarext, cptr_namevarext,&
                                         cptr_nbprop  , cptr_nameprop)
         use Behaviour_type
-        type(Behaviour_External), intent(in) :: comp_exte
-        integer, intent(out) :: cptr_fct_ldc
-        integer, intent(out) :: cptr_nbvarext
-        integer, intent(out) :: cptr_namevarext
-        integer, intent(out) :: cptr_nbprop
-        integer, intent(out) :: cptr_nameprop
+        type(Behaviour_ParaExte), intent(in) :: paraExte
+        integer, intent(out) :: cptr_fct_ldc, cptr_nbvarext
+        integer, intent(out) :: cptr_namevarext, cptr_nbprop, cptr_nameprop
     end subroutine getExternalBehaviourPntr
 end interface

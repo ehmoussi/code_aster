@@ -20,6 +20,7 @@
 subroutine vdpnlr(option, nomte, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -31,7 +32,6 @@ implicit none
 #include "asterfort/gdt.h"
 #include "asterfort/hsaco.h"
 #include "asterfort/jacbm1.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/jevech.h"
 #include "asterfort/jevete.h"
 #include "asterfort/jm1dn1.h"

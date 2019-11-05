@@ -25,6 +25,7 @@ subroutine nmpl2d(fami, nno, npg, ipoids, ivf,&
                   matuu, ivectu, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -32,9 +33,7 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/codere.h"
 #include "asterfort/crirup.h"
-#include "asterfort/behaviourPrepExternal.h"
 #include "asterfort/nmcomp.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
 !
@@ -99,7 +98,6 @@ aster_logical :: matsym
     integer :: kpg, kk, kkd, n, i, m, j, j1, kl
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
     real(kind=8) :: poids, tmp, sig(6)
-    real(kind=8) :: coorga(27,3)
     type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
@@ -113,11 +111,11 @@ aster_logical :: matsym
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepExternal(carcri , typmod    ,&
-                               nno    , npg       , ndim      ,&
-                               ipoids , ivf       , idfde     ,&
-                               geom   , zr(ideplm), zr(ideplp),&
-                               coorga)
+    call behaviourPrepESVAElem(carcri    , typmod    ,&
+                               nno       , npg       , ndim ,&
+                               ipoids    , ivf       , idfde,&
+                               geom      , BEHinteg  ,&
+                               zr(ideplm), zr(ideplp))
 !
 ! - INITIALISATION CODES RETOURS
     do kpg = 1, npg
@@ -173,7 +171,7 @@ aster_logical :: matsym
 !
 !
 ! - LOI DE COMPORTEMENT
-        BEHinteg%elga%coorpg = coorga(kpg,:)
+!
         call nmcomp(BEHinteg,&
                     fami, kpg, 1, 2, typmod,&
                     imate, compor, carcri, instam, instap,&

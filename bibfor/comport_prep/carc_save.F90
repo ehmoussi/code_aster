@@ -60,6 +60,8 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp
     real(kind=8), pointer :: v_carcri(:) => null()
+    real(kind=8) :: parm_theta_thm, parm_alpha_thm
+    real(kind=8) :: hho_coef_stab, hho_type_stab, hho_type_calc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,22 +73,29 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
 !
     call jeveuo(carcri//'.VALV', 'E', vr = v_carcri)
 !
+! - Get parameters from SCHEMA_THM
+!
+    parm_theta_thm = ds_compor_para%parm_theta_thm
+    parm_alpha_thm = ds_compor_para%parm_alpha_thm
+!
+! - Get parameters from HHO
+!
+    hho_coef_stab = ds_compor_para%hho_coef_stab
+    hho_type_stab = ds_compor_para%hho_type_stab
+    hho_type_calc = ds_compor_para%hho_type_calc
+!
 ! - Loop on occurrences of COMPORTEMENT
 !
     do i_comp = 1, nb_comp
-!
 ! ----- Get list of elements where comportment is defined
-!
         call comp_read_mesh(mesh          , keywordfact, i_comp      ,&
                             list_elem_affe, l_affe_all , nb_elem_affe)
-!
 ! ----- Set in <CARTE>
-!
-        call setBehaviourParaValue(ds_compor_para%v_para, ds_compor_para,&
+        call setBehaviourParaValue(ds_compor_para%v_crit,&
+                                   parm_theta_thm, parm_alpha_thm, &
+                                   hho_coef_stab , hho_type_stab , hho_type_calc,&
                                    i_comp, v_carcri_ = v_carcri)
-!
 ! ----- Affect in <CARTE>
-!
         if (l_affe_all) then
             call nocart(carcri, 1, nb_cmp)
         else
@@ -95,7 +104,6 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
                         limanu = v_elem_affe)
             call jedetr(list_elem_affe)
         endif
-!
     enddo
 !
     call jedetr(carcri//'.NCMP')

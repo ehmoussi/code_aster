@@ -1,0 +1,69 @@
+#!/bin/bash
+
+set_prefix() {
+    local this=`readlink -n -f "$1"`
+    prefix=`dirname "${this}"`
+}
+
+set_prefix "$0"
+
+wrkdir=$(mktemp -d /tmp/install_script.XXXXXX 2> /dev/null)
+iret=$?
+if [ $iret -ne 0 ]; then
+    printf "\nERROR: a writable directory in required.\n\n"
+    printf "Please mount a writable directory as '/tmp' using the option: "
+    printf "--bind <writable directory>:/tmp\n"
+fi
+
+printf "\nThe installation directory is the directory that contains the \n"
+printf "Singularity image and where few other files will be created to make \n"
+printf "the version available from salome_meca/asterstudy.\n\n"
+
+read -p "Please enter the installation directory: " instdir
+
+
+script=${wrkdir}/install.sh
+mkdir ${wrkdir}/data
+
+cp /scif/apps/aster/lib/aster/aster_pkginfo.py ${wrkdir}/data/aster_pkginfo.py
+sed -e 's/\(BIN_.*|.*|.*|\).*$/\1 execute_codeaster/g' \
+    -e 's/\(BUILD_TYPE .*$\)/\1 container/g' \
+    /scif/apps/aster/share/aster/config.txt > ${wrkdir}/data/config.txt
+cp /scif/apps/aster/share/aster/execute_codeaster ${wrkdir}/data/execute_codeaster
+cp -r /scif/apps/aster/lib/aster/code_aster ${wrkdir}/data/code_aster
+
+cat << EOF > ${script}
+#!/bin/bash
+# this script is executed from outside the container
+
+cp ${wrkdir}/data/aster_pkginfo.py ${instdir}/
+cp ${wrkdir}/data/config.txt ${instdir}/
+cp ${wrkdir}/data/execute_codeaster ${instdir}/
+chmod 755 ${instdir}/execute_codeaster
+cp -r ${wrkdir}/data/code_aster ${instdir}/
+echo '# empty' > ${instdir}/profile.sh
+
+[ -f ${instdir}/image ] && rm -f ${instdir}/image
+ln -s ${SINGULARITY_CONTAINER} ${instdir}/image
+
+rm -rf ${wrkdir}
+EOF
+chmod 755 ${script}
+
+printf "\n\nDo you want to add this version in your local asrun/asterstudy "
+printf "installation ([y]/n)? "
+read yn
+case "${yn}" in
+    [Nn]* ) true;;
+    * ) printf "\nEach version appears with a label in asterstudy.\n"
+        printf "It must contain no spaces or special character. "
+        printf "It must end with '_mpi' or '_MPI' for parallel versions.\n"
+        printf "Enter a label: "
+        read label
+        printf "\nvers : ${label}:${instdir}\n" >> ${HOME}/.astkrc/prefs
+        ;;
+esac
+
+printf "\n\nPlease copy/paste the following line to complete the "
+printf "installation:\n\n"
+printf "    ${script}\n\n"

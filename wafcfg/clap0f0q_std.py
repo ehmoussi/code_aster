@@ -37,7 +37,7 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20190507')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20191017')
 
 #   for using metis with standard integer (since Metis_aster-510_aster4)
     self.env.append_value('CFLAGS', ['-DINTSIZE32'])
@@ -50,7 +50,7 @@ def configure(self):
     # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
     self.env['ADDMEM'] = 500
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321'
     TFELVERS = '3.2.1'
     self.env.TFELHOME = TFELHOME
     self.env.TFELVERS = TFELVERS
@@ -61,7 +61,7 @@ def configure(self):
         YAMMROOT + '/prerequisites/Medfichier-400/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/lib',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/lib',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/lib',
         TFELHOME + '/lib',
         # for openblas
         ASTER_ROOT + '/public/lib',
@@ -73,8 +73,8 @@ def configure(self):
         YAMMROOT + '/prerequisites/Medfichier-400/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include_seq',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/include',
+        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/include_seq',
         TFELHOME + '/include',
     ])
 

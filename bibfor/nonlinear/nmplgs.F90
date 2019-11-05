@@ -26,6 +26,7 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                   nbvois, numa, lisoco, nbsoco)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -34,7 +35,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/cavini.h"
 #include "asterfort/codere.h"
-#include "asterfort/behaviourInit.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmepsb.h"

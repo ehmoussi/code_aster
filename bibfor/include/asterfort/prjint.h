@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ interface
                       elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
                       elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
                       poin_inte       , inte_weight   , nb_poin_inte  ,&
-                      inte_neigh_)
+                      inte_neigh_     , ierror_)
         real(kind=8), intent(in) :: proj_tole
         integer, intent(in) :: elem_dime
         real(kind=8), intent(in) :: elem_slav_coor(3,9)
@@ -34,5 +34,6 @@ interface
         real(kind=8), intent(out) :: inte_weight
         integer, intent(out) :: nb_poin_inte
         integer, optional, intent(inout) :: inte_neigh_(4)
+        integer, optional, intent(inout) :: ierror_
     end subroutine prjint
 end interface

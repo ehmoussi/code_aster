@@ -26,6 +26,7 @@ subroutine nifipd(ndim, nno1, nno2, nno3, npg,&
                   rigi, vect, matr, codret)
 !
 use Behaviour_type
+use Behaviour_module
 !
 implicit none
 !
@@ -37,7 +38,6 @@ implicit none
 #include "asterfort/pmat.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
-#include "asterfort/behaviourInit.h"
 #include "blas/ddot.h"
 !
 aster_logical :: resi, rigi

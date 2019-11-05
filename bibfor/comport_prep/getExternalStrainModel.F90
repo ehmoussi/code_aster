@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine getExternalStrainModel(l_mfront_offi, l_mfront_proto, comp_exte,&
+subroutine getExternalStrainModel(l_mfront_offi, l_mfront_proto, paraExte,&
                                   defo_comp    , istrainexte)
 !
 use Behaviour_type
@@ -29,9 +29,8 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
-aster_logical, intent(in) :: l_mfront_offi
-aster_logical, intent(in) :: l_mfront_proto
-type(Behaviour_External), intent(in) :: comp_exte
+aster_logical, intent(in) :: l_mfront_offi, l_mfront_proto
+type(Behaviour_ParaExte), intent(in) :: paraExte
 character(len=16), intent(in) :: defo_comp
 integer, intent(out) :: istrainexte
 !
@@ -45,7 +44,7 @@ integer, intent(out) :: istrainexte
 !
 ! In  l_mfront_proto   : .true. if MFront prototype
 ! In  l_mfront_offi    : .true. if MFront official
-! In  comp_exte        : values defining external behaviour
+! In  paraExte         : external behaviours parameters
 ! In  defo_comp        : DEFORMATION comportment
 ! Out istrainexte      : model of (large) strains
 !                        0 - MFront is small strains
@@ -58,7 +57,7 @@ integer, intent(out) :: istrainexte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    strain_model = comp_exte%strain_model
+    strain_model = paraExte%strain_model
     istrainexte  = 0
 !
     if (l_mfront_offi .or. l_mfront_proto) then
