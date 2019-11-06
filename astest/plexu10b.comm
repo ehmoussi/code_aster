@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -140,12 +140,9 @@ GLIS=AFFE_CHAR_MECA(
                       INFO=1 )
 
 
-
-TAB1 = CO('TAB1')
-
 tfin = 1e-2
 
-U_EPX = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    ETAT_INIT=_F(RESULTAT=U_PREC,CONTRAINTE='OUI',EQUILIBRE='NON'),
    COMPORTEMENT =(_F(
                   RELATION = 'ELAS',
@@ -156,21 +153,14 @@ U_EPX = CALC_EUROPLEXUS(
           _F(CHARGE=CL,),
            _F(CHARGE=GLIS,),
           ),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = tfin,
                NMAX      = 2000000,
                PASFIX    = 2e-5,
                ),
-   #OBSERVATION = _F(PAS_NBRE=1,
-                    #TOUT_GROUP_NO = 'OUI',
-                    #TOUT_GROUP_MA = 'OUI',
-                    #NOM_CHAM = ('DEPL','VITE','ACCE'),
-                    #),
    ARCHIVAGE   = _F(PAS_INST=tfin,),
    PAS_NBRE_COURBE=100,
-   TABLE_COURBE    = TAB1,
    COURBE = (
            _F(
            NOM_CHAM = 'DEPL',
@@ -186,12 +176,6 @@ U_EPX = CALC_EUROPLEXUS(
            ),
    ),
    );
-
-IMPR_TABLE(TABLE=TAB1)
-
-
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_EPX,NOM_CHAM=('SIEF_ELGA'), GROUP_MA='CABLE2',),)
-
 
 TEST_RESU(RESU=(_F(INST = 1.0,
                   RESULTAT=U_PREC,
@@ -226,53 +210,12 @@ TEST_RESU(RESU=(_F(INST = 1.0,
                 )
           )
 
-TEST_RESU(RESU=(_F(INST = tfin,
-                  RESULTAT=U_EPX,
-                  NOM_CHAM='DEPL',
-                  GROUP_NO='NY10',
-                  NOM_CMP='DX',
-                  VALE_CALC=-2.40351243045E-06,
-                  VALE_REFE=-2.40357805409E-06,
-                  REFERENCE = 'ANALYTIQUE',
-                  PRECISION = 3E-5,
-                  ),
-                _F(INST = tfin,
-                  RESULTAT=U_EPX,
-                  NOM_CHAM='DEPL',
-                  GROUP_NO='NY10',
-                  NOM_CMP='DY',
-                  VALE_CALC=-6.40552798575E-05,
-                  VALE_REFE=-6.40552798575E-05,
-                  REFERENCE = 'ANALYTIQUE',
-                  PRECISION = 1E-6,
-                  ),
-                _F(INST = tfin,
-                  RESULTAT=U_EPX,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='M305',
-                  POINT = 1,
-                  NOM_CMP='NYY',
-                  VALE_CALC=-100399.049696,
-                  VALE_REFE=-100399.049696,
-                  REFERENCE = 'ANALYTIQUE',
-                  PRECISION = 1E-6,
-                  ),
-                _F(INST = tfin,
-                  RESULTAT=U_EPX,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='M150',
-                  POINT = 1,
-                  NOM_CMP='N',
-                  VALE_CALC=199999.944309,
-                  VALE_REFE=200000.163668,
-                  REFERENCE = 'ANALYTIQUE',
-                  PRECISION = 1.2E-6,
-                  ),
-                )
-          )
-
-
-
-
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=11,
+             NB_VALE_I=35,
+             VALE_CALC=2.3e11,
+             VALE_CALC_I=2126731,
+             VALE_CALC_K='0afcbc3004e8dd72d16f73ded6adcc8d')
 
 FIN()

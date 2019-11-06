@@ -103,10 +103,10 @@ en état initial ne sera pas transmis à EPX pour les éléments affectés des m
 
     18 : _("""Le mot clé %(k1)s du concept CARA_ELEM n'est pas pris en compte par CALC_EUROPLEXUS'
 """),
-    19 : _("""Le type de charge %(k1)s n'est pas pris en compte par CALC_EUROPLEXUS'
+    19 : _("""Le type de charge %(k1)s n'est pas pris en compte par CALC_EUROPLEXUS.
 """),
 
-    20 : _("""Le concept %(k1)s donné par %(k2)s n'a pas été trouvé.'
+    20 : _("""Le concept %(k1)s donné par %(k2)s n'a pas été trouvé.
 """),
 
     21 : _("""
