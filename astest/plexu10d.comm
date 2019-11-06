@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -187,7 +187,7 @@ TABINI0 = CALC_TABLE(reuse=TABINI0 ,TABLE=TABINI0, ACTION=_F(OPERATION='OPER',
                                 FORMULE = ERR_RELA,
                                 NOM_PARA=('ERR_RELA'),
                                 ))
-                                
+
 IMPR_TABLE(TABLE = TABINI0, NOM_PARA=('NOEUD', 'ABSC_CURV', 'TENSION', 'N','ERR_RELA'), SEPARATEUR=';')
 
 TEST_TABLE(TABLE=TABINI0, NOM_PARA = 'ERR_RELA', TYPE_TEST='MAX',VALE_CALC = 0.0447086123078)
@@ -216,11 +216,11 @@ TABREC0 = CALC_TABLE(reuse=TABREC0 ,TABLE=TABREC0, ACTION=_F(OPERATION='OPER',
                                 NOM_PARA=('ERR_RELA'),
                                 ))
 
-                                
+
 IMPR_TABLE(TABLE = TABREC0, NOM_PARA=('NOEUD', 'ABSC_CURV', 'TENSION', 'N','ERR_RELA'), SEPARATEUR=';')
 
 TEST_TABLE(TABLE=TABREC0, NOM_PARA = 'ERR_RELA', TYPE_TEST='MAX',VALE_CALC = 0.0605346658829)
- 
+
 
 
 
@@ -327,7 +327,7 @@ FONC2=DEFI_FONCTION(NOM_PARA='INST',
 
 
 
-U_EPX = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    MODELE = MODE_EPX,
    CARA_ELEM = CARAEPX,
    CHAM_MATER = CHMA_EPX,
@@ -346,7 +346,6 @@ U_EPX = CALC_EUROPLEXUS(
           _F(CHARGE=CL,),
           _F(CHARGE=FROT,),
           ),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='AUTO',
                INST_INIT = 0,
                INST_FIN  = 0.12,
@@ -363,58 +362,12 @@ U_EPX = CALC_EUROPLEXUS(
    ARCHIVAGE   = _F(PAS_NBRE=3020,),
    );
 
-
-CALC_CHAMP(reuse = U_EPX, RESULTAT = U_EPX, CONTRAINTE = 'SIEF_NOEU', GROUP_MA = 'CABLE2')
-
-
-
-TABEPX1 = CREA_TABLE(RESU = (_F(RESULTAT = U_EPX, NOM_CHAM ='SIEF_NOEU', GROUP_MA='CABLE2', NUME_ORDRE = nume_ordre1, NOM_CMP ='N'),
-                        ))
-
-TABINI = CALC_TABLE(reuse = TABINI, TABLE=TABINI, ACTION=_F(OPERATION='RENOMME',
-                                NOM_PARA=('NOEUD_CABLE','NOEUD'), ))
-
-TABINI = CALC_TABLE(reuse=TABINI ,TABLE=TABINI, ACTION=_F(OPERATION='COMB',
-                                TABLE=TABEPX1,
-                                NOM_PARA=('NOEUD'),
-                                RESTREINT='NON' ) )
-
-TABINI = CALC_TABLE(reuse=TABINI ,TABLE=TABINI, ACTION=_F(OPERATION='OPER',
-                                FORMULE = ERR_RELA,
-                                NOM_PARA=('ERR_RELA'),
-                                ))
-                                
-IMPR_TABLE(TABLE = TABINI, NOM_PARA=('NOEUD', 'ABSC_CURV', 'TENSION', 'N','ERR_RELA'), SEPARATEUR=';')
-
-TEST_TABLE(TABLE=TABINI, NOM_PARA = 'ERR_RELA', TYPE_TEST='MAX',VALE_CALC = 0.0447086123078)
-
-
-
-
-
-
-
-
-TABEPX2 = CREA_TABLE(RESU = (_F(RESULTAT = U_EPX, NOM_CHAM ='SIEF_NOEU', GROUP_MA='CABLE2', NUME_ORDRE = nume_ordre2, NOM_CMP ='N'),
-                        ))
-
-TABREC = CALC_TABLE(reuse = TABREC, TABLE=TABREC, ACTION=_F(OPERATION='RENOMME',
-                                NOM_PARA=('NOEUD_CABLE','NOEUD'), ))
-
-TABREC = CALC_TABLE(reuse=TABREC ,TABLE=TABREC, ACTION=_F(OPERATION='COMB',
-                                TABLE=TABEPX2,
-                                NOM_PARA=('NOEUD'),
-                                RESTREINT='NON' ) )
-
-
-TABREC = CALC_TABLE(reuse=TABREC ,TABLE=TABREC, ACTION=_F(OPERATION='OPER',
-                                FORMULE = ERR_RELA,
-                                NOM_PARA=('ERR_RELA'),
-                                ))
-
-                                
-IMPR_TABLE(TABLE = TABREC, NOM_PARA=('NOEUD', 'ABSC_CURV', 'TENSION', 'N','ERR_RELA'), SEPARATEUR=';')
-
-TEST_TABLE(TABLE=TABREC, NOM_PARA = 'ERR_RELA', TYPE_TEST='MAX',VALE_CALC = 0.0605346658829)
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=25,
+             NB_VALE_I=24,
+             VALE_CALC=2.3e11,
+             VALE_CALC_I=20137295,
+             VALE_CALC_K='75198800eecf522ec423e8fe0d921e67')
 
 FIN()

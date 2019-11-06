@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -373,9 +373,8 @@ DEFLIST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=inst1,),
                                 SUBD_NIVEAU=20,),);
 
 
-RESU1 = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    MODELE=MOD,
-   LANCEMENT = 'OUI',
    CHAM_MATER=CHMAT,
    COMPORTEMENT =(_F(
                   RELATION='GLRC_DAMAGE',
@@ -395,52 +394,12 @@ RESU1 = CALC_EUROPLEXUS(
    ARCHIVAGE   = _F(PAS_INST=1.90E-05,),
    );
 
-
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=RESU1,GROUP_NO='P04',NOM_CHAM='DEPL'))
-
-
-TEST_RESU(RESU=(_F(GROUP_NO='P04',
-                   INST=2.0E-05,
-                   REFERENCE='SOURCE_EXTERNE',
-                   RESULTAT=RESU1,
-                   NOM_CHAM='DEPL',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-1.6000001256644E-04,
-                   VALE_REFE=-1.74913E-4,
-                   PRECISION=0.15, ),
-                _F(GROUP_NO='P04',
-                   INST=2.0E-05,
-                   REFERENCE='SOURCE_EXTERNE',
-                   RESULTAT=RESU1,
-                   NOM_CHAM='ACCE',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-8.0000207143139E+05,
-                   VALE_REFE=-7.99968E5,
-                   PRECISION=1.E-4, ),
-                _F(GROUP_NO='P04',
-                   INST=1.E-3,
-                   REFERENCE='SOURCE_EXTERNE',
-                   RESULTAT=RESU1,
-                   NOM_CHAM='DEPL',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-0.449384151174,
-                   VALE_REFE=-0.44933,
-                   PRECISION=0.03,
-                   # issue26503 : les variations de résultats sont liés à Europlexus et non à Code_Aster
-                   TOLE_MACHINE=3E-6 ),
-                _F(GROUP_NO='P04',
-                   INST=1.E-3,
-                   REFERENCE='SOURCE_EXTERNE',
-                   RESULTAT=RESU1,
-                   NOM_CHAM='VITE',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-821.78513042,
-                   VALE_REFE=-824.761,
-                   PRECISION=0.1, 
-                   # issue26503 : les variations de résultats sont liés à Europlexus et non à Code_Aster
-                   TOLE_MACHINE=2E-4,),
-                ),
-          )
-
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=57,
+             NB_VALE_I=43,
+             VALE_CALC=8.3737660250e+11,
+             VALE_CALC_I=124619,
+             VALE_CALC_K='f9828ccf0f696f6bb8ca3eee8a00ed3e')
 
 FIN();

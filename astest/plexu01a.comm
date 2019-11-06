@@ -17,7 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IMPR_MACRO='OUI',ERREUR=_F(ERREUR_F='EXCEPTION',),DEBUG=_F(SDVERI='OUI'),)
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+      IMPR_MACRO='OUI',
+      ERREUR=_F(ERREUR_F='EXCEPTION',),
+      DEBUG=_F(SDVERI='OUI'),)
 
 MPa = 1000000.0;
 
@@ -198,8 +201,7 @@ NFAR=DEFI_FONCTION(NOM_PARA='INST',
                         ),
                    );
 
-U = CALC_EUROPLEXUS(
-#   LOGICIEL='/aster/outils/europlexus_d/epx_essai',
+CALC_EUROPLEXUS(
    MODELE=MO,
    CHAM_MATER=MATER,
    COMPORTEMENT =(_F(
@@ -222,12 +224,6 @@ U = CALC_EUROPLEXUS(
                NMAX      = 5,
                PASFIX    = 1e-3,
                ),
-#    CALCUL = _F(TYPE_DISCRETISATION  ='AUTO',
-#                INST_INIT = 0,
-#                INST_FIN  = 2e-3,
-#                NMAX      = 9000000,
-#                CSTAB     = 0.5
-#                ),
    OBSERVATION = _F(PAS_NBRE=1,
                     TOUT_GROUP_NO = 'OUI',
                     TOUT_GROUP_MA = 'OUI',
@@ -237,42 +233,12 @@ U = CALC_EUROPLEXUS(
    );
 
 
-IMPR_RESU(FORMAT='ASTER',UNITE=95,
-          RESU=_F(MAILLAGE=MA,
-                     ),);
-#tps_tst = 2.0006449507140125E-3
-tps_tst = 2.E-3
-TEST_RESU(
-   RESU=(
-        _F(
-          RESULTAT   = U,
-          INST       = tps_tst,
-          NOM_CHAM   = 'DEPL',
-          NOM_CMP    = 'DZ',
-          NOEUD      = 'N1',
-          REFERENCE  = 'SOURCE_EXTERNE',
-                   VALE_CALC= 5.56058528E-03,
-                   VALE_REFE=5.5599999999999998E-3,),
-        _F(
-          RESULTAT   = U,
-          INST       = tps_tst,
-          NOM_CHAM   = 'VITE',
-          NOM_CMP    = 'DZ',
-          NOEUD      = 'N49',
-          REFERENCE  = 'SOURCE_EXTERNE',
-                   VALE_CALC=-880.351840422,
-                   VALE_REFE=-880.35199999999998,),
-        _F(
-          RESULTAT   = U,
-          INST       = tps_tst,
-          NOM_CHAM   = 'ACCE',
-          NOM_CMP    = 'DRX',
-          NOEUD      = 'N1',
-          REFERENCE  = 'SOURCE_EXTERNE',
-                   VALE_CALC= 2.43887064E+08,
-                   VALE_REFE=2.43886000E8,),
-    )
-  );
-
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=639,
+             NB_VALE_I=262,
+             VALE_CALC=739743142622637.,
+             VALE_CALC_I=11778,
+             VALE_CALC_K='6a1c636b8016b8676dfcdfdaefe9c952')
 
 FIN()
