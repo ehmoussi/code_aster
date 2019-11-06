@@ -28,18 +28,18 @@ debug = False
 import os
 import os.path as osp
 import tempfile
+
+import aster
 import aster_core
-
-
-# Protection pour Eficas
-try:
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.partition import MAIL_PY
-    from Utilitai.Utmess import UTMESS
-    from Calc_epx.calc_epx_utils import tolist
-except:
-    pass
+import med_aster
+from Calc_epx.calc_epx_utils import tolist
+from code_aster.Cata.Commands import (DEFI_FICHIER, DETRUIRE,
+                                      IMPR_RESU,
+                                      INFO_EXEC_ASTER,
+                                      MODI_REPERE)
+from code_aster.Cata.Syntax import _F
+from Utilitai.partition import MAIL_PY
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 #-----------------------------------------------------------------------
 #----------------------------- Operateur de la Macro-commande ----------
@@ -70,41 +70,17 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     if size > 1:
         UTMESS('F', 'PLEXUS_59')
 
-    global DEFI_FICHIER
-    DEFI_FICHIER = self.get_cmd('DEFI_FICHIER')
-
     # Pour la gestion des Exceptions
     prev_onFatalError = aster.onFatalError()
     aster.onFatalError('EXCEPTION')
 
     # Pour masquer certaines alarmes
-    from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
     MasquerAlarme('MED_1')
     MasquerAlarme('ALGELINE4_43')
     MasquerAlarme('JEVEUX_57')
 
-    # Ligne de commande d'Europlexus
-    EXEC = args['LOGICIEL']
-
-    # Version d'Europlexus
-    VERS = args['VERSION_EUROPLEXUS']
-
     # Chemin du repertoire REPE_OUT de l'execution courante d'Aster
     REPE_OUT = os.path.join(os.getcwd(), 'REPE_OUT')
-
-    # Chemin du repertoire temporaire pour l'execution d'EPX
-    # (un lien vers REPE_OUT)
-    REPE_epx = tempfile.mkdtemp(suffix='_epx')
-    os.rmdir(REPE_epx)
-    os.symlink(REPE_OUT, REPE_epx)
-
-    # Le concept sortant (de type evol_noli) est nomme 'resu'.
-    # Le nom de ce concept sera celui defini par l'utilisateur.
-    self.DeclareOut('resu', self.sd)
-    global resu
-
-    # On récupère ce nom pour le nommage des fichiers dans REPE_OUT.
-    nom_resu = self.sd.get_name()
 
     #
     # TRADUCTION DES INFORMATIONS
@@ -112,8 +88,9 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
 
     EPX = EUROPLEXUS(ETAT_INIT, MODELE, CARA_ELEM, CHAM_MATER, COMPORTEMENT,
                      FONC_PARASOL, EXCIT, OBSERVATION, ARCHIVAGE, COURBE,
-                     CALCUL, AMORTISSEMENT, DOMAINES, INTERFACES, REPE='REPE_OUT',
-                     EXEC=EXEC, VERS=VERS, INFO=INFO, REPE_epx=REPE_epx, NOM_RESU=nom_resu,
+                     CALCUL, AMORTISSEMENT, DOMAINES, INTERFACES,
+                     INFO=INFO, REPE_epx=REPE_OUT,
+                     NOM_RESU="study",
                      args=args)
 
     #
@@ -122,35 +99,6 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
 
     EPX.ecrire_fichier()
 
-    #
-    # LANCEMENT DU CALCUL
-    #
-
-
-    if args['LANCEMENT'] == 'OUI':
-
-        EPX.lancer_calcul()
-
-        #
-        # COPIE DES RESULTATS EPX DANS LE CONCEPT ASTER
-        #
-
-        EPX.get_resu()
-
-        #
-        # RECUPERER LES CONCEPTS TABLE
-        #
-
-        if COURBE is not None:
-            global table
-            self.DeclareOut('table', args['TABLE_COURBE'])
-            EPX.get_table()
-
-
-    #
-    # MENAGE
-    #
-
     # Pour la gestion des Exceptions
     aster.onFatalError(prev_onFatalError)
 
@@ -158,9 +106,6 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     RetablirAlarme('MED_1')
     RetablirAlarme('ALGELINE4_43')
     RetablirAlarme('JEVEUX_57')
-
-    # Suppression du lien symbolique
-    os.remove(REPE_epx)
 
     return ier
 
@@ -177,14 +122,13 @@ class EUROPLEXUS:
 
     def __init__(self, ETAT_INIT, MODELE, CARA_ELEM, CHAM_MATER, COMPORTEMENT,
                  FONC_PARASOL, EXCIT, OBSERVATION, ARCHIVAGE, COURBE,
-                 CALCUL, AMORTISSEMENT, DOMAINES, INTERFACES, REPE, EXEC, VERS,
-                  INFO, REPE_epx, NOM_RESU, args):
+                 CALCUL, AMORTISSEMENT, DOMAINES, INTERFACES,
+                 INFO, REPE_epx, NOM_RESU, args):
         """
             Met toutes les entrées en attributs.
             Crée les directives EPX.
             Définie les fichiers de sortie.
         """
-        import aster_core
         from Calc_epx.calc_epx_cata import cata_directives
         from Calc_epx.calc_epx_struc import DIRECTIVE
 
@@ -268,22 +212,11 @@ class EUROPLEXUS:
         self.CALCUL = CALCUL
         self.DOMAINES = DOMAINES
         self.INTERFACES = INTERFACES
-        self.VERS = VERS
         self.INFO = INFO
         self.COMPORTEMENT = COMPORTEMENT
         self.AMORTISSEMENT = AMORTISSEMENT
 
         self.REPE_epx = REPE_epx
-
-        # Commande d'execution de Europlexus
-        epxExec = EXEC
-        if not epxExec:
-            epxExec = os.environ.get('ASTER_EUROPLEXUS')
-            if epxExec:
-                UTMESS('I', 'PLEXUS_13', valk=epxExec)
-            else:
-                epxExec = aster_core.get_option('prog:europlexus')
-        self.EXEC = epxExec
 
         # COURBE
         if 'UNITE_COURBE' in args:
@@ -344,7 +277,6 @@ class EUROPLEXUS:
         """
             Retoune une unité de fichier libre.
         """
-        from code_aster.Cata.Commands import DETRUIRE, INFO_EXEC_ASTER
         _UL = INFO_EXEC_ASTER(LISTE_INFO='UNITE_LIBRE')
         unite = _UL['UNITE_LIBRE', 1]
         DETRUIRE(CONCEPT=(_F(NOM=_UL),), INFO=1)
@@ -388,9 +320,7 @@ class EUROPLEXUS:
             Imprime le maillage et le résultat initial aster au format MED
             s'il y a un état initial.
         """
-        from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
         from Calc_epx.trans_var_int import var_int_a2e
-        from code_aster.Cata.Commands import IMPR_RESU, MODI_REPERE
 
         epx = self.epx
 
@@ -680,7 +610,7 @@ class EUROPLEXUS:
             mot_cle = "FICHIER MED"
             objet = epx[directive].add_mcfact(mot_cle)
 
-            fichier_med = "'%s'"%(self.nom_fichiers['MED'])
+            fichier_med = repr(self.nom_fichiers['MED'])
             bloc_fic = BLOC_DONNEES(fichier_med)
             objet.add_bloc(bloc_fic)
             # instants
@@ -696,7 +626,7 @@ class EUROPLEXUS:
 
         # FICHIER SAUV
         mot_cle = 'FICHIER SAUV'
-        nom_fic = "'%s'"%(self.nom_fichiers['SAUV'])
+        nom_fic = repr(self.nom_fichiers['SAUV'])
         data = [nom_fic, 'LAST']
         bloc = BLOC_DONNEES(mot_cle, cara=data)
         epx[directive].add_bloc(bloc)
@@ -746,9 +676,8 @@ class EUROPLEXUS:
         bloc = BLOC_DONNEES('AXTEMPS', cle="1. 'TEMPS(s)'")
         objet.add_bloc(bloc)
 
-        # Dictionnaire décrivant les légendes des abscisses et ordodonnees
-        # des courbes imprimées et utilisées dans get_tables.
-        self.legend_courbes = {}
+        # Dictionnaire décrivant les légendes des abscisses et ordonnees
+        # des courbes imprimées et utilisées dans get_table.
         dic_entite = {'GROUP_NO' : 'NOEUD', 'GROUP_MA' : 'ELEM'}
         nb_courbe = 0
         lnoeuds = []
@@ -796,7 +725,6 @@ class EUROPLEXUS:
                         bloc_liste = BLOC_DONNEES(mot_cle, val_cle=nb_courbe,
                                                    cara=cara, vale=vale)
                         objet.add_bloc(bloc_liste)
-                        self.legend_courbes[nb_courbe] = ['TEMPS', label]
 
   #-----------------------------------------------------------------------
     def export_CALCUL(self):
@@ -947,8 +875,6 @@ class EUROPLEXUS:
                       'INIT', 'STRUCTURE', 'INTERFACE', 'CALCUL', 'SUITE',
                       'INFO_SORTIE', 'SORTIE', 'FIN']
 
-
-
         # Excecution des differentes modules
         for module in modules_exe:
             fct = 'export_%s' % module
@@ -959,139 +885,12 @@ class EUROPLEXUS:
                                                                        % fct)
 
         # Ecriture des directives
-        fd = open(fichier, 'w')
-        for directive in directives:
-            liste_lignes = self.epx[directive].write()
-            for ll in liste_lignes:
-                fd.write('%s\n'%ll)
-        fd.close()
+        with open(fichier, 'w') as fd:
+            for directive in directives:
+                liste_lignes = self.epx[directive].write()
+                for ll in liste_lignes:
+                    fd.write('%s\n'%ll)
 
-  #-----------------------------------------------------------------------
-    def get_table(self, icourbe=1,):
-        """
-            Transforme les courbes écrites dans le fichier .pun par EPX
-            en table Code_Aster.
-        """
-
-        from Calc_epx.calc_epx_utils import lire_pun
-        from code_aster.Cata.Commands import CREA_TABLE, IMPR_TABLE
-        global table
-
-        if not hasattr(self, 'courbes'):
-            fichier = self.nom_fichiers['PUN']
-            if not os.path.isfile(fichier):
-                return
-            self.courbes = lire_pun(fichier=fichier)
-
-        if not os.path.isfile(fichier):
-            return
-        if debug:
-            print(self.courbes, type(self.courbes))
-        nc = 0
-        para_ordonnee = []
-        dico = []
-        for icourbe in self.courbes:
-            valeurs = self.courbes[icourbe]
-            if debug:
-                print('icourbe = %s ; valeurs = %s'%(icourbe, valeurs))
-            if nc == 0:
-                para_abscisse = self.legend_courbes[icourbe][0]
-                vale_abscisse = valeurs[0,:].tolist()
-                if len(para_abscisse ) > 16:
-                    para_abscisse  =  para_abscisse[:17]
-                dico.append({'TYPE_K': 'K16', 'LISTE_R' : vale_abscisse,
-                           'PARA' : para_abscisse})
-                para_ordonnee = self.legend_courbes[icourbe][1]
-                vale_ordonnee = valeurs[1,:].tolist()
-                if len(para_ordonnee) > 16:
-                    para_ordonnee =  para_ordonnee[:17]
-                dico.append({'TYPE_K':'K16', 'LISTE_R' : vale_ordonnee,
-                           'PARA' : para_ordonnee})
-                nc = 1
-            else:
-                if ((self.legend_courbes[icourbe][0] == para_abscisse) and
-                  (vale_abscisse == valeurs[0,:].tolist())):
-                    para_ordonnee = self.legend_courbes[icourbe][1]
-                    vale_ordonnee = valeurs[1,:].tolist()
-                    if len(para_ordonnee) > 16:
-                        para_ordonnee =  para_ordonnee[:17]
-                    dico.append({'TYPE_K':'K16', 'LISTE_R' : vale_ordonnee,
-                               'PARA' : para_ordonnee})
-                else:
-                    raise Exception('Table non compatible')
-
-        if len(dico)-1 != self.nb_COURBE:
-            UTMESS('A', 'PLEXUS_39')
-        table = CREA_TABLE(LISTE=dico)
-
-        # test d'impression de la table
-        if False:
-            unite = self.get_unite_libre()
-            unite = 90
-            DEFI_FICHIER(UNITE=unite, ACTION='ASSOCIER')
-
-            IMPR_TABLE(UNITE=unite,
-                     FORMAT='XMGRACE',
-                     TABLE=table,
-                     LEGENDE_X=para_abscisse,
-                     LEGENDE_Y=para_ordonnee,
-                     LEGENDE='test'
-                 )
-
-            os.system('xmgrace fort.%i' % unite)
-
-            DEFI_FICHIER(UNITE=unite, ACTION='LIBERER')
-
-
-#-----------------------------------------------------------------------
-    def get_resu(self,):
-        """
-            Construit un concept aster evol_noli à partir des résultats du
-            calcul EPX contenus dans le fichier MED de sortie.
-        """
-        from code_aster.Cata.Commands import LIRE_EUROPLEXUS
-        import med_aster
-
-
-        fichier_med = self.nom_fichiers['MED']
-        if not os.path.isfile(fichier_med):
-            UTMESS('F', 'PLEXUS_14')
-        # on complète le test car le fichier est créé au début du calcul
-        # mais il est vide.
-        dic_champ_med = med_aster.get_nom_champ_med(fichier_med)
-        if len(list(dic_champ_med.keys())) == 0:
-            UTMESS('F', 'PLEXUS_14')
-
-        unite = self.get_unite_libre()
-        # ca ne marche pas avec ca :
-        # DEFI_FICHIER(UNITE=unite, FICHIER=fichier_med, ACTION='ASSOCIER')
-
-        # mais ca marche avec ca
-        fort = 'fort.%i' % unite
-        if os.path.isfile(fort):
-            os.remove(fort)
-        os.symlink(fichier_med, fort)
-
-
-        resu = LIRE_EUROPLEXUS(UNITE_MED=unite,
-                            MODELE=self.MODELE,
-                            CARA_ELEM=self.CARA_ELEM_CONCEPT,
-                            CHAM_MATER=self.CHAM_MATER,
-                            COMPORTEMENT=self.COMPORTEMENT,
-                            EXCIT=self.EXCIT,
-                            INFO=self.INFO,
-                            )
-        DEFI_FICHIER(UNITE=unite, ACTION='LIBERER')
-        os.remove(fort)
-#-----------------------------------------------------------------------
-    def lancer_calcul(self):
-        """Lancement du calcul EPX"""
-        from code_aster.Cata.Commands import EXEC_LOGICIEL
-        fichier_epx = osp.abspath(self.nom_fichiers['COMMANDE'])
-        EXEC_LOGICIEL(LOGICIEL=self.EXEC,
-                      ARGUMENT=(fichier_epx, self.VERS, self.REPE_epx),
-                      CODE_RETOUR_MAXI=-1,
-                      INFO=2)
 #-----------------------------------------------------------------------
     def write_all_gr(self,):
         """
