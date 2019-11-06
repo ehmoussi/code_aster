@@ -364,7 +364,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
         # 1.5 Modele contenant uniquement les cables de precontrainte
         # ---------------------------------------------------------
-        objma = MODELE.getSupportMesh()
+        objma = MODELE.getMesh()
 
         # need CENTRALISE?
         iret, repi, repk = aster.dismoi('PARTITION', MODELE.nom, 'MODELE', 'C')

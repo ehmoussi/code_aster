@@ -3,7 +3,7 @@
  * @brief Implementation de StaticMechanicalAlgorithm
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -90,7 +90,7 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) {
         ctx._aMatrix, kineLoadsFON, chNoDir, resultField );
 
     const auto &study = ctx._discreteProblem->getStudyDescription();
-    const auto &model = study->getSupportModel();
+    const auto &model = study->getModel();
     const auto &mater = study->getMaterialOnMesh();
     const auto &load = study->getListOfLoads();
     const auto &cara = study->getElementaryCharacteristics();

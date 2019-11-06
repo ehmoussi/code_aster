@@ -3,7 +3,7 @@
  * @brief Interface python de ElementaryMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,7 +39,7 @@ void exportElementaryMatrixToPython() {
         .def( "getFiniteElementDescriptors",
               &ElementaryMatrixDisplacementDoubleInstance::getFiniteElementDescriptors )
         .def( "getMaterialOnMesh", &ElementaryMatrixDisplacementDoubleInstance::getMaterialOnMesh )
-        .def( "getSupportModel", &ElementaryMatrixDisplacementDoubleInstance::getSupportModel )
+        .def( "getModel", &ElementaryMatrixDisplacementDoubleInstance::getModel )
         .def( "setMaterialOnMesh", &ElementaryMatrixDisplacementDoubleInstance::setMaterialOnMesh )
         .def( "setSupportModel", &ElementaryMatrixDisplacementDoubleInstance::setSupportModel );
 

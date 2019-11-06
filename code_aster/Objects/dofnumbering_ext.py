@@ -39,7 +39,7 @@ class ExtendedDOFNumbering(object):
         Returns:
             dict: Internal state.
         """
-        return (self.getSupportModel(), )
+        return (self.getModel(), )
 
     def __setstate__(self, state):
         """Restore internal state.

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe KinematicsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -138,7 +138,7 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
         // ne sont pas vides
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
             throw std::runtime_error( "The support model is empty" );
-        if ( !_supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
+        if ( !_supportModel->getMesh()->hasGroupOfElements( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
@@ -175,7 +175,7 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
         // ne sont pas vides
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
             throw std::runtime_error( "The support model is empty" );
-        if ( !_supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
+        if ( !_supportModel->getMesh()->hasGroupOfNodes( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
@@ -237,7 +237,7 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
         // ne sont pas vides
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
             throw std::runtime_error( "The support model is empty" );
-        if ( !_supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
+        if ( !_supportModel->getMesh()->hasGroupOfElements( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
@@ -273,7 +273,7 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
         // ne sont pas vides
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
             throw std::runtime_error( "The support model is empty" );
-        if ( !_supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
+        if ( !_supportModel->getMesh()->hasGroupOfNodes( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
@@ -309,7 +309,7 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
         // ne sont pas vides
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
             throw std::runtime_error( "The support model is empty" );
-        if ( !_supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
+        if ( !_supportModel->getMesh()->hasGroupOfNodes( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );

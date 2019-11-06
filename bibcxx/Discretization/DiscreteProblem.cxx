@@ -37,7 +37,7 @@
 ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector( double time ) {
     ElementaryVectorPtr retour( new ElementaryVectorInstance( Permanent ) );
 
-    ModelPtr curModel = _study->getSupportModel();
+    ModelPtr curModel = _study->getModel();
     std::string modelName = curModel->getName();
     modelName.resize( 24, ' ' );
 
@@ -66,7 +66,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector( dou
 ElementaryVectorPtr DiscreteProblemInstance::buildElementaryLaplaceVector() {
     ElementaryVectorPtr retour( new ElementaryVectorInstance( Permanent ) );
 
-    ModelPtr curModel = _study->getSupportModel();
+    ModelPtr curModel = _study->getModel();
     std::string modelName = curModel->getName();
     modelName.resize( 24, ' ' );
 
@@ -100,7 +100,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector(
     ElementaryVectorPtr retour( new ElementaryVectorInstance( Permanent ) );
     const auto &curMater = _study->getCodedMaterial()->getCodedMaterialField();
 
-    ModelPtr curModel = _study->getSupportModel();
+    ModelPtr curModel = _study->getModel();
     std::string modelName = curModel->getName();
 
     JeveuxVectorChar24 jvListOfLoads = _study->getListOfLoads()->getListVector();
@@ -140,7 +140,7 @@ ElementaryMatrixDisplacementDoublePtr
 {
     ElementaryMatrixDisplacementDoublePtr
         retour( new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
-    ModelPtr curModel = _study->getSupportModel();
+    ModelPtr curModel = _study->getModel();
     retour->setSupportModel( curModel );
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
     auto compor = curMater->getBehaviourField();
@@ -222,14 +222,14 @@ FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad(
 BaseDOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( BaseDOFNumberingPtr dofNum ) {
     if ( !dofNum ) {
 #ifdef _USE_MPI
-        if ( _study->getSupportModel()->getSupportMesh()->isParallel() )
+        if ( _study->getModel()->getMesh()->isParallel() )
             dofNum = ParallelDOFNumberingPtr( new ParallelDOFNumberingInstance() );
         else
 #endif /* _USE_MPI */
             dofNum = DOFNumberingPtr( new DOFNumberingInstance() );
     }
 
-    dofNum->setSupportModel( _study->getSupportModel() );
+    dofNum->setSupportModel( _study->getModel() );
     dofNum->setListOfLoads( _study->getListOfLoads() );
     dofNum->computeNumbering();
 
@@ -248,7 +248,7 @@ DiscreteProblemInstance::buildElementaryMechanicalLoadsVector() {
 
     SyntaxMapContainer dict;
     dict.container["OPTION"] = "CHAR_MECA";
-    dict.container["MODELE"] = _study->getSupportModel()->getName();
+    dict.container["MODELE"] = _study->getModel()->getName();
 
     if ( _study->getMaterialOnMesh() )
         dict.container["CHAM_MATER"] = _study->getMaterialOnMesh()->getName();
@@ -279,9 +279,9 @@ SyntaxMapContainer DiscreteProblemInstance::computeMatrixSyntax( const std::stri
     SyntaxMapContainer dict;
 
     // Definition du mot cle simple MODELE
-    if ( ( !_study->getSupportModel() ) || _study->getSupportModel()->isEmpty() )
+    if ( ( !_study->getModel() ) || _study->getModel()->isEmpty() )
         throw std::runtime_error( "Model is empty" );
-    dict.container["MODELE"] = _study->getSupportModel()->getName();
+    dict.container["MODELE"] = _study->getModel()->getName();
 
     // Definition du mot cle simple CHAM_MATER
     if ( !_study->getMaterialOnMesh() )
@@ -307,7 +307,7 @@ ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::computeMechanical
 {
     ElementaryMatrixDisplacementDoublePtr retour(
          new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
-    retour->setSupportModel( _study->getSupportModel() );
+    retour->setSupportModel( _study->getModel() );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
     CommandSyntax cmdSt( "CALC_MATR_ELEM" );
@@ -333,7 +333,7 @@ ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::computeMechanical
 {
     ElementaryMatrixDisplacementDoublePtr
         retour( new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
-    retour->setSupportModel( rigidity->getSupportModel() );
+    retour->setSupportModel( rigidity->getModel() );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
     CommandSyntax cmdSt( "CALC_MATR_ELEM" );

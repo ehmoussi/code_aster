@@ -52,7 +52,7 @@ class RaffXfemZone(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = PCFieldOnMeshDouble(keywords["FISSURE"].getSupportMesh())
+        self._result = PCFieldOnMeshDouble(keywords["FISSURE"].getMesh())
 
 
 RAFF_XFEM_ZONE = RaffXfemZone.run

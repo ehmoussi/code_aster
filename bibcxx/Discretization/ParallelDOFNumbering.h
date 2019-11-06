@@ -11,7 +11,7 @@
  * @brief Fichier entete de la classe ParallelDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -82,7 +82,7 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
     void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
 
     {
-        if ( !currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+        if ( !currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
@@ -94,7 +94,7 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
     void setElementaryMatrix( const ElementaryMatrixDisplacementComplexPtr &currentMatrix )
 
     {
-        if ( !currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+        if ( !currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
@@ -106,7 +106,7 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
     void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
 
     {
-        if ( !currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+        if ( !currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
@@ -118,7 +118,7 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
     void setElementaryMatrix( const ElementaryMatrixPressureComplexPtr &currentMatrix )
 
     {
-        if ( !currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+        if ( !currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
@@ -128,7 +128,7 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
      * @param currentModel Model support de la numerotation
      */
     void setSupportModel( const ModelPtr &currentModel ) {
-        if ( !currentModel->getSupportMesh()->isParallel() )
+        if ( !currentModel->getMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must be parallel" );
         BaseDOFNumberingInstance::setSupportModel( currentModel );
     };

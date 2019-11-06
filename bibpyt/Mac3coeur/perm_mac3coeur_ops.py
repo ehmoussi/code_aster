@@ -67,7 +67,7 @@ def perm_mac3coeur_ops(self, **args):
         l_last_i.append(RESUI.LIST_PARA()['INST'][-1])
         # on recupere le concept maillage
 
-        _MA_N = RESUI.getModel().getSupportMesh()
+        _MA_N = RESUI.getModel().getMesh()
         _l_MA_N.append(_MA_N)
 
     _l_coeur = []

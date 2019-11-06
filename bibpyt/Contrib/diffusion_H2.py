@@ -97,7 +97,7 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
     moth = RESU_H2.getModel()
 
     # Recuperation du maillage a partir du resultat
-    mesh = moth.getSupportMesh()
+    mesh = moth.getMesh()
 
     # Recuperation du modele mecanique a partir du resultat
     mome = RESUMECA.getModel()
@@ -250,7 +250,7 @@ def char_grad_ini_ops(self, RESU_H2, GRMAVOL, DIME, **args):
     moth = RESU_H2.getModel()
 
     # Recuperation du maillage a partir du resultat
-    mesh = moth.getSupportMesh()
+    mesh = moth.getMesh()
 
     nommai = mesh.sdj.NOMMAI.get()
     connex = mesh.sdj.CONNEX.get()
@@ -319,7 +319,7 @@ def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, 
     moth = RESU_H2.getModel()
 
     # Recuperation du maillage a partir du resultat
-    mesh = moth.getSupportMesh()
+    mesh = moth.getMesh()
 
     # Recuperation du modele mecanique a partir du resultat
     mome = RESUMECA.getModel()
@@ -433,7 +433,7 @@ def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0
     moth = RESU_H2.getModel()
 
    # Recuperation du maillage a partir du resultat
-    mesh = moth.getSupportMesh()
+    mesh = moth.getMesh()
 
    # Recuperation du modele mecanique a partir du resultat
     mome = RESUMECA.getModel()

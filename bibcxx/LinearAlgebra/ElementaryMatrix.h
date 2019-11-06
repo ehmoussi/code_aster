@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ElementaryMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -113,7 +113,7 @@ public:
     /**
      * @brief Obtenir le modèle de l'étude
      */
-    ModelPtr getSupportModel() const { return _supportModel; };
+    ModelPtr getModel() const { return _supportModel; };
 
     /**
      * @brief Methode permettant de savoir si les matrices elementaires sont vides

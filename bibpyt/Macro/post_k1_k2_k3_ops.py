@@ -701,7 +701,7 @@ def get_resxfem(self, xcont, RESULTAT, MODELISATION, MODEL):
 
 #     XFEM + contact : il faut reprojeter sur le maillage lineaire
     elif xcont[0] == 3:
-        __mail1 = RESULTAT.getModel().getSupportMesh()
+        __mail1 = RESULTAT.getModel().getMesh()
         __mail2 = CREA_MAILLAGE(MAILLAGE=__mail1,
                                 QUAD_LINE=_F(TOUT='OUI',),)
 
@@ -1847,7 +1847,7 @@ def is_present_varc(RESULTAT):
 #---------------------------------------------------------------------------------------------------------------
 #                 CORPS DE LA MACRO POST_K1_K2_K3
 #-------------------------------------------------------------------------
-def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None, 
+def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
                       ABSC_CURV_MAXI=None, PREC_VIS_A_VIS=None, INFO=None, TITRE=None, **args):
     """
     Macro POST_K1_K2_K3
@@ -1937,9 +1937,9 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 #                               MAILLAGE
 #   ------------------------------------------------------------------
     try:
-        MAILLAGE = RESULTAT.getModel().getSupportMesh()
+        MAILLAGE = RESULTAT.getModel().getMesh()
     except:
-        MAILLAGE = CHAM_MATER.getSupportMesh()
+        MAILLAGE = CHAM_MATER.getMesh()
     nom_ma = MAILLAGE.getName()
 
 

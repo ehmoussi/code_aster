@@ -259,7 +259,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
           _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ),
-          _supportMesh( ligrel->getSupportMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
+          _supportMesh( ligrel->getMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
 
     /**
@@ -290,7 +290,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
           _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ),
-          _supportMesh( ligrel->getSupportMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
+          _supportMesh( ligrel->getMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
 
     typedef boost::shared_ptr< PCFieldOnMeshInstance< ValueType > > PCFieldOnMeshValueTypePtr;

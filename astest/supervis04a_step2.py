@@ -11,7 +11,7 @@ test = code_aster.TestCase()
 test.assertTrue(MAIL.hasGroupOfElements("BLOK"))
 test.assertTrue(MAIL.hasGroupOfElements("VOL"))
 
-support = MODELE.getSupportMesh()
+support = MODELE.getMesh()
 test.assertTrue(support.hasGroupOfElements("VOL"))
 del support
 

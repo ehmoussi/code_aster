@@ -63,7 +63,7 @@ class VibrationDynamics(ExecuteCommand):
         """
         if keywords["BASE_CALCUL"] == "PHYS":
             massMatrix = keywords["MATR_MASS"]
-            self._result.appendModelOnAllRanks(massMatrix.getDOFNumbering().getSupportModel())
+            self._result.appendModelOnAllRanks(massMatrix.getDOFNumbering().getModel())
             self._result.update()
         if keywords["BASE_CALCUL"] == "GENE":
             stiffnessMatrix = keywords["MATR_RIGI"]

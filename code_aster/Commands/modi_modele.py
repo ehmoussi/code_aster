@@ -30,11 +30,11 @@ class ModiModele(ExecuteCommand):
 
     def create_result(self, keywords):
         """Initialize the result.
-        
+
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        
+
         if "reuse" in keywords:
             self._result = keywords["reuse"]
         else:
@@ -47,6 +47,6 @@ class ModiModele(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         if "reuse" not in keywords:
-            self._result.setSupportMesh(keywords["MODELE"].getSupportMesh())
+            self._result.setSupportMesh(keywords["MODELE"].getMesh())
 
 MODI_MODELE = ModiModele.run

@@ -36,7 +36,7 @@ class NumberingCreation(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         matr = keywords.get('MATR_RIGI')
-        if matr and matr[0].getSupportModel().getSupportMesh().getType() == 'MAILLAGE_P':
+        if matr and matr[0].getModel().getMesh().getType() == 'MAILLAGE_P':
             self._result = ParallelDOFNumbering()
         else:
             self._result = DOFNumbering()
@@ -57,7 +57,7 @@ class NumberingCreation(ExecuteCommand):
                     self._result.addFiniteElementDescriptor(curFED)
         else:
             matrRigi = keywords['MATR_RIGI'][0]
-            self._result.setSupportModel(matrRigi.getSupportModel())
+            self._result.setSupportModel(matrRigi.getModel())
             for curFED in matrRigi.getFiniteElementDescriptors():
                 self._result.addFiniteElementDescriptor(curFED)
 

@@ -228,7 +228,7 @@ def calc_gp_ops(self, **args):
     iret, ndim, rbid = aster.dismoi('DIM_GEOM', __model.getName(), 'MODELE', 'F')
 #
 #  maillage
-    __maillage = __model.getSupportMesh()
+    __maillage = __model.getMesh()
 #
     __cham_mater = __RESU.getMaterialOnMesh()
 

@@ -26,7 +26,7 @@ from ..Cata.Language.SyntaxObjects import FactorKeyword
 
 
 class MechanicalLoadDefinition(ExecuteCommand):
-    
+
     """Command that defines :class:`~code_aster.Objects.GenericMechanicalLoad`.
     """
     command_name = "AFFE_CHAR_MECA"
@@ -88,9 +88,9 @@ class MechanicalLoadDefinition(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         model = keywords["MODELE"]
-        if not model.getSupportMesh().isParallel() or self._hasNeumannLoadings(keywords):
+        if not model.getMesh().isParallel() or self._hasNeumannLoadings(keywords):
             self._result = GenericMechanicalLoad(model)
-        if model.getSupportMesh().isParallel():
+        if model.getMesh().isParallel():
             if self._hasDirichletLoadings(keywords) and self._hasNeumannLoadings(keywords):
                 raise TypeError("Not allowed to mix up Dirichlet and Neumann loadings in the same parallel AFFE_CHAR_MECA")
 
@@ -102,7 +102,7 @@ class MechanicalLoadDefinition(ExecuteCommand):
         else:
             from ..Objects import ParallelMechanicalLoad, PartialMesh
             model = keywords.pop("MODELE")
-            partialMesh = PartialMesh(model.getSupportMesh(), self._getNodeGroups(keywords))
+            partialMesh = PartialMesh(model.getMesh(), self._getNodeGroups(keywords))
             if partialMesh.getDimension()==3:
                 modelisation = "3D"
             else:

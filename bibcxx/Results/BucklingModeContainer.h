@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe BucklingModeContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -206,9 +206,9 @@ class BucklingModeContainerInstance : public FullResultsContainerInstance
 
         if ( numeDdl != nullptr )
         {
-            const auto model = numeDdl->getSupportModel();
+            const auto model = numeDdl->getModel();
             if ( model != nullptr )
-                _mesh = model->getSupportMesh();
+                _mesh = model->getMesh();
         }
         return ResultsContainerInstance::update();
     };

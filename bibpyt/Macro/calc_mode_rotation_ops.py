@@ -34,18 +34,14 @@ def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
 # CALC_FREQ
 # VERI_MODE
     from Utilitai.Table import Table
-    ier = 0
 
     # On importe les definitions des commandes a utiliser dans la macro
     CALC_MODES = self.get_cmd('CALC_MODES')
     COMB_MATR_ASSE = self.get_cmd('COMB_MATR_ASSE')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     motscit = {}
-    
+
     if  CALC_FREQ['OPTION']== 'PLUS_PETITE':
         motscit['CALC_FREQ'] = _F(SEUIL_FREQ=CALC_FREQ['SEUIL_FREQ'],
                                   NMAX_FREQ=CALC_FREQ['NMAX_FREQ'])

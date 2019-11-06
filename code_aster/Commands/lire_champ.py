@@ -43,7 +43,7 @@ class FieldReader(ExecuteCommand):
             if "MAILLAGE" in keywords:
                 mesh = keywords["MAILLAGE"]
             else:
-                mesh = keywords["MODELE"].getSupportMesh()
+                mesh = keywords["MODELE"].getMesh()
             self._result = PCFieldOnMeshDouble(mesh)
         elif location == "NOEU_":
             self._result = FieldOnNodesDouble()

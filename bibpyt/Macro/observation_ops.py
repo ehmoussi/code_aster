@@ -68,18 +68,18 @@ def observation_ops(self,
     RESU = None
 
     TYPE_RESU = RESULTAT.getType()
-    
+
     self.DeclareOut('RESU', self.sd)
 
-    
+
     # recuperation du maillage associe au modele numerique
-    mayanum = MODELE_1.getSupportMesh()
+    mayanum = MODELE_1.getMesh()
 
     # modele numerique 2D ou 3D
     typmod = mayanum.getDimension()
-    
+
     # recuperation du maillage associe au modele experimental
-    mayaexp = MODELE_2.getSupportMesh()
+    mayaexp = MODELE_2.getMesh()
 
     # cham_mater et cara_elem pour le resultat a projeter
     if RESULTAT.getNumberOfRanks() > 0:
@@ -125,7 +125,7 @@ def observation_ops(self,
             # recherche du nume_ddl associe
             NUME_DDL = MATR_RIGI.getDOFNumbering()
             # coherence avec le nom associe a MODELE_2 :
-            modele_matr_rigi = NUME_DDL.getSupportModel()
+            modele_matr_rigi = NUME_DDL.getModel()
             if modele_matr_rigi.getName() != modele_matr_rigi.getName():
                 UTMESS('F', 'CALCESSAI0_10')
         else:
@@ -137,7 +137,7 @@ def observation_ops(self,
         NUME_DDL = None
 
     indice = list(range(RESULTAT.getNumberOfRanks()))
-    
+
 #***********************************************
 #  PHASE DE CALCUL DE LA DEFORMATION MOYENNE AUX NOEUDS
 #  CHAMP CALCULE SUR LE MODELE NUMERIQUE
@@ -769,7 +769,7 @@ def crea_normale(self, modele_1, modele_2,
     import aster
     from code_aster.Cata.Syntax import _F
     # recherche du maillage associe au modele numerique
-    mayanum = modele_1.getSupportMesh()
+    mayanum = modele_1.getMesh()
 
     DEFI_GROUP(reuse=mayanum,
                MAILLAGE=mayanum,

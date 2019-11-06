@@ -34,4 +34,4 @@ class ExtendedAcousticsLoad(object):
         """Returns the argument required to reinitialize a
         AcousticsLoad object during unpickling.
         """
-        return (self.getName(), self.getSupportModel())
+        return (self.getName(), self.getModel())

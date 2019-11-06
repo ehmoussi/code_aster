@@ -59,7 +59,7 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
     // Define the discrete problem
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( _study ) );
 
-    if ( _supportModel->getSupportMesh()->isParallel() ) {
+    if ( _supportModel->getMesh()->isParallel() ) {
         if ( !_linearSolver->isHPCCompliant() )
             throw std::runtime_error( "ParallelMesh not allowed with this linear solver" );
         if ( _linearSolver->getPreconditioning() == SimplePrecisionLdlt )
@@ -72,7 +72,7 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
 
     BaseDOFNumberingPtr dofNum1;
 #ifdef _USE_MPI
-    if ( _supportModel->getSupportMesh()->isParallel() )
+    if ( _supportModel->getMesh()->isParallel() )
         dofNum1 = resultC->getEmptyParallelDOFNumbering();
     else
 #endif /* _USE_MPI */
