@@ -110,8 +110,8 @@ en état initial ne sera pas transmis à EPX pour les éléments affectés des m
 """),
 
     21 : _("""
-Dans l'occurrence %(i1)d du mot-clé COURBE, NOM_COURBE dépasse.%(i2)d caractères.
-Le nom de la colonne correspondante sera tronqué dans la table.
+Dans l'occurrence %(i1)d du mot-clé COURBE, NOM_COURBE dépasse %(i2)d caractères.
+Le nom sera tronqué avant d'être transmis à Europlexus.
 """),
 
     22 : _("""La valeur du mot-clé %(k1)s du matériau %(k2)s est différente de %(k3)s.

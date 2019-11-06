@@ -46,7 +46,7 @@ from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 #-----------------------------------------------------------------------
 
 
-def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
+def calc_europlexus_ops(self, NOM_CAS, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
                         CARA_ELEM=None, MODELE=None,
                         CHAM_MATER=None, FONC_PARASOL=None,
                         OBSERVATION=None, COURBE=None,
@@ -90,7 +90,7 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
                      FONC_PARASOL, EXCIT, OBSERVATION, ARCHIVAGE, COURBE,
                      CALCUL, AMORTISSEMENT, DOMAINES, INTERFACES,
                      INFO=INFO, REPE_epx=REPE_OUT,
-                     NOM_RESU="study",
+                     NOM_RESU=NOM_CAS,
                      args=args)
 
     #
@@ -243,11 +243,6 @@ class EUROPLEXUS:
             self.NUME_ORDRE_COURBE = args['NUME_ORDRE_COURBE']
         else:
             self.NUME_ORDRE_COURBE = None
-
-        if 'TABLE_COURBE' in args:
-            self.TABLE_COURBE = args['TABLE_COURBE']
-        else:
-            self.TABLE_COURBE = None
 
         # Création des directives EPX
         self.epx = {}
@@ -723,7 +718,7 @@ class EUROPLEXUS:
                         cara = 'AXES 1.'
                         vale = "'%s'"%label
                         bloc_liste = BLOC_DONNEES(mot_cle, val_cle=nb_courbe,
-                                                   cara=cara, vale=vale)
+                                                  cara=cara, vale=vale)
                         objet.add_bloc(bloc_liste)
 
   #-----------------------------------------------------------------------
