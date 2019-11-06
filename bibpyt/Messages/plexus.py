@@ -81,16 +81,6 @@ Une déclaration d'une de ces informations sur un groupe de mailles contenant le
 ne permet pas à CALC_EUROPLEXUS de retrouver les informations.
 """),
 
-    13 : _("""
-    Lancement d'Europlexus en utilisant %(k1)s
-"""),
-
-
-    14 : _("""
-Le fichier MED contenant les résultats d'Europlexus est introuvable ou vide.
-L'exécution d'Europlexus s'est probablement mal déroulée.
-"""),
-
     15 : _("""Les différentes occurrences de RIGI_PARASOL dans AFFE_CARA_ELEM n'ont pas la même
 liste de caractéristiques (mot-clé CARA).
 CALC_EUROPLEXUS ne sait pas traiter de tels cas.
@@ -221,16 +211,6 @@ CALC_EUROPLEXUS ne sait pas traiter de tels cas.
     38 : _("""
 CALC_EUROPLEXUS/COURBE :
 Le champ %(k1)s ne possède pas de composante %(k2)s.
-"""),
-
-    39 : _("""
-CALC_EUROPLEXUS/COURBE :
-La quantité de données présente dans le fichier de sortie de suivi de point ne concorde
-pas avec les instructions du fichier de commande.
-Une erreur s'est certainement produite lors du traitement de ce mot-clé par EPX.
-
-Conseil : regarder le message de sortie d'EPX dans le fichier .mess pour comprendre
-ou le problème se situe.
 """),
 
     40 : _("""
