@@ -762,7 +762,7 @@ def get_resxfem(self, xcont, RESULTAT, MODELISATION, MODEL):
 
 #     XFEM + contact : il faut reprojeter sur le maillage lineaire
     elif xcont[0] == 3:
-        __mail1 = RESULTAT.getModel().getSupportMesh()
+        __mail1 = RESULTAT.getModel().getMesh()
         __mail2 = CREA_MAILLAGE(MAILLAGE=__mail1,
                                 QUAD_LINE=_F(TOUT='OUI',),)
 
@@ -2013,7 +2013,7 @@ def post_t_q_ops(self, **args):
 
         iret, ibid, nom_ma = aster.dismoi(
             'NOM_MAILLA', RESULTAT.nom, 'RESULTAT', 'F')
-        MAILLAGE = RESULTAT.getModel().getSupportMesh()
+        MAILLAGE = RESULTAT.getModel().getMesh()
 
         NB_NOEUD_COUPE = args.get('NB_NOEUD_COUPE')
 
@@ -2152,7 +2152,7 @@ def post_t_q_ops(self, **args):
 
         iret, ibid, nom_ma = aster.dismoi(
             'NOM_MAILLA', RESULTAT.nom, 'RESULTAT', 'F')
-        MAILLAGE = RESULTAT.getModel().getSupportMesh()
+        MAILLAGE = RESULTAT.getModel().getMesh()
 
 #     Recuperation de la liste des tailles de maille en chaque noeud du fond
         if not ABSC_CURV_MAXI:

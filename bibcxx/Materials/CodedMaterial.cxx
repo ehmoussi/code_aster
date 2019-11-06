@@ -29,7 +29,7 @@
 CodedMaterialInstance::CodedMaterialInstance( const MaterialOnMeshPtr &mater,
                                               const ModelPtr &model )
     : _name( mater->getName() ), _type( "MATER_CODE" ), _mater( mater ), _model( model ),
-      _field( new PCFieldOnMeshLongInstance( getName() + ".MATE_CODE", _model->getSupportMesh(),
+      _field( new PCFieldOnMeshLongInstance( getName() + ".MATE_CODE", _model->getMesh(),
                                              Permanent ) ),
       _grp( JeveuxVectorChar8( getName() + ".MATE_CODE.GRP" ) ),
       _nGrp( JeveuxVectorLong( getName() + ".MATE_CODE.NGRP" ) ){};

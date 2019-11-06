@@ -3,7 +3,7 @@
  * @brief Interface python de XfemCrack
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,7 +35,7 @@ void exportXfemCrackToPython() {
               make_constructor(&initFactoryPtr< XfemCrackInstance, std::string, MeshPtr >))
         .def( "build", &XfemCrackInstance::build )
         .def( "enrichModelWithXfem", &XfemCrackInstance::enrichModelWithXfem )
-        .def( "getSupportMesh", &XfemCrackInstance::getSupportMesh )
+        .def( "getMesh", &XfemCrackInstance::getMesh )
         .def( "setSupportMesh", &XfemCrackInstance::setSupportMesh )
         .def( "getAuxiliaryGrid", &XfemCrackInstance::getAuxiliaryGrid )
         .def( "setAuxiliaryGrid", &XfemCrackInstance::setAuxiliaryGrid )

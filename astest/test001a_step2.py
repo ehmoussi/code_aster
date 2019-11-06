@@ -22,7 +22,7 @@ test.assertFalse(mesh2.hasGroupOfNodes("Tout"))
 test.assertFalse(mesh2.hasGroupOfElements("POINT"))
 test.assertTrue(mesh2.hasGroupOfNodes("POINT"))
 
-support = model.getSupportMesh()
+support = model.getMesh()
 test.assertIsNotNone(support)
 
 test.printSummary()

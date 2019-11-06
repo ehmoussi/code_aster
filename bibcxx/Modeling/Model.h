@@ -246,7 +246,7 @@ class ModelInstance : public DataStructure {
      */
     ModelSplitingMethod getSplittingMethod() const { return _splitMethod; };
 
-    BaseMeshPtr getSupportMesh() const {
+    BaseMeshPtr getMesh() const {
         if ( ( !_supportBaseMesh ) || _supportBaseMesh->isEmpty() )
             throw std::runtime_error( "Support mesh of current model is empty" );
         return _supportBaseMesh;

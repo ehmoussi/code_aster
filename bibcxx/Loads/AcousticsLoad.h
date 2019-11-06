@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe AcousticsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -149,7 +149,7 @@ class AcousticsLoadInstance : public DataStructure {
      */
     AcousticsLoadInstance( const std::string name, const ModelPtr &model )
         : DataStructure( name, 8, "CHAR_ACOU" ), _supportModel( model ),
-          _mesh( model->getSupportMesh() ),
+          _mesh( model->getMesh() ),
           _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),
           _type( JeveuxVectorChar8( getName() + ".TYPE" ) ),
           _imposedValues( PCFieldOnMeshComplexPtr(
@@ -248,7 +248,7 @@ class AcousticsLoadInstance : public DataStructure {
     /**
      * @brief Get the support model
      */
-    ModelPtr getSupportModel()
+    ModelPtr getModel()
     {
         return _supportModel;
     };

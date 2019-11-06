@@ -1206,7 +1206,7 @@ class PostMissChar(PostMiss):
             nom_MODELE = self.MODELE.get_name()
             iret, ibid, nomsd = aster.dismoi('NOM_MAILLA', nom_MODELE, 'MODELE', 'F')
             nomsd = nomsd.strip()
-            mail = self.MODELE.getSupportMesh()
+            mail = self.MODELE.getMesh()
             mm = MAIL_PY()
             mm.FromAster(mail)
             # groupes de noeuds

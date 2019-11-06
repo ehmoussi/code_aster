@@ -76,10 +76,10 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
                                                                       # so one deletes all entries having a different shape
                     no_force.pop(j)
 
-            model = __num.getSupportModel()
+            model = __num.getModel()
             maillage = None
             if model is not None:
-                maillage = model.getSupportMesh()
+                maillage = model.getMesh()
             else:
                 raise NameError("No support mesh")
 

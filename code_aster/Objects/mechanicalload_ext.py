@@ -37,4 +37,4 @@ class ExtendedGenericMechanicalLoad(object):
         """Returns the argument required to reinitialize a GenericMechanicalLoad
         object during unpickling.
         """
-        return (self.getName(), self.getSupportModel())
+        return (self.getName(), self.getModel())

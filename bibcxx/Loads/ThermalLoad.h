@@ -73,7 +73,7 @@ class ThermalLoadInstance : public DataStructure {
 
         /** @brief Constructeur */
         TherLoad( const std::string &name, const ModelPtr &currentModel )
-            : _supportModel( currentModel ), _mesh( _supportModel->getSupportMesh() ),
+            : _supportModel( currentModel ), _mesh( _supportModel->getMesh() ),
               _modelName( name + ".MODEL.NOMO" ), _convection( name + ".CONVE.VALE" ),
               _FEDesc( new FiniteElementDescriptorInstance( name + ".LIGRE", _mesh ) ),
               _cimpo( new PCFieldOnMeshDoubleInstance( name + ".CIMPO", _FEDesc ) ),
@@ -137,7 +137,7 @@ class ThermalLoadInstance : public DataStructure {
     bool addUnitaryThermalLoad( const UnitaryThermalLoadPtr &toAdd ) {
         //         if ( ! _supportModel ) throw std::runtime_error( "Support model is not defined"
         //         );
-        //         MeshPtr mesh = _supportModel->getSupportMesh();
+        //         MeshPtr mesh = _supportModel->getMesh();
         //         if ( ! _supportMesh->hasGroupOfNodes( nameOfGroup ) )
         //             throw std::runtime_error( nameOfGroup + "not in support mesh" );
         //         throw std::runtime_error( "Not yet implemented" );

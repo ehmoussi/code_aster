@@ -227,7 +227,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
         if( _mesh != nullptr )
         {
             const auto name1 = _mesh->getName();
-            const auto name2 = _dofNum->getSupportModel()->getSupportMesh()->getName();
+            const auto name2 = _dofNum->getModel()->getMesh()->getName();
             if( name1 != name2 )
                 throw std::runtime_error( "Support meshes inconsistents" );
         }
@@ -254,7 +254,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
         if( _dofNum != nullptr )
         {
             const auto name1 = _mesh->getName();
-            const auto name2 = _dofNum->getSupportModel()->getSupportMesh()->getName();
+            const auto name2 = _dofNum->getModel()->getMesh()->getName();
             if( name1 != name2 )
                 throw std::runtime_error( "Support meshes inconsistents" );
         }

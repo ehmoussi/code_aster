@@ -219,7 +219,7 @@ BaseMeshPtr ResultsContainerInstance::getMesh()
         return _mesh;
     const auto model = getModel();
     if( model != nullptr )
-        return model->getSupportMesh();
+        return model->getMesh();
     return nullptr;
 };
 
@@ -338,7 +338,7 @@ bool ResultsContainerInstance::update()
     BaseMeshPtr curMesh( nullptr );
     const ASTERINTEGER iordr = ( *_serialNumber )[_nbRanks - 1];
     if ( _mapModel.find( iordr ) != _mapModel.end() )
-        curMesh = _mapModel[iordr]->getSupportMesh();
+        curMesh = _mapModel[iordr]->getMesh();
     else if ( _mesh != nullptr )
         curMesh = _mesh;
 

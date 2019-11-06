@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe XfemCrack
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -145,7 +145,7 @@ class XfemCrackInstance : public DataStructure {
          * @brief Series of getters and setters that check the syntax rules
          */
 
-    const MeshPtr getSupportMesh() const { return _supportMesh; };
+    const MeshPtr getMesh() const { return _supportMesh; };
 
     void setSupportMesh( const MeshPtr &supportMesh ) { _supportMesh = supportMesh; }
 

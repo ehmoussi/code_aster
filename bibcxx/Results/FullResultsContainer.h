@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FullResultsContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -67,8 +67,8 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
     bool setDOFNumbering( const DOFNumberingPtr &dofNum ) {
         if ( dofNum != nullptr ) {
             _dofNum = dofNum;
-            if ( _dofNum->getSupportModel() != nullptr )
-                _mesh = _dofNum->getSupportModel()->getSupportMesh();
+            if ( _dofNum->getModel() != nullptr )
+                _mesh = _dofNum->getModel()->getMesh();
             _fieldBuidler.addFieldOnNodesDescription( _dofNum->getFieldOnNodesDescription() );
             return true;
         }

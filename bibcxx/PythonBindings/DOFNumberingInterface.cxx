@@ -59,7 +59,7 @@ void exportDOFNumberingToPython() {
     c1.def( "setElementaryMatrix", f2 );
     c1.def( "setElementaryMatrix", f3 );
     c1.def( "setElementaryMatrix", f4 );
-    c1.def( "getSupportModel", &BaseDOFNumberingInstance::getSupportModel );
+    c1.def( "getModel", &BaseDOFNumberingInstance::getModel );
     c1.def( "setSupportModel", &BaseDOFNumberingInstance::setSupportModel );
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );

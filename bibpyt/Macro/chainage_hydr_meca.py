@@ -142,7 +142,7 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
   # hydraulique
   #
 
-    __maillage_h = __modele.getSupportMesh()
+    __maillage_h = __modele.getMesh()
 
   #
   # On vérifie que le résultat donné en sortie

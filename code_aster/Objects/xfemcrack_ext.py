@@ -37,4 +37,4 @@ class ExtendedXfemCrack(object):
         """Returns the argument required to reinitialize a XfemCrack
         object during unpickling.
         """
-        return (self.getName(), self.getSupportMesh())
+        return (self.getName(), self.getMesh())
