@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -207,7 +207,7 @@ U_PREC=CALC_PRECONT(MODELE=MO,
                     INCREMENT=_F(LIST_INST=TEMPS,),
                     )
 
-U = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    ETAT_INIT=_F(RESULTAT=U_PREC,CONTRAINTE='OUI',EQUILIBRE='NON'),
    COMPORTEMENT =(_F(
                   RELATION = 'ELAS',
@@ -222,7 +222,6 @@ U = CALC_EUROPLEXUS(
           _F(CHARGE = LIAISON),
           _F(CHARGE=PRESS,FONC_MULT=FONC,),
          ),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0.,
                INST_FIN  = 2.5E-3,
@@ -261,18 +260,12 @@ U2=DYNA_NON_LINE(MODELE=MO,
                                     FORMULATION='ACCELERATION',),
                     MASS_DIAG='OUI',);
 
-# LA REFERENCE EST LE CALCUL DYNA_NON_LINE DE CODE_ASTER AVEC TEST DE NON REGRESSION.
-
-TEST_RESU(RESU=(_F(RESULTAT   = U,
-                   INST       = 2.5E-3,
-                   NOM_CHAM   = 'DEPL',
-                   NOM_CMP    = 'DZ',
-                   GROUP_NO   = 'T0',
-                   REFERENCE  = 'AUTRE_ASTER',
-                   VALE_CALC=-0.000431991484151,
-                   VALE_REFE  = -4.3214499919696E-04,
-                   PRECISION=5.E-3, ),
-                ),
-          )
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=61,
+             NB_VALE_I=75,
+             VALE_CALC=6.6990155000e+11,
+             VALE_CALC_I=20013650,
+             VALE_CALC_K='f4f71b1f47f58ed07a44785135653944')
 
 FIN()

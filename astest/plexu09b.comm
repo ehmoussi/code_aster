@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -98,7 +98,7 @@ FOMU=DEFI_FONCTION(NOM_PARA='INST',
                      );
 
 
-U_EPX = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    MODELE = MODELE,
    CHAM_MATER = CHMATER,
    COMPORTEMENT =(_F(
@@ -108,7 +108,6 @@ U_EPX = CALC_EUROPLEXUS(
               ),
    EXCIT=(_F(CHARGE=PRESS,FONC_MULT=FOMU),
           _F(CHARGE=BLOQ,),),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 0.01,
@@ -119,36 +118,12 @@ U_EPX = CALC_EUROPLEXUS(
    );
 
 
-TEST_RESU(RESU=_F(INST = 0.01,
-                  RESULTAT=U_EPX,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='M1',
-                  NOM_CMP='SIXX',
-                  POINT = 1,
-                  VALE_CALC=-150717574.84,
-                  ),
-          )
-
-TEST_RESU(RESU=_F(INST = 0.01,
-                  RESULTAT=U_EPX,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='M1',
-                  NOM_CMP='SIYY',
-                  POINT = 3,
-                  VALE_CALC=-150717574.84,
-                  ),
-          )
-
-
-TEST_RESU(RESU=_F(INST = 0.01,
-                  RESULTAT=U_EPX,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='M1',
-                  NOM_CMP='SIZZ',
-                  POINT = 5,
-                  VALE_CALC=-150729740.859
-                  ),
-          )
-
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=16,
+             NB_VALE_I=17,
+             VALE_CALC=3.e10,
+             VALE_CALC_I=50023159,
+             VALE_CALC_K='8682b62b0a922792581bc32f26a0cfc7')
 
 FIN()

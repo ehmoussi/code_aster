@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -146,9 +146,7 @@ FONCCB=DEFI_FONCTION(NOM_PARA='INST',
                      PROL_DROITE='CONSTANT',
                      PROL_GAUCHE='CONSTANT',
                      );
-TAB1 = CO('TAB1')
-
-U = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    MODELE=MODELE,
    CHAM_MATER=CHMATER,
    COMPORTEMENT =(_F(
@@ -165,7 +163,6 @@ U = CALC_EUROPLEXUS(
    EXCIT=(_F(CHARGE=CHARPRES,FONC_MULT=FONCCB,),
           _F(CHARGE=CHARMECA,),
          ),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 2e-3,
@@ -174,7 +171,6 @@ U = CALC_EUROPLEXUS(
                ),
    ARCHIVAGE   = _F(PAS_NBRE=10,),
    PAS_NBRE_COURBE=1,
-   TABLE_COURBE    = TAB1,
    COURBE = (_F(
            NOM_CHAM = 'SIEF_ELGA',
            NOM_CMP  = 'N',
@@ -190,64 +186,14 @@ U = CALC_EUROPLEXUS(
            NOM_COURBE = 'V3_GRSG3'
            ),
    ),
-   );
-IMPR_TABLE(TABLE=TAB1)
+)
 
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U,NUME_ORDRE=(20,50,100),NOM_CHAM=('DEPL','VITE','ACCE','SIEF_ELGA')))
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U,NOM_CHAM=('VARI_ELGA'), GROUP_MA='GRSG3'))
-
-
-TEST_TABLE(TABLE=TAB1,
-           NOM_PARA='N_GRSG3',
-           TYPE_TEST='MAX',
-           REFERENCE = 'ANALYTIQUE',
-           VALE_REFE = 1.E6,
-           VALE_CALC = 1.E6,
-           )
-
-TEST_RESU(RESU=_F(NUME_ORDRE = 80,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='SG001003',
-                  NOM_CMP='N',
-                  POINT = 1,
-                  VALE_CALC=150.0,
-                  ),
-          )
-
-
-TEST_RESU(RESU=_F(NUME_ORDRE = 90,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='SG001003',
-                  NOM_CMP='N',
-                  POINT = 1,
-                  VALE_CALC=150.0,
-                  ),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE = 100,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='SG001003',
-                  NOM_CMP='N',
-                  POINT = 1,
-                  VALE_CALC=150.,
-                  ),
-          )
-# référence prise dans la table
-TEST_RESU(RESU=_F(NUME_ORDRE = 100,
-                  REFERENCE='AUTRE_ASTER',
-                  RESULTAT=U,
-                  NOM_CHAM='VARI_ELGA',
-                  MAILLE='SG001003',
-                  NOM_CMP='V1',
-                  POINT = 1,
-                  VALE_CALC=1.62139511288E-05,
-                  VALE_REFE=1.62140E-05,
-                  ),
-          )
-
-
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=28,
+             NB_VALE_I=51,
+             VALE_CALC=2.3001300000e+11,
+             VALE_CALC_I=133743,
+             VALE_CALC_K='365c9ae460ee5eaead5d85c5233b772d')
 
 FIN()
