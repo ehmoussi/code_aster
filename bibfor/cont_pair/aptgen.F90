@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,6 +28,8 @@ implicit none
 #include "asterfort/mminfr.h"
 #include "asterfort/cfcald.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jerazo.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -53,13 +55,14 @@ implicit none
 !
     integer :: nb_cont_zone, model_ndim
     integer :: ifm, niv
-    integer :: i_zone
+    integer :: i_zone, length
     integer :: jdecmm, nb_elem_mast
     integer :: jdecme, nb_elem_slav
     character(len=4) :: zone_type
     aster_logical :: apcald
     real(kind=8) :: epsi_maxi
     integer :: iter_maxi
+    character(len=24) :: sdappa_tgel
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,6 +77,10 @@ implicit none
     iter_maxi    = cfdisi(sdcont_defi,'PROJ_NEWT_ITER')
     model_ndim   = cfdisi(sdcont_defi,'NDIM'  )
     nb_cont_zone = cfdisi(sdcont_defi,'NZOCO' )
+    sdappa_tgel = sdappa(1:19)//'.TGEL'
+    length=0
+    call jelira(sdappa_tgel, 'LONT', length)
+    call jerazo(sdappa_tgel, length ,1)
 !
 ! - Loop on contact zones
 !
