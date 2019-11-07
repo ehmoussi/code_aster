@@ -661,6 +661,27 @@ def crea_mail_lig_coup(dimension, lignes, groups, arcs):
 
     return resu, arcgma, angles, nbno
 
+# extrait les coordonnées du noeud ORIG ou EXTR à partir des coordonnées
+# ou bien d'un groupe de noeuds ne contenant qu'un seul noeud.
+def get_coor(LIGN_COUPE, position, collgrno, n_mailla):
+    import aster
+    from Utilitai.Utmess import UTMESS
+    assert(position in ('ORIG', 'EXTR'))
+    if 'GROUP_NO_'+position in LIGN_COUPE:
+        ngrno = LIGN_COUPE['GROUP_NO_'+position]
+        if ngrno.ljust(24) not in list(collgrno.keys()):
+            UTMESS('F', 'POST0_13', valk=[ngrno, n_mailla])
+        if len(collgrno[ngrno.ljust(24)]) != 1:
+            UTMESS('F', 'POST0_27', valk=ngrno, vali=len(collgrno[ngrno.ljust(24)]))
+        node = collgrno[ngrno.ljust(24)][0]
+        coor = aster.getvectjev(n_mailla.ljust(8) + '.COORDO    .VALE', 3 * (node - 1), 3)
+    elif 'COOR_'+position in LIGN_COUPE:
+        coor = LIGN_COUPE['COOR_'+position]
+    else:
+        # Utilisation impossible d'après le catalogue
+        assert(False)
+    return(coor)
+    
 
 #
 def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
@@ -804,6 +825,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     # le maillage est-il 2D ou 3D ?
     iret, dime, kbid = aster.dismoi('DIM_GEOM', n_mailla, 'MAILLAGE', 'F')
     collgrma = aster.getcolljev(n_mailla.ljust(8) + '.GROUPEMA')
+    collgrno = aster.getcolljev(n_mailla.ljust(8) + '.GROUPENO')
     typma = aster.getvectjev(n_mailla.ljust(8) + '.TYPMAIL')
     connex = aster.getcolljev(n_mailla.ljust(8) + '.CONNEX')
     ltyma = aster.getvectjev("&CATA.TM.NOMTM")
@@ -815,8 +837,10 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
 
     for m in LIGN_COUPE:
         if m['TYPE'] == 'SEGMENT':
-            lignes.append((m['COOR_ORIG'], m['COOR_EXTR'], m['NB_POINTS']))
-            minidim = min(minidim, len(m['COOR_ORIG']), len(m['COOR_EXTR']))
+            coor_orig = get_coor(m, 'ORIG', collgrno, n_mailla)
+            coor_extr = get_coor(m, 'EXTR', collgrno, n_mailla)
+            lignes.append((coor_orig, coor_extr, m['NB_POINTS']))
+            minidim = min(minidim, len(coor_orig), len(coor_extr))
             if minidim != dime:
                 UTMESS('F', 'POST0_11')
 
