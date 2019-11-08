@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -150,7 +150,7 @@ implicit none
 !
 ! - Type of jacobian (MORTAR)
 !
-    call getvtx(keywf, 'ALGO_CONT', iocc=i_zone, scal=s_algo_cont, nbret = iret) 
+    call getvtx(keywf, 'ALGO_CONT', iocc=i_zone, scal=s_algo_cont, nbret = iret)
     if (iret .eq. 0) then
         s_algo_cont = ' '
     endif
@@ -187,17 +187,11 @@ implicit none
         if (type_norm(1:4) .eq. 'MAIT') then
             if (type_norm(5:9) .eq. '_ESCL') then
                 v_sdcont_methco(zmeth*(i_zone-1)+4) = 1
-                if (nb_proc .gt. 1) then
-                    call utmess('F', 'CONTACT3_44')
-                endif
             else
                 v_sdcont_methco(zmeth*(i_zone-1)+4) = 0
             endif
         else if (type_norm(1:4) .eq. 'ESCL') then
             v_sdcont_methco(zmeth*(i_zone-1)+4) = 2
-            if (nb_proc .gt. 1) then
-                call utmess('F', 'CONTACT3_44')
-            endif
         else
             ASSERT(.false.)
         endif
@@ -298,7 +292,7 @@ implicit none
 !
 ! - Pairing: search fixed direction - (DIRE_APPA)
 !
-    if (s_algo_cont .eq. 'LAC') then 
+    if (s_algo_cont .eq. 'LAC') then
         call getvtx(keywf, 'TYPE_APPA', iocc=i_zone, scal=type_appa_search)
         if (type_appa_search  .eq.  'ROBUSTE') then
             v_sdcont_methco(zmeth*(i_zone-1)+7) = 2
@@ -307,7 +301,7 @@ implicit none
         else
             ASSERT(.false.)
         endif
-    else 
+    else
         call getvtx(keywf, 'TYPE_PROJECTION', iocc=i_zone, scal=type_appa_search)
         if (type_appa_search .eq. 'ORTHOGONALE') then
             v_sdcont_methco(zmeth*(i_zone-1)+7) = 0
@@ -325,7 +319,7 @@ implicit none
             v_sdcont_dirapp(3*(i_zone-1)+3) = dire_appa(3)
         else
             ASSERT(.false.)
-        endif    
+        endif
     endif
 !
 ! - Resolution of contact (VERIF mode) ?

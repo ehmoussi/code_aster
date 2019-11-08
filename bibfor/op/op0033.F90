@@ -246,9 +246,7 @@ implicit none
 ! - Initialisation of behaviour datastructure - Special for SIMU_POINT_MAT
 !
     read (compor(DEFO_LDC),'(A16)') defo_ldc
-    call behaviourInitPoint(carcri  , defo_ldc, imate   ,&
-                            fami    , kpg     , ksp     ,&
-                            6       , instap  , BEHinteg)
+    call behaviourInitPoint(carcri, BEHinteg)
 !
 !        6 CMP DE EPSI OU 9 CMP DE GRAD DONNEES : PAS BESOIN DE NEWTON
     if ((defimp.ge.1) .and. (abs(carcri(2)).lt.0.1d0)) then
