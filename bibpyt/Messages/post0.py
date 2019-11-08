@@ -146,6 +146,10 @@ La SD RESULTAT ne contient aucun champ au numéro d ordre %(i1)d.
 La SD RESULTAT ne contient aucun champ à l instant %(r1)f.
 """),
 
+    27: _("""
+Le GROUP_NO %(k1)s ne doit contenir qu'un seul noeud, il en contient %(i1)d.
+"""),
+
     33 : _("""
 Sur certains points de la fissure %(k1)s le calcul de l'ouverture de fissure n'a pas été possible. Trois situations sont envisageables :
       (1) Le point est sur le bord

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/cfcald.h"
+#include "asterfort/jeveuo.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/aptgnn.h"
 #include "asterfort/mminfi.h"
@@ -55,6 +56,8 @@ implicit none
     integer :: jdecne, nb_node_slav
     aster_logical :: apcald
     real(kind=8) :: norm_vect(3)
+    real(kind=8), pointer :: v_sdappa_tgno(:) => null()
+    character(len=24) :: sdappa_tgno
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,6 +70,9 @@ implicit none
 !
     model_ndim   = cfdisi(sdcont_defi,'NDIM'  )
     nb_cont_zone = cfdisi(sdcont_defi,'NZOCO' )
+    sdappa_tgno = sdappa(1:19)//'.TGNO'
+    call jeveuo(sdappa_tgno, 'E', vr = v_sdappa_tgno)
+    v_sdappa_tgno(:) = 0.d0
 !
 ! - Loop on contact zones
 !
@@ -82,7 +88,7 @@ implicit none
             norm_vect(1) = mminfr(sdcont_defi, 'VECT_MAIT_DIRX', i_zone)
             norm_vect(2) = mminfr(sdcont_defi, 'VECT_MAIT_DIRY', i_zone)
             norm_vect(3) = mminfr(sdcont_defi, 'VECT_MAIT_DIRZ', i_zone)
-        endif      
+        endif
 !
 ! ----- Compute tangents at each node by smoothing - On current zone/Master
 !

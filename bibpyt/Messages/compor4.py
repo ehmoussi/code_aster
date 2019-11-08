@@ -81,6 +81,7 @@ Ce n'est actuellement pas possible.
 
     25: _("""Le comportement utilise la variable d'état externe %(k1)s. Ce n'est actuellement pas possible avec un solveur externe (MFRONT ou UMAT)."""),
 
+    26: _("""Le comportement utilise la variable d'état externe %(k1)s, or la température n'est pas définie dans AFFE_VARC."""),
 
     35: _("""Le modèle de déformation utilisé dans MFront est incompatible avec %(k1)s."""),
 

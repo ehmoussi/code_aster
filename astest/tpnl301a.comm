@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,20 @@ DEBUT(CODE=_F(
 
 MAILTH=LIRE_MAILLAGE(FORMAT='MED',
                      INFO=2,);
+
+MAILTH=DEFI_GROUP(reuse =MAILTH,
+                  MAILLAGE=MAILTH,
+                  CREA_GROUP_NO=(_F(OPTION='ENV_SPHERE',
+                                    NOM='pt_ori',
+                                    POINT=(20.0, 0.5, 0.5),
+                                    RAYON=1.E-5,
+                                    PRECISION=1.E-4,),
+                                 _F(OPTION='ENV_SPHERE',
+                                    NOM='pt_extr',
+                                    POINT=(21.0, 0.5, 0.5),
+                                    RAYON=1.E-5,
+                                    PRECISION=1.E-4,),),
+                  )
 
 MODELETH=AFFE_MODELE(MAILLAGE=MAILTH,
                      AFFE=_F(TOUT='OUI',
@@ -452,5 +466,151 @@ TEST_RESU(CHAM_NO=(_F(
                       VALE_CALC=0.95422259513577412,),
                    ),
           )
+
+# Tests de MACR_LIGN_COUPE
+MLC1 = MACR_LIGN_COUPE(RESULTAT=THINI,
+                       LIGN_COUPE=_F(INTITULE='T dans l_epaisseur',
+                                    NOM_CMP='TEMP',
+                                    TYPE='SEGMENT',
+                                    NB_POINTS=20,
+                                    COOR_ORIG=(20.0, 0.5, 0.5),
+                                    COOR_EXTR=(21.0, 0.5, 0.5),),
+                      )
+
+MLC1=CALC_TABLE(reuse=MLC1, TABLE=MLC1,
+                    ACTION=_F(OPERATION='RENOMME',
+                              NOM_PARA=('TEMP','TEMP_L1'),),
+               )
+
+MLC2 = MACR_LIGN_COUPE(RESULTAT=THINI,
+                       LIGN_COUPE=_F(INTITULE='T dans l_epaisseur',
+                                    NOM_CMP='TEMP',
+                                    TYPE='SEGMENT',
+                                    NB_POINTS=20,
+                                    GROUP_NO_ORIG='pt_ori',
+                                    COOR_EXTR=(21.0, 0.5, 0.5),),
+                      )
+
+MLC2=CALC_TABLE(reuse=MLC2, TABLE=MLC2,
+                    ACTION=_F(OPERATION='RENOMME',
+                              NOM_PARA=('TEMP','TEMP_L2'),),
+               )
+
+MLC3 = MACR_LIGN_COUPE(RESULTAT=THINI,
+                       LIGN_COUPE=_F(INTITULE='T dans l_epaisseur',
+                                    NOM_CMP='TEMP',
+                                    TYPE='SEGMENT',
+                                    NB_POINTS=20,
+                                    COOR_ORIG=(20.0, 0.5, 0.5),
+                                    GROUP_NO_EXTR='pt_extr'),
+                      )
+
+MLC3=CALC_TABLE(reuse=MLC3, TABLE=MLC3,
+                    ACTION=_F(OPERATION='RENOMME',
+                              NOM_PARA=('TEMP','TEMP_L3'),),
+               )
+
+MLC4 = MACR_LIGN_COUPE(RESULTAT=THINI,
+                       LIGN_COUPE=_F(INTITULE='T dans l_epaisseur',
+                                    NOM_CMP='TEMP',
+                                    TYPE='SEGMENT',
+                                    NB_POINTS=20,
+                                    GROUP_NO_ORIG='pt_ori',
+                                    GROUP_NO_EXTR='pt_extr',),
+                      )
+
+MLC4=CALC_TABLE(reuse=MLC4, TABLE=MLC4,
+                    ACTION=_F(OPERATION='RENOMME',
+                              NOM_PARA=('TEMP','TEMP_L4'),),
+               )
+
+L1_L2=FORMULE(NOM_PARA = ('TEMP_L1','TEMP_L2'),VALE = 'abs(TEMP_L1-TEMP_L2)')
+L1_L3=FORMULE(NOM_PARA = ('TEMP_L1','TEMP_L3'),VALE = 'abs(TEMP_L1-TEMP_L3)')
+L1_L4=FORMULE(NOM_PARA = ('TEMP_L1','TEMP_L4'),VALE = 'abs(TEMP_L1-TEMP_L4)')
+
+MLC1=CALC_TABLE(reuse=MLC1,
+                TABLE=MLC1,
+                ACTION=(_F(OPERATION='COMB',
+                              TABLE=MLC2,  
+                              NOM_PARA=('ABSC_CURV','NUME_ORDRE'),
+                              RESTREINT='NON' ),
+                        _F(OPERATION='COMB',
+                              TABLE=MLC3,  
+                              NOM_PARA=('ABSC_CURV','NUME_ORDRE'),
+                              RESTREINT='NON' ),
+                        _F(OPERATION='COMB',
+                              TABLE=MLC4,  
+                              NOM_PARA=('ABSC_CURV','NUME_ORDRE'),
+                              RESTREINT='NON' ),
+                        _F(OPERATION='OPER', FORMULE=L1_L2, NOM_PARA='L1_L2'),
+                        _F(OPERATION='OPER', FORMULE=L1_L3, NOM_PARA='L1_L3'),
+                        _F(OPERATION='OPER', FORMULE=L1_L4, NOM_PARA='L1_L4'),
+                        ),
+                )
+
+
+IMPR_TABLE(TABLE=MLC1, UNITE=10)
+
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=1.0E-12,
+           VALE_CALC=40.0,
+           VALE_REFE=40.0,
+           NOM_PARA='TEMP_L1',
+           TYPE_TEST='MAX',
+           TABLE=MLC1,
+           FILTRE=(_F(NOM_PARA='ABSC_CURV',VALE=0,),
+                   _F(NOM_PARA='INST',VALE=0,),)
+           )
+
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=1.0E-12,
+           VALE_CALC=15.0,
+           VALE_REFE=15.0,
+           NOM_PARA='TEMP_L1',
+           TYPE_TEST='MAX',
+           TABLE=MLC1,
+           FILTRE=(_F(NOM_PARA='ABSC_CURV',VALE=1,),
+                   _F(NOM_PARA='INST',VALE=0,),)
+           )
+
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='ANALYTIQUE',
+           ORDRE_GRANDEUR=10,
+           PRECISION=1.0E-12,
+           VALE_CALC=0.0,
+           VALE_REFE=0.0,
+           NOM_PARA='L1_L2',
+           TYPE_TEST='MAX',
+           TABLE=MLC1,
+           FILTRE=_F(NOM_PARA='INST',VALE=0,),
+           )
+           
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='ANALYTIQUE',
+           ORDRE_GRANDEUR=10,
+           PRECISION=1.0E-12,
+           VALE_CALC=0.0,
+           VALE_REFE=0.0,
+           NOM_PARA='L1_L3',
+           TYPE_TEST='MAX',
+           TABLE=MLC1,
+           FILTRE=_F(NOM_PARA='INST',VALE=0,),
+           )
+           
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='ANALYTIQUE',
+           ORDRE_GRANDEUR=10,
+           PRECISION=1.0E-12,
+           VALE_CALC=0.0,
+           VALE_REFE=0.0,
+           NOM_PARA='L1_L4',
+           TYPE_TEST='MAX',
+           TABLE=MLC1,
+           FILTRE=_F(NOM_PARA='INST',VALE=0,),
+           )
+
+
 
 FIN();
