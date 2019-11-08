@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,16 +51,13 @@ subroutine te0477(option, nomte)
     integer :: ideplm, ideplp, idfde, igeom, iinstm, iinstp, imate
     integer ::  imatuu, ipoids, iret, ivarim, ivarix
     integer :: ivarip, ivectu, ivf, jcret, jgano, jtab(7), lgpg
-    integer :: ndim, nno, nnos, npg
-    character(len=4) :: fami
+    integer :: nno, nnos, npg
+    character(len=4), parameter :: fami = 'RIGI'
     character(len=8) :: typmod(2)
     aster_logical :: matsym, shb6, shb8, hexa
     real(kind=8) :: angmas(3)
 !
 ! ......................................................................
-!
-    parameter(fami='RIGI')
-    parameter(ndim=3)
 !
     icontp=1
     ivarip=1

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ subroutine pjecou(ma1, ma2, nomgma, nomgno, corres)
     character(len=16) :: nomgma, nomgno, corres
 ! ======================================================================
 ! ======================================================================
-    integer :: iret, itypma, ndim, nbpg, ib, flag, ibt(20)
+    integer :: iret, itypma, ndim, nbpg, ib, ib2, flag, ibt(20)
     integer :: nodegl, inol, ino2, mailrf, nbpgrf
     integer :: inog2, ii, ima1, ima, inom1, inom2, inom3
     integer :: nbmag1, nbnog2, nbnog
@@ -135,7 +135,7 @@ subroutine pjecou(ma1, ma2, nomgma, nomgno, corres)
             elref(1:2)=ntypma(1:2)
             elref(3:3)=ntypma(ii:ii)
             elref(4:8)='     '
-            call elraca(elref, ndim, nbpg, ib, ib,&
+            call elraca(elref, ndim, nbpg, ib, ib2,&
                         cbt, ibt, crrefe, rbid)
 !
 !         CAS OU LA MAILLE EST LINEIQUE (SEG)
