@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 subroutine res2mat(resu, inst, chmat, nommat, mu, ka, lvarc, varcns, cplan)
 !
 ! person_in_charge: samuel.geniaut at edf.fr
-! aslint: disable=W1504
     implicit none
 !
 #include "asterf_types.h"
@@ -49,7 +48,7 @@ subroutine res2mat(resu, inst, chmat, nommat, mu, ka, lvarc, varcns, cplan)
 !           DANS UN CONCEPT RESULTAT
 !   IN:
 !      * RESU  : CHAMP RESULTAT ASTER
-!   OUT: 
+!   OUT:
 !      * CHMAT : CHAMP MATERIAU ASTER
 !      * MU    : PARAMETRE MATERIAU ELASTIQUE (OPT.)
 !      * KA    : PARAMETRE MATERIAU ELASTIQUE (OPT.)
@@ -73,7 +72,7 @@ subroutine res2mat(resu, inst, chmat, nommat, mu, ka, lvarc, varcns, cplan)
     if (present(lvarc)) lvarc=.false.
     chmat=' '
     cplan2 =.false.
-!    
+!
     call dismoi('CHAM_MATER', resu(1:8), 'RESULTAT', repk=chmat)
     call dismoi('NOM_MODELE', resu, 'RESULTAT', repk=model)
     call dismoi('DIM_GEOM', model, 'MODELE', repi=ndim)
@@ -103,14 +102,14 @@ subroutine res2mat(resu, inst, chmat, nommat, mu, ka, lvarc, varcns, cplan)
           call codent(irc,'D0',k6)
           exit
         endif
-      enddo 
+      enddo
       if (k6.ne.' ') exit
 10    continue
     enddo
 !   SI ON NE TROUVE PAS DE MATER ELAS :: SORTIE
 !   ATTENTION : L EXTRACTION DES PARAMETRES ELESTIQUES EST DOUTEUSE
 !               EN PRESENCE DE VARIABLES DE COMMANDE MATERIAU
-!               IL CONVIENT DE CHOISIR LA BONNE VARIABLE DE COMMANDE SINON 
+!               IL CONVIENT DE CHOISIR LA BONNE VARIABLE DE COMMANDE SINON
 !               RISQUE DE RESU FAUX !!!
     ASSERT(k6.ne.' ')
     call jeveuo(nommatz//'.CPT.'//k6//'.VALK', 'L', jvalk)
@@ -133,7 +132,7 @@ subroutine res2mat(resu, inst, chmat, nommat, mu, ka, lvarc, varcns, cplan)
 !     DE COMMANDE
     call dismoi('EXI_VARC', chmat, 'CHAM_MATER', repk=is_varc)
     if (is_varc.eq.'OUI') then
-      ASSERT(present(lvarc)) 
+      ASSERT(present(lvarc))
       lvarc=.true.
       call jeexin(chmat(1:8)//'.CVRCVARC', iret)
       ASSERT( iret .gt. 0 )
@@ -159,7 +158,7 @@ subroutine res2mat(resu, inst, chmat, nommat, mu, ka, lvarc, varcns, cplan)
     mu2 = e/(2.d0*(1.d0+nu))
     if (cplan2) ka2=(3.d0-nu)/(1.d0+nu)
 !
-99  continue   
+99  continue
 !
 !   ECRITURES ET SORTIE
     if (present(mu)) mu=mu2

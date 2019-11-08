@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 subroutine te0565(nomopt, nomte)
 !
-! aslint: disable=W0104
     implicit none
 !
 !     BUTS: .CALCUL DE L'ENERGIES DE DEFORMATION ELASTIQUE - CAS X-FEM
@@ -309,7 +308,7 @@ subroutine te0565(nomopt, nomte)
             idebv = nbvari * idecpg
 
 !     --- TENSEUR DES CONTRAINTES AU POINT D'INTEGRATION COURANT :
-! 
+!
             do i = 1, nbsig
                 sigma(i) = zr(idsig+idebs+(kpg-1)*nbsig+i-1)
             enddo

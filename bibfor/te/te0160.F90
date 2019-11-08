@@ -29,7 +29,6 @@ subroutine te0160(option, nomte)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! aslint: disable=W0104
     implicit none
     character(len=16) :: option, nomte
 !
