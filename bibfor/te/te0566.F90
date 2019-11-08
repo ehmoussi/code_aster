@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine te0566(nomopt, nomte)
-! aslint: disable=W0104
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -88,7 +87,7 @@ subroutine te0566(nomopt, nomte)
     call jevech('PLSN', 'L', jlsn)
     call jevech('PLST', 'L', jlst)
     if (nfh.gt.0) call jevech('PHEA_NO', 'L', jheavn)
-    if (nfe.gt.0) then 
+    if (nfe.gt.0) then
        call jevech('PSTANO', 'L', jstno)
        call jevech('PMATERC', 'L', imate)
        call jevech('PGEOMER', 'L', igeom)
@@ -149,10 +148,10 @@ subroutine te0566(nomopt, nomte)
        do ifiss = 1, nfiss
            he(ifiss) = zi(jheavt - 1 + ncomp*(ifiss - 1) + ise)
        end do
-!                   
+!
 !       CALCUL DE L IDENTIFIANT DU SS ELEMENT
        hea_se=xcalc_code(nfiss, he_inte=[he])
-!                   
+!
 !       BOUCLE SUR LES POINTS DE GAUSS
        do kpg = 1, nspg
 !         calcul de l'indice du point de Gauss courant dans la liste des
@@ -165,7 +164,7 @@ subroutine te0566(nomopt, nomte)
           enddo
 !
 !         evaluation des fonctions de forme au point de Gauss courant
-          call elrfvf(elrefp, xg, nbnomx, ff, nnop)         
+          call elrfvf(elrefp, xg, nbnomx, ff, nnop)
 !
 !       FONCTION D'ENRICHISSEMENT AU POINT DE GAUSS ET LEURS DÉRIVÉES
         if (nfe .gt. 0) then
