@@ -18,6 +18,7 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
+# aslint: disable=C4007
 
 """Macro-commande INCLUDE_MATERIAU
 

@@ -1108,8 +1108,9 @@ class Mesh(object):
            if grp[0] == nomma:
               check = 1
         if check == 0:
-           string = "DEFI_GROUP(reuse =" + self.old_mesh.nom + "," + "MAILLAGE = " + self.old_mesh.nom +", CREA_GROUP_NO=(_F(GROUP_MA =" + nomma + "),),);"
-           exec(self.old_mesh.nom + string)
+           DEFI_GROUP(reuse=self.old_mesh,
+                      MAILLAGE=self.old_mesh,
+                      CREA_GROUP_NO=(_F(GROUP_MA=nomma),),)
 
     def __set_list_supermaille(self, MacroElem):
         """Build a set of supermeshes"""
