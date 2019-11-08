@@ -134,11 +134,6 @@ La normale que vous avez prédéfinie par (VECT_* = 'VECT_Y') sur la maille %(k1
 Utilisez plutôt VECT_* = 'FIXE'
 """),
 
-    44 : _("""
-La normale que vous avez choisie NORMALE='ESCL'/'MAIT_ESCL' n'est pas prévue pour des calculs parallèles. Il
-faut utiliser l'option par défaut NORMALE='MAIT' ou changer de surface maître/esclave. 
-"""),
-
     45 : _("""
 Pour les formulations discrètes et unilatérales, il faut utiliser la méthode de distribution centralisée 
 "DISTRIBUTION=_F(METHODE='CENTRALISE')" dans AFFE_MODELE. 

@@ -28,7 +28,7 @@ waf install -p
 
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
-YAMMROOT = ASTER_ROOT + '/public/default'
+YAMMROOT = os.environ['ROOT_SALOME']
 
 import official_programs
 

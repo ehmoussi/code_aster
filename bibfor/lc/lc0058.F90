@@ -227,8 +227,6 @@ integer, intent(out) :: codret
 ! - Call MFront
 !
     pnewdt = 1.d0
-    WRITE(6,*) 'PREDEF: ',BEHinteg%exte%predef(1:8),BEHinteg%exte%dpred(1:8)
-    WRITE(6,*) 'STRAN: ',stran(1:6),dstran(1:6)
     if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
         call dcopy(nsig, sigm, 1, sigp, 1)
         call dscal(3, usrac2, sigp(4), 1)
