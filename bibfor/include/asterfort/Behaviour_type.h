@@ -151,6 +151,7 @@
 #define ZALPHPUR  29
 #define ZALPHBET  30
 #define TIME      31
+#define TEMPREFE  32
 !
 ! Slots: for THM parameters
 !
