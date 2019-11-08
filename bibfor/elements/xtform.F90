@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ subroutine xtform(ndim, typmae, typmam, typmac, nne,&
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: ibid
+    integer :: ibid, ibid2
 !
 ! ----------------------------------------------------------------------
 !
@@ -69,15 +69,15 @@ subroutine xtform(ndim, typmae, typmam, typmac, nne,&
 ! --- L'ELEMENT DE CONTACT
 !
     call elrfdf(typmac, coorc, nnc*ndim, dffc, ibid,&
-                ibid)
+                ibid2)
 !
 ! --- FONCTIONS DE FORMES DU POINTS DE CONTACT DANS L'ELEMENT PARENT
 !
-    call elrfvf(typmae, coore, nne, ffe, nne)
+    call elrfvf(typmae, coore, nne, ffe, ibid)
 !
 ! --- FONCTIONS DE FORMES DE LA PROJ DU PT DE CONTACT DANS L'ELE PARENT
 !
-    if (nnm .ne. 0) call elrfvf(typmam, coorm, nnm, ffm, nnm)
+    if (nnm .ne. 0) call elrfvf(typmam, coorm, nnm, ffm, ibid)
 !
 !
 end subroutine

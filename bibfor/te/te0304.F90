@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ subroutine te0304(option, nomte)
 !====
 !
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfdx,jgano=jgano)
+                     npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfdx,jgano=jgano)
     idfdy = idfdx + 1
 !
 !====
@@ -71,39 +71,39 @@ subroutine te0304(option, nomte)
     nompar(2) = 'Y'
     nompar(3) = 'Z'
     nompar(4) = 'INST'
-    do 10 i = 1, 2*nno
+    do i = 1, 2*nno
         zr(ivectt+i-1) = 0.0d0
-10  end do
+    end do
 !
 !    CALCUL DES PRODUITS VECTORIELS OMI * OMJ
 !
-    do 1 ino = 1, nno
+    do ino = 1, nno
         i = igeom + 3*(ino-1) -1
-        do 2 jno = 1, nno
+        do jno = 1, nno
             j = igeom + 3*(jno-1) -1
             sx(ino,jno) = zr(i+2) * zr(j+3) - zr(i+3) * zr(j+2)
             sy(ino,jno) = zr(i+3) * zr(j+1) - zr(i+1) * zr(j+3)
             sz(ino,jno) = zr(i+1) * zr(j+2) - zr(i+2) * zr(j+1)
- 2      continue
- 1  end do
+        end do
+    end do
 !
 !====
 ! 2. CALCULS TERMES DE MASSE
 !====
 !    BOUCLE SUR LES POINTS DE GAUSS
 !
-    do 101 ipg = 1, npg1
+    do ipg = 1, npg1
         kdec = (ipg-1)*nno*ndim
         ldec = (ipg-1)*nno
 !    CALCUL DE HECHP
         xx = 0.d0
         yy = 0.d0
         zz = 0.d0
-        do 202 i = 1, nno
+        do i = 1, nno
             xx = xx + zr(igeom+3*i-3) * zr(ivf+ldec+i-1)
             yy = yy + zr(igeom+3*i-2) * zr(ivf+ldec+i-1)
             zz = zz + zr(igeom+3*i-1) * zr(ivf+ldec+i-1)
-202      continue
+        end do
         valpar(1) = xx
         valpar(2) = yy
         valpar(3) = zz
@@ -137,6 +137,6 @@ subroutine te0304(option, nomte)
                              &* (1.0d0-theta)*tem
             zr(ivectt+nno+i-1) = zr(ivectt+nno+i-1) - jac * hechp * zr(ipoids+ipg-1) * zr(ivf+lde&
                                  &c+i-1) * (1.0d0-theta)*tem
-103     end do
-101  end do
+        end do
+    end do
 end subroutine

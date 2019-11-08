@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -143,7 +143,7 @@ subroutine te0519(option, nomte)
 !
 ! --- CALCUL DES FONCTIONS DE FORMES DU POINT D'INTERSECTION
 !
-            call elrfvf(elref, ptref, nno, ff, nno)
+            call elrfvf(elref, ptref, nno, ff, ibid)
 !
             if (nfe .gt. 0) then
               call xkamat(zi(imate), ndim, axi, ka, mu)
@@ -184,7 +184,7 @@ subroutine te0519(option, nomte)
                     nfh)+alp)
                     deple(j)=deple(j)+fk_escl(i,alp,j)*zr(jdepl-1+in+ndim*(1+&
                     nfh)+alp)
-                  enddo   
+                  enddo
 240              continue
 210          continue
 !
