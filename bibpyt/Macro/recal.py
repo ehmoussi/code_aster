@@ -24,6 +24,8 @@
 #  Utilisable en mode EXTERNE, voir les flags avec "python recal.py -h"
 #___________________________________________________________________________
 
+# MACR_RECAL is on the next deprecations list!
+# aslint: disable=C4007
 
 import os
 import sys
@@ -600,7 +602,8 @@ class CALCULS_ASTER:
             # ----------------------------------------------------------------------------
             for nompara in list_params:
                 valpara = params[nompara]
-                exec( "%s=%s" % (nompara, valpara) )    #  YOUN__ = X0[0], DSDE__ = X0[1], ...
+                #  YOUN__ = X0[0], DSDE__ = X0[1], ...
+                locals()[nompara] = valpara
 
             # ----------------------------------------------------------------------------
             # Affichage des parametres du calcul courant
