@@ -18,7 +18,6 @@
 
 !
 !
-! aslint: disable=W1504
 !
 interface
     subroutine lc7048(BEHinteg,&
