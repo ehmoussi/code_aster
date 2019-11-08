@@ -40,8 +40,6 @@ subroutine op0045()
 !-----------------------------------------------------------------------
 ! person_in_charge: olivier.boiteau at edf.fr
     implicit none
-! aslint: disable=W1304,W1501
-!
 !
 ! --- INCLUDES DE MODE_ITER_SIMULT
 !
@@ -108,7 +106,7 @@ subroutine op0045()
 ! --------------------------------------------------------------------------------------------------
 ! --- ETAPES 1: PREPARATION DU CALCUL MODAL
 ! --------------------------------------------------------------------------------------------------
-! --  ETAPE 1.1: TRAITEMENTS NUMERIQUES (SOLVEUR LINEAIRE, LAGRANGE, MODES RIGIDES, 
+! --  ETAPE 1.1: TRAITEMENTS NUMERIQUES (SOLVEUR LINEAIRE, LAGRANGE, MODES RIGIDES,
 ! --             BORNES DE TRAVAIL EFFECTIVES, CALCUL DU NOMBRE DE MODES, FACTO. MATRICE SHIFTEE
 ! --             DETERMINATION TAILLE DE L'ESPACE DE PROJECTION)
     call vpini1(eigsol, modes, solveu, typcon, vecblo,&

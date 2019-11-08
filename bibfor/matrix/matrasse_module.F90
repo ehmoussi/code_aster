@@ -25,7 +25,7 @@ module matrasse_module
 !
 !
 ! because the pointer is a result
-! aslint: disable=C1310,W1304
+! aslint: disable=C1310
 !
 implicit none
 private
@@ -48,12 +48,12 @@ private
     !
     ! This function returns the number of degrees of freedom
     ! with a selected type (physical_dof or lagrange1_dof or lagrange2_dof)
-    ! in a matrasse 
+    ! in a matrasse
     function get_num_of_dofs(type_dof, matass) result( ndof )
       ! Dummy arguments
     integer, intent(in)                     :: type_dof
     character(len=19), intent(in)           :: matass
-    integer                                 :: ndof 
+    integer                                 :: ndof
     ! Local variables
     character(len=14) :: nonu
     integer, dimension(:), pointer :: delg => null()
@@ -95,7 +95,7 @@ private
     ! Dummy arguments
     integer, intent(in)                     :: type_dof
     character(len=19), intent(in)           :: matass
-    integer,dimension(:), pointer           :: idof 
+    integer,dimension(:), pointer           :: idof
     ! Local variables
     character(len=14) :: nonu
     integer, dimension(:), pointer :: delg => null()

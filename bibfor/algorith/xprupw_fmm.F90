@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ subroutine xprupw_fmm(cmnd, noma, vcn, grlr,&
                   grlt, isozro, nodtor,eletor, liggrd,&
                   vpoint , cnsbl ,deltat ,cnsbet ,listp, nbrinit)
 !
-! aslint: disable=W1504
    implicit none
 !
 #include "jeveux.h"

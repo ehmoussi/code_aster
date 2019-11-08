@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,9 @@
 ! --------------------------------------------------------------------
 
 subroutine nmvend(fami, kpg, ksp, materd, materf,&
-                  nmat, dt1, deps, sigm,&
-                  vim, ndim, crit, dammax, etatf,&
-                  p, np, beta, nb, iter,&
-                  ier)
-! aslint: disable=W1304,W1504
+                  nmat, dt1, deps, sigm, vim, &
+                  ndim, crit, dammax, etatf, p, &
+                  np, beta, nb, iter, ier)
     implicit none
 !
 #include "asterc/r8miem.h"

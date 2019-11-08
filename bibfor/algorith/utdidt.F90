@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,6 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1501
 !
 subroutine utdidt(getset, sddisc, ques_type, question, index_, &
                   valr_ , vali_ , valk_    )
@@ -63,9 +62,9 @@ character(len=*), intent(inout), optional :: valk_
     real(kind=8), pointer :: v_sddisc_linf(:) => null()
     character(len=24) :: sddisc_eevr
     real(kind=8), pointer :: v_sddisc_eevr(:) => null()
-    character(len=24) :: sddisc_eevk        
+    character(len=24) :: sddisc_eevk
     character(len=16), pointer :: v_sddisc_eevk(:) => null()
-    character(len=24) :: sddisc_esur    
+    character(len=24) :: sddisc_esur
     real(kind=8), pointer :: v_sddisc_esur(:) => null()
     character(len=24) :: sddisc_epil
     integer, pointer :: v_sddisc_epil(:) => null()
@@ -489,5 +488,5 @@ character(len=*), intent(inout), optional :: valk_
     if (present(valk_)) then
         valk_ = valk
     endif
-!        
+!
 end subroutine
