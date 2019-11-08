@@ -18,7 +18,6 @@
 
 !
 !
-! aslint: disable=W1504
 !
 interface
     subroutine lc7049(BEHinteg,&
@@ -28,7 +27,7 @@ interface
                       sigp, vip, typmod, icomp,&
                       nvi, dsidep, codret)
         use Behaviour_type
-        type(Behaviour_Integ), intent(inout) :: BEHinteg 
+        type(Behaviour_Integ), intent(inout) :: BEHinteg
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
         integer, intent(in) :: ksp
