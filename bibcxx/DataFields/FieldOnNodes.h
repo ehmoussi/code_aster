@@ -208,7 +208,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
     };
 
     /**
-     * @brief Get support mesh
+     * @brief Get mesh
      */
     BaseMeshPtr getMesh() const
     {
@@ -218,7 +218,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
     bool printMedFile( const std::string fileName ) const ;
 
     /**
-     * @brief Set support DOFNumering
+     * @brief Set DOFNumering
      */
     void setDOFNumbering( const BaseDOFNumberingPtr &dofNum ) {
         if ( _dofNum )
@@ -229,7 +229,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
             const auto name1 = _mesh->getName();
             const auto name2 = _dofNum->getModel()->getMesh()->getName();
             if( name1 != name2 )
-                throw std::runtime_error( "Support meshes inconsistents" );
+                throw std::runtime_error( "Meshes inconsistents" );
         }
     };
 
@@ -244,7 +244,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
     };
 
     /**
-     * @brief Set support mesh
+     * @brief Set mesh
      * @param mesh object BaseMeshPtr
      */
     void setMesh( const BaseMeshPtr &mesh ) {
@@ -256,7 +256,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
             const auto name1 = _mesh->getName();
             const auto name2 = _dofNum->getModel()->getMesh()->getName();
             if( name1 != name2 )
-                throw std::runtime_error( "Support meshes inconsistents" );
+                throw std::runtime_error( "Meshes inconsistents" );
         }
     };
 

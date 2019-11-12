@@ -135,8 +135,8 @@ nb_modes_mes = 8
 EP=0.5
 MP=50000.
 
-# le modele support exact correspond a EP=0.5 et MP=50000
-# on peut simuler eventuellement une incertitude sur le modele support
+# le modele exact correspond a EP=0.5 et MP=50000
+# on peut simuler eventuellement une incertitude sur le modele
 #EP=0.48
 #MP=48000.
 

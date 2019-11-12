@@ -85,7 +85,7 @@ class DynamicMacroElementInstance : public DataStructure {
     /** @brief Objet NUME_DDL */
     DOFNumberingPtr _numeDdl;
     /** @brief Mode Meca sur lequel repose le macro emement */
-    MechanicalModeContainerPtr _supportMechanicalMode;
+    MechanicalModeContainerPtr _mechanicalMode;
     /** @brief double rigidity matrix */
     AssemblyMatrixDisplacementDoublePtr _rigidityDMatrix;
     /** @brief complex rigidity matrix */
@@ -138,7 +138,7 @@ class DynamicMacroElementInstance : public DataStructure {
           _maelInerRefe( JeveuxVectorChar24( getName() + ".MAEL_INER_REFE" ) ),
           _maelInterVale( JeveuxVectorDouble( getName() + ".MAEL_INER_VALE" ) ),
           _numeDdl( nullptr ),
-          _supportMechanicalMode( MechanicalModeContainerPtr() ), _rigidityDMatrix( nullptr ),
+          _mechanicalMode( MechanicalModeContainerPtr() ), _rigidityDMatrix( nullptr ),
           _rigidityCMatrix( nullptr ), _massMatrix( nullptr ), _dampingMatrix( nullptr ),
           _impeMatrix( nullptr ), _impeRigiMatrix( nullptr ), _impeMassMatrix( nullptr ),
           _impeAmorMatrix( nullptr ){};
@@ -254,11 +254,11 @@ class DynamicMacroElementInstance : public DataStructure {
     };
 
     /**
-     * @brief Set the support MechanicalModeContainer
+     * @brief Set the MechanicalModeContainer
      * @param mechanicalMode MechanicalModeContainerPtr object
      */
-    bool setSupportMechanicalMode( MechanicalModeContainerPtr &mechanicalMode ) {
-        _supportMechanicalMode = mechanicalMode;
+    bool setMechanicalMode( MechanicalModeContainerPtr &mechanicalMode ) {
+        _mechanicalMode = mechanicalMode;
         return true;
     };
 

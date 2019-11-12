@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe AssemblyMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -178,7 +178,7 @@ class AssemblyMatrixInstance : public DataStructure {
     BaseDOFNumberingPtr getDOFNumbering() const { return _dofNum; };
 
     /**
-     * @brief Get support MaterialOnMesh
+     * @brief Get MaterialOnMesh
      * @return MaterialOnMesh of the first ElementaryMatrix (all others must be the same)
      */
     MaterialOnMeshPtr getMaterialOnMesh() const

@@ -3,7 +3,7 @@
  * @brief Interface python de PrestressingCableDefinition
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -41,7 +41,7 @@ void exportPrestressingCableDefinitionToPython() {
                                    const ModelPtr &, const MaterialOnMeshPtr &,
                                    const ElementaryCharacteristicsPtr & > ) )
         .def( "getModel", &PrestressingCableDefinitionInstance::getModel, R"(
-Return the support Model.
+Return the Model.
 
 Returns:
     *Model*: Model object.

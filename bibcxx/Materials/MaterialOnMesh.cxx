@@ -35,8 +35,8 @@
 
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
                                                 const MeshPtr& mesh ):
-    _supportMesh( mesh ),
-    _supportModel( nullptr ),
+    _mesh( mesh ),
+    _model( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
@@ -52,8 +52,8 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
 
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
                                                 const SkeletonPtr& mesh ):
-    _supportMesh( mesh ),
-    _supportModel( nullptr ),
+    _mesh( mesh ),
+    _model( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
@@ -70,8 +70,8 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
 #ifdef _USE_MPI
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
                                                 const ParallelMeshPtr& mesh ):
-    _supportMesh( mesh ),
-    _supportModel( nullptr ),
+    _mesh( mesh ),
+    _model( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),

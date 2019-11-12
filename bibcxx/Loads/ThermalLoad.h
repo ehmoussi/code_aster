@@ -42,9 +42,9 @@
 class ThermalLoadInstance : public DataStructure {
   private:
     struct TherLoad {
-        /** @brief Modèle support */
-        ModelPtr _supportModel;
-        /** @brief support mesh */
+        /** @brief Modele */
+        ModelPtr _model;
+        /** @brief mesh */
         BaseMeshPtr _mesh;
         /** @brief Vecteur Jeveux '.MODEL.NOMO' */
         JeveuxVectorChar8 _modelName;
@@ -73,7 +73,7 @@ class ThermalLoadInstance : public DataStructure {
 
         /** @brief Constructeur */
         TherLoad( const std::string &name, const ModelPtr &currentModel )
-            : _supportModel( currentModel ), _mesh( _supportModel->getMesh() ),
+            : _model( currentModel ), _mesh( _model->getMesh() ),
               _modelName( name + ".MODEL.NOMO" ), _convection( name + ".CONVE.VALE" ),
               _FEDesc( new FiniteElementDescriptorInstance( name + ".LIGRE", _mesh ) ),
               _cimpo( new PCFieldOnMeshDoubleInstance( name + ".CIMPO", _FEDesc ) ),
@@ -99,8 +99,8 @@ class ThermalLoadInstance : public DataStructure {
     /** @brief Vecteur Jeveux '.TYPE' */
     JeveuxVectorChar8 _type;
     TherLoad _therLoad;
-    /** @brief Modele support */
-    ModelPtr _supportModel;
+    /** @brief Modele */
+    ModelPtr _model;
     /** @brief La SD est-elle vide ? */
     bool _isEmpty;
     listOfLoads _thermalLoads;
@@ -126,7 +126,7 @@ class ThermalLoadInstance : public DataStructure {
      */
     ThermalLoadInstance( const std::string name, const ModelPtr &currentModel )
         : DataStructure( name, 8, "CHAR_THER" ), _therLoad( getName() + ".CHTH", currentModel ),
-          _type( getName() + ".TYPE" ), _supportModel( currentModel ), _isEmpty( true ){};
+          _type( getName() + ".TYPE" ), _model( currentModel ), _isEmpty( true ){};
 
     /**
      * @brief Ajout d'une valeur acoustique imposee sur un groupe de mailles
@@ -135,11 +135,11 @@ class ThermalLoadInstance : public DataStructure {
      * @return Booleen indiquant que tout s'est bien passe
      */
     bool addUnitaryThermalLoad( const UnitaryThermalLoadPtr &toAdd ) {
-        //         if ( ! _supportModel ) throw std::runtime_error( "Support model is not defined"
+        //         if ( ! _model ) throw std::runtime_error( "Model is not defined"
         //         );
-        //         MeshPtr mesh = _supportModel->getMesh();
-        //         if ( ! _supportMesh->hasGroupOfNodes( nameOfGroup ) )
-        //             throw std::runtime_error( nameOfGroup + "not in support mesh" );
+        //         MeshPtr mesh = _model->getMesh();
+        //         if ( ! _mesh->hasGroupOfNodes( nameOfGroup ) )
+        //             throw std::runtime_error( nameOfGroup + "not in mesh" );
         //         throw std::runtime_error( "Not yet implemented" );
         _thermalLoads.push_back( toAdd );
     };
@@ -151,14 +151,14 @@ class ThermalLoadInstance : public DataStructure {
     bool build() ;
 
     /**
-     * @brief Get the support finite element descriptor
+     * @brief Get the finite element descriptor
      */
     FiniteElementDescriptorPtr getFiniteElementDescriptor() const { return _therLoad._FEDesc; };
 
     /**
-     * @brief Get the support model
+     * @brief Get the model
      */
-    ModelPtr getModel() const { return _supportModel; };
+    ModelPtr getModel() const { return _model; };
 };
 
 /**

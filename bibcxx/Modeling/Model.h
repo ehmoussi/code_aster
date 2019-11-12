@@ -102,7 +102,7 @@ class ModelInstance : public DataStructure {
     /** @brief Liste contenant les modelisations ajoutees par l'utilisateur */
     listOfModsAndGrps _modelisations;
     /** @brief Maillage sur lequel repose la modelisation */
-    BaseMeshPtr _supportBaseMesh;
+    BaseMeshPtr _baseMesh;
     /** @brief Maillage sur lequel repose la modelisation */
     ModelPtr _saneModel;
 /**
@@ -110,7 +110,7 @@ class ModelInstance : public DataStructure {
  * @todo a supprimer en templatisant Model etc.
  */
 #ifdef _USE_MPI
-    PartialMeshPtr _supportPartialMesh;
+    PartialMeshPtr PartialMesh;
 #endif /* _USE_MPI */
     /** @brief Méthode de parallélisation du modèle */
     ModelSplitingMethod _splitMethod;
@@ -141,9 +141,9 @@ class ModelInstance : public DataStructure {
         _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
         _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
         _saneModel( nullptr ),
-        _supportBaseMesh( MeshPtr() ), _splitMethod( SubDomain ),
+        _baseMesh( MeshPtr() ), _splitMethod( SubDomain ),
         _graphPartitioner( MetisPartitioner ), _ligrel( new FiniteElementDescriptorInstance(
-                                                    getName() + ".MODELE", _supportBaseMesh ) )
+                                                    getName() + ".MODELE", _baseMesh ) )
     {};
 
     /**
@@ -164,10 +164,10 @@ class ModelInstance : public DataStructure {
      */
     void addModelingOnGroupOfElements( Physics phys, Modelings mod,
                                        std::string nameOfGroup ) {
-        if ( !_supportBaseMesh )
-            throw std::runtime_error( "Support mesh is not defined" );
-        if ( !_supportBaseMesh->hasGroupOfElements( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + " not in support mesh" );
+        if ( !_baseMesh )
+            throw std::runtime_error( "Mesh is not defined" );
+        if ( !_baseMesh->hasGroupOfElements( nameOfGroup ) )
+            throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         _modelisations.push_back(
             listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
@@ -182,10 +182,10 @@ class ModelInstance : public DataStructure {
      */
     void addModelingOnGroupOfNodes( Physics phys, Modelings mod,
                                     std::string nameOfGroup ) {
-        if ( !_supportBaseMesh )
-            throw std::runtime_error( "Support mesh is not defined" );
-        if ( !_supportBaseMesh->hasGroupOfNodes( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + " not in support mesh" );
+        if ( !_baseMesh )
+            throw std::runtime_error( "Mesh is not defined" );
+        if ( !_baseMesh->hasGroupOfNodes( nameOfGroup ) )
+            throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         _modelisations.push_back( listOfModsAndGrpsValue(
             ElementaryModeling( phys, mod ), MeshEntityPtr( new GroupOfNodes( nameOfGroup ) ) ) );
@@ -227,9 +227,9 @@ class ModelInstance : public DataStructure {
 
 #ifdef _USE_MPI
     PartialMeshPtr getPartialMesh() const {
-        if ( ( !_supportPartialMesh ) || _supportPartialMesh->isEmpty() )
-            throw std::runtime_error( "Support mesh of current model is empty" );
-        return _supportPartialMesh;
+        if ( ( !PartialMesh ) || PartialMesh->isEmpty() )
+            throw std::runtime_error( "Mesh of current model is empty" );
+        return PartialMesh;
     };
 #endif /* _USE_MPI */
 
@@ -247,9 +247,9 @@ class ModelInstance : public DataStructure {
     ModelSplitingMethod getSplittingMethod() const { return _splitMethod; };
 
     BaseMeshPtr getMesh() const {
-        if ( ( !_supportBaseMesh ) || _supportBaseMesh->isEmpty() )
-            throw std::runtime_error( "Support mesh of current model is empty" );
-        return _supportBaseMesh;
+        if ( ( !_baseMesh ) || _baseMesh->isEmpty() )
+            throw std::runtime_error( "Mesh of current model is empty" );
+        return _baseMesh;
     };
 
     /**
@@ -280,65 +280,65 @@ class ModelInstance : public DataStructure {
     void setSplittingMethod( ModelSplitingMethod split ) { _splitMethod = split; };
 
     /**
-     * @brief Definition du maillage support
+     * @brief Definition du maillage
      * @param currentMesh objet MeshPtr sur lequel le modele reposera
      */
-    bool setSupportMesh( MeshPtr &currentMesh ) {
+    bool setMesh( MeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-        _supportBaseMesh = currentMesh;
-        _ligrel->setSupportMesh(currentMesh);
+        _baseMesh = currentMesh;
+        _ligrel->setMesh(currentMesh);
         return true;
     };
 
     /**
-     * @brief Definition du maillage support
+     * @brief Definition du maillage
      * @param currentMesh objet SkeletonPtr sur lequel le modele reposera
      */
-    bool setSupportMesh( SkeletonPtr &currentMesh ) {
+    bool setMesh( SkeletonPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Skeleton is empty" );
-        _supportBaseMesh = currentMesh;
+        _baseMesh = currentMesh;
         return true;
     };
 
 /**
- * @brief Definition du maillage support
+ * @brief Definition du maillage
  * @param currentMesh objet MeshPtr sur lequel le modele reposera
  */
 #ifdef _USE_MPI
-    bool setSupportMesh( ParallelMeshPtr &currentMesh ) {
+    bool setMesh( ParallelMeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-        _supportBaseMesh = currentMesh;
-        _ligrel->setSupportMesh(currentMesh);
+        _baseMesh = currentMesh;
+        _ligrel->setMesh(currentMesh);
         return true;
     };
 #endif /* _USE_MPI */
 
 /**
- * @brief Definition du maillage support
+ * @brief Definition du maillage
  * @param currentMesh objet PartialMeshPtr sur lequel le modele reposera
  */
 #ifdef _USE_MPI
-    bool setSupportMesh( PartialMeshPtr &currentMesh ) {
+    bool setMesh( PartialMeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-        _supportBaseMesh = currentMesh;
-        _supportPartialMesh = currentMesh;
-        _ligrel->setSupportMesh(currentMesh);
+        _baseMesh = currentMesh;
+        PartialMesh = currentMesh;
+        _ligrel->setMesh(currentMesh);
         return true;
     };
 #endif /* _USE_MPI */
        /**
-        * @brief Definition du maillage support
+        * @brief Definition du maillage
         * @param currentMesh objet BasePtr sur lequel le modele reposera
         */
-    bool setSupportMesh( BaseMeshPtr &currentMesh ) {
+    bool setMesh( BaseMeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-        _supportBaseMesh = currentMesh;
-        _ligrel->setSupportMesh(currentMesh);
+        _baseMesh = currentMesh;
+        _ligrel->setMesh(currentMesh);
         return true;
     };
 };

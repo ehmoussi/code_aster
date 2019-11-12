@@ -29,13 +29,13 @@ MODT=AFFE_MODELE(MAILLAGE=MAIL,
                  DISTRIBUTION=_F(METHODE='CENTRALISE',),);
 
 #MODT = code_aster.Model()
-#MODT.setSupportMesh(MAIL)
+#MODT.setMesh(MAIL)
 #MODT.addModelingOnAllMesh(code_aster.Physics.Mechanics,code_aster.Modelings.PlaneStrain)
 #MODT.build()
 #MODT.debugPrint()
 
 charCine = code_aster.KinematicsMechanicalLoad()
-charCine.setSupportModel(MODT)
+charCine.setModel(MODT)
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "EncastN")
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 0., "EncastN")
 charCine.build()

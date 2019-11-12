@@ -47,6 +47,6 @@ class ModiModele(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         if "reuse" not in keywords:
-            self._result.setSupportMesh(keywords["MODELE"].getMesh())
+            self._result.setMesh(keywords["MODELE"].getMesh())
 
 MODI_MODELE = ModiModele.run

@@ -38,9 +38,9 @@
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance(
     const ModelPtr &model, const MaterialOnMeshPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
-    : _supportModel( model ), _materialOnMesh( mater ), _linearSolver( BaseLinearSolverPtr() ),
+    : _model( model ), _materialOnMesh( mater ), _linearSolver( BaseLinearSolverPtr() ),
       _timeStep( TimeStepperPtr( new TimeStepperInstance() ) ),
-      _study( new StudyDescriptionInstance( _supportModel, _materialOnMesh, cara ) ) {
+      _study( new StudyDescriptionInstance( _model, _materialOnMesh, cara ) ) {
     _timeStep->setValues( VectorDouble( 1, 0. ) );
 };
 
@@ -59,7 +59,7 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
     // Define the discrete problem
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( _study ) );
 
-    if ( _supportModel->getMesh()->isParallel() ) {
+    if ( _model->getMesh()->isParallel() ) {
         if ( !_linearSolver->isHPCCompliant() )
             throw std::runtime_error( "ParallelMesh not allowed with this linear solver" );
         if ( _linearSolver->getPreconditioning() == SimplePrecisionLdlt )
@@ -67,12 +67,12 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
     }
     // Build the linear solver (sd_solver)
     _linearSolver->_commandName = "MECA_STATIQUE";
-    if( _supportModel->xfemPreconditioningEnable() ) _linearSolver->enableXfem();
+    if( _model->xfemPreconditioningEnable() ) _linearSolver->enableXfem();
     _linearSolver->build();
 
     BaseDOFNumberingPtr dofNum1;
 #ifdef _USE_MPI
-    if ( _supportModel->getMesh()->isParallel() )
+    if ( _model->getMesh()->isParallel() )
         dofNum1 = resultC->getEmptyParallelDOFNumbering();
     else
 #endif /* _USE_MPI */

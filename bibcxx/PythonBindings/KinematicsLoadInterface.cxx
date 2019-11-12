@@ -3,7 +3,7 @@
  * @brief Interface python de KinematicsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -65,7 +65,7 @@ void exportKinematicsLoadToPython() {
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
         .def( "build", &KinematicsLoadInstance::build )
-        .def( "setSupportModel", &KinematicsLoadInstance::setSupportModel );
+        .def( "setModel", &KinematicsLoadInstance::setModel );
 
     class_< KinematicsMechanicalLoadInstance,
             KinematicsMechanicalLoadInstance::KinematicsMechanicalLoadPtr,

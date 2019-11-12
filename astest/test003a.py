@@ -16,7 +16,7 @@ mesh.readMedFile("zzzz255a.mmed")
 
 # Creation of the model
 model = code_aster.Model()
-model.setSupportMesh(mesh)
+model.setMesh(mesh)
 model.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,
                                    code_aster.Modelings.Tridimensional,"ALL")
 model.build()

@@ -3,7 +3,7 @@
  * @brief Fichier source contenant le source du solveur de mecanique statique
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,7 +31,7 @@
 #include "Supervis/CommandSyntax.h"
 
 StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance()
-    : _supportModel( ModelPtr() ), _materialOnMesh( MaterialOnMeshPtr() ),
+    : _model( ModelPtr() ), _materialOnMesh( MaterialOnMeshPtr() ),
       _loadStepManager( TimeStepManagerPtr() ),
       _nonLinearMethod( NonLinearMethodPtr( new NonLinearMethodInstance() ) ),
       _control( NonLinearControlPtr( new NonLinearControlInstance() ) ),
@@ -50,9 +50,9 @@ StaticNonLinearAnalysisInstance::execute() {
     // Build a dictionnary of keywords/values used to define the command syntax object
     SyntaxMapContainer dict;
 
-    if ( !_supportModel )
-        throw std::runtime_error( "Support model is undefined" );
-    dict.container["MODELE"] = _supportModel->getName();
+    if ( !_model )
+        throw std::runtime_error( "Model is undefined" );
+    dict.container["MODELE"] = _model->getName();
 
     if ( !_materialOnMesh )
         throw std::runtime_error( "MaterialOnMesh is undefined" );
@@ -136,7 +136,7 @@ StaticNonLinearAnalysisInstance::execute() {
     }
     // Return result
     //    resultSNL->debugPrint(6);
-    resultSNL->appendModelOnAllRanks( _supportModel );
+    resultSNL->appendModelOnAllRanks( _model );
     resultSNL->update();
     return resultSNL;
 };

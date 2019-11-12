@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -85,7 +85,7 @@ MODMESU=EXTR_MODE(FILTRE_MODE=_F(MODE=MODMtmp,
 # CREATION MODELE SUPPORT
 #************************
 
-# Le modele support doit etre cree AVEC LA MODIFICATION, pour bien
+# Le modele doit etre cree AVEC LA MODIFICATION, pour bien
 # prendre en compte la rigidification apportee par celle-ci dans le
 # calcul des RELEVES STATIQUES a l'interface. La modification est
 # prise en compte en utilisant un materiau different la ou elle est
@@ -257,9 +257,9 @@ BAMOSTRU=DEFI_BASE_MODALE(RITZ=_F( MODE_MECA = MODEET),
 ##                         )
 
 # Les matrices projetees PHI^T.M.PHI et PHI^T.K.PHI sont basees sur
-# des matrices Met K fausses, car le modele support peut etre faux.
+# des matrices Met K fausses, car le modele peut etre faux.
 # On cree un macr_elem contenant les valeurs modales identifiees.
-# RECUPERATION AUTOMATIQUE DES PARAMETRES : 
+# RECUPERATION AUTOMATIQUE DES PARAMETRES :
 ##freq = MODMESU.LIST_PARA()['FREQ']
 ##amor = MODMESU.LIST_PARA()['AMOR_REDUIT']
 ##mass = MODMESU.LIST_PARA()['MASS_GENE']

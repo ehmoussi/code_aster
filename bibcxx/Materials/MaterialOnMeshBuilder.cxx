@@ -37,11 +37,11 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMa
 {
     SyntaxMapContainer dict;
 
-    if ( !curMater._supportMesh )
-        throw std::runtime_error( "Support mesh is undefined" );
-    dict.container["MAILLAGE"] = curMater._supportMesh->getName();
-    if( curMater._supportModel )
-        dict.container["MODELE"] = curMater._supportModel->getName();
+    if ( !curMater._mesh )
+        throw std::runtime_error( "Mesh is undefined" );
+    dict.container["MAILLAGE"] = curMater._mesh->getName();
+    if( curMater._model )
+        dict.container["MODELE"] = curMater._model->getName();
 
     ListSyntaxMapContainer listeAFFE;
     for ( auto &curIter : curMater._materialsOnMeshEntity ) {

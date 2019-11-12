@@ -3,7 +3,7 @@
  * @brief Implementation de DOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+ *   Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
  *   This file is part of code_aster.
  *
  *   code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string &type,
       _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
       _dofDescription( new FieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
       _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
-      _supportModel( ModelPtr( nullptr ) ),
+      _model( ModelPtr( nullptr ) ),
       _listOfLoads( new ListOfLoadsInstance() ),
       _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
       _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
@@ -58,7 +58,7 @@ BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name, cons
       _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
       _dofDescription( new FieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
       _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
-      _supportModel( ModelPtr( nullptr ) ),
+      _model( ModelPtr( nullptr ) ),
       _listOfLoads( new ListOfLoadsInstance() ),
       _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
       _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
@@ -66,10 +66,10 @@ BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name, cons
 
 bool BaseDOFNumberingInstance::computeNumbering()
 {
-    if ( _supportModel )
+    if ( _model )
     {
-        if ( _supportModel->isEmpty() )
-            throw std::runtime_error( "Support Model is empty" );
+        if ( _model->isEmpty() )
+            throw std::runtime_error( "Model is empty" );
 
         _listOfLoads->build();
         JeveuxVectorChar24 jvListOfLoads = _listOfLoads->getListVector();
@@ -78,10 +78,10 @@ bool BaseDOFNumberingInstance::computeNumbering()
 
         const std::string base( "VG" );
         const std::string null( " " );
-        CALLO_NUMERO_WRAP( getName(), base, null, null, _supportModel->getName(),
+        CALLO_NUMERO_WRAP( getName(), base, null, null, _model->getName(),
                            _listOfLoads->getName() );
     }
-    else if ( _supportMatrix.size() != 0 )
+    else if ( _matrix.size() != 0 )
     {
         CommandSyntax cmdSt( "NUME_DDL" );
         cmdSt.setResult( getName(), getType() );
@@ -89,7 +89,7 @@ bool BaseDOFNumberingInstance::computeNumbering()
         SyntaxMapContainer dict;
 
         VectorString names;
-        for( const auto& mat : _supportMatrix )
+        for( const auto& mat : _matrix )
             names.push_back( boost::apply_visitor( ElementaryMatrixGetName(), mat ) );
         dict.container["MATR_RIGI"] = names;
 
@@ -100,7 +100,7 @@ bool BaseDOFNumberingInstance::computeNumbering()
         CALL_EXECOP( &op );
     }
     else
-        throw std::runtime_error( "No support matrix or support model defined" );
+        throw std::runtime_error( "No matrix or model defined" );
     _isEmpty = false;
 
     return true;

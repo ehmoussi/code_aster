@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -57,7 +57,7 @@ class ComputeElementaryMatrix(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords, changed
                 in place.
         """
-        self._result.setSupportModel(keywords['MODELE'])
+        self._result.setModel(keywords['MODELE'])
         charge = keywords.get("CHARGE")
         if charge is not None:
             for curLoad in charge:

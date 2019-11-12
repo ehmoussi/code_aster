@@ -6,7 +6,7 @@
  * @brief Fichier entete de la class ContactDefinition
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,8 +39,8 @@ class ContactDefinitionInstance : public DataStructure {
   private:
     /** @brief La SD est-elle vide ? */
     bool _isEmpty;
-    /** @brief Modele support */
-    ModelPtr _supportModel;
+    /** @brief Modele */
+    ModelPtr _model;
 
   public:
     /**
@@ -57,7 +57,7 @@ class ContactDefinitionInstance : public DataStructure {
      * @brief Constructeur
      */
     ContactDefinitionInstance( const std::string name )
-        : DataStructure( name, 8, "CHAR_CONTACT" ), _supportModel( ModelPtr() ), _isEmpty( true ){};
+        : DataStructure( name, 8, "CHAR_CONTACT" ), _model( ModelPtr() ), _isEmpty( true ){};
 };
 
 /**

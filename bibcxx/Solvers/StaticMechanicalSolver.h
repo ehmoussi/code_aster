@@ -6,7 +6,7 @@
  * @brief Definition of the static mechanical solver
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -57,8 +57,8 @@ class StaticMechanicalSolverInstance : public GenericSolver {
     typedef ListKineLoad::iterator ListParaMechaLoadIter;
 #endif /* _USE_MPI */
 
-    /** @brief Modele support */
-    ModelPtr _supportModel;
+    /** @brief Modele */
+    ModelPtr _model;
     /** @brief Champ de materiau a utiliser */
     MaterialOnMeshPtr _materialOnMesh;
     /** @brief Solveur lineaire */
