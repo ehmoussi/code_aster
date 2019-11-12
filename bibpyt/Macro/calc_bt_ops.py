@@ -52,7 +52,7 @@ def calc_bt_ops(self,
     CREA_CHAMP =  self.get_cmd('CREA_CHAMP')
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
     DETRUIRE = self.get_cmd('DETRUIRE')
-    
+
     RESU_BT = args.get("RESU_BT")
     RESULTAT = args.get("RESULTAT")
     INST = args.get("INST")
@@ -131,7 +131,7 @@ def calc_bt_ops(self,
     __FY = SIGMA_Y
 
     iret, ibid, n_mail = aster.dismoi('NOM_MAILLA', RESULTAT.nom, 'RESULTAT', 'F')
-    __MAIL = RESULTAT.getModel().getSupportMesh()
+    __MAIL = RESULTAT.getModel().getMesh()
     __resu = CALC_CHAMP(
                       CONTRAINTE=('SIGM_ELNO', ),
                       CRITERES=('SIEQ_NOEU', ),

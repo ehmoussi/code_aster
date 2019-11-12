@@ -63,16 +63,16 @@ private:
     JeveuxVector<ValueType>   _acceleration;
     /** @brief si résulte d'un proj_mesu_modal */
     ProjMesuPtr               _projM;
-    /** @brief Support Generalized DOFNumbering */
+    /** @brief Generalized DOFNumbering */
     GeneralizedDOFNumberingPtr _genDOFNum;
-    /** @brief Support DOFNumbering */
+    /** @brief DOFNumbering */
     DOFNumberingPtr _DOFNum;
 public:
     /**
      * @brief Constructeur
      */
     GeneralizedResultsContainerInstance( const std::string &name, const std::string &resuTyp ):
-        DataStructure( name, 19, resuTyp ), 
+        DataStructure( name, 19, resuTyp ),
         _index( new DynamicResultsIndexingInstance( getName(), resuTyp )),
         _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
         _abscissasOfSamples( JeveuxVectorDouble( getName() +".DISC"  ) ),
@@ -85,7 +85,7 @@ public:
         _DOFNum( nullptr )
     {};
 
-    GeneralizedResultsContainerInstance( const std::string &resuTyp ): 
+    GeneralizedResultsContainerInstance( const std::string &resuTyp ):
         GeneralizedResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp )
     {};
 
@@ -124,7 +124,7 @@ typedef GeneralizedResultsContainerInstance< DoubleComplex >
 typedef boost::shared_ptr< GeneralizedResultsContainerComplexInstance >
     GeneralizedResultsContainerComplexPtr;
 
-class NonLinearDescriptor 
+class NonLinearDescriptor
 {
     private:
     /** @brief Vecteur Jeveux '.NL.TYPE' */
@@ -135,7 +135,7 @@ class NonLinearDescriptor
     JeveuxVectorLong            _vIndi;
     /** @brief Vecteur Jeveux '.NL.INTI */
     JeveuxVectorChar24          _vInti;
-    public: 
+    public:
     /**
      * @brief Constructeur
     */
@@ -196,7 +196,7 @@ public:
         _ipsd( JeveuxVectorLong( getName() + ".IPSD" ) )
     {};
 
-   
+
 };
 typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance >
     TransientGeneralizedResultsContainerPtr;
@@ -210,7 +210,7 @@ typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance >
 class HarmoGeneralizedResultsContainerInstance: public GeneralizedResultsContainerComplexInstance
 {
 private:
-   
+
 
 public:
     /**

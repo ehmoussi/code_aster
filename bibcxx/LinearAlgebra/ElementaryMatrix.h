@@ -50,9 +50,9 @@ protected:
     JeveuxVectorChar24 _listOfElementaryResults;
     /** @brief Booleen indiquant si la sd est vide */
     bool _isEmpty;
-    /** @brief Modele support */
-    ModelPtr _supportModel;
-    /** @brief Support MaterialOnMesh */
+    /** @brief Modele */
+    ModelPtr _model;
+    /** @brief MaterialOnMesh */
     MaterialOnMeshPtr _materOnMesh;
     /** @brief Vectors of FiniteElementDescriptor */
     std::vector< FiniteElementDescriptorPtr > _FEDVector;
@@ -68,7 +68,7 @@ protected:
         _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
         _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
         _isEmpty( true ),
-        _supportModel( nullptr ), _materOnMesh( nullptr )
+        _model( nullptr ), _materOnMesh( nullptr )
     {};
 
     /**
@@ -83,12 +83,12 @@ protected:
 public:
     /**
      * @brief Add a FiniteElementDescriptor to elementary matrix
-     * @param FiniteElementDescriptorPtr support FiniteElementDescriptor
+     * @param FiniteElementDescriptorPtr FiniteElementDescriptor
      */
     bool addFiniteElementDescriptor( const FiniteElementDescriptorPtr &curFED ) {
         const auto name = trim( curFED->getName() );
         if ( _FEDNames.find( name ) == _FEDNames.end() ) {
-            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDVector.push_back( _model->getFiniteElementDescriptor() );
             _FEDNames.insert( name );
             return true;
         }
@@ -96,7 +96,7 @@ public:
     };
 
     /**
-     * @brief Get all support FiniteElementDescriptors
+     * @brief Get all FiniteElementDescriptors
      * @return vector of all FiniteElementDescriptors
      */
     std::vector< FiniteElementDescriptorPtr > getFiniteElementDescriptors() { return _FEDVector; };
@@ -113,7 +113,7 @@ public:
     /**
      * @brief Obtenir le modèle de l'étude
      */
-    ModelPtr getModel() const { return _supportModel; };
+    ModelPtr getModel() const { return _model; };
 
     /**
      * @brief Methode permettant de savoir si les matrices elementaires sont vides
@@ -136,15 +136,15 @@ public:
     };
 
     /**
-     * @brief Methode permettant de definir le modele support
-     * @param currentModel Model support de la numerotation
+     * @brief Methode permettant de definir le modele
+     * @param currentModel Modele de la numerotation
      */
-    void setSupportModel( const ModelPtr &currentModel ) {
-        _supportModel = currentModel;
-        auto curFED = _supportModel->getFiniteElementDescriptor();
+    void setModel( const ModelPtr &currentModel ) {
+        _model = currentModel;
+        auto curFED = _model->getFiniteElementDescriptor();
         const auto name = trim( curFED->getName() );
         if ( _FEDNames.find( name ) == _FEDNames.end() ) {
-            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDVector.push_back( _model->getFiniteElementDescriptor() );
             _FEDNames.insert( name );
         }
     };

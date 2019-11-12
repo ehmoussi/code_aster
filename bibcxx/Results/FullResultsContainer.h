@@ -40,7 +40,7 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
   protected:
     /** @brief indexage des résultats de calcul dynamiques */
     DynamicResultsIndexingPtr _index;
-    /** @brief the support DOFNumbering */
+    /** @brief the DOFNumbering */
     DOFNumberingPtr _dofNum;
 
   public:

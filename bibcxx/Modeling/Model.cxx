@@ -39,9 +39,9 @@ SyntaxMapContainer ModelInstance::buildModelingsSyntaxMapContainer() const {
     SyntaxMapContainer dict;
 
     dict.container["VERI_JACOBIEN"] = "OUI";
-    if ( !_supportBaseMesh )
-        throw std::runtime_error( "Support mesh is undefined" );
-    dict.container["MAILLAGE"] = _supportBaseMesh->getName();
+    if ( !_baseMesh )
+        throw std::runtime_error( "Mesh is undefined" );
+    dict.container["MAILLAGE"] = _baseMesh->getName();
 
     ListSyntaxMapContainer listeAFFE;
     for ( listOfModsAndGrpsCIter curIter = _modelisations.begin(); curIter != _modelisations.end();
@@ -84,7 +84,7 @@ bool ModelInstance::buildWithSyntax( SyntaxMapContainer &dict ) {
 
 bool ModelInstance::build() {
     SyntaxMapContainer dict = buildModelingsSyntaxMapContainer();
-    if ( _supportBaseMesh->isParallel() ) {
+    if ( _baseMesh->isParallel() ) {
         ListSyntaxMapContainer listeDISTRIBUTION;
         SyntaxMapContainer dict2;
         dict2.container["METHODE"] = ModelSplitingMethodNames[(int)Centralized];

@@ -49,7 +49,7 @@ class NumberingCreation(ExecuteCommand):
                 in place.
         """
         if 'MODELE' in keywords:
-            self._result.setSupportModel(keywords['MODELE'])
+            self._result.setModel(keywords['MODELE'])
             charge = keywords.get("CHARGE")
             if charge is not None:
                 for curLoad in charge:
@@ -57,7 +57,7 @@ class NumberingCreation(ExecuteCommand):
                     self._result.addFiniteElementDescriptor(curFED)
         else:
             matrRigi = keywords['MATR_RIGI'][0]
-            self._result.setSupportModel(matrRigi.getModel())
+            self._result.setModel(matrRigi.getModel())
             for curFED in matrRigi.getFiniteElementDescriptors():
                 self._result.addFiniteElementDescriptor(curFED)
 

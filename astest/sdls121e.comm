@@ -48,7 +48,7 @@ MODEXP=AFFE_MODELE(MAILLAGE=MAILEXP2,
 
 #
 #---------------------------------------------------------------------
-#                     CARACTERISTIQUES ELEMENTAIRES 
+#                     CARACTERISTIQUES ELEMENTAIRES
 #---------------------------------------------------------------------
 
 CAREXP=AFFE_CARA_ELEM(MODELE=MODEXP,
@@ -59,9 +59,9 @@ CAREXP=AFFE_CARA_ELEM(MODELE=MODEXP,
                                      VALE = MP,),
                                   _F(  GROUP_MA = 'MASS',
                                      CARA = 'K_T_D_N',
-                                     VALE = (0.,0.,0.,),)           
+                                     VALE = (0.,0.,0.,),)
                         ));
-                         
+
 
 #
 
@@ -89,8 +89,8 @@ ASSEMBLAGE(MODELE=MODEXP,
 # CREATION MODELE SUPPORT POUR L'EXPANSION DE LA MESURE
 #********************************
 
-# le modele support exact correspond a EP=0.5, MP=50000 et AM=20000
-# on peut simuler eventuellement une incertitude sur le modele support
+# le modele exact correspond a EP=0.5, MP=50000 et AM=20000
+# on peut simuler eventuellement une incertitude sur le modele
 #EP=0.48
 #MP=48000.
 #AM=20000.
@@ -183,7 +183,7 @@ MAIL2= CREA_MAILLAGE(MAILLAGE=MAIL1,
                                 GROUP_NO = 'NO_MA8'),
                               _F(NOM_GROUP_MA = 'AMO9',
                                 GROUP_NO = 'NO_MA9'),
-                                ),      
+                                ),
                      )
 
 
@@ -199,7 +199,7 @@ MODEL=AFFE_MODELE(MAILLAGE=MAIL2,
 
 #
 #---------------------------------------------------------------------
-#                     CARACTERISTIQUES ELEMENTAIRES 
+#                     CARACTERISTIQUES ELEMENTAIRES
 #---------------------------------------------------------------------
 
 CARA_ELE=AFFE_CARA_ELEM(MODELE=MODEL,
@@ -211,16 +211,16 @@ CARA_ELE=AFFE_CARA_ELEM(MODELE=MODEL,
                                   _F(  GROUP_MA = ('MASS','AMO1','AMO2','AMO3','AMO4',
                                        'AMO5','AMO6','AMO7','AMO8','AMO9',),
                                      CARA = 'K_T_D_N',
-                                     VALE = (0.,0.,0.,),),           
+                                     VALE = (0.,0.,0.,),),
                                   _F(  GROUP_MA = ('MASS','AMO1','AMO2','AMO3','AMO4',
                                        'AMO5','AMO6','AMO7','AMO8','AMO9',),
                                      CARA = 'A_T_D_N',
-                                     VALE = (0.,0.,AM,),)           
+                                     VALE = (0.,0.,AM,),)
                         ),);
-                         
+
 
 #---------------------------------------------------------------------
-#                     CARACTERISTIQUES MATERIAUX 
+#                     CARACTERISTIQUES MATERIAUX
 #---------------------------------------------------------------------
 
 ACIER2=DEFI_MATERIAU(ELAS=_F(E=2.E11,
@@ -254,7 +254,7 @@ ASSEMBLAGE(MODELE=MODEL,
 
 
 #---------------------------------------------------------------------
-#                     RESOLUTION 
+#                     RESOLUTION
 #---------------------------------------------------------------------
 
 #
@@ -327,7 +327,7 @@ t_freq_mes = TFREQ.EXTR_TABLE().Array('NUME_ORDRE','FREQ')
 freq_mes = t_freq_mes[:,1]
 
 # les modes etendus exploites pour le recalage
-l_modes_exploit=(1,2,3,4,5,6,7,8,) 
+l_modes_exploit=(1,2,3,4,5,6,7,8,)
 nbmodes_mes=len(l_modes_exploit)
 
 
@@ -335,7 +335,7 @@ nbmodes_mes=len(l_modes_exploit)
 # EXPANSION MODES MESURES (IDENTIFIES)
 #********************************
 
-# expansion des modes identifies (mesure) sur modele support
+# expansion des modes identifies (mesure) sur modele
 # separation partie reelle - partie imag (d abord pour la base)
 CHMC  = [None]*nbmodes_base
 VR  = [None]*nbmodes_base
@@ -367,7 +367,7 @@ BASER = CREA_RESU(OPERATION='AFFE',
                   MATR_MASS =M_AS_MAS,
                   NOM_CHAM='DEPL',)
 
-unite =80       
+unite =80
 DEFI_FICHIER( UNITE = unite, FICHIER = 'REPE_OUT/mode.pos')
 IMPR_RESU(FORMAT='GMSH',PROC0='NON',
         RESU=_F(RESULTAT=BASER,

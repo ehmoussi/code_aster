@@ -19,7 +19,7 @@ else:
     monMaillage.readMedFile("xxParallelNonlinearMechanics001a.med")
 
 monModel = code_aster.Model()
-monModel.setSupportMesh(monMaillage)
+monModel.setMesh(monMaillage)
 monModel.addModelingOnAllMesh(
     code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 monModel.build()
@@ -35,7 +35,7 @@ affectMat.addMaterialOnAllMesh(acier)
 affectMat.buildWithoutInputVariables()
 
 charMeca1 = code_aster.KinematicsMechanicalLoad()
-charMeca1.setSupportModel(monModel)
+charMeca1.setModel(monModel)
 charMeca1.addImposedMechanicalDOFOnElements(
     code_aster.PhysicalQuantityComponent.Dx, 0., "COTE_B")
 charMeca1.addImposedMechanicalDOFOnElements(
@@ -45,7 +45,7 @@ charMeca1.addImposedMechanicalDOFOnElements(
 charMeca1.build()
 
 charMeca2 = code_aster.KinematicsMechanicalLoad()
-charMeca2.setSupportModel(monModel)
+charMeca2.setModel(monModel)
 charMeca2.addImposedMechanicalDOFOnElements(
     code_aster.PhysicalQuantityComponent.Dy, 0.1, "COTE_H")
 charMeca2.addImposedMechanicalDOFOnElements(
@@ -60,7 +60,7 @@ monSolver.setPreconditioning(code_aster.Preconditioning.Ml)
 statNonLine = code_aster.StaticNonLinearAnalysis()
 statNonLine.addStandardExcitation(charMeca1)
 statNonLine.addStandardExcitation(charMeca2)
-statNonLine.setSupportModel(monModel)
+statNonLine.setModel(monModel)
 statNonLine.setMaterialOnMesh(affectMat)
 statNonLine.setLinearSolver(monSolver)
 

@@ -13,14 +13,14 @@ monMaillage.readMedFile("test001f.mmed")
 
 # Definition du modele Aster
 monModel = code_aster.Model()
-monModel.setSupportMesh(monMaillage)
+monModel.setMesh(monMaillage)
 monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                               code_aster.Modelings.Tridimensional)
 
 monModel.build()
 
 charCine = code_aster.KinematicsMechanicalLoad()
-charCine.setSupportModel(monModel)
+charCine.setModel(monModel)
 charCine.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dx,
                                            0., "Bas")
 test.assertEqual( charCine.getType(), "CHAR_CINE_MECA" )

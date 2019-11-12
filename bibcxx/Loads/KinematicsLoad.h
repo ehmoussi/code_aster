@@ -54,8 +54,8 @@ class KinematicsLoadInstance : public DataStructure {
     /** @typedef Iterateur sur ListDoubleTemp */
     typedef ListDoubleTemp::iterator ListDoubleTempIter;
 
-    /** @brief Modele support */
-    ModelPtr _supportModel;
+    /** @brief Modele */
+    ModelPtr _model;
     /** @brief Listes des valeurs imposees DEPL_R et TEMP_R */
     ListDoubleDisp _listOfDoubleImposedDisplacement;
     ListDoubleTemp _listOfDoubleImposedTemperature;
@@ -90,13 +90,13 @@ class KinematicsLoadInstance : public DataStructure {
     bool build() ;
 
     /**
-     * @brief Definition du modele support
+     * @brief Definition du modele
      * @param currentModel objet Model sur lequel la charge reposera
      */
-    bool setSupportModel( ModelPtr &currentModel ) {
+    bool setModel( ModelPtr &currentModel ) {
         if ( currentModel->isEmpty() )
             throw std::runtime_error( "Model is empty" );
-        _supportModel = currentModel;
+        _model = currentModel;
         return true;
     };
 };
@@ -134,12 +134,12 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
     bool addImposedMechanicalDOFOnElements(
         const PhysicalQuantityComponent &coordinate, const double &value,
         const std::string &nameOfGroup ) {
-        // On verifie que le pointeur vers le modele support ET que le modele lui-meme
+        // On verifie que le pointeur vers le modele ET que le modele lui-meme
         // ne sont pas vides
-        if ( ( !_supportModel ) || _supportModel->isEmpty() )
-            throw std::runtime_error( "The support model is empty" );
-        if ( !_supportModel->getMesh()->hasGroupOfElements( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + " not in support mesh" );
+        if ( ( !_model ) || _model->isEmpty() )
+            throw std::runtime_error( "The model is empty" );
+        if ( !_model->getMesh()->hasGroupOfElements( nameOfGroup ) )
+            throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
         DoubleLoadDisplacement resu( meshEnt, coordinate, value );
@@ -171,12 +171,12 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
     addImposedMechanicalDOFOnNodes( const PhysicalQuantityComponent &coordinate,
                                     const double &value,
                                     const std::string &nameOfGroup ) {
-        // On verifie que le pointeur vers le modele support ET que le modele lui-meme
+        // On verifie que le pointeur vers le modele ET que le modele lui-meme
         // ne sont pas vides
-        if ( ( !_supportModel ) || _supportModel->isEmpty() )
-            throw std::runtime_error( "The support model is empty" );
-        if ( !_supportModel->getMesh()->hasGroupOfNodes( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + " not in support mesh" );
+        if ( ( !_model ) || _model->isEmpty() )
+            throw std::runtime_error( "The model is empty" );
+        if ( !_model->getMesh()->hasGroupOfNodes( nameOfGroup ) )
+            throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
         DoubleLoadDisplacement resu( meshEnt, coordinate, value );
@@ -233,12 +233,12 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
     addImposedThermalDOFOnElements( const PhysicalQuantityComponent &coordinate,
                                     const double &value,
                                     const std::string &nameOfGroup ) {
-        // On verifie que le pointeur vers le modele support ET que le modele lui-meme
+        // On verifie que le pointeur vers le modele ET que le modele lui-meme
         // ne sont pas vides
-        if ( ( !_supportModel ) || _supportModel->isEmpty() )
-            throw std::runtime_error( "The support model is empty" );
-        if ( !_supportModel->getMesh()->hasGroupOfElements( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + " not in support mesh" );
+        if ( ( !_model ) || _model->isEmpty() )
+            throw std::runtime_error( "The model is empty" );
+        if ( !_model->getMesh()->hasGroupOfElements( nameOfGroup ) )
+            throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
         DoubleLoadTemperature resu( meshEnt, coordinate, value );
@@ -269,12 +269,12 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
     bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent &coordinate,
                                       const double &value,
                                       const std::string &nameOfGroup ) {
-        // On verifie que le pointeur vers le modele support ET que le modele lui-meme
+        // On verifie que le pointeur vers le modele ET que le modele lui-meme
         // ne sont pas vides
-        if ( ( !_supportModel ) || _supportModel->isEmpty() )
-            throw std::runtime_error( "The support model is empty" );
-        if ( !_supportModel->getMesh()->hasGroupOfNodes( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + " not in support mesh" );
+        if ( ( !_model ) || _model->isEmpty() )
+            throw std::runtime_error( "The model is empty" );
+        if ( !_model->getMesh()->hasGroupOfNodes( nameOfGroup ) )
+            throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
         DoubleLoadTemperature resu( meshEnt, coordinate, value );
@@ -305,12 +305,12 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
     bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent &coordinate,
                                       const FunctionPtr &function,
                                       const std::string &nameOfGroup ) {
-        // On verifie que le pointeur vers le modele support ET que le modele lui-meme
+        // On verifie que le pointeur vers le modele ET que le modele lui-meme
         // ne sont pas vides
-        if ( ( !_supportModel ) || _supportModel->isEmpty() )
-            throw std::runtime_error( "The support model is empty" );
-        if ( !_supportModel->getMesh()->hasGroupOfNodes( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + " not in support mesh" );
+        if ( ( !_model ) || _model->isEmpty() )
+            throw std::runtime_error( "The model is empty" );
+        if ( !_model->getMesh()->hasGroupOfNodes( nameOfGroup ) )
+            throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
         FunctionLoadTemperature resu( meshEnt, coordinate, function );

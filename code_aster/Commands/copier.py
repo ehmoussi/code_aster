@@ -54,7 +54,7 @@ class Copier(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         if isinstance(self._result, Model):
-            self._result.setSupportMesh(keywords['CONCEPT'].getMesh())
+            self._result.setMesh(keywords['CONCEPT'].getMesh())
 
 
 COPIER = Copier.run

@@ -48,4 +48,4 @@ class ExtendedDOFNumbering(object):
             state (dict): Internal state.
         """
         if state[0] is not None:
-            self.setSupportModel(state[0])
+            self.setModel(state[0])
