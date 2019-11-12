@@ -26,7 +26,7 @@ with test.assertRaises(TypeError):
 
 # Definition du modele Aster
 monModel = code_aster.Model()
-monModel.setSupportMesh(monMaillage)
+monModel.setMesh(monMaillage)
 monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 
 # delete monMaillage and check that the C++ object still exists because

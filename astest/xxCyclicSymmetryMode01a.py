@@ -16,7 +16,7 @@ secteur = code_aster.Mesh()
 secteur.readMedFile("sdlv134a.mmed")
 
 modele = code_aster.Model()
-modele.setSupportMesh(secteur)
+modele.setMesh(secteur)
 modele.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                            code_aster.Modelings.Tridimensional)
 modele.build()
@@ -34,7 +34,7 @@ affeMat.addMaterialOnAllMesh(acier)
 affeMat.buildWithoutInputVariables()
 
 charCine = code_aster.KinematicsMechanicalLoad()
-charCine.setSupportModel(modele)
+charCine.setModel(modele)
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx,
                                         0., ["ENCAS","AXE","Droite","Gauche"])
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy,

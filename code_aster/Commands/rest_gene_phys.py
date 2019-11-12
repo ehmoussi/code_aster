@@ -57,7 +57,7 @@ class RestGenePhys(ExecuteCommand):
             dofNum = resu_gene.getDOFNumbering()
             if dofNum is not None:
                 self._result.setDOFNumbering(dofNum)
-                self._result.appendModelOnAllRanks(dofNum.getSupportModel())
+                self._result.appendModelOnAllRanks(dofNum.getModel())
         elif isinstance(resu_gene, GeneralizedModeContainer):
             matrRigi = resu_gene.getStiffnessMatrix()
             if matrRigi is not None:

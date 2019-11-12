@@ -59,7 +59,7 @@ void exportDynamicMacroElementToPython() {
         .def( "setImpedanceStiffnessMatrix",
               &DynamicMacroElementInstance::setImpedanceStiffnessMatrix )
         .def( "setMassMatrix", &DynamicMacroElementInstance::setMassMatrix )
-        .def( "setSupportMechanicalMode", &DynamicMacroElementInstance::setSupportMechanicalMode )
+        .def( "setMechanicalMode", &DynamicMacroElementInstance::setMechanicalMode )
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 );
 };

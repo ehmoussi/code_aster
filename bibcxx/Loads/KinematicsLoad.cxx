@@ -3,7 +3,7 @@
  * @brief Implementation de KinematicsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,12 +32,12 @@
 
 KinematicsLoadInstance::KinematicsLoadInstance( const std::string &type )
     : DataStructure( ResultNaming::getNewResultName(), 19, "CHAR_CINE" + type ),
-      _supportModel( ModelPtr() ), _intParam( JeveuxVectorLong( getName() + ".AFCI" ) ),
+      _model( ModelPtr() ), _intParam( JeveuxVectorLong( getName() + ".AFCI" ) ),
       _charParam( JeveuxVectorChar8( getName() + ".AFCK" ) ),
       _doubleParam( JeveuxVectorDouble( getName() + ".AFCV" ) ), _isEmpty( true ){};
 
 KinematicsLoadInstance::KinematicsLoadInstance( const std::string &name, const std::string &type )
-    : DataStructure( name, 19, "CHAR_CINE" + type ), _supportModel( ModelPtr() ),
+    : DataStructure( name, 19, "CHAR_CINE" + type ), _model( ModelPtr() ),
       _intParam( JeveuxVectorLong( getName() + ".AFCI" ) ),
       _charParam( JeveuxVectorChar8( getName() + ".AFCK" ) ),
       _doubleParam( JeveuxVectorDouble( getName() + ".AFCV" ) ), _isEmpty( true ){};
@@ -50,9 +50,9 @@ bool KinematicsLoadInstance::build() {
     cmdSt.setResult( ResultNaming::getCurrentName(), getType() );
 
     SyntaxMapContainer dict;
-    if ( !_supportModel )
-        throw std::runtime_error( "Support model is undefined" );
-    dict.container["MODELE"] = _supportModel->getName();
+    if ( !_model )
+        throw std::runtime_error( "Model is undefined" );
+    dict.container["MODELE"] = _model->getName();
 
     // Definition de mot cle facteur MECA_IMPO
     if ( _listOfDoubleImposedDisplacement.size() != 0 ) {

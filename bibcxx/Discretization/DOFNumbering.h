@@ -224,10 +224,10 @@ class BaseDOFNumberingInstance : public DataStructure
     FieldOnNodesDescriptionPtr _dofDescription;
     /** @brief Objet '.NUML' */
     LocalEquationNumberingPtr _localNumbering;
-    /** @brief Modele support */
-    ModelPtr _supportModel;
+    /** @brief Modele */
+    ModelPtr _model;
     /** @brief Matrices elementaires */
-    std::vector< MatrElem > _supportMatrix;
+    std::vector< MatrElem > _matrix;
     /** @brief Chargements */
     ListOfLoadsPtr _listOfLoads;
     /** @brief Objet Jeveux '.SMOS' */
@@ -274,12 +274,12 @@ class BaseDOFNumberingInstance : public DataStructure
 
     /**
      * @brief Add a FiniteElementDescriptor to elementary matrix
-     * @param FiniteElementDescriptorPtr support FiniteElementDescriptor
+     * @param FiniteElementDescriptorPtr FiniteElementDescriptor
      */
     bool addFiniteElementDescriptor( const FiniteElementDescriptorPtr &curFED ) {
         const auto name = trim( curFED->getName() );
         if ( _FEDNames.find( name ) == _FEDNames.end() ) {
-            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDVector.push_back( _model->getFiniteElementDescriptor() );
             _FEDNames.insert( name );
             return true;
         }
@@ -300,12 +300,12 @@ class BaseDOFNumberingInstance : public DataStructure
     bool computeNumbering() ;
 
     /**
-     * @brief Get support FieldOnNodesDescription
+     * @brief Get FieldOnNodesDescription
      */
     FieldOnNodesDescriptionPtr getFieldOnNodesDescription() { return _dofDescription; };
 
     /**
-     * @brief Get all support FiniteElementDescriptors
+     * @brief Get all FiniteElementDescriptors
      * @return vector of all FiniteElementDescriptors
      */
     std::vector< FiniteElementDescriptorPtr > getFiniteElementDescriptors() { return _FEDVector; };
@@ -315,12 +315,12 @@ class BaseDOFNumberingInstance : public DataStructure
      */
     ModelPtr getModel()
     {
-        if( _supportModel != nullptr )
-            return _supportModel;
+        if( _model != nullptr )
+            return _model;
         else
         {
-            if( _supportMatrix.size() != 0 )
-                return boost::apply_visitor( ElementaryMatrixGetModel(), _supportMatrix[0] );
+            if( _matrix.size() != 0 )
+                return boost::apply_visitor( ElementaryMatrixGetModel(), _matrix[0] );
         }
         return ModelPtr( nullptr );
     };
@@ -344,10 +344,10 @@ class BaseDOFNumberingInstance : public DataStructure
     virtual void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
 
     {
-        if ( _supportModel )
+        if ( _model )
             throw std::runtime_error(
                 "It is not allowed to defined Model and ElementaryMatrix together" );
-        _supportMatrix.push_back( currentMatrix );
+        _matrix.push_back( currentMatrix );
     };
 
     /**
@@ -357,10 +357,10 @@ class BaseDOFNumberingInstance : public DataStructure
     virtual void setElementaryMatrix( const ElementaryMatrixDisplacementComplexPtr &currentMatrix )
 
     {
-        if ( _supportModel )
+        if ( _model )
             throw std::runtime_error(
                 "It is not allowed to defined Model and ElementaryMatrix together" );
-        _supportMatrix.push_back( currentMatrix );
+        _matrix.push_back( currentMatrix );
     };
 
     /**
@@ -370,10 +370,10 @@ class BaseDOFNumberingInstance : public DataStructure
     virtual void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
 
     {
-        if ( _supportModel )
+        if ( _model )
             throw std::runtime_error(
                 "It is not allowed to defined Model and ElementaryMatrix together" );
-        _supportMatrix.push_back( currentMatrix );
+        _matrix.push_back( currentMatrix );
     };
 
     /**
@@ -383,10 +383,10 @@ class BaseDOFNumberingInstance : public DataStructure
     virtual void setElementaryMatrix( const ElementaryMatrixPressureComplexPtr &currentMatrix )
 
     {
-        if ( _supportModel )
+        if ( _model )
             throw std::runtime_error(
                 "It is not allowed to defined Model and ElementaryMatrix together" );
-        _supportMatrix.push_back( currentMatrix );
+        _matrix.push_back( currentMatrix );
     };
 
     /**
@@ -396,18 +396,18 @@ class BaseDOFNumberingInstance : public DataStructure
     void setListOfLoads( const ListOfLoadsPtr &currentList ) { _listOfLoads = currentList; };
 
     /**
-     * @brief Methode permettant de definir le modele support
-     * @param currentModel Model support de la numerotation
+     * @brief Methode permettant de definir le modele
+     * @param currentModel Modele de la numerotation
      */
-    virtual void setSupportModel( const ModelPtr &currentModel ) {
-        if ( _supportMatrix.size() != 0 )
+    virtual void setModel( const ModelPtr &currentModel ) {
+        if ( _matrix.size() != 0 )
             throw std::runtime_error(
                 "It is not allowed to defined Model and ElementaryMatrix together" );
-        _supportModel = currentModel;
-        auto curFED = _supportModel->getFiniteElementDescriptor();
+        _model = currentModel;
+        auto curFED = _model->getFiniteElementDescriptor();
         const auto name = trim( curFED->getName() );
         if ( _FEDNames.find( name ) == _FEDNames.end() ) {
-            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDVector.push_back( _model->getFiniteElementDescriptor() );
             _FEDNames.insert( name );
         }
     };
@@ -447,7 +447,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
 
     {
         if ( currentMatrix->getModel()->getMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must not be parallel" );
+            throw std::runtime_error( "Mesh must not be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
 
@@ -459,7 +459,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
 
     {
         if ( currentMatrix->getModel()->getMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must not be parallel" );
+            throw std::runtime_error( "Mesh must not be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
 
@@ -471,7 +471,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
 
     {
         if ( currentMatrix->getModel()->getMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must not be parallel" );
+            throw std::runtime_error( "Mesh must not be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
 
@@ -483,18 +483,18 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
 
     {
         if ( currentMatrix->getModel()->getMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must not be parallel" );
+            throw std::runtime_error( "Mesh must not be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
 
     /**
-     * @brief Methode permettant de definir le modele support
-     * @param currentModel Model support de la numerotation
+     * @brief Methode permettant de definir le modele
+     * @param currentModel Modele de la numerotation
      */
-    void setSupportModel( const ModelPtr &currentModel ) {
+    void setModel( const ModelPtr &currentModel ) {
         if ( currentModel->getMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must not be parallel" );
-        BaseDOFNumberingInstance::setSupportModel( currentModel );
+            throw std::runtime_error( "Mesh must not be parallel" );
+        BaseDOFNumberingInstance::setModel( currentModel );
     };
 };
 

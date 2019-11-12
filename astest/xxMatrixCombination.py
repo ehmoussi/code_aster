@@ -15,7 +15,7 @@ mesh.readMedFile("test001f.mmed")
 
 
 model = code_aster.Model()
-model.setSupportMesh(mesh)
+model.setMesh(mesh)
 model.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 model.build()
 

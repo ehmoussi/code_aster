@@ -41,7 +41,7 @@ void exportElementaryMatrixToPython() {
         .def( "getMaterialOnMesh", &ElementaryMatrixDisplacementDoubleInstance::getMaterialOnMesh )
         .def( "getModel", &ElementaryMatrixDisplacementDoubleInstance::getModel )
         .def( "setMaterialOnMesh", &ElementaryMatrixDisplacementDoubleInstance::setMaterialOnMesh )
-        .def( "setSupportModel", &ElementaryMatrixDisplacementDoubleInstance::setSupportModel );
+        .def( "setModel", &ElementaryMatrixDisplacementDoubleInstance::setModel );
 
     class_< ElementaryMatrixDisplacementDoubleInstance,
             ElementaryMatrixDisplacementDoubleInstance::ElementaryMatrixPtr,

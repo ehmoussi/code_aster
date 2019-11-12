@@ -22,7 +22,7 @@ pMesh.debugPrint(rank+30)
 
 model = code_aster.Model()
 test.assertEqual(model.getType(), "MODELE_SDASTER")
-model.setSupportMesh(pMesh)
+model.setMesh(pMesh)
 model.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                            code_aster.Modelings.Tridimensional)
 model.build()
@@ -45,7 +45,7 @@ affectMat.addMaterialOnAllMesh(acier)
 affectMat.buildWithoutInputVariables()
 
 charCine = code_aster.KinematicsMechanicalLoad()
-charCine.setSupportModel(model)
+charCine.setModel(model)
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "COTE_B")
 charCine.build()
 

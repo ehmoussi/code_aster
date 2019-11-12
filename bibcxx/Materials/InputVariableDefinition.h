@@ -183,7 +183,7 @@ class GenericInputVariableInstance {
         : _mesh( mesh ), _localization( new GroupOfElements( nameOfGroup ) ), _refValue( 0. ),
           _refValueSet( false ) {
         if ( !_mesh->hasGroupOfElements( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + " not in support mesh" );
+            throw std::runtime_error( nameOfGroup + " not in mesh" );
     };
 
     /**
@@ -354,15 +354,15 @@ class InputVariableOnMeshInstance {
     /** @brief Vector of GenericInputVariableInstance */
     VectorOfInputVarAndGrps _inputVars;
     /** @brief Maillage sur lequel repose la sd_cham_mater */
-    BaseMeshPtr _supportMesh;
+    BaseMeshPtr _mesh;
 
   public:
-    InputVariableOnMeshInstance( const MeshPtr &mesh ) : _supportMesh( mesh ){};
+    InputVariableOnMeshInstance( const MeshPtr &mesh ) : _mesh( mesh ){};
 
-    InputVariableOnMeshInstance( const SkeletonPtr &mesh ) : _supportMesh( mesh ){};
+    InputVariableOnMeshInstance( const SkeletonPtr &mesh ) : _mesh( mesh ){};
 
 #ifdef _USE_MPI
-    InputVariableOnMeshInstance( const ParallelMeshPtr &mesh ) : _supportMesh( mesh ){};
+    InputVariableOnMeshInstance( const ParallelMeshPtr &mesh ) : _mesh( mesh ){};
 #endif /* _USE_MPI */
 
     /**
@@ -381,10 +381,10 @@ class InputVariableOnMeshInstance {
     void addInputVariableOnGroupOfElements(
         const InputVariablePtr &curBehav,
         const std::string &nameOfGroup ) {
-        if ( !_supportMesh )
-            throw std::runtime_error( "Support mesh is not defined" );
-        if ( !_supportMesh->hasGroupOfElements( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + "not in support mesh" );
+        if ( !_mesh )
+            throw std::runtime_error( "Mesh is not defined" );
+        if ( !_mesh->hasGroupOfElements( nameOfGroup ) )
+            throw std::runtime_error( nameOfGroup + "not in mesh" );
 
         _inputVars.push_back( VectorOfInputVarAndGrpsValue(
             curBehav, MeshEntityPtr( new GroupOfElements( nameOfGroup ) ) ) );
@@ -396,8 +396,8 @@ class InputVariableOnMeshInstance {
     template < class InputVariablePtr >
     void addInputVariableOnElement( const InputVariablePtr &curBehav,
                                     const std::string &nameOfElement ) {
-        if ( !_supportMesh )
-            throw std::runtime_error( "Support mesh is not defined" );
+        if ( !_mesh )
+            throw std::runtime_error( "Mesh is not defined" );
 
         _inputVars.push_back( VectorOfInputVarAndGrpsValue(
             curBehav, MeshEntityPtr( new Element( nameOfElement ) ) ) );

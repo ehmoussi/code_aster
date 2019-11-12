@@ -141,7 +141,7 @@ ElementaryMatrixDisplacementDoublePtr
     ElementaryMatrixDisplacementDoublePtr
         retour( new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
     ModelPtr curModel = _study->getModel();
-    retour->setSupportModel( curModel );
+    retour->setModel( curModel );
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
     auto compor = curMater->getBehaviourField();
 
@@ -229,7 +229,7 @@ BaseDOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( BaseDOFNumberi
             dofNum = DOFNumberingPtr( new DOFNumberingInstance() );
     }
 
-    dofNum->setSupportModel( _study->getModel() );
+    dofNum->setModel( _study->getModel() );
     dofNum->setListOfLoads( _study->getListOfLoads() );
     dofNum->computeNumbering();
 
@@ -307,7 +307,7 @@ ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::computeMechanical
 {
     ElementaryMatrixDisplacementDoublePtr retour(
          new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
-    retour->setSupportModel( _study->getModel() );
+    retour->setModel( _study->getModel() );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
     CommandSyntax cmdSt( "CALC_MATR_ELEM" );
@@ -333,7 +333,7 @@ ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::computeMechanical
 {
     ElementaryMatrixDisplacementDoublePtr
         retour( new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
-    retour->setSupportModel( rigidity->getModel() );
+    retour->setModel( rigidity->getModel() );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
     CommandSyntax cmdSt( "CALC_MATR_ELEM" );

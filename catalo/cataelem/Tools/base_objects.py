@@ -147,7 +147,7 @@ class MeshType(BaseCataEntity):
         """Store an Elrefe supported by the mesh"""
         key = elrefe.name or len(self._elrefe)
         self._elrefe[key] = elrefe
-        # elrefe.setSupportMeshType(self)
+        # elrefe.setMeshType(self)
 
     def setName(self, name):
         """Define the object name"""

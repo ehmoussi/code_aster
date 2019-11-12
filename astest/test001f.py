@@ -12,7 +12,7 @@ monMaillage = code_aster.Mesh()
 monMaillage.readMedFile( "test001f.mmed" )
 
 monModel = code_aster.Model()
-monModel.setSupportMesh( monMaillage )
+monModel.setMesh( monMaillage )
 monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 monModel.build()
 test.assertEqual( monModel.getType(), "MODELE_SDASTER" )

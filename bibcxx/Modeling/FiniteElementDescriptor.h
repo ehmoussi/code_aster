@@ -145,7 +145,7 @@ public:
         return _mesh;
     };
 
-    void setSupportMesh( const BaseMeshPtr& currentMesh )
+    void setMesh( const BaseMeshPtr& currentMesh )
     {
         _mesh = currentMesh;
     };

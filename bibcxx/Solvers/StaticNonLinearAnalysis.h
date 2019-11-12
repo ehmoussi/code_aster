@@ -63,8 +63,8 @@ class StaticNonLinearAnalysisInstance : public GenericSolver {
     typedef ListLocatedBehaviour::iterator ListLocatedBehaviourIter;
     /** @typedef Constant Iterator on a std::list of LocatedBehaviourPtr */
     typedef ListLocatedBehaviour::const_iterator ListLocatedBehaviourCIter;
-    /** @brief Support model */
-    ModelPtr _supportModel;
+    /** @brief Model */
+    ModelPtr _model;
     /** @brief Material field  */
     MaterialOnMeshPtr _materialOnMesh;
     /** @brief List of excitations */
@@ -107,32 +107,32 @@ class StaticNonLinearAnalysisInstance : public GenericSolver {
     /**
      * @brief Define a Constitutive Law on a MeshEntity
      * @param BehaviourPtr is the constitutive law
-     * @param nameOfGroup is the name of the group defining the support MeshEntity.
+     * @param nameOfGroup is the name of the group defining the MeshEntity.
      * Default value corresponds to set the bahaviour on the whole mesh.
     */
     void addBehaviourOnElements( const BehaviourPtr &behaviour,
                                  std::string nameOfGroup = "" ) {
-        // Check that the pointer to the support model is not empty
-        if ( ( !_supportModel ) || _supportModel->isEmpty() )
+        // Check that the pointer to the model is not empty
+        if ( ( !_model ) || _model->isEmpty() )
             throw std::runtime_error( "Model is empty" );
-        // Define the support Mesh Entity
-        MeshEntityPtr supportMeshEntity;
-        BaseMeshPtr currentMesh = _supportModel->getMesh();
-        // If the support MeshEntity is not given, the behaviour is set on the whole mesh
+        // Define the Mesh Entity
+        MeshEntityPtr meshEntity;
+        BaseMeshPtr currentMesh = _model->getMesh();
+        // If the MeshEntity is not given, the behaviour is set on the whole mesh
         if ( nameOfGroup.size() == 0 ) {
-            supportMeshEntity = MeshEntityPtr( new AllMeshEntities() );
+            meshEntity = MeshEntityPtr( new AllMeshEntities() );
         }
-        // otherwise, if nameOfGroup is the name of a group of elements in the support mesh
+        // otherwise, if nameOfGroup is the name of a group of elements in the mesh
         else if ( currentMesh->hasGroupOfElements( nameOfGroup ) ) {
-            supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+            meshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
         } else
             //  otherwise, throw an exception
             throw std::runtime_error( nameOfGroup + " does not exist in the mesh "
                                                     "or it is not authorized as a localization "
                                                     "of the behaviour " );
-        // Insert the current behaviour with its support Mesh Entity in the list of behaviours
+        // Insert the current behaviour with its Mesh Entity in the list of behaviours
         _listOfBehaviours.push_back(
-            LocatedBehaviourPtr( new LocatedBehaviourInstance( behaviour, supportMeshEntity ) ) );
+            LocatedBehaviourPtr( new LocatedBehaviourInstance( behaviour, meshEntity ) ) );
     };
 
     /**
@@ -160,7 +160,7 @@ class StaticNonLinearAnalysisInstance : public GenericSolver {
      * @brief definition of  the finite element model
      * @param currentModel Model
      */
-    void setSupportModel( const ModelPtr &currentModel ) { _supportModel = currentModel; };
+    void setModel( const ModelPtr &currentModel ) { _model = currentModel; };
 
     /**
      * @brief definition of the load steps

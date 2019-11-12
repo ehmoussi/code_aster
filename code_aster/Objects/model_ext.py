@@ -47,4 +47,4 @@ class ExtendedModel(object):
         Arguments:
             state (dict): Internal state.
         """
-        self.setSupportMesh(state[0])
+        self.setMesh(state[0])

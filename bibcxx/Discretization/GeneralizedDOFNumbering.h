@@ -122,13 +122,13 @@ class GeneralizedDOFNumberingInstance : public DataStructure {
     MorseStoragePtr _smos;
     /** @brief Objet Jeveux '.SLCS' */
     LigneDeCielPtr _slcs;
-    /** @brief support GeneralizedFieldOnNodesDescription */
+    /** @brief GeneralizedFieldOnNodesDescription */
     GeneralizedFieldOnNodesDescriptionPtr _nume;
-    /** @brief support GeneralizedFieldOnNodesDescription */
+    /** @brief GeneralizedFieldOnNodesDescription */
     GeneralizedModelPtr _model;
-    /** @brief support modal basis */
+    /** @brief modal basis */
     ForwardMechanicalModeContainerPtr _basis1;
-    /** @brief support modal basis */
+    /** @brief modal basis */
     ForwardGeneralizedModeContainerPtr _basis2;
 
   public:
@@ -161,12 +161,12 @@ class GeneralizedDOFNumberingInstance : public DataStructure {
     {};
 
     /**
-     * @brief Get the support GeneralizedModel
+     * @brief Get the GeneralizedModel
      */
     GeneralizedModelPtr getGeneralizedModel() const { return _model; };
 
     /**
-     * @brief Get support modal basis
+     * @brief Get modal basis
      */
     GeneralizedModeContainerPtr getModalBasisFromGeneralizedModeContainer()
     {
@@ -176,7 +176,7 @@ class GeneralizedDOFNumberingInstance : public DataStructure {
     };
 
     /**
-     * @brief Get support modal basis
+     * @brief Get modal basis
      */
     MechanicalModeContainerPtr getModalBasisFromMechanicalModeContainer()
     {
@@ -186,7 +186,7 @@ class GeneralizedDOFNumberingInstance : public DataStructure {
     };
 
     /**
-     * @brief Set the support GeneralizedModel
+     * @brief Set the GeneralizedModel
      */
     bool setGeneralizedModel( const GeneralizedModelPtr &model ) {
         _model = model;
@@ -194,7 +194,7 @@ class GeneralizedDOFNumberingInstance : public DataStructure {
     };
 
     /**
-     * @brief Set support modal basis
+     * @brief Set modal basis
      */
     bool setModalBasis( const GeneralizedModeContainerPtr &mecaModeC )
     {
@@ -208,7 +208,7 @@ class GeneralizedDOFNumberingInstance : public DataStructure {
     };
 
     /**
-     * @brief Set support modal basis
+     * @brief Set modal basis
      */
     bool setModalBasis( const MechanicalModeContainerPtr &mecaModeC )
     {

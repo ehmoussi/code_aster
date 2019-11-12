@@ -44,7 +44,7 @@ class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
     GeneralizedAssemblyMatrixDoublePtr _rigidityDoubleMatrix;
     /** @brief Stiffness complex matrix */
     GeneralizedAssemblyMatrixComplexPtr _rigidityComplexMatrix;
-    /** @brief generalized support DOFNumbering */
+    /** @brief generalized DOFNumbering */
     GeneralizedDOFNumberingPtr _genDOFNum;
 
   public:
@@ -64,7 +64,7 @@ class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
         : GeneralizedModeContainerInstance( ResultNaming::getNewResultName() ){};
 
     /**
-     * @brief Get support GeneralizedDOFNumering
+     * @brief Get GeneralizedDOFNumering
      */
     GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() const {
         if ( _genDOFNum != nullptr )
@@ -90,7 +90,7 @@ class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
     };
 
     /**
-     * @brief Set support GeneralizedDOFNumering
+     * @brief Set GeneralizedDOFNumering
      */
     bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr &dofNum ) {
         if ( dofNum != nullptr ) {

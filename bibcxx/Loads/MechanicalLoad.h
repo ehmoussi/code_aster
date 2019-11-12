@@ -77,7 +77,7 @@ template < LoadEnum Load > struct LoadTraits;
 template <> struct LoadTraits< NodalForce > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = false;
     static bool const isAllowedOnGroupOfNodes = true;
@@ -90,7 +90,7 @@ template <> struct LoadTraits< NodalForce > {
 template <> struct LoadTraits< ForceOnFace > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -103,7 +103,7 @@ template <> struct LoadTraits< ForceOnFace > {
 template <> struct LoadTraits< ForceOnEdge > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -116,7 +116,7 @@ template <> struct LoadTraits< ForceOnEdge > {
 template <> struct LoadTraits< LineicForce > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -129,7 +129,7 @@ template <> struct LoadTraits< LineicForce > {
 template <> struct LoadTraits< InternalForce > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -142,7 +142,7 @@ template <> struct LoadTraits< InternalForce > {
 template <> struct LoadTraits< ForceOnBeam > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -156,7 +156,7 @@ template <> struct LoadTraits< ForceOnBeam > {
 template <> struct LoadTraits< ForceOnShell > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -169,7 +169,7 @@ template <> struct LoadTraits< ForceOnShell > {
 template <> struct LoadTraits< PressureOnPipe > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -182,7 +182,7 @@ template <> struct LoadTraits< PressureOnPipe > {
 template <> struct LoadTraits< ImposedDoF > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = true;
@@ -195,7 +195,7 @@ template <> struct LoadTraits< ImposedDoF > {
 template <> struct LoadTraits< DistributedPressure > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -208,7 +208,7 @@ template <> struct LoadTraits< DistributedPressure > {
 template <> struct LoadTraits< ImpedanceOnFace > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -221,7 +221,7 @@ template <> struct LoadTraits< ImpedanceOnFace > {
 template <> struct LoadTraits< NormalSpeedOnFace > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -234,7 +234,7 @@ template <> struct LoadTraits< NormalSpeedOnFace > {
 template <> struct LoadTraits< WavePressureOnFace > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -247,7 +247,7 @@ template <> struct LoadTraits< WavePressureOnFace > {
 template <> struct LoadTraits< THMFlux > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
-    // Authorized support MeshEntity
+    // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
@@ -261,9 +261,9 @@ template <> struct LoadTraits< THMFlux > {
 class GenericMechanicalLoadInstance : public DataStructure {
   public:
     struct MecaLoad {
-        /** @brief Modèle support */
-        ModelPtr _supportModel;
-        /** @brief support mesh */
+        /** @brief Modele */
+        ModelPtr _model;
+        /** @brief mesh */
         BaseMeshPtr _mesh;
         /** @brief Vecteur Jeveux '.TEMPE.TEMP' */
         JeveuxVectorChar8 _temperatureField;
@@ -324,7 +324,7 @@ class GenericMechanicalLoadInstance : public DataStructure {
 
         /** @brief Constructeur */
         MecaLoad( const std::string &name, const ModelPtr &currentModel )
-            : _supportModel( currentModel ), _mesh( _supportModel->getMesh() ),
+            : _model( currentModel ), _mesh( _model->getMesh() ),
               _temperatureField( name + ".TEMPE.TEMP" ), _modelName( name + ".MODEL.NOMO" ),
               _nameOfAssemblyVector( name + ".VEASS" ), _veiss( name + ".VEISS" ),
               _evolChar( name + ".EVOL.CHAR" ),
@@ -358,7 +358,7 @@ class GenericMechanicalLoadInstance : public DataStructure {
     typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
     /** @brief MeshEntity sur laquelle repose le "blocage" */
-    MeshEntityPtr _supportMeshEntity;
+    MeshEntityPtr _meshEntity;
     MecaLoad _mecaLoad;
     /** @brief Vecteur Jeveux '.TYPE' */
     JeveuxVectorChar8 _type;
@@ -401,22 +401,22 @@ class GenericMechanicalLoadInstance : public DataStructure {
     ~GenericMechanicalLoadInstance(){};
 
     /**
-     * @brief Get the support finite element descriptor
+     * @brief Get the finite element descriptor
      */
     FiniteElementDescriptorPtr getFiniteElementDescriptor() const { return _mecaLoad._FEDesc; };
 
     /**
-     * @brief Get the support model
+     * @brief Get the model
      */
     const MecaLoad &getMechanicalLoadDescription() const { return _mecaLoad; };
 
     /**
-     * @brief Get the support model
+     * @brief Get the model
      */
     const ModelPtr &getModel() const {
-        if ( ( !_mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
-            throw std::runtime_error( "Support model of current load is empty" );
-        return _mecaLoad._supportModel;
+        if ( ( !_mecaLoad._model ) || _mecaLoad._model->isEmpty() )
+            throw std::runtime_error( "Model of current load is empty" );
+        return _mecaLoad._model;
     };
 
     virtual bool build(){};
@@ -474,26 +474,26 @@ class MechanicalLoadInstance : public GenericMechanicalLoadInstance {
      */
     bool setValue( PhysicalQuantityPtr physPtr,
                    std::string nameOfGroup = "" ) {
-        // Check that the pointer to the support model is not empty
-        if ( ( !_mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
+        // Check that the pointer to the model is not empty
+        if ( ( !_mecaLoad._model ) || _mecaLoad._model->isEmpty() )
             throw std::runtime_error( "Model is empty" );
 
         // Get the type of MeshEntity
-        BaseMeshPtr currentMesh = _mecaLoad._supportModel->getMesh();
-        // If the support MeshEntity is not given, the quantity is set on the whole mesh
+        BaseMeshPtr currentMesh = _mecaLoad._model->getMesh();
+        // If the MeshEntity is not given, the quantity is set on the whole mesh
         if ( nameOfGroup.size() == 0 && Traits::isAllowedOnWholeMesh ) {
-            _supportMeshEntity = MeshEntityPtr( new AllMeshEntities() );
+            _meshEntity = MeshEntityPtr( new AllMeshEntities() );
         }
         // nameOfGroup is the name of a group of elements and
         // LoadTraits authorizes to base the current load on such a group
         else if ( currentMesh->hasGroupOfElements( nameOfGroup ) &&
                   Traits::isAllowedOnGroupOfElements ) {
-            _supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+            _meshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
         }
         // nameOfGroup is the name of a group of nodes and LoadTraits authorizes
         // to base the current load on such a group
         else if ( currentMesh->hasGroupOfNodes( nameOfGroup ) && Traits::isAllowedOnGroupOfNodes ) {
-            _supportMeshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
+            _meshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
         } else
             throw std::runtime_error(
                 nameOfGroup + " does not exist in the mesh " +
@@ -513,9 +513,9 @@ class MechanicalLoadInstance : public GenericMechanicalLoadInstance {
         cmdSt.setResult( ResultNaming::getCurrentName(), "CHAR_MECA" );
 
         SyntaxMapContainer dict;
-        if ( !_mecaLoad._supportModel )
-            throw std::runtime_error( "Support model is undefined" );
-        dict.container["MODELE"] = _mecaLoad._supportModel->getName();
+        if ( !_mecaLoad._model )
+            throw std::runtime_error( "Model is undefined" );
+        dict.container["MODELE"] = _mecaLoad._model->getName();
         ListSyntaxMapContainer listeLoad;
         SyntaxMapContainer dict2;
         /* On itere sur les composantes de la "PhysicalQuantity" */
@@ -526,14 +526,14 @@ class MechanicalLoadInstance : public GenericMechanicalLoadInstance {
             dict2.container[tmp->second] = curIter->second;
         }
         /* Caractéristiques du MeshEntity */
-        if ( _supportMeshEntity->getType() == AllMeshEntitiesType ) {
+        if ( _meshEntity->getType() == AllMeshEntitiesType ) {
             dict2.container["TOUT"] = "OUI";
         } else {
-            if ( _supportMeshEntity->getType() == GroupOfNodesType ) {
-                dict2.container["GROUP_NO"] = _supportMeshEntity->getName();
-                //        std::cout << "GROUP_NO " <<  _supportMeshEntity->getName() << std::endl;
-            } else if ( _supportMeshEntity->getType() == GroupOfElementsType )
-                dict2.container["GROUP_MA"] = _supportMeshEntity->getName();
+            if ( _meshEntity->getType() == GroupOfNodesType ) {
+                dict2.container["GROUP_NO"] = _meshEntity->getName();
+                //        std::cout << "GROUP_NO " <<  _meshEntity->getName() << std::endl;
+            } else if ( _meshEntity->getType() == GroupOfElementsType )
+                dict2.container["GROUP_MA"] = _meshEntity->getName();
         }
         listeLoad.push_back( dict2 );
         // mot-clé facteur

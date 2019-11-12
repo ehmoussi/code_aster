@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe CyclicSymmetryMode
  * @author Natacha Bereux
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -58,8 +58,8 @@ class CyclicSymmetryModeInstance : public DataStructure {
     JeveuxVectorComplex _cMode;
     /** @brief Objet Jeveux .CYCL_FREQ */
     JeveuxVectorComplex _cFreq;
-    /** @brief Support Mesh  */
-    MeshPtr _supportMesh;
+    /** @brief Mesh  */
+    MeshPtr _mesh;
     /** @brief Structure Interface */
     StructureInterfacePtr _structInterf;
     /** @brief Modal Basis */
@@ -86,15 +86,15 @@ class CyclicSymmetryModeInstance : public DataStructure {
           _interfaceIndices( JeveuxVectorLong( getName() + ".CYCL_NUIN" ) ),
           _cMode( JeveuxVectorComplex( getName() + ".CYCL_MODE" ) ),
           /** Pointers to objects listed in _refe */
-          _supportMesh( MeshPtr() ), _structInterf( StructureInterfacePtr() ),
+          _mesh( MeshPtr() ), _structInterf( StructureInterfacePtr() ),
           _modalBasis( StandardModalBasisPtr() )
 
               {};
 
-    bool setSupportMesh( MeshPtr &currentMesh ) {
+    bool setMesh( MeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-        _supportMesh = currentMesh;
+        _mesh = currentMesh;
         return true;
     };
     bool setStructureInterface( StructureInterfacePtr &currentStructInterf ) {

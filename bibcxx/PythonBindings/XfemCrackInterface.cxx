@@ -36,7 +36,7 @@ void exportXfemCrackToPython() {
         .def( "build", &XfemCrackInstance::build )
         .def( "enrichModelWithXfem", &XfemCrackInstance::enrichModelWithXfem )
         .def( "getMesh", &XfemCrackInstance::getMesh )
-        .def( "setSupportMesh", &XfemCrackInstance::setSupportMesh )
+        .def( "setMesh", &XfemCrackInstance::setMesh )
         .def( "getAuxiliaryGrid", &XfemCrackInstance::getAuxiliaryGrid )
         .def( "setAuxiliaryGrid", &XfemCrackInstance::setAuxiliaryGrid )
         .def( "getExistingCrackWithGrid", &XfemCrackInstance::getExistingCrackWithGrid )

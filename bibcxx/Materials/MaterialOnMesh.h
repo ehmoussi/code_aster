@@ -71,7 +71,7 @@ public:
     };
 
     /**
-     * @brief Get the support MeshEntity of PartOfMaterialOnMesh
+     * @brief Get the MeshEntity of PartOfMaterialOnMesh
      */
     MeshEntityPtr getMeshEntity() const
     {
@@ -116,9 +116,9 @@ class MaterialOnMeshInstance: public DataStructure
         typedef listOfBehavAndGrps::iterator listOfBehavAndGrpsIter;
 
         /** @brief Maillage sur lequel repose la sd_cham_mater */
-        BaseMeshPtr            _supportMesh;
-        /** @brief Support model */
-        ModelPtr               _supportModel;
+        BaseMeshPtr            _mesh;
+        /** @brief Model */
+        ModelPtr               _model;
         /** @brief Carte '.CHAMP_MAT' */
         PCFieldOnMeshChar8Ptr  _listOfMaterials;
         /** @brief Carte '.TEMPE_REF' */
@@ -207,9 +207,9 @@ class MaterialOnMeshInstance: public DataStructure
         void addBehaviourOnGroupOfElements( BehaviourDefinitionPtr& curBehav,
                                             std::string nameOfGroup )
         {
-            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
-            if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+            if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
+            if ( ! _mesh->hasGroupOfElements( nameOfGroup ) )
+                throw std::runtime_error( nameOfGroup + "not in mesh" );
 
             _behaviours.push_back( listOfBehavAndGrpsValue( curBehav,
                                             MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
@@ -223,7 +223,7 @@ class MaterialOnMeshInstance: public DataStructure
         void addBehaviourOnElement( BehaviourDefinitionPtr& curBehav,
                                             std::string nameOfElement )
         {
-            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+            if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
             _behaviours.push_back( listOfBehavAndGrpsValue( curBehav,
                                             MeshEntityPtr( new Element(nameOfElement) ) ) );
@@ -247,10 +247,10 @@ class MaterialOnMeshInstance: public DataStructure
         void addMaterialsOnGroupOfElements( std::vector< MaterialPtr > curMaters,
                                             VectorString namesOfGroup )
         {
-            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+            if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
             for( const auto& nameOfGroup : namesOfGroup )
-                if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
-                    throw std::runtime_error( nameOfGroup + "not in support mesh" );
+                if ( ! _mesh->hasGroupOfElements( nameOfGroup ) )
+                    throw std::runtime_error( nameOfGroup + "not in mesh" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMaters,
                                            MeshEntityPtr( new GroupOfElements(namesOfGroup) ) ) );
@@ -264,7 +264,7 @@ class MaterialOnMeshInstance: public DataStructure
         void addMaterialsOnElement( std::vector< MaterialPtr > curMaters,
                                     VectorString namesOfElement )
         {
-            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+            if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMaters,
                                             MeshEntityPtr( new Element(namesOfElement) ) ) );
@@ -288,10 +288,10 @@ class MaterialOnMeshInstance: public DataStructure
         void addMaterialOnGroupOfElements( MaterialPtr& curMater,
                                            VectorString namesOfGroup )
         {
-            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+            if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
             for( const auto& nameOfGroup : namesOfGroup )
-                if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
-                    throw std::runtime_error( nameOfGroup + "not in support mesh" );
+                if ( ! _mesh->hasGroupOfElements( nameOfGroup ) )
+                    throw std::runtime_error( nameOfGroup + "not in mesh" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( { curMater },
                                            MeshEntityPtr( new GroupOfElements(namesOfGroup) ) ) );
@@ -305,7 +305,7 @@ class MaterialOnMeshInstance: public DataStructure
         void addMaterialOnElement( MaterialPtr& curMater,
                                    VectorString namesOfElement )
         {
-            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+            if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( { curMater },
                                             MeshEntityPtr( new Element(namesOfElement) ) ) );
@@ -343,22 +343,22 @@ class MaterialOnMeshInstance: public DataStructure
         bool existsCalculationInputVariable( const std::string& );
 
         /**
-         * @brief Obtenir le maillage support
-         * @return Maillage support du champ de materiau
+         * @brief Obtenir le maillage
+         * @return Maillage du champ de materiau
          */
         BaseMeshPtr getMesh()
         {
-            if ( _supportMesh->isEmpty() )
-                throw std::runtime_error( "support mesh of current model is empty" );
-            return _supportMesh;
+            if ( _mesh->isEmpty() )
+                throw std::runtime_error( "mesh of current model is empty" );
+            return _mesh;
         };
 
         /**
-         * @brief Set the support model
+         * @brief Set the model
          */
         void setModel( ModelPtr model )
         {
-            _supportModel = model;
+            _model = model;
         };
 };
 

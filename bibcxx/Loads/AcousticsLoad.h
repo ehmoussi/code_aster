@@ -112,7 +112,7 @@ typedef boost::shared_ptr< UniformConnection > UniformConnectionPtr;
 
 class AcousticsLoadInstance : public DataStructure {
   private:
-    ModelPtr _supportModel;
+    ModelPtr _model;
     BaseMeshPtr _mesh;
     std::vector< ImposedComplexPressurePtr > _pressure;
     std::vector< ImposedComplexNormalSpeedPtr > _speed;
@@ -148,7 +148,7 @@ class AcousticsLoadInstance : public DataStructure {
      * @brief Constructeur
      */
     AcousticsLoadInstance( const std::string name, const ModelPtr &model )
-        : DataStructure( name, 8, "CHAR_ACOU" ), _supportModel( model ),
+        : DataStructure( name, 8, "CHAR_ACOU" ), _model( model ),
           _mesh( model->getMesh() ),
           _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),
           _type( JeveuxVectorChar8( getName() + ".TYPE" ) ),
@@ -162,7 +162,7 @@ class AcousticsLoadInstance : public DataStructure {
               new PCFieldOnMeshComplexInstance( getName() + ".CHAC.VITFA", _mesh ) ) ),
           _FEDesc( new FiniteElementDescriptorInstance( name + "CHAC.LIGRE", _mesh ) ) {
         _toCapyConverter.add(
-            new CapyConvertibleValue< ModelPtr >( true, "MODELE", _supportModel, true ) );
+            new CapyConvertibleValue< ModelPtr >( true, "MODELE", _model, true ) );
     };
 
     void addImposedNormalSpeedOnAllMesh( const DoubleComplex &speed ) {
@@ -241,16 +241,16 @@ class AcousticsLoadInstance : public DataStructure {
     bool build();
 
     /**
-     * @brief Get the support finite element descriptor
+     * @brief Get the finite element descriptor
      */
     FiniteElementDescriptorPtr getFiniteElementDescriptor() const { return _FEDesc; };
 
     /**
-     * @brief Get the support model
+     * @brief Get the model
      */
     ModelPtr getModel()
     {
-        return _supportModel;
+        return _model;
     };
 };
 

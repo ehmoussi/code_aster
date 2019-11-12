@@ -46,7 +46,7 @@ class XfemModelModication(ExecuteCommand):
             self._result.setSaneModel(modeleIn)
             if type(modeleIn) is tuple:
                 modeleIn = modeleIn[0]
-            self._result.setSupportMesh(modeleIn.getMesh())
+            self._result.setMesh(modeleIn.getMesh())
 
 
 MODI_MODELE_XFEM = XfemModelModication.run

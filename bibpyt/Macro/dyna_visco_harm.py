@@ -81,7 +81,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
             if model is not None:
                 maillage = model.getMesh()
             else:
-                raise NameError("No support mesh")
+                raise NameError("No mesh")
 
             direction = array( [tuple(array(ddl[i*12:(i+1)*12]).nonzero()[0]) for i in range(0, len(ddl)//12)] )
             # array which contains, for each node having an imposed force, the list of the imposed directions
