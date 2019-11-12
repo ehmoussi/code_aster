@@ -3,7 +3,7 @@
  * @brief Interface python de StaticNonLinearAnalysis
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -58,7 +58,7 @@ void exportStaticNonLinearAnalysisToPython() {
         .def( "setLineSearchMethod", &StaticNonLinearAnalysisInstance::setLineSearchMethod )
         .def( "setMaterialOnMesh", &StaticNonLinearAnalysisInstance::setMaterialOnMesh )
         .def( "setLoadStepManager", &StaticNonLinearAnalysisInstance::setLoadStepManager )
-        .def( "setSupportModel", &StaticNonLinearAnalysisInstance::setSupportModel )
+        .def( "setModel", &StaticNonLinearAnalysisInstance::setModel )
         .def( "setDriving", &StaticNonLinearAnalysisInstance::setDriving )
         .def( "addStandardExcitation", c1 )
         .def( "addStandardExcitation", c2 )

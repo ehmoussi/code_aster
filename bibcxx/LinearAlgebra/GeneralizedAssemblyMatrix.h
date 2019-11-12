@@ -47,11 +47,11 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     JeveuxVectorDouble _desc;
     /** @brief Objet Jeveux '.REFE' */
     JeveuxVectorChar24 _refe;
-    /** @brief Support GeneralizedDOFNumbering */
+    /** @brief GeneralizedDOFNumbering */
     ForwardGeneralizedDOFNumberingPtr _dofNum;
-    /** @brief Support MechanicalModeContainer */
+    /** @brief MechanicalModeContainer */
     ForwardMechanicalModeContainerPtr _mecaModeC;
-    /** @brief Support GeneralizedModeContainer */
+    /** @brief GeneralizedModeContainer */
     ForwardGeneralizedModeContainerPtr _geneModeC;
 
   public:
@@ -75,7 +75,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     {};
 
     /**
-     * @brief Get support GeneralizedDOFNumbering
+     * @brief Get GeneralizedDOFNumbering
      */
     GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() {
         if ( _dofNum.isSet() )
@@ -84,7 +84,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     };
 
     /**
-     * @brief Get support GeneralizedModeContainer
+     * @brief Get GeneralizedModeContainer
      */
     GeneralizedModeContainerPtr getModalBasisFromGeneralizedModeContainer()
     {
@@ -94,7 +94,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     };
 
     /**
-     * @brief Get support MechanicalModeContainer
+     * @brief Get MechanicalModeContainer
      */
     MechanicalModeContainerPtr getModalBasisFromMechanicalModeContainer()
     {
@@ -104,7 +104,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     };
 
     /**
-     * @brief Set support GeneralizedDOFNumbering
+     * @brief Set GeneralizedDOFNumbering
      */
     bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr &dofNum )
     {
@@ -117,7 +117,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     };
 
     /**
-     * @brief Set support GeneralizedModeContainer
+     * @brief Set GeneralizedModeContainer
      */
     bool setModalBasis( const GeneralizedModeContainerPtr &mecaModeC )
     {
@@ -131,7 +131,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     };
 
     /**
-     * @brief Set support MechanicalModeContainer
+     * @brief Set MechanicalModeContainer
      */
     bool setModalBasis( const MechanicalModeContainerPtr &mecaModeC )
     {

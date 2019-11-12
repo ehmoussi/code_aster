@@ -3,7 +3,7 @@
  * @brief Implementation de ModelInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,7 +32,7 @@
 #include "Supervis/CommandSyntax.h"
 
 // StaticModeDeplInstance::StaticModeDeplInstance():  //?????
-//                                _supportModel( ModelPtr() ),
+//                                _model( ModelPtr() ),
 //                               _materialOnMesh( MaterialOnMeshPtr() ),
 //                              _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
 //                             _loadStep( TimeStepperPtr( new TimeStepperInstance( Temporary ) ) ),

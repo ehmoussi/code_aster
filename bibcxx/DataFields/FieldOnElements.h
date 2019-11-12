@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FieldOnElements
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -55,8 +55,8 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
     JeveuxVectorChar24 _reference;
     /** @brief Vecteur Jeveux '.CELV' */
     JeveuxVector< ValueType > _valuesList;
-    /** @brief Modele support */
-    ModelPtr _supportModel;
+    /** @brief Modele */
+    ModelPtr _model;
     /** @brief Finite element description */
     FiniteElementDescriptorPtr _dofDescription;
     /** @brief jeveux vector '.TITR' */
@@ -77,7 +77,7 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
         : GenericDataFieldInstance( name, "CHAM_ELEM" ),
           _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
           _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
-          _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _supportModel( nullptr ),
+          _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _model( nullptr ),
           _title( JeveuxVectorChar80( getName() + ".TITR" ) ){};
 
     /**
@@ -88,7 +88,7 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
         : GenericDataFieldInstance( memType, "CHAM_ELEM" ),
           _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
           _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
-          _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _supportModel( nullptr ),
+          _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _model( nullptr ),
           _title( JeveuxVectorChar80( getName() + ".TITR" ) ){};
 
     ~FieldOnElementsInstance() {
@@ -123,12 +123,12 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
     };
 
     /**
-     * @brief Get the support model
+     * @brief Get the model
      */
     ModelPtr getModel() const {
-        if ( _supportModel->isEmpty() )
+        if ( _model->isEmpty() )
             throw std::runtime_error( "Model is empty" );
-        return _supportModel;
+        return _model;
     };
 
     /**
@@ -142,13 +142,13 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
     };
 
     /**
-     * @brief Definition du modele support
+     * @brief Definition du modele
      * @param currentMesh objet Model sur lequel la charge reposera
      */
     bool setModel( ModelPtr &currentModel ) {
         if ( currentModel->isEmpty() )
             throw std::runtime_error( "Model is empty" );
-        _supportModel = currentModel;
+        _model = currentModel;
         return true;
     };
 
@@ -157,9 +157,9 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
      */
     bool update() {
         if ( _dofDescription == nullptr && updateValuePointers() ) {
-            if ( _supportModel == nullptr )
+            if ( _model == nullptr )
                 throw std::runtime_error( "Model is empty" );
-            _dofDescription = _supportModel->getFiniteElementDescriptor();
+            _dofDescription = _model->getFiniteElementDescriptor();
         }
         return true;
     };

@@ -3,7 +3,7 @@
  * @brief Implementation de AcousticsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,8 +29,8 @@ const char SANS_GROUP_MA[] = "SANS_GROUP_MA";
 const char SANS_GROUP_NO[] = "SANS_GROUP_NO";
 
 bool AcousticsLoadInstance::build() {
-    if ( !_supportModel )
-        throw std::runtime_error( "Support Model not set" );
+    if ( !_model )
+        throw std::runtime_error( "Model not set" );
 
     CommandSyntax cmdSt( "AFFE_CHAR_ACOU" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "CHAR_ACOU" );

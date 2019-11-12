@@ -46,8 +46,8 @@
  */
 class StudyDescriptionInstance {
   private:
-    /** @brief Modèle support */
-    ModelPtr _supportModel;
+    /** @brief Modele */
+    ModelPtr _model;
     /** @brief Materiau affecté */
     MaterialOnMeshPtr _materialOnMesh;
     /** @brief Liste des chargements */
@@ -67,10 +67,10 @@ class StudyDescriptionInstance {
      */
     StudyDescriptionInstance( const ModelPtr &curModel, const MaterialOnMeshPtr &curMat,
                               const ElementaryCharacteristicsPtr &cara = nullptr )
-        : _supportModel( curModel ), _materialOnMesh( curMat ),
+        : _model( curModel ), _materialOnMesh( curMat ),
           _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ), _elemChara( cara ),
-          _codedMater( new CodedMaterialInstance( _materialOnMesh, _supportModel ) ),
-          _varCom( new CalculationInputVariablesInstance( _supportModel, _materialOnMesh,
+          _codedMater( new CodedMaterialInstance( _materialOnMesh, _model ) ),
+          _varCom( new CalculationInputVariablesInstance( _model, _materialOnMesh,
                                                           _elemChara, _codedMater ) ){};
 
     ~StudyDescriptionInstance(){};
@@ -126,7 +126,7 @@ class StudyDescriptionInstance {
     /**
      * @brief Obtenir le modèle de l'étude
      */
-    const ModelPtr &getModel() const { return _supportModel; };
+    const ModelPtr &getModel() const { return _model; };
 };
 
 /**

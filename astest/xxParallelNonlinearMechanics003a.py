@@ -12,7 +12,7 @@ monMaillage = code_aster.ParallelMesh()
 monMaillage.readMedFile("xxParallelNonlinearMechanics003a")
 
 monModel = code_aster.Model()
-monModel.setSupportMesh(monMaillage)
+monModel.setMesh(monMaillage)
 monModel.addModelingOnAllMesh(
     code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 # monModel.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,
@@ -31,7 +31,7 @@ affectMat.addMaterialOnAllMesh(acier)
 affectMat.buildWithoutInputVariables()
 
 charMeca1 = code_aster.KinematicsMechanicalLoad()
-charMeca1.setSupportModel(monModel)
+charMeca1.setModel(monModel)
 charMeca1.addImposedMechanicalDOFOnNodes(
     code_aster.PhysicalQuantityComponent.Dx, 0., "Surf6N")
 charMeca1.addImposedMechanicalDOFOnNodes(

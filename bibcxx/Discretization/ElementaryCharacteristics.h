@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ElementaryCharacteristics
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -40,9 +40,9 @@
  */
 class ElementaryCharacteristicsInstance : public DataStructure {
   private:
-    /** @brief Support model */
+    /** @brief Model */
     ModelPtr _model;
-    /** @brief Support mesh */
+    /** @brief Mesh */
     BaseMeshPtr _mesh;
     /** @brief Objet Jeveux '.CANBSP' */
     PCFieldOnMeshLongPtr _numberOfSubpoints;
@@ -102,7 +102,7 @@ class ElementaryCharacteristicsInstance : public DataStructure {
      */
     const ModelPtr &getModel() const {
         if ( _model->isEmpty() )
-            throw std::runtime_error( "Support model is empty" );
+            throw std::runtime_error( "Model is empty" );
         return _model;
     };
 

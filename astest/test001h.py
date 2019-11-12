@@ -36,7 +36,7 @@ with test.assertRaises(TypeError):
 # Definition du modele Aster
 model = code_aster.Model()
 test.assertEqual(model.getType(), "MODELE_SDASTER")
-model.setSupportMesh(mesh)
+model.setMesh(mesh)
 model.addModelingOnAllMesh(
     code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 
@@ -52,7 +52,7 @@ model.build()
 
 # Definition du modele Aster
 model2 = code_aster.Model()
-model2.setSupportMesh(mesh)
+model2.setMesh(mesh)
 
 with test.assertRaisesRegex(RuntimeError, 'not allowed'):
     model2.addModelingOnAllMesh(

@@ -6,7 +6,7 @@
  * @brief Fichier definissant la classe template UnitaryLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -43,7 +43,7 @@ template < class PhysicalQuantityType > class UnitaryLoad {
     typedef typename PhysicalQuantityType::QuantityType ValueType;
 
     /** @brief MeshEntity sur laquelle repose le "blocage" */
-    MeshEntityPtr _supportMeshEntity;
+    MeshEntityPtr _meshEntity;
     /** @brief "Numero" de la composante à imposer */
     PhysicalQuantityComponent _loadCoordinate;
     /** @brief Valeur a imposer */
@@ -52,13 +52,13 @@ template < class PhysicalQuantityType > class UnitaryLoad {
   public:
     /**
      * @brief Constructeur
-     * @param supportMeshEntity MeshEntity sur laquelle repose la chargement
+     * @param meshEntity MeshEntity sur laquelle repose la chargement
      * @param curCoord Coordonnee de la grandeur sur laquelle on impose le chargement
      * @param value Valeur du chargement
      */
-    UnitaryLoad( MeshEntityPtr supportMeshEntity, PhysicalQuantityComponent curCoord,
+    UnitaryLoad( MeshEntityPtr meshEntity, PhysicalQuantityComponent curCoord,
                  ValueType value )
-        : _supportMeshEntity( supportMeshEntity ), _loadCoordinate( curCoord ), _value( value ) {
+        : _meshEntity( meshEntity ), _loadCoordinate( curCoord ), _value( value ) {
         if ( !PhysicalQuantityType::hasComponent( curCoord ) )
             throw std::runtime_error( ComponentNames.find( curCoord )->second + " not allowed" );
     };
@@ -75,7 +75,7 @@ template < class PhysicalQuantityType > class UnitaryLoad {
      * @brief Obtenir l'entite du maillage sur laquelle repose le chargement
      * @return Un pointeur vers l'entite
      */
-    const MeshEntityPtr &getMeshEntityPtr() const { return _supportMeshEntity; };
+    const MeshEntityPtr &getMeshEntityPtr() const { return _meshEntity; };
 
     /**
      * @brief Obtenir la valeur du chargement

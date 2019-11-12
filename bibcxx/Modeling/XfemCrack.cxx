@@ -3,7 +3,7 @@
  * @brief Implementation de MaterialInstance
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,9 +31,9 @@
 
 #include "Modeling/CrackShape.h"
 
-XfemCrackInstance::XfemCrackInstance( const std::string name, MeshPtr supportMesh )
+XfemCrackInstance::XfemCrackInstance( const std::string name, MeshPtr mesh )
     : DataStructure( name, 8, "FISS_XFEM" ), _jeveuxName( ResultNaming::getCurrentName() ),
-      _supportMesh( supportMesh ), _auxiliaryGrid( MeshPtr() ),
+      _mesh( mesh ), _auxiliaryGrid( MeshPtr() ),
       _existingCrackWithGrid( XfemCrackPtr() ), _discontinuityType( "Crack" ), _crackLipsEntity(),
       _crackTipEntity(), _normalLevelSetFunction( FunctionPtr() ),
       _tangentialLevelSetFunction( FunctionPtr() ), _crackShape( CrackShapePtr() ),
@@ -55,8 +55,8 @@ XfemCrackInstance::XfemCrackInstance( const std::string name, MeshPtr supportMes
       _heavisideElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HEAV" ) ),
       _crackTipAndHeavisideElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HECT" ) ){};
 
-XfemCrackInstance::XfemCrackInstance( MeshPtr supportMesh )
-    : XfemCrackInstance( ResultNaming::getNewResultName(), supportMesh ){};
+XfemCrackInstance::XfemCrackInstance( MeshPtr mesh )
+    : XfemCrackInstance( ResultNaming::getNewResultName(), mesh ){};
 
 bool XfemCrackInstance::build() {
     CommandSyntax cmdSt( "DEFI_FISS_XFEM" );
@@ -64,7 +64,7 @@ bool XfemCrackInstance::build() {
 
     SyntaxMapContainer dict;
 
-    dict.container["MAILLAGE"] = _supportMesh->getName();
+    dict.container["MAILLAGE"] = _mesh->getName();
 
     if ( _auxiliaryGrid ) {
         dict.container["MAILLAGE_GRILLE"] = _auxiliaryGrid->getName();

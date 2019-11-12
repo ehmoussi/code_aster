@@ -388,15 +388,14 @@ for Raff in range(0,Nb_Raffinement):
 # Impression de la courbe de convergence
 #================================================================================================
 
-print 'Norme L2 de l erreur sur la surface= %e' %dicResu['NormeL2ErreurU_Surf']
-print 'Norme L2 de l erreur dans le volume= %e' %dicResu['NormeL2ErreurU_Volu']
+print('Norme L2 de l erreur sur la surface= {0:e}'.format(dicResu['NormeL2ErreurU_Surf']))
+print('Norme L2 de l erreur dans le volume= {0:e}'.format(dicResu['NormeL2ErreurU_Volu']))
 
 PenteL2U_Surf=-math.log( NormeL2ErreurU_Surf[-1]/NormeL2ErreurU_Surf[-2])/math.log(2.)
 PenteL2U_Volu=-math.log( NormeL2ErreurU_Volu[-1]/NormeL2ErreurU_Volu[-2])/math.log(2.)
 
 
-
-sous_titreU='Element P%i, Ordre de convergence = %f '%(2 , PenteL2U_Surf)
+sous_titreU='Element P2, Ordre de convergence = {0:f} '.format(PenteL2U_Surf)
 
 IMPR_FONCTION(FORMAT='XMGRACE',
               UNITE=82,
@@ -407,15 +406,15 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                          ORDONNEE=NormeL2ErreurU_Surf,
                          ),
                      ),
-              TITRE='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N en surface',
+              TITRE=r'Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N en surface',
               SOUS_TITRE=sous_titreU,
               LEGENDE_X='h',
-              LEGENDE_Y='L\s2\N(Erreur)',
+              LEGENDE_Y=r'L\s2\N(Erreur)',
               ECHELLE_X='LOG',
               ECHELLE_Y='LOG',
               INFO=2,)
 
-sous_titreU='Element P%i, Ordre de convergence = %f '%(2 , PenteL2U_Volu)
+sous_titreU='Element P2, Ordre de convergence = {0:f} '.format(PenteL2U_Volu)
 
 IMPR_FONCTION(FORMAT='XMGRACE',
               UNITE=83,
@@ -426,10 +425,10 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                          ORDONNEE=NormeL2ErreurU_Volu,
                          ),
                      ),
-              TITRE='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N dans le volume',
+              TITRE=r'Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N dans le volume',
               SOUS_TITRE=sous_titreU,
               LEGENDE_X='h',
-              LEGENDE_Y='L\s2\N(Erreur)',
+              LEGENDE_Y=r'L\s2\N(Erreur)',
               ECHELLE_X='LOG',
               ECHELLE_Y='LOG',
               INFO=2,)

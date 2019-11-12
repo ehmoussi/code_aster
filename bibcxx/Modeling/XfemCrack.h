@@ -53,7 +53,7 @@ class XfemCrackInstance : public DataStructure {
     /** @brief Name of the JEVEUX Data Structure */
     const std::string _jeveuxName;
     /** @brief Mesh supporting the crack */
-    MeshPtr _supportMesh;
+    MeshPtr _mesh;
     /** @brief Mesh of the auxiliary grid */
     MeshPtr _auxiliaryGrid;
     /** @brief Mesh of the previous auxiliary grid */
@@ -121,12 +121,12 @@ class XfemCrackInstance : public DataStructure {
     /**
          * @brief Constructeur
          */
-    XfemCrackInstance( MeshPtr supportMesh );
+    XfemCrackInstance( MeshPtr mesh );
 
     /**
          * @brief Constructeur
          */
-    XfemCrackInstance( const std::string name, MeshPtr supportMesh );
+    XfemCrackInstance( const std::string name, MeshPtr mesh );
 
     /**
          * @brief Construction du XfemCrackInstance
@@ -145,9 +145,9 @@ class XfemCrackInstance : public DataStructure {
          * @brief Series of getters and setters that check the syntax rules
          */
 
-    const MeshPtr getMesh() const { return _supportMesh; };
+    const MeshPtr getMesh() const { return _mesh; };
 
-    void setSupportMesh( const MeshPtr &supportMesh ) { _supportMesh = supportMesh; }
+    void setMesh( const MeshPtr &mesh ) { _mesh = mesh; }
 
     MeshPtr getAuxiliaryGrid() const { return _auxiliaryGrid; }
 

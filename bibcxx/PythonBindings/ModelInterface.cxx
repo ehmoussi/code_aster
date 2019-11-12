@@ -36,18 +36,18 @@ void exportModelToPython() {
     enum_< GraphPartitioner >( "GraphPartitioner" ).value( "Scotch", ScotchPartitioner ).value(
         "Metis", MetisPartitioner );
 
-    bool ( ModelInstance::*c1 )( MeshPtr & ) = &ModelInstance::setSupportMesh;
-    bool ( ModelInstance::*c4 )( SkeletonPtr & ) = &ModelInstance::setSupportMesh;
+    bool ( ModelInstance::*c1 )( MeshPtr & ) = &ModelInstance::setMesh;
+    bool ( ModelInstance::*c4 )( SkeletonPtr & ) = &ModelInstance::setMesh;
 
     void ( ModelInstance::*split1 )( ModelSplitingMethod ) = &ModelInstance::setSplittingMethod;
 
     void ( ModelInstance::*split2 )( ModelSplitingMethod, GraphPartitioner ) =
         &ModelInstance::setSplittingMethod;
 #ifdef _USE_MPI
-    bool ( ModelInstance::*c2 )( ParallelMeshPtr & ) = &ModelInstance::setSupportMesh;
-    bool ( ModelInstance::*c3 )( PartialMeshPtr & ) = &ModelInstance::setSupportMesh;
+    bool ( ModelInstance::*c2 )( ParallelMeshPtr & ) = &ModelInstance::setMesh;
+    bool ( ModelInstance::*c3 )( PartialMeshPtr & ) = &ModelInstance::setMesh;
 #endif /* _USE_MPI */
-    bool ( ModelInstance::*c5 )( BaseMeshPtr & ) = &ModelInstance::setSupportMesh;
+    bool ( ModelInstance::*c5 )( BaseMeshPtr & ) = &ModelInstance::setMesh;
 
     class_< ModelInstance, ModelInstance::ModelPtr, bases< DataStructure > >( "Model", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< ModelInstance >))
@@ -63,14 +63,14 @@ void exportModelToPython() {
         .def( "getSplittingMethod", &ModelInstance::getSplittingMethod )
         .def( "getGraphPartitioner", &ModelInstance::getGraphPartitioner )
         .def( "setSaneModel", &ModelInstance::setSaneModel )
-        .def( "setSupportMesh", c1 )
-        .def( "setSupportMesh", c4 )
+        .def( "setMesh", c1 )
+        .def( "setMesh", c4 )
         .def( "setSplittingMethod", split1 )
         .def( "setSplittingMethod", split2 )
 #ifdef _USE_MPI
-        .def( "setSupportMesh", c2 )
-        .def( "setSupportMesh", c3 )
+        .def( "setMesh", c2 )
+        .def( "setMesh", c3 )
 #endif /* _USE_MPI */
-        .def( "setSupportMesh", c5 )
+        .def( "setMesh", c5 )
         .def( "getFiniteElementDescriptor", &ModelInstance::getFiniteElementDescriptor );
 };

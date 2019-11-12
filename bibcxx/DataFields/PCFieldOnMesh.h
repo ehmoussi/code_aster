@@ -95,7 +95,7 @@ class PCFieldZone {
 
     LocalizationType getLocalizationType() const { return _localisation; };
 
-    GroupOfElementsPtr getSupportGroup() const { return _grp; };
+    GroupOfElementsPtr getGroup() const { return _grp; };
 
     const VectorLong &getListOfElements() const { return _indexes; };
 };
@@ -136,7 +136,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     /** @brief Vecteur Jeveux '.VALE' */
     JeveuxVector< ValueType > _valuesList;
     /** @brief Maillage sous-jacent */
-    const BaseMeshPtr _supportMesh;
+    const BaseMeshPtr _mesh;
     /** @brief Ligrel */
     FiniteElementDescriptorPtr _FEDesc;
     /** @brief La carte est-elle allouée ? */
@@ -217,7 +217,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     void fortranAllocate( const std::string base,
                           const std::string quantity ) {
         try {
-            CALLO_ALCART( base, getName(), _supportMesh->getName(), quantity );
+            CALLO_ALCART( base, getName(), _mesh->getName(), quantity );
         } catch ( ... ) {
             throw;
         }
@@ -233,7 +233,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     /**
      * @brief Constructeur
      * @param name Nom Jeveux de la carte
-     * @param mesh Maillage support
+     * @param mesh Maillage
      */
     PCFieldOnMeshInstance( const std::string &name, const BaseMeshPtr &mesh,
                            const JeveuxMemory memType = Permanent )
@@ -242,7 +242,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
           _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
-          _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _supportMesh( mesh ),
+          _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _mesh( mesh ),
           _FEDesc( FiniteElementDescriptorPtr() ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
 
@@ -259,12 +259,12 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
           _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ),
-          _supportMesh( ligrel->getMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
+          _mesh( ligrel->getMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
 
     /**
      * @brief Constructeur
-     * @param mesh Maillage support
+     * @param mesh Maillage
      * @param name Nom Jeveux de la carte
      */
     PCFieldOnMeshInstance( const BaseMeshPtr &mesh, const JeveuxMemory memType = Permanent )
@@ -273,7 +273,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
           _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
-          _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _supportMesh( mesh ),
+          _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _mesh( mesh ),
           _FEDesc( FiniteElementDescriptorPtr() ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
 
@@ -290,7 +290,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
           _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ),
-          _supportMesh( ligrel->getMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
+          _mesh( ligrel->getMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
 
     typedef boost::shared_ptr< PCFieldOnMeshInstance< ValueType > > PCFieldOnMeshValueTypePtr;
@@ -306,7 +306,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      */
     void allocate( const JeveuxMemory jeveuxBase,
                    const std::string componant ) {
-        if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
+        if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 
         std::string strJeveuxBase( "V" );
@@ -360,11 +360,11 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     };
 
     /**
-     * @brief Get support mesh
+     * @brief Get mesh
      */
     BaseMeshPtr getMesh() const
     {
-        return _supportMesh;
+        return _mesh;
     };
 
     /**
@@ -411,19 +411,19 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
 
         ASTERINTEGER code = ( *_descriptor )[3 + 2 * position];
         if ( code == 1 )
-            return PCFieldZone( _supportMesh );
+            return PCFieldZone( _mesh );
         else if ( code == -1 )
             return PCFieldZone( _FEDesc );
         else if ( code == 2 ) {
             const auto numGrp = ( *_descriptor )[4 + 2 * position];
-            const auto &map = _supportMesh->getGroupOfNodesNames();
+            const auto &map = _mesh->getGroupOfNodesNames();
             const auto name = map->findStringOfElement( numGrp );
-            return PCFieldZone( _supportMesh, GroupOfElementsPtr( new GroupOfElements( name ) ) );
+            return PCFieldZone( _mesh, GroupOfElementsPtr( new GroupOfElements( name ) ) );
         } else if ( code == 3 ) {
             const auto numGrp = ( *_descriptor )[4 + 2 * position];
             _listOfMeshElements->buildFromJeveux();
             const auto &object = _listOfMeshElements->getObject( numGrp );
-            return PCFieldZone( _supportMesh, object.toVector() );
+            return PCFieldZone( _mesh, object.toVector() );
         } else if ( code == -3 ) {
             const auto numGrp = ( *_descriptor )[4 + 2 * position];
             _listOfMeshElements->buildFromJeveux();
@@ -441,7 +441,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      */
     bool setValueOnAllMesh( const JeveuxVectorChar8 &component,
                             const JeveuxVector< ValueType > &values ) {
-        if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
+        if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 
         const ASTERINTEGER code = 1;
@@ -464,7 +464,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     bool setValueOnListOfDelayedElements( const JeveuxVectorChar8 &component,
                                           const JeveuxVector< ValueType > &values,
                                           const VectorLong &grp ) {
-        if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
+        if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 
         const ASTERINTEGER code = -3;
@@ -489,9 +489,9 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     bool setValueOnGroupOfElements( const JeveuxVectorChar8 &component,
                                     const JeveuxVector< ValueType > &values,
                                     const GroupOfElements &grp ) {
-        if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
+        if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-        if ( !_supportMesh->hasGroupOfElements( grp.getName() ) )
+        if ( !_mesh->hasGroupOfElements( grp.getName() ) )
             throw std::runtime_error( "Group " + grp.getName() + " not in mesh" );
 
         const ASTERINTEGER code = 2;
@@ -511,7 +511,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      */
     bool setValueOnZone( const PCFieldZone &zone,
                          const PCFieldValues< ValueType > &values ) {
-        if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
+        if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 
         ASTERINTEGER code = 0;
@@ -527,7 +527,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
             limanu->allocate( Temporary, 1 );
         } else if ( zone.getLocalizationType() == PCFieldZone::OnGroupOfElements ) {
             code = 2;
-            grp = zone.getSupportGroup()->getName();
+            grp = zone.getGroup()->getName();
             limanu->allocate( Temporary, 1 );
         } else if ( zone.getLocalizationType() == PCFieldZone::ListOfElements ) {
             code = 3;

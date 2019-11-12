@@ -83,7 +83,7 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
 
     {
         if ( !currentMatrix->getModel()->getMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must be parallel" );
+            throw std::runtime_error( "Mesh must be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
 
@@ -95,7 +95,7 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
 
     {
         if ( !currentMatrix->getModel()->getMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must be parallel" );
+            throw std::runtime_error( "Mesh must be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
 
@@ -107,7 +107,7 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
 
     {
         if ( !currentMatrix->getModel()->getMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must be parallel" );
+            throw std::runtime_error( "Mesh must be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
 
@@ -119,18 +119,18 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
 
     {
         if ( !currentMatrix->getModel()->getMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must be parallel" );
+            throw std::runtime_error( "Mesh must be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
 
     /**
-     * @brief Methode permettant de definir le modele support
-     * @param currentModel Model support de la numerotation
+     * @brief Methode permettant de definir le modele
+     * @param currentModel Modele de la numerotation
      */
-    void setSupportModel( const ModelPtr &currentModel ) {
+    void setModel( const ModelPtr &currentModel ) {
         if ( !currentModel->getMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must be parallel" );
-        BaseDOFNumberingInstance::setSupportModel( currentModel );
+            throw std::runtime_error( "Mesh must be parallel" );
+        BaseDOFNumberingInstance::setModel( currentModel );
     };
 };
 
