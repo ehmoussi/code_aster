@@ -22,6 +22,7 @@
  */
 
 #include "PythonBindings/GeneralizedModeContainerInterface.h"
+#include "PythonBindings/VariantStiffnessMatrixInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
@@ -46,6 +47,6 @@ void exportGeneralizedModeContainerToPython() {
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )
         .def( "getDampingMatrix", &GeneralizedModeContainerInstance::getDampingMatrix )
-        .def( "getStiffnessMatrix", &GeneralizedModeContainerInstance::getStiffnessMatrix );
+        .def( "getStiffnessMatrix", &getGeneralizedStiffnessMatrix< GeneralizedModeContainerPtr > );
 
 };
