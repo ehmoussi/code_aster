@@ -483,7 +483,8 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
         CALL_ASABRT( &ier );
     }
 
-    pFunc = PyObject_GetAttrString(pModule, "UTMESS");
+    /* Unlike UTMESS, MessageLog does not raise any exception, done later by uexcep. */
+    pFunc = PyObject_GetAttrString(pModule, "MessageLog");
 
     if ( PyErr_Occurred() ) {
         iexc = 1;
@@ -521,10 +522,10 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     }
 
     res = PyObject_Call(pFunc, args, kwargs);
-//     if (!res)
-//     {
-//        MYABORT("erreur lors de l'appel a MessageLog");
-//     }
+    if (!res)
+    {
+       MYABORT("erreur lors de l'appel a MessageLog");
+    }
     if ( iexc == 1 ) {
         PyErr_Restore(etype, eval, etb);
     }
