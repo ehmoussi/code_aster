@@ -151,7 +151,7 @@ PyObject * append_etape(PyObject *etape)
     return etape;
 }
 
-/*! Remove and return the last 'etape' object on stack */
+/*! Remove and return the previous 'etape' object on stack ('.pop()' x 2) */
 PyObject * pop_etape()
 {
     PyObject * etape;
@@ -163,7 +163,7 @@ PyObject * pop_etape()
     }
     /* Derniere commande dans la pile */
     etape = PyList_GetItem(gPileEtapes, l-1);
-    /* PyList_GetItem n incremente pas le compteur de ref de etape */
+    /* PyList_GetItem n'incremente pas le compteur de ref de etape */
     /* On tronque la liste a la dimension l-1 */
     PyList_SetSlice(gPileEtapes, l-1, l, NULL);
     /* Le compteur de ref de etape est decremente de 1 */
@@ -172,8 +172,6 @@ PyObject * pop_etape()
         Py_INCREF(Py_None);
         return Py_None;
     }
-    /* On ne passe ici que pour les macros avec sous commandes
-     * en mode commande par commande */
     /* On retourne la derniere commande de la pile */
     etape = PyList_GetItem(gPileEtapes, l-2);
     return etape;
