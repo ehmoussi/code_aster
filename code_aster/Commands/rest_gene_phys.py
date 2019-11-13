@@ -62,9 +62,10 @@ class RestGenePhys(ExecuteCommand):
             matrRigi = resu_gene.getStiffnessMatrix()
             if matrRigi is not None:
                 modalBasis = matrRigi.getModalBasis()
-                dofNum = modalBasis.getDOFNumbering()
-                if dofNum is not None:
-                    self._result.setDOFNumbering(dofNum)
+                if modalBasis is not None:
+                    dofNum = modalBasis.getDOFNumbering()
+                    if dofNum is not None:
+                        self._result.setDOFNumbering(dofNum)
         else:
             raise Exception("Unknown result type")
 
