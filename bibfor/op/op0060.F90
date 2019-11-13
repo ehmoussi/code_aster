@@ -34,10 +34,10 @@ subroutine op0060()
 #include "asterfort/fonimp.h"
 #include "asterfort/foninf2.h"
 #include "asterfort/fonlev.h"
-#include "asterfort/fonmai.h"
-#include "asterfort/fonnoe.h"
+#include "asterfort/fonmai2.h"
+#include "asterfort/fonnoe2.h"
 #include "asterfort/fonnof.h"
-#include "asterfort/fonvec.h"
+#include "asterfort/fonvec2.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
@@ -57,11 +57,11 @@ subroutine op0060()
     integer :: iret1, iret, irets
     integer :: n1, n2
     character(len=6) :: nompro
-    character(len=8) :: resu, noma, typfon, confin
+    character(len=8) :: resu, noma, typfon, confin, typmp, typm
     character(len=9) :: entit(8)
     character(len=13) :: motcl(8)
     character(len=16) :: typres, oper
-    character(len=19) :: basfon, basloc, cnxinv, fontyp, lnno, ltno
+    character(len=19) :: basfon, basloc, cnxinv, lnno, ltno
     character(len=24) :: valk(2), entnom, abscur, fonoeu
 ! DEB-------------------------------------------------------------------
 !
@@ -160,7 +160,7 @@ subroutine op0060()
 !       CONSTRUCTION DE FOND DE FISSURE
 !       ---------------------------------------------------------------
 !
-!        SI LE MOT CLE FACTEUR EST GROUP_NO
+!        SI LE MOT CLE FACTEUR EST GROUP_NO ( cas 2D)
 !        ----------------------------------------
 !
         call jeexin('&&'//nompro//'.GROUP_NO', iret1)
@@ -168,13 +168,13 @@ subroutine op0060()
             call jeveuo(noma//'.DIME', 'L', iret1)
 !!          LE MOT-CLE GROUP_NO EST UNIQUEMENT AUTORISE EN DIMENSION 2
             if (zi(iret1-1+6).eq.2) then
-                call fonnoe(resu, noma, cnxinv, nompro, nbnoff)
+                call fonnoe2(resu, noma, nompro, nbnoff, typmp)
             else
                 call utmess('F', 'RUPTURE1_9')
             endif
         endif
 !
-!        SI LE MOT CLE FACTEUR EST GROUP_MA
+!        SI LE MOT CLE FACTEUR EST GROUP_MA (cas 3D)
 !        ----------------------------------------
 !
         call jeexin('&&'//nompro//'.GROUP_MA', iret1)
@@ -182,12 +182,12 @@ subroutine op0060()
             call jeveuo(noma//'.DIME', 'L', iret1)
 !!          LE MOT-CLE GROUP_MA EST UNIQUEMENT AUTORISE EN DIMENSION 3
             if (zi(iret1-1+6).eq.3) then
-                call fonmai(resu, noma, typfon, iocc, nbnoff)
+                call fonmai2(resu, noma, typfon, iocc, nbnoff, typm)
             else
                 call utmess('F', 'RUPTURE1_8')
             endif
         endif
-!C
+!
 !
 !       DESTRUCTION DES VECTEURS DE TRAVAIL
 !       ----------------------------------------
@@ -209,13 +209,12 @@ subroutine op0060()
 !
     call fonlev(resu, noma, nbnoff)
 !
-!
 !     TRAITEMENT DE LA NORMALE ET DES
 !     MOTS CLES FACTEUR : DTAN_EXTR, DTAN_ORIG
 !                         VECT_GRNO_ORIG, VECT_GRNO_EXTR
 !     ----------------------------------------
 !
-    call fonvec(resu, noma, cnxinv)
+    call fonvec2(resu, noma, cnxinv, typm)
 !
     call jedetr(cnxinv)
 !
@@ -250,13 +249,10 @@ subroutine op0060()
     call jeexin(resu//'.BASEFOND', ibas)
     if (ibas .ne. 0) then
         basfon = resu//'.BASEFOND'
-        if (nbnoff .ne. 1) then
-            fontyp = resu//'.FOND.TYPE'
-        endif
         basloc = resu//'.BASLOC'
         lnno = resu//'.LNNO'
         ltno = resu//'.LTNO'
-        call fonbas2(noma, basfon, fontyp, fonoeu, nbnoff,&
+        call fonbas2(noma, basfon, typm, fonoeu, nbnoff,&
                     basloc, lnno, ltno)
     endif
 !
