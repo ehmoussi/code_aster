@@ -161,9 +161,9 @@ class ExecuteCommand(object):
         cmd.print_syntax(keywords)
         try:
             cmd.exec_(keywords)
-        finally:
             cmd.add_references(keywords)
             cmd.post_exec(keywords)
+        finally:
             cmd.print_result()
         ExecuteCommand.level -= 1
         return cmd._result
