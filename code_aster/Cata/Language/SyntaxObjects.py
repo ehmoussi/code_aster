@@ -792,6 +792,10 @@ class Macro(Command):
             return
         result.settype(astype)
 
+    def accept(self, visitor, syntax=None):
+        """Called by a Visitor"""
+        visitor.visitMacro(self, syntax)
+
 
 class Procedure(Command):
 
