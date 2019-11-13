@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fonbas2(noma, basfon, fontyp, fonoeu, nbnoff,&
+subroutine fonbas2(noma, basfon, typm, fonoeu, nbnoff,&
                   basloc, lnno, ltno)
 !
     implicit none
@@ -34,8 +34,8 @@ subroutine fonbas2(noma, basfon, fontyp, fonoeu, nbnoff,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
     integer :: nbnoff
-    character(len=8) :: noma
-    character(len=19) :: basfon, basloc, fontyp, lnno, ltno
+    character(len=8) :: noma, typm
+    character(len=19) :: basfon, basloc, lnno, ltno
     character(len=24) :: fonoeu
 !
 ! FONCTION REALISEE:
@@ -48,25 +48,25 @@ subroutine fonbas2(noma, basfon, fontyp, fonoeu, nbnoff,&
 !     ENTREES:
 !        NOMA   : NOM DU MAILLAGE
 !        BASFON : BASE AUX NOEUDS DU FOND DE FISSURE
-!        FONTYP : TYPE DU FOND DE FISSURE
 !        FONOEU : NOM DES NOEUDS DU FOND DE FISSURE
 !        NBNOFF : NOMBRE DE NOEUDS AU FOND DE FISSURE
+!        TYPM   : TYPE DE FOND DE FISSURE : LIN OU QUAD
 !     SORTIES:
 !        BASLOC : BASE LOCALE EN CHAQUE NOEUD DU MAILLAGE
 !        LTNO   : LEVEL-SETS TANGENTS EN CHAQUE NOEUD DU MAILLAGE
 !        LNNO   : LEVLE-SETS NORMAUX EN CHAQUE NOEUD DU MAILLAGE
 !-----------------------------------------------------------------------
 !
-    integer :: ibid, ifon, indica, indicb, ina, inb, ino, ni, nj, jnoe
+    integer :: ibid, indica, indicb, ina, inb, ino, ni, nj, jnoe
     integer :: iseg, jbas
-    integer :: jgsl,   jlnsl,  jltsl, jtyp
+    integer :: jgsl,   jlnsl,  jltsl
     integer :: k, nbno, ndim, nseg
     real(kind=8) :: d, dmin, eps, norm2, s, sn, xln, xlt
     real(kind=8) :: xa, ya, za, xb, yb, zb, xm, ym, zm
     real(kind=8) :: xab, yab, zab, xam, yam, zam, xnm, ynm, znm
     real(kind=8) :: n(3), nm(3), vdira(3), vnora(3), vdirb(3), vnorb(3)
     real(kind=8) :: vdirn(3), vnorn(3)
-    character(len=8) :: licmp(9), typfon
+    character(len=8) :: licmp(9)
     character(len=16) :: casfon
     character(len=19) :: cnsbas, cnsln, cnslt
     real(kind=8), pointer :: gsv(:) => null()
@@ -96,20 +96,18 @@ subroutine fonbas2(noma, basfon, fontyp, fonoeu, nbnoff,&
         nseg = 1
         casfon = ' '
     else if (ndim.eq.3) then
-        call jeveuo(fontyp, 'L', jtyp)
-        typfon = zk8(jtyp)
         casfon = 'LINEAIRE'
         nseg = nbnoff-1
 !       CAS QUADRATIQUE
-        if (typfon .eq. 'NOE3' .or. typfon .eq. 'SEG3') then
+        if ( typm .eq. 'SEG3') then
             casfon = 'QUADRATIQUE'
             nseg = (nbnoff-1)/2
         endif
     endif
 !
 !     INITIALISATION DES CHAMPS SIMPLES DES LEVEL-SETS
-    cnslt = '&&FONBAS.CNSLT'
-    cnsln = '&&FONBAS.CNSLN'
+    cnslt = '&&FONBAS2.CNSLT'
+    cnsln = '&&FONBAS2.CNSLN'
     call cnscre(noma, 'NEUT_R', 1, 'X1', 'V',&
                 cnslt)
     call cnscre(noma, 'NEUT_R', 1, 'X1', 'V',&
@@ -121,7 +119,7 @@ subroutine fonbas2(noma, basfon, fontyp, fonoeu, nbnoff,&
     call jeveuo(cnsln//'.CNSL', 'E', jlnsl)
 !
 !     INITIALISATION DU CHAMP SIMPLE DE LA BASE LOCALE
-    cnsbas = '&&FONBAS.CNSBAS'
+    cnsbas = '&&FONBAS2.CNSBAS'
     call cnscre(noma, 'NEUT_R', ndim*3, licmp, 'V',&
                 cnsbas)
     call jeveuo(cnsbas//'.CNSV', 'E', vr=gsv)

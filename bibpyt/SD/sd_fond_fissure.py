@@ -26,7 +26,6 @@ class sd_fond_fissure(AsBase):
     LEVREINF_MAIL = Facultatif(AsVK8(SDNom(nomj='.LEVREINF.MAIL'), ))
     NORMALE = Facultatif(AsVR(lonmax=3, ))
     BASEFOND = Facultatif(AsVR())
-    FOND_TYPE = AsVK8(SDNom(nomj='.FOND.TYPE'), lonmax=1, )
     FOND_NOEU = Facultatif(AsVK8(SDNom(nomj='.FOND.NOEU'), ))
     DTAN_EXTREMITE = Facultatif(AsVR(lonmax=3, ))
     INFNORM_NOEU = Facultatif(AsVK8(SDNom(nomj='.INFNORM.NOEU'), ))
