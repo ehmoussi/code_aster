@@ -35,9 +35,18 @@ typedef boost::variant< AssemblyMatrixDisplacementDoublePtr,
                         AssemblyMatrixTemperatureDoublePtr,
                         AssemblyMatrixPressureDoublePtr > MatrixVariant;
 
+
+typedef boost::variant< GeneralizedAssemblyMatrixDoublePtr,
+                        GeneralizedAssemblyMatrixComplexPtr > GeneralizedMatrixVariant;
+
 struct variant_to_object : boost::static_visitor< PyObject * >
 {
     static result_type convert( MatrixVariant const &v )
+    {
+        return apply_visitor( variant_to_object(), v );
+    };
+
+    static result_type convert( GeneralizedMatrixVariant const &v )
     {
         return apply_visitor( variant_to_object(), v );
     };
@@ -62,6 +71,16 @@ MatrixVariant getStiffnessMatrix( ObjectPointer self )
         return MatrixVariant( mat4 );
     auto mat2 = self->getTemperatureDoubleStiffnessMatrix();
     return MatrixVariant( mat2 );
+};
+
+template< typename ObjectPointer >
+GeneralizedMatrixVariant getGeneralizedStiffnessMatrix( ObjectPointer self)
+{
+    auto mat1 = self->getDoubleGeneralizedStiffnessMatrix();
+    if ( mat1 != nullptr )
+        return GeneralizedMatrixVariant( mat1 );
+    auto mat2 = self->getComplexGeneralizedStiffnessMatrix();
+    return GeneralizedMatrixVariant( mat2);
 };
 
 void exportStiffnessMatrixVariantToPython();
