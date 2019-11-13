@@ -97,7 +97,7 @@ CALC_EUROPLEXUS = MACRO(nom="CALC_EUROPLEXUS",
                                      AU_MOINS_UN('GROUP_NO','TOUT_GROUP_NO','GROUP_MA','TOUT_GROUP_MA',),
                                         EXCLUS('GROUP_NO','TOUT_GROUP_NO',),
                                         EXCLUS('GROUP_MA','TOUT_GROUP_MA',), ),
-           NOM_CHAM        = SIMP(statut='f',typ='TXM',validators=NoRepeat(),min=1, max='**',defaut=('DEPL',),into=('DEPL'
+           NOM_CHAM        = SIMP(statut='f',typ='TXM',validators=NoRepeat(),min=1, max='**',defaut='DEPL',into=('DEPL'
                                          ,'VITE','ACCE','SIEF_ELGA','EPSI_ELGA','VARI_ELGA'),),
            PAS_INST        = SIMP(statut='f',typ='R'),
            PAS_NBRE        = SIMP(statut='f',typ='I'),

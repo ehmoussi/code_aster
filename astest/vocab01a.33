@@ -5,13 +5,219 @@
 import os
 import tempfile
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.Language.SyntaxObjects import IDS
+from code_aster.Cata.Language.SyntaxUtils import force_list
+from code_aster.Commands.ExecuteCommand import UserMacro
+
 from Noyau.N_ETAPE import check_sdprod
+from Noyau.N_CR import CR
+
+
+class CataChecker:
+    """Check catalogs"""
+
+    def __init__(self):
+        self.cr = CR()
+
+    def check_regles(self, step):
+        """Vérifie l'attribut rules."""
+        if type(step.rules) not in (list, tuple):
+            self.cr.fatal("Unexpected type for 'rules' attr: %r", step.rules)
+
+    def check_fr(self, step):
+        """Vérifie l'attribut fr."""
+        value = step.definition.get("fr")
+        if value and not isinstance(value, str):
+            self.cr.fatal("Unexpected type for 'fr' attr: %r", value)
+
+    def check_docu(self, step):
+        """Vérifie l'attribut docu."""
+        if not isinstance(step.udocstring, str):
+            self.cr.fatal("Unexpected type for 'docu' attr: %r",
+                          step.udocstring)
+
+    def check_nom(self, step):
+        """Vérifie l'attribut nom."""
+        if type(step.name) is not str:
+            self.cr.fatal("Unexpected type for 'nom' attr: %r", step.name)
+
+    def check_reentrant(self, step):
+        """Vérifie l'attribut reentrant."""
+        status = step.definition.get("reentrant", "n").split(":")[0]
+        if status not in ('o', 'n', 'f'):
+            self.cr.fatal(
+                "Unexpected value for 'reentrant' (not 'o', 'n' or 'f'): %r",
+                status)
+        if status != 'n' and 'reuse' not in list(step.keywords.keys()):
+            self.cr.fatal("Keyword 'reuse' is missing")
+        if status != 'n':
+            orig = step.definition.get("reentrant").split(':')
+            try:
+                assert len(orig) in (2, 3), "expecting one or two keywords"
+                orig.pop(0)
+                msg = "Inexisting keyword {0!r}"
+                for k1 in orig[0].split("|"):
+                    key1 = step.keywords.get(k1)
+                    assert key1 is not None, msg.format(k1)
+                    if len(orig) > 1:
+                        key2 = key1.keywords.get(orig[1])
+                        assert key2 is not None, msg.format("/".join([k1, orig[1]]))
+            except AssertionError as exc:
+                self.cr.fatal("'reentrant' must define which keyword "
+                              "provide the modified object.\nFor example: "
+                              "'o:MAILLAGE' for a simple keyword or "
+                              "'o:ETAT_INIT:EVOL_NOLI' for a factor keyword. "
+                              "Keywords must exist.\n"
+                              "Error: {0}"
+                              .format(exc))
+
+    def check_statut(self, step, into=('o', 'f', 'c', 'd')):
+        """Vérifie l'attribut statut."""
+        if step.definition.get("statut") not in into:
+            self.cr.fatal("Unexpected value for 'statut' (not in %s): %r",
+                          into, step.definition.get("statut"))
+        if step.name == 'reuse' and step.definition.get("statut") != 'c':
+            self.cr.fatal("'statut' must be 'c' for reuse.")
+
+    def check_op(self, step, valmin=-99, valmax=9999):
+        """Vérifie l'attribut op."""
+        op = step.definition.get("op")
+        if (op is not None and
+                (isinstance(op, int) and not valmin < op <= valmax) or
+                (isinstance(op, str) and not isinstance(op, str))):
+            self.cr.fatal("Attribute 'op' must be between %d and %d: %r",
+                          valmin, valmax, op)
+
+    def check_min_max(self, step):
+        """Vérifie les attributs min/max."""
+        vmin = step.definition.get("min", 1)
+        if not isinstance(vmin, int):
+            self.cr.fatal("Unexpected type for 'min' attr: %r", vmin)
+        vmax = step.definition.get("max", 1)
+        if not isinstance(vmax, int):
+            if vmax != '**':
+                self.cr.fatal("Unexpected type for 'max' attr: %r", vmax)
+        if vmax != '**' and vmin > vmax:
+            self.cr.fatal("Unexpected values: min=%r and max=%r")
+
+    def check_validators(self, step):
+        """Vérifie les validateurs supplémentaires"""
+        # TODO
+        # valid = step.definition.get("validators")
+        # if valid and not valid.verif_cata():
+        #     self.cr.fatal("Incorrect validator. Reason : %s", valid.cata_info)
+
+    def check_into(self, step):
+        """Vérifie l'attribut into."""
+        into = step.definition.get("into")
+        if into is not None:
+            if not isinstance(into, (list, tuple)):
+                self.cr.fatal("Unexpected type for 'into' attr: %r", into)
+            if len(into) == 0:
+                self.cr.fatal("At least one value is expected for 'into'")
+
+    def check_position(self, step):
+        """Vérifie l'attribut position."""
+        if step.definition.get("position") is not None:
+            self.cr.fatal("Unauthorized attribute: 'position'")
+
+    def check_defaut(self, step):
+        """Vérifie l'attribut defaut."""
+        if step.defaultValue() is not None:
+            if (step.definition.get("into")
+                    and step.defaultValue() not in step.definition.get("into")):
+                self.cr.fatal("The default value %r must be in the 'into' list: %r",
+                              step.defaultValue(), step.definition.get("into"))
+            if step.definition.get("statut") == 'o':
+                self.cr.fatal("A keyword with a default value must be optional")
+
+    def check_inout(self, step):
+        """Vérifie l'attribut inout."""
+        from code_aster.Cata.Language.DataStructure import UnitBaseType
+        inout = step.definition.get("inout")
+        typ = force_list(step.definition.get("typ"))
+        if inout is None:
+            return
+        elif inout not in ('in', 'out'):
+            self.cr.fatal("Unexpected value (not 'in' or 'out'): %r", inout)
+        elif len(typ) != 1 or not issubclass(typ[0], UnitBaseType):
+            self.cr.fatal("Attribute 'typ' must be UnitType(): %r", typ)
+
+    def check_unit(self, step):
+        """Vérification ayant besoin du nom"""
+        from code_aster.Cata.DataStructure import UnitType
+        # As UnitType() is not an object, this forbids UNITE* keywords
+        # for another kind of 'int'.
+        inout = step.definition.get("inout")
+        typ = force_list(step.definition.get("typ"))
+        if step.name.startswith('UNITE') and UnitType() in typ:
+            if not inout:
+                self.cr.fatal("Attribute 'inout' is required with 'typ' "
+                              "UnitType().")
+            if step.defaultValue() == 6 :
+                self.cr.fatal("Unauthorized default value: 6")
+
+    def visitCommand(self, step, userDict=None):
+        """Visit a Command object"""
+        self.check_regles(step)
+        self.check_fr(step)
+        self.check_reentrant(step)
+        self.check_docu(step)
+        self.check_nom(step)
+        self.check_op(step, valmin=0)
+        # self.verif_cata_regles(step)
+        for entity in step.entities.values():
+            entity.accept(self)
+
+    def visitMacro(self, step, userDict=None):
+        """Visit a Macro object"""
+        self.check_regles(step)
+        self.check_fr(step)
+        self.check_reentrant(step)
+        self.check_docu(step)
+        self.check_nom(step)
+        self.check_op(step, valmax=0)
+        # self.verif_cata_regles(step)
+        for entity in step.entities.values():
+            entity.accept(self)
+
+    def visitFactorKeyword(self, step, userDict=None):
+        """Visit a FactorKeyword object"""
+        self.check_min_max(step)
+        self.check_fr(step)
+        self.check_regles(step)
+        self.check_statut(step)
+        self.check_docu(step)
+        self.check_validators(step)
+        # self.verif_cata_regles(step)
+        for entity in step.entities.values():
+            entity.accept(self)
+
+    def visitBloc(self, step, userDict=None):
+        """Visit a Bloc object"""
+        for entity in step.entities.values():
+            entity.accept(self)
+
+    def visitSimpleKeyword(self, step, skwValue=None):
+        """Visit a SimpleKeyword object"""
+        self.check_min_max(step)
+        self.check_fr(step)
+        self.check_statut(step)
+        self.check_into(step)
+        self.check_position(step)
+        self.check_validators(step)
+        self.check_defaut(step)
+        self.check_inout(step)
+        self.check_unit(step)
 
 
 def getListOfCommands():
     """Build the list of operators"""
-    from code_aster.Commands import commandStore
-    commands = [cmd for cmd in list(commandStore.values()) if cmd.nom != 'VARIABLE']
+    from code_aster.Cata.SyntaxObjects import Command
+    from code_aster.Cata.Commands import commandStore
+    commands = [cmd for cmd in list(commandStore.values())
+                if isinstance(cmd, Command)]
     return commands
 
 def checkDefinition( commands ):
@@ -19,15 +225,16 @@ def checkDefinition( commands ):
     print(">>> Vérification des catalogues de commandes...")
     err = []
     for cmd in commands:
-        cr = cmd.report()
-        if not cr.estvide():
-            err.append([cmd.nom, str(cr)])
+        checker = CataChecker()
+        cmd.accept(checker)
+        if not checker.cr.estvide():
+            err.append([cmd.name, str(checker.cr)])
             # print str(cr)
             # raise TypeError("La vérification du catalogue a échoué pour '{0}'"\
-            #                 .format(cmd.nom))
+            #                 .format(cmd.name))
         cr = check_sd_prod(cmd)
         if cr:
-            err.append([cmd.nom, str(cr)])
+            err.append([cmd.name, str(cr)])
 
     for name, msg in err:
         print(("La vérification du catalogue a échoué pour '{0}':\n{1}"
@@ -40,27 +247,32 @@ def checkDefinition( commands ):
 def check_sd_prod(cmd):
     """Check sd_prod function."""
     try:
-        check_sdprod(cmd.nom, getattr(cmd, 'sd_prod', None),
+        check_sdprod(cmd.name, getattr(cmd, 'sd_prod', None),
                      None, verbose=False)
     except TypeError as exc:
         return str(exc)
 
-def get_entite( obj ):
-    """Return the sub-objects of a composite object"""
-    ret = list(obj.entites.values())
+def get_entite( obj, typ="values" ):
+    """Return the sub-objects (if `typ` is "values") or sub-objects
+    names (if `typ` is "key") of a composite object."""
+    entities = obj.keywords
     lsub = []
-    for sub in ret:
-        if sub.label in ("BLOC", "FACT"):
-            lsub.extend(get_entite(sub))
-    ret.extend(lsub)
-    return ret
+    for key, sub in entities.items():
+        if sub.getCataTypeId() != IDS.bloc:
+            if typ == "values":
+                lsub.append(sub)
+            else:
+                lsub.append(key)
+        if sub.getCataTypeId() in (IDS.bloc, IDS.fact):
+            lsub.extend(get_entite(sub, typ=typ))
+    return lsub
 
 def checkDocStrings( commands ):
     """Extract and check the fr/ang docstrings"""
     print(">>> Vérification des textes explicatifs des mots-clés...")
     lang = {}
     for cmd in commands:
-        objs = [cmd] + get_entite( cmd )
+        objs = [cmd] + get_entite( cmd, typ="values" )
         for entity in objs:
             if getattr(entity, 'ang', None):
                 lang[id(entity)] = (entity.fr, entity.ang)
@@ -72,15 +284,13 @@ def extractKeywords( commands ):
     # keywords of each command
     cmdKwd = {}
     for command in commands:
-        name = command.nom
-        words = command.get_mc_simp(niv=2) + command.get_mc_fact()
-        cmdKwd[ name ] = words
+        cmdKwd[ command.name ] = get_entite(command, typ="keys")
     # reverse dict : commands that use a keyword
     kwdCmd = {}
-    for nom, words in list(cmdKwd.items()):
+    for name, words in list(cmdKwd.items()):
         for word in words:
             kwdCmd[ word ] = kwdCmd.get(word, set())
-            kwdCmd[ word ].add(nom)
+            kwdCmd[ word ].add(name)
     return kwdCmd
 
 def sortedKeywords( kwdCmd ):
@@ -172,7 +382,10 @@ def vocab01_ops(self, EXISTANT, INFO, **kwargs):
                      str(list(diff)) ))
 
 
-VOCAB01 = MACRO(nom='VOCAB01', op=vocab01_ops,
-                EXISTANT = SIMP(statut='o', typ='TXM', max='**',),
-                INFO = SIMP(statut='f',typ='I', defaut=1, into=(1, 2),),
+VOCAB01_cata = MACRO(nom='VOCAB01',
+                     op=vocab01_ops,
+                     EXISTANT = SIMP(statut='o', typ='TXM', max='**',),
+                     INFO = SIMP(statut='f',typ='I', defaut=1, into=(1, 2),),
 )
+
+VOCAB01 = UserMacro("VOCAB01", VOCAB01_cata, vocab01_ops)
