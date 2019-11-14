@@ -67,7 +67,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
     integer, parameter :: nb_info_maxi = 99
     character(len=24) :: list_info_type(nb_info_maxi)
     integer :: n1, npilo, nb_load
-    integer ::  i_excit, i_load, iret, infc, j, i_load_new
+    integer ::  i_excit, i_load, iret, i_load_new
     character(len=4) :: typcal
     character(len=8) :: k8bid, load_type, func_para_inst, const_func
     character(len=16) :: nomcmd, typesd, load_apply, load_keyword

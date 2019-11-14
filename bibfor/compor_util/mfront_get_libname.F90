@@ -31,7 +31,7 @@ subroutine mfront_get_libname(libname)
 ! for the path name
 ! person_in_charge: mathieu.courtois@edf.fr
 !
-    character(len=512) :: dir, nom512
+    character(len=512) :: dir
     integer :: nchar
 !
     libname = ' '
