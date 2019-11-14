@@ -680,6 +680,7 @@ def macr_ecrevisse_ops(self, **args):
     if (T_TABL_RES is not None):
         dprod = T_TABL_RES.dict_CREA_TABLE()
         TABL_RES = CREA_TABLE(**dprod)
+        self.register_result(TABL_RES, TABLE)
     if (T_DEB_RES is not None):
         debprod = T_DEB_RES.dict_CREA_TABLE()
         DEB_RES = CREA_TABLE(**debprod)

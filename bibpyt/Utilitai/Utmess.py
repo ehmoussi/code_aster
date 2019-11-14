@@ -111,12 +111,9 @@ class MESSAGE_LOGGER(metaclass=Singleton):
 
     def init_mpi_error(self):
         """Stocke les informations nécessaires pour la gestion des erreurs en MPI."""
-        rank = aster_core.MPI_CommRankSize()[0]
-        self._mpi_rank = aster_core._USE_MPI and rank or None
-        np   = aster_core.MPI_CommRankSize()[1]
-        self._mpi_nbcpu = aster_core._USE_MPI and np or None
-        import platform
-        node = platform.node()
+        if not aster_core._USE_MPI:
+            return
+        self._mpi_rank, self._mpi_nbcpu = aster_core.MPI_CommRankSize()
 
     def __call__(self, *args, **kwargs):
         """Raccourci pour simplifier l'appel depuis astermodule.c et UTMESS.

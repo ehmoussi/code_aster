@@ -99,7 +99,7 @@ class CommandSyntax(object):
         self._resultName = " "
         self._resultType = " "
         self._definition = None
-        logger.debug( "new command is %r", self._name )
+        logger.debug( "Syntax: new command is %r", self._name )
         currentCommand = self.getCurrentCommand()
         # only FIN is allowed to free the current "in failure" command
         if self._name == "FIN" and currentCommand is not None:
@@ -120,7 +120,7 @@ class CommandSyntax(object):
     def free( self ):
         """Reset the current command pointer as soon as possible"""
         # `currentCommand` must be reset before the garbage collector will do it
-        logger.debug( "del command %r", self._name )
+        logger.debug( "Syntax: del command %r", self._name )
         self.setCurrentCommand(None)
 
     def __repr__( self ):
