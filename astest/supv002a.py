@@ -33,6 +33,7 @@ import queue
 import time
 import signal
 
+import code_aster
 from Noyau.N_types import is_int
 from Utilitai.Utmess import UTMESS, MessageLog
 from code_aster.Utilities.i18n import localization as LO
@@ -56,8 +57,7 @@ RE_UNAUTH = [
 try:
     import aster
     from code_aster.Cata.Syntax import _F
-    from code_aster.Cata.Syntax import MACRO, SIMP
-    from code_aster.Cata.Commands import CREA_TABLE, TEST_TABLE
+    from code_aster.Commands import CREA_TABLE, TEST_TABLE
     loginfo = partial(aster.affiche, 'MESSAGE')
 except ImportError:
     def loginfo(msg):
