@@ -103,6 +103,10 @@ try:
 except AsterError as err:
    assert err.id_message == "CALCULEL6_63"
 
+# the initialization is partial because of exception raised
+resu.appendModelOnAllRanks(model)
+resu.appendMaterialOnMeshOnAllRanks(chmat)
+resu.update()
 
 resu = EXTR_RESU(RESULTAT=resu,ARCHIVAGE=_F(NUME_ORDRE=1))
 
