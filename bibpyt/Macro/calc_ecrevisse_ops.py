@@ -243,7 +243,7 @@ def calc_ecrevisse_ops(self, **args):
     # ON CREE LES GROUP_NO ORDONNES DES LEVRES DE FISSURE
     #     Liste des noms des groupes de noeuds du maillage :
     mesh = MODELE_MECA.getMesh()
-    _lgno = map(lambda x: x[0], mesh.LIST_GROUP_NO())
+    _lgno = [x[0] for x in mesh.LIST_GROUP_NO()]
 
     for k, fissure in enumerate(FISSURE):
         dFISSURE = fissure.cree_dict_valeurs(fissure.mc_liste)
