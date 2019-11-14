@@ -418,7 +418,7 @@ class CommandSyntax(object):
             explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
-        if len( value ) > 0 and not is_int(value[0]):
+        if len( value ) > 0 and not is_int(value[0], onvalue=True):
             raise TypeError( "integer expected, got %s" % type( value[0] ) )
         size = len(value)
         if size > maxval:
@@ -564,7 +564,7 @@ class CommandSyntax(object):
                 pass
             elif is_float(obj) and typ in ('R8', 'C8'):
                 pass
-            elif is_int(obj) and typ in ('IS', 'R8', 'C8'):
+            elif is_int(obj, onvalue=True) and typ in ('IS', 'R8', 'C8'):
                 pass
             elif is_str(obj) and typ == 'TX':
                 pass
