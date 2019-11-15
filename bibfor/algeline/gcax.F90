@@ -18,7 +18,7 @@
 
 subroutine gcax(m, in, ip, ac, x,&
                 y)
-! aslint: disable=W1304, C1513
+! aslint: disable=W1304
     implicit none
     integer(kind=4) :: ip(*)
     integer :: m, in(m)

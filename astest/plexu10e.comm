@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -142,7 +142,7 @@ FONC2=DEFI_FONCTION(NOM_PARA='INST',
 
 
 
-U_EPX = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    MODELE = MODE_EPX,
    CARA_ELEM = CARAEPX,
    CHAM_MATER = CHMA_EPX,
@@ -161,7 +161,6 @@ U_EPX = CALC_EUROPLEXUS(
           _F(CHARGE=CL,),
           _F(CHARGE=FROT,),
           ),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='AUTO',
                INST_INIT = 0,
                INST_FIN  = 0.4,
@@ -171,52 +170,12 @@ U_EPX = CALC_EUROPLEXUS(
    ARCHIVAGE   = _F(PAS_NBRE=1790,),
    );
 
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_EPX, NOM_CHAM = 'SIEF_ELGA', GROUP_MA='MCAY10'))
-
-TEST_RESU(RESU=(_F(RESULTAT=U_EPX,
-                   GROUP_NO = 'NY10',
-                   NOM_CHAM='DEPL',
-                   NOM_CMP = 'DX',
-                   NUME_ORDRE = 1790,
-                   VALE_CALC = 0.227749672627,
-                   VALE_REFE = 2.27750E-01,
-                   REFERENCE = 'SOURCE_EXTERNE'
-                  ),
-                _F(RESULTAT=U_EPX,
-                   MAILLE = 'M150',
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP = 'N',
-                   NUME_ORDRE = 1790,
-                   VALE_CALC = 40510631.371 ,
-                   VALE_REFE = 40510650.0,
-                   REFERENCE = 'SOURCE_EXTERNE'
-                  ),
-               ),
-         )
-
-TEST_RESU(RESU=(_F(RESULTAT=U_EPX,
-                   GROUP_NO = 'NY10',
-                   NOM_CHAM='DEPL',
-                   NOM_CMP = 'DX',
-                   NUME_ORDRE = 6494,
-                   VALE_CALC = 0.237958954204,
-                   VALE_REFE = 2.37959E-01,
-                   REFERENCE = 'SOURCE_EXTERNE',
-                   # issue26503 : les variations de résultats sont liés à Europlexus et non à Code_Aster
-                   TOLE_MACHINE=1E-4
-                  ),
-                _F(RESULTAT=U_EPX,
-                   MAILLE = 'M150',
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP = 'N',
-                   NUME_ORDRE = 6494,
-                   VALE_CALC = 38661888.792,
-                   VALE_REFE = 38661900.0,
-                   REFERENCE = 'SOURCE_EXTERNE',
-                   # issue26503 : les variations de résultats sont liés à Europlexus et non à Code_Aster
-                   TOLE_MACHINE=1E-3
-                  ),
-               ),
-         )
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=17,
+             NB_VALE_I=24,
+             VALE_CALC=2.3e11,
+             VALE_CALC_I=20136063,
+             VALE_CALC_K='2440bb9458fd083e981f04b457ed65e6')
 
 FIN()

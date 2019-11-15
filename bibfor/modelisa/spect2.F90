@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 function spect2(a, b, xlc, vitn, rhoe,&
                 defm, func, tol, ier, r1,&
                 err, nbp, im, jm)
-! aslint: disable=W0307
     implicit none
 !                                 B  F2(X)
 ! DESCRIPTION : CALCULE DINTEG = S  S func(X,Y) DY   DX

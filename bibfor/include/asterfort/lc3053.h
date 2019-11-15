@@ -17,9 +17,6 @@
 ! --------------------------------------------------------------------
 
 !
-!
-! aslint: disable=W1504,W0104
-!
 interface
     subroutine lc3053(BEHinteg,&
                       fami, kpg, ksp, ndim, imate,&

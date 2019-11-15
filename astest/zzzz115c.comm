@@ -1,0 +1,837 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 2019 Aether Engineering Solutions - www.aethereng.com
+# Copyright (C) 2019 Kobe Innovation Engineering - www.kobe-ie.com
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# AUTEUR : L. DALL OLIO (Alter Ego Engineering)
+#          VALIDATION DE CALC_COUPURE
+#
+#  DETAILS : MODELISATION DKT
+#            Mailles QUAD4
+#
+# - Based on analytical results of beam with one fixed support and point load on free ending.
+# - Computation with macr_elas_mult
+# - Applied loads for macr_elas_mult-shearLd2 is double than for fz
+
+N = 1.
+MPa = 1.
+mm = 1.
+ton = 1.
+sec = 1.
+
+Pa = MPa*1E-6
+m  = mm*1.E3
+kN = N*1.E3
+kg = ton*1.E-3
+
+
+L  = 12.*m
+H  = 3.*m
+B  = 0.3*m
+A  = B*H
+d1 = 3.*m
+d2 = 3.15*m
+
+young = 30000.0 * MPa
+rho   = 2.5e-9 * ton/mm**3
+
+A        = B*H
+Imin   = (H*B**3)/12.
+masse  = rho * A
+valSpectre = 5000.
+csi = 0.04
+
+# Facteur de participation modaux (calcules par code_aster)
+Facteurs = (1.29122E+00, 1.43199E-11, -4.57071E-01) # norme TRAN
+# ~ Facteurs = (4.67809E+00, 3.98830E-11, -1.55859E+00) # norme MASS_GENE
+
+# Pulsations et frequences analytiques et de non regression
+omega1 = pi**2 * sqrt( young * Imin /(masse * L**4))
+freq1  = omega1/(2.*pi)
+omega2 = 4.*omega1
+freq2  = omega2/(2.*pi)
+omega3 = 9.*omega1
+freq3  = omega3/(2.*pi)
+freqCalc = [3.2832347,13.226884,29.971639]
+
+# DX analytiques (deformee modale) et de non regression
+valX = 6000.*mm
+phi1 = sin(pi*valX/L)
+phi2 = sin(2.*pi*valX/L)
+phi3 = sin(3.*pi*valX/L)
+phiCalc = [1.0,1.4447690477746692E-11,0.9999999999998523]
+
+# Moments analytiques (selon deformee modale) et de non regression
+Mphi1 = phi1 * (young*Imin/H) * (pi/L)**2
+Mphi2 = phi2 * (young*Imin/H) * (2.*pi/L)**2 
+Mphi3 = phi3 * (young*Imin/H) * (3.*pi/L)**2
+MPhiCalc = [4627.16795565386,1.6441040190384726E-07,41701.76360928606]
+
+# Cisaillement analytiques (selon deformee modale) et de non regression
+Tphi1 = cos(pi*valX/L) * (young*Imin/H) * (pi/L)**3 
+Tphi2 = cos(2.*pi*valX/L) * (young*Imin/H) * (2.*pi/L)**3
+Tphi3 = cos(3.*pi*valX/L) * (young*Imin/H) * (3.*pi/L)**3
+TPhiCalc = [-2.843947299879801E-10,-8.581697416995668,1.2784084901795723E-10]
+
+# Echelle spectres
+echelleX = 1.
+echelleY = 2.
+echelleZ = 3.
+
+# Contributions modales
+M1 = Mphi1 * H * Facteurs[0] * valSpectre * echelleX /  (2*pi*freqCalc[0])**2
+M2 = Mphi2 * H * Facteurs[1] * valSpectre * echelleX /  (2*pi*freqCalc[1])**2
+M3 = Mphi3 * H * Facteurs[2] * valSpectre * echelleX /  (2*pi*freqCalc[2])**2
+T1 = -Tphi1 * H * Facteurs[0] * valSpectre * echelleX /  (2*pi*freqCalc[0])**2
+T2 = -Tphi2 * H * Facteurs[1] * valSpectre * echelleX /  (2*pi*freqCalc[1])**2
+T3 = -Tphi3 * H * Facteurs[2] * valSpectre * echelleX /  (2*pi*freqCalc[2])**2
+
+eta12 = freqCalc[1]/freqCalc[0]
+rho12 = (8.* eta12 * sqrt(csi**2*eta12) * (csi+csi*eta12)) / ((1-eta12**2)**2 + 4*eta12*csi**2*(1+eta12**2) + 4*eta12**2*(2*csi**2))
+
+eta13 = freqCalc[2]/freqCalc[0]
+rho13 = (8.* eta13 * sqrt(csi**2*eta13) * (csi+csi*eta13)) / ((1-eta13**2)**2 + 4*eta13*csi**2*(1+eta13**2) + 4*eta13**2*(2*csi**2))
+
+eta23 = freqCalc[2]/freqCalc[1]
+rho23 = (8.* eta23 * sqrt(csi**2*eta23) * (csi+csi*eta23)) / ((1-eta23**2)**2 + 4*eta23*csi**2*(1+eta23**2) + 4*eta23**2*(2*csi**2))
+
+signMX = +1
+MCQCX = signMX*sqrt( M1**2 + M2**2 + M3**2  + 2*rho12*M1*M2 + 2*rho13*M1*M3 + 2*rho23*M2*M3) 
+MCQCY = 0.
+MCQCZ = 0.
+
+MNM1 = MCQCX + 0.4*(MCQCY + MCQCZ)
+MNM2 = MCQCX + 0.4*(MCQCY - MCQCZ)
+MNM3 = MCQCX + 0.4*(-MCQCY + MCQCZ)
+MNM4 = MCQCX + 0.4*(-MCQCY - MCQCZ)
+MNM5 = -MCQCX + 0.4*(MCQCY + MCQCZ)
+MNM6 = -MCQCX + 0.4*(MCQCY - MCQCZ)
+MNM7 = -MCQCX + 0.4*(-MCQCY + MCQCZ)
+MNM8 = -MCQCX + 0.4*(-MCQCY - MCQCZ)
+
+MNM9 = MCQCY + 0.4*(MCQCZ + MCQCX)
+MNM10 = MCQCY + 0.4*(MCQCZ - MCQCX)
+MNM11 = MCQCY + 0.4*(-MCQCZ + MCQCX)
+MNM12 = MCQCY + 0.4*(-MCQCZ - MCQCX)
+MNM13 = -MCQCY + 0.4*(MCQCZ + MCQCX)
+MNM14 = -MCQCY + 0.4*(MCQCZ - MCQCX)
+MNM15 = -MCQCY + 0.4*(-MCQCZ + MCQCX)
+MNM16 = -MCQCY + 0.4*(-MCQCZ - MCQCX)
+
+MNM17 = MCQCZ + 0.4*(MCQCX + MCQCY)
+MNM18 = MCQCZ + 0.4*(MCQCX - MCQCY)
+MNM19 = MCQCZ + 0.4*(-MCQCX + MCQCY)
+MNM20 = MCQCZ + 0.4*(-MCQCX - MCQCY)
+MNM21 = -MCQCZ + 0.4*(MCQCX + MCQCY)
+MNM22 = -MCQCZ + 0.4*(MCQCX - MCQCY)
+MNM23 = -MCQCZ + 0.4*(-MCQCX + MCQCY)
+MNM24 = -MCQCZ + 0.4*(-MCQCX - MCQCY)
+
+signTX = -1
+TCQCX = signTX*sqrt( T1**2 + T2**2 + T3**2  + 2*rho12*T1*T2 + 2*rho13*T1*T3 + 2*rho23*T2*T3)
+TCQCY = 0.
+TCQCZ = 0.
+
+TNM1 = TCQCX + 0.4*(TCQCY + TCQCZ)
+TNM2 = TCQCX + 0.4*(TCQCY - TCQCZ)
+TNM3 = TCQCX + 0.4*(-TCQCY + TCQCZ)
+TNM4 = TCQCX + 0.4*(-TCQCY - TCQCZ)
+TNM5 = -TCQCX + 0.4*(TCQCY + TCQCZ)
+TNM6 = -TCQCX + 0.4*(TCQCY - TCQCZ)
+TNM7 = -TCQCX + 0.4*(-TCQCY + TCQCZ)
+TNM8 = -TCQCX + 0.4*(-TCQCY - TCQCZ)
+
+TNM9 = TCQCY + 0.4*(TCQCZ + TCQCX)
+TNM10 = TCQCY + 0.4*(TCQCZ - TCQCX)
+TNM11 = TCQCY + 0.4*(-TCQCZ + TCQCX)
+TNM12 = TCQCY + 0.4*(-TCQCZ - TCQCX)
+TNM13 = -TCQCY + 0.4*(TCQCZ + TCQCX)
+TNM14 = -TCQCY + 0.4*(TCQCZ - TCQCX)
+TNM15 = -TCQCY + 0.4*(-TCQCZ + TCQCX)
+TNM16 = -TCQCY + 0.4*(-TCQCZ - TCQCX)
+
+TNM17 = TCQCZ + 0.4*(TCQCX + TCQCY)
+TNM18 = TCQCZ + 0.4*(TCQCX - TCQCY)
+TNM19 = TCQCZ + 0.4*(-TCQCX + TCQCY)
+TNM20 = TCQCZ + 0.4*(-TCQCX - TCQCY)
+TNM21 = -TCQCZ + 0.4*(TCQCX + TCQCY)
+TNM22 = -TCQCZ + 0.4*(TCQCX - TCQCY)
+TNM23 = -TCQCZ + 0.4*(-TCQCX + TCQCY)
+TNM24 = -TCQCZ + 0.4*(-TCQCX - TCQCY)
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
+      ERREUR=_F(ERREUR_F='EXCEPTION'),
+      PAR_LOT='NON',
+      IGNORE_ALARM=('SUPERVIS_1',),
+)
+
+mesh = LIRE_MAILLAGE(
+    FORMAT = 'MED',
+    UNITE=20,
+)
+
+cls = DEFI_MATERIAU(
+    ELAS =
+        _F(
+            E = young,
+            NU = 0.3,
+            RHO = rho,
+    )
+)
+
+model = AFFE_MODELE(
+    AFFE =
+        _F(
+            MODELISATION = 'DKT', # 'DST',
+            PHENOMENE = 'MECANIQUE',
+            TOUT = 'OUI'
+    ),
+    MAILLAGE = mesh
+)
+
+
+fieldmat = AFFE_MATERIAU(
+    AFFE =
+        _F(
+            MATER = (cls, ),
+            TOUT = 'OUI'
+        ),
+    MODELE = model
+)
+
+elemprop = AFFE_CARA_ELEM(
+    MODELE = model,
+    COQUE =
+        _F(
+            GROUP_MA = 'ELEMENTS',
+            EPAIS = 300.0 * mm,
+            VECTEUR = (0. , 1. , 0.),
+        )
+)
+
+boundary = AFFE_CHAR_MECA(
+    MODELE = model,
+    DDL_IMPO =(
+        _F(GROUP_NO = ( 'START','END',),DX = 0.,),
+        _F(GROUP_NO = ( 'PGB',),DY = 0., DZ=0.),
+        _F(GROUP_NO = ( 'PDB',),DY = 0., DZ=0.),
+        ),
+)
+
+liaison=AFFE_CHAR_MECA(MODELE = model, LIAISON_DDL=(
+        _F(  GROUP_NO = ('PCB', 'PCH',), DDL = ('DX', 'DX',), COEF_MULT = (-1, 1, ), COEF_IMPO = 0.)))
+
+ASSEMBLAGE(MODELE = model,
+            CHAM_MATER = fieldmat,
+            CARA_ELEM = elemprop,
+           CHARGE=(boundary,liaison,),
+           NUME_DDL=CO('NUMEDDL'),
+           MATR_ASSE=(_F(MATRICE=CO('RIGIDITE'),
+                         OPTION='RIGI_MECA',),
+                      _F(MATRICE=CO('MASSE'),
+                         OPTION='MASS_MECA',),),);
+
+MODMECA=CALC_MODES(MATR_RIGI=RIGIDITE,
+                  OPTION='BANDE',
+                  CALC_FREQ=_F(FREQ=(0.,30.,),
+                               ),
+                  MATR_MASS=MASSE,
+                  NORM_MODE=_F(NORME='TRAN'), # MASS_GENE
+                  );
+
+TABFREQ = RECU_TABLE(CO=MODMECA, 
+                     NOM_PARA=('FREQ','FACT_PARTICI_DX', 'FACT_PARTICI_DY', 'FACT_PARTICI_DZ'),
+                        );
+
+# Comparaison frequences calculees et analytiques
+TEST_TABLE(  TABLE=TABFREQ,
+             FILTRE=(_F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=1,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='FREQ', 
+             VALE_CALC=freqCalc[0], 
+             VALE_REFE=freq1,
+             PRECISION=2.E-2, 
+             );
+             
+TEST_TABLE(  TABLE=TABFREQ,
+             FILTRE=(_F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=2,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='FREQ',  
+             VALE_CALC=freqCalc[1], 
+             VALE_REFE=freq2,
+             PRECISION=2.E-2, 
+             );
+             
+TEST_TABLE(  TABLE=TABFREQ,
+             FILTRE=(_F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=3,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='FREQ',  
+             VALE_CALC=freqCalc[2], 
+             VALE_REFE=freq3,
+             PRECISION=2.E-2,
+             );
+             
+# Comparaison deplacements modaux calculees et analytiques
+coupe=MACR_LIGN_COUPE(RESULTAT=MODMECA, NOM_CHAM='DEPL',
+                     LIGN_COUPE=(
+                        _F(TYPE='SEGMENT', NB_POINTS=3, INTITULE='depl modes',
+                           NOM_CMP = ( 'DX', ),
+                           DISTANCE_MAX=1.0,
+                           COOR_ORIG= (0.,4500.,-1500.),
+                           COOR_EXTR= (0.,4500.,1500.),
+                    )));
+
+TEST_TABLE(  TABLE=coupe,
+             FILTRE=(_F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=1,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='DX',  
+             VALE_CALC= phiCalc[0], 
+             VALE_REFE=phi1,
+             PRECISION=1.E-2,
+             );
+
+TEST_TABLE(  TABLE=coupe,
+             FILTRE=(_F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=2,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='DX',  
+             VALE_CALC= phiCalc[1], 
+             VALE_REFE=phi2,
+             PRECISION=1.E-2,
+             );
+
+TEST_TABLE(  TABLE=coupe,
+             FILTRE=(_F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=3,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='DX',  
+             VALE_CALC= phiCalc[2], 
+             VALE_REFE=-phi3,
+             PRECISION=1.E-2,
+             );
+             
+# Comparaisons efforts modaux (moment et cisaillement) calcules et analytiques
+MODMECA = CALC_CHAMP(reuse=MODMECA,
+                        RESULTAT=MODMECA,
+                        MODELE = model,
+                        CHAM_MATER = fieldmat,
+                        CARA_ELEM = elemprop, 
+                        CONTRAINTE=('EFGE_NOEU',),);
+                    
+coupEff = MACR_LIGN_COUPE(RESULTAT=MODMECA, 
+                            NOM_CHAM='EFGE_NOEU',
+                            LIGN_COUPE=(
+                                _F(TYPE='SEGMENT',
+                                    NB_POINTS=3,
+                                    INTITULE='efforts modes',
+                                    NOM_CMP = ( 'MXX','QX' ),
+                                    DISTANCE_MAX=1.0,
+                                    COOR_ORIG= (0.,4500.,-1500.),
+                                    COOR_EXTR= (0.,4500.,1500.),),
+                                        ),
+                                );
+
+TEST_TABLE(  TABLE=coupEff,
+             FILTRE=(_F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=1,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MXX',  
+             VALE_CALC= MPhiCalc[0],
+             VALE_REFE= Mphi1,
+             PRECISION= 1.E-2,
+             ); 
+
+TEST_TABLE(  TABLE=coupEff,
+             FILTRE=(_F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=2,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='MXX',  
+             VALE_CALC= MPhiCalc[1], 
+             VALE_REFE=Mphi2,
+             PRECISION=1.E-2,
+             );
+
+TEST_TABLE(  TABLE=coupEff,
+             FILTRE=(_F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=3,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MXX',  
+             VALE_CALC= MPhiCalc[2],
+             VALE_REFE=-Mphi3,
+             PRECISION=1.E-2,
+             );
+             
+
+TEST_TABLE(  TABLE=coupEff,
+             FILTRE=(_F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=1,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='QX',  
+             VALE_CALC= TPhiCalc[0], 
+             VALE_REFE=Tphi1,
+             PRECISION=12.E-2,
+             );
+
+TEST_TABLE(  TABLE=coupEff,
+             FILTRE=(_F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=2,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='QX',  
+             VALE_CALC= TPhiCalc[1], 
+             VALE_REFE=Tphi2,
+             PRECISION=12.E-2,
+             );
+
+TEST_TABLE(  TABLE=coupEff,
+             FILTRE=(_F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=3,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='QX',  
+             VALE_CALC= TPhiCalc[2], 
+             VALE_REFE=-Tphi3,
+             PRECISION=12.E-2,
+             );
+
+ACCE=DEFI_FONCTION(  NOM_PARA='FREQ', INTERPOL='LIN',
+                             PROL_DROITE='CONSTANT',
+                             PROL_GAUCHE='CONSTANT',
+                            VALE=( 0., valSpectre,   1., valSpectre,  ),
+                            );
+                                   
+SPECT=DEFI_NAPPE(    NOM_PARA='AMOR',
+                        INTERPOL=( 'LIN', 'LIN', ),
+                        PARA=(      0.001,    0.1,),
+                        FONCTION=( ACCE,  ACCE, ),
+                        );
+
+tbextr = CALC_COUPURE(RESULTAT=MODMECA,
+                      OPERATION='EXTRACTION',
+                      LIGN_COUPE=(
+                                  _F(INTITULE="coupe_extr",
+                                     GROUP_MA = 'ELEMENTS',
+                                     COOR_ORIG=(0.,4500.,-1500.),
+                                     COOR_EXTR=(0.,4500.,1500.),
+                                     NB_POINTS=3,
+                                     DISTANCE_MAX=1.0,
+                                     ), 
+                                 )
+                      )
+
+
+# ===================================== #
+# TEST COUPE 
+# ===================================== #
+
+# Test CQC en direction X
+TEST_TABLE(  TABLE=tbextr,
+             FILTRE=(_F(NOM_PARA='INTITULE',
+                       VALE_K='coupe_extr',
+                       ),
+                     _F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_MODE',
+                       VALE_I=1,
+                       ),                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MYY',  
+             VALE_CALC=4627.16795565386,
+             VALE_REFE=Mphi1,
+             );
+             
+TEST_TABLE(  TABLE=tbextr,
+             FILTRE=(_F(NOM_PARA='INTITULE',
+                       VALE_K='coupe_extr',
+                       ),
+                     _F(NOM_PARA='ABSC_CURV',
+                       VALE=0.,
+                       ),
+                    _F(NOM_PARA='NUME_MODE',
+                       VALE_I=1,
+                       ),                        
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='QY',  
+             VALE_CALC=2.843947299879801E-10,
+             VALE_REFE=-Tphi1,
+             PRECISION = 1.2E-1,
+             );
+
+tbcoup = CALC_COUPURE(  RESULTAT=MODMECA,
+                        OPERATION='RESULTANTE',
+                        COMB_MODE =    
+                                _F(NOM_CAS = 'combinaisons test',
+                                    ECHELLE = (echelleX, echelleY, echelleZ),
+                                    MODE_SIGNE = (1, 1, 1),
+                                    SPEC_OSCI= (SPECT, SPECT, SPECT),
+                                    TYPE = 'CQC_SIGNE',
+                                    AMOR_REDUIT = csi,
+                                    ),
+                        LIGN_COUPE=(                          
+                                    _F(INTITULE="coupe_resu",
+                                       GROUP_MA = 'ELEMENTS',
+                                       COOR_ORIG=(0.,4500.,-1500.),
+                                       COOR_EXTR=(0.,4500.,1500.),
+                                       NB_POINTS=100,
+                                       DISTANCE_MAX=1.0,
+                                       ), 
+                                   )
+                    )
+ 
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='RESULTANTE',
+                       ),
+                       _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=1,
+                       ),                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MHP',  
+             VALE_CALC=13777141.549543874,
+             VALE_REFE=Mphi1*H,
+             PRECISION=1E-2,
+             );
+             
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='RESULTANTE',
+                       ),
+                       _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=1,
+                       ),                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='VHP',  
+             VALE_CALC=-2.347513158717119E-07,
+             VALE_REFE=-Tphi1*H,
+             PRECISION = 1.2E-1,
+             );
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=(_F(NOM_PARA='TYPE',
+                       VALE_K='RIX',
+                       ),
+                       _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=1,
+                       ),                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MHP',  
+             VALE_CALC=209008775.921893,
+             VALE_REFE=M1,
+             PRECISION=1E-2,
+             );
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='RIX',
+                       ),
+                       _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=2,
+                       ),
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='MHP',  
+             VALE_CALC=4.600947286273307E-15,
+             VALE_REFE=M2,
+             PRECISION=3E-1,
+             );
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='RIX',
+                       ),
+                       _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=3,
+                       ),                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MHP',  
+             VALE_CALC=-7741154.825747078,
+             VALE_REFE=-M3,
+             PRECISION=5E-2,
+             );
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='CQCX',
+                       ),                     
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MHP',  
+             VALE_CALC=209148006.01160133,
+             VALE_REFE=MCQCX,
+             PRECISION=1E-2,
+             );
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='RIX',
+                       ),
+                       _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=1,
+                       ),                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='VHP',  
+             VALE_CALC=-3.5613399920409895E-06,
+             VALE_REFE=T1,
+             TOLE_MACHINE=1e-5,
+             PRECISION=2E-3,
+             );
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='RIX',
+                       ),
+                       _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=2,
+                       ),                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='VHP',  
+             VALE_CALC=2.121322241237171E-07,
+             VALE_REFE=T2,
+             PRECISION=3E-1,
+             );
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='RIX',
+                       ),
+                       _F(NOM_PARA='NUME_ORDRE',
+                       VALE_I=3,
+                       ),                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='VHP',  
+             VALE_CALC=3.1331701208538796E-08,
+             VALE_REFE=T3,
+             PRECISION=5E-3,
+             );
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='CQCX',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='VHP',  
+             VALE_CALC=-3.567314902874884E-06,
+             VALE_REFE=TCQCX,
+             TOLE_MACHINE=1e-5,
+             PRECISION=2E-3,
+             );
+             
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='NEWMARK+X+0.4Y+0.4Z',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MHP',  
+             VALE_CALC=209148006.01160124,
+             VALE_REFE=MNM1,
+             PRECISION=1E-2,
+             );
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='NEWMARK_MAXABS',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MHP',  
+             VALE_CALC=209148006.01160142,
+             VALE_REFE=abs(MNM1),
+             PRECISION=1E-2,
+             );                              
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='NEWMARK-X+0.4Y+0.4Z',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MHP',  
+             VALE_CALC=-209148006.01160142,
+             VALE_REFE=MNM5,
+             PRECISION=1E-2,
+             );
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='NEWMARK+X+0.4Y+0.4Z',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='VHP',  
+             VALE_CALC=-3.5673148142427053E-06,
+             VALE_REFE=TNM1,
+             TOLE_MACHINE=1e-5,
+             PRECISION=2E-3,
+             );
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='NEWMARK_MAXABS',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='VHP',  
+             VALE_CALC=3.5673149915070627E-06,
+             VALE_REFE=abs(TNM1),
+             TOLE_MACHINE=1e-5,
+             PRECISION=2E-3,
+             );                            
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='NEWMARK-X+0.4Y+0.4Z',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='VHP',  
+             VALE_CALC=3.5673149915070627E-06,
+             VALE_REFE=TNM5,
+             TOLE_MACHINE=1e-5,
+             PRECISION=2E-3,
+             );
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='NEWMARK+Y+0.4X+0.4Z',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MHP',  
+             VALE_CALC=83659202.40464047,
+             VALE_REFE=MNM9,
+             PRECISION=1E-2,
+             );                              
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='NEWMARK+Y-0.4X+0.4Z',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             NOM_PARA='MHP',  
+             VALE_CALC=-83659202.40464061,
+             VALE_REFE=MNM10,
+             PRECISION=1E-2,
+             );
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='NEWMARK+Y+0.4X+0.4Z',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='VHP',  
+             VALE_CALC=-1.4269258393415706E-06,
+             VALE_REFE=TNM9,
+             TOLE_MACHINE=1e-5,
+             PRECISION=2E-3,
+             );                              
+
+TEST_TABLE(  TABLE=tbcoup,
+             FILTRE=( _F(NOM_PARA='TYPE',
+                       VALE_K='NEWMARK+Y-0.4X+0.4Z',
+                       )                       
+                    ),
+             REFERENCE='ANALYTIQUE',
+             CRITERE='ABSOLU',
+             NOM_PARA='VHP',  
+             VALE_CALC=1.426926082958337E-06,
+             VALE_REFE=TNM10,
+             TOLE_MACHINE=1e-5,
+             PRECISION=2E-3,
+             );
+
+FIN()

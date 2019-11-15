@@ -18,7 +18,8 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-
+# `exec` needed for INCLUDE which is deprecated
+# aslint: disable=C4007
 
 """
     Ce module contient la classe MACRO_ETAPE qui sert à vérifier et à exécuter

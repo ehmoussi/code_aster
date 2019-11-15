@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine te0435(option, nomte)
-! aslint: disable=W0104
     implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
@@ -77,7 +76,7 @@ subroutine te0435(option, nomte)
     matric = ((option(1:9).eq.'FULL_MECA').or. (option(1:9).eq.'RIGI_MECA'))
 
     statnonline = ((option(1:9) .eq.'FULL_MECA').or. (option .eq.'RAPH_MECA')&
-    .or. ((option(1:10).eq.'RIGI_MECA_').and.(option .ne. 'RIGI_MECA_PRSU_R'))) 
+    .or. ((option(1:10).eq.'RIGI_MECA_').and.(option .ne. 'RIGI_MECA_PRSU_R')))
 !
 ! - NOMBRE DE COMPOSANTES DES TENSEURS
 !
@@ -93,7 +92,7 @@ subroutine te0435(option, nomte)
 ! - PARAMETRES EN ENTREE
 !
     call jevech('PGEOMER', 'L', igeom)
-    
+
 ! - ON UTILISE PCACOQU ET PMATERC POUR TOUT EXCEPTE LA PRESSION SUIVEUSE
     if (option .ne. 'RIGI_MECA_PRSU_R') then
         call jevech('PCACOQU', 'L', icacoq)
@@ -113,12 +112,12 @@ subroutine te0435(option, nomte)
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PVARIMP', 'L', ivarix)
     endif
-    
+
     if (option .ne. 'RIGI_MECA') then
         call jevech('PDEPLMR', 'L', ideplm)
         call jevech('PDEPLPR', 'L', ideplp)
     endif
-    
+
 ! - PARAMETRES NECESSAIRE AU CALCUL DE LA MATRICE DE RIGITE POUR PRESSION SUIVEUSE
     if (option.eq.'RIGI_MECA_PRSU_R') then
         call jevecd('PPRESSR', i_pres, 0.d0)
@@ -134,25 +133,25 @@ subroutine te0435(option, nomte)
 ! ---   ESTIMATION VARIABLES INTERNES A L'ITERATION PRECEDENTE
         call dcopy(npg*nvari, zr(ivarix), 1, zr(ivarip), 1)
     endif
-!    
+!
 
     if ((option(1:9) .eq.'FULL_MECA').or.((option(1:9).eq.'RIGI_MECA').and.&
         (option .ne. 'RIGI_MECA_PRSU_R'))) then
         call jevech('PMATUUR', 'E', imatuu)
     endif
-    
+
     if (option .eq. 'RIGI_MECA_PRSU_R') then
         call jevech('PMATUNS', 'E', imatun)
     endif
- 
+
 !
 ! - PARAMETRES EN SORTIE SUPPLEMENTAIRE POUR LA METHODE IMPLEX
     if (option .eq. 'RIGI_MECA_IMPLEX') then
         call jevech('PCONTXR', 'E', icontx)
 ! ------ INITIALISATION DE LA CONTRAINTE INTERPOLE CONTX=CONTM
         call dcopy(npg*ncomp, zr(icontm), 1, zr(icontx), 1)
-    endif  
-!    
+    endif
+!
 !
 ! - INITIALISATION CODES RETOURS
 !
@@ -166,7 +165,7 @@ subroutine te0435(option, nomte)
 ! -----------------------------------------------------------------
 !
 ! - DIRECTION DE REFERENCE POUR UN COMPORTEMENT ANISOTROPE
-! - EPAISSEUR 
+! - EPAISSEUR
 ! - PRECONTRAINTES
 !
     if (option .ne. 'RIGI_MECA_PRSU_R') then
@@ -178,7 +177,7 @@ subroutine te0435(option, nomte)
             call utmess('F', 'MEMBRANE_1')
         endif
         preten = zr(icacoq+3)/h
-    endif 
+    endif
 !
 ! -----------------------------------------------------------------
 ! ---       DEBUT DE LA BOUCLE SUR LES POINTS DE GAUSS          ---
@@ -194,16 +193,16 @@ subroutine te0435(option, nomte)
             dff(2,n)=zr(idfde+(kpg-1)*nno*2+(n-1)*2+1)
         end do
 !
-! ---   ON DISTINGUE LES PETITS ET GRANDS DEFORMATIONS  
+! ---   ON DISTINGUE LES PETITS ET GRANDS DEFORMATIONS
 ! ---   ON FAIT LE CAS DE LA PRESSION A PART
 !
 
         if (option .ne. 'RIGI_MECA_PRSU_R') then
-        
+
                 if (statnonline) then
                     pttdef = (zk16(icompo + 2).eq.'PETIT')
                     grddef = (zk16(icompo + 2).eq.'GROT_GDEP')
-! ---------         AUTRE MESURE DE DEFORMATION 
+! ---------         AUTRE MESURE DE DEFORMATION
                     if ((zk16(icompo + 2) .ne. 'GROT_GDEP').and. &
                         (zk16(icompo + 2) .ne. 'PETIT')) then
                         call utmess('F', 'MEMBRANE_2', sk=zk16(icompo+2))
@@ -219,24 +218,24 @@ subroutine te0435(option, nomte)
 !
 ! ------       SEPARATION DES APPELS POUR LES GRANDES ET PETITES DEFORMATIONS ET LA PRESSION
 !
-               if (pttdef) then 
-                
+               if (pttdef) then
+
                     call mbxnlr(option,fami,nddl,nno,ncomp,kpg,ipoids,igeom,&
                           imate,ideplm,ideplp,ivectu,icontp,&
                           imatuu,dff,alpha,beta,&
                           vecteu,matric)
-        
+
                 elseif (grddef) then
-        
+
                     if (zk16 ( icompo ) ( 1 : 14 ) .eq. 'ELAS_MEMBRANE_') then
-        
+
                         if ((abs(alpha).gt.r8prem()) .or. (abs(beta).gt.r8prem())) then
                             call utmess('A', 'MEMBRANE_6')
                         endif
-        
+
                         call mbgnlr(option,vecteu,matric,nno,ncomp,imate,icompo,dff,alpha,beta,&
                         h,preten,igeom,ideplm,ideplp,kpg,fami,ipoids,icontp,ivectu,imatuu)
-        
+
                     else
                         call utmess('F', 'MEMBRANE_3')
                     endif

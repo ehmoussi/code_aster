@@ -17,22 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import sys
+import hashlib
 import os
-import tempfile
 import re
-
-# hashlib only exists in python>=2.5
-
-
-def hash_new():
-    try:
-        import hashlib
-        _hash_new = hashlib.md5()
-    except ImportError:
-        import md5
-        _hash_new = md5.new()
-    return _hash_new
+import sys
+import tempfile
 
 
 class TestFichierError(Exception):
@@ -120,18 +109,19 @@ def test_fichier_ops(self, **kwargs):
     # lecture du fichier
     if not os.path.isfile(FICHIER):
         UTMESS('S', 'TEST0_3', valk=FICHIER)
-    fileobj = open(FICHIER, 'r')
-    # filtre par expression régulière
-    try:
-        fileobj = regexp_filter(fileobj, kwargs.get('EXPR_IGNORE'))
-    except TestFichierError as valk:
-        UTMESS('S', 'TEST0_1', valk=valk)
-    # calcule le nombre de valeurs et la somme ou min/max
-    verbose = INFO > 1
-    results = test_iter(fileobj, function=dict_func_test[TYPE_TEST],
-                        verbose=verbose)
-    fileobj.close()
-    nbvalr, vale_r, nbvali, vale_i, chksum = results
+
+    with open(FICHIER, 'r') as fileobj:
+        # filtre par expression régulière
+        try:
+            fileobj = regexp_filter(fileobj, kwargs.get('EXPR_IGNORE'))
+        except TestFichierError as valk:
+            UTMESS('S', 'TEST0_1', valk=valk)
+        # calcule le nombre de valeurs et la somme ou min/max
+        verbose = INFO > 1
+        results = test_iter(fileobj, function=dict_func_test[TYPE_TEST],
+                            verbose=verbose)
+        nbvalr, vale_r, nbvali, vale_i, chksum = results
+
     # produit le TEST_TABLE
     refsum = VALE_CALC_K or 'not_tested'
     is_ok = int(chksum == refsum)
@@ -228,8 +218,8 @@ def regexp_filter(file_in, regexp_ignore, debug=False):
     return file_out
 
 
-RE_FLOAT_EXPO = re.compile('[-+]?[0-9\.]+[eED][\-\+]{0,1}[0-9]+')
-RE_FLOAT = re.compile('[-+]?[0-9]+?\.[0-9]*')
+RE_FLOAT_EXPO = re.compile(r'[-+]?[0-9]{1}[0-9\.]+[eED][\-\+]{0,1}[0-9]+')
+RE_FLOAT = re.compile(r'[-+]?[0-9]+?\.[0-9]*')
 RE_INT = re.compile('[0-9]+')
 
 def test_iter(obj, function, verbose=False):
@@ -253,7 +243,7 @@ def test_iter(obj, function, verbose=False):
     nbvali = 0
     valr = 0.
     vali = 0.
-    hfile = hash_new()
+    hfile = hashlib.md5()
     # Si on lit tout le fichier d'un coup, on va environ 3 fois plus vite
     # que si on le lit ligne à ligne, mais on consomme en mémoire environ
     # 5 fois la taille du fichier...

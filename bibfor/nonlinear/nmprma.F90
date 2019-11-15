@@ -359,6 +359,4 @@ integer :: faccvg, ldccvg
         call nmrinc(ds_measure, 'Factor')
     endif
 !
-999 continue
-!
 end subroutine

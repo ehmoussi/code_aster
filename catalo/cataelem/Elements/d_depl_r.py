@@ -37,7 +37,7 @@ for cmp in ( 'DH', 'DRX', 'DRY', 'DRZ', 'DX', 'DY', 'DZ', 'K1', 'K2', 'K3',
              'GLIS', 'GONF', 'GRX', 'H1PRE1', 'H1X', 'H1Y',
              'H1Z', 'H2PRE1', 'H2X', 'H2Y', 'H2Z', 'H3PRE1', 'H3X', 'H3Y', 'H3Z', 'H4X', 'H4Y', 'H4Z',
              'PRE_FLU', 'LAG_FLI' , 'LAG_FLS' , 'LAGS_C' , 'LAGS_F1', 'LAGS_F2' , 'LAG2_C' , 'LAG2_F1',
-             'LAG2_F2', 'LAG3_C', 'LAG3_F1', 'LAG3_F2', 'PR2_FLU', 'LA2_FLI' , 'LA2_FLS', 
+             'LAG2_F2', 'LAG3_C', 'LAG3_F1', 'LAG3_F2', 'PR2_FLU', 'LA2_FLI' , 'LA2_FLS',
              'PR3_FLU', 'LA3_FLI', 'LA3_FLS' , 'LAG4_C' , 'LAG4_F1', 'LAG4_F2' , 'LH1', 'PHI', 'PRE1', 'PRE2', 'PRES', 'PRES11',
              'PRES12', 'PRES13', 'PRES21', 'PRES22', 'PRES23', 'PRES31', 'PRES32', 'PRES33', 'TEMP',
              'D1X' , 'D1Y' , 'D1Z' , 'D2X' , 'D2Y' , 'D2Z' , 'D3X' , 'D3Y' , 'D3Z',
@@ -123,5 +123,5 @@ for cmp in ( 'DH', 'DRX', 'DRY', 'DRZ', 'DX', 'DY', 'DZ', 'K1', 'K2', 'K3',
             )
         )
 
-    exec(name + " = TempClass")
+    globals()[name] = TempClass
     del TempClass

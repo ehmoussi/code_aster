@@ -81,16 +81,6 @@ Une déclaration d'une de ces informations sur un groupe de mailles contenant le
 ne permet pas à CALC_EUROPLEXUS de retrouver les informations.
 """),
 
-    13 : _("""
-    Lancement d'Europlexus en utilisant %(k1)s
-"""),
-
-
-    14 : _("""
-Le fichier MED contenant les résultats d'Europlexus est introuvable ou vide.
-L'exécution d'Europlexus s'est probablement mal déroulée.
-"""),
-
     15 : _("""Les différentes occurrences de RIGI_PARASOL dans AFFE_CARA_ELEM n'ont pas la même
 liste de caractéristiques (mot-clé CARA).
 CALC_EUROPLEXUS ne sait pas traiter de tels cas.
@@ -113,15 +103,15 @@ en état initial ne sera pas transmis à EPX pour les éléments affectés des m
 
     18 : _("""Le mot clé %(k1)s du concept CARA_ELEM n'est pas pris en compte par CALC_EUROPLEXUS'
 """),
-    19 : _("""Le type de charge %(k1)s n'est pas pris en compte par CALC_EUROPLEXUS'
+    19 : _("""Le type de charge %(k1)s n'est pas pris en compte par CALC_EUROPLEXUS.
 """),
 
-    20 : _("""Le concept %(k1)s donné par %(k2)s n'a pas été trouvé.'
+    20 : _("""Le concept %(k1)s donné par %(k2)s n'a pas été trouvé.
 """),
 
     21 : _("""
-Dans l'occurrence %(i1)d du mot-clé COURBE, NOM_COURBE dépasse.%(i2)d caractères.
-Le nom de la colonne correspondante sera tronqué dans la table.
+Dans l'occurrence %(i1)d du mot-clé COURBE, NOM_COURBE dépasse %(i2)d caractères.
+Le nom sera tronqué avant d'être transmis à Europlexus.
 """),
 
     22 : _("""La valeur du mot-clé %(k1)s du matériau %(k2)s est différente de %(k3)s.
@@ -221,16 +211,6 @@ CALC_EUROPLEXUS ne sait pas traiter de tels cas.
     38 : _("""
 CALC_EUROPLEXUS/COURBE :
 Le champ %(k1)s ne possède pas de composante %(k2)s.
-"""),
-
-    39 : _("""
-CALC_EUROPLEXUS/COURBE :
-La quantité de données présente dans le fichier de sortie de suivi de point ne concorde
-pas avec les instructions du fichier de commande.
-Une erreur s'est certainement produite lors du traitement de ce mot-clé par EPX.
-
-Conseil : regarder le message de sortie d'EPX dans le fichier .mess pour comprendre
-ou le problème se situe.
 """),
 
     40 : _("""

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ subroutine xmrlst(jcesd, jcesv, jcesl, noma, posma,&
 !
     real(kind=8) :: ff(20)
     integer :: jconx1, jconx2, jma
-    integer :: itypma, nno, ino, iad
+    integer :: itypma, nno0, nno, ino, iad
     character(len=8) :: typma, elref
 !
 ! ----------------------------------------------------------------------
@@ -94,11 +94,11 @@ subroutine xmrlst(jcesd, jcesv, jcesl, noma, posma,&
 !
 ! --- ON RECUPERE LE NOMBRE DE NOEUDS DE LA MAILLE
 !
-    call jelira(jexnum(noma//'.CONNEX', posma), 'LONMAX', nno)
+    call jelira(jexnum(noma//'.CONNEX', posma), 'LONMAX', nno0)
 !
 ! --- FONCTIONS DE FORMES DU PT DE CONTACT DANS L'ELE PARENT
 !
-    call elrfvf(elref, coor, nno, ff, nno)
+    call elrfvf(elref, coor, nno0, ff, nno)
 !
 ! --- ON INTERPOLE LA LST AVEC SES VALEURS AUX NOEUDS
 !

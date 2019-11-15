@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,6 @@ subroutine asmpi_check(iret)
 !
     use parameters_module
     implicit none
-! aslint: disable=W1306
 #include "asterf_debug.h"
 #include "asterf_types.h"
 #include "asterf.h"

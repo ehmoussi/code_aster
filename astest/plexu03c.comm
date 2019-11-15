@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -164,7 +164,8 @@ FONC2=DEFI_FONCTION(NOM_PARA='INST',
                      PROL_GAUCHE='CONSTANT',
                      );
 
-U1 = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
+   NOM_CAS="study",
    ETAT_INIT=_F(RESULTAT=U_ASTER,CONTRAINTE='NON',EQUILIBRE='OUI',NITER=100),
    COMPORTEMENT =(_F(
                   RELATION = 'ELAS',
@@ -173,7 +174,6 @@ U1 = CALC_EUROPLEXUS(
               ),
    EXCIT=( _F(CHARGE=PRESS,FONC_MULT=FONC2,),
           _F(CHARGE=CL,),),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 2e-3,
@@ -189,19 +189,16 @@ U1 = CALC_EUROPLEXUS(
    );
 
 
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U1,NUME_ORDRE=(0,100),NOM_CHAM=('DEPL','SIEF_ELGA')))
-
-
-U2 = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
+   NOM_CAS="study2",
    ETAT_INIT=_F(RESULTAT=U_ASTER,CONTRAINTE='NON',EQUILIBRE='OUI',NITER=100),
    COMPORTEMENT =(_F(
                   RELATION = 'ELAS',
                   GROUP_MA = ('GROUPE__CABLE001','GROUPE_____VOILE'),
                  ),
               ),
-   EXCIT=( #_F(CHARGE=PRESS,FONC_MULT=FONC2,),
+   EXCIT=(
           _F(CHARGE=CL,),),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 2e-3,
@@ -217,13 +214,8 @@ U2 = CALC_EUROPLEXUS(
    );
 
 
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U2,NUME_ORDRE=(0,100),NOM_CHAM=('DEPL','SIEF_ELGA')))
-
-
-
-
-
-U3 = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
+   NOM_CAS="study3",
    ETAT_INIT=_F(RESULTAT=U_ASTER,CONTRAINTE='NON',EQUILIBRE='NON',NITER=100),
    COMPORTEMENT =(_F(
                   RELATION = 'ELAS',
@@ -232,7 +224,6 @@ U3 = CALC_EUROPLEXUS(
               ),
    EXCIT=( _F(CHARGE=PRESS,FONC_MULT=FONC2,),
           _F(CHARGE=CL,),),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 2e-3,
@@ -248,10 +239,6 @@ U3 = CALC_EUROPLEXUS(
    );
 
 
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U3,NUME_ORDRE=(0,100),NOM_CHAM=('DEPL','SIEF_ELGA')))
-
-
-# U_ASTER
 TEST_RESU(RESU=(_F(INST=1.E0,
                   RESULTAT=U_ASTER,
                   NOM_CHAM='SIEF_ELGA',
@@ -279,173 +266,29 @@ TEST_RESU(RESU=(_F(INST=1.E0,
                )
           )
 
-# U1
-TEST_RESU(RESU=(_F(INST=0.E0,
-                  RESULTAT=U1,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='QD001001',
-                  POINT=4,
-                  NOM_CMP='QX',
-                  VALE_CALC=12.4999999336,
-                  ),
-                _F(INST=0.E0,
-                  RESULTAT=U1,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='TR001001',
-                  POINT=1,
-                  NOM_CMP='MXX',
-                  VALE_CALC=-0.416664978641,
-                  ),
-                _F(INST=0.E0,
-                  RESULTAT=U1,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='SG001001',
-                  POINT=1,
-                  NOM_CMP='N',
-                  VALE_CALC=8.32299513977E-05,
-                  ),
-               )
-          )
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=14,
+             NB_VALE_I=27,
+             VALE_CALC=2.3e11,
+             VALE_CALC_I=133733,
+             VALE_CALC_K='329fa5d7e789d0befdf271406009b9b6')
 
-TEST_RESU(RESU=(_F(INST=2e-3,
-                  RESULTAT=U1,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='QD001001',
-                  POINT=4,
-                  NOM_CMP='QX',
-                  VALE_CALC=12.4999999336,
-                  ),
-                _F(INST=2e-3,
-                  RESULTAT=U1,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='TR001001',
-                  POINT=1,
-                  NOM_CMP='MXX',
-                  VALE_CALC=-0.416664978641,
-                  ),
-                _F(INST=2e-3,
-                  RESULTAT=U1,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='SG001001',
-                  POINT=1,
-                  NOM_CMP='N',
-                  VALE_CALC=8.32299513977E-05,
-                  ),
-               )
-          )
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study2.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=7,
+             NB_VALE_I=30,
+             VALE_CALC=2.3e11,
+             VALE_CALC_I=133847,
+             VALE_CALC_K='e9f462d62ce419a112e3c71402bf6810')
 
-
-# U2
-TEST_RESU(RESU=(_F(INST=0.E0,
-                  RESULTAT=U2,
-                  NOM_CHAM='SIEF_ELGA',
-                 MAILLE='QD001001',
-                 POINT=4,
-                 NOM_CMP='QX',
-                 VALE_CALC=12.4999999336,
-                 ),
-               _F(INST=0.E0,
-                 RESULTAT=U2,
-                 NOM_CHAM='SIEF_ELGA',
-                 MAILLE='TR001001',
-                 POINT=1,
-                 NOM_CMP='MXX',
-                 VALE_CALC=-0.416664978641,
-                 ),
-               _F(INST=0.E0,
-                 RESULTAT=U2,
-                 NOM_CHAM='SIEF_ELGA',
-                 MAILLE='SG001001',
-                 POINT=1,
-                 NOM_CMP='N',
-                 VALE_CALC=8.32299513977E-05,
-                 ),
-               )
-          )
-
-TEST_RESU(RESU=(_F(INST=2e-3,
-                 RESULTAT=U2,
-                 NOM_CHAM='SIEF_ELGA',
-                 MAILLE='QD001001',
-                 POINT=4,
-                 NOM_CMP='QX',
-                 VALE_CALC=12.4999999336,
-                 ),
-               _F(INST=2e-3,
-                 RESULTAT=U2,
-                 NOM_CHAM='SIEF_ELGA',
-                 MAILLE='TR001001',
-                 POINT=1,
-                 NOM_CMP='MXX',
-                 VALE_CALC=-0.416664978641,
-                 ),
-               _F(INST=2e-3,
-                 RESULTAT=U2,
-                 NOM_CHAM='SIEF_ELGA',
-                 MAILLE='SG001001',
-                 POINT=1,
-                 NOM_CMP='N',
-                 VALE_CALC=8.32299513977E-05,
-                 ),
-              )
-
-         )
-
-# U3
-TEST_RESU(RESU=(_F(INST=0.E0,
-                  RESULTAT=U3,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='QD001001',
-                  POINT=4,
-                  NOM_CMP='QX',
-                  VALE_CALC=12.4999999336,
-                  ),
-                _F(INST=0.E0,
-                  RESULTAT=U3,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='TR001001',
-                  POINT=1,
-                  NOM_CMP='MXX',
-                  VALE_CALC=-0.416664978641,
-                  ),
-                _F(INST=0.E0,
-                  RESULTAT=U3,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='SG001001',
-                  POINT=1,
-                  NOM_CMP='N',
-                  VALE_CALC=8.32299513977E-05,
-                  ),
-               )
-          )
-
-TEST_RESU(RESU=(_F(INST=2e-3,
-                  RESULTAT=U3,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='QD001001',
-                  POINT=4,
-                  NOM_CMP='QX',
-                  VALE_CALC=12.5000127517,
-                  ),
-                _F(INST=2e-3,
-                  RESULTAT=U3,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='TR001001',
-                  POINT=1,
-                  NOM_CMP='MXX',
-                  VALE_CALC=-0.416668864726,
-                  ),
-                _F(INST=2e-3,
-                  RESULTAT=U3,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='SG001001',
-                  POINT=1,
-                  NOM_CMP='N',
-                  CRITERE = 'ABSOLU',
-                  VALE_CALC=7.58009308692E-05,
-                  ),
-               )
-          )
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study3.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=12,
+             NB_VALE_I=34,
+             VALE_CALC=2.3e11,
+             VALE_CALC_I=133849,
+             VALE_CALC_K='17395a5af9a8bc4dfce3e3dd82a4e4fe')
 
 
 FIN()
