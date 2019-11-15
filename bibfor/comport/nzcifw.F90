@@ -26,7 +26,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
-#include "asterfort/matini.h"
 #include "asterfort/nzcalc.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/verift.h"
@@ -100,7 +99,8 @@ integer, intent(out) :: iret
     real(kind=8) :: fmel, sy(5), symoy, h(5), hmoy, rprim
     real(kind=8) :: theta(8)
     real(kind=8) :: eta(5), n(5), unsurn(5), c(5), m(5), cmoy, mmoy, cr
-    real(kind=8) :: dz(4), dz1(4), dz2(4), vi(30), dvin, vimt(30)
+    real(kind=8) :: dz(4), dz1(4), dz2(4), dvin
+    real(kind=8) :: vi(30), vimt(30)
     real(kind=8) :: xmoy(6), ds(6), xmoyeq
     real(kind=8) :: trans, kpt(4), fpt(4)
     real(kind=8) :: trepsm, trdeps, trsigm, trsigp
@@ -116,11 +116,6 @@ integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    do i = 1, 2*ndim
-        sigp(i) = 0.d0
-    end do
-    vip(1:IDX_C_IPLAS) = 0.d0
-    dsidep(1:6,1:6)    = 0.d0
     ndimsi             = 2*ndim
     iret               = 0
     resi               = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
@@ -385,6 +380,7 @@ integer, intent(out) :: iret
 !
 ! 4.2.1 - CALCUL DE DP
 !
+        vip(1:IDX_C_IPLAS) = 0.d0
         seuil= sieleq-(1.5d0*deuxmu*trans+1.d0)*symoy
 !
         if (seuil .lt. 0.d0) then
@@ -406,7 +402,8 @@ integer, intent(out) :: iret
 !
 ! 4.2.2 - CALCUL DE SIGMA
 !
-        plasti=vip(IDX_C_IPLAS)
+        plasti = vip(IDX_C_IPLAS)
+        sigp(1:2*ndim) = 0.d0
 !
         do i = 1, ndimsi
             dvsigp(i) = sigel(i) - 1.5d0*deuxmu*dp*sig0(i)
@@ -444,7 +441,7 @@ integer, intent(out) :: iret
     if (rigi) then
         mode=2
         if (l_visc) mode=1
-        call matini(6, 6, 0.d0, dsidep)
+        dsidep(1:6,1:6)    = 0.d0
         do i = 1, ndimsi
             dsidep(i,i) = 1.d0
         end do

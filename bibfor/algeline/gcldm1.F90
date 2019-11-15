@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine gcldm1(m, in, ip, prec, x, y, perm, xtrav, ytrav)
-! aslint: disable=W1304, C1513
+! aslint: disable=W1304
     implicit none
 
     integer,intent(in) :: m

@@ -39,7 +39,6 @@ subroutine te0392(option, nomte)
 #include "asterfort/get_elas_id.h"
 #include "asterfort/get_elas_para.h"
 !
-! aslint: disable=W0104
 !
     character(len=16), intent(in) :: option
     character(len=16), intent(in) :: nomte

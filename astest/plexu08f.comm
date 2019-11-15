@@ -26,7 +26,7 @@ MPa = 1000000.0;
 
 MAILLAGE=LIRE_MAILLAGE(FORMAT='MED', UNITE=20 )
 
-DEFI_GROUP(reuse = MAILLAGE, MAILLAGE = MAILLAGE, 
+DEFI_GROUP(reuse = MAILLAGE, MAILLAGE = MAILLAGE,
            CREA_GROUP_NO=(_F(GROUP_MA='FACE_SUP',
                              NOM = 'FACE_SUP'
                            ),
@@ -129,9 +129,7 @@ l_inst.append(0.004)
 l_nume_ordre = list(range(100,105))
 
 
-TAB1 = CO('TAB1')
-
-U_EPX = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    ETAT_INIT=_F(RESULTAT=U_ASTER,CONTRAINTE='OUI',EQUILIBRE='NON'),
    COMPORTEMENT =(_F(
                   RELATION = 'ELAS',
@@ -140,14 +138,13 @@ U_EPX = CALC_EUROPLEXUS(
               ),
    EXCIT=(_F(CHARGE=FORC,FONC_MULT=PLATEAU),
           _F(CHARGE=BLOQ,),),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 0.004,
                NMAX      = 200,
                PASFIX    = 2e-5,
                ),
-   OBSERVATION =_F(TOUT_GROUP_NO ='OUI', NOM_CHAM = 'DEPL', 
+   OBSERVATION =_F(TOUT_GROUP_NO ='OUI', NOM_CHAM = 'DEPL',
                    INST = l_inst,
                    NUME_ORDRE = l_nume_ordre,
                    PAS_INST = 0.001,
@@ -161,7 +158,6 @@ U_EPX = CALC_EUROPLEXUS(
    NUME_ORDRE_COURBE = l_nume_ordre,
    PAS_INST_COURBE = 0.001,
    PAS_NBRE_COURBE=99,
-   TABLE_COURBE    = TAB1,
    COURBE = (_F(
            NOM_CHAM = 'DEPL',
            NOM_CMP  = 'DX',
@@ -170,11 +166,6 @@ U_EPX = CALC_EUROPLEXUS(
            ),
         ),
    );
-
-IMPR_TABLE(TABLE = TAB1)
-
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_ASTER,NOM_CHAM=('DEPL','SIEF_ELGA',),INST=1.0))
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_EPX,NOM_CHAM=('DEPL',),GROUP_NO = 'GRN1'))
 
 # REFERENCE ETAT INITIAL ASTER
 
@@ -203,8 +194,8 @@ TEST_RESU(RESU=(_F(INST=1.0,
             )
 
 
-            
-TEST_RESU(RESU=(            
+
+TEST_RESU(RESU=(
                 _F(INST=1.0,
                    POINT=1,
                    RESULTAT=U_ASTER,
@@ -229,77 +220,12 @@ TEST_RESU(RESU=(
                 ),
           )
 
-# RESULTATS APRES PASSAGE DANS EPX
-
-TEST_RESU(RESU=(_F(INST=0.004,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DX',
-                   VALE_CALC=-8.6090494774E-05,
-                   VALE_REFE=-8.6090494774E-05,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 1E-6,
-                   ),
-                _F(INST=0.004,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DY',
-                   VALE_CALC=-1.86758056933E-05,
-                   VALE_REFE=-1.86758056933E-05,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 1E-6,
-                   ),
-                _F(INST=0.004,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-0.000110181067659 ,
-                   VALE_REFE=-0.000110181067659 ,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 1E-6,
-                   ),
-                ),
-            )
-
-
-            
-TEST_RESU(RESU=(            
-                _F(INST=0.004,
-                   POINT=1,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIXX',
-                   VALE_CALC=-1220186.68329,
-                   VALE_REFE=-1220186.68329,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 1E-6,
-                   MAILLE = 'M93',),
-                _F(INST=0.004,
-                   POINT=1,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIYY',
-                   VALE_CALC=-71707.7384702,
-                   VALE_REFE=-71707.7384702,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 1E-6,
-                   MAILLE = 'M93',),
-                _F(INST=0.004,
-                   POINT=1,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIZZ',
-                   VALE_CALC=-2036191.89547,
-                   VALE_REFE=-2036191.89547,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 1E-6,
-                   MAILLE = 'M93',),
-                ),
-          )
-
-
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=36,
+             NB_VALE_I=59,
+             VALE_CALC=3.e10,
+             VALE_CALC_I=154832,
+             VALE_CALC_K='f5c94a9788df8f80287a762ee19618ad')
 
 FIN()

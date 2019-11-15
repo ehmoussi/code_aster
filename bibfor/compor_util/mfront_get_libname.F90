@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,8 +23,6 @@ subroutine mfront_get_libname(libname)
 ! Retourne le chemin vers la bibliothèque MFront officielle
 !       out  libname: chemin
 !
-! for define
-! aslint: disable=C1510
 #include "asterf_config.h"
 #include "asterfort/utmess.h"
 #include "asterfort/lxlgut.h"
@@ -33,7 +31,7 @@ subroutine mfront_get_libname(libname)
 ! for the path name
 ! person_in_charge: mathieu.courtois@edf.fr
 !
-    character(len=512) :: dir, nom512
+    character(len=512) :: dir
     integer :: nchar
 !
     libname = ' '

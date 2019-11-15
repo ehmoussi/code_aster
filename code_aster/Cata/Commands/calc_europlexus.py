@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,29 +24,15 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-def calc_europlexus_prod(self,COURBE=None,**args):
-  if args.get('__all__'):
-      return ([evol_noli], [None, table_sdaster])
-
-  if COURBE is not None:
-      self.type_sdprod(args['TABLE_COURBE'],table_sdaster)
-  return evol_noli
-
 CALC_EUROPLEXUS = MACRO(nom="CALC_EUROPLEXUS",
                         op=OPS('Macro.calc_europlexus_ops.calc_europlexus_ops'),
-                        sd_prod=calc_europlexus_prod,
+                        sd_prod=None,
                         reentrant='n',
                         fr=tr("Chainage Code_Aster-Europlexus"),
                         regles=(UN_PARMI('ETAT_INIT','MODELE'),
                                 UN_PARMI('ETAT_INIT','CHAM_MATER'),
-                                EXCLUS('ETAT_INIT','FONC_PARASOL'),
-                                AU_MOINS_UN('COMPORTEMENT'),),
-        LOGICIEL = SIMP(statut='f', typ='TXM'),
-        LANCEMENT = SIMP(statut='f', typ='TXM', defaut='OUI',into=('OUI','NON')),
-        VERSION_EUROPLEXUS =  SIMP(statut='f',typ='TXM',defaut="EPX2017",
-                        into=("2014", "2015", "2015_DEV", "DEV" , "2016" , "EPX2016p1" , "EPX2017" , "EPXASTER_DEV"),
-                        fr=tr("Version d'EUROPLEXUS"),
-                        ),
+                                EXCLUS('ETAT_INIT','FONC_PARASOL'),),
+        NOM_CAS=SIMP(statut="f", typ="TXM", defaut="study", fr="Nom de l'étude"),
 
         ETAT_INIT = FACT(statut='f',
            RESULTAT   = SIMP(statut='o', typ=evol_noli),
@@ -137,18 +123,16 @@ CALC_EUROPLEXUS = MACRO(nom="CALC_EUROPLEXUS",
             GROUP_MA   = SIMP(statut='f',typ=grma,max=1),
             NOM_COURBE = SIMP(statut='o',typ='TXM'),
 
-            b_maille = BLOC(condition = """exists("GROUP_MA")""", regles=(AU_MOINS_UN('NUM_GAUSS')),
-              NUM_GAUSS = SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),),
+            b_maille = BLOC(condition = """exists("GROUP_MA")""",
+              NUM_GAUSS = SIMP(statut='o',typ='I',validators=NoRepeat(),max='**'),),
          ),
         b_courbe = BLOC(condition = """exists("COURBE")""",
-                        regles=(AU_MOINS_UN('PAS_NBRE_COURBE','PAS_INST_COURBE','INST_COURBE','NUME_ORDRE_COURBE'),
-                                AU_MOINS_UN('TABLE_COURBE',)),
+                        regles=(AU_MOINS_UN('PAS_NBRE_COURBE','PAS_INST_COURBE','INST_COURBE','NUME_ORDRE_COURBE'),),
           PAS_INST_COURBE      = SIMP(statut='f',typ='R'),
           PAS_NBRE_COURBE      = SIMP(statut='f',typ='I'),
           INST_COURBE          = SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
           NUME_ORDRE_COURBE    = SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
-                  TABLE_COURBE      = SIMP(statut='f', typ=CO),
-          ),
+        ),
         DOMAINES = FACT(statut='f',max='**',
              GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
              IDENTIFIANT =  SIMP(statut='f',typ='I'),),

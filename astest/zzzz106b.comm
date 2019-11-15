@@ -97,11 +97,11 @@ IMPR_RESU(FORMAT="RESULTAT",UNITE=38,RESU=_F(MAILLAGE=MA2),)
 DEFI_FICHIER (ACTION='LIBERER',UNITE=38)
 
 TEST_FICHIER(FICHIER="fort.38",
-             NB_VALE_I=637,
-             VALE_CALC_I=9776,
-             NB_VALE=214,
-             VALE_CALC=1.1600500000e+03,
-             VALE_CALC_K="ffcebec669c2b11afd3b027b076de349",
+             NB_VALE_I=639,
+             VALE_CALC_I=9779,
+             NB_VALE=213,
+             VALE_CALC=1.0600500000e+03,
+             VALE_CALC_K="3721f3c4374819dc27240d615cfdc89f",
              EXPR_IGNORE=('ASTER'),
 )
 

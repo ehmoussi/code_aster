@@ -17,7 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine te0080(option, nomte)
-! aslint: disable=C1513
     implicit none
 #include "jeveux.h"
 #include "asterfort/connec.h"
@@ -96,7 +95,7 @@ subroutine te0080(option, nomte)
             valpar(1) = r
             valpar(2) = z
             valpar(3) = zr(itemps)
-!           EC : je voulais mettre fami = RIGI et kpg = kp 
+!           EC : je voulais mettre fami = RIGI et kpg = kp
 !                mais il n'y a que FPG1 dans MATER pour cet élément
             call fointe_varc('FM', 'FPG1', 1, 1, '+',&
                         zk8(isour), 3, nompar, valpar,&

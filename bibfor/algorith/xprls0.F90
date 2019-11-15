@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 subroutine xprls0(noma, noesom, armin, cnsln,&
                   cnslt, isozro, levset, nodtor, eletor)
 !
-! aslint: disable=W1501
     implicit none
 #include "jeveux.h"
 #include "asterc/r8prem.h"
@@ -79,10 +78,10 @@ subroutine xprls0(noma, noesom, armin, cnsln,&
     integer :: jconx2, ndim, jzero, jmaco, nbmaco, nbnoma, jmai, nunoa, nunob
     integer :: jnomco, nbnoco, nmaabs, itypma
     integer :: jnosom, nbnozo, cptzo, jlsno, jltno
-    integer :: ar(12, 3), nbar, iar, na, nb 
+    integer :: ar(12, 3), nbar, iar, na, nb
     integer :: ndime, i
     real(kind=8) :: lsna, lsnb
-    real(kind=8) :: lst(6) 
+    real(kind=8) :: lst(6)
     real(kind=8) :: armin
     character(len=8) :: typma
     character(len=19) :: mai, maicou, nomcou

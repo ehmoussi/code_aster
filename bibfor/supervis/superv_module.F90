@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,8 +22,7 @@ module superv_module
 !
 ! person_in_charge: mathieu.courtois@edf.fr
 
-! dummy argument because of ifdef
-! aslint: disable=W0104
+! warning on dummy argument (W0104) may occur because of ifdef
 
     use calcul_module, only: calcul_init
     implicit none

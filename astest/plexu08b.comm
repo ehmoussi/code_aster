@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -98,7 +98,7 @@ FONCCB=DEFI_FONCTION(NOM_PARA='INST',
                      );
 
 
-U = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    MODELE=MODELE,
    CHAM_MATER=CHMATER,
    COMPORTEMENT =(_F(
@@ -110,7 +110,6 @@ U = CALC_EUROPLEXUS(
    EXCIT=(_F(CHARGE=BLOQ,),
           _F(CHARGE=TRAC,FONC_MULT=FONCCB,),
          ),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 2e-3,
@@ -119,11 +118,6 @@ U = CALC_EUROPLEXUS(
                ),
    ARCHIVAGE   = _F(PAS_NBRE=10,),
    );
-
-
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U,NUME_ORDRE=(100),NOM_CHAM=('DEPL','SIEF_ELGA')))
-
-
 
 temps=DEFI_LIST_REEL(DEBUT=0.0,
                         INTERVALLE=(_F(JUSQU_A=2e-3,NOMBRE=1,),
@@ -177,39 +171,12 @@ TEST_RESU(RESU=_F(NUME_ORDRE = 1,
                   ),
           )
 
-TEST_RESU(RESU=_F(NUME_ORDRE = 100,
-                  REFERENCE ='AUTRE_ASTER',
-                  VALE_REFE = 0.1,
-                  RESULTAT=U,
-                  NOM_CHAM='DEPL',
-                  NOEUD='NC001005',
-                  NOM_CMP='DX',
-                  VALE_CALC=0.1,
-                  ),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE = 100,
-                  RESULTAT=U,
-                  REFERENCE ='AUTRE_ASTER',
-                  VALE_REFE = 0.05,
-                  NOM_CHAM='DEPL',
-                  NOEUD='NC001003',
-                  NOM_CMP='DX',
-                  VALE_CALC=0.05,
-                  ),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE = 100,
-                  RESULTAT=U,
-                  REFERENCE ='AUTRE_ASTER',
-                  VALE_REFE = 1428571.42857,
-                  PRECISION = 0.025,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='SG001004',
-                  POINT = 1,
-                  NOM_CMP='N',
-                  VALE_CALC=1463347.84033,
-                  ),
-          )
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=14,
+             NB_VALE_I=31,
+             VALE_CALC=2.e11,
+             VALE_CALC_I=7705,
+             VALE_CALC_K='9fc582824f604cf49c56929fb543a0f1')
 
 FIN()

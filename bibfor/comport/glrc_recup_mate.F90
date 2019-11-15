@@ -16,11 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine glrc_recup_mate(imate, compor, lrgm, ep, lambda, deuxmu, lamf, deumuf, gt, gc, gf, &
-                           seuil, alpha, alfmc, epsic, epsiels, epsilim,&
-                           is_param_opt_, val_param_opt_)
-! person_in_charge: sebastien.fayolle at edf.fr
-! aslint: disable=W1504
+subroutine glrc_recup_mate(imate, compor, lrgm, ep, lambda, &
+                           deuxmu, lamf, deumuf, gt, gc, &
+                           gf, seuil, alpha, alfmc, epsic, &
+                           epsiels, epsilim, is_param_opt_, val_param_opt_)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -159,7 +158,7 @@ subroutine glrc_recup_mate(imate, compor, lrgm, ep, lambda, deuxmu, lamf, deumuf
 !    endif
 
 !    alpha_c etant obligatoire le bloc en commentaire est equivalent a :
-     
+
     if (gc_int .eq. 1.d0) then
         alfmc_int = 1.d0
     endif

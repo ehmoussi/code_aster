@@ -679,7 +679,7 @@ PINSTMR = InputParameter(phys=PHY.INST_R,
 PINSTPR = InputParameter(phys=PHY.INST_R,
                          comment=""" Current time""")
 
-PITERAT = InputParameter(phys=PHY.NEUT_R,
+PITERAT = InputParameter(phys=PHY.NEUT_I,
                          comment=""" Newton iteration""")
 
 PLAGRM = InputParameter(phys=PHY.NEUT_R,

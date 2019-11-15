@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine te0434(option, nomte)
-! aslint: disable=W0104
     implicit none
 #include "asterfort/assert.h"
 #include "jeveux.h"
@@ -75,10 +74,10 @@ subroutine te0434(option, nomte)
 ! - PARAMETRES EN ENTREE
 ! - grav : permet d'utiliser PESANTEUR en STAT_NON_LINE
     grav = (option.eq.'CHAR_MECA_PESA_R')
-    
+
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PCACOQU', 'L', icacoq)
-    
+
     call tecach('N','PCOMPOR', 'L',iret ,1 , itab)
     icompo = itab(1)
 !
@@ -115,9 +114,9 @@ subroutine te0434(option, nomte)
 !
     alpha = zr(icacoq+1) * r8dgrd()
     beta = zr(icacoq+2) * r8dgrd()
-    
+
 ! - EPAISSEUR ET PRETCONTRAINTES
-    h = zr(icacoq) 
+    h = zr(icacoq)
     preten = zr(icacoq+3)/h
 !
 ! -----------------------------------------------------------------
@@ -126,7 +125,7 @@ subroutine te0434(option, nomte)
 !
     call rccoma(zi(imate), 'ELAS_MEMBRANE', 0, phenom, icodre1)
     call rccoma(zi(imate), 'ELAS', 0, phenom, icodre2)
-    
+
     if (icodre1 .eq. 0) then
         if ((icompo.ne.0) .and. (zk16( icompo + 2 )(1:5) .ne. 'PETIT')) then
             call utmess('F', 'MEMBRANE_10')
@@ -152,20 +151,20 @@ subroutine te0434(option, nomte)
             dff(1,n)=zr(idfde+(kpg-1)*nno*2+(n-1)*2)
             dff(2,n)=zr(idfde+(kpg-1)*nno*2+(n-1)*2+1)
         end do
-        
+
         if (icodre1 .eq. 0) then
 
             call mbxchg(option,fami,nddl,nno,ncomp,kpg, npg,iepsin,itemps,ipoids,igeom,&
                   imate,ipesa,ivectu,icontm,vff,dff,alpha,beta)
-                  
+
         elseif (icodre2 .eq. 0) then
-        
+
             if ((option.ne.'FORC_NODA') .and. (option.ne.'CHAR_MECA_PESA_R')) then
                 call utmess('F', 'MEMBRANE_7')
             endif
             call mbgchg(option,fami,nddl,nno,ncomp,kpg,imate,icontm,&
               ipoids,ipesa,igeom,ivectu,vff,dff,h,alpha,beta,preten)
-              
+
         endif
     end do
 !

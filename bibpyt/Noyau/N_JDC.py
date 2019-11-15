@@ -18,6 +18,8 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
+# `exec` needed for INCLUDE which is deprecated
+# aslint: disable=C4007
 
 
 """

@@ -67,10 +67,9 @@ character(len=1), optional, intent(in) :: base
 !
     integer, parameter :: nb_info_maxi = 99
     character(len=24) :: list_info_type(nb_info_maxi)
-    integer, parameter :: nbchmx = 99
     integer :: n1, npilo, nb_load
     character(len=1) :: bas
-    integer ::  i_excit, i_load, iret, infc, j, i_load_new
+    integer ::  i_excit, i_load, iret, i_load_new
     character(len=4) :: typcal
     character(len=8) :: k8bid, load_type, func_para_inst, const_func
     character(len=16) :: nomcmd, typesd, load_apply, load_keyword
@@ -183,7 +182,7 @@ character(len=1), optional, intent(in) :: base
                                 load_apply)
 !
 ! --------- Check model / model of load
-!            
+!
             if (n1.eq.1 .and. model.ne.' ') then
                 call dismoi('NOM_MODELE', load_name, 'CHARGE', repk=load_model)
                 if (load_model .ne. model) then
@@ -298,7 +297,7 @@ character(len=1), optional, intent(in) :: base
 !
 ! --------- Add new load(s) in list
 !
-            
+
             if (nb_info_type .gt. 0) then
                 i_load_new = i_load_new+1
                 call liscad('MECA'      , list_load     , i_load_new, load_name, load_func, &

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -111,7 +111,7 @@ PLATEAU=DEFI_FONCTION(NOM_PARA='INST',
                      PROL_GAUCHE='CONSTANT',
                      );
 
-U_EPX = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    ETAT_INIT=_F(RESULTAT=U_ASTER,CONTRAINTE='OUI',EQUILIBRE='NON'),
    COMPORTEMENT =(_F(
                   RELATION = 'ELAS',
@@ -120,7 +120,6 @@ U_EPX = CALC_EUROPLEXUS(
               ),
    EXCIT=(_F(CHARGE=PRES,FONC_MULT=PLATEAU),
           _F(CHARGE=BLOQ,),),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 0.004,
@@ -130,9 +129,6 @@ U_EPX = CALC_EUROPLEXUS(
    ARCHIVAGE   = _F(PAS_NBRE=100,),
    );
 
-
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_ASTER,NOM_CHAM=('DEPL','SIEF_ELGA',),INST=1.0))
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_EPX,NOM_CHAM=('DEPL','SIEF_ELGA',),INST=0.004))
 
 # REFERENCE ETAT INITIAL ASTER
 
@@ -161,8 +157,8 @@ TEST_RESU(RESU=(_F(INST=1.0,
             )
 
 
-            
-TEST_RESU(RESU=(            
+
+TEST_RESU(RESU=(
                 _F(INST=1.0,
                    POINT=1,
                    RESULTAT=U_ASTER,
@@ -187,77 +183,12 @@ TEST_RESU(RESU=(
                 ),
           )
 
-# RESULTATS APRES PASSAGE DANS EPX
-
-TEST_RESU(RESU=(_F(INST=0.004,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DX',
-                   VALE_CALC=-9.07068363627E-06,
-                   VALE_REFE=-9.07102694457E-06,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 5E-5,
-                   ),
-                _F(INST=0.004,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DY',
-                   VALE_CALC=-6.54453170354E-07,
-                   VALE_REFE=-6.54472368612E-07,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 5E-5,
-                   ),
-                _F(INST=0.004,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-6.22326643992E-06 ,
-                   VALE_REFE=-6.2234063541E-06 ,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 5E-5,
-                   ),
-                ),
-            )
-
-
-            
-TEST_RESU(RESU=(            
-                _F(INST=0.004,
-                   POINT=1,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIXX',
-                   VALE_CALC=-90490.2753104,
-                   VALE_REFE=-90491.3795116,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 5E-5,
-                   MAILLE = 'M93',),
-                _F(INST=0.004,
-                   POINT=1,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIYY',
-                   VALE_CALC=-4494.75415162,
-                   VALE_REFE=-4495.07212071,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 1E-4,
-                   MAILLE = 'M93',),
-                _F(INST=0.004,
-                   POINT=1,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIZZ',
-                   VALE_CALC=-92663.6670429,
-                   VALE_REFE=-92662.5352308,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 5E-5,
-                   MAILLE = 'M93',),
-                ),
-          )
-
-
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=7,
+             NB_VALE_I=14,
+             VALE_CALC=3.e10,
+             VALE_CALC_I=102992,
+             VALE_CALC_K='feff5bbcd38908d2dd6146b711cd79b6')
 
 FIN()

@@ -19,6 +19,9 @@
 
 # person_in_charge: samuel.geniaut at edf.fr
 
+# `exec` could be probably replaced by import
+# aslint: disable=C4007
+
 """
 Module dédié à la macro MAC3COEUR.
 
