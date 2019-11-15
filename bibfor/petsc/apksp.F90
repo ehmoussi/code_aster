@@ -23,6 +23,7 @@ subroutine apksp(kptsc)
 !
 !
 ! person_in_charge: natacha.bereux at edf.fr
+! aslint: disable=C1308
 
 use aster_petsc_module
 use petsc_data_module

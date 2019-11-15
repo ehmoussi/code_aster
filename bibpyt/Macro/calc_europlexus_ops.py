@@ -30,7 +30,7 @@ import os.path as osp
 import tempfile
 
 import aster
-import med_aster
+import aster_core
 from Calc_epx.calc_epx_utils import tolist
 from code_aster import onFatalError
 from code_aster.Cata.Commands import (DEFI_FICHIER, DETRUIRE,
@@ -179,27 +179,13 @@ class EUROPLEXUS:
         #
         # Recherche dans le jdc la création du concept CARA_ELEM
         if ( self.CARA_ELEM is not None ):
-            FindEtape = False
             self.CARA_ELEM_CONCEPT = self.CARA_ELEM
-            nomsd = self.CARA_ELEM.get_name()
-            jdc = CONTEXT.get_current_step().jdc
-            for UneEtape in jdc.etapes:
-                if (UneEtape.nom=='AFFE_CARA_ELEM') and (UneEtape.sdnom==nomsd):
-                    self.CARA_ELEM = UneEtape
-                    FindEtape = True
-                    break
-            #
-            if ( not FindEtape ):
-                UTMESS('F', 'PLEXUS_20', valk=[nomsd, 'CARA_ELEM'])
-            #
+            self.CARA_ELEM = None
         else:
             self.CARA_ELEM_CONCEPT = None
         #
         # récuperation du maillage
-        nom_MODELE = self.MODELE.get_name()
-        iret, ibid, nomsd = aster.dismoi('NOM_MAILLA', nom_MODELE, 'MODELE', 'F')
-        nomsd = nomsd.strip()
-        self.MAILLAGE = macro.get_concept(nomsd)
+        self.MAILLAGE = self.MODELE.getMesh()
 
         # Autres entrées
         self.FONC_PARASOL = FONC_PARASOL
@@ -872,7 +858,7 @@ class EUROPLEXUS:
         for module in modules_exe:
             fct = 'export_%s' % module
             if hasattr(self, fct):
-                eval('self.'+fct+'()')
+                getattr(self, fct)()
             else:
                 raise Exception("La classe EUROPLEXUS n'a pas de méthode %s"
                                                                        % fct)
