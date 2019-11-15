@@ -17,6 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
+! aslint: disable=W1303
 module NonLin_Datastructure_type
 !
 implicit none
@@ -678,7 +679,7 @@ implicit none
         real(kind=8) :: erre_thm_loca = 0.d0
         real(kind=8) :: erre_thm_glob = 0.d0
         real(kind=8) :: parm_theta    = 0.d0
-! ----- Nondimensionalization 
+! ----- Nondimensionalization
         real(kind=8) :: adim_p        = 0.d0
         real(kind=8) :: adim_l        = 0.d0
     end type NL_DS_ErrorIndic

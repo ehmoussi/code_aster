@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@ subroutine encadr(func, x1, x2, f1, f2,&
                   niter, xmult, iret)
     implicit none
 !
-! aslint: disable=W0307
     interface
         function func(x)
             real(kind=8) :: x

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,8 +109,7 @@ CHAR_REF=AFFE_CHAR_MECA(MODELE=MO_REF,
 
 
 
-U_REF = CALC_EUROPLEXUS(
-   LANCEMENT = 'OUI',
+CALC_EUROPLEXUS(
    MODELE=MO_REF,
    CHAM_MATER=MATER,
    COMPORTEMENT =(_F(
@@ -137,48 +136,8 @@ U_REF = CALC_EUROPLEXUS(
    );
 
 
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_REF))
-
-
-TEST_RESU(
-   RESU=(
-        _F(
-          RESULTAT   = U_REF,
-          #INST       = 0.5,
-          NUME_ORDRE = 4331,
-          NOM_CHAM   = 'DEPL',
-          NOM_CMP    = 'DX',
-          GROUP_NO   = 'XY0',
-          VALE_CALC= -0.00210267324236,
-          ),
-        _F(
-          RESULTAT   = U_REF,
-          #INST       = 0.5,
-          NUME_ORDRE = 4331,
-          NOM_CHAM   = 'DEPL',
-          NOM_CMP    = 'DY',
-          GROUP_NO   = 'XY0',
-          VALE_CALC= 0.00175325119557,
-          ),
-        _F(
-          RESULTAT   = U_REF,
-          #INST       = 0.5,
-          NUME_ORDRE = 4331,
-          NOM_CHAM   = 'DEPL',
-          NOM_CMP    = 'DZ',
-          GROUP_NO   = 'XY0',
-          VALE_CALC= -0.00691531181833,
-          ),
-    )
-  );
-
-
-
-
 
 # CALCUL AVEC DIS_T POI1
-
-
 
 MO_T=AFFE_MODELE(MAILLAGE=MA,
                AFFE=(_F(GROUP_MA = 'SOLI_3D',PHENOMENE = 'MECANIQUE',MODELISATION = '3D'),
@@ -214,8 +173,8 @@ CHAR_T=AFFE_CHAR_MECA(MODELE=MO_T,
 
 
 
-U_T = CALC_EUROPLEXUS(
-   LANCEMENT = 'OUI',
+CALC_EUROPLEXUS(
+   NOM_CAS="study2",
    MODELE=MO_T,
    CHAM_MATER=MATER,
    COMPORTEMENT =(_F(
@@ -239,47 +198,21 @@ U_T = CALC_EUROPLEXUS(
    ARCHIVAGE   = _F(INST=[0.25, 0.5],),
    );
 
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=82,
+             NB_VALE_I=49,
+             VALE_CALC=3.0003003104e+10,
+             VALE_CALC_I=9008636,
+             VALE_CALC_K='5098325b586bbd540895cf7d894fd265')
 
-
-TEST_RESU(
-   RESU=(
-        _F(
-          RESULTAT   = U_T,
-          #INST       = 0.5,
-          NUME_ORDRE = 4331,
-          NOM_CHAM   = 'DEPL',
-          NOM_CMP    = 'DX',
-          GROUP_NO   = 'XY0',
-          VALE_CALC= -0.00210267324236,
-          VALE_REFE= -0.00210267324236,
-          REFERENCE = 'AUTRE_ASTER',
-          ),
-        _F(
-          RESULTAT   = U_T,
-          #INST       = 0.5,
-          NUME_ORDRE = 4331,
-          NOM_CHAM   = 'DEPL',
-          NOM_CMP    = 'DY',
-          GROUP_NO   = 'XY0',
-          VALE_CALC= 0.00175325119557,
-          VALE_REFE= 0.00175325119557,
-          REFERENCE = 'AUTRE_ASTER',
-          ),
-        _F(
-          RESULTAT   = U_T,
-          #INST       = 0.5,
-          NUME_ORDRE = 4331,
-          NOM_CHAM   = 'DEPL',
-          NOM_CMP    = 'DZ',
-          GROUP_NO   = 'XY0',
-          VALE_REFE= -0.00691531181833,
-          VALE_CALC= -0.00691531181833,
-          REFERENCE = 'AUTRE_ASTER',
-          ),
-    )
-  );
-
-
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study2.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=46,
+             NB_VALE_I=37,
+             VALE_CALC=3.0003003104e+10,
+             VALE_CALC_I=9008595,
+             VALE_CALC_K='8547c225cd1e4d3cbb0316373770255c')
 
 
 FIN()

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -354,9 +354,7 @@ NFKR=DEFI_FONCTION(NOM_PARA='INST',
 
 TAB1 = CO('TAB1')
 
-U = CALC_EUROPLEXUS(
-   #LOGICIEL='. /home/europlex/EPX2014/EPX_Prod_2014_lmx/env_prod_2014.sh && /home/europlex/EPX2014/EPX_Prod_2014_lmx/bin/europlexus',
-   LANCEMENT ='OUI',
+CALC_EUROPLEXUS(
    MODELE=MO,
    CHAM_MATER=MATER,
    COMPORTEMENT =(_F(
@@ -418,7 +416,6 @@ U = CALC_EUROPLEXUS(
                     NOM_CHAM = ('DEPL','VITE','ACCE','SIEF_ELGA','VARI_ELGA'),
                     ),
    PAS_NBRE_COURBE=500,
-   TABLE_COURBE    = TAB1,
    COURBE = (_F(
            NOM_CHAM = 'DEPL',
            NOM_CMP  = 'DZ',
@@ -429,47 +426,12 @@ U = CALC_EUROPLEXUS(
    ARCHIVAGE   = _F(PAS_NBRE=500,),
    );
 
-
-IMPR_TABLE(TABLE=TAB1)
-
-
-MODI_REPERE(RESULTAT=U,reuse=U,
-                    REPERE='COQUE_UTIL_INTR',
-                    MODI_CHAM=_F(TYPE_CHAM = 'COQUE_GENE',
-                                 NOM_CHAM  = 'SIEF_ELGA',
-                                 NOM_CMP   = ('NXX','NYY','NXY',
-                                              'MXX','MYY','MXY',
-                                              'QX','QY')))
-
-
-
-TEST_RESU(RESU=(_F(NUME_ORDRE=7216,
-                   GROUP_NO='PMMA',
-                   REFERENCE='SOURCE_EXTERNE',
-                   RESULTAT=U,
-                   NOM_CHAM='DEPL',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-2.13162163909E-06 ,
-                   VALE_REFE=-2.13162163909E-06 ,),
-                _F(NUME_ORDRE=7216,
-                   REFERENCE='SOURCE_EXTERNE',
-                   POINT=1,
-                   RESULTAT=U,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='MXX',
-                   VALE_CALC=-30.810940325403333,
-                   VALE_REFE=-30.810940325403333,
-                   MAILLE='M12',),
-                _F(NUME_ORDRE=7216,
-                   REFERENCE='SOURCE_EXTERNE',
-                   POINT=3,
-                   RESULTAT=U,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='MYY',
-                   VALE_CALC=-29.811387977106666,
-                   VALE_REFE=-29.811387977106666,
-                   MAILLE='M80',),
-                ),
-          )
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=313,
+             NB_VALE_I=252,
+             VALE_CALC=2.6849331650e+12,
+             VALE_CALC_I=9010451,
+             VALE_CALC_K='6909ea389e9205cf2c0f6a82a13350f5')
 
 FIN()

@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1306,W1501
+! aslint: disable=W1306
 !
 module Behaviour_module
 ! ==================================================================================================
@@ -259,8 +259,8 @@ end subroutine
 !
 ! In  carcri           : parameters for comportment
 ! In  typmod           : type of modelisation
-! In  nno              : number of nodes 
-! In  npg              : number of Gauss points 
+! In  nno              : number of nodes
+! In  npg              : number of Gauss points
 ! In  ndim             : dimension of problem (2 or 3)
 ! In  jv_poids         : JEVEUX adress for weight of Gauss points
 ! In  jv_func          : JEVEUX adress for shape functions
@@ -698,7 +698,7 @@ subroutine behaviourPrepESVA(defo_ldc, imate   ,&
     aster_logical, intent(in) :: l_mfront, l_umat
     type(Behaviour_ESVA), intent(inout) :: BEHesva
 !   ------------------------------------------------------------------------------------------------
-! 
+!
 ! - Get external state variables
 !
     if (ca_nbcvrc_ .ne. 0) then
@@ -823,8 +823,8 @@ end subroutine
 !
 ! Compute intrinsic external state variables - Size of element (ELTSIZE1)
 !
-! In  nno              : number of nodes 
-! In  npg              : number of Gauss points 
+! In  nno              : number of nodes
+! In  npg              : number of Gauss points
 ! In  ndim             : dimension of problem (2 or 3)
 ! In  jv_poids         : JEVEUX adress for weight of Gauss points
 ! In  jv_func          : JEVEUX adress for shape functions
@@ -905,7 +905,7 @@ end subroutine
 !
 ! Compute intrinsic external state variables - Size of element (ELTSIZE2)
 !
-! In  nno              : number of nodes 
+! In  nno              : number of nodes
 ! In  npg              : number of Gauss points
 ! In  ndim             : dimension of problem (2 or 3)
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
@@ -975,8 +975,8 @@ end subroutine
 !
 ! Compute intrinsic external state variables - Gradient of velocity (GRADVELO)
 !
-! In  nno              : number of nodes 
-! In  npg              : number of Gauss points 
+! In  nno              : number of nodes
+! In  npg              : number of Gauss points
 ! In  ndim             : dimension of problem (2 or 3)
 ! In  jv_poids         : JEVEUX adress for weight of Gauss points
 ! In  jv_func          : JEVEUX adress for shape functions
@@ -1041,8 +1041,8 @@ end subroutine
 !
 ! Compute intrinsic external state variables - Coordinates of Gauss points
 !
-! In  nno              : number of nodes 
-! In  npg              : number of Gauss points 
+! In  nno              : number of nodes
+! In  npg              : number of Gauss points
 ! In  ndim             : dimension of problem (2 or 3)
 ! In  jv_func          : JEVEUX adress for shape functions
 ! In  geom             : initial coordinates of nodes

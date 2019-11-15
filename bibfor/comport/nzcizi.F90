@@ -26,7 +26,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
-#include "asterfort/matini.h"
 #include "asterfort/nzcalc.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/verift.h"
@@ -116,11 +115,7 @@ integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    do i = 1, 2*ndim
-        sigp(i) = 0.d0
-    end do
-    vip(1:25)       = 0.d0
-    dsidep(1:6,1:6) = 0.d0
+
     iret            = 0
     ndimsi          = 2*ndim
     resi            = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
@@ -188,6 +183,8 @@ integer, intent(out) :: iret
     end do
 !
     if (resi) then
+        sigp(1:2*ndim) = 0.d0
+        vip(1:25)       = 0.d0
 ! ----- Parameters for annealing
         if (l_anneal) then
             call metaGetParaAnneal(poum     , fami    , kpg, ksp, imat,&
@@ -437,7 +434,7 @@ integer, intent(out) :: iret
     if (rigi) then
         mode=2
         if (l_visc) mode=1
-        call matini(6, 6, 0.d0, dsidep)
+        dsidep(1:ndimsi,1:ndimsi) = 0.d0
         do i = 1, ndimsi
             dsidep(i,i) = 1.d0
         end do

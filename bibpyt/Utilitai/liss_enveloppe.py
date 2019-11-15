@@ -152,12 +152,22 @@ class filtreBandWidth(filtre):
             self.upperBound = listOpt['upper']
         except KeyError:
             self.upperBound = 35.5
+        try:
+            self.precision= listOpt['precision']
+        except KeyError:
+            self.precision = 1e-5
+        try:
+            self.critere = listOpt['critere']
+        except KeyError:
+            self.critere = 'RELATIF'
 
     def _filtre(self, sp):
         spr = sp
         toDel = []
+        precision=self.precision
+        critere=self.critere
         for i in range(0, len(spr.listFreq)):
-            if spr.listFreq[i] > self.upperBound:
+            if spr.listFreq[i] > self.upperBound and verif_freq(spr.listFreq[i], [self.upperBound], precision, critere):
                 toDel = toDel + [i]
 
         # Nettoyage des fréquences à supprimer (on commence par les plus
@@ -168,7 +178,7 @@ class filtreBandWidth(filtre):
 
         toDel = []
         for i in range(0, len(spr.listFreq)):
-            if spr.listFreq[i] < self.lowerBound:
+            if spr.listFreq[i] < self.lowerBound and verif_freq(spr.listFreq[i], [self.lowerBound], precision, critere):
                 toDel = toDel + [i]
             else:
                 break
@@ -551,7 +561,7 @@ def verif_freq(freq, l_freq, precision, critere):
         return True
     else:
         ind = 0
-        while l_freq[ind] <= freq:
+        while ((l_freq[ind] <= freq) or (l_freq[ind-1] <= freq)):
             if critere == 'RELATIF':
                 if abs(l_freq[ind] - freq) / abs(freq) < precision:
                     return False
@@ -589,7 +599,7 @@ def lissage_spectres(nappe=nappe, fmin=0.2, fmax=35.5, nb_pts=50, l_freq=[], pre
             fmin = min(nappe_up.listFreq)
         if fmax is None:
             fmax = max(nappe_up.listFreq)
-        filter = filtreBandWidth(lower=fmin, upper=fmax)
+        filter = filtreBandWidth(lower=fmin, upper=fmax, precision=precision, critere=critereVF)
         nappe_up.filtre(filter)
 
     # Suppression des pics inferieurs
@@ -694,7 +704,7 @@ def enveloppe_nappe(l_nappe):
 
     sp_nappe = copy.copy(nappe)
     sp_nappe.listAmor = l_amor_unique
-    sp_nappe.listFreq = l_freq
+    sp_nappe.listFreq = l_spec_amor[0].listFreq
     sp_nappe.listSpec = l_spec_amor
 
     return sp_nappe
@@ -760,7 +770,7 @@ def liss_enveloppe(l_nappes, option='CONCEPTION', nb_pts=50, coef_elarg=None,
             UTMESS('A', 'FONCT0_75')
         liss_nappe = lissage_spectres(nappe=env_nappe, fmin=fmin, fmax=fmax,
                                       nb_pts=nb_pts[0], l_freq=l_freq, check=2,
-                                      zpa=zpa)
+                                      precision=precision, critereVF=critere, zpa=zpa)
 
         return liss_nappe
 
@@ -778,17 +788,20 @@ def liss_enveloppe(l_nappes, option='CONCEPTION', nb_pts=50, coef_elarg=None,
         for nappe in l_nappes:
             liss_nappe = lissage_spectres(nappe=nappe, fmin=fmin, fmax=fmax,
                                           nb_pts=nb_pts_1, l_freq=l_freq,
-                                          check=2, zpa=zpa)
+                                          check=2, precision=precision, critereVF=critere,
+                                          zpa=zpa)
             l_liss_nappe.append(liss_nappe)
         # Elargissement
         if coef_elarg is not None:
             l_liss_nappe = elargis_spectres(l_liss_nappe, coef_elarg)
+
         # Enveloppe
         env_nappe = enveloppe_nappe(l_liss_nappe)
+
         # Lissage
         liss_nappe = lissage_spectres(nappe=env_nappe, fmin=fmin, fmax=fmax,
                                       nb_pts=nb_pts_2, l_freq=l_freq, check=2,
-                                      zpa=zpa)
+                                      precision=precision, critereVF=critere, zpa=zpa)
         return liss_nappe
     else:
         print("L'option %s n'est pas traitée" % option)

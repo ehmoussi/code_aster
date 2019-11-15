@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,13 +18,12 @@
 
 !
 !
-interface 
+interface
     subroutine dhrc_lc(epsm, deps, vim, pgl, option,&
                       sig, vip, a0, c0,&
                       aa_t, ga_t, ab, gb, ac,&
                       gc, aa_c, ga_c, cstseu, crit,&
                       codret, dsidep, debug)
-! aslint: disable=W1504
         real(kind=8), intent(in) :: epsm(6)
         real(kind=8), intent(in) :: deps(6)
         real(kind=8), intent(in) :: vim(*)
@@ -48,4 +47,4 @@ interface
         real(kind=8), intent(out) :: dsidep(6, 6)
         aster_logical, intent(in):: debug
     end subroutine dhrc_lc
-end interface 
+end interface

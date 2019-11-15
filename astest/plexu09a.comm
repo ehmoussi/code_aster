@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -125,9 +125,7 @@ PLATEAU=DEFI_FONCTION(NOM_PARA='INST',
                      PROL_GAUCHE='CONSTANT',
                      );
 
-TAB1 = CO('TAB1')
-
-U_EPX = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
    ETAT_INIT=_F(RESULTAT=U_ASTER,CONTRAINTE='OUI', VARI_INT = 'OUI',EQUILIBRE='NON'),
    COMPORTEMENT =(_F(
                   RELATION = 'VMIS_JOHN_COOK',
@@ -136,7 +134,6 @@ U_EPX = CALC_EUROPLEXUS(
               ),
    EXCIT=(_F(CHARGE=TRAC,FONC_MULT=PLATEAU),
           _F(CHARGE=BLOQ,),),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 0.004,
@@ -145,7 +142,6 @@ U_EPX = CALC_EUROPLEXUS(
                ),
    ARCHIVAGE   = _F(PAS_NBRE=100,),
    PAS_NBRE_COURBE=100,
-   TABLE_COURBE    = TAB1,
    COURBE = (
            _F(
            NOM_CHAM = 'VARI_ELGA',
@@ -216,142 +212,6 @@ U_EPX2 = LIRE_EUROPLEXUS(UNITE_MED = 19,
               ),
         )
 
-
-
-
-
-IMPR_TABLE(TABLE=TAB1)
-
-TEST_TABLE(TABLE=TAB1,
-           NOM_PARA='V1_CUBE',
-           FILTRE = _F(NOM_PARA = 'TEMPS',
-                       VALE = 0.,
-                      ),
-           REFERENCE = 'ANALYTIQUE',
-           VALE_REFE = 4.078819E+2,
-           VALE_CALC = 4.078819E+2,
-           )
-
-TEST_TABLE(TABLE=TAB1,
-           NOM_PARA='V2_CUBE',
-           FILTRE = _F(NOM_PARA = 'TEMPS',
-                       VALE = 0.,
-                      ),
-           REFERENCE = 'ANALYTIQUE',
-           VALE_REFE = 1.420337E+2,
-           VALE_CALC = 1.420337E+2,
-           )
-
-TEST_TABLE(TABLE=TAB1,
-           NOM_PARA='V3_CUBE',
-           FILTRE = _F(NOM_PARA = 'TEMPS',
-                       VALE = 0.,
-                      ),
-           REFERENCE = 'ANALYTIQUE',
-           VALE_REFE = 5.773488E-3,
-           VALE_CALC = 5.773488E-3,
-           )
-
-TEST_TABLE(TABLE=TAB1,
-           NOM_PARA='V4_CUBE',
-           FILTRE = _F(NOM_PARA = 'TEMPS',
-                       VALE = 0.,
-                      ),
-           REFERENCE = 'ANALYTIQUE',
-           VALE_REFE = 1.561430E+2,
-           VALE_CALC = 1.561430E+2,
-           )
-
-
-
-
-TEST_TABLE(TABLE=TAB1,
-           NOM_PARA='V1_CUBE',
-           FILTRE = _F(NOM_PARA = 'TEMPS',
-                       VALE = 0.004,
-                      ),
-           REFERENCE = 'ANALYTIQUE',
-           VALE_REFE = 4.078819E+2,
-           VALE_CALC = 4.078819E+2,
-           )
-
-TEST_TABLE(TABLE=TAB1,
-           NOM_PARA='V2_CUBE',
-           FILTRE = _F(NOM_PARA = 'TEMPS',
-                       VALE = 0.004,
-                      ),
-           REFERENCE = 'ANALYTIQUE',
-           VALE_REFE = 1.420337E+2,
-           VALE_CALC = 1.420337E+2,
-           )
-
-TEST_TABLE(TABLE=TAB1,
-           NOM_PARA='V3_CUBE',
-           FILTRE = _F(NOM_PARA = 'TEMPS',
-                       VALE = 0.004,
-                      ),
-           REFERENCE = 'ANALYTIQUE',
-           VALE_REFE = 5.773488E-3,
-           VALE_CALC = 5.773488E-3,
-           )
-
-TEST_TABLE(TABLE=TAB1,
-           NOM_PARA='V4_CUBE',
-           FILTRE = _F(NOM_PARA = 'TEMPS',
-                       VALE = 0.004,
-                      ),
-           REFERENCE = 'ANALYTIQUE',
-           VALE_REFE = 1.561430E+2,
-           VALE_CALC = 1.561430E+2,
-           )
-
-
-# cel = numpy.sqrt(E_b*(1-Nu_b)/(rho_b*(1+Nu_b)*(1-2*Nu_b)))
-# cel = 4019.1847623425019
-
-
-
-TEST_TABLE(TABLE=TAB1,
-           NOM_PARA='V5_CUBE',
-           FILTRE = _F(NOM_PARA = 'TEMPS',
-                       VALE = 0.004,
-                      ),
-           REFERENCE = 'ANALYTIQUE',
-           VALE_REFE = 4019.1847623425019,
-           VALE_CALC = 4019.1847623425019,
-           )
-
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_EPX, NOM_CHAM = 'VARI_ELGA', INST = (0.,0.004)))
-
-#ECRO GAUS 1 COMP 1 REFE 4.078819E+2 TOLE 1e-6 LECT 1 TERM
- #ECRO GAUS 2 COMP 2 REFE 1.420337E+2 TOLE 1e-6 LECT 1 TERM
- #ECRO GAUS 3 COMP 3 REFE 5.773488E-3 TOLE 1e-6 LECT 1 TERM
- #ECRO GAUS 4 COMP 4 REFE 1.561430E+2 TOLE 1e-6 LECT 1 TERM
-
-TEST_RESU(RESU=_F(INST = 0.,
-                  RESULTAT=U_EPX,
-                  NOM_CHAM='VARI_ELGA',
-                  MAILLE='M1',
-                  NOM_CMP='V1',
-                  POINT = 1,
-                  VALE_CALC=5.773488E-3,
-                  VALE_REFE=5.773488E-3,
-                  REFERENCE = 'SOURCE_EXTERNE',
-                  ),
-          )
-          
-TEST_RESU(RESU=_F(INST = 0.004,
-                  RESULTAT=U_EPX,
-                  NOM_CHAM='VARI_ELGA',
-                  MAILLE='M1',
-                  NOM_CMP='V1',
-                  POINT = 1,
-                  VALE_CALC=5.773488E-3,
-                  VALE_REFE=5.773488E-3,
-                  REFERENCE = 'SOURCE_EXTERNE',
-                  ),
-          )
-
 TEST_RESU(RESU=_F(INST = 0.,
                   RESULTAT=U_EPX2,
                   NOM_CHAM='VARI_ELGA',
@@ -363,7 +223,7 @@ TEST_RESU(RESU=_F(INST = 0.,
                   REFERENCE = 'SOURCE_EXTERNE',
                   ),
           )
-          
+
 TEST_RESU(RESU=_F(INST = 0.004,
                   RESULTAT=U_EPX2,
                   NOM_CHAM='VARI_ELGA',
@@ -375,6 +235,5 @@ TEST_RESU(RESU=_F(INST = 0.004,
                   REFERENCE = 'SOURCE_EXTERNE',
                   ),
           )
-
 
 FIN()

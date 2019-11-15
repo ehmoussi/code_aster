@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -126,11 +126,11 @@ subroutine palim3(mcfact, iocc, nomaz, nomvei, nomvek,&
                 endif
                 nommai = prfm(1:lgp)//nommai
             endif
-            do 32 i = 1, nbmst
+            do i = 1, nbmst
                 if (zk8(klist+i-1) .eq. nommai) then
                     call utmess('F', 'MODELISA9_57', sk=nommai)
                 endif
- 32         continue
+            end do
             nbmst = nbmst + 1
             if (nbmst .gt. nbv1) then
                 call juveca(nomvek, 2*nbmst)
@@ -141,7 +141,6 @@ subroutine palim3(mcfact, iocc, nomaz, nomvei, nomvek,&
             endif
             zk8(klist+nbmst-1) = nommai
             zi(ilist+nbmst-1) = numa
- 34         continue
         endif
     end do
     call jedetr(nomjv)

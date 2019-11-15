@@ -145,7 +145,7 @@ CIMPEDC = LocatedComponents(phys=PHY.IMPE_C, type='ELEM',
 CINSTPR = LocatedComponents(phys=PHY.INST_R, type='ELEM',
                             components=('INST',))
 
-CITERAT = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
+CITERAT = LocatedComponents(phys=PHY.NEUT_I, type='ELEM',
                             components=('X1',))
 
 CLISTMA = LocatedComponents(phys=PHY.LISTMA, type='ELEM',

@@ -38,7 +38,6 @@ implicit none
 #include "asterfort/ortrep.h"
 #include "asterfort/Behaviour_type.h"
 !
-! aslint: disable=W0104
 ! person_in_charge: mickael.abbas at edf.fr
 !
     character(len=16), intent(in) :: option

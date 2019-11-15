@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine te0439(option, nomte)
-! aslint: disable=W0104
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -56,7 +55,7 @@ subroutine te0439(option, nomte)
 !
 !
     call jevech('PCOMPOR', 'L', icompo)
-    
+
     grdef = (zk16 ( icompo + 2 )(1:9) .eq. 'GROT_GDEP')
 
     ldiag = (option(1:10).eq.'MASS_MECA_')
@@ -84,11 +83,11 @@ subroutine te0439(option, nomte)
 !
     alpha = zr(icacoq+1) * r8dgrd()
     beta = zr(icacoq+2) * r8dgrd()
-    
+
 ! - EPAISSEUR (VALABLE UNIQUEMENT POUR GROT_GDEP)
 !
-     
-    
+
+
     if (grdef) then
 ! - LES MEMBRANES EN GROT_GDEP EN DYNAMIQUE SONT CODEES MAIS PAS TESTEES
 ! - ON INTERDIT MASS_MECA POUR LE MOMENT
@@ -99,7 +98,7 @@ subroutine te0439(option, nomte)
     else
         h = 1.d0
     endif
-    
+
 !
 ! - CALCUL POUR CHAQUE POINT DE GAUSS : ON CALCULE D'ABORD LA
 !      CONTRAINTE ET/OU LA RIGIDITE SI NECESSAIRE PUIS
@@ -129,7 +128,7 @@ subroutine te0439(option, nomte)
                ' ', 'ELAS_MEMBRANE', 0, ' ', [0.d0],&
                1, 'RHO', rho, codres, 1)
     endif
-        
+
 !
 ! - CALCUL DE LA MATRICE "B" : DEPL NODAL -> EPS11 ET DU JACOBIEN
 !

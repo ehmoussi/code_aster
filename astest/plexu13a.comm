@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -71,8 +71,7 @@ PLATEAU=DEFI_FONCTION(NOM_PARA='INST',
                      );
 
 
-U_EPX1 = CALC_EUROPLEXUS(
-   VERSION_EUROPLEXUS = 'DEV',
+CALC_EUROPLEXUS(
    MODELE = MODELE,
    CHAM_MATER = CHMATER,
    COMPORTEMENT =(_F(
@@ -82,7 +81,6 @@ U_EPX1 = CALC_EUROPLEXUS(
               ),
    EXCIT=(_F(CHARGE=TRAC,FONC_MULT=PLATEAU),
           _F(CHARGE=BLOQ,),),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 0.01,
@@ -92,95 +90,12 @@ U_EPX1 = CALC_EUROPLEXUS(
    ARCHIVAGE   = _F(PAS_INST=0.01,),
    );
 
-
-U_EPX2 = CALC_EUROPLEXUS(
-   VERSION_EUROPLEXUS = 'DEV',
-   ETAT_INIT=_F(RESULTAT=U_EPX1,CONTRAINTE='OUI',EQUILIBRE='NON', VITESSE = 'OUI', 
-                ),
-   COMPORTEMENT =(_F(
-                  RELATION = 'ELAS',
-                  GROUP_MA='CUBE',
-                 ),
-              ),
-   EXCIT=(_F(CHARGE=TRAC,FONC_MULT=PLATEAU),
-          _F(CHARGE=BLOQ,),),
-   LANCEMENT ='OUI',
-   CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
-               INST_INIT = 0.01,
-               INST_FIN  = 0.02,
-               NMAX = 1000,
-               PASFIX = 1E-5,
-               ),
-   ARCHIVAGE   = _F(PAS_INST=0.01,),
-   );
-
-
-U_EPX3 = CALC_EUROPLEXUS(
-   VERSION_EUROPLEXUS = 'DEV',
-   MODELE = MODELE,
-   CHAM_MATER = CHMATER,
-   COMPORTEMENT =(_F(
-                  RELATION = 'ELAS',
-                  GROUP_MA='CUBE',
-                 ),
-              ),
-   EXCIT=(_F(CHARGE=TRAC,FONC_MULT=PLATEAU),
-          _F(CHARGE=BLOQ,),),
-   LANCEMENT ='OUI',
-   CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
-               INST_INIT = 0,
-               INST_FIN  = 0.02,
-               NMAX = 2000,
-               PASFIX = 1E-5,
-               ),
-   ARCHIVAGE   = _F(PAS_INST=0.01,),
-   );
-
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_EPX1,NOM_CHAM=('DEPL',),))
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_EPX2,))
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_EPX3,NOM_CHAM=('DEPL',),))
-
-
-# REFERENCE : CALCUL D'UN TRAIT
-
-TEST_RESU(RESU=(_F(INST=0.02,
-                   RESULTAT=U_EPX3,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N8',
-                   NOM_CMP='DX',
-                   VALE_CALC=2.50230296487024E-03,
-                   ),
-                _F(INST=0.02,
-                   RESULTAT=U_EPX3,
-                   NOM_CHAM='VITE',
-                   NOEUD='N5',
-                   NOM_CMP='DY',
-                   VALE_CALC=-1.64605199800359E+01,
-                   ),
-                ),
-            )
-            
-# VALIDATION ETAT INITIAL DYNAMIQUE
-TEST_RESU(RESU=(_F(INST=0.02,
-                   RESULTAT=U_EPX2,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N8',
-                   NOM_CMP='DX',
-                   VALE_CALC=2.50230296487024E-03,
-                   VALE_REFE=2.50230296487024E-03,
-                   REFERENCE = 'AUTRE_ASTER',
-                   ),
-                _F(INST=0.02,
-                   RESULTAT=U_EPX2,
-                   NOM_CHAM='VITE',
-                   NOEUD='N5',
-                   NOM_CMP='DY',
-                   VALE_CALC=-1.64605199800359E+01,
-                   VALE_REFE=-1.64605199800359E+01,
-                   REFERENCE = 'AUTRE_ASTER',
-                   ),
-                ),
-            )
-
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=9,
+             NB_VALE_I=15,
+             VALE_CALC=3.e10,
+             VALE_CALC_I=3696,
+             VALE_CALC_K='a6a412789c9b2f063c9ef3e6d80260a8')
 
 FIN()

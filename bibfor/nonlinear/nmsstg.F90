@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,8 +58,6 @@ subroutine nmsstg(shb6, geom, idfde, ipoids, icoopg, pgl, para,&
 #include "asterfort/ss6bgl.h"
 #include "asterfort/tpsivp_shb.h"
 #include "asterfort/utbtab.h"
-!
-! aslint: disable=W1504
 !
     aster_logical, intent(in) :: shb6
     integer, intent(in) :: nno
@@ -182,13 +180,13 @@ subroutine nmsstg(shb6, geom, idfde, ipoids, icoopg, pgl, para,&
 !
 !   Expressing stress tensor at T- from local to global frame
 !   Glut \ 1/2 \ Start
-    tmp     = sign(5) 
+    tmp     = sign(5)
     sign(5) = sign(6)
     sign(6) = tmp
 !   Glut \ 1/2 \ End
     call tpsivp_shb(pgl, sign, .false._1)
 !   Glut \ 2/2 \ Start
-    tmp     = sign(5) 
+    tmp     = sign(5)
     sign(5) = sign(6)
     sign(6) = tmp
 !   Glut \ 2/2 \ End

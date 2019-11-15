@@ -297,71 +297,32 @@ l_excit_europlexus.append(_F(CHARGE=CHARBLOQ,))
 l_excit_europlexus.append(_F(CHARGE=CINE_CAB,))
 l_excit_europlexus.append(_F(CHARGE=CHARPRES, FONC_MULT=FONCCB2))
 
-U = CALC_EUROPLEXUS(ETAT_INIT=_F(RESULTAT=RES1,CONTRAINTE='OUI',EQUILIBRE='OUI'),
-                    COMPORTEMENT =(_F(
-                                 RELATION = 'ELAS',
-                                 GROUP_MA = l_cable,
-                                   ),
-                                 _F(
-                                 RELATION = 'ELAS',
-                                 GROUP_MA = l_beton,
-                                   ),
-                                ),
-                    LANCEMENT ='OUI',
-                    EXCIT   =l_excit_europlexus,
-                    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
-                                INST_INIT = 0.0,
-                                INST_FIN  = 0.001,
-                                NMAX      = 10000,
-                                PASFIX    = 1e-5,
-                                ),
-                    OBSERVATION = _F(PAS_NBRE=1,
-                                     TOUT_GROUP_NO = 'OUI',
-                                     TOUT_GROUP_MA = 'OUI',
-                                     NOM_CHAM = ('DEPL','VITE','ACCE'),
-                                     ),
-                    ARCHIVAGE   = _F(PAS_NBRE=50,),
-                    # ARCHIVAGE   = _F(PAS_NBRE=1,),
+CALC_EUROPLEXUS(ETAT_INIT=_F(RESULTAT=RES1,CONTRAINTE='OUI',EQUILIBRE='OUI'),
+                COMPORTEMENT =(_F(
+                             RELATION = 'ELAS',
+                             GROUP_MA = l_cable,
+                               ),
+                             _F(
+                             RELATION = 'ELAS',
+                             GROUP_MA = l_beton,
+                               ),
+                            ),
+                EXCIT   =l_excit_europlexus,
+                CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
+                            INST_INIT = 0.0,
+                            INST_FIN  = 0.001,
+                            NMAX      = 10000,
+                            PASFIX    = 1e-5,
+                            ),
+                OBSERVATION = _F(PAS_NBRE=1,
+                                 TOUT_GROUP_NO = 'OUI',
+                                 TOUT_GROUP_MA = 'OUI',
+                                 NOM_CHAM = ('DEPL','VITE','ACCE'),
+                                 ),
+                ARCHIVAGE   = _F(PAS_NBRE=50,),
+                # ARCHIVAGE   = _F(PAS_NBRE=1,),
 # !!! Changer le pas d'archivage pour une plus grande precision sur le trace de la courbe du resultat de calc_europlexus !!!
                     );
-
-#------------------------------------------------------------------------
-# Post-traitement DYNA_NON_LINE
-#------------------------------------------------------------------------
-
-# Deplacement Noeud de reference sur le cylindre
-#------------------------------------------------------------------------
-
-# Courbe
-#------------------------------------------------------------------------
-# tab_RES2=POST_RELEVE_T(ACTION=_F(INTITULE = 'Uy',
-                            # RESULTAT = RES2,
-                            # NOM_CHAM = 'DEPL',
-                            # NOM_CMP = 'DY',
-                            # TOUT_ORDRE = 'OUI',
-                            # GROUP_NO = 'NREF_CYL',
-                            # OPERATION = 'EXTRACTION',
-                            # ),);
-
-# IMPR_TABLE(UNITE=85,TABLE=tab_RES2,)
-
-# dy_RES2 = RECU_FONCTION( RESULTAT = RES2,
-                    # NOM_CHAM = 'DEPL',
-                    # GROUP_NO = 'NREF_CYL',
-                    # NOM_CMP = 'DY' );
-
-# IMPR_FONCTION(UNITE = 84,
-              # FORMAT = 'XMGRACE',
-              # PILOTE = 'POSTSCRIPT',
-              # BORNE_X = (1.0, 1.001),
-              # BORNE_Y = (-2.0E-03, 1.2E-02),
-              # GRILLE_X = 0.0001,
-              # GRILLE_Y = 0.1E-02,
-              # LEGENDE_X = 'Temps (s)',
-              # LEGENDE_Y = 'DY (m)',
-              # COURBE = (_F(FONCTION = dy_RES2,
-                         # LEGENDE = 'DY',),),
-              
 
 TEST_RESU(RESU=_F(NUME_ORDRE=0,
                   GROUP_NO='NREF_CYL',
@@ -491,200 +452,12 @@ TEST_RESU(RESU=_F(NUME_ORDRE=100,
                   MAILLE='M2803',),
           )
 
-#------------------------------------------------------------------------
-# Post-traitement CALC_EUROPLEXUS
-#------------------------------------------------------------------------
-
-# Deplacement Noeud de reference sur le cylindre
-#------------------------------------------------------------------------
-
-# Courbe
-#------------------------------------------------------------------------
-# tab_U=POST_RELEVE_T(ACTION=_F(INTITULE = 'Uy',
-                            # RESULTAT = U,
-                            # NOM_CHAM = 'DEPL',
-                            # NOM_CMP = 'DY',
-                            # TOUT_ORDRE = 'OUI',
-                            # GROUP_NO = 'NREF_CYL',
-                            # OPERATION = 'EXTRACTION',
-                            # ),);
-
-# IMPR_TABLE(UNITE=85,TABLE=tab_U,)
-
-# dy_U = RECU_FONCTION( RESULTAT = U,
-                    # NOM_CHAM = 'DEPL',
-                    # GROUP_NO = 'NREF_CYL',
-                    # NOM_CMP = 'DY' );
-
-# IMPR_FONCTION(UNITE = 83,
-              # FORMAT = 'XMGRACE',
-              # PILOTE = 'POSTSCRIPT',
-              # BORNE_X = (0.0, 0.001),
-              # BORNE_Y = (-2.0E-03, 1.2E-02),
-              # GRILLE_X = 0.0001,
-              # GRILLE_Y = 0.1E-02,
-              # LEGENDE_X = 'Temps (s)',
-              # LEGENDE_Y = 'DY (m)',
-              # COURBE = (_F(FONCTION = dy_U,
-                         # LEGENDE = 'DY',),),
-              
-
-TEST_RESU(RESU=_F(NUME_ORDRE=0,
-                  GROUP_NO='NREF_CYL',
-                  REFERENCE='AUTRE_ASTER',
-                  RESULTAT=U,
-                  NOM_CHAM='DEPL',
-                  NOM_CMP='DY',
-                  VALE_CALC=-0.00149171629532,
-                  VALE_REFE=-0.00149171629532,
-                  CRITERE='RELATIF',
-                  PRECISION=1.E-06,),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=50,
-                  GROUP_NO='NREF_CYL',
-                  REFERENCE='AUTRE_ASTER',
-                  RESULTAT=U,
-                  NOM_CHAM='DEPL',
-                  NOM_CMP='DY',
-                  VALE_CALC=-0.000143405873999,
-                  VALE_REFE=-0.000144254069992,
-                  CRITERE='RELATIF',
-                  PRECISION=3.E-2,),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=100,
-                  GROUP_NO='NREF_CYL',
-                  REFERENCE='AUTRE_ASTER',
-                  RESULTAT=U,
-                  NOM_CHAM='DEPL',
-                  NOM_CMP='DY',
-                  VALE_CALC=0.00928795251461,
-                  VALE_REFE=0.00927115873819,
-                  CRITERE='RELATIF',
-                  PRECISION=3.0000000000000001E-3,),
-          )
-
-# Contrainte NXX dans la Maille de reference sur le cylindre
-#------------------------------------------------------------------------
-TEST_RESU(RESU=_F(NUME_ORDRE=0,
-                  REFERENCE='AUTRE_ASTER',
-                  POINT=1,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  NOM_CMP='NXX',
-                  VALE_CALC=-298115.503936,
-                  VALE_REFE=-298115.503936,
-                  CRITERE='RELATIF',
-                  MAILLE='M6852',),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=50,
-                  REFERENCE='AUTRE_ASTER',
-                  POINT=1,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  NOM_CMP='NXX',
-                  VALE_CALC=12682.6431945,
-                  VALE_REFE=12143.207589,
-                  CRITERE='RELATIF',
-                  PRECISION=5.E-2,
-                  MAILLE='M6852',),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=100,
-                  REFERENCE='AUTRE_ASTER',
-                  POINT=1,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  NOM_CMP='NXX',
-                  VALE_CALC= 2185237.61661,
-                  VALE_REFE= 2183571.35963,
-                  CRITERE='RELATIF',
-                  PRECISION=2.5E-3,
-                  MAILLE='M6852',),
-          )
-
-# Contrainte NYY dans la Maille de reference sur le cylindre
-#------------------------------------------------------------------------
-TEST_RESU(RESU=_F(NUME_ORDRE=0,
-                  REFERENCE='AUTRE_ASTER',
-                  POINT=1,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  NOM_CMP='NYY',
-                  VALE_CALC=-1671586.18169,
-                  VALE_REFE=-1671586.18169,
-                  CRITERE='RELATIF',
-                  PRECISION=1.E-06,
-                  MAILLE='M6852',),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=50,
-                  REFERENCE='AUTRE_ASTER',
-                  POINT=1,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  NOM_CMP='NYY',
-                  VALE_CALC= -115372.053317,
-                  VALE_REFE= -115744.270149,
-                  CRITERE='RELATIF',
-                  PRECISION=0.005,
-                  MAILLE='M6852',),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=100,
-                  REFERENCE='AUTRE_ASTER',
-                  POINT=1,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  NOM_CMP='NYY',
-                  VALE_CALC= 10772953.8251,
-                  VALE_REFE= 10770364.4408,
-                  CRITERE='RELATIF',
-                  PRECISION=3.5000000000000001E-4,
-                  MAILLE='M6852',),
-          )
-
-# Contrainte N dans la Maille de reference d'un cable
-#------------------------------------------------------------------------
-TEST_RESU(RESU=_F(NUME_ORDRE=0,
-                  REFERENCE='ANALYTIQUE',
-                  POINT=1,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  NOM_CMP='N',
-                  VALE_CALC= 3749979.33652 ,
-                  VALE_REFE=3.750000E6,
-                  CRITERE='RELATIF',
-                  PRECISION=3.E-05,
-                  MAILLE='M2803',),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=50,
-                  REFERENCE='AUTRE_ASTER',
-                  POINT=1,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  NOM_CMP='N',
-                  VALE_CALC= 3813101.29315,
-                  VALE_REFE= 3808797.87598,
-                  CRITERE='RELATIF',
-                  PRECISION=2.E-3,
-                  MAILLE='M2803',),
-          )
-
-TEST_RESU(RESU=_F(NUME_ORDRE=100,
-                  REFERENCE='AUTRE_ASTER',
-                  POINT=1,
-                  RESULTAT=U,
-                  NOM_CHAM='SIEF_ELGA',
-                  NOM_CMP='N',
-                  VALE_CALC= 4239331.20216,
-                  VALE_REFE= 4229204.64926,
-                  CRITERE='RELATIF',
-                  PRECISION=5.0000000000000001E-3,
-                  MAILLE='M2803',),
-          )
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=58,
+             NB_VALE_I=331,
+             VALE_CALC=2.3290001036e+11,
+             VALE_CALC_I=136913,
+             VALE_CALC_K='828394fc9382ad1aa88266abba79883b')
 
 FIN();

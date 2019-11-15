@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@ subroutine xkamat(imate, ndim, axi, ka, mu, famiz)
 !
 ! person_in_charge: samuel.geniaut at edf.fr
 !
-! aslint: disable=W1504
 use calcul_module, only : ca_jvcnom_, ca_nbcvrc_
     implicit none
 #include "asterf_types.h"
@@ -51,7 +50,7 @@ use calcul_module, only : ca_jvcnom_, ca_nbcvrc_
 !
     call jemarq()
 !
-!   ABANDON DE L APPEL A RCVALD2 ==> ON PREFERE L APPEL A RCVALA QUI EST 
+!   ABANDON DE L APPEL A RCVALD2 ==> ON PREFERE L APPEL A RCVALA QUI EST
 !     PLUS DIRECT ET PLUS ROBUSTE
     nbpar=1
     iarret=0
@@ -90,7 +89,7 @@ use calcul_module, only : ca_jvcnom_, ca_nbcvrc_
                 icodre)
     endif
 !
-!  VERIFICATION DE LA PRESENCE DES PARAM. ELAS. 
+!  VERIFICATION DE LA PRESENCE DES PARAM. ELAS.
    if (count(icodre.eq.0).ne.2) then
      call utmess('F', 'ELEMENTS6_10')
    endif
@@ -105,7 +104,7 @@ use calcul_module, only : ca_jvcnom_, ca_nbcvrc_
             mu = e/(2.d0*(1.d0+nu))
       else
             mu = e/(2.d0*(1.d0+nu))
-            ka = 3.d0-4.d0*nu 
+            ka = 3.d0-4.d0*nu
       endif
 !
    else

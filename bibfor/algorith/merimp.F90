@@ -106,7 +106,7 @@ integer, intent(out) :: nbin
     character(len=24) :: ligrmo
     character(len=19) :: disp_iter, disp_cumu_inst
     aster_logical :: l_dyna
-    real(kind=8) :: iter
+    integer :: iter
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -210,8 +210,8 @@ integer, intent(out) :: nbin
 ! - Field for iteration number
 !
     iter = iter_newt
-    call mecact('V', chiter, 'MODELE', ligrmo, 'NEUT_R',&
-                ncmp=1, nomcmp='X1', sr=iter)
+    call mecact('V', chiter, 'MODELE', ligrmo, 'NEUT_I',&
+                ncmp=1, nomcmp='X1', si=iter)
 !
 ! - Input fields
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-#
 
 DEBUT(   CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI', HIST_ETAPE='OUI'))
 
@@ -103,7 +101,7 @@ CHMATER=AFFE_MATERIAU(
                        _F(  GROUP_MA = 'CABLE2',
                               MATER = ACIER),
                        _F(  GROUP_MA = 'DISFROT',
-                              MATER = ACIER),      
+                              MATER = ACIER),
                               )
                          )
 
@@ -187,7 +185,8 @@ CARAEPX=AFFE_CARA_ELEM(
 
 # équilibre activé
 
-U_EPX1 = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
+   NOM_CAS="study",
    ETAT_INIT=_F(RESULTAT=U_PREC,CONTRAINTE='OUI',EQUILIBRE='OUI'),
    CARA_ELEM = CARAEPX,
    COMPORTEMENT =(
@@ -204,7 +203,6 @@ U_EPX1 = CALC_EUROPLEXUS(
           _F(CHARGE=CL,),
           _F(CHARGE=FROT,),
           ),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='AUTO',
                INST_INIT = 0,
                INST_FIN  = 0.01,
@@ -218,8 +216,8 @@ U_EPX1 = CALC_EUROPLEXUS(
 
 
 # équilibre désactivé
-
-U_EPX2 = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
+   NOM_CAS="study2",
    ETAT_INIT=_F(RESULTAT=U_PREC,CONTRAINTE='OUI',EQUILIBRE='NON'),
    CARA_ELEM = CARAEPX,
    COMPORTEMENT =(
@@ -236,7 +234,6 @@ U_EPX2 = CALC_EUROPLEXUS(
           _F(CHARGE=CL,),
           _F(CHARGE=FROT,),
           ),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='AUTO',
                INST_INIT = 0,
                INST_FIN  = 0.2,
@@ -249,35 +246,6 @@ U_EPX2 = CALC_EUROPLEXUS(
                     ),
    ARCHIVAGE   = _F(PAS_NBRE=3166,),
    );
-
-
-CALC_CHAMP(reuse = U_EPX2, RESULTAT = U_EPX2, CONTRAINTE = 'SIEF_NOEU', 
-           GROUP_MA = 'CABLE2')
-
-ERR_RELA = FORMULE(NOM_PARA=('TENSION', 'N'), VALE='abs(TENSION-N)/TENSION')
-nume_ordre1 = 3166
-TABEPX1 = CREA_TABLE(RESU = (_F(RESULTAT = U_EPX2, NOM_CHAM ='SIEF_NOEU', 
-                                GROUP_MA='CABLE2', NUME_ORDRE = nume_ordre1, 
-                                NOM_CMP ='N'),
-                        ))
-
-TABINI = CALC_TABLE(reuse = TABINI, TABLE=TABINI, ACTION=_F(OPERATION='RENOMME',
-                                NOM_PARA=('NOEUD_CABLE','NOEUD'), ))
-
-TABINI = CALC_TABLE(reuse=TABINI ,TABLE=TABINI, ACTION=_F(OPERATION='COMB',
-                                TABLE=TABEPX1,
-                                NOM_PARA=('NOEUD'),
-                                RESTREINT='NON' ) )
-
-TABINI = CALC_TABLE(reuse=TABINI ,TABLE=TABINI, ACTION=_F(OPERATION='OPER',
-                                FORMULE = ERR_RELA,
-                                NOM_PARA=('ERR_RELA'),
-                                ))
-                                
-IMPR_TABLE(TABLE = TABINI, NOM_PARA=('NOEUD', 'ABSC_CURV', 'TENSION', 'N','ERR_RELA'), 
-                                     SEPARATEUR=';')
-
-
 
 
 TEST_RESU(RESU=(_F(INST = 1.0,
@@ -305,72 +273,20 @@ TEST_RESU(RESU=(_F(INST = 1.0,
                 )
           )
 
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=10,
+             NB_VALE_I=17,
+             VALE_CALC=2.3e11,
+             VALE_CALC_I=2133965,
+             VALE_CALC_K='f726386168e5c94bf0ed97039988dcd6')
 
-
-TEST_RESU(RESU=(_F(NUME_ORDRE = 159,
-                  RESULTAT=U_EPX1,
-                  NOM_CHAM='DEPL',
-                  GROUP_NO='NY10',
-                  NOM_CMP='DX',
-                  VALE_CALC=-0.000146058846353,
-                  VALE_REFE=-0.000146058993962,
-                  REFERENCE = 'ANALYTIQUE',
-                  ),
-                _F(NUME_ORDRE = 159,
-                  RESULTAT=U_EPX1,
-                  NOM_CHAM='DEPL',
-                  GROUP_NO='NY10',
-                  NOM_CMP='DY',
-                  VALE_CALC=-0.00361862774358,
-                  VALE_REFE=-0.00361862774358,
-                  REFERENCE = 'ANALYTIQUE',
-                  ),
-                _F(NUME_ORDRE = 159,
-                  RESULTAT=U_EPX1,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='M150',
-                  POINT = 1,
-                  NOM_CMP='N',
-                  VALE_CALC=14051238.3598,
-                  VALE_REFE=14051238.3598,
-                  REFERENCE = 'ANALYTIQUE',
-                  ),
-                )
-          )
-
-TEST_RESU(RESU=(_F(NUME_ORDRE = 3166,
-                  RESULTAT=U_EPX2,
-                  NOM_CHAM='DEPL',
-                  GROUP_NO='NY10',
-                  NOM_CMP='DX',
-                  VALE_CALC=-0.000136724311534,
-                  VALE_REFE=-1.36726E-04,
-                  REFERENCE = 'SOURCE_EXTERNE',
-                  # issue26503 : les variations de résultats sont liés à Europlexus et non à Code_Aster
-                  TOLE_MACHINE=3E-4,
-                  ),
-                _F(NUME_ORDRE = 3166,
-                  RESULTAT=U_EPX2,
-                  NOM_CHAM='DEPL',
-                  GROUP_NO='NY10',
-                  NOM_CMP='DY',
-                  VALE_CALC=-0.00369190584599,
-                  VALE_REFE=-3.69190E-03,
-                  REFERENCE = 'SOURCE_EXTERNE',
-                  # issue26503 : les variations de résultats sont liés à Europlexus et non à Code_Aster
-                  TOLE_MACHINE=7E-6,
-                  ),
-                _F(NUME_ORDRE = 3166,
-                  RESULTAT=U_EPX2,
-                  NOM_CHAM='SIEF_ELGA',
-                  MAILLE='M150',
-                  POINT = 1,
-                  NOM_CMP='N',
-                  VALE_CALC=14278815.9432,
-                  VALE_REFE=14278815.0,
-                  REFERENCE = 'SOURCE_EXTERNE',
-                  ),
-                )
-          )
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study2.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=12,
+             NB_VALE_I=17,
+             VALE_CALC=2.3e11,
+             VALE_CALC_I=2136972,
+             VALE_CALC_K='f8392615407415015a22f4a050079f38')
 
 FIN()
