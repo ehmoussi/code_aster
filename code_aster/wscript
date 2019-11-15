@@ -39,6 +39,8 @@ def options(self):
 def configure(self):
     opts = self.options
     self.env.BUILD_CYTHON = False
+    if not self.env.BUILD_PARALLEL:
+        opts.enable_cython = False
     try:
         self.check_cython()
     except Errors.ConfigurationError as exc:
