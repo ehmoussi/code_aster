@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 # person_in_charge: david.haboussa at edf.fr
 #
-from numpy import *
+import numpy
 
 POURSUITE(CODE='OUI',DEBUG=_F(SDVERI='NON'),IGNORE_ALARM=('COMPOR4_62',),);
 
@@ -51,7 +51,7 @@ nvarpargr=3*nb_syst
 
 
 # densites de dislocation initiales : variables internes de 0 a 44
-avari = zeros(nvarit)
+avari = numpy.zeros(nvarit)
 for igr in range(nbgr):
    for isy in range(12):
        avari[7+6*nbgr+igr*nvarpargr+isy*3]=rho_ini
