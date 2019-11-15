@@ -65,9 +65,6 @@ def options(self):
     group.add_option('--with-prog-salome', action='store_true', default=None,
                      dest='with_prog_salome',
                      help='Force support of salome program')
-    group.add_option('--with-prog-europlexus', action='store_true',
-                     default=None, dest='with_prog_europlexus',
-                     help='Force support of europlexus program')
     group.add_option('--with-prog-miss3d', action='store_true', default=None,
                      dest='with_prog_miss3d',
                      help='Force support of miss3d program')
@@ -297,8 +294,6 @@ def check_external_programs(self):
 
     _check_prog(self, 'salome', ['salome'],
                 add_paths=['${ABSOLUTE_APPLI_PATH}'])
-
-    _check_prog(self, 'europlexus', ['europlexus'])
 
     _check_prog(self, 'miss3d', ['run_miss3d'],
                 add_paths=['${MISS3D_DIR}'])

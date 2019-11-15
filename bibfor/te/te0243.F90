@@ -17,7 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine te0243(option, nomte)
-! aslint: disable=C1513
     implicit none
 #include "jeveux.h"
 #include "asterfort/connec.h"

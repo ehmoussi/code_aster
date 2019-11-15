@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,7 +34,6 @@ subroutine te0235(option, nomte)
 !           'MECA_POU_D_TGM': POUTRE DROITE DE TIMOSHENKO (GAUCHISSEMENT)
 !                               MULTI-FIBRES SECTION CONSTANTE
 ! --------------------------------------------------------------------------------------------------
-! aslint: disable=W0104
 !
     implicit none
     character(len=*) :: option, nomte

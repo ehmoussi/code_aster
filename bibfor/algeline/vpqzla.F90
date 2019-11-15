@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -82,8 +82,7 @@ subroutine vpqzla(typeqz, qrn, iqrn, lqrn, qrar,&
 !
 ! OUT FLAGE  : LO : FLAG PERMETTANT DE GERER LES IMPRESSIONS
 !-----------------------------------------------------------------------
-! aslint: disable=W1304,W1504,C9991
-! C9991 : a cause du compilo gfortran 4.4.5 qui se plante
+! aslint: disable=W1304,W1504
 !
     implicit none
 !

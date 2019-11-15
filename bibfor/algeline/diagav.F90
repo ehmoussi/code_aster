@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,9 +27,6 @@ subroutine diagav(noma19, neq, ilfin, typvar, eps)
 !     OUT : EPS    : 'EPSILON' TEL QU'UN TERME DIAGONAL APRES
 !                    FACTORISATION SERA CONSIDERE COMME NUL
 !     ------------------------------------------------------------------
-
-! C9991 : a cause du compilo gfortran 4.4.5 qui se plante
-! aslint: disable=C9991
 
 #include "jeveux.h"
 #include "asterc/r8gaem.h"

@@ -17,9 +17,6 @@
 ! --------------------------------------------------------------------
 
 !
-!
-! aslint: disable=W0104
-!
 interface
     subroutine lc0152(BEHinteg,&
                       fami, kpg, ksp, ndim, imate,&

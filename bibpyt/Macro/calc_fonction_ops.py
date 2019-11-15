@@ -930,7 +930,7 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
                                         l_freq = list(kw['LIST_FREQ']),
                                         nb_pts = kw['NB_FREQ_LISS'],
                                         zpa    = kw['ZPA'],
-                                        precision=1e-3,
+                                        precision=1e-5,
                                         critere='RELATIF' )
         else:
             sp_lisse = LISS.liss_enveloppe(l_sp_nappe ,
@@ -941,7 +941,7 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
                                         l_freq = list(kw['LIST_FREQ']),
                                         nb_pts = kw['NB_FREQ_LISS'],
                                         zpa    = kw['ZPA'],
-                                        precision=1e-3,
+                                        precision=1e-5,
                                         critere='RELATIF' )
 
         l_fonc_f = []

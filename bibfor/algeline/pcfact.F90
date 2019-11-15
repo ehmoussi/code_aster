@@ -18,7 +18,7 @@
 
 subroutine pcfact(matas, nequ, in, ip, ac,&
                   prc, vect, epsi)
-! aslint: disable=W1304, C1513
+! aslint: disable=W1304
     implicit none
 #include "jeveux.h"
 #include "asterfort/jeveuo.h"

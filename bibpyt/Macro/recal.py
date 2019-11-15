@@ -24,7 +24,8 @@
 #  Utilisable en mode EXTERNE, voir les flags avec "python recal.py -h"
 #___________________________________________________________________________
 
-import code_aster
+# MACR_RECAL is on the next deprecations list!
+# aslint: disable=C4007
 
 import os
 import sys
@@ -37,6 +38,8 @@ import platform
 from math import log10, sqrt
 
 import numpy as NP
+
+import code_aster
 
 # Importation de commandes Aster
 try:
@@ -601,7 +604,8 @@ class CALCULS_ASTER:
             # ----------------------------------------------------------------------------
             for nompara in list_params:
                 valpara = params[nompara]
-                exec( "%s=%s" % (nompara, valpara) )    #  YOUN__ = X0[0], DSDE__ = X0[1], ...
+                #  YOUN__ = X0[0], DSDE__ = X0[1], ...
+                locals()[nompara] = valpara
 
             # ----------------------------------------------------------------------------
             # Affichage des parametres du calcul courant

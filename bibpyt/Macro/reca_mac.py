@@ -123,6 +123,4 @@ class fenetre_mac:
         self.root.quit()
 
     def get_list(self):
-        exec('l1=' + self.l1)
-        exec('l2=' + self.l2)
-        return l1, l2
+        return float(self.l1), float(self.l2)

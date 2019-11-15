@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 subroutine te0324(option, nomte)
     implicit none
-! aslint: disable=W0104
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -109,7 +108,7 @@ subroutine te0324(option, nomte)
        if (icodre(i) .ne. 0) then
          valres(i) = 0.d0
        endif
-    end do 
+    end do
 !
 !
     call tecach('ONO', 'PGEOMER', 'L', iret, nval=5,&
@@ -149,7 +148,7 @@ subroutine te0324(option, nomte)
         surf2=ddot(3,a,1,a,1)
         c2(1)=a(1)/sqrt(surf2)
         c2(2)=a(2)/sqrt(surf2)
-        c2(3)=a(3)/sqrt(surf2)          
+        c2(3)=a(3)/sqrt(surf2)
     endif
     call provec(c1, c2, c3)
 !
@@ -206,7 +205,7 @@ subroutine te0324(option, nomte)
                                 if (zr(ivari-1+7+18*(i3-1)) .ge. 0.d0) then
                                     zr(iresu-1+i*(i+1)/2)=zr(iresu-1+i*(i+1)/2)*valres(4)
                                 endif
-                            endif 
+                            endif
                             zr(iresu-1+i2*(i2+1)/2)=zr(iresu-1+i*(i+1)/2)
                             zr(iresu-1+i+i2*(i2-1)/2)=-zr(iresu-1+i*(i+1)/2)
                         end do
@@ -214,7 +213,7 @@ subroutine te0324(option, nomte)
                 else
                     do i = 1, nbval
                         zr(iresu-1+i)=zr(irigi-1+i)*valres(2)/valres(1)
-                    end do 
+                    end do
                 endif
             endif
             goto 1

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
@@ -38,7 +37,7 @@ interface
         integer, intent(in) :: nno, npg, lgpg
         integer, intent(in) :: ipoids, ivf, idfde
         real(kind=8), intent(in) :: vff(*)
-        character(len=16), intent(in) :: compor(*)        
+        character(len=16), intent(in) :: compor(*)
         real(kind=8), intent(in) :: carcri(*)
         character(len=16), intent(in) :: mult_comp
         real(kind=8), intent(in) :: instam, instap

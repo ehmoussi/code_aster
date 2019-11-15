@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 !
 !
 #include "asterf_types.h"
-! aslint: disable=W1504
 !
 interface
     subroutine mmeval_prep(mesh   , time_curr  , model_ndim     , ds_contact,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,8 +27,6 @@ subroutine lcgtn_wrap(fami, kpg, ksp, ndim, imate, &
 #include "asterfort/lcgtn_compute.h"
 #include "asterfort/lcgtn_material.h"
 
-! aslint: disable=W1504
-    
     aster_logical:: grvi
     integer      :: imate, ndim, kpg, ksp, codret, neps
     real(kind=8) :: crit(*)
@@ -50,11 +48,11 @@ subroutine lcgtn_wrap(fami, kpg, ksp, ndim, imate, &
     real(kind=8) :: grad(ndim),eps(2*ndim),ep(2*ndim),t(2*ndim)
     real(kind=8) :: deps_t(2*ndim,2*ndim),dphi_t(2*ndim),deps_ka(2*ndim),dphi_ka
 ! ----------------------------------------------------------------------
-        
+
 
 ! INITIALISATION
 
-    elas = option(11:14).eq.'ELAS' 
+    elas = option(11:14).eq.'ELAS'
     rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
     resi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RAPH'
     itemax = nint(crit(1))
@@ -69,39 +67,39 @@ subroutine lcgtn_wrap(fami, kpg, ksp, ndim, imate, &
     if (grvi) then
         apg  = epsm(ndimsi+1)
         lag  = epsm(ndimsi+2)
-        grad = epsm(ndimsi+3:ndimsi+2+ndim) 
+        grad = epsm(ndimsi+3:ndimsi+2+ndim)
     else
         apg = 0
         lag = 0
         grad = 0
     end if
-    
+
     if (resi) then
         eps = eps + deps(1:ndimsi)
         if (grvi) then
             apg  = apg  + deps(ndimsi+1)
             lag  = lag  + deps(ndimsi+2)
-            grad = grad + deps(ndimsi+3:ndimsi+2+ndim) 
+            grad = grad + deps(ndimsi+3:ndimsi+2+ndim)
         end if
     endif
 
 
 
-! LECTURE DU MATERIAU ET DES DEFORMATIONS DE RETRAIT   
+! LECTURE DU MATERIAU ET DES DEFORMATIONS DE RETRAIT
 
-    mat = lcgtn_material(fami,kpg,ksp,imate,resi,grvi)   
-    epsth  = 0.d0   
+    mat = lcgtn_material(fami,kpg,ksp,imate,resi,grvi)
+    epsth  = 0.d0
 
-    
 
-! INTERACTION MATERIAU / CINEMATIQUE    
-    
+
+! INTERACTION MATERIAU / CINEMATIQUE
+
     eps(1:3) = eps(1:3) - epsth
     phi = lag + mat%r*apg
 
 
 
-! LECTURE DES VARIABLES INTERNES    
+! LECTURE DES VARIABLES INTERNES
 
     ka = vim(1)
     f  = max(mat%f0,vim(2))
@@ -110,7 +108,7 @@ subroutine lcgtn_wrap(fami, kpg, ksp, ndim, imate, &
 
 
 
-! COMPORTEMENT    
+! COMPORTEMENT
 
     codret = lcgtn_compute(resi,rigi,elas, itemax, prec, mat, instap-instam, eps, phi, ep, ka, &
                   f, state, t, deps_t,dphi_t,deps_ka,dphi_ka)
@@ -134,11 +132,11 @@ subroutine lcgtn_wrap(fami, kpg, ksp, ndim, imate, &
     else
         ! Local
         if (resi) sigp(1:ndimsi) = t
-        if (rigi) dsidep(1:ndimsi,1:ndimsi) = deps_t    
+        if (rigi) dsidep(1:ndimsi,1:ndimsi) = deps_t
     end if
 
 
 
-    
+
 999 continue
 end subroutine

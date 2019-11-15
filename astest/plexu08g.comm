@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -113,7 +113,8 @@ PLATEAU=DEFI_FONCTION(NOM_PARA='INST',
 
 
 
-U_EPX_EQ = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
+   NOM_CAS="study",
    ETAT_INIT=_F(RESULTAT=U_ASTER,CONTRAINTE='OUI',EQUILIBRE='OUI'),
    COMPORTEMENT =(_F(
                   RELATION = 'ELAS',
@@ -122,7 +123,6 @@ U_EPX_EQ = CALC_EUROPLEXUS(
               ),
    EXCIT=(_F(CHARGE=PRES,FONC_MULT=PLATEAU),
           _F(CHARGE=BLOQ,),),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 0.004,
@@ -133,12 +133,8 @@ U_EPX_EQ = CALC_EUROPLEXUS(
    );
 
 
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_ASTER,NOM_CHAM=('DEPL','SIEF_ELGA',),INST=1.0))
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U_EPX_EQ,NOM_CHAM=('DEPL','SIEF_ELGA',),INST=0.004))
-
-TAB1 = CO('TAB1')
-
-U_EPX = CALC_EUROPLEXUS(
+CALC_EUROPLEXUS(
+   NOM_CAS="study2",
    ETAT_INIT=_F(RESULTAT=U_ASTER,CONTRAINTE='OUI',EQUILIBRE='NON'),
    COMPORTEMENT =(_F(
                   RELATION = 'ELAS',
@@ -147,7 +143,6 @@ U_EPX = CALC_EUROPLEXUS(
               ),
    EXCIT=(_F(CHARGE=PRES,FONC_MULT=PLATEAU),
           _F(CHARGE=BLOQ,),),
-   LANCEMENT ='OUI',
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 0.02,
@@ -156,7 +151,6 @@ U_EPX = CALC_EUROPLEXUS(
                ),
    ARCHIVAGE   = _F(PAS_NBRE=100,),
    PAS_NBRE_COURBE=5,
-   TABLE_COURBE    = TAB1,
    COURBE = (_F(
                NOM_CHAM = 'DEPL',
                NOM_CMP  = 'DX',
@@ -174,10 +168,6 @@ U_EPX = CALC_EUROPLEXUS(
                NOM_COURBE = 'DZ_GRN1'),
            ),
    );
-
-IMPR_TABLE(TABLE=TAB1, SEPARATEUR=';')
-
-
 
 
 # REFERENCE ETAT INITIAL ASTER
@@ -207,8 +197,8 @@ TEST_RESU(RESU=(_F(INST=1.0,
             )
 
 
-            
-TEST_RESU(RESU=(            
+
+TEST_RESU(RESU=(
                 _F(INST=1.0,
                    POINT=1,
                    RESULTAT=U_ASTER,
@@ -233,153 +223,20 @@ TEST_RESU(RESU=(
                 ),
           )
 
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=7,
+             NB_VALE_I=13,
+             VALE_CALC=3.e10,
+             VALE_CALC_I=102984,
+             VALE_CALC_K='d059820baa25d98f2ed75b16fe1d9632')
 
-
-
-
-# RESULTATS APRES PASSAGE DANS EPX AVEC EQUI
-
-TEST_RESU(RESU=(_F(INST=0.004,
-                   RESULTAT=U_EPX_EQ,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DX',
-                   VALE_CALC=-9.42600991306E-06,
-                   VALE_REFE=-9.42600991306E-06,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 5E-5,
-                   ),
-                _F(INST=0.004,
-                   RESULTAT=U_EPX_EQ,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DY',
-                   VALE_CALC=-6.78188286688E-07,
-                   VALE_REFE=-6.78188286688E-07,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 5E-5,
-                   ),
-                _F(INST=0.004,
-                   RESULTAT=U_EPX_EQ,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-6.47139874604E-06,
-                   VALE_REFE=-6.47139874604E-06,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 5E-5,
-                   ),
-                ),
-            )
-
-
-            
-TEST_RESU(RESU=(            
-                _F(INST=0.004,
-                   POINT=1,
-                   RESULTAT=U_EPX_EQ,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIXX',
-                   VALE_CALC=-88191.2920113,
-                   VALE_REFE=-88191.2920113,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 5E-5,
-                   MAILLE = 'M93',),
-                _F(INST=0.004,
-                   POINT=1,
-                   RESULTAT=U_EPX_EQ,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIYY',
-                   VALE_CALC=-4298.28256544,
-                   VALE_REFE=-4298.28256544,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 1E-4,
-                   MAILLE = 'M93',),
-                _F(INST=0.004,
-                   POINT=1,
-                   RESULTAT=U_EPX_EQ,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIZZ',
-                   VALE_CALC=-89716.486396,
-                   VALE_REFE=-89716.486396,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 5E-5,
-                   MAILLE = 'M93',),
-                ),
-          )
-
-# RESULTATS APRES PASSAGE DANS EPX SANS EQUI
-# on peut visualiser les courbes de déplacement de GRN1 dans le doc
-
-TEST_RESU(RESU=(_F(INST=0.02,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DX',
-                   VALE_CALC=-1.14602709217E-05,
-                   VALE_REFE=-9.42600991306E-06,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 0.22,
-                   ),
-                _F(INST=0.02,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DY',
-                   VALE_CALC=-6.94778961428E-07,
-                   VALE_REFE=-6.78188286688E-07,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 0.025,
-                   ),
-                _F(INST=0.02,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='DEPL',
-                   GROUP_NO='GRN1',
-                   NOM_CMP='DZ',
-                   VALE_CALC=-9.15587776658E-06,
-                   VALE_REFE=-6.47139874604E-06,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 0.42,
-                   ),
-                ),
-            )
-
-
-            
-TEST_RESU(RESU=(            
-                _F(INST=0.02,
-                   POINT=1,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIXX',
-                   VALE_CALC=-88179.8317394,
-                   VALE_REFE=-88191.2920113,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 1.5E-4,
-                   MAILLE = 'M93',),
-                _F(INST=0.02,
-                   POINT=1,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIYY',
-                   VALE_CALC=-148.835459839,
-                   VALE_REFE=-4298.28256544,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 1.,
-                   MAILLE = 'M93',),
-                _F(INST=0.02,
-                   POINT=1,
-                   RESULTAT=U_EPX,
-                   NOM_CHAM='SIEF_ELGA',
-                   NOM_CMP='SIZZ',
-                   VALE_CALC=-87524.1519631,
-                   VALE_REFE=-89716.486396,
-                   REFERENCE = 'ANALYTIQUE',
-                   PRECISION = 0.025,
-                   MAILLE = 'M93',),
-                ),
-          )
-
-
+TEST_FICHIER(FICHIER='./REPE_OUT/commandes_study2.epx',
+             EXPR_IGNORE='REPE_OUT',
+             NB_VALE=11,
+             NB_VALE_I=36,
+             VALE_CALC=3.e10,
+             VALE_CALC_I=112856,
+             VALE_CALC_K='9217eb6f713733d7282989ab156af248')
 
 FIN()
