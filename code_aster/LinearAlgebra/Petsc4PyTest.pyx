@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -27,7 +27,7 @@ IF _HAVE_PETSC4PY == 1:
 
 def AssemblyMatrixToPetsc4Py(assemblyMatrix):
     IF _HAVE_PETSC4PY == 1:
-        name = assemblyMatrix.getName()
+        name = assemblyMatrix.getName().encode()
         cdef char* charName = name
         cdef PetscMat retour
         cdef PetscErrorCode ier
@@ -36,4 +36,4 @@ def AssemblyMatrixToPetsc4Py(assemblyMatrix):
         myMat.mat=retour
         return myMat
     ELSE:
-        print "You must install Petsc4py to call this method"
+        print("You must install Petsc4py to call this method")

@@ -184,8 +184,8 @@ def get_ld_paths(self):
     # Add *LIBPATH paths to LD_LIBRARY_PATH
     env = self.all_envs[self.variant]
     ld_path = list(chain(*[Utils.to_list(env[name])
-                           for name in ('LIBPATH', 'LIBPATH_CODE_ASTER_CORE', 
-                                        'LIBDIR', 'ASTERLIBDIR') if env[name]]))
+                           for name in ('LIBPATH', 'LIBDIR', 'ASTERLIBDIR')
+                           if env[name]]))
     return [self.options.destdir + p for p in ld_path]
 
 def add_to_env_paths(environ, name, path):
