@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster import _
+
 cata_msg = {
     1 : _("""
 Le mot-clé MAILLAGE_N n'est pas utilisé. Le maillage considéré est celui provenant

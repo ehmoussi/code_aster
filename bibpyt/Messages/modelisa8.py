@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -125,7 +125,7 @@ cata_msg = {
 """),
 
     29 : _("""
- nombre de composantes %(i2)d supérieur au maximum %(i1)d 
+ nombre de composantes %(i2)d supérieur au maximum %(i1)d
 """),
 
     34 : _("""

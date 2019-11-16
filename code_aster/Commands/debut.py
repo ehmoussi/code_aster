@@ -118,7 +118,7 @@ class Starter(ExecuteCommand):
         if keywords.get('LANG'):
             from ..Utilities.i18n import localization
             from ..Cata.Syntax import tr
-            translation = localization.install(keywords['LANG'])
+            translation = localization.translation(keywords['LANG'])
             tr.set_translator(translation.gettext)
 
         if keywords.get('IGNORE_ALARM'):

@@ -20,6 +20,8 @@
 
 # Pour la méthode EXTRAPOLATION de DEFI_LIST_INST
 
+from code_aster import _
+
 cata_msg = {
 
     1: _("""On tente une extrapolation linéaire sur les résidus."""),

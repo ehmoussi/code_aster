@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -78,11 +78,11 @@ La valeur initiale du signal d'entrée dépasse le critère limite TOLE_INIT cho
 """),
 
 17: _("""
-La table fournie ne comporte pas le paramètre %(k1)s. Elle n'est pas issue de MACR_SPECTRE. 
+La table fournie ne comporte pas le paramètre %(k1)s. Elle n'est pas issue de MACR_SPECTRE.
 """),
 
 18: _("""
-Les valeurs des amortissements de deux instances de SPECTRE sont différentes. 
+Les valeurs des amortissements de deux instances de SPECTRE sont différentes.
 """),
 
 19: _("""
@@ -92,7 +92,7 @@ Cette librairie est disponible en lançant le calcul depuis Salome-Meca.
 """),
 
 20: _("""
-Le mot-clé ELARG n'a pas d'effet avec l'option CONCEPTION. 
+Le mot-clé ELARG n'a pas d'effet avec l'option CONCEPTION.
 """),
 
 }

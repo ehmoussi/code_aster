@@ -19,6 +19,8 @@
 
 # person_in_charge: jean-luc.flejou at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
 # Messages dans OP0019

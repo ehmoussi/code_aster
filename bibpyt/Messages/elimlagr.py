@@ -20,6 +20,8 @@
 # person_in_charge: natacha.bereux at edf.fr
 
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""
@@ -35,8 +37,8 @@ cata_msg = {
     2 : _("""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
-   Il y a plusieurs processeurs actifs. Mais les données du modèle doivent 
-   être centralisées. 
+   Il y a plusieurs processeurs actifs. Mais les données du modèle doivent
+   être centralisées.
  Risques & conseils :
    Il faut utiliser DISTRIBUTION='CENTRALISE' dans la commande AFFE_MODELE.
 """),
@@ -117,14 +119,14 @@ cata_msg = {
       M2=ELIM_LAGR(MATR_RIGI=K1, MATR_ASSE=M1)
 """),
     12 : _("""
-    La matrice a %(i1)d  colonnes (au total). 
-    Parmi ces colonnes %(i2)d sont linéairement indépendantes.  
+    La matrice a %(i1)d  colonnes (au total).
+    Parmi ces colonnes %(i2)d sont linéairement indépendantes.
 """),
     13 : _("""
-    Le noyau de la matrice est un espace de dimension %(i1)d. On a construit une base de cet espace. 
+    Le noyau de la matrice est un espace de dimension %(i1)d. On a construit une base de cet espace.
     Norme de la matrice           : %(r1)f
     Norme de la base              : %(r2)f
-    Norme du produit matrice-base : %(r3)f 
+    Norme du produit matrice-base : %(r3)f
     Temps écoulé (secondes)       : %(r4)f
 """),
 

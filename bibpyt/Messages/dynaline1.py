@@ -19,6 +19,8 @@
 
 
 
+from code_aster import _
+
 cata_msg = {
 
     2 : _("""

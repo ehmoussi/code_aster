@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -74,7 +74,7 @@ cata_msg = {
 """),
 
     12: _("""
- "NUME_GROUPE" est obligatoire, il doit contenir au moins 1 valeur qui 
+ "NUME_GROUPE" est obligatoire, il doit contenir au moins 1 valeur qui
  doit être strictement positive
 """),
 
@@ -180,7 +180,7 @@ Contactez le support technique.
 """),
 
     34: _("""
- "NUME_PASSAGE" contient les numéros des groupes reliés par la situation de passage, 
+ "NUME_PASSAGE" contient les numéros des groupes reliés par la situation de passage,
  ces numéros sont strictement positifs et différents. La situation de passage doit également appartenir
  à tous ces groupes.
 """),
@@ -286,26 +286,26 @@ Contactez le support technique.
 
     53: _("""
  Les situations d'un groupe de partage devraient appartenir au même groupe de fonctionnement
- et avoir le même nombre d'occurrences initial. 
+ et avoir le même nombre d'occurrences initial.
  Le groupe de partage doit avoir un numéro strictement positif.
 """),
 
     54: _("""
- Il manque une donnée en fatigue environnementale. De plus, le FEN_INTEGRE doit être 
- strictement positif. 
+ Il manque une donnée en fatigue environnementale. De plus, le FEN_INTEGRE doit être
+ strictement positif.
 """),
 
     55: _("""
- Les instants des transitoires ne sont pas ordonnés de manière croissante. Cela peut 
- nuire aux résultats sur les sous-cycles ou la fatigue environnementale. 
+ Les instants des transitoires ne sont pas ordonnés de manière croissante. Cela peut
+ nuire aux résultats sur les sous-cycles ou la fatigue environnementale.
 """),
 
     56: _("""
- Les sous-cycles ne seront pas pris en compte avec la méthode de sélection des instants 'TRESCA'. 
+ Les sous-cycles ne seront pas pris en compte avec la méthode de sélection des instants 'TRESCA'.
 """),
 
     57: _("""
- Seuls les 100 premiers sous-cycles extraits seront pris en compte. 
+ Seuls les 100 premiers sous-cycles extraits seront pris en compte.
 """),
 
 }

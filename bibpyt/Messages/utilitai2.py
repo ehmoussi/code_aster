@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -63,21 +63,21 @@ cata_msg = {
 
     18 : _("""
  Erreur:
-     Vous utilisez CREA_TABLE LISTE/LISTE_CO pour créer une table à 
-     partir d'une liste de concepts. Or, TYPE_TABLE n'a pas la 
-     valeur TYPE_TABLE='TABLE_CONTENEUR'.  
- Conseil: 
+     Vous utilisez CREA_TABLE LISTE/LISTE_CO pour créer une table à
+     partir d'une liste de concepts. Or, TYPE_TABLE n'a pas la
+     valeur TYPE_TABLE='TABLE_CONTENEUR'.
+ Conseil:
      Il est obligatoire de renseigner TYPE_TABLE='TABLE_CONTENEUR'.
 """),
 
     19 : _("""
  Erreur:
-     Vous utilisez CREA_TABLE LISTE/LISTE_CO pour créer une table à 
-     partir d'une liste de concepts. Or, vous n'avez pas fourni de 
-     liste de paramètre NOM_OBJET contenant une clé unique pour chaque 
-     concept présent dans la liste de concepts.   
- Conseil: 
-     Il est obligatoire de définir une liste de paramètre NOM_OBJET 
+     Vous utilisez CREA_TABLE LISTE/LISTE_CO pour créer une table à
+     partir d'une liste de concepts. Or, vous n'avez pas fourni de
+     liste de paramètre NOM_OBJET contenant une clé unique pour chaque
+     concept présent dans la liste de concepts.
+ Conseil:
+     Il est obligatoire de définir une liste de paramètre NOM_OBJET
      contenant une clé unique pour chaque concept présent dans la liste
      de concepts.
 """),

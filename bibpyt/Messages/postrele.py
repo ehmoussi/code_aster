@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -377,7 +377,7 @@ Or, ces noeuds ne sont pas présents dans le modèle qui a servi à calculer le 
 
 Conseil :
     - Vérifiez qu'une modélisation a bien été affectée sur ces noeuds.
-    - Si vous utilisez PROPA_FISS, peut-être s'agit-il de noeuds créés par cet opérateur. 
+    - Si vous utilisez PROPA_FISS, peut-être s'agit-il de noeuds créés par cet opérateur.
 """),
 
     65 : _("""

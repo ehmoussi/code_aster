@@ -77,6 +77,7 @@ class ASTER_TIMER:
     def __init__(self, add_total=True, format='as_run', maxlabel=None):
         """Constructor
         """
+        from code_aster import _
         # ----- initialisation
         self.timers = {}
         self.add_total = add_total

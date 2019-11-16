@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -279,7 +279,7 @@ Conseil:
 """),
 
     51: _("""
- MASSE MODALE EFFECTIVE CUMULÉE : 
+ MASSE MODALE EFFECTIVE CUMULÉE :
 """),
 
     52: _("""       DIRECTION : %(k1)s, CUMUL :  %(r1).5e, SOIT %(r2)12.3f %%
@@ -290,10 +290,10 @@ Conseil:
  MODE      FREQUENCE    AMORTISSEMENT    DIR         SPECTRE
 """),
 
-    54: _(""" %(i1)4d   %(r1)12.5e     %(r2)12.5e      %(k1)s    %(r3)12.5e 
+    54: _(""" %(i1)4d   %(r1)12.5e     %(r2)12.5e      %(k1)s    %(r3)12.5e
 """),
 
-    55: _("""                                           %(k1)s    %(r1)12.5e 
+    55: _("""                                           %(k1)s    %(r1)12.5e
 """),
 
     56: _("""
@@ -301,7 +301,7 @@ Conseil:
  DIRECTION
 """),
 
-    57: _("""         %(k1)s    %(r1)12.5e 
+    57: _("""         %(k1)s    %(r1)12.5e
 """),
 
     58: _("""                       %(k1)s    %(r1)12.5e   %(r2)12.5e   %(r3)12.4f   %(r4)12.4f
@@ -312,21 +312,21 @@ Conseil:
  MODE      FREQUENCE   AMORTISSEMENT   DIR   SUPPORT         SPECTRE
 """),
 
-    60: _(""" %(i1)4d   %(r1)12.5e    %(r2)12.5e   %(k1)s     %(k2).8s         %(r3)12.5e 
+    60: _(""" %(i1)4d   %(r1)12.5e    %(r2)12.5e   %(k1)s     %(k2).8s         %(r3)12.5e
 """),
 
-    61: _("""                                             %(k1).8s         %(r1)12.5e 
+    61: _("""                                             %(k1).8s         %(r1)12.5e
 """),
 
     62: _("""
  --- VALEURS CORRECTION STATIQUE ---
-  DIRECTION                          
+  DIRECTION
 """),
 
-    63: _("""          %(k1)s  %(k2).8s     %(r1)12.5e 
+    63: _("""          %(k1)s  %(k2).8s     %(r1)12.5e
 """),
 
-    64: _("""             %(k1).8s    %(r1)12.5e 
+    64: _("""             %(k1).8s    %(r1)12.5e
 """),
 
     65: _("""
@@ -358,16 +358,16 @@ Conseil:
 """),
 
     72: _("""
-  SOMME QUADRATIQUE DES OCCURRENCES DE COMB_DEPL_APPUI    
+  SOMME QUADRATIQUE DES OCCURRENCES DE COMB_DEPL_APPUI
 
  NUME_ORDRE     CUMUL
 """),
 
-    73: _("""                                       %(k1)s     %(k2).8s         %(r1)12.5e 
+    73: _("""                                       %(k1)s     %(k2).8s         %(r1)12.5e
 """),
 
     74: _("""
-  COMBINAISON DIRECTION :  %(k1)s   
+  COMBINAISON DIRECTION :  %(k1)s
 """),
 
     75: _("""       DIRECTION : %(k1)s , CUMUL :  %(r1)12.5e
@@ -376,11 +376,11 @@ Conseil:
     76: _("""                       %(k1)s    %(r1)12.5e   %(r2)12.5e
 """),
 
-    77: _("""  Les coordonnées du noeud de référence COOR_REFE sont : ( %(r1).2f   %(r2).2f   %(r3).2f )              
+    77: _("""  Les coordonnées du noeud de référence COOR_REFE sont : ( %(r1).2f   %(r2).2f   %(r3).2f )
 """),
 
-    78: _("""  Le temps d'arrivée est négatif: 
-                il faut changer les coordonnées du noeud de référence COOR_REFE.            
+    78: _("""  Le temps d'arrivée est négatif:
+                il faut changer les coordonnées du noeud de référence COOR_REFE.
 """),
 
 
@@ -390,11 +390,11 @@ Conseil:
 
     80: _("""
 Les signaux renseignés dans les opérandes %(k1)s et %(k2)s de EXCIT_SOL n'ont pas
-le même nombres de valeurs.           
+le même nombres de valeurs.
 """),
 
     81: _("""
-Les valeurs numéro %(i1)d  des abscisses des signaux renseignés dans les opérandes 
+Les valeurs numéro %(i1)d  des abscisses des signaux renseignés dans les opérandes
 %(k1)s et %(k2)s de EXCIT_SOL sont différentes.
 """),
 
@@ -432,7 +432,7 @@ La table fournie n'est pas issue de GENE_ACCE_SEISME.
 
     89: _("""
 La valeur du mot-clé DUREE est supérieure à la durée totale des accélérogrammes.
-   
+
    Valeur fournie        : %(r1).2f
    Durée accélérogrammes : %(r2).2f
 """),

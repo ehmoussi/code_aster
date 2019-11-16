@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 """
    Messages à l'attention des développeurs, type "ASSERT"
    Lorsque l'utilisateur tombe sur un tel message, tout ce qu'il a à faire,
@@ -29,6 +27,8 @@
       Il y a probablement une erreur dans la programmation.
       Veuillez contacter votre assistance technique.
 """
+
+from code_aster import _
 
 cata_msg = {
 

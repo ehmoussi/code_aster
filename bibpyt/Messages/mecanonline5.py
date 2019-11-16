@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster import _
+
 cata_msg = {
 
     1  : _("""
@@ -277,7 +279,7 @@ Il n'y a aucun degré de liberté de déplacement sur le modèle.
 """),
 
     57 : _("""
-De manière générale, PREDICTION = 'DEPL_CALCULE' est là pour éviter de devoir factoriser une matrice et gagner en temps de calcul. 
+De manière générale, PREDICTION = 'DEPL_CALCULE' est là pour éviter de devoir factoriser une matrice et gagner en temps de calcul.
 Mais les limitations (problèmes de conditions limites) font que cette fonctionnalité n'est pas à recommander et qu'on lui préférera par exemple un PREDICTION='ELASTIQUE'.
 """),
 
@@ -287,7 +289,7 @@ A cause des erreurs précédentes, le code s'arrête.
   Pour cela, vous précisez un état initial (mot clé ETAT_INIT).
   Pour le calcul du premier pas de temps, le champ des contraintes du début du pas est pris
   dans le concept EVOL_NOLI fourni ou par le champ SIGM.
-  On a comparé son nombre des sous-points avec celui correspondant au mot-clef COMPORTEMENT, 
+  On a comparé son nombre des sous-points avec celui correspondant au mot-clef COMPORTEMENT,
   il y a incohérence.
 """),
 

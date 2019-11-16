@@ -19,6 +19,8 @@
 
 # For DEBUG (INFO=2)
 
+from code_aster import _
+
 cata_msg = {
 
      1 : _("""  Activation de la méthode IMPLEX."""),

@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -245,12 +245,12 @@ Opérateur CALC_MODES:
 Opérateurs CALC_MODES ou NORM_MODES:
   La norme calculée pour le mode %(i1)d est nulle ou presque nulle.
   Valeur calculée :  %(r1)f
-  
+
   Conseils:
   Vous avez certainement choisi un type de norme qui prend uniquement en compte les
   valeurs des degrés de liberté de translation alors que celles-ci sont toutes nulles
   ou presque nulles.
-  
+
   Modifiez le type de norme choisi par le type correspondant prenant en compte les rotations :
     TRAN      -> TRAN_ROTA
     EUCL_TRAN -> EUCL

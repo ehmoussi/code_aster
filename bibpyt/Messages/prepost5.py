@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -123,16 +123,16 @@ Erreur utilisateur dans la commande EXTR_RESU / RESTREINT :
     50 : _("""
  Attention : la valeur d'amortissement associée au mode propre %(i1)d est négative ou nulle : %(r1)f.
 """),
- 
+
     51 : _("""
  La valeur d'amortissement associée au mode propre %(i1)d est négative ou nulle : %(r1)f.
  Vous avez demandé qu'elle soit corrigée. Cet amortissement est mis à %(r2)f.
 """),
- 
+
     52 : _("""
  La valeur d'amortissement associée au mode propre %(i1)d est négative ou nulle : %(r1)f.
 """),
- 
+
     57 : _("""
  problème dans  le traitement de l'instant  %(r1)f
   récupération de  %(k1)s

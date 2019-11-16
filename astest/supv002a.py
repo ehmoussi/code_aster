@@ -326,7 +326,7 @@ def check_catamess(checker, lang, l_cata):
     checker.set_current_lang(lang)
     checker.set_current_mod('-')
     loginfo("<i18n> lang=%s, domain=%s, localedir=%s" % (LO.current_lang, LO.domain, LO.localedir))
-    tr = LO.install(lang)
+    tr = LO.translation(lang)
     if lang != 'fr' and not isinstance(tr, gettext.GNUTranslations):
         checker.warning("no translation object for language '%s'" % lang)
         return

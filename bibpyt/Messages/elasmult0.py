@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster import _
+
 cata_msg = {
     1: _("""
 On ne peut avoir à la fois NOM_CAS et MODE_FOURIER.

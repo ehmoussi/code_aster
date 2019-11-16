@@ -18,6 +18,8 @@
 # --------------------------------------------------------------------
 
 
+from code_aster import _
+
 cata_msg = {
 
     2 : _("""  Création des structures de données pour l'appariement."""),

@@ -24,7 +24,7 @@ import sys
 import traceback
 import re
 
-from code_aster import AsterError
+from code_aster import _, AsterError
 
 import libaster
 import aster

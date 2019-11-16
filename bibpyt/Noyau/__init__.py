@@ -34,13 +34,6 @@ from . import context
 import builtins
 builtins.CONTEXT = context
 
-
-def _(msg):
-    """Differs translation."""
-    # 'codex' should install its translation functions later
-    return msg
-builtins._ = _
-
 # Classes de base
 from .N_SIMP import SIMP
 from .N_FACT import FACT
