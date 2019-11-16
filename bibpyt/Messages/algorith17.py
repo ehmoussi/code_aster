@@ -17,13 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster import _
+
 cata_msg = {
     1: _("""
-  Une divergence a été détectée à l'instant %(r1)f, inutile de poursuivre avec 
-  l'intégration temporelle. 
-  
-  Conseil : réduire le pas de temps du schéma d'intégration ou choisir un schéma 
-  adaptatif avec une valeur de tolérance adaptée à la raideur du système dynamique 
+  Une divergence a été détectée à l'instant %(r1)f, inutile de poursuivre avec
+  l'intégration temporelle.
+
+  Conseil : réduire le pas de temps du schéma d'intégration ou choisir un schéma
+  adaptatif avec une valeur de tolérance adaptée à la raideur du système dynamique
   aussi bien en vol libre qu'en état de choc.
 """),
 
@@ -104,7 +106,7 @@ cata_msg = {
    un axe Or quelconque normal à Oz pour continuer le changement de repère mais seules les composantes suivant z ont un sens en ces points.
 """),
     23 : _("""
-    Vous effectuez un changement de repère %(k1)s. Le repère est défini par %(i1)d occurrences du mot-clé AFFE : or une seule occurrence de ce mot-clé est autorisée pour ce type de changement de repère. 
+    Vous effectuez un changement de repère %(k1)s. Le repère est défini par %(i1)d occurrences du mot-clé AFFE : or une seule occurrence de ce mot-clé est autorisée pour ce type de changement de repère.
 """),
     25 : _("""
   Lors de la reprise du calcul, la liste des champs calculés (DEPL, VITE, ACCE) doit être la même
@@ -144,5 +146,5 @@ cata_msg = {
     42 : _("""
    On doit obligatoirement trouver le mot-clé F_MRR_RR ou le mot-clé F_MXX_XX
 """),
-    
+
 }

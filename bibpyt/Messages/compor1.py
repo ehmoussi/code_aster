@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster import _
+
 cata_msg = {
 
     1: _("""
@@ -252,7 +254,7 @@ Ne renseignez pas le mot-clé COMPORTEMENT/%(k2)s, afin de sélectionner l'algor
 
     48: _("""
   La modélisation DKT n'est compatible avec DEFORMATION='GROT_GDEP' que lorsque RELATION = 'ELAS' est utilisé.
-  Pour prendre en compte correctement les grands déplacements, et surtout les grandes rotations, 
+  Pour prendre en compte correctement les grands déplacements, et surtout les grandes rotations,
   il est recommandé d’utiliser la modélisation COQUE_3D, avec DEFORMATION='GROT_GDEP'.
 """),
 

@@ -20,6 +20,8 @@
 # --------------------------------------------------------------------
 # aslint: disable=W4004
 
+from code_aster import _
+
 cata_msg = {
 1 : _("""
 Vous avez demandé CODIFICATION = "UTILISATEUR"

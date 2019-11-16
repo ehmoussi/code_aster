@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -51,14 +51,14 @@ cata_msg = {
 
 
     39 : _("""
-    DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=ADAPT_COEF ou TOUT. Il est possible que vous demandez un critère trop sévère pour la pénétration. La valeur de coefficient de pénalisation adaptée prend des valeurs inattendues.  
-    
+    DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=ADAPT_COEF ou TOUT. Il est possible que vous demandez un critère trop sévère pour la pénétration. La valeur de coefficient de pénalisation adaptée prend des valeurs inattendues.
+
     Conseils :
     - Soit changer de mode adaptatif de pénalisation : DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=NON avec COEF_PENA_CONT <= %(r3).2e
-    - Soit relancer votre calcul avec PENE_MAXI en fonction du maillage dans la zone de contact.  Pour information : 
+    - Soit relancer votre calcul avec PENE_MAXI en fonction du maillage dans la zone de contact.  Pour information :
         - La plus petite arête de toutes les zones maîtres est  %(r2).2e.
         - La plus grande arête de toutes les zones maîtres  %(r4).2e.
-    
+
 """),
 
     67 : _("""
@@ -69,11 +69,11 @@ cata_msg = {
   -> Risque et conseils : dans le cas d'une résolution incrémentale, on ne prend pas en compte
      les éventuelles contraintes incompatibles dues à ces variables de commande initiales.
      Pour tenir compte de ces contraintes vous pouvez :
-     - partir d'un instant fictif antérieur où toutes les variables de commande sont nulles 
+     - partir d'un instant fictif antérieur où toutes les variables de commande sont nulles
        (ou égales aux valeurs de référence)
      - choisir des valeurs de référence adaptées
 
-     Pour plus d'informations, consultez la documentation de AFFE_MATERIAU  
+     Pour plus d'informations, consultez la documentation de AFFE_MATERIAU
      (mot-clé AFFE_VARC).
 """),
 
@@ -97,8 +97,8 @@ cata_msg = {
 """),
 
     97 : _("""
-  -> A l'état initial (avant le premier instant de calcul) les variables 
-     de commande (température, hydratation, séchage...) entraînent une 
+  -> A l'état initial (avant le premier instant de calcul) les variables
+     de commande (température, hydratation, séchage...) entraînent une
      déformation anélastique non nulle.
      Cette déformation non nulle est incohérente avec l'état initial "vierge" qui est
      utilisé.

@@ -19,10 +19,12 @@
 
 # person_in_charge: marina.bottoni at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
     3: _(u"""
-CALC_BT : Le paramètre RESI_RELA_TOPO doit impérativement être inférieur au paramètre RESI_RELA_SECTION. 
+CALC_BT : Le paramètre RESI_RELA_TOPO doit impérativement être inférieur au paramètre RESI_RELA_SECTION.
 """),
 
     4: _(u"""
@@ -32,26 +34,26 @@ CALC_BT : Le paramètre RESI_RELA_TOPO n'est pas utilisé avec l'option SECTION.
     5: _(u"""
  CALC_BT : Un des contours (extérieur ou intérieurs) fournis en entrée n'est pas fermé.
 """),
-    
+
     6: _(u"""
-CALC_BT : La structure treillis n'as pas pu être générée. Une réduction dans la valeur CRIT_ELIM est conseillée. 
+CALC_BT : La structure treillis n'as pas pu être générée. Une réduction dans la valeur CRIT_ELIM est conseillée.
 """),
-    
+
     7: _(u"""
-CALC_BT : La méthode d'optimisation n'a pas convergé. Pensez à augmenter NMAX_ITER. 
+CALC_BT : La méthode d'optimisation n'a pas convergé. Pensez à augmenter NMAX_ITER.
 """),
 
     8: _(u"""
 CALC_BT : Le paramètre CRIT_ELIM n'est pas utilisé avec l'option SECTION.
-"""),  
+"""),
 
     9: _(u"""
-CALC_BT : Seules les modélisations D_PLAN et C_PLAN sont acceptées. 
-"""),
-    
-   10: _(u"""
-CALC_BT : La structure treillis n'a pas pu être générée. Une augmentation dans la valeur LONGUEUR_MAX est conseillée. 
+CALC_BT : Seules les modélisations D_PLAN et C_PLAN sont acceptées.
 """),
 
-  
+   10: _(u"""
+CALC_BT : La structure treillis n'a pas pu être générée. Une augmentation dans la valeur LONGUEUR_MAX est conseillée.
+"""),
+
+
 }

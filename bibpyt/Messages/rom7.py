@@ -19,9 +19,11 @@
 
 # person_in_charge: mickael.abbas at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
-   2  : _("""Création d'une base empirique à partir de champs de type %(k1)s."""), 
+   2  : _("""Création d'une base empirique à partir de champs de type %(k1)s."""),
 
    3  : _("""Tolérance pour les valeurs singulières: %(r1)13.6G."""),
 
@@ -39,13 +41,13 @@ cata_msg = {
 
    12 : _("""Calcul des coordonnées réduites."""),
 
-   13 : _("""Tolérance pour l'algorithme incrémental: %(r1)13.6G."""), 
+   13 : _("""Tolérance pour l'algorithme incrémental: %(r1)13.6G."""),
 
-   14 : _("""Nombre final de clichés retenus dans l'algorithme incrémental: %(i1)d."""), 
+   14 : _("""Nombre final de clichés retenus dans l'algorithme incrémental: %(i1)d."""),
 
-   15 : _("""Enrichissement de la base empirique."""), 
+   15 : _("""Enrichissement de la base empirique."""),
 
-   16 : _("""Création de nouveaux modes empiriques."""), 
+   16 : _("""Création de nouveaux modes empiriques."""),
 
    20 : _("""Paramètres spécifiques à la méthode POD ou POD_INCR."""),
 
@@ -74,5 +76,5 @@ Conseil: utilisez CALC_CHAMP pour calculer ce champ."""),
 
    31 : _("""Paramètres spécifiques à la méthode d'orthogonalisation."""),
 
-   32 : _("""Paramètre pour l'algorithme: %(r1)13.6G."""), 
+   32 : _("""Paramètre pour l'algorithme: %(r1)13.6G."""),
 }

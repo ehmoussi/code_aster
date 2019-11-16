@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""
@@ -24,7 +26,7 @@ Définition d'une liaison unilatérale.
  -> Cette fonctionnalité suppose la symétrie de la matrice obtenue après assemblage.
 
 Il est possible de forcer la matrice à être symétrique en renseignant MATR_RIGI_SYME='OUI' sous le mot-clé facteur NEWTON ou d'utiliser ALGO_CONT='PENALISATION' dans LIAISON_UNILATER.
-    
+
 """),
 
     42: _("""

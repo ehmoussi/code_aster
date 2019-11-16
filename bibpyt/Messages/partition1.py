@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -36,7 +36,7 @@ cata_msg = {
    - diminuez le nombre de processeurs du calcul.
    - diminuez le nombre de sous-domaines de la partition du mot-clé DISTRIBUTION
    - n'utilisez pas le parallélisme (trop peu d'éléments).
- 
+
 """),
 
     17 : _("""

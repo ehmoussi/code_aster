@@ -18,6 +18,8 @@
 # --------------------------------------------------------------------
 
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""Les chargements de Dirichlet de type AFFE_CHAR_CINE sont ignorés pour CONV_CHAR."""),

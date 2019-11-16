@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -35,48 +35,48 @@ On ne trouve aucun numéro d'ordre dans la structure de données résultat de no
 """),
 
     37: _("""
-Le MODELE fourni par l'utilisateur est différent de celui présent dans la structure de données Résultat. 
+Le MODELE fourni par l'utilisateur est différent de celui présent dans la structure de données Résultat.
 On poursuit les calculs avec le MODELE fourni par l'utilisateur.
 
-Risque & Conseil : Vérifiez si le MODELE fourni dans la commande est bien celui que vous souhaitez. 
+Risque & Conseil : Vérifiez si le MODELE fourni dans la commande est bien celui que vous souhaitez.
 Si oui, vous allez poursuivre les calculs de post-traitement avec un MODELE différent de
 celui utilisé pour calculer les déplacements, températures,...
 """),
 
     38: _("""
-Les caractéristiques élémentaires CARA_ELEM fournies par l'utilisateur sont différentes de celles présentes dans la structure de données Résultat.  
+Les caractéristiques élémentaires CARA_ELEM fournies par l'utilisateur sont différentes de celles présentes dans la structure de données Résultat.
 On poursuit les calculs avec le CARA_ELEM fourni par l'utilisateur.
 
-Risque & Conseil : Vérifiez si le CARA_ELEM fourni dans la commande est bien celui que vous souhaitez. 
+Risque & Conseil : Vérifiez si le CARA_ELEM fourni dans la commande est bien celui que vous souhaitez.
 Si oui, vous allez poursuivre les calculs de post-traitement avec un CARA_ELEM différent de
 celui utilisé pour calculer les déplacements, températures,...
 """),
 
     39: _("""
-Le matériau fourni par l'utilisateur est différent de celui présent dans la structure de données Résultat. 
+Le matériau fourni par l'utilisateur est différent de celui présent dans la structure de données Résultat.
 On poursuit les calculs avec le matériau fourni par l'utilisateur.
 
-Risque & Conseil : Vérifiez si le matériau fourni dans la commande est bien celui que vous souhaitez. 
-Si oui, vous allez poursuivre les calculs de post-traitement avec un matériau différent de 
+Risque & Conseil : Vérifiez si le matériau fourni dans la commande est bien celui que vous souhaitez.
+Si oui, vous allez poursuivre les calculs de post-traitement avec un matériau différent de
 celui utilisé pour calculer les déplacements, températures,...
 """),
 
     40: _("""
-Le chargement fourni par l'utilisateur est différent de celui présent dans la 
+Le chargement fourni par l'utilisateur est différent de celui présent dans la
 structure de données Résultat. On poursuit les calculs avec le chargement fourni par l'utilisateur.
 
-Risque & Conseil : Vérifiez si le chargement fourni dans la commande est bien celui que vous souhaitez. 
-Si oui vous allez poursuivre les calculs post-traitement avec un chargement différent de celui utilisé 
+Risque & Conseil : Vérifiez si le chargement fourni dans la commande est bien celui que vous souhaitez.
+Si oui vous allez poursuivre les calculs post-traitement avec un chargement différent de celui utilisé
 pour calculer les déplacements, températures,...
 """),
 
     41: _("""
-Les fonctions multiplicatrices du chargement (mot clé: FONC_MULT) fournies par l'utilisateur sont 
-différentes de celles présentes dans la structure de données Résultat. On poursuit les calculs avec 
+Les fonctions multiplicatrices du chargement (mot clé: FONC_MULT) fournies par l'utilisateur sont
+différentes de celles présentes dans la structure de données Résultat. On poursuit les calculs avec
 les fonctions multiplicatrices fournies par l'utilisateur.
 
-Risque & Conseil : Vérifiez si les fonctions fournies dans la commande sont bien celles que vous souhaitez. 
-Si oui vous allez poursuivre les calculs de post-traitement avec des fonctions différentes de celles 
+Risque & Conseil : Vérifiez si les fonctions fournies dans la commande sont bien celles que vous souhaitez.
+Si oui vous allez poursuivre les calculs de post-traitement avec des fonctions différentes de celles
 utilisées pour calculer les déplacements, températures,...
 """),
 

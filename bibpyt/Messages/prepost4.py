@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -29,12 +29,12 @@ cata_msg = {
  Le mot-clé %(k2)s n'est pas utilisé pour le contact de type %(k1)s.
  Il n'est donc pas pris en compte.
  """),
- 
+
      3 : _("""
  Le mot-clé %(k1)s n'est pas utilisé pour le contact en présence du mot-clé SECTEUR.
  Il n'est donc pas pris en compte.
  """),
- 
+
     4 : _("""
  Le calcul ne peut aboutir.
 

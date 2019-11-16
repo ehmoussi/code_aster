@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -57,7 +57,7 @@ Contactez le support technique.
 
 Conseil :
  En général, la base ne peut-être utilisée qu'avec la version du code l'ayant construite,
- les catalogues d'éléments sont stockés dans la base lors de sa création, or certaines structures de 
+ les catalogues d'éléments sont stockés dans la base lors de sa création, or certaines structures de
  données s'appuient sur leur description qui peut varier d'une version à l'autre.
 """),
 

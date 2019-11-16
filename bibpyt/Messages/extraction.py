@@ -17,15 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
+from code_aster import _
 
 cata_msg = {
 
     1 : _("""
 Le champ de nom %(k1)s n'est pas présent.
-Vous demandez certainement un champ qui n'est pas créé pour le type de 
-calcul effectué. 
+Vous demandez certainement un champ qui n'est pas créé pour le type de
+calcul effectué.
 """),
 
     3 : _("""
@@ -74,14 +74,14 @@ Il faut donner le point d'intégration et le SOUS_POINT si c'est un élément de
     24 : _("""
 Erreur utilisateur commande RECU_TABLE / RESU :
   On veut désigner des variables internes en utilisant le mot clé NOM_VARI.
-  Le mot clé RESU / RESULTAT est obligatoire. 
+  Le mot clé RESU / RESULTAT est obligatoire.
 """),
 
     25 : _("""
 Erreur utilisateur commande RECU_TABLE / RESU :
   On veut désigner des variables internes en utilisant le mot clé NOM_VARI.
   Le champ concerné doit être un champ par élément de VARI_R.
-  Ici, NOM_CHAM = %(k1)s 
+  Ici, NOM_CHAM = %(k1)s
 """),
 
 

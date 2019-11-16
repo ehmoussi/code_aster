@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""Quand on utilise une BASE_MODALE, il faut également donner les modes d'interface par MODE_INTF."""),

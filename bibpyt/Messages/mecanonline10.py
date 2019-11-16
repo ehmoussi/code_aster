@@ -19,6 +19,8 @@
 
 # Attention a ne pas faire de retour à la ligne !
 
+from code_aster import _
+
 cata_msg = {
 
     1  : _("""

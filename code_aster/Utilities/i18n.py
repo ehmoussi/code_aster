@@ -57,6 +57,12 @@ class Language(metaclass=Singleton):
             osp.join(os.environ.get('ASTER_ROOT', ''), 'share', 'locale')
         self.domain = None
         self.current_lang = self.default_lang = get_language()
+        self._translate = None
+
+    @property
+    def translate(self):
+        """Attribute providing the translation function"""
+        return self._translate if self._translate else lambda text: text
 
     def set_localedir(self, path):
         """Change the locale directory"""
@@ -70,8 +76,8 @@ class Language(metaclass=Singleton):
         """Return the current language."""
         return self.current_lang, get_encoding()
 
-    def install(self, lang=None):
-        """Install the translation object for the given 'lang'."""
+    def translation(self, lang=None):
+        """Return an instance of the translation object for the given 'lang'."""
         if not self.domain:
             self.set_domain()
         lang = (lang or self.default_lang).lower()
@@ -89,7 +95,19 @@ class Language(metaclass=Singleton):
             lang.extend(variants)
         tr = gettext.translation(
             self.domain, self.localedir, languages=lang, fallback=True)
-        tr.install()
+        self._translate = tr.gettext
         return tr
 
+
 localization = Language()
+
+def translate(source_text):
+    """Get translation text for source text.
+
+    Arguments:
+        source_text (str): Text being translated.
+
+    Returns:
+        str: Translated text.
+    """
+    return localization.translate(source_text)

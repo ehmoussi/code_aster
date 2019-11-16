@@ -19,6 +19,8 @@
 
 #
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""
@@ -205,8 +207,8 @@ Contactez le support technique.
 """),
 
     57 : _("""
- Aucune des mailles du maillage 1 fournies ne permet d'effectuer la projection souhaitée.    
- 
+ Aucune des mailles du maillage 1 fournies ne permet d'effectuer la projection souhaitée.
+
  Conseil :
     Vérifiez que les mailles fournies ne sont pas toutes ponctuelles (POI1).
 """),

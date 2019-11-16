@@ -17,8 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: patrick.massin at edf.fr
-
+from code_aster import _
 
 cata_msg = {
 
@@ -52,7 +51,7 @@ cata_msg = {
   Le pré-conditionneur XFEM a détecté une ligne pratiquement nulle à l'équation %(i1)d
   correspondante au noeud N%(i2)d et au degré de liberté %(k1)s.
   Conseils:
-    - S'il s'agit d'un degré de liberté de type contact : vérifier que le chargement contact est 
+    - S'il s'agit d'un degré de liberté de type contact : vérifier que le chargement contact est
       bien appliqué à la résolution et que toutes les sous-facettes de contact sont présentes en
       activant MODI_MODELE_XFEM/DECOUPE_FACETTE='SOUS_ELEMENTS'
     - Sinon, désactiver le pré-conditionneur X-FEM dans le MODI_MODELE_XFEM/PRETRAITEMENTS='SANS'
@@ -60,9 +59,9 @@ cata_msg = {
 """),
 
     8 : _("""
-  -> La connectivité stockée lors de la découpe XFEM ne situe pas 
+  -> La connectivité stockée lors de la découpe XFEM ne situe pas
      dans les bornes autorisées.
-     Cela risque de produire des sous-éléments distordus à cause de la 
+     Cela risque de produire des sous-éléments distordus à cause de la
      mauvaise localisation des points de découpe.
   """),
 

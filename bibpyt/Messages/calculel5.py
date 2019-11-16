@@ -19,6 +19,8 @@
 
 # person_in_charge: thomas.de-soza at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""
@@ -158,13 +160,13 @@ Contactez le support technique.
 """),
 
     47 : _("""
- PROJ_CHAMP, occurrence %(i1)d de VIS_A_VIS : 
- 
+ PROJ_CHAMP, occurrence %(i1)d de VIS_A_VIS :
+
  Le noeud %(k1)s est jugé distant de la maille sur laquelle il devrait être
- projeté. Comme la projection de ce noeud a déjà été faite lors d'une occurrence 
+ projeté. Comme la projection de ce noeud a déjà été faite lors d'une occurrence
  précédente, on ne tient pas compte de cette projection distante.
- 
- Conseil : il est cependant recommandé de vérifier l'affectation des groupes dans VIS_A_VIS. 
+
+ Conseil : il est cependant recommandé de vérifier l'affectation des groupes dans VIS_A_VIS.
 """),
 
     48 : _("""

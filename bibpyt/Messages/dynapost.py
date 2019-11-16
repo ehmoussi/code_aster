@@ -18,6 +18,8 @@
 # --------------------------------------------------------------------
 
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""Les poutres ne sont pas utilisables dans la commande REST_COND_TRAN."""),

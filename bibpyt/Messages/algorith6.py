@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -160,14 +160,14 @@ cata_msg = {
 
     34 : _("""
  L'option RIGI_INIT pour le mot-clé FLEXION conduit à une valeur négative pour
- le paramètre gamma en flexion. 
+ le paramètre gamma en flexion.
  On modifie donc le moment seuil et la pente de flexion.
 """),
 
     35 : _("""
  La courbure de calage KAPPA_FLEX est inférieure la limite de courbure de la section élastique,
  égale à %(k1)s. Dans ce cas, on considère le moment d'initiation de la première fissure
- et une pente d'endommagement nulle. 
+ et une pente d'endommagement nulle.
 """),
 
     36 : _("""

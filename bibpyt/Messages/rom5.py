@@ -19,6 +19,8 @@
 
 # person_in_charge: mickael.abbas at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""Création de la matrice des clichés."""),

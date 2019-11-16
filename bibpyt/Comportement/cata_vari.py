@@ -19,6 +19,8 @@
 
 # person_in_charge: mickael.abbas at edf.fr
 
+from code_aster import _
+
 """Ce module définit les noms de variables internes valides.
 Un comportement ne doit/peut pas utiliser une variable internes dont le
 nom ne serait pas déclaré ici."""

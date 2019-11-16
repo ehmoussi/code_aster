@@ -19,6 +19,8 @@
 
 # person_in_charge: albert.alarcon at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
     1: _("""

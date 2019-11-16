@@ -20,6 +20,8 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 # ce catalogue est réservé à Utmess !
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""

@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -40,7 +40,7 @@ Le frottement n'est autorisé qu'avec une formulation pénalisée sur la partie 
 """),
 
     4 : _("""
-    Erreur d'utilisation de la méthode LAC. 
+    Erreur d'utilisation de la méthode LAC.
   Le mot-clef < %(k1)s > doit avoir la même valeur sur toutes les zones
   de contact
 """),
@@ -135,13 +135,13 @@ Utilisez plutôt VECT_* = 'FIXE'
 """),
 
     45 : _("""
-Pour les formulations discrètes et unilatérales, il faut utiliser la méthode de distribution centralisée 
-"DISTRIBUTION=_F(METHODE='CENTRALISE')" dans AFFE_MODELE. 
+Pour les formulations discrètes et unilatérales, il faut utiliser la méthode de distribution centralisée
+"DISTRIBUTION=_F(METHODE='CENTRALISE')" dans AFFE_MODELE.
 """),
 
     46 : _("""
-Pour la dynamique non linéaire implicite avec contact, il faut utiliser la méthode de distribution centralisée 
-"DISTRIBUTION=_F(METHODE='CENTRALISE')" dans AFFE_MODELE. 
+Pour la dynamique non linéaire implicite avec contact, il faut utiliser la méthode de distribution centralisée
+"DISTRIBUTION=_F(METHODE='CENTRALISE')" dans AFFE_MODELE.
 """),
 
     50: _("""
@@ -225,11 +225,11 @@ Contact et détection de collision.
 
     99 : _("""
     DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=PENE_MAXI.
-    Le critère de pénétration PENE_MAXI semble lâche.  Pour information : 
+    Le critère de pénétration PENE_MAXI semble lâche.  Pour information :
         - La plus petite arête de la zone maître est  %(r1).2e.
         - La plus grande arête de la zone maître est  %(r2).2e.
     -> Risque & Conseils :
-       Vous risquez d'avoir des résultats inattendus. Vérifiez que le niveau d'interpénétration dans le tableau de convergence est bien inférieure une longueur d'arête dans la zone de contact. 
+       Vous risquez d'avoir des résultats inattendus. Vérifiez que le niveau d'interpénétration dans le tableau de convergence est bien inférieure une longueur d'arête dans la zone de contact.
        S'il y a trop d'interpénétrations, il faudrait relancer le calcul avec PENE_MAXI <= %(r1).2e.
 """),
 

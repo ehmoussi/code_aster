@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""Le type de DEFORMATION <%(k1)s>, est actuellement incompatible avec SUPPORT=POINT. On utilise donc SUPPORT=ELEMENT."""),
@@ -33,7 +35,7 @@ cata_msg = {
 
     7 : _("""On ne peut pas utiliser les KIT_THM dans SIMU_POINT_MAT."""),
 
-    8 : _("""La somme des fractions volumiques est très différente de 1.0, elle vaut <%(r1).15E>. 
+    8 : _("""La somme des fractions volumiques est très différente de 1.0, elle vaut <%(r1).15E>.
 Vérifiez FRAC_VOL pour toutes les occurrences du mot clé POLYCRISTAL."""),
 
     9 : _("""
@@ -57,7 +59,7 @@ La rotation de réseau n'est pas compatible avec RUNGE_KUTTA. Utiliser l'intégr
 
     12 : _("""
    On ne peut pas utiliser les variables de commandes intrinsèques dans SIMU_POINT_MAT en mode POINT.
-   Elles seront ignorées dans le calcul. 
+   Elles seront ignorées dans le calcul.
    Si votre loi de comportement en utilise (par exemple ENDO_PORO_BETON, BETON_DOUBLE_DP, MONOCRISTAL ou META_LEMA_ANI), vous aurez des résultats faux ou le calcul n'aboutira pas.
 """),
 

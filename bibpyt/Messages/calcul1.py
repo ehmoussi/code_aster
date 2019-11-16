@@ -21,6 +21,8 @@
 
 # For the command CALCUL and not for CALCUL.F90 !!!
 
+from code_aster import _
+
 cata_msg = {
 
     1: _("""

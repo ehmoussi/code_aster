@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -73,12 +73,12 @@ cata_msg = {
 """),
 
     18 : _("""
- Delta plus grand que la racine carrée de 3 : impossible 
+ Delta plus grand que la racine carrée de 3 : impossible
 """),
 
     19 : _("""
  DP atteignable par traction tri-axiale
- Augmenter RC ou diminuer RT effective 
+ Augmenter RC ou diminuer RT effective
                 RT = %(r1)f
                 RC = %(r2)f
                 RC minimum = %(r3)f
@@ -143,13 +143,13 @@ cata_msg = {
  FLUA_ENDO_PORO : nombre d'itération maximum %(i1)d atteint :
              compteur de sous itération plastique = %(i1)d
              nombre d'itération multiplicateur < 0 = %(i1)d
-             
+
  Essayez de réduire la vitesse de chargement ou augmentez le nombre d'itérations maximum
 
 """),
 
     34 : _("""
- FLUA_ENDO_PORO : erreur 
+ FLUA_ENDO_PORO : erreur
 """),
 
     35 : _("""
@@ -168,7 +168,7 @@ cata_msg = {
 
     38 : _("""
  Données incohérentes pour l'hydratation
- 0<HYDR<1  0<HYDR_S<1 
+ 0<HYDR<1  0<HYDR_S<1
 """),
 
     39 : _("""

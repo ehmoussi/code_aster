@@ -20,8 +20,10 @@
 # --------------------------------------------------------------------
 # aslint: disable=W4004
 
+from code_aster import _
+
 cata_msg = {
 1 : _("""
-Le numéro d'un mode dans MODE_SIGNE n'est pas dans la liste des NUME_ORDRE du résultat 
+Le numéro d'un mode dans MODE_SIGNE n'est pas dans la liste des NUME_ORDRE du résultat
 """),
 }
