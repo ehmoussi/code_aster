@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,12 +22,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 MA=LIRE_MAILLAGE(FORMAT="ASTER",)
 
 
-ZIRCALOY=DEFI_MATERIAU(THER=_F(RHO_CP = 2000000.0, LAMBDA = 9999.9),
-                        META_ZIRC=_F(
-                                  TDEQ = 809.,   K = 1.135E-2,   N = 2.187,
-                                  T1C = 831. , T2C=0., 
-                                  QSR_K = 14614.,AC = 1.58E-4,  M = 4.7,
-                                  T1R=949.1, T2R=0.,AR = -5.725,  BR = 0.05))
+ZIRCALOY=DEFI_MATERIAU(THER=_F(RHO_CP = 2000000.0, LAMBDA = 9999.9),)
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=_F(TOUT = 'OUI',MATER = ZIRCALOY))
@@ -37,9 +32,9 @@ MOTH=AFFE_MODELE(MAILLAGE=MA,
                          MODELISATION = 'AXIS',
                          PHENOMENE = 'THERMIQUE'))
 
-L_INST=DEFI_LIST_REEL(         DEBUT=0.0,INTERVALLE=(
+L_INST=DEFI_LIST_REEL(DEBUT=0.0,INTERVALLE=(
                               _F(  JUSQU_A = 1.0,  NOMBRE = 10),
-                                         _F(  JUSQU_A = 2.0,  NOMBRE = 10))
+                              _F(  JUSQU_A = 2.0,  NOMBRE = 10))
                           )
 
 TFONC=DEFI_FONCTION(NOM_PARA='INST',
@@ -55,13 +50,6 @@ TIMPO=CREA_CHAMP(OPERATION='AFFE',
                  AFFE=_F(TOUT = 'OUI',
                          NOM_CMP = 'TEMP',
                          VALE_F = TFONC))
-
-PHASINIT=CREA_CHAMP(OPERATION='AFFE',
-                    TYPE_CHAM='CART_VAR2_R',
-                    MAILLAGE=MA,
-                    AFFE=_F(TOUT = 'OUI',
-                            NOM_CMP = ('V1', 'V2', 'V3', 'V4', 'V5'),
-                            VALE = ( 0.0, 0.0, 1.0, 20.,0.)))
                             
 TEMPE=CREA_RESU(OPERATION='AFFE',
                 TYPE_RESU='EVOL_THER',
@@ -69,28 +57,20 @@ TEMPE=CREA_RESU(OPERATION='AFFE',
                 AFFE=_F(CHAM_GD = TIMPO,
                         LIST_INST = L_INST))
 
-TEMPE=CALC_META(reuse=TEMPE,
-                MODELE=MOTH,
-                CHAM_MATER=CHMAT,
-                RESULTAT=TEMPE,
-                ETAT_INIT=_F( META_INIT_ELNO = PHASINIT),
-                COMPORTEMENT=_F(RELATION = 'ZIRC',
-                             TOUT = 'OUI'),
-                OPTION='META_ELNO',);
-
 # PARTIE MECANIQUE
 # ON DEGENERE LA LOI POUR AVOIR UNE LOI DE VISCOSITE
 # DE TYPE NORTON D OU F1_M=0.D0                                 
 # CETTE LOI ANISOTROPE AVEC UNE SEULE PHASE ET UNE LOI DE NORTON
 # EST IDENTIQUE A UNE LOI CONTENUE DANS ZMAT
                              
-ACIER=DEFI_MATERIAU(ELAS_META=_F(E = 80000.,
+ACIER=DEFI_MATERIAU(ELAS=_F(E = 80000.,
                                NU = 0.35,
-                               F_ALPHA = 0.,
-                               C_ALPHA = 0.00004,
-                               PHASE_REFE = 'FROID',
-                               EPSF_EPSC_TREF = 0.,),
+                               ALPHA = 1.0E-10,
+                            ),
                    META_LEMA_ANI=_F(
+                            #PARAMETRES MECANIQUES
+                            YoungModulus = 80000,
+                            PoissonRatio = 0.35,
                             F1_A=2.39,    F2_A=0.22,     C_A=253.5496957,  
                             F1_M=0.0,    F2_M=0.77E-04,  C_M=0.0,  
                             F1_N=4.39,    F2_N=2.96,     C_N=4.39,  
@@ -100,15 +80,20 @@ ACIER=DEFI_MATERIAU(ELAS_META=_F(E = 80000.,
                             F_MZZ_ZZ=1.,                 C_MZZ_ZZ=1.,
                             F_MRT_RT=0.75,               C_MRT_RT=0.75,
                             F_MRZ_RZ=0.75,               C_MRZ_RZ=0.75,
-                            F_MTZ_TZ=0.75,               C_MTZ_TZ=0.75,),),
+                            F_MTZ_TZ=0.75,               C_MTZ_TZ=0.75,
+                            #PARAMETRES THERMIQUES
+                            F_ALPHA = 0.,
+                            C_ALPHA = 0.00004,
+                            #PARAMETRES METALLURGIQUES
+                            TDEQ = 809.,   K = 1.135E-2,   NEQ = 2.187,
+                            T1C = 831. , T2C=0., 
+                            QSR_K = 14614.,AC = 1.58E-4,  M = 4.7,
+                            T1R=949.1, T2R=0.,AR = -5.725,  BR = 0.05,
+                            ),),
                             
 CM2=AFFE_MATERIAU(MAILLAGE=MA,
                   AFFE=_F( TOUT = 'OUI', MATER = ACIER ),
                   AFFE_VARC=(_F(TOUT='OUI',
-                                EVOL=TEMPE,
-                                NOM_VARC='M_ZIRC',
-                                NOM_CHAM='META_ELNO'),
-                             _F(TOUT='OUI',
                                 EVOL=TEMPE,
                                 VALE_REF=1200.,
                                 NOM_VARC='TEMP',
@@ -139,54 +124,52 @@ CHR_TRAC=AFFE_CHAR_MECA(       MODELE=MO,
                               FACE_IMPO=_F(  MAILLE = 'MA2',  DY = 1.)
                           )
 
-VL=STAT_NON_LINE(
-                            MODELE=MO,
-                        CHAM_MATER=CM2,EXCIT=(
-                             _F(
-                CHARGE = CHR_LIAI), _F(
-                CHARGE = CHR_TRAC,
-                FONC_MULT = F_CHAR,
-                TYPE_CHARGE = 'DIDI')),
-                         COMPORTEMENT=_F(
-                RELATION = 'META_LEMA_ANI',
-                RELATION_KIT = 'ZIRC',
-                ITER_INTE_MAXI = 100,
-                RESI_INTE_RELA = 1.E-12),
-                         INCREMENT=_F(
-                LIST_INST = L_INST,
-                NUME_INST_FIN = 10),
-                            NEWTON=_F(
-                MATRICE = 'TANGENTE',
-                REAC_ITER = 1),
-                       CONVERGENCE=_F(
-                RESI_GLOB_MAXI = 1.E-1,
-                ITER_GLOB_MAXI = 50),
+VL=STAT_NON_LINE(MODELE=MO,
+                CHAM_MATER=CM2,
+                EXCIT=(_F(CHARGE = CHR_LIAI),
+                    _F( CHARGE = CHR_TRAC,
+                        FONC_MULT = F_CHAR,
+                        TYPE_CHARGE = 'DIDI')),
+                COMPORTEMENT=_F(
+                    RELATION = 'META_LEMA_ANI',
+                    ITER_INTE_MAXI = 100,
+                    RESI_INTE_RELA = 1.E-8,
+                    ),
+                INCREMENT=_F(
+                    LIST_INST = L_INST,
+                    NUME_INST_FIN = 10,
+                    ),
+                NEWTON=_F(
+                    MATRICE = 'TANGENTE',
+                    REAC_ITER = 1),
+                CONVERGENCE=_F(
+                    RESI_GLOB_MAXI = 1.E-1,
+                    ITER_GLOB_MAXI = 50),
               )
 
-VL=STAT_NON_LINE( reuse=VL,
-                            MODELE=MO,
-                        CHAM_MATER=CM2,
-                         ETAT_INIT=_F(
-                EVOL_NOLI = VL,
-                NUME_ORDRE = 10),EXCIT=(
-                             _F(
-                CHARGE = CHR_LIAI), _F(
-                CHARGE = CHR_TRAC,
-                FONC_MULT = F_CHAR,
-                TYPE_CHARGE = 'DIDI')),
-                         COMPORTEMENT=_F(
-                RELATION = 'META_LEMA_ANI',
-                RELATION_KIT = 'ZIRC',
-                ITER_INTE_MAXI = 100,
-                RESI_INTE_RELA = 1.E-12),
-                         INCREMENT=_F(
-                LIST_INST = L_INST),
-                            NEWTON=_F(
-                MATRICE = 'TANGENTE',
-                REAC_ITER = 1),
-                       CONVERGENCE=_F(
-                RESI_GLOB_RELA = 1.E-6,
-                ITER_GLOB_MAXI = 50),
+VL=STAT_NON_LINE(reuse=VL,
+                MODELE=MO,
+                CHAM_MATER=CM2,
+                ETAT_INIT=_F(
+                    EVOL_NOLI = VL,
+                    NUME_ORDRE = 10),
+                EXCIT=(_F(CHARGE = CHR_LIAI),
+                    _F( CHARGE = CHR_TRAC,
+                        FONC_MULT = F_CHAR,
+                        TYPE_CHARGE = 'DIDI'
+                        )),
+                COMPORTEMENT=_F(
+                    RELATION = 'META_LEMA_ANI',
+                    ITER_INTE_MAXI = 100,
+                    RESI_INTE_RELA = 1.E-8,
+                    ),
+                INCREMENT=_F(LIST_INST = L_INST),
+                NEWTON=_F(
+                    MATRICE = 'TANGENTE',
+                    REAC_ITER = 1),
+                CONVERGENCE=_F(
+                    RESI_GLOB_RELA = 1.E-6,
+                    ITER_GLOB_MAXI = 50),
               )
 
 # Test stresses: comparison with LEMAITRE (hsna106b)
@@ -216,7 +199,7 @@ TEST_RESU(RESU=(_F(INST=0.3,
                    NOM_CHAM='SIGM_NOEU',
                    NOEUD='NO3',
                    NOM_CMP='SIYY',
-                   VALE_CALC=70.1846,
+                   VALE_CALC=70.18540138602222,
                    VALE_REFE=70.1846,
                    REFERENCE='AUTRE_ASTER',
                    PRECISION=1.E-2,),
@@ -225,7 +208,7 @@ TEST_RESU(RESU=(_F(INST=0.3,
                    NOM_CHAM='SIGM_NOEU',
                    NOEUD='NO3',
                    NOM_CMP='SIYY',
-                   VALE_CALC=84.4120,
+                   VALE_CALC=84.41208110687563,
                    VALE_REFE=84.4144,
                    REFERENCE='AUTRE_ASTER',
                    PRECISION=1.E-2,),
@@ -256,114 +239,335 @@ TEST_RESU(RESU=(
                    PRECISION=1.E-6,),
            ),)
 
-VL=CALC_CHAMP(reuse=VL,RESULTAT=VL,DEFORMATION=('EPSP_NOEU',))
-
-TEST_RESU(RESU=(
-                _F(INST=1.3,
-                   RESULTAT=VL,
-                   NOM_CHAM='EPSP_NOEU',
-                   NOEUD='NO3',
-                   NOM_CMP='EPYY',
-                   VALE_CALC=-0.0104773071226,
-                   VALE_REFE=-0.0104773071226,
-                   REFERENCE='AUTRE_ASTER',
-                   PRECISION=1.E-6,),
-                _F(INST=2.0,
-                   RESULTAT=VL,
-                   NOM_CHAM='EPSP_NOEU',
-                   NOEUD='NO3',
-                   NOM_CMP='EPYY',
-                   VALE_CALC=-0.00505515026067,
-                   VALE_REFE=-0.00505515920024,
-                   REFERENCE='AUTRE_ASTER',
-                   PRECISION=1.E-5,),
-           ),)
-
-VL=CALC_CHAMP(reuse=VL,RESULTAT=VL,DEFORMATION=('EPVC_NOEU',))
-
+VL=CALC_CHAMP(reuse=VL,RESULTAT=VL,VARI_INTERNE=('VARI_NOEU',))
+# Le champs de variables internes V6 correspond à la proportion de phase bêta
 TEST_RESU(RESU=(
                 _F(INST=0.8,
                    RESULTAT=VL,
-                   NOM_CHAM='EPVC_NOEU',
+                   NOM_CHAM='VARI_NOEU',
                    NOEUD='NO3',
-                   NOM_CMP='EPTHER_L',
+                   NOM_CMP='V6',
+                   VALE_CALC=1,
+                   VALE_REFE=1,
+                   REFERENCE='ANALYTIQUE',
+                   PRECISION=1.E-6,),
+                _F(INST=1.3,
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='NO3',
+                   NOM_CMP='V6',
+                   VALE_CALC=1,
+                   VALE_REFE=1,
+                   REFERENCE='ANALYTIQUE',
+                   PRECISION=1.E-6,),
+                _F(INST=2.0,
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='NO3',
+                   NOM_CMP='V6',
+                   VALE_CALC=1,
+                   VALE_REFE=1,
+                   REFERENCE='ANALYTIQUE',
+                   PRECISION=1.E-6,),
+           ),)
+# Le champs de variables internes V7 correspond à la déformation thermique
+TEST_RESU(RESU=(
+                _F(INST=0.8,
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='NO3',
+                   NOM_CMP='V7',
                    VALE_CALC=0.0096,
                    VALE_REFE=0.0096,
-                   REFERENCE='AUTRE_ASTER',
+                   REFERENCE='ANALYTIQUE',
                    PRECISION=1.E-6,),
                 _F(INST=1.3,
                    RESULTAT=VL,
-                   NOM_CHAM='EPVC_NOEU',
+                   NOM_CHAM='VARI_NOEU',
                    NOEUD='NO3',
-                   NOM_CMP='EPTHER_L',
+                   NOM_CMP='V7',
                    VALE_CALC=0.0156,
                    VALE_REFE=0.0156,
-                   REFERENCE='AUTRE_ASTER',
+                   REFERENCE='ANALYTIQUE',
                    PRECISION=1.E-6,),
                 _F(INST=2.0,
                    RESULTAT=VL,
-                   NOM_CHAM='EPVC_NOEU',
+                   NOM_CHAM='VARI_NOEU',
                    NOEUD='NO3',
-                   NOM_CMP='EPTHER_L',
+                   NOM_CMP='V7',
                    VALE_CALC=0.024,
                    VALE_REFE=0.024,
-                   REFERENCE='AUTRE_ASTER',
+                   REFERENCE='ANALYTIQUE',
                    PRECISION=1.E-6,),
            ),)
-
-VL=CALC_CHAMP(reuse=VL,RESULTAT=VL,DEFORMATION=('EPME_NOEU',))
-
+# Le champs de variables internes V8 correspond à la contrainte équivalente de Hill
 TEST_RESU(RESU=(
+                _F(INST=0.8,
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='NO3',
+                   NOM_CMP='V8',
+                   VALE_CALC=92.58022541470629,
+                   VALE_REFE=92.5802,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=1.E-2,),
                 _F(INST=1.3,
                    RESULTAT=VL,
-                   NOM_CHAM='EPME_NOEU',
+                   NOM_CHAM='VARI_NOEU',
                    NOEUD='NO3',
-                   NOM_CMP='EPYY',
-                   VALE_CALC=-0.0096,
-                   VALE_REFE=-0.0096,
+                   NOM_CMP='V8',
+                   VALE_CALC=70.18540138718302,
+                   VALE_REFE=70.1846,
                    REFERENCE='AUTRE_ASTER',
-                   PRECISION=1.E-6,),
+                   PRECISION=1.E-2,),
                 _F(INST=2.0,
                    RESULTAT=VL,
-                   NOM_CHAM='EPME_NOEU',
+                   NOM_CHAM='VARI_NOEU',
                    NOEUD='NO3',
-                   NOM_CMP='EPYY',
-                   VALE_CALC=-0.004,
-                   VALE_REFE=-0.004,
+                   NOM_CMP='V8',
+                   VALE_CALC=84.41204799082819,
+                   VALE_REFE=84.4144,
                    REFERENCE='AUTRE_ASTER',
-                   PRECISION=1.E-6,),
+                   PRECISION=1.E-2,),
            ),)
 
-IMPR_RESU(FORMAT='MED', RESU=_F(RESULTAT=VL),)
-
-VLMED=LIRE_RESU(TYPE_RESU='EVOL_NOLI', FORMAT='MED',  UNITE=80,
-              MODELE=MO, TOUT_ORDRE='OUI',
-              FORMAT_MED=(
-                   _F(NOM_RESU='VL', NOM_CHAM='EPME_NOEU'),
-              )
-              );
-
+#~ # Le champs de variables internes V11 correspond à la contrainte visqueuse de la phase bêta
 TEST_RESU(RESU=(
+                _F(INST=0.8,
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='NO3',
+                   NOM_CMP='V11',
+                   VALE_CALC=92.58022541470629,
+                   VALE_REFE=92.5802,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=1.E-2,),
                 _F(INST=1.3,
-                   RESULTAT=VLMED,
-                   NOM_CHAM='EPME_NOEU',
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_NOEU',
                    NOEUD='NO3',
-                   NOM_CMP='EPYY',
-                   VALE_CALC=-0.0096,
-                   VALE_REFE=-0.0096,
+                   NOM_CMP='V11',
+                   VALE_CALC=70.184097628367,
+                   VALE_REFE=70.1846,
                    REFERENCE='AUTRE_ASTER',
-                   PRECISION=1.E-6,),
+                   PRECISION=1.E-2,),
                 _F(INST=2.0,
-                   RESULTAT=VLMED,
-                   NOM_CHAM='EPME_NOEU',
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_NOEU',
                    NOEUD='NO3',
-                   NOM_CMP='EPYY',
-                   VALE_CALC=-0.004,
-                   VALE_REFE=-0.004,
+                   NOM_CMP='V11',
+                   VALE_CALC=84.41204799082819,
+                   VALE_REFE=84.4144,
                    REFERENCE='AUTRE_ASTER',
-                   PRECISION=1.E-6,),
+                   PRECISION=1.E-2,),
            ),)
 
+# Le champs de variables internes V12 correspond à l'indicateur de changement de phase
+TEST_RESU(RESU=(
+                _F(INST=0.8,
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='NO3',
+                   NOM_CMP='V12',
+                   VALE_CALC=0.0,
+                   VALE_REFE=0.0,
+                   REFERENCE='ANALYTIQUE',
+                   ORDRE_GRANDEUR = 1.0e-10,),
+                _F(INST=1.3,
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='NO3',
+                   NOM_CMP='V12',
+                   VALE_CALC=0.0,
+                   VALE_REFE=0.0,
+                   REFERENCE='ANALYTIQUE',
+                   ORDRE_GRANDEUR = 1.0e-10,),
+                _F(INST=2.0,
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_NOEU',
+                   NOEUD='NO3',
+                   NOM_CMP='V12',
+                   VALE_CALC=0.0,
+                   VALE_REFE=0.0,
+                   REFERENCE='ANALYTIQUE',
+                   ORDRE_GRANDEUR = 1.0e-10,),
+           ),)
 
+#########################################################################
+#Création à la main du champ de déformations mécaniques  (composante YY)#
+#                         à l'instant 1.3                               #
+#########################################################################
+#Déformation totale
+EPS13 = CREA_CHAMP(TYPE_CHAM='NOEU_EPSI_R', OPERATION='EXTR', RESULTAT=VL, NOM_CHAM='EPSI_NOEU',INST=1.3);
+
+EPSY13=CREA_CHAMP(OPERATION='ASSE',
+                    TYPE_CHAM='NOEU_NEUT_R',
+                    MODELE=MO,
+                    ASSE=_F(CHAM_GD=EPS13 ,
+                            TOUT='OUI',
+                            NOM_CMP  =('EPYY',),
+                            NOM_CMP_RESU=('X1'),   ),)
+
+#Déformation thermique
+VAR13 = CREA_CHAMP(TYPE_CHAM='NOEU_VAR2_R', OPERATION='EXTR', RESULTAT=VL, NOM_CHAM='VARI_NOEU',INST=1.3);
+
+
+VAR713=CREA_CHAMP(OPERATION='ASSE',
+                    TYPE_CHAM='NOEU_NEUT_R',
+                    MODELE=MO,
+                    ASSE=_F(CHAM_GD=VAR13 ,
+                            TOUT='OUI',
+                            NOM_CMP  =('V7',),
+                            NOM_CMP_RESU=('X1'),   ),)
+#Déformation mécanique = Déformation totale - Déformation thermique
+EPM13 = CREA_CHAMP(OPERATION='ASSE',
+                    TYPE_CHAM='NOEU_NEUT_R',
+                    MODELE=MO,
+                    ASSE=(_F(CHAM_GD=EPSY13 ,
+                            TOUT='OUI',  
+                            CUMUL='OUI',COEF_R=1
+                                ),
+                            _F(CHAM_GD=VAR713 ,
+                            TOUT='OUI',
+                            CUMUL='OUI',COEF_R=-1
+                                ),
+                            )
+                    )
+#########################################################################
+#Création à la main du champ de déformations mécaniques  (composante YY)#
+#                         à l'instant 2.0                               #
+#########################################################################
+#Déformation totale
+EPS20 = CREA_CHAMP(TYPE_CHAM='NOEU_EPSI_R', OPERATION='EXTR', RESULTAT=VL, NOM_CHAM='EPSI_NOEU',INST=2);
+
+EPSY20=CREA_CHAMP(OPERATION='ASSE',
+                    TYPE_CHAM='NOEU_NEUT_R',
+                    MODELE=MO,
+                    ASSE=_F(CHAM_GD=EPS20 ,
+                            TOUT='OUI',
+                            NOM_CMP  =('EPYY',),
+                            NOM_CMP_RESU=('X1'),   ),)
+
+
+VAR20 = CREA_CHAMP(TYPE_CHAM='NOEU_VAR2_R', OPERATION='EXTR', RESULTAT=VL, NOM_CHAM='VARI_NOEU',INST=2);
+
+#Déformation thermique
+VAR720=CREA_CHAMP(OPERATION='ASSE',
+                    TYPE_CHAM='NOEU_NEUT_R',
+                    MODELE=MO,
+                    ASSE=_F(CHAM_GD=VAR20 ,
+                            TOUT='OUI',
+                            NOM_CMP  =('V7',),
+                            NOM_CMP_RESU=('X1'),   ),)
+#Déformation mécanique = Déformation totale - Déformation thermique
+EPM20 = CREA_CHAMP(OPERATION='ASSE',
+                    TYPE_CHAM='NOEU_NEUT_R',
+                    MODELE=MO,
+                    ASSE=(_F(CHAM_GD=EPSY20 ,
+                            TOUT='OUI',  
+                            CUMUL='OUI',COEF_R=1
+                                ),
+                            _F(CHAM_GD=VAR720 ,
+                            TOUT='OUI',
+                            CUMUL='OUI',COEF_R=-1
+                                ),
+                            )
+                    )
+#Test des déformations mécaniques calculées
+TEST_RESU(CHAM_NO=(_F(NOEUD='NO3',
+                     REFERENCE='AUTRE_ASTER',
+                     NOM_CMP='X1',
+                     CHAM_GD=EPM13,
+                     VALE_CALC=-0.0096,
+                     VALE_REFE=-0.0096,),
+                   _F(NOEUD='NO3',
+                     REFERENCE='AUTRE_ASTER',
+                     NOM_CMP='X1',
+                     CHAM_GD=EPM20,
+                     VALE_CALC=-0.004,
+                     VALE_REFE=-0.004,),
+                   )  
+          )
+          
+          
+##########################################################################
+#Création à la main du champ de déformations anélastiques (composante YY)#
+#                         à l'instant 1.3                                #
+##########################################################################
+#Déformation élastique
+
+VAR213=CREA_CHAMP(OPERATION='ASSE',
+                    TYPE_CHAM='NOEU_NEUT_R',
+                    MODELE=MO,
+                    ASSE=_F(CHAM_GD=VAR13 ,
+                            TOUT='OUI',
+                            NOM_CMP  =('V2',),
+                            NOM_CMP_RESU=('X1'),   ),)
+#Déformation anélastique = Déformation mécanique - Déformation élastique (ici)                            
+EPA13 = CREA_CHAMP(OPERATION='ASSE',
+                    TYPE_CHAM='NOEU_NEUT_R',
+                    MODELE=MO,
+                    ASSE=(_F(CHAM_GD=EPSY13 ,
+                            TOUT='OUI',  
+                            CUMUL='OUI',COEF_R=1
+                                ),
+                            _F(CHAM_GD=VAR713 ,
+                            TOUT='OUI',
+                            CUMUL='OUI',COEF_R=-1
+                                ),
+                            _F(CHAM_GD=VAR213 ,
+                            TOUT='OUI',
+                            CUMUL='OUI',COEF_R=-1
+                                ),
+                            )
+                    )
+                    
+##########################################################################
+#Création à la main du champ de déformations anélastiques (composante YY)#
+#                         à l'instant 2.0                                #
+##########################################################################
+#Déformation élastique
+
+VAR220=CREA_CHAMP(OPERATION='ASSE',
+                    TYPE_CHAM='NOEU_NEUT_R',
+                    MODELE=MO,
+                    ASSE=_F(CHAM_GD=VAR20 ,
+                            TOUT='OUI',
+                            NOM_CMP  =('V2',),
+                            NOM_CMP_RESU=('X1'),   ),)
+#Déformation anélastique = Déformation mécanique - Déformation élastique (ici) 
+EPA20 = CREA_CHAMP(OPERATION='ASSE',
+                    TYPE_CHAM='NOEU_NEUT_R',
+                    MODELE=MO,
+                    ASSE=(_F(CHAM_GD=EPSY20 ,
+                            TOUT='OUI',  
+                            CUMUL='OUI',COEF_R=1
+                                ),
+                            _F(CHAM_GD=VAR720 ,
+                            TOUT='OUI',
+                            CUMUL='OUI',COEF_R=-1
+                                ),
+                            _F(CHAM_GD=VAR220 ,
+                            TOUT='OUI',
+                            CUMUL='OUI',COEF_R=-1
+                                ),
+                            )
+                    )
+#Test des déformations anélastiques calculées
+TEST_RESU(CHAM_NO=(_F(NOEUD='NO3',
+                     REFERENCE='AUTRE_ASTER',
+                     NOM_CMP='X1',
+                     CHAM_GD=EPA13,
+                     VALE_CALC=-0.0104773071226,
+                     VALE_REFE=-0.0104773071226,),
+                  _F(NOEUD='NO3',
+                     REFERENCE='AUTRE_ASTER',
+                     NOM_CMP='X1',
+                     CHAM_GD=EPA20,
+                     VALE_CALC=-0.005055150724037733,
+                     VALE_REFE=-0.00505515920024,),
+                   )  
+          )
+          
 FIN()
 #
