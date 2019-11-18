@@ -17,13 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
+from code_aster import _
 
 cata_msg = {
 
     1: _("""
-  -> Lors de la définition du champ de matériaux %(k1)s, vous avez renseigné le mot-clé 
+  -> Lors de la définition du champ de matériaux %(k1)s, vous avez renseigné le mot-clé
      EVOL de AFFE_MATERIAU / AFFE_VARC avec un résultat thermique X-FEM.
      Cette fonctionnalité n'est pas compatible avec l'opérateur POST_K1_K2_K3 lorsque le
      matériau dépend de la température.
@@ -138,7 +138,7 @@ cata_msg = {
 """),
 
     14: _("""
-Le calcul de la norme L2 de la pression de contact sur une fissure XFEM n'est pas disponible. 
+Le calcul de la norme L2 de la pression de contact sur une fissure XFEM n'est pas disponible.
 """),
 
     15: _("""
@@ -179,10 +179,10 @@ Le calcul de la norme L2 de la pression de contact sur une fissure XFEM n'est pa
 """),
 
     22: _("""
-     Une relation cinématique est imposée au niveau du noeud %(k1)s sur lequel une 
+     Une relation cinématique est imposée au niveau du noeud %(k1)s sur lequel une
      fissure passe et cette relation est imposée de part et d'autre de la fissure.
      Deux relations sont donc imposées, bloquant ainsi le ddl Heaviside associé.
-     Si vous avez également imposé une relation cinématique sur le degré de liberté 
+     Si vous avez également imposé une relation cinématique sur le degré de liberté
      Heaviside associé du noeud  %(k1)s, la matrice sera non factorisable.
      Conseil :
      Vous pouvez exclure le noeud %(k1)s du groupe affecté par
@@ -221,7 +221,7 @@ Le calcul de la norme L2 de la pression de contact sur une fissure XFEM n'est pa
 
     27: _("""
      L'utilisation de la grille auxiliaire avec la méthode SIMPLEXE n'est pas disponible.
-     Utiliser la méthode UPWIND ou effectuer le calcul sur le maillage physique.    
+     Utiliser la méthode UPWIND ou effectuer le calcul sur le maillage physique.
 """),
 
     28: _("""
@@ -393,7 +393,7 @@ Utilisez ELIM_ARETE='DUAL'.
      lors de l'écriture du mode local %(k1)s.
      La longueur du mode local dans le catalogue est %(i1)d, pourtant on a calculé qu'il
      faudrait %(i2)d.
-     Le calcul s'arrête pour prévenir un dépassement mémoire. 
+     Le calcul s'arrête pour prévenir un dépassement mémoire.
   -> Conseils:
      - Vous pouvez augmenter le dimensionnement du mode local %(k1)s.
      - Veuillez aussi contacter l'équipe de développement pour reporter la configuration de
@@ -457,7 +457,7 @@ Utilisez ELIM_ARETE='DUAL'.
     Le nombre d'ajustements effectués est : %(i1)d.
     Cette correction impacte légèrement la localisation de la fissure.
   -> Conseil :
-    Veuillez vérifier en post-traitement grâce à la commande POST_MAIL_XFEM que la nouvelle 
+    Veuillez vérifier en post-traitement grâce à la commande POST_MAIL_XFEM que la nouvelle
     géométrie de la fissure respecte la géométrie imposée dans la commande DEFI_FISS_XFEM.
 """),
 
@@ -637,19 +637,19 @@ Utilisez ELIM_ARETE='DUAL'.
 """),
 
     86: _("""
-Le CHAM_GD utilisé par l'opération ASSE_DEPL de l'opérateur CREA_CHAMP doit être un champ nodal." 
+Le CHAM_GD utilisé par l'opération ASSE_DEPL de l'opérateur CREA_CHAMP doit être un champ nodal."
 """),
 
     87: _("""
-Le CHAM_GD utilisé par l'opération ASSE_DEPL de l'opérateur CREA_CHAMP doit être de type DEPL_R." 
+Le CHAM_GD utilisé par l'opération ASSE_DEPL de l'opérateur CREA_CHAMP doit être de type DEPL_R."
 """),
 
     88: _("""
-L'opération ASSE_DEPL de l'opérateur CREA_CHAMP ne doit pas être utilisée si le modèle le comporte pas d'éléments X-FEM." 
+L'opération ASSE_DEPL de l'opérateur CREA_CHAMP ne doit pas être utilisée si le modèle le comporte pas d'éléments X-FEM."
 """),
 
     89: _("""
-L'opération ASSE_DEPL de l'opérateur CREA_CHAMP ne prend pas en charge les éléments HM." 
+L'opération ASSE_DEPL de l'opérateur CREA_CHAMP ne prend pas en charge les éléments HM."
 """),
 
     90: _("""
@@ -680,7 +680,7 @@ L'opération ASSE_DEPL de l'opérateur CREA_CHAMP ne prend pas en charge les él
      des facteurs d'intensité de contraintes de la fissure %(k1)s ne contient
      pas de colonne 'GAMMA'.
   -> Risque & Conseil:
-     Si vous souhaitez imposer les valeurs de l'angle de déversement aux points 
+     Si vous souhaitez imposer les valeurs de l'angle de déversement aux points
      du fonds de fissure, veuillez indiquer CRITERE='ANGLE_IMPO_GAMMA' ou 'ANGLE_IMPO_BETA_GAMMA' et ajouter
      une colonne 'GAMMA' au tableau des facteurs d'intensité de contraintes manuellement.
 """),

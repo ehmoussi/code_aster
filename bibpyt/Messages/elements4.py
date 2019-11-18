@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -190,7 +190,7 @@ Les comportements écrits en configuration de référence ne sont pas disponible
 sur les éléments linéaires pour la modélisation 3D_SI.
 
 Pour contourner le problème et passer à un comportement en configuration actuelle,
-ajoutez un état initial nul au calcul. 
+ajoutez un état initial nul au calcul.
 """),
 
 

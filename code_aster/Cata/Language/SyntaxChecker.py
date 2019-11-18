@@ -209,6 +209,10 @@ class SyntaxCheckerVisitor:
                        ("Cannot type result of the command {0}\n"
                         "Exception raised: {1})").format(step.name, repr(exc)))
 
+    def visitMacro(self, step, userDict=None):
+        """Visit a Macro object"""
+        self.visitCommand(step, userDict)
+
     def visitBloc(self, step, userDict=None):
         """Visit a Bloc object"""
         pass

@@ -81,6 +81,8 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ))
 # du message incriminé ou bien mettre un ASSERT(condition) si cela concerne
 # uniquement le développeur.
 previous_errors = [
+    # Marqueur d'exécution pour asrun
+    'JEFINI',
     # LE fameux LIGREL !
     'LIGREL',
     # Solveur PETSc

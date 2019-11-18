@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -68,7 +68,7 @@ Risque & Conseil:
     43: _("""
  Le coefficient de dilatation thermique ALPHA du matériau est une fonction de la température.
  Or vous ne fournissez pas de résultats thermiques dans AFFE_MATERIAU / AFFE_VARC.
- Dans ce cas, TEMP_DEF_ALPHA et TEMP_REF doivent être identiques. 
+ Dans ce cas, TEMP_DEF_ALPHA et TEMP_REF doivent être identiques.
 """),
 
     56: _("""

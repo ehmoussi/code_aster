@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -105,7 +105,7 @@ La déformation est supposée nulle.
   Pour les poutres multifibres, l'utilisation de lois de comportement via
   DEBORST nécessite d'avoir un seul matériau par poutre!
  """),
- 
+
     32 : _("""
 Sur la maille %(k1)s le calcul est thermo mécanique. Mais il manque le paramètre matériau %(k2)s.
 On ne peut donc pas calculer la déformation thermique.
@@ -117,7 +117,7 @@ Il faut une température dans AFFE_MATERIAU/AFFE_VARC.
 """),
 
     42 : _("""
-Il existe un champ de température mais vous n'avez pas renseigné la paramètre ALPHA dans DEFI_MATERIAU ou la 
+Il existe un champ de température mais vous n'avez pas renseigné la paramètre ALPHA dans DEFI_MATERIAU ou la
 température de référence dans AFFE_MATERIAU/AFFE_VARC.
 On ne peut pas calculer la déformation thermique.
 """),

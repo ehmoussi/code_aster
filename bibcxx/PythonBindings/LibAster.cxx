@@ -9,7 +9,7 @@
  *
  *   Code_Aster is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 2 of the License, or
+ *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
  *
  *   Code_Aster is distributed in the hope that it will be useful,
@@ -296,11 +296,13 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportGeneralizedModeContainerToPython();
 
 #ifdef _USE_MPI
+    /* These objects must be declared in Objects/__init__.py as
+       OnlyParallelObject for sequential version. */
     exportParallelMeshToPython();
     exportParallelDOFNumberingToPython();
     exportParallelMechanicalLoadToPython();
-    exportMPIInfosToPython();
 #endif /* _USE_MPI */
+    exportMPIInfosToPython();
 
     exportPartialMeshToPython();
     exportResultNamingToPython();

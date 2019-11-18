@@ -1,12 +1,28 @@
-# coding: utf-8
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
-# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
 # Code_Aster is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # Code_Aster is distributed in the hope that it will be useful,
@@ -23,8 +39,8 @@
 
 code_aster objects are saved and reloaded using the *pickle* protocol.
 
-:func:`saveObjects` does the saving of objects available in the user context
-(in which :func:`saveObjects` is called).
+:func:`saveObjects` does the saving of objects which are available in the user
+context (in which :func:`saveObjects` is called).
 The command :func:`~code_aster.Commands.FIN` automatically calls this function.
 
 Objects are reloaded by the function :func:`loadObjects` called just after the
@@ -34,6 +50,7 @@ The command :func:`~code_aster.Commands.debut.POURSUITE` does also the same.
 """
 
 import inspect
+from io import IOBase
 import os.path as osp
 import pickle
 import traceback
@@ -149,8 +166,8 @@ class Serializer(object):
                     pickler.save_one(obj, main=True)
                     objList.append(name)
                 except Exception as exc:
-                    logger.warn("object can't be pickled: {0}".format(name))
-                    logger.debug(str(exc))
+                    logger.warn("object can not be pickled: {0}".format(name))
+                    logger.debug(traceback.format_exc())
                     continue
                 if isinstance(obj, DataStructure):
                     saved.append(name)
@@ -218,7 +235,7 @@ class Serializer(object):
 
         not_read = set(objList).difference(names)
         if not_read:
-            logger.warn("These objects have not be reloaded: {0}"
+            logger.warn("These objects have not been reloaded: {0}"
                         .format(tuple(not_read)))
         logger.info("Restored objects:")
         for name, obj in zip(names, objects):
@@ -327,7 +344,7 @@ class AsterPickler(pickle.Pickler):
     *Boost* instances. So there are several *pointers* for the same instance.
     Standard pickling creates new objects for each *pointers* and during
     unpickling this creates new *Boost* instance for each Python wrapper.
-    To avoid that pickling only saves arguments (returned by
+    To avoid that, the pickling step only saves arguments (returned by
     :py:meth:`__getinitargs__`), a state (returned by :py:meth:`__getstate__`)
     and an identifier of the DataStructure (its Jeveux name).
 
@@ -385,7 +402,7 @@ class AsterPickler(pickle.Pickler):
         Returns:
             str: Identifier containing " mark, class name, object name".
         """
-        if hasattr(obj, "getName"):
+        if isinstance(obj, DataStructure):
             class_ = type(obj).__name__
             pers_id = "DataStructure", class_, obj.getName().strip()
             logger.debug("persistent id: {0}".format(pers_id))
@@ -402,9 +419,10 @@ class AsterUnpickler(pickle.Unpickler):
     See :py:class:`.AsterPickler` for pickling phase.
 
     During unpickling, only :py:class:`.BufferObject` are created from the
-    persistent identifier that are reloaded.
-    Only after that all *BufferObjects* are reloaded the instances can be
-    created on demand.
+    persistent identifiers that are reloaded.
+    Only after this step, all *BufferObjects* are reloaded.
+    The instances are created on demand. The parent instances are
+    also automatically and recursively created when needed.
 
     See *Pickling and unpickling external objects* from the :py:mod:`pickle`
     documentation.
@@ -606,6 +624,10 @@ def _filteringContext(context):
         if name in ('code_aster', ) or name.startswith('__'):
             continue
         if not isinstance(obj, numpy.ndarray) and obj in ignored:
+            continue
+        if getattr(numpy, name, None) is obj: # see issue29282
+            continue
+        if isinstance(obj, IOBase):
             continue
         if type(obj) in (types.ModuleType, type,
                          types.MethodType, types.FunctionType,

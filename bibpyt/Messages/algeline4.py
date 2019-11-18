@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -30,7 +30,7 @@ cata_msg = {
  Le shift utilisé pour poursuivre le calcul modal est quasi-nul: shift=%(r1)g.
  Cela va perturber le calcul modal. Ce problème aurait dû être détecté automatiquement
  et le shift aurait dû être décalé.
- 
+
  Conseils :
    * Vérifier votre mise  en données concernant les paramètres de décalage (PREC_SHIFT, NMAX_ITER_SHIFT) ou concernant la
       détection de singularité (SOLVEUR/NPREC).

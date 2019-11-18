@@ -17,8 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
+from code_aster import _
 
 cata_msg = {
 
@@ -42,7 +42,7 @@ cata_msg = {
 
     5: _("""
 Erreur utilisateur :
-   Le calcul de POST_ELEM / INTEGRALE pour les champs FORC_NODA et REAC_NODA n'a pas de sens 
+   Le calcul de POST_ELEM / INTEGRALE pour les champs FORC_NODA et REAC_NODA n'a pas de sens
    car ces quantités ne sont pas "continues".
 """),
 

@@ -59,7 +59,7 @@ def build(self):
             name = 'asterbibcxx',
           source = get_srcs('**/*.cxx', excl='mfront/*.cxx'),
              env = env.derive(),
-             use = ['PYEMBED'] + uses + ['CODE_ASTER_CORE'],
+             use = ['PYEMBED'] + uses,
     )
 
 ###############################################################################

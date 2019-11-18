@@ -19,6 +19,8 @@
 
 # person_in_charge: nicolas.brie at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
     1: _("""                 Participation du mode : %(i1)2d --> %(r1)12.5E
@@ -114,9 +116,9 @@ numéro    itération      erreur              valeur propre
        =        Formulation fréquentielle.           =
        =                                             =
        ===============================================
- 
+
  Nombre de fréquences demandées    = %(i1)d
- 
+
  Ordres de grandeur des matrices du problème:
  (informations combinant degrés de liberté physiques et de Lagrange)
  (informations des termes non nuls selon un stockage de la partie
@@ -124,18 +126,18 @@ numéro    itération      erreur              valeur propre
  -------------------------------------------------------------------
 
  Dimension des matrices de masse (M) et raideur (K)  = %(i2)d x %(i2)d
- Termes non nuls des matrices de masse et raideur    = %(i3)d 
- 
+ Termes non nuls des matrices de masse et raideur    = %(i3)d
+
  Dimension de la matrice d'observation (H)           = %(i4)d x %(i2)d
  Termes non nuls de la matrice d'observation         = %(i5)d
  Dimension de la matrice norme (G)                   = %(i4)d x %(i4)d
-  
+
  Termes non nuls du sous-bloc H^T*G*H                = %(i6)d
- 
+
  Dimension de la matrice du problème d'ERC           = %(i7)d x %(i7)d
  Termes non nuls de la matrice du problème d'ERC     = %(i8)d
 
  ===============================================
 
-"""),   
+"""),
 }

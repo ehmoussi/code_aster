@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -37,13 +37,13 @@ cata_msg = {
 
     4 : _("""
  Erreur lors de l'opération LIAISON_MAIL.
- L'élément %(k1)s n'est pas du bon type. 
+ L'élément %(k1)s n'est pas du bon type.
  Si cette maille correspond à un élément affecté d'une modélisation de type coque, il faut utiliser l'option TYPE_RACCORD='MASSIF_COQUE' ou TYPE_RACCORD='COQUE_MASSIF'.
 """),
 
     5 : _("""
 Erreur lors de l'opération LIAISON_CYCLE.
-L'élément %(k1)s n'est pas du bon type. 
+L'élément %(k1)s n'est pas du bon type.
 Si vous êtes en deux dimensions, les éléments doivent être des segments.
 Si vous êtes en trois dimensions, les éléments doivent être des triangles ou des quadrangles.
 """),

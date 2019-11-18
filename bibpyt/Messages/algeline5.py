@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -42,7 +42,7 @@ cata_msg = {
 
     6: _("""
  Résolution MULTI_FRONTALE :
- problème dans le traitement des résultats 
+ problème dans le traitement des résultats
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
@@ -299,7 +299,7 @@ Contactez le support technique.
 Commande FACTORISER :
    Il faut toujours utiliser le mot clé 'reuse'.
 
-   Sauf si la méthode est 'GCPC' et le préconditionnement 'LDLT_INC', 
+   Sauf si la méthode est 'GCPC' et le préconditionnement 'LDLT_INC',
    auquel cas, il est interdit d'utiliser 'reuse'
 """),
 
@@ -446,7 +446,7 @@ Commande FACTORISER :
     77 : _("""
 Conseils :
 Si vous utilisez METHODE='SORENSEN' ou 'TRI_DIAG' ou 'JACOBI', vous pouvez améliorer cette norme :
- - Si la dimension de l'espace réduit est inférieure à (nombre de degrés de liberté actifs - 2), augmenter la valeur de 
+ - Si la dimension de l'espace réduit est inférieure à (nombre de degrés de liberté actifs - 2), augmenter la valeur de
    COEF_DIM_ESPACE (la valeur par défaut est 4 pour 'TRI_DIAG' et 2 pour 'SORENSEN' et 'JACOBI').
  - Découper le calcul en plusieurs appels de manière à réduire le nombre de modes propres recherchés simultanément
    (%(k1)s ou taille de la BANDE).

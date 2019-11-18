@@ -19,6 +19,8 @@
 
 # person_in_charge: nicolas.sellenet at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""
@@ -50,7 +52,7 @@ il est préférable d'utiliser %(k2)s
 """),
 
 4 : _("""
-Les contributions de l'amortissement liées à la vitesse pour les 
+Les contributions de l'amortissement liées à la vitesse pour les
 réactions nodales sont négligées dans la version actuelle du code.
 """),
 

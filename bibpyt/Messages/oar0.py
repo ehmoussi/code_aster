@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
     1: _("""
@@ -32,7 +32,7 @@ Erreur d'interpolation: %(k1)s
 Les coupes du revêtement et de la structure doivent partager une abscisse commune.
 """),
 
- 
+
 
     5: _("""
 Fonction non implantée.

@@ -19,6 +19,8 @@
 
 # person_in_charge: natacha.bereux at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
 1 : _("""
@@ -70,14 +72,14 @@ Solveur PETSc :
 
 8 : _("""
 Solveur PETSc :
-  Le solveur a échoué : la norme du résidu est une valeur invalide. 
+  Le solveur a échoué : la norme du résidu est une valeur invalide.
 """),
 
 9 : _("""
 Solveur PETSc :
   La matrice du système est non symétrique, or l'algorithme que vous utilisez requiert
   la symétrie.
-  Changez d'algorithme ou bien utilisez le mot-clé MATR_RIGI_SYME  ='OUI' sous le mot-clé 
+  Changez d'algorithme ou bien utilisez le mot-clé MATR_RIGI_SYME  ='OUI' sous le mot-clé
   facteur NEWTON  pour symétriser la matrice.
 """),
 
@@ -127,7 +129,7 @@ Solveur PETSc :
 16 : _("""
 Solveur PETSc :
   La résolution du système linéaire a abouti mais la solution obtenue ne vérifie pas le critère de convergence.
-  Cela peut arriver: 
+  Cela peut arriver:
      - si la matrice du système linéaire est mal conditionnée
      - si vous avez utilisé le préconditionneur 'LDLT_SP' avec ALGORITHME='GMRES'
 
@@ -139,11 +141,11 @@ Solveur PETSc :
 Solveur PETSc :
   Les préconditionneurs 'ML', 'BOOMER' et 'GAMG' ne doivent pas être utilisés lorsque:
   - soit le modèle comporte des charges dualisées issues de AFFE_CHAR_MECA,
-  - soit les noeuds du modèle ne portent pas tous les mêmes degrés de liberté. 
-  
+  - soit les noeuds du modèle ne portent pas tous les mêmes degrés de liberté.
+
   Conseils :
   - ne mélangez pas des modélisations dans votre calcul
-  - remplacez AFFE_CHAR_MECA par AFFE_CHAR_CINE si cela est possible 
+  - remplacez AFFE_CHAR_MECA par AFFE_CHAR_CINE si cela est possible
   - utilisez le préconditionneur 'LDLT_SP' ou un solveur direct ('MULT_FRONT' ou 'MUMPS').
 """),
 
@@ -168,24 +170,24 @@ Solveur PETSc :
 
 24 : _("""
 Solveur PETSc :
-  La résolution du système linéaire précédent s'est effectuée en %(i1)d itérations. 
+  La résolution du système linéaire précédent s'est effectuée en %(i1)d itérations.
   """),
 
 26 : _("""
 Solveur PETSc :
-  On construit un nouveau préconditionneur de second niveau à partir des éléments de Ritz calculés au cours de la résolution du système linéaire précédent.   
+  On construit un nouveau préconditionneur de second niveau à partir des éléments de Ritz calculés au cours de la résolution du système linéaire précédent.
   """),
 27 : _("""
 Solveur PETSc :
-  On conserve le préconditionneur de second niveau pour les résolutions ultérieures.   
+  On conserve le préconditionneur de second niveau pour les résolutions ultérieures.
   """),
 28 : _("""
 Solveur PETSc :
-  Vous avez demandé à utiliser un préconditionneur de second niveau. C'est seulement possible avec le préconditionneur de premier niveau 'LDLT_SP'. 
+  Vous avez demandé à utiliser un préconditionneur de second niveau. C'est seulement possible avec le préconditionneur de premier niveau 'LDLT_SP'.
   Conseils:
   Vous pouvez :
   - soit changer de préconditionneur de premier niveau (choisir PRE_COND='LDLT_SP'),
-  - soit désactiver le préconditionneur de second niveau (en choisissant ALGORITHME='GMRES' ou 'FGMRES' au lieu de 'GMRES_LMP').   
+  - soit désactiver le préconditionneur de second niveau (en choisissant ALGORITHME='GMRES' ou 'FGMRES' au lieu de 'GMRES_LMP').
   """),
 
 }

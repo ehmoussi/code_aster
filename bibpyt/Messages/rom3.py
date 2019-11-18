@@ -19,6 +19,8 @@
 
 # person_in_charge: mickael.abbas at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
     4 : _("""La base empirique contient des champs de type %(k1)s."""),

@@ -22,8 +22,6 @@ from glob import glob
 import os
 import os.path as osp
 
-# Objects depending on conditional build
-IN_CONDITIONAL_BUILD = ["ParallelMechanicalLoad", "ParallelDOFNumbering" ]
 
 automodule_block = \
 """.. automodule:: {0}
@@ -94,23 +92,23 @@ def all_objects(destdir):
         sections.append(obj)
     sections.append(boost_enum)
     sections.append(Exception)
-    # print len(sections), "sections"
+    # print(len(sections), "sections")
 
     # dict of subclasses
     dictobj = OrderedDict([(i, []) for i in sections])
     for name, obj in list(OBJ.__dict__.items()):
         # if obj is not OBJ.Material:
         #     continue
-        if not isinstance(obj, type):
+        if not isinstance(obj, type) or issubclass(obj, OBJ.OnlyParallelObject):
             continue
         found = False
         for subtyp in sections:
             if issubclass(obj, subtyp) or obj is subtyp:
                 dictobj[subtyp].append(name)
                 found = True
-                # print "Found:", name ,">>>", subtyp
+                # print("Found:", name ,">>>", subtyp)
                 break
-        if not found and name not in IN_CONDITIONAL_BUILD:
+        if not found:
             raise KeyError("Boost class not found: {0}".format(obj.mro()))
 
     dicttext = OrderedDict()

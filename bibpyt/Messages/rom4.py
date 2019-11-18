@@ -19,9 +19,11 @@
 
 # person_in_charge: mickael.abbas at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
-    7 : _("""Échec lors du calcul des modes empiriques pour l'estimation du domaine réduit."""),    
+    7 : _("""Échec lors du calcul des modes empiriques pour l'estimation du domaine réduit."""),
 
     9 : _("""Les bases ne sont pas définies sur le même maillage."""),
 
@@ -39,9 +41,9 @@ cata_msg = {
 
    20 : _("""Calcul du domaine réduit. """),
 
-   21 : _("""Création des groupes dans le maillage pour l'estimation du domaine réduit."""),  
+   21 : _("""Création des groupes dans le maillage pour l'estimation du domaine réduit."""),
 
-   22 : _("""Nombre d'éléments dans le domaine réduit: %(i1)d"""), 
+   22 : _("""Nombre d'éléments dans le domaine réduit: %(i1)d"""),
 
    23 : _("""Nombre de noeuds sur l'interface du domaine réduit: %(i1)d"""),
 
@@ -53,5 +55,5 @@ cata_msg = {
 
    28 : _("""Il n'y a aucun noeud dans la zone rigide pour le correcteur éléments finis."""),
 
-   29 : _("""Nombre de noeuds dans le domaine réduit: %(i1)d"""), 
+   29 : _("""Nombre de noeuds dans le domaine réduit: %(i1)d"""),
 }

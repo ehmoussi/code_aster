@@ -77,8 +77,6 @@ def build(self):
     # The build is splitted in 3 stages:
     # - compilation of C source files
     # - build of the shared lib (libaster)
-    # - build and link the cython wrapper
-    #
     get_srcs = self.path.get_src().ant_glob
     env = self.all_envs[self.variant]
     excl = [] if env.BUILD_MED else ['**/med_aster_module.c']
@@ -129,7 +127,7 @@ def build_libaster(self, shenv):
          defines = '_MAIN_=_unused_main_', #'_WITHOUT_PYMOD_',
              env = shenv.derive(),
              use = (['PYEMBED', 'NUMPY'] + libasterfor + ['asterbibc',
-                    'asterbibcxx', 'CODE_ASTER_CORE'] + uses + ['CXX']),
+                    'asterbibcxx'] + uses + ['CXX']),
     install_path = shenv.ASTERLIBDIR,
     )
     for submodule in ("aster", "_aster_core", "aster_fonctions", "med_aster"):

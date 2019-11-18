@@ -40,24 +40,3 @@ loi = LoiComportement(
     exte_vari      = None,
     deform_ldc     = ('OLD',),
 )
-#
-# Variable existante
-#   "DISSTHER": _(u"dissipation Thermodynamique"),
-#
-# Nouvelles variables internes
-#   "FORCEX":   _(u"DIS_ECRO_TRAC : Force suivant x local."),
-#   "FORCEY":   _(u"DIS_ECRO_TRAC : Force suivant y local."),
-#   "FORCEZ":   _(u"DIS_ECRO_TRAC : Force suivant z local."),
-#   "DEPLX":    _(u"DIS_ECRO_TRAC : Déplacement différentiel, suivant x local."),
-#   "DEPLY":    _(u"DIS_ECRO_TRAC : Déplacement différentiel, suivant y local."),
-#   "DEPLZ":    _(u"DIS_ECRO_TRAC : Déplacement différentiel, suivant z local."),
-#   "PCUM" :    _(u"DIS_ECRO_TRAC : Déplacement anélastique cumulé"),
-#   "DEPLPX":   _(u"DIS_ECRO_TRAC : Déplacement anélastique différentiel, suivant x local."),
-#   "DEPLPY":   _(u"DIS_ECRO_TRAC : Déplacement anélastique différentiel, suivant y local."),
-#   "DEPLPZ":   _(u"DIS_ECRO_TRAC : Déplacement anélastique différentiel, suivant z local."),
-#   "FORCXX":   _(u"DIS_ECRO_TRAC : Force écrouissage cinématique suivant x local."),
-#   "FORCXY":   _(u"DIS_ECRO_TRAC : Force écrouissage cinématique suivant y local."),
-#   "FORCXZ":   _(u"DIS_ECRO_TRAC : Force écrouissage cinématique suivant z local."),
-#   "RAIDEX":   _(U"DIS_ECRO_TRAC : Raideur tangente du discret suivant x local"),
-#   "RAIDEY":   _(U"DIS_ECRO_TRAC : Raideur tangente du discret suivant y local"),
-#   "RAIDEZ":   _(U"DIS_ECRO_TRAC : Raideur tangente du discret suivant z local"),

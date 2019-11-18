@@ -131,7 +131,7 @@ official ones). A convenient function allows to easily define this executor:
 
 .. code-block:: python
 
-    from code_aster.Commands.ExecuteCommand
+    from code_aster.Commands.ExecuteCommand import UserMacro
     MA_MACRO = UserMacro("MA_MACRO", MA_MACRO_cata, ma_macro_ops)
 
 

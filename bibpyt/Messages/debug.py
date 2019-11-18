@@ -22,6 +22,8 @@
 # Dans ce catalogue les messages peuvent ne pas être formules
 # en francais
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""

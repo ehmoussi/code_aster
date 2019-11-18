@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,6 +39,8 @@ def options(self):
 def configure(self):
     opts = self.options
     self.env.BUILD_CYTHON = False
+    if not self.env.BUILD_PARALLEL:
+        opts.enable_cython = False
     try:
         self.check_cython()
     except Errors.ConfigurationError as exc:
@@ -57,12 +59,14 @@ def check_cython(self):
         raise Errors.ConfigurationError('Cython disabled')
 
     self.load('cython')
-    raise Errors.ConfigurationError('not found')
     self.start_msg('Checking for Cython version')
-    output = self.cmd_and_log(self.env['CYTHON'] + ['--version'],
-                                output=Context.STDERR)
-    self.end_msg(output.strip())
-
+    try:
+        output = self.cmd_and_log(self.env['CYTHON'] + ['--version'],
+                                    output=Context.STDERR)
+        self.end_msg(output.strip())
+    except:
+        self.end_msg('failed - Cython support disabled', 'YELLOW')
+        raise Errors.ConfigurationError()
 
 def build(self):
     get_srcs = self.path.get_src().ant_glob
@@ -88,43 +92,15 @@ def build(self):
 
     # cython
     if self.env.BUILD_CYTHON:
-        build_libaster_dependencies(self)
-        self.add_group()
-        build_wrappers_on_libaster(self)
+        build_cython_ext(self)
 
-
-def build_libaster_dependencies(self):
-    get_srcs = self.path.get_src().ant_glob
-    env = self.all_envs[self.variant]
-    uses = env['all_dependencies']
-
-    # Core & Supervis are used by libaster (must be named 'lib*')
-    # bibcxx is using the generated includes
-    for cymodule in get_srcs('Supervis/**/*.pyx'):
-        path = cymodule.abspath()
-        modname = osp.splitext(osp.basename(path))[0]
-        dirname = osp.basename(osp.dirname(path))
-
-        self(
-            features = 'cxx cxxshlib pyext',
-              source = cymodule,
-                name = modname,
-              target = osp.join(dirname, modname),
-        install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
-        )
-        # 'use' in bibc would add 'lib' to the target name (that already
-        # contains 'lib'), that's why we define another product CODE_ASTER_CORE
-        # to deal dependencies.
-        env.append_value('LIB_CODE_ASTER_CORE', [modname.replace('lib', '')])
-        env.append_unique('LIBPATH_CODE_ASTER_CORE', [osp.join('code_aster', dirname)])
-
-def build_wrappers_on_libaster(self):
+def build_cython_ext(self):
     get_srcs = self.path.get_src().ant_glob
     env = self.all_envs[self.variant]
     uses = env['all_dependencies']
 
     # Wrappers on C++ objects uses libaster
-    wrapper = get_srcs('**/*.pyx', excl=['Supervis/**/*.pyx'])
+    wrapper = get_srcs('**/*.pyx')
     for cymodule in wrapper:
         path = cymodule.abspath()
         modname = osp.splitext(osp.basename(path))[0]
@@ -141,5 +117,6 @@ def build_wrappers_on_libaster(self):
 @Configure.conf
 def check_optimization_cython(self):
     self.setenv('debug')
-    self.env.append_unique('CYTHONFLAGS', ["-a"])
+    self.env.append_unique('CYTHONFLAGS', ["-3", "-a"])
     self.setenv('release')
+    self.env.append_unique('CYTHONFLAGS', ["-3"])

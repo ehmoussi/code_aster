@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -73,13 +73,13 @@ Une incohérence a été détectée entre les déclarations de noms de noeuds ou
 """),
 
     40 : _("""
- absence de convergence 
+ absence de convergence
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
     41 : _("""
- absence de convergence 
+ absence de convergence
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
@@ -297,7 +297,7 @@ Contactez le support technique.
     92 : _("""
  Erreur de mise en données :
  Le mot clé ORIE_LIGNE ne traite que les mailles linéiques.
- Or, des mailles surfaciques ont été fournies. 
+ Or, des mailles surfaciques ont été fournies.
 """),
 
     93 : _("""

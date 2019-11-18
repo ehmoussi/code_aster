@@ -59,14 +59,10 @@ from .Objects import *
 from .Supervis import (AsterError, ContactError, ConvergenceError,
                        IntegrationError, SolverError, TimeLimitError)
 from .RunManager import saveObjects
-from .Utilities import TestCase
+from .Utilities import TestCase, translate as _
 
 from .Algorithms import (ConstitutiveLaw, IntegrationAlgorithm, StrainType,
                          TangentMatrixType)
-
-# # install i18n function as soon as possible
-# from .Utilities import localization
-# localization.install()
 
 from .Commands.debut import init
 from .Commands.fin import FIN as close

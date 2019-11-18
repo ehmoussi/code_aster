@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -191,10 +191,10 @@ cata_msg = {
  """),
 
     91 : _("""
- Loi de séchage %(k1)s : le coefficient de diffusion atteint des valeurs trop élevées %(r1)f. Il se peut que cela soit dû à la stabilité du thêta-schéma qui empêche la convergence du calcul non linéaire. 
+ Loi de séchage %(k1)s : le coefficient de diffusion atteint des valeurs trop élevées %(r1)f. Il se peut que cela soit dû à la stabilité du thêta-schéma qui empêche la convergence du calcul non linéaire.
  Conseils :
  - Branchez REAC_ITER >=1 (actualisation fréquente de la matrice tangente);
- - Changez la valeur de PARM_THETA dans THER_NON_LINE tout en raffinant le pas de temps. 
+ - Changez la valeur de PARM_THETA dans THER_NON_LINE tout en raffinant le pas de temps.
 """),
 
 

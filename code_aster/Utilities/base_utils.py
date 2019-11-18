@@ -100,9 +100,17 @@ def value_is_sequence(value):
     """Tell if *value* is a valid object if max > 1."""
     return isinstance(value, (list, tuple, array, numpy.ndarray))
 
-def is_int(obj):
-    """Tell if an object is an integer."""
-    return isinstance(obj, (int, numpy.integer))
+def is_int(obj, onvalue=False):
+    """Tell if an object is an integer.
+
+    Arguments:
+        obj (misc): Object to be tested.
+        onvalue (bool, optional): If *onvalue* is True, accept a float number
+            that is equal to its integer part. If *False*, acceptance is
+            only based on the object type.
+    """
+    return (isinstance(obj, (int, numpy.integer))
+            or (onvalue and is_float(obj) and obj == int(obj)))
 
 def is_float(obj):
     """Tell if an object is a float number."""
