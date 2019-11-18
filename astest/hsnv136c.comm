@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,12 +22,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 MA=LIRE_MAILLAGE(FORMAT="ASTER",)
 
 
-ZIRCALOY=DEFI_MATERIAU(THER=_F(RHO_CP = 2000000.0, LAMBDA = 9999.9),
-                        META_ZIRC=_F(
-                                  TDEQ = 802.,   K = 1.125E-2,   N = 2.217,
-                                  T1C = 838. , T2C=0.,
-                                  QSR_K = 14600.,AC = 1.60E-4,  M = 4.5,
-                                  T1R=950., T2R=0.,AR = -5.70,  BR = 0.05))
+ZIRCALOY=DEFI_MATERIAU(THER=_F(RHO_CP = 2000000.0, LAMBDA = 9999.9),)
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=_F(TOUT = 'OUI',MATER = ZIRCALOY))
@@ -56,27 +51,11 @@ TIMPO=CREA_CHAMP(OPERATION='AFFE',
                          NOM_CMP = 'TEMP',
                          VALE_F = TFONC))
 
-PHASINIT=CREA_CHAMP(OPERATION='AFFE',
-                    TYPE_CHAM='CART_VAR2_R',
-                    MAILLAGE=MA,
-                    AFFE=_F(TOUT = 'OUI',
-                            NOM_CMP = ('V1', 'V2', 'V3','V4', 'V5'),
-                            VALE = ( 1.0, 0.0, 0.0, 20.,0.)))
-
 TEMPE=CREA_RESU(OPERATION='AFFE',
                 TYPE_RESU='EVOL_THER',
                 NOM_CHAM='TEMP',
                 AFFE=_F(CHAM_GD = TIMPO,
                         LIST_INST = L_INST))
-
-TEMPE=CALC_META(reuse=TEMPE,
-                MODELE=MOTH,
-                CHAM_MATER=CHMAT,
-                RESULTAT=TEMPE,
-                ETAT_INIT=_F(META_INIT_ELNO=PHASINIT),
-                COMPORTEMENT=_F(RELATION='ZIRC',
-                             TOUT='OUI'),
-                OPTION='META_ELNO',);
 
 # PARTIE MECANIQUE
 # ON DEGENERE LA LOI POUR AVOIR UNE LOI DE VISCOSITE
@@ -84,13 +63,13 @@ TEMPE=CALC_META(reuse=TEMPE,
 # CETTE LOI ANISOTROPE AVEC UNE SEULE PHASE ET UNE LOI DE NORTON
 # EST IDENTIQUE A UNE LOI CONTENUE DANS ZMAT
 
-ACIER=DEFI_MATERIAU(ELAS_META=_F(E = 80000.,
-                               NU = 0.35,
-                               F_ALPHA = 0.,
-                               C_ALPHA = 0.,
-                               PHASE_REFE = 'FROID',
-                               EPSF_EPSC_TREF = 0.,),
+ACIER=DEFI_MATERIAU(ELAS=_F(E = 80000.,
+                            NU = 0.35,
+                            ALPHA = 0.,),
                    META_LEMA_ANI=_F(
+                            #PARAMETRES MECANIQUES
+                            YoungModulus = 80000,
+                            PoissonRatio = 0.35,
                             F1_A=2.40,    F2_A=0.20,     C_A=9.40,
                             F1_M=0.0,    F2_M=0.80E-04, C_M=0.99E-04,
                             F1_N=4.40,    F2_N=3.0,     C_N=6.1,
@@ -100,15 +79,20 @@ ACIER=DEFI_MATERIAU(ELAS_META=_F(E = 80000.,
                             F_MZZ_ZZ=1.,                 C_MZZ_ZZ=1.,
                             F_MRT_RT=0.75,               C_MRT_RT=0.75,
                             F_MRZ_RZ=0.75,               C_MRZ_RZ=0.75,
-                            F_MTZ_TZ=0.75,               C_MTZ_TZ=0.75,),),
+                            F_MTZ_TZ=0.75,               C_MTZ_TZ=0.75,
+                            #PARAMETRES THERMIQUES
+                            F_ALPHA = 0,
+                            C_ALPHA = 0,
+                            #PARAMETRES METALLURGIQUES
+                            TDEQ = 802.,   K = 1.125E-2,   NEQ = 2.217,
+                            T1C = 838. , T2C=0.,
+                            QSR_K = 14600.,AC = 1.60E-4,  M = 4.5,
+                            T1R=950., T2R=0.,AR = -5.70,  BR = 0.05
+                            ),),
 
 CM2=AFFE_MATERIAU(MAILLAGE=MA,
                   AFFE=_F( TOUT = 'OUI', MATER = ACIER ),
                   AFFE_VARC=(_F(TOUT='OUI',
-                                EVOL=TEMPE,
-                                NOM_VARC='M_ZIRC',
-                                NOM_CHAM='META_ELNO'),
-                             _F(TOUT='OUI',
                                 EVOL=TEMPE,
                                 VALE_REF=700.,
                                 NOM_VARC='TEMP',
@@ -139,52 +123,54 @@ CHR_TRAC=AFFE_CHAR_MECA(       MODELE=MO,
                               FACE_IMPO=_F(  MAILLE = 'MA2',  DY = 1.)
                           )
 
-VL=STAT_NON_LINE(
-                            MODELE=MO,
-                        CHAM_MATER=CM2,EXCIT=(
-                             _F(
-                CHARGE = CHR_LIAI), _F(
-                CHARGE = CHR_TRAC,
-                FONC_MULT = F_CHAR,
-                TYPE_CHARGE = 'DIDI')),
-                         COMPORTEMENT=_F(
-                RELATION = 'META_LEMA_ANI',
-                DEFORMATION = 'GDEF_LOG',
-                RELATION_KIT = 'ZIRC',),
-                         INCREMENT=_F(
-                LIST_INST = L_INST,
-                NUME_INST_FIN = 1),
-                            NEWTON=_F(
-                MATRICE = 'TANGENTE',
-                REAC_ITER = 1),
-                       CONVERGENCE=_F(
-                RESI_GLOB_MAXI = 1.E-1,
-                ITER_GLOB_MAXI = 50),
+VL=STAT_NON_LINE(MODELE=MO,
+                CHAM_MATER=CM2,
+                EXCIT=(
+                    _F(CHARGE = CHR_LIAI),
+                    _F(CHARGE = CHR_TRAC,
+                        FONC_MULT = F_CHAR,
+                        TYPE_CHARGE = 'DIDI')),
+                COMPORTEMENT=_F(
+                        RELATION = 'META_LEMA_ANI',
+                        DEFORMATION = 'GDEF_LOG',
+                        RESI_INTE_RELA=1e-10,
+                        ),
+                INCREMENT=_F(
+                    LIST_INST = L_INST,
+                    NUME_INST_FIN = 1),
+                NEWTON=_F(
+                    MATRICE = 'TANGENTE',
+                    REAC_ITER = 1),
+                CONVERGENCE=_F(
+                    RESI_GLOB_MAXI = 1.E-1,
+                    ITER_GLOB_MAXI = 50
+                    ),
               )
 
 VL=STAT_NON_LINE( reuse=VL,
-                            MODELE=MO,
-                        CHAM_MATER=CM2,
-                         ETAT_INIT=_F(
-                EVOL_NOLI = VL,
-                NUME_ORDRE = 1),EXCIT=(
-                             _F(
-                CHARGE = CHR_LIAI), _F(
-                CHARGE = CHR_TRAC,
-                FONC_MULT = F_CHAR,
-                TYPE_CHARGE = 'DIDI')),
-                         COMPORTEMENT=_F(
-                RELATION = 'META_LEMA_ANI',
-                DEFORMATION = 'GDEF_LOG',
-                RELATION_KIT = 'ZIRC',),
-                         INCREMENT=_F(
-                LIST_INST = L_INST),
-                            NEWTON=_F(
-                MATRICE = 'TANGENTE',
-                REAC_ITER = 1),
-                       CONVERGENCE=_F(
-                RESI_GLOB_RELA = 1.E-6,
-                ITER_GLOB_MAXI = 50),
+                MODELE=MO,
+                CHAM_MATER=CM2,
+                ETAT_INIT=_F(
+                    EVOL_NOLI = VL,
+                    NUME_ORDRE = 1),
+                EXCIT=(_F(CHARGE = CHR_LIAI),
+                        _F(CHARGE = CHR_TRAC,
+                            FONC_MULT = F_CHAR,
+                            TYPE_CHARGE = 'DIDI'
+                            )
+                        ),
+                COMPORTEMENT=_F(
+                        RELATION = 'META_LEMA_ANI',
+                        DEFORMATION = 'GDEF_LOG',
+                        RESI_INTE_RELA=1e-10,
+
+                ),
+                INCREMENT=_F(LIST_INST = L_INST),
+                NEWTON=_F(MATRICE = 'TANGENTE',
+                        REAC_ITER = 1),
+                CONVERGENCE=_F(
+                        RESI_GLOB_RELA = 1.E-6,
+                        ITER_GLOB_MAXI = 50),
               )
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=501,
@@ -211,11 +197,23 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=501,
                    POINT=1,
                    RESULTAT=VL,
                    NOM_CHAM='VARI_ELGA',
-                   NOM_CMP='V1',
+                   NOM_CMP='V5',
                    VALE_CALC=1.5011182987469,
                    VALE_REFE=1.4984004816205,
                    PRECISION=0.015,
                    MAILLE='MA1',),
+                _F(NUME_ORDRE=501,
+                   REFERENCE='AUTRE_ASTER',
+                   POINT=1,
+                   RESULTAT=VL,
+                   NOM_CHAM='VARI_ELGA',
+                   NOM_CMP='V6',
+                   VALE_CALC=0.0,
+                   VALE_REFE=0.0,
+                   ORDRE_GRANDEUR = 1.0e-10,
+                   MAILLE='MA1',
+
+                   ),
                 ),
           )
 
