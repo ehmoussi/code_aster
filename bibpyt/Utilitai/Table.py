@@ -370,6 +370,23 @@ class Table(TableBase):
         self.nom = nom
         self.referenceToDataStructure = []
 
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            dict: Internal state.
+        """
+        return (self.rows, self.para, self.type, self.titr, self.nom)
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (dict): Internal state.
+        """
+        if isinstance(state, tuple) and len(state) == 5:
+            self.rows, self.para, self.type, self.titr, self.nom = state
+
     def copy(self):
         """Retourne une copie de la table.
         """
@@ -760,6 +777,24 @@ class Colonne(TableBase):
         self.para = column
         self.type = typ
         self.titr = ''
+
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            dict: Internal state.
+        """
+        return self.Table, self.para, self.type, self.titr
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (dict): Internal state.
+        """
+        if isinstance(state, tuple) and len(state) == 4:
+            self.Table, self.para, self.type, self.titr = state
+            self.rows = self.Table.rows
 
     def _extract(self, fun):
         """Construit une table avec les lignes de self.Table
