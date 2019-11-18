@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -119,10 +119,10 @@ FONCCB=DEFI_FONCTION(
                      PROL_GAUCHE='LINEAIRE',);
 
 
-LIST1=DEFI_LIST_REEL(DEBUT=0.,
+LISTR=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(JUSQU_A=1.0,
                                    NOMBRE=nbPasPress,),);
-
+LIST1=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=LISTR, SUBD_PAS=2))
 
 RES1=STAT_NON_LINE(MODELE=MODELE,
                    CHAM_MATER=CHMAT,
