@@ -19,6 +19,8 @@
 
 # person_in_charge: nicolas.sellenet at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
     1: _("""
@@ -385,7 +387,7 @@ Conseils :
 """),
 
     48 : _("""
-  Les chargements de pression sont interdits pour les modélisations 
+  Les chargements de pression sont interdits pour les modélisations
   GRILLE_EXCENTRE, GRILLE_MEMBRANE et MEMBRANE (en petites déformations).
 """),
 

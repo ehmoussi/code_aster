@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -173,7 +173,7 @@ Conseil :
     25: _("""
   Attention : %(i1)d mailles de type %(k1)s n'ont pas été projetées car la famille
   de points de Gauss sur le champ en question a une maille support 1D.
-  
+
   Il s'agit certainement d'éléments de joint 2D.
 """),
 
@@ -386,7 +386,7 @@ Erreur utilisateur :
   Mais on ne peut rien calculer, faute de données.
 
 Risques et conseils :
-  Il faut fournir en argument du mot clé CHARGE au moins une charge 
+  Il faut fournir en argument du mot clé CHARGE au moins une charge
   mécanique qui utilise le mot clé IMPE_FACE.
 """),
 
@@ -396,7 +396,7 @@ Erreur utilisateur :
   Mais on ne peut rien calculer, faute de données.
 
 Risques et conseils :
-  Il faut fournir en argument du mot clé CHARGE au moins une charge 
+  Il faut fournir en argument du mot clé CHARGE au moins une charge
   mécanique qui utilise le mot clé ONDE_FLUI.
 """),
 

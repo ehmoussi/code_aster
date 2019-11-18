@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -256,7 +256,7 @@ Contactez le support technique.
 
     57 : _("""
 
- L'appel a ne peut être effectue avec la valeur  %(k1)s 
+ L'appel a ne peut être effectue avec la valeur  %(k1)s
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),

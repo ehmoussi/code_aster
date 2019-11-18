@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -316,7 +316,7 @@ L'écart entre le pas de temps demandé (PAS_INST) et celui obtenu est supérieu
    Pas de temps du signal de sortie obtenu   : %(r1)f
    Pas de temps du signal de sortie souhaité : %(r2)f
    Écart relatif                             : %(r3).2f %%
-   
+
 """),
 
     52 : _("""
@@ -441,7 +441,7 @@ L'algorithme n'a pas converge après %(k1)s itérations , il reste %(k2)s points
 """),
 
     74 : _("""
-Les nappes fournit n'ont pas les mêmes valeurs d'amortissements 
+Les nappes fournit n'ont pas les mêmes valeurs d'amortissements
 """),
 
     75 : _("""

@@ -20,6 +20,8 @@
 # person_in_charge : ayaovi-dzifa.kudawoo at edf.fr
 
 
+from code_aster import _
+
 cata_msg = {
     1 : _("""
 La modélisation contenue dans RESULTAT est différente du MODELE déclaré.
@@ -28,5 +30,5 @@ La modélisation contenue dans RESULTAT est différente du MODELE déclaré.
     3 : _("""
 CALC_PRESSION n'est pas programmé sur des éléments de structures (poutre, plaque, coque, tuyau, poutre multifibre).
 """),
-    
+
 }

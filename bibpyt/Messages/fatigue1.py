@@ -17,12 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
     1: _("""
  Aucun élément du modèle ne sait calculer l'option
- de fatigue multiaxiale, 
+ de fatigue multiaxiale,
  Il se peut que la modélisation affectée au groupe de mailles
  sur lequel vous faites un calcul de fatigue ne soit pas "3D".
 

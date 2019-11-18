@@ -118,7 +118,7 @@ class Starter(ExecuteCommand):
         if keywords.get('LANG'):
             from ..Utilities.i18n import localization
             from ..Cata.Syntax import tr
-            translation = localization.install(keywords['LANG'])
+            translation = localization.translation(keywords['LANG'])
             tr.set_translator(translation.gettext)
 
         if keywords.get('IGNORE_ALARM'):
@@ -176,6 +176,17 @@ def init(*argv, **kwargs):
     if kwargs.get('debug'):
         ExecutionParameter().enable(Options.Debug)
     kwargs.pop('debug', None)
+
+    if kwargs.get('ptvsd'):
+        import ptvsd
+        print('Waiting for debugger attach...'),
+        ptvsd.enable_attach(address=('127.0.0.1', kwargs.get('ptvsd', 3000)))
+        ptvsd.wait_for_attach()
+        ptvsd.break_into_debugger()
+        # add 10 hours for debugging
+        tpmax = ExecutionParameter().get_option("tpmax")
+        ExecutionParameter().set_option("tpmax", tpmax + 36000)
+    kwargs.pop('ptvsd', None)
 
     if ExecutionStarter.params.option & Options.Continue:
         Restarter.run_with_argv(**kwargs)

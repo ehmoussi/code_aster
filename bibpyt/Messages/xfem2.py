@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -120,7 +120,7 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
     30 : _("""
      Le modèle de visualisation (mot-clé MODELE_VISU) utilisé est un
      modèle X-FEM.
-     
+
      Risque & Conseil:
      Veuillez créer un modèle FEM sur un maillage de visualisation fissuré
      par l'utilisation des commandes POST_MAIL_XFEM puis AFFE_MODELE

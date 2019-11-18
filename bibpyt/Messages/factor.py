@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -41,17 +41,17 @@ ne seront alors pas détectés. Vous risquer donc de résoudre un problème diff
 
 D'autre part, certains algorithmes peuvent alors produire des résultats incorrects si il n'existe pas d'autres garde-fous
 algorithmiques ou si ceux-ci sont débranchés. Parmi ces garde-fous il y'a, par exemple, les paramètres:
-    * RESI_RELA du bloc SOLVEUR si METHODE='MUMPS'(pour tous les opérateurs), 
+    * RESI_RELA du bloc SOLVEUR si METHODE='MUMPS'(pour tous les opérateurs),
     * RESI_GLOB_RELA du bloc CONVERGENCE (pour les opérateurs STAT/DYNA_NON_LINE)...
 Conseils:
    * Vérifiez votre mise en données (conditions limites, coefficients matériaux...) ou votre maillage (mailles étirées)
-     afin de bien vérifier qu'elle est licite et qu'elle correspond à ce que vous souhaitez. 
+     afin de bien vérifier qu'elle est licite et qu'elle correspond à ce que vous souhaitez.
    * Assurez-vous qu'au moins un autre critère d'arrêt reste fonctionnel (avec une valeur raisonnable !) afin d'assurer une
      qualité minimale à la solution.
 
 Remarque:
    * Pour plus d'informations sur ce sujet on pourra lire la notice U2.08.03 dédiée aux solveurs linéaires.
- 
+
 """),
 
     10: _("""

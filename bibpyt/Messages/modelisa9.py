@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster import _
+
 cata_msg = {
     1 : _("""
 Erreur utilisateur dans la commande CREA_CHAMP / EXTR / TABLE :
@@ -58,7 +60,7 @@ Alarme de programmation :
    On utilise le premier matériau de la liste affectée sur la maille.
 
 Risques et conseils :
-   Le comportement du code est dangereux car les résultats dépendent de l'ordre  
+   Le comportement du code est dangereux car les résultats dépendent de l'ordre
    des matériaux affectés dans la commande AFFE_MATERIAU.
    Il faut sans doute émettre une demande de correction du code.
 """),
@@ -70,7 +72,7 @@ Alarme de programmation :
    On utilise le premier matériau de la liste affectée sur la maille.
 
 Risques et conseils :
-   Le comportement du code est dangereux car les résultats dépendent de l'ordre  
+   Le comportement du code est dangereux car les résultats dépendent de l'ordre
    des matériaux affectés dans la commande AFFE_MATERIAU.
    Il faut sans doute émettre une demande de correction du code.
 """),
@@ -395,7 +397,7 @@ Erreur Europlexus
 
     97 : _("""
 Erreur Europlexus
-   Données incorrectes. Les dimensions des objets ne sont pas cohérentes 
+   Données incorrectes. Les dimensions des objets ne sont pas cohérentes
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),

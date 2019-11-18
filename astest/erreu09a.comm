@@ -105,11 +105,11 @@ try:
 except ConvergenceError as err:
    is_ok = 1
    print("Exception NonConvergence interceptee")
-   print("Raison : " + str(err.valk))
+   print("Raison : " + str(err.message))
 
 except AsterError as err:
    print("Exception error interceptee")
-   print("Raison : " + str(err.valk))
+   print("Raison : " + str(err.message))
 
 print(sep)
 
@@ -138,16 +138,16 @@ try:
 
 except SolverError as err:
    print("Exception BandeFrequenceVide interceptee")
-   print("Raison : " + str(err.valk))
+   print("Raison : " + str(err.message))
 
 except IntegrationError as err:
    is_ok = 1
    print("Exception EchecComportement interceptee")
-   print("Raison : " + str(err.valk))
+   print("Raison : " + str(err.message))
 
 except AsterError as err:
    print("Exception error interceptee")
-   print("Raison : " + str(err.valk))
+   print("Raison : " + str(err.message))
 
 print(sep)
 
@@ -178,7 +178,7 @@ prev=onFatalError()
 print(fmt % prev)
 
 onFatalError('EXCEPTION')
-print(fmt % aster.onFatalError())
+print(fmt % onFatalError())
 try:
     ma=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=999)   # unite invalide
 except AsterError as err:
@@ -189,7 +189,7 @@ except AsterError as err:
 
 # on remet dans l'etat initial
 onFatalError(prev)
-print(fmt % aster.onFatalError())
+print(fmt % onFatalError())
 print(sep)
 
 # TEST_RESU

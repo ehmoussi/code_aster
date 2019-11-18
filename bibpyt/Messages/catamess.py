@@ -20,6 +20,8 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 # ce catalogue est réservé à Utmess !
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""
@@ -60,11 +62,11 @@ Appels récursifs de messages d'erreur ou d'alarme.
 """),
 
     69: _("""
-  Destruction du concept '%(k1)s'.
+  Destruction du concept '%(k1)s' suite à l'erreur précédente.
 """),
 
     70: _("""
-  Validation du concept '%(k1)s'.
+  Validation du concept '%(k1)s' (accessible si la commande est réentrante).
 """),
 
     87: _("""

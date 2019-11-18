@@ -27,7 +27,7 @@ Python functions.
 from libaster import *
 
 # ensure DataStructure is extended first
-from .datastructure_ext import DataStructure
+from .datastructure_ext import DataStructure, OnlyParallelObject
 
 # extend DataStructures using metaclasses
 from .acousticsload_ext import AcousticsLoad
@@ -69,13 +69,24 @@ from .transientgeneralizedresultscontainer_ext import TransientGeneralizedResult
 from .xfemcrack_ext import XfemCrack
 
 
+# Define unusable objects
+try:
+    ParallelMesh
+except NameError:
+    class ParallelMesh(OnlyParallelObject):
+        pass
+try:
+    PartialMesh
+except NameError:
+    class PartialMesh(OnlyParallelObject):
+        pass
 try:
     ParallelMechanicalLoad
 except NameError:
-    class ParallelMechanicalLoad(object):
+    class ParallelMechanicalLoad(OnlyParallelObject):
         pass
 try:
     ParallelDOFNumbering
 except NameError:
-    class ParallelDOFNumbering(object):
+    class ParallelDOFNumbering(OnlyParallelObject):
         pass

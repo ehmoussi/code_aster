@@ -20,6 +20,8 @@
 # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 
 
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""

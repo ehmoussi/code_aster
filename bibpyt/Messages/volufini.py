@@ -19,6 +19,8 @@
 
 # person_in_charge: sylvie.granet at edf.fr
 
+from code_aster import _
+
 cata_msg = {
 
     2 : _("""

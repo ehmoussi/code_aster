@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
     2: _("""
@@ -75,7 +75,7 @@ Veuillez indiquer les mots-clés R_INF et R_SUP (ou R_INF_FO et R_SUP_FO).
 
     8: _("""
 Pour une modélisation 2D, le front de fissure doit être défini par un
-groupe contenant un noeud (mot-clé GROUP_NO). Le mot clé GROUP_MA 
+groupe contenant un noeud (mot-clé GROUP_NO). Le mot clé GROUP_MA
 est réservé aux modélisations 3D.
 """),
 

@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
     1: _("""
@@ -35,8 +35,8 @@ CALC_PRECONT ne peut pas traiter ce type de cas
 """),
 
     4: _("""
-La liste d’instant fournie n’a pas permis d’identifier l’instant initial et 
-l’instant final de la mise en précontrainte. 
+La liste d’instant fournie n’a pas permis d’identifier l’instant initial et
+l’instant final de la mise en précontrainte.
 
 Si vous avez renseigné l'opérande INST_INIT du mot-clé facteur INCREMENT, alors
 cette valeur est prise en compte comme instant initial.

@@ -17,9 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 # Pour la méthode de subdivision
+
+from code_aster import _
 
 cata_msg = {
 

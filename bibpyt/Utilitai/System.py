@@ -33,6 +33,8 @@ import re
 import io
 import tempfile
 
+from code_aster import _
+
 
 def _exitcode(status, default=0):
     """

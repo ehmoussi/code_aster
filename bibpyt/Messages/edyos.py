@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 
 #
 #  messages d'erreur pour interface Aster/edyos
@@ -33,6 +31,8 @@
 #
 #    Les numéros des erreurs de ce script correspondent aux numéros de la
 #    référence bibliographique
+from code_aster import _
+
 cata_msg = {
 
     1 : _("""

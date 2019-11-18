@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+from code_aster import _
 
 cata_msg = {
 
@@ -56,15 +56,15 @@ Erreur utilisateur :
 """),
 
     8 : _("""
- L'opération correspondant à l'occurrence numéro %(i4)d de CHAM_UTIL n'a pas pu être 
+ L'opération correspondant à l'occurrence numéro %(i4)d de CHAM_UTIL n'a pas pu être
  effectuée sur certaines mailles pour le numéro d'ordre %(i1)d.
-    - nombre de mailles affectées : %(i2)d 
-    - nombre de mailles fournies  : %(i3)d 
+    - nombre de mailles affectées : %(i2)d
+    - nombre de mailles fournies  : %(i3)d
 
- Conseils : 
+ Conseils :
 
  Utilisez le mot-clé GROUP_MA pour restreindre le calcul aux mailles concernées.
- Si c'est déjà le cas, adaptez les groupes fournis.  
+ Si c'est déjà le cas, adaptez les groupes fournis.
 """),
 
     9 : _("""
@@ -73,15 +73,15 @@ Erreur utilisateur :
 """),
 
    10 : _("""
- L'opération correspondant à l'occurrence numéro %(i4)d de CHAM_UTIL n'a pas pu être 
+ L'opération correspondant à l'occurrence numéro %(i4)d de CHAM_UTIL n'a pas pu être
  effectuée sur certains noeuds pour le numéro d'ordre %(i1)d.
-    - nombre de noeuds affectées : %(i2)d 
-    - nombre de noeuds fournies  : %(i3)d 
+    - nombre de noeuds affectées : %(i2)d
+    - nombre de noeuds fournies  : %(i3)d
 
- Conseils : 
+ Conseils :
 
  Utilisez le mot-clé GROUP_MA pour restreindre le calcul aux mailles concernées.
- Si c'est déjà le cas, adaptez les groupes fournis.  
+ Si c'est déjà le cas, adaptez les groupes fournis.
 """),
 
     11 : _("""
@@ -121,7 +121,7 @@ Conseil:
     15 : _("""
  Le calcul demandé dans l'occurrence numéro %(i2)d de CHAM_UTIL a échoué.
  Aucune maille ou aucun noeud fourni ne sait traiter le calcul.
- 
+
  Conseils :
  Si vous avez restreint le calcul à des groupes de mailles ou de noeuds, vérifiez l'affectation de ces entités,
  sinon le calcul n'est pas possible sur ce modèle.
@@ -151,7 +151,7 @@ Erreur utilisateur :
 """),
 
     21 : _("""
- Le modèle contient plusieurs 'CHAM_MATER'. Aucun n'a été stocké dans le concept résultat. 
+ Le modèle contient plusieurs 'CHAM_MATER'. Aucun n'a été stocké dans le concept résultat.
   aucun post-traitement lié à CHAM_MATER ne sera possible
 """),
 
