@@ -167,7 +167,7 @@ class Serializer(object):
                     objList.append(name)
                 except Exception as exc:
                     logger.warn("object can not be pickled: {0}".format(name))
-                    logger.debug(str(exc))
+                    logger.debug(traceback.format_exc())
                     continue
                 if isinstance(obj, DataStructure):
                     saved.append(name)
@@ -402,7 +402,7 @@ class AsterPickler(pickle.Pickler):
         Returns:
             str: Identifier containing " mark, class name, object name".
         """
-        if hasattr(obj, "getName"):
+        if isinstance(obj, DataStructure):
             class_ = type(obj).__name__
             pers_id = "DataStructure", class_, obj.getName().strip()
             logger.debug("persistent id: {0}".format(pers_id))
