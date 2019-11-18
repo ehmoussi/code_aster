@@ -22,7 +22,7 @@
 #
 # Code_Aster is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # Code_Aster is distributed in the hope that it will be useful,
@@ -46,7 +46,7 @@ class ModeNonLine(ExecuteCommand):
 
     def create_result(self, keywords):
         """Initialize the result.
-        
+
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
@@ -65,9 +65,9 @@ class ModeNonLine(ExecuteCommand):
         nrow=self._result.get_nrow()
         for irow in range(nrow):
             nom_obj=self._result["NOM_OBJET",irow+1]
-            mode_meca=self._result.getMechanicalModeContainer(nom_obj)           
+            mode_meca=self._result.getMechanicalModeContainer(nom_obj)
             mode_meca.setMassMatrix(keywords['MATR_MASS'])
             mode_meca.setStiffnessMatrix(keywords['MATR_RIGI'])
-            
+
 
 MODE_NON_LINE = ModeNonLine.run
