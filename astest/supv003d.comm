@@ -52,7 +52,7 @@ TUP = (10., 11., 12., 13.)
 
 I02 = DEFI_LIST_ENTI(VALE=UN)
 I03 = DEFI_LIST_ENTI(VALE=(5, 6, 7))
-vale = aster.getvectjev(I02.getName() + ".VALE")
+vale = aster.getvectjev(I02.getName() + "           .VALE")
 assert vale == (1, ), vale
 
 FO3 = DEFI_FONCTION(NOM_PARA='X',
