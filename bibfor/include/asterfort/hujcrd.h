@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,10 @@
 !
 !
 interface
-    subroutine hujcrd(k, mater, sig, vin, seuild)
-        integer :: k
-        real(kind=8) :: mater(22, 2)
-        real(kind=8) :: sig(6)
-        real(kind=8) :: vin(*)
-        real(kind=8) :: seuild
+    subroutine hujcrd(k, mater, sig, vin, seuild, iret)
+        integer, intent(in) :: k
+        real(kind=8), intent(in) :: mater(22, 2), sig(6), vin(*)
+        real(kind=8), intent(out) :: seuild
+        integer, intent(out) :: iret
     end subroutine hujcrd
 end interface

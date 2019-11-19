@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,22 +16,25 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine hujcrd(k, mater, sig, vin, seuild)
+subroutine hujcrd(k, mater, sig, vin, seuild, iret)
     implicit none
 !    HUJEUX:  SEUIL DU MECANISME DEVIATOIRE K(=1 A 3)
 !             FD(K) = QII(K) + M*PK*RK*( 1 - B*LOG(PK/PC) )
 !    ---------------------------------------------------------------
-!    IN  K      : PLAN DE PROJECTION (K = 1 A 3)
-!        SIG    :  CONTRAINTE
-!        VIN    :  VARIABLES INTERNES = ( Q, R, X )
-!    OUT SEUILD :  SEUIL DU MECANISME DEVIATOIRE K
+!    IN  k      : Plan de projection (k = 1 a 3)
+!        sig    : Contrainte
+!        vin    : Variables internes = ( q, r, x )
+!    OUT seuild : Seuil du mecanisme deviatoire k
+!        iret   : =0 si 0, 1 en cas d'erreur.
 !    ---------------------------------------------------------------
 #include "asterf_types.h"
 #include "asterfort/hujprj.h"
-#include "asterfort/infniv.h"
-    integer :: k, ndt, ndi
-    integer :: ifm, niv
-    real(kind=8) :: mater(22, 2), sig(6), vin(*), seuild
+    integer, intent(in) :: k
+    real(kind=8), intent(in) :: mater(22, 2), sig(6), vin(*)
+    real(kind=8), intent(out) :: seuild
+    integer, intent(out) :: iret
+
+    integer :: ndt, ndi, ifm
     real(kind=8) :: un, r, epsvp, pcr, pa, tole
     real(kind=8) :: degr, beta, b, m, phi, pcref, ptrac
     real(kind=8) :: sigd(3), p, q
@@ -44,7 +47,7 @@ subroutine hujcrd(k, mater, sig, vin, seuild)
     common /tdim/   ndt, ndi
     common /meshuj/ debug
 !
-    call infniv(ifm, niv)
+    iret = 0
 !
 ! ==================================================================
 ! --- VARIABLES INTERNES -------------------------------------------
@@ -60,21 +63,24 @@ subroutine hujcrd(k, mater, sig, vin, seuild)
     phi = mater(5, 2)
     pcref = mater(7, 2)
     pa = mater(8, 2)
+    if (-beta*epsvp .gt. 700.d0) then
+        iret = 1
+        goto 999
+    endif
     pcr = pcref*exp(-beta*epsvp)
     ptrac = mater(21,2)
     m = sin(degr*phi)
-!
 !
 ! ==================================================================
 ! --- PROJECTION DANS LE PLAN DEVIATEUR K ------------------------
 ! ==================================================================
     call hujprj(k, sig, sigd, p, q)
 !
-    p =p -ptrac
+    p = p - ptrac
 !
     if ((p/pa) .le. tole) then
-        if (debug) write (ifm,'(A)') 'HUJCRD :: LOG(P/PA) NON DEFINI'
-        seuild =-1.d0
+        if (debug) write (6, '(A)') 'HUJCRD :: LOG(P/PA) NON DEFINI'
+        seuild = -1.d0
         goto 999
     endif
 !

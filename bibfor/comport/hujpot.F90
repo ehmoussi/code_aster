@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -359,7 +359,10 @@ subroutine hujpot(mod, mater, vind, depsh, sigd,&
             else
                 if (actif .ge. (-r8prem())) then
                     if (indi(i) .lt. 4) then
-                        call hujcrd(i, mater, sige, vind, seuil)
+                        call hujcrd(i, mater, sige, vind, seuil, iret)
+                        if(iret .ne. 0) then
+                            goto 999
+                        endif
                     else
                         call hujcri(mater, sige, vind, seuil)
                     endif
