@@ -124,8 +124,16 @@ class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
      * @brief Get the stiffness matrix
      * @param matr GeneralizedAssemblyMatrixDoublePtr
      */
-    GeneralizedAssemblyMatrixDoublePtr getStiffnessMatrix( void ) const {
+    GeneralizedAssemblyMatrixDoublePtr getDoubleGeneralizedStiffnessMatrix( void ) const {
         return _rigidityDoubleMatrix;
+    };
+
+    /**
+     * @brief Get the stiffness matrix
+     * @param matr GeneralizedAssemblyMatrixComplexPtr
+     */
+    GeneralizedAssemblyMatrixComplexPtr getComplexGeneralizedStiffnessMatrix( void ) const {
+        return _rigidityComplexMatrix;
     };
 
     bool update() { return ResultsContainerInstance::update(); };

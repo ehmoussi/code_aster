@@ -50,7 +50,7 @@ mail1=LIRE_MAILLAGE( );
 mail=CREA_MAILLAGE(MAILLAGE=mail1,
                     CREA_POI1 =(
                                 _F(NOM_GROUP_MA = 'PLATE',
-                                   GROUP_MA = ('FOND_RG','FOND_RD',)),  
+                                   GROUP_MA = ('FOND_RG','FOND_RD',)),
                                  ),
                     );
 
@@ -118,7 +118,7 @@ ELEM=AFFE_CARA_ELEM(MODELE=MODELE,
                                     REPERE='GLOBAL',
                                     CARA='M_T_D_N',
                                     VALE=(0.E10,)),
-                            ),        
+                            ),
                     );
 
 ASSEMBLAGE(MODELE=MODELE,
@@ -242,7 +242,7 @@ CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
 CHA_ON2=CREA_RESU(OPERATION='CONV_RESU',
                   TYPE_RESU='EVOL_CHAR',
                   CONV_RESU=_F(
-                          MATR_RIGI=RIGI, 
+                          MATR_RIGI=RIGI,
                           NOM_CHAM_INIT='DEPL',
                           COEF=1.0,
                           PRECISION=1.E-6,CRITERE='RELATIF',
@@ -441,7 +441,7 @@ BlancP1=DYNA_VIBRA(BASE_CALCUL='PHYS',
                   SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                   INCREMENT=_F(LIST_INST=LINST,),
                   EXCIT_RESU=(
-                              _F( RESULTAT = CHA_ONB,COEF_MULT= 1.0 ,),               
+                              _F( RESULTAT = CHA_ONB,COEF_MULT= 1.0 ,),
                              ),
                   );
 
@@ -602,7 +602,7 @@ TEST_RESU(
                       VALE_CALC=0.924694598542,
                       ),
                   ),
-           );     
+           );
 
 IMPR_RESU(FORMAT="RESULTAT",UNITE=8,
           RESU=_F(CHAM_GD=maxS1,
@@ -637,13 +637,13 @@ CHAMPMA0=AFFE_MATERIAU(    MAILLAGE=MAIL0,
                           MATER = sol2),
                                       )
                            )
-                           
+
 ONDES0=AFFE_CHAR_MECA_F(  MODELE=MODELE0,
 
               ONDE_PLANE=_F( DIRECTION = (0., 1., 0.), TYPE_ONDE = 'S',
                  FONC_SIGNAL=d_sinus,
                  DEPL_IMPO=sinus1,
-                 DIST=-200., 
+                 DIST=-200.,
                  DIST_REFLECHI=0.,
                  GROUP_MA= ('BAS','LATE',),),
                           );
@@ -657,7 +657,7 @@ MASS_ELE=CALC_MATR_ELEM(    MODELE=MODELE0,
                               OPTION='MASS_MECA',
                               CHAM_MATER=CHAMPMA0,
                             )
-                            
+
 AMOR_ELE=CALC_MATR_ELEM(    MODELE=MODELE0,
                               OPTION='AMOR_MECA',
                               CHAM_MATER=CHAMPMA0,
@@ -672,7 +672,7 @@ NUMEDDL0=NUME_DDL(    MATR_RIGI=RIGI_ELE,   )
 RIGI0=ASSE_MATRICE(    MATR_ELEM=RIGI_ELE,
                             NUME_DDL=NUMEDDL0
                           )
-                          
+
 
 AMOR0=ASSE_MATRICE(    MATR_ELEM=AMOR_ELE,
                             NUME_DDL=NUMEDDL0
@@ -740,12 +740,12 @@ AMOR_ELB=CALC_MATR_ELEM(    MODELE=MODELE,
                               RIGI_MECA=RIGI_ELB,
                               MASS_MECA=MASS_ELB,
                             )
-                            
+
 
 AMORTB=ASSE_MATRICE(    MATR_ELEM=AMOR_ELB,
                             NUME_DDL=NUMEDDL
                           )
-                       
+
 RIGIDITB=ASSE_MATRICE(    MATR_ELEM=RIGI_ELB,
                             NUME_DDL=NUMEDDL
                           )
@@ -928,7 +928,7 @@ ONDES0B=AFFE_CHAR_MECA_F(  MODELE=MODELE0,
               ONDE_PLANE=_F( DIRECTION = (0., 1., 0.), TYPE_ONDE = 'S',
                  FONC_SIGNAL=i_sinus,
                  DEPL_IMPO=i2sinus,
-                 DIST=-200., 
+                 DIST=-200.,
                  DIST_REFLECHI=0.,
                  GROUP_MA= ('BAS','LATE',),),
                           );
@@ -960,9 +960,9 @@ DYNA1=LIRE_RESU(FORMAT='MED',
                   UNITE=81,
                   FORMAT_MED=(
                               _F(NOM_CHAM='FORC_NODA',
-                                NOM_CHAM_MED='00000715FORC_NODA',),
+                                NOM_CHAM_MED=DYNA0B.getName() + 'FORC_NODA',),
                               _F(NOM_CHAM='REAC_NODA',
-                                NOM_CHAM_MED='00000715REAC_NODA',),
+                                NOM_CHAM_MED=DYNA0B.getName() + 'REAC_NODA',),
                                 ),
                   TYPE_RESU='DYNA_TRANS',
                   TOUT_ORDRE='OUI',
@@ -1035,7 +1035,7 @@ CHAONCD1=CREA_RESU(OPERATION='CONV_CHAR',
 CHAONCD2=CREA_RESU(OPERATION='CONV_RESU',
                   TYPE_RESU='EVOL_CHAR',
                   CONV_RESU=_F(
-                          MATR_RIGI=RIGIDITB, 
+                          MATR_RIGI=RIGIDITB,
                           NOM_CHAM_INIT='DEPL',
                           COEF=1.0,
                           PRECISION=1.E-6,CRITERE='RELATIF',
@@ -1176,7 +1176,7 @@ ELEM2=AFFE_CARA_ELEM(MODELE=MODELE,
                                     REPERE='GLOBAL',
                                     CARA='M_T_D_N',
                                     VALE=(1.E10,)),
-                            ),        
+                            ),
                     );
 
 CHMAT2=AFFE_MATERIAU(MAILLAGE=mail,

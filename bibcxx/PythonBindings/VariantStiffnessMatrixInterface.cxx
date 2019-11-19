@@ -35,4 +35,8 @@ void exportStiffnessMatrixVariantToPython()
     implicitly_convertible< AssemblyMatrixDisplacementComplexPtr, MatrixVariant >();
     implicitly_convertible< AssemblyMatrixTemperatureDoublePtr, MatrixVariant >();
     implicitly_convertible< AssemblyMatrixPressureDoublePtr, MatrixVariant >();
+
+    to_python_converter< GeneralizedMatrixVariant, variant_to_object >();
+    implicitly_convertible< GeneralizedAssemblyMatrixDoublePtr, GeneralizedMatrixVariant >();
+    implicitly_convertible< GeneralizedAssemblyMatrixComplexPtr, GeneralizedMatrixVariant >();
 };
