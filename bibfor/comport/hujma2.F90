@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,6 +43,7 @@ subroutine hujma2(fami, kpg, ksp, mod, imat,&
 !           NR     :  NB DE COMPOSANTES SYSTEME NL
 !           NVI    :  NB DE VARIABLES INTERNES
 !       ----------------------------------------------------------------
+#include "asterfort/assert.h"
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
 #include "asterc/r8vide.h"
@@ -63,7 +64,7 @@ subroutine hujma2(fami, kpg, ksp, mod, imat,&
     real(kind=8) :: zero, bid66(6, 6), seuil, tin(3), piso, q
     real(kind=8) :: ptrac, b, phi, m, pc0, degr, d, un, trois
     real(kind=8) :: matert(22, 2)
-    integer :: i, j
+    integer :: i, j, iret
     parameter   ( zero  = 0.d0 )
     parameter   ( un    = 1.d0 )
     parameter   ( trois = 3.d0 )
@@ -119,7 +120,8 @@ subroutine hujma2(fami, kpg, ksp, mod, imat,&
                 vind(i) = materf(13,2)
             endif
 !
-            call hujcrd(i, matert, sigd, vind, seuil)
+            call hujcrd(i, matert, sigd, vind, seuil, iret)
+            ASSERT(iret .eq. 0)
 !
 ! --- SI LE SEUIL EST DESEQUILIBRE A L'ETAT INITIAL
 !     ON EQUILIBRE LE SEUIL EN CALCULANT LA VALEUR DE R
