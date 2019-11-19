@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -97,9 +97,13 @@ real(kind=8), intent(out) :: stran(neps), dstran(neps)
         ASSERT(neps .ne. 9)
         call dcopy(neps, deps, 1, dstran, 1)
         call dcopy(neps, epsm, 1, stran, 1)
-        if ((neps .eq. 6) .or. (neps .eq. 4)) then
+        if (neps .eq. 6) then
             call dscal(3, rac2, dstran(4), 1) 
             call dscal(3, rac2, stran(4), 1)
+        endif
+        if (neps .eq. 4) then
+            call dscal(1, rac2, dstran(4), 1) 
+            call dscal(1, rac2, stran(4), 1)
         endif
     endif
 !
