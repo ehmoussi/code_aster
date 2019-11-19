@@ -36,6 +36,16 @@ class ExtendedDataStructure(object):
     ptr_class_sdj = None
     ptr_sdj = None
 
+    orig_getName = DataStructure.getName
+
+    def getName(self):
+        """
+            Overload standart getName() function to eliminate whitespace at both ends of the string.
+
+            note: the c++ constructor adds automaticaly the whitespace when it creates a new object from the result name of this overloaded function getName.
+        """
+        return self.orig_getName().strip()
+
     def __getinitargs__(self):
         """Returns the argument required to reinitialize a derivated
         DataStructure object during unpickling.

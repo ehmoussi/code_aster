@@ -69,7 +69,7 @@ encas14=AFFE_CHAR_MECA(MODELE=mo,
                                    DRX=0.,
                                    DRY=0.,
                                    DRZ=0.,),);
- 
+
 from sdnl142a import *
 
 FXP = FORMULE(VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,1,cinelin,projvect,dragquad)',
@@ -171,7 +171,7 @@ dyna=DYNA_NON_LINE(MODELE=mo,
                                 GROUP_MA='CABLE'),
                                 _F(RELATION='ELAS',
                                 DEFORMATION='PETIT',
-                                GROUP_MA=('R1','R2')),                          
+                                GROUP_MA=('R1','R2')),
                                 ),
                    INCREMENT=_F(LIST_INST=temps,
                                 INST_FIN=tfin,),
@@ -179,7 +179,7 @@ dyna=DYNA_NON_LINE(MODELE=mo,
                                    FORMULATION='DEPLACEMENT',),
                    NEWTON=_F(REAC_ITER=2,),
                    CONVERGENCE=_F(ITER_GLOB_MAXI=100,),
-                   SOLVEUR    =_F(METHODE='LDLT',),                
+                   SOLVEUR    =_F(METHODE='LDLT',),
                                    );
 
 

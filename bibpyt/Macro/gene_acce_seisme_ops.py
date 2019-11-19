@@ -48,8 +48,6 @@ from Utilitai.signal_correlation_utils import (CALC_CORRE,
 
 def gene_acce_seisme_ops(self, **kwargs):
     """Corps de la macro GENE_ACCE_SEIMSE"""
-    self.set_icmd(1)
-    ier = 0
     # conteneur des paramètres du calcul
     params = GeneAcceParameters(**kwargs)
     if not params.seed:
@@ -352,15 +350,14 @@ class GeneratorSpectrum(Generator):
             elif  self.simu_params['TYPE_ITER'] == 'MOYENNE':
                 self.SRO_args.update({'TYPE_ITER' : 'SPEC_MOYENNE',})
 
-        import numpy
         spec_osci = self.method_params.get('SPEC_OSCI')
         l_freq_sro, sro_ref = spec_osci.Valeurs()
         ZPA = sro_ref[-1]
         F_MIN = l_freq_sro[0]
         if self.sampler.FREQ_COUP > l_freq_sro[-1]:
-            sro_ref.append(ZPA)
-#            l_freq_sro.append(FREQ_COUP)
-            l_freq_sro.append(self.sampler.FREQ_COUP)
+            sro_ref = NP.append(sro_ref,ZPA)
+            l_freq_sro= NP.append(l_freq_sro, self.sampler.FREQ_COUP)
+
         f_spec = t_fonction(l_freq_sro, sro_ref, para=self.para_sro)
         self.SRO_args.update({'FONC_SPEC': f_spec,
                               'FMIN': F_MIN,

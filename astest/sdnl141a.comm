@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
@@ -85,7 +86,7 @@ liai=AFFE_CHAR_MECA(MODELE=mo,
 
 from sdnl141a import *
 
-FZP = FORMULE(VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,3,cinelin,projvect,dragquad)',
+FZP = FORMULE(VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,uc,thetac,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,dir,cinelin,projvect,dragquad)',
               FP=FP,
               rhoeau=rhoeau,
               Cd1=Cd1,
@@ -94,9 +95,12 @@ FZP = FORMULE(VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,
               T=T,
               L=L,
               thetai=thetai,
+              uc = 0.0,
+              thetac = 0.0,
               proinf=proinf,
               depth=depth,
               lstrech=lstrech,
+              dir = 3,
               cinelin=cinelin,
               projvect=projvect,
               dragquad=dragquad,

@@ -21,7 +21,6 @@ def info_fonction_ops(self, INFO, **args):
     """
        Ecriture de la macro INFO_FONCTION
     """
-    ier = 0
     from Cata_Utils.t_fonction import t_fonction, t_fonction_c, t_nappe
     import math
     from code_aster.Cata.Syntax import _F
@@ -35,9 +34,6 @@ def info_fonction_ops(self, INFO, **args):
     IMPR_TABLE = self.get_cmd('IMPR_TABLE')
     CALC_FONCTION = self.get_cmd('CALC_FONCTION')
 
-    # Comptage commandes + déclaration concept sortant
-    self.set_icmd(1)
-    self.DeclareOut('C_out', self.sd)
 
     # type de traitement
 
