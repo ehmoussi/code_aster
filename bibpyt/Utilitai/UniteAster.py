@@ -19,6 +19,9 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
+import os
+import os.path as osp
+
 import aster
 from code_aster.Cata.Syntax import _F
 from code_aster.Cata.Commands import DEFI_FICHIER, INFO_EXEC_ASTER, DETRUIRE
@@ -86,15 +89,23 @@ class UniteAster:
         # print 'DEBUG infos[unit] = ', self.infos[unit]
         DETRUIRE(CONCEPT=_F(NOM=__tab), INFO=1)
 
-    def Libre(self, nom=None, action='RESERVER', ascii=True):
-        """Réserve/associe et retourne une unité libre en y associant, s'il est
-        fourni, le fichier 'nom'.
+    def Libre(self, nom=None, action='RESERVER', ascii=True, new=False):
+        """Get a free logical unit.
+
+        Assign it to the filename given by *nom* if provided.
+        Arguments:
+            action (str): 'RESERVER' to mark the unit as used, 'ASSOCIER' also
+                open the file.
+            new (bool): *True* means that this is a new file. The file is
+                removed if it exists. *False* means that the file may exist.
+            ascii (bool): If *True* the file is opened in text mode.
         """
         __tab = INFO_EXEC_ASTER(LISTE_INFO=('UNITE_LIBRE'))
         unit = __tab['UNITE_LIBRE', 1]
         DETRUIRE(CONCEPT=_F(NOM=__tab), INFO=1)
         if nom is None:
             nom = 'fort.' + str(unit)
+        nom = nom.strip()
 
         # Si la clé existe, c'est que le fichier n'était pas libre
         if unit in self.infos:
@@ -105,9 +116,12 @@ class UniteAster:
         opts = {}
         if action == 'ASSOCIER':
             opts['TYPE'] = "ASCII" if ascii else "BINARY"
-        DEFI_FICHIER(ACTION=action, UNITE=unit, FICHIER=nom.strip(), **opts)
+            if new and osp.exists(nom):
+                print("warning: remove existing file '{0}'".format(nom))
+                os.remove(nom)
+        DEFI_FICHIER(ACTION=action, UNITE=unit, FICHIER=nom, **opts)
         self.infos[unit] = {}
-        self.infos[unit]['nom'] = nom.strip()
+        self.infos[unit]['nom'] = nom
         self.infos[unit]['etat'] = 'R'
         self.infos[unit]['etat_init'] = 'F'
         return unit
