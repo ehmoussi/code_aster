@@ -398,7 +398,9 @@ subroutine nmssgr(  hexa,   shb6,   shb8, icoopg,&
 !      Glut \ End
 !
 !      Transforming Piola-Kirchhoff II stress to Cauchy stress
-       call pk2sig(3, fpl, detfpl, sigma, sigp(1,kpg), 1)
+        if (resi) then
+        call pk2sig(3, fpl, detfpl, sigma, sigp(1,kpg), 1)
+        endif
 !
 !      Glut \ Start
 !      Sigma terms have to be adjusted so as to comply with initial SHB code.
