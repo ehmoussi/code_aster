@@ -301,8 +301,8 @@ class MAIL_PY:
 
         UL = UniteAster()
         # Récupération d'une unité logique libre si besoin
-        if (unite is None):
-            unite = UL.Libre(action='ASSOCIER')
+        if unite is None:
+            unite = UL.Libre(action='ASSOCIER', new=True)
         fichier = UL.Nom(unite)
         # Bascule le fichier en F : ferme
         UL.Etat(unite, etat='F')

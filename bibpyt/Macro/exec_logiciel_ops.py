@@ -212,7 +212,7 @@ class ExecSalome( ExecMesher ):
         if len(self.args) != 1:
             UTMESS('F', 'EXECLOGICIEL0_1')
         self.fileOut = self.args[0]
-        self.uniteAster.Libre(action='ASSOCIER', nom=self.fileOut)
+        self.uniteAster.Libre(action='ASSOCIER', nom=self.fileOut, new=True)
         # start a SALOME session
         portFile = tempfile.NamedTemporaryFile(dir='.', suffix='.port').name
         self.prog = self.prog or aster_core.get_option('prog:salome')
@@ -241,7 +241,7 @@ class ExecGmsh( ExecMesher ):
         super(ExecGmsh, self).configure( kwargs )
         self.format = "MED"
         self.fileOut = tempfile.NamedTemporaryFile(dir='.', suffix='.med').name
-        self.uniteAster.Libre(action='ASSOCIER', nom=self.fileOut)
+        self.uniteAster.Libre(action='ASSOCIER', nom=self.fileOut, new=True)
         self.prog = self.prog or aster_core.get_option('prog:gmsh')
         self.args.extend( ['-3', '-format', 'med',
                            self.fileIn, '-o', self.fileOut] )
