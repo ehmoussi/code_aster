@@ -638,7 +638,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         if input == 'CL' :
             #__VITEX[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__ACCEX0[n], ))
             __VITEX[n] = CALC_FONCTION(COMB=_F(FONCTION=__VITEX0, COEF=1.0 ),
-                            LIST_PARA=__linst, 
+                            LIST_PARA=__linst,
                             PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',
                              );
         if input == 'RA' :
@@ -682,7 +682,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         __DG = [None] * (nbmat + 1)
 
         UL = UniteAster()
-        utabequ = UL.Libre(action='ASSOCIER')
+        utabequ = UL.Libre(action='ASSOCIER', new=True)
         IMPR_TABLE(TABLE=args['TABLE_GEQUI_GMAX'], UNITE=utabequ)
         IMPR_TABLE(TABLE=args['TABLE_AMOR_EQUI'], UNITE=utabequ)
 
@@ -982,6 +982,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
       UL = UniteAster()
       umail = UL.Libre(action='ASSOCIER', nom='dse.mail')
       __mail0=LIRE_MAILLAGE(UNITE=umail, FORMAT='ASTER');
+      UL.EtatInit()
       __mailla = CREA_MAILLAGE(MAILLAGE=__mail0,
                              CREA_POI1=(
                              _F(NOM_GROUP_MA='PCOL',
@@ -994,7 +995,6 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                           MAILLAGE=__mailla,
                           CREA_GROUP_NO=_F(GROUP_MA=('PLATE',),),
                            )
-      UL.EtatInit()
 
     # cas uniquement en 2D pour l'instant
     if ltranin == 'OUI' :
