@@ -234,12 +234,10 @@ class SUPERV:
             self.MESSAGE(
                 _("\n  Sortie immédiatement après la vérification de syntaxe.\n"))
             # markers for as_run status
-            for fname in ('fort.8', 'fort.9'):
-                with open(fname, 'ab') as f:
-                    f.write('\n'
-                                        '-- CODE_ASTER -- VERSION \n'
-                                        'only the syntax was checked\n'
-                                        '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".\n')
+            self.MESSAGE('\n'
+                         '-- CODE_ASTER -- VERSION \n'
+                         'only the syntax was checked\n'
+                         '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".\n')
             raise Interrupt(0)
 
     @jdc_required

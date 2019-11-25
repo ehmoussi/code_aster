@@ -19,23 +19,24 @@
 
 # person_in_charge: sofiane.hendili at edf.fr
 
-from .cata_comportement import LoiComportement
+from .cata_comportement import LoiComportementMFront
 
-loi = LoiComportement(
+loi = LoiComportementMFront(
     nom            = 'META_LEMA_ANI',
-    lc_type        = ('MECANIQUE',),
+    symbol_mfront  = 'astermeta_lema_ani',
+    lc_type        = None,
     doc            =   """Loi de comportement viscoplastique anisotrope prenant en compte la métallurgie,
-            pour le Zirconium uniquement"""              ,
-    num_lc         = 115,
-    nb_vari        = 5,
-    nom_vari       = ('EPSPEQ','INDIPLAS','ZIRCALPH','ZIRCALBE','ZIRCBETA'),
-    mc_mater       = ('ELAS_META','META_LEMA_ANI',),
+            pour le Zirconium uniquement R4.04.04 et R4.04.05"""              ,
+    num_lc         = 58,
+    nb_vari        = 0,
+    nom_vari       = None,
+    mc_mater       = None,
     modelisation   = ('3D','AXIS','D_PLAN',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP','GDEF_LOG',),
-    algo_inte      = ('NEWTON',),
-    type_matr_tang = ('PERTURBATION','VERIFICATION',),
+    algo_inte      = ('NEWTON_PERT',),
+    type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
-    exte_vari      = ('COORGA',),
-    deform_ldc     = ('OLD',),
+    exte_vari      = None,
+    deform_ldc     = ('TOTALE'),
 )
