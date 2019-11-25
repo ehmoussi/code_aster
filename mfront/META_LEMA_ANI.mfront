@@ -1,0 +1,363 @@
+@Parser    Implicit;
+@Behaviour META_LEMA_ANI;
+@Author    ERMES T6D;
+@Date      11/2019;
+@Description{
+ "Modèle de comportement élasto-visqueux ETA_LEMA_ANI avec prise en "
+ "compte de la métallurgie pour les tubes de gaine du crayon combustible."
+ "Documentation du Code Aster R4.04.04 pour la métallurgie et R4.04.05"
+ "pour la mécanique"
+ "http:www.code-aster.org"
+ "Modèle utilisé par le département MMC pour décrire les gaines de"
+ "crayon combustible ensituation d'APRP."
+}
+
+@Includes{
+#include<TFEL/Material/Hill.hxx>
+#include<TFEL/Material/Lame.hxx>
+}
+
+@OrthotropicBehaviour;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Theta 1.;
+@Epsilon 1.e-10;
+
+@MaterialProperty real young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+//Propriétés matériaux Mécaniques
+@MaterialProperty real F1_A;
+@MaterialProperty real F2_A;
+@MaterialProperty real C_A;
+
+@MaterialProperty real F1_M;
+@MaterialProperty real F2_M;
+@MaterialProperty real C_M;
+
+@MaterialProperty real F1_N;
+@MaterialProperty real F2_N;
+@MaterialProperty real C_N;
+
+@MaterialProperty real F1_Q;
+@MaterialProperty real F2_Q;
+@MaterialProperty real C_Q;
+
+@MaterialProperty real F_MRR_RR;
+@MaterialProperty real C_MRR_RR;
+@MaterialProperty real F_MTT_TT;
+@MaterialProperty real C_MTT_TT;
+@MaterialProperty real F_MZZ_ZZ;
+@MaterialProperty real C_MZZ_ZZ;
+@MaterialProperty real F_MRT_RT;
+@MaterialProperty real C_MRT_RT;
+@MaterialProperty real F_MRZ_RZ;
+@MaterialProperty real C_MRZ_RZ;
+@MaterialProperty real F_MTZ_TZ;
+@MaterialProperty real C_MTZ_TZ;
+
+//Propriétés matériaux Thermiques
+@MaterialProperty real F_ALPHA;
+@MaterialProperty real C_ALPHA;
+
+//Propriétés matériaux Métallurgiques
+@MaterialProperty real TDEQ; // en °C car donné par Aster
+@MaterialProperty real K;
+@MaterialProperty real NEQ; 
+@MaterialProperty real T1C; // en °C car donné par Aster
+@MaterialProperty real T2C; // en °C car donné par Aster
+@MaterialProperty real QSR_K;
+@MaterialProperty real AC;
+@MaterialProperty real M;
+@MaterialProperty real T1R; // en °C car donné par Aster
+@MaterialProperty real T2R; // en °C car donné par Aster
+@MaterialProperty real AR;
+@MaterialProperty real BR;
+
+//Variables d'état
+@StateVariable real p;      // Déforamtion viscoplastique equivalente 
+@StateVariable real Zb;     // Proportion en phase beta 
+@PhysicalBounds Zb in [0:1];
+@StateVariable real epsther; // Déformation thermique
+
+//Variables d'état auxilliaires
+@AuxiliaryStateVariable real seq; // contrainte équivalente de Hill
+seq.setGlossaryName("HillStress");
+@AuxiliaryStateVariable real svi[3]; //contrainte visqueuse par phase
+@AuxiliaryStateVariable real pch; // indicateur de changement de phase // real = 0 ou 1 mais en fait bool (type impossible à mettre en variable d'état)
+@AuxiliaryStateVariable real tdeq; // date correspondant à la température TDEQ défini ci-dessous
+@AuxiliaryStateVariable real tfeq; // date correspondant à la température TFEQ défini ci-dessous
+
+// Variables locales
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+@LocalVariable tfel::math::st2tost2<N,real> H;
+@LocalVariable real T_ ; // en °K
+@LocalVariable real invn[3], f[3], gamma[3], sv[3]  ;
+@LocalVariable real Zbeq; // proportion de phase beta à l'équilibre
+@LocalVariable real TDEQ_K; // en °K
+@LocalVariable real TFEQ; // température de fin de transformation à l'équilibre en °C
+@LocalVariable real TFEQ_K; // température de fin de transformation à l'équilibre en °K 
+
+@LocalVariable real a[3];
+@LocalVariable real m[3];
+@LocalVariable real pn[3];
+@LocalVariable real Q[3];
+@LocalVariable real M1[6];
+@LocalVariable real M3[6];
+
+// Variables d'état issues d'aster
+@ExternalStateVariable real TIME; //instant courant
+@ExternalStateVariable real TEMPREFE; // T_REF en °C car donné par Aster, température à laquelle il n'y a pas deformations thermiques
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if(smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor Hooke;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = Hooke*Je;
+  } else {
+    return false;
+  }
+}
+
+@InitLocalVariables{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+
+  // Définitition des proprités matériaux métallurgiques en °K
+  TDEQ_K= 273.0 + TDEQ;// en °K
+
+  //Température en milieu de pas de temps en °K (T aster en °C)
+  T_ = 273.0 + T + theta * dT ; // en °K
+
+  //recopie des caractéristiques matériaux dans des tableaux de travail
+  a = {F1_A,F2_A,C_A};
+  m = {F1_M,F2_M,C_M};
+  pn = {F1_N,F2_N,C_N};
+  Q = {F1_Q,F2_Q,C_Q};
+  
+  if(hypothesis==ModellingHypothesis::AXISYMMETRICAL){
+    //correspondance valable en cylindrique (r,z,theta) : valable uniquement en axis
+    M1={F_MRR_RR,F_MZZ_ZZ,F_MTT_TT,F_MRT_RT,F_MRZ_RZ,F_MTZ_TZ};
+    M3={C_MRR_RR,C_MZZ_ZZ,C_MTT_TT,C_MRT_RT,C_MRZ_RZ,C_MTZ_TZ};
+  } else {
+    M1={F_MRR_RR,F_MTT_TT,F_MZZ_ZZ,F_MRZ_RZ,F_MRT_RT,F_MTZ_TZ};
+    M3={C_MRR_RR,C_MTT_TT,C_MZZ_ZZ,C_MRZ_RZ,C_MRT_RT,C_MTZ_TZ};
+  }
+  
+  /* calcul de la proportion de phase beta à l'équilibre -> sert à déterminer
+   si on est à l'équilibre, en phase de refroidissement ou de chauffage */
+  TFEQ = TDEQ + (1.0/K)*pow(log(1.0/(1.0-0.99)),(1.0/NEQ)); //log = logarihme népérien
+  TFEQ_K = 273.0 + TFEQ ; // en °K
+
+  if (T_ > TFEQ_K) { // Zbeq doit être évalué en T_
+    Zbeq=1.0 ;
+  } else if (T_> TDEQ_K) {
+    Zbeq=1.0-exp(-pow(K*(T_-TDEQ_K),NEQ));
+  } else {
+    Zbeq=0.0 ; ;
+  }
+
+  //Calcul de Tc_K et Tr_K : Températures de début de changement de phase
+  if(pch == 0.0) { //Tc ou Tr ne sont à chercher que si on n'est pas en changement de phase
+    if (Zb == 0.0) { // cas Zb=0 : on cherche Tc pour initier un chauffage
+        if ((T+273.00 <TDEQ_K)&& (T_>=TDEQ_K)){
+            tdeq= TIME + (dt/dT)*(TDEQ_K - T_);
+        }
+        if (T>TFEQ){
+            Zb=1.0; // pour les cas où on commence à chaud
+        } else if(T_>TDEQ_K){
+            if (TIME != tdeq){
+                const real Vch = (T_-TDEQ_K)/(TIME-tdeq);
+                // température de début de changement de phase au chauffage en °C
+                const real Tc = (Vch < 0.1) ?  TDEQ : T1C*pow(Vch,T2C) ;
+                // température de début de changement de phase au chauffage en °K
+                const real Tc_K = 273.0 + Tc;
+                
+                if (T_>Tc_K){
+                    pch=1.0; 
+                } // else : on ne fait rien, pch reste à 0 pour que Zb reste à 0
+            }
+        }
+
+    }
+    
+    if (Zb == 1.0) { // cas Z=1 : on cherche Tr pour initier un refroidissement
+        if ((T+273.00 >TFEQ_K)&& (T_<=TFEQ_K)){ 
+            tfeq= TIME + (dt/dT)*(TFEQ_K - T_);
+        }
+        if (T_<TFEQ_K){
+            const real Vref = fabs(T_-TFEQ_K)/(TIME-tfeq) ;
+            // température de début de changement de phase au refroidissement en °C
+            const real Tr = (Vref < 0.1) ? TFEQ : T1R+T2R*log(Vref);
+            // température de début de changement de phase au refroidissement en °K
+            const real Tr_K = 273.0 + Tr; 
+            
+            if (T_<Tr_K){
+                pch=1.0; 
+                /* glute : si on commence avec Zb =1, la résolution de 
+                l'équation différentielle donnant Zb donne dZb = 0, donc Zb 
+                n'évolue pas. On force donc Zb à commencer à une autre valeur*/
+                Zb=0.75; 
+            }
+        }
+    }
+  }
+}
+
+@ComputeStress{
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+}
+
+@Integrator{
+  //PARTIE METALLURGIQUE - R4.04.04//
+  //BUT : calcul Zb proportion en phase bêta en milieu de pas de temps
+  real Zb_=Zb+theta*dZb ;
+  //calcul de Teq 
+  real TEQ; // température equivalente à un Zb donné, en °K
+  if (Zb_ >= 0.99) {
+    TEQ = TFEQ_K ;
+  } else {
+    TEQ = TDEQ_K + (1.0/K)*pow(log(1.0/(1.0-fabs(Zb_))),(1.0/NEQ)); //log = logarihme népérien -> abs nécessaire (mais pourquoi?!?)
+  }
+
+  if (pch==1.0){ // changement de phase en cour
+    if(Zb<Zbeq) { // Zb(-)>Zeq(+) : chauffage (cf §3.1 de R4.04.04)
+        if (Zb > 0.99) {
+            fZb= Zb_-1.0; // Zb_ vaut 1 
+        } else {
+            // équation au chauffage : eq 2.2-2 de R4.04.04
+            fZb = dZb - dt*AC*exp(-QSR_K/T_)*pow(fabs(T_-TEQ),M); 
+        }
+    } else if (Zb>Zbeq) {// refroidissement
+        if (Zb < 0.01) {
+            fZb= Zb_; // Zb_ vaut 0 
+        } else {
+            // équation au refroidissement : eq 2.3-2 de R4.04.04
+            fZb = dZb+dt*fabs(T_-TEQ)*exp(AR+BR*fabs(T_-TEQ))*Zb_*(1.0-Zb_);
+        }
+    }
+  }
+  //FIN PARTIE METALLURGIQUE//
+  
+  //PARTIE MECANIQUE - R4.04.05 //
+    //Calcul de la deformation thermique
+  real alpha_eq_p = (1-Zb_)*F_ALPHA+Zb_*C_ALPHA; // alpha equivalent en fin de pas de temps
+  fepsther= epsther+depsther-(alpha_eq_p*(T_-(TEMPREFE+273)));//T_ en K, T en °C, TEMPREFE en °C
+
+  //Za proportion en phase alpha en milieu de pas de temps
+  const real Za = 1.0-Zb_;
+ 
+  if (Za >= 0.99) {
+    f[0]=1. ;
+  } else if (Za >= 0.9) {
+    f[0] = (Za-0.9)/0.09 ;
+  } else {
+    f[0] = 0. ;
+  }
+  if (Za >= 0.1) {
+    f[2]=0. ;
+  } else if (Za >= 0.01) {
+    f[2] = (0.1-Za)/0.09 ;
+  } else {
+    f[2] = 1. ;
+  }
+  if (Za >= 0.99) {
+    f[1]=0. ;
+  } else if (Za >= 0.9) {
+    f[1] = 1.0-(Za-0.9)/0.09 ;
+  } else if (Za >= 0.1) {
+    f[1] = 1.0 ;
+  } else if (Za >= 0.01) {
+    f[1] = 1.0-(0.1-Za)/0.09 ;
+  } else {
+    f[1] = 0. ;
+  } 
+
+
+  for(unsigned short i=0;i!=3;++i){
+    invn[i] = 1.0 / pn[i] ;
+    gamma[i] = a[i]* exp(Q[i]/T_*invn[i]) ;
+  }
+  
+  // correspondance Matrice de Hill du format aster au format MFront
+  real Mat[6];
+  if (Za >= 0.99) {
+    for(unsigned short i=0;i!=6;++i){
+      Mat[i]=M1[i] ;
+    }
+  } else if (Za >= 0.01) {
+    for(unsigned short i=0;i!=6;++i){
+      Mat[i]=Za*M1[i]+(1.-Za)*M3[i] ;
+    }
+  } else {
+    for(unsigned short i=0;i!=6;++i){
+      Mat[i]=M3[i] ;
+    }
+  }
+  const real H_F = 0.5*( Mat[0]+Mat[1]-Mat[2]);
+  const real H_G = 0.5*(-Mat[0]+Mat[1]+Mat[2]);
+  const real H_H = 0.5*( Mat[0]-Mat[1]+Mat[2]);
+  const real H_L = 2.0*Mat[3];
+  const real H_M = 2.0*Mat[4];
+  const real H_N = 2.0*Mat[5];
+  H = hillTensor<N,real>(H_F,H_G,H_H,
+			 H_L,H_M,H_N);
+
+  const real sigeq = sqrt(max(sig|(H*sig),0.0));
+  real p_=p+theta*dp ;
+  real sigv =  0. ;
+  real pm[3];
+  real dpn[3] ;
+
+  for(unsigned short i=0;i!=3;++i){
+    pm[i]  = (p_ > 0.) ? pow(p_,m[i])         : 0.;
+    dpn[i] = (dp > 0.) ? pow((dp/dt),invn[i]) : 0. ;
+    sv[i]=gamma[i]*pm[i]*dpn[i] ;
+    sigv += f[i]*sv[i] ;
+  }
+
+  Stensor  n(0.);
+  real inv_sigeq(0);
+  if(sigeq > 1.e-10*young){// sensibilité au facteur 1e-10 non testée
+    inv_sigeq = 1/sigeq;
+    n  = (H*sig)*inv_sigeq;
+    fp    = (sigeq-sigv)/young;
+  }
+  feel += dp*n+depsther*Stensor::Id()-deto;
+
+  //FIN PARTIE MECANIQUE//
+}
+
+@UpdateAuxiliaryStateVars{
+  // mise à jour seq
+  seq = sqrt(max(sig|(H*sig),0.0));
+  
+  // Mise à jour svi
+  for(unsigned short i=0;i!=3;++i){
+      svi[i]=sv[i] ;
+    }
+  
+  // Mise à jour pch
+  if (pch == 1.0) {
+    if(Zb<Zbeq) { // chauffage 
+        if (Zb > 0.99) {
+            Zb=1;// normalement, cette ligne est inutile
+            pch=0.0;
+        }
+    }else if (Zb>Zbeq){// refroidissement 
+        if(Zb<0.01) {
+            Zb=0;// normalement, cette ligne est inutile
+            pch=0.0;
+        }
+    }
+  } 
+}

@@ -38,11 +38,6 @@ NCAL = 20
 
 RESU   = [None]*NCAL
 ACIER  = [None]*NCAL
-V1_META= [None]*NCAL
-V2_META= [None]*NCAL
-V3_META= [None]*NCAL
-V4_META= [None]*NCAL
-V5_META= [None]*NCAL
 
 TREF = 700.
 T0   = TREF
@@ -64,12 +59,7 @@ compor='META_LEMA_ANI'
 
 MA=LIRE_MAILLAGE(FORMAT="ASTER",)
 
-ZIRCALOY=DEFI_MATERIAU(THER=_F(RHO_CP = 2000000.0, LAMBDA = 9999.9),
-                        META_ZIRC=_F(
-                                  TDEQ = 809.,   K = 1.135E-2,   N = 2.187,
-                                  T1C = 831. , T2C=0.,
-                                  QSR_K = 14614.,AC = 1.58E-4,  M = 4.7,
-                                  T1R=949.1, T2R=0.,AR = -5.725,  BR = 0.05))
+ZIRCALOY=DEFI_MATERIAU(THER=_F(RHO_CP = 2000000.0, LAMBDA = 9999.9),)
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=_F(TOUT = 'OUI',MATER = ZIRCALOY))
@@ -97,50 +87,42 @@ TIMPO=CREA_CHAMP(OPERATION='AFFE',
                          NOM_CMP = 'TEMP',
                          VALE_F = TFONC))
 
-PHASINIT=CREA_CHAMP(OPERATION='AFFE',
-                    TYPE_CHAM='CART_VAR2_R',
-                    MAILLAGE=MA,
-                    AFFE=_F(TOUT = 'OUI',
-                            NOM_CMP = ('V1', 'V2', 'V3', 'V4', 'V5'),
-                            VALE = ( 1.0, 0.0, 0.0, 20., 0.)))
-
 TEMPE=CREA_RESU(OPERATION='AFFE',
                 TYPE_RESU='EVOL_THER',
                 NOM_CHAM='TEMP',
                 AFFE=_F(CHAM_GD = TIMPO,
                         LIST_INST = L_INST))
 
-TEMPE=CALC_META(reuse=TEMPE,
-                MODELE=MOTH,
-                CHAM_MATER=CHMAT,
-                RESULTAT=TEMPE,
-                ETAT_INIT=_F( META_INIT_ELNO = PHASINIT),
-                COMPORTEMENT=_F(RELATION = 'ZIRC',
-                             TOUT = 'OUI'),
-                OPTION='META_ELNO',);
-
-for i in range(NCAL):
-  inst_i = (i+1)*(tmax/NCAL)
-  EVMETA= CREA_CHAMP(
-             TYPE_CHAM = 'ELNO_VARI_R',
-             OPERATION = 'EXTR',
-             RESULTAT  = TEMPE,
-             NOM_CHAM  = 'META_ELNO',
-             INST      = inst_i,
-             )
-  V1_META[i]=EVMETA.EXTR_COMP("V1",[],1).valeurs[1]
-  V2_META[i]=EVMETA.EXTR_COMP("V2",[],1).valeurs[1]
-  V3_META[i]=EVMETA.EXTR_COMP("V3",[],1).valeurs[1]
-  V4_META[i]=EVMETA.EXTR_COMP("V4",[],1).valeurs[1]
-  V5_META[i]=EVMETA.EXTR_COMP("V5",[],1).valeurs[1]
-  DETRUIRE ( CONCEPT =  _F (NOM =EVMETA),);
-
-# Parametres elastiques
+# Paramètres élastiques
 YOUN=DEFI_FONCTION(  NOM_PARA='TEMP',
                      VALE=(T0,   8.E4,
                            Tmax, 4.E4,)  )
 
 NUCST=DEFI_CONSTANTE(VALE=0.35);
+F1_ACST=DEFI_CONSTANTE(VALE=2.39);
+F2_ACST=DEFI_CONSTANTE(VALE=0.22);
+C_ACST=DEFI_CONSTANTE(VALE=9.36);
+F2_MCST=DEFI_CONSTANTE(VALE=0.77E-04);
+C_MCST=DEFI_CONSTANTE(VALE=0.99E-04);
+F1_NCST=DEFI_CONSTANTE(VALE=4.39);
+F2_NCST=DEFI_CONSTANTE(VALE=2.96);
+C_NCST=DEFI_CONSTANTE(VALE=6.11);
+F1_QCST=DEFI_CONSTANTE(VALE=19922.8);
+F2_QCST=DEFI_CONSTANTE(VALE=21023.7);
+C_QCST=DEFI_CONSTANTE(VALE=6219.);
+TQRT=DEFI_CONSTANTE(VALE=0.75);
+TDEQCST=DEFI_CONSTANTE(VALE=809.);
+KCST=DEFI_CONSTANTE(VALE=1.135E-2);
+NEQCST=DEFI_CONSTANTE(VALE=2.187);
+T1CCST=DEFI_CONSTANTE(VALE=831.);
+QSR_KCST=DEFI_CONSTANTE(VALE=14614.);
+ACCST=DEFI_CONSTANTE(VALE=1.58E-4);
+MEQCST=DEFI_CONSTANTE(VALE=4.7);
+T1RCST=DEFI_CONSTANTE(VALE=949.1);
+ARCST=DEFI_CONSTANTE(VALE=-5.725);
+BRCST=DEFI_CONSTANTE(VALE=0.05);
+T_REF =DEFI_CONSTANTE(VALE=700);
+
 
 ALPH=DEFI_FONCTION(NOM_PARA='TEMP',VALE=(T0,   1.0E-5,
                                          Tmax, 2.0E-5,),);
@@ -148,32 +130,39 @@ ALPH=DEFI_FONCTION(NOM_PARA='TEMP',VALE=(T0,   1.0E-5,
 
 # PARTIE MECANIQUE
 
-ACMAT=DEFI_MATERIAU(ELAS_META_FO=_F(E = YOUN ,
+ACMAT=DEFI_MATERIAU(
+                    ELAS_FO=_F(E = YOUN ,
                                     NU = NUCST ,
-                                    F_ALPHA = ALPH ,
-                                    C_ALPHA = ALPH ,
+                                    ALPHA = ALPH ,
                                     TEMP_DEF_ALPHA = 700.,
-                                    PHASE_REFE = 'FROID',
-                                    EPSF_EPSC_TREF = 0.,),
-                   META_LEMA_ANI=_F(
-                            F1_A=2.39,    F2_A=0.22,     C_A=9.36,
-                            F1_M=0.0,    F2_M=0.77E-04, C_M=0.99E-04,
-                            F1_N=4.39,    F2_N=2.96,     C_N=6.11,
-                            F1_Q=19922.8, F2_Q=21023.7,  C_Q=6219.,
-                            F_MRR_RR=1.,                 C_MRR_RR=1.,
-                            F_MTT_TT=1.,                 C_MTT_TT=1.,
-                            F_MZZ_ZZ=1.,                 C_MZZ_ZZ=1.,
-                            F_MRT_RT=0.75,               C_MRT_RT=0.75,
-                            F_MRZ_RZ=0.75,               C_MRZ_RZ=0.75,
-                            F_MTZ_TZ=0.75,               C_MTZ_TZ=0.75,),),
+                                    ),
+                   META_LEMA_ANI_FO=_F(
+                            #PARAMETRES MECANIQUES
+                            YoungModulus = YOUN,
+                            PoissonRatio = NUCST,
+                            F1_A=F1_ACST,    F2_A=F2_ACST,     C_A=C_ACST,
+                            F1_M=ZERO,    F2_M=F2_MCST, C_M=C_MCST,
+                            F1_N=F1_NCST,    F2_N=F2_NCST,     C_N=C_NCST,
+                            F1_Q=F1_QCST, F2_Q=F2_QCST,  C_Q=C_QCST,
+                            F_MRR_RR=UN,                 C_MRR_RR=UN,
+                            F_MTT_TT=UN,                 C_MTT_TT=UN,
+                            F_MZZ_ZZ=UN,                 C_MZZ_ZZ=UN,
+                            F_MRT_RT=TQRT,               C_MRT_RT=TQRT,
+                            F_MRZ_RZ=TQRT,               C_MRZ_RZ=TQRT,
+                            F_MTZ_TZ=TQRT,               C_MTZ_TZ=TQRT,
+                            #PARAMETRES THERMIQUES
+                            F_ALPHA = ALPH,
+                            C_ALPHA = ALPH,
+                            #PARAMETRES METALLURGIQUES
+                            TDEQ = TDEQCST,   K = KCST,   NEQ = NEQCST,
+                            T1C = T1CCST , T2C=ZERO,
+                            QSR_K = QSR_KCST,AC = ACCST,  M = MEQCST,
+                            T1R=T1RCST, T2R=ZERO,AR = ARCST,  BR =BRCST,
+                            ),),
 
 CM1=AFFE_MATERIAU(MAILLAGE=MA,
                   AFFE=_F( TOUT = 'OUI', MATER = ACMAT ),
                   AFFE_VARC=(_F(TOUT='OUI',
-                                EVOL=TEMPE,
-                                NOM_VARC='M_ZIRC',
-                                NOM_CHAM='META_ELNO'),
-                             _F(TOUT='OUI',
                                 EVOL=TEMPE,
                                 VALE_REF=700.,
                                 NOM_VARC='TEMP',
@@ -221,8 +210,10 @@ U=STAT_NON_LINE(        MODELE=MO,
                                         ),
                                ),
                         COMPORTEMENT=_F(RELATION = 'META_LEMA_ANI',
-                                     RELATION_KIT = 'ZIRC',
-                                     ITER_INTE_MAXI = 100),
+                                    RESI_INTE_RELA=1E-10,
+                                    ITER_INTE_MAXI = 100,
+
+                                    ),
                         NEWTON=_F(MATRICE = 'TANGENTE', REAC_ITER = 1),
                         INCREMENT=_F(LIST_INST = LINST2),
                         CONVERGENCE=_F(
@@ -240,7 +231,7 @@ TBU1 = CREA_TABLE (RESU=_F(RESULTAT=U,
 TBU2 = CREA_TABLE (RESU=_F(RESULTAT=U,
                            TOUT='OUI',
                            TOUT_ORDRE='OUI',
-                           NOM_CMP='V1',
+                           NOM_CMP='V7',
                            NOM_CHAM='VARI_ELGA',),)
 
 
@@ -260,7 +251,7 @@ for i in range(NCAL):
 
           Tm = T0 + timem/tmax * (Tmax - T0)
 
-          # deformation mecanique imposee correspondant a la deformation thermique du premier calcul
+          # déformation mécanique imposée correspondant à la déformation thermique du premier calcul
 
           epsimp =DEFI_CONSTANTE(VALE=-ALPH(Ti)*(Ti - TREF));
 
@@ -268,7 +259,7 @@ for i in range(NCAL):
                    VALE=(  timem , Ti, time , Ti)
                    )
 
-          print('i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp)
+          print('i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp(0))
 
           if i > 0 :
              CMULT = YOUN(Ti)/YOUN(Tm)
@@ -280,6 +271,9 @@ for i in range(NCAL):
                                     PHASE_REFE = 'FROID',
                                     EPSF_EPSC_TREF = 0.,),
                    META_LEMA_ANI=_F(
+                            #PARAMETRES MECANIQUES
+                            YoungModulus = YOUN(Ti),
+                            PoissonRatio = NUCST(Ti),
                             F1_A=2.39,    F2_A=0.22,     C_A=9.36,
                             F1_M=0.0,    F2_M=0.77E-04, C_M=0.99E-04,
                             F1_N=4.39,    F2_N=2.96,     C_N=6.11,
@@ -289,7 +283,17 @@ for i in range(NCAL):
                             F_MZZ_ZZ=1.,                 C_MZZ_ZZ=1.,
                             F_MRT_RT=0.75,               C_MRT_RT=0.75,
                             F_MRZ_RZ=0.75,               C_MRZ_RZ=0.75,
-                            F_MTZ_TZ=0.75,               C_MTZ_TZ=0.75,),),
+                            F_MTZ_TZ=0.75,               C_MTZ_TZ=0.75,
+                            #PARAMETRES THERMIQUES
+                            F_ALPHA = 0.0,
+                            C_ALPHA = 0.0,
+                            #PARAMETRES METALLURGIQUES
+                            TDEQ = 809.,   K = 1.135E-2,   NEQ= 2.187,
+                            T1C = 831. , T2C=0.,
+                            QSR_K = 14614.,AC = 1.58E-4,  M = 4.7,
+                            T1R=949.1, T2R=0.,AR = -5.725,  BR = 0.05
+                            
+                            ),),
 
           listinst = DEFI_LIST_REEL(DEBUT=timem,
                       INTERVALLE=(_F(JUSQU_A=time,NOMBRE=1,),),);
@@ -301,35 +305,15 @@ for i in range(NCAL):
                          NOM_CMP = 'TEMP',
                          VALE_F = tempi))
 
-          PHASINI2=CREA_CHAMP(OPERATION='AFFE',
-                    TYPE_CHAM='CART_VAR2_R',
-                    MAILLAGE=MA,
-                    AFFE=_F(TOUT = 'OUI',
-                            NOM_CMP = ('V1', 'V2', 'V3','V4','V5'),
-                     VALE=(V1_META[i],V2_META[i],V3_META[i],V4_META[i],V5_META[i])))
-
           TEMP2=CREA_RESU(OPERATION='AFFE',
                 TYPE_RESU='EVOL_THER',
                 NOM_CHAM='TEMP',
                 AFFE=_F(CHAM_GD = TIMP2,
                         LIST_INST = listinst))
 
-          TEMP2=CALC_META(reuse=TEMP2,
-                MODELE=MOTH,
-                CHAM_MATER=CHMAT,
-                RESULTAT=TEMP2,
-                ETAT_INIT=_F( META_INIT_ELNO = PHASINI2),
-                COMPORTEMENT=_F(RELATION = 'ZIRC',
-                             TOUT = 'OUI'),
-                OPTION='META_ELNO',);
-
           CM2=AFFE_MATERIAU(MAILLAGE=MA,
                   AFFE=_F( TOUT = 'OUI', MATER = ACIER[i] ),
                   AFFE_VARC=(_F(TOUT='OUI',
-                                EVOL=TEMP2,
-                                NOM_VARC='M_ZIRC',
-                                NOM_CHAM='META_ELNO'),
-                             _F(TOUT='OUI',
                                 EVOL=TEMP2,
                                 VALE_REF=700.,
                                 NOM_VARC='TEMP',
@@ -344,7 +328,7 @@ for i in range(NCAL):
                                         ),
                                ),
                         COMPORTEMENT=_F(RELATION = 'META_LEMA_ANI',
-                                     RELATION_KIT = 'ZIRC',
+                                     RESI_INTE_RELA=1E-10,
                                      ITER_INTE_MAXI = 100),
                         NEWTON=_F(MATRICE = 'TANGENTE', REAC_ITER = 1),
                         INCREMENT=_F(LIST_INST = listinst),
@@ -387,8 +371,9 @@ for i in range(NCAL):
                                         ),
                                ),
                         COMPORTEMENT=_F(RELATION = 'META_LEMA_ANI',
-                                     RELATION_KIT = 'ZIRC',
-                                     ITER_INTE_MAXI = 100),
+                                     ITER_INTE_MAXI = 100,
+                                     RESI_INTE_RELA=1E-10,
+                                     ),
                         NEWTON=_F(MATRICE = 'TANGENTE', REAC_ITER = 1),
                         INCREMENT=_F(LIST_INST = listinst),
                         ETAT_INIT=_F(
@@ -411,7 +396,6 @@ for i in range(NCAL):
           DETRUIRE ( CONCEPT =  _F (NOM =listinst),);
           DETRUIRE ( CONCEPT =  _F (NOM =(tempi)),);
           DETRUIRE ( CONCEPT =  _F (NOM =TIMP2),);
-          DETRUIRE ( CONCEPT =  _F (NOM =PHASINI2),);
           DETRUIRE ( CONCEPT =  _F (NOM =TEMP2),);
           DETRUIRE ( CONCEPT =  _F (NOM =CM2),);
 
@@ -426,7 +410,7 @@ for i in range(NCAL):
             TRE2 = CREA_TABLE (RESU=_F(RESULTAT=RESU[i],
                            TOUT='OUI',
                            TOUT_ORDRE='OUI',
-                           NOM_CMP='V1',
+                           NOM_CMP='V7',
                            NOM_CHAM='VARI_ELGA',),)
 
             indice = 8*i+9
@@ -439,8 +423,8 @@ for i in range(NCAL):
                        REFERENCE='AUTRE_ASTER',);
 
             TEST_TABLE(TABLE=TRE2,
-                       NOM_PARA='V1',VALE_REFE=TBU2['V1',indice],
-                       VALE_CALC=TBU2['V1',indice],
+                       NOM_PARA='V7',VALE_REFE=TBU2['V7',indice],
+                       VALE_CALC=TBU2['V7',indice],
                        FILTRE=(_F(NOM_PARA='INST',VALE=time),
                                _F(NOM_PARA='POINT',VALE_I=1)),
                        REFERENCE='AUTRE_ASTER',);
