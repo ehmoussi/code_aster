@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -67,16 +67,14 @@ implicit none
     endif
 !
     if (rela_comp(1:4) .eq. 'META') then
-        nb_rela_kit = 1
-        call getvtx(keywordfact, 'RELATION_KIT', iocc = iocc, &
-                    nbval = nb_rela_kit, vect = rela_meta, nbret = nocc)
-        ASSERT(nocc.eq.1)
-        kit_comp(1) = rela_meta
         if (rela_comp.eq.'META_LEMA_ANI') then
-            if (rela_meta.ne.'ZIRC') then
-                call utmess('F','COMPOR3_91')
-            endif
             kit_comp(1) = 'VIDE'
+        else
+            nb_rela_kit = 1
+            call getvtx(keywordfact, 'RELATION_KIT', iocc = iocc, &
+                        nbval = nb_rela_kit, vect = rela_meta, nbret = nocc)
+            ASSERT(nocc.eq.1)
+            kit_comp(1) = rela_meta
         endif
     else if (rela_comp.eq.'KIT_DDI') then
         call ddi_kit_read(keywordfact, iocc     , l_etat_init,&
