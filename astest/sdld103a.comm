@@ -25,425 +25,668 @@
 # REF: PAS DE REF BIBLIO MAIS CALCUL ANALYTIQUE
 # ----------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),
-          BASE=_F( FICHIER = 'GLOBALE',  LONG_REPE = 20000 )
-        )
+DEBUT(CODE  =_F(NIV_PUB_WEB = 'INTERNET'),
+      DEBUG =_F(SDVERI      = 'OUI'     ),
+      BASE  =_F(FICHIER     = 'GLOBALE',
+                LONG_REPE   = 20000    ,
+                ),
+      )
 
-MAILLAG0=LIRE_MAILLAGE(FORMAT="ASTER", )
+MAILLAG0 = LIRE_MAILLAGE(FORMAT = "ASTER")
 
-MAILLAG0=DEFI_GROUP(reuse=MAILLAG0,
-                    MAILLAGE=MAILLAG0,
-                    CREA_GROUP_NO=_F( NOM='GROUP_NO_GN5',
-                                      NOEUD=('NO5',),),);
-
-
-MAILLAGE=CREA_MAILLAGE(MAILLAGE=MAILLAG0,
-    CREA_POI1=(
-        _F(NOM_GROUP_MA='GROUP_NO_MASSES',   GROUP_NO='GROUP_NO_MASSES', ),
-    ),
-)
+MAILLAG0 = DEFI_GROUP(reuse         = MAILLAG0,
+                      MAILLAGE      = MAILLAG0,
+                      CREA_GROUP_NO =_F(NOM   = 'GROUP_NO_GN5',
+                                        NOEUD = 'NO5'         ,
+                                        ),
+                      )
 
 
-MODELE=AFFE_MODELE(  MAILLAGE=MAILLAGE,AFFE=(
-         _F(  PHENOMENE = 'MECANIQUE', MODELISATION = 'DIS_T',
-                GROUP_MA = 'GROUP_MA_RESSORT'),
-              _F(  PHENOMENE = 'MECANIQUE', MODELISATION = 'DIS_T',
-                GROUP_MA = 'GROUP_NO_MASSES'))
-                    )
-
-#
-CARA_ELE=AFFE_CARA_ELEM(  MODELE=MODELE,DISCRET=(
-                _F(  CARA = 'K_T_D_L',  REPERE = 'GLOBAL',
-                          GROUP_MA = 'GROUP_MA_RESSORT',
-                          VALE = (10000., 0., 10000., )),
-                _F(  CARA = 'M_T_L',  REPERE = 'GLOBAL',
-                          GROUP_MA = 'GROUP_MA_RESSORT',
-                          VALE = (0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                          0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., )),
-                        _F(  CARA = 'M_T_D_N',  GROUP_MA = 'GROUP_NO_MASSES',  VALE = 10.))
+MAILLAGE = CREA_MAILLAGE(MAILLAGE  = MAILLAG0,
+                         CREA_POI1 =_F(NOM_GROUP_MA = 'GROUP_NO_MASSES',
+                                       GROUP_NO     = 'GROUP_NO_MASSES',
+                                       ),
                          )
 
-#
-CON_LIM=AFFE_CHAR_MECA(  MODELE=MODELE,DDL_IMPO=(
-# ------------ LES DEPL_IMPO SONT DEFINIS DANS LE REPERE GLOBAL
-               _F(  GROUP_NO = 'GROUP_NO_ENCASTRE',  DX = 0.,  DY = 0.,  DZ = 0.),
-               _F(  GROUP_NO = 'GROUP_NO_MASSES',    DY = 0.,  DZ = 0.))
-                        )
+MODELE = AFFE_MODELE(MAILLAGE = MAILLAGE,
+                     AFFE     =_F(PHENOMENE    = 'MECANIQUE'                           ,
+                                  MODELISATION = 'DIS_T'                               ,
+                                  GROUP_MA     = ('GROUP_MA_RESSORT','GROUP_NO_MASSES'),
+                                  ),
+                     )
 
-#
-ASSEMBLAGE(  MODELE=MODELE,   CHARGE=CON_LIM,   CARA_ELEM=CARA_ELE,
-                   NUME_DDL=CO("NUMEDDL"),MATR_ASSE=(
-                 _F(  MATRICE = CO("RIGIDITE"),  OPTION = 'RIGI_MECA'),
-                           _F(  MATRICE = CO("MASSE"),     OPTION = 'MASS_MECA'))
-               )
+CARA_ELE = AFFE_CARA_ELEM(MODELE  = MODELE,
+                          DISCRET = (
+                                     _F(CARA     = 'K_T_D_L'           ,
+                                        REPERE   = 'GLOBAL'            ,
+                                        GROUP_MA = 'GROUP_MA_RESSORT'  ,
+                                        VALE     = (10000., 0., 10000.),
+                                        ),
+                                     _F(CARA     = 'M_T_L'                      ,
+                                        REPERE   = 'GLOBAL'                     ,
+                                        GROUP_MA = 'GROUP_MA_RESSORT'           ,
+                                        VALE     = (0., 0., 0., 0., 0., 0., 0.,
+                                                    0., 0., 0., 0., 0., 0., 0.,
+                                                    0., 0., 0., 0., 0., 0., 0.,),
+                                        ),
+                                     _F(CARA     = 'M_T_D_N'        ,
+                                        GROUP_MA = 'GROUP_NO_MASSES',
+                                        VALE     = 10.              ,
+                                        ),
+                                     )
+                          )
+
+CON_LIM = AFFE_CHAR_MECA(MODELE   = MODELE,
+                         DDL_IMPO = (
+# ------------ LES DEPL_IMPO SONT DEFINIS DANS LE REPERE GLOBAL
+                                     _F(GROUP_NO = 'GROUP_NO_ENCASTRE',
+                                        DX       = 0.                 ,
+                                        DY       = 0.                 ,
+                                        DZ       = 0.                 ,
+                                        ),
+                                     _F(GROUP_NO = 'GROUP_NO_MASSES'  ,
+                                        DY       = 0.                 ,
+                                        DZ       = 0.                 ,
+                                        ),
+                                     )
+                         )
+
+ASSEMBLAGE(MODELE    = MODELE       ,
+           CHARGE    = CON_LIM      ,
+           CARA_ELEM = CARA_ELE     ,
+           NUME_DDL  = CO("NUMEDDL"),
+           MATR_ASSE =(
+                       _F(MATRICE = CO("RIGIDITE"),
+                          OPTION  = 'RIGI_MECA'   ,
+                          ),
+                       _F(MATRICE = CO("MASSE")   ,
+                          OPTION  = 'MASS_MECA'   ,
+                          ),
+                       ),
+           )
 
 #
 # CALCUL DES MODES AVEC BLOCAGE DES ANCRAGES:
-#---------------------------------------------
-SOLVEURL='MULT_FRONT'
-MODE_MEC=CALC_MODES(MATR_RIGI=RIGIDITE,SOLVEUR=_F(METHODE=SOLVEURL),
-                    OPTION='AJUSTE',
-                    CALC_FREQ=_F(FREQ=(3.8,7.,9.3,),
-                                 ),
-                    MATR_MASS=MASSE,
-                    )
+#--------------------------------------------
 
-MODE_MEC=NORM_MODE(reuse=MODE_MEC,  MODE=MODE_MEC,   NORME='MASS_GENE' )
-MODE_EXT=EXTR_MODE(FILTRE_MODE=_F(MODE=MODE_MEC,
-                                  NUME_MODE=(1,2,),),
-                   IMPRESSION=_F(CUMUL='OUI',),);
+SOLVEURL = 'MULT_FRONT'
+
+MODE_MEC = CALC_MODES(MATR_RIGI = RIGIDITE               ,
+                      SOLVEUR   =_F(METHODE = SOLVEURL)  ,
+                      OPTION    = 'AJUSTE'               ,
+                      CALC_FREQ =_F(FREQ = (3.8, 7., 9.3),
+                                    ),
+                      MATR_MASS = MASSE                  ,
+                      )
+
+MODE_MEC = NORM_MODE(reuse = MODE_MEC   ,
+                     MODE  = MODE_MEC   ,
+                     NORME = 'MASS_GENE',
+                     )
+
+MODE_EXT = EXTR_MODE(FILTRE_MODE =_F(MODE      = MODE_MEC,
+                                     NUME_MODE = (1,2)   ,
+                                     ),
+                     IMPRESSION  =_F(CUMUL     ='OUI'    ,
+                                     ),
+                     )
 
 #
 # CALCUL DES MODES STATIQUES AUX POINTS D ANCRAGE:
 #-------------------------------------------------
-MODE_STA=MODE_STATIQUE(  MATR_RIGI=RIGIDITE,   MATR_MASS=MASSE,SOLVEUR=_F(METHODE=SOLVEURL),
-                         MODE_STAT=_F(  TOUT = 'OUI', AVEC_CMP = 'DX') )
 
-####################################################################
+MODE_STA = MODE_STATIQUE(MATR_RIGI = RIGIDITE,
+                         MATR_MASS = MASSE   ,
+                         SOLVEUR   =_F(METHODE  = SOLVEURL,
+                                       ),
+                         MODE_STAT =_F(TOUT     = 'OUI'   ,
+                                       AVEC_CMP = 'DX'    ,
+                                       ),
+                         )
+
+
+
+
+
+##########################################################
 # CALCUL MODES STATIQUES POUR CORRECTION STATIQUE A PRIORI
-######################################################################
-PSEUDO=MODE_STATIQUE(  MATR_RIGI=RIGIDITE,   MATR_MASS=MASSE,SOLVEUR=_F(METHODE=SOLVEURL),
-                             PSEUDO_MODE=_F(  AXE = ( 'X',  'Y',  'Z', ))  )
+##########################################################
 
-PSEUDO=CALC_CHAMP(reuse=PSEUDO,RESULTAT=PSEUDO,CONTRAINTE=('SIEF_ELGA','EFGE_ELNO'))
+"""
+
+PSEUDO = MODE_STATIQUE(MATR_RIGI   = RIGIDITE,
+                       MATR_MASS   = MASSE   ,
+                       SOLVEUR     =_F(METHODE = SOLVEURL       ,
+                                       ),
+                       PSEUDO_MODE =_F(AXE     = ('X', 'Y', 'Z'),
+                                       ),
+                       )
+
+PSEUDO = CALC_CHAMP(reuse      = PSEUDO                  ,
+                    RESULTAT   = PSEUDO                  ,
+                    CONTRAINTE =('SIEF_ELGA','EFGE_ELNO'),
+                    )
 
 
-PSEUDO=CALC_CHAMP(reuse=PSEUDO,  RESULTAT=PSEUDO,
-                   FORCE='REAC_NODA',)
+PSEUDO = CALC_CHAMP(reuse    = PSEUDO     ,
+                    RESULTAT = PSEUDO     ,
+                    FORCE    = 'REAC_NODA',
+                    )
 
-MODESTAT=MODE_STATIQUE(MATR_RIGI=RIGIDITE,SOLVEUR=_F(METHODE=SOLVEURL),
-                     MATR_MASS=MASSE,
-                     FORCE_NODALE=_F(TOUT='OUI',
-                                    TOUT_CMP='OUI',
-                                    )
-                      ,);
+MODESTAT = MODE_STATIQUE(MATR_RIGI    = RIGIDITE,
+                         SOLVEUR      =_F(METHODE = SOLVEURL,
+                                          ),
+                         MATR_MASS    = MASSE,
+                         FORCE_NODALE =_F(TOUT     = 'OUI',
+                                          TOUT_CMP = 'OUI',
+                                          ),
+                         )
+
+"""
 
 #
 # DESCRIPTION DES PAS DES FONCTIONS:
 #-----------------------------------
-L_INST=DEFI_LIST_REEL(  DEBUT=0.,
-                        INTERVALLE=_F(  JUSQU_A = 1., PAS = 0.0001) )
+
+L_INST = DEFI_LIST_REEL(DEBUT      = 0.,
+                        INTERVALLE =_F(JUSQU_A = 1.    ,
+                                       PAS     = 0.0001,
+                                       ),
+                        )
 
 
-#
+
 # DEFINITION DES PAS DE CALCUL AVEC UNE LISTE D'INSTANTS
 # (ceci n'est pas la forme canonique de definir la liste d'instants
-# mais permet de couvrir cette maniere d'utiliser DEFI_LIST_REEL)
-#------------------------------
+# mais permet de decouvrir cette maniere d'utiliser DEFI_LIST_REEL)
+#-----------------------------------------------------------------
 
-list_py=[0.001*ii for ii in range(1001)]
+list_py = [0.001*ii for ii in range(1001)]
 
-L_INST2=DEFI_LIST_REEL(VALE=(list_py))
-L_INST3=DEFI_LIST_REEL(VALE=(3.,4.,6.))
-IMPR_CO(CONCEPT=_F(NOM=L_INST3))
+L_INST2 = DEFI_LIST_REEL(VALE = list_py   )
+
+L_INST3 = DEFI_LIST_REEL(VALE = (3.,4.,6.))
+
+IMPR_CO(CONCEPT =_F(NOM = L_INST3))
+
 #
 # DESCRIPTION DES ACCELEROGRAMMES:
 #---------------------------------
-ACCE1 = FORMULE(VALE='2.E+05*INST**2',
-                NOM_PARA='INST',)
-ACCELER1=CALC_FONC_INTERP( FONCTION=ACCE1, LIST_PARA=L_INST,
-                       NOM_PARA = 'INST',
-                       PROL_DROITE='LINEAIRE',
-                      PROL_GAUCHE='LINEAIRE',
-                      NOM_RESU='ACCE'
-                     )
 
-ACCE2 = FORMULE(VALE='0.*INST ',
-                NOM_PARA='INST',)
-ACCELER2=CALC_FONC_INTERP( FONCTION=ACCE2, LIST_PARA=L_INST,
-                      NOM_PARA = 'INST',
-                       PROL_DROITE='LINEAIRE',
-                      PROL_GAUCHE='LINEAIRE',
-                      NOM_RESU='ACCE'
-                     )
+ACCE1 = FORMULE(VALE     ='2.E+05*INST**2',
+                NOM_PARA ='INST'          ,
+                )
+
+ACCELER1 = CALC_FONC_INTERP(FONCTION    = ACCE1     ,
+                            LIST_PARA   = L_INST    ,
+                            NOM_PARA    = 'INST'    ,
+                            PROL_DROITE = 'LINEAIRE',
+                            PROL_GAUCHE = 'LINEAIRE',
+                            NOM_RESU    = 'ACCE'    ,
+                            )
+
+ACCE2 = FORMULE(VALE     = '0.*INST ',
+                NOM_PARA = 'INST'    ,
+                )
+
+ACCELER2 = CALC_FONC_INTERP(FONCTION    = ACCE2     ,
+                            LIST_PARA   = L_INST    ,
+                            NOM_PARA    = 'INST'    ,
+                            PROL_DROITE = 'LINEAIRE',
+                            PROL_GAUCHE = 'LINEAIRE',
+                            NOM_RESU    = 'ACCE'    ,
+                            )
+
 
 #
-# INTEGRATION DES ACCELEROGRAMMES:
-#---------------------------------
-VITE1 = FORMULE(VALE='(2.E+05*INST**3)/3.',
-                NOM_PARA='INST',)
-VITESSE1=CALC_FONC_INTERP( FONCTION=VITE1, LIST_PARA=L_INST,
-                       NOM_PARA = 'INST',
-                       PROL_DROITE='LINEAIRE',
-                      PROL_GAUCHE='LINEAIRE',
-                      NOM_RESU='VITE'
-                     )
+# INTEGRATION DES ACCELEROGRAMMES: Pour calcul de deplacements et vitesses
+#-------------------------------------------------------------------------
 
-DEPL1 = FORMULE(VALE='(2.E+05*INST**4)/12.',
-                NOM_PARA='INST',)
-DEPLACE1=CALC_FONC_INTERP( FONCTION=DEPL1, LIST_PARA=L_INST,
-                       NOM_PARA = 'INST',
-                       PROL_DROITE='LINEAIRE',
-                      PROL_GAUCHE='LINEAIRE',
-                      NOM_RESU='DEPL'
-                     )
+VITE1 = FORMULE(VALE     = '(2.E+05*INST**3)/3.',
+                NOM_PARA = 'INST'               ,
+                )
 
-VITE2 = FORMULE(VALE='0.*INST',
-                NOM_PARA='INST',)
-VITESSE2=CALC_FONC_INTERP( FONCTION=VITE2, LIST_PARA=L_INST,
-                     NOM_PARA = 'INST',
-                       PROL_DROITE='LINEAIRE',
-                      PROL_GAUCHE='LINEAIRE',
-                      NOM_RESU='VITE'
-                     )
+VITESSE1 = CALC_FONC_INTERP(FONCTION    = VITE1     ,
+                            LIST_PARA   = L_INST    ,
+                            NOM_PARA    = 'INST'    ,
+                            PROL_DROITE = 'LINEAIRE',
+                            PROL_GAUCHE = 'LINEAIRE',
+                            NOM_RESU    = 'VITE'    ,
+                            )
 
-DEPL2 = FORMULE(VALE='0.*INST',
-                NOM_PARA='INST',)
-DEPLACE2=CALC_FONC_INTERP( FONCTION=DEPL2, LIST_PARA=L_INST,
-                     NOM_PARA = 'INST',
-                       PROL_DROITE='LINEAIRE',
-                      PROL_GAUCHE='LINEAIRE',
-                      NOM_RESU='DEPL'
-                     )
+DEPL1 = FORMULE(VALE     = '(2.E+05*INST**4)/12.',
+                NOM_PARA = 'INST'                ,
+                )
+
+DEPLACE1 = CALC_FONC_INTERP(FONCTION    = DEPL1     ,
+                            LIST_PARA   = L_INST    ,
+                            NOM_PARA    = 'INST'    ,
+                            PROL_DROITE = 'LINEAIRE',
+                            PROL_GAUCHE = 'LINEAIRE',
+                            NOM_RESU    = 'DEPL'    ,
+                            )
+
+VITE2 = FORMULE(VALE     = '0.*INST',
+                NOM_PARA = 'INST'   ,
+                )
+
+VITESSE2 = CALC_FONC_INTERP(FONCTION    = VITE2     ,
+                            LIST_PARA   = L_INST    ,
+                            NOM_PARA    = 'INST'    ,
+                            PROL_DROITE = 'LINEAIRE',
+                            PROL_GAUCHE = 'LINEAIRE',
+                            NOM_RESU    = 'VITE'    ,
+                            )
+
+DEPL2 = FORMULE(VALE     = '0.*INST',
+                NOM_PARA = 'INST'   ,
+                )
+
+DEPLACE2 = CALC_FONC_INTERP(FONCTION    = DEPL2    ,
+                            LIST_PARA   = L_INST   ,
+                            NOM_PARA    = 'INST'   ,
+                            PROL_DROITE ='LINEAIRE',
+                            PROL_GAUCHE ='LINEAIRE',
+                            NOM_RESU    ='DEPL'    ,
+                            )
 
 #
 # ON ETUDIE LA STRUCTURE EN VRAI MULTI-APPUI:
 #    ACCE_IMPO = ACCELER1 (A.T*T) EN Z=0 (NO1) ET
 #    ACCE_IMPO = ACCELER2 (0) EN Z=4 (NO5)
-#----------------------------------------------------------
+#------------------------------------------------
 #
-MULT_X1=CALC_CHAR_SEISME(  MATR_MASS=MASSE,   DIRECTION=( 1., 0., 0.,),
-                            MODE_STAT=MODE_STA,   NOEUD='NO1' )
 
-MULT_X2=CALC_CHAR_SEISME(  MATR_MASS=MASSE,   DIRECTION=( 1., 0., 0.,),
-                            MODE_STAT=MODE_STA,   NOEUD='NO5' )
+MULT_X1 = CALC_CHAR_SEISME(MATR_MASS = MASSE       ,
+                           DIRECTION = (1., 0., 0.),
+                           MODE_STAT = MODE_STA    ,
+                           NOEUD     = 'NO1'       ,
+                           )
+
+MULT_X2 = CALC_CHAR_SEISME(MATR_MASS = MASSE       ,
+                           DIRECTION = (1., 0., 0.),
+                           MODE_STAT = MODE_STA    ,
+                           NOEUD     = 'NO5'       ,
+                           )
 
 #
 # PROJECTION DES MATRICES M ET K SUR LA BASE MODALE
-#---------------------------------------------------
-PROJ_BASE(BASE=MODE_MEC,
-          STOCKAGE='DIAG',
-          MATR_ASSE_GENE=(
-           _F( MATRICE = CO("MASS_GEN"), MATR_ASSE = MASSE),
-           _F( MATRICE = CO("RIGI_GEN"), MATR_ASSE = RIGIDITE)),VECT_ASSE_GENE=(
-           _F( VECTEUR = CO("VECT_X1"), VECT_ASSE = MULT_X1, TYPE_VECT='FORC'),
-           _F( VECTEUR = CO("VECT_X2"), VECT_ASSE = MULT_X2, TYPE_VECT='FORC'))
-                          )
+#--------------------------------------------------
+
+PROJ_BASE(BASE           = MODE_MEC,
+          STOCKAGE       = 'DIAG'  ,
+          MATR_ASSE_GENE =(
+                           _F(MATRICE   = CO("MASS_GEN"),
+                              MATR_ASSE = MASSE         ,
+                              ),
+                           _F(MATRICE   = CO("RIGI_GEN"),
+                              MATR_ASSE = RIGIDITE      ,
+                              ),
+                           ),
+          VECT_ASSE_GENE =(
+                          _F(VECTEUR   = CO("VECT_X1"),
+                              VECT_ASSE = MULT_X1      ,
+                              TYPE_VECT = 'FORC'       ,
+                              ),
+                           _F(VECTEUR   = CO("VECT_X2"),
+                              VECT_ASSE = MULT_X2      ,
+                              TYPE_VECT = 'FORC'       ,
+                              ),
+                           ),
+           )
 
 #
 # CALCUL TRANSITOIRE SUR BASE PHYSIQUE
-# -------------------------------------------
+# ------------------------------------
 
-TRAN_PH2=DYNA_LINE(TYPE_CALCUL='TRAN',
-                   BASE_CALCUL='PHYS',
-                   MODELE=MODELE,
-                   CARA_ELEM=CARA_ELE,
-                   CHARGE=CON_LIM,
-                   SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
-                   EXCIT=(_F(ACCE = ACCELER1,
-                             VITE = VITESSE1,
-                             DEPL = DEPLACE1,
-                             TYPE_APPUI='MULTI',
-                             DIRECTION = ( 1., 0., 0.,),
-                             NOEUD = 'NO1'
-                             ),
-                          _F(ACCE = ACCELER2,
-                             VITE = VITESSE2,
-                             DEPL = DEPLACE2,
-                             TYPE_APPUI='MULTI',
-                             DIRECTION = ( 1., 0., 0.,),
-                             GROUP_NO = 'GROUP_NO_GN5',
-                             ),),
-                   ARCHIVAGE=_F(PAS_ARCH = 100,
-                                CHAM_EXCLU=('VITE','ACCE',),),
-                   INCREMENT=_F(PAS=0.001,
-                                INST_FIN=1.),
+TRAN_PH2=DYNA_LINE(TYPE_CALCUL  ='TRAN'  ,
+                   BASE_CALCUL  ='PHYS'  ,
+                   MODELE       =MODELE  ,
+                   CARA_ELEM    =CARA_ELE,
+                   CHARGE       =CON_LIM ,
+                   SCHEMA_TEMPS =_F(SCHEMA = 'NEWMARK'
+                                    ),
+                   EXCIT        =(_F(ACCE       = ACCELER1      ,
+                                     VITE       = VITESSE1      ,
+                                     DEPL       = DEPLACE1      ,
+                                     TYPE_APPUI = 'MULTI'       ,
+                                     DIRECTION  = (1., 0., 0.)  ,
+                                     NOEUD      = 'NO1'         ,
+                                     ),
+                                  _F(ACCE       = ACCELER2      ,
+                                     VITE       = VITESSE2      ,
+                                     DEPL       = DEPLACE2      ,
+                                     TYPE_APPUI = 'MULTI'       ,
+                                     DIRECTION  = (1., 0., 0.)  ,
+                                     GROUP_NO   = 'GROUP_NO_GN5',
+                                     ),
+                                  ),
+                   ARCHIVAGE    =_F(PAS_ARCH   = 100            ,
+                                    CHAM_EXCLU = ('VITE','ACCE'),
+                                    ),
+                   INCREMENT    =_F(PAS      =0.001,
+                                    INST_FIN =1.   ,
+                                    ),
                    )
 
-# #
+#
 # CALCUL TRANSITOIRE PAR SUPERPOSITION MODALE
 # -------------------------------------------
+# On utilise différents schéma d'intégration
 
-#
-L_RECU=DEFI_LIST_REEL(  DEBUT=0., INTERVALLE=_F(  JUSQU_A = 1.0,  NOMBRE = 20) )
+L_RECU = DEFI_LIST_REEL(DEBUT      = 0.,
+                        INTERVALLE =_F(JUSQU_A = 1.0,
+                                       NOMBRE  = 20 ,
+                                       ),
+                        )
 
 
-TRAN_GE2=DYNA_LINE(TYPE_CALCUL='TRAN',
-                   BASE_CALCUL='GENE',
-                   MODELE=MODELE,
-                   CARA_ELEM=CARA_ELE,
-                   CHARGE=CON_LIM,
-                   SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
-                   BANDE_ANALYSE=9.3,
-                   ENRI_STAT='NON',
-                   EXCIT=(_F(ACCE = ACCELER1,
-                             VITE = VITESSE1,
-                             DEPL = DEPLACE1,
-                             TYPE_APPUI='MULTI',
-                             DIRECTION = ( 1., 0., 0.,),
-                             NOEUD = 'NO1'
-                             ),
-                          _F(ACCE = ACCELER2,
-                             VITE = VITESSE2,
-                             DEPL = DEPLACE2,
-                             TYPE_APPUI='MULTI',
-                             DIRECTION = ( 1., 0., 0.,),
-                             NOEUD = 'NO5',
-                             ),),
-                   ARCHIVAGE=_F(  PAS_ARCH = 1.E8, LIST_INST=L_RECU),
-                   INCREMENT=_F(PAS=0.001,
-                                INST_FIN=1.),
+TRAN_GE2=DYNA_LINE(TYPE_CALCUL   = 'TRAN'  ,
+                   BASE_CALCUL   = 'GENE'  ,
+                   MODELE        = MODELE  ,
+                   CARA_ELEM     = CARA_ELE,
+                   CHARGE        = CON_LIM ,
+                   SCHEMA_TEMPS  =_F(SCHEMA='DIFF_CENTRE',
+                                     ),
+                   BANDE_ANALYSE = 9.3 ,
+                   ENRI_STAT     ='NON',
+                   EXCIT         =(
+                                   _F(ACCE       = ACCELER1     ,
+                                      VITE       = VITESSE1     ,
+                                      DEPL       = DEPLACE1     ,
+                                      TYPE_APPUI ='MULTI'       ,
+                                      DIRECTION  = ( 1., 0., 0.),
+                                      NOEUD      = 'NO1'        ,
+                                      ),
+                                   _F(ACCE       = ACCELER2     ,
+                                      VITE       = VITESSE2     ,
+                                      DEPL       = DEPLACE2     ,
+                                      TYPE_APPUI ='MULTI'       ,
+                                      DIRECTION  = ( 1., 0., 0.),
+                                      NOEUD      = 'NO5'        ,
+                                      ),
+                                   ),
+                   ARCHIVAGE     =_F(PAS_ARCH  = 1.E8  ,
+                                     LIST_INST = L_RECU,
+                                     ),
+                   INCREMENT     =_F(PAS       = 0.001 ,
+                                     INST_FIN  = 1.    ,
+                                     ),
                    )
 
-#
-TRAN_GED=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                 MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
-                 SCHEMA_TEMPS=_F(SCHEMA='DEVOGE', PAS_MAXI=0.0001, TOLERANCE=1.E-7),
-                 MODE_STAT=MODE_STA,
-                 EXCIT=(
-                _F( VECT_ASSE_GENE = VECT_X1,  ACCE = ACCELER1,
-                        MULT_APPUI = 'OUI',
-                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO1',
-                        VITE = VITESSE1, DEPL = DEPLACE1),
-                _F( VECT_ASSE_GENE = VECT_X2,  ACCE = ACCELER2,
-                        MULT_APPUI = 'OUI',
-                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO5',
-                        VITE = VITESSE2, DEPL = DEPLACE2)),
-                 ARCHIVAGE=_F(  PAS_ARCH = 1.E8, LIST_INST=L_RECU),
-                 INCREMENT=_F(  INST_INIT = 0., INST_FIN = 1.0, PAS = 0.0001,),
-                )
 
-#
-TRAN_GEA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
-                SCHEMA_TEMPS=_F(SCHEMA='ADAPT_ORDRE2',
-                                PAS_MAXI = 0.0001, VITE_MIN = 'MAXI', NMAX_ITER_PAS=50,),
-                MODE_STAT=MODE_STA,
-                EXCIT=(
-                _F( VECT_ASSE_GENE = VECT_X1,  ACCE = ACCELER1,
-                        MULT_APPUI = 'OUI',
-                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO1',
-                        VITE = VITESSE1, DEPL = DEPLACE1),
-                _F( VECT_ASSE_GENE = VECT_X2,  ACCE = ACCELER2,
-                        MULT_APPUI = 'OUI',
-                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO5',
-                        VITE = VITESSE2, DEPL = DEPLACE2)),
-                 ARCHIVAGE=_F(  PAS_ARCH = 1.E8, LIST_INST=L_RECU),
-                 INCREMENT=_F(  INST_INIT = 0., INST_FIN = 1.0, PAS = 0.0001,),
-                )
-#
-TRA_RK54=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
-                SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_54',TOLERANCE=1.E-7, PAS_MAXI = 0.0001),
-                MODE_STAT=MODE_STA,
-                EXCIT=(
-                _F( VECT_ASSE_GENE = VECT_X1,  ACCE = ACCELER1,
-                        MULT_APPUI = 'OUI',
-                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO1',
-                        VITE = VITESSE1, DEPL = DEPLACE1),
-                _F( VECT_ASSE_GENE = VECT_X2,  ACCE = ACCELER2,
-                        MULT_APPUI = 'OUI',
-                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO5',
-                        VITE = VITESSE2, DEPL = DEPLACE2)),
-                 ARCHIVAGE=_F(  PAS_ARCH = 1.E8, LIST_INST=L_RECU),
-                 INCREMENT=_F( INST_INIT = 0., INST_FIN = 1.0, PAS = 0.0001))
-
-#
-TRA_RK32=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
-                SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_32',TOLERANCE=1.E-7, PAS_MAXI = 0.0001),
-                MODE_STAT=MODE_STA,
-                EXCIT=(
-                _F( VECT_ASSE_GENE = VECT_X1,  ACCE = ACCELER1,
-                        MULT_APPUI = 'OUI',
-                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO1',
-                        VITE = VITESSE1, DEPL = DEPLACE1),
-                _F( VECT_ASSE_GENE = VECT_X2,  ACCE = ACCELER2,
-                        MULT_APPUI = 'OUI',
-                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO5',
-                        VITE = VITESSE2, DEPL = DEPLACE2)),
-                 ARCHIVAGE=_F(  PAS_ARCH = 1.E8, LIST_INST=L_RECU),
-                 INCREMENT=_F( INST_INIT = 0., INST_FIN = 1.0, PAS = 0.0001))
+TRAN_GED = DYNA_VIBRA(TYPE_CALCUL  = 'TRAN'  ,
+                      BASE_CALCUL  = 'GENE'  ,
+                      MATR_MASS    = MASS_GEN,
+                      MATR_RIGI    = RIGI_GEN,
+                      SCHEMA_TEMPS =_F(SCHEMA    = 'DEVOGE',
+                                       PAS_MAXI  = 0.0001  ,
+                                       TOLERANCE = 1.E-7   ,
+                                       ),
+                      MODE_STAT    = MODE_STA,
+                      EXCIT        =(
+                                     _F(VECT_ASSE_GENE = VECT_X1      ,
+                                        ACCE           = ACCELER1     ,
+                                        MULT_APPUI     = 'OUI'        ,
+                                        DIRECTION      = ( 1., 0., 0.),
+                                        NOEUD          = 'NO1'        ,
+                                        VITE           = VITESSE1     ,
+                                        DEPL           = DEPLACE1     ,
+                                        ),
+                                     _F(VECT_ASSE_GENE = VECT_X2      ,
+                                        ACCE           = ACCELER2     ,
+                                        MULT_APPUI     = 'OUI'        ,
+                                        DIRECTION      = ( 1., 0., 0.),
+                                        NOEUD          = 'NO5'        ,
+                                        VITE           = VITESSE2     ,
+                                        DEPL           = DEPLACE2     ,
+                                        ),
+                                     ),
+                      ARCHIVAGE    =_F(PAS_ARCH  = 1.E8  ,
+                                       LIST_INST = L_RECU,
+                                       ),
+                      INCREMENT    =_F(INST_INIT = 0.    ,
+                                       INST_FIN  = 1.0   ,
+                                       PAS       = 0.0001,
+                                       ),
+                      )
 
 
-#######################################################################
+TRAN_GEA = DYNA_VIBRA(TYPE_CALCUL  ='TRAN'   ,
+                      BASE_CALCUL  ='GENE'   ,
+                      MATR_MASS    = MASS_GEN,
+                      MATR_RIGI    = RIGI_GEN,
+                      SCHEMA_TEMPS =_F(SCHEMA        ='ADAPT_ORDRE2',
+                                       PAS_MAXI      = 0.0001       ,
+                                       VITE_MIN      = 'MAXI'       ,
+                                       NMAX_ITER_PAS = 50           ,
+                                       ),
+                      MODE_STAT    = MODE_STA,
+                      EXCIT        =(
+                                     _F(VECT_ASSE_GENE = VECT_X1      ,
+                                        ACCE           = ACCELER1     ,
+                                        MULT_APPUI     = 'OUI'        ,
+                                        DIRECTION      = ( 1., 0., 0.),
+                                        NOEUD          = 'NO1'        ,
+                                        VITE           = VITESSE1     ,
+                                        DEPL           = DEPLACE1     ,
+                                        ),
+                                     _F(VECT_ASSE_GENE = VECT_X2      ,
+                                        ACCE           = ACCELER2     ,
+                                        MULT_APPUI     = 'OUI'        ,
+                                        DIRECTION      = ( 1., 0., 0.),
+                                        NOEUD          = 'NO5'        ,
+                                        VITE           = VITESSE2     ,
+                                        DEPL           = DEPLACE2     ,
+                                        ),
+                                     ),
+                      ARCHIVAGE    =_F(PAS_ARCH  = 1.E8  ,
+                                       LIST_INST = L_RECU,
+                                       ),
+                      INCREMENT    =_F(INST_INIT = 0.    ,
+                                       INST_FIN  = 1.0   ,
+                                       PAS       = 0.0001,
+                                       ),
+                      )
+
+
+TRA_RK54 = DYNA_VIBRA(TYPE_CALCUL  = 'TRAN'  ,
+                      BASE_CALCUL  = 'GENE'  ,
+                      MATR_MASS    = MASS_GEN,
+                      MATR_RIGI    = RIGI_GEN,
+                      SCHEMA_TEMPS =_F(SCHEMA    ='RUNGE_KUTTA_54',
+                                       TOLERANCE = 1.E-7          ,
+                                       PAS_MAXI  = 0.0001         ,
+                                       ),
+                      MODE_STAT    = MODE_STA,
+                      EXCIT        =(
+                                     _F(VECT_ASSE_GENE = VECT_X1      ,
+                                        ACCE           = ACCELER1     ,
+                                        MULT_APPUI     = 'OUI'        ,
+                                        DIRECTION      = ( 1., 0., 0.),
+                                        NOEUD          = 'NO1'        ,
+                                        VITE           = VITESSE1     ,
+                                        DEPL           = DEPLACE1     ,
+                                        ),
+                                     _F(VECT_ASSE_GENE = VECT_X2      ,
+                                        ACCE           = ACCELER2     ,
+                                        MULT_APPUI     = 'OUI'        ,
+                                        DIRECTION      = ( 1., 0., 0.),
+                                        NOEUD          = 'NO5'        ,
+                                        VITE           = VITESSE2     ,
+                                        DEPL           = DEPLACE2     ,
+                                        ),
+                                     ),
+                      ARCHIVAGE    =_F(PAS_ARCH        = 1.E8  ,
+                                       LIST_INST       = L_RECU,
+                                       ),
+                      INCREMENT    =_F(INST_INIT       = 0.    ,
+                                       INST_FIN        = 1.0   ,
+                                       PAS             = 0.0001,
+                                       ),
+                      )
+
+
+TRA_RK32 = DYNA_VIBRA(TYPE_CALCUL  = 'TRAN'  ,
+                      BASE_CALCUL  = 'GENE'  ,
+                      MATR_MASS    = MASS_GEN,
+                      MATR_RIGI    = RIGI_GEN,
+                      SCHEMA_TEMPS =_F(SCHEMA    = 'RUNGE_KUTTA_32',
+                                       TOLERANCE = 1.E-7           ,
+                                       PAS_MAXI  = 0.0001          ,
+                                       ),
+                      MODE_STAT    = MODE_STA,
+                      EXCIT        =(
+                                     _F(VECT_ASSE_GENE = VECT_X1      ,
+                                        ACCE           = ACCELER1     ,
+                                        MULT_APPUI     = 'OUI'        ,
+                                        DIRECTION      = ( 1., 0., 0.),
+                                        NOEUD          = 'NO1'        ,
+                                        VITE           = VITESSE1     ,
+                                        DEPL           = DEPLACE1     ,
+                                        ),
+                                     _F(VECT_ASSE_GENE = VECT_X2      ,
+                                        ACCE           = ACCELER2     ,
+                                        MULT_APPUI     = 'OUI'        ,
+                                        DIRECTION      = ( 1., 0., 0.),
+                                        NOEUD          = 'NO5'        ,
+                                        VITE           = VITESSE2     ,
+                                        DEPL           = DEPLACE2     ,
+                                        ),
+                                     ),
+                      ARCHIVAGE    =_F(PAS_ARCH  = 1.E8  ,
+                                       LIST_INST = L_RECU,
+                                       ),
+                      INCREMENT    =_F(INST_INIT = 0.    ,
+                                       INST_FIN  = 1.0   ,
+                                       PAS       = 0.0001,
+                                       ),
+                      )
+
+
+##################################################################
 #CALCUL TRANSITOIRE PAR SUPERPOSITION MODALE (BASE TRONQUEE) EULER
-########################################################################
-PROJ_BASE(BASE=MODE_EXT,
-          STOCKAGE='DIAG',
-          MATR_ASSE_GENE=(
-           _F( MATRICE = CO("MASS_EXT"), MATR_ASSE = MASSE),
-           _F( MATRICE = CO("RIGI_EXT"), MATR_ASSE = RIGIDITE)),
-          VECT_ASSE_GENE=(
-           _F( VECTEUR = CO("VECT_EX1"), VECT_ASSE = MULT_X1, TYPE_VECT='FORC'),
-           _F( VECTEUR = CO("VECT_EX2"), VECT_ASSE = MULT_X2, TYPE_VECT='FORC'))
-                          )
-TRAN_EXT=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                 MATR_MASS=MASS_EXT,   MATR_RIGI=RIGI_EXT,
-                 SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
-                 MODE_STAT=MODE_STA,
-                 EXCIT=(
-                _F( VECT_ASSE_GENE = VECT_EX1,  ACCE = ACCELER1,
-                        MULT_APPUI = 'OUI',
-                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO1',
-                        VITE = VITESSE1, DEPL = DEPLACE1),
-                _F( VECT_ASSE_GENE = VECT_EX2,  ACCE = ACCELER2,
-                        MULT_APPUI = 'OUI',
-                        DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO5',
-                        VITE = VITESSE2, DEPL = DEPLACE2)),
-                 ARCHIVAGE=_F(  PAS_ARCH = 1),
-                 INCREMENT=_F(  LIST_INST=L_INST2,),
-                )
+##################################################################
+
+PROJ_BASE(BASE           = MODE_EXT,
+          STOCKAGE       = 'DIAG'  ,
+          MATR_ASSE_GENE =(
+                           _F(MATRICE   = CO("MASS_EXT"),
+                              MATR_ASSE = MASSE         ,
+                              ),
+                           _F(MATRICE   = CO("RIGI_EXT"),
+                              MATR_ASSE = RIGIDITE      ,
+                              ),
+                           ),
+          VECT_ASSE_GENE =(
+                           _F(VECTEUR   = CO("VECT_EX1"),
+                              VECT_ASSE = MULT_X1       ,
+                              TYPE_VECT ='FORC'         ,
+                              ),
+                           _F(VECTEUR   = CO("VECT_EX2"),
+                              VECT_ASSE = MULT_X2       ,
+                              TYPE_VECT = 'FORC'        ,
+                              ),
+                           ),
+          )
+
+TRAN_EXT = DYNA_VIBRA(TYPE_CALCUL  = 'TRAN'  ,
+                      BASE_CALCUL  = 'GENE'  ,
+                      MATR_MASS    = MASS_EXT,
+                      MATR_RIGI    = RIGI_EXT,
+                      SCHEMA_TEMPS =_F(SCHEMA = 'DIFF_CENTRE'),
+                      MODE_STAT    = MODE_STA,
+                      EXCIT        =(
+                                     _F(VECT_ASSE_GENE = VECT_EX1     ,
+                                        ACCE           = ACCELER1     ,
+                                        MULT_APPUI     = 'OUI'        ,
+                                        DIRECTION      = ( 1., 0., 0.),
+                                        NOEUD          = 'NO1'        ,
+                                        VITE           = VITESSE1     ,
+                                        DEPL           = DEPLACE1     ,
+                                        ),
+                                     _F(VECT_ASSE_GENE = VECT_EX2     ,
+                                        ACCE           = ACCELER2     ,
+                                        MULT_APPUI     = 'OUI'        ,
+                                        DIRECTION      = ( 1., 0., 0.),
+                                        NOEUD          = 'NO5'        ,
+                                        VITE           = VITESSE2     ,
+                                        DEPL           = DEPLACE2     ,
+                                        ),
+                                     ),
+                      ARCHIVAGE    =_F(PAS_ARCH  = 1      ),
+                      INCREMENT    =_F(LIST_INST = L_INST2),
+                      )
 
 ##########################################################
 # PRISE EN COMPTE DE LA CORRECTION STATIQUE dans DYNA_LINE
 ##########################################################
 
-TRAN_DLI=DYNA_LINE(TYPE_CALCUL='TRAN',
-                   BASE_CALCUL='GENE',
-                   MODELE=MODELE,
-                   CARA_ELEM=CARA_ELE,
-                   CHARGE=CON_LIM,
-                   SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
-                   BANDE_ANALYSE=9.3,
-                   ORTHO='OUI',
-                   EXCIT=(_F(ACCE = ACCELER1,
-                             VITE = VITESSE1,
-                             DEPL = DEPLACE1,
-                             TYPE_APPUI='MULTI',
-                             DIRECTION = ( 1., 0., 0.,),
-                             NOEUD = 'NO1'
-                             ),
-                          _F(ACCE = ACCELER2,
-                             VITE = VITESSE2,
-                             DEPL = DEPLACE2,
-                             TYPE_APPUI='MULTI',
-                             DIRECTION = ( 1., 0., 0.,),
-                             NOEUD = 'NO5',
-                             ),),
-                   ARCHIVAGE=_F(PAS_ARCH = 1.E8, LIST_INST=L_RECU),
-                   INCREMENT=_F(PAS=0.001,
-                                INST_FIN=1.),
+TRAN_DLI = DYNA_LINE(TYPE_CALCUL   = 'TRAN'  ,
+                     BASE_CALCUL   = 'GENE'  ,
+                     MODELE        = MODELE  ,
+                     CARA_ELEM     = CARA_ELE,
+                     CHARGE        = CON_LIM ,
+                     SCHEMA_TEMPS  =_F(SCHEMA = 'DIFF_CENTRE'),
+                     BANDE_ANALYSE = 9.3,
+                     ORTHO         = 'OUI'   ,
+                     EXCIT         =(_F(ACCE       = ACCELER1     ,
+                                        VITE       = VITESSE1     ,
+                                        DEPL       = DEPLACE1     ,
+                                        TYPE_APPUI ='MULTI'       ,
+                                        DIRECTION  = ( 1., 0., 0.),
+                                        NOEUD      = 'NO1'        ,
+                                        ),
+                                     _F(ACCE       = ACCELER2     ,
+                                        VITE       = VITESSE2     ,
+                                        DEPL       = DEPLACE2     ,
+                                        TYPE_APPUI ='MULTI'       ,
+                                        DIRECTION  = ( 1., 0., 0.),
+                                        NOEUD      = 'NO5'        ,
+                                        ),
+                                     ),
+                   ARCHIVAGE       =_F(PAS_ARCH  = 1.E8  ,
+                                       LIST_INST = L_RECU,
+                                       ),
+                   INCREMENT       =_F(PAS       = 0.001 ,
+                                       INST_FIN  = 1.    ,
+                                       ),
                    )
 
-TRAN_DLJ=DYNA_LINE(TYPE_CALCUL='TRAN',
-                   BASE_CALCUL='GENE',
-                   MODELE=MODELE,
-                   CARA_ELEM=CARA_ELE,
-                   CHARGE=CON_LIM,
-                   SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE',),
-                   BANDE_ANALYSE=9.3,
-                   ORTHO='OUI',
-                   FREQ_COUP_STAT=10.,
-                   EXCIT=(_F(ACCE = ACCELER1,
-                             VITE = VITESSE1,
-                             DEPL = DEPLACE1,
-                             TYPE_APPUI='MULTI',
-                             DIRECTION = ( 1., 0., 0.,),
-                             NOEUD = 'NO1'
-                             ),
-                          _F(ACCE = ACCELER2,
-                             VITE = VITESSE2,
-                             DEPL = DEPLACE2,
-                             TYPE_APPUI='MULTI',
-                             DIRECTION = ( 1., 0., 0.,),
-                             NOEUD = 'NO5',
-                             ),),
-                   ARCHIVAGE=_F(PAS_ARCH = 1.E8, LIST_INST=L_RECU),
-                   INCREMENT=_F(PAS=0.001,
-                                INST_FIN=1.),
-                   )
-                   
+TRAN_DLJ = DYNA_LINE(TYPE_CALCUL    = 'TRAN'  ,
+                     BASE_CALCUL    = 'GENE'  ,
+                     MODELE         = MODELE  ,
+                     CARA_ELEM      = CARA_ELE,
+                     CHARGE         = CON_LIM ,
+                     SCHEMA_TEMPS   =_F(SCHEMA='DIFF_CENTRE'),
+                     BANDE_ANALYSE  = 9.3     ,
+                     ORTHO          = 'OUI'   ,
+                     FREQ_COUP_STAT = 10.     ,
+                     EXCIT          =(
+                                      _F(ACCE       = ACCELER1     ,
+                                         VITE       = VITESSE1     ,
+                                         DEPL       = DEPLACE1     ,
+                                         TYPE_APPUI ='MULTI'       ,
+                                         DIRECTION  = ( 1., 0., 0.),
+                                         NOEUD      = 'NO1'        ,
+                                         ),
+                                      _F(ACCE       = ACCELER2     ,
+                                         VITE       = VITESSE2     ,
+                                         DEPL       = DEPLACE2     ,
+                                         TYPE_APPUI ='MULTI'       ,
+                                         DIRECTION  = ( 1., 0., 0.),
+                                         NOEUD      = 'NO5'        ,
+                                         ),
+                                      ),
+                     ARCHIVAGE      =_F(PAS_ARCH  = 1.E8  ,
+                                        LIST_INST = L_RECU,
+                                        ),
+                     INCREMENT      =_F(PAS       = 0.001 ,
+                                        INST_FIN  = 1.    ,
+                                        ),
+                     )
+
+
 # RESTITUTION DU DEPLACEMENT ABSOLU
 # ---------------------------------
 RESUAD=REST_GENE_PHYS(  RESU_GENE=TRAN_GED,
@@ -469,7 +712,7 @@ RESARK54=REST_GENE_PHYS(  RESU_GENE=TRA_RK54,
                         MULT_APPUI='OUI'
                        )
 
-RESARK32=REST_GENE_PHYS(  RESU_GENE=TRA_RK54,
+RESARK32=REST_GENE_PHYS(  RESU_GENE=TRA_RK32,
                          INTERPOL='LIN',
                          PRECISION=4.E-3,
                          LIST_INST=L_RECU,
