@@ -96,9 +96,13 @@ real(kind=8), optional, intent(out) :: detf_
         ASSERT(neps .ne. 9)
         call dcopy(neps, deps, 1, dstran, 1)
         call dcopy(neps, epsm, 1, stran, 1)
-        if ((neps .eq. 6) .or. (neps .eq. 4)) then
+        if (neps .eq. 6) then
             call dscal(3, rac2, dstran(4), 1) 
             call dscal(3, rac2, stran(4), 1)
+        endif
+        if (neps .eq. 4) then
+            call dscal(1, rac2, dstran(4), 1) 
+            call dscal(1, rac2, stran(4), 1)
         endif
     endif
 !

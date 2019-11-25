@@ -180,8 +180,4 @@ cata_msg = {
  Vous utilisez le modèle BETON_UMLV avec un modèle d'endommagement.
  La mise à jour des contraintes sera faite suivant les déformations totales et non pas suivant un schéma incrémental.
 """),
-
-    91 : _("""
-   La loi métallurgique META_LEMA_ANI n'est utilisable qu'avec le zirconium.
-"""),
 }

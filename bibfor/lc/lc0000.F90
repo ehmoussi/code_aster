@@ -110,7 +110,6 @@ implicit none
 #include "asterfort/lc0098.h"
 #include "asterfort/lc0099.h"
 #include "asterfort/lc0100.h"
-#include "asterfort/lc0115.h"
 #include "asterfort/lc0120.h"
 #include "asterfort/lc0137.h"
 #include "asterfort/lc0145.h"
@@ -784,14 +783,6 @@ integer :: codret
                     nvi, dsidep, codret)
     case (100)
         call lc0100(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (115)
-!     META_LEMA_ANI
-        call lc0115(BEHinteg,&
-                    fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
