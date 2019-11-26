@@ -465,8 +465,5 @@ Erreur utilisateur dans COMB_MATR_ASSE:
  le mot-clé MAILLAGE est obligatoire avec le mot-clé COQU_VOLU.
 """),
 
-    99 : _("""
- pas de maille a modifier
-"""),
 
 }

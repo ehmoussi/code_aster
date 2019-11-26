@@ -91,7 +91,7 @@ MODI_REPERE / CHAMP_GD
     13: _("""
  Il n'y a aucun groupe de noeuds ni aucun noeud défini après le mot facteur  %(k1)s
 """),
- 
+
     14: _("""
 MODI_REPERE / RESULTAT / concept réentrant
     Le mot clé REPERE est obligatoire et doit valoir "COQUE_INTR_UTIL" ou "COQUE_UTIL_INTR"
@@ -101,7 +101,7 @@ MODI_REPERE / RESULTAT / concept réentrant
 MODI_REPERE / RESULTAT / concept réentrant
     Le mot clé REPERE vaut %(k1)s. Il est interdit d'utiliser le même concept résultat en entrée et en sortie de
     la commande MODI_REPERE pour ce type de changement de repère.
-    
+
     Conseils : Définissez un concept résultat différent en sortie de la commande.
 """),
 2 : _("""
@@ -132,7 +132,12 @@ MODI_REPERE / RESULTAT / concept réentrant
 """),
 
 
-
+    31: _("""
+ Alarme utilisateur dans CREA_MAILLAGE/MODI_MAILLE :
+  Occurrence du mot clé facteur MODI_MAILLE : %(i1)d.
+  Vous avez demandé la transformation de certaines mailles.
+  Mais il n'y a aucune maille à transformer.
+"""),
 
 
     32: _("""
