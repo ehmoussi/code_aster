@@ -115,7 +115,8 @@ ASSEMBLAGE(MODELE     = MODEL        ,
 
 # Calcul des modes propres
 
-MODES=CALC_MODES(CALC_FREQ = _F(FREQ=(0., 995.)),
+MODES=CALC_MODES(CALC_FREQ = _F(FREQ=(0., 995.),
+                                SEUIL_FREQ=2.E-6),
                  OPTION    = 'BANDE'             ,
                  MATR_RIGI = RAIDASS             ,
                  MATR_MASS = MASSASS             ,
