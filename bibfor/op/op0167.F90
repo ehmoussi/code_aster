@@ -105,9 +105,9 @@ subroutine op0167()
     character(len=24) :: momanu, momano, crgrnu, crgrno, lisi
     character(len=24) :: lisk, typ_dec_lac, cninv
     character(len=24) :: nomg, valk(2), nogma, gpptnm, gpptnn
-    character(len=24) :: prfn1, prfn2, nume2, iadr, nume1, momoto, momuto, prfn
+    character(len=24) :: prfn1, prfn2, nume2, iadr, nume1, momuto, prfn
     integer :: nn1, iaa, iagma, iatyma, ii, ima, in, ino, inumol, j, nfi
-    integer :: jcrgno, jcrgnu, jgg, jlii, jlik, jmail, jmomto
+    integer :: jcrgno, jcrgnu, jgg, jlii, jlik, jmail
     integer :: jmomtu, jnoeu, jnono, jnpt, jopt, jtom, jtrno, jvale, jvg, kvale
     integer :: nbcrp1, nbgma, nbgrma, nbgrmn, nbgrmt, nbgrmv
     integer :: nbgrno, nbmain, nbmaj2, nbmaj3, nbno, nbnot, nbtrav
@@ -117,7 +117,7 @@ subroutine op0167()
     integer :: nbmaiv, nbmoma, nbnoaj, nbnoev, nch, ndinit, niv, k, jgeofi
     integer :: dimcon, decala, iocct, typ_dec
     real(kind=8) :: shrink, lonmin
-    aster_logical :: lpb, same_zone
+    aster_logical :: lpb, same_zone, l_modi_maille
     integer, pointer :: adrjvx(:) => null()
     integer, pointer :: nbnoma(:) => null()
     integer, pointer :: nbnomb(:) => null()
@@ -500,7 +500,6 @@ subroutine op0167()
         momano='&&OP0167.MO_MA.NOM'
 !
         momuto='&&OP0167.MO_TO.NUM'
-        momoto='&&OP0167.MO_TO.NOM'
 !
         lisi='&&OP0167.LISI'
         lisk='&&OP0167.LISK'
@@ -519,6 +518,8 @@ subroutine op0167()
         call wkvect(nume1, 'V V I', nbmoma, jnum)
         call wkvect(prfn2, 'V V K8', nbmaiv, jpr2)
         call wkvect(nume2, 'V V I', nbmaiv, jnu2)
+!
+        l_modi_maille = ASTER_FALSE
 !
         iad=1
         do iocc = 1, nbmoma
@@ -540,6 +541,8 @@ subroutine op0167()
             if (zi(jiad+iocc-1)-1 .le. 0) then
                 call utmess('A', 'MODELISA3_32', sk=option, si=iocc)
                 goto 60
+            else
+                l_modi_maille = ASTER_TRUE
             endif
 !
             call wkvect(lisi, 'V V I', zi(jiad+iocc-1)-1, jlii)
@@ -550,7 +553,6 @@ subroutine op0167()
                 zk8(jlik+ii-1)=zk8(jmomno+ii-1)
             end do
             call cocali(momuto, lisi, 'I')
-            call cocali(momoto, lisk, 'K8')
             iaa=iad
             iad=iad+zi(jiad+iocc-1)-1
 !
@@ -581,12 +583,14 @@ subroutine op0167()
  60         continue
         end do
 !
-        call jeveuo(momuto, 'L', jmomtu)
-        call jeveuo(momoto, 'L', jmomto)
+        if(l_modi_maille) then
+            call jeveuo(momuto, 'L', jmomtu)
+        else
+            call utmess('A', 'MODELISA3_31', si=nbmoma)
+            nbmoma = 0
+        end if
+!
         nbnoaj=iad-1
-        if (nbnoaj .eq. 0) then
-            call utmess('F', 'ALGELINE2_99')
-        endif
     endif
 !
 ! ----------------------------------------------------------------------
