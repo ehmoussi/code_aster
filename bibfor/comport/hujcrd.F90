@@ -34,7 +34,7 @@ subroutine hujcrd(k, mater, sig, vin, seuild, iret)
     real(kind=8), intent(out) :: seuild
     integer, intent(out) :: iret
 
-    integer :: ndt, ndi, ifm
+    integer :: ndt, ndi
     real(kind=8) :: un, r, epsvp, pcr, pa, tole
     real(kind=8) :: degr, beta, b, m, phi, pcref, ptrac
     real(kind=8) :: sigd(3), p, q
