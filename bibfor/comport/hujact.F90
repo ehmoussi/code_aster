@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ subroutine hujact(mater, vind, vinf, vins, sigd,&
 !       CHGMEC   = .TRUE. SI MODIFICATION DU DOMAINE POTENTIEL
 !                            DES MECANISMES ACTIFS
 !   ------------------------------------------------------------------
+#include "asterfort/assert.h"
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
 #include "asterfort/hujcdc.h"
@@ -46,7 +47,7 @@ subroutine hujact(mater, vind, vinf, vins, sigd,&
 #include "asterfort/hujmei.h"
 #include "asterfort/hujrmo.h"
 #include "asterfort/lceqvn.h"
-    integer :: ndt, ndi, i, mono, indi(7)
+    integer :: ndt, ndi, i, mono, indi(7), iret
     real(kind=8) :: tole1, sigd(6), sigf(6)
     real(kind=8) :: vind(*), vinf(*), vins(50), vint(50)
     real(kind=8) :: mater(22, 2), un, zero
@@ -153,7 +154,8 @@ subroutine hujact(mater, vind, vinf, vins, sigd,&
 ! --- MECANISME DEVIATOIRE
 ! ************************
             if (i .lt. 4) then
-                call hujcrd(i, mater, sigf, vinf, seuil)
+                call hujcrd(i, mater, sigf, vinf, seuil, iret)
+                ASSERT(iret .eq. 0)
                 if (seuil .gt. tole1) then
                     chgmec = .true.
                     vind(23+i) = un
@@ -209,7 +211,8 @@ subroutine hujact(mater, vind, vinf, vins, sigd,&
 ! --- VERIFICATION DES SEUILS MONOTONES
 ! *************************************
             if (i .lt. 4) then
-                call hujcrd(i, mater, sigf, vinf, seuil)
+                call hujcrd(i, mater, sigf, vinf, seuil, iret)
+                ASSERT(iret .eq. 0)
             else
                 if (chgmec .and. (.not.miso)) goto 40
                 call hujcri(mater, sigf, vinf, seuil)

@@ -264,7 +264,10 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
                 vind(i) = materf(13,2)
             endif
 !
-            call hujcrd(i, materf, sigd, vind, seuil)
+            call hujcrd(i, materf, sigd, vind, seuil, iret)
+            if (iret .ne. 0) then
+                goto 999
+            endif
 !
 ! --- SI LE SEUIL EST DESEQUILIBRE A L'ETAT INITIAL
 !     ON EQUILIBRE LE SEUIL EN CALCULANT LA VALEUR DE R
@@ -413,7 +416,7 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
         iret1 =0
         call hujdp(mod, depsr, sigd, sigf, materf,&
                    vind, incmax, iret1)
-                   
+
         if (iret1.eq.1) then
            if (debug) &
            write (6, '(A)' ) &
@@ -609,7 +612,7 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
                    det=0.
                 endif
                 call lcprsv(det, dsig, dsig)
-                
+
                 call lcsovn(6, sigd0, dsig, sigf)
 ! semble moins performant que + haut:
 !                 call lceqve(sigd0, sigf)
@@ -671,39 +674,42 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
 ! i.e. par le module d'Young materf(1,1)/Pcr0
 ! pour assurer la coherence du controle avec RESI_INTE_RELA
               if (i.lt.4) then
-              
-                 call hujcrd(i, materf, sigf, vinf, seuil)
+
+                 call hujcrd(i, materf, sigf, vinf, seuil, iret)
+                 if (iret .ne. 0) then
+                    goto 999
+                 endif
                  seuil   = seuil*det
-                 
+
                  if (seuil.gt.zero) then
                    bid16(i)=un
                  else
                    bid16(i)=zero
                  endif
-              
+
               elseif (i.eq.4) then
-              
+
                  call hujcri(materf, sigf, vinf, seuil)
                  seuil   = seuil/materf(1,1)*abs(materf(7,2))
-                 
+
                  if (seuil.gt.zero) then
                    bid16(4)=un
                  else
                    bid16(4)=zero
                  endif
-              
+
               elseif (i.lt.8 .and. bid16(i-4).eq.zero) then
-              
+
                  call hujcdc(i-4, materf, sigf, vinf, seuil)
                  seuil = seuil*det
-              
+
               elseif (bid16(4).eq.zero) then
-              
+
                  call hujcic(materf, sigf, vinf, seuil)
                  seuil = seuil/materf(1,1)*abs(materf(7,2))
-                 
+
               endif
-              
+
               crit = max(seuil,crit)
 !
            enddo

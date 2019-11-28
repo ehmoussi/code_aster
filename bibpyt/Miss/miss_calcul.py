@@ -212,7 +212,7 @@ class CalculMiss(object):
     def cree_resultat_aster(self):
         """Produit le(s) fichier(s) issu(s) d'Aster."""
         self._dbg_trace("Start")
-        ulaster = self.param.UL.Libre(action='ASSOCIER')
+        ulaster = self.param.UL.Libre(action='ASSOCIER', new=True)
         mael = self.param['MACR_ELEM_DYNA']
         if mael is None:
             opts = {}
