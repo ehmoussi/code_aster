@@ -17,8 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster.RunManager import LogicalUnitFile, FileAccess
+
+
 def simu_point_mat_ops(
-    self, MATER, INCREMENT=None, SIGM_IMPOSE=None, EPSI_IMPOSE=None, SIGM_INIT=None, 
+    self, MATER, INCREMENT=None, SIGM_IMPOSE=None, EPSI_IMPOSE=None, SIGM_INIT=None,
         EPSI_INIT=None, VARI_INIT=None, NEWTON=None, CONVERGENCE=None,
         MASSIF=None, ANGLE=None, COMPORTEMENT=None, INFO=None, ARCHIVAGE=None, SUPPORT=None, **args):
     """Simulation de la reponse d'un point materiel"""
@@ -49,7 +52,6 @@ def simu_point_mat_ops(
     from code_aster.Commands import CALC_POINT_MAT
 
     from code_aster.Cata.Syntax import _F
-    from Utilitai.UniteAster import UniteAster
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     from Noyau.N_types import is_sequence
 
@@ -350,15 +352,14 @@ def simu_point_mat_ops(
            FIN
          """
 
-        fi_mail = open('simu.mail', 'w')
-        fi_mail.write(texte_ma)
-        fi_mail.close()
+        with open('simu.mail', 'w') as fi_mail:
+            fi_mail.write(texte_ma)
 
-        UL = UniteAster()
-        umail = UL.Libre(action='ASSOCIER', nom='simu.mail')
+        logical_unit = LogicalUnitFile.open('simu.mail', access=FileAccess.Old)
+        umail = logical_unit.unit
 
         __MA = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=umail)
-        UL.Etat(umail, etat="F")
+        logical_unit.release()
 
         if MODELISATION == "3D":
             __MO = AFFE_MODELE(MAILLAGE=__MA,
@@ -953,6 +954,6 @@ def simu_point_mat_ops(
                              _F(OPERATION='COMB', TABLE=__REP_INV,
                                 NOM_PARA=('INST'), ),
                              _F(OPERATION='COMB', TABLE=__REP_VARI, NOM_PARA=('INST'), ),))
-        
+
     RetablirAlarme('COMPOR4_70')
     return REPONSE
