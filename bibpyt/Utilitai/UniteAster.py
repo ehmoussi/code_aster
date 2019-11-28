@@ -32,9 +32,16 @@ class UniteAster:
     def __init__(self):
         pass
 
-    def Libre(self, nom=None, action='RESERVER'):
-        """Réserve/associe et retourne une unité libre en y associant, s'il est
-        fourni, le fichier 'nom'.
+    def Libre(self, nom=None, action='RESERVER', ascii=True, new=False):
+        """Get a free logical unit.
+
+        Arguments:
+            nom (str): file name or it will be automatically assigned.
+            action (str): 'RESERVER' to mark the unit as used, 'ASSOCIER' also
+                open the file.
+            new (bool): *True* means that this is a new file. The file is
+                removed if it exists. *False* means that the file may exist.
+            ascii (bool): If *True* the file is opened in text mode.
         """
         logical_unit = LogicalUnitFile.new_free(nom)
         return logical_unit.unit

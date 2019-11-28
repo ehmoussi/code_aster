@@ -56,15 +56,29 @@ p.setGlossaryName("EquivalentPlasticStrain");
   if(seq_>1.e-8*young){
     n_ = 3/(2*seq_)*deviator(sig);
   }
+  cout << "n_" << n_ << endl;
+
   // elasticity
   StrainStensor np_ = a*StrainStensor::Id()+n_;
+  cout << "np_  :" << np_ << endl;
+  cout << "dp   :" << dp<< endl;
+  cout << "deto :" << deto<< endl;
+  cout << "deel :" << deel<< endl;
   feel = deel+dp*np_-deto;
+  cout << "feel :" << feel << endl;
+  cout << "seq  :" << seq_ << endl;
+  cout << "young:" << 1.e-8*young<< endl;
   if(seq_>1.e-8*young){
     dfeel_ddeel += (2*mu*theta*dp/seq_)*(Stensor4::M()-(n_^n_));
   }
   dfeel_ddp = np_;
   // plasticity
   const strain f = (a*pr_+seq_-k)/young;
+
+
+
+
+
   if((f>0)||(dp>epsilon)){
     fp = f;
     dfp_ddp   = 0;
