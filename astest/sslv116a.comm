@@ -19,11 +19,10 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
-# MODELISATION A : FEM
+# MODELISATION A : Modélisation 3D FEM
 
-# parametres utiles
+# parametre utile
 #------------------
-
 
 # rayon de la fissure
 a = 2
@@ -97,6 +96,7 @@ MO=AFFE_MODELE(MAILLAGE=MA,
 #-----------------------------------------------------------------------------------------------------------------------------
 #                                CREATION DES CHAMPS THERMIQUES
 #-----------------------------------------------------------------------------------------------------------------------------
+
 #Temperature variable spatialement pour ouvrir la fissure
 TEMPVARX=DEFI_FONCTION(NOM_PARA='Z',VALE=(-10,250,
                                            -1,130,
@@ -153,6 +153,7 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
                                   NOM_VARC='TEMP',
                                   EVOL = RESUTHER,
                                   VALE_REF=250,),);
+
 #-----------------------------------------------------------------------------------------------------------------------------
 #                                CHARGEMENTS POSSIBLES
 #-----------------------------------------------------------------------------------------------------------------------------
@@ -189,10 +190,6 @@ SYME=AFFE_CHAR_MECA(MODELE=MO,
 
 #ENCASTREMENT
 ENCAS=AFFE_CHAR_MECA(MODELE=MO,
-#                     FACE_IMPO=_F(GROUP_MA=('ENCASTRE'),
-#                                  DX=0,
-#                                  DY=0,
-#                                  DZ=0,),
                      DDL_IMPO=_F(GROUP_NO='EXTERIEUR',
                                   DX=0,
                                   DY=0,
@@ -220,8 +217,8 @@ RESUMECA=CALC_CHAMP(reuse=RESUMECA,
                     RESULTAT=RESUMECA,
                     CONTRAINTE=('SIEF_ELNO','SIEF_NOEU',),
                     DEFORMATION=('EPSI_ELGA','EPSP_ELNO',),
-#                    VARI_INTERNE=('VARI_ELNO',),
                     );
+
 ##Extraction des contraintes au noeuds et points de Gauss
 SIEFELGA=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
                     OPERATION='EXTR',
@@ -260,8 +257,7 @@ RESOUVFI=CALC_CHAMP(reuse=RESOUVFI,
                     RESULTAT=RESOUVFI,
                     CONTRAINTE=('SIEF_ELNO',),
                     DEFORMATION=('EPSI_ELGA','EPSP_ELNO',),
-#                    VARI_INTERNE=('VARI_ELNO',),
-                    );
+                    )
 
 
 
@@ -270,9 +266,11 @@ RESOUVFI=CALC_CHAMP(reuse=RESOUVFI,
 #                               RESOLUTION DU PROBLEME THERMO-MECANIQUE A FISSURE FERMEE
 #                                RESVERI, POUR VERIFIER QUE LA CONTRAINTE EST AUTO-EQUILIBREE
 #-----------------------------------------------------------------------------------------------------------------------------
+
 ## Definition de la liste d'instants
 LIST3=DEFI_LIST_REEL(DEBUT=2,
                      INTERVALLE=_F(JUSQU_A=3,PAS=1,),);
+
 ## Affectation du materiau mecanique (sans chargement thermique)
 MATMECA=AFFE_MATERIAU(MAILLAGE=MA,
                       AFFE=_F(TOUT='OUI',MATER=MAT,),);
@@ -303,62 +301,64 @@ DIFSIEF=CREA_CHAMP(OPERATION='ASSE',
                          _F(CHAM_GD=SIEFVERI, TOUT='OUI',CUMUL='OUI',COEF_R=-1.),
                          ),
                    )
+
 MOYDIF=POST_ELEM(CHAM_GD=DIFSIEF,
                   MODELE=MO,
                   CHAM_MATER=MATMECA,
                   INTEGRALE=(_F(TOUT='OUI',
-                              TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIXX',),
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIXX',),
                              _F(TOUT='OUI',
-                             TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIYY',),
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIYY',),
                              _F(TOUT='OUI',
-                             TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIZZ',),                              
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIZZ',),                              
                              _F(TOUT='OUI',
-                             TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIXY',), 
-                              _F(TOUT='OUI',
-                              TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIXZ',),
-                              _F(TOUT='OUI',
-                              TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIYZ',), 
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIXY',), 
+                             _F(TOUT='OUI',
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIXZ',),
+                             _F(TOUT='OUI',
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIYZ',), 
                              ),
                   )
+
 MOYENNE=POST_ELEM(CHAM_GD=SIEFVERI,
                   MODELE=MO,
                   CHAM_MATER=MATMECA,
                   INTEGRALE=(_F(TOUT='OUI',
-                              TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIXX',),
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIXX',),
                              _F(TOUT='OUI',
-                             TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIYY',),
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIYY',),
                              _F(TOUT='OUI',
-                             TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIZZ',),                              
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIZZ',),                              
                              _F(TOUT='OUI',
-                             TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIXY',), 
-                              _F(TOUT='OUI',
-                              TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIXZ',),
-                              _F(TOUT='OUI',
-                              TYPE_MAILLE='3D',
-                              NOM_CHAM='SIEF_ELGA',
-                              NOM_CMP='SIYZ',), 
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIXY',), 
+                             _F(TOUT='OUI',
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIXZ',),
+                             _F(TOUT='OUI',
+                                TYPE_MAILLE='3D',
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP='SIYZ',), 
                              ),
                   )
 
@@ -394,231 +394,353 @@ RESUINI=CALC_CHAMP(reuse=RESUINI,
                    DEFORMATION=('EPSI_ELGA','EPSP_ELNO',),
                    VARI_INTERNE=('VARI_ELNO',),
                  );
+
 IMPR_RESU(FORMAT='MED',
           UNITE=81,
           RESU=_F(RESULTAT=RESUINI),
           )
 
 #-----------------------------------------------------------------------------------------------------------------------------
-#                                 POST-TRAITEMENT
+#                                 POST-TRAITEMENTS
 #-----------------------------------------------------------------------------------------------------------------------------
 
+# on va définir les tables suivantes EI = avec Etat Initial
+
+#                   Référence    |     EI_ELGA     EI_ELNO         EI_NOEU
+# CALC_G :         GREF (1,2,3)  | GINIPG (1,2,3) GINIEL (1,2,3) GININO (1,2,3)
+# CALC_K_G :       GKREF(1,2,3)  | GKINIPG(1,2,3) GKINIEL(1,2,3) GKININO(1,2,3)
+
+# POST_K1_K2_K3 :  KREF          |                KINI
+
 #Definition du fond de fissure
-FISS=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
+FISS=DEFI_FOND_FISS(MAILLAGE=MA,
                     FOND_FISS=_F(GROUP_MA='LFF1'),
                     LEVRE_SUP=_F(GROUP_MA='LEVSUP'),
                     LEVRE_INF=_F(GROUP_MA='LEVINF'),
-                    )
+                    SYME='NON')
 
 # 1 prisme + 6 hexas selon le rayon du tore
 # h_ -> taille de maille selon le rayon du tore
 h_pris = 0.04
 h_hexa = 0.06
 
-RINF  = h_pris + 0.25*h_hexa
-RSUP  = h_pris + 3.25*h_hexa
+# couronne n°1 : 2h-4h
+RINF1 = h_pris + h_hexa
+RSUP1 = h_pris + 3*h_hexa
 
-RINF2 = h_pris + 0.25*h_hexa
-RSUP2 = h_pris + 5.25*h_hexa
+# couronne n°2 : 4h-6h
+RINF2 = h_pris + 3*h_hexa
+RSUP2 = h_pris + 5*h_hexa
 
-RINF3 = h_pris + 2.25*h_hexa
-RSUP3 = h_pris + 5.25*h_hexa
+# couronne n°2 : 2h-6h
+RINF3 = h_pris + h_hexa
+RSUP3 = h_pris + 5*h_hexa
 
 #CALCULS DE REFERENCE, A PARTIR DE RESOUVFI
 # Methode G-theta
-GREF=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF,
-                   R_SUP=RSUP),
-          RESULTAT=RESOUVFI,
-          INST=1,
-          OPTION='CALC_G')
-GREF2=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF2,
-                   R_SUP=RSUP2),
-          RESULTAT=RESOUVFI,
-          INST=1,
-          OPTION='CALC_G')
-GREF3=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF3,
-                   R_SUP=RSUP3),
-          RESULTAT=RESOUVFI,
-          INST=1,
-          OPTION='CALC_G')
+GREF1=CALC_G(OPTION='CALC_G',
+            RESULTAT=RESOUVFI,
+            INST=1.,
+            THETA=_F(FOND_FISS=FISS,
+                     R_INF=RINF1,
+                     R_SUP=RSUP1),
+          )
 
-GIRREF=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF,
-                   R_SUP=RSUP),
-          RESULTAT=RESOUVFI,
-          INST=1,
-          OPTION='CALC_K_G')
+GREF2=CALC_G(OPTION='CALC_G',
+            RESULTAT=RESOUVFI,
+            INST=1.,
+            THETA=_F(FOND_FISS=FISS,
+                     R_INF=RINF2,
+                     R_SUP=RSUP2),
+          )
+
+GREF3=CALC_G(OPTION='CALC_G',
+            RESULTAT=RESOUVFI,
+            INST=1.,
+            THETA=_F(FOND_FISS=FISS,
+                     R_INF=RINF3,
+                     R_SUP=RSUP3),
+          )
+
+GKREF1=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESOUVFI,
+              INST=1.,
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=RINF1,
+                       R_SUP=RSUP1),
+             )
+
+GKREF2=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESOUVFI,
+              INST=1.,
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=RINF2,
+                       R_SUP=RSUP2),
+             )
+
+GKREF3=CALC_G(OPTION='CALC_K_G',
+              RESULTAT=RESOUVFI,
+              INST=1.,
+              THETA=_F(FOND_FISS=FISS,
+                       R_INF=RINF3,
+                       R_SUP=RSUP3),
+             )
+
+
+
 # Extrapolation des sauts de deplacements
-KREF=POST_K1_K2_K3(FOND_FISS=FISS,
-                 RESULTAT=RESOUVFI,
-                 INST=1,
-                )
+KREF=POST_K1_K2_K3(RESULTAT=RESOUVFI,
+                   INST=1,
+                   FOND_FISS=FISS)
+                   
 #CALCULS AVEC ETAT INITIAL, A PARTIR DE RESUINI
-GINI=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF,
-                   R_SUP=RSUP),
-          RESULTAT=RESUINI,
-          ETAT_INIT=_F(SIGM=SIEFELGA,), 
-          INST=3,
-          OPTION='CALC_G')
-GINI2=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF2,
-                   R_SUP=RSUP2),
-          RESULTAT=RESUINI,
-          ETAT_INIT=_F(SIGM=SIEFELGA,), 
-          INST=3,
-          OPTION='CALC_G')          
-GINI3=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF3,
-                   R_SUP=RSUP3),
-          RESULTAT=RESUINI,
-          ETAT_INIT=_F(SIGM=SIEFELGA,), 
-          INST=3,
-          OPTION='CALC_G')
-GINI4=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF,
-                   R_SUP=RSUP),
-          RESULTAT=RESUINI,
-          ETAT_INIT=_F(SIGM=SIEFELNO,), 
-          INST=3,
-          OPTION='CALC_G')
-GINI5=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF2,
-                   R_SUP=RSUP2),
-          RESULTAT=RESUINI,
-          ETAT_INIT=_F(SIGM=SIEFELNO,), 
-          INST=3,
-          OPTION='CALC_G')          
-GINI6=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF3,
-                   R_SUP=RSUP3),
-          RESULTAT=RESUINI,
-          ETAT_INIT=_F(SIGM=SIEFELNO,), 
-          INST=3,
-          OPTION='CALC_G')          
-          
+# a partir d'un champ de contraintes initiales de type ELGA
+GINIPG1=CALC_G(OPTION='CALC_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELGA,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF1,
+                        R_SUP=RSUP1),
+                        )
 
-GIRINI=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF,
-                   R_SUP=RSUP),
-          RESULTAT=RESUINI, 
-          ETAT_INIT=_F(SIGM=SIEFELGA,),
-          INST=3,
-          OPTION='CALC_K_G')
-GIRINI2=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF2,
-                   R_SUP=RSUP2),
-          RESULTAT=RESUINI, 
-          ETAT_INIT=_F(SIGM=SIEFELGA,),
-          INST=3,
-          OPTION='CALC_K_G')
-GIRINI3=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF3,
-                   R_SUP=RSUP3),
-          RESULTAT=RESUINI, 
-          ETAT_INIT=_F(SIGM=SIEFELGA,),
-          INST=3,
-          OPTION='CALC_K_G')
-GIRINI4=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF,
-                   R_SUP=RSUP),
-          RESULTAT=RESUINI, 
-          ETAT_INIT=_F(SIGM=SIEFELNO,),
-          INST=3,
-          OPTION='CALC_K_G')
-GIRINI5=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF2,
-                   R_SUP=RSUP2),
-          RESULTAT=RESUINI, 
-          ETAT_INIT=_F(SIGM=SIEFELNO,),
-          INST=3,
-          OPTION='CALC_K_G')
-GIRINI6=CALC_G(THETA=_F(FOND_FISS=FISS,
-                   R_INF=RINF3,
-                   R_SUP=RSUP3),
-          RESULTAT=RESUINI, 
-          ETAT_INIT=_F(SIGM=SIEFELNO,),
-          INST=3,
-          OPTION='CALC_K_G')
+GINIPG2=CALC_G(OPTION='CALC_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELGA,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF2,
+                        R_SUP=RSUP2),
+                        )         
+
+GINIPG3=CALC_G(OPTION='CALC_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELGA,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF3,
+                        R_SUP=RSUP3),
+                        )
+
+# a partir d'un champ de contraintes initiales de type ELNO
+GINIEL1=CALC_G(OPTION='CALC_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELNO,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF1,
+                        R_SUP=RSUP1),
+                        )
+
+GINIEL2=CALC_G(OPTION='CALC_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELNO,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF2,
+                        R_SUP=RSUP2),
+                        )        
+          
+GINIEL3=CALC_G(OPTION='CALC_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELNO,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF3,
+                        R_SUP=RSUP3),
+                        )
+
+# a partir d'un champ de contraintes initiales de type NOEU
+GININO1=CALC_G(OPTION='CALC_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFNOEU,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF1,
+                        R_SUP=RSUP1),
+                        )
+
+GININO2=CALC_G(OPTION='CALC_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFNOEU,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF2,
+                        R_SUP=RSUP2),
+                        )        
+          
+GININO3=CALC_G(OPTION='CALC_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFNOEU,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF3,
+                        R_SUP=RSUP3),
+                        )
+
+
+# avec CALC_K_G
+GKINIPG1=CALC_G(OPTION='CALC_K_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELGA,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF1,
+                        R_SUP=RSUP1),
+                        )
+
+GKINIPG2=CALC_G(OPTION='CALC_K_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELGA,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF2,
+                        R_SUP=RSUP2),
+                        )         
+
+GKINIPG3=CALC_G(OPTION='CALC_K_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELGA,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF3,
+                        R_SUP=RSUP3),
+                        )
+
+GKINIEL1=CALC_G(OPTION='CALC_K_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELNO,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF1,
+                        R_SUP=RSUP1),
+                        )
+
+GKINIEL2=CALC_G(OPTION='CALC_K_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELNO,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF2,
+                        R_SUP=RSUP2),
+                        )        
+          
+GKINIEL3=CALC_G(OPTION='CALC_K_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFELNO,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF3,
+                        R_SUP=RSUP3),
+                        )
+
+GKININO1=CALC_G(OPTION='CALC_K_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFNOEU,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF1,
+                        R_SUP=RSUP1),
+                        )
+
+GKININO2=CALC_G(OPTION='CALC_K_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFNOEU,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF2,
+                        R_SUP=RSUP2),
+                        )        
+          
+GKININO3=CALC_G(OPTION='CALC_K_G',
+               RESULTAT=RESUINI,
+               INST=3.,
+               ETAT_INIT=_F(SIGM=SIEFNOEU,), 
+               THETA=_F(FOND_FISS=FISS,
+                        R_INF=RINF3,
+                        R_SUP=RSUP3),
+                        )
           
 # Extrapolation des sauts de deplacements
 KINI=POST_K1_K2_K3(FOND_FISS=FISS,
-                 RESULTAT=RESUINI,
-                 INST=3,
-                 )                
+                   RESULTAT=RESUINI,
+                   INST=3.)                
 
 #-----------------------------------------------------------------------------------------------------------------------------
 #                                 CONFRONTATION DES RESULTATS SOUS FORME DE COURBE
 #-----------------------------------------------------------------------------------------------------------------------------
+
 # formule pour le calcul de l'angle en degre
 ANGLE = FORMULE(VALE='ABSC_CURV/a * 180./pi',
                 a=a,
                 NOM_PARA='ABSC_CURV',)
-#
-# ajout des colonnes 'angle'
-GREF=CALC_TABLE(TABLE=GREF,
-              reuse=GREF,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-              )
-GIRREF=CALC_TABLE(TABLE=GIRREF,
-              reuse=GIRREF,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-              )
-GINI=CALC_TABLE(TABLE=GINI,
-              reuse=GINI,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-              )
-GIRINI=CALC_TABLE(TABLE=GIRINI,
-              reuse=GIRINI,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-              )
-GIRINI2=CALC_TABLE(TABLE=GIRINI2,
-              reuse=GIRINI2,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-              )
-GIRINI3=CALC_TABLE(TABLE=GIRINI3,
-              reuse=GIRINI3,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-              )
-GIRINI4=CALC_TABLE(TABLE=GIRINI4,
-              reuse=GIRINI4,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-              )
-GIRINI5=CALC_TABLE(TABLE=GIRINI5,
-              reuse=GIRINI5,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-              )
-GIRINI6=CALC_TABLE(TABLE=GIRINI6,
-              reuse=GIRINI6,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-              )                            
-KREF=CALC_TABLE(TABLE=KREF,
-              reuse=KREF,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-               )
-KINI=CALC_TABLE(TABLE=KINI,
-              reuse=KINI,
-              ACTION=(_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'),
-                      )
-               )
+
+# ajout de la colonne 'angle'
+GREF1=CALC_TABLE(TABLE=GREF1,reuse=GREF1,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GREF2=CALC_TABLE(TABLE=GREF2,reuse=GREF2,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GREF3=CALC_TABLE(TABLE=GREF3,reuse=GREF3,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+                 
+GKREF1=CALC_TABLE(TABLE=GKREF1,reuse=GKREF1,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GKREF2=CALC_TABLE(TABLE=GKREF2,reuse=GKREF2,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GKREF3=CALC_TABLE(TABLE=GKREF3,reuse=GKREF3,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+
+GINIPG1=CALC_TABLE(TABLE=GINIPG1,reuse=GINIPG1,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GINIPG2=CALC_TABLE(TABLE=GINIPG2,reuse=GINIPG2,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GINIPG3=CALC_TABLE(TABLE=GINIPG3,reuse=GINIPG3,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+
+GKINIPG1=CALC_TABLE(TABLE=GKINIPG1,reuse=GKINIPG1,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GKINIPG2=CALC_TABLE(TABLE=GKINIPG2,reuse=GKINIPG2,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GKINIPG3=CALC_TABLE(TABLE=GKINIPG3,reuse=GKINIPG3,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+
+GINIEL1=CALC_TABLE(TABLE=GINIEL1,reuse=GINIEL1,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GINIEL2=CALC_TABLE(TABLE=GINIEL2,reuse=GINIEL2,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GINIEL3=CALC_TABLE(TABLE=GINIEL3,reuse=GINIEL3,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+               
+GKINIEL1=CALC_TABLE(TABLE=GKINIEL1,reuse=GKINIEL1,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GKINIEL2=CALC_TABLE(TABLE=GKINIEL2,reuse=GKINIEL2,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GKINIEL3=CALC_TABLE(TABLE=GKINIEL3,reuse=GKINIEL3,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+
+GININO1=CALC_TABLE(TABLE=GININO1,reuse=GININO1,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GININO2=CALC_TABLE(TABLE=GININO2,reuse=GININO2,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GININO3=CALC_TABLE(TABLE=GININO3,reuse=GININO3,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+
+GKININO1=CALC_TABLE(TABLE=GKININO1,reuse=GKININO1,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GKININO2=CALC_TABLE(TABLE=GKININO2,reuse=GKININO2,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+GKININO3=CALC_TABLE(TABLE=GKININO3,reuse=GKININO3,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+                                        
+KREF=CALC_TABLE(TABLE=KREF,reuse=KREF,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+              
+KINI=CALC_TABLE(TABLE=KINI,reuse=KINI,ACTION=_F(OPERATION='OPER',FORMULE=ANGLE,NOM_PARA='ANGLE'))
+              
 # impression de chaque table
-IMPR_TABLE(TABLE=GREF, UNITE=9)
-IMPR_TABLE(TABLE=GIRREF, UNITE=9)
-IMPR_TABLE(TABLE=GINI, UNITE=9)
-IMPR_TABLE(TABLE=GIRINI, UNITE=9)
+IMPR_TABLE(TABLE=GREF1,  UNITE=9)
+IMPR_TABLE(TABLE=GREF2,  UNITE=9)
+IMPR_TABLE(TABLE=GREF3,  UNITE=9)
+IMPR_TABLE(TABLE=GKREF1, UNITE=9)
+IMPR_TABLE(TABLE=GKREF2, UNITE=9)
+IMPR_TABLE(TABLE=GKREF3, UNITE=9)
+
+IMPR_TABLE(TABLE=GINIPG1, UNITE=9)
+IMPR_TABLE(TABLE=GINIPG2, UNITE=9)
+IMPR_TABLE(TABLE=GINIPG3, UNITE=9)
+IMPR_TABLE(TABLE=GKINIPG1,UNITE=9)
+IMPR_TABLE(TABLE=GKINIPG2,UNITE=9)
+IMPR_TABLE(TABLE=GKINIPG3,UNITE=9)
+
+IMPR_TABLE(TABLE=GINIEL1, UNITE=9)
+IMPR_TABLE(TABLE=GINIEL2, UNITE=9)
+IMPR_TABLE(TABLE=GINIEL3, UNITE=9)
+IMPR_TABLE(TABLE=GKINIEL1,UNITE=9)
+IMPR_TABLE(TABLE=GKINIEL2,UNITE=9)
+IMPR_TABLE(TABLE=GKINIEL3,UNITE=9)
+
+IMPR_TABLE(TABLE=GININO1, UNITE=9)
+IMPR_TABLE(TABLE=GININO2, UNITE=9)
+IMPR_TABLE(TABLE=GININO3, UNITE=9)
+IMPR_TABLE(TABLE=GKININO1,UNITE=9)
+IMPR_TABLE(TABLE=GKININO2,UNITE=9)
+IMPR_TABLE(TABLE=GKININO3,UNITE=9)
+
 IMPR_TABLE(TABLE=KREF, UNITE=9)
 IMPR_TABLE(TABLE=KINI, UNITE=9)
 
@@ -627,51 +749,55 @@ IMPR_TABLE(TABLE=KINI, UNITE=9)
 #                                 TRACE DES COURBES
 #-----------------------------------------------------------------------------------------------------------------------------
 
-# courbe de G
-C_GREF=RECU_FONCTION(TABLE=GREF,
+# courbes de G, pour la couronne n°1
+C_GREF1=RECU_FONCTION(TABLE=GREF1,
                       PARA_X='ANGLE',
                       PARA_Y='G',)
 
-C_GINI=RECU_FONCTION(TABLE=GINI,
-                     PARA_X='ANGLE',
-                     PARA_Y='G',)
+CGINIPG1=RECU_FONCTION(TABLE=GINIPG1,
+                       PARA_X='ANGLE',
+                       PARA_Y='G',)
 
 C_KREF=RECU_FONCTION(TABLE=KREF,
                      PARA_X='ANGLE',
                      PARA_Y='G',)
 
-C_KGINI=RECU_FONCTION(TABLE=GIRINI,
+GKINIPG=RECU_FONCTION(TABLE=GKINIPG1,
                       PARA_X='ANGLE',
                       PARA_Y='G',)
 
 IMPR_FONCTION(FORMAT='XMGRACE',
               UNITE=30,
-              COURBE=(_F(FONCTION=C_GREF,
-                         LEGENDE='G reference',
+              COURBE=(_F(FONCTION=C_GREF1,
+                         LEGENDE='G CALC_G reference',
+                         STYLE=1,
                          MARQUEUR=0,
                          COULEUR=1),
-                      _F(FONCTION=C_GINI,
-                         LEGENDE='G CALC_G',
+                      _F(FONCTION=CGINIPG1,
+                         LEGENDE='G CALC_G etat intial PG',
+                         STYLE=1,
                          MARQUEUR=0,
                          COULEUR=2),
-                      _F(FONCTION=C_KREF,
-                         LEGENDE='GREF POST_K1_K2_K3',
+                      _F(FONCTION=GKINIPG,
+                         LEGENDE='G CALC_K_G etat intial PG',
+                         STYLE=3,
                          MARQUEUR=0,
-                         COULEUR=3),
-                      _F(FONCTION=C_KGINI,
-                         LEGENDE='G CALC_K_G',
-                         MARQUEUR=1,
-                         COULEUR=4,),
+                         COULEUR=2),
                        ),
               TITRE='Taux de restitution d energie',
               BORNE_X=(0.0,180,),
               BORNE_Y=(0.0,2E6,),
 
               LEGENDE_X='angle (degre)',
-              LEGENDE_Y='G (J.m\S-2\\N)',);
+              LEGENDE_Y=r'G (J.m\S-2\N)',);
 
 
-# courbe de K1
+# courbe de K1, pour la couronne n°1
+
+C_GKREF1=RECU_FONCTION(TABLE=GKREF1,
+                       PARA_X='ANGLE',
+                       PARA_Y='K1',)
+
 C1KREF=RECU_FONCTION(TABLE=KREF,
                        PARA_X='ANGLE',
                        PARA_Y='K1',)
@@ -680,241 +806,468 @@ C1KINI=RECU_FONCTION(TABLE=KINI,
                       PARA_X='ANGLE',
                       PARA_Y='K1',)
 
-C1GIRINI=RECU_FONCTION(TABLE=GIRINI,
+CKINIPG1=RECU_FONCTION(TABLE=GKINIPG1,
                       PARA_X='ANGLE',
                       PARA_Y='K1',)
 
 IMPR_FONCTION(FORMAT='XMGRACE',
               UNITE=31,
-              COURBE=(_F(FONCTION=C1KREF,
-                         LEGENDE='K1 reference',
+              COURBE=(
+                      _F(FONCTION=C_GKREF1,
+                         LEGENDE='K1 CALC_K_G reference',
                          MARQUEUR=0,
                          COULEUR=1),
-                      _F(FONCTION=C1KINI,
-                         LEGENDE='K1 POST_K1_K2_K3',
-                         MARQUEUR=0,
-                         COULEUR=2),
-                      _F(FONCTION=C1GIRINI,
+                      _F(FONCTION=C1KREF,
+                         LEGENDE='K1 POST_K1_K2_K3 reference',
+                         MARQUEUR=8,
+                         COULEUR=1),
+                      _F(FONCTION=CKINIPG1,
                          LEGENDE='K1 CALC_K_G',
                          MARQUEUR=0,
                          COULEUR=3),
+                      _F(FONCTION=C1KINI,
+                         LEGENDE='K1 POST_K1_K2_K3',
+                         MARQUEUR=9,
+                         COULEUR=2),
                        ),
               TITRE='K1',
               BORNE_X=(0.0,180,),
               BORNE_Y=(0.0,7E8,),
 
               LEGENDE_X='angle (degre)',
-              LEGENDE_Y='KI (Pa.m\S-1/2\\N)',)
-# 
-# TESTS
-#---------------
+              LEGENDE_Y=r'KI (Pa.m\S-1/2\N)',)
 
-# test de G initial par CALC_G et CALC_K_G sur tout le fond de fissure
-TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GREF,)
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=2.E-4,
-           VALE_CALC=1923033.28845,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GREF2,)
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=4.E-4,
-           VALE_CALC=1922702.19534,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GREF3,)
-           
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-6,
-           VALE_CALC=1923355.09151,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GIRREF,)
+# ---------------------------------------------------------------------
+#                VERIFICATIONS DES VALEURS
+# ---------------------------------------------------------------------
 
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=2.E-4,
-           VALE_CALC=1923600.04248,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GINI,)           
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=7.E-5,
-           VALE_CALC=1923478.74797,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GINI2,)
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-5,
-           VALE_CALC=1923373.25897,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GINI3,)           
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=2.E-4,
-           VALE_CALC=1923600.04248,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GINI4,)           
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=7.E-5,
-           VALE_CALC=1923478.74797,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GINI5,)
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-5,
-           VALE_CALC=1923373.25897,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GINI6,)             
-           
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=2.E-4,
-           VALE_CALC=1923617.19528,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GIRINI,)
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=9.E-5,
-           VALE_CALC=1923520.83766,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GIRINI2,)
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=5.E-5,
-           VALE_CALC=1923439.45499,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GIRINI3,)
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=2.E-4,
-           VALE_CALC=1923617.19528,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GIRINI4,)
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=9.E-5,
-           VALE_CALC=1923520.83766,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GIRINI5,)
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=5.E-5,
-           VALE_CALC=1923439.45499,
-           VALE_REFE=1923355.09151,
-           NOM_PARA='G',
-           TYPE_TEST='MAX',
-           TABLE=GIRINI6,)
+# G de CALC_G 
+# -----------
 
-# test de K1 au milieu du fond (angle = 0) par CALC_KG (vale_ref de post_k1_k2_k3)
-TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=621498251.587,
-           NOM_PARA='K1',
-           TABLE=KREF,
-           FILTRE=_F(NOM_PARA='ANGLE',
-                     VALE=89.8555,),
+# valeurs de référence (thermique)
+Gref1=1923020.50827
+Gref2=1922612.72586
+Gref3=1922816.61714
+
+# G de CALC_G Reference pour les 3 couronnes
+TEST_TABLE(TABLE=GREF1,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           VALE_CALC=Gref1, # pour la non-régression
            )
-TEST_TABLE(CRITERE='RELATIF',
+
+TEST_TABLE(TABLE=GREF2,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-6,
-           VALE_CALC=621498251.587,
-           VALE_REFE=621498251.587,
-           NOM_PARA='K1',
-           TABLE=KINI,
-           FILTRE=_F(NOM_PARA='ANGLE',
-                     VALE=89.8555,),
+           PRECISION=0.03e-2,
+           VALE_REFE=Gref1,
+           VALE_CALC=Gref2, # pour la non-régression
            )
-TEST_TABLE(CRITERE='RELATIF',
+
+TEST_TABLE(TABLE=GREF3,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           PRECISION=0.07,
-           VALE_CALC=662192068.4360701,
-           VALE_REFE=621498251.587,
-           NOM_PARA='K1',
-           TABLE=GIRINI,
-           FILTRE=_F(NOM_PARA='ANGLE',
-                     VALE=89.8555,),
+           PRECISION=0.04e-2,
+           VALE_REFE=Gref1,
+           VALE_CALC=Gref3, # pour la non-régression
            )
-TEST_TABLE(CRITERE='RELATIF',
+
+
+# G de CALC_G Etat Initial avec Contrainte aux Points de Gauss, pour les 3 couronnes    
+TEST_TABLE(TABLE=GINIPG1,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           PRECISION=0.08,
-           VALE_CALC=667390580.7299285,
-           VALE_REFE=621498251.587,
-           NOM_PARA='K1',
-           TABLE=GIRINI2,
-           FILTRE=_F(NOM_PARA='ANGLE',
-                     VALE=89.8555,),
+           PRECISION=0.02e-2,
+           VALE_REFE=Gref1,
+           VALE_CALC=1923369.87866, # pour la non-régression
            )
-TEST_TABLE(CRITERE='RELATIF',
+
+TEST_TABLE(TABLE=GINIPG2,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           PRECISION=0.09,
-           VALE_CALC=672621030.666861,
-           VALE_REFE=621498251.587,
-           NOM_PARA='K1',
-           TABLE=GIRINI3,
-           FILTRE=_F(NOM_PARA='ANGLE',
-                     VALE=89.8555,),
+           PRECISION=0.04e-2,
+           VALE_REFE=Gref2,
+           VALE_CALC=1923362.00723, # pour la non-régression
            )
-TEST_TABLE(CRITERE='RELATIF',
+
+TEST_TABLE(TABLE=GINIPG3,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           PRECISION=0.07,
-           VALE_CALC=662192068.4360701,
-           VALE_REFE=621498251.587,
-           NOM_PARA='K1',
-           TABLE=GIRINI4,
-           FILTRE=_F(NOM_PARA='ANGLE',
-                     VALE=89.8555,),
-           )
-TEST_TABLE(CRITERE='RELATIF',
+           PRECISION=0.04e-2,
+           VALE_REFE=Gref3,
+           VALE_CALC=1923365.94297, # pour la non-régression
+           )          
+
+# G de CALC_G Etat Initial avec Contrainte aux Noeuds par élément, pour les 3 couronnes                     
+TEST_TABLE(TABLE=GINIEL1,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           PRECISION=0.08,
-           VALE_CALC=667390580.7299285,
-           VALE_REFE=621498251.587,
-           NOM_PARA='K1',
-           TABLE=GIRINI5,
-           FILTRE=_F(NOM_PARA='ANGLE',
-                     VALE=89.8555,),
+           PRECISION=0.02e-2,
+           VALE_REFE=Gref1,
+           VALE_CALC=1923369.87866, # pour la non-régression
            )
-TEST_TABLE(CRITERE='RELATIF',
+
+TEST_TABLE(TABLE=GINIEL2,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           PRECISION=0.09,
-           VALE_CALC=672621030.666861,
-           VALE_REFE=621498251.587,
+           PRECISION=0.04e-2,
+           VALE_REFE=Gref2,
+           VALE_CALC=1923362.00723, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=GINIEL3,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.04e-2,
+           VALE_REFE=Gref3,
+           VALE_CALC=1923365.94297, # pour la non-régression
+           )         
+
+# G de CALC_G Etat Initial avec Contrainte aux Noeuds, pour les 3 couronnes                     
+TEST_TABLE(TABLE=GININO1,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.02e-2,
+           VALE_REFE=Gref1,
+           VALE_CALC=1923339.06307, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=GININO2,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.06e-2,
+           VALE_REFE=Gref2,
+           VALE_CALC=1923601.95943, # pour la non-régression
+           )
+
+TEST_TABLE(TABLE=GININO3,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.05e-2,
+           VALE_REFE=Gref3,
+           VALE_CALC=1923470.51132, # pour la non-régression
+           )  
+
+
+
+# G de CALC_K_G 
+# -------------
+
+# on utilise les memes valeurs de référence
+
+
+# G de CALC_K_G Reference pour les 3 couronnes           
+TEST_TABLE(TABLE=GKREF1,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.02e-2,
+           VALE_REFE=Gref1,
+           VALE_CALC=1923020.50827 , # pour la non-régression
+           )  
+
+TEST_TABLE(TABLE=GKREF2,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.03e-2,
+           VALE_REFE=Gref2,
+           VALE_CALC=1922612.72586 , # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKREF3,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.04e-2,
+           VALE_REFE=Gref3,
+           VALE_CALC= 1922816.61714, # pour la non-régression
+           ) 
+
+# G de CALC_K_G Etat Initial avec Contrainte aux Points de Gauss, pour les 3 couronnes
+TEST_TABLE(TABLE=GKINIPG1,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.02e-2,
+           VALE_REFE=Gref1,
+           VALE_CALC=1923395.99936, # pour la non-régression
+           )  
+
+TEST_TABLE(TABLE=GKINIPG2,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.05e-2,
+           VALE_REFE=Gref2,
+           VALE_CALC=1923435.22455, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKINIPG3,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.04e-2,
+           VALE_REFE=Gref3,
+           VALE_CALC=1923415.61198, # pour la non-régression
+           ) 
+
+
+# G de CALC_K_G Etat Initial avec Contrainte aux Noeuds par élément, pour les 3 couronnes
+TEST_TABLE(TABLE=GKINIEL1,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.02e-2,
+           VALE_REFE=Gref1,
+           VALE_CALC=1923395.99936, # pour la non-régression
+           )  
+
+TEST_TABLE(TABLE=GKINIEL2,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.05e-2,
+           VALE_REFE=Gref2,
+           VALE_CALC=1923435.22455, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKINIEL3,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.04e-2,
+           VALE_REFE=Gref3,
+           VALE_CALC=1923415.61198, # pour la non-régression
+           ) 
+
+# G de CALC_K_G Etat Initial avec Contrainte aux Noeuds, pour les 3 couronnes
+TEST_TABLE(TABLE=GKININO1,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.02e-2,
+           VALE_REFE=Gref1,
+           VALE_CALC=1923130.30252, # pour la non-régression
+           )  
+
+TEST_TABLE(TABLE=GKININO2,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.04e-2,
+           VALE_REFE=Gref2,
+           VALE_CALC=1923293.91284, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKININO3,
+           NOM_PARA='G',
+           TYPE_TEST='MAX',
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.04e-2,
+           VALE_REFE=Gref3,
+           VALE_CALC=1923212.10775, # pour la non-régression
+           )
+
+
+# K de CALC_K_G 
+# -------------
+
+# K1 : valeurs de référence (thermique)
+Kref1=663460384.573532
+Kref2=673917231.8458568
+Kref3=668688808.0629863
+
+TEST_TABLE(TABLE=GKREF1,
            NOM_PARA='K1',
-           TABLE=GIRINI6,
            FILTRE=_F(NOM_PARA='ANGLE',
                      VALE=89.8555,),
+           VALE_CALC=Kref1, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKREF2,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=2.e-2,
+           VALE_REFE=Kref1,
+           VALE_CALC=Kref2, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKREF3,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=1.e-2,
+           VALE_REFE=Kref1,
+           VALE_CALC=Kref3, # pour la non-régression
+           ) 
+
+
+TEST_TABLE(TABLE=GKINIPG1,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.01e-2,
+           VALE_REFE=Kref1,
+           VALE_CALC=663522635.905865, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKINIPG2,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.01e-2,
+           VALE_REFE=Kref2,
+           VALE_CALC=673964476.183042, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKINIPG3,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.01e-2,
+           VALE_REFE=Kref3,
+           VALE_CALC=668743555.8988272, # pour la non-régression
+           )        
+
+
+TEST_TABLE(TABLE=GKINIEL1,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.01e-2,
+           VALE_REFE=Kref1,
+           VALE_CALC=663522635.905865, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKINIEL2,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.01e-2,
+           VALE_REFE=Kref2,
+           VALE_CALC=673964476.183042, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKINIEL3,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.01e-2,
+           VALE_REFE=Kref3,
+           VALE_CALC=668743555.8988272, # pour la non-régression
+           ) 
+
+
+TEST_TABLE(TABLE=GKININO1,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.011e-2,
+           VALE_REFE=Kref1,
+           VALE_CALC=663526759.363054, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKININO2,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.01e-2,
+           VALE_REFE=Kref2,
+           VALE_CALC=673983060.8835199, # pour la non-régression
+           ) 
+
+TEST_TABLE(TABLE=GKININO3,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.01e-2,
+           VALE_REFE=Kref3,
+           VALE_CALC=668754909.977671, # pour la non-régression
+           ) 
+
+
+# K de POST_K1_K2_K3 
+# ------------------
+
+# K1 : valeurs de référence pour POST_K1_K2_K3 (thermique)
+Kpk1=621498251.587
+
+TEST_TABLE(TABLE=KREF,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           VALE_CALC=Kpk1, # pour la non-régression
            )
+
+TEST_TABLE(TABLE=KINI,
+           NOM_PARA='K1',
+           FILTRE=_F(NOM_PARA='ANGLE',
+                     VALE=89.8555,),
+           CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           PRECISION=0.01e-2,
+           VALE_REFE=Kpk1,
+           VALE_CALC=621498251.587, # pour la non-régression
+           ) 
+
+
+
 FIN()

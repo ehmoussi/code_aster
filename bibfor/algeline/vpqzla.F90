@@ -722,8 +722,8 @@ subroutine vpqzla(typeqz, qrn, iqrn, lqrn, qrar,&
                        ldvl, zc(lvec3), qrn, zc(kqrn), qrlwo,&
                        zr(kqrnr), qrinfo)
             if (qrinfo .eq. 0) then
-                qrlwo = int(dble(zc(kqrn)))
-                qrlwor = int(dble(zc(kqrn)))
+                qrlwo  = 4*int(dble(zc(kqrn)))
+                qrlwor = 4*int(dble(zc(kqrn)))
                 call jedetr('&&VPQZLA.QR.WORK')
                 call wkvect('&&VPQZLA.QR.WORK', 'V V C', qrlwor, kqrn2)
                 call zggev('N', 'V', qrn, zc(iqrn), qrn,&

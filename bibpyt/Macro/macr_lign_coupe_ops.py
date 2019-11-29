@@ -19,6 +19,7 @@
 
 import os
 
+from code_aster.RunManager import LogicalUnitFile
 #
 # script PYTHON de creation du résultat local
 #
@@ -681,7 +682,7 @@ def get_coor(LIGN_COUPE, position, collgrno, n_mailla):
         # Utilisation impossible d'après le catalogue
         assert(False)
     return(coor)
-    
+
 
 #
 def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
@@ -693,19 +694,19 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     from Noyau.N_utils import AsType
     import aster
     import math
-    from Utilitai.UniteAster import UniteAster
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     ier = 0
 
     # La valeur par défaut n'est pas dans le catalogue, sinon le mot-clé devient
     # obligatoire dans AsterStudy
-    UL = UniteAster()
-    UNITE_MAILLAGE = args.get("UNITE_MAILLAGE") or UL.Libre()
+    UNITE_MAILLAGE = args.get("UNITE_MAILLAGE")
+    if not UNITE_MAILLAGE:
+        logical_unit = LogicalUnitFile.new_free(new=True)
+        UNITE_MAILLAGE = logical_unit.unit
 
     # On importe les definitions des commandes a utiliser dans la macro
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
     DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
     PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
     POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
@@ -917,14 +918,13 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     resu_mail, arcgma, angles, nbno = crea_mail_lig_coup(
         dime, lignes, groups, arcs)
 
-    nomFichierSortie = UL.Nom(UNITE_MAILLAGE)
+    nomFichierSortie = LogicalUnitFile.filename_from_unit(UNITE_MAILLAGE)
     with open(nomFichierSortie, 'w') as fproc:
         fproc.write(os.linesep.join(resu_mail))
-    from code_aster.RunManager import ReservedUnitUsed
-    ReservedUnitUsed(UNITE_MAILLAGE)
 
     # Lecture du maillage de seg2 contenant toutes les lignes de coupe
     __macou = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=UNITE_MAILLAGE,)
+    LogicalUnitFile.release_from_number(UNITE_MAILLAGE)
 
     # distance min entre 2 points de la ligne de coupe (utile pour PROJ_CHAMP)
     dmin = dist_min_deux_points(__macou)

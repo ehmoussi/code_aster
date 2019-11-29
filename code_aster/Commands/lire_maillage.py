@@ -63,7 +63,7 @@ class MeshReader(ExecuteCommand):
         unit = keywords.get('UNITE')
         fmt = keywords['FORMAT']
         if fmt in need_conversion:
-            tmpfile = LogicalUnitFile.new_free(None)
+            tmpfile = LogicalUnitFile.new_free(new=True)
             unit_op = tmpfile.unit
             keywords['FORMAT'] = 'ASTER'
         else:

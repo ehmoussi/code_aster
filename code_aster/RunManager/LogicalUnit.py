@@ -48,8 +48,9 @@ a Python command.
 
 """
 
+import os
+import os.path as osp
 import tempfile
-
 
 from ..Cata.Syntax import _F
 from ..Supervis.logger import logger
@@ -163,19 +164,23 @@ class LogicalUnitFile(object):
         return cls(unit, filename, Action.Open, typ, access)
 
     @classmethod
-    def new_free(cls, filename):
+    def new_free(cls, filename=None, ascii=True, new=False):
         """Factory that returns a new free *LogicalUnitFile* for the given name.
 
         Arguments:
             filename (str): Path of the file. If empty, it will be automatically
                 named using the unit number.
+            new (bool): *True* means that this is a new file. The file is
+                removed if it exists. *False* means that the file may exist.
+            ascii (bool): If *True* the file is opened in text mode.
 
         Returns:
             LogicalUnitFile: New logical unit.
         """
         unit = cls._get_free_number()
-        return cls(unit, filename, Action.Open, FileType.Ascii,
-                   FileAccess.New)
+        return cls(unit, filename, Action.Open,
+                   FileType.Ascii if ascii else FileType.Binary,
+                   FileAccess.New if new else FileAccess.Append)
 
     @staticmethod
     def register(unit, filename, action,
@@ -195,6 +200,9 @@ class LogicalUnitFile(object):
         if action == Action.Open:
             if filename:
                 kwargs['FICHIER'] = filename
+                if access == FileAccess.New and osp.exists(filename):
+                    logger.warn("remove existing file '{0}'".format(filename))
+                    os.remove(filename)
             kwargs['TYPE'] = FileType.name(typ)
             kwargs['ACCES'] = FileAccess.name(access)
             if typ != FileType.Ascii and access == FileAccess.Append:

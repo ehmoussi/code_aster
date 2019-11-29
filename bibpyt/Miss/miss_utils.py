@@ -134,13 +134,13 @@ class MISS_PARAMETER(object):
         # unités logiques
         if self.get('UNITE_RESU_IMPE') is None:
             self.set('_exec_Miss', True)
-            self['UNITE_RESU_IMPE'] = self.UL.Libre(action='ASSOCIER')
+            self['UNITE_RESU_IMPE'] = self.UL.Libre(action='ASSOCIER', new=True)
         elif self['TYPE_RESU'] in ('TABLE_CONTROL', ):
             self.set('_exec_Miss', True)
 
         if self.get('UNITE_RESU_FORC') is None:
             self.set('_exec_Miss', True)
-            self['UNITE_RESU_FORC'] = self.UL.Libre(action='ASSOCIER')
+            self['UNITE_RESU_FORC'] = self.UL.Libre(action='ASSOCIER', new=True)
         elif self['TYPE_RESU'] in ('TABLE_CONTROL', ):
             self.set('_exec_Miss', True)
 

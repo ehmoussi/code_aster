@@ -637,7 +637,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
         if input == 'CL' :
             #__VITEX[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__ACCEX0[n], ))
             __VITEX[n] = CALC_FONCTION(COMB=_F(FONCTION=__VITEX0, COEF=1.0 ),
-                            LIST_PARA=__linst, 
+                            LIST_PARA=__linst,
                             PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',
                              );
         if input == 'RA' :
@@ -680,7 +680,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
         __GG = [None] * (nbmat + 1)
         __DG = [None] * (nbmat + 1)
 
-        tabfile = LogicalUnitFile.new_free(None)
+        tabfile = LogicalUnitFile.new_free(new=True)
         utabequ = tabfile.unit
         IMPR_TABLE(TABLE=args['TABLE_GEQUI_GMAX'], UNITE=utabequ)
         IMPR_TABLE(TABLE=args['TABLE_AMOR_EQUI'], UNITE=utabequ)
