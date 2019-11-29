@@ -39,6 +39,7 @@ SIGM_ELGA = Option(
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.ABSO,'OUI'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.BORD,'0'),(AT.EFGE,'OUI'),(AT.SIGM,'NON'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.INTERFACE,'OUI'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'3FI'),)),

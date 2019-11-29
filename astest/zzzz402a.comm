@@ -296,7 +296,7 @@ DYNA_V = CALC_CHAMP(reuse = DYNA_V,
            CHAM_MATER = MATDYN,
            EXCIT=(_F(CHARGE=CHARGX,),
                   _F(CHARGE=ONDELATE,),),
-           CONTRAINTE = ('SIEF_ELGA'),
+           CONTRAINTE = ('SIEF_ELGA','SIGM_ELGA'),
            );
 
 ky=0.001
