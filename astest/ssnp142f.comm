@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -433,6 +433,60 @@ TEST_TABLE(
            TABLE=P_HM,
            FILTRE=_F(NOM_PARA='COOR_X',
                      VALE=4.4,),
+           )
+
+######## tester crea_champ à partir d'une table 
+#--------pour l'option sief_elga + elements de joint
+
+ch_sief = CREA_CHAMP(
+  INST=tfin_SNL, 
+  NOM_CHAM='SIEF_ELGA', 
+  OPERATION='EXTR', 
+  RESULTAT=U_HM, 
+  TYPE_CHAM='ELGA_SIEF_R'
+) 
+
+tab_ch0 = CREA_TABLE(
+    RESU=_F(
+    CHAM_GD=ch_sief, 
+    TOUT='OUI', 
+    TOUT_CMP='OUI'
+  )
+) 
+
+tab_ch1 = CALC_TABLE(
+  ACTION=_F(
+    NOM_PARA=('CHAM_GD', 'COOR_X', 'COOR_Y', 'COOR_Z'), 
+    OPERATION='SUPPRIME'
+  ), 
+  TABLE=tab_ch0
+) 
+
+ch_tab = CREA_CHAMP(
+  MODELE=MO, 
+  OPERATION='EXTR', 
+  OPTION='SIEF_ELGA', 
+  PROL_ZERO='OUI', 
+  TABLE=tab_ch1, 
+  TYPE_CHAM='ELGA_SIEF_R'
+) 
+
+tab_ch2 = CREA_TABLE(
+  RESU=_F(
+    CHAM_GD=ch_tab, 
+    TOUT='OUI', 
+    TOUT_CMP='OUI'
+  )
+) 
+
+TEST_TABLE(
+           VALE_CALC=-537498.3671,
+           NOM_PARA='SIGN',
+           TABLE=tab_ch2,
+           FILTRE=(_F(NOM_PARA='COOR_X',
+                     VALE=4.94459E+00,),
+                   _F(NOM_PARA='COOR_Z',
+                     VALE=3.31077E-02,),)
            )
 
 FIN(FORMAT_HDF='OUI')
