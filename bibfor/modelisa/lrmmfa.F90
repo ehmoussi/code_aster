@@ -23,8 +23,9 @@ subroutine lrmmfa(fid, nomamd, nbnoeu, grpnoe,&
 !
 implicit none
 !
-#include "jeveux.h"
-#include "MeshTypes_type.h"
+#include "asterf_types.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/as_mfafai.h"
 #include "asterfort/as_mfanfa.h"
 #include "asterfort/as_mfanfg.h"
@@ -37,9 +38,9 @@ implicit none
 #include "asterfort/jecrec.h"
 #include "asterfort/jecreo.h"
 #include "asterfort/jecroc.h"
-#include "asterfort/jeecra.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeecra.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jenonu.h"
 #include "asterfort/jenuno.h"
@@ -52,6 +53,8 @@ implicit none
 #include "asterfort/lxnoac.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "jeveux.h"
+#include "MeshTypes_type.h"
 !
 med_idt :: fid
 integer :: nbnoeu, nbgrno, nbgrma
@@ -104,6 +107,7 @@ character(len=24) :: grpnoe, grpmai
     character(len=64) :: nomfam
     character(len=80) :: nomgrp, valk(4), newgrm
     character(len=200) :: descat(200)
+    aster_logical, pointer :: v_notempty_fami(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -143,6 +147,8 @@ character(len=24) :: grpnoe, grpmai
     if (nbrfam .eq. 0) then
         call utmess('A', 'MED_17')
     else
+    AS_ALLOCATE(vl=v_notempty_fami, size=nbrfam)
+    v_notempty_fami(1:nbrfam) = ASTER_FALSE
 !
 !====
 ! 3. ON LIT LES TABLES DES NUMEROS DE FAMILLES POUR NOEUDS ET MAILLES
@@ -213,40 +219,46 @@ character(len=24) :: grpnoe, grpmai
                 saux08='mfanfg'
                 call utmess('F', 'DVP_97', sk=saux08, si=codret)
             endif
+!
             if( nbgr.gt.nbver ) then
                 call jedetr(nofnog)
                 nbver = 2*nbver
                 call wkvect(nofnog, 'V V K80', nbver, jnogrp)
             endif
-            if( nbgr.ne.0 ) then
-                if (major .eq. 3) then
-                    call as_mfafai(fid, nomamd, ifam, nomfam, numfam,&
-                                   zk80(jnogrp), codret)
-                    nbattr = 0
-                else
-                    call as_mfaona(fid, nomamd, ifam, nbattr, codret)
-                    call as_mfaofi(fid, nomamd, ifam, nomfam, numfam,&
-                                   idatfa, vaatfa, descat, nbattr, zk80(jnogrp),&
-                                   codret)
-                endif
+!
+            if (major .eq. 3) then
+                call as_mfafai(fid, nomamd, ifam, nomfam, numfam,&
+                               zk80(jnogrp), codret)
+                nbattr = 0
+            else
+                call as_mfaona(fid, nomamd, ifam, nbattr, codret)
+                call as_mfaofi(fid, nomamd, ifam, nomfam, numfam,&
+                               idatfa, vaatfa, descat, nbattr, zk80(jnogrp),&
+                               codret)
+            endif
+!
+            zi(jv4+ifam-1) = nbgr
+            zi(jv2+ifam-1) = numfam
+            val_max = max(numfam, val_max)
+            val_min = min(numfam, val_min)
+!
+            if( nbgr > 0 ) then
+                v_notempty_fami(ifam) = ASTER_TRUE
+!
                 if( codret.ne.0 ) then
                     saux08='mfafai'
                     call utmess('F', 'DVP_97', sk=saux08, si=codret)
                 endif
-
+!
                 call jecroc(jexnum(nocorf, ifam))
                 call jeecra(jexnum(nocorf, ifam), 'LONMAX', nbgr)
                 call jeveuo(jexnum(nocorf, ifam), 'E', jgrp)
                 zi(jadcor+ifam-1) = jgrp
-                zi(jv4+ifam-1) = nbgr
-                zi(jv2+ifam-1) = numfam
-                val_max = max(numfam, val_max)
-                val_min = min(numfam, val_min)
 !
-                bgrpno = .false.
+                bgrpno = ASTER_FALSE
                 nomtmp = nonogm
                 if( numfam.gt.0 ) then
-                    bgrpno = .true.
+                    bgrpno = ASTER_TRUE
                     nomtmp = nonogn
                 endif
 !
@@ -286,6 +298,8 @@ character(len=24) :: grpnoe, grpmai
                     ASSERT(num.ne.0)
                     zi(jgrp+igrp-1) = num
                 enddo
+            else
+                v_notempty_fami(ifam) = ASTER_FALSE
             endif
         enddo
         call jedetr(nofnog)
@@ -297,9 +311,7 @@ character(len=24) :: grpnoe, grpmai
             call wkvect('&&LRMMFA.COR_NUM_FAM', 'V V I', ecart, jv3)
             do ifam = 1, nbrfam
                 numfam = zi(jv2+ifam-1)
-                if( numfam.ne.0 ) then
-                    zi(jv3+numfam-val_min) = ifam
-                endif
+                zi(jv3+numfam-val_min) = ifam
             enddo
         endif
         call jedetr(nonufa)
@@ -315,7 +327,7 @@ character(len=24) :: grpnoe, grpmai
                 numfam = zi(adfano+ino-1)
                 if( numfam.ne.0 ) then
                     ifam = zi(jv3+numfam-val_min)
-                    if( ifam.ne.0 ) then
+                    if(v_notempty_fami(ifam)) then
                         ASSERT(ifam.le.nbrfam.and.ifam.ne.0)
                         jgrp = zi(jadcor+ifam-1)
                         nbgr = zi(jv4+ifam-1)
@@ -343,7 +355,7 @@ character(len=24) :: grpnoe, grpmai
                 numfam = zi(adfano+ino-1)
                 if( numfam.ne.0 ) then
                     ifam = zi(jv3+numfam-val_min)
-                    if( ifam.ne.0 ) then
+                    if(v_notempty_fami(ifam)) then
                         jgrp = zi(jadcor+ifam-1)
                         nbgr = zi(jv4+ifam-1)
                         do igrp = 1, nbgr
@@ -377,7 +389,7 @@ character(len=24) :: grpnoe, grpmai
                         numfam = zi(jfamma(ityp)+ima-1)
                         if( numfam.ne.0 ) then
                             ifam = zi(jv3+numfam-val_min)
-                            if( ifam.ne.0 ) then
+                            if(v_notempty_fami(ifam)) then
                                 ASSERT(ifam.le.nbrfam.and.ifam.ne.0)
                                 jgrp = zi(jadcor+ifam-1)
                                 nbgr = zi(jv4+ifam-1)
@@ -413,7 +425,7 @@ character(len=24) :: grpnoe, grpmai
                         numfam = zi(jfamma(ityp)+ima-1)
                         if( numfam.ne.0 ) then
                             ifam = zi(jv3+numfam-val_min)
-                            if( ifam.ne.0 ) then
+                            if(v_notempty_fami(ifam)) then
                                 jgrp = zi(jadcor+ifam-1)
                                 nbgr = zi(jv4+ifam-1)
                                 nummai = zi(jnumty(ityp)+ima-1)
@@ -449,6 +461,9 @@ character(len=24) :: grpnoe, grpmai
         call jedetr(nocorf)
 !
     endif
+!
+    AS_DEALLOCATE(vl=v_notempty_fami)
+    !ASSERT(ASTER_FALSE)
 !
     call jedema()
 !
