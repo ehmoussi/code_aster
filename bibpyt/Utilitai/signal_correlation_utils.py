@@ -129,7 +129,7 @@ def get_group_nom_coord(group_inter, nom_mail):
     # nom des noeuds
     liste_nom_no_int = tuple([ nom.strip() for nom in  nom_no_interf    ])
     COORD_3D = mm.cn
-    coord_no_interf = COORD_3D[liste_no_interf]
+    coord_no_interf = COORD_3D[mm.gno.get(group_inter)]
     if len(coord_no_interf[0])== 2:
         z = NP.zeros((len(coord_no_interf[:,0]),1))
         coord_no_interf = NP.append(coord_no_interf, z, axis=1)
