@@ -40,13 +40,6 @@ cata_msg = {
  le résultat :  %(k1)s  existe déjà.
 """),
 
-    7: _("""
- -> Le groupe de mailles %(k1)s est vide. On ne le crée donc pas !
- -> Risque & Conseil:
-    Veuillez vous assurer que le type de mailles souhaité soit cohérent
-    avec votre maillage.
-"""),
-
     8 : _("""
   Aucun DDL actif n'a été trouve pour les interfaces données
    => Les modes d'attaches, de contrainte ou de couplage ne peuvent pas être calcules.
