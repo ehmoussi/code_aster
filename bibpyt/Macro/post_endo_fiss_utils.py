@@ -156,14 +156,14 @@ def crea_mail_lin(XcreteTot, YcreteTot, ZcreteTot, ConnTot, lstNomFiss, dime):
 # CREATE AN MESH OBJECT FROM A STRING REPRESENTING
 #    A MESH IN THE ASTER FORMAT
 def crea_sd_mail(self, mailString):
-    from code_aster.RunManager.LogicalUnit import LogicalUnitFile
+    from code_aster.RunManager.LogicalUnit import LogicalUnitFile, FileAccess
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
 
     nomFichierSortie = os.path.join(os.getcwd(), 'maillage.mail')
     fproc = open(nomFichierSortie, 'w')
     fproc.write(mailString)
     fproc.close()
-    unitFile = LogicalUnitFile.open(nomFichierSortie)
+    unitFile = LogicalUnitFile.open(nomFichierSortie, access=FileAccess.Old)
     uniteMail = unitFile.unit
     _MAI = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=uniteMail)
     unitFile.release()
