@@ -10,7 +10,7 @@
 @Algorithm NewtonRaphson_NumericalJacobian;
 
 @Theta 1.;
-@Epsilon 1.e-9;
+@Epsilon 1.e-12;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
@@ -33,37 +33,36 @@ p.setGlossaryName("EquivalentPlasticStrain");
 @LocalVariable stress mu;
 @LocalVariable stress Fel;
 @LocalVariable stress i1el;
-@LocalVariable stress seqel;
+@LocalVariable stress seq_e;
 @LocalVariable stress Rpel;
 @LocalVariable real Dp;
 @LocalVariable real ind;
 
 /* Initialize Lame coefficients */
-@InitLocalVariables {
-  lambda = computeLambda(young, nu);
-  mu = computeMu(young, nu);
-  K = lambda + (2 * mu) / 3;
-  // elastic prediction
-  StressStensor sigel(lambda * trace(eel + deto) * Stensor::Id() +
-                      2 * mu * (eel + deto));
-  i1el = trace(sigel);
-  seqel = sigmaeq(sigel);
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+  K      = lambda+(2*mu)/3;
+  const StrainStensor e  =  eel+deto;
+  const StressStensor se = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  seq_e = sigmaeq(se);
+  i1el = trace(se);
   Rpel = sy + H * min(p, p_ult);
-  Fel = a * i1el + seqel - Rpel;
+  Fel = a * i1el + seq_e - Rpel;
 }
 
-@ComputeStress {
-  sig = lambda * trace(eel) * StrainStensor::Id() + 2 * mu * eel;
+@ComputeStress{
+  sig = lambda*trace(eel)*StrainStensor::Id()+2*mu*eel;
 }
 
-@Integrator {
+@Integrator{
   ind = 0;
   Dp = 0.;
   if (Fel > 0) {
     const stress seq_ = sigmaeq(sig);
     StrainStensor np_(real(0));
     StrainStensor n_(real(0));
-    if (seq_ > 1.e-10 * young) {
+    if(seq_>1.e-10* young){
       ind = 1;
       n_ = 3 / (2 * seq_) * deviator(sig);
       Dp = Fel / (3. * mu + 9. * K * a * a + H);
@@ -87,15 +86,13 @@ p.setGlossaryName("EquivalentPlasticStrain");
   fp = dp - Dp;
 }
 
-@TangentOperator {
-  if ((smt == ELASTIC) || (smt == SECANTOPERATOR)) {
-    computeElasticStiffness<N, Type>::exe(Dt, lambda, mu);
-  } else if (smt == CONSISTENTTANGENTOPERATOR) {
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
     StiffnessTensor De;
-    Stensor4 Je;
-    computeElasticStiffness<N, Type>::exe(De, lambda, mu);
-    getPartialJacobianInvert(Je);
-    Dt = De * Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    Dt = De;
   } else {
     return false;
   }
