@@ -35,7 +35,8 @@ use HHO_type
 use HHO_comb_module, only : hhoPrepMatrix
 use NonLinear_module, only : getOption, getMatrType, isMatrUpdate,&
                              isDampMatrCompute, isMassMatrCompute,&
-                             isRigiMatrCompute, isInteVectCompute
+                             isRigiMatrCompute, isInteVectCompute,&
+                             factorSystem
 !
 implicit none
 !
@@ -56,11 +57,7 @@ implicit none
 #include "asterfort/asmari.h"
 #include "asterfort/nmrigi.h"
 #include "asterfort/utmess.h"
-#include "asterfort/mtdscr.h"
 #include "asterfort/nmaint.h"
-#include "asterfort/nmrinc.h"
-#include "asterfort/nmtime.h"
-#include "asterfort/preres.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=*) :: modelz
@@ -140,7 +137,7 @@ integer :: faccvg, ldccvg
     character(len=24) :: model
     aster_logical :: l_renumber
     integer :: ifm, niv
-    integer :: nb_matr, ibid, reac_iter
+    integer :: nb_matr, reac_iter
     integer :: condcvg
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
@@ -300,19 +297,9 @@ integer :: faccvg, ldccvg
         endif
 ! ----- Factorization of global matrix of system
         if (l_update_matr) then
-            call nmtime(ds_measure, 'Init', 'Factor')
-            call nmtime(ds_measure, 'Launch', 'Factor')
-            if (l_rom .and. ds_algorom%phase .eq. 'HROM') then
-                call mtdscr(matass)
-            elseif (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
-                call mtdscr(matass)
-                call romAlgoNLCorrEFMatrixModify(numedd, matass, ds_algorom)
-                call preres(solveu, 'V', faccvg, maprec, matass, ibid, -9999)
-            else
-                call preres(solveu, 'V', faccvg, maprec, matass, ibid, -9999)
-            endif
-            call nmtime(ds_measure, 'Stop', 'Factor')
-            call nmrinc(ds_measure, 'Factor')
+            call factorSystem(list_func_acti, ds_measure, ds_algorom,&
+                              numedd        , solveu    , maprec    , matass,&
+                              faccvg)
         endif
     endif
 !

@@ -29,7 +29,8 @@ private :: swapMatrToSecant, getMatrTypePred, getMatrTypeCorr,&
            isContDiscMatr, isElasMatr
 public  :: getMatrType, getOption,&
            isMatrUpdate,&
-           isDampMatrCompute, isMassMatrCompute, isRigiMatrCompute, isInteVectCompute
+           isDampMatrCompute, isMassMatrCompute, isRigiMatrCompute, isInteVectCompute,&
+           factorSystem
 ! ==================================================================================================
 private
 #include "asterf_types.h"
@@ -763,6 +764,63 @@ subroutine isInteVectCompute(phaseType    , list_func_acti,&
     else
         ASSERT(ASTER_FALSE)
     endif
+!   -----------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! factorSystem
+!
+! Factorization of linear system
+!
+! In  list_func_acti   : list of active functionnalities
+! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_algorom       : datastructure for ROM parameters
+! In  nume_dof         : name of nume_dof object (numbering equation)
+! In  solveu           : name of datastructure for solver
+! In  ds_system        : datastructure for non-linear system management
+! In  maprec           : matrix for pre-conditionning
+! In  matass           : matrix of linear system
+! Out faccvg           : error from factorization
+!
+! --------------------------------------------------------------------------------------------------
+subroutine factorSystem(list_func_acti, ds_measure, ds_algorom,&
+                        nume_dof      , solveu    , maprec    , matass,&
+                        faccvg)
+! - Parameters
+    integer, intent(in) :: list_func_acti(*)
+    type(NL_DS_Measure), intent(inout) :: ds_measure
+    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+    character(len=19), intent(in) :: maprec, matass, solveu
+    character(len=24), intent(in) :: nume_dof
+    integer, intent(out) :: faccvg
+!   ------------------------------------------------------------------------------------------------
+! - Local
+    aster_logical :: l_rom
+    integer :: npvneg, ifm, niv
+!   ------------------------------------------------------------------------------------------------
+    call infdbg('MECANONLINE', ifm, niv)
+    l_rom  = isfonc(list_func_acti, 'ROM')
+    faccvg = 0
+!
+    call nmtime(ds_measure, 'Init'  , 'Factor')
+    call nmtime(ds_measure, 'Launch', 'Factor')
+    if (l_rom .and. ds_algorom%phase .eq. 'HROM') then
+        call mtdscr(matass)
+    elseif (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
+        call mtdscr(matass)
+        call romAlgoNLCorrEFMatrixModify(nume_dof, matass, ds_algorom)
+        call preres(solveu, 'V', faccvg, maprec, matass, npvneg, -9999)
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_42')
+        endif
+    else
+        call preres(solveu, 'V', faccvg, maprec, matass, npvneg, -9999)
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_42')
+        endif
+    endif
+    call nmtime(ds_measure, 'Stop'  , 'Factor')
+    call nmrinc(ds_measure, 'Factor')
 !   -----------------------------------------------------------------------------------------------
 end subroutine
 !

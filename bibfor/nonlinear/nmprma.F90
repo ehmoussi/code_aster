@@ -30,7 +30,8 @@ use Rom_Datastructure_type
 use HHO_type
 use HHO_comb_module, only : hhoPrepMatrix
 use NonLinear_module, only : getOption, getMatrType, isMatrUpdate,&
-                             isDampMatrCompute, isMassMatrCompute, isRigiMatrCompute
+                             isDampMatrCompute, isMassMatrCompute, isRigiMatrCompute,&
+                             factorSystem
 !
 implicit none
 !
@@ -44,8 +45,6 @@ implicit none
 #include "asterfort/echmat.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/mtdscr.h"
-#include "asterfort/ndynlo.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmcmat.h"
 #include "asterfort/nmdebg.h"
@@ -54,10 +53,7 @@ implicit none
 #include "asterfort/nmmatr.h"
 #include "asterfort/nmrenu.h"
 #include "asterfort/nmrigi.h"
-#include "asterfort/nmrinc.h"
-#include "asterfort/nmtime.h"
 #include "asterfort/nmxmat.h"
-#include "asterfort/preres.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 #include "asterfort/sdmpic.h"
 #include "asterfort/utmess.h"
@@ -143,7 +139,7 @@ integer :: faccvg, ldccvg, condcvg
     character(len=19) :: matr_elem, rigid
     character(len=3) :: mathpc
     integer :: ifm, niv
-    integer :: iter_newt, ibid
+    integer :: iter_newt
     integer :: nb_matr, reac_incr
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
@@ -350,25 +346,9 @@ integer :: faccvg, ldccvg, condcvg
 ! - Factorization of global matrix of system
 !
     if (l_update_matr) then
-        call nmtime(ds_measure, 'Init', 'Factor')
-        call nmtime(ds_measure, 'Launch', 'Factor')
-        if (l_rom .and. ds_algorom%phase .eq. 'HROM') then
-            call mtdscr(matass)
-        elseif (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
-            call mtdscr(matass)
-            call romAlgoNLCorrEFMatrixModify(numedd, matass, ds_algorom)
-            call preres(solveu, 'V', faccvg, maprec, matass, ibid, -9999)
-            if (niv .ge. 2) then
-                call utmess('I', 'MECANONLINE13_42')
-            endif
-        else
-            call preres(solveu, 'V', faccvg, maprec, matass, ibid, -9999)
-            if (niv .ge. 2) then
-                call utmess('I', 'MECANONLINE13_42')
-            endif
-        endif
-        call nmtime(ds_measure, 'Stop', 'Factor')
-        call nmrinc(ds_measure, 'Factor')
+        call factorSystem(list_func_acti, ds_measure, ds_algorom,&
+                          numedd        , solveu    , maprec    , matass,&
+                          faccvg)
     endif
 !
 end subroutine
