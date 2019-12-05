@@ -406,7 +406,7 @@ implicit none
 !      Transforming Piola-Kirchhoff II stress to Cauchy stress
         if (resi) then
         call pk2sig(3, fpl, detfpl, sigma, sigp(1,kpg), 1)
-        endif
+
 !
 !      Glut \ Start
 !      Sigma terms have to be adjusted so as to comply with initial SHB code.
@@ -452,6 +452,7 @@ implicit none
 !                                     +sigma(6)*fpl(2,3)*fpl(3,1)&
 !                                     +sigma(5)*fpl(2,3)*fpl(3,2)) * unsrac2 / detfpl
 !      Glut \ End
+        endif
 !
 !
 ! ---- Tangent stiffness matrix

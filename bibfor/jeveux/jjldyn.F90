@@ -25,7 +25,6 @@ subroutine jjldyn(imode, lmin, ltot)
 #include "asterfort/asmpi_info.h"
 #include "asterfort/jermxd.h"
 #include "asterfort/jxecro.h"
-#include "asterfort/random.h"
 #include "asterfort/utgtme.h"
 #include "asterfort/utmess.h"
 #include "asterfort/utptme.h"
@@ -100,7 +99,8 @@ subroutine jjldyn(imode, lmin, ltot)
 !    CHARACTER*32   NOM32
     integer :: iaddi(2), lgs, nbioav(2)
     integer :: rang, nbproc, iret, iret2
-    real(kind=8) :: graine, valp(5), vx(2), v0
+    real(kind=8) :: valp(5), vx(2), v0
+    real(kind=4) :: graine
     mpi_int :: mrank, msize
 !
     data nomk /'COUR_JV ','RLQ_MEM ','VMSIZE  ','MEM_TOTA','LIMIT_JV'/
@@ -128,7 +128,7 @@ subroutine jjldyn(imode, lmin, ltot)
         if (rang .ne. 0) then
             graine = (rang+1)*datei*1.5d0
             do i = 2, nreuti(ic)
-                call random(graine)
+                call random_number(graine)
                 k = int(graine*i)+1
                 j = indir(jindir(ic)+i)
                 indir(jindir(ic)+i) = indir(jindir(ic)+k)

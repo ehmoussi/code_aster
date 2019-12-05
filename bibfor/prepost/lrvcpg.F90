@@ -64,8 +64,9 @@ subroutine lrvcpg(idfimd, nbpgm, nbpga, nomtm, typgeo,&
 #include "asterfort/jexnom.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/irnbsp.h"
 !
-    integer :: tygeos, nbpgm, nbpga, nloc, nutyma 
+    integer :: tygeos, nbpgm, nbpga, nloc, nutyma
     med_idt :: idfimd
     integer :: permu(nbpgm), codret, nbsp
     character(len=8) :: elrefa, fapg, nomtm
@@ -74,20 +75,20 @@ subroutine lrvcpg(idfimd, nbpgm, nbpga, nomtm, typgeo,&
     integer :: vali(2), jcopga, jwpga, ndim, nbfpg, iloc, dime, nbpgm2
     integer :: typgeo, nbpg, iret, nnoref, npgref, jrefco, jgscoo, jwg, jcorre
     integer :: ncorre, igau, idim, ad, ipgm, ipga, ada, im, ifm, nivinf
-    character(len=8) :: valk(3)
+    character(len=8), parameter :: valk(3) = ['X','Y','Z']
     character(len=64) :: locnam2, nomasu
     integer :: edfuin
     parameter (edfuin=0)
     real(kind=8) :: xpgm, ypgm, zpgm, xpga, ypga, zpga, valr(2)
 !
-    data valk / 'X','Y','Z'/
-!
     call jemarq()
 !
     call infniv(ifm, nivinf)
+!   Voir irmpg1 pour la localisation des informations
     if ( locnam(33:40).eq.'ASTER_SP' ) then
-        read(locnam(23:28),'(I6)') nbsp
+        call irnbsp(locnam(17:24), nbsp)
         nbpgm2 = nbpgm/nbsp
+
     else
         nbsp = 1
         nbpgm2 = nbpgm
@@ -116,7 +117,7 @@ subroutine lrvcpg(idfimd, nbpgm, nbpga, nomtm, typgeo,&
         vali(2)=nbpga
         call utmess('A', 'MED_2', ni=2, vali=vali)
         codret = 4
-        goto 9999
+        goto 999
     endif
 !
 !     DETERMINATION DU NOM DE LA LOCALISATION DES PG PRESENTE
@@ -127,7 +128,7 @@ subroutine lrvcpg(idfimd, nbpgm, nbpga, nomtm, typgeo,&
 !     -SI LA LOCALISATION EST PRESENTE, ON COMPARE LES
 !      COORDONNES DES PG ASTER/MED
     if (nivinf .gt. 1) then
-        write(ifm,1001) nloc
+        write(ifm,101) nloc
     endif
     do iloc = 1, nloc
         call as_mlclci(idfimd, iloc, locnam2, tygeos, nbpg,&
@@ -142,12 +143,12 @@ subroutine lrvcpg(idfimd, nbpgm, nbpga, nomtm, typgeo,&
         call utmess('A', 'MED_1', sk=elrefa)
     endif
     codret=2
-    goto 9999
+    goto 999
 140 continue
 !
 !
     if (nivinf .gt. 1) then
-        write(ifm,1002) locnam
+        write(ifm,102) locnam
     endif
 !
 !     DETERMINATION DES COORDONNES DES PG
@@ -171,26 +172,26 @@ subroutine lrvcpg(idfimd, nbpgm, nbpga, nomtm, typgeo,&
 !
     call wkvect('&&LRVCPG_CORRESP_PG', 'V V I', nbpgm2, jcorre)
     ncorre=0
-    do 100 igau = 1, nbpgm2
+    do igau = 1, nbpgm2
         zi(jcorre+igau-1)=0
         do idim = 1, dime
             ad=dime*(igau-1)+idim
             if (nivinf .gt. 1) then
-                write(ifm,1100) igau,idim,zr(jgscoo+ad-1),zr(jcopga+&
+                write(ifm,110) igau,idim,zr(jgscoo+ad-1),zr(jcopga+&
                 ad-1)
             endif
             if (abs(zr(jgscoo+ad-1)-zr(jcopga+ad-1)) .gt. 1.d-3) then
                 ncorre=ncorre+1
                 zi(jcorre+igau-1)=igau
-                goto 100
+                exit
             endif
         end do
-100  end do
+    end do
 !
 !     SI LES PG ASTER/MED CORRESPONDENT : TOUT VA BIEN
     if (ncorre .eq. 0) then
         codret=0
-        goto 9999
+        goto 999
     else
 !        .. SINON, ON RECHERCHE UNE EVENTUELLE PERMUTATION:
 !        PERMU = LE TABLEAU DE PERMUTATIONS DIMENSIONNE
@@ -217,7 +218,7 @@ subroutine lrvcpg(idfimd, nbpgm, nbpga, nomtm, typgeo,&
                         abs(zpgm-zpga) .lt. 1.d-3) then
                         permu(ipgm)=ipga
                         codret=1
-                        goto 200
+                        exit
                     endif
 !                 SI ON EST ICI, CELA SIGNIFIE QUE L'UN DES PG MED
 !                 N'A PAS PU ETRE IDENTIFIE A L'UN DES PG ASTER
@@ -233,11 +234,11 @@ subroutine lrvcpg(idfimd, nbpgm, nbpga, nomtm, typgeo,&
                         enddo
                         call utmess('A', 'MED_3')
                         codret=2
-                        goto 9999
+                        goto 999
                     endif
                 enddo
             endif
-200      enddo
+        enddo
     endif
 !
     if (codret .eq. 1) then
@@ -254,7 +255,7 @@ subroutine lrvcpg(idfimd, nbpgm, nbpga, nomtm, typgeo,&
         call utmess('A', 'MED_6')
     endif
 !
-9999  continue
+999  continue
 !
     call jedetr('&&LRVCPG_COORD_PG_ASTER')
     call jedetr('&&LRVCPG_POIDS_PG_ASTER')
@@ -265,8 +266,8 @@ subroutine lrvcpg(idfimd, nbpgm, nbpga, nomtm, typgeo,&
 !
     call jedema()
 !
-    1001 format('  NOMBRE DE LOCALISATIONS LUES :',i4)
-    1002 format('  LOCALISATION MED UTILISEE    :', a32)
-    1100 format('  PT GAUSS',i4,' DIM ',i1,' COORD MED',1pe12.5,&
+    101 format('  NOMBRE DE LOCALISATIONS LUES :',i4)
+    102 format('  LOCALISATION MED UTILISEE    :', a32)
+    110 format('  PT GAUSS',i4,' DIM ',i1,' COORD MED',1pe12.5,&
      &                                  ' COORD ASTER',1pe12.5)
 end subroutine
