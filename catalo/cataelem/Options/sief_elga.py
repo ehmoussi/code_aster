@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -137,7 +137,7 @@ SIEF_ELGA = Option(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.ABSO,'OUI'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.FLUIDE,'OUI'),)),
-      CondCalcul('-', ((AT.PHENO,'ME'),(AT.INTERFACE,'OUI'),)),
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.INTERFACE,'OUI'),(AT.TYPMOD2,'INTERFAC'),)),
     ),
     comment=""" CALCUL DES CONTRAINTES ET/OU EFFORTS GENERALISES AUX POINTS DE GAUSS
    A PARTIR DES DEPLACEMENTS. LICITE EN LINEAIRE SEULEMENT. """,

@@ -467,16 +467,14 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         endif
         nbmax = 0
         do ii = 1, nbk
-            do i = 1, nbk
-                if ((valk(nbr+nbc+ii)(1:6) .eq. 'SIGM  ') .or.&
-                    (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_F1') .or.&
-                    (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_F2') .or.&
-                    (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_F3') .or.&
-                    (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_F4') .or.&
-                    (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_C ')) then
-                    goto 151
-                endif
-            enddo
+            if ((valk(nbr+nbc+ii)(1:6) .eq. 'SIGM  ') .or.&
+                (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_F1') .or.&
+                (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_F2') .or.&
+                (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_F3') .or.&
+                (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_F4') .or.&
+                (valk(nbr+nbc+ii)(1:7) .eq. 'SIGM_C ')) then
+                goto 151
+            endif
             call utmess('F', 'MODELISA6_70', sk=nomcle(ii))
 151         continue
             nomfct = valk(nbr+nbc+nbk+ii)
