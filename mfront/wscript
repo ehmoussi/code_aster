@@ -266,6 +266,10 @@ def check_mfront_obsolete_source(self):
                     Logs.warn("remove obsolete build: %s" % node)
                     remove( osp.join(build, node) )
 
+@TaskGen.extension('.hxx')
+def nothing(*k, **kw):
+        pass
+
 @TaskGen.extension('.mfront')
 def process_mfront(self, node):
     name = osp.splitext(node.name)[0]
@@ -273,7 +277,14 @@ def process_mfront(self, node):
     # print "DEBUG: node:", node, "wkrdir:", wrkdir.abspath()
     wrkdir.mkdir()
     files = [name, "aster" + name] + getAdditionalOutputs(node.abspath())
-    outputs = [wrkdir.find_or_declare(osp.join("src", i + ".cxx")) for i in files]
+
+    _nod = wrkdir.find_or_declare
+    outputs = [_nod(osp.join("src", i + ".cxx")) for i in files]
+    outputs.append(_nod(osp.join("include", "MFront", "Aster",
+                                 "aster" + name + ".hxx")))
+    outputs.extend([_nod(osp.join("include", "TFEL", "Material",
+                                  name + i + ".hxx"))
+                    for i in ("", "BehaviourData", "IntegrationData")])
     tsk = self.create_task('mfront2cxx', node, outputs)
     self.source.extend(tsk.outputs)
 
