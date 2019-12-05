@@ -5,11 +5,12 @@
  * \date   18/11/2013
  */
 
-@Parser    Implicit;
+@DSL Implicit;
 @Behaviour DruckerPrager;
+@Algorithm NewtonRaphson_NumericalJacobian;
 
 @Theta 1.;
-@Epsilon 1.e-8;
+@Epsilon 1.e-13;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
@@ -30,19 +31,20 @@ p.setGlossaryName("EquivalentPlasticStrain");
 @LocalVariable stress K;
 @LocalVariable stress lambda;
 @LocalVariable stress mu;
-
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
+@LocalVariable bool b;
 
 /* Initialize Lame coefficients */
 @InitLocalVariables{
-  using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
   K      = lambda+(2*mu)/3;
-  a      = -3*(tau-1)/(tau+1);
-  k      = 2*sigc*tau/(tau+1);
+  a      = -3*(tau-1)/(tau+1); 
+  k      = 2*sigc*tau/(tau+1); 
+  const StrainStensor e  =  eel+deto;
+  const StressStensor se = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  const stress seq_e = sigmaeq(se);
+  const stress pr_e  = trace(se)/3.;
+  b =  a*pr_e+seq_e-k > 0;
 }
 
 @ComputeStress{
@@ -50,53 +52,32 @@ p.setGlossaryName("EquivalentPlasticStrain");
 }
 
 @Integrator{
-  const stress seq_ = sigmaeq(sig);
-  const stress pr_  = trace(sig)/3.;
-  StrainStensor n_(real(0));
-  if(seq_>1.e-8*young){
-    n_ = 3/(2*seq_)*deviator(sig);
-  }
-  cout << "n_" << n_ << endl;
-
-  // elasticity
-  StrainStensor np_ = a*StrainStensor::Id()+n_;
-  cout << "np_  :" << np_ << endl;
-  cout << "dp   :" << dp<< endl;
-  cout << "deto :" << deto<< endl;
-  cout << "deel :" << deel<< endl;
-  feel = deel+dp*np_-deto;
-  cout << "feel :" << feel << endl;
-  cout << "seq  :" << seq_ << endl;
-  cout << "young:" << 1.e-8*young<< endl;
-  if(seq_>1.e-8*young){
-    dfeel_ddeel += (2*mu*theta*dp/seq_)*(Stensor4::M()-(n_^n_));
-  }
-  dfeel_ddp = np_;
-  // plasticity
-  const strain f = (a*pr_+seq_-k)/young;
-
-
-
-
-
-  if((f>0)||(dp>epsilon)){
-    fp = f;
-    dfp_ddp   = 0;
-    dfp_ddeel = (a*K*StrainStensor::Id()+2*mu*n_)*theta/young;
+  if(b){
+    const stress seq_ = sigmaeq(sig);
+    const stress pr_  = trace(sig)/3.;
+    StrainStensor n_(real(0));
+    if(seq_>1.e-8*young){
+      n_ = 3/(2*seq_)*deviator(sig);
+    }
+    // elasticity
+    StrainStensor np_ = a*StrainStensor::Id()+n_;
+    feel = deel+dp*np_-deto;
+    // plasticity
+    fp = (a*pr_+seq_-k)/young;
+  } else {
+    feel -= deto;
   }
 }
 
 @TangentOperator{
-  using namespace tfel::material::lame;
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTENTTANGENTOPERATOR){
     StiffnessTensor De;
-    Stensor4 Je;
     computeElasticStiffness<N,Type>::exe(De,lambda,mu);
-    getPartialJacobianInvert(Je);
-    Dt = De*Je;
+    Dt = De;
   } else {
     return false;
   }
 }
+

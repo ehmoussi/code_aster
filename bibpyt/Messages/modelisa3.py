@@ -132,7 +132,12 @@ MODI_REPERE / RESULTAT / concept réentrant
 """),
 
 
-
+    31: _("""
+ Alarme utilisateur dans CREA_MAILLAGE/MODI_MAILLE :
+  Occurrence du mot clé facteur MODI_MAILLE : %(i1)d.
+  Vous avez demandé la transformation de certaines mailles.
+  Mais il n'y a aucune maille à transformer.
+"""),
 
 
     32: _("""
