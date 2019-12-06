@@ -29,6 +29,12 @@
 # - Computation with macr_elas_mult
 # - Applied loads for macr_elas_mult-shearLd2 is double than for fz
 
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
+      #DEBUG=_F(SDVERI='OUI',),
+      ERREUR=_F(ERREUR_F='EXCEPTION'),
+      #IMPR_MACRO='OUI',
+)
+
 import numpy as NP
 
 N =1.
@@ -76,12 +82,6 @@ momentHP_d1 = -fx_globcs*(L-d1)
 momentHP_d2 = -fx_globcs*(L-d2)
 
 # NXX not tested (can exist but no analytical solution)
-
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      #DEBUG=_F(SDVERI='OUI',),
-      ERREUR=_F(ERREUR_F='EXCEPTION'),
-      #IMPR_MACRO='OUI',
-)
 
 mesh = LIRE_MAILLAGE(
     FORMAT = 'MED',
@@ -155,7 +155,7 @@ ch1 = AFFE_CHAR_MECA(
         GROUP_MA = (
             'END',
         ),
-        FY = fy / H,        
+        FY = fy / H,
         FZ = fz / H,
     ),
 )
@@ -168,7 +168,7 @@ ch2 = AFFE_CHAR_MECA(
             'END',
         ),
         FX = fx / H,
-    ),    
+    ),
 )
 
 reslin1 = MECA_STATIQUE(MODELE = model,
@@ -178,21 +178,21 @@ reslin1 = MECA_STATIQUE(MODELE = model,
                               _F(CHARGE=boundary),
                               _F(CHARGE=ch1),
                               ),
-                        )                       
+                        )
 
 tbcoup1 = CALC_COUPURE(RESULTAT=reslin1,
                        OPERATION='RESULTANTE',
                       LIGN_COUPE=(
-                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe1_start, COOR_EXTR=coupe1_end, NB_POINTS=100, DISTANCE_MAX=1.0), 
-                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe2_start, COOR_EXTR=coupe2_end, NB_POINTS=100, DISTANCE_MAX=1.0), 
-                    ))                 
+                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe1_start, COOR_EXTR=coupe1_end, NB_POINTS=100, DISTANCE_MAX=1.0),
+                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe2_start, COOR_EXTR=coupe2_end, NB_POINTS=100, DISTANCE_MAX=1.0),
+                    ))
 
-# ~ IMPR_TABLE(TABLE=tbcoup) 
+# ~ IMPR_TABLE(TABLE=tbcoup)
 
 # ===================================== #
 # TEST COUPE RESULTANTE
 # ===================================== #
-# ------------------------- # 
+# ------------------------- #
 # TEST COUPE 3 m, ch1
 # ------------------------- #
 
@@ -319,8 +319,8 @@ TEST_TABLE(  TABLE=tbcoup1,
              VALE_REFE=0.0,
              PRECISION=1.E-6,
              )
-             
-# ------------------------- # 
+
+# ------------------------- #
 # TEST COUPE 3 m, ch2
 # ------------------------- #
 
@@ -331,14 +331,14 @@ reslin2 = MECA_STATIQUE(MODELE = model,
                               _F(CHARGE=boundary),
                               _F(CHARGE=ch2),
                               ),
-                        ) 
+                        )
 
 tbcoup2 = CALC_COUPURE(RESULTAT=reslin2,
                        OPERATION='RESULTANTE',
                       LIGN_COUPE=(
-                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe1_start, COOR_EXTR=coupe1_end, NB_POINTS=100, DISTANCE_MAX=1.0), 
-                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe2_start, COOR_EXTR=coupe2_end, NB_POINTS=100, DISTANCE_MAX=1.0), 
-                    ))   
+                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe1_start, COOR_EXTR=coupe1_end, NB_POINTS=100, DISTANCE_MAX=1.0),
+                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe2_start, COOR_EXTR=coupe2_end, NB_POINTS=100, DISTANCE_MAX=1.0),
+                    ))
 
 TEST_TABLE(  TABLE=tbcoup2,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -366,7 +366,7 @@ TEST_TABLE(  TABLE=tbcoup2,
              VALE_REFE=0.0,
              PRECISION=1.E-6,
              )
-             
+
 TEST_TABLE(  TABLE=tbcoup2,
              FILTRE=(_F(NOM_PARA='INTITULE',
                        VALE_K='coupe 3 m',
@@ -418,7 +418,7 @@ TEST_TABLE(  TABLE=tbcoup2,
              ORDRE_GRANDEUR=1E-6,
              PRECISION=1E-6,
              );
-             
+
 TEST_TABLE(  TABLE=tbcoup2,
              FILTRE=(_F(NOM_PARA='INTITULE',
                        VALE_K='coupe 3.15 m',
@@ -431,7 +431,7 @@ TEST_TABLE(  TABLE=tbcoup2,
              VALE_REFE=0.0,
              PRECISION=1E-6,
              )
-             
+
 TEST_TABLE(  TABLE=tbcoup2,
              FILTRE=(_F(NOM_PARA='INTITULE',
                        VALE_K='coupe 3.15 m',
@@ -474,12 +474,12 @@ TEST_TABLE(  TABLE=tbcoup2,
 
 tbextr1 = CALC_COUPURE(RESULTAT=reslin1,
                        OPERATION='EXTRACTION',
-                      LIGN_COUPE=( 
-                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe1_start, COOR_EXTR=coupe1_end, NB_POINTS=3, DISTANCE_MAX=1.0), 
-                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe2_start, COOR_EXTR=coupe2_end, NB_POINTS=3, DISTANCE_MAX=1.0), 
+                      LIGN_COUPE=(
+                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe1_start, COOR_EXTR=coupe1_end, NB_POINTS=3, DISTANCE_MAX=1.0),
+                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe2_start, COOR_EXTR=coupe2_end, NB_POINTS=3, DISTANCE_MAX=1.0),
                     ))
 
-# ------------------------- # 
+# ------------------------- #
 # TEST COUPE 3 m, ch1
 # ------------------------- #
 
@@ -544,16 +544,16 @@ TEST_TABLE(  TABLE=tbextr1,
              PRECISION=1.E-6,
              );
 
-# ------------------------- # 
+# ------------------------- #
 # TEST COUPE 3.15 m, ch2
 # ------------------------- #
 
 tbextr2 = CALC_COUPURE(RESULTAT=reslin2,
                        OPERATION='EXTRACTION',
-                      LIGN_COUPE=( 
-                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe1_start, COOR_EXTR=coupe1_end, NB_POINTS=3, DISTANCE_MAX=1.0), 
-                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe2_start, COOR_EXTR=coupe2_end, NB_POINTS=3, DISTANCE_MAX=1.0), 
-                    ))       
+                      LIGN_COUPE=(
+                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe1_start, COOR_EXTR=coupe1_end, NB_POINTS=3, DISTANCE_MAX=1.0),
+                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=coupe2_start, COOR_EXTR=coupe2_end, NB_POINTS=3, DISTANCE_MAX=1.0),
+                    ))
 
 TEST_TABLE(  TABLE=tbextr2,
              FILTRE=(_F(NOM_PARA='INTITULE',
