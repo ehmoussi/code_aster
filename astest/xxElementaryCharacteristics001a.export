@@ -3,7 +3,7 @@ P memory_limit 256
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist asterxx verification sequential
+P testlist asterxx ci verification sequential
 
 F comm xxElementaryCharacteristics001a.py D 1
 F nom xxElementaryCharacteristics001a.mail D 0
