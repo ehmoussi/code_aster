@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -19,7 +18,7 @@ TSM = 10.
 
 SRO_NGA = DEFI_FONCTION(  PROL_DROITE='CONSTANT',PROL_GAUCHE='EXCLU',
                           NOM_PARA='FREQ',
-                          ABSCISSE=(0.1, 0.1333, 0.2, 0.25, 0.3333, 0.5, 0.6667, 1.0, 1.3333, 
+                          ABSCISSE=(0.1, 0.1333, 0.2, 0.25, 0.3333, 0.5, 0.6667, 1.0, 1.3333,
                                     2.0, 2.5, 3.3333, 4.0, 5.0, 6.6667, 10.0,13.3333, 20.0, 33.3333, 50.0, 100.0),
                           INTERPOL=('LIN', ),
                           ORDONNEE=(0.0037, 0.0065, 0.0144, 0.0180, 0.0291,  0.0605, 0.0984, 0.1659,  0.2298, 0.3682,
@@ -28,11 +27,11 @@ SRO_NGA = DEFI_FONCTION(  PROL_DROITE='CONSTANT',PROL_GAUCHE='EXCLU',
 
 
 FDSP = CALC_FONCTION ( DSP =_F( FONCTION = SRO_NGA, AMOR_REDUIT = 0.05,
-                               FREQ_PAS    = 0.05, FREQ_COUP   = FCOUP, 
+                               FREQ_PAS    = 0.05, FREQ_COUP   = FCOUP,
                                DUREE = TSM, NORME = 9.81,  NB_ITER=2   ),);
 
 DSPX= DEFI_INTE_SPEC( DIMENSION = 1,
-                         PAR_FONCTION = _F(NUME_ORDRE_I = 1, NUME_ORDRE_J = 1, FONCTION =FDSP , )); 
+                         PAR_FONCTION = _F(NUME_ORDRE_I = 1, NUME_ORDRE_J = 1, FONCTION =FDSP , ));
 
 #---------- LECTURE TABLE GGmax - D - DONNEE SOL --------#
 
@@ -157,7 +156,7 @@ tabsol= DEFI_SOL_EQUI(#MAILLAGE=mailcol,
 
 IMPR_TABLE(TABLE=tabsol);
 
-                       
+
 #----------- TEST CAS-TEST---------------#
 
 
@@ -176,7 +175,7 @@ TEST_TABLE(  TABLE=T_resu,
              VALE_CALC=( 0.6852491  , ),
              VALE_ABS='NON',)
 
-            
+
 TEST_TABLE(  TABLE=T_resu,
              NOM_PARA='G/Gmax',
              FILTRE=_F(NOM_PARA='M',
@@ -184,7 +183,7 @@ TEST_TABLE(  TABLE=T_resu,
                        CRITERE='RELATIF',
                        ),
              VALE_CALC=(      0.72368654  , ),
-             VALE_ABS='NON',)      
+             VALE_ABS='NON',)
 
 TEST_TABLE(  TABLE=T_resu,
              NOM_PARA='AHfin',
@@ -194,7 +193,7 @@ TEST_TABLE(  TABLE=T_resu,
                        ),
              VALE_CALC=(  0.062506044  ),
              VALE_ABS='NON',)
-             
+
 TEST_TABLE(  TABLE=T_resu,
              NOM_PARA='AHfin',
              FILTRE=_F(NOM_PARA='M',

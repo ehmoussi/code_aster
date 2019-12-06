@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -21,7 +20,7 @@ def adapte_fic_nappe(adr_fic, unite):
     lines = fic.readlines()
     fic.close()
     fic= open('fort.%s'%unite,"w")
-    
+
     print('AMOR\n')
     for line in lines:
         if 'Courbe' in line:
@@ -84,7 +83,7 @@ spectre2=LIRE_FONCTION(TYPE='NAPPE',
 
 
 
-# Validation de NAPPE 
+# Validation de NAPPE
 #####################
 
 # mots-clés NB_FREQ_LISS, FREQ_MIN, FREQ_MAX, ZPA
@@ -99,7 +98,7 @@ refcon=CALC_FONCTION(LISS_ENVELOP=_F(NAPPE=(spectre,spectre2),
                                   ),
                                   NOM_PARA='AMOR',
                                   NOM_RESU='ACCE',
-                                  NOM_PARA_FONC='FREQ',) 
+                                  NOM_PARA_FONC='FREQ',)
 
 
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.14547896587493,
@@ -127,7 +126,7 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.14547896587493,
                          FONCTION=refcon,
                          ),
                        )
-)                         
+)
 
 # test pour les nappes '_verif'
 
@@ -140,7 +139,7 @@ refcon2=CALC_FONCTION(LISS_ENVELOP=_F(NAPPE=(spectre,spectre2),
                                   ),
                                   NOM_PARA='AMOR',
                                   NOM_RESU='ACCE',
-                                  NOM_PARA_FONC='FREQ',) 
+                                  NOM_PARA_FONC='FREQ',)
 
 
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.14326800000000,
@@ -168,15 +167,15 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.14326800000000,
                          FONCTION=refcon2,
                          ),
                        )
-)                         
+)
 
 
 
 
-LISS_SPECTRE(SPECTRE=(_F(NAPPE=spectre, NOM='ETAGE', BATIMENT='BATIMENT', 
+LISS_SPECTRE(SPECTRE=(_F(NAPPE=spectre, NOM='ETAGE', BATIMENT='BATIMENT',
                          COMMENTAIRE='PRECISIONS', DIRECTION = 'X',),
-                      _F(NAPPE=spectre2, NOM='ETAGE', BATIMENT='BATIMENT', 
-                         COMMENTAIRE='PRECISIONS', DIRECTION = 'X',),), 
+                      _F(NAPPE=spectre2, NOM='ETAGE', BATIMENT='BATIMENT',
+                         COMMENTAIRE='PRECISIONS', DIRECTION = 'X',),),
              OPTION = 'CONCEPTION',
              NB_FREQ_LISS = 50,
              FREQ_MIN = 0.5,
@@ -253,7 +252,7 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.14547916410928,
                          REFERENCE='AUTRE_ASTER',
                          ),
                        )
-)                         
+)
 
 
 adapte_fic_nappe('./REPE_OUT/BATIMENT_ETAGE_X_verif.txt',86)
@@ -320,7 +319,7 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.14326800000000,
 )
 
 
-                    
+
 # Validation de TABLE
 #####################
 
@@ -331,7 +330,7 @@ TABSPEC = LIRE_TABLE(UNITE=38, FORMAT='ASTER', NUME_TABLE=1)
 TABSPEC2 = LIRE_TABLE(UNITE=39, FORMAT='ASTER', NUME_TABLE=1)
 
 LISS_SPECTRE(SPECTRE=(_F(TABLE=TABSPEC,),
-                      _F(TABLE=TABSPEC2,),), 
+                      _F(TABLE=TABSPEC2,),),
              OPTION = 'CONCEPTION',
              NB_FREQ_LISS = 50,
              FREQ_MIN = 0.5,
@@ -408,7 +407,7 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.14547916410928,
                          REFERENCE='AUTRE_ASTER',
                          ),
                        )
-)                        
+)
 
 
 

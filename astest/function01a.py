@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 from math import sin, pi
 import numpy as np
