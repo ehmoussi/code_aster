@@ -1,8 +1,8 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
 from code_aster.Commands import *
+
 test = code_aster.TestCase()
 
 code_aster.init()
@@ -10,7 +10,7 @@ code_aster.init()
 rank = code_aster.getMPIRank()
 
 pMesh2 = code_aster.ParallelMesh()
-pMesh2.readMedFile("xxParallelMesh003a")
+pMesh2.readMedFile("xxParallelMechanicalLoad001c")
 
 model = AFFE_MODELE(MAILLAGE = pMesh2,
                     AFFE = _F(MODELISATION = "D_PLAN",
