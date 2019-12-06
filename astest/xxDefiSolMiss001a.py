@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -54,7 +53,7 @@ CHAMPMAT=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
 #
 # ----------------------------------------------------------------------
 #       CONDITIONS LIMITES
-                      
+
 CL_RIGID=AFFE_CHAR_MECA(MODELE=MODELE,
                                     LIAISON_SOLIDE=(_F(GROUP_NO=('PA0','SBAS1',),),
                                                    _F(GROUP_NO=('PB0','SBAS2',),),
@@ -151,7 +150,7 @@ TBSOL = DEFI_SOL_MISS(
                # On met le decalage a non pour retrouver la definition manuelle
                DECALAGE_AUTO='NON',
    ),),
-   INFO=2,   
+   INFO=2,
 )
 
 test.assertEqual(TBSOL.getType(), "TABLE_SDASTER")

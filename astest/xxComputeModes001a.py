@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -56,7 +55,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 
 test.assertEqual(MODES.getType(), "MODE_MECA")
 
-BAMODA=DEFI_BASE_MODALE( 
+BAMODA=DEFI_BASE_MODALE(
                     RITZ=( _F( MODE_MECA=MODES),),);
 
 test.assertEqual(BAMODA.getType(), "MODE_MECA")
