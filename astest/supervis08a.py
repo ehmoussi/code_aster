@@ -7,8 +7,8 @@ test = code_aster.TestCase()
 
 TCPU = INFO_EXEC_ASTER(LISTE_INFO='TEMPS_RESTANT')
 remaining = TCPU['TEMPS_RESTANT', 1]
-test.assertGreater(remaining, 10.)
-test.assertLess(remaining, 60.) # time_limit in '.export'
+test.assertGreater(remaining, 30.)
+test.assertLess(remaining, 9999.)
 
 tab = INFO_EXEC_ASTER(LISTE_INFO='ETAT_UNITE', FICHIER='file1')
 state = tab['ETAT_UNITE', 1].strip()
