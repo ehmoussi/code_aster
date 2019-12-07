@@ -291,13 +291,10 @@ class MAIL_PY:
     def ToAster(self, unite=None):
         from code_aster.RunManager.LogicalUnit import LogicalUnitFile, Action, FileAccess, FileType
         try:
-            LIRE_MAILLAGE = self.jdc.get_cmd('LIRE_MAILLAGE')
+            from code_aster.Commands import LIRE_MAILLAGE
         except:
-            try:
-                from code_aster.Commands import LIRE_MAILLAGE
-            except:
-                print("Il faut lancer ce programme depuis Aster pour pouvoir générer un maillage Aster.")
-                sys.exit()
+            print("Il faut lancer ce programme depuis Aster pour pouvoir générer un maillage Aster.")
+            sys.exit()
 
         # Récupération d'une unité logique libre si besoin
         if unite is None:
