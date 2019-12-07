@@ -217,10 +217,14 @@ class LogicalUnitFile(object):
         """Attributes that holds the logical unit associated to this file"""
         return self._unit
 
+    @staticmethod
+    def _default_filename(unit):
+        return "fort.{0}".format(unit)
+
     @property
     def filename(self):
         """Attributes that holds the file name"""
-        return self._filename or "fort.{0}".format(self._unit)
+        return self._filename or self._default_filename(self._unit)
 
     def release(self):
         """Close and free a logical unit."""
@@ -238,8 +242,10 @@ class LogicalUnitFile(object):
             *None* if unit=6.
         """
         fileobj = cls.from_number(unit)
-        if not fileobj or unit == 6:
+        if unit == 6:
             return None
+        if not fileobj:
+            return cls._default_filename(unit)
         return fileobj.filename
 
     @classmethod
