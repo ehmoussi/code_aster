@@ -622,9 +622,11 @@ class CALCULS_ASTER:
             # ----------------------------------------------------------------------------
             new = "fort.%s.new" % self.UNITE_INCLUDE
             ctxt = {}
+            code = "\nfrom code_aster.Commands import *\nfrom math import *\n"
+            with open(new) as fcom:
+                code += fcom.read()
             try:
-                with open(new) as f:
-                    exec(compile(f.read(), new, 'exec'), ctxt, locals())
+                exec(code, ctxt, locals())
             except Exception as e:
                 UTMESS('F', 'RECAL0_85', valk=str(e))
 
