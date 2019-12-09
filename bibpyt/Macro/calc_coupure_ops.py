@@ -296,8 +296,6 @@ def calc_coupure_ops(self, **args):
                                     UNITE_MAILLAGE=UNITE_MAILLAGE,
                                     **macr_lign_extrac)
 
-        IMPR_TABLE( TABLE = __tbextr, UNITE = 8)
-
         __tbextr = CALC_TABLE(TABLE=__tbextr,
                                reuse=__tbextr,
                                ACTION=(
