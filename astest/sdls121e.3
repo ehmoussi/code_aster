@@ -1,6 +1,8 @@
 
 DEBUT(PAR_LOT='NON',);  #PAR_LOT = NON a cause de getvectjev
 
+import numpy as NP
+
 EP__=0.5
 MP__=50000.
 AM__=20000.
@@ -103,12 +105,12 @@ MODEL=AFFE_MODELE(MAILLAGE=MAIL2,
                                        'AMO5','AMO6','AMO7','AMO8','AMO9',),
                           PHENOMENE='MECANIQUE',
                           MODELISATION='DIS_T',),
-  
+
                           ),);
 
 #
 #---------------------------------------------------------------------
-#                     CARACTERISTIQUES ELEMENTAIRES 
+#                     CARACTERISTIQUES ELEMENTAIRES
 #---------------------------------------------------------------------
 
 CARA_ELE=AFFE_CARA_ELEM(MODELE=MODEL,
@@ -126,10 +128,10 @@ CARA_ELE=AFFE_CARA_ELEM(MODELE=MODEL,
                                      CARA = 'A_T_D_N',
                                      VALE = (1.,1.,AM__,),)
                         ),);
-                         
+
 
 #---------------------------------------------------------------------
-#                     CARACTERISTIQUES MATERIAUX 
+#                     CARACTERISTIQUES MATERIAUX
 #---------------------------------------------------------------------
 
 ACIER2=DEFI_MATERIAU(ELAS=_F(E=2.E11,
@@ -151,10 +153,10 @@ CHAR = AFFE_CHAR_MECA(MODELE=MODEL,
                     DRX=0., DRY=0., DRZ=0.,))
 
 #---------------------------------------------------------------------
-#                     RESOLUTION 
+#                     RESOLUTION
 #---------------------------------------------------------------------
 
-# on deploie ASSEMBLAGE 
+# on deploie ASSEMBLAGE
 # les macros ne passent pas dans les fichiers esclaves
 
 M_EL_RIG=CALC_MATR_ELEM(OPTION='RIGI_MECA',
@@ -211,7 +213,7 @@ MODET=LIRE_RESU(TYPE_RESU='MODE_MECA_C',
                  TOUT_ORDRE='OUI',);
 
 ######################
-#les modes identifies a exploiter 
+#les modes identifies a exploiter
 # numero ordre a mettre en coherence avec le fichier pilote
 l_modes_exploit=(1,2,3,4,5,6,7,8,)
 l_array = NP.array(l_modes_exploit)
@@ -232,8 +234,8 @@ amorx_mes = t_amorx[:,1]
 freq = []
 amor_red = []
 for i in list_reca:
-    freq.append(freq_mes[i]) 
-    amor_red.append(amorx_mes[i]) 
+    freq.append(freq_mes[i])
+    amor_red.append(amorx_mes[i])
 
 nbmodes_mes = len(l_modes_exploit)
 
@@ -340,7 +342,7 @@ for i in range(nbmodes_mes):
     val = val/l_vect[i]
     l_1.append(val.real)
 # la partie imag de val est egale a zero
-    
+
 T1 = CREA_TABLE(LISTE=(_F(LISTE_I=list(range(len(l_1))),PARA='ORDRE',),
                          _F(LISTE_R=l_1,PARA='TY_BM_Y',),),
                  )
