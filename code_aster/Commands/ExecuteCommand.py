@@ -69,7 +69,7 @@ from ..Cata import Commands
 from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
-from ..Objects import DataStructure, ResultNaming
+from ..Objects import DataStructure
 from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
 from ..Utilities import deprecated, import_object, no_new_attributes
 from ..Utilities.outputs import (command_header, command_result,
@@ -157,7 +157,8 @@ class ExecuteCommand(object):
         if hasattr(cmd._result, "userName"):
             cmd._result.userName = cmd.result_name
 
-        timer.Start(str(cmd._counter), name=cmd.command_name)
+        if cmd.show_syntax():
+            timer.Start(str(cmd._counter), name=cmd.command_name)
         cmd.print_syntax(keywords)
         try:
             cmd.exec_(keywords)
@@ -243,8 +244,9 @@ class ExecuteCommand(object):
             self._caller["identifier"]))
         logger.info(command_separator())
         logger.info(command_header(self._counter, filename, lineno))
+        max_print = ExecutionParameter().get_option("max_print")
         logger.info(command_text(self.name, printed_args, self.result_name,
-                                 limit=500))
+                                 limit=max_print))
 
     def print_result(self):
         """Print an echo of the result of the command."""
@@ -270,7 +272,9 @@ class ExecuteCommand(object):
                 in place.
         """
         logger.debug("checking syntax of {0}...".format(self.name))
-        checkCommandSyntax(self._cata, keywords, in_place=True)
+        max_check = ExecutionParameter().get_option("max_check")
+        checkCommandSyntax(self._cata, keywords, in_place=True,
+                           max_check=max_check)
 
     def create_result(self, keywords):
         """Create the result before calling the *exec* command function

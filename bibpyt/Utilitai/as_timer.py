@@ -74,13 +74,15 @@ class ASTER_TIMER:
     MaxNumTimer = 9999999
     MaxSize = 500
 
-    def __init__(self, add_total=True, format='as_run', maxlabel=None):
+    def __init__(self, add_total=True, format='as_run', maxlabel=None, limit=None):
         """Constructor
         """
         from code_aster import _
         # ----- initialisation
         self.timers = {}
         self.add_total = add_total
+        if limit:
+            self.MaxSize = limit
         self._oversize = False
         self._oversize_name = maxlabel or _("after %d timers")
         try:
