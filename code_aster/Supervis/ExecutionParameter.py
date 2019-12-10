@@ -93,6 +93,8 @@ class ExecutionParameter(metaclass=Singleton):
         self._args['numthreads'] = 0
 
         self._args['stage_number'] = 0
+        self._args['max_check'] = 0
+        self._args['max_print'] = 0
 
         # boolean (on/off) options
         self._bool = Options.Null
@@ -129,7 +131,7 @@ class ExecutionParameter(metaclass=Singleton):
         self._args['versionD0'] = '%d.%02d.%02d' % version
         self._args['versLabel'] = aster_pkginfo.get_version_desc()
 
-        self._timer = ASTER_TIMER(format="aster")
+        self._timer = None
         self._command_counter = 0
 
     def set_option(self, option, value):
@@ -296,6 +298,15 @@ class ExecutionParameter(metaclass=Singleton):
             action='store_const', const=1,
             help="turn on deprecation warnings")
 
+        parser.add_argument('--max_check',
+            action='store', type=int, default=500,
+            help="maximum number of occurrences to be checked, "
+                 "next are ignored")
+        parser.add_argument('--max_print',
+            action='store', type=int, default=500,
+            help="maximum number of keywords or values printed in "
+                 "commands echo")
+
         args, ignored = parser.parse_known_args(argv or sys.argv)
 
         logger.debug("Ignored arguments: %r", ignored)
@@ -304,6 +315,8 @@ class ExecutionParameter(metaclass=Singleton):
         # assign parameter values
         for opt, value in list(vars(args).items()):
             self.set_option(opt, value)
+
+        self._timer = ASTER_TIMER(format="aster", limit=self._args['max_print'])
 
         # For convenience DEBUG can be set from environment
         if os.getenv("DEBUG") == "1":

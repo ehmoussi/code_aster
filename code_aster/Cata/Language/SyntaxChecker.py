@@ -159,12 +159,13 @@ class SyntaxCheckerVisitor:
             times (for performance).
     """
 
-    def __init__(self, in_place=False):
+    def __init__(self, in_place=False, max_check=99999):
         """Initialization"""
         self._stack = []
         self._parent_context = []
         self._in_place = in_place
         self._default_command = False
+        self._max_check = max_check
 
     @property
     def stack(self):
@@ -273,7 +274,13 @@ class SyntaxCheckerVisitor:
             skwValue = [skwValue]
 
         # Vérification du type et des bornes des valeurs
+        count = 0
         for i in skwValue:
+            count += 1
+            if count > self._max_check:
+                print("Only the first {0} values are checked."
+                      .format(self._max_check))
+                break
             if complex in validType:
                 i = old_complex(i)
             # AsterStudy: for PythonVariable
@@ -370,7 +377,13 @@ class SyntaxCheckerVisitor:
                            .format(max_occurences))
 
         # loop on occurrences filled by the user
+        count = 0
         for userOcc in userDict:
+            count += 1
+            if count > self._max_check:
+                print("Only the first {0} occurrences are checked."
+                      .format(self._max_check))
+                break
             ctxt = self._parent_context[-1] if self._parent_context else {}
             if not self._default_command:
                 userOcc = mixedcopy(userOcc)
@@ -412,7 +425,7 @@ class SyntaxCheckerVisitor:
                     self._stack.pop()
 
 
-def checkCommandSyntax(command, keywords, in_place=True):
+def checkCommandSyntax(command, keywords, in_place=True, max_check=99999):
     """Check the syntax of a command `keywords` contains the keywords filled by
     the user.
 
@@ -422,7 +435,7 @@ def checkCommandSyntax(command, keywords, in_place=True):
         in_place (bool): If *True* the default keywords are added in the user
             dict. *None* values are removed from the user dict.
     """
-    checker = SyntaxCheckerVisitor(in_place)
+    checker = SyntaxCheckerVisitor(in_place, max_check)
     if not isinstance(keywords, dict):
         checker.error(TypeError, "'dict' object is expected")
 
