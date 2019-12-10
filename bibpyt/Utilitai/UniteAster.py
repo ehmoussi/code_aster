@@ -43,7 +43,7 @@ class UniteAster:
                 removed if it exists. *False* means that the file may exist.
             ascii (bool): If *True* the file is opened in text mode.
         """
-        logical_unit = LogicalUnitFile.new_free(nom)
+        logical_unit = LogicalUnitFile.new_free(nom, ascii, new)
         return logical_unit.unit
 
     def Nom(self, ul):

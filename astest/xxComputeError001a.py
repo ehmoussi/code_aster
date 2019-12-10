@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -11,7 +10,7 @@ MESH=code_aster.Mesh()
 MESH.readMedFile("sslv113c.mmed")
 
 MO=AFFE_MODELE(MAILLAGE=MESH,
-               
+
                AFFE=_F(TOUT='OUI',
                        PHENOMENE='MECANIQUE',
                        MODELISATION='AXIS',),);
@@ -123,7 +122,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   NOM_CHAM='ERME_ELEM',
                   NOM_CMP='ERREST',
                   VALE_CALC=0.015854340000000001,
-                  
+
                   CRITERE='RELATIF',
                   MAILLE='M1',),
           )

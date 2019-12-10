@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding=utf-8
 # --------------------------------------------------------------------
 # Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org

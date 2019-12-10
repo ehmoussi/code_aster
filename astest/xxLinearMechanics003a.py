@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -24,7 +23,7 @@ DEFI_GROUP( reuse=MAILL,   MAILLAGE=MAILL,
 CHMAT=AFFE_MATERIAU(  MAILLAGE=MAILL,
                       AFFE=_F(  TOUT = 'OUI',   MATER = MATER) )
 
-MODEL=AFFE_MODELE(  MAILLAGE=MAILL,    
+MODEL=AFFE_MODELE(  MAILLAGE=MAILL,
                     AFFE=_F(  TOUT = 'OUI',   MODELISATION = 'DKT',
                               PHENOMENE = 'MECANIQUE') )
 
@@ -48,7 +47,7 @@ RESU=MECA_STATIQUE(     MODELE=MODEL,
                      CARA_ELEM=CARELEM,
                        SOLVEUR=_F( STOP_SINGULIER = 'NON'),
                          EXCIT=_F(  CHARGE = CHARGE),
-                       OPTION='SIEF_ELGA',                         
+                       OPTION='SIEF_ELGA',
                              )
 
 RESU.printMedFile("test.med")

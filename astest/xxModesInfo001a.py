@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -69,7 +68,7 @@ NB_MODES=INFO_MODE(MATR_RIGI=K_ASSE,
                    FREQ=(0.,4.0,));
 
 
-                          
+
 # TEST_TABLE UNIQUEMENT POUR FAIRE CAS TEST
 TEST_TABLE(
            VALE_CALC_I=86,

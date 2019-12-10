@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 # validation du pilotage inspiré de ssnv176c
 

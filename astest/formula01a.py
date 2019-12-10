@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 from math import cos, pi
 

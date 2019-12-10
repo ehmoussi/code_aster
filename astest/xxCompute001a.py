@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -36,9 +35,9 @@ TEMP1=CREA_CHAMP(OPERATION='AFFE',
 CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
                        AFFE=_F(TOUT='OUI',
                                MATER=BETON,),
-                    AFFE_VARC=_F(GROUP_MA = 'POUTRE', 
-                                 NOM_VARC = 'TEMP', 
-                                 CHAM_GD=TEMP1, 
+                    AFFE_VARC=_F(GROUP_MA = 'POUTRE',
+                                 NOM_VARC = 'TEMP',
+                                 CHAM_GD=TEMP1,
                                  VALE_REF=0.),
                    )
 
@@ -119,7 +118,7 @@ MACSS=MACR_ELEM_STAT(DEFINITION=_F(MODELE=MODMACR,
                      CAS_CHARGE=_F(NOM_CAS='K1',
                                    SUIV='OUI',
                                    CHARGE=BLOQMACR,),);
-                                   
+
 MAYSS=DEFI_MAILLAGE(DEFI_SUPER_MAILLE=_F(MACR_ELEM=MACSS,
                                         SUPER_MAILLE='MAILLE1',),
                     DEFI_NOEUD=_F(TOUT='OUI',
@@ -146,8 +145,8 @@ CHMAT2=AFFE_MATERIAU(MAILLAGE=MAG,
                           ),
                     AFFE_VARC=_F(
                                  GROUP_MA = 'POUPOS',
-                                 NOM_VARC = 'TEMP', 
-                                 CHAM_GD=TEMPMACR, 
+                                 NOM_VARC = 'TEMP',
+                                 CHAM_GD=TEMPMACR,
                                  VALE_REF=0.),
                     )
 
@@ -165,14 +164,14 @@ ENCAST2=AFFE_CHAR_MECA(MODELE=MOMACR,
                                   DY=0.0,
                                   ),);
 
-rigiel2    = CALC_MATR_ELEM(MODELE=MOMACR, 
-                            CHAM_MATER=CHMAT2, 
+rigiel2    = CALC_MATR_ELEM(MODELE=MOMACR,
+                            CHAM_MATER=CHMAT2,
                             OPTION='RIGI_MECA',
                             CHARGE=ENCAST2)
-vecel2     = CALC_VECT_ELEM(INST=1.0, 
-                            CHAM_MATER=CHMAT2, 
+vecel2     = CALC_VECT_ELEM(INST=1.0,
+                            CHAM_MATER=CHMAT2,
                             CHARGE=ENCAST2,
-                            OPTION='CHAR_MECA', 
+                            OPTION='CHAR_MECA',
                             MODELE=MOMACR,
                             SOUS_STRUC=_F(CAS_CHARGE='K1',
                                           SUPER_MAILLE = 'MAILLE1'

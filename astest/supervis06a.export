@@ -3,7 +3,7 @@ P memory_limit 128
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist asterxx verification sequential
+P testlist asterxx ci verification sequential
 
 F comm supervis06a.py D 1
 F comm supervis06a.com1 D 1

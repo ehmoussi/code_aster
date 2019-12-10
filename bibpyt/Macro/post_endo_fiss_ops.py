@@ -997,10 +997,10 @@ def post_endo_fiss_ops(self,
     fproc = open(nomFichierSortie, 'w')
     fproc.write(resu_mail0)
     fproc.close()
-    from code_aster.RunManager.LogicalUnit import LogicalUnitFile
-    unitFile = LogicalUnitFile.open(nomFichierSortie)
+    from code_aster.RunManager.LogicalUnit import LogicalUnitFile, FileAccess
+    unitFile = LogicalUnitFile.open(nomFichierSortie, access=FileAccess.Old)
     uniteMail = unitFile.unit
-    MAFISS = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=uniteMail,)
+    MAFISS = LIRE_MAILLAGE(FORMAT='ASTER', UNITE=uniteMail)
     unitFile.release()
 
     RetablirAlarme('CALCULEL5_48')

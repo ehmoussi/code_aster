@@ -291,28 +291,24 @@ class MAIL_PY:
     def ToAster(self, unite=None):
         from code_aster.RunManager.LogicalUnit import LogicalUnitFile, Action, FileAccess, FileType
         try:
-            LIRE_MAILLAGE = self.jdc.get_cmd('LIRE_MAILLAGE')
+            from code_aster.Commands import LIRE_MAILLAGE
         except:
-            try:
-                from code_aster.Commands import LIRE_MAILLAGE
-            except:
-                print("Il faut lancer ce programme depuis Aster pour pouvoir générer un maillage Aster.")
-                sys.exit()
+            print("Il faut lancer ce programme depuis Aster pour pouvoir générer un maillage Aster.")
+            sys.exit()
 
         # Récupération d'une unité logique libre si besoin
-        if (unite is None):
-            unite = LogicalUnitFile._get_free_number()
-        name = LogicalUnitFile.filename_from_unit(unite)
-        fileObject = LogicalUnitFile(unite, name, Action.Open, FileType.Ascii,
-                                     FileAccess.New)
-        fichier = fileObject.filename
-        # Ouverture du fichier en WRITE
-        f = open(fichier, 'w')
-        # Sauvegarde du maillage dans le fichier
-        f.write(self.Voir_Mail())
-        f.close()
-        fileObject.release()
+        if unite is None:
+            fileObject = LogicalUnitFile.new_free(new=True)
+            unite = fileObject.unit
+        else:
+            fileObject = LogicalUnitFile.from_number(unite)
 
+        fichier = fileObject.filename
+        with open(fichier, 'w') as fobj:
+        # Sauvegarde du maillage dans le fichier
+            fobj.write(self.Voir_Mail())
+
+        fileObject.release()
         return unite
 
 # -------------------------------------------------------------
