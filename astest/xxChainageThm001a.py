@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -190,7 +189,7 @@ CHAINAGE_THM(
 test.assertEqual(MATMH.getType(), "CORRESP_2_MAILLA")
 test.assertEqual(MATHM1.getType(), "CORRESP_2_MAILLA")
 test.assertEqual(MATHM2.getType(), "CORRESP_2_MAILLA")
-  
+
 UNPAS=DEFI_LIST_REEL(DEBUT=linst[0],
                      INTERVALLE=_F(JUSQU_A=linst[1],
                                    NOMBRE=1));

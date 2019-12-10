@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -15,7 +14,7 @@ MAT=DEFI_MATERIAU(  ELAS=_F( E = 200000.,  NU = 0.3,  ALPHA = 1.0E-5),
                               SM = 200.,
                               SY_02 = 200.)
                                )
- 
+
 T_TOT1 = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
                       NUME_TABLE=1,)
 

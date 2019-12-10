@@ -142,11 +142,11 @@ class LogicalUnitFile(object):
 
     def __init__(self, unit, filename, action, typ, access,
                  to_register = True):
-        self._logicalUnit = unit
+        self._unit = unit
         self._filename = filename
         self._register(self)
         if to_register:
-            self.register(self._logicalUnit, filename, action, typ, access)
+            self.register(self._unit, filename, action, typ, access)
 
     @classmethod
     def open(cls, filename, typ=FileType.Ascii, access=FileAccess.New):
@@ -215,16 +215,20 @@ class LogicalUnitFile(object):
     @property
     def unit(self):
         """Attributes that holds the logical unit associated to this file"""
-        return self._logicalUnit
+        return self._unit
+
+    @staticmethod
+    def _default_filename(unit):
+        return "fort.{0}".format(unit)
 
     @property
     def filename(self):
         """Attributes that holds the file name"""
-        return self._filename
+        return self._filename or self._default_filename(self._unit)
 
     def release(self):
         """Close and free a logical unit."""
-        LogicalUnitFile.register(self.unit, self.filename, Action.Close)
+        LogicalUnitFile.register(self._unit, self._filename, Action.Close)
 
     @classmethod
     def filename_from_unit(cls, unit):
@@ -237,14 +241,12 @@ class LogicalUnitFile(object):
             str: Filename of the logical unit or 'fort.<unit>' if unknown or
             *None* if unit=6.
         """
-        logicalUnit = cls.from_number(unit)
+        fileobj = cls.from_number(unit)
         if unit == 6:
             return None
-        if logicalUnit and logicalUnit.filename:
-            filename = logicalUnit.filename
-        else:
-            filename = "fort.{0}".format(unit)
-        return filename
+        if not fileobj:
+            return cls._default_filename(unit)
+        return fileobj.filename
 
     @classmethod
     def from_number(cls, unit):
@@ -260,11 +262,11 @@ class LogicalUnitFile(object):
         return cls._used_unit.get(unit)
 
     @classmethod
-    def _register(cls, logicalUnit):
+    def _register(cls, fileobj):
         """Register a logical unit."""
         logger.debug("LogicalUnit: register unit {0}, name {1!r}"
-                     .format(logicalUnit.unit, logicalUnit.filename))
-        cls._used_unit[logicalUnit.unit] = logicalUnit
+                     .format(fileobj._unit, fileobj._filename))
+        cls._used_unit[fileobj._unit] = fileobj
 
     @classmethod
     def release_from_number(cls, unit, to_register = True):
@@ -275,13 +277,13 @@ class LogicalUnitFile(object):
             to_register (bool): Boolean to avoid calling of register.
         """
         logger.debug("LogicalUnit: release unit {0}".format(unit))
-        logicalUnit = cls.from_number(unit)
-        if not logicalUnit:
+        fileobj = cls.from_number(unit)
+        if not fileobj:
             # RESERVED_UNIT or not registered
             return
 
         if to_register:
-            cls.register(unit, logicalUnit.filename, Action.Close)
+            cls.register(unit, fileobj.filename, Action.Close)
         if unit in cls._used_unit:
             if unit not in RESERVED_UNIT:
                 cls._free_number.append(unit)

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import code_aster
 code_aster.init()

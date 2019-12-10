@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import code_aster
@@ -54,7 +53,7 @@ MATER=AFFE_MATERIAU(MAILLAGE=MAIL,
                           _F(GROUP_MA=('TOP'),
                              MATER=BETARMXL,),
                           _F(GROUP_MA=('FACELAT2'),
-                             MATER=BETARMXL,),),);        
+                             MATER=BETARMXL,),),);
 
 ELEM=AFFE_CARA_ELEM(MODELE=MODELE,
                     COQUE=(_F(GROUP_MA=('SRADIER'),
@@ -76,7 +75,7 @@ MATERB=AFFE_MATERIAU(MAILLAGE=MAIL,
                           _F(GROUP_MA=('TOP'),
                              MATER=BETARM00,),
                           _F(GROUP_MA=('FACELAT2'),
-                             MATER=BETARM00,),),);    
+                             MATER=BETARM00,),),);
 
 ELEMB=AFFE_CARA_ELEM(MODELE=MODELE,
                        RIGI_PARASOL=_F(VALE=(5.40000000000E11,5.40000000000E11,6.E11,6.50000000000000E14,6.50000000000000E14,1.090000000000000E15,),
