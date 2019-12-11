@@ -309,9 +309,12 @@ class ExecuteCommand(object):
             result_name = self._result.getName()
         syntax.setResult(result_name, type_name)
 
+        timer = ExecutionParameter().timer
         try:
+            timer.Start(" . fortran", num=1.2e6)
             self._call_oper(syntax)
         finally:
+            timer.Stop(" . fortran")
             syntax.free()
 
     def post_exec(self, keywords):
@@ -493,7 +496,9 @@ class ExecuteMacro(ExecuteCommand):
             result (*DataStructure*): Result object to register.
             target (:class:`CO`): CO object.
         """
-        self._add_results[target.getName()] = result
+        name = target.getName()
+        result.userName = name
+        self._add_results[name] = result
 
     @property
     def sdprods(self):
