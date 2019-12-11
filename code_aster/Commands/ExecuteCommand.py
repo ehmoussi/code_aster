@@ -131,7 +131,7 @@ class ExecuteCommand(object):
         keywords = mixedcopy(kwargs)
         cmd.keep_caller_infos(keywords)
         timer = ExecutionParameter().timer
-        if cls.command_name not in ("DEBUT", "POURSUITE", "FIN"):
+        if cmd.command_name not in ("DEBUT", "POURSUITE", "FIN"):
             check_jeveux()
         if cmd._op is None:
             logger.debug("ignore command {0}".format(cmd.name))
@@ -139,6 +139,8 @@ class ExecuteCommand(object):
 
         ExecuteCommand.level += 1
         cmd._counter = ExecutionParameter().incr_command_counter()
+        if cmd.show_syntax():
+            timer.Start(str(cmd._counter), name=cmd.command_name)
         timer.Start(" . check syntax", num=1.1e6)
         cmd.adapt_syntax(keywords)
         cmd._cata.addDefaultKeywords(keywords)
@@ -158,8 +160,6 @@ class ExecuteCommand(object):
         if hasattr(cmd._result, "userName"):
             cmd._result.userName = cmd.result_name
 
-        if cmd.show_syntax():
-            timer.Start(str(cmd._counter), name=cmd.command_name)
         cmd.print_syntax(keywords)
         try:
             cmd.exec_(keywords)
