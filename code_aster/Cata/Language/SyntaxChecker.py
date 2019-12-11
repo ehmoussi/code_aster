@@ -22,6 +22,8 @@ This module allows to check the syntax of a user command file that used the
 syntax of legacy operators.
 The check is performed at execution of an operator. So, the user file can mix
 legacy operators and pure Python instructions.
+
+Warning: Default keywords must be added before checking the syntax.
 """
 
 import numpy
@@ -151,6 +153,10 @@ class SyntaxCheckerVisitor:
     """This class walks along the tree of a Command object to check its syntax.
 
     Warning: Default keywords must be added before visiting the objects.
+
+    Arguments:
+        max_check (int): Limit the number of checked occurrences
+            (default: 99999).
 
     Attributes:
         _stack (list): Stack of checked objects for error report.
@@ -412,23 +418,27 @@ class SyntaxCheckerVisitor:
                     self._stack.pop()
 
 
-def checkCommandSyntax(command, keywords, in_place=True, max_check=99999):
-    """Check the syntax of a command `keywords` contains the keywords filled by
-    the user.
+def checkCommandSyntax(command, keywords, add_default=True, max_check=99999):
+    """Check the syntax of a command `keywords` contains the default keywords
+    and the user keywords filled by the user.
+
+    Default keywords must be added before checking the syntax if `add_default`
+    is set to `False`.
 
     Arguments:
         command (Command): Command object to be checked.
-        keywords (dict): Dict of the user keywords.
-        in_place (bool): If *True* the default keywords are added in the user
-            dict. *None* values are removed from the user dict.
+        keywords (dict): Dict of keywords.
+            *None* values are removed from the user dict.
+        add_default (bool, optional): Tell if default keywords have to be
+            added or not.
+        max_check (int): Limit the number of checked occurrences
+            (default: 99999).
     """
     checker = SyntaxCheckerVisitor(max_check)
     if not isinstance(keywords, dict):
         checker.error(TypeError, "'dict' object is expected")
 
-    if not in_place:
-        keywords = mixedcopy(keywords)
-    command.addDefaultKeywords(keywords)
+    if add_default:
+        command.addDefaultKeywords(keywords)
     command.accept(checker, keywords)
-    if in_place:
-        remove_none(keywords)
+    remove_none(keywords)

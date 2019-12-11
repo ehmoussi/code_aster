@@ -141,6 +141,7 @@ class ExecuteCommand(object):
         cmd._counter = ExecutionParameter().incr_command_counter()
         timer.Start(" . check syntax", num=1.1e6)
         cmd.adapt_syntax(keywords)
+        cmd._cata.addDefaultKeywords(keywords)
         try:
             cmd.check_syntax(keywords)
         except CheckerError as exc:
@@ -273,7 +274,7 @@ class ExecuteCommand(object):
         """
         logger.debug("checking syntax of {0}...".format(self.name))
         max_check = ExecutionParameter().get_option("max_check")
-        checkCommandSyntax(self._cata, keywords, in_place=True,
+        checkCommandSyntax(self._cata, keywords, add_default=False,
                            max_check=max_check)
 
     def create_result(self, keywords):
@@ -299,7 +300,7 @@ class ExecuteCommand(object):
             keywords (dict): User's keywords.
         """
         syntax = CommandSyntax(self.name, self._cata)
-        syntax.define(keywords)
+        syntax.define(keywords, add_default=False)
         # set result and type names
         if self._result is None or type(self._result) is int:
             type_name = ""
