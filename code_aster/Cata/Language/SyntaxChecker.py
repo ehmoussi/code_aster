@@ -148,23 +148,20 @@ def isValidType(obj, expected):
 
 class SyntaxCheckerVisitor:
 
-    """This class walks along the tree of a Command object to check its syntax
+    """This class walks along the tree of a Command object to check its syntax.
+
+    Warning: Default keywords must be added before visiting the objects.
 
     Attributes:
         _stack (list): Stack of checked objects for error report.
         _parent_context (dict): Context of the parent used to evaluate block
             conditions.
-        _in_place (bool): If *True* the keywords dict is changed in place.
-        _default_command (bool): Marker not to add default keywords several
-            times (for performance).
     """
 
-    def __init__(self, in_place=False, max_check=99999):
+    def __init__(self, max_check=99999):
         """Initialization"""
         self._stack = []
         self._parent_context = []
-        self._in_place = in_place
-        self._default_command = False
         self._max_check = max_check
 
     @property
@@ -192,19 +189,12 @@ class SyntaxCheckerVisitor:
         if step.name in ("_CONVERT_VARIABLE", "_CONVERT_COMMENT",
                          "_RESULT_OF_MACRO"):
             return
-        if self._in_place:
-            keywords = userDict
-        else:
-            keywords = mixedcopy(userDict)
-        # mark that default keywords have already added at command level
-        self._default_command = True
-        step.addDefaultKeywords(keywords)
-        debug_message2("checking syntax of", step.name, "with", keywords)
-        self._parent_context.append(keywords)
-        self._visitComposite(step, keywords)
+        debug_message2("checking syntax of", step.name, "with", userDict)
+        self._parent_context.append(userDict)
+        self._visitComposite(step, userDict)
         self._parent_context.pop()
         try:
-            step.get_type_sd_prod(**keywords)
+            step.get_type_sd_prod(**userDict)
         except Exception as exc:
             self.error(TypeError,
                        ("Cannot type result of the command {0}\n"
@@ -385,9 +375,6 @@ class SyntaxCheckerVisitor:
                       .format(self._max_check))
                 break
             ctxt = self._parent_context[-1] if self._parent_context else {}
-            if not self._default_command:
-                userOcc = mixedcopy(userOcc)
-                step.addDefaultKeywords(userOcc, ctxt)
             # check rules
             for rule in step.getRules(userOcc, ctxt):
                 self._stack.append(rule)
@@ -435,11 +422,13 @@ def checkCommandSyntax(command, keywords, in_place=True, max_check=99999):
         in_place (bool): If *True* the default keywords are added in the user
             dict. *None* values are removed from the user dict.
     """
-    checker = SyntaxCheckerVisitor(in_place, max_check)
+    checker = SyntaxCheckerVisitor(max_check)
     if not isinstance(keywords, dict):
         checker.error(TypeError, "'dict' object is expected")
 
+    if not in_place:
+        keywords = mixedcopy(keywords)
+    command.addDefaultKeywords(keywords)
     command.accept(checker, keywords)
     if in_place:
-        command.addDefaultKeywords(keywords)
         remove_none(keywords)
