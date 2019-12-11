@@ -143,13 +143,15 @@ class CommandSyntax(object):
         self._resultName = sdName
         self._resultType = sdType
 
-    def define( self, dictSyntax ):
+    def define( self, dictSyntax, add_default=True ):
         """Register the keywords values.
 
         Arguments:
             dictSyntax (dict): User keywords.
+            add_default (bool, optional): Tell if default keywords have to be
+                added or not.
         """
-        if self._commandCata != None:
+        if self._commandCata != None and add_default:
             logger.debug( "define0 %r: %r", self._name, dictSyntax )
             self._commandCata.addDefaultKeywords( dictSyntax )
         self._definition = dictSyntax
