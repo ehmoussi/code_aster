@@ -425,20 +425,18 @@ class PartOfSyntax(UIDMixing):
     def checkMandatory(self, userSyntax, stack, _parent_ctxt=None):
         """Check that the mandatory keywords are provided by the user.
 
+        Warning: Default keywords must be added before visiting the objects.
         Warning: this does not check recursively, only the current level.
 
         Arguments:
-            userSyntax (dict): dict of the keywords as filled by the user.
+            userSyntax (dict): dict of the user and default keywords.
             stack (list): used to give contextual informations in error
                 messages.
             _parent_ctxt (dict): contains the keywords as known in the parent.
                 This context is used to evaluate block conditions.
         """
         ctxt = _parent_ctxt.copy() if _parent_ctxt else {}
-        userSyntax = mixedcopy(userSyntax)
-        # add default keywords into userSyntax
-        self.addDefaultKeywords(userSyntax, ctxt)
-        # and update parent context with local keywords
+        # update parent context with local keywords
         ctxt.update(userSyntax)
 
         for key, kwd in self.definition.iterItemsByType():
@@ -459,9 +457,11 @@ class PartOfSyntax(UIDMixing):
     def getKeyword(self, userKeyword, userSyntax, _parent_ctxt=None):
         """Return the keyword in the current composite object.
 
+        Warning: Default keywords must be added before visiting the objects.
+
         Arguments:
             userKeyword (str): name of the searched keyword.
-            userSyntax (dict): dict of the keywords as filled by the user.
+            userSyntax (dict): dict of the user and default keywords.
             _parent_ctxt (dict): contains the keywords as known in the parent.
                 This context is used to evaluate block conditions.
         """
@@ -471,14 +471,11 @@ class PartOfSyntax(UIDMixing):
             return found
 
         ctxt = _parent_ctxt.copy() if _parent_ctxt else {}
-        userSyntax = mixedcopy(userSyntax)
-        # add default keywords into userSyntax
-        self.addDefaultKeywords(userSyntax, ctxt)
-        # and update parent context with local keywords
+        # update parent context with local keywords
         ctxt.update(userSyntax)
 
         # search in BLOC objects
-        for key, kwd in self.definition.iterItemsByType():
+        for _, kwd in self.definition.iterItemsByType():
             if not isinstance(kwd, Bloc):
                 continue
             # debug_message2("block", key, repr(kwd.getCondition()), "with", ctxt,
@@ -493,21 +490,20 @@ class PartOfSyntax(UIDMixing):
     def getRules(self, userSyntax, _parent_ctxt=None):
         """Return the rules to be applied to the given keywords.
 
+        Warning: Default keywords must be added before visiting the objects.
+
         Arguments:
-            userSyntax (dict): dict of the keywords as filled by the user.
+            userSyntax (dict): dict of the user and default keywords.
             _parent_ctxt (dict): contains the keywords as known in the parent.
                 This context is used to evaluate block conditions.
         """
         ctxt = _parent_ctxt.copy() if _parent_ctxt else {}
-        userSyntax = mixedcopy(userSyntax)
-        # add default keywords into userSyntax
-        self.addDefaultKeywords(userSyntax, ctxt)
-        # and update parent context with local keywords
+        # update parent context with local keywords
         ctxt.update(userSyntax)
 
         rules = list(self.rules)
         # search in BLOC objects
-        for key, kwd in self.definition.iterItemsByType():
+        for _, kwd in self.definition.iterItemsByType():
             if not isinstance(kwd, Bloc):
                 continue
             if not kwd.isEnabled(ctxt):
@@ -654,7 +650,7 @@ class Bloc(PartOfSyntax):
             enabled = eval(self.getCondition(), {}, eval_context)
         except AssertionError:
             raise
-        except Exception as exc:
+        except Exception:
             # TODO: re-enable CataError, it seems me a catalog error!
             # raise CataError("Error evaluating {0!r}: {1}".format(
             #                 self.getCondition(), str(exc)))
@@ -728,12 +724,11 @@ class Command(PartOfSyntax):
         else:
             return Command._call_callback(self, **args)
 
-    def get_type_sd_prod(self, **args):
+    def get_type_sd_prod(self, **ctxt):
         """Return the type of the command result."""
         resultType = self.definition.get('sd_prod')
         if resultType is not None:
             if type(resultType) is types.FunctionType:
-                ctxt = mixedcopy(args)
                 self.addDefaultKeywords(ctxt)
                 # if os.environ.get('DEBUG'):
                     # print "COMMAND:", self.name
