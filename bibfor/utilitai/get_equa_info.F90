@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ implicit none
 !
 ! In  nume_ddl       : name of numbering (NUME_DDL)
 ! In  i_equa         : index of equation
-! Out type_equa      : type of dof 
+! Out type_equa      : type of dof
 !                 / 'A' : physical dof (node+component)
 !                 / 'B' : Lagrange dof (boundary condition) simple given boundary condition
 !                 / 'C' : Lagrange dof (boundary condition) linear relation
@@ -156,6 +156,7 @@ implicit none
                                nume_cmp)
             ASSERT(nb_node_lagr.eq.1)
             nume_node     = list_node_lagr(1)
+            nume_cmp_lagr = nume_cmp
             goto 70
         endif
 !

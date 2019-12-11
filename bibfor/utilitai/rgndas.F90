@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ character(len=*), optional, intent(out) :: ligrelz
 ! In  nume_ddl      : name of numbering (NUME_DDL)
 ! In  i_equa        : index of equation
 ! In  l_print       : .true. to print equation information
-! Out type_equa      : type of dof 
+! Out type_equa      : type of dof
 !                 / 'A' : physical dof (node+component)
 !                 / 'B' : Lagrange dof (boundary condition) simple given boundary condition
 !                 / 'C' : Lagrange dof (boundary condition) linear relation
