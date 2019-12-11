@@ -67,14 +67,12 @@ class VibrationDynamics(ExecuteCommand):
             self._result.update()
         if keywords["BASE_CALCUL"] == "GENE":
             stiffnessMatrix = keywords["MATR_RIGI"]
-            dofNum = stiffnessMatrix.getGeneralizedDOFNumbering()
+            dofGeneNum = stiffnessMatrix.getGeneralizedDOFNumbering()
             if isinstance(self._result, HarmoGeneralizedResultsContainer) or \
                isinstance(self._result, TransientGeneralizedResultsContainer):
-                self._result.setGeneralizedDOFNumbering(dofNum)
+                self._result.setGeneralizedDOFNumbering(dofGeneNum)
             else:
-                base = stiffnessMatrix.getModalBasis()
-                if base is not None:
-                    self._result.setDOFNumbering(base.getDOFNumbering())
+                raise Exception("Unknown result type")
 
 
 DYNA_VIBRA = VibrationDynamics.run

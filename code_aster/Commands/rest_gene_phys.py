@@ -55,9 +55,25 @@ class RestGenePhys(ExecuteCommand):
         if isinstance(resu_gene, (TransientGeneralizedResultsContainer,
                                     HarmoGeneralizedResultsContainer)):
             dofNum = resu_gene.getDOFNumbering()
+
             if dofNum is not None:
                 self._result.setDOFNumbering(dofNum)
-                self._result.appendModelOnAllRanks(dofNum.getModel())
+                modele = dofNum.getModel()
+                if modele is not None:
+                    self._result.appendModelOnAllRanks(modele)
+                    self._result.update()
+            else:
+                geneDofNum = resu_gene.getGeneralizedDOFNumbering()
+                if geneDofNum is not None:
+                    basis = geneDofNum.getModalBasis()
+                    if basis is not None:
+                        dofNum = basis.getDOFNumbering()
+                        if dofNum is not None:
+                            modele = dofNum.getModel()
+                            if modele is not None:
+                                self._result.appendModelOnAllRanks(modele)
+                                self._result.update()
+
         elif isinstance(resu_gene, GeneralizedModeContainer):
             matrRigi = resu_gene.getStiffnessMatrix()
             if matrRigi is not None:
