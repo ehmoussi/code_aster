@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,9 +24,11 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-CREA_LIB_MFRONT=MACRO(nom="CREA_LIB_MFRONT",
-                      op=OPS('Macro.crea_lib_mfront_ops.crea_lib_mfront_ops'),
-                      reentrant='n',
-                      fr=tr("Compiler une loi de comportement MFront"),
-                      UNITE_MFRONT=SIMP(statut='o',typ=UnitType(),inout='in',),
-                      UNITE_LIBRAIRIE=SIMP(statut='o',typ=UnitType(), inout='out',),);
+CREA_LIB_MFRONT=MACRO(
+    nom="CREA_LIB_MFRONT",
+    op=OPS('Macro.crea_lib_mfront_ops.crea_lib_mfront_ops'),
+    reentrant='n',
+    fr=tr("Compiler une loi de comportement MFront"),
+    UNITE_MFRONT=SIMP(statut='o', typ=UnitType(), inout='in',),
+    UNITE_LIBRAIRIE=SIMP(statut='o', typ=UnitType(), inout='out',),
+    DEBUG=SIMP(statut='f', typ='TXM', defaut='NON', into=('OUI', 'NON')))
