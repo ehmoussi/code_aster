@@ -30,9 +30,6 @@ BETON_BURGER model for concrete creep;
 @Includes{
 #include"TFEL/Material/Lame.hxx"
 }
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
@@ -72,7 +69,7 @@ nu.setGlossaryName("PoissonRatio");
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
-} 
+}
 
 @TangentOperator{
   using namespace tfel::material::lame;
@@ -91,7 +88,7 @@ nu.setGlossaryName("PoissonRatio");
 
 @ComputeStress{
     sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
-} 
+}
 
 @Integrator{
     real stresP=trace(sig)/3.;
@@ -133,7 +130,7 @@ nu.setGlossaryName("PoissonRatio");
      }
 
     feel=deel-(deto-dEDEVR-dEDEVI-dEdess-(dESPHR+dESPHI)*Stensor::Id());
-    
+
 }
 @UpdateAuxiliaryStateVariables{
 
