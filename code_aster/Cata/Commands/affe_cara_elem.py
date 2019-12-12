@@ -31,7 +31,7 @@ def force_tuple(obj):
     return tuple(obj)
 
 
-def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
+def affe_cara_elem_prod(POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                         GRILLE, MASS_REP, **args):
     """Fonction sdprod de AFFE_CARA_ELEM"""
     # phase de typage seul
@@ -283,14 +283,18 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
     return cara_elem
 
 
-keywords = dict(
-   regles = (AU_MOINS_UN('POUTRE','BARRE','COQUE','CABLE','DISCRET','DISCRET_2D','MASSIF',
-                         'GRILLE','MEMBRANE','MULTIFIBRE','RIGI_PARASOL','MASS_REP',),
-             PRESENT_PRESENT('MULTIFIBRE','GEOM_FIBRE'),
-             EXCLUS('DISCRET','DISCRET_2D'),),
-   MODELE = SIMP(statut='o',typ=modele_sdaster ),
-   INFO   = SIMP(statut='f',typ='I', defaut= 1 ,into=(1,2) ),
-   VERIF  = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',into=("MAILLE",) ),
+AFFE_CARA_ELEM=OPER(nom="AFFE_CARA_ELEM",
+                    sd_prod=affe_cara_elem_prod,
+                    op=19,
+                    fr=tr("Affectation de caractéristiques à des éléments de structure"),
+                    reentrant='n',
+    regles = (AU_MOINS_UN('POUTRE','BARRE','COQUE','CABLE','DISCRET','DISCRET_2D','MASSIF',
+                          'GRILLE','MEMBRANE','MULTIFIBRE','RIGI_PARASOL','MASS_REP',),
+              PRESENT_PRESENT('MULTIFIBRE','GEOM_FIBRE'),
+              EXCLUS('DISCRET','DISCRET_2D'),),
+    MODELE = SIMP(statut='o',typ=modele_sdaster ),
+    INFO   = SIMP(statut='f',typ='I', defaut= 1 ,into=(1,2) ),
+    VERIF  = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',into=("MAILLE",) ),
 #
 # ==============================================================================
     POUTRE  = FACT(statut= 'f',max= '**',
@@ -895,11 +899,3 @@ keywords = dict(
         PREC_INERTIE = SIMP(statut='f',typ= 'R',defaut= 0.1),
     ),
 )
-
-
-AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
-                     sd_prod=affe_cara_elem_prod,
-                     op=OPS('Macro.affe_cara_elem_ops.affe_cara_elem_ops'),
-                     fr=tr("Affectation de caractéristiques à des éléments de structure"),
-                     reentrant='n',
-                     **keywords)
