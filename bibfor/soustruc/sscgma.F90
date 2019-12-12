@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,17 +17,12 @@
 ! --------------------------------------------------------------------
 
 subroutine sscgma(ma, nbgmp, nbgmin)
-    implicit none
-!     BUT: TRAITER LE MOT CLEF CREA_GROUP_MA
-!          DE L'OPERATEUR: DEFI_GROUP
 !
-!     IN:
-!          MA    : NOM DU MAILLAGE
-!          NBGMP : NOMBRE DE GROUP_MA A CREER
-!     ------------------------------------------------------------------
+implicit none
 !
-#include "jeveux.h"
 #include "asterc/getres.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/cgmaap.h"
 #include "asterfort/cgmaba.h"
@@ -55,27 +50,34 @@ subroutine sscgma(ma, nbgmp, nbgmin)
 #include "asterfort/utlisi.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
+#include "jeveux.h"
 !
+    character(len=8), intent(in) :: ma
+    integer, intent(in)          :: nbgmp
+    integer, intent(in)          :: nbgmin
+
+!     BUT: TRAITER LE MOT CLEF CREA_GROUP_MA
+!          DE L'OPERATEUR: DEFI_GROUP
 !
-    character(len=8) :: ma, noma, kbid, kpos, nom1
+!     IN:
+!          MA    : NOM DU MAILLAGE
+!          NBGMP : NOMBRE DE GROUP_MA A CREER
+!     ------------------------------------------------------------------
+!
+    character(len=8) :: noma, kbid, kpos, nom1
     character(len=8) :: alarm, tyma
     character(len=16) :: concep, cmd, option
     character(len=24) :: lisma, nogma, nogma2
     character(len=24) :: valk(2)
     character(len=132) :: card
     integer :: iarg
-!     ------------------------------------------------------------------
-!
-!-----------------------------------------------------------------------
-    integer :: i, iagm1, iagm2, ialii1, ialii2, ibid
+    integer :: i, iagm1, iagm2, ialii1, ialii2, iret
     integer :: idlima, ier, ierr, ifm, igm, igm1
     integer :: igm2, ii, iii, ili1, ili2, im1
     integer :: ima, ind1, ind2, iocc, ireste, jgma, jjj
     integer :: jlisma, jmail, kkk, maxcol, n, n1
     integer :: n2, n3, n4, n5, n6, n6a, n6b
-    integer :: n7, n8, nalar, nb, nbcol, nbgmin, nbgmp
+    integer :: n7, n8, nalar, nb, nbcol
     integer :: nbgnaj, nbgrmn, nbid, nbis, nbk8, nbline, nbma
     integer :: nbmat, niv, ntrou, ntyp, num
     character(len=24), pointer :: lik8(:) => null()
@@ -105,8 +107,8 @@ subroutine sscgma(ma, nbgmp, nbgmin)
 !
         call getvtx('CREA_GROUP_MA', 'NOM', iocc=iocc, scal=nogma, nbret=n1)
 !
-        call jenonu(jexnom(ma//'.GROUPEMA', nogma), ibid)
-        if (ibid .gt. 0) then
+        call jenonu(jexnom(ma//'.GROUPEMA', nogma), iret)
+        if (iret .gt. 0) then
             call utmess('F', 'ALGELINE3_7', sk=nogma)
         endif
 !
@@ -453,7 +455,9 @@ subroutine sscgma(ma, nbgmp, nbgmin)
             if (tyma(1:4) .ne. 'TOUT') then
                 call cgmftm(tyma, ma, lisma, nbma, ierr)
                 if (ierr .ne. 0) then
-                    call utmess('F', 'SOUSTRUC2_7', sk=nogma)
+                    if (alarm .eq. 'OUI') then
+                        call utmess('A', 'SOUSTRUC_36', sk=nogma)
+                    end if
                 endif
             endif
         endif
