@@ -283,12 +283,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
     return cara_elem
 
 
-
-AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
-   sd_prod=affe_cara_elem_prod,
-   op=OPS('Macro.affe_cara_elem_ops.affe_cara_elem_ops'),
-   fr=tr("Affectation de caractéristiques à des éléments de structure"),
-   reentrant='n',
+keywords = dict(
    regles = (AU_MOINS_UN('POUTRE','BARRE','COQUE','CABLE','DISCRET','DISCRET_2D','MASSIF',
                          'GRILLE','MEMBRANE','MULTIFIBRE','RIGI_PARASOL','MASS_REP',),
              PRESENT_PRESENT('MULTIFIBRE','GEOM_FIBRE'),
@@ -900,3 +895,11 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         PREC_INERTIE = SIMP(statut='f',typ= 'R',defaut= 0.1),
     ),
 )
+
+
+AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
+                     sd_prod=affe_cara_elem_prod,
+                     op=OPS('Macro.affe_cara_elem_ops.affe_cara_elem_ops'),
+                     fr=tr("Affectation de caractéristiques à des éléments de structure"),
+                     reentrant='n',
+                     **keywords)
