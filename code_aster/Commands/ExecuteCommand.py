@@ -499,8 +499,12 @@ class ExecuteMacro(ExecuteCommand):
             target (:class:`CO`): CO object.
         """
         name = target.getName()
+        orig = result.userName
         result.userName = name
         self._add_results[name] = result
+        if ExecutionParameter().option & Options.ShowChildCmd:
+            logger.info("Intermediate result '{0}' will be available as '{1}'."
+                        .format(orig, name))
 
     @property
     def sdprods(self):
