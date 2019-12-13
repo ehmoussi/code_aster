@@ -37,7 +37,6 @@ use tenseur_meca_module
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/get_varc.h"
-#include "asterfort/jevech.h"
 #include "asterfort/rcexistvarc.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
@@ -155,12 +154,12 @@ use tenseur_meca_module
         call rcvarc('F', 'SECH', '+',   fami, kpg, ksp, param_bet_rag%sechagp,   iret)
         call rcvarc('F', 'SECH', 'REF', fami, kpg, ksp, param_bet_rag%sechagref, iret)
         param_bet_rag%dsechag = param_bet_rag%sechagp - param_bet_rag%sechagm
-        ! En dessous de 0.1 cela ne veut plus rien dire
-        if ( (param_bet_rag%sechagm   < 0.1d0) .or. &
-             (param_bet_rag%sechagp   < 0.1d0) .or. &
-             (param_bet_rag%sechagref < 0.1d0) ) then
+        ! En dessous de BR_SECHAGE_MINI cela ne veut plus rien dire
+        if ( (param_bet_rag%sechagm   < BR_SECHAGE_MINI) .or. &
+             (param_bet_rag%sechagp   < BR_SECHAGE_MINI) .or. &
+             (param_bet_rag%sechagref < BR_SECHAGE_MINI) ) then
              valr(1) = instap
-             valr(2) = 0.10
+             valr(2) = BR_SECHAGE_MINI
              valr(3) = param_bet_rag%sechagm
              valr(4) = param_bet_rag%sechagp
              valr(5) = param_bet_rag%sechagref
