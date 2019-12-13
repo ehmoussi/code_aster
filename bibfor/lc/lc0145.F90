@@ -274,7 +274,7 @@ use tenseur_meca_module
     perturb = maxval(abs(depsldc))
     if ( rigi .and. perturb>1.0D-07 ) then
         ! Le calcul de la matrice tangente par perturbation
-        param_bet_rag%perturbation = .true.
+        param_bet_rag%perturbation = ASTER_TRUE
         ! Le calcul ne se fait que sur la mécanique
         param_bet_rag%loi_integre = 1
         sigmldc = VecteurAsterVecteur(sigp)
