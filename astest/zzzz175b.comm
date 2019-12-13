@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -188,7 +188,17 @@ for n_adap in range(n_adap_max ) :
        ADAPTATION   = 'LECTURE',
        MAILLAGE_N   = BLOC[n_adap],  #Maillage issu de l adaptation
        MODELE=MODELE,                #Modele mis sur ce maillage
-                   );
+       MAJ_CHAM=(
+                    _F( CHAM_MAJ    = CO('SG_IN'),  # Contraintes aux points de Gauss : lu plus tard
+                        TYPE_CHAM  = 'ELGA_SIEF_R',
+                        RESULTAT=RESU, NOM_CHAM   = 'SIEF_ELGA',
+                        NUME_ORDRE=NOMBRE_DT,),
+                    _F( CHAM_MAJ    = CO('V_IN'),  # Variables internes aux points de Gauss : lu plus tard
+                        TYPE_CHAM  = 'ELGA_VARI_R',
+                        RESULTAT=RESU, NOM_CHAM   = 'VARI_ELGA',
+                        NUME_ORDRE=NOMBRE_DT,),
+
+       ))
 # Calcul avec un etat initial en deplacement (DP_IN), contraintes (SG_IN) et variables internes (V_IN)
     RESU=STAT_NON_LINE(MODELE=MODELE,
                        ETAT_INIT = _F( DEPL = DP_IN, SIGM = SG_IN, VARI = V_IN,),
