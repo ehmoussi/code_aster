@@ -38,6 +38,7 @@ import aster
 import aster_core
 from Comportement import catalc
 
+from ..Cata.SyntaxUtils import remove_none
 from ..RunManager import LogicalUnitFile, Serializer, loadObjects
 from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
 
@@ -103,6 +104,7 @@ class Starter(ExecuteCommand):
         cmd = cls()
         cmd._result = None
         cmd._cata.addDefaultKeywords(keywords)
+        remove_none(keywords)
         cmd.exec_(keywords)
 
     def exec_(self, keywords):

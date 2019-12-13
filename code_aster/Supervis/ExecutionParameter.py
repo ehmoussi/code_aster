@@ -319,7 +319,7 @@ class ExecutionParameter(metaclass=Singleton):
         self._timer = ASTER_TIMER(format="aster", limit=self._args['max_print'])
 
         # For convenience DEBUG can be set from environment
-        if os.getenv("DEBUG") == "1":
+        if int(os.getenv("DEBUG", 0)) >= 1:
             self.enable(Options.Debug)
 
     def sub_tpmax(self, tsub):
