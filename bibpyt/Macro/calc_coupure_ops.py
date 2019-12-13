@@ -31,7 +31,7 @@ import itertools
 import Messages
 import aster
 
-filter_columns = ('TOUT_ORDRE','NUME_ORDRE','NUME_MODE','LIST_ORDRE','LIST_MODE','FREQ','LIST_FREQ','NOM_CAS', 'CRITERE', 'PRECISION')
+filter_columns = ('TOUT_ORDRE','NUME_ORDRE','NUME_MODE','FREQ','LIST_FREQ','NOM_CAS','CRITERE','PRECISION')
 inte_by_efge = {'N':'NYY', 'VPL':'NXY', 'MHP':'MYY', 'VHP':'QY', 'MPL':'NYY'}
 efge_comps = ('NXX', 'NYY', 'NXY', 'MXX', 'MYY', 'MXY','QX','QY')
 space_dirs = ('X', 'Y', 'Z')
@@ -44,11 +44,10 @@ def calc_comb_modes(__tbresul, myintitule_by_num, comb_modes, resu, b_extrac, re
     __nresu=EXTR_MODE(FILTRE_MODE=_F(MODE=resu, **b_extrac),IMPRESSION =_F(CUMUL='OUI'))
     # ~ __nresu=NORM_MODE(reuse=__nresu, MODE=__nresu,NORME='MASS_GENE',)
     __tbmodpar=RECU_TABLE(CO=__nresu,NOM_PARA = ('FREQ','FACT_PARTICI_DX','FACT_PARTICI_DY','FACT_PARTICI_DZ'))
-    # ~ IMPR_TABLE(TABLE=__tbmodpar)
     resu_partab = __tbmodpar.EXTR_TABLE().values()
-    DETRUIRE(CONCEPT=_F(NOM=(__nresu, __tbmodpar)))    
+    DETRUIRE(CONCEPT=_F(NOM=(__nresu, __tbmodpar)))
     l_freq = resu_partab['FREQ']
-    l_omega = [2 * math.pi * f for f in l_freq]           
+    l_omega = [2 * math.pi * f for f in l_freq]
     pytbcoup = __tbresul.EXTR_TABLE()
     for comb_num, comb in enumerate(comb_modes, 1):
         comb_by_key = comb.cree_dict_toutes_valeurs()
@@ -63,33 +62,27 @@ def calc_comb_modes(__tbresul, myintitule_by_num, comb_modes, resu, b_extrac, re
         else:
             l_amor = comb['LIST_AMOR'].Valeurs()
         if len(l_amor) == 1:
-            l_amor = l_amor * len(resu_nume_ordre)             
+            l_amor = l_amor * len(resu_nume_ordre)
         for lign_num in myintitule_by_num.keys():
             l_ri_by_comp = ((pytbcoup.INTITULE == myintitule_by_num[lign_num]) & (pytbcoup.TYPE == 'RESULTANTE')).values() # INTITULE must be unique and not empty here
             l_Ri_by_inte_by_space = {c:{inte_comp:[] for inte_comp in inte_by_efge.keys()} for c in space_dirs}
             l_fact_by_spacedir = {'X' : resu_partab['FACT_PARTICI_DX'], 'Y' : resu_partab['FACT_PARTICI_DY'], 'Z' : resu_partab['FACT_PARTICI_DZ']}
             for nume_ordre in resu_nume_ordre:
                 amor = l_amor[nume_ordre-1]
-                freq = l_freq[nume_ordre-1]                
+                freq = l_freq[nume_ordre-1]
                 omega = 2 * math.pi * freq
-                # ~ print("omega(%s):%s"%(nume_ordre,omega))
                 for spacedir_index, space_dir in enumerate(space_dirs):
-                    paras = ['INTITULE','NOM_CHAM','COMB','TYPE','NUME_ORDRE'] # 'FREQ',
+                    paras = ['INTITULE','NOM_CHAM','COMB','TYPE','NUME_ORDRE']
                     vales = [myintitule_by_num[lign_num],"EFGE_NOEU",comb_intitule,"RI"+space_dir,nume_ordre]
                     nappe_acce = nappe_acces[spacedir_index]
                     acce = nappe_acce(amor, freq) * echelles[spacedir_index]
-                    # ~ print("acce(%s):%s"%(space_dir,acce))
                     fpart = l_fact_by_spacedir[space_dir][nume_ordre-1]
-                    # ~ print("fpart(%s):%s"%(space_dir,fpart))
                     for inte_comp in inte_by_efge.keys():
                         r_i = l_ri_by_comp[inte_comp][nume_ordre-1]
-                        # ~ print("r_i(%s):%s"%(inte_comp,r_i))
                         R_i = r_i * fpart * acce / (omega ** 2)
                         l_Ri_by_inte_by_space[space_dir][inte_comp].append(R_i)
                         paras.append(inte_comp)
                         vales.append(R_i)
-                        # ~ print("R_i(%s):%s"%(space_dir,R_i))
-                        # ~ print("-"*72)                        
                     __tbresul=CALC_TABLE(reuse=__tbresul,TABLE=__tbresul,ACTION=_F(OPERATION='AJOUT_LIGNE',NOM_PARA=paras,VALE=vales),)
 
             Rm_by_inte_by_spacedir = {space_dir:{inte_comp:0.0 for inte_comp in inte_by_efge.keys()} for space_dir in space_dirs}
@@ -101,37 +94,28 @@ def calc_comb_modes(__tbresul, myintitule_by_num, comb_modes, resu, b_extrac, re
                     csi_j = l_amor[j-1]
                     eta = omega_j / omega_i
                     rho_ij = (8*eta*math.sqrt(csi_i*csi_j*eta)*(csi_i+csi_j*eta)) / ((1-eta**2)**2+4*eta*csi_i*csi_j*(1+eta**2)+4*eta**2*(csi_i**2+csi_j**2))
-                    #print("rho(%d,%d):%s"%(i,j,rho_ij))
                     for space_dir in space_dirs:
                         for inte_comp in inte_by_efge.keys():
                             R_i = l_Ri_by_inte_by_space[space_dir][inte_comp][i-1]
-                            #print("R_i:%s"%R_i)
                             R_j = l_Ri_by_inte_by_space[space_dir][inte_comp][j-1]
-                            #print("R_j:%s"%R_j)
-                            Rm_by_inte_by_spacedir[space_dir][inte_comp] += rho_ij * R_i * R_j                           
+                            Rm_by_inte_by_spacedir[space_dir][inte_comp] += rho_ij * R_i * R_j
             for spacedir_index, space_dir in enumerate(space_dirs):
                 mode_sign = mode_signs[spacedir_index]
                 if mode_sign not in resu_nume_ordre:
                     UTMESS('F', 'CALCCOUP_1')
                 paras = ['INTITULE','NOM_CHAM','COMB','TYPE']
-                vales = [myintitule_by_num[lign_num],"EFGE_NOEU",comb_intitule,"CQC"+space_dir]                                
+                vales = [myintitule_by_num[lign_num],"EFGE_NOEU",comb_intitule,"CQC"+space_dir]
                 for inte_comp in inte_by_efge.keys():
                     R_k = l_Ri_by_inte_by_space[space_dir][inte_comp][mode_sign-1]
                     signR_k = math.copysign(1, R_k)
-                    # ~ print("R_k(%s,%s):%s"%(space_dir, inte_comp, R_k))
-                    # ~ print("signR_k(%s,%s):%s"%(space_dir, inte_comp, signR_k))
                     Rm_by_inte_by_spacedir[space_dir][inte_comp] = signR_k * math.sqrt(Rm_by_inte_by_spacedir[space_dir][inte_comp])
-                    # ~ print("before sign Rm:%s"%math.sqrt(Rm_by_inte_by_spacedir[space_dir][inte_comp]))
-                    # ~ print("sign Rm:%s"%Rm_by_inte_by_spacedir[space_dir][inte_comp])
                     paras.append(inte_comp)
                     vales.append(Rm_by_inte_by_spacedir[space_dir][inte_comp])
-                #print("Em_by_comp:%s"%Em_by_comp)
                 __tbresul=CALC_TABLE(reuse=__tbresul,TABLE=__tbresul,ACTION=_F(OPERATION='AJOUT_LIGNE',NOM_PARA=paras,VALE=vales),)
 
             Emax_by_inte = {inte_comp:0.0 for inte_comp in inte_by_efge.keys()}
             comb_coefs = (1.0, 0.4, 0.4)
             sym_by_permsign = {1 : '+', -1 : '-'}
-            # ~ print("product:%s"%str(itertools.product((-1,1),(-1,1),(-1,1))))
             for permsign in itertools.product((-1,1),(-1,1),(-1,1)):
                 for first_spacecomp_index, first_spacecomp in enumerate(space_dirs):
                     other_spacecomps = list(space_dirs)
@@ -174,7 +158,6 @@ def calc_resultante(lign_num, __tbresul, __tbextr, myintitule_by_num, resu_nume_
                                 _F(OPERATION='OPER', FORMULE=__abscnyy, NOM_PARA='ABSC*NYY'),
                           )
                   )
-    # ~ IMPR_TABLE(TABLE=__tbextr)
     DETRUIRE(CONCEPT=_F(NOM=(__fmidabs, __abscnyy)))
     for nume_ordre in resu_nume_ordre:
         paras = ['INTITULE','NOM_CHAM','TYPE','NUME_ORDRE']
@@ -193,13 +176,10 @@ def calc_resultante(lign_num, __tbresul, __tbextr, myintitule_by_num, resu_nume_
                                     PARA_Y = ordo_col,
                                     NOM_PARA='ABSC',
                                     NOM_RESU=inte_comp, )
-            # ~ IMPR_FONCTION(COURBE=_F(FONCTION=__fcomp))
             __finte = CALC_FONCTION( INTEGRE=_F( FONCTION=__fcomp ),)
             inte = __finte.Ordo()[-1]
-            # ~ print("__finte.Ordo():%s"%__finte.Ordo())
             paras.append(inte_comp)
             vales.append(inte)
-            # ~ print("inte:%s"%inte)
             DETRUIRE(CONCEPT=_F(NOM=(__fcomp, __finte)))
         if __tbresul is None:
             pytbresul=Table()
@@ -226,8 +206,6 @@ def calc_coupure_ops(self, **args):
     else:
         comb_modes = []
 
-    resu_nume_ordre = resu.LIST_VARI_ACCES()['NUME_ORDRE']
-
     iret, ibid, n_cara_elem = aster.dismoi('CARA_ELEM', resu.nom, 'RESULTAT', 'F')
     n_cara_elem = n_cara_elem.rstrip()
 
@@ -242,12 +220,27 @@ def calc_coupure_ops(self, **args):
     if len(b_extrac) == 0:
         b_extrac['TOUT_ORDRE'] = 'OUI'
 
+    if 'NUME_ORDRE' in args and args['NUME_ORDRE'] is not None:
+        resu_nume_ordre = args['NUME_ORDRE']
+    elif 'NOM_CAS' in args and args['NOM_CAS'] is not None:
+        index = -1.
+        for i,nom_cas in enumerate(resu.LIST_VARI_ACCES()['NOM_CAS']):
+            if args['NOM_CAS'][0] in nom_cas:
+                index = i
+        if index == -1.:
+            resu_nume_ordre = resu.LIST_VARI_ACCES()['NUME_ORDRE']
+        else :
+            resu_nume_ordre = []
+            resu_nume_ordre.append(resu.LIST_VARI_ACCES()['NUME_ORDRE'][index])
+    else:
+        resu_nume_ordre = resu.LIST_VARI_ACCES()['NUME_ORDRE']
+
     __resefge = CALC_CHAMP(RESULTAT=resu,
                            CONTRAINTE='EFGE_ELNO', # MACR_LIGN_COUPE with repere COQUE does not want an NOEU field, needs an ELNO
                            # GROUP_MA=..., # MACR_LIGN_COUPE needs the field to exist on the whole mesh (otherwise it stops with error)
                            **b_extrac)
 
-    macr_lign_extrac = {k:v for k,v in b_extrac.items() if k not in ('TOUT_ORDRE',)}
+    macr_lign_extrac = {k:v for k,v in b_extrac.items() if k not in ('TOUT_ORDRE','NOM_CAS')}
 
     lign_by_key = None
     lignextr_by_key = None
@@ -322,8 +315,6 @@ def calc_coupure_ops(self, **args):
     # Combinaison modale
     if len(comb_modes) >= 1:
         __tbresul = calc_comb_modes(__tbresul, myintitule_by_num, comb_modes, resu, b_extrac, resu_nume_ordre)
-
-    # ~ IMPR_TABLE(TABLE=__tbresul)
 
     # Recostruction de l'intitule
     for lign_num, _ in enumerate(lign_coupe, 1):
