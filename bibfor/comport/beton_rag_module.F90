@@ -84,18 +84,18 @@ module beton_rag_module
         real(kind=8)  ::  temperm   = 0.0
         real(kind=8)  ::  temperref = 0.0
         real(kind=8)  ::  dtemper   = 0.0
-        aster_logical ::  istemper  = .false.
+        aster_logical ::  istemper  = ASTER_FALSE
         ! les hydratations
         real(kind=8)  ::  hydratp   = 0.0
         real(kind=8)  ::  hydratm   = 0.0
         real(kind=8)  ::  dhydrat   = 0.0
-        aster_logical ::  ishydrat  = .false.
+        aster_logical ::  ishydrat  = ASTER_FALSE
         ! les séchages
         real(kind=8)  ::  sechagp   = 0.0
         real(kind=8)  ::  sechagm   = 0.0
         real(kind=8)  ::  sechagref = 0.0
         real(kind=8)  ::  dsechag   = 0.0
-        aster_logical ::  issechag = .false.
+        aster_logical ::  issechag = ASTER_FALSE
         ! Nombre d'itérations maxi (ITER_INTE_MAXI)
         real(kind=8) ::  nbdecp
         ! Tolérance de convergence (RESI_INTE_RELA)
@@ -106,13 +106,13 @@ module beton_rag_module
         !   3 : Mécanique + Fluage + RAG
         integer      :: loi_integre = 0
         ! Calcul fait par perturbation ou pas
-        logical      :: perturbation = .false.
+        aster_logical      :: perturbation = ASTER_FALSE
         ! Calcul de fluage
-        logical      :: fluage       = .false.
+        aster_logical      :: fluage       = ASTER_FALSE
         ! Calcul des grandeurs à + ou pas
-        logical      :: resi         = .false.
+        aster_logical      :: resi         = ASTER_FALSE
         ! calcul de la matrice de raideur tangente
-        logical      :: rigi         = .false.
+        aster_logical      :: rigi         = ASTER_FALSE
     end type beton_rag_parametres
 
     type,private :: beton_rag_pression
@@ -301,7 +301,7 @@ contains
         real(kind=8)     :: Dommage_Rag(3), bgel, EpsiVRAG(6)
         real(kind=8)     :: xx1,xx2,xx3
         !
-        logical          :: perturb, fluage, isendomtrac, isendomcomp
+        aster_logical    :: perturb, fluage, isendomtrac, isendomcomp
         ! ------------------------------------------------------------------------------------------
         !
         young   = abs(mater_br%young)
@@ -573,7 +573,7 @@ contains
         ! ------------------------------------------------------------------------------------------
         ! On ne met pas à jour les vip(*) et dsidep(*) de la mécanique.
         param_br_loc = param_br
-        param_br_loc%fluage = .true.
+        param_br_loc%fluage = ASTER_TRUE
         ! Intégration : Déformations
         dyy(1:6) = dy0(1:6)
         ! Intégration : Température, Hydratation, Séchage
