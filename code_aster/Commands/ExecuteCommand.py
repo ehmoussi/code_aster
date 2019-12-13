@@ -144,6 +144,7 @@ class ExecuteCommand(object):
         timer.Start(" . check syntax", num=1.1e6)
         cmd.adapt_syntax(keywords)
         cmd._cata.addDefaultKeywords(keywords)
+        remove_none(keywords)
         try:
             cmd.check_syntax(keywords)
         except CheckerError as exc:
