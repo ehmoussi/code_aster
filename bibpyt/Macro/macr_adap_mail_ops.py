@@ -130,14 +130,24 @@ class HomardInfo:
         """
         return [self.field_data_to_name(data) for data in fields_data]
 
-    def get_fields_data(self, data_with_names):
-        """Return fields properties with *DataStructure* objects."""
+    def field_data_to_object(self, data_with_names):
+        """Replace names by *DataStructure* objects.
+
+        Arguments:
+            data_with_names (dict): Properties of a field.
+
+        Returns:
+            dict: New *dict* with *DataStructure* objects."""
         field_data = dict()
         field_data.update(data_with_names)
         for key in ("RESULTAT", "CHAM_GD"):
             if key in data_with_names:
                 field_data[key] = self.get_object(data_with_names[key])
         return field_data
+
+    def get_fields_data(self, data_with_names):
+        """Return fields properties with *DataStructure* objects."""
+        return [self.field_data_to_object(data) for data in data_with_names]
 
     def load_runs(self, Rep_Calc_ASTER):
         """Load the previously stored data."""
@@ -1761,11 +1771,9 @@ def macr_adap_mail_ops(self,
 #
     if (mode_homard in ["ADAP", "MODI", "LECT"]):
 #
-        # print "liste_champs =", liste_champs
         for dico in liste_champs:
 #
             usage_champ = dico["Usage_champ"]
-            # print ".... Usage_champ :", usage_champ
             if (usage_champ == "MAJ_CHAM"):
                 nom_cham = dico["CHAM_MAJ"]
             elif (usage_champ == "ADD_CHAM"):
@@ -1773,7 +1781,6 @@ def macr_adap_mail_ops(self,
             else:
                 nom_cham = None
             if (nom_cham is not None):
-                # print ".... dico :", dico
 #
 # 8.2.1. ==> Constantes
 #
@@ -1800,14 +1807,7 @@ def macr_adap_mail_ops(self,
 #
                     if (type_cham[0:2] == "EL"):
                         garder_fic_homard_aster = 1
-                        a_lire = 0
                     else:
-                        a_lire = 1
-                    if (a_lire):
-                        # print "MAILLAGE =", maillage_np1
-                        # print "NOM_MAIL_MED =", maillage_np1_nom_med
-                        # print "NOM_CHAM_MED =", dico["NOM_CHAM_MED"]
-                        # print "TYPE_CHAM =", type_cham
                         le_champ = LIRE_CHAMP(
                             UNITE=unite_fichier_homard_vers_aster, FORMAT="MED",
                             MAILLAGE=maillage_np1, NOM_MAIL_MED=maillage_np1_nom_med,
@@ -1821,15 +1821,6 @@ def macr_adap_mail_ops(self,
                 else:
 #
                     if (type_cham[0:2] == "EL"):
-                        a_lire = 1
-                    else:
-                        a_lire = 0
-                    if (a_lire):
-                        # print "MODELE =", args.get("MODELE")
-                        # print "MAILLAGE =", maillage_n
-                        # print "NOM_MAIL_MED =", maillage_n_nom_med
-                        # print "NOM_CHAM_MED =", dico["NOM_CHAM_MED"]
-                        # print "TYPE_CHAM =", type_cham
                         le_champ = LIRE_CHAMP(
                             UNITE=unite_fichier_homard_vers_aster, FORMAT="MED",
                             MAILLAGE=maillage_n, NOM_MAIL_MED=maillage_n_nom_med, MODELE=args.get(
