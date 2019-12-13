@@ -194,7 +194,7 @@ class Serializer(object):
             pickler.dump(sign_info)
             pickler.dump(sign_base)
 
-    def load(self):
+    def load(self, reset=False):
         """Load objects into the context."""
         assert self._ctxt is not None, "context is required"
         with open(self._info_filename, "rb") as pick:
@@ -252,7 +252,8 @@ class Serializer(object):
             logger.info("{0:<24s} {1}".format(name, type(obj)))
             assert not isinstance(obj, AsterUnpickler.BufferObject)
         # restore the objects counter
-        ResultNaming.initCounter(lastId)
+        if reset:
+            ResultNaming.initCounter(lastId)
 
 
 def _restore(name, obj):
@@ -317,7 +318,7 @@ def loadObjects(level=1):
         del caller
     if ExecutionParameter().option & Options.Debug:
         libaster.debugJeveuxContent("Reloaded jeveux objects:")
-    Serializer(context).load()
+    Serializer(context).load(reset=True)
 
 
 def contains_datastructure(sequence):
