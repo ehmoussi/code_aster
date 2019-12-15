@@ -139,8 +139,8 @@ class ExecuteCommand(object):
 
         ExecuteCommand.level += 1
         cmd._counter = ExecutionParameter().incr_command_counter()
-        if cmd.show_syntax():
-            timer.Start(str(cmd._counter), name=cmd.command_name)
+        timer.Start(str(cmd._counter), name=cmd.command_name,
+                    hide=not cmd.show_syntax())
         timer.Start(" . check syntax", num=1.1e6)
         cmd.adapt_syntax(keywords)
         cmd._cata.addDefaultKeywords(keywords)

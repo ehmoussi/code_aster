@@ -104,7 +104,7 @@ subroutine ops026()
 !---- POUR DETRUIRE LE FICHIER SI CE DERNIER EST OUVERT EN NEW
 !
     if (ktyp .ne. 'A') then
-        if (kacc .eq. 'N') then
+        if (kacc .eq. 'N' .and. fichie .ne. ' ') then
             call rmfile(fichie, 1, iret)
         endif
     endif
