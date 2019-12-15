@@ -1513,6 +1513,11 @@ def macr_adap_mail_ops(self,
 #
         if (niter == 0):
 #
+            # Hmmm, the same mesh object but niter=0
+            if os.path.isdir(Rep_Calc_HOMARD_global):
+                UTMESS("A", 'HOMARD0_11',
+                       valk=(Nom_Co_Mail_N, Rep_Calc_HOMARD_global))
+                shutil.rmtree(Rep_Calc_HOMARD_global)
             try:
                 os.mkdir(Rep_Calc_HOMARD_global)
             except os.error as codret_partiel:
