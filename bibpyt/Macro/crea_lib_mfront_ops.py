@@ -22,7 +22,6 @@ import os
 import os.path as osp
 import shutil
 from subprocess import call
-import tempfile
 
 import aster_core
 from Utilitai.UniteAster import UniteAster
@@ -33,10 +32,9 @@ def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, DEBUG, **args):
     """Compiler une loi de comportement MFront"""
     self.set_icmd(1)
 
-    wrkdir = os.getcwd()
     UL = UniteAster()
-    infile = osp.join(wrkdir, UL.Nom(UNITE_MFRONT))
-    outlib = osp.join(wrkdir, UL.Nom(UNITE_LIBRAIRIE))
+    infile = UL.Nom(UNITE_MFRONT)
+    outlib = UL.Nom(UNITE_LIBRAIRIE)
 
     cmd = [aster_core.get_option('prog:mfront'),
            "--build",
@@ -46,14 +44,14 @@ def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, DEBUG, **args):
         # cmd.append("--@AsterGenerateMTestFileOnFailure=true")
     cmd.append(infile)
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
-        try:
-            call(cmd)
-            if not osp.exists("src/libAsterBehaviour.so"):
-                UTMESS('F', 'MFRONT_4', valk="libAsterBehaviour.so")
-            shutil.copyfile("src/libAsterBehaviour.so", outlib)
-        finally:
-            os.chdir(wrkdir)
+    try:
+        call(cmd)
+        if not osp.exists("src/libAsterBehaviour.so"):
+            UTMESS('F', 'MFRONT_4', valk="libAsterBehaviour.so")
+        shutil.copyfile("src/libAsterBehaviour.so", outlib)
+    finally:
+        for dname in ('src', 'include'):
+            if osp.isdir(dname):
+                shutil.rmtree(dname)
 
     return 0
