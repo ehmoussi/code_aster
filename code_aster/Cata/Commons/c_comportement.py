@@ -25,22 +25,12 @@ from code_aster.Cata.Commons import C_RELATION
 
 def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
 
-    assert COMMAND in ('MACR_ASCOUF_CALC','MACR_ASPIC_CALC','CALC_G','POST_GP','CALC_ESSAI_GEOMECA','CALC_EUROPLEXUS',
+    assert COMMAND in ('MACR_ASCOUF_CALC','MACR_ASPIC_CALC','CALC_G','POST_GP','CALC_ESSAI_GEOMECA',
                        'CALC_POINT_MAT','SIMU_POINT_MAT', 'DYNA_NON_LINE','STAT_NON_LINE','CALCUL','CALC_FORC_NONL',
                        'CALC_IFS_DNL','CALC_PRECONT','CREA_RESU','LIRE_RESU','MACR_ECREVISSE','TEST_COMPOR',None)
 
     stcom='f'
-    if COMMAND =='CALC_EUROPLEXUS':
-        mcfact = FACT(statut='o',min=1,max='**',  #COMMUN#
-
-           RELATION  = SIMP( statut='f',typ='TXM',defaut="ELAS",into=('ELAS',
-                                                                      'GLRC_DAMAGE',
-                                                                      'VMIS_ISOT_TRAC',
-                                                                      'VMIS_JOHN_COOK',
-                                                                      'BPEL_FROT')),
-           GROUP_MA  = SIMP(statut='o',typ=grma,validators=NoRepeat(),max='**'),
-        )
-    elif COMMAND =='CALC_ESSAI_GEOMECA':
+    if COMMAND =='CALC_ESSAI_GEOMECA':
         mcfact = FACT(statut='o',min=1,max='**',  #COMMUN#
 
            RELATION  = SIMP( statut='o',typ='TXM',into=('HUJEUX',

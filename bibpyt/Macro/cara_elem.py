@@ -582,7 +582,6 @@ CARA_ELEM=OPER(nom="CARA_ELEM",sd_prod=cara_elem, op= 19,
       GROUP_NO_CENTRE = SIMP(statut='f',typ=grno),
       NOEUD_CENTRE    = SIMP(statut='f',typ=no),
       COOR_CENTRE     = SIMP(statut='f',typ='R',min=2,max=3),
-      EUROPLEXUS      = SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="NON"),
       UNITE           = SIMP(statut='f',typ='I',val_min=1),
    ),
 #

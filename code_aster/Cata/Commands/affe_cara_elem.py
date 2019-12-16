@@ -850,7 +850,6 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         GROUP_NO_CENTRE = SIMP(statut='f',typ=grno),
         NOEUD_CENTRE    = SIMP(statut='c',typ=no),
         COOR_CENTRE     = SIMP(statut='f',typ='R',min=2,max=3),
-        EUROPLEXUS      = SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="NON"),
         UNITE           = SIMP(statut='f',typ=UnitType(),inout='out'),
      ),
 #
