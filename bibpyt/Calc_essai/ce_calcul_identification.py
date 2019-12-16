@@ -89,7 +89,7 @@ class CalcEssaiIdentification:
 
     def set_var_opt(self, var_opt):
         """Une variable pour calculer l'interspectre."""
-        self.var_opt = var_opt        
+        self.var_opt = var_opt
 
     def calculate_force(self):
         self.is_Syy = 0

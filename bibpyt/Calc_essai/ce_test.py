@@ -58,8 +58,6 @@ def TestCalcEssai(macro,
     #
     if EXPANSION:
         calc_essai = CalcEssaiExpansion(macro, mess, objects)
-        norm_num = None
-        norm_exp = None
 
         # Transformation des objets Aster en classes Python
         resu_num = objects.resultats[EXPANSION['CALCUL'].nom]
@@ -90,7 +88,6 @@ def TestCalcEssai(macro,
 
         resu_et = objects.resultats["RESU_ET"]
         resu_nx = objects.resultats["RESU_NX"]
-        resu_rd = objects.resultats["RESU_RD"]
 
         calc_essai.calc_mac_mode(resu_et, resu_nx, resu_num.mass)
 
