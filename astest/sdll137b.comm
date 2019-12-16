@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -238,27 +238,8 @@ AELCPL=CALC_MATR_ELEM(MODELE=MODLCPL,
                       CHAM_MATER=CHMATCPL,
                       CHARGE=CONDLCPL,)
 
-#AASCPL=ASSE_MATRICE(MATR_ELEM=AELCPL,NUME_DDL=NUMCPL);
 
-interactif = 0
-if interactif :
-    CALC_ESSAI(
-                       INTERACTIF = 'OUI',
-                       RESU_MODIFSTRU = _F( MODELE=CO('MODLCPL2'),
-                                            MAILLAGE=CO('MAILCPL2'),
-                                            MODE_MECA = CO('MODECPL2'),
-                                            RIGI_MECA = CO('KASCPL2'),
-                                            MASS_MECA = CO('MASCPL2'),
-                                            AMOR_MECA = CO('AASCPL2'),
-                                            NUME_DDL = CO('NUMCPL2'),
-                                            PROJ_MESU = CO('PROJMS2'),
-                                            MACR_ELEM = CO('MCELEM2'),
-                                           )
-                     );
-
-else :
-    CALC_ESSAI(
-                       INTERACTIF = 'NON',
+CALC_ESSAI(
                        MODIFSTRUCT = _F( MESURE=MODMESU,
                                          MODELE_SUP=MODLSUP,
                                          MATR_RIGI=KASSUP,
