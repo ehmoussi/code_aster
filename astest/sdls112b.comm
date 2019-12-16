@@ -320,8 +320,4 @@ for ind in range(21):
                        ),
                )
 
-
-# On peut lancer la totalite du test en interactif en utilisant CALC_ESSAI
-#CALC_ESSAI()
-
 FIN();
