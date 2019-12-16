@@ -487,7 +487,6 @@ class CalcEssaiModifStruct:
                                 "de la creation du modele couple")
             self.mess.disp_mess(str(err))
             raise
-            return
 
         if not self.cpl.mat_rigi:
             self.mess.disp_mess("Le modele couple n'a pas de matrice "

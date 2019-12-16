@@ -169,7 +169,6 @@ class ModeMeca(Resultat):
                 info = aster.getvectjev(ordr.ljust(19) + ".REFE")
                 if info is not None:
                     if info[1].strip():
-                        nom = info[1][0:8].strip()
                         self.maya_name = info[0].strip()
                         self.maya = self.objects.maillages[self.maya_name]
 
@@ -232,7 +231,6 @@ class ModeMeca(Resultat):
 
         matrice = []
         for ind_mod in range(1, nb_mod + 1):
-            defo = []
             champ = crea_champ(self.obj, ind_mod)
             matrice.append(champ)
 
@@ -304,7 +302,6 @@ class DynaHarmo(Resultat):
         return vari_acces
 
     def get_maillage(self):
-        desc = self.obj.sdj.DESC.get()
         for ind_cham in range(3):
             # on ne s'interesse qu'aux champ 'DEPL','VITE' et 'ACCE' pour
             # gagner du temps
@@ -621,7 +618,6 @@ class InterSpectre:
         if resu:
             self.set_model(resu)
             self.nume_phy = nume_ddl_phy(resu)
-            nume = self.nume_phy
             nb_mes = len(self.nume_phy)
             # verification de la coherence entre la taille de l'inter-spectre et du DDL du resu
             # TODO : retirer la verif ici et la mettre ailleurs
@@ -660,7 +656,6 @@ class InterSpectre:
                     "Erreur dans l'extraction de l'inter-spectre : cas non-traite")
             fonc_py = __fonc.convert('complex')
             ordo = numpy.array(fonc_py.vale_y)
-            absc = numpy.array(fonc_py.vale_x)
             if ind_l != ind_c:
                 self.matr_inte_spec[:, ind_l, ind_c] = ordo
                 self.matr_inte_spec[:, ind_c, ind_l] = numpy.conjugate(ordo)
@@ -1199,7 +1194,6 @@ def nume_ddl_gene(resu, extract_mode=None):
     """
     modes = []
     nume_mode = resu.get_modes_data()['NUME_MODE']
-    nb_mod = len(nume_mode)
     for mod in nume_mode:
         modes.append('MO' + str(int(mod)))
     return modes
