@@ -371,42 +371,11 @@ Le nom du paramètre >>%(k1)s<< est trop long, il dépasse les 16 caractères au
 Le nom sera tronqué à 16 caractères.
 """),
 
-    92 : _("""
-Erreur Europlexus
-   Le mot-clé GROUP_MA_SEG2 est incompatible avec EUROPLEXUS = 'OUI'.
-"""),
-
-    93 : _("""
-Erreur Europlexus
-   Toutes les occurrences de RIGI_PARASOL doivent avoir la même valeur pour le
-   mot clef EUROPLEXUS. La valeur du mot clef EUROPLEXUS à l'occurrence %(i1)d
-   est différente de sa valeur à l'occurrence numéro 1.
-"""),
-
     94 : _("""
      On ne peut pas appliquer un cisaillement 2d sur une modélisation 3D
 """),
     95 : _("""
      ERREUR: l'auto-spectre est a valeurs négatives
-"""),
-    96 : _("""
-Erreur Europlexus
-   Europlexus ne gère pas les MAILLES, mais seulement les POINTS.
-   Le problème vient de la maille %(k1)s.
-"""),
-
-    97 : _("""
-Erreur Europlexus
-   Données incorrectes. Les dimensions des objets ne sont pas cohérentes
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
-
-    98 : _("""
-Erreur Europlexus
-   Pour accéder aux valeurs nécessaires à Europlexus, il faut que dans la
-   commande AFFE_CARA_ELEM, pour le mot clef facteur RIGI_PARASOL, la valeur
-   du mot clef EUROPLEXUS soit 'OUI' dans toutes les occurrences.
 """),
 
 }

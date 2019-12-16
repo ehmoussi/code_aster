@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,9 @@ TCARS=MACR_CARA_POUTRE(   GROUP_MA_BORD='LPOU',FORMAT='MED',
      # UNIQUEMENT POUR NE PAS AVOIR DE MATRICE SINGULIERE:
                                NOEUD='N1' )
 
+
+IMPR_TABLE(TABLE=TCARS, UNITE=6, INFO=2)
+
 #
 # --- VALEURS DE REFERENCE: OPERATEUR AFFE_CARA_ELEM
 #
@@ -36,8 +39,6 @@ TEST_TABLE(PRECISION=5.0000000000000001E-3,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='A',
            TABLE=TCARS,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
            )
 
 TEST_TABLE(PRECISION=2.E-3,
@@ -46,8 +47,6 @@ TEST_TABLE(PRECISION=2.E-3,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='CDG_Y',
            TABLE=TCARS,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
            )
 
 TEST_TABLE(VALE_REFE=10.0,
@@ -56,8 +55,6 @@ TEST_TABLE(VALE_REFE=10.0,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='CDG_Z',
            TABLE=TCARS,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
            )
 
 TEST_TABLE(PRECISION=4.0000000000000001E-3,
@@ -66,8 +63,6 @@ TEST_TABLE(PRECISION=4.0000000000000001E-3,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='JX',
            TABLE=TCARS,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
            )
 
 TEST_TABLE(PRECISION=0.059999999999999998,
@@ -76,8 +71,6 @@ TEST_TABLE(PRECISION=0.059999999999999998,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='AY',
            TABLE=TCARS,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
            )
 
 TEST_TABLE(PRECISION=0.19,
@@ -86,8 +79,6 @@ TEST_TABLE(PRECISION=0.19,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='AZ',
            TABLE=TCARS,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
            )
 
 TEST_TABLE(CRITERE='ABSOLU',
@@ -97,8 +88,6 @@ TEST_TABLE(CRITERE='ABSOLU',
            REFERENCE='ANALYTIQUE',
            NOM_PARA='EY',
            TABLE=TCARS,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
            )
 
 TEST_TABLE(PRECISION=0.02,
@@ -107,8 +96,6 @@ TEST_TABLE(PRECISION=0.02,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='EZ',
            TABLE=TCARS,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
            )
 
 TEST_TABLE(PRECISION=3.0000000000000001E-3,
@@ -117,8 +104,6 @@ TEST_TABLE(PRECISION=3.0000000000000001E-3,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='JG',
            TABLE=TCARS,
-           FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
            )
 
 FIN( )
