@@ -54,25 +54,21 @@ test.assertEqual(size, 0)
 test.assertSequenceEqual(length, [])
 
 # fake test of getvid with strings
-size, value, isdef = syntax.getvid("", "IGNORE_ALARM", 0, 3)
+size, value = syntax.getvid("", "IGNORE_ALARM", 0, 3)
 test.assertEqual(size, -4)
 test.assertSequenceEqual(value, ["alarm1", "alarm22", "alarm333"])
-test.assertEqual(isdef, 0)
 
-size, value, isdef = syntax.getvtx("", "IGNORE_ALARM", 999, 6)
+size, value = syntax.getvtx("", "IGNORE_ALARM", 999, 6)
 test.assertEqual(size, 4)
 test.assertSequenceEqual(value, ["alarm1", "alarm22", "alarm333", "alarm4444"])
-test.assertEqual(isdef, 0)
 
-size, value, isdef = syntax.getvis("", "INFO", 999, 1)
+size, value = syntax.getvis("", "INFO", 999, 1)
 test.assertEqual(size, 1)
 test.assertSequenceEqual(value, [2])
-test.assertEqual(isdef, 0)
 
-size, value, isdef = syntax.getvr8("RESERVE_CPU", "POURCENTAGE", 0, 1)
+size, value = syntax.getvr8("RESERVE_CPU", "POURCENTAGE", 0, 1)
 test.assertEqual(size, 1)
 test.assertSequenceEqual(value, [0.2])
-test.assertEqual(isdef, 0)
 
 kws, types = syntax.getmjm("RESERVE_CPU", 0, 99)
 test.assertEqual(len(kws), len(types))
