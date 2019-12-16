@@ -267,7 +267,7 @@ def command_result(counter, command_name, result):
         show_name = decorate_name(result)
     else:
         show_name = str(result)
-    return "\nResult of command #{0:0>4} ({1}): {2}{3}".format(
+    return "Result of command #{0:0>4} ({1}): {2}{3}".format(
         counter, command_name, show_name, show_type)
 
 def command_text(command_name, keywords, result="", limit=0):

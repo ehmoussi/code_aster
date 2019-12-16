@@ -451,13 +451,9 @@ class ExecuteMacro(ExecuteCommand):
             logger.info(command_result(self._counter, self.name,
                                        self._result))
         if self._result_names:
-            names = []
             for name in self._result_names:
-                res = self._add_results.get(name)
-                resname = res.getName() if res is not None else "?"
-                names.append("{0} {1}".format(name, decorate_name(resname)))
-            logger.info(command_result(self._counter, self.name,
-                                       names))
+                logger.info(command_result(self._counter, name,
+                                           self._add_results.get(name)))
         self._print_timer()
 
     def exec_(self, keywords):
