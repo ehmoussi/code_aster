@@ -460,7 +460,7 @@ class CommandSyntax(object):
             size = len(toReturn)
             if size > maxval:
                 size = -size
-            return size, tuple(toReturn[:maxval]), 0
+            return size, tuple(toReturn[:maxval])
         size = len(values)
         if size > maxval:
             size = -size
