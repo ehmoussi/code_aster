@@ -471,36 +471,6 @@ def argument_frontiere_analytique(INFO, args):
         liste_front_analytiques.append(dico)
 #
     return liste_front_analytiques
-#
-# ======================================================================
-#
-
-
-def argument_historique(INFO, args):
-#
-    """
-  Les historiques dans les arguments
-  Entree :
-    INFO : niveau d'information pour la macro-commande
-    args : dictionnaire des arguments de macr_adap_mail
-  Sortie :
-    dico_unites : dictionnaire des unites des historiques
-    """
-#
-    dico_unites = {}
-#
-    for mot_cle in ("UNITE_HIST_IN", "UNITE_HIST_OUT"):
-        if mot_cle in args:
-            if (args[mot_cle] is not None):
-                dico_unites[mot_cle] = args[mot_cle]
-#
-    if (INFO >= 3):
-        print("dico_unites =", dico_unites)
-#
-    return dico_unites
-#
-# ======================================================================
-#
 
 
 def version_homard_aster(INFO, VERSION_HOMARD):
@@ -1145,29 +1115,10 @@ def macr_adap_mail_ops(self,
         print("numero_passage_fonction =", numero_passage_fonction)
 #
 # 1.4. ==> Fichier d'archivage
-# 1.4.1. ==> Si une unite a ete fournie
-#
-    dico_unites = argument_historique(INFO, args)
-#
-    if "UNITE_HIST_IN" in dico_unites:
-        unite = dico_unites["UNITE_HIST_IN"]
-#   recherche de l'eventuel fichier defini par DEFI_FICHIER
-#   sinon, c'est un fort.xx classique
-        UL = UniteAster()
-        try:
-            # print "defini par DEFI_FICHIER"
-            fichier_archive = UL.Nom(unite)
-            if (fichier_archive[0:1] != os.sep):
-                fichier_archive = os.path.join(Rep_Calc_ASTER, fichier_archive)
-        except:
-            # print "fort.xx classique"
-            aux = "fort.%d" % unite
-            fichier_archive = os.path.join(Rep_Calc_ASTER, aux)
 #
 # 1.4.2. ==> C'est le fichier contenu dans la base : son nom est pick.homard.tar (cf.11.2.1)
 #
-    else:
-        fichier_archive = os.path.join(Rep_Calc_ASTER, "pick.homard.tar")
+    fichier_archive = os.path.join(Rep_Calc_ASTER, "pick.homard.tar")
 #
     fichier_archive = os.path.normpath(fichier_archive)
     if (INFO >= 4):
@@ -1258,11 +1209,6 @@ def macr_adap_mail_ops(self,
         if "ZONE" in args:
             if args["ZONE"] is not None:
                 liste_zones = argument_zone(INFO, args)
-#
-# 2.1.6. ==> Les historiques
-        # print "\n.. Debut de 2.1.6."
-#
-        dico_unites = argument_historique(INFO, args)
 #
 # 2.2. ==> Donnees de pilotage de l'information
 #
@@ -1850,26 +1796,6 @@ def macr_adap_mail_ops(self,
                 print(".. Insertion de", rep)
             file.add(rep)
         file.close()
-#
-# 11.2.2. Sur demande, transfert dans le fichier ad-hoc
-#
-        if "UNITE_HIST_OUT" in dico_unites:
-#
-            unite = dico_unites["UNITE_HIST_OUT"]
-#     recherche de l'eventuel fichier defini par DEFI_FICHIER
-#     sinon, c'est un fort.xx classique
-            UL = UniteAster()
-            try:
-                fichier_hist_out = UL.Nom(unite)
-            except:
-                aux = "fort.%d" % unite
-                fichier_hist_out = os.path.join(Rep_Calc_ASTER, aux)
-#
-            if os.path.isfile(fichier_hist_out):
-                os.remove(fichier_hist_out)
-            if (INFO >= 3):
-                print("Copie de", fichier_archive, "vers", fichier_hist_out)
-            shutil.copyfile(fichier_archive, fichier_hist_out)
 #
 #====================================================================
 #  C'est fini !

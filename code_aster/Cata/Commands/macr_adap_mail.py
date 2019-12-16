@@ -729,21 +729,6 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
   ) ,
 #
-# 15. Unites logiques pour les historiques
-#
-  b_unite_hist = BLOC( condition = """ (not equal_to("ADAPTATION", 'LECTURE')) """ ,
-                                fr=tr("Gestions des historiques.",),
-#
-  UNITE_HIST_IN = SIMP(statut='f',typ=UnitType(),val_min=1, inout='in',
-                       fr=tr("Unite logique d'un historique en entrée" ),
-                      ),
-#
-  UNITE_HIST_OUT = SIMP(statut='f',typ=UnitType(),val_min=1, inout='out',
-                        fr=tr("Unite logique d'un historique en sortie"),
-                       ),
-#
-  ) ,
-#
 # 16. Les options avancées
 # 16.1. Langue des messages issus de HOMARD
 #
