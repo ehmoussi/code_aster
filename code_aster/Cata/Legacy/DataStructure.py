@@ -57,7 +57,6 @@ from .DS.co_resultat_sdaster import (resultat_sdaster, comb_fourier, fourier_ela
                                   evol_sdaster, evol_char, evol_elas,
                                   evol_noli, evol_ther, evol_varc)
 from .DS.co_listr8_sdaster import listr8_sdaster
-from .DS.co_cara_elem import cara_elem
 from .DS.co_entier import entier
 from .DS.co_modele_sdaster import modele_sdaster
 from .DS.co_sd_dyna import (dyna_gene, dyna_phys, harm_gene, tran_gene, acou_harmo,
