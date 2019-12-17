@@ -222,7 +222,8 @@ RES1 = MODI_REPERE(reuse=RES1,
                    MODI_CHAM=_F(TYPE_CHAM='COQUE_GENE',
                                 NOM_CHAM='SIEF_ELGA',
                                 NOM_CMP=('NXX','NYY','NXY','MXX','MYY','MXY','QX','QY',),),
-                   REPERE='COQUE_UTIL_INTR')
+                   REPERE='COQUE_UTIL_INTR',
+                   AFFE=_F(TOUT='OUI',),)
 
 TEST_RESU(RESU=_F(INST=1.0,
                   REFERENCE='ANALYTIQUE',

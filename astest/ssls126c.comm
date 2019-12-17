@@ -21,7 +21,7 @@
 #           REGIME DE POUTRE ELASTIQUE
 #
 #  DETAILS : MODELISATION Q4GG
-#            Mailles TRIA3 
+#            Mailles TRIA3
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI',),);
@@ -171,14 +171,14 @@ RESU_INT=MODI_REPERE(RESULTAT=RESU,
                                   NOM_CHAM='SIEF_ELGA',
                                   NOM_CMP=('NXX','NYY','NXY','MXX','MYY','MXY','QX','QY',),),
                      REPERE='COQUE_UTIL_INTR',
-                     AFFE=_F(),);
+                     AFFE=_F(TOUT='OUI',),);
 
 RESU_UTI=MODI_REPERE(RESULTAT=RESU_INT,
                      MODI_CHAM=_F(TYPE_CHAM='COQUE_GENE',
                                   NOM_CHAM='SIEF_ELGA',
                                   NOM_CMP=('NXX','NYY','NXY','MXX','MYY','MXY','QX','QY',),),
                      REPERE='COQUE_INTR_UTIL',
-                     AFFE=_F(),);
+                     AFFE=_F(TOUT='OUI',),);
 
 TEST_RESU(RESU=_F(RESULTAT=RESU,
                   NUME_ORDRE=2,
