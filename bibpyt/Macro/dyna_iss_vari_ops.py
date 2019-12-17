@@ -373,15 +373,17 @@ class GeneratorTRANS(Generator):
                             tup_re2.append(VEC_comp.real*0.)
                             tup_im2.append(VEC_comp.imag*0.)
 
+        # il peut y avoir des blancs à la fin du noms qui ont été enlevés par le python
+        resu_name = __dyge0.getName()+(19-len(__dyge0.getName()))*' '
         # affectation des valeurs
         for k in range(len(self.liste_freq_sig)):
             #                                     1         2         3
             #                                   8901234567890123456789012
-            aster.putvectjev(__dyge0.get_name() + '.DEPL        ', nbmodt, tuple(
+            aster.putvectjev(resu_name + '.DEPL        ', nbmodt, tuple(
             range(nbmodt * k + 1, nbmodt * (k + 1) + 1)), tuple(tup_re1[k]), tuple(tup_im1[k]), 1)
-            aster.putvectjev(__dyge0.get_name() + '.VITE        ', nbmodt, tuple(
+            aster.putvectjev(resu_name + '.VITE        ', nbmodt, tuple(
             range(nbmodt * k + 1, nbmodt * (k + 1) + 1)), tuple(tup_re2[k]), tuple(tup_im2[k]), 1)
-            aster.putvectjev(__dyge0.get_name() + '.ACCE        ', nbmodt, tuple(
+            aster.putvectjev(resu_name + '.ACCE        ', nbmodt, tuple(
                 range(nbmodt * k + 1, nbmodt * (k + 1) + 1)), tuple(tup_re[k]), tuple(tup_im[k]), 1)
 
         if self.INFO == 2:
