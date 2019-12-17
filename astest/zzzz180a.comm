@@ -165,9 +165,9 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 # CALCUL DE L INTERSPECTRE DES FCTS GENEREES
 ##############################
 
-ts =  aster.getvectjev(FONCT1.getName() + ".VALE");
-nbpoin=(len(ts)//2-1)/nbtir
-tfin=ts[len(ts)//2-1]
+ts =  FONCT1.getValues()
+nbpoin= FONCT1.size()//nbtir
+tfin= ts[FONCT1.size()-1]
 
 #
 INTERS=CALC_INTE_SPEC(          INST_INIT=0.,
@@ -271,9 +271,9 @@ MF11=RECU_FONCTION(    INTE_SPEC=INTERS,
                       )
 
 
-tt =  aster.getvectjev(MF11.getName() + ".VALE");
+tt = MF11.getValues()
 fmin=tt[0]
-fmax=tt[len(tt)//2-1]
+fmax=tt[MF11.size()-1]
 
 RMS11=INFO_FONCTION( RMS=_F(  FONCTION = MF11))
 
