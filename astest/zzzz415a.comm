@@ -35,11 +35,11 @@ MAILLAGE=DEFI_GROUP(reuse =MAILLAGE,
                                    _F(GROUP_MA='VOL',),
                                    _F(DIFFE=('LEVSUP','FONFIS'),NOM='LEVS',),
                                    _F(DIFFE=('LEVINF','FONFIS'),NOM='LEVI',),
-                                   _F(DIFFE=('VOL','LEVSUP','LEVINF'),NOM='VOLB',),                    
+                                   _F(DIFFE=('VOL','LEVSUP','LEVINF'),NOM='VOLB',),
                                     ),);
 
 #----------------------------------------------
-#                   MODELE 
+#                   MODELE
 #----------------------------------------------
 
 MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAGE,
@@ -68,17 +68,17 @@ CHAMPMA=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                              ),);
 
 #----------------------------------------------
-#                   CHARGEMENTS 
+#                   CHARGEMENTS
 #----------------------------------------------
 
 #                   1) TRACTION
 
-PRES=-1.E6 
+PRES=-1.E6
 CHARBL1=AFFE_CHAR_MECA(MODELE=MODELEIN,
                    DDL_IMPO=(_F(NOEUD='N4265',DX=0.0,DY=0.0,DZ=0.0,),
                              _F(NOEUD='N3751',DZ=0.0,),
                              _F(NOEUD='N4256',DX=0.0,DZ=0.0,),),);
-                             
+
 CHF1=AFFE_CHAR_MECA(MODELE=MODELEIN,PRES_REP=_F(GROUP_MA=('SURFSUP','SURFINF',),PRES=PRES,),);
 
 
@@ -89,7 +89,7 @@ R = FORMULE(VALE='sqrt((Y-5.)**2+(Z-15.)**2)',
             NOM_PARA=['X', 'Y', 'Z'],)
 T = FORMULE(VALE='atan2(Z-15.,-Y+5.)',
             NOM_PARA=['X', 'Y', 'Z'],)
-   
+
 coef=(1+nu)/(E*sqrt(2.*pi))
 
 # FORMULES GENERALES DU MODE I
@@ -108,7 +108,7 @@ UAUX2 = FORMULE(VALE=' coef*sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,
 UAUX3 = FORMULE(VALE='0.',
                 NOM_PARA=['X', 'Y', 'Z'],)
 
-# FORMULES POUR LES NOEUDS DE LA LEVRE SUP (MOINS LE FOND DE FISSURE) : THETA=PI 
+# FORMULES POUR LES NOEUDS DE LA LEVRE SUP (MOINS LE FOND DE FISSURE) : THETA=PI
 OUAUX1S = FORMULE(VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(pi/2.)*(3.-4.*nu-cos(pi))',
                   coef=coef,
                   R=R,
@@ -122,7 +122,7 @@ UAUX2S = FORMULE(VALE=' coef*sqrt(R(X,Y,Z))*sin(pi/2.)*(3.-4.*nu-cos(pi))',
 UAUX3S = FORMULE(VALE='0.',
                  NOM_PARA=['X', 'Y', 'Z'],)
 
-# FORMULES POUR LES NOEUDS DE LA LEVRE INF (MOINS LE FOND DE FISSURE) : THETA=-PI 
+# FORMULES POUR LES NOEUDS DE LA LEVRE INF (MOINS LE FOND DE FISSURE) : THETA=-PI
 OUAUX1I = FORMULE(VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(-pi/2.)*(3.-4.*nu-cos(-pi))',
                   coef=coef,
                   R=R,
@@ -137,12 +137,12 @@ UAUX3I = FORMULE(VALE='0.',
                  NOM_PARA=['X', 'Y', 'Z'],)
 
 CHARBL2=AFFE_CHAR_MECA(MODELE=MODELEIN,DDL_IMPO=_F(GROUP_MA='FONFIS',DX=0.0,DY=0.0,DZ=0.0,),);
-                             
+
 CHF2=AFFE_CHAR_MECA_F(MODELE=MODELEIN,DDL_IMPO=(_F(GROUP_NO='VOLB',DX=UAUX3,DY=OUAUX1,DZ=UAUX2,),
                                                _F(GROUP_NO='LEVS',DX=UAUX3S,DY=OUAUX1S,DZ=UAUX2S,),
                                                _F(GROUP_NO='LEVI',DX=UAUX3I,DY=OUAUX1I,DZ=UAUX2I,),
-                                               ),);              
-              
+                                               ),);
+
 #                   3) PRESSION CONSTANTE SUR LES LEVRES
 CHPRES=AFFE_CHAR_MECA(MODELE=MODELEIN,PRES_REP=_F(GROUP_MA=('LEVSUP','LEVINF',),PRES=1.e6,),);
 
@@ -152,34 +152,34 @@ PRESF = FORMULE(VALE='1.e6*(1.-X)',
 CHPRESF=AFFE_CHAR_MECA_F(MODELE=MODELEIN,PRES_REP=_F(GROUP_MA=('LEVSUP','LEVINF',),PRES=PRESF,),);
 
 
-              
+
 #----------------------------------------------
 #                   RESOLUTIONS
 #----------------------------------------------
 
 UTOT1=MECA_STATIQUE(MODELE=MODELEIN,
-                   CHAM_MATER=CHAMPMA,              
+                   CHAM_MATER=CHAMPMA,
                    EXCIT=(_F(CHARGE=CHARBL1,),
                           _F(CHARGE=CHF1,),),
                    INST=1.0,
                    INFO=1,);
 
 UTOT2=MECA_STATIQUE(MODELE=MODELEIN,
-                   CHAM_MATER=CHAMPMA,              
+                   CHAM_MATER=CHAMPMA,
                    EXCIT=(_F(CHARGE=CHARBL2,),
                           _F(CHARGE=CHF2,),),
                    INST=1.0,
                    INFO=1,);
 
 UTOT3=MECA_STATIQUE(MODELE=MODELEIN,
-                   CHAM_MATER=CHAMPMA,              
+                   CHAM_MATER=CHAMPMA,
                    EXCIT=(_F(CHARGE=CHARBL1,),
                           _F(CHARGE=CHPRES,),),
                    INST=1.0,
                    INFO=1,);
 
 UTOT4=MECA_STATIQUE(MODELE=MODELEIN,
-                   CHAM_MATER=CHAMPMA,              
+                   CHAM_MATER=CHAMPMA,
                    EXCIT=(_F(CHARGE=CHARBL1,),
                           _F(CHARGE=CHPRESF,),),
                    INST=1.0,
@@ -209,7 +209,7 @@ SIF3 = [None]*(nbc+1)
 SIF4 = [None]*(nbc+1)
 
 for i in range(0,nbc) :
-   
+
    SIF1[i]=CALC_H(RESULTAT=UTOT1,
                   OPTION='CALC_K_G',
                   LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
@@ -321,16 +321,16 @@ for i in range(0,nbc+1) :
 for i in range(0,nbc+1) :
    TEST_TABLE(TABLE=SIF1[i],
               NOM_PARA='G',
-              TYPE_TEST='MAX', 
-              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),              
+              TYPE_TEST='MAX',
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),
               VALE_CALC=123456789.0,
               CRITERE='RELATIF',
-              PRECISION=0.0001,   
+              PRECISION=0.0001,
               REFERENCE='ANALYTIQUE',);
 
 """
 
-"""   
+"""
 #                   SOLUTIONS ANALYTIQUES DE K1 :
 # POUR LES CHARGEMENT 1 & 3 : VOIR CHABOCHE P.53
 a=5
@@ -404,60 +404,60 @@ VAL_CALC = [  1.0514480546308E+07   ,
               1.0492304259512E+07   ,
               5.9798081648442E+06   ,
               4.512496183805E+06    ,]
-              
+
 for i in range(0,nbc+1) :
    TEST_TABLE(TABLE=SIF1[i],
               NOM_PARA='K1',
-              TYPE_TEST='MAX', 
-              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),              
+              TYPE_TEST='MAX',
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),
               VALE_CALC=VAL_CALC[i*8+0], VALE_REFE=K1REF1,
               CRITERE='RELATIF',
-              PRECISION=0.065,   
+              PRECISION=0.065,
               REFERENCE='ANALYTIQUE',);
 
    TEST_TABLE(TABLE=SIF1[i],
               NOM_PARA='K1',
-              TYPE_TEST='MIN', 
-              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),              
+              TYPE_TEST='MIN',
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),
               VALE_CALC=VAL_CALC[i*8+1], VALE_REFE=K1REF1,
               CRITERE='RELATIF',
-              PRECISION=0.065,   
+              PRECISION=0.065,
               REFERENCE='ANALYTIQUE',);
-              
+
    TEST_TABLE(TABLE=SIF2[i],
               NOM_PARA='K1',
-              TYPE_TEST='MAX',               
+              TYPE_TEST='MAX',
               FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),
               VALE_CALC=VAL_CALC[i*8+2], VALE_REFE=K1REF2,
               CRITERE='RELATIF',
-              PRECISION=0.003,   
+              PRECISION=0.003,
               REFERENCE='ANALYTIQUE',);
 
    TEST_TABLE(TABLE=SIF2[i],
               NOM_PARA='K1',
-              TYPE_TEST='MIN', 
-              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),              
+              TYPE_TEST='MIN',
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),
               VALE_CALC=VAL_CALC[i*8+3], VALE_REFE=K1REF2,
               CRITERE='RELATIF',
-              PRECISION=0.003,   
-              REFERENCE='ANALYTIQUE',);           
-
-   TEST_TABLE(TABLE=SIF3[i],
-              NOM_PARA='K1',
-              TYPE_TEST='MAX',               
-              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),
-              VALE_CALC=VAL_CALC[i*8+4], VALE_REFE=K1REF1,
-              CRITERE='RELATIF',
-              PRECISION=0.065,   
+              PRECISION=0.003,
               REFERENCE='ANALYTIQUE',);
 
    TEST_TABLE(TABLE=SIF3[i],
               NOM_PARA='K1',
-              TYPE_TEST='MIN', 
-              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),              
+              TYPE_TEST='MAX',
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),
+              VALE_CALC=VAL_CALC[i*8+4], VALE_REFE=K1REF1,
+              CRITERE='RELATIF',
+              PRECISION=0.065,
+              REFERENCE='ANALYTIQUE',);
+
+   TEST_TABLE(TABLE=SIF3[i],
+              NOM_PARA='K1',
+              TYPE_TEST='MIN',
+              FILTRE = _F(NOM_PARA='NUME_ORDRE',VALE_I=1),
               VALE_CALC=VAL_CALC[i*8+5], VALE_REFE=K1REF1,
               CRITERE='RELATIF',
-              PRECISION=0.065,   
+              PRECISION=0.065,
               REFERENCE='ANALYTIQUE',);
 
    TEST_TABLE(TABLE=SIF4[i],
