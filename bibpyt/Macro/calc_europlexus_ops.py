@@ -338,6 +338,7 @@ class EUROPLEXUS:
                 if self.modi_repere['COQUE']:
                     MODI_REPERE(RESULTAT=RESULTAT, reuse=RESULTAT,
                                 REPERE='COQUE_UTIL_INTR',
+                                AFFE=_F(TOUT='OUI'),
                                 NUME_ORDRE = nume_ordre,
                                 MODI_CHAM=_F(TYPE_CHAM='COQUE_GENE',
                                              NOM_CHAM='SIEF_ELGA',
@@ -368,6 +369,7 @@ class EUROPLEXUS:
                 if self.modi_repere['COQUE']:
                     MODI_REPERE(RESULTAT=RESULTAT, reuse=RESULTAT,
                                 REPERE='COQUE_INTR_UTIL',
+                                AFFE=_F(TOUT='OUI'),
                                 NUME_ORDRE = nume_ordre,
                                 MODI_CHAM=_F(TYPE_CHAM='COQUE_GENE',
                                              NOM_CHAM='SIEF_ELGA',
