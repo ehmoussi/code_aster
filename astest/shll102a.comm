@@ -24,6 +24,10 @@ import numpy as NP
 import numpy.linalg as LA
 from math import *
 
+# Workaround: Otherwise NUMEDDL is collected after the 3rd iteration of the loop!
+import gc
+gc.set_debug(gc.DEBUG_LEAK)
+
 from code_aster.Commands import *
 
 
