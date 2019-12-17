@@ -60,8 +60,6 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     DEFI_GROUP = self.get_cmd('DEFI_GROUP')
     from code_aster.Commands import DEFI_CABLE_OP
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # Le concept sortant (de type char_meca) est nomme CHCABLE dans
     # le contexte de la macro
@@ -88,10 +86,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
         motscles['CONE'].append(dCONE)
 
         # RECUPERATION DU MAILLAGE A PARTIR DU MODELE
-        __MAIL = aster.getvectjev(
-            MODELE.nom.ljust(8) + '.MODELE    .LGRF        ')
-        __MAIL = __MAIL[0].strip()
-        MAILLAGE = self.get_sd_avant_etape(__MAIL, self)
+        MAILLAGE = MODELE.getMesh()
 
         # DEFINITION DU NOM DES GROUP_NO
         __NOM = 'AN__'
