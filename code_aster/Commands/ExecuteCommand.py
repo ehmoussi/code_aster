@@ -452,7 +452,7 @@ class ExecuteMacro(ExecuteCommand):
                                        self._result))
         if self._result_names:
             for name in self._result_names:
-                logger.info(command_result(self._counter, name,
+                logger.info(command_result(self._counter, self.name,
                                            self._add_results.get(name)))
         self._print_timer()
 
