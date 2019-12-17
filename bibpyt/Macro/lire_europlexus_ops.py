@@ -737,6 +737,7 @@ présentes%s""" % compo)
             from code_aster.Cata.Commands import MODI_REPERE
             MODI_REPERE(RESULTAT=resu, reuse=resu,
                         REPERE='COQUE_INTR_UTIL',
+                        AFFE=_F(TOUT='OUI'),
                         MODI_CHAM=_F(TYPE_CHAM='COQUE_GENE',
                                      NOM_CHAM='SIEF_ELGA',
                                      NOM_CMP=('NXX', 'NYY', 'NXY',

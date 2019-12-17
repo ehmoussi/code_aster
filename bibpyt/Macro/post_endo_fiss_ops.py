@@ -606,6 +606,7 @@ def calcul_ouverture(self, NOM_CHAM, NOM_CMP, dRECHERCHE, __RESUIN, __mail, info
                                REPERE='UTILISATEUR',
                                AFFE=_F(
                                ANGL_NAUT=(alpha, beta, gamma),
+                               TOUT='OUI',
                                ),
                                **motclefs)
 
