@@ -75,6 +75,9 @@ Pour poursuivre la séquence, il faudrait partir maintenant de %(k3)s.
 Le fichier %(k1)s est inconnu.
 """),
 
-
+    11: _("""
+Il s'agit de la première adaptation du maillage '%(k1)s' or le répertoire '%(k2)s'
+existe déjà. On le supprime.
+"""),
 
 }

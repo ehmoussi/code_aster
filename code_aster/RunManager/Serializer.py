@@ -158,14 +158,14 @@ class Serializer(object):
             # ordered list of objects names
             logger.info("Saving objects...")
             objList = []
-            for name, obj in list(ctxt.items()):
+            for name, obj in ctxt.items():
                 if name == "CO":
                     continue
                 try:
                     logger.info("{0:<24s} {1}".format(name, type(obj)))
                     pickler.save_one(obj, main=True)
                     objList.append(name)
-                except Exception as exc:
+                except Exception:
                     logger.warn("object can not be pickled: {0}".format(name))
                     logger.debug(traceback.format_exc())
                     continue

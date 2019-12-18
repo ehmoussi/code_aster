@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ r_raff=5*h;
 # Initialisation
 ########
 
-MA=[None]*(nb_iter+1);
+lMA=[None]*(nb_iter+1);
 CHERR=[None]*nb_iter;
 FISS=[None]*nb_iter;
 
@@ -62,7 +62,7 @@ FISS=[None]*nb_iter;
 # Lecture du maillage non raffine
 ########
 
-MA[0] = LIRE_MAILLAGE(UNITE=20, FORMAT='MED');
+lMA[0] = LIRE_MAILLAGE(UNITE=20, FORMAT='MED');
 
 ########
 # Boucle de raffinements
@@ -71,7 +71,7 @@ MA[0] = LIRE_MAILLAGE(UNITE=20, FORMAT='MED');
 for i_raff in range(nb_iter) :
 
 # Definition de la fissure
-    FISS[i_raff]=DEFI_FISS_XFEM(MAILLAGE=MA[i_raff],  
+    FISS[i_raff]=DEFI_FISS_XFEM(MAILLAGE=lMA[i_raff],
                                 TYPE_DISCONTINUITE='FISSURE',
                                 DEFI_FISS=_F(FORM_FISS='ELLIPSE',
                                 DEMI_GRAND_AXE=a,
@@ -80,24 +80,24 @@ for i_raff in range(nb_iter) :
                                 VECT_X=(1.,0.,0.,),
                                 VECT_Y=(0.,1.,0.,),),);
 
-# Calcul du critere de raffinement       
+# Calcul du critere de raffinement
     CHERR[i_raff]=RAFF_XFEM(FISSURE=FISS[i_raff],TYPE='ZONE',RAYON=r_raff);
 
-#Definition du type du maillage n+1 --> pour dire que MAILLAGE_NP1 est un type maillage        
-    MA[i_raff+1]=CO('MA_%d' % (i_raff+1))
+#Definition du type du maillage n+1 --> pour dire que MAILLAGE_NP1 est un type maillage
+    lMA[i_raff+1]=CO('lMA_%d' % (i_raff+1))
 
 #Adaptation du maillage
     MACR_ADAP_MAIL(ADAPTATION    = 'RAFFINEMENT',
                    CHAM_GD       = CHERR[i_raff],
                    CRIT_RAFF_ABS = 0.5,
                    DIAM_MIN      = hc,
-                   MAILLAGE_N    = MA[i_raff],
-                   MAILLAGE_NP1  = MA[i_raff+1],);
+                   MAILLAGE_N    = lMA[i_raff],
+                   MAILLAGE_NP1  = lMA[i_raff+1],);
 
 ########
 # Impression du maillage raffine
 ########
-                                          
-IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(MAILLAGE=MA[nb_iter]));
+
+IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(MAILLAGE=lMA[nb_iter]));
 
 FIN();

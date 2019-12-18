@@ -33,171 +33,272 @@ import shutil
 #
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 from Utilitai.UniteAster import UniteAster
-#
-# ======================================================================
-#
+from code_aster.RunManager import Serializer
+from code_aster.Supervis import logger
 
 
-def liste_passages_init(INFO, fichier_archive, Rep_Calc_ASTER):
-#
+class HomardInfo:
+    """Object that holds the informations needed by Homard and *reused* by
+    successive calls to MACR_ADAP_MAIL.
+
+    *This is an incomplete refactoring of the legacy operator.*
+
+    The `Serializer` isn't able to store every complex objects containing
+    *DataStructure* objects, only *list* and *dict*.
+
+    The needed informations between successive calls are the mesh objects and
+    the fields to be interpolated or used as refinement indicator.
+    Pointers to the needed *DataStructure* objects are kept in `objects`
+    attribute (as a *dict* to be serialized).
+    The informations are stored into `run_params` attribute. In this object,
+    all references to *DataStructure* are replaced by their names to be
+    pickable.
+    When it is required, *DataStructure* objects are injected to make the data
+    used as in legacy operator.
     """
-  initialisation de la liste des passages, eventuellement apres extraction de l'archive
-  Entree :
-    INFO : niveau d'information pour la macro-commande
-    fichier_archive : nom de l'eventuel fichier d'archive des cas precedents
-    Rep_Calc_ASTER : répertoire de calcul d'Aster
-  Sortie :
-    Liste_Passages : liste decrivant les passages deja faits
-    """
-#
-    if (INFO >= 3):
-        print("\nDans liste_passages_init, fichier_archive :", fichier_archive)
-#
-# A.0. A priori, la liste est vide
-#
-    Liste_Passages = []
-#
-# A.1. S'il existe un fichier de reprise, c'est que l'on est au premier
-#      appel apres une 'poursuite' ou un 'debut' avec les historiques.
-#      On recupere les répertoires qui auraient pu etre archives au calcul precedent.
-#
-    if os.path.isfile(fichier_archive):
-#
-# A.1.1 Extraction  des fichiers selon leur type
-# Remarque : a partir de python 2.5 on pourra utiliser extractall
-#
-        file = tarfile.open(fichier_archive, "r")
-        for tarinfo in file:
-            if (INFO >= 3):
-                print(tarinfo.name, "is", tarinfo.size, "bytes in size and is", end=' ')
-            if tarinfo.isreg():
-                if (INFO >= 3):
-                    print("a regular file.")
-                file.extract(tarinfo.name)
-            elif tarinfo.isdir():
-                if (INFO >= 3):
-                    print("a directory.")
-                file.extract(tarinfo.name)
-            else:
-                if (INFO >= 3):
-                    print("something else.")
-#
-        if (INFO >= 3):
-            print(os.listdir(Rep_Calc_ASTER))
-#
-# A.1.2. Liste de tous les répertoires d'adaptation qui ont ete recuperes
-#
-        laux = glob("*_ADAP_*")
-#
-#   On prend le fichier pickle du 1er répertoire (ce sont tous les memes),
-#   puis on recupere la liste des passages
-#
-        fic = os.path.join(Rep_Calc_ASTER, laux[0], "pick.1")
-        file = open(fic, "rb")
-        laux = pickle.load(file)
-        file.close()
-#
-# A.1.3. Pour chaque cas, mise à jour du répertoire global
-#
-        for dico in laux:
+    _objects = {}
+    _run_params = []
+    _run_idx = 0
+
+    @classmethod
+    def new_run(cls):
+        cls._run_idx += 1
+        return cls._run_idx
+
+    @property
+    def objects(self):
+        """Attribute that contains the stored objects."""
+        return self._objects
+
+    @property
+    def run_params(self):
+        """Attribute that contains the runs parameters."""
+        return self._run_params
+
+    def store_object(self, datastr):
+        """Store a DataStructure for reusability.
+
+        Arguments:
+            datastr (*DataStructure*): *DataStructure* object.
+        """
+        name = datastr.getName()
+        if name in self._objects:
+            previous = self._objects[name].getName()
+            if previous != name:
+                print("Warning: object {0} already exist".format(name))
+        self._objects[name] = datastr
+
+    def get_object(self, name):
+        """Return the object known as `name`.
+
+        Arguments:
+            name (str): Object name.
+
+        Returns:
+            *DataStructure*: Object as previously stored.
+        """
+        return self._objects[name]
+
+    def field_data_to_name(self, field_data):
+        """Replace *DataStructure* by their names.
+
+        Arguments:
+            field_data (dict): Properties of a field.
+
+        Returns:
+            dict: New *dict* where *DataStructure* have been replaced by
+            their names.
+        """
+        data_with_names = dict()
+        data_with_names.update(field_data)
+        for key in ("RESULTAT", "CHAM_GD"):
+            if key in field_data:
+                self.store_object(field_data[key])
+                data_with_names[key] = field_data[key].getName()
+        return data_with_names
+
+    def store_fields_data(self, fields_data):
+        """Store *DataStructure* in known objects and return data containing
+        only the objects names.
+
+        Arguments:
+            fields_data (list): Fields data containing *DataStructure*.
+
+        Returns:
+            list: Fields data where *DataStructure* have been replaced by
+            objects names.
+        """
+        return [self.field_data_to_name(data) for data in fields_data]
+
+    def field_data_to_object(self, data_with_names):
+        """Replace names by *DataStructure* objects.
+
+        Arguments:
+            data_with_names (dict): Properties of a field.
+
+        Returns:
+            dict: New *dict* with *DataStructure* objects."""
+        field_data = dict()
+        field_data.update(data_with_names)
+        for key in ("RESULTAT", "CHAM_GD"):
+            if key in data_with_names:
+                field_data[key] = self.get_object(data_with_names[key])
+        return field_data
+
+    def get_fields_data(self, data_with_names):
+        """Return fields properties with *DataStructure* objects."""
+        return [self.field_data_to_object(data) for data in data_with_names]
+
+    def load_runs(self, Rep_Calc_ASTER):
+        """Load the previously stored data."""
+        wrkdir = os.getcwd()
+        #   On prend le fichier pickle du 1er répertoire (ce sont tous les memes),
+        #   puis on recupere la liste des passages
+        base = glob("*_ADAP_*")[0]
+        os.chdir(os.path.join(Rep_Calc_ASTER, base))
+        context = {}
+        Serializer(context).load()
+        os.chdir(wrkdir)
+
+        logger.info("Loaded objects from homard history:")
+        for obj in context['objects'].values():
+            self.store_object(obj)
+            logger.info("{0:<24s} {1}".format(obj.getName(), type(obj)))
+
+        for dico in context['runs']:
             Rep_Calc_HOMARD_local = dico["Rep_Calc_HOMARD_local"]
-            dico["Rep_Calc_HOMARD_global"] = os.path.join(
-                Rep_Calc_ASTER, Rep_Calc_HOMARD_local)
-            Liste_Passages.append(dico)
-#
-    else:
-        if (INFO >= 3):
-            print("Fichier inconnu.")
-#
-    return Liste_Passages
-#
-# ======================================================================
-#
+            dico["Rep_Calc_HOMARD_global"] = os.path.abspath(Rep_Calc_HOMARD_local)
+            self._run_params.append(dico)
+
+    def save_runs(self):
+        """Save the data of the existing runs.
+
+        Returns:
+            list: List of saved subdirectories.
+        """
+        # it probably saves the same content several times...
+        dirs = []
+        for dico in self._run_params:
+            Rep_Calc_HOMARD_local = dico["Rep_Calc_HOMARD_local"]
+            dirs.append(Rep_Calc_HOMARD_local)
+            Rep_Calc_HOMARD_global = dico["Rep_Calc_HOMARD_global"]
+            wrkdir = os.getcwd()
+            os.chdir(Rep_Calc_HOMARD_global)
+            context = {}
+            context['objects'] = ginfos.objects
+            context['runs'] = ginfos.run_params
+            pickler = Serializer(context)
+            pickler.save()
+            logger.info("Saved objects for homard history:")
+            for obj in ginfos.objects.values():
+                logger.info("{0:<24s} {1}".format(obj.getName(), type(obj)))
+
+            os.chdir(wrkdir)
+        return dirs
+
+    def init_run_params(self, INFO, fichier_archive, Rep_Calc_ASTER):
+        """Initialisation de la liste des passages, eventuellement apres
+        extraction de l'archive.
+
+        Arguments:
+            INFO : niveau d'information pour la macro-commande
+            fichier_archive : nom de l'eventuel fichier d'archive des cas precedents
+            Rep_Calc_ASTER : répertoire de calcul d'Aster
+        """
+        if INFO >= 3:
+            print("\nDans init_run_params, fichier_archive :", fichier_archive)
+        #
+        # A.0. A priori, la liste est vide
+        #
+        # A.1. S'il existe un fichier de reprise, c'est que l'on est au premier
+        #      appel apres une 'poursuite' ou un 'debut' avec les historiques.
+        #      On recupere les répertoires qui auraient pu etre archives au calcul precedent.
+        #
+        if os.path.isfile(fichier_archive):
+        #
+        # A.1.1 Extraction  des fichiers selon leur type
+        # Remarque : a partir de python 2.5 on pourra utiliser extractall
+        #
+            with tarfile.open(fichier_archive, "r") as tar:
+                tar.extractall()
+
+            if INFO >= 3:
+                print(os.listdir(Rep_Calc_ASTER))
+
+            self.load_runs(Rep_Calc_ASTER)
+        else:
+            if INFO >= 3:
+                print("Fichier inconnu.")
 
 
-def liste_passages_maj(INFO, Liste_Passages, niter, Nom_Co_Mail_N, Nom_Co_Mail_NP1, maillage_np1, maillage_np1_nom_med, Nom_Co_Mail_NP1_ANNEXE, Rep_Calc_HOMARD_local, Rep_Calc_HOMARD_global, fic_homard_niterp1, unite_fichier_homard_vers_aster, liste_champs):
-#
-    """
-  Mise a jour de la liste des passages
-  Entree :
-    Liste_Passages : liste decrivant les passages deja faits
-    niter : numero d'iteration de depart
-    Nom_Co_Mail_N : Nom du concept du maillage n
-    Nom_Co_Mail_NP1 : Nom du concept du maillage n+1
-    maillage_np1 : concept ASTER du dernier maillage adapte
-    maillage_np1_nom_med : Nom MED du dernier maillage adapte
-    Nom_Co_Mail_NP1_ANNEXE : Nom du concept du maillage n+1 annexe
-    Rep_Calc_HOMARD_local : répertoire local de calcul de HOMARD
-    Rep_Calc_HOMARD_global : répertoire global de calcul de HOMARD
-    fic_homard_niterp1 : fichier HOMARD n+1
-    unite_fichier_homard_vers_aster : unite du fichier d'ASTER vers HOMARD
-    liste_champs : liste des champs definis
-  Sortie :
-    Liste_Passages_0 : liste decrivant les passages deja faits
-    """
-#
-    if (INFO >= 3):
-        print("Dans liste_passages_maj, numero d'iteration", niter)
-#
-# A.0. A priori, la liste est vide
-#
-    Liste_Passages_0 = []
-#
-# A.1. Une nouvelle iteration
-#      On emet une alarme si il existe deja un cas pour etre certain
-#      que l'utilisateur ne s'est pas trompe dans l'enchainement
-#
-    if (niter == 0):
-#
-# A.1.1. On stocke tous les cas deja enregistres
-#        On emet une alarme si il existe deja un cas pour etre certain
-#        que l'utilisateur ne s'est pas trompe dans l'enchainement
-        for dico in Liste_Passages:
-            Liste_Passages_0.append(dico)
-            UTMESS("A", 'HOMARD0_9', valk=(Nom_Co_Mail_N, Nom_Co_Mail_NP1,
-                   dico["Maillage_NP1"], dico["Maillage_0"]), vali=dico["niter"] + 1)
-#
-        dico = {}
-        dico["Maillage_0"] = Nom_Co_Mail_N
-        dico["Maillage_NP1"] = Nom_Co_Mail_NP1
-        dico["maillage_np1"] = maillage_np1
-        dico["maillage_np1_nom_med"] = maillage_np1_nom_med
-        dico["Maillage_NP1_ANNEXE"] = Nom_Co_Mail_NP1_ANNEXE
-        dico["Rep_Calc_HOMARD_local"] = Rep_Calc_HOMARD_local
-        dico["Rep_Calc_HOMARD_global"] = Rep_Calc_HOMARD_global
-        dico["niter"] = niter
-        dico["fic_homard_niterp1"] = fic_homard_niterp1
-        dico[
-            "unite_fichier_homard_vers_aster"] = unite_fichier_homard_vers_aster
-        dico["liste_champs"] = liste_champs
-        Liste_Passages_0.append(dico)
-        if (INFO >= 3):
-            print(".. Nouveau dico", dico)
-#
-# A.2. Modification du cas en cours
-#
-    else:
-#
-        for dico in Liste_Passages:
-            # print dico
-            if (dico["Maillage_NP1"] == Nom_Co_Mail_N):
-                dico["Maillage_NP1"] = Nom_Co_Mail_NP1
-                dico["maillage_np1"] = maillage_np1
-                dico["maillage_np1_nom_med"] = maillage_np1_nom_med
-                dico["Maillage_NP1_ANNEXE"] = Nom_Co_Mail_NP1_ANNEXE
-                dico["niter"] = niter
-                dico["fic_homard_niterp1"] = fic_homard_niterp1
-                dico[
-                    "unite_fichier_homard_vers_aster"] = unite_fichier_homard_vers_aster
-                dico["liste_champs"] = liste_champs
-                if (INFO >= 3):
-                    print(".. Nouveau dico", dico)
-            Liste_Passages_0.append(dico)
-#
-    return Liste_Passages_0
-#
-# ======================================================================
-#
+    def update_run_params(self, INFO, niter, Nom_Co_Mail_N, Nom_Co_Mail_NP1,
+                          maillage_np1, maillage_np1_nom_med, Nom_Co_Mail_NP1_ANNEXE,
+                          Rep_Calc_HOMARD_local, Rep_Calc_HOMARD_global, fic_homard_niterp1,
+                          unite_fichier_homard_vers_aster, liste_champs):
+        """Mise a jour de la liste des passages
+
+        Arguments:
+            niter : numero d'iteration de depart
+            Nom_Co_Mail_N : Nom du concept du maillage n
+            Nom_Co_Mail_NP1 : Nom du concept du maillage n+1
+            maillage_np1 : concept ASTER du dernier maillage adapte
+            maillage_np1_nom_med : Nom MED du dernier maillage adapte
+            Nom_Co_Mail_NP1_ANNEXE : Nom du concept du maillage n+1 annexe
+            Rep_Calc_HOMARD_local : répertoire local de calcul de HOMARD
+            Rep_Calc_HOMARD_global : répertoire global de calcul de HOMARD
+            fic_homard_niterp1 : fichier HOMARD n+1
+            unite_fichier_homard_vers_aster : unite du fichier d'ASTER vers HOMARD
+            liste_champs : liste des champs definis
+        """
+        if INFO >= 3:
+            print("Dans update_run_params, numero d'iteration", niter)
+
+        # A.1. Une nouvelle iteration
+        #      On emet une alarme si il existe deja un cas pour etre certain
+        #      que l'utilisateur ne s'est pas trompe dans l'enchainement
+        #
+        if niter == 0:
+        #
+        # A.1.1. On stocke tous les cas deja enregistres
+        #        On emet une alarme si il existe deja un cas pour etre certain
+        #        que l'utilisateur ne s'est pas trompe dans l'enchainement
+            for dico in self._run_params:
+                UTMESS("A", 'HOMARD0_9', valk=(Nom_Co_Mail_N, Nom_Co_Mail_NP1,
+                    dico["Maillage_NP1"], dico["Maillage_0"]), vali=dico["niter"] + 1)
+
+            dico = {}
+            dico["Maillage_0"] = Nom_Co_Mail_N
+            dico["Maillage_NP1"] = Nom_Co_Mail_NP1
+            assert Nom_Co_Mail_NP1 == maillage_np1.getName()
+            self.store_object(maillage_np1) #XXX
+            dico["maillage_np1_nom_med"] = maillage_np1_nom_med
+            dico["Maillage_NP1_ANNEXE"] = Nom_Co_Mail_NP1_ANNEXE
+            dico["Rep_Calc_HOMARD_local"] = Rep_Calc_HOMARD_local
+            dico["Rep_Calc_HOMARD_global"] = Rep_Calc_HOMARD_global
+            dico["niter"] = niter
+            dico["fic_homard_niterp1"] = fic_homard_niterp1
+            dico["unite_fichier_homard_vers_aster"] = unite_fichier_homard_vers_aster
+            dico["liste_champs"] = self.store_fields_data(liste_champs) #XXX
+            self._run_params.append(dico)
+            if INFO >= 3:
+                print(".. Nouveau dico", dico)
+        #
+        # A.2. Modification du cas en cours
+        #
+        else:
+            for dico in self._run_params:
+                if dico["Maillage_NP1"] == Nom_Co_Mail_N:
+                    dico["Maillage_NP1"] = Nom_Co_Mail_NP1
+                    assert Nom_Co_Mail_NP1 == maillage_np1.getName()
+                    self.store_object(maillage_np1) #XXX
+                    dico["maillage_np1_nom_med"] = maillage_np1_nom_med
+                    dico["Maillage_NP1_ANNEXE"] = Nom_Co_Mail_NP1_ANNEXE
+                    dico["niter"] = niter
+                    dico["fic_homard_niterp1"] = fic_homard_niterp1
+                    dico["unite_fichier_homard_vers_aster"] = unite_fichier_homard_vers_aster
+                    dico["liste_champs"] = self.store_fields_data(liste_champs) #XXX
+                    if INFO >= 3:
+                        print(".. Nouveau dico", dico)
 
 
 def argument_maillage(INFO, args, mot_cle, mode_homard):
@@ -213,7 +314,7 @@ def argument_maillage(INFO, args, mot_cle, mode_homard):
     dico : dictionnaire pour ce maillage (cf. 3)
     """
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("\nDans argument_maillage, mode_homard =", mode_homard)
         print("Dans argument_maillage, mot_cle     =", mot_cle)
 #
@@ -233,7 +334,7 @@ def argument_maillage(INFO, args, mot_cle, mode_homard):
             else:
                 dico["Action"] = "mot_cle"
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("dico =", dico)
 #
     return dico
@@ -288,7 +389,7 @@ def argument_pilotage(INFO, args):
                     l_aux.append(composante)
             dico["COMPOSANTE"] = l_aux
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("dico =", dico)
 #
     return dico
@@ -311,7 +412,7 @@ def argument_champ(INFO, le_champ, usage_champ, iaux):
     iaux : numero du champ effectivement retenu
     """
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("\nDans argument_champ, le_champ =", le_champ)
         print("Dans argument_champ, usage_champ =", usage_champ)
         print("Dans argument_champ, iaux =", iaux)
@@ -388,7 +489,7 @@ def argument_champ(INFO, le_champ, usage_champ, iaux):
     dico["NOM_CHAM_MED"] = nom_cham_med_fichier
         # print "==> dico[\"NOM_CHAM_MED\"] =", dico["NOM_CHAM_MED"]
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("dico =", dico)
 #
     return dico, iaux
@@ -423,7 +524,7 @@ def argument_zone(INFO, args):
                 dico[aux] = zone[aux]
         # print dico
         liste_zones.append(dico)
-        if (INFO >= 3):
+        if INFO >= 3:
             print("dico =", dico)
 #
     return liste_zones
@@ -466,7 +567,7 @@ def argument_frontiere_analytique(INFO, args):
         dico = {}
         for aux in l_aux:
             dico[aux] = frontiere[aux]
-        if (INFO >= 3):
+        if INFO >= 3:
             print("dico =", dico)
         liste_front_analytiques.append(dico)
 #
@@ -494,7 +595,7 @@ def argument_historique(INFO, args):
             if (args.get(mot_cle) is not None):
                 dico_unites[mot_cle] = args.get(mot_cle)
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("dico_unites =", dico_unites)
 #
     return dico_unites
@@ -550,7 +651,7 @@ def fichier_echange_unite(INFO, numero_passage_fonction):
     unite_fichier_homard_vers_aster : unite du fichier d'ASTER vers HOMARD
     """
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("\nDans fichier_echange_unite, numero_passage_fonction =", numero_passage_fonction)
 #
 # A.1. ==> D'ASTER vers HOMARD
@@ -584,7 +685,7 @@ def fichier_echange_nom(INFO, unite, Rep_Calc_ASTER):
     fichier : nom du fichier associe a l'unite
     """
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("\nDans fichier_echange_nom, unite =", unite)
 #
     saux = "fort.%d" % unite
@@ -609,7 +710,7 @@ def champ_imprime_0(INFO, dico_pilo, liste_champs):
     liste_champs_imprime : liste des champs imprimes
     """
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("\nDans champ_imprime_0, dico_pilo =", dico_pilo)
 #
 # A.1. Le champ de pilotage est-il deja imprime ?
@@ -624,7 +725,7 @@ def champ_imprime_0(INFO, dico_pilo, liste_champs):
         chp_pilo_est_deja_imprime = 1
         l_aux = []
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("\nchp_pilo_est_deja_imprime =", chp_pilo_est_deja_imprime)
 #
 # A.2. Parcours des champs definis
@@ -671,7 +772,7 @@ def champ_imprime_0(INFO, dico_pilo, liste_champs):
                     dico_pilo["NOM_CHAM_MED"] = dico["NOM_CHAM_MED"]
                     chp_pilo_est_deja_imprime = 1
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("\nFin de la boucle .. chp_pilo_est_deja_imprime =", chp_pilo_est_deja_imprime)
 #
 # A.3. Si le champ de pilotage de l'adaptation n'a pas ete repere comme champ a mettre a jour,
@@ -709,7 +810,7 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
     dico_configuration : dictionnaire decrivant le fichier de configuration de HOMARD
     """
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("\nPassage dans cree_configuration")
 #
     dico_configuration = {}
@@ -822,7 +923,7 @@ def cree_configuration(INFO, args, Rep_Calc_ASTER, mode_homard, VERSION_HOMARD, 
                 l_aux = dico_configuration["Champs_supplementaires"]
                 l_aux.append(dico_aux)
             dico_configuration["Champs_supplementaires"] = l_aux
-    if (INFO >= 3):
+    if INFO >= 3:
         if "Champs_supplementaires" in dico_configuration:
             print("dico_configuration[Champs_supplementaires] =", dico_configuration["Champs_supplementaires"])
 #
@@ -913,7 +1014,7 @@ def file_remove(INFO, mode_homard, Rep_Calc_HOMARD_global, fichier_aster_vers_ho
         fic = os.path.join(Rep_Calc_HOMARD_global, fic_homard_niterp1)
         l_aux.remove(fic)
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print(".. Liste des fichiers a supprimer =", l_aux)
 #
     return l_aux
@@ -958,7 +1059,7 @@ def post_traitement(INFO, mode_homard, dico_configuration, Rep_Calc_ASTER):
             erreur : 0, si OK, !=0 si probleme
     """
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("\nPassage dans post_traitement")
 #
     d_aux = {}
@@ -1010,7 +1111,7 @@ def post_traitement(INFO, mode_homard, dico_configuration, Rep_Calc_ASTER):
 #
 # 3. Analyse de la liste standard
 #
-        if (INFO >= 3):
+        if INFO >= 3:
             if (mode_homard in ["ADAP", "MODI"]):
                 nomfic = "Liste." + str_niter_vers_niterp1
                 fic = os.path.join(Rep_Calc_HOMARD_global, nomfic)
@@ -1021,9 +1122,6 @@ def post_traitement(INFO, mode_homard, dico_configuration, Rep_Calc_ASTER):
                     fichier.close()
                     for ligne in les_lignes:
                         print(ligne[:-1])
-            else:
-                print("\nLe fichier", fic, "est inconnu.")
-#
 #
         break
 #
@@ -1034,6 +1132,8 @@ def post_traitement(INFO, mode_homard, dico_configuration, Rep_Calc_ASTER):
 #
 # ======================================================================
 #
+
+ginfos = HomardInfo()
 
 
 def macr_adap_mail_ops(self,
@@ -1050,12 +1150,12 @@ def macr_adap_mail_ops(self,
 
     2. Les caracteristiques d'un passage sont conservees dans un dictionnaire. Il y a autant de
        dictionnaires que de sollicitations pour une serie d'adaptation. L'ensemble de ces dictionnaires
-       est conserve dans la liste Liste_Passages. Cette liste est necessairement globale pour pouvoir
+       est conserve dans la liste `run_params`. Cette liste est necessairement globale pour pouvoir
        la retrouver a chaque nouveau passage.
        Description du dictionnaire de passages :
           dico["Maillage_0"]             = o ; string ; nom du concept du maillage initial de la serie d'adaptation
           dico["Maillage_NP1"]           = o ; string ; nom du concept du dernier maillage adapte
-          dico["maillage_np1"]           = o ; string ; Concept ASTER du dernier maillage adapte
+          dico["maillage_np1"]           = o ; concept ASTER du dernier maillage adapte
           dico["maillage_np1_nom_med"]   = o ; string ; Nom MED du dernier maillage adapte
           dico["Rep_Calc_HOMARD_global"] = o ; string ; Nom global du répertoire de calcul pour HOMARD
           dico["Rep_Calc_HOMARD_local"]  = o ; string ; Nom local du répertoire de calcul pour HOMARD
@@ -1111,9 +1211,6 @@ def macr_adap_mail_ops(self,
     import aster_core
     import aster
 #
-    global Liste_Passages
-    global numero_passage_fonction
-#
 #====================================================================
 # 1. Prealables
 #====================================================================
@@ -1131,17 +1228,14 @@ def macr_adap_mail_ops(self,
     LIRE_CHAMP = self.get_cmd("LIRE_CHAMP")
 #
     Rep_Calc_ASTER = os.getcwd()
-    if (INFO >= 3):
+    if INFO >= 3:
         print("Contenu du répertoire de calcul d'Aster", Rep_Calc_ASTER)
         print(os.listdir(Rep_Calc_ASTER))
 #
 # 1.3. ==> Numéro du passage dans cette macro
 #
-    try:
-        numero_passage_fonction = numero_passage_fonction + 1
-    except:
-        numero_passage_fonction = 1
-    if (INFO >= 4):
+    numero_passage_fonction = ginfos.new_run()
+    if INFO >= 4:
         print("numero_passage_fonction =", numero_passage_fonction)
 #
 # 1.4. ==> Fichier d'archivage
@@ -1170,18 +1264,17 @@ def macr_adap_mail_ops(self,
         fichier_archive = os.path.join(Rep_Calc_ASTER, "pick.homard.tar")
 #
     fichier_archive = os.path.normpath(fichier_archive)
-    if (INFO >= 4):
+    if INFO >= 4:
         print("fichier_archive =", fichier_archive)
         # os.system("ls -la "+fichier_archive)
 #
 # 1.5. ==> Au tout premier passage, initialisation de la liste des passages
 #
     if numero_passage_fonction == 1:
-        Liste_Passages = liste_passages_init(
-            INFO, fichier_archive, Rep_Calc_ASTER)
+        ginfos.init_run_params(INFO, fichier_archive, Rep_Calc_ASTER)
 #
-    if (INFO >= 3):
-        print("1.4. Liste_Passages =", Liste_Passages)
+    if INFO >= 3:
+        print("1.4. run_params =", ginfos.run_params)
 #
 # 1.6. ==> Initialisations
 #
@@ -1218,7 +1311,7 @@ def macr_adap_mail_ops(self,
         else:
             mode_homard = "ADAP"
 #
-        if (INFO >= 3):
+        if INFO >= 3:
             print("2.1.1. mode_homard =", mode_homard)
 #
 # 2.1.2. ==> Les concepts "maillage"
@@ -1384,10 +1477,10 @@ def macr_adap_mail_ops(self,
     if (mode_homard in ("ADAP", "LECT")):
 #
         # print ".. Nom_Co_Mail_N =", Nom_Co_Mail_N
-        for dico in Liste_Passages:
+        for dico in ginfos.run_params:
             # print ".... dico :", dico
 #
-            if (dico["Maillage_NP1"] == Nom_Co_Mail_N):
+            if dico["Maillage_NP1"] == Nom_Co_Mail_N:
 #
                 Rep_Calc_HOMARD_local = dico["Rep_Calc_HOMARD_local"]
                 Rep_Calc_HOMARD_global = dico["Rep_Calc_HOMARD_global"]
@@ -1398,15 +1491,17 @@ def macr_adap_mail_ops(self,
                 fic_homard_niterp1 = dico["fic_homard_niterp1"]
 #
                 if (mode_homard == "LECT"):
-                    maillage_n = dico["maillage_np1"]
+                    maillage_n = ginfos.get_object(Nom_Co_Mail_N)
                     maillage_n_nom_med = maillage_np1_nom_med
-                    unite_fichier_homard_vers_aster = dico[
-                        "unite_fichier_homard_vers_aster"]
-                    liste_champs = dico["liste_champs"]
+                    unite_fichier_homard_vers_aster = dico["unite_fichier_homard_vers_aster"]
+                    # liste_champs = dico["liste_champs"]
+                    liste_champs = ginfos.get_fields_data(dico["liste_champs"])
 #
-                if (INFO >= 3):
+                if INFO >= 3:
                     print(".... ==> répertoire de calcul de HOMARD :", Rep_Calc_HOMARD_local)
                     print(".... ==> niter :", niter)
+
+                break
 #
 # 3.2.3. Le répertoire pour homard
 #        Attention : on ne fait cette creation qu'une seule fois par cas
@@ -1418,6 +1513,11 @@ def macr_adap_mail_ops(self,
 #
         if (niter == 0):
 #
+            # Hmmm, the same mesh object but niter=0
+            if os.path.isdir(Rep_Calc_HOMARD_global):
+                UTMESS("A", 'HOMARD0_11',
+                       valk=(Nom_Co_Mail_N, Rep_Calc_HOMARD_global))
+                shutil.rmtree(Rep_Calc_HOMARD_global)
             try:
                 os.mkdir(Rep_Calc_HOMARD_global)
             except os.error as codret_partiel:
@@ -1429,7 +1529,7 @@ def macr_adap_mail_ops(self,
 #
             if not os.path.isdir(Rep_Calc_HOMARD_global):
                 UTMESS("F", 'HOMARD0_8', valk=Rep_Calc_HOMARD_global)
-            if (INFO >= 3):
+            if INFO >= 3:
                 print("Contenu du répertoire de calcul de HOMARD", Rep_Calc_HOMARD_local)
                 print(os.listdir(Rep_Calc_HOMARD_global))
 #
@@ -1545,7 +1645,7 @@ def macr_adap_mail_ops(self,
 #
         donnees_homard = creation_donnees_homard.creation_donnees_homard(
             self.name, args, dico_configuration)
-        if (INFO >= 3):
+        if INFO >= 3:
             donnees_homard.quel_mode()
         fic_homard_niter, fic_homard_niterp1 = donnees_homard.creation_configuration(
         )
@@ -1561,7 +1661,7 @@ def macr_adap_mail_ops(self,
 # 5.4. ==> Impression eventuelle des fichiers crees
 #
         # print "Repertoire ", Rep_Calc_HOMARD_global
-        if (INFO >= 4):
+        if INFO >= 4:
             file_print(Rep_Calc_HOMARD_global)
 #    if ( mode_homard == "ADAP" ) :
 #      if args.has_key("MAJ_CHAM") :
@@ -1676,11 +1776,9 @@ def macr_adap_mail_ops(self,
 #
     if (mode_homard in ["ADAP", "MODI", "LECT"]):
 #
-        # print "liste_champs =", liste_champs
         for dico in liste_champs:
 #
             usage_champ = dico["Usage_champ"]
-            # print ".... Usage_champ :", usage_champ
             if (usage_champ == "MAJ_CHAM"):
                 nom_cham = dico["CHAM_MAJ"]
             elif (usage_champ == "ADD_CHAM"):
@@ -1688,7 +1786,6 @@ def macr_adap_mail_ops(self,
             else:
                 nom_cham = None
             if (nom_cham is not None):
-                # print ".... dico :", dico
 #
 # 8.2.1. ==> Constantes
 #
@@ -1715,14 +1812,7 @@ def macr_adap_mail_ops(self,
 #
                     if (type_cham[0:2] == "EL"):
                         garder_fic_homard_aster = 1
-                        a_lire = 0
                     else:
-                        a_lire = 1
-                    if (a_lire):
-                        # print "MAILLAGE =", maillage_np1
-                        # print "NOM_MAIL_MED =", maillage_np1_nom_med
-                        # print "NOM_CHAM_MED =", dico["NOM_CHAM_MED"]
-                        # print "TYPE_CHAM =", type_cham
                         le_champ = LIRE_CHAMP(
                             UNITE=unite_fichier_homard_vers_aster, FORMAT="MED",
                             MAILLAGE=maillage_np1, NOM_MAIL_MED=maillage_np1_nom_med,
@@ -1736,15 +1826,6 @@ def macr_adap_mail_ops(self,
                 else:
 #
                     if (type_cham[0:2] == "EL"):
-                        a_lire = 1
-                    else:
-                        a_lire = 0
-                    if (a_lire):
-                        # print "MODELE =", args.get("MODELE")
-                        # print "MAILLAGE =", maillage_n
-                        # print "NOM_MAIL_MED =", maillage_n_nom_med
-                        # print "NOM_CHAM_MED =", dico["NOM_CHAM_MED"]
-                        # print "TYPE_CHAM =", type_cham
                         le_champ = LIRE_CHAMP(
                             UNITE=unite_fichier_homard_vers_aster, FORMAT="MED",
                             MAILLAGE=maillage_n, NOM_MAIL_MED=maillage_n_nom_med, MODELE=args.get(
@@ -1761,12 +1842,11 @@ def macr_adap_mail_ops(self,
     if (mode_homard == "ADAP"):
         # print ".. Debut de 8."
 #
-        Liste_Passages = liste_passages_maj(
-            INFO, Liste_Passages, niter, Nom_Co_Mail_N, Nom_Co_Mail_NP1, maillage_np1, maillage_np1_nom_med,
-            Nom_Co_Mail_NP1_ANNEXE, Rep_Calc_HOMARD_local, Rep_Calc_HOMARD_global, fic_homard_niterp1, unite_fichier_homard_vers_aster, liste_champs)
-#
-        # print "Apres 9. Liste_Passages =", Liste_Passages
-        # print "niter =", niter, ", Rep_Calc_HOMARD_global =", Rep_Calc_HOMARD_global
+        ginfos.update_run_params(INFO, niter, Nom_Co_Mail_N, Nom_Co_Mail_NP1,
+                                 maillage_np1, maillage_np1_nom_med,
+                                 Nom_Co_Mail_NP1_ANNEXE, Rep_Calc_HOMARD_local,
+                                 Rep_Calc_HOMARD_global, fic_homard_niterp1,
+                                 unite_fichier_homard_vers_aster, liste_champs)
 #
 #====================================================================
 # 10. Menage
@@ -1789,7 +1869,7 @@ def macr_adap_mail_ops(self,
 #
     for fic in l_aux:
         if os.path.isfile(fic):
-            if (INFO >= 3):
+            if INFO >= 3:
                 print("==> Destruction du fichier", fic)
             try:
                 os.remove(fic)
@@ -1814,25 +1894,13 @@ def macr_adap_mail_ops(self,
 #====================================================================
         # print ".. Debut de 10."
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print(os.listdir(Rep_Calc_ASTER))
         print("Archivage dans", fichier_archive)
 #
 # 11.1. Archivage de chacun des passages
 #
-    laux = []
-    for dico in Liste_Passages:
-#   Memorisation du nom du répertoire local pour ce cas d'adaptation
-        Rep_Calc_HOMARD_local = dico["Rep_Calc_HOMARD_local"]
-        laux.append(Rep_Calc_HOMARD_local)
-# 11.1.2. Creation du fichier pour ce passage
-# Remarque : c'est fait a chaque répertoire pour faciliter le decodage
-# ensuite
-        Rep_Calc_HOMARD_global = dico["Rep_Calc_HOMARD_global"]
-        fic = os.path.join(Rep_Calc_HOMARD_global, "pick.1")
-        file = open(fic, "wb")
-        pickle.dump(Liste_Passages, file)
-        file.close()
+    laux = ginfos.save_runs()
 #
 # 11.2. Si on a au moins un cas d'adaptation, archivage
 #
@@ -1846,7 +1914,7 @@ def macr_adap_mail_ops(self,
 #
         file = tarfile.open(fichier_archive, "w")
         for rep in laux:
-            if (INFO >= 3):
+            if INFO >= 3:
                 print(".. Insertion de", rep)
             file.add(rep)
         file.close()
@@ -1867,7 +1935,7 @@ def macr_adap_mail_ops(self,
 #
             if os.path.isfile(fichier_hist_out):
                 os.remove(fichier_hist_out)
-            if (INFO >= 3):
+            if INFO >= 3:
                 print("Copie de", fichier_archive, "vers", fichier_hist_out)
             shutil.copyfile(fichier_archive, fichier_hist_out)
 #
@@ -1875,7 +1943,7 @@ def macr_adap_mail_ops(self,
 #  C'est fini !
 #====================================================================
 #
-    if (INFO >= 3):
+    if INFO >= 3:
         print("A la fin, contenu du repertoire de calcul ASTER")
         print(os.listdir(Rep_Calc_ASTER))
 #

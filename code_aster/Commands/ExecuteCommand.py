@@ -69,7 +69,7 @@ from ..Cata import Commands
 from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
-from ..Objects import DataStructure, ResultNaming
+from ..Objects import DataStructure
 from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
 from ..Utilities import deprecated, import_object, no_new_attributes
 from ..Utilities.outputs import (command_header, command_result,
@@ -131,7 +131,7 @@ class ExecuteCommand(object):
         keywords = mixedcopy(kwargs)
         cmd.keep_caller_infos(keywords)
         timer = ExecutionParameter().timer
-        if cls.command_name not in ("DEBUT", "POURSUITE", "FIN"):
+        if cmd.command_name not in ("DEBUT", "POURSUITE", "FIN"):
             check_jeveux()
         if cmd._op is None:
             logger.debug("ignore command {0}".format(cmd.name))
@@ -139,8 +139,12 @@ class ExecuteCommand(object):
 
         ExecuteCommand.level += 1
         cmd._counter = ExecutionParameter().incr_command_counter()
+        timer.Start(str(cmd._counter), name=cmd.command_name,
+                    hide=not cmd.show_syntax())
         timer.Start(" . check syntax", num=1.1e6)
         cmd.adapt_syntax(keywords)
+        cmd._cata.addDefaultKeywords(keywords)
+        remove_none(keywords)
         try:
             cmd.check_syntax(keywords)
         except CheckerError as exc:
@@ -157,7 +161,6 @@ class ExecuteCommand(object):
         if hasattr(cmd._result, "userName"):
             cmd._result.userName = cmd.result_name
 
-        timer.Start(str(cmd._counter), name=cmd.command_name)
         cmd.print_syntax(keywords)
         try:
             cmd.exec_(keywords)
@@ -243,8 +246,9 @@ class ExecuteCommand(object):
             self._caller["identifier"]))
         logger.info(command_separator())
         logger.info(command_header(self._counter, filename, lineno))
+        max_print = ExecutionParameter().get_option("max_print")
         logger.info(command_text(self.name, printed_args, self.result_name,
-                                 limit=500))
+                                 limit=max_print))
 
     def print_result(self):
         """Print an echo of the result of the command."""
@@ -270,7 +274,9 @@ class ExecuteCommand(object):
                 in place.
         """
         logger.debug("checking syntax of {0}...".format(self.name))
-        checkCommandSyntax(self._cata, keywords, in_place=True)
+        max_check = ExecutionParameter().get_option("max_check")
+        checkCommandSyntax(self._cata, keywords, add_default=False,
+                           max_check=max_check)
 
     def create_result(self, keywords):
         """Create the result before calling the *exec* command function
@@ -295,7 +301,7 @@ class ExecuteCommand(object):
             keywords (dict): User's keywords.
         """
         syntax = CommandSyntax(self.name, self._cata)
-        syntax.define(keywords)
+        syntax.define(keywords, add_default=False)
         # set result and type names
         if self._result is None or type(self._result) is int:
             type_name = ""
@@ -305,9 +311,12 @@ class ExecuteCommand(object):
             result_name = self._result.getName()
         syntax.setResult(result_name, type_name)
 
+        timer = ExecutionParameter().timer
         try:
+            timer.Start(" . fortran", num=1.2e6)
             self._call_oper(syntax)
         finally:
+            timer.Stop(" . fortran")
             syntax.free()
 
     def post_exec(self, keywords):
@@ -442,13 +451,9 @@ class ExecuteMacro(ExecuteCommand):
             logger.info(command_result(self._counter, self.name,
                                        self._result))
         if self._result_names:
-            names = []
             for name in self._result_names:
-                res = self._add_results.get(name)
-                resname = res.getName() if res is not None else "?"
-                names.append("{0} {1}".format(name, decorate_name(resname)))
-            logger.info(command_result(self._counter, self.name,
-                                       names))
+                logger.info(command_result(self._counter, self.name,
+                                           self._add_results.get(name)))
         self._print_timer()
 
     def exec_(self, keywords):
@@ -489,7 +494,13 @@ class ExecuteMacro(ExecuteCommand):
             result (*DataStructure*): Result object to register.
             target (:class:`CO`): CO object.
         """
-        self._add_results[target.getName()] = result
+        name = target.getName()
+        orig = result.userName
+        result.userName = name
+        self._add_results[name] = result
+        if ExecutionParameter().option & Options.ShowChildCmd:
+            logger.info("Intermediate result '{0}' will be available as '{1}'."
+                        .format(orig, name))
 
     @property
     def sdprods(self):

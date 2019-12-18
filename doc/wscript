@@ -35,6 +35,9 @@ def options(self):
                     help='Force documentation support.'
                          'NB: The documentation build must be explicitly '
                          ' called by running `waf doc|doc_debug`.')
+    group.add_option('--enable-pdf', action='store_true', default=None,
+                    dest='enable_pdf',
+                    help='Build pdf documentation.')
 
 def configure(self):
     opts = self.options
@@ -49,20 +52,33 @@ def configure(self):
     else:
         self.env.BUILD_DOC = True
 
-def build_doc(self):
-    env = self.all_envs[self.variant]
+
+def _setup_doc(self):
     self.path.make_node('_static').mkdir()
     out = self.path.get_bld().abspath()
-    if not env.BUILD_DOC:
-        raise Errors.ConfigurationError("Documentation build not configure. "
-            "Please re-run 'waf configure' with '--enable-doc' to "
-            "force documentation support.")
     Logs.info("building documentation in {0}".format(out))
 
     files = self.path.parent.find_dir('code_aster').ant_glob('**/*.py')
     files.extend(self.path.ant_glob('**/*.rst'))
     files.extend(self.path.ant_glob('conf.py'))
     files.extend(self.path.ant_glob('_static/mystyles.css'))
+    return out, files
+
+
+def build_doc(self):
+    env = self.all_envs[self.variant]
+    if not env.BUILD_DOC:
+        raise Errors.ConfigurationError("Documentation build not configure. "
+            "Please re-run 'waf configure' with '--enable-doc' to "
+            "force documentation support.")
+    build_html(self)
+    if self.options.enable_pdf:
+        build_pdf(self)
+
+
+def build_html(self):
+    env = self.all_envs[self.variant]
+    out, files = _setup_doc(self)
 
     cmd = (". ${{ASTERDATADIR}}/profile.sh ; "
            "BUILDDIR={0} ${{SPHINX_BUILD}} ${{SPHINX_ARGS}} "
@@ -74,5 +90,23 @@ def build_doc(self):
         cwd    = self.path.abspath(),
         source = files,
         target = self.path.find_or_declare('html/index.html'),
+        install_path = env.HTMLDIR,
+    )
+
+
+def build_pdf(self):
+    env = self.all_envs[self.variant]
+    out, files = _setup_doc(self)
+
+    cmd = (". ${{ASTERDATADIR}}/profile.sh ; "
+           "BUILDDIR={0} ${{SPHINX_BUILD}} ${{SPHINX_ARGS}} "
+           "-b latex -d {1} . {2} && cd {2} && make"
+           .format(self.path.parent.get_bld().abspath(),
+                   osp.join(out, "doctrees"), osp.join(out, "latex")))
+    self(
+        rule   = "bash -c '{0}'".format(cmd),
+        cwd    = self.path.abspath(),
+        source = files,
+        target = self.path.find_or_declare('latex/code_aster.pdf'),
         install_path = env.HTMLDIR,
     )
