@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,29 +17,29 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'), 
-     );
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'),
+     )
 
-mail = LIRE_MAILLAGE(FORMAT="ASTER",VERI_MAIL=_F(VERIF='OUI'));
+mail = LIRE_MAILLAGE(FORMAT="ASTER",VERI_MAIL=_F(VERIF='OUI'))
 
 mail=DEFI_GROUP(reuse = mail,
                     MAILLAGE=mail,
                     CREA_GROUP_NO=(
                         _F(GROUP_MA=('PBASE',)),
                   ),
-           );
+           )
 mail =DEFI_GROUP(reuse = mail,
                      MAILLAGE=mail,
                      CREA_GROUP_MA=(
-                         _F(NOM= 'NISFS', UNION=('SURFBAS2','IFLUSTR2',),),  # Noeuds Joints Fondation        
+                         _F(NOM= 'NISFS', UNION=('SURFBAS2','IFLUSTR2',),),  # Noeuds Joints Fondation
                                    ),
-                    ); 
+                    )
 
 mat1= DEFI_MATERIAU( ELAS=_F( E= 3.6E+10,
                               RHO= 2400.,
                               NU= 0.2,
                             ),
-                       ) ;
+                       )
 
 Npf = 205
 
@@ -69,9 +69,9 @@ PRE_SEISME_NONL(
                                                      GROUP_NO_CENT = 'PBASE',
                                                      CALC_MISS_OPTION = 'ISFS',
                                                     ),
-                 AFFE_MODELE = _F( 
+                 AFFE_MODELE = _F(
                                    MAILLAGE=mail,
-                                   AFFE=( 
+                                   AFFE=(
                                           _F(GROUP_MA=( 'STRVOU2' ),
                                              PHENOMENE= 'MECANIQUE',
                                              MODELISATION= '3D'),
@@ -85,7 +85,7 @@ PRE_SEISME_NONL(
                                ),
 
                 # Condition aux limites pour le calcul des modes de corps rigide d'ISS
-                AFFE_CHAR_MECA = _F( 
+                AFFE_CHAR_MECA = _F(
                                      #MODELE= MODEL1,
                                      DDL_IMPO=_F(
                                                  GROUP_NO = 'PBASE',
@@ -103,11 +103,11 @@ PRE_SEISME_NONL(
                 AFFE_CARA_ELEM = _F(
                                      #MODELE= MODEL1,
                                      DISCRET=(
-                                               _F(GROUP_MA=('PBASE'), 
+                                               _F(GROUP_MA=('PBASE'),
                                                   CARA='K_TR_D_N',
                                                   VALE=(0.0,0.0,0.0,0.0,0.0,0.0,),
                                                   ),
-                                               _F(GROUP_MA=('PFONDAT'), 
+                                               _F(GROUP_MA=('PFONDAT'),
                                                   CARA='K_TR_D_N',
                                                   VALE=(kxp, kyp,kzp,1E18,1E18,1E18),
                                                   ),
@@ -116,12 +116,12 @@ PRE_SEISME_NONL(
 
                 AFFE_MATERIAU = _F(
                                    MAILLAGE=mail,
-                                   AFFE=_F( 
+                                   AFFE=_F(
                                            GROUP_MA= ('STRVOU2'),
                                            MATER= mat1 )
                                     ),
 
-);
+)
 
 
 TABSOL = DEFI_SOL_MISS(
@@ -151,7 +151,7 @@ TABSOL = DEFI_SOL_MISS(
       _F(SUBSTRATUM="OUI", NUME_MATE=2,),
    ),
    INFO=2,
-);
+)
 '''
 CALC_MISS(TYPE_RESU='FICHIER',
           PROJET='FDLV112G',
@@ -176,10 +176,10 @@ CALC_MISS(TYPE_RESU='FICHIER',
                        ISSF='OUI',
                        ALGO='REGU',
                        OFFSET_MAX=1000,
-                       OFFSET_NB=5000,),);
-                       
+                       OFFSET_NB=5000,),)
+
 '''
-                     
+
 CALC_MISS(TYPE_RESU='FICHIER_TEMPS',
           PROJET='FDLV112G2',
           VERSION='V6.6',
@@ -206,22 +206,22 @@ CALC_MISS(TYPE_RESU='FICHIER_TEMPS',
                        ISSF='OUI',
                        ALGO='REGU',
                        OFFSET_MAX=1000,
-                       OFFSET_NB=5000,),);                       
+                       OFFSET_NB=5000,),)
 
-NDDLGEN = NUME_DDL_GENE( BASE= BAMO, STOCKAGE= 'PLEIN',);
+NDDLGEN = NUME_DDL_GENE( BASE= BAMO, STOCKAGE= 'PLEIN',)
 
 MATK = LIRE_IMPE_MISS(UNITE_RESU_IMPE=35, INST_EXTR=0.0,
                       SYME='OUI',
-                      BASE=BAMO, NUME_DDL_GENE=NDDLGEN);
+                      BASE=BAMO, NUME_DDL_GENE=NDDLGEN)
 
 MAEL=MACR_ELEM_DYNA(  BASE_MODALE=BAMO,
                        MATR_IMPE_RIGI = MATK,
                        SANS_GROUP_NO='NISFS',
-                       );
-                       
-IMPR_CO(CHAINE='MAEL    .LINO', UNITE = 6);
+                       )
 
-PRE_SEISME_NONL( 
+IMPR_CO(CHAINE='MAEL    .LINO', UNITE = 6)
+
+PRE_SEISME_NONL(
                  RESULTAT = _F(
                                 MODELE = CO('MODELB'),
                                 MAILLAGE = CO('MAILB'),
@@ -251,11 +251,11 @@ PRE_SEISME_NONL(
                                              MODELISATION = 'DIS_TR'),
                                         ),
                                 ),
-    
+
                  AFFE_CARA_ELEM = _F(
                                       MODELE=modele,
                                       DISCRET=(
-                                                _F(GROUP_MA=('PFONDAT'), 
+                                                _F(GROUP_MA=('PFONDAT'),
                                                    CARA='K_TR_D_N',
                                                    VALE=(0.0, 0.0,0.0,0.0,0.0,0.0),
                                                    ),
@@ -264,63 +264,63 @@ PRE_SEISME_NONL(
 
                  AFFE_MATERIAU = _F(
                                       MAILLAGE=mail,
-                                      AFFE=_F( 
+                                      AFFE=_F(
                                               GROUP_MA= ('STRVOU2'),
-                                              MATER= mat1 
+                                              MATER= mat1
                                               )
                                     ),
 
-           );
-           
-#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(MAILLAGE=MAILB));
- 
+           )
+
+#IMPR_RESU(FORMAT="RESULTAT",RESU=_F(MAILLAGE=MAILB))
+
 
 PESAX=AFFE_CHAR_MECA(MODELE=MODELB,
                     PESANTEUR=_F(GRAVITE=1.0,
-                                 DIRECTION=(-1.0,0.0,0.0,),),);
+                                 DIRECTION=(-1.0,0.0,0.0,),),)
 
 from fdlv112d import F_ACC_X
 acc_x = F_ACC_X()
 
 
 
-N=200 
+N=200
 dt=0.01
-TFIN=2.0                         
+TFIN=2.0
 
 linst = DEFI_LIST_REEL ( DEBUT = 0.,
                           INTERVALLE = (
-                                      _F( 
+                                      _F(
                                          JUSQU_A = (N-1)*dt,
                                          PAS=1*dt,
                                          ),
                                        ),
-                           );                           
-                      
+                           )
+
 
 ACCEX= CALC_FONCTION( COMB=_F( FONCTION = acc_x, COEF = 1.),
                         INTERPOL='LIN',
                         PROL_DROITE='LINEAIRE',
                         PROL_GAUCHE='LINEAIRE',
-                      LIST_PARA=linst);
-                      
+                      LIST_PARA=linst)
 
 
-vitex=CALC_FONCTION(INTEGRE=_F(FONCTION=ACCEX,));
 
-deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=vitex,));
+vitex=CALC_FONCTION(INTEGRE=_F(FONCTION=ACCEX,))
+
+deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=vitex,))
 
 deplxF = FORMULE(VALE='deplx0(INST)-(INST*deplx0(TFIN-dt)/(TFIN-dt))',
                  deplx0=deplx0,
                  TFIN=TFIN,
                  dt=dt,
                  NOM_PARA='INST',)
-            
+
 deplx=CALC_FONC_INTERP(FONCTION=deplxF, NOM_PARA = 'INST',
                         PROL_DROITE='CONSTANT',
                         PROL_GAUCHE='CONSTANT',
-                        LIST_PARA=linst);
-                        
+                        LIST_PARA=linst)
+
 dt=0.01
 
 N=131
@@ -329,13 +329,13 @@ L_INST=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(
                                    JUSQU_A=(N-1)*dt,
                                    PAS=dt,),
-                     );
-                     
+                     )
 
-                     
+
+
 FSEISX0=CALC_MISS(MODELE=MODELB, TYPE_RESU='CHARGE', #INFO=2,
                         FONC_SIGNAL=deplx,
-                        FREQ_MAX=25, 
+                        FREQ_MAX=25,
                         NOM_CMP='DX',
                         UNITE_RESU_FORC=28,
                         UNITE_RESU_IMPE=25,
@@ -343,9 +343,9 @@ FSEISX0=CALC_MISS(MODELE=MODELB, TYPE_RESU='CHARGE', #INFO=2,
                         NOEUD_AFFE=('N2591','N2592','N2593','N2594','N2595',
                                     'N2596','N2597','N2598','N2599','N2600',
                                     ),
-                        );
+                        )
 
-                        
+
 DYNA=DYNA_NON_LINE(MODELE=MODELB,
                  CHAM_MATER=CHMATB,
                  CARA_ELEM=ELEMB,
@@ -363,7 +363,7 @@ DYNA=DYNA_NON_LINE(MODELE=MODELB,
                            #MATRICE='TANGENTE',
                            REAC_INCR=0,REAC_ITER=0,
                            ),
-                 SCHEMA_TEMPS = _F(SCHEMA='HHT', 
+                 SCHEMA_TEMPS = _F(SCHEMA='HHT',
                                    #ALPHA=-0.0,
                                    ALPHA=-0.1,
                                    #ALPHA=-0.05,
@@ -373,27 +373,27 @@ DYNA=DYNA_NON_LINE(MODELE=MODELB,
                                 ITER_GLOB_MAXI = 20,
                                 ARRET='OUI',),
                  INCREMENT=_F(LIST_INST=L_INST,),
-                 #ARCHIVAGE=_F(PAS_ARCH=1,),             
-                          );
-                          
+                 #ARCHIVAGE=_F(PAS_ARCH=1,),
+                          )
+
 ax253i = RECU_FONCTION ( RESULTAT = DYNA, NOM_CHAM = 'ACCE',
                         INTERPOL='LIN',
                         PROL_DROITE='LINEAIRE',
                         PROL_GAUCHE='LINEAIRE',
-                        NOEUD = 'N253', NOM_CMP = 'DX', );
-                        
+                        NOEUD = 'N253', NOM_CMP = 'DX', )
+
 ax316i = RECU_FONCTION ( RESULTAT = DYNA, NOM_CHAM = 'ACCE',
                         INTERPOL='LIN',
                         PROL_DROITE='LINEAIRE',
                         PROL_GAUCHE='LINEAIRE',
-                        NOEUD = 'N316', NOM_CMP = 'DX', );
-                        
+                        NOEUD = 'N316', NOM_CMP = 'DX', )
+
 ax11i = RECU_FONCTION ( RESULTAT = DYNA, NOM_CHAM = 'ACCE',
                         INTERPOL='LIN',
                         PROL_DROITE='LINEAIRE',
                         PROL_GAUCHE='LINEAIRE',
-                        NOEUD = 'N11', NOM_CMP = 'DX', );
-                        
+                        NOEUD = 'N11', NOM_CMP = 'DX', )
+
 
 freqspec = DEFI_LIST_REEL ( DEBUT = 0.1,
                           INTERVALLE = (
@@ -410,42 +410,42 @@ freqspec = DEFI_LIST_REEL ( DEBUT = 0.1,
                                          NOMBRE = 65,
                                        ),
                                        ),
-                           );
+                           )
 
 
 sro_axi=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ax253i, AMOR_REDUIT=0.05,
                                   NORME=1.,
                                   LIST_FREQ = freqspec,
-                                 ),);
-                                 
+                                 ),)
+
 sro11xi=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ax11i, AMOR_REDUIT=0.05,
                                   NORME=1.,
                                   LIST_FREQ = freqspec,
-                                 ),);
-                                 
+                                 ),)
+
 sro316xi=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ax316i, AMOR_REDUIT=0.05,
                                   NORME=1.,
                                   LIST_FREQ = freqspec,
-                                 ),);
-                                 
+                                 ),)
+
 SACCEX=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ACCEX, AMOR_REDUIT=0.05,
                                   NORME=1.,
                                   LIST_FREQ = freqspec,
-                                 ),);
-                                 
+                                 ),)
+
 SACCEX0=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=acc_x, AMOR_REDUIT=0.05,
                                   NORME=1.,
                                   LIST_FREQ = freqspec,
-                                 ),);
-                                 
+                                 ),)
+
 IMPR_FONCTION( FORMAT='AGRAF',UNITE=21,
               COURBE=(
                       _F(FONCTION=ax253i),
                       _F(FONCTION=ax316i),
                       _F(FONCTION=ax11i),
                       ),
-             );
-             
+             )
+
 IMPR_FONCTION( FORMAT='AGRAF',UNITE=22,
               COURBE=(
                       _F(FONCTION=sro_axi),
@@ -454,14 +454,14 @@ IMPR_FONCTION( FORMAT='AGRAF',UNITE=22,
                       _F(FONCTION=SACCEX),
                       _F(FONCTION=SACCEX0),
                       ),
-             );                                 
-                                 
- 
+             )
+
+
 TEST_FONCTION(VALEUR=(
                       _F(VALE_CALC=4.684936613651,
                          VALE_REFE=4.885,
                          PRECISION=0.05,
-                         TOLE_MACHINE=3.2E-06,   # En attente issue24202 
+                         TOLE_MACHINE=3.2E-06,   # En attente issue24202
                          REFERENCE = 'AUTRE_ASTER',
                          VALE_PARA=1.00,
                          FONCTION=ax253i,
@@ -469,13 +469,13 @@ TEST_FONCTION(VALEUR=(
                       _F(VALE_CALC=14.93492844330,
                          VALE_REFE=17.40,
                          PRECISION=0.15,
-                         TOLE_MACHINE=3.E-06,   # En attente issue24202 
+                         TOLE_MACHINE=3.E-06,   # En attente issue24202
                          REFERENCE = 'AUTRE_ASTER',
                          VALE_PARA=(10.7, 0.05),
                          NOM_PARA=('FREQ', 'AMOR'),
                          FONCTION=sro_axi,
                          ),
                       ),
-              );
+              )
 
-FIN( );
+FIN( )
