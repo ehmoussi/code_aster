@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -377,7 +377,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_REFE=50.00000000000001,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,
-                   TOLE_MACHINE=5.E-6,),# ajustement pour clap0f0q
+                   TOLE_MACHINE=1.E-5,),# ajustement pour clap0f0q et scibian9
                 _F(NUME_ORDRE=4,
                    PARA='FREQ',
                    REFERENCE='SOURCE_EXTERNE',
@@ -386,7 +386,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_REFE=50.00000000000001,
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,
-                   TOLE_MACHINE=5.E-6,),# ajustement pour clap0f0q
+                   TOLE_MACHINE=1.E-5,),# ajustement pour clap0f0q et scibian9
                 _F(NUME_ORDRE=5,
                    PARA='FREQ',
                    REFERENCE='SOURCE_EXTERNE',
@@ -472,4 +472,3 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
           )
 
 FIN()
-
