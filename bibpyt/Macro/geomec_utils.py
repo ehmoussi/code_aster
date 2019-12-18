@@ -381,7 +381,7 @@ def verif_essais(COMPORTEMENT,
             list_tmp = list(DicoEssai[clef])
             list_tmp.sort()
 
-            if not(DicoEssai[clef] == list_tmp):
+            if not(DicoEssai[clef] == tuple(list_tmp)):
                 UTMESS('F', 'COMPOR2_38',
                     valk=(typ_essai, clef, ListR_2_Str(DicoEssai[clef]), "croissante"),
                     vali=(iocc+1))
@@ -510,7 +510,7 @@ def verif_essais(COMPORTEMENT,
             list_tmp = list(DicoEssai[clef])
             list_tmp.sort()
 
-            if not(DicoEssai[clef] == list_tmp):
+            if not(DicoEssai[clef] == tuple(list_tmp)):
 
                 UTMESS('F', 'COMPOR2_38',
                     valk=(typ_essai, clef, ListR_2_Str(DicoEssai[clef]), "croissante"),
