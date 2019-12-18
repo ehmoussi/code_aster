@@ -1371,6 +1371,54 @@ class RuptFragFoMaterialBehaviourInstance : public GeneralMaterialBehaviourInsta
 typedef boost::shared_ptr< RuptFragFoMaterialBehaviourInstance > RuptFragFoMaterialBehaviourPtr;
 
 /**
+ * @class CzmLabMixMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau CzmLabMix
+ * @author Nicolas Pignet
+ */
+class CzmLabMixMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+  public:
+    /**
+     * @brief Constructeur
+     */
+    CzmLabMixMaterialBehaviourInstance() {
+        // Mot cle "CZM_LAB_MIX" dans Aster
+        _asterName = "CZM_LAB_MIX";
+
+        // Parametres matériau
+        this->addDoubleProperty( "Sigm_c", ElementaryMaterialPropertyDouble( "SIGM_C", false ) );
+        this->addDoubleProperty( "Glis_c",
+                                 ElementaryMaterialPropertyDouble( "GLIS_C", false ) );
+        this->addDoubleProperty( "Alpha",
+                                 ElementaryMaterialPropertyDouble( "ALPHA", 0.5, false ) );
+        this->addDoubleProperty( "Beta",
+                                 ElementaryMaterialPropertyDouble( "BETA", 1.0, false ) );
+        this->addDoubleProperty( "Pena_lagr",
+                                 ElementaryMaterialPropertyDouble( "PENA_LAGR", 100., false ) );
+        this->addConvertibleProperty(
+            "Cinematique",
+            ElementaryMaterialPropertyConvertible(
+                "CINEMATIQUE",
+                StringToDoubleValue( {{"UNILATER", 0.}, {"GLIS_1D", 1.}, {"GLIS_2D", 2.}},
+                                     "GLIS_1D" ),
+                false ) );
+    };
+
+    /**
+     * @brief Get name link to the class
+     * @return name
+     */
+    static std::string getName() { return "CZM_LAB_MIX"; };
+
+    /**
+     * @brief To know if a MaterialBehaviour has ConvertibleValues
+     */
+    static bool hasConvertibleValues() { return true; };
+};
+
+/** @typedef Pointeur intelligent vers un comportement materiau CzmLabMix */
+typedef boost::shared_ptr< CzmLabMixMaterialBehaviourInstance > CzmLabMixMaterialBehaviourPtr;
+
+/**
  * @class TractionMaterialBehaviourInstance
  * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Traction
  * @author Jean-Pierre Lefebvre
