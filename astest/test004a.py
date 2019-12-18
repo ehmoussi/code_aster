@@ -86,8 +86,6 @@ sixx=resu.getRealFieldOnElements('SIEF_ELGA',1)
 z=sixx.EXTR_COMP('SIXX')
 test.assertEqual(len(z.valeurs),64)
 
-# at least it pass here!
-test.assertTrue( True )
 test.printSummary()
 
 FIN()

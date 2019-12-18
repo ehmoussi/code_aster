@@ -143,13 +143,15 @@ class CommandSyntax(object):
         self._resultName = sdName
         self._resultType = sdType
 
-    def define( self, dictSyntax ):
+    def define( self, dictSyntax, add_default=True ):
         """Register the keywords values.
 
         Arguments:
             dictSyntax (dict): User keywords.
+            add_default (bool, optional): Tell if default keywords have to be
+                added or not.
         """
-        if self._commandCata != None:
+        if self._commandCata != None and add_default:
             logger.debug( "define0 %r: %r", self._name, dictSyntax )
             self._commandCata.addDefaultKeywords( dictSyntax )
         self._definition = dictSyntax
@@ -335,21 +337,6 @@ class CommandSyntax(object):
         length = [min(len(i), lenmax) for i in value]
         return size, tuple(length[:maxval])
 
-    #TODO: to remove
-    def hasDefaultValue(self, factName, simpName):
-        hasDV = 0
-        if self._commandCata is not None and hasattr(self._commandCata, "keywords"):
-            fkw = self._commandCata.keywords.get(factName)
-            if fkw is not None:
-                skw = fkw.keywords.get(simpName)
-                if skw is not None:
-                    hasDV = skw.hasDefaultValue()
-                    if hasDV == False:
-                        hasDV = 0
-                    else:
-                        hasDV = 1
-        return hasDV
-
     def getvid(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of results.
 
@@ -364,16 +351,13 @@ class CommandSyntax(object):
             ``size`` is the number of the values provided by the user.
             If ``size > maxval``, ``-size`` is returned.
             ``values`` is a list of result names.
-            ``isdef`` is 1 if the value is the default, 0 if it has been
-            explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
         value = [i.getName()if hasattr(i, 'getName') else i for i in value]
         size = len(value)
         if size > maxval:
             size = -size
-        hasDV = self.hasDefaultValue(factName, simpName)
-        return size, tuple(value[:maxval]), hasDV
+        return size, tuple(value[:maxval])
 
     def getvtx(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of strings.
@@ -389,16 +373,13 @@ class CommandSyntax(object):
             ``size`` is the number of the values provided by the user.
             If ``size > maxval``, ``-size`` is returned.
             ``values`` is a list of strings.
-            ``isdef`` is 1 if the value is the default, 0 if it has been
-            explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
         value = _check_strings(factName, simpName, value)
         size = len(value)
         if size > maxval:
             size = -size
-        hasDV = self.hasDefaultValue(factName, simpName)
-        return size, tuple(value[:maxval]), hasDV
+        return size, tuple(value[:maxval])
 
     def getvis(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of integers.
@@ -414,8 +395,6 @@ class CommandSyntax(object):
             ``size`` is the number of the values provided by the user.
             If ``size > maxval``, ``-size`` is returned.
             ``values`` is a list of integers.
-            ``isdef`` is 1 if the value is the default, 0 if it has been
-            explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
         if len( value ) > 0 and not is_int(value[0], onvalue=True):
@@ -423,8 +402,7 @@ class CommandSyntax(object):
         size = len(value)
         if size > maxval:
             size = -size
-        hasDV = self.hasDefaultValue(factName, simpName)
-        return size, tuple(value[:maxval]), hasDV
+        return size, tuple(value[:maxval])
 
     def getvr8(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of float numbers.
@@ -440,8 +418,6 @@ class CommandSyntax(object):
             ``size`` is the number of the values provided by the user.
             If ``size > maxval``, ``-size`` is returned.
             ``values`` is a list of floats.
-            ``isdef`` is 1 if the value is the default, 0 if it has been
-            explicitly provided by the user.
         """
         value = self.getValue( factName, occurrence, simpName )
         if len( value ) > 0:
@@ -452,8 +428,7 @@ class CommandSyntax(object):
         size = len(value)
         if size > maxval:
             size = -size
-        hasDV = self.hasDefaultValue(factName, simpName)
-        return size, tuple(value[:maxval]), hasDV
+        return size, tuple(value[:maxval])
 
     def getvc8(self, factName, simpName, occurrence, maxval):
         """Wrapper function to return a list of complex numbers.
@@ -469,8 +444,6 @@ class CommandSyntax(object):
             ``size`` is the number of the values provided by the user.
             If ``size > maxval``, ``-size`` is returned.
             ``values`` is a list of complex numbers.
-            ``isdef`` is 1 if the value is the default, 0 if it has been
-            explicitly provided by the user.
         """
         values = self.getValue( factName, occurrence, simpName )
         if len( values ) > 0:
@@ -487,12 +460,11 @@ class CommandSyntax(object):
             size = len(toReturn)
             if size > maxval:
                 size = -size
-            return size, tuple(toReturn[:maxval]), 0
+            return size, tuple(toReturn[:maxval])
         size = len(values)
         if size > maxval:
             size = -size
-        hasDV = self.hasDefaultValue(factName, simpName)
-        return size, tuple(values[:maxval]), hasDV
+        return size, tuple(values[:maxval])
 
     def getres(self):
         """Return the name and type of the result, and the command name.

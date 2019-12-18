@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -84,7 +84,9 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     msgId = idmess
     typm = typ
     idf = index('EFIMASZD', typm(1:1))
-    ASSERT(idf .ne. 0)
+    if (idf .eq. 0) then
+        idf = 2
+    endif
     lstop = .false.
 !
 !     --- COMPORTEMENT EN CAS D'ERREUR

@@ -38,6 +38,7 @@ import aster
 import aster_core
 from Comportement import catalc
 
+from ..Cata.SyntaxUtils import remove_none
 from ..RunManager import LogicalUnitFile, Serializer, loadObjects
 from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
 
@@ -102,6 +103,8 @@ class Starter(ExecuteCommand):
         """
         cmd = cls()
         cmd._result = None
+        cmd._cata.addDefaultKeywords(keywords)
+        remove_none(keywords)
         cmd.exec_(keywords)
 
     def exec_(self, keywords):
@@ -180,7 +183,7 @@ def init(*argv, **kwargs):
     if kwargs.get('ptvsd'):
         import ptvsd
         print('Waiting for debugger attach...'),
-        ptvsd.enable_attach(address=('127.0.0.1', kwargs.get('ptvsd', 3000)))
+        ptvsd.enable_attach(address=('127.0.0.1', kwargs['ptvsd']))
         ptvsd.wait_for_attach()
         ptvsd.break_into_debugger()
         # add 10 hours for debugging

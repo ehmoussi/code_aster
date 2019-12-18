@@ -474,10 +474,13 @@ void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
 }
 
 /* ------------------------------------------------------------------ */
-void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
-                              _IN char *motcle,_IN STRING_SIZE lcle,_IN ASTERINTEGER *iocc,
-                              _IN ASTERINTEGER *iarg,_IN ASTERINTEGER *mxval,
-                           _INOUT ASTERDOUBLE *val,_OUT ASTERINTEGER *nbval)
+void DEFSSPPPP(GETVC8_WRAP,getvc8_wrap,
+               _IN char *motfac, _IN STRING_SIZE lfac,
+               _IN char *motcle, _IN STRING_SIZE lcle,
+               _IN ASTERINTEGER *iocc,
+               _IN ASTERINTEGER *mxval,
+               _INOUT ASTERDOUBLE *val,
+               _OUT ASTERINTEGER *nbval)
 {
         /*
           Procedure GETVC8 pour le FORTRAN : emule le fonctionnement
@@ -486,7 +489,6 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
             le nom d un mot cle facteur : motfac (string)
             le nom d un mot cle simple ou sous mot cle : motcle (string)
             le numero de l occurence du mot cle facteur : iocc (entier)
-            le numero de l argument demande (obsolete =1): iarg (entier)
             le nombre max de valeur attendues dans val : mxval (entier)
           Retourne :
             le tableau des valeurs attendues : val (2 reels (double) par complexe)
@@ -499,7 +501,6 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         PyObject *tup  = (PyObject*)0 ;
         int ok         = 0 ;
         int nval       = 0 ;
-        int idef       = 0 ;
         int ioc        = 0 ;
         char *mfc      = (char*)0 ;
         char *mcs      = (char*)0 ;
@@ -531,13 +532,12 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
             normalement a l appelant mais FORTRAN ??? */
         if (res == NULL)MYABORT("erreur dans la partie Python");
                                                      DEBUG_ASSERT(PyTuple_Check(res)) ;
-        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
+        ok = PyArg_ParseTuple(res,"iO",&nval,&tup);
         if(!ok)MYABORT("erreur dans la partie Python");
 
         *nbval = (ASTERINTEGER)nval;
         if ( nval < 0 ) nval=(int)*mxval;
         convc8(nval,tup,val);
-        *iarg = (ASTERINTEGER)idef;
 
         Py_DECREF(res);
         FreeStr(mfc);
@@ -547,11 +547,13 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 
 
 /* ------------------------------------------------------------------ */
-void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
-                              _IN char *motcle,_IN STRING_SIZE lcle,_IN ASTERINTEGER *iocc,
-                              _IN ASTERINTEGER *iarg,_IN ASTERINTEGER *mxval,
-                              _INOUT ASTERDOUBLE *val,
-                              _OUT ASTERINTEGER *nbval)
+void DEFSSPPPP(GETVR8_WRAP,getvr8_wrap,
+               _IN char *motfac, _IN STRING_SIZE lfac,
+               _IN char *motcle, _IN STRING_SIZE lcle,
+               _IN ASTERINTEGER *iocc,
+               _IN ASTERINTEGER *mxval,
+               _INOUT ASTERDOUBLE *val,
+               _OUT ASTERINTEGER *nbval)
 {
         /*
           Procedure GETVR8 pour le FORTRAN : emule le fonctionnement
@@ -560,7 +562,6 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
             le nom d un mot cle facteur : motfac (string)
             le nom d un mot cle simple ou sous mot cle : motcle (string)
             le numero de l occurence du mot cle facteur : iocc (entier)
-            le numero de l argument demande (obsolete =1): iarg (entier)
             le nombre max de valeur attendues dans val : mxval (entier)
           Retourne :
             le tableau des valeurs attendues : val (tableau de R8    )
@@ -573,7 +574,6 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         PyObject *tup  = (PyObject*)0 ;
         int ok         = 0 ;
         int nval       = 0 ;
-        int idef       = 0 ;
         int ioc        = 0 ;
         char *mfc      = (char*)0 ;
         char *mcs      = (char*)0 ;
@@ -602,7 +602,7 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
             normalement a l appelant mais FORTRAN ??? */
         if (res == NULL)MYABORT("erreur dans la partie Python");
                                                     DEBUG_ASSERT(PyTuple_Check(res)) ;
-        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
+        ok = PyArg_ParseTuple(res,"iO",&nval,&tup);
         if(!ok)MYABORT("erreur dans la partie Python");
 
         *nbval=(ASTERINTEGER)nval;
@@ -610,7 +610,6 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         if ( nval>0 ){
                 convr8(nval,tup,val);
         }
-        *iarg = (ASTERINTEGER)idef;
 
         Py_DECREF(res);                /*  decrement sur le refcount du retour */
         FreeStr(mfc);
@@ -620,13 +619,13 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 
 
 /* ------------------------------------------------------------------ */
-void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
-                              _IN char *motcle,_IN STRING_SIZE lcle,
-                              _IN ASTERINTEGER *iocc,
-                              _IN ASTERINTEGER *iarg,
-                              _IN ASTERINTEGER *mxval,
-                           _INOUT ASTERINTEGER *val,
-                             _OUT ASTERINTEGER *nbval )
+void DEFSSPPPP(GETVIS_WRAP,getvis_wrap,
+               _IN char *motfac, _IN STRING_SIZE lfac,
+               _IN char *motcle, _IN STRING_SIZE lcle,
+               _IN ASTERINTEGER *iocc,
+               _IN ASTERINTEGER *mxval,
+               _INOUT ASTERINTEGER *val,
+               _OUT ASTERINTEGER *nbval )
 {
         /*
           Procedure GETVIS pour le FORTRAN : emule le fonctionnement
@@ -635,7 +634,6 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
             le nom d un mot cle facteur : motfac (string)
             le nom d un mot cle simple ou sous mot cle : motcle (string)
             le numero de l occurence du mot cle facteur : iocc (entier)
-            le numero de l argument demande (obsolete =1): iarg (entier)
             le nombre max de valeur attendues dans val : mxval (entier)
           Retourne :
             le tableau des valeurs attendues : val (tableau d entier )
@@ -648,7 +646,6 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         PyObject *tup  = (PyObject*)0 ;
         int ok         = 0 ;
         int nval       = 0 ;
-        int idef       = 0 ;
         int ioc        = 0 ;
         char *mfc      = (char*)0 ;
         char *mcs      = (char*)0 ;
@@ -680,13 +677,12 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
             normalement a l appelant mais FORTRAN ??? */
         if (res == NULL)MYABORT("erreur dans la partie Python");
 
-        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
+        ok = PyArg_ParseTuple(res,"iO",&nval,&tup);
         if (!ok)MYABORT("erreur dans la partie Python");
 
         *nbval = (ASTERINTEGER)nval;
         if ( nval < 0 ) nval=(int)*mxval;
         convert(nval,tup,val);
-        *iarg = (ASTERINTEGER)idef;
 
         Py_DECREF(res);                /*  decrement sur le refcount du retour */
         FreeStr(mfc);
@@ -696,12 +692,13 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 
 
 /* ------------------------------------------------------------------ */
-#define CALL_GETVTX(a,b,c,d,e,f,g) CALLSSPPPSP(GETVTX_WRAP,getvtx_wrap,a,b,c,d,e,f,g)
-
-void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
-                              _IN char *motcle,_IN STRING_SIZE lcle,_IN ASTERINTEGER *iocc,
-                              _IN ASTERINTEGER *iarg,_IN ASTERINTEGER *mxval,
-                           _INOUT char *txval,_IN STRING_SIZE ltx,_OUT ASTERINTEGER *nbval)
+void DEFSSPPSP(GETVTX_WRAP,getvtx_wrap,
+               _IN char *motfac, _IN STRING_SIZE lfac,
+               _IN char *motcle, _IN STRING_SIZE lcle,
+               _IN ASTERINTEGER *iocc,
+               _IN ASTERINTEGER *mxval,
+               _INOUT char *txval, _IN STRING_SIZE ltx,
+               _OUT ASTERINTEGER *nbval)
 {
         /*
           Procedure GETVTX pour le FORTRAN : emule le fonctionnement
@@ -710,7 +707,6 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
             le nom d un mot cle facteur : motfac (string)
             le nom d un mot cle simple ou sous mot cle : motcle (string)
             le numero de l occurence du mot cle facteur : iocc (entier)
-            le numero de l argument demande (obsolete =1): iarg (entier)
             le nombre max de valeur attendues dans val : mxval (entier)
           Retourne :
             le tableau des valeurs attendues : txval (tableau de string)
@@ -725,7 +721,6 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         PyObject *tup  = (PyObject*)0 ;
         int ok         = 0 ;
         int nval       = 0 ;
-        int idef       = 0 ;
         int ioc        = 0 ;
         char *mfc      = (char*)0 ;
         char *mcs      = (char*)0 ;
@@ -764,7 +759,7 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                 MYABORT("erreur dans la partie Python");
         }
 
-        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
+        ok = PyArg_ParseTuple(res,"iO",&nval,&tup);
         if (!ok)MYABORT("erreur au decodage d'une chaine dans le module C aster.getvtx");
 
         *nbval=(ASTERINTEGER)nval;
@@ -772,7 +767,6 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         if ( nval > 0 ){
                 convertxt(nval,tup,txval,ltx);
         }
-        *iarg = (ASTERINTEGER)idef;
         /* ATTENTION : il ne faut decrementer le compteur de references de res
          *             qu'apres en avoir fini avec l'utilisation de tup.
          *             NE PAS decrementer le compteur de references de tup car
@@ -786,10 +780,13 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 }
 
 /* ------------------------------------------------------------------ */
-void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
-                              _IN char *motcle,_IN STRING_SIZE lcle,_IN ASTERINTEGER *iocc,
-                              _IN ASTERINTEGER *iarg,_IN ASTERINTEGER *mxval,
-                           _INOUT char *txval,_IN STRING_SIZE ltx,_OUT ASTERINTEGER *nbval)
+void DEFSSPPSP(GETVID_WRAP,getvid_wrap,
+               _IN char *motfac, _IN STRING_SIZE lfac,
+               _IN char *motcle, _IN STRING_SIZE lcle,
+               _IN ASTERINTEGER *iocc,
+               _IN ASTERINTEGER *mxval,
+               _INOUT char *txval, _IN STRING_SIZE ltx,
+               _OUT ASTERINTEGER *nbval)
 {
         /*
           Procedure GETVID pour le FORTRAN : emule le fonctionnement
@@ -798,7 +795,6 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
             le nom d un mot cle facteur : motfac (string)
             le nom d un mot cle simple ou sous mot cle : motcle (string)
             le numero de l occurence du mot cle facteur : iocc (entier)
-            le numero de l argument demande (obsolete =1): iarg (entier)
             le nombre max de valeur attendues dans val : mxval (entier)
           Retourne :
             le tableau des valeurs attendues : val (tableau de string)
@@ -809,7 +805,7 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
         PyObject *res  = (PyObject*)0 ;
         PyObject *tup  = (PyObject*)0 ;
-        int ok,nval,ioc,idef ;
+        int ok,nval,ioc;
         char *mfc;
         char *mcs;
                                                  DEBUG_ASSERT((*iocc>0)||(FStrlen(motfac,lfac)==0));
@@ -840,7 +836,7 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
             normalement a l appelant mais FORTRAN ??? */
         if (res == NULL)MYABORT("erreur dans la partie Python");
 
-        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
+        ok = PyArg_ParseTuple(res,"iO",&nval,&tup);
         if (!ok)MYABORT("erreur dans la partie Python");
 
         *nbval=(ASTERINTEGER)nval;
@@ -848,7 +844,6 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         if ( nval > 0 ){
                 convertxt(nval,tup,txval,ltx);
         }
-        *iarg = (ASTERINTEGER)idef;
 
         Py_DECREF(res);                /*  decrement sur le refcount du retour */
         FreeStr(mfc);
