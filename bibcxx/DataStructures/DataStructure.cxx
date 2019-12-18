@@ -56,8 +56,8 @@ DataStructure::DataStructure( const std::string type, const JeveuxMemory memType
                                     nameLength, type, memType ) {}
 
 DataStructure::~DataStructure() {
-#ifdef __DEBUG_GC__
-    std::cout << "DataStructure.destr: " << this->getName() << std::endl;
+#ifdef _DEBUG_CXX
+    std::cout << "DEBUG: DataStructure.destr: " << this->getName() << std::endl;
 #endif
     std::string nameWithoutBlanks = trim( _name );
     // empty name or no memory manager : skip silently
@@ -79,10 +79,10 @@ DataStructure::~DataStructure() {
         test->allocate( Temporary, -retour );
         ASTERINTEGER nbval2 = -retour;
         CALLO_JELSTC( base, nameWithoutBlanks, &pos, &nbval2, ( *test )[0], &retour );
-        std::cout << "Remaining jeveux objects in " << _name << std::endl;
-        std::cout << "List of objects:" << std::endl;
+        std::cout << "DEBUG: Remaining jeveux objects in " << _name << std::endl;
+        std::cout << "DEBUG: List of objects:" << std::endl;
         for ( int i = 0; i < retour; ++i )
-            std::cout << "  - " << ( *test )[i].toString() << std::endl;
+            std::cout << "DEBUG:   - " << ( *test )[i].toString() << std::endl;
     }
 #endif
 };

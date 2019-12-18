@@ -92,15 +92,6 @@ class ParallelMeshInstance : public BaseMeshInstance {
           _listOfOppositeDomain( getName() + ".DOMJOINTS" ){};
 
     /**
-     * @brief Destructeur
-     */
-    ~ParallelMeshInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "ParallelMesh.destr: " << this->getName() << std::endl;
-#endif
-    };
-
-    /**
      * @brief Get the JeveuxVector for global nodes numbering
      * @return _globalNumbering
      */

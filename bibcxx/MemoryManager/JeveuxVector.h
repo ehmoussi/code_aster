@@ -62,8 +62,8 @@ class JeveuxVectorInstance : public JeveuxObjectInstance, private AllowedJeveuxT
      * @brief Destructeur
      */
     ~JeveuxVectorInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "JeveuxVector.destr: " << _name << std::endl;
+#ifdef _DEBUG_CXX
+        std::cout << "DEBUG: JeveuxVector.destr: " << _name << std::endl;
 #endif
         _valuePtr = nullptr;
     };
