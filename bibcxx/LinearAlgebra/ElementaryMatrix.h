@@ -190,15 +190,6 @@ class ElementaryMatrixInstance : public BaseElementaryMatrixInstance
     {};
 
     /**
-     * @brief Destructeur
-     */
-    ~ElementaryMatrixInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "ElementaryMatrixInstance.destr: " << this->getName() << std::endl;
-#endif
-    };
-
-    /**
      * @brief function to update ElementaryResultInstance
      */
     bool update() {

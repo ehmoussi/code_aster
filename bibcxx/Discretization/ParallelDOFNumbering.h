@@ -61,15 +61,6 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
         : BaseDOFNumberingInstance( name, "NUME_DDL_P", memType ){};
 
     /**
-     * @brief Destructeur
-     */
-    ~ParallelDOFNumberingInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "ParallelDOFNumbering.destr: " << this->getName() << std::endl;
-#endif
-    };
-
-    /**
      * @brief Methode permettant de savoir si l'objet est parallel
      * @return true
      */
