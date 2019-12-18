@@ -36,7 +36,7 @@ class RestSousStrucOper(ExecuteCommand):
         """
         resu_gene = keywords.get("RESU_GENE")
         resultat = keywords.get("RESULTAT")
-        if resu_gene != None:
+        if resu_gene is not None:
             if resu_gene.getType() == "TRAN_GENE":
                 self._result = FullTransientResultsContainer()
             if resu_gene.getType() == "MODE_GENE":
@@ -46,7 +46,7 @@ class RestSousStrucOper(ExecuteCommand):
             if resu_gene.getType() == "HARM_GENE":
                 self._result = FullHarmonicResultsContainer()
 
-        if resultat != None:
+        if resultat is not None:
             if resultat.getType() == "EVOL_NOLI":
                 self._result = NonLinearEvolutionContainer()
             if resultat.getType() == "DYNA_TRANS":
@@ -61,11 +61,12 @@ class RestSousStrucOper(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         sousStruc = keywords.get("SOUS_STRUC")
+        resuGene = keywords.get("RESU_GENE")
+        squelette = keywords.get("SQUELETTE")
+
         if sousStruc is not None:
-            resuGene = keywords.get("RESU_GENE")
             if resuGene is not None:
                 dofNum = resuGene.getGeneralizedDOFNumbering()
-                print(dofNum.getName())
                 modeleGene = dofNum.getGeneralizedModel()
                 if modeleGene is not None:
                     macroElem = modeleGene.getDynamicMacroElementFromName(sousStruc)
@@ -74,13 +75,15 @@ class RestSousStrucOper(ExecuteCommand):
                     if mat is None: mat = macroElem.getImpedanceMatrix()
                     if mat is None: mat = macroElem.getImpedanceMassMatrix()
                     if mat is None: mat = macroElem.getImpedanceStiffnessMatrix()
-
                     if mat is None: mat = macroElem.getMassMatrix()
                     if mat is None: mat = macroElem.getComplexStiffnessMatrix()
                     if mat is None: mat = macroElem.getDoubleStiffnessMatrix()
                     if mat is not None:
                         modele = mat.getDOFNumbering().getModel()
                         self._result.appendModelOnAllRanks(modele)
+        elif squelette is not None:
+            self._result.setMesh(squelette)
+
 
 
 REST_SOUS_STRUC = RestSousStrucOper.run

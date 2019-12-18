@@ -53,9 +53,6 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
     dictb = __tab.EXTR_TABLE()
     # listenoe_b=liste ordonnee des noeuds de la ligne de coupe (avec doublons)
     listenoe_b = dictb.NOEUD.values()
-    # lno_b2=liste des noeuds de la ligne de coupe après élimination des doublons
-    # (attention, on perd l'ordre des noeuds)
-    lno_b2 = set(listenoe_b)
 
     # dictc=table (extraite de dictb) contenant uniquement des noeuds dans la
     # matière
@@ -88,8 +85,8 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
     if len(l_horsmat) > 0:
 
         nderh = l_horsmat.index(l_horsmat[len(l_horsmat) - 1])
-        cnom = aster.getvectjev(__macou.nom.ljust(8) + '.NOMNOE')
-        l_coor = aster.getvectjev(__macou.nom.ljust(8) + '.COORDO    .VALE')
+        cnom = aster.getvectjev(__macou.getName().ljust(8) + '.NOMNOE')
+        l_coor = aster.getvectjev(__macou.getName().ljust(8) + '.COORDO    .VALE')
         indent = os.linesep + ' ' * 12
         l_surlig = []
         l_horslig = []
@@ -106,8 +103,8 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
 
     elif reste > 0:
 
-        cnom = aster.getvectjev(__macou.nom.ljust(8) + '.NOMNOE')
-        l_coor = aster.getvectjev(__macou.nom.ljust(8) + '.COORDO    .VALE')
+        cnom = aster.getvectjev(__macou.getName().ljust(8) + '.NOMNOE')
+        l_coor = aster.getvectjev(__macou.getName().ljust(8) + '.COORDO    .VALE')
         indent = os.linesep + ' ' * 12
         l_surlig = []
         for j in l_matiere[:nderm + 1]:
@@ -276,7 +273,7 @@ def crea_resu_local(self, dime, NOM_CHAM, m, resin, mail, nomgrma):
         if m['TYPE'][:5] == 'GROUP' and m['REPERE'] == 'LOCAL':
         # determination du repère local (v1,v2,v3)
         # ---------------------------------------
-            noma = mail.nom
+            noma = mail.getName()
             collgrma = aster.getcolljev(noma.ljust(8) + '.GROUPEMA')
             collcnx = aster.getcolljev(noma.ljust(8) + '.CONNEX')
             coord = aster.getvectjev(noma.ljust(8) + '.COORDO    .VALE')
@@ -485,14 +482,14 @@ def crea_noeu_lig_coup(dimension, pt1, pt2, anglj, dnor):
 def dist_min_deux_points(mail):
     from math import sqrt
     import aster
-    nno = aster.getvectjev(mail.nom.ljust(8) + '.DIME')[0]
+    nno = aster.getvectjev(mail.getName().ljust(8) + '.DIME')[0]
     l_coor1 = []
     l_coor2 = []
     for i in range(nno - 1):
         l_coor1 = aster.getvectjev(
-            mail.nom.ljust(8) + '.COORDO    .VALE', 3 * (i), 3)
+            mail.getName().ljust(8) + '.COORDO    .VALE', 3 * (i), 3)
         l_coor2 = aster.getvectjev(
-            mail.nom.ljust(8) + '.COORDO    .VALE', 3 * (i + 1), 3)
+            mail.getName().ljust(8) + '.COORDO    .VALE', 3 * (i + 1), 3)
         d = sqrt((l_coor1[0] - l_coor2[0]) ** 2 + (
             l_coor1[1] - l_coor2[1]) ** 2 + (l_coor1[2] - l_coor2[2]) ** 2)
         if i == 0:
@@ -695,7 +692,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     import aster
     import math
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-    ier = 0
 
     # La valeur par défaut n'est pas dans le catalogue, sinon le mot-clé devient
     # obligatoire dans AsterStudy
@@ -713,9 +709,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     CREA_RESU = self.get_cmd('CREA_RESU')
     COPIER = self.get_cmd('COPIER')
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     #
     MasquerAlarme('ALGORITH12_43')
     MasquerAlarme('CALCULEL2_63')
@@ -726,6 +719,9 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     MasquerAlarme('MODELE1_64')
 
     mcORDR = {}
+
+    Model = MODELE
+    Mesh = None
 
     l_mode_meca_sans_modele = False
 
@@ -747,35 +743,31 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
         else:
             mcORDR['TOUT_ORDRE'] = 'OUI'
 
-
-        nomresu = RESULTAT.nom
         type_resu = RESULTAT.getType().lower()
-        iret, ibid, n_modele = aster.dismoi('MODELE', nomresu, 'RESULTAT', 'F')
-        n_modele = n_modele.strip()
-        if n_modele in ('', '#AUCUN'):
+        model = RESULTAT.getModel()
+
+        if (model is None) or (model.getName() in ('', '#AUCUN')):
             if MODELE is None:
                 if (type_resu != 'mode_meca'):
-                    UTMESS('F', 'POST0_9', valk=nomresu)
+                    UTMESS('F', 'POST0_9', valk=RESULTAT.getName())
                 # si le résultat en entrée est un mode_meca et qu'il ne contient pas de modèle (il est obtenu par sous-structuration, par exemple)
                 # on passe le message fatal et on récupérera directement le
                 # maillage (ou squelette)
                 else:
                     l_mode_meca_sans_modele = True
-                    UTMESS('I', 'POST0_23', valk=nomresu)
-            else:
-                n_modele = MODELE.nom
-        iret, ibid, l_mailla = aster.dismoi(
-            'NOM_MAILLA', nomresu, 'RESULTAT', 'F')
+                    Mesh = RESULTAT.getMesh()
+                    UTMESS('I', 'POST0_23', valk=RESULTAT.getName())
+        else:
+            Model = model
 
     elif CHAM_GD is not None:
         mcORDR['TOUT_ORDRE'] = 'OUI'
-        if MODELE is None:
+        if Model is None:
             UTMESS('F', 'POST0_10')
-        else:
-            n_modele = MODELE.nom
 
+        Mesh
         # récupération de la grandeur du champ
-        n_cham = CHAM_GD.nom
+        n_cham = CHAM_GD.getName()
         catagd = aster.getvectjev("&CATA.GD.NOMGD")
         desc = aster.getvectjev('%-19s.DESC' % n_cham)
         if desc is not None:
@@ -819,18 +811,18 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
                              NOM_CHAM=NOM_CHAM, TYPE_RESU=TYPE_RESU,
                              AFFE=_F(CHAM_GD=CHAM_GD, INST=0.),)
         RESULTAT = __resuch
-        iret, ibid, l_mailla = aster.dismoi('NOM_MAILLA', n_cham, 'CHAMP', 'F')
 
     # Maillage sur lequel s'appuie le résultat à projeter
-    n_mailla = l_mailla.strip()
+
+    if Mesh is None:
+        Mesh = Model.getMesh()
     # le maillage est-il 2D ou 3D ?
+    n_mailla = Mesh.getName()
     iret, dime, kbid = aster.dismoi('DIM_GEOM', n_mailla, 'MAILLAGE', 'F')
     collgrma = aster.getcolljev(n_mailla.ljust(8) + '.GROUPEMA')
     collgrno = aster.getcolljev(n_mailla.ljust(8) + '.GROUPENO')
     typma = aster.getvectjev(n_mailla.ljust(8) + '.TYPMAIL')
-    connex = aster.getcolljev(n_mailla.ljust(8) + '.CONNEX')
     ltyma = aster.getvectjev("&CATA.TM.NOMTM")
-
     lignes = []
     groups = []
     arcs = []
@@ -899,7 +891,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
                                   CREA_GROUP_NO=_F(OPTION='NOEUD_ORDO', NOM=str(m['GROUP_MA']),
                                                    GROUP_MA=m['GROUP_MA'], ORIGINE='SANS', **argsup))
 
-            collgrno = aster.getcolljev(__mailla.nom.ljust(8) + '.GROUPENO')
+            collgrno = aster.getcolljev(__mailla.getName().ljust(8) + '.GROUPENO')
             grpn = collgrno[str(m['GROUP_MA']).ljust(24)]
             l_coor_group = [ngrma, ]
             for node in grpn:
@@ -926,8 +918,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     __macou = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=UNITE_MAILLAGE,)
     LogicalUnitFile.release_from_number(UNITE_MAILLAGE)
 
-    # distance min entre 2 points de la ligne de coupe (utile pour PROJ_CHAMP)
-    dmin = dist_min_deux_points(__macou)
 
     motscles = {}
     iocc = 1
@@ -965,15 +955,9 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
         UTMESS('A', 'POST0_18', valk=[NOM_CHAM, ])
 
     if (l_mode_meca_sans_modele == False):
-        # on utilise le modèle pour projeter le champ
-        if MODELE is not None or CHAM_GD is not None:
-            MODELE_1 = MODELE
-        elif RESULTAT is not None:
-            MODELE_1 = RESULTAT.getModel()
-
         __recou = PROJ_CHAMP(METHODE='COLLOCATION',
                              RESULTAT=RESULTAT,
-                             MODELE_1=MODELE_1,
+                             MODELE_1=Model,
                              DISTANCE_MAX=m['DISTANCE_MAX'],
                              # issue27543 #MODELE_2=__mocou,
                              MAILLAGE_2=__macou,
@@ -981,16 +965,9 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
                              NOM_CHAM=NOM_CHAM, **motscles)
 
     else:
-        # on utilise directement le maillage (ou squelette) pour projeter le
-        # champ
-        if n_mailla in list(self.get_global_contexte().keys()):
-            MAILLAGE_1 = self.get_global_contexte()[n_mailla]
-        else:
-            MAILLAGE_1 = self.jdc.current_context[n_mailla]
-
         __recou = PROJ_CHAMP(METHODE='COLLOCATION',
                              RESULTAT=RESULTAT,
-                             MAILLAGE_1=MAILLAGE_1,
+                             MAILLAGE_1=Mesh,
                              DISTANCE_MAX=m['DISTANCE_MAX'],
                              # issue27543 #MODELE_2=__mocou,
                              MAILLAGE_2=__macou,
@@ -1001,7 +978,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     icham = 0
     ioc2 = 0
     mcACTION = []
-    angtab = []
 
     if RESULTAT.getType().lower() in ('evol_ther', 'evol_elas', 'evol_noli', 'mode_meca', 'evol_varc',
                                      'comb_fourier', 'mult_elas', 'fourier_elas','dyna_trans'):
@@ -1102,7 +1078,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     dictab = __tabitm.EXTR_TABLE()
     # Ajout de la colonne theta
     if len(arcgma) > 0 and 'ABSC_CURV' in dictab.para:
-        coltab = []
         val = dictab['ABSC_CURV'].values()['ABSC_CURV']
         nbi = len(val) // nbno
         nba = len(angles)
