@@ -34,6 +34,9 @@ class PostUsure(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Table()
+        if "reuse" in keywords:
+            self._result = keywords["reuse"]
+        else:
+            self._result = Table()
 
 POST_USURE = PostUsure.run
