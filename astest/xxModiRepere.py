@@ -47,7 +47,8 @@ RESU1=MODI_REPERE(
                                    NOM_CMP    = ('SIXX','SIYY','SIZZ','SIXY',),
                                    TYPE_CHAM  = 'TENS_2D',),
                    REPERE     = 'CYLINDRIQUE',
-                   AFFE = _F( ORIGINE    = (0.0, 0.0)))
+                   AFFE = _F(TOUT='OUI',
+                             ORIGINE    = (0.0, 0.0)))
 
 test.assertTrue( True )
 
