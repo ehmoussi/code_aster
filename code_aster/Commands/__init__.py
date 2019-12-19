@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ using their catalog definition.
 """
 
 # please keep alphabetical order
+from .affe_cara_elem import AFFE_CARA_ELEM
 from .affe_char_acou import AFFE_CHAR_ACOU
 from .affe_char_cine import AFFE_CHAR_CINE
 from .affe_char_cine_f import AFFE_CHAR_CINE_F
