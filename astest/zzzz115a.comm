@@ -530,6 +530,7 @@ TEST_TABLE(  TABLE=tbcoup,
 
 tbextr = CALC_COUPURE(RESULTAT=reslin,
                       OPERATION='EXTRACTION',
+                      NOM_CAS = 'ch1',
                       LIGN_COUPE=(
                        _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1500.,-1500.), COOR_EXTR=(0.,1500.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0), 
                        _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1650.,-1500.), COOR_EXTR=(0.,1650.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0), 
@@ -611,6 +612,16 @@ TEST_TABLE(  TABLE=tbextr,
              VALE_REFE=0.0,
              PRECISION=1.E-6,
              );
+
+DETRUIRE( CONCEPT = _F( NOM = tbextr),);
+
+tbextr = CALC_COUPURE(RESULTAT=reslin,
+                      OPERATION='EXTRACTION',
+                      NOM_CAS = 'ch2',
+                      LIGN_COUPE=(
+                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1500.,-1500.), COOR_EXTR=(0.,1500.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0), 
+                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1650.,-1500.), COOR_EXTR=(0.,1650.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0), 
+                    ))
 
 # ------------------------- # 
 # TEST COUPE 3.15 m, ch2

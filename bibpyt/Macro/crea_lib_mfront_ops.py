@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,34 +17,41 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: nicolas.sellenet at edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
+import os
+import os.path as osp
+import shutil
+from subprocess import call
 
-def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, **args):
+import aster_core
+from Utilitai.UniteAster import UniteAster
+from Utilitai.Utmess import UTMESS
+
+
+def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, DEBUG, **args):
     """Compiler une loi de comportement MFront"""
-
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
-    import os
-    import aster_core
-    from Utilitai.UniteAster import UniteAster
-    from Utilitai.Utmess import UTMESS
-    from code_aster.RunManager import ReservedUnitUsed
-
     UL = UniteAster()
-    fichierMFront = UL.Nom(UNITE_MFRONT)
-    mfront = aster_core.get_option('prog:mfront')
-    os.system(mfront + " --obuild " + fichierMFront + " --interface=aster")
-    if not os.path.exists("src/libAsterBehaviour.so"):
-        fileName = ("libAsterBehaviour.so")
-        UTMESS('F', 'MFRONT_4', valk=fileName)
+    infile = UL.Nom(UNITE_MFRONT)
+    outlib = UL.Nom(UNITE_LIBRAIRIE)
 
-    fichierLib = 'fort.%s' % UNITE_LIBRAIRIE
-    fichierLib = UL.Nom(UNITE_LIBRAIRIE)
-    os.system("cp src/libAsterBehaviour.so ./"+fichierLib)
-    os.system("ls -ltr")
-    os.system("rm -fr src include")
-    ReservedUnitUsed()
+    cmd = [aster_core.get_option('prog:mfront'),
+           "--build",
+           "--interface=aster"]
+    if DEBUG == 'OUI':
+        cmd.append("--debug")
+        # cmd.append("--@AsterGenerateMTestFileOnFailure=true")
+    cmd.append(infile)
+
+    try:
+        call(cmd)
+        if not osp.exists("src/libAsterBehaviour.so"):
+            UTMESS('F', 'MFRONT_4', valk="libAsterBehaviour.so")
+        shutil.copyfile("src/libAsterBehaviour.so", outlib)
+    finally:
+        for dname in ('src', 'include'):
+            if osp.isdir(dname):
+                shutil.rmtree(dname)
 
     return
