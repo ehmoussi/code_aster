@@ -243,7 +243,7 @@ def crea_resu_local(self, dime, NOM_CHAM, m, resin, mail, nomgrma):
         if dime == 3:
             ANGL_NAUT.append(beta)
             ANGL_NAUT.append(gamma)
-        motscles['AFFE'].append(_F(ANGL_NAUT=ANGL_NAUT),)
+        motscles['AFFE'].append(_F(ANGL_NAUT=ANGL_NAUT, TOUT='OUI',),)
         __remodr = MODI_REPERE(
             RESULTAT=resin, REPERE='UTILISATEUR', **motscles)
 
@@ -263,9 +263,9 @@ def crea_resu_local(self, dime, NOM_CHAM, m, resin, mail, nomgrma):
                 AXE_Z.append(m['DNOR'][0])
                 AXE_Z.append(m['DNOR'][1])
                 AXE_Z.append(m['DNOR'][2])
-                motscles['AFFE'].append(_F(ORIGINE=ORIGINE, AXE_Z=AXE_Z),)
+                motscles['AFFE'].append(_F(ORIGINE=ORIGINE, AXE_Z=AXE_Z, TOUT='OUI',),)
             elif dime == 2:
-                motscles['AFFE'].append(_F(ORIGINE=ORIGINE,),)
+                motscles['AFFE'].append(_F(ORIGINE=ORIGINE, TOUT='OUI',),)
             __remodr = MODI_REPERE(
                 RESULTAT=resin, REPERE='CYLINDRIQUE', **motscles)
         else:
@@ -423,9 +423,9 @@ def crea_resu_local(self, dime, NOM_CHAM, m, resin, mail, nomgrma):
         if m['REPERE'] == 'CYLINDRIQUE':
             if dime == 3:
                 motscles['AFFE'].append(
-                    _F(ORIGINE=m['ORIGINE'], AXE_Z=m['AXE_Z']),)
+                    _F(ORIGINE=m['ORIGINE'], AXE_Z=m['AXE_Z'], TOUT='OUI',),)
             elif dime == 2:
-                motscles['AFFE'].append(_F(ORIGINE=m['ORIGINE'],),)
+                motscles['AFFE'].append(_F(ORIGINE=m['ORIGINE'], TOUT='OUI',),)
             __remodr = MODI_REPERE(
                 RESULTAT=resin, REPERE='CYLINDRIQUE', **motscles)
         elif m['REPERE'] == 'UTILISATEUR':
@@ -437,7 +437,7 @@ def crea_resu_local(self, dime, NOM_CHAM, m, resin, mail, nomgrma):
             if dime == 3:
                 ANGL_NAUT.append(beta)
                 ANGL_NAUT.append(gamma)
-            motscles['AFFE'].append(_F(ANGL_NAUT=ANGL_NAUT),)
+            motscles['AFFE'].append(_F(ANGL_NAUT=ANGL_NAUT, TOUT='OUI',),)
             __remodr = MODI_REPERE(
                 RESULTAT=resin, REPERE='UTILISATEUR', **motscles)
 
