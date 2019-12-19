@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 # DATE      : 30/04/2015
 # AUTEUR : Francis LEBOUVIER (DeltaCAD)
-# 
+#
 # MODELISATION : C_PLAN
 # MAILLE              : QUAD4
 #------------------------------------------------------------------
@@ -96,7 +96,7 @@ RESU1=MODI_REPERE(
                                    NOM_CMP    = ('SIXX','SIYY','SIZZ','SIXY',),
                                    TYPE_CHAM  = 'TENS_2D',),
                    REPERE     = 'CYLINDRIQUE',
-                   AFFE = _F( ORIGINE    = (0.0, 0.0)))
+                   AFFE = _F( ORIGINE    = (0.0, 0.0),TOUT='OUI',))
 
 TEST_RESU(RESU=_F(RESULTAT=RESU1,
                   INST=0.,

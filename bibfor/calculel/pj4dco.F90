@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -348,7 +348,7 @@ implicit none
 
 !   5. on transforme cortr3 en corres (retour aux vraies mailles)
 !   -------------------------------------------------------------
-    lraff=.false.
+    lraff=.true.
     charbid = ' '
     call pj2dtr(cortr3, corres, nutm, elrf, zr(iacoo1), zr(iacoo2), lraff, dala,&
                charbid, 0)

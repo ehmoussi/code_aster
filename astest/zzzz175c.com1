@@ -20,7 +20,6 @@
 # person_in_charge: gerald.nicolas at edf.fr
 
 POURSUITE(CODE='OUI')
-#
 # 2. Adaptation
 # 2.1. Du maillage de 2 vers 3 : uniforme sur la face du tore
 
@@ -84,41 +83,34 @@ MACR_ADAP_MAIL(MAILLAGE_N=M_2,
                        GROUP_MA=('C_4_cote',),),),
                MAILLAGE_FRONTIERE=MA_INTER,
                NOMBRE='OUI',
-               PROP_CALCUL='OUI',
-               UNITE_HIST_IN=42,);
+               PROP_CALCUL='OUI',);
 
 #IMPR_RESU(FORMAT='MED',RESU=_F(MAILLAGE=M_3,),);
 
 #
 # 6. Un p'tit calcul pour un TEST_RESU
 #
-MATERIO=DEFI_MATERIAU( ELAS=_F( E =180000., NU = 0.30) , )
+MTMECA3=AFFE_MATERIAU( MAILLAGE=M_3,AFFE=_F( TOUT='OUI', MATER = MATERIO, ),)
 #
-MTMECA=AFFE_MATERIAU( MAILLAGE=M_3,AFFE=_F( TOUT='OUI', MATER = MATERIO, ),)
-#
-MOMECA=AFFE_MODELE( MAILLAGE=M_3,
+MOMECA3=AFFE_MODELE( MAILLAGE=M_3,
   AFFE=_F( TOUT = 'OUI', PHENOMENE = 'MECANIQUE', MODELISATION = '3D', ))
 #
 
-CHMECA=AFFE_CHAR_MECA(  MODELE=MOMECA,
+CHMECA3=AFFE_CHAR_MECA(  MODELE=MOMECA3,
                         FACE_IMPO=_F(  GROUP_MA = 'C_1_base', DX = 0., DY = 0., DZ = 0. ),
                         PRES_REP=_F(GROUP_MA=('C_3_base',), PRES=1.E3,),
                           )
 #
-LI=DEFI_LIST_REEL(DEBUT=0.0,
-                  INTERVALLE=_F(JUSQU_A=0.0001,
-                                NOMBRE=5,),);
-
-REMECA=STAT_NON_LINE( MODELE=MOMECA,
-                      CHAM_MATER=MTMECA,
-                      EXCIT=_F( CHARGE = CHMECA,),
+REMECA3=STAT_NON_LINE( MODELE=MOMECA3,
+                      CHAM_MATER=MTMECA3,
+                      EXCIT=_F( CHARGE = CHMECA3,),
                       INCREMENT=_F(LIST_INST=LI,),
                     )
 #IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=REMECA,),);
 #
 TEST_RESU(RESU=(_F(NUME_ORDRE=5,
                    GROUP_NO='S_2',
-                   RESULTAT=REMECA,
+                   RESULTAT=REMECA3,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
                    VALE_CALC=-628.773696974,
@@ -128,7 +120,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=5,
                    ),
                 _F(NUME_ORDRE=5,
                    GROUP_NO='S_4',
-                   RESULTAT=REMECA,
+                   RESULTAT=REMECA3,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
                    VALE_CALC=-152.436880132,

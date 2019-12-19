@@ -97,8 +97,8 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 ! ---------------------------------------------------------------------
 !********************CONTRAINTE ET FORCES INTERIEURES******************
 !
-    sigp = 0.d0
-    dsidep = 0.d0
+
+
     pk2m = 0.d0
     pk2p = 0.d0
     codret = 0
@@ -154,6 +154,7 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 !
 ! *********************MATRICE TANGENTE(SYMETRIQUE)*********************
     if (rigi) then
+        dsidep = 0.d0
 !
 !        POUR LA RIGIDITE GEOMETRIQUE : CALCUL AVEC LES PK2
         tp2 = 0.d0
@@ -181,6 +182,7 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
     endif
 !
     if (resi) then
+        sigp = 0.d0
 !
 !        TRANSFORMATION DU TENSEUR T EN PK2
 !
