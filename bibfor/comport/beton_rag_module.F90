@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,34 +24,39 @@ module beton_rag_module
 !
 #include "asterf_types.h"
 !
+    real(kind=8),parameter      :: BR_SECHAGE_MINI              = 0.10
+    real(kind=8),parameter      :: BR_SECHAGE_MAXI              = 0.9999
+!
     type :: beton_rag_mat_fluage
         real(kind=8) :: k1,k2,n1,n2
     end type beton_rag_mat_fluage
 
     type :: beton_rag_mat_pw
         ! Coefficients Van Genuchten
-        real(kind=8) :: a,b,bw
+        real(kind=8) :: a   = 0.0
+        real(kind=8) :: b   = 2.0
     end type beton_rag_mat_pw
 
     type :: beton_rag_mat_gel
     ! Avancement du gel
         ! Cinétique d'avancement identifiée à Tref
-        real(kind=8) :: alpha0, tref
+        real(kind=8) :: alpha0  = 0.0
+        real(kind=8) :: tref    = 0.0
         ! Énergie d'activation / Constante gaz parfait
-        real(kind=8) :: ear
+        real(kind=8) :: ear     = 0.0
         ! Seuil de saturation
-        real(kind=8) :: sr0
+        real(kind=8) :: sr0     = BR_SECHAGE_MINI
     ! Pression du gel
         ! Volume de gel maximum pouvant être créé
-        real(kind=8) :: vg
+        real(kind=8) :: vg      = 0.0
         ! Module d'élasticité du gel
-        real(kind=8) :: mg
+        real(kind=8) :: mg      = 0.0
         ! Coefficient de "biot" du gel
-        real(kind=8) :: bg
+        real(kind=8) :: bg      = 0.0
         ! Seuil de comblement de la porosité connectée
-        real(kind=8) :: a0
+        real(kind=8) :: a0      = 0.0
         ! RAG : Déformation visqueuse
-        real(kind=8) :: epsi0
+        real(kind=8) :: epsi0   = 0.0
     end type beton_rag_mat_gel
 
     type :: beton_rag_materiau
@@ -79,18 +84,18 @@ module beton_rag_module
         real(kind=8)  ::  temperm   = 0.0
         real(kind=8)  ::  temperref = 0.0
         real(kind=8)  ::  dtemper   = 0.0
-        aster_logical ::  istemper  = .false.
+        aster_logical ::  istemper  = ASTER_FALSE
         ! les hydratations
         real(kind=8)  ::  hydratp   = 0.0
         real(kind=8)  ::  hydratm   = 0.0
         real(kind=8)  ::  dhydrat   = 0.0
-        aster_logical ::  ishydrat  = .false.
+        aster_logical ::  ishydrat  = ASTER_FALSE
         ! les séchages
         real(kind=8)  ::  sechagp   = 0.0
         real(kind=8)  ::  sechagm   = 0.0
         real(kind=8)  ::  sechagref = 0.0
         real(kind=8)  ::  dsechag   = 0.0
-        aster_logical ::  issechag = .false.
+        aster_logical ::  issechag = ASTER_FALSE
         ! Nombre d'itérations maxi (ITER_INTE_MAXI)
         real(kind=8) ::  nbdecp
         ! Tolérance de convergence (RESI_INTE_RELA)
@@ -98,15 +103,16 @@ module beton_rag_module
         ! Loi à intégrer
         !   1 : Mécanique seule
         !   2 : Mécanique + Fluage
+        !   3 : Mécanique + Fluage + RAG
         integer      :: loi_integre = 0
         ! Calcul fait par perturbation ou pas
-        logical      :: perturbation = .false.
+        aster_logical      :: perturbation = ASTER_FALSE
         ! Calcul de fluage
-        logical      :: fluage       = .false.
+        aster_logical      :: fluage       = ASTER_FALSE
         ! Calcul des grandeurs à + ou pas
-        logical      :: resi         = .false.
+        aster_logical      :: resi         = ASTER_FALSE
         ! calcul de la matrice de raideur tangente
-        logical      :: rigi         = .false.
+        aster_logical      :: rigi         = ASTER_FALSE
     end type beton_rag_parametres
 
     type,private :: beton_rag_pression
@@ -193,10 +199,12 @@ contains
         vaux1 = max( 0.0 , Avc*mater_br%gel%vg - vaux1)
         X%Pgel = mater_br%gel%mg*vaux1
         ! Calcul de la pression capillaire !! Elle est <=0.
-        if      ( Sr >= 0.9999  ) then
+        if      ( Sr >= BR_SECHAGE_MAXI ) then
             X%Pcap = 0.0d0
-        else if ( Sr >= 0.1000 ) then
+        else if ( Sr >= BR_SECHAGE_MINI ) then
             X%Pcap = -mater_br%pw%a*Sr*pow(pow(Sr,-mater_br%pw%b) -1.0, 1.0-1.0/mater_br%pw%b)
+        else
+            X%Pcap = 0.0d0
         endif
     end function beton_rag_grd
 
@@ -205,7 +213,7 @@ contains
         real(kind=8),intent(in)  :: xx, puiss
         !
         if (log10(xx)*puiss .gt. 200.0) then
-            X = 1.0
+            X = 10.0D+200
         else
             X = xx**puiss
         endif
@@ -260,7 +268,7 @@ contains
             call BR_Mecanique_Fluage(epsm, deps, vim, mater_br, param_br, &
                                      sigp, vip, dsidep, iret)
         else
-            ASSERT( .FALSE. )
+            ASSERT( ASTER_FALSE )
         endif
     end subroutine ldc_beton_rag
 
@@ -293,7 +301,7 @@ contains
         real(kind=8)     :: Dommage_Rag(3), bgel, EpsiVRAG(6)
         real(kind=8)     :: xx1,xx2,xx3
         !
-        logical          :: perturb, fluage, isendomtrac, isendomcomp
+        aster_logical    :: perturb, fluage, isendomtrac, isendomcomp
         ! ------------------------------------------------------------------------------------------
         !
         young   = abs(mater_br%young)
@@ -482,7 +490,7 @@ contains
         ! Pas de calcul de fluage avec perturbation : erreur développeur
         if ( param_br%perturbation ) then
             write(*,*) 'Pas encore possible de faire appel au fluage avec perturbation'
-            ASSERT( .FALSE. )
+            ASSERT( ASTER_FALSE )
         endif
         ! Vitesse de déformation
         dy0(1:6) = deps/param_br%dtemps
@@ -565,7 +573,7 @@ contains
         ! ------------------------------------------------------------------------------------------
         ! On ne met pas à jour les vip(*) et dsidep(*) de la mécanique.
         param_br_loc = param_br
-        param_br_loc%fluage = .true.
+        param_br_loc%fluage = ASTER_TRUE
         ! Intégration : Déformations
         dyy(1:6) = dy0(1:6)
         ! Intégration : Température, Hydratation, Séchage

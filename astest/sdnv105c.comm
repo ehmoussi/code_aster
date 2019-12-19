@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -699,6 +699,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
            VALE_CALC= 0.00232424253297,
            VALE_REFE=2.0110000000000002E-3,
+           TOLE_MACHINE=2.E-04,
            NOM_PARA='DY',
            TYPE_TEST='MAX',
            TABLE=DY_O_max,)
@@ -708,6 +709,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
            VALE_CALC= 0.00232424253297,
            VALE_REFE=2.2469999999999999E-3,
+           TOLE_MACHINE=2.E-04,
            NOM_PARA='DY',
            TYPE_TEST='MAX',
            TABLE=DY_O_max,)

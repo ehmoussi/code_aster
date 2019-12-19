@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -140,14 +140,14 @@ SIG=MODI_REPERE(RESULTAT=DEPPOS,
          TYPE_CHAM='TENS_3D',),
          REPERE='COQUE',
 #         AFFE=_F(ANGL_REP=(0.0,0.0,),),)
-         AFFE=_F(VECTEUR=(1.0,0.0,0.0,),),)
+         AFFE=_F(VECTEUR=(1.0,0.0,0.0,),TOUT='OUI',),)
 
 EFGE=MODI_REPERE(RESULTAT=DEP,
          MODI_CHAM=_F(NOM_CHAM='EFGE_ELNO',
          NOM_CMP=('NXX','NYY','NXY','MXX','MYY','MXY','QX','QY',),
          TYPE_CHAM='COQUE_GENE',),
          REPERE='COQUE',
-         AFFE=_F(ANGL_REP=(0.0,0.0,),),)
+         AFFE=_F(ANGL_REP=(0.0,0.0,),TOUT='OUI',),)
 
 DEP1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 OPERATION='EXTR',

@@ -911,7 +911,7 @@ def simu_point_mat_ops(
                     'EPXX', 'EPYY', 'EPZZ', 'EPXY', 'EPXZ', 'EPYZ'), TYPE_CHAM='TENS_3D',),
             ),
                 REPERE='UTILISATEUR',
-                AFFE=_F(ANGL_NAUT=angles),)
+                AFFE=_F(ANGL_NAUT=angles, TOUT='OUI',),)
         else:
             angles = ANGLE
             __EVOL = MODI_REPERE(RESULTAT=__EVOL1, MODI_CHAM=(
@@ -923,7 +923,7 @@ def simu_point_mat_ops(
                                     'EPXX', 'EPYY', 'EPZZ', 'EPXY'), TYPE_CHAM='TENS_2D',),
                                  ),
                                  REPERE='UTILISATEUR',
-                                 AFFE=_F(ANGL_NAUT=angles),)
+                                 AFFE=_F(ANGL_NAUT=angles, TOUT='OUI',),)
 
 #     -- Recuperation des courbes
 
