@@ -24,10 +24,7 @@
 #include <boost/python.hpp>
 
 #include "astercxx.h"
-
-#include "aster_fort.h"
 #include "aster_init.h"
-#include "shared_vars.h"
 
 #include "RunManager/Exceptions.h"
 #include "RunManager/Fortran.h"
@@ -46,6 +43,7 @@
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
 #include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/DebugInterface.h"
 #include "PythonBindings/DiscreteProblemInterface.h"
 #include "PythonBindings/DrivingInterface.h"
 #include "PythonBindings/DynamicMacroElementInterface.h"
@@ -145,12 +143,6 @@
 
 namespace py = boost::python;
 
-static void libaster_debugJeveuxContent( const std::string message ) {
-    ASTERINTEGER unit_out = 6;
-    std::string base( "G" );
-    CALLO_JEIMPR( &unit_out, base, message );
-};
-
 struct LibAsterInitializer {
     LibAsterInitializer() { initAsterModules(); };
 
@@ -169,7 +161,6 @@ BOOST_PYTHON_MODULE( libaster ) {
         "LibAsterInitializer", py::no_init );
 
     py::scope().attr( "__libguard" ) = libGuard;
-    py::scope().attr( "debugJeveuxContent" ) = &libaster_debugJeveuxContent;
 
     // Definition of exceptions, thrown from 'Exceptions.cxx'/uexcep
     ErrorPy[ASTER_ERROR] = createPyException( "AsterError" );
@@ -203,6 +194,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportModalBasisVariantToPython();
     exportVectorUtilitiesToPython();
     exportDataStructureToPython();
+    exportDebugToPython();
     exportMeshToPython();
     exportDiscreteProblemToPython();
     exportDOFNumberingToPython();

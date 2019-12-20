@@ -70,6 +70,15 @@ class ExtendedDataStructure(object):
             self.ptr_sdj = self.ptr_class_sdj(nomj=self.getName())
         return self.ptr_sdj
 
+    def use_count(self):
+        """Return the number of reference to the DataStructure.
+
+        Warning: Use only for debugging! Supported datastructures in
+        ``PythonBindings/DebugInterface.cxx``.
+        """
+        import libaster
+        return libaster.use_count(self)
+
     # transitional functions - to remove later
     @staticmethod
     @deprecated(False)
