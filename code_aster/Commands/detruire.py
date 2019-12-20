@@ -21,8 +21,12 @@
 
 def DETRUIRE(**keywords):
     if "CONCEPT" in keywords:
-        concepts = keywords["CONCEPT"]
-        if type(concepts) not in (list, tuple):
-            concepts = (concepts,)
-        for concept in concepts:
-            del concept["NOM"]
+        kwlist = keywords["CONCEPT"]
+        if type(kwlist) not in (list, tuple):
+            kwlist = (kwlist, )
+        for occ in kwlist:
+            objects = occ["NOM"]
+            if type(objects) not in (list, tuple):
+                objects = (objects, )
+            for concept in objects:
+                del concept
