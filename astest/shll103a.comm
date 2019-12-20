@@ -20,10 +20,7 @@
 # person_in_charge: mohamed-amine.hassini at edf.fr
 #
 
-import gc
 import numpy as NP
-
-gc.set_debug(gc.DEBUG_LEAK)
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI'),PAR_LOT='OUI',);

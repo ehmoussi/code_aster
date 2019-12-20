@@ -23,11 +23,17 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "astercxx.h"
 #include <boost/python.hpp>
 
 template< typename T >
-static long libaster_debugRefCount( T &ds ) {
-    long value = ds.use_count();
+static long libaster_debugRefCount( T &ptr ) {
+    long value = ptr.use_count();
+#ifdef _DEBUG_CXX
+    std::cout << "DEBUG: use_count=" << value
+        << " addr=" << std::ios::hex << ptr.get()
+        << std::endl;
+#endif
     return value;
 }
 
