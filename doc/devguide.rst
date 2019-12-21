@@ -98,6 +98,7 @@ Contents
     devguide/boost
     devguide/supervis
     devguide/utilities
+    devguide/debugging
 
     devguide/documentation
 
