@@ -864,16 +864,11 @@ void DEFP(PUTVIR,putvir, _IN ASTERINTEGER *ival)
          cet attribut est ensuite évalué par la méthode traite_value
          de B_ETAPE.py
    */
-    printf("PUTVIR ???\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
    PyObject *res = (PyObject*)0 ;
 
-   res = PyObject_CallMethod(get_sh_etape(),"putvir","i",(int)*ival);
+   res = PyObject_CallMethod(get_sh_etape(), "setres", "i", (int)*ival);
    if (res == NULL)
-      MYABORT("erreur a l appel de putvir dans la partie Python");
+      MYABORT("erreur a l appel de setres dans la partie Python");
 
    Py_DECREF(res);
 }
@@ -889,16 +884,11 @@ void DEFP(PUTVRR,putvrr, _IN ASTERDOUBLE *rval)
          cet attribut est ensuite évalué par la méthode traite_value
          de B_ETAPE.py
    */
-    printf("PUTVRR ???\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
    PyObject *res = (PyObject*)0 ;
 
-   res = PyObject_CallMethod(get_sh_etape(),"putvrr","d",(double)*rval);
+   res = PyObject_CallMethod(get_sh_etape(), "setres", "d", (double)*rval);
    if (res == NULL)
-      MYABORT("erreur a l appel de putvrr dans la partie Python");
+      MYABORT("erreur a l appel de setres dans la partie Python");
 
    Py_DECREF(res);
 }

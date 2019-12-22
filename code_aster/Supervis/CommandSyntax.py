@@ -98,6 +98,7 @@ class CommandSyntax(object):
         self._name = name
         self._resultName = " "
         self._resultType = " "
+        self._resultValue = None
         self._definition = None
         logger.debug( "Syntax: new command is %r", self._name )
         currentCommand = self.getCurrentCommand()
@@ -180,6 +181,14 @@ class CommandSyntax(object):
             str: Type name of the result of the Command.
         """
         return self._resultType
+
+    def getResultValue( self ):
+        """Return the value of the result of the Command.
+
+        Returns:
+            str: Name of the result of the Command.
+        """
+        return self._resultValue
 
     def _getFactorKeyword( self, factName ):
         """Return the occurrences of a factor keyword.
@@ -477,6 +486,15 @@ class CommandSyntax(object):
         ret = self.getResultName(), self.getResultType(), self.getName()
         logger.debug("Command {2}: result name {0!r}, type {1!r}".format(*ret))
         return ret
+
+    def setres(self, value):
+        """Define a value for special commands that returns a builtin type
+        (*int* or *float*).
+
+        Arguments:
+            value (int|float): Value returned.
+        """
+        self._resultValue = value
 
     def getexm(self, factName, simpName):
         """Tell if the couple ( factor keyword, simple keyword ) exists in the
