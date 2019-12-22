@@ -27,31 +27,32 @@ Python functions.
 from libaster import *
 
 # ensure DataStructure is extended first
-from .datastructure_ext import DataStructure, OnlyParallelObject
+from .datastructure_ext import (AsFloat, AsInteger, DataStructure,
+                                OnlyParallelObject, PyDataStructure)
 
 # extend DataStructures using metaclasses
 from .acousticsload_ext import AcousticsLoad
-from .assemblymatrix_ext import AssemblyMatrixDisplacementDouble
-from .assemblymatrix_ext import AssemblyMatrixDisplacementComplex
+from .assemblymatrix_ext import (AssemblyMatrixDisplacementComplex,
+                                 AssemblyMatrixDisplacementDouble)
 from .dofnumbering_ext import DOFNumbering
 from .dynamicmacroelement_ext import DynamicMacroElement
 from .dynamicresults_ext import TransientGeneralizedResultsContainer
 from .elementarycharacteristics_ext import ElementaryCharacteristics
-from .elementarymatrix_ext import ElementaryMatrixDisplacementDouble
-from .elementarymatrix_ext import ElementaryMatrixDisplacementComplex
-from .elementarymatrix_ext import ElementaryMatrixTemperatureDouble
-from .elementarymatrix_ext import ElementaryMatrixPressureComplex
+from .elementarymatrix_ext import (ElementaryMatrixDisplacementComplex,
+                                   ElementaryMatrixDisplacementDouble,
+                                   ElementaryMatrixPressureComplex,
+                                   ElementaryMatrixTemperatureDouble)
 from .fieldonelements_ext import FieldOnElementsDouble
 from .fieldonnodes_ext import FieldOnNodesDouble
 from .formula_ext import Formula
 from .function_ext import Function
-from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixComplex
-from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixDouble
-from .generalizedassemblyvector_ext import GeneralizedAssemblyVectorComplex
-from .generalizedassemblyvector_ext import GeneralizedAssemblyVectorDouble
+from .generalizedassemblymatrix_ext import (GeneralizedAssemblyMatrixComplex,
+                                            GeneralizedAssemblyMatrixDouble)
+from .generalizedassemblyvector_ext import (GeneralizedAssemblyVectorComplex,
+                                            GeneralizedAssemblyVectorDouble)
 from .generalizedmodel_ext import GeneralizedModel
-from .listofintegers_ext import ListOfIntegers
 from .listoffloats import ListOfFloats
+from .listofintegers_ext import ListOfIntegers
 from .material_ext import Material
 from .materialonmesh_ext import MaterialOnMesh
 from .mechanicalload_ext import GenericMechanicalLoad
@@ -65,9 +66,9 @@ from .table_ext import Table
 from .tablecontainer_ext import TableContainer
 from .thermalload_ext import ThermalLoad
 from .timestepmanager_ext import TimeStepManager
-from .transientgeneralizedresultscontainer_ext import TransientGeneralizedResultsContainer
+from .transientgeneralizedresultscontainer_ext import \
+    TransientGeneralizedResultsContainer
 from .xfemcrack_ext import XfemCrack
-
 
 # Define unusable objects
 try:

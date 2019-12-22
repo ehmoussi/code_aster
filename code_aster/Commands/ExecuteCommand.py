@@ -69,7 +69,7 @@ from ..Cata import Commands
 from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
-from ..Objects import DataStructure
+from ..Objects import DataStructure, PyDataStructure
 from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
 from ..Utilities import deprecated, import_object, no_new_attributes
 from ..Utilities.outputs import (command_header, command_result,
@@ -254,7 +254,7 @@ class ExecuteCommand(object):
         """Print an echo of the result of the command."""
         if not self.show_syntax():
             return
-        if self._result and type(self._result) is not int:
+        if self._result is not None:
             logger.info(command_result(self._counter, self.name,
                                        self._result))
         self._print_timer()
@@ -318,6 +318,9 @@ class ExecuteCommand(object):
         finally:
             timer.Stop(" . fortran")
             syntax.free()
+        # for special fortran operator that returns a int/float
+        if syntax.getResultValue() is not None:
+            self._result = syntax.getResultValue()
 
     def post_exec(self, keywords):
         """Hook that allows to add post-treatments after the *exec* function.
@@ -566,23 +569,10 @@ def UserMacro(name, cata, ops):
     return Macro.run
 
 
-class CO(object):
+class CO(PyDataStructure):
 
     """Object that identify an auxiliary result of a Macro-Command."""
     _name = None
-
-    def __init__(self, name):
-        """Initialization"""
-        self._name = name
-
-    def getName(self):
-        """Return the CO name."""
-        return self._name
-
-    @property
-    def userName(self):
-        """Same as 'getName' for a CO."""
-        return self.getName()
 
     @property
     def value_repr(self):

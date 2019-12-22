@@ -112,3 +112,43 @@ class OnlyParallelObject:
     def __init__(self, *args, **kwargs):
         raise NameError("The object '{0}' is only available in parallel "
                         "executions.".format(self.__class__.__name__))
+
+
+class PyDataStructure:
+    """Temporary object used as a DataStructure during a Command execution."""
+
+    def __init__(self, name="unnamed"):
+        """Initialization"""
+        self._name = name
+
+    def getName(self):
+        """Return the CO name."""
+        return self._name
+
+    @property
+    def userName(self):
+        """Same as 'getName'."""
+        return self.getName()
+
+    @userName.setter
+    def userName(self, name):
+        self._name = name
+
+    def getType(self):
+        """Return a type for syntax checking."""
+        raise NotImplementedError("must be subclassed")
+
+
+class AsInteger(PyDataStructure):
+    """This class defines a simple integer used as a DataStructure."""
+
+    @classmethod
+    def getType(cls):
+        return 'ENTIER'
+
+class AsFloat(PyDataStructure):
+    """This class defines a simple float used as a DataStructure."""
+
+    @classmethod
+    def getType(cls):
+        return 'REEL'

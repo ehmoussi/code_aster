@@ -35,15 +35,14 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Function, FunctionComplex, Surface
-from ..Objects import ElementaryVectorDisplacementDouble, ElementaryVectorTemperatureDouble
-from ..Objects import Table
-from ..Objects import GeneralizedAssemblyMatrixDouble
-from ..Objects import ElementaryMatrixDisplacementDouble, ElementaryMatrixTemperatureDouble
-from ..Objects import Surface
-from ..Objects import MechanicalModeContainer
-from ..Objects import PCFieldOnMeshDouble, FieldOnElementsDouble, FieldOnNodesDouble
-from ..Objects import GenericDataField
+from ..Objects import (AsFloat, AsInteger, ElementaryMatrixDisplacementDouble,
+                       ElementaryMatrixTemperatureDouble,
+                       ElementaryVectorDisplacementDouble,
+                       ElementaryVectorTemperatureDouble,
+                       FieldOnElementsDouble, FieldOnNodesDouble, Function,
+                       FunctionComplex, GeneralizedAssemblyMatrixDouble,
+                       GenericDataField, MechanicalModeContainer,
+                       PCFieldOnMeshDouble, Surface, Table)
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -87,6 +86,10 @@ class ExtrTable(ExecuteCommand):
             self._result = FieldOnNodesDouble()
         elif typeResu == 'CHAM_GD_SDASTER':
             self._result = GenericDataField()
+        elif typeResu == 'ENTIER':
+            self._result = AsInteger()
+        elif typeResu == 'REEL':
+            self._result = AsFloat()
         else:
             raise NotImplementedError()
 
