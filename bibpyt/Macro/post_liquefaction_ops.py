@@ -27,14 +27,10 @@ def post_liquefaction_ops(self,AXE,RESULTAT,CRITERE,**args):
     import os
     from code_aster.Cata.Syntax import _F
 
-  # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
   ### On importe les definitions des commandes a utiliser dans la macro
     CREA_CHAMP     = self.get_cmd('CREA_CHAMP')
     CREA_RESU      = self.get_cmd('CREA_RESU')
     FORMULE        = self.get_cmd('FORMULE')
-    DETRUIRE       = self.get_cmd('DETRUIRE')
 
  ### RECUPERATION DU MODELE A PARTIR DU RESULTAT
     if CRITERE != 'P_SIGM' :
@@ -122,7 +118,7 @@ def post_liquefaction_ops(self,AXE,RESULTAT,CRITERE,**args):
                       VALE_F  = __fmul),)
 
   ### Acces aux numeros d'ordre de RESULTAT pour l'indicage de la boucle
-    __dico = aster.GetResu(RESULTAT.get_name(), "VARI_ACCES")
+    __dico = aster.GetResu(RESULTAT.getName(), "VARI_ACCES")
     __numo = __dico['NUME_ORDRE']
     __n    = __numo[-1]
   ### Initialisation des variables de la boucle

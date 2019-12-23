@@ -65,6 +65,7 @@ from .calc_fonc_interp import CALC_FONC_INTERP
 from .calc_forc_ajou import CALC_FORC_AJOU
 from .calc_forc_nonl import CALC_FORC_NONL
 from .calc_g import CALC_G
+from .calc_h import CALC_H
 from .calc_inte_spec import CALC_INTE_SPEC
 from .calc_matr_ajou import CALC_MATR_AJOU
 from .calc_matr_elem import CALC_MATR_ELEM
@@ -96,6 +97,7 @@ from .defi_flui_stru import DEFI_FLUI_STRU
 from .defi_fonc_flui import DEFI_FONC_FLUI
 from .defi_fonction import DEFI_FONCTION
 from .defi_fond_fiss import DEFI_FOND_FISS
+from .defi_fissure import DEFI_FISSURE
 from .defi_geom_fibre import DEFI_GEOM_FIBRE
 from .defi_glrc import DEFI_GLRC
 from .defi_grille import DEFI_GRILLE

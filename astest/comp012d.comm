@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ POISSON = (3.*K-2.*G) /(6.*K+2.*G)
 GammaRef=2.e-4
 n=0.78
 
-MATE=DEFI_MATERIAU(ELAS=_F(E=YOUNG, 
+MATE=DEFI_MATERIAU(ELAS=_F(E=YOUNG,
                            NU=POISSON,),
                   Iwan=_F(YoungModulus = YOUNG ,
                           PoissonRatio = POISSON ,
@@ -61,12 +61,12 @@ CALC_ESSAI_GEOMECA(INFO=1,
                                   ITER_GLOB_MAXI = 20,
                                   ),
                    ESSAI_CISA_DR_C_D = _F(PRES_CONF= p_confCISA,
-                                     GAMMA_IMPOSE  = gamma_impCISA , 
+                                     GAMMA_IMPOSE  = gamma_impCISA ,
                                      GAMMA_ELAS  = 1.0e-10,
                                      NB_INST     = 200,
                                      TYPE_CHARGE = 'TRIANGULAIRE',
-                                     NB_CYCLE    = nb_cy, 
-                                     TABLE_RESU  = (TCISA1,TBILAN),), 
+                                     NB_CYCLE    = nb_cy,
+                                     TABLE_RESU  = (TCISA1,TBILAN),),
                    );
 
 #---------------------

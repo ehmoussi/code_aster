@@ -42,7 +42,6 @@ from .thyc_result import lire_resu_thyc
 
 def calc_mac3coeur_ops(self, **args):
     """Fonction d'appel de la macro CALC_MAC3COEUR"""
-    self.set_icmd(1)
     analysis = Mac3CoeurCalcul.factory(self, args)
     return analysis.run()
 
@@ -149,8 +148,6 @@ class Mac3CoeurCalcul(object):
 
     def _prepare_data(self,noresu):
         """Prepare the data for the calculation"""
-        if (not noresu) :
-          self.macro.DeclareOut('__RESULT', self.macro.sd)
         coeur = self.coeur
         coeur.recuperation_donnees_geom(self.mesh)
         # force the computation of the times to ensure it is done first
@@ -652,7 +649,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
 
         assert(inst==coeur.temps_simu['T8'])
 
-        _LI2=DEFI_FONCTION(NOM_PARA='INST',PROL_DROITE='CONSTANT',VALE=(coeur.temps_simu['T8'],1.,coeur.temps_simu['T8b'],0.),);
+        _LI2=DEFI_FONCTION(NOM_PARA='INST',PROL_DROITE='CONSTANT',VALE=(coeur.temps_simu['T8'],1.,coeur.temps_simu['T8b'],0.),)
 
         _F_EMB2=AFFE_CHAR_MECA(MODELE=self.model,
                                 FORCE_NODALE=listarg,)
@@ -927,7 +924,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                    ASSE = (_F(TOUT='OUI',CHAM_GD = depl1,NOM_CMP=('DY','DZ'),CUMUL = 'NON',),
                            _F(TOUT='OUI',CHAM_GD = depl2,NOM_CMP=('DY','DZ'),CUMUL = 'OUI',),
                            _F(TOUT='OUI',CHAM_GD = depl2,NOM_CMP=('DX',),CUMUL = 'NON',COEF_R=0.0),
-                           ),);
+                           ),)
 
         return _depl
 
@@ -980,8 +977,6 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         self._maintien_grille = False
         if (not noresu) :
             self.res_def = self.keyw.get('RESU_DEF')
-            if self.res_def :
-                self.macro.DeclareOut('__RESFIN',self.res_def)
         super(Mac3CoeurLame, self)._prepare_data(noresu)
 
     def _run(self,tinit=None,tfin=None):

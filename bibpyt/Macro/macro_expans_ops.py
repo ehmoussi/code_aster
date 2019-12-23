@@ -38,16 +38,12 @@ def macro_expans_ops(self,
     PROJ_MESU_MODAL = self.get_cmd('PROJ_MESU_MODAL')
     REST_GENE_PHYS = self.get_cmd('REST_GENE_PHYS')
     PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
-    NORM_MODE = self.get_cmd('NORM_MODE')
 
     RESU_NUM = MODELE_CALCUL['BASE']
     RESU_EXP = MODELE_MESURE['MESURE']
     MOD_CALCUL = MODELE_CALCUL['MODELE']
     MOD_MESURE = MODELE_MESURE['MODELE']
     NOM_CHAM = MODELE_MESURE['NOM_CHAM']
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     is_nume_num = is_nume_exp = 0
     if MODELE_CALCUL['NUME_MODE'][0] or MODELE_CALCUL['NUME_ORDRE'][0]:
@@ -174,5 +170,5 @@ def macro_expans_ops(self,
                           )
     if RESU_RD:
         self.register_result(__resurd, RESU_RD)
-    
+
     return

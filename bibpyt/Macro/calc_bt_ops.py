@@ -45,7 +45,6 @@ def calc_bt_ops(self,
     AFFE_CARA_ELEM = self.get_cmd('AFFE_CARA_ELEM')
     AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
     MECA_STATIQUE = self.get_cmd('MECA_STATIQUE')
-    CREA_GROUP_MA = self.get_cmd('CREA_GROUP_MA')
     AFFE_MATERIAU = self.get_cmd('AFFE_MATERIAU')
     CALC_CHAMP = self.get_cmd('CALC_CHAMP')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
@@ -130,7 +129,6 @@ def calc_bt_ops(self,
     __FC = SIGMA_C
     __FY = SIGMA_Y
 
-    iret, ibid, n_mail = aster.dismoi('NOM_MAILLA', RESULTAT.nom, 'RESULTAT', 'F')
     __MAIL = RESULTAT.getModel().getMesh()
     __resu = CALC_CHAMP(
                       CONTRAINTE=('SIGM_ELNO', ),
@@ -327,49 +325,6 @@ def calc_bt_ops(self,
 
         return SUPPORTS + 1, FORCES + 1
 
-
-    #==============================================================================
-    def BCA(Mesh_, GS_, SUP, LOAD):
-        """
-        Description:
-            Transfer the continuous boundary conditions to discrete ones.
-        Input:
-            Mesh_ .- FE nodal list
-            GS_ .- Ground structure nodal list
-            SUP .- Assigned displacements [Node UX UY UZ]
-            LOAD .- Assigned loads [Node FX FY FZ]
-        Output:
-            N_o_S .- Nodes considered at the supports of the structure
-            N_o_L .- Nodes receiving a puntual load
-            Mesh_=Nodes_
-            GS_=GS_nodes
-            SUP=SUPPORTS
-            LOAD=LOADS
-        """
-        N_o_S = np.zeros((len(SUP[:, 0]), 4), dtype= int)
-
-        for i_ in range(len(SUP[:, 0])):
-            dist_ = np.sqrt((GS_[:, 0] - Mesh_[int(SUP[i_, 0]) - 1, 1])**2) + \
-                np.sqrt((GS_[:, 1] - Mesh_[int(SUP[i_, 0]) - 1, 2])**2)
-
-            N_o_S[i_, 0] = sum(np.multiply(range(len(GS_[:, 0])),
-                dist_ == min(dist_))) + 1
-            N_o_S[i_, 1:4] = SUP[i_, 1:4]
-
-
-        N_o_L = np.zeros((len(LOAD[:, 0]), 4), dtype= int)
-
-        for i_ in range(len(LOAD[:, 0])):
-            dist_ = np.sqrt((GS_[:, 0] - Mesh_[int(LOAD[i_, 0]) - 1, 1])**2) + \
-                np.sqrt((GS_[:, 1] - Mesh_[int(LOAD[i_, 0]), 2] - 1)**2)
-
-            N_o_L[i_, 0] = sum(np.multiply(range(len(GS_[:, 0])),
-                dist_ == min(dist_))) + 1
-            N_o_L[i_, 1:4] = LOAD[i_, 1:4]
-
-        return N_o_S, N_o_L
-
-
     #==============================================================================
     def BCA2(Mesh_, GS_, __BC):
         """
@@ -406,61 +361,6 @@ def calc_bt_ops(self,
 
         return N_o_S
 
-
-    #==============================================================================
-    def B_inter_V(V_regions, V_vertices, B_region, B_vertices):
-        """
-        Description:
-            Vornoi division intersected with a general polyhedron. Finds the
-            intersections between a finite Voronoï tesselation and group of segments
-            describing a geometry
-        Input:
-            V_regions and V_vertices .- Matrice describing the Voronoï tessellation
-            B_region, B_vertices .-  Matrice describing the Geometry to intersect
-        Output:
-            N_V .- Coordinates of the intersections
-        """
-        N_V = np.empty((len(B_region)*len(V_regions), 5))
-        N_V[:] = np.nan
-        i_ = 0
-
-        for v_1 in range (0, len(V_regions)):    # Intersections Voronoi-boundary
-            v_cell = np.zeros([1, len(V_regions[v_1]) + 1], dtype=int)
-            v_cell[0, 0:-1] = V_regions[v_1]
-            v_cell[0, -1] = v_cell[0, 0]
-
-            for NB in range (0, (len(B_region) - 1)):    # Variating boundary lines
-
-                # Intersection lines
-                for NS in range (len(V_regions[v_1])):
-                    p = get_intersect(B_vertices[B_region[NB],:],
-                            B_vertices[B_region[NB + 1],:],
-                            V_vertices[v_cell[0, NS],:],
-                            V_vertices[v_cell[0, NS + 1],:])
-
-                    a = isinline(np.array([
-                            [B_vertices[B_region[NB], 0],
-                            B_vertices[B_region[NB], 1]],
-                            [B_vertices[B_region[NB + 1], 0],
-                            B_vertices[B_region[NB + 1], 1]]]),
-                            p)    # First segment intersection
-
-                    b = isinline(np.array([
-                            [V_vertices[v_cell[0, NS], 0],
-                            V_vertices[v_cell[0, NS], 1]],
-                            [V_vertices[v_cell[0, NS + 1], 0],
-                            V_vertices[v_cell[0, NS + 1], 1]]]),
-                            p)    # Second segment intersection
-
-                    if (a*b) == 1:    # Intersection contained within the segments
-                        N_V[i_, [0, 1]] = p
-                        N_V[i_, [2]] = v_1    # Contained cell
-                        N_V[i_, [3]] = NS    # Voronoi line
-                        N_V[i_, [4]] = NB    # Boundary line
-                        i_ = i_ + 1
-
-        return N_V[(np.isnan(N_V[:, 0]) != 1),:]
-
     #==============================================================================
     def Cr_loop(_vector):
         """
@@ -474,111 +374,6 @@ def calc_bt_ops(self,
             _vector1[range(len(_vector))] = _vector
             _vector1[-1] = _vector[0]
             return _vector1
-
-
-    def charposition(string, char):
-        pos = [] #list to store positions for each 'char' in 'string'
-        for n in range(len(string)):
-            if string[n] == char:
-                pos.append(n)
-        return pos
-    #==============================================================================
-    def clipped_2D(N_Bound, Bound, vertices, regions, N_V):
-        """
-        Description:
-            Clipping a Voronoi division. the results must be concave cells
-        Input:
-            N_Bound .- Nodes of the geometry to contain the Voronoï division
-            Bound .- Connectivity matrix of the geometry
-        Output:
-            vertices .- vertices contained whitin the limits of the geometry
-            regions .- connectivity matrix of the clipped cells
-        """
-        Polygon = N_Bound[Bound,:]
-        inside = [is_inpolygon(vertice, Polygon) for vertice in vertices]
-        outside = list(np.asarray(inside) == False)
-
-        SSS = np.asarray(Polygon)
-
-
-
-        vertices_ = np.empty((len(vertices[:, 0]) + 2*len(N_V[:, 0]), 2, ))
-        vertices_[:] = np.nan
-        vertices_[0:len(vertices),:] = vertices
-
-        i_ = 0
-        for region in regions:
-            n_v = sum(N_V[:, 2] == i_)    # New possible vertices in the region
-
-            if n_v >= 1:
-                n = sum(list(np.isnan(vertices_[:, 0]) == False))
-                Polygon_ = vertices[region,:]
-                inside_v = [is_inpolygon(vertice_B,     # Boundary vertices inside
-                    Polygon_) for vertice_B in N_Bound]  # the cell
-
-                if sum(inside_v) > 0:
-                    uno = np.array(range(0, len(vertices[:, 0])))
-                    dos = uno[inside]
-                    uno = uno[outside]
-                    to_del = list(set(uno) & set(region))    # Nodes to delete
-                    to_keep = list(set(dos) & set(region))
-                    to_add = N_V[N_V[:, 2] == i_, 0:2]    # Nodes to add
-
-                    b = len(to_del)
-                    c = 0
-                    for del_ in to_del:
-                        a = np.where(np.array(region) == del_)
-                        a = a[0].astype(np.int32)
-                        b = (min(a, b))
-                        c = (max(a, c))
-
-                    C_r = [0] * (len(region) + len(to_add) - len(to_del) + \
-                        sum(inside_v))
-
-                    C_r[0:len(to_keep)] = to_keep
-                    C_r[(len(to_keep)):(len(to_keep) + len(to_add))] =\
-                            range(n, n + len(to_add))
-                    C_r[(len(to_add) + len(to_keep)):] = range((n + len(to_add)),
-                        (n + len(to_add) + sum(inside_v)))
-
-                    vertices_[n:(n + len(to_add[:, 0])),:] = to_add
-                    vertices_[(n + len(to_add[:, 0])):(n + 2 + sum(inside_v)),:] =  \
-                        N_Bound[inside_v,:]
-                    a_ = ordering(vertices_, C_r)
-                    C_r = [ C_r[i] for i in a_]
-                    regions[i_] = C_r
-
-                elif sum(inside_v) == 0:
-                    uno = np.array(range(0, len(vertices[:, 0])))
-                    dos = uno[inside]
-                    uno = uno[outside]
-                    to_del = list(set(uno) & set(region))    # Nodes to delete
-                    to_keep = list(set(dos) & set(region))
-                    to_add = N_V[N_V[:, 2] == i_, 0:2]    # Nodes to add
-
-                    b = len(to_del)
-                    c = 0
-                    for del_ in to_del:
-                        a = np.where(np.array(region) == del_)
-                        a = a[0].astype(np.int32)
-                        b = (min(a, b))
-                        c = (max(a, c))
-
-                    C_r = [0] * (len(region) + len(to_add) - len(to_del))
-                    C_r[0:len(to_keep)] = to_keep
-                    C_r[len(to_keep):] = range(n, (n + len(C_r) - len(to_keep)))
-
-                    # region[b[0]]
-                    vertices_[n:(n + len(to_add[:, 0])),:] = to_add
-                    a_ = ordering(vertices_, C_r)
-                    C_r = [ C_r[i] for i in a_]
-                    regions[i_] = C_r
-
-                    regions[i_] = C_r
-            i_ = i_ + 1
-        vertices = vertices_[(np.isnan(vertices_[:, 0]) != 1),:]
-
-        return regions, vertices
 
     #==============================================================================
     def count_digit(num_, *Opt1):
@@ -757,11 +552,6 @@ def calc_bt_ops(self,
                     N_S[j_, 0] = int(BC[i_])
                     j_ = j_ + 1
 
-
-
-
-
-
         j_ = 0
 
         for key in GROUP_F.keys():
@@ -771,52 +561,6 @@ def calc_bt_ops(self,
             j_ = j_ + 1
 
         return GS_nodes[np.isnan(B_[:, 0]) == False,:], N_Con_Mat, N_o_S, N_S, N_L
-
-
-    #==============================================================================
-    def find_nearest(array, value):
-        """
-
-        """
-        array = np.asarray(array)
-        idx = (np.abs(array - value)).argmin()
-        return array[idx]
-
-    #==============================================================================
-    def Grid_sq(div_):
-        """
-
-        """
-        Grid_ = np.zeros(((div_ + 1)**2, 2))
-        x = np.linspace(0, 1, div_ + 1)
-        xv, yv = np.meshgrid(x, x)
-        Grid_[:, 0] = np.asarray(xv).reshape(-1)
-        Grid_[:, 1] = np.asarray(yv).reshape(-1)
-
-        return Grid_
-
-
-    #==============================================================================
-    def general_geom(NL, EL):
-        """
-        Description :
-            Plot a general 2D truss.
-        Input :
-            NL = Nodes_[:, 1:3]
-            EL = Elements_[:, 6:10]
-        Output :
-            figure
-        """
-        GE_plot = np.zeros((len(EL[:, 0])*6, 2))
-        GE_plot[:] = np.nan
-        GE_plot[range(0, len(EL[:, 0])*6, 6),:] = NL[EL[:, 0] - 1,:]
-        GE_plot[range(1, len(EL[:, 0])*6, 6),:] = NL[EL[:, 1] - 1,:]
-
-        GE_plot[range(2, len(EL[:, 0])*6, 6),:] = NL[EL[:, 2] - 1,:]
-        GE_plot[range(3, len(EL[:, 0])*6, 6),:] = NL[EL[:, 3] - 1,:]
-
-        GE_plot[range(4, len(EL[:, 0])*6, 6),:] = NL[EL[:, 0] - 1,:]
-
 
 
     #==============================================================================
@@ -896,11 +640,7 @@ def calc_bt_ops(self,
         for i_ in range(len(A)):
             K_red[i_,:] = K[A[i_], IDoF]
 
-
-
-
         A = K_red[range(len(K_red)), range(len(K_red))]
-        ratio_ = min(abs(A))/max(abs(A))
         C = np.diag(K_red)
 
         if 0 in C:
@@ -1026,65 +766,6 @@ def calc_bt_ops(self,
                 inside = True
 
         return inside
-
-
-    #==============================================================================
-    def K_matrix(GS_nodes, Con_Mat, E_sections, Mat_prp, Forces):
-        """
-        Description:
-            Assembles the stiffness matrix of the structure.
-        Input:
-            GS_nodes .- Element nodal list
-            Con_Mat .- Element conectivity matrix
-            E_sections .- Asigned element sections
-            Mat_prp .- Material proprerties
-            Forces .- Forces on the elements
-        Output:
-            K .- Global stiffness matrix
-
-        """
-        K = np.zeros((len(GS_nodes[:, 0])*2, len(GS_nodes[:, 0])*2))    # Global K
-
-        Elem_L = Length_(GS_nodes, Con_Mat)    # Element length
-        Young_m = np.zeros((len(E_sections)))    # Associated young modulus
-        Young_m[Forces > 0] = Mat_prp[0, 1]
-        Young_m[Forces <= 0] = Mat_prp[1, 1]
-        A = np.array([0, 0])
-        B = np.array([[0, 0]])
-
-        co_ca_at = np.zeros((len(Con_Mat[:, 0]), 3))
-        co_ca_at[:, 0] = GS_nodes[Con_Mat[:, 1], 1] - GS_nodes[Con_Mat[:, 0], 1]
-        co_ca_at[:, 1] = GS_nodes[Con_Mat[:, 1], 0] - GS_nodes[Con_Mat[:, 0], 0]
-        co_ca_at[:, 2] = np.arctan2(co_ca_at[:, 0], co_ca_at[:, 1])
-
-        for i_ in range(len(Con_Mat[:, 0])):
-            k = (Young_m[i_]*E_sections[i_]/Elem_L[i_]) *\
-                            np.array([[1, 0, -1, 0],
-                                      [0, 0, 0, 0],
-                                      [-1, 0, 1, 0],
-                                      [0, 0, 0, 0]])#Local element SM
-
-            A[:] = GS_nodes[Con_Mat[i_, 0],:]
-            B[:] = GS_nodes[Con_Mat[i_, 1],:]
-            C = np.cos(co_ca_at[i_, 2])
-            S = np.sin((co_ca_at[i_, 2]))
-
-            R = np.array([[C, -S, 0, 0],
-                          [S, C, 0, 0],
-                          [0, 0, C, -S],
-                          [0, 0, S, C]])
-
-            k_ = np.Mat_prpmul(np.matrix.transpose(R), np.Mat_prpmul(k, R))    #global ESM
-            ADoF = np.zeros((4), dtype = int)
-            ADoF[0:2] = [(Con_Mat[i_, 0]*2), Con_Mat[i_, 0]*2 + 1]
-            ADoF[2:4] = [(Con_Mat[i_, 1]*2), Con_Mat[i_, 1]*2 + 1]
-
-            for j_ in range(4):
-                for m_ in range(4):
-                    K[ADoF[j_], ADoF[m_]] = k_[j_, m_]
-
-        return K
-
 
     #==============================================================================
     def K_matrix1by1(GS_nodes, Con_Mat, E_sections,  Ec, Es, FC, FY, Forces, IDoF, Elem_prin, method):
@@ -1255,7 +936,6 @@ def calc_bt_ops(self,
 
         rows_A = len(A)
         cols_A = len(A[0])
-        rows_B = len(A)
         cols_B = len(B[0])
 
         C = np.zeros((cols_B, rows_A))
@@ -1440,99 +1120,6 @@ def calc_bt_ops(self,
 
 
     #==============================================================================
-    def strut_path(seeds, mean_CQ, vertices, regions, N_Bound, Bound):
-        """
-        Description:
-            Proposes the first strut path based on the computed directions and
-            Voronoï division.
-        Input:
-            seeds .- Seeds to grow the branches
-            mena_CQ .- Computed mean direction per zone
-            vertices .- Voronoï cells' vertices
-            regions .- Cells' connectivity matrix
-            N_Bound .- Nodal list of the boundaries of the structure
-            Bound .- Boundaries connectivity matrix
-        Output:
-            Nodes of the initial strut path
-        """
-        points_1 = np.zeros((len(seeds[:, 0])*len(regions)*2, len(regions) + 2))*1000000
-        # points_1[:] = np.nan
-        points_1[range(len(seeds)), 0] = seeds[:, 0]
-        points_1[range(len(seeds)), 1] = seeds[:, 1]
-        points_1[range(len(seeds)), 2:] = len(regions)
-
-
-
-        for i_ in range(len(points_1[:, 0])):
-            nodo_ = points_1[i_, 0:2]
-            last_p = int(sum(points_1[:, 0] < 1000000 ))
-
-            for j_ in range(len(regions)):
-
-                if j_ not in points_1[i_, 2:]:
-                    region = regions[j_]
-                    polygon = vertices[region]
-
-
-
-                    if is_inpolygon(nodo_, polygon, 1) and \
-                        (np.isnan(mean_CQ[j_, 0]) == False):
-
-                        i_node = np.array([nodo_[0] - 1000*np.cos(mean_CQ[j_, 0]),
-                            nodo_[1] - 1000*np.sin(mean_CQ[j_, 0])])    # Initial node
-
-                        f_node = np.array([nodo_[0] + 1000*np.cos(mean_CQ[j_, 0]),
-                            nodo_[1] + 1000*np.sin(mean_CQ[j_, 0])])    # Final node
-
-                        A = intersections_(np.array([[i_node[0], i_node[1]],
-                                        [f_node[0], f_node[1]]]),     # Intersections with
-                                        [0, 1], vertices, region, 1)    # the Voronoi cell
-
-
-                        if len(A[:, 0]) > 2:
-                            A_ = A
-                            A = np.zeros((2, 2))
-                            A[0,:] = A_[0,:]
-                            A[1,:] = A_[-1,:]
-
-
-                        B = intersections_(np.array([[i_node[0], i_node[1]],
-                                        [f_node[0], f_node[1]]]),     # Intersections with
-                                        [0, 1], N_Bound, Bound, 1)    # the Voronoi geometry
-
-                        if (len(B[:, 0]) <= 1) or (len(A[:, 0]) <= 1):
-                            A = np.array([[np.nan]])
-
-                        if sum(sum(np.isnan(A))) == 0:
-                            if sum(abs(A[0,:]-A[1, 0])) < .001:
-                                break
-                            else:
-                                points_1[i_, j_ + 2] = j_
-
-                                A_ = [False, False]
-                                for k_ in range(2):
-                                    A_[k_] = is_inpolygon(A[k_,:], N_Bound[Bound,:], 1)
-
-                                if sum(A_) > 0:
-                                    last_p = int(sum(np.isnan(points_1[:, 0]) == False))
-                                    if last_p < (len(points_1[:, 1]) - 1):
-                                        points_1[range(last_p, (last_p + int(sum(A_)))), 0:2] = A[A_,:]
-                                        points_1[range(last_p, (last_p + int(sum(A_)))), 2:] = \
-                                            np.array([points_1[i_, 2:], ]*sum(A_))
-
-
-
-
-
-                            # nodo_ = A[1, :]
-                            # new_node = sum(np.isnan(points_1[:, 0]) == False)
-                            # points_1[new_node, :] =[A[0, 0], A[0, 1], j_]
-
-        return points_1[np.isnan(points_1[:, 0]) == False, 0:2]
-        # points_1[650:670, 0:2]
-
-
-    #==============================================================================
     def strut_path1(seeds, mean_CQ, vertices, regions, N_Bound, Bound):
 
         """
@@ -1673,102 +1260,6 @@ def calc_bt_ops(self,
 
         return new_points, new_regions1
 
-    #==============================================================================
-    def voronoi_finite_polygons_2d_B(vor, radius=None):
-        """
-        Description:
-            Reconstruct infinite voronoi regions in a 2D diagram to finite regions.
-        Input:
-            vor .- Voronoi
-            radius .- float, optional. Distance to 'points at infinity'.
-        Output:
-            regions .- list of tuples
-                Indices of vertices in each revised Voronoi regions.
-            vertices .- list of tuples
-                Coordinates for revised Voronoi vertices. Same as coordinates
-                of input vertices, with 'points at infinity' appended to the
-                end.
-        """
-
-        if vor.points.shape[1] != 2:
-            raise ValueError("Requires 2D input")
-
-        new_regions = []
-        new_vertices = vor.vertices.tolist()
-
-        center = vor.points.mean(axis=0)
-        if radius is None:
-            radius = vor.points.ptp().max()
-
-        # Construct a map containing all ridges for a given point
-        all_ridges = {}
-        for (p1, p2), (v1, v2) in zip(vor.ridge_points, vor.ridge_vertices):
-            all_ridges.setdefault(p1, []).append((p2, v1, v2))
-            all_ridges.setdefault(p2, []).append((p1, v1, v2))
-
-        # Reconstruct infinite regions
-        for p1, region in enumerate(vor.point_region):
-            vertices = vor.regions[region]
-
-            if all(v >= 0 for v in vertices):
-                # finite region
-                new_regions.append(vertices)
-                continue
-
-            # reconstruct a non-finite region
-            ridges = all_ridges[p1]
-            new_region = [v for v in vertices if v >= 0]
-
-            for p2, v1, v2 in ridges:
-                if v2 < 0:
-                    v1, v2 = v2, v1
-                if v1 >= 0:
-                    # finite ridge: already in the region
-                    continue
-                # Compute the missing endpoint of an infinite ridge
-                t = vor.points[p2] - vor.points[p1] # tangent
-                t /= np.linalg.norm(t)
-                n = np.array([-t[1], t[0]])  # normal
-
-                midpoint = vor.points[[p1, p2]].mean(axis=0)
-                direction = np.sign(np.dot(midpoint - center, n)) * n
-                far_point = vor.vertices[v2] + direction * radius
-
-                new_region.append(len(new_vertices))
-                new_vertices.append(far_point.tolist())
-
-            # sort region counterclockwise
-            vs = np.asarray([new_vertices[v] for v in new_region])
-            c = vs.mean(axis=0)
-            angles = np.arctan2(vs[:, 1] - c[1], vs[:, 0] - c[0])
-            new_region = np.array(new_region)[np.argsort(angles)]
-
-            # finish
-            new_regions.append(new_region.tolist())
-
-        return new_regions, np.asarray(new_vertices)
-
-
-    #==============================================================================
-    def ordering(vertices, region):
-        """
-        Description:
-            Sorting clockwise the nodes of a 2D convex polyherdron
-        Input:
-            vertices .- Nodal list of the polygon
-        Output:
-            ord_ .- ordered elements
-        """
-        vertices = vertices[(np.isnan(vertices[:, 0]) != 1),:]
-        cent_ = np.mean((vertices[region,:]), axis=0)
-        co_ca_a = angle_clockwise(cent_, vertices[region,:])
-
-        ord_ = np.array([x for _, x in sorted(zip(co_ca_a, range(0, len(region))))])
-        ord_ = ord_.astype(int)
-
-
-        return ord_
-
 
     #==============================================================================
     def N_o_Comb(n, k):
@@ -1809,67 +1300,6 @@ def calc_bt_ops(self,
 
 
     #==============================================================================
-    def op_top(GS_nodes, Con_Mat, E_sections,  Ec, Es, FC, FY, Forces, N_o_S, N_S, N_L, percent):
-        """
-        Description:
-            Topology optimisation.  Reduce the quantity of elements contained in a
-            connectivity matrix by testing the elimination of a prescribed quantity
-            of elements.
-        Input:
-            GS_nodes .- Element nodal list
-            Con_Mat .- Element conectivity matrix
-            E_sections .- Asigned element sections
-            Mat_prp .- Material proprerties
-            Forces .- Forces on the elements
-            N_o_S .- Nodes associated to the supports
-            N_o_L .- Nodes associated to the loads
-            percent .- Percent to test at each iteration
-        Output:
-            Con_Mat .- Element conectivity matrix (updated)
-            E_sections .- Asigned element sections (updated)
-            Mat_prp .- Material proprerties (updated)
-            Forces .- Forces on the elements (updated)
-            N_o_S .- Nodes associated to the supports (updated)
-            N_o_L .- Nodes associated to the loads (updated)
-
-        """
-        A = np.arange(len(E_sections))
-        A = [x for _, x in sorted(zip(E_sections, A), reverse=True)]
-
-        Con_Mat[:, 0] = Con_Mat[A, 0]
-        Con_Mat[:, 1] = Con_Mat[A, 1]
-        Forces[:] = Forces[A] # [x for _,x in sorted(zip(E_sections, Forces), reverse=True)]
-        E_sections[:] = E_sections[A] #[x for _,x in sorted(zip(E_sections, E_sections), reverse=True)]
-
-        IDoF = np.ones((len(GS_nodes[:, 0])*2), dtype = bool)    # Imposssed degrees of freedom
-        for i_ in range(len(N_S)):
-            if  N_S[i_, 1] == 0:
-                IDoF[(N_S[i_, 0] - 1)*2] = False
-            if N_S[i_, 2] == 0:
-                IDoF[(N_S[i_, 0] - 1)*2 + 1] = False
-
-        Con_Mat, E_sections, Forces = K_matrix1by1(GS_nodes, Con_Mat, E_sections,  Ec, Es, FC, FY,
-                                              Forces, IDoF, percent, 0)
-
-        Steady = np.zeros((len(N_S[:, 0]) + len(N_L[:, 0])), dtype = int)
-
-        i_ = 0
-        for key in N_o_S.keys():
-            Steady[i_] = N_o_S[key]
-
-        GS_nodes, Con_Mat, Steady1 = Erase_nodes(GS_nodes, Con_Mat, Steady)
-
-        i_ = 0
-        for key in N_o_S.keys():
-            N_o_S[key] = np.array(np.array([Steady1[i_]]), dtype = int)
-
-
-
-
-        return E_sections, Forces, GS_nodes, Con_Mat, N_o_S
-
-
-    #==============================================================================
     def op_top_node(GS_nodes, Con_Mat, AREAS, Forces, Ec, Es, FC, FY, N_o_S, N_S, N_L,
                     percent, GROUP_S, GROUP_F, INIT_ALEA, percent1):
 
@@ -1896,9 +1326,6 @@ def calc_bt_ops(self,
             N_o_L .- Nodes associated to the loads (updated)
 
         """
-        maxTie = max(AREAS[Forces >= 0])
-        maxStrut = max(AREAS[Forces < 0])
-
 
         A = np.arange(len(AREAS))
         A = [x for _, x in sorted(zip(AREAS, A), reverse=True)]
@@ -1913,7 +1340,6 @@ def calc_bt_ops(self,
         C, D = count_dup((Con_Mat[0:B]).reshape(-1))
 
         NtoK = C[D > 0]    # Nodes to keep
-
 
 
         Order = np.zeros((len(Con_Mat[:, 0])), dtype = int)
@@ -1944,14 +1370,11 @@ def calc_bt_ops(self,
         Order[j_1::] = Order2[Sort_nodes]
 
 
-
         Con_Mat[:, 0] = Con_Mat[Order, 0]
         Con_Mat[:, 1] = Con_Mat[Order, 1]
 
         Forces[:] = Forces[Order]
         AREAS[:] = AREAS[Order]
-
-
 
 
         GS_nodes, Con_Mat, N_o_S, N_S, N_L = Erase_nodes(GS_nodes, Con_Mat, N_o_S, N_S, N_L, GROUP_S, GROUP_F)
@@ -2134,7 +1557,6 @@ def calc_bt_ops(self,
                 GS_nodes = GS_i
                 __Forces = F_i
                 N_o_S = NoS_i
-                N_o_L = NoL_i
                 UTMESS('F', 'CALCBT_6')
 
                 break
@@ -2346,46 +1768,6 @@ def calc_bt_ops(self,
             return ang_2
         elif ad_3 == min(ad_1, ad_2, ad_3):
             return ang_3
-
-    #==============================================================================
-    def read_from(directory, iteration_, Con_Mat):
-        """
-        Description:
-            Reading data form a specified directory.
-        Input:
-            directory
-            iteration_ .- Iteration number to built the File title
-            Con_Mat_ .- Expected length of the data
-        Output:
-            Forces .- Read data
-        """
-        Forces = np.zeros([len(Con_Mat[:, 0])])
-        newpath = directory + '/aster_model/'
-        if not os.path.exists(newpath):
-            os.makedirs(newpath)
-
-        if os.path.exists(newpath + 'RESULTS_%d' % iteration_) == True:
-
-            with open(newpath + 'RESULTS_%d' % iteration_) as fp:
-                line = fp.readline()
-                cnt = 1
-                i_ = 0
-                while line and (i_ < len(Con_Mat[:, 0])) :
-                    if line.strip():
-                        A = line[8]
-                        if A.isdigit():
-                            # line = line.replace("+", "0")
-                            Forces[i_] = float(line[10:32]) + 1
-                            i_ = i_ + 1
-                    line = fp.readline()
-                    cnt += 1
-
-            return Forces
-
-        else:
-            # print('Aborted at iteration %d' % (iteration_))
-            return np.array(([0]))
-
 
     #===============================================================================
     def run_truss_computation_1(iteration_, GS_nodes, Con_Mat, __S, Forces, N_o_S,  Ec, Es, FC, FY, N_S, N_L,
@@ -3012,9 +2394,6 @@ def calc_bt_ops(self,
         GE_plot[range(1, len(GE_plot[:, 0]), 3),:] = GS_nodes[Con_Mat[:, 1],:]
 
 
-
-        #[N_o_S, N_o_L] = BCA(Nodes_, GS_nodes, SUPPORTS, LOADS)
-
         N_o_S = BCA2(Nodes_, GS_nodes, __SUPPORTS)
 
         return GS_nodes, N_o_S, Con_Mat
@@ -3029,7 +2408,7 @@ def calc_bt_ops(self,
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # Geometry contour
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    def SKIN(__grma, __Nodes, __SUPPORTS_KEY, __FORCES_KEY, GROUP_C):
+    def SKIN(__grma, __Nodes, __SUPPORTS_KEY, __FORCES_KEY, GROUP_C, __MAIL):
         """
 
         """
@@ -3040,11 +2419,6 @@ def calc_bt_ops(self,
 
         __A = []
         for i_, key in zip(range(len(GROUP_C.keys())), GROUP_C.keys()) :
-            if  i_ == 0:
-                b = 1
-            else:
-                b = 0
-
             if (i_ + 1) == len(GROUP_C.keys()):    # Contour nodal group
                 motscles['CREA_GROUP_NO'].append(_F(GROUP_MA=(GROUP_C[key], ), NOM=GROUP_C[key], OPTION='NOEUD_ORDO', ORIGINE='SANS'))
                 __A.append(GROUP_C[key],)
@@ -3055,7 +2429,8 @@ def calc_bt_ops(self,
                 __A.append(GROUP_C[key])
         motscles1['DETR_GROUP_NO'].append(_F(NOM=(__A)),)
         # Defining nodal groups
-        __SKIN = DEFI_GROUP(reuse=__MAIL, MAILLAGE=__MAIL,**motscles)
+        __MAIL = DEFI_GROUP(reuse=__MAIL, MAILLAGE=__MAIL, **motscles1)
+        __MAIL = DEFI_GROUP(reuse=__MAIL, MAILLAGE=__MAIL,**motscles)
 
         # Updating mail_py
         mm = partition.MAIL_PY()
@@ -3065,16 +2440,13 @@ def calc_bt_ops(self,
 
         Bound = np.array([])
         Holes = {}
-        i_ = 1
         for key in GROUP_C.keys():
             if (key ==  0):
                 Bound = Cr_loop(__grno[GROUP_C[key]])
-
             else :
                 Holes[key] = Cr_loop(__grno[GROUP_C[key]])
-                i_ = i_ + 1
 
-        MESH = DEFI_GROUP(reuse=__MAIL, MAILLAGE=__MAIL, **motscles1)
+        __MAIL = DEFI_GROUP(reuse=__MAIL, MAILLAGE=__MAIL, **motscles1)
         return __Nodes, Bound, Holes
 
 
@@ -3092,8 +2464,8 @@ def calc_bt_ops(self,
     __UNITE_MAILLAGE = mm.ToAster()
 
     # Extraction of materials
-    b_mater = BETON.nom    # Names of the materials inside sd_mater
-    a_mater = ACIER.nom
+    b_mater = BETON.getName()    # Names of the materials inside sd_mater
+    a_mater = ACIER.getName()
 
     __STEEL_mat = aster.getvectjev("%s" % (a_mater) + " "*(8-len(a_mater)) + ".CPT.000001.VALR        ")
 
@@ -3118,7 +2490,7 @@ def calc_bt_ops(self,
 
     # Geometry's "skin"
     __grma = mm.gma
-    __N_Bound, __Bound, __Holes = SKIN(__grma, __Nodes, __GROUP_S.keys(), __GROUP_F.keys(), __GROUP_C)    # Geometry loops
+    __N_Bound, __Bound, __Holes = SKIN(__grma, __Nodes, __GROUP_S.keys(), __GROUP_F.keys(), __GROUP_C, __MAIL)    # Geometry loops
 
     # Geometry's maximum dimentions and real merging tolerances
     __max_dimx = max(__Nodes[:, 1]) - min(__Nodes[:, 1])
@@ -3155,9 +2527,6 @@ def calc_bt_ops(self,
 
     if __SCHEMA == 'SECTION' and __MELIM != 0.5:
         UTMESS('A', 'CALCBT_8')
-
-
-
 
     #=========================================================================
     # Ground structure

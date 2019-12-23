@@ -37,8 +37,6 @@ class ExtendedDynamicMacroElement(object):
 
     def EXTR_MATR_GENE(self,typmat) :
         import numpy
-        if not self.accessible():
-            raise AsException("Erreur dans macr_elem_dyna.EXTR_MATR_GENE en PAR_LOT='OUI'")
 
         if (typmat=='MASS_GENE') :
             macr_elem = self.sdj.MAEL_MASS
@@ -61,10 +59,8 @@ class ExtendedDynamicMacroElement(object):
 
     def RECU_MATR_GENE(self,typmat,matrice) :
         import numpy
-        if not self.accessible():
-            raise AsException("Erreur dans macr_elem_dyna.RECU_MATR_GENE en PAR_LOT='OUI'")
 
-        nommacr=self.get_name()
+        nommacr=self.getName()
         if (typmat=='MASS_GENE') :
             macr_elem = self.sdj.MAEL_MASS
         elif (typmat=='RIGI_GENE') :

@@ -17,14 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def macro_elas_mult_ops(self, MODELE, CAS_CHARGE, 
+def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
                         CHAM_MATER=None, CARA_ELEM=None, NUME_DDL=None,
                         CHAR_MECA_GLOBAL=None, LIAISON_DISCRET=None,
                          SOLVEUR=None, **args):
     """
        Ecriture de la macro MACRO_ELAS_MULT
     """
-    ier = 0
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
@@ -44,16 +43,12 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
     CALCUL = self.get_cmd('CALCUL')
     EXTR_TABLE = self.get_cmd('EXTR_TABLE')
     DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
-    # Le concept sortant (de type mult_elas ou fourier_elas) est nommé
-    # 'nomres' dans le contexte de la macro
-    self.DeclareOut('nomres', self.sd)
+    args = _F(args)
 
-    if self.reuse:
+    if args['reuse'] is not None:
         changed = args.get('RESULTAT')
-        if changed is None or changed != self.sd:
+        if changed is None:
             UTMESS('F', 'SUPERVIS2_79', valk='RESULTAT')
 
     ielas = 0
@@ -91,7 +86,6 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
             # On peut passer des mots cles egaux a None. Ils sont ignores
             motscles = {}
             if numeddl is not None:
-                self.DeclareOut('num', numeddl)
                 num = NUME_DDL(MATR_RIGI=__nomrig, **motscles)
                 self.register_result(num, numeddl)
             else:
@@ -163,7 +157,7 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
             l_calc_varc = False
             if CHAM_MATER:
                 motscles['CHAM_MATER'] = CHAM_MATER
-                iret, ibid, answer = aster.dismoi('EXI_VARC', CHAM_MATER.nom, 'CHAM_MATER', 'F')
+                iret, ibid, answer = aster.dismoi('EXI_VARC', CHAM_MATER.getName(), 'CHAM_MATER', 'F')
                 if answer == 'OUI':
                     l_calc_varc = True
             if CARA_ELEM:
@@ -184,7 +178,7 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
 
                 __list1=DEFI_LIST_REEL(DEBUT=0.0,
                                     INTERVALLE=_F(JUSQU_A=1.0,
-                                                  NOMBRE=1,),);
+                                                  NOMBRE=1,),)
 
                 if CHAR_MECA_GLOBAL :
                     excit = []

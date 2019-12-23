@@ -100,7 +100,6 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
   # Dans ce cas, on a au moins 2 "vrais" instants dans RESULTAT : instp et
   # instm
         instm = linst_resultat[-2]
-        b_inst_initial = False
     else:
 
   # Dans ce cas, on a instp = 0 et instm n'existe pas
@@ -114,7 +113,7 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
     inst_coincident = False
     if (INST is not None):
         if (INST < instp):
-            UTMESS('F', 'CHAINAGE_6', valr=[INST], valk=[RESU_MECA.nom])
+            UTMESS('F', 'CHAINAGE_6', valr=[INST], valk=[RESU_MECA.getName()])
         if abs(instp - INST) < prec:
             inst_coincident = True
 

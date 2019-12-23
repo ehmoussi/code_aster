@@ -70,7 +70,7 @@ class ExtendedFunction(object):
         if arg == 'complex':
             class_fonction = t_fonction_c
         absc, ordo = self.Valeurs()
-        return class_fonction(absc, ordo, self.Parametres(), nom=self.nom)
+        return class_fonction(absc, ordo, self.Parametres(), nom=self.getName())
 
     def Valeurs(self):
         """
@@ -105,7 +105,7 @@ class ExtendedFunction(object):
         """
         from Utilitai.Utmess import UTMESS
         TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
-        objev = '%-19s.PROL' % self.get_name()
+        objev = '%-19s.PROL' % self.getName()
         prol = self.sdj.PROL.get()
         if prol == None:
             UTMESS('F', 'SDVERI_2', valk=[objev])
@@ -198,7 +198,7 @@ class ExtendedFunctionComplex(object):
             ordo = list(map(complex, self.Ordo(), self.OrdoImg()))
         else:
             assert False, 'unexpected value for arg: %r' % arg
-        return class_fonction(self.Absc(), ordo, self.Parametres(), nom=self.nom)
+        return class_fonction(self.Absc(), ordo, self.Parametres(), nom=self.getName())
 
     def __call__(self, val, tol=1.e-6):
         """Evaluate a function at 'val'. If provided, 'tol' is a relative
@@ -218,7 +218,7 @@ class ExtendedFunctionComplex(object):
         """
         from Utilitai.Utmess import UTMESS
         TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
-        objev = '%-19s.PROL' % self.get_name()
+        objev = '%-19s.PROL' % self.getName()
         prol = self.sdj.PROL.get()
         if prol == None:
             UTMESS('F', 'SDVERI_2', valk=[objev])

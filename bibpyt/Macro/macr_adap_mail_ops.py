@@ -1185,10 +1185,6 @@ def macr_adap_mail_ops(self,
 # 1. Prealables
 #====================================================================
 #
-# 1.1. ==> La macro compte pour 1 dans la numerotation des commandes
-#
-    self.set_icmd(1)
-#
 # 1.2. ==> Initialisations de parametres Aster
 #
     DEFI_FICHIER = self.get_cmd("DEFI_FICHIER")
@@ -1468,7 +1464,7 @@ def macr_adap_mail_ops(self,
                 os.mkdir(Rep_Calc_HOMARD_global)
             except os.error as codret_partiel:
                 saux = "Code d'erreur de mkdir : %d" % codret_partiel[0]
-                self.cr.warn(saux + " : " + codret_partiel[1])
+                self.logger.warn(saux + " : " + codret_partiel[1])
                 UTMESS("F", 'HOMARD0_4', valk=Rep_Calc_HOMARD_global)
 #
         else:
@@ -1671,16 +1667,7 @@ def macr_adap_mail_ops(self,
 #
 #====================================================================
 # 8. ==> Ecriture de la commande de lecture des resultats med
-#        Remarque :
-#        La fonction self.DeclareOut(a,b) fonctionne ainsi :
-#        a est une chaine de caracteres
-#        b est la variable declaree dans la commande
-#        le but est de associer le contenu de b a la variable locale qui sera designee par a
-#        Exemple :
-#        self.DeclareOut("maillage_a_lire", args.get("MAILLAGE_NP1") )
-#        ==> la variable maillage_a_lire est identifiee a l'argument "MAILLAGE_NP1"
 #====================================================================
-    # print ".. Debut de 8."
 #
 # 8.1. ==> Le maillage
 #          On inhibe l'alarme MODELISA5_49 qui apparait car on fait VERIF=NON
@@ -1821,7 +1808,7 @@ def macr_adap_mail_ops(self,
                 os.remove(fic)
             except os.error as codret_partiel:
                 saux = "Code d'erreur de remove : %d" % codret_partiel[0]
-                self.cr.warn(saux + " : " + codret_partiel[1])
+                self.logger.warn(saux + " : " + codret_partiel[1])
                 UTMESS("F", 'HOMARD0_5', valk=fic)
 #
 # 10.3. Liberation du fichier de ASTER vers HOMARD

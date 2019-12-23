@@ -43,6 +43,7 @@
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
 #include "PythonBindings/CrackShapeInterface.h"
 #include "PythonBindings/CrackTipInterface.h"
+#include "PythonBindings/CrackInterface.h"
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
 #include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
@@ -253,6 +254,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportStaticMacroElementToPython();
     exportCrackShapeToPython();
     exportCrackTipToPython();
+    exportCrackToPython();
     exportGeneralizedModelToPython();
     exportModelToPython();
     exportPhysicsAndModelingsToPython();

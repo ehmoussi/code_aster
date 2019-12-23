@@ -60,7 +60,6 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     from Noyau.N_utils import AsType
     from Noyau.N_types import is_sequence
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-    ier = 0
 
     # On importe les definitions des commandes a utiliser dans la macro
     AFFE_MODELE = self.get_cmd('AFFE_MODELE')
@@ -72,17 +71,6 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     CALC_CHAMP = self.get_cmd('CALC_CHAMP')
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
     RECU_TABLE = self.get_cmd('RECU_TABLE')
-    DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
-    AFFE_MATERIAU = self.get_cmd('AFFE_MATERIAU')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
-    # Le concept sortant (de type evol_noli) est nomme RES dans
-    # le contexte de la macro
-
-    self.DeclareOut('RES', self.sd)
 
     # alarme de STAT_NON_LINE si les mot-cles de COMPORTEMENT sont renseignes
     # a tort
@@ -105,7 +93,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         __L1 = __L0.getValuesAsArray()
     elif type(__L0) == TimeStepper:
     # cas où liste definie par DEFI_LIST_INST
-        tmp = __L0.get_name().ljust(8) + '.LIST.' + 'DITR'.ljust(18)
+        tmp = __L0.getName().ljust(8) + '.LIST.' + 'DITR'.ljust(18)
         __L1 = aster.getvectjev(tmp)
 
     # Traitement de l'etat initial
@@ -364,14 +352,13 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
         # 1.5 Modele contenant uniquement les cables de precontrainte
         # ---------------------------------------------------------
-        objma = MODELE.getMesh()
 
         # need CENTRALISE?
-        iret, repi, repk = aster.dismoi('PARTITION', MODELE.nom, 'MODELE', 'C')
+        iret, repi, repk = aster.dismoi('PARTITION', MODELE.getName(), 'MODELE', 'C')
         assert iret == 0, "Can not extract PARTITION type of the model."
         opts = {} if repk.strip() else {'DISTRIBUTION': _F(METHODE='CENTRALISE')}
 
-        __M_CA = AFFE_MODELE(MAILLAGE=objma,
+        __M_CA = AFFE_MODELE(MAILLAGE=MODELE.getMesh(),
                              AFFE=affe_mo,
                              **opts
                              )
@@ -680,8 +667,6 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
 
         # determination des instants finaux de chaque étape
-
-        nb_inst_dispo = len(__L2) -1
         nb_etapes = 1
 
         if __ActifActif:
@@ -832,7 +817,7 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
             __RESREA=CALC_CHAMP(
                     FORCE=('REAC_NODA',),
-                    RESULTAT=RES,);
+                    RESULTAT=RES,)
 
             __REAC1 = CREA_CHAMP( OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
                           RESULTAT=__RESREA, NOM_CHAM='REAC_NODA',

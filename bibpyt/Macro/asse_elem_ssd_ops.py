@@ -30,9 +30,6 @@ def asse_elem_ssd_ops(self, RESU_ASSE_SSD, SOUS_STRUC, LIAISON, VERIF, **args):
     NUME_DDL_GENE = self.get_cmd('NUME_DDL_GENE')
     ASSE_MATR_GENE = self.get_cmd('ASSE_MATR_GENE')
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     modl_gene = {}
     mcfact = []
     for i in range(len(SOUS_STRUC)):
@@ -79,21 +76,21 @@ def asse_elem_ssd_ops(self, RESU_ASSE_SSD, SOUS_STRUC, LIAISON, VERIF, **args):
         VERIF=VERIF,
     )
     self.register_result(modele, RESU_ASSE_SSD['MODELE'])
-    
+
     nugene = NUME_DDL_GENE(MODELE_GENE=modele,
                            METHODE=args['METHODE'],
                            STOCKAGE=args['STOCKAGE'],
                            )
     self.register_result(nugene, RESU_ASSE_SSD['NUME_DDL_GENE'])
-    
+
     if RESU_ASSE_SSD['RIGI_GENE']:
         rigidite = ASSE_MATR_GENE(NUME_DDL_GENE=nugene,
                                   OPTION='RIGI_GENE')
         self.register_result(rigidite, RESU_ASSE_SSD['RIGI_GENE'])
-    
+
     if RESU_ASSE_SSD['MASS_GENE']:
         masse = ASSE_MATR_GENE(NUME_DDL_GENE=nugene,
                                OPTION='MASS_GENE')
         self.register_result(masse, RESU_ASSE_SSD['MASS_GENE'])
-    
+
     return

@@ -376,7 +376,7 @@ class GeneratorSpectrum(Generator):
         if 'FREQ_PAS' in self.method_params:
             self.SRO_args.update({'PAS': self.method_params.get('FREQ_PAS')})
         elif 'LIST_FREQ' in self.method_params:
-            L_FREQ = self.method_params.get('LIST_FREQ').Valeurs()
+            L_FREQ = self.method_params.get('LIST_FREQ').getValues()
             assert L_FREQ[0] > 0.0, "LIST_FREQ: il faut des valeurs >0.0"
             self.SRO_args.update({'LIST_FREQ': L_FREQ})
         else:
@@ -724,7 +724,7 @@ class SimulatorDSPScalar(Simulator):
             Xt = self.process_TimeHistory(generator, NP.array(Xt))
             _f_out = DEFI_FONCTION(ABSCISSE=tuple(generator.sampler.liste_temps),
                                    ORDONNEE=tuple(Xt), **self.para_fonc_traj)
-            generator.tab.append({'NUME_ORDRE': self.ntir + 1, 'FONCTION': _f_out.nom})
+            generator.tab.append({'NUME_ORDRE': self.ntir + 1, 'FONCTION': _f_out.getName()})
             generator.tab.referenceToDataStructure.append(_f_out)
             self.ntir = self.ntir + 1
 
@@ -775,11 +775,11 @@ class SimulatorDSPVector(Simulator):
                 if self.TYPE == 'COEF_CORR':
                     nom_acce = 'ACCE' + str(nba)
                     generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                         'FONCTION': _f_out.nom , 'NOM_PARA':nom_acce})
+                         'FONCTION': _f_out.getName() , 'NOM_PARA':nom_acce})
                 else:
                     nom_no = liste_nom[nba-1]
                     generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                         'FONCTION': _f_out.nom ,'NOEUD': nom_no})
+                         'FONCTION': _f_out.getName() ,'NOEUD': nom_no})
                 nba = nba + 1
             self.ntir = self.ntir + 1
 
@@ -814,11 +814,11 @@ class SimulatorSPECVector(Simulator):
                     if self.TYPE == 'COEF_CORR':
                         nom_acce = 'ACCE' + str(nba)
                         generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                 'FONCTION': _f_out.nom , 'NOM_PARA': nom_acce})
+                                 'FONCTION': _f_out.getName() , 'NOM_PARA': nom_acce})
                     else:
                         nom_no = self.liste_nom[nba-1]
                         generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                  'FONCTION': _f_out.nom ,'NOEUD': nom_no})
+                                  'FONCTION': _f_out.getName() ,'NOEUD': nom_no})
                     nba = nba + 1
                 self.ntir = self.ntir + 1
 
@@ -928,11 +928,11 @@ class SimulatorSPECVector(Simulator):
                     if self.TYPE == 'COEF_CORR':
                         nom_acce = 'ACCE' + str(nba)
                         generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                 'FONCTION': _f_out.nom , 'NOM_PARA':nom_acce})
+                                 'FONCTION': _f_out.getName() , 'NOM_PARA':nom_acce})
                     else:
                         nom_no = self.liste_nom[nba-1]
                         generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                 'FONCTION': _f_out.nom ,'NOEUD':nom_no})
+                                 'FONCTION': _f_out.getName() ,'NOEUD':nom_no})
                     generator.tab.referenceToDataStructure.append(_f_out)
                     nba = nba + 1
                 self.ntir = self.ntir + 1
@@ -953,11 +953,11 @@ class SimulatorSPECVector(Simulator):
                     if self.TYPE == 'COEF_CORR':
                         nom_acce = 'ACCE' + str(nba)
                         generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                 'FONCTION': _f_out.nom , 'NOM_PARA': nom_acce})
+                                 'FONCTION': _f_out.getName() , 'NOM_PARA': nom_acce})
                     else:
                         nom_no = self.liste_nom[nba-1]
                         generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                 'FONCTION': _f_out.nom ,'NOEUD': nom_no})
+                                 'FONCTION': _f_out.getName() ,'NOEUD': nom_no})
                     nba = nba + 1
                 self.ntir = self.ntir + 1
 
@@ -981,7 +981,7 @@ class SimulatorSPECScalar(Simulator):
                         ABSCISSE=tuple(generator.sampler.liste_temps),
                         ORDONNEE=tuple(Xt), **self.para_fonc_traj)
                 generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                      'FONCTION': _f_out.nom})
+                                      'FONCTION': _f_out.getName()})
                 generator.tab.referenceToDataStructure.append(_f_out)
                 self.ntir = self.ntir + 1
 
@@ -1055,7 +1055,7 @@ class SimulatorSPECScalar(Simulator):
                          ORDONNEE=tuple(Xt), **self.para_fonc_traj)
                 generator.tab.referenceToDataStructure.append(_f_out)
                 generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                      'FONCTION': _f_out.nom})
+                                      'FONCTION': _f_out.getName()})
                 self.ntir = self.ntir + 1
         else:
             fonc_dsp_opt, liste_rv = itersim_SRO(generator,
@@ -1070,7 +1070,7 @@ class SimulatorSPECScalar(Simulator):
                          ORDONNEE=tuple(Xt), **self.para_fonc_traj)
                 generator.tab.referenceToDataStructure.append(_f_out)
                 generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                    'FONCTION': _f_out.nom})
+                                    'FONCTION': _f_out.getName()})
                 self.ntir = self.ntir + 1
 
 
@@ -1112,7 +1112,7 @@ class SimulatorSPECPhase(Simulator):
                     generator.tab.referenceToDataStructure.append(_f_out)
                     nom_no = self.liste_nom[nba-1]
                     generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                  'FONCTION': _f_out.nom ,'NOEUD': nom_no})
+                                  'FONCTION': _f_out.getName() ,'NOEUD': nom_no})
                     nba = nba + 1
                 self.ntir = self.ntir + 1
 
@@ -1195,7 +1195,7 @@ class SimulatorSPECPhase(Simulator):
                     generator.tab.referenceToDataStructure.append(_f_out)
                     nom_no = self.liste_nom[nba-1]
                     generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                 'FONCTION': _f_out.nom ,'NOEUD':nom_no})
+                                 'FONCTION': _f_out.getName() ,'NOEUD':nom_no})
                     nba = nba + 1
                 self.ntir = self.ntir + 1
         else:
@@ -1215,7 +1215,7 @@ class SimulatorSPECPhase(Simulator):
                     generator.tab.referenceToDataStructure.append(_f_out)
                     nom_no = self.liste_nom[nba-1]
                     generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                                 'FONCTION': _f_out.nom ,'NOEUD': nom_no})
+                                 'FONCTION': _f_out.getName() ,'NOEUD': nom_no})
                     nba = nba + 1
                 self.ntir = self.ntir + 1
 
@@ -1246,7 +1246,7 @@ class SimulatorDSPPhase(Simulator):
                 generator.tab.referenceToDataStructure.append(_f_out)
                 nom_no = liste_nom[nba-1]
                 generator.tab.append({'NUME_ORDRE': self.ntir + 1,
-                         'FONCTION': _f_out.nom ,'NOEUD': nom_no})
+                         'FONCTION': _f_out.getName() ,'NOEUD': nom_no})
                 nba = nba + 1
             self.ntir = self.ntir + 1
 

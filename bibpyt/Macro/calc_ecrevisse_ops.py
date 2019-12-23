@@ -89,12 +89,6 @@ def ouvFiss(DIR_FISS, beta, Xa, Ya, Xb, Yb):
         Ouv = list(map(lambda x1, x2: abs(x2 - x1), Xa, Xb))
         Gli = list(map(lambda y1, y2: abs(y2 - y1), Ya, Yb))
     else:
-        xi = (Xa[0] + Xb[0]) * 0.5
-        yi = (Ya[0] + Yb[0]) * 0.5
-        Xa1 = [x - y for (x, y) in zip(Xa, [xi] * len(Xa))]
-        Ya1 = [x - y for (x, y) in zip(Ya, [yi] * len(Ya))]
-        Xb1 = [x - y for (x, y) in zip(Xb, [xi] * len(Xb))]
-        Yb1 = [x - y for (x, y) in zip(Yb, [yi] * len(Yb))]
         Xa2 = [x * cos(radians(beta)) + y * sin(radians(beta))
                for (x, y) in zip(Xa, Ya)]
         Ya2 = [-x * sin(radians(beta)) + y * cos(radians(beta))
@@ -147,18 +141,6 @@ def calc_ecrevisse_ops(self, **args):
     INFO = args.get("INFO")
     COURBES = args.get("COURBES")
 
-    ier = 0
-
-    # Concepts sortant
-    self.DeclareOut('__TAB', TABLE)
-    self.DeclareOut('__ECR_F1', CHARGE_THER1)
-    self.DeclareOut('__ECR_F2', CHARGE_THER2)
-    self.DeclareOut('__ECR_P', CHARGE_MECA)
-    self.DeclareOut('__DEB', DEBIT)
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     # Parametres debug
     debug = False
 
@@ -185,7 +167,6 @@ def calc_ecrevisse_ops(self, **args):
     POST_RELEVE_T = self.get_cmd("POST_RELEVE_T")
     IMPR_TABLE = self.get_cmd("IMPR_TABLE")
     DETRUIRE = self.get_cmd("DETRUIRE")
-    IMPR_CO = self.get_cmd("IMPR_CO")
     DEFI_FONCTION = self.get_cmd("DEFI_FONCTION")
     CREA_TABLE = self.get_cmd("CREA_TABLE")
     IMPR_TABLE = self.get_cmd("IMPR_TABLE")
@@ -193,7 +174,6 @@ def calc_ecrevisse_ops(self, **args):
     AFFE_CHAR_THER_F = self.get_cmd("AFFE_CHAR_THER_F")
     AFFE_CHAR_MECA_F = self.get_cmd("AFFE_CHAR_MECA_F")
     DEFI_FICHIER = self.get_cmd("DEFI_FICHIER")
-    DEFI_CONSTANTE = self.get_cmd("DEFI_CONSTANTE")
     from Contrib.macr_ecre_calc import MACR_ECRE_CALC
 
     # RECUPERATION DES MOTS-CLES FACTEURS
@@ -792,14 +772,12 @@ def calc_ecrevisse_ops(self, **args):
             try:
                 a = len(_lst_c)
             except:
-                _lst_c = []
                 _lst_f = []
                 _lst_p = []
                 _lst_t = []
                 _lst_cc = []
             try:
                 if _lst_c[1] == 0:
-                    _lst_c = []
                     _lst_f = []
                     _lst_p = []
                     _lst_t = []
@@ -847,8 +825,6 @@ def calc_ecrevisse_ops(self, **args):
                     for i in range(nbCotes - 2):
                         x = _X0[i + 1]
                         y = _Y0[i + 1]
-                        toto1 = x - epsx
-                        toto2 = x + epsx
 
                         _lst_x0.append(x - epsx)
                         _lst_x0.append(x + epsx)

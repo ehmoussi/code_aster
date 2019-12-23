@@ -37,7 +37,6 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
     """
        Corps de la macro POST_DECOLLEMENT
     """
-    ier = 0
     import aster
     import os
     from code_aster.Cata.Syntax import _F
@@ -54,10 +53,6 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
     AFFE_MODELE = self.get_cmd('AFFE_MODELE')
     AFFE_MATERIAU = self.get_cmd('AFFE_MATERIAU')
     IMPR_TABLE = self.get_cmd('IMPR_TABLE')
-
-    # Comptage commandes + déclaration concept sortant
-    self.set_icmd(1)
-    self.DeclareOut('C_out', self.sd)
 
     # on recupere le concept maillage
     MAILLAGE = RESULTAT.getModel().getMesh()
@@ -106,7 +101,7 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
 
     __surf = __tbSurf0.EXTR_TABLE().values()['INTE_X1'][0]
 
-    __linst = aster.GetResu(RESULTAT.get_name(), "VARI_ACCES")['INST']
+    __linst = aster.GetResu(RESULTAT.getName(), "VARI_ACCES")['INST']
 
 
 
