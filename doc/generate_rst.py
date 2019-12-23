@@ -108,7 +108,7 @@ def all_objects(destdir):
                 found = True
                 # print("Found:", name ,">>>", subtyp)
                 break
-        if not found:
+        if not found and not issubclass(obj, OBJ.PyDataStructure):
             raise KeyError("Boost class not found: {0}".format(obj.mro()))
 
     dicttext = OrderedDict()
