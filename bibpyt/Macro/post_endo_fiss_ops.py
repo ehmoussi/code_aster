@@ -42,7 +42,6 @@ def cherche_trajet(self, NOM_CMP, NOM_CHAM, dRECHERCHE, __ENDO, __mail, typeCham
     # --------------------------------------------------
     # IMPORT OF ASTER COMMANDS
     #
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
     PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
     CREA_RESU = self.get_cmd('CREA_RESU')
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
@@ -121,7 +120,6 @@ def cherche_trajet(self, NOM_CMP, NOM_CHAM, dRECHERCHE, __ENDO, __mail, typeCham
     endomax = Endo[idxmax]
 
     Endono2 = __ENDO.EXTR_COMP(NOM_CMP, [], 1)
-    Endo2 = Endono2.valeurs
 
     # First crack path point
     PtMax = xmax * dplan1 + ymax * dplan2 + zCoupe * dnor
@@ -493,10 +491,7 @@ def calcul_ouverture(self, NOM_CHAM, NOM_CMP, dRECHERCHE, __RESUIN, __mail, info
     # --------------------------------------------------
     # IMPORT DES COMMANDES ASTER
     #
-    LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
     PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
-    CREA_RESU = self.get_cmd('CREA_RESU')
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     MODI_REPERE = self.get_cmd('MODI_REPERE')
 
@@ -508,7 +503,6 @@ def calcul_ouverture(self, NOM_CHAM, NOM_CMP, dRECHERCHE, __RESUIN, __mail, info
         #   caracteristic- and orthogonal line lengths
         #   default values : those used for crack path search
         lortOuv = dRECHERCHE['LONG_ORTH']
-        lregOuv = dRECHERCHE['LONG_REG']
 
     # ---------------------------
     # PARAMETRES DE LA RECHERCHE
@@ -534,14 +528,11 @@ def calcul_ouverture(self, NOM_CHAM, NOM_CMP, dRECHERCHE, __RESUIN, __mail, info
     coorIni1 = infoPlan[0]
     coorIni2 = infoPlan[1]
     dnor = infoPlan[2]
-    dplan1 = infoPlan[3]
-    dplan2 = infoPlan[4]
 
     (lst_tanPoi, lst_normPoi) = versDirMoy(CoxCrete, CoyCrete, CozCrete, dnor)
 
     motclefs = {}
     ChampsResu = __RESUIN.LIST_CHAMPS()
-    lstChampsResu = list(ChampsResu.keys())
 
     methodeProj = 'COLLOCATION'
     methodeProjVI = 'COLLOCATION'
@@ -599,7 +590,6 @@ def calcul_ouverture(self, NOM_CHAM, NOM_CMP, dRECHERCHE, __RESUIN, __mail, info
         M = NP.concatenate(([vec_tan], [vec_nor], [dnor]), axis=0)
         M = NP.transpose(M)
 
-        Angles = {}
         (alpha, beta, gamma) = euler_angles(M)
         __RESROT = MODI_REPERE(RESULTAT=__RESUIN,
                                INST=inst,
@@ -725,10 +715,6 @@ def post_endo_fiss_ops(self,
     # "strong_flag" must be set to True if computing crack opening with the "strong" method
     strong_flag = False
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     MasquerAlarme('CALCULEL5_48')
     MasquerAlarme('ALGORITH12_43')
     MasquerAlarme('CALCULEL2_12')
@@ -738,11 +724,8 @@ def post_endo_fiss_ops(self,
     # IMPORT OF ASTER COMMANDS
     #
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    CO = self.get_cmd('CO')
-    IMPR_RESU = self.get_cmd('IMPR_RESU')
     RECU_TABLE = self.get_cmd('RECU_TABLE')
 
     # --------------------------------------------------
@@ -771,14 +754,11 @@ def post_endo_fiss_ops(self,
         inst = 1.
         motscles['INST'] = inst
 
-        n_mail = __ENDO.sdj.REFE.get()[0].strip()
-        __mail = self.get_concept(n_mail)
+        __mail = __ENDO.getMesh()
 
     else:
         build = 'resu'
         __RESUIN = args['RESULTAT']
-        nomresu = __RESUIN.nom
-        dicResu = __RESUIN.LIST_PARA()
         dicVarAcc = __RESUIN.LIST_VARI_ACCES()
         if args.get('NUME_ORDRE') is not None:
             nume_ordre = args.get('NUME_ORDRE')

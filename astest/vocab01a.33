@@ -9,6 +9,8 @@ from code_aster.Cata.Syntax import *
 from code_aster.Cata.Language.SyntaxObjects import IDS
 from code_aster.Cata.Language.SyntaxUtils import force_list
 from code_aster.Commands.ExecuteCommand import UserMacro
+from code_aster.Supervis import logger
+
 
 from Noyau.N_ETAPE import check_sdprod
 from Noyau.N_CR import CR
@@ -328,7 +330,6 @@ def vocab01_ops(self, EXISTANT, INFO, **kwargs):
     """Fake macro-command to check the catalog"""
     from code_aster.Commands import CREA_TABLE, TEST_TABLE
     from Utilitai.Utmess import UTMESS
-    self.set_icmd(1)
 
     # start the job
     commands = getListOfCommands()

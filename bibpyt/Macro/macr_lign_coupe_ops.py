@@ -758,14 +758,18 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
                     Mesh = RESULTAT.getMesh()
                     UTMESS('I', 'POST0_23', valk=RESULTAT.getName())
         else:
-            Model = model
+            Mesh = model.getMesh()
+            if Model is None:
+                Model = model
+
+        if Mesh is None:
+            raise Exception("Empty mesh")
 
     elif CHAM_GD is not None:
         mcORDR['TOUT_ORDRE'] = 'OUI'
         if Model is None:
             UTMESS('F', 'POST0_10')
 
-        Mesh
         # récupération de la grandeur du champ
         n_cham = CHAM_GD.getName()
         catagd = aster.getvectjev("&CATA.GD.NOMGD")
@@ -811,9 +815,9 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
                              NOM_CHAM=NOM_CHAM, TYPE_RESU=TYPE_RESU,
                              AFFE=_F(CHAM_GD=CHAM_GD, INST=0.),)
         RESULTAT = __resuch
+        Mesh = CHAM_GD.getMesh()
 
     # Maillage sur lequel s'appuie le résultat à projeter
-
     if Mesh is None:
         Mesh = Model.getMesh()
     # le maillage est-il 2D ou 3D ?
@@ -1074,7 +1078,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     # on repasse par les tables python pour supprimer les paramètres inutiles
     # NOEUD (car il est propre au maillage de la ligne) et RESU
 
-    self.DeclareOut('nomres', self.sd)
     dictab = __tabitm.EXTR_TABLE()
     # Ajout de la colonne theta
     if len(arcgma) > 0 and 'ABSC_CURV' in dictab.para:

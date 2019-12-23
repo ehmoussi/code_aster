@@ -20,6 +20,23 @@
 # person_in_charge: mathieu.courtois at edf.fr
 import os
 
+from code_aster.Cata.DataStructure import *
+
+
+def calc_table_prod(TABLE, ACTION, **args):
+   """Typage du concept produit.
+   """
+   l_typ = [AsType(TABLE),]
+   for mcf in ACTION:
+      if mcf.get('TABLE') is not None:
+         l_typ.append(AsType(mcf['TABLE']))
+   # une table_fonction étant une table
+   if table_fonction in l_typ:
+      return table_fonction, 'TABLE_FONCTION'
+   elif table_container in l_typ:
+      return table_container, 'TABLE_CONTENEUR'
+   else:
+      return table_sdaster, 'TABLE'
 
 def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     """
@@ -36,23 +53,15 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     from Utilitai.utils import get_titre_concept
     import numpy as np
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
+    args = _F(args)
 
-    # Le concept sortant (de type table_sdaster ou dérivé) est tabout
-    if self.sd.__class__ == table_fonction:
-        typ_tabout = 'TABLE_FONCTION'
-    elif self.sd.__class__ == table_container:
-        typ_tabout = 'TABLE_CONTENEUR'
-    else:
-        typ_tabout = 'TABLE'
+    new_table, typ_tabout = calc_table_prod(TABLE, ACTION)
 
     tab = TABLE.EXTR_TABLE()
 
     # Réinitialiser le titre si on n'est pas réentrant
-    if self.reuse is None:
-        tab.titr = get_titre_concept(self.sd)
+    if args['reuse'] is None:
+        tab.titr = get_titre_concept(new_table)
 
     # Boucle sur les actions à effectuer
     for fOP in ACTION:
@@ -86,7 +95,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
             lpar = force_list(occ['NOM_PARA'])
             for p in lpar:
                 if not p in tab.para:
-                    UTMESS('F', 'TABLE0_2', valk=[p, TABLE.nom])
+                    UTMESS('F', 'TABLE0_2', valk=[p, TABLE.getName()])
             tab = tab[lpar]
 
         # 3. Traitement de SUPPRIME
@@ -117,9 +126,9 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
                 lpar = force_list(occ['NOM_PARA'])
                 for p in lpar:
                     if not p in tab.para:
-                        UTMESS('F', 'TABLE0_2', valk=[p, TABLE.nom])
+                        UTMESS('F', 'TABLE0_2', valk=[p, TABLE.getName()])
                     if not p in tab2.para:
-                        UTMESS('F', 'TABLE0_2', valk=[p, occ['TABLE'].nom])
+                        UTMESS('F', 'TABLE0_2', valk=[p, occ['TABLE'].getName()])
             restrict = occ.get('RESTREINT') == 'OUI'
             format_r = occ.get('FORMAT_R')
             tab = merge(tab, tab2, lpar, restrict=restrict, format_r=format_r)
@@ -127,8 +136,8 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
         # 7. Traitement de OPER
         if occ['OPERATION'] == 'OPER':
             if occ.get('NOM_COLONNE') \
-                    and len(occ['NOM_COLONNE']) != len(occ['FORMULE'].nompar):
-                UTMESS('F', 'TABLE0_19', vali=len(occ['FORMULE'].nompar))
+                    and len(occ['NOM_COLONNE']) != len(occ['FORMULE'].getVariables()):
+                UTMESS('F', 'TABLE0_19', vali=len(occ['FORMULE'].getVariables()))
             # ajout de la colonne dans la table
             tab.fromfunction(occ['NOM_PARA'], occ['FORMULE'],
                              l_para=occ.get('NOM_COLONNE'))
@@ -194,7 +203,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
                     UTMESS('F', 'TABLE0_16')
 
             # décider le format de la nouvelle table
-            if self.reuse is not None:
+            if args['reuse'] is not None:
                 tab.add_para('TYPE_CALCUL','K8')
                 tab_new = tab
             else :
@@ -253,7 +262,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
 
     # 99. Création de la table_sdaster résultat
     # cas réentrant : il faut détruire l'ancienne table_sdaster
-    if self.reuse is not None:
+    if args['reuse'] is not None:
         DETRUIRE(CONCEPT=_F(NOM=TABLE), INFO=1)
 
     dprod = tab.dict_CREA_TABLE()

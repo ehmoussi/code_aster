@@ -30,7 +30,6 @@ def info_fonction_ops(self, INFO, **args):
 
     # On importe les definitions des commandes a utiliser dans la macro
     CREA_TABLE = self.get_cmd('CREA_TABLE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
     IMPR_TABLE = self.get_cmd('IMPR_TABLE')
     CALC_FONCTION = self.get_cmd('CALC_FONCTION')
 
@@ -171,7 +170,7 @@ def info_fonction_ops(self, INFO, **args):
             __ez = __ff.trapeze(0.)
         sigma = math.sqrt(__ez.vale_y[-1] / (__ff.vale_x[-1] - __ff.vale_x[0]))
         C_out = CREA_TABLE(
-            LISTE=(_F(LISTE_K=ECART_TYPE['FONCTION'].nom, PARA='FONCTION'),
+            LISTE=(_F(LISTE_K=ECART_TYPE['FONCTION'].getName(), PARA='FONCTION'),
                    _F(LISTE_K=ECART_TYPE[
                       'METHODE'], PARA='METHODE'),
                    _F(LISTE_R=fmoy, PARA='MOYENNE'),
@@ -211,7 +210,7 @@ def info_fonction_ops(self, INFO, **args):
                 math.sqrt(__ez.vale_y[-1] / (__ff.vale_x[-1] - __ff.vale_x[0])))
             tmpi.append(tini)
             tmpf.append(tfin)
-            nomf.append(i_rms['FONCTION'].nom)
+            nomf.append(i_rms['FONCTION'].getName())
             meth.append(i_rms['METHODE'])
         C_out = CREA_TABLE(LISTE=(_F(LISTE_K=nomf, PARA='FONCTION'),
                                   _F(LISTE_K=meth, PARA='METHODE'),
@@ -227,7 +226,7 @@ def info_fonction_ops(self, INFO, **args):
         norme = []
         for __fi in __ff.l_fonc:
             norme.append(__fi.normel2())
-        nom = [NORME['FONCTION'].nom, ] * len(norme)
+        nom = [NORME['FONCTION'].getName(), ] * len(norme)
         C_out = CREA_TABLE(LISTE=(_F(LISTE_R=norme, PARA='NORME'),
                                   _F(LISTE_K=nom, PARA='FONCTION'), )
                            )
@@ -267,7 +266,7 @@ def info_fonction_ops(self, INFO, **args):
         if NOCI_SEISME['FONCTION'] is not None:
             # cas fonction
             l_table.append(
-                _F(LISTE_K=NOCI_SEISME['FONCTION'].nom, PARA='FONCTION'))
+                _F(LISTE_K=NOCI_SEISME['FONCTION'].getName(), PARA='FONCTION'))
             __ac = NOCI_SEISME['FONCTION'].convert()
             option = NOCI_SEISME['OPTION']
             if NOCI_SEISME['INST_INIT'] is not None:
@@ -297,7 +296,7 @@ def info_fonction_ops(self, INFO, **args):
             if NOCI_SEISME['FREQ'] is not None:
                 l_freq = NOCI_SEISME['FREQ']
             elif NOCI_SEISME['LIST_FREQ'] is not None:
-                l_freq = NOCI_SEISME['LIST_FREQ'].Valeurs()
+                l_freq = NOCI_SEISME['LIST_FREQ'].getValues()
             else:
                 # fréquences par défaut
                 l_freq = []

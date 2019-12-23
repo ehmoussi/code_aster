@@ -36,8 +36,6 @@ class ExtendedMesh(object):
     def LIST_GROUP_NO(self) :
         """ retourne la liste des groupes de noeuds sous la forme :
             [ (gno1, nb noeuds  gno1), ...] """
-        if not self.accessible():
-            raise AsException("Erreur dans maillage.LIST_GROUP_NO en PAR_LOT='OUI'")
         dic_gpno = self.sdj.GROUPENO.get()
         if dic_gpno is None:
             return []
@@ -46,8 +44,6 @@ class ExtendedMesh(object):
     def LIST_GROUP_MA(self) :
         """ retourne la liste des groupes de mailles sous la forme :
             [ (gma1, nb mailles gma1, dime max des mailles gma1), ...] """
-        if not self.accessible():
-            raise AsException("Erreur dans maillage.LIST_GROUP_MA en PAR_LOT='OUI'")
         ltyma = aster.getvectjev("&CATA.TM.NOMTM")
         catama = aster.getcolljev("&CATA.TM.TMDIM")
         dic_gpma = self.sdj.GROUPEMA.get()

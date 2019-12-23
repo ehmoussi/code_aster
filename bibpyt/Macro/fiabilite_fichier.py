@@ -107,7 +107,7 @@ class fiabilite_fichier:
 
         else:
 #
-            self.jdc.cr.warn("Type d'ouverture : " + type_ouvr)
+            self.jdc.logger.warn("Type d'ouverture : " + type_ouvr)
             erreur = 2
 #
 # 2.3. ==> Ouverture vraie
@@ -118,15 +118,15 @@ class fiabilite_fichier:
             try:
                 self.fic = open(self.nomfic_global, type_ouvr)
             except os.error as erreur_partiel:
-                self.jdc.cr.warn("Code d'erreur de open : " + str(
+                self.jdc.logger.warn("Code d'erreur de open : " + str(
                     erreur_partiel[0]) + " : " + erreur_partiel[1])
                 erreur = 10
 #
 # 2.4. ==> C'est fini
 #
         if erreur:
-            self.jdc.cr.warn("Fichier : " + self.nomfic)
-            self.jdc.cr.warn(self.messages_erreur[erreur])
+            self.jdc.logger.warn("Fichier : " + self.nomfic)
+            self.jdc.logger.warn(self.messages_erreur[erreur])
 #
         return erreur
 #
@@ -162,15 +162,15 @@ class fiabilite_fichier:
             try:
                 self.fic.close()
             except os.error as erreur_partiel:
-                self.jdc.cr.warn("Code d'erreur de close : " + str(
+                self.jdc.logger.warn("Code d'erreur de close : " + str(
                     erreur_partiel[0]) + " : " + erreur_partiel[1])
                 erreur = 11
 #
 # 3.3. ==> C'est fini
 #
         if erreur:
-            self.jdc.cr.warn("Fichier : " + self.nomfic)
-            self.jdc.cr.warn(self.messages_erreur[erreur])
+            self.jdc.logger.warn("Fichier : " + self.nomfic)
+            self.jdc.logger.warn(self.messages_erreur[erreur])
 #
         return erreur
 #
@@ -210,8 +210,8 @@ class fiabilite_fichier:
 #
         if erreur:
             erreur = 20
-            self.jdc.cr.warn("Fichier : " + self.nomfic)
-            self.jdc.cr.warn(self.messages_erreur[erreur])
+            self.jdc.logger.warn("Fichier : " + self.nomfic)
+            self.jdc.logger.warn(self.messages_erreur[erreur])
 #
         return erreur
 #

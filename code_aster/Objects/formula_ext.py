@@ -28,7 +28,7 @@ from pickle import dumps, loads
 
 from libaster import Formula
 
-from ..Utilities import deprecated, force_list, initial_context, injector
+from ..Utilities import force_list, initial_context, injector
 from ..Supervis.logger import logger
 
 
@@ -82,14 +82,6 @@ class ExtendedFormula(object):
         else:
             result = result[0]
         return result
-
-    @property
-    @deprecated(help="Use 'getVariables()' instead.")
-    def nompar(self):
-        """Return the variables names.
-
-        *Deprecated:* Use `getVariables()` instead. """
-        return self.getVariables()
 
     def Parametres(self):
         """Return a dict containing the properties of the formula that can be

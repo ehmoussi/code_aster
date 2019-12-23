@@ -30,26 +30,14 @@ def post_k_trans_ops(self, **args):
 
     RESU_TRANS = args.get("RESU_TRANS")
     K_MODAL = args.get("K_MODAL")
-    TOUT_ORDRE = args.get("TOUT_ORDRE")
     NUME_ORDRE = args.get("NUME_ORDRE")
     LIST_ORDRE = args.get("LIST_ORDRE")
     INST = args.get("INST")
     LIST_INST = args.get("LIST_INST")
-    INFO = args.get("INFO")
 
-    macro = 'POST_K_TRANS'
-    ier = 0
 #------------------------------------------------------------------
     # On importe les definitions des commandes a utiliser dans la macro
-    CALC_G = self.get_cmd('CALC_G')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
-    # Le concept sortant (de type table_sdaster ou dérivé) est tab
-    self.DeclareOut('tabout', self.sd)
 
 #------------------------------------------------------------------
     TABK = K_MODAL['TABL_K_MODA']
@@ -69,7 +57,7 @@ def post_k_trans_ops(self, **args):
 # Verification de cohérence sur le nombre de modes
 #
 # RESULTAT TRANSITOIRE
-    nomresu = RESU_TRANS.nom
+    nomresu = RESU_TRANS.getName()
     coef = aster.getvectjev(nomresu.ljust(19) + '.DEPL')
     nmodtr = aster.getvectjev(nomresu.ljust(19) + '.DESC')[1]
 # BASE MODALE
@@ -110,7 +98,7 @@ def post_k_trans_ops(self, **args):
                 NUME_ORDRE = (NUME_ORDRE,)
             ltmp = list(NUME_ORDRE)
         elif LIST_ORDRE:
-            ltmp = aster.getvectjev(LIST_ORDRE.nom.ljust(19) + '.VALE')
+            ltmp = aster.getvectjev(LIST_ORDRE.getName().ljust(19) + '.VALE')
         for ord in ltmp:
             if ord in l0_ord:
                 l_ord.append(ord)
@@ -125,7 +113,7 @@ def post_k_trans_ops(self, **args):
                 INST = (INST,)
             ltmp = list(INST)
         elif LIST_INST:
-            ltmp = aster.getvectjev(LIST_INST.nom.ljust(19) + '.VALE')
+            ltmp = aster.getvectjev(LIST_INST.getName().ljust(19) + '.VALE')
         for ins in ltmp:
             if CRITERE == 'RELATIF' and ins != 0.:
                 match = [

@@ -70,16 +70,6 @@ class ExtendedDataStructure(object):
             self.ptr_sdj = self.ptr_class_sdj(nomj=self.getName())
         return self.ptr_sdj
 
-    # transitional functions - to remove later
-    @staticmethod
-    @deprecated(False)
-    def accessible():
-        return True
-
-    @deprecated(help="Use 'getName()' instead.")
-    def get_name(self):
-        return self.getName()
-
     @property
     @deprecated(help="Use 'getName()' instead.")
     def nom(self):

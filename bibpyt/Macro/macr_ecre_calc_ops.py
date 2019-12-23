@@ -45,17 +45,8 @@ def macr_ecre_calc_ops(self, **args):
     IMPRESSION = args.get("IMPRESSION")
     INFO = args.get("INFO")
 
-    ier = 0
-
     # PARAMETRES DEBUG
     debug = False
-
-    # Concept sortant
-    self.DeclareOut('__TAB', TABLE)
-    self.DeclareOut('__DEB', DEBIT)
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # Info
     info2 = (INFO == 2)

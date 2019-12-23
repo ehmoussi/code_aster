@@ -28,9 +28,6 @@ def post_bordet_ops(self, RESULTAT, PARAM, TEMP, TOUT=None, GROUP_MA=None,
     from code_aster.Objects import Surface as nappe_sdaster
     from Utilitai.Utmess import UTMESS
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
     # On importe les definitions des commandes a utiliser dans la macro
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     CALC_CHAM_ELEM = self.get_cmd('CALC_CHAM_ELEM')
@@ -39,16 +36,11 @@ def post_bordet_ops(self, RESULTAT, PARAM, TEMP, TOUT=None, GROUP_MA=None,
     FORMULE = self.get_cmd('FORMULE')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
     #
-    # Definition du concept sortant dans le contexte de la macro
-    self.DeclareOut('tabout', self.sd)
-    #
     # Recuperation du modele a partir du resultat
-    iret, ibid, n_modele = aster.dismoi(
-        'MODELE', RESULTAT.nom, 'RESULTAT', 'F')
-    n_modele = n_modele.rstrip()
-    if len(n_modele) == 0 or n_modele == "#PLUSIEURS":
-        UTMESS('F', 'RUPTURE1_58')
     model = RESULTAT.getModel()
+    n_modele = model.getName()
+    if model is None or n_modele == "#PLUSIEURS":
+        UTMESS('F', 'RUPTURE1_58')
 
     # Dimension du modele
     iret, ndim, rbid = aster.dismoi('DIM_GEOM', model.getName(), 'MODELE', 'F')
@@ -83,8 +75,8 @@ def post_bordet_ops(self, RESULTAT, PARAM, TEMP, TOUT=None, GROUP_MA=None,
         DEFORMATION='EPSP_ELGA',)
 
 # Recuperation de la liste des instants et des ordres de calcul
-    list_ordre = aster.GetResu(__RESU.get_name(), "VARI_ACCES")['NUME_ORDRE']
-    list_inst = aster.GetResu(__RESU.get_name(), "VARI_ACCES")['INST']
+    list_ordre = aster.GetResu(__RESU.getName(), "VARI_ACCES")['NUME_ORDRE']
+    list_inst = aster.GetResu(__RESU.getName(), "VARI_ACCES")['INST']
 
 #
 # On va travailler en ordre ; si l'utilisateur entre un instant, on va le

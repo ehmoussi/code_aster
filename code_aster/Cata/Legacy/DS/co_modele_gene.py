@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ class modele_gene(ASSD):
          la liste des macro-elements sous-jacents"""
       if not self.accessible():
          raise AsException("Erreur dans modele_gene.LIST_SOUS_STRUCT en PAR_LOT='OUI'")
-      nommodgen=self.get_name()
+      nommodgen=self.getName()
       ncham=nommodgen+(8-len(nommodgen))*' '
       ssno=aster.getvectjev(ncham+(14-len(ncham))*' '+'.MODG.SSNO')
       ssme=aster.getcolljev(ncham+(14-len(ncham))*' '+'.MODG.SSME')
@@ -43,7 +43,7 @@ class modele_gene(ASSD):
          [ (ss1, nom_liais1,  ss2 , nom_liais2), ...] """
       if not self.accessible() :
          raise AsException("Erreur dans modele_gene.LIST_LIAIS_STRUCT en PAR_LOT='OUI'")
-      nommodgen=self.get_name()
+      nommodgen=self.getName()
       ncham=nommodgen+(8-len(nommodgen))*' '
       lidf=aster.getcolljev(ncham+(14-len(ncham))*' '+'.MODG.LIDF')
       return [([(lidf[ind][indb]) for indb in range(4)]) for ind in lidf]

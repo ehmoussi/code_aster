@@ -56,42 +56,8 @@ def chainage_thm_ops(self, TYPE_CHAINAGE, **args):
     #
 
     #
-    # Introduction : déclarations préalables
-    #
-
-    ier = 0
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
-    # On importe les definitions des commandes a utiliser dans la macro
-    CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
-    PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    CREA_RESU = self.get_cmd('CREA_RESU')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-
-    #
     # Début de la macro-commande
     #
-
-    # précision machine
-    prec = numpy.finfo(float).eps
-
-    motscles = dict()
-
-    INST = None
-    if 'INST' in args:
-        if args['INST'] is not None:
-            INST = args['INST']
-
-    b_type_resu_cham_no = False
-    if 'TYPE_RESU' in args:
-        if args['TYPE_RESU'] is not None:
-            TYPE_RESU = args['TYPE_RESU']
-        if (TYPE_RESU == "CHAM_NO"):
-            b_type_resu_cham_no = True
-
     #
     # 3 possibilités pour TYPE_CHAINAGE :
     #  1. HYDR_MECA
@@ -102,41 +68,29 @@ def chainage_thm_ops(self, TYPE_CHAINAGE, **args):
     # 1. Chaînage HYDRAULIQUE ===> MECANIQUE
     #
 
+    motscles = dict()
+
     if (TYPE_CHAINAGE == "HYDR_MECA"):
-
-        self.DeclareOut('nomres', self.sd)
-
-        nomres = CHAINAGE_HYDR_MECA(self, args, motscles)
-        return nomres
+        return CHAINAGE_HYDR_MECA(self, args, motscles)
 
     #
     # 2. Chaînage MECANIQUE ===> HYDRAULIQUE
     #
 
     elif (TYPE_CHAINAGE == "MECA_HYDR"):
-
-        self.DeclareOut('nomres', self.sd)
-
-        nomres = CHAINAGE_MECA_HYDR(self, args, motscles)
-        return nomres
+        return CHAINAGE_MECA_HYDR(self, args, motscles)
 
     #
     # 3. Initialisation des matrices de projection
     #
 
     elif (TYPE_CHAINAGE == "INIT"):
-
-        self.DeclareOut('MATR_MH', args['MATR_MH'])
-        self.DeclareOut('MATR_HM1', args['MATR_HM1'])
-        self.DeclareOut('MATR_HM2', args['MATR_HM2'])
-
         MATR_MH, MATR_HM1, MATR_HM2 = CHAINAGE_INIT(self, args, motscles)
         self.register_result(MATR_MH, args['MATR_MH'])
         self.register_result(MATR_HM1, args['MATR_HM1'])
         self.register_result(MATR_HM2, args['MATR_HM2'])
 
     else:
-
         UTMESS('F', 'DVP_1')
 
     return

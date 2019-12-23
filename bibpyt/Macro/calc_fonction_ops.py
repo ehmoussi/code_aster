@@ -145,7 +145,6 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
 def calc_fonction_ops(self, **args):
     """Corps de la macro CALC_FONCTION"""
     args = _F(args)
-    self.set_icmd(1)
     # éléments de contexte
     ctxt = Context()
 
@@ -224,7 +223,6 @@ class CalcFonctionOper(object):
         DEFI_FONCTION = macr.get_cmd('DEFI_FONCTION')
         IMPR_FONCTION = macr.get_cmd('IMPR_FONCTION')
         DEFI_NAPPE = macr.get_cmd('DEFI_NAPPE')
-        macr.DeclareOut('result', macr.sd)
         # common keywords to DEFI_FONCTION & DEFI_NAPPE
         para = self.resu.para
         for p in ('NOM_PARA', 'NOM_RESU', 'PROL_DROITE', 'PROL_GAUCHE',
@@ -264,7 +262,7 @@ class CalcFonctionOper(object):
     def _use_list_para(self):
         """Interpolate using LIST_PARA."""
         if self.args['LIST_PARA'] is not None:
-            self.resu = self.resu.evalfonc(self.args['LIST_PARA'].Valeurs())
+            self.resu = self.resu.evalfonc(self.args['LIST_PARA'].getValues())
 
     def _get_mcsimp(self, mcsimp):
         """Return the list of mcsimp values for all occurrences of mcfact."""
@@ -482,7 +480,7 @@ class CalcFonction_EXTRACTION(CalcFonctionOper):
 class CalcFonction_FFT(CalcFonctionOper):
     """Fast Fourier Transform"""
 
-    
+
     def _build_data(self):
         """Read keywords to build the data"""
         opts = {}
@@ -689,8 +687,6 @@ class CalcFonction_MULT(CalcFonctionOper):
         self._use_list_para()
 
 
-
-
 class CalcFonction_PUISSANCE(CalcFonctionOper):
     """Compute f^n"""
     def _run(self):
@@ -719,7 +715,7 @@ class CalcFonction_SPEC_OSCI(CalcFonctionOper):
         self._dat['AMOR'] = l_amor
         # freq
         if kw['LIST_FREQ'] is not None:
-            l_freq = kw['LIST_FREQ'].Valeurs()
+            l_freq = kw['LIST_FREQ'].getValues()
         elif kw['FREQ'] is not None:
             l_freq = force_list(kw['FREQ'])
         else:
@@ -824,7 +820,6 @@ class CalcFonction_DSP(CalcFonctionOper):
                           para=f_in.para)
         deuxpi = 2. * math.pi
         freq_coup = kw['FREQ_COUP']
-        nbiter = kw['NB_ITER']
         SRO_args = {
             'DUREE_PHASE_FORTE' : kw['DUREE'], 'FREQ_COUP' : freq_coup,
             'NORME' : kw['NORME'], 'AMORT' : kw['AMOR_REDUIT'],
@@ -832,7 +827,7 @@ class CalcFonction_DSP(CalcFonctionOper):
         if kw['FREQ_PAS'] is not None:
             SRO_args['PAS'] = kw['FREQ_PAS']
         elif kw['LIST_FREQ'] is not None:
-            l_freq = kw['LIST_FREQ'].Valeurs()
+            l_freq = kw['LIST_FREQ'].getValues()
             if l_freq[0] <= 0.0:
                 UTMESS('F', 'FONCT0_43')
             SRO_args['LIST_FREQ'] = l_freq
@@ -961,7 +956,7 @@ class CalcFonction_REGR_POLYNOMIALE(CalcFonctionOper):
         # interpolation sur une liste d'abscisses
         absc = f_in.vale_x
         if self.args['LIST_PARA'] is not None:
-            absc = self.args['LIST_PARA'].Valeurs()
+            absc = self.args['LIST_PARA'].getValues()
         vale = NP.polyval(coef, absc)
         # paramètres
         para = f_in.para.copy()

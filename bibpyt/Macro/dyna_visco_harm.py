@@ -46,9 +46,6 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
     DETRUIRE        = self.get_cmd('DETRUIRE')
 
 
-    self.DeclareOut('dyna_harm',self.sd)
-
-
     if args['NOM_CHAM'] is not None:
         NOM_CHAM = args['NOM_CHAM']
     if isinstance(NOM_CHAM,str):
@@ -121,7 +118,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
         UTMESS('F', 'DYNAVISCO_8')
 
     __modstat=MODE_STATIQUE(MATR_RIGI=__asseKgr,
-                            FORCE_NODALE=mc_force_nodale);
+                            FORCE_NODALE=mc_force_nodale)
 
 
     #################################################################################################
@@ -129,18 +126,18 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
     # PROJECTION OF THE MATRICES K AND M ON A BASE MADE WITH THE REAL EIGENMODES AND THE STATIC MODES
 
     __modrs=DEFI_BASE_MODALE(DIAG_MASS=_F(MODE_MECA=modes,
-                                          MODE_STAT=__modstat,),);
+                                          MODE_STAT=__modstat,),)
 
     __ddlplein=NUME_DDL_GENE(BASE=__modrs,
-                             STOCKAGE='PLEIN',);
+                             STOCKAGE='PLEIN',)
 
     __Mgproj=PROJ_MATR_BASE(BASE=__modrs,
                             NUME_DDL_GENE=__ddlplein,
-                            MATR_ASSE=__asseMg,);
+                            MATR_ASSE=__asseMg,)
 
     __Kgproj=PROJ_MATR_BASE(BASE=__modrs,
                             NUME_DDL_GENE=__ddlplein,
-                            MATR_ASSE=__asseKg,);
+                            MATR_ASSE=__asseKg,)
 
 
     # ASSEMBLY AND PROJECTION OF THE EXCITATION
@@ -153,7 +150,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
 
     __lfor=PROJ_VECT_BASE(BASE=__modrs,
                           NUME_DDL_GENE=__ddlplein,
-                          VECT_ASSE=__assef, TYPE_VECT='FORC');
+                          VECT_ASSE=__assef, TYPE_VECT='FORC')
 
     DETRUIRE(CONCEPT = _F (NOM = __felem,) , )
     DETRUIRE(CONCEPT = _F (NOM = __assef,) , )
@@ -166,7 +163,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
     for y in MATER_ELAS_FO:
         __lKv[ny]=PROJ_MATR_BASE(BASE=__modrs,
                                NUME_DDL_GENE=__ddlplein,
-                               MATR_ASSE=__listKv[ny],);
+                               MATR_ASSE=__listKv[ny],)
         ny=ny+1
 
 
@@ -185,7 +182,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
 
     dyna_harm=REST_GENE_PHYS(RESU_GENE=__dyngene,
                              MODE_MECA=__modrs,
-                             NOM_CHAM=NOM_CHAM);
+                             NOM_CHAM=NOM_CHAM)
 
 
     # compute the response of the projected problem for f>fmin
@@ -214,7 +211,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
 
         __dynphys=REST_GENE_PHYS(RESU_GENE=__dyngene,
                                  MODE_MECA=__modrs,
-                                 NOM_CHAM=NOM_CHAM);
+                                 NOM_CHAM=NOM_CHAM)
 
 
         for champ in NOM_CHAM:
@@ -223,7 +220,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
                                 NOM_CHAM=champ,
                                 TYPE_CHAM='NOEU_DEPL_C',
                                 RESULTAT=__dynphys,
-                                NUME_ORDRE=1,);
+                                NUME_ORDRE=1,)
 
             dyna_harm=CREA_RESU(reuse=dyna_harm,
                                 RESULTAT=dyna_harm,
@@ -231,7 +228,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
                                 TYPE_RESU='DYNA_HARMO',
                                 NOM_CHAM=champ,
                                 AFFE=_F(CHAM_GD=__resveu,
-                                        FREQ=list_FREQ[num_freq],),);
+                                        FREQ=list_FREQ[num_freq],),)
 
 
     return dyna_harm

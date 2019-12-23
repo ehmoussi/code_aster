@@ -76,17 +76,10 @@ class ExtendedResultsContainer(object):
                 rankMater = rankMater + 1
 
     def LIST_CHAMPS (self) :
-        if not self.accessible():
-            raise AsException("Erreur dans resultat.LIST_CHAMPS en PAR_LOT='OUI'")
-        return aster.GetResu(self.get_name(), "CHAMPS")
+        return aster.GetResu(self.getName(), "CHAMPS")
 
     def LIST_VARI_ACCES (self):
-        if not self.accessible():
-            raise AsException("Erreur dans resultat.LIST_VARI_ACCES " +
-                              "en PAR_LOT='OUI'")
-        return aster.GetResu(self.get_name(), "VARI_ACCES")
+        return aster.GetResu(self.getName(), "VARI_ACCES")
 
     def LIST_PARA (self):
-        if not self.accessible():
-            raise AsException("Erreur dans resultat.LIST_PARA en PAR_LOT='OUI'")
-        return aster.GetResu(self.get_name(), "PARAMETRES")
+        return aster.GetResu(self.getName(), "PARAMETRES")

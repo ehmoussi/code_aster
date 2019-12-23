@@ -31,23 +31,12 @@ def post_dyna_alea_ops(self, INFO, **args):
     from Cata_Utils.t_fonction import t_fonction
     from Utilitai.Table import Table
 
-    commande = 'POST_DYNA_ALEA'
-
-    # La macro compte pour 1 dans la numérotation des commandes
-    self.set_icmd(1)
-
-    # Le concept sortant (de type table_sdaster ou dérivé) est tab
-    self.DeclareOut('tabout', self.sd)
-
     # On importe les définitions des commandes a utiliser dans la macro
     # Le nom de la variable doit être obligatoirement le nom de la commande
     CREA_TABLE = self.get_cmd('CREA_TABLE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
     RECU_FONCTION = self.get_cmd('RECU_FONCTION')
-    IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
+    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
     CALC_FONCTION = self.get_cmd('CALC_FONCTION')
 
 #  ------------------------------------------------------------------
@@ -266,7 +255,7 @@ def post_dyna_alea_ops(self, INFO, **args):
 #                   1- concept interspectre
 #                   2- table de table d interspectre
 
-        intespec = INTE_SPEC.nom.ljust(8)
+        intespec = INTE_SPEC.getName().ljust(8)
 
 #     ------------------------------------------------------------------
 #     Repérer les couples d'indices selectionnés
@@ -382,7 +371,7 @@ def post_dyna_alea_ops(self, INFO, **args):
         nbpara0 = len(tabres.para)
 
         if INFO == 2:
-            texte = 'POUR LA MATRICE INTERSPECTRALE ' + INTE_SPEC.nom + '\n'
+            texte = 'POUR LA MATRICE INTERSPECTRALE ' + INTE_SPEC.getName() + '\n'
             aster.affiche('MESSAGE', texte)
         for ind in l_ind:
             dlign = {}
@@ -437,10 +426,10 @@ def post_dyna_alea_ops(self, INFO, **args):
                                    **dlrecu)
 
             val = __fon1.Valeurs()
+
             fvalx = NP.array(val[0])
             fvaly = NP.array(val[1])
-            frez = fvalx[0]
-
+            frez  = fvalx[0]
             # -- moments spectraux
 
             val_mom = {}

@@ -680,7 +680,6 @@ class Coeur(object):
 
         mcf = []
         for ac in list(self.collAC.values()):
-            LIS_GNO = []
             for igr in range(0, ac._para['NBGR']):
                 mcf.append(_F(GROUP_NO='G_' + ac.idAST + '_' + str(igr + 1)))
         return mcf
@@ -928,7 +927,7 @@ class Coeur(object):
         # DEFI_CONSTANT = self.macro.get_cmd('DEFI_CONSTANT')
         #AAA modifier Tref => -Tref
         mcf = []
-        
+
         for ac in self.collAC.values():
             # boucle sur les grilles
             Ttmp_val = self.TP_REF
@@ -992,19 +991,19 @@ class Coeur(object):
         _CHTEM1N=CREA_CHAMP( OPERATION='ASSE', TYPE_CHAM='NOEU_NEUT_F', MAILLAGE=MAILLAGE,
                             ASSE=_F( GROUP_NO=('T_GUIDE', 'EBOSUP', 'EBOINF', 'CRAYON', 'ELA', 'DIL', 'MAINTIEN',), CHAM_GD = _CHTEM11,
                                                 NOM_CMP = ('TEMP',),  NOM_CMP_RESU = ('X1',)),  )
-        
+
         _CHXN=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_GEOM_R',
                 NOM_CHAM='GEOMETRIE', MAILLAGE=MAILLAGE )
-        
+
         _CHTEM1A = CREA_CHAMP(OPERATION='EVAL', CHAM_F = _CHTEM1N, CHAM_PARA = _CHXN, TYPE_CHAM='NOEU_NEUT_R',)
-        
+
         _CHTEM1B = CREA_CHAMP( OPERATION='ASSE', TYPE_CHAM='NOEU_TEMP_R', MAILLAGE=MAILLAGE,
                             ASSE=_F( GROUP_NO=('T_GUIDE', 'EBOSUP', 'EBOINF', 'CRAYON', 'ELA', 'DIL', 'MAINTIEN',), CHAM_GD = _CHTEM1A,
                                                 NOM_CMP = ('X1',),  NOM_CMP_RESU = ('TEMP',)),  )
 
         # champ de dilatation du a l'irradiation des grilles
         mcf_champ_dil = self.mcf_crea_champ_dil()
-    
+
         _CHTEM1D = CREA_CHAMP(
             TYPE_CHAM='NOEU_TEMP_R', MAILLAGE=MAILLAGE, OPERATION='AFFE',
             AFFE=mcf_champ_dil,)
@@ -1107,7 +1106,6 @@ class Coeur(object):
 
     def definition_materiau(self, MAILLAGE, GFF, FLUENCE, CHTH, CONTACT='NON',RATIO=1.):
         from code_aster.Cata.Syntax import _F
-        DEFI_COMPOR = self.macro.get_cmd('DEFI_COMPOR')
         DEFI_MATERIAU = self.macro.get_cmd('DEFI_MATERIAU')
         AFFE_MATERIAU = self.macro.get_cmd('AFFE_MATERIAU')
 
@@ -1119,7 +1117,7 @@ class Coeur(object):
             _M_RES = DEFI_MATERIAU(DIS_CONTACT=_F(RIGI_NOR=1.E1))
 
 
-        _M_BCR = DEFI_MATERIAU( DIS_CONTACT = _F( RIGI_NOR = 1.E9, JEU=.0),);
+        _M_BCR = DEFI_MATERIAU( DIS_CONTACT = _F( RIGI_NOR = 1.E9, JEU=.0),)
 
         mcf_affe_mater = self.mcf_coeur_mater(_M_RES,_M_BCR)
         mcf_affe_varc = self.mcf_coeur_varc(FLUENCE,CHTH)
@@ -1146,7 +1144,7 @@ class Coeur(object):
         mcf.extend(_VARCIRR)
         for ac in self.collAC.values():
             # boucle sur les grilles
-            Ttmp = self.TP_REF 
+            Ttmp = self.TP_REF
             try :
               _alpha = ac._para['AL_DIL']
               _dilatbu = ac._para['dilatBU']
@@ -1528,7 +1526,7 @@ class Coeur(object):
                                                     DX=_DthX,
                                                     DY=_DthY,
                                                     DZ=_DthZ),),)
-            
+
         return _dilatation
 
 

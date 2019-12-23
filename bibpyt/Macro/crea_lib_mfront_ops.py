@@ -30,7 +30,6 @@ from Utilitai.Utmess import UTMESS
 
 def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, DEBUG, **args):
     """Compiler une loi de comportement MFront"""
-    self.set_icmd(1)
 
     UL = UniteAster()
     infile = UL.Nom(UNITE_MFRONT)

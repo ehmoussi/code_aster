@@ -146,7 +146,6 @@ class InterfaceParametres(Frame):
 
         nom_modele = self.nom_obs_modele.get()
         if nom_modele.strip() != 'Choisir':
-            modele = self.objects.get_model(nom_modele)
             self.obs_noeuds.set_resultat(resu.modele)
             self.obs_mailles.set_resultat(resu.modele)
 
@@ -311,7 +310,7 @@ class InterfaceParametres(Frame):
         mdo = self.objects
         resu = mdo.get_resultats(var_resu.get())
         fenetre = DispObs(self, self.mess, self.objects, resu)
-        fenetre.set_resu(resu.nom)
+        fenetre.set_resu(resu.getName())
 
     def view_modes(self, *args):
         """!Visualisation des modes par GMSH ou Salome"""
@@ -700,13 +699,13 @@ class CalcEssaiGmsh(CalcEssaiLogiciel):
 
     def visu_mac(self, mac, resu1, resu2):
 
-        titre = "matrice de MAC pour " + resu1.nom + " et " + resu2.nom
+        titre = "matrice de MAC pour " + resu1.getName() + " et " + resu2.getName()
 
         f = Toplevel()
         size = (20, 300)
         f.columnconfigure(0, weight=1)
         f.rowconfigure(0, weight=1)
-        mac_win = MacWindowFrame(f, titre, resu1.nom, resu2.nom, size)
+        mac_win = MacWindowFrame(f, titre, resu1.getName(), resu2.getName(), size)
         mac_win.grid(row=0, column=0, sticky='nsew')
         afreq1 = resu1.get_modes_data()['FREQ']
         noeud_cmp1 = resu1.get_modes_data()['NOEUD_CMP']

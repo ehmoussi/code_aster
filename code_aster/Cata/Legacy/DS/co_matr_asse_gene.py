@@ -98,7 +98,7 @@ class matr_asse_gene_r(matr_asse_gene):
     if not self.accessible():
        raise AsException("Erreur dans matr_asse_gene.RECU_MATR_GENE en PAR_LOT='OUI'")
 
-    ncham=self.get_name()
+    ncham=self.getName()
 
     desc = self.sdj.DESC.get()
     # On teste si le DESC de la matrice existe
@@ -177,7 +177,7 @@ class matr_asse_gene_c(matr_asse_gene):
        raise AsException("Erreur dans matr_asse_gene_c.RECU_MATR_GENE en PAR_LOT='OUI'")
 
     numpy.asarray(matrice)
-    ncham=self.get_name()
+    ncham=self.getName()
     desc = self.sdj.DESC.get()
     # On teste si le DESC de la matrice existe
     if not desc:

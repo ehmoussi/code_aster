@@ -252,6 +252,6 @@ class CommandTextVisitor(JDCVisitor):
     def visitASSD(self, sd):
         """Visit the ASSD object."""
         try:
-            self.sdname = sd.get_name()
+            self.sdname = sd.getName()
         except:
             self.sdname = "sansnom"

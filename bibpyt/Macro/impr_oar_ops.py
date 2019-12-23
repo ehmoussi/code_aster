@@ -294,7 +294,6 @@ class composant(OAR_element):
             self.tabAbscisses = list()
             self.tabAbscisses_S = None
 
-            listInst = list()
             if self.revet == 'OUI':
                 # Le revetement est obligatoirement en interne on commence par lui
                 # 1. Construction champ temperature
@@ -804,8 +803,6 @@ def impr_oar_ops(self, TYPE_CALC, **args):
     IMPR_OAR va etre utilise en deux fois d abord calcul mecanique,
     ensuite calcul thermique ce qui implique qu il ne peut y avoir qu'une seule des deux options a la fois
     """
-    # La macro compte pour 1 dans la numérotation des commandes
-    self.set_icmd(1)
 
     obj = None
 

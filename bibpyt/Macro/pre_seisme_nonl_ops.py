@@ -123,10 +123,6 @@ class PreSeismeNonL(object):
         """Define different type of loads"""
         raise NotImplementedError('must be defined in a derivated class')
 
-    def DeclareOut(self, *args):
-        """Define output depending on user choices"""
-        self.parent.DeclareOut(*args)
-
     def register_result(self, *args):
         """Define output depending on user choices"""
         self.parent.register_result(*args)
@@ -793,7 +789,7 @@ class StatDyna(object):
                                 SANS_CMP='LAGR',
                                 )
 
-        nom_mail = self.maillage.nom
+        nom_mail = self.maillage.getName()
         nom_mael = aster.getvectjev(nom_mail + (8 - len(nom_mail)) * ' ' + '.NOMACR')[0]
         maelk = _DIFFK.EXTR_MATR_GENE()
         nbmod = maelk.shape[0]

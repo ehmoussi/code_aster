@@ -61,11 +61,6 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     from code_aster.Commands import DEFI_CABLE_OP
 
 
-    # Le concept sortant (de type char_meca) est nomme CHCABLE dans
-    # le contexte de la macro
-
-    self.DeclareOut('__DC', self.sd)
-
     # ---------------------------------------------------------------------------- #
     #                  Début de la Macro :
 

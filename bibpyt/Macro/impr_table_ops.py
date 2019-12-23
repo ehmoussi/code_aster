@@ -36,8 +36,6 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
     from Utilitai.utils import fmtF2PY
 
     args = _F(args)
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
@@ -82,7 +80,7 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
 
         # ----- 1. Infos de base
         if INFO == 2:
-            print('IMPRESSION DE LA TABLE : %s' % sdtab.get_name())
+            print('IMPRESSION DE LA TABLE : %s' % sdtab.getName())
 
         if args['TITRE']:
         #    tab.titr = os.linesep.join(args['TITRE'] + (tab.titr, ))

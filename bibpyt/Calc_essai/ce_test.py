@@ -58,12 +58,10 @@ def TestCalcEssai(macro,
     #
     if EXPANSION:
         calc_essai = CalcEssaiExpansion(macro, mess, objects)
-        norm_num = None
-        norm_exp = None
 
         # Transformation des objets Aster en classes Python
-        resu_num = objects.resultats[EXPANSION['CALCUL'].nom]
-        resu_exp = objects.resultats[EXPANSION['MESURE'].nom]
+        resu_num = objects.resultats[EXPANSION['CALCUL'].getName()]
+        resu_exp = objects.resultats[EXPANSION['MESURE'].getName()]
 
         # Set default indices for the modes
         if EXPANSION['NUME_MODE_CALCUL'] != 0:
@@ -90,7 +88,6 @@ def TestCalcEssai(macro,
 
         resu_et = objects.resultats["RESU_ET"]
         resu_nx = objects.resultats["RESU_NX"]
-        resu_rd = objects.resultats["RESU_RD"]
 
         calc_essai.calc_mac_mode(resu_et, resu_nx, resu_num.mass)
 
@@ -100,10 +97,10 @@ def TestCalcEssai(macro,
     if IDENTIFICATION:
         calcturb = CalcEssaiIdentification(objects, mess)
 
-        inter_spec_name = IDENTIFICATION['INTE_SPEC'].nom
-        obs_name = IDENTIFICATION['OBSERVABILITE'].nom
-        com_name = IDENTIFICATION['COMMANDABILITE'].nom
-        res_base = IDENTIFICATION['BASE'].nom
+        inter_spec_name = IDENTIFICATION['INTE_SPEC'].getName()
+        obs_name = IDENTIFICATION['OBSERVABILITE'].getName()
+        com_name = IDENTIFICATION['COMMANDABILITE'].getName()
+        res_base = IDENTIFICATION['BASE'].getName()
 
         calcturb.set_interspectre(objects.get_inter_spec(inter_spec_name))
         calcturb.set_observabilite(objects.get_mode_meca(obs_name))
@@ -196,8 +193,8 @@ def lance_modif_struct_calcul(macro, ce_objects,
     modif_struct = CalcEssaiModifStruct(macro, ce_objects,
                                         ce_objects.mess, out_modifstru)
 
-    modif_struct.find_experimental_result_from(MODIFSTRUCT["MESURE"].nom)
-    modif_struct.find_support_modele_from(MODIFSTRUCT["MODELE_SUP"].nom)
+    modif_struct.find_experimental_result_from(MODIFSTRUCT["MESURE"].getName())
+    modif_struct.find_support_modele_from(MODIFSTRUCT["MODELE_SUP"].getName())
     modif_struct.set_stiffness_matrix(MODIFSTRUCT["MATR_RIGI"])
     modif_struct.set_method_name(MODIFSTRUCT["RESOLUTION"])
 
@@ -208,8 +205,8 @@ def lance_modif_struct_calcul(macro, ce_objects,
     modif_struct.set_modes_expansion(MODIFSTRUCT["NUME_MODE_CALCUL"])
 
     modif_struct.set_sumail_name("SUMAIL")   # nom super-maille par defaut
-    modif_struct.find_modele_modif_from(MODIFSTRUCT["MODELE_MODIF"].nom)
-    modif_struct.find_maillage_modif_from(MODIFSTRUCT["MODELE_MODIF"].nom)
+    modif_struct.find_modele_modif_from(MODIFSTRUCT["MODELE_MODIF"].getName())
+    modif_struct.find_maillage_modif_from(MODIFSTRUCT["MODELE_MODIF"].getName())
 
     modif_struct.get_modele_support()
     modif_struct.calc_base_proj()

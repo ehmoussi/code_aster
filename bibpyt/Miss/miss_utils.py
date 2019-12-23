@@ -152,7 +152,7 @@ class MISS_PARAMETER(object):
 
             # récupération des infos sur les modes
             if self['BASE_MODALE']:
-                basemo = self['BASE_MODALE'].nom
+                basemo = self['BASE_MODALE'].getName()
             elif self['MACR_ELEM_DYNA']:
                 basemo = self['MACR_ELEM_DYNA'].sdj.MAEL_REFE.get()[0]
             else:

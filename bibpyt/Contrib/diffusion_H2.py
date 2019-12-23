@@ -87,11 +87,8 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
 
     # On importe les definitions des commandes a utiliser dans la macro
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    AFFE_CHAR_THER = self.get_cmd('AFFE_CHAR_THER')
     CALC_CHAMP = self.get_cmd('CALC_CHAMP')
     CALC_CHAM_ELEM = self.get_cmd('CALC_CHAM_ELEM')
-
-    dt = TFIN - TINIT
 
     # Recuperation du modele a partir du resultat
     moth = RESU_H2.getModel()
@@ -161,9 +158,9 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
             fx[ino], fx[ino] = FLUX(cl, grsigx, grsigy, DIME, grsigz, Vh, R, T)
 
     # pour gagner du temps on evite la construction du mot-cle PRE_GRAD_TEMP
-    nomvale = CHARGRD0.nom.ljust(8) + '.CHTH.GRAIN.VALE'
-    nomlima = CHARGRD0.nom.ljust(8) + '.CHTH.GRAIN.LIMA'
-    nomdesc = CHARGRD0.nom.ljust(8) + '.CHTH.GRAIN.DESC'
+    nomvale = CHARGRD0.getName().ljust(8) + '.CHTH.GRAIN.VALE'
+    nomlima = CHARGRD0.getName().ljust(8) + '.CHTH.GRAIN.LIMA'
+    nomdesc = CHARGRD0.getName().ljust(8) + '.CHTH.GRAIN.DESC'
     tabvale = aster.getvectjev(nomvale)
     tabdesc = aster.getvectjev(nomdesc)
     dicolima = aster.getcolljev(nomlima)
@@ -172,10 +169,8 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
     champ = NP.zeros(nbrvale)
     bidon = NP.zeros(nbrvale)
 
-    nommai = mesh.sdj.NOMMAI.get()
     connex = mesh.sdj.CONNEX.get()
     groupma = mesh.sdj.GROUPEMA.get()[GRMAVOL.ljust(24)]
-    nbzone = tabdesc[1]
 #   print "tabdesc",tabdesc
 #   print "tablima",dicolima
 
@@ -260,7 +255,6 @@ def char_grad_ini_ops(self, RESU_H2, GRMAVOL, DIME, **args):
         # ATTENTION : dans Python, les tableaux commencent a 0
         # mais dans la connectivite, les noeuds commencent a 1!
         lnoeu = NP.array(connex[ima]) - 1
-        nbno = len(lnoeu)
         # ajout dans le mot-cle facteur PRE_GRAD_TEMP
         nom_maille = nommai[ima - 1]
         mon_dico = {}
@@ -307,10 +301,8 @@ def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, 
     INFO = args.get('INFO')
 
    # On importe les definitions des commandes a utiliser dans la macro
-    DETRUIRE = self.get_cmd('DETRUIRE')
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     AFFE_CHAR_THER = self.get_cmd('AFFE_CHAR_THER')
-    AFFE_CHAR_CINE = self.get_cmd('AFFE_CHAR_CINE')
     CALC_CHAMP = self.get_cmd('CALC_CHAMP')
 
     dt = TFIN - TINIT
@@ -345,7 +337,6 @@ def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, 
     __chtmp = CREA_CHAMP(
         OPERATION='AFFE', TYPE_CHAM='NOEU_NEUT_R', MAILLAGE=mesh,
         AFFE=(_F(VALE=0., GROUP_MA=GRMAVOL, NOM_CMP='X1',),))
-    nomcham = __chtmp.sdj.nomj()
 
     # on suppose que les noeuds du maillage thermique et mecaniqeu sont les
     # memes (pour eviter un PROJ_CHAMP)
@@ -370,7 +361,7 @@ def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, 
         # cela marche
         source[ino] = SOURCE(Cl, p1, dpdt, Ctot0, Nl, Kt, a1, a2, a3)
 
-    nomvect = '%-19s.VALE' % __chtmp.nom
+    nomvect = '%-19s.VALE' % __chtmp.getName()
     aster.putvectjev(nomvect, nbnode, tuple(
         range(1, nbnode + 1)), tuple(source), tuple(bidon), 1)
     __NEUTG = CREA_CHAMP(OPERATION='DISC', TYPE_CHAM='ELGA_NEUT_R',
@@ -425,7 +416,6 @@ def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0
     INFO = args.get('INFO')
 
    # On importe les definitions des commandes a utiliser dans la macro
-    DETRUIRE = self.get_cmd('DETRUIRE')
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     CALC_CHAMP = self.get_cmd('CALC_CHAMP')
 
@@ -457,7 +447,6 @@ def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0
     __chtmp = CREA_CHAMP(
         OPERATION='AFFE', TYPE_CHAM='NOEU_NEUT_R', MAILLAGE=mesh,
         AFFE=(_F(VALE=0., GROUP_MA=GRMAVOL, NOM_CMP='X1',),))
-    nomcham = __chtmp.sdj.nomj()
 
     # on suppose que les noeuds du maillage thermique et mecaniqeu sont les
     # memes (pour eviter un PROJ_CHAMP)
@@ -476,7 +465,7 @@ def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0
         p1 = p_t1[ino]
         detoile[ino] = DETOILE(Cl, p1, Ctot0, Nl, Kt, a1, a2, a3)
 
-    nomvect = '%-19s.VALE' % __chtmp.nom
+    nomvect = '%-19s.VALE' % __chtmp.getName()
     aster.putvectjev(nomvect, nbnode, tuple(
         range(1, nbnode + 1)), tuple(detoile), tuple(bidon), 1)
     NEUTG = CREA_CHAMP(OPERATION='DISC', TYPE_CHAM='ELNO_NEUT_R',

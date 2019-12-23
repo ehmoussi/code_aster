@@ -258,7 +258,7 @@ def verif_config_init(FOND_FISS):
     import aster
 
     iret, ibid, config = aster.dismoi(
-        'CONFIG_INIT', FOND_FISS.nom, 'FOND_FISS', 'F')
+        'CONFIG_INIT', FOND_FISS.getName(), 'FOND_FISS', 'F')
     if config != 'COLLEE':
         UTMESS('F', 'RUPTURE0_16')
 
@@ -941,7 +941,7 @@ def get_liste_inst(tabsup, args):
         if args.get('INST') != None:
             l_inst = args.get('INST')
         elif args.get('LIST_INST') != None:
-            l_inst = args.get('LIST_INST').Valeurs()
+            l_inst = args.get('LIST_INST').getValues()
 
         if type(l_inst) == tuple:
             l_inst = list(l_inst)
@@ -1019,7 +1019,7 @@ def get_liste_freq(tabsup, args):
         if args.get('FREQ') is not None:
             l_freq = list(args.get('FREQ'))
         elif args.get('LIST_FREQ') is not None:
-            l_freq = args.get('LIST_FREQ').Valeurs()
+            l_freq = args.get('LIST_FREQ').getValues()
 
         if type(l_freq) == tuple:
             l_freq = list(l_freq)
@@ -1757,7 +1757,6 @@ def get_tabout(
     import numpy as NP
 
     CREA_TABLE = self.get_cmd('CREA_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
 
     mcfact = []
@@ -1768,20 +1767,20 @@ def get_tabout(
         titre = get_titre_concept()
 
     if FOND_FISS and MODELISATION == '3D':
-        mcfact.append(_F(PARA='FOND_FISS', LISTE_K=[FOND_FISS.nom, ] * 3))
+        mcfact.append(_F(PARA='FOND_FISS', LISTE_K=[FOND_FISS.getName(), ] * 3))
         mcfact.append(_F(PARA='NUME_FOND', LISTE_I=[1, ] * 3))
         mcfact.append(_F(PARA='NOEUD_FOND', LISTE_K=[Lnofon[ino], ] * 3))
         mcfact.append(_F(PARA='NUM_PT', LISTE_I=[ino + 1, ] * 3))
         mcfact.append(_F(PARA='ABSC_CURV', LISTE_R=[dicoF[Lnofon[ino]]] * 3))
 
     if FISSURE and MODELISATION == '3D':
-        mcfact.append(_F(PARA='FISSURE', LISTE_K=[FISSURE.nom, ] * 3))
+        mcfact.append(_F(PARA='FISSURE', LISTE_K=[FISSURE.getName(), ] * 3))
         mcfact.append(_F(PARA='NUME_FOND', LISTE_I=[args.get('NUME_FOND'), ] * 3))
         mcfact.append(_F(PARA='NUM_PT', LISTE_I=[ino + 1, ] * 3))
         mcfact.append(_F(PARA='ABSC_CURV', LISTE_R=[absfon[ino], ] * 3))
 
     if FISSURE and MODELISATION != '3D' and Nnoff != 1:
-        mcfact.append(_F(PARA='FISSURE', LISTE_K=[FISSURE.nom, ] * 3))
+        mcfact.append(_F(PARA='FISSURE', LISTE_K=[FISSURE.getName(), ] * 3))
         mcfact.append(_F(PARA='NUM_PT', LISTE_I=[ino + 1, ] * 3))
 
     mcfact.append(_F(PARA='METHODE', LISTE_I=(1, 2, 3)))
@@ -1838,7 +1837,7 @@ def is_present_varc(RESULTAT):
     """
     import aster
 
-    iret, ibid, nom_chamat = aster.dismoi('CHAM_MATER', RESULTAT.nom, 'RESULTAT', 'F')
+    iret, ibid, nom_chamat = aster.dismoi('CHAM_MATER', RESULTAT.getName(), 'RESULTAT', 'F')
     assert not ( nom_chamat in ['#AUCUN', '#PLUSIEURS'] )
     nom_jvx = nom_chamat.ljust(8)+'.CVRCVARC'
 
@@ -1866,13 +1865,6 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 
     EnumTypes = (list, tuple)
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
-    # Le concept sortant (de type table_sdaster ou dérivé) est tab
-    self.DeclareOut('tabout', self.sd)
-
     tabout = []
     liste_noeu_a_extr = []
 
@@ -1885,11 +1877,11 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
     # On recupere le materiau et le nom de la modelisation
     nom_fiss = ''
     if FOND_FISS is not None:
-        nom_fiss = FOND_FISS.nom
+        nom_fiss = FOND_FISS.getName()
     if FISSURE is not None:
-        nom_fiss = FISSURE.nom
+        nom_fiss = FISSURE.getName()
     assert nom_fiss != ''
-    mater, MODELISATION = aster.postkutil(RESULTAT.nom, nom_fiss)
+    mater, MODELISATION = aster.postkutil(RESULTAT.getName(), nom_fiss)
 
     # si le MCS MATER n'est pas renseigne, on considere le materiau
     # present dans la sd_resultat. Si MATER est renseigne, on ecrase
@@ -1917,7 +1909,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
                 MATER = curMater
                 break
     else:
-        UTMESS('A', 'RUPTURE0_1', valk=[mater, MATER.nom])
+        UTMESS('A', 'RUPTURE0_1', valk=[mater, MATER.getName()])
 
 
     # Affectation de ndim selon le type de modelisation
@@ -1960,7 +1952,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
         UTMESS('F', 'RUPTURE0_5')
     ns = '{:06d}'.format(ind)
 
-    compor = sd_compor1('%-8s.CPT.%s' % (MATER.nom, ns))
+    compor = sd_compor1('%-8s.CPT.%s' % (MATER.getName(), ns))
     valk = [s.strip() for s in compor.VALK.get()]
     valr = compor.VALR.get()
     dicmat = dict(list(zip(valk, valr)))
@@ -1978,7 +1970,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
         # erreur fatale si le MCS MATER est renseigne car on n'autorise que la
         # surcharge par un materiau constant
         if args.get('MATER') is not None:
-            UTMESS('F', 'RUPTURE0_6', valk=MATER.nom)
+            UTMESS('F', 'RUPTURE0_6', valk=MATER.getName())
 
 #       valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et
 #       et les noms des concepts de type [fonction] (ecrits derriere les operandes) dans une
@@ -2120,7 +2112,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 #     ----------------------------------
 
         iret, ibid, syme_char = aster.dismoi(
-            'SYME', FOND_FISS.nom, 'FOND_FISS', 'F')
+            'SYME', FOND_FISS.getName(), 'FOND_FISS', 'F')
 
 #     Recuperation de la liste des tailles de maille en chaque noeud du fond
 #     ----------------------------------------------------------------------
