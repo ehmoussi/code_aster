@@ -40,15 +40,10 @@ def calc_essai_ops(self,
     from code_aster import onFatalError
     ier = 0
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     prev = onFatalError()
 
     # gestion des concepts sortants de la macro, declares a priori
-    table = []
     table_fonction = []
-    mode_mec = []
 
     if not RESU_MODIFSTRU:
         out_modifstru = {}

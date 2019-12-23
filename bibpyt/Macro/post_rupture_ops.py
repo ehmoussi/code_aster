@@ -54,7 +54,7 @@ def verif_un_instant(tabin, OPERATION, COMPTAGE):
         s = set(tabin.NUME_ORDRE.values())
         n = len(s)
         if n > 1:
-            UTMESS('F', 'RUPTURE1_64', valk=(COMPTAGE, tabin.nom), vali=n)
+            UTMESS('F', 'RUPTURE1_64', valk=(COMPTAGE, tabin.getName()), vali=n)
 
     # si INST est present dans la table
     if 'INST' in tabin.para:
@@ -62,19 +62,19 @@ def verif_un_instant(tabin, OPERATION, COMPTAGE):
         s = set(tabin.INST.values())
         n = len(s)
         if n > 1:
-            UTMESS('F', 'RUPTURE1_64', valk=(COMPTAGE, tabin.nom), vali=n)
+            UTMESS('F', 'RUPTURE1_64', valk=(COMPTAGE, tabin.getName()), vali=n)
 
 
 def verif_exi(tabin, col):
     """ verification que la colonne col existe """
     if not col in tabin.para:
-        UTMESS('F', 'RUPTURE1_59', valk=(tabin.nom, col))
+        UTMESS('F', 'RUPTURE1_59', valk=(tabin.getName(), col))
 
 
 def verif_non_exi(tabin, col):
     """ verification que la colonne col n'existe pas"""
     if col in tabin.para:
-        UTMESS('F', 'RUPTURE1_65', valk=(tabin.nom, col))
+        UTMESS('F', 'RUPTURE1_65', valk=(tabin.getName(), col))
 
 
 def sittmax(k1, k2):
@@ -194,7 +194,7 @@ def caract_mater(self, mater):
     if phenom is None:
         UTMESS('F', 'RUPTURE0_5')
     ns = '{:06d}'.format(ind)
-    compor = sd_compor1('%-8s.CPT.%s' % (mater.nom, ns))
+    compor = sd_compor1('%-8s.CPT.%s' % (mater.getName(), ns))
     valk = [s.strip() for s in compor.VALK.get()]
     valr = compor.VALR.get()
     dicmat = dict(list(zip(valk, valr)))
@@ -214,7 +214,6 @@ def caract_mater(self, mater):
 #    E et nu definis avec defi_fonction
         if young == 0.0 and poisson == 0.0:
             list_oper = valk[: len(valk) // 2]
-            list_fonc = valk[len(valk) // 2:]
 
 #    valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et
 #    et les noms des concepts de type [fonction] (ecrits derriere les operandes) dans une
@@ -251,8 +250,6 @@ def caract_mater(self, mater):
                     nom_fonc_e = matBehav.getGenericFunctionValue( "E" )
                 if matBehav.hasGenericFunctionValue( "Nu" ):
                     nom_fonc_nu = matBehav.getGenericFunctionValue( "Nu" )
-            nom_fonc_e_prol = nom_fonc_e.sdj.PROL.get()[0].strip()
-            nom_fonc_nu_prol = nom_fonc_nu.sdj.PROL.get()[0].strip()
 
             if (nom_fonc_e.sdj.PROL.get()[0].strip() == 'CONSTANT' and
                     nom_fonc_nu.sdj.PROL.get()[0].strip() == 'CONSTANT'):
@@ -294,14 +291,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
     """
     import aster
 
-    macro = 'POST_RUPTURE'
     from code_aster.Cata.Syntax import _F
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
-    # Le concept sortant (de type table) est tabout
-    self.DeclareOut('tabout', self.sd)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
@@ -309,11 +299,8 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
     CALC_TABLE = self.get_cmd('CALC_TABLE')
     DETRUIRE = self.get_cmd('DETRUIRE')
     RECU_FONCTION = self.get_cmd('RECU_FONCTION')
-    IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
     POST_FATIGUE = self.get_cmd('POST_FATIGUE')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
-    DEFI_CONSTANTE = self.get_cmd('DEFI_CONSTANTE')
 
     # parametre
     eps = 1e-15
@@ -344,7 +331,6 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
             contenu_nume_fond = tabin.NUME_FOND.values()
             nume_fond = list(set(contenu_nume_fond))
 
-            indice_tmp = 0
             max_absc_fond = []
             # boucle sur les fonds
             for i, fond_i in enumerate(nume_fond):
@@ -700,12 +686,6 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
                 tab_fond_j = tabin.NUME_FOND == fond_j
                 nbpt = max(tab_fond_j.NUM_PT.values())
 
-                # si on effectue le comptage sur plusieurs quantités,
-                # il faut qu'elles aient le meme nombre de cycles
-                # pour cela, on stocke pour chaque quantite le nombres de
-                # cycles dans 'nb_cycles'
-                nb_cycles = []
-
                 # boucle sur les points du fond de fissure du fond 'fond_i'
                 for ipt in range(nbpt):
 
@@ -798,7 +778,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
             # on supprime la colonne bidon
             tabout = CALC_TABLE(TABLE=tabout,
                                 reuse=tabout,
-                                TITRE=tabout.nom,
+                                TITRE=tabout.getName(),
                                 ACTION=_F(OPERATION='SUPPRIME', NOM_PARA='&BIDON&'))
 
             DETRUIRE(CONCEPT=_F(NOM=__COPIE_TABIN), INFO=1)
@@ -896,7 +876,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
         # on supprime la colonne bidon
         tabout = CALC_TABLE(TABLE=tabout,
                             reuse=tabout,
-                            TITRE=tabout.nom,
+                            TITRE=tabout.getName(),
                             ACTION=_F(OPERATION='SUPPRIME', NOM_PARA='&BIDON&'))
 
     #-----------------------------------------------------------------------
@@ -965,7 +945,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
         # on supprime la colonne bidon
         tabout = CALC_TABLE(TABLE=tabout,
                             reuse=tabout,
-                            TITRE=tabout.nom,
+                            TITRE=tabout.getName(),
                             ACTION=_F(OPERATION='SUPPRIME', NOM_PARA='&BIDON&'))
 
     #-----------------------------------------------------------------------

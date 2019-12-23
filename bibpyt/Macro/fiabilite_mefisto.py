@@ -321,7 +321,7 @@ def fiabilite_mefisto(self, Rep_Calc_LOGICIEL_global,
             elif args["METHODE_TEST"] == "REJECTION":
                 aux1 = 3
             else:
-                self.cr.warn("METHODE DE TEST : " + args["METHODE_TEST"])
+                self.logger.warn("METHODE DE TEST : " + args["METHODE_TEST"])
                 erreur = 50
                 break
 #
@@ -427,7 +427,7 @@ def fiabilite_mefisto(self, Rep_Calc_LOGICIEL_global,
     if erreur:
         if erreur not in messages_erreur:
             erreur = 100
-        self.cr.warn(messages_erreur[erreur])
+        self.logger.warn(messages_erreur[erreur])
         erreur = 11
 #
     return erreur

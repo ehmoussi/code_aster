@@ -226,7 +226,6 @@ def CHAR3D(self, POISSON, YOUNG, _tempsar, INFO):
     # eps apres rotation
     VI = [[V1, V1], [V2, V2], [V3, V3], [V1, V2], [V1, V3], [V2, V3]]
     for vect_i in VI:
-        i = VI.index(vect_i)
         V_COEF = vect_prod_rot(vect_i[0], vect_i[1])
         __epsrot = CALC_FONCTION(COMB=(
             _F(FONCTION=__eps_xx, COEF=V_COEF[0],),
@@ -236,10 +235,7 @@ def CHAR3D(self, POISSON, YOUNG, _tempsar, INFO):
             _F(FONCTION=__eps_xz, COEF=V_COEF[4],),
             _F(FONCTION=__eps_yz, COEF=V_COEF[5],),
         ),)
-    # eps apres symetrie
-    eps_sym = [__eps_zz, __eps_xx, __eps_yy, __eps_xz, __eps_yz, __eps_xy]
 
-    V_EPS = [eps_imp, eps_sym, __epsrot]
     # trace chargement
     if INFO == 2:
         IMPR_FONCTION(  # FORMAT='XMGRACE',PILOTE='INTERACTIF',
@@ -300,7 +296,6 @@ def CHAR2D(self, POISSON, YOUNG, _tempsar, INFO):
                                     _F(FONCTION=__Devi1_2d,
                                        COEF=-(Ctrac),),),)
     # rotation tenseur des def
-    angle = 0.9
     c, s = NP.cos(0.9), NP.sin(0.9)
     c2, s2, cs = c * c, s * s, c * s
     __eps_rr2 = CALC_FONCTION(COMB=(_F(FONCTION=__eps_xx2,
@@ -346,9 +341,6 @@ def CHAR2D(self, POISSON, YOUNG, _tempsar, INFO):
 def test_compor_ops(self, **args):
     # seule l'option "THER", c'est à dire le test thermomecanique est programmé à ce jour
     # ajouter l'option MECA (tests comp001,002), l'option HYDR, etc..
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
     OPTION = args.get("OPTION")
     NEWTON = args.get("NEWTON")
     CONVERGENCE = args.get("CONVERGENCE")
@@ -357,11 +349,7 @@ def test_compor_ops(self, **args):
     VARI_TEST = args.get("VARI_TEST")
     INFO = args.get("INFO")
 
-    # Le concept sortant (de type fonction) est nomme U dans
-    # le contexte de la macro
     U = None
-    if COMPORTEMENT:
-        self.DeclareOut('U', self.sd)
 
     motscles = {}
     if COMPORTEMENT:
@@ -691,7 +679,6 @@ def test_compor_ops(self, **args):
         for i in range(Ncal):
             N = LIST_NPAS[i]
             imat = P_imat[i]
-            idef = P_idef[i]
             __temps = DEFI_LIST_REEL(DEBUT=0.0,
                                      INTERVALLE=(_F(JUSQU_A=t_0, NOMBRE=N,),
                                                  _F(JUSQU_A=2.0 *

@@ -237,24 +237,13 @@ def make_include_files(UNITE_INCLUDE, calcul, parametres):
 def mes_concepts(list_concepts=[], base=None):
     """ Fonction qui liste les concepts créés """
     for e in base.etapes:
-        if e.nom in ('INCLUDE', 'MACR_RECAL',) :
+        if e.getName() in ('INCLUDE', 'MACR_RECAL',) :
             list_concepts = list(mes_concepts(list_concepts=list_concepts, base=e))
-        elif (e.sd is not None) and (e.parent.nom == 'INCLUDE') :
-            nom_concept = e.sd.get_name()
+        elif (e.sd is not None) and (e.parent.getName == 'INCLUDE') :
+            nom_concept = e.sd.getName()
             if not(nom_concept in list_concepts):
                 list_concepts.append( nom_concept )
     return tuple(list_concepts)
-
-
-# -------------------------------------------------------------------------------
-def detr_concepts(self):
-    liste_concepts = mes_concepts(base=self.parent)
-    for e in liste_concepts:
-        nom = string.strip(e)
-        DETRUIRE( OBJET =self.g_context['_F'](CHAINE = nom), INFO=2)
-        if nom in self.jdc.g_context :
-            del self.jdc.g_context[nom]
-    del(liste_concepts)
 
 
 # -------------------------------------------------------------------------------
@@ -650,8 +639,6 @@ class CALCULS_ASTER:
                 F = table2numpy(tab_lue, list_para, reponses, i)
                 Lrep.append(F)
 
-
-
             Lcalc.append( Lrep )
 
 
@@ -660,9 +647,6 @@ class CALCULS_ASTER:
             liste_concepts = []
             for c in liste_concepts:
                 DETRUIRE(OBJET=_F(CHAINE=c), INFO=1);
-
-            # detr_concepts(self.jdc)  # marche pas !
-            # sys.exit()
 
 
         # ----------------------------------------------------------------------------

@@ -1192,5 +1192,5 @@ def obj_get_name(obj):
     if isinstance(obj, str):
         return obj
     elif hasattr(obj, 'nom'):
-        return obj.nom.strip()
+        return obj.getName()
     return None

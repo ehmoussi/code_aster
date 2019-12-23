@@ -41,7 +41,6 @@ def perm_mac3coeur_ops(self, **args):
     CREA_RESU = self.get_cmd('CREA_RESU')
     AFFE_CHAR_CINE = self.get_cmd('AFFE_CHAR_CINE')
 
-    self.set_icmd(1)
     rcdir = aster_core.get_option("rcdir")
     datg = osp.join(rcdir, "datg")
     coeur_factory = CoeurFactory(datg)
@@ -124,7 +123,6 @@ def perm_mac3coeur_ops(self, **args):
            'EBOINF', 'EBOSUP', 'RIG', 'DIL',),),
         _F(RELATION='VMIS_ISOT_TRAC', GROUP_MA ='MAINTIEN', DEFORMATION='PETIT',), ]
 
-    self.DeclareOut('BIDON', self.sd)
     __BIDON = STAT_NON_LINE(MODELE=_MO_NP1,
                            CHAM_MATER=_AFSCNP1,
                            CARA_ELEM=_CARANP1,

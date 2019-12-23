@@ -135,8 +135,8 @@ LISTRD=DEFI_LIST_REEL(DEBUT=(98.0)*periode+pas,
                                      PAS=pas,),);
 
 # Creation de la liste des pas d'archivage
-archsize=NP.size(LISTRD.Valeurs())
-archfin=NP.size(LISTTM.Valeurs())
+archsize=NP.size(LISTRD.getValues())
+archfin=NP.size(LISTTM.getValues())
 archinit=archfin-archsize
 
 LISTARCH=DEFI_LIST_ENTI(DEBUT=archinit,

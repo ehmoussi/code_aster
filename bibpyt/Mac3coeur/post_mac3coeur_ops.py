@@ -174,8 +174,6 @@ def makeXMGRACEjeu(unit, post, coeur, valjeuac, valjeucu):
 def makeXMGRACEdef_amp(unit, post, coeur, valdefac):
 
     def computeColor(value):
-        valmin = 0.
-        valmax = 20.
         if (value <= 10.):
             redF = 0
             greenF = 255 * value / 10
@@ -273,11 +271,7 @@ def makeXMGRACEdef_vec(unit, post, coeur, valdefac, valdirYac, valdirZac):
     outGraceXY = coeur.get_outGraceXY()
 
     def computeVector(value, Y, Z):
-        valmin = 0.
-        valmax = 20.
         Rvec = value / 20.
-        #Xvec = 1000. * Y / 20.
-        #Yvec = -1000. * Z / 20.
 
         vec = {'X' : Y / 20., 'Y' : Z / 20.}
         Xvec = vec[outGraceXY['X'][0]]*outGraceXY['X'][1]
@@ -371,19 +365,15 @@ def post_mac3coeur_ops(self, **args):
     from Utilitai.Utmess import UTMESS
     from math import sqrt
 
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
-    EXTR_TABLE = self.get_cmd('EXTR_TABLE')
     FORMULE = self.get_cmd('FORMULE')
-    DEFI_FICHIER = self.get_cmd('DEFI_FICHIER')
     IMPR_TABLE = self.get_cmd('IMPR_TABLE')
 
     rcdir = aster_core.get_option("rcdir")
     datg = osp.join(rcdir, "datg")
     coeur_factory = CoeurFactory(datg)
 
-    self.set_icmd(1)
     _RESU = args.get('RESULTAT')
     _typ_coeur = args.get('TYPE_COEUR')
     POST_LAME = args.get('LAME')
@@ -404,7 +394,6 @@ def post_mac3coeur_ops(self, **args):
     _coeur.init_from_table(_table,mater=False)
     tableCreated = False
 
-    self.DeclareOut('__TAB_OUT', self.sd)
     # "
     #                                          MOT-CLE FACTEUR LAME
     # "
@@ -566,10 +555,8 @@ def post_mac3coeur_ops(self, **args):
 
                 if (_extremum is None):
                     post = _num_grille
-                    texte = 'sur la grille ' + str(post)
                 else:
                     post = _extremum
-                    texte = 'sur la valeur ' + post
 
                 makeXMGRACEjeu(_unit, post, _coeur, valjeuac, valjeucu)
 

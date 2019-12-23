@@ -462,20 +462,20 @@ class Table(TableBase):
     def fromfunction(self, nom_para, funct, l_para=None, const=None):
         """Ajoute une colonne `nom_para` en évaluant la fonction `funct` sur
         la valeur des paramètres `l_para` (qui doivent exister dans la table).
-        Si `l_para` n'est pas fourni, on prend `funct`.nompar (FORMULE Aster).
+        Si `l_para` n'est pas fourni, on prend `funct`.getVariables() (FORMULE Aster).
         On peut passer un dictionnaire de constantes dans `const`. Quand on
         utilise une FORMULE Aster, les constantes sont prises dans le contexte
         global.
         """
         # vérif préalables
         if not hasattr(funct, '__call__'):
-            UTMESS('F', 'TABLE0_25', valk=(funct.__name__, '__call__'))
+            UTMESS('F', 'TABLE0_25', valk=(funct.getName(), '__call__'))
         if nom_para in self.para:
             UTMESS('F', 'TABLE0_24', valk=nom_para)
         if l_para is None:
-            if not hasattr(funct, 'nompar'):
-                UTMESS('F', 'TABLE0_25', valk=(funct.__name__, 'nompar'))
-            l_para = funct.nompar
+            if not hasattr(funct, 'getVariables'):
+                UTMESS('F', 'TABLE0_25', valk=(funct.getName(), 'getVariables'))
+            l_para = funct.getVariables()
         if not is_sequence(l_para):
             l_para = [l_para]
         not_found = ', '.join([p for p in l_para if not p in self.para])

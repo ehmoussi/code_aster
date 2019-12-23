@@ -30,9 +30,7 @@ from code_aster.Commands.ExecuteCommand import ExecuteMacro
 
 def POST_GOUJ_ops(self,**args):
   TABLE = args["TABLE"]
-  ier=0
-  self.set_icmd(1)
-  ### On importe les definitions des commandes a utiliser dans la macro
+
   CREA_TABLE  =self.get_cmd('CREA_TABLE')
 
   aa1=TABLE.EXTR_TABLE()
@@ -65,7 +63,6 @@ def POST_GOUJ_ops(self,**args):
   v_RC=[]
   for liste in v_CU : v_RC=v_RC+liste
 
-  self.DeclareOut('tab3',self.sd)
   tab3=CREA_TABLE(LISTE=(_F(PARA    = 'NUME_ORDRE' ,
                               LISTE_I = v_NU ),
                            _F(PARA    = 'NUME_FILET' ,

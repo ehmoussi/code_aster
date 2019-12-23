@@ -118,9 +118,6 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         """
         Returns a 1D numpy array giving the evolution of the normal force at the archived instants"""
 
-        if not self.accessible():
-            raise AsException("Erreur dans tran_gene.FORCE_NORMALE() en PAR_LOT='OUI'")
-
         inoli = self._check_input_inoli(inoli)
 
         nltypes = self._type_nonl()
@@ -137,9 +134,6 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         """
         Prints out information about the considered non linearities, returns a 2D python list (list in list) with
         the retrieved information"""
-
-        if not self.accessible():
-            raise AsException("Erreur dans tran_gene.INFO_NONL() en PAR_LOT='OUI'")
 
         nbnoli  = self._nb_nonl()
         if nbnoli == 0 :
@@ -178,8 +172,6 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         """
         Returns a python list of all archived instants
         """
-        if not self.accessible():
-            raise AsException("Erreur dans tran_gene.LIST_ARCH() en PAR_LOT='OUI'")
 
         disc = self.sdj.DISC.get()
         return list(disc)
@@ -188,8 +180,6 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         """
         Returns a 2D numpy array of all internal variables for a given non linearity of index <inoli>
         """
-        if not self.accessible():
-            raise AsException("Erreur dans tran_gene.VARI_INTERNE() en PAR_LOT='OUI'")
 
         inoli = self._check_input_inoli(inoli)
         i = inoli-1

@@ -99,7 +99,6 @@ class Generator(object):
 
     def __init__(self, macro, params):
         """Constructor Base class"""
-        #self.name = macro.sd.nom
         self.macro = macro
         self.case = params.cas
         self.INFO = params.other_keys['INFO']
@@ -127,11 +126,6 @@ class Generator(object):
 
     def prepare_input(self):
         """run prepare data"""
-        #v_refa_rigi = self.mat_gene_params['MATR_RIGI'].sdj.REFA.get()
-        #nom_bamo = v_refa_rigi[0]
-        #nom_ddlgene = v_refa_rigi[1]
-        #self.mat_gene_params['NUME_DDL'] = self.macro.get_concept(nom_ddlgene)
-        #self.mat_gene_params['BASE'] = self.macro.get_concept(nom_bamo)
         matr_rigi = self.mat_gene_params['MATR_RIGI']
         bamo = matr_rigi.getModalBasis()
         ddlgene = matr_rigi.getGeneralizedDOFNumbering()
@@ -254,8 +248,6 @@ class GeneratorTRANS(Generator):
             aster.affiche('MESSAGE', text)
 
     def build_result(self):
-       # declaration concept sortant
-        self.macro.DeclareOut('dyha', self.macro.sd)
         return self.compute_result()
 
     def compute_result(self):
@@ -641,8 +633,6 @@ class GeneratorSPEC(Generator):
 
 
     def build_result(self):
-       # Declaration concept sortant
-        self.macro.DeclareOut('dsp_out', self.macro.sd)
         return self.compute_result()
 
 

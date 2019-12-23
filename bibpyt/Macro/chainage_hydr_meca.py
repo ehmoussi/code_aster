@@ -56,7 +56,6 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
         'MODELISATION', __modele.getName(), 'MODELE', 'F')
     nom_modele_1 = nom_modele_1.strip()
 
-    yathm1 = __modele.existsThm()
 
   #
   # A l'heure actuelle, les modélisations autorisées pour
@@ -118,7 +117,7 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
     inst_coincident = False
     if (INST is not None):
         if (INST < instp):
-            UTMESS('F', 'CHAINAGE_6', valr=[INST], valk=[RESU_HYDR.nom])
+            UTMESS('F', 'CHAINAGE_6', valr=[INST], valk=[RESU_HYDR.getName()])
         if abs(instp - INST) < prec:
             inst_coincident = True
 

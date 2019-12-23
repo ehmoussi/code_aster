@@ -51,12 +51,6 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
   STAT_NON_LINE    = self.get_cmd('STAT_NON_LINE')
   IMPR_RESU        = self.get_cmd('IMPR_RESU')
 
-  # La macro compte pour 1 dans la numerotation des commandes
-  self.set_icmd(1)
-
-  # Le concept sortant (de type evol_noli) est nomme EVOL
-  self.DeclareOut('EVOL',self.sd)
-
   # On se prepare a manipuler le mot-cle facteur SOLVEUR
   assert len(SOLVEUR) == 1
   solveur = SOLVEUR[0].cree_dict_toutes_valeurs()
@@ -77,10 +71,7 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
     nomCham = ETAT_INIT[0]['NOM_CHAM_MED']
 
     # Recuperation du maillage a partir du modele
-    modelName   = MODELE.get_name().ljust(8)
-    pointerMesh =  modelName + '.MODELE    .LGRF        '
-    meshName    = aster.getvectjev(pointerMesh)[0].strip()
-    MAILLAGE    = self.get_concept(meshName)
+    MAILLAGE    = MODELE.getMesh()
 
     # Lecture du champ de variables internes (avec detection si absent)
     try:

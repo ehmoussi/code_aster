@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: nicolas.brie at edf.fr
-
+import sys
 from code_aster.Objects import GeneralizedModeContainer, MechanicalModeContainer
 
 def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
@@ -39,6 +39,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
     VERI_MODE = args.get("VERI_MODE")
     l_multi_bandes = False # logical indicating if the computation is performed
                            # for DYNAMICAL modes on several bands
+    sys.stdout.flush()
 
     # to prepare the work of AMELIORATION='OUI'
     stop_erreur= None

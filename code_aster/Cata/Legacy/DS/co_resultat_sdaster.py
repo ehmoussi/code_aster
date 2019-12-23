@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,22 +30,22 @@ class resultat_sdaster(ASSD):
    def LIST_CHAMPS (self) :
       if not self.accessible():
          raise AsException("Erreur dans resultat.LIST_CHAMPS en PAR_LOT='OUI'")
-      return aster.GetResu(self.get_name(), "CHAMPS")
+      return aster.GetResu(self.getName(), "CHAMPS")
 
    def LIST_NOM_CMP (self) :
       if not self.accessible():
          raise AsException("Erreur dans resultat.LIST_NOM_CMP en PAR_LOT='OUI'")
-      return aster.GetResu(self.get_name(), "COMPOSANTES")
+      return aster.GetResu(self.getName(), "COMPOSANTES")
 
    def LIST_VARI_ACCES (self) :
       if not self.accessible():
          raise AsException("Erreur dans resultat.LIST_VARI_ACCES en PAR_LOT='OUI'")
-      return aster.GetResu(self.get_name(), "VARI_ACCES")
+      return aster.GetResu(self.getName(), "VARI_ACCES")
 
    def LIST_PARA (self) :
       if not self.accessible():
          raise AsException("Erreur dans resultat.LIST_PARA en PAR_LOT='OUI'")
-      return aster.GetResu(self.get_name(), "PARAMETRES")
+      return aster.GetResu(self.getName(), "PARAMETRES")
 
 
 class comb_fourier(resultat_sdaster): pass
