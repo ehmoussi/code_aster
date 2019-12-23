@@ -23,17 +23,12 @@ from code_aster.Cata.DataStructure import CO as typCO
 from code_aster.Cata.DataStructure import (maillage_sdaster, modele_sdaster,
     cham_no_sdaster, listr8_sdaster, cham_mater, char_meca,resultat_sdaster)
 from code_aster.Commands.ExecuteCommand import UserMacro
-from code_aster.Commands import (DEFI_LIST_REEL, FORMULE, CALC_FONC_INTERP, DETRUIRE, 
+from code_aster.Commands import (DEFI_LIST_REEL, FORMULE, CALC_FONC_INTERP, DETRUIRE,
     AFFE_CHAR_MECA_F, CREA_CHAMP)
 
 
 def char_rota_ops(self,MODELE,ANGLE_DEGRES,TINI,TFIN,RESU,MAIL,**args):
     import numpy as NP
-
-    ier=0
-  # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-  # On importe les definitions des commandes a utiliser dans la macro
 
     angle=ANGLE_DEGRES*math.pi/180.0
     coordo=MAIL.sdj.COORDO.VALE.get()
@@ -56,18 +51,18 @@ def char_rota_ops(self,MODELE,ANGLE_DEGRES,TINI,TFIN,RESU,MAIL,**args):
         }
         __DXTf = FORMULE(VALE='X1*(cos(angle*(INST-TINI)/(TFIN-TINI))-1.0)-Y1*sin(angle*(INST-TINI)/(TFIN-TINI))',
                          NOM_PARA=('INST'),
-                         **const_context);
+                         **const_context)
         _DXT  =CALC_FONC_INTERP( FONCTION=__DXTf,LIST_PARA=__interp,NOM_PARA='INST',INTERPOL='LIN')
         __DYTf = FORMULE(VALE='X1*sin(angle*(INST-TINI)/(TFIN-TINI))+Y1*(cos(angle*(INST-TINI)/(TFIN-TINI))-1.0)',
                          NOM_PARA=('INST'),
-                         **const_context);
+                         **const_context)
         _DYT  =CALC_FONC_INTERP( FONCTION=__DYTf,LIST_PARA=__interp,NOM_PARA='INST',INTERPOL='LIN')
         dico={}
         dico["NOEUD"]=nomnoe[ino]
         dico["DX"]=_DXT
         dico["DY"]=_DYT
         ddlimpo.append(dico)
-    CharRota=AFFE_CHAR_MECA_F(MODELE=MODELE,DDL_IMPO=ddlimpo);
+    CharRota=AFFE_CHAR_MECA_F(MODELE=MODELE,DDL_IMPO=ddlimpo)
     return CharRota
 
 CHAR_ROTA_cata =MACRO(nom="CHAR_ROTA", op=char_rota_ops,sd_prod=char_meca,

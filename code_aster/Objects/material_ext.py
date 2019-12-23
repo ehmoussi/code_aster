@@ -48,8 +48,6 @@ class ExtendedMaterial(object):
         """Appel à la routine fortran RCVALE pour récupérer les valeurs des
         propriétés du matériau.
         """
-        if not self.accessible():
-            raise AsException("Erreur dans mater.RCVALE en PAR_LOT='OUI'")
         from Utilitai.Utmess import UTMESS
         # vérification des arguments
         if not type(nompar) in (list, tuple):
@@ -68,4 +66,4 @@ class ExtendedMaterial(object):
         if len(nomres) < 1:
             UTMESS('F', 'SDVERI_5')
         # appel à l'interface Python/C
-        return aster.rcvale(self.nom, phenomene, nompar, valpar, nomres, stop)
+        return aster.rcvale(self.getName(), phenomene, nompar, valpar, nomres, stop)

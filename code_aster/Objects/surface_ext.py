@@ -51,7 +51,7 @@ class ExtendedSurface(object):
                       }
             l_fonc.append(t_fonction(vale[1][i][0], vale[1][i][1], para_f))
             i += 1
-        return t_nappe(vale[0], l_fonc, para[0], nom=self.nom)
+        return t_nappe(vale[0], l_fonc, para[0], nom=self.getName())
 
     def Parametres(self):
         """

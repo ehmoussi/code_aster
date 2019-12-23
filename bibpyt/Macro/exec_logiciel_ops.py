@@ -323,8 +323,6 @@ def exec_logiciel_ops(self, **kwargs):
     import aster
     from Utilitai.Utmess import UTMESS
 
-    self.set_icmd(1)
-
     action = ExecProgram.factory(self, **kwargs)
     try:
         action.configure( kwargs )

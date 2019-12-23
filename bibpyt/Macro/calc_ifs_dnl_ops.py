@@ -40,7 +40,6 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     from code_aster.Commands import EXTR_RESU, DEFI_LIST_ENTI, IMPR_RESU
     from SD.sd_maillage import sd_maillage
     #
-    self.set_icmd(1)
     # =================================================================#
     # Liste des commandes ASTER utilisees                             #
     # --------------------------------------------------------------- #
@@ -64,16 +63,12 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     grpProjMocle = {}
     ifsCharMocle = {}
     tmpListe = []
-    ifsCharList = []
     poidsMocle['VIS_A_VIS'] = []
     grpRefeMocle['CREA_GROUP_NO'] = []
     grpProjMocle['CREA_GROUP_NO'] = []
     ifsCharMocle['GROUP_NO'] = []
 
     ifsCharTuple = (GROUP_MA_IFS,)
-    # print "ifsCharTuple=",ifsCharTuple
-    ifsCharList = GROUP_MA_IFS
-    # print "len(ifsCharList)=",len(ifsCharList)
     prefix = "_"
     for j in range(len(ifsCharTuple)):
         poidsDico = {}
@@ -158,19 +153,13 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                 motscles[cle] = dMotCle
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-    # ===============================#
-    # INITIALISATION DE LA SD MACRO #
-    # ----------------------------- #
-    self.DeclareOut('resdnl', self.sd)
-
     # ============================================================#
     # GENERATION DES GROUPES DE NOEUDS SUR LE MAILLAGE STRUCTURE #
     # ---------------------------------------------------------- #
     # on recupere le concept maillage
     # print "MODELE=",MODELE
     # print "MODELE.strip()=",MODELE.strip()
-    iret, ibid, nom_ma = aster.dismoi('NOM_MAILLA', MODELE.nom, 'MODELE', 'F')
-    _strucMesh = self.get_concept(nom_ma.strip())
+    _strucMesh = MODELE.getMesh()
     # print "MAILLAGE STRUCTURE=",_strucMesh
     # print "DEFI_GROUP MAILLAGE STRUCTURE"
     # print "grpRefeMocle=",grpRefeMocle
@@ -209,8 +198,8 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     # ASTER -> CODE COUPLE                         #
     # -------------------------------------------- #
     print("PROJ_CHAMP MAILLAGE NOEUDS")
-    # print "MAILLAGE_1=",_strucMesh.nom
-    # print "MAILLAGE_2=",_fluidNodeMesh.nom
+    # print "MAILLAGE_1=",_strucMesh.getName()
+    # print "MAILLAGE_2=",_fluidNodeMesh.getName()
     _fluidNodePoids = PROJ_CHAMP(PROJECTION='NON',
                                  METHODE='COUPLAGE',
                                  MAILLAGE_1=_strucMesh,
@@ -272,8 +261,8 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     print("PAS=", _timeStepAster)
     _timeV = RECU_PARA_YACS(DONNEES='INITIALISATION',
                             PAS=_timeStepAster,)
-    # print "__timeValues=",_timeV.Valeurs()
-    _timeValues = _timeV.Valeurs()
+    # print "__timeValues=",_timeV.getValues()
+    _timeValues = _timeV.getValues()
     _nbTimeStep = int(_timeValues[0])
 
 #  Ancien nommage
@@ -311,9 +300,6 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
 # Compteur de sous-itearation
     _SousIterations = 1
 
-    ticv = [None] * (_nbTimeStep + 1)
-    endv = [None] * (_nbTimeStep + 1)
-
 #
 #   Envoi des donnees initiales si besoin est
 #
@@ -342,7 +328,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                                  INST=_tStart,
                                  PAS=_timeStepAster,
                                  )
-        _pastps0 = _pastps.Valeurs()
+        _pastps0 = _pastps.getValues()
         print("_pastps0[0]=", _pastps0[0])
         _timeStep = _pastps0[0]
         print("DEFI_LIST_REEL")
@@ -389,7 +375,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                                    NUME_ORDRE_YACS=_ntcast,
                                    INST=_tEnd,
                                    PAS=_timeStep,)
-            __icv = _ticv.Valeurs()
+            __icv = _ticv.getValues()
             icv = int(__icv[0])
             print("Convergence=", icv)
             if (icv == 1 or _SousIterations == _nbSsIterMax):
@@ -416,7 +402,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
 #                         NUME_ORDRE_YACS = _iter,
 #                         INST  = _tEnd,
 #                         PAS  = _timeStep,)
-#     __endv = endv[0].Valeurs()
+#     __endv = endv[0].getValues()
 #     _endValue   = __endv[0]
 #     _nbTimeStep = _endValue
 #     print "FIN=",_endValue
@@ -437,7 +423,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                                  INST=_tyacs,
                                  PAS=_timeStepAster,
                                  )
-        _pastps0 = _pastps.Valeurs()
+        _pastps0 = _pastps.getValues()
         print("_pastps0[0]=", _pastps0[0])
         _timeStep = _pastps0[0]
         _tEnd = _tStart + _timeStep
@@ -485,7 +471,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                                    NUME_ORDRE_YACS=_ntcast,
                                    INST=_tEnd,
                                    PAS=_timeStep,)
-            __icv = _ticv.Valeurs()
+            __icv = _ticv.getValues()
             icv = int(__icv[0])
             print("Convergence=", icv)
             _ntcat = _ntcast + 1
@@ -513,7 +499,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
 #                         NUME_ORDRE_YACS = _iter,
 #                         INST  = _tEnd,
 #                         PAS  = _timeStep,)
-#     __endv = endv[_iter].Valeurs()
+#     __endv = endv[_iter].getValues()
 #     _endValue   = __endv[0]
 #     _nbTimeStep = _endValue
         _numpas = _numpas + 1

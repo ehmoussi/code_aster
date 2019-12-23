@@ -51,7 +51,6 @@ def force_iss_vari(self,imod,MATR_GENE,NOM_CMP,ISSF,INFO,UNITE_RESU_FORC,
     nom_bamo = MATR_GENE['BASE']
     resultat = MATR_GENE['BASE']
     nom_bam2 = nom_bamo.nom
-      #iret,ibid,nume_ddl = aster.dismoi('NUME_DDL',nom_bamo.nom,'RESU_DYNA','F')
     iret, ibid, nume_ddl = aster.dismoi('NUME_DDL',nom_bam2,'RESU_DYNA','F')
     iret,ibid, nom_mail = aster.dismoi('NOM_MAILLA',nume_ddl,'NUME_DDL','F')
     # MODELE, DDLGENE
@@ -90,7 +89,7 @@ def force_iss_vari(self,imod,MATR_GENE,NOM_CMP,ISSF,INFO,UNITE_RESU_FORC,
              NUME_ORDRE = nmo,
              RESULTAT = resultat  ,
              NOM_CHAM = 'DEPL'
-               );
+               )
        MCMP2 = __CHAM.EXTR_COMP(' ',[GROUP_NO_INTER],0).valeurs
        if mods == 0:
            NCMP2 =__CHAM.EXTR_COMP(' ',[GROUP_NO_INTER], topo=1).comp
@@ -166,7 +165,7 @@ def force_iss_vari(self,imod,MATR_GENE,NOM_CMP,ISSF,INFO,UNITE_RESU_FORC,
                                 UNITE_RESU_IMPE= UNITE_RESU_IMPE,
                                 ISSF=ISSF,
                                 FREQ_EXTR=freqk,
-                                );
+                                )
            #    on cree __fosi  pour  RECU_VECT_GENE_C   plus loin
 
       __fosi = LIRE_FORC_MISS(BASE=resultat,
@@ -175,7 +174,7 @@ def force_iss_vari(self,imod,MATR_GENE,NOM_CMP,ISSF,INFO,UNITE_RESU_FORC,
                                 NOM_CHAM='DEPL',
                                 UNITE_RESU_FORC = UNITE_RESU_FORC,
                                 ISSF=ISSF,
-                                FREQ_EXTR=freqk,);
+                                FREQ_EXTR=freqk,)
 
 
       # -------------- impedance--------------------------------

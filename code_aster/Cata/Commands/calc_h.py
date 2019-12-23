@@ -66,7 +66,7 @@ CALC_H=OPER(nom="CALC_H",op=27,sd_prod=table_sdaster,
                   b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                       PRECISION       =SIMP(statut='o',typ='R'),),
         ),
-         
+
         EXCIT           =FACT(statut='f',max='**',
             CHARGE          =SIMP(statut='f',typ=(char_meca,char_cine_meca)),
             FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),

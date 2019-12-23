@@ -43,16 +43,10 @@ def macr_rota_globale_ops(self, **args):
     RESULTAT = args["RESULTAT"]
     GROUP_NO_ORIG = args["GROUP_NO_ORIG"]
     GROUP_NO_EXTR = args["GROUP_NO_EXTR"]
-    ier = 0
     # On importe les definitions des commandes a utiliser dans la macro
     POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
     DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-    # Le concept sortant (de type fonction) est nomme ROTGD dans
-    # le contexte de la macro
-    self.DeclareOut('ROTGD', self.sd)
     # Commandes de la macro
     __ROTAB = POST_RELEVE_T(ACTION=_F(INTITULE='__ROTAB',
                                       GROUP_NO=GROUP_NO_ORIG,

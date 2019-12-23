@@ -149,7 +149,6 @@ def build_debut(self, **args):
     # op doit être un entier car la fonction debut appelle GCECDU qui demande
     # le numéro de l'operateur associé (getoper)
     self.definition.op = 0
-    self.set_icmd(1)
     self.codex.debut(self)
     # On remet op a None juste apres pour eviter que la commande DEBUT
     # ne soit executée dans la phase d'execution
@@ -342,7 +341,6 @@ def build_poursuite(self, **args):
     # Pour POURSUITE on ne modifie pas la valeur initialisee dans ops.POURSUITE
     # Il n y a pas besoin d executer self.codex.poursu (c'est deja fait dans
     # la fonction sdprod de la commande (ops.POURSUITE))
-    self.set_icmd(1)
     self.jdc.UserError = self.codex.error
     return 0
 
@@ -394,7 +392,6 @@ def build_include(self, **args):
     # le numéro de la commande n est pas utile en phase de construction
     # La macro INCLUDE ne sera pas numérotée (incrément=None)
     ier = 0
-    self.set_icmd(None)
     # On n'execute pas l'ops d'include en phase BUILD car il ne sert a rien.
     # ier=self.codex.opsexe(self,1)
     return ier
@@ -427,7 +424,6 @@ def DETRUIRE(self, CONCEPT, OBJET, **args):
     # tôt
     for co in _detr_list_co(self, {}):
         co.supprime(force=True)
-    self.set_icmd(1)
     ier = self.codex.opsexe(self, 7)
     return ier
 
@@ -475,7 +471,6 @@ def build_procedure(self, **args):
     # Pour presque toutes les commandes (sauf FORMULE et POURSUITE)
     # le numéro de la commande n est pas utile en phase de construction
     # On ne numérote pas une macro PROCEDURE (incrément=None)
-    self.set_icmd(None)
     # ier=self.codex.opsexe(self,3)
     return ier
 
@@ -484,7 +479,6 @@ def build_DEFI_FICHIER(self, **args):
     """
     Fonction ops de la macro DEFI_FICHIER
     """
-    self.set_icmd(1)
     ier = self.codex.opsexe(self, 26)
     return ier
 

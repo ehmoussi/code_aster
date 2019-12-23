@@ -111,7 +111,7 @@ SOLUT=STAT_NON_LINE(MODELE=MO,
 
 # boucle sur les pas de temps
 pred = 'elastique'
-l_inst = LIST.Valeurs()
+l_inst = LIST.getValues()
 for i_inst in range(1,len(l_inst)) :
    inst = l_inst[i_inst]
    print(' ')

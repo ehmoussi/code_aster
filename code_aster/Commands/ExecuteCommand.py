@@ -396,7 +396,7 @@ class ExecuteMacro(ExecuteCommand):
     """This implements an executor of *legacy* macro-commands.
 
     The OPS function of *legacy* macro-commands returns a return code and
-    declared results through ``self.DeclareOut(...)``.
+    declared results through ``self.register_result(...)``.
 
     Now the results must be directly returned by the OPS function.
 
@@ -487,7 +487,7 @@ class ExecuteMacro(ExecuteCommand):
     def register_result(self, result, target):
         """Register an additional result.
 
-        Similar to the old *DeclareOut* method but it must called **after** that
+        It must called **after** that
         the result has been created.
 
         Arguments:
@@ -501,27 +501,6 @@ class ExecuteMacro(ExecuteCommand):
         if ExecutionParameter().option & Options.ShowChildCmd:
             logger.info("Intermediate result '{0}' will be available as '{1}'."
                         .format(orig, name))
-
-    @property
-    def sdprods(self):
-        """Attribute that holds the auxiliary results."""
-        return self._sdprods or []
-
-    # create a sub-object?
-    def get_cmd(self, name):
-        """Return a command."""
-        from .. import Commands
-        return getattr(Commands, name, None)
-
-    @deprecated(False)
-    def set_icmd(self, _):
-        """Does nothing, kept for compatibility."""
-        return
-
-    @deprecated(help="Results have to be register using 'register_result'.")
-    def DeclareOut(self, result, target):
-        """Register a result of the macro-command."""
-        pass
 
     @property
     @deprecated(True, help="Not yet implemented.")
@@ -538,9 +517,16 @@ class ExecuteMacro(ExecuteCommand):
     def cr(self):
         return logger
 
-    def get_concept(self, name):
-        raise NotImplementedError("'get_concept()' does not exist anymore...")
+    @property
+    def sdprods(self):
+        """Attribute that holds the auxiliary results."""
+        return self._sdprods or []
 
+    # create a sub-object?
+    def get_cmd(self, name):
+        """Return a command."""
+        from .. import Commands
+        return getattr(Commands, name, None)
 
 def UserMacro(name, cata, ops):
     """Helper function that defines a user macro-command from its catalog

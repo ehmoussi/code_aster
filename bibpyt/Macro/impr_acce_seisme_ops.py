@@ -136,10 +136,6 @@ def impr_acce_seisme_ops(self, **args):
     CREA_TABLE = self.get_cmd('CREA_TABLE')
     IMPR_TABLE = self.get_cmd('IMPR_TABLE')
 
-    # Comptage commandes + déclaration concept sortant
-    self.set_icmd(1)
-    macro = 'IMPR_ACCE_SEISME'
-
     # Chemin du repertoire REPE_OUT de l'execution courante d'Aster
     REPE_OUT = os.path.join(os.getcwd(), 'REPE_OUT')
 
@@ -209,8 +205,6 @@ def impr_acce_seisme_ops(self, **args):
     __specci=CALC_FONCTION(COMB=_F(FONCTION= SPEC_OSCI, COEF=1./ratio_hv),)
 
     __MOY = [None]*dim
-
-    pas_grid = [0.1,0.2,0.25,0.5,1.]
 
     for idi in range(1,dim+1):
 
@@ -632,9 +626,6 @@ def impr_acce_seisme_ops(self, **args):
         if SPEC_1_SIGMA:
 
             __spec1s=CALC_FONCTION(COMB=_F(FONCTION= SPEC_1_SIGMA, COEF=1./ratio_hv),)
-
-            # calcul du spectre -1 sigma cible
-            #SPEC_MOINS_1_SIGMA = SPEC_OSCI * exp(-BETA) où BETA = log(SPEC_1_SIGMA/ SPEC_OSCI).
 
 
             freq_cib, acce_cib = __specci.Valeurs()

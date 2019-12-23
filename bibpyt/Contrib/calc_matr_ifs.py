@@ -55,9 +55,6 @@ def calc_matr_ifs_ops(self, **args):
     IMPE_R_OUT = args.get("IMPE_R")
     IMPE_I_OUT = args.get("IMPE_I")
 
-# Numerotation de la macro
-    self.set_icmd(1)
-
 # Commandes utilisées dans la macro
     DEFI_MATERIAU  = self.get_cmd('DEFI_MATERIAU')
     AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
@@ -68,71 +65,71 @@ def calc_matr_ifs_ops(self, **args):
     COMB_MATR_ASSE = self.get_cmd('COMB_MATR_ASSE')
 
 # Définition des propriétés matériaux
-    _FLUI     = DEFI_MATERIAU(FLUIDE=_F(RHO=RHO_FLUI, CELE_R=C_FLUI,),);
-    _FLUI_0   = DEFI_MATERIAU(FLUIDE=_F(RHO=RHO_FLUI, CELE_R=0,),);
-    _FLUI_00  = DEFI_MATERIAU(FLUIDE=_F(RHO=0.0, CELE_R=0,),);
+    _FLUI     = DEFI_MATERIAU(FLUIDE=_F(RHO=RHO_FLUI, CELE_R=C_FLUI,),)
+    _FLUI_0   = DEFI_MATERIAU(FLUIDE=_F(RHO=RHO_FLUI, CELE_R=0,),)
+    _FLUI_00  = DEFI_MATERIAU(FLUIDE=_F(RHO=0.0, CELE_R=0,),)
 
-    _ELAS_0   = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_ELAS, RHO=RHO_ELAS, AMOR_HYST=0.0,),);
-    _ELAS_1   = DEFI_MATERIAU(ELAS=_F(E=1.0, NU=NU_ELAS, RHO=RHO_ELAS, AMOR_HYST=0.0,),);
-    _ELAS_11  = DEFI_MATERIAU(ELAS=_F(E=1.0, NU=NU_ELAS, RHO=1.0     , AMOR_HYST=0.0,),);
-    _ELAS_00  = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_ELAS, RHO=0.0     , AMOR_HYST=0.0,),);
+    _ELAS_0   = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_ELAS, RHO=RHO_ELAS, AMOR_HYST=0.0,),)
+    _ELAS_1   = DEFI_MATERIAU(ELAS=_F(E=1.0, NU=NU_ELAS, RHO=RHO_ELAS, AMOR_HYST=0.0,),)
+    _ELAS_11  = DEFI_MATERIAU(ELAS=_F(E=1.0, NU=NU_ELAS, RHO=1.0     , AMOR_HYST=0.0,),)
+    _ELAS_00  = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_ELAS, RHO=0.0     , AMOR_HYST=0.0,),)
 
     if GROUP_MA_VISC is not None:
-        _VISC_0   = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_VISC, RHO=RHO_VISC, AMOR_HYST=0.0,),);
-        _VISC_1   = DEFI_MATERIAU(ELAS=_F(E=1.0, NU=NU_VISC, RHO=RHO_VISC, AMOR_HYST=0.0,),);
-        _VISC_00  = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_VISC, RHO=0.0, AMOR_HYST=0.0,),);
+        _VISC_0   = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_VISC, RHO=RHO_VISC, AMOR_HYST=0.0,),)
+        _VISC_1   = DEFI_MATERIAU(ELAS=_F(E=1.0, NU=NU_VISC, RHO=RHO_VISC, AMOR_HYST=0.0,),)
+        _VISC_00  = DEFI_MATERIAU(ELAS=_F(E=0.0, NU=NU_VISC, RHO=0.0, AMOR_HYST=0.0,),)
 
 # Materiaux pour matrices de masse
     if GROUP_MA_VISC is None:
         _MAT_MSE=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_11,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_00,),
-                                     ),);
+                                     ),)
         _MAT_MSF=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_00,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI,),
-                                     ),);
+                                     ),)
     else:
         _MAT_MSE=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_11,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_00,),
-                                     _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_00,),),);
+                                     _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_00,),),)
         _MAT_MSF=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_00,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI,),
-                                     _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_0,),),);
+                                     _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_0,),),)
 
 # Materiaux pour matrices de raideur
     if GROUP_MA_VISC is None:
         _MAT_MK1=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_0,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI,),
-                                     ),);
+                                     ),)
 
         _MAT_MK2=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_1,),
                                       _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_0,),
-                                    ),);
+                                    ),)
 
         _MAT_MK3=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_0,),
                                       _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_0,),
-                                    ),);
+                                    ),)
     else:
         _MAT_MK1=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_0,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI,),
-                                     _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_0,),),);
+                                     _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_0,),),)
 
         _MAT_MK2=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_1,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_0,),
-                                     _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_0,),),);
+                                     _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_0,),),)
 
         _MAT_MK3=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_0,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_0,),
-                                     _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_1,),),);
+                                     _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_1,),),)
 # Creation du NUME_DDL
 
     NUME_DDL=NUME_DDL(MODELE = MODELE)
@@ -141,8 +138,8 @@ def calc_matr_ifs_ops(self, **args):
 # Calcul des matrices d'impédance
 
     if GROUP_MA_IMPE is not None:
-        _CLIMPR=AFFE_CHAR_MECA(MODELE=MODELE, IMPE_FACE=_F(GROUP_MA=GROUP_MA_IMPE, IMPE=CHAR_IMPE_R,),);
-        _CLIMPI=AFFE_CHAR_MECA(MODELE=MODELE, IMPE_FACE=_F(GROUP_MA=GROUP_MA_IMPE, IMPE=CHAR_IMPE_C,),);
+        _CLIMPR=AFFE_CHAR_MECA(MODELE=MODELE, IMPE_FACE=_F(GROUP_MA=GROUP_MA_IMPE, IMPE=CHAR_IMPE_R,),)
+        _CLIMPI=AFFE_CHAR_MECA(MODELE=MODELE, IMPE_FACE=_F(GROUP_MA=GROUP_MA_IMPE, IMPE=CHAR_IMPE_C,),)
         _ElIMPEr=CALC_MATR_ELEM(OPTION='IMPE_MECA',
                                MODELE=MODELE,CHARGE= _CLIMPR,
                                CHAM_MATER=_MAT_MK1,)
@@ -181,7 +178,7 @@ def calc_matr_ifs_ops(self, **args):
 
     if GROUP_MA_IMPE is not None:
         MASS_FI=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=MASS_F, COEF_R=1.0,),
-                                       _F(MATR_ASSE=IMPE_I, COEF_R=1.0,),),);
+                                       _F(MATR_ASSE=IMPE_I, COEF_R=1.0,),),)
         self.register_result(MASS_FI, MASS_FI_OUT)
 
 

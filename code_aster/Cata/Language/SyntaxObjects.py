@@ -443,6 +443,7 @@ class PartOfSyntax(UIDMixing):
             if isinstance(kwd, (SimpleKeyword, FactorKeyword)):
                 if key == "reuse": # reuse is deprecated
                     continue
+                    #raise KeyError("reuse has been removed")
                 # pragma pylint: disable=no-member
                 if kwd.isMandatory() and kwd.undefined(userSyntax.get(key)):
                     debug_message2("mandatory keyword =", key, ":", kwd)

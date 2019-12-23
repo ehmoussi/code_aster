@@ -166,14 +166,12 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
     IMPR_TABLE = self.get_cmd('IMPR_TABLE')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
-    LIRE_TABLE = self.get_cmd('LIRE_TABLE')
     LIRE_FONCTION = self.get_cmd('LIRE_FONCTION')
     RECU_FONCTION = self.get_cmd('RECU_FONCTION')
     DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
     AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
     AFFE_CHAR_MECA_F = self.get_cmd('AFFE_CHAR_MECA_F')
     DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    LIRE_MAILLAGE=self.get_cmd('LIRE_MAILLAGE')
     CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
     MODI_MAILLAGE = self.get_cmd('MODI_MAILLAGE')
     # PRE_GIBI=self.get_cmd('PRE_GIBI')
@@ -182,10 +180,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     NUME_DDL = self.get_cmd('NUME_DDL')
     CALC_MATR_ELEM = self.get_cmd('CALC_MATR_ELEM')
     ASSE_MATRICE = self.get_cmd('ASSE_MATRICE')
-    CALC_VECT_ELEM = self.get_cmd('CALC_VECT_ELEM')
-    ASSE_VECTEUR = self.get_cmd('ASSE_VECTEUR')
     CREA_RESU = self.get_cmd('CREA_RESU')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     CALC_CHAR_SEISME = self.get_cmd('CALC_CHAR_SEISME')
     CALC_CHAMP = self.get_cmd('CALC_CHAMP')
     CALC_FONC_INTERP = self.get_cmd('CALC_FONC_INTERP')
@@ -195,22 +190,11 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     DEFI_NAPPE = self.get_cmd('DEFI_NAPPE')
     AFFE_CARA_ELEM = self.get_cmd('AFFE_CARA_ELEM')
     POST_DYNA_ALEA = self.get_cmd('POST_DYNA_ALEA')
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-    self.DeclareOut("tabout", self.sd)
-
-    # Le concept sortant (de type table_sdaster)
-
 
 # calculs de deconvolution ou reconvolution sur une colonne de sol en 2D
 # avec approche harmonique lineaire equivalente (courbes G et D gamma)
 
     titre = 'Etude Reconvolution 500m TRI'
-
-    nbsol = 1
-
-    nbacc = 1
 
     args = _F(args)
     SURF = args['SURF']
@@ -237,11 +221,8 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     elif args['LIEU_SIGNAL'] == 'CHAMP_LIBRE':
         input = 'CL'
 
-
     if 'DSP' in args:
         TSM = args['DUREE']
-
-
 
     lliaison = 'OUI'
     lmassp = 'NON'
@@ -295,10 +276,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
           #0.66666667
 
     if 'DSP' in args:
-      PARATAB = 'FREQ'
       ldevi = 'NON'
-    else :
-      PARATAB = 'INST'
 
     veriftmp = 'NON'
 
@@ -371,7 +349,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
       __fonc_acce[0]=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[1,1],INDIC_RESU=[1,3],
-                   );
+                   )
 
       tt, vale_s = __fonc_acce[0].Valeurs()
       dt = tt[1] - tt[0]
@@ -400,27 +378,27 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
       __fonc_dsp = DEFI_FONCTION(ABSCISSE = fr.tolist(), ORDONNEE = vale_s.tolist(),
                         PROL_DROITE='CONSTANT', NOM_PARA  = 'FREQ',
                         PROL_GAUCHE='CONSTANT',
-                         );
+                         )
 
       __fonc_acce[0] = DEFI_FONCTION(ABSCISSE = fr.tolist(), ORDONNEE = np.sqrt(vale_s).tolist() ,
                         PROL_DROITE='CONSTANT', NOM_PARA  = 'FREQ',
                         PROL_GAUCHE='CONSTANT',
-                         );
+                         )
 
       __AHX[0]  = CALC_FONCTION(COMB_C=_F(FONCTION=__fonc_acce[0], COEF_C = 1.+0.j),
-                       NOM_PARA='FREQ',);
+                       NOM_PARA='FREQ',)
 
 
       if fr[0] < 10**(-10):
         __VHX = DEFI_FONCTION(ABSCISSE = list(fr[1:]), ORDONNEE = list(np.array(vale_s[1:])/np.array(fr[1:])),
                         PROL_DROITE='CONSTANT', NOM_PARA  = 'FREQ',
                         PROL_GAUCHE='CONSTANT',
-                         );
+                         )
       else:
         __VHX = DEFI_FONCTION(ABSCISSE = list(fr), ORDONNEE = list(np.array(vale_s)/np.array(fr)),
                         PROL_DROITE='CONSTANT', NOM_PARA  = 'FREQ',
                         PROL_GAUCHE='CONSTANT',
-                         );
+                         )
 
 ####
     else :
@@ -431,7 +409,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                          ),
                     PROL_DROITE='CONSTANT',
                     PROL_GAUCHE='CONSTANT',
-                     );
+                     )
       elif dime == "3D":
           for n in range(num_dime):
               fonc_acce[n] = args['FONC_SIGNAL_'+name_dime[n]]
@@ -440,7 +418,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                          ),
                     PROL_DROITE='CONSTANT',
                     PROL_GAUCHE='CONSTANT',
-                     );
+                     )
 
       tt, vale_s = __fonc_acce[0].Valeurs()
       dt = tt[1] - tt[0]
@@ -542,9 +520,9 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
             __VITEX[0] = DEFI_FONCTION(ABSCISSE = fr[1:], ORDONNEE = 1./np.array(fr[1:]),
                         PROL_DROITE='CONSTANT', NOM_PARA  = 'FREQ',
                         PROL_GAUCHE='CONSTANT',
-                         );
+                         )
       if input == 'RA' :
-            __VITEX[0] = CALC_FONCTION(COMB=( _F(FONCTION=__VHX, COEF=1. ),),);
+            __VITEX[0] = CALC_FONCTION(COMB=( _F(FONCTION=__VHX, COEF=1. ),),)
 
 
     else:
@@ -615,7 +593,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                             LIST_PARA=__linst,
                             PROL_DROITE='CONSTANT',
                             PROL_GAUCHE='CONSTANT',
-                             );
+                             )
 
         #__ACCEX0H[n] = CALC_FONCTION(FFT=_F(FONCTION=__ACCEX0[n], METHODE='COMPLET',))
         __VITEX0H = CALC_FONCTION(FFT=_F(FONCTION=__VITEX0, METHODE='COMPLET',))
@@ -639,7 +617,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
             __VITEX[n] = CALC_FONCTION(COMB=_F(FONCTION=__VITEX0, COEF=1.0 ),
                             LIST_PARA=__linst,
                             PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',
-                             );
+                             )
         if input == 'RA' :
             __VITEX[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__ACCEX[n], ))
 
@@ -659,14 +637,13 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     # indicateur du nombre d iterations
     etat = 'debut'
 
-    legendeT = 's' + str(s) + 'v' + str(v) + 'a' + str(a)
     legende = '-acce' + str(a) + '-sol' + str(s) + '-cvar=' + str(v)
     if args.get('TABLE_MATER_ELAS') is not None:
         nom_para_table_elas = ['Y','M','RHO','Emax','NU','AH','GDgam']
         if Byrne :
             nom_para_table_elas.append('N1')
         __TMAT = CALC_TABLE( TABLE=args['TABLE_MATER_ELAS'],
-         ACTION=_F(OPERATION='EXTR',NOM_PARA=nom_para_table_elas));
+         ACTION=_F(OPERATION='EXTR',NOM_PARA=nom_para_table_elas))
         tmat = __TMAT.EXTR_TABLE()
         NCOU = len(tmat) - 1
         text = ('NCOU=' + str(NCOU) )
@@ -1007,36 +984,36 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
              __faccex0=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[1,1],INDIC_RESU=[1,NPC+2-k],
-                   );
+                   )
            else:
              __fvitex=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[2,1],INDIC_RESU=[2,NPC+2-k],
-                   );
+                   )
              __fdeplx=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[3,1],INDIC_RESU=[3,NPC+2-k],
-                   );
+                   )
            l_para.append(-1.0*__TMAT['Y',NPC-1-k])
          else:
            if lmassp == 'OUI':
              __faccex0=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[1,1],INDIC_RESU=[1,2],
-                   );
+                   )
            else:
              __fvitex=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[2,1],INDIC_RESU=[2,2],
-                   );
+                   )
              __fdeplx=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[3,1],INDIC_RESU=[3,2],
-                   );
+                   )
            l_para.append(0.0)
          if lmassp == 'OUI':
-           __faccX=CALC_FONCTION(COMB=_F(FONCTION=__faccex0,COEF=1.0*args['MASS_PENA'],),);
-           DETRUIRE(CONCEPT=_F(NOM=(__faccex0,),), INFO = 1);
+           __faccX=CALC_FONCTION(COMB=_F(FONCTION=__faccex0,COEF=1.0*args['MASS_PENA'],),)
+           DETRUIRE(CONCEPT=_F(NOM=(__faccex0,),), INFO = 1)
            l_foncx.append(__faccX)
          else:
            l_vitex.append(__fvitex)
@@ -1044,14 +1021,14 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
       if lmassp == 'OUI':
         __NSEISMX = DEFI_NAPPE(NOM_PARA='Y', INTERPOL=('LIN','LIN',),
                                PROL_GAUCHE='CONSTANT', PROL_DROITE='CONSTANT',
-                               PARA= tuple(l_para), FONCTION=tuple(l_foncx),);
+                               PARA= tuple(l_para), FONCTION=tuple(l_foncx),)
       else:
         __FONCVX = DEFI_NAPPE(NOM_PARA='X', INTERPOL=('LIN','LIN',),
                                PROL_GAUCHE='CONSTANT', PROL_DROITE='CONSTANT',
-                               PARA= tuple(l_para), FONCTION=tuple(l_vitex),);
+                               PARA= tuple(l_para), FONCTION=tuple(l_vitex),)
         __FONCDX = DEFI_NAPPE(NOM_PARA='X', INTERPOL=('LIN','LIN',),
                                PROL_GAUCHE='CONSTANT', PROL_DROITE='CONSTANT',
-                               PARA= tuple(l_para), FONCTION=tuple(l_deplx),);
+                               PARA= tuple(l_para), FONCTION=tuple(l_deplx),)
 
     #IMPR_RESU(RESU=_F(MAILLAGE=__mailla,));
     if lliaison == 'OUI':
@@ -1059,7 +1036,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
           __mailla=MODI_MAILLAGE(reuse =__mailla,
                     MAILLAGE=__mailla,
                     ORIE_PEAU_2D=_F(GROUP_MA=grma_subst,GROUP_MA_SURF=grma_colon,),
-                    );
+                    )
           __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
                                AFFE=(
                                _F(GROUP_MA=grma_colon, PHENOMENE='MECANIQUE',
@@ -1092,7 +1069,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
           __mailla=MODI_MAILLAGE(reuse =__mailla,
                     MAILLAGE=__mailla,
                     ORIE_PEAU_3D=_F(GROUP_MA=grma_subst,GROUP_MA_VOLU=grma_colon,),
-                    );
+                    )
 
           __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
                                AFFE=(
@@ -1117,7 +1094,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
         __mailla=MODI_MAILLAGE(reuse =__mailla,
                 MAILLAGE=__mailla,
                 ORIE_PEAU_2D=_F(GROUP_MA=(grma_subst,grma_gauch,grma_droit),GROUP_MA_SURF=grma_colon,),
-                );
+                )
         if lmassp == 'OUI':
             __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
                                AFFE=(
@@ -1135,7 +1112,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                                     CARA='M_T_D_N',
                                     VALE=args['MASS_PENA']),
                             ),
-                    );
+                    )
         else:
             __MODELE = AFFE_MODELE(MAILLAGE=__mailla,
                                AFFE=(
@@ -1447,7 +1424,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                     TYPE_ONDE = 'S',
                     DIST=-1.0*__TMAT['Y', NCOU + 1],
                     FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst)
-                         );
+                         )
               else:
                 if ltranin == 'OUI' :
                   if lmassp == 'OUI' :
@@ -1456,30 +1433,30 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                       TYPE_ONDE = 'S',
                       DIST=-1.0*__TMAT['Y', NCOU + 1], #DIST_REFLECHI=0.,
                       FONC_SIGNAL = __VITEX[0], GROUP_MA=(grma_subst,))
-                          );
+                          )
                     __FSEISMX=AFFE_CHAR_MECA_F(MODELE=__MODELE,
                       FORCE_NODALE=(_F(GROUP_NO='PLATE',FX=__NSEISMX,),),
-                          );
+                          )
                   else:
                     __FSEISMX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                       ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                       TYPE_ONDE = 'S',
                       DEPL_IMPO=__FONCDX,
                       FONC_SIGNAL = __FONCVX, GROUP_MA=(grma_gauch,grma_droit))
-                          );
+                          )
                     __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                     ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                     TYPE_ONDE = 'S',
                     DIST=-1.0*__TMAT['Y', NCOU + 1],
                     FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst)
-                         );
+                         )
                 else:
                   __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                     ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                     TYPE_ONDE = 'S',
                     DIST=-1.0*__TMAT['Y', NCOU + 1], DIST_REFLECHI=0.,
                     FONC_SIGNAL = __VITEX[0], GROUP_MA=(grma_subst,grma_gauch,grma_droit))
-                         );
+                         )
             else:
               __VECASX = CALC_CHAR_SEISME(
                 MATR_MASS=__MASSEH, DIRECTION=(0., 1., 0.,), MONO_APPUI='OUI')
@@ -1489,7 +1466,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                     TYPE_ONDE = 'P',
                     DIST=-1.0*__TMAT['Y', NCOU + 1],
                     FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst)
-                         );
+                         )
               else:
                 if ltranin == 'OUI' :
                   if lmassp == 'OUI' :
@@ -1498,30 +1475,30 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                       TYPE_ONDE = 'P',
                       DIST=-1.0*__TMAT['Y', NCOU + 1], #DIST_REFLECHI=0.,
                       FONC_SIGNAL = __VITEX[0], GROUP_MA=(grma_subst,))
-                          );
+                          )
                     __FSEISMX=AFFE_CHAR_MECA_F(MODELE=__MODELE,
                       FORCE_NODALE=(_F(GROUP_NO='PLATE',FY=__NSEISMX,),),
-                          );
+                          )
                   else:
                     __FSEISMX=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                       ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                       TYPE_ONDE = 'P',
                       DEPL_IMPO=__FONCDX,
                       FONC_SIGNAL = __FONCVX, GROUP_MA=(grma_gauch,grma_droit))
-                          );
+                          )
                     __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                     ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                     TYPE_ONDE = 'P',
                     DIST=-1.0*__TMAT['Y', NCOU + 1],
                     FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst)
-                         );
+                         )
                 else:
                   __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                     ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                     TYPE_ONDE = 'P',
                     DIST=-1.0*__TMAT['Y', NCOU + 1], DIST_REFLECHI=0.,
                     FONC_SIGNAL = __VITEX[0], GROUP_MA=(grma_subst,grma_gauch,grma_droit))
-                         );
+                         )
         # modèle 3D
         else:
             __VECASX = CALC_CHAR_SEISME(
@@ -1535,17 +1512,17 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                     ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                                     TYPE_ONDE = 'P',
                                     DIST=-1.0*__TMAT['Y', NCOU + 1],
-                                    FONC_SIGNAL = __VITEX[1], GROUP_MA=grma_subst),);
+                                    FONC_SIGNAL = __VITEX[1], GROUP_MA=grma_subst),)
                 __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                     ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                                     TYPE_ONDE = 'SH',
                                     DIST=-1.0*__TMAT['Y', NCOU + 1],
-                                    FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst),);
+                                    FONC_SIGNAL = __VITEX[0], GROUP_MA=grma_subst),)
                 __ONDEX[2]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                     ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                                     TYPE_ONDE = 'SV',
                                     DIST=-1.0*__TMAT['Y', NCOU + 1],
-                                    FONC_SIGNAL = __VITEX[2], GROUP_MA=grma_subst),);
+                                    FONC_SIGNAL = __VITEX[2], GROUP_MA=grma_subst),)
             else:
                 __ONDEX[1]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                     ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
@@ -1553,21 +1530,21 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                                     DIST=-1.0*__TMAT['Y', NCOU + 1],
                                     DIST_REFLECHI=0.,
                                     FONC_SIGNAL = __VITEX[1],
-                                    GROUP_MA=(grma_subst,grma_gauch,grma_droit)),);
+                                    GROUP_MA=(grma_subst,grma_gauch,grma_droit)),)
                 __ONDEX[0]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                     ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                                     TYPE_ONDE = 'SH',
                                     DIST=-1.0*__TMAT['Y', NCOU + 1],
                                     DIST_REFLECHI=0.,
                                     FONC_SIGNAL = __VITEX[0],
-                                    GROUP_MA=(grma_subst,grma_gauch,grma_droit)),);
+                                    GROUP_MA=(grma_subst,grma_gauch,grma_droit)),)
                 __ONDEX[2]=AFFE_CHAR_MECA_F(  MODELE=__MODELE,
                     ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                                     TYPE_ONDE = 'SV',
                                     DIST=-1.0*__TMAT['Y', NCOU + 1],
                                     DIST_REFLECHI=0.,
                                     FONC_SIGNAL = __VITEX[2],
-                                    GROUP_MA=(grma_subst,grma_gauch,grma_droit)),);
+                                    GROUP_MA=(grma_subst,grma_gauch,grma_droit)),)
             #
             # CALCUL HARMONIQUE SUR BASE PHYSIQUE #
             #
@@ -1584,7 +1561,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                           CHARGE=(__ONDEX[0],__FSEISMX),
                           PRECISION=1.E-6,CRITERE='RELATIF',
                           LIST_INST=__linst,),
-                );
+                )
           else:
             if dime == "2D":
               __CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
@@ -1594,7 +1571,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                           CHARGE=(__ONDEX[0]),
                           PRECISION=1.E-6,CRITERE='RELATIF',
                           LIST_INST=__linst,),
-                );
+                )
             else:
               __CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
                   TYPE_RESU='DYNA_TRANS',
@@ -1603,12 +1580,12 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                           CHARGE=(__ONDEX[0],__ONDEX[1],__ONDEX[2]),
                           PRECISION=1.E-6,CRITERE='RELATIF',
                           LIST_INST=__linst,),
-                );
+                )
 
           __CHAONF = REST_SPEC_TEMP( RESULTAT = __CHA_ON ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          NOM_CHAM = 'DEPL' ,  );
+                          NOM_CHAM = 'DEPL' ,  )
 
           __DYNHARM = DYNA_VIBRA    (TYPE_CALCUL='HARM', BASE_CALCUL='PHYS',
                         MODELE=__MODELE,
@@ -1626,7 +1603,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                                  ),
                         LIST_FREQ= __lfreq0,
                         TOUT_CHAM= 'OUI'
-                      );
+                      )
             # On excite la base de la colonne avec un bruit blanc
 ######## cas classique et DSP
         else:
@@ -1713,7 +1690,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                              CHAM_MATER=__CHAMPMAH,
                              GROUP_MA=(grma_colon,),
                              FORCE=('FORC_NODA',),
-                            );
+                            )
 
             #
             #
@@ -1997,7 +1974,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
               if input == 'CL':
                 __AHX_RA[n] = CALC_FONCTION(MULT=(_F(FONCTION= __AHX[n],), _F(FONCTION=__FDT_RACL[n],), ), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
               elif input == 'RA':
-                __AHX_RA[n]  = CALC_FONCTION(COMB_C=_F(FONCTION=__AHX[n], COEF_R = 1.), LIST_PARA=__lfreq,   NOM_PARA='FREQ',);
+                __AHX_RA[n]  = CALC_FONCTION(COMB_C=_F(FONCTION=__AHX[n], COEF_R = 1.), LIST_PARA=__lfreq,   NOM_PARA='FREQ',)
 
             else:
                 if input == 'CL':
@@ -2179,22 +2156,22 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
             if ldevi == 'OUI':
 
               __VX_CL[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_CL[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
               __DX_CL[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_CL[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
               __VX_RA[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_RA[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
               __DX_RA[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_RA[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
               __VX_BH[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_BH[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
               __DX_BH[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_BH[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
         # Calcul des contraintes et deformations dans tous les elements de
         # la colonne
@@ -2380,10 +2357,10 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
                 if ldevi == 'OUI':
                   __vix[k] = CALC_FONCTION(INTEGRE=_F(FONCTION=__axa[k],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
                   __dex[k]=CALC_FONCTION(INTEGRE=_F(FONCTION=__vix[k],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
                   __ftfy = RECU_FONCTION(
                     GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='FORC_NODA', NOM_CMP=CMP2, INTERPOL='LIN',
@@ -2415,9 +2392,9 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                      MULT=(_F(FONCTION=__AHX_RA[0],), _F(FONCTION=__ftfy,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
 
                 if formulation == 'LYSMER':
-                  f2Getoil = E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j) ;
+                  f2Getoil = E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j)
                 else:
-                  f2Getoil = (E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j);
+                  f2Getoil = (E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j)
 
                 if 'DSP' not in args:
                   __epxy[k] = CALC_FONCTION(
@@ -2425,16 +2402,16 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                 # Calcul de la distorsion : gamma = 2*epxy ; tau = sixy
                   __gam[k] = CALC_FONCTION(LIST_PARA=__linst,
                             COMB=(_F(FONCTION=__epxy[k], COEF=(2),),)  ,)
-                  __tauh = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',);
+                  __tauh = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',)
 
-                  __tau[k] = CALC_FONCTION(FFT=_F(FONCTION=__tauh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',);
+                  __tau[k] = CALC_FONCTION(FFT=_F(FONCTION=__tauh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',)
                   if ldevi == 'OUI':
-                    __foy[k] = CALC_FONCTION(FFT=_F(FONCTION=__fyh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',);
+                    __foy[k] = CALC_FONCTION(FFT=_F(FONCTION=__fyh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',)
                 else:
                   __gam[k] = CALC_FONCTION( LIST_PARA=__lfreq,
                           COMB_C=(_F(FONCTION=__eph, COEF_R=(2),), )    ,)
 
-                  __tau[k] = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',);
+                  __tau[k] = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',)
 
                 # Calcul des max
                 if 'DSP' in args:
@@ -2526,10 +2503,10 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                     if ldevi == 'OUI':
 
                       __vix[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__axa[n],),
-                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
                       __dex[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__vix[n],),
-                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
                     DETRUIRE(CONCEPT=_F(NOM=(
                                        __fthr,
@@ -2556,9 +2533,6 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                 GROUP_MA=__TMAT['M', k], RESULTAT=__DYNHARM, NOM_CHAM='EPSI_ELGA', POINT=1, NOM_CMP='EPYZ', INTERPOL='LIN',
                 PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
 
-                #onde P (YY) : signal Y, n=1
-                #onde SV (XY) : signal X, n=0
-                #onde SH (YZ): signal Z, n=2
                 if args['CHARGEMENT'] == 'ONDE_PLANE':
                   if input == 'CL':
                     __ephYY = CALC_FONCTION(
@@ -2606,20 +2580,16 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                 coef = (2./3.)*nsqrt(3.)
                 __gam[k] = CALC_FONCTION(
                     LIST_PARA=__linst, COMB=(_F(FONCTION=__epxy[k], COEF=coef,),
-                    #LIST_PARA=__linst, COMB=(_F(FONCTION=__epxy[k], COEF=2.0,),
                                              ),)
 
-                # coef = (1/3)*np.sqrt(3)
                 if formulation == 'LYSMER':
-                  f2Getoil = (1./nsqrt(3.))*E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j) ;
-                  #f2Getoil = 1.0*E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j) ;
+                  f2Getoil = (1./nsqrt(3.))*E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j)
                 else:
-                  f2Getoil = (1./np.sqrt(3.))*(E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j);
-                  #f2Getoil = 1.0*(E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j);
+                  f2Getoil = (1./np.sqrt(3.))*(E[iter][k] / (1+ __TMAT['NU',k]) ) * (1.+ (AH[iter][k])*1.j)
 
-                __qh = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',);
+                __qh = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',)
 
-                __tau[k] = CALC_FONCTION(FFT=_F(FONCTION=__qh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',);
+                __tau[k] = CALC_FONCTION(FFT=_F(FONCTION=__qh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',)
 
                 __gama = CALC_FONCTION(ABS=_F(FONCTION=__gam[k]))
                 mgam = max(__gama.Ordo())
@@ -3862,7 +3832,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
              'RECEPTEUR': 'NON', 'AMOR_HYST': __TMAT['AH0', k]})
 
     DETRUIRE(CONCEPT=_F(NOM=__TMAT), INFO=1)
-    IMPR_RESU(RESU=_F(MAILLAGE=__mailla,),FORMAT='ASTER',UNITE=6);
+    IMPR_RESU(RESU=_F(MAILLAGE=__mailla,),FORMAT='ASTER',UNITE=6)
 
     # creation de la table
     dprod = tab.dict_CREA_TABLE()

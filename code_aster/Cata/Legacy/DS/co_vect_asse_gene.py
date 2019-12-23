@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ class vect_asse_gene(ASSD):
          raise AsException("Erreur dans vect_asse_gene_r.RECU_VECT_GENE en PAR_LOT='OUI'")
       import numpy
       numpy.asarray(vecteur)
-      ncham=self.get_name()
+      ncham=self.getName()
       ncham=ncham+(8-len(ncham))*' '
       desc = self.sdj.DESC.get()
       # On teste si le DESC du vecteur existe
@@ -85,7 +85,7 @@ class vect_asse_gene(ASSD):
          raise AsException("Erreur dans vect_asse_gene_c.RECU_VECT_GENE en PAR_LOT='OUI'")
       import numpy
       numpy.asarray(vecteur)
-      ncham=self.get_name()
+      ncham=self.getName()
       ncham=ncham+(8-len(ncham))*' '
       desc = self.sdj.DESC.get()
       # On teste si le DESC de la matrice existe

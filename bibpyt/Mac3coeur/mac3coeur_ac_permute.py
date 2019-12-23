@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,12 +30,7 @@ def mac3coeur_ac_permute(self, **args):
     """Methode corps de la macro MACRO_AC_PERMUTE"""
     from code_aster.Cata.Syntax import _F
 
-    ier = 0
-    nompro = 'MACRO_AC_PERMUTE'
-
     # On importe les definitions des commandes a utiliser dans la macro
-    EXTR_RESU = self.get_cmd('EXTR_RESU')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     CREA_RESU = self.get_cmd('CREA_RESU')
 
     POS_INIT = self['POS_INIT']
@@ -45,11 +40,7 @@ def mac3coeur_ac_permute(self, **args):
     INSTANT = self['INSTANT']
     MA_INI = self['MAILLAGE_INIT']
     MA_FIN = self['MAILLAGE_FINAL']
-    MO_FIN = self['MODELE_FINAL']
     VECT = self['TRAN']
-
-    # La macro compte pour 1 dans l'execution des commandes
-    self.set_icmd(1)
 
     CREA_RESU(reuse=RESU_FIN,
               OPERATION='PERM_CHAM',
@@ -158,8 +149,6 @@ def mac3coeur_ac_permute(self, **args):
                             GROUP_MA_FINAL='MNT_' + POS_FIN,
                             TRAN=VECT,
                             PRECISION=1.E-10),))
-
-    return ier
 
 MACRO_AC_PERMUTE = MACRO(nom="MACRO_AC_PERMUTE",
                          op=mac3coeur_ac_permute,

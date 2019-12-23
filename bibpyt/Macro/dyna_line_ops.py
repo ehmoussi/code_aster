@@ -169,7 +169,7 @@ class DynaLineFEM:
         self.__impePhy = None
         if "CHARGE" in self.keywords:
             for charge in self.keywords['CHARGE']:
-                if aster.jeveux_exists(charge.nom.ljust(8) + '.CHME.IMPE .DESC'):
+                if aster.jeveux_exists(charge.getName().ljust(8) + '.CHME.IMPE .DESC'):
                     __impePhy = ASSE_MATRICE(MATR_ELEM=self.__getImpeelem(), NUME_DDL=self.getNumeddl(), **self.char_cine)
                     self.__impePhy = __impePhy
                     break
@@ -710,10 +710,10 @@ class DynaLineBasis:
                             )
             __rigiGen=PROJ_MATR_BASE(BASE=__dynaModes,
                                      NUME_DDL_GENE=__numeDdlGene,
-                                     MATR_ASSE=self.dynaLineFEM.getRigiPhy());
+                                     MATR_ASSE=self.dynaLineFEM.getRigiPhy())
             __massGen=PROJ_MATR_BASE(BASE=__dynaModes,
                                      NUME_DDL_GENE=__numeDdlGene,
-                                     MATR_ASSE=self.dynaLineFEM.getMassPhy());
+                                     MATR_ASSE=self.dynaLineFEM.getMassPhy())
             __massGen=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=__massGen,
                                                 COEF_R=1.0,),
                                              _F(MATR_ASSE=addedMass,
@@ -1003,7 +1003,7 @@ class DynaLineIncrement:
             self.increment = {}
             assert FREQ or LIST_FREQ
             if LIST_FREQ:
-                FREQ = LIST_FREQ.Valeurs()
+                FREQ = LIST_FREQ.getValues()
             self.increment["FREQ"] = FREQ
     def __getStep(self):
         """return the time step, according to cutoff frequency, step = 1/(5*fc)"""
@@ -1240,11 +1240,6 @@ class DynaLineResu:
 
 def dyna_line_ops(self, **args):
     """Ecriture de la macro DYNA_LINE"""
-
-    ier=0
-
-    # La macro compte pour 1 dans la numérotation des commandes
-    self.set_icmd(1)
 
     dynaLineFEM = DynaLineFEM(self, **args)
     dynaLineFrequencyBand = DynaLineFrequencyBand(**args)

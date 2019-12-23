@@ -26,11 +26,6 @@ def defi_list_freq_ops(self, **args):
     RAFFINEMENT = args.get("RAFFINEMENT")
     if RAFFINEMENT is not None: args.pop("RAFFINEMENT")
 
-    self.set_icmd(1)
-    ier = 0
-
-    self.DeclareOut('co_l_freq', self.sd)
-
     DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
 
     # 1. Construction de la liste des fréquences "de base"
@@ -40,7 +35,7 @@ def defi_list_freq_ops(self, **args):
             motscle[key] = args[key]
 
     __co_l_freq0 = DEFI_LIST_REEL(**motscle)
-    l_freq0 = __co_l_freq0.Valeurs()
+    l_freq0 = __co_l_freq0.getValues()
 
     # 2. Récuperation des données liées au raffinement
     if RAFFINEMENT.get('CRITERE') in ('RELATIF', 'ABSOLU'):
@@ -52,7 +47,7 @@ def defi_list_freq_ops(self, **args):
         if RAFFINEMENT.get('AMOR_REDUIT') is not None:
             l_amor = list(RAFFINEMENT.get('AMOR_REDUIT'))
         else:
-            l_amor = RAFFINEMENT.get('LIST_AMOR').Valeurs()
+            l_amor = RAFFINEMENT.get('LIST_AMOR').getValues()
 
     dfMin = RAFFINEMENT.get('PAS_MINI')
     nbPtsRaf = RAFFINEMENT.get('NB_POINTS')

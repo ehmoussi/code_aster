@@ -84,8 +84,6 @@ class ExtendedGeneralizedAssemblyMatrixComplex(object):
 
     def EXTR_MATR_GENE(self) :
         import numpy
-        if not self.accessible():
-            raise AsException("Erreur dans matr_asse_gene_c.EXTR_MATR_GENE en PAR_LOT='OUI'")
 
         desc = self.sdj.DESC.get()
         # On teste si le DESC de la matrice existe
@@ -108,11 +106,9 @@ class ExtendedGeneralizedAssemblyMatrixComplex(object):
 
     def RECU_MATR_GENE(self,matrice) :
         import numpy, aster
-        if not self.accessible():
-            raise AsException("Erreur dans matr_asse_gene_c.RECU_MATR_GENE en PAR_LOT='OUI'")
 
         numpy.asarray(matrice)
-        ncham=self.get_name()
+        ncham=self.getName()
         desc = self.sdj.DESC.get()
         # On teste si le DESC de la matrice existe
         if not desc:
@@ -180,12 +176,9 @@ class ExtendedGeneralizedAssemblyMatrixDouble():
 
     def EXTR_MATR(self, sparse=False):
         import numpy as NP
-        if not self.accessible():
-            raise Accas.AsException(
-                "Erreur dans matr_asse_gene.EXTR_MATR en PAR_LOT='OUI'")
+
         refa = NP.array(self.sdj.REFA.get())
-        ma = refa[0]
-        nu = refa[1]
+
         stock = "diag" if self.sdj.DESC.get()[2]==1 else "full"
         valm = self.sdj.VALM.get()
         sym = len(valm) == 1
@@ -210,8 +203,6 @@ class ExtendedGeneralizedAssemblyMatrixDouble():
             return make_sym_matrix(dim,triang_sup,ntype)
 
     def EXTR_MATR_GENE(self):
-        if not self.accessible():
-            raise AsException("Erreur dans matr_asse_gene.EXTR_MATR_GENE en PAR_LOT='OUI'")
         import numpy
 
         desc = self.sdj.DESC.get()
@@ -236,10 +227,8 @@ class ExtendedGeneralizedAssemblyMatrixDouble():
 
     def RECU_MATR_GENE(self,matrice) :
         import numpy, aster
-        if not self.accessible():
-            raise AsException("Erreur dans matr_asse_gene.RECU_MATR_GENE en PAR_LOT='OUI'")
 
-        ncham=self.get_name()
+        ncham=self.getName()
 
         desc = self.sdj.DESC.get()
         # On teste si le DESC de la matrice existe

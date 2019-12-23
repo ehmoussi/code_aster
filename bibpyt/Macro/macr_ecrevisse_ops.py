@@ -30,14 +30,9 @@ def macr_ecrevisse_ops(self, **args):
     import copy
     from code_aster import EntityType
 
-    # ASSD.__getitem__ was deprecated, now it didn't work anymore!
     #import warnings
     #warnings.warn("MACR_ECREVISSE must be refactored!", RuntimeWarning)
     #return
-
-    #
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     CONV_CRITERE = args.get("CONV_CRITERE")
     TABLE = args.get("TABLE")
@@ -129,7 +124,7 @@ def macr_ecrevisse_ops(self, **args):
     # Debut de la macro
 
     # Si LIST_INST est un DEFI_LIST_REEL :
-    liste_inst = LIST_INST.Valeurs()
+    liste_inst = LIST_INST.getValues()
     if (debug):
         print('liste des instants liste_inst = ', liste_inst)
 
@@ -188,14 +183,12 @@ def macr_ecrevisse_ops(self, **args):
         except:
             # on cherche le plus proche
             _idx = 0
-            found = False
             if _inst_init >= liste_inst[-1]:
                 UTMESS('F', 'ECREVISSE0_26', valr=[
                        liste_inst[-1], _inst_init])
 
             for t in liste_inst:
                 if t > _inst_init:
-                    found = True
                     break
                 _idx += 1
 

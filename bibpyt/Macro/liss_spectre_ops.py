@@ -71,7 +71,6 @@ def liss_spectre_ops(
     """
         Ecriture de la macro LISS_SPECTRE
     """
-    ier = 0
 
     # On importe les definitions des commandes a utiliser dans la macro
     DEFI_NAPPE = self.get_cmd('DEFI_NAPPE')
@@ -79,10 +78,6 @@ def liss_spectre_ops(
     IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
     DEFI_FICHIER = self.get_cmd('DEFI_FICHIER')
     DETRUIRE = self.get_cmd('DETRUIRE')
-
-    # Comptage commandes + déclaration concept sortant
-    self.set_icmd(1)
-    macro = 'LISS_SPECTRE'
 
     # Chemin du repertoire REPE_OUT de l'execution courante d'Aster
     REPE_OUT = os.path.join(os.getcwd(), 'REPE_OUT')
@@ -132,7 +127,6 @@ def liss_spectre_ops(
             planchers = recu_val(tab, 'NOM', stop=1, typ='K')
             batiments = recu_val(tab, 'BATIMENT', typ='K')
             commentaires = recu_val(tab, 'COMMENTAIRE', typ='K')
-            nb_planchers = len(planchers)
 
             # amortissements, frequences
             nume_amor = recu_val(tab, 'NUME_AMOR', stop=1)
@@ -198,7 +192,7 @@ def liss_spectre_ops(
                              PROL_DROITE='CONSTANT',
                              PROL_GAUCHE='CONSTANT',
                              DEFI_FONCTION=list_defi_fonc,
-                             );
+                             )
 
                         dic_dir_planchers[dir_pl]['liste_nappes'].append(__NAPPE[i_nappe])
                         dic_dir_planchers[dir_pl]['elargissement'].append(elarg)
@@ -354,4 +348,3 @@ def liss_spectre_ops(
                           _F(NOM=__Napver),
                          ),
                  INFO=1)
-

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -84,19 +84,12 @@ def FcontinuGR2R(T, I1R, I2R, TRR, PHI1R, PHI2R, TAU1R, TAU2R, D):
 
 
 def defi_fonc_elec_ops(self, FREQ=None, SIGNAL=None, COUR=None, COUR_PRIN=None, COUR_SECO=None, **args):
-    ier = 0
     from Utilitai.Utmess import UTMESS
     import numpy
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    FORMULE = self.get_cmd('FORMULE')
-    CALC_FONC_INTERP = self.get_cmd('CALC_FONC_INTERP')
-
-    # Comptage commandes + déclaration concept sortant
-    self.set_icmd(1)
-    self.DeclareOut('C_out', self.sd)
 #
     if COUR:
         TINI = COUR[0]['INST_CC_INIT']

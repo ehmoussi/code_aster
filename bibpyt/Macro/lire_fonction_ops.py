@@ -162,7 +162,6 @@ def column_values(fmt, filename, idbx, separ=' ', info=0):
         separ (str): Text separator (if needed).
         info (int): Verbosity level.
     """
-    kwargs = {}
     if fmt == 'LIBRE':
         try:
             values = liste_simple(filename, idbx, separ, info)
@@ -187,7 +186,6 @@ def function_values(fmt, filename, idbx, idby, separ=' ', info=0):
         separ (str): Text separator (if needed).
         info (int): Verbosity level.
     """
-    kwargs = {}
     if fmt == 'LIBRE':
         try:
             values = liste_double(filename, idbx, idby, separ, info)
@@ -225,8 +223,8 @@ def complex_values(filename, idbx, idbr, idbi, module_phase=False):
     if module_phase:
         module = valr
         phase = vali
-        valr = module * numpy.cos(vali)
-        vali = module * numpy.sin(vali)
+        valr = module * numpy.cos(phase)
+        vali = module * numpy.sin(phase)
     cols = numpy.vstack((valx, valr, vali)).transpose()
     return cols.ravel()
 
@@ -241,10 +239,6 @@ def lire_fonction_ops(self, UNITE, NOM_PARA, FORMAT=None, TYPE=None, SEPAR=None,
     from Utilitai.UniteAster import UniteAster
     from code_aster.RunManager import LogicalUnitFile, ReservedUnitUsed
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     # On recopie le mot cle defi_fonction pour le proteger
     if TYPE == 'NAPPE':
         mc_DEFI_FONCTION = args['DEFI_FONCTION']
@@ -258,9 +252,6 @@ def lire_fonction_ops(self, UNITE, NOM_PARA, FORMAT=None, TYPE=None, SEPAR=None,
     nomfich = LogicalUnitFile.filename_from_unit(UNITE)
     if not osp.isfile(nomfich):
         UTMESS('F', 'FONCT0_41', valk=nomfich)
-
-    # fonction(_c) ou nappe en sortie
-    self.DeclareOut('ut_fonc', self.sd)
 
     if TYPE == 'FONCTION':
         values = function_values(FORMAT, nomfich, INDIC_PARA,

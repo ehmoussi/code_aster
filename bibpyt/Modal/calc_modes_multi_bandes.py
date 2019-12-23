@@ -128,7 +128,7 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
     if (nbproc > 1):
         nommod, old_prtk1 = recup_modele_partition(MATR_RIGI, dbg)
         sd_modele = None
-        sd_modele = self.get_concept(nommod)
+        sd_modele = MATR_RIGI.getModel().getMesh()
         if (sd_modele is None):
             assert(False)  # Pb, on arrive pas a recuperer le nom du modele
         if (old_prtk1 is not None):
@@ -409,7 +409,6 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
     # 3b. Concaténation des résultats
     #
     #-----------------------------------------------------------------------
-    self.DeclareOut('modes', self.sd)
 
     modes = EXTR_MODE(**motscles)
 

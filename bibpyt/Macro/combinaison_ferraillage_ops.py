@@ -36,7 +36,6 @@ from code_aster.Commands import DETRUIRE
 
 def combinaison_ferraillage_ops(self, **args):
     """Command to combine results to estimate reinforcement of the structure."""
-    self.set_icmd(1)
 
     resu         = args.get('reuse')
     combinaison  = args.get('COMBINAISON')
@@ -263,7 +262,7 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
         dic_type_comb = {}
 
         # saving dict_affe
-        affe_for_cf = dict_affe.copy();
+        affe_for_cf = dict_affe.copy()
 
         if type_combo [idx]  == 'ELS_CARACTERISTIQUE':
             dic_type_comb['TYPE_COMB'] = 'ELS'

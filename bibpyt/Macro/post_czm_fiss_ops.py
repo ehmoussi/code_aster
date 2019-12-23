@@ -49,11 +49,6 @@ def distance(x, y, xref, yref, xdir, ydir):
 def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
     """Corps de POST_CZM_FISS"""
 
-    ier = 0
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     #
     # calcul de la longueur d'une fissure cohesive 2D
     #
@@ -68,16 +63,13 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
         CALC_CHAM_ELEM = self.get_cmd('CALC_CHAM_ELEM')
         CREA_CHAMP = self.get_cmd('CREA_CHAMP')
         CREA_TABLE = self.get_cmd('CREA_TABLE')
-        EXTR_COMP = self.get_cmd('EXTR_COMP')
         DETRUIRE = self.get_cmd('DETRUIRE')
 
         # Recuperation du nom du modele
-        iret, ibid, n_modele = aster.dismoi(
-            'MODELE', RESULTAT.nom, 'RESULTAT', 'F')
-        n_modele = n_modele.rstrip()
-        if len(n_modele) == 0:
-            UTMESS('F', 'RUPTURE0_18')
         __MODEL = RESULTAT.getModel()
+
+        if __MODEL is None:
+            UTMESS('F', 'RUPTURE0_18')
 
         # Calcul des coordonnees des points de Gauss
         __CHAMEL = CALC_CHAM_ELEM(
@@ -137,7 +129,7 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
         ming = min(disg)
         maxg = max(disg)
 
-        __INST = aster.GetResu(RESULTAT.get_name(), "VARI_ACCES")['INST']
+        __INST = aster.GetResu(RESULTAT.getName(), "VARI_ACCES")['INST']
         nbinst = len(__INST)
 
         Lfis = [0] * (nbinst)

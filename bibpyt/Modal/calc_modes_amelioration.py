@@ -33,7 +33,6 @@ def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
 
     args = _F(args)
     SOLVEUR = args.get("SOLVEUR")
-    SOLVEUR_MODAL = args.get("SOLVEUR_MODAL")
     VERI_MODE = args.get("VERI_MODE")
     TITRE = args.get("TITRE")
 
@@ -51,8 +50,6 @@ def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
         type_vp = 'FREQ'
         matr_A  = 'MATR_RIGI'
         matr_B  = 'MATR_MASS'
-        if 'MATR_AMOR' in args:
-            matr_C = 'MATR_AMOR'
     elif TYPE_RESU == 'MODE_FLAMB':
         type_vp = 'CHAR_CRIT'
         matr_A  = 'MATR_RIGI'
@@ -65,18 +62,18 @@ def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
     # 1.1 check if the input matrices are symetric and real
     lsym = True
     lreel= True
-    iret, ibid, type_matr_A = aster.dismoi('TYPE_MATRICE', args[matr_A].nom, 'MATR_ASSE', 'F')
+    iret, ibid, type_matr_A = aster.dismoi('TYPE_MATRICE', args[matr_A].getName(), 'MATR_ASSE', 'F')
     if not type_matr_A == 'SYMETRI':
         lsym = False
     if isinstance(args[matr_A], AssemblyMatrixDisplacementComplex) or\
         isinstance(args[matr_A], GeneralizedAssemblyMatrixComplex):
         lreel = False
-    iret, ibid, type_matr_B = aster.dismoi('TYPE_MATRICE', args[matr_B].nom, 'MATR_ASSE', 'F')
+    iret, ibid, type_matr_B = aster.dismoi('TYPE_MATRICE', args[matr_B].getName(), 'MATR_ASSE', 'F')
     if not type_matr_B == 'SYMETRI':
         lsym = False
     if TYPE_RESU == 'DYNAMIQUE':
         if args['MATR_AMOR'] is not None:
-            iret, ibid, type_matr_C = aster.dismoi('TYPE_MATRICE', args['MATR_AMOR'].nom, 'MATR_ASSE', 'F')
+            iret, ibid, type_matr_C = aster.dismoi('TYPE_MATRICE', args['MATR_AMOR'].getName(), 'MATR_ASSE', 'F')
             if not type_matr_C == 'SYMETRI':
                 lsym = False
     if not lsym:
@@ -101,7 +98,7 @@ def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
             if (abs(list_vp[k+1]) >= seuilr):
                 ltest = abs(2.*(list_vp[k]-list_vp[k+1])/(list_vp[k]+list_vp[k+1])) < seuilp
     if ltest:
-        UTMESS('I','MODAL_17',valk=modes.nom)
+        UTMESS('I','MODAL_17',valk=modes.getName())
         return modes
 
 

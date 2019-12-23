@@ -46,10 +46,6 @@ from Utilitai.Utmess import ASSERT, UTMESS
 
 def pre_seisme_nonl_ops(self, **args):
     """Corps de la macro PRE_SEISME_NONL"""
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     # conteneur des paramètres du calcul
     param = Properties(**args)
 
@@ -126,10 +122,6 @@ class PreSeismeNonL(object):
     def set_type(self, txt):
         """Define different type of loads"""
         raise NotImplementedError('must be defined in a derivated class')
-
-    def DeclareOut(self, *args):
-        """Define output depending on user choices"""
-        self.parent.DeclareOut(*args)
 
     def register_result(self, *args):
         """Define output depending on user choices"""
@@ -226,7 +218,7 @@ class BaseModale(object):
 
     def from_grma_interf(self):
         grma = self.param['PRE_CALC_MISS']['GROUP_MA_INTERF']
-        mail = self.model.mesh.add_group_no(grma)
+        self.model.mesh.add_group_no(grma)
         return grma
 
     def get_grno_interf(self):
@@ -349,9 +341,9 @@ class BaseModale(object):
     def DefineOut(self):
         """Define output depending on user choices"""
         if 'BASE_MODALE' in self.param['RESULTAT']:
-        _BAMO = DEFI_BASE_MODALE(**self.cmd_bamo)
+            _BAMO = DEFI_BASE_MODALE(**self.cmd_bamo)
             self.parent.register_result(_BAMO, self.param['RESULTAT']['BASE_MODALE'])
-        self.bamo = _BAMO
+            self.bamo = _BAMO
 
 
 class MacroElement(object):
@@ -376,7 +368,7 @@ class MacroElement(object):
                 reduc_dyna = True
         if self.param['POST_CALC_MISS']:
             bamo_nom_long = aster.getvectjev(
-                self.mael.nom + (8 - len(self.mael.nom)) * ' ' + '.MAEL_REFE')
+                self.mael.getName() + (8 - len(self.mael.getName())) * ' ' + '.MAEL_REFE')
             bamo_nom_short = bamo_nom_long[0].split()[0]
             NOEUD_CMP = aster.getvectjev(
                 bamo_nom_short + (19 - len(bamo_nom_short)) * ' ' + '.RS16')
@@ -533,13 +525,13 @@ class Model(object):
     def DefineOut(self):
         """Define output depending on user choices"""
         if 'CHAM_MATER' in self.args['RESULTAT']:
-        _AMa = AFFE_MATERIAU(**self.args['AFFE_MATERIAU'])
+            _AMa = AFFE_MATERIAU(**self.args['AFFE_MATERIAU'])
             self.parent.register_result(_AMa, self.args['RESULTAT']['CHAM_MATER'])
-        self.mate = _AMa
+            self.mate = _AMa
         if 'CARA_ELEM' in self.args['RESULTAT']:
-        _ACa = AFFE_CARA_ELEM(**self.args['AFFE_CARA_ELEM'])
+            _ACa = AFFE_CARA_ELEM(**self.args['AFFE_CARA_ELEM'])
             self.parent.register_result(_ACa, self.args['RESULTAT']['CARA_ELEM'])
-        self.cara_elem = _ACa
+            self.cara_elem = _ACa
         _ACh_CL = AFFE_CHAR_MECA(**self.args['AFFE_CHAR_MECA'])
         if 'CHARGE' in self.args['RESULTAT']:
             for mcfact in self.args['RESULTAT']['CHARGE']:
@@ -548,7 +540,7 @@ class Model(object):
                     self.parent.register_result(ACh_LT, mcfact['NOM'])
                 elif mcfact['OPTION'] == 'COND_LIM':
                     self.parent.register_result(_ACh_CL, mcfact['NOM'])
-        self.cond_lim = _ACh_CL
+                    self.cond_lim = _ACh_CL
 
 
 class StatDyna(object):
@@ -624,14 +616,14 @@ class StatDyna(object):
         _chsol = self.calc_chsol_equi()
         self.add_charge(_chsol)
 
-        _lreel = DEFI_LIST_REEL( VALE = self.resu_snl.LIST_PARA()['INST'] );
-        _linst = DEFI_LIST_INST(METHODE ='AUTO', DEFI_LIST=_F(LIST_INST = _lreel,),);
+        _lreel = DEFI_LIST_REEL( VALE = self.resu_snl.LIST_PARA()['INST'] )
+        _linst = DEFI_LIST_INST(METHODE ='AUTO', DEFI_LIST=_F(LIST_INST = _lreel,),)
 
         _ResuSNL = STAT_NON_LINE(**self.non_line(
                                   EXCIT = self.charges,
                                   INCREMENT = _F(LIST_INST = _linst,),
                                 )
-                             );
+                             )
 
         self.resu_snl = _ResuSNL
 
@@ -642,21 +634,21 @@ class StatDyna(object):
                  RESULTAT = self.resu_snl,
                  NOM_CHAM='DEPL',
                  INST = self.inst_init,
-                 INFO=1,);
+                 INFO=1,)
 
         _SIGF = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
                  OPERATION='EXTR',
                  RESULTAT = self.resu_snl,
                  NOM_CHAM='SIEF_ELGA',
                  INST = self.inst_init,
-                 INFO=1,);
+                 INFO=1,)
 
         _VARF = CREA_CHAMP(TYPE_CHAM='ELGA_VARI_R',
                  OPERATION='EXTR',
                  RESULTAT=self.resu_snl,
                  NOM_CHAM='VARI_ELGA',
                  INST = self.inst_init,
-                 INFO=1,);
+                 INFO=1,)
 
         _CNUL = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                   OPERATION='ASSE',
@@ -665,16 +657,16 @@ class StatDyna(object):
                   ASSE=(_F(TOUT='OUI',
                            CHAM_GD = _DEPF,
                            CUMUL='OUI',
-                           COEF_R=0.0,),),);
+                           COEF_R=0.0,),),)
 
         TFIN_TOTAL = self.pas_inst_impe * (self.nb_inst + 1)
 
         _larch = DEFI_LIST_REEL(DEBUT = self.inst_init,
                      INTERVALLE=_F(JUSQU_A = TFIN_TOTAL,
-                                   PAS = self.pas_inst_impe,),);
+                                   PAS = self.pas_inst_impe,),)
 
         _linst2 = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = _larch,),
-                                 ECHEC=_F(SUBD_PAS=2,SUBD_NIVEAU=10,),);
+                                 ECHEC=_F(SUBD_PAS=2,SUBD_NIVEAU=10,),)
 
         N_stab1 = int(0.75*self.nb_inst)
         TFIN1 = N_stab1 * self.pas_inst_impe
@@ -689,7 +681,7 @@ class StatDyna(object):
                                   INCREMENT=_F(LIST_INST = _linst2, INST_FIN = TFIN1,),
                                   ARCHIVAGE=_F(LIST_INST = _larch,),
                                 )
-                             );
+                             )
 
         N_stab2 = self.nb_inst - N_stab1
         TFIN2 = TFIN1 + N_stab2 * self.pas_inst_impe
@@ -705,7 +697,7 @@ class StatDyna(object):
                                   INCREMENT=_F(LIST_INST = _linst2, INST_FIN = TFIN2,),
                                   ARCHIVAGE=_F(LIST_INST = _larch,),
                                 )
-                             );
+                             )
         self.parent.register_result(_ResuDNL, self.args['RESULTAT']['RESULTAT'])
 
         self.init_amor(0.0)
@@ -760,8 +752,6 @@ class StatDyna(object):
             for n in range(num_param):
                 relation    = aster.getvectjev(
                          resu_INST0[0:19] + '.VALE')[20*(n+2)]
-                deformation = aster.getvectjev(
-                         resu_INST0[0:19] + '.VALE')[20*(n+2)+2]
                 grma = anom_mailles(NP.array(col_mailles[n+1]))
 
                 kw_comp.append(_F(RELATION = relation,
@@ -777,29 +767,29 @@ class StatDyna(object):
         """Compute the corrective force coming from the soil"""
 
         _NUMGEN = NUME_DDL_GENE(BASE = self.base_modale,
-                                STOCKAGE='PLEIN',);
+                                STOCKAGE='PLEIN',)
 
         _impeF = LIRE_IMPE_MISS( BASE = self.base_modale,
                                  UNITE_RESU_IMPE = self.UL_impe_freq,
                                  NUME_DDL_GENE = _NUMGEN,
-                                 SYME='OUI', TYPE='ASCII', FREQ_EXTR = 0.1,);
+                                 SYME='OUI', TYPE='ASCII', FREQ_EXTR = 0.1,)
 
         _Ks = COMB_MATR_ASSE(COMB_C=( _F(MATR_ASSE = _impeF,
                                          COEF_C=1.0 + 0j,), ),
-                             SANS_CMP='LAGR',);
+                             SANS_CMP='LAGR',)
 
         _Z0 = LIRE_IMPE_MISS(UNITE_RESU_IMPE = self.UL_impe_temps_K,
                                SYME = 'OUI', INST_EXTR = 0.0,
                                BASE = self.base_modale,
-                               NUME_DDL_GENE = _NUMGEN);
+                               NUME_DDL_GENE = _NUMGEN)
 
         _DIFFK = COMB_MATR_ASSE(COMB_C = (_F(MATR_ASSE = _Z0, COEF_C =  1.0 + 0j),
                                           _F(MATR_ASSE = _Ks, COEF_C = -1.0 + 0j), # Z0-KS
                                          ),
                                 SANS_CMP='LAGR',
-                                );
+                                )
 
-        nom_mail = self.maillage.nom
+        nom_mail = self.maillage.getName()
         nom_mael = aster.getvectjev(nom_mail + (8 - len(nom_mail)) * ' ' + '.NOMACR')[0]
         maelk = _DIFFK.EXTR_MATR_GENE()
         nbmod = maelk.shape[0]
@@ -822,7 +812,7 @@ class StatDyna(object):
                            RESULTAT = self.resu_snl,
                            NOM_CHAM = 'DEPL',
                            INST = self.inst_init,
-                           INFO = 1,);
+                           INFO = 1,)
 
         lchar = []
         for elem in self.charges:
@@ -834,10 +824,10 @@ class StatDyna(object):
                                    CHAM_MATER = self.mater,
                                    CARA_ELEM = self.cara_elem,
                                    CHARGE = lchar,
-                                  );
+                                  )
 
-        _NUME = NUME_DDL( MATR_RIGI = _rigiEle);
-        _MATKZ = ASSE_MATRICE( MATR_ELEM = _rigiEle, NUME_DDL = _NUME );
+        _NUME = NUME_DDL( MATR_RIGI = _rigiEle)
+        _MATKZ = ASSE_MATRICE( MATR_ELEM = _rigiEle, NUME_DDL = _NUME )
 
         _DEPL1 = CREA_CHAMP(TYPE_CHAM = 'NOEU_DEPL_R',
                            OPERATION = 'ASSE',
@@ -848,11 +838,11 @@ class StatDyna(object):
                                     CUMUL = 'OUI',
                                     COEF_R = 1.0,),
                                  ),
-                           ) ;
+                           )
 
-        _VFORC = PROD_MATR_CHAM( MATR_ASSE = _MATKZ, CHAM_NO = _DEPL1 );
+        _VFORC = PROD_MATR_CHAM( MATR_ASSE = _MATKZ, CHAM_NO = _DEPL1 )
 
-        _CHFORC= AFFE_CHAR_MECA( MODELE = self.modele, VECT_ASSE = _VFORC,);
+        _CHFORC= AFFE_CHAR_MECA( MODELE = self.modele, VECT_ASSE = _VFORC,)
 
         maelZ = _Z0.EXTR_MATR_GENE()
         nbmod = maelZ.shape[0]
@@ -895,12 +885,11 @@ class ModelMacrElem(Model):
         self.link_macro_elem()
         self.fiction_model()
         self.parasol_model()
-        self.args.set_key(
-            ('AFFE_MODELE', 'MAILLAGE'), self.mesh.get_new_mesh())
+        self.args.set_key(('AFFE_MODELE', 'MAILLAGE'), self.mesh.get_new_mesh())
         if 'MODELE' in self.args['RESULTAT']:
-        _Modele = AFFE_MODELE(**self.args['AFFE_MODELE'])
+            _Modele = AFFE_MODELE(**self.args['AFFE_MODELE'])
             self.parent.register_result(_Modele, self.args['RESULTAT']['MODELE'])
-        self.modele = _Modele
+            self.modele = _Modele
 
     def fiction_model(self):
         """Define fictitious DoF's in the numerical modelling"""
@@ -970,7 +959,7 @@ class ModelMacrElem(Model):
         valC = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         mcfact_CEle = _F(GROUP_MA = self.args['POST_CALC_MISS']['GROUP_MA_INTERF'], GROUP_MA_POI1 = 'PARA_SOL',
                          GROUP_NO_CENTRE = self.args['POST_CALC_MISS']['GROUP_NO_CENT'],
-                         COEF_GROUP = 1., CARA='A_TR_D_N', VALE=valC, EUROPLEXUS = 'OUI',)
+                         COEF_GROUP = 1., CARA='A_TR_D_N', VALE=valC)
         self.args.add_MCFACT(('AFFE_CARA_ELEM', 'RIGI_PARASOL'), mcfact_CEle)
         valK = (1.E-9, 1.E-9, 1.E-9, 1.E-9, 0., 0., 0., 0., 0., 0.,)
         valM = (1.E-3, 1.E-3, 1.E-3, 1.E-3, 1.E-3, 1.E-3,)
@@ -1099,7 +1088,7 @@ class Mesh(object):
             _NewMesh = CREA_MAILLAGE(MAILLAGE = _MeshTmp,
                                      CREA_POI1 =_F(NOM_GROUP_MA = 'PARA_SOL',
                                      GROUP_MA = self.param['POST_CALC_MISS']['GROUP_MA_INTERF']),
-                                        );
+                                        )
             if 'MAILLAGE' in self.param['RESULTAT']:
                 self.parent.register_result(
                     _NewMesh, self.param['RESULTAT']['MAILLAGE'])

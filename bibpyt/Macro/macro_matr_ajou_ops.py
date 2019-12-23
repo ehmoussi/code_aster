@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 def macro_matr_ajou_ops(
-    self, MAILLAGE, GROUP_MA_FLUIDE, GROUP_MA_INTERF, MODELISATION, FLUIDE, DDL_IMPO, 
+    self, MAILLAGE, GROUP_MA_FLUIDE, GROUP_MA_INTERF, MODELISATION, FLUIDE, DDL_IMPO,
     MODE_MECA=None, DEPL_IMPO=None, NUME_DDL_GENE=None, MODELE_GENE=None, MATR_MASS_AJOU=None,
     MATR_AMOR_AJOU=None, MATR_RIGI_AJOU=None, NOEUD_DOUBLE=None, DIST_REFE=None, SOLVEUR=None,
     INFO=None, AVEC_MODE_STAT=None, MODE_STAT=None, MONO_APPUI=None,
@@ -30,7 +30,6 @@ def macro_matr_ajou_ops(
     import aster
     from Utilitai.Utmess import UTMESS
     from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
-    ier = 0
 
     # On importe les definitions des commandes a utiliser dans la macro
     DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
@@ -40,8 +39,6 @@ def macro_matr_ajou_ops(
     CALC_MATR_AJOU = self.get_cmd('CALC_MATR_AJOU')
     THER_LINEAIRE = self.get_cmd('THER_LINEAIRE')
     from code_aster.Commands import CALC_FORC_AJOU
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     if len(FLUIDE) == 1:
         message = '<I> <MACRO_MATR_AJOU> tout le domaine fluide specifie dans GROUP_MA_INTERF et GROUP_MA_FLUIDE \n'
@@ -161,7 +158,7 @@ def macro_matr_ajou_ops(
                                 SOLVEUR=solveur,
                                 **mostcles)
         self.register_result(MASSAJ, MATR_MASS_AJOU)
-        
+
 
 #  ---------------------------------------------------------------
 #  calcul de l amortissement ajoute

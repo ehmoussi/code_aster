@@ -106,7 +106,6 @@ def TesterValeur(nomPara, valPu, valRef, res, epsi, crit, sSigne):
     testOk = 'NOOK'
     curEps = 0
     err = 0
-    pourcent = ' '
     # Calcul de l'erreur commise
     if crit[0:4] == 'RELA':
         isTestOk = (abs(res - vtc) <= epsi * abs(vtc))
@@ -154,10 +153,6 @@ def RoundValues(crit, res, vtc, err, curEps, nreg=False):
          curEpsr (K)  :  chaine représentant "curEps" (arrondie pour l'affichage)
     """
     import math
-    # valeur calculee, valeur de reference:
-    # --------------------------------------
-    res2 = """%20.15E """ % res
-    vtc2 = """%20.15E """ % vtc
 
     # détermination du nombre de digits à afficher pour resr et vtc : ndigit
     # ----------------------------------------------------------------------
@@ -217,8 +212,6 @@ def RoundValues(crit, res, vtc, err, curEps, nreg=False):
         chdiff = """%5.1f"""
         ii = err2.find('E')
         expo = err2[ii + 2:ii + 4]
-        sg = err2[ii + 1:ii + 2]
-        nexpo = int(expo)
         if abs(erin) < 0.1:
             listEpsiOut.append(err2)
         elif abs(erin) > 0.1 and abs(erin) < 100000:
@@ -278,11 +271,6 @@ def AfficherResultat(dicoValeur, nomPara, ref, legende, crit, res, valPu, txt, l
             val_ref = vtcr.upper() + '+' + vtcc.upper() + 'j'
     else:
         val_ref = vtc2.upper()
-
-    espace = (len(val_ref) - 8) * ' '
-    chvalref = 'VALE_REFE' + espace
-    espace = (len(val_cal) - 8) * ' '
-    chvalcal = 'VALE_CALC' + espace
 
     if(len(val_ref) <= 16):
         nvref = 16
@@ -345,7 +333,6 @@ def test_fonction_ops(self, **args):
     """
        Corps de la macro TEST_FONCTION
     """
-    macro = 'TEST_FONCTION'
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
@@ -354,10 +341,6 @@ def test_fonction_ops(self, **args):
 
     CALC_FONCTION = self.get_cmd('CALC_FONCTION')
     DETRUIRE = self.get_cmd('DETRUIRE')
-
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     VALEUR = args.get('VALEUR')
     ATTRIBUT = args.get('ATTRIBUT')
@@ -384,7 +367,6 @@ def test_fonction_ops(self, **args):
                 nompara = ''
             ref = dres['REFERENCE'] or 'NON_REGRESSION'
             other_ref = ref != 'NON_REGRESSION' and dres['REFERENCE'] or None
-            ver = None
             legende = dres['LEGENDE']
             if legende is None:
                 legende = 'XXXX'
