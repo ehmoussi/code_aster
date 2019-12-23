@@ -228,9 +228,6 @@ class MESSAGE_LOGGER(metaclass=Singleton):
             if catamess != 'catamess':
                 code = 'A'
                 self.print_message(code, 'CATAMESS_57', valk=(catamess, str(msg)))
-                if in_testcase():
-                    raise ImportError(
-                        _("Fichier de messages non trouvé: {0}").format(str(msg)))
             cata_msg = {}
 
         # corps du message
@@ -263,9 +260,6 @@ class MESSAGE_LOGGER(metaclass=Singleton):
         except Exception as msg:
             if code == 'I':
                 code = 'A'
-            if in_testcase():
-                raise SyntaxError(_("Impossible de construire le texte du "
-                                    "message: {0}").format(str(msg)))
             dictmess = {
                 'code': code,
                 'flags': 0,
@@ -481,12 +475,8 @@ Exception : %s
             self.add_to_buffer(dictmess)
         self.print_buffer_content()
         if not_seen:
-            # current step should be the JDC object in FIN()
-            jdc = CONTEXT.get_current_step()
             code = 'A'
             if self._mpi_nbcpu is None:
-                if in_testcase():
-                    code = 'F'
                 self.print_message(code, 'CATAMESS_87', valk=list(not_seen),
                                    exception=True)
 
@@ -710,14 +700,6 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
         """Récupérer le comportement en cas d'erreur fatale."""
         return libaster.onFatalError()
 
-# could be share elsewhere
-def in_testcase():
-    """Tell if we are currently executing a testcase"""
-    step = CONTEXT.get_current_step()
-    jdc = getattr(step, 'jdc', step)
-    if jdc and getattr(jdc, 'fico', None):
-        return True
-    return False
 
 def is_last_message(code):
     """Tell if a message 'code' is the last message or not."""
