@@ -815,7 +815,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
                              NOM_CHAM=NOM_CHAM, TYPE_RESU=TYPE_RESU,
                              AFFE=_F(CHAM_GD=CHAM_GD, INST=0.),)
         RESULTAT = __resuch
-        Mesh = CHAM_GD.getMesh()
 
     # Maillage sur lequel s'appuie le résultat à projeter
     if Mesh is None:
