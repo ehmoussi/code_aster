@@ -87,6 +87,10 @@ DataStructure::~DataStructure() {
 #endif
 };
 
+void DataStructure::addReference( const DataStructurePtr &ds ) {
+    _referenceVector.push_back( ds );
+}
+
 void DataStructure::debugPrint( int logicalUnit ) const {
     ASTERINTEGER unit, niveau, ipos, True, False;
     unit = ASTERINTEGER( logicalUnit );
