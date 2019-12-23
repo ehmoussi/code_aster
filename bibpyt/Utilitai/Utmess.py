@@ -107,6 +107,7 @@ class MESSAGE_LOGGER(metaclass=Singleton):
         self._cache_txt = {}
         # arguments mpi : ligne de commande à envoyer au proc #0
         self._mpi_rank = None
+        self._mpi_nbcpu = None
         self.init_mpi_error()
 
     def init_mpi_error(self):
