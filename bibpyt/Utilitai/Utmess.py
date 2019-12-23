@@ -538,7 +538,7 @@ Exception : %s
         """Méthode appelée entre les commandes. (Interface C : resmsg)
         On remet à zéro le compteur d'alarme,
         on vérifie les erreurs <E> en attente."""
-        iret = self.check_counter()
+        self.check_counter()
         # reset des alarmes
         self.count_alarm = {}
         # reset du cache, sans doute inutile car l'ensemble des messages représente
