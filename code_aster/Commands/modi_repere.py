@@ -33,7 +33,9 @@ class ModiRepere(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if "RESULTAT" in keywords:
+        if "reuse" in keywords:
+            self._result = keywords["reuse"]
+        elif "RESULTAT" in keywords:
             if keywords["RESULTAT"].getType() == "EVOL_ELAS":
                 self._result = type(keywords["RESULTAT"])()
             else:
