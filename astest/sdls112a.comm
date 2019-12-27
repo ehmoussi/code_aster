@@ -19,10 +19,10 @@
 
 #       TEST DU GARTEUR : BASE D'EXPANSION = MODES DYNAMIQUES
 
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='NON'),
      )
-
 
 #********************************
 # CALCUL DE LA BASE DE PROJECTION
@@ -325,15 +325,15 @@ for ind1 in range(3):
 
     # On range dans la meme table la RMS de la mesure et la RMS de la difference entre mesure et synthese
     NORM = CALC_TABLE( reuse = NORM, TABLE = NORM,
-                       ACTION = _F(OPERATION = 'COMB', TABLE = NORM_REF, NOM_PARA='FONCTION'))
+                       ACTION = _F(OPERATION = 'COMB', TABLE = NORM_REF, NOM_PARA='METHODE'))
 
     # On ajoute le NOEU_CMP associe :
     noeu_cmp = lis_no[ind1] + '_' + lis_ddl1[ind1]
-    NOM = CREA_TABLE(LISTE = (_F( PARA = 'FONCTION', LISTE_K = 'ABS'),
+    NOM = CREA_TABLE(LISTE = (_F( PARA = 'METHODE', LISTE_K = 'TRAPEZE'),
                               _F( PARA = 'NOEU_CMP', LISTE_K = noeu_cmp)))
-    NORM = CALC_TABLE( reuse = NORM, TABLE = NORM,
-                       ACTION = _F(OPERATION = 'COMB', TABLE = NOM, NOM_PARA='FONCTION'))
 
+    NORM = CALC_TABLE( reuse = NORM, TABLE = NORM,
+                       ACTION = _F(OPERATION = 'COMB', TABLE = NOM, NOM_PARA='METHODE'))
 
     # calcul de la colonne du rapport DELTA/REFE
     NORM = CALC_TABLE( reuse = NORM, TABLE = NORM,
