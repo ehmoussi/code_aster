@@ -24,17 +24,18 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/LoadUtilities.h"
 
 void exportDOFNumberingToPython() {
-    using namespace boost::python;
 
-    class_< FieldOnNodesDescriptionInstance, FieldOnNodesDescriptionPtr,
-            bases< DataStructure > >( "FieldOnNodesDescription", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FieldOnNodesDescriptionInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< FieldOnNodesDescriptionInstance,
+    py::class_< FieldOnNodesDescriptionInstance, FieldOnNodesDescriptionPtr,
+            py::bases< DataStructure > >( "FieldOnNodesDescription", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDescriptionInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDescriptionInstance,
                                                             std::string >));
 
     void ( BaseDOFNumberingInstance::*f1 )( const ElementaryMatrixDisplacementDoublePtr & ) =
@@ -46,8 +47,8 @@ void exportDOFNumberingToPython() {
     void ( BaseDOFNumberingInstance::*f4 )( const ElementaryMatrixPressureComplexPtr & ) =
         &BaseDOFNumberingInstance::setElementaryMatrix;
 
-    class_< BaseDOFNumberingInstance, BaseDOFNumberingInstance::BaseDOFNumberingPtr,
-            bases< DataStructure > > c1( "BaseDOFNumbering", no_init );
+    py::class_< BaseDOFNumberingInstance, BaseDOFNumberingInstance::BaseDOFNumberingPtr,
+            py::bases< DataStructure > > c1( "BaseDOFNumbering", py::no_init );
     // fake initFactoryPtr: created by subclasses
     // fake initFactoryPtr: created by subclasses
     c1.def( "addFiniteElementDescriptor", &BaseDOFNumberingInstance::addFiniteElementDescriptor );
@@ -64,9 +65,9 @@ void exportDOFNumberingToPython() {
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 
-    class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
-            bases< BaseDOFNumberingInstance > >( "DOFNumbering", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< DOFNumberingInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< DOFNumberingInstance, std::string >))
+    py::class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
+            py::bases< BaseDOFNumberingInstance > >( "DOFNumbering", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< DOFNumberingInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< DOFNumberingInstance, std::string >))
         .def( "getFieldOnNodesDescription", &DOFNumberingInstance::getFieldOnNodesDescription );
 };

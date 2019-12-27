@@ -27,12 +27,14 @@
 #include "astercxx.h"
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include "Loads/KinematicsLoad.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/ParallelMechanicalLoad.h"
 
 template < class firstClass, typename... Args >
-void addKinematicsLoadToInterface( boost::python::class_< firstClass, Args... > myInstance ) {
+void addKinematicsLoadToInterface( py::class_< firstClass, Args... > myInstance ) {
     typedef firstClass myClass;
 
     void ( myClass::*c1 )( const KinematicsLoadPtr & ) = &myClass::addLoad;
@@ -50,7 +52,7 @@ void addKinematicsLoadToInterface( boost::python::class_< firstClass, Args... > 
 };
 
 template < class firstClass, typename... Args >
-void addMechanicalLoadToInterface( boost::python::class_< firstClass, Args... > myInstance ) {
+void addMechanicalLoadToInterface( py::class_< firstClass, Args... > myInstance ) {
     typedef firstClass myClass;
 
     void ( myClass::*c5 )( const GenericMechanicalLoadPtr & ) = &myClass::addLoad;
@@ -70,7 +72,7 @@ void addMechanicalLoadToInterface( boost::python::class_< firstClass, Args... > 
 #ifdef _USE_MPI
 template < class firstClass, typename... Args >
 void
-addParallelMechanicalLoadToInterface( boost::python::class_< firstClass, Args... > myInstance ) {
+addParallelMechanicalLoadToInterface( py::class_< firstClass, Args... > myInstance ) {
     typedef firstClass myClass;
 
     void ( myClass::*c5 )( const ParallelMechanicalLoadPtr & ) = &myClass::addLoad;

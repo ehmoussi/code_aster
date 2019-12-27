@@ -25,13 +25,14 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportFullHarmonicResultsContainerToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< FullHarmonicResultsContainerInstance, FullHarmonicResultsContainerPtr,
-            bases< FullResultsContainerInstance > >( "FullHarmonicResultsContainer", no_init )
-        .def( "__init__", make_constructor(
+void exportFullHarmonicResultsContainerToPython() {
+
+    py::class_< FullHarmonicResultsContainerInstance, FullHarmonicResultsContainerPtr,
+            py::bases< FullResultsContainerInstance > >( "FullHarmonicResultsContainer", py::no_init )
+        .def( "__init__", py::make_constructor(
                               &initFactoryPtr< FullHarmonicResultsContainerInstance, std::string >))
-        .def( "__init__", make_constructor(&initFactoryPtr< FullHarmonicResultsContainerInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FullHarmonicResultsContainerInstance >))
         .def( "printMedFile", &FullHarmonicResultsContainerInstance::printMedFile );
 };

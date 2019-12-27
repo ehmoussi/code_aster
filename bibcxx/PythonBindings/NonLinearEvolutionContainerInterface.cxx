@@ -25,13 +25,14 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportNonLinearEvolutionContainerToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< NonLinearEvolutionContainerInstance, NonLinearEvolutionContainerPtr,
-            bases< TimeDependantResultsContainerInstance > >( "NonLinearEvolutionContainer",
-                                                              no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< NonLinearEvolutionContainerInstance >))
-        .def( "__init__", make_constructor(
+void exportNonLinearEvolutionContainerToPython() {
+
+    py::class_< NonLinearEvolutionContainerInstance, NonLinearEvolutionContainerPtr,
+            py::bases< TimeDependantResultsContainerInstance > >( "NonLinearEvolutionContainer",
+                                                              py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< NonLinearEvolutionContainerInstance >))
+        .def( "__init__", py::make_constructor(
                               &initFactoryPtr< NonLinearEvolutionContainerInstance, std::string >));
 };

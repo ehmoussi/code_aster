@@ -25,16 +25,17 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportFullResultsContainerToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< FullResultsContainerInstance, FullResultsContainerPtr,
-            bases< ResultsContainerInstance > >( "FullResultsContainer", no_init )
+void exportFullResultsContainerToPython() {
+
+    py::class_< FullResultsContainerInstance, FullResultsContainerPtr,
+            py::bases< ResultsContainerInstance > >( "FullResultsContainer", py::no_init )
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< FullResultsContainerInstance, std::string, std::string > ) )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< FullResultsContainerInstance, std::string > ) )
+              py::make_constructor( &initFactoryPtr< FullResultsContainerInstance, std::string > ) )
         .def( "getDOFNumbering", &FullResultsContainerInstance::getDOFNumbering )
         .def( "printMedFile", &FullResultsContainerInstance::printMedFile )
         .def( "setDOFNumbering", &FullResultsContainerInstance::setDOFNumbering )

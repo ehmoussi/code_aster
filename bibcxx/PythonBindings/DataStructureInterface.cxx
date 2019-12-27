@@ -26,23 +26,24 @@
 #include "PythonBindings/DataStructureInterface.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportDataStructureToPython() {
-    using namespace boost::python;
 
     void ( DataStructure::*c1 )( const int ) const = &DataStructure::debugPrint;
     void ( DataStructure::*c2 )() const = &DataStructure::debugPrint;
 
-    class_< DataStructure, DataStructure::DataStructurePtr >( "DataStructure", no_init )
+    py::class_< DataStructure, DataStructure::DataStructurePtr >( "DataStructure", py::no_init )
         .enable_pickling()
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
         .def( "addReference", &DataStructure::addReference )
-        .def( "getName", &DataStructure::getName, return_value_policy< return_by_value >() )
+        .def( "getName", &DataStructure::getName, py::return_value_policy< py::return_by_value >() )
         .add_property(
             "userName",
-            make_function( &DataStructure::getUserName, return_value_policy< return_by_value >() ),
+            make_function( &DataStructure::getUserName, py::return_value_policy< py::return_by_value >() ),
             &DataStructure::setUserName )
-        .def( "getType", &DataStructure::getType, return_value_policy< return_by_value >() )
+        .def( "getType", &DataStructure::getType, py::return_value_policy< py::return_by_value >() )
         .def( "debugPrint", c1 )
         .def( "debugPrint", c2 )
         .def( "update", &DataStructure::update );

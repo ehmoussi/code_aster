@@ -25,14 +25,15 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportTimeStepManagerToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< TimeStepManagerInstance, TimeStepManagerPtr, bases< DataStructure > >(
-        "TimeStepManager", no_init )
-        .def( "__init__", make_constructor( &initFactoryPtr< TimeStepManagerInstance > ) )
+void exportTimeStepManagerToPython() {
+
+    py::class_< TimeStepManagerInstance, TimeStepManagerPtr, py::bases< DataStructure > >(
+        "TimeStepManager", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< TimeStepManagerInstance > ) )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< TimeStepManagerInstance, std::string > ) )
+              py::make_constructor( &initFactoryPtr< TimeStepManagerInstance, std::string > ) )
         .def( "addErrorManager", &TimeStepManagerInstance::addErrorManager )
         .def( "build", &TimeStepManagerInstance::build )
         .def( "setAutomaticManagement", &TimeStepManagerInstance::setAutomaticManagement )

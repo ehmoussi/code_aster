@@ -30,12 +30,12 @@
 #include "DataFields/FieldOnNodes.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 struct MeshCoordinatesFieldToFieldOnNodes {
     static PyObject *convert( MeshCoordinatesFieldPtr toConvert ) {
-        using namespace boost::python;
-        using namespace boost;
-        return boost::python::incref(
-            boost::python::object(
+        return py::incref(
+            py::object(
                 FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( toConvert ) ) ).ptr() );
     }
 };

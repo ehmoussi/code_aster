@@ -22,29 +22,30 @@
  */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/StructureInterfaceInterface.h"
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( StructureInterfaceInstance_overloads, addInterface, 3, 4 )
 
 void exportStructureInterfaceToPython() {
-    using namespace boost::python;
 
-    enum_< InterfaceTypeEnum >( "InterfaceType" )
+    py::enum_< InterfaceTypeEnum >( "InterfaceType" )
         .value( "MacNeal", MacNeal )
         .value( "CraigBampton", CraigBampton )
         .value( "HarmonicCraigBampton", HarmonicCraigBampton )
         .value( "None", NoInterfaceType );
 
-    class_< StructureInterfaceInstance, StructureInterfaceInstance::StructureInterfacePtr,
-            bases< DataStructure > >( "StructureInterface", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< StructureInterfaceInstance >))
+    py::class_< StructureInterfaceInstance, StructureInterfaceInstance::StructureInterfacePtr,
+            py::bases< DataStructure > >( "StructureInterface", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StructureInterfaceInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< StructureInterfaceInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< StructureInterfaceInstance, std::string >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< StructureInterfaceInstance, DOFNumberingPtr >))
+              py::make_constructor(&initFactoryPtr< StructureInterfaceInstance, DOFNumberingPtr >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< StructureInterfaceInstance, std::string, DOFNumberingPtr >))
         .def( "addInterface", &StructureInterfaceInstance::addInterface,
               StructureInterfaceInstance_overloads() );

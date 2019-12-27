@@ -24,16 +24,17 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/FluidStructureInteractionInterface.h"
 
 void exportFluidStructureInteractionToPython() {
-    using namespace boost::python;
 
-    class_< FluidStructureInteractionInstance,
+    py::class_< FluidStructureInteractionInstance,
             FluidStructureInteractionInstance::FluidStructureInteractionPtr,
-            bases< DataStructure > >( "FluidStructureInteraction", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FluidStructureInteractionInstance >))
+            py::bases< DataStructure > >( "FluidStructureInteraction", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FluidStructureInteractionInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< FluidStructureInteractionInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< FluidStructureInteractionInstance, std::string >));
 };

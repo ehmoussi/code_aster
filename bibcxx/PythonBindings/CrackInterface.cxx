@@ -25,11 +25,12 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportCrackToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< CrackInstance, CrackInstance::CrackPtr, bases< DataStructure > >( "Crack",
-                                                                                       no_init )
-        .def( "__init__", make_constructor( &initFactoryPtr< CrackInstance > ) )
-        .def( "__init__", make_constructor( &initFactoryPtr< CrackInstance, std::string > ) );
+void exportCrackToPython() {
+
+    py::class_< CrackInstance, CrackInstance::CrackPtr, py::bases< DataStructure > >( "Crack",
+                                                                                       py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< CrackInstance > ) )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< CrackInstance, std::string > ) );
 };

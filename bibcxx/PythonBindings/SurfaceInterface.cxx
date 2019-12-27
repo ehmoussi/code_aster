@@ -24,16 +24,17 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/SurfaceInterface.h"
 
 void exportSurfaceToPython() {
-    using namespace boost::python;
 
-    class_< SurfaceInstance, SurfaceInstance::SurfacePtr, bases< DataStructure > >( "Surface",
-                                                                                    no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< SurfaceInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< SurfaceInstance, std::string >))
+    py::class_< SurfaceInstance, SurfaceInstance::SurfacePtr, py::bases< DataStructure > >( "Surface",
+                                                                                    py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< SurfaceInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< SurfaceInstance, std::string >))
         .def( "exportExtensionToPython", &SurfaceInstance::exportExtensionToPython )
         .def( "exportValuesToPython", &SurfaceInstance::exportValuesToPython )
         .def( "exportParametersToPython", &SurfaceInstance::exportParametersToPython );

@@ -25,14 +25,15 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportXfemCrackToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< XfemCrackInstance, XfemCrackInstance::XfemCrackPtr, bases< DataStructure > >(
-        "XfemCrack", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< XfemCrackInstance, MeshPtr >))
+void exportXfemCrackToPython() {
+
+    py::class_< XfemCrackInstance, XfemCrackInstance::XfemCrackPtr, py::bases< DataStructure > >(
+        "XfemCrack", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< XfemCrackInstance, MeshPtr >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< XfemCrackInstance, std::string, MeshPtr >))
+              py::make_constructor(&initFactoryPtr< XfemCrackInstance, std::string, MeshPtr >))
         .def( "build", &XfemCrackInstance::build )
         .def( "enrichModelWithXfem", &XfemCrackInstance::enrichModelWithXfem )
         .def( "getMesh", &XfemCrackInstance::getMesh )

@@ -24,11 +24,12 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/AssemblyMatrixInterface.h"
 
 void exportAssemblyMatrixToPython() {
-    using namespace boost::python;
 
     void ( AssemblyMatrixDisplacementDoubleInstance::*c1 )( const KinematicsLoadPtr &currentLoad ) =
         &AssemblyMatrixDisplacementDoubleInstance::addLoad;
@@ -36,12 +37,12 @@ void exportAssemblyMatrixToPython() {
                                                             const FunctionPtr &func ) =
         &AssemblyMatrixDisplacementDoubleInstance::addLoad;
 
-    class_< AssemblyMatrixDisplacementDoubleInstance, AssemblyMatrixDisplacementDoublePtr,
-            bases< DataStructure > >( "AssemblyMatrixDisplacementDouble", no_init )
+    py::class_< AssemblyMatrixDisplacementDoubleInstance, AssemblyMatrixDisplacementDoublePtr,
+            py::bases< DataStructure > >( "AssemblyMatrixDisplacementDouble", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< AssemblyMatrixDisplacementDoubleInstance >))
+              py::make_constructor(&initFactoryPtr< AssemblyMatrixDisplacementDoubleInstance >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< AssemblyMatrixDisplacementDoubleInstance, std::string >))
         .def( "addKinematicsLoad", c1 )
         .def( "addKinematicsLoad", c2 )
@@ -62,12 +63,12 @@ void exportAssemblyMatrixToPython() {
                                                              const FunctionPtr &func ) =
         &AssemblyMatrixDisplacementComplexInstance::addLoad;
 
-    class_< AssemblyMatrixDisplacementComplexInstance, AssemblyMatrixDisplacementComplexPtr,
-            bases< DataStructure > >( "AssemblyMatrixDisplacementComplex", no_init )
+    py::class_< AssemblyMatrixDisplacementComplexInstance, AssemblyMatrixDisplacementComplexPtr,
+            py::bases< DataStructure > >( "AssemblyMatrixDisplacementComplex", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< AssemblyMatrixDisplacementComplexInstance >))
+              py::make_constructor(&initFactoryPtr< AssemblyMatrixDisplacementComplexInstance >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< AssemblyMatrixDisplacementComplexInstance, std::string >))
         .def( "addKinematicsLoad", c3 )
         .def( "addKinematicsLoad", c4 )
@@ -87,12 +88,12 @@ void exportAssemblyMatrixToPython() {
                                                            const FunctionPtr &func ) =
         &AssemblyMatrixTemperatureDoubleInstance::addLoad;
 
-    class_< AssemblyMatrixTemperatureDoubleInstance, AssemblyMatrixTemperatureDoublePtr,
-            bases< DataStructure > >( "AssemblyMatrixTemperatureDouble", no_init )
+    py::class_< AssemblyMatrixTemperatureDoubleInstance, AssemblyMatrixTemperatureDoublePtr,
+            py::bases< DataStructure > >( "AssemblyMatrixTemperatureDouble", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< AssemblyMatrixTemperatureDoubleInstance >))
+              py::make_constructor(&initFactoryPtr< AssemblyMatrixTemperatureDoubleInstance >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< AssemblyMatrixTemperatureDoubleInstance, std::string >))
         .def( "addKinematicsLoad", c5 )
         .def( "addKinematicsLoad", c6 )
@@ -112,12 +113,12 @@ void exportAssemblyMatrixToPython() {
                                                             const FunctionPtr &func ) =
         &AssemblyMatrixTemperatureComplexInstance::addLoad;
 
-    class_< AssemblyMatrixTemperatureComplexInstance, AssemblyMatrixTemperatureComplexPtr,
-            bases< DataStructure > >( "AssemblyMatrixTemperatureComplex", no_init )
+    py::class_< AssemblyMatrixTemperatureComplexInstance, AssemblyMatrixTemperatureComplexPtr,
+            py::bases< DataStructure > >( "AssemblyMatrixTemperatureComplex", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< AssemblyMatrixTemperatureComplexInstance >))
+              py::make_constructor(&initFactoryPtr< AssemblyMatrixTemperatureComplexInstance >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< AssemblyMatrixTemperatureComplexInstance, std::string >))
         .def( "addKinematicsLoad", c7 )
         .def( "addKinematicsLoad", c8 )
@@ -137,10 +138,10 @@ void exportAssemblyMatrixToPython() {
                                                          const FunctionPtr &func ) =
         &AssemblyMatrixPressureDoubleInstance::addLoad;
 
-    class_< AssemblyMatrixPressureDoubleInstance, AssemblyMatrixPressureDoublePtr,
-            bases< DataStructure > >( "AssemblyMatrixPressureDouble", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< AssemblyMatrixPressureDoubleInstance >))
-        .def( "__init__", make_constructor(
+    py::class_< AssemblyMatrixPressureDoubleInstance, AssemblyMatrixPressureDoublePtr,
+            py::bases< DataStructure > >( "AssemblyMatrixPressureDouble", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< AssemblyMatrixPressureDoubleInstance >))
+        .def( "__init__", py::make_constructor(
                               &initFactoryPtr< AssemblyMatrixPressureDoubleInstance, std::string >))
         .def( "addKinematicsLoad", c9 )
         .def( "addKinematicsLoad", c10 )
@@ -160,12 +161,12 @@ void exportAssemblyMatrixToPython() {
                                                           const FunctionPtr &func ) =
         &AssemblyMatrixPressureComplexInstance::addLoad;
 
-    class_< AssemblyMatrixPressureComplexInstance, AssemblyMatrixPressureComplexPtr,
-            bases< DataStructure > >( "AssemblyMatrixPressureComplex", no_init )
+    py::class_< AssemblyMatrixPressureComplexInstance, AssemblyMatrixPressureComplexPtr,
+            py::bases< DataStructure > >( "AssemblyMatrixPressureComplex", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< AssemblyMatrixPressureComplexInstance >))
+              py::make_constructor(&initFactoryPtr< AssemblyMatrixPressureComplexInstance >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< AssemblyMatrixPressureComplexInstance, std::string >))
         .def( "addKinematicsLoad", c11 )
         .def( "addKinematicsLoad", c12 )

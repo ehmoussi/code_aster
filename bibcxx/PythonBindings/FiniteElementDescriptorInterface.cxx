@@ -24,15 +24,16 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/FiniteElementDescriptorInterface.h"
 
 void exportFiniteElementDescriptorToPython() {
-    using namespace boost::python;
 
-    class_< FiniteElementDescriptorInstance,
-            FiniteElementDescriptorInstance::FiniteElementDescriptorPtr, bases< DataStructure > >(
-        "FiniteElementDescriptor", no_init )
+    py::class_< FiniteElementDescriptorInstance,
+            FiniteElementDescriptorInstance::FiniteElementDescriptorPtr, py::bases< DataStructure > >(
+        "FiniteElementDescriptor", py::no_init )
 // fake initFactoryPtr: not directly created by user
 // fake initFactoryPtr: not directly created by user
 #ifdef _USE_MPI

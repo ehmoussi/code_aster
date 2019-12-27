@@ -24,12 +24,13 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/TableContainerInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
 
 void exportTableContainerToPython() {
-    using namespace boost::python;
 
     void ( TableContainerInstance::*c1 )( const std::string &,
                                           ElementaryMatrixDisplacementDoublePtr ) =
@@ -74,10 +75,10 @@ void exportTableContainerToPython() {
                                            TablePtr ) =
         &TableContainerInstance::addObject;
 
-    class_< TableContainerInstance, TableContainerInstance::TableContainerPtr,
-            bases< TableInstance > >( "TableContainer", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance >) )
-        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance, std::string >) )
+    py::class_< TableContainerInstance, TableContainerInstance::TableContainerPtr,
+            py::bases< TableInstance > >( "TableContainer", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TableContainerInstance >) )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TableContainerInstance, std::string >) )
         .def( "addObject", c1 )
         .def( "addObject", c2 )
         .def( "addObject", c3 )

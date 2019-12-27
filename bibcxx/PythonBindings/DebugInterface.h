@@ -26,6 +26,8 @@
 #include "astercxx.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 template< typename T >
 static long libaster_debugRefCount( T &ptr ) {
     long value = ptr.use_count();

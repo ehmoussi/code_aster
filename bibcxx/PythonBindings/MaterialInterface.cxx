@@ -22,17 +22,18 @@
  */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/MaterialInterface.h"
 
 void exportMaterialToPython() {
-    using namespace boost::python;
 
-    class_< MaterialInstance, MaterialInstance::MaterialPtr, bases< DataStructure > >( "Material",
-                                                                                       no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< MaterialInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< MaterialInstance, std::string >))
-        .def( "__init__", make_constructor(&initFactoryPtr< MaterialInstance, std::string,
+    py::class_< MaterialInstance, MaterialInstance::MaterialPtr, py::bases< DataStructure > >( "Material",
+                                                                                       py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialInstance, std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialInstance, std::string,
                                                             VectorInt >))
         .def( "addMaterialBehaviour", &MaterialInstance::addMaterialBehaviour )
         .def( "build", &MaterialInstance::build )

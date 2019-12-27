@@ -26,21 +26,20 @@
 #include "Functions/Surface.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 PyObject *SurfaceInstance::exportExtensionToPython() const {
     if ( !_property->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 
     _property->updateValuePointer();
 
-    using namespace boost::python;
-    using boost::python::list;
-
-    list toReturn;
+    py::list toReturn;
     for ( int pos = 0; pos < _property->size(); ++pos ) {
         const std::string toCopy = ( *_property )[pos].toString();
         toReturn.append( toCopy );
     }
-    return incref( toReturn.ptr() );
+    return py::incref( toReturn.ptr() );
 };
 
 PyObject *SurfaceInstance::exportParametersToPython() const {
@@ -49,14 +48,11 @@ PyObject *SurfaceInstance::exportParametersToPython() const {
 
     _parameters->updateValuePointer();
 
-    using namespace boost::python;
-    using boost::python::list;
-
-    list toReturn;
+    py::list toReturn;
     for ( int pos = 0; pos < _parameters->size(); ++pos ) {
         toReturn.append( ( *_parameters )[pos] );
     }
-    return incref( toReturn.ptr() );
+    return py::incref( toReturn.ptr() );
 };
 
 PyObject *SurfaceInstance::exportValuesToPython() const {
@@ -65,15 +61,12 @@ PyObject *SurfaceInstance::exportValuesToPython() const {
 
     _value->buildFromJeveux();
 
-    using namespace boost::python;
-    using boost::python::list;
-
-    list toReturn;
+    py::list toReturn;
     for ( const auto &curIter : *_value ) {
         const auto size = curIter.size() / 2;
-        list list1;
-        list list2;
-        list list3;
+        py::list list1;
+        py::list list2;
+        py::list list3;
         for ( int pos = 0; pos < size; ++pos ) {
             list2.append( curIter[pos] );
             list3.append( curIter[pos + size] );
@@ -82,5 +75,5 @@ PyObject *SurfaceInstance::exportValuesToPython() const {
         list1.append( list3 );
         toReturn.append( list1 );
     }
-    return incref( toReturn.ptr() );
+    return py::incref( toReturn.ptr() );
 };

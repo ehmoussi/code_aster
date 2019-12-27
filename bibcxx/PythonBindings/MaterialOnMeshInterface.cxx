@@ -25,37 +25,38 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportMaterialOnMeshToPython()
 {
-    using namespace boost::python;
 
-    class_< PartOfMaterialOnMeshInstance,
-            PartOfMaterialOnMeshPtr > c2( "PartOfMaterialOnMesh", no_init );
-    c2.def( "__init__", make_constructor(
+    py::class_< PartOfMaterialOnMeshInstance,
+            PartOfMaterialOnMeshPtr > c2( "PartOfMaterialOnMesh", py::no_init );
+    c2.def( "__init__", py::make_constructor(
             &initFactoryPtr< PartOfMaterialOnMeshInstance > ) );
-    c2.def( "__init__", make_constructor(
+    c2.def( "__init__", py::make_constructor(
             &initFactoryPtr< PartOfMaterialOnMeshInstance,
                              std::vector< MaterialPtr >, MeshEntityPtr > ) );
     c2.def( "getVectorOfMaterial", &PartOfMaterialOnMeshInstance::getVectorOfMaterial );
     c2.def( "getMeshEntity", &PartOfMaterialOnMeshInstance::getMeshEntity );
 
-    class_< MaterialOnMeshInstance, MaterialOnMeshInstance::MaterialOnMeshPtr,
-            bases< DataStructure > > c1( "MaterialOnMesh", no_init );
-    c1.def( "__init__", make_constructor(
+    py::class_< MaterialOnMeshInstance, MaterialOnMeshInstance::MaterialOnMeshPtr,
+            py::bases< DataStructure > > c1( "MaterialOnMesh", py::no_init );
+    c1.def( "__init__", py::make_constructor(
             &initFactoryPtr< MaterialOnMeshInstance,
                              const MeshPtr& > ) );
-    c1.def( "__init__", make_constructor(
+    c1.def( "__init__", py::make_constructor(
             &initFactoryPtr< MaterialOnMeshInstance,
                              const SkeletonPtr& > ) );
-    c1.def( "__init__", make_constructor(
+    c1.def( "__init__", py::make_constructor(
             &initFactoryPtr< MaterialOnMeshInstance,
                              const std::string&,
                              const MeshPtr& > ) );
 #ifdef _USE_MPI
-    c1.def( "__init__", make_constructor(
+    c1.def( "__init__", py::make_constructor(
             &initFactoryPtr< MaterialOnMeshInstance,
                              const ParallelMeshPtr& > ) );
-    c1.def( "__init__", make_constructor(
+    c1.def( "__init__", py::make_constructor(
             &initFactoryPtr< MaterialOnMeshInstance,
                              const std::string&,
                              const ParallelMeshPtr& > ) );

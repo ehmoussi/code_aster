@@ -24,16 +24,17 @@
 /* person_in_charge: natacha.bereux at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/FluidStructureModalBasisInterface.h"
 
 void exportFluidStructureModalBasisToPython() {
-    using namespace boost::python;
 
-    class_< FluidStructureModalBasisInstance,
-            FluidStructureModalBasisInstance::FluidStructureModalBasisPtr, bases< DataStructure > >(
-        "FluidStructureModalBasis", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FluidStructureModalBasisInstance >))
+    py::class_< FluidStructureModalBasisInstance,
+            FluidStructureModalBasisInstance::FluidStructureModalBasisPtr, py::bases< DataStructure > >(
+        "FluidStructureModalBasis", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FluidStructureModalBasisInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< FluidStructureModalBasisInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< FluidStructureModalBasisInstance, std::string >));
 };

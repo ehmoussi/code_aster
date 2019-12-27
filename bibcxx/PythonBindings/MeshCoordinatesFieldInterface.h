@@ -30,6 +30,8 @@
 #include "DataFields/MeshCoordinatesField.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportMeshCoordinatesFieldToPython();
 
 #endif /* MESHCOORDINATESFIELDINTERFACE_H_ */

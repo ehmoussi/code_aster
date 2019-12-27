@@ -25,12 +25,13 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportCyclicSymmetryModeToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< CyclicSymmetryModeInstance, CyclicSymmetryModeInstance::CyclicSymmetryModePtr,
-            bases< DataStructure > >( "CyclicSymmetryMode", no_init )
-        .def( "__init__", make_constructor( &initFactoryPtr< CyclicSymmetryModeInstance > ) )
+void exportCyclicSymmetryModeToPython() {
+
+    py::class_< CyclicSymmetryModeInstance, CyclicSymmetryModeInstance::CyclicSymmetryModePtr,
+            py::bases< DataStructure > >( "CyclicSymmetryMode", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< CyclicSymmetryModeInstance > ) )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< CyclicSymmetryModeInstance, std::string > ) );
+              py::make_constructor( &initFactoryPtr< CyclicSymmetryModeInstance, std::string > ) );
 };

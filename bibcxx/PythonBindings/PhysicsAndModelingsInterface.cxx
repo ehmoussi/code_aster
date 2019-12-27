@@ -24,13 +24,14 @@
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
 #include <boost/python.hpp>
 
-void exportPhysicsAndModelingsToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    enum_< Physics >( "Physics" ).value( "Mechanics", Mechanics ).value( "Thermal", Thermal ).value(
+void exportPhysicsAndModelingsToPython() {
+
+    py::enum_< Physics >( "Physics" ).value( "Mechanics", Mechanics ).value( "Thermal", Thermal ).value(
         "Acoustics", Acoustics );
 
-    enum_< Modelings >( "Modelings" )
+    py::enum_< Modelings >( "Modelings" )
         .value( "Axisymmetrical", Axisymmetrical )
         .value( "Tridimensional", Tridimensional )
         .value( "TridimensionalAbsorbingBoundary", TridimensionalAbsorbingBoundary )

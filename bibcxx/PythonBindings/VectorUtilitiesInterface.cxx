@@ -31,7 +31,6 @@
 #include "Materials/MaterialBehaviour.h"
 
 void exportVectorUtilitiesToPython() {
-    using namespace boost::python;
 
     exportVectorUtilities< long >();
     exportVectorUtilities< int >();

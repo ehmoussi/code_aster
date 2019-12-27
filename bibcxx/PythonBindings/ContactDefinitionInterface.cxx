@@ -24,15 +24,16 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ContactDefinitionInterface.h"
 
 void exportContactDefinitionToPython() {
-    using namespace boost::python;
 
-    class_< ContactDefinitionInstance, ContactDefinitionInstance::ContactDefinitionPtr,
-            bases< DataStructure > >( "ContactDefinition", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ContactDefinitionInstance >))
+    py::class_< ContactDefinitionInstance, ContactDefinitionInstance::ContactDefinitionPtr,
+            py::bases< DataStructure > >( "ContactDefinition", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ContactDefinitionInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ContactDefinitionInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< ContactDefinitionInstance, std::string >));
 };

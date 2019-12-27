@@ -24,21 +24,22 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/TableInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
 
 void exportTableToPython() {
-    using namespace boost::python;
 
-    class_< TableInstance, TableInstance::TablePtr, bases< DataStructure > >( "Table", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< TableInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< TableInstance, std::string >));
-    class_< TableOfFunctionsInstance, TableOfFunctionsInstance::TableOfFunctionsPtr,
-            bases< TableInstance > >( "TableOfFunctions", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< TableOfFunctionsInstance >))
+    py::class_< TableInstance, TableInstance::TablePtr, py::bases< DataStructure > >( "Table", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TableInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TableInstance, std::string >));
+    py::class_< TableOfFunctionsInstance, TableOfFunctionsInstance::TableOfFunctionsPtr,
+            py::bases< TableInstance > >( "TableOfFunctions", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TableOfFunctionsInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< TableOfFunctionsInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< TableOfFunctionsInstance, std::string >))
         .def( "addFunction", &TableOfFunctionsInstance::addFunction )
         .def( "getFunction", &TableOfFunctionsInstance::getFunction )
         .def( "getNumberOfFunctions", &TableOfFunctionsInstance::getNumberOfFunctions );

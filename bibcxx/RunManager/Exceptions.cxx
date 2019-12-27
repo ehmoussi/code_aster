@@ -25,6 +25,8 @@
 
 #include <assert.h>
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <exception>
 #include <string>
 

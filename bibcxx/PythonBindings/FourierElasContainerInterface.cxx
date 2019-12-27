@@ -25,12 +25,13 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportFourierElasContainerToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< FourierElasContainerInstance, FourierElasContainerPtr,
-            bases< ResultsContainerInstance > >( "FourierElasContainer", no_init )
-        .def( "__init__", make_constructor( &initFactoryPtr< FourierElasContainerInstance > ) )
+void exportFourierElasContainerToPython() {
+
+    py::class_< FourierElasContainerInstance, FourierElasContainerPtr,
+            py::bases< ResultsContainerInstance > >( "FourierElasContainer", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< FourierElasContainerInstance > ) )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< FourierElasContainerInstance, std::string > ) );
+              py::make_constructor( &initFactoryPtr< FourierElasContainerInstance, std::string > ) );
 };

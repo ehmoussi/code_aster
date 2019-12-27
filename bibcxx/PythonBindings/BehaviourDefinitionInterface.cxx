@@ -22,15 +22,16 @@
  */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/BehaviourDefinitionInterface.h"
 
 void exportBehaviourDefinitionToPython() {
-    using namespace boost::python;
 
-    class_< BehaviourDefinitionInstance, BehaviourDefinitionInstance::BehaviourDefinitionPtr,
-            bases< DataStructure > >( "BehaviourDefinition", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< BehaviourDefinitionInstance >))
+    py::class_< BehaviourDefinitionInstance, BehaviourDefinitionInstance::BehaviourDefinitionPtr,
+            py::bases< DataStructure > >( "BehaviourDefinition", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< BehaviourDefinitionInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< BehaviourDefinitionInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< BehaviourDefinitionInstance, std::string >));
 };

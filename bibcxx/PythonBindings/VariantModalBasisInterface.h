@@ -30,6 +30,8 @@
 #include <boost/variant.hpp>
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 typedef boost::variant< MechanicalModeContainerPtr,
                         GeneralizedModeContainerPtr > ModalBasisVariant;
 
@@ -42,7 +44,7 @@ struct ModalBasisToObject: boost::static_visitor< PyObject * >
 
     template < typename T > result_type operator()( T const &t ) const
     {
-        return boost::python::incref( boost::python::object( t ).ptr() );
+        return py::incref( py::object( t ).ptr() );
     };
 };
 

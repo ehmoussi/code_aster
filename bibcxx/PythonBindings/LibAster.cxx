@@ -23,6 +23,8 @@
 
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 #include "astercxx.h"
 #include "aster_init.h"
 
