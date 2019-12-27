@@ -27,13 +27,13 @@
 
 namespace py = boost::python;
 
-#include "PythonBindings/factory.h"
 #include "PythonBindings/FunctionInterface.h"
+#include "PythonBindings/factory.h"
 
 void exportFunctionToPython() {
 
     py::class_< BaseFunctionInstance, BaseFunctionInstance::BaseFunctionPtr,
-            py::bases< GenericFunctionInstance > >( "BaseFunction", py::no_init )
+                py::bases< GenericFunctionInstance > >( "BaseFunction", py::no_init )
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
         .def( "setParameterName", &FunctionInstance::setParameterName )
@@ -42,8 +42,8 @@ void exportFunctionToPython() {
         .def( "setValues", &FunctionInstance::setValues )
         .def( "getValues", &FunctionInstance::getValues );
 
-    py::class_< FunctionInstance, FunctionInstance::FunctionPtr, py::bases< BaseFunctionInstance > >(
-        "Function", py::no_init )
+    py::class_< FunctionInstance, FunctionInstance::FunctionPtr,
+                py::bases< BaseFunctionInstance > >( "Function", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionInstance >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionInstance, std::string >))
         .def( "setValues", &FunctionInstance::setValues )
@@ -57,9 +57,10 @@ void exportFunctionToPython() {
         &FunctionComplexInstance::setValues;
 
     py::class_< FunctionComplexInstance, FunctionComplexInstance::FunctionComplexPtr,
-            py::bases< BaseFunctionInstance > >( "FunctionComplex", py::no_init )
+                py::bases< BaseFunctionInstance > >( "FunctionComplex", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionComplexInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionComplexInstance, std::string >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< FunctionComplexInstance, std::string >))
         .def( "setValues", c1 )
         .def( "setValues", c2 )
         .def( "size", &FunctionComplexInstance::size );

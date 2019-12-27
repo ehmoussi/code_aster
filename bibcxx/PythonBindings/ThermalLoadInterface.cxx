@@ -29,8 +29,8 @@ namespace py = boost::python;
 
 void exportThermalLoadToPython() {
 
-    py::class_< ThermalLoadInstance, ThermalLoadInstance::ThermalLoadPtr, py::bases< DataStructure > >(
-        "ThermalLoad", py::no_init )
+    py::class_< ThermalLoadInstance, ThermalLoadInstance::ThermalLoadPtr,
+                py::bases< DataStructure > >( "ThermalLoad", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< ThermalLoadInstance, ModelPtr & >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< ThermalLoadInstance, std::string, ModelPtr & >))

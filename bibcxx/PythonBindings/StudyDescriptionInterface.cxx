@@ -30,11 +30,12 @@ namespace py = boost::python;
 
 void exportStudyDescriptionToPython() {
 
-    py::class_< StudyDescriptionInstance, StudyDescriptionPtr > c1( "StudyDescription", py::no_init );
+    py::class_< StudyDescriptionInstance, StudyDescriptionPtr > c1( "StudyDescription",
+                                                                    py::no_init );
     // fake initFactoryPtr: not a DataStructure
-    c1.def(
-        "__init__",
-        py::make_constructor(&initFactoryPtr< StudyDescriptionInstance, ModelPtr, MaterialOnMeshPtr >));
+    c1.def( "__init__",
+            py::make_constructor(
+                &initFactoryPtr< StudyDescriptionInstance, ModelPtr, MaterialOnMeshPtr >));
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 };

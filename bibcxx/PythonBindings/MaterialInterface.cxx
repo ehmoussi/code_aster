@@ -29,12 +29,12 @@ namespace py = boost::python;
 
 void exportMaterialToPython() {
 
-    py::class_< MaterialInstance, MaterialInstance::MaterialPtr, py::bases< DataStructure > >( "Material",
-                                                                                       py::no_init )
+    py::class_< MaterialInstance, MaterialInstance::MaterialPtr, py::bases< DataStructure > >(
+        "Material", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialInstance >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialInstance, std::string >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialInstance, std::string,
-                                                            VectorInt >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< MaterialInstance, std::string, VectorInt >))
         .def( "addMaterialBehaviour", &MaterialInstance::addMaterialBehaviour )
         .def( "build", &MaterialInstance::build )
         .def( "getNumberOfListOfDoubleProperties",

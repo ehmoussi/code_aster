@@ -29,9 +29,10 @@ namespace py = boost::python;
 
 void exportFullAcousticHarmonicResultsContainerToPython() {
 
-    py::class_< FullAcousticHarmonicResultsContainerInstance, FullAcousticHarmonicResultsContainerPtr,
-            py::bases< FullResultsContainerInstance > >( "FullAcousticHarmonicResultsContainer",
-                                                     py::no_init )
+    py::class_< FullAcousticHarmonicResultsContainerInstance,
+                FullAcousticHarmonicResultsContainerPtr,
+                py::bases< FullResultsContainerInstance > >( "FullAcousticHarmonicResultsContainer",
+                                                             py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< FullAcousticHarmonicResultsContainerInstance, std::string >))

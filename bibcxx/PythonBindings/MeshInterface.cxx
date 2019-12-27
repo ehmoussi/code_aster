@@ -43,32 +43,31 @@ void exportMeshToPython() {
         .value( "NoType", NoType );
 
     py::class_< VirtualMeshEntity, MeshEntityPtr >( "MeshEntity", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< VirtualMeshEntity,
-                                                            std::string, EntityType >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< VirtualMeshEntity, std::string, EntityType >))
         // fake initFactoryPtr: created by subclass
         .def( "getType", &VirtualMeshEntity::getType )
         .def( "getNames", &VirtualMeshEntity::getNames );
 
-    py::class_< GroupOfElements, GroupOfElementsPtr,
-            py::bases< VirtualMeshEntity > >( "GroupOfElements", py::no_init )
+    py::class_< GroupOfElements, GroupOfElementsPtr, py::bases< VirtualMeshEntity > >(
+        "GroupOfElements", py::no_init )
         // fake initFactoryPtr: created by subclass
         // fake initFactoryPtr: created by subclass
-    ;
+        ;
 
-    py::class_< Element, ElementPtr,
-            py::bases< VirtualMeshEntity > >( "Element", py::no_init )
+    py::class_< Element, ElementPtr, py::bases< VirtualMeshEntity > >( "Element", py::no_init )
         // fake initFactoryPtr: created by subclass
         // fake initFactoryPtr: created by subclass
-    ;
+        ;
 
-    py::class_< AllMeshEntities, AllMeshEntitiesPtr,
-            py::bases< VirtualMeshEntity > >( "AllMeshEntities", py::no_init )
+    py::class_< AllMeshEntities, AllMeshEntitiesPtr, py::bases< VirtualMeshEntity > >(
+        "AllMeshEntities", py::no_init )
         // fake initFactoryPtr: created by subclass
         // fake initFactoryPtr: created by subclass
-    ;
+        ;
 
-    py::class_< BaseMeshInstance, BaseMeshInstance::BaseMeshPtr, py::bases< DataStructure > >( "BaseMesh",
-                                                                                       py::no_init )
+    py::class_< BaseMeshInstance, BaseMeshInstance::BaseMeshPtr, py::bases< DataStructure > >(
+        "BaseMesh", py::no_init )
         // fake initFactoryPtr: created by subclass
         // fake initFactoryPtr: created by subclass
         //         .def( "getCoordinates", +[](const BaseMeshInstance& v)
@@ -77,10 +76,10 @@ void exportMeshToPython() {
         //         })
         .def( "getCoordinates", &BaseMeshInstance::getCoordinates )
         .def( "isParallel", &BaseMeshInstance::isParallel )
-        .def( "getDimension", &BaseMeshInstance::getDimension )
-    ;
+        .def( "getDimension", &BaseMeshInstance::getDimension );
 
-    py::class_< MeshInstance, MeshInstance::MeshPtr, py::bases< BaseMeshInstance > >( "Mesh", py::no_init )
+    py::class_< MeshInstance, MeshInstance::MeshPtr, py::bases< BaseMeshInstance > >( "Mesh",
+                                                                                      py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< MeshInstance >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< MeshInstance, std::string >))
         .def( "addGroupOfNodesFromNodes", &MeshInstance::addGroupOfNodesFromNodes )

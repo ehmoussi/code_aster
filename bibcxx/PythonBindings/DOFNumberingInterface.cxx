@@ -26,17 +26,17 @@
 #include <boost/python.hpp>
 
 namespace py = boost::python;
-#include <PythonBindings/factory.h>
 #include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/LoadUtilities.h"
+#include <PythonBindings/factory.h>
 
 void exportDOFNumberingToPython() {
 
     py::class_< FieldOnNodesDescriptionInstance, FieldOnNodesDescriptionPtr,
-            py::bases< DataStructure > >( "FieldOnNodesDescription", py::no_init )
+                py::bases< DataStructure > >( "FieldOnNodesDescription", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDescriptionInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDescriptionInstance,
-                                                            std::string >));
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< FieldOnNodesDescriptionInstance, std::string >));
 
     void ( BaseDOFNumberingInstance::*f1 )( const ElementaryMatrixDisplacementDoublePtr & ) =
         &BaseDOFNumberingInstance::setElementaryMatrix;
@@ -48,7 +48,7 @@ void exportDOFNumberingToPython() {
         &BaseDOFNumberingInstance::setElementaryMatrix;
 
     py::class_< BaseDOFNumberingInstance, BaseDOFNumberingInstance::BaseDOFNumberingPtr,
-            py::bases< DataStructure > > c1( "BaseDOFNumbering", py::no_init );
+                py::bases< DataStructure > > c1( "BaseDOFNumbering", py::no_init );
     // fake initFactoryPtr: created by subclasses
     // fake initFactoryPtr: created by subclasses
     c1.def( "addFiniteElementDescriptor", &BaseDOFNumberingInstance::addFiniteElementDescriptor );
@@ -66,8 +66,9 @@ void exportDOFNumberingToPython() {
     addMechanicalLoadToInterface( c1 );
 
     py::class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
-            py::bases< BaseDOFNumberingInstance > >( "DOFNumbering", py::no_init )
+                py::bases< BaseDOFNumberingInstance > >( "DOFNumbering", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< DOFNumberingInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DOFNumberingInstance, std::string >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< DOFNumberingInstance, std::string >))
         .def( "getFieldOnNodesDescription", &DOFNumberingInstance::getFieldOnNodesDescription );
 };

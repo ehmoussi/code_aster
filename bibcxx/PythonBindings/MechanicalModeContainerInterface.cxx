@@ -49,17 +49,18 @@ void exportMechanicalModeContainerToPython() {
         &MechanicalModeContainerInstance::setMassMatrix;
 
     py::class_< MechanicalModeContainerInstance, MechanicalModeContainerPtr,
-            py::bases< FullResultsContainerInstance > >( "MechanicalModeContainer", py::no_init )
+                py::bases< FullResultsContainerInstance > >( "MechanicalModeContainer",
+                                                             py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< MechanicalModeContainerInstance >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< MechanicalModeContainerInstance, std::string >))
         .def( "getDOFNumbering", &MechanicalModeContainerInstance::getDOFNumbering )
-        .def( "getStiffnessMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr > )
+        .def("getStiffnessMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr >)
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )
         .def( "setStiffnessMatrix", c3 )
         .def( "setStiffnessMatrix", c4 )
-        .def( "getMassMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr > )
+        .def("getMassMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr >)
         .def( "setMassMatrix", c5 )
         .def( "setMassMatrix", c6 )
         .def( "setMassMatrix", c7 )
@@ -83,7 +84,8 @@ void exportMechanicalModeComplexContainerToPython() {
         &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
 
     py::class_< MechanicalModeComplexContainerInstance, MechanicalModeComplexContainerPtr,
-            py::bases< MechanicalModeContainerInstance > >( "MechanicalModeComplexContainer", py::no_init )
+                py::bases< MechanicalModeContainerInstance > >( "MechanicalModeComplexContainer",
+                                                                py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< MechanicalModeComplexContainerInstance >))
         .def( "__init__",

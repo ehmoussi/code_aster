@@ -36,10 +36,11 @@ void exportInputVariableDefinitionToPython() {
     void ( EvolutionParameterInstance::*c2 )( const FunctionPtr & ) =
         &EvolutionParameterInstance::setTimeFunction;
 
-    py::class_< EvolutionParameterInstance, EvolutionParameterPtr >( "EvolutionParameter", py::no_init )
+    py::class_< EvolutionParameterInstance, EvolutionParameterPtr >( "EvolutionParameter",
+                                                                     py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< EvolutionParameterInstance,
-                                                const TimeDependantResultsContainerPtr & >))
+                                                    const TimeDependantResultsContainerPtr & >))
         .def( "setFieldName", &EvolutionParameterInstance::setFieldName )
         .def( "setTimeFunction", c1 )
         .def( "setTimeFunction", c2 )
@@ -50,13 +51,14 @@ void exportInputVariableDefinitionToPython() {
         .def( "setConstantLeftExtension", &EvolutionParameterInstance::setConstantLeftExtension )
         .def( "setLinearLeftExtension", &EvolutionParameterInstance::setLinearLeftExtension );
 
-    py::class_< GenericInputVariableInstance, GenericInputVariableInstance::GenericInputVariablePtr >(
-        "GenericInputVariable", py::no_init )
+    py::class_< GenericInputVariableInstance,
+                GenericInputVariableInstance::GenericInputVariablePtr >( "GenericInputVariable",
+                                                                         py::no_init )
         .def( "__init__", py::make_constructor(
                               &initFactoryPtr< GenericInputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< GenericInputVariableInstance, const BaseMeshPtr &,
-                                                const std::string & >))
+              py::make_constructor(&initFactoryPtr< GenericInputVariableInstance,
+                                                    const BaseMeshPtr &, const std::string & >))
         .def( "existsReferenceValue", &GenericInputVariableInstance::existsReferenceValue )
         .def( "getReferenceValue", &GenericInputVariableInstance::getReferenceValue )
         .def( "setEvolutionParameter", &GenericInputVariableInstance::setEvolutionParameter )
@@ -64,142 +66,151 @@ void exportInputVariableDefinitionToPython() {
         .def( "setReferenceValue", &GenericInputVariableInstance::setReferenceValue );
 
     py::class_< TemperatureInputVariableInstance, TemperatureInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "TemperatureInputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "TemperatureInputVariable",
+                                                             py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< TemperatureInputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< TemperatureInputVariableInstance,
-                                                const BaseMeshPtr &, const std::string & >));
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< GeometryInputVariableInstance, GeometryInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "GeometryInputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "GeometryInputVariable", py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< GeometryInputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< GeometryInputVariableInstance, const BaseMeshPtr &,
-                                                const std::string & >));
+              py::make_constructor(&initFactoryPtr< GeometryInputVariableInstance,
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< CorrosionInputVariableInstance, CorrosionInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "CorrosionInputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "CorrosionInputVariable", py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< CorrosionInputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< CorrosionInputVariableInstance, const BaseMeshPtr &,
-                                                const std::string & >));
+              py::make_constructor(&initFactoryPtr< CorrosionInputVariableInstance,
+                                                    const BaseMeshPtr &, const std::string & >));
 
-    py::class_< IrreversibleDeformationInputVariableInstance, IrreversibleDeformationInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "IrreversibleDeformationInputVariable",
-                                                     py::no_init )
+    py::class_< IrreversibleDeformationInputVariableInstance,
+                IrreversibleDeformationInputVariablePtr,
+                py::bases< GenericInputVariableInstance > >( "IrreversibleDeformationInputVariable",
+                                                             py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< IrreversibleDeformationInputVariableInstance,
-                                                const BaseMeshPtr & >))
+                                                    const BaseMeshPtr & >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< IrreversibleDeformationInputVariableInstance,
-                                                const BaseMeshPtr &, const std::string & >));
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< ConcreteHydratationInputVariableInstance, ConcreteHydratationInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "ConcreteHydratationInputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "ConcreteHydratationInputVariable",
+                                                             py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< ConcreteHydratationInputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< ConcreteHydratationInputVariableInstance,
-                                                const BaseMeshPtr &, const std::string & >));
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< IrradiationInputVariableInstance, IrradiationInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "IrradiationInputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "IrradiationInputVariable",
+                                                             py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< IrradiationInputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< IrradiationInputVariableInstance,
-                                                const BaseMeshPtr &, const std::string & >));
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< SteelPhasesInputVariableInstance, SteelPhasesInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "SteelPhasesInputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "SteelPhasesInputVariable",
+                                                             py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< SteelPhasesInputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< SteelPhasesInputVariableInstance,
-                                                const BaseMeshPtr &, const std::string & >));
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< ZircaloyPhasesInputVariableInstance, ZircaloyPhasesInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "ZircaloyPhasesInputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "ZircaloyPhasesInputVariable",
+                                                             py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< ZircaloyPhasesInputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< ZircaloyPhasesInputVariableInstance,
-                                                const BaseMeshPtr &, const std::string & >));
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< Neutral1InputVariableInstance, Neutral1InputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "Neutral1InputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "Neutral1InputVariable", py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< Neutral1InputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< Neutral1InputVariableInstance, const BaseMeshPtr &,
-                                                const std::string & >));
+              py::make_constructor(&initFactoryPtr< Neutral1InputVariableInstance,
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< Neutral2InputVariableInstance, Neutral2InputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "Neutral2InputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "Neutral2InputVariable", py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< Neutral2InputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< Neutral2InputVariableInstance, const BaseMeshPtr &,
-                                                const std::string & >));
+              py::make_constructor(&initFactoryPtr< Neutral2InputVariableInstance,
+                                                    const BaseMeshPtr &, const std::string & >));
 
-    py::class_< Neutral3InputVariableInstance,
-           Neutral3InputVariablePtr,
-           py::bases<GenericInputVariableInstance>>("Neutral3InputVariable", py::no_init)
-        .def("__init__",
-            py::make_constructor(&initFactoryPtr<Neutral3InputVariableInstance, const BaseMeshPtr&>))
-        .def("__init__",
-            py::make_constructor( &initFactoryPtr<Neutral3InputVariableInstance, const BaseMeshPtr&,
-                                              const std::string&>));
+    py::class_< Neutral3InputVariableInstance, Neutral3InputVariablePtr,
+                py::bases< GenericInputVariableInstance > >( "Neutral3InputVariable", py::no_init )
+        .def( "__init__",
+              py::make_constructor(
+                  &initFactoryPtr< Neutral3InputVariableInstance, const BaseMeshPtr & >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< Neutral3InputVariableInstance,
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< ConcreteDryingInputVariableInstance, ConcreteDryingInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "ConcreteDryingInputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "ConcreteDryingInputVariable",
+                                                             py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< ConcreteDryingInputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< ConcreteDryingInputVariableInstance,
-                                                const BaseMeshPtr &, const std::string & >));
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< TotalFluidPressureInputVariableInstance, TotalFluidPressureInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "TotalFluidPressureInputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "TotalFluidPressureInputVariable",
+                                                             py::no_init )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< TotalFluidPressureInputVariableInstance, const BaseMeshPtr & >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< TotalFluidPressureInputVariableInstance,
-                                                const BaseMeshPtr &, const std::string & >));
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< VolumetricDeformationInputVariableInstance, VolumetricDeformationInputVariablePtr,
-            py::bases< GenericInputVariableInstance > >( "VolumetricDeformationInputVariable", py::no_init )
+                py::bases< GenericInputVariableInstance > >( "VolumetricDeformationInputVariable",
+                                                             py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< VolumetricDeformationInputVariableInstance,
-                                                const BaseMeshPtr & >))
+                                                    const BaseMeshPtr & >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< VolumetricDeformationInputVariableInstance,
-                                                const BaseMeshPtr &, const std::string & >));
+                                                    const BaseMeshPtr &, const std::string & >));
 
     py::class_< InputVariableOnMeshInstance, InputVariableOnMeshPtr > c3( "InputVariableOnMesh",
-                                                                      py::no_init );
+                                                                          py::no_init );
     c3.def( "__init__",
             py::make_constructor(&initFactoryPtr< InputVariableOnMeshInstance, const MeshPtr & >));
-    c3.def( "__init__",
-            py::make_constructor(&initFactoryPtr< InputVariableOnMeshInstance, const SkeletonPtr & >));
+    c3.def( "__init__", py::make_constructor(
+                            &initFactoryPtr< InputVariableOnMeshInstance, const SkeletonPtr & >));
 #ifdef _USE_MPI
-    c3.def(
-        "__init__",
-        py::make_constructor(&initFactoryPtr< InputVariableOnMeshInstance, const ParallelMeshPtr & >));
+    c3.def( "__init__",
+            py::make_constructor(
+                &initFactoryPtr< InputVariableOnMeshInstance, const ParallelMeshPtr & >));
 #endif /* _USE_MPI */
     c3.def(
         "addInputVariableOnAllMesh",
@@ -279,13 +290,13 @@ void exportInputVariableDefinitionToPython() {
                 Neutral2InputVariablePtr > );
     c3.def( "addInputVariableOnElement",
             &InputVariableOnMeshInstance::addInputVariableOnElement< Neutral2InputVariablePtr > );
-    c3.def("addInputVariableOnAllMesh",
-           &InputVariableOnMeshInstance::addInputVariableOnAllMesh< Neutral3InputVariablePtr> );
-    c3.def(
-      "addInputVariableOnGroupOfElements",
-      &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements< Neutral3InputVariablePtr > );
-    c3.def("addInputVariableOnElement",
-           &InputVariableOnMeshInstance::addInputVariableOnElement< Neutral3InputVariablePtr > );
+    c3.def( "addInputVariableOnAllMesh",
+            &InputVariableOnMeshInstance::addInputVariableOnAllMesh< Neutral3InputVariablePtr > );
+    c3.def( "addInputVariableOnGroupOfElements",
+            &InputVariableOnMeshInstance::addInputVariableOnGroupOfElements<
+                Neutral3InputVariablePtr > );
+    c3.def( "addInputVariableOnElement",
+            &InputVariableOnMeshInstance::addInputVariableOnElement< Neutral3InputVariablePtr > );
     c3.def(
         "addInputVariableOnAllMesh",
         &InputVariableOnMeshInstance::addInputVariableOnAllMesh< ConcreteDryingInputVariablePtr > );

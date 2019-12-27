@@ -45,8 +45,9 @@ void exportMechanicalLoadToPython() {
         .value( "WavePressureOnFace", WavePressureOnFace )
         .value( "THMFlux", THMFlux );
 
-    py::class_< GenericMechanicalLoadInstance, GenericMechanicalLoadInstance::GenericMechanicalLoadPtr,
-            py::bases< DataStructure > >( "GenericMechanicalLoad", py::no_init )
+    py::class_< GenericMechanicalLoadInstance,
+                GenericMechanicalLoadInstance::GenericMechanicalLoadPtr,
+                py::bases< DataStructure > >( "GenericMechanicalLoad", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< GenericMechanicalLoadInstance, ModelPtr >))
         .def( "__init__",
@@ -58,16 +59,17 @@ void exportMechanicalLoadToPython() {
               py::return_value_policy< py::copy_const_reference >() );
 
     py::class_< NodalForceDoubleInstance, NodalForceDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "NodalForceDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< NodalForceDoubleInstance, ModelPtr >))
+                py::bases< GenericMechanicalLoadInstance > >( "NodalForceDouble", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< NodalForceDoubleInstance, std::string, ModelPtr >))
+              py::make_constructor(&initFactoryPtr< NodalForceDoubleInstance, ModelPtr >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< NodalForceDoubleInstance, std::string, ModelPtr >))
         .def( "build", &NodalForceDoubleInstance::build )
         .def( "setValue", &NodalForceDoubleInstance::setValue );
 
-    py::class_< NodalStructuralForceDoubleInstance,
-            NodalStructuralForceDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "NodalStructuralForceDouble", py::no_init )
+    py::class_<
+        NodalStructuralForceDoubleInstance, NodalStructuralForceDoubleInstance::MechanicalLoadPtr,
+        py::bases< GenericMechanicalLoadInstance > >( "NodalStructuralForceDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< NodalStructuralForceDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -77,26 +79,28 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &NodalStructuralForceDoubleInstance::setValue );
 
     py::class_< ForceOnFaceDoubleInstance, ForceOnFaceDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "ForceOnFaceDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ForceOnFaceDoubleInstance, ModelPtr >))
+                py::bases< GenericMechanicalLoadInstance > >( "ForceOnFaceDouble", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ForceOnFaceDoubleInstance, std::string, ModelPtr >))
+              py::make_constructor(&initFactoryPtr< ForceOnFaceDoubleInstance, ModelPtr >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< ForceOnFaceDoubleInstance, std::string, ModelPtr >))
         .def( "build", &ForceOnFaceDoubleInstance::build )
         .def( "setValue", &ForceOnFaceDoubleInstance::setValue );
 
     py::class_< ForceOnEdgeDoubleInstance, ForceOnEdgeDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "ForceOnEdgeDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ForceOnEdgeDoubleInstance, ModelPtr >))
+                py::bases< GenericMechanicalLoadInstance > >( "ForceOnEdgeDouble", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ForceOnEdgeDoubleInstance, std::string, ModelPtr >))
+              py::make_constructor(&initFactoryPtr< ForceOnEdgeDoubleInstance, ModelPtr >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< ForceOnEdgeDoubleInstance, std::string, ModelPtr >))
         .def( "build", &ForceOnEdgeDoubleInstance::build )
         .def( "setValue", &ForceOnEdgeDoubleInstance::setValue );
 
-    py::class_< StructuralForceOnEdgeDoubleInstance,
-            StructuralForceOnEdgeDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "StructuralForceOnEdgeDouble", py::no_init )
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< StructuralForceOnEdgeDoubleInstance, ModelPtr >))
+    py::class_<
+        StructuralForceOnEdgeDoubleInstance, StructuralForceOnEdgeDoubleInstance::MechanicalLoadPtr,
+        py::bases< GenericMechanicalLoadInstance > >( "StructuralForceOnEdgeDouble", py::no_init )
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< StructuralForceOnEdgeDoubleInstance, ModelPtr >))
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< StructuralForceOnEdgeDoubleInstance, std::string, ModelPtr >))
@@ -104,15 +108,16 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &StructuralForceOnEdgeDoubleInstance::setValue );
 
     py::class_< LineicForceDoubleInstance, LineicForceDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "LineicForceDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< LineicForceDoubleInstance, ModelPtr >))
+                py::bases< GenericMechanicalLoadInstance > >( "LineicForceDouble", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< LineicForceDoubleInstance, std::string, ModelPtr >))
+              py::make_constructor(&initFactoryPtr< LineicForceDoubleInstance, ModelPtr >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< LineicForceDoubleInstance, std::string, ModelPtr >))
         .def( "build", &LineicForceDoubleInstance::build )
         .def( "setValue", &LineicForceDoubleInstance::setValue );
 
     py::class_< InternalForceDoubleInstance, InternalForceDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "InternalForceDouble", py::no_init )
+                py::bases< GenericMechanicalLoadInstance > >( "InternalForceDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< InternalForceDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -121,11 +126,11 @@ void exportMechanicalLoadToPython() {
         .def( "build", &InternalForceDoubleInstance::build )
         .def( "setValue", &InternalForceDoubleInstance::setValue );
 
-    py::class_< StructuralForceOnBeamDoubleInstance,
-            StructuralForceOnBeamDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "StructuralForceOnBeamDouble", py::no_init )
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< StructuralForceOnBeamDoubleInstance, ModelPtr >))
+    py::class_<
+        StructuralForceOnBeamDoubleInstance, StructuralForceOnBeamDoubleInstance::MechanicalLoadPtr,
+        py::bases< GenericMechanicalLoadInstance > >( "StructuralForceOnBeamDouble", py::no_init )
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< StructuralForceOnBeamDoubleInstance, ModelPtr >))
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< StructuralForceOnBeamDoubleInstance, std::string, ModelPtr >))
@@ -133,7 +138,8 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &StructuralForceOnBeamDoubleInstance::setValue );
 
     py::class_< LocalForceOnBeamDoubleInstance, LocalForceOnBeamDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "LocalForceOnBeamDouble", py::no_init )
+                py::bases< GenericMechanicalLoadInstance > >( "LocalForceOnBeamDouble",
+                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< LocalForceOnBeamDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -143,10 +149,11 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &LocalForceOnBeamDoubleInstance::setValue );
 
     py::class_< StructuralForceOnShellDoubleInstance,
-            StructuralForceOnShellDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "StructuralForceOnShellDouble", py::no_init )
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< StructuralForceOnShellDoubleInstance, ModelPtr >))
+                StructuralForceOnShellDoubleInstance::MechanicalLoadPtr,
+                py::bases< GenericMechanicalLoadInstance > >( "StructuralForceOnShellDouble",
+                                                              py::no_init )
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< StructuralForceOnShellDoubleInstance, ModelPtr >))
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< StructuralForceOnShellDoubleInstance, std::string, ModelPtr >))
@@ -154,7 +161,8 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &StructuralForceOnShellDoubleInstance::setValue );
 
     py::class_< LocalForceOnShellDoubleInstance, LocalForceOnShellDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "LocalForceOnShellDouble", py::no_init )
+                py::bases< GenericMechanicalLoadInstance > >( "LocalForceOnShellDouble",
+                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< LocalForceOnShellDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -164,7 +172,7 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &LocalForceOnShellDoubleInstance::setValue );
 
     py::class_< PressureOnShellDoubleInstance, PressureOnShellDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "PressureOnShellDouble", py::no_init )
+                py::bases< GenericMechanicalLoadInstance > >( "PressureOnShellDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< PressureOnShellDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -174,7 +182,7 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &PressureOnShellDoubleInstance::setValue );
 
     py::class_< PressureOnPipeDoubleInstance, PressureOnPipeDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "PressureOnPipeDouble", py::no_init )
+                py::bases< GenericMechanicalLoadInstance > >( "PressureOnPipeDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< PressureOnPipeDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -183,8 +191,9 @@ void exportMechanicalLoadToPython() {
         .def( "build", &PressureOnPipeDoubleInstance::build )
         .def( "setValue", &PressureOnPipeDoubleInstance::setValue );
 
-    py::class_< ImposedDisplacementDoubleInstance, ImposedDisplacementDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "ImposedDisplacementDouble", py::no_init )
+    py::class_<
+        ImposedDisplacementDoubleInstance, ImposedDisplacementDoubleInstance::MechanicalLoadPtr,
+        py::bases< GenericMechanicalLoadInstance > >( "ImposedDisplacementDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< ImposedDisplacementDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -194,7 +203,7 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &ImposedDisplacementDoubleInstance::setValue );
 
     py::class_< ImposedPressureDoubleInstance, ImposedPressureDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "ImposedPressureDouble", py::no_init )
+                py::bases< GenericMechanicalLoadInstance > >( "ImposedPressureDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< ImposedPressureDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -203,8 +212,9 @@ void exportMechanicalLoadToPython() {
         .def( "build", &ImposedPressureDoubleInstance::build )
         .def( "setValue", &ImposedPressureDoubleInstance::setValue );
 
-    py::class_< DistributedPressureDoubleInstance, DistributedPressureDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "DistributedPressureDouble", py::no_init )
+    py::class_<
+        DistributedPressureDoubleInstance, DistributedPressureDoubleInstance::MechanicalLoadPtr,
+        py::bases< GenericMechanicalLoadInstance > >( "DistributedPressureDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< DistributedPressureDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -214,7 +224,7 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &DistributedPressureDoubleInstance::setValue );
 
     py::class_< ImpedanceOnFaceDoubleInstance, ImpedanceOnFaceDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "ImpedanceOnFaceDouble", py::no_init )
+                py::bases< GenericMechanicalLoadInstance > >( "ImpedanceOnFaceDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< ImpedanceOnFaceDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -224,7 +234,8 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &ImpedanceOnFaceDoubleInstance::setValue );
 
     py::class_< NormalSpeedOnFaceDoubleInstance, NormalSpeedOnFaceDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "NormalSpeedOnFaceDouble", py::no_init )
+                py::bases< GenericMechanicalLoadInstance > >( "NormalSpeedOnFaceDouble",
+                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< NormalSpeedOnFaceDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -233,8 +244,9 @@ void exportMechanicalLoadToPython() {
         .def( "build", &NormalSpeedOnFaceDoubleInstance::build )
         .def( "setValue", &NormalSpeedOnFaceDoubleInstance::setValue );
 
-    py::class_< WavePressureOnFaceDoubleInstance, WavePressureOnFaceDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "WavePressureOnFaceDouble", py::no_init )
+    py::class_<
+        WavePressureOnFaceDoubleInstance, WavePressureOnFaceDoubleInstance::MechanicalLoadPtr,
+        py::bases< GenericMechanicalLoadInstance > >( "WavePressureOnFaceDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< WavePressureOnFaceDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -243,8 +255,9 @@ void exportMechanicalLoadToPython() {
         .def( "build", &WavePressureOnFaceDoubleInstance::build )
         .def( "setValue", &WavePressureOnFaceDoubleInstance::setValue );
 
-    py::class_< DistributedHeatFluxDoubleInstance, DistributedHeatFluxDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "DistributedHeatFluxDouble", py::no_init )
+    py::class_<
+        DistributedHeatFluxDoubleInstance, DistributedHeatFluxDoubleInstance::MechanicalLoadPtr,
+        py::bases< GenericMechanicalLoadInstance > >( "DistributedHeatFluxDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< DistributedHeatFluxDoubleInstance, ModelPtr >))
         .def( "__init__",
@@ -254,10 +267,11 @@ void exportMechanicalLoadToPython() {
         .def( "setValue", &DistributedHeatFluxDoubleInstance::setValue );
 
     py::class_< DistributedHydraulicFluxDoubleInstance,
-            DistributedHydraulicFluxDoubleInstance::MechanicalLoadPtr,
-            py::bases< GenericMechanicalLoadInstance > >( "DistributedHydraulicFluxDouble", py::no_init )
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DistributedHydraulicFluxDoubleInstance, ModelPtr >))
+                DistributedHydraulicFluxDoubleInstance::MechanicalLoadPtr,
+                py::bases< GenericMechanicalLoadInstance > >( "DistributedHydraulicFluxDouble",
+                                                              py::no_init )
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< DistributedHydraulicFluxDoubleInstance, ModelPtr >))
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< DistributedHydraulicFluxDoubleInstance, std::string, ModelPtr >))

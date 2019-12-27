@@ -28,8 +28,10 @@ namespace py = boost::python;
 
 void exportPhysicsAndModelingsToPython() {
 
-    py::enum_< Physics >( "Physics" ).value( "Mechanics", Mechanics ).value( "Thermal", Thermal ).value(
-        "Acoustics", Acoustics );
+    py::enum_< Physics >( "Physics" )
+        .value( "Mechanics", Mechanics )
+        .value( "Thermal", Thermal )
+        .value( "Acoustics", Acoustics );
 
     py::enum_< Modelings >( "Modelings" )
         .value( "Axisymmetrical", Axisymmetrical )

@@ -30,9 +30,11 @@ namespace py = boost::python;
 void exportTimeDependantResultsContainerToPython() {
 
     py::class_< TimeDependantResultsContainerInstance, TimeDependantResultsContainerPtr,
-            py::bases< ResultsContainerInstance > >( "TimeDependantResultsContainer", py::no_init )
+                py::bases< ResultsContainerInstance > >( "TimeDependantResultsContainer",
+                                                         py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< TimeDependantResultsContainerInstance > ) )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< TimeDependantResultsContainerInstance,
-                                                             std::string, std::string > ) );
+              py::make_constructor(&initFactoryPtr< TimeDependantResultsContainerInstance >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< TimeDependantResultsContainerInstance,
+                                                    std::string, std::string >));
 };

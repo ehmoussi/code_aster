@@ -31,8 +31,8 @@ namespace py = boost::python;
 
 void exportSurfaceToPython() {
 
-    py::class_< SurfaceInstance, SurfaceInstance::SurfacePtr, py::bases< DataStructure > >( "Surface",
-                                                                                    py::no_init )
+    py::class_< SurfaceInstance, SurfaceInstance::SurfacePtr, py::bases< DataStructure > >(
+        "Surface", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< SurfaceInstance >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< SurfaceInstance, std::string >))
         .def( "exportExtensionToPython", &SurfaceInstance::exportExtensionToPython )

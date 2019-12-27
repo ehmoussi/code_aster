@@ -30,9 +30,10 @@ namespace py = boost::python;
 void exportNonLinearEvolutionContainerToPython() {
 
     py::class_< NonLinearEvolutionContainerInstance, NonLinearEvolutionContainerPtr,
-            py::bases< TimeDependantResultsContainerInstance > >( "NonLinearEvolutionContainer",
-                                                              py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< NonLinearEvolutionContainerInstance >))
+                py::bases< TimeDependantResultsContainerInstance > >( "NonLinearEvolutionContainer",
+                                                                      py::no_init )
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< NonLinearEvolutionContainerInstance >))
         .def( "__init__", py::make_constructor(
                               &initFactoryPtr< NonLinearEvolutionContainerInstance, std::string >));
 };

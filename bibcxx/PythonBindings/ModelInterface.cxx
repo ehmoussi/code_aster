@@ -50,7 +50,8 @@ void exportModelToPython() {
 #endif /* _USE_MPI */
     bool ( ModelInstance::*c5 )( BaseMeshPtr & ) = &ModelInstance::setMesh;
 
-    py::class_< ModelInstance, ModelInstance::ModelPtr, py::bases< DataStructure > >( "Model", py::no_init )
+    py::class_< ModelInstance, ModelInstance::ModelPtr, py::bases< DataStructure > >( "Model",
+                                                                                      py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< ModelInstance >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< ModelInstance, std::string >))
         .def( "addModelingOnAllMesh", &ModelInstance::addModelingOnAllMesh )
