@@ -29,7 +29,8 @@ namespace py = boost::python;
 
 void exportNormalModeAnalysisToPython() {
 
-    py::class_< NormalModeAnalysisInstance, NormalModeAnalysisPtr >( "NormalModeAnalysis", py::no_init )
+    py::class_< NormalModeAnalysisInstance, NormalModeAnalysisPtr >( "NormalModeAnalysis",
+                                                                     py::no_init )
         // fake initFactoryPtr: not a DataStructure
         .def( "__init__", py::make_constructor(&initFactoryPtr< NormalModeAnalysisInstance >))
         .def( "execute", &NormalModeAnalysisInstance::execute )

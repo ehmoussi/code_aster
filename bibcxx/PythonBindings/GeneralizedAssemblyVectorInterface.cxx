@@ -26,19 +26,19 @@
 #include <boost/python.hpp>
 
 namespace py = boost::python;
-#include <PythonBindings/factory.h>
 #include "PythonBindings/GeneralizedAssemblyVectorInterface.h"
+#include <PythonBindings/factory.h>
 
 void exportGeneralizedAssemblyVectorToPython() {
 
     py::class_< GenericGeneralizedAssemblyVectorInstance, GenericGeneralizedAssemblyVectorPtr,
-            py::bases< DataStructure > >( "GeneralizedAssemblyVector", py::no_init );
-        // fake initFactoryPtr: created by subclasses
-        // fake initFactoryPtr: created by subclasses
+                py::bases< DataStructure > >( "GeneralizedAssemblyVector", py::no_init );
+    // fake initFactoryPtr: created by subclasses
+    // fake initFactoryPtr: created by subclasses
 
     py::class_< GeneralizedAssemblyVectorDoubleInstance, GeneralizedAssemblyVectorDoublePtr,
-            py::bases< GenericGeneralizedAssemblyVectorInstance > >( "GeneralizedAssemblyVectorDouble",
-                                                                 py::no_init )
+                py::bases< GenericGeneralizedAssemblyVectorInstance > >(
+        "GeneralizedAssemblyVectorDouble", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorDoubleInstance >))
         .def( "__init__",
@@ -46,8 +46,8 @@ void exportGeneralizedAssemblyVectorToPython() {
                   &initFactoryPtr< GeneralizedAssemblyVectorDoubleInstance, std::string >));
 
     py::class_< GeneralizedAssemblyVectorComplexInstance, GeneralizedAssemblyVectorComplexPtr,
-            py::bases< GenericGeneralizedAssemblyVectorInstance > >( "GeneralizedAssemblyVectorComplex",
-                                                                 py::no_init )
+                py::bases< GenericGeneralizedAssemblyVectorInstance > >(
+        "GeneralizedAssemblyVectorComplex", py::no_init )
 #include <PythonBindings/factory.h>
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorComplexInstance >))

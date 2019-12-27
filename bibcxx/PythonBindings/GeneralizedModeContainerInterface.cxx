@@ -36,9 +36,10 @@ void exportGeneralizedModeContainerToPython() {
         &GeneralizedModeContainerInstance::setStiffnessMatrix;
 
     py::class_< GeneralizedModeContainerInstance, GeneralizedModeContainerPtr,
-            py::bases< FullResultsContainerInstance > >( "GeneralizedModeContainer", py::no_init )
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< GeneralizedModeContainerInstance, std::string >))
+                py::bases< FullResultsContainerInstance > >( "GeneralizedModeContainer",
+                                                             py::no_init )
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< GeneralizedModeContainerInstance, std::string >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< GeneralizedModeContainerInstance >))
         .def( "setDampingMatrix", &GeneralizedModeContainerInstance::setDampingMatrix )
         .def( "getGeneralizedDOFNumbering",
@@ -49,5 +50,4 @@ void exportGeneralizedModeContainerToPython() {
         .def( "setStiffnessMatrix", c2 )
         .def( "getDampingMatrix", &GeneralizedModeContainerInstance::getDampingMatrix )
         .def( "getStiffnessMatrix", &getGeneralizedStiffnessMatrix< GeneralizedModeContainerPtr > );
-
 };

@@ -32,10 +32,11 @@ namespace py = boost::python;
 
 void exportSimpleFieldOnElementsToPython() {
     py::class_< SimpleFieldOnElementsDoubleInstance, SimpleFieldOnElementsDoublePtr,
-            py::bases< DataStructure > >( "SimpleFieldOnElementsDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< SimpleFieldOnElementsDoubleInstance >))
+                py::bases< DataStructure > >( "SimpleFieldOnElementsDouble", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< SimpleFieldOnElementsDoubleInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< SimpleFieldOnElementsDoubleInstance >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< SimpleFieldOnElementsDoubleInstance, std::string >))
         .def( "getValue", &SimpleFieldOnElementsDoubleInstance::getValue,
               py::return_value_policy< py::return_by_value >() )
         .def( "updateValuePointers", &SimpleFieldOnElementsDoubleInstance::updateValuePointers );

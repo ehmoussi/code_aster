@@ -31,19 +31,20 @@ namespace py = boost::python;
 #include "PythonBindings/SimpleFieldOnNodesInterface.h"
 
 void exportSimpleFieldOnNodesToPython() {
-    py::class_< SimpleFieldOnNodesDoubleInstance, SimpleFieldOnNodesDoublePtr, py::bases< DataStructure > >(
-        "SimpleFieldOnNodesDouble", py::no_init )
+    py::class_< SimpleFieldOnNodesDoubleInstance, SimpleFieldOnNodesDoublePtr,
+                py::bases< DataStructure > >( "SimpleFieldOnNodesDouble", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesDoubleInstance >))
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesDoubleInstance, std::string >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< SimpleFieldOnNodesDoubleInstance, std::string >))
         .def( "getValue", &SimpleFieldOnNodesDoubleInstance::getValue,
               py::return_value_policy< py::return_by_value >() )
         .def( "updateValuePointers", &SimpleFieldOnNodesDoubleInstance::updateValuePointers );
     py::class_< SimpleFieldOnNodesComplexInstance, SimpleFieldOnNodesComplexPtr,
-            py::bases< DataStructure > >( "SimpleFieldOnNodesComplex", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesComplexInstance >))
+                py::bases< DataStructure > >( "SimpleFieldOnNodesComplex", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesComplexInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesComplexInstance >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< SimpleFieldOnNodesComplexInstance, std::string >))
         .def( "getValue", &SimpleFieldOnNodesComplexInstance::getValue,
               py::return_value_policy< py::return_by_value >() )
         .def( "updateValuePointers", &SimpleFieldOnNodesComplexInstance::updateValuePointers );

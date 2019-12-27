@@ -26,15 +26,15 @@
 #include <boost/python.hpp>
 
 namespace py = boost::python;
-#include <PythonBindings/factory.h>
 #include "PythonBindings/FluidStructureModalBasisInterface.h"
+#include <PythonBindings/factory.h>
 
 void exportFluidStructureModalBasisToPython() {
 
     py::class_< FluidStructureModalBasisInstance,
-            FluidStructureModalBasisInstance::FluidStructureModalBasisPtr, py::bases< DataStructure > >(
-        "FluidStructureModalBasis", py::no_init )
+                FluidStructureModalBasisInstance::FluidStructureModalBasisPtr,
+                py::bases< DataStructure > >( "FluidStructureModalBasis", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FluidStructureModalBasisInstance >))
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FluidStructureModalBasisInstance, std::string >));
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< FluidStructureModalBasisInstance, std::string >));
 };

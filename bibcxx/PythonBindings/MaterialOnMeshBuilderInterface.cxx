@@ -32,10 +32,11 @@ BOOST_PYTHON_FUNCTION_OVERLOADS( MaterialOnMeshBuilderbuild, MaterialOnMeshBuild
 
 void exportMaterialOnMeshBuilderToPython() {
 
-    py::class_< MaterialOnMeshBuilderInstance, MaterialOnMeshBuilderInstance::MaterialOnMeshBuilderPtr >
+    py::class_< MaterialOnMeshBuilderInstance,
+                MaterialOnMeshBuilderInstance::MaterialOnMeshBuilderPtr >
         c1( "MaterialOnMeshBuilder", py::no_init );
-        // fake initFactoryPtr: no constructor
-        // fake initFactoryPtr: no constructor
+    // fake initFactoryPtr: no constructor
+    // fake initFactoryPtr: no constructor
 
     c1.def( "build", &MaterialOnMeshBuilderInstance::build, MaterialOnMeshBuilderbuild() );
     c1.staticmethod( "build" );

@@ -34,7 +34,8 @@ void exportLineSearchMethodToPython() {
         .value( "Mixte", Mixte )
         .value( "Pilotage", Pilotage );
 
-    py::class_< LineSearchMethodInstance, LineSearchMethodPtr >( "LineSearchMethod", py::no_init ).def(
-        "__init__", py::make_constructor(&initFactoryPtr< LineSearchMethodInstance, LineSearchEnum >));
-        // fake initFactoryPtr: not a DataStructure
+    py::class_< LineSearchMethodInstance, LineSearchMethodPtr >( "LineSearchMethod", py::no_init )
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< LineSearchMethodInstance, LineSearchEnum >));
+    // fake initFactoryPtr: not a DataStructure
 };

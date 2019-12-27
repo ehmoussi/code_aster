@@ -27,15 +27,15 @@
 namespace py = boost::python;
 #include <PythonBindings/factory.h>
 
-#include "PythonBindings/DataStructureInterface.h"
-#include "PythonBindings/FieldOnNodesInterface.h"
 #include "DataFields/MeshCoordinatesField.h"
 #include "PythonBindings/ConstViewerUtilities.h"
+#include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/FieldOnNodesInterface.h"
 
 void exportFieldOnNodesToPython() {
 
-    py::class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr, py::bases< GenericDataFieldInstance > >(
-        "FieldOnNodesDouble", py::no_init )
+    py::class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
+                py::bases< GenericDataFieldInstance > >( "FieldOnNodesDouble", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDoubleInstance >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< FieldOnNodesDoubleInstance, std::string >))
@@ -51,7 +51,7 @@ void exportFieldOnNodesToPython() {
         .def( "update", &FieldOnNodesDoubleInstance::update )
         .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers );
     py::class_< FieldOnNodesComplexInstance, FieldOnNodesComplexPtr,
-            py::bases< GenericDataFieldInstance > >( "FieldOnNodesComplex", py::no_init )
+                py::bases< GenericDataFieldInstance > >( "FieldOnNodesComplex", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance, std::string >))

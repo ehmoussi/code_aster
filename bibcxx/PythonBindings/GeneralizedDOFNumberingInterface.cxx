@@ -32,19 +32,19 @@ namespace py = boost::python;
 
 void exportGeneralizedDOFNumberingToPython() {
 
-    bool ( GeneralizedDOFNumberingInstance::*c1 )( const MechanicalModeContainerPtr& ) =
+    bool ( GeneralizedDOFNumberingInstance::*c1 )( const MechanicalModeContainerPtr & ) =
         &GeneralizedDOFNumberingInstance::setModalBasis;
-    bool ( GeneralizedDOFNumberingInstance::*c2 )( const GeneralizedModeContainerPtr& ) =
+    bool ( GeneralizedDOFNumberingInstance::*c2 )( const GeneralizedModeContainerPtr & ) =
         &GeneralizedDOFNumberingInstance::setModalBasis;
 
     py::class_< GeneralizedDOFNumberingInstance,
-            GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr, py::bases< DataStructure > >(
-        "GeneralizedDOFNumbering", py::no_init )
+                GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
+                py::bases< DataStructure > >( "GeneralizedDOFNumbering", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< GeneralizedDOFNumberingInstance >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< GeneralizedDOFNumberingInstance, std::string >))
         .def( "getGeneralizedModel", &GeneralizedDOFNumberingInstance::getGeneralizedModel )
-        .def( "getModalBasis", &getModalBasis< GeneralizedDOFNumberingPtr > )
+        .def("getModalBasis", &getModalBasis< GeneralizedDOFNumberingPtr >)
         .def( "setGeneralizedModel", &GeneralizedDOFNumberingInstance::setGeneralizedModel )
         .def( "setModalBasis", c1 )
         .def( "setModalBasis", c2 );

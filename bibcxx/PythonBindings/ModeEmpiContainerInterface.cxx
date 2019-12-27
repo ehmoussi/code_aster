@@ -29,8 +29,8 @@ namespace py = boost::python;
 
 void exportModeEmpiContainerToPython() {
 
-    py::class_< ModeEmpiContainerInstance, ModeEmpiContainerPtr, py::bases< ResultsContainerInstance > >(
-        "ModeEmpiContainer", py::no_init )
+    py::class_< ModeEmpiContainerInstance, ModeEmpiContainerPtr,
+                py::bases< ResultsContainerInstance > >( "ModeEmpiContainer", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< ModeEmpiContainerInstance >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< ModeEmpiContainerInstance, std::string >));

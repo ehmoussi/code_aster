@@ -34,7 +34,7 @@ void exportMaterialBehaviourToPython() {
     py::class_< GeneralMaterialBehaviourInstance, GeneralMaterialBehaviourPtr >(
         "GeneralMaterialBehaviour", py::no_init )
         // fake initFactoryPtr: created by subclasses
-        .def( "__init__", py::make_constructor( &initFactoryPtr< GeneralMaterialBehaviourInstance > ) )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GeneralMaterialBehaviourInstance >))
         .def( "getAsterName", &GeneralMaterialBehaviourInstance::getAsterName )
         .def( "hasTractionFunction", &GeneralMaterialBehaviourInstance::hasTractionFunction )
         .def( "hasEnthalpyFunction", &GeneralMaterialBehaviourInstance::hasEnthalpyFunction )
@@ -77,12 +77,12 @@ void exportMaterialBehaviourToPython() {
         &MaterialBehaviourInstance::addNewStringProperty;
 
     py::class_< MaterialBehaviourInstance, MaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "MaterialBehaviour", py::no_init )
+                py::bases< GeneralMaterialBehaviourInstance > >( "MaterialBehaviour", py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< MaterialBehaviourInstance, std::string > ) )
+              py::make_constructor(&initFactoryPtr< MaterialBehaviourInstance, std::string >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< MaterialBehaviourInstance, std::string, std::string > ) )
+                  &initFactoryPtr< MaterialBehaviourInstance, std::string, std::string >))
         .def( "addNewDoubleProperty", c1 )
         .def( "addNewDoubleProperty", c2 )
         .def( "addNewComplexProperty", &MaterialBehaviourInstance::addNewComplexProperty )
@@ -97,9 +97,10 @@ void exportMaterialBehaviourToPython() {
         .def( "getName", &MaterialBehaviourInstance::getName );
 
     py::class_< BetonDoubleDpMaterialBehaviourInstance, BetonDoubleDpMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "BetonDoubleDpMaterialBehaviour", py::no_init )
+                py::bases< GeneralMaterialBehaviourInstance > >( "BetonDoubleDpMaterialBehaviour",
+                                                                 py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< BetonDoubleDpMaterialBehaviourInstance > ) )
+              py::make_constructor(&initFactoryPtr< BetonDoubleDpMaterialBehaviourInstance >))
         .def( "getName", &BetonDoubleDpMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues",
@@ -107,35 +108,40 @@ void exportMaterialBehaviourToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< BetonRagMaterialBehaviourInstance, BetonRagMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "BetonRagMaterialBehaviour", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< BetonRagMaterialBehaviourInstance > ) )
+                py::bases< GeneralMaterialBehaviourInstance > >( "BetonRagMaterialBehaviour",
+                                                                 py::no_init )
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< BetonRagMaterialBehaviourInstance >))
         .def( "getName", &BetonRagMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues", &BetonRagMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< DisEcroTracMaterialBehaviourInstance, DisEcroTracMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "DisEcroTracMaterialBehaviour", py::no_init )
+                py::bases< GeneralMaterialBehaviourInstance > >( "DisEcroTracMaterialBehaviour",
+                                                                 py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< DisEcroTracMaterialBehaviourInstance > ) )
+              py::make_constructor(&initFactoryPtr< DisEcroTracMaterialBehaviourInstance >))
         .def( "getName", &DisEcroTracMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues", &DisEcroTracMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< ElasMetaMaterialBehaviourInstance, ElasMetaMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "ElasMetaMaterialBehaviour", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< ElasMetaMaterialBehaviourInstance > ) )
+                py::bases< GeneralMaterialBehaviourInstance > >( "ElasMetaMaterialBehaviour",
+                                                                 py::no_init )
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< ElasMetaMaterialBehaviourInstance >))
         .def( "getName", &ElasMetaMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues", &ElasMetaMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< CableGaineFrotMaterialBehaviourInstance, CableGaineFrotMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "CableGaineFrotMaterialBehaviour",
-                                                                py::no_init )
+                py::bases< GeneralMaterialBehaviourInstance > >( "CableGaineFrotMaterialBehaviour",
+                                                                 py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< CableGaineFrotMaterialBehaviourInstance > ) )
+              py::make_constructor(&initFactoryPtr< CableGaineFrotMaterialBehaviourInstance >))
         .def( "getName", &CableGaineFrotMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues",
@@ -143,18 +149,20 @@ void exportMaterialBehaviourToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< ElasMetaFoMaterialBehaviourInstance, ElasMetaFoMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "ElasMetaFoMaterialBehaviour", py::no_init )
+                py::bases< GeneralMaterialBehaviourInstance > >( "ElasMetaFoMaterialBehaviour",
+                                                                 py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< ElasMetaFoMaterialBehaviourInstance > ) )
+              py::make_constructor(&initFactoryPtr< ElasMetaFoMaterialBehaviourInstance >))
         .def( "getName", &ElasMetaFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues", &ElasMetaFoMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< MetaTractionMaterialBehaviourInstance, MetaTractionMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "MetaTractionMaterialBehaviour", py::no_init )
+                py::bases< GeneralMaterialBehaviourInstance > >( "MetaTractionMaterialBehaviour",
+                                                                 py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< MetaTractionMaterialBehaviourInstance > ) )
+              py::make_constructor(&initFactoryPtr< MetaTractionMaterialBehaviourInstance >))
         .def( "getName", &MetaTractionMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues", &MetaTractionMaterialBehaviourInstance::hasConvertibleValues )
@@ -162,35 +170,40 @@ void exportMaterialBehaviourToPython() {
         .def( "hasTractionFunction", &MetaTractionMaterialBehaviourInstance::hasTractionFunction );
 
     py::class_< RuptFragMaterialBehaviourInstance, RuptFragMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "RuptFragMaterialBehaviour", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< RuptFragMaterialBehaviourInstance > ) )
+                py::bases< GeneralMaterialBehaviourInstance > >( "RuptFragMaterialBehaviour",
+                                                                 py::no_init )
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< RuptFragMaterialBehaviourInstance >))
         .def( "getName", &RuptFragMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues", &RuptFragMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< RuptFragFoMaterialBehaviourInstance, RuptFragFoMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "RuptFragFoMaterialBehaviour", py::no_init )
+                py::bases< GeneralMaterialBehaviourInstance > >( "RuptFragFoMaterialBehaviour",
+                                                                 py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< RuptFragFoMaterialBehaviourInstance > ) )
+              py::make_constructor(&initFactoryPtr< RuptFragFoMaterialBehaviourInstance >))
         .def( "getName", &RuptFragFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues", &RuptFragFoMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
-
     py::class_< CzmLabMixMaterialBehaviourInstance, CzmLabMixMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "CzmLabMixMaterialBehaviour", py::no_init )
+                py::bases< GeneralMaterialBehaviourInstance > >( "CzmLabMixMaterialBehaviour",
+                                                                 py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< CzmLabMixMaterialBehaviourInstance > ) )
+              py::make_constructor(&initFactoryPtr< CzmLabMixMaterialBehaviourInstance >))
         .def( "getName", &CzmLabMixMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues", &CzmLabMixMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< TractionMaterialBehaviourInstance, TractionMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "TractionMaterialBehaviour", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< TractionMaterialBehaviourInstance > ) )
+                py::bases< GeneralMaterialBehaviourInstance > >( "TractionMaterialBehaviour",
+                                                                 py::no_init )
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< TractionMaterialBehaviourInstance >))
         .def( "getName", &TractionMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues", &TractionMaterialBehaviourInstance::hasConvertibleValues )
@@ -198,8 +211,9 @@ void exportMaterialBehaviourToPython() {
         .def( "hasTractionFunction", &TractionMaterialBehaviourInstance::hasTractionFunction );
 
     py::class_< TherNlMaterialBehaviourInstance, TherNlMaterialBehaviourPtr,
-            py::bases< GeneralMaterialBehaviourInstance > >( "TherNlMaterialBehaviour", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< TherNlMaterialBehaviourInstance > ) )
+                py::bases< GeneralMaterialBehaviourInstance > >( "TherNlMaterialBehaviour",
+                                                                 py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TherNlMaterialBehaviourInstance >))
         .def( "getName", &TherNlMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues", &TherNlMaterialBehaviourInstance::hasConvertibleValues )

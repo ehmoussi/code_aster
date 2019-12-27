@@ -74,14 +74,14 @@ void exportUnitaryThermalLoadToPython() {
         "UnitaryThermalLoad", py::no_init );
 
     py::class_< DoubleImposedTemperatureInstance, DoubleImposedTemperaturePtr,
-            py::bases< UnitaryThermalLoadInstance > >( "DoubleImposedTemperature", py::no_init )
+                py::bases< UnitaryThermalLoadInstance > >( "DoubleImposedTemperature", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleImposedTemperatureInstance >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< DoubleImposedTemperatureInstance, double >))
         .def( "addGroupOfNodes", &DoubleImposedTemperatureInstance::addGroupOfNodes );
 
     py::class_< DoubleDistributedFlowInstance, DoubleDistributedFlowPtr,
-            py::bases< UnitaryThermalLoadInstance > >( "DoubleDistributedFlow", py::no_init )
+                py::bases< UnitaryThermalLoadInstance > >( "DoubleDistributedFlow", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleDistributedFlowInstance >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< DoubleDistributedFlowInstance, double >))
@@ -96,14 +96,15 @@ void exportUnitaryThermalLoadToPython() {
               DistributedFlowsetFlowXYZ() );
 
     py::class_< DoubleNonLinearFlowInstance, DoubleNonLinearFlowPtr,
-            py::bases< UnitaryThermalLoadInstance > >( "DoubleNonLinearFlow", py::no_init )
+                py::bases< UnitaryThermalLoadInstance > >( "DoubleNonLinearFlow", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleNonLinearFlowInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleNonLinearFlowInstance, double >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< DoubleNonLinearFlowInstance, double >))
         .def( "addGroupOfElements", &DoubleNonLinearFlowInstance::addGroupOfElements )
         .def( "setFlow", &DoubleNonLinearFlowInstance::setFlow, DoubleNonLinearFlowsetFlow() );
 
-    py::class_< DoubleExchangeInstance, DoubleExchangePtr, py::bases< UnitaryThermalLoadInstance > >(
-        "DoubleExchange", py::no_init )
+    py::class_< DoubleExchangeInstance, DoubleExchangePtr,
+                py::bases< UnitaryThermalLoadInstance > >( "DoubleExchange", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleExchangeInstance >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleExchangeInstance, double >))
         .def( "addGroupOfElements", &DoubleExchangeInstance::addGroupOfElements )
@@ -117,9 +118,10 @@ void exportUnitaryThermalLoadToPython() {
               DoubleExchangesetExternalTemperatureInfSup() );
 
     py::class_< DoubleExchangeWallInstance, DoubleExchangeWallPtr,
-            py::bases< UnitaryThermalLoadInstance > >( "DoubleExchangeWall", py::no_init )
+                py::bases< UnitaryThermalLoadInstance > >( "DoubleExchangeWall", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleExchangeWallInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleExchangeWallInstance, double >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< DoubleExchangeWallInstance, double >))
         .def( "addGroupOfElements", &DoubleExchangeWallInstance::addGroupOfElements )
         .def( "setExchangeCoefficient", &DoubleExchangeWallInstance::setExchangeCoefficient,
               DoubleExchangeWallsetExchangeCoefficient() )
@@ -133,7 +135,7 @@ void exportUnitaryThermalLoadToPython() {
         .def( "setSource", &DoubleSourceInstance::setSource, DoubleSourcesetSource() );
 
     py::class_< DoubleNonLinearSourceInstance, DoubleNonLinearSourcePtr,
-            py::bases< UnitaryThermalLoadInstance > >( "DoubleNonLinearSource", py::no_init )
+                py::bases< UnitaryThermalLoadInstance > >( "DoubleNonLinearSource", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleNonLinearSourceInstance >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< DoubleNonLinearSourceInstance, double >))
@@ -142,12 +144,12 @@ void exportUnitaryThermalLoadToPython() {
               DoubleNonLinearSourcesetSource() );
 
     py::class_< DoubleThermalRadiationInstance, DoubleThermalRadiationPtr,
-            py::bases< UnitaryThermalLoadInstance > >( "DoubleThermalRadiation", py::no_init )
+                py::bases< UnitaryThermalLoadInstance > >( "DoubleThermalRadiation", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleThermalRadiationInstance >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< DoubleThermalRadiationInstance, double >))
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DoubleThermalRadiationInstance, double, double >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< DoubleThermalRadiationInstance, double, double >))
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< DoubleThermalRadiationInstance, double, double, double >))
@@ -160,12 +162,12 @@ void exportUnitaryThermalLoadToPython() {
               DoubleThermalRadiationsetSigma() );
 
     py::class_< DoubleThermalGradientInstance, DoubleThermalGradientPtr,
-            py::bases< UnitaryThermalLoadInstance > >( "DoubleThermalGradient", py::no_init )
+                py::bases< UnitaryThermalLoadInstance > >( "DoubleThermalGradient", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleThermalGradientInstance >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< DoubleThermalGradientInstance, double >))
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DoubleThermalGradientInstance, double, double >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< DoubleThermalGradientInstance, double, double >))
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< DoubleThermalGradientInstance, double, double, double >))

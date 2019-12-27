@@ -66,7 +66,7 @@ void exportPhysicalQuantityToPython() {
         .value( "FlunHydr2", FlunHydr2 );
 
     py::class_< ForceDoubleInstance, ForceDoubleInstance::PhysicalQuantityPtr >( "ForceDouble",
-                                                                             py::no_init )
+                                                                                 py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< ForceDoubleInstance >))
         .def( "debugPrint", &ForceDoubleInstance::debugPrint )
         .def( "setValue", &ForceDoubleInstance::setValue );
@@ -95,8 +95,8 @@ void exportPhysicalQuantityToPython() {
         .def( "debugPrint", &DisplacementDoubleInstance::debugPrint )
         .def( "setValue", &DisplacementDoubleInstance::setValue );
 
-    py::class_< PressureDoubleInstance, PressureDoubleInstance::PhysicalQuantityPtr >( "PressureDouble",
-                                                                                   py::no_init )
+    py::class_< PressureDoubleInstance, PressureDoubleInstance::PhysicalQuantityPtr >(
+        "PressureDouble", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< PressureDoubleInstance >))
         .def( "debugPrint", &PressureDoubleInstance::debugPrint )
         .def( "setValue", &PressureDoubleInstance::setValue );
@@ -113,8 +113,8 @@ void exportPhysicalQuantityToPython() {
         .def( "debugPrint", &NormalSpeedDoubleInstance::debugPrint )
         .def( "setValue", &NormalSpeedDoubleInstance::setValue );
 
-    py::class_< HeatFluxDoubleInstance, HeatFluxDoubleInstance::PhysicalQuantityPtr >( "HeatFluxDouble",
-                                                                                   py::no_init )
+    py::class_< HeatFluxDoubleInstance, HeatFluxDoubleInstance::PhysicalQuantityPtr >(
+        "HeatFluxDouble", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< HeatFluxDoubleInstance >))
         .def( "debugPrint", &HeatFluxDoubleInstance::debugPrint )
         .def( "setValue", &HeatFluxDoubleInstance::setValue );

@@ -29,8 +29,9 @@ namespace py = boost::python;
 
 void exportLinearDisplacementEvolutionContainerToPython() {
 
-    py::class_< LinearDisplacementEvolutionContainerInstance, LinearDisplacementEvolutionContainerPtr,
-            py::bases< ResultsContainerInstance > >( "LinearDisplacementEvolutionContainer", py::no_init )
+    py::class_< LinearDisplacementEvolutionContainerInstance,
+                LinearDisplacementEvolutionContainerPtr, py::bases< ResultsContainerInstance > >(
+        "LinearDisplacementEvolutionContainer", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< LinearDisplacementEvolutionContainerInstance >))
         .def( "__init__",

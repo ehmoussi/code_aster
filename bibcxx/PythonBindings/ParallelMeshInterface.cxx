@@ -34,9 +34,10 @@ namespace py = boost::python;
 
 void exportParallelMeshToPython() {
     py::class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
-            py::bases< BaseMeshInstance > >( "ParallelMesh", py::no_init )
+                py::bases< BaseMeshInstance > >( "ParallelMesh", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelMeshInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelMeshInstance, std::string >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< ParallelMeshInstance, std::string >))
         .def( "hasLocalGroupOfElements", &ParallelMeshInstance::hasLocalGroupOfElements )
         .def( "hasLocalGroupOfNodes", &ParallelMeshInstance::hasLocalGroupOfNodes )
         .def( "readMedFile", &ParallelMeshInstance::readMedFile );

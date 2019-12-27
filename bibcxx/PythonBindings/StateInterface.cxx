@@ -37,7 +37,8 @@ void exportStateToPython() {
         &StateInstance::setFromNonLinearEvolution;
 
     py::class_< StateInstance, StatePtr >( "State", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< StateInstance, ASTERINTEGER, double >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< StateInstance, ASTERINTEGER, double >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< StateInstance, ASTERINTEGER >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< StateInstance, double >))
         .def( "setFromNonLinearEvolution", c1 )

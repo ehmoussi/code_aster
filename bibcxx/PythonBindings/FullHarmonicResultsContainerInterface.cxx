@@ -30,9 +30,11 @@ namespace py = boost::python;
 void exportFullHarmonicResultsContainerToPython() {
 
     py::class_< FullHarmonicResultsContainerInstance, FullHarmonicResultsContainerPtr,
-            py::bases< FullResultsContainerInstance > >( "FullHarmonicResultsContainer", py::no_init )
+                py::bases< FullResultsContainerInstance > >( "FullHarmonicResultsContainer",
+                                                             py::no_init )
         .def( "__init__", py::make_constructor(
                               &initFactoryPtr< FullHarmonicResultsContainerInstance, std::string >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FullHarmonicResultsContainerInstance >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< FullHarmonicResultsContainerInstance >))
         .def( "printMedFile", &FullHarmonicResultsContainerInstance::printMedFile );
 };

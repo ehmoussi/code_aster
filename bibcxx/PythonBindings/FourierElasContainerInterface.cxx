@@ -30,8 +30,8 @@ namespace py = boost::python;
 void exportFourierElasContainerToPython() {
 
     py::class_< FourierElasContainerInstance, FourierElasContainerPtr,
-            py::bases< ResultsContainerInstance > >( "FourierElasContainer", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< FourierElasContainerInstance > ) )
+                py::bases< ResultsContainerInstance > >( "FourierElasContainer", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FourierElasContainerInstance >))
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< FourierElasContainerInstance, std::string > ) );
+              py::make_constructor(&initFactoryPtr< FourierElasContainerInstance, std::string >));
 };
