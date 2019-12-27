@@ -38,11 +38,8 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     ESSAI_TRIA_DR_C_D = ListFact(args.get('ESSAI_TRIA_DR_C_D'))
     ESSAI_OEDO_DR_C_F = ListFact(args.get('ESSAI_OEDO_DR_C_F'))
     ESSAI_ISOT_DR_C_F = ListFact(args.get('ESSAI_ISOT_DR_C_F'))
-    ier     = 0
     str_num = None
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # Verifs supplementaires des valeurs renseignees pr les MCF ESSAI_*
     # -------------------------------------------------------------

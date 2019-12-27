@@ -33,8 +33,6 @@ from Utilitai.Utmess import UTMESS
 
 def defi_prop_alea_ops(self, **kwargs):
     """Corps de la macro DEFI_PROP_ALEA"""
-    self.set_icmd(1)
-    ier = 0
     # conteneur des paramètres du calcul
     params = Randomfield(**kwargs)
     np.random.seed(params.seed)
@@ -164,7 +162,6 @@ class Generator(object):
 
     def __init__(self, macro, params):
         """Constructor Base class"""
-#       self.name = macro.sd.nom
         self.macro = macro
         self.mediane = params.mediane
         self.cas = params.cas
@@ -173,7 +170,6 @@ class Generator(object):
         self.beta = params.beta
         self.seed = params.seed
         self.coord = params.coord
-#        self.formule  = formule(titr='GENE_PROP_ALEA concept : %s' % macro.sd.nom)
 
     def compute_KL(self):
         """specific to each method"""

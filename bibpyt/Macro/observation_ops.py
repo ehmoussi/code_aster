@@ -35,11 +35,6 @@ def observation_ops(self,
     """
      Ecriture de la macro MACRO_OBSERVATION
     """
-    ier = 0
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     # on transforme le mc MODI_REPERE pour ne pas le confondre avec l'operateur
     # du meme nom
     MODIF_REPERE = MODI_REPERE
@@ -68,9 +63,6 @@ def observation_ops(self,
     RESU = None
 
     TYPE_RESU = RESULTAT.getType()
-
-    self.DeclareOut('RESU', self.sd)
-
 
     # recuperation du maillage associe au modele numerique
     mayanum = MODELE_1.getMesh()
@@ -1083,7 +1075,6 @@ def anglnaut(P):
 
     xg = P[:, 0]
     yg = P[:, 1]
-    zg = P[:, 2]
 
     # calcul des angles nautiques
     x1 = copy.copy(xg)

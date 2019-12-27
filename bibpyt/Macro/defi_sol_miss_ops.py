@@ -27,15 +27,14 @@ def recu_coor_z(noma,group,typ_group,tole_r):
     import aster
     from Utilitai.Utmess import UTMESS
 
-    collcnx = aster.getcolljev(noma.nom.ljust(8) + '.CONNEX')
-    coord = aster.getvectjev(noma.nom.ljust(8) + '.COORDO    .VALE')
-    cnom = aster.getvectjev(noma.nom.ljust(8) + '.NOMNOE')
+    collcnx = aster.getcolljev(noma.getName().ljust(8) + '.CONNEX')
+    coord = aster.getvectjev(noma.getName().ljust(8) + '.COORDO    .VALE')
 
     coor_z=[]
 
     if typ_group == 'group_ma':
         nomgrma = group
-        collgrma = aster.getcolljev(noma.nom.ljust(8) + '.GROUPEMA')
+        collgrma = aster.getcolljev(noma.getName().ljust(8) + '.GROUPEMA')
         if nomgrma.ljust(24) not in collgrma:
             UTMESS("F", "MISS0_26", valk=group)
         else:
@@ -53,7 +52,7 @@ def recu_coor_z(noma,group,typ_group,tole_r):
                 if uzmax not in coor_z:
                     coor_z.append(uzmax)
     elif typ_group == 'group_no':
-        collgrno = aster.getcolljev(noma.nom.ljust(8) + '.GROUPENO')
+        collgrno = aster.getcolljev(noma.getName().ljust(8) + '.GROUPENO')
         nomgrno = group
         if nomgrno.ljust(24) not in collgrno:
             UTMESS("F", "MISS0_26", valk=group)
@@ -63,7 +62,7 @@ def recu_coor_z(noma,group,typ_group,tole_r):
             i = 0
             for node in grpn:
                 l_coor_group.append(
-                    aster.getvectjev(noma.nom.ljust(8) + '.COORDO    .VALE', 3 * (node - 1), 3))
+                    aster.getvectjev(noma.getName().ljust(8) + '.COORDO    .VALE', 3 * (node - 1), 3))
                 uz = round(l_coor_group[i][2],tole_r)
                 i += 1
                 if uz not in coor_z:
@@ -90,13 +89,6 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
     from Utilitai.Table import Table
     CREA_TABLE = self.get_cmd("CREA_TABLE")
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
-    # Le concept sortant (de type table_sdaster) est tabout
-    self.DeclareOut("tabout", self.sd)
-
     # 1. Création des dictionnaires des MATERIAUX
     l_mate = []
     for Mi in MATERIAU:
@@ -121,11 +113,9 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
             UTMESS("F", "MISS0_3")
         if n_epais == 0:
             UTMESS("F", "MISS0_21")
-        nb_couche = len(l_couche)
 
     # Mode automatique pour les couches :
     grma_interf = None
-    arg_grno = False
     arg_grma = False
     if COUCHE_AUTO is not None:
         if isinstance(COUCHE_AUTO, tuple): COUCHE_AUTO = COUCHE_AUTO[0]
@@ -143,7 +133,6 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         coor_z_input = []
         decalage_auto = False
         # Lecture des arguments : toujours une seule couche_auto
-        
         if COUCHE_AUTO.get("HOMOGENE") == "OUI":
             homogene = True
         if COUCHE_AUTO.get("MAILLAGE"):
@@ -151,15 +140,11 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         if COUCHE_AUTO.get("SURF") == "NON":
             enfonce = True
         if COUCHE_AUTO.get("GROUP_MA") or COUCHE_AUTO.get("GROUP_NO"):
-            collcnx = aster.getcolljev(noma.nom.ljust(8) + '.CONNEX')
-            coord = aster.getvectjev(noma.nom.ljust(8) + '.COORDO    .VALE')
-            cnom = aster.getvectjev(noma.nom.ljust(8) + '.NOMNOE')
             if COUCHE_AUTO.get("GROUP_MA"):
                 arg_grma = True
                 nomgrma = COUCHE_AUTO.get("GROUP_MA")
                 coor_z_input =  recu_coor_z(noma,nomgrma,'group_ma',tole_r)
             else:
-                arg_grno = True
                 nomgrno = COUCHE_AUTO.get("GROUP_NO")
                 coor_z_input =  recu_coor_z(noma,nomgrno,'group_no',tole_r)
             max_z_input = coor_z_input[0]
@@ -288,9 +273,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
     #Generation table sol en mode auto
     if (COUCHE_AUTO is not None):
         couche = {}
-        nbc = 0
         idc = 1
-        nbsscouche = 0
         if enfonce:
             l_noeud = coor_z_input
             # Liste des epaisseurs de sol
@@ -319,7 +302,6 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
                         ind_mat_sup = ind_mat_sup - 1
                         while enfonc_ss_c_bas >= l_z_ep[ind_mat_inf]:
                             ind_mat_inf += 1
-                    nb_mat_couche = ind_mat_inf - ind_mat_sup
                     if homogene:
                         id_mate = ll_mate[0]
                     elif ind_mat_sup < (ind_mat_inf - 2):
@@ -490,7 +472,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         couche.update(l_mate[id_mate])
         # pour "SUBSTRATUM" existe dans la liste et == None
         if ("SUBSTRATUM" in couche) :
-            if not couche.get("SUBSTRATUM") : 
+            if not couche.get("SUBSTRATUM") :
                 del couche["SUBSTRATUM"]
         if couche["EPAIS"] is None:
             couche["EPAIS"] = 0.

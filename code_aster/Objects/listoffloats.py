@@ -29,7 +29,6 @@ import aster
 from libaster import ListOfFloats
 
 from ..Utilities import accept_array, injector
-from ..Utilities import deprecated
 
 
 @injector(ListOfFloats)
@@ -68,8 +67,3 @@ class ExtendedListOfFloats(object):
             list: The :py:class:`numpy.array` containing the values (by
                 reference).
         """
-        return self.setVectorValues(list(array))
-
-    @deprecated(help="Use `getValues()` instead.")
-    def Valeurs(self):
-        return self.getValues()

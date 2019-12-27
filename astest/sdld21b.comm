@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -58,9 +58,9 @@ CL=AFFE_CHAR_MECA( MODELE=MO,DDL_IMPO=(
                    _F( GROUP_NO = 'A_ET_B', DX = 0.,DY = 0.,DZ = 0.),
                             _F( GROUP_NO = 'MASSE',         DY = 0.,DZ = 0.)),
                    )
-                   
+
 CH2 = AFFE_CHAR_MECA(MODELE=MO,
-                        FORCE_NODALE=_F(  NOEUD = 'P4',   FX = 1.)   
+                        FORCE_NODALE=_F(  NOEUD = 'P4',   FX = 1.)
                         )
 
 # --------------------------------------------------------------------
@@ -188,7 +188,7 @@ L_AMORT = DEFI_LIST_REEL(VALE=(8.6824E-3,  0.017101,   0.0250,     3.21393E-2,
 
 
 
-LIFREQB = DEFI_LIST_FREQ(VALE=LIFREQ.Valeurs(),
+LIFREQB = DEFI_LIST_FREQ(VALE=LIFREQ.getValues(),
                          RAFFINEMENT=_F(LIST_RAFFINE=lfreq,
                                         CRITERE="LARGEUR_3DB",
                                         NB_POINTS=7,
@@ -205,7 +205,7 @@ DYNPHGB2=DYNA_LINE(MODELE=MO,
                    BANDE_ANALYSE=(5.,32.),
                    CHARGE = CL,
                    AMORTISSEMENT=_F(TYPE_AMOR='MODAL',
-                                    AMOR_REDUIT = L_AMORT.Valeurs(),
+                                    AMOR_REDUIT = L_AMORT.getValues(),
                                     ),
                    LIST_FREQ=LIFREQB,
                    EXCIT=_F(COEF_MULT = 1.,
@@ -214,7 +214,7 @@ DYNPHGB2=DYNA_LINE(MODELE=MO,
                    RESU_GENE = CO('DYNHAGB2'),
                    ENRI_STAT = 'NON',
                    )
-                   
+
 
 #--- Test DYNA_LINE DYNHAGB2
 
@@ -1659,7 +1659,7 @@ LIFREQC = DEFI_LIST_FREQ(DEBUT=5.,
                                         DISPERSION=0.01),
                          )
 
-FREQC=CREA_TABLE(LISTE=_F(LISTE_R=LIFREQC.Valeurs(),PARA='FREQ'))
+FREQC=CREA_TABLE(LISTE=_F(LISTE_R=LIFREQC.getValues(),PARA='FREQ'))
 
 
 LIFREQD = DEFI_LIST_FREQ(DEBUT=5.,
@@ -1671,7 +1671,7 @@ LIFREQD = DEFI_LIST_FREQ(DEBUT=5.,
                                         DISPERSION=0.01),
                          )
 
-FREQD=CREA_TABLE(LISTE=_F(LISTE_R=LIFREQD.Valeurs(),PARA='FREQ'))
+FREQD=CREA_TABLE(LISTE=_F(LISTE_R=LIFREQD.getValues(),PARA='FREQ'))
 
 TEST_TABLE(TABLE=FREQC,
            VALE_CALC=5.5089685249803111,

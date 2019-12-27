@@ -35,18 +35,15 @@ class ExtendedGeneralizedAssemblyVectorComplex(object):
 
     def EXTR_VECT_GENE_C(self):
         import numpy
-        if not self.accessible():
-            raise AsException("Erreur dans vect_asse_gene_c.EXTR_VECT_GENE en PAR_LOT='OUI'")
+
         valeur=numpy.array(self.sdj.VALE.get(), complex)
 
         return valeur
 
     def RECU_VECT_GENE_C(self,vecteur):
-        if not self.accessible():
-            raise AsException("Erreur dans vect_asse_gene_c.RECU_VECT_GENE en PAR_LOT='OUI'")
         import numpy
         numpy.asarray(vecteur)
-        ncham=self.get_name()
+        ncham=self.getName()
         ncham=ncham+(8-len(ncham))*' '
         desc = self.sdj.DESC.get()
         # On teste si le DESC de la matrice existe
@@ -73,25 +70,19 @@ class ExtendedGeneralizedAssemblyVectorDouble(object):
 
     def EXTR_VECT_GENE_R(self) :
       import numpy
-      if not self.accessible():
-         raise AsException("Erreur dans vect_asse_gene_r.EXTR_VECT_GENE en PAR_LOT='OUI'")
       valeur = numpy.array(self.sdj.VALE.get())
       return valeur
 
     def EXTR_VECT_GENE_C(self):
         import numpy
-        if not self.accessible():
-            raise AsException("Erreur dans vect_asse_gene_c.EXTR_VECT_GENE en PAR_LOT='OUI'")
         valeur=numpy.array(self.sdj.VALE.get(), complex)
 
         return valeur
 
     def RECU_VECT_GENE_C(self,vecteur):
-        if not self.accessible():
-            raise AsException("Erreur dans vect_asse_gene_c.RECU_VECT_GENE en PAR_LOT='OUI'")
         import numpy
         numpy.asarray(vecteur)
-        ncham=self.get_name()
+        ncham=self.getName()
         ncham=ncham+(8-len(ncham))*' '
         desc = self.sdj.DESC.get()
         # On teste si le DESC de la matrice existe

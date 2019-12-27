@@ -24,8 +24,6 @@ def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
     """
        Macro-command DYNA_VISCO, main file
     """
-
-    ier=0
     from Macro.dyna_visco_modes import dyna_visco_modes
     from Macro.dyna_visco_harm  import dyna_visco_harm
     from code_aster.Cata.Syntax import _F
@@ -38,11 +36,6 @@ def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
     NUME_DDL      = self.get_cmd('NUME_DDL')
     ASSE_MATRICE  = self.get_cmd('ASSE_MATRICE')
     COMB_MATR_ASSE= self.get_cmd('COMB_MATR_ASSE')
-    DEBUG         = self.get_cmd('DEBUG')
-
-
-    # La macro compte pour 1 dans la numérotation des commandes
-    self.set_icmd(1)
 
     coef_fmax = 1.
     if 'COEF_FREQ_MAX' in args:
@@ -54,7 +47,7 @@ def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
     if FREQ:
         list_FREQ=FREQ
     else:
-        list_FREQ=LIST_FREQ.Valeurs()
+        list_FREQ=LIST_FREQ.getValues()
 
     # check on the number of values of the frequencies list
     n_f=len(list_FREQ)
@@ -73,8 +66,6 @@ def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
     eta0={}
     ny=0
     trKg=0
-
-    info=INFO
 
 
 # ASSEMBLY OF THE MATRICES OF THE ELASTIC AND VISCOELASTIC PARTS
@@ -226,9 +217,9 @@ def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
 
         dyna_harm=dyna_visco_harm(self, EXCIT, list_FREQ, _modes,
                                         MATER_ELAS_FO, __asseKg, __asseKgr, __asseMg, __listKv, e0, eta0, __num, **args)
-        
+
         return dyna_harm
-    
+
     return _modes
 
 
@@ -247,7 +238,7 @@ def extr_matr_elim_lagr(self, matr_asse):
     #--                                                 --#
     #-----------------------------------------------------#
 
-    iret,ibid,nom_nume = aster.dismoi('NOM_NUME_DDL',matr_asse.nom,'MATR_ASSE','F')
+    iret,ibid,nom_nume = aster.dismoi('NOM_NUME_DDL',matr_asse.getName(),'MATR_ASSE','F')
     Nume=aster.getvectjev(nom_nume.ljust(8)+'      .NUME.DELG        ' )
     ind_lag1=[]
     ind_nolag=[]

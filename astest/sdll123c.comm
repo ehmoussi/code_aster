@@ -33,13 +33,12 @@ def EXTR_MATR(matrrr,option) :
 # attention a l'espace memoire
 
 # construction des vecteurs jeveux
-                nommatr=matrrr.nom
+                nommatr=matrrr.getName()
                 lenm=len(nommatr)
                 nommatr=nommatr+' '*(8-lenm+1)
                 vectrav=nommatr+'          .REFA        '
                 nom=aster.getvectjev(vectrav)
                 nomnume=nom[1]
-                typm=nom[8]
                 lenm=len(nomnume)
                 nomnume=nomnume[0:9]
 
@@ -83,7 +82,6 @@ def EXTR_MATR(matrrr,option) :
 
 # contruction du vect contenant les indices des ddls non lagr et non nuls
                 gg=0
-                tt=0
                 pp=0
                 limm=nnddl[pp]
                 vecc=[1]*limm
@@ -113,7 +111,6 @@ def EXTR_MATR(matrrr,option) :
                 valeu=NP.zeros([lon,lon])
                 opi=0
                 indc=0
-                indl=0
                 for ii in range(0,lon):
                         if (ii==0):
                                 opi=adia[ii]
@@ -373,7 +370,7 @@ CARELEM=AFFE_CARA_ELEM(INFO=1,
                                    ),
                                    ),
                        MODELE=MODELE,
-                       );
+                       )
 
 BLOQUAGE=AFFE_CHAR_MECA(MODELE=MODELE,
                        DDL_IMPO=(
@@ -403,7 +400,7 @@ ASSEMBLAGE(MODELE=MODELE,
                            _F(MATRICE=CO('GYASS'),
                               OPTION='MECA_GYRO',),
                            _F(MATRICE=CO('AMOR'),
-                              OPTION='AMOR_MECA',),),);
+                              OPTION='AMOR_MECA',),),)
 
 ######################################
 # TEST GENERALISE REEL NON SYM

@@ -41,9 +41,6 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     from Utilitai.Utmess import UTMESS
     from Utilitai.utils import fmtF2PY
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
@@ -133,8 +130,8 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
             if typi in dCi:
                 obj = dCi[typi]
                 break
-        if 'LEGENDE' not in dCi and hasattr(obj, 'get_name'):
-            dCi['LEGENDE'] = obj.get_name()
+        if 'LEGENDE' not in dCi and hasattr(obj, 'getName'):
+            dCi['LEGENDE'] = obj.getName()
         if obj is None:
             UTMESS('S', 'SUPERVIS_56')
 
@@ -147,7 +144,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                 dpar = obj.Parametres()
                 if len(dpar['NOM_PARA']) != 1:
                     UTMESS(
-                        'S', 'FONCT0_50', valk=obj.nom, vali=len(dpar['NOM_PARA']))
+                        'S', 'FONCT0_50', valk=obj.getName(), vali=len(dpar['NOM_PARA']))
 
             if obj.getType() == "NAPPE_SDASTER":
                 lpar, lval = obj.Valeurs()
@@ -260,14 +257,14 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
         elif typi == 'LIST_RESU':
             if interp and iocc > 0:
                 UTMESS('S', 'FONCT0_2')
-            lx = dCi['LIST_PARA'].Valeurs()
-            lr = obj.Valeurs()
+            lx = dCi['LIST_PARA'].getValues()
+            lr = obj.getValues()
             if len(lx) != len(lr):
                 UTMESS('S', 'FONCT0_3')
             # on stocke les données dans le Graph
             dicC = {
                 'Val': [lx, lr],
-                'Lab': [dCi['LIST_PARA'].get_name(), obj.get_name()]
+                'Lab': [dCi['LIST_PARA'].getName(), obj.getName()]
             }
             Graph.AjoutParaCourbe(dicC, args=dCi)
             graph.AjoutCourbe(**dicC)

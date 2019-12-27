@@ -249,10 +249,6 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
     from Utilitai.partition import MAIL_PY
     from Internal.detec_front import DETEC_FRONT
 
-    EnumTypes = (list, tuple)
-
-    macro = 'PROPA_FISS'
-    ier = 0
 #------------------------------------------------------------------
     # On importe les definitions des commandes a utiliser dans la macro
     ASSE_MAILLAGE = self.get_cmd('ASSE_MAILLAGE')
@@ -263,8 +259,6 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
     MODI_MODELE_XFEM = self.get_cmd('MODI_MODELE_XFEM')
     POST_RUPTURE = self.get_cmd('POST_RUPTURE')
     DETRUIRE = self.get_cmd('DETRUIRE')
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # parametre
     eps = 1e-15
@@ -295,7 +289,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         print('-------------------------------------------')
         print('NOMBRE DE FISSURES A TRAITER : ', Nbfissure)
         for numfis, Fiss in enumerate(Fissures):
-            print('FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].get_name())
+            print('FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].getName())
         print('-------------------------------------------')
 
 # Recuperation des donnees
@@ -357,7 +351,6 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 mcsimp['VITESSE'] = TABLE_VIT
 
                 if NumStep == StepTot - 1:
-                    #self.DeclareOut('nomfiss', FissNou[numfis])
                     nomfiss = PROPA_XFEM(
                         METHODE=METHODE_PROPA, INFO=INFO, **mcsimp)
                     self.register_result(nomfiss, FissNou[numfis])
@@ -463,7 +456,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         print('-------------------------------------------')
         print('NOMBRE DE FISSURES A TRAITER : ', Nbfissure)
         for numfis, Fiss in enumerate(Fissures):
-            print('FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].get_name())
+            print('FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].getName())
         print('-------------------------------------------')
 
 # Recuperation des donnees
@@ -512,7 +505,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 inst_tab = __tabsif['INST'].values()['INST']
                 l_inst_tab = set(inst_tab)
                 if len(l_inst_tab) > 1:
-                    UTMESS('F', 'XFEM2_70', valk=fiss0.get_name())
+                    UTMESS('F', 'XFEM2_70', valk=fiss0.getName())
 
 # Recuperation du nombre de fonds de fissure
             Fondmult = fiss0.sdj.FONDMULT.get()
@@ -521,7 +514,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             if (('NUME_FOND' in __tabsif.para and
                 (max(__table['NUME_FOND']) != Nbfond or len(set(__table['NUME_FOND'])) != Nbfond))
                or ('NUME_FOND' not in __tabsif.para and Nbfond != 1)):
-                UTMESS('A', 'XFEM_42', valk=fiss0.get_name())
+                UTMESS('A', 'XFEM_42', valk=fiss0.getName())
 
 # Calcul des angles de bifurcation, des avancees et du nombre de cycles
 
@@ -532,10 +525,10 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 
 #     beta et gamma
             if not 'BETA' in __tabsif.para and CRITERE_ANGLE in ('ANGLE_IMPO','ANGLE_IMPO_GETA_GAMMA'):
-                UTMESS('F','XFEM2_19',valk = fiss0.get_name())
+                UTMESS('F','XFEM2_19',valk = fiss0.getName())
 
             if not 'GAMMA' in __tabsif.para and CRITERE_ANGLE in ('ANGLE_IMPO_GAMMA','ANGLE_IMPO_GETA_GAMMA'):
-                UTMESS('F','XFEM_95',valk = fiss0.get_name())
+                UTMESS('F','XFEM_95',valk = fiss0.getName())
             if CRITERE_ANGLE == 'ANGLE_IMPO' : CRITERE='SITT_MAX'
             elif CRITERE_ANGLE == 'ANGLE_IMPO_GAMMA' : CRITERE='SITT_MAX_DEVER'
             elif CRITERE_ANGLE == 'ANGLE_IMPO_BETA_GAMMA' : CRITERE='SITT_MAX_DEVER'
@@ -546,7 +539,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             else : calc_gamma=False
             if CRITERE_ANGLE not in ('ANGLE_IMPO_BETA_GAMMA','ANGLE_IMPO'):
                if 'BETA' in __tabsif.para or 'GAMMA' in  __tabsif.para :
-                  UTMESS('A','XFEM2_18',valk = fiss0.get_name())
+                  UTMESS('A','XFEM2_18',valk = fiss0.getName())
 
             if (OPERATION != 'PROPA_COHESIF'):
 #         Si CRITERE_ANGLE = ANGLE_IMPO_GAMMA il faut calculer le BETA, donc donner le bon mot-clé à post_rupture
@@ -790,10 +783,10 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 #           le nombre de points indiques dans NB_POINT_FOND
                     if calc_gamma :
                        if ((len(tab_BETA[numfis][i+1]) != NbPointFond[i]) or (len(tab_GAMMA[numfis][i+1]) != NbPointFond[i])):
-                          UTMESS('F','XFEM2_75',vali=i+1,valk=fiss0.get_name())
+                          UTMESS('F','XFEM2_75',vali=i+1,valk=fiss0.getName())
                     else :
                        if (len(tab_BETA[numfis][i+1]) != NbPointFond[i]) :
-                          UTMESS('F','XFEM2_75',vali=i+1,valk=fiss0.get_name())
+                          UTMESS('F','XFEM2_75',vali=i+1,valk=fiss0.getName())
 
                     if not presence_colonne_absc:
 # cas ou la colonne ABSC_CURV n'existe pas la table SIF: calcul des
@@ -879,7 +872,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             mcsimp['VITESSE'] = TABLE_VIT[numfis]
             if (OPERATION != 'PROPA_COHESIF') and (OPERATION != 'DETECT_COHESIF'):
                 mcsimp['DA_FISS'] = Vmfiss[numfis] * NBCYCLE
-            #self.DeclareOut('nomfiss', FissNou[numfis])
+
             nomfiss = PROPA_XFEM(METHODE=METHODE_PROPA, INFO=INFO, **mcsimp)
             self.register_result(nomfiss, FissNou[numfis])
 
@@ -900,7 +893,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             DETRUIRE(CONCEPT=_F(NOM=__TAB_CUMUL[numfis]), INFO=1)
             fiss0 = Fiss['FISS_ACTUELLE']
             print('-------------------------------------------')
-            print('TRAITEMENT DE LA FISSURE ', fiss0.get_name())
+            print('TRAITEMENT DE LA FISSURE ', fiss0.getName())
             print('-------------------------------------------')
             MAIL_FISS1 = Fiss['MAIL_ACTUEL']
             dime = MAIL_FISS1.sdj.DIME.get()[5]
@@ -924,14 +917,12 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 
 # Recuperation de la liste des noeuds du fond
                 connex = mm[numfis].co
-                linomma = list(mm[numfis].correspondance_mailles)
                 lisnofo = []
                 # recuperation des noeud du fond de fissure
                 inofo = 1
                 FmPrec = []
                 lmafo = groupma[MFOND + '_' + str(it - 1)]
                 for i in range(len(lmafo)):
-                    ma_i = linomma[lmafo[i]]
                     no_i = connex[lmafo[i]]
                     if i == 0:
                         FmPrec.append(no_i[0])
@@ -1489,7 +1480,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 # Sauvegarde (maillage xfem et maillage concatene)
         MAIL_FISS2 = args.get('MAIL_FISS')
         unit = mm.ToAster()
-        self.DeclareOut('ma_xfem2', MAIL_FISS2)
+
         ma_xfem2 = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=unit)
         self.register_result(ma_xfem2, MAIL_FISS2)
         if MAIL_FISS2 != None:

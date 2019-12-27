@@ -38,9 +38,6 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, **args):
     # On importe les definitions des commandes a utiliser dans la macro
     CREA_TABLE = self.get_cmd('CREA_TABLE')
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     # Lecture de la table dans un fichier d unité logique UNITE
     nomfich = LogicalUnitFile.filename_from_unit(UNITE)
     if not osp.isfile(nomfich):
@@ -65,7 +62,6 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, **args):
            vali=(len(tab.rows), len(tab.para)))
 
     # création de la table ASTER :
-    self.DeclareOut('ut_tab', self.sd)
     motscles = tab.dict_CREA_TABLE()
     if TITRE:
         motscles['TITRE'] = TITRE

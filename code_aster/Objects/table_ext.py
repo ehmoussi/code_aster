@@ -36,8 +36,6 @@ class ExtendedTable(object):
     def __getitem__(self, key):
         """Retourne la valeur d'une cellule de la table.
         Exemple : TAB['INST', 1] retourne la 1ère valeur de la colonne 'INST'."""
-        if not self.accessible():
-            raise RuntimeError("Erreur dans table.__getitem__ en PAR_LOT='OUI'")
         try:
             para, numlign = key
         except (TypeError, ValueError):
@@ -61,9 +59,6 @@ class ExtendedTable(object):
         (Utile pour récupérer le titre et uniquement le titre d'une table dont
         on souhaite manipuler la dérivée).
         """
-        if not self.accessible():
-            raise RuntimeError("Erreur dans table.TITRE en PAR_LOT='OUI'")
-        #titj = aster.getvectjev('%-19s.TITR' % self.get_name())
         titj = self.sdj.TITR.get()
         if titj != None:
             titr = '\n'.join(titj)
@@ -74,16 +69,12 @@ class ExtendedTable(object):
     def get_nrow(self):
         """Renvoie le nombre de lignes
         """
-        if not self.accessible():
-            raise RuntimeError("Erreur dans table.get_nrow en PAR_LOT='OUI'")
         shape = self.sdj.TBNP.get()
         return shape[1]
 
     def get_nom_para(self):
         """Produit une liste des noms des colonnes
         """
-        if not self.accessible():
-            raise RuntimeError("Erreur dans table.get_nom_para en PAR_LOT='OUI'")
         l_name = []
         shape = self.sdj.TBNP.get()
         desc  = self.sdj.TBLP.get()
@@ -101,17 +92,15 @@ class ExtendedTable(object):
                 return None
             else:
                 return l1
-        if not self.accessible():
-            raise RuntimeError("Erreur dans table.EXTR_TABLE en PAR_LOT='OUI'")
         from Utilitai.Table import Table
         # titre
         titr = self.TITRE()
         # récupération des paramètres
-        #v_tblp = aster.getvectjev('%-19s.TBLP' % self.get_name())
+        #v_tblp = aster.getvectjev('%-19s.TBLP' % self.getName())
         v_tblp = self.sdj.TBLP.get()
         if v_tblp == None:
             # retourne une table vide
-            return Table(titr=titr, nom=self.nom)
+            return Table(titr=titr, nom=self.getName())
         tabnom=list(v_tblp)
         nparam=len(tabnom) // 4
         lparam=[tabnom[4*i:4*i+4] for i in range(nparam)]
@@ -143,7 +132,7 @@ class ExtendedTable(object):
             for p in lpar:
                d[p]=dval[p][i]
             lisdic.append(d)
-        return Table(lisdic, lpar, ltyp, titr, self.nom)
+        return Table(lisdic, lpar, ltyp, titr, self.getName())
 
     def Valeurs(self):
         """

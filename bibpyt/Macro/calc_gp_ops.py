@@ -24,6 +24,7 @@
 #
 
 
+
 def SEUIL(X, Y, X0, Y0, R, lc, Nume_cop, ccos, ssin):
     f1 = 0
     f2 = 0
@@ -205,12 +206,8 @@ def calc_gp_ops(self, **args):
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     MasquerAlarme('CALCCHAMP_1')
-
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-    # On importe les definitions des commandes a utiliser dans la macro
     global DEFI_GROUP
+    # On importe les definitions des commandes a utiliser dans la macro
     from code_aster.Commands import CREA_CHAMP, CREA_TABLE, POST_ELEM
     from code_aster.Commands import FORMULE, CALC_TABLE, CALC_CHAMP
     from code_aster.Commands import DEFI_LIST_REEL, DEFI_GROUP
@@ -260,7 +257,7 @@ def calc_gp_ops(self, **args):
 
 #    symetrie
         iret, ibid, syme = aster.dismoi(
-            'SYME', args['FOND_FISS'].nom, 'FOND_FISS', 'F')
+            'SYME', args['FOND_FISS'].getName(), 'FOND_FISS', 'F')
         if syme == 'OUI':
             mult = 2
 
@@ -273,7 +270,7 @@ def calc_gp_ops(self, **args):
     list_inst = __RESU.LIST_VARI_ACCES()['INST']
     l_inst_final = []
 
-    for inst in args['LIST_INST'].Valeurs():
+    for inst in args['LIST_INST'].getValues():
         if args['CRITERE'] == 'ABSOLU':
             prec = args['PRECISION']
         elif args['CRITERE'] == 'RELATIF':
@@ -327,7 +324,7 @@ def calc_gp_ops(self, **args):
 #
         if TRANCHE_2D['ZONE_MAIL'] == 'OUI':
             lgroupma = TRANCHE_2D['GROUP_MA']
-            lcopeau = TRANCHE_2D['TAILLE'].Valeurs()
+            lcopeau = TRANCHE_2D['TAILLE'].getValues()
             if len(lgroupma) != len(lcopeau):
                 UTMESS('F', 'RUPTURE1_21')
             nbcop = len(lcopeau)

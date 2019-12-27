@@ -56,7 +56,7 @@ class table_sdaster(ASSD):
         """
         if not self.accessible():
             raise AsException("Erreur dans table.TITRE en PAR_LOT='OUI'")
-        #titj = aster.getvectjev('%-19s.TITR' % self.get_name())
+        #titj = aster.getvectjev('%-19s.TITR' % self.getName())
         titj = self.sdj.TITR.get()
         if titj is not None:
             titr = '\n'.join(titj)
@@ -92,7 +92,7 @@ class table_sdaster(ASSD):
         # titre
         titr = self.TITRE()
         # récupération des paramètres
-        #v_tblp = aster.getvectjev('%-19s.TBLP' % self.get_name())
+        #v_tblp = aster.getvectjev('%-19s.TBLP' % self.getName())
         v_tblp = self.sdj.TBLP.get()
         if v_tblp is None:
             # retourne une table vide

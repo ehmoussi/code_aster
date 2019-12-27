@@ -89,7 +89,7 @@ class macr_elem_dyna(ASSD):
         if not self.accessible():
             raise AsException("Erreur dans macr_elem_dyna.RECU_MATR_GENE en PAR_LOT='OUI'")
 
-        nommacr=self.get_name()
+        nommacr=self.getName()
         if (typmat=='MASS_GENE') :
             macr_elem = self.sdj.MAEL_MASS
         elif (typmat=='RIGI_GENE') :

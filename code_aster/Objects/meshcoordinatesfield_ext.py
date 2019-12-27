@@ -51,11 +51,8 @@ class ExtendedMeshCoordinatesField(object):
         """
         import numpy
         import aster
-        if not self.accessible():
-            raise Accas.AsException(
-                "Erreur dans cham_no.EXTR_COMP en PAR_LOT='OUI'")
 
-        ncham = self.get_name()
+        ncham = self.getName()
         ncham = ncham + (19 - len(ncham)) * ' '
         nchams = aster.get_nom_concept_unique('_')
         ncmp = comp + (8 - len(comp)) * ' '

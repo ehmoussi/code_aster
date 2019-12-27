@@ -29,8 +29,6 @@ def lire_inte_spec_ops(self,
                        TITRE=None,
                        INFO=None,
                        **args):
-    ier = 0
-
     from code_aster.Cata.Syntax import _F
     import os
     from math import cos, sin, sqrt
@@ -39,10 +37,6 @@ def lire_inte_spec_ops(self,
     # On importe les definitions des commandes a utiliser dans la macro
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
     DEFI_INTE_SPEC = self.get_cmd('DEFI_INTE_SPEC')
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-    nompro = 'LIRE_INTE_SPEC'
 
     # Lecture de la fonction dans un fichier d unité logique UNITE
     UL = UniteAster()
@@ -85,10 +79,8 @@ def lire_inte_spec_ops(self,
             record_6 = ligne[7].split()
             if record_6[0] != '2' and record_6[0] != '3' and record_6[0] != '9':
                 UTMESS('F', 'SPECTRAL0_10')
-            nono = record_6[4]             # nom du noeud
             nuno = int(record_6[5])        # numero
             ddlno = float(record_6[6]) / 10   # DDL
-            noref = record_6[7]             # nom du noeud de reference
             nuref = int(record_6[8])        # numero
             ddlref = float(record_6[9]) / 10   # DDL
             # On traduit les ddl "chiffres" en vrais ddl. Avec le sens des
@@ -157,7 +149,7 @@ def lire_inte_spec_ops(self,
                              NOEUD_J=l_noj[i],
                              NOM_CMP_J=l_cmpj[i],
                              FONCTION=l_fonc[i],))
-        self.DeclareOut('inte_out', self.sd)
+
         inte_out = DEFI_INTE_SPEC(PAR_FONCTION=mcfact,
                                   TITRE=TITRE,)
 
@@ -226,7 +218,7 @@ def lire_inte_spec_ops(self,
             mcfact.append(_F(NUME_ORDRE_I=nume_i[i],
                              NUME_ORDRE_J=nume_j[i],
                              FONCTION=l_fonc[i],))
-        self.DeclareOut('inte_out', self.sd)
+
         inte_out = DEFI_INTE_SPEC(PAR_FONCTION=mcfact,
                                   TITRE=TITRE,)
 

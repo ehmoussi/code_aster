@@ -31,10 +31,7 @@ def proj_base_ops(self, **args):
     NUME_DDL_GENE = args.get("NUME_DDL_GENE")
     STOCKAGE = args.get("STOCKAGE")
 
-    ier = 0
     from Utilitai.Utmess import UTMESS
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # et  creation du nume_ddl_gene
@@ -45,7 +42,6 @@ def proj_base_ops(self, **args):
     elif isinstance(numgen, GeneralizedDOFNumbering):
         _num = numgen
     elif isinstance(numgen, CO):
-    #self.DeclareOut('_num', numgen)
         _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
         self.register_result(_num, numgen)
     else:
@@ -65,7 +61,6 @@ def proj_base_ops(self, **args):
                 motscles['MATR_ASSE_GENE'] = m['MATR_ASSE_GENE']
             else:
                 UTMESS('F', 'MODAL0_1')
-            #self.DeclareOut('mm', m['MATRICE'])
             mm = PROJ_MATR_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
             mm.setGeneralizedDOFNumbering(_num)
             mm.setModalBasis(BASE)
@@ -81,7 +76,6 @@ def proj_base_ops(self, **args):
             else:
                 UTMESS('F', 'MODAL0_1')
             motscles['TYPE_VECT'] = v['TYPE_VECT']
-            self.DeclareOut('vv', v['VECTEUR'])
             vv = PROJ_VECT_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
             self.register_result(vv, v['VECTEUR'])
 
@@ -90,12 +84,9 @@ def proj_base_ops(self, **args):
             motscles = {}
             if v['RESU']:
                 motscles['RESU'] = v['RESU']
-# elif v['RESU_GENE']:
-# motscles['RESU_GENE'] = v['RESU_GENE']
             else:
                 UTMESS('F', 'MODAL0_1')
             motscles['TYPE_VECT'] = v['TYPE_VECT']
-            self.DeclareOut('vv', v['RESULTAT'])
             vv = PROJ_RESU_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
             vv.setGeneralizedDOFNumbering(_num)
             self.register_result(vv, v['RESULTAT'])

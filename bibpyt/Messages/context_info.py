@@ -62,7 +62,7 @@ def message_context_concept(*args, **kwargs):
     dico = context_concept(*args, **kwargs)
     d = {
         'nom_concept': dico['concept'],
-        'nom_cmde_prod': dico['cmde_prod'].nom,
+        'nom_cmde_prod': dico['cmde_prod'].getName(),
     }
     return fmt_concept % d
 

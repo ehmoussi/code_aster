@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ CALC_TABLE=MACRO(nom="CALC_TABLE",
       OPERATION = SIMP(statut='o', typ='TXM',
                   into=('FILTRE', 'EXTR', 'RENOMME', 'TRI', 'COMB',
                         'AJOUT_LIGNE', 'OPER', 'SUPPRIME', 'UNIQUE', 'AJOUT_COLONNE',
-                        'STATISTIQUES', 'CALCUL')),  
+                        'STATISTIQUES', 'CALCUL')),
 
       b_filtre = BLOC(condition="""equal_to("OPERATION", 'FILTRE')""",
                       fr=tr("Sélectionne les lignes de la table vérifiant un critère"),
@@ -149,7 +149,7 @@ CALC_TABLE=MACRO(nom="CALC_TABLE",
          NOM_COLONNE = SIMP(statut='f',typ='TXM', max='**',
                          fr=tr("Nom des colonnes à utiliser en tant que paramètres de la formule")),
       ),
-      
+
       b_calcul = BLOC(condition="""equal_to("OPERATION", 'CALCUL')""",
                         fr=tr("Appliquer des calculs simples sur des colonnes de la table"),
          NOM_PARA = SIMP(statut='o',typ='TXM', validators=NoRepeat(),max='**',

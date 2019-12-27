@@ -48,7 +48,6 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
     MATR_ASSE = args.get("MATR_ASSE")
     VECT_ASSE = args.get("VECT_ASSE")
 
-    ier = 0
     num = None
     from Utilitai.Utmess import UTMESS
 
@@ -58,9 +57,6 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
     # On importe la definition de la commande
     # Le nom de la variable doit etre obligatoirement le nom de la commande
     NUME_DDL = self.get_cmd('NUME_DDL')
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     if numeddl in self.sdprods:
         # Si le concept numeddl est dans self.sdprods
@@ -244,7 +240,6 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
                 numeddl_status = 'OK'
 
             # les vecteurs assembles sont des concepts sortants.
-            # self.DeclareOut('vv', v['VECTEUR'])
             # assemblage des vecteurs
             vv = ASSE_VECTEUR(VECT_ELEM=_b, NUME_DDL=num)
             self.register_result(vv, v['VECTEUR'])

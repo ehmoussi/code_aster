@@ -105,8 +105,6 @@ def include_materiau_ops(self,
     from Utilitai.Utmess import UTMESS
 
     DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
-    self.set_icmd(1)
-    self.DeclareOut('MAT', self.sd)
 
     fmat = args.get('FICHIER')
     if not fmat:
@@ -147,7 +145,7 @@ def include_materiau_ops(self,
         UTMESS('F', 'SUPERVIS2_6', valk=bnmat)
     # certains concepts cachés doivent être connus plus tard (au moins les
     # objets FORMULE)
-    to_add = dict([(v.nom, v)
+    to_add = dict([(v.getName(), v)
                   for k, v in list(context.items()) if isinstance(v, formule)])
     self.sdprods.extend(list(to_add.values()))
     if INFO == 2:

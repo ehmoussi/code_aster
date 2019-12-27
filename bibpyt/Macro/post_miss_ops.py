@@ -34,10 +34,6 @@ def post_miss_ops(self, **kwargs):
     from Utilitai.Utmess import UTMESS
     from Miss.miss_post import PostMissFactory
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     # création de l'objet POST_MISS_xxx
     post = PostMissFactory(kwargs['OPTION'], self, kwargs)
 

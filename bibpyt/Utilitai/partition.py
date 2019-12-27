@@ -391,7 +391,6 @@ class MAIL_PY:
         # Group_ma et Group_no
         entete = ['GROUP_MA', 'GROUP_NO']
         d_gp = [self.gma, self.gno]
-        pref = ['M', 'N']
 
         # Si le maillage initial ne provient pas d'Aster
         if len(self.correspondance_mailles) == 0:
@@ -486,11 +485,11 @@ class PARTITION:
         l.append('Contenu de la partition :')
         l.append('-------------------------')
         try:
-            l.append('- Maillage       : ' + str(self.ASTER['MAILLAGE'].nom))
+            l.append('- Maillage       : ' + str(self.ASTER['MAILLAGE'].getName()))
         except:
             pass
         try:
-            l.append('- Modele         : ' + str(self.ASTER['MODELE'].nom))
+            l.append('- Modele         : ' + str(self.ASTER['MODELE'].getName()))
         except:
             pass
         l.append('- Nb part        : ' + str(self.OPTIONS['NB_PART']))
@@ -519,7 +518,7 @@ class PARTITION:
 
         # Creation du maillage Python correspondant au maillage Aster
         MAILLAGE_Python = MAIL_PY()
-        MAILLAGE_Python.FromAster(MAILLAGE.nom)
+        MAILLAGE_Python.FromAster(MAILLAGE.getName())
 
         # Partitionne le maillage Python avec la liste de mailles _LST_MA
         self.Partitionne_Maillage(
@@ -544,7 +543,6 @@ class PARTITION:
 
         exe_metis = self.OPTIONS['exe_metis']
         f_metis = self.OPTIONS['fichier_in']
-        fw_metis = self.OPTIONS['fichier_out']
 
         _LST_MA = MAILLE
 
@@ -737,7 +735,7 @@ class PARTITION:
 # ---------------------------------------------------------------------------- #
     def Modele_to_Liste_Mailles(self, MODELE):
 
-        nommod = MODELE.nom.ljust(8)
+        nommod = MODELE.getName().ljust(8)
         _DIC_MA = aster.getcolljev(nommod.ljust(8) + '.MODELE    .LIEL')
 
         # Creation de la liste des mailles
@@ -877,7 +875,7 @@ class PARTITION:
 
         if self.OPTIONS['INFO'] >= 5:
             MAILLAGE = self.ASTER['MAILLAGE']
-            nommail = MAILLAGE.nom.ljust(8)
+            nommail = MAILLAGE.getName().ljust(8)
             _LST_MAI = aster.getvectjev(nommail.ljust(8) + '.NOMMAI')
 
         # Le dico maille2nb donne le nombre de noeuds definissant un bord
@@ -1021,7 +1019,7 @@ class PARTITION:
         _LST_TMA = self.MAILLAGE_Python.tm
 
         if self.OPTIONS['INFO'] >= 5:
-            nommail = MAILLAGE.nom.ljust(8)
+            nommail = MAILLAGE.getName().ljust(8)
             _LST_MAI = aster.getvectjev(nommail.ljust(8) + '.NOMMAI')
 
         t0 = time.clock()
@@ -1292,7 +1290,7 @@ class PARTITION:
         MAILLAGE = self.ASTER['MAILLAGE']
         NB_PART = self.OPTIONS['NB_PART']
 
-        nommail = MAILLAGE.nom.ljust(8)
+        nommail = MAILLAGE.getName().ljust(8)
         _LST_MAI = aster.getvectjev(nommail.ljust(8) + '.NOMMAI')
 
         # Creation du dictionnaire des listes des mailles par SD

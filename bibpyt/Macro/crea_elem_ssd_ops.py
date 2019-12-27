@@ -46,8 +46,6 @@ def crea_elem_ssd_ops(self, **args):
     DEFI_BASE_MODALE = self.get_cmd('DEFI_BASE_MODALE')
     MACR_ELEM_DYNA = self.get_cmd('MACR_ELEM_DYNA')
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     mSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
 
@@ -64,10 +62,10 @@ def crea_elem_ssd_ops(self, **args):
                              CHAM_MATER=args['CHAM_MATER'],)
 
     _nume_ddl = NUME_DDL(MATR_RIGI=_kelem,)
-    
+
     if numeddl:
         self.register_result(_nume_ddl, numeddl)
-    
+
     _matrigi = ASSE_MATRICE(NUME_DDL=_nume_ddl,
                             MATR_ELEM=_kelem,)
 

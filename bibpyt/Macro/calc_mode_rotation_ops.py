@@ -56,8 +56,6 @@ def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
                               STURM=VERI_MODE['STURM'],
                               PREC_SHIFT=VERI_MODE['PREC_SHIFT'])
 
-    self.DeclareOut('tab_out', self.sd)
-
     NBV = len(VITE_ROTA)
 
     _mod = [None] * NBV
@@ -84,12 +82,12 @@ def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
 
         tab.append({'NUME_VITE': ii, 'VITE_ROTA': OM, 'NOM_OBJET':
                     'MODE_MECA_'+str(ii), 'TYPE_OBJET': 'MODE_MECA',
-                    'NOM_SD': _mod[ii].nom})
+                    'NOM_SD': _mod[ii].getName()})
         toSave['MODE_MECA_'+str(ii)] = _mod[ii]
 
     motcles = tab.dict_CREA_TABLE()
     tab_out = CREA_TABLE(TYPE_TABLE='TABLE_CONTENEUR', **motcles)
-    
+
     for key, mod in toSave.items():
         tab_out.addObject(key, mod)
     return tab_out

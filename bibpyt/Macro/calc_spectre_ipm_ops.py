@@ -39,11 +39,6 @@ def calc_spectre_ipm_ops(
     import math
     EnumType = (list, tuple)
 
-    # Comptage commandes + déclaration concept sortant
-    self.set_icmd(1)
-    self.DeclareOut('tab', self.sd,)
-    macro = 'calc_spectre_ipm'
-
     # On importe les definitions des commandes a utiliser dans la macro
     RECU_FONCTION = self.get_cmd("RECU_FONCTION")
     CALC_FONCTION = self.get_cmd('CALC_FONCTION')
@@ -57,8 +52,8 @@ def calc_spectre_ipm_ops(
     planch_nodes = {}
     planch_param = {}
     if (MAILLAGE):
-        dic_gpno = aster.getcolljev(MAILLAGE.nom.ljust(8) + ".GROUPENO")
-        l_nodes = aster.getvectjev(MAILLAGE.nom.ljust(8) + ".NOMNOE")
+        dic_gpno = aster.getcolljev(MAILLAGE.getName().ljust(8) + ".GROUPENO")
+        l_nodes = aster.getvectjev(MAILLAGE.getName().ljust(8) + ".NOMNOE")
     l_plancher = []
     #
     dplancher = []
@@ -132,34 +127,10 @@ def calc_spectre_ipm_ops(
         RAP_MAS = planch_param[plancher]['RAP_MAS']
         # -----------------------------------------------------------------------------------------
         # boucle 2 sur les noeuds du plancher
-        indexn = 0
         for node in planch_nodes[plancher]:
             # ---------------------------------------------------------------------------------
             # boucle 3 sur les résultats
-            l_fonc=[]
             for resu in RESU :
-                # Etape 1: Récupération des fonctions
-                # if resu['RESU_GENE'] is not None :
-                    # __ACCE_E=RECU_FONCTION(NOM_CHAM     = 'ACCE',
-                            # TOUT_ORDRE   = 'OUI',
-                            # NOM_CMP      = 'DZ',
-                            # INTERPOL     = 'LIN',
-                            # PROL_GAUCHE  = 'CONSTANT',
-                            # PROL_DROITE  = 'CONSTANT',
-                            # NOEUD        = node ,
-                            # RESU_GENE    = resu['RESU_GENE']
-                        # )
-                # if resu['RESULTAT'] is not None :
-                    # __ACCE_E=RECU_FONCTION(
-                            # NOM_CHAM     = 'ACCE',
-                            # TOUT_ORDRE   = 'OUI',
-                            # NOM_CMP      = 'DZ',
-                            # INTERPOL     = 'LIN',
-                            # PROL_GAUCHE  = 'CONSTANT',
-                            # PROL_DROITE  = 'CONSTANT',
-                            # NOEUD        = node ,
-                            # RESULTAT     = resu['RESULTAT']
-                        # )
                 if resu['TABLE'] is not None :
                     # 2 formats de table possible. Avec les colonnes :
                     #   INST NOEUD NOM_CHAM NOM_CMP VALE
@@ -216,7 +187,7 @@ def calc_spectre_ipm_ops(
 
                 freq1 = FREQ_SUPP
                 # frequence modèle A
-                omega1=freq1*2.*pi;
+                omega1=freq1*2.*pi
                 # frequence modèle B
                 omega1_=omega1*(1+RAP_MAS)**0.5
                 # calcul de la fft de l'accelero d entree
@@ -225,42 +196,42 @@ def calc_spectre_ipm_ops(
                 FFT   = NP.array(_FFTE.Ordo()) +complex(0.,1.)*NP.array(_FFTE.OrdoImg())
                 X     = NP.array(_FFTE.Valeurs()[0])
                 #
-                RES=[];
+                RES=[]
                 cNum = [0]*len(FFT)
                 cDenom = [0]*len(FFT)
                 # boucle 4 sur les equipements
                 for i in range(len(FREQ_EQUI)):
-                    omega = FREQ_EQUI[i]*2.*pi;
+                    omega = FREQ_EQUI[i]*2.*pi
                     Delta =  -(2.*pi*X[0:len(FFT)])**2 + 2.*complex(0.,1.)*2.*pi*X[0:len(FFT)]*omega*AMOR_EQUI[i] + omega**2
                     cNum = cNum + RAP_MAS*RAP_MAS_COEF[i]*(Delta+(2.*pi*X[0:len(FFT)])**2)/Delta
                     cDenom = cDenom + RAP_MAS*RAP_MAS_COEF[i]*(Delta+(2.*pi*X[0:len(FFT)])**2) - RAP_MAS*RAP_MAS_COEF[i]*(Delta+(2.*pi*X[0:len(FFT)])**2)**2/Delta
                 # Modele B
-                Delta1_ = -(2.*pi*X[0:len(FFT)])**2 + 2.*complex(0.,1.)*2.*pi*X[0:len(FFT)]*omega1_*AMOR_SUPP*(1+RAP_MAS)**0.5 + omega1_**2;
+                Delta1_ = -(2.*pi*X[0:len(FFT)])**2 + 2.*complex(0.,1.)*2.*pi*X[0:len(FFT)]*omega1_*AMOR_SUPP*(1+RAP_MAS)**0.5 + omega1_**2
                 # Modele A
-                Delta1 = -(2.*pi*X[0:len(FFT)])**2 + 2.*complex(0.,1.)*2.*pi*X[0:len(FFT)]*omega1*AMOR_SUPP + omega1**2;
+                Delta1 = -(2.*pi*X[0:len(FFT)])**2 + 2.*complex(0.,1.)*2.*pi*X[0:len(FFT)]*omega1*AMOR_SUPP + omega1**2
                 # Calcul de la fonction de transfert
                 c = (1.+(2.*pi*X[0:len(FFT)])**2*( 1 + cNum)/(Delta1_ + cDenom))/(1+(2.*pi*X[0:len(FFT)])**2/Delta1)
-                RES = FFT*c;
+                RES = FFT*c
                 #
                 # methode 2: CALC_FONCTION pour FFT
                 val_c=[]
                 for i in range(len(X)//2):
                     val_c+=[X[i],RES[i].real,RES[i].imag]
                 __FRESULT  = DEFI_FONCTION(VALE_C =val_c, NOM_PARA='FREQ' )
-                __ACCEAcor = CALC_FONCTION(FFT = _F(FONCTION = __FRESULT, METHODE='COMPLET', SYME='NON'));
+                __ACCEAcor = CALC_FONCTION(FFT = _F(FONCTION = __FRESULT, METHODE='COMPLET', SYME='NON'))
                 #
                 # calcul de spectres corriges
                 motscles={}
                 if FREQ     is not None : motscles['FREQ']     =FREQ
                 if LIST_FREQ is not None : motscles['LIST_FREQ']=LIST_FREQ
-                __Spec=[None]*len(AMOR_SPEC);
+                __Spec=[None]*len(AMOR_SPEC)
                 for amor in range(len(AMOR_SPEC)): # eviter la boucle ??
                     __Spec[amor] = CALC_FONCTION(
                                 SPEC_OSCI = _F(  FONCTION = __ACCEAcor,
                                                  AMOR_REDUIT = AMOR_SPEC[amor],
                                                  NORME = NORME ,
                                                   **motscles) ,
-                                                 NOM_PARA='FREQ', ) ;
+                                                 NOM_PARA='FREQ', )
        #****************************************************
                 dico_global['FREQ ' + plancher] = Valeurs(__Spec[amor])[1][0][0]
                 for amor in range(len(AMOR_SPEC)):
@@ -283,7 +254,7 @@ def calc_spectre_ipm_ops(
 def Valeurs(surface):
     # TODO : dirty workarround for this macro, until Surface.getValues()
     # implementaiton in c++
-    nsd = '%-19s' % surface.get_name()
+    nsd = '%-19s' % surface.getName()
     dicv = aster.getcolljev(nsd + '.VALE')
     lpar = aster.getvectjev(nsd + '.PARA')
     lval = []

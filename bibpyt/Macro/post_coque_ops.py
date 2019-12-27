@@ -29,32 +29,23 @@ def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE=None , INST=None
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     from Utilitai.Table import Table
     from Noyau.N_utils import AsType
-    ier = 0
 
     # On importe les definitions des commandes a utiliser dans la macro
     MACR_LIGN_COUPE = self.get_cmd('MACR_LIGN_COUPE')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
     CALC_CHAMP = self.get_cmd('CALC_CHAMP')
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
     MasquerAlarme('MODELISA4_9')
 
-  # Le concept sortant (de type table) est nomme
-  # 'tabout' dans le contexte de la macro
-
-    self.DeclareOut('tabout', self.sd)
     assert RESULTAT.getType() in ('EVOL_ELAS', 'EVOL_NOLI',)
-    dico = aster.GetResu(RESULTAT.get_name(), "CHAMPS")
-    dico2 = aster.GetResu(RESULTAT.get_name(), "VARI_ACCES")
+    dico = aster.GetResu(RESULTAT.getName(), "CHAMPS")
+    dico2 = aster.GetResu(RESULTAT.getName(), "VARI_ACCES")
   # si ni INST ni NUME_ORDRE ne sont presents, on prend le premier
   # instant calcule
     if not INST and not NUME_ORDRE:
         INST = dico2['INST'][0]
-    MODEL = RESULTAT.getModel()
+
     if NUME_ORDRE:
         if not NUME_ORDRE in dico2['NUME_ORDRE']:
             UTMESS('F', 'POST0_25', vali=NUME_ORDRE)
@@ -80,7 +71,7 @@ def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE=None , INST=None
                 else:
                     UTMESS('F', 'POST0_19', vali=NUME_ORDRE)
 
-    dico = aster.GetResu(RESULTAT.get_name(), "CHAMPS")
+    dico = aster.GetResu(RESULTAT.getName(), "CHAMPS")
 
     # Appel MACR_LIGN_COUPE :
     motscles = {}
