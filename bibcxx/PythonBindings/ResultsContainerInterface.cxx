@@ -25,8 +25,9 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportResultsContainerToPython() {
-    using namespace boost::python;
 
     MaterialOnMeshPtr ( ResultsContainerInstance::*c1 )() =
         &ResultsContainerInstance::getMaterialOnMesh;
@@ -43,12 +44,12 @@ void exportResultsContainerToPython() {
     ElementaryCharacteristicsPtr ( ResultsContainerInstance::*c6 )( int ) =
         &ResultsContainerInstance::getElementaryCharacteristics;
 
-    class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
-            bases< DataStructure > >( "ResultsContainer", no_init )
+    py::class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
+            py::bases< DataStructure > >( "ResultsContainer", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ResultsContainerInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< ResultsContainerInstance, std::string >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< ResultsContainerInstance, std::string, std::string >))
         .def( "addFieldOnNodesDescription", &ResultsContainerInstance::addFieldOnNodesDescription )
         .def( "addMaterialOnMesh", &ResultsContainerInstance::addMaterialOnMesh )

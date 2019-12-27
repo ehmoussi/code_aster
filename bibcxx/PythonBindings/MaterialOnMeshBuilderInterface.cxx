@@ -25,14 +25,15 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 BOOST_PYTHON_FUNCTION_OVERLOADS( MaterialOnMeshBuilderbuild, MaterialOnMeshBuilderInstance::build,
                                  1, 3 )
 
 void exportMaterialOnMeshBuilderToPython() {
-    using namespace boost::python;
 
-    class_< MaterialOnMeshBuilderInstance, MaterialOnMeshBuilderInstance::MaterialOnMeshBuilderPtr >
-        c1( "MaterialOnMeshBuilder", no_init );
+    py::class_< MaterialOnMeshBuilderInstance, MaterialOnMeshBuilderInstance::MaterialOnMeshBuilderPtr >
+        c1( "MaterialOnMeshBuilder", py::no_init );
         // fake initFactoryPtr: no constructor
         // fake initFactoryPtr: no constructor
 

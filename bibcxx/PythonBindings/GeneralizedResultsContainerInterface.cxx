@@ -23,38 +23,39 @@
 
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/GeneralizedResultsContainerInterface.h"
 
 
 void exportGeneralizedResultsContainerToPython()
 {
-    using namespace boost::python;
 
 
-    class_< GeneralizedResultsContainerDoubleInstance,
+    py::class_< GeneralizedResultsContainerDoubleInstance,
             GeneralizedResultsContainerDoublePtr,
-            bases< DataStructure > >
-            ( "GeneralizedResultsContainerDouble", no_init )
+            py::bases< DataStructure > >
+            ( "GeneralizedResultsContainerDouble", py::no_init )
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
     ;
 
-    class_< GeneralizedResultsContainerComplexInstance,
+    py::class_< GeneralizedResultsContainerComplexInstance,
             GeneralizedResultsContainerComplexPtr,
-            bases< DataStructure > >
-            ( "GeneralizedResultsContainerComplex", no_init )
+            py::bases< DataStructure > >
+            ( "GeneralizedResultsContainerComplex", py::no_init )
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
     ;
 
-    class_< TransientGeneralizedResultsContainerInstance,
+    py::class_< TransientGeneralizedResultsContainerInstance,
             TransientGeneralizedResultsContainerPtr,
-            bases< GeneralizedResultsContainerDoubleInstance > >
-            ( "TransientGeneralizedResultsContainer", no_init )
-        .def( "__init__", make_constructor(
+            py::bases< GeneralizedResultsContainerDoubleInstance > >
+            ( "TransientGeneralizedResultsContainer", py::no_init )
+        .def( "__init__", py::make_constructor(
             &initFactoryPtr< TransientGeneralizedResultsContainerInstance >) )
-        .def( "__init__", make_constructor(
+        .def( "__init__", py::make_constructor(
             &initFactoryPtr< TransientGeneralizedResultsContainerInstance,
                              std::string >) )
         .def( "setGeneralizedDOFNumbering",
@@ -67,13 +68,13 @@ void exportGeneralizedResultsContainerToPython()
               &TransientGeneralizedResultsContainerInstance::getDOFNumbering )
     ;
 
-    class_< HarmoGeneralizedResultsContainerInstance,
+    py::class_< HarmoGeneralizedResultsContainerInstance,
             HarmoGeneralizedResultsContainerPtr,
-            bases< GeneralizedResultsContainerComplexInstance > >
-            ( "HarmoGeneralizedResultsContainer", no_init )
-        .def( "__init__", make_constructor(
+            py::bases< GeneralizedResultsContainerComplexInstance > >
+            ( "HarmoGeneralizedResultsContainer", py::no_init )
+        .def( "__init__", py::make_constructor(
             &initFactoryPtr< HarmoGeneralizedResultsContainerInstance >) )
-        .def( "__init__", make_constructor(
+        .def( "__init__", py::make_constructor(
             &initFactoryPtr< HarmoGeneralizedResultsContainerInstance,
                              std::string >) )
         .def( "getGeneralizedDOFNumbering",

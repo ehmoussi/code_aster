@@ -25,12 +25,13 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportModeEmpiContainerToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< ModeEmpiContainerInstance, ModeEmpiContainerPtr, bases< ResultsContainerInstance > >(
-        "ModeEmpiContainer", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ModeEmpiContainerInstance >))
+void exportModeEmpiContainerToPython() {
+
+    py::class_< ModeEmpiContainerInstance, ModeEmpiContainerPtr, py::bases< ResultsContainerInstance > >(
+        "ModeEmpiContainer", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModeEmpiContainerInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ModeEmpiContainerInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< ModeEmpiContainerInstance, std::string >));
 };

@@ -23,17 +23,18 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/GenericDataFieldInterface.h"
 
 void exportGenericDataFieldToPython() {
-    using namespace boost::python;
 
-    class_< GenericDataFieldInstance, GenericDataFieldPtr, bases< DataStructure > >(
-        "GenericDataField", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< GenericDataFieldInstance >))
+    py::class_< GenericDataFieldInstance, GenericDataFieldPtr, py::bases< DataStructure > >(
+        "GenericDataField", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GenericDataFieldInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< GenericDataFieldInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< GenericDataFieldInstance, std::string >));
 };

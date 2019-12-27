@@ -30,6 +30,8 @@
 #include "DataFields/GenericDataField.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportGenericDataFieldToPython();
 
 #endif /* GENERICDATAFIELDINTERFACE_H_ */

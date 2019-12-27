@@ -25,12 +25,13 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportMultElasContainerToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< MultElasContainerInstance, MultElasContainerPtr, bases< ResultsContainerInstance > >(
-        "MultElasContainer", no_init )
-        .def( "__init__", make_constructor( &initFactoryPtr< MultElasContainerInstance > ) )
+void exportMultElasContainerToPython() {
+
+    py::class_< MultElasContainerInstance, MultElasContainerPtr, py::bases< ResultsContainerInstance > >(
+        "MultElasContainer", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< MultElasContainerInstance > ) )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< MultElasContainerInstance, std::string > ) );
+              py::make_constructor( &initFactoryPtr< MultElasContainerInstance, std::string > ) );
 };

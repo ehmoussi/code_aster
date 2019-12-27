@@ -25,81 +25,82 @@
 
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 #include "PythonBindings/FortranInterface.h"
 
 BOOST_PYTHON_FUNCTION_OVERLOADS( onFatalError_overloads, onFatalError, 0, 1 )
 
 void exportFortranToPython() {
-    using namespace boost::python;
 
     // These functions are for internal use.
-    def( "jeveux_init", &jeveux_init, R"(
+    py::def( "jeveux_init", &jeveux_init, R"(
 Initialize the memory manager (Jeveux).
         )" );
 
-    def( "jeveux_finalize", &jeveux_finalize, R"(
+    py::def( "jeveux_finalize", &jeveux_finalize, R"(
 Finalize the memory manager (Jeveux).
         )" );
 
-    def( "call_oper", &call_oper, R"(
+    py::def( "call_oper", &call_oper, R"(
 Call a Fortran operator ('op' subroutine).
 
 Arguments:
     syntax (CommandSyntax): Object containing the user syntax.
     jxveri (int): If non null `JXVERI` is called after calling the operator.
         )",
-         ( arg( "syntax" ), arg( "jxveri" ) ) );
+         ( py::arg( "syntax" ), py::arg( "jxveri" ) ) );
 
-    def( "call_ops", &call_ops, R"(
+    py::def( "call_ops", &call_ops, R"(
 Call a Fortran 'ops' subroutine.
 
 Arguments:
     syntax (CommandSyntax): Object containing the user syntax.
     ops (int): Number of the `ops00x` subroutine.
         )",
-         ( arg( "syntax" ), arg( "ops" ) ) );
+         ( py::arg( "syntax" ), py::arg( "ops" ) ) );
 
-    def( "call_debut", &call_debut, R"(
+    py::def( "call_debut", &call_debut, R"(
 Call a Fortran 'debut' subroutine.
 
 Arguments:
     syntax (CommandSyntax): Object containing the user syntax.
         )",
-         ( arg( "syntax" ) ) );
+         ( py::arg( "syntax" ) ) );
 
-    def( "call_poursuite", &call_poursuite, R"(
+    py::def( "call_poursuite", &call_poursuite, R"(
 Call a Fortran 'poursuite' subroutine.
 
 Arguments:
     syntax (CommandSyntax): Object containing the user syntax.
         )",
-         ( arg( "syntax" ) ) );
+         ( py::arg( "syntax" ) ) );
 
-    def( "write", &call_print, R"(
+    py::def( "write", &call_print, R"(
 Print a string using the fortran subroutine.
 
 Arguments:
     text (str): Text to be printed.
         )",
-         ( arg( "text" ) ) );
+         ( py::arg( "text" ) ) );
 
-    def( "affich", &call_affich, R"(
+    py::def( "affich", &call_affich, R"(
 Print a string using the fortran subroutine on an internal file.
 
 Arguments:
     code (str): Code name of the internal file : 'MESSAGE' or 'CODE'.
     text (str): Text to be printed.
         )",
-         ( arg( "code" ), arg( "text" ) ) );
+         ( py::arg( "code" ), py::arg( "text" ) ) );
 
-    def( "jeveux_status", &get_sh_jeveux_status, R"(
+    py::def( "jeveux_status", &get_sh_jeveux_status, R"(
 Return the status of the Jeveux memory manager.
 
 Returns:
     int: 0 after initialization and after shutdown, 1 during the execution.
         )" );
 
-//     def( "onFatalError", &onFatalError, R"(
+//     py::def( "onFatalError", &onFatalError, R"(
 // Get/set the behavior in case of error.
 
 // Arguments:
@@ -110,10 +111,10 @@ Returns:
 // Returns:
 //     str: Current value
 //         )",
-//          ( arg( "value" ) ) );
-    def( "onFatalError", &onFatalError, onFatalError_overloads() );
+//          ( py::arg( "value" ) ) );
+    py::def( "onFatalError", &onFatalError, onFatalError_overloads() );
 
-    def( "set_option", &set_option, R"(
+    py::def( "set_option", &set_option, R"(
 Set an option value to be used from Fortran operators.
 
 Arguments:

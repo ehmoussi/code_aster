@@ -26,16 +26,17 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportStaticMechanicalSolverToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< StaticMechanicalSolverInstance, StaticMechanicalSolverPtr > c1(
-        "StaticMechanicalSolver", no_init );
+void exportStaticMechanicalSolverToPython() {
+
+    py::class_< StaticMechanicalSolverInstance, StaticMechanicalSolverPtr > c1(
+        "StaticMechanicalSolver", py::no_init );
     c1.def( "__init__",
-            make_constructor(
+            py::make_constructor(
                 &initFactoryPtr< StaticMechanicalSolverInstance, ModelPtr, MaterialOnMeshPtr >));
     c1.def( "__init__",
-            make_constructor(&initFactoryPtr< StaticMechanicalSolverInstance, ModelPtr,
+            py::make_constructor(&initFactoryPtr< StaticMechanicalSolverInstance, ModelPtr,
                                               MaterialOnMeshPtr, ElementaryCharacteristicsPtr >));
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );

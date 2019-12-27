@@ -25,12 +25,13 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportEvolutiveLoadToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< EvolutiveLoadInstance, EvolutiveLoadPtr,
-            bases< TimeDependantResultsContainerInstance > >( "EvolutiveLoad", no_init )
-        .def( "__init__", make_constructor( &initFactoryPtr< EvolutiveLoadInstance > ) )
+void exportEvolutiveLoadToPython() {
+
+    py::class_< EvolutiveLoadInstance, EvolutiveLoadPtr,
+            py::bases< TimeDependantResultsContainerInstance > >( "EvolutiveLoad", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< EvolutiveLoadInstance > ) )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< EvolutiveLoadInstance, std::string > ) );
+              py::make_constructor( &initFactoryPtr< EvolutiveLoadInstance, std::string > ) );
 };

@@ -24,14 +24,15 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/FiberGeometryInterface.h"
 
 void exportFiberGeometryToPython() {
-    using namespace boost::python;
 
-    class_< FiberGeometryInstance, FiberGeometryInstance::FiberGeometryPtr,
-            bases< DataStructure > >( "FiberGeometry", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FiberGeometryInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< FiberGeometryInstance, std::string >));
+    py::class_< FiberGeometryInstance, FiberGeometryInstance::FiberGeometryPtr,
+            py::bases< DataStructure > >( "FiberGeometry", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FiberGeometryInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FiberGeometryInstance, std::string >));
 };

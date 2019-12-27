@@ -24,13 +24,14 @@
 #include "PythonBindings/VariantModalBasisInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <boost/variant.hpp>
 
 void exportModalBasisVariantToPython()
 {
-    using namespace boost::python;
 
-    to_python_converter< ModalBasisVariant, ModalBasisToObject >();
-    implicitly_convertible< MechanicalModeContainerPtr, ModalBasisVariant >();
-    implicitly_convertible< GeneralizedModeContainerPtr, ModalBasisVariant >();
+    py::to_python_converter< ModalBasisVariant, ModalBasisToObject >();
+    py::implicitly_convertible< MechanicalModeContainerPtr, ModalBasisVariant >();
+    py::implicitly_convertible< GeneralizedModeContainerPtr, ModalBasisVariant >();
 };

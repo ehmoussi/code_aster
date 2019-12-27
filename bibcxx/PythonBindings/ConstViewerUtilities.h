@@ -27,6 +27,8 @@
 #include "astercxx.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 template < typename T > struct ConstViewer {
     ConstViewer( boost::shared_ptr< const T > p ) : ptr( p ){};
 

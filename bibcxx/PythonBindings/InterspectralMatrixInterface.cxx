@@ -24,15 +24,16 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/InterspectralMatrixInterface.h"
 
 void exportInterspectralMatrixToPython() {
-    using namespace boost::python;
 
-    class_< InterspectralMatrixInstance, InterspectralMatrixInstance::InterspectralMatrixPtr,
-            bases< DataStructure > >( "InterspectralMatrix", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< InterspectralMatrixInstance >))
+    py::class_< InterspectralMatrixInstance, InterspectralMatrixInstance::InterspectralMatrixPtr,
+            py::bases< DataStructure > >( "InterspectralMatrix", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< InterspectralMatrixInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< InterspectralMatrixInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< InterspectralMatrixInstance, std::string >));
 };

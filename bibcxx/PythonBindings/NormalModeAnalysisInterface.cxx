@@ -25,12 +25,13 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportNormalModeAnalysisToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< NormalModeAnalysisInstance, NormalModeAnalysisPtr >( "NormalModeAnalysis", no_init )
+void exportNormalModeAnalysisToPython() {
+
+    py::class_< NormalModeAnalysisInstance, NormalModeAnalysisPtr >( "NormalModeAnalysis", py::no_init )
         // fake initFactoryPtr: not a DataStructure
-        .def( "__init__", make_constructor(&initFactoryPtr< NormalModeAnalysisInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< NormalModeAnalysisInstance >))
         .def( "execute", &NormalModeAnalysisInstance::execute )
         .def( "setMassMatrix", &NormalModeAnalysisInstance::setMassMatrix )
         .def( "setNumberOfFrequencies", &NormalModeAnalysisInstance::setNumberOfFrequencies )

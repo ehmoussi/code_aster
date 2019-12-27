@@ -24,14 +24,15 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ElementaryMatrixInterface.h"
 
 void exportElementaryMatrixToPython() {
-    using namespace boost::python;
 
-    class_< BaseElementaryMatrixInstance, BaseElementaryMatrixPtr,
-            bases< DataStructure > >( "ElementaryMatrixDisplacementDouble", no_init )
+    py::class_< BaseElementaryMatrixInstance, BaseElementaryMatrixPtr,
+            py::bases< DataStructure > >( "ElementaryMatrixDisplacementDouble", py::no_init )
     // fake initFactoryPtr: not buildable
     // fake initFactoryPtr: not buildable
         .def( "addFiniteElementDescriptor",
@@ -43,47 +44,47 @@ void exportElementaryMatrixToPython() {
         .def( "setMaterialOnMesh", &ElementaryMatrixDisplacementDoubleInstance::setMaterialOnMesh )
         .def( "setModel", &ElementaryMatrixDisplacementDoubleInstance::setModel );
 
-    class_< ElementaryMatrixDisplacementDoubleInstance,
+    py::class_< ElementaryMatrixDisplacementDoubleInstance,
             ElementaryMatrixDisplacementDoubleInstance::ElementaryMatrixPtr,
-            bases< BaseElementaryMatrixInstance > >( "ElementaryMatrixDisplacementDouble",
-                                                     no_init )
+            py::bases< BaseElementaryMatrixInstance > >( "ElementaryMatrixDisplacementDouble",
+                                                     py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementDoubleInstance >))
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementDoubleInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementDoubleInstance,
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementDoubleInstance,
                                                 std::string >))
         .def( "update", &ElementaryMatrixDisplacementDoubleInstance::update );
 
-    class_< ElementaryMatrixDisplacementComplexInstance,
+    py::class_< ElementaryMatrixDisplacementComplexInstance,
             ElementaryMatrixDisplacementComplexInstance::ElementaryMatrixPtr,
-            bases< BaseElementaryMatrixInstance > >( "ElementaryMatrixDisplacementComplex",
-                                                     no_init )
+            py::bases< BaseElementaryMatrixInstance > >( "ElementaryMatrixDisplacementComplex",
+                                                     py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementComplexInstance >))
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementComplexInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementComplexInstance,
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementComplexInstance,
                                                 std::string >))
         .def( "update", &ElementaryMatrixDisplacementComplexInstance::update );
 
-    class_< ElementaryMatrixTemperatureDoubleInstance,
+    py::class_< ElementaryMatrixTemperatureDoubleInstance,
             ElementaryMatrixTemperatureDoubleInstance::ElementaryMatrixPtr,
-            bases< BaseElementaryMatrixInstance > >( "ElementaryMatrixTemperatureDouble",
-                                                     no_init )
+            py::bases< BaseElementaryMatrixInstance > >( "ElementaryMatrixTemperatureDouble",
+                                                     py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ElementaryMatrixTemperatureDoubleInstance >))
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixTemperatureDoubleInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ElementaryMatrixTemperatureDoubleInstance,
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixTemperatureDoubleInstance,
                                                 std::string >))
         .def( "update", &ElementaryMatrixTemperatureDoubleInstance::update );
 
-    class_< ElementaryMatrixPressureComplexInstance,
+    py::class_< ElementaryMatrixPressureComplexInstance,
             ElementaryMatrixPressureComplexInstance::ElementaryMatrixPtr,
-            bases< BaseElementaryMatrixInstance > >( "ElementaryMatrixPressureComplex",
-                                                     no_init )
+            py::bases< BaseElementaryMatrixInstance > >( "ElementaryMatrixPressureComplex",
+                                                     py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ElementaryMatrixPressureComplexInstance >))
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixPressureComplexInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ElementaryMatrixPressureComplexInstance,
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixPressureComplexInstance,
                                                 std::string >))
         .def( "update", &ElementaryMatrixPressureComplexInstance::update );
 };

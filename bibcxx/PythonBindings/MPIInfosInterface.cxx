@@ -25,11 +25,12 @@
 
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 #include "PythonBindings/MPIInfosInterface.h"
 
 void exportMPIInfosToPython() {
-    using namespace boost::python;
 
-    def( "getMPINumberOfProcs", getMPINumberOfProcs );
-    def( "getMPIRank", getMPIRank );
+    py::def( "getMPINumberOfProcs", getMPINumberOfProcs );
+    py::def( "getMPIRank", getMPIRank );
 };

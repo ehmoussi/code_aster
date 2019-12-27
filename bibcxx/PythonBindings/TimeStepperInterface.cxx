@@ -25,16 +25,17 @@
 
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 #include <PythonBindings/factory.h>
 #include "PythonBindings/TimeStepperInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
 
 void exportTimeStepperToPython() {
-    using namespace boost::python;
 
-    class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr, bases< DataStructure > >(
-        "TimeStepper", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< TimeStepperInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< TimeStepperInstance, std::string >))
+    py::class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr, py::bases< DataStructure > >(
+        "TimeStepper", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TimeStepperInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TimeStepperInstance, std::string >))
         .def( "setValues", &TimeStepperInstance::setValues );
 };

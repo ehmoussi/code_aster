@@ -26,10 +26,11 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportCppToFortranGlossaryToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< Glossary >( "Glossary", no_init )
+void exportCppToFortranGlossaryToPython() {
+
+    py::class_< Glossary >( "Glossary", py::no_init )
         // fake initFactoryPtr: not a DataStructure
         // fake initFactoryPtr: not a DataStructure
         .def( "getComponent", &Glossary::getComponent )
@@ -46,5 +47,5 @@ void exportCppToFortranGlossaryToPython() {
         .def( "getSolver", &Glossary::getSolver );
 
     def( "getGlossary", &getReferenceToGlossary,
-         return_value_policy< reference_existing_object >() );
+         py::return_value_policy< py::reference_existing_object >() );
 };

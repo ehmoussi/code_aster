@@ -24,18 +24,19 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DiscreteProblemInterface.h"
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( buildKinematicsLoad_overloads, buildKinematicsLoad, 2, 2 )
 
 void exportDiscreteProblemToPython() {
-    using namespace boost::python;
 
-    class_< DiscreteProblemInstance, DiscreteProblemInstance::DiscreteProblemPtr >(
-        "DiscreteProblem", no_init )
+    py::class_< DiscreteProblemInstance, DiscreteProblemInstance::DiscreteProblemPtr >(
+        "DiscreteProblem", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< DiscreteProblemInstance, StudyDescriptionPtr >))
+              py::make_constructor(&initFactoryPtr< DiscreteProblemInstance, StudyDescriptionPtr >))
         // fake initFactoryPtr: not a DataStructure
         .def( "buildElementaryMechanicalLoadsVector",
               &DiscreteProblemInstance::buildElementaryMechanicalLoadsVector )

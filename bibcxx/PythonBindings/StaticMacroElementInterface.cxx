@@ -25,12 +25,13 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportStaticMacroElementToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< StaticMacroElementInstance, StaticMacroElementInstance::StaticMacroElementPtr,
-            bases< DataStructure > >( "StaticMacroElement", no_init )
-        .def( "__init__", make_constructor( &initFactoryPtr< StaticMacroElementInstance > ) )
+void exportStaticMacroElementToPython() {
+
+    py::class_< StaticMacroElementInstance, StaticMacroElementInstance::StaticMacroElementPtr,
+            py::bases< DataStructure > >( "StaticMacroElement", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< StaticMacroElementInstance > ) )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< StaticMacroElementInstance, std::string > ) );
+              py::make_constructor( &initFactoryPtr< StaticMacroElementInstance, std::string > ) );
 };

@@ -24,14 +24,15 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ListOfIntegersInterface.h"
 
 void exportListOfIntegersToPython() {
-    using namespace boost::python;
 
-    class_< ListOfIntegersInstance, ListOfIntegersInstance::ListOfIntegersPtr,
-            bases< DataStructure > >( "ListOfIntegers", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ListOfIntegersInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< ListOfIntegersInstance, std::string >));
+    py::class_< ListOfIntegersInstance, ListOfIntegersInstance::ListOfIntegersPtr,
+            py::bases< DataStructure > >( "ListOfIntegers", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ListOfIntegersInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ListOfIntegersInstance, std::string >));
 };

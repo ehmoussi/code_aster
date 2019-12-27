@@ -22,17 +22,18 @@
  */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ThermalLoadInterface.h"
 
 void exportThermalLoadToPython() {
-    using namespace boost::python;
 
-    class_< ThermalLoadInstance, ThermalLoadInstance::ThermalLoadPtr, bases< DataStructure > >(
-        "ThermalLoad", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ThermalLoadInstance, ModelPtr & >))
+    py::class_< ThermalLoadInstance, ThermalLoadInstance::ThermalLoadPtr, py::bases< DataStructure > >(
+        "ThermalLoad", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ThermalLoadInstance, ModelPtr & >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ThermalLoadInstance, std::string, ModelPtr & >))
+              py::make_constructor(&initFactoryPtr< ThermalLoadInstance, std::string, ModelPtr & >))
         .def( "addUnitaryThermalLoad", &ThermalLoadInstance::addUnitaryThermalLoad )
         .def( "build", &ThermalLoadInstance::build )
         .def( "getFiniteElementDescriptor", &ThermalLoadInstance::getFiniteElementDescriptor )

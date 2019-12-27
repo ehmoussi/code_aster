@@ -26,6 +26,8 @@
 
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 /** @brief Factory for '__init__' constructor without 'DSTypePtr'.
  */
 template < typename DSType, typename... Args >

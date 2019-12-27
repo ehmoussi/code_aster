@@ -25,10 +25,11 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportDrivingToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    enum_< DrivingTypeEnum >( "DrivingType" )
+void exportDrivingToPython() {
+
+    py::enum_< DrivingTypeEnum >( "DrivingType" )
         .value( "DisplacementValue", DisplacementValue )
         .value( "DisplacementNorm", DisplacementNorm )
         .value( "JumpOnCrackValue", JumpOnCrackValue )
@@ -37,8 +38,8 @@ void exportDrivingToPython() {
         .value( "MonotonicStrain", MonotonicStrain )
         .value( "ElasticityLimit", ElasticityLimit );
 
-    class_< DrivingInstance, DrivingPtr >( "Driving", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< DrivingInstance, DrivingTypeEnum >))
+    py::class_< DrivingInstance, DrivingPtr >( "Driving", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< DrivingInstance, DrivingTypeEnum >))
         // fake initFactoryPtr: not a DataStructure
         .def( "addObservationGroupOfNodes", &DrivingInstance::addObservationGroupOfNodes )
         .def( "addObservationGroupOfElements", &DrivingInstance::addObservationGroupOfElements )

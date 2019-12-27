@@ -23,6 +23,8 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 
 #include "PythonBindings/DataStructureInterface.h"
@@ -31,13 +33,12 @@
 #include "PythonBindings/ConstViewerUtilities.h"
 
 void exportFieldOnNodesToPython() {
-    using namespace boost::python;
 
-    class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr, bases< GenericDataFieldInstance > >(
-        "FieldOnNodesDouble", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FieldOnNodesDoubleInstance >))
+    py::class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr, py::bases< GenericDataFieldInstance > >(
+        "FieldOnNodesDouble", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDoubleInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< FieldOnNodesDoubleInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< FieldOnNodesDoubleInstance, std::string >))
 
         .def( "exportToSimpleFieldOnNodes",
               &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
@@ -49,11 +50,11 @@ void exportFieldOnNodesToPython() {
         .def( "setMesh", &FieldOnNodesDoubleInstance::setMesh )
         .def( "update", &FieldOnNodesDoubleInstance::update )
         .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers );
-    class_< FieldOnNodesComplexInstance, FieldOnNodesComplexPtr,
-            bases< GenericDataFieldInstance > >( "FieldOnNodesComplex", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance >))
+    py::class_< FieldOnNodesComplexInstance, FieldOnNodesComplexPtr,
+            py::bases< GenericDataFieldInstance > >( "FieldOnNodesComplex", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance, std::string >))
         .def( "exportToSimpleFieldOnNodes",
               &FieldOnNodesComplexInstance::exportToSimpleFieldOnNodes )
         .def( "getMesh", &FieldOnNodesComplexInstance::getMesh )

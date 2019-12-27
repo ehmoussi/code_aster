@@ -23,6 +23,8 @@
 #include <string>
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 #include "astercxx.h"
 #include "aster_fort.h"
 
@@ -41,20 +43,19 @@ static void libaster_debugJeveuxContent( const std::string message ) {
 };
 
 void exportDebugToPython() {
-    using namespace boost::python;
 
-    def( "debugJeveuxContent", &libaster_debugJeveuxContent );
-    def( "use_count", &libaster_debugRefCount< MeshPtr > );
-    def( "use_count", &libaster_debugRefCount< ModelPtr > );
-    def( "use_count", &libaster_debugRefCount< DOFNumberingPtr > );
-    def( "use_count", &libaster_debugRefCount< ElementaryMatrixDisplacementDoublePtr > );
-    def( "use_count", &libaster_debugRefCount< ElementaryMatrixDisplacementComplexPtr > );
-    def( "use_count", &libaster_debugRefCount< ElementaryMatrixTemperatureDoublePtr > );
-    def( "use_count", &libaster_debugRefCount< ElementaryMatrixPressureComplexPtr > );
-    def( "use_count", &libaster_debugRefCount< AssemblyMatrixDisplacementDoublePtr > );
-    def( "use_count", &libaster_debugRefCount< AssemblyMatrixDisplacementComplexPtr > );
-    def( "use_count", &libaster_debugRefCount< AssemblyMatrixTemperatureDoublePtr > );
-    def( "use_count", &libaster_debugRefCount< AssemblyMatrixTemperatureComplexPtr > );
-    def( "use_count", &libaster_debugRefCount< AssemblyMatrixPressureDoublePtr > );
-    def( "use_count", &libaster_debugRefCount< AssemblyMatrixPressureComplexPtr > );
+    py::def( "debugJeveuxContent", &libaster_debugJeveuxContent );
+    py::def( "use_count", &libaster_debugRefCount< MeshPtr > );
+    py::def( "use_count", &libaster_debugRefCount< ModelPtr > );
+    py::def( "use_count", &libaster_debugRefCount< DOFNumberingPtr > );
+    py::def( "use_count", &libaster_debugRefCount< ElementaryMatrixDisplacementDoublePtr > );
+    py::def( "use_count", &libaster_debugRefCount< ElementaryMatrixDisplacementComplexPtr > );
+    py::def( "use_count", &libaster_debugRefCount< ElementaryMatrixTemperatureDoublePtr > );
+    py::def( "use_count", &libaster_debugRefCount< ElementaryMatrixPressureComplexPtr > );
+    py::def( "use_count", &libaster_debugRefCount< AssemblyMatrixDisplacementDoublePtr > );
+    py::def( "use_count", &libaster_debugRefCount< AssemblyMatrixDisplacementComplexPtr > );
+    py::def( "use_count", &libaster_debugRefCount< AssemblyMatrixTemperatureDoublePtr > );
+    py::def( "use_count", &libaster_debugRefCount< AssemblyMatrixTemperatureComplexPtr > );
+    py::def( "use_count", &libaster_debugRefCount< AssemblyMatrixPressureDoublePtr > );
+    py::def( "use_count", &libaster_debugRefCount< AssemblyMatrixPressureComplexPtr > );
 };
