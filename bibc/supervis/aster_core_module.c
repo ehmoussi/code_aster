@@ -153,7 +153,6 @@ void DEFP(RDTMAX, rdtmax, _IN ASTERDOUBLE *tsub)
      */
     PyObject *res;
 
-    fprintf(fileOut, "RDTMAX\n");
     res = PyObject_CallMethod(get_sh_coreopts(), "sub_tpmax", "d", (double)(*tsub));
     if (res == NULL)
         MYABORT("erreur dans RDTMAX");
@@ -524,7 +523,7 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     Py_DECREF(tup_valk);
     Py_DECREF(tup_vali);
     Py_DECREF(tup_valr);
-    if ( res ) Py_DECREF(res);
+    Py_DECREF(res);
 }
 
 void DEFPP(CHKMSG,chkmsg, _IN ASTERINTEGER *info_alarm, _OUT ASTERINTEGER *iret)
@@ -539,18 +538,13 @@ void DEFPP(CHKMSG,chkmsg, _IN ASTERINTEGER *info_alarm, _OUT ASTERINTEGER *iret)
      *    iret = 0 : tout est ok
      *    iret > 0   erreur
      */
-    fprintf(fileOut, "CHKMSG ne fait rien ?\n");
-    /* ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-       TODO
-
     PyObject *res;
 
     res = PyObject_CallMethod(get_sh_msglog(), "check_counter", "i", (int)*info_alarm);
     if ( !res ) MYABORT("erreur lors de l'appel a la methode MessageLog.check_counter");
     *iret = (ASTERINTEGER)PyLong_AsLong(res);
 
-    Py_DECREF(res); */
+    Py_DECREF(res);
 }
 
 void DEFSS(UTALRM,utalrm, _IN char *bool, _IN STRING_SIZE lbool,
@@ -561,11 +555,6 @@ void DEFSS(UTALRM,utalrm, _IN char *bool, _IN STRING_SIZE lbool,
      * call utalrm('OFF', 'CALCULEL5_7') == MasquerAlarme('CALCULEL5_7')
      * call utalrm('ON', 'CALCULEL5_7') == RetablirAlarme('CALCULEL5_7')
      */
-    fprintf(fileOut, "UTALRM\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
     char *onoff, *s_id;
     PyObject *res;
 
@@ -587,15 +576,11 @@ void DEFP(GTALRM,gtalrm, _OUT ASTERINTEGER *nb)
 {
     /* Interface Fortran/Python pour obtenir si des alarmes ont été émises.
      */
-    fprintf(fileOut, "GTALRM\n");
-    *nb = 0;
-    /* TODO */
-
-//     PyObject *res;
-//     res = PyObject_CallMethod(get_sh_msglog(), "get_info_alarm_nb", "");
-//     if (!res) MYABORT("erreur lors de l'appel a la methode 'get_info_alarm'");
-//     *nb = (ASTERINTEGER)PyLong_AsLong(res);
-//     Py_DECREF(res);
+    PyObject *res;
+    res = PyObject_CallMethod(get_sh_msglog(), "get_info_alarm_nb", "");
+    if (!res) MYABORT("erreur lors de l'appel a la methode 'get_info_alarm_nb'");
+    *nb = (ASTERINTEGER)PyLong_AsLong(res);
+    Py_DECREF(res);
 }
 
 /*

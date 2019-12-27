@@ -32,10 +32,14 @@ void exportFullResultsContainerToPython() {
             bases< ResultsContainerInstance > >( "FullResultsContainer", no_init )
         .def( "__init__",
               make_constructor(
-                  &initFactoryPtr< FullResultsContainerInstance, std::string, std::string >))
+                  &initFactoryPtr< FullResultsContainerInstance, std::string, std::string > ) )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< FullResultsContainerInstance, std::string >))
+              make_constructor( &initFactoryPtr< FullResultsContainerInstance, std::string > ) )
         .def( "getDOFNumbering", &FullResultsContainerInstance::getDOFNumbering )
         .def( "printMedFile", &FullResultsContainerInstance::printMedFile )
-        .def( "setDOFNumbering", &FullResultsContainerInstance::setDOFNumbering );
+        .def( "setDOFNumbering", &FullResultsContainerInstance::setDOFNumbering )
+#ifdef _USE_MPI
+        .def( "setDOFNumbering", &FullResultsContainerInstance::setParallelDOFNumbering )
+#endif
+        ;
 };

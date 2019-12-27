@@ -81,14 +81,14 @@ class TableInstance : public DataStructure {
           _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) ) {};
 
     ~TableInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "Table.destr: " << this->getName() << std::endl;
+#ifdef _DEBUG_CXX
+        std::cout << "DEBUG: Table.destr: " << this->getName() << std::endl;
 #endif
         if ( _parameterDescription->exists() && _description->exists() ) {
             _parameterDescription->updateValuePointer();
             _description->updateValuePointer();
             const int nbParam = ( *_description )[0];
-            // Pour que la desctruction soit effective, on créé des JeveuxVector pour déclencher
+            // Pour que la destruction soit effective, on crée des JeveuxVector pour déclencher
             // l'appel à JEDETR
             for ( int i = 0; i < nbParam; ++i ) {
                 const JeveuxChar24 &name1 = ( *_parameterDescription )[i * 4 + 2];

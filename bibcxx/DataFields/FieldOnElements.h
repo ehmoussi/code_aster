@@ -91,12 +91,6 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
           _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _model( nullptr ),
           _title( JeveuxVectorChar80( getName() + ".TITR" ) ){};
 
-    ~FieldOnElementsInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "FieldOnElements.destr: " << this->getName() << std::endl;
-#endif
-    };
-
     /**
      * @brief
      * @return

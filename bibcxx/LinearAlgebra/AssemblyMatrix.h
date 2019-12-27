@@ -133,8 +133,8 @@ class AssemblyMatrixInstance : public DataStructure {
      * @brief Destructeur
      */
     ~AssemblyMatrixInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "AssemblyMatrixInstance.destr: " << this->getName() << std::endl;
+#ifdef _DEBUG_CXX
+        std::cout << "DEBUG: AssemblyMatrixInstance.destr: " << this->getName() << std::endl;
 #endif
         if ( _description->exists() && ( _solverName == "MUMPS" || _solverName == "PETSC" ) ) {
             CALLO_DELETE_MATRIX( getName(), _solverName );
@@ -217,18 +217,18 @@ class AssemblyMatrixInstance : public DataStructure {
      * @brief Methode permettant de definir la numerotation
      * @param currentNum objet DOFNumbering
      */
-    void setDOFNumbering( const BaseDOFNumberingPtr &currentNum ) { _dofNum = currentNum; };
+    void setDOFNumbering( const BaseDOFNumberingPtr currentNum ) { _dofNum = currentNum; };
 
 /**
  * @brief Methode permettant de definir la numerotation
  * @param currentNum objet ParallelDOFNumbering
  */
-#ifdef _USE_MPI
+// #ifdef _USE_MPI
 //         void setDOFNumbering( const ParallelDOFNumberingPtr& currentNum )
 //         {
 //             _dofNum = currentNum;
 //         };
-#endif /* _USE_MPI */
+// #endif /* _USE_MPI */
 
     /**
      * @brief Methode permettant de definir la liste de chargement

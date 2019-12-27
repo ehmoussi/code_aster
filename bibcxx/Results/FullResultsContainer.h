@@ -41,7 +41,7 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
     /** @brief indexage des résultats de calcul dynamiques */
     DynamicResultsIndexingPtr _index;
     /** @brief the DOFNumbering */
-    DOFNumberingPtr _dofNum;
+    BaseDOFNumberingPtr _dofNum;
 
   public:
     /**
@@ -55,7 +55,7 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
     FullResultsContainerInstance( const std::string &resuTyp )
         : FullResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ){};
 
-    DOFNumberingPtr getDOFNumbering() const
+    BaseDOFNumberingPtr getDOFNumbering() const
     {
         return _dofNum;
     };
@@ -64,16 +64,11 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
         return ResultsContainerInstance::printMedFile( fileName );
     };
 
-    bool setDOFNumbering( const DOFNumberingPtr &dofNum ) {
-        if ( dofNum != nullptr ) {
-            _dofNum = dofNum;
-            if ( _dofNum->getModel() != nullptr )
-                _mesh = _dofNum->getModel()->getMesh();
-            _fieldBuidler.addFieldOnNodesDescription( _dofNum->getFieldOnNodesDescription() );
-            return true;
-        }
-        return false;
-    };
+    bool _setDOFNumbering( const BaseDOFNumberingPtr & );
+    bool setDOFNumbering( const DOFNumberingPtr & );
+#ifdef _USE_MPI
+    bool setParallelDOFNumbering( const ParallelDOFNumberingPtr & );
+#endif
 };
 
 /**

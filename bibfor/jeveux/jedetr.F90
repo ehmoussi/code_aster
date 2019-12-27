@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 
 subroutine jedetr(nomlu)
     implicit none
+#include "asterf_config.h"
 #include "jeveux_private.h"
 #include "asterfort/assert.h"
 #include "asterfort/jjallc.h"
@@ -70,6 +71,9 @@ subroutine jedetr(nomlu)
 ! DEB ------------------------------------------------------------------
     noml32 = nomlu
     icre = 0
+#ifdef _DEBUG_CXX
+    nivo = 2
+#endif
     call jjvern(noml32, icre, iret)
 !
     if (iret .eq. 0) then
