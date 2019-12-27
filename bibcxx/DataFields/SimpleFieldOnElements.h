@@ -94,12 +94,6 @@ template < class ValueType > class SimpleFieldOnElementsInstance : public DataSt
           _allocated( JeveuxVectorLogical( getName() + ".CESL" ) ), _nbNodes( 0 ), _nbComp( 0 ),
           _nbPt( 0 ), _nbSpt( 0 ){};
 
-    ~SimpleFieldOnElementsInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "SimpleFieldOnElements.destr: " << this->getName() << std::endl;
-#endif
-    };
-
     /**
      * @brief Surcharge de l'operateur []
      * @param i Indice dans le tableau Jeveux
@@ -108,11 +102,8 @@ template < class ValueType > class SimpleFieldOnElementsInstance : public DataSt
     ValueType &operator[]( int i ) { return _values->operator[]( i ); };
 
     ValueType const &getValue( int nodeNumber, int compNumber ) const
-#ifdef __DEBUG_GC__
-
-#endif
     {
-#ifdef __DEBUG_GC__
+#ifdef _DEBUG_CXX
         if ( _nbNodes == 0 || _nbComp == 0 )
             throw std::runtime_error( "First call of updateValuePointers is mandatory" );
 #endif

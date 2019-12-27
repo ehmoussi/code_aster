@@ -239,7 +239,6 @@ ResultsContainerPtr StaticModeInterfInstance::execute() {
     cmdSt.setResult( nameOfSD, resultC->getType() );
 
     SyntaxMapContainer dict;
-    std::cout << "cxx!" << std::endl;
     // On récupère la matrice de rigidité et éventuellement de masse
     if ( !_StiffMatrix )
         throw std::runtime_error( "Stiffness Matrix is undefined" );
@@ -294,8 +293,6 @@ ResultsContainerPtr StaticModeInterfInstance::execute() {
 
     cmdSt.define( dict );
 
-    std::cout << "Je lance !" << std::endl;
-
     // Maintenant que le fichier de commande est pret, on appelle OP0093
     try {
         ASTERINTEGER op = 93;
@@ -303,7 +300,6 @@ ResultsContainerPtr StaticModeInterfInstance::execute() {
     } catch ( ... ) {
         throw;
     }
-    std::cout << "OK !" << std::endl;
     //_isEmpty = false;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire ???
     //_typeOfElements->updateValuePointer();

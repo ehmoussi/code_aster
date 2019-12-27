@@ -114,15 +114,6 @@ class BaseMeshInstance : public DataStructure {
     typedef boost::shared_ptr< BaseMeshInstance > BaseMeshPtr;
 
     /**
-     * @brief Destructeur
-     */
-    ~BaseMeshInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "Mesh.destr: " << this->getName() << std::endl;
-#endif
-    };
-
-    /**
      * @brief Get the connectivity
      */
     const ConnectivityMeshExplorer &getConnectivityExplorer() const {

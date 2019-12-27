@@ -17,6 +17,18 @@ should give some ideas.
 One can also search for names in the :ref:`devguide-objects_datastructure` page.
 
 
+Definitions ``.h`` vs Implementation ``.cxx``
+=============================================
+
+The header files ``.h`` should only contain definitions. Exceptions are allowed
+for *properties* that directly return the content of an attribute
+(example: ``DataStructure.getName()``).
+Others functions should be implemented in the ``.cxx`` file
+(example: ``DataStructure.addReference()``).
+
+It avoids to rebuild every thing for a small change.
+
+
 Default arguments in Boost Interface
 ====================================
 

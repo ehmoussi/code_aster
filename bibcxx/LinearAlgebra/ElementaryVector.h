@@ -88,15 +88,6 @@ class ElementaryVectorInstance : public DataStructure {
     ElementaryVectorInstance( const JeveuxMemory memType = Permanent )
         : ElementaryVectorInstance( ResultNaming::getNewResultName(), memType ){};
 
-    /**
-     * @brief Destructeur
-     */
-    ~ElementaryVectorInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "ElementaryVectorInstance.destr: " << this->getName() << std::endl;
-#endif
-    };
-
     /* FIXME: temporay for _corich .REPT initialiezation! */
     const std::string getName8() const {
         std::string name8 = getName();
@@ -229,15 +220,6 @@ class TemplateElementaryVectorInstance: public ElementaryVectorInstance
     TemplateElementaryVectorInstance( const JeveuxMemory memType = Permanent ):
         TemplateElementaryVectorInstance( ResultNaming::getNewResultName(), memType )
     {};
-
-    /**
-     * @brief Destructeur
-     */
-    ~TemplateElementaryVectorInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "TemplateElementaryVectorInstance.destr: " << this->getName() << std::endl;
-#endif
-    };
 };
 
 /** @typedef Definition d'une matrice élémentaire de double */

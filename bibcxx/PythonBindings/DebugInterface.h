@@ -1,7 +1,9 @@
+#ifndef DEBUGINTERFACE_H_
+#define DEBUGINTERFACE_H_
+
 /**
- * @file MPIInfosInterface.cxx
- * @brief Interface python de MPIInfos
- * @author Nicolas Sellenet
+ * @file DebugInterface.h
+ * @brief Debugging utilities
  * @section LICENCE
  *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
@@ -21,15 +23,20 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
+#include "astercxx.h"
 #include <boost/python.hpp>
 
-#include "PythonBindings/MPIInfosInterface.h"
+template< typename T >
+static long libaster_debugRefCount( T &ptr ) {
+    long value = ptr.use_count();
+#ifdef _DEBUG_CXX
+    std::cout << "DEBUG: use_count=" << value
+        << " addr=" << std::ios::hex << ptr.get()
+        << std::endl;
+#endif
+    return value;
+}
 
-void exportMPIInfosToPython() {
-    using namespace boost::python;
+void exportDebugToPython();
 
-    def( "getMPINumberOfProcs", getMPINumberOfProcs );
-    def( "getMPIRank", getMPIRank );
-};
+#endif /* DEBUGINTERFACE_H_ */

@@ -88,11 +88,6 @@ template < class ValueType > class SimpleFieldOnNodesInstance : public DataStruc
           _values( JeveuxVector< ValueType >( getName() + ".CNSV" ) ),
           _allocated( JeveuxVectorLogical( getName() + ".CNSL" ) ), _nbNodes( 0 ), _nbComp( 0 ){};
 
-    ~SimpleFieldOnNodesInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "SimpleFieldOnNodes.destr: " << this->getName() << std::endl;
-#endif
-    };
 
     /**
      * @brief Surcharge de l'operateur []
@@ -102,11 +97,8 @@ template < class ValueType > class SimpleFieldOnNodesInstance : public DataStruc
     ValueType &operator[]( int i ) { return _values->operator[]( i ); };
 
     const ValueType &getValue( int nodeNumber, int compNumber ) const
-#ifdef __DEBUG_GC__
-
-#endif
     {
-#ifdef __DEBUG_GC__
+#ifdef _DEBUG_CXX
         if ( _nbNodes == 0 || _nbComp == 0 )
             throw std::runtime_error( "First call of updateValuePointers is mandatory" );
 #endif
