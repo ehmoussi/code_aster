@@ -47,9 +47,6 @@ def SEUIL(X, Y, X0, Y0, R, lc, Nume_cop, ccos, ssin):
     f = f1 + f2 - f3
     return f
 
-#--
-
-
 #
 # DEBUT DE LA MACRO PROPREMENT DITE
 #
@@ -60,41 +57,27 @@ def raff_gp_ops(self, **args):
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     MasquerAlarme('CALCCHAMP_1')
-#    MasquerAlarme('HOMARD0_9')
-#
-# PREPARATION DES SORTIES
-#
-    self.DeclareOut('MAOUT', self.sd)
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-#
+
 # IMPORTATION DES COMMANDES ET MACRO UTILISEES
 #
     CO = self.get_cmd('CO')
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     FORMULE = self.get_cmd('FORMULE')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
     MACR_ADAP_MAIL = self.get_cmd('MACR_ADAP_MAIL')
     AFFE_MODELE = self.get_cmd('AFFE_MODELE')
     DETRUIRE = self.get_cmd('DETRUIRE')
     COPIER = self .get_cmd('COPIER')
 #
-
-#
 # RECUPERATION DU MAILLAGE ET DES DONNEES UTILISATEUR
 #
-
     __MA0 = args.get('MAILLAGE_N')
 
     nb_calc = args.get('NB_RAFF')
 # Manipulation obligatoire pour pouvoir se servir des grandeurs dans les
 # formules
     TRANCHE_2D = args.get('TRANCHE_2D')
-    nbcop = TRANCHE_2D['NB_ZONE']
     theta = TRANCHE_2D['ANGLE']
-    taille = TRANCHE_2D['TAILLE']
 
 #
 # INITIALISATIONS

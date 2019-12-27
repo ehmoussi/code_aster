@@ -31,12 +31,8 @@ def calc_stabilite_ops(self, **args):
     """
 
     from code_aster.Cata.Syntax import _F
-    reuse = args.get("reuse")
     SCHEMA_TEMPS = args.get("SCHEMA_TEMPS")
     FILTRE = args.get("FILTRE")
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # On importe les definitions des commandes a utiliser dans la macro
     EXTR_TABLE = self.get_cmd('EXTR_TABLE')
@@ -74,7 +70,7 @@ def calc_stabilite_ops(self, **args):
         filtre = {}
         filtre['FILTRE'] = _F(NOM_PARA= 'NUME_ORDRE',
                           VALE_I= num_ordr)
-        nom_obj=mnl["NOM_OBJET", num_ordr] 
+        nom_obj=mnl["NOM_OBJET", num_ordr]
         __sol_per = mnl.getMechanicalModeContainer( nom_obj )
 
         if not recup_para:
@@ -146,7 +142,6 @@ def calc_stabilite_ops(self, **args):
         nd = int(size(u)/(2*hu+1))
         vect1 = zeros(nd)
         vect1[poschoc[0]-1] = 1.E+00
-        adim = zeros(3)
         rig1 = rig#/adim[0]
         mass1 = mass#/adim[1]
         alpha1 = alpha#/adim[0]
@@ -177,7 +172,7 @@ def calc_stabilite_ops(self, **args):
         DETRUIRE = self.get_cmd('DETRUIRE')
         DETRUIRE(CONCEPT=_F(NOM=args['MODE_NON_LINE']), INFO=1)
 
-   
+
     tab = t_res.dict_CREA_TABLE()
     t_resu = CREA_TABLE(TYPE_TABLE='TABLE_CONTENEUR', **tab)
 
@@ -207,7 +202,6 @@ def main(U, hu, omega, K, M, nchoc, poschoc, orig, typchoc, alpha, eta, jeu, nbi
     a1 = (1.-alp)*dt
     b1 = (0.5-bet)*dt**2
     a2 = 1./(bet*(dt**2))
-    b2 = alp/(bet*dt)
 
     t = 0.
     phi[:, :nd] = eye(nd, nd)
@@ -261,8 +255,6 @@ def main(U, hu, omega, K, M, nchoc, poschoc, orig, typchoc, alpha, eta, jeu, nbi
 
 
 def dfdu(t, nd, hu, U, omega, nchoc, poschoc, orig, typchoc, alpha, eta, jeu):
-    lig = ones(nchoc*6)
-    col = ones(nchoc*6)
     val = zeros(nchoc*6)
 
     dFdU = zeros((nd, nd))
@@ -334,16 +326,14 @@ def fbilateral(x, alpha, eta):
     u3 = (q - (1j**sd)*sqrt(abs(discr1)))/2.
     v3 = (q + (1j**sd)*sqrt(abs(discr1)))/2.
 
-    u = u3**(1/3.);
-    v = v3**(1/3.);
+    u = u3**(1/3.)
+    v = v3**(1/3.)
 
     f1 = u + v + h
 
     a2 = a1
     b2 = b1+a1*f1
     c2 = c1+b1*f1 + a1*f1**2
-
-    discr2 = b2 ** 2 - 4.*a2*c2
 
     f = (-b2 + sqrt(b2 ** 2 - 4.*a2*c2))/(2.*a2)
 
@@ -388,7 +378,7 @@ def posnoeud(typ, noeud1, comp1, comp2, pos):
 
 
 def extr_matr(matr):
-    nommatr = str(matr.nom).strip()
+    nommatr = matr.getName().strip()
     lenm = len(nommatr)
     nommatr = nommatr+' '*(8-lenm)
     nrefa = nommatr+'           .REFA'

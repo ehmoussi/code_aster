@@ -38,8 +38,6 @@ from code_aster.Commands import (DETRUIRE, LIRE_IMPE_MISS, LIRE_FORC_MISS,
 
 def dyna_iss_vari_ops(self, **kwargs):
     """Corps de la macro DYNA_ISS_VARI"""
-    self.set_icmd(1)
-    ier = 0
     # conteneur des paramètres du calcul
     params = DynaISSParameters(**kwargs)
     # création de l'objet generator
@@ -101,7 +99,6 @@ class Generator(object):
 
     def __init__(self, macro, params):
         """Constructor Base class"""
-        #self.name = macro.sd.nom
         self.macro = macro
         self.case = params.cas
         self.INFO = params.other_keys['INFO']
@@ -129,16 +126,10 @@ class Generator(object):
 
     def prepare_input(self):
         """run prepare data"""
-        #v_refa_rigi = self.mat_gene_params['MATR_RIGI'].sdj.REFA.get()
-        #nom_bamo = v_refa_rigi[0]
-        #nom_ddlgene = v_refa_rigi[1]
-        #self.mat_gene_params['NUME_DDL'] = self.macro.get_concept(nom_ddlgene)
-        #self.mat_gene_params['BASE'] = self.macro.get_concept(nom_bamo)
         matr_rigi = self.mat_gene_params['MATR_RIGI']
         bamo = matr_rigi.getModalBasis()
         ddlgene = matr_rigi.getGeneralizedDOFNumbering()
         nom_bamo = bamo.getName()
-        nom_ddlgene = ddlgene.getName()
         self.mat_gene_params['NUME_DDL'] = ddlgene
         self.mat_gene_params['BASE'] = bamo
         ir, ib, nume_ddl = aster.dismoi('NUME_DDL', nom_bamo,'RESU_DYNA','F')
@@ -257,8 +248,6 @@ class GeneratorTRANS(Generator):
             aster.affiche('MESSAGE', text)
 
     def build_result(self):
-       # declaration concept sortant
-        self.macro.DeclareOut('dyha', self.macro.sd)
         return self.compute_result()
 
     def compute_result(self):
@@ -376,18 +365,21 @@ class GeneratorTRANS(Generator):
                             tup_re2.append(VEC_comp.real*0.)
                             tup_im2.append(VEC_comp.imag*0.)
 
+        # il peut y avoir des blancs à la fin du noms qui ont été enlevés par le python
+        resu_name = __dyge0.getName()+(19-len(__dyge0.getName()))*' '
         # affectation des valeurs
         for k in range(len(self.liste_freq_sig)):
             #                                     1         2         3
             #                                   8901234567890123456789012
-            aster.putvectjev(__dyge0.get_name() + '.DEPL        ', nbmodt, tuple(
+            aster.putvectjev(resu_name + '.DEPL        ', nbmodt, tuple(
             range(nbmodt * k + 1, nbmodt * (k + 1) + 1)), tuple(tup_re1[k]), tuple(tup_im1[k]), 1)
-            aster.putvectjev(__dyge0.get_name() + '.VITE        ', nbmodt, tuple(
+            aster.putvectjev(resu_name + '.VITE        ', nbmodt, tuple(
             range(nbmodt * k + 1, nbmodt * (k + 1) + 1)), tuple(tup_re2[k]), tuple(tup_im2[k]), 1)
-            aster.putvectjev(__dyge0.get_name() + '.ACCE        ', nbmodt, tuple(
+            aster.putvectjev(resu_name + '.ACCE        ', nbmodt, tuple(
                 range(nbmodt * k + 1, nbmodt * (k + 1) + 1)), tuple(tup_re[k]), tuple(tup_im[k]), 1)
 
-        aster.affiche('MESSAGE','START REST_SPEC_TEMP' )
+        if self.INFO == 2:
+            aster.affiche('MESSAGE','START REST_SPEC_TEMP' )
 
         dyha = REST_SPEC_TEMP(RESU_GENE = __dyge0, SYMETRIE='NON',
                               #METHODE = 'PROL_ZERO' ,
@@ -458,7 +450,7 @@ class GeneratorTRANS(Generator):
                       NUME_DDL_GENE = self.mat_gene_params['NUME_DDL'],
                       UNITE_RESU_IMPE = self.calc_params.get('UNITE_RESU_IMPE'),
                       ISSF = 'NON',
-                      FREQ_EXTR = freqk,);
+                      FREQ_EXTR = freqk,)
         __fosi = LIRE_FORC_MISS(
                       BASE =self.mat_gene_params['BASE'],
                       NUME_DDL_GENE = self.mat_gene_params['NUME_DDL'],
@@ -466,7 +458,7 @@ class GeneratorTRANS(Generator):
                       NOM_CHAM = 'DEPL',
                       UNITE_RESU_FORC = self.calc_params.get('UNITE_RESU_FORC'),
                       ISSF = 'NON',
-                      FREQ_EXTR = freqk,);
+                      FREQ_EXTR = freqk,)
         __rito = COMB_MATR_ASSE(COMB_C = (
                       _F(MATR_ASSE = __impe, COEF_C = 1.0 + 0.j,),
                       _F(MATR_ASSE = self.mat_gene_params['MATR_RIGI'],
@@ -510,8 +502,7 @@ class GeneratorTRANS(Generator):
         if k > 0:
             DETRUIRE(CONCEPT = _F(NOM = (__impe, __fosi, __rito)), INFO=1)
         return VECRES
-        VEC = calc_miss_vari(self)
-        return VEC
+        return calc_miss_vari(self)
 
 
 #     -----------------------------------------------------------------
@@ -548,7 +539,7 @@ class GeneratorSPEC(Generator):
                       NUME_DDL_GENE = self.mat_gene_params['NUME_DDL'],
                       UNITE_RESU_IMPE = self.calc_params.get('UNITE_RESU_IMPE'),
                       ISSF = 'NON',
-                      FREQ_EXTR = freqk,);
+                      FREQ_EXTR = freqk,)
         __fosi = LIRE_FORC_MISS(
                       BASE =self.mat_gene_params['BASE'],
                       NUME_DDL_GENE = self.mat_gene_params['NUME_DDL'],
@@ -556,7 +547,7 @@ class GeneratorSPEC(Generator):
                       NOM_CHAM = 'DEPL',
                       UNITE_RESU_FORC = self.calc_params.get('UNITE_RESU_FORC'),
                       ISSF = 'NON',
-                      FREQ_EXTR = freqk,);
+                      FREQ_EXTR = freqk,)
         __rito = COMB_MATR_ASSE(COMB_C = (
                       _F(MATR_ASSE = __impe, COEF_C = 1.0 + 0.j,),
                       _F(MATR_ASSE = self.mat_gene_params['MATR_RIGI'],
@@ -642,8 +633,6 @@ class GeneratorSPEC(Generator):
 
 
     def build_result(self):
-       # Declaration concept sortant
-        self.macro.DeclareOut('dsp_out', self.macro.sd)
         return self.compute_result()
 
 

@@ -33,10 +33,6 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
     from code_aster.Cata.Language.SyntaxObjects import _F
     from Utilitai.Utmess import UTMESS, ASSERT
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
     CREA_TABLE    = self.get_cmd('CREA_TABLE')
@@ -46,40 +42,31 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
     CREA_RESU     = self.get_cmd('CREA_RESU')
     FORMULE       = self.get_cmd('FORMULE')
     CALC_TABLE    = self.get_cmd('CALC_TABLE')
-    IMPR_RESU     = self.get_cmd('IMPR_RESU')
 
     # récupération du phenomene
-    iret,ibid,phenomene = aster.dismoi('PHENOMENE', MODELE.nom, 'MODELE', 'F')
+    iret,ibid,phenomene = aster.dismoi('PHENOMENE', MODELE.getName(), 'MODELE', 'F')
 
     # seul le phénomène mécanique est pris en charge
     if (phenomene != 'MECANIQUE'):
        UTMESS('F', 'PREPOST_11')
 
-    # récupération de la modélisation
-    iret,ibid,modelisation = aster.dismoi('MODELISATION', MODELE.nom, 'MODELE', 'F')
-
-#    # assertion : modèle isoparamétrique
-#    ASSERT(modelisation in ('D_PLAN', 'C_PLAN', 'AXIS', '3D'))
-
     # le modele comporte-t-il des fissures X-FEM ?
-    iret,nfismo,kbid = aster.dismoi('NB_FISS_XFEM', MODELE.nom, 'MODELE', 'F')
+    iret,nfismo,kbid = aster.dismoi('NB_FISS_XFEM', MODELE.getName(), 'MODELE', 'F')
     lxfem = nfismo > 0
 
     # récupération du maillage inclus dans le modele
-    iret,ibid,nom_mail = aster.dismoi('NOM_MAILLA', MODELE.nom, 'MODELE', 'F')
-    nom_mail = nom_mail.strip()
     __MA = MODELE.getMesh()
 
     # récupération de la dimension géométrique
-    iret,dime,kbid = aster.dismoi('DIM_GEOM', __MA.nom, 'MAILLAGE', 'F')
+    iret,dime,kbid = aster.dismoi('DIM_GEOM', __MA.getName(), 'MAILLAGE', 'F')
 
     # extraction des coordonnées des noeuds du maillage
     __CHXN=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_GEOM_R',
-                      NOM_CHAM='GEOMETRIE', MAILLAGE=__MA, INFO=1);
+                      NOM_CHAM='GEOMETRIE', MAILLAGE=__MA, INFO=1)
 
     # calcul des coordonnées des points d'intégration des éléments du maillage
     __CHXG=CREA_CHAMP(OPERATION='DISC', TYPE_CHAM='ELGA_GEOM_R', PROL_ZERO='OUI',
-                      CHAM_GD=__CHXN, MODELE=MODELE, );
+                      CHAM_GD=__CHXN, MODELE=MODELE, )
 
     # si un seul GROUP_MA, on le convertit en liste
 #    if type(GROUP_MA) not in (list, tuple):
@@ -155,7 +142,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                             MODELE=MODELE,
                             PROL_ZERO='OUI',
                             AFFE=l_F,
-                           );
+                           )
 
         # 2. Evaluation de la solution analytique aux points d'intégration
 
@@ -163,7 +150,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                            TYPE_CHAM='ELGA_NEUT_R',
                            CHAM_F=__UanaFG,
                            CHAM_PARA=__CHXG,
-                          );
+                          )
 
         # 3. Conversion du champ solution analytique en champ de déplacement
 
@@ -188,7 +175,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                            TYPE_CHAM='ELGA_DEPL_R',
                            MODELE=MODELE,
                            PROL_ZERO='OUI',
-                           ASSE=l_F);
+                           ASSE=l_F)
 
         # 4. création d'un champ contenant les déplacements calculés sur les groupes considérés
 
@@ -203,7 +190,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                               MODELE=MODELE,
                               PROL_ZERO='OUI',
                               CHAM_GD=CHAM_GD,
-                             );
+                             )
         else:
            cham_mater=None
            if 'CHAM_MATER' in args:
@@ -217,14 +204,14 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                                  TYPE_CHAM='ELGA_DEPL_R',
                                  PROL_ZERO='OUI',
                                  CHAM_GD=CHAM_GD,
-                                 MODELE=MODELE, );
+                                 MODELE=MODELE, )
            else:
               __UcalG=CREA_CHAMP(OPERATION='ASSE_DEPL',
                                  TYPE_CHAM='ELGA_DEPL_R',
                                  PROL_ZERO='OUI',
                                  CHAM_MATER=cham_mater,
                                  CHAM_GD=CHAM_GD,
-                                 MODELE=MODELE, );
+                                 MODELE=MODELE, )
 
         # 6. création du champ différence entre les déplacements calculés et analytiques
 
@@ -263,7 +250,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                             TYPE_CHAM='ELGA_DEPL_R',
                             MODELE=MODELE,
                             PROL_ZERO='OUI',
-                            ASSE=l_F);
+                            ASSE=l_F)
 
         # calcul de la norme L2 du deplacement pour la solution analytique et le champ difference, pour chaque groupe
         l_ref_norm=[]
@@ -276,7 +263,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
             __TanaDEP =POST_ELEM(NORME=(_F(TYPE_NORM='L2',
                                            GROUP_MA=group,
                                            CHAM_GD=__UanaR,
-                                           MODELE=MODELE,),));
+                                           MODELE=MODELE,),))
 
             # extraction de la norme L2 du champ de déplacement analytique
             tab = __TanaDEP.EXTR_TABLE()
@@ -296,7 +283,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
             __TdiffDEP=POST_ELEM(NORME=(_F(TYPE_NORM='L2',
                                            GROUP_MA=group,
                                            CHAM_GD=__UdiffG,
-                                           MODELE=MODELE,),));
+                                           MODELE=MODELE,),))
 
             # extraction de la norme L2 du champ de déplacement difference
             tab = __TdiffDEP.EXTR_TABLE()
@@ -398,7 +385,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                             TYPE_CHAM='ELGA_NEUT_F',
                             MODELE=MODELE,
                             PROL_ZERO='OUI',
-                            AFFE=l_F,);
+                            AFFE=l_F,)
 
 
         # 2. Evaluation de la solution analytique aux points d'intégration
@@ -407,7 +394,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                            TYPE_CHAM='ELGA_NEUT_R',
                            CHAM_F=__SI_ana_F,
                            CHAM_PARA=__CHXG,
-                          );
+                          )
 
         # 3. Conversion du champ solution analytique en champ de contrainte
 
@@ -432,7 +419,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                            TYPE_CHAM='ELGA_SIEF_R',
                            MODELE=MODELE,
                            PROL_ZERO='OUI',
-                           ASSE=l_F);
+                           ASSE=l_F)
 
         # 4. création du champ différence entre les contraintes calculés et analytiques
 
@@ -471,7 +458,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                             TYPE_CHAM='ELGA_SIEF_R',
                             MODELE=MODELE,
                             PROL_ZERO='OUI',
-                            ASSE=l_F);
+                            ASSE=l_F)
 
         # 5. création d'un champ de deplacement nul partout
         # ce champ de deplacement est essentiel pour calculer les normes, mais n'aucun impact sur les resultats
@@ -497,7 +484,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
         __U=CREA_CHAMP(OPERATION='AFFE',
                        TYPE_CHAM='NOEU_DEPL_R',
                        MAILLAGE=__MA,
-                       AFFE=l_F);
+                       AFFE=l_F)
 
         # 6. création d'un champ resultat a partir de champ de contrainte analytique
         __SIanaRES=CREA_RESU(OPERATION='AFFE',
@@ -508,7 +495,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                              AFFE=_F(CHAM_GD=__SI_ana_R,
                                      MODELE=MODELE,
                                      CHAM_MATER=CHAM_MATER,
-                                     INST = (1.0),), );
+                                     INST = (1.0),), )
 
         __SIanaRES=CREA_RESU(reuse=__SIanaRES,
                              RESULTAT=__SIanaRES,
@@ -521,7 +508,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                                      MODELE=MODELE,
                                      CHAM_MATER=CHAM_MATER,
                                      INST = (1.0),),
-                             );
+                             )
 
 
         # 7. création d'un champ resultat a partir de champ de contrainte difference
@@ -533,7 +520,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                              AFFE=_F(CHAM_GD=__SI_diff,
                                      MODELE=MODELE,
                                      CHAM_MATER=CHAM_MATER,
-                                     INST = (1.0),), );
+                                     INST = (1.0),), )
 
         __SI_DIFFR=CREA_RESU(reuse=__SI_DIFFR,
                              RESULTAT=__SI_DIFFR,
@@ -546,16 +533,16 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                                      MODELE=MODELE,
                                      CHAM_MATER=CHAM_MATER,
                                      INST = (1.0),),
-                             );
+                             )
 
 
         # 8. calcul de l'energie a partir du champ de contraintes analytique
 
-        __TanaSIG = POST_ELEM(RESULTAT=__SIanaRES,ENER_ELAS=_F(GROUP_MA=GROUP_MA), );
+        __TanaSIG = POST_ELEM(RESULTAT=__SIanaRES,ENER_ELAS=_F(GROUP_MA=GROUP_MA), )
 
         # 9. calcul de l'energie a partir du champ de contraintes difference
 
-        __TdiffSIG= POST_ELEM(RESULTAT=__SI_DIFFR,ENER_ELAS=_F(GROUP_MA=GROUP_MA), );
+        __TdiffSIG= POST_ELEM(RESULTAT=__SI_DIFFR,ENER_ELAS=_F(GROUP_MA=GROUP_MA), )
 
         #creation de la table finale
 
@@ -647,7 +634,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                             MODELE=MODELE,
                             PROL_ZERO='OUI',
                             AFFE=l_F,
-                           );
+                           )
 
         # 2. Evaluation de la solution analytique aux points d'intégration
 
@@ -655,7 +642,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                            TYPE_CHAM='ELGA_NEUT_R',
                            CHAM_F=__PanaFG,
                            CHAM_PARA=__CHXG,
-                          );
+                          )
 
         # 3. Conversion du champ solution analytique en champ de déplacement
         # N.B.: L'intégration de la pression asocciée au ddl LAG_C donne 0 !
@@ -680,7 +667,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                            TYPE_CHAM='ELGA_DEPL_R',
                            MODELE=MODELE,
                            PROL_ZERO='OUI',
-                           ASSE=l_F);
+                           ASSE=l_F)
 
         # 4. création d'un champ contenant les déplacements calculés sur les groupes considérés
 
@@ -702,7 +689,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
         __PcalN=CREA_CHAMP(OPERATION='ASSE',
                            TYPE_CHAM='NOEU_NEUT_R',
                            MAILLAGE=__MA,
-                           ASSE=l_F);
+                           ASSE=l_F)
 
         # 5. discrétisation des déplacements calculés aux points d'intégration
 
@@ -711,7 +698,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                            MODELE=MODELE,
                            PROL_ZERO='OUI',
                            CHAM_GD=__PcalN,
-                          );
+                          )
 
         # 6. création du champ différence entre les déplacements calculés et analytiques
 
@@ -746,7 +733,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                             TYPE_CHAM='ELGA_DEPL_R',
                             MODELE=MODELE,
                             PROL_ZERO='OUI',
-                            ASSE=l_F);
+                            ASSE=l_F)
 
         # calcul de la norme L2 du deplacement pour la solution analytique et le champ difference, pour chaque groupe
         l_ref_norm=[]
@@ -759,7 +746,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
             __TanaP =POST_ELEM(NORME=(_F(TYPE_NORM='L2',
                                            GROUP_MA=group,
                                            CHAM_GD=__PanaR,
-                                           MODELE=MODELE,),));
+                                           MODELE=MODELE,),))
 
             # extraction de la norme L2 du champ de déplacement analytique
             tab = __TanaP.EXTR_TABLE()
@@ -779,7 +766,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
             __TdiffP=POST_ELEM(NORME=(_F(TYPE_NORM='L2',
                                            GROUP_MA=group,
                                            CHAM_GD=__PdiffG,
-                                           MODELE=MODELE,),));
+                                           MODELE=MODELE,),))
 
             # extraction de la norme L2 du champ de déplacement difference
             tab = __TdiffP.EXTR_TABLE()
@@ -833,7 +820,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                                   PARA   ="REFERENCE",),
                                 ),
                          TITRE=TITRE,
-                         );
+                         )
     else:
        tabout=CREA_TABLE(LISTE=(_F(LISTE_K=l_group,
                                   PARA="GROUP_MA"),
@@ -843,7 +830,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                                   PARA   ="REFERENCE",),
                                 ),
                          TITRE=TITRE,
-                         );
+                         )
 
     # on ne calcule l'erreur relative que si la reference est non nulle
     if ref_norm_tot > 1.e-16:

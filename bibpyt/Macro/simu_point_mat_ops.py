@@ -26,9 +26,6 @@ def simu_point_mat_ops(
         MASSIF=None, ANGLE=None, COMPORTEMENT=None, INFO=None, ARCHIVAGE=None, SUPPORT=None, **args):
     """Simulation de la reponse d'un point materiel"""
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
     import math
 
     # On importe les definitions des commandes a utiliser dans la macro
@@ -42,7 +39,6 @@ def simu_point_mat_ops(
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     CREA_RESU = self.get_cmd('CREA_RESU')
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
     MODI_MAILLAGE = self.get_cmd('MODI_MAILLAGE')
     MODI_REPERE = self.get_cmd('MODI_REPERE')
@@ -234,7 +230,6 @@ def simu_point_mat_ops(
                 motscles['AFFE_VARC'] = lmotcle
         if lcomp['RELATION'] == 'META_LEMA_ANI':
             UTMESS('F', 'COMPOR2_91', valk=lcomp['RELATION'])
-        self.DeclareOut('REPONSE', self.sd)
 
         Titre = 'CALC_POINT_MAT'
         if ARCHIVAGE is not None:
@@ -243,7 +238,7 @@ def simu_point_mat_ops(
                 __REP1 = CALC_POINT_MAT(
                     INFO=INFO, MATER=MATER, ANGLE=ANGLE, **motscles)
                 lr8 = ARCHIVAGE['LIST_INST']
-                lr = lr8.Valeurs()
+                lr = lr8.getValues()
                 REPONSE = CALC_TABLE(TABLE=__REP1, TITRE=Titre,
                                      ACTION=_F(
                                          OPERATION='FILTRE', NOM_PARA='INST',
@@ -771,9 +766,6 @@ def simu_point_mat_ops(
         if EPSI_INIT:
             etatinit = 1
             EPSINI = {}
-            LCDEPL = []
-            LNDEPL = []
-            LVDEPL = []
             LIST_AFFE = []
             mon_dico = {}
             mon_dico["NOEUD"] = 'P0'
@@ -945,8 +937,6 @@ def simu_point_mat_ops(
 
         __REP_INV = CALC_TABLE(TABLE=__REP_INV, reuse=__REP_INV,
                                ACTION=_F(OPERATION='EXTR', NOM_PARA=('INST', 'TRACE', 'VMIS'), ))
-
-        self.DeclareOut('REPONSE', self.sd)
 
         REPONSE = CALC_TABLE(TABLE=__REP_EPSI, TITRE='TABLE ', ACTION=(
                              _F(OPERATION='COMB', TABLE=__REP_SIGM,

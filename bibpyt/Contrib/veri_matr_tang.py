@@ -174,8 +174,6 @@ def veri_matr_tang_ops(self, **args):
     # On importe les definitions des commandes a utiliser dans la macro
     CREA_TABLE = self.get_cmd('CREA_TABLE')
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
     # Le concept sortant (de type fonction) est nomme ROTGD dans
     # le contexte de la macro
 

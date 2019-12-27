@@ -60,7 +60,7 @@ def calc_comb_modes(__tbresul, myintitule_by_num, comb_modes, resu, b_extrac, re
         if comb['AMOR_REDUIT'] is not None:
             l_amor = list(comb['AMOR_REDUIT'])
         else:
-            l_amor = comb['LIST_AMOR'].Valeurs()
+            l_amor = comb['LIST_AMOR'].getValues()
         if len(l_amor) == 1:
             l_amor = l_amor * len(resu_nume_ordre)
         for lign_num in myintitule_by_num.keys():
@@ -192,7 +192,6 @@ def calc_resultante(lign_num, __tbresul, __tbextr, myintitule_by_num, resu_nume_
 
 #macro body
 def calc_coupure_ops(self, **args):
-    self.set_icmd(1) # commands in macro will be counted as one
 
     # La valeur par défaut n'est pas dans le catalogue, sinon le mot-clé devient
     # obligatoire dans AsterStudy

@@ -89,8 +89,8 @@ if phenom is None :
    UTMESS('F','GENERIC_1','ELAS_GLRC non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.getName(), ns,'.VALR'))
 
 TAB_G_RA=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -172,8 +172,8 @@ if phenom is None :
    UTMESS('F','GENERIC_2','GLRC_DM non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.getName(), ns,'.VALR'))
 
 TAB_G_RA=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -259,8 +259,8 @@ if phenom is None :
    UTMESS('F','GENERIC_3','ELAS_GLRC non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.getName(), ns,'.VALR'))
 
 TAB_G_PA=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -342,8 +342,8 @@ if phenom is None :
    UTMESS('F','GENERIC_4','GLRC_DM non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.getName(), ns,'.VALR'))
 
 TAB_G_PA=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -426,8 +426,8 @@ if phenom is None :
    UTMESS('F','GENERIC_5','ELAS_GLRC non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.getName(), ns,'.VALR'))
 
 TAB_G_UT=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -509,8 +509,8 @@ if phenom is None :
    UTMESS('F','GENERIC_6','GLRC_DM non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.getName(), ns,'.VALR'))
 
 TAB_G_UT=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -593,8 +593,8 @@ if phenom is None :
    UTMESS('F','GENERIC_11','ELAS_GLRC non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.getName(), ns,'.VALR'))
 
 TAB_G_CI=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -679,8 +679,8 @@ if phenom is None :
    UTMESS('F','GENERIC_12','GLRC_DM non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.getName(), ns,'.VALR'))
 
 TAB_G_CI=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),

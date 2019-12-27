@@ -177,6 +177,16 @@ void exportMaterialBehaviourToPython() {
         .def( "hasConvertibleValues", &RuptFragFoMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
+
+    class_< CzmLabMixMaterialBehaviourInstance, CzmLabMixMaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >( "CzmLabMixMaterialBehaviour", no_init )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< CzmLabMixMaterialBehaviourInstance > ) )
+        .def( "getName", &CzmLabMixMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
+        .def( "hasConvertibleValues", &CzmLabMixMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" );
+
     class_< TractionMaterialBehaviourInstance, TractionMaterialBehaviourPtr,
             bases< GeneralMaterialBehaviourInstance > >( "TractionMaterialBehaviour", no_init )
         .def( "__init__", make_constructor( &initFactoryPtr< TractionMaterialBehaviourInstance > ) )

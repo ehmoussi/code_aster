@@ -47,7 +47,6 @@ def calc_spec_ops(self, **args):
 #  a partir de fonctions reelles
 
     import aster
-    EnumTypes = (list, tuple)
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
     import numpy
@@ -66,9 +65,6 @@ def calc_spec_ops(self, **args):
         INTERSPE = INTERSPE,
     if TRANSFERT is not None and type(TRANSFERT) not in (list, tuple):
         TRANSFERT = TRANSFERT,
-
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
@@ -358,7 +354,6 @@ def calc_spec_ops(self, **args):
             refer = list(l_H[0][1]['REFER'])
 
         ind_refer = []
-        dimh = len(refer) * (len(list_ord) - len(refer))
         for k1 in range(len(refer)):
             for l1 in range(len(list_ord)):
                 if refer[k1] == list_ord[l1]:

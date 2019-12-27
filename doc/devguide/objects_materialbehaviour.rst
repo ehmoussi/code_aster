@@ -47,6 +47,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.CzmLabMixMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.CzmLabMixMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.DisEcroTracMaterialBehaviour` object
 ================================================================================
 

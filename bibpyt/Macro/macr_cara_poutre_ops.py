@@ -29,7 +29,6 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
     import aster
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     #
-    ier = 0
     # On importe les définitions des commandes a utiliser dans la macro
     # Le nom de la variable doit être obligatoirement le nom de la commande
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
@@ -55,11 +54,6 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
     CREA_TABLE = self.get_cmd('CREA_TABLE')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
     DETRUIRE = self.get_cmd('DETRUIRE')
-    # La macro compte pour 1 dans la numérotation des commandes
-    self.set_icmd(1)
-    # Le concept sortant (de type table_sdaster) est nommé 'nomres' dans le
-    # contexte de la macro
-    self.DeclareOut('nomres', self.sd)
     #
     ImprTable = False
     #
@@ -72,9 +66,9 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
     # Dans les tables on retrouve une ligne avec __nomlma.nom. Soit :
     #   - on remplace __nomlma.nom par NomMaillageNew.
     #   - on supprime la ligne
-    NomMaillage = (None, __nomlma.get_name())
+    NomMaillage = (None, __nomlma.getName())
     if ('NOM' in args):
-        NomMaillage = (args.get('NOM'), __nomlma.get_name())
+        NomMaillage = (args.get('NOM'), __nomlma.getName())
     #
     #
     __nomamo = AFFE_MODELE(
@@ -116,7 +110,7 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
         # on pourra appliquer des conditions de température imposée
         #
         # les groupes doivent exister
-        collgrma = aster.getcolljev('%-8s.GROUPEMA' % __nomlma.nom)
+        collgrma = aster.getcolljev('%-8s.GROUPEMA' % __nomlma.getName())
         collgrma = list(map(lambda x: x.strip(), collgrma))
         if type(GROUP_MA_BORD) == str:
             l_group_ma_bord = [ GROUP_MA_BORD,  ]
@@ -253,7 +247,7 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
                 UTMESS('F', 'POUTRE0_3')
             nthno = args['NOEUD'][0].strip()
             # nthno est-il dans le maillage ?
-            nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.nom)
+            nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.getName())
             nomnoe = list(map(lambda x: x.strip(), nomnoe))
             if ( not nthno in nomnoe ):
                 UTMESS('F', 'POUTRE0_9',valk=nthno)
@@ -264,8 +258,8 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
                 UTMESS('F', 'POUTRE0_3')
             grthno = args.get('GROUP_NO')[0]
             #grthno = grthno[0]
-            collgrno = aster.getcolljev('%-8s.GROUPENO' % __nomapi.nom)
-            nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomapi.nom)
+            collgrno = aster.getcolljev('%-8s.GROUPENO' % __nomapi.getName())
+            nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomapi.getName())
             # Plantage si grthno n'existe pas dans le maillage
             try:
                 l_no = collgrno[grthno.ljust(24)]
@@ -545,7 +539,7 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             UTMESS('F', 'POUTRE0_1')
         #
         # les groupes doivent exister
-        collgrma = aster.getcolljev('%-8s.GROUPEMA' % __nomlma.nom)
+        collgrma = aster.getcolljev('%-8s.GROUPEMA' % __nomlma.getName())
         collgrma = list(map(lambda x: x.strip(), collgrma))
         for igr in l_group_ma_bord:
             if ( not igr.strip() in collgrma):
@@ -570,14 +564,14 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             if (len(l_group_ma) != len(l_noeud)):
                 UTMESS('F', 'POUTRE0_2')
             # Les noeuds doivent faire partie du maillage
-            nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.nom)
+            nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.getName())
             nomnoe = list(map(lambda x: x.strip(), nomnoe))
             for ino in l_noeud:
                 if ( not ino in nomnoe ):
                     UTMESS('F', 'POUTRE0_9',valk=ino)
         elif args.get('GROUP_NO') is not None:
-            collgrno = aster.getcolljev('%-8s.GROUPENO' % __nomlma.nom)
-            nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.nom)
+            collgrno = aster.getcolljev('%-8s.GROUPENO' % __nomlma.getName())
+            nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.getName())
             l_nu_no = []
             for grno in args.get('GROUP_NO'):
                 try:
@@ -794,10 +788,11 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             #
         #
         dprod = __catp2.EXTR_TABLE().dict_CREA_TABLE()
-        # On remplace dans le TITRE le nom du concept __catp2.nom par self.sd.nom
+        # On remplace dans le TITRE le nom du concept __catp2.getName() par self.sd.getName()
         if ('TITRE' in list(dprod.keys())):
-            conceptOld = __catp2.nom
-            conceptNew = self.sd.nom
+            conceptOld = __catp2.getName()
+            ## to fix
+            conceptNew = conceptOld #self.sd.getName()
             for ii in range(len(dprod['TITRE'])):
                 zz = dprod['TITRE'][ii]
                 if (conceptOld.strip() in zz):

@@ -31,9 +31,6 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')

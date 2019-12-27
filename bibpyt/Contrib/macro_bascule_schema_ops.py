@@ -23,7 +23,6 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
                              COMPORTEMENT_IMPL, COMPORTEMENT_EXPL, CONVERGENCE,
                              EXCIT, NEWTON, ETAT_INIT, LIST_INST_BASCULE, SCHEMA_INIT, EQUILIBRAGE,
                              SOLVEUR, ARCHIVAGE, OBSERVATION, ENERGIE, **args):
-    ier = 0
     import copy
     import aster
     from code_aster.Cata.Syntax import _F
@@ -33,11 +32,6 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
     DYNA_NON_LINE = self.get_cmd('DYNA_NON_LINE')
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-    # Le concept sortant (de type evol_noli) est nommé
-    # 'nomres' dans le contexte de la macro
-    self.DeclareOut('nomres', self.sd)
     #
     motscles = {}
     motscles['MODELE'] = MODELE

@@ -191,7 +191,7 @@ def verif_config_init(FOND_FISS):
     import aster
 
     iret, ibid, config = aster.dismoi(
-        'CONFIG_INIT', FOND_FISS.nom, 'FOND_FISS', 'F')
+        'CONFIG_INIT', FOND_FISS.getName(), 'FOND_FISS', 'F')
     if config != 'COLLEE':
         UTMESS('F', 'RUPTURE0_16')
 
@@ -229,7 +229,6 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
     SANS_NOEUD = args.get('SANS_NOEUD')
     GROUP_NO = args.get('GROUP_NO')
     SANS_GROUP_NO = args.get('SANS_GROUP_NO')
-    TOUT = args.get('TOUT')
 
     if ndim == 2:
 
@@ -237,16 +236,6 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
         assert (len(Lnocal) == 1)
 
     elif ndim == 3:
-
-# determination du pas de parcours des noeuds : 1 (tous les noeuds) ou 2
-# (un noeud sur 2)
-        Typ = FOND_FISS.sdj.FOND_TYPE.get()
-        Typ = Typ[0].rstrip()
-        if (Typ == 'SEG2') or (Typ == 'SEG3' and TOUT == 'OUI'):
-            pas = 1
-        elif (Typ == 'SEG3'):
-            pas = 2
-
 #        construction de la liste des noeuds "AVEC" et des noeuds "SANS"
         NO_SANS = []
         NO_AVEC = []
@@ -398,7 +387,6 @@ def get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, dicVNOR, RESULTAT, MODEL
 
     from code_aster.Cata.Syntax import _F
     import numpy as NP
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
 
     MACR_LIGN_COUPE = self.get_cmd('MACR_LIGN_COUPE')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
@@ -694,8 +682,6 @@ def get_noeuds_perp_regle(Lnocal, d_coor, dicoS, dicoI, Lnoff, PREC_VIS_A_VIS, h
                     Ninf = dicoI[ino][k]
                     Pinf = NP.array(
                         [d_coor[Ninf][0], d_coor[Ninf][1], d_coor[Ninf][2]])
-                    absi = NP.sqrt(
-                        NP.dot(NP.transpose(Pfon - Pinf), Pfon - Pinf))
 
                     if abss < rmprec:
                         dist = NP.sqrt(
@@ -752,11 +738,8 @@ def get_resxfem(self, xcont, RESULTAT, MODELISATION, MODEL):
 
     AFFE_MODELE = self.get_cmd('AFFE_MODELE')
     PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
-    DETRUIRE = self.get_cmd('DETRUIRE')
     CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
 
-    iret, ibid, nom_ma = aster.dismoi(
-        'NOM_MAILLA', RESULTAT.nom, 'RESULTAT', 'F')
     if xcont[0] != 3:
         __RESX = RESULTAT
 
@@ -996,7 +979,7 @@ def get_liste_inst(tabsup, args):
         if args.get('INST') is not None:
             l_inst = args.get('INST')
         elif args.get('LIST_INST') is not None:
-            l_inst = args.get('LIST_INST').Valeurs()
+            l_inst = args.get('LIST_INST').getValues()
 
         if type(l_inst) == tuple:
             l_inst = list(l_inst)
@@ -1074,7 +1057,7 @@ def get_liste_freq(tabsup, args):
         if args.get('FREQ') is not None:
             l_freq = list(args.get('FREQ'))
         elif args.get('LIST_FREQ') is not None:
-            l_freq = args.get('LIST_FREQ').Valeurs()
+            l_freq = args.get('LIST_FREQ').getValues()
 
         if type(l_freq) == tuple:
             l_freq = list(l_freq)
@@ -1579,23 +1562,11 @@ def get_meth1(self, abscs, absch, abscq, coetd, isig, tgsig,isigt,ttgsig, isigtt
     x1= abscs[5:-1]
     x2 = abscs[6:nabs]
 
-    xt1= absch[5:-1]
-    xt2= absch[6:nabh]
-
-    xq1 = abscq[5:-1]
-    xq2 = abscq[6:nabq]
-
     y1 = saut2[:, 5:-1] / x1
     y2 = saut2[:, 6:nabs] / x2
 
     ys1 = sautt2[:, 5:-1]
     ys2 = sautt2[:, 6:nabs]
-
-    yt1 = sauttt2[:, 5:-1]
-    yt2 = sauttt2[:, 6:nabh]
-
-    yq1 = sauttt2[:, 5:-1]
-    yq2 = sauttt2[:, 6:nabq]
 
     t = y1 - x1 * (y2 - y1) / (x2 - x1)
     ts = ys1 - x1 * (ys2 - ys1) / (x2 - x1)
@@ -1603,9 +1574,6 @@ def get_meth1(self, abscs, absch, abscq, coetd, isig, tgsig,isigt,ttgsig, isigtt
     tq = y1 - x1 * (y2 - y1) / (x2 - x1)
 
     vt = abs(t)  * isig[:, 4:-1]
-    st = abs(ts) * isigt [:, 4:-1]
-    sh = abs(th) * isigtt[:, 4:-1]
-    sq = abs(tq) * isigtt[:, 4:-1]
 
     tg1 = [max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]),]
 
@@ -1630,8 +1598,6 @@ def get_erreur(self, ndim, __tabi, type_para):
 
     CREA_TABLE = self.get_cmd('CREA_TABLE')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    FORMULE = self.get_cmd('FORMULE')
 
     labels = ['Td_MAX', 'Td_MIN']
 
@@ -1753,20 +1719,20 @@ def get_tabout(
         titre = get_titre_concept()
 
     if FOND_FISS and MODELISATION == '3D':
-        mcfact.append(_F(PARA='FOND_FISS', LISTE_K=[FOND_FISS.nom, ] * 3))
+        mcfact.append(_F(PARA='FOND_FISS', LISTE_K=[FOND_FISS.getName(), ] * 3))
         mcfact.append(_F(PARA='NUME_FOND', LISTE_I=[1, ] * 3))
         mcfact.append(_F(PARA='NOEUD_FOND', LISTE_K=[Lnofon[ino], ] * 3))
         mcfact.append(_F(PARA='NUM_PT', LISTE_I=[ino + 1, ] * 3))
         mcfact.append(_F(PARA='ABSC_CURV', LISTE_R=[dicoF[Lnofon[ino]]] * 3))
 
     if FISSURE and MODELISATION == '3D':
-        mcfact.append(_F(PARA='FISSURE', LISTE_K=[FISSURE.nom, ] * 3))
+        mcfact.append(_F(PARA='FISSURE', LISTE_K=[FISSURE.getName(), ] * 3))
         mcfact.append(_F(PARA='NUME_FOND', LISTE_I=[args.get('NUME_FOND'), ] * 3))
         mcfact.append(_F(PARA='NUM_PT', LISTE_I=[ino + 1, ] * 3))
         mcfact.append(_F(PARA='ABSC_CURV', LISTE_R=[absfon[ino], ] * 3))
 
     if FISSURE and MODELISATION != '3D' and Nnoff != 1:
-        mcfact.append(_F(PARA='FISSURE', LISTE_K=[FISSURE.nom, ] * 3))
+        mcfact.append(_F(PARA='FISSURE', LISTE_K=[FISSURE.getName(), ] * 3))
         mcfact.append(_F(PARA='NUM_PT', LISTE_I=[ino + 1, ] * 3))
 
     mcfact.append(_F(PARA='METHODE', LISTE_I=(1, 2, 3)))
@@ -1840,13 +1806,6 @@ def post_t_q_ops(self, **args):
 
     EnumTypes = (list, tuple)
 
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-
-    # Le concept sortant (de type table_sdaster ou dérivé) est tab
-    self.DeclareOut('tabout', self.sd)
-
     tabout = []
     liste_noeu_a_extr = []
 
@@ -1886,7 +1845,7 @@ def post_t_q_ops(self, **args):
 
 #  RECHERCHE SI LE MATERIAU DEPEND DE LA TEMPERATURE:
 
-    compor = sd_compor1('%-8s.CPT.%s' % (MATER.nom, ns))
+    compor = sd_compor1('%-8s.CPT.%s' % (MATER.getName(), ns))
     valk = [s.strip() for s in compor.VALK.get()]
     valr = compor.VALR.get()
     dicmat = dict(list(zip(valk, valr)))
@@ -1960,7 +1919,7 @@ def post_t_q_ops(self, **args):
 # variable de commande)
         ndim = 3
         Tempe3D = True
-        resuth = EVOL_THER.nom.ljust(8).rstrip()
+        resuth = EVOL_THER.getName()
 
     if not Tempe3D:
 
@@ -2010,9 +1969,6 @@ def post_t_q_ops(self, **args):
 #  I. CAS FOND_FISS
 #  ------------------------------------------------------------------
     if FOND_FISS:
-
-        iret, ibid, nom_ma = aster.dismoi(
-            'NOM_MAILLA', RESULTAT.nom, 'RESULTAT', 'F')
         MAILLAGE = RESULTAT.getModel().getMesh()
 
         NB_NOEUD_COUPE = args.get('NB_NOEUD_COUPE')
@@ -2052,7 +2008,7 @@ def post_t_q_ops(self, **args):
 #     ----------------------------------
 
         iret, ibid, syme_char = aster.dismoi(
-            'SYME', FOND_FISS.nom, 'FOND_FISS', 'F')
+            'SYME', FOND_FISS.getName(), 'FOND_FISS', 'F')
 
 #     Recuperation de la liste des tailles de maille en chaque noeud du fond
 #     ----------------------------------------------------------------------
@@ -2098,12 +2054,9 @@ def post_t_q_ops(self, **args):
 
 
 #        Extraction dep sup/inf sur les normales
-            iret, ibid, n_modele = aster.dismoi(
-                'MODELE', RESULTAT.nom, 'RESULTAT', 'F')
-            n_modele = n_modele.rstrip()
-            if len(n_modele) == 0:
-                UTMESS('F', 'RUPTURE0_18')
             MODEL = RESULTAT.getModel()
+            if MODEL is None:
+                UTMESS('F', 'RUPTURE0_18')
 
             (__TlibS,__TlibI,__TlibH, __TlibV, __TlibQ) = get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, dicVNOR, RESULTAT, MODEL,
                                              ListmaS, ListmaI, NB_NOEUD_COUPE, hmax, syme_char, PREC_VIS_A_VIS, MAILLAGE)
@@ -2150,8 +2103,6 @@ def post_t_q_ops(self, **args):
 
     elif FISSURE:
 
-        iret, ibid, nom_ma = aster.dismoi(
-            'NOM_MAILLA', RESULTAT.nom, 'RESULTAT', 'F')
         MAILLAGE = RESULTAT.getModel().getMesh()
 
 #     Recuperation de la liste des tailles de maille en chaque noeud du fond
@@ -2403,14 +2354,6 @@ def post_t_q_ops(self, **args):
                 if FISSURE:
                     UTMESS('A+', 'RUPTURE0_99', vali=ino)
                 UTMESS('A', 'RUPTURE0_25')
-
-                tg1 = [0.] * 10
-                tg2 = [0.] * 10
-                tg3 = [0.] * 10
-
-                ts1 = [0.] * 8
-                ts2 = [0.] * 8
-                ts3 = [0.] * 8
 
                 liste_noeu_a_extr.append(ino)
 

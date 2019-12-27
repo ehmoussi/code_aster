@@ -115,7 +115,7 @@ class PostMiss(object):
                 __linst = DEFI_LIST_REEL(DEBUT=0.,
                                          INTERVALLE=_F(JUSQU_A=tmax - pasdt,
                                                        PAS=pasdt),)
-                linst = __linst.Valeurs()
+                linst = __linst.getValues()
                 UTMESS('I', 'MISS0_10', valr=(min(linst), max(linst), pasdt), vali=len(linst))
                 if self.param['ACCE_X']:
                     _acx = CALC_FONCTION(COMB=_F(FONCTION=self.param['ACCE_X'], COEF=1.0,),
@@ -334,7 +334,6 @@ class PostMissTran(PostMiss):
 
     def sortie(self):
         """Prépare et produit les concepts de sortie."""
-        self.parent.DeclareOut('resugene', self.parent.sd)
         self._to_delete.append(self.dyge)
         # XXX on pensait qu'il fallait utiliser PROL_ZERO mais miss01a
         #    devient alors NOOK. A clarifier/vérifier en passant
@@ -484,7 +483,6 @@ class PostMissHarm(PostMissTran):
     def argument(self):
         """Vérification des arguments d'entrée."""
         super(PostMissHarm, self).argument()
-        self.parent.DeclareOut('trangene', self.parent.sd)
 
     def concepts_communs(self):
         """Construction des concepts spécifiques au cas HARMO."""
@@ -540,7 +538,6 @@ class PostMissTabl(PostMiss):
 
     def sortie(self):
         """Prépare et produit les concepts de sortie."""
-        self.parent.DeclareOut('tabout', self.parent.sd)
         self.tab.OrdreColonne(self._torder)
         dprod = self.tab.dict_CREA_TABLE()
         if self.verbose:
@@ -755,7 +752,6 @@ class PostMissControl(PostMiss):
 
     def sortie(self):
         """Prépare et produit les concepts de sortie"""
-        self.parent.DeclareOut('tabout', self.parent.sd)
         self.tab.OrdreColonne(self._torder)
         dprod = self.tab.dict_CREA_TABLE()
         if self.verbose:
@@ -1203,7 +1199,7 @@ class PostMissChar(PostMiss):
             # Récuperation des concepts de la base
             macro = CONTEXT.get_current_step()
             # récuperation du maillage
-            nom_MODELE = self.MODELE.get_name()
+            nom_MODELE = self.MODELE.getName()
             iret, ibid, nomsd = aster.dismoi('NOM_MAILLA', nom_MODELE, 'MODELE', 'F')
             nomsd = nomsd.strip()
             mail = self.MODELE.getMesh()
@@ -1240,8 +1236,7 @@ class PostMissChar(PostMiss):
 
     def sortie(self):
         """Prépare et produit les concepts de sortie."""
-        self.parent.DeclareOut('Force_no', self.parent.sd)
-        Force_no = AFFE_CHAR_MECA_F(MODELE=self.MODELE, FORCE_NODALE=self.Force_Nodale,);
+        Force_no = AFFE_CHAR_MECA_F(MODELE=self.MODELE, FORCE_NODALE=self.Force_Nodale,)
         return Force_no
 
     def calc_forc_temps(self):
@@ -1262,7 +1257,6 @@ class PostMissChar(PostMiss):
             ndeca = 2*nbmod
 
         if self.param['VARI'] == 'OUI':
-            MODELE  =  self.param['MODELE']
             MATR_GENE = self.param['MATR_GENE']
             INFO = self.param['INFO']
             ISSF = self.param['ISSF']
@@ -1302,7 +1296,7 @@ class PostMissChar(PostMiss):
                                    FZ= fz,
                                    MX= frx,
                                    MY= fry,
-                                   MZ= frz,),);
+                                   MZ= frz,),)
 
         DETRUIRE(CONCEPT=_F(NOM=__fdep))
 
@@ -1315,14 +1309,14 @@ class PostMissChar(PostMiss):
         if self.param['FREQ_MAX'] is None :
             __FILTRE = DEFI_FONCTION(NOM_PARA='FREQ',
                        VALE_C=(0., 1., 0., self.fmax, 1., 0.),
-                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',);
+                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',)
 
         else:
             fcoup = self.param['FREQ_MAX']
             fcou2 = fcoup + self.df
             __FILTRE = DEFI_FONCTION(NOM_PARA='FREQ',
                        VALE_C=(0., 1., 0., fcoup, 1., 0., fcou2, 0., 0.),
-                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',);
+                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',)
 
         __fHr = LIRE_FONCTION(UNITE=unit, NOM_PARA='FREQ',
                        INDIC_PARA=[1, 1], INDIC_RESU=[indice, 2],
@@ -1375,13 +1369,13 @@ class PostMissChar(PostMiss):
         if self.param['FREQ_MAX'] is None :
             __FILTRE = DEFI_FONCTION(NOM_PARA='FREQ',
                        VALE_C=(0., 1., 0., self.fmax, 1., 0.),
-                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',);
+                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',)
         else:
             fcoup = self.param['FREQ_MAX']
             fcou2 = fcoup + self.df
             __FILTRE = DEFI_FONCTION(NOM_PARA='FREQ',
                        VALE_C=(0., 1., 0., fcoup, 1., 0., fcou2, 0., 0.),
-                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',);
+                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',)
 
         Vale = []
         for k in range(0, NB_FREQ):
@@ -1391,7 +1385,7 @@ class PostMissChar(PostMiss):
             Vale.append(NP.imag(FSIST[k, indice-1]).tolist())
 
         __fH = DEFI_FONCTION(NOM_PARA='FREQ', VALE_C=Vale,
-                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',);
+                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
 
         __fT0 = CALC_FONCTION(MULT=(
                                     _F(FONCTION=fdepl,),

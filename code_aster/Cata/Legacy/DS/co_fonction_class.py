@@ -41,7 +41,7 @@ class fonction_class(ASSD):
         from Utilitai.Utmess import UTMESS
         if self.accessible():
             TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
-            objev = '%-19s.PROL' % self.get_name()
+            objev = '%-19s.PROL' % self.getName()
             prol = self.sdj.PROL.get()
             if prol is None:
                 UTMESS('F', 'SDVERI_2', valk=[objev])
@@ -104,7 +104,7 @@ class fonction_sdaster(fonction_class):
         """
         from Utilitai.Utmess import UTMESS
         if self.accessible():
-            vale = '%-19s.VALE' % self.get_name()
+            vale = '%-19s.VALE' % self.getName()
             lbl = self.sdj.VALE.get()
             if lbl is None:
                 UTMESS('F', 'SDVERI_2', valk=[vale])
@@ -189,7 +189,7 @@ class fonction_c(fonction_class):
         """
         from Utilitai.Utmess import UTMESS
         if self.accessible():
-            vale = '%-19s.VALE' % self.get_name()
+            vale = '%-19s.VALE' % self.getName()
             lbl = self.sdj.VALE.get()
             if lbl is None:
                 UTMESS('F', 'SDVERI_2', valk=[vale])
@@ -282,7 +282,7 @@ class nappe_sdaster(fonction_class):
         if not self.accessible():
             raise AsException(
                 "Erreur dans nappe.Valeurs en PAR_LOT='OUI'")
-        nsd = '%-19s' % self.get_name()
+        nsd = '%-19s' % self.getName()
         dicv = aster.getcolljev(nsd + '.VALE')
         # les cles de dicv sont 1,...,N (indice du parametre)
         lpar = aster.getvectjev(nsd + '.PARA')
@@ -307,7 +307,7 @@ class nappe_sdaster(fonction_class):
             raise AsException(
                 "Erreur dans nappe.Parametres en PAR_LOT='OUI'")
         TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
-        objev = '%-19s.PROL' % self.get_name()
+        objev = '%-19s.PROL' % self.getName()
         prol = aster.getvectjev(objev)
         if prol is None:
             UTMESS('F', 'SDVERI_2', valk=[objev])

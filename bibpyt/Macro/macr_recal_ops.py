@@ -83,9 +83,6 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=N
                     GRAPHIQUE=None, PARA_OPTI=None, COURBE=None, METHODE=None, INFO=None, **args):
     """ Macro commande realisant le recalage de modeles Aster """
 
-    # Initialisation du compteur d'erreurs
-    ier = 0
-
     from code_aster import onFatalError
     import aster
     import Macro
@@ -104,16 +101,6 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=N
     # Gestion des Exceptions
     prev_onFatalError = onFatalError()
     onFatalError('EXCEPTION')
-
-    # La macro compte pour 1 dans l'execution des commandes
-    self.set_icmd(1)
-
-    # Concept en sortir
-    self.DeclareOut('nomres', self.sd)
-
-    # Declaration de toutes les commandes Aster
-    #self.current_context['_F'] = _F
-    #self.current_context.update(commandStore)
 
     # Reecriture des mots-cles
     if COURBE:
@@ -198,10 +185,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
 
     import Macro
     from code_aster.Cata.Syntax import _F
-    #from code_aster.Commands import commandStore
-    # Declaration de toutes les commandes Aster
-    #self.current_context['_F'] = _F
-    #self.current_context.update(commandStore)
     #_____________________________________________
     #
     # RECUPERATION DU PROFIL DU CALCUL MAITRE
@@ -490,7 +473,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         UNITE_INCLUDE = UNITE_ESCL
         recal.make_include_files(
             UNITE_INCLUDE=UNITE_INCLUDE, calcul=RESU_CALC, parametres=LIST_PARA)
-        pre = "fort.%s.pre" % UNITE_INCLUDE
         # if os.path.isfile(pre): recal.execfile(filename)
 
     #-------------------------------------------------------------------------------
@@ -664,7 +646,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
                 #___________________________________________________________
 
             UTMESS('I', 'RECAL0_13', valk=METHODE, files=Mess.get_filename())
-            epsilon = 10. * RESI_GLOB_RELA
             while(iter < ITER_MAXI):
                 iter = iter + 1
                 new_val, s, l, Act = reca_algo.Levenberg_bornes(
@@ -795,17 +776,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         from code_aster.Commands import CREA_TABLE, TEST_TABLE
         _tmp = []
         _tmp.append({'PARA': 'ITER_MAXI', 'LISTE_R': 0.0, })
-        motscle = {'LISTE': _tmp}
-
-#       _TBL = CREA_TABLE(**motscle);
-#
-#       TEST_TABLE(
-#            VALE_CALC=1.,
-#            NOM_PARA='ITER_MAXI',
-#            TABLE=_TBL,
-#            FILTRE=_F(NOM_PARA='ITER_MAXI',
-#                      VALE_I=1,),
-#            )
 
     #_____________________________________________
     #

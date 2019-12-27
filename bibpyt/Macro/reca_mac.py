@@ -58,8 +58,8 @@ class fenetre_mac:
         self.mac = mac
         self.root = Tk()
 
-        nom1 = resu1.nom
-        nom2 = resu2.nom
+        nom1 = resu1.getName()
+        nom2 = resu2.getName()
         titre = "MAC pour la base " + nom1 + " et " + nom2
         size = (20, 300)
 

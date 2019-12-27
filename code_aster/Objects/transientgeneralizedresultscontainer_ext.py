@@ -66,13 +66,10 @@ class ExtendedTransientGeneralizedResultsContainer(object):
         #The relationship defined forces are saved in position 2  for
         #RELA_EFFO_DEPL and RELA_EFFO_VITE nonlinearities
         return vint[:,1]
-    
+
     def FORCE_AXIALE (self, inoli=-1):
         """
         Returns a 1D numpy array giving the evolution of the axial force at the archived instants"""
-
-        if not self.accessible():
-            raise AsException("Erreur dans tran_gene.FORCE_AXIALE() en PAR_LOT='OUI'")
 
         inoli = self._check_input_inoli(inoli)
 

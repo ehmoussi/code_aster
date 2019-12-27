@@ -478,14 +478,8 @@ def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, BETON_G
     """
     C'est : un parmi : ACIER  MAZARS  ENDO_FISS_EXP, BETON_GLRC
     """
-    ier = 0
-    # La macro compte pour 1 dans la numérotation des commandes
-    self.set_icmd(1)
     DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
 
-    # Le concept sortant (de type mater_sdaster) est nommé 'Materiau' dans le
-    # contexte de la macro
-    self.DeclareOut('Materiau', self.sd)
     #
     if MAZARS is not None:
         mclef = Mazars_Unil(MAZARS[0], args)

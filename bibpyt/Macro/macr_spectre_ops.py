@@ -31,7 +31,6 @@ def macr_spectre_ops(
     """
         Ecriture de la macro MACR_SPECTRE
     """
-    ier = 0
     MAILLAGE = args.get("MAILLAGE")
     PLANCHER = args.get("PLANCHER")
     NOM_CHAM = args.get("NOM_CHAM")
@@ -51,16 +50,11 @@ def macr_spectre_ops(
     IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
 
-    # Comptage commandes + déclaration concept sortant
-    self.set_icmd(1)
-    self.DeclareOut('tab', self.sd)
-    macro = 'MACR_SPECTRE'
-
     # construction de la liste des noeuds à traiter
     planch_nodes = {}
     if (MAILLAGE):
-        dic_gpno = aster.getcolljev(MAILLAGE.nom.ljust(8) + ".GROUPENO")
-        l_nodes = aster.getvectjev(MAILLAGE.nom.ljust(8) + ".NOMNOE")
+        dic_gpno = aster.getcolljev(MAILLAGE.getName().ljust(8) + ".GROUPENO")
+        l_nodes = aster.getvectjev(MAILLAGE.getName().ljust(8) + ".NOMNOE")
     l_plancher = []
     l_batiment = []
     l_commentaire = []
@@ -288,7 +282,6 @@ def macr_spectre_ops(
                     __moyya = [None] * len(AMOR_SPEC)
                     __moyza = [None] * len(AMOR_SPEC)
                     for i in range(len(AMOR_SPEC)):
-                        amor = AMOR_SPEC[i]
                         __moyxa[i] = RECU_FONCTION(
                             NAPPE=__moy_x[indexn], VALE_PARA_FONC=AMOR_SPEC[i])
                         __moyya[i] = RECU_FONCTION(
@@ -318,7 +311,6 @@ def macr_spectre_ops(
                                 **motscles
                             )
                     elif IMPRESSION['TRI'] == 'DIRECTION':
-                        lfonc = []
                         for dd in ('X', 'Y', 'Z'):
                             TITRE = 'Spectres / Plancher = ' + plancher + \
                                 ' / direction = ' + dd + ' / noeud = ' + node
@@ -466,21 +458,21 @@ def macr_spectre_ops(
         for i in range(len(AMOR_SPEC)):
            infos_amor['NUME_AMOR'].append(i)
            infos_amor['AMOR'].append(AMOR_SPEC[i])
-    
-    
+
+
     nb_plancher = len(l_plancher)
     lkeys = list(dico_glob.keys())
     lkeys.sort()
     for key in lkeys:
-        nb_lignes = len(dico_glob[key]) 
-        lListe.append(_F(LISTE_R=dico_glob[key], PARA=key, 
+        nb_lignes = len(dico_glob[key])
+        lListe.append(_F(LISTE_R=dico_glob[key], PARA=key,
                          NUME_LIGN=list(range(nb_amor+nb_plancher+1,nb_amor+nb_plancher+nb_lignes+1))))
     if NOM_CHAM == 'ACCE':
         lListe.append(_F(LISTE_I=infos_amor['NUME_AMOR'], PARA='NUME_AMOR',
                          NUME_LIGN=list(range(nb_plancher+1,nb_plancher+nb_amor+1))))
         lListe.append(_F(LISTE_R=infos_amor['AMOR'], PARA='AMOR',
                          NUME_LIGN=list(range(nb_plancher+1,nb_plancher+nb_amor+1))))
-        
+
     lListe.append(_F(LISTE_K=l_plancher, TYPE_K='K24', PARA='NOM'))
     l_bat = [i for i in l_batiment if i is not None]
     l_com = [i for i in l_commentaire if i is not None]
@@ -490,6 +482,6 @@ def macr_spectre_ops(
     if l_com !=[]:
         l_com2 = ['-' if i is None else i for i in l_commentaire]
         lListe.append(_F(LISTE_K=l_com2,TYPE_K='K24', PARA='COMMENTAIRE'))
-        
+
     tab = CREA_TABLE(LISTE=lListe, TITRE=titre)
     return tab

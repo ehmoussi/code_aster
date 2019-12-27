@@ -34,10 +34,6 @@ def post_newmark_ops(self, **args):
   from Utilitai.Utmess import UTMESS, ASSERT
   import numpy as np
 
-  ier= 0
-  # La macro compte pour 1 dans la numerotation des commandes
-  self.set_icmd(1)
-
   ### On importe les definitions des commandes a utiliser dans la macro
   DEFI_GROUP     = self.get_cmd('DEFI_GROUP')
   POST_ELEM      = self.get_cmd('POST_ELEM')
@@ -49,8 +45,6 @@ def post_newmark_ops(self, **args):
   CALC_TABLE        = self.get_cmd('CALC_TABLE')
   PROJ_CHAMP        = self.get_cmd('PROJ_CHAMP')
   POST_RELEVE_T        = self.get_cmd('POST_RELEVE_T')
-  IMPR_RESU        = self.get_cmd('IMPR_RESU')
-  IMPR_TABLE        = self.get_cmd('IMPR_TABLE')
 
  ### RECUPERATION DU RESULTAT
   args = _F(args)
@@ -86,7 +80,7 @@ def post_newmark_ops(self, **args):
     raise NameError("No model")
   __mail = __model.getMesh()
 
-  iret, dim, rbid = aster.dismoi('DIM_GEOM', __mail.nom, 'MAILLAGE', 'F')
+  iret, dim, rbid = aster.dismoi('DIM_GEOM', __mail.getName(), 'MAILLAGE', 'F')
   if dim == 3:
     UTMESS('F', 'POST0_51')
 
@@ -152,11 +146,7 @@ def post_newmark_ops(self, **args):
   __tabmas = POST_ELEM(RESULTAT=RESULTAT,
                       MASS_INER=_F(GROUP_MA='GLISSE'),)
 
-  tabmasse = __tabmas.EXTR_TABLE()
-
   masse = __tabmas['MASSE',1]
-  cdgx = __tabmas['CDG_X',1]
-  cdgy = __tabmas['CDG_Y',1]
 
 #  print('masse = ',masse)
 
@@ -170,7 +160,7 @@ def post_newmark_ops(self, **args):
            MODELE = __model,
            CHAM_MATER = __ch_mat,
            FORCE = ('FORC_NODA'),
-           );
+           )
 
   if TYPE == 'CERCLE':
     __tabFLI = MACR_LIGN_COUPE(RESULTAT = __RESU3,
@@ -220,7 +210,7 @@ def post_newmark_ops(self, **args):
 
     else :
       seg=[]
-      iret, ibid, yaseg2 = aster.dismoi('EXI_SEG2', __mail_2.nom, 'MAILLAGE', 'F')
+      iret, ibid, yaseg2 = aster.dismoi('EXI_SEG2', __mail_2.getName(), 'MAILLAGE', 'F')
       if yaseg2 == 'OUI':
 
         seg.append('LIGNE_2')
@@ -230,7 +220,7 @@ def post_newmark_ops(self, **args):
                                        TYPE_MAILLE=('SEG2'),
                                        TOUT='OUI',),)
 
-      iret, ibid, yaseg3 = aster.dismoi('EXI_SEG3', __mail_2.nom, 'MAILLAGE', 'F')
+      iret, ibid, yaseg3 = aster.dismoi('EXI_SEG3', __mail_2.getName(), 'MAILLAGE', 'F')
       if yaseg3 == 'OUI':
         seg.append('LIGNE_3')
         __mail_2 = DEFI_GROUP(reuse = __mail_2,
@@ -374,16 +364,12 @@ def post_newmark_ops(self, **args):
       vitA[i] = vitAFv[i]
       ind[i] = True
 
-  initial = True
   vini = 0.
   for i in range(len(time)):
     if ind[i]:
       vitA[i] = vitA[i]-vini
-      initial = False
     else :
-      initial = True
       vini = vitAFv[i]
-      #print vini
 
   for i in range(len(time)):
     if vitA[i]<0:

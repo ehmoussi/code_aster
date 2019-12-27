@@ -40,14 +40,9 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
     import math
     from code_aster.Cata.Syntax import _F
     from SD.sd_xfem import sd_fiss_xfem
-    EnumTypes = (list, tuple)
-
-    macro = 'RAFF_XFEM'
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
@@ -55,8 +50,6 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     DETRUIRE = self.get_cmd('DETRUIRE')
     from Contrib.raff_xfem_zone import RAFF_XFEM_ZONE
-
-    IMPR_CO = self.get_cmd('IMPR_CO')
 
     assert (TYPE in ('DISTANCE', 'ZONE'))
 
@@ -73,7 +66,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
         nom_ma_i = get_nom_maillage_sdfiss(FISSURE[i])
         if nom_ma_i != nom_ma:
             UTMESS('F', 'XFEM2_10', valk=(
-                FISSURE[0].nom, nom_ma, FISSURE[i].nom, nom_ma_i))
+                FISSURE[0].getName(), nom_ma, FISSURE[i].getName(), nom_ma_i))
 
     # indicateur de type 'DISTANCE'
     if TYPE == 'DISTANCE':
@@ -97,7 +90,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
             # si FISSURE   : l'erreur est la distance au fond de fissure
             # si INTERFACE : l'erreur est la distance a l'interface
             iret, ibid, typ_ds = aster.dismoi(
-                'TYPE_DISCONTINUITE', fiss.nom, 'FISS_XFEM', 'F')
+                'TYPE_DISCONTINUITE', fiss.getName(), 'FISS_XFEM', 'F')
             typ_ds = typ_ds.rstrip()
 
             # extraction des champs level sets

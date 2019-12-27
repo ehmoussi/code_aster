@@ -381,7 +381,7 @@ def verif_essais(COMPORTEMENT,
             list_tmp = list(DicoEssai[clef])
             list_tmp.sort()
 
-            if not(DicoEssai[clef] == list_tmp):
+            if (len(list_tmp) > 1) and (not(tuple(DicoEssai[clef]) == tuple(list_tmp))):
                 UTMESS('F', 'COMPOR2_38',
                     valk=(typ_essai, clef, ListR_2_Str(DicoEssai[clef]), "croissante"),
                     vali=(iocc+1))
@@ -510,7 +510,7 @@ def verif_essais(COMPORTEMENT,
             list_tmp = list(DicoEssai[clef])
             list_tmp.sort()
 
-            if not(DicoEssai[clef] == list_tmp):
+            if (len(list_tmp) > 1) and (not(tuple(DicoEssai[clef]) == tuple(list_tmp))):
 
                 UTMESS('F', 'COMPOR2_38',
                     valk=(typ_essai, clef, ListR_2_Str(DicoEssai[clef]), "croissante"),
@@ -862,7 +862,7 @@ def verif_essais(COMPORTEMENT,
                 # on s'assure chaque TABLE_REF est bien construite...
                 # ------------------------------------------------------------------------
                 table_ref = table_tmp.EXTR_TABLE().values()
-                nom_tbref = table_tmp.nom
+                nom_tbref = table_tmp.getName()
 
                 list_paras = ['TYPE','LEGENDE','ABSCISSE','ORDONNEE']
 

@@ -87,12 +87,9 @@ def test_fichier_ops(self, **kwargs):
     CRITERE = kwargs.get("CRITERE")
     INFO = kwargs.get("INFO")
 
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
     INFO_EXEC_ASTER = self.get_cmd('INFO_EXEC_ASTER')
-    DETRUIRE = self.get_cmd('DETRUIRE')
     CREA_TABLE = self.get_cmd('CREA_TABLE')
     TEST_TABLE = self.get_cmd('TEST_TABLE')
     #

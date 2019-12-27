@@ -86,7 +86,7 @@ LIST=DEFI_LIST_REEL(        DEBUT=0.,INTERVALLE=(
 
 temp_init = 100.
 
-l_inst = LIST.Valeurs()
+l_inst = LIST.getValues()
 
 # Create numbering
 NU       = NUME_DDL(MODELE = MOTH,
