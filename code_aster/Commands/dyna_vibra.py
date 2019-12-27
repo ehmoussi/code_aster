@@ -35,7 +35,6 @@ class VibrationDynamics(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        print("init")
         if keywords.get("reuse") != None:
             self._result = keywords["reuse"]
         else:
@@ -62,7 +61,6 @@ class VibrationDynamics(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        print("post")
         if keywords["BASE_CALCUL"] == "PHYS":
             massMatrix = keywords["MATR_MASS"]
             dofn = massMatrix.getDOFNumbering()
