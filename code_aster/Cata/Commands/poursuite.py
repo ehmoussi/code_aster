@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,13 +25,10 @@ from code_aster.Cata.Commons import *
 
 
 POURSUITE=MACRO(nom="POURSUITE",
-                op=OPS("code_aster.Cata.ops.build_poursuite"),
+                op=None,
                 repetable='n',
                 fr=tr("Poursuite d'une étude à partir de la sauvegarde au format JEVEUX "
                      "ou HDF de sa base globale"),
-                sd_prod = ops.POURSUITE,
-                op_init=ops.POURSUITE_context,
-                fichier_ini=1,
          FORMAT_HDF      =SIMP(fr=tr("sauvegarde de la base GLOBALE au format HDF"),statut='f',
                                typ='TXM',defaut="NON",into=("OUI","NON",) ),
          PAR_LOT         =SIMP(fr=tr("mode de traitement des commandes"),statut='f',typ='TXM',

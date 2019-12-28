@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,10 +29,4 @@ It works as a switch between the legacy supervisor and the next generation
 of the commands language (already used by AsterStudy).
 """
 
-from . import HAVE_ASTERSTUDY
-
-if not HAVE_ASTERSTUDY:
-    from .Legacy.DataStructure import *
-
-else:
-    from .Language.DataStructure import *
+from .Language.DataStructure import *
