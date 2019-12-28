@@ -26,7 +26,6 @@ It mainly converts new objects to old ones for backward compatibility.
 import builtins
 
 from . import DataStructure as DS
-from . import ops
 from .DataStructure import AsType
 from .Rules import (AllTogether, AtLeastOne, AtMostOne, ExactlyOne,
                     IfFirstAllPresent, OnlyFirstPresent)

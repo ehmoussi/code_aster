@@ -133,9 +133,6 @@ class ExecuteCommand(object):
         timer = ExecutionParameter().timer
         if cmd.command_name not in ("DEBUT", "POURSUITE", "FIN"):
             check_jeveux()
-        if cmd._op is None:
-            logger.debug("ignore command {0}".format(cmd.name))
-            return
 
         ExecuteCommand.level += 1
         cmd._counter = ExecutionParameter().incr_command_counter()
