@@ -68,13 +68,9 @@ class Resultat:
 
         # Si cela ne marche pas, on passe par le maillage
         if not self.modele:
-            self.get_maillage()
-            for m, _mod in list(self.objects.modeles.items()):
+            for _mod in list(self.objects.modeles.values()):
                 if not _mod.maya_name:
                     _mod.get_maillage()
-                if _mod.maya_name == self.maya_name:
-                    self.modele_name = m
-                    self.modele = _mod
 
         if not self.modele:
             self.mess.disp_mess(
@@ -238,16 +234,6 @@ class ModeMeca(Resultat):
 
         return matrice
 
-    def show_cara_mod(self):
-        cara_mod = self.get_cara_mod()
-        self.mess.disp_mess(self.nom)
-        self.mess.disp_mess("caracteristiques modales de" + self.nom)
-        self.mess.disp_mess(
-            "NUME_ORDRE  FREQUENCE  MASS_GENE  AMOR_REDUIT  NUME_MODE")
-        for ind in range(numpy.size(cara_mod, 0)):
-            self.mess.disp_mess(
-                "%3i        %7.5g    %7.5g        %7.5g      %3i" % tuple(cara_mod[ind, :]))
-
     def get_nom_cham(self):
         """ Recherche le type de champ rempli dans la sd ('ACCE', 'DEPL'...)"""
         desc = self.obj.sdj.DESC.get()
@@ -359,62 +345,6 @@ class DynaHarmo(Resultat):
 
         self.cara_mod = cara_mod
         return cara_mod
-
-
-#-------------------------------------------------------------------------
-class CaraElem:
-
-    """!Gestions des cara modales"""
-    CARTES = [
-        "CARARCPO",
-        "CARCABLE",
-        "CARCOQUE",
-        "CARDISCA",
-        "CARDISCK",
-        "CARDISCM",
-        "CARGENBA",
-        "CARGENPO",
-        "CARGEOBA",
-        "CARGEOPO",
-        "CARMASSI",
-        "CARORIEN",
-        "CARPOUFL",
-    ]
-
-    def __init__(self, nom, obj, mess):
-        self.nom = nom
-        self.obj = obj
-        self.mess = mess
-
-    def maillages(self):
-        maillages = []
-        for carte in CaraElem.CARTES:
-            ncham = self.nom.ljust(8) + "." + carte.ljust(10) + ".NOMA"
-            maill = aster.getvectjev(ncham.ljust(32))
-            if maill:
-                for m in maill:
-                    if m not in maillages:
-                        maillages.append(m)
-        return maillages
-
-
-#-------------------------------------------------------------------------
-
-class ChampMateriau:
-
-    """!Gestion d'un concept champ_mater"""
-
-    def __init__(self, nom, obj, mess):
-        self.nom = nom
-        self.obj = obj
-        self.mess = mess
-
-    def maillage(self):
-        ncham = self.nom.ljust(8) + ".CHAMP_MAT .NOMA        "
-        maill = aster.getvectjev(ncham.ljust(32))
-        if maill is not None:
-            return maill[0]
-        return ""
 
 #-------------------------------------------------------------------------
 
@@ -531,15 +461,6 @@ class InterSpectre:
                                paras_out,
                                self.mess,
                                )
-
-    def def_inte_spec(self, intsp):
-        """ Associe une sd_interspectre intsp a l'instance de InterSpectre"""
-        self.obj = intsp
-
-# def def_nom(self, nom):
-# """ Associe un nom (self.nom) a l'InterSpectre"""
-# A SUPPRIMER ????
-# self.nom = nom
 
     def var_opt(self, opt):
         if opt == 'Efforts discrets localises':
@@ -729,10 +650,6 @@ class Tempo:
             # Cas ou la table_sdaster n'est pas un Tempo
             pass  # TODO : faire en sorte que cette table ne soit pas visible
 
-    def def_tempo(self, tempo):
-        """ Associe une table intsp aster a l'instance de InterSpectre"""
-        self.obj = tempo
-
     def var_opt(self, opt):
         if opt == 'Efforts discrets localises':
             self.opt = 0
@@ -749,18 +666,6 @@ class Tempo:
         ordre.
         """
         self.resu = resu
-
-    def extr_tempo(self):
-        """!Recuperation d'une table_fonction pour creer un catalogue de temporels"""
-        from code_aster.Cata.Commands import RECU_FONCTION
-        from code_aster.Cata.Commands import DETRUIRE
-        self.mess.disp_mess(
-            "Recuperation des informations sur les temporels " + self.nom)
-        self.mess.disp_mess(" ")
-        tabl_py = self.obj.EXTR_TABLE()
-        self.nom_fonc = tabl_py['FONCTION'].values()['FONCTION']
-        self.nume_ordr = tabl_py['NUME_ORDRE_I'].values()['NUME_ORDRE_I']
-        self.nume_mes = tabl_py['NUME_MES'].values()['NUME_MES']
 
     def extr_temps(self):
         """Extraction des instants d'etude dans la Tempo qui contient
@@ -860,18 +765,6 @@ class Modele:
                 "Certains calculs ne seront pas realisables (MAC_MODE)")
         return
 
-    def make_nume(self):
-        """Fabrication d'un nume ddl pour des modeles experimentaux
-           avec des cara_elem et affe_materiau pipos
-        """
-        # TODO : ce n'est pas tres simple : il faut aller chercher les modelisations
-        # de AFFE_MODELE, et associer les bons cara_elem : BARRE, DIS_T,
-        # DIS_TR...
-        pass
-
-    def set_extraction_ddl(self, ddls):
-        self.extraction_ddl = ddls
-
 
 #-------------------------------------------------------------------------
 class CalcEssaiObjects:
@@ -961,17 +854,17 @@ class CalcEssaiObjects:
 
         # self.debug()
         # Liaison des concepts entre eux (resu <=> maillage <=> modele)
-        for modes_name, modes in list(self.mode_meca.items()):
+        for modes in list(self.mode_meca.values()):
             modes.get_nume()
             modes.get_modele()
             modes.get_matrices()
             modes.get_maillage()
 
-        for modele_name, modele in list(self.modeles.items()):
+        for modele in list(self.modeles.values()):
             modele.get_maillage()
             modele.get_nume()
 
-        for dyna_name, dyna in list(self.dyna_harmo.items()):
+        for dyna in list(self.dyna_harmo.values()):
             dyna.get_nume()
             dyna.get_maillage()
             dyna.get_modele()
@@ -1047,40 +940,13 @@ class CalcEssaiObjects:
         else:
             return
 
-    def get_mode_meca_name(self):
-        """!Liste des objets resultat"""
-        return list(self.mode_meca.keys())
-
     def get_mode_meca(self, name):
         """!Renvoie un objet resultat identifie par son nom"""
         return self.mode_meca[name]
 
-    def get_cara_elem(self, name):
-        return self.cara_elem[name]
-
-    def get_cham_mater(self, name):
-        return self.cham_mater[name]
-
-    def get_model_name(self):
-        """!Renvoie les noms de modeles dispos"""
-        return list(self.modeles.keys())
-
     def get_model(self, name):
         """!Renvoie un modele"""
         return self.modeles[name]
-
-    def get_dyna_harmo_name(self):
-        return list(self.dyna_harmo.keys())
-
-    def get_dyna_harmo(self, name):
-        return self.dyna_harmo[name]
-
-    def get_inter_spec_name(self):
-        inter_spec = []
-        for i in list(self.inter_spec.keys()):
-            if self.inter_spec[i].intsp == 1:
-                inter_spec.append(i)
-        return inter_spec
 
     def get_inter_spec(self, name):
         return self.inter_spec[name]
@@ -1089,31 +955,9 @@ class CalcEssaiObjects:
         """!Renvoie une matrice de masse ou raideur ou None"""
         return self.matrices.get(name)
 
-    def get_resultats_name(self):
-        """recup des noms de toutes les sd resus : mode_meca, base_modale, dyna_harmo"""
-        return list(self.resultats.keys())
-
-    def get_resultats(self, name):
-        """recup d'une sd resu dans la liste ci-dessus"""
-        return self.resultats[name]
-
-    def get_matr_norme(self):
-        normes = list(self.matrices.keys())
-        normes[0:0] = ["Aucune"]
-        return normes
-
-    def get_matr_name(self):
-        return list(self.matrices.keys())
-
-    def get_cara_elem_name(self):
-        return list(self.cara_elem.keys())
-
     def get_cara_elem(self, name):
         """recup d'une sd resu dans la liste ci-dessus"""
         return self.cara_elem[name]
-
-    def get_cham_mater_name(self):
-        return list(self.cara_elem.keys())
 
     def get_cham_mater(self, name):
         """recup d'une sd resu dans la liste ci-dessus"""
