@@ -119,10 +119,6 @@ subroutine irmdes(idfimd, titre, nbtitr, infmed)
 !
 ! 3.2. ==> ECRITURE
 !
-    if (infmed .gt. 1) then
-        call utmess('I', 'MED_38', sk=descri)
-    endif
-!
     call as_mficow(idfimd, descri, codret)
     if (codret .ne. 0) then
         saux08='mficow'
