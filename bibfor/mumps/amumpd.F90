@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -134,6 +134,14 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
     rang=dmpsk%myid
     nbproc=dmpsk%nprocs
 !
+! --- MATRICE ASTER DISTRIBUEE ?
+    call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
+    lmd = matd.eq.'OUI'
+!
+! --- MATRICE ASTER HPC ?
+    call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=mathpc)
+    lmhpc = mathpc.eq.'OUI'
+!
     lquali=.false.
     if( action(1:5).ne.'DETR_' ) then
         call jeveuo(nosolv//'.SLVK', 'E', vk24=slvk)
@@ -165,14 +173,6 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !
 ! --- PARAMETRE NPREC
         nprec=slvi(1)
-!
-! --- MATRICE ASTER DISTRIBUEE ?
-        call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
-        lmd = matd.eq.'OUI'
-!
-! --- MATRICE ASTER HPC ?
-        call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=mathpc)
-        lmhpc = mathpc.eq.'OUI'
 !
 ! --- MUMPS EST-IL UTILISE COMME PRECONDITIONNEUR ?
 ! --- SI OUI, ON DEBRANCHE LES ALARMES ET INFO (PAS LES UTMESS_F)
