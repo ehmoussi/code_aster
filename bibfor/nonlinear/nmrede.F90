@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -111,6 +111,7 @@ integer, intent(out) :: r_char_indx
     l_cont_cont = isfonc(list_func_acti,'CONT_CONTINU')
     l_cont_lac  = isfonc(list_func_acti,'CONT_LAC')
     l_macr      = isfonc(list_func_acti,'MACR_ELEM_STAT')
+    l_unil_pena = ASTER_FALSE
 !
 ! - Compute inertial force
 !
