@@ -53,14 +53,12 @@
                             return NULL
 
 /*
- *   PUBLIC FUNCTIONS
+ *   PUBLIC ATTRS
  *
  */
 extern int gExcLvl;
 extern int gExcNumb;
 extern jmp_buf gExcEnv[NIVMAX+1];
-
-extern void initExceptions(PyObject *dict);
 
 /*
  *   PRIVATE/HIDDEN FUNCTIONS

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,24 +20,19 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 import os
+import re
 import sys
 import traceback
-import re
 
-from code_aster import _, AsterError
-
-import libaster
 import aster
 import aster_core
-
+import libaster
+from code_aster import AsterError, _
+from code_aster.Utilities import (Singleton, convert, force_list, to_unicode,
+                                  ufmt)
 from Messages.context_info import message_context_concept
-from Utilitai.string_utils import cut_long_lines, copy_text_to, clean_string
+from Utilitai.string_utils import clean_string, copy_text_to, cut_long_lines
 from Utilitai.utils import get_time
-from Execution.strfunc import convert, ufmt, to_unicode
-from Execution.E_Exception import ST
-
-from Noyau.N_types import force_list
-from Noyau.N_utils import Singleton
 
 DEBUG = False
 CENTER = 1
@@ -295,7 +290,7 @@ Exception : %s
         # type d'exception
         if exc_typ:
             if isinstance(exc_typ, int):
-                exc_args = ST.get_exception_name(exc_typ)
+                exc_args = (None, RuntimeError)
             else:
                 # exc_typ is an Exception
                 exc_args = exc_typ.__class__.__name__, exc_typ

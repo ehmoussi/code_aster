@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,7 +34,6 @@ from code_aster.Cata.Syntax import _F
 
 from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
-from Utilitai.utils import _debug
 
 from .mac3coeur_coeur import CoeurFactory
 from .thyc_result import lire_resu_thyc
@@ -64,7 +63,6 @@ def cached_property(method):
             return cached
         computed = method(inst)
         setattr(inst, attr, computed)
-        _debug(computed, attr)
         return computed
     return wrapper
 
@@ -880,7 +878,6 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                           TYPE_CHAM='NOEU_DEPL_R',
                           COMB=_F(CHAM_GD=depl,COEF_R=-1.))
 
-        _debug(_depl_inv, "mesh deformation")
         _mesh = MODI_MAILLAGE(reuse=self.mesh,
                               MAILLAGE=self.mesh,
                               DEFORME=_F(OPTION='TRAN',
@@ -896,7 +893,6 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                            TYPE_CHAM='NOEU_DEPL_R',
                            NOM_CHAM='DEPL',
                            RESULTAT=resu)
-        _debug(_depl, "mesh deformation")
         _mesh = MODI_MAILLAGE(reuse=self.mesh,
                               MAILLAGE=self.mesh,
                               DEFORME=_F(OPTION='TRAN',
@@ -994,15 +990,6 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                                   self.vessel_dilatation_load + self.gravity_load +
                                   self.layer_load + self.periodic_cond,
                                   ))
-        _debug(_snl_lame, "result STAT_NON_LINE 1")
-        # updated coeur
-        # __resuf = PERM_MAC3COEUR(TYPE_COEUR_N=self.keyw['TYPE_COEUR'],
-        #                          TYPE_COEUR_P=self.keyw['TYPE_COEUR'],
-        #                          RESU_N=_snl_lame,
-        #                          TABLE_N=self.keyw['TABLE_N'],
-        #                          TABLE_NP1=self.mcf['TABLE_NP1'],
-        #                          MAILLAGE_NP1=self.mcf['MAILLAGE_NP1'])
-        # _debug(__resuf, "result PERM_MAC3COEUR")
         self.update_coeur(_snl_lame, self.keyw['TABLE_N'])
         # WARNING: element characteristics and the most of the loadings must be
         # computed on the initial (not deformed) meshhg st
@@ -1109,7 +1096,6 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                             self.thyc_load[0] + self.thyc_load[1],
                             )
         __RESULT = STAT_NON_LINE(**keywords)
-        _debug(__RESULT, "result STAT_NON_LINE 2")
 
         if self.res_def :
             self.output_resdef(__RESULT,depl_deformed,tinit,tfin)

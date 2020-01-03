@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,20 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import sys
-
-#
-#  2    utilitaires pour vérifications et émission de messages
-#  3    utilitaires pour création des objets jeveux en Python
-#
-
-
-#
-#  2    utilitaires pour vérifications et émission de messages
-#
-
-from Execution.strfunc import convert
-
 
 class ERREUR:
 
@@ -42,14 +28,14 @@ class ERREUR:
         # pour imprimer un message d'erreur :
         ucode = code.upper()
         if ucode == 'I':
-            print("\n<" + ucode + "> INFORMATION: ", convert(message))
+            print("\n<" + ucode + "> INFORMATION: ", message)
         elif ucode == 'A':
-            print("\n<" + ucode + "> ALARME: ", convert(message))
+            print("\n<" + ucode + "> ALARME: ", message)
         elif ucode == 'E':
-            print("\n<" + ucode + "> ERREUR: ", convert(message))
+            print("\n<" + ucode + "> ERREUR: ", message)
             self.IER = self.IER + 1
         elif ucode == 'F':
-            print("\n<" + ucode + "> ERREUR: ", convert(message))
+            print("\n<" + ucode + "> ERREUR: ", message)
             self.IER = self.IER + 1
         else:
             raise Exception
@@ -60,7 +46,7 @@ class ERREUR:
                 for c in self.contxt:
                     print("         " + c)
         if ucode == 'F':
-            raise Exception(convert(message))
+            raise Exception(message)
 
     def veri_appartient_liste(self, code, element, liste):
         try:

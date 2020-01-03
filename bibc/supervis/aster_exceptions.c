@@ -69,33 +69,6 @@ static PyObject* gExcArgs = NULL;
 static PyObject *exc_module = NULL;
 
 /*
- *   PUBLIC FUNCTIONS
- *
- */
-void initExceptions(PyObject *dict)
-{
-    /* The exception of the 'aster' module are defined in Execution/E_Exception.py.
-     * They are added to the module through the function 'add_to_dict_module'.
-     */
-    PyObject *res;
-
-    exc_module = PyImport_ImportModule("Execution.E_Exception");
-    if ( ! exc_module ) {
-        fprintf(stderr, "\n\nWARNING:\n    ImportError of Execution.E_Exception module!\n");
-        fprintf(stderr, "    No exception defined in the aster module.\n");
-        fprintf(stderr, "    It may be unusable.\n\n");
-        PyErr_Clear();
-        Py_XDECREF(exc_module);
-        return;
-    }
-
-    /* assign the dict using the method add_to_dict_module of E_Exception */
-    res = PyObject_CallMethod(exc_module, "add_to_dict_module", "O", dict);
-    Py_DECREF(res);
-    Py_DECREF(exc_module);
-}
-
-/*
  *   PRIVATE FUNCTIONS
  *
  */

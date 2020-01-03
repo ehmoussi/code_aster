@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,6 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
 
     import aster
     from code_aster.Cata.Syntax import _F
-    from Noyau.N_utils import AsType
     from Utilitai.Utmess import UTMESS
     POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
     DEFI_GROUP = self.get_cmd('DEFI_GROUP')
@@ -688,7 +687,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
        Ecriture de la macro MACR_LIGN_COUPE
     """
     from code_aster.Cata.Syntax import _F
-    from Noyau.N_utils import AsType
     import aster
     import math
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme

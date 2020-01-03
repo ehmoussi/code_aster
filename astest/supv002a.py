@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,10 +34,8 @@ import time
 import signal
 
 import code_aster
-from Noyau.N_types import is_int
 from Utilitai.Utmess import UTMESS, MessageLog
-from code_aster.Utilities.i18n import localization as LO
-from Execution.strfunc import ufmt, convert
+from code_aster.Utilities import convert, is_int, localization as LO
 import Messages
 
 ENCODING = "utf-8"
@@ -274,7 +272,7 @@ def check_msg(checker, catamess, msg, key, lang):
     # check formatting
     txt = None
     try:
-        txt = ufmt(msg, VALUES)
+        txt = msg % VALUES
     except Exception as exc:
         trace = repr(exc)
         checker.error("%s can not be formatted :\nmessage: %r\n%s"

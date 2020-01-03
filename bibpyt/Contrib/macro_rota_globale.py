@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,9 +37,7 @@ def macr_rota_globale_ops(self, **args):
                (______
                B
     """
-    import os
     from code_aster.Cata.Syntax import _F
-    from Noyau.N_utils import AsType
     RESULTAT = args["RESULTAT"]
     GROUP_NO_ORIG = args["GROUP_NO_ORIG"]
     GROUP_NO_EXTR = args["GROUP_NO_EXTR"]

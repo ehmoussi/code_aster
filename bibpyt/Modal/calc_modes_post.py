@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,6 @@ def calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression):
     """
 
     from code_aster.Cata.Syntax import _F
-    from Noyau.N_utils import AsType
 
     # import the definitions of the commands to use in the macro-command
     # The name of the variable has to be the name of the command
@@ -64,7 +63,7 @@ def calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression):
         if (impression is not None):
             motscles['IMPRESSION'] = _F(CUMUL=impression['CUMUL'],
                                         CRIT_EXTR=impression['CRIT_EXTR'])
-    
+
         modes = EXTR_MODE(**motscles)
 
         if (impression is not None):

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,17 +40,13 @@ builtins._ = translate
 
 def build(target, debug, *args):
     """Create the jeveux object of the catalog"""
-    from Utilitai.as_timer import ASTER_TIMER
     from cataelem.elem import CataElem
     from cataelem.Tools.build_jeveux import impr_cata
     if args:
         from cataelem import __DEBUG_ELEMENTS__
         __DEBUG_ELEMENTS__.extend(args)
-    timer = ASTER_TIMER()
-    timer.Start('T0')
     cel = CataElem()
     cel.build()
-    timer.Stop('T0')
     if args:
         return
     debugdir = None
@@ -59,7 +55,7 @@ def build(target, debug, *args):
         if osp.exists(debugdir):
             shutil.rmtree(debugdir)
         os.makedirs(debugdir)
-    impr_cata(cel, target, timer, debugdir)
+    impr_cata(cel, target, debugdir)
 
 
 if __name__ == '__main__':

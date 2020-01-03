@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ import pprint
 
 import numpy as NP
 
-import Accas
 import aster
 from code_aster import AsterError
 from code_aster.Cata.DataStructure import (cara_elem, cham_mater, fonction_c,
@@ -38,8 +37,6 @@ from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
                                  LIRE_MAILLAGE, MACR_ELEM_DYNA, MODE_STATIQUE,
                                  NUME_DDL, NUME_DDL_GENE, PROD_MATR_CHAM,
                                  STAT_NON_LINE)
-from Noyau.N_types import force_list
-from Noyau.N_utils import AsType
 from Utilitai.partition import MAIL_PY
 from Utilitai.Utmess import ASSERT, UTMESS
 
