@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,11 +24,9 @@ def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE=None , INST=None
     """
     import aster
     import os
-    import Accas
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     from Utilitai.Table import Table
-    from Noyau.N_utils import AsType
 
     # On importe les definitions des commandes a utiliser dans la macro
     MACR_LIGN_COUPE = self.get_cmd('MACR_LIGN_COUPE')

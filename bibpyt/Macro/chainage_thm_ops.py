@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@
 import aster
 import numpy
 from code_aster.Cata.Syntax import _F
-from Noyau.N_utils import AsType
 from Utilitai.Utmess import UTMESS
 from .chainage_init import *
 from .chainage_hydr_meca import *

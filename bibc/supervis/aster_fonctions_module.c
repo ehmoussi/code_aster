@@ -155,7 +155,7 @@ static PyMethodDef methods[] = {
    { NULL, NULL, 0, NULL }
 };
 
-static struct PyModuleDef moduledef = {
+static struct PyModuleDef aster_fonctions_def = {
         PyModuleDef_HEAD_INIT,
         "aster_fonctions",
         NULL,
@@ -169,7 +169,7 @@ static struct PyModuleDef moduledef = {
 
 PyObject* PyInit_aster_fonctions(void)
 {
-   PyObject* aster_fonctions = PyModule_Create(&moduledef);
+   PyObject* aster_fonctions = PyModule_Create(&aster_fonctions_def);
    import_array();
    return aster_fonctions;
 }

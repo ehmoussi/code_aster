@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,9 @@ import re
 from functools import partial
 from glob import glob
 
-from Noyau import N_utils
+# TODO imported by code_aster < aster_core < here < Utmess < code_aster
+# to be solved!
+# from code_aster.Utilities import Singleton
 
 _trans = str.maketrans('e', 'E')
 
@@ -35,44 +37,51 @@ def _fortran(srepr):
     return srepr.translate(_trans)
 
 
-class TestResult(metaclass=N_utils.Singleton):
-
+class TestResult:
     """This class provides the feature to print the testcase results.
     A singleton object is created to avoid to repeat some global tasks.
     """
-    _singleton_id = 'Utilitai.TestResult'
+    _isVerif = None
 
-    def __init__(self):
-        """Initialization"""
-        # TODO imported by code_aster < aster_core < here < Utmess < code_aster
-        # to be solved!
+    @classmethod
+    def isVerif(cls):
+        """Tell if the testcase is a verification one"""
+        if cls._isVerif is None:
+            cls._isVerif = cls._checkVerif()
+            if not cls._isVerif:
+                cls._utmess('I', 'TEST0_19')
+        return cls._isVerif
+
+    @staticmethod
+    def _utmess(code, msg):
+        try:
+            from Utilitai.Utmess import UTMESS as func
+        except ImportError:
+            func = _internal_mess
+        func(code, msg)
+
+    @staticmethod
+    def _printLine(text):
         try:
             import aster
-            from Utilitai.Utmess import UTMESS
-            self._printLine = partial(aster.affiche, 'RESULTAT')
-            self._utmess = UTMESS
+            func = partial(aster.affiche, 'RESULTAT')
         except ImportError:
-            self._printLine = _internal_print
-            self._utmess = _internal_mess
-        self._isVerif = self._checkVerif()
-        if not self._isVerif:
-            self._utmess('I', 'TEST0_19')
+            func = _internal_print
+        func(text)
 
-    def isVerif(self):
-        """Tell if the testcase is a verification one"""
-        return self._isVerif
-
-    def write(self, width, *args):
+    @classmethod
+    def write(cls, width, *args):
         """shortcut to print in the RESULTAT file"""
         fmtval = '%%-%ds' % width
         fmtcols = ['%-4s ', '%-16s', '%-16s', fmtval, fmtval, '%-16s', '%-16s']
         assert len(args) <= 7, args
         fmt = ' '.join(fmtcols[:len(args)])
         line = fmt % args
-        self._printLine(line)
+        cls._printLine(line)
         return line
 
-    def showResult(self, type_ref, legend, label, skip, relative,
+    @classmethod
+    def showResult(cls, type_ref, legend, label, skip, relative,
                    tole, ref, val, compare=1.):
         """Print a table for TEST_RESU
 
@@ -88,7 +97,7 @@ class TestResult(metaclass=N_utils.Singleton):
         """
         # ignore NON_REGRESSION tests for validation testcases
         isNonRegr = type_ref.strip() == "NON_REGRESSION"
-        isValidIgn = isNonRegr and not self._isVerif
+        isValidIgn = isNonRegr and not cls.isVerif()
         lines = ['pass in showResult']
         # compute
         diag = 'SKIP'
@@ -112,7 +121,7 @@ class TestResult(metaclass=N_utils.Singleton):
         else:
             # do not warn if validation testcase
             if not isValidIgn:
-                self._utmess('A', 'TEST0_12')
+                cls._utmess('A', 'TEST0_12')
         # formatting
         sref = '%s' % ref
         sval = '%s' % val
@@ -129,19 +138,20 @@ class TestResult(metaclass=N_utils.Singleton):
             legend = sref = sval = serr = stol = '-'
         # printing
         if compare != 1.:
-            lines.append(self.write(width, ' ', 'ORDRE DE GRANDEUR :', compare))
+            lines.append(cls.write(width, ' ', 'ORDRE DE GRANDEUR :', compare))
         if label:
-            lines.append(self.write(width, ' ', 'REFERENCE', 'LEGENDE',
-                                    'VALE_REFE', 'VALE_CALC', 'ERREUR', 'TOLE'))
+            lines.append(cls.write(width, ' ', 'REFERENCE', 'LEGENDE',
+                                   'VALE_REFE', 'VALE_CALC', 'ERREUR', 'TOLE'))
         if isValidIgn:
-            lines.append(self.write(width, "-", type_ref, legend, sref,
-                                    sval, serr, "-"))
+            lines.append(cls.write(width, "-", type_ref, legend, sref,
+                                   sval, serr, "-"))
         else:
-            lines.append(self.write(width, diag, type_ref, legend, sref,
-                                    sval, serr, stol))
+            lines.append(cls.write(width, diag, type_ref, legend, sref,
+                                   sval, serr, stol))
         return lines
 
-    def _checkVerif(self):
+    @staticmethod
+    def _checkVerif():
         """Check if the current execution is for a verification testcase
         (and not a validation one)."""
         exports = glob("*.export")
@@ -169,8 +179,8 @@ def testresu_print(type_ref, legend, label, skip, relative,
     val : computed value (same type as ref)
     compare : order of magnitude
     """
-    lines = TestResult().showResult(type_ref, legend, label, skip, relative,
-                                    tole, ref, val, compare)
+    lines = TestResult.showResult(type_ref, legend, label, skip, relative,
+                                  tole, ref, val, compare)
     return lines
 
 

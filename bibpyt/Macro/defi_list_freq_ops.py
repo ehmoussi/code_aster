@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 
 def defi_list_freq_ops(self, **args):
 
-    from Accas import MCList
     from Utilitai.Utmess import UTMESS
     from math import fmod, sqrt
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,6 @@ from .cata_comportement import CataComportementError, LoiComportement, KIT, cata
 
 def _init_cata(debug):
     """Import de tous les comportements"""
-    from Execution.strfunc import ufmt
     from .cata_vari import DICT_NOM_VARI
     pkgdir = osp.dirname(__file__)
     pkg = osp.basename(pkgdir)
@@ -53,7 +52,7 @@ def _init_cata(debug):
                     catalc.add(obj)
                     all_vari.update(obj.nom_vari)
         except Exception as msg:
-            err = ufmt("Erreur import de '%s' : %s", modname, str(msg))
+            err = "Erreur import de '%s' : %s" % (modname, str(msg))
             raise CataComportementError(err)
     if debug:
         print(catalc)

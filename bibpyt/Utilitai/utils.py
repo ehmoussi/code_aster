@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ from subprocess import Popen
 import tempfile
 
 from Utilitai.string_utils import maximize_lines
-from Execution.strfunc import convert
+from code_aster.Utilities import convert
 
 try:
     import aster
@@ -71,48 +71,12 @@ def _printDBG(*args):
     _print(*args)
 
 
-def _debug(arg, label, dest='RESULTAT'):
-    """Generic function for debugging
-    :param arg: object to print
-    :type arg: ASSD, string or iterable
-    :param dest: output 'MESSAGE' or 'RESULTAT'
-    :type dest: string
-    """
-    if not DEBUG:
-        return
-    from code_aster.Commands import IMPR_CO
-    from code_aster.Cata.Syntax import _F, ASSD, MCFACT
-    show = partial(aster.affiche, dest)
-    if isinstance(arg, ASSD):
-        show("#DEBUG: {} >>> {} <{}>".format(label, arg.nom, arg.__class__))
-        IMPR_CO(UNITE=8 if dest == 'RESULTAT' else 6,
-                CONCEPT=_F(NOM=arg),
-                NIVEAU=-1)
-    else:
-        if type(arg) in (str, str):
-            arg = convert(arg)
-        else:
-            try:
-                if isinstance(arg, _F):
-                    arg = [arg[i] for i in arg]
-                for obj in arg:
-                    _debug(obj, label, dest)
-            except TypeError:
-                arg = repr(arg)
-            else:
-                return
-        show("#DEBUG: {} >>> {}".format(label, arg))
-
-
 # les commandes fortran pourraient appeler cette fonction
 def get_titre_concept(co=None):
     """Retourne un titre automatique."""
     # ASTER 10.01.25 CONCEPT tab0 CALCULE LE 21/05/2010 A 17:58:50 DE TYPE
     # TABLE_SDASTER
     import aster_core
-    from Noyau.N_ASSD import ASSD
-    if not isinstance(co, ASSD):
-        co = None
     fmt = {
         "version": "ASTER %(version)s",
         "nomco": "CONCEPT %(nom_concept)s",
@@ -126,12 +90,12 @@ def get_titre_concept(co=None):
         "dateheure": time.strftime("LE %m/%d/%Y A %H:%M:%S"),
     }
     if co:
-        dfmt["nom_concept"] = co.nom
+        dfmt["nom_concept"] = co.getName()
         format.append(fmt["nomco"])
         format.append(fmt["etatco"])
     format.append(fmt["dateheure"])
     if co:
-        dfmt["type_concept"] = co.__class__.__name__.upper()
+        dfmt["type_concept"] = co.getType().upper()
         format.append(fmt["typeco"])
     globfmt = " ".join(format)
     titre = globfmt % dfmt

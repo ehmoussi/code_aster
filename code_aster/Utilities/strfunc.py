@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,3 +109,28 @@ def convert(content, encoding=None, errors='replace'):
     if type(content) == str:
         content = to_unicode(content)
     return content
+
+
+def ufmt(uformat, *args):
+    """Helper function to format a string by converting all its arguments to unicode"""
+    if type(uformat) is not str:
+        uformat = to_unicode(uformat)
+    if len(args) == 1 and type(args[0]) is dict:
+        arguments = to_unicode(args[0])
+    else:
+        nargs = []
+        for arg in args:
+            if type(arg) in (str, str, list, tuple, dict):
+                nargs.append(to_unicode(arg))
+            elif type(arg) not in (int, int, float):
+                nargs.append(to_unicode(str(arg)))
+            else:
+                nargs.append(arg)
+        arguments = tuple(nargs)
+    try:
+        formatted_string = uformat % arguments
+    except UnicodeDecodeError as err:
+        print(type(uformat), uformat)
+        print(type(arguments), arguments)
+        raise
+    return formatted_string

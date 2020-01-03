@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,13 +68,11 @@ Interfaces Fortran/Python :
 
 import os
 
-from Noyau.N_types import force_tuple
-from Noyau.N_utils import Singleton
+from code_aster.Utilities import Singleton, convert, force_tuple, ufmt
+from Utilitai.Utmess import UTMESS
 
-from Execution.strfunc import convert, ufmt
 from .cata_vari import DICT_NOM_VARI
 
-from Utilitai.Utmess import UTMESS
 
 class CataComportementError(Exception):
 
