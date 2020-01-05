@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,16 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from Accas import ASSD
 
-# pour utilisation du catalogue hors aster
-try:
-    import aster
-except:
-    pass
-
-from Noyau.asnom import SDNom
-from Noyau.ascheckers import Parmi
-from Noyau.asojb      import AsBase, AsVK8, AsVK16, AsVK24, AsVK32, AsVK80, \
+from .asnom import SDNom
+from .ascheckers import Parmi
+from .asojb      import AsBase, AsVK8, AsVK16, AsVK24, AsVK32, AsVK80, \
     AsVI, AsVS, AsVL, AsVR, AsVC, \
     AsColl, AsObject, Facultatif, OJBVect, AsPn, AsVect
