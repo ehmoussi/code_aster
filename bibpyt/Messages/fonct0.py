@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -403,16 +403,6 @@ L'ordre des abscisses a été inversé.
 
     67 : _("""
 Le nombre de valeurs est différent du nombre de paramètres
-"""),
-
-    68 : _("""
-Les paramètres de la formule n'ont pas été fournis.
-Paramètres manquants : %(k1)s
-"""),
-
-    69 : _("""
-Certains paramètres de la formule ont été fournis plusieurs fois.
-Paramètres répétés : %(k1)s
 """),
 
     70 : _("""

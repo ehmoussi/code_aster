@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,8 +32,6 @@ cata_msg = {
     Si vous avez des développements privés, vous risquez d'avoir un travail
     important de portage si vous ne suivez pas les mises à jour.
 """),
-
-    3 : _("""%(k1)-8s %(k2)-16s ignoré"""),
 
     # 4 plus bas avec 9, 10
 
@@ -179,26 +177,6 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
                          reste pour l'allocation dynamique : %(r1).2f Mo"""),
             'flags': 'CENTER',
             },
-
-    # marks for the extraction of messages
-    69 : """.. %(k1)s""",
-
-    # Affichage des commandes
-    70 : """  # ------------------------------------------------------------------------------------------""",
-
-    71 : _("""  # Commande No :  %(i1)04d            Concept de type : %(k1)s"""),
-
-    72 : _("""  # Commande :
-  # ----------"""),
-
-    73 : _("""  # Mémoire (Mo) : %(r1)8.2f / %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmPeak / VmSize / Optimum / Minimum)"""),
-
-    # attention au décalage
-    74 : _("""  # Mémoire (Mo) : %(r3)8.2f / %(r4)8.2f (Optimum / Minimum)"""),
-
-    75 : _("""  # Fin commande No : %(i1)04d   user+syst:%(r1)12.2fs (syst:%(r2)12.2fs, elaps:%(r3)12.2fs)"""),
-
-    76 : _("""  # Fin commande : %(k1)s"""),
 
     # sans formatage pour STAT_NON_LINE (impmem)
     77 : _("""

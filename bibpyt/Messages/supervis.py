@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,19 +42,6 @@ Les commandes DEBUT et POURSUITE doivent être appelées une fois et une seule.
   Erreur programmeur : %(k1)s non appariés.
 """),
 
-    4 : _("""Suppression du fichier: %(k1)s"""),
-
-    5 : _("""Échec lors de la suppression du fichier: %(k1)s"""),
-
-    6 : _("""
-Ces fichiers n'ont pas de sens lors d'un nouveau calcul (DEBUT)."""),
-
-    7: _("""
-Erreur lors du chargement du catalogue de loi de comportement :
-
-%(k1)s
-    """),
-
     8: _("""
   Un nom de concept intermédiaire doit commencer par '.' ou '_' et non :  %(k1)s
 """),
@@ -71,15 +58,6 @@ Conseils :
 - si vous avez un besoin impérieux de cette fonctionnalité,
   rapprochez-vous de votre correspondant Club utilisateur ou de l'équipe de développement.
 
-"""),
-
-    10 : { 'message' : _("""
-Aucune commande n'est exécutée. Seule la syntaxe est vérifiée.
-"""), 'flags' : 'DECORATED',
-           },
-
-    11 : _("""
-La vérification de syntaxe seule n'est pas disponible en mode PAR_LOT='NON'.
 """),
 
     12: _("""
@@ -132,18 +110,6 @@ La vérification de syntaxe seule n'est pas disponible en mode PAR_LOT='NON'.
 
     24: _("""
   Débogage SDVERI demandé
-"""),
-
-    25: _("""
-L'usage de la commande INCLUDE n'est pas conseillé.
-
-Une étude utilisant la commande INCLUDE ne peut pas être éditée en mode
-graphique dans %(k1)s. Il est alors conseillé de remplacer INCLUDE par
-un "Stage" supplémentaire.
-
-De plus, cette commande ne sera plus disponible à partir de la version 15.
-S'il s'agit d'exécuter des commandes Python, il sera alors possible d'utiliser
-l'instruction "%(k2)s".
 """),
 
     31: _("""
@@ -221,50 +187,6 @@ Fermeture des bases jeveux afin de permettre la POURSUITE ultérieure du calcul.
   Réserve CPU prévue = %(i3)d secondes
 """),
 
-    65 : _("""
-  Liste des concepts issus de la base :
-    Nom         Type du concept
-"""),
-
-    66 : _("""    %(k1)-8s    %(k2)-20s    %(k3)s"""),
-
-    67 : _("""    pas de concept
-"""),
-
-    68: _("""
-  La signature de la base sauvegardée est (à l'adresse %(i1)d) :
-    %(k1)s
-"""),
-
-    69: _("""
-Les fichiers glob.1 et pick.1 ne sont pas cohérents !
-
-D'après le fichier pick.1, la signature de la base à l'adresse %(i1)d devrait être :
-    %(k1)s
-Or la signature de glob.1 est :
-    %(k2)s
-"""),
-
-    70: _("""
-  La signature de la base relue est conforme à celle attendue (à l'adresse %(i1)d) :
-    %(k1)s
-"""),
-
-    71: _("""
-  La signature de la base au format HDF ne peut pas être vérifiée.
-"""),
-
-    72: _("""
-  L'exécution précédente s'est terminée correctement.
-"""),
-
-    73 : _("""relu: %(k1)s = %(k2)s"""),
-
-    76: _("""
-  L'exécution précédente a été interrompue au cours d'une commande qui a produit
-  le concept '%(k1)s' de type <%(k2)s> qui a été néanmoins validé par l'opérateur.
-"""),
-
     81: _("""
  %(k1)s nom symbolique inconnu
   - nombre de valeurs attendues %(i1)d
@@ -286,40 +208,6 @@ Or la signature de glob.1 est :
  Vous pouvez augmenter cette limite en utilisant l'argument "-max_base" sur la ligne
  de commande suivi d'une valeur en Mo.
 
-"""),
-
-    86: _("""
- Erreur à la relecture du fichier pick.1 : aucun objet sauvegardé ne sera récupéré.
-"""),
-
-    89: _("""
- Il n'y a pas de fichier glob.1 ou bhdf.1 dans le répertoire courant.
-
-Conseils:
-   - Vérifiez que vous avez une base (de type base ou bhdf) dans votre étude.
-   - Vérifiez si elle doit être décompressée ou pas.
-"""),
-
-    93 : _("""
-La variable python "%(k1)s" fait référence au concept "%(k2)s".
-Cela se produit avec ce type d'enchaînement :
-   %(k2)s = COMMANDE(...)
-   %(k1)s = %(k2)s
-
-On détruit cette variable ("%(k1)s" dans l'exemple ci-dessus).
-
--> Conseil :
-   Pour éviter cette alarme, supprimer la référence dans le jeu de commandes
-   qui produit la base en faisant :
-      %(k3)s
-"""),
-
-    95 : _("""
-Le temps CPU système (%(r1).1f) atteint une valeur supérieure à %(i1)d%% du temps CPU (%(r2).1f).
-Ce comportement est peut-être anormal.
-
--> Conseil :
-   Augmenter la quantité de mémoire peut permettre de diminuer le temps système.
 """),
 
     96 : { 'message' : _("""

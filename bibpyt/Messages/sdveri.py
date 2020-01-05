@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,28 +39,6 @@ cata_msg = {
  Arguments invalide
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
-"""),
-
-    30 : _("""
- Erreur de programmation (catalogue des SD) :
-   Vérification de la structure de donnée %(k1)s
-   produite (ou modifiée) par la commande %(k2)s
-
-   Certains objets JEVEUX sont incorrects :
-"""),
-
-    31 : _("""
-      Objet : '%(k1)s'    Message : %(k2)s
-"""),
-
-    40 : _("""
- Erreur de programmation (catalogue des SD) :
-   Vérification d'une structure de donnée :
-   Les objets suivants sont interdits dans les SD de type : %(k1)s
-"""),
-
-    41 : _("""
-   Objet '%(k1)s'   INTERDIT
 """),
 
 }
