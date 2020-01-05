@@ -61,7 +61,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
 
     # Réinitialiser le titre si on n'est pas réentrant
     if args['reuse'] is None:
-        tab.titr = get_titre_concept(new_table)
+        tab.titr = get_titre_concept(TABLE)
 
     # Boucle sur les actions à effectuer
     for fOP in ACTION:

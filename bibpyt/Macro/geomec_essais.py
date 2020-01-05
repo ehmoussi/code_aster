@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster import AsterError
 from code_aster.Commands import DEFI_FONCTION, SIMU_POINT_MAT, DETRUIRE, CREA_TABLE, IMPR_TABLE
 from code_aster.Commands import DEFI_LIST_INST, DEFI_LIST_REEL
 from .geomec_utils import *
@@ -199,7 +200,7 @@ def essai_TRIA_DR_M_D(self, str_n_essai, DicoEssai,
                          EPXZ=0.,
                          EPYZ=0.,),)
 
-        except (aster.error,aster.onFatalError,) as message:
+        except aster.error as message:
 
            print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
                      %(message))
@@ -502,7 +503,7 @@ def essai_TRIA_ND_M_D(self, str_n_essai, DicoEssai,\
                          EPXZ=0.,
                          EPYZ=0.,),)
 
-        except (aster.error,aster.onFatalError,) as message:
+        except AsterError as message:
 
            print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
                      %(message))
@@ -905,7 +906,7 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
                              EPXZ=0.,
                              EPYZ=0.,),)
 
-            except (aster.error,aster.onFatalError,) as mess:
+            except AsterError as mess:
 
                print(\
       '\n!!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n\n%s'\
@@ -2783,7 +2784,7 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
                              EPXZ=0.,
                              EPYZ=0.,),)
 
-            except (aster.error,aster.onFatalError,) as message:
+            except AsterError as message:
 
                print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
                      %(message))
@@ -3307,7 +3308,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
                              EPXZ=0.,
                              EPYZ=0.,),)
 
-            except ((aster.error,aster.onFatalError,),aster.onFatalError,) as message:
+            except AsterError as message:
 
                print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
                      %(message))
@@ -3844,7 +3845,7 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
 
             VARI_INIT= _F(VALE=[0.]*nb_vari),)
 
-        except (aster.error,aster.onFatalError,) as message:
+        except AsterError as message:
 
            print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
                      %(message))
