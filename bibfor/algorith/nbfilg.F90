@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -106,7 +106,7 @@ character(len=16) :: compor(*), option
     integer :: ia, na, ra, sa, ib, nb, rb, sb, ja, jb
     integer :: lij(3, 3), vij(3, 3), os, kk
     integer :: viaja, vibjb, vuiana, vgra, vpsa
-    integer :: cod(27)
+    integer :: cod(27), iret
     real(kind=8) :: geomm(3*27), geomp(3*27), deplm(3*27), deplp(3*27)
     real(kind=8) :: r, w, wp, dff1(nno1, 4)
     real(kind=8) :: presm(27), presd(27)
@@ -219,7 +219,12 @@ character(len=16) :: compor(*), option
 ! - CALCUL DES FONCTIONS A, B,... DETERMINANT LA RELATION LIANT G ET J
         call nirela(2, jp, gm, gp, am,&
                     ap, bp, boa, aa, bb,&
-                    daa, dbb, dboa, d2boa)
+                    daa, dbb, dboa, d2boa, iret)
+!
+        if(iret .ne. 0) then
+            codret = 1
+            goto 999
+        end if
 !
 ! - CALCUL DES DEFORMATIONS ENRICHIES
         corm = (am/jm)**(1.d0/3.d0)
