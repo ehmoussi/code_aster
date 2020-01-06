@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ subroutine nbfnlg(ndim, nno1, nno2, nno3, npg,&
     implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/nirela.h"
 #include "asterfort/nmepsi.h"
@@ -74,7 +75,7 @@ subroutine nbfnlg(ndim, nno1, nno2, nno3, npg,&
     aster_logical :: nonloc
     integer :: k2ret(1), vij(3, 3), lij(3, 3)
     integer :: nddl, ndu, g
-    integer :: kl, sa, ra, na, ia, ja, kk
+    integer :: kl, sa, ra, na, ia, ja, kk, iret
     real(kind=8) :: geomm(3*27), jm, wm, epsm(6)
     real(kind=8) :: deplm(3*27), gonfm(27), presm(27), gm, pm, r
     real(kind=8) :: dff1(nno1, 4), dff2(nno2, 3)
@@ -172,7 +173,9 @@ subroutine nbfnlg(ndim, nno1, nno2, nno3, npg,&
 ! - CALCUL DES FONCTIONS A,B,... QUI LIENT G ET J
         call nirela(2, jm, gm, gm, am,&
                     ap, bm, boa, aa, bb,&
-                    daa, dbb, dboa, d2boa)
+                    daa, dbb, dboa, d2boa, iret)
+!
+        ASSERT(iret == 0)
 !
 ! - VECTEUR FINT:U
         do na = 1, nno1
