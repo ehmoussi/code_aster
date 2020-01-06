@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 
 # L'ILOT NUCLEAIRE PWR 1300 P'4
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IMPR_MACRO='OUI',)
 
-MAILLAGE=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAILLAGE=LIRE_MAILLAGE(FORMAT="ASTER",)
 
 MAILLAGE=DEFI_GROUP(reuse =MAILLAGE,
                     MAILLAGE=MAILLAGE,
-                    CREA_GROUP_NO=_F(GROUP_MA='RADIER',),);
+                    CREA_GROUP_NO=_F(GROUP_MA='RADIER',),)
 
 
 MAT=DEFI_MATERIAU(ELAS=_F(E=4.E10,
@@ -33,7 +33,7 @@ MAT=DEFI_MATERIAU(ELAS=_F(E=4.E10,
                           RHO=0.0,
                           ALPHA=0.0,
                           AMOR_ALPHA=1.5e-2, AMOR_BETA=0.0,
-                          ),);
+                          ),)
 
 
 PRE_SEISME_NONL(
@@ -144,9 +144,9 @@ PRE_SEISME_NONL(
                      ),
 
 
-);
+)
 
-IMPR_CO(CHAINE='MAEL0   .LINO', UNITE = 6);
+IMPR_CO(CHAINE='MAEL0   .LINO', UNITE = 6)
 
 
 #Pour reference :
@@ -173,7 +173,7 @@ TABSOL0 = DEFI_SOL_MISS(
       _F(SUBSTRATUM="OUI", NUME_MATE=8,),
    ),
    INFO=2,
-);
+)
 
 TABSOL = DEFI_SOL_MISS(
    TITRE="SOL STRATIFIE",
@@ -219,19 +219,19 @@ CALC_MISS(
         SPEC_MAX=0.075,
         SPEC_NB=16384,
     ),
-);
+)
 
 TFIN_IMPE = 10.0
 
-NDDLGEN = NUME_DDL_GENE( BASE= BAMO, STOCKAGE= 'PLEIN',);
+NDDLGEN = NUME_DDL_GENE( BASE= BAMO, STOCKAGE= 'PLEIN',)
 
 impe = LIRE_IMPE_MISS(BASE=BAMO, NUME_DDL_GENE = NDDLGEN,
                         UNITE_RESU_IMPE=31, FREQ_EXTR=3.,
-                        SYME='OUI', );
+                        SYME='OUI', )
 
 impe0 = LIRE_IMPE_MISS(BASE=BAMO, NUME_DDL_GENE = NDDLGEN,
                         UNITE_RESU_IMPE=31, FREQ_EXTR=0.1,
-                        SYME='OUI', );
+                        SYME='OUI', )
 
 
 rito=COMB_MATR_ASSE(COMB_R=(
@@ -241,7 +241,7 @@ rito=COMB_MATR_ASSE(COMB_R=(
                                 COEF_R=1.0,),
                              ),
                                 SANS_CMP='LAGR',
-                    );
+                    )
 
 mato=COMB_MATR_ASSE(COMB_R=(
                              _F(MATR_ASSE=impe0,
@@ -254,7 +254,7 @@ mato=COMB_MATR_ASSE(COMB_R=(
                                 COEF_R=-2.85e-3,),
                             ),
                                 SANS_CMP='LAGR',
-                    );
+                    )
 
 amto2=COMB_MATR_ASSE(COMB_R=(
                              _F(MATR_ASSE=impe,
@@ -263,7 +263,7 @@ amto2=COMB_MATR_ASSE(COMB_R=(
                                 COEF_R=5.30e-2,),
                             ),
                                 SANS_CMP='LAGR',
-                    );
+                    )
 
 DEFI_FICHIER(UNITE=35,
              FICHIER='impe_rigi')
@@ -300,7 +300,7 @@ CALC_MISS(
                   OFFSET_MAX = 40,
                   OFFSET_NB = 400,
                   ),
-             );
+             )
 
 
 KS0 = COMB_MATR_ASSE(COMB_C=(
@@ -309,14 +309,14 @@ KS0 = COMB_MATR_ASSE(COMB_C=(
                                 COEF_C=1.0 + 0j,),
                              ),
                                 SANS_CMP='LAGR',
-                    );
+                    )
 
 MAEL=MACR_ELEM_DYNA(  BASE_MODALE=BAMO,
                        MATR_IMPE_RIGI = KS0,
                        SANS_GROUP_NO='RADIER',
-                       );
+                       )
 
-IMPR_CO(CHAINE='MAEL    .LINO', UNITE = 6);
+IMPR_CO(CHAINE='MAEL    .LINO', UNITE = 6)
 
 PRE_SEISME_NONL(
                   RESULTAT = _F(
@@ -428,20 +428,20 @@ PRE_SEISME_NONL(
                      ),
 
 
-);
+)
 
 
 PESAX=AFFE_CHAR_MECA(MODELE=MODELB,
                     PESANTEUR=_F(GRAVITE=1.0,
-                                 DIRECTION=(-1.0,0.0,0.0,),),);
+                                 DIRECTION=(-1.0,0.0,0.0,),),)
 
 PESAY=AFFE_CHAR_MECA(MODELE=MODELB,
                     PESANTEUR=_F(GRAVITE=1.0,
-                                 DIRECTION=(0.0,-1.0,0.0,),),);
+                                 DIRECTION=(0.0,-1.0,0.0,),),)
 
 PESAZ=AFFE_CHAR_MECA(MODELE=MODELB,
                     PESANTEUR=_F(GRAVITE=9.81,
-                                 DIRECTION=(0.0,0.0,-1.0,),),);
+                                 DIRECTION=(0.0,0.0,-1.0,),),)
 
 from sdnx100a import F_FONC
 LBEW, LBNS = F_FONC()
@@ -453,13 +453,13 @@ linst = DEFI_LIST_REEL ( DEBUT = 0.,
                           INTERVALLE = ( _F(
                                          JUSQU_A = (N-1)*dt,
                                          PAS=1*dt,
-                                         ),), );
+                                         ),), )
 
 ACCEX=CALC_FONCTION(COMB=_F(FONCTION=LBNS, COEF=1.5,),
-                       LIST_PARA=linst,);
+                       LIST_PARA=linst,)
 
 ACCEY=CALC_FONCTION(COMB=_F(FONCTION=LBEW, COEF=1.5,),
-                       LIST_PARA=linst,);
+                       LIST_PARA=linst,)
 
 
 dt = 0.008
@@ -467,11 +467,11 @@ N= TFIN_IMPE/dt
 
 L_INST=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(JUSQU_A=(N-1)*dt,
-                                   PAS=dt,),);
+                                   PAS=dt,),)
 
 L_REEL= DEFI_LIST_REEL(DEBUT=-1.0,
                         INTERVALLE=_F(JUSQU_A=0.0,
-                                      PAS=1.0,),);
+                                      PAS=1.0,),)
 
 
 STA0 = STAT_NON_LINE(MODELE=MODELB,
@@ -491,11 +491,11 @@ STA0 = STAT_NON_LINE(MODELE=MODELB,
                                 ARRET='OUI',),
                  SOLVEUR=_F(METHODE='MUMPS', NPREC = 20),
                  INCREMENT=_F(LIST_INST=L_REEL,),
-                          );
+                          )
 
 
 IMPR_RESU(FORMAT="RESULTAT", RESU=_F(RESULTAT = STA0, NOM_CHAM='DEPL', INST=0.0,
-                   GROUP_NO=('CENT_RAD',)), );
+                   GROUP_NO=('CENT_RAD',)), )
 
 PRE_SEISME_NONL(
                  RESULTAT = _F( RESULTAT = CO('DYNA'), ),
@@ -520,16 +520,16 @@ PRE_SEISME_NONL(
                                                 _F(CHARGE=COND_LIB),
                                      ),
                             ),
-);
+)
 
 Nbinst = 52
 TFIN = Nbinst * dt
 
 IMPR_RESU(FORMAT="RESULTAT", RESU=_F(RESULTAT = DYNA, NOM_CHAM='DEPL', #INST=TFIN,
-                   GROUP_NO=('CENT_RAD',)), );
+                   GROUP_NO=('CENT_RAD',)), )
 
 IMPR_RESU(FORMAT="RESULTAT", RESU=_F(RESULTAT = DYNA, NOM_CHAM='ACCE', #INST=TFIN,
-                   GROUP_NO=('CENT_RAD',)), );
+                   GROUP_NO=('CENT_RAD',)), )
 
 ACCEX2 = FORMULE(VALE='ACCEX(INST-TFIN)',
                  ACCEX=ACCEX,
@@ -567,7 +567,7 @@ DYNA=DYNA_NON_LINE(
                                 ARRET='OUI',),
                  SOLVEUR=_F(METHODE='MUMPS',),
                  INCREMENT=_F(LIST_INST=L_INST, INST_FIN = TFIN*1.25),
-                          );
+                          )
 
 # pas avant car utilisé par FORCE_SOL
 DEFI_FICHIER(ACTION='LIBERER', UNITE=35)
@@ -578,7 +578,7 @@ GABKDZ=RECU_FONCTION(RESULTAT=DYNA,
                      NOM_CMP='DZ',
                      GROUP_NO='CENT_RAD',
                      INTERPOL='LIN',
-                     TITRE='ACCELERATION ABSOLUE AU SOMMET DU BK',);
+                     TITRE='ACCELERATION ABSOLUE AU SOMMET DU BK',)
 
 
 GDBKDZ=RECU_FONCTION(RESULTAT=DYNA,
@@ -586,7 +586,7 @@ GDBKDZ=RECU_FONCTION(RESULTAT=DYNA,
                      NOM_CMP='DZ',
                      GROUP_NO='CENT_RAD',
                      INTERPOL='LIN',
-                     TITRE='ACCELERATION ABSOLUE AU SOMMET DU BK',);
+                     TITRE='ACCELERATION ABSOLUE AU SOMMET DU BK',)
 
 IMPR_FONCTION(FORMAT='AGRAF',
               UNITE=51,
@@ -594,13 +594,13 @@ IMPR_FONCTION(FORMAT='AGRAF',
                       _F(FONCTION=GABKDZ,),
                       _F(FONCTION=GDBKDZ),
                      ),
-              );
+              )
 
 TEST_FONCTION(VALEUR=(
                       _F(VALE_CALC = -1.27057207385664E-02,
                          VALE_REFE = -1.27057207385667E-02,
                          PRECISION = 0.1,
-                         TOLE_MACHINE = 3.E-06, # En attente issue24202 
+                         TOLE_MACHINE = 3.E-06, # En attente issue24202
                          REFERENCE = 'AUTRE_ASTER',
                          VALE_PARA = 0.312, #A la fin du 1er DYNA_NON_LINE
                          FONCTION = GDBKDZ,
@@ -608,7 +608,7 @@ TEST_FONCTION(VALEUR=(
                       _F(VALE_CALC = -1.34066736177442E-02,
                          VALE_REFE = -1.27057207385667E-02,
                          PRECISION = 0.1,
-                         TOLE_MACHINE = 3.E-06, # En attente issue24202 
+                         TOLE_MACHINE = 3.E-06, # En attente issue24202
                          REFERENCE = 'AUTRE_ASTER',
                          VALE_PARA = 0.416, #A la fin du 2eme DYNA_NON_LINE
                          FONCTION = GDBKDZ,
@@ -616,7 +616,7 @@ TEST_FONCTION(VALEUR=(
                       _F(VALE_CALC = -1.12105863729370E-16,
                          VALE_REFE = 0.00,
                          PRECISION = 0.1,
-                         TOLE_MACHINE = 3.E-06, # En attente issue24202 
+                         TOLE_MACHINE = 3.E-06, # En attente issue24202
                          CRITERE = 'ABSOLU',
                          REFERENCE = 'AUTRE_ASTER',
                          VALE_PARA = 0.312, #A la fin du 1er DYNA_NON_LINE
@@ -625,13 +625,13 @@ TEST_FONCTION(VALEUR=(
                       _F(VALE_CALC = 3.84270207809421E-02,
                          VALE_REFE = 0.00,
                          PRECISION = 0.1,
-                         TOLE_MACHINE = 3.E-06, # En attente issue24202 
+                         TOLE_MACHINE = 3.E-06, # En attente issue24202
                          CRITERE = 'ABSOLU',
                          REFERENCE = 'AUTRE_ASTER',
                          VALE_PARA = 0.416, #A la fin du 2eme DYNA_NON_LINE
                          FONCTION = GABKDZ,
                          ),
                       ),
-              );
+              )
 
-FIN();
+FIN()
