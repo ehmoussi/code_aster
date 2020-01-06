@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -524,15 +524,19 @@ class Model(object):
 
     def DefineOut(self):
         """Define output depending on user choices"""
+
+        _AMa = AFFE_MATERIAU(**self.args['AFFE_MATERIAU'])
+        self.mate = _AMa
         if 'CHAM_MATER' in self.args['RESULTAT']:
-            _AMa = AFFE_MATERIAU(**self.args['AFFE_MATERIAU'])
             self.parent.register_result(_AMa, self.args['RESULTAT']['CHAM_MATER'])
-            self.mate = _AMa
+
+        _ACa = AFFE_CARA_ELEM(**self.args['AFFE_CARA_ELEM'])
+        self.cara_elem = _ACa
         if 'CARA_ELEM' in self.args['RESULTAT']:
-            _ACa = AFFE_CARA_ELEM(**self.args['AFFE_CARA_ELEM'])
             self.parent.register_result(_ACa, self.args['RESULTAT']['CARA_ELEM'])
-            self.cara_elem = _ACa
+
         _ACh_CL = AFFE_CHAR_MECA(**self.args['AFFE_CHAR_MECA'])
+        self.cond_lim = _ACh_CL
         if 'CHARGE' in self.args['RESULTAT']:
             for mcfact in self.args['RESULTAT']['CHARGE']:
                 if mcfact['OPTION'] == 'LAPL_TEMPS':
@@ -540,7 +544,7 @@ class Model(object):
                     self.parent.register_result(ACh_LT, mcfact['NOM'])
                 elif mcfact['OPTION'] == 'COND_LIM':
                     self.parent.register_result(_ACh_CL, mcfact['NOM'])
-                    self.cond_lim = _ACh_CL
+
 
 
 class StatDyna(object):
@@ -671,7 +675,6 @@ class StatDyna(object):
         N_stab1 = int(0.75*self.nb_inst)
         TFIN1 = N_stab1 * self.pas_inst_impe
 
-        self.init_amor(self.coef_amor)
         alpha_HHT = -7.0
         _ResuDNL = DYNA_NON_LINE(**self.non_line(
                                   SCHEMA_TEMPS = _F(SCHEMA='HHT',ALPHA = alpha_HHT,
@@ -700,7 +703,6 @@ class StatDyna(object):
                              )
         self.parent.register_result(_ResuDNL, self.args['RESULTAT']['RESULTAT'])
 
-        self.init_amor(0.0)
 
     def non_line(self, **kwds):
         """Return the common keywords for STAT_NON_LINE and DYNA_NON_LINE
@@ -719,16 +721,6 @@ class StatDyna(object):
         }
         keywords.update(kwds)
         return keywords
-
-    def init_amor(self, coef):
-        """Initialization of the RIGI_PARASOL damping values"""
-        val = coef * 1.E16
-        lvalues = self.cara_elem.sdj.CARAMOXV.get()
-        p_ind = list(range(1, len(lvalues)+1))
-        p_real = len(lvalues)*(val,)
-        p_imag = len(lvalues)*(0.0,)
-        self.cara_elem.sdj.CARAMOXV.changeJeveuxValues(len(lvalues),tuple(p_ind),
-                                                 tuple(p_real),tuple(p_imag))
 
     def mc_converge(self):
         """Build 'Converge' keywords set"""
