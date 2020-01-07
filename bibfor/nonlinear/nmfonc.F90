@@ -163,6 +163,12 @@ integer, intent(inout) :: list_func_acti(*)
         list_func_acti(50) = 1
     endif
 !
+! - Dynamic
+!
+    if (l_dyna) then
+        list_func_acti(69) = 1
+    endif
+!
 ! - Modal projection for dynamic
 !
     if (l_dyna) then
@@ -233,9 +239,9 @@ integer, intent(inout) :: list_func_acti(*)
         else if (i_cont_form .eq. 5) then
             list_func_acti(63) = 1
             list_func_acti(26) = 1
-            l_frot = .false.
+            l_frot = ASTER_FALSE
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !
@@ -249,20 +255,20 @@ integer, intent(inout) :: list_func_acti(*)
 ! - Contact: fixed loops
 !
     if (l_cont) then
-        l_loop_geom = .false.
-        l_loop_frot = .false.
-        l_loop_cont = .false.
+        l_loop_geom = ASTER_FALSE
+        l_loop_frot = ASTER_FALSE
+        l_loop_cont = ASTER_FALSE
         l_loop_geom = cfdisl(ds_contact%sdcont_defi,'GEOM_BOUCLE')
         if (l_frot) l_loop_frot = cfdisl(ds_contact%sdcont_defi,'FROT_BOUCLE')
         l_loop_cont = cfdisl(ds_contact%sdcont_defi,'CONT_BOUCLE')
         if (l_all_verif) then
-            l_loop_cont = .false.
-            l_loop_geom = .false.
-            l_loop_frot = .false.
+            l_loop_cont = ASTER_FALSE
+            l_loop_geom = ASTER_FALSE
+            l_loop_frot = ASTER_FALSE
         endif
         if (i_cont_form .eq. 1) then
-            l_loop_cont = .false.
-            l_loop_frot = .false.
+            l_loop_cont = ASTER_FALSE
+            l_loop_frot = ASTER_FALSE
         endif
         if (l_loop_geom) list_func_acti(31) = 1
         if (l_loop_frot) list_func_acti(32) = 1
@@ -480,6 +486,9 @@ integer, intent(inout) :: list_func_acti(*)
         endif
         if (isfonc(list_func_acti,'EXPLICITE')) then
             call utmess('I', 'MECANONLINE14_2')
+        endif
+        if (isfonc(list_func_acti,'DYNAMIQUE')) then
+            call utmess('I', 'MECANONLINE14_65')
         endif
         if (isfonc(list_func_acti,'NEWTON_KRYLOV')) then
             call utmess('I', 'MECANONLINE14_3')

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,6 +45,7 @@ character(len=*), intent(in) :: func_name_z
 !       DEBORST            :  De Borst plane stress method
 !       SOUS_STRUC         :  CALCUL PAR SOUS-STRUCTURATION
 !       PROJ_MODAL         :  PROJECTION MODALE
+!       DYNAMIQUE          :  DYNAMIQUE
 !       IMPLEX             :  METHODE IMPLEX
 !       EXPLICITE          :  METHODE EXPLICITE
 !       CONTACT            :  CONTACT DISCRET OU CONTINU OU XFEM OU LAC
@@ -110,7 +111,7 @@ character(len=*), intent(in) :: func_name_z
 !       HROM               :  hyper-reduced order model
 !       HROM_CORR_EF       :  hyper-reduced order model with EF correction
 !
-! DERNIER NUMERO UTILISE: 67
+! DERNIER NUMERO UTILISE: 69
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -244,6 +245,8 @@ character(len=*), intent(in) :: func_name_z
         isfonc = list_func_acti(52).eq.1
     else if (func_name.eq.'EXPLICITE') then
         isfonc = list_func_acti(54).eq.1
+    else if (func_name.eq.'DYNAMIQUE') then
+        isfonc = list_func_acti(69).eq.1
     else if (func_name.eq.'EXI_STRX') then
         isfonc = list_func_acti(56).eq.1
     else if (func_name.eq.'ELAS_FO') then

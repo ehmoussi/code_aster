@@ -151,5 +151,7 @@ cata_msg = {
 
     64 : _("""  Activation de contact par pénalisation."""),
 
+    65 : _("""  Activation du calcul en dynamique."""),
+
     99 : _("""Création des structures de données."""),
 }

@@ -37,6 +37,7 @@ implicit none
 #include "asterfort/NonLinear_type.h"
 #include "asterfort/assert.h"
 #include "asterfort/nmfint.h"
+#include "asterfort/isfonc.h"
 #include "asterfort/nonlinNForceCompute.h"
 #include "asterfort/nonlinIntForceAsse.h"
 !
@@ -90,6 +91,7 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
     character(len=19) :: sddyna
     type(HHO_Field) :: hhoField
     real(kind=8) :: time_prev, time_curr
+    aster_logical :: l_dyna
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -106,6 +108,11 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
     if (present(hhoField_)) then
         hhoField = hhoField_
     endif
+!
+! - Active functionnalites
+!
+    l_dyna = isfonc(list_func_acti, 'DYNAMIQUE')
+!
     if (phaseType .eq. PRED_EULER) then
         ASSERT(iter_newt .eq. 0)
 ! ----- Direct computation (no integration of behaviour)
@@ -122,7 +129,13 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
                     ldccvg        , sddyna)
 ! ----- Assembly
         if (ldccvg .ne. 1) then
-            call nonlinIntForceAsse(INTE_FORCE_FNOD, list_func_acti, sdnume, ds_material, ds_system)
+            if (l_dyna) then
+                call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
+                                        ds_system)
+            else
+                call nonlinIntForceAsse(INTE_FORCE_FNOD, list_func_acti, sdnume, ds_material,&
+                                        ds_system)
+            endif
         endif
     elseif (phaseType .eq. CORR_NEWTON) then
 ! ----- Integration of behaviour
