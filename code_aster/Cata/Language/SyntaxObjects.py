@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -350,10 +350,9 @@ class PartOfSyntax(UIDMixing):
 
     def _def_status(self):
         """Wrapper that returns the value of 'statut' after precondition."""
-        from code_aster.Cata import HAVE_ASTERSTUDY
         definition = self.definition
         value = definition.get("statut", "f")
-        if not HAVE_ASTERSTUDY or value == "c":
+        if value == "c":
             return value
         # In AsterStudy, a simple keyword with a default value...
         if self.getCataTypeId() == IDS.simp and self.hasDefaultValue():

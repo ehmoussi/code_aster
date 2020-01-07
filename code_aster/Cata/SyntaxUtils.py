@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,11 +25,7 @@ Module SyntaxUtils
 
 This module defines utilities for the code_aster language.
 
-Only used by the next generation of the commands language
-(already used by AsterStudy).
+Used by AsterStudy and code_aster >= 15.2.
 """
 
-from . import HAVE_ASTERSTUDY
-
-if HAVE_ASTERSTUDY:
-    from .Language.SyntaxUtils import *
+from .Language.SyntaxUtils import *
