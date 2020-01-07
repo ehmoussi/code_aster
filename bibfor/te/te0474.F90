@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
 subroutine te0474(option, nomte)
     implicit none
 !
-! 'RIGI_MECA_GE' option for SHB elements
+! 'RIGI_GEOM' option for SHB elements
 !
 !
-! 'RIGI_MECA_GE' option for solid-shell elements SHB6, SHB8, SHB15 & SHB20.
+! 'RIGI_GEOM' option for solid-shell elements SHB6, SHB8, SHB15 & SHB20.
 ! Computation of 3D elementary matrix.
 !
 !
-! IN  option   'RIGI_MECA_GE'
+! IN  option   'RIGI_GEOM'
 ! IN  nomte    elment type name
 !
 #include "jeveux.h"
