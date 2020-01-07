@@ -55,6 +55,7 @@ implicit none
 #include "asterfort/nmrigi.h"
 #include "asterfort/nmxmat.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
+#include "asterfort/nonlinIntForceAsse.h"
 #include "asterfort/sdmpic.h"
 #include "asterfort/utmess.h"
 !

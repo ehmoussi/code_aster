@@ -54,6 +54,7 @@ implicit none
 #include "asterfort/nmrenu.h"
 #include "asterfort/nmxmat.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
+#include "asterfort/nonlinIntForceAsse.h"
 #include "asterfort/asmari.h"
 #include "asterfort/nmrigi.h"
 #include "asterfort/utmess.h"
@@ -272,6 +273,10 @@ integer :: faccvg, ldccvg
                                meelem     , hhoField   ,&
                                ASTER_FALSE, ASTER_TRUE ,&
                                rigid      , condcvg)
+            if (ldccvg .ne. 1) then
+                call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
+                                        ds_system)
+            endif
         endif
 ! ----- Compute and assemble matrices
         if (nb_matr .gt. 0) then

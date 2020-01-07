@@ -91,7 +91,7 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
     character(len=19) :: sddyna
     type(HHO_Field) :: hhoField
     real(kind=8) :: time_prev, time_curr
-    aster_logical :: l_dyna
+    aster_logical :: l_dyna, l_hho
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -112,15 +112,18 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
 ! - Active functionnalites
 !
     l_dyna = isfonc(list_func_acti, 'DYNAMIQUE')
+    l_hho  = isfonc(list_func_acti, 'HHO')
 !
     if (phaseType .eq. PRED_EULER) then
         ASSERT(iter_newt .eq. 0)
 ! ----- Direct computation (no integration of behaviour)
-        call nonlinNForceCompute(model      , cara_elem      , list_func_acti,&
-                                 ds_material, ds_constitutive,&
-                                 ds_measure , ds_system      ,&
-                                 time_prev  , time_curr      ,&
-                                 hval_incr  , hval_algo)
+        if (.not. l_hho) then
+            call nonlinNForceCompute(model      , cara_elem      , list_func_acti,&
+                                     ds_material, ds_constitutive,&
+                                     ds_measure , ds_system      ,&
+                                     time_prev  , time_curr      ,&
+                                     hval_incr  , hval_algo)
+        endif
 ! ----- Integration of behaviour
         call nmfint(model         , cara_elem      ,&
                     ds_material   , ds_constitutive,&
@@ -132,7 +135,7 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
             if (l_dyna) then
                 call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
                                         ds_system)
-            else
+            elseif (.not. l_hho) then
                 call nonlinIntForceAsse(INTE_FORCE_FNOD, list_func_acti, sdnume, ds_material,&
                                         ds_system)
             endif
@@ -146,7 +149,10 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
                     ldccvg        , sddyna)
 ! ----- Assembly
         if (ldccvg .ne. 1) then
-            call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material, ds_system)
+            if (.not. l_hho) then
+                call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
+                                        ds_system)
+            endif
         endif
     else
         ASSERT(ASTER_FALSE)

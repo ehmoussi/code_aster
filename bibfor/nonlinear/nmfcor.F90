@@ -224,6 +224,10 @@ aster_logical :: lerrit
                                hval_meelem, hhoField   ,&
                                ASTER_TRUE , ASTER_FALSE,&
                                rigid      , condcvg)
+            if (ldccvg .ne. 1) then
+                call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
+                                        ds_system)
+            endif
         end if
     endif
 !
