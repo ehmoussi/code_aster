@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/cffoco.h"
 #include "asterfort/cffofr.h"
 #include "asterfort/cufoco.h"
+#include "asterfort/utmess.h"
 !
 integer, intent(in) :: list_func_acti(*)
 type(NL_DS_Contact), intent(in) :: ds_contact
@@ -57,7 +58,7 @@ character(len=24), intent(in) :: nume_dof
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('CONTACT', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! - Active functionnalites
 !
@@ -67,29 +68,21 @@ character(len=24), intent(in) :: nume_dof
     l_unil      = isfonc(list_func_acti        , 'LIAISON_UNILATER')
     l_all_verif = cfdisl(ds_contact%sdcont_defi, 'ALL_VERIF')
     if (.not.l_all_verif) then
-!
 ! ----- Print
-!
         if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ...... CALCUL FORCES CONTACT'
+            call utmess('I', 'MECANONLINE11_31')
         endif
-!
 ! ----- Contact (DISCRETE) forces
-!
         if (l_cont_disc) then
             vect_asse = ds_contact%cnctdc
             call cffoco(nume_dof, ds_contact%sdcont_solv, vect_asse)
         endif
-!
 ! ----- Friction (DISCRETE) forces
-!
         if ((l_frot_disc) .or. (l_cont_pena)) then
             vect_asse = ds_contact%cnctdf
             call cffofr(nume_dof, ds_contact%sdcont_solv, vect_asse)
         endif
-!
 ! ----- Unilateral conditions (DISCRETE) forces
-!
         if (l_unil) then
             vect_asse = ds_contact%cnunil
             call cufoco(nume_dof, ds_contact%sdunil_solv, vect_asse)

@@ -29,27 +29,27 @@ cata_msg = {
 
     3  : _("""Préparation du second membre pour l'accélération initiale."""),
 
-    4  : _(""" Calcul des chargements."""),
+    4  : _("""Calcul des chargements."""),
 
-    5  : _(""" Calcul des chargements spécifiques à la dynamique."""),
+    5  : _("""Calcul des chargements spécifiques à la dynamique."""),
 
-    6  : _("""  Calcul de l'impédance (dynamique)."""),
+    6  : _("""Calcul de l'impédance (dynamique)."""),
 
-    7  : _("""  Calcul de l'effet sur le second membre des macro-éléments."""),
+    7  : _("""Calcul de l'effet sur le second membre des macro-éléments."""),
 
-    8  : _(""" Calcul des efforts intérieurs (sans intégration du comportement)."""),
+    8  : _("""Calcul des efforts intérieurs (sans intégration de la loi de comportement)."""),
 
-    9  : _("""  Calcul des forces de rappel dynamique."""),
+    9  : _("""Calcul des forces de rappel dynamique."""),
 
-   10  : _("""  Calcul des forces d'amortissement modal."""),
+   10  : _("""Calcul des forces d'amortissement modal."""),
 
-   11  : _(""" Calcul des réactions d'appui pour les conditions limites de Dirichlet."""),
+   11  : _("""Calcul des réactions d'appui pour les conditions limites de Dirichlet."""),
 
-   12  : _(""" Calcul des conditions limites de Dirichlet."""),
+   12  : _("""Calcul des conditions limites de Dirichlet."""),
 
    13  : _("""Calcul du second membre pour le pas de temps courant."""),
 
-   14  : _(""" Calcul de la contribution des variables de commande."""),
+   14  : _("""Calcul de la contribution des variables de commande."""),
 
    15  : _("""Calcul du second membre pour la correction."""),
 
@@ -67,7 +67,7 @@ cata_msg = {
 
    22  : _("""Préparation du second membre pour le pas de temps courant (dynamique explicite)."""),
 
-   25  : _("""Intégration de la loi de comportement (calcul des efforts internes élémentaires)."""),
+   25  : _("""Calcul des efforts intérieurs (avec intégration de la loi de comportement)."""),
 
    26  : _("""Calcul de l'accélération initiale."""),
 
@@ -76,5 +76,9 @@ cata_msg = {
    28  : _("""Intégration de la loi de comportement (assemblage des efforts internes élémentaires)."""),
 
    29  : _("""Intégration de la loi de comportement et de la matrice tangente."""),
+
+   30  : _("""Calcul des forces de contact et de frottement (méthodes continues)."""),
+
+   31  : _("""Calcul des forces de contact et de frottement (méthodes discrètes)."""),
 
 }

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ implicit none
 #include "asterfort/nmtime.h"
 #include "asterfort/nmvcex.h"
 #include "asterfort/vtaxpy.h"
+#include "asterfort/utmess.h"
 !
 character(len=10), intent(in) :: phase
 character(len=24), intent(in) :: model
@@ -85,10 +86,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('CONTACT', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> CALCUL DU SECOND MEMBRE'
-    endif
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! - Active functionnalities
 !
@@ -129,6 +127,9 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         ((.not.l_cont_lac) .or. ds_contact%nb_cont_pair.ne.0)) then
         call nmtime(ds_measure, 'Init'  , 'Cont_Elem')
         call nmtime(ds_measure, 'Launch', 'Cont_Elem')
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE11_30')
+        endif
         call nmelcv(mesh          , model         ,&
                     ds_material   , ds_contact    , ds_constitutive,&
                     disp_prev     , vite_prev     ,&
