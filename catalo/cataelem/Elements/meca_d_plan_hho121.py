@@ -292,10 +292,9 @@ class MECA_DPQ8_HHO121(Element):
 
         OP.HHO_COMB(te=448,
             para_in=(
-                     (SP.PMATERC, LC.CMATERC),
                      (OP.HHO_COMB.PCMBHHO, LC.CCMBHHO),
                      (OP.HHO_COMB.PMAELS1, MMATUHR),
-                     ((OP.HHO_COMB.PMAELS2, MMATUHR)),
+                     (OP.HHO_COMB.PMAELS2, MMATUHR),
                      (OP.HHO_COMB.PMAELNS1, MMATUHS),
                      (OP.HHO_COMB.PMAELNS2, MMATUHS),
                      (OP.HHO_COMB.PVEELE1, MVECTHR),

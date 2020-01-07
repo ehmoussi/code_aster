@@ -132,8 +132,7 @@ contains
 !
 ! --------------------------------------------------------------------------------------------------
 !
-        integer, parameter :: nbin = 11
-        integer, parameter :: nbout = 3
+        integer, parameter :: nbin = 9, nbout = 3
         character(len=8)  :: lpain(nbin), lpaout(nbout)
         character(len=19) :: lchin(nbin), lchout(nbout)
         character(len=19) :: ligrel_model, cart_comb
@@ -160,26 +159,24 @@ contains
 !
 ! ----- Input fields
 !
-        lpain(1)  = 'PMATERC'
-        lchin(1)  = mateco
-        lpain(2)  = 'PCMBHHO'
-        lchin(2)  = cart_comb(1:19)
-        lpain(3)  = 'PMAELS1'
-        lchin(3)  = resu_elem_sym(1)
-        lpain(4)  = 'PMAELS2'
-        lchin(4)  = resu_elem_sym(2)
-        lpain(5)  = 'PMAELNS1'
-        lchin(5)  = resu_elem_unsym(1)
-        lpain(6)  = 'PMAELNS2'
-        lchin(6)  = resu_elem_unsym(2)
-        lpain(8)  = 'PVEELE1'
-        lchin(8)  = getResuElem(vect_elem_=vect_elem(1))
-        lpain(9)  = 'PVEELE2'
-        lchin(9)  = getResuElem(vect_elem_=vect_elem(2))
-        lpain(10) = 'PVEELE3'
-        lchin(10) = getResuElem(vect_elem_=vect_elem(3))
-        lpain(11) = 'PVEELE4'
-        lchin(11) = getResuElem(vect_elem_=vect_elem(4))
+        lpain(1)  = 'PCMBHHO'
+        lchin(1)  = cart_comb(1:19)
+        lpain(2)  = 'PMAELS1'
+        lchin(2)  = resu_elem_sym(1)
+        lpain(3)  = 'PMAELS2'
+        lchin(3)  = resu_elem_sym(2)
+        lpain(4)  = 'PMAELNS1'
+        lchin(4)  = resu_elem_unsym(1)
+        lpain(5)  = 'PMAELNS2'
+        lchin(5)  = resu_elem_unsym(2)
+        lpain(6)  = 'PVEELE1'
+        lchin(6)  = getResuElem(vect_elem_=vect_elem(1))
+        lpain(7)  = 'PVEELE2'
+        lchin(7)  = getResuElem(vect_elem_=vect_elem(2))
+        lpain(8)  = 'PVEELE3'
+        lchin(8)  = getResuElem(vect_elem_=vect_elem(3))
+        lpain(9)  = 'PVEELE4'
+        lchin(9)  = getResuElem(vect_elem_=vect_elem(4))
 !
 ! ----- Prepare RESU_ELEM
 !
