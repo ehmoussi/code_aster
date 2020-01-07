@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -744,15 +744,15 @@ class MECA_POU_D_TGM(Element):
                      para_out=((SP.PMATUUR, MMATUUR), ),
                      ),
 
-        OP.RIGI_MECA_GE(te=143,
+        OP.RIGI_GEOM(te=143,
                         para_in=(
                         (SP.PCAGNPO, LC.CCAGNP1), (
-                            OP.RIGI_MECA_GE.PCAORIE, CCAORIE),
-                        (OP.RIGI_MECA_GE.PEFFORR, ECONTPG), (
+                            OP.RIGI_GEOM.PCAORIE, CCAORIE),
+                        (OP.RIGI_GEOM.PEFFORR, ECONTPG), (
                         SP.PFIBRES, LC.ECAFIEL),
                         (SP.PGEOMER, NGEOMER), (
-                            OP.RIGI_MECA_GE.PNBSP_I, ENBSP_I),
-                        (OP.RIGI_MECA_GE.PSTRXRR, ESTRAUX), ),
+                            OP.RIGI_GEOM.PNBSP_I, ENBSP_I),
+                        (OP.RIGI_GEOM.PSTRXRR, ESTRAUX), ),
                         para_out=((SP.PMATUUR, MMATUUR), ),
                         ),
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -582,8 +582,8 @@ class TemplateElement(Element):
                      (SP.PMATUUR, MMATUUR), ),
         ),
 
-        OP.RIGI_MECA_GE(te=402,
-            para_in=((SP.PCACOQU, CCACOQU), (OP.RIGI_MECA_GE.PCONTRR, ECONTPG),
+        OP.RIGI_GEOM(te=402,
+            para_in=((SP.PCACOQU, CCACOQU), (OP.RIGI_GEOM.PCONTRR, ECONTPG),
                      (SP.PGEOMER, NGEOMER), ),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
