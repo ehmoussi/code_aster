@@ -29,7 +29,6 @@ implicit none
 #include "asterfort/nmlect.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
-#include "asterfort/nonlinDSConstitutiveCreate.h"
 #include "asterfort/nmdorc.h"
 #include "asterfort/nonlinDSConstitutiveInit.h"
 #include "asterfort/dismoi.h"
@@ -138,7 +137,6 @@ integer, intent(out) :: nume_harm
 !
 ! - Prepare constitutive laws management datastructure
 !
-    call nonlinDSConstitutiveCreate(ds_constitutive)
     if (l_elem_nonl) then
         call nmdorc(model, mate, l_etat_init,&
                     ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp,&

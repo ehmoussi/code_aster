@@ -157,13 +157,12 @@ implicit none
 !
 ! - Creation of datastructures
 !
-    call nmini0(eta      , numins         , matass     ,&
-                zmeelm   , zmeass         , zveelm     ,&
-                zveass   , zsolal         , zvalin     ,&
-                ds_print , ds_conv        , ds_algopara,&
-                ds_inout , ds_contact     , ds_measure ,&
-                ds_energy, ds_constitutive, ds_material,&
-                ds_system, sderro)
+    call nmini0(eta      , numins     , matass     ,&
+                zmeelm   , zmeass     , zveelm     ,&
+                zveass   , zsolal     , zvalin     ,&
+                ds_print , ds_conv    , ds_algopara,&
+                ds_inout , ds_contact , ds_measure ,&
+                ds_energy, ds_material, sderro)
 !
 ! - Read parameters
 !

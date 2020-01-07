@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,12 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmini0(eta      , nume_inst      , matass     ,&
-                  zmeelm   , zmeass         , zveelm     ,&
-                  zveass   , zsolal         , zvalin     ,&
-                  ds_print , ds_conv        , ds_algopara,&
-                  ds_inout , ds_contact     , ds_measure ,&
-                  ds_energy, ds_constitutive, ds_material,&
-                  ds_system, sderro)
+subroutine nmini0(eta      , nume_inst  , matass     ,&
+                  zmeelm   , zmeass     , zveelm     ,&
+                  zveass   , zsolal     , zvalin     ,&
+                  ds_print , ds_conv    , ds_algopara,&
+                  ds_inout , ds_contact , ds_measure ,&
+                  ds_energy, ds_material, sderro)
 !
 use NonLin_Datastructure_type
 !
@@ -41,11 +40,9 @@ implicit none
 #include "asterfort/nonlinDSContactCreate.h"
 #include "asterfort/nonlinDSMeasureCreate.h"
 #include "asterfort/nonlinDSEnergyCreate.h"
-#include "asterfort/nonlinDSConstitutiveCreate.h"
 #include "asterfort/nonlinDSMaterialCreate.h"
 #include "asterfort/nmcrga.h"
 #include "asterfort/nonlinDSPrintSepLine.h"
-#include "asterfort/nonlinDSSystemCreate.h"
 !
 character(len=19), intent(out) :: matass
 integer, intent(out) :: nume_inst
@@ -59,9 +56,7 @@ type(NL_DS_InOut), intent(out) :: ds_inout
 type(NL_DS_Contact), intent(out) :: ds_contact
 type(NL_DS_Measure), intent(out) :: ds_measure
 type(NL_DS_Energy), intent(out) :: ds_energy
-type(NL_DS_Constitutive), intent(out) :: ds_constitutive
 type(NL_DS_Material), intent(out) :: ds_material
-type(NL_DS_System), intent(out) :: ds_system
 character(len=24) :: sderro
 !
 ! --------------------------------------------------------------------------------------------------
@@ -80,9 +75,7 @@ character(len=24) :: sderro
 ! Out ds_contact       : datastructure for contact management
 ! Out ds_measure       : datastructure for measure and statistics management
 ! Out ds_energy        : datastructure for energy management
-! Out ds_constitutive  : datastructure for constitutive laws management
 ! Out ds_material      : datastructure for material parameters
-! Out ds_system        : datastructure for non-linear system management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -126,10 +119,6 @@ character(len=24) :: sderro
 !
     call nonlinDSEnergyCreate(ds_energy)
 !
-! - Create constitutive laws management datastructure
-!
-    call nonlinDSConstitutiveCreate(ds_constitutive)
-!
 ! - Create material management datastructure
 !
     call nonlinDSMaterialCreate(ds_material)
@@ -137,10 +126,6 @@ character(len=24) :: sderro
 ! - Create non-linear algorithm management datastructure
 !
     call nmcrga(sderro)
-!
-! - Create non-linear system management datastructure
-!
-    call nonlinDSSystemCreate(ds_system)
 !
 ! --- INITIALISATION BOUCLE EN TEMPS
 !

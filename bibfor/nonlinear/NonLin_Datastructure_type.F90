@@ -531,15 +531,15 @@ implicit none
 !
     type NL_DS_Constitutive
 ! ----- Name of field for constitutive laws
-        character(len=24)     :: compor      = ' '
+        character(len=24)     :: compor      = '&&OP00XX.COMPOR'
 ! ----- Name of field for criteria of constitutive laws
-        character(len=24)     :: carcri      = ' '
+        character(len=24)     :: carcri      = '&&OP00XX.CARCRI'
 ! ----- Name of field for constitutive laws - Special crystal
-        character(len=24)     :: mult_comp   = ' '
+        character(len=24)     :: mult_comp   = '&&OP00XX.MULT_COMP'
 ! ----- Name of field for error field from constitutive laws
-        character(len=24)     :: comp_error  = ' '
+        character(len=24)     :: comp_error  = '&&OP00XX.COMP_ERROR'
 ! ----- Name of field for coefficient in prediction
-        character(len=24)     :: code_pred   = ' '
+        character(len=24)     :: code_pred   = '&&OP00XX.CODE_PRED'
 ! ----- Flag for De Borst algorithm
         aster_logical         :: l_deborst   = ASTER_FALSE
 ! ----- Flag for DIS_CHOC
@@ -665,17 +665,17 @@ implicit none
 ! ----- Flag to integrate behaviour law at prediction (full prediction)
         aster_logical         :: l_pred_full = ASTER_FALSE
 ! ----- Name of field for multiplicator for full prediction
-        character(len=24)     :: code_pred = ' '
+        character(len=24)     :: code_pred = '&&OP00XX.CODE_PRED'
 ! ----- Elementary and assembled vector for nodal force (no integration)
-        character(len=19)     :: vefnod = ' '
-        character(len=19)     :: cnfnod = ' '
+        character(len=19)     :: vefnod = '&&OP00XX.VEFNOD'
+        character(len=19)     :: cnfnod = '&&OP00XX.CNFNOD'
 ! ----- Elementary and assembled vector for internal force (integration)
-        character(len=19)     :: vefint = ' '
-        character(len=19)     :: cnfint = ' '
+        character(len=19)     :: vefint = '&&OP00XX.VEFINT'
+        character(len=19)     :: cnfint = '&&OP00XX.CNFINT'
 ! ----- Elementary and assembled vector for internal force (full integration at prediction)
-        character(len=19)     :: cnpred = ' '
+        character(len=19)     :: cnpred = '&&OP00XX.CNPRED'
 ! ----- Elementary rigidity matrix
-        character(len=19)     :: merigi = ' '
+        character(len=19)     :: merigi = '&&OP00XX.MERIGI'
     end type NL_DS_System
 !
 ! - Type: error indicators' management
