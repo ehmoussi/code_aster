@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,10 +63,8 @@ implicit none
     character(len=8) :: table_new, table_old
     type(NL_DS_Constitutive) :: ds_constitutive
     character(len=16) :: phenom
-    character(len=19) :: list_load
-    character(len=19) :: list_inst
+    character(len=19) :: list_load, list_inst
     character(len=24) :: model, mate, cara_elem, compor_ther
-    character(len=24) :: varc_refe
     character(len=19) :: disp_prev, disp_cumu_inst, vari_prev, sigm_prev
     character(len=19) :: temp_prev, temp_curr, incr_temp
     character(len=19) :: merigi, vediri, vefint, veforc, vevarc_prev, vevarc_curr
@@ -74,6 +72,7 @@ implicit none
     character(len=24) :: ve_charther, me_mtanther, ve_evolther_l, ve_evolther_nl
     character(len=24) :: ve_resither
     character(len=24) :: time
+    type(NL_DS_Material) :: ds_material
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -94,7 +93,7 @@ implicit none
         call calcGetDataTher(list_load  , model    , mate       , cara_elem,&
                              temp_prev  , incr_temp, compor_ther, theta)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Get current and previous times
@@ -117,7 +116,7 @@ implicit none
         call calcPrepDataMeca(model          , mate          , cara_elem,&
                               disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                               time_prev      , time_curr     ,&
-                              ds_constitutive, varc_refe     ,&
+                              ds_constitutive, ds_material   ,&
                               hval_incr      , hval_algo     ,&
                               merigi         , vediri        , vefint   , veforc   ,&
                               vevarc_prev    , vevarc_curr   )    
@@ -128,19 +127,20 @@ implicit none
                               ve_charther  , me_mtanther   , vediri     ,&
                               ve_evolther_l, ve_evolther_nl, ve_resither)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Compute 
 !
     if (phenom .eq. 'MECANIQUE') then
-        call calcCalcMeca(nb_option   , list_option    , &
-                          list_load   , model          , mate       , cara_elem,& 
-                          l_elem_nonl , ds_constitutive, varc_refe  ,&
-                          hval_incr   , hval_algo      ,&
-                          merigi      , vediri         , vefint     , veforc,&
-                          vevarc_prev , vevarc_curr    , nume_harm  ,&
-                          nb_obje_maxi, obje_name      , obje_sdname, nb_obje)
+        call calcCalcMeca(nb_option      , list_option,&
+                          l_elem_nonl    , nume_harm  ,&
+                          list_load      , model      , cara_elem,& 
+                          ds_constitutive, ds_material,&
+                          hval_incr      , hval_algo  ,&
+                          merigi         , vediri     , vefint     , veforc,&
+                          vevarc_prev    , vevarc_curr,&
+                          nb_obje_maxi   , obje_name  , obje_sdname, nb_obje)
     elseif (phenom .eq. 'THERMIQUE') then
         call calcCalcTher(nb_option    , list_option   , &
                           list_load    , model         , mate       , cara_elem,&
@@ -150,7 +150,7 @@ implicit none
                           ve_evolther_l, ve_evolther_nl, ve_resither,&
                           nb_obje_maxi , obje_name     , obje_sdname, nb_obje)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Table management
@@ -162,7 +162,7 @@ implicit none
         call catabl_ther(table_new, table_old, time_curr, nume_inst, nb_obje,&
                          obje_name, obje_sdname)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
     call jedema()

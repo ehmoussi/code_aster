@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,13 +18,14 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcCalcMeca(nb_option   , list_option    , &
-                        list_load   , model          , mate       , cara_elem,&
-                        l_elem_nonl , ds_constitutive, varc_refe  ,&
-                        hval_incr   , hval_algo      ,&
-                        merigi      , vediri         , vefint     , veforc,&
-                        vevarc_prev , vevarc_curr    , nume_harm  ,&
-                        nb_obje_maxi, obje_name      , obje_sdname, nb_obje)
+subroutine calcCalcMeca(nb_option      , list_option,&
+                        l_elem_nonl    , nume_harm  ,&
+                        list_load      , model      , cara_elem,&
+                        ds_constitutive, ds_material,&
+                        hval_incr      , hval_algo  ,&
+                        merigi         , vediri     , vefint     , veforc,&
+                        vevarc_prev    , vevarc_curr,&
+                        nb_obje_maxi   , obje_name  , obje_sdname, nb_obje)
 !
 use NonLin_Datastructure_type
 use HHO_type
@@ -42,22 +43,22 @@ implicit none
 #include "asterfort/vebtla.h"
 #include "asterfort/copisd.h"
 #include "asterfort/vefnme.h"
-#include "asterfort/nmvcpr.h"
+#include "asterfort/nmvcpr_elem.h"
 #include "asterfort/utmess.h"
 #include "asterfort/nmvcd2.h"
 !
 integer, intent(in) :: nb_option
 character(len=16), intent(in) :: list_option(:)
-character(len=19), intent(in) :: list_load
-character(len=24), intent(in) :: model, mate, cara_elem
 aster_logical, intent(in) :: l_elem_nonl
+integer, intent(in) :: nume_harm
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: model, cara_elem
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-character(len=24), intent(in) :: varc_refe
+type(NL_DS_Material), intent(in) :: ds_material
 character(len=19), intent(in) :: hval_incr(:), hval_algo(:)
 character(len=19), intent(in) :: merigi, vediri, vefint
 character(len=19), intent(inout) :: veforc
 character(len=19), intent(in) :: vevarc_prev, vevarc_curr
-integer, intent(in) :: nume_harm
 integer, intent(in) :: nb_obje_maxi
 character(len=16), intent(inout) :: obje_name(nb_obje_maxi)
 character(len=24), intent(inout) :: obje_sdname(nb_obje_maxi)
@@ -75,11 +76,10 @@ integer, intent(out) ::  nb_obje
 ! In  list_option      : list of options to compute
 ! In  list_load        : name of datastructure for list of loads
 ! In  model            : name of model
-! In  mate             : name of material characteristics (field)
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  l_elem_nonl      : .true. if all elements can compute non-linear options
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! In  varc_refe        : name of reference command variables vector
+! IO  ds_material      : datastructure for material parameters
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  merigi           : name of elementary for tangent matrix
@@ -108,11 +108,13 @@ integer, intent(out) ::  nb_obje
     character(len=32) :: answer
     type(NL_DS_System) :: ds_system
     type(HHO_Field) :: hhoField
+    character(len=1) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
     partps(:) = 0.d0
     nb_obje   = 0
+    base      = 'G'
 !
 ! - Get LIGREL
 !
@@ -172,8 +174,8 @@ integer, intent(out) ::  nb_obje
     endif
 !
     if (l_varc_prev .or. l_varc_curr) then
-        call nmvcd2('M_ZIRC' , mate, l_meta_zirc)
-        call nmvcd2('M_ACIER', mate, l_meta_acier)
+        call nmvcd2('M_ZIRC' , ds_material%field_mate, l_meta_zirc)
+        call nmvcd2('M_ACIER', ds_material%field_mate, l_meta_acier)
         if ((l_meta_zirc .or. l_meta_acier) .and. (.not.l_elem_nonl)) then
             call utmess('F', 'CALCUL1_9')
         endif
@@ -194,19 +196,20 @@ integer, intent(out) ::  nb_obje
         ds_system%merigi = merigi
         ds_system%vefint = vefint
         iter_newt = 1
-        call merimo('G'            , l_xfem   , l_macr_elem, l_hho, &
-                    model          , cara_elem, mate       , iter_newt,&
-                    ds_constitutive, varc_refe,&
-                    hval_incr      , hval_algo, hhoField, &
-                    option         , merigi   , vefint     ,&
-                    ldccvg         )
+        call merimo(base,&
+                    l_xfem         , l_macr_elem, l_hho    ,&
+                    model          , cara_elem  , iter_newt,&
+                    ds_constitutive, ds_material,&
+                    hval_incr      , hval_algo  , hhoField ,&
+                    option         , merigi     , vefint   ,&
+                    ldccvg)
     endif
 !
 ! - Lagrange dof computation
 !
     if (l_lagr) then
-        call medime('G', 'CUMU', model, list_load, merigi)
-        call vebtla('G', model, mate, cara_elem, disp_curr,&
+        call medime(base, 'CUMU', model, list_load, merigi)
+        call vebtla(base, model, ds_material%field_mate, cara_elem, disp_curr,&
                     list_load, vediri)
     endif
 !
@@ -218,23 +221,25 @@ integer, intent(out) ::  nb_obje
             call copisd('CHAMP_GD', 'V', sigm_prev, sigm_curr)
         endif
         call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst )
-        call vefnme(option                , model    , mate, cara_elem,&
-                    ds_constitutive%compor, partps   , 0   , ligrmo   ,&
-                    varc_curr             , sigm_curr, ' ' , disp_prev, disp_cumu_inst,&
-                    'G'                   , veforc)
+        call vefnme(option                , model    , ds_material%field_mate, cara_elem,&
+                    ds_constitutive%compor, partps   , 0                     , ligrmo   ,&
+                    varc_curr             , sigm_curr, ' '                   , disp_prev,&
+                    disp_cumu_inst        , base     , veforc)
     endif
 !
 ! - State variables
 !
     if (l_varc_prev) then
-        call nmvcpr(model, mate       , cara_elem, varc_refe     , ds_constitutive%compor,&
-                    hval_incr, base_ = 'G', vect_elem_prev_ = vevarc_prev,&
-                    nume_harm_ = nume_harm)
+        call nmvcpr_elem(model                , ds_material%field_mate, cara_elem,&
+                         nume_harm            , '-'                   , hval_incr,&
+                         ds_material%varc_refe, ds_constitutive%compor,&
+                         base                 , vevarc_prev)
     endif
     if (l_varc_curr) then
-        call nmvcpr(model, mate       , cara_elem, varc_refe     , ds_constitutive%compor,&
-                    hval_incr, base_ = 'G', vect_elem_curr_ = vevarc_curr,&
-                    nume_harm_ = nume_harm)
+        call nmvcpr_elem(model                , ds_material%field_mate, cara_elem,&
+                         nume_harm            , '+'                   , hval_incr,&
+                         ds_material%varc_refe, ds_constitutive%compor,&
+                         base                 , vevarc_curr)
     endif
 !
 ! - New objects in table
