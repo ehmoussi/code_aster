@@ -673,6 +673,8 @@ implicit none
 ! ----- Elementary and assembled vector for nodal force (no integration)
         character(len=19)     :: vefnod = '&&OP00XX.VEFNOD'
         character(len=19)     :: cnfnod = '&&OP00XX.CNFNOD'
+! ----- For compatibility (to suppress)
+        character(len=19)     :: veinte = '&&OP00XX.VEINTE'
 ! ----- Elementary and assembled vector for internal force (integration)
         character(len=19)     :: vefint = '&&OP00XX.VEFINT'
         character(len=19)     :: cnfint = '&&OP00XX.CNFINT'

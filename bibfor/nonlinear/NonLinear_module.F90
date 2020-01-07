@@ -30,7 +30,8 @@ private :: swapMatrToSecant, getMatrTypePred, getMatrTypeCorr,&
 public  :: getMatrType, getOption,&
            isMatrUpdate,&
            isDampMatrCompute, isMassMatrCompute, isRigiMatrCompute, isInteVectCompute,&
-           factorSystem
+           factorSystem,&
+           setNodalValuesGDVARINO
 ! ==================================================================================================
 private
 #include "asterf_types.h"
@@ -821,6 +822,39 @@ subroutine factorSystem(list_func_acti, ds_measure, ds_algorom,&
     endif
     call nmtime(ds_measure, 'Stop'  , 'Factor')
     call nmrinc(ds_measure, 'Factor')
+!   -----------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! setNodalValuesGDVARINO
+!
+! Set damage nodal values to positive value in nodal force vector
+!
+! In  sdnume           : datastructure for dof positions
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  cnforc           : nodal force vector
+!
+! --------------------------------------------------------------------------------------------------
+subroutine setNodalValuesGDVARINO(nume_dof, sdnume, cnforc)
+! - Parameters
+    character(len=24), intent(in) :: nume_dof
+    character(len=19), intent(in) :: sdnume, cnforc
+!   ------------------------------------------------------------------------------------------------
+! - Local
+    integer :: nb_equa, i_equa
+    real(kind=8), pointer :: v_cnforc(:) => null()
+    integer, pointer :: v_endo(:) => null()
+!   ------------------------------------------------------------------------------------------------
+    call jeveuo(sdnume(1:19)//'.ENDO', 'L', vi = v_endo)
+    call jeveuo(cnforc(1:19)//'.VALE', 'E', vr = v_cnforc)
+    call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=nb_equa)
+    do i_equa = 1, nb_equa
+        if (v_endo(i_equa) .eq. 2) then
+            if (v_cnforc(i_equa) .ge. 0.d0) then
+                v_cnforc(i_equa) = 0.d0
+            endif
+        endif
+    end do
 !   -----------------------------------------------------------------------------------------------
 end subroutine
 !

@@ -16,15 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-! Indicator to compute nodal field from internal forces
-#define PRED_EULER          1
-#define CORR_NEWTON         2
-#define INTE_FORCE          3
-!
-! Set to 1 to activate DEBUG
-#define NONLINEAR_DEBUG     0
-!
-! Indicator to combine nodal fields for internal forces
-#define INTE_FORCE_COMB     1
-#define INTE_FORCE_INTE     2
-#define INTE_FORCE_FNOD     3
+interface
+    subroutine nonlinIntForceAsse(typeAsse, list_func_acti, sdnume, ds_material, ds_system)
+        use NonLin_Datastructure_type
+        integer, intent(in) :: typeAsse, list_func_acti(*)
+        character(len=19), intent(in) :: sdnume
+        type(NL_DS_Material), intent(in) :: ds_material
+        type(NL_DS_System), intent(in) :: ds_system
+    end subroutine nonlinIntForceAsse
+end interface

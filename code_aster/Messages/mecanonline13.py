@@ -93,6 +93,8 @@ cata_msg = {
 
    36  : _("""   Nouvelle numérotation des inconnues."""),
 
+   39  : _("""Assemblage des efforts intérieurs."""),
+
    41  : _("""   Calcul de la matrice globale du système."""),
 
    42  : _("""   Factorisation de la matrice globale du système."""),
