@@ -678,8 +678,10 @@ implicit none
         character(len=19)     :: merigi = '&&OP00XX.MERIGI'
 ! ----- Flag for symmetric rigidity matrix
         aster_logical         :: l_rigi_syme = ASTER_FALSE
-! ----- Flag for contact matrix to add in rigidity matrix
+! ----- Flag for contact matrix to add in rigidity matrix (CONTINUE/XFEM)
         aster_logical         :: l_rigi_cont = ASTER_FALSE
+! ----- Flag for modifiy matrix because of contact (LAC/DISCRETE/LIAISON_UNIL)
+        aster_logical         :: l_matr_cont = ASTER_FALSE
     end type NL_DS_System
 !
 ! - Type: error indicators' management

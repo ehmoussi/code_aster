@@ -182,7 +182,7 @@ integer :: faccvg, ldccvg
 ! - Update global matrix ?
 !
     call isMatrUpdate(CORR_NEWTON  , corrMatrType, list_func_acti,&
-                      ds_contact   , sddyna      ,&
+                      sddyna       , ds_system   ,&
                       l_update_matr,&
                       iter_newt_ = iter_newt, reac_iter_ = reac_iter)
 !

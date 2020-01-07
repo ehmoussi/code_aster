@@ -26,7 +26,7 @@ implicit none
 private :: swapMatrToSecant, getMatrTypePred, getMatrTypeCorr,&
            getOptionPred, getOptionCorr,&
            isMatrUpdatePred, isMatrUpdateCorr,&
-           isContDiscMatr, isElasMatr
+           isElasMatr
 public  :: getMatrType, getOption,&
            isMatrUpdate,&
            isDampMatrCompute, isMassMatrCompute, isRigiMatrCompute, isInteVectCompute,&
@@ -327,8 +327,8 @@ end subroutine
 ! In  phaseType        : name of current phase (prediction/correction/internal forces)
 ! In  matrType         : type of matrix
 ! In  list_func_acti   : list of active functionnalities
-! In  ds_contact       : datastructure for contact management
 ! In  sddyna           : name of dynamic parameters datastructure
+! In  ds_system        : datastructure for non-linear system management
 ! Out l_update_matr    : flag to update matrix
 ! In  nume_inst        : index of current time step
 ! In  iter_newt        : index of current Newton iteration
@@ -336,8 +336,8 @@ end subroutine
 ! In  reac_incr        : frequency to update matrix (time step)
 !
 ! --------------------------------------------------------------------------------------------------
-subroutine isMatrUpdate(phaseType    , matrType   , list_func_acti,&
-                        ds_contact   , sddyna     ,&
+subroutine isMatrUpdate(phaseType    , matrType  , list_func_acti,&
+                        sddyna       , ds_system ,&
                         l_update_matr,&
                         nume_inst_   , iter_newt_,&
                         reac_iter_   , reac_incr_)
@@ -346,13 +346,13 @@ subroutine isMatrUpdate(phaseType    , matrType   , list_func_acti,&
     integer, intent(in) :: phaseType
     character(len=16), intent(in) :: matrType
     integer, intent(in) :: list_func_acti(*)
-    type(NL_DS_Contact), intent(in) :: ds_contact
     character(len=19), intent(in) :: sddyna
+    type(NL_DS_System), intent(in) :: ds_system
+    aster_logical, intent(out) :: l_update_matr
     integer, optional, intent(in) :: nume_inst_, iter_newt_
     integer, optional, intent(in) :: reac_iter_, reac_incr_
-    aster_logical, intent(out) :: l_update_matr
 ! - Local
-    aster_logical :: l_matr_elas, l_ctcd_matr
+    aster_logical :: l_matr_elas
     aster_logical :: l_cont_elem, l_dyna
     aster_logical :: l_damp, l_dischoc, l_varc, l_elas_fo
 !   ------------------------------------------------------------------------------------------------
@@ -366,10 +366,6 @@ subroutine isMatrUpdate(phaseType    , matrType   , list_func_acti,&
     l_dischoc    = isfonc(list_func_acti, 'DIS_CHOC')
     l_varc       = isfonc(list_func_acti, 'EXI_VARC' )
     l_elas_fo    = isfonc(list_func_acti, 'ELAS_FO' )
-!
-! - Is matrix should been modified by contact (DISCRETE/LIAISON_UNIL) ?
-!
-    call isContDiscMatr(ds_contact, l_ctcd_matr)
 !
 ! - Is matrix is elastic
 !
@@ -410,7 +406,7 @@ subroutine isMatrUpdate(phaseType    , matrType   , list_func_acti,&
 !
 ! - Update if contact matrix in global matrix
 !
-    if (l_ctcd_matr) then
+    if (ds_system%l_matr_cont) then
         if (.not.l_update_matr) then
             call utmess('A', 'MECANONLINE5_5')
             l_update_matr = ASTER_TRUE
@@ -503,35 +499,6 @@ subroutine isMatrUpdateCorr(matrType, iter_newt, reac_iter, l_update_matr)
         endif
     else
         l_update_matr = ASTER_FALSE
-    endif
-!   ------------------------------------------------------------------------------------------------
-end subroutine
-! --------------------------------------------------------------------------------------------------
-!
-! isContDiscMatr
-!
-! Is matrix should been modified by contact (DISCRETE/LIAISON_UNIL) ?
-!
-! In  ds_contact       : datastructure for contact management
-! Out l_ctcd_matr      : flag if matrix should been modified by contact (DISCRETE/LIAISON_UNIL)
-!
-! --------------------------------------------------------------------------------------------------
-subroutine isContDiscMatr(ds_contact, l_ctcd_matr)
-!   ------------------------------------------------------------------------------------------------
-! - Parameters
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    aster_logical, intent(out) :: l_ctcd_matr
-!   ------------------------------------------------------------------------------------------------
-    l_ctcd_matr = ASTER_FALSE
-    if (ds_contact%l_contact) then
-        if (ds_contact%l_form_disc) then
-            l_ctcd_matr = cfdisl(ds_contact%sdcont_defi,'MODI_MATR_GLOB')
-        endif
-        if (ds_contact%l_meca_unil) then
-            if (cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')) then
-                l_ctcd_matr = ASTER_TRUE
-            endif
-        endif
     endif
 !   ------------------------------------------------------------------------------------------------
 end subroutine

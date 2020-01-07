@@ -190,7 +190,7 @@ integer :: faccvg, ldccvg, condcvg
 ! - Update global matrix ?
 !
     call isMatrUpdate(PRED_EULER   , predMatrType, list_func_acti,&
-                      ds_contact   , sddyna      ,&
+                      sddyna       , ds_system   ,&
                       l_update_matr,&
                       nume_inst_ = nume_inst, reac_incr_ = reac_incr)
 !

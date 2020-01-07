@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinSystemInit(list_func_acti, nume_dof, ds_algopara, ds_system)
+subroutine nonlinSystemInit(list_func_acti, nume_dof, ds_algopara, ds_contact, ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -30,10 +30,12 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/vtcreb.h"
+#include "asterfort/cfdisl.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: nume_dof
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_System), intent(inout) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
@@ -45,7 +47,8 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  list_func_acti   : list of active functionnalities
-! IO  ds_algopara      : datastructure for algorithm parameters
+! In  ds_algopara      : datastructure for algorithm parameters
+! In  ds_contact       : datastructure for contact management
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! IO  ds_system        : datastructure for non-linear system management
 !
@@ -80,6 +83,19 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
     if (l_cont_elem .and. .not.l_cont_all_verif) then
         ds_system%l_rigi_cont = ASTER_TRUE
+    endif
+!
+! - Set flag for modifiy matrix because of contact (LAC/DISCRETE/LIAISON_UNIL)
+!
+    if (ds_contact%l_contact) then
+        if (ds_contact%l_form_disc) then
+            ds_system%l_matr_cont = cfdisl(ds_contact%sdcont_defi, 'MODI_MATR_GLOB')
+        endif
+        if (ds_contact%l_meca_unil) then
+            if (cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')) then
+                ds_system%l_matr_cont = ASTER_TRUE
+            endif
+        endif
     endif
 !
 ! - Set name of numbering object

@@ -17,11 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinSystemInit(list_func_acti, nume_dof, ds_algopara, ds_system)
+    subroutine nonlinSystemInit(list_func_acti, nume_dof, ds_algopara, ds_contact, ds_system)
         use NonLin_Datastructure_type
         integer, intent(in) :: list_func_acti(*)
-        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=24), intent(in) :: nume_dof
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+        type(NL_DS_Contact), intent(in) :: ds_contact
         type(NL_DS_System), intent(inout) :: ds_system
     end subroutine nonlinSystemInit
 end interface
