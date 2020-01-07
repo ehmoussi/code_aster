@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -915,11 +915,11 @@ class PostMissFichierTemps(PostMissFichier):
 
         for n in range(0, self.nrows):
             for m in range(0, self.ncols):
-                Z_Laplace_re[n, m,:] = NP.interp(freq_vect, freq_reduc, Z_redu_r[n, m,:]);
-                Z_Laplace_im[n, m,:] = NP.interp(freq_vect, freq_reduc, Z_redu_i[n, m,:]);
+                Z_Laplace_re[n, m,:] = NP.interp(freq_vect, freq_reduc, Z_redu_r[n, m,:])
+                Z_Laplace_im[n, m,:] = NP.interp(freq_vect, freq_reduc, Z_redu_i[n, m,:])
 
         for k in range(0, self.L_points):
-            Z_Laplace[:,:, k] = Z_Laplace_re[:,:, k] + 1j*Z_Laplace_im[:,:, k];
+            Z_Laplace[:,:, k] = Z_Laplace_re[:,:, k] + 1j*Z_Laplace_im[:,:, k]
 
         MATR_GENE = self.param['MATR_GENE']
         if MATR_GENE:
@@ -1196,12 +1196,8 @@ class PostMissChar(PostMiss):
         if self.param['NOEUD_AFFE']:
             self.List_Noeu_Fictif = self.param['NOEUD_AFFE']
         elif self.param['GROUP_NO_AFFE']:
-            # Récuperation des concepts de la base
-            macro = CONTEXT.get_current_step()
             # récuperation du maillage
             nom_MODELE = self.MODELE.getName()
-            iret, ibid, nomsd = aster.dismoi('NOM_MAILLA', nom_MODELE, 'MODELE', 'F')
-            nomsd = nomsd.strip()
             mail = self.MODELE.getMesh()
             mm = MAIL_PY()
             mm.FromAster(mail)
