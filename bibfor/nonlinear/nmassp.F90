@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmassp(ds_material, list_func_acti,&
-                  ds_algorom , sddyna        , ds_system,&
-                  ds_contact , hval_veasse   ,&
-                  cnpilo     , cndonn)
+subroutine nmassp(list_func_acti,&
+                  sddyna        , ds_system,&
+                  ds_contact    , hval_veasse,&
+                  cnpilo        , cndonn)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -34,9 +34,7 @@ implicit none
 #include "asterfort/nsassp.h"
 #include "asterfort/vtzero.h"
 !
-type(NL_DS_Material), intent(in) :: ds_material
 integer, intent(in) :: list_func_acti(*)
-type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: sddyna
 type(NL_DS_Contact), intent(in) :: ds_contact
@@ -51,9 +49,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_material      : datastructure for material parameters
 ! In  list_func_acti   : list of active functionnalities
-! In  ds_algorom       : datastructure for ROM parameters
 ! In  ds_system        : datastructure for non-linear system management
 ! In  ds_contact       : datastructure for contact management
 ! In  sddyna           : datastructure for dynamic
@@ -78,11 +74,11 @@ character(len=19), intent(in) :: cnpilo, cndonn
 ! - Evaluate second member for prediction
 !
     if (l_dyna) then
-        call ndassp(ds_material, list_func_acti, ds_contact, ds_system ,&
-                    sddyna     , hval_veasse   , cndonn)
+        call ndassp(list_func_acti, ds_contact , ds_system ,&
+                    sddyna        , hval_veasse, cndonn)
     else if (l_stat) then
-        call nsassp(list_func_acti, ds_material, ds_contact, ds_algorom, ds_system,&
-                    hval_veasse   , cnpilo     , cndonn)
+        call nsassp(list_func_acti, ds_contact, ds_system,&
+                    hval_veasse   , cnpilo    , cndonn)
     else
         ASSERT(ASTER_FALSE)
     endif

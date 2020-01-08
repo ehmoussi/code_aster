@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,22 +18,21 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine ndxforc_pred(list_func_acti,&
-                        model         , cara_elem      ,&
-                        nume_dof      , &
+                        model         , cara_elem      , nume_dof ,&
                         list_load     , sddyna         ,&
                         ds_material   , ds_constitutive, ds_system,&
-                        ds_measure    , &
+                        ds_measure    , sdnume         ,&
                         sddisc        , nume_inst      ,&
                         hval_incr     , hval_algo      ,&
                         hval_veelem   , hval_veasse    ,&
                         hval_measse   , ldccvg)
 !
 use NonLin_Datastructure_type
-use HHO_type
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/NonLinear_type.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
@@ -47,7 +46,7 @@ implicit none
 #include "asterfort/nonlinDynaImpeCompute.h"
 #include "asterfort/nonlinLoadCompute.h"
 #include "asterfort/nonlinSubStruCompute.h"
-#include "asterfort/nmfint_pred.h"
+#include "asterfort/nonlinIntForce.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: model, cara_elem, nume_dof
@@ -56,7 +55,7 @@ type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: sddisc, sdnume
 integer, intent(in) :: nume_inst
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
 character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
@@ -99,7 +98,6 @@ integer, intent(out) :: ldccvg
     real(kind=8) :: time_prev, time_curr
     aster_logical :: l_impe, l_ammo, l_macr
     integer :: iter_newt
-    type(HHO_Field) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -183,11 +181,15 @@ integer, intent(out) :: ldccvg
 !
 ! - Compute internal forces
 !
-    call nmfint_pred(model      , cara_elem      , list_func_acti,&
-                     sddyna     , nume_dof       , &
-                     ds_material, ds_constitutive, ds_system     , ds_measure,&
-                     time_prev  , time_curr      , iter_newt     ,&
-                     hval_incr  , hval_algo      , hhoField      ,&
-                     ldccvg     )
+    call nonlinIntForce(PRED_EULER    ,&
+                        model         , cara_elem      ,&
+                        list_func_acti, iter_newt      , sdnume,&
+                        ds_material   , ds_constitutive,&
+                        ds_system     , ds_measure     ,&
+                        hval_incr     , hval_algo      ,&
+                        ldccvg        ,&
+                        sddyna_    = sddyna   ,&
+                        time_prev_ = time_prev,&
+                        time_curr_ = time_curr)
 !
 end subroutine

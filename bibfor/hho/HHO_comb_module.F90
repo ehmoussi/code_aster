@@ -247,6 +247,7 @@ contains
 !   In hhoField     : fields for HHO
 !   In l_cond       : flag for static condensation
 !   In l_asse       : flag for assembly
+!   In rigid        : name of rigidity matrix
 !   Out index_success :  0 if success / 1  if fails
 !
 ! --------------------------------------------------------------------------------------------------
@@ -271,7 +272,7 @@ contains
         if (l_cond) then
 ! --------- Get names of matrices/vectors
             matr_elem(1) = ds_system%merigi
-            vect_elem(1) = ds_system%vefint
+            vect_elem(1) = ds_system%veinte
 ! --------- Combine matrices/vectors
             call nmtime(ds_measure, 'Init', 'HHO_Comb')
             call nmtime(ds_measure, 'Launch', 'HHO_Comb')
@@ -280,7 +281,7 @@ contains
 ! --------- Condensation
             call nmtime(ds_measure, 'Init', 'HHO_Cond')
             call nmtime(ds_measure, 'Launch', 'HHO_Cond')
-            call hhoMecaCondOP(model, hhoField, ds_system%merigi, ds_system%vefint, index_success)
+            call hhoMecaCondOP(model, hhoField, ds_system%merigi, ds_system%veinte, index_success)
             call nmtime(ds_measure, 'Stop', 'HHO_Cond')
         endif
 !

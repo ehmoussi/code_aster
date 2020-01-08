@@ -121,7 +121,7 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
                     hval_incr     , hval_algo      , hhoField,&
                     ldccvg        , sddyna)
 ! ----- Assembly
-        if (ldccvg .eq. 0) then
+        if (ldccvg .ne. 1) then
             call nonlinIntForceAsse(INTE_FORCE_FNOD, list_func_acti, sdnume, ds_material, ds_system)
         endif
     elseif (phaseType .eq. CORR_NEWTON) then
@@ -132,7 +132,7 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
                     hval_incr     , hval_algo      , hhoField,&
                     ldccvg        , sddyna)
 ! ----- Assembly
-        if (ldccvg .eq. 0) then
+        if (ldccvg .ne. 1) then
             call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material, ds_system)
         endif
     else

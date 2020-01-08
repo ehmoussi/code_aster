@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ integer :: fonact(*)
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=24) :: sderro
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=19) :: sdnume, sddyna, sddisc
+character(len=19), intent(in) :: sdnume, sddyna, sddisc
 type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_Print), intent(inout) :: ds_print
 character(len=19) :: valinc(*), solalg(*)
@@ -125,19 +125,18 @@ integer :: nbiter
                 ds_constitutive, lischa, ds_algopara, solveu     , ds_system,&
                 fonact         , sddisc, ds_measure , numins     , valinc,&
                 solalg         , matass, maprec     , sddyna     , sderro,&
-                meelem         , measse, veelem     , veasse,&
+                sdnume         , meelem, measse     , veelem     , veasse,&
                 lerrit)
 !
-    if (lerrit) goto 315
+! - Update displacements
 !
-! --- CALCUL PROPREMENT DIT DE L'INCREMENT DE DEPLACEMENT
-!
-    call ndxdep(numedd, fonact, numins, sddisc, sddyna,&
-                sdnume, valinc, solalg, veasse)
+    if (.not. lerrit) then
+        call ndxdep(numedd, fonact, numins, sddisc, sddyna,&
+                    sdnume, valinc, solalg, veasse)
+    endif
 !
 ! --- ESTIMATION DE LA CONVERGENCE
 !
-315 continue
     call ndxcvg(sddisc, sderro, valinc)
 !
 ! --- EN L'ABSENCE DE CONVERGENCE ON CHERCHE A SUBDIVISER LE PAS

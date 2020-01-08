@@ -48,7 +48,7 @@ implicit none
 #include "asterfort/nmelcm.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmcmat.h"
-#include "asterfort/nmfint.h"
+#include "asterfort/nonlinIntForce.h"
 #include "asterfort/nmimck.h"
 #include "asterfort/nmmatr.h"
 #include "asterfort/nmrenu.h"
@@ -57,7 +57,6 @@ implicit none
 #include "asterfort/asmari.h"
 #include "asterfort/nmrigi.h"
 #include "asterfort/utmess.h"
-#include "asterfort/nmaint.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=*) :: modelz
@@ -214,20 +213,20 @@ integer :: faccvg, ldccvg
 ! - Compute internal forces elementary vectors
 !
     if (l_comp_fint) then
-        call nmfint(model         , cara_elem      ,&
-                    ds_material   , ds_constitutive,&
-                    list_func_acti, iter_newt      , ds_measure, ds_system,&
-                    hval_incr     , hval_algo      , hhoField,&
-                    ldccvg        , sddyna)
+        call nonlinIntForce(CORR_NEWTON   ,&
+                            model         , cara_elem      ,&
+                            list_func_acti, iter_newt      , sdnume,&
+                            ds_material   , ds_constitutive,&
+                            ds_system     , ds_measure     ,&
+                            hval_incr     , hval_algo      ,&
+                            ldccvg        ,&
+                            hhoField_  = hhoField,&
+                            sddyna_    = sddyna)
     endif
 !
 ! - No error => continue
 !
     if (ldccvg .ne. 1) then
-! ----- Assemble internal forces
-        if (l_comp_fint) then
-            call nmaint(numedd, list_func_acti, sdnume, ds_system)
-        endif
 ! ----- Compute contact elementary matrices
         if (l_comp_cont) then
             call nmchex(meelem, 'MEELEM', 'MEELTC', matr_elem)

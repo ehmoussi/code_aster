@@ -38,7 +38,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/nmaint.h"
 #include "asterfort/nonlinLoadDirichletCompute.h"
 #include "asterfort/nmforc_corr.h"
 #include "asterfort/nmchex.h"
@@ -47,7 +46,8 @@ implicit none
 #include "asterfort/ndynin.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nonlinRForceCompute.h"
-#include "asterfort/nmfint.h"
+#include "asterfort/nonlinIntForce.h"
+#include "asterfort/nonlinIntForceAsse.h"
 #include "asterfort/nmfocc.h"
 #include "asterfort/nmltev.h"
 #include "asterfort/nmrigi.h"
@@ -200,13 +200,21 @@ aster_logical :: lerrit
                         ds_material    , ds_constitutive,&
                         list_func_acti , iter_newt      , sddyna, ds_measure, ds_system,&
                         hval_incr      , hval_algo      , hhoField, &
-                        option_nonlin         , ldccvg)
+                        option_nonlin  , ldccvg)
+            if (ldccvg .ne. 1) then
+                call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
+                                        ds_system)
+            endif
         else
-            call nmfint(model          , cara_elem      ,&
-                        ds_material    , ds_constitutive,&
-                        list_func_acti , iter_newt      , ds_measure, ds_system,&
-                        hval_incr      , hval_algo      , hhoField, &
-                        ldccvg         , sddyna)
+            call nonlinIntForce(CORR_NEWTON   ,&
+                                model         , cara_elem      ,&
+                                list_func_acti, iter_newt      , sdnume,&
+                                ds_material   , ds_constitutive,&
+                                ds_system     , ds_measure     ,&
+                                hval_incr     , hval_algo      ,&
+                                ldccvg        ,&
+                                hhoField_  = hhoField,&
+                                sddyna_    = sddyna)
         endif
 !
         if (l_hho) then
@@ -224,7 +232,7 @@ aster_logical :: lerrit
     l_disp = ASTER_TRUE
     l_vite = ASTER_FALSE
     l_acce = ASTER_FALSE
-    l_dyna  = ndynlo(sddyna,'DYNAMIQUE')
+    l_dyna = ndynlo(sddyna,'DYNAMIQUE')
     if (l_dyna) then
         l_disp = ndynin(sddyna,'FORMUL_DYNAMIQUE') .eq. 1
         l_vite = ndynin(sddyna,'FORMUL_DYNAMIQUE') .eq. 2
@@ -249,10 +257,6 @@ aster_logical :: lerrit
 ! ----- Compute vectors for DISCRETE contact
         if (l_cont_disc .or. l_unil) then
             call nmctcd(list_func_acti, ds_contact, nume_dof)
-        endif
-! ----- Assemble internal forces
-        if (l_comp_fint) then
-            call nmaint(nume_dof, list_func_acti, sdnume, ds_system)
         endif
 ! ----- Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
         if (l_comp_fint) then

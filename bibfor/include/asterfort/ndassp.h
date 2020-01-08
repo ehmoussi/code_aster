@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine ndassp(ds_material, list_func_acti, ds_contact, ds_system,&
-                      sddyna     , hval_veasse   , cndonn    )
+    subroutine ndassp(list_func_acti, ds_contact , ds_system,&
+                      sddyna        , hval_veasse, cndonn)
         use NonLin_Datastructure_type
-        type(NL_DS_Material), intent(in) :: ds_material
         integer, intent(in) :: list_func_acti(*)
         type(NL_DS_Contact), intent(in) :: ds_contact
         character(len=19), intent(in) :: sddyna

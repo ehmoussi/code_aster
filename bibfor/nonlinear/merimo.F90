@@ -95,13 +95,13 @@ character(len=*), optional, intent(in) :: sddynz_
     integer, parameter :: mxchout = 11, mxchin = 57
     character(len=8) :: lpaout(mxchout), lpain(mxchin)
     character(len=19) :: lchout(mxchout), lchin(mxchin)
-    aster_logical :: l_merigi, l_vefint, l_sigmex
+    aster_logical :: l_merigi, l_veinte, l_sigmex
     aster_logical :: l_codret, l_codpre, l_dyna
     integer :: ires, iret, nbin, nbout
     character(len=24) :: caco3d, ligrmo
     character(len=19) :: sigm_extr, sigm_curr, vari_curr, strx_curr, sddyna
     character(len=16) :: option
-    integer :: ich_matrixs, ich_matrixn, ich_vefint, ich_codret
+    integer :: ich_matrixs, ich_matrixn, ich_veinte, ich_codret
     character(len=24), pointer :: v_rerr(:) => null()
     aster_logical :: tabret(0:10)
 !
@@ -141,31 +141,31 @@ character(len=*), optional, intent(in) :: sddynz_
 !
     if (option(1:9) .eq. 'FULL_MECA') then
         l_merigi = ASTER_TRUE
-        l_vefint = ASTER_TRUE
+        l_veinte = ASTER_TRUE
         l_codret = ASTER_TRUE
         l_sigmex = ASTER_FALSE
         l_codpre = ASTER_FALSE
     else if (option(1:10) .eq. 'RIGI_MECA ') then
         l_merigi = ASTER_TRUE
-        l_vefint = ASTER_FALSE
+        l_veinte = ASTER_FALSE
         l_codret = ASTER_FALSE
         l_sigmex = ASTER_FALSE
         l_codpre = ASTER_FALSE
     else if (option(1:16) .eq. 'RIGI_MECA_IMPLEX') then
         l_merigi = ASTER_TRUE
-        l_vefint = ASTER_FALSE
+        l_veinte = ASTER_FALSE
         l_codret = ASTER_FALSE
         l_sigmex = ASTER_TRUE
         l_codpre = ASTER_FALSE
     else if (option(1:10) .eq. 'RIGI_MECA_') then
         l_merigi = ASTER_TRUE
-        l_vefint = ASTER_FALSE
+        l_veinte = ASTER_FALSE
         l_codret = ASTER_FALSE
         l_sigmex = ASTER_FALSE
         l_codpre = ASTER_TRUE
     else if (option(1:9) .eq. 'RAPH_MECA') then
         l_merigi = ASTER_FALSE
-        l_vefint = ASTER_TRUE
+        l_veinte = ASTER_TRUE
         l_codret = ASTER_TRUE
         l_sigmex = ASTER_FALSE
         l_codpre = ASTER_FALSE
@@ -177,7 +177,7 @@ character(len=*), optional, intent(in) :: sddynz_
 !
     if (l_hho) then
         ASSERT(.not. l_sigmex)
-        l_vefint = ASTER_TRUE
+        l_veinte = ASTER_TRUE
     end if
 !
 ! - Prepare vector and matrix
@@ -199,14 +199,14 @@ character(len=*), optional, intent(in) :: sddynz_
         call reajre(ds_system%merigi, ' ', base)
     endif
 !
-    if (l_vefint) then
-        call jeexin(ds_system%vefint//'.RELR', iret)
+    if (l_veinte) then
+        call jeexin(ds_system%veinte//'.RELR', iret)
         if (iret .eq. 0) then
-            call memare(base, ds_system%vefint, model, ds_material%mater, cara_elem,&
+            call memare(base, ds_system%veinte, model, ds_material%mater, cara_elem,&
                         'CHAR_MECA')
         endif
-        call jedetr(ds_system%vefint//'.RELR')
-        call reajre(ds_system%vefint, ' ', base)
+        call jedetr(ds_system%veinte//'.RELR')
+        call reajre(ds_system%veinte, ' ', base)
     endif
 !
 ! - Output fields
@@ -228,11 +228,11 @@ character(len=*), optional, intent(in) :: sddynz_
         lchout(nbout) = ds_system%merigi(1:15)//'.M02'
         ich_matrixn = nbout
     endif
-    if (l_vefint) then
+    if (l_veinte) then
         nbout = nbout+1
         lpaout(nbout) = 'PVECTUR'
-        lchout(nbout) = ds_system%vefint(1:15)//'.R01'
-        ich_vefint = nbout
+        lchout(nbout) = ds_system%veinte(1:15)//'.R01'
+        ich_veinte = nbout
     endif
     if (l_sigmex) then
         nbout = nbout+1
@@ -286,8 +286,8 @@ character(len=*), optional, intent(in) :: sddynz_
         call reajre(ds_system%merigi, lchout(ich_matrixn), base)
         call redetr(ds_system%merigi)
     endif
-    if (l_vefint) then
-        call reajre(ds_system%vefint, lchout(ich_vefint), base)
+    if (l_veinte) then
+        call reajre(ds_system%veinte, lchout(ich_veinte), base)
     endif
 !
 ! - Errors

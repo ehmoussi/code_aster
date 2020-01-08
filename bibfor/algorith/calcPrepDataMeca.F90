@@ -88,7 +88,7 @@ character(len=19), intent(out) :: vevarc_prev, vevarc_curr
 !
     integer :: iret
     character(len=19) :: disp_curr, varc_prev, varc_curr, sigm_curr, vari_curr, ligrmo
-    character(len=19) :: merigi, vefint
+    character(len=19) :: merigi, veinte
     character(len=24) :: varc_refe
 !
 ! --------------------------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ character(len=19), intent(out) :: vevarc_prev, vevarc_curr
     call gcncon('_', sigm_curr)
     call gcncon('_', vari_curr)
     call gcncon('_', merigi)
-    call gcncon('_', vefint)
+    call gcncon('_', veinte)
     call gcncon('_', vediri)
     call gcncon('_', vefnod)
     call gcncon('_', vevarc_prev)
@@ -178,6 +178,6 @@ character(len=19), intent(out) :: vevarc_prev, vevarc_curr
     ds_material%mateco = mateco
     ds_material%varc_refe  = varc_refe
     ds_system%merigi       = merigi
-    ds_system%vefint       = vefint
+    ds_system%veinte       = veinte
 !
 end subroutine

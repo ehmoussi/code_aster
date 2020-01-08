@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmassx(list_func_acti, sddyna, ds_material, hval_veasse, ds_system,&
+subroutine nmassx(list_func_acti, sddyna, hval_veasse, ds_system,&
                   cndonn)
 !
 use NonLin_Datastructure_type
@@ -42,7 +42,6 @@ implicit none
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=19), intent(in) :: sddyna
-type(NL_DS_Material), intent(in) :: ds_material
 character(len=19), intent(in) :: hval_veasse(*)
 type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: cndonn
@@ -57,7 +56,6 @@ character(len=19), intent(in) :: cndonn
 !
 ! In  list_func_acti   : list of active functionnalities
 ! In  sddyna           : datastructure for dynamic
-! In  ds_material      : datastructure for material parameters
 ! In  hval_veasse      : hat-variable for vectors (node fields)
 ! In  ds_system        : datastructure for non-linear system management
 ! In  cndonn           : name of nodal field for "given" forces
@@ -130,10 +128,6 @@ character(len=19), intent(in) :: cndonn
     if (l_macr) then
         call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTR', -1.d0, ds_vectcomb)
     endif
-!
-! - Add external state variable
-!
-    call nonlinDSVectCombAddAny(ds_material%fvarc_pred, +1.d0, ds_vectcomb)
 !
 ! - Add force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !

@@ -71,14 +71,9 @@ cata_msg = {
 
    26  : _("""Calcul de l'accélération initiale."""),
 
-   27  : _("""Calcul des efforts internes en prédiction."""),
-
-   28  : _("""Intégration de la loi de comportement (assemblage des efforts internes élémentaires)."""),
-
    29  : _("""Intégration de la loi de comportement et de la matrice tangente."""),
 
    30  : _("""Calcul des forces de contact et de frottement (méthodes continues)."""),
 
    31  : _("""Calcul des forces de contact et de frottement (méthodes discrètes)."""),
-
 }

@@ -110,26 +110,27 @@ integer :: pilcvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter:: zveass = 19
-    integer, parameter:: zsolal = 17
-    integer, parameter:: zvalin = 28
+    integer :: ifm, niv
+    integer, parameter :: zsolal = 17, zvalin = 28
+    character(len=19) :: solalt(zsolal), valint(zvalin, 2)
+    integer, parameter :: zveass = 19
+    character(len=19) :: veasst(zveass)
     aster_logical :: exopt, mieux, irecli
     integer :: itrlmx, iterho, act, opt
     integer :: pilopt
     integer :: nbeffe
     integer :: nr, pos, nbsto, n, nbatte, nmax
-    real(kind=8) :: rhomin, rhomax, rhoexm, rhoexp, relirl, fcvg
-    real(kind=8) :: rhoopt, f0, fopt, proeta(2)
-    real(kind=8) :: r(1002), g(1002), memfg(1002)
-    real(kind=8) :: fgmax, fgmin, amelio, residu, etaopt, rho
-    character(len=19) :: veasst(zveass), solalt(zsolal), valint(zvalin, 2)
-    character(len=19) :: cnfins(2), vefins(2), cndirs(2), k19bla
-    character(len=19) :: cndiri, cnfext, cnsstr
+    real(kind=8) :: rhomin, rhomax, rhoexm, rhoexp
+    real(kind=8) :: f0, fopt, fcvg
+    real(kind=8) :: rho, rhoopt, proeta(2)
+    real(kind=8) :: r(1002), g(1002), memfg(1002), relirl
+    real(kind=8) :: fgmax, fgmin, amelio, residu, etaopt
+    character(len=19) :: cnfint2(2), cndiri2(2)
+    character(len=19) :: cndiri, cnfext, cnsstr, k19bla
     character(len=19) :: depplu, sigplu, varplu, complu
-    character(len=19) :: depdet
+    character(len=19) :: veinte2(2), depdet
     character(len=19) :: sigplt, varplt, depplt
     character(len=24) :: typilo
-    integer :: ifm, niv
     character(len=24), pointer :: pltk(:) => null()
     type(NL_DS_System) :: ds_system2
 !
@@ -152,14 +153,10 @@ integer :: pilcvg, ldccvg
     k19bla = ' '
     call nmchai('VEASSE', 'LONMAX', nmax)
     ASSERT(nmax.eq.zveass)
-    call nmchai('SOLALG', 'LONMAX', nmax)
-    ASSERT(nmax.eq.zsolal)
     call nmchai('VALINC', 'LONMAX', nmax)
     ASSERT(nmax.eq.zvalin)
-!
-! - Copy dastructure for solving system
-!
-    ds_system2 = ds_system
+    call nmchai('SOLALG', 'LONMAX', nmax)
+    ASSERT(nmax.eq.zsolal)
 !
 ! --- PARAMETRES RECHERCHE LINEAIRE
 !
@@ -173,12 +170,16 @@ integer :: pilcvg, ldccvg
 !
 ! --- DECOMPACTION VARIABLES CHAPEAUX
 !
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
     call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
     call nmchex(valinc, 'VALINC', 'SIGPLU', sigplu)
     call nmchex(valinc, 'VALINC', 'VARPLU', varplu)
     call nmchex(valinc, 'VALINC', 'COMPLU', complu)
+    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
+    call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
+!
+! - Copy datastructure for solving system
+!
+    ds_system2 = ds_system
 !
 ! --- LECTURE DONNEES PILOTAGE
 !
@@ -197,12 +198,12 @@ integer :: pilcvg, ldccvg
 !
 ! --- PREPARATION DES ZONES TEMPORAIRES POUR ITERATION COURANTE
 !
-    cnfins(1) = ds_system%cnfint
-    cnfins(2) = '&&CNREPL.CHP1'
-    vefins(1) = ds_system%vefint
-    vefins(2) = '&&CNREPL.CHPX'
-    cndirs(1) = cndiri
-    cndirs(2) = '&&CNREPL.CHP2'
+    cnfint2(1) = ds_system%cnfint
+    cnfint2(2) = '&&CNREPL.CHP1'
+    cndiri2(1) = cndiri
+    cndiri2(2) = '&&CNREPL.CHP2'
+    veinte2(1) = ds_system%veinte
+    veinte2(2) = '&&CNREPL.CHPX'
     depdet = '&&CNREPL.CHP3'
     depplt = '&&CNREPL.CHP4'
     sigplt = '&&NMREPL.SIGPLU'
@@ -222,11 +223,11 @@ integer :: pilcvg, ldccvg
     call nmchso(valint(1, 2), 'VALINC', 'SIGPLU', sigplt, valint(1, 2))
     call nmchso(valint(1, 2), 'VALINC', 'VARPLU', varplt, valint(1, 2))
     call nmchso(solalg, 'SOLALG', 'DEPDEL', depdet, solalt)
-    call nmchso(veasse, 'VEASSE', 'CNDIRI', cndirs(1), veasst)
+    call nmchso(veasse, 'VEASSE', 'CNDIRI', cndiri2(1), veasst)
 !
 ! --- CALCUL DE F(RHO=0)
 !
-    call nmpilr(fonact, numedd, matass, veasse, ds_contact, ds_system,&
+    call nmpilr(fonact, numedd, matass, veasse, ds_contact, ds_system%cnfint,&
                 etan  , f0)
     fcvg = abs(relirl * f0)
 !
@@ -248,9 +249,9 @@ integer :: pilcvg, ldccvg
 !
 ! ----- RESOLUTION DE L'EQUATION DE PILOTAGE: NVELLE DIRECT. DE DESCENTE
 !
-        call nmpilo(sdpilo, deltat, rho            , solalg    , veasse,&
+        call nmpilo(sdpilo, deltat     , rho            , solalg    , veasse,&
                     modele, ds_material, ds_constitutive, ds_contact, valinc,&
-                    nbatte, numedd, nbeffe         , proeta    , pilcvg,&
+                    nbatte, numedd     , nbeffe         , proeta    , pilcvg,&
                     carele)
         if (pilcvg .eq. 1) goto 999
 !
@@ -263,9 +264,9 @@ integer :: pilcvg, ldccvg
 !
 ! ----- Get right vectors
 !
-        call nmchso(veasse, 'VEASSE', 'CNDIRI', cndirs(act), veasst)
-        ds_system2%vefint = vefins(act)
-        ds_system2%cnfint = cnfins(act)
+        call nmchso(veasse, 'VEASSE', 'CNDIRI', cndiri2(act), veasst)
+        ds_system2%veinte = veinte2(act)
+        ds_system2%cnfint = cnfint2(act)
 !
 ! ----- Select ETA
 !
@@ -276,8 +277,7 @@ integer :: pilcvg, ldccvg
                     proeta         , offset    , rho        , eta           , ldccvg    ,&
                     pilcvg         , residu    , matass     , ds_system2)
 !
-! ----- PB CVG: S'IL EXISTE DEJA UN RHO OPTIMAL, ON LE CONSERVE
-! ----- ET ON SORT
+! ----- PB CVG: S'IL EXISTE DEJA UN RHO OPTIMAL, ON LE CONSERVE ET ON SORT
 !
         if (ldccvg .gt. 0) then
             if (exopt) goto 100
@@ -351,8 +351,8 @@ integer :: pilcvg, ldccvg
     if (opt .ne. 1) then
         call copisd('CHAMP_GD', 'V', sigplt, sigplu)
         call copisd('CHAMP_GD', 'V', varplt, varplu)
-        call copisd('CHAMP_GD', 'V', cnfins(opt), ds_system%cnfint)
-        call copisd('CHAMP_GD', 'V', cndirs(opt), cndiri)
+        call copisd('CHAMP_GD', 'V', cnfint2(opt), ds_system%cnfint)
+        call copisd('CHAMP_GD', 'V', cndiri2(opt), cndiri)
     endif
 !
 ! - Save results of line search

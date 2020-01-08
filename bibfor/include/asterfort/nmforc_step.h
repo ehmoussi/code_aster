@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ interface
     subroutine nmforc_step(list_func_acti,&
                            model         , cara_elem      , nume_dof ,&
                            list_load     , sddyna         ,&
-                           ds_material   , ds_constitutive, ds_system,&
+                           ds_material   , ds_constitutive,&
                            ds_measure    , ds_inout       ,&
                            sddisc        , nume_inst      ,&
                            hval_incr     , hval_algo      ,hhoField,&
@@ -32,7 +32,6 @@ interface
         character(len=19), intent(in) :: list_load, sddyna
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        type(NL_DS_System), intent(in) :: ds_system
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(NL_DS_InOut), intent(in) :: ds_inout
         type(HHO_Field), intent(in) :: hhoField

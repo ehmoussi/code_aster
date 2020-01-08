@@ -31,20 +31,20 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8maem.h"
 #include "asterfort/assert.h"
+#include "asterfort/NonLinear_type.h"
 #include "asterfort/copisd.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/nmaint.h"
 #include "asterfort/nmcha0.h"
 #include "asterfort/nmchai.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmchso.h"
 #include "asterfort/nmdebg.h"
 #include "asterfort/nonlinRForceCompute.h"
-#include "asterfort/nmfint.h"
+#include "asterfort/nonlinIntForce.h"
 #include "asterfort/nmmaji.h"
 #include "asterfort/nmrebo.h"
 #include "asterfort/nmrech.h"
@@ -106,8 +106,9 @@ character(len=19), intent(in), optional :: sddyna_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: zsolal = 17
-    integer, parameter :: zvalin = 28
+    integer :: ifm, niv
+    integer, parameter :: zsolal = 17, zvalin = 28
+    character(len=19) :: solalt(zsolal), valint(zvalin, 2)
     integer :: itrlmx, iterho, neq, act, opt, ldcopt
     integer :: dimmem, nmax
     real(kind=8) :: rhomin, rhomax, rhoexm, rhoexp
@@ -117,18 +118,15 @@ character(len=19), intent(in), optional :: sddyna_
     real(kind=8) :: mem(2, 10)
     aster_logical :: stite, lnkry
     aster_logical :: lgrot, lendo
-    character(len=19) :: cnfins(2), cndirs(2), k19bla
+    character(len=19) :: cnfint2(2), cndiri2(2)
+    character(len=19) :: cndiri, cnfext, cnsstr, k19bla
     character(len=19) :: depplu, sigplu, varplu, complu
     character(len=19) :: sigplt, varplt, depplt
     character(len=19) :: vediri
-    character(len=19) :: cndiri, cnfext, cnsstr
     character(len=19) :: depdet, ddepla, depdel, sddyna
-    character(len=19) :: solalt(zsolal), valint(zvalin, 2)
     aster_logical :: echec
-    integer :: ifm, niv
     real(kind=8), pointer :: vale(:) => null()
     type(NL_DS_System) :: ds_system2
-    type(HHO_Field) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -177,13 +175,13 @@ character(len=19), intent(in), optional :: sddyna_
     call nmchex(valinc, 'VALINC', 'VARPLU', varplu)
     call nmchex(valinc, 'VALINC', 'COMPLU', complu)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
     call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
+    call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
     call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(solalg, 'SOLALG', 'DDEPLA', ddepla)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
 !
-! - Copy dastructure for solving system
+! - Copy datastructure for solving system
 !
     ds_system2 = ds_system
 !
@@ -193,10 +191,10 @@ character(len=19), intent(in), optional :: sddyna_
 !
 ! --- PREPARATION DES ZONES TEMPORAIRES POUR ITERATION COURANTE
 !
-    cnfins(1) = ds_system%cnfint
-    cnfins(2) = '&&NMRECH.RESI'
-    cndirs(1) = cndiri
-    cndirs(2) = '&&NMRECH.DIRI'
+    cnfint2(1) = ds_system%cnfint
+    cnfint2(2) = '&&NMRECH.RESI'
+    cndiri2(1) = cndiri
+    cndiri2(2) = '&&NMRECH.DIRI'
     depdet = '&&CNPART.CHP1'
     depplt = '&&CNPART.CHP2'
     sigplt = '&&NMRECH.SIGP'
@@ -223,7 +221,7 @@ character(len=19), intent(in), optional :: sddyna_
 ! --- CALCUL DE F(RHO=0)
 !
     call nmrecz(nume_dof, ds_contact, list_func_acti, &
-                cndiri, ds_system%cnfint, cnfext, cnsstr, ddepla,&
+                cndiri  , ds_system%cnfint, cnfext, cnsstr, ddepla,&
                 f0)
 !
     if (niv .ge. 2) then
@@ -280,23 +278,24 @@ character(len=19), intent(in), optional :: sddyna_
             call nmdebg('VECT', depdet, 6)
         endif
 ! ----- Update internal forces
-        ds_system2%cnfint = cnfins(act)
-        ds_system2%vefint = ds_system%vefint
-        call nmfint(model         , cara_elem      ,&
-                    ds_material   , ds_constitutive,&
-                    list_func_acti, iter_newt      , ds_measure, ds_system2,&
-                    valint(1, act), solalt         , hhoField, &
-                    ldccvg        , sddyna)
-        call nmaint(nume_dof, list_func_acti, sdnume, ds_system2)
+        ds_system2%cnfint = cnfint2(act)
+        ds_system2%veinte = ds_system%veinte
+        call nonlinIntForce(CORR_NEWTON   ,&
+                            model         , cara_elem      ,&
+                            list_func_acti, iter_newt      , sdnume,&
+                            ds_material   , ds_constitutive,&
+                            ds_system2    , ds_measure     ,&
+                            valint(1, act), solalt         ,&
+                            ldccvg)
 ! ----- Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
         call nonlinRForceCompute(model   , ds_material, cara_elem, list_load,&
                                  nume_dof, ds_measure , depplt,&
-                                 veelem  , cndiri_ = cndirs(act))
+                                 veelem  , cndiri_ = cndiri2(act))
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ...... FORCES INTERNES'
-            call nmdebg('VECT', cnfins(act), 6)
+            call nmdebg('VECT', cnfint2(act), 6)
             write (ifm,*) '<MECANONLINE> ...... REACTIONS D''APPUI'
-            call nmdebg('VECT', cndirs(act), 6)
+            call nmdebg('VECT', cndiri2(act), 6)
         endif
 !
 ! ----- ON A NECESSAIREMENT INTEGRE LA LOI DE COMPORTEMENT
@@ -319,7 +318,7 @@ character(len=19), intent(in), optional :: sddyna_
 ! ----- CALCUL DE F(RHO)
 !
         call nmrecz(nume_dof, ds_contact, list_func_acti, &
-                    cndirs(act), cnfins(act), cnfext, cnsstr, ddepla, f)
+                    cndiri2(act), cnfint2(act), cnfext, cnsstr, ddepla, f)
 !
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ... FONCTIONNELLE COURANTE: ',f
@@ -363,8 +362,8 @@ character(len=19), intent(in), optional :: sddyna_
     if (opt .ne. 1) then
         call copisd('CHAMP_GD', 'V', sigplt, sigplu)
         call copisd('CHAMP_GD', 'V', varplt, varplu)
-        call copisd('CHAMP_GD', 'V', cnfins(opt), ds_system%cnfint)
-        call copisd('CHAMP_GD', 'V', cndirs(opt), cndiri)
+        call copisd('CHAMP_GD', 'V', cnfint2(opt), ds_system%cnfint)
+        call copisd('CHAMP_GD', 'V', cndiri2(opt), cndiri)
     endif
 !
 ! --- INFORMATIONS SUR LA RECHERCHE LINEAIRE

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,11 +18,11 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine ndxpre(model          , nume_dof   , numfix     , ds_material, cara_elem,&
-                  ds_constitutive, list_load  , ds_algopara, solveu     , ds_system,&
-                  list_func_acti , sddisc     , ds_measure , nume_inst  , hval_incr,&
-                  hval_algo      , matass     , maprec     , sddyna     , sderro   ,&
-                  hval_meelem    , hval_measse, hval_veelem, hval_veasse,&
+subroutine ndxpre(model          , nume_dof   , numfix     , ds_material, cara_elem  ,&
+                  ds_constitutive, list_load  , ds_algopara, solveu     , ds_system  ,&
+                  list_func_acti , sddisc     , ds_measure , nume_inst  , hval_incr  ,&
+                  hval_algo      , matass     , maprec     , sddyna     , sderro     ,&
+                  sdnume         , hval_meelem, hval_measse, hval_veelem, hval_veasse,&
                   lerrit)
 !
 use NonLin_Datastructure_type
@@ -47,7 +47,8 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=19) :: matass, maprec
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Measure), intent(inout) :: ds_measure
-character(len=19) :: list_load, solveu, sddisc, sddyna
+character(len=19) :: list_load, solveu
+character(len=19), intent(in) :: sdnume, sddyna, sddisc
 character(len=24) :: model, cara_elem
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_System), intent(in) :: ds_system
@@ -75,10 +76,10 @@ aster_logical :: lerrit
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_system        : datastructure for non-linear system management
-! In  ds_system        : datastructure for non-linear system management
 ! In  ds_inout         : datastructure for input/output management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SOLVEU : SOLVEUR
+! In  sdnume           : datastructure for dof positions
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  sddisc           : datastructure for time discretization
 ! In  nume_inst        : index of current time step
@@ -137,11 +138,10 @@ aster_logical :: lerrit
 ! - Compute forces for second member at prediction
 !
     call ndxforc_pred(list_func_acti,&
-                      model         , cara_elem      ,&
-                      nume_dof      , &
+                      model         , cara_elem      , nume_dof ,&
                       list_load     , sddyna         ,&
                       ds_material   , ds_constitutive, ds_system,&
-                      ds_measure    , &
+                      ds_measure    , sdnume         ,&
                       sddisc        , nume_inst      ,&
                       hval_incr     , hval_algo      ,&
                       hval_veelem   , hval_veasse    ,&
@@ -149,7 +149,7 @@ aster_logical :: lerrit
 !
 ! - Evaluate second member
 !
-    call nmassx(list_func_acti, sddyna, ds_material, hval_veasse, ds_system,&
+    call nmassx(list_func_acti, sddyna, hval_veasse, ds_system,&
                 cndonn)
 !
 ! - Solve system

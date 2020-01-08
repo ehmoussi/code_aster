@@ -33,13 +33,14 @@ use HHO_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/NonLinear_type.h"
 #include "asterfort/assert.h"
 #include "asterfort/diinst.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmassp.h"
 #include "asterfort/nmforc_pred.h"
-#include "asterfort/nmfint_pred.h"
+#include "asterfort/nonlinIntForce.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmdep0.h"
 #include "asterfort/nmfocc.h"
@@ -204,24 +205,29 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
                     ds_contact  , ds_measure, hval_algo  , hval_incr, ds_constitutive)
     endif
 !
-! - Compute internal forces at prediction
+! - Compute internal forces
 !
-    call nmfint_pred(model      , cara_elem      , list_func_acti, &
-                     sddyna     , nume_dof       , &
-                     ds_material, ds_constitutive, ds_system     , ds_measure,&
-                     time_prev  , time_curr      , iter_newt     ,&
-                     hval_incr  , hval_algo      , hhoField,&
-                     ldccvg     , sdnume)
+    call nonlinIntForce(PRED_EULER    ,&
+                        model         , cara_elem      ,&
+                        list_func_acti, iter_newt      , sdnume,&
+                        ds_material   , ds_constitutive,&
+                        ds_system     , ds_measure     ,&
+                        hval_incr     , hval_algo      ,&
+                        ldccvg        ,&
+                        hhoField_  = hhoField ,&
+                        sddyna_    = sddyna   ,&
+                        time_prev_ = time_prev,&
+                        time_curr_ = time_curr)
     if (ldccvg .eq. 1) then
         goto 999
     endif
 !
 ! - Evaluate second member for prediction
 !
-    call nmassp(ds_material, list_func_acti,&
-                ds_algorom , sddyna        , ds_system,&
-                ds_contact , hval_veasse   ,&
-                cnpilo     , cndonn)
+    call nmassp(list_func_acti,&
+                sddyna        , ds_system,&
+                ds_contact    , hval_veasse   ,&
+                cnpilo        , cndonn)
 !
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !

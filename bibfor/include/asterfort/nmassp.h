@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,15 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmassp(ds_material,list_func_acti,&
-                      ds_algorom , sddyna        , ds_system,&
-                      ds_contact , hval_veasse   ,&
-                      cnpilo     , cndonn)
+    subroutine nmassp(list_func_acti,&
+                      sddyna        , ds_system  ,&
+                      ds_contact    , hval_veasse,&
+                      cnpilo        , cndonn)
         use NonLin_Datastructure_type
-        use Rom_Datastructure_type  
-        type(NL_DS_Material), intent(in) :: ds_material
+        use Rom_Datastructure_type
         integer, intent(in) :: list_func_acti(*)
-        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: sddyna
         type(NL_DS_Contact), intent(in) :: ds_contact

@@ -33,6 +33,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/assvec.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/nonlinLoadCompute.h"
 #include "asterfort/nonlinLoadDynaCompute.h"
@@ -46,6 +47,7 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/utmess.h"
+#include "asterfort/nmdebg.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: model, cara_elem, nume_dof
@@ -156,5 +158,10 @@ character(len=19), intent(in) :: hval_measse(*)
                              ds_measure , ds_system      ,&
                              time_prev  , time_curr      ,&
                              hval_incr  , hval_algo      )
+    call assvec('V'               , ds_system%cnfnod, 1     , ds_system%vefnod, [1.d0],&
+                ds_system%nume_dof, ' '             , 'ZERO', 1)
+    if (niv .ge. 2) then
+        call nmdebg('VECT', ds_system%cnfnod, 6)
+    endif
 !
 end subroutine

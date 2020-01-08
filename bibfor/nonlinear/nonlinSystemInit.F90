@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinSystemInit(list_func_acti, sddyna, nume_dof, ds_algopara, ds_system)
+subroutine nonlinSystemInit(list_func_acti, nume_dof, ds_algopara, ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -32,7 +32,6 @@ implicit none
 #include "asterfort/vtcreb.h"
 !
 integer, intent(in) :: list_func_acti(*)
-character(len=19), intent(in) :: sddyna
 character(len=24), intent(in) :: nume_dof
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_System), intent(inout) :: ds_system
@@ -46,7 +45,6 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  list_func_acti   : list of active functionnalities
-! In  sddyna           : dynamic parameters datastructure
 ! IO  ds_algopara      : datastructure for algorithm parameters
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! IO  ds_system        : datastructure for non-linear system management
@@ -54,7 +52,6 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_implex, l_resi_comp, l_stat, l_dyna, l_hho
     aster_logical :: l_cont_elem, l_cont_all_verif
 !
 ! --------------------------------------------------------------------------------------------------
@@ -66,41 +63,14 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! - Active functionnalities
 !
-    l_implex         = isfonc(list_func_acti,'IMPLEX')
-    l_resi_comp      = isfonc(list_func_acti,'RESI_COMP')
-    l_stat           = ndynlo(sddyna,'STATIQUE')
-    l_dyna           = ndynlo(sddyna,'DYNAMIQUE')
-    l_hho            = isfonc(list_func_acti, 'HHO')
     l_cont_elem      = isfonc(list_func_acti, 'ELT_CONTACT')
     l_cont_all_verif = isfonc(list_func_acti, 'CONT_ALL_VERIF')
 !
-! - Activation
-!
-    if (l_resi_comp) then
-        ds_system%l_pred_cnfnod = ASTER_TRUE
-    endif
-    if (l_implex) then
-        ds_system%l_pred_cnfnod = ASTER_TRUE
-    endif
-    if (l_stat) then
-        ds_system%l_pred_cnfnod = ASTER_TRUE
-    endif
-    if (l_dyna) then
-        ds_system%l_pred_cnfint = ASTER_TRUE
-    endif
-!
-! - Full prediction
-!
-    ds_system%l_pred_full = ASTER_TRUE
-!
-    if(l_hho) then
-        ! Désactivation de FORC_NODA en prédiction
-        ds_system%l_pred_cnfnod = ASTER_FALSE
-    end if
-!
 ! - Create fields
 !
+    call vtcreb(ds_system%cninte, 'V', 'R', nume_ddlz = nume_dof)
     call vtcreb(ds_system%cnfint, 'V', 'R', nume_ddlz = nume_dof)
+    call vtcreb(ds_system%cnfnod, 'V', 'R', nume_ddlz = nume_dof)
 !
 ! - Set flag for symmetric rigidity matrix
 !

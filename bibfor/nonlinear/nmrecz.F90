@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ real(kind=8), intent(out) :: func
 ! In  ds_contact       : datastructure for contact management
 ! In  list_func_acti   : list of active functionnalities
 ! In  cndiri           : nodal field for support reaction
-! In  cnfint           : nodal field for internal force
+! In  cnfint           : nodal field for internal force (integration)
 ! In  cnfext           : nodal field for external force
 ! In  cnsstr           : nodal field for sub-structuring force
 ! In  disp_iter        : displacement iteration

@@ -73,7 +73,6 @@ type(NL_DS_System), intent(in) :: ds_system
 !
     if (typeAsse .eq. INTE_FORCE_COMB) then
 !       Assemblage special: In: cninte + cnfnod + ds_material%fvarc_pred + COPRED
-        !call assvec()
         ASSERT(ASTER_FALSE)
     elseif (typeAsse .eq. INTE_FORCE_INTE) then
 !       Assemblage que de l'intégration (RAPH_MECA / FULL_MECA / RIGI_MECA_TANG)
@@ -83,13 +82,11 @@ type(NL_DS_System), intent(in) :: ds_system
 !       Assemblage que de FORC_NODA
         call assvec('V'               , ds_system%cnfint, 1     , ds_system%vefnod, [1.d0],&
                     ds_system%nume_dof, ' '             , 'ZERO', 1)
+!       For external state variables
+        call vtaxpy(-1.d0, ds_material%fvarc_pred, ds_system%cnfint)
     else
         ASSERT(ASTER_FALSE)
     endif
-!
-! - For external state variables
-!
-    call vtaxpy(+1.d0, ds_material%fvarc_pred, ds_system%cnfint)
 !
 ! - For GDVARINO
 !

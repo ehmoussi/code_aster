@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nsassp(list_func_acti, ds_material, ds_contact, ds_algorom, ds_system,&
-                  hval_veasse   , cnpilo     , cndonn)
+subroutine nsassp(list_func_acti, ds_contact, ds_system,&
+                  hval_veasse   , cnpilo    , cndonn)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -41,9 +41,7 @@ implicit none
 #include "asterfort/nonlinDSVectCombAddHat.h"
 !
 integer, intent(in) :: list_func_acti(*)
-type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Contact), intent(in) :: ds_contact
-type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: hval_veasse(*)
 character(len=19), intent(in) :: cnpilo, cndonn
@@ -57,9 +55,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  list_func_acti   : list of active functionnalities
-! In  ds_material      : datastructure for material parameters
 ! In  ds_contact       : datastructure for contact management
-! In  ds_algorom       : datastructure for ROM parameters
 ! In  ds_system        : datastructure for non-linear system management
 ! In  hval_veasse      : hat-variable for vectors (node fields)
 ! In  cndonn           : name of nodal field for "given" forces
@@ -69,7 +65,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 !
     integer :: ifm, niv
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnffpi, cndfpi
-    aster_logical :: l_macr, l_pilo, l_hho
+    aster_logical :: l_macr, l_pilo
     type(NL_DS_VectComb) :: ds_vectcomb
     aster_logical :: l_unil_pena
 !
@@ -93,7 +89,6 @@ character(len=19), intent(in) :: cnpilo, cndonn
 !
     l_macr = isfonc(list_func_acti,'MACR_ELEM_STAT')
     l_pilo = isfonc(list_func_acti,'PILOTAGE')
-    l_hho  = isfonc(list_func_acti,'HHO')
 !
 ! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
@@ -140,10 +135,6 @@ character(len=19), intent(in) :: cnpilo, cndonn
         call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTR', -1.d0, ds_vectcomb)
     endif
 !
-! - External state variable
-!
-    call nonlinDSVectCombAddAny(ds_material%fvarc_pred, +1.d0, ds_vectcomb)
-!
 ! - Get Dirichlet boundary conditions - B.U
 !
     call nonlinDSVectCombAddHat(hval_veasse, 'CNBUDI', -1.d0, ds_vectcomb)
@@ -154,11 +145,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 !
 ! - Add internal forces to second member
 !
-    if (ds_algorom%phase.eq.'CORR_EF' .or. l_hho) then
-        call nonlinDSVectCombAddAny(ds_system%cnfint, -1.d0, ds_vectcomb)
-    else
-        call nonlinDSVectCombAddAny(ds_system%cnfnod, -1.d0, ds_vectcomb)
-    endif
+    call nonlinDSVectCombAddAny(ds_system%cnfint, -1.d0, ds_vectcomb)
 !
 ! - Second member (standard)
 !

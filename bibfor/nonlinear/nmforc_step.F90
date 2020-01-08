@@ -20,7 +20,7 @@
 subroutine nmforc_step(list_func_acti,&
                        model         , cara_elem      , nume_dof ,&
                        list_load     , sddyna         ,&
-                       ds_material   , ds_constitutive, ds_system,&
+                       ds_material   , ds_constitutive,&
                        ds_measure    , ds_inout       ,&
                        sddisc        , nume_inst      ,&
                        hval_incr     , hval_algo      , hhoField,&
@@ -49,7 +49,6 @@ character(len=24), intent(in) :: model, cara_elem, nume_dof
 character(len=19), intent(in) :: list_load, sddyna
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-type(NL_DS_System), intent(in) :: ds_system
 type(NL_DS_Measure), intent(inout) :: ds_measure
 type(NL_DS_InOut), intent(in) :: ds_inout
 type(HHO_Field), intent(in) :: hhoField
@@ -74,7 +73,6 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! In  sddyna           : datastructure for dynamic
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! In  ds_system        : datastructure for non-linear system management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  hhoField         : datastructure for HHO
 ! In  ds_inout         : datastructure for input/output management
@@ -89,7 +87,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
     integer :: ifm, niv
     real(kind=8) :: time_prev, time_curr
-    aster_logical :: l_dyna, l_implex
+    aster_logical :: l_dyna
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,7 +106,6 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! - Active functionnalities
 !
     l_dyna    = ndynlo(sddyna,'DYNAMIQUE')
-    l_implex  = isfonc(list_func_acti,'IMPLEX')
 !
 ! - Compute CHAR_MECA_*_R for PREDICTOR
 !
@@ -134,16 +131,6 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
                                    ds_material, ds_measure , ds_inout,&
                                    time_prev  , time_curr  ,&
                                    hval_veelem, hval_veasse)
-    endif
-!
-! - Compute nodal force BT . SIGMA (No integration of behaviour)
-!
-    if (ds_system%l_pred_cnfnod .and. .not. l_implex) then
-        call nonlinNForceCompute(model      , cara_elem      , list_func_acti,&
-                                 ds_material, ds_constitutive,&
-                                 ds_measure , ds_system      ,&
-                                 time_prev  , time_curr      ,&
-                                 hval_incr  , hval_algo)
     endif
 !
 end subroutine

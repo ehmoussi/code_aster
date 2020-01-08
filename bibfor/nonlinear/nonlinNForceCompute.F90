@@ -29,12 +29,10 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/nmdebg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmvcex.h"
 #include "asterfort/vefnme.h"
-#include "asterfort/assvec.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nmdep0.h"
 #include "asterfort/infdbg.h"
@@ -133,8 +131,6 @@ character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
                     disp_prev             , disp_cumu_inst  ,&
                     'V'                   , ds_system%vefnod)
     endif
-    call assvec('V', ds_system%cnfnod, 1, ds_system%vefnod, [1.d0],&
-                ds_system%nume_dof, ' ', 'ZERO', 1)
 !
 ! - Restore disp_cumu_inst
 !
@@ -143,11 +139,5 @@ character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
 ! - Stop timer
 !
     call nmtime(ds_measure, 'Stop', '2nd_Member')
-!
-! - Debug
-!
-    if (niv .ge. 2) then
-        call nmdebg('VECT', ds_system%cnfnod, 6)
-    endif
 !
 end subroutine

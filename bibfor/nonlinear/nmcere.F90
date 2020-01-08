@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,18 +25,17 @@ subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     , &
                   ldccvg         , ds_system , matr_asse)
 !
 use NonLin_Datastructure_type
-use HHO_type
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/NonLinear_type.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/majour.h"
-#include "asterfort/nmaint.h"
 #include "asterfort/nonlinLoadDirichletCompute.h"
 #include "asterfort/nmcha0.h"
 #include "asterfort/nmchai.h"
@@ -45,7 +44,7 @@ implicit none
 #include "asterfort/nmchso.h"
 #include "asterfort/nonlinRForceCompute.h"
 #include "asterfort/nmfext.h"
-#include "asterfort/nmfint.h"
+#include "asterfort/nonlinIntForce.h"
 #include "asterfort/nmpilr.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/r8inir.h"
@@ -104,8 +103,7 @@ type(NL_DS_System), intent(in) :: ds_system
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer, parameter :: zvalin = 28
-    integer, parameter :: zsolal = 17
+    integer, parameter :: zvalin = 28, zsolal = 17
     aster_logical :: lgrot, lendo
     integer :: neq, nmax
     character(len=19) :: cnfext
@@ -122,7 +120,6 @@ type(NL_DS_System), intent(in) :: ds_system
     real(kind=8), pointer :: deppt(:) => null()
     real(kind=8), pointer :: du0(:) => null()
     real(kind=8), pointer :: du1(:) => null()
-    type(HHO_Field) :: hhoField
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -189,22 +186,20 @@ type(NL_DS_System), intent(in) :: ds_system
 !
 ! - Compute internal forces
 !
-    call nmfint(model         , cara_elem      ,&
-                ds_material   , ds_constitutive,&
-                list_func_acti, iter_newt      , ds_measure, ds_system,&
-                valint        , solalt         , hhoField,&
-                ldccvg   )
-!
-! - Assemble internal forces
-!
-    call nmaint(nume_dof, list_func_acti, sdnume, ds_system)
+    call nonlinIntForce(CORR_NEWTON   ,&
+                        model         , cara_elem      ,&
+                        list_func_acti, iter_newt      , sdnume,&
+                        ds_material   , ds_constitutive,&
+                        ds_system     , ds_measure     ,&
+                        valint        , solalt         ,&
+                        ldccvg)
+    ASSERT(ldccvg .ge. 0)
 !
 ! - Update Dirichlet boundary conditions - B.U
 !
     call nonlinLoadDirichletCompute(list_load  , model      , nume_dof,&
                                     ds_measure , matr_asse  , depplt  ,&
                                     hval_veelem, hval_veasse)
-
 !
 ! - Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
 !
@@ -226,14 +221,10 @@ type(NL_DS_System), intent(in) :: ds_system
 !
     call nmtime(ds_measure, 'Stop', '2nd_Member')
 !
-! --- ON A FORCEMENT INTEGRE LA LDC !
-!
-    ASSERT(ldccvg .ge. 0)
-!
 ! - Compute maximum of out-of-balance force
 !
     if (ldccvg .eq. 0) then
-        call nmpilr(list_func_acti, nume_dof, matr_asse, hval_veasse, ds_contact, ds_system,&
+        call nmpilr(list_func_acti, nume_dof, matr_asse, hval_veasse, ds_contact, ds_system%cnfint,&
                     eta   , residu)
     endif
 !

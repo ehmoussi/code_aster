@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,9 +37,7 @@ interface
         type(NL_DS_InOut), intent(in) :: ds_inout
         type(NL_DS_Print), intent(inout) :: ds_print
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19) :: sdnume
-        character(len=19) :: sddyna
-        character(len=19) :: sddisc
+        character(len=19), intent(in) :: sdnume, sddyna, sddisc
         character(len=24) :: sderro
         character(len=19) :: valinc(*)
         integer :: numins

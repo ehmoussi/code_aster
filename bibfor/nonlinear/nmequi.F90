@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -81,6 +81,7 @@ real(kind=8), optional, intent(in) :: eta_
     call nonlinDSVectCombAddAny(cnfint, +1.d0, ds_vectcomb)
     call nonlinDSVectCombAddAny(cndiri, +1.d0, ds_vectcomb)
     call nonlinDSVectCombAddAny(cnfext, -1.d0, ds_vectcomb)
+
     if (present(ds_contact_)) then
         if (ds_contact_%l_cnctdf) then
             call nonlinDSVectCombAddAny(ds_contact_%cnctdf, +1.d0, ds_vectcomb)

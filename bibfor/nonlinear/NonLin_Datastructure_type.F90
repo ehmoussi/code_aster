@@ -662,24 +662,16 @@ implicit none
     type NL_DS_System
 ! ----- Name of numbering (for assembling)
         character(len=24)     :: nume_dof = 'Unknown'
-! ----- Flag to compute nodal force at prediction
-        aster_logical         :: l_pred_cnfnod = ASTER_FALSE
-! ----- Flag to integrate behaviour law at prediction
-        aster_logical         :: l_pred_cnfint = ASTER_FALSE
-! ----- Flag to integrate behaviour law at prediction (full prediction)
-        aster_logical         :: l_pred_full = ASTER_FALSE
 ! ----- Name of field for multiplicator for full prediction
         character(len=24)     :: code_pred = '&&OP00XX.CODE_PRED'
 ! ----- Elementary and assembled vector for nodal force (no integration)
         character(len=19)     :: vefnod = '&&OP00XX.VEFNOD'
         character(len=19)     :: cnfnod = '&&OP00XX.CNFNOD'
-! ----- For compatibility (to suppress)
-        character(len=19)     :: veinte = '&&OP00XX.VEINTE'
 ! ----- Elementary and assembled vector for internal force (integration)
-        character(len=19)     :: vefint = '&&OP00XX.VEFINT'
+        character(len=19)     :: veinte = '&&OP00XX.VEINTE'
+        character(len=19)     :: cninte = '&&OP00XX.CNINTE'
+! ----- Internal forces
         character(len=19)     :: cnfint = '&&OP00XX.CNFINT'
-! ----- Elementary and assembled vector for internal force (full integration at prediction)
-        character(len=19)     :: cnpred = '&&OP00XX.CNPRED'
 ! ----- Elementary rigidity matrix
         character(len=19)     :: merigi = '&&OP00XX.MERIGI'
 ! ----- Flag for symmetric rigidity matrix

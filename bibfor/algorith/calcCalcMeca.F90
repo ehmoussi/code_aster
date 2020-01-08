@@ -265,7 +265,7 @@ integer, intent(out) ::  nb_obje
         nb_obje = nb_obje + 1
         ASSERT(nb_obje.le.nb_obje_maxi)
         obje_name(nb_obje)   = 'FORC_INTE_ELEM'
-        obje_sdname(nb_obje) = ds_system%vefint
+        obje_sdname(nb_obje) = ds_system%veinte
         nb_obje = nb_obje + 1
         ASSERT(nb_obje.le.nb_obje_maxi)
         obje_name(nb_obje)   = 'SIEF_ELGA'
