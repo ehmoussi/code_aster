@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -978,7 +978,7 @@ def post_endo_fiss_ops(self,
     fproc = open(nomFichierSortie, 'w')
     fproc.write(resu_mail0)
     fproc.close()
-    from code_aster.RunManager.LogicalUnit import LogicalUnitFile, FileAccess
+    from code_aster.Helpers.LogicalUnit import LogicalUnitFile, FileAccess
     unitFile = LogicalUnitFile.open(nomFichierSortie, access=FileAccess.Old)
     uniteMail = unitFile.unit
     MAFISS = LIRE_MAILLAGE(FORMAT='ASTER', UNITE=uniteMail)

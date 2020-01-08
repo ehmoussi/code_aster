@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -70,8 +70,8 @@ from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
 from ..Objects import DataStructure, PyDataStructure
-from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
-from ..Utilities import deprecated, import_object, no_new_attributes
+from ..Supervis import CommandSyntax, ExecutionParameter, Options
+from ..Utilities import deprecated, import_object, logger, no_new_attributes
 from ..Utilities.outputs import (command_header, command_result,
                                  command_separator, command_text, command_time,
                                  decorate_name)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,10 +33,12 @@ global access (no C interface currently)...
     A :file:`trace.log` file is also opened for detailed traceback.
 """
 
-import sys
 import logging
-from functools import partial
+import sys
 import tempfile
+from functools import partial
+
+from libaster import AsterError
 
 # using these values allows to use them as `lvl` in `logger.log(lvl, ...)`
 ERROR = logging.ERROR
@@ -125,7 +127,6 @@ def build_logger(level=logging.INFO, raise_exception=True):
     logger.addHandler(term)
 
     if raise_exception:
-        from .exceptions_ext import AsterError
         logger._error_orig = logger.error
 
         def _error(self, *args, **kwargs):

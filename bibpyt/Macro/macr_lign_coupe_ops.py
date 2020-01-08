@@ -19,7 +19,7 @@
 
 import os
 
-from code_aster.RunManager import LogicalUnitFile
+from code_aster.Helpers import LogicalUnitFile
 #
 # script PYTHON de creation du résultat local
 #

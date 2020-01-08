@@ -3,7 +3,7 @@
  * @brief Implementation de BaseMeshInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,9 +28,9 @@
 // emulate_LIRE_MAILLAGE_MED.h is auto-generated and requires Mesh.h and Python.h
 #include "Meshes/Mesh.h"
 #include "Python.h"
-#include "RunManager/LogicalUnitManagerCython.h"
+#include "PythonBindings/LogicalUnitManager.h"
 #include "Supervis/CommandSyntax.h"
-#include "RunManager/Exceptions.h"
+#include "Supervis/Exceptions.h"
 #include "Supervis/ResultNaming.h"
 #include "Utilities/CapyConvertibleValue.h"
 
@@ -62,16 +62,16 @@ bool MeshInstance::addGroupOfNodesFromNodes( const std::string &name,
 };
 
 bool BaseMeshInstance::readMeshFile( const std::string &fileName, const std::string &format ) {
-    FileTypeCython type = Ascii;
+    FileType type = Ascii;
     if ( format == "MED" )
         type = Binary;
-    LogicalUnitFileCython file1( fileName, type, Old );
+    LogicalUnitFile file1( fileName, type, Old );
 
     SyntaxMapContainer syntax;
 
     if ( format == "GIBI" || format == "GMSH" ) {
         // Fichier temporaire
-        LogicalUnitFileCython file2( "", Ascii, Append );
+        LogicalUnitFile file2( "", Ascii, Append );
         std::string preCmd = "PRE_" + format;
         ASTERINTEGER op2 = 47;
         if ( format == "GIBI" )

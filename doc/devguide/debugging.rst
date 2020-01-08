@@ -17,7 +17,7 @@ This section gives some tips about debugging code_aster.
     Please ask a guru before adding new blocks under this flag!
 
     Detailed informations about the command syntax checker can be printed using
-    the debug level of the :py:class:`~code_aster.Supervis.logger`.
+    the debug level of the :py:class:`~code_aster.Utilities.logger`.
     Use ``--debug`` option or set ``DEBUG=1`` environment variable.
 
 

@@ -3,7 +3,7 @@
  * @brief Création de LibAster
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,8 +28,8 @@ namespace py = boost::python;
 #include "astercxx.h"
 #include "aster_init.h"
 
-#include "RunManager/Exceptions.h"
-#include "RunManager/Fortran.h"
+#include "Supervis/Exceptions.h"
+#include "PythonBindings/Fortran.h"
 
 // Please keep '*Interface.h' files in alphabetical order to ease merging
 #include "PythonBindings/AcousticModeContainerInterface.h"

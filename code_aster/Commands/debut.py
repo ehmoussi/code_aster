@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,15 +33,15 @@ passed during the initialization to the
 :py:class:`~code_aster.Supervis.ExecutionParameter.ExecutionParameter`.
 """
 
-import libaster
 import aster
 import aster_core
+import libaster
 from Comportement import catalc
 
 from ..Cata.SyntaxUtils import remove_none
-from ..RunManager import LogicalUnitFile, Serializer, loadObjects
-from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
-
+from ..Helpers import LogicalUnitFile, Serializer, loadObjects
+from ..Supervis import CommandSyntax, ExecutionParameter, Options
+from ..Utilities import logger
 from .ExecuteCommand import ExecuteCommand
 
 

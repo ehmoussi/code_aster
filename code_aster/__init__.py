@@ -58,7 +58,7 @@ from .Objects import *
 # import general purpose functions
 from .Supervis import (AsterError, ContactError, ConvergenceError,
                        IntegrationError, SolverError, TimeLimitError)
-from .RunManager import saveObjects
+from .Helpers import saveObjects
 from .Utilities import TestCase, translate as _
 
 from .Algorithms import (ConstitutiveLaw, IntegrationAlgorithm, StrainType,
