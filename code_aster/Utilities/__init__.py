@@ -31,10 +31,12 @@ from .base_utils import (Singleton, accept_array, array_to_list, force_list,
                          is_str, no_new_attributes, value_is_sequence)
 from .compatibility import (compat_listr8, deprecated, remove_keyword,
                             required, unsupported)
+from .ExecutionParameter import ExecutionParameter
 from .general import initial_context
 from .i18n import localization, translate
 from .injector import injector
 from .logger import DEBUG, ERROR, INFO, WARNING, logger
+from .options import Options
 from .report import CR
 from .strfunc import convert, from_unicode, get_encoding, to_unicode, ufmt
 from .Tester import TestCase

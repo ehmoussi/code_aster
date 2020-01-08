@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -24,7 +24,7 @@ from ..Objects import (GenericMechanicalLoad, KinematicsLoad,
 from ..Utilities import force_list, unsupported
 from .calc_champ import CALC_CHAMP
 from .common_keywords import create_solver
-from .ExecuteCommand import ExecuteCommand
+from ..Supervis.ExecuteCommand import ExecuteCommand
 
 
 class MechanicalSolver(ExecuteCommand):

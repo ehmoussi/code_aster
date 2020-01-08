@@ -24,13 +24,13 @@
 
 The :py:class:`Starter` starts the execution by initializing the code_aster
 memory manager (*Jeveux*). For this task, it parses the arguments through the
-:py:class:`~code_aster.Supervis.ExecutionParameter.ExecutionParameter` object.
+:py:class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter` object.
 By default, arguments are read from the command line. Otherwise, the arguments
 can be passed to :py:func:`.init`.
 
 Some Python objects that have to be available from :py:mod:`libaster` are
 passed during the initialization to the
-:py:class:`~code_aster.Supervis.ExecutionParameter.ExecutionParameter`.
+:py:class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter`.
 """
 
 import aster
@@ -40,14 +40,14 @@ from Comportement import catalc
 
 from ..Cata.SyntaxUtils import remove_none
 from ..Helpers import LogicalUnitFile, Serializer, loadObjects
-from ..Supervis import CommandSyntax, ExecutionParameter, Options
-from ..Utilities import logger
-from .ExecuteCommand import ExecuteCommand
+from ..Supervis import CommandSyntax
+from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Utilities import ExecutionParameter, Options, logger
 
 
 class ExecutionStarter(object):
     """Initialize the
-    :class:`~code_aster.Supervis.ExecutionParameter.ExecutionParameter` object
+    :class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter` object
     for requests from the both sides Python/Fortran."""
     params = _is_initialized = None
 

@@ -10,7 +10,6 @@ Class diagram
 
 .. inheritance-diagram::
     code_aster.Supervis.CommandSyntax
-    code_aster.Supervis.ExecutionParameter
    :parts: 1
 
 
@@ -24,11 +23,6 @@ Detailed description
    :special-members: __init__
 
 .. automodule:: code_aster.Supervis.CommandSyntax
-   :show-inheritance:
-   :members:
-   :special-members: __init__
-
-.. automodule:: code_aster.Supervis.ExecutionParameter
    :show-inheritance:
    :members:
    :special-members: __init__

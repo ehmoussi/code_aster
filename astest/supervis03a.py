@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 import code_aster
 from code_aster.Commands import *
-from code_aster.Supervis.ExecutionParameter import ExecutionParameter, Options
+from code_aster.Utilities.ExecutionParameter import ExecutionParameter, Options
 
 test = code_aster.TestCase()
 

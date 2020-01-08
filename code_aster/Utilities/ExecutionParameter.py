@@ -19,7 +19,8 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-"""
+"""from .logger import DEBUG, ERROR, INFO, WARNING, logger
+
 :py:mod:`ExecutionParameter` --- Management of the execution parameters
 ***********************************************************************
 
@@ -40,13 +41,16 @@ import platform
 import re
 import sys
 import warnings
+from argparse import SUPPRESS, ArgumentParser
 
 import aster_pkginfo
 import libaster
 from Utilitai.as_timer import ASTER_TIMER
 
-from ..Utilities import DEBUG, INFO, Singleton, convert, logger, no_new_attributes
+from .base_utils import Singleton, no_new_attributes
+from .logger import DEBUG, INFO, logger
 from .options import Options
+from .strfunc import convert
 
 DEFAULT_MEMORY_LIMIT = 2047 if "32" in platform.architecture()[0] else 4096
 DEFAULT_TIME_LIMIT = 86400
@@ -69,7 +73,7 @@ class ExecutionParameter(metaclass=Singleton):
         _syntax (*CommandSyntax*): Class that passes user keywords up to
             Fortran operator.
     """
-    _singleton_id = 'Supervis.ExecutionParameter'
+    _singleton_id = 'Utilities.ExecutionParameter'
     _args = _bool = None
     _timer = _command_counter = None
     _catalc = _unit = _syntax = None
@@ -226,7 +230,6 @@ class ExecutionParameter(metaclass=Singleton):
 
     def parse_args(self, argv=None):
         """Parse the command line arguments to set the execution parameters"""
-        from argparse import ArgumentParser, SUPPRESS
         # command arguments parser
         parser = ArgumentParser(description='execute a Code_Aster study',
                                 prog="Code_Aster{called by Python}")
