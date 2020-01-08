@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,10 +60,10 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
         VECT_TANG = args['VECT_TANG']
 
         # On importe les definitions des commandes a utiliser dans la macro
-        CALC_CHAM_ELEM = self.get_cmd('CALC_CHAM_ELEM')
-        CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-        CREA_TABLE = self.get_cmd('CREA_TABLE')
-        DETRUIRE = self.get_cmd('DETRUIRE')
+        from code_aster.Commands import CALC_CHAM_ELEM
+        from code_aster.Commands import CREA_CHAMP
+        from code_aster.Commands import CREA_TABLE
+        from code_aster.Commands import DETRUIRE
 
         # Recuperation du nom du modele
         __MODEL = RESULTAT.getModel()

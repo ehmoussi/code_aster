@@ -30,21 +30,21 @@ def simu_point_mat_ops(
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    AFFE_CARA_ELEM = self.get_cmd('AFFE_CARA_ELEM')
-    AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
-    AFFE_MATERIAU = self.get_cmd('AFFE_MATERIAU')
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    CREA_RESU = self.get_cmd('CREA_RESU')
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    MODI_MAILLAGE = self.get_cmd('MODI_MAILLAGE')
-    MODI_REPERE = self.get_cmd('MODI_REPERE')
-    POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
-    STAT_NON_LINE = self.get_cmd('STAT_NON_LINE')
-    IMPR_RESU = self.get_cmd('IMPR_RESU')
+    from code_aster.Commands import AFFE_CARA_ELEM
+    from code_aster.Commands import AFFE_CHAR_MECA
+    from code_aster.Commands import AFFE_MATERIAU
+    from code_aster.Commands import AFFE_MODELE
+    from code_aster.Commands import CALC_CHAMP
+    from code_aster.Commands import CALC_TABLE
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import LIRE_MAILLAGE
+    from code_aster.Commands import MODI_MAILLAGE
+    from code_aster.Commands import MODI_REPERE
+    from code_aster.Commands import POST_RELEVE_T
+    from code_aster.Commands import STAT_NON_LINE
+    from code_aster.Commands import IMPR_RESU
     from code_aster.Commands import CALC_POINT_MAT
 
     from code_aster.Cata.Syntax import _F

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,11 +32,11 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
     import numpy as NP
     import aster
 
-    COMB_MATR_ASSE = self.get_cmd('COMB_MATR_ASSE')
-    CALC_MODES     = self.get_cmd('CALC_MODES')
-    CREA_CHAMP     = self.get_cmd('CREA_CHAMP')
-    CREA_RESU      = self.get_cmd('CREA_RESU')
-    DETRUIRE       = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import COMB_MATR_ASSE
+    from code_aster.Commands import CALC_MODES
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import DETRUIRE
 
 
     dfreq=freq1
@@ -92,7 +92,7 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
                                                COEF_R=betah/betab),
                                             ),);
 
-        # IMPR_CO        = self.get_cmd('IMPR_CO')
+        from code_aster.Commands import # IMPR_CO
         # IMPR_CO(CONCEPT=_F(NOM=__asseKw))
 
         __modtmp=CALC_MODES(MATR_RIGI=__asseKw,

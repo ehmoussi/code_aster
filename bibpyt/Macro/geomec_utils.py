@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -1291,10 +1291,10 @@ def impr_graphique(self, DicoEssai, Courbes, NomsFich,
     from code_aster.Cata.Syntax import _F
     from random import randint
 
-    DEFI_FICHIER   = self.get_cmd('DEFI_FICHIER')
-    IMPR_FONCTION  = self.get_cmd('IMPR_FONCTION')
-    INFO_EXEC_ASTER= self.get_cmd('INFO_EXEC_ASTER')
-    DETRUIRE       = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import DEFI_FICHIER
+    from code_aster.Commands import IMPR_FONCTION
+    from code_aster.Commands import INFO_EXEC_ASTER
+    from code_aster.Commands import DETRUIRE
 
     # Recuperation des options d'impression
     # -----------------------------------------
@@ -1435,7 +1435,7 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
 
     if 'TABLE_RESU' in DicoEssai:
 
-        CREA_TABLE = self.get_cmd('CREA_TABLE')
+        from code_aster.Commands import CREA_TABLE
 
         # Recuperation des variables supplementaires a imprimer
         # (si existantes) contenues sous le mot-cle 'NOM_CMP'
@@ -2015,11 +2015,11 @@ def Calc_Gs_max(self, GAMMA_ELAS, PRES_CONF, KZERO, MATER, COMPORTEMENT, CONVERG
     """
     from code_aster.Cata.Syntax import _F
 
-    DEFI_FONCTION  = self.get_cmd('DEFI_FONCTION')
-    DEFI_LIST_INST = self.get_cmd('DEFI_LIST_INST')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    SIMU_POINT_MAT = self.get_cmd('SIMU_POINT_MAT')
-    DETRUIRE       = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import DEFI_LIST_INST
+    from code_aster.Commands import DEFI_LIST_REEL
+    from code_aster.Commands import SIMU_POINT_MAT
+    from code_aster.Commands import DETRUIRE
 
     __RLIST = DEFI_LIST_REEL(DEBUT=0.,
                              INTERVALLE=_F(JUSQU_A=1., NOMBRE=1,),)
@@ -2096,11 +2096,11 @@ def Calc_Es_max(self, EPSI_ELAS, PRES_CONF, KZERO, MATER, COMPORTEMENT, CONVERGE
     from code_aster.Cata.Syntax import _F
     import numpy as NP
 
-    DEFI_FONCTION  = self.get_cmd('DEFI_FONCTION')
-    DEFI_LIST_INST = self.get_cmd('DEFI_LIST_INST')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    SIMU_POINT_MAT = self.get_cmd('SIMU_POINT_MAT')
-    DETRUIRE       = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import DEFI_LIST_INST
+    from code_aster.Commands import DEFI_LIST_REEL
+    from code_aster.Commands import SIMU_POINT_MAT
+    from code_aster.Commands import DETRUIRE
 
     __RLIST = DEFI_LIST_REEL(DEBUT=0.,
                              INTERVALLE=_F(JUSQU_A=5., NOMBRE=5,),)
@@ -2187,10 +2187,10 @@ def essai_TRIA_ND_C_D_mono(self, inst_init, sigm, epsi, vari, DicoEssai,
     from Utilitai.Utmess import UTMESS
     from Comportement import catalc
 
-    DEFI_FONCTION  = self.get_cmd('DEFI_FONCTION')
-    DETRUIRE       = self.get_cmd('DETRUIRE')
-    DEFI_LIST_INST = self.get_cmd('DEFI_LIST_INST')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import DETRUIRE
+    from code_aster.Commands import DEFI_LIST_INST
+    from code_aster.Commands import DEFI_LIST_REEL
     from Contrib.calc_point_mat import CALC_POINT_MAT
 
     UN_SUR_K   = DicoEssai['UN_SUR_K']

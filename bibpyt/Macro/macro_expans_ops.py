@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,10 +34,10 @@ def macro_expans_ops(self,
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
     import aster
-    EXTR_MODE = self.get_cmd('EXTR_MODE')
-    PROJ_MESU_MODAL = self.get_cmd('PROJ_MESU_MODAL')
-    REST_GENE_PHYS = self.get_cmd('REST_GENE_PHYS')
-    PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
+    from code_aster.Commands import EXTR_MODE
+    from code_aster.Commands import PROJ_MESU_MODAL
+    from code_aster.Commands import REST_GENE_PHYS
+    from code_aster.Commands import PROJ_CHAMP
 
     RESU_NUM = MODELE_CALCUL['BASE']
     RESU_EXP = MODELE_MESURE['MESURE']

@@ -39,7 +39,7 @@ def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
     # import the definitions of the commands to use in the macro-command
     # The name of the variable has to be the name of the command
     from Modal.mode_iter_inv import MODE_ITER_INV
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import DETRUIRE
 
 
     ##############################################################################

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,12 +43,12 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     # =================================================================#
     # Liste des commandes ASTER utilisees                             #
     # --------------------------------------------------------------- #
-    AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    DYNA_NON_LINE = self.get_cmd('DYNA_NON_LINE')
-    LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
+    from code_aster.Commands import AFFE_CHAR_MECA
+    from code_aster.Commands import DEFI_GROUP
+    from code_aster.Commands import DEFI_LIST_REEL
+    from code_aster.Commands import DYNA_NON_LINE
+    from code_aster.Commands import LIRE_MAILLAGE
+    from code_aster.Commands import PROJ_CHAMP
     # Operateurs specifiques pour IFS
     from Contrib.impr_mail_yacs import IMPR_MAIL_YACS
     from Contrib.env_cine_yacs import ENV_CINE_YACS

@@ -11,7 +11,7 @@ from code_aster.Commands.ExecuteCommand import UserMacro
 def ma_macro_ops(self, TEMPER=None, **kwargs):
     """Corps de la macro de test."""
     # soit à gauche, soit sous TEMPER
-    THER_LINEAIRE = self.get_cmd('THER_LINEAIRE')
+    from code_aster.Commands import THER_LINEAIRE
     rther=THER_LINEAIRE(MODELE=kwargs['MOTH'],
                         ETAT_INIT=_F(CHAM_NO=kwargs['TEMP0'],),
                         INCREMENT=_F(LIST_INST=kwargs['LR8']),

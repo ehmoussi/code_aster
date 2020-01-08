@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -316,7 +316,7 @@ class GeneratorDSP(Generator):
         """Create the result function"""
        # Le concept sortant (de type table_fonction) est tab
         macr = self.macro
-        CREA_TABLE = macr.get_cmd('CREA_TABLE')
+        from code_aster.Commands import CREA_TABLE
         #--- construction des fonctions sortie
         self.build_output()
         #--- Creation du concept (table) en sortie
@@ -414,7 +414,7 @@ class GeneratorSpectrum(Generator):
         """Create the result function"""
        # Le concept sortant (de type table_fonction) est tab
         macr = self.macro
-        CREA_TABLE = macr.get_cmd('CREA_TABLE')
+        from code_aster.Commands import CREA_TABLE
         #--- construction des fonctions sortie
         self.build_output()
         #--- Creation du concept (table) en sortie
@@ -718,7 +718,7 @@ class SimulatorDSPScalar(Simulator):
     def run(self, generator):
         """Create the result table of functions"""
         macr = generator.macro
-        DEFI_FONCTION = macr.get_cmd('DEFI_FONCTION')
+        from code_aster.Commands import DEFI_FONCTION
         for iii in range(self.nbtirage):
             Xt = self.build_TimeHistory(generator)
             Xt = self.process_TimeHistory(generator, NP.array(Xt))
@@ -757,7 +757,7 @@ class SimulatorDSPVector(Simulator):
     def run(self, generator):
         """build result for vector DSP class"""
         macr = generator.macro
-        DEFI_FONCTION = macr.get_cmd('DEFI_FONCTION')
+        from code_aster.Commands import DEFI_FONCTION
         if self.TYPE != 'COEF_CORR':
             liste_nom, l2 = get_group_nom_coord(
                              self.DEFI_COHE['GROUP_NO_INTERF'],
@@ -791,7 +791,7 @@ class SimulatorSPECVector(Simulator):
     def run(self, generator):
         """build result for vector SPEC class"""
         macr = generator.macro
-        DEFI_FONCTION = macr.get_cmd('DEFI_FONCTION')
+        from code_aster.Commands import DEFI_FONCTION
         if self.TYPE != 'COEF_CORR':
             self.liste_nom, l2 = get_group_nom_coord(
                            self.DEFI_COHE['GROUP_NO_INTERF'],
@@ -893,7 +893,7 @@ class SimulatorSPECVector(Simulator):
 
     def build_TimeHistories(self, generator):
         """build Time Histories for iterated median spec case"""
-        DEFI_FONCTION = generator.macro.get_cmd('DEFI_FONCTION')
+        from code_aster.Commands import DEFI_FONCTION
         DSP_args = generator.DSP_args
         if self.TYPE == 'COEF_CORR':
             rho = self.DEFI_COHE['COEF_CORR']
@@ -970,7 +970,7 @@ class SimulatorSPECScalar(Simulator):
     def run(self, generator):
         """Create the result table of functions"""
         macr = generator.macro
-        DEFI_FONCTION = macr.get_cmd('DEFI_FONCTION')
+        from code_aster.Commands import DEFI_FONCTION
         if self.simu_params['SPEC_METHODE'] == 'SPEC_MEDIANE' and 'NB_ITER' in self.simu_params:
             self.build_TimeHistories(generator)
         else:
@@ -1038,7 +1038,7 @@ class SimulatorSPECScalar(Simulator):
     def build_TimeHistories(self, generator):
         """build Time Histories for iterated median spec case"""
         DSP_args = generator.DSP_args
-        DEFI_FONCTION = generator.macro.get_cmd('DEFI_FONCTION')
+        from code_aster.Commands import DEFI_FONCTION
         if 'FREQ_PENTE' in DSP_args:
             fonc_dsp_opt, liste_rv = itersim_SRO(generator,
                         DSP_args['FONC_DSP'], NB_TIRAGE=self.nbtirage,
@@ -1088,7 +1088,7 @@ class SimulatorSPECPhase(Simulator):
     def run(self, generator):
         """build result for phase SPEC class"""
         macr = generator.macro
-        DEFI_FONCTION = macr.get_cmd('DEFI_FONCTION')
+        from code_aster.Commands import DEFI_FONCTION
         self.liste_nom, l2 = get_group_nom_coord(
                            self.DEFI_COHE['GROUP_NO_INTERF'],
                            self.DEFI_COHE['MAILLAGE'])
@@ -1172,7 +1172,7 @@ class SimulatorSPECPhase(Simulator):
 
     def build_TimeHistories(self, generator):
         """build Time Histories for iterated median spec case"""
-        DEFI_FONCTION = generator.macro.get_cmd('DEFI_FONCTION')
+        from code_aster.Commands import DEFI_FONCTION
         DSP_args = generator.DSP_args
         Data_phase = self.DEFI_COHE
         if 'FREQ_PENTE' in DSP_args:
@@ -1227,7 +1227,7 @@ class SimulatorDSPPhase(Simulator):
     def run(self, generator):
         """build result for vector DSP class"""
         macr = generator.macro
-        DEFI_FONCTION = macr.get_cmd('DEFI_FONCTION')
+        from code_aster.Commands import DEFI_FONCTION
         liste_nom, l2 = get_group_nom_coord(
                              self.DEFI_COHE['GROUP_NO_INTERF'],
                              self.DEFI_COHE['MAILLAGE'])

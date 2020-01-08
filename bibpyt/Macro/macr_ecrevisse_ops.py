@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,14 +73,14 @@ def macr_ecrevisse_ops(self, **args):
         info2 = True
 
     # IMPORTATION DE COMMANDES ASTER
-    DEFI_LIST_REEL = self.get_cmd("DEFI_LIST_REEL")
-    THER_LINEAIRE = self.get_cmd("THER_LINEAIRE")
-    PROJ_CHAMP = self.get_cmd("PROJ_CHAMP")
-    DETRUIRE = self.get_cmd("DETRUIRE")
-    AFFE_MATERIAU = self.get_cmd("AFFE_MATERIAU")
-    STAT_NON_LINE = self.get_cmd("STAT_NON_LINE")
-    CO = self.get_cmd("CO")
-    CREA_TABLE = self.get_cmd("CREA_TABLE")
+    from code_aster.Commands import DEFI_LIST_REEL
+    from code_aster.Commands import THER_LINEAIRE
+    from code_aster.Commands import PROJ_CHAMP
+    from code_aster.Commands import DETRUIRE
+    from code_aster.Commands import AFFE_MATERIAU
+    from code_aster.Commands import STAT_NON_LINE
+    from code_aster.Commands import CO
+    from code_aster.Commands import CREA_TABLE
 
 
     # alarme de STAT_NON_LINE si les mot-cles de COMPORTEMENT sont renseignes

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -89,9 +89,9 @@ def test_fichier_ops(self, **kwargs):
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    INFO_EXEC_ASTER = self.get_cmd('INFO_EXEC_ASTER')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    TEST_TABLE = self.get_cmd('TEST_TABLE')
+    from code_aster.Commands import INFO_EXEC_ASTER
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import TEST_TABLE
     #
     is_ok = 0
     TYPE_TEST = kwargs.get("TYPE_TEST")

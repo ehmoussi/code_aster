@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,6 +52,7 @@ import pprint
 from math import pow
 
 import aster_core
+from code_aster import Commands
 
 EXTR = 'extraction'
 FTEMP = 'temp_eval'
@@ -104,7 +105,7 @@ def include_materiau_ops(self,
     from code_aster.Cata.DataStructure import formule
     from Utilitai.Utmess import UTMESS
 
-    DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
+    from code_aster.Commands import DEFI_MATERIAU
 
     fmat = args.get('FICHIER')
     if not fmat:
@@ -133,7 +134,7 @@ def include_materiau_ops(self,
 
     context = build_context(UNITE_LONGUEUR, TEMP_EVAL, dict_prol)
     # ajout des commandes autorisées
-    commandes = dict([(cmd, self.get_cmd(cmd)) for cmd in COMMANDES])
+    commandes = dict([(cmd, getattr(Commands, cmd)) for cmd in COMMANDES])
     context.update(commandes)
     context['_F'] = _F
 

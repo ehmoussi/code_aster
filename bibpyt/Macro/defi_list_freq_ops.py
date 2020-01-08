@@ -25,7 +25,7 @@ def defi_list_freq_ops(self, **args):
     RAFFINEMENT = args.get("RAFFINEMENT")
     if RAFFINEMENT is not None: args.pop("RAFFINEMENT")
 
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
+    from code_aster.Commands import DEFI_LIST_REEL
 
     # 1. Construction de la liste des fréquences "de base"
     motscle = {}

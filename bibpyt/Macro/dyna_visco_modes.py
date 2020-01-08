@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ def dyna_visco_modes(self, TYPE_RESU, TYPE_MODE, list_FREQ, fmax, RESI_RELA,
     from Utilitai.Utmess import UTMESS
     import aster
 
-    EXTR_MODE       = self.get_cmd('EXTR_MODE')
-    DEFI_BASE_MODALE= self.get_cmd('DEFI_BASE_MODALE')
-    DETRUIRE        = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import EXTR_MODE
+    from code_aster.Commands import DEFI_BASE_MODALE
+    from code_aster.Commands import DETRUIRE
 
 
 
@@ -72,7 +72,7 @@ def dyna_visco_modes(self, TYPE_RESU, TYPE_MODE, list_FREQ, fmax, RESI_RELA,
     # PRINTING OF THE EIGENMODES
     UTMESS('I', 'DYNAVISCO_3')
     eigenfreq = aster.GetResu(_modes.getName(), "VARI_ACCES")['FREQ']
-    
+
     if TYPE_MODE in ['REEL','BETA_REEL']:
         UTMESS('I', 'DYNAVISCO_4')
     if TYPE_MODE=='COMPLEXE':

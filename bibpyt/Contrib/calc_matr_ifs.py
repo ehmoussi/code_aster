@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -56,13 +56,13 @@ def calc_matr_ifs_ops(self, **args):
     IMPE_I_OUT = args.get("IMPE_I")
 
 # Commandes utilisées dans la macro
-    DEFI_MATERIAU  = self.get_cmd('DEFI_MATERIAU')
-    AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
-    AFFE_MATERIAU  = self.get_cmd('AFFE_MATERIAU')
-    CALC_MATR_ELEM = self.get_cmd('CALC_MATR_ELEM')
-    NUME_DDL       = self.get_cmd('NUME_DDL')
-    ASSE_MATRICE   = self.get_cmd('ASSE_MATRICE')
-    COMB_MATR_ASSE = self.get_cmd('COMB_MATR_ASSE')
+    from code_aster.Commands import DEFI_MATERIAU
+    from code_aster.Commands import AFFE_CHAR_MECA
+    from code_aster.Commands import AFFE_MATERIAU
+    from code_aster.Commands import CALC_MATR_ELEM
+    from code_aster.Commands import NUME_DDL
+    from code_aster.Commands import ASSE_MATRICE
+    from code_aster.Commands import COMB_MATR_ASSE
 
 # Définition des propriétés matériaux
     _FLUI     = DEFI_MATERIAU(FLUIDE=_F(RHO=RHO_FLUI, CELE_R=C_FLUI,),)

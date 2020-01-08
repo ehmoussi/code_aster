@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -183,7 +183,7 @@ class GeneratorTRANS(Generator):
     def sampling(self):
         """ sampling for trans"""
         from math import ceil, floor
-        CALC_FONCTION = self.macro.get_cmd('CALC_FONCTION')
+        from code_aster.Commands import CALC_FONCTION
         __foint = [None]*3
 
         # verification que les abscisses des différents signaux sont les mêmes
@@ -253,7 +253,7 @@ class GeneratorTRANS(Generator):
     def compute_result(self):
         L_VEC = self.compute_harm_gene()
         __dyge0 = self.create_host_sd()
-        REST_SPEC_TEMP = self.macro.get_cmd('REST_SPEC_TEMP')
+        from code_aster.Commands import REST_SPEC_TEMP
         nbmodt = self.mat_gene_params['NBMODT']
 
         tup_re = []
@@ -595,8 +595,8 @@ class GeneratorSPEC(Generator):
 
 
     def compute_result(self):
-        DEFI_FONCTION = self.macro.get_cmd('DEFI_FONCTION')
-        DEFI_INTE_SPEC = self.macro.get_cmd('DEFI_INTE_SPEC')
+        from code_aster.Commands import DEFI_FONCTION
+        from code_aster.Commands import DEFI_INTE_SPEC
         SPEC = self.compute_harm_gene()
         nbmodt = self.mat_gene_params['NBMODT']
         mcfact = []

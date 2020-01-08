@@ -42,9 +42,9 @@ def cherche_trajet(self, NOM_CMP, NOM_CHAM, dRECHERCHE, __ENDO, __mail, typeCham
     # --------------------------------------------------
     # IMPORT OF ASTER COMMANDS
     #
-    PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
-    CREA_RESU = self.get_cmd('CREA_RESU')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
+    from code_aster.Commands import PROJ_CHAMP
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import CREA_CHAMP
 
     # --------------------------------------------------
     # MESH AND MESH PROPERTIES
@@ -491,9 +491,9 @@ def calcul_ouverture(self, NOM_CHAM, NOM_CMP, dRECHERCHE, __RESUIN, __mail, info
     # --------------------------------------------------
     # IMPORT DES COMMANDES ASTER
     #
-    PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    MODI_REPERE = self.get_cmd('MODI_REPERE')
+    from code_aster.Commands import PROJ_CHAMP
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import MODI_REPERE
 
     # ---------------------------
     # DEVELOPER PARAMETERS
@@ -723,10 +723,10 @@ def post_endo_fiss_ops(self,
     # --------------------------------------------------
     # IMPORT OF ASTER COMMANDS
     #
-    LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    RECU_TABLE = self.get_cmd('RECU_TABLE')
+    from code_aster.Commands import LIRE_MAILLAGE
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import RECU_TABLE
 
     # --------------------------------------------------
     #  INPUT PARAMETERS

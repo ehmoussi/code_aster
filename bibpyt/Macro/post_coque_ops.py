@@ -29,10 +29,10 @@ def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE=None , INST=None
     from Utilitai.Table import Table
 
     # On importe les definitions des commandes a utiliser dans la macro
-    MACR_LIGN_COUPE = self.get_cmd('MACR_LIGN_COUPE')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
+    from code_aster.Commands import MACR_LIGN_COUPE
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import CALC_TABLE
+    from code_aster.Commands import CALC_CHAMP
 
     MasquerAlarme('MODELISA4_9')
 

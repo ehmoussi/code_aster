@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,15 +36,15 @@ def crea_elem_ssd_ops(self, **args):
 
 
     # On importe les definitions des commandes a utiliser dans la macro
-    CALC_MATR_ELEM = self.get_cmd('CALC_MATR_ELEM')
-    NUME_DDL = self.get_cmd('NUME_DDL')
-    ASSE_MATRICE = self.get_cmd('ASSE_MATRICE')
-    EXTR_MODE = self.get_cmd('EXTR_MODE')
-    CALC_MODES = self.get_cmd('CALC_MODES')
-    MODE_STATIQUE = self.get_cmd('MODE_STATIQUE')
-    DEFI_INTERF_DYNA = self.get_cmd('DEFI_INTERF_DYNA')
-    DEFI_BASE_MODALE = self.get_cmd('DEFI_BASE_MODALE')
-    MACR_ELEM_DYNA = self.get_cmd('MACR_ELEM_DYNA')
+    from code_aster.Commands import CALC_MATR_ELEM
+    from code_aster.Commands import NUME_DDL
+    from code_aster.Commands import ASSE_MATRICE
+    from code_aster.Commands import EXTR_MODE
+    from code_aster.Commands import CALC_MODES
+    from code_aster.Commands import MODE_STATIQUE
+    from code_aster.Commands import DEFI_INTERF_DYNA
+    from code_aster.Commands import DEFI_BASE_MODALE
+    from code_aster.Commands import MACR_ELEM_DYNA
 
 
     mSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)

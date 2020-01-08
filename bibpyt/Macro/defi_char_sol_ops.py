@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,20 +39,20 @@ def defi_char_sol_ops(self, TITRE=None, INFO=None, **args):
   #--------------------------------------------------------------------------------
   # On importe les definitions des commandes a utiliser dans la macro
   #
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    CALC_FONCTION = self.get_cmd('CALC_FONCTION')
-    IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    CREA_RESU = self.get_cmd('CREA_RESU')
-    LIRE_FONCTION = self.get_cmd('LIRE_FONCTION')
-    AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
-    AFFE_CHAR_MECA_F = self.get_cmd('AFFE_CHAR_MECA_F')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    LIRE_MAILLAGE=self.get_cmd('LIRE_MAILLAGE')
-    CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
-    MODI_MAILLAGE = self.get_cmd('MODI_MAILLAGE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    DEFI_NAPPE = self.get_cmd('DEFI_NAPPE')
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import CALC_FONCTION
+    from code_aster.Commands import IMPR_FONCTION
+    from code_aster.Commands import CALC_TABLE
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import LIRE_FONCTION
+    from code_aster.Commands import AFFE_CHAR_MECA
+    from code_aster.Commands import AFFE_CHAR_MECA_F
+    from code_aster.Commands import DEFI_GROUP
+    from code_aster.Commands import LIRE_MAILLAGE
+    from code_aster.Commands import CREA_MAILLAGE
+    from code_aster.Commands import MODI_MAILLAGE
+    from code_aster.Commands import DETRUIRE
+    from code_aster.Commands import DEFI_NAPPE
 
     args = _F(args)
     modele = args['MODELE']

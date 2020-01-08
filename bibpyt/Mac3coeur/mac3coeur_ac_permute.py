@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ def mac3coeur_ac_permute(self, **args):
     from code_aster.Cata.Syntax import _F
 
     # On importe les definitions des commandes a utiliser dans la macro
-    CREA_RESU = self.get_cmd('CREA_RESU')
+    from code_aster.Commands import CREA_RESU
 
     POS_INIT = self['POS_INIT']
     POS_FIN = self['POS_FIN']

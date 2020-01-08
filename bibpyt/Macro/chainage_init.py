@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,8 +27,8 @@ def CHAINAGE_INIT(self, args, motscles):
     MODELE_HYDR = args['MODELE_HYDR']
 
     # On importe les definitions des commandes a utiliser dans la macro
-    CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
-    PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
+    from code_aster.Commands import CREA_MAILLAGE
+    from code_aster.Commands import PROJ_CHAMP
 
     MATR_MH = PROJ_CHAMP(METHODE='COLLOCATION', MODELE_1=MODELE_MECA,
                          MODELE_2=MODELE_HYDR, PROJECTION='NON', **motscles)

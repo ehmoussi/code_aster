@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,12 +32,12 @@ def macro_matr_ajou_ops(
     from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
 
     # On importe les definitions des commandes a utiliser dans la macro
-    DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
-    AFFE_MATERIAU = self.get_cmd('AFFE_MATERIAU')
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
-    AFFE_CHAR_THER = self.get_cmd('AFFE_CHAR_THER')
-    CALC_MATR_AJOU = self.get_cmd('CALC_MATR_AJOU')
-    THER_LINEAIRE = self.get_cmd('THER_LINEAIRE')
+    from code_aster.Commands import DEFI_MATERIAU
+    from code_aster.Commands import AFFE_MATERIAU
+    from code_aster.Commands import AFFE_MODELE
+    from code_aster.Commands import AFFE_CHAR_THER
+    from code_aster.Commands import CALC_MATR_AJOU
+    from code_aster.Commands import THER_LINEAIRE
     from code_aster.Commands import CALC_FORC_AJOU
 
     if len(FLUIDE) == 1:

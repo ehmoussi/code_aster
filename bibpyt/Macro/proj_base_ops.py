@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ def proj_base_ops(self, **args):
     # On importe les definitions des commandes a utiliser dans la macro
     # et  creation du nume_ddl_gene
     numgen = NUME_DDL_GENE
-    NUME_DDL_GENE = self.get_cmd('NUME_DDL_GENE')
+    from code_aster.Commands import NUME_DDL_GENE
     if numgen is None:
         _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
     elif isinstance(numgen, GeneralizedDOFNumbering):
@@ -47,8 +47,8 @@ def proj_base_ops(self, **args):
     else:
         assert( False )
 
-    PROJ_MATR_BASE = self.get_cmd('PROJ_MATR_BASE')
-    PROJ_VECT_BASE = self.get_cmd('PROJ_VECT_BASE')
+    from code_aster.Commands import PROJ_MATR_BASE
+    from code_aster.Commands import PROJ_VECT_BASE
     from Contrib.proj_resu_base import PROJ_RESU_BASE
 
 

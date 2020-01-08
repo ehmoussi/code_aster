@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,12 +29,12 @@ def post_bordet_ops(self, RESULTAT, PARAM, TEMP, TOUT=None, GROUP_MA=None,
     from Utilitai.Utmess import UTMESS
 
     # On importe les definitions des commandes a utiliser dans la macro
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    CALC_CHAM_ELEM = self.get_cmd('CALC_CHAM_ELEM')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    FORMULE = self.get_cmd('FORMULE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import CALC_CHAM_ELEM
+    from code_aster.Commands import CALC_CHAMP
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import FORMULE
+    from code_aster.Commands import CALC_TABLE
     #
     # Recuperation du modele a partir du resultat
     model = RESULTAT.getModel()

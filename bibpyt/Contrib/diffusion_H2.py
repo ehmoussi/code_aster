@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -86,9 +86,9 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
     INFO = args.get('INFO')
 
     # On importe les definitions des commandes a utiliser dans la macro
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
-    CALC_CHAM_ELEM = self.get_cmd('CALC_CHAM_ELEM')
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import CALC_CHAMP
+    from code_aster.Commands import CALC_CHAM_ELEM
 
     # Recuperation du modele a partir du resultat
     moth = RESU_H2.getModel()
@@ -301,9 +301,9 @@ def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, 
     INFO = args.get('INFO')
 
    # On importe les definitions des commandes a utiliser dans la macro
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    AFFE_CHAR_THER = self.get_cmd('AFFE_CHAR_THER')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import AFFE_CHAR_THER
+    from code_aster.Commands import CALC_CHAMP
 
     dt = TFIN - TINIT
 
@@ -416,8 +416,8 @@ def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0
     INFO = args.get('INFO')
 
    # On importe les definitions des commandes a utiliser dans la macro
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import CALC_CHAMP
 
    # Recuperation du modele a partir du resultat
     moth = RESU_H2.getModel()

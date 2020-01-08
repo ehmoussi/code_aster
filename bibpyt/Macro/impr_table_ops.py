@@ -39,8 +39,8 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    RECU_FONCTION = self.get_cmd('RECU_FONCTION')
+    from code_aster.Commands import DETRUIRE
+    from code_aster.Commands import RECU_FONCTION
 
     #----------------------------------------------
     # 0. Traitement des arguments, initialisations

@@ -55,12 +55,12 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
 
     # On importe les definitions des commandes a utiliser dans la macro
     from Modal.mode_iter_simult import MODE_ITER_SIMULT
-    EXTR_MODE = self.get_cmd('EXTR_MODE')
-    INFO_MODE = self.get_cmd('INFO_MODE')
-    MODI_MODELE = self.get_cmd('MODI_MODELE')
-    NUME_DDL = self.get_cmd('NUME_DDL')
+    from code_aster.Commands import EXTR_MODE
+    from code_aster.Commands import INFO_MODE
+    from code_aster.Commands import MODI_MODELE
+    from code_aster.Commands import NUME_DDL
     if (dbg):
-        IMPR_CO = self.get_cmd('IMPR_CO')
+        from code_aster.Commands import IMPR_CO
 
     # Recuperation parametres solveur lineaire
     dSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)

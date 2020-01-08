@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,19 +31,19 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
     from Utilitai.Utmess import UTMESS
     from numpy import array
 
-    DEFI_BASE_MODALE= self.get_cmd('DEFI_BASE_MODALE')
-    MODE_STATIQUE   = self.get_cmd('MODE_STATIQUE')
-    NUME_DDL_GENE   = self.get_cmd('NUME_DDL_GENE')
-    CALC_VECT_ELEM  = self.get_cmd('CALC_VECT_ELEM')
-    ASSE_VECTEUR    = self.get_cmd('ASSE_VECTEUR')
-    PROJ_MATR_BASE  = self.get_cmd('PROJ_MATR_BASE')
-    PROJ_VECT_BASE  = self.get_cmd('PROJ_VECT_BASE')
-    DYNA_VIBRA      = self.get_cmd('DYNA_VIBRA')
-    REST_GENE_PHYS  = self.get_cmd('REST_GENE_PHYS')
-    COMB_MATR_ASSE  = self.get_cmd('COMB_MATR_ASSE')
-    CREA_CHAMP      = self.get_cmd('CREA_CHAMP')
-    CREA_RESU       = self.get_cmd('CREA_RESU')
-    DETRUIRE        = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import DEFI_BASE_MODALE
+    from code_aster.Commands import MODE_STATIQUE
+    from code_aster.Commands import NUME_DDL_GENE
+    from code_aster.Commands import CALC_VECT_ELEM
+    from code_aster.Commands import ASSE_VECTEUR
+    from code_aster.Commands import PROJ_MATR_BASE
+    from code_aster.Commands import PROJ_VECT_BASE
+    from code_aster.Commands import DYNA_VIBRA
+    from code_aster.Commands import REST_GENE_PHYS
+    from code_aster.Commands import COMB_MATR_ASSE
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import DETRUIRE
 
 
     if args['NOM_CHAM'] is not None:

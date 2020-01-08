@@ -219,9 +219,9 @@ class CalcFonctionOper(object):
     def build_result(self):
         """Create the result function"""
         macr = self.macro
-        DEFI_FONCTION = macr.get_cmd('DEFI_FONCTION')
-        IMPR_FONCTION = macr.get_cmd('IMPR_FONCTION')
-        DEFI_NAPPE = macr.get_cmd('DEFI_NAPPE')
+        from code_aster.Commands import DEFI_FONCTION
+        from code_aster.Commands import IMPR_FONCTION
+        from code_aster.Commands import DEFI_NAPPE
         # common keywords to DEFI_FONCTION & DEFI_NAPPE
         para = self.resu.para
         for p in ('NOM_PARA', 'NOM_RESU', 'PROL_DROITE', 'PROL_GAUCHE',

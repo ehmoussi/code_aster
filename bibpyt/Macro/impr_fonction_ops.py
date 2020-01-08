@@ -44,8 +44,8 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    CALC_FONC_INTERP = self.get_cmd('CALC_FONC_INTERP')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
+    from code_aster.Commands import CALC_FONC_INTERP
+    from code_aster.Commands import DEFI_LIST_REEL
 
     #----------------------------------------------
     # 0. Traitement des arguments, initialisations
