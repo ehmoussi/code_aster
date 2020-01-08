@@ -51,8 +51,13 @@ import os.path as osp
 import pprint
 from math import pow
 
+import aster
 import aster_core
-from code_aster import Commands
+from . import Commands
+from ..Cata.DataStructure import formule
+from ..Cata.Syntax import _F
+from ..Commands import DEFI_MATERIAU
+from Utilitai.Utmess import UTMESS
 
 EXTR = 'extraction'
 FTEMP = 'temp_eval'
@@ -100,13 +105,6 @@ def include_materiau_ops(self,
                          EXTRACTION=None, UNITE_LONGUEUR=None, INFO=None,
                          PROL_GAUCHE=None, PROL_DROITE=None, **args):
     """Macro INCLUDE_MATERIAU"""
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from code_aster.Cata.DataStructure import formule
-    from Utilitai.Utmess import UTMESS
-
-    from code_aster.Commands import DEFI_MATERIAU
-
     fmat = args.get('FICHIER')
     if not fmat:
         bnmat = ''.join([args['NOM_AFNOR'], '_', args['TYPE_MODELE'],

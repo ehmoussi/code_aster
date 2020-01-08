@@ -33,16 +33,23 @@ passed during the initialization to the
 :py:class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter`.
 """
 
+# for 'ptvsd'
+# aslint: disable=C4008
+
+
 import aster
 import aster_core
 import libaster
 from Comportement import catalc
+from Utilitai.Utmess import MessageLog
 
+from ..Cata.Syntax import tr
 from ..Cata.SyntaxUtils import remove_none
 from ..Helpers import LogicalUnitFile, Serializer, loadObjects
 from ..Supervis import CommandSyntax
 from ..Supervis.ExecuteCommand import ExecuteCommand
 from ..Utilities import ExecutionParameter, Options, logger
+from ..Utilities.i18n import localization
 
 
 class ExecutionStarter(object):
@@ -113,14 +120,10 @@ class Starter(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        from Utilitai.Utmess import MessageLog
-
         if keywords.get('IMPR_MACRO') == 'OUI':
             ExecutionParameter().enable(Options.ShowChildCmd)
 
         if keywords.get('LANG'):
-            from ..Utilities.i18n import localization
-            from ..Cata.Syntax import tr
             translation = localization.translation(keywords['LANG'])
             tr.set_translator(translation.gettext)
 

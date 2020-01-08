@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os.path as osp
+from glob import glob
+
+from code_aster.Cata.SyntaxObjects import Command
+
+
 def _init_command(ctx, debug):
     """Import de toutes les commandes et les copie dans le contexte"""
-    import os.path as osp
-    from glob import glob
-    from code_aster.Cata.SyntaxObjects import Command
     pkgdir = osp.dirname(__file__)
     pkg = osp.basename(pkgdir)
     l_mod = [osp.splitext(osp.basename(modname))[0]

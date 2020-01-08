@@ -19,11 +19,14 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Material, GeneralMaterialBehaviour, Table, Function
-from ..Objects import Surface, Formula, MaterialBehaviour, DataStructure
-from code_aster.Cata.Language.SyntaxObjects import _F
-from ..Supervis.ExecuteCommand import ExecuteCommand
 import numpy
+
+from .. import Objects as all_types
+from ..Cata.Language.SyntaxObjects import _F
+from ..Objects import (DataStructure, Formula, Function,
+                       GeneralMaterialBehaviour, Material, MaterialBehaviour,
+                       Surface, Table)
+from ..Supervis.ExecuteCommand import ExecuteCommand
 
 
 class MaterialDefinition(ExecuteCommand):
@@ -203,9 +206,8 @@ class MaterialDefinition(ExecuteCommand):
         Returns:
             dict: Behaviour classes by keyword in DEFI_MATERIAU.
         """
-        import code_aster.Objects as all_types
         objects = {}
-        for name, obj in list(all_types.__dict__.items()):
+        for _, obj in list(all_types.__dict__.items()):
             if not isinstance(obj, type):
                 continue
             if not issubclass(obj, GeneralMaterialBehaviour):
