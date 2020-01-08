@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,14 +42,14 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
   ier=0
 
   # On importe les definitions des commandes a utiliser dans la macro
-  DEFI_CONSTANTE   = self.get_cmd('DEFI_CONSTANTE')
-  DEFI_FONCTION    = self.get_cmd('DEFI_FONCTION')
-  LIRE_CHAMP       = self.get_cmd('LIRE_CHAMP')
-  CREA_CHAMP       = self.get_cmd('CREA_CHAMP')
-  DEFI_LIST_REEL   = self.get_cmd('DEFI_LIST_REEL')
-  DEFI_LIST_INST   = self.get_cmd('DEFI_LIST_INST')
-  STAT_NON_LINE    = self.get_cmd('STAT_NON_LINE')
-  IMPR_RESU        = self.get_cmd('IMPR_RESU')
+  from code_aster.Commands import DEFI_CONSTANTE
+  from code_aster.Commands import DEFI_FONCTION
+  from code_aster.Commands import LIRE_CHAMP
+  from code_aster.Commands import CREA_CHAMP
+  from code_aster.Commands import DEFI_LIST_REEL
+  from code_aster.Commands import DEFI_LIST_INST
+  from code_aster.Commands import STAT_NON_LINE
+  from code_aster.Commands import IMPR_RESU
 
   # On se prepare a manipuler le mot-cle facteur SOLVEUR
   assert len(SOLVEUR) == 1

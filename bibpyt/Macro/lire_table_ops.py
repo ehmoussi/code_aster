@@ -36,7 +36,7 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, **args):
     INFO = args.get('INFO')
 
     # On importe les definitions des commandes a utiliser dans la macro
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
+    from code_aster.Commands import CREA_TABLE
 
     # Lecture de la table dans un fichier d unité logique UNITE
     nomfich = LogicalUnitFile.filename_from_unit(UNITE)

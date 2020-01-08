@@ -244,8 +244,8 @@ def lire_fonction_ops(self, UNITE, NOM_PARA, FORMAT=None, TYPE=None, SEPAR=None,
         mc_DEFI_FONCTION = args['DEFI_FONCTION']
 
     # On importe les definitions des commandes a utiliser dans la macro
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    DEFI_NAPPE = self.get_cmd('DEFI_NAPPE')
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import DEFI_NAPPE
     assert FORMAT in ('LIBRE', 'NUMPY')
 
     # Lecture de la fonction dans un fichier d unité logique UNITE

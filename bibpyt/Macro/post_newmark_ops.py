@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,16 +35,16 @@ def post_newmark_ops(self, **args):
   import numpy as np
 
   ### On importe les definitions des commandes a utiliser dans la macro
-  DEFI_GROUP     = self.get_cmd('DEFI_GROUP')
-  POST_ELEM      = self.get_cmd('POST_ELEM')
-  MACR_LIGN_COUPE        = self.get_cmd('MACR_LIGN_COUPE')
-  DEFI_FONCTION        = self.get_cmd('DEFI_FONCTION')
-  CALC_FONCTION        = self.get_cmd('CALC_FONCTION')
-  CALC_CHAMP        = self.get_cmd('CALC_CHAMP')
-  CREA_TABLE        = self.get_cmd('CREA_TABLE')
-  CALC_TABLE        = self.get_cmd('CALC_TABLE')
-  PROJ_CHAMP        = self.get_cmd('PROJ_CHAMP')
-  POST_RELEVE_T        = self.get_cmd('POST_RELEVE_T')
+  from code_aster.Commands import DEFI_GROUP
+  from code_aster.Commands import POST_ELEM
+  from code_aster.Commands import MACR_LIGN_COUPE
+  from code_aster.Commands import DEFI_FONCTION
+  from code_aster.Commands import CALC_FONCTION
+  from code_aster.Commands import CALC_CHAMP
+  from code_aster.Commands import CREA_TABLE
+  from code_aster.Commands import CALC_TABLE
+  from code_aster.Commands import PROJ_CHAMP
+  from code_aster.Commands import POST_RELEVE_T
 
  ### RECUPERATION DU RESULTAT
   args = _F(args)

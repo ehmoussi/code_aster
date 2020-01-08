@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -478,7 +478,7 @@ def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, BETON_G
     """
     C'est : un parmi : ACIER  MAZARS  ENDO_FISS_EXP, BETON_GLRC
     """
-    DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
+    from code_aster.Commands import DEFI_MATERIAU
 
     #
     if MAZARS is not None:

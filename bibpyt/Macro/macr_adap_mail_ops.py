@@ -1187,11 +1187,11 @@ def macr_adap_mail_ops(self,
 #
 # 1.2. ==> Initialisations de parametres Aster
 #
-    DEFI_FICHIER = self.get_cmd("DEFI_FICHIER")
-    IMPR_RESU = self.get_cmd("IMPR_RESU")
-    EXEC_LOGICIEL = self.get_cmd("EXEC_LOGICIEL")
-    LIRE_MAILLAGE = self.get_cmd("LIRE_MAILLAGE")
-    LIRE_CHAMP = self.get_cmd("LIRE_CHAMP")
+    from code_aster.Commands import DEFI_FICHIER
+    from code_aster.Commands import IMPR_RESU
+    from code_aster.Commands import EXEC_LOGICIEL
+    from code_aster.Commands import LIRE_MAILLAGE
+    from code_aster.Commands import LIRE_CHAMP
 #
     Rep_Calc_ASTER = os.getcwd()
     if INFO >= 3:

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -126,15 +126,15 @@ def impr_acce_seisme_ops(self, **args):
     RATIO_HV = args.get("RATIO_HV")
 
     # On importe les definitions des commandes a utiliser dans la macro
-    INFO_FONCTION = self.get_cmd('INFO_FONCTION')
-    RECU_FONCTION = self.get_cmd('RECU_FONCTION')
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    CALC_FONCTION = self.get_cmd('CALC_FONCTION')
-    IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
-    DEFI_FICHIER = self.get_cmd('DEFI_FICHIER')
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
+    from code_aster.Commands import INFO_FONCTION
+    from code_aster.Commands import RECU_FONCTION
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import CALC_FONCTION
+    from code_aster.Commands import IMPR_FONCTION
+    from code_aster.Commands import DEFI_FICHIER
+    from code_aster.Commands import DETRUIRE
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import IMPR_TABLE
 
     # Chemin du repertoire REPE_OUT de l'execution courante d'Aster
     REPE_OUT = os.path.join(os.getcwd(), 'REPE_OUT')

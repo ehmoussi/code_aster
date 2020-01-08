@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 from code_aster.Cata.SyntaxUtils import remove_none
 
 def create_nume(self, numeddl_status, option, numeddl, matr_rigi, CHARGE, INFO, MODELE):
-    NUME_DDL = self.get_cmd('NUME_DDL')
+    from code_aster.Commands import NUME_DDL
     if numeddl_status == 'To_Read':
         num = numeddl
     elif numeddl_status == 'To_Create':
@@ -56,7 +56,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
     info = INFO
     # On importe la definition de la commande
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    NUME_DDL = self.get_cmd('NUME_DDL')
+    from code_aster.Commands import NUME_DDL
 
     if numeddl in self.sdprods:
         # Si le concept numeddl est dans self.sdprods
@@ -82,8 +82,8 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
     if MATR_ASSE is not None:
         # import des commandes a utiliser dans la macro pour l'assemblage des
         # matrices
-        CALC_MATR_ELEM = self.get_cmd('CALC_MATR_ELEM')
-        ASSE_MATRICE = self.get_cmd('ASSE_MATRICE')
+        from code_aster.Commands import CALC_MATR_ELEM
+        from code_aster.Commands import ASSE_MATRICE
         # decalage eventuel en premiere position dans la liste de l occurence de MATR_ASSE contenant
         # l option de rigidite
         try:
@@ -169,8 +169,8 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
     if VECT_ASSE is not None:
         # import des commandes a utiliser dans la macro pour l'assemblage des
         # vecteurs
-        CALC_VECT_ELEM = self.get_cmd('CALC_VECT_ELEM')
-        ASSE_VECTEUR = self.get_cmd('ASSE_VECTEUR')
+        from code_aster.Commands import CALC_VECT_ELEM
+        from code_aster.Commands import ASSE_VECTEUR
 
         for v in VECT_ASSE:
             option = v['OPTION']

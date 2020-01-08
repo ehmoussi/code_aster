@@ -339,8 +339,8 @@ def test_fonction_ops(self, **args):
     from SD.sd_fonction import sd_fonction
     from Cata_Utils.t_fonction import t_fonction_c
 
-    CALC_FONCTION = self.get_cmd('CALC_FONCTION')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import CALC_FONCTION
+    from code_aster.Commands import DETRUIRE
 
     VALEUR = args.get('VALEUR')
     ATTRIBUT = args.get('ATTRIBUT')

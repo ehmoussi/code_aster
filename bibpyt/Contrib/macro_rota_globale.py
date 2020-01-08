@@ -42,9 +42,9 @@ def macr_rota_globale_ops(self, **args):
     GROUP_NO_ORIG = args["GROUP_NO_ORIG"]
     GROUP_NO_EXTR = args["GROUP_NO_EXTR"]
     # On importe les definitions des commandes a utiliser dans la macro
-    POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
+    from code_aster.Commands import POST_RELEVE_T
+    from code_aster.Commands import DEFI_LIST_REEL
+    from code_aster.Commands import DEFI_FONCTION
     # Commandes de la macro
     __ROTAB = POST_RELEVE_T(ACTION=_F(INTITULE='__ROTAB',
                                       GROUP_NO=GROUP_NO_ORIG,

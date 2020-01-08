@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,9 +36,9 @@ def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
     from Utilitai.Table import Table
 
     # On importe les definitions des commandes a utiliser dans la macro
-    CALC_MODES = self.get_cmd('CALC_MODES')
-    COMB_MATR_ASSE = self.get_cmd('COMB_MATR_ASSE')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
+    from code_aster.Commands import CALC_MODES
+    from code_aster.Commands import COMB_MATR_ASSE
+    from code_aster.Commands import CREA_TABLE
 
     motscit = {}
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,16 +43,16 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
     # On importe les definitions des commandes a utiliser dans la macro
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    POST_ELEM = self.get_cmd('POST_ELEM')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
-    CREA_RESU = self.get_cmd('CREA_RESU')
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
-    AFFE_MATERIAU = self.get_cmd('AFFE_MATERIAU')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import POST_ELEM
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import POST_RELEVE_T
+    from code_aster.Commands import DEFI_GROUP
+    from code_aster.Commands import DEFI_MATERIAU
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import AFFE_MODELE
+    from code_aster.Commands import AFFE_MATERIAU
+    from code_aster.Commands import IMPR_TABLE
 
     # on recupere le concept maillage
     MAILLAGE = RESULTAT.getModel().getMesh()

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,17 +40,17 @@ def calc_bt_ops(self,
 
     """
     # Code_ASTER command definitions
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
-    AFFE_CARA_ELEM = self.get_cmd('AFFE_CARA_ELEM')
-    AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
-    MECA_STATIQUE = self.get_cmd('MECA_STATIQUE')
-    AFFE_MATERIAU = self.get_cmd('AFFE_MATERIAU')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    CREA_CHAMP =  self.get_cmd('CREA_CHAMP')
-    LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import DEFI_GROUP
+    from code_aster.Commands import AFFE_MODELE
+    from code_aster.Commands import AFFE_CARA_ELEM
+    from code_aster.Commands import AFFE_CHAR_MECA
+    from code_aster.Commands import MECA_STATIQUE
+    from code_aster.Commands import AFFE_MATERIAU
+    from code_aster.Commands import CALC_CHAMP
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import LIRE_MAILLAGE
+    from code_aster.Commands import DETRUIRE
 
     RESU_BT = args.get("RESU_BT")
     RESULTAT = args.get("RESULTAT")

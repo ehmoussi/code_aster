@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,9 +26,9 @@ def asse_elem_ssd_ops(self, RESU_ASSE_SSD, SOUS_STRUC, LIAISON, VERIF, **args):
     from code_aster.Cata.Syntax import _F
 
     # On importe les definitions des commandes a utiliser dans la macro
-    DEFI_MODELE_GENE = self.get_cmd('DEFI_MODELE_GENE')
-    NUME_DDL_GENE = self.get_cmd('NUME_DDL_GENE')
-    ASSE_MATR_GENE = self.get_cmd('ASSE_MATR_GENE')
+    from code_aster.Commands import DEFI_MODELE_GENE
+    from code_aster.Commands import NUME_DDL_GENE
+    from code_aster.Commands import ASSE_MATR_GENE
 
     modl_gene = {}
     mcfact = []

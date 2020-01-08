@@ -58,7 +58,7 @@ def macr_ecre_calc_ops(self, **args):
     defaut = '00'
 
     # IMPORTATION DE COMMANDES ASTER
-    CREA_TABLE = self.get_cmd("CREA_TABLE")
+    from code_aster.Commands import CREA_TABLE
 
     FISSURE = _F(FISSURE)
     ECOULEMENT = _F(ECOULEMENT)

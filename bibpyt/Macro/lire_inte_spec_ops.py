@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,8 +35,8 @@ def lire_inte_spec_ops(self,
     from Utilitai.Utmess import UTMESS
     from Utilitai.UniteAster import UniteAster
     # On importe les definitions des commandes a utiliser dans la macro
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    DEFI_INTE_SPEC = self.get_cmd('DEFI_INTE_SPEC')
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import DEFI_INTE_SPEC
 
     # Lecture de la fonction dans un fichier d unité logique UNITE
     UL = UniteAster()

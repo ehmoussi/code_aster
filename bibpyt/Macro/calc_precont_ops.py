@@ -61,15 +61,15 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
     # On importe les definitions des commandes a utiliser dans la macro
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    DEFI_LIST_INST = self.get_cmd('DEFI_LIST_INST')
-    STAT_NON_LINE = self.get_cmd('STAT_NON_LINE')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    RECU_TABLE = self.get_cmd('RECU_TABLE')
+    from code_aster.Commands import AFFE_MODELE
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import AFFE_CHAR_MECA
+    from code_aster.Commands import DEFI_LIST_REEL
+    from code_aster.Commands import DEFI_LIST_INST
+    from code_aster.Commands import STAT_NON_LINE
+    from code_aster.Commands import CALC_CHAMP
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import RECU_TABLE
 
     # alarme de STAT_NON_LINE si les mot-cles de COMPORTEMENT sont renseignes
     # a tort

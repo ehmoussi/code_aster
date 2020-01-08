@@ -29,10 +29,10 @@ def calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression):
 
     # import the definitions of the commands to use in the macro-command
     # The name of the variable has to be the name of the command
-    NORM_MODE = self.get_cmd('NORM_MODE')
-    IMPR_RESU = self.get_cmd('IMPR_RESU')
-    EXTR_MODE = self.get_cmd('EXTR_MODE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import NORM_MODE
+    from code_aster.Commands import IMPR_RESU
+    from code_aster.Commands import EXTR_MODE
+    from code_aster.Commands import DETRUIRE
 
     motscles = {}
 

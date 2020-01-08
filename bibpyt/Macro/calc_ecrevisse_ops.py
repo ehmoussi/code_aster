@@ -162,17 +162,17 @@ def calc_ecrevisse_ops(self, **args):
         info2 = True
 
     # IMPORTATION DE COMMANDES ASTER
-    DEFI_GROUP = self.get_cmd("DEFI_GROUP")
-    POST_RELEVE_T = self.get_cmd("POST_RELEVE_T")
-    IMPR_TABLE = self.get_cmd("IMPR_TABLE")
-    DETRUIRE = self.get_cmd("DETRUIRE")
-    DEFI_FONCTION = self.get_cmd("DEFI_FONCTION")
-    CREA_TABLE = self.get_cmd("CREA_TABLE")
-    IMPR_TABLE = self.get_cmd("IMPR_TABLE")
-    CO = self.get_cmd("CO")
-    AFFE_CHAR_THER_F = self.get_cmd("AFFE_CHAR_THER_F")
-    AFFE_CHAR_MECA_F = self.get_cmd("AFFE_CHAR_MECA_F")
-    DEFI_FICHIER = self.get_cmd("DEFI_FICHIER")
+    from code_aster.Commands import DEFI_GROUP
+    from code_aster.Commands import POST_RELEVE_T
+    from code_aster.Commands import IMPR_TABLE
+    from code_aster.Commands import DETRUIRE
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import IMPR_TABLE
+    from code_aster.Commands import CO
+    from code_aster.Commands import AFFE_CHAR_THER_F
+    from code_aster.Commands import AFFE_CHAR_MECA_F
+    from code_aster.Commands import DEFI_FICHIER
     from Contrib.macr_ecre_calc import MACR_ECRE_CALC
 
     # RECUPERATION DES MOTS-CLES FACTEURS

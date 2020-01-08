@@ -33,8 +33,8 @@ def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,
     from code_aster.Cata.Syntax import _F
 
     # On importe les definitions des commandes a utiliser dans la macro
-    CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
-    CREA_RESU = self.get_cmd('CREA_RESU')
+    from code_aster.Commands import CREA_MAILLAGE
+    from code_aster.Commands import CREA_RESU
 
     # Appel à CREA_MAILLAGE :
     motscles = {}

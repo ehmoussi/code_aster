@@ -33,8 +33,8 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
-    POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
+    from code_aster.Commands import POST_RELEVE_T
+    from code_aster.Commands import DEFI_GROUP
 
     motscles = {}
     if m['NOM_CMP'] is not None:
@@ -125,7 +125,7 @@ def crea_resu_local(self, dime, NOM_CHAM, m, resin, mail, nomgrma):
     from math import pi, sqrt, atan2, asin
     import aster
     from code_aster.Cata.Syntax import _F
-    MODI_REPERE = self.get_cmd('MODI_REPERE')
+    from code_aster.Commands import MODI_REPERE
 
     epsi = 0.00000001
 
@@ -699,13 +699,13 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
         UNITE_MAILLAGE = logical_unit.unit
 
     # On importe les definitions des commandes a utiliser dans la macro
-    LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
-    POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    CREA_RESU = self.get_cmd('CREA_RESU')
-    COPIER = self.get_cmd('COPIER')
+    from code_aster.Commands import LIRE_MAILLAGE
+    from code_aster.Commands import DEFI_GROUP
+    from code_aster.Commands import PROJ_CHAMP
+    from code_aster.Commands import POST_RELEVE_T
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import COPIER
 
     #
     MasquerAlarme('ALGORITH12_43')

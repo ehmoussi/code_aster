@@ -155,41 +155,41 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
   #--------------------------------------------------------------------------------
   # On importe les definitions des commandes a utiliser dans la macro
   #
-    CREA_TABLE = self.get_cmd("CREA_TABLE")
-    DYNA_VIBRA = self.get_cmd('DYNA_VIBRA')
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    REST_SPEC_TEMP = self.get_cmd('REST_SPEC_TEMP')
-    DEFI_INTE_SPEC = self.get_cmd('DEFI_INTE_SPEC')
-    GENE_FONC_ALEA = self.get_cmd('GENE_FONC_ALEA')
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    CALC_FONCTION = self.get_cmd('CALC_FONCTION')
-    IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    LIRE_FONCTION = self.get_cmd('LIRE_FONCTION')
-    RECU_FONCTION = self.get_cmd('RECU_FONCTION')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
-    AFFE_CHAR_MECA_F = self.get_cmd('AFFE_CHAR_MECA_F')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
-    MODI_MAILLAGE = self.get_cmd('MODI_MAILLAGE')
-    # PRE_GIBI=self.get_cmd('PRE_GIBI')
-    IMPR_RESU=self.get_cmd('IMPR_RESU')
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
-    NUME_DDL = self.get_cmd('NUME_DDL')
-    CALC_MATR_ELEM = self.get_cmd('CALC_MATR_ELEM')
-    ASSE_MATRICE = self.get_cmd('ASSE_MATRICE')
-    CREA_RESU = self.get_cmd('CREA_RESU')
-    CALC_CHAR_SEISME = self.get_cmd('CALC_CHAR_SEISME')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
-    CALC_FONC_INTERP = self.get_cmd('CALC_FONC_INTERP')
-    FORMULE = self.get_cmd('FORMULE')
-    AFFE_MATERIAU = self.get_cmd('AFFE_MATERIAU')
-    DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
-    DEFI_NAPPE = self.get_cmd('DEFI_NAPPE')
-    AFFE_CARA_ELEM = self.get_cmd('AFFE_CARA_ELEM')
-    POST_DYNA_ALEA = self.get_cmd('POST_DYNA_ALEA')
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import DYNA_VIBRA
+    from code_aster.Commands import DETRUIRE
+    from code_aster.Commands import REST_SPEC_TEMP
+    from code_aster.Commands import DEFI_INTE_SPEC
+    from code_aster.Commands import GENE_FONC_ALEA
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import CALC_FONCTION
+    from code_aster.Commands import IMPR_FONCTION
+    from code_aster.Commands import IMPR_TABLE
+    from code_aster.Commands import CALC_TABLE
+    from code_aster.Commands import LIRE_FONCTION
+    from code_aster.Commands import RECU_FONCTION
+    from code_aster.Commands import DEFI_LIST_REEL
+    from code_aster.Commands import AFFE_CHAR_MECA
+    from code_aster.Commands import AFFE_CHAR_MECA_F
+    from code_aster.Commands import DEFI_GROUP
+    from code_aster.Commands import CREA_MAILLAGE
+    from code_aster.Commands import MODI_MAILLAGE
+    from code_aster.Commands import # PRE_GIBI
+    from code_aster.Commands import IMPR_RESU
+    from code_aster.Commands import AFFE_MODELE
+    from code_aster.Commands import NUME_DDL
+    from code_aster.Commands import CALC_MATR_ELEM
+    from code_aster.Commands import ASSE_MATRICE
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import CALC_CHAR_SEISME
+    from code_aster.Commands import CALC_CHAMP
+    from code_aster.Commands import CALC_FONC_INTERP
+    from code_aster.Commands import FORMULE
+    from code_aster.Commands import AFFE_MATERIAU
+    from code_aster.Commands import DEFI_MATERIAU
+    from code_aster.Commands import DEFI_NAPPE
+    from code_aster.Commands import AFFE_CARA_ELEM
+    from code_aster.Commands import POST_DYNA_ALEA
 
 # calculs de deconvolution ou reconvolution sur une colonne de sol en 2D
 # avec approche harmonique lineaire equivalente (courbes G et D gamma)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,9 +28,9 @@ def post_liquefaction_ops(self,AXE,RESULTAT,CRITERE,**args):
     from code_aster.Cata.Syntax import _F
 
   ### On importe les definitions des commandes a utiliser dans la macro
-    CREA_CHAMP     = self.get_cmd('CREA_CHAMP')
-    CREA_RESU      = self.get_cmd('CREA_RESU')
-    FORMULE        = self.get_cmd('FORMULE')
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import FORMULE
 
  ### RECUPERATION DU MODELE A PARTIR DU RESULTAT
     if CRITERE != 'P_SIGM' :

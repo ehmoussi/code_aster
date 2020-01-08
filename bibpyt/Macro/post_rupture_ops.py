@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -295,12 +295,12 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    FORMULE = self.get_cmd('FORMULE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    RECU_FONCTION = self.get_cmd('RECU_FONCTION')
-    POST_FATIGUE = self.get_cmd('POST_FATIGUE')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
+    from code_aster.Commands import FORMULE
+    from code_aster.Commands import CALC_TABLE
+    from code_aster.Commands import DETRUIRE
+    from code_aster.Commands import RECU_FONCTION
+    from code_aster.Commands import POST_FATIGUE
+    from code_aster.Commands import CREA_TABLE
 
     # parametre
     eps = 1e-15

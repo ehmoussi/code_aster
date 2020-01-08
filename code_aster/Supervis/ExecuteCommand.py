@@ -523,11 +523,6 @@ class ExecuteMacro(ExecuteCommand):
         """Attribute that holds the auxiliary results."""
         return self._sdprods or []
 
-    # create a sub-object?
-    def get_cmd(self, name):
-        """Return a command."""
-        from .. import Commands
-        return getattr(Commands, name, None)
 
 def UserMacro(name, cata, ops):
     """Helper function that defines a user macro-command from its catalog

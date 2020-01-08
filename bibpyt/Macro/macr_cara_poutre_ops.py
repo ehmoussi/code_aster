@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,29 +31,29 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
     #
     # On importe les définitions des commandes a utiliser dans la macro
     # Le nom de la variable doit être obligatoirement le nom de la commande
-    LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
-    COPIER = self.get_cmd('COPIER')
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
-    DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
-    AFFE_MATERIAU = self.get_cmd('AFFE_MATERIAU')
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    DEFI_CONSTANTE = self.get_cmd('DEFI_CONSTANTE')
-    AFFE_CHAR_THER = self.get_cmd('AFFE_CHAR_THER')
-    AFFE_CHAR_THER_F = self.get_cmd('AFFE_CHAR_THER_F')
-    THER_LINEAIRE = self.get_cmd('THER_LINEAIRE')
-    CALC_VECT_ELEM = self.get_cmd('CALC_VECT_ELEM')
-    CALC_MATR_ELEM = self.get_cmd('CALC_MATR_ELEM')
-    NUME_DDL = self.get_cmd('NUME_DDL')
-    ASSE_VECTEUR = self.get_cmd('ASSE_VECTEUR')
-    POST_ELEM = self.get_cmd('POST_ELEM')
-    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
-    MACR_LIGN_COUPE = self.get_cmd('MACR_LIGN_COUPE')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import LIRE_MAILLAGE
+    from code_aster.Commands import DEFI_GROUP
+    from code_aster.Commands import CREA_MAILLAGE
+    from code_aster.Commands import COPIER
+    from code_aster.Commands import AFFE_MODELE
+    from code_aster.Commands import DEFI_MATERIAU
+    from code_aster.Commands import AFFE_MATERIAU
+    from code_aster.Commands import DEFI_FONCTION
+    from code_aster.Commands import DEFI_CONSTANTE
+    from code_aster.Commands import AFFE_CHAR_THER
+    from code_aster.Commands import AFFE_CHAR_THER_F
+    from code_aster.Commands import THER_LINEAIRE
+    from code_aster.Commands import CALC_VECT_ELEM
+    from code_aster.Commands import CALC_MATR_ELEM
+    from code_aster.Commands import NUME_DDL
+    from code_aster.Commands import ASSE_VECTEUR
+    from code_aster.Commands import POST_ELEM
+    from code_aster.Commands import CALC_CHAMP
+    from code_aster.Commands import MACR_LIGN_COUPE
+    from code_aster.Commands import IMPR_TABLE
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import CALC_TABLE
+    from code_aster.Commands import DETRUIRE
     #
     ImprTable = False
     #

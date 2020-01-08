@@ -28,9 +28,9 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     # On importe les definitions des commandes a utiliser dans la macro
-    DYNA_NON_LINE = self.get_cmd('DYNA_NON_LINE')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
+    from code_aster.Commands import DYNA_NON_LINE
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import DEFI_LIST_REEL
     #
     motscles = {}
     motscles['MODELE'] = MODELE

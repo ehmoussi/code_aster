@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,12 +45,12 @@ def observation_ops(self,
     from Utilitai.Utmess import UTMESS
     from code_aster.Cata.DataStructure import (mode_meca, dyna_harmo,
                                                evol_elas, dyna_trans)
-    MODI_REPERE = self.get_cmd('MODI_REPERE')
-    PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    CREA_RESU = self.get_cmd('CREA_RESU')
-    POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import MODI_REPERE
+    from code_aster.Commands import PROJ_CHAMP
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import POST_RELEVE_T
+    from code_aster.Commands import DETRUIRE
 
     # dans **args, on range les options de PROJ_CHAMP facultatives, et dont on
     # ne sert pas par la suite
@@ -754,10 +754,10 @@ def crea_normale(self, modele_1, modele_2,
        projection du champ de normales cree sur le maillage numerique
        les mailles doivent etre des elements de <peau> (facettes)
     """
-    PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    CREA_RESU = self.get_cmd('CREA_RESU')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
+    from code_aster.Commands import PROJ_CHAMP
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import DEFI_GROUP
     import aster
     from code_aster.Cata.Syntax import _F
     # recherche du maillage associe au modele numerique

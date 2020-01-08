@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,10 +36,10 @@ def perm_mac3coeur_ops(self, **args):
     from Utilitai.UniteAster import UniteAster
     from Utilitai.Utmess import UTMESS
 
-    STAT_NON_LINE = self.get_cmd('STAT_NON_LINE')
-    CREA_CHAMP = self.get_cmd('CREA_CHAMP')
-    CREA_RESU = self.get_cmd('CREA_RESU')
-    AFFE_CHAR_CINE = self.get_cmd('AFFE_CHAR_CINE')
+    from code_aster.Commands import STAT_NON_LINE
+    from code_aster.Commands import CREA_CHAMP
+    from code_aster.Commands import CREA_RESU
+    from code_aster.Commands import AFFE_CHAR_CINE
 
     rcdir = aster_core.get_option("rcdir")
     datg = osp.join(rcdir, "datg")

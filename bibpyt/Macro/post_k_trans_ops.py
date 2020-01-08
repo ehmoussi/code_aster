@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ def post_k_trans_ops(self, **args):
 
 #------------------------------------------------------------------
     # On importe les definitions des commandes a utiliser dans la macro
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
+    from code_aster.Commands import CREA_TABLE
 
 #------------------------------------------------------------------
     TABK = K_MODAL['TABL_K_MODA']

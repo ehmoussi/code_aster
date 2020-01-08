@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -251,14 +251,14 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 
 #------------------------------------------------------------------
     # On importe les definitions des commandes a utiliser dans la macro
-    ASSE_MAILLAGE = self.get_cmd('ASSE_MAILLAGE')
-    LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
+    from code_aster.Commands import ASSE_MAILLAGE
+    from code_aster.Commands import LIRE_MAILLAGE
+    from code_aster.Commands import DEFI_GROUP
+    from code_aster.Commands import CALC_TABLE
     from Contrib.propa_xfem import PROPA_XFEM
-    MODI_MODELE_XFEM = self.get_cmd('MODI_MODELE_XFEM')
-    POST_RUPTURE = self.get_cmd('POST_RUPTURE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import MODI_MODELE_XFEM
+    from code_aster.Commands import POST_RUPTURE
+    from code_aster.Commands import DETRUIRE
 
     # parametre
     eps = 1e-15

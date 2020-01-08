@@ -1331,13 +1331,10 @@ class PARTITION:
 
         # Creation et lancement de la commande DEFI_GROUP associée
         try:
-            DEFI_GROUP = self.jdc.get_cmd('DEFI_GROUP')
+            from code_aster.Commands import DEFI_GROUP
         except:
-            try:
-                from code_aster.Commands import DEFI_GROUP
-            except:
-                print("\n\nERREUR : il faut lancer ce programme depuis Aster pour pouvoir \ngénérer les groupes de mailles Aster.\n\n")
-                return
+            print("\n\nERREUR : il faut lancer ce programme depuis Aster pour pouvoir \ngénérer les groupes de mailles Aster.\n\n")
+            return
 
         _tmp = []
         _l_sd = []

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,8 +103,8 @@ def expand_values(self, tabout, liste_noeu_a_extr, titre, type_para):
     from code_aster.Cata.Syntax import _F
     from Utilitai.Table import Table
 
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import DETRUIRE
 
     extrtabout = tabout.EXTR_TABLE()
     DETRUIRE(CONCEPT=_F(NOM=tabout), INFO=1)
@@ -300,8 +300,8 @@ def get_coor_libre(self, Lnoff, RESULTAT, ndim):
     import numpy as NP
     from code_aster.Cata.Syntax import _F
 
-    POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import POST_RELEVE_T
+    from code_aster.Commands import DETRUIRE
 
     __NCOFON = POST_RELEVE_T(
         ACTION=_F(INTITULE='Tab pour coordonnees noeuds du fond',
@@ -388,8 +388,8 @@ def get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, dicVNOR, RESULTAT, MODEL
     from code_aster.Cata.Syntax import _F
     import numpy as NP
 
-    MACR_LIGN_COUPE = self.get_cmd('MACR_LIGN_COUPE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
+    from code_aster.Commands import MACR_LIGN_COUPE
+    from code_aster.Commands import CALC_TABLE
 
     dmax = hmax * PREC_VIS_A_VIS
 
@@ -556,8 +556,8 @@ def get_coor_regle(self, RESULTAT, ndim, Lnoff, Lnocal, dicoS, syme_char, dicoI)
     import copy
     from code_aster.Cata.Syntax import _F
 
-    POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
+    from code_aster.Commands import POST_RELEVE_T
+    from code_aster.Commands import CALC_TABLE
 #        a eclaircir
     Ltot = copy.copy(Lnoff)
     for ino in Lnocal:
@@ -736,9 +736,9 @@ def get_resxfem(self, xcont, RESULTAT, MODELISATION, MODEL):
     from code_aster.Cata.Syntax import _F
     import aster
 
-    AFFE_MODELE = self.get_cmd('AFFE_MODELE')
-    PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
-    CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
+    from code_aster.Commands import AFFE_MODELE
+    from code_aster.Commands import PROJ_CHAMP
+    from code_aster.Commands import CREA_MAILLAGE
 
     if xcont[0] != 3:
         __RESX = RESULTAT
@@ -856,7 +856,7 @@ def get_sauts_xfem(self, Nnoff, Coorfo, VDIR, hmax, NB_NOEUD_COUPE, dmax, __RESX
     from code_aster.Cata.Syntax import _F
     import numpy as NP
 
-    MACR_LIGN_COUPE = self.get_cmd('MACR_LIGN_COUPE')
+    from code_aster.Commands import MACR_LIGN_COUPE
 
     mcfact = []
     for i in range(Nnoff):
@@ -884,8 +884,8 @@ def affiche_xfem(self, INFO, Nnoff, VNOR, VDIR):
     from code_aster.Cata.Syntax import _F
     import aster
 
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import DETRUIRE
 
     if INFO == 2:
         mcfact = []
@@ -1420,8 +1420,8 @@ def get_saut(self, pgl, ds, Ss, di, Si, Sh, Sv, Sq, INFO, FISSURE, syme_char, ab
     import numpy as NP
     from Utilitai.Utmess import UTMESS
 
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import DETRUIRE
 
     Sig_Y=1.
 
@@ -1550,8 +1550,8 @@ def get_meth1(self, abscs, absch, abscq, coetd, isig, tgsig,isigt,ttgsig, isigtt
     import numpy as NP
     import math
 
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import DETRUIRE
 
     nabs = len(abscs)
     nabh = len (absch)
@@ -1596,8 +1596,8 @@ def get_erreur(self, ndim, __tabi, type_para):
     import aster
     import numpy as NP
 
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import CALC_TABLE
 
     labels = ['Td_MAX', 'Td_MIN']
 
@@ -1707,9 +1707,9 @@ def get_tabout(
     from Utilitai.utils import get_titre_concept
     import numpy as NP
 
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
+    from code_aster.Commands import CREA_TABLE
+    from code_aster.Commands import DETRUIRE
+    from code_aster.Commands import CALC_TABLE
 
     mcfact = []
 
@@ -1811,12 +1811,12 @@ def post_t_q_ops(self, **args):
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
-    DETRUIRE = self.get_cmd('DETRUIRE')
+    from code_aster.Commands import CALC_TABLE
+    from code_aster.Commands import POST_RELEVE_T
+    from code_aster.Commands import DETRUIRE
 
-    LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
-    DEFI_GROUP = self.get_cmd('DEFI_GROUP')
+    from code_aster.Commands import LIRE_MAILLAGE
+    from code_aster.Commands import DEFI_GROUP
 
     EVOL_THER = None
 
