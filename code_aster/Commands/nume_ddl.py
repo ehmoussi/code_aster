@@ -21,7 +21,7 @@
 
 from ..Objects import DOFNumbering, ParallelDOFNumbering
 from ..Utilities import logger
-from .ExecuteCommand import ExecuteCommand
+from ..Supervis.ExecuteCommand import ExecuteCommand
 
 
 class NumberingCreation(ExecuteCommand):

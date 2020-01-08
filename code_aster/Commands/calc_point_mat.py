@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,14 +21,14 @@
 from Contrib.calc_point_mat import CALC_POINT_MAT as CALC_POINT_MAT_OP
 
 from ..Objects import Table
-from .ExecuteCommand import ExecuteCommand
+from ..Supervis.ExecuteCommand import ExecuteCommand
 
 
 class CalcPointMat(ExecuteCommand):
     """Command that defines a class:`~code_aster.Objects.Table"""
     command_name = "CALC_POINT_MAT"
     command_cata = CALC_POINT_MAT_OP
-    
+
     def create_result(self, keywords):
         """Create the result.
 

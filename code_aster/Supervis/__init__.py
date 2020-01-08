@@ -27,5 +27,3 @@ objects.
 from .CommandSyntax import CommandSyntax
 from .exceptions_ext import (AsterError, ContactError, ConvergenceError,
                              IntegrationError, SolverError, TimeLimitError)
-from .ExecutionParameter import ExecutionParameter
-from .options import Options

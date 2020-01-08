@@ -23,7 +23,7 @@ from ..Objects import MechanicalModeContainer
 from ..Objects import MechanicalModeComplexContainer
 from ..Objects import BucklingModeContainer
 from ..Utilities import logger
-from .ExecuteCommand import ExecuteCommand
+from ..Supervis.ExecuteCommand import ExecuteCommand
 
 
 class NormMode(ExecuteCommand):

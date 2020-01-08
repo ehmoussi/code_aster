@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -18,7 +18,7 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from ..Objects import InterspectralMatrix
-from .ExecuteCommand import ExecuteCommand
+from ..Supervis.ExecuteCommand import ExecuteCommand
 
 
 class RandomFunctionGeneration(ExecuteCommand):

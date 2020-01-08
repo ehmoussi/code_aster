@@ -62,7 +62,7 @@ import libaster
 
 from .. import Objects
 from ..Objects import DataStructure, ResultNaming
-from ..Supervis import ExecutionParameter, Options
+from ..Utilities import ExecutionParameter, Options
 from ..Utilities import logger
 
 ARGS = '_MARK_DS_ARGS_'
@@ -619,14 +619,11 @@ def _filteringContext(context):
     Returns:
         dict: New cleaned context.
     """
-    from ..Commands import DETRUIRE, FIN, VARIABLE
     # functions to be ignored
-    ignored = (DETRUIRE, FIN, VARIABLE)
+    ignored = ("code_aster", "DETRUIRE", "FIN", "VARIABLE")
     ctxt = {}
     for name, obj in list(context.items()):
-        if name in ('code_aster', ) or name.startswith('__'):
-            continue
-        if not isinstance(obj, numpy.ndarray) and obj in ignored:
+        if name in ignored or name.startswith('__'):
             continue
         if getattr(numpy, name, None) is obj: # see issue29282
             continue

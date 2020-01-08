@@ -70,8 +70,9 @@ from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
 from ..Objects import DataStructure, PyDataStructure
-from ..Supervis import CommandSyntax, ExecutionParameter, Options
-from ..Utilities import deprecated, import_object, logger, no_new_attributes
+from ..Supervis import CommandSyntax
+from ..Utilities import (ExecutionParameter, Options, deprecated,
+                         import_object, logger, no_new_attributes)
 from ..Utilities.outputs import (command_header, command_result,
                                  command_separator, command_text, command_time,
                                  decorate_name)

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -23,7 +23,7 @@ from ..Objects import ElementaryMatrixDisplacementDouble, ElementaryMatrixTemper
 from ..Objects import ElementaryMatrixDisplacementComplex, ElementaryMatrixPressureComplex
 from ..Objects import AssemblyMatrixDisplacementDouble, AssemblyMatrixTemperatureDouble
 from ..Objects import AssemblyMatrixDisplacementComplex, AssemblyMatrixPressureComplex
-from .ExecuteCommand import ExecuteCommand
+from ..Supervis.ExecuteCommand import ExecuteCommand
 
 
 class AssembleMatrixOperator(ExecuteCommand):

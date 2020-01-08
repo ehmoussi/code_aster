@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,13 +23,12 @@
 
 All user's Commands are imported from this module.
 
-*Work in progress*: Commented Commands have not yet been migrated using
-:py:class:`~code_aster.Commands.ExecuteCommand.ExecuteCommand`.
-
 By default, an automatic implementation of all Commands are published here
 using their catalog definition.
 
 """
+
+from ..Supervis.ExecuteCommand import CO
 
 # please keep alphabetical order
 from .affe_cara_elem import AFFE_CARA_ELEM
@@ -201,8 +200,6 @@ from .ther_non_line import THER_NON_LINE
 from .ther_lineaire import THER_LINEAIRE
 from .ther_non_line_mo import THER_NON_LINE_MO
 from .variable import VARIABLE
-
-from .ExecuteCommand import CO
 
 
 # other commands are automatically added just using their catalog
