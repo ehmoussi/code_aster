@@ -54,6 +54,7 @@ import os.path as osp
 import pickle
 import traceback
 import types
+from hashlib import sha256
 from io import IOBase
 
 import numpy
@@ -62,8 +63,7 @@ import libaster
 
 from .. import Objects
 from ..Objects import DataStructure, ResultNaming
-from ..Utilities import ExecutionParameter, Options
-from ..Utilities import logger
+from ..Utilities import ExecutionParameter, Options, logger
 
 ARGS = '_MARK_DS_ARGS_'
 STATE = '_MARK_DS_STATE_'
@@ -672,7 +672,6 @@ def file_signature(filename, offset=0, bufsize=-1):
     Returns:
         str: Signature as SHA256 string to identify the file.
     """
-    from hashlib import sha256
     try:
         with open(filename, 'rb') as fobj:
             fobj.seek(offset, 0)

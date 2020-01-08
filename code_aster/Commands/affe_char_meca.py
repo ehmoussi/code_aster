@@ -19,10 +19,11 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import GenericMechanicalLoad
-from .affe_modele import AFFE_MODELE
-from ..Supervis.ExecuteCommand import ExecuteCommand
 from ..Cata.Language.SyntaxObjects import FactorKeyword
+from ..Objects import (GenericMechanicalLoad, ParallelMechanicalLoad,
+                       PartialMesh)
+from ..Supervis.ExecuteCommand import ExecuteCommand
+from .affe_modele import AFFE_MODELE
 
 
 class MechanicalLoadDefinition(ExecuteCommand):
@@ -100,7 +101,6 @@ class MechanicalLoadDefinition(ExecuteCommand):
         if isinstance(self._result, GenericMechanicalLoad):
             super(MechanicalLoadDefinition, self).exec_(keywords)
         else:
-            from ..Objects import ParallelMechanicalLoad, PartialMesh
             model = keywords.pop("MODELE")
             partialMesh = PartialMesh(model.getMesh(), self._getNodeGroups(keywords))
             if partialMesh.getDimension()==3:

@@ -19,16 +19,19 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
+from ..Cata.Commands.lire_maillage import keywords as main_keywords
+from ..Cata.DataStructure import maillage_sdaster
+from ..Cata.Syntax import OPER, SIMP, tr
+from ..Helpers import LogicalUnitFile
 from ..Objects import Mesh
 from ..Supervis.ExecuteCommand import ExecuteCommand
-from code_aster.Helpers import LogicalUnitFile
+from .pre_gibi import PRE_GIBI
+from .pre_gmsh import PRE_GMSH
+from .pre_ideas import PRE_IDEAS
 
 
 def catalog_op():
     """Define the catalog of the fortran operator."""
-    from code_aster.Cata.Commands.lire_maillage import keywords as main_keywords
-    from code_aster.Cata.DataStructure import maillage_sdaster
-    from code_aster.Cata.Syntax import OPER, SIMP, tr
 
     keywords = dict()
     keywords.update(main_keywords)
@@ -57,8 +60,6 @@ class MeshReader(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        from code_aster.Commands import PRE_GIBI, PRE_GMSH, PRE_IDEAS
-
         need_conversion = ('GIBI', 'GMSH', 'IDEAS')
         unit = keywords.get('UNITE')
         fmt = keywords['FORMAT']

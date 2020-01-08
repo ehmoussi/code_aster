@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ Ex.: maillage_sdaster.getType() = Mesh().getType() = "MAILLAGE"
 
 import warnings
 from collections import UserDict
+from copy import deepcopy
 
 
 class DataStructure:
@@ -67,7 +68,6 @@ class DataStructure:
         if DataStructure._deepcopy_callback is not None:
             copied = DataStructure._deepcopy_callback(self, memodict)
         else:
-            from copy import deepcopy
             copied = self.__class__()
             memodict[id(self)] = copied
             for (k, v) in list(self.__dict__.items()):
