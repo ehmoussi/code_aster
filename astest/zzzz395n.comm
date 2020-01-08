@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -142,7 +142,7 @@ chg_p_r=AFFE_CHAR_MECA(MODELE=model_r,
                                  PRES = 1000,),
                     )
 # Calcul hyper-réduit (avec CORR_COMPLET)
-redu=STAT_NON_LINE(MODELE=model_r,
+redu=STAT_NON_LINE(MODELE=model_r,INFO=2,
                    CHAM_MATER=chmat,
                    EXCIT=(_F(CHARGE=chg_b_r,),
                           _F(CHARGE=chg_p_r,FONC_MULT=rampe),

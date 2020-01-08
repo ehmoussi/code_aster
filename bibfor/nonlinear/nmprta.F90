@@ -217,7 +217,8 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
                         hhoField_  = hhoField ,&
                         sddyna_    = sddyna   ,&
                         time_prev_ = time_prev,&
-                        time_curr_ = time_curr)
+                        time_curr_ = time_curr,&
+                        ds_algorom_ = ds_algorom)
     if (ldccvg .eq. 1) then
         goto 999
     endif

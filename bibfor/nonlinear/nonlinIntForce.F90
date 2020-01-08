@@ -25,9 +25,11 @@ subroutine nonlinIntForce(phaseType     ,&
                           hval_incr     , hval_algo      ,&
                           ldccvg        ,&
                           hhoField_     , sddyna_        ,&
-                          time_prev_    , time_curr_)
+                          time_prev_    , time_curr_     ,&
+                          ds_algorom_)
 !
 use NonLin_Datastructure_type
+use Rom_Datastructure_type
 use HHO_type
 !
 implicit none
@@ -55,6 +57,7 @@ integer, intent(out) :: ldccvg
 type(HHO_Field), optional, intent(in) :: hhoField_
 character(len=19), optional, intent(in) :: sddyna_
 real(kind=8), optional, intent(in) :: time_prev_, time_curr_
+type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,6 +83,7 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  hhoField         : datastructure for HHO
+! In  ds_algorom       : datastructure for ROM parameters
 ! Out ldccvg           : indicator from integration of behaviour
 !                -1 : PAS D'INTEGRATION DU COMPORTEMENT
 !                 0 : CAS DE FONCTIONNEMENT NORMAL
@@ -136,8 +140,13 @@ real(kind=8), optional, intent(in) :: time_prev_, time_curr_
                 call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
                                         ds_system)
             elseif (.not. l_hho) then
-                call nonlinIntForceAsse(INTE_FORCE_FNOD, list_func_acti, sdnume, ds_material,&
-                                        ds_system)
+                if (ds_algorom_%phase.eq.'CORR_EF') then
+                    call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
+                                            ds_system)
+                else
+                    call nonlinIntForceAsse(INTE_FORCE_FNOD, list_func_acti, sdnume, ds_material,&
+                                            ds_system)
+                endif
             endif
         endif
     elseif (phaseType .eq. CORR_NEWTON) then
