@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,8 +33,8 @@ import shutil
 #
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 from Utilitai.UniteAster import UniteAster
-from code_aster.RunManager import Serializer
-from code_aster.Supervis import logger
+from code_aster.Helpers import Serializer
+from code_aster.Utilities import logger
 
 
 class HomardInfo:

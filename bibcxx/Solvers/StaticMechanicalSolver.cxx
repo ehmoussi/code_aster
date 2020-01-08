@@ -3,7 +3,7 @@
  * @brief Fichier source contenant le source du solveur de mecanique statique
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,7 +31,7 @@
 #include "DataStructures/TemporaryDataStructureName.h"
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/DiscreteProblem.h"
-#include "RunManager/Exceptions.h"
+#include "Supervis/Exceptions.h"
 #include "Solvers/StaticMechanicalSolver.h"
 #include "Supervis/CommandSyntax.h"
 

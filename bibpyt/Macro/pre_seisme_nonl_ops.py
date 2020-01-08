@@ -574,7 +574,7 @@ class StatDyna(object):
         self.base_modale = properties['STAT_DYNA']['BASE_MODALE']
         self.UL_impe_freq = properties['STAT_DYNA']['UNITE_IMPE_FREQ']
 
-        from code_aster.RunManager.LogicalUnit import LogicalUnitFile
+        from code_aster.Helpers.LogicalUnit import LogicalUnitFile
         uniteImpeTemps = properties['STAT_DYNA']['UNITE_IMPE_TEMPS'][0]
         if uniteImpeTemps['UNITE_RESU_RIGI']:
             self.UL_impe_temps_K = uniteImpeTemps['UNITE_RESU_RIGI']

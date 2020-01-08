@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ from Utilitai.utils import set_debug, _print, _printDBG
 from Miss.force_iss_vari import force_iss_vari
 
 from Miss.miss_resu_miss import MissCsolReader
-from code_aster.RunManager.LogicalUnit import LogicalUnitFile
+from code_aster.Helpers.LogicalUnit import LogicalUnitFile
 from code_aster import DataStructure
 
 

@@ -3,7 +3,7 @@
  * @brief Definition of code_aster exceptions
  * @author Mathieu Courtois
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,7 +30,7 @@ namespace py = boost::python;
 #include <exception>
 #include <string>
 
-#include "RunManager/Exceptions.h"
+#include "Supervis/Exceptions.h"
 #include "Utilities/Tools.h"
 
 PyObject *AbstractErrorCpp::py_attrs() const {

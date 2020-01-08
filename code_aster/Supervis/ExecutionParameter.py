@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,8 +45,7 @@ import aster_pkginfo
 import libaster
 from Utilitai.as_timer import ASTER_TIMER
 
-from ..Utilities import Singleton, convert, no_new_attributes
-from .logger import DEBUG, INFO, logger
+from ..Utilities import DEBUG, INFO, Singleton, convert, logger, no_new_attributes
 from .options import Options
 
 DEFAULT_MEMORY_LIMIT = 2047 if "32" in platform.architecture()[0] else 4096

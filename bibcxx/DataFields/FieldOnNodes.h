@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FieldOnNodes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -288,7 +288,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
 template < class ValueType >
 bool FieldOnNodesInstance< ValueType >::printMedFile( const std::string fileName ) const
     {
-    LogicalUnitFileCython a( fileName, Binary, New );
+    LogicalUnitFile a( fileName, Binary, New );
     int retour = a.getLogicalUnit();
     CommandSyntax cmdSt( "IMPR_RESU" );
 

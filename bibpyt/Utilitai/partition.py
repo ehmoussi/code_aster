@@ -288,7 +288,7 @@ class MAIL_PY:
 
 # -------------------------------------------------------------
     def ToAster(self, unite=None):
-        from code_aster.RunManager.LogicalUnit import LogicalUnitFile, Action, FileAccess, FileType
+        from code_aster.Helpers.LogicalUnit import LogicalUnitFile, Action, FileAccess, FileType
         try:
             from code_aster.Commands import LIRE_MAILLAGE
         except:

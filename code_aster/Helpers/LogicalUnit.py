@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ import os.path as osp
 import tempfile
 
 from ..Cata.Syntax import _F
-from ..Supervis.logger import logger
+from ..Utilities.logger import logger
 
 # Units 6 and 9 can not be released/associated.
 RESERVED_UNIT = (8, )
@@ -141,7 +141,7 @@ class LogicalUnitFile(object):
     _used_unit = {}
 
     def __init__(self, unit, filename, action, typ, access,
-                 to_register = True):
+                 to_register=True):
         self._unit = unit
         self._filename = filename
         self._register(self)

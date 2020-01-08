@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -237,7 +237,7 @@ def lire_fonction_ops(self, UNITE, NOM_PARA, FORMAT=None, TYPE=None, SEPAR=None,
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
     from Utilitai.UniteAster import UniteAster
-    from code_aster.RunManager import LogicalUnitFile, ReservedUnitUsed
+    from code_aster.Helpers import LogicalUnitFile, ReservedUnitUsed
 
     # On recopie le mot cle defi_fonction pour le proteger
     if TYPE == 'NAPPE':

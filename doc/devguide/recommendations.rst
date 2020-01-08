@@ -193,7 +193,7 @@ Required changes
   Temporarly one can use ``POUTRE = ListFact(POUTRE)`` not to change the code
   and let ``POUTRE.List_F()`` with a dummy ``.List_F()`` function that does nothing.
 
-- Usage of logical units: See :mod:`code_aster.RunManager.LogicalUnit`.
+- Usage of logical units: See :mod:`code_aster.Helpers.LogicalUnit`.
 
 - Additional results (**CO()** objects):
 

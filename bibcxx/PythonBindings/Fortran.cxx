@@ -3,7 +3,7 @@
  * @brief Definition of interface functions between C++ and Fortran
  * @author Mathieu Courtois
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -23,7 +23,7 @@
 
 /* person_in_charge: mathieu.courtois@edf.fr */
 
-#include "RunManager/Fortran.h"
+#include "PythonBindings/Fortran.h"
 #include "aster_fort.h"
 #include "aster_utils.h"
 #include "astercxx.h"

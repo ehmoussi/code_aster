@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.RunManager import LogicalUnitFile, FileAccess
+from code_aster.Helpers import LogicalUnitFile, FileAccess
 
 
 def simu_point_mat_ops(

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -144,7 +144,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     """
     import aster
     from code_aster.Cata.Syntax import _F
-    from code_aster.RunManager import LogicalUnitFile
+    from code_aster.Helpers import LogicalUnitFile
     from Utilitai.Utmess import UTMESS
     from Utilitai.Table import Table
     # from math import log, sqrt, floor, pi, sin

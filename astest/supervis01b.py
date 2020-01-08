@@ -1,6 +1,6 @@
 import code_aster
 from code_aster.Commands import *
-from code_aster.Supervis import WARNING, logger
+from code_aster.Utilities import WARNING, logger
 
 code_aster.init()
 

@@ -2,11 +2,11 @@
 #define LOGICALUNITMANAGER_H_
 
 /**
- * @file LogicalUnitManagerCython.h
+ * @file LogicalUnitManager.h
  * @brief Fichier entete permettant de decrire un fichier sur unité logique
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,15 +27,15 @@
 // TODO: Refactor LogicalUnit.py in C++
 #include "logical_unit.h"
 
-enum FileTypeCython { Ascii, Binary, Free };
-enum FileAccessCython { New, Append, Old };
+enum FileType { Ascii, Binary, Free };
+enum FileAccess { New, Append, Old };
 
 /**
- * @class LogicalUnitFileCython
+ * @class LogicalUnitFile
  * @brief This class is a mirror of class LogicalUnitFile in Python.
  * @author Nicolas Sellenet
  */
-class LogicalUnitFileCython {
+class LogicalUnitFile {
   private:
     /** @brief Nom du fichier */
     std::string _fileName;
@@ -51,7 +51,7 @@ class LogicalUnitFileCython {
      * @param type type du fichier
      * @param access Accés au fichier
      */
-    LogicalUnitFileCython() : _fileName( "" ), _isUsable( false ){};
+    LogicalUnitFile() : _fileName( "" ), _isUsable( false ){};
 
     /**
      * @brief Constructeur
@@ -59,8 +59,8 @@ class LogicalUnitFileCython {
      * @param type type du fichier
      * @param access Accés au fichier
      */
-    LogicalUnitFileCython( const std::string name, const FileTypeCython type,
-                           const FileAccessCython access )
+    LogicalUnitFile( const std::string name, const FileType type,
+                           const FileAccess access )
         : _fileName( name ), _isUsable( true ) {
         _logicalUnit = openLogicalUnitFile( name.c_str(), type, access );
     };
@@ -68,7 +68,7 @@ class LogicalUnitFileCython {
     /**
      * @brief Destructeur
      */
-    ~LogicalUnitFileCython() {
+    ~LogicalUnitFile() {
         if ( _isUsable )
             releaseLogicalUnitFile( _logicalUnit );
     };

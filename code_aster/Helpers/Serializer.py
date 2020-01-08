@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,11 +50,11 @@ The command :func:`~code_aster.Commands.debut.POURSUITE` does also the same.
 """
 
 import inspect
-from io import IOBase
 import os.path as osp
 import pickle
 import traceback
 import types
+from io import IOBase
 
 import numpy
 
@@ -62,7 +62,8 @@ import libaster
 
 from .. import Objects
 from ..Objects import DataStructure, ResultNaming
-from ..Supervis import ExecutionParameter, Options, logger
+from ..Supervis import ExecutionParameter, Options
+from ..Utilities import logger
 
 ARGS = '_MARK_DS_ARGS_'
 STATE = '_MARK_DS_STATE_'
@@ -540,6 +541,8 @@ class AsterUnpickler(pickle.Unpickler):
             *misc*: Loaded object.
         """
         obj = self.load()
+        if not isinstance(obj, str):
+            return obj
         if obj == LIST:
             size = self.load_one()
             for _ in range(size):
