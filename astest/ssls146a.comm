@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,17 +38,35 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       DEBUG=_F(SDVERI='OUI',),
-      IGNORE_ALARM='CALCULEL6_77')
+      IGNORE_ALARM = (
+        'CALCULEL_83',
+        'UTILITAI_4',
+        )
+    )
 
 mesh = LIRE_MAILLAGE (
     FORMAT = 'MED',
     UNITE=2
 )
 
+mesh = DEFI_GROUP (
+    reuse = mesh,
+    MAILLAGE = mesh,
+    CREA_GROUP_NO = _F(
+        NOM = 'EARTH',
+        OPTION = 'PLAN',
+        POINT = (0,0,-6.105),
+        VECT_NORMALE = (0,0,1),
+        PRECISION = 0.01
+    )
+)
+
+MPa = 1.E6 # from Mpa to Pa
+
 cls = DEFI_MATERIAU (
     ELAS =
         _F(
-            E = 30000.0*1000, # from N/mm2 to KN/m2
+            E = 30000.0*MPa, 
             NU = 0.3
     )
 )
@@ -101,13 +119,13 @@ bound = AFFE_CHAR_MECA(
     DDL_IMPO = (
         _F(
             GROUP_NO = (
-                'BOUNDARY_COLUMNS',
-            ), DX = 0., DY = 0., DZ = 0., DRX = 0., DRY = 0., DRZ = 0.
-        ),
+                'EARTH',
+            ), DX = 0., DY = 0., DZ = 0.
+        ),        
         _F(
             GROUP_NO = (
-                'BOUNDARY_WALL',
-            ), DX = 0., DY = 0., DZ = 0.,
+                'BOUNDARY_COLUMNS',
+            ), DX = 0., DY = 0., DZ = 0., DRX = 0., DRY = 0., DRZ = 0.
         ),
     )
 )
@@ -119,7 +137,7 @@ floor0 = AFFE_CHAR_MECA(
             GROUP_MA = (
                 'GrSLAB_L0_05_Faces',
             ),
-            FZ = -(250.0) * (0.21),
+            FZ = -(25000.0) * (0.21),
         ),
 )
 
@@ -130,7 +148,7 @@ floor1 = AFFE_CHAR_MECA(
             GROUP_MA = (
                 'GrSLAB_L1_05_Faces',
             ),
-            FZ = -(250.0) * (0.21),
+            FZ = -(25000.0) * (0.21),
         ),
 )
 
@@ -141,7 +159,7 @@ floor2 = AFFE_CHAR_MECA(
             GROUP_MA = (
                 'GrSLAB_L2_05_Faces',
             ),
-            FZ = -(250.0) * (0.21),
+            FZ = -(25000.0) * (0.21),
         ),
 )
 
@@ -152,7 +170,7 @@ floor3 = AFFE_CHAR_MECA(
             GROUP_MA = (
                 'GrSLAB_L3_05_Faces',
             ),
-            FZ = -(250.0) * (0.21),
+            FZ = -(25000.0) * (0.21),
         ),
 )
 
@@ -163,7 +181,7 @@ floor4 = AFFE_CHAR_MECA(
             GROUP_MA = (
                 'GrSLAB_L4_05_Faces',
             ),
-            FZ = -(250.0) * (0.21),
+            FZ = -(25000.0) * (0.21),
         ),
 )
 
@@ -174,7 +192,7 @@ floor5 = AFFE_CHAR_MECA(
             GROUP_MA = (
                 'GrSLAB_L5_05_Faces',
             ),
-            FZ = -(250.0) * (0.21),
+            FZ = -(25000.0) * (0.21),
         ),
 )
 
@@ -185,7 +203,7 @@ floor6 = AFFE_CHAR_MECA(
             GROUP_MA = (
                 'GrSLAB_L6_05_Faces',
             ),
-            FZ = -(250.0) * (0.21),
+            FZ = -(25000.0) * (0.21),
         ),
 )
 
@@ -254,6 +272,7 @@ reslin = CALC_CHAMP(
      CONTRAINTE = (
          'EFGE_ELNO',
          'SIEF_ELNO',
+         'EFGE_NOEU',         
      ),
          FORCE = (
         'REAC_NODA',
@@ -331,48 +350,46 @@ RESUMULT = CREA_RESU (
     )
 )
 
-#~ Units
-Pa=1.
-sec=1.
-m=1.
-N=1.
-
-MPa = 1.E6
-GPa = 1.E9
-mm  = 1.E-3
-
-# Slab thickness
-EP = 0.12
-
-# Concrete properties
-EB  = 35700000000.0; # Young Modulus
-NUB = 0.0; # Poisson ration equal to 0.0
-fck = 35*MPa
-
-# Steel rebars properties
-E   = 2.1e+11; # Young Modulus
-NU  = 0.0; # Poisson ration equal to 0.0
-fyk = 450*MPa
-
 lst_nomcas_floor = ('floor0','floor1','floor2','floor3','floor4','floor5','floor6')
 lst_numord_floor = (1,2,3,4,5,6,7)
 
-ferrDatSlu = dict(
-    TOUT = 'OUI',
-    C_INF = 0.04,
-    C_SUP = 0.04,
-    FCK = fck,
-    FYK = fyk,
+ferrDatSlu1 = dict(
+    C_INF = 0.03,
+    C_SUP = 0.03,
+    FYK = 450*MPa,    
+    FCK = 35*MPa,
     GAMMA_S_FOND = 1.15,
     GAMMA_C_FOND = 1.5,
     GAMMA_S_ACCI = 1.15,
     GAMMA_C_ACCI = 1.5,
-    SIGS_ELS = 0.8*fyk,
-    SIGC_ELS = 0.6*fck,
+    SIGS_ELS = 0.8*450*MPa,
+    SIGC_ELS = 0.6*35*MPa,
     ALPHA_E  =  15,
     CLASSE_ACIER = 'B',
+    RHO_ACIER = 7850,
     ALPHA_CC = 1.0 ,
     UNITE_CONTRAINTE = 'Pa',
+    GROUP_MA = ('GrSLAB_L0_05_Faces','GrSLAB_L1_05_Faces','GrSLAB_L2_05_Faces','GrSLAB_L3_05_Faces'),
+    TYPE_STRUCTURE = '2D', # test OK
+)
+
+ferrDatSlu2 = dict(
+    C_INF = 0.04,
+    C_SUP = 0.04,
+    FYK = 450*MPa,    
+    FCK = 35*MPa,
+    GAMMA_S_FOND = 1.15,
+    GAMMA_C_FOND = 1.5,
+    GAMMA_S_ACCI = 1.15,
+    GAMMA_C_ACCI = 1.5,
+    SIGS_ELS = 0.8*450*MPa,
+    SIGC_ELS = 0.6*35*MPa,
+    ALPHA_E  =  15,
+    CLASSE_ACIER = 'B',
+    RHO_ACIER = 7850,
+    ALPHA_CC = 1.0 ,
+    UNITE_CONTRAINTE = 'Pa',
+    GROUP_MA = ('GrSLAB_L4_05_Faces','GrSLAB_L5_05_Faces','GrSLAB_L6_05_Faces'),
     TYPE_STRUCTURE = '2D', # test OK
 )
 
@@ -386,7 +403,10 @@ reslin = COMBINAISON_FERRAILLAGE (
             NOM_CAS = lst_nomcas_floor,
         ),
     ),
-    AFFE = ( _F ( **ferrDatSlu ), ),
+    AFFE = ( 
+        _F ( **ferrDatSlu1 ), 
+        _F ( **ferrDatSlu2 ),
+    ),
 )
 
 TEST_RESU(
@@ -400,8 +420,8 @@ TEST_RESU(
             MAILLE='M3452',
             POINT=1,
             PRECISION = 1.E-6,
-            VALE_CALC = 1.38709219710163E-06,
-            VALE_REFE = 1.38709219710163E-06,
+            VALE_CALC = 0.00013212564350356624,
+            VALE_REFE = 0.00013212564350356624,
             REFERENCE='ANALYTIQUE',
         ),
         _F(
@@ -413,8 +433,8 @@ TEST_RESU(
             MAILLE='M4511',
             POINT=1,
             PRECISION = 1.E-6,
-            VALE_CALC = 1.61010640170952E-06,
-            VALE_REFE = 1.61010640170952E-06,
+            VALE_CALC = 0.0001535226008530567,
+            VALE_REFE = 0.0001535226008530567,
             REFERENCE='ANALYTIQUE',
         ),
         _F(
@@ -426,8 +446,8 @@ TEST_RESU(
             MAILLE='M5114',
             POINT=1,
             PRECISION = 1.E-6,
-            VALE_CALC = 1.57361830265693E-06,
-            VALE_REFE = 1.57361830265693E-06,
+            VALE_CALC = 0.0001503579881182019,
+            VALE_REFE = 0.0001503579881182019,
             REFERENCE='ANALYTIQUE',
         ),
         _F(
@@ -439,8 +459,8 @@ TEST_RESU(
             MAILLE='M5960',
             POINT=1,
             PRECISION = 1.E-6,
-            VALE_CALC = 1.57462247057179E-06,
-            VALE_REFE = 1.57462247057179E-06,
+            VALE_CALC = 0.00015055222516976698,
+            VALE_REFE = 0.00015055222516976698,
             REFERENCE='ANALYTIQUE',
         ),
         _F(
@@ -452,8 +472,8 @@ TEST_RESU(
             MAILLE='M6815',
             POINT=1,
             PRECISION = 1.E-6,
-            VALE_CALC = 1.68028272274199E-06,
-            VALE_REFE = 1.68028272274199E-06,
+            VALE_CALC = 0.0001705187656042732,
+            VALE_REFE = 0.0001705187656042732,
             REFERENCE='ANALYTIQUE',
         ),
         _F(
@@ -465,8 +485,8 @@ TEST_RESU(
             MAILLE='M7652',
             POINT=1,
             PRECISION = 1.E-6,
-            VALE_CALC = 1.57844940913345E-06,
-            VALE_REFE = 1.57844940913345E-06,
+            VALE_CALC = 0.00016007857254689213,
+            VALE_REFE = 0.00016007857254689213,
             REFERENCE='ANALYTIQUE',
         ),
         _F(
@@ -478,12 +498,13 @@ TEST_RESU(
             MAILLE='M8601',
             POINT=1,
             PRECISION = 1.E-6,
-            VALE_CALC = 1.82966291073997E-06,
-            VALE_REFE = 1.82966291073997E-06,
+            VALE_CALC = 0.00018584785356479968,
+            VALE_REFE = 0.00018584785356479968,
             REFERENCE='ANALYTIQUE',
         ),
     )
 )
+
 
 TOTEST = CREA_CHAMP (
     OPERATION ='EXTR',
@@ -566,7 +587,7 @@ TEST_RESU(
 )
 
 TEST_RESU(
-    CARTE = _F(
+    CARTE = _F(          
         CHAM_GD = TOTEST,
         MAILLE='M8601',
         NOM_CMP='X2',
