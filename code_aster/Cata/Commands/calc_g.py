@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: samuel.geniaut at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
             fr=tr("Calcul du taux de restitution d'énergie par la méthode theta en thermo-élasticité"

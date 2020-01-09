@@ -20,10 +20,9 @@
 # person_in_charge: david.haboussa at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 SIMU_POINT_MAT=MACRO(nom="SIMU_POINT_MAT",
                      op=OPS('Macro.simu_point_mat_ops.simu_point_mat_ops'),

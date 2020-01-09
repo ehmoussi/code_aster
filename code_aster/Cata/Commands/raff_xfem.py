@@ -19,10 +19,9 @@
 
 # person_in_charge: sam.cuvilliez at edf.fr
 
-# determination du type de sd produite par la commande
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def raff_xfem_prod(self,TYPE,**args):

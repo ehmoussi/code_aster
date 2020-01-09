@@ -19,10 +19,14 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import AssemblyMatrixDisplacementDouble, AssemblyMatrixDisplacementComplex, \
-    GeneralizedAssemblyMatrixDouble, GeneralizedAssemblyMatrixComplex
-from ..Objects import AssemblyMatrixTemperatureDouble, AssemblyMatrixTemperatureComplex
-from ..Objects import AssemblyMatrixPressureDouble, AssemblyMatrixPressureComplex
+from ..Objects import (AssemblyMatrixDisplacementComplex,
+                       AssemblyMatrixDisplacementDouble,
+                       AssemblyMatrixPressureComplex,
+                       AssemblyMatrixPressureDouble,
+                       AssemblyMatrixTemperatureComplex,
+                       AssemblyMatrixTemperatureDouble,
+                       GeneralizedAssemblyMatrixComplex,
+                       GeneralizedAssemblyMatrixDouble)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

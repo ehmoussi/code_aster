@@ -17,14 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
-from .affe_materiau import AFFE_MATERIAU
-from .affe_modele import AFFE_MODELE
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 from .affe_cara_elem import AFFE_CARA_ELEM
 from .affe_char_meca import AFFE_CHAR_MECA
+from .affe_materiau import AFFE_MATERIAU
+from .affe_modele import AFFE_MODELE
 
 
 def pre_seisme_nonl_sdprod(self, RESULTAT, **args):

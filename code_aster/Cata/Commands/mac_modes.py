@@ -19,10 +19,9 @@
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MAC_MODES=OPER(nom="MAC_MODES",op=  141,sd_prod=table_sdaster,
                fr=tr("Critere orthogonalite de modes propres"),

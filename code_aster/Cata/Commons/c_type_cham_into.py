@@ -20,8 +20,8 @@
 # person_in_charge: mathieu.courtois at edf.fr
 #
 
-from ..Language.Syntax import *
 from ..Language.DataStructure import *
+from ..Language.Syntax import *
 from .c_nom_grandeur import C_NOM_GRANDEUR
 
 

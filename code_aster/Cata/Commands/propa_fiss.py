@@ -20,9 +20,9 @@
 # person_in_charge: samuel.geniaut at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def propa_fiss_prod(self,**args):

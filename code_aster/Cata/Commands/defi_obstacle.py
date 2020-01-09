@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: marc.kham at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_OBSTACLE=OPER(nom="DEFI_OBSTACLE",op=  73,sd_prod=table_fonction,
                    fr=tr("Définition d'un obstacle plan perpendiculaire à une structure filaire"),

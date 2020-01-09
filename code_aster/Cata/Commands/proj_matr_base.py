@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def matr_asse_gene_prod(MATR_ASSE,MATR_ASSE_GENE,**args):

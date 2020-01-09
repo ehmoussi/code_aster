@@ -19,10 +19,9 @@
 
 # person_in_charge: mathieu.corus at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 IMPR_MACR_ELEM=PROC(nom="IMPR_MACR_ELEM",op= 160,
          fr=tr("Impression d'une structure de données MACR_ELEM_DYNA au format IDEAS MISS3D"),

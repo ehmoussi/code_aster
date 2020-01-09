@@ -20,8 +20,8 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import (ElementaryVectorDisplacementDouble,
-                       ElementaryVectorTemperatureDouble,
-                       ElementaryVectorPressureComplex)
+                       ElementaryVectorPressureComplex,
+                       ElementaryVectorTemperatureDouble)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

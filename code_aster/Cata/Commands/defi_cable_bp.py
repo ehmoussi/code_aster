@@ -20,10 +20,9 @@
 # person_in_charge: sylvie.michel-ponnelle at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_CABLE_BP=MACRO(nom="DEFI_CABLE_BP",
                     op=OPS('Macro.defi_cable_bp_ops.defi_cable_bp_ops'),

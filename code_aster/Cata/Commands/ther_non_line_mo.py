@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mickael.abbas at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 THER_NON_LINE_MO=OPER(nom="THER_NON_LINE_MO",op= 171,sd_prod=evol_ther,
                      fr=tr("Résoudre un problème thermique non linéaire (conditions limites ou comportement matériau)"

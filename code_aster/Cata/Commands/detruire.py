@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DETRUIRE=MACRO(nom="DETRUIRE",
                op=None,

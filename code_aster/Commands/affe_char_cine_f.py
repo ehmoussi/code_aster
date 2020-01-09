@@ -19,8 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from .affe_char_cine import KinematicsLoadDefinition
 from ..Supervis.ExecuteCommand import ExecuteCommand
+from .affe_char_cine import KinematicsLoadDefinition
 
 
 class AffeCharCineF(KinematicsLoadDefinition):

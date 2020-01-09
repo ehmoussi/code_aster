@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: hassan.berro at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 REST_SPEC_PHYS=OPER(nom="REST_SPEC_PHYS",op= 148,sd_prod=interspectre,
                     reentrant='n',

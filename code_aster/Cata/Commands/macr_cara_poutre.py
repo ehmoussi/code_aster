@@ -20,10 +20,9 @@
 # person_in_charge: jean-luc.flejou at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
                        op=OPS('Macro.macr_cara_poutre_ops.macr_cara_poutre_ops'),

@@ -19,15 +19,13 @@
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
-from ..Objects import EvolutiveThermalLoad
-from ..Objects import LinearDisplacementEvolutionContainer
-from ..Objects import NonLinearEvolutionContainer
-from ..Objects import EvolutiveLoad
-from ..Objects import FullTransientResultsContainer
-from ..Objects import FullHarmonicResultsContainer
-from ..Objects import MechanicalModeContainer, MechanicalModeComplexContainer
-from ..Objects import ModeEmpiContainer
-from ..Objects import InputVariableEvolutionContainer
+from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
+                       FullHarmonicResultsContainer,
+                       FullTransientResultsContainer,
+                       InputVariableEvolutionContainer,
+                       LinearDisplacementEvolutionContainer,
+                       MechanicalModeComplexContainer, MechanicalModeContainer,
+                       ModeEmpiContainer, NonLinearEvolutionContainer)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

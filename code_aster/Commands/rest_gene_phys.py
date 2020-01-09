@@ -19,9 +19,11 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FullTransientResultsContainer, FullHarmonicResultsContainer
-from ..Objects import TransientGeneralizedResultsContainer, HarmoGeneralizedResultsContainer
-from ..Objects import MechanicalModeContainer, GeneralizedModeContainer
+from ..Objects import (FullHarmonicResultsContainer,
+                       FullTransientResultsContainer, GeneralizedModeContainer,
+                       HarmoGeneralizedResultsContainer,
+                       MechanicalModeContainer,
+                       TransientGeneralizedResultsContainer)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

@@ -19,10 +19,9 @@
 
 # person_in_charge: sam.cuvilliez at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MODI_MODELE_XFEM=OPER(nom="MODI_MODELE_XFEM",op= 113,sd_prod=modele_sdaster,docu="U4.44.12-e",reentrant='n',
                            fr=tr("Engendrer ou enrichir une structure de donnees en affectant les cham_gd associes"),

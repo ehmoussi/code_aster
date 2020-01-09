@@ -19,10 +19,9 @@
 
 # person_in_charge: hassan.berro at edf.fr
 
-# The product concept (data-structure) depends on the calculation type and basis
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def dyna_vibra_sdprod(BASE_CALCUL, TYPE_CALCUL, MATR_RIGI,**args):

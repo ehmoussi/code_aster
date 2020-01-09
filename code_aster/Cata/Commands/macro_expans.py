@@ -20,9 +20,9 @@
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def macro_expans_prod(self, MODELE_MESURE, RESU_NX=None, RESU_EX=None, RESU_ET=None, RESU_RD=None, **args):

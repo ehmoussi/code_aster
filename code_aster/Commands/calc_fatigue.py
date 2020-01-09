@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FieldOnNodesDouble, FieldOnElementsDouble
+from ..Objects import FieldOnElementsDouble, FieldOnNodesDouble
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

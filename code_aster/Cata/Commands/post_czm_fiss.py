@@ -30,9 +30,9 @@
 #    - PRODUIT UNE CARTE
 # ----------------------------------------------------------------------
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def post_czm_fiss_prod(self,OPTION,**args):

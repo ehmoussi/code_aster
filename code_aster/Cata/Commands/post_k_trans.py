@@ -20,10 +20,9 @@
 # person_in_charge: sam.cuvilliez at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_K_TRANS=MACRO(nom="POST_K_TRANS",
                    op=OPS('Macro.post_k_trans_ops.post_k_trans_ops'),

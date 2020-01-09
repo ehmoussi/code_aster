@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.corus at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_MODELE_GENE=OPER(nom="DEFI_MODELE_GENE",op= 126,sd_prod=modele_gene,
                       reentrant='n',

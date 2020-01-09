@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 INFO_EXEC_ASTER=OPER(nom="INFO_EXEC_ASTER",op=35,sd_prod=table_sdaster,
                     fr=tr("Récupère différentes informations propres à l'exécution en cours"),

@@ -19,10 +19,9 @@
 
 # person_in_charge: romeo.fernandes at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                        sd_prod=table_sdaster,

@@ -19,10 +19,9 @@
 
 # person_in_charge: georges-cc.devesa at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MODE_STATIQUE=OPER(nom="MODE_STATIQUE",op= 93,sd_prod=mode_meca,
                    fr=tr("Calcul de déformées statiques pour un déplacement, une force ou une accélération unitaire imposé"),

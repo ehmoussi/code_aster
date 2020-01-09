@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: irmela.zentner at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_FATI_ALEA=OPER(nom="POST_FATI_ALEA",op=170,sd_prod=table_sdaster,reentrant='n',
                     fr=tr("Calculer le dommage de fatigue subi par une structure soumise à une sollicitation de type aléatoire"),

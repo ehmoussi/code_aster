@@ -19,8 +19,9 @@
 
 # person_in_charge: natacha.bereux@edf.fr
 
-from ..Objects import TransientGeneralizedResultsContainer, HarmoGeneralizedResultsContainer
-from ..Objects import GeneralizedModeContainer
+from ..Objects import (GeneralizedModeContainer,
+                       HarmoGeneralizedResultsContainer,
+                       TransientGeneralizedResultsContainer)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

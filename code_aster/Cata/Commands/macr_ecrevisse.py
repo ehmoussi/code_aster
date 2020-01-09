@@ -20,9 +20,9 @@
 # person_in_charge: marina.bottoni at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def macr_ecrevisse_prod(self,TABLE,TEMPER,DEBIT,**args):

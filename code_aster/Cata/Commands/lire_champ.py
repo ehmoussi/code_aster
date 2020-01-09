@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: nicolas.sellenet at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def lire_champ_prod(TYPE_CHAM=None,**args):

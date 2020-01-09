@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sylvie.audebert at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 COMB_SISM_MODAL=OPER(nom="COMB_SISM_MODAL",op= 109,sd_prod=mode_meca,
                      fr=tr("Réponse sismique par recombinaison modale par une méthode spectrale"),

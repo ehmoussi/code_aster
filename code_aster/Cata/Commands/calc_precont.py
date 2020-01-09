@@ -20,10 +20,9 @@
 # person_in_charge: sylvie.michel-ponnelle at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_PRECONT=MACRO(nom="CALC_PRECONT",
                    op=OPS('Macro.calc_precont_ops.calc_precont_ops'),

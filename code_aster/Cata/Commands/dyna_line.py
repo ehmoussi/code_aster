@@ -18,10 +18,9 @@
 # --------------------------------------------------------------------
 # person_in_charge: yannick.tampango at edf.fr
 
-# The product concept (data-structure) depends on the calculation type and basis
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def dyna_line_sdprod(self, TYPE_CALCUL, BASE_RESU=None, RESU_GENE=None, **args):

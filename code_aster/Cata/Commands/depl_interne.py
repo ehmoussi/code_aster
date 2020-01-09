@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: jacques.pellet at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def depl_interne_prod(DEPL_GLOBAL,**args ):

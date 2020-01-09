@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: hassan.berro at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_FLUI_STRU=OPER(nom="CALC_FLUI_STRU",op= 144,sd_prod=melasflu_sdaster,
                     reentrant='n',

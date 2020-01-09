@@ -52,17 +52,13 @@ import aster_fonctions
 import med_aster
 import libaster
 
-# import datastructures enriched by pure python extensions
-from .Objects import *
-
-# import general purpose functions
-from .Supervis import (AsterError, ContactError, ConvergenceError,
-                       IntegrationError, SolverError, TimeLimitError)
-from .Helpers import saveObjects
-from .Utilities import TestCase, translate as _
-
 from .Algorithms import (ConstitutiveLaw, IntegrationAlgorithm, StrainType,
                          TangentMatrixType)
-
 from .Commands.debut import init
 from .Commands.fin import FIN as close
+from .Helpers import saveObjects
+from .Objects import *
+from .Supervis import (AsterError, ContactError, ConvergenceError,
+                       IntegrationError, SolverError, TimeLimitError)
+from .Utilities import TestCase
+from .Utilities import translate as _

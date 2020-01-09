@@ -19,10 +19,9 @@
 
 # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_COQUE=MACRO(nom="POST_COQUE",
                  op=OPS('Macro.post_coque_ops.post_coque_ops'),

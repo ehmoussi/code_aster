@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: nicolas.sellenet at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 NUME_DDL=OPER(nom="NUME_DDL",op=11,sd_prod=nume_ddl_sdaster,reentrant='n',
               fr=tr("Etablissement de la numérotation des ddl avec ou sans renumérotation et du stockage de la matrice"),

@@ -19,10 +19,9 @@
 
 # person_in_charge: hassan.berro at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_CHAM_FLUI = OPER(nom="CALC_CHAM_FLUI",op= 116,sd_prod=evol_ther,
                       fr="Calculer le champ de vitesses et de pression fluides",

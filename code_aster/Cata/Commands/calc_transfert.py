@@ -20,9 +20,9 @@
 # person_in_charge: nicolas.greffet at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_transfert_prod(self,SIGNAL,**args):

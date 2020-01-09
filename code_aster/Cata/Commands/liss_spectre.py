@@ -20,9 +20,9 @@
 # person_in_charge: adrien.guilloux at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 LISS_SPECTRE=MACRO(nom="LISS_SPECTRE",
                    op=OPS('Macro.liss_spectre_ops.liss_spectre_ops'),

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sebastien.fayolle at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_GLRC=OPER(nom="DEFI_GLRC",op=57,sd_prod=mater_sdaster,
                reentrant='f:BETON|NAPPE|CABLE_PREC|LINER:MATER',

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: georges-cc.devesa at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 LIRE_FORC_MISS=OPER(nom="LIRE_FORC_MISS",op= 179,sd_prod=vect_asse_gene,
                     fr=tr("Création d'un vecteur assemblé à partir d'une base modale"),

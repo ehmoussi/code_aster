@@ -19,10 +19,9 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 PRE_GMSH=PROC(nom="PRE_GMSH",op=47,
                fr=tr("Conversion d'un fichier de maillage GMSH au format Aster"),

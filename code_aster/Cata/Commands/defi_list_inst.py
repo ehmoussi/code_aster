@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mickael.abbas at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 # Bloc pour decoupe automatique
 bloc_auto   =BLOC(fr                = tr("Subdivision de type automatique"),
@@ -144,9 +144,6 @@ bloc_pene   =BLOC(fr                = tr("Action d' adaptation du coefficient de
                                            ),
                  )
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
 
 DEFI_LIST_INST = OPER(nom="DEFI_LIST_INST",op=  28,sd_prod=list_inst,reentrant='n',

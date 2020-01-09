@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_NAPPE=OPER(nom="DEFI_NAPPE",op=4,sd_prod=nappe_sdaster,
                 fr=tr("Définir une fonction réelle de deux variables réelles"),

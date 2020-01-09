@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sam.cuvilliez at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_MAIL_XFEM=OPER(nom="POST_MAIL_XFEM",op= 187,sd_prod=maillage_sdaster,
                     reentrant='n',

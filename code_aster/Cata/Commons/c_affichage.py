@@ -19,8 +19,8 @@
 
 # person_in_charge: mickael.abbas at edf.fr
 
-from ..Language.Syntax import FACT, SIMP
 from ..Language.DataStructure import UnitType
+from ..Language.Syntax import FACT, SIMP
 
 
 def C_AFFICHAGE():

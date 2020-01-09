@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: hassan.berro at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_SPEC_TURB=OPER(nom="DEFI_SPEC_TURB",op= 145,sd_prod=spectre_sdaster,
                     fr=tr("Definition d'un spectre d'excitation turbulente"),

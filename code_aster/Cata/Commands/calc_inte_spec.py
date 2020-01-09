@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: irmela.zentner at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_INTE_SPEC=OPER(nom="CALC_INTE_SPEC",op= 120,sd_prod=interspectre,
                     fr=tr("Calcul d'une matrice interspectrale à partir d'une fonction du temps"),

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: david.haboussa at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 RECA_WEIBULL=OPER(nom="RECA_WEIBULL",op= 197,sd_prod=table_sdaster,
                      fr=tr("Recaler les paramètres du modèle de WEIBULL sur des données expérimentales"),reentrant='n',

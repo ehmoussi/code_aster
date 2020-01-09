@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 TEST_RESU=PROC(nom="TEST_RESU",op=23,
          fr=tr("Extraction d'une valeur d'une structure de donnée et comparaison à une valeur de référence"),

@@ -18,8 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: kyrylo.kazymyrenko at edf.fr
-from ..Language.Syntax import *
+
 from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def C_PILOTAGE() : return FACT(statut='f',

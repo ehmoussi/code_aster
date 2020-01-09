@@ -20,9 +20,9 @@
 # person_in_charge: natacha.bereux at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def macro_elas_mult_prod(self,NUME_DDL,CAS_CHARGE,**args ):

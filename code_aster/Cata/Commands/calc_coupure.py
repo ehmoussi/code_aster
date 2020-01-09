@@ -20,9 +20,10 @@
 # --------------------------------------------------------------------
 # aslint: disable=W4004
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
+
 
 def gc_open_prod(self,TABLE,**args) :
     self.type_sdprod(TABLE,table_sdaster)

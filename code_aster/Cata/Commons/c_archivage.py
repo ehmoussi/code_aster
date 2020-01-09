@@ -18,8 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mickael.abbas at edf.fr
-from ..Language.Syntax import FACT, SIMP, BLOC, NoRepeat, EXCLUS
+
 from ..Language.DataStructure import listr8_sdaster
+from ..Language.Syntax import BLOC, EXCLUS, FACT, SIMP, NoRepeat
 
 
 def C_ARCHIVAGE() : return FACT(statut='d',max=1,

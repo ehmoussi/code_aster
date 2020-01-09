@@ -19,10 +19,9 @@
 
 # person_in_charge: david.haboussa at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 RAFF_GP =MACRO(nom="RAFF_GP",
                    op=OPS('Macro.raff_gp_ops.raff_gp_ops'),

@@ -19,10 +19,9 @@
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                    fr=tr("Définition des paramètres décrivant le comportement d un matériau"),

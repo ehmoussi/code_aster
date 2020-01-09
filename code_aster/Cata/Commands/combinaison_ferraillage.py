@@ -20,9 +20,10 @@
 # --------------------------------------------------------------------
 # aslint: disable=W4004
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
+
 
 # definition of macro return types (both in-out arguments and return types)
 def combinaison_ferraillage_prod ( self, **args ):

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: alexei.mikchevitch at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 PRE_IDEAS=PROC(nom="PRE_IDEAS",op=47,
                fr=tr("Conversion d'un fichier universel IDEAS-SUPERTAB au format Aster"),

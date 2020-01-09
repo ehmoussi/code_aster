@@ -20,9 +20,9 @@
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def proj_base_prod(self,MATR_ASSE_GENE,VECT_ASSE_GENE,

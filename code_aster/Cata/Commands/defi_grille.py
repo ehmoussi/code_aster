@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sam.cuvilliez at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_GRILLE=OPER(nom="DEFI_GRILLE",op=82,sd_prod=grille_sdaster,reentrant='n',
                 fr=tr("Définition d'une grille"),

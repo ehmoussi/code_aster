@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: josselin.delmas at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_erreur_prod(RESULTAT,**args):

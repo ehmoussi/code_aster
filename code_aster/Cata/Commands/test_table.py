@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 TEST_TABLE=PROC(nom="TEST_TABLE",op= 177,
                 fr=tr("Tester une cellule ou une colonne d'une table"),

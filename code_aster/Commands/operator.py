@@ -36,7 +36,6 @@ from ..Cata.Commands import commandStore
 from ..Cata.Syntax import Macro, Operator, Procedure
 from ..Supervis.ExecuteCommand import ExecuteCommand, ExecuteMacro
 
-
 UNSUPPORTED = ('FORMULE', )
 
 def define_operators(store):

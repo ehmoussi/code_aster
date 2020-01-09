@@ -19,10 +19,9 @@
 
 # person_in_charge: nicolas.sellenet at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CREA_LIB_MFRONT=MACRO(
     nom="CREA_LIB_MFRONT",

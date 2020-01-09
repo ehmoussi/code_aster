@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sarah.plessis at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_fatigue_prod(TYPE_CALCUL,OPTION,**args):

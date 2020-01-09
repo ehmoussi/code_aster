@@ -19,9 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FullTransientResultsContainer, AssemblyMatrixPressureComplex
-from ..Objects import FullAcousticHarmonicResultsContainer, FullHarmonicResultsContainer
-from ..Objects import TransientGeneralizedResultsContainer, HarmoGeneralizedResultsContainer
+from ..Objects import (AssemblyMatrixPressureComplex,
+                       FullAcousticHarmonicResultsContainer,
+                       FullHarmonicResultsContainer,
+                       FullTransientResultsContainer,
+                       HarmoGeneralizedResultsContainer,
+                       TransientGeneralizedResultsContainer)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

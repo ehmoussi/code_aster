@@ -18,9 +18,10 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 # person_in_charge: mathieu.courtois@edf.fr
-from ..Objects import Function, FunctionComplex, Formula, Surface
-from ..Utilities import compat_listr8
+
+from ..Objects import Formula, Function, FunctionComplex, Surface
 from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Utilities import compat_listr8
 
 
 class FunctionInterpolation(ExecuteCommand):

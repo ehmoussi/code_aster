@@ -17,12 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: j-pierre.lefebvre at edf.fr
-#
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MAJ_CATA=PROC(nom="MAJ_CATA",op=20,
               fr=tr("Compilation des catalogues d'éléments et couverture des calculs élémentaires"),

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 IMPR_CO=PROC(nom="IMPR_CO",op=17,
              fr=tr("Imprimer tous les objets JEVEUX qui constituent un concept utilisateur existant (pour les développeurs)"),

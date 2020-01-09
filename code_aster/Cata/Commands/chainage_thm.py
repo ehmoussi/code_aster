@@ -19,9 +19,9 @@
 
 # person_in_charge: sylvie.granet at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def chainage_thm_prod(self,TYPE_CHAINAGE,TYPE_RESU = None,**args) :

@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: jacques.pellet at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def affe_char_cine_f_prod(MECA_IMPO,THER_IMPO,**args):

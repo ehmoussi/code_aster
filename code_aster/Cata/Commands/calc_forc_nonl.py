@@ -19,10 +19,9 @@
 
 # person_in_charge: georges-cc.devesa at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_FORC_NONL=OPER(nom="CALC_FORC_NONL",op= 183,sd_prod=dyna_trans,reentrant='n',
             fr=tr("Créer un dyna_trans contenant des champs nommés 'DEPL' correspondant à 'FONL_NOEU' "),

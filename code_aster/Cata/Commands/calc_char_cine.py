@@ -19,10 +19,9 @@
 
 # person_in_charge: jacques.pellet at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_CHAR_CINE=OPER(nom="CALC_CHAR_CINE",op= 102,sd_prod=cham_no_sdaster,
                     fr=tr("Calcul des seconds membres associés à des charges cinématiques (conditions aux limites non dualisées)"),

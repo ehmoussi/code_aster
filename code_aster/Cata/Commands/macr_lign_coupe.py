@@ -20,10 +20,9 @@
 # person_in_charge: josselin.delmas at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
                       op=OPS('Macro.macr_lign_coupe_ops.macr_lign_coupe_ops'),

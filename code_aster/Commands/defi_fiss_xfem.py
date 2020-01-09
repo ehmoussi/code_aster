@@ -22,6 +22,7 @@
 from ..Objects import XfemCrack
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
+
 class XFEMCrackDefinition(ExecuteCommand):
     """Command that defines :class:`~code_aster.Objects.XfemCrack`."""
     command_name = "DEFI_FISS_XFEM"

@@ -19,10 +19,9 @@
 
 # person_in_charge: sam.cuvilliez at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_FISS_XFEM=OPER(nom="DEFI_FISS_XFEM",op=  41,sd_prod=fiss_xfem,reentrant='n',
                fr=tr("Définition des caratéristiques d'une fissure ou d'une interface avec X-FEM"),

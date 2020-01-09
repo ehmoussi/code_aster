@@ -19,9 +19,9 @@
 
 # person_in_charge: natacha.bereux at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def assemblage_prod(self,NUME_DDL,MATR_ASSE,VECT_ASSE,**args):

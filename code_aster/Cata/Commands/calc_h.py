@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: tanguy.mathieu at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_H=OPER(nom="CALC_H",op=27,sd_prod=table_sdaster,
             fr=tr("Nouvel opérateur de calcul du taux de restitution d'énergie par la méthode theta en thermo-élasticité"

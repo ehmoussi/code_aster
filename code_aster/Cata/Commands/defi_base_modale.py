@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_BASE_MODALE=OPER(nom="DEFI_BASE_MODALE",op=  99,sd_prod=mode_meca,
                      reentrant='f:RITZ:BASE_MODALE',

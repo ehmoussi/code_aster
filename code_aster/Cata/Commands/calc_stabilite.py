@@ -17,10 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_STABILITE=MACRO(nom="CALC_STABILITE",sd_prod=table_container,
                op=OPS('Macro.calc_stabilite_ops.calc_stabilite_ops'),

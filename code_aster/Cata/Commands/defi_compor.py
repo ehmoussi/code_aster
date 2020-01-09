@@ -19,10 +19,9 @@
 
 # person_in_charge: david.haboussa at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_COMPOR=OPER(nom="DEFI_COMPOR",op=59,sd_prod=compor_sdaster,
     fr=tr("Définir le comportement d'un monocristal, d'un polycristal ou de groupes de fibres"),

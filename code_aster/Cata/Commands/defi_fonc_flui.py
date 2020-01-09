@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: hassan.berro at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_FONC_FLUI=OPER(nom="DEFI_FONC_FLUI",op= 142,sd_prod=fonction_sdaster,
                     reentrant='n',

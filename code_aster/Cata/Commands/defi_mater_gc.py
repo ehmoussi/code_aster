@@ -19,10 +19,9 @@
 
 # person_in_charge: jean-luc.flejou at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_MATER_GC=MACRO(nom="DEFI_MATER_GC",
     op=OPS('Macro.defi_mater_gc_ops.defi_mater_gc_ops'),

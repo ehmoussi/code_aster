@@ -17,13 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: david.haboussa at edf.fr
-#Quoi qu'il en soit, on sort la table GP
-#Si on est sans copeau et que l'utilisateur souhaite verifier
-#les copeaux automatiquement crees, il peut grace a CHAMP_COP
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_gp_prod(self,TRANCHE_2D,GPMAX, **args):

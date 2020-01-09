@@ -19,10 +19,9 @@
 
 # person_in_charge: serguei.potapov at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 LIRE_PLEXUS=OPER(nom="LIRE_PLEXUS",op= 184,sd_prod=evol_char,
                  fr=tr("Lire le fichier de résultats au format IDEAS produit par le logiciel EUROPLEXUS"),

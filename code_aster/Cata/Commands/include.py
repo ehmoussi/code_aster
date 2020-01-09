@@ -19,10 +19,9 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 INCLUDE=MACRO(nom="INCLUDE",
               op=None,

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 RECU_TABLE=OPER(nom="RECU_TABLE",op= 174,sd_prod=table_sdaster,
          fr=tr("Récupérer dans une table les valeurs d'un paramètre d'une SD Résultat ou d'extraire une table contenue"

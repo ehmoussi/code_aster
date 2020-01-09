@@ -20,8 +20,8 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import DOFNumbering, ParallelDOFNumbering
-from ..Utilities import logger
 from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Utilities import logger
 
 
 class NumberingCreation(ExecuteCommand):

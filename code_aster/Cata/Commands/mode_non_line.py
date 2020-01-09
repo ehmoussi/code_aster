@@ -17,10 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MODE_NON_LINE=OPER(nom="MODE_NON_LINE",op=  61,sd_prod=table_container,
                      fr=tr("Calcul des modes non-linéaires"),

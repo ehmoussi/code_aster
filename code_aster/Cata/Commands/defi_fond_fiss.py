@@ -19,10 +19,9 @@
 
 # person_in_charge: sam.cuvilliez at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
                     op=55,

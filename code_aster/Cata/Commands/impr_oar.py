@@ -17,12 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: isabelle.fournier at edf.fr
-#
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 IMPR_OAR =MACRO(nom="IMPR_OAR",
                 op=OPS('Macro.impr_oar_ops.impr_oar_ops'),

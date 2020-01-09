@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_COMPOSITE=OPER(nom="DEFI_COMPOSITE",op=56,sd_prod=mater_sdaster,reentrant='n',
                     fr=tr("Déterminer les caractéristiques matériaux homogénéisées d'une coque multicouche à partir"

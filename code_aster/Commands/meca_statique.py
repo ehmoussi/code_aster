@@ -21,10 +21,10 @@
 
 from ..Objects import (GenericMechanicalLoad, KinematicsLoad,
                        ParallelMechanicalLoad, StaticMechanicalSolver)
+from ..Supervis.ExecuteCommand import ExecuteCommand
 from ..Utilities import force_list, unsupported
 from .calc_champ import CALC_CHAMP
 from .common_keywords import create_solver
-from ..Supervis.ExecuteCommand import ExecuteCommand
 
 
 class MechanicalSolver(ExecuteCommand):

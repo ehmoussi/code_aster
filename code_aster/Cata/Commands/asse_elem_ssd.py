@@ -20,9 +20,9 @@
 # person_in_charge: mathieu.corus at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def asse_elem_ssd_prod(self, RESU_ASSE_SSD, **args):

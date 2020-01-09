@@ -17,10 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois at edf.fr
-# ce fichier contient la liste des PARA possibles pour les fonctions et les nappes
-from ..Language.Syntax import *
 from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def C_PARA_FONCTION() : return  ( #COMMUN#

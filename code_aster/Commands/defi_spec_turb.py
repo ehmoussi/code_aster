@@ -19,8 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Supervis.ExecuteCommand import ExecuteCommand
 from ..Objects import TurbulentSpectrum
+from ..Supervis.ExecuteCommand import ExecuteCommand
 
 
 class TurbulentSpectrumDefinition(ExecuteCommand):
