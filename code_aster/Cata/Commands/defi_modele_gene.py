@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,14 +18,14 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.corus at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 DEFI_MODELE_GENE=OPER(nom="DEFI_MODELE_GENE",op= 126,sd_prod=modele_gene,
                       reentrant='n',
-            fr=tr("Créer la structure globale à partir des sous-structures en sous-structuration dynamique"), 
+            fr=tr("Créer la structure globale à partir des sous-structures en sous-structuration dynamique"),
          SOUS_STRUC      =FACT(statut='o',max='**',
            NOM             =SIMP(statut='o',typ='TXM' ),
            MACR_ELEM_DYNA  =SIMP(statut='o',typ=macr_elem_dyna ),
@@ -46,7 +46,7 @@ DEFI_MODELE_GENE=OPER(nom="DEFI_MODELE_GENE",op= 126,sd_prod=modele_gene,
            OPTION            =SIMP(statut='f',typ='TXM',defaut="CLASSIQUE",into=("REDUIT","CLASSIQUE") ),
          ),
          VERIF           =FACT(statut='f',max='**',
-#  dans la doc U stop_erreur est obligatoire         
+#  dans la doc U stop_erreur est obligatoire
            STOP_ERREUR     =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
            PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-3 ),
            CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 
 # person_in_charge: sam.cuvilliez at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 DEFI_FISS_XFEM=OPER(nom="DEFI_FISS_XFEM",op=  41,sd_prod=fiss_xfem,reentrant='n',
@@ -93,12 +93,12 @@ DEFI_FISS_XFEM=OPER(nom="DEFI_FISS_XFEM",op=  41,sd_prod=fiss_xfem,reentrant='n'
            DTAN           =SIMP(statut='o',typ='R',min=3,max=3),),
       ),
   ), # fin b_cohesif
-  
-  b_sans_cohesif      = BLOC(condition = """not equal_to("TYPE_DISCONTINUITE", 'COHESIF')""",fr="Options pas ouvertes avec le cohesif",       
+
+  b_sans_cohesif      = BLOC(condition = """not equal_to("TYPE_DISCONTINUITE", 'COHESIF')""",fr="Options pas ouvertes avec le cohesif",
     DEFI_FISS             =FACT(statut='o',max=1,
       FONC_LT             =SIMP(statut='f',typ=(fonction_sdaster,formule) ),
       FONC_LN             =SIMP(statut='f',typ=(fonction_sdaster,formule) ),
-#     Type discontinuite != COHESIF      
+#     Type discontinuite != COHESIF
       CHAM_NO_LSN         =SIMP(statut='f',typ=cham_no_sdaster,min=1,max=1),
       CHAM_NO_LST         =SIMP(statut='f',typ=cham_no_sdaster,min=1,max=1),
       GROUP_MA_FISS       =SIMP(statut='f',typ=grma,min=1,max=1),
@@ -145,8 +145,8 @@ DEFI_FISS_XFEM=OPER(nom="DEFI_FISS_XFEM",op=  41,sd_prod=fiss_xfem,reentrant='n'
       b_droite            =BLOC(condition = """equal_to("FORM_FISS", 'DROITE') """,fr=tr("Paramètres de l'interface 2D (fissure traversante)"),
            POINT          =SIMP(statut='o',typ='R',min=3,max=3),
            DTAN           =SIMP(statut='o',typ='R',min=3,max=3),),
-      ),  
-   ), # fin b_sans_cohesif 
+      ),
+   ), # fin b_sans_cohesif
 # ------------------------------------------------------------------------------------------------------------------------
 #                       partie du maillage potentiellement enrichie
 # ------------------------------------------------------------------------------------------------------------------------
@@ -179,4 +179,4 @@ DEFI_FISS_XFEM=OPER(nom="DEFI_FISS_XFEM",op=  41,sd_prod=fiss_xfem,reentrant='n'
 #                       info
 # ------------------------------------------------------------------------------------------------------------------------
      INFO                  =SIMP(statut='f',typ='I',defaut= 1,into=(1,2,3,) ),
-) 
+)

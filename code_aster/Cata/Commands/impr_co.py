@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 IMPR_CO=PROC(nom="IMPR_CO",op=17,
@@ -33,7 +33,7 @@ IMPR_CO=PROC(nom="IMPR_CO",op=17,
          CONTENU         =SIMP(statut='f',typ='TXM',defaut="OUI",into=("NON","OUI") ),
          BASE            =SIMP(statut='f',typ='TXM',defaut="G",into=(" ","G","V","L") ),
          CONCEPT    =FACT(statut='f',max='**',
-             NOM         =SIMP(statut='o',typ=assd,validators=NoRepeat(),max='**'),),        
+             NOM         =SIMP(statut='o',typ=assd,validators=NoRepeat(),max='**'),),
          CHAINE          =SIMP(statut='f',typ='TXM'),
          POSITION        =SIMP(statut='f',typ='I',defaut=1),
          TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),

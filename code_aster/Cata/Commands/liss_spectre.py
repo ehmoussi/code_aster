@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,21 +20,21 @@
 # person_in_charge: adrien.guilloux at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 LISS_SPECTRE=MACRO(nom="LISS_SPECTRE",
                    op=OPS('Macro.liss_spectre_ops.liss_spectre_ops'),
                    reentrant='n',
                    fr=tr("Lissage de spectre, post-traitement de séisme"),
-         
+
          SPECTRE     =FACT(statut='o',max='**',
              regles=(UN_PARMI('TABLE','NAPPE'),),
              TABLE         =SIMP(statut='f',typ=table_sdaster),
              NAPPE         =SIMP(statut='f',typ=nappe_sdaster),
              ELARG         =SIMP(statut='f',typ='R'),
-             
+
              b_nappe=BLOC( condition = """exists("NAPPE")""",
                    DIRECTION     =SIMP(statut='o',typ='TXM',into=('X','Y','Z','H'),),
                    NOM           =SIMP(statut='o',typ='TXM',),
@@ -42,13 +42,13 @@ LISS_SPECTRE=MACRO(nom="LISS_SPECTRE",
                    COMMENTAIRE   =SIMP(statut='f',typ='TXM',),
              ), # fin b_nappe
          ),
-         
+
          OPTION          =SIMP(statut='o',typ='TXM' ,into=('VERIFICATION','CONCEPTION')),
          FREQ_MIN        =SIMP(statut='f',typ='R'),
          FREQ_MAX        =SIMP(statut='f',typ='R'),
-         NB_FREQ_LISS    =SIMP(statut='f',typ='I',max=2, val_min=1, defaut=10, fr=tr("Nb de points pour le lissage ") ), 
-         ZPA             =SIMP(statut='f',typ='R'), 
-         
+         NB_FREQ_LISS    =SIMP(statut='f',typ='I',max=2, val_min=1, defaut=10, fr=tr("Nb de points pour le lissage ") ),
+         ZPA             =SIMP(statut='f',typ='R'),
+
          # format du graphique
          BORNE_X         =SIMP(statut='f',typ='R',min=2,max=2,
                                fr=tr("Intervalles de variation des abscisses")),

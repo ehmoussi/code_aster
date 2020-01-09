@@ -53,11 +53,12 @@ from math import pow
 
 import aster
 import aster_core
-from . import Commands
+from Utilitai.Utmess import UTMESS
+
 from ..Cata.DataStructure import formule
 from ..Cata.Syntax import _F
 from ..Commands import DEFI_MATERIAU
-from Utilitai.Utmess import UTMESS
+from . import Commands
 
 EXTR = 'extraction'
 FTEMP = 'temp_eval'

@@ -20,7 +20,7 @@
 import os.path as osp
 from glob import glob
 
-from code_aster.Cata.SyntaxObjects import Command
+from ..Language.SyntaxObjects import Command
 
 
 def _init_command(ctx, debug):

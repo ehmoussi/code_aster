@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sebastien.fayolle at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 DEFI_GLRC=OPER(nom="DEFI_GLRC",op=57,sd_prod=mater_sdaster,
@@ -48,7 +48,7 @@ DEFI_GLRC=OPER(nom="DEFI_GLRC",op=57,sd_prod=mater_sdaster,
                               AMOR_ALPHA = SIMP(statut='f',typ='R',val_min=0.E+0,),
                               AMOR_BETA = SIMP(statut='f',typ='R',val_min=0.E+0,),
                               AMOR_HYST = SIMP(statut='f',typ='R',val_min=0.E+0,),
-                   
+
                    PENTE = FACT(statut='o',max=1,
                                 TRACTION = SIMP(statut='f',typ='TXM',defaut="RIGI_ACIER",
                                                 into=("PLAS_ACIER","UTIL","RIGI_ACIER"),),
@@ -58,7 +58,7 @@ DEFI_GLRC=OPER(nom="DEFI_GLRC",op=57,sd_prod=mater_sdaster,
                                                 into=("UTIL","RIGI_INIT","RIGI_ACIER", "PLAS_ACIER"),),
                                 b_flex_util=BLOC(condition = """equal_to("FLEXION", 'UTIL')""",
                                                  KAPPA_FLEX = SIMP(statut='o',typ='R',),),
-                                ),               
+                                ),
                    CISAIL = SIMP(statut='f',typ='TXM',defaut="NON",
                                  into=("OUI","NON"),),
                            ),
