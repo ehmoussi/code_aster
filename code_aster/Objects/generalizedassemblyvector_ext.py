@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,8 +23,11 @@
 ************************************************************************
 """
 
+import numpy
+
 import aster
-from libaster import GeneralizedAssemblyVectorComplex, GeneralizedAssemblyVectorDouble
+from libaster import (GeneralizedAssemblyVectorComplex,
+                      GeneralizedAssemblyVectorDouble)
 
 from ..Utilities import injector
 
@@ -34,14 +37,12 @@ class ExtendedGeneralizedAssemblyVectorComplex(object):
     cata_sdj = "SD.sd_cham_gene.sd_cham_gene"
 
     def EXTR_VECT_GENE_C(self):
-        import numpy
 
         valeur=numpy.array(self.sdj.VALE.get(), complex)
 
         return valeur
 
     def RECU_VECT_GENE_C(self,vecteur):
-        import numpy
         numpy.asarray(vecteur)
         ncham=self.getName()
         ncham=ncham+(8-len(ncham))*' '
@@ -69,18 +70,15 @@ class ExtendedGeneralizedAssemblyVectorDouble(object):
     cata_sdj = "SD.sd_cham_gene.sd_cham_gene"
 
     def EXTR_VECT_GENE_R(self) :
-      import numpy
       valeur = numpy.array(self.sdj.VALE.get())
       return valeur
 
     def EXTR_VECT_GENE_C(self):
-        import numpy
         valeur=numpy.array(self.sdj.VALE.get(), complex)
 
         return valeur
 
     def RECU_VECT_GENE_C(self,vecteur):
-        import numpy
         numpy.asarray(vecteur)
         ncham=self.getName()
         ncham=ncham+(8-len(ncham))*' '

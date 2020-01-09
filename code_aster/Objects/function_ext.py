@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,10 +24,15 @@
 """
 
 import os
-import numpy as np
+from math import pi
+
+import numpy as NP
 
 import aster
+from Cata_Utils.t_fonction import t_fonction, t_fonction_c
 from libaster import Function, FunctionComplex
+from Utilitai.Graph import Graph
+from Utilitai.Utmess import UTMESS
 
 from ..Utilities import accept_array, injector
 
@@ -46,7 +51,7 @@ class ExtendedFunction(object):
         """
         new = Function()
         absc, ordo = self.Valeurs()
-        new.setValues(absc, np.abs(ordo))
+        new.setValues(absc, NP.abs(ordo))
         return new
 
     def getValuesAsArray(self):
@@ -56,7 +61,7 @@ class ExtendedFunction(object):
             numpy.array: Array containing the values.
         """
         size = self.size()
-        values = np.array(self.getValues())
+        values = NP.array(self.getValues())
         values.shape = (2, size)
         return values.transpose()
 
@@ -65,7 +70,6 @@ class ExtendedFunction(object):
         Retourne un objet de la classe t_fonction
         représentation python de la fonction
         """
-        from Cata_Utils.t_fonction import t_fonction, t_fonction_c
         class_fonction = t_fonction
         if arg == 'complex':
             class_fonction = t_fonction_c
@@ -103,7 +107,6 @@ class ExtendedFunction(object):
         le type jeveux (FONCTION, FONCT_C, NAPPE) n'est pas retourne,
         le dictionnaire peut ainsi etre fourni a CALC_FONC_INTERP tel quel.
         """
-        from Utilitai.Utmess import UTMESS
         TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
         objev = '%-19s.PROL' % self.getName()
         prol = self.sdj.PROL.get()
@@ -120,7 +123,6 @@ class ExtendedFunction(object):
 
     def Trace(self, FORMAT='TABLEAU', **kargs):
         """Tracé d'une fonction"""
-        from Utilitai.Graph import Graph
         gr = Graph()
         para = self.Parametres()
         gr.AjoutCourbe(
@@ -144,13 +146,13 @@ class ExtendedFunctionComplex(object):
             numpy.array: Array containing the values.
         """
         size = self.size()
-        values = np.array(self.getValues())
+        values = NP.array(self.getValues())
         abscissas = values[:size].transpose()
         ordinates = values[size:].transpose()
         abscissas.shape = (size, 1)
         ordinates.shape = (size, 2)
         ordinates = ordinates
-        return np.hstack([abscissas, ordinates])
+        return NP.hstack([abscissas, ordinates])
 
     def Valeurs(self):
         """
@@ -176,8 +178,6 @@ class ExtendedFunctionComplex(object):
         Retourne un objet de la classe t_fonction ou t_fonction_c,
         représentation python de la fonction complexe
         """
-        import numpy
-        from Cata_Utils.t_fonction import t_fonction, t_fonction_c
         class_fonction = t_fonction
         if arg == 'complex':
             class_fonction = t_fonction_c
@@ -191,7 +191,6 @@ class ExtendedFunctionComplex(object):
             ordo = numpy.sqrt(
                 numpy.array(self.Ordo())**2 + numpy.array(self.OrdoImg())**2)
         elif arg == 'phase':
-            from math import pi
             ordo = numpy.arctan2(
                 numpy.array(self.OrdoImg()), numpy.array(self.Ordo())) * 180. / pi
         elif arg == 'complex':
@@ -216,7 +215,6 @@ class ExtendedFunctionComplex(object):
         le type jeveux (FONCTION, FONCT_C, NAPPE) n'est pas retourne,
         le dictionnaire peut ainsi etre fourni a CALC_FONC_INTERP tel quel.
         """
-        from Utilitai.Utmess import UTMESS
         TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
         objev = '%-19s.PROL' % self.getName()
         prol = self.sdj.PROL.get()
@@ -233,7 +231,6 @@ class ExtendedFunctionComplex(object):
 
     def Trace(self, FORMAT='TABLEAU', **kargs):
         """Tracé d'une fonction"""
-        from Utilitai.Graph import Graph
         gr = Graph()
         para = self.Parametres()
         gr.AjoutCourbe(

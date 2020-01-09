@@ -57,6 +57,7 @@ operator using the functions:
 
 import random
 
+from ..Cata import Commands
 from ..Objects import DataStructure
 from ..Utilities import (force_list, is_complex, is_float, is_int, is_str,
                          logger, value_is_sequence)
@@ -110,7 +111,6 @@ class CommandSyntax(object):
         self.setCurrentCommand(self)
         # TODO: remove cata argument (not easy to fill in C++)
         if not cata:
-            from ..Cata import Commands
             cata = getattr(Commands, name, None)
             if not cata:
                 logger.debug("CommandSyntax: catalog not found for {0!r}"

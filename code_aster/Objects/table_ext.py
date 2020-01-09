@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 
 import aster
 from libaster import Table
+from Utilitai.Table import Table
 
 from ..Utilities import injector
 
@@ -92,7 +93,6 @@ class ExtendedTable(object):
                 return None
             else:
                 return l1
-        from Utilitai.Table import Table
         # titre
         titr = self.TITRE()
         # récupération des paramètres

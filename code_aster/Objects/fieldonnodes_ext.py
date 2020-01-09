@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,11 @@
 **********************************************************************
 """
 
+import numpy
+
+import aster
 from libaster import FieldOnNodesDouble
+
 from ..Utilities import injector
 
 
@@ -47,8 +51,6 @@ class ExtendedFieldOnNodesDouble(object):
             :py:class:`.post_comp_cham_no`: Object containing the values and,
             eventually, the topological informations of the support.
         """
-        import numpy
-        import aster
 
         ncham = self.getName()
         ncham = ncham + (19 - len(ncham)) * ' '
