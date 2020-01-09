@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -51,6 +51,7 @@ The class hierarchy for code_aster exceptions is:
 import aster
 from libaster import (AsterError, ContactError, ConvergenceError,
                       IntegrationError, SolverError, TimeLimitError)
+from Utilitai.Utmess import message_exception
 
 from ..Utilities import convert
 
@@ -66,7 +67,6 @@ def format(exc, code):
         str: Message of the exception.
     """
     try:
-        from Utilitai.Utmess import message_exception
         txt = message_exception(code, exc)
     except:
         txt = str(exc.args)

@@ -59,6 +59,7 @@ from ..Utilities.logger import logger
 # Units 6 and 9 can not be released/associated.
 RESERVED_UNIT = (8, )
 
+
 class FileType(object):
     """Enumeration for file type."""
     Ascii = 0

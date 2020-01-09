@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,26 +23,26 @@
 ****************************************************
 """
 
-from libaster import GeneralizedAssemblyMatrixDouble
-from libaster import GeneralizedAssemblyMatrixComplex
+import numpy as NP
+
+import aster
+from libaster import (GeneralizedAssemblyMatrixComplex,
+                      GeneralizedAssemblyMatrixDouble)
 
 from ..Utilities import injector
 
-_orig_getType = GeneralizedAssemblyMatrixDouble.getType
-
 
 def VALM_triang2array(dict_VALM, dim, dtype=None):
-    import numpy
     # stockage symetrique ou non (triang inf+sup)
     sym = len(dict_VALM) == 1
-    triang_sup = numpy.array(dict_VALM[1])
+    triang_sup = NP.array(dict_VALM[1])
     assert dim*(dim+1) // 2 == len(triang_sup), \
             'Matrice non pleine : %d*(%d+1)/2 != %d' % (dim, dim, len(triang_sup))
     if sym:
         triang_inf = triang_sup
     else:
-        triang_inf = numpy.array(dict_VALM[2])
-    valeur=numpy.zeros([dim, dim], dtype=dtype)
+        triang_inf = NP.array(dict_VALM[2])
+    valeur=NP.zeros([dim, dim], dtype=dtype)
     for i in range(1, dim+1):
         for j in range(1, i+1):
             k = i*(i-1) // 2 + j
@@ -51,10 +51,9 @@ def VALM_triang2array(dict_VALM, dim, dtype=None):
     return valeur
 
 def VALM_diag2array(dict_VALM, dim, dtype=None):
-    import numpy
-    diag = numpy.array(dict_VALM[1])
+    diag = NP.array(dict_VALM[1])
     assert dim == len(diag), 'Dimension incorrecte : %d != %d' % (dim, len(diag))
-    valeur=numpy.zeros([dim, dim], dtype=dtype)
+    valeur=NP.zeros([dim, dim], dtype=dtype)
     for i in range(dim):
         valeur[i,i] =  diag[i]
     return valeur
@@ -83,14 +82,12 @@ class ExtendedGeneralizedAssemblyMatrixComplex(object):
             self.setModalBasis(state[2])
 
     def EXTR_MATR_GENE(self) :
-        import numpy
-
         desc = self.sdj.DESC.get()
         # On teste si le DESC de la matrice existe
         if not desc:
             raise AsException("L'objet matrice {0!r} n'existe pas"
                               .format(self.sdj.DESC.nomj()))
-        desc = numpy.array(desc)
+        desc = NP.array(desc)
         # Si le stockage est plein
         if desc[2] == 2 :
             valeur = VALM_triang2array(self.sdj.VALM.get(), desc[1], complex)
@@ -105,31 +102,29 @@ class ExtendedGeneralizedAssemblyMatrixComplex(object):
         return valeur
 
     def RECU_MATR_GENE(self,matrice) :
-        import numpy, aster
-
-        numpy.asarray(matrice)
+        NP.asarray(matrice)
         ncham=self.getName()
         desc = self.sdj.DESC.get()
         # On teste si le DESC de la matrice existe
         if not desc:
             raise AsException("L'objet matrice {0!r} n'existe pas"
                             .format(self.sdj.DESC.nomj()))
-        desc = numpy.array(desc)
-        numpy.asarray(matrice)
+        desc = NP.array(desc)
+        NP.asarray(matrice)
 
         # On teste si la dimension de la matrice python est 2
-        if (len(numpy.shape(matrice)) != 2) :
+        if (len(NP.shape(matrice)) != 2) :
             raise AsException("La dimension de la matrice est incorrecte ")
 
         # On teste si la taille de la matrice jeveux et python est identique
-        if (tuple([desc[1],desc[1]]) != numpy.shape(matrice)) :
+        if (tuple([desc[1],desc[1]]) != NP.shape(matrice)) :
             raise AsException("La taille de la matrice est incorrecte ")
 
         # Si le stockage est plein
         if desc[2]==2 :
             taille=desc[1]*desc[1]/2.0+desc[1]/2.0
-            tmpr=numpy.zeros([int(taille)])
-            tmpc=numpy.zeros([int(taille)])
+            tmpr=NP.zeros([int(taille)])
+            tmpc=NP.zeros([int(taille)])
             for j in range(desc[1]+1):
                 for i in range(j):
                     k=j*(j-1) // 2+i
@@ -139,8 +134,8 @@ class ExtendedGeneralizedAssemblyMatrixComplex(object):
                             list(range(1,len(tmpr)+1)))),tuple(tmpr),tuple(tmpc),1)
         # Si le stockage est diagonal
         elif desc[2]==1 :
-            tmpr=numpy.zeros(desc[1])
-            tmpc=numpy.zeros(desc[1])
+            tmpr=NP.zeros(desc[1])
+            tmpc=NP.zeros(desc[1])
             for j in range(desc[1]):
                 tmpr[j]=matrice[j,j].real
                 tmpc[j]=matrice[j,j].imag
@@ -175,7 +170,6 @@ class ExtendedGeneralizedAssemblyMatrixDouble():
             self.setModalBasis(state[2])
 
     def EXTR_MATR(self, sparse=False):
-        import numpy as NP
 
         refa = NP.array(self.sdj.REFA.get())
 
@@ -203,14 +197,12 @@ class ExtendedGeneralizedAssemblyMatrixDouble():
             return make_sym_matrix(dim,triang_sup,ntype)
 
     def EXTR_MATR_GENE(self):
-        import numpy
-
         desc = self.sdj.DESC.get()
         # On teste si le DESC du vecteur existe
         if not desc:
             raise AsException("L'objet vecteur {0!r} n'existe pas"
                               .format(self.sdj.DESC.nomj()))
-        desc = numpy.array(desc)
+        desc = NP.array(desc)
 
         # Si le stockage est plein
         if desc[2]==2:
@@ -226,8 +218,6 @@ class ExtendedGeneralizedAssemblyMatrixDouble():
         return valeur
 
     def RECU_MATR_GENE(self,matrice) :
-        import numpy, aster
-
         ncham=self.getName()
 
         desc = self.sdj.DESC.get()
@@ -235,22 +225,22 @@ class ExtendedGeneralizedAssemblyMatrixDouble():
         if not desc:
             raise AsException("L'objet matrice {0!r} n'existe pas"
                             .format(self.sdj.DESC.nomj()))
-        desc = numpy.array(desc)
+        desc = NP.array(desc)
 
-        numpy.asarray(matrice)
+        NP.asarray(matrice)
 
         # On teste si la dimension de la matrice python est 2
-        if (len(numpy.shape(matrice)) != 2) :
+        if (len(NP.shape(matrice)) != 2) :
             raise AsException("La dimension de la matrice est incorrecte ")
 
         # On teste si les tailles des matrices jeveux et python sont identiques
-        if (tuple([desc[1],desc[1]]) != numpy.shape(matrice)) :
+        if (tuple([desc[1],desc[1]]) != NP.shape(matrice)) :
             raise AsException("La taille de la matrice est incorrecte ")
 
         # Si le stockage est plein
         if desc[2]==2 :
             taille=desc[1]*desc[1]/2.0+desc[1]/2.0
-            tmp=numpy.zeros([int(taille)])
+            tmp=NP.zeros([int(taille)])
             for j in range(desc[1]+1):
                 for i in range(j):
                     k=j*(j-1) // 2+i
@@ -259,7 +249,7 @@ class ExtendedGeneralizedAssemblyMatrixDouble():
             list(range(1,len(tmp)+1)))),tuple(tmp),tuple(tmp),1)
         # Si le stockage est diagonal
         elif desc[2]==1 :
-            tmp=numpy.zeros(desc[1])
+            tmp=NP.zeros(desc[1])
             for j in range(desc[1]):
                 tmp[j]=matrice[j,j]
             aster.putcolljev('%-19s.VALM' % ncham,len(tmp),tuple((\
