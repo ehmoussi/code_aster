@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: olivier.boiteau at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 INFO_MODE=OPER(nom="INFO_MODE",op=32,sd_prod=table_sdaster,
@@ -39,8 +39,8 @@ INFO_MODE=OPER(nom="INFO_MODE",op=32,sd_prod=table_sdaster,
                                  validators=AndVal((OrdList('croissant'), NoRepeat())),
                                  fr=tr("Liste de frequences") ),
            COMPTAGE        =FACT(statut='d',
-              METHODE          =SIMP(statut='f',typ='TXM',defaut="AUTO",into=("AUTO","STURM")),                
-              SEUIL_FREQ       =SIMP(statut='f',typ='R',defaut= 1.E-2 ),  
+              METHODE          =SIMP(statut='f',typ='TXM',defaut="AUTO",into=("AUTO","STURM")),
+              SEUIL_FREQ       =SIMP(statut='f',typ='R',defaut= 1.E-2 ),
               PREC_SHIFT       =SIMP(statut='f',typ='R',defaut= 5.E-2 ),
               NMAX_ITER_SHIFT  =SIMP(statut='f',typ='I',defaut= 3,val_min=0),
                                 ),
@@ -54,12 +54,12 @@ INFO_MODE=OPER(nom="INFO_MODE",op=32,sd_prod=table_sdaster,
                                  validators=AndVal((OrdList('croissant'), NoRepeat())),
                                  fr=tr("Liste de charges critiques") ),
            COMPTAGE        =FACT(statut='d',
-              METHODE          =SIMP(statut='f',typ='TXM',defaut="AUTO",into=("AUTO","STURM")),                
-              SEUIL_CHAR_CRIT  =SIMP(statut='f',typ='R',defaut= 1.E-2 ),  
+              METHODE          =SIMP(statut='f',typ='TXM',defaut="AUTO",into=("AUTO","STURM")),
+              SEUIL_CHAR_CRIT  =SIMP(statut='f',typ='R',defaut= 1.E-2 ),
               PREC_SHIFT       =SIMP(statut='f',typ='R',defaut= 5.E-2 ),
               NMAX_ITER_SHIFT  =SIMP(statut='f',typ='I',defaut= 3,val_min=0),
                                 ),
-         ),         
+         ),
 
          b_complexe  =BLOC(condition = """equal_to("TYPE_MODE", 'MODE_COMPLEXE')""",fr=tr("Recherche du nombre de fréquences propres"),
            MATR_RIGI       =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_temp_r,matr_asse_pres_r,matr_asse_gene_r,
@@ -70,7 +70,7 @@ INFO_MODE=OPER(nom="INFO_MODE",op=32,sd_prod=table_sdaster,
            RAYON_CONTOUR   =SIMP(statut='o',typ='R',val_min=1.E-2 ),
            CENTRE_CONTOUR  =SIMP(statut='f',typ='C',defaut= 0.0+0.0j),
            COMPTAGE        =FACT(statut='d',
-              METHODE          =SIMP(statut='f',typ='TXM',defaut="AUTO",into=("AUTO","APM")),                
+              METHODE          =SIMP(statut='f',typ='TXM',defaut="AUTO",into=("AUTO","APM")),
               NBPOINT_CONTOUR  =SIMP(statut='f',typ='I',defaut= 40,val_min=10,val_max=1000),
               NMAX_ITER_CONTOUR=SIMP(statut='f',typ='I',defaut= 3, val_min=1,val_max=5),
                                ),
@@ -85,26 +85,26 @@ INFO_MODE=OPER(nom="INFO_MODE",op=32,sd_prod=table_sdaster,
                                  validators=AndVal((OrdList('croissant'), NoRepeat())),
                                  fr=tr("Liste de charges critiques") ),
            b_contour  =BLOC(condition = """not exists("CHAR_CRIT")""",
-             TYPE_CONTOUR    =SIMP(statut='f',typ='TXM',defaut="CERCLE",into=("CERCLE","CERCLE") ),        
+             TYPE_CONTOUR    =SIMP(statut='f',typ='TXM',defaut="CERCLE",into=("CERCLE","CERCLE") ),
              RAYON_CONTOUR   =SIMP(statut='o',typ='R',val_min=1.E-2 ),
              CENTRE_CONTOUR  =SIMP(statut='f',typ='C',defaut= 0.0+0.0j),),
            COMPTAGE        =FACT(statut='d',
-              METHODE          =SIMP(statut='f',typ='TXM',defaut="AUTO",into=("AUTO","STURM","APM")),                
-              SEUIL_CHAR_CRIT  =SIMP(statut='f',typ='R',defaut= 1.E-2 ),  
+              METHODE          =SIMP(statut='f',typ='TXM',defaut="AUTO",into=("AUTO","STURM","APM")),
+              SEUIL_CHAR_CRIT  =SIMP(statut='f',typ='R',defaut= 1.E-2 ),
               PREC_SHIFT       =SIMP(statut='f',typ='R',defaut= 5.E-2 ),
               NMAX_ITER_SHIFT  =SIMP(statut='f',typ='I',defaut= 3,val_min=0),                                 ),
               NBPOINT_CONTOUR  =SIMP(statut='f',typ='I',defaut= 40,val_min=10,val_max=1000),
               NMAX_ITER_CONTOUR=SIMP(statut='f',typ='I',defaut= 3, val_min=1,val_max=5),
                                 ),
 
-         TITRE           =SIMP(statut='f',typ='TXM'),  
-                        
+         TITRE           =SIMP(statut='f',typ='TXM'),
+
 #-------------------------------------------------------------------
 #        Catalogue commun SOLVEUR
          SOLVEUR         =C_SOLVEUR('INFO_MODE'),
 #        Mot-cle pour piloter les niveaux de parallelismes de l'operateur (a ne pas confondre avec le mot-cle
 #        cache PARALLELISME_MACRO)
-         NIVEAU_PARALLELISME  =SIMP(statut='f',typ='TXM',defaut="COMPLET",into=("PARTIEL","COMPLET") ),  
+         NIVEAU_PARALLELISME  =SIMP(statut='f',typ='TXM',defaut="COMPLET",into=("PARTIEL","COMPLET") ),
 #-------------------------------------------------------------------
 #-------------------------------------------------------------------
 #  Mot-cles caches pour activer le parallelisme au sein d'une macro-commande

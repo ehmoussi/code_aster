@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sylvie.audebert at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 COMB_SISM_MODAL=OPER(nom="COMB_SISM_MODAL",op= 109,sd_prod=mode_meca,
@@ -49,12 +49,12 @@ COMB_SISM_MODAL=OPER(nom="COMB_SISM_MODAL",op= 109,sd_prod=mode_meca,
 
          MASS_INER       =SIMP(statut='f',typ=table_sdaster ),
          CORR_FREQ       =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON") ),
-         
+
          MONO_APPUI      =SIMP(statut='f',typ='TXM',into=("OUI",),
                                  fr=tr("excitation imposée unique") ),
          MULTI_APPUI      =SIMP(statut='f',typ='TXM',into=("DECORRELE","CORRELE"),
                                  fr=tr("excitation imposée unique") ),
-                                 
+
          b_mult_appui    =BLOC(condition = """(exists("MULTI_APPUI"))""",
             EXCIT           =FACT(statut='o',max='**',
               regles=(UN_PARMI('AXE','TRI_AXE','TRI_SPEC' ),UN_PARMI('NOEUD','GROUP_NO' ),),
@@ -98,8 +98,8 @@ COMB_SISM_MODAL=OPER(nom="COMB_SISM_MODAL",op= 109,sd_prod=mode_meca,
               ),
               NATURE          =SIMP(statut='f',typ='TXM',defaut="ACCE",into=("ACCE","VITE","DEPL") ),
             ), # fin mcf_excit
-         ), # fin b_not_mult_appui  
-                                               
+         ), # fin b_not_mult_appui
+
          b_decorrele     =BLOC(condition = """equal_to("MULTI_APPUI", 'DECORRELE') """,
            GROUP_APPUI     =FACT(statut='f',max='**',
            regles=(UN_PARMI('NOEUD','GROUP_NO' ),),
@@ -122,7 +122,7 @@ COMB_SISM_MODAL=OPER(nom="COMB_SISM_MODAL",op= 109,sd_prod=mode_meca,
          b_gupta =BLOC(condition = """equal_to("TYPE", 'GUPTA') """,
            FREQ_1      =SIMP(statut='o',typ='R',),
            FREQ_2      =SIMP(statut='o',typ='R',),
-         ),      
+         ),
          ),
          COMB_DIRECTION  =FACT(statut='f',
            TYPE            =SIMP(statut='f',typ='TXM',into=("QUAD","NEWMARK") ),

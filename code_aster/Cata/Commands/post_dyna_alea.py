@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: irmela.zentner at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 POST_DYNA_ALEA=MACRO(nom="POST_DYNA_ALEA",
@@ -38,10 +38,10 @@ POST_DYNA_ALEA=MACRO(nom="POST_DYNA_ALEA",
                         VALE       = SIMP(statut='f',typ='R', min=1,validators=NoRepeat(),max='**' ),
                         LIST_PARA  = SIMP(statut='f',typ=listr8_sdaster),
                         METHODE    = SIMP(statut='o',typ='TXM',into=("EMV","REGRESSION") ),
-                        a_methode =BLOC(condition = """equal_to("METHODE", 'REGRESSION')""", 
-                            SEUIL     = SIMP(statut='o',typ='R' ),  ), 
+                        a_methode =BLOC(condition = """equal_to("METHODE", 'REGRESSION')""",
+                            SEUIL     = SIMP(statut='o',typ='R' ),  ),
                         b_methode =BLOC(condition = """equal_to("METHODE", 'EMV')""",
-                           SEUIL     = SIMP(statut='f',typ='R' ),   
+                           SEUIL     = SIMP(statut='f',typ='R' ),
                            AM_INI     = SIMP(statut='o',typ='R' ),
                            BETA_INI   = SIMP(statut='f',typ='R',defaut= 0.3 ),
                            FRACTILE   = SIMP(statut='f',typ='R', min=1,validators=NoRepeat(),max='**', val_min=0., val_max=1.,),

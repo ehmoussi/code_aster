@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: irmela.zentner at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 POST_FATI_ALEA=OPER(nom="POST_FATI_ALEA",op=170,sd_prod=table_sdaster,reentrant='n',
@@ -28,14 +28,14 @@ POST_FATI_ALEA=OPER(nom="POST_FATI_ALEA",op=170,sd_prod=table_sdaster,reentrant=
          regles=(ENSEMBLE('MOMENT_SPEC_0','MOMENT_SPEC_2'),
                  PRESENT_PRESENT( 'MOMENT_SPEC_4','MOMENT_SPEC_0'),
                  UN_PARMI('TABL_POST_ALEA','MOMENT_SPEC_0'), ),
-         MOMENT_SPEC_0   =SIMP(statut='f',typ='R'),  
-         MOMENT_SPEC_2   =SIMP(statut='f',typ='R'),  
-         MOMENT_SPEC_4   =SIMP(statut='f',typ='R'),  
+         MOMENT_SPEC_0   =SIMP(statut='f',typ='R'),
+         MOMENT_SPEC_2   =SIMP(statut='f',typ='R'),
+         MOMENT_SPEC_4   =SIMP(statut='f',typ='R'),
          TABL_POST_ALEA  =SIMP(statut='f',typ=table_sdaster),
          COMPTAGE        =SIMP(statut='o',typ='TXM',into=("PIC","NIVEAU")),
-         DUREE           =SIMP(statut='f',typ='R',defaut= 1.),  
+         DUREE           =SIMP(statut='f',typ='R',defaut= 1.),
          CORR_KE         =SIMP(statut='f',typ='TXM',into=("RCCM",)),
          DOMMAGE         =SIMP(statut='o',typ='TXM',into=("WOHLER",)),
          MATER           =SIMP(statut='o',typ=mater_sdaster),
-         TITRE           =SIMP(statut='f',typ='TXM'),  
+         TITRE           =SIMP(statut='f',typ='TXM'),
 )  ;

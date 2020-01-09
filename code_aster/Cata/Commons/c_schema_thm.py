@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,11 +18,10 @@
 # --------------------------------------------------------------------
 # person_in_charge: sylvie.granet at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
 
 def C_SCHEMA_THM() : return FACT(statut='f',max=1,
         PARM_THETA      =SIMP(statut='f',typ='R',val_min=0.,val_max=1., defaut= 1.),
         PARM_ALPHA      =SIMP(statut='f',typ='R',defaut= 1. ),
          );
-

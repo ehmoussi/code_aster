@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------
 # Copyright (C) 2018 Aether Engineering Solutions - www.aethereng.com
 # Copyright (C) 2018 Kobe Innovation Engineering - www.kobe-ie.com
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # --------------------------------------------------------------------
 # aslint: disable=W4004
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 # definition of macro return types (both in-out arguments and return types)
 def combinaison_ferraillage_prod ( self, **args ):
@@ -66,8 +66,8 @@ COMBINAISON_FERRAILLAGE = MACRO(
                               validators=NoRepeat() , max='**'),
             TYPE_STRUCTURE = SIMP ( statut = 'o', typ = 'TXM',
                           into = (
-                                   # 'POUTRE', TODO: next release 
-                                   # 'POTEAU', TODO: next release 
+                                   # 'POUTRE', TODO: next release
+                                   # 'POTEAU', TODO: next release
                                    '2D',
                                   )
                         ),
@@ -127,13 +127,13 @@ COMBINAISON_FERRAILLAGE = MACRO(
         AFFE = FACT ( statut = 'o', min = 1 , max = '**',
             regles = ( UN_PARMI ( 'TOUT', 'GROUP_MA' ), ),
                 TOUT = SIMP ( statut = 'f', typ = 'TXM', into = ('OUI',) ),
-                                  
+
             GROUP_MA = SIMP ( statut = 'f', typ = grma,
                               validators=NoRepeat() , max='**'),
             TYPE_STRUCTURE = SIMP ( statut = 'o', typ = 'TXM',
                           into = (
-                                   # 'POUTRE', TODO: next release 
-                                   # 'POTEAU', TODO: next release 
+                                   # 'POUTRE', TODO: next release
+                                   # 'POTEAU', TODO: next release
                                    '2D',
                                   )
                         ),

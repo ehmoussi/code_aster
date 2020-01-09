@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 CALC_ERC_DYN=OPER(nom="CALC_ERC_DYN",op=66,sd_prod=mode_meca,
@@ -39,7 +39,7 @@ CALC_ERC_DYN=OPER(nom="CALC_ERC_DYN",op=66,sd_prod=mode_meca,
 #
          GAMMA           =SIMP(statut='o',typ='R',validators=NoRepeat()),
          ALPHA           =SIMP(statut='o',typ='R',validators=NoRepeat()),
-# 
+#
          EVAL_FONC=SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="NON" ),
          SOLVEUR = C_SOLVEUR('CALC_ERC_DYN'),
          INFO = SIMP(statut='f',typ='I',defaut=1),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # person_in_charge: mathieu.courtois at edf.fr
 #
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons.c_nom_grandeur import C_NOM_GRANDEUR
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from .c_nom_grandeur import C_NOM_GRANDEUR
 
 
 def C_TYPE_CHAM_INTO( type_cham=None ):

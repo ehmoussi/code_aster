@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: irmela.zentner at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 DEFI_PROP_ALEA = MACRO(nom="DEFI_PROP_ALEA",
@@ -38,12 +38,12 @@ DEFI_PROP_ALEA = MACRO(nom="DEFI_PROP_ALEA",
 #
         a_data_x   = BLOC(condition="""exists('LONG_CORR_X')""",
         X_MINI     = SIMP(statut='o', typ='R', fr=tr("Dimension du domaine: X_MINI"),),
-        X_MAXI     = SIMP(statut='o', typ='R', fr=tr("Dimension du domaine: X_MAXI"),),  
+        X_MAXI     = SIMP(statut='o', typ='R', fr=tr("Dimension du domaine: X_MAXI"),),
         NB_TERM_X     = SIMP(statut='o', typ='R',  fr=tr("Nombre de termes de KL en X"), ),
 ),
         a_data_y   = BLOC(condition="""exists('LONG_CORR_Y')""",
         Y_MINI     = SIMP(statut='o', typ='R', fr=tr("Dimension du domaine: Y_MINI"), ),
-        Y_MAXI     = SIMP(statut='o', typ='R', fr=tr("Dimension du domaine: Y_MAXI"), ), 
+        Y_MAXI     = SIMP(statut='o', typ='R', fr=tr("Dimension du domaine: Y_MAXI"), ),
         NB_TERM_Y    = SIMP(statut='o', typ='R',  fr=tr("Nombre de termes de KL en Y"), ),
 ),
         a_data_z   = BLOC(condition="""exists('LONG_CORR_Z')""",

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Language.Syntax import *
+from ..Language.DataStructure import *
+from ..Commons import *
 
 
 POST_LIQUEFACTION=MACRO(nom="POST_LIQUEFACTION",
@@ -27,7 +27,7 @@ POST_LIQUEFACTION=MACRO(nom="POST_LIQUEFACTION",
                         sd_prod=evol_noli,
                         reentrant='n',
                         AXE      = SIMP(statut='o',typ='TXM',into=("X","Y","Z"),max=1,fr=tr("Direction de la pesanteur")),
-                        RESULTAT = SIMP(statut='o',typ=evol_noli,fr=tr("Resultat contenant les pressions"),), 
+                        RESULTAT = SIMP(statut='o',typ=evol_noli,fr=tr("Resultat contenant les pressions"),),
                         CRITERE  = SIMP(statut='o',typ='TXM',into=("DP_SIGV_REF","DP_SIGM_REF","DP","P_SIGM"),max=1,
                         fr=tr("Choix de la formule du critere de liquefaction")),
                         b_def_ref =BLOC(condition = """equal_to('CRITERE', 'DP_SIGV_REF')""",

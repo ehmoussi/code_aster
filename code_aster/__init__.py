@@ -28,8 +28,8 @@ creation. It can be simply called from this toplevel module with:
 
 .. code-block:: python
 
-    import code_aster
-    code_aster.init()
+    >>> import code_aster
+    >>> code_aster.init()
 
 The same job is done by :py:class:`~code_aster.Commands.debut.DEBUT`.
 
@@ -37,8 +37,8 @@ For convenience the objects are direcly available here:
 
 .. code-block:: python
 
-    import code_aster
-    mymesh = code_aster.Mesh()
+    >>> import code_aster
+    >>> mymesh = code_aster.Mesh()
 
 """
 
