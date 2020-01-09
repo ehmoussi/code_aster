@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -176,9 +176,10 @@ integer :: faccvg, ldccvg
     iterat = 0
     lcamor = ASTER_FALSE
 !
-! --- RE-CREATION DU NUME_DDL OU PAS
+! - Renumbering equations ?
 !
-    call nmrenu(modelz, fonact, lischa, ds_contact, numedd,&
+    call nmrenu(modelz    , fonact    , lischa,&
+                ds_measure, ds_contact, numedd,&
                 renume)
 !
 ! --- CHOIX DE REASSEMBLAGE DE LA MATRICE GLOBALE
