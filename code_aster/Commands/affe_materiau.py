@@ -35,18 +35,20 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MaterialOnMesh
-from ..Utilities import force_list
+from ..Objects import (ConcreteDryingInputVariable,
+                       ConcreteHydratationInputVariable,
+                       CorrosionInputVariable, EvolutionParameter,
+                       GeometryInputVariable, InputVariableConverter,
+                       InputVariableOnMesh, IrradiationInputVariable,
+                       IrreversibleDeformationInputVariable, MaterialOnMesh,
+                       MaterialOnMeshBuilder, Neutral1InputVariable,
+                       Neutral2InputVariable, Neutral3InputVariable,
+                       SteelPhasesInputVariable, TemperatureInputVariable,
+                       TotalFluidPressureInputVariable,
+                       VolumetricDeformationInputVariable,
+                       ZircaloyPhasesInputVariable)
 from ..Supervis.ExecuteCommand import ExecuteCommand
-from ..Objects import TemperatureInputVariable, GeometryInputVariable, CorrosionInputVariable
-from ..Objects import IrreversibleDeformationInputVariable, ConcreteHydratationInputVariable
-from ..Objects import IrradiationInputVariable, SteelPhasesInputVariable
-from ..Objects import ZircaloyPhasesInputVariable
-from ..Objects import Neutral1InputVariable, Neutral2InputVariable, Neutral3InputVariable
-from ..Objects import ConcreteDryingInputVariable, TotalFluidPressureInputVariable
-from ..Objects import VolumetricDeformationInputVariable, InputVariableOnMesh
-from ..Objects import MaterialOnMeshBuilder, EvolutionParameter
-from ..Objects import InputVariableConverter
+from ..Utilities import force_list
 
 
 class MaterialAssignment(ExecuteCommand):

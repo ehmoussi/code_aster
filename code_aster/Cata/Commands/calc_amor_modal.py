@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: georges-cc.devesa at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_AMOR_MODAL=OPER(nom="CALC_AMOR_MODAL",op= 172,sd_prod=listr8_sdaster,
                      fr=tr("Création d'une liste d'amortissements modaux calculés selon la règle du RCC-G"),

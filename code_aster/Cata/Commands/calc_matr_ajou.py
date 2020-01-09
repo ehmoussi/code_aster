@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: nicolas.greffet at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_MATR_AJOU=OPER(nom="CALC_MATR_AJOU",op= 152,sd_prod=matr_asse_gene_r,
                     fr=tr("Calcul des matrices de masse, d'amortissement ou de rigidité ajoutés"),

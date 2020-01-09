@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sarah.plessis at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_FATIGUE=OPER(nom="POST_FATIGUE",op=136,sd_prod=table_sdaster,reentrant='n',
                   fr=tr("Calculer en un point, le dommage de fatigue subi par une structure soumise à une histoire de chargement"),

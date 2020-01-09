@@ -19,10 +19,9 @@
 
 # person_in_charge: tanguy.mathieu at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_FISSURE=OPER(nom="DEFI_FISSURE",
                     op=60,

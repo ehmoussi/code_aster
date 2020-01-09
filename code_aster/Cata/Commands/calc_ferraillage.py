@@ -19,9 +19,9 @@
 
 # person_in_charge: jessica.haelewyn at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_ferraillage_prod(RESULTAT,**args):

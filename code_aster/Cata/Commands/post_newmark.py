@@ -17,10 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_NEWMARK=MACRO(nom="POST_NEWMARK",
                         op=OPS("Macro.post_newmark_ops.post_newmark_ops"),

@@ -21,6 +21,7 @@
 from ..Objects import ElementaryCharacteristics
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
+
 class EltCharacteristicsAssignment(ExecuteCommand):
 
     """Command that assigns

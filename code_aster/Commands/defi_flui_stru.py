@@ -19,8 +19,9 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Supervis.ExecuteCommand import ExecuteCommand
 from ..Objects import FluidStructureInteraction
+from ..Supervis.ExecuteCommand import ExecuteCommand
+
 
 class FluidStructureDefinition(ExecuteCommand):
     """Execute legacy operator DEFI_FLUI_STRU."""

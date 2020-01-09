@@ -19,8 +19,9 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FullTransientResultsContainer, MechanicalModeContainer
-from ..Objects import NonLinearEvolutionContainer, FullHarmonicResultsContainer
+from ..Objects import (FullHarmonicResultsContainer,
+                       FullTransientResultsContainer, MechanicalModeContainer,
+                       NonLinearEvolutionContainer)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

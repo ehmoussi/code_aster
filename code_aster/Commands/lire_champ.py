@@ -19,7 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import PCFieldOnMeshDouble, FieldOnNodesDouble, FieldOnElementsDouble
+from ..Objects import (FieldOnElementsDouble, FieldOnNodesDouble,
+                       PCFieldOnMeshDouble)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

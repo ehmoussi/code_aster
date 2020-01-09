@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MechanicalModeContainer, FullTransientResultsContainer
+from ..Objects import FullTransientResultsContainer, MechanicalModeContainer
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

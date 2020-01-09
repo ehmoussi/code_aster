@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: georges-cc.devesa at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_char_seisme_prod(MATR_MASS,**args ):

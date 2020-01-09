@@ -26,10 +26,10 @@
 This modules gives some basic utilities.
 """
 
+import sys
 from array import array
 from decimal import Decimal
 from functools import wraps
-import sys
 
 import numpy
 

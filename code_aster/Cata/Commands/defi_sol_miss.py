@@ -20,10 +20,9 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_SOL_MISS = MACRO(nom="DEFI_SOL_MISS",
                       op=OPS('Macro.defi_sol_miss_ops.defi_sol_miss_ops'),

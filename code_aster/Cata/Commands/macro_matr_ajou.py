@@ -20,9 +20,9 @@
 # person_in_charge: nicolas.greffet at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def macro_matr_ajou_prod(self, MATR_AMOR_AJOU=None, MATR_MASS_AJOU=None, MATR_RIGI_AJOU=None, FORC_AJOU=None, **args):

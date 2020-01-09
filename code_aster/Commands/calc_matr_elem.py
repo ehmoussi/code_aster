@@ -19,10 +19,10 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import ElementaryMatrixDisplacementDouble
-from ..Objects import ElementaryMatrixDisplacementComplex
-from ..Objects import ElementaryMatrixTemperatureDouble
-from ..Objects import ElementaryMatrixPressureComplex
+from ..Objects import (ElementaryMatrixDisplacementComplex,
+                       ElementaryMatrixDisplacementDouble,
+                       ElementaryMatrixPressureComplex,
+                       ElementaryMatrixTemperatureDouble)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

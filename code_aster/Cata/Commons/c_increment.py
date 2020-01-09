@@ -18,8 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mickael.abbas at edf.fr
-from ..Language.Syntax import FACT, SIMP, EXCLUS
-from ..Language.DataStructure import listr8_sdaster, list_inst
+
+from ..Language.DataStructure import list_inst, listr8_sdaster
+from ..Language.Syntax import EXCLUS, FACT, SIMP
 
 
 def C_INCREMENT(TYPE_CMD) :   #COMMUN#

@@ -19,10 +19,9 @@
 
 # person_in_charge: david.haboussa at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 TEST_COMPOR =MACRO(nom="TEST_COMPOR",
                    op=OPS('Macro.test_compor_ops.test_compor_ops'),

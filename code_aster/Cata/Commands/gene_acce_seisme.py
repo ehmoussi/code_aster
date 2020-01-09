@@ -19,10 +19,9 @@
 
 # person_in_charge: irmela.zentner at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 GENE_ACCE_SEISME=MACRO(nom = "GENE_ACCE_SEISME",
                      op = OPS('Macro.gene_acce_seisme_ops.gene_acce_seisme_ops'),

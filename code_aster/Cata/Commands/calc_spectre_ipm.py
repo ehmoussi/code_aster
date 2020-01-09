@@ -17,10 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_SPECTRE_IPM=MACRO(nom="CALC_SPECTRE_IPM",
                     op=OPS('Macro.calc_spectre_ipm_ops.calc_spectre_ipm_ops'),

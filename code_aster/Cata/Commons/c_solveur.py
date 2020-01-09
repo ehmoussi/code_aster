@@ -19,8 +19,8 @@
 
 # person_in_charge: olivier.boiteau at edf.fr
 
-from ..Language.Syntax import *
 from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#

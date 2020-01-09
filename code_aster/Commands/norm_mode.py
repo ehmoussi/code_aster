@@ -19,11 +19,10 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MechanicalModeContainer
-from ..Objects import MechanicalModeComplexContainer
-from ..Objects import BucklingModeContainer
-from ..Utilities import logger
+from ..Objects import (BucklingModeContainer, MechanicalModeComplexContainer,
+                       MechanicalModeContainer)
 from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Utilities import logger
 
 
 class NormMode(ExecuteCommand):

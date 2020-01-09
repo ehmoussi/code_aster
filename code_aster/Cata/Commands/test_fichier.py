@@ -19,10 +19,9 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 TEST_FICHIER=MACRO(nom="TEST_FICHIER",
                    op=OPS('Macro.test_fichier_ops.test_fichier_ops'),

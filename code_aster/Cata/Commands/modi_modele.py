@@ -19,10 +19,9 @@
 
 # person_in_charge: jacques.pellet at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MODI_MODELE=OPER(nom="MODI_MODELE",op= 103,sd_prod=modele_sdaster,
          reentrant='o:MODELE',

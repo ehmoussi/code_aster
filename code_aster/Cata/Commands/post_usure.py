@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,
                 reentrant='f:TABL_USURE',

@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: georges-cc.devesa at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def rest_cond_tran_prod(RESULTAT,TYPE_RESU,**args ):

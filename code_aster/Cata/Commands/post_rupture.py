@@ -19,10 +19,9 @@
 
 # person_in_charge: samuel.geniaut at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_RUPTURE=MACRO(nom="POST_RUPTURE",
                    op=OPS("Macro.post_rupture_ops.post_rupture_ops"),

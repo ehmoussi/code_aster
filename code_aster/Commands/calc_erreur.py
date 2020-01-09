@@ -19,8 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Utilities import required
 from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Utilities import required
 
 
 class ComputeError(ExecuteCommand):

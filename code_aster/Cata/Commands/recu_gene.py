@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 RECU_GENE=OPER(nom="RECU_GENE",op=  76,sd_prod=vect_asse_gene,reentrant='n',
                fr=tr("Extraire d'un champ de grandeur (déplacements, vitesses ou accélérations) à partir de résultats"

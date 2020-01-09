@@ -18,10 +18,9 @@
 # --------------------------------------------------------------------
 # person_in_charge: mickael.abbas at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALCUL=OPER(nom="CALCUL",op=26,sd_prod=table_container,
             reentrant='f:TABLE',

@@ -19,10 +19,9 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 INCLUDE_MATERIAU = MACRO(nom="INCLUDE_MATERIAU",
                          op=OPS("Macro.include_materiau_ops.include_materiau_ops"),

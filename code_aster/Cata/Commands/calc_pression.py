@@ -24,10 +24,9 @@
 # au frottement et aux éléments de structures si le besoin se manifeste.
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_PRESSION=MACRO(nom="CALC_PRESSION",
                     op=OPS('Macro.calc_pression_ops.calc_pression_ops'),

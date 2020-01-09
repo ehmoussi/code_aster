@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sam.cuvilliez at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def post_cham_xfem_prod(RESULTAT,**args ):

@@ -19,7 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import KinematicsMechanicalLoad, KinematicsThermalLoad, KinematicsAcousticLoad
+from ..Objects import (KinematicsAcousticLoad, KinematicsMechanicalLoad,
+                       KinematicsThermalLoad)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

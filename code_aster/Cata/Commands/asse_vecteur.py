@@ -19,10 +19,9 @@
 
 # person_in_charge: jacques.pellet at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 ASSE_VECTEUR=OPER(nom="ASSE_VECTEUR",op=13,sd_prod=cham_no_sdaster,
                   fr=tr("Construire un champ aux noeuds par assemblage de vecteurs élémentaires"),reentrant='n',

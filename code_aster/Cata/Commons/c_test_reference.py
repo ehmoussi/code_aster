@@ -18,8 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-from ..Language.Syntax import *
+
 from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def C_TEST_REFERENCE(keyword, max=1):       #COMMUN#

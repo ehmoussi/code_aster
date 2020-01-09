@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 COMB_FOURIER=OPER(nom="COMB_FOURIER",op= 161,sd_prod=comb_fourier,
                   reentrant='n',fr=tr("Recombiner les modes de Fourier d'une SD Résultat dans des directions particulières"),

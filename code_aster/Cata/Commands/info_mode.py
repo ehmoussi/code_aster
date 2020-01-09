@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: olivier.boiteau at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 INFO_MODE=OPER(nom="INFO_MODE",op=32,sd_prod=table_sdaster,
                 fr=tr("Calculer, imprimer, et sauvegarder le nombre de valeurs propres dans un contour donné"),

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: jacques.pellet at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CREA_MAILLAGE=OPER(nom="CREA_MAILLAGE",op= 167,sd_prod=maillage_sdaster,
             reentrant='n',fr=tr("Crée un maillage à partir d'un maillage existant"),

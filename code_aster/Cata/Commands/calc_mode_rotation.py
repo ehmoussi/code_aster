@@ -20,10 +20,9 @@
 # person_in_charge: mohamed-amine.hassini at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_MODE_ROTATION=MACRO(nom="CALC_MODE_ROTATION",
                          op=OPS('Macro.calc_mode_rotation_ops.calc_mode_rotation_ops'),

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: jacques.pellet at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 ASSE_MAILLAGE=OPER(nom="ASSE_MAILLAGE",op= 105,sd_prod=maillage_sdaster,
                    fr=tr("Assembler deux maillages pour en former un nouveau"),

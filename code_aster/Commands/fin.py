@@ -22,9 +22,8 @@
 import libaster
 
 from ..Helpers import saveObjects
-from ..Utilities import ExecutionParameter
-from ..Utilities import logger
 from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Utilities import ExecutionParameter, logger
 
 
 class Closer(ExecuteCommand):

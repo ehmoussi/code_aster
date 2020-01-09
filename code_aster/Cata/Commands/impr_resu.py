@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: nicolas.sellenet at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                fr=tr("Imprimer un maillage et/ou les résultats d'un calcul (différents formats)"),

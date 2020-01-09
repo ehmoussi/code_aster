@@ -20,10 +20,9 @@
 # person_in_charge: irmela.zentner at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 LIRE_INTE_SPEC=MACRO(nom="LIRE_INTE_SPEC",
                      op=OPS('Macro.lire_inte_spec_ops.lire_inte_spec_ops'),

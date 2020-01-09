@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sofiane.hendili at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_META=OPER(nom="CALC_META",op=194,sd_prod=evol_ther,
                reentrant='o:RESULTAT',

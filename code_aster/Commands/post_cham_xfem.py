@@ -19,8 +19,9 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import NonLinearEvolutionContainer, MechanicalModeContainer
-from ..Objects import LinearDisplacementEvolutionContainer, EvolutiveThermalLoad
+from ..Objects import (EvolutiveThermalLoad,
+                       LinearDisplacementEvolutionContainer,
+                       MechanicalModeContainer, NonLinearEvolutionContainer)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

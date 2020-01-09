@@ -19,10 +19,9 @@
 
 # person_in_charge: mathieu.corus at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MACR_ELEM_DYNA=OPER(nom="MACR_ELEM_DYNA",op=  81,sd_prod=macr_elem_dyna,
                     fr=tr("Definition d'un macro element pour analyse modale ou harmonique par sous structuration dynamique"),

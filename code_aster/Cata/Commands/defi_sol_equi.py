@@ -17,10 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
                       op=OPS('Macro.defi_sol_equi_ops.defi_sol_equi_ops'),

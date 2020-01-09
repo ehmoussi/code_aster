@@ -19,10 +19,9 @@
 
 # person_in_charge: josselin.delmas at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_CHAM_ELEM=OPER(nom="CALC_CHAM_ELEM",op=38,sd_prod=cham_elem,
                     fr=tr("Calculer un champ élémentaire en thermique et en accoustique à partir de champs déjà calculés"),

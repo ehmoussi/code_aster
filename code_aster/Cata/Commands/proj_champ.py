@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: jacques.pellet at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
+
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def proj_champ_prod(RESULTAT=None,CHAM_GD=None,METHODE=None,**args ):

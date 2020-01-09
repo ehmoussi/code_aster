@@ -17,10 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_LIQUEFACTION=MACRO(nom="POST_LIQUEFACTION",
                         op=OPS("Macro.post_liquefaction_ops.post_liquefaction_ops"),

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_DYNA_MODA_T=OPER(nom="POST_DYNA_MODA_T",op= 130,sd_prod=table_sdaster,
                       fr=tr("Post-traiter les résultats en coordonnées généralisées produit par DYNA_TRAN_MODAL"),

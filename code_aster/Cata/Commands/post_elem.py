@@ -19,10 +19,9 @@
 
 # person_in_charge: josselin.delmas at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_ELEM=OPER(nom="POST_ELEM",op=107,sd_prod=table_sdaster,reentrant='n',
                fr=tr("Calcul de quantités globales (masse, inerties, énergie, ...) sur tout ou partie du modèle"),

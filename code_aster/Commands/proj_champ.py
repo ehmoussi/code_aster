@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MatchingMeshes, FieldOnElementsDouble
+from ..Objects import FieldOnElementsDouble, MatchingMeshes
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

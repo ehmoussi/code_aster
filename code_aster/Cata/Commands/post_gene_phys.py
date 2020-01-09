@@ -19,10 +19,9 @@
 
 # person_in_charge: hassan.berro at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_GENE_PHYS  = OPER( nom="POST_GENE_PHYS",op=  58,sd_prod=table_sdaster,
                         fr="Post-traiter dans la base physique des résultats dyanmiques en coordonnées généralisées",

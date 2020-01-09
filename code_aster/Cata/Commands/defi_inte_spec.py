@@ -19,10 +19,9 @@
 
 # person_in_charge: irmela.zentner at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_INTE_SPEC=OPER(nom="DEFI_INTE_SPEC",op= 115,
                     sd_prod=interspectre,

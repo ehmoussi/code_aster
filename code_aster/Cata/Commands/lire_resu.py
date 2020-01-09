@@ -19,9 +19,9 @@
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def lire_resu_prod(TYPE_RESU,**args):

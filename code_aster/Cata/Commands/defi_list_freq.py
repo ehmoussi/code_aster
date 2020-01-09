@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_LIST_FREQ=MACRO(nom="DEFI_LIST_FREQ",
                     op=OPS('Macro.defi_list_freq_ops.defi_list_freq_ops'),

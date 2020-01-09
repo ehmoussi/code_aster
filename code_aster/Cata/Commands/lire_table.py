@@ -20,10 +20,9 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 LIRE_TABLE=MACRO(nom="LIRE_TABLE",
                  op=OPS('Macro.lire_table_ops.lire_table_ops'),

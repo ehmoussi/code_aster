@@ -18,8 +18,9 @@
 # --------------------------------------------------------------------
 # person_in_charge: sylvie.granet at edf.fr
 
-from ..Language.Syntax import *
 from ..Language.DataStructure import *
+from ..Language.Syntax import *
+
 
 def C_SCHEMA_THM() : return FACT(statut='f',max=1,
         PARM_THETA      =SIMP(statut='f',typ='R',val_min=0.,val_max=1., defaut= 1.),

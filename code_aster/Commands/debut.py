@@ -37,6 +37,8 @@ passed during the initialization to the
 # aslint: disable=C4008
 
 
+import ptvsd
+
 import aster
 import aster_core
 import libaster
@@ -184,7 +186,6 @@ def init(*argv, **kwargs):
     kwargs.pop('debug', None)
 
     if kwargs.get('ptvsd'):
-        import ptvsd
         print('Waiting for debugger attach...'),
         ptvsd.enable_attach(address=('127.0.0.1', kwargs['ptvsd']))
         ptvsd.wait_for_attach()

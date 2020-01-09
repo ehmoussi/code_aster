@@ -19,8 +19,9 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import AssemblyMatrixDisplacementDouble
-from ..Objects import GeneralizedAssemblyMatrixDouble, GeneralizedAssemblyMatrixComplex
+from ..Objects import (AssemblyMatrixDisplacementDouble,
+                       GeneralizedAssemblyMatrixComplex,
+                       GeneralizedAssemblyMatrixDouble)
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
 

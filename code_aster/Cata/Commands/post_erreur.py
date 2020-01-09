@@ -19,10 +19,9 @@
 
 # person_in_charge: alexandre-externe.martin at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_ERREUR=MACRO(nom="POST_ERREUR",
                   op=OPS('Macro.post_erreur_ops.post_erreur_ops'),

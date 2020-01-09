@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: sofiane.hendili at edf.fr
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
-from ..Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_TRC=OPER(nom="DEFI_TRC",op=94,sd_prod=table_sdaster,reentrant='n',
               fr=tr("Définir d'un diagramme de transformations en refroidissement continu (TRC) de référence d'un acier"

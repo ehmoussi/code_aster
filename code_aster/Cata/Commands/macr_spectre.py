@@ -20,10 +20,9 @@
 # person_in_charge: francois.voldoire at edf.fr
 
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MACR_SPECTRE=MACRO(nom="MACR_SPECTRE",
                    op=OPS('Macro.macr_spectre_ops.macr_spectre_ops'),

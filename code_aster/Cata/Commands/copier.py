@@ -19,10 +19,9 @@
 
 # person_in_charge: jacques.pellet at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 # liste des types de concept acceptes par la commande :
 copier_ltyp = (

@@ -19,10 +19,9 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 TEST_FONCTION=MACRO(nom="TEST_FONCTION",
                     op=OPS('Macro.test_fonction_ops.test_fonction_ops'),

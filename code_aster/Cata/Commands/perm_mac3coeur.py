@@ -19,10 +19,9 @@
 
 # person_in_charge: romeo.fernandes at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 PERM_MAC3COEUR = MACRO(nom="PERM_MAC3COEUR",
                        op=OPS("Mac3coeur.perm_mac3coeur_ops.perm_mac3coeur_ops"),

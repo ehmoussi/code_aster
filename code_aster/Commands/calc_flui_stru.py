@@ -22,6 +22,7 @@
 from ..Objects import FluidStructureModalBasis
 from ..Supervis.ExecuteCommand import ExecuteCommand
 
+
 class ComputeFluidStructureInteraction(ExecuteCommand):
     """Command that defines :class:`~code_aster.Objects.FluidStructureModalBasis`.
     """

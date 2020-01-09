@@ -19,10 +19,9 @@
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 PROJ_VECT_BASE=OPER(nom="PROJ_VECT_BASE",op=  72,sd_prod=vect_asse_gene,
                     fr=tr("Projection d'un vecteur assemblé sur une base (modale ou de RITZ)"),

@@ -19,10 +19,9 @@
 
 # person_in_charge: samuel.geniaut at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
                     op=OPS('Macro.post_k1_k2_k3_ops.post_k1_k2_k3_ops'),

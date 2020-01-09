@@ -19,10 +19,9 @@
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
-
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEBUG=PROC(nom="DEBUG",op=137,
                fr=tr("Permettre de changer entre 2 commandes quelques variables globales de debug"),

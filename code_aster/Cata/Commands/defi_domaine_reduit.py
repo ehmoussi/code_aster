@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 # person_in_charge: mickael.abbas at edf.fr
 #
-from ..Language.Syntax import *
-from ..Language.DataStructure import *
 from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
+
 #
 DEFI_DOMAINE_REDUIT=OPER(nom="DEFI_DOMAINE_REDUIT",op=50,
               sd_prod=maillage_sdaster,
