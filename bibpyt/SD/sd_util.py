@@ -23,11 +23,6 @@
    Utilitaires pour la vérification des SD
 """
 
-# pour utilisation dans eficas
-try:
-except:
-    pass
-
 import copy
 
 import numpy

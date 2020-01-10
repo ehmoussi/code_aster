@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# aslint: disable=C4008
+
 # =====================================================================
 # Based on tensor.py written by Konrad Hinsen <hinsen@cnrs-orleans.fr>
 # =====================================================================
@@ -25,9 +27,9 @@ import unittest
 
 import numpy as NP
 
-import sympy
 
 try:
+    import sympy
     X, Y, Z = sympy.symbols('X Y Z')
     HAVE_SYMPY = True
 except ImportError:
@@ -331,7 +333,7 @@ def gradsym(F):
     return gradsymF
 
 
-# 
+#
 class TensorUnitTest(unittest.TestCase):
 
     def setUp(self):

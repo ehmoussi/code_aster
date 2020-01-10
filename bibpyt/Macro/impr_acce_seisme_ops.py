@@ -28,10 +28,6 @@ from code_aster.Commands import (CALC_FONCTION, CREA_TABLE, DEFI_FICHIER, DEFI_F
                                  RECU_FONCTION)
 from Utilitai.Utmess import UTMESS
 
-try:
-except:
-    pass
-
 
 def calc_bornes(inte_arias, duree, cav, dmaxi, vmaxi, amaxi, asv,
               inte_arias_refe, duree_refe, cav_refe, dmaxi_refe,

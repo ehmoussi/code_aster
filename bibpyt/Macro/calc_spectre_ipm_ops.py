@@ -28,10 +28,6 @@ from code_aster.Cata.Syntax import _F
 from code_aster.Commands import CALC_FONCTION, CREA_TABLE, DEFI_FONCTION, RECU_FONCTION
 from Utilitai.Utmess import UTMESS
 
-try:
-except:
-    pass
-
 
 def calc_spectre_ipm_ops(
     self, EQUIPEMENT, CALCUL, RESU, MAILLAGE=None, RESULTAT=None, GROUP_NO=None,

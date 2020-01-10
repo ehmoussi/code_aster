@@ -32,17 +32,6 @@ from Utilitai.Utmess import UTMESS
 
 EnumTypes = (list, tuple)
 
-try:
-except ImportError:
-    def UTMESS(code, idmess, valk=(), vali=(), valr=()):
-        """
-        Clone de utmess si on ne reussit pas a le charger
-        """
-        fmt = '\n <%s> <%s> %s %s %s\n\n'
-        print(fmt % (code, idmess, valk, vali, valr))
-
-# ------------------------------------------------------------------------
-
 
 class creation_donnees_homard:
 

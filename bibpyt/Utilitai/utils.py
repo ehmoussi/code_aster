@@ -38,11 +38,6 @@ import aster_core
 from code_aster.Utilities import convert
 from Utilitai.string_utils import maximize_lines
 
-try:
-    aster_exists = True
-except:
-    aster_exists = False
-
 
 DEBUG = False
 
@@ -61,10 +56,7 @@ def _print(*args):
             arg = repr(arg)
         l_str.append(arg)
     text = convert(" ".join(l_str))
-    if aster_exists:
-        aster.affiche('MESSAGE', text)
-    else:
-        print(text)
+    aster.affiche('MESSAGE', text)
 
 
 def _printDBG(*args):
