@@ -22,10 +22,6 @@ from code_aster.Cata.Syntax import _F
 from code_aster.Commands import CALC_FONCTION, CREA_TABLE, IMPR_FONCTION, RECU_FONCTION
 from Utilitai.Utmess import UTMESS
 
-try:
-except:
-    pass
-
 
 def macr_spectre_ops(
     self, **args):

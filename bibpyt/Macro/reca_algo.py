@@ -31,17 +31,10 @@ from code_aster.Cata.Syntax import _F
 from code_aster.Commands import DETRUIRE, INFO_EXEC_ASTER
 from Utilitai.Utmess import UTMESS
 
-try:
-except:
-    pass
 
-
-# ------------------------------------------------------------------------
 def calcul_gradient(A, erreur):
     grad = NP.dot(NP.transpose(A), erreur)
     return grad
-
-# ------------------------------------------------------------------------
 
 
 def calcul_norme2(V):
@@ -49,8 +42,6 @@ def calcul_norme2(V):
     return NP.dot(a, NP.transpose(a)) ** 0.5
 
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------
 class Dimension:
 
     """

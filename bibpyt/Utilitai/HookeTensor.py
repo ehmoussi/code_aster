@@ -17,15 +17,16 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# aslint: disable=C4008
+
 import unittest
 
 import numpy as N
 
-import sympy
-
 from . import TensorModule
 
 try:
+    import sympy
     X, Y, Z = sympy.symbols('X Y Z')
     HAVE_SYMPY = True
 except ImportError:

@@ -60,10 +60,6 @@ from Utilitai.TableReader import TableReaderFactory
 from Utilitai.utils import get_shared_tmpdir
 from Utilitai.Utmess import UTMESS
 
-# Importation de commandes Aster
-try:
-except ImportError:
-    pass
 
 include_pattern = "# -->INCLUDE<--"
 debug = False

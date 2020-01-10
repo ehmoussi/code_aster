@@ -17,16 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# aslint: disable=C4008
+
 import copy
 
 import Cata
-import Gnuplot
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import DEFI_FICHIER, IMPR_FONCTION
 
 try:
+    import Gnuplot
     isGnuplot = True
-except:
+except ImportError:
     isGnuplot = False
 
 

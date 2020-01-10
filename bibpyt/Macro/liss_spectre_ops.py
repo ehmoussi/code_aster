@@ -27,10 +27,6 @@ from code_aster.Commands import (CALC_FONCTION, DEFI_FICHIER, DEFI_NAPPE, DETRUI
                                  INFO_EXEC_ASTER)
 from Utilitai.Utmess import UTMESS
 
-try:
-except:
-    pass
-
 
 def recu_val(tab, para, stop=0, typ=None):
     """

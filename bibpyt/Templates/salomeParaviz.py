@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# aslint: disable=C4008
+
 # TODO Probably obsolete
 #
 import os
@@ -24,7 +26,6 @@ import os
 import re
 import sys
 
-import pvsimple as PV
 import salome
 import salome_kernel
 import SALOMEDS
@@ -65,6 +66,7 @@ salome.salome_init()
 try:
     pvsimple
 except:
+    import pvsimple as PV
 
 #%===================Construction courbe======================%
 

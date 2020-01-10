@@ -44,11 +44,6 @@ from Utilitai.UniteAster import UniteAster
 from Utilitai.utils import _printDBG, get_shared_tmpdir
 from Utilitai.Utmess import ASSERT, UTMESS
 
-try:
-except ImportError:
-    # to make pure python unittests
-    pass
-
 
 dict_format = {
     'R': "15.6E",

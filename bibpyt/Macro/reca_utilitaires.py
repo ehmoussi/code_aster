@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois@edf.fr
+# aslint: disable=C4008
 
 import copy
 import glob
@@ -26,13 +26,13 @@ import sys
 
 import numpy as NP
 
-import Gnuplot
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, INFO_EXEC_ASTER
 from Utilitai.Utmess import UTMESS
 
 try:
-except:
+    import Gnuplot
+except ImportError:
     pass
 
 

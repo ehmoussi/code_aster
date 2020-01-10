@@ -34,13 +34,6 @@ from .ascheckers import CheckLog
 from .asnom import SDNom
 from .basetype import Type
 
-# pour utilisation dans eficas
-try:
-except:
-    pass
-
-# -----------------------------------------------------------------------------
-
 
 class AsBase(Type):
     nomj = SDNom()

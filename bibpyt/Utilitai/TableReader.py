@@ -28,11 +28,6 @@ from Utilitai.string_utils import cut_long_lines, maximize_lines
 from Utilitai.Table import Table
 from Utilitai.utils import _printDBG, set_debug
 
-try:
-    error = aster.error
-except ImportError:
-    error = Exception
-
 
 # Aster type : regular expression
 FMT = {
