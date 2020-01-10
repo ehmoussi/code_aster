@@ -17,27 +17,28 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: sam.cuvilliez at edf.fr
+# person_in_charge: samuel.geniaut at edf.fr
 
-from code_aster import FieldOnNodesDouble
-from code_aster.Cata.DataStructure import cham_no_sdaster, evol_elas, evol_noli
-from code_aster.Cata.Syntax import OPER, SIMP
-from code_aster.Supervis.ExecuteCommand import ExecuteCommand
+from ...Cata.DataStructure import evol_noli, fiss_xfem, table_sdaster
+from ...Cata.Syntax import OPER, SIMP
+from ...Objects import Table
+from ...Supervis.ExecuteCommand import ExecuteCommand
 
-POST_K_VARC_CATA = OPER(
-    nom="POST_K_VARC", op=48, sd_prod=cham_no_sdaster, reentrant='n',
-    fr="Récuperation d'un champ de variable de commande a un instant donné à partir d'un résultat",
+DETEC_FRONT_CATA = OPER(
+    nom="DETEC_FRONT", op=139, sd_prod=table_sdaster, reentrant='n',
+    fr="Detection de front cohesif avec X-FEM",
 
-    RESULTAT=SIMP(statut='o', typ=(evol_elas,evol_noli)),
-    INST=SIMP(statut='o',typ='R'),
-    NOM_VARC=SIMP(statut='o',typ='TXM',into=("TEMP","NEUT1")),
+    FISSURE=SIMP(statut='o', typ=fiss_xfem),
+    NB_POINT_FOND=SIMP(statut='f', typ='I', val_min=2),
+    RESULTAT=SIMP(statut='o', typ=evol_noli),
+
 )
 
-class PostKVarc(ExecuteCommand):
+class DetecFront(ExecuteCommand):
     """Command that defines :class:`~code_aster.Objects.Table`.
     """
-    command_name = "POST_K_VARC"
-    command_cata = POST_K_VARC_CATA
+    command_name = "DETEC_FRONT"
+    command_cata = DETEC_FRONT_CATA
 
     def create_result(self, keywords):
         """Initialize the result.
@@ -45,6 +46,6 @@ class PostKVarc(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FieldOnNodesDouble()
+        self._result = Table()
 
-POST_K_VARC = PostKVarc.run
+DETEC_FRONT = DetecFront.run
