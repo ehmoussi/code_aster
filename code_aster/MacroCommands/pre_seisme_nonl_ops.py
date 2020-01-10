@@ -23,19 +23,23 @@ import numpy as NP
 
 import aster
 from libaster import AsterError
-from ..Cata.DataStructure import (cara_elem, cham_mater, fonction_c, fonction_sdaster,
-                                           maillage_sdaster, modele_sdaster, nappe_sdaster)
-from ..Cata.Syntax import _F
-from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU, AFFE_MODELE,
-                                 ASSE_MAILLAGE, ASSE_MATRICE, CALC_MATR_ELEM, CALC_MODES,
-                                 COMB_MATR_ASSE, CREA_CHAMP, CREA_MAILLAGE, DEFI_BASE_MODALE,
-                                 DEFI_FONCTION, DEFI_GROUP, DEFI_INTERF_DYNA, DEFI_LIST_INST,
-                                 DEFI_LIST_REEL, DEFI_MAILLAGE, DETRUIRE, DYNA_NON_LINE,
-                                 LIRE_IMPE_MISS, LIRE_MAILLAGE, MACR_ELEM_DYNA, MODE_STATIQUE,
-                                 NUME_DDL, NUME_DDL_GENE, PROD_MATR_CHAM, STAT_NON_LINE)
-from ..Helpers.LogicalUnit import LogicalUnitFile
 from Utilitai.partition import MAIL_PY
 from Utilitai.Utmess import ASSERT, UTMESS
+
+from ..Cata.DataStructure import (cara_elem, cham_mater, fonction_c,
+                                  fonction_sdaster, maillage_sdaster,
+                                  modele_sdaster, nappe_sdaster)
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
+                        AFFE_MODELE, ASSE_MAILLAGE, ASSE_MATRICE,
+                        CALC_MATR_ELEM, CALC_MODES, COMB_MATR_ASSE, CREA_CHAMP,
+                        CREA_MAILLAGE, DEFI_BASE_MODALE, DEFI_FONCTION,
+                        DEFI_GROUP, DEFI_INTERF_DYNA, DEFI_LIST_INST,
+                        DEFI_LIST_REEL, DEFI_MAILLAGE, DETRUIRE, DYNA_NON_LINE,
+                        LIRE_IMPE_MISS, LIRE_MAILLAGE, MACR_ELEM_DYNA,
+                        MODE_STATIQUE, NUME_DDL, NUME_DDL_GENE, PROD_MATR_CHAM,
+                        STAT_NON_LINE)
+from ..Helpers.LogicalUnit import LogicalUnitFile
 
 
 def pre_seisme_nonl_ops(self, **args):

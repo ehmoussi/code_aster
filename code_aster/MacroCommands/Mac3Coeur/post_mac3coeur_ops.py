@@ -27,8 +27,8 @@ import numpy.linalg as LA
 
 import aster
 import aster_core
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CALC_TABLE, CREA_TABLE, FORMULE, IMPR_TABLE
+from ...Cata.Syntax import _F
+from ...Commands import CALC_TABLE, CREA_TABLE, FORMULE, IMPR_TABLE
 from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
 
