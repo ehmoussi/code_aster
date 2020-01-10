@@ -19,8 +19,8 @@
 
 # person_in_charge: nicolas.brie at edf.fr
 
-from code_aster.Cata.Syntax import _F
-from Modal.mode_iter_simult import MODE_ITER_SIMULT
+from ...Cata.Syntax import _F
+from .mode_iter_simult import MODE_ITER_SIMULT
 
 
 def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args):

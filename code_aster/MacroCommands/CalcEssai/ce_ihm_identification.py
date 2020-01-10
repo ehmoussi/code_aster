@@ -26,13 +26,13 @@ from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox, 
 from numpy import arctan, array, conjugate, identity, log, ones, pi, transpose, zeros
 
 import aster_core
-from Calc_essai.cata_ce import (CreaTable, InterSpectre, ModeMeca, Resultat, nume_ddl_gene,
+from .cata_ce import (CreaTable, InterSpectre, ModeMeca, Resultat, nume_ddl_gene,
                                 nume_ddl_phy)
-from Calc_essai.ce_calcul_identification import CalcEssaiIdentification
-from Calc_essai.outils_ihm import (ChgtRepereDialogue, Compteur, MultiList, MyMenu,
+from .ce_calcul_identification import CalcEssaiIdentification
+from .outils_ihm import (ChgtRepereDialogue, Compteur, MultiList, MyMenu,
                                    ObservationWindow, VisuSpectre)
-from code_aster.Cata.Syntax import _F, CO
-from code_aster.Commands import DETRUIRE, IMPR_RESU, OBSERVATION
+from ...Cata.Syntax import _F, CO
+from ...Commands import DETRUIRE, IMPR_RESU, OBSERVATION
 
 #
 #

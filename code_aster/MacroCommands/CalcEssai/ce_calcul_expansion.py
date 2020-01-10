@@ -24,13 +24,13 @@ import random
 import numpy
 
 import aster
-from Calc_essai.cata_ce import DynaHarmo, Resultat
-from code_aster import AsterError
-from code_aster.Cata.DataStructure import (dyna_harmo, maillage_sdaster,
+from .cata_ce import DynaHarmo, Resultat
+from libaster import AsterError
+from ...Cata.DataStructure import (dyna_harmo, maillage_sdaster,
                                            matr_asse_depl_r, mode_meca,
                                            modele_sdaster)
-from code_aster.Cata.Syntax import _F, CO
-from code_aster.Commands import (AFFE_MODELE, CREA_CHAMP, CREA_RESU,
+from ...Cata.Syntax import _F, CO
+from ...Commands import (AFFE_MODELE, CREA_CHAMP, CREA_RESU,
                                  DEFI_FICHIER, DETRUIRE, IMPR_RESU,
                                  INFO_EXEC_ASTER, LIRE_MAILLAGE, MAC_MODES,
                                  MACRO_EXPANS)

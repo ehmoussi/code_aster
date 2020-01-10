@@ -21,11 +21,12 @@ from numpy import *
 from numpy.linalg import *
 
 import aster
-from Calc_essai.cata_ce import crea_champ
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_TABLE, DETRUIRE, EXTR_TABLE
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
+
+from ..Cata.Syntax import _F
+from ..Commands import CREA_TABLE, DETRUIRE, EXTR_TABLE
+from .CalcEssai.cata_ce import crea_champ
 
 
 def calc_stabilite_ops(self, **args):

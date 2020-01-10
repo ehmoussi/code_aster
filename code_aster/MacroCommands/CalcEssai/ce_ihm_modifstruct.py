@@ -25,8 +25,8 @@
 import tkinter.font
 from tkinter import Button, Checkbutton, Entry, Frame, IntVar, Label, StringVar, Toplevel
 
-from Calc_essai.ce_calcul_modifstruct import CalcEssaiModifStruct
-from Calc_essai.outils_ihm import (DispFRFDialogue, MacWindowFrame, ModeFreqList, MyMenu,
+from .ce_calcul_modifstruct import CalcEssaiModifStruct
+from .outils_ihm import (DispFRFDialogue, MacWindowFrame, ModeFreqList, MyMenu,
                                    ParamModelCouple, ParamModeLMME, ParamProjMesuModal,
                                    SelectionNoeuds)
 

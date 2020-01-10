@@ -19,11 +19,11 @@
 
 #
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Supervis.ExecuteCommand import ExecuteCommand
-from code_aster.Objects import (AssemblyMatrixDisplacementComplex, AssemblyMatrixDisplacementDouble,
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Objects import (AssemblyMatrixDisplacementComplex, AssemblyMatrixDisplacementDouble,
                                 AssemblyMatrixPressureDouble, AssemblyMatrixTemperatureDouble,
                                 BucklingModeContainer, GeneralizedAssemblyMatrixComplex,
                                 GeneralizedAssemblyMatrixDouble, GeneralizedModeContainer,

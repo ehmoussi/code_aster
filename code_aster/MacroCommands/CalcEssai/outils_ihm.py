@@ -29,14 +29,14 @@ from numpy import arange, array, log, maximum, minimum
 
 import aster
 import aster_core
-from Calc_essai.cata_ce import DynaHarmo, ModeMeca
-from code_aster import AsterError
-from code_aster.Cata.Syntax import _F, ASSD, CO
-from code_aster.Commands import (AFFE_CHAR_MECA, CREA_CHAMP, DEFI_FONCTION, DEPL_INTERNE, DETRUIRE,
+from .cata_ce import DynaHarmo, ModeMeca
+from libaster import AsterError
+from ...Cata.Syntax import _F, ASSD, CO
+from ...Commands import (AFFE_CHAR_MECA, CREA_CHAMP, DEFI_FONCTION, DEPL_INTERNE, DETRUIRE,
                                  DYNA_VIBRA, OBSERVATION, RECU_FONCTION)
 from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
 
-# from Calc_essai.ce_ihm_parametres import CalcEssaiSalome
+# from .ce_ihm_parametres import CalcEssaiSalome
 
 palette = ["#%02x%02x%02x" % (255 - i, 255 - i, 255 - i) for i in range(256)]
 # MESSAGE_LOGGER = classe permettant de formatter et d'afficher les

@@ -25,8 +25,8 @@
 from numpy import take
 
 import aster
-from Calc_essai.ce_calcul_modifstruct import CalcEssaiModifStruct
-from code_aster.Cata.Syntax import _F
+from .ce_calcul_modifstruct import CalcEssaiModifStruct
+from ...Cata.Syntax import _F
 from Utilitai.Utmess import UTMESS
 
 from .ce_calcul_expansion import CalcEssaiExpansion

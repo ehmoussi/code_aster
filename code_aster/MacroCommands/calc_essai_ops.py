@@ -23,16 +23,16 @@ Implémentation de la macro CALC_ESSAI
 Ce module contient la partie controle de la macro CALC_ESSAI
 """
 
-from Calc_essai.cata_ce import CalcEssaiObjects
-from Calc_essai.ce_calc_spec import InterfaceCalcSpec
-from Calc_essai.ce_ihm_expansion import InterfaceCorrelation
-from Calc_essai.ce_ihm_identification import InterfaceIdentification
-from Calc_essai.ce_ihm_modifstruct import InterfaceModifStruct
-from Calc_essai.ce_ihm_parametres import InterfaceParametres
-from Calc_essai.ce_test import MessageBox, TestCalcEssai
-from Calc_essai.outils_ihm import MessageBoxInteractif, TabbedWindow
-from code_aster import onFatalError
-from Pmw import PanedWidget
+from libaster import onFatalError
+
+from .CalcEssai.cata_ce import CalcEssaiObjects
+from .CalcEssai.ce_calc_spec import InterfaceCalcSpec
+from .CalcEssai.ce_ihm_expansion import InterfaceCorrelation
+from .CalcEssai.ce_ihm_identification import InterfaceIdentification
+from .CalcEssai.ce_ihm_modifstruct import InterfaceModifStruct
+from .CalcEssai.ce_ihm_parametres import InterfaceParametres
+from .CalcEssai.ce_test import MessageBox, TestCalcEssai
+from .CalcEssai.outils_ihm import MessageBoxInteractif, TabbedWindow
 
 
 def calc_essai_ops(self,
@@ -144,8 +144,6 @@ def create_interactive_window(macro,
                               ):
     """Construit la fenêtre interactive comprenant une table pour
     les 4 domaines de CALC_ESSAI."""
-
-# from Calc_essai.ce_ihm_expansion import InterfaceVisual
 
     # fenetre principale
     tk = Tk()

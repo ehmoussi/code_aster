@@ -17,13 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster import (AssemblyMatrixDisplacementDouble, AssemblyMatrixPressureDouble,
+from ...Objects import (AssemblyMatrixDisplacementDouble, AssemblyMatrixPressureDouble,
                         GeneralizedAssemblyMatrixDouble)
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Supervis.ExecuteCommand import ExecuteCommand
-from code_aster.Objects import (AcousticModeContainer, BucklingModeContainer,
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Objects import (AcousticModeContainer, BucklingModeContainer,
                                 GeneralizedModeContainer, MechanicalModeComplexContainer,
                                 MechanicalModeContainer)
 

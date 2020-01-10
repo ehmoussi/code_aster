@@ -30,13 +30,13 @@ from tkinter import (Button, Canvas, Checkbutton, Entry, Frame, IntVar, Label, L
                      Menubutton, Radiobutton, Scrollbar, StringVar, Toplevel)
 
 import aster
-from Calc_essai.cata_ce import (CalcEssaiObjects, CaraElem, DynaHarmo, InterSpectre, ModeMeca,
+from .cata_ce import (CalcEssaiObjects, CaraElem, DynaHarmo, InterSpectre, ModeMeca,
                                 Resultat)
-from Calc_essai.ce_calcul_expansion import CalcEssaiExpansion
-from Calc_essai.ce_ihm_parametres import CalcEssaiSalome
-from Calc_essai.outils_ihm import (DispFRFDialogue, DispObs, MacWindowFrame, ModeFreqList, MyMenu,
+from .ce_calcul_expansion import CalcEssaiExpansion
+from .ce_ihm_parametres import CalcEssaiSalome
+from .outils_ihm import (DispFRFDialogue, DispObs, MacWindowFrame, ModeFreqList, MyMenu,
                                    ParamProjMesuModal)
-from code_aster.Cata.Syntax import _F
+from ...Cata.Syntax import _F
 from Utilitai.Utmess import UTMESS
 
 #

@@ -37,16 +37,16 @@ from tkinter import (DISABLED, NORMAL, BooleanVar, Button, Canvas, Checkbutton, 
 
 import aster
 import Templates
-from Calc_essai.cata_ce import (CalcEssaiObjects, CaraElem, DynaHarmo, InterSpectre, ModeMeca,
+from .cata_ce import (CalcEssaiObjects, CaraElem, DynaHarmo, InterSpectre, ModeMeca,
                                 Resultat)
-from Calc_essai.ce_calcul_expansion import CalcEssaiExpansion, make_mac_salome, make_mesh_mac
-from Calc_essai.outils_ihm import (DispFRFDialogue, DispObs, MacWindowFrame, MyMenu, StudyList,
+from .ce_calcul_expansion import CalcEssaiExpansion, make_mac_salome, make_mesh_mac
+from .outils_ihm import (DispFRFDialogue, DispObs, MacWindowFrame, MyMenu, StudyList,
                                    XmgrManager)
-from code_aster.Cata.Syntax import _F
+from ...Cata.Syntax import _F
 #
 # Classes specifiques pour chaque logiciel de post-traitement
 #
-from code_aster.Commands import DEFI_FICHIER, DETRUIRE, EXEC_LOGICIEL, IMPR_RESU, INFO_EXEC_ASTER
+from ...Commands import DEFI_FICHIER, DETRUIRE, EXEC_LOGICIEL, IMPR_RESU, INFO_EXEC_ASTER
 from gmsh import GMSH
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS

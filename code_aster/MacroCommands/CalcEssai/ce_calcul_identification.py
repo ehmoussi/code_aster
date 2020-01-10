@@ -24,8 +24,8 @@ from numpy import arctan, array, conjugate, identity, log, matrix, pi, transpose
 
 import aster
 import aster_core
-from Calc_essai.cata_ce import InterSpectre, Resultat, nume_ddl_gene, nume_ddl_phy
-from code_aster.Cata.Syntax import _F
+from .cata_ce import InterSpectre, Resultat, nume_ddl_gene, nume_ddl_phy
+from ...Cata.Syntax import _F
 from Utilitai.Utmess import UTMESS
 
 
@@ -87,7 +87,7 @@ class CalcEssaiIdentification:
 
     def set_var_opt(self, var_opt):
         """Une variable pour calculer l'interspectre."""
-        self.var_opt = var_opt        
+        self.var_opt = var_opt
 
     def calculate_force(self):
         self.is_Syy = 0

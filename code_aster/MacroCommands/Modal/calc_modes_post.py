@@ -17,8 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DETRUIRE, EXTR_MODE, IMPR_RESU, NORM_MODE
+from ...Cata.Syntax import _F
+from ...Commands import DETRUIRE, EXTR_MODE, IMPR_RESU, NORM_MODE
 
 
 def calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression):
