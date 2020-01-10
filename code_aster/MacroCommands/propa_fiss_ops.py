@@ -22,13 +22,14 @@ from math import acos, atan, atan2, cos, log, pi, sin, sqrt
 import numpy as NP
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (ASSE_MAILLAGE, CALC_TABLE, DEFI_GROUP, DETRUIRE, LIRE_MAILLAGE,
-                                 MODI_MODELE_XFEM, POST_RUPTURE)
 from Contrib.propa_xfem import PROPA_XFEM
-from Internal.detec_front import DETEC_FRONT
 from Utilitai.partition import MAIL_PY
 from Utilitai.Utmess import UTMESS
+
+from ..Cata.Syntax import _F
+from ..Commands import (ASSE_MAILLAGE, CALC_TABLE, DEFI_GROUP, DETRUIRE,
+                        LIRE_MAILLAGE, MODI_MODELE_XFEM, POST_RUPTURE)
+from .Fracture.detec_front import DETEC_FRONT
 
 
 def InterpolationLineaire(x0, points):

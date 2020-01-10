@@ -19,26 +19,25 @@
 
 # person_in_charge: sam.cuvilliez at edf.fr
 
-from code_aster import PCFieldOnMeshDouble
-from code_aster.Cata.DataStructure import carte_sdaster, evol_noli
-from code_aster.Cata.Syntax import OPER, SIMP
-from code_aster.Supervis.ExecuteCommand import ExecuteCommand
+from ...Cata.DataStructure import cham_no_sdaster, evol_elas, evol_noli
+from ...Cata.Syntax import OPER, SIMP
+from ...Objects import FieldOnNodesDouble
+from ...Supervis.ExecuteCommand import ExecuteCommand
 
-POST_VOISIN_CZM_CATA = OPER(
+POST_K_VARC_CATA = OPER(
+    nom="POST_K_VARC", op=48, sd_prod=cham_no_sdaster, reentrant='n',
+    fr="Récuperation d'un champ de variable de commande a un instant donné à partir d'un résultat",
 
-    nom="POST_VOISIN_CZM", op=189,
-    docu="...", fr="...",
-    reentrant='n',
-    sd_prod=carte_sdaster,
-    RESULTAT=SIMP(statut='o', typ=evol_noli, max=1,),
-
+    RESULTAT=SIMP(statut='o', typ=(evol_elas,evol_noli)),
+    INST=SIMP(statut='o',typ='R'),
+    NOM_VARC=SIMP(statut='o',typ='TXM',into=("TEMP","NEUT1")),
 )
 
-class PostVoisinCzw(ExecuteCommand):
+class PostKVarc(ExecuteCommand):
     """Command that defines :class:`~code_aster.Objects.Table`.
     """
-    command_name = "POST_VOISIN_CZM"
-    command_cata = POST_VOISIN_CZM_CATA
+    command_name = "POST_K_VARC"
+    command_cata = POST_K_VARC_CATA
 
     def create_result(self, keywords):
         """Initialize the result.
@@ -46,6 +45,6 @@ class PostVoisinCzw(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = PCFieldOnMeshDouble(keywords["RESULTAT"].getMesh())
+        self._result = FieldOnNodesDouble()
 
-POST_VOISIN_CZM = PostVoisinCzw.run
+POST_K_VARC = PostKVarc.run

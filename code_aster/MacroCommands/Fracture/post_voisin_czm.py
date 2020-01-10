@@ -17,28 +17,28 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: samuel.geniaut at edf.fr
+# person_in_charge: sam.cuvilliez at edf.fr
 
-from code_aster import Table
-from code_aster.Cata.DataStructure import evol_noli, fiss_xfem, table_sdaster
-from code_aster.Cata.Syntax import OPER, SIMP
-from code_aster.Supervis.ExecuteCommand import ExecuteCommand
+from ...Cata.DataStructure import carte_sdaster, evol_noli
+from ...Cata.Syntax import OPER, SIMP
+from ...Objects import PCFieldOnMeshDouble
+from ...Supervis.ExecuteCommand import ExecuteCommand
 
-DETEC_FRONT_CATA = OPER(
-    nom="DETEC_FRONT", op=139, sd_prod=table_sdaster, reentrant='n',
-    fr="Detection de front cohesif avec X-FEM",
+POST_VOISIN_CZM_CATA = OPER(
 
-    FISSURE=SIMP(statut='o', typ=fiss_xfem),
-    NB_POINT_FOND=SIMP(statut='f', typ='I', val_min=2),
-    RESULTAT=SIMP(statut='o', typ=evol_noli),
+    nom="POST_VOISIN_CZM", op=189,
+    docu="...", fr="...",
+    reentrant='n',
+    sd_prod=carte_sdaster,
+    RESULTAT=SIMP(statut='o', typ=evol_noli, max=1,),
 
 )
 
-class DetecFront(ExecuteCommand):
+class PostVoisinCzw(ExecuteCommand):
     """Command that defines :class:`~code_aster.Objects.Table`.
     """
-    command_name = "DETEC_FRONT"
-    command_cata = DETEC_FRONT_CATA
+    command_name = "POST_VOISIN_CZM"
+    command_cata = POST_VOISIN_CZM_CATA
 
     def create_result(self, keywords):
         """Initialize the result.
@@ -46,6 +46,6 @@ class DetecFront(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Table()
+        self._result = PCFieldOnMeshDouble(keywords["RESULTAT"].getMesh())
 
-DETEC_FRONT = DetecFront.run
+POST_VOISIN_CZM = PostVoisinCzw.run

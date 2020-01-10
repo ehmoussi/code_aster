@@ -35,10 +35,11 @@ from math import acos, pi
 from numpy import *
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CALC_CHAM_ELEM, CREA_CHAMP, CREA_TABLE, DETRUIRE
-from Internal.post_voisin_czm import POST_VOISIN_CZM
 from Utilitai.Utmess import UTMESS, MasquerAlarme
+
+from ..Cata.Syntax import _F
+from ..Commands import CALC_CHAM_ELEM, CREA_CHAMP, CREA_TABLE, DETRUIRE
+from .Fracture.post_voisin_czm import POST_VOISIN_CZM
 
 
 def distance(x, y, xref, yref, xdir, ydir):
