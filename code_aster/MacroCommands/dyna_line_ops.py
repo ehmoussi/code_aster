@@ -23,16 +23,16 @@ from functools import reduce
 import numpy as np
 
 import aster
-from code_aster import AsterError
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CHAR_MECA, ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAR_SEISME,
+from libaster import AsterError
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CHAR_MECA, ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAR_SEISME,
                                  CALC_FONCTION, CALC_MATR_ELEM, CALC_MISS, CALC_MODES,
                                  CALC_VECT_ELEM, CO, COMB_MATR_ASSE, CREA_CHAMP, CREA_RESU,
                                  DEFI_BASE_MODALE, DEFI_INTERF_DYNA, DYNA_VIBRA, FACTORISER,
                                  MACR_ELEM_DYNA, MACRO_ELAS_MULT, MACRO_MATR_AJOU, MODE_STATIQUE,
                                  NUME_DDL, NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE, RESOUDRE,
                                  REST_GENE_PHYS)
-from code_aster.Utilities import force_list
+from ..Utilities import force_list
 from Utilitai.Utmess import UTMESS
 
 

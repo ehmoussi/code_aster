@@ -29,11 +29,11 @@ from math import radians
 import numpy as NP
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CREA_CHAMP, CREA_RESU, CREA_TABLE,
+from ..Cata.Syntax import _F
+from ..Commands import (CREA_CHAMP, CREA_RESU, CREA_TABLE,
                                  LIRE_MAILLAGE, MODI_REPERE, PROJ_CHAMP,
                                  RECU_TABLE)
-from code_aster.Helpers.LogicalUnit import FileAccess, LogicalUnitFile
+from ..Helpers.LogicalUnit import FileAccess, LogicalUnitFile
 from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 

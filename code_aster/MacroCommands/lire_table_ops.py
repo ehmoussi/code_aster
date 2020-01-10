@@ -22,8 +22,8 @@
 import os.path as osp
 
 import aster
-from code_aster.Commands import CREA_TABLE
-from code_aster.Helpers import LogicalUnitFile
+from ..Commands import CREA_TABLE
+from ..Helpers import LogicalUnitFile
 from Utilitai.TableReader import TableReaderFactory, unique_parameters
 from Utilitai.Utmess import UTMESS, raise_UTMESS
 

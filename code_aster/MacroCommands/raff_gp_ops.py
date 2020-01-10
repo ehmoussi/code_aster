@@ -20,8 +20,8 @@
 from numpy import cos, pi, sin
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_MODELE, CO, COPIER, CREA_CHAMP, DETRUIRE,
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_MODELE, CO, COPIER, CREA_CHAMP, DETRUIRE,
                                  FORMULE, MACR_ADAP_MAIL)
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 

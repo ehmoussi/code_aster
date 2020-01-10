@@ -20,8 +20,8 @@
 import os
 from math import cos, sin, sqrt
 
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DEFI_FONCTION, DEFI_INTE_SPEC
+from ..Cata.Syntax import _F
+from ..Commands import DEFI_FONCTION, DEFI_INTE_SPEC
 from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
 

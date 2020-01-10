@@ -23,8 +23,8 @@ from copy import copy
 from math import atan, atan2, cos, degrees, pi, radians, sin, sqrt
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CHAR_MECA_F, AFFE_CHAR_THER_F, CO, CREA_TABLE, DEFI_FICHIER,
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CHAR_MECA_F, AFFE_CHAR_THER_F, CO, CREA_TABLE, DEFI_FICHIER,
                                  DEFI_FONCTION, DEFI_GROUP, DETRUIRE, IMPR_TABLE, POST_RELEVE_T)
 from Contrib.macr_ecre_calc import MACR_ECRE_CALC
 from Utilitai.Table import Table, merge

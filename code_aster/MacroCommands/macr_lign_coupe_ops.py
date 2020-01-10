@@ -22,10 +22,10 @@ import os
 from math import asin, atan2, cos, pi, sin, sqrt
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (COPIER, CREA_RESU, CREA_TABLE, DEFI_GROUP, LIRE_MAILLAGE,
+from ..Cata.Syntax import _F
+from ..Commands import (COPIER, CREA_RESU, CREA_TABLE, DEFI_GROUP, LIRE_MAILLAGE,
                                  MODI_REPERE, POST_RELEVE_T, PROJ_CHAMP)
-from code_aster.Helpers import LogicalUnitFile
+from ..Helpers import LogicalUnitFile
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 #

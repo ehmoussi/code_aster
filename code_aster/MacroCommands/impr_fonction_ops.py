@@ -23,12 +23,12 @@ import os.path
 import pprint
 
 import aster
-from code_aster import AsterError
-from code_aster.Cata.DataStructure import (fonction_c, formule, formule_c,
+from libaster import AsterError
+from ..Cata.DataStructure import (fonction_c, formule, formule_c,
                                            nappe_sdaster)
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CALC_FONC_INTERP, DEFI_LIST_REEL
-from code_aster.Helpers import LogicalUnitFile, ReservedUnitUsed
+from ..Cata.Syntax import _F
+from ..Commands import CALC_FONC_INTERP, DEFI_LIST_REEL
+from ..Helpers import LogicalUnitFile, ReservedUnitUsed
 from Utilitai import Graph
 from Utilitai.utils import fmtF2PY
 from Utilitai.Utmess import UTMESS

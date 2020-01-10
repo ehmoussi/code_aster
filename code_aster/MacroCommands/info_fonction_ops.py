@@ -22,8 +22,8 @@ import math
 import numpy as NP
 
 from Cata_Utils.t_fonction import t_fonction, t_fonction_c, t_nappe
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CALC_FONCTION, CREA_TABLE, IMPR_TABLE
+from ..Cata.Syntax import _F
+from ..Commands import CALC_FONCTION, CREA_TABLE, IMPR_TABLE
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
 

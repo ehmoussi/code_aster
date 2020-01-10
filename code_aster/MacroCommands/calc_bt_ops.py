@@ -27,8 +27,8 @@ from math import factorial, log, pi
 import numpy as np
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU, AFFE_MODELE,
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU, AFFE_MODELE,
                                  CALC_CHAMP, CREA_CHAMP, CREA_TABLE, DEFI_GROUP, DETRUIRE,
                                  LIRE_MAILLAGE, MECA_STATIQUE)
 from Utilitai import partition

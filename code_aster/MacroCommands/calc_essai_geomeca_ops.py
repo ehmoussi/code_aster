@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import _F, ListFact
+from ..Cata.Syntax import _F, ListFact
 
 from .geomec_essais import *
 from .geomec_utils import *

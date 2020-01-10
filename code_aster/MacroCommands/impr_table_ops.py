@@ -23,9 +23,9 @@ import os.path
 import re
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DETRUIRE, RECU_FONCTION
-from code_aster.Helpers import LogicalUnitFile, ReservedUnitUsed
+from ..Cata.Syntax import _F
+from ..Commands import DETRUIRE, RECU_FONCTION
+from ..Helpers import LogicalUnitFile, ReservedUnitUsed
 from Utilitai.utils import fmtF2PY
 from Utilitai.Utmess import UTMESS
 

@@ -26,8 +26,8 @@ import sys
 
 import numpy as NP
 
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, INFO_EXEC_ASTER
+from ..Cata.Syntax import _F
+from ..Commands import DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, INFO_EXEC_ASTER
 from Utilitai.Utmess import UTMESS
 
 try:

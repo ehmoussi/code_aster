@@ -24,9 +24,9 @@ from math import cos, sin
 
 import numpy
 
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DEFI_FONCTION, DEFI_NAPPE
-from code_aster.Helpers import LogicalUnitFile, ReservedUnitUsed
+from ..Cata.Syntax import _F
+from ..Commands import DEFI_FONCTION, DEFI_NAPPE
+from ..Helpers import LogicalUnitFile, ReservedUnitUsed
 from Utilitai.transpose import transpose
 from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS

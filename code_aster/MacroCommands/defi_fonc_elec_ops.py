@@ -21,7 +21,7 @@ from math import cos, exp, pi
 
 import numpy
 
-from code_aster.Commands import DEFI_FONCTION
+from ..Commands import DEFI_FONCTION
 from Utilitai.Utmess import UTMESS
 
 

@@ -20,8 +20,8 @@
 from numpy import array
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (ASSE_VECTEUR, CALC_VECT_ELEM, COMB_MATR_ASSE,
+from ..Cata.Syntax import _F
+from ..Commands import (ASSE_VECTEUR, CALC_VECT_ELEM, COMB_MATR_ASSE,
                                  CREA_CHAMP, CREA_RESU, DEFI_BASE_MODALE,
                                  DETRUIRE, DYNA_VIBRA, MODE_STATIQUE,
                                  NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE,

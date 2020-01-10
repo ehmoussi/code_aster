@@ -18,8 +18,8 @@
 # --------------------------------------------------------------------
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CHAR_THER, AFFE_CHAR_THER_F,
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CHAR_THER, AFFE_CHAR_THER_F,
                                  AFFE_MATERIAU, AFFE_MODELE, ASSE_VECTEUR,
                                  CALC_CHAMP, CALC_MATR_ELEM, CALC_TABLE,
                                  CALC_VECT_ELEM, COPIER, CREA_MAILLAGE,

@@ -20,8 +20,8 @@
 import os
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CALC_CHAMP, CALC_TABLE, CREA_TABLE,
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_CHAMP, CALC_TABLE, CREA_TABLE,
                                  MACR_LIGN_COUPE)
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme

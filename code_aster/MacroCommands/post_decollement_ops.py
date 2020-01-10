@@ -20,8 +20,8 @@
 import os
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_MATERIAU, AFFE_MODELE, CREA_CHAMP,
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_MATERIAU, AFFE_MODELE, CREA_CHAMP,
                                  CREA_RESU, CREA_TABLE, DEFI_GROUP,
                                  DEFI_MATERIAU, IMPR_TABLE, POST_ELEM,
                                  POST_RELEVE_T)

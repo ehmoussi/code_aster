@@ -18,8 +18,8 @@
 # --------------------------------------------------------------------
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_TABLE
+from ..Cata.Syntax import _F
+from ..Commands import CREA_TABLE
 from Utilitai.Table import Table, merge
 from Utilitai.utils import get_titre_concept
 from Utilitai.Utmess import UTMESS

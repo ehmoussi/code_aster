@@ -19,7 +19,7 @@
 
 from math import fmod, sqrt
 
-from code_aster.Commands import DEFI_LIST_REEL
+from ..Commands import DEFI_LIST_REEL
 from Utilitai.Utmess import UTMESS
 
 

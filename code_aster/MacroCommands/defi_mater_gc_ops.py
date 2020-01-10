@@ -21,7 +21,7 @@
 
 import numpy as NP
 
-from code_aster.Commands import DEFI_MATERIAU
+from ..Commands import DEFI_MATERIAU
 from Utilitai.Utmess import UTMESS
 
 

@@ -27,8 +27,8 @@ import numpy.linalg as linalg
 
 import aster
 import aster_core
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DETRUIRE, INFO_EXEC_ASTER
+from ..Cata.Syntax import _F
+from ..Commands import DETRUIRE, INFO_EXEC_ASTER
 from Utilitai.Utmess import UTMESS
 
 

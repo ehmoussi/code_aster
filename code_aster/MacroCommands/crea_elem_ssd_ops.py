@@ -17,8 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (ASSE_MATRICE, CALC_MATR_ELEM, CALC_MODES,
+from ..Cata.Syntax import _F
+from ..Commands import (ASSE_MATRICE, CALC_MATR_ELEM, CALC_MODES,
                                  DEFI_BASE_MODALE, DEFI_INTERF_DYNA, EXTR_MODE,
                                  MACR_ELEM_DYNA, MODE_STATIQUE, NUME_DDL)
 

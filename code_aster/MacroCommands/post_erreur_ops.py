@@ -23,8 +23,8 @@ import math
 import os
 
 import aster
-from code_aster.Cata.Language.SyntaxObjects import _F
-from code_aster.Commands import (CALC_TABLE, CREA_CHAMP, CREA_RESU, CREA_TABLE, DETRUIRE, FORMULE,
+from ..Cata.Language.SyntaxObjects import _F
+from ..Commands import (CALC_TABLE, CREA_CHAMP, CREA_RESU, CREA_TABLE, DETRUIRE, FORMULE,
                                  POST_ELEM)
 from Utilitai.Utmess import ASSERT, UTMESS
 

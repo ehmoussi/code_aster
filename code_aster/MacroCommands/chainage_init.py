@@ -18,8 +18,8 @@
 # --------------------------------------------------------------------
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_MAILLAGE, PROJ_CHAMP
+from ..Cata.Syntax import _F
+from ..Commands import CREA_MAILLAGE, PROJ_CHAMP
 
 
 def CHAINAGE_INIT(self, args, motscles):
