@@ -34,15 +34,15 @@ from asrun.profil import AsterProfil
 import aster
 import aster_core
 import Utilitai
-from code_aster import onFatalError
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_TABLE, DEFI_LIST_REEL, TEST_TABLE
-from . import (reca_algo, reca_calcul_aster, reca_interp, reca_message,
-                   reca_utilitaires, recal)
+from libaster import onFatalError
 from Utilitai.optimize import (approx_fhess_p, approx_fprime, fmin, fminBFGS,
                                fminNCG, line_search, line_search_BFGS)
 from Utilitai.Utmess import UTMESS, MessageLog
 
+from ..Cata.Syntax import _F
+from ..Commands import CREA_TABLE, DEFI_LIST_REEL, TEST_TABLE
+from . import (reca_algo, reca_calcul_aster, reca_interp, reca_message,
+               reca_utilitaires, recal)
 from .reca_controles import gestion
 from .reca_evol import evolutivo
 

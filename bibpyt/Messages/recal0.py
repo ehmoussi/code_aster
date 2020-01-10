@@ -26,10 +26,6 @@ cata_msg = {
 
 """),
 
-    2 : _("""Impossible d'importer le module as_profil ! Vérifier la variable
-d'environnement ASTER_ROOT ou mettez à jour ASTK.
-"""),
-
     3 : _("""Le logiciel GNUPLOT ou le module python Gnuplot n'est pas disponible.
 On désactive l'affichage des courbes par Gnuplot.
 """),
@@ -83,9 +79,6 @@ en MPI sur un processeur."""),
 """),
 
     19 : _("""Erreur dans le test de convergence de MACR_RECAL.
-"""),
-
-    23 : _("""Impossible d'importer le module de lecture des tables !
 """),
 
     24 : _("""Impossible de récupérer les résultats de calcul esclave (lecture des tables) !
@@ -378,34 +371,6 @@ Erreur! Le calcul esclave '%(k1)s' n'a pas pu démarrer !
 
 Il s'agit vraisemblablement d'un problème de configuration du serveur de calcul ou de ressources disponibles.
 Mettre UNITE_SUIVI et INFO=2 permettra d'avoir des messages supplémentaires dans l'output du maître.
-"""),
-
-    # 87 : _(u""" """),
-
-    # 88 : _(u""" """),
-
-    # 89 : _(u""" """),
-
-    # 90 : _(u""" """),
-
-    # 91 : _(u""" """),
-
-    # 92 : _(u""" """),
-
-    # 93 : _(u""" """),
-
-    # 94 : _(u""" """),
-
-    # 95 : _(u""" """),
-
-    # 96 : _(u""" """),
-
-    # 97 : _(u""" """),
-
-    # 98 : _(u""" """),
-
-    99 : _("""Impossible de déterminer l'emplacement de Code_Aster !
-Fixer le chemin avec la variable d'environnement ASTER_ROOT.
 """),
 
 }
