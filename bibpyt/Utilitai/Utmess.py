@@ -27,7 +27,7 @@ import traceback
 import aster
 import aster_core
 import libaster
-from code_aster import AsterError, _
+from code_aster.Utilities import _
 from code_aster.Utilities import Singleton, convert, force_list, to_unicode, ufmt
 from Messages.context_info import message_context_concept
 from Utilitai.string_utils import clean_string, copy_text_to, cut_long_lines
@@ -174,7 +174,7 @@ class MESSAGE_LOGGER(metaclass=Singleton):
                 exc_typ = dictmess.get('exc_typ')
                 if exc_typ:
                     raise exc_typ(id0, valk, vali, valr)
-                raise AsterError(id0, valk, vali, valr)
+                raise libaster.AsterError(id0, valk, vali, valr)
         return None
 
     def build_dict_args(self, valk, vali, valr):
@@ -705,15 +705,15 @@ def raise_UTMESS(exc):
     """Raise UTMESS if exception occurred.
 
     Typical usage:
-        try:
-            ... code with error ...
-            raise AsterError(id_message, valk, vali, valr)
-            ... or ...
-            lerr = [id_message1, valk1, vali1, valr1]
-            lerr.append([id_message2, valk2, vali2, valr2])
-            raise AsterError(lerr)
-        except AsterError as exc:
-            raise_UTMESS(exc)
+        >>> try:
+        >>>     ... code with error ...
+        >>>     raise AsterError(id_message, valk, vali, valr)
+        >>>     ... or ...
+        >>>     lerr = [id_message1, valk1, vali1, valr1]
+        >>>     lerr.append([id_message2, valk2, vali2, valr2])
+        >>>     raise AsterError(lerr)
+        >>> except AsterError as exc:
+        >>>     raise_UTMESS(exc)
 
     .. todo :: several messages is not yet supported ('related' attribute)
     """

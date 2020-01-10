@@ -33,7 +33,7 @@ import re
 import sys
 import tempfile
 
-from code_aster import _
+from code_aster.Utilities import _
 
 
 def _exitcode(status, default=0):

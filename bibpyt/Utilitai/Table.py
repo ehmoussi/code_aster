@@ -28,16 +28,14 @@ from copy import copy
 import numpy
 
 from code_aster.Utilities import is_complex, is_float, is_int, is_number, is_sequence, is_str
-from Utilitai import Graph
 from Utilitai.string_utils import cut_long_lines
 from Utilitai.utils import fmtF2PY
 from Utilitai.Utmess import UTMESS
 
-from . import Graph, transpose
 
 if 'Graph' not in sys.modules:
-    try:
-    except ImportError:
+    from . import Graph, transpose
+
 
 # formats de base (identiques à ceux du module Graph)
 DicForm = {

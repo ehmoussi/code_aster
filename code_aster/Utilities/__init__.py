@@ -25,6 +25,7 @@ This module gives common utilities.
 No external import of other :py:mod:`code_aster` packages.
 """
 
+from .as_timer import ASTER_TIMER
 from .base_utils import (Singleton, accept_array, array_to_list, force_list,
                          force_tuple, import_object, is_complex, is_float,
                          is_float_or_int, is_int, is_number, is_sequence,
@@ -33,7 +34,8 @@ from .compatibility import (compat_listr8, deprecated, remove_keyword,
                             required, unsupported)
 from .ExecutionParameter import ExecutionParameter
 from .general import initial_context
-from .i18n import localization, translate
+from .i18n import localization
+from .i18n import translate as _
 from .injector import injector
 from .logger import DEBUG, ERROR, INFO, WARNING, logger
 from .options import Options

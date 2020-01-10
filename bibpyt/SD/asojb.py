@@ -27,8 +27,6 @@ import sys
 import traceback
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import IMPR_CO
 
 from .ascheckers import CheckLog
 from .asnom import SDNom
@@ -121,7 +119,7 @@ class AsBase(Type):
             # hors Aster ou en par_lot='oui'
             return self.short_repr()
         else:
-            IMPR_CO(CONCEPT=_F(NOM=self.nom), UNITE=6)
+            self.debugPrint()
             return ''
 
     def __repr__(self):

@@ -32,14 +32,11 @@ import numpy as np
 
 import aster_core
 from code_aster.Utilities import value_is_sequence
-from Utilitai import Table
 from Utilitai.Utmess import UTMESS
 
-from . import Table
 
 if 'Table' not in sys.modules:
-    try:
-    except ImportError:
+    from . import Table
 
 
 # ------------------------------------------------------------------------
