@@ -36,7 +36,7 @@ def exec_logiciel_prod(self, SALOME, MAILLAGE, **args):
     return None
 
 EXEC_LOGICIEL = MACRO(nom="EXEC_LOGICIEL",
-                      op=OPS('Macro.exec_logiciel_ops.exec_logiciel_ops'),
+                      op=OPS('code_aster.MacroCommands.exec_logiciel_ops.exec_logiciel_ops'),
                       sd_prod=exec_logiciel_prod,
                       fr=tr("Exécute un logiciel ou une commande système depuis Aster"),
 

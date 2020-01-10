@@ -32,7 +32,7 @@ def macr_recal_prod(self,**args ):
     return listr8_sdaster
 
 MACR_RECAL = MACRO(nom="MACR_RECAL",
-                   op=OPS('Macro.macr_recal_ops.macr_recal_ops'),
+                   op=OPS('code_aster.MacroCommands.macr_recal_ops.macr_recal_ops'),
                    sd_prod=macr_recal_prod,
                    fr=tr("Réalise le recalage des calculs Aster sur des résultats expérimentaux "
                         "ou sur d'autres résultats de calculs"),

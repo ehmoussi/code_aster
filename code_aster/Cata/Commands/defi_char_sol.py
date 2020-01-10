@@ -22,7 +22,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 DEFI_CHAR_SOL = MACRO(nom="DEFI_CHAR_SOL",
-                      op=OPS('Macro.defi_char_sol_ops.defi_char_sol_ops'),
+                      op=OPS('code_aster.MacroCommands.defi_char_sol_ops.defi_char_sol_ops'),
                       sd_prod=char_meca,
                       fr=tr("Définition des données de sol pour Miss"),
                       reentrant='n',

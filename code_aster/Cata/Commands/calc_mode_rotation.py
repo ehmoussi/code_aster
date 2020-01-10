@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 CALC_MODE_ROTATION=MACRO(nom="CALC_MODE_ROTATION",
-                         op=OPS('Macro.calc_mode_rotation_ops.calc_mode_rotation_ops'),
+                         op=OPS('code_aster.MacroCommands.calc_mode_rotation_ops.calc_mode_rotation_ops'),
                          sd_prod=table_container,
                          reentrant='n',
                          fr=tr("calculer les fréquences et modes d'un système en fonction des "

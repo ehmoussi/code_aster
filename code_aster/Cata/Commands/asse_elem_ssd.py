@@ -42,7 +42,7 @@ def asse_elem_ssd_prod(self, RESU_ASSE_SSD, **args):
 
 
 ASSE_ELEM_SSD=MACRO(nom="ASSE_ELEM_SSD",
-                    op=OPS('Macro.asse_elem_ssd_ops.asse_elem_ssd_ops'),
+                    op=OPS('code_aster.MacroCommands.asse_elem_ssd_ops.asse_elem_ssd_ops'),
                     sd_prod=asse_elem_ssd_prod,
                     reentrant='n',
                     fr=tr("Enchainer les commandes DEFI_MODELE_GENE, NUME_DDL_GENE et ASSE_MATR_GENE"),

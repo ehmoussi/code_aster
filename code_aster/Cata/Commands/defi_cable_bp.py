@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 DEFI_CABLE_BP=MACRO(nom="DEFI_CABLE_BP",
-                    op=OPS('Macro.defi_cable_bp_ops.defi_cable_bp_ops'),
+                    op=OPS('code_aster.MacroCommands.defi_cable_bp_ops.defi_cable_bp_ops'),
                     sd_prod=cabl_precont,
                     fr=tr("Calculer les profils initiaux de tension le long des cables "
                          "de précontrainte d'une structure en béton"),

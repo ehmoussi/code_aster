@@ -60,7 +60,7 @@ def macr_adap_mail_prod(self, MAJ_CHAM, ADD_CHAM, ADAPTATION, **args):
   return None
 
 MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
-                     op=OPS('Macro.macr_adap_mail_ops.macr_adap_mail_ops'),
+                     op=OPS('code_aster.MacroCommands.macr_adap_mail_ops.macr_adap_mail_ops'),
                      sd_prod=macr_adap_mail_prod,
                      fr=tr("Adapter un maillage avec le logiciel HOMARD."),
 #

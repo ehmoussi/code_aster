@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 GENE_ACCE_SEISME=MACRO(nom = "GENE_ACCE_SEISME",
-                     op = OPS('Macro.gene_acce_seisme_ops.gene_acce_seisme_ops'),
+                     op = OPS('code_aster.MacroCommands.gene_acce_seisme_ops.gene_acce_seisme_ops'),
                      sd_prod = table_fonction,
                      fr = tr("Generation d'accelerogrammes sismiques "),
                      reentrant = 'n',

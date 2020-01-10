@@ -22,7 +22,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 POST_NEWMARK=MACRO(nom="POST_NEWMARK",
-                        op=OPS("Macro.post_newmark_ops.post_newmark_ops"),
+                        op=OPS("code_aster.MacroCommands.post_newmark_ops.post_newmark_ops"),
                         fr=tr("Calcul des déplacements résiduels des ouvrages en remblai par méthode de Newmark"),
                         sd_prod=table_sdaster,
                         reentrant='n',

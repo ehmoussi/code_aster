@@ -38,7 +38,7 @@ def macr_ecrevisse_prod(self,TABLE,TEMPER,DEBIT,**args):
 
 
 MACR_ECREVISSE=MACRO(nom="MACR_ECREVISSE",
-                     op=OPS('Macro.macr_ecrevisse_ops.macr_ecrevisse_ops'),
+                     op=OPS('code_aster.MacroCommands.macr_ecrevisse_ops.macr_ecrevisse_ops'),
                      sd_prod=macr_ecrevisse_prod,
                      reentrant='f:ETAT_INIT:EVOL_NOLI',
                      fr=tr("Procedure de couplage avec Ecrevisse"),

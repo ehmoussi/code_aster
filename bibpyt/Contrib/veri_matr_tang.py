@@ -28,7 +28,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import CREA_TABLE
-from code_aster.Commands.ExecuteCommand import UserMacro
+from code_aster.Supervis.ExecuteCommand import UserMacro
 
 
 class TANGENT:

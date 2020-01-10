@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 RAFF_GP =MACRO(nom="RAFF_GP",
-                   op=OPS('Macro.raff_gp_ops.raff_gp_ops'),
+                   op=OPS('code_aster.MacroCommands.raff_gp_ops.raff_gp_ops'),
                    sd_prod=maillage_sdaster,
                    reentrant='n',
                    fr=tr("Preparation du maillage pour calcul du Gp en 2D"),

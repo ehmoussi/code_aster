@@ -22,7 +22,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 POST_LIQUEFACTION=MACRO(nom="POST_LIQUEFACTION",
-                        op=OPS("Macro.post_liquefaction_ops.post_liquefaction_ops"),
+                        op=OPS("code_aster.MacroCommands.post_liquefaction_ops.post_liquefaction_ops"),
                         sd_prod=evol_noli,
                         reentrant='n',
                         AXE      = SIMP(statut='o',typ='TXM',into=("X","Y","Z"),max=1,fr=tr("Direction de la pesanteur")),

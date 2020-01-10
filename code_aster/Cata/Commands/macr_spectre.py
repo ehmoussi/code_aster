@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 MACR_SPECTRE=MACRO(nom="MACR_SPECTRE",
-                   op=OPS('Macro.macr_spectre_ops.macr_spectre_ops'),
+                   op=OPS('code_aster.MacroCommands.macr_spectre_ops.macr_spectre_ops'),
                    sd_prod=table_sdaster,
                    reentrant='n',
                    fr=tr("Calcul de spectre, post-traitement de séisme"),

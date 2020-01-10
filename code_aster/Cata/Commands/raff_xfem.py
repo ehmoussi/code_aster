@@ -37,7 +37,7 @@ def raff_xfem_prod(self,TYPE,**args):
 
 
 RAFF_XFEM=MACRO(nom="RAFF_XFEM",
-                op=OPS('Macro.raff_xfem_ops.raff_xfem_ops'),
+                op=OPS('code_aster.MacroCommands.raff_xfem_ops.raff_xfem_ops'),
                 sd_prod=raff_xfem_prod,
                 fr=tr("Calcul d'un indicateur pour le raffinement"),
                 reentrant='n',

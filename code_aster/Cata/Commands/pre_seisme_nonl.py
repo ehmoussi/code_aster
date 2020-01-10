@@ -79,7 +79,7 @@ def affe_cara_elem_keywords():
     return orig
 
 PRE_SEISME_NONL = MACRO(nom="PRE_SEISME_NONL",
-                 op=OPS('Macro.pre_seisme_nonl_ops.pre_seisme_nonl_ops'),
+                 op=OPS('code_aster.MacroCommands.pre_seisme_nonl_ops.pre_seisme_nonl_ops'),
                  sd_prod=pre_seisme_nonl_sdprod,
                  fr=tr("description"),
                  reentrant='n',

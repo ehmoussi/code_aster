@@ -35,7 +35,7 @@ def dyna_iss_vari_prod(self, EXCIT_SOL,**args):
    raise AsException("type de concept resultat non prevu")
 
 DYNA_ISS_VARI=MACRO(nom="DYNA_ISS_VARI",
-                    op=OPS('Macro.dyna_iss_vari_ops.dyna_iss_vari_ops'),
+                    op=OPS('code_aster.MacroCommands.dyna_iss_vari_ops.dyna_iss_vari_ops'),
                     sd_prod=dyna_iss_vari_prod,
                     fr=tr("Calcul du spectre de réponse ou de la reponse temporelle "
                          "sismique incoherente par decomposition spectrale"),

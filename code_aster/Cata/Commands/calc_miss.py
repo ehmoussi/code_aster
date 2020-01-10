@@ -41,7 +41,7 @@ def calc_miss_sdprod(self, TYPE_RESU, **kwargs):
         return None
 
 CALC_MISS = MACRO(nom="CALC_MISS",
-                  op=OPS('Macro.calc_miss_ops.calc_miss_ops'),
+                  op=OPS('code_aster.MacroCommands.calc_miss_ops.calc_miss_ops'),
                   sd_prod=calc_miss_sdprod,
                   fr=tr("Préparation des données, exécution du logiciel Miss3D, et post-traitement"),
                   regles=(EXCLUS('TABLE_SOL', 'MATER_SOL'),),

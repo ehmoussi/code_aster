@@ -44,7 +44,7 @@ def calc_essai_geomeca_prod(self, **args):
 
 
 CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
-                     op           =OPS('Macro.calc_essai_geomeca_ops.calc_essai_geomeca_ops'),
+                     op           =OPS('code_aster.MacroCommands.calc_essai_geomeca_ops.calc_essai_geomeca_ops'),
                      sd_prod      =calc_essai_geomeca_prod,
                      fr=tr("Simulation 0D des essais de laboratoire pour les lois geomecaniques du Code_Aster (Hujeux, Mohr-Coulomb etc.)"),
                      reentrant    ='n',

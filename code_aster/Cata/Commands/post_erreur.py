@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 POST_ERREUR=MACRO(nom="POST_ERREUR",
-                  op=OPS('Macro.post_erreur_ops.post_erreur_ops'),
+                  op=OPS('code_aster.MacroCommands.post_erreur_ops.post_erreur_ops'),
                   sd_prod=table_sdaster,
                   reentrant='n',
                   OPTION       = SIMP(statut='o',typ='TXM',into=("DEPL_RELA","ENER_RELA","LAGR_RELA") ),

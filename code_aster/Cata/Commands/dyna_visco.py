@@ -47,7 +47,7 @@ def dyna_visco_prod(self,TYPE_RESU,TYPE_MODE,**args):
 
 
 DYNA_VISCO=MACRO(nom="DYNA_VISCO",
-                 op=OPS('Macro.dyna_visco_ops.dyna_visco_ops'),
+                 op=OPS('code_aster.MacroCommands.dyna_visco_ops.dyna_visco_ops'),
                  sd_prod=dyna_visco_prod,
                  reentrant='n',
                  fr="Calcul par projection sur modes réels des FRF avec dependance en fréquence de la matrice K",

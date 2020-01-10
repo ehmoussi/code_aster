@@ -27,7 +27,7 @@ from code_aster.Cata.Syntax import *
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, CALC_CHAM_ELEM, CALC_CHAMP,
                                  CREA_CHAMP, DEFI_MATERIAU, PROJ_CHAMP)
-from code_aster.Commands.ExecuteCommand import UserMacro
+from code_aster.Supervis.ExecuteCommand import UserMacro
 
 
 def NT(epsp, Nl, Kt, a1, a2, a3):

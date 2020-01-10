@@ -49,7 +49,7 @@ def proj_base_prod(self,MATR_ASSE_GENE,VECT_ASSE_GENE,
   return None
 
 PROJ_BASE=MACRO(nom="PROJ_BASE",
-                op=OPS('Macro.proj_base_ops.proj_base_ops'),
+                op=OPS('code_aster.MacroCommands.proj_base_ops.proj_base_ops'),
                 regles=(AU_MOINS_UN('MATR_ASSE_GENE','VECT_ASSE_GENE','RESU_GENE')),
                 sd_prod=proj_base_prod,
          fr=tr("Projection des matrices et/ou vecteurs assembles sur une base (modale ou de RITZ)"),

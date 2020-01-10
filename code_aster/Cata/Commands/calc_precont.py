@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 CALC_PRECONT=MACRO(nom="CALC_PRECONT",
-                   op=OPS('Macro.calc_precont_ops.calc_precont_ops'),
+                   op=OPS('code_aster.MacroCommands.calc_precont_ops.calc_precont_ops'),
                    sd_prod=evol_noli,
                    fr=tr("Imposer la tension définie par le BPEL dans les cables"),
                    reentrant='f:ETAT_INIT:EVOL_NOLI',

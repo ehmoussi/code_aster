@@ -30,16 +30,19 @@ import numpy as NP
 
 import aster
 from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CREA_CHAMP, CREA_RESU, CREA_TABLE, LIRE_MAILLAGE, MODI_REPERE,
-                                 PROJ_CHAMP, RECU_TABLE)
+from code_aster.Commands import (CREA_CHAMP, CREA_RESU, CREA_TABLE,
+                                 LIRE_MAILLAGE, MODI_REPERE, PROJ_CHAMP,
+                                 RECU_TABLE)
 from code_aster.Helpers.LogicalUnit import FileAccess, LogicalUnitFile
-from Macro.macr_lign_coupe_ops import crea_mail_lig_coup
 from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
-from .post_endo_fiss_utils import (NoMaximaError, ThresholdTooHighError, conv_smoothing1D,
-                                   conv_smoothing_arc, crackOpeningStrong, crea_mail_lin,
-                                   crea_sd_mail, euler_angles, findExtr, unitVector, versDirMoy)
+from .macr_lign_coupe_ops import crea_mail_lig_coup
+from .post_endo_fiss_utils import (NoMaximaError, ThresholdTooHighError,
+                                   conv_smoothing1D, conv_smoothing_arc,
+                                   crackOpeningStrong, crea_mail_lin,
+                                   crea_sd_mail, euler_angles, findExtr,
+                                   unitVector, versDirMoy)
 
 
 def cherche_trajet(self, NOM_CMP, NOM_CHAM, dRECHERCHE, __ENDO, __mail, typeChampTrajet, infoPlan, inst):

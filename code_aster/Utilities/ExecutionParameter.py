@@ -121,7 +121,7 @@ class ExecutionParameter(metaclass=Singleton):
         self._args['architecture'] = platform.architecture()[0]
         # ex. 2.6.32...
         self._args['osrelease'] = platform.release()
-        self._args['osname'] = ' '.join(platform.linux_distribution())
+        self._args['osname'] = platform.platform()
         version = aster_pkginfo.version_info.version
         keys = ('parentid', 'branch', 'date',
                 'from_branch', 'changes', 'uncommitted')

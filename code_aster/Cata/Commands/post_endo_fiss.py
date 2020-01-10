@@ -37,7 +37,7 @@ def post_endo_fiss_prod(self,TABLE,**args) :
     return maillage_sdaster
 
 POST_ENDO_FISS=MACRO(nom="POST_ENDO_FISS",
-                     op=OPS('Macro.post_endo_fiss_ops.post_endo_fiss_ops'),
+                     op=OPS('code_aster.MacroCommands.post_endo_fiss_ops.post_endo_fiss_ops'),
                      sd_prod=post_endo_fiss_prod,
                      reentrant='n',
                      fr=tr("Individuation du trace d'une fissure a partir d'un champ scalaire pertinant"),

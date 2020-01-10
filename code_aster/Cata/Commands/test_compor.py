@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 TEST_COMPOR =MACRO(nom="TEST_COMPOR",
-                   op=OPS('Macro.test_compor_ops.test_compor_ops'),
+                   op=OPS('code_aster.MacroCommands.test_compor_ops.test_compor_ops'),
                    sd_prod=table_sdaster,
                    docu="",reentrant='n',
                    fr=tr("macro de test des comportements incrementaux dependant de la temperature"),

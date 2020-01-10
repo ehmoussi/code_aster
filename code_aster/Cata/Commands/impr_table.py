@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 IMPR_TABLE=MACRO(nom="IMPR_TABLE",
-                 op=OPS('Macro.impr_table_ops.impr_table_ops'),
+                 op=OPS('code_aster.MacroCommands.impr_table_ops.impr_table_ops'),
                  sd_prod=None,
                  fr=tr("Impression du contenu d'une table dans un fichier"),
    TABLE          =SIMP(statut='o',typ=table_sdaster),

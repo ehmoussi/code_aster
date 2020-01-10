@@ -30,7 +30,7 @@ def gc_open_prod(self,TABLE,**args) :
     return maillage_sdaster
 
 CALC_COUPURE =MACRO(nom='CALC_COUPURE',
-                    op=OPS('Macro.calc_coupure_ops.calc_coupure_ops'),
+                    op=OPS('code_aster.MacroCommands.calc_coupure_ops.calc_coupure_ops'),
                     sd_prod=table_sdaster,
                     reentrant='n',
                     fr=tr("Extraction des résultantes dans une table sur "

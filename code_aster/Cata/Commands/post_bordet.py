@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 POST_BORDET =MACRO(nom="POST_BORDET",
-                   op=OPS('Macro.post_bordet_ops.post_bordet_ops'),
+                   op=OPS('code_aster.MacroCommands.post_bordet_ops.post_bordet_ops'),
                    sd_prod=table_sdaster,
                    reentrant='n',
                    fr=tr("calcul de la probabilite de clivage via le modele de Bordet"),

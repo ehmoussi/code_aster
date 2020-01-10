@@ -49,7 +49,7 @@ def propa_fiss_prod(self,**args):
   return None
 
 PROPA_FISS=MACRO(nom="PROPA_FISS",
-                 op=OPS('Macro.propa_fiss_ops.propa_fiss_ops'),
+                 op=OPS('code_aster.MacroCommands.propa_fiss_ops.propa_fiss_ops'),
                  sd_prod=propa_fiss_prod,
                  fr=tr("Propagation de fissure avec X-FEM"),reentrant='n',
 

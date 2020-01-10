@@ -20,7 +20,7 @@
 from code_aster.Cata.Commons import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Syntax import *
-from code_aster.Commands.ExecuteCommand import UserMacro
+from code_aster.Supervis.ExecuteCommand import UserMacro
 from Contrib.post_t_q_ops import post_t_q_ops
 
 POST_T_Q_CATA=MACRO(nom="POST_T_Q",

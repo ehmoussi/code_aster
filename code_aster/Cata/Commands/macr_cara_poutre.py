@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
-                       op=OPS('Macro.macr_cara_poutre_ops.macr_cara_poutre_ops'),
+                       op=OPS('code_aster.MacroCommands.macr_cara_poutre_ops.macr_cara_poutre_ops'),
                        sd_prod=table_sdaster,
                        reentrant='n',
                        fr=tr("Calculer les caractéristiques d'une section transversale de "

@@ -52,7 +52,7 @@ def chainage_thm_prod(self,TYPE_CHAINAGE,TYPE_RESU = None,**args) :
   raise AsException("type de chainage THM non prevu")
 
 CHAINAGE_THM=MACRO(nom="CHAINAGE_THM",
-                   op=OPS('Macro.chainage_thm_ops.chainage_thm_ops'),
+                   op=OPS('code_aster.MacroCommands.chainage_thm_ops.chainage_thm_ops'),
                    sd_prod=chainage_thm_prod,
                    reentrant='n',
                    docu="Ux.xx.xx",

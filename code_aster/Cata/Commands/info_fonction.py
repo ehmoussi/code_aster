@@ -31,7 +31,7 @@ def info_fonction_prod(self, **args):
 
 
 INFO_FONCTION=MACRO(nom="INFO_FONCTION",
-                    op=OPS('Macro.info_fonction_ops.info_fonction_ops'),
+                    op=OPS('code_aster.MacroCommands.info_fonction_ops.info_fonction_ops'),
                     sd_prod=info_fonction_prod,
                     fr=tr("Opérations mathématiques sur des concepts de type fonction, "
                          "fonction_c ou nappe"),

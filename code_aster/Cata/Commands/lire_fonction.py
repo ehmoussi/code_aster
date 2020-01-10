@@ -35,7 +35,7 @@ def lire_fonction_prod(self,TYPE,**args):
   raise AsException("type de concept resultat non prevu")
 
 LIRE_FONCTION=MACRO(nom="LIRE_FONCTION",
-                    op=OPS('Macro.lire_fonction_ops.lire_fonction_ops'),
+                    op=OPS('code_aster.MacroCommands.lire_fonction_ops.lire_fonction_ops'),
                     sd_prod=lire_fonction_prod,
                     fr=tr("Lit les valeurs réelles dans un fichier de données représentant une "
                          "fonction et crée un concept de type fonction ou nappe"),

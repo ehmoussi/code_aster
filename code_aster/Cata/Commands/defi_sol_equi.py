@@ -22,7 +22,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
-                      op=OPS('Macro.defi_sol_equi_ops.defi_sol_equi_ops'),
+                      op=OPS('code_aster.MacroCommands.defi_sol_equi_ops.defi_sol_equi_ops'),
                       sd_prod=table_sdaster,
                       fr=tr("Définition des données de sol pour Miss"),
                       reentrant='n',

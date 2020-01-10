@@ -20,7 +20,7 @@
 import aster
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import DEFI_BASE_MODALE, DETRUIRE, EXTR_MODE
-from Macro.dyna_visco_modes_calc import dyna_visco_modes_calc
+from .dyna_visco_modes_calc import dyna_visco_modes_calc
 from Utilitai.Utmess import UTMESS
 
 

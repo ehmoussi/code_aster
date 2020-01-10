@@ -25,7 +25,7 @@ from ..Language.Syntax import *
 
 CREA_LIB_MFRONT=MACRO(
     nom="CREA_LIB_MFRONT",
-    op=OPS('Macro.crea_lib_mfront_ops.crea_lib_mfront_ops'),
+    op=OPS('code_aster.MacroCommands.crea_lib_mfront_ops.crea_lib_mfront_ops'),
     reentrant='n',
     fr=tr("Compiler une loi de comportement MFront"),
     UNITE_MFRONT=SIMP(statut='o', typ=UnitType(), inout='in',),

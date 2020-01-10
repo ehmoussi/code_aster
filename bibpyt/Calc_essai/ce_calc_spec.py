@@ -31,7 +31,7 @@ from Calc_essai.outils_ihm import DispFRFDialogue, MultiList, VisuSpectre
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import CREA_TABLE, DETRUIRE, IMPR_TABLE, RECU_FONCTION
 from Contrib.calc_spec import CALC_SPEC
-from Macro.calc_spec_ops import FonctionError
+from code_aster.MacroCommands.calc_spec_ops import FonctionError
 from SD.sd_fonction import sd_fonction
 from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
 

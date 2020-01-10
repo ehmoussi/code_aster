@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 IMPR_ACCE_SEISME=MACRO(nom="IMPR_ACCE_SEISME",
-                   op=OPS('Macro.impr_acce_seisme_ops.impr_acce_seisme_ops'),
+                   op=OPS('code_aster.MacroCommands.impr_acce_seisme_ops.impr_acce_seisme_ops'),
                    reentrant='n',
                    fr=tr("Impression et visualisation, post-traitement de séisme"),
                    regles=(ENSEMBLE('FREQ_MIN','FREQ_MAX')),

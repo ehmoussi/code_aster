@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 DEFI_PROP_ALEA = MACRO(nom="DEFI_PROP_ALEA",
-                op = OPS('Macro.defi_prop_alea_ops.defi_prop_alea_ops'),
+                op = OPS('code_aster.MacroCommands.defi_prop_alea_ops.defi_prop_alea_ops'),
                 sd_prod = formule,
                 fr = tr("Construit un champ aleatoire par son expression analytique"),
                 reentrant='n',

@@ -55,10 +55,10 @@ import aster
 import aster_core
 from Utilitai.Utmess import UTMESS
 
+from .. import Commands
 from ..Cata.DataStructure import formule
 from ..Cata.Syntax import _F
 from ..Commands import DEFI_MATERIAU
-from . import Commands
 
 EXTR = 'extraction'
 FTEMP = 'temp_eval'

@@ -50,16 +50,13 @@ from asrun.thread import Dispatcher
 from asrun.utils import search_enclosed
 
 import aster
-import aster_core
-import code_aster
-import Macro
-from code_aster.Cata.Commands import DETRUIRE
-from code_aster.Cata.Syntax import _F, MACRO, OPER
-from Macro import reca_algo, reca_interp
 from Utilitai.TableReader import TableReaderFactory
 from Utilitai.utils import get_shared_tmpdir
 from Utilitai.Utmess import UTMESS
 
+from ..Cata.Syntax import _F, MACRO, OPER
+from ..Commands import DETRUIRE
+from . import reca_algo, reca_interp
 
 include_pattern = "# -->INCLUDE<--"
 debug = False
@@ -79,15 +76,6 @@ def get_absolute_path(path):
 
 # recupere "bibpyt" à partir de "bibpyt/Macro/recal.py"
 sys.path.append(get_absolute_path(os.path.join(sys.argv[0], '..', '..')))
-
-# try:
-#    from Utilitai.Utmess import UTMESS
-# except Exception, e:
-#    print e
-#    def UTMESS(code='I', txt='',valk='', vali='', valr=''):
-#        print txt, valk, vali, valr
-#        if code=='F': sys.exit()
-
 
 # -------------------------------------------------------------------------------
 def affiche(unity, filename, label='', filetype='stderr'):
@@ -172,11 +160,6 @@ def make_include_files(UNITE_INCLUDE, calcul, parametres):
         sys.path.append(os.path.join(ASTER_ROOT, 'lib', 'python%s.%s' % (sys.version_info[0], sys.version_info[1] ), 'site-packages'))
     except:
         pass
-    try:
-    except Exception as e:
-        print(e)
-        UTMESS('F', 'RECAL0_99')
-
 
     # ----------------------------------------------------------------------------
     # Preparation des fichiers
@@ -268,9 +251,6 @@ def get_tables(tables_calc, tmp_repe_table, prof):
         sys.path.append(bibpyt)
         for mdl in glob.glob(os.path.join(bibpyt, '*')):
             sys.path.append(os.path.join(os.environ['ASTER_ROOT'], version, 'bibpyt', mdl))
-    try:
-    except:
-        UTMESS('F', 'RECAL0_23')
 
     reponses = tables_calc
     Lrep = []
@@ -563,14 +543,6 @@ class CALCULS_ASTER:
     def run_include(self, list_val):
         """  Module permettant de lancer N+1 calculs via un mecanisme d'include
         """
-
-        try:
-
-            # Declaration de toutes les commandes Aster
-        except Exception as e:
-            raise Exception("Le mode INCLUDE doit etre lance depuis Aster : \nErreur : %s" % e)
-
-
         list_params = self.list_params
         calcul      = self.calcul
         reponses    = self.calcul
@@ -721,10 +693,6 @@ class CALCULS_ASTER:
             sys.path.append(os.path.join(ASTER_ROOT, 'lib', 'python%s.%s' % (sys.version_info[0], sys.version_info[1] ), 'site-packages'))
         except:
             pass
-        try:
-        except Exception as e:
-            print(e)
-            UTMESS('F', 'RECAL0_99')
 
 
         assert is_list_of_dict(list_val)
@@ -1034,10 +1002,6 @@ class CALCULS_ASTER:
             sys.path.append(os.path.join(ASTER_ROOT, 'lib', 'python%s.%s' % (sys.version_info[0], sys.version_info[1] ), 'site-packages'))
         except:
             pass
-        try:
-        except Exception as e:
-            print(e)
-            UTMESS('F', 'RECAL0_99')
 
         pos, endpos = -1, -1
         re_start = re.compile('^ *%s *\=' % re.escape(param), re.M)
@@ -1070,7 +1034,7 @@ class CALCULS_ASTER:
            Ajoute un bloc a la fin de l'esclave pour l'affichage des MAC pour l'appariement manuel
         """
         txt = []
-        txt.append( "from Macro.reca_mac import extract_mac_array, get_modes, fenetre_mac\n" )
+        txt.append( "from code_aster.MacroCommands.reca_mac import extract_mac_array, get_modes, fenetre_mac\n" )
         txt.append( "_mac = extract_mac_array("+str(reponse[0])+")\n" )
         txt.append( "l_mac=[]\n" )
         txt.append( "nb_freq=_mac.shape[1]\n" )

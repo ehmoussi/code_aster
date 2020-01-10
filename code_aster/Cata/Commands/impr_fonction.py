@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 IMPR_FONCTION=MACRO(nom="IMPR_FONCTION",
-                    op=OPS('Macro.impr_fonction_ops.impr_fonction_ops'),
+                    op=OPS('code_aster.MacroCommands.impr_fonction_ops.impr_fonction_ops'),
                     sd_prod=None,
                     fr=tr("Imprime le contenu d'objets de type fonction ou liste de "
                          "réels dans un fichier destiné à un traceur de courbe"),

@@ -34,7 +34,7 @@ def crea_elem_ssd_prod(self,NUME_DDL,**args):
     return macr_elem_dyna
 
 CREA_ELEM_SSD=MACRO(nom="CREA_ELEM_SSD",
-                    op=OPS('Macro.crea_elem_ssd_ops.crea_elem_ssd_ops'),
+                    op=OPS('code_aster.MacroCommands.crea_elem_ssd_ops.crea_elem_ssd_ops'),
                     sd_prod=crea_elem_ssd_prod,
                     reentrant='n',
                     fr=tr("Creation de macro-element dynamique en enchainant les commandes : "
