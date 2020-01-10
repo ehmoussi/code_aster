@@ -21,8 +21,8 @@ import copy
 import math
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_CHAMP, DETRUIRE, FORMULE
+from ..Cata.Syntax import _F
+from ..Commands import CREA_CHAMP, DETRUIRE, FORMULE
 from Contrib.raff_xfem_zone import RAFF_XFEM_ZONE
 from SD.sd_xfem import sd_fiss_xfem
 from Utilitai.Utmess import UTMESS

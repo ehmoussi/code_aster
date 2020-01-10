@@ -20,8 +20,8 @@
 import numpy as NP
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CALC_TABLE, CREA_TABLE, DETRUIRE, FORMULE, POST_FATIGUE,
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_TABLE, CREA_TABLE, DETRUIRE, FORMULE, POST_FATIGUE,
                                  RECU_FONCTION)
 from SD.sd_mater import sd_compor1
 from Utilitai.Utmess import UTMESS

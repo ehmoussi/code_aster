@@ -23,8 +23,8 @@ import numpy
 import numpy.fft as FFT
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DEFI_FONCTION, DEFI_INTE_SPEC
+from ..Cata.Syntax import _F
+from ..Commands import DEFI_FONCTION, DEFI_INTE_SPEC
 from SD.sd_fonction import sd_fonction
 from Utilitai.Utmess import UTMESS
 

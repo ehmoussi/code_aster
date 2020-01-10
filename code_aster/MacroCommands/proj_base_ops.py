@@ -17,9 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Commands import NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE
+from ..Commands import NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE
 from ...Supervis import CO
-from code_aster.Objects import GeneralizedDOFNumbering
+from ..Objects import GeneralizedDOFNumbering
 from Contrib.proj_resu_base import PROJ_RESU_BASE
 from Utilitai.Utmess import UTMESS
 

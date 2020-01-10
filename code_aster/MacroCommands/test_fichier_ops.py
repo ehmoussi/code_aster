@@ -25,8 +25,8 @@ import tempfile
 from optparse import OptionGroup, OptionParser
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_TABLE, INFO_EXEC_ASTER, TEST_TABLE
+from ..Cata.Syntax import _F
+from ..Commands import CREA_TABLE, INFO_EXEC_ASTER, TEST_TABLE
 from Utilitai.Utmess import UTMESS
 
 

@@ -33,10 +33,10 @@ from Cata_Utils.t_fonction import (FonctionError, InterpolationError,
                                    ParametreError, ProlongementError,
                                    enveloppe, fractile, homo_support_nappe,
                                    moyenne, t_fonction, t_nappe)
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DEFI_FONCTION, DEFI_NAPPE, IMPR_FONCTION
-from code_aster.Objects import Function, FunctionComplex, Surface
-from code_aster.Utilities import force_list
+from ..Cata.Syntax import _F
+from ..Commands import DEFI_FONCTION, DEFI_NAPPE, IMPR_FONCTION
+from ..Objects import Function, FunctionComplex, Surface
+from ..Utilities import force_list
 from Utilitai import liss_enveloppe as LISS
 from Utilitai.calc_coherency import calc_cohefromdata
 from Utilitai.random_signal_utils import (ACCE2SRO, DSP2SRO, SRO2DSP,

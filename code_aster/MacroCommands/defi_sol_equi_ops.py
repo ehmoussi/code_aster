@@ -24,24 +24,23 @@ from math import exp, floor, log, pi, sin, sqrt
 import numpy as np
 
 import aster
-import code_aster
 from Cata_Utils.t_fonction import t_fonction
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA,
-                                 AFFE_CHAR_MECA_F, AFFE_MATERIAU, AFFE_MODELE,
-                                 ASSE_MATRICE, CALC_CHAMP, CALC_CHAR_SEISME,
-                                 CALC_FONC_INTERP, CALC_FONCTION,
-                                 CALC_MATR_ELEM, CALC_TABLE, CREA_MAILLAGE,
-                                 CREA_RESU, CREA_TABLE, DEFI_FONCTION,
-                                 DEFI_GROUP, DEFI_INTE_SPEC, DEFI_LIST_REEL,
-                                 DEFI_MATERIAU, DEFI_NAPPE, DETRUIRE,
-                                 DYNA_VIBRA, FORMULE, GENE_FONC_ALEA,
-                                 IMPR_FONCTION, IMPR_RESU, IMPR_TABLE,
-                                 LIRE_FONCTION, MODI_MAILLAGE, NUME_DDL,
-                                 POST_DYNA_ALEA, RECU_FONCTION, REST_SPEC_TEMP)
-from code_aster.Helpers import LogicalUnitFile
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
+
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_CHAR_MECA_F,
+                        AFFE_MATERIAU, AFFE_MODELE, ASSE_MATRICE, CALC_CHAMP,
+                        CALC_CHAR_SEISME, CALC_FONC_INTERP, CALC_FONCTION,
+                        CALC_MATR_ELEM, CALC_TABLE, CREA_MAILLAGE, CREA_RESU,
+                        CREA_TABLE, DEFI_FONCTION, DEFI_GROUP, DEFI_INTE_SPEC,
+                        DEFI_LIST_REEL, DEFI_MATERIAU, DEFI_NAPPE, DETRUIRE,
+                        DYNA_VIBRA, FORMULE, GENE_FONC_ALEA, IMPR_FONCTION,
+                        IMPR_RESU, IMPR_TABLE, LIRE_FONCTION, MODI_MAILLAGE,
+                        NUME_DDL, POST_DYNA_ALEA, RECU_FONCTION,
+                        REST_SPEC_TEMP)
+from ..Helpers import LogicalUnitFile
+from ..Objects import Mesh
 
 
 def epeq(eps1, eps2, eps3):
@@ -925,7 +924,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
       resultfile.close()
 
-      __mail0 = code_aster.Mesh()
+      __mail0 = Mesh()
       __mail0.readAsterMeshFile("dse.mail")
       __mailla = CREA_MAILLAGE(MAILLAGE=__mail0,
                              CREA_POI1=(

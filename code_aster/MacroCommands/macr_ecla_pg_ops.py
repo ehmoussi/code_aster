@@ -19,8 +19,8 @@
 
 import os
 
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_MAILLAGE, CREA_RESU
+from ..Cata.Syntax import _F
+from ..Commands import CREA_MAILLAGE, CREA_RESU
 
 
 def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,

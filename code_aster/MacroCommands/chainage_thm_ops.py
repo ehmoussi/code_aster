@@ -30,7 +30,7 @@
 import numpy
 
 import aster
-from code_aster.Cata.Syntax import _F
+from ..Cata.Syntax import _F
 from Utilitai.Utmess import UTMESS
 
 from .chainage_hydr_meca import *

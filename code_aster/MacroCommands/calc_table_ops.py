@@ -25,11 +25,11 @@ from pprint import pformat
 import numpy as np
 
 import aster
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.DataStructure import table_container, table_fonction
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_TABLE, DETRUIRE
-from code_aster.Utilities import force_list
+from ..Cata.DataStructure import *
+from ..Cata.DataStructure import table_container, table_fonction
+from ..Cata.Syntax import _F
+from ..Commands import CREA_TABLE, DETRUIRE
+from ..Utilities import force_list
 from Utilitai.Table import Table, merge, remove_twins
 from Utilitai.utils import get_titre_concept
 from Utilitai.Utmess import UTMESS

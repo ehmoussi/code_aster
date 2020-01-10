@@ -19,8 +19,8 @@
 
 #
 
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CALC_MODES, COMB_MATR_ASSE, CREA_TABLE
+from ..Cata.Syntax import _F
+from ..Commands import CALC_MODES, COMB_MATR_ASSE, CREA_TABLE
 from Utilitai.Table import Table
 
 

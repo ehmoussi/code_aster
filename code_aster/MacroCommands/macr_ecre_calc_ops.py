@@ -22,8 +22,8 @@ import shutil
 
 import aster
 import aster_core
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_TABLE
+from ..Cata.Syntax import _F
+from ..Commands import CREA_TABLE
 from Utilitai.System import ExecCommand
 from Utilitai.Utmess import UTMESS
 

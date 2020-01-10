@@ -20,11 +20,11 @@
 import numpy as NP
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CALC_CHAM_ELEM, CALC_CHAMP, CALC_TABLE,
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_CHAM_ELEM, CALC_CHAMP, CALC_TABLE,
                                  CREA_CHAMP, CREA_TABLE, FORMULE)
-from code_aster.Objects import Function as fonction_sdaster
-from code_aster.Objects import Surface as nappe_sdaster
+from ..Objects import Function as fonction_sdaster
+from ..Objects import Surface as nappe_sdaster
 from Utilitai.Utmess import UTMESS
 
 

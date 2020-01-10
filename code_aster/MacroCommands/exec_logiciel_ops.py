@@ -34,9 +34,9 @@ from subprocess import PIPE
 
 import aster
 import aster_core
-from code_aster import AsterError
-from code_aster.Commands import LIRE_MAILLAGE
-from code_aster.Helpers.LogicalUnit import FileAccess, FileType, LogicalUnitFile
+from libaster import AsterError
+from ..Commands import LIRE_MAILLAGE
+from ..Helpers.LogicalUnit import FileAccess, FileType, LogicalUnitFile
 from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
 

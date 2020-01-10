@@ -24,8 +24,8 @@
 import os
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CHAR_MECA, DEFI_GROUP, DEFI_LIST_ENTI, DEFI_LIST_REEL,
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CHAR_MECA, DEFI_GROUP, DEFI_LIST_ENTI, DEFI_LIST_REEL,
                                  DYNA_NON_LINE, EXTR_RESU, IMPR_RESU, LIRE_MAILLAGE, PROJ_CHAMP)
 from Contrib.env_cine_yacs import ENV_CINE_YACS
 from Contrib.impr_mail_yacs import IMPR_MAIL_YACS

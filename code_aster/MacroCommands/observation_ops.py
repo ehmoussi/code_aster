@@ -24,10 +24,10 @@ import copy
 import numpy
 
 import aster
-from code_aster.Cata.DataStructure import (dyna_harmo, dyna_trans, evol_elas,
+from ..Cata.DataStructure import (dyna_harmo, dyna_trans, evol_elas,
                                            mode_meca)
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CREA_CHAMP, CREA_RESU, DEFI_GROUP, DETRUIRE,
+from ..Cata.Syntax import _F
+from ..Commands import (CREA_CHAMP, CREA_RESU, DEFI_GROUP, DETRUIRE,
                                  MODI_REPERE, POST_RELEVE_T, PROJ_CHAMP,
                                  RECU_TABLE)
 from Utilitai.Utmess import UTMESS

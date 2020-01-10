@@ -19,8 +19,8 @@
 
 # person_in_charge: albert.alarcon at edf.fr
 
-from code_aster.Cata.SyntaxUtils import remove_none
-from code_aster.Commands import ASSE_MATRICE, ASSE_VECTEUR, CALC_MATR_ELEM, CALC_VECT_ELEM, NUME_DDL
+from ..Cata.SyntaxUtils import remove_none
+from ..Commands import ASSE_MATRICE, ASSE_VECTEUR, CALC_MATR_ELEM, CALC_VECT_ELEM, NUME_DDL
 from Utilitai.Utmess import UTMESS
 
 

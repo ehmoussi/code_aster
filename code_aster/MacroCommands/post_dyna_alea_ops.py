@@ -24,8 +24,8 @@ import numpy as NP
 
 import aster
 from Cata_Utils.t_fonction import t_fonction
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CALC_FONCTION, CREA_TABLE, DEFI_FONCTION, DEFI_LIST_REEL,
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_FONCTION, CREA_TABLE, DEFI_FONCTION, DEFI_LIST_REEL,
                                  RECU_FONCTION)
 from Utilitai.optimize import fmin
 from Utilitai.stats import linregress, normcdf

@@ -22,12 +22,12 @@
 import copy
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CHAR_MECA, AFFE_MODELE, CALC_CHAMP,
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CHAR_MECA, AFFE_MODELE, CALC_CHAMP,
                                  CREA_CHAMP, DEFI_FONCTION, DEFI_LIST_INST,
                                  DEFI_LIST_REEL, RECU_TABLE, STAT_NON_LINE)
-from code_aster.Objects import ListOfFloats, TimeStepper
-from code_aster.Utilities import is_sequence
+from ..Objects import ListOfFloats, TimeStepper
+from ..Utilities import is_sequence
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 

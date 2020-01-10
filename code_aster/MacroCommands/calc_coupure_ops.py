@@ -28,8 +28,8 @@ import numpy as NP
 
 import aster
 import Messages
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import *
+from ..Cata.Syntax import _F
+from ..Commands import *
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
 

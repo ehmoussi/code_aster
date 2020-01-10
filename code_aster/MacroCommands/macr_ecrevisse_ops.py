@@ -19,14 +19,14 @@
 
 import copy
 
-from code_aster import EntityType
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_MATERIAU, CO, CREA_TABLE, DEFI_LIST_REEL,
-                                 DETRUIRE, PROJ_CHAMP, STAT_NON_LINE,
-                                 THER_LINEAIRE)
 from Contrib.calc_ecrevisse import CALC_ECREVISSE
 from Utilitai.Table import merge
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_MATERIAU, CO, CREA_TABLE, DEFI_LIST_REEL,
+                        DETRUIRE, PROJ_CHAMP, STAT_NON_LINE, THER_LINEAIRE)
+from ..Objects import EntityType
 
 
 def macr_ecrevisse_ops(self, **args):

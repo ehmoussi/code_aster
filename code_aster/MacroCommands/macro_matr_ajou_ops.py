@@ -18,8 +18,8 @@
 # --------------------------------------------------------------------
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, AFFE_MODELE,
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, AFFE_MODELE,
                                  CALC_FORC_AJOU, CALC_MATR_AJOU, DEFI_MATERIAU,
                                  THER_LINEAIRE)
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme

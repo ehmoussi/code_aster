@@ -22,8 +22,8 @@ import os
 import numpy as np
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CALC_FONC_INTERP, CALC_FONCTION, CREA_TABLE,
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_FONC_INTERP, CALC_FONCTION, CREA_TABLE,
                                  DEFI_FONCTION, DEFI_LIST_REEL, RECU_FONCTION)
 from Utilitai.Utmess import UTMESS
 

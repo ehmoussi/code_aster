@@ -22,8 +22,8 @@ import os
 import matplotlib
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CALC_FONCTION, DEFI_FICHIER, DEFI_NAPPE, DETRUIRE, IMPR_FONCTION,
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_FONCTION, DEFI_FICHIER, DEFI_NAPPE, DETRUIRE, IMPR_FONCTION,
                                  INFO_EXEC_ASTER)
 from Utilitai.Utmess import UTMESS
 

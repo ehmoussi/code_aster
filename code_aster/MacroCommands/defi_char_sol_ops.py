@@ -25,8 +25,8 @@ import numpy as np
 from numpy import sqrt as nqsrt
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CHAR_MECA, AFFE_CHAR_MECA_F, CALC_FONCTION, CALC_TABLE,
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CHAR_MECA, AFFE_CHAR_MECA_F, CALC_FONCTION, CALC_TABLE,
                                  CREA_MAILLAGE, CREA_RESU, DEFI_FONCTION, DEFI_GROUP, DEFI_NAPPE,
                                  DETRUIRE, IMPR_FONCTION, LIRE_FONCTION, LIRE_MAILLAGE,
                                  MODI_MAILLAGE)

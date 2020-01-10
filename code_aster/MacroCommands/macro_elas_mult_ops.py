@@ -18,8 +18,8 @@
 # --------------------------------------------------------------------
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAMP,
+from ..Cata.Syntax import _F
+from ..Commands import (ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAMP,
                                  CALC_MATR_ELEM, CALC_VECT_ELEM, CALCUL,
                                  CREA_RESU, DEFI_LIST_REEL, EXTR_TABLE,
                                  FACTORISER, NUME_DDL, RESOUDRE)

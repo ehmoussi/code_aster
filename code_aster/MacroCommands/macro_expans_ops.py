@@ -18,8 +18,8 @@
 # --------------------------------------------------------------------
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (EXTR_MODE, PROJ_CHAMP, PROJ_MESU_MODAL,
+from ..Cata.Syntax import _F
+from ..Commands import (EXTR_MODE, PROJ_CHAMP, PROJ_MESU_MODAL,
                                  REST_GENE_PHYS)
 from Utilitai.Utmess import UTMESS
 

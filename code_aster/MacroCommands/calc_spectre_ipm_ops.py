@@ -23,9 +23,9 @@ import numpy as NP
 
 import aster
 import aster_fonctions
-from code_aster.Cata.DataStructure import fonction_c, fonction_sdaster, nappe_sdaster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CALC_FONCTION, CREA_TABLE, DEFI_FONCTION, RECU_FONCTION
+from ..Cata.DataStructure import fonction_c, fonction_sdaster, nappe_sdaster
+from ..Cata.Syntax import _F
+from ..Commands import CALC_FONCTION, CREA_TABLE, DEFI_FONCTION, RECU_FONCTION
 from Utilitai.Utmess import UTMESS
 
 

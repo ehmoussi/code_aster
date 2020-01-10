@@ -24,7 +24,7 @@ import os
 import pprint
 import sys
 
-from code_aster.Utilities import is_float, is_sequence, is_str
+from ..Utilities import is_float, is_sequence, is_str
 
 # Nom de la routine
 nompro = 'MACR_RECAL'

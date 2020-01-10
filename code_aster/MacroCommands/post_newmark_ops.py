@@ -25,8 +25,8 @@ import types
 import numpy as np
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CALC_CHAMP, CALC_FONCTION, CALC_TABLE,
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_CHAMP, CALC_FONCTION, CALC_TABLE,
                                  CREA_TABLE, DEFI_FONCTION, DEFI_GROUP,
                                  MACR_LIGN_COUPE, POST_ELEM, POST_RELEVE_T,
                                  PROJ_CHAMP)

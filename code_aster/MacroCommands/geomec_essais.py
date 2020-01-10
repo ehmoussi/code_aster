@@ -22,9 +22,9 @@ import math as M
 import numpy as NP
 
 import aster
-from code_aster import AsterError
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CALC_POINT_MAT, CREA_TABLE, DEFI_FONCTION, DEFI_LIST_INST,
+from libaster import AsterError
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_POINT_MAT, CREA_TABLE, DEFI_FONCTION, DEFI_LIST_INST,
                                  DEFI_LIST_REEL, DETRUIRE, IMPR_TABLE, SIMU_POINT_MAT)
 from Comportement import catalc
 from Utilitai.Utmess import UTMESS
