@@ -20,10 +20,10 @@
 # person_in_charge: nicolas.brie at edf.fr
 
 import aster
-from code_aster import AssemblyMatrixDisplacementComplex, GeneralizedAssemblyMatrixComplex
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DETRUIRE
-from Modal.mode_iter_inv import MODE_ITER_INV
+from ...Objects import AssemblyMatrixDisplacementComplex, GeneralizedAssemblyMatrixComplex
+from ...Cata.Syntax import _F
+from ...Commands import DETRUIRE
+from .mode_iter_inv import MODE_ITER_INV
 from Utilitai.Utmess import UTMESS
 
 

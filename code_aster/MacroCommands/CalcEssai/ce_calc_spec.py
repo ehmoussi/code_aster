@@ -20,20 +20,21 @@
 # person_in_charge: albert.alarcon at edf.fr
 
 import tkinter.font
-from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox, Menu, Menubutton,
-                     Message, Radiobutton, Scrollbar, StringVar, Toplevel)
+from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox,
+                     Menu, Menubutton, Message, Radiobutton, Scrollbar,
+                     StringVar, Toplevel)
 
 import numpy
 
 import aster
-from Calc_essai.cata_ce import CreaTable, InterSpectre, Tempo
-from Calc_essai.outils_ihm import DispFRFDialogue, MultiList, VisuSpectre
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_TABLE, DETRUIRE, IMPR_TABLE, RECU_FONCTION
 from Contrib.calc_spec import CALC_SPEC
-from code_aster.MacroCommands.calc_spec_ops import FonctionError
 from SD.sd_fonction import sd_fonction
 from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import CREA_TABLE, DETRUIRE, IMPR_TABLE, RECU_FONCTION
+from .cata_ce import CreaTable, InterSpectre, Tempo
+from .outils_ihm import DispFRFDialogue, MultiList, VisuSpectre
 
 # MESSAGE_LOGGER = classe permettant de formatter et d'afficher les
 # messages d'erreur

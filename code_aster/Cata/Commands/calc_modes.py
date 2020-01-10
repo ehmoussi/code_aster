@@ -55,7 +55,7 @@ def calc_modes_prod( self, TYPE_RESU, **args) :
    raise AsException("type de concept resultat non prevu")
 
 CALC_MODES=MACRO(nom="CALC_MODES",
-                 op=OPS('Modal.calc_modes_ops.calc_modes_ops'),
+                 op=OPS('code_aster.MacroCommands.Modal.calc_modes_ops.calc_modes_ops'),
                  sd_prod=calc_modes_prod,
                  reentrant='n',
                  fr=tr("Calculer les modes propres ou de flambement d'une structure"),

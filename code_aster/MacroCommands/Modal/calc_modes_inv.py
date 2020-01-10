@@ -17,8 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import _F
-from Modal.mode_iter_inv import MODE_ITER_INV
+from ...Cata.Syntax import _F
+from .mode_iter_inv import MODE_ITER_INV
 
 
 def calc_modes_inv(self, stop_erreur, sturm, TYPE_RESU, OPTION,  INFO, **args):

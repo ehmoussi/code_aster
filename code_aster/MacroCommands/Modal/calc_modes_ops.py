@@ -22,13 +22,13 @@
 import sys
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Objects import GeneralizedModeContainer, MechanicalModeContainer
-from Modal.calc_modes_amelioration import calc_modes_amelioration
-from Modal.calc_modes_inv import calc_modes_inv
-from Modal.calc_modes_multi_bandes import calc_modes_multi_bandes
-from Modal.calc_modes_post import calc_modes_post
-from Modal.calc_modes_simult import calc_modes_simult
+from ...Cata.Syntax import _F
+from ...Objects import GeneralizedModeContainer, MechanicalModeContainer
+from .calc_modes_amelioration import calc_modes_amelioration
+from .calc_modes_inv import calc_modes_inv
+from .calc_modes_multi_bandes import calc_modes_multi_bandes
+from .calc_modes_post import calc_modes_post
+from .calc_modes_simult import calc_modes_simult
 from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
 
 

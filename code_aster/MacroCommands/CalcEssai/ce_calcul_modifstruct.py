@@ -22,18 +22,21 @@
 # La classe CalcEssaiModifStruct permet de gerer les calculs de modification structurale
 #
 import aster
-from Calc_essai.cata_ce import ModeMeca, Resultat
-from Calc_essai.ce_calcul_expansion import extract_mac_array
-from code_aster import AsterError
-from code_aster.Cata.Syntax import _F, ASSD
-from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU, AFFE_MODELE,
-                                 ASSE_MAILLAGE, ASSE_MATRICE, CALC_MATR_ELEM, CREA_MAILLAGE,
-                                 DEFI_MAILLAGE, DEPL_INTERNE, DETRUIRE, EXTR_MODE, MAC_MODES,
-                                 MACR_ELEM_STAT, MODE_STATIQUE, NUME_DDL, NUME_DDL_GENE, PROJ_CHAMP,
-                                 PROJ_MATR_BASE, PROJ_MESU_MODAL, REST_GENE_PHYS)
-from Modal.mode_iter_inv import MODE_ITER_INV
-from Modal.mode_iter_simult import MODE_ITER_SIMULT
+from libaster import AsterError
 from Utilitai.Utmess import MESSAGE_LOGGER
+
+from ...Cata.Syntax import _F, ASSD
+from ...Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
+                         AFFE_MODELE, ASSE_MAILLAGE, ASSE_MATRICE,
+                         CALC_MATR_ELEM, CREA_MAILLAGE, DEFI_MAILLAGE,
+                         DEPL_INTERNE, DETRUIRE, EXTR_MODE, MAC_MODES,
+                         MACR_ELEM_STAT, MODE_STATIQUE, NUME_DDL,
+                         NUME_DDL_GENE, PROJ_CHAMP, PROJ_MATR_BASE,
+                         PROJ_MESU_MODAL, REST_GENE_PHYS)
+from ..Modal.mode_iter_inv import MODE_ITER_INV
+from ..Modal.mode_iter_simult import MODE_ITER_SIMULT
+from .cata_ce import ModeMeca, Resultat
+from .ce_calcul_expansion import extract_mac_array
 
 # MESSAGE_LOGGER = classe permettant de formatter et d'afficher les
 # messages d'erreur
