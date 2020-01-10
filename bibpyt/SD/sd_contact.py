@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,12 +18,12 @@
 # --------------------------------------------------------------------
 
 from SD import *
-from SD.sd_char_meca import sd_char_chme
-from SD.sd_char_meca import sd_char_dual
-from SD.sd_ligrel import sd_ligrel
-from .sd_prof_chno import sd_prof_chno
 from SD.sd_champ import sd_champ
+from SD.sd_char_meca import sd_char_chme, sd_char_dual
+from SD.sd_ligrel import sd_ligrel
 from SD.sd_xfem import sd_modele_xfem
+
+from .sd_prof_chno import sd_prof_chno
 
 
 class sd_contact(AsBase):

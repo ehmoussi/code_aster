@@ -22,24 +22,21 @@
 import os.path as osp
 from pprint import pformat
 
+import aster
 import aster_core
-from code_aster.Cata.DataStructure import (modele_sdaster, maillage_sdaster,
-    table_sdaster)
+from code_aster.Cata.DataStructure import maillage_sdaster, modele_sdaster, table_sdaster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import AFFE_CHAR_CINE, CREA_CHAMP, CREA_RESU, STAT_NON_LINE
+from Utilitai.UniteAster import UniteAster
+from Utilitai.Utmess import UTMESS
+
+from .mac3coeur_ac_permute import MACRO_AC_PERMUTE
 from .mac3coeur_coeur import CoeurFactory
 
 
 def perm_mac3coeur_ops(self, **args):
     """Corps principal de la macro pour la permutation des AC dans MAC3COEUR"""
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from .mac3coeur_ac_permute import MACRO_AC_PERMUTE
-    from Utilitai.UniteAster import UniteAster
-    from Utilitai.Utmess import UTMESS
 
-    from code_aster.Commands import STAT_NON_LINE
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import AFFE_CHAR_CINE
 
     rcdir = aster_core.get_option("rcdir")
     datg = osp.join(rcdir, "datg")

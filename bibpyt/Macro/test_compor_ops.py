@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,16 +26,13 @@
 
 import numpy as NP
 
-from code_aster.Commands import (CALC_FONCTION, CALC_TABLE, DEBUG,
-                                 DEFI_CONSTANTE, DEFI_FONCTION,
-                                 DEFI_LIST_INST, DEFI_LIST_REEL,
-                                 DEFI_MATERIAU, DETRUIRE, FORMULE,
-                                 IMPR_FONCTION, IMPR_TABLE,
-                                 SIMU_POINT_MAT, TEST_TABLE)
 from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_FONCTION, CALC_TABLE, DEBUG, DEFI_CONSTANTE, DEFI_FONCTION,
+                                 DEFI_LIST_INST, DEFI_LIST_REEL, DEFI_MATERIAU, DETRUIRE, FORMULE,
+                                 IMPR_FONCTION, IMPR_TABLE, SIMU_POINT_MAT, TEST_TABLE)
 from Contrib.testcomp_utils import relative_error, vect_prod_rot
 from Contrib.veri_matr_tang import VERI_MATR_TANG
-from Utilitai.Utmess import MasquerAlarme, RetablirAlarme, UTMESS
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 
 def rename_components_tmp(i, N_pas, label_cal, ch_param, RESU, __RS_I):

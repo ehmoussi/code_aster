@@ -21,22 +21,22 @@
 
 import os.path as osp
 
+import aster
+from code_aster.Commands import CREA_TABLE
 from code_aster.Helpers import LogicalUnitFile
+from Utilitai.TableReader import TableReaderFactory, unique_parameters
+from Utilitai.Utmess import UTMESS, raise_UTMESS
 
 
 def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, **args):
     """Méthode corps de la macro LIRE_TABLE
     """
-    import aster
-    from Utilitai.Utmess import UTMESS, raise_UTMESS
-    from Utilitai.TableReader import TableReaderFactory, unique_parameters
 
     RENOMME_PARA = args.get('RENOMME_PARA')
     TITRE = args.get('TITRE')
     INFO = args.get('INFO')
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_TABLE
 
     # Lecture de la table dans un fichier d unité logique UNITE
     nomfich = LogicalUnitFile.filename_from_unit(UNITE)

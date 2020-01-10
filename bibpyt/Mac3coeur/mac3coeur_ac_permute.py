@@ -19,19 +19,19 @@
 
 # person_in_charge: samuel.geniaut at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_RESU
 
 # ------------------------------------------------------------------------
 
 
 def mac3coeur_ac_permute(self, **args):
     """Methode corps de la macro MACRO_AC_PERMUTE"""
-    from code_aster.Cata.Syntax import _F
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_RESU
 
     POS_INIT = self['POS_INIT']
     POS_FIN = self['POS_FIN']

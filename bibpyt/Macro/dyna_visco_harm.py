@@ -17,6 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from numpy import array
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (ASSE_VECTEUR, CALC_VECT_ELEM, COMB_MATR_ASSE,
+                                 CREA_CHAMP, CREA_RESU, DEFI_BASE_MODALE,
+                                 DETRUIRE, DYNA_VIBRA, MODE_STATIQUE,
+                                 NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE,
+                                 REST_GENE_PHYS)
+from Utilitai.Utmess import UTMESS
+
+
 def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
                           MATER_ELAS_FO, __asseKg, __asseKgr, __asseMg,
                           __listKv, e0, eta0, __num, **args):
@@ -26,24 +38,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
        function to compute the harmonic response of the structure
     """
 
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS
-    from numpy import array
 
-    from code_aster.Commands import DEFI_BASE_MODALE
-    from code_aster.Commands import MODE_STATIQUE
-    from code_aster.Commands import NUME_DDL_GENE
-    from code_aster.Commands import CALC_VECT_ELEM
-    from code_aster.Commands import ASSE_VECTEUR
-    from code_aster.Commands import PROJ_MATR_BASE
-    from code_aster.Commands import PROJ_VECT_BASE
-    from code_aster.Commands import DYNA_VIBRA
-    from code_aster.Commands import REST_GENE_PHYS
-    from code_aster.Commands import COMB_MATR_ASSE
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import DETRUIRE
 
 
     if args['NOM_CHAM'] is not None:

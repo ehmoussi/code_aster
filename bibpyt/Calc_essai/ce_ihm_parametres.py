@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,34 +22,38 @@
 # La classe InterfaceParametres gere les options et les logiciels de
 # Visualisation
 
-import sys
-from subprocess import Popen
-import weakref
+import getpass
 import os
 import os.path as osp
+import socket
+import sys
 import time
 import tkinter.font
-
-from tkinter import Tk, Frame, Menubutton, Menu, StringVar, IntVar, BooleanVar, Listbox
-from tkinter import Scrollbar, Label, Radiobutton, Button, Entry
-from tkinter import Checkbutton, Canvas, Toplevel
-from tkinter import NORMAL, DISABLED
-
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import EXEC_LOGICIEL
-from Utilitai.Utmess import UTMESS
-from Utilitai.Table import Table
-
-from Calc_essai.outils_ihm import XmgrManager, MyMenu, MacWindowFrame, StudyList, DispFRFDialogue, DispObs
-from Calc_essai.ce_calcul_expansion import make_mac_salome, make_mesh_mac, CalcEssaiExpansion
-from Calc_essai.cata_ce import CaraElem, InterSpectre, CalcEssaiObjects, Resultat, ModeMeca, DynaHarmo
-
-import Templates
-TEMPLATESDIR = osp.dirname(Templates.__file__)
+import weakref
+from subprocess import Popen
+from tkinter import (DISABLED, NORMAL, BooleanVar, Button, Canvas, Checkbutton, Entry, Frame,
+                     IntVar, Label, Listbox, Menu, Menubutton, Radiobutton, Scrollbar, StringVar,
+                     Tk, Toplevel)
 
 import aster
-
+import Templates
+from Calc_essai.cata_ce import (CalcEssaiObjects, CaraElem, DynaHarmo, InterSpectre, ModeMeca,
+                                Resultat)
+from Calc_essai.ce_calcul_expansion import CalcEssaiExpansion, make_mac_salome, make_mesh_mac
+from Calc_essai.outils_ihm import (DispFRFDialogue, DispObs, MacWindowFrame, MyMenu, StudyList,
+                                   XmgrManager)
+from code_aster.Cata.Syntax import _F
+#
+# Classes specifiques pour chaque logiciel de post-traitement
+#
+from code_aster.Commands import DEFI_FICHIER, DETRUIRE, EXEC_LOGICIEL, IMPR_RESU, INFO_EXEC_ASTER
 from gmsh import GMSH
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS
+
+TEMPLATESDIR = osp.dirname(Templates.__file__)
+
+
 
 #
 #
@@ -412,7 +416,6 @@ class InterfaceParametres(Frame):
         return main_param
 
     def get_user(self):
-        import getpass
         user = getpass.getuser()
         return user
 
@@ -421,7 +424,6 @@ class InterfaceParametres(Frame):
         # on retourne le nom de la machine locale
         # XXX on ne peut pas utiliser un salome distant,
         #     il faudrait un utilisateur et un chemin
-        import socket
         machine_name = socket.gethostname()
         return machine_name
 
@@ -536,10 +538,6 @@ class InterfaceParametres(Frame):
                 term.Fermer()
 
 
-#
-# Classes specifiques pour chaque logiciel de post-traitement
-#
-from code_aster.Commands import INFO_EXEC_ASTER, DEFI_FICHIER, DETRUIRE, IMPR_RESU
 
 # Classe abstraite
 

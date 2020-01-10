@@ -26,12 +26,12 @@ Ce package contient la définition des comportements.
 import os.path as osp
 from glob import glob
 
-from .cata_comportement import CataComportementError, LoiComportement, KIT, catalc
+from .cata_comportement import KIT, CataComportementError, LoiComportement, catalc
+from .cata_vari import DICT_NOM_VARI
 
 
 def _init_cata(debug):
     """Import de tous les comportements"""
-    from .cata_vari import DICT_NOM_VARI
     pkgdir = osp.dirname(__file__)
     pkg = osp.basename(pkgdir)
     l_mod = [osp.splitext(osp.basename(modname))[0]

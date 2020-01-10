@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,11 @@
 
 # person_in_charge: albert.alarcon at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Syntax import *
 from code_aster.Commands.ExecuteCommand import ExecuteCommand
 from code_aster.Objects import TransientGeneralizedResultsContainer
-
 
 PROJ_RESU_BASE_CATA=OPER(nom="PROJ_RESU_BASE",op=  79,sd_prod=tran_gene,
                     fr=tr("Projection d'une sd resultat assemblee sur une base (modale ou de RITZ)"),

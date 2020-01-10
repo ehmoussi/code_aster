@@ -17,6 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (EXTR_MODE, PROJ_CHAMP, PROJ_MESU_MODAL,
+                                 REST_GENE_PHYS)
+from Utilitai.Utmess import UTMESS
+
+
 def macro_expans_ops(self,
                      MODELE_CALCUL,
                      MODELE_MESURE,
@@ -31,13 +38,6 @@ def macro_expans_ops(self,
                      **args
                      ):
     """!macro MACRO_EXPANS """
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    import aster
-    from code_aster.Commands import EXTR_MODE
-    from code_aster.Commands import PROJ_MESU_MODAL
-    from code_aster.Commands import REST_GENE_PHYS
-    from code_aster.Commands import PROJ_CHAMP
 
     RESU_NUM = MODELE_CALCUL['BASE']
     RESU_EXP = MODELE_MESURE['MESURE']

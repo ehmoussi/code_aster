@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,8 @@
 
 import os
 from functools import partial
+
+import numpy as NP
 
 from Miss.miss_domain import MissDomains
 from Miss.miss_utils import dict_format, en_ligne
@@ -149,7 +151,6 @@ def fichier_ext(struct):
 
 def fichier_sign(param):
     """Produit le contenu du fichier .sign"""
-    import numpy as NP
     if param["FREQ_MIN"] is not None:
         lfreq = list(NP.arange(param["FREQ_MIN"],
                                param["FREQ_MAX"] + param["FREQ_PAS"],

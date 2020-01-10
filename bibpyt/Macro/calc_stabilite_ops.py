@@ -17,12 +17,16 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import aster
-from Utilitai.Table import Table
 from numpy import *
 from numpy.linalg import *
+
+import aster
 from Calc_essai.cata_ce import crea_champ
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_TABLE, DETRUIRE, EXTR_TABLE
+from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
+
 
 def calc_stabilite_ops(self, **args):
     """
@@ -30,13 +34,10 @@ def calc_stabilite_ops(self, **args):
     On evalue egalement la stabilite du systeme
     """
 
-    from code_aster.Cata.Syntax import _F
     SCHEMA_TEMPS = args.get("SCHEMA_TEMPS")
     FILTRE = args.get("FILTRE")
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import EXTR_TABLE
-    from code_aster.Commands import CREA_TABLE
 
     t_mnl = args['MODE_NON_LINE'].EXTR_TABLE()
     nbord = len(t_mnl.rows)
@@ -169,7 +170,6 @@ def calc_stabilite_ops(self, **args):
         for i in range(nbord):
             t_res.rows.append(t_mnl.rows[i])
 
-        from code_aster.Commands import DETRUIRE
         DETRUIRE(CONCEPT=_F(NOM=args['MODE_NON_LINE']), INFO=1)
 
 

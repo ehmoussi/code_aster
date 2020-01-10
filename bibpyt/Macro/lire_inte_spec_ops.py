@@ -17,6 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
+from math import cos, sin, sqrt
+
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DEFI_FONCTION, DEFI_INTE_SPEC
+from Utilitai.UniteAster import UniteAster
+from Utilitai.Utmess import UTMESS
+
+
 def lire_inte_spec_ops(self,
                        UNITE=None,
                        FORMAT=None,
@@ -29,15 +38,6 @@ def lire_inte_spec_ops(self,
                        TITRE=None,
                        INFO=None,
                        **args):
-    from code_aster.Cata.Syntax import _F
-    import os
-    from math import cos, sin, sqrt
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.UniteAster import UniteAster
-    # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import DEFI_INTE_SPEC
-
     # Lecture de la fonction dans un fichier d unité logique UNITE
     UL = UniteAster()
     nomfich = UL.Nom(UNITE)

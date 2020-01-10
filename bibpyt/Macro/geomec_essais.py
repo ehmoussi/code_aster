@@ -17,10 +17,20 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import math as M
+
+import numpy as NP
+
+import aster
 from code_aster import AsterError
-from code_aster.Commands import DEFI_FONCTION, SIMU_POINT_MAT, DETRUIRE, CREA_TABLE, IMPR_TABLE
-from code_aster.Commands import DEFI_LIST_INST, DEFI_LIST_REEL
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_POINT_MAT, CREA_TABLE, DEFI_FONCTION, DEFI_LIST_INST,
+                                 DEFI_LIST_REEL, DETRUIRE, IMPR_TABLE, SIMU_POINT_MAT)
+from Comportement import catalc
+from Utilitai.Utmess import UTMESS
+
 from .geomec_utils import *
+
 
 # ----------------------------------------------------------------------- #
 # ----------------------------------------------------------------------- #
@@ -33,9 +43,6 @@ def essai_TRIA_DR_M_D(self, str_n_essai, DicoEssai,
     """
     Objet: Essai Triaxial Draine Monotone a Deplacement controle [TRIA_DR_M_D]
     """
-    import numpy as NP
-    from code_aster.Cata.Syntax import _F
-    import aster
 
     typessai = "TRIA_DR_M_D"
 
@@ -336,9 +343,6 @@ def essai_TRIA_ND_M_D(self, str_n_essai, DicoEssai,\
     Objet: Essai TRIAxial Non Draine Monotone a Deplacement controle
            (TRIA_ND_M_D)
     """
-    import numpy as NP
-    from code_aster.Cata.Syntax import _F
-    import aster
 
     typessai= "TRIA_ND_M_D"
 
@@ -639,11 +643,6 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
     Objet: Essai de CISAillement DRaine Cyclique a Deformation controlee
            (CISA_DR_C_D)
     """
-    import numpy as NP
-    import math as M
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS
 
     typessai = "CISA_DR_C_D"
 
@@ -1126,13 +1125,6 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
     Objet: Essai TRIAxial Non Draine Cyclique alterne a Force controlee
            (TRIA_ND_C_F)
     """
-    import numpy as NP
-    import math as M
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS
-    from Comportement import catalc
-    from code_aster.Commands import CALC_POINT_MAT
 
     typessai = "TRIA_ND_C_F"
 
@@ -2497,12 +2489,6 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
     Objet: Essai TRIAxial DRaine Cyclique alterne a Deplacement controle
           (TRIA_DR_C_D)
     """
-    import numpy as NP
-    import math as M
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS
-    from Comportement import catalc
 
     typessai = "TRIA_DR_C_D"
 
@@ -2998,12 +2984,6 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
     Objet: Essai TRIAxial Non Draine Cyclique alterne a Deplacement controle
           (TRIA_ND_C_D)
     """
-    import numpy as NP
-    import math as M
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS
-    from Comportement import catalc
 
     typessai = "TRIA_ND_C_D"
 
@@ -3570,12 +3550,6 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
     Objet: Essai OEDOmetrique DRaine Cyclique a Force imposee
            (OEDO_DR_C_F)
     """
-    import numpy as NP
-    import math as M
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS
-    from Comportement import catalc
 
     # Essai de type oedometre ou isotrope?
     # -----------------------------------------

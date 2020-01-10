@@ -22,6 +22,12 @@ import os
 import re
 import sys
 import tempfile
+from optparse import OptionGroup, OptionParser
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_TABLE, INFO_EXEC_ASTER, TEST_TABLE
+from Utilitai.Utmess import UTMESS
 
 
 class TestFichierError(Exception):
@@ -73,9 +79,6 @@ def test_fichier_ops(self, **kwargs):
       On teste le nombre de réels présents, et, facultativement, la
       somme de ces nombres et le texte du fichier.
     """
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
 
     FICHIER = kwargs.get("FICHIER")
     NB_VALE = kwargs.get("NB_VALE")
@@ -89,9 +92,6 @@ def test_fichier_ops(self, **kwargs):
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import INFO_EXEC_ASTER
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import TEST_TABLE
     #
     is_ok = 0
     TYPE_TEST = kwargs.get("TYPE_TEST")
@@ -296,7 +296,6 @@ def test_iter(obj, function, verbose=False):
     return nbvalr, valr, nbvali, int(vali) % 2147483647, chksum
 
 if __name__ == '__main__':
-    from optparse import OptionParser, OptionGroup
 
     p = OptionParser(usage='usage: %s fichier [options]' % sys.argv[0])
     p.add_option('--type_test',

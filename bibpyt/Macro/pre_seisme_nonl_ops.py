@@ -23,20 +23,17 @@ import numpy as NP
 
 import aster
 from code_aster import AsterError
-from code_aster.Cata.DataStructure import (cara_elem, cham_mater, fonction_c,
-                                           fonction_sdaster, maillage_sdaster,
-                                           modele_sdaster, nappe_sdaster)
+from code_aster.Cata.DataStructure import (cara_elem, cham_mater, fonction_c, fonction_sdaster,
+                                           maillage_sdaster, modele_sdaster, nappe_sdaster)
 from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
-                                 AFFE_MODELE, ASSE_MAILLAGE, ASSE_MATRICE,
-                                 CALC_MATR_ELEM, CALC_MODES, COMB_MATR_ASSE,
-                                 CREA_CHAMP, CREA_MAILLAGE, DEFI_BASE_MODALE,
-                                 DEFI_FONCTION, DEFI_GROUP, DEFI_INTERF_DYNA,
-                                 DEFI_LIST_INST, DEFI_LIST_REEL, DEFI_MAILLAGE,
-                                 DETRUIRE, DYNA_NON_LINE, LIRE_IMPE_MISS,
-                                 LIRE_MAILLAGE, MACR_ELEM_DYNA, MODE_STATIQUE,
-                                 NUME_DDL, NUME_DDL_GENE, PROD_MATR_CHAM,
-                                 STAT_NON_LINE)
+from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU, AFFE_MODELE,
+                                 ASSE_MAILLAGE, ASSE_MATRICE, CALC_MATR_ELEM, CALC_MODES,
+                                 COMB_MATR_ASSE, CREA_CHAMP, CREA_MAILLAGE, DEFI_BASE_MODALE,
+                                 DEFI_FONCTION, DEFI_GROUP, DEFI_INTERF_DYNA, DEFI_LIST_INST,
+                                 DEFI_LIST_REEL, DEFI_MAILLAGE, DETRUIRE, DYNA_NON_LINE,
+                                 LIRE_IMPE_MISS, LIRE_MAILLAGE, MACR_ELEM_DYNA, MODE_STATIQUE,
+                                 NUME_DDL, NUME_DDL_GENE, PROD_MATR_CHAM, STAT_NON_LINE)
+from code_aster.Helpers.LogicalUnit import LogicalUnitFile
 from Utilitai.partition import MAIL_PY
 from Utilitai.Utmess import ASSERT, UTMESS
 
@@ -574,7 +571,6 @@ class StatDyna(object):
         self.base_modale = properties['STAT_DYNA']['BASE_MODALE']
         self.UL_impe_freq = properties['STAT_DYNA']['UNITE_IMPE_FREQ']
 
-        from code_aster.Helpers.LogicalUnit import LogicalUnitFile
         uniteImpeTemps = properties['STAT_DYNA']['UNITE_IMPE_TEMPS'][0]
         if uniteImpeTemps['UNITE_RESU_RIGI']:
             self.UL_impe_temps_K = uniteImpeTemps['UNITE_RESU_RIGI']

@@ -28,8 +28,7 @@ import aster
 import aster_core
 import libaster
 from code_aster import AsterError, _
-from code_aster.Utilities import (Singleton, convert, force_list, to_unicode,
-                                  ufmt)
+from code_aster.Utilities import Singleton, convert, force_list, to_unicode, ufmt
 from Messages.context_info import message_context_concept
 from Utilitai.string_utils import clean_string, copy_text_to, cut_long_lines
 from Utilitai.utils import get_time

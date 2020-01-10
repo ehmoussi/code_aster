@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,23 +23,27 @@
 debug = False
 
 import copy
-import os
-import sys
-import pprint
-import math
+import getpass
 import glob
-import socket
+import math
+import os
+import pprint
 import shutil
+import socket
+import sys
 import tempfile
 
 import numpy as NP
+from asrun.common.sysutils import on_64bits
+from asrun.profil import AsterProfil
 
 import aster_core
 from Utilitai.System import ExecCommand
+from Utilitai.utils import get_shared_tmpdir
 from Utilitai.Utmess import UTMESS
 
-from .recal import Affiche_Param, CALCULS_ASTER, CALC_ERROR
 from .reca_utilitaires import Random_Tmp_Name
+from .recal import CALC_ERROR, CALCULS_ASTER, Affiche_Param
 
 
 # ------------------------------------------------------------------------
@@ -390,7 +394,6 @@ class CALCUL_ASTER:
         """
            Creation du repertoire temporaire d'execution du calcul esclave
         """
-        from Utilitai.utils import get_shared_tmpdir
 
         # Creation du repertoire temporaire
         tmp_macr_recal = get_shared_tmpdir('tmp_macr_recal')
@@ -413,8 +416,6 @@ class CALCUL_ASTER:
            Creation du fichier .export pour le calcul esclave
         """
 
-        from asrun.profil import AsterProfil
-        from asrun.common.sysutils import on_64bits
 
         # Recuperation du fichier .export
         if self.export:
@@ -440,7 +441,6 @@ class CALCUL_ASTER:
             try:
                 username = os.getlogin()
             except:
-                import getpass
                 username = getpass.getuser()
         user_mach_dist = "%s@%s:" % (username, socket.gethostname())
 

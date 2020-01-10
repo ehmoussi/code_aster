@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,11 @@ On regroupe ici les fonctions Python necessaires au lancement
 de la fenetre graphique d'appariement manuel des MAC pour le
 recalage en dynamique
 '''
+from tkinter import Button, Entry, Frame, Label, StringVar, Tk
+
 import numpy as NP
+
+from Calc_essai.outils_ihm import MacWindowFrame
 
 
 def extract_mac_array(mac_mode):
@@ -50,8 +54,6 @@ def get_modes(resu):
 class fenetre_mac:
 
     def __init__(self, resu1, resu2, mac):
-        from Calc_essai.outils_ihm import MacWindowFrame
-        from tkinter import Tk, Frame, StringVar, Entry, Label, Button
 
         self.resu1 = resu1
         self.resu2 = resu2

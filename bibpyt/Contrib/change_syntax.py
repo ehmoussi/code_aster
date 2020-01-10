@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ It needs several changes in the source code:
 
   in ``JDC.__init__()``::
 
-    from Contrib.change_syntax import SyntaxVisitor
     self.change_syntax = SyntaxVisitor()
 
   in ``JDC.affiche_fin_exec()``::
@@ -36,7 +35,6 @@ It needs several changes in the source code:
 
 - In ``N_ETAPE.py``, in ``ETAPE.__init__()``::
 
-    from Contrib.change_syntax import store_frame_info
     self.frame_info = store_frame_info(self.nom, niveau)
 
 - In ``E_ETAPE.py``, in ``ETAPE.AfficheTexteCommande()``::
@@ -48,14 +46,20 @@ import linecache
 import os
 import os.path as osp
 import re
+import shutil
+from glob import glob
+from random import random
+
+from asrun.profil import AsterProfil
 
 from command_text import CommandTextVisitor
+from Contrib.change_syntax import SyntaxVisitor, store_frame_info
 from E_utils import repr_float
 from Noyau.N_ASSD import ASSD
+from Noyau.N_FONCTION import initial_context
 from Noyau.N_info import LEVEL, Category, message
 from Noyau.N_types import force_list
 from Noyau.N_utils import cur_frame
-from Noyau.N_FONCTION import initial_context
 
 ALL = False
 COMMANDS = ('PRE_GIBI', 'PRE_GMSH', 'PRE_IDEAS', 'LIRE_MAILLAGE')
@@ -178,9 +182,6 @@ class SyntaxVisitor(CommandTextVisitor):
 
     def finalize(self, code=None):
         """End"""
-        import shutil
-        from glob import glob
-        from asrun.profil import AsterProfil
         num = len(glob(FILENAME + '.*')) + 1
         lfn = [i for i in list(self.text.keys()) if i.startswith('fort.')]
         assert len(lfn) <= 1, lfn
@@ -496,7 +497,6 @@ def external_objects(params, formula):
     Returns:
         list[str]: List of required objects.
     """
-    from random import random
     expr = re.compile("name '(.*)' is not defined")
     needed = []
     ok = False

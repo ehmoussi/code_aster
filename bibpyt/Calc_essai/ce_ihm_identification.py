@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,24 +19,20 @@
 
 # person_in_charge: albert.alarcon at edf.fr
 
-from numpy import array, zeros, conjugate, identity
-from numpy import transpose, ones, arctan, pi, log
-
-from tkinter import Frame, Menubutton, Checkbutton, Menu, StringVar, IntVar
-from tkinter import Scrollbar, Label, Radiobutton, Button, Entry
-from tkinter import Checkbutton, Listbox
-
 import tkinter.font
+from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox, Menu, Menubutton,
+                     Radiobutton, Scrollbar, StringVar)
 
-from code_aster.Cata.Syntax import _F, CO
-from code_aster.Commands import OBSERVATION, DETRUIRE, IMPR_RESU
-from Calc_essai.cata_ce import Resultat, ModeMeca, InterSpectre, CreaTable
-from Calc_essai.cata_ce import nume_ddl_phy, nume_ddl_gene, CreaTable
-from Calc_essai.ce_calcul_identification import CalcEssaiIdentification
-from Calc_essai.outils_ihm import Compteur, MyMenu, MultiList, VisuSpectre
-from Calc_essai.outils_ihm import ChgtRepereDialogue, ObservationWindow
+from numpy import arctan, array, conjugate, identity, log, ones, pi, transpose, zeros
+
 import aster_core
-
+from Calc_essai.cata_ce import (CreaTable, InterSpectre, ModeMeca, Resultat, nume_ddl_gene,
+                                nume_ddl_phy)
+from Calc_essai.ce_calcul_identification import CalcEssaiIdentification
+from Calc_essai.outils_ihm import (ChgtRepereDialogue, Compteur, MultiList, MyMenu,
+                                   ObservationWindow, VisuSpectre)
+from code_aster.Cata.Syntax import _F, CO
+from code_aster.Commands import DETRUIRE, IMPR_RESU, OBSERVATION
 
 #
 #

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,28 +22,22 @@
 
 # La classe InterfaceCorrelation dirige les objets graphiques
 
-import sys
-import weakref
 import os
-
-from Utilitai.Utmess import UTMESS
+import sys
+import tkinter.font
+import weakref
+from tkinter import (Button, Canvas, Checkbutton, Entry, Frame, IntVar, Label, Listbox, Menu,
+                     Menubutton, Radiobutton, Scrollbar, StringVar, Toplevel)
 
 import aster
-from Calc_essai.cata_ce import CaraElem, InterSpectre, CalcEssaiObjects
-from Calc_essai.cata_ce import Resultat, ModeMeca, DynaHarmo
-from Calc_essai.outils_ihm import ParamProjMesuModal
-
-from code_aster.Cata.Syntax import _F
-import tkinter.font
-
-from tkinter import Frame, Menubutton, Menu, StringVar, IntVar, Listbox
-from tkinter import Scrollbar, Label, Radiobutton, Button, Entry
-from tkinter import Checkbutton, Canvas, Toplevel
-from Calc_essai.outils_ihm import MyMenu, ModeFreqList
-from Calc_essai.outils_ihm import DispFRFDialogue, MacWindowFrame, DispObs
+from Calc_essai.cata_ce import (CalcEssaiObjects, CaraElem, DynaHarmo, InterSpectre, ModeMeca,
+                                Resultat)
 from Calc_essai.ce_calcul_expansion import CalcEssaiExpansion
 from Calc_essai.ce_ihm_parametres import CalcEssaiSalome
-
+from Calc_essai.outils_ihm import (DispFRFDialogue, DispObs, MacWindowFrame, ModeFreqList, MyMenu,
+                                   ParamProjMesuModal)
+from code_aster.Cata.Syntax import _F
+from Utilitai.Utmess import UTMESS
 
 #
 #

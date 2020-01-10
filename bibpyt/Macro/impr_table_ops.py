@@ -22,6 +22,13 @@
 import os.path
 import re
 
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DETRUIRE, RECU_FONCTION
+from code_aster.Helpers import LogicalUnitFile, ReservedUnitUsed
+from Utilitai.utils import fmtF2PY
+from Utilitai.Utmess import UTMESS
+
 
 def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
     """
@@ -29,18 +36,11 @@ def impr_table_ops(self, FORMAT, TABLE, INFO, **args):
     Erreurs<S> dans IMPR_TABLE pour ne pas perdre la base.
     """
     macro = 'IMPR_TABLE'
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from code_aster.Helpers import LogicalUnitFile, ReservedUnitUsed
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.utils import fmtF2PY
 
     args = _F(args)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import RECU_FONCTION
 
     #----------------------------------------------
     # 0. Traitement des arguments, initialisations

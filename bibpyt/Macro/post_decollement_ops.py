@@ -17,13 +17,20 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#
+import os
 
-# fonction qui renvoie une liste de 0/1 en fonction du signe des éléments
-# de la liste listIN:
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_MATERIAU, AFFE_MODELE, CREA_CHAMP,
+                                 CREA_RESU, CREA_TABLE, DEFI_GROUP,
+                                 DEFI_MATERIAU, IMPR_TABLE, POST_ELEM,
+                                 POST_RELEVE_T)
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 
 def fctZeroUn(listIN):
+    """Fonction qui renvoie une liste de 0/1 en fonction du signe des éléments
+    de la liste listIN:"""
     listOUT = []
     for n in listIN:
         if n > 0:
@@ -37,22 +44,8 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
     """
        Corps de la macro POST_DECOLLEMENT
     """
-    import aster
-    import os
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import POST_ELEM
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import POST_RELEVE_T
-    from code_aster.Commands import DEFI_GROUP
-    from code_aster.Commands import DEFI_MATERIAU
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import AFFE_MODELE
-    from code_aster.Commands import AFFE_MATERIAU
-    from code_aster.Commands import IMPR_TABLE
 
     # on recupere le concept maillage
     MAILLAGE = RESULTAT.getModel().getMesh()

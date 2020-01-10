@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,17 +23,17 @@ import os
 import sys
 import traceback
 
+import aster
 from code_aster import AsterError
+from Miss.miss_calcul import CalculMiss
+from Miss.miss_utils import MISS_PARAMETER
+from Utilitai.Utmess import UTMESS
 
 
 def calc_miss_ops(self, **kwargs):
     """Macro CALC_MISS :
     Préparation des données et exécution d'un calcul MISS3D
     """
-    import aster
-    from Utilitai.Utmess import UTMESS
-    from Miss.miss_utils import MISS_PARAMETER
-    from Miss.miss_calcul import CalculMiss
 
     # conteneur des paramètres du calcul
     param = MISS_PARAMETER(initial_dir=os.getcwd(), **kwargs)

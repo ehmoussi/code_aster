@@ -22,7 +22,6 @@
 import types
 
 import aster
-
 from code_aster.Helpers import LogicalUnitFile
 
 

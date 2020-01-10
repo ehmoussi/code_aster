@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@ Ce module définit des fonctions permettant de manipuler un résultat issu de TH
 """
 
 import re
+
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import AFFE_CHAR_MECA, AFFE_CHAR_MECA_F, DEFI_FONCTION
 
 
 class ThycResult(object):
@@ -66,7 +69,6 @@ def compute_ep_from_Z(line) :
 
 def definir_chargement_transverse(cote, epaisseur, pos_thyc, force, prod):
     """XXX pas documenté, propre à lire_resu_thyc"""
-    from code_aster.Commands import DEFI_FONCTION
     # Determination du chargement transverse sur les crayons pour un
     # assemblage donne.
     kk = 2
@@ -141,9 +143,6 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
     ou un objet ThycResult avec .read(), .hydr_load()... pour récupérer les
     différents résultats
     """
-    from code_aster.Commands import (DEFI_FONCTION, AFFE_CHAR_MECA,
-        AFFE_CHAR_MECA_F)
-    from code_aster.Cata.Syntax import _F
     # Fonction multiplicative de la force hydrodynamique axiale.
     # On multiplie par 0.722 les forces hydrodynamiques a froid pour obtenir
     # celles a chaud.

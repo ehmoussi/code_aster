@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,24 +20,26 @@
 # person_in_charge: mathieu.courtois at edf.fr
 __all__ = ['Graph', 'AjoutParaCourbe']
 
-import sys
 import os
 import os.path
 import re
+import sys
 import time
-import numpy
 
-from Utilitai.Utmess import UTMESS
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
 
 import aster_core
-
 from code_aster.Utilities import value_is_sequence
+from Utilitai import Table
+from Utilitai.Utmess import UTMESS
+
+from . import Table
 
 if 'Table' not in sys.modules:
     try:
-        from Utilitai import Table
     except ImportError:
-        from . import Table
 
 
 # ------------------------------------------------------------------------
@@ -1160,10 +1162,7 @@ class TraceMatplotlib(TraceGraph):
 
     def Trace(self):
         fichier = self.NomFich
-        import matplotlib
         matplotlib.use('Agg')
-        import matplotlib.pyplot as plt
-        import numpy as np
 
         l_color=['b','r','k','g']
         g = self.Graph

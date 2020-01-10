@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,10 +18,9 @@
 # --------------------------------------------------------------------
 
 from SD import *
-
-from SD.sd_ligrel import sd_ligrel
 from SD.sd_carte import sd_carte
 from SD.sd_l_table import sd_l_table
+from SD.sd_ligrel import sd_ligrel
 
 
 class sd_char_gf_xx(AsBase):

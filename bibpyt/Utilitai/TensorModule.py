@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,10 +22,12 @@
 # =====================================================================
 
 import unittest
+
 import numpy as NP
 
+import sympy
+
 try:
-    import sympy
     X, Y, Z = sympy.symbols('X Y Z')
     HAVE_SYMPY = True
 except ImportError:
@@ -35,7 +37,6 @@ def flatten(x):
     """flatten(sequence) -> list
 
     Returns a single, flat list which contains all elements retrieved
-    from the sequence and all recursively contained sub-sequences
     (iterables).
 
     Examples:

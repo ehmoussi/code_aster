@@ -18,26 +18,27 @@
 # --------------------------------------------------------------------
 
 import random
-from math import pi, sqrt, log, exp
+from math import exp, log, pi, sqrt
+
+import numpy as NP
+
+import aster
+from Cata_Utils.t_fonction import t_fonction
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_FONCTION, CREA_TABLE, DEFI_FONCTION, DEFI_LIST_REEL,
+                                 RECU_FONCTION)
+from Utilitai.optimize import fmin
+from Utilitai.stats import linregress, normcdf
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS
 
 EnumTypes = (list, tuple)
 
 
 def post_dyna_alea_ops(self, INFO, **args):
-    import numpy as NP
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    from Cata_Utils.t_fonction import t_fonction
-    from Utilitai.Table import Table
 
     # On importe les définitions des commandes a utiliser dans la macro
     # Le nom de la variable doit être obligatoirement le nom de la commande
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import RECU_FONCTION
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import DEFI_LIST_REEL
-    from code_aster.Commands import CALC_FONCTION
 
 #  ------------------------------------------------------------------
 #---------algorithme d'optimisation pour le  maximum de vraisemblance
@@ -84,8 +85,6 @@ def post_dyna_alea_ops(self, INFO, **args):
 #  OPTION FRAGILITE
 # ------------------------------------------------------------------
     if 'FRAGILITE' in args:
-        from Utilitai.optimize import fmin
-        from Utilitai.stats import normcdf, linregress
         FRAGILITE = args['FRAGILITE'][0]
         if FRAGILITE['LIST_PARA'] is not None:
             liste_a = FRAGILITE['LIST_PARA'].sdj.VALE.get()

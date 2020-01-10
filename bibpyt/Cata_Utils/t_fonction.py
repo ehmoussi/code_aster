@@ -23,7 +23,7 @@ from math import exp, log
 import numpy as NP
 import numpy.fft as FFT
 
-from code_aster.Utilities import is_float, is_float_or_int, is_complex, is_number, is_sequence
+from code_aster.Utilities import is_complex, is_float, is_float_or_int, is_number, is_sequence
 
 
 # -----------------------------------------------------------------------------

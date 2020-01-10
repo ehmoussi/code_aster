@@ -17,20 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import numpy
+
 import aster
 from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CALC_CHAMP, CREA_CHAMP, CREA_RESU, DEFI_LIST_REEL, PROJ_CHAMP
 from Utilitai.Utmess import UTMESS
-import numpy
+
 prec = numpy.finfo(float).eps
 
 
 def CHAINAGE_MECA_HYDR(self, args, motscles):
 
-    from code_aster.Commands import DEFI_LIST_REEL
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import CALC_CHAMP
-    from code_aster.Commands import PROJ_CHAMP
 
     b_info = False
     if 'INFO' in args:

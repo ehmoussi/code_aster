@@ -17,42 +17,33 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import os
 import copy
-from math import log, sqrt, floor, pi, sin
-from numpy import sqrt as nsqrt
+import os
+from math import floor, log, pi, sin, sqrt
+
+import numpy as np
+from numpy import sqrt as nqsrt
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CHAR_MECA, AFFE_CHAR_MECA_F, CALC_FONCTION, CALC_TABLE,
+                                 CREA_MAILLAGE, CREA_RESU, DEFI_FONCTION, DEFI_GROUP, DEFI_NAPPE,
+                                 DETRUIRE, IMPR_FONCTION, LIRE_FONCTION, LIRE_MAILLAGE,
+                                 MODI_MAILLAGE)
+from Utilitai.Table import Table
+from Utilitai.UniteAster import UniteAster
+from Utilitai.Utmess import UTMESS
 
 
 def defi_char_sol_ops(self, TITRE=None, INFO=None, **args):
     """
        Macro DEFI_SOL_EQUI
     """
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.UniteAster import UniteAster
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.Table import Table
     # from math import log, sqrt, floor, pi, sin
-    from numpy import sqrt as nqsrt
-    import numpy as np
 
   #--------------------------------------------------------------------------------
   # On importe les definitions des commandes a utiliser dans la macro
   #
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import CALC_FONCTION
-    from code_aster.Commands import IMPR_FONCTION
-    from code_aster.Commands import CALC_TABLE
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import LIRE_FONCTION
-    from code_aster.Commands import AFFE_CHAR_MECA
-    from code_aster.Commands import AFFE_CHAR_MECA_F
-    from code_aster.Commands import DEFI_GROUP
-    from code_aster.Commands import LIRE_MAILLAGE
-    from code_aster.Commands import CREA_MAILLAGE
-    from code_aster.Commands import MODI_MAILLAGE
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import DEFI_NAPPE
 
     args = _F(args)
     modele = args['MODELE']

@@ -17,6 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import math
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CREA_CHAMP, DEFI_CONSTANTE, DEFI_FONCTION,
+                                 DEFI_LIST_INST, DEFI_LIST_REEL, IMPR_RESU,
+                                 LIRE_CHAMP, STAT_NON_LINE)
+
+
 def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
                                 COMPORTEMENT,ETAT_INIT,INCREMENT,
                                 CONVERGENCE,PILOTAGE,SOLVEUR,
@@ -28,9 +37,6 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
      sur une sequence de pas de pilotage
   """
 
-  import math
-  import aster
-  from code_aster.Cata.Syntax import _F
 
 
 
@@ -42,14 +48,6 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
   ier=0
 
   # On importe les definitions des commandes a utiliser dans la macro
-  from code_aster.Commands import DEFI_CONSTANTE
-  from code_aster.Commands import DEFI_FONCTION
-  from code_aster.Commands import LIRE_CHAMP
-  from code_aster.Commands import CREA_CHAMP
-  from code_aster.Commands import DEFI_LIST_REEL
-  from code_aster.Commands import DEFI_LIST_INST
-  from code_aster.Commands import STAT_NON_LINE
-  from code_aster.Commands import IMPR_RESU
 
   # On se prepare a manipuler le mot-cle facteur SOLVEUR
   assert len(SOLVEUR) == 1
@@ -404,7 +402,6 @@ def Extract(COMPORTEMENT, baseField, cplField=None, **components):
   law.
   """
 
-  from code_aster.Cata.Syntax import _F
 
 
   # 1 - Access to the properties of the constitutive laws

@@ -17,11 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import _F
-from Utilitai.Utmess import UTMESS
-import aster_core
 import aster
+import aster_core
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import EXTR_MODE, IMPR_CO, INFO_MODE, MODI_MODELE, NUME_DDL
 from code_aster.Objects import AssemblyMatrixDisplacementDouble
+from Modal.mode_iter_simult import MODE_ITER_SIMULT
+from Utilitai.Utmess import UTMESS
 
 
 def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
@@ -54,13 +56,7 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
         lmatphys = False
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from Modal.mode_iter_simult import MODE_ITER_SIMULT
-    from code_aster.Commands import EXTR_MODE
-    from code_aster.Commands import INFO_MODE
-    from code_aster.Commands import MODI_MODELE
-    from code_aster.Commands import NUME_DDL
     if (dbg):
-        from code_aster.Commands import IMPR_CO
 
     # Recuperation parametres solveur lineaire
     dSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)

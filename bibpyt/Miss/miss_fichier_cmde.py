@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,14 +24,13 @@
 import os
 import os.path as osp
 import re
-from pprint import pformat
-from math import sqrt
 import tempfile
 import unittest
+from math import sqrt
+from pprint import pformat
 
-from Miss.miss_utils import dict_format
 from Miss.miss_domain import MissDomains
-
+from Miss.miss_utils import dict_format
 from Utilitai import test_utils
 
 

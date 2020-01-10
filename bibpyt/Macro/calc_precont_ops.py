@@ -19,29 +19,16 @@
 
 # person_in_charge: sylvie.michel-ponnelle@edf.fr
 
-#def calc_etape(nb_etapes, list_inst):
-    #"""
-        #Répartition des instants disponibles dans les différentes étapes
-        #de calcul.
-        #Renvoie les instants finaux des nb_etapes -1
-    #"""
+import copy
 
-    #nb_inst_dispo = len(list_inst)-1
-    #if nb_inst_dispo < nb_etapes : return None
-
-    #inst_out = []
-    #N = nb_inst_dispo
-    #ind = 0
-    #n_inst_etape = 0
-    #for d in range(nb_etapes,1, -1):
-        #a,b = divmod(N,d)
-        #n_inst_etape += a
-        #ind +=n_inst_etape
-        #inst_out.append(list_inst[ind])
-        #N = b
-
-    #return inst_out
-
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CHAR_MECA, AFFE_MODELE, CALC_CHAMP,
+                                 CREA_CHAMP, DEFI_FONCTION, DEFI_LIST_INST,
+                                 DEFI_LIST_REEL, RECU_TABLE, STAT_NON_LINE)
+from code_aster.Objects import ListOfFloats, TimeStepper
+from code_aster.Utilities import is_sequence
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 
 def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
@@ -53,23 +40,8 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     """
        Ecriture de la macro CALC_PRECONT
     """
-    import copy
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from code_aster.Objects import ListOfFloats, TimeStepper
-    from code_aster.Utilities import is_sequence
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import AFFE_MODELE
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import AFFE_CHAR_MECA
-    from code_aster.Commands import DEFI_LIST_REEL
-    from code_aster.Commands import DEFI_LIST_INST
-    from code_aster.Commands import STAT_NON_LINE
-    from code_aster.Commands import CALC_CHAMP
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import RECU_TABLE
 
     # alarme de STAT_NON_LINE si les mot-cles de COMPORTEMENT sont renseignes
     # a tort

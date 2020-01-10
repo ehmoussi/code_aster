@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,10 +22,9 @@
 # RECUPERATION DES MAILLAGES IFS VENANT DE SATURNE VIA YACS
 #
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
-
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Syntax import *
 
 IMPR_MAIL_YACS=PROC(nom="IMPR_MAIL_YACS",op=43,
                fr=tr("Lecture d'un maillage via YACS lors du Couplage de Code_Aster et Saturne"),

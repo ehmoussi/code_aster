@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,14 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# protection pour eficas
-try:
-    import aster
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.Table import Table
-    from Utilitai.partition import MAIL_PY
-except:
-    pass
+import aster
+from Utilitai.partition import MAIL_PY
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS
 
 
 def buildTabString(tabLevel):

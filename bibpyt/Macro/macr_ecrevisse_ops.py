@@ -17,18 +17,24 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import copy
+
+from code_aster import EntityType
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_MATERIAU, CO, CREA_TABLE, DEFI_LIST_REEL,
+                                 DETRUIRE, PROJ_CHAMP, STAT_NON_LINE,
+                                 THER_LINEAIRE)
+from Contrib.calc_ecrevisse import CALC_ECREVISSE
+from Utilitai.Table import merge
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+
 def macr_ecrevisse_ops(self, **args):
     """
     Procédure de couplage Code_Aster-Ecrevisse.
     Exécution pour tous les pas de temps des calculs thermiques, mécaniques puis hydrauliques.
     Découpage/Génération par Aster du fichier de données d'Ecrevisse et lancement d'Ecrevisse.
     """
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-    from Utilitai.Table import merge
-    from code_aster.Cata.Syntax import _F
-    from Contrib.calc_ecrevisse import CALC_ECREVISSE
-    import copy
-    from code_aster import EntityType
 
     #import warnings
     #warnings.warn("MACR_ECREVISSE must be refactored!", RuntimeWarning)
@@ -73,14 +79,6 @@ def macr_ecrevisse_ops(self, **args):
         info2 = True
 
     # IMPORTATION DE COMMANDES ASTER
-    from code_aster.Commands import DEFI_LIST_REEL
-    from code_aster.Commands import THER_LINEAIRE
-    from code_aster.Commands import PROJ_CHAMP
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import AFFE_MATERIAU
-    from code_aster.Commands import STAT_NON_LINE
-    from code_aster.Commands import CO
-    from code_aster.Commands import CREA_TABLE
 
 
     # alarme de STAT_NON_LINE si les mot-cles de COMPORTEMENT sont renseignes

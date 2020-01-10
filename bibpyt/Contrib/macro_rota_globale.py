@@ -17,9 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DEFI_FONCTION, DEFI_LIST_REEL, POST_RELEVE_T
 from code_aster.Commands.ExecuteCommand import UserMacro
 
 
@@ -37,14 +39,10 @@ def macr_rota_globale_ops(self, **args):
                (______
                B
     """
-    from code_aster.Cata.Syntax import _F
     RESULTAT = args["RESULTAT"]
     GROUP_NO_ORIG = args["GROUP_NO_ORIG"]
     GROUP_NO_EXTR = args["GROUP_NO_EXTR"]
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import POST_RELEVE_T
-    from code_aster.Commands import DEFI_LIST_REEL
-    from code_aster.Commands import DEFI_FONCTION
     # Commandes de la macro
     __ROTAB = POST_RELEVE_T(ACTION=_F(INTITULE='__ROTAB',
                                       GROUP_NO=GROUP_NO_ORIG,

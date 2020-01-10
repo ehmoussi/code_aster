@@ -18,18 +18,21 @@
 # --------------------------------------------------------------------
 # Contribution from Naval Group
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.DataStructure import CO as CATA_CO
-from code_aster.Cata.Syntax import MACRO, SIMP
-from code_aster.Commands import *
 from math import *
+
+import aster
+from code_aster.Cata.DataStructure import CO as CATA_CO
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.Syntax import _F, MACRO, SIMP
+from code_aster.Commands import *
+from code_aster.Commands import (AFFE_CHAR_MECA, AFFE_MATERIAU, ASSE_MATRICE, CALC_MATR_ELEM,
+                                 COMB_MATR_ASSE, DEFI_MATERIAU, NUME_DDL)
+from Utilitai.Utmess import UTMESS
+
 
 def calc_matr_ifs_ops(self, **args):
 
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS
     MAILLAGE = args.get("MAILLAGE")
     MODELE = args.get("MODELE")
     CHAR_CINE = args.get("CHAR_CINE")
@@ -56,13 +59,6 @@ def calc_matr_ifs_ops(self, **args):
     IMPE_I_OUT = args.get("IMPE_I")
 
 # Commandes utilisées dans la macro
-    from code_aster.Commands import DEFI_MATERIAU
-    from code_aster.Commands import AFFE_CHAR_MECA
-    from code_aster.Commands import AFFE_MATERIAU
-    from code_aster.Commands import CALC_MATR_ELEM
-    from code_aster.Commands import NUME_DDL
-    from code_aster.Commands import ASSE_MATRICE
-    from code_aster.Commands import COMB_MATR_ASSE
 
 # Définition des propriétés matériaux
     _FLUI     = DEFI_MATERIAU(FLUIDE=_F(RHO=RHO_FLUI, CELE_R=C_FLUI,),)

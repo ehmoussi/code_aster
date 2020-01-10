@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,6 +18,15 @@
 # --------------------------------------------------------------------
 
 import os
+#%====================Initialisation Salome================================%
+import sys
+
+import salome
+import salome_kernel
+import SALOMEDS
+import VISU
+import visu
+import visu_gui
 
 # NOM_PARA requis dans EXEC_LOGICIEL: INPUTFILE1, CHOIX
 
@@ -38,11 +47,6 @@ if not os.path.isfile('INPUTFILE1'):
     raise Exception("Fichier %s non present!" % 'INPUTFILE1')
 
 
-#%====================Initialisation Salome================================%
-import sys
-import salome
-import SALOMEDS
-import salome_kernel
 orb, lcc, naming_service, cm = salome_kernel.salome_kernel_init()
 obj = naming_service.Resolve('myStudyManager')
 myStudyManager = obj._narrow(SALOMEDS.StudyManager)
@@ -58,18 +62,12 @@ if 'STUDY':
     # Si on a le nom de l'etude
     study = myStudyManager.GetStudyByName('STUDY')
     salome.salome_init(study._get_StudyId())
-    import visu_gui
-    import VISU
-    import visu
     myVisu = visu_gui.myVisu
     myVisu.SetCurrentStudy(study)
 
 else:
     # Sinon on choisit etude courante
     salome.salome_init()
-    import visu_gui
-    import VISU
-    import visu
     myVisu = visu_gui.myVisu
     myVisu.SetCurrentStudy(salome.myStudy)
     # ou la premiere detectee ?

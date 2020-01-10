@@ -17,7 +17,16 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Helpers import LogicalUnitFile, FileAccess
+import math
+
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU, AFFE_MODELE,
+                                 CALC_CHAMP, CALC_POINT_MAT, CALC_TABLE, CREA_CHAMP, CREA_RESU,
+                                 DEFI_FONCTION, IMPR_RESU, LIRE_MAILLAGE, MODI_MAILLAGE,
+                                 MODI_REPERE, POST_RELEVE_T, STAT_NON_LINE)
+from code_aster.Helpers import FileAccess, LogicalUnitFile
+from code_aster.Utilities import is_sequence
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 
 def simu_point_mat_ops(
@@ -26,30 +35,10 @@ def simu_point_mat_ops(
         MASSIF=None, ANGLE=None, COMPORTEMENT=None, INFO=None, ARCHIVAGE=None, SUPPORT=None, **args):
     """Simulation de la reponse d'un point materiel"""
 
-    import math
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import AFFE_CARA_ELEM
-    from code_aster.Commands import AFFE_CHAR_MECA
-    from code_aster.Commands import AFFE_MATERIAU
-    from code_aster.Commands import AFFE_MODELE
-    from code_aster.Commands import CALC_CHAMP
-    from code_aster.Commands import CALC_TABLE
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import LIRE_MAILLAGE
-    from code_aster.Commands import MODI_MAILLAGE
-    from code_aster.Commands import MODI_REPERE
-    from code_aster.Commands import POST_RELEVE_T
-    from code_aster.Commands import STAT_NON_LINE
-    from code_aster.Commands import IMPR_RESU
-    from code_aster.Commands import CALC_POINT_MAT
 
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-    from code_aster.Utilities import is_sequence
 
     # alarme de STAT_NON_LINE si les mot-cles de COMPORTEMENT sont renseignes
     # a tort

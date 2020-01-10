@@ -17,7 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#
+import os
+
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_MAILLAGE, CREA_RESU
 
 
 def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,
@@ -29,12 +32,8 @@ def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,
     """
        Ecriture de la macro macr_ecla_pg
     """
-    import os
-    from code_aster.Cata.Syntax import _F
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_MAILLAGE
-    from code_aster.Commands import CREA_RESU
 
     # Appel à CREA_MAILLAGE :
     motscles = {}

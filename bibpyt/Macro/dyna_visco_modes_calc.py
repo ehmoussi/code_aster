@@ -17,6 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import numpy as NP
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_MODES, COMB_MATR_ASSE,  # IMPR_CO
+                                 CREA_CHAMP, CREA_RESU, DETRUIRE)
+
+
 def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
                                  MATER_ELAS_FO, e0, eta0, __asseMg, __asseKgr, __asseKg,
                                  __listKv, trKg, ltrv, TYPE_RESU,
@@ -28,15 +36,7 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
        and store it
     """
 
-    from code_aster.Cata.Syntax import _F
-    import numpy as NP
-    import aster
 
-    from code_aster.Commands import COMB_MATR_ASSE
-    from code_aster.Commands import CALC_MODES
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import DETRUIRE
 
 
     dfreq=freq1
@@ -92,7 +92,6 @@ def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
                                                COEF_R=betah/betab),
                                             ),);
 
-        from code_aster.Commands import # IMPR_CO
         # IMPR_CO(CONCEPT=_F(NOM=__asseKw))
 
         __modtmp=CALC_MODES(MATR_RIGI=__asseKw,

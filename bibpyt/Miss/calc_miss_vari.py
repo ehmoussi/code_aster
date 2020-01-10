@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,21 +17,24 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import aster_core
-import aster
-from numpy import linalg
-import numpy as NP
-from math import pi, sqrt
 import os
-from Utilitai.Utmess import  UTMESS
+from math import pi, sqrt
+
+import numpy as NP
+from numpy import linalg
+
+import aster
+import aster_core
 from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (DETRUIRE, LIRE_IMPE_MISS, LIRE_FORC_MISS,
-                                      CREA_CHAMP, COMB_MATR_ASSE, DYNA_VIBRA)
+from code_aster.Commands import (COMB_MATR_ASSE, CREA_CHAMP, DETRUIRE,
+                                 DYNA_VIBRA, LIRE_FORC_MISS, LIRE_IMPE_MISS)
+from Utilitai.signal_correlation_utils import CALC_COHE
+from Utilitai.Utmess import UTMESS
+
 
 def calc_miss_vari(self):
     """Compute SSI analysis with spatial variability"""
 
-    from Utilitai.signal_correlation_utils import (CALC_COHE)
     NB_FREQ = 1 + int((self.FMAX - self.FREQ_INIT) / self.FREQ_PAS)
     if self.case == 'TRANS':
         RESU = [None]*len(self.list_NOM_CMP)

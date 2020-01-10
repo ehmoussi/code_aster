@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,12 +21,12 @@
 Convenient tools for the testcases
 """
 
-import sys
 import os
 import os.path as osp
 import re
-from glob import glob
+import sys
 import traceback
+from glob import glob
 
 DELIMITER = '---delimiter---'
 

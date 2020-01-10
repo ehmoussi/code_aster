@@ -20,9 +20,15 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 import os.path as osp
-from math import sin, cos
+from math import cos, sin
+
 import numpy
 
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DEFI_FONCTION, DEFI_NAPPE
+from code_aster.Helpers import LogicalUnitFile, ReservedUnitUsed
+from Utilitai.transpose import transpose
+from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
 
 
@@ -84,7 +90,6 @@ def liste_double(nomfich, INDIC_PARA, INDIC_RESU, SEPAR, INFO=1):
     INDIC_PARA et INDIC_RESU est l indice permettant de pointer sur la
     fonction voulue, au sens de ce découpage.
     """
-    from Utilitai.transpose import transpose
     blocs = lire_blocs(nomfich, SEPAR, INFO)
 
     # vérifications de cohérences lignes et colonnes
@@ -234,18 +239,12 @@ def lire_fonction_ops(self, UNITE, NOM_PARA, FORMAT=None, TYPE=None, SEPAR=None,
                       PROL_GAUCHE=None, VERIF=None, INFO=None, TITRE=None, **args):
     """Méthode corps de la macro
     """
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.UniteAster import UniteAster
-    from code_aster.Helpers import LogicalUnitFile, ReservedUnitUsed
 
     # On recopie le mot cle defi_fonction pour le proteger
     if TYPE == 'NAPPE':
         mc_DEFI_FONCTION = args['DEFI_FONCTION']
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import DEFI_NAPPE
     assert FORMAT in ('LIBRE', 'NUMPY')
 
     # Lecture de la fonction dans un fichier d unité logique UNITE

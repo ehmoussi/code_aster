@@ -19,6 +19,8 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
+from hashlib import sha1
+
 
 class Parmi(object):
 
@@ -83,7 +85,6 @@ class CheckLog(object):
         # sd : concept qui contient obj
         # maj='maj', l'opérateur a le droit de modifier ojb
         if obj.exists:
-            from hashlib import sha1
             m = sha1()
             m.update(str(obj.get()))
             cksum = m.digest()

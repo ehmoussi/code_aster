@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,8 +22,10 @@
 
 """
 
+from math import exp, log, pi, sqrt, tanh
+
 import numpy as np
-from math import pi, sqrt, exp,  log, tanh
+
 
 def calc_cohefromdata(acce1, acce2, dt, Mm):
 # IN : acce1,acce2: accelerograms at station1 and stationa 2 (matrices: nbsignal x nbstep),
@@ -172,24 +174,3 @@ def CALC_COHE(freq, **kwargs):
                 term2 = 1. + (freqk * tanh(p_a3 * dist_xi) / (p_a2))**p_n2
                 COHE[no1,no2] = 1. / sqrt(term1 * term2)
     return COHE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

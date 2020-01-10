@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,10 +20,9 @@
 # person_in_charge: jean-michel.proix at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
-
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Syntax import *
 
 CALC_POINT_MAT=OPER(nom="CALC_POINT_MAT",op=33,sd_prod=table_sdaster,reentrant='f',
             fr=tr("Intégrer une loi de comportement"),

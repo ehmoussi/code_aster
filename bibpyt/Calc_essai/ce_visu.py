@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,8 +23,10 @@
 # Il faudra reporter les methodes modifiees dans la prochaine version
 # puis supprimer ce fichier.
 
-from pylotage.TOOLS.Visu import *
+import random
+
 from pylotage.TOOLS.Study import *
+from pylotage.TOOLS.Visu import *
 
 # Attention: pylotage appelle readMED pour importer le fichier med et en meme temps definir le maillage contenant les champs
 # => si on veut afficher les champs de deux maillages differents, sans avoir a reimporter le fichier med,
@@ -77,7 +79,6 @@ class Visu(Visu):
     def XYPlot2(self, l_courbes, title="Title of table", x_title=None, y_title=None):
         """
         """
-        import random
         ok = None
         try:
             ok = None

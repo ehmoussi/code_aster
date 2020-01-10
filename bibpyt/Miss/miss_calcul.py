@@ -31,34 +31,31 @@ Les classes définies sont :
 """
 
 import os
+import os.path as osp
 import re
 import shutil
-import traceback
-import os.path as osp
 import socket
-from math import cos, sin, pi
+import traceback
+from math import cos, pi, sin
+
 import numpy as NP
 
-import aster_core
 import aster
+import aster_core
 from code_aster.Cata.Syntax import _F
-from code_aster.Commands import MACR_ELEM_DYNA, IMPR_MACR_ELEM
-
-from Utilitai.Utmess import UTMESS
-from Utilitai.System import ExecCommand
-from Utilitai.utils import set_debug, _print, _printDBG
-from Utilitai.utils import encode_str, decode_str, send_file
-
-from Miss.miss_utils import copie_fichier
-from Miss.miss_fichier_sol import fichier_sol
-from Miss.miss_fichier_option import fichier_option
-from Miss.miss_resu_aster import ResuAsterReader
-from Miss.miss_fichier_interf import (
-    fichier_mvol, fichier_chp, fichier_ext, fichier_sign,
-)
-from Miss.miss_fichier_cmde import MissCmdeGen
-from Miss.miss_post import PostMissFactory, info_freq
+from code_aster.Commands import IMPR_MACR_ELEM, MACR_ELEM_DYNA
 from code_aster.Helpers.LogicalUnit import LogicalUnitFile
+from Miss.miss_fichier_cmde import MissCmdeGen
+from Miss.miss_fichier_interf import fichier_chp, fichier_ext, fichier_mvol, fichier_sign
+from Miss.miss_fichier_option import fichier_option
+from Miss.miss_fichier_sol import fichier_sol
+from Miss.miss_post import PostMissFactory, info_freq
+from Miss.miss_resu_aster import ResuAsterReader
+from Miss.miss_utils import copie_fichier
+from Utilitai.as_timer import ASTER_TIMER
+from Utilitai.System import ExecCommand
+from Utilitai.utils import _print, _printDBG, decode_str, encode_str, send_file, set_debug
+from Utilitai.Utmess import UTMESS
 
 
 class CalculMiss(object):
@@ -93,7 +90,6 @@ class CalculMiss(object):
         if self.verbose:
             _print('Paramètres du calcul', self.param)
         if self.debug:
-            from Utilitai.as_timer import ASTER_TIMER
             self.timer = ASTER_TIMER()
             set_debug(True)
 

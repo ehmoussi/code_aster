@@ -17,7 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois@edf.fr
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DEFI_CABLE_OP, DEFI_GROUP
+from Utilitai.Utmess import UTMESS
 
 # ===========================================================================
 #           CORPS DE LA MACRO "DEFI_CABLE_BP"
@@ -52,18 +55,6 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     """
        Ecriture de la macro DEFI_CABLE_BP
     """
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS
-
-    # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import DEFI_GROUP
-    from code_aster.Commands import DEFI_CABLE_OP
-
-
-    # ---------------------------------------------------------------------------- #
-    #                  Début de la Macro :
-
     motscles = {}
 
     # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "CONE"

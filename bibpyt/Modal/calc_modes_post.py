@@ -17,7 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: nicolas.brie at edf.fr
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DETRUIRE, EXTR_MODE, IMPR_RESU, NORM_MODE
 
 
 def calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression):
@@ -25,14 +26,9 @@ def calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression):
        Macro-command CALC_MODES, post-treatment
     """
 
-    from code_aster.Cata.Syntax import _F
 
     # import the definitions of the commands to use in the macro-command
     # The name of the variable has to be the name of the command
-    from code_aster.Commands import NORM_MODE
-    from code_aster.Commands import IMPR_RESU
-    from code_aster.Commands import EXTR_MODE
-    from code_aster.Commands import DETRUIRE
 
     motscles = {}
 

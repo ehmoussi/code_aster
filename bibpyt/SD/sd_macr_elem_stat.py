@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,10 +18,9 @@
 # --------------------------------------------------------------------
 
 from SD import *
-
 from SD.sd_matr_asse_gd import sd_matr_asse_gd
-from SD.sd_stoc_lciel import sd_stoc_lciel
 from SD.sd_proj_mesu import sd_proj_mesu
+from SD.sd_stoc_lciel import sd_stoc_lciel
 
 
 class sd_macr_elem_stat(AsBase):

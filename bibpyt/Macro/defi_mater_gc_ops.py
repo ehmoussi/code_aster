@@ -20,6 +20,8 @@
 # person_in_charge: jean-luc.flejou at edf.fr
 
 import numpy as NP
+
+from code_aster.Commands import DEFI_MATERIAU
 from Utilitai.Utmess import UTMESS
 
 
@@ -478,7 +480,6 @@ def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, BETON_G
     """
     C'est : un parmi : ACIER  MAZARS  ENDO_FISS_EXP, BETON_GLRC
     """
-    from code_aster.Commands import DEFI_MATERIAU
 
     #
     if MAZARS is not None:

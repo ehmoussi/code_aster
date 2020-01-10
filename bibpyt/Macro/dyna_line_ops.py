@@ -18,24 +18,22 @@
 # --------------------------------------------------------------------
 # person_in_charge: yannick.tampango at edf.fr
 #
+from functools import reduce
+
 import numpy as np
 
 import aster
 from code_aster import AsterError
 from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CHAR_MECA, ASSE_MATRICE, ASSE_VECTEUR,
-                                 CALC_CHAR_SEISME, CALC_FONCTION,
-                                 CALC_MATR_ELEM, CALC_MISS, CALC_MODES,
-                                 CALC_VECT_ELEM, COMB_MATR_ASSE, CREA_CHAMP,
-                                 CREA_RESU, DEFI_BASE_MODALE, DEFI_INTERF_DYNA,
-                                 DYNA_VIBRA, FACTORISER, MACR_ELEM_DYNA,
-                                 MACRO_ELAS_MULT, MACRO_MATR_AJOU,
-                                 MODE_STATIQUE, NUME_DDL, NUME_DDL_GENE,
-                                 PROJ_MATR_BASE, PROJ_VECT_BASE, RESOUDRE,
+from code_aster.Commands import (AFFE_CHAR_MECA, ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAR_SEISME,
+                                 CALC_FONCTION, CALC_MATR_ELEM, CALC_MISS, CALC_MODES,
+                                 CALC_VECT_ELEM, CO, COMB_MATR_ASSE, CREA_CHAMP, CREA_RESU,
+                                 DEFI_BASE_MODALE, DEFI_INTERF_DYNA, DYNA_VIBRA, FACTORISER,
+                                 MACR_ELEM_DYNA, MACRO_ELAS_MULT, MACRO_MATR_AJOU, MODE_STATIQUE,
+                                 NUME_DDL, NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE, RESOUDRE,
                                  REST_GENE_PHYS)
 from code_aster.Utilities import force_list
 from Utilitai.Utmess import UTMESS
-from functools import reduce
 
 
 class DynaLineFEM:
@@ -696,7 +694,6 @@ class DynaLineBasis:
         if self.ifs:
             __numeDdlGene = NUME_DDL_GENE(BASE=__dynaModes,
                                           STOCKAGE=self.getStockageType())
-            from code_aster.Commands import CO
             addedMassCo = CO('addedMass')
             MACRO_MATR_AJOU(MAILLAGE=self.dynaLineFEM.getMaillage(),
                             MODELISATION=self.modelisation_flu,
@@ -752,7 +749,6 @@ class DynaLineBasis:
             self.addedMass = None
             self.__excitForcAjou = []
             return self.addedMass, self.__excitForcAjou
-        from code_aster.Commands import CO
         addedMassCo = CO('addedMass')
         keywords = {}
         tmp = []

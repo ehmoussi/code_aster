@@ -17,17 +17,35 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import os
 import copy
-from math import log, sqrt, floor, pi, sin, exp
-from numpy import sqrt as nsqrt
+import os
+from math import exp, floor, log, pi, sin, sqrt
+
+import numpy as np
+
+import aster
+import code_aster
+from Cata_Utils.t_fonction import t_fonction
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA,
+                                 AFFE_CHAR_MECA_F, AFFE_MATERIAU, AFFE_MODELE,
+                                 ASSE_MATRICE, CALC_CHAMP, CALC_CHAR_SEISME,
+                                 CALC_FONC_INTERP, CALC_FONCTION,
+                                 CALC_MATR_ELEM, CALC_TABLE, CREA_MAILLAGE,
+                                 CREA_RESU, CREA_TABLE, DEFI_FONCTION,
+                                 DEFI_GROUP, DEFI_INTE_SPEC, DEFI_LIST_REEL,
+                                 DEFI_MATERIAU, DEFI_NAPPE, DETRUIRE,
+                                 DYNA_VIBRA, FORMULE, GENE_FONC_ALEA,
+                                 IMPR_FONCTION, IMPR_RESU, IMPR_TABLE,
+                                 LIRE_FONCTION, MODI_MAILLAGE, NUME_DDL,
+                                 POST_DYNA_ALEA, RECU_FONCTION, REST_SPEC_TEMP)
+from code_aster.Helpers import LogicalUnitFile
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS
+
 
 def epeq(eps1, eps2, eps3):
     """Calcule la deformation equivalente"""
-    from code_aster.Commands import (
-         DEFI_FONCTION,
-    )
-    from Cata_Utils.t_fonction import t_fonction
     ep1 = eps1.convert('real')
     ep2 = eps2.convert('real')
     ep3 = eps3.convert('real')
@@ -142,54 +160,6 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     """
        Macro DEFI_SOL_EQUI
     """
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from code_aster.Helpers import LogicalUnitFile
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.Table import Table
-    # from math import log, sqrt, floor, pi, sin
-    from numpy import sqrt as nqsrt
-    import numpy as np
-    import code_aster
-
-  #--------------------------------------------------------------------------------
-  # On importe les definitions des commandes a utiliser dans la macro
-  #
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import DYNA_VIBRA
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import REST_SPEC_TEMP
-    from code_aster.Commands import DEFI_INTE_SPEC
-    from code_aster.Commands import GENE_FONC_ALEA
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import CALC_FONCTION
-    from code_aster.Commands import IMPR_FONCTION
-    from code_aster.Commands import IMPR_TABLE
-    from code_aster.Commands import CALC_TABLE
-    from code_aster.Commands import LIRE_FONCTION
-    from code_aster.Commands import RECU_FONCTION
-    from code_aster.Commands import DEFI_LIST_REEL
-    from code_aster.Commands import AFFE_CHAR_MECA
-    from code_aster.Commands import AFFE_CHAR_MECA_F
-    from code_aster.Commands import DEFI_GROUP
-    from code_aster.Commands import CREA_MAILLAGE
-    from code_aster.Commands import MODI_MAILLAGE
-    from code_aster.Commands import # PRE_GIBI
-    from code_aster.Commands import IMPR_RESU
-    from code_aster.Commands import AFFE_MODELE
-    from code_aster.Commands import NUME_DDL
-    from code_aster.Commands import CALC_MATR_ELEM
-    from code_aster.Commands import ASSE_MATRICE
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import CALC_CHAR_SEISME
-    from code_aster.Commands import CALC_CHAMP
-    from code_aster.Commands import CALC_FONC_INTERP
-    from code_aster.Commands import FORMULE
-    from code_aster.Commands import AFFE_MATERIAU
-    from code_aster.Commands import DEFI_MATERIAU
-    from code_aster.Commands import DEFI_NAPPE
-    from code_aster.Commands import AFFE_CARA_ELEM
-    from code_aster.Commands import POST_DYNA_ALEA
 
 # calculs de deconvolution ou reconvolution sur une colonne de sol en 2D
 # avec approche harmonique lineaire equivalente (courbes G et D gamma)

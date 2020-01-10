@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,16 +32,20 @@ COHE_DATA_POINTS  ---  evaluate distances from nodal coordinates for coherency
 DSP2ACCE_ND        ---   simulation of vector valued random process
 gene_traj_gauss_evol_ND        ---   simulation of vector valued random process
 """
-from Cata_Utils.t_fonction import t_fonction
-from Utilitai.Utmess import UTMESS
-from math import pi, exp, sqrt, log, tanh
-from cmath import sqrt as csqrt
 from cmath import exp as cexp
+from cmath import sqrt as csqrt
+from math import exp, log, pi, sqrt, tanh
+
 import numpy as NP
-import aster_core
-from Utilitai.random_signal_utils import (calc_dsp_FR, calc_dsp_KT,
-               acce_filtre_CP, ACCE2SROM, dsp_filtre_CP)
+
 import aster
+import aster_core
+from Cata_Utils.t_fonction import t_fonction
+from Utilitai.partition import MAIL_PY
+from Utilitai.random_signal_utils import (ACCE2SROM, acce_filtre_CP, calc_dsp_FR, calc_dsp_KT,
+                                          dsp_filtre_CP)
+from Utilitai.Utmess import UTMESS
+
 
 # -------------------------------------------------------------------
 # COHERENCY MATRIX
@@ -119,7 +123,6 @@ def CALC_COHE(freq, **kwargs):
     return COHE
 
 def get_group_nom_coord(group_inter, nom_mail):
-    from Utilitai.partition import MAIL_PY
     mm = MAIL_PY()
     mm.FromAster(nom_mail)
     noeuds_maillage= NP.array(mm.correspondance_noeuds)

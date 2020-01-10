@@ -18,21 +18,24 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: nicolas.brie at edf.fr
+
 import sys
+
+import aster
+from code_aster.Cata.Syntax import _F
 from code_aster.Objects import GeneralizedModeContainer, MechanicalModeContainer
+from Modal.calc_modes_amelioration import calc_modes_amelioration
+from Modal.calc_modes_inv import calc_modes_inv
+from Modal.calc_modes_multi_bandes import calc_modes_multi_bandes
+from Modal.calc_modes_post import calc_modes_post
+from Modal.calc_modes_simult import calc_modes_simult
+from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
+
 
 def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
     """
        Macro-command CALC_MODES, main file
     """
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Modal.calc_modes_simult import calc_modes_simult
-    from Modal.calc_modes_inv import calc_modes_inv
-    from Modal.calc_modes_multi_bandes import calc_modes_multi_bandes
-    from Modal.calc_modes_amelioration import calc_modes_amelioration
-    from Modal.calc_modes_post import calc_modes_post
-    from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
 
     args = _F(args)
     VERI_MODE = args.get("VERI_MODE")

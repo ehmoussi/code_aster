@@ -17,9 +17,17 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import math
 import os
+from math import asin, atan2, cos, pi, sin, sqrt
 
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (COPIER, CREA_RESU, CREA_TABLE, DEFI_GROUP, LIRE_MAILLAGE,
+                                 MODI_REPERE, POST_RELEVE_T, PROJ_CHAMP)
 from code_aster.Helpers import LogicalUnitFile
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
 #
 # script PYTHON de creation du résultat local
 #
@@ -30,11 +38,6 @@ from code_aster.Helpers import LogicalUnitFile
 
 def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COUPE, __macou):
 
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    from code_aster.Commands import POST_RELEVE_T
-    from code_aster.Commands import DEFI_GROUP
 
     motscles = {}
     if m['NOM_CMP'] is not None:
@@ -121,11 +124,6 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
 
 def crea_resu_local(self, dime, NOM_CHAM, m, resin, mail, nomgrma):
 
-    from Utilitai.Utmess import UTMESS
-    from math import pi, sqrt, atan2, asin
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from code_aster.Commands import MODI_REPERE
 
     epsi = 0.00000001
 
@@ -444,8 +442,6 @@ def crea_resu_local(self, dime, NOM_CHAM, m, resin, mail, nomgrma):
 
 
 def crea_noeu_lig_coup(dimension, pt1, pt2, anglj, dnor):
-    from Utilitai.Utmess import UTMESS
-    from math import pi, sin, cos, sqrt
 
     a = pt1[0] - pt2[0]
     b = pt1[1] - pt2[1]
@@ -479,8 +475,6 @@ def crea_noeu_lig_coup(dimension, pt1, pt2, anglj, dnor):
 
 
 def dist_min_deux_points(mail):
-    from math import sqrt
-    import aster
     nno = aster.getvectjev(mail.getName().ljust(8) + '.DIME')[0]
     l_coor1 = []
     l_coor2 = []
@@ -503,7 +497,6 @@ def dist_min_deux_points(mail):
 
 def crea_mail_lig_coup(dimension, lignes, groups, arcs):
 
-    from Utilitai.Utmess import UTMESS
 
 # construction du maillage au format Aster des segments de lignes de coupe
 
@@ -661,8 +654,6 @@ def crea_mail_lig_coup(dimension, lignes, groups, arcs):
 # extrait les coordonnées du noeud ORIG ou EXTR à partir des coordonnées
 # ou bien d'un groupe de noeuds ne contenant qu'un seul noeud.
 def get_coor(LIGN_COUPE, position, collgrno, n_mailla):
-    import aster
-    from Utilitai.Utmess import UTMESS
     assert(position in ('ORIG', 'EXTR'))
     if 'GROUP_NO_'+position in LIGN_COUPE:
         ngrno = LIGN_COUPE['GROUP_NO_'+position]
@@ -686,10 +677,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
     """
        Ecriture de la macro MACR_LIGN_COUPE
     """
-    from code_aster.Cata.Syntax import _F
-    import aster
-    import math
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
     # La valeur par défaut n'est pas dans le catalogue, sinon le mot-clé devient
     # obligatoire dans AsterStudy
@@ -699,13 +686,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
         UNITE_MAILLAGE = logical_unit.unit
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import LIRE_MAILLAGE
-    from code_aster.Commands import DEFI_GROUP
-    from code_aster.Commands import PROJ_CHAMP
-    from code_aster.Commands import POST_RELEVE_T
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import COPIER
 
     #
     MasquerAlarme('ALGORITH12_43')

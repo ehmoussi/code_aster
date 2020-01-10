@@ -17,6 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAMP,
+                                 CALC_MATR_ELEM, CALC_VECT_ELEM, CALCUL,
+                                 CREA_RESU, DEFI_LIST_REEL, EXTR_TABLE,
+                                 FACTORISER, NUME_DDL, RESOUDRE)
+from Utilitai.Utmess import UTMESS
+
+
 def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
                         CHAM_MATER=None, CARA_ELEM=None, NUME_DDL=None,
                         CHAR_MECA_GLOBAL=None, LIAISON_DISCRET=None,
@@ -24,25 +33,10 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
     """
        Ecriture de la macro MACRO_ELAS_MULT
     """
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
 
     # On met le mot cle NUME_DDL dans une variable locale pour le proteger
     numeddl = NUME_DDL
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CALC_MATR_ELEM
-    from code_aster.Commands import NUME_DDL
-    from code_aster.Commands import ASSE_MATRICE
-    from code_aster.Commands import FACTORISER
-    from code_aster.Commands import CALC_VECT_ELEM
-    from code_aster.Commands import ASSE_VECTEUR
-    from code_aster.Commands import RESOUDRE
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import CALC_CHAMP
-    from code_aster.Commands import CALCUL
-    from code_aster.Commands import EXTR_TABLE
-    from code_aster.Commands import DEFI_LIST_REEL
 
     args = _F(args)
 

@@ -21,11 +21,16 @@
 
 import os
 
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_TABLE
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS
+
+
 # Creation de la liste des coordonnees en Z d'un groupe de noeuds ou mailles :
 def recu_coor_z(noma,group,typ_group,tole_r):
 
-    import aster
-    from Utilitai.Utmess import UTMESS
 
     collcnx = aster.getcolljev(noma.getName().ljust(8) + '.CONNEX')
     coord = aster.getvectjev(noma.getName().ljust(8) + '.COORDO    .VALE')
@@ -82,12 +87,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
     """Macro DEFI_SOL_MISS :
     définir les caractéristiques du sol pour un calcul MISS3D
     """
-    import aster
 
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.Table import Table
-    from code_aster.Commands import CREA_TABLE
 
     # 1. Création des dictionnaires des MATERIAUX
     l_mate = []

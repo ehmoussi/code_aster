@@ -17,6 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (ASSE_MATRICE, CALC_MATR_ELEM, CALC_MODES,
+                                 DEFI_BASE_MODALE, DEFI_INTERF_DYNA, EXTR_MODE,
+                                 MACR_ELEM_DYNA, MODE_STATIQUE, NUME_DDL)
+
+
 def crea_elem_ssd_ops(self, **args):
     """
      Enchainement des commandes :
@@ -24,7 +30,6 @@ def crea_elem_ssd_ops(self, **args):
         DEFI_INTERF_DYNA + DEFI_BASE_MODALE + MACR_ELEM_DYNA
     """
 
-    from code_aster.Cata.Syntax import _F
     NUME_DDL = args.get("NUME_DDL")
     INTERFACE = args.get("INTERFACE")
     BASE_MODALE = args.get("BASE_MODALE")
@@ -36,15 +41,6 @@ def crea_elem_ssd_ops(self, **args):
 
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CALC_MATR_ELEM
-    from code_aster.Commands import NUME_DDL
-    from code_aster.Commands import ASSE_MATRICE
-    from code_aster.Commands import EXTR_MODE
-    from code_aster.Commands import CALC_MODES
-    from code_aster.Commands import MODE_STATIQUE
-    from code_aster.Commands import DEFI_INTERF_DYNA
-    from code_aster.Commands import DEFI_BASE_MODALE
-    from code_aster.Commands import MACR_ELEM_DYNA
 
 
     mSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)

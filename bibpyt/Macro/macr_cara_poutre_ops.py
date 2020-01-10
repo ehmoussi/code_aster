@@ -17,7 +17,17 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: jean-michel.proix at edf.fr
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CHAR_THER, AFFE_CHAR_THER_F,
+                                 AFFE_MATERIAU, AFFE_MODELE, ASSE_VECTEUR,
+                                 CALC_CHAMP, CALC_MATR_ELEM, CALC_TABLE,
+                                 CALC_VECT_ELEM, COPIER, CREA_MAILLAGE,
+                                 CREA_TABLE, DEFI_CONSTANTE, DEFI_FONCTION,
+                                 DEFI_GROUP, DEFI_MATERIAU, DETRUIRE,
+                                 IMPR_TABLE, LIRE_MAILLAGE, MACR_LIGN_COUPE,
+                                 NUME_DDL, POST_ELEM, THER_LINEAIRE)
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 
 def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA_BORD=None,
@@ -25,35 +35,9 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
     """
        Ecriture de la macro MACR_CARA_POUTRE
     """
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     #
     # On importe les définitions des commandes a utiliser dans la macro
     # Le nom de la variable doit être obligatoirement le nom de la commande
-    from code_aster.Commands import LIRE_MAILLAGE
-    from code_aster.Commands import DEFI_GROUP
-    from code_aster.Commands import CREA_MAILLAGE
-    from code_aster.Commands import COPIER
-    from code_aster.Commands import AFFE_MODELE
-    from code_aster.Commands import DEFI_MATERIAU
-    from code_aster.Commands import AFFE_MATERIAU
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import DEFI_CONSTANTE
-    from code_aster.Commands import AFFE_CHAR_THER
-    from code_aster.Commands import AFFE_CHAR_THER_F
-    from code_aster.Commands import THER_LINEAIRE
-    from code_aster.Commands import CALC_VECT_ELEM
-    from code_aster.Commands import CALC_MATR_ELEM
-    from code_aster.Commands import NUME_DDL
-    from code_aster.Commands import ASSE_VECTEUR
-    from code_aster.Commands import POST_ELEM
-    from code_aster.Commands import CALC_CHAMP
-    from code_aster.Commands import MACR_LIGN_COUPE
-    from code_aster.Commands import IMPR_TABLE
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import CALC_TABLE
-    from code_aster.Commands import DETRUIRE
     #
     ImprTable = False
     #

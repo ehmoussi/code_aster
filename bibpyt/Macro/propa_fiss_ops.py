@@ -17,9 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from math import atan, atan2, cos, sin, log, sqrt, acos, pi
+from math import acos, atan, atan2, cos, log, pi, sin, sqrt
 
 import numpy as NP
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (ASSE_MAILLAGE, CALC_TABLE, DEFI_GROUP, DETRUIRE, LIRE_MAILLAGE,
+                                 MODI_MODELE_XFEM, POST_RUPTURE)
+from Contrib.propa_xfem import PROPA_XFEM
+from Internal.detec_front import DETEC_FRONT
+from Utilitai.partition import MAIL_PY
+from Utilitai.Utmess import UTMESS
 
 
 def InterpolationLineaire(x0, points):
@@ -243,22 +252,9 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
     ou par projection sur un maillage
     """
 
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.partition import MAIL_PY
-    from Internal.detec_front import DETEC_FRONT
 
 #------------------------------------------------------------------
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import ASSE_MAILLAGE
-    from code_aster.Commands import LIRE_MAILLAGE
-    from code_aster.Commands import DEFI_GROUP
-    from code_aster.Commands import CALC_TABLE
-    from Contrib.propa_xfem import PROPA_XFEM
-    from code_aster.Commands import MODI_MODELE_XFEM
-    from code_aster.Commands import POST_RUPTURE
-    from code_aster.Commands import DETRUIRE
 
     # parametre
     eps = 1e-15
