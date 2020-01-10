@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
-                    op=OPS('Macro.post_k1_k2_k3_ops.post_k1_k2_k3_ops'),
+                    op=OPS('code_aster.MacroCommands.post_k1_k2_k3_ops.post_k1_k2_k3_ops'),
                     sd_prod=table_sdaster,
                     fr=tr("Calcul des facteurs d'intensité de contraintes en 2D et en 3D par "
                          "extrapolation des sauts de déplacements sur les lèvres de la fissure"),

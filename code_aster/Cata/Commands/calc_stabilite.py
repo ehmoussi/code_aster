@@ -22,7 +22,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 CALC_STABILITE=MACRO(nom="CALC_STABILITE",sd_prod=table_container,
-               op=OPS('Macro.calc_stabilite_ops.calc_stabilite_ops'),
+               op=OPS('code_aster.MacroCommands.calc_stabilite_ops.calc_stabilite_ops'),
                fr=tr("post-traitement modes non-linéaires : filtre resultats et calcul de stabilité"),
                reentrant='f:MODE_NON_LINE',
 

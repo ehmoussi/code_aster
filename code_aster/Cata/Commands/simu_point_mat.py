@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 SIMU_POINT_MAT=MACRO(nom="SIMU_POINT_MAT",
-                     op=OPS('Macro.simu_point_mat_ops.simu_point_mat_ops'),
+                     op=OPS('code_aster.MacroCommands.simu_point_mat_ops.simu_point_mat_ops'),
                      sd_prod=table_sdaster,
                      fr=tr("Calcul de l'évolution mécanique, en quasi-statique, "
                           "d'un point matériel en non linéaire"),

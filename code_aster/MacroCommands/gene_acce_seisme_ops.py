@@ -31,19 +31,25 @@ import numpy as NP
 
 import aster_core
 from Cata_Utils.t_fonction import t_fonction
-from code_aster.Cata.Syntax import _F
+from ..Cata.Syntax import _F
 from Utilitai.optimize import fmin
-from Utilitai.random_signal_utils import (DSP2ACCE1D, DSP2FR, RAND_DSP, RAND_VEC, SRO2DSP, Rice2,
-                                          acce_filtre_CP, calc_dsp_KT, calc_phase_delay,
-                                          corrcoefmodel, dsp_filtre_CP, f_ARIAS, f_ARIAS_TSM,
-                                          f_opt1, f_opt2, f_opta, fonctm_gam, fonctm_JetH,
-                                          gene_traj_gauss_evol1D, itersim_SRO, peak)
-from Utilitai.signal_correlation_utils import (CALC_CORRE, CREA_TABLE, DEFI_FONCTION, DSP2ACCE_ND,
-                                               code_aster.Commands, from, gene_traj_gauss_evol_ND,
-                                               get_group_nom_coord, get_no_refe, import,
-                                               itersimcor_SRO, itersimcortir_SRO)
+from Utilitai.random_signal_utils import (DSP2ACCE1D, DSP2FR, RAND_DSP,
+                                          RAND_VEC, SRO2DSP, Rice2,
+                                          acce_filtre_CP, calc_dsp_KT,
+                                          calc_phase_delay, corrcoefmodel,
+                                          dsp_filtre_CP, f_ARIAS, f_ARIAS_TSM,
+                                          f_opt1, f_opt2, f_opta, fonctm_gam,
+                                          fonctm_JetH, gene_traj_gauss_evol1D,
+                                          itersim_SRO, peak)
+from Utilitai.signal_correlation_utils import (CALC_CORRE, DSP2ACCE_ND,
+                                               gene_traj_gauss_evol_ND,
+                                               get_group_nom_coord,
+                                               get_no_refe, itersimcor_SRO,
+                                               itersimcortir_SRO)
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
+
+from ..Commands import CREA_TABLE, DEFI_FONCTION
 
 
 def gene_acce_seisme_ops(self, **kwargs):

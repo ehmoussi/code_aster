@@ -42,7 +42,7 @@ def dyna_line_sdprod(self, TYPE_CALCUL, BASE_RESU=None, RESU_GENE=None, **args):
         return dyna_harmo
 
 DYNA_LINE = MACRO(nom      = "DYNA_LINE",
-                 op=OPS('Macro.dyna_line_ops.dyna_line_ops'),
+                 op=OPS('code_aster.MacroCommands.dyna_line_ops.dyna_line_ops'),
                  sd_prod  = dyna_line_sdprod,
                  reentrant='n',
                  fr       = tr("Calcul dynamique transitoire ou harmonique"),

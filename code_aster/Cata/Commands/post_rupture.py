@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 POST_RUPTURE=MACRO(nom="POST_RUPTURE",
-                   op=OPS("Macro.post_rupture_ops.post_rupture_ops"),
+                   op=OPS("code_aster.MacroCommands.post_rupture_ops.post_rupture_ops"),
                    sd_prod=table_sdaster,
                    fr=tr("post-traitements en Rupture"),
                    reentrant='f:TABLE',

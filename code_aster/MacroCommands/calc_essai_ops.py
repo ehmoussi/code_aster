@@ -104,11 +104,6 @@ def calc_essai_ops(self,
 
 def create_tab_mess_widgets(tk, tabskeys):
     """Construits les objects table et boîte à messages."""
-    try:
-    except ImportError:
-        PanedWidget = None
-
-
     tabsw = tk
     msgw = tk
     tk.rowconfigure(0, weight=2)

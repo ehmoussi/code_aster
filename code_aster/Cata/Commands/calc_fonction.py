@@ -92,7 +92,7 @@ def calc_fonction_prod(self, DERIVE, EXTRACTION, INTEGRE, INVERSE, COMB, COMB_C,
 
 
 CALC_FONCTION=MACRO(nom="CALC_FONCTION",
-                    op=OPS('Macro.calc_fonction_ops.calc_fonction_ops'),
+                    op=OPS('code_aster.MacroCommands.calc_fonction_ops.calc_fonction_ops'),
                     sd_prod=calc_fonction_prod,
                     fr=tr("Effectue des opérations mathématiques sur des concepts de type fonction"),
                     reentrant='n',

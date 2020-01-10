@@ -22,7 +22,7 @@
 from code_aster import FieldOnNodesDouble
 from code_aster.Cata.DataStructure import cham_no_sdaster, evol_elas, evol_noli
 from code_aster.Cata.Syntax import OPER, SIMP
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster.Supervis.ExecuteCommand import ExecuteCommand
 
 POST_K_VARC_CATA = OPER(
     nom="POST_K_VARC", op=48, sd_prod=cham_no_sdaster, reentrant='n',

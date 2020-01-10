@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
-                      op=OPS('Macro.macr_lign_coupe_ops.macr_lign_coupe_ops'),
+                      op=OPS('code_aster.MacroCommands.macr_lign_coupe_ops.macr_lign_coupe_ops'),
                       sd_prod=table_sdaster,
                       reentrant='n',
                       fr=tr("Extraction des valeurs d'un résultat dans une ou plusieurs tables sur "

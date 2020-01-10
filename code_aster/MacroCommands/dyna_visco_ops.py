@@ -23,8 +23,8 @@ import aster
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import (AFFE_MATERIAU, ASSE_MATRICE, CALC_MATR_ELEM,
                                  COMB_MATR_ASSE, DEFI_MATERIAU, NUME_DDL)
-from Macro.dyna_visco_harm import dyna_visco_harm
-from Macro.dyna_visco_modes import dyna_visco_modes
+from .dyna_visco_harm import dyna_visco_harm
+from .dyna_visco_modes import dyna_visco_modes
 from Utilitai.Utmess import UTMESS
 
 

@@ -22,7 +22,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import DEFI_FONCTION, DEFI_LIST_REEL, POST_RELEVE_T
-from code_aster.Commands.ExecuteCommand import UserMacro
+from code_aster.Supervis.ExecuteCommand import UserMacro
 
 
 def macr_rota_globale_ops(self, **args):

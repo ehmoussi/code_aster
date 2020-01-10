@@ -22,7 +22,7 @@
 from code_aster import PCFieldOnMeshDouble
 from code_aster.Cata.DataStructure import carte_sdaster, evol_noli
 from code_aster.Cata.Syntax import OPER, SIMP
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster.Supervis.ExecuteCommand import ExecuteCommand
 
 POST_VOISIN_CZM_CATA = OPER(
 

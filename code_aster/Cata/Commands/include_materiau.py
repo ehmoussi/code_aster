@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 INCLUDE_MATERIAU = MACRO(nom="INCLUDE_MATERIAU",
-                         op=OPS("Macro.include_materiau_ops.include_materiau_ops"),
+                         op=OPS("code_aster.MacroCommands.include_materiau_ops.include_materiau_ops"),
                          sd_prod=mater_sdaster,
             fr=tr("Récupérer les caractéristiques d'un matériau dans le Catalogue Materiaux d'Aster "),
             regles=(UN_PARMI('NOM_AFNOR', 'FICHIER'),

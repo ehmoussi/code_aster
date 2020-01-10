@@ -22,7 +22,7 @@
 from code_aster.Cata.Commons import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Syntax import *
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster.Supervis.ExecuteCommand import ExecuteCommand
 from code_aster.Objects import (AssemblyMatrixDisplacementComplex, AssemblyMatrixDisplacementDouble,
                                 AssemblyMatrixPressureDouble, AssemblyMatrixTemperatureDouble,
                                 BucklingModeContainer, GeneralizedAssemblyMatrixComplex,

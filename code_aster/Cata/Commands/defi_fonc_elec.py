@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 DEFI_FONC_ELEC=MACRO(nom="DEFI_FONC_ELEC",
-                     op=OPS('Macro.defi_fonc_elec_ops.defi_fonc_elec_ops'),
+                     op=OPS('code_aster.MacroCommands.defi_fonc_elec_ops.defi_fonc_elec_ops'),
                      sd_prod=fonction_sdaster,
                      reentrant='n',
                      fr=tr("Définir une fonction du temps intervenant dans le calcul des "

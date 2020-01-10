@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 POST_DECOLLEMENT=MACRO(nom="POST_DECOLLEMENT",
-                       op=OPS('Macro.post_decollement_ops.post_decollement_ops'),
+                       op=OPS('code_aster.MacroCommands.post_decollement_ops.post_decollement_ops'),
                        sd_prod=table_sdaster,
                        fr=tr("calcul du rapport de surfaces de contact radier/sol"),
                        reentrant='n',

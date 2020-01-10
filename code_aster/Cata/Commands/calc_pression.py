@@ -29,7 +29,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 CALC_PRESSION=MACRO(nom="CALC_PRESSION",
-                    op=OPS('Macro.calc_pression_ops.calc_pression_ops'),
+                    op=OPS('code_aster.MacroCommands.calc_pression_ops.calc_pression_ops'),
                     sd_prod=cham_no_sdaster,
                     fr="Calcul de la pression nodale sur une interface a partir de SIEF_NOEU. Cette option n existe que pour les éléments isoparamétriques.",
 

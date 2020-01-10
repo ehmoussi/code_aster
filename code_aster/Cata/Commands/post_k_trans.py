@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 POST_K_TRANS=MACRO(nom="POST_K_TRANS",
-                   op=OPS('Macro.post_k_trans_ops.post_k_trans_ops'),
+                   op=OPS('code_aster.MacroCommands.post_k_trans_ops.post_k_trans_ops'),
                    sd_prod=table_sdaster,
                    fr=tr("Calcul des facteurs d intensite des contrainte par recombinaison modale"),
                    reentrant='n',

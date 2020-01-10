@@ -27,7 +27,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Syntax import *
 
 CALC_IFS_DNL= MACRO(nom='CALC_IFS_DNL',
-                    op=OPS("Macro.calc_ifs_dnl_ops.calc_ifs_dnl_ops"),
+                    op=OPS("code_aster.MacroCommands.calc_ifs_dnl_ops.calc_ifs_dnl_ops"),
                     sd_prod=evol_noli,
                     reentrant='f',
                     fr=tr("Calcul de l'évolution dynamique d'une structure couplée à un "

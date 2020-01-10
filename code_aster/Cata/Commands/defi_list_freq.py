@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 DEFI_LIST_FREQ=MACRO(nom="DEFI_LIST_FREQ",
-                    op=OPS('Macro.defi_list_freq_ops.defi_list_freq_ops'),
+                    op=OPS('code_aster.MacroCommands.defi_list_freq_ops.defi_list_freq_ops'),
                     sd_prod=listr8_sdaster,
                     fr=tr("Définir une liste de fréquences strictement croissante"),
                     reentrant='n',

@@ -22,7 +22,7 @@
 from code_aster.Cata.Commons import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Syntax import *
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster.Supervis.ExecuteCommand import ExecuteCommand
 from code_aster.Objects import TransientGeneralizedResultsContainer
 
 PROJ_RESU_BASE_CATA=OPER(nom="PROJ_RESU_BASE",op=  79,sd_prod=tran_gene,

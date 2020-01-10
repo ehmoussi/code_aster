@@ -33,7 +33,7 @@ def calc_bt_prod(self, RESU_BT, **args):
 
 # Formalisation de la macro commande CALC_CARTEDEV
 CALC_BT = MACRO(nom="CALC_BT",
-                op = OPS('Macro.calc_bt_ops.calc_bt_ops'),
+                op = OPS('code_aster.MacroCommands.calc_bt_ops.calc_bt_ops'),
                 fr=tr("Modéle Bielles-Tirants à partir d'un modéle 2D"),
                 sd_prod = calc_bt_prod,
                 reentrant = 'n',

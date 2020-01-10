@@ -22,7 +22,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 IMPR_OAR =MACRO(nom="IMPR_OAR",
-                op=OPS('Macro.impr_oar_ops.impr_oar_ops'),
+                op=OPS('code_aster.MacroCommands.impr_oar_ops.impr_oar_ops'),
                 sd_prod=None,
                 fr=tr("Impression au format OAR"),
    TYPE_CALC = SIMP(statut='o', typ='TXM',into=('COMPOSANT', 'MEF', 'TUYAUTERIE')),

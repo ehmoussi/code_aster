@@ -41,7 +41,7 @@ def macro_expans_prod(self, MODELE_MESURE, RESU_NX=None, RESU_EX=None, RESU_ET=N
     return None
 
 MACRO_EXPANS=MACRO(nom="MACRO_EXPANS",
-                   op=OPS('Macro.macro_expans_ops.macro_expans_ops'),
+                   op=OPS('code_aster.MacroCommands.macro_expans_ops.macro_expans_ops'),
                    sd_prod=macro_expans_prod,
                    reentrant='n',
                    fr=tr("Outil d'expansion de resultats exprimentaux sur une base definie sur un modele numerique"),

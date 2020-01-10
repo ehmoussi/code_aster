@@ -25,7 +25,7 @@
 
 import aster
 from libaster import Table
-from Utilitai.Table import Table
+from Utilitai.Table import Table as TablePy
 
 from ..Utilities import injector
 
@@ -100,7 +100,7 @@ class ExtendedTable(object):
         v_tblp = self.sdj.TBLP.get()
         if v_tblp == None:
             # retourne une table vide
-            return Table(titr=titr, nom=self.getName())
+            return TablePy(titr=titr, nom=self.getName())
         tabnom=list(v_tblp)
         nparam=len(tabnom) // 4
         lparam=[tabnom[4*i:4*i+4] for i in range(nparam)]
@@ -132,7 +132,7 @@ class ExtendedTable(object):
             for p in lpar:
                d[p]=dval[p][i]
             lisdic.append(d)
-        return Table(lisdic, lpar, ltyp, titr, self.getName())
+        return TablePy(lisdic, lpar, ltyp, titr, self.getName())
 
     def Valeurs(self):
         """

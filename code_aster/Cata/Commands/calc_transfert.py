@@ -40,7 +40,7 @@ def calc_transfert_prod(self,SIGNAL,**args):
 
 
 CALC_TRANSFERT=MACRO(nom="CALC_TRANSFERT",
-                      op=OPS('Macro.calc_transfert_ops.calc_transfert_ops'),
+                      op=OPS('code_aster.MacroCommands.calc_transfert_ops.calc_transfert_ops'),
                       sd_prod=calc_transfert_prod,
                       fr=tr("Calcul des fonctions de transfert et des signaux deconvolues "),
 

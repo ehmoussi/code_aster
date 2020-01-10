@@ -40,7 +40,7 @@ def calc_gp_prod(self,TRANCHE_2D,GPMAX, **args):
 
 
 CALC_GP =MACRO(nom="CALC_GP",
-                   op=OPS('Macro.calc_gp_ops.calc_gp_ops'),
+                   op=OPS('code_aster.MacroCommands.calc_gp_ops.calc_gp_ops'),
                    sd_prod=calc_gp_prod,
 #                   sd_prod=table_sdaster,
                    reentrant='n',

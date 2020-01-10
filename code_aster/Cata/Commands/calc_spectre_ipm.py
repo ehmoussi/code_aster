@@ -22,7 +22,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 CALC_SPECTRE_IPM=MACRO(nom="CALC_SPECTRE_IPM",
-                    op=OPS('Macro.calc_spectre_ipm_ops.calc_spectre_ipm_ops'),
+                    op=OPS('code_aster.MacroCommands.calc_spectre_ipm_ops.calc_spectre_ipm_ops'),
                     sd_prod=table_sdaster,
                     reentrant='n',
                     fr="Calcul de spectre, post-traitement de séisme",

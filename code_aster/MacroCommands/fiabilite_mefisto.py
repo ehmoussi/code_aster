@@ -25,7 +25,7 @@ import tempfile
 
 import numpy
 
-from Macro import fiabilite_fichier
+from . import fiabilite_fichier
 from Utilitai.Utmess import UTMESS
 
 

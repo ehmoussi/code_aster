@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,21 +19,22 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
-import sys
+import glob
 import os
 import os.path as osp
-import glob
+import sys
 from distutils.sysconfig import get_python_lib
+
+from asrun.profil import AsterProfil
+
+# Recuperation du chemin du fichier macr_recal_ops.py
+import code_aster.MacroCommands
+from Utilitai.System import ExecCommand
 
 ROOT = os.getcwd()
 
-# Recuperation du chemin du fichier macr_recal_ops.py
-import Macro
-commande = osp.join(osp.dirname(Macro.__file__), 'recal.py')
+commande = osp.join(osp.dirname(code_aster.MacroCommands.__file__), 'recal.py')
 
-from Utilitai.System import ExecCommand
-from asrun.profil import AsterProfil
-import aster
 
 arguments = ' --objective=fcalc --objective_type=float --gradient_type=no --mr_parameters=fort.2 '
 commande = '%s %s %s' % (sys.executable, commande, arguments)
@@ -56,8 +57,10 @@ def fonction(val):
    print(val)
 
    # Menage
-   try:    os.remove(fichier_grad_out)
-   except: pass
+   try:
+      os.remove(fichier_grad_out)
+   except:
+      pass
 
 
    # Ajout des parametres

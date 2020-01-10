@@ -22,7 +22,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 MACR_INFO_MAIL=MACRO(nom="MACR_INFO_MAIL",
-                     op=OPS('Macro.macr_adap_mail_ops.macr_adap_mail_ops'),
+                     op=OPS('code_aster.MacroCommands.macr_adap_mail_ops.macr_adap_mail_ops'),
                      docu="U7.03.02",
                      fr=tr("Donner des informations sur un maillage."),
 

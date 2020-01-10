@@ -40,7 +40,7 @@ def observation_prod(self, RESULTAT, **args):
         return None
 
 OBSERVATION=MACRO(nom="OBSERVATION",
-                  op=OPS('Macro.observation_ops.observation_ops'),
+                  op=OPS('code_aster.MacroCommands.observation_ops.observation_ops'),
                   sd_prod=observation_prod,
                   fr=tr("Calcul de l'observabilite d'un champ aux noeuds "),
 #

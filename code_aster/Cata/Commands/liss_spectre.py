@@ -25,7 +25,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 LISS_SPECTRE=MACRO(nom="LISS_SPECTRE",
-                   op=OPS('Macro.liss_spectre_ops.liss_spectre_ops'),
+                   op=OPS('code_aster.MacroCommands.liss_spectre_ops.liss_spectre_ops'),
                    reentrant='n',
                    fr=tr("Lissage de spectre, post-traitement de séisme"),
 

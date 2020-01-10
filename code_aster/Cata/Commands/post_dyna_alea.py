@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 POST_DYNA_ALEA=MACRO(nom="POST_DYNA_ALEA",
-                     op=OPS('Macro.post_dyna_alea_ops.post_dyna_alea_ops'),
+                     op=OPS('code_aster.MacroCommands.post_dyna_alea_ops.post_dyna_alea_ops'),
                      sd_prod=table_sdaster,
                      fr=tr("Traitements statistiques de résultats de type interspectre "
                           "et impression sur fichiers"),

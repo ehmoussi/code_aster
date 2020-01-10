@@ -45,7 +45,7 @@ def post_czm_fiss_prod(self,OPTION,**args):
 POST_CZM_FISS=MACRO(
 
   nom="POST_CZM_FISS",
-  op=OPS('Macro.post_czm_fiss_ops.post_czm_fiss_ops'),
+  op=OPS('code_aster.MacroCommands.post_czm_fiss_ops.post_czm_fiss_ops'),
   sd_prod=post_czm_fiss_prod,
   reentrant='n',
   fr=tr("Post-Traiement scpécifiques aux modèles CZM"),

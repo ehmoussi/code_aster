@@ -36,7 +36,7 @@ from code_aster.Cata.Syntax import _F
 from code_aster.Commands import DEFI_FICHIER, EXEC_LOGICIEL, IMPR_RESU, LIRE_CHAMP, LIRE_MAILLAGE
 from code_aster.Helpers import Serializer
 from code_aster.Utilities import logger
-from Macro import creation_donnees_homard
+from . import creation_donnees_homard
 from Utilitai.UniteAster import UniteAster
 #
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme

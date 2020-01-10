@@ -24,7 +24,7 @@
 from code_aster.Cata.Commons import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Syntax import *
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster.Supervis.ExecuteCommand import ExecuteCommand
 from code_aster.Objects import PCFieldOnMeshDouble
 
 RAFF_XFEM_ZONE_CATA=OPER(nom="RAFF_XFEM_ZONE",

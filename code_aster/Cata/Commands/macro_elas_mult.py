@@ -37,7 +37,7 @@ def macro_elas_mult_prod(self,NUME_DDL,CAS_CHARGE,**args ):
   raise AsException("type de concept resultat non prevu")
 
 MACRO_ELAS_MULT=MACRO(nom="MACRO_ELAS_MULT",
-                      op=OPS('Macro.macro_elas_mult_ops.macro_elas_mult_ops'),
+                      op=OPS('code_aster.MacroCommands.macro_elas_mult_ops.macro_elas_mult_ops'),
                       sd_prod=macro_elas_mult_prod,
                       reentrant='f:RESULTAT',
                       fr=tr("Calculer les réponses statiques linéaires pour différents cas "

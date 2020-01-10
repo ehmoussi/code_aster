@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 POST_COQUE=MACRO(nom="POST_COQUE",
-                 op=OPS('Macro.post_coque_ops.post_coque_ops'),
+                 op=OPS('code_aster.MacroCommands.post_coque_ops.post_coque_ops'),
                  sd_prod=table_sdaster,
                  reentrant='n',
                  fr=tr("Calcul des efforts et déformations en un point et une cote "

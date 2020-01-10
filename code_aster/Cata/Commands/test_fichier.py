@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 TEST_FICHIER=MACRO(nom="TEST_FICHIER",
-                   op=OPS('Macro.test_fichier_ops.test_fichier_ops'),
+                   op=OPS('code_aster.MacroCommands.test_fichier_ops.test_fichier_ops'),
                    fr=tr("Tester la non régression de fichiers produits par "
                          "des commandes aster"),
    FICHIER          =SIMP(statut='o',typ='TXM',

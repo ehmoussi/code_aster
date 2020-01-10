@@ -35,7 +35,7 @@ def macr_ecla_pg_prod(self,RESULTAT,MAILLAGE,RESU_INIT,**args):
 
 
 MACR_ECLA_PG=MACRO(nom="MACR_ECLA_PG",
-                   op=OPS('Macro.macr_ecla_pg_ops.macr_ecla_pg_ops'),
+                   op=OPS('code_aster.MacroCommands.macr_ecla_pg_ops.macr_ecla_pg_ops'),
                    sd_prod=macr_ecla_pg_prod,
                    reentrant='n',
                    fr=tr("Permettre la visualisation des champs aux points de Gauss d'une "

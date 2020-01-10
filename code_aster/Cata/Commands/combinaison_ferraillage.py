@@ -32,7 +32,7 @@ def combinaison_ferraillage_prod ( self, **args ):
 # definition of macro catalogue
 COMBINAISON_FERRAILLAGE = MACRO(
     nom = 'COMBINAISON_FERRAILLAGE',
-    op = OPS('Macro.combinaison_ferraillage_ops.combinaison_ferraillage_ops'),
+    op = OPS('code_aster.MacroCommands.combinaison_ferraillage_ops.combinaison_ferraillage_ops'),
     fr = tr("COMBINAISON_FERRAILLAGE"),
     sd_prod = combinaison_ferraillage_prod,
     reentrant = 'o:RESULTAT',

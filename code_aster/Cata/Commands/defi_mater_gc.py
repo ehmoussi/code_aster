@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 DEFI_MATER_GC=MACRO(nom="DEFI_MATER_GC",
-    op=OPS('Macro.defi_mater_gc_ops.defi_mater_gc_ops'),
+    op=OPS('code_aster.MacroCommands.defi_mater_gc_ops.defi_mater_gc_ops'),
     sd_prod=mater_sdaster,
     reentrant='n',
     fr=tr("Définir des lois matériaux spécifique au Génie Civil"),

@@ -20,7 +20,7 @@
 from code_aster.Cata.Commons import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Syntax import *
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster.Supervis.ExecuteCommand import ExecuteCommand
 from code_aster.Objects import NonLinearEvolutionContainer
 
 from .macro_bascule_schema_ops import macro_bascule_schema_ops

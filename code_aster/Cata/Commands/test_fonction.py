@@ -24,7 +24,7 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 TEST_FONCTION=MACRO(nom="TEST_FONCTION",
-                    op=OPS('Macro.test_fonction_ops.test_fonction_ops'),
+                    op=OPS('code_aster.MacroCommands.test_fonction_ops.test_fonction_ops'),
                     sd_prod=None,
             fr=tr("Extraction d'une valeur numérique ou d'un attribut de fonction pour comparaison à une valeur de référence"),
          VALEUR          =FACT(statut='f',max='**',

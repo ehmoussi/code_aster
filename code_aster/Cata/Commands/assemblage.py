@@ -61,7 +61,7 @@ def assemblage_prod(self,NUME_DDL,MATR_ASSE,VECT_ASSE,**args):
   return None
 
 ASSEMBLAGE=MACRO(nom="ASSEMBLAGE",
-                      op=OPS('Macro.assemblage_ops.assemblage_ops'),
+                      op=OPS('code_aster.MacroCommands.assemblage_ops.assemblage_ops'),
                       sd_prod=assemblage_prod,
                       regles=(AU_MOINS_UN('MATR_ASSE','VECT_ASSE'),),
                       fr=tr("Calcul des matrices et vecteurs assemblés "),

@@ -22,7 +22,7 @@
 from code_aster import Table
 from code_aster.Cata.DataStructure import evol_noli, fiss_xfem, table_sdaster
 from code_aster.Cata.Syntax import OPER, SIMP
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster.Supervis.ExecuteCommand import ExecuteCommand
 
 DETEC_FRONT_CATA = OPER(
     nom="DETEC_FRONT", op=139, sd_prod=table_sdaster, reentrant='n',

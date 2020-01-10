@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# aslint: disable=C4008
+
 # person_in_charge: mathieu.courtois@edf.fr
 
 import copy
@@ -31,18 +33,18 @@ from asrun.profil import AsterProfil
 
 import aster
 import aster_core
-import Gnuplot
-import Macro
 import Utilitai
 from code_aster import onFatalError
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import CREA_TABLE, DEFI_LIST_REEL, TEST_TABLE
-from Macro import reca_algo, reca_calcul_aster, reca_interp, reca_message, reca_utilitaires, recal
-from Macro.reca_controles import gestion
-from Macro.reca_evol import evolutivo
-from Utilitai.optimize import (approx_fhess_p, approx_fprime, fmin, fminBFGS, fminNCG, line_search,
-                               line_search_BFGS)
+from . import (reca_algo, reca_calcul_aster, reca_interp, reca_message,
+                   reca_utilitaires, recal)
+from Utilitai.optimize import (approx_fhess_p, approx_fprime, fmin, fminBFGS,
+                               fminNCG, line_search, line_search_BFGS)
 from Utilitai.Utmess import UTMESS, MessageLog
+
+from .reca_controles import gestion
+from .reca_evol import evolutivo
 
 debug = False
 
@@ -87,12 +89,6 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=N
                     ITER_MAXI=None, ITER_FONC_MAXI=None, RESI_GLOB_RELA=None, UNITE_RESU=None, PARA_DIFF_FINI=None,
                     GRAPHIQUE=None, PARA_OPTI=None, COURBE=None, METHODE=None, INFO=None, **args):
     """ Macro commande realisant le recalage de modeles Aster """
-
-    #from code_aster.Commands import (DEFI_LIST_REEL, CREA_TABLE,
-    #    TEST_TABLE, INCLUDE, INFO_EXEC_ASTER)
-    #from code_aster.Commands import commandStore
-
-
     # Gestion des Exceptions
     prev_onFatalError = onFatalError()
     onFatalError('EXCEPTION')
@@ -160,11 +156,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
                         (sys.version_info[0], sys.version_info[1]), 'site-packages'))
     except:
         pass
-    try:
-    except Exception as e:
-        print(e)
-        UTMESS('F', 'RECAL0_2')
-
 
     #_____________________________________________
     #
@@ -243,6 +234,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         if 'FORMAT' in dGRAPHIQUE and dGRAPHIQUE['FORMAT'] == 'GNUPLOT':
         # On essaie d'importer Gnuplot -> PAS DE GRAPHIQUE
             try:
+                import Gnuplot
             except ImportError:
                 GRAPHIQUE = None
                 UTMESS('A', 'RECAL0_3')
