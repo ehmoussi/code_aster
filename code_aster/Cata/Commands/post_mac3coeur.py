@@ -25,7 +25,7 @@ from ..Language.Syntax import *
 
 POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                        sd_prod=table_sdaster,
-                       op=OPS("Mac3coeur.post_mac3coeur_ops.post_mac3coeur_ops"),
+                       op=OPS("code_aster.MacroCommands.Mac3Coeur.post_mac3coeur_ops.post_mac3coeur_ops"),
 
            TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4")),
            b_type_ligne = BLOC(condition = """is_in("TYPE_COEUR", ("LIGNE900","LIGNE1300","LIGNEN4"))""",

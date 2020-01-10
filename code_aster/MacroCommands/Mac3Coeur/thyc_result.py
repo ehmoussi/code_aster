@@ -25,8 +25,8 @@ Ce module définit des fonctions permettant de manipuler un résultat issu de TH
 
 import re
 
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import AFFE_CHAR_MECA, AFFE_CHAR_MECA_F, DEFI_FONCTION
+from ...Cata.Syntax import _F
+from ...Commands import AFFE_CHAR_MECA, AFFE_CHAR_MECA_F, DEFI_FONCTION
 
 
 class ThycResult(object):

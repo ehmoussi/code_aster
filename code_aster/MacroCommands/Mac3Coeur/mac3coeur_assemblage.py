@@ -33,7 +33,7 @@ certains types d'assemblages.
 
 from math import pi
 
-from code_aster.Cata.Syntax import _F
+from ...Cata.Syntax import _F
 
 from .mac3coeur_factory import Mac3Factory
 

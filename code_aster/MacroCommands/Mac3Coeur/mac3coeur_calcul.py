@@ -27,10 +27,10 @@ import os.path as osp
 from functools import wraps
 
 import aster_core
-from code_aster import ConvergenceError
-from code_aster.Cata.DataStructure import maillage_sdaster, modele_sdaster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CHAR_CINE, AFFE_CHAR_MECA, CALC_CHAMP,
+from libaster import ConvergenceError
+from ...Cata.DataStructure import maillage_sdaster, modele_sdaster
+from ...Cata.Syntax import _F
+from ...Commands import (AFFE_CHAR_CINE, AFFE_CHAR_MECA, CALC_CHAMP,
                                  CREA_CHAMP, CREA_RESU, DEFI_FONCTION,
                                  DETRUIRE, MODI_MAILLAGE, PERM_MAC3COEUR,
                                  POST_RELEVE_T, STAT_NON_LINE)

@@ -24,9 +24,9 @@ from pprint import pformat
 
 import aster
 import aster_core
-from code_aster.Cata.DataStructure import maillage_sdaster, modele_sdaster, table_sdaster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import AFFE_CHAR_CINE, CREA_CHAMP, CREA_RESU, STAT_NON_LINE
+from ...Cata.DataStructure import maillage_sdaster, modele_sdaster, table_sdaster
+from ...Cata.Syntax import _F
+from ...Commands import AFFE_CHAR_CINE, CREA_CHAMP, CREA_RESU, STAT_NON_LINE
 from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
 

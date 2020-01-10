@@ -27,8 +27,8 @@ Définition d'une conception de coeur (ensemble d'assemblages).
 
 import os
 
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_CINE, AFFE_CHAR_MECA,  # DEFI_CONSTANT
+from ...Cata.Syntax import _F
+from ...Commands import (AFFE_CARA_ELEM, AFFE_CHAR_CINE, AFFE_CHAR_MECA,  # DEFI_CONSTANT
                                  AFFE_CHAR_MECA_F, AFFE_MATERIAU, AFFE_MODELE, CREA_CHAMP,
                                  CREA_MAILLAGE, CREA_RESU, DEFI_COMPOR, DEFI_FONCTION,
                                  DEFI_GEOM_FIBRE, DEFI_GROUP, DEFI_LIST_INST, DEFI_LIST_REEL,

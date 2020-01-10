@@ -19,11 +19,11 @@
 
 # person_in_charge: samuel.geniaut at edf.fr
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_RESU
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Cata.Syntax import _F
+from ...Commands import CREA_RESU
 
 # ------------------------------------------------------------------------
 

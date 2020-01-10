@@ -33,7 +33,7 @@ def calc_mac3coeur_prod(self,RESU_DEF,**args):
     return evol_noli
 
 CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
-                       op=OPS("Mac3coeur.mac3coeur_calcul.calc_mac3coeur_ops"),
+                       op=OPS("code_aster.MacroCommands.Mac3Coeur.mac3coeur_calcul.calc_mac3coeur_ops"),
                        sd_prod=calc_mac3coeur_prod,
 
          TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4") ),
