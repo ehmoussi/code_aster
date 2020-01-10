@@ -45,16 +45,18 @@ import aster_core
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import IMPR_MACR_ELEM, MACR_ELEM_DYNA
 from code_aster.Helpers.LogicalUnit import LogicalUnitFile
+from code_aster.Utilities import ASTER_TIMER
 from Miss.miss_fichier_cmde import MissCmdeGen
-from Miss.miss_fichier_interf import fichier_chp, fichier_ext, fichier_mvol, fichier_sign
+from Miss.miss_fichier_interf import (fichier_chp, fichier_ext, fichier_mvol,
+                                      fichier_sign)
 from Miss.miss_fichier_option import fichier_option
 from Miss.miss_fichier_sol import fichier_sol
 from Miss.miss_post import PostMissFactory, info_freq
 from Miss.miss_resu_aster import ResuAsterReader
 from Miss.miss_utils import copie_fichier
-from Utilitai.as_timer import ASTER_TIMER
 from Utilitai.System import ExecCommand
-from Utilitai.utils import _print, _printDBG, decode_str, encode_str, send_file, set_debug
+from Utilitai.utils import (_print, _printDBG, decode_str, encode_str,
+                            send_file, set_debug)
 from Utilitai.Utmess import UTMESS
 
 

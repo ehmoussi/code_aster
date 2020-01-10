@@ -26,7 +26,7 @@
 import os
 import time
 
-from code_aster import _
+from .i18n import translate as _
 
 
 def _dtimes():

@@ -47,7 +47,7 @@ __all__ = []
 
 # import libaster to call initAsterModules
 import aster
-import aster_core
+import _aster_core
 import aster_fonctions
 import med_aster
 import libaster
@@ -61,4 +61,3 @@ from .Objects import *
 from .Supervis import (AsterError, ContactError, ConvergenceError,
                        IntegrationError, SolverError, TimeLimitError)
 from .Utilities import TestCase
-from .Utilities import translate as _

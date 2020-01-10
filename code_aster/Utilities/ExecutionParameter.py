@@ -45,8 +45,8 @@ from argparse import SUPPRESS, ArgumentParser
 
 import aster_pkginfo
 import libaster
-from Utilitai.as_timer import ASTER_TIMER
 
+from .as_timer import ASTER_TIMER
 from .base_utils import Singleton, no_new_attributes
 from .logger import DEBUG, INFO, logger
 from .options import Options
