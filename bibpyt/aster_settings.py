@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,15 +33,15 @@ import os
 import os.path as osp
 import platform
 import re
+import resource
 import sys
-from argparse import ArgumentParser, SUPPRESS
+from argparse import SUPPRESS, ArgumentParser
 from warnings import simplefilter, warn
 
 import aster
 import aster_core
 import aster_pkginfo
-from code_aster.Utilities import localization, convert
-
+from code_aster.Utilities import convert, localization
 
 RCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir, os.pardir,
                     'share', 'aster'))
@@ -204,7 +204,6 @@ class CoreOptions(object):
             localization.set_localedir(locale_dir)
         if self.opts.tpmax is None and platform.system() == 'Linux':
             # use rlimit to set to the cpu "ulimit"
-            import resource
             limcpu = resource.getrlimit(resource.RLIMIT_CPU)[0]
             if limcpu < 0:
                 limcpu = int(1.e18)

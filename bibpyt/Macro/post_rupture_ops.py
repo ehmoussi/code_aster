@@ -18,8 +18,13 @@
 # --------------------------------------------------------------------
 
 import numpy as NP
-from Utilitai.Utmess import UTMESS
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_TABLE, CREA_TABLE, DETRUIRE, FORMULE, POST_FATIGUE,
+                                 RECU_FONCTION)
 from SD.sd_mater import sd_compor1
+from Utilitai.Utmess import UTMESS
 
 
 def verif_nb_table(OPERATION, TABLE):
@@ -289,18 +294,10 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
     """
     Macro POST_RUPTURE
     """
-    import aster
 
-    from code_aster.Cata.Syntax import _F
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import FORMULE
-    from code_aster.Commands import CALC_TABLE
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import RECU_FONCTION
-    from code_aster.Commands import POST_FATIGUE
-    from code_aster.Commands import CREA_TABLE
 
     # parametre
     eps = 1e-15

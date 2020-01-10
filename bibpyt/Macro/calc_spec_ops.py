@@ -18,7 +18,15 @@
 # --------------------------------------------------------------------
 
 import copy
+
+import numpy
+import numpy.fft as FFT
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DEFI_FONCTION, DEFI_INTE_SPEC
 from SD.sd_fonction import sd_fonction
+from Utilitai.Utmess import UTMESS
 
 # -----------------------------------------------------------------------------
 
@@ -46,11 +54,6 @@ def calc_spec_ops(self, **args):
 #  Calcul d'une matrice interspectrale
 #  a partir de fonctions reelles
 
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    import numpy
-    import numpy.fft as FFT
 
     TAB_ECHANT = args.get("TAB_ECHANT")
     ECHANT = args.get("ECHANT")
@@ -68,8 +71,6 @@ def calc_spec_ops(self, **args):
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import DEFI_INTE_SPEC
-    from code_aster.Commands import DEFI_FONCTION
 
 # --- Verifications sur les entrees --#
     l_f = []

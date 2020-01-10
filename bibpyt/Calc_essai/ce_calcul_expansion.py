@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,8 @@
 
 # person_in_charge: albert.alarcon at edf.fr
 
+import random
+
 import numpy
 
 import aster
@@ -27,7 +29,11 @@ from code_aster import AsterError
 from code_aster.Cata.DataStructure import (dyna_harmo, maillage_sdaster,
                                            matr_asse_depl_r, mode_meca,
                                            modele_sdaster)
-from code_aster.Cata.Syntax import _F
+from code_aster.Cata.Syntax import _F, CO
+from code_aster.Commands import (AFFE_MODELE, CREA_CHAMP, CREA_RESU,
+                                 DEFI_FICHIER, DETRUIRE, IMPR_RESU,
+                                 INFO_EXEC_ASTER, LIRE_MAILLAGE, MAC_MODES,
+                                 MACRO_EXPANS)
 from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
 
 # MESSAGE_LOGGER = classe permettant de formatter et d'afficher les
@@ -110,8 +116,6 @@ class CalcEssaiExpansion:
         """!Mancement de MACRO_EPXANS et export des resultats si demande
             4 resultats sont crees, nommes basename + suffix, ou
             suffix = ['_NX','_EX','_ET','_RD']"""
-        from code_aster.Cata.Syntax import CO
-        from code_aster.Commands import DETRUIRE, MACRO_EXPANS
         self.mess.disp_mess("Debut de MACRO_EXPANS")
         mdo = self.ce_objects
 
@@ -190,7 +194,6 @@ class CalcEssaiExpansion:
 
     def calc_mac_mode(self, resu1, resu2, norme):
         """!Calcul de MAC entre deux bases modales compatibles"""
-        from code_aster.Commands import MAC_MODES, DETRUIRE
         o1 = resu1.obj
         o2 = resu2.obj
         try:
@@ -212,10 +215,6 @@ class CalcEssaiExpansion:
 
 def make_mac_salome(mac, resu1, resu2, unite):
 
-    from code_aster.Commands import (LIRE_MAILLAGE, AFFE_MODELE,
-        CREA_CHAMP, DETRUIRE, INFO_EXEC_ASTER, IMPR_RESU, DEFI_FICHIER,
-        CREA_RESU)
-    import random
     # dimension du MAC
 
     nb_l = mac.shape[0] - 1
@@ -283,7 +282,6 @@ def make_mac_salome(mac, resu1, resu2, unite):
 
 
 def make_mesh_mac(nb_l, nb_c):
-    from code_aster.Commands import INFO_EXEC_ASTER
     _UL = INFO_EXEC_ASTER(LISTE_INFO='UNITE_LIBRE')
     unite = _UL['UNITE_LIBRE', 1]
 

@@ -22,11 +22,13 @@ import pickle
 import numpy as NP
 from numpy import linalg as LA
 
-from code_aster.Commands.ExecuteCommand import UserMacro
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
+import aster
 from code_aster.Cata.Commons import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_TABLE
+from code_aster.Commands.ExecuteCommand import UserMacro
 
 
 class TANGENT:
@@ -63,7 +65,6 @@ class TANGENT:
         """lit la matrice depuis l'espace Aster.
         nom : suffixe de l'objet jeveux
         """
-        import aster
         nom_obj_jeveux = ('PYTHON.TANGENT.' + suffixe).ljust(24)
         obj_jeveux = aster.getvectjev(nom_obj_jeveux)
         if not obj_jeveux:
@@ -169,10 +170,8 @@ def veri_matr_tang_ops(self, **args):
     """
     Ecriture de la macro verif_matrice_tangente_ops
     """
-    from code_aster.Cata.Syntax import _F
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_TABLE
 
     # Le concept sortant (de type fonction) est nomme ROTGD dans
     # le contexte de la macro

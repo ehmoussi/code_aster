@@ -17,6 +17,20 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
+import shutil
+from copy import copy
+from math import atan, atan2, cos, degrees, pi, radians, sin, sqrt
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CHAR_MECA_F, AFFE_CHAR_THER_F, CO, CREA_TABLE, DEFI_FICHIER,
+                                 DEFI_FONCTION, DEFI_GROUP, DETRUIRE, IMPR_TABLE, POST_RELEVE_T)
+from Contrib.macr_ecre_calc import MACR_ECRE_CALC
+from Utilitai.Table import Table, merge
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+
 # ------------------OUTILS ------------------------------
 
 # Determination de la direction de la fissure
@@ -28,7 +42,6 @@
 #         positif si sens anti-horaire
 #         -180< beta <=180
 def dirfiss(Xa, Ya, Xb, Yb):
-    from math import atan2, degrees
 
     xia = Xa[0]
     yia = Ya[0]
@@ -80,7 +93,6 @@ def dirfiss(Xa, Ya, Xb, Yb):
 
 # Determination de l ouverture de la fissure
 def ouvFiss(DIR_FISS, beta, Xa, Ya, Xb, Yb):
-    from math import sin, cos, sqrt, radians
 
     if DIR_FISS == 'X':
         Ouv = list(map(lambda y1, y2: abs(y2 - y1), Ya, Yb))
@@ -112,14 +124,6 @@ def calc_ecrevisse_ops(self, **args):
         creation des tableaux de resultats et des chargements pour AsterGeneration par Aster
     """
 
-    import os
-    import shutil
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-    from Utilitai.Table import Table, merge
-    from copy import copy
-    from math import atan, pi, sqrt, atan2, degrees, sin, cos
 
     CHARGE_MECA = args.get("CHARGE_MECA")
     CHARGE_THER1 = args.get("CHARGE_THER1")
@@ -162,18 +166,6 @@ def calc_ecrevisse_ops(self, **args):
         info2 = True
 
     # IMPORTATION DE COMMANDES ASTER
-    from code_aster.Commands import DEFI_GROUP
-    from code_aster.Commands import POST_RELEVE_T
-    from code_aster.Commands import IMPR_TABLE
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import IMPR_TABLE
-    from code_aster.Commands import CO
-    from code_aster.Commands import AFFE_CHAR_THER_F
-    from code_aster.Commands import AFFE_CHAR_MECA_F
-    from code_aster.Commands import DEFI_FICHIER
-    from Contrib.macr_ecre_calc import MACR_ECRE_CALC
 
     # RECUPERATION DES MOTS-CLES FACTEURS
     dRESULTAT = RESULTAT[0].cree_dict_valeurs(RESULTAT[0].mc_liste)

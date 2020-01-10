@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,23 +19,21 @@
 
 # person_in_charge: albert.alarcon at edf.fr
 
+import tkinter.font
+from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox, Menu, Menubutton,
+                     Message, Radiobutton, Scrollbar, StringVar, Toplevel)
+
 import numpy
 
-from tkinter import Frame, Menubutton, Checkbutton, Menu, StringVar, IntVar
-from tkinter import Scrollbar, Label, Radiobutton, Button, Entry
-from tkinter import Checkbutton, Listbox, Toplevel, Message
-import tkinter.font
-
-from code_aster.Cata.Syntax import _F
 import aster
-from Macro.calc_spec_ops import FonctionError
-from code_aster.Commands import DETRUIRE, CREA_TABLE, RECU_FONCTION, IMPR_TABLE
+from Calc_essai.cata_ce import CreaTable, InterSpectre, Tempo
+from Calc_essai.outils_ihm import DispFRFDialogue, MultiList, VisuSpectre
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_TABLE, DETRUIRE, IMPR_TABLE, RECU_FONCTION
 from Contrib.calc_spec import CALC_SPEC
-from Calc_essai.cata_ce import InterSpectre, CreaTable, Tempo
-from Calc_essai.outils_ihm import MultiList, DispFRFDialogue, VisuSpectre
-from Utilitai.Utmess import UTMESS, MESSAGE_LOGGER
-
+from Macro.calc_spec_ops import FonctionError
 from SD.sd_fonction import sd_fonction
+from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
 
 # MESSAGE_LOGGER = classe permettant de formatter et d'afficher les
 # messages d'erreur
@@ -668,7 +666,6 @@ class InterfaceCalcSpec(Frame):
 
     def crea_tab_fonc(self):
 
-        from code_aster.Commands import CREA_TABLE
         # recuperation des numeros d'ordre et de reference
 
         ind_mes = self.list_mes.curselection()

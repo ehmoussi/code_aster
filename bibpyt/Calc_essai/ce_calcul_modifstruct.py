@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,10 +26,12 @@ from Calc_essai.cata_ce import ModeMeca, Resultat
 from Calc_essai.ce_calcul_expansion import extract_mac_array
 from code_aster import AsterError
 from code_aster.Cata.Syntax import _F, ASSD
-from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_MODELE, ASSE_MAILLAGE,
-                                 ASSE_MATRICE, CALC_MATR_ELEM, DETRUIRE,
-                                 MODE_STATIQUE, NUME_DDL, PROJ_MESU_MODAL,
-                                 REST_GENE_PHYS)
+from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU, AFFE_MODELE,
+                                 ASSE_MAILLAGE, ASSE_MATRICE, CALC_MATR_ELEM, CREA_MAILLAGE,
+                                 DEFI_MAILLAGE, DEPL_INTERNE, DETRUIRE, EXTR_MODE, MAC_MODES,
+                                 MACR_ELEM_STAT, MODE_STATIQUE, NUME_DDL, NUME_DDL_GENE, PROJ_CHAMP,
+                                 PROJ_MATR_BASE, PROJ_MESU_MODAL, REST_GENE_PHYS)
+from Modal.mode_iter_inv import MODE_ITER_INV
 from Modal.mode_iter_simult import MODE_ITER_SIMULT
 from Utilitai.Utmess import MESSAGE_LOGGER
 
@@ -323,7 +325,6 @@ class CalcEssaiModifStruct:
         """!Calcul de la base de projection type Mathieu Corus
         """
 
-        from code_aster.Commands import NUME_DDL_GENE, PROJ_MATR_BASE
 
         __NUMGEN = NUME_DDL_GENE(BASE=base_mod_es.obj,
                                  STOCKAGE='PLEIN',)
@@ -378,7 +379,6 @@ class CalcEssaiModifStruct:
     def condensation(self, resolution=None, nomcham='DEPL'):
         """Calcul la condensation des modes sur la structure modifiee."""
 
-        from code_aster.Commands import MACR_ELEM_STAT, EXTR_MODE, DEFI_MAILLAGE
 
         modmesu = self.resu_exp
         modlexp = modmesu.modele
@@ -499,7 +499,6 @@ class CalcEssaiModifStruct:
     def maillage_iface(self):
         """Construit le maillage de l'interface."""
 
-        from code_aster.Commands import CREA_MAILLAGE
 
         self.group_ma_int = ['IFACE']
 
@@ -567,7 +566,6 @@ class CalcEssaiModifStruct:
     def indicateur_choix_base_expansion(self):
         """Expansion statique du champ de deplacements aux interfaces"""
 
-        from code_aster.Commands import MAC_MODES, PROJ_CHAMP
 
         clear_concept(self.modstint)
         self.modstint
@@ -687,8 +685,6 @@ class CalcEssaiModifStruct:
     def modes_modele_couple(self, mode_simult, calc_freq):
         # ne traite qu'une seule masse/raideur
 
-        from code_aster.Commands import DEPL_INTERNE
-        from Modal.mode_iter_inv import MODE_ITER_INV
 
         cpl = self.cpl
         kcouple = cpl.mat_rigi[0]
@@ -880,7 +876,6 @@ class CopyModelMeca:
         # replication des AFFE_MATERIAU
         # -----------------------------
 
-        from code_aster.Commands import AFFE_MATERIAU
 
         if not mater:
             raise RuntimeError("MODELE est un attribut facultatif de AFFE_MATERIAU \n"
@@ -895,7 +890,6 @@ class CopyModelMeca:
         # replication de AFFE_CHAR_MECA
         # -----------------------------
 
-        from code_aster.Commands import AFFE_CHAR_MECA
 
         for args, sd in charge:
             args = convert_args(args, self.concepts)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,22 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# \package calc_essai_ops Implémentation de la macro CALC_ESSAI
-#
-# Ce module contient la partie controle de la macro CALC_ESSAI
-# les autres fichiers sources sont situes dans ../Calc_essai
+"""
+Implémentation de la macro CALC_ESSAI
+
+Ce module contient la partie controle de la macro CALC_ESSAI
+"""
+
+from Calc_essai.cata_ce import CalcEssaiObjects
+from Calc_essai.ce_calc_spec import InterfaceCalcSpec
+from Calc_essai.ce_ihm_expansion import InterfaceCorrelation
+from Calc_essai.ce_ihm_identification import InterfaceIdentification
+from Calc_essai.ce_ihm_modifstruct import InterfaceModifStruct
+from Calc_essai.ce_ihm_parametres import InterfaceParametres
+from Calc_essai.ce_test import MessageBox, TestCalcEssai
+from Calc_essai.outils_ihm import MessageBoxInteractif, TabbedWindow
+from code_aster import onFatalError
+from Pmw import PanedWidget
 
 
 def calc_essai_ops(self,
@@ -36,8 +48,6 @@ def calc_essai_ops(self,
                    RESU_MODIFSTRU=None,
                    **args):
 
-    from Calc_essai.cata_ce import CalcEssaiObjects
-    from code_aster import onFatalError
     ier = 0
 
     prev = onFatalError()
@@ -69,8 +79,6 @@ def calc_essai_ops(self,
                                   out_modifstru,
                                   )
     else:
-        from Calc_essai.ce_test import MessageBox
-        from Calc_essai.ce_test import TestCalcEssai
         mess = MessageBox(UNITE_RESU)
         mess.disp_mess("Mode non intéractif")
 
@@ -97,11 +105,9 @@ def calc_essai_ops(self,
 def create_tab_mess_widgets(tk, tabskeys):
     """Construits les objects table et boîte à messages."""
     try:
-        from Pmw import PanedWidget
     except ImportError:
         PanedWidget = None
 
-    from Calc_essai.outils_ihm import MessageBoxInteractif, TabbedWindow
 
     tabsw = tk
     msgw = tk
@@ -143,14 +149,7 @@ def create_interactive_window(macro,
                               ):
     """Construit la fenêtre interactive comprenant une table pour
     les 4 domaines de CALC_ESSAI."""
-    from tkinter import Tk
 
-    from Calc_essai.cata_ce import CalcEssaiObjects
-    from Calc_essai.ce_ihm_expansion import InterfaceCorrelation
-    from Calc_essai.ce_ihm_modifstruct import InterfaceModifStruct
-    from Calc_essai.ce_ihm_identification import InterfaceIdentification
-    from Calc_essai.ce_ihm_parametres import InterfaceParametres  # , InterfaceParametres_init
-    from Calc_essai.ce_calc_spec import InterfaceCalcSpec
 # from Calc_essai.ce_ihm_expansion import InterfaceVisual
 
     # fenetre principale

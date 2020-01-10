@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,7 +40,10 @@ fminNCG     ---      Line-search Newton Conjugate Gradient (uses function, gradi
                      and hessian (if it's provided))
 
 """
+import time
+
 import numpy as Num
+
 max = Num.max
 min = Num.min
 abs = Num.absolute
@@ -532,7 +535,6 @@ def fminNCG(f, x0, fprime, fhess_p=None, fhess=None, args=(), avextol=1e-5, maxi
     
 
 if __name__ == "__main__":
-    import time
 
     
     times = []
@@ -575,4 +577,3 @@ if __name__ == "__main__":
     print("===========\t\t\t      =========")
     for k in range(len(algor)):
         print(algor[k], "\t -- ", times[k])
-        

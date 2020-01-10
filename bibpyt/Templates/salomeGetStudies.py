@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,14 +17,17 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# aslint: disable=C4008
+
 # Script permettant de recuperer les etudes ouvertes dans Salome
 
 # un FICHIERS_SORTIE requis dans EXEC_LOGICIEL: OUTPUTFILE1
 
 try:
     import salome
-    import SALOMEDS
     import salome_kernel
+    import SALOMEDS
+
     orb, lcc, naming_service, cm = salome_kernel.salome_kernel_init()
     # get Study Manager reference
     obj = naming_service.Resolve('myStudyManager')

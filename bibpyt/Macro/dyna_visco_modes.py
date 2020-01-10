@@ -17,6 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DEFI_BASE_MODALE, DETRUIRE, EXTR_MODE
+from Macro.dyna_visco_modes_calc import dyna_visco_modes_calc
+from Utilitai.Utmess import UTMESS
+
+
 def dyna_visco_modes(self, TYPE_RESU, TYPE_MODE, list_FREQ, fmax, RESI_RELA,
                            MATER_ELAS_FO, __asseKg, __asseKgr, __asseMg, trKg, __listKv, e0, eta0, ltrv, **args):
 
@@ -25,14 +32,7 @@ def dyna_visco_modes(self, TYPE_RESU, TYPE_MODE, list_FREQ, fmax, RESI_RELA,
        function to compute the eigenmodes of the structure
     """
 
-    from Macro.dyna_visco_modes_calc import dyna_visco_modes_calc
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    import aster
 
-    from code_aster.Commands import EXTR_MODE
-    from code_aster.Commands import DEFI_BASE_MODALE
-    from code_aster.Commands import DETRUIRE
 
 
 

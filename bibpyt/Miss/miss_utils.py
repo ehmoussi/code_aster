@@ -29,25 +29,26 @@ Les objets/fonctions définis sont :
 """
 
 import os.path as osp
-import re
 import pprint
-from math import log
+import re
 import shutil
 import tempfile
+from math import log
 
 import numpy as NP
 
+import aster
+from code_aster.Utilities import force_list
+from Utilitai.transpose import transpose
+from Utilitai.UniteAster import UniteAster
+from Utilitai.utils import _printDBG, get_shared_tmpdir
+from Utilitai.Utmess import ASSERT, UTMESS
+
 try:
-    import aster
-    from Utilitai.UniteAster import UniteAster
 except ImportError:
     # to make pure python unittests
     pass
 
-from code_aster.Utilities import force_list
-from Utilitai.Utmess import UTMESS, ASSERT
-from Utilitai.transpose import transpose
-from Utilitai.utils import get_shared_tmpdir, _printDBG
 
 dict_format = {
     'R': "15.6E",

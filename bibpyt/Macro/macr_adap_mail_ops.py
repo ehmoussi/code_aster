@@ -26,15 +26,22 @@ __revision__ = "V3.1"
 #
 import os
 import pickle
-from glob import glob
-import tarfile
-EnumTypes = (list, tuple)
 import shutil
-#
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-from Utilitai.UniteAster import UniteAster
+import tarfile
+from glob import glob
+
+import aster
+import aster_core
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DEFI_FICHIER, EXEC_LOGICIEL, IMPR_RESU, LIRE_CHAMP, LIRE_MAILLAGE
 from code_aster.Helpers import Serializer
 from code_aster.Utilities import logger
+from Macro import creation_donnees_homard
+from Utilitai.UniteAster import UniteAster
+#
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+EnumTypes = (list, tuple)
 
 
 class HomardInfo:
@@ -1176,10 +1183,6 @@ def macr_adap_mail_ops(self,
     # if len (args.keys())>0 : print args.keys()[0]
     # print args.get("MAILLAGE")
 #
-    from code_aster.Cata.Syntax import _F
-    from Macro import creation_donnees_homard
-    import aster_core
-    import aster
 #
 #====================================================================
 # 1. Prealables
@@ -1187,11 +1190,6 @@ def macr_adap_mail_ops(self,
 #
 # 1.2. ==> Initialisations de parametres Aster
 #
-    from code_aster.Commands import DEFI_FICHIER
-    from code_aster.Commands import IMPR_RESU
-    from code_aster.Commands import EXEC_LOGICIEL
-    from code_aster.Commands import LIRE_MAILLAGE
-    from code_aster.Commands import LIRE_CHAMP
 #
     Rep_Calc_ASTER = os.getcwd()
     if INFO >= 3:

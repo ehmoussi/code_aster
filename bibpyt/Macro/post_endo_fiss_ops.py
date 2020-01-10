@@ -23,28 +23,31 @@
 # PROCEDURE PYTHON DU RECHERCHE DU TRAJET DE FISSURATION
 #   ET D'EXTRACTION DE L'OUVERTURE DE FISSURE D'UN CHAMP D'ENDOMMAGEMENT
 
-import numpy as NP
 import os
-from .post_endo_fiss_utils import unitVector, crea_mail_lin, crea_sd_mail, euler_angles
-from .post_endo_fiss_utils import conv_smoothing_arc, conv_smoothing1D
+from math import radians
+
+import numpy as NP
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CREA_CHAMP, CREA_RESU, CREA_TABLE, LIRE_MAILLAGE, MODI_REPERE,
+                                 PROJ_CHAMP, RECU_TABLE)
+from code_aster.Helpers.LogicalUnit import FileAccess, LogicalUnitFile
+from Macro.macr_lign_coupe_ops import crea_mail_lig_coup
 from Utilitai.UniteAster import UniteAster
-from .post_endo_fiss_utils import ThresholdTooHighError, NoMaximaError
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+from .post_endo_fiss_utils import (NoMaximaError, ThresholdTooHighError, conv_smoothing1D,
+                                   conv_smoothing_arc, crackOpeningStrong, crea_mail_lin,
+                                   crea_sd_mail, euler_angles, findExtr, unitVector, versDirMoy)
 
 
 def cherche_trajet(self, NOM_CMP, NOM_CHAM, dRECHERCHE, __ENDO, __mail, typeChampTrajet, infoPlan, inst):
 
-    from math import radians
-    from Utilitai.Utmess import UTMESS
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Macro.macr_lign_coupe_ops import crea_mail_lig_coup
 
     # --------------------------------------------------
     # IMPORT OF ASTER COMMANDS
     #
-    from code_aster.Commands import PROJ_CHAMP
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import CREA_CHAMP
 
     # --------------------------------------------------
     # MESH AND MESH PROPERTIES
@@ -481,19 +484,10 @@ def cherche_trajet(self, NOM_CMP, NOM_CHAM, dRECHERCHE, __ENDO, __mail, typeCham
 
 def calcul_ouverture(self, NOM_CHAM, NOM_CMP, dRECHERCHE, __RESUIN, __mail, infoPlan, inst, CoxCrete, CoyCrete, CozCrete, dime, strong_flag):
 
-    import numpy as NP
-    import aster
-    from Utilitai.Utmess import UTMESS
-    from code_aster.Cata.Syntax import _F
-    from .post_endo_fiss_utils import versDirMoy, findExtr, crackOpeningStrong, crea_sd_mail
-    from Macro.macr_lign_coupe_ops import crea_mail_lig_coup
 
     # --------------------------------------------------
     # IMPORT DES COMMANDES ASTER
     #
-    from code_aster.Commands import PROJ_CHAMP
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import MODI_REPERE
 
     # ---------------------------
     # DEVELOPER PARAMETERS
@@ -705,9 +699,6 @@ def post_endo_fiss_ops(self,
                        CHAM_GD=None,
                        **args):
 
-    import aster
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-    from code_aster.Cata.Syntax import _F
 
     # --------------------------------------------------
     # DEVELOPER OPTIONS
@@ -723,10 +714,6 @@ def post_endo_fiss_ops(self,
     # --------------------------------------------------
     # IMPORT OF ASTER COMMANDS
     #
-    from code_aster.Commands import LIRE_MAILLAGE
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import RECU_TABLE
 
     # --------------------------------------------------
     #  INPUT PARAMETERS
@@ -978,7 +965,6 @@ def post_endo_fiss_ops(self,
     fproc = open(nomFichierSortie, 'w')
     fproc.write(resu_mail0)
     fproc.close()
-    from code_aster.Helpers.LogicalUnit import LogicalUnitFile, FileAccess
     unitFile = LogicalUnitFile.open(nomFichierSortie, access=FileAccess.Old)
     uniteMail = unitFile.unit
     MAFISS = LIRE_MAILLAGE(FORMAT='ASTER', UNITE=uniteMail)

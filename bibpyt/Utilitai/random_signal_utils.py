@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,12 +35,15 @@ Acce2SRO               ---      calculate response spectrum of a seismic signal
                                 (accelerogram) by FFT
 """
 
-from Utilitai.Utmess import UTMESS
-from math import pi, ceil, exp, sqrt, log, cos
 from cmath import sqrt as csqrt
+from math import ceil, cos, exp, log, pi, sqrt
+
 import numpy as NP
+
 import aster_fonctions
-from Cata_Utils.t_fonction import (t_fonction,)
+from Cata_Utils.t_fonction import t_fonction
+from Utilitai.optimize import fmin
+from Utilitai.Utmess import UTMESS
 
 
 # -------------------------------------------------------------------
@@ -869,7 +872,6 @@ def DSP2FR(f_dsp_refe, FC):
     #
     # OUT: f_out: DSP FR fonction de la frequence(rad/s)
     # ---------------------------------------------------------
-    from Utilitai.optimize import fmin
     para_dsp = f_dsp_refe.para
     lfreq = f_dsp_refe.vale_x
     vale_dsp = f_dsp_refe.vale_y

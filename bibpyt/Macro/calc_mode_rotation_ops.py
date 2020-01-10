@@ -20,6 +20,8 @@
 #
 
 from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CALC_MODES, COMB_MATR_ASSE, CREA_TABLE
+from Utilitai.Table import Table
 
 
 def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
@@ -33,12 +35,8 @@ def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
 # METHODE, methode de calcul, QZ par defaut ou SORENSEN
 # CALC_FREQ
 # VERI_MODE
-    from Utilitai.Table import Table
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CALC_MODES
-    from code_aster.Commands import COMB_MATR_ASSE
-    from code_aster.Commands import CREA_TABLE
 
     motscit = {}
 

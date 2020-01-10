@@ -23,9 +23,14 @@
 #   UTILITAIRES MACRO POST_ENDO_FISS
 
 
-import numpy as NP
-import os
+import doctest
 import math
+import os
+
+import numpy as NP
+
+from code_aster.Commands import LIRE_MAILLAGE
+from code_aster.Helpers.LogicalUnit import FileAccess, LogicalUnitFile
 
 # RETURN A UNIQUE VECTOR
 # Fonction qui elimine les doublons dans un vecteur Vect
@@ -156,8 +161,6 @@ def crea_mail_lin(XcreteTot, YcreteTot, ZcreteTot, ConnTot, lstNomFiss, dime):
 # CREATE AN MESH OBJECT FROM A STRING REPRESENTING
 #    A MESH IN THE ASTER FORMAT
 def crea_sd_mail(self, mailString):
-    from code_aster.Helpers.LogicalUnit import LogicalUnitFile, FileAccess
-    from code_aster.Commands import LIRE_MAILLAGE
 
     nomFichierSortie = os.path.join(os.getcwd(), 'maillage.mail')
     fproc = open(nomFichierSortie, 'w')
@@ -524,7 +527,6 @@ array([-2., -1.,  0.])
 #   CO  : crack opening array
 #   errPerc : errors expressed as pourcentage (NP array)
 def crackOpeningStrong(lreg, Coorx, Coory, Epsi):
-    import numpy as NP
     Absc = curvilinearAbsissa(Coorx, Coory, len(Coorx) // 2)
     Gauss = NP.exp(-Absc ** 2 / (2. * lreg ** 2))
     area = NP.trapz(Gauss, x=Absc)
@@ -565,5 +567,4 @@ def euler_angles(matrix):
     return alpha, beta, gamma
 
 if __name__ == "__main__":
-    import doctest
     doctest.testmod(verbose=True)

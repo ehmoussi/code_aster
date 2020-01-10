@@ -18,10 +18,13 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: albert.alarcon at edf.fr
+
 from code_aster.Cata.SyntaxUtils import remove_none
+from code_aster.Commands import ASSE_MATRICE, ASSE_VECTEUR, CALC_MATR_ELEM, CALC_VECT_ELEM, NUME_DDL
+from Utilitai.Utmess import UTMESS
+
 
 def create_nume(self, numeddl_status, option, numeddl, matr_rigi, CHARGE, INFO, MODELE):
-    from code_aster.Commands import NUME_DDL
     if numeddl_status == 'To_Read':
         num = numeddl
     elif numeddl_status == 'To_Create':
@@ -49,14 +52,12 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
     VECT_ASSE = args.get("VECT_ASSE")
 
     num = None
-    from Utilitai.Utmess import UTMESS
 
     # On met le mot cle NUME_DDL dans une variable locale pour le proteger
     numeddl = NUME_DDL
     info = INFO
     # On importe la definition de la commande
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import NUME_DDL
 
     if numeddl in self.sdprods:
         # Si le concept numeddl est dans self.sdprods
@@ -82,8 +83,6 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
     if MATR_ASSE is not None:
         # import des commandes a utiliser dans la macro pour l'assemblage des
         # matrices
-        from code_aster.Commands import CALC_MATR_ELEM
-        from code_aster.Commands import ASSE_MATRICE
         # decalage eventuel en premiere position dans la liste de l occurence de MATR_ASSE contenant
         # l option de rigidite
         try:
@@ -169,8 +168,6 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
     if VECT_ASSE is not None:
         # import des commandes a utiliser dans la macro pour l'assemblage des
         # vecteurs
-        from code_aster.Commands import CALC_VECT_ELEM
-        from code_aster.Commands import ASSE_VECTEUR
 
         for v in VECT_ASSE:
             option = v['OPTION']

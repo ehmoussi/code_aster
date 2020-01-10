@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,12 +25,14 @@
 
 # pour utilisation dans eficas
 try:
-    import aster
 except:
     pass
 
 import copy
 
+import numpy
+
+import aster
 
 #  1) Utilitaires pour vérifier certaines propriétés.
 #     Ces utilitaires ne provoquent pas d'arret mais écrivent des messages dans un "checker"
@@ -129,7 +131,6 @@ def sdu_monotone(seqini):
        1 : croissant
       -1 : décroissant
        0 : constant"""
-    import numpy
     if len(seqini) < 2:
         return 0
     tv = numpy.array(seqini)

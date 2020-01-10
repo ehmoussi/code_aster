@@ -21,13 +21,14 @@
 
 import copy
 import os
-import sys
 import pprint
+import sys
+
+from code_aster.Utilities import is_float, is_sequence, is_str
 
 # Nom de la routine
 nompro = 'MACR_RECAL'
 
-from code_aster.Utilities import is_float, is_str, is_sequence
 
 
 #_____________________________________________

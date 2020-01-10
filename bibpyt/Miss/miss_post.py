@@ -29,36 +29,28 @@ avec "_xxxx" (soit _9000002).
 """
 
 import os
-import traceback
 import os.path as osp
-
+import traceback
 from math import pi
 
 import numpy as NP
-from numpy.fft import ifft, fft
-from Utilitai.partition import MAIL_PY
+from numpy.fft import fft, ifft
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (
-    DETRUIRE, DEFI_FICHIER,
-    NUME_DDL_GENE, PROJ_VECT_BASE, PROJ_MATR_BASE, COMB_MATR_ASSE,
-    LIRE_IMPE_MISS, LIRE_FORC_MISS,
-    DYNA_VIBRA, REST_SPEC_TEMP,
-    DEFI_LIST_REEL, CALC_FONCTION, RECU_FONCTION, DEFI_FONCTION,
-    FORMULE, CALC_FONC_INTERP, CREA_TABLE, LIRE_FONCTION,
-    DEFI_CONSTANTE, CREA_CHAMP, AFFE_CHAR_MECA_F
-)
-
-from Utilitai.Table import Table
-from Utilitai.Utmess import UTMESS
-from Utilitai.utils import set_debug, _print, _printDBG
-from Miss.force_iss_vari import force_iss_vari
-
-from Miss.miss_resu_miss import MissCsolReader
-from code_aster.Helpers.LogicalUnit import LogicalUnitFile
 from code_aster import DataStructure
-
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CHAR_MECA_F, CALC_FONC_INTERP, CALC_FONCTION, COMB_MATR_ASSE,
+                                 CREA_CHAMP, CREA_TABLE, DEFI_CONSTANTE, DEFI_FICHIER,
+                                 DEFI_FONCTION, DEFI_LIST_REEL, DETRUIRE, DYNA_VIBRA, FORMULE,
+                                 LIRE_FONCTION, LIRE_FORC_MISS, LIRE_IMPE_MISS, NUME_DDL_GENE,
+                                 PROJ_MATR_BASE, PROJ_VECT_BASE, RECU_FONCTION, REST_SPEC_TEMP)
+from code_aster.Helpers.LogicalUnit import LogicalUnitFile
+from Miss.force_iss_vari import force_iss_vari
+from Miss.miss_resu_miss import MissCsolReader
+from Utilitai.partition import MAIL_PY
+from Utilitai.Table import Table
+from Utilitai.utils import _print, _printDBG, set_debug
+from Utilitai.Utmess import UTMESS
 
 # correspondance
 FKEY = {

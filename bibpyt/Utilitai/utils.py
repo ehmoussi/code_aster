@@ -26,16 +26,19 @@ Module fournissant quelques fonctions utilitaires.
 import os
 import os.path as osp
 import re
+import tempfile
 import time
 from functools import partial
 from subprocess import Popen
-import tempfile
 
-from Utilitai.string_utils import maximize_lines
+from asrun.run import AsRunFactory
+
+import aster
+import aster_core
 from code_aster.Utilities import convert
+from Utilitai.string_utils import maximize_lines
 
 try:
-    import aster
     aster_exists = True
 except:
     aster_exists = False
@@ -76,7 +79,6 @@ def get_titre_concept(co=None):
     """Retourne un titre automatique."""
     # ASTER 10.01.25 CONCEPT tab0 CALCULE LE 21/05/2010 A 17:58:50 DE TYPE
     # TABLE_SDASTER
-    import aster_core
     fmt = {
         "version": "ASTER %(version)s",
         "nomco": "CONCEPT %(nom_concept)s",
@@ -152,7 +154,6 @@ def get_shared_tmpdir(prefix, default_dir=None):
     If asrun shared tmpdir is not known, use *default_dir*.
     """
     if getattr(get_shared_tmpdir, 'cache_run', None) is None:
-        from asrun.run import AsRunFactory
         get_shared_tmpdir.cache_run = AsRunFactory()
     run = get_shared_tmpdir.cache_run
 

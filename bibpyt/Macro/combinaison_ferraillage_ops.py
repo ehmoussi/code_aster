@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------
 # Copyright (C) 2018 Aether Engineering Solutions - www.aethereng.com
 # Copyright (C) 2018 Kobe Innovation Engineering - www.kobe-ie.com
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,16 +23,10 @@
 import string
 
 import aster
-
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CALC_FERRAILLAGE, CREA_CHAMP, CREA_RESU, DETRUIRE, FORMULE
 from Utilitai.Utmess import UTMESS
 
-from code_aster.Cata.Syntax import _F
-
-from code_aster.Commands import CREA_CHAMP
-from code_aster.Commands import CREA_RESU
-from code_aster.Commands import CALC_FERRAILLAGE
-from code_aster.Commands import FORMULE
-from code_aster.Commands import DETRUIRE
 
 def combinaison_ferraillage_ops(self, **args):
     """Command to combine results to estimate reinforcement of the structure."""

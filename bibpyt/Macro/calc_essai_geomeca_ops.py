@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from .geomec_utils import *
+from code_aster.Cata.Syntax import _F, ListFact
+
 from .geomec_essais import *
+from .geomec_utils import *
+
 
 def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
                            # ESSAI_XXX,
@@ -26,7 +29,6 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
     """
     Objet : Programme principal CALC_ESSAI_GEOMECA
     """
-    from code_aster.Cata.Syntax import _F, ListFact
     args = _F(args)
     COMPORTEMENT = ListFact(COMPORTEMENT)
     CONVERGENCE = ListFact(CONVERGENCE)

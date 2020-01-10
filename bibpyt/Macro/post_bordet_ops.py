@@ -17,24 +17,23 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import numpy as NP
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_CHAM_ELEM, CALC_CHAMP, CALC_TABLE,
+                                 CREA_CHAMP, CREA_TABLE, FORMULE)
+from code_aster.Objects import Function as fonction_sdaster
+from code_aster.Objects import Surface as nappe_sdaster
+from Utilitai.Utmess import UTMESS
+
+
 def post_bordet_ops(self, RESULTAT, PARAM, TEMP, TOUT=None, GROUP_MA=None,
                     INST=None, PRECISION=None, CRITERE=None, NUME_ORDRE=None,
                     PROBA_NUCL=None, COEF_MULT=None, **args):
     """Corps de POST_BORDET"""
-    import numpy as NP
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from code_aster.Objects import Function as fonction_sdaster
-    from code_aster.Objects import Surface as nappe_sdaster
-    from Utilitai.Utmess import UTMESS
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CALC_CHAM_ELEM
-    from code_aster.Commands import CALC_CHAMP
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import FORMULE
-    from code_aster.Commands import CALC_TABLE
     #
     # Recuperation du modele a partir du resultat
     model = RESULTAT.getModel()

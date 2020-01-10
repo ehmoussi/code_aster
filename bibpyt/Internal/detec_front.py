@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,10 @@
 
 # person_in_charge: samuel.geniaut at edf.fr
 
-from code_aster.Cata.Syntax import OPER, SIMP
-from code_aster.Cata.DataStructure import table_sdaster, evol_noli, fiss_xfem
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
 from code_aster import Table
-
+from code_aster.Cata.DataStructure import evol_noli, fiss_xfem, table_sdaster
+from code_aster.Cata.Syntax import OPER, SIMP
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
 
 DETEC_FRONT_CATA = OPER(
     nom="DETEC_FRONT", op=139, sd_prod=table_sdaster, reentrant='n',

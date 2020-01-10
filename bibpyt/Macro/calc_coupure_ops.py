@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------
 # Copyright (C) 2019 Aether Engineering Solutions - www.aethereng.com
 # Copyright (C) 2019 Kobe Innovation Engineering - www.kobe-ie.com
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,16 +20,18 @@
 # --------------------------------------------------------------------
 # aslint: disable=W4004
 
+import itertools
+import math
+import os
+
 import numpy as NP
-import os, math
-from Utilitai.Utmess import UTMESS
-from Utilitai.Table import Table
+
+import aster
+import Messages
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import *
-import itertools
-
-import Messages
-import aster
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS
 
 filter_columns = ('TOUT_ORDRE','NUME_ORDRE','NUME_MODE','FREQ','LIST_FREQ','NOM_CAS','CRITERE','PRECISION')
 inte_by_efge = {'N':'NYY', 'VPL':'NXY', 'MHP':'MYY', 'VHP':'QY', 'MPL':'NYY'}

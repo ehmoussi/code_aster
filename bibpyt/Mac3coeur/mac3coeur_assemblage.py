@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,8 @@ certains types d'assemblages.
 """
 
 from math import pi
+
+from code_aster.Cata.Syntax import _F
 
 from .mac3coeur_factory import Mac3Factory
 
@@ -190,7 +192,6 @@ class Assemblage(object):
 
     def mcf_geom_fibre(self):
         """Retourne les mots-clés facteurs pour DEFI_GEOM_FIBRE."""
-        from code_aster.Cata.Syntax import _F
 
         def vale_4fibres(surf, iner):
             """Retourne les triplets (y, z, val) pour les 4 fibres."""
@@ -234,7 +235,6 @@ class Assemblage(object):
 
     def mcf_cara_multifibre(self):
         """Retourne les mots-clés facteurs pour AFFE_CARA_ELEM/MULTIFIBRE."""
-        from code_aster.Cata.Syntax import _F
         mcf = (
             _F(GROUP_MA='CR_' + self.idAST,
                GROUP_FIBRE='CR_' + self.idAST,),
@@ -249,7 +249,6 @@ class Assemblage(object):
 
     def mcf_cara_barre(self):
         """Retourne les mots-clés facteurs pour AFFE_CARA_ELEM/BARRE."""
-        from code_aster.Cata.Syntax import _F
         # On donne une section unitaire
         mcf = (
             _F(GROUP_MA='MNT_' + self.idAST,
@@ -260,7 +259,6 @@ class Assemblage(object):
 
     def mcf_AC_mater(self):
         """Retourne les mots-clés facteurs pour AFFE_MATERIAU/AFFE."""
-        from code_aster.Cata.Syntax import _F
         mcf = (
             _F(GROUP_MA='CR_' + self.idAST, MATER=self.mate.mate['CR'],),
             _F(GROUP_MA='TG_' + self.idAST, MATER=self.mate.mate['TG'],),
@@ -279,7 +277,6 @@ class Assemblage(object):
 
     def mcf_cara_poutre(self):
         """Retourne les mots-clés facteurs pour AFFE_CARA_ELEM/POUTRE."""
-        from code_aster.Cata.Syntax import _F
         mcf = (
             # crayons
             _F(GROUP_MA='CR_' + self.idAST,
@@ -320,7 +317,6 @@ class Assemblage(object):
 
     def mcf_cara_discret(self):
         """Retourne les mots-clés facteurs pour AFFE_CARA_ELEM/DISCRET."""
-        from code_aster.Cata.Syntax import _F
 
         def vale_K_TR_D_L(nb, kr):
             """Retourne les valeurs pour un K_TR_D_L."""
@@ -412,7 +408,6 @@ class Assemblage(object):
 
     def mcf_deform_impo(self):
         """Retourne les mots-clés facteurs pour AFFE_CHAR_CINE/MECA_IMPO."""
-        from code_aster.Cata.Syntax import _F
         mcf = []
         for igr in range(1, self.NBGR + 1):
             mcf.append(_F(GROUP_NO='G_' + self.idAST + '_' + str(igr),
@@ -423,7 +418,6 @@ class Assemblage(object):
     def mcf_archimede_nodal(self):
         """Retourne les mots-clés facteurs pour AFFE_CHAR_MECA/FORCE_NODALE
             dans la prise en compte de la poussée d Archimede."""
-        from code_aster.Cata.Syntax import _F
         mcf = []
         mcf.append(_F(GROUP_NO='PS_' + self.idAST, FX=self.AFEBSU_1,),)
         mcf.append(_F(GROUP_NO='PI_' + self.idAST, FX=self.AFEBIN_1,),)
@@ -441,7 +435,6 @@ class Assemblage(object):
     def mcf_archimede_poutre(self, FXTG, FXCR):
         """Retourne les mots-clés facteurs pour AFFE_CHAR_MECA_F/FORCE_POUTRE
             dans la prise en compte de la poussée d Archimede."""
-        from code_aster.Cata.Syntax import _F
         mcf = (
             _F(GROUP_MA='TG_' + self.idAST, FX=FXTG,),
             _F(GROUP_MA='CR_' + self.idAST, FX=FXCR,),

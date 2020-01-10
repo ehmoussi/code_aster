@@ -19,16 +19,18 @@
 
 # person_in_charge: nicolas.brie at edf.fr
 
+import aster
 from code_aster import AssemblyMatrixDisplacementComplex, GeneralizedAssemblyMatrixComplex
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DETRUIRE
+from Modal.mode_iter_inv import MODE_ITER_INV
+from Utilitai.Utmess import UTMESS
 
 
 def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
     """
        Macro-command CALC_MODES, file for improving the quality of the eigenmodes
     """
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
 
     args = _F(args)
     SOLVEUR = args.get("SOLVEUR")
@@ -38,8 +40,6 @@ def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
 
     # import the definitions of the commands to use in the macro-command
     # The name of the variable has to be the name of the command
-    from Modal.mode_iter_inv import MODE_ITER_INV
-    from code_aster.Commands import DETRUIRE
 
 
     ##############################################################################

@@ -17,6 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, AFFE_MODELE,
+                                 CALC_FORC_AJOU, CALC_MATR_AJOU, DEFI_MATERIAU,
+                                 THER_LINEAIRE)
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+
 def macro_matr_ajou_ops(
     self, MAILLAGE, GROUP_MA_FLUIDE, GROUP_MA_INTERF, MODELISATION, FLUIDE, DDL_IMPO,
     MODE_MECA=None, DEPL_IMPO=None, NUME_DDL_GENE=None, MODELE_GENE=None, MATR_MASS_AJOU=None,
@@ -26,19 +34,8 @@ def macro_matr_ajou_ops(
     """
        Ecriture de la macro MACRO_MATR_AJOU
     """
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import DEFI_MATERIAU
-    from code_aster.Commands import AFFE_MATERIAU
-    from code_aster.Commands import AFFE_MODELE
-    from code_aster.Commands import AFFE_CHAR_THER
-    from code_aster.Commands import CALC_MATR_AJOU
-    from code_aster.Commands import THER_LINEAIRE
-    from code_aster.Commands import CALC_FORC_AJOU
 
     if len(FLUIDE) == 1:
         message = '<I> <MACRO_MATR_AJOU> tout le domaine fluide specifie dans GROUP_MA_INTERF et GROUP_MA_FLUIDE \n'

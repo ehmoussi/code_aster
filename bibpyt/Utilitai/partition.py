@@ -19,15 +19,19 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-import aster_core
-import aster
-import os
-import time
-import sys
 import collections
-import numpy as NP
+import os
+import sys
+import time
 
+import numpy as N
+
+import aster
+import aster_core
 from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DEFI_GROUP, LIRE_MAILLAGE
+from code_aster.Helpers.LogicalUnit import Action, FileAccess, FileType, LogicalUnitFile
+from Utilitai.Partition import MAIL_PY
 
 # ============================================================================ #
 
@@ -98,8 +102,6 @@ class MAIL_PY:
 
  EXEMPLE D'UTILISATION
  ---------------------
- from Utilitai.Partition import MAIL_PY
- import numpy as N
 
  mail=LIRE_MAILLAGE();
 
@@ -177,7 +179,6 @@ class MAIL_PY:
         self.correspondance_mailles = []
 
         try:
-            import aster
             nom_mailles = [None] + [tm.strip()
                                     for tm in aster.getvectjev('&CATA.TM.NOMTM')]
         except ImportError:
@@ -288,9 +289,7 @@ class MAIL_PY:
 
 # -------------------------------------------------------------
     def ToAster(self, unite=None):
-        from code_aster.Helpers.LogicalUnit import LogicalUnitFile, Action, FileAccess, FileType
         try:
-            from code_aster.Commands import LIRE_MAILLAGE
         except:
             print("Il faut lancer ce programme depuis Aster pour pouvoir générer un maillage Aster.")
             sys.exit()
@@ -1331,7 +1330,6 @@ class PARTITION:
 
         # Creation et lancement de la commande DEFI_GROUP associée
         try:
-            from code_aster.Commands import DEFI_GROUP
         except:
             print("\n\nERREUR : il faut lancer ce programme depuis Aster pour pouvoir \ngénérer les groupes de mailles Aster.\n\n")
             return

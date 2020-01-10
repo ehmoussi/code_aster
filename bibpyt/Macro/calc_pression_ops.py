@@ -17,7 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge : ayaovi-dzifa.kudawoo at edf.fr
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_CHAMP, FORMULE, MODI_MAILLAGE
+from Utilitai.Utmess import UTMESS
 
 
 def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args):
@@ -27,15 +30,9 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
            uniquement pour les modèles massif. On exclut du périmètre d'utilisation
            les éléments de structures types discret, poutre, plaque, coques,...
     """
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import MODI_MAILLAGE
-    from code_aster.Commands import FORMULE
 
     model = args.get('MODELE')
     if model == None:

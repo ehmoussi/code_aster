@@ -17,21 +17,23 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import math
+
+import numpy as NP
+
+from Cata_Utils.t_fonction import t_fonction, t_fonction_c, t_nappe
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CALC_FONCTION, CREA_TABLE, IMPR_TABLE
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS
+
+
 def info_fonction_ops(self, INFO, **args):
     """
        Ecriture de la macro INFO_FONCTION
     """
-    from Cata_Utils.t_fonction import t_fonction, t_fonction_c, t_nappe
-    import math
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    import numpy as NP
-    from Utilitai.Table import Table
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import IMPR_TABLE
-    from code_aster.Commands import CALC_FONCTION
 
 
     # type de traitement

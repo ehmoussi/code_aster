@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,19 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import os.path
-import os
 import copy
+import os
+import os.path
+
 import numpy as NP
 
-try:
-    from code_aster.Commands import (COPIER, CREA_MAILLAGE, DEFI_FICHIER,
-                                          DEFI_GROUP, DETRUIRE, LIRE_MAILLAGE,
-                                          PRE_GMSH)
-    from code_aster.Cata.Syntax import _F
-except:
-    print('Fonctionnalites Aster indisponibles')
-
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (COPIER, CREA_MAILLAGE, DEFI_FICHIER,
+                                 DEFI_GROUP, DETRUIRE, LIRE_MAILLAGE, PRE_GMSH)
 
 _CARAC = {
     'prec': 1.E-8

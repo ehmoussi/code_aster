@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,21 +20,21 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 import copy
+import glob
 import os
 import sys
-import glob
 
 import numpy as NP
 
+import Gnuplot
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, INFO_EXEC_ASTER
+from Utilitai.Utmess import UTMESS
+
 try:
-    import Gnuplot
 except:
     pass
 
-from code_aster.Commands import (INFO_EXEC_ASTER, DEFI_FICHIER,
-                                 IMPR_FONCTION, DETRUIRE)
-from code_aster.Cata.Syntax import _F
-from Utilitai.Utmess import UTMESS
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------

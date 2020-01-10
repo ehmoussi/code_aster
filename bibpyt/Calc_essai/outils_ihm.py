@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 
 import os
 import string
+import tkinter.font
 from subprocess import Popen
 from tkinter import *
 
@@ -28,10 +29,11 @@ from numpy import arange, array, log, maximum, minimum
 
 import aster
 import aster_core
-import tkinter.font
 from Calc_essai.cata_ce import DynaHarmo, ModeMeca
 from code_aster import AsterError
-from code_aster.Cata.Syntax import _F, ASSD
+from code_aster.Cata.Syntax import _F, ASSD, CO
+from code_aster.Commands import (AFFE_CHAR_MECA, CREA_CHAMP, DEFI_FONCTION, DEPL_INTERNE, DETRUIRE,
+                                 DYNA_VIBRA, OBSERVATION, RECU_FONCTION)
 from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
 
 # from Calc_essai.ce_ihm_parametres import CalcEssaiSalome
@@ -1550,7 +1552,6 @@ class DispFRFDialogue(Toplevel):
     def prep_calc(self, num_resu, resu, param):
         """ Calcul des FRF associees a une base de mode et une excitation "marteau".
             Pour les calculs de modification structurale (sumail is not None), calcul du depl interne"""
-        from code_aster.Commands import DEPL_INTERNE
         mdo = self.ce_objects
         if isinstance(self.modes_couple, ModeMeca):
             nom = self.modes_couple
@@ -1623,7 +1624,6 @@ class DispFRFDialogue(Toplevel):
 
     def choix_ddl(self, num_resu):
         # la liste des ddls dispos pour le champ selectionne
-        from code_aster.Commands import CREA_CHAMP, DETRUIRE
         ddls = []
         self.champ_choisi[num_resu] = self.param_disp[num_resu]['champ'].get()
         try:
@@ -1662,7 +1662,6 @@ class DispFRFDialogue(Toplevel):
         # TODO :  rendre possible un calcul sur base modale, en fabriquant les
         # matrices de mass et de raideur generalisees a partir des donnees
         # mesurees
-        from code_aster.Commands import DYNA_VIBRA, AFFE_CHAR_MECA, DEFI_FONCTION
 
         f_min = float(param['freq_min'].get())
         f_max = float(param['freq_max'].get())
@@ -1708,7 +1707,6 @@ class DispFRFDialogue(Toplevel):
         self.affich_FRF(1)
 
     def affich_FRF(self):
-        from code_aster.Commands import RECU_FONCTION
         if self.sumail:
             dynas = [self.dyna[0], self.dyna[2]]
         else:
@@ -1851,8 +1849,6 @@ class ObservationWindow(Frame):
 
     def _calculate_observabilite(self):
 
-        from code_aster.Cata.Syntax import CO
-        from code_aster.Commands import OBSERVATION, DETRUIRE
 
         if self.obs_co:
             DETRUIRE(CONCEPT=_F(NOM=self.obs_co.obj), INFO=1)

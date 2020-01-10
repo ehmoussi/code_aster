@@ -17,15 +17,17 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def defi_list_freq_ops(self, **args):
+from math import fmod, sqrt
 
-    from Utilitai.Utmess import UTMESS
-    from math import fmod, sqrt
+from code_aster.Commands import DEFI_LIST_REEL
+from Utilitai.Utmess import UTMESS
+
+
+def defi_list_freq_ops(self, **args):
 
     RAFFINEMENT = args.get("RAFFINEMENT")
     if RAFFINEMENT is not None: args.pop("RAFFINEMENT")
 
-    from code_aster.Commands import DEFI_LIST_REEL
 
     # 1. Construction de la liste des fréquences "de base"
     motscle = {}

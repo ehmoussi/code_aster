@@ -17,20 +17,21 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_CHAMP, CREA_RESU, FORMULE
+
+
 #-------------------------------------------------------
 # CRITERE DE LIQUEFACTION : [SIP(t)-SIP(t0)]/SIV(t0)
 #-------------------------------------------------------
 
 def post_liquefaction_ops(self,AXE,RESULTAT,CRITERE,**args):
 
-    import aster
-    import os
-    from code_aster.Cata.Syntax import _F
 
   ### On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import FORMULE
 
  ### RECUPERATION DU MODELE A PARTIR DU RESULTAT
     if CRITERE != 'P_SIGM' :

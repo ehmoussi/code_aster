@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,6 +20,14 @@
 # TODO Probably obsolete
 #
 import os
+#%====================Initialisation Salome================================%
+import re
+import sys
+
+import pvsimple as PV
+import salome
+import salome_kernel
+import SALOMEDS
 
 # NOM_PARA requis dans EXEC_LOGICIEL: INPUTFILE1, CHOIX
 
@@ -38,12 +46,6 @@ if 'CHOIX' not in ['DEPL', 'ISO', 'GAUSS', 'COURBE', 'ON_DEFORMED']:
 if not os.path.isfile('INPUTFILE1'):
     raise Exception("Fichier %s non present!" % 'INPUTFILE1')
 
-#%====================Initialisation Salome================================%
-import re
-import sys
-import salome
-import SALOMEDS
-import salome_kernel
 
 orb, lcc, naming_service, cm = salome_kernel.salome_kernel_init()
 obj = naming_service.Resolve('myStudyManager')
@@ -63,7 +65,6 @@ salome.salome_init()
 try:
     pvsimple
 except:
-    import pvsimple as PV
 
 #%===================Construction courbe======================%
 

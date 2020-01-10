@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,27 +27,41 @@
 # MACR_RECAL is on the next deprecations list!
 # aslint: disable=C4007
 
-import os
-import sys
-import shutil
-import tempfile
-import glob
 import copy
-import re
+import glob
+import os
 import platform
+import pprint
+import re
+import shutil
+import sys
+import tempfile
 from math import log10, sqrt
+from optparse import OptionGroup, OptionParser
 
 import numpy as NP
+from asrun.common.utils import find_command, search_enclosed
+from asrun.distrib import DistribParametricTask
+from asrun.parametric import is_list_of_dict
+from asrun.profil import AsterProfil
+from asrun.repart import get_hostrc
+from asrun.run import AsRunFactory
+from asrun.thread import Dispatcher
+from asrun.utils import search_enclosed
 
+import aster
+import aster_core
 import code_aster
+import Macro
+from code_aster.Cata.Commands import DETRUIRE
+from code_aster.Cata.Syntax import _F, MACRO, OPER
+from Macro import reca_algo, reca_interp
+from Utilitai.TableReader import TableReaderFactory
+from Utilitai.utils import get_shared_tmpdir
+from Utilitai.Utmess import UTMESS
 
 # Importation de commandes Aster
 try:
-    import aster_core
-    import aster
-    import Macro
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.utils import get_shared_tmpdir
 except ImportError:
     pass
 
@@ -70,7 +84,6 @@ def get_absolute_path(path):
 # recupere "bibpyt" à partir de "bibpyt/Macro/recal.py"
 sys.path.append(get_absolute_path(os.path.join(sys.argv[0], '..', '..')))
 
-from Utilitai.Utmess import UTMESS
 # try:
 #    from Utilitai.Utmess import UTMESS
 # except Exception, e:
@@ -164,7 +177,6 @@ def make_include_files(UNITE_INCLUDE, calcul, parametres):
     except:
         pass
     try:
-        from asrun.common.utils import find_command, search_enclosed
     except Exception as e:
         print(e)
         UTMESS('F', 'RECAL0_99')
@@ -261,7 +273,6 @@ def get_tables(tables_calc, tmp_repe_table, prof):
         for mdl in glob.glob(os.path.join(bibpyt, '*')):
             sys.path.append(os.path.join(os.environ['ASTER_ROOT'], version, 'bibpyt', mdl))
     try:
-        from Utilitai.TableReader import TableReaderFactory
     except:
         UTMESS('F', 'RECAL0_23')
 
@@ -558,12 +569,8 @@ class CALCULS_ASTER:
         """
 
         try:
-            import aster
-            from code_aster.Cata.Syntax import OPER, MACRO
-            from code_aster.Cata.Syntax import _F
 
             # Declaration de toutes les commandes Aster
-            from code_aster.Cata.Commands import DETRUIRE
         except Exception as e:
             raise Exception("Le mode INCLUDE doit etre lance depuis Aster : \nErreur : %s" % e)
 
@@ -719,12 +726,6 @@ class CALCULS_ASTER:
         except:
             pass
         try:
-            from asrun.run          import AsRunFactory
-            from asrun.profil       import AsterProfil
-            from asrun.repart       import get_hostrc
-            from asrun.parametric   import is_list_of_dict
-            from asrun.thread       import Dispatcher
-            from asrun.distrib      import DistribParametricTask
         except Exception as e:
             print(e)
             UTMESS('F', 'RECAL0_99')
@@ -1014,7 +1015,6 @@ class CALCULS_ASTER:
         # ----------------------------------------------------------------------------
         if info and info >= 2:
             UTMESS('I', 'RECAL0_72', valk=str(fonctionnelle))
-            import pprint
             if CalcGradient:
                 UTMESS('I', 'RECAL0_73')
                 pprint.pprint(gradient)
@@ -1039,7 +1039,6 @@ class CALCULS_ASTER:
         except:
             pass
         try:
-            from asrun.utils        import search_enclosed
         except Exception as e:
             print(e)
             UTMESS('F', 'RECAL0_99')
@@ -1111,7 +1110,6 @@ class CALC_ERROR:
         self.INFO           = info
         self.unite_resu     = unite_resu
 
-        from Macro import reca_interp, reca_algo
         self.test_convergence   = reca_algo.test_convergence
         self.calcul_gradient    = reca_algo.calcul_gradient
         self.Simul              = reca_interp.Sim_exp(self.experience, self.poids)
@@ -1333,7 +1331,6 @@ if __name__ == '__main__':
         # Execution en mode EXTERNE : on doit depouiller les parametres de la ligne de commande
 
 
-        from optparse import OptionParser, OptionGroup
 
         p = OptionParser(usage='usage: %s fichier_export [options]' % sys.argv[0])
 
@@ -1616,7 +1613,6 @@ if __name__ == '__main__':
     # ------------------------------------------------------------------------------------------------------------------
     if info >= 2:
         print("\nFonctionnelle au point X0: \n%s" % str(fonctionnelle))
-        import pprint
         if dX:
             print("\nGradient au point X0:")
             pprint.pprint(gradient)

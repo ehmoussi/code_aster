@@ -19,6 +19,11 @@
 
 from math import cos, exp, pi
 
+import numpy
+
+from code_aster.Commands import DEFI_FONCTION
+from Utilitai.Utmess import UTMESS
+
 
 def FcompletGR1(T, I1, I2, FR, TR, PHI1, PHI2, TAU1, TAU2):
     fxt = 4.E-7 * I1 * I2
@@ -84,12 +89,9 @@ def FcontinuGR2R(T, I1R, I2R, TRR, PHI1R, PHI2R, TAU1R, TAU2R, D):
 
 
 def defi_fonc_elec_ops(self, FREQ=None, SIGNAL=None, COUR=None, COUR_PRIN=None, COUR_SECO=None, **args):
-    from Utilitai.Utmess import UTMESS
-    import numpy
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import DEFI_FONCTION
 #
     if COUR:
         TINI = COUR[0]['INST_CC_INIT']

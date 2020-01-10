@@ -17,20 +17,21 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import copy
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_CHAMP, DEFI_LIST_REEL, DYNA_NON_LINE
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+
 def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
                              INCR_IMPL, INCR_EXPL,
                              SCHEMA_TEMPS_IMPL, SCHEMA_TEMPS_EXPL, SCHEMA_TEMPS_EQUI,
                              COMPORTEMENT_IMPL, COMPORTEMENT_EXPL, CONVERGENCE,
                              EXCIT, NEWTON, ETAT_INIT, LIST_INST_BASCULE, SCHEMA_INIT, EQUILIBRAGE,
                              SOLVEUR, ARCHIVAGE, OBSERVATION, ENERGIE, **args):
-    import copy
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import DYNA_NON_LINE
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import DEFI_LIST_REEL
     #
     motscles = {}
     motscles['MODELE'] = MODELE

@@ -17,19 +17,23 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
+import shutil
+
+import aster
+import aster_core
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_TABLE
+from Utilitai.System import ExecCommand
+from Utilitai.Utmess import UTMESS
+
+
 def macr_ecre_calc_ops(self, **args):
     """
        Procedure de couplage Aster-Ecrevisse
        Generation par Aster du fichier de donnees d'Ecrevisse et lancement d'Ecrevisse
     """
 
-    import os
-    import shutil
-    import aster_core
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.System import ExecCommand
 
     TABLE = args.get("TABLE")
     DEBIT = args.get("DEBIT")
@@ -58,7 +62,6 @@ def macr_ecre_calc_ops(self, **args):
     defaut = '00'
 
     # IMPORTATION DE COMMANDES ASTER
-    from code_aster.Commands import CREA_TABLE
 
     FISSURE = _F(FISSURE)
     ECOULEMENT = _F(ECOULEMENT)

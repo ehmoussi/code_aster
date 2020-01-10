@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,10 @@
 
 # person_in_charge: sam.cuvilliez at edf.fr
 
-from code_aster.Cata.Syntax import OPER, SIMP
-from code_aster.Cata.DataStructure import carte_sdaster, evol_noli
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
 from code_aster import PCFieldOnMeshDouble
-
+from code_aster.Cata.DataStructure import carte_sdaster, evol_noli
+from code_aster.Cata.Syntax import OPER, SIMP
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
 
 POST_VOISIN_CZM_CATA = OPER(
 

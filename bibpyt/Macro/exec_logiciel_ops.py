@@ -32,9 +32,11 @@ import tempfile
 import traceback
 from subprocess import PIPE
 
+import aster
 import aster_core
 from code_aster import AsterError
 from code_aster.Commands import LIRE_MAILLAGE
+from code_aster.Helpers.LogicalUnit import FileAccess, FileType, LogicalUnitFile
 from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
 
@@ -179,7 +181,6 @@ class ExecMesher( ExecProgram ):
 
     def post( self ):
         """Create the mesh object"""
-        from code_aster.Helpers.LogicalUnit import LogicalUnitFile, FileType, FileAccess
         fileToRead = LogicalUnitFile.open(self.fileOut, FileType.Binary, FileAccess.Old)
         ulMesh = fileToRead.unit
         assert ulMesh, \
@@ -320,8 +321,6 @@ def safe_remove( *args ):
 
 def exec_logiciel_ops(self, **kwargs):
     """Execute a program, a script, a mesher... from Code_Aster"""
-    import aster
-    from Utilitai.Utmess import UTMESS
 
     action = ExecProgram.factory(self, **kwargs)
     try:

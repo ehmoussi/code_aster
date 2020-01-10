@@ -19,8 +19,15 @@
 
 # person_in_charge: patrick.massin at edf.fr
 
-import os
 import math
+import os
+
+import aster
+from code_aster.Cata.Language.SyntaxObjects import _F
+from code_aster.Commands import (CALC_TABLE, CREA_CHAMP, CREA_RESU, CREA_TABLE, DETRUIRE, FORMULE,
+                                 POST_ELEM)
+from Utilitai.Utmess import ASSERT, UTMESS
+
 
 def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
     """
@@ -28,20 +35,10 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
     norme en énergie, norme L2 du déplacement et norme L2 de la pression
     de contact
     """
-    import aster
 
-    from code_aster.Cata.Language.SyntaxObjects import _F
-    from Utilitai.Utmess import UTMESS, ASSERT
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import POST_ELEM
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import FORMULE
-    from code_aster.Commands import CALC_TABLE
 
     # récupération du phenomene
     iret,ibid,phenomene = aster.dismoi('PHENOMENE', MODELE.getName(), 'MODELE', 'F')

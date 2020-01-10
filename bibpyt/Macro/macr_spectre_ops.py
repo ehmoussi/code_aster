@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import aster
 from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CALC_FONCTION, CREA_TABLE, IMPR_FONCTION, RECU_FONCTION
+from Utilitai.Utmess import UTMESS
 
 try:
-    import aster
-    from Utilitai.Utmess import UTMESS
 except:
     pass
 
@@ -45,10 +46,6 @@ def macr_spectre_ops(
     EnumType = (list, tuple)
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import RECU_FONCTION
-    from code_aster.Commands import CALC_FONCTION
-    from code_aster.Commands import IMPR_FONCTION
-    from code_aster.Commands import CREA_TABLE
 
     # construction de la liste des noeuds à traiter
     planch_nodes = {}

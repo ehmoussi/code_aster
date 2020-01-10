@@ -17,6 +17,23 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import math as M
+from random import randint
+
+import numpy as NP
+from numpy import array
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CREA_TABLE, DEFI_FICHIER, DEFI_FONCTION,
+                                 DEFI_LIST_INST, DEFI_LIST_REEL, DETRUIRE,
+                                 IMPR_FONCTION, INFO_EXEC_ASTER,
+                                 SIMU_POINT_MAT)
+from Comportement import catalc
+from Contrib.calc_point_mat import CALC_POINT_MAT
+from Utilitai.Utmess import UTMESS
+
+
 # --------------------------------------------------------------
 # -Debut--------------------------------------------------------
 # --------------------------------------------------------------
@@ -89,7 +106,6 @@ def affiche_infos_essai(str_n_essai, type_essai, \
     """
     Objet: Afficher des informations sur l'essai
     """
-    import aster
 
     mesg1 = " ESSAI " + type_essai + " NUMERO " + str_n_essai + " :"
 
@@ -193,7 +209,6 @@ def verif_essais(COMPORTEMENT,
     Objet: Verification de certaines donnees d'entree de la macro
            ne pouvant etre faites dans le catalogue
     """
-    from Utilitai.Utmess import UTMESS
 
     List_essais = []
 
@@ -917,7 +932,6 @@ def affiche_alarm_TRIA_ND_C_F(str_n_essai, pres, dsig, codret, NB_CYCLE, \
                     | 2 : CALC_POINT_MAT s'arrete en ConvergenceError et critere atteint
                     | 3 : CALC_POINT_MAT s'arrete en ConvergenceError et critere non atteint
     """
-    from Utilitai.Utmess import UTMESS
 
     assert codret in ['0', '1', '2', '3']
 
@@ -1288,13 +1302,7 @@ def impr_graphique(self, DicoEssai, Courbes, NomsFich,
     Objet: Tracer une liste de courbes au format XMGRACE
     """
     #import os
-    from code_aster.Cata.Syntax import _F
-    from random import randint
 
-    from code_aster.Commands import DEFI_FICHIER
-    from code_aster.Commands import IMPR_FONCTION
-    from code_aster.Commands import INFO_EXEC_ASTER
-    from code_aster.Commands import DETRUIRE
 
     # Recuperation des options d'impression
     # -----------------------------------------
@@ -1430,12 +1438,9 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
     """
     Objet: Construction des tableaux de resultats du fichier .resu
     """
-    from code_aster.Cata.Syntax import _F
-    from numpy import array
 
     if 'TABLE_RESU' in DicoEssai:
 
-        from code_aster.Commands import CREA_TABLE
 
         # Recuperation des variables supplementaires a imprimer
         # (si existantes) contenues sous le mot-cle 'NOM_CMP'
@@ -2013,13 +2018,7 @@ def Calc_Gs_max(self, GAMMA_ELAS, PRES_CONF, KZERO, MATER, COMPORTEMENT, CONVERG
     Objet: Pour l'essai CISA_DR_C_D, calcul du module de cisaillement secant max
            (EPSI_ELAS doit etre telle qu'on reste bien dans le domaine elastique)
     """
-    from code_aster.Cata.Syntax import _F
 
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import DEFI_LIST_INST
-    from code_aster.Commands import DEFI_LIST_REEL
-    from code_aster.Commands import SIMU_POINT_MAT
-    from code_aster.Commands import DETRUIRE
 
     __RLIST = DEFI_LIST_REEL(DEBUT=0.,
                              INTERVALLE=_F(JUSQU_A=1., NOMBRE=1,),)
@@ -2093,14 +2092,7 @@ def Calc_Es_max(self, EPSI_ELAS, PRES_CONF, KZERO, MATER, COMPORTEMENT, CONVERGE
            equivalent max (EPSI_ELAS doit etre telle qu'on reste bien
            dans le domaine elastique)
     """
-    from code_aster.Cata.Syntax import _F
-    import numpy as NP
 
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import DEFI_LIST_INST
-    from code_aster.Commands import DEFI_LIST_REEL
-    from code_aster.Commands import SIMU_POINT_MAT
-    from code_aster.Commands import DETRUIRE
 
     __RLIST = DEFI_LIST_REEL(DEBUT=0.,
                              INTERVALLE=_F(JUSQU_A=5., NOMBRE=5,),)
@@ -2180,18 +2172,7 @@ def essai_TRIA_ND_C_D_mono(self, inst_init, sigm, epsi, vari, DicoEssai,
            de l'instabilite a contrainte controlee lors du franchissement
            de la ligne d' instabilite
     """
-    import numpy as NP
-    import math as M
-    from code_aster.Cata.Syntax import _F
-    import aster
-    from Utilitai.Utmess import UTMESS
-    from Comportement import catalc
 
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import DEFI_LIST_INST
-    from code_aster.Commands import DEFI_LIST_REEL
-    from Contrib.calc_point_mat import CALC_POINT_MAT
 
     UN_SUR_K   = DicoEssai['UN_SUR_K']
     KZERO      = DicoEssai['KZERO']

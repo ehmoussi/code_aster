@@ -30,12 +30,15 @@
 #    - PRODUIT UNE CARTE
 # ----------------------------------------------------------------------
 
-import aster
-from numpy import *
-from code_aster.Cata.Syntax import _F
-from Utilitai.Utmess import UTMESS, MasquerAlarme
 from math import acos, pi
+
+from numpy import *
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CALC_CHAM_ELEM, CREA_CHAMP, CREA_TABLE, DETRUIRE
 from Internal.post_voisin_czm import POST_VOISIN_CZM
+from Utilitai.Utmess import UTMESS, MasquerAlarme
 
 
 def distance(x, y, xref, yref, xdir, ydir):
@@ -60,10 +63,6 @@ def post_czm_fiss_ops(self, OPTION, RESULTAT, **args):
         VECT_TANG = args['VECT_TANG']
 
         # On importe les definitions des commandes a utiliser dans la macro
-        from code_aster.Commands import CALC_CHAM_ELEM
-        from code_aster.Commands import CREA_CHAMP
-        from code_aster.Commands import CREA_TABLE
-        from code_aster.Commands import DETRUIRE
 
         # Recuperation du nom du modele
         __MODEL = RESULTAT.getModel()

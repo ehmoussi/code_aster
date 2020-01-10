@@ -21,20 +21,25 @@
 
 """Commande DYNA_ISS_VARI"""
 
+import os
 import sys
 import traceback
-import numpy as NP
 from math import pi
-from Utilitai.Utmess import UTMESS
-from Utilitai.Table import Table
-from Miss.calc_miss_vari import (calc_miss_vari, compute_force_vari )
+
+import numpy as NP
+
 import aster
-import os
-from SD.sd_maillage import sd_maillage
-from Utilitai.signal_correlation_utils import (get_group_nom_coord, calc_dist2)
 from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (DETRUIRE, LIRE_IMPE_MISS, LIRE_FORC_MISS,
-                                      COMB_MATR_ASSE, DYNA_VIBRA)
+from code_aster.Commands import (CALC_FONCTION, COMB_MATR_ASSE, DEFI_FONCTION, DEFI_INTE_SPEC,
+                                 DETRUIRE, DYNA_VIBRA, LIRE_FORC_MISS, LIRE_IMPE_MISS,
+                                 REST_SPEC_TEMP, ceil, code_aster.Commands, floor, from, import,
+                                 math)
+from Miss.calc_miss_vari import calc_miss_vari, compute_force_vari
+from SD.sd_maillage import sd_maillage
+from Utilitai.signal_correlation_utils import calc_dist2, get_group_nom_coord
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS
+
 
 def dyna_iss_vari_ops(self, **kwargs):
     """Corps de la macro DYNA_ISS_VARI"""
@@ -182,8 +187,6 @@ class GeneratorTRANS(Generator):
 
     def sampling(self):
         """ sampling for trans"""
-        from math import ceil, floor
-        from code_aster.Commands import CALC_FONCTION
         __foint = [None]*3
 
         # verification que les abscisses des différents signaux sont les mêmes
@@ -253,7 +256,6 @@ class GeneratorTRANS(Generator):
     def compute_result(self):
         L_VEC = self.compute_harm_gene()
         __dyge0 = self.create_host_sd()
-        from code_aster.Commands import REST_SPEC_TEMP
         nbmodt = self.mat_gene_params['NBMODT']
 
         tup_re = []
@@ -595,8 +597,6 @@ class GeneratorSPEC(Generator):
 
 
     def compute_result(self):
-        from code_aster.Commands import DEFI_FONCTION
-        from code_aster.Commands import DEFI_INTE_SPEC
         SPEC = self.compute_harm_gene()
         nbmodt = self.mat_gene_params['NBMODT']
         mcfact = []

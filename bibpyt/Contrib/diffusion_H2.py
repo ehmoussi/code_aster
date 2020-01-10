@@ -17,12 +17,16 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from math import log
+
 import numpy as NP
 
-from math import log
-from code_aster.Cata.Syntax import *
+import aster
 from code_aster.Cata.DataStructure import *
-from code_aster.Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, CALC_CHAMP, CALC_CHAM_ELEM, CREA_CHAMP, DEFI_MATERIAU, PROJ_CHAMP)
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, CALC_CHAM_ELEM, CALC_CHAMP,
+                                 CREA_CHAMP, DEFI_MATERIAU, PROJ_CHAMP)
 from code_aster.Commands.ExecuteCommand import UserMacro
 
 
@@ -80,15 +84,9 @@ def FLUX(cl, GRSHx, GRSHy, DIME, GRSHz, Vh, R, T):
 def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, CHARGRD0, Vh, R, T, **args):
 # macro pour calculer le chargement thermique specfique a la diffusion H2
 
-    import numpy as NP
-    import aster
-    from code_aster.Cata.Syntax import _F
     INFO = args.get('INFO')
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CALC_CHAMP
-    from code_aster.Commands import CALC_CHAM_ELEM
 
     # Recuperation du modele a partir du resultat
     moth = RESU_H2.getModel()
@@ -235,8 +233,6 @@ CHAR_GRAD_IMPO = UserMacro("CHAR_GRAD_IMPO", CHAR_GRAD_IMPO_cata, char_grad_impo
 
 def char_grad_ini_ops(self, RESU_H2, GRMAVOL, DIME, **args):
 
-    import aster
-    from code_aster.Cata.Syntax import _F
 
     grad = []
     # On boucle sur les mailles du groupe de mailles GRMAVOL
@@ -295,15 +291,9 @@ CHAR_GRAD_INI = UserMacro("CHAR_GRAD_INI", CHAR_GRAD_INI_cata, char_grad_ini_ops
 def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, Nl, Kt, a1, a2, a3, **args):
 # macro pour calculer le chargement thermique specfique a la diffusion H2
 
-    import numpy as NP
-    import aster
-    from code_aster.Cata.Syntax import _F
     INFO = args.get('INFO')
 
    # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import AFFE_CHAR_THER
-    from code_aster.Commands import CALC_CHAMP
 
     dt = TFIN - TINIT
 
@@ -410,14 +400,9 @@ CHAR_SOURCE = UserMacro("CHAR_SOURCE", CHAR_SOURCE_cata, char_source_ops)
 def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, Nl, Kt, a1, a2, a3, **args):
 # macro pour calculer le chargement thermique specfique a la diffusion H2
 
-    import numpy as NP
-    import aster
-    from code_aster.Cata.Syntax import _F
     INFO = args.get('INFO')
 
    # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CALC_CHAMP
 
    # Recuperation du modele a partir du resultat
     moth = RESU_H2.getModel()

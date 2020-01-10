@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,16 +23,12 @@
 #
 
 import tkinter.font
-from tkinter import Frame, Toplevel
-from tkinter import Label, Button, Entry, Checkbutton
-from tkinter import StringVar, IntVar
-
-
-from Calc_essai.outils_ihm import ModeFreqList, SelectionNoeuds, DispFRFDialogue
-from Calc_essai.outils_ihm import ParamModelCouple, ParamProjMesuModal, ParamModeLMME
-from Calc_essai.outils_ihm import MacWindowFrame, MyMenu
+from tkinter import Button, Checkbutton, Entry, Frame, IntVar, Label, StringVar, Toplevel
 
 from Calc_essai.ce_calcul_modifstruct import CalcEssaiModifStruct
+from Calc_essai.outils_ihm import (DispFRFDialogue, MacWindowFrame, ModeFreqList, MyMenu,
+                                   ParamModelCouple, ParamModeLMME, ParamProjMesuModal,
+                                   SelectionNoeuds)
 
 
 class InterfaceModifStruct(Frame):

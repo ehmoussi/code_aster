@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,15 +23,16 @@ import os
 import re
 from pprint import pformat
 
+import aster
+from Utilitai.string_utils import cut_long_lines, maximize_lines
+from Utilitai.Table import Table
+from Utilitai.utils import _printDBG, set_debug
+
 try:
-    import aster
     error = aster.error
 except ImportError:
     error = Exception
 
-from Utilitai.Table import Table
-from Utilitai.string_utils import cut_long_lines, maximize_lines
-from Utilitai.utils import set_debug, _printDBG
 
 # Aster type : regular expression
 FMT = {

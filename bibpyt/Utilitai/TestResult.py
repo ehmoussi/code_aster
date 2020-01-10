@@ -25,6 +25,9 @@ import re
 from functools import partial
 from glob import glob
 
+import aster
+from Utilitai.Utmess import UTMESS as func
+
 # TODO imported by code_aster < aster_core < here < Utmess < code_aster
 # to be solved!
 # from code_aster.Utilities import Singleton
@@ -55,7 +58,6 @@ class TestResult:
     @staticmethod
     def _utmess(code, msg):
         try:
-            from Utilitai.Utmess import UTMESS as func
         except ImportError:
             func = _internal_mess
         func(code, msg)
@@ -63,7 +65,6 @@ class TestResult:
     @staticmethod
     def _printLine(text):
         try:
-            import aster
             func = partial(aster.affiche, 'RESULTAT')
         except ImportError:
             func = _internal_print

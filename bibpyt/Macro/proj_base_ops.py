@@ -17,12 +17,17 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster.Commands import NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE
+from code_aster.Commands.ExecuteCommand import CO
+from code_aster.Objects import GeneralizedDOFNumbering
+from Contrib.proj_resu_base import PROJ_RESU_BASE
+from Utilitai.Utmess import UTMESS
+
+
 def proj_base_ops(self, **args):
     """
      Ecriture de la macro PROJ_BASE
     """
-    from code_aster.Objects import GeneralizedDOFNumbering
-    from code_aster.Commands.ExecuteCommand import CO
     BASE = args.get("BASE")
     NB_VECT = args.get("NB_VECT")
     MATR_ASSE_GENE = args.get("MATR_ASSE_GENE")
@@ -31,12 +36,10 @@ def proj_base_ops(self, **args):
     NUME_DDL_GENE = args.get("NUME_DDL_GENE")
     STOCKAGE = args.get("STOCKAGE")
 
-    from Utilitai.Utmess import UTMESS
 
     # On importe les definitions des commandes a utiliser dans la macro
     # et  creation du nume_ddl_gene
     numgen = NUME_DDL_GENE
-    from code_aster.Commands import NUME_DDL_GENE
     if numgen is None:
         _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
     elif isinstance(numgen, GeneralizedDOFNumbering):
@@ -47,9 +50,6 @@ def proj_base_ops(self, **args):
     else:
         assert( False )
 
-    from code_aster.Commands import PROJ_MATR_BASE
-    from code_aster.Commands import PROJ_VECT_BASE
-    from Contrib.proj_resu_base import PROJ_RESU_BASE
 
 
     if MATR_ASSE_GENE:

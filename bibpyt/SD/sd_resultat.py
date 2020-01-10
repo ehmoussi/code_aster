@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,11 +18,10 @@
 # --------------------------------------------------------------------
 
 from SD import *
-from SD.sd_titre import sd_titre
-
-from SD.sd_l_table import sd_l_table
 from SD.sd_champ import sd_champ
 from SD.sd_l_charges import sd_l_charges
+from SD.sd_l_table import sd_l_table
+from SD.sd_titre import sd_titre
 from SD.sd_util import *
 
 

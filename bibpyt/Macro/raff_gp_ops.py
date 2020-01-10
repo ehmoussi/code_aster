@@ -17,6 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from numpy import cos, pi, sin
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_MODELE, CO, COPIER, CREA_CHAMP, DETRUIRE,
+                                 FORMULE, MACR_ADAP_MAIL)
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
 #
 #
 # FORMULE 2D PERMETTANT LA DEFINITION ET LE CALCUL DES COPEAUX DANS LE CAS SS_COPEAU
@@ -52,22 +60,11 @@ def SEUIL(X, Y, X0, Y0, R, lc, Nume_cop, ccos, ssin):
 #
 def raff_gp_ops(self, **args):
     """Corps de RAFF_GP"""
-    from numpy import cos, sin, pi
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     MasquerAlarme('CALCCHAMP_1')
 
 
 # IMPORTATION DES COMMANDES ET MACRO UTILISEES
 #
-    from code_aster.Commands import CO
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import FORMULE
-    from code_aster.Commands import MACR_ADAP_MAIL
-    from code_aster.Commands import AFFE_MODELE
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import COPIER
 #
 # RECUPERATION DU MAILLAGE ET DES DONNEES UTILISATEUR
 #

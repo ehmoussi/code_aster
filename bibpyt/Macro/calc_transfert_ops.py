@@ -17,7 +17,16 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: julie.fouque at edf.fr
+import os
+
+import numpy as np
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_FONC_INTERP, CALC_FONCTION, CREA_TABLE,
+                                 DEFI_FONCTION, DEFI_LIST_REEL, RECU_FONCTION)
+from Utilitai.Utmess import UTMESS
+
 
 def calc_transfert_ops(
     self, NOM_CHAM,ENTREE,SORTIE,RESULTAT_X,RESULTAT_Y,RESULTAT_Z=None, REPERE=None,
@@ -25,20 +34,9 @@ def calc_transfert_ops(
     """
            Macro permettant le calcul de fonctions de transfert et de signaux deconvolues
     """
-    import os
-    import numpy as np
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import RECU_FONCTION
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import CALC_FONCTION
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import CALC_FONC_INTERP
-    from code_aster.Commands import DEFI_LIST_REEL
 
 
 #......................................................

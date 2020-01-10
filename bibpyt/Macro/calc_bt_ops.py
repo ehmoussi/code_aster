@@ -22,15 +22,21 @@ import random
 import string
 import time
 import types
-from math import log, pi, factorial
+from math import factorial, log, pi
 
 import numpy as np
 
 import aster
 from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU, AFFE_MODELE,
+                                 CALC_CHAMP, CREA_CHAMP, CREA_TABLE, DEFI_GROUP, DETRUIRE,
+                                 LIRE_MAILLAGE, MECA_STATIQUE)
 from Utilitai import partition
+from Utilitai.griddata_local import griddata
 from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from Utilitai.voronoi_local import Voronoi
+
 
 #==============================================================================
 def calc_bt_ops(self,
@@ -40,17 +46,6 @@ def calc_bt_ops(self,
 
     """
     # Code_ASTER command definitions
-    from code_aster.Commands import DEFI_GROUP
-    from code_aster.Commands import AFFE_MODELE
-    from code_aster.Commands import AFFE_CARA_ELEM
-    from code_aster.Commands import AFFE_CHAR_MECA
-    from code_aster.Commands import MECA_STATIQUE
-    from code_aster.Commands import AFFE_MATERIAU
-    from code_aster.Commands import CALC_CHAMP
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import LIRE_MAILLAGE
-    from code_aster.Commands import DETRUIRE
 
     RESU_BT = args.get("RESU_BT")
     RESULTAT = args.get("RESULTAT")
@@ -603,7 +598,6 @@ def calc_bt_ops(self,
         grid_y .- Y coordinates of the interpolation points
         grid_z1 .- interpolated data
         """
-        from Utilitai.griddata_local import griddata
 
         grid_x, grid_y = np.mgrid[min(Coord_[:, 0]): max(Coord_[:, 0]): x_d, \
                                   min(Coord_[:, 1]): max(Coord_[:, 1]): y_d]
@@ -2277,7 +2271,6 @@ def calc_bt_ops(self,
         """
 
         """
-        from Utilitai.voronoi_local import Voronoi
 
         int_nodes = np.zeros((len(SUPPORTS[:, 0])+len(__FORCES[:, 0]), 4))
         int_nodes[0:len(SUPPORTS[:, 0]),:] = SUPPORTS

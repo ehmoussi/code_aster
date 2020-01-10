@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,12 @@
 # person_in_charge: hassan.berro at edf.fr
 
 from SD import *
-
-from SD.sd_nume_ddl import sd_nume_ddl
-from SD.sd_prof_chno import sd_prof_chno
-from SD.sd_nume_ddl_gene import sd_nume_ddl_gene
+from SD.sd_interf_dyna_clas import sd_interf_dyna_clas
 from SD.sd_matr_asse import sd_matr_asse
 from SD.sd_matr_asse_gene import sd_matr_asse_gene
-from SD.sd_interf_dyna_clas import sd_interf_dyna_clas
+from SD.sd_nume_ddl import sd_nume_ddl
+from SD.sd_nume_ddl_gene import sd_nume_ddl_gene
+from SD.sd_prof_chno import sd_prof_chno
 from SD.sd_proj_mesu import sd_proj_mesu
 from SD.sd_resultat import sd_resultat
 

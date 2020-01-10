@@ -25,25 +25,25 @@
 import sys
 import traceback
 from datetime import datetime
-from math import pi, ceil, exp, sqrt, log
-import numpy as NP
-from code_aster.Cata.Syntax import _F
-from Utilitai.Utmess import UTMESS
-from Cata_Utils.t_fonction import t_fonction
-from Utilitai.Table import Table
-from Utilitai.optimize import fmin
-import aster_core
-from Utilitai.random_signal_utils import (
-    DSP2ACCE1D, itersim_SRO, gene_traj_gauss_evol1D, Rice2,
-    peak, SRO2DSP, DSP2FR, corrcoefmodel, RAND_DSP, RAND_VEC,
-    calc_dsp_KT, f_ARIAS, f_ARIAS_TSM, fonctm_gam, dsp_filtre_CP,
-    fonctm_JetH, acce_filtre_CP, f_opta, f_opt1, f_opt2, calc_phase_delay,
-)
-from Utilitai.signal_correlation_utils import (CALC_CORRE,
-              itersimcor_SRO, itersimcortir_SRO, get_group_nom_coord,
-              get_no_refe,
-              DSP2ACCE_ND, gene_traj_gauss_evol_ND)
+from math import ceil, exp, log, pi, sqrt
 
+import numpy as NP
+
+import aster_core
+from Cata_Utils.t_fonction import t_fonction
+from code_aster.Cata.Syntax import _F
+from Utilitai.optimize import fmin
+from Utilitai.random_signal_utils import (DSP2ACCE1D, DSP2FR, RAND_DSP, RAND_VEC, SRO2DSP, Rice2,
+                                          acce_filtre_CP, calc_dsp_KT, calc_phase_delay,
+                                          corrcoefmodel, dsp_filtre_CP, f_ARIAS, f_ARIAS_TSM,
+                                          f_opt1, f_opt2, f_opta, fonctm_gam, fonctm_JetH,
+                                          gene_traj_gauss_evol1D, itersim_SRO, peak)
+from Utilitai.signal_correlation_utils import (CALC_CORRE, CREA_TABLE, DEFI_FONCTION, DSP2ACCE_ND,
+                                               code_aster.Commands, from, gene_traj_gauss_evol_ND,
+                                               get_group_nom_coord, get_no_refe, import,
+                                               itersimcor_SRO, itersimcortir_SRO)
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS
 
 
 def gene_acce_seisme_ops(self, **kwargs):
@@ -316,7 +316,6 @@ class GeneratorDSP(Generator):
         """Create the result function"""
        # Le concept sortant (de type table_fonction) est tab
         macr = self.macro
-        from code_aster.Commands import CREA_TABLE
         #--- construction des fonctions sortie
         self.build_output()
         #--- Creation du concept (table) en sortie
@@ -414,7 +413,6 @@ class GeneratorSpectrum(Generator):
         """Create the result function"""
        # Le concept sortant (de type table_fonction) est tab
         macr = self.macro
-        from code_aster.Commands import CREA_TABLE
         #--- construction des fonctions sortie
         self.build_output()
         #--- Creation du concept (table) en sortie
@@ -718,7 +716,6 @@ class SimulatorDSPScalar(Simulator):
     def run(self, generator):
         """Create the result table of functions"""
         macr = generator.macro
-        from code_aster.Commands import DEFI_FONCTION
         for iii in range(self.nbtirage):
             Xt = self.build_TimeHistory(generator)
             Xt = self.process_TimeHistory(generator, NP.array(Xt))
@@ -757,7 +754,6 @@ class SimulatorDSPVector(Simulator):
     def run(self, generator):
         """build result for vector DSP class"""
         macr = generator.macro
-        from code_aster.Commands import DEFI_FONCTION
         if self.TYPE != 'COEF_CORR':
             liste_nom, l2 = get_group_nom_coord(
                              self.DEFI_COHE['GROUP_NO_INTERF'],
@@ -791,7 +787,6 @@ class SimulatorSPECVector(Simulator):
     def run(self, generator):
         """build result for vector SPEC class"""
         macr = generator.macro
-        from code_aster.Commands import DEFI_FONCTION
         if self.TYPE != 'COEF_CORR':
             self.liste_nom, l2 = get_group_nom_coord(
                            self.DEFI_COHE['GROUP_NO_INTERF'],
@@ -893,7 +888,6 @@ class SimulatorSPECVector(Simulator):
 
     def build_TimeHistories(self, generator):
         """build Time Histories for iterated median spec case"""
-        from code_aster.Commands import DEFI_FONCTION
         DSP_args = generator.DSP_args
         if self.TYPE == 'COEF_CORR':
             rho = self.DEFI_COHE['COEF_CORR']
@@ -970,7 +964,6 @@ class SimulatorSPECScalar(Simulator):
     def run(self, generator):
         """Create the result table of functions"""
         macr = generator.macro
-        from code_aster.Commands import DEFI_FONCTION
         if self.simu_params['SPEC_METHODE'] == 'SPEC_MEDIANE' and 'NB_ITER' in self.simu_params:
             self.build_TimeHistories(generator)
         else:
@@ -1038,7 +1031,6 @@ class SimulatorSPECScalar(Simulator):
     def build_TimeHistories(self, generator):
         """build Time Histories for iterated median spec case"""
         DSP_args = generator.DSP_args
-        from code_aster.Commands import DEFI_FONCTION
         if 'FREQ_PENTE' in DSP_args:
             fonc_dsp_opt, liste_rv = itersim_SRO(generator,
                         DSP_args['FONC_DSP'], NB_TIRAGE=self.nbtirage,
@@ -1088,7 +1080,6 @@ class SimulatorSPECPhase(Simulator):
     def run(self, generator):
         """build result for phase SPEC class"""
         macr = generator.macro
-        from code_aster.Commands import DEFI_FONCTION
         self.liste_nom, l2 = get_group_nom_coord(
                            self.DEFI_COHE['GROUP_NO_INTERF'],
                            self.DEFI_COHE['MAILLAGE'])
@@ -1172,7 +1163,6 @@ class SimulatorSPECPhase(Simulator):
 
     def build_TimeHistories(self, generator):
         """build Time Histories for iterated median spec case"""
-        from code_aster.Commands import DEFI_FONCTION
         DSP_args = generator.DSP_args
         Data_phase = self.DEFI_COHE
         if 'FREQ_PENTE' in DSP_args:
@@ -1227,7 +1217,6 @@ class SimulatorDSPPhase(Simulator):
     def run(self, generator):
         """build result for vector DSP class"""
         macr = generator.macro
-        from code_aster.Commands import DEFI_FONCTION
         liste_nom, l2 = get_group_nom_coord(
                              self.DEFI_COHE['GROUP_NO_INTERF'],
                              self.DEFI_COHE['MAILLAGE'])

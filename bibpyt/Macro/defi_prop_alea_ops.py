@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,12 +24,14 @@
 
 import sys
 import traceback
+from math import ceil, exp, log, pi, sqrt
 
-from math import pi, ceil, exp, sqrt, log
 import numpy as np
+
 import aster_core
 from code_aster.Commands import FORMULE
 from Utilitai.Utmess import UTMESS
+
 
 def defi_prop_alea_ops(self, **kwargs):
     """Corps de la macro DEFI_PROP_ALEA"""

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,25 +33,22 @@ import sys
 import time
 from datetime import datetime
 
-import aster_pkginfo
+import numpy
+
 import _aster_core
+import aster
+import aster_pkginfo
 # methods and attributes of C implementation of the module
-from _aster_core import (
-    matfpe,
-    get_mem_stat,
-    set_mem_stat,
-    MPI_CommRankSize,
-    MPI_Warn,
-    MPI_Barrier,
-    MPI_Bcast,
-    MPI_GatherStr,
-    _USE_MPI,
-    _USE_OPENMP,
-    _USE_64_BITS,
-    _POSIX,
-    _NO_EXPIR,
-    ASTER_INT_SIZE,
-)
+from _aster_core import (_NO_EXPIR, _POSIX, _USE_64_BITS, _USE_MPI, _USE_OPENMP, ASTER_INT_SIZE,
+                         MPI_Barrier, MPI_Bcast, MPI_CommRankSize, MPI_GatherStr, MPI_Warn,
+                         get_mem_stat, matfpe, set_mem_stat)
+from code_aster.Utilities import localization
+# This module is available from the C/Fortran that's why the following functions
+# are imported here:
+from Utilitai.TestResult import testresu_print
+from Utilitai.Utmess import MessageLog  # prevent cycling import
+from Utilitai.Utmess import UTMESS
+
 # prefer use get_version()
 __version__ = '.'.join(str(i) for i in aster_pkginfo.version_info.version)
 
@@ -101,14 +98,12 @@ def register(settings, logger=None):
     :logger: the message logger (default: Utilitai.Utmess.MessageLog)
     """
     if logger is None:
-        from Utilitai.Utmess import MessageLog  # prevent cycling import
         logger = MessageLog
     _aster_core.register(settings, logger, sys.modules[__name__])
 
 
 def _print_alarm():
     """Emet une alarme en cas de modification de la version du dépôt"""
-    from Utilitai.Utmess import UTMESS
     changes = aster_pkginfo.version_info.changes
     uncommitted = aster_pkginfo.version_info.uncommitted
     if changes:
@@ -123,9 +118,6 @@ def _print_alarm():
 def _print_header():
     """Appelé par entete.F90 pour afficher des informations sur
     la machine."""
-    from code_aster.Utilities import localization
-    from Utilitai.Utmess import UTMESS
-    import numpy
     lang_settings = '%s (%s)' % localization.get_current_settings()
     date_build = aster_pkginfo.version_info.date
     UTMESS('I', 'SUPERVIS2_4',
@@ -184,8 +176,6 @@ def checksd(nomsd, typesd):
       1 : erreurs lors du checksd
       4 : on n'a meme pas pu tester
     """
-    from Utilitai.Utmess import UTMESS
-    import aster
     nomsd = nomsd.strip()
     typesd = typesd.strip().lower()
     # import
@@ -212,8 +202,3 @@ def checksd(nomsd, typesd):
         if level == 0:
             aster.affiche('MESSAGE', repr(obj) + msg)
     return iret
-
-
-# This module is available from the C/Fortran that's why the following functions
-# are imported here:
-from Utilitai.TestResult import testresu_print

@@ -17,6 +17,21 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import copy
+import os
+import string
+import types
+
+import numpy as np
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_CHAMP, CALC_FONCTION, CALC_TABLE,
+                                 CREA_TABLE, DEFI_FONCTION, DEFI_GROUP,
+                                 MACR_LIGN_COUPE, POST_ELEM, POST_RELEVE_T,
+                                 PROJ_CHAMP)
+from Utilitai.Utmess import ASSERT, UTMESS
+
 #-------------------------------------------------------
 # POST_NEWMARK : calcul de stabilite ouvrage en remblai au seisme
 #-------------------------------------------------------
@@ -27,24 +42,8 @@ def post_newmark_ops(self, **args):
         (digure / barrage) au séisme par la méthode simplifiée de Newmark.
         Uniquement possible pour une modélisation 2D.
   """
-  import aster
-  import os,string,types
-  import copy
-  from code_aster.Cata.Syntax import _F
-  from Utilitai.Utmess import UTMESS, ASSERT
-  import numpy as np
 
   ### On importe les definitions des commandes a utiliser dans la macro
-  from code_aster.Commands import DEFI_GROUP
-  from code_aster.Commands import POST_ELEM
-  from code_aster.Commands import MACR_LIGN_COUPE
-  from code_aster.Commands import DEFI_FONCTION
-  from code_aster.Commands import CALC_FONCTION
-  from code_aster.Commands import CALC_CHAMP
-  from code_aster.Commands import CREA_TABLE
-  from code_aster.Commands import CALC_TABLE
-  from code_aster.Commands import PROJ_CHAMP
-  from code_aster.Commands import POST_RELEVE_T
 
  ### RECUPERATION DU RESULTAT
   args = _F(args)

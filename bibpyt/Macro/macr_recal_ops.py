@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,15 +19,31 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
+import copy
+import glob
+import math
 import os
 import sys
-import copy
-import math
-import glob
 
 import numpy as NP
+from asrun.common.sysutils import on_64bits
+from asrun.profil import AsterProfil
 
+import aster
 import aster_core
+import Gnuplot
+import Macro
+import Utilitai
+from code_aster import onFatalError
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_TABLE, DEFI_LIST_REEL, TEST_TABLE
+from Macro import reca_algo, reca_calcul_aster, reca_interp, reca_message, reca_utilitaires, recal
+from Macro.reca_controles import gestion
+from Macro.reca_evol import evolutivo
+from Utilitai.optimize import (approx_fhess_p, approx_fprime, fmin, fminBFGS, fminNCG, line_search,
+                               line_search_BFGS)
+from Utilitai.Utmess import UTMESS, MessageLog
+
 debug = False
 
 INFO = 1
@@ -38,17 +54,6 @@ NOMPRO = 'MACR_RECAL'
 def Sortie(LIST_NOM_PARA, LIST_PARA, val, CALCUL_ASTER, Mess):
     """ Sortie de la macro, on renvoie les parametres obtenus """
 
-    import aster
-    import Macro
-    from code_aster.Commands import DEFI_LIST_REEL
-    from code_aster.Cata.Syntax import _F
-    from Macro import reca_message
-    from Macro import reca_algo
-    from Macro import reca_interp
-    from Macro import reca_utilitaires
-    from Macro import reca_calcul_aster
-    from Macro.reca_controles import gestion
-    from Utilitai.Utmess import UTMESS, MessageLog
 
     UTMESS('I', 'RECAL0_39', valk=str(CALCUL_ASTER.evaluation_fonction),
            files=Mess.get_filename())
@@ -83,20 +88,10 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=N
                     GRAPHIQUE=None, PARA_OPTI=None, COURBE=None, METHODE=None, INFO=None, **args):
     """ Macro commande realisant le recalage de modeles Aster """
 
-    from code_aster import onFatalError
-    import aster
-    import Macro
     #from code_aster.Commands import (DEFI_LIST_REEL, CREA_TABLE,
     #    TEST_TABLE, INCLUDE, INFO_EXEC_ASTER)
-    from code_aster.Cata.Syntax import _F
     #from code_aster.Commands import commandStore
 
-    from Macro import reca_message
-    from Macro import reca_algo
-    from Macro import reca_interp
-    from Macro import reca_utilitaires
-    from Macro import reca_calcul_aster
-    from Macro.reca_controles import gestion
 
     # Gestion des Exceptions
     prev_onFatalError = onFatalError()
@@ -157,7 +152,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
                ITER_MAXI, ITER_FONC_MAXI, RESI_GLOB_RELA, UNITE_RESU, PARA_DIFF_FINI,
                GRAPHIQUE, METHODE, INFO, **args):
 
-    from Utilitai.Utmess import UTMESS
     ASTER_ROOT = os.environ['ASTER_ROOT']
 
     try:
@@ -167,24 +161,11 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
     except:
         pass
     try:
-        from asrun.profil import AsterProfil
     except Exception as e:
         print(e)
         UTMESS('F', 'RECAL0_2')
 
-    import Macro
-    import Utilitai
-    from Macro import reca_message
-    from Macro import reca_algo
-    from Macro import reca_interp
-    from Macro import reca_utilitaires
-    from Macro import reca_calcul_aster
-    from Macro import recal
-    from Macro.reca_controles import gestion
-    from Utilitai.optimize import fmin, line_search, line_search_BFGS, approx_fprime, approx_fhess_p, fminBFGS, fminNCG
 
-    import Macro
-    from code_aster.Cata.Syntax import _F
     #_____________________________________________
     #
     # RECUPERATION DU PROFIL DU CALCUL MAITRE
@@ -262,7 +243,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         if 'FORMAT' in dGRAPHIQUE and dGRAPHIQUE['FORMAT'] == 'GNUPLOT':
         # On essaie d'importer Gnuplot -> PAS DE GRAPHIQUE
             try:
-                import Gnuplot
             except ImportError:
                 GRAPHIQUE = None
                 UTMESS('A', 'RECAL0_3')
@@ -281,7 +261,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
             print(prof.param['memjob'][0])
 
         # Pour la conversion mega-mots / mega-octets
-        from asrun.common.sysutils import on_64bits
         if on_64bits():
             facw = 8
         else:
@@ -513,7 +492,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
     #
     elif (METHODE == 'GENETIQUE'):
         UTMESS('I', 'RECAL0_13', valk=METHODE, files=Mess.get_filename())
-        from Macro.reca_evol import evolutivo
         nb_parents = NB_PARENTS
         nb_fils = NB_FILS
         nb_iter = ITER_ALGO_GENE
@@ -536,7 +514,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         # Levenberg-Marquardt qui demarre avec le jeu de parametres issu de
         # genetique
         if (METHODE == 'HYBRIDE'):
-            from Macro.reca_evol import evolutivo
             nb_parents = NB_PARENTS
             nb_fils = NB_FILS
             nb_iter = ITER_ALGO_GENE
@@ -773,7 +750,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         print("ecart_para, TOLE_PARA=", ecart_para, TOLE_PARA, (ecart_para > TOLE_PARA))
 
     if (residu > RESI_GLOB_RELA):
-        from code_aster.Commands import CREA_TABLE, TEST_TABLE
         _tmp = []
         _tmp.append({'PARA': 'ITER_MAXI', 'LISTE_R': 0.0, })
 

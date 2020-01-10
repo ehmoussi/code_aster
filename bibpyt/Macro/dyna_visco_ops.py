@@ -17,6 +17,17 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import numpy as NP
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_MATERIAU, ASSE_MATRICE, CALC_MATR_ELEM,
+                                 COMB_MATR_ASSE, DEFI_MATERIAU, NUME_DDL)
+from Macro.dyna_visco_harm import dyna_visco_harm
+from Macro.dyna_visco_modes import dyna_visco_modes
+from Utilitai.Utmess import UTMESS
+
+
 def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
                          MATER_ELAS=None, CARA_ELEM=None,
                          FREQ=None, LIST_FREQ=None, TYPE_MODE=None,
@@ -24,18 +35,7 @@ def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
     """
        Macro-command DYNA_VISCO, main file
     """
-    from Macro.dyna_visco_modes import dyna_visco_modes
-    from Macro.dyna_visco_harm  import dyna_visco_harm
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    import numpy as NP
 
-    from code_aster.Commands import DEFI_MATERIAU
-    from code_aster.Commands import AFFE_MATERIAU
-    from code_aster.Commands import CALC_MATR_ELEM
-    from code_aster.Commands import NUME_DDL
-    from code_aster.Commands import ASSE_MATRICE
-    from code_aster.Commands import COMB_MATR_ASSE
 
     coef_fmax = 1.
     if 'COEF_FREQ_MAX' in args:
@@ -225,8 +225,6 @@ def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
 
 ###################################################################
 def extr_matr_elim_lagr(self, matr_asse):
-    import aster
-    import numpy as NP
 
     matr_lagr=matr_asse.EXTR_MATR()  # function EXTR_MATR available in the official source code
     #-----------------------------------------------------#

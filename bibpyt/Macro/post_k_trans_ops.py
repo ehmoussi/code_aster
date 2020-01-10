@@ -17,15 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_TABLE
+from Utilitai.Table import Table, merge
+from Utilitai.utils import get_titre_concept
+from Utilitai.Utmess import UTMESS
+
+
 def post_k_trans_ops(self, **args):
     """
        Ecriture de la macro post_k_trans
     """
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.Table import Table, merge
-    from Utilitai.utils import get_titre_concept
     EnumTypes = (list, tuple)
 
     RESU_TRANS = args.get("RESU_TRANS")
@@ -37,7 +40,6 @@ def post_k_trans_ops(self, **args):
 
 #------------------------------------------------------------------
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_TABLE
 
 #------------------------------------------------------------------
     TABK = K_MODAL['TABL_K_MODA']

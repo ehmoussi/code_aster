@@ -17,13 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import _F
 import os
+
 import numpy as np
 
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_FONCTION, CREA_TABLE, DEFI_FICHIER, DEFI_FONCTION, DETRUIRE,
+                                 IMPR_FONCTION, IMPR_TABLE, INFO_EXEC_ASTER, INFO_FONCTION,
+                                 RECU_FONCTION)
+from Utilitai.Utmess import UTMESS
+
 try:
-    import aster
-    from Utilitai.Utmess import UTMESS
 except:
     pass
 
@@ -71,7 +76,6 @@ def get_unite_libre():
     """
         Retoune une unité de fichier libre.
     """
-    from code_aster.Commands import DETRUIRE, INFO_EXEC_ASTER
     _UL = INFO_EXEC_ASTER(LISTE_INFO='UNITE_LIBRE')
     unite = _UL['UNITE_LIBRE', 1]
     DETRUIRE(CONCEPT=(_F(NOM=_UL),), INFO=1)
@@ -126,15 +130,6 @@ def impr_acce_seisme_ops(self, **args):
     RATIO_HV = args.get("RATIO_HV")
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import INFO_FONCTION
-    from code_aster.Commands import RECU_FONCTION
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import CALC_FONCTION
-    from code_aster.Commands import IMPR_FONCTION
-    from code_aster.Commands import DEFI_FICHIER
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import IMPR_TABLE
 
     # Chemin du repertoire REPE_OUT de l'execution courante d'Aster
     REPE_OUT = os.path.join(os.getcwd(), 'REPE_OUT')

@@ -17,22 +17,23 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_CHAMP, CALC_TABLE, CREA_TABLE,
+                                 MACR_LIGN_COUPE)
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+
 def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE=None , INST=None,
                    **args):
     """
     macro post_coque
     """
-    import aster
-    import os
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-    from Utilitai.Table import Table
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import MACR_LIGN_COUPE
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import CALC_TABLE
-    from code_aster.Commands import CALC_CHAMP
 
     MasquerAlarme('MODELISA4_9')
 

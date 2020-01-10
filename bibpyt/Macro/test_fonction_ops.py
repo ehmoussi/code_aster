@@ -19,10 +19,18 @@
 
 # person_in_charge: nicolas.pignet at edf.fr
 
+import cmath
+import math
 import os
 
+import aster
+from Cata_Utils.t_fonction import t_fonction_c
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CALC_FONCTION, DETRUIRE
 from code_aster.Utilities import is_complex, is_sequence, is_str
+from SD.sd_fonction import sd_fonction
 from Utilitai.TestResult import TestResult
+from Utilitai.Utmess import UTMESS
 
 epsi = 1e-15
 
@@ -57,9 +65,6 @@ def TesterValeur(nomPara, valPu, valRef, res, epsi, crit, sSigne):
     """
        Teste de la valeur calculee par rapport a la valeur de reference
     """
-    import aster
-    import cmath
-    import math
 
     isTestOk = 0
     vtc = valRef[0]
@@ -152,7 +157,6 @@ def RoundValues(crit, res, vtc, err, curEps, nreg=False):
          errr    (K)  :  chaine représentant "err" (arrondie pour l'affichage)
          curEpsr (K)  :  chaine représentant "curEps" (arrondie pour l'affichage)
     """
-    import math
 
     # détermination du nombre de digits à afficher pour resr et vtc : ndigit
     # ----------------------------------------------------------------------
@@ -333,14 +337,7 @@ def test_fonction_ops(self, **args):
     """
        Corps de la macro TEST_FONCTION
     """
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    from SD.sd_fonction import sd_fonction
-    from Cata_Utils.t_fonction import t_fonction_c
 
-    from code_aster.Commands import CALC_FONCTION
-    from code_aster.Commands import DETRUIRE
 
     VALEUR = args.get('VALEUR')
     ATTRIBUT = args.get('ATTRIBUT')

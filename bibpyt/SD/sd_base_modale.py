@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 from SD import *
-
 from SD.sd_resu_dyna import sd_resu_dyna
 
 

@@ -20,8 +20,18 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 import os.path
+import pprint
 
+import aster
 from code_aster import AsterError
+from code_aster.Cata.DataStructure import (fonction_c, formule, formule_c,
+                                           nappe_sdaster)
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CALC_FONC_INTERP, DEFI_LIST_REEL
+from code_aster.Helpers import LogicalUnitFile, ReservedUnitUsed
+from Utilitai import Graph
+from Utilitai.utils import fmtF2PY
+from Utilitai.Utmess import UTMESS
 
 
 def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
@@ -31,22 +41,6 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     Erreurs<S> dans IMPR_FONCTION pour ne pas perdre la base.
     """
     macro = 'IMPR_FONCTION'
-    import pprint
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from code_aster.Cata.DataStructure import (nappe_sdaster, fonction_c,
-                                               formule, formule_c)
-    from code_aster.Helpers import LogicalUnitFile, ReservedUnitUsed
-    from Utilitai import Graph
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.utils import fmtF2PY
-
-
-    # On importe les definitions des commandes a utiliser dans la macro
-    # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import CALC_FONC_INTERP
-    from code_aster.Commands import DEFI_LIST_REEL
-
     #----------------------------------------------
     # 0. Traitement des arguments, initialisations
     # 0.1. Fichier

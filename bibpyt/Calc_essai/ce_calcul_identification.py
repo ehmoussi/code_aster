@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,16 +19,14 @@
 
 # person_in_charge: albert.alarcon at edf.fr
 
-from Utilitai.Utmess import UTMESS
-from numpy import array, zeros, conjugate, identity
-from numpy import transpose, arctan, pi, log
-from numpy import matrix
 import numpy.linalg as linalg
+from numpy import arctan, array, conjugate, identity, log, matrix, pi, transpose, zeros
 
-from Calc_essai.cata_ce import Resultat, InterSpectre, nume_ddl_phy, nume_ddl_gene
-import aster_core
 import aster
+import aster_core
+from Calc_essai.cata_ce import InterSpectre, Resultat, nume_ddl_gene, nume_ddl_phy
 from code_aster.Cata.Syntax import _F
+from Utilitai.Utmess import UTMESS
 
 
 class CalcEssaiIdentification:

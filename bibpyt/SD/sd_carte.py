@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 from SD import *
+from SD.sd_fonction import sd_fonction
+from SD.sd_maillage import sd_maillage
 from SD.sd_titre import sd_titre
 from SD.sd_util import *
-from SD.sd_fonction import sd_fonction
 
 
 class sd_carte(sd_titre):
@@ -42,7 +43,6 @@ class sd_carte(sd_titre):
             return
         noma = self.NOMA.get_stripped()
 
-        from SD.sd_maillage import sd_maillage
         sd2 = sd_maillage(noma[0])
         # Rem : si on vérifie le sd_maillage, sdll503a se plante (RuntimeError: maximum recursion depth exceeded)
         # sd2.check(checker)

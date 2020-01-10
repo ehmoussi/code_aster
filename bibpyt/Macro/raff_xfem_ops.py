@@ -17,11 +17,20 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import copy
+import math
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_CHAMP, DETRUIRE, FORMULE
+from Contrib.raff_xfem_zone import RAFF_XFEM_ZONE
+from SD.sd_xfem import sd_fiss_xfem
+from Utilitai.Utmess import UTMESS
+
+
 def get_nom_maillage_sdfiss(FISS):
     """ retourne le nom du maillage associe au concept FISS"""
 
-    import aster
-    from Utilitai.Utmess import UTMESS
 
     nom_ma = FISS.getMesh()
     return nom_ma
@@ -35,21 +44,10 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
     a l'interface pour les interfaces), soit un indicateur binaire qui vaut
     1 dans la zone d'interet
     """
-    import aster
-    import copy
-    import math
-    from code_aster.Cata.Syntax import _F
-    from SD.sd_xfem import sd_fiss_xfem
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
 
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import FORMULE
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import DETRUIRE
-    from Contrib.raff_xfem_zone import RAFF_XFEM_ZONE
 
     assert (TYPE in ('DISTANCE', 'ZONE'))
 

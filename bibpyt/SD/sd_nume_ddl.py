@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,11 +18,9 @@
 # --------------------------------------------------------------------
 
 from SD import *
-from SD.sd_solveur import sd_solveur
-
-from SD.sd_nume_ddl_gene import sd_nume_ddl_gene
 from SD.sd_nume_ddl_gd import sd_nume_ddl_gd
-
+from SD.sd_nume_ddl_gene import sd_nume_ddl_gene
+from SD.sd_solveur import sd_solveur
 
 #---------------------------------------------------------------------------------
 # classe "chapeau" à sd_nume_ddl_gene et sd_nume_ddl_gd ne servant que pour "check"

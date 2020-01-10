@@ -22,15 +22,20 @@
 """
    Description des OJB jeveux
 """
-from .basetype import Type
-from .asnom import SDNom
-from .ascheckers import CheckLog
-import traceback
+import pydoc
 import sys
+import traceback
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import IMPR_CO
+
+from .ascheckers import CheckLog
+from .asnom import SDNom
+from .basetype import Type
 
 # pour utilisation dans eficas
 try:
-    import aster
 except:
     pass
 
@@ -90,7 +95,6 @@ class AsBase(Type):
         return checker
 
     def dump(self, indent=""):
-        import pydoc
         l = []
         checkers = []
         nomj = self.nomj()
@@ -124,8 +128,6 @@ class AsBase(Type):
             # hors Aster ou en par_lot='oui'
             return self.short_repr()
         else:
-            from code_aster.Cata.Syntax import _F
-            from code_aster.Commands import IMPR_CO
             IMPR_CO(CONCEPT=_F(NOM=self.nom), UNITE=6)
             return ''
 
@@ -168,7 +170,6 @@ class JeveuxExists(JeveuxAttr):
         pass
 
     def __get__(self, obj, klass):
-        import aster
         if obj is None:
             return self
         nomj = obj.nomj()
@@ -182,7 +183,6 @@ class JeveuxExists(JeveuxAttr):
 class JeveuxIntAttr(JeveuxAttr):
 
     def __get__(self, obj, klass):
-        import aster
         if obj is None:
             return self
         nomj = obj.nomj()
@@ -197,7 +197,6 @@ class JeveuxIntAttr(JeveuxAttr):
 class JeveuxStrAttr(JeveuxAttr):
 
     def __get__(self, obj, klass):
-        import aster
         if obj is None:
             return self
         nomj = obj.nomj()
@@ -238,7 +237,6 @@ class OJB(AsBase):
             setattr(self, _name, attrs[name])
 
     def get(self):
-        import aster
         nomj = self.nomj()
         if aster.jeveux_exists(nomj):
             obj_simple = aster.jeveux_getattr(nomj, 'XOUS')[1].strip() == 'S'
@@ -251,7 +249,6 @@ class OJB(AsBase):
 
     def changeJeveuxValues(self, nbval, indices, reel, imag, num = 1):
         """Modify values of existing data structures"""
-        import aster
         nomj = self.nomj()
         if aster.jeveux_exists(nomj):
             obj_simple = aster.jeveux_getattr(nomj, 'XOUS')[1].strip() == 'S'

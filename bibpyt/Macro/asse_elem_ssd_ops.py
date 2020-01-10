@@ -17,19 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import ASSE_MATR_GENE, DEFI_MODELE_GENE, NUME_DDL_GENE
+
+
 def asse_elem_ssd_ops(self, RESU_ASSE_SSD, SOUS_STRUC, LIAISON, VERIF, **args):
     """
      Echainement des commandes :
        DEFI_MODELE_GENE + NUME_DDL_GENE + ASSE_MATR_GENE
     """
-
-    from code_aster.Cata.Syntax import _F
-
-    # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import DEFI_MODELE_GENE
-    from code_aster.Commands import NUME_DDL_GENE
-    from code_aster.Commands import ASSE_MATR_GENE
-
     modl_gene = {}
     mcfact = []
     for i in range(len(SOUS_STRUC)):

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,10 +27,12 @@ __all__ = []
 
 import os
 import os.path
+
+from Utilitai.Utmess import UTMESS
+
 EnumTypes = (list, tuple)
 
 try:
-    from Utilitai.Utmess import UTMESS
 except ImportError:
     def UTMESS(code, idmess, valk=(), vali=(), valr=()):
         """

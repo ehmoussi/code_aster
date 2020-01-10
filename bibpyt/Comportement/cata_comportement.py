@@ -66,6 +66,7 @@ Interfaces Fortran/Python :
 
 """
 
+import copy
 import os
 
 from code_aster.Utilities import Singleton, convert, force_tuple, ufmt
@@ -147,7 +148,6 @@ class Base(object):
 
     def copy(self):
         """Copie d'un objet LoiComportement"""
-        import copy
         return copy.copy(self)
 
     def gen_property(prop, typ, comment):

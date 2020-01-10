@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,9 @@
 # person_in_charge: jean-luc.flejou at edf.fr
 
 from SD import *
+from SD.sd_maillage import sd_maillage
 from SD.sd_titre import sd_titre
+
 
 class sd_gfibre(sd_titre):
 #-------------------------------------
@@ -67,6 +69,5 @@ class sd_gfibre(sd_titre):
     def check_GFMA(self,checker):
         if not self.GFMA.exists: return
         gfma = self.GFMA.get_stripped()
-        from SD.sd_maillage import sd_maillage
         sd2=sd_maillage(gfma[0])
         sd2.check(checker)

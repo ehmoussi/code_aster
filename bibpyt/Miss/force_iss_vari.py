@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,35 +17,35 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
+from math import ceil, floor, log, pi, sqrt, tanh
+
+import numpy as NP
+from numpy import linalg
+
+import aster
+import aster_core
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (COMB_MATR_ASSE, CREA_CHAMP, DETRUIRE,
+                                 DYNA_VIBRA, LIRE_FORC_MISS, LIRE_IMPE_MISS)
+from SD.sd_cham_gene import sd_cham_gene
+from SD.sd_maillage import sd_maillage
+from SD.sd_mode_meca import sd_mode_meca
+from SD.sd_nume_ddl_gd import sd_nume_ddl_gd
+from SD.sd_nume_ddl_gene import sd_nume_ddl_gene
+from SD.sd_resultat import sd_resultat
+from Utilitai.signal_correlation_utils import (CALC_COHE, calc_dist2,
+                                               get_group_nom_coord)
+from Utilitai.Table import Table
+from Utilitai.Utmess import UTMESS
+
+
 def force_iss_vari(self,imod,MATR_GENE,NOM_CMP,ISSF,INFO,UNITE_RESU_FORC,
          UNITE_RESU_IMPE,PRECISION,INTERF,MATR_COHE,TYPE,fini,PAS,fmax):
     """Force sismique variable en ISS"""
-    import os
-    import numpy as NP
-    from numpy import linalg
-    from math import pi, ceil, sqrt, floor, log, tanh
-    import aster_core
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Table import Table
-    from Utilitai.Utmess import  UTMESS
-    from Utilitai.signal_correlation_utils import (CALC_COHE,
-                              get_group_nom_coord, calc_dist2)
-    from code_aster.Cata.Syntax import _F
-    from code_aster.Commands import (
-        DETRUIRE, LIRE_IMPE_MISS, LIRE_FORC_MISS, CREA_CHAMP,
-        COMB_MATR_ASSE, DYNA_VIBRA
-    )
     #--------------------------------------------------------------------------------
     NB_FREQ = 1+int((fmax-fini)/PAS)
     FREQ_INIT = fini
-    from SD.sd_maillage      import sd_maillage
-    from SD.sd_nume_ddl_gd   import sd_nume_ddl_gd
-    from SD.sd_nume_ddl_gene import sd_nume_ddl_gene
-    from SD.sd_mode_meca import sd_mode_meca
-    from SD.sd_resultat import sd_resultat
-    from SD.sd_cham_gene import sd_cham_gene
-
     GROUP_NO_INTER = INTERF['GROUP_NO_INTERF']
     # MAILLAGE NUME_DDL
     nom_bamo = MATR_GENE['BASE']

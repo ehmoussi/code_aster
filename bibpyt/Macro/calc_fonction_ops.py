@@ -21,28 +21,27 @@
 
 """Commande CALC_FONCTION"""
 
+import copy
+import math
 import os
 import traceback
-import math
 
 import numpy as NP
 
-from code_aster.Utilities import force_list
+import aster_fonctions
+from Cata_Utils.t_fonction import (FonctionError, InterpolationError, ParametreError,
+                                   ProlongementError, enveloppe, fractile, homo_support_nappe,
+                                   moyenne, t_fonction, t_nappe)
 from code_aster.Cata.Syntax import _F
+from code_aster.Commands import DEFI_FONCTION, DEFI_NAPPE, IMPR_FONCTION
 from code_aster.Objects import Function, FunctionComplex, Surface
-
-from Cata_Utils.t_fonction import (
-    t_fonction, t_nappe,
-    homo_support_nappe, enveloppe, fractile, moyenne,
-    FonctionError, ParametreError, InterpolationError, ProlongementError,
-)
+from code_aster.Utilities import force_list
+from Macro.defi_inte_spec_ops import tocomplex
 from Utilitai import liss_enveloppe as LISS
 from Utilitai.calc_coherency import calc_cohefromdata
-from Utilitai.random_signal_utils import (ACCE2SRO, DSP2SRO, SRO2DSP,
-                                acce_filtre_CP, f_phase_forte)
+from Utilitai.random_signal_utils import ACCE2SRO, DSP2SRO, SRO2DSP, acce_filtre_CP, f_phase_forte
+from Utilitai.Utmess import ASSERT, UTMESS
 
-from Utilitai.Utmess import UTMESS, ASSERT
-from Macro.defi_inte_spec_ops import tocomplex
 
 def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None, COMB=None, COMB_C=None, MULT=None,
                        ENVELOPPE=None, FRACTILE=None, PROL_SPEC_OSCI=None, SPEC_OSCI=None, ASSE=None, FFT=None,
@@ -219,9 +218,6 @@ class CalcFonctionOper(object):
     def build_result(self):
         """Create the result function"""
         macr = self.macro
-        from code_aster.Commands import DEFI_FONCTION
-        from code_aster.Commands import IMPR_FONCTION
-        from code_aster.Commands import DEFI_NAPPE
         # common keywords to DEFI_FONCTION & DEFI_NAPPE
         para = self.resu.para
         for p in ('NOM_PARA', 'NOM_RESU', 'PROL_DROITE', 'PROL_GAUCHE',
@@ -506,7 +502,6 @@ class CalcFonction_INTERPOL_FFT(CalcFonctionOper):
 
     def _run(self):
         """INTERPOL_FFT"""
-        import copy
         kw = self.kw
         t0 = self._lf[0].vale_x[0]
 
@@ -750,7 +745,6 @@ class CalcFonction_SPEC_OSCI(CalcFonctionOper):
 
     def _run(self):
         """SPEC_OSCI"""
-        import aster_fonctions
         f_in = self._lf[0]
         l_freq, l_amor = self._dat['FREQ'], self._dat['AMOR']
         kw = self.kw

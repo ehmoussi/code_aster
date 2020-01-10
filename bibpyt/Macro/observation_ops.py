@@ -19,6 +19,19 @@
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
+import copy
+
+import numpy
+
+import aster
+from code_aster.Cata.DataStructure import (dyna_harmo, dyna_trans, evol_elas,
+                                           mode_meca)
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CREA_CHAMP, CREA_RESU, DEFI_GROUP, DETRUIRE,
+                                 MODI_REPERE, POST_RELEVE_T, PROJ_CHAMP,
+                                 RECU_TABLE)
+from Utilitai.Utmess import UTMESS
+
 
 def observation_ops(self,
                     PROJECTION=None,
@@ -38,19 +51,6 @@ def observation_ops(self,
     # on transforme le mc MODI_REPERE pour ne pas le confondre avec l'operateur
     # du meme nom
     MODIF_REPERE = MODI_REPERE
-
-    # importation de commandes
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    from code_aster.Cata.DataStructure import (mode_meca, dyna_harmo,
-                                               evol_elas, dyna_trans)
-    from code_aster.Commands import MODI_REPERE
-    from code_aster.Commands import PROJ_CHAMP
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import POST_RELEVE_T
-    from code_aster.Commands import DETRUIRE
 
     # dans **args, on range les options de PROJ_CHAMP facultatives, et dont on
     # ne sert pas par la suite
@@ -108,7 +108,6 @@ def observation_ops(self,
     # if isinstance(RESULTAT, mode_meca):
     if TYPE_RESU == "MODE_MECA":
         # frequences propres
-        from code_aster.Commands import RECU_TABLE
         __freq = RECU_TABLE(CO=RESULTAT,
                             NOM_PARA='FREQ',)
         afreq = __freq.EXTR_TABLE().Array('NUME_ORDRE', 'FREQ')
@@ -754,12 +753,6 @@ def crea_normale(self, modele_1, modele_2,
        projection du champ de normales cree sur le maillage numerique
        les mailles doivent etre des elements de <peau> (facettes)
     """
-    from code_aster.Commands import PROJ_CHAMP
-    from code_aster.Commands import CREA_CHAMP
-    from code_aster.Commands import CREA_RESU
-    from code_aster.Commands import DEFI_GROUP
-    import aster
-    from code_aster.Cata.Syntax import _F
     # recherche du maillage associe au modele numerique
     mayanum = modele_1.getMesh()
 
@@ -833,9 +826,6 @@ def crea_repere(chnorm, ind_no, vect):
        d'une equation supplementaire donnee par l'utilisateur sous forme
        de trois parametres et du vecteur de base concerne.
     """
-
-    import numpy
-
     nom_para = list(vect.keys())[0]  # nom_para = 'VECT_X' ou 'VECT_Y'
 
     # 1) pour tous les noeuds du maillage experimental, recuperer la normale
@@ -893,10 +883,6 @@ def crea_repere_xy(vect_x, vect_y):
            colineaire a vect_y
        Si vect_x is None et vect_y is None alors on ne fait rien
     """
-
-    import numpy
-    from Utilitai.Utmess import UTMESS
-
     if vect_x is None and vect_y is None:
         angl_naut = (0., 0., 0.)
     else:
@@ -976,9 +962,6 @@ def find_no(maya, mcsimp):
           du maillage les indices, puis les noms des noeuds concernes
         etc...
     """
-
-    import numpy
-
     list_no = []
     if 'GROUP_NO' in mcsimp and type(mcsimp['GROUP_NO']) not in (tuple, list):
         mcsimp['GROUP_NO'] = [mcsimp['GROUP_NO']]
@@ -1027,9 +1010,6 @@ def find_ma(maya, mcsimp):
     """ Si mot cle MAILLE, on retourne la liste des mailles
         Si mot cle GROUP_MA, on va chercher les mailles dans ces groupes
     """
-
-    import numpy
-
     list_ma = []
     if 'GROUP_MA' in mcsimp and type(mcsimp['GROUP_MA']) != tuple:
         mcsimp['GROUP_MA'] = [mcsimp['GROUP_MA']]
@@ -1057,7 +1037,6 @@ def find_ma(maya, mcsimp):
 
 def norm(x):
     """Calcul de la norme euclidienne d'un vecteur"""
-    import numpy
     tmp = numpy.sqrt(numpy.dot(x, x))
     return tmp
 
@@ -1067,9 +1046,6 @@ def anglnaut(P):
        NB : seuls les deux premiers vecteurs de P (les images respectives
        de X et Y) sont utiles pour le calcul des angles
     """
-
-    import copy
-    import numpy
     # expression des coordonnees globales des 3 vecteurs de base locale
     y = numpy.array([0., 1., 0.])
 

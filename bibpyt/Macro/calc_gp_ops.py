@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,14 +17,21 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import numpy as NP
+from numpy import cos, pi, sin
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (CALC_CHAMP, CALC_TABLE, CREA_CHAMP, CREA_TABLE, DEFI_GROUP,
+                                 DEFI_LIST_REEL, FORMULE, POST_ELEM)
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+
 #
 #
 # CAS 2D: FORMULES PERMETTANT LA DEFINITION ET LE CALCUL DES COPEAUX DANS LE CAS SS_COPEAU
 #           (Pour plus de renseignement, voir CR-AMA-12-272)
 #
-
-
-
 def SEUIL(X, Y, X0, Y0, R, lc, Nume_cop, ccos, ssin):
     f1 = 0
     f2 = 0
@@ -62,7 +69,6 @@ def NRJ(ENEL_ELGA, X, Y, X0, Y0, R, lc, Nume_cop, ccos, ssin):
 
 def CalDist(coor_nd, coor_nds):
     # on calcule la distance du noeud 1 aux autres noeuds
-    import numpy as NP
 
     dist = NP.sqrt((coor_nds[0] - coor_nd[0]) ** 2 +
                    (coor_nds[1] - coor_nd[1]) ** 2 +
@@ -76,7 +82,6 @@ def Recup_Noeuds_Copeaux(maya, Copeau_k):
 
     # Recuperation des noeuds appartenant a la surface de symetrie
     # et aux copeaux
-    from code_aster.Cata.Syntax import _F
     dicno = []
     dicno.append(_F(NOM=Copeau_k))
     dicno.append(_F(NOM='Cop_Pl'))
@@ -91,7 +96,6 @@ def Recup_Noeuds_Copeaux(maya, Copeau_k):
 
 
 def Crea_grp_ma(maya, C_k):
-    from code_aster.Cata.Syntax import _F
     if C_k == 0:
         dicma = {'NOM': 'Mai_Plan'}
         DEFI_GROUP(reuse=maya, MAILLAGE=maya, DETR_GROUP_MA=dicma),
@@ -135,9 +139,6 @@ def Calcul_mesure_3D(maya, nbcop, l_copo_tot, ltyma, nd_fiss, normale):
     # On est en petites deformations alors on ne tient pas compte de la deformee
     # lors du calcul de la surface
 
-    import numpy as NP
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
 
     mesure = [0] * len(l_copo_tot)
 
@@ -201,16 +202,9 @@ def Calcul_mesure_3D(maya, nbcop, l_copo_tot, ltyma, nd_fiss, normale):
 #
 def calc_gp_ops(self, **args):
     """Corps de CALC_GP"""
-    from numpy import pi, cos, sin
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     MasquerAlarme('CALCCHAMP_1')
     global DEFI_GROUP
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_CHAMP, CREA_TABLE, POST_ELEM
-    from code_aster.Commands import FORMULE, CALC_TABLE, CALC_CHAMP
-    from code_aster.Commands import DEFI_LIST_REEL, DEFI_GROUP
 #
 
 #

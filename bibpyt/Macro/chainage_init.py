@@ -19,6 +19,7 @@
 
 import aster
 from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_MAILLAGE, PROJ_CHAMP
 
 
 def CHAINAGE_INIT(self, args, motscles):
@@ -27,8 +28,6 @@ def CHAINAGE_INIT(self, args, motscles):
     MODELE_HYDR = args['MODELE_HYDR']
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import CREA_MAILLAGE
-    from code_aster.Commands import PROJ_CHAMP
 
     MATR_MH = PROJ_CHAMP(METHODE='COLLOCATION', MODELE_1=MODELE_MECA,
                          MODELE_2=MODELE_HYDR, PROJECTION='NON', **motscles)

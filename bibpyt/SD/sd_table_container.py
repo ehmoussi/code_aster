@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,15 +18,15 @@
 # --------------------------------------------------------------------
 
 from SD import *
-
-from SD.sd_table import sd_table
-from SD.sd_vect_elem import sd_vect_elem
-from SD.sd_matr_elem import sd_matr_elem
 from SD.sd_cham_elem import sd_cham_elem
 from SD.sd_cham_no import sd_cham_no
 # from SD.sd_mode_meca import sd_mode_meca
 from SD.sd_dyna_phys import sd_dyna_phys
 from SD.sd_fonction import sd_fonction
+from SD.sd_matr_elem import sd_matr_elem
+from SD.sd_table import sd_table
+from SD.sd_vect_elem import sd_vect_elem
+
 # --------------------------------------------------------------------
 # sd_table contenant les colonnes nommée "NOM_OBJET","TYPE_OBJET",
 # et "NOM_SD"

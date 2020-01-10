@@ -17,6 +17,25 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
+import copy
+from math import pi
+
+import numpy as NP
+
+import aster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_MODELE, CALC_TABLE, CREA_MAILLAGE,
+                                 CREA_TABLE, DETRUIRE, FORMULE,
+                                 MACR_LIGN_COUPE, POST_RELEVE_T, PROJ_CHAMP)
+from code_aster.Objects import MechanicalModeContainer
+from Internal.post_k_varc import POST_K_VARC
+from SD.sd_mater import sd_compor1
+from Utilitai.Table import Table, merge
+from Utilitai.utils import get_titre_concept
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+
 #---------------------------------------------------------------------------------------------------------------
 #                 FONCTIONS UTILITAIRES
 #-------------------------------------------------------------------------
@@ -28,7 +47,6 @@
 #     return cross
 #-------------------------------------------------------------------------
 def normalize(v):
-    import numpy as NP
     norm = NP.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
     return v / norm
 
@@ -137,11 +155,7 @@ def expand_values(self, tabout, liste_noeu_a_extr, titre, type_para):
 # Lorsqu'il n'y a pas suffisament de noeud pour le calcul des KJ, on extrapole
 # attention cela n'est valable que pour une seule fissure a la fois
 
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Table import Table
 
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import DETRUIRE
 
     extrtabout = tabout.EXTR_TABLE()
     DETRUIRE(CONCEPT=_F(NOM=tabout), INFO=1)
@@ -254,8 +268,6 @@ def expand_values(self, tabout, liste_noeu_a_extr, titre, type_para):
 
 
 def verif_config_init(FOND_FISS):
-    from Utilitai.Utmess import UTMESS
-    import aster
 
     iret, ibid, config = aster.dismoi(
         'CONFIG_INIT', FOND_FISS.getName(), 'FOND_FISS', 'F')
@@ -266,7 +278,6 @@ def verif_config_init(FOND_FISS):
 #-------------------------------------------------------------------------
 
 def verif_type_fond_fiss(ndim, FOND_FISS):
-    from Utilitai.Utmess import UTMESS
     if ndim == 3:
         Typ = FOND_FISS.sdj.FOND_TYPE.get()
 #     attention : Typ est un tuple contenant une seule valeur
@@ -278,7 +289,6 @@ def verif_type_fond_fiss(ndim, FOND_FISS):
 
 def get_noeud_fond_fiss(FOND_FISS):
     """ retourne la liste des noeuds de FOND_FISS"""
-    from Utilitai.Utmess import UTMESS
     Lnoff = FOND_FISS.sdj.FOND_NOEU.get()
     if Lnoff is None:
         UTMESS('F', 'RUPTURE0_11')
@@ -290,7 +300,6 @@ def get_noeud_fond_fiss(FOND_FISS):
 
 def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
     """ retourne la liste des noeuds de FOND_FISS a calculer"""
-    from Utilitai.Utmess import UTMESS
 
     NOEUD = args.get('NOEUD')
     SANS_NOEUD = args.get('SANS_NOEUD')
@@ -377,11 +386,7 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
 def get_coor_libre(self, Lnoff, RESULTAT, ndim):
     """ retourne les coordonnees des noeuds de FOND_FISS en dictionnaire"""
 
-    import numpy as NP
-    from code_aster.Cata.Syntax import _F
 
-    from code_aster.Commands import POST_RELEVE_T
-    from code_aster.Commands import DETRUIRE
 
     __NCOFON = POST_RELEVE_T(
         ACTION=_F(INTITULE='Tab pour coordonnees noeuds du fond',
@@ -417,7 +422,6 @@ def get_direction(Nnoff, ndim, DTANOR, DTANEX, Lnoff, FOND_FISS):
     # cette fonction retourne 2 dictionnaires, il faudrait mettre
     # en conformite avec get_direction_xfem
 
-    import numpy as NP
 
     Basefo = FOND_FISS.sdj.BASEFOND.get()
 
@@ -464,10 +468,7 @@ def get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, RESULTAT, MODEL,
     """ retourne les tables des deplacements sup et inf pour les noeuds perpendiculaires pour
     tous les points du fond de fissure"""
 
-    from code_aster.Cata.Syntax import _F
-    import numpy as NP
 
-    from code_aster.Commands import MACR_LIGN_COUPE
 
     dmax = hmax * PREC_VIS_A_VIS
 
@@ -502,7 +503,6 @@ def get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, RESULTAT, MODEL,
 
 def get_dico_levres(lev, FOND_FISS, ndim, Lnoff, Nnoff):
     "retourne ???"""
-    from Utilitai.Utmess import UTMESS
     if lev == 'sup':
         Nnorm = FOND_FISS.sdj.SUPNORM_NOEU.get()
         if not Nnorm:
@@ -524,11 +524,7 @@ def get_dico_levres(lev, FOND_FISS, ndim, Lnoff, Nnoff):
 
 def get_coor_regle(self, RESULTAT, ndim, Lnoff, Lnocal, dicoS, syme_char, dicoI):
     """retourne le dictionnaire des coordonnees des noeuds des lèvres pour les maillages regles"""
-    import numpy as NP
-    import copy
-    from code_aster.Cata.Syntax import _F
 
-    from code_aster.Commands import POST_RELEVE_T
 
 #        a eclaircir
     Ltot = copy.copy(Lnoff)
@@ -577,7 +573,6 @@ def get_coor_regle(self, RESULTAT, ndim, Lnoff, Lnocal, dicoS, syme_char, dicoI)
 
 def get_absfon(Lnoff, Nnoff, d_coor):
     """ retourne le dictionnaire des Abscisses curvilignes du fond"""
-    import numpy as NP
     absfon = [0, ]
     for i in range(Nnoff - 1):
         Pfon1 = NP.array(
@@ -594,8 +589,6 @@ def get_absfon(Lnoff, Nnoff, d_coor):
 
 def get_noeuds_perp_regle(Lnocal, d_coor, dicoS, dicoI, Lnoff, PREC_VIS_A_VIS, hmax, syme_char):
     """retourne la liste des noeuds du fond (encore ?), la liste des listes des noeuds perpendiculaires"""
-    import numpy as NP
-    from Utilitai.Utmess import UTMESS
 
     NBTRLS = 0
     NBTRLI = 0
@@ -676,8 +669,6 @@ def get_noeuds_perp_regle(Lnocal, d_coor, dicoS, dicoI, Lnoff, PREC_VIS_A_VIS, h
 def verif_resxfem(self, RESULTAT):
     """ verifie que le resultat est bien compatible avec X-FEM et renvoie xcont et MODEL"""
 
-    import aster
-    from Utilitai.Utmess import UTMESS
 
     MODEL = RESULTAT.getModel()
     xcont = MODEL.sdj.xfem.XFEM_CONT.get()
@@ -688,13 +679,7 @@ def verif_resxfem(self, RESULTAT):
 
 def get_resxfem(self, xcont, RESULTAT, MODELISATION, MODEL):
     """ retourne le resultat """
-    from code_aster.Cata.Syntax import _F
-    import aster
 
-    from code_aster.Commands import AFFE_MODELE
-    from code_aster.Commands import PROJ_CHAMP
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import CREA_MAILLAGE
 
     if xcont[0] != 3:
         __RESX = RESULTAT
@@ -727,7 +712,6 @@ def get_resxfem(self, xcont, RESULTAT, MODELISATION, MODEL):
 def get_coor_xfem(args, FISSURE, ndim):
     """retourne la liste des coordonnees des points du fond, la base locale en fond et le nombre de points"""
 
-    from Utilitai.Utmess import UTMESS
 
     Listfo = FISSURE.sdj.FONDFISS.get()
     Basefo = FISSURE.sdj.BASEFOND.get()
@@ -774,8 +758,6 @@ def get_direction_xfem(Nnoff, Vpropa, Coorfo, ndim):
     """retourne la direction de propagation, la normale a la surface de la fissure,
     et l'abscisse curviligne en chaque point du fond"""
 
-    import numpy as NP
-    from Utilitai.Utmess import UTMESS
 
     VDIR = [None] * Nnoff
     VNOR = [None] * Nnoff
@@ -814,10 +796,7 @@ def get_direction_xfem(Nnoff, Vpropa, Coorfo, ndim):
 
 def get_sauts_xfem(self, Nnoff, Coorfo, VDIR, hmax, NB_NOEUD_COUPE, dmax, __RESX):
     """retourne la table des sauts"""
-    from code_aster.Cata.Syntax import _F
-    import numpy as NP
 
-    from code_aster.Commands import MACR_LIGN_COUPE
 
     mcfact = []
     for i in range(Nnoff):
@@ -841,11 +820,7 @@ def get_sauts_xfem(self, Nnoff, Coorfo, VDIR, hmax, NB_NOEUD_COUPE, dmax, __RESX
 
 def affiche_xfem(self, INFO, Nnoff, VNOR, VDIR):
     """affiche des infos"""
-    from code_aster.Cata.Syntax import _F
-    import aster
 
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import DETRUIRE
 
     if INFO == 2:
         mcfact = []
@@ -871,7 +846,6 @@ def affiche_xfem(self, INFO, Nnoff, VNOR, VDIR):
 
 
 def affiche_traitement(FOND_FISS, Lnofon, ino):
-    import aster
     if FOND_FISS:
         texte = "\n\n--> TRAITEMENT DU NOEUD DU FOND DE FISSURE: %s" % Lnofon[
             ino]
@@ -908,7 +882,6 @@ def get_tab(self, lev, ino, Tlib, Lno, TTSo, FOND_FISS, TYPE_MAILLAGE, tabl_depl
 
 def get_liste_inst(tabsup, args):
     """retourne la liste d'instants"""
-    from Utilitai.Utmess import UTMESS
 
     l_inst = None
     l_inst_tab = tabsup['INST'].values()['INST']
@@ -968,7 +941,6 @@ def get_liste_inst(tabsup, args):
 
 def get_liste_freq(tabsup, args):
     """retourne la liste des fréquences"""
-    from Utilitai.Utmess import UTMESS
 
     l_freq = None
     l_freq_tab = tabsup['FREQ'].values()['FREQ']
@@ -1046,7 +1018,6 @@ def get_liste_freq(tabsup, args):
 
 
 def affiche_instant(inst, type_para):
-    import aster
 
     if inst is not None:
         if type_para == 'FREQ':
@@ -1092,14 +1063,7 @@ def get_tab_inst(lev, inst, FISSURE, syme_char, PRECISION, CRITERE, tabsup, tabi
 
 def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, ino, inst, para_fonc):
     """cas fem : retourne les proprietes materiaux en fonction de la variable de commande au noeud ino à l'instant demandé"""
-    from code_aster.Cata.Syntax import _F
-    import aster
-    import numpy as NP
-    from math import pi
-    from Internal.post_k_varc import POST_K_VARC
 
-    from code_aster.Commands import POST_RELEVE_T
-    from code_aster.Commands import DETRUIRE
 
     # extraction du cham_no de varc a l'instant considere
     __CHNOVRC = POST_K_VARC(RESULTAT=RESULTAT, INST=inst, NOM_VARC=para_fonc)
@@ -1179,14 +1143,7 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
 def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, FISSURE, ndim, ipt, inst, para_fonc):
     """cas xfem : retourne les proprietes materiaux en fonction de la variable de commande au point ipt à l'instant demandé"""
 
-    from Utilitai.Utmess import UTMESS
-    from code_aster.Cata.Syntax import _F
-    import numpy as NP
-    from math import pi
-    from Internal.post_k_varc import POST_K_VARC
-    import aster
 
-    from code_aster.Commands import DETRUIRE
 
     # extraction du cham_no de varc a l'instant considere
     __CHNOVRC = POST_K_VARC(RESULTAT=RESULTAT, INST=inst, NOM_VARC=para_fonc)
@@ -1299,9 +1256,6 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
 def get_depl_sup(FOND_FISS, tabsupi, ndim, Lnofon, d_coor, ino, TYPE_MAILLAGE):
     """retourne les déplacements sup"""
 
-    import numpy as NP
-    import copy
-    from Utilitai.Utmess import UTMESS
 
     abscs = getattr(tabsupi, 'ABSC_CURV').values()
 
@@ -1361,9 +1315,6 @@ def get_depl_sup(FOND_FISS, tabsupi, ndim, Lnofon, d_coor, ino, TYPE_MAILLAGE):
 
 def get_depl_inf(FOND_FISS, tabinfi, ndim, Lnofon, syme_char, d_coor, ino, TYPE_MAILLAGE):
     """retourne les déplacements inf"""
-    import numpy as NP
-    import copy
-    from Utilitai.Utmess import UTMESS
 
     if syme_char == 'NON' and FOND_FISS:
         absci = getattr(tabinfi, 'ABSC_CURV').values()
@@ -1408,7 +1359,6 @@ def get_depl_inf(FOND_FISS, tabinfi, ndim, Lnofon, syme_char, d_coor, ino, TYPE_
 
 def get_pgl(syme_char, FISSURE, ino, VDIR, VNOR, dicVDIR, dicVNOR, Lnofon, ndim):
     """retourne la matrice du changement de repère"""
-    import numpy as NP
 
     # attention en 2d, la base (VDIR, VNOR) issue BASEFOND n'est pas forcement dans le
     # sens trigo :
@@ -1448,13 +1398,7 @@ def get_pgl(syme_char, FISSURE, ino, VDIR, VNOR, dicVDIR, dicVNOR, Lnofon, ndim)
 def get_saut(self, pgl, ds, di, INFO, FISSURE, syme_char, abscs, ndim):
     """retourne le saut de déplacements dans le nouveau repère"""
 
-    from code_aster.Cata.Syntax import _F
-    import aster
-    import numpy as NP
-    from Utilitai.Utmess import UTMESS
 
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import DETRUIRE
 
     dpls = NP.dot(pgl, ds)
 
@@ -1494,7 +1438,6 @@ def get_saut(self, pgl, ds, di, INFO, FISSURE, syme_char, abscs, ndim):
 
 def get_kgsig(saut, nbval, coefd, coefd3):
     """retourne des trucs...."""
-    import numpy as NP
 
     isig = NP.sign(NP.transpose(NP.resize(saut[:, -1], (nbval - 1, 3))))
     isig = NP.sign(isig + 0.001)
@@ -1513,12 +1456,7 @@ def get_kgsig(saut, nbval, coefd, coefd3):
 
 def get_meth1(self, abscs, coefg, coefg3, kgsig, isig, saut2, INFO, ndim):
     """retourne kg1"""
-    from code_aster.Cata.Syntax import _F
-    import aster
-    import numpy as NP
 
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import DETRUIRE
 
     nabs = len(abscs)
 
@@ -1551,12 +1489,7 @@ def get_meth1(self, abscs, coefg, coefg3, kgsig, isig, saut2, INFO, ndim):
 
 def get_meth2(self, abscs, coefg, coefg3, kgsig, isig, saut2, INFO, ndim):
     """retourne kg2"""
-    from code_aster.Cata.Syntax import _F
-    import aster
-    import numpy as NP
 
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import DETRUIRE
 
     nabs = len(abscs)
     x1 = abscs[1:nabs]
@@ -1585,12 +1518,7 @@ def get_meth2(self, abscs, coefg, coefg3, kgsig, isig, saut2, INFO, ndim):
 
 def get_meth3(self, abscs, coefg, coefg3, kgsig, isig, saut2, INFO, ndim):
     """retourne kg3"""
-    from code_aster.Cata.Syntax import _F
-    import aster
-    import numpy as NP
 
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import DETRUIRE
 
     nabs = len(abscs)
     x1 = abscs[:-1]
@@ -1623,14 +1551,7 @@ def get_meth3(self, abscs, coefg, coefg3, kgsig, isig, saut2, INFO, ndim):
 def get_erreur(self, ndim, __tabi, type_para):
     """retourne l'erreur selon les méthodes.
     En FEM/X-FEM, on ne retient que le K_MAX de la méthode 1."""
-    from code_aster.Cata.Syntax import _F
-    import aster
-    import numpy as NP
 
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import CALC_TABLE
-    from code_aster.Commands import DETRUIRE
-    from code_aster.Commands import FORMULE
 
     labels = ['K1_MAX', 'K1_MIN', 'K2_MAX', 'K2_MIN', 'K3_MAX', 'K3_MIN']
     index = 2
@@ -1752,12 +1673,7 @@ def get_tabout(
     self, kg, args, TITRE, FOND_FISS, MODELISATION, FISSURE, ndim, ino, inst, iord,
         Lnofon, dicoF, absfon, Nnoff, tabout, type_para, nume):
     """retourne la table de sortie"""
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.utils import get_titre_concept
-    import numpy as NP
 
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import CALC_TABLE
 
     mcfact = []
 
@@ -1835,7 +1751,6 @@ def is_present_varc(RESULTAT):
     retourne true si presence de variables de commande dans la sd_cham_mater
     contenue dans la sd_resultat RESULTAT, retourne false sinon.
     """
-    import aster
 
     iret, ibid, nom_chamat = aster.dismoi('CHAM_MATER', RESULTAT.getName(), 'RESULTAT', 'F')
     assert not ( nom_chamat in ['#AUCUN', '#PLUSIEURS'] )
@@ -1854,14 +1769,6 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
     par extrapolation des sauts de déplacements sur les lèvres de
     la fissure. Produit une table.
     """
-    import aster
-    import numpy as NP
-    from math import pi
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Table import Table, merge
-    from SD.sd_mater import sd_compor1
-    from code_aster.Objects import MechanicalModeContainer
-    from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
     EnumTypes = (list, tuple)
 
@@ -1870,9 +1777,6 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
-    from code_aster.Commands import CALC_TABLE
-    from code_aster.Commands import POST_RELEVE_T
-    from code_aster.Commands import DETRUIRE
 
     # On recupere le materiau et le nom de la modelisation
     nom_fiss = ''

@@ -18,9 +18,21 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-import os
 
+import os
+from pprint import pformat
+
+import numpy as np
+
+import aster
 from code_aster.Cata.DataStructure import *
+from code_aster.Cata.DataStructure import table_container, table_fonction
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CREA_TABLE, DETRUIRE
+from code_aster.Utilities import force_list
+from Utilitai.Table import Table, merge, remove_twins
+from Utilitai.utils import get_titre_concept
+from Utilitai.Utmess import UTMESS
 
 
 def calc_table_prod(TABLE, ACTION, **args):
@@ -42,16 +54,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     """
     Macro CALC_TABLE permettant de faire des opérations sur une table
     """
-    import aster
 
-    from code_aster.Cata.Syntax import _F
-    from code_aster.Utilities import force_list
-    from code_aster.Cata.DataStructure import table_fonction, table_container
-    from code_aster.Commands import CREA_TABLE, DETRUIRE
-    from Utilitai.Utmess import UTMESS
-    from Utilitai.Table import merge, Table
-    from Utilitai.utils import get_titre_concept
-    import numpy as np
 
     args = _F(args)
 
@@ -175,7 +178,6 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
 
         # 10. Suppression des doublons
         if occ['OPERATION'] == 'UNIQUE':
-            from Utilitai.Table import remove_twins
             format_r = occ.get('FORMAT_R')
             lpar = force_list(occ['NOM_PARA'])
             remove_twins(tab, lpar, format_r)
@@ -269,7 +271,6 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     if INFO == 2:
         echo_mess = ['']
         echo_mess.append(repr(tab))
-        from pprint import pformat
         echo_mess.append(pformat(dprod))
         echo_mess.append('')
         texte_final = os.linesep.join(echo_mess)

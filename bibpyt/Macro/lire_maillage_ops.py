@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,11 +23,15 @@
 
 
 from code_aster import Mesh
+from code_aster.Cata.Commands.lire_maillage import keywords as main_keywords
+from code_aster.Cata.Syntax import OPER, SIMP, tr
+from code_aster.Commands import PRE_GIBI, PRE_GMSH, PRE_IDEAS
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from Utilitai.UniteAster import UniteAster
+
 
 def catalog_op():
     """Define the catalog of the fortran operator."""
-    from code_aster.Cata.Commands.lire_maillage import keywords as main_keywords
-    from code_aster.Cata.Syntax import OPER, SIMP, tr
 
     keywords = dict()
     keywords.update(main_keywords)
@@ -48,8 +52,6 @@ def catalog_op():
 
 def lire_maillage_ops(self, **args):
     """Corps de la macro CALC_FONCTION"""
-    from code_aster.Commands import PRE_GIBI, PRE_GMSH, PRE_IDEAS
-    from Utilitai.UniteAster import UniteAster
 
     need_conversion = ('GIBI', 'GMSH', 'IDEAS')
     unit = args['UNITE']
@@ -72,7 +74,6 @@ def lire_maillage_ops(self, **args):
 
     args['UNITE'] = unit_op
 
-    from code_aster.Commands.ExecuteCommand import ExecuteCommand
     LIRE_MAILLAGE_OP = catalog_op()
     class InheritedCommand(ExecuteCommand):
         """Execute legacy operator."""

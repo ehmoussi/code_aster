@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,11 +18,11 @@
 # --------------------------------------------------------------------
 
 from SD import *
-from SD.sd_resuelem import sd_resuelem
+from SD.sd_cara_elem import sd_cara_elem
+from SD.sd_cham_mater import sd_cham_mater
 from SD.sd_cham_no import sd_cham_no
 from SD.sd_modele import sd_modele
-from SD.sd_cham_mater import sd_cham_mater
-from SD.sd_cara_elem import sd_cara_elem
+from SD.sd_resuelem import sd_resuelem
 
 
 class sd_matr_elem(AsBase):

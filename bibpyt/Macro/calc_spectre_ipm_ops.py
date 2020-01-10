@@ -17,17 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import _F
-from code_aster.Cata.DataStructure import (nappe_sdaster, fonction_sdaster,
-                                           fonction_c)
-from Utilitai.Utmess import UTMESS
-import aster_fonctions
-import numpy as NP
 import math
 
+import numpy as NP
+
+import aster
+import aster_fonctions
+from code_aster.Cata.DataStructure import fonction_c, fonction_sdaster, nappe_sdaster
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CALC_FONCTION, CREA_TABLE, DEFI_FONCTION, RECU_FONCTION
+from Utilitai.Utmess import UTMESS
+
 try:
-    import aster
-    from Utilitai.Utmess import UTMESS
 except:
     pass
 
@@ -35,15 +36,9 @@ except:
 def calc_spectre_ipm_ops(
     self, EQUIPEMENT, CALCUL, RESU, MAILLAGE=None, RESULTAT=None, GROUP_NO=None,
                         AMOR_SPEC=None, LIST_INST=None, FREQ=None, LIST_FREQ=None, NORME=None, TOLE_INIT=None, CORR_INIT=None, **args):
-    import numpy as NP
-    import math
     EnumType = (list, tuple)
 
     # On importe les definitions des commandes a utiliser dans la macro
-    from code_aster.Commands import RECU_FONCTION
-    from code_aster.Commands import CALC_FONCTION
-    from code_aster.Commands import DEFI_FONCTION
-    from code_aster.Commands import CREA_TABLE
 
     if AMOR_SPEC is not None and type(AMOR_SPEC) not in EnumType:
         AMOR_SPEC = (AMOR_SPEC,)

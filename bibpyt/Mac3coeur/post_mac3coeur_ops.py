@@ -18,14 +18,21 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: samuel.geniaut at edf.fr
+
 import os.path as osp
+from math import sqrt
 
 import numpy as N
 import numpy.linalg as LA
 
+import aster
 import aster_core
-from .mac3coeur_coeur import CoeurFactory
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import CALC_TABLE, CREA_TABLE, FORMULE, IMPR_TABLE
 from Utilitai.UniteAster import UniteAster
+from Utilitai.Utmess import UTMESS
+
+from .mac3coeur_coeur import CoeurFactory
 
 UL=UniteAster()
 
@@ -360,15 +367,7 @@ def PostForme(l_f, meth):
 
 def post_mac3coeur_ops(self, **args):
     """Corps principal de la macro de post-traitement de MAC3COEUR"""
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
-    from math import sqrt
 
-    from code_aster.Commands import CREA_TABLE
-    from code_aster.Commands import CALC_TABLE
-    from code_aster.Commands import FORMULE
-    from code_aster.Commands import IMPR_TABLE
 
     rcdir = aster_core.get_option("rcdir")
     datg = osp.join(rcdir, "datg")

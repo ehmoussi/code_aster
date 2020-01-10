@@ -18,8 +18,7 @@
 # --------------------------------------------------------------------
 
 
-from .asnom import SDNom
 from .ascheckers import Parmi
-from .asojb      import AsBase, AsVK8, AsVK16, AsVK24, AsVK32, AsVK80, \
-    AsVI, AsVS, AsVL, AsVR, AsVC, \
-    AsColl, AsObject, Facultatif, OJBVect, AsPn, AsVect
+from .asnom import SDNom
+from .asojb import (AsBase, AsColl, AsObject, AsPn, AsVC, AsVect, AsVI, AsVK8, AsVK16, AsVK24,
+                    AsVK32, AsVK80, AsVL, AsVR, AsVS, Facultatif, OJBVect)
