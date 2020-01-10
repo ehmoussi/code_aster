@@ -38,7 +38,7 @@ from math import log
 import numpy as NP
 
 import aster
-from code_aster.Utilities import force_list
+from ...Utilities import force_list
 from Utilitai.transpose import transpose
 from Utilitai.UniteAster import UniteAster
 from Utilitai.utils import _printDBG, get_shared_tmpdir

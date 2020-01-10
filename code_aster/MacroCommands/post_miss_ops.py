@@ -24,9 +24,10 @@ import sys
 import traceback
 
 import aster
-from code_aster import AsterError
-from Miss.miss_post import PostMissFactory
+from libaster import AsterError
 from Utilitai.Utmess import UTMESS
+
+from .Miss.miss_post import PostMissFactory
 
 
 def post_miss_ops(self, **kwargs):

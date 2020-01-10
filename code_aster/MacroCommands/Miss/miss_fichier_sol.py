@@ -22,7 +22,7 @@
 import os
 
 import aster
-from Miss.miss_utils import calc_param_auto, dict_format, l_coor_sort, verif_sol_homogene
+from .miss_utils import calc_param_auto, dict_format, l_coor_sort, verif_sol_homogene
 from Utilitai.Utmess import UTMESS
 
 sfmt = dict_format['sR']

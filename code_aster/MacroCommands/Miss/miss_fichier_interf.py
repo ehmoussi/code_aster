@@ -30,8 +30,8 @@ from functools import partial
 
 import numpy as NP
 
-from Miss.miss_domain import MissDomains
-from Miss.miss_utils import dict_format, en_ligne
+from .miss_domain import MissDomains
+from .miss_utils import dict_format, en_ligne
 
 
 def fichier_mvol(struct):

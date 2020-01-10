@@ -30,7 +30,7 @@ import os.path as osp
 import traceback
 import unittest
 
-from Miss.miss_utils import double, lire_nb_valeurs
+from .miss_utils import double, lire_nb_valeurs
 from Utilitai.Utmess import UTMESS
 
 

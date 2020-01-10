@@ -29,8 +29,8 @@ import unittest
 from math import sqrt
 from pprint import pformat
 
-from Miss.miss_domain import MissDomains
-from Miss.miss_utils import dict_format
+from .miss_domain import MissDomains
+from .miss_utils import dict_format
 from Utilitai import test_utils
 
 
