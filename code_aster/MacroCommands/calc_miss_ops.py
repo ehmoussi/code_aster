@@ -24,10 +24,11 @@ import sys
 import traceback
 
 import aster
-from code_aster import AsterError
-from Miss.miss_calcul import CalculMiss
-from Miss.miss_utils import MISS_PARAMETER
+from libaster import AsterError
 from Utilitai.Utmess import UTMESS
+
+from .Miss.miss_calcul import CalculMiss
+from .Miss.miss_utils import MISS_PARAMETER
 
 
 def calc_miss_ops(self, **kwargs):

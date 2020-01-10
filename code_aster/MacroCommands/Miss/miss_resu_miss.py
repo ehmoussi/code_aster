@@ -28,7 +28,7 @@ import unittest
 
 import numpy as NP
 
-from Miss.miss_utils import double, lire_nb_valeurs
+from .miss_utils import double, lire_nb_valeurs
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
 

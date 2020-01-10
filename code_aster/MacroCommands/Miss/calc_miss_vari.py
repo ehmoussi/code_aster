@@ -25,8 +25,8 @@ from numpy import linalg
 
 import aster
 import aster_core
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (COMB_MATR_ASSE, CREA_CHAMP, DETRUIRE,
+from ...Cata.Syntax import _F
+from ...Commands import (COMB_MATR_ASSE, CREA_CHAMP, DETRUIRE,
                                  DYNA_VIBRA, LIRE_FORC_MISS, LIRE_IMPE_MISS)
 from Utilitai.signal_correlation_utils import CALC_COHE
 from Utilitai.Utmess import UTMESS
