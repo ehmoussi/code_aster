@@ -30,12 +30,12 @@
 import numpy
 
 import aster
-from ..Cata.Syntax import _F
 from Utilitai.Utmess import UTMESS
 
-from .chainage_hydr_meca import *
-from .chainage_init import *
-from .chainage_meca_hydr import *
+from ..Cata.Syntax import _F
+from .GeoMeca.chainage_hydr_meca import *
+from .GeoMeca.chainage_init import *
+from .GeoMeca.chainage_meca_hydr import *
 
 
 def chainage_thm_ops(self, TYPE_CHAINAGE, **args):

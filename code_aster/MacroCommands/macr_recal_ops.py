@@ -41,10 +41,10 @@ from Utilitai.Utmess import UTMESS, MessageLog
 
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE, DEFI_LIST_REEL, TEST_TABLE
-from . import (reca_algo, reca_calcul_aster, reca_interp, reca_message,
-               reca_utilitaires, recal)
-from .reca_controles import gestion
-from .reca_evol import evolutivo
+from .Recal.reca_controles import gestion
+from .Recal.reca_evol import evolutivo
+from .Recal import (reca_algo, reca_calcul_aster, reca_interp, reca_message,
+                    reca_utilitaires, recal)
 
 debug = False
 

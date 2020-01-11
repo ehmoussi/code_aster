@@ -20,12 +20,13 @@
 import numpy as NP
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import (AFFE_MATERIAU, ASSE_MATRICE, CALC_MATR_ELEM,
-                                 COMB_MATR_ASSE, DEFI_MATERIAU, NUME_DDL)
-from .dyna_visco_harm import dyna_visco_harm
-from .dyna_visco_modes import dyna_visco_modes
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import (AFFE_MATERIAU, ASSE_MATRICE, CALC_MATR_ELEM,
+                         COMB_MATR_ASSE, DEFI_MATERIAU, NUME_DDL)
+from .Utils.dyna_visco_harm import dyna_visco_harm
+from .Utils.dyna_visco_modes import dyna_visco_modes
 
 
 def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,

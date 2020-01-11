@@ -32,14 +32,16 @@ from glob import glob
 
 import aster
 import aster_core
-from ..Cata.Syntax import _F
-from ..Commands import DEFI_FICHIER, EXEC_LOGICIEL, IMPR_RESU, LIRE_CHAMP, LIRE_MAILLAGE
-from ..Helpers import Serializer
-from ..Utilities import logger
-from . import creation_donnees_homard
 from Utilitai.UniteAster import UniteAster
 #
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+from ..Cata.Syntax import _F
+from ..Commands import (DEFI_FICHIER, EXEC_LOGICIEL, IMPR_RESU, LIRE_CHAMP,
+                        LIRE_MAILLAGE)
+from ..Helpers import Serializer
+from ..Utilities import logger
+from .Utils import creation_donnees_homard
 
 EnumTypes = (list, tuple)
 

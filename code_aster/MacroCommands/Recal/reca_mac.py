@@ -26,7 +26,7 @@ from tkinter import Button, Entry, Frame, Label, StringVar, Tk
 
 import numpy as NP
 
-from .CalcEssai.outils_ihm import MacWindowFrame
+from ..CalcEssai.outils_ihm import MacWindowFrame
 
 
 def extract_mac_array(mac_mode):

@@ -20,9 +20,10 @@
 import numpy as NP
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import (CALC_MODES, COMB_MATR_ASSE,  # IMPR_CO
-                                 CREA_CHAMP, CREA_RESU, DETRUIRE)
+
+from ...Cata.Syntax import _F
+from ...Commands import (CALC_MODES, COMB_MATR_ASSE, CREA_CHAMP, CREA_RESU,
+                         DETRUIRE)
 
 
 def dyna_visco_modes_calc( self, TYPE_MODE, freq1, nmode, RESI_RELA, i, j,
