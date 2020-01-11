@@ -22,15 +22,17 @@
 # MACRO DE COUPLAGE IFS AVEC SATURNE VIA YACS
 #
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Supervis import UserMacro
+from .calc_ifs_dnl_ops import calc_ifs_dnl_ops
 
-CALC_IFS_DNL= MACRO(nom='CALC_IFS_DNL',
-                    op=OPS("code_aster.MacroCommands.calc_ifs_dnl_ops.calc_ifs_dnl_ops"),
-                    sd_prod=evol_noli,
-                    reentrant='f',
-                    fr=tr("Calcul de l'évolution dynamique d'une structure couplée à un "
+CALC_IFS_DNL_CATA = MACRO(nom='CALC_IFS_DNL',
+      op=OPS("code_aster.MacroCommands.Contrib.calc_ifs_dnl_ops.calc_ifs_dnl_ops"),
+      sd_prod=evol_noli,
+      reentrant='f',
+      fr=tr("Calcul de l'évolution dynamique d'une structure couplée à un "
                          "domaine fluide (résolu avec le code Saturne) via YACS"),
 
 #IFS
@@ -237,4 +239,6 @@ CALC_IFS_DNL= MACRO(nom='CALC_IFS_DNL',
                              ),
                     ),
          TITRE           =SIMP(statut='f',typ='TXM',max='**'),
-)  ;
+)
+
+CALC_IFS_DNL = UserMacro("CALC_IFS_DNL", CALC_IFS_DNL_CATA, calc_ifs_dnl_ops)

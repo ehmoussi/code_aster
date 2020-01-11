@@ -20,12 +20,12 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ...Objects import GeneralizedAssemblyVectorDouble
-from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Supervis import ExecuteCommand
 from .calc_forc_ajou_cata import CALC_FORC_AJOU_CATA
 
 
 class CalcForcAjou(ExecuteCommand):
-    """Command that defines aclass:`~code_aster.Objects.GeneralizedAssemblyVectorDouble`
+    """Command that defines a :class:`~code_aster.Objects.GeneralizedAssemblyVectorDouble`
     """
     command_name = "CALC_FORC_AJOU"
     command_cata = CALC_FORC_AJOU_CATA

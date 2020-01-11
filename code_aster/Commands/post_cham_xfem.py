@@ -22,7 +22,7 @@
 from ..Objects import (EvolutiveThermalLoad,
                        LinearDisplacementEvolutionContainer,
                        MechanicalModeContainer, NonLinearEvolutionContainer)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class XfemFieldPostprocessing(ExecuteCommand):

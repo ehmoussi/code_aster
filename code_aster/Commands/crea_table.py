@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 from ..Objects import Table, TableContainer, TableOfFunctions
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class TableCreation(ExecuteCommand):

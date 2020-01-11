@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 from ..Objects import CrackTip
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class CrackDefinition(ExecuteCommand):

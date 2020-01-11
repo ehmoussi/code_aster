@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 from ..Objects import Grid
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class GridDefinition(ExecuteCommand):

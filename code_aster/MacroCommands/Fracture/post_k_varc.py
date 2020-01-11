@@ -22,7 +22,7 @@
 from ...Cata.DataStructure import cham_no_sdaster, evol_elas, evol_noli
 from ...Cata.Syntax import OPER, SIMP
 from ...Objects import FieldOnNodesDouble
-from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Supervis import ExecuteCommand
 
 POST_K_VARC_CATA = OPER(
     nom="POST_K_VARC", op=48, sd_prod=cham_no_sdaster, reentrant='n',

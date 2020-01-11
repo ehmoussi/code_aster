@@ -21,14 +21,17 @@
 from math import *
 
 import aster
-from code_aster.Cata.DataStructure import CO as CATA_CO
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.Syntax import _F, MACRO, SIMP
-from code_aster.Commands import *
-from code_aster.Commands import (AFFE_CHAR_MECA, AFFE_MATERIAU, ASSE_MATRICE, CALC_MATR_ELEM,
-                                 COMB_MATR_ASSE, DEFI_MATERIAU, NUME_DDL)
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.DataStructure import CO as CATA_CO
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Cata.Syntax import _F, MACRO, SIMP
+from ...Commands import *
+from ...Commands import (AFFE_CHAR_MECA, AFFE_MATERIAU, ASSE_MATRICE,
+                         CALC_MATR_ELEM, COMB_MATR_ASSE, DEFI_MATERIAU,
+                         NUME_DDL)
+from ...Supervis import UserMacro
 
 
 def calc_matr_ifs_ops(self, **args):
@@ -301,4 +304,4 @@ CALC_MATR_IFS_CATA=MACRO(nom="CALC_MATR_IFS",
                  IMPE_I          =SIMP(statut='f',typ= CATA_CO),
 )
 
-CALC_MATR_IFS = ExecuteCommand.UserMacro("CALC_MATR_IFS", CALC_MATR_IFS_CATA, calc_matr_ifs_ops)
+CALC_MATR_IFS = UserMacro("CALC_MATR_IFS", CALC_MATR_IFS_CATA, calc_matr_ifs_ops)

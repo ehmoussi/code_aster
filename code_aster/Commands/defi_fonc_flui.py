@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import Function
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class FluidFonctionDefinition(ExecuteCommand):

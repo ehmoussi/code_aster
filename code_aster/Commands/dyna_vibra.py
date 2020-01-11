@@ -25,7 +25,7 @@ from ..Objects import (AssemblyMatrixPressureComplex,
                        FullTransientResultsContainer,
                        HarmoGeneralizedResultsContainer,
                        TransientGeneralizedResultsContainer)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class VibrationDynamics(ExecuteCommand):

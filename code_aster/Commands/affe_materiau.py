@@ -47,7 +47,7 @@ from ..Objects import (ConcreteDryingInputVariable,
                        TotalFluidPressureInputVariable,
                        VolumetricDeformationInputVariable,
                        ZircaloyPhasesInputVariable)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 from ..Utilities import force_list
 
 

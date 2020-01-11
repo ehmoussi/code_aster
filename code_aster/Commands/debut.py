@@ -47,7 +47,7 @@ from ..Cata.Syntax import tr
 from ..Cata.SyntaxUtils import remove_none
 from ..Helpers import LogicalUnitFile, Serializer, loadObjects
 from ..Supervis import CommandSyntax
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 from ..Utilities import ExecutionParameter, Options, logger
 from ..Utilities.i18n import localization
 

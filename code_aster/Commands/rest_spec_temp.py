@@ -23,7 +23,7 @@ from ..Objects import (FullHarmonicResultsContainer,
                        FullTransientResultsContainer,
                        HarmoGeneralizedResultsContainer,
                        TransientGeneralizedResultsContainer)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class FourierTransformation(ExecuteCommand):

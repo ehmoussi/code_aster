@@ -18,17 +18,21 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: nicolas.greffet at edf.fr
-#
-# RECUPERATION DES MAILLAGES IFS VENANT DE SATURNE VIA YACS
-#
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
 
-IMPR_MAIL_YACS=PROC(nom="IMPR_MAIL_YACS",op=43,
-               fr=tr("Lecture d'un maillage via YACS lors du Couplage de Code_Aster et Saturne"),
-         UNITE_MAILLAGE = SIMP(statut='f',typ='I',defaut=30),
-         TYPE_MAILLAGE = SIMP(statut='o',typ='TXM',into=("SOMMET","MILIEU")),
-         INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
-)  ;
+from ...Cata.Syntax import PROC, SIMP
+from ...Supervis import ExecuteCommand
+
+INIT_COMPO_CATA = PROC(nom="INIT_COMPO",
+                op=  117,
+                fr=tr("Initialiser adresse component YACS"),
+           COMPO           =SIMP(statut='o',typ='I',),
+)
+
+class InitComponent(ExecuteCommand):
+    """Command that initialize a code_aster component.
+    """
+    command_name = "INIT_COMPO"
+    command_cata = INIT_COMPO_CATA
+
+INIT_COMPO = InitComponent.run

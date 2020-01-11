@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 from ..Objects import Formula
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 from ..Utilities import force_list, initial_context
 
 

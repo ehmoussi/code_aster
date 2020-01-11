@@ -43,7 +43,7 @@ from ..Objects import (AsFloat, AsInteger, ElementaryMatrixDisplacementDouble,
                        FunctionComplex, GeneralizedAssemblyMatrixDouble,
                        GenericDataField, MechanicalModeContainer,
                        PCFieldOnMeshDouble, Surface, Table)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ExtrTable(ExecuteCommand):

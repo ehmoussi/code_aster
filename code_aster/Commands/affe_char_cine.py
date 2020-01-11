@@ -21,7 +21,7 @@
 
 from ..Objects import (KinematicsAcousticLoad, KinematicsMechanicalLoad,
                        KinematicsThermalLoad)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class KinematicsLoadDefinition(ExecuteCommand):

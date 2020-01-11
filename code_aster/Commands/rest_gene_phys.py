@@ -24,7 +24,7 @@ from ..Objects import (FullHarmonicResultsContainer,
                        HarmoGeneralizedResultsContainer,
                        MechanicalModeContainer,
                        TransientGeneralizedResultsContainer)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class RestGenePhys(ExecuteCommand):

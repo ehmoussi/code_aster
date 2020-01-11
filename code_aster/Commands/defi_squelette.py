@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import Skeleton
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class SkeletonDefinition(ExecuteCommand):

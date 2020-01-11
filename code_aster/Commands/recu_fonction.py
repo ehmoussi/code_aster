@@ -19,7 +19,7 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 from ..Objects import Function, FunctionComplex
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ExtractFunction(ExecuteCommand):

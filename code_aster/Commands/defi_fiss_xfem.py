@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.tardieu@edf.fr
 
 from ..Objects import XfemCrack
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class XFEMCrackDefinition(ExecuteCommand):

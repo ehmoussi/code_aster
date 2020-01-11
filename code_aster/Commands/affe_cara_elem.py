@@ -19,7 +19,7 @@
 
 
 from ..Objects import ElementaryCharacteristics
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class EltCharacteristicsAssignment(ExecuteCommand):

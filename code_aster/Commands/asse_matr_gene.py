@@ -21,7 +21,7 @@
 
 from ..Objects import (GeneralizedAssemblyMatrixComplex,
                        GeneralizedAssemblyMatrixDouble)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class GeneralizedMatrixBuilder(ExecuteCommand):

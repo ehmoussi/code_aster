@@ -18,7 +18,7 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from ..Objects import Table
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ModesMAC(ExecuteCommand):

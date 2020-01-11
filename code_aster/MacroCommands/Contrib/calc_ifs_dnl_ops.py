@@ -24,16 +24,18 @@
 import os
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import (AFFE_CHAR_MECA, DEFI_GROUP, DEFI_LIST_ENTI, DEFI_LIST_REEL,
-                                 DYNA_NON_LINE, EXTR_RESU, IMPR_RESU, LIRE_MAILLAGE, PROJ_CHAMP)
-from Contrib.env_cine_yacs import ENV_CINE_YACS
-from Contrib.impr_mail_yacs import IMPR_MAIL_YACS
-from Contrib.modi_char_yacs import MODI_CHAR_YACS
-from Contrib.recu_para_yacs import RECU_PARA_YACS
 from SD.sd_maillage import sd_maillage
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import (AFFE_CHAR_MECA, DEFI_GROUP, DEFI_LIST_ENTI,
+                         DEFI_LIST_REEL, DYNA_NON_LINE, EXTR_RESU, IMPR_RESU,
+                         LIRE_MAILLAGE, PROJ_CHAMP)
+from .env_cine_yacs import ENV_CINE_YACS
+from .impr_mail_yacs import IMPR_MAIL_YACS
+from .modi_char_yacs import MODI_CHAR_YACS
+from .recu_para_yacs import RECU_PARA_YACS
 
 
 def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, MODELE, ETAT_INIT, EXCIT, PAS_INIT, **args):

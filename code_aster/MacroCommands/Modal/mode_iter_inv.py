@@ -22,7 +22,7 @@ from ...Objects import (AssemblyMatrixDisplacementDouble, AssemblyMatrixPressure
 from ...Cata.Commons import *
 from ...Cata.DataStructure import *
 from ...Cata.Syntax import *
-from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Supervis import ExecuteCommand
 from ...Objects import (AcousticModeContainer, BucklingModeContainer,
                                 GeneralizedModeContainer, MechanicalModeComplexContainer,
                                 MechanicalModeContainer)

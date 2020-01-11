@@ -34,7 +34,7 @@ command with few changes.
 
 from ..Cata.Commands import commandStore
 from ..Cata.Syntax import Macro, Operator, Procedure
-from ..Supervis.ExecuteCommand import ExecuteCommand, ExecuteMacro
+from ..Supervis import ExecuteCommand, ExecuteMacro
 
 UNSUPPORTED = ('FORMULE', )
 

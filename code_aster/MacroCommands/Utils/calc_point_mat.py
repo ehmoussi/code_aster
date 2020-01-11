@@ -19,7 +19,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ...Objects import Table
-from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Supervis import ExecuteCommand
 from .calc_point_mat_cata import CALC_POINT_MAT_CATA
 
 

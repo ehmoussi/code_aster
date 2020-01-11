@@ -22,7 +22,7 @@
 from ..Objects import (FullHarmonicResultsContainer,
                        FullTransientResultsContainer, MechanicalModeContainer,
                        NonLinearEvolutionContainer)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class RestSousStrucOper(ExecuteCommand):

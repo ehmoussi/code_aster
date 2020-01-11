@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ...Objects import PrestressingCableDefinition
-from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Supervis import ExecuteCommand
 from .defi_cable_op_cata import DEFI_CABLE_OP_CATA
 
 

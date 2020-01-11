@@ -20,7 +20,7 @@
 # person_in_charge: mickael.abbas at edf.fr
 
 from ..Objects import EvolutiveThermalLoad
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class NonLinearThermalAnalysis(ExecuteCommand):

@@ -20,7 +20,7 @@
 # person_in_charge: guillaume.drouet@edf.fr
 
 from ..Objects import MechanicalModeContainer
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class StaticModeCalculation(ExecuteCommand):
