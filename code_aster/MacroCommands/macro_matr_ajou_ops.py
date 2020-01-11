@@ -18,11 +18,12 @@
 # --------------------------------------------------------------------
 
 import aster
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
 from ..Cata.Syntax import _F
 from ..Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, AFFE_MODELE,
-                                 CALC_FORC_AJOU, CALC_MATR_AJOU, DEFI_MATERIAU,
-                                 THER_LINEAIRE)
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+                        CALC_MATR_AJOU, DEFI_MATERIAU, THER_LINEAIRE)
+from .Utils.calc_forc_ajou_cata import CALC_FORC_AJOU
 
 
 def macro_matr_ajou_ops(

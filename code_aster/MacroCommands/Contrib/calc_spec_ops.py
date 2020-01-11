@@ -23,12 +23,11 @@ import numpy
 import numpy.fft as FFT
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import DEFI_FONCTION, DEFI_INTE_SPEC
 from SD.sd_fonction import sd_fonction
 from Utilitai.Utmess import UTMESS
 
-# -----------------------------------------------------------------------------
+from ...Cata.Syntax import _F
+from ...Commands import DEFI_FONCTION, DEFI_INTE_SPEC
 
 
 class FonctionError(Exception):
@@ -46,15 +45,11 @@ class InterpolationError(FonctionError):
 class ProlongementError(FonctionError):
     pass
 
-# -----------------------------------------------------------------------------
-
 
 def calc_spec_ops(self, **args):
-#  ------------------------------------------------------------------
-#  Calcul d'une matrice interspectrale
-#  a partir de fonctions reelles
-
-
+    """Calcul d'une matrice interspectrale
+    à partir de fonctions réelles.
+    """
     TAB_ECHANT = args.get("TAB_ECHANT")
     ECHANT = args.get("ECHANT")
     INTERSPE = args.get("INTERSPE")

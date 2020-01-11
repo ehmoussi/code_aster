@@ -22,10 +22,11 @@ import shutil
 
 import aster
 import aster_core
-from ..Cata.Syntax import _F
-from ..Commands import CREA_TABLE
 from Utilitai.System import ExecCommand
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import CREA_TABLE
 
 
 def macr_ecre_calc_ops(self, **args):

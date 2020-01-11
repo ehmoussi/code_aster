@@ -1,5 +1,5 @@
 # coding=utf-8
-#
+# --------------------------------------------------------------------
 # Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
@@ -15,26 +15,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
-# person_in_charge: nicolas.sellenet@edf.fr
+"""
+This modules contains some modules provided by third party entities.
 
-from Contrib.calc_point_mat import CALC_POINT_MAT as CALC_POINT_MAT_OP
+They are not used by any official commands.
 
-from ..Objects import Table
-from ..Supervis.ExecuteCommand import ExecuteCommand
-
-
-class CalcPointMat(ExecuteCommand):
-    """Command that defines a class:`~code_aster.Objects.Table"""
-    command_name = "CALC_POINT_MAT"
-    command_cata = CALC_POINT_MAT_OP
-
-    def create_result(self, keywords):
-        """Create the result.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-        self._result = Table()
-
-CALC_POINT_MAT = CalcPointMat.run
+They may be useful but without any warranty. They may fail or be unsufficiently
+validated.
+"""

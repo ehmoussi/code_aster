@@ -20,9 +20,10 @@
 import copy
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_CHAMP, DEFI_LIST_REEL, DYNA_NON_LINE
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+from ...Cata.Syntax import _F
+from ...Commands import CREA_CHAMP, DEFI_LIST_REEL, DYNA_NON_LINE
 
 
 def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,

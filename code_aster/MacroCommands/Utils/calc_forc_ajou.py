@@ -19,17 +19,16 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from Contrib.calc_forc_ajou import CALC_FORC_AJOU as CATA_CALC_FORC_AJOU
-
-from ..Objects import GeneralizedAssemblyVectorDouble
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ...Objects import GeneralizedAssemblyVectorDouble
+from ...Supervis.ExecuteCommand import ExecuteCommand
+from .calc_forc_ajou_cata import CALC_FORC_AJOU_CATA
 
 
 class CalcForcAjou(ExecuteCommand):
     """Command that defines aclass:`~code_aster.Objects.GeneralizedAssemblyVectorDouble`
     """
     command_name = "CALC_FORC_AJOU"
-    command_cata = CATA_CALC_FORC_AJOU
+    command_cata = CALC_FORC_AJOU_CATA
 
     def create_result(self, keywords):
         """Initialize the result.

@@ -19,11 +19,11 @@
 
 # person_in_charge: nicolas.greffet at edf.fr
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
 
-CALC_FORC_AJOU=OPER(nom="CALC_FORC_AJOU",op=199,sd_prod=vect_asse_gene,
+CALC_FORC_AJOU_CATA=OPER(nom="CALC_FORC_AJOU",op=199,sd_prod=vect_asse_gene,
                    fr=tr("Calculer l'effet de surpression hydrodynamique due au mouvement d'entrainement de la structure"
                          " en analyse sismique"),
                    reentrant ='n',

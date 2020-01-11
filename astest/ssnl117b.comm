@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 # person_in_charge: jean-luc.flejou at edf.fr
 # GEOMETRIE PROCHE DU CPP N4
 
-from Contrib.macro_rota_globale import MACR_ROTA_GLOBALE
+from code_aster.MacroCommands.Contrib.macro_rota_globale import MACR_ROTA_GLOBALE
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='OUI'))
 
@@ -139,32 +139,32 @@ LINST=DEFI_LIST_REEL(DEBUT=0.,INTERVALLE=(
 U1=STAT_NON_LINE( MODELE=MO,
                   CHAM_MATER=CHMAT,
                   CARA_ELEM=CAREL,
-                  
+
                   EXCIT=( _F(CHARGE = CHART,
                              FONC_MULT = FONCT),
                           _F(CHARGE = CHARP)
                                 ),
-                
+
                   INCREMENT=_F( LIST_INST = LINST,
                                        NUME_INST_FIN = 8
                                             ),
-                                            
+
                   COMPORTEMENT=(
                          _F( GROUP_MA = 'BC',
-                             RELATION = 'MFRONT', 
+                             RELATION = 'MFRONT',
                              NOM_ROUTINE = 'asterplasticity',
                              UNITE_LIBRAIRIE=39,
                              RESI_INTE_MAXI = 1.E-6,
                              ITER_CPLAN_MAXI=3 ),
                          _F( GROUP_MA = ( 'AB',  'CD',),
                              RELATION = 'ELAS', )),
-                             
+
                   NEWTON=_F(MATRICE = 'TANGENTE',
                             REAC_ITER = 3),
-                            
+
                   CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-4,
                                  ITER_GLOB_MAXI = 100),
-                                 
+
                   RECH_LINEAIRE=_F(ITER_LINE_MAXI = 3)
                             ,)
 

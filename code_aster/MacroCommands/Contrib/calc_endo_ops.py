@@ -20,10 +20,11 @@
 import math
 
 import aster
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (CREA_CHAMP, DEFI_CONSTANTE, DEFI_FONCTION,
-                                 DEFI_LIST_INST, DEFI_LIST_REEL, IMPR_RESU,
-                                 LIRE_CHAMP, STAT_NON_LINE)
+
+from ...Cata.Syntax import _F
+from ...Commands import (CREA_CHAMP, DEFI_CONSTANTE, DEFI_FONCTION,
+                         DEFI_LIST_INST, DEFI_LIST_REEL, IMPR_RESU, LIRE_CHAMP,
+                         STAT_NON_LINE)
 
 
 def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,

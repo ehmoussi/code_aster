@@ -20,14 +20,15 @@
 # person_in_charge: mathieu.corus at edf.fr
 
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Supervis.ExecuteCommand import UserMacro
-from code_aster.MacroCommands.calc_spec_ops import calc_spec_ops
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Supervis.ExecuteCommand import UserMacro
+from .calc_spec_ops import calc_spec_ops
+
 
 CALC_SPEC_CATA=MACRO(nom="CALC_SPEC",
-                op=OPS('code_aster.MacroCommands.calc_spec_ops.calc_spec_ops'),
+                op=OPS('code_aster.MacroCommands.Contrib.calc_spec_ops.calc_spec_ops'),
                 sd_prod=interspectre,
                 reentrant='n',
                 fr=tr("Calcule une matrice interspectrale ou des fonctions de transferts"),

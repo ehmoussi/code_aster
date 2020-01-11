@@ -17,11 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster import GenericMechanicalLoad, Table, ThermalLoad
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Supervis.ExecuteCommand import ExecuteMacro
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Objects import GenericMechanicalLoad, Table, ThermalLoad
+from ...Supervis.ExecuteCommand import ExecuteMacro
 
 
 def calc_ecrevisse_prod(self,CHARGE_MECA,CHARGE_THER1,CHARGE_THER2,TABLE,DEBIT,**args):
@@ -39,7 +39,7 @@ def calc_ecrevisse_prod(self,CHARGE_MECA,CHARGE_THER1,CHARGE_THER2,TABLE,DEBIT,*
 
 
 CALC_ECREVISSE_CATA=MACRO(nom="CALC_ECREVISSE",
-                          op=OPS('code_aster.MacroCommands.calc_ecrevisse_ops.calc_ecrevisse_ops'),
+                          op=OPS('code_aster.MacroCommands.Utils.calc_ecrevisse_ops.calc_ecrevisse_ops'),
                           sd_prod=calc_ecrevisse_prod,
                           reentrant='n',
                           regles   = (UN_PARMI('LOGICIEL','VERSION'),),

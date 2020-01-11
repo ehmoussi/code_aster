@@ -19,14 +19,17 @@
 
 import math
 
+from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
 from ..Cata.Syntax import _F
-from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU, AFFE_MODELE,
-                                 CALC_CHAMP, CALC_POINT_MAT, CALC_TABLE, CREA_CHAMP, CREA_RESU,
-                                 DEFI_FONCTION, IMPR_RESU, LIRE_MAILLAGE, MODI_MAILLAGE,
-                                 MODI_REPERE, POST_RELEVE_T, STAT_NON_LINE)
+from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
+                        AFFE_MODELE, CALC_CHAMP, CALC_TABLE, CREA_CHAMP,
+                        CREA_RESU, DEFI_FONCTION, IMPR_RESU, LIRE_MAILLAGE,
+                        MODI_MAILLAGE, MODI_REPERE, POST_RELEVE_T,
+                        STAT_NON_LINE)
 from ..Helpers import FileAccess, LogicalUnitFile
 from ..Utilities import is_sequence
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from .Utils.calc_point_mat import CALC_POINT_MAT
 
 
 def simu_point_mat_ops(

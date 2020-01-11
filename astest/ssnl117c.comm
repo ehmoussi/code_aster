@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 # person_in_charge: jean-luc.flejou at edf.fr
 # GEOMETRIE PROCHE DU CPP N4
 
-from Contrib.macro_rota_globale import MACR_ROTA_GLOBALE
+from code_aster.MacroCommands.Contrib.macro_rota_globale import MACR_ROTA_GLOBALE
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
@@ -85,7 +85,7 @@ MO=AFFE_MODELE(        MAILLAGE=MA,
      AFFE=(_F(  GROUP_MA = ('POUTRE'),   PHENOMENE = 'MECANIQUE',
                MODELISATION = 'POU_D_T'),
            _F(  GROUP_MA = ('3D','FACE_X224', 'FACE_Y224',
-                            'FACE_X125','FACE_Y125'),   
+                            'FACE_X125','FACE_Y125'),
                 PHENOMENE = 'MECANIQUE',
                MODELISATION = '3D'),
            _F(  GROUP_MA = ('POI_X125','POI_Y125'),   PHENOMENE = 'MECANIQUE',
@@ -94,13 +94,13 @@ MO=AFFE_MODELE(        MAILLAGE=MA,
                )
 
 CAREL=AFFE_CARA_ELEM(   MODELE=MO,
-                        POUTRE=( _F( GROUP_MA = ('POUTRE'), 
-                                     SECTION = 'CERCLE', 
-                                     CARA = (   'R',  'EP', ), 
+                        POUTRE=( _F( GROUP_MA = ('POUTRE'),
+                                     SECTION = 'CERCLE',
+                                     CARA = (   'R',  'EP', ),
                                      VALE = (  REXT,  EP, ),
                                      MODI_METRIQUE = 'OUI'),
                                ),
-                        DISCRET=( _F(GROUP_MA=('POI_X125', 'POI_Y125'), 
+                        DISCRET=( _F(GROUP_MA=('POI_X125', 'POI_Y125'),
                                      CARA='K_TR_D_N',
                                      #VALE=(1.E-3,1.E-3,1.E-3,
                                            #1.E-3,1.E-3,1.E-3,),
@@ -148,7 +148,7 @@ U1=STAT_NON_LINE(
                           FONC_MULT = FONCT),
                        _F(CHARGE = L_3D_POU),
                       ),
-                
+
                 INCREMENT=_F(LIST_INST = LINST,
                              NUME_INST_FIN = 8
                              ),
@@ -185,13 +185,13 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.399065942030E-03,
               )
 
 
-IMPR_RESU(FORMAT='RESULTAT', UNITE=6, 
-          RESU=_F(RESULTAT=U1, GROUP_NO = 'D', 
+IMPR_RESU(FORMAT='RESULTAT', UNITE=6,
+          RESU=_F(RESULTAT=U1, GROUP_NO = 'D',
                   NOM_CHAM=('FORC_NODA'),
                                               ))
 
-IMPR_RESU(FORMAT='RESULTAT', UNITE=6, 
-          RESU=_F(RESULTAT=U1, GROUP_NO = 'D', 
+IMPR_RESU(FORMAT='RESULTAT', UNITE=6,
+          RESU=_F(RESULTAT=U1, GROUP_NO = 'D',
                   NOM_CHAM=('DEPL'),
                                               ))
 

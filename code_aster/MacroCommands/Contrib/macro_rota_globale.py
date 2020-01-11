@@ -17,12 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DEFI_FONCTION, DEFI_LIST_REEL, POST_RELEVE_T
-from code_aster.Supervis.ExecuteCommand import UserMacro
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Cata.Syntax import _F
+from ...Commands import DEFI_FONCTION, DEFI_LIST_REEL, POST_RELEVE_T
+from ...Supervis.ExecuteCommand import UserMacro
 
 
 def macr_rota_globale_ops(self, **args):

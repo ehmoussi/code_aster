@@ -27,12 +27,12 @@ from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox,
 import numpy
 
 import aster
-from Contrib.calc_spec import CALC_SPEC
 from SD.sd_fonction import sd_fonction
 from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import CREA_TABLE, DETRUIRE, IMPR_TABLE, RECU_FONCTION
+from ..Contrib.calc_spec import CALC_SPEC
 from .cata_ce import CreaTable, InterSpectre, Tempo
 from .outils_ihm import DispFRFDialogue, MultiList, VisuSpectre
 

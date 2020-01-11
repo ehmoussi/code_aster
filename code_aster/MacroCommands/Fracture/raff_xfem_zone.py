@@ -21,11 +21,11 @@
 
 # commande cachee appelee uniquement par la macro RAFF_XFEM
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Supervis.ExecuteCommand import ExecuteCommand
-from code_aster.Objects import PCFieldOnMeshDouble
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Objects import PCFieldOnMeshDouble
+from ...Supervis.ExecuteCommand import ExecuteCommand
 
 RAFF_XFEM_ZONE_CATA=OPER(nom="RAFF_XFEM_ZONE",
                          op=188,

@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Commands import NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE
-from ...Supervis import CO
-from ..Objects import GeneralizedDOFNumbering
-from Contrib.proj_resu_base import PROJ_RESU_BASE
 from Utilitai.Utmess import UTMESS
+
+from ...Supervis import CO
+from ..Commands import NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE
+from ..Objects import GeneralizedDOFNumbering
+from .Utils.proj_resu_base import PROJ_RESU_BASE
 
 
 def proj_base_ops(self, **args):

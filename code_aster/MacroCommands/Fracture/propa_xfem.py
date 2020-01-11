@@ -19,11 +19,11 @@
 
 # person_in_charge: samuel.geniaut at edf.fr
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Supervis.ExecuteCommand import ExecuteCommand
-from code_aster.Objects import XfemCrack
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Objects import XfemCrack
+from ...Supervis.ExecuteCommand import ExecuteCommand
 
 PROPA_XFEM_CATA=OPER(nom="PROPA_XFEM",op=10,sd_prod=fiss_xfem,reentrant='n',
                 fr=tr("Propagation de fissure avec X-FEM"),

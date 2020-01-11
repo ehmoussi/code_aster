@@ -19,10 +19,9 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from Contrib.defi_cable_op import DEFI_CABLE_OP as CATA_DEFI_CABLE_OP
-
-from ..Objects import PrestressingCableDefinition
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ...Objects import PrestressingCableDefinition
+from ...Supervis.ExecuteCommand import ExecuteCommand
+from .defi_cable_op_cata import DEFI_CABLE_OP_CATA
 
 
 class DefiCableOp(ExecuteCommand):
@@ -30,7 +29,7 @@ class DefiCableOp(ExecuteCommand):
     :class:`~code_aster.Objects.PrestressingCableDefinition` on a
     :class:`~code_aster.Objects.Mesh`."""
     command_name = "DEFI_CABLE_OP"
-    command_cata = CATA_DEFI_CABLE_OP
+    command_cata = DEFI_CABLE_OP_CATA
 
     def create_result(self, keywords):
         """Initialize the result.

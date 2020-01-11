@@ -18,9 +18,11 @@
 # --------------------------------------------------------------------
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import DEFI_CABLE_OP, DEFI_GROUP
 from Utilitai.Utmess import UTMESS
+
+from ..Cata.Syntax import _F
+from ..Commands import DEFI_GROUP
+from .Utils.defi_cable_op import DEFI_CABLE_OP
 
 # ===========================================================================
 #           CORPS DE LA MACRO "DEFI_CABLE_BP"

@@ -36,7 +36,6 @@ from tkinter import (DISABLED, NORMAL, BooleanVar, Button, Canvas, Checkbutton, 
                      Tk, Toplevel)
 
 import aster
-import Templates
 from .cata_ce import (CalcEssaiObjects, CaraElem, DynaHarmo, InterSpectre, ModeMeca,
                                 Resultat)
 from .ce_calcul_expansion import CalcEssaiExpansion, make_mac_salome, make_mesh_mac
@@ -51,7 +50,7 @@ from gmsh import GMSH
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
 
-TEMPLATESDIR = osp.dirname(Templates.__file__)
+TEMPLATESDIR = None # TODO waiting for ce_* removal!
 
 
 

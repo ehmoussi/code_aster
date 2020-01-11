@@ -17,12 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Supervis.ExecuteCommand import ExecuteCommand
-from code_aster.Objects import NonLinearEvolutionContainer
-
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Objects import NonLinearEvolutionContainer
+from ...Supervis.ExecuteCommand import ExecuteCommand
 from .macro_bascule_schema_ops import macro_bascule_schema_ops
 
 MACRO_BASCULE_SCHEMA_CATA = MACRO(
