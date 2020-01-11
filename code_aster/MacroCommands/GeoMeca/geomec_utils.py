@@ -24,9 +24,9 @@ import numpy as NP
 from numpy import array
 
 import aster
-from Comportement import catalc
 from Utilitai.Utmess import UTMESS
 
+from ...Behaviours import catalc
 from ...Cata.Syntax import _F
 from ...Commands import (CREA_TABLE, DEFI_FICHIER, DEFI_FONCTION,
                          DEFI_LIST_INST, DEFI_LIST_REEL, DETRUIRE,
