@@ -22,13 +22,14 @@ import math as M
 import numpy as NP
 
 import aster
-from libaster import AsterError
-from ..Cata.Syntax import _F
-from ..Commands import (CALC_POINT_MAT, CREA_TABLE, DEFI_FONCTION, DEFI_LIST_INST,
-                                 DEFI_LIST_REEL, DETRUIRE, IMPR_TABLE, SIMU_POINT_MAT)
 from Comportement import catalc
+from libaster import AsterError
 from Utilitai.Utmess import UTMESS
 
+from ...Cata.Syntax import _F
+from ...Commands import (CALC_POINT_MAT, CREA_TABLE, DEFI_FONCTION,
+                         DEFI_LIST_INST, DEFI_LIST_REEL, DETRUIRE, IMPR_TABLE,
+                         SIMU_POINT_MAT)
 from .geomec_utils import *
 
 

@@ -27,9 +27,10 @@ import numpy.linalg as linalg
 
 import aster
 import aster_core
-from ..Cata.Syntax import _F
-from ..Commands import DETRUIRE, INFO_EXEC_ASTER
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import DETRUIRE, INFO_EXEC_ASTER
 
 
 def calcul_gradient(A, erreur):

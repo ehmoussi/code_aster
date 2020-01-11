@@ -54,8 +54,8 @@ from Utilitai.TableReader import TableReaderFactory
 from Utilitai.utils import get_shared_tmpdir
 from Utilitai.Utmess import UTMESS
 
-from ..Cata.Syntax import _F, MACRO, OPER
-from ..Commands import DETRUIRE
+from ...Cata.Syntax import _F
+from ...Commands import DETRUIRE
 from . import reca_algo, reca_interp
 
 include_pattern = "# -->INCLUDE<--"
@@ -1034,7 +1034,7 @@ class CALCULS_ASTER:
            Ajoute un bloc a la fin de l'esclave pour l'affichage des MAC pour l'appariement manuel
         """
         txt = []
-        txt.append( "from ..MacroCommands.reca_mac import extract_mac_array, get_modes, fenetre_mac\n" )
+        txt.append( "from ..MacroCommands.Recal.reca_mac import extract_mac_array, get_modes, fenetre_mac\n" )
         txt.append( "_mac = extract_mac_array("+str(reponse[0])+")\n" )
         txt.append( "l_mac=[]\n" )
         txt.append( "nb_freq=_mac.shape[1]\n" )

@@ -18,10 +18,11 @@
 # --------------------------------------------------------------------
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import DEFI_BASE_MODALE, DETRUIRE, EXTR_MODE
-from .dyna_visco_modes_calc import dyna_visco_modes_calc
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import DEFI_BASE_MODALE, DETRUIRE, EXTR_MODE
+from .dyna_visco_modes_calc import dyna_visco_modes_calc
 
 
 def dyna_visco_modes(self, TYPE_RESU, TYPE_MODE, list_FREQ, fmax, RESI_RELA,

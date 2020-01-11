@@ -29,8 +29,8 @@ import os
 
 import numpy as NP
 
-from ..Commands import LIRE_MAILLAGE
-from ..Helpers.LogicalUnit import FileAccess, LogicalUnitFile
+from ...Commands import LIRE_MAILLAGE
+from ...Helpers.LogicalUnit import FileAccess, LogicalUnitFile
 
 # RETURN A UNIQUE VECTOR
 # Fonction qui elimine les doublons dans un vecteur Vect

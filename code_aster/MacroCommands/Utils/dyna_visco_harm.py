@@ -20,13 +20,13 @@
 from numpy import array
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import (ASSE_VECTEUR, CALC_VECT_ELEM, COMB_MATR_ASSE,
-                                 CREA_CHAMP, CREA_RESU, DEFI_BASE_MODALE,
-                                 DETRUIRE, DYNA_VIBRA, MODE_STATIQUE,
-                                 NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE,
-                                 REST_GENE_PHYS)
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import (ASSE_VECTEUR, CALC_VECT_ELEM, COMB_MATR_ASSE,
+                         CREA_CHAMP, CREA_RESU, DEFI_BASE_MODALE, DETRUIRE,
+                         DYNA_VIBRA, MODE_STATIQUE, NUME_DDL_GENE,
+                         PROJ_MATR_BASE, PROJ_VECT_BASE, REST_GENE_PHYS)
 
 
 def dyna_visco_harm(self, EXCIT, list_FREQ, modes,

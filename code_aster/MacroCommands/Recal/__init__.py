@@ -16,17 +16,3 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-import sys
-
-
-"""
-Définition de la méthode UTMESS pour reca_xxxx.py, Graph.py, Table.py
-"""
-
-
-def UTMESS(code, sprg, texte):
-    fmt = '\n <%s> <%s> %s\n\n'
-    print(fmt % (code, sprg, texte))
-    if code == 'F':
-        sys.exit()

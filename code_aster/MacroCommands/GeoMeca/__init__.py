@@ -16,12 +16,3 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-from code_aster.Utilities import _
-
-cata_msg = {
-    1: _("""
-Le nombre d'éléments du mot clé MATRICE doit être égal à : %(i1)d
-"""),
-
-}

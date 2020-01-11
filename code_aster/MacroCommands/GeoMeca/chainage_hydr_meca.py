@@ -20,9 +20,10 @@
 import numpy
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import CREA_CHAMP, CREA_RESU, PROJ_CHAMP
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import CREA_CHAMP, CREA_RESU, PROJ_CHAMP
 
 prec = numpy.finfo(float).eps
 

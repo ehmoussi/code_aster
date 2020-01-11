@@ -24,14 +24,14 @@ import numpy as NP
 from numpy import array
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import (CREA_TABLE, DEFI_FICHIER, DEFI_FONCTION,
-                                 DEFI_LIST_INST, DEFI_LIST_REEL, DETRUIRE,
-                                 IMPR_FONCTION, INFO_EXEC_ASTER,
-                                 SIMU_POINT_MAT)
 from Comportement import catalc
 from Contrib.calc_point_mat import CALC_POINT_MAT
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import (CREA_TABLE, DEFI_FICHIER, DEFI_FONCTION,
+                         DEFI_LIST_INST, DEFI_LIST_REEL, DETRUIRE,
+                         IMPR_FONCTION, INFO_EXEC_ASTER, SIMU_POINT_MAT)
 
 
 # --------------------------------------------------------------
@@ -58,18 +58,9 @@ def ListR_2_Str(listreal):
     """
     char = ""
 
-    for i,r in enumerate(listreal):
+    for i, r in enumerate(listreal):
 
-        assert type(r) is float,\
-        '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+\
-        '!!!                                                       !!!'+\
-        '!!!   Erreur dans geomec_utils.py/ListR_2_Str :           !!!'+\
-        '!!!                                                       !!!'+\
-        '!!!   La composante numero %2d de la liste de donnees    !!!' %(i)+\
-        '!!!   n est pas un reel. Veuillez verifier vos donnees    !!!'+\
-        '!!!                                                       !!!'+\
-        '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-#    if str("%E"%(x[i]))[0] == "-" : deb = " "
+        assert type(r) is float, (i, type(r))
 
         if str(r)[0] == "-":
             deb = " "
@@ -81,7 +72,6 @@ def ListR_2_Str(listreal):
         else:
             fin = "\n"
 
-#    char += deb + str("%E"%(x[i])) + fin
         char += deb + str(r) + fin
 
     return char

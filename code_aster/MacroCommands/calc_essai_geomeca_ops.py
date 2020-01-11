@@ -18,9 +18,8 @@
 # --------------------------------------------------------------------
 
 from ..Cata.Syntax import _F, ListFact
-
-from .geomec_essais import *
-from .geomec_utils import *
+from .GeoMeca.geomec_essais import *
+from .GeoMeca.geomec_utils import *
 
 
 def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,

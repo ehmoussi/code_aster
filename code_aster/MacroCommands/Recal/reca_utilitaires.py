@@ -26,9 +26,10 @@ import sys
 
 import numpy as NP
 
-from ..Cata.Syntax import _F
-from ..Commands import DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, INFO_EXEC_ASTER
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, INFO_EXEC_ASTER
 
 try:
     import Gnuplot
