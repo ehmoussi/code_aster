@@ -20,11 +20,11 @@
 # person_in_charge: jean-michel.proix at edf.fr
 
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
 
-CALC_POINT_MAT=OPER(nom="CALC_POINT_MAT",op=33,sd_prod=table_sdaster,reentrant='f',
+CALC_POINT_MAT_CATA=OPER(nom="CALC_POINT_MAT",op=33,sd_prod=table_sdaster,reentrant='f',
             fr=tr("Intégrer une loi de comportement"),
      MATER           =SIMP(statut='o',typ=mater_sdaster,max=30),
      COMPORTEMENT    =C_COMPORTEMENT('CALC_POINT_MAT'),
@@ -127,7 +127,7 @@ CALC_POINT_MAT=OPER(nom="CALC_POINT_MAT",op=33,sd_prod=table_sdaster,reentrant='
      AFFE_VARC    = FACT(statut='f',max='**',
         NOM_VARC    = SIMP(statut='o',typ='TXM', into=("TEMP","CORR","IRRA","HYDR","SECH","NEUT1","NEUT2",
                                                  "PFERRITE","PPERLITE","PBAINITE","PMARTENS","PAUSTENI",
-                                                 "PCOLDSUM","ALPHPUR","ALPHBETA","BETA", 
+                                                 "PCOLDSUM","ALPHPUR","ALPHBETA","BETA",
                                                  "EPSA",
                                                   )),
         VALE_FONC   = SIMP(statut='f',typ=(fonction_sdaster,formule) ),

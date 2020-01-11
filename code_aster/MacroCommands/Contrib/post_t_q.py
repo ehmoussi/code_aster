@@ -17,11 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Supervis.ExecuteCommand import UserMacro
-from Contrib.post_t_q_ops import post_t_q_ops
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Supervis.ExecuteCommand import UserMacro
+from .post_t_q_ops import post_t_q_ops
 
 POST_T_Q_CATA=MACRO(nom="POST_T_Q",
                     op=OPS('Contrib.post_t_q_ops.post_t_q_ops'),

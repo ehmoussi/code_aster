@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 #
 # Pour pouvoir utiliser VERI_MATR_TANG, il faut mettre SDVERI='NON'
 #                                                      ------------
-from Contrib.veri_matr_tang import VERI_MATR_TANG
+from code_aster.MacroCommands.Utils.veri_matr_tang import VERI_MATR_TANG
 import numpy as np
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
@@ -64,7 +64,7 @@ TEMPS1=DEFI_LIST_REEL(DEBUT=0.,
                       INTERVALLE=(_F(JUSQU_A = tarret   , NOMBRE = 5),
                                   _F(JUSQU_A = temps_max, NOMBRE = 5),),);
 
-                                 
+
 #***********************************************************************
 #    ESSAI TRIAXIAL NON DRAINE CYCLIQUE
 #***********************************************************************
@@ -74,19 +74,19 @@ SOL=DEFI_MATERIAU(ELAS=_F(E=YOUNG, NU=POISSON, ALPHA=0.),
                             ANGDIL   = 27.,
                             COHESION = 1.0E+3,),);
 
-                            
+
 COEF0=DEFI_FONCTION(NOM_PARA    = 'INST',
                     PROL_DROITE = 'CONSTANT',
                     VALE=( 0.0, 0.,
                            temps_max, 0.,),);
 
-                          
+
 COEFH=DEFI_FONCTION(NOM_PARA    = 'INST',
                     PROL_DROITE = 'CONSTANT',
                     VALE=( 0.0, -PCO,
                            temps_max, -PCO,),);
 
-                           
+
 COEFV=DEFI_FONCTION(NOM_PARA    = 'INST',
                     PROL_DROITE = 'CONSTANT',
                     VALE=( 0.0, -3.*PCO,
@@ -111,7 +111,7 @@ if axe_char=='DX':
                SIYY=-PCO,
                SIZZ=-PCO,)
 
-               
+
 elif axe_char=='DY':
   sigm_impose=_F(SIYY=COEFV,
                  SIXX=COEFH,
@@ -123,7 +123,7 @@ elif axe_char=='DY':
                SIXX=-PCO,
                SIZZ=-PCO,)
 
-               
+
 elif axe_char=='DZ':
   sigm_impose=_F(SIZZ=COEFV,
                  SIYY=COEFH,
@@ -151,7 +151,7 @@ elif matr_tang:
 else:
   comp_incr =_F(RELATION='MOHR_COULOMB',);
 
-  
+
 DEBUG(SDVERI='NON')
 
 #
@@ -216,7 +216,7 @@ TSIGTANG=SIMU_POINT_MAT(INFO=2,
 
 DIFF = FORMULE(VALE='NB_ITER1-NB_ITER',
                NOM_PARA=['NB_ITER1', 'NB_ITER'],)
-                 
+
 TSIGTANG=CALC_TABLE(reuse=TSIGTANG,TABLE=TSIGTANG,
                     ACTION=(_F(OPERATION='RENOMME',
                                NOM_PARA =('NB_ITER','NB_ITER1'),),
@@ -227,7 +227,7 @@ TSIGTANG=CALC_TABLE(reuse=TSIGTANG,TABLE=TSIGTANG,
                                FORMULE  =DIFF,
                                NOM_PARA ='NB_ITER_DIFF',),
                             ),);
-                            
+
 IMPR_TABLE(TABLE=TSIGTANG,);
 #
 # On verifie que NB_ITER1 < NB_ITER a chaque instant
@@ -243,13 +243,13 @@ TEST_TABLE(NOM_PARA='NB_ITER_DIFF',
            CRITERE='ABSOLU',
            PRECISION=.1,
            VALE_REFE=0.,);
-           
+
 # ================================================================
 #                            POST-TRAITEMENTS
 # ================================================================
-# 
+#
 # tsigm = TSIGTANG.EXTR_TABLE().values();
-# 
+#
 # epxx = tsigm['EPXX'];
 # epyy = tsigm['EPYY'];
 # epxy = tsigm['EPXY'];
@@ -261,14 +261,14 @@ TEST_TABLE(NOM_PARA='NB_ITER_DIFF',
 # epvp = tsigm['V1'];
 # edvp = tsigm['V2'];
 # indi = tsigm['V3'];
-# 
+#
 # # Verif
 # # -------------
 # sig1_calc =list( -2.*PCO+np.sqrt(PCO**2.+np.array(sixy)**2.) )
 # sig3_calc =list( -2.*PCO-np.sqrt(PCO**2.+np.array(sixy)**2.) )
-# 
+#
 # co_sigm,co_epsi,co_vari,= [],[],[],;
-# 
+#
 # # CHAMPS CINEMATIQUES
 # # _____________________________
 # co_sigm =Defi_Xmcourbe(courbe=co_sigm,
@@ -276,13 +276,13 @@ TEST_TABLE(NOM_PARA='NB_ITER_DIFF',
 #         X=epxy, Y=sig1_calc,
 #         legend='SIG1_CALC',
 #         color=1,);
-#         
+#
 # co_sigm =Defi_Xmcourbe(courbe=co_sigm,
 #         #X=epxy, Y=sixx,
 #         X=epxy, Y=sig3_calc,
 #         legend='SIG3_CALC',
 #         color=2,);
-#         
+#
 # co_sigm =Defi_Xmcourbe(courbe=co_sigm,
 #         X=epxy, Y=siyy,
 #         legend='SIYY',

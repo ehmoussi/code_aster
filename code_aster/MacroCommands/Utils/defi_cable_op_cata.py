@@ -20,11 +20,12 @@
 # person_in_charge: sylvie.michel-ponnelle at edf.fr
 
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
 
-DEFI_CABLE_OP=OPER(nom="DEFI_CABLE_OP",op= 180,sd_prod=cabl_precont,reentrant='n',
+DEFI_CABLE_OP_CATA=OPER(nom="DEFI_CABLE_OP",op= 180,
+         sd_prod=cabl_precont,reentrant='n',
             fr=tr("Définit les profils initiaux de tension d'une structure en béton le long des cables de précontrainte"
                 " (utilisée par la macro DEFI_CABLE_BP)"),
          MODELE          =SIMP(statut='o',typ=modele_sdaster ),

@@ -17,11 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster import Table
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Supervis.ExecuteCommand import ExecuteMacro
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Objects import Table
+from ...Supervis.ExecuteCommand import ExecuteMacro
 
 
 def macr_ecre_calc_prod(self,TABLE,DEBIT,**args):
@@ -33,7 +33,7 @@ def macr_ecre_calc_prod(self,TABLE,DEBIT,**args):
   return None
 
 MACR_ECRE_CALC_CATA=MACRO(nom="MACR_ECRE_CALC",
-                          op=OPS('code_aster.MacroCommands.macr_ecre_calc_ops.macr_ecre_calc_ops'),
+                          op=OPS('code_aster.MacroCommands.Utils.macr_ecre_calc_ops.macr_ecre_calc_ops'),
                           sd_prod=macr_ecre_calc_prod,
                           reentrant='n',
                           fr=tr("Procedure de couplage avec Ecrevisse"),

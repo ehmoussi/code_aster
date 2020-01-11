@@ -22,12 +22,13 @@ from math import log
 import numpy as NP
 
 import aster
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, CALC_CHAM_ELEM, CALC_CHAMP,
-                                 CREA_CHAMP, DEFI_MATERIAU, PROJ_CHAMP)
-from code_aster.Supervis.ExecuteCommand import UserMacro
+
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Cata.Syntax import _F
+from ...Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, CALC_CHAM_ELEM,
+                         CALC_CHAMP, CREA_CHAMP, DEFI_MATERIAU, PROJ_CHAMP)
+from ...Supervis.ExecuteCommand import UserMacro
 
 
 def NT(epsp, Nl, Kt, a1, a2, a3):

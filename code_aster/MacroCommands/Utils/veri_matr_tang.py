@@ -23,12 +23,13 @@ import numpy as NP
 from numpy import linalg as LA
 
 import aster
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import CREA_TABLE
-from code_aster.Supervis.ExecuteCommand import UserMacro
+
+from ...Cata.Commons import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
+from ...Cata.Syntax import _F
+from ...Commands import CREA_TABLE
+from ...Supervis.ExecuteCommand import UserMacro
 
 
 class TANGENT:

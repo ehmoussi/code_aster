@@ -478,14 +478,14 @@ class TraceTableau(TraceGraph):
         msg = []
         if g.NbCourbe > 0:
             # validité des données (abscisses identiques)
-            t0 = numpy.array(g.Courbe(0)['Abs'])
+            t0 = np.array(g.Courbe(0)['Abs'])
             max0 = max(abs(t0))
             for i in range(1, g.NbCourbe):
                 if g.Courbe(i)['NbPts'] != g.Courbe(0)['NbPts']:
                     msg.append("La courbe %d n'a pas le même "
                                "nombre de points que la 1ère." % (i + 1))
                 else:
-                    ti = numpy.array(g.Courbe(i)['Abs'])
+                    ti = np.array(g.Courbe(i)['Abs'])
                     if max(abs((ti - t0).ravel())) > self.EPSILON * max0:
                         msg.append("Courbe %d : écart entre les "
                                    "abscisses supérieur à %9.2E" % (i + 1, self.EPSILON))
@@ -1292,14 +1292,14 @@ def Tri(tri, lx, ly):
     """Retourne les listes triées selon la valeur de tri ('X','Y','XY','YX').
     """
     dNumCol = {'X': 0, 'Y': 1}
-    tab = numpy.array((lx, ly))
-    tab = numpy.transpose(tab)
+    tab = np.array((lx, ly))
+    tab = np.transpose(tab)
     li = list(range(len(tri)))
     li.reverse()
     for i in li:
         if tri[-i] in list(dNumCol.keys()):
             icol = dNumCol[tri[-i]]
-            tab = numpy.take(tab, numpy.argsort(tab[:, icol]))
+            tab = np.take(tab, np.argsort(tab[:, icol]))
     return [tab[:, 0].tolist(), tab[:, 1].tolist()]
 
 # ------------------------------------------------------------------------

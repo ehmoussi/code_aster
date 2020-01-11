@@ -59,7 +59,6 @@ from .calc_fatigue import CALC_FATIGUE
 from .calc_ferraillage import CALC_FERRAILLAGE
 from .calc_flui_stru import CALC_FLUI_STRU
 from .calc_fonc_interp import CALC_FONC_INTERP
-from .calc_forc_ajou import CALC_FORC_AJOU
 from .calc_forc_nonl import CALC_FORC_NONL
 from .calc_g import CALC_G
 from .calc_h import CALC_H
@@ -67,7 +66,6 @@ from .calc_inte_spec import CALC_INTE_SPEC
 from .calc_matr_ajou import CALC_MATR_AJOU
 from .calc_matr_elem import CALC_MATR_ELEM
 from .calc_meta import CALC_META
-from .calc_point_mat import CALC_POINT_MAT
 from .calc_vect_elem import CALC_VECT_ELEM
 from .calcul import CALCUL
 from .comb_fourier import COMB_FOURIER
@@ -81,7 +79,6 @@ from .crea_table import CREA_TABLE
 from .debut import DEBUT, POURSUITE
 from .defi_base_modale import DEFI_BASE_MODALE
 from .defi_base_reduite import DEFI_BASE_REDUITE
-from .defi_cable_op import DEFI_CABLE_OP
 from .defi_compor import DEFI_COMPOR
 from .defi_composite import DEFI_COMPOSITE
 from .defi_constante import DEFI_CONSTANTE

@@ -26,13 +26,15 @@
 
 import numpy as NP
 
-from ..Cata.Syntax import _F
-from ..Commands import (CALC_FONCTION, CALC_TABLE, DEBUG, DEFI_CONSTANTE, DEFI_FONCTION,
-                                 DEFI_LIST_INST, DEFI_LIST_REEL, DEFI_MATERIAU, DETRUIRE, FORMULE,
-                                 IMPR_FONCTION, IMPR_TABLE, SIMU_POINT_MAT, TEST_TABLE)
-from Contrib.testcomp_utils import relative_error, vect_prod_rot
-from Contrib.veri_matr_tang import VERI_MATR_TANG
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_FONCTION, CALC_TABLE, DEBUG, DEFI_CONSTANTE,
+                        DEFI_FONCTION, DEFI_LIST_INST, DEFI_LIST_REEL,
+                        DEFI_MATERIAU, DETRUIRE, FORMULE, IMPR_FONCTION,
+                        IMPR_TABLE, SIMU_POINT_MAT, TEST_TABLE)
+from .Utils.testcomp_utils import relative_error, vect_prod_rot
+from .Utils.veri_matr_tang import VERI_MATR_TANG
 
 
 def rename_components_tmp(i, N_pas, label_cal, ch_param, RESU, __RS_I):
