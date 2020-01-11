@@ -21,7 +21,7 @@
 
 from ..Objects import (BucklingModeContainer, MechanicalModeComplexContainer,
                        MechanicalModeContainer)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 from ..Utilities import logger
 
 

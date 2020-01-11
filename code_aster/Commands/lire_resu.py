@@ -26,7 +26,7 @@ from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
                        LinearDisplacementEvolutionContainer,
                        MechanicalModeComplexContainer, MechanicalModeContainer,
                        ModeEmpiContainer, NonLinearEvolutionContainer)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ResultsReader(ExecuteCommand):

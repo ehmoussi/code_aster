@@ -24,7 +24,7 @@ import numpy as np
 from Utilitai.Utmess import UTMESS
 
 from ..Objects import Function, FunctionComplex
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 from ..Utilities import unsupported
 
 

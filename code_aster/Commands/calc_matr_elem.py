@@ -23,7 +23,7 @@ from ..Objects import (ElementaryMatrixDisplacementComplex,
                        ElementaryMatrixDisplacementDouble,
                        ElementaryMatrixPressureComplex,
                        ElementaryMatrixTemperatureDouble)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ComputeElementaryMatrix(ExecuteCommand):

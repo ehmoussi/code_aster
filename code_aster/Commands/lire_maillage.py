@@ -24,7 +24,7 @@ from ..Cata.DataStructure import maillage_sdaster
 from ..Cata.Syntax import OPER, SIMP, tr
 from ..Helpers import LogicalUnitFile
 from ..Objects import Mesh
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 from .pre_gibi import PRE_GIBI
 from .pre_gmsh import PRE_GMSH
 from .pre_ideas import PRE_IDEAS

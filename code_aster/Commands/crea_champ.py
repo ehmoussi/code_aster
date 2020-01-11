@@ -22,7 +22,7 @@
 from ..Objects import (FieldOnElementsDouble, FieldOnNodesComplex,
                        FieldOnNodesDouble, FullResultsContainer,
                        PCFieldOnMeshDouble)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class FieldCreator(ExecuteCommand):

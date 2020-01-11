@@ -22,7 +22,7 @@
 from ...Cata.DataStructure import carte_sdaster, evol_noli
 from ...Cata.Syntax import OPER, SIMP
 from ...Objects import PCFieldOnMeshDouble
-from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Supervis import ExecuteCommand
 
 POST_VOISIN_CZM_CATA = OPER(
 

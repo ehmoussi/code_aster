@@ -22,7 +22,7 @@
 from ..Cata.Language.SyntaxObjects import FactorKeyword
 from ..Objects import (GenericMechanicalLoad, ParallelMechanicalLoad,
                        PartialMesh)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 from .affe_modele import AFFE_MODELE
 
 

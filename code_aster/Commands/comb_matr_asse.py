@@ -27,7 +27,7 @@ from ..Objects import (AssemblyMatrixDisplacementComplex,
                        AssemblyMatrixTemperatureDouble,
                        GeneralizedAssemblyMatrixComplex,
                        GeneralizedAssemblyMatrixDouble)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class MatrixCombination(ExecuteCommand):

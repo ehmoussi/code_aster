@@ -27,4 +27,5 @@ objects.
 from .CommandSyntax import CommandSyntax
 from .exceptions_ext import (AsterError, ContactError, ConvergenceError,
                              IntegrationError, SolverError, TimeLimitError)
-from .ExecuteCommand import CO
+from .ExecuteCommand import (CO, ExecuteCommand, ExecuteCommandOps,
+                             ExecuteMacro, UserMacro)

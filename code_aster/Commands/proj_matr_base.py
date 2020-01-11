@@ -22,7 +22,7 @@
 from ..Objects import (AssemblyMatrixDisplacementDouble,
                        GeneralizedAssemblyMatrixComplex,
                        GeneralizedAssemblyMatrixDouble)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ProjMatrBase(ExecuteCommand):

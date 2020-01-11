@@ -23,7 +23,7 @@ from ...Cata.Commons import *
 from ...Cata.DataStructure import *
 from ...Cata.Syntax import *
 from ...Objects import TransientGeneralizedResultsContainer
-from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Supervis import ExecuteCommand
 
 PROJ_RESU_BASE_CATA=OPER(nom="PROJ_RESU_BASE",op=  79,sd_prod=tran_gene,
                     fr=tr("Projection d'une sd resultat assemblee sur une base (modale ou de RITZ)"),

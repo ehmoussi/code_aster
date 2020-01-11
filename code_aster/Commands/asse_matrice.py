@@ -27,7 +27,7 @@ from ..Objects import (AssemblyMatrixDisplacementComplex,
                        ElementaryMatrixDisplacementDouble,
                        ElementaryMatrixPressureComplex,
                        ElementaryMatrixTemperatureDouble)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class AssembleMatrixOperator(ExecuteCommand):

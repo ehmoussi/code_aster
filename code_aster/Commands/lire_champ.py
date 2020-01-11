@@ -21,7 +21,7 @@
 
 from ..Objects import (FieldOnElementsDouble, FieldOnNodesDouble,
                        PCFieldOnMeshDouble)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class FieldReader(ExecuteCommand):

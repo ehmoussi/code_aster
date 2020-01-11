@@ -22,7 +22,7 @@
 import libaster
 
 from ..Helpers import saveObjects
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 from ..Utilities import ExecutionParameter, logger
 
 

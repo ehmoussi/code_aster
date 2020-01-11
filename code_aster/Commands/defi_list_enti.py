@@ -22,7 +22,7 @@
 import numpy as np
 
 from ..Objects import ListOfIntegers
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ListOfIntegersDefinition(ExecuteCommand):

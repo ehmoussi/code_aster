@@ -25,7 +25,7 @@ from ...Cata.Commons import *
 from ...Cata.DataStructure import *
 from ...Cata.Syntax import *
 from ...Objects import PCFieldOnMeshDouble
-from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Supervis import ExecuteCommand
 
 RAFF_XFEM_ZONE_CATA=OPER(nom="RAFF_XFEM_ZONE",
                          op=188,

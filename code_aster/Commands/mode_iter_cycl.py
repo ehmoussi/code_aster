@@ -20,7 +20,7 @@
 # person_in_charge: natacha.bereux  at edf.fr
 
 from ..Objects import CyclicSymmetryMode
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class CyclicSymmetryModeDefinition(ExecuteCommand):

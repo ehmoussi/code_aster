@@ -22,7 +22,7 @@
 from ..Objects import (ElementaryVectorDisplacementDouble,
                        ElementaryVectorPressureComplex,
                        ElementaryVectorTemperatureDouble)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ComputeElementaryVector(ExecuteCommand):

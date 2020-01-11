@@ -36,7 +36,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import MechanicalModeContainer, TableContainer
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ModeNonLine(ExecuteCommand):

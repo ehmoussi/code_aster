@@ -26,7 +26,7 @@ from ..Cata.Language.SyntaxObjects import _F
 from ..Objects import (DataStructure, Formula, Function,
                        GeneralMaterialBehaviour, Material, MaterialBehaviour,
                        Surface, Table)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class MaterialDefinition(ExecuteCommand):

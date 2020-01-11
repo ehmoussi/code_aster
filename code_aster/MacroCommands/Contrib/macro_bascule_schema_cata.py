@@ -21,7 +21,7 @@ from ...Cata.Commons import *
 from ...Cata.DataStructure import *
 from ...Cata.Syntax import *
 from ...Objects import NonLinearEvolutionContainer
-from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Supervis import ExecuteCommand
 from .macro_bascule_schema_ops import macro_bascule_schema_ops
 
 MACRO_BASCULE_SCHEMA_CATA = MACRO(

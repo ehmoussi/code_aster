@@ -53,7 +53,7 @@ import os.path as osp
 import tempfile
 
 from ..Cata.Syntax import _F
-from ..Supervis.ExecuteCommand import ExecuteCommandOps
+from ..Supervis import ExecuteCommandOps
 from ..Utilities.logger import logger
 
 # Units 6 and 9 can not be released/associated.

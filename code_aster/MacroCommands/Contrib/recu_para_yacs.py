@@ -22,11 +22,12 @@
 # RECUPERATION DE PARAMETRES DE COUPLAGE VIA YACS
 #
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
+from ...Cata.DataStructure import listr8_sdaster
+from ...Cata.Syntax import BLOC, OPER, SIMP, tr
+from ...Objects import ListOfFloats
+from ...Supervis import ExecuteCommand
 
-RECU_PARA_YACS=OPER(nom="RECU_PARA_YACS",op=114,sd_prod=listr8_sdaster,
+RECU_PARA_YACS_CATA=OPER(nom="RECU_PARA_YACS",op=114,sd_prod=listr8_sdaster,
                    reentrant = 'n',
                    fr        = tr("Gestion des scalaires via YACS pour le coupleur IFS"),
           DONNEES = SIMP(statut='o',typ='TXM',into=("INITIALISATION","CONVERGENCE","FIN","PAS",) ),
@@ -43,3 +44,18 @@ RECU_PARA_YACS=OPER(nom="RECU_PARA_YACS",op=114,sd_prod=listr8_sdaster,
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
          TITRE           =SIMP(statut='f',typ='TXM',max='**'),
 );
+
+class ReceiveYacsPara(ExecuteCommand):
+    """Command that receive a Yacs parameter."""
+    command_name = "RECU_PARA_YACS"
+    command_cata = RECU_PARA_YACS_CATA
+
+    def create_result(self, keywords):
+        """Initialize the result object.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = ListOfFloats()
+
+RECU_PARA_YACS = ReceiveYacsPara.run

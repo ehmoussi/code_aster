@@ -22,7 +22,7 @@
 from ...Cata.DataStructure import evol_noli, fiss_xfem, table_sdaster
 from ...Cata.Syntax import OPER, SIMP
 from ...Objects import Table
-from ...Supervis.ExecuteCommand import ExecuteCommand
+from ...Supervis import ExecuteCommand
 
 DETEC_FRONT_CATA = OPER(
     nom="DETEC_FRONT", op=139, sd_prod=table_sdaster, reentrant='n',

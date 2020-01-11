@@ -21,10 +21,10 @@
 #
 #  ENVOI DES CHAMPS CINEMATIQUES VIA YACS POUR COUPLAGE IFS
 #
+#TODO ExecuteCommand
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
 
 ENV_CINE_YACS=PROC(nom             = "ENV_CINE_YACS",
                    op              = 111,

@@ -28,7 +28,7 @@ from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
                        LinearDisplacementEvolutionContainer,
                        MechanicalModeComplexContainer, MechanicalModeContainer,
                        MultElasContainer, NonLinearEvolutionContainer)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ResultCreator(ExecuteCommand):

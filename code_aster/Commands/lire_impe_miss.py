@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 from ..Objects import GeneralizedAssemblyMatrixComplex
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class MissImpedanceReader(ExecuteCommand):

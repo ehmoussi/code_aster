@@ -22,7 +22,7 @@
 from ..Objects import (GeneralizedModeContainer,
                        HarmoGeneralizedResultsContainer,
                        TransientGeneralizedResultsContainer)
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ProjMesuModal(ExecuteCommand):

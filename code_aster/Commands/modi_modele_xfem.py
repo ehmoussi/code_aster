@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet at edf.fr
 
 from ..Objects import Model
-from ..Supervis.ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class XfemModelModication(ExecuteCommand):

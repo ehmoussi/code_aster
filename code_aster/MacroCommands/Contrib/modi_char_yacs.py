@@ -21,10 +21,10 @@
 #
 #  RECUPERATION DES EFFORTS VIA YACS POUR COUPLAGE IFS
 #
+#TODO ExecuteCommand
 
-from code_aster.Cata.Commons import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Syntax import *
+from ...Cata.DataStructure import *
+from ...Cata.Syntax import *
 
 MODI_CHAR_YACS=OPER(nom            = "MODI_CHAR_YACS",
                    op              = 112,
