@@ -24,7 +24,7 @@
 """
 
 import aster
-from Cata_Utils.t_fonction import t_fonction, t_nappe
+from .function_py import t_fonction, t_nappe
 from libaster import DataStructure, Surface
 
 from ..Utilities import injector

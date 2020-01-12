@@ -24,7 +24,7 @@ import math
 import os
 
 import aster
-from Cata_Utils.t_fonction import t_fonction_c
+from ..Objects.function_py import t_fonction_c
 from Utilitai.TestResult import TestResult
 from Utilitai.Utmess import UTMESS
 

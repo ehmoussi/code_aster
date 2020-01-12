@@ -27,7 +27,6 @@ import os
 import numpy as NP
 
 import aster
-import Messages
 from ..Cata.Syntax import _F
 from ..Commands import *
 from Utilitai.Table import Table

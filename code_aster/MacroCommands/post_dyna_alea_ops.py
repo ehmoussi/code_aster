@@ -23,7 +23,7 @@ from math import exp, log, pi, sqrt
 import numpy as NP
 
 import aster
-from Cata_Utils.t_fonction import t_fonction
+from ..Objects.function_py import t_fonction
 from ..Cata.Syntax import _F
 from ..Commands import (CALC_FONCTION, CREA_TABLE, DEFI_FONCTION, DEFI_LIST_REEL,
                                  RECU_FONCTION)

@@ -40,7 +40,7 @@ import numpy as NP
 
 import aster
 import aster_core
-from Cata_Utils.t_fonction import t_fonction
+from code_aster.Objects.function_py import t_fonction
 from Utilitai.partition import MAIL_PY
 from Utilitai.random_signal_utils import (ACCE2SROM, acce_filtre_CP, calc_dsp_FR, calc_dsp_KT,
                                           dsp_filtre_CP)
