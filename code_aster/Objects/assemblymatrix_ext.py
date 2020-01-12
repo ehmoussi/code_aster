@@ -27,8 +27,8 @@ import numpy as NP
 
 from libaster import (AssemblyMatrixDisplacementComplex,
                       AssemblyMatrixDisplacementDouble)
-from SD.sd_stoc_morse import sd_stoc_morse
 
+from ..SD.sd_stoc_morse import sd_stoc_morse
 from ..Utilities import injector
 
 _orig_getType = AssemblyMatrixDisplacementDouble.getType

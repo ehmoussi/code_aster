@@ -25,12 +25,13 @@ import os
 
 import aster
 from Cata_Utils.t_fonction import t_fonction_c
-from ..Cata.Syntax import _F
-from ..Commands import CALC_FONCTION, DETRUIRE
-from ..Utilities import is_complex, is_sequence, is_str
-from SD.sd_fonction import sd_fonction
 from Utilitai.TestResult import TestResult
 from Utilitai.Utmess import UTMESS
+
+from ..Cata.Syntax import _F
+from ..Commands import CALC_FONCTION, DETRUIRE
+from ..SD.sd_fonction import sd_fonction
+from ..Utilities import is_complex, is_sequence, is_str
 
 epsi = 1e-15
 

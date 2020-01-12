@@ -24,7 +24,6 @@
 import os
 
 import aster
-from SD.sd_maillage import sd_maillage
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
 
@@ -32,6 +31,7 @@ from ...Cata.Syntax import _F
 from ...Commands import (AFFE_CHAR_MECA, DEFI_GROUP, DEFI_LIST_ENTI,
                          DEFI_LIST_REEL, DYNA_NON_LINE, EXTR_RESU, IMPR_RESU,
                          LIRE_MAILLAGE, PROJ_CHAMP)
+from ...SD.sd_maillage import sd_maillage
 from .env_cine_yacs import ENV_CINE_YACS
 from .impr_mail_yacs import IMPR_MAIL_YACS
 from .modi_char_yacs import MODI_CHAR_YACS

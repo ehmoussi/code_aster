@@ -20,11 +20,12 @@
 import numpy as NP
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import (CALC_TABLE, CREA_TABLE, DETRUIRE, FORMULE, POST_FATIGUE,
-                                 RECU_FONCTION)
-from SD.sd_mater import sd_compor1
 from Utilitai.Utmess import UTMESS
+
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_TABLE, CREA_TABLE, DETRUIRE, FORMULE,
+                        POST_FATIGUE, RECU_FONCTION)
+from ..SD.sd_mater import sd_compor1
 
 
 def verif_nb_table(OPERATION, TABLE):
