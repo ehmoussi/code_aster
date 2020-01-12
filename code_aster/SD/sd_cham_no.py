@@ -17,8 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# Cyclic dependency actually exist between sd_maillage and sd_carte
+# aslint: disable=C4008
+
 from . import *
-from .sd_maillage import sd_maillage
 from .sd_prof_chno import sd_prof_chno
 from .sd_titre import sd_titre
 from .sd_util import *
@@ -51,6 +53,7 @@ class sd_cham_no(sd_titre):
         return mail, prof_chno
 
     def check_cham_no_i_REFE(self, checker):
+        from .sd_maillage import sd_maillage
         if not self.exists():
             return
         if self.REFE in checker.names:

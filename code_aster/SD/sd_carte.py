@@ -17,9 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# Cyclic dependency actually exist between sd_maillage and sd_carte
+# aslint: disable=C4008
+
 from . import *
 from .sd_fonction import sd_fonction
-from .sd_maillage import sd_maillage
 from .sd_titre import sd_titre
 from .sd_util import *
 
@@ -39,6 +41,7 @@ class sd_carte(sd_titre):
         return self.NOMA.exists
 
     def check_NOMA(self, checker):
+        from .sd_maillage import sd_maillage
         if not self.exists():
             return
         noma = self.NOMA.get_stripped()
