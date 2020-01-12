@@ -41,7 +41,7 @@ from math import ceil, cos, exp, log, pi, sqrt
 import numpy as NP
 
 import aster_fonctions
-from Cata_Utils.t_fonction import t_fonction
+from code_aster.Objects.function_py import t_fonction
 from Utilitai.optimize import fmin
 from Utilitai.Utmess import UTMESS
 

@@ -30,7 +30,7 @@ from math import ceil, exp, log, pi, sqrt
 import numpy as NP
 
 import aster_core
-from Cata_Utils.t_fonction import t_fonction
+from ..Objects.function_py import t_fonction
 from ..Cata.Syntax import _F
 from Utilitai.optimize import fmin
 from Utilitai.random_signal_utils import (DSP2ACCE1D, DSP2FR, RAND_DSP,

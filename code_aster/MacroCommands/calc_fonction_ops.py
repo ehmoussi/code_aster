@@ -29,7 +29,7 @@ import traceback
 import numpy as NP
 
 import aster_fonctions
-from Cata_Utils.t_fonction import (FonctionError, InterpolationError,
+from ..Objects.function_py import (FonctionError, InterpolationError,
                                    ParametreError, ProlongementError,
                                    enveloppe, fractile, homo_support_nappe,
                                    moyenne, t_fonction, t_nappe)

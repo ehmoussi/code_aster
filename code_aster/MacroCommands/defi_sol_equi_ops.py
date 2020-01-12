@@ -24,7 +24,7 @@ from math import exp, floor, log, pi, sin, sqrt
 import numpy as np
 
 import aster
-from Cata_Utils.t_fonction import t_fonction
+from ..Objects.function_py import t_fonction
 from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
 

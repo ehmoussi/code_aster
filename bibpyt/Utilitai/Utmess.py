@@ -29,7 +29,7 @@ import aster_core
 import libaster
 from code_aster.Utilities import _
 from code_aster.Utilities import Singleton, convert, force_list, to_unicode, ufmt
-from Messages.context_info import message_context_concept
+from code_aster.Messages.context_info import message_context_concept
 from Utilitai.string_utils import clean_string, copy_text_to, cut_long_lines
 from Utilitai.utils import get_time
 
@@ -212,7 +212,7 @@ class MESSAGE_LOGGER(metaclass=Singleton):
 
         # import catamess => cata_msg
         try:
-            mod = __import__('Messages.%s' %
+            mod = __import__("code_aster.Messages.%s" %
                              catamess, globals(), locals(), [catamess])
             # si le dictionnaire n'existe pas, on alertera au moment du
             # formatage.

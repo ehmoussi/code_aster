@@ -29,7 +29,7 @@ from math import pi
 import numpy as NP
 
 import aster
-from Cata_Utils.t_fonction import t_fonction, t_fonction_c
+from .function_py import t_fonction, t_fonction_c
 from libaster import Function, FunctionComplex
 from Utilitai.Graph import Graph
 from Utilitai.Utmess import UTMESS
