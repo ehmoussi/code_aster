@@ -21,11 +21,11 @@ import copy
 import math
 
 import aster
-from SD.sd_xfem import sd_fiss_xfem
 from Utilitai.Utmess import UTMESS
 
 from ..Cata.Syntax import _F
 from ..Commands import CREA_CHAMP, DETRUIRE, FORMULE
+from ..SD.sd_xfem import sd_fiss_xfem
 from .Fracture.raff_xfem_zone import RAFF_XFEM_ZONE
 
 

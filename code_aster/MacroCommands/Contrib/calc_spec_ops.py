@@ -23,11 +23,11 @@ import numpy
 import numpy.fft as FFT
 
 import aster
-from SD.sd_fonction import sd_fonction
 from Utilitai.Utmess import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import DEFI_FONCTION, DEFI_INTE_SPEC
+from ...SD.sd_fonction import sd_fonction
 
 
 class FonctionError(Exception):

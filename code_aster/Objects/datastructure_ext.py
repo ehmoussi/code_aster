@@ -67,7 +67,7 @@ class ExtendedDataStructure(object):
             assert cata_sdj, ("The attribute 'cata_sdj' must be defined in "
                               "the class {}".format(self.__class__.__name__))
             if self.ptr_class_sdj is None:
-                self.ptr_class_sdj = import_object(cata_sdj)
+                self.ptr_class_sdj = import_object("code_aster." + cata_sdj)
             self.ptr_sdj = self.ptr_class_sdj(nomj=self.getName())
         return self.ptr_sdj
 
