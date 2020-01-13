@@ -9,7 +9,7 @@ import types
 from code_aster.Cata.Language.SyntaxObjects import IDS
 from code_aster.Cata.Language.SyntaxUtils import add_none_sdprod
 from code_aster.Cata.Syntax import *
-from code_aster.Commands.ExecuteCommand import UserMacro
+from code_aster.Supervis.ExecuteCommand import UserMacro
 from code_aster.Utilities import CR, force_list, logger
 
 

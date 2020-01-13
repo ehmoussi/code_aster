@@ -1,11 +1,12 @@
 # coding=utf-8
 
-from code_aster.Cata.Syntax import _F, MACRO, SIMP
 from code_aster.Cata.DataStructure import CO as typCO
-from code_aster.Cata.DataStructure import (evol_ther, modele_sdaster,
-    cham_no_sdaster, listr8_sdaster, cham_mater, char_ther, char_cine_ther)
+from code_aster.Cata.DataStructure import (cham_mater, cham_no_sdaster,
+                                           char_cine_ther, char_ther, evol_ther,
+                                           listr8_sdaster, modele_sdaster)
+from code_aster.Cata.Syntax import _F, MACRO, SIMP
 from code_aster.Commands import THER_LINEAIRE
-from code_aster.Commands.ExecuteCommand import UserMacro
+from code_aster.Supervis.ExecuteCommand import UserMacro
 
 
 def ma_macro_ops(self, TEMPER=None, **kwargs):
