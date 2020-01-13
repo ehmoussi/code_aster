@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,10 @@ from cataelem.Options.options import OP
 #----------------
 
 
+NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
+    components=('PRES','PHI',))
+
+
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
     components=('PRES','PHI',))
 
@@ -42,36 +46,52 @@ EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
     components=('X','Y','W',))
 
 
-MVECTUR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=DDL_MECA)
+MMATUUC  = ArrayOfComponents(phys=PHY.MDEP_C, locatedComponents=NDEPLAC)
 
 MMATUUR  = ArrayOfComponents(phys=PHY.MDEP_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class MEFASE2(Element):
+class MEAXFLQ4(Element):
     """Please document this element"""
-    meshType = MT.SEG2
+    meshType = MT.QUAD4
     elrefe =(
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('FPG1',),),
         )
     calculs = (
 
-        OP.COOR_ELGA(te=478,
+        OP.COOR_ELGA(te=479,
             para_in=((SP.PGEOMER, NGEOMER), ),
             para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
         ),
 
-        OP.IMPE_ABSO(te=550,
+        OP.MASS_INER(te=157,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (SP.PVITENT, DDL_MECA), (SP.PVITPLU, DDL_MECA),
                      ),
-            para_out=((SP.PVECTUR, MVECTUR), ),
+            para_out=((SP.PMASSINE, LC.EMASSINE), ),
         ),
 
-        OP.IMPE_MECA(te=258,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PIMPEDR, LC.EIMPEDR),
-                     (SP.PMATERC, LC.CMATERC), ),
+        OP.MASS_MECA(te=254,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     ),
             para_out=((SP.PMATUUR, MMATUUR), ),
+        ),
+
+        OP.PRME_ELNO(te=420,
+            para_in=((SP.PDEPLAC, NDEPLAC), ),
+            para_out=((SP.PPRME_R, LC.EPRMENO), ),
+        ),
+
+        OP.RIGI_MECA(te=253,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     ),
+            para_out=((SP.PMATUUR, MMATUUR), ),
+        ),
+
+        OP.RIGI_MECA_HYST(te=253,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     ),
+            para_out=((SP.PMATUUC, MMATUUC), ),
         ),
 
         OP.TOU_INI_ELGA(te=99,
@@ -87,13 +107,45 @@ class MEFASE2(Element):
             para_out=((OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), ),
         ),
 
+        OP.VERI_JACOBIEN(te=328,
+            para_in=((SP.PGEOMER, NGEOMER), ),
+            para_out=((SP.PCODRET, LC.ECODRET), ),
+        ),
+
     )
 
 
 #------------------------------------------------------------
-class MEFASE3(MEFASE2):
+class MEAXFLQ8(MEAXFLQ4):
     """Please document this element"""
-    meshType = MT.SEG3
+    meshType = MT.QUAD8
     elrefe =(
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','FPG1=FPG1',), mater=('FPG1',),),
+        )
+
+
+#------------------------------------------------------------
+class MEAXFLQ9(MEAXFLQ4):
+    """Please document this element"""
+    meshType = MT.QUAD9
+    elrefe =(
+            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','FPG1=FPG1',), mater=('FPG1',),),
+        )
+
+
+#------------------------------------------------------------
+class MEAXFLT3(MEAXFLQ4):
+    """Please document this element"""
+    meshType = MT.TRIA3
+    elrefe =(
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3','FPG1=FPG1',), mater=('FPG1',),),
+        )
+
+
+#------------------------------------------------------------
+class MEAXFLT6(MEAXFLQ4):
+    """Please document this element"""
+    meshType = MT.TRIA6
+    elrefe =(
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','FPG1=FPG1',), mater=('FPG1',),),
         )
