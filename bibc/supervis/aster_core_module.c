@@ -53,12 +53,11 @@ static PyObject* register_jdc(PyObject *self, PyObject *args)
      * Register the Python instances for usage from fortran/libaster
      */
     PyObject *val;
-    PyObject *coreopts, *msglog, *pymod;
-    if ( !PyArg_ParseTuple(args, "OOO:register_jdc", &coreopts, &msglog, &pymod) )
+    PyObject *coreopts, *msglog;
+    if ( !PyArg_ParseTuple(args, "OO:register_jdc", &coreopts, &msglog) )
         return NULL;
-    register_sh_coreopts(coreopts);
+    register_sh_params(coreopts);
     register_sh_msglog(msglog);
-    register_sh_pymod(pymod);
 
     // Add some wrappers for convenience
     val = PyObject_GetAttrString(coreopts, "get_option");
@@ -80,7 +79,7 @@ ASTERINTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
     PyObject *val;
     ASTERINTEGER value;
 
-    val = PyObject_CallMethod(get_sh_coreopts(), "get_option", "s#", attr, l_attr);
+    val = PyObject_CallMethod(get_sh_params(), "get_option", "s#", attr, l_attr);
     if (val == NULL){
         fprintf(fileOut, "attribut inexistant dans le jdc : '%s'\n\n", attr);
         MYABORT("erreur dans JDCGET");
@@ -101,7 +100,7 @@ void DEFSP(JDCSET,jdcset,char *attr, STRING_SIZE l_attr, ASTERINTEGER *value)
      */
     PyObject *res;
 
-    res = PyObject_CallMethod(get_sh_coreopts(), "set_option", "s#l", attr, l_attr, (long)*value);
+    res = PyObject_CallMethod(get_sh_params(), "set_option", "s#l", attr, l_attr, (long)*value);
     if (res == NULL)
         MYABORT("erreur dans JDCSET");
     Py_XDECREF(res);
@@ -113,7 +112,7 @@ PyObject* GetJdcAttr(_IN char *attribut)
      * Retourne un attribut du 'jdc' en tant que PyObject.
      */
     PyObject *objattr;
-    objattr = PyObject_GetAttrString(get_sh_coreopts(), attribut);
+    objattr = PyObject_GetAttrString(get_sh_params(), attribut);
     /* traiter l'erreur "objattr == NULL" dans l'appelant */
     return objattr;
 }
@@ -153,7 +152,7 @@ void DEFP(RDTMAX, rdtmax, _IN ASTERDOUBLE *tsub)
      */
     PyObject *res;
 
-    res = PyObject_CallMethod(get_sh_coreopts(), "sub_tpmax", "d", (double)(*tsub));
+    res = PyObject_CallMethod(get_sh_params(), "sub_tpmax", "d", (double)(*tsub));
     if (res == NULL)
         MYABORT("erreur dans RDTMAX");
     // reset du cache
@@ -176,7 +175,7 @@ PyObject* asterc_getopt(_IN char *option)
      */
     PyObject *res;
 
-    res = PyObject_CallMethod(get_sh_coreopts(), "get_option", "s", option);
+    res = PyObject_CallMethod(get_sh_params(), "get_option", "s", option);
     if ( !res ) MYABORT("erreur lors de l'appel a la methode CoreOptions.get_option");
 
     return res;
@@ -200,7 +199,7 @@ PyObject *args;
     if ( !PyArg_ParseTuple(args, "OO:set_option", &option, &value) )
         return NULL;
 
-    res = PyObject_CallMethodObjArgs(get_sh_coreopts(),
+    res = PyObject_CallMethodObjArgs(get_sh_params(),
                                      PyUnicode_FromString("set_option"),
                                      option, value, NULL);
     if ( !res ) MYABORT("erreur lors de l'appel a la methode CoreOptions.set_option");
@@ -594,7 +593,7 @@ void DEFP(PRHEAD,prhead, _IN ASTERINTEGER *part)
      * Voir help(aster_core.print_header)
      */
     PyObject *res;
-    res = PyObject_CallMethod(get_sh_pymod(), "print_header", "i", (int)(*part));
+    res = PyObject_CallFunction(GetJdcAttr("print_header"), "i", (int)(*part));
     if (!res) MYABORT("erreur lors de l'appel a la fonction E_Global.print_header");
     Py_DECREF(res);
 }
@@ -612,7 +611,7 @@ void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,
    */
    PyObject *res;
 
-   res = PyObject_CallMethod(get_sh_pymod(), "checksd", "s#s#", nomsd, lnom, typsd, ltyp);
+   res = PyObject_CallFunction(GetJdcAttr("checksd"), "s#s#", nomsd, lnom, typsd, ltyp);
    if (!res) MYABORT("erreur lors de l'appel a la methode CHECKSD");
    *iret = (ASTERINTEGER)PyLong_AsLong(res);
 
@@ -639,7 +638,7 @@ void DEFSSPPPPPPPPPPPP(TESTRESU_PRINT,testresu_print,
     PyObject *res, *func, *args, *kwargs, *ref, *val, *comp=NULL;
     int ityp;
 
-    func = PyObject_GetAttrString(get_sh_pymod(), "testresu_print");
+    func = PyObject_GetAttrString(get_sh_params(), "testresu_print");
     /* positional arguments */
     args = Py_BuildValue("s#s#llld", refer, lref, legend, lleg,
                          (long)(*llab), (long)(*skip), (long)(*rela),

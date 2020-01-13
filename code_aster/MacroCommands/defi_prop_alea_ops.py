@@ -28,7 +28,6 @@ from math import ceil, exp, log, pi, sqrt
 
 import numpy as np
 
-import aster_core
 from ..Commands import FORMULE
 from ..Messages import UTMESS
 

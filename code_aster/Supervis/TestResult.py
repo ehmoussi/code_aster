@@ -21,15 +21,12 @@
 This module defines objects for the testing feature.
 """
 
-# aslint: disable=C4008
-
 import re
-from functools import partial
 from glob import glob
 
-# TODO imported by code_aster < aster_core < here < Utmess < code_aster
-# to be solved!
-# from code_aster.Utilities import Singleton
+import aster
+
+from ..Messages import UTMESS
 
 _trans = str.maketrans('e', 'E')
 
@@ -39,7 +36,7 @@ def _fortran(srepr):
     return srepr.translate(_trans)
 
 
-class TestResult:
+class TestResult():
     """This class provides the feature to print the testcase results.
     A singleton object is created to avoid to repeat some global tasks.
     """
@@ -51,25 +48,12 @@ class TestResult:
         if cls._isVerif is None:
             cls._isVerif = cls._checkVerif()
             if not cls._isVerif:
-                cls._utmess('I', 'TEST0_19')
+                UTMESS('I', 'TEST0_19')
         return cls._isVerif
 
     @staticmethod
-    def _utmess(code, msg):
-        try:
-            from ...Messages import UTMESS as func
-        except ImportError:
-            func = _internal_mess
-        func(code, msg)
-
-    @staticmethod
     def _printLine(text):
-        try:
-            import aster
-            func = partial(aster.affiche, 'RESULTAT')
-        except ImportError:
-            func = _internal_print
-        func(text)
+        aster.affiche("RESULTAT", text)
 
     @classmethod
     def write(cls, width, *args):
@@ -123,7 +107,7 @@ class TestResult:
         else:
             # do not warn if validation testcase
             if not isValidIgn:
-                cls._utmess('A', 'TEST0_12')
+                UTMESS('A', 'TEST0_12')
         # formatting
         sref = '%s' % ref
         sval = '%s' % val
@@ -184,16 +168,6 @@ def testresu_print(type_ref, legend, label, skip, relative,
     lines = TestResult.showResult(type_ref, legend, label, skip, relative,
                                   tole, ref, val, compare)
     return lines
-
-
-def _internal_print(text):
-    """Define a basic print function for unittest"""
-    print(text)
-
-
-def _internal_mess(a, b):
-    """UTMESS replacement for unittest"""
-    print('<{0}> message {1}'.format(a, b))
 
 
 if __name__ == '__main__':

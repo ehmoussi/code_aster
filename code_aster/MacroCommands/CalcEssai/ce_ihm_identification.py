@@ -20,19 +20,19 @@
 # person_in_charge: albert.alarcon at edf.fr
 
 import tkinter.font
-from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox, Menu, Menubutton,
-                     Radiobutton, Scrollbar, StringVar)
+from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox,
+                     Menu, Menubutton, Radiobutton, Scrollbar, StringVar)
 
-from numpy import arctan, array, conjugate, identity, log, ones, pi, transpose, zeros
+from numpy import (arctan, array, conjugate, identity, log, ones, pi,
+                   transpose, zeros)
 
-import aster_core
-from .cata_ce import (CreaTable, InterSpectre, ModeMeca, Resultat, nume_ddl_gene,
-                                nume_ddl_phy)
-from .ce_calcul_identification import CalcEssaiIdentification
-from .outils_ihm import (ChgtRepereDialogue, Compteur, MultiList, MyMenu,
-                                   ObservationWindow, VisuSpectre)
 from ...Cata.Syntax import _F, CO
 from ...Commands import DETRUIRE, IMPR_RESU, OBSERVATION
+from .cata_ce import (CreaTable, InterSpectre, ModeMeca, Resultat,
+                      nume_ddl_gene, nume_ddl_phy)
+from .ce_calcul_identification import CalcEssaiIdentification
+from .outils_ihm import (ChgtRepereDialogue, Compteur, MultiList, MyMenu,
+                         ObservationWindow, VisuSpectre)
 
 #
 #

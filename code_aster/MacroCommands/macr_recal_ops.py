@@ -32,7 +32,6 @@ from asrun.common.sysutils import on_64bits
 from asrun.profil import AsterProfil
 
 import aster
-import aster_core
 from libaster import onFatalError
 from ..Messages import UTMESS, MessageLog
 
