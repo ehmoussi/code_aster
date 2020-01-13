@@ -27,38 +27,39 @@ from datetime import datetime
 
 import numpy
 
-import aster_core
 import aster
+import aster_core
 
 from ..Messages import UTMESS
-from ..Utilities import ExecutionParameter, aster_pkginfo, localization
+from ..Utilities import (ExecutionParameter, get_version, get_version_desc,
+                         localization, version_info)
 
 
 def _print_alarm():
     """Emet une alarme en cas de modification de la version du dépôt"""
-    changes = aster_pkginfo.version_info.changes
-    uncommitted = aster_pkginfo.version_info.uncommitted
+    changes = version_info.changes
+    uncommitted = version_info.uncommitted
     if changes:
         UTMESS('I', 'SUPERVIS_41',
-               valk=aster_pkginfo.get_version(), vali=changes)
+               valk=get_version(), vali=changes)
     if uncommitted and type(uncommitted) is list:
         fnames = ', '.join(uncommitted)
         UTMESS('A', 'SUPERVIS_42',
-               valk=(aster_pkginfo.version_info.parentid, fnames),)
+               valk=(version_info.parentid, fnames),)
 
 
 def _print_header():
     """Appelé par entete.F90 pour afficher des informations sur
     la machine."""
     lang_settings = '%s (%s)' % localization.get_current_settings()
-    date_build = aster_pkginfo.version_info.date
+    date_build = version_info.date
     UTMESS('I', 'SUPERVIS2_4',
-           valk=aster_pkginfo.get_version_desc())
+           valk=get_version_desc())
     UTMESS('I', 'SUPERVIS2_23',
-           valk=(aster_pkginfo.get_version(),
+           valk=(get_version(),
                  date_build,
-                 aster_pkginfo.version_info.parentid[:12],
-                 aster_pkginfo.version_info.branch),)
+                 version_info.parentid[:12],
+                 version_info.branch),)
     params = ExecutionParameter()
     UTMESS('I', 'SUPERVIS2_10',
            valk=("1991", time.strftime('%Y'),
