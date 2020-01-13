@@ -18,26 +18,23 @@
 # --------------------------------------------------------------------
 
 import aster
+
 from ..Cata.Syntax import _F
-from ..Commands import (ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAMP,
-                                 CALC_MATR_ELEM, CALC_VECT_ELEM, CALCUL,
-                                 CREA_RESU, DEFI_LIST_REEL, EXTR_TABLE,
-                                 FACTORISER, NUME_DDL, RESOUDRE)
+from ..Commands import (ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAMP, CALC_MATR_ELEM,
+                        CALC_VECT_ELEM, CALCUL, CREA_RESU, DEFI_LIST_REEL,
+                        EXTR_TABLE, FACTORISER)
+from ..Commands import NUME_DDL as NUME_DDL_CMD
+from ..Commands import RESOUDRE
 from ..Messages import UTMESS
 
 
 def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
                         CHAM_MATER=None, CARA_ELEM=None, NUME_DDL=None,
                         CHAR_MECA_GLOBAL=None, LIAISON_DISCRET=None,
-                         SOLVEUR=None, **args):
+                        SOLVEUR=None, **args):
     """
        Ecriture de la macro MACRO_ELAS_MULT
     """
-
-    # On met le mot cle NUME_DDL dans une variable locale pour le proteger
-    numeddl = NUME_DDL
-    # On importe les definitions des commandes a utiliser dans la macro
-
     args = _F(args)
 
     if args['reuse'] is not None:
@@ -57,8 +54,8 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
     if ielas == 1 and ifour == 1:
         UTMESS('F', 'ELASMULT0_1')
 
-    if (numeddl in self.sdprods) or (numeddl is None):
-        # Si le concept numeddl est dans self.sdprods ou n est pas nommé
+    if NUME_DDL in self.sdprods or NUME_DDL is None:
+        # Si le concept NUME_DDL est dans self.sdprods ou n est pas nommé
         # il doit etre  produit par la macro
         # il faudra donc appeler la commande NUME_DDL
         lnume = 1
@@ -79,14 +76,14 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
         if lnume:
             # On peut passer des mots cles egaux a None. Ils sont ignores
             motscles = {}
-            if numeddl is not None:
+            if NUME_DDL is not None:
                 num = NUME_DDL(MATR_RIGI=__nomrig, **motscles)
-                self.register_result(num, numeddl)
+                self.register_result(num, NUME_DDL)
             else:
                 _num = NUME_DDL(MATR_RIGI=__nomrig, **motscles)
                 num = _num
         else:
-            num = numeddl
+            num = NUME_DDL
 
         __nomras = ASSE_MATRICE(MATR_ELEM=__nomrig, NUME_DDL=num)
 

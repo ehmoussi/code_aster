@@ -30,18 +30,11 @@ def crea_elem_ssd_ops(self, **args):
         DEFI_INTERF_DYNA + DEFI_BASE_MODALE + MACR_ELEM_DYNA
     """
 
-    NUME_DDL = args.get("NUME_DDL")
+    numeddl = args.get("NUME_DDL")
     INTERFACE = args.get("INTERFACE")
     BASE_MODALE = args.get("BASE_MODALE")
     CALC_FREQ = args.get("CALC_FREQ")
     SOLVEUR = args.get("SOLVEUR")
-
-    # On met le mot cle NUME_DDL dans une variable locale pour le proteger
-    numeddl = NUME_DDL
-
-
-    # On importe les definitions des commandes a utiliser dans la macro
-
 
     mSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
 

@@ -486,7 +486,7 @@ class Table(TableBase):
         for para in l_para:
             vals = list(getattr(self, para).values())
             tabpar.append(vals)
-        tabpar = transpose.transpose(tabpar)
+        tabpar = transpose(tabpar)
         # évaluation de la fonction sur ces paramètres
         vectval = []
         for lpar in tabpar:
