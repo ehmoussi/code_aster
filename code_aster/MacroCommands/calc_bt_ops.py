@@ -27,15 +27,16 @@ from math import factorial, log, pi
 import numpy as np
 
 import aster
-from ..Cata.Syntax import _F
-from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU, AFFE_MODELE,
-                                 CALC_CHAMP, CREA_CHAMP, CREA_TABLE, DEFI_GROUP, DETRUIRE,
-                                 LIRE_MAILLAGE, MECA_STATIQUE)
-from Utilitai import partition
-from Utilitai.griddata_local import griddata
-from Utilitai.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
-from Utilitai.voronoi_local import Voronoi
+
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
+                        AFFE_MODELE, CALC_CHAMP, CREA_CHAMP, CREA_TABLE,
+                        DEFI_GROUP, DETRUIRE, LIRE_MAILLAGE, MECA_STATIQUE)
+from ..Helpers.UniteAster import UniteAster
+from .Utils import partition
+from .Utils.griddata_local import griddata
+from .Utils.voronoi_local import Voronoi
 
 
 #==============================================================================

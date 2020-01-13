@@ -26,7 +26,7 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import DETRUIRE, RECU_FONCTION
 from ..Helpers import LogicalUnitFile, ReservedUnitUsed
-from Utilitai.utils import fmtF2PY
+from ..Utilities.misc import fmtF2PY
 from Utilitai.Utmess import UTMESS
 
 

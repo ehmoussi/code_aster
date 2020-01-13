@@ -38,12 +38,11 @@ from math import log
 import numpy as NP
 
 import aster
-from ...Utilities import force_list
-from Utilitai.transpose import transpose
-from Utilitai.UniteAster import UniteAster
-from Utilitai.utils import _printDBG, get_shared_tmpdir
 from Utilitai.Utmess import ASSERT, UTMESS
 
+from ...Helpers.UniteAster import UniteAster
+from ...Utilities import force_list, transpose
+from ...Utilities.misc import _printDBG, get_shared_tmpdir
 
 dict_format = {
     'R': "15.6E",

@@ -25,7 +25,7 @@ import numpy as np
 
 import aster
 from ..Objects.function_py import t_fonction
-from Utilitai.Table import Table
+from ..Objects.table_py import Table
 from Utilitai.Utmess import UTMESS
 
 from ..Cata.Syntax import _F

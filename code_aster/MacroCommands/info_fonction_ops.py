@@ -24,7 +24,7 @@ import numpy as NP
 from ..Objects.function_py import t_fonction, t_fonction_c, t_nappe
 from ..Cata.Syntax import _F
 from ..Commands import CALC_FONCTION, CREA_TABLE, IMPR_TABLE
-from Utilitai.Table import Table
+from ..Objects.table_py import Table
 from Utilitai.Utmess import UTMESS
 
 

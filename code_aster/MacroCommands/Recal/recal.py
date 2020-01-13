@@ -50,12 +50,12 @@ from asrun.thread import Dispatcher
 from asrun.utils import search_enclosed
 
 import aster
-from Utilitai.TableReader import TableReaderFactory
-from Utilitai.utils import get_shared_tmpdir
 from Utilitai.Utmess import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import DETRUIRE
+from ...Utilities.misc import get_shared_tmpdir
+from ..Utils.TableReader import TableReaderFactory
 from . import reca_algo, reca_interp
 
 include_pattern = "# -->INCLUDE<--"

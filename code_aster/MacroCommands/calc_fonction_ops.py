@@ -29,21 +29,21 @@ import traceback
 import numpy as NP
 
 import aster_fonctions
+from Utilitai.Utmess import ASSERT, UTMESS
+
+from ..Cata.Syntax import _F
+from ..Commands import DEFI_FONCTION, DEFI_NAPPE, IMPR_FONCTION
+from ..Objects import Function, FunctionComplex, Surface
 from ..Objects.function_py import (FonctionError, InterpolationError,
                                    ParametreError, ProlongementError,
                                    enveloppe, fractile, homo_support_nappe,
                                    moyenne, t_fonction, t_nappe)
-from ..Cata.Syntax import _F
-from ..Commands import DEFI_FONCTION, DEFI_NAPPE, IMPR_FONCTION
-from ..Objects import Function, FunctionComplex, Surface
 from ..Utilities import force_list
-from Utilitai import liss_enveloppe as LISS
-from Utilitai.calc_coherency import calc_cohefromdata
-from Utilitai.random_signal_utils import (ACCE2SRO, DSP2SRO, SRO2DSP,
-                                          acce_filtre_CP, f_phase_forte)
-from Utilitai.Utmess import ASSERT, UTMESS
-
 from .defi_inte_spec_ops import tocomplex
+from .Utils import liss_enveloppe as LISS
+from .Utils.calc_coherency import calc_cohefromdata
+from .Utils.random_signal_utils import (ACCE2SRO, DSP2SRO, SRO2DSP,
+                                        acce_filtre_CP, f_phase_forte)
 
 
 def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None, COMB=None, COMB_C=None, MULT=None,

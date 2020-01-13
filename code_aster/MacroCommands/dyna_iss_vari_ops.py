@@ -29,8 +29,7 @@ from math import ceil, floor, pi
 import numpy as NP
 
 import aster
-from Utilitai.signal_correlation_utils import calc_dist2, get_group_nom_coord
-from Utilitai.Table import Table
+from ..Objects.table_py import Table
 from Utilitai.Utmess import UTMESS
 
 from ..Cata.Syntax import _F
@@ -39,6 +38,7 @@ from ..Commands import (CALC_FONCTION, COMB_MATR_ASSE, DEFI_FONCTION,
                         LIRE_IMPE_MISS, REST_SPEC_TEMP)
 from ..SD.sd_maillage import sd_maillage
 from .Miss.calc_miss_vari import calc_miss_vari, compute_force_vari
+from .Utils.signal_correlation_utils import calc_dist2, get_group_nom_coord
 
 
 def dyna_iss_vari_ops(self, **kwargs):

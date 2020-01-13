@@ -25,10 +25,6 @@ cata_msg = {
  Impossible d'importer le catalogue de la structure de données '%(k1)s'
 """),
 
-    2 : _("""
- Objet %(k1)s inexistant.
-"""),
-
     4 : _("""
  Arguments incohérents :
       Nom des paramètres : %(k1)s

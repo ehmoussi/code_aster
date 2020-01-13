@@ -24,10 +24,10 @@ import re
 from pprint import pformat
 
 import aster
-from Utilitai.string_utils import cut_long_lines, maximize_lines
-from Utilitai.Table import Table
-from Utilitai.utils import _printDBG, set_debug
 
+from ...Objects.table_py import Table
+from ...Utilities import cut_long_lines, maximize_lines
+from ...Utilities.misc import _printDBG, set_debug
 
 # Aster type : regular expression
 FMT = {

@@ -18,7 +18,9 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-__all__ = ['Table', 'merge']
+
+# TODO solve dependency TablePy/Graph
+# aslint: disable=C4008
 
 import os
 import re
@@ -27,15 +29,11 @@ from copy import copy
 
 import numpy
 
-from code_aster.Utilities import is_complex, is_float, is_int, is_number, is_sequence, is_str
-from Utilitai.string_utils import cut_long_lines
-from Utilitai.utils import fmtF2PY
 from Utilitai.Utmess import UTMESS
 
-
-if 'Graph' not in sys.modules:
-    from . import Graph, transpose
-
+from ..Utilities import (cut_long_lines, is_complex, is_float, is_int,
+                         is_number, is_sequence, is_str, transpose)
+from ..Utilities.misc import fmtF2PY
 
 # formats de base (identiques à ceux du module Graph)
 DicForm = {
@@ -278,6 +276,7 @@ class TableBase(object):
     def ImprGraph(self, **kargs):
         """Impression au format XMGRACE : via le module Graph
         """
+        from .table_graph import Graph
         args = kargs.copy()
         if len(self.para) != 2:
             UTMESS('A', 'TABLE0_21')
@@ -286,7 +285,7 @@ class TableBase(object):
         tnv = getattr(self, self.para[0]).NON_VIDE() \
             & getattr(self, self.para[1]).NON_VIDE()
         # objet Graph
-        graph = Graph.Graph()
+        graph = Graph()
         dicC = {
             'Val': [list(getattr(tnv, tnv.para[0]).values()),
                     list(getattr(tnv, tnv.para[1]).values())],

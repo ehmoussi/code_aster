@@ -27,11 +27,11 @@ import traceback
 import aster
 import aster_core
 import libaster
-from code_aster.Utilities import _
-from code_aster.Utilities import Singleton, convert, force_list, to_unicode, ufmt
 from code_aster.Messages.context_info import message_context_concept
-from Utilitai.string_utils import clean_string, copy_text_to, cut_long_lines
-from Utilitai.utils import get_time
+from code_aster.Utilities import (Singleton, _, clean_string, convert,
+                                  copy_text_to, cut_long_lines, force_list,
+                                  to_unicode, ufmt)
+from code_aster.Utilities.misc import get_time
 
 DEBUG = False
 CENTER = 1

@@ -24,12 +24,13 @@ from math import cos, sin
 
 import numpy
 
+from Utilitai.Utmess import UTMESS
+
 from ..Cata.Syntax import _F
 from ..Commands import DEFI_FONCTION, DEFI_NAPPE
 from ..Helpers import LogicalUnitFile, ReservedUnitUsed
-from Utilitai.transpose import transpose
-from Utilitai.UniteAster import UniteAster
-from Utilitai.Utmess import UTMESS
+from ..Helpers.UniteAster import UniteAster
+from ..Utilities.transpose import transpose
 
 
 class LectureBlocError(Exception):

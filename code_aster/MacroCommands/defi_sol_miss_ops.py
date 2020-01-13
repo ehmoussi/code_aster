@@ -24,7 +24,7 @@ import os
 import aster
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE
-from Utilitai.Table import Table
+from ..Objects.table_py import Table
 from Utilitai.Utmess import UTMESS
 
 

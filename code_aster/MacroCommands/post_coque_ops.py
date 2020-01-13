@@ -23,7 +23,7 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import (CALC_CHAMP, CALC_TABLE, CREA_TABLE,
                                  MACR_LIGN_COUPE)
-from Utilitai.Table import Table
+from ..Objects.table_py import Table
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 

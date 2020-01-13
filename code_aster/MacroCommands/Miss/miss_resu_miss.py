@@ -29,7 +29,7 @@ import unittest
 import numpy as NP
 
 from .miss_utils import double, lire_nb_valeurs
-from Utilitai.Table import Table
+from ...Objects.table_py import Table
 from Utilitai.Utmess import UTMESS
 
 

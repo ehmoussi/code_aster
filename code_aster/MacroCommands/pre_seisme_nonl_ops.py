@@ -23,7 +23,6 @@ import numpy as NP
 
 import aster
 from libaster import AsterError
-from Utilitai.partition import MAIL_PY
 from Utilitai.Utmess import ASSERT, UTMESS
 
 from ..Cata.DataStructure import (cara_elem, cham_mater, fonction_c,
@@ -40,6 +39,7 @@ from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
                         MODE_STATIQUE, NUME_DDL, NUME_DDL_GENE, PROD_MATR_CHAM,
                         STAT_NON_LINE)
 from ..Helpers.LogicalUnit import LogicalUnitFile
+from .Utils.partition import MAIL_PY
 
 
 def pre_seisme_nonl_ops(self, **args):

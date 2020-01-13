@@ -25,11 +25,12 @@ from numpy import linalg
 
 import aster
 import aster_core
-from ...Cata.Syntax import _F
-from ...Commands import (COMB_MATR_ASSE, CREA_CHAMP, DETRUIRE,
-                                 DYNA_VIBRA, LIRE_FORC_MISS, LIRE_IMPE_MISS)
-from Utilitai.signal_correlation_utils import CALC_COHE
 from Utilitai.Utmess import UTMESS
+
+from ...Cata.Syntax import _F
+from ...Commands import (COMB_MATR_ASSE, CREA_CHAMP, DETRUIRE, DYNA_VIBRA,
+                         LIRE_FORC_MISS, LIRE_IMPE_MISS)
+from ..Utils.signal_correlation_utils import CALC_COHE
 
 
 def calc_miss_vari(self):

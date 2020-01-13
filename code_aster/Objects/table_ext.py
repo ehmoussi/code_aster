@@ -25,7 +25,7 @@
 
 import aster
 from libaster import Table
-from Utilitai.Table import Table as TablePy
+from .table_py import Table as TablePy
 
 from ..Utilities import injector
 
