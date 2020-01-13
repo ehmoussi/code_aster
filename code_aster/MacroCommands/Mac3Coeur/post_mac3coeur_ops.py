@@ -30,7 +30,7 @@ import aster_core
 from ...Cata.Syntax import _F
 from ...Commands import CALC_TABLE, CREA_TABLE, FORMULE, IMPR_TABLE
 from ...Helpers.UniteAster import UniteAster
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from .mac3coeur_coeur import CoeurFactory
 

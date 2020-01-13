@@ -22,7 +22,7 @@ from math import acos, atan, atan2, cos, log, pi, sin, sqrt
 import numpy as NP
 
 import aster
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Cata.Syntax import _F
 from ..Commands import (ASSE_MAILLAGE, CALC_TABLE, DEFI_GROUP, DETRUIRE,

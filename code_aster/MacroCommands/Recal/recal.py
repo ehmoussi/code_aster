@@ -50,7 +50,7 @@ from asrun.thread import Dispatcher
 from asrun.utils import search_enclosed
 
 import aster
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import DETRUIRE
@@ -1349,8 +1349,6 @@ if __name__ == '__main__':
         if not os.path.isdir(ASTER_ROOT):
             raise Exception("Wrong directory for ASTER_ROOT : %s" % ASTER_ROOT)
         os.environ['ASTER_ROOT'] = ASTER_ROOT
-#         sys.path.append(get_absolute_path(os.path.join(ASTER_ROOT, 'STA10.1', 'bibpyt' )))
-#         from Utilitai.Utmess import UTMESS
 
         if options.as_run:
             as_run = options.as_run

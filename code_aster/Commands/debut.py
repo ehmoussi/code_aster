@@ -40,12 +40,12 @@ passed during the initialization to the
 import aster
 import aster_core
 import libaster
-from Utilitai.Utmess import MessageLog
 
 from ..Behaviours import catalc
 from ..Cata.Syntax import tr
 from ..Cata.SyntaxUtils import remove_none
 from ..Helpers import LogicalUnitFile, Serializer, loadObjects
+from ..Messages import MessageLog
 from ..Supervis import CommandSyntax, ExecuteCommand
 from ..Utilities import ExecutionParameter, Options, logger
 from ..Utilities.i18n import localization

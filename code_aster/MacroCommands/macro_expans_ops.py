@@ -21,7 +21,7 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import (EXTR_MODE, PROJ_CHAMP, PROJ_MESU_MODAL,
                                  REST_GENE_PHYS)
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def macro_expans_ops(self,

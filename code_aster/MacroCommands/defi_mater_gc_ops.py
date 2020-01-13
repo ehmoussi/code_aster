@@ -22,7 +22,7 @@
 import numpy as NP
 
 from ..Commands import DEFI_MATERIAU
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def FaitMessage(Dico):

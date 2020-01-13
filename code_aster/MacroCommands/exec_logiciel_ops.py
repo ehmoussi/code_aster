@@ -38,7 +38,7 @@ from libaster import AsterError
 from ..Commands import LIRE_MAILLAGE
 from ..Helpers.LogicalUnit import FileAccess, FileType, LogicalUnitFile
 from ..Helpers.UniteAster import UniteAster
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 class CommandLine( object ):

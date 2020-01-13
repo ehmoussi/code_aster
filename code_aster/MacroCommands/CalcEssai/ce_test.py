@@ -27,7 +27,7 @@ from numpy import take
 import aster
 from .ce_calcul_modifstruct import CalcEssaiModifStruct
 from ...Cata.Syntax import _F
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from .ce_calcul_expansion import CalcEssaiExpansion
 from .ce_calcul_identification import CalcEssaiIdentification, CalculInverse

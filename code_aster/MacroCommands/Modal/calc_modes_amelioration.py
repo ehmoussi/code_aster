@@ -24,7 +24,7 @@ from ...Objects import AssemblyMatrixDisplacementComplex, GeneralizedAssemblyMat
 from ...Cata.Syntax import _F
 from ...Commands import DETRUIRE
 from .mode_iter_inv import MODE_ITER_INV
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 
 def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):

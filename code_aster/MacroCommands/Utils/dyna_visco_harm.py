@@ -20,7 +20,7 @@
 from numpy import array
 
 import aster
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import (ASSE_VECTEUR, CALC_VECT_ELEM, COMB_MATR_ASSE,

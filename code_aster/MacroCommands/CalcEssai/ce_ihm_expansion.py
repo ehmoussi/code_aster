@@ -37,7 +37,7 @@ from .ce_ihm_parametres import CalcEssaiSalome
 from .outils_ihm import (DispFRFDialogue, DispObs, MacWindowFrame, ModeFreqList, MyMenu,
                                    ParamProjMesuModal)
 from ...Cata.Syntax import _F
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 #
 #

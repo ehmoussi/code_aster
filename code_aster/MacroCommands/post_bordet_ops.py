@@ -25,7 +25,7 @@ from ..Commands import (CALC_CHAM_ELEM, CALC_CHAMP, CALC_TABLE,
                                  CREA_CHAMP, CREA_TABLE, FORMULE)
 from ..Objects import Function as fonction_sdaster
 from ..Objects import Surface as nappe_sdaster
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def post_bordet_ops(self, RESULTAT, PARAM, TEMP, TOUT=None, GROUP_MA=None,

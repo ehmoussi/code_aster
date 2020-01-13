@@ -24,7 +24,7 @@ import pprint
 
 import aster
 from libaster import AsterError
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Cata.DataStructure import fonction_c, formule, formule_c, nappe_sdaster
 from ..Cata.Syntax import _F

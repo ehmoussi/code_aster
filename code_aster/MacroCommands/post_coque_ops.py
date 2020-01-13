@@ -24,7 +24,7 @@ from ..Cata.Syntax import _F
 from ..Commands import (CALC_CHAMP, CALC_TABLE, CREA_TABLE,
                                  MACR_LIGN_COUPE)
 from ..Objects.table_py import Table
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 
 def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE=None , INST=None,

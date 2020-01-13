@@ -21,7 +21,7 @@
 
 from ..Cata.SyntaxUtils import remove_none
 from ..Commands import ASSE_MATRICE, ASSE_VECTEUR, CALC_MATR_ELEM, CALC_VECT_ELEM, NUME_DDL
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def create_nume(self, numeddl_status, option, numeddl, matr_rigi, CHARGE, INFO, MODELE):

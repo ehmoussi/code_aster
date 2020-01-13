@@ -51,7 +51,7 @@ The class hierarchy for code_aster exceptions is:
 import aster
 from libaster import (AsterError, ContactError, ConvergenceError,
                       IntegrationError, SolverError, TimeLimitError)
-from Utilitai.Utmess import message_exception
+from ..Messages import message_exception
 
 from ..Utilities import convert
 

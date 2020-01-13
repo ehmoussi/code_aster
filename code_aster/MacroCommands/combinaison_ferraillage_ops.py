@@ -25,7 +25,7 @@ import string
 import aster
 from ..Cata.Syntax import _F
 from ..Commands import CALC_FERRAILLAGE, CREA_CHAMP, CREA_RESU, DETRUIRE, FORMULE
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def combinaison_ferraillage_ops(self, **args):

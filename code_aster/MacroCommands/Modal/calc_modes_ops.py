@@ -29,7 +29,7 @@ from .calc_modes_inv import calc_modes_inv
 from .calc_modes_multi_bandes import calc_modes_multi_bandes
 from .calc_modes_post import calc_modes_post
 from .calc_modes_simult import calc_modes_simult
-from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
+from ...Messages import MasquerAlarme, RetablirAlarme
 
 
 def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):

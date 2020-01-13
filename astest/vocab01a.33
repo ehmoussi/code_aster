@@ -376,7 +376,7 @@ def printKeywordsUsage( commands, fileList=None ):
 def vocab01_ops(self, EXISTANT, INFO, **kwargs):
     """Fake macro-command to check the catalog"""
     from code_aster.Commands import CREA_TABLE, TEST_TABLE
-    from Utilitai.Utmess import UTMESS
+    from code_aster.Messages import UTMESS
 
     # start the job
     commands = getListOfCommands()

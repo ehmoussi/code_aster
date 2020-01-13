@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 import aster
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ..Cata.Syntax import _F
 from ..Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, AFFE_MODELE,

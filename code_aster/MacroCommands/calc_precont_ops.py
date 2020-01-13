@@ -28,7 +28,7 @@ from ..Commands import (AFFE_CHAR_MECA, AFFE_MODELE, CALC_CHAMP,
                                  DEFI_LIST_REEL, RECU_TABLE, STAT_NON_LINE)
 from ..Objects import ListOfFloats, TimeStepper
 from ..Utilities import is_sequence
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 
 def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,

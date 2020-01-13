@@ -34,7 +34,7 @@ from ...Commands import (AFFE_MODELE, CREA_CHAMP, CREA_RESU,
                                  DEFI_FICHIER, DETRUIRE, IMPR_RESU,
                                  INFO_EXEC_ASTER, LIRE_MAILLAGE, MAC_MODES,
                                  MACRO_EXPANS)
-from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
+from ...Messages import MESSAGE_LOGGER, UTMESS
 
 # MESSAGE_LOGGER = classe permettant de formatter et d'afficher les
 # messages d'erreur

@@ -24,7 +24,7 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import (CALC_CHAMP, CALC_TABLE, CREA_CHAMP, CREA_TABLE, DEFI_GROUP,
                                  DEFI_LIST_REEL, FORMULE, POST_ELEM)
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 
 #

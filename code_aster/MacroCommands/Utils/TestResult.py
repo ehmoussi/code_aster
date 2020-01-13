@@ -57,7 +57,7 @@ class TestResult:
     @staticmethod
     def _utmess(code, msg):
         try:
-            from Utilitai.Utmess import UTMESS as func
+            from ...Messages import UTMESS as func
         except ImportError:
             func = _internal_mess
         func(code, msg)

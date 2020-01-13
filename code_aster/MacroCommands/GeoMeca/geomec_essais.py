@@ -23,7 +23,7 @@ import numpy as NP
 
 import aster
 from libaster import AsterError
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Behaviours import catalc
 from ...Cata.Syntax import _F

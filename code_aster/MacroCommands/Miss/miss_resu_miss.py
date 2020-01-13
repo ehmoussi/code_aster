@@ -30,7 +30,7 @@ import numpy as NP
 
 from .miss_utils import double, lire_nb_valeurs
 from ...Objects.table_py import Table
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 
 class MissCsolReader(object):

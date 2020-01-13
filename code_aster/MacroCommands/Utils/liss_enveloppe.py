@@ -22,7 +22,7 @@ import math
 
 import numpy as N
 
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Utilities import force_list
 

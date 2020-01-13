@@ -22,7 +22,7 @@ from numpy.linalg import *
 
 import aster
 from ..Objects.table_py import Table
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE, DETRUIRE, EXTR_TABLE

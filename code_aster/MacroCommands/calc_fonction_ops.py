@@ -29,7 +29,7 @@ import traceback
 import numpy as NP
 
 import aster_fonctions
-from Utilitai.Utmess import ASSERT, UTMESS
+from ..Messages import ASSERT, UTMESS
 
 from ..Cata.Syntax import _F
 from ..Commands import DEFI_FONCTION, DEFI_NAPPE, IMPR_FONCTION

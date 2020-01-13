@@ -20,7 +20,7 @@
 import copy
 
 from ..Objects.table_py import merge
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ..Cata.Syntax import _F
 from ..Commands import (AFFE_MATERIAU, CO, CREA_TABLE, DEFI_LIST_REEL,

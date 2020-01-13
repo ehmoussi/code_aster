@@ -37,7 +37,7 @@ import numpy as NP
 from asrun.common.sysutils import on_64bits
 from asrun.profil import AsterProfil
 
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Utilities.misc import get_shared_tmpdir
 from .recal import CALC_ERROR, CALCULS_ASTER, Affiche_Param

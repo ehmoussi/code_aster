@@ -47,8 +47,7 @@ from _aster_core import (_NO_EXPIR, _POSIX, _USE_64_BITS, _USE_MPI,
 # are imported here:
 from code_aster.MacroCommands.Utils.TestResult import testresu_print
 from code_aster.Utilities import localization
-from Utilitai.Utmess import MessageLog  # prevent cycling import
-from Utilitai.Utmess import UTMESS
+from code_aster.Messages import UTMESS, MessageLog  # prevent cycling import
 
 # prefer use get_version()
 __version__ = '.'.join(str(i) for i in aster_pkginfo.version_info.version)
@@ -95,8 +94,8 @@ def register(settings, logger=None):
 
     This function must be called in order to initialize aster.
 
-    :settings: aster settings object (as given by aster_settings.CoreOptions)
-    :logger: the message logger (default: Utilitai.Utmess.MessageLog)
+    :settings: aster settings object (as given by ExecutionParameter)
+    :logger: the message logger (default: code_aster.Messages.MessageLog)
     """
     if logger is None:
         logger = MessageLog

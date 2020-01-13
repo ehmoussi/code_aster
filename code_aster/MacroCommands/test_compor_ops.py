@@ -26,7 +26,7 @@
 
 import numpy as NP
 
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ..Cata.Syntax import _F
 from ..Commands import (CALC_FONCTION, CALC_TABLE, DEBUG, DEFI_CONSTANTE,

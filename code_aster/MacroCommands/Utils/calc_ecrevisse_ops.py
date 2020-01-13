@@ -24,7 +24,7 @@ from math import atan, atan2, cos, degrees, pi, radians, sin, sqrt
 
 import aster
 from ...Objects.table_py import Table, merge
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ...Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ...Cata.Syntax import _F
 from ...Commands import (AFFE_CHAR_MECA_F, AFFE_CHAR_THER_F, CO, CREA_TABLE,

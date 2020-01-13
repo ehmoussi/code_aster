@@ -30,7 +30,7 @@ from math import ceil, exp, log, pi, sqrt
 import numpy as NP
 
 import aster_core
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE, DEFI_FONCTION

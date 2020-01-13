@@ -34,13 +34,16 @@
 import numpy
 
 import aster
-from ...Cata.DataStructure import (cara_elem, cham_mater, dyna_harmo, interspectre,
-                                           maillage_sdaster, matr_asse_depl_r, matr_asse_gene_r,
-                                           mode_meca, modele_sdaster, nume_ddl_sdaster,
-                                           table_fonction, table_sdaster)
+
+from ...Cata.DataStructure import (cara_elem, cham_mater, dyna_harmo,
+                                   interspectre, maillage_sdaster,
+                                   matr_asse_depl_r, matr_asse_gene_r,
+                                   mode_meca, modele_sdaster, nume_ddl_sdaster,
+                                   table_fonction, table_sdaster)
 from ...Cata.Syntax import _F
-from ...Commands import CREA_CHAMP, DEFI_FONCTION, DEFI_INTE_SPEC, DETRUIRE, RECU_FONCTION
-from Utilitai.Utmess import UTMESS
+from ...Commands import (CREA_CHAMP, DEFI_FONCTION, DEFI_INTE_SPEC, DETRUIRE,
+                         RECU_FONCTION)
+from ...Messages import UTMESS
 
 
 class Resultat:

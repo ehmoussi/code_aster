@@ -30,7 +30,7 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import *
 from ..Objects.table_py import Table
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 filter_columns = ('TOUT_ORDRE','NUME_ORDRE','NUME_MODE','FREQ','LIST_FREQ','NOM_CAS','CRITERE','PRECISION')
 inte_by_efge = {'N':'NYY', 'VPL':'NXY', 'MHP':'MYY', 'VHP':'QY', 'MPL':'NYY'}
