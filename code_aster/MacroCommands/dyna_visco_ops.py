@@ -22,8 +22,8 @@ import numpy as NP
 import aster
 from ..Messages import UTMESS
 
-from ...Cata.Syntax import _F
-from ...Commands import (AFFE_MATERIAU, ASSE_MATRICE, CALC_MATR_ELEM,
+from ..Cata.Syntax import _F
+from ..Commands import (AFFE_MATERIAU, ASSE_MATRICE, CALC_MATR_ELEM,
                          COMB_MATR_ASSE, DEFI_MATERIAU, NUME_DDL)
 from .Utils.dyna_visco_harm import dyna_visco_harm
 from .Utils.dyna_visco_modes import dyna_visco_modes

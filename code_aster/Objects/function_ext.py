@@ -185,11 +185,11 @@ class ExtendedFunctionComplex(object):
         elif arg == 'imag':
             ordo = self.OrdoImg()
         elif arg == 'modul':
-            ordo = numpy.sqrt(
-                numpy.array(self.Ordo())**2 + numpy.array(self.OrdoImg())**2)
+            ordo = NP.sqrt(
+                NP.array(self.Ordo())**2 + NP.array(self.OrdoImg())**2)
         elif arg == 'phase':
-            ordo = numpy.arctan2(
-                numpy.array(self.OrdoImg()), numpy.array(self.Ordo())) * 180. / pi
+            ordo = NP.arctan2(
+                NP.array(self.OrdoImg()), NP.array(self.Ordo())) * 180. / pi
         elif arg == 'complex':
             ordo = list(map(complex, self.Ordo(), self.OrdoImg()))
         else:

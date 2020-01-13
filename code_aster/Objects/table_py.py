@@ -30,7 +30,6 @@ from copy import copy
 import numpy
 
 from ..Messages import UTMESS
-
 from ..Utilities import (cut_long_lines, is_complex, is_float, is_int,
                          is_number, is_sequence, is_str, transpose)
 from ..Utilities.misc import fmtF2PY
@@ -276,7 +275,7 @@ class TableBase(object):
     def ImprGraph(self, **kargs):
         """Impression au format XMGRACE : via le module Graph
         """
-        from .table_graph import Graph
+        from .table_graph import AjoutParaCourbe, Graph
         args = kargs.copy()
         if len(self.para) != 2:
             UTMESS('A', 'TABLE0_21')
@@ -291,7 +290,7 @@ class TableBase(object):
                     list(getattr(tnv, tnv.para[1]).values())],
             'Lab': tnv.para,
         }
-        Graph.AjoutParaCourbe(dicC, args)
+        AjoutParaCourbe(dicC, args)
         graph.AjoutCourbe(**dicC)
 
         # Surcharge des propriétés du graphique et des axes
