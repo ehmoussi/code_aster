@@ -43,14 +43,15 @@ import sys
 import warnings
 from argparse import SUPPRESS, ArgumentParser
 
-from . import aster_pkginfo
 import libaster
 
 from .as_timer import ASTER_TIMER
+from .aster_pkginfo import version_info
 from .base_utils import Singleton, no_new_attributes
 from .logger import DEBUG, INFO, logger
 from .options import Options
 from .strfunc import convert
+from .version import get_version_desc
 
 DEFAULT_MEMORY_LIMIT = 2047 if "32" in platform.architecture()[0] else 4096
 DEFAULT_TIME_LIMIT = 86400
@@ -123,17 +124,17 @@ class ExecutionParameter(metaclass=Singleton):
         # ex. 2.6.32...
         self._args['osrelease'] = platform.release()
         self._args['osname'] = platform.platform()
-        version = aster_pkginfo.version_info.version
+        version = version_info.version
         keys = ('parentid', 'branch', 'date',
                 'from_branch', 'changes', 'uncommitted')
-        self._args.update(list(zip(keys, aster_pkginfo.version_info[1:])))
+        self._args.update(list(zip(keys, version_info[1:])))
         self._args['version'] = '.'.join(str(i) for i in version)
         self._args['versMAJ'] = version[0]
         self._args['versMIN'] = version[1]
         self._args['versSUB'] = version[2]
-        self._args['exploit'] = aster_pkginfo.version_info.branch.startswith('v')
+        self._args['exploit'] = version_info.branch.startswith('v')
         self._args['versionD0'] = '%d.%02d.%02d' % version
-        self._args['versLabel'] = aster_pkginfo.get_version_desc()
+        self._args['versLabel'] = get_version_desc()
 
         self._timer = None
         self._command_counter = 0
