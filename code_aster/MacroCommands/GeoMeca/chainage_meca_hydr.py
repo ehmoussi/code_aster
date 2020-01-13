@@ -20,7 +20,7 @@
 import numpy
 
 import aster
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import (CALC_CHAMP, CREA_CHAMP, CREA_RESU, DEFI_LIST_REEL,

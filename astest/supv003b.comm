@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ rank, size = aster_core.MPI_CommRankSize()
 def just_for_test_decorator(meth):
     def wrap(*args, **kwargs):
         #if rank == 0:
-        from Utilitai.Utmess import MessageLog as MSG
+        from code_aster.Messages import MessageLog as MSG
         res = MSG.get_info_alarm()
         idmsg = set([item[0] for item in res])
         ok = idmsg.intersection(['APPELMPI_1', 'APPELMPI_2'])

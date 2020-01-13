@@ -25,7 +25,7 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE
 from ..Objects.table_py import Table
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 # Creation de la liste des coordonnees en Z d'un groupe de noeuds ou mailles :

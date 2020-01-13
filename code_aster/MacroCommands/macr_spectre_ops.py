@@ -20,7 +20,7 @@
 import aster
 from ..Cata.Syntax import _F
 from ..Commands import CALC_FONCTION, CREA_TABLE, IMPR_FONCTION, RECU_FONCTION
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def macr_spectre_ops(

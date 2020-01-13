@@ -31,7 +31,7 @@ import traceback
 import unittest
 
 from .miss_utils import double, lire_nb_valeurs
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 
 class ResuAsterReader(object):

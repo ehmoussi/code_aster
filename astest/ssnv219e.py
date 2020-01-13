@@ -1,7 +1,6 @@
 # coding=utf-8
 
 from code_aster.Commands import *
-import Utilitai
 
 try:
   # Import du module de calcul symbolique Sympy

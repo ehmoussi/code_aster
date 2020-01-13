@@ -19,7 +19,7 @@
 
 import math
 
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ..Cata.Syntax import _F
 from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,

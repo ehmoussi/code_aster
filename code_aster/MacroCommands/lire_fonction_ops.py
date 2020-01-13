@@ -24,7 +24,7 @@ from math import cos, sin
 
 import numpy
 
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Cata.Syntax import _F
 from ..Commands import DEFI_FONCTION, DEFI_NAPPE

@@ -26,7 +26,7 @@ from ..Cata.Syntax import _F
 from ..Commands import (COPIER, CREA_RESU, CREA_TABLE, DEFI_GROUP, LIRE_MAILLAGE,
                                  MODI_REPERE, POST_RELEVE_T, PROJ_CHAMP)
 from ..Helpers import LogicalUnitFile
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 #
 # script PYTHON de creation du résultat local

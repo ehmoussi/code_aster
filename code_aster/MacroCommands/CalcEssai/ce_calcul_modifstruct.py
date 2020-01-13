@@ -23,7 +23,7 @@
 #
 import aster
 from libaster import AsterError
-from Utilitai.Utmess import MESSAGE_LOGGER
+from ...Messages import MESSAGE_LOGGER
 
 from ...Cata.Syntax import _F, ASSD
 from ...Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,

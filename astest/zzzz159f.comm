@@ -29,7 +29,7 @@ from asrun.profil import AsterProfil
 
 # Recuperation du chemin du fichier recal.py
 import code_aster.MacroCommands.Recal
-from Utilitai.System import ExecCommand
+from code_aster.Utilities.System import ExecCommand
 
 ROOT = os.getcwd()
 

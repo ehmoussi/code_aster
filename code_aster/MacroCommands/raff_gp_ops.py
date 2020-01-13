@@ -23,7 +23,7 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import (AFFE_MODELE, CO, COPIER, CREA_CHAMP, DETRUIRE,
                                  FORMULE, MACR_ADAP_MAIL)
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 #
 #

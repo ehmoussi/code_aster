@@ -22,7 +22,7 @@ from math import cos, exp, pi
 import numpy
 
 from ..Commands import DEFI_FONCTION
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def FcompletGR1(T, I1, I2, FR, TR, PHI1, PHI2, TAU1, TAU2):

@@ -20,7 +20,7 @@
 import aster
 from ..Cata.Syntax import _F
 from ..Commands import CREA_CHAMP, FORMULE, MODI_MAILLAGE
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args):

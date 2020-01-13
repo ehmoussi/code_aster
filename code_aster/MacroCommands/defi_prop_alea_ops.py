@@ -30,7 +30,7 @@ import numpy as np
 
 import aster_core
 from ..Commands import FORMULE
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def defi_prop_alea_ops(self, **kwargs):

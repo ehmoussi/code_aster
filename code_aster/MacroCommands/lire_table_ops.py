@@ -22,7 +22,7 @@
 import os.path as osp
 
 import aster
-from Utilitai.Utmess import UTMESS, raise_UTMESS
+from ..Messages import UTMESS, raise_UTMESS
 
 from ..Commands import CREA_TABLE
 from ..Helpers import LogicalUnitFile

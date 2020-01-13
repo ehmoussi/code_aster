@@ -27,7 +27,7 @@ from ..Commands import (AFFE_CHAR_THER, AFFE_CHAR_THER_F,
                                  DEFI_GROUP, DEFI_MATERIAU, DETRUIRE,
                                  IMPR_TABLE, LIRE_MAILLAGE, MACR_LIGN_COUPE,
                                  NUME_DDL, POST_ELEM, THER_LINEAIRE)
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 
 def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA_BORD=None,

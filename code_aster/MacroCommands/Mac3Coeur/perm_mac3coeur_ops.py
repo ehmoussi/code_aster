@@ -28,7 +28,7 @@ from ...Cata.DataStructure import maillage_sdaster, modele_sdaster, table_sdaste
 from ...Cata.Syntax import _F
 from ...Commands import AFFE_CHAR_CINE, CREA_CHAMP, CREA_RESU, STAT_NON_LINE
 from ...Helpers.UniteAster import UniteAster
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from .mac3coeur_ac_permute import MACRO_AC_PERMUTE
 from .mac3coeur_coeur import CoeurFactory

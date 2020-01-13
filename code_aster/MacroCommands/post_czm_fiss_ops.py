@@ -35,7 +35,7 @@ from math import acos, pi
 from numpy import *
 
 import aster
-from Utilitai.Utmess import UTMESS, MasquerAlarme
+from ..Messages import UTMESS, MasquerAlarme
 
 from ..Cata.Syntax import _F
 from ..Commands import CALC_CHAM_ELEM, CREA_CHAMP, CREA_TABLE, DETRUIRE

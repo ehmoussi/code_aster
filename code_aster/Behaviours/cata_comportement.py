@@ -69,9 +69,8 @@ Interfaces Fortran/Python :
 import copy
 import os
 
+from ..Messages import UTMESS
 from ..Utilities import Singleton, convert, force_tuple, ufmt
-from Utilitai.Utmess import UTMESS
-
 from .cata_vari import DICT_NOM_VARI
 
 

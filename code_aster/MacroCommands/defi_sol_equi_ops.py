@@ -26,7 +26,7 @@ import numpy as np
 import aster
 from ..Objects.function_py import t_fonction
 from ..Objects.table_py import Table
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Cata.Syntax import _F
 from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_CHAR_MECA_F,

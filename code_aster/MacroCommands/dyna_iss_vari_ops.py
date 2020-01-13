@@ -30,7 +30,7 @@ import numpy as NP
 
 import aster
 from ..Objects.table_py import Table
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Cata.Syntax import _F
 from ..Commands import (CALC_FONCTION, COMB_MATR_ASSE, DEFI_FONCTION,

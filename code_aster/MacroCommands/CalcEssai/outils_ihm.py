@@ -34,7 +34,7 @@ from libaster import AsterError
 from ...Cata.Syntax import _F, ASSD, CO
 from ...Commands import (AFFE_CHAR_MECA, CREA_CHAMP, DEFI_FONCTION, DEPL_INTERNE, DETRUIRE,
                                  DYNA_VIBRA, OBSERVATION, RECU_FONCTION)
-from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
+from ...Messages import MESSAGE_LOGGER, UTMESS
 
 # from .ce_ihm_parametres import CalcEssaiSalome
 

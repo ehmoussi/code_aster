@@ -22,7 +22,7 @@ import shutil
 
 import aster
 import aster_core
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import CREA_TABLE

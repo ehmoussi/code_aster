@@ -27,7 +27,7 @@ from optparse import OptionGroup, OptionParser
 import aster
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE, INFO_EXEC_ASTER, TEST_TABLE
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 class TestFichierError(Exception):

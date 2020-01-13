@@ -27,7 +27,7 @@ from ..Cata.Syntax import _F
 from ..Commands import DETRUIRE, RECU_FONCTION
 from ..Helpers import LogicalUnitFile, ReservedUnitUsed
 from ..Utilities.misc import fmtF2PY
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def impr_table_ops(self, FORMAT, TABLE, INFO, **args):

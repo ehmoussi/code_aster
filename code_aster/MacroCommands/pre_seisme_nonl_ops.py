@@ -23,7 +23,7 @@ import numpy as NP
 
 import aster
 from libaster import AsterError
-from Utilitai.Utmess import ASSERT, UTMESS
+from ..Messages import ASSERT, UTMESS
 
 from ..Cata.DataStructure import (cara_elem, cham_mater, fonction_c,
                                   fonction_sdaster, maillage_sdaster,

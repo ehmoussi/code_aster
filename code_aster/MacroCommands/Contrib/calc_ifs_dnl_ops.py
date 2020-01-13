@@ -25,7 +25,7 @@ import os
 
 import aster
 from ...Objects.table_py import Table
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import (AFFE_CHAR_MECA, DEFI_GROUP, DEFI_LIST_ENTI,

@@ -34,7 +34,7 @@ import aster
 import aster_core
 from ..Helpers.UniteAster import UniteAster
 #
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ..Cata.Syntax import _F
 from ..Commands import (DEFI_FICHIER, EXEC_LOGICIEL, IMPR_RESU, LIRE_CHAMP,

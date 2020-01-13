@@ -24,7 +24,7 @@ from math import pi
 import numpy as NP
 
 import aster
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ...Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ...Cata.DataStructure import mode_meca
 from ...Cata.Syntax import _F

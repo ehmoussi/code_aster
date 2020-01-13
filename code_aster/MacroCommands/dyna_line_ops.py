@@ -33,7 +33,7 @@ from ..Commands import (AFFE_CHAR_MECA, ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAR_SE
                                  NUME_DDL, NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE, RESOUDRE,
                                  REST_GENE_PHYS)
 from ..Utilities import force_list
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 class DynaLineFEM:

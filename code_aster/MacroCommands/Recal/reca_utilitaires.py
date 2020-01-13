@@ -26,7 +26,7 @@ import sys
 
 import numpy as NP
 
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, INFO_EXEC_ASTER

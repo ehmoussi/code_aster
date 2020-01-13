@@ -32,7 +32,7 @@ from ..Commands import (AFFE_CHAR_MECA, AFFE_CHAR_MECA_F, CALC_FONCTION, CALC_TA
                                  MODI_MAILLAGE)
 from ..Objects.table_py import Table
 from ..Helpers.UniteAster import UniteAster
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def defi_char_sol_ops(self, TITRE=None, INFO=None, **args):

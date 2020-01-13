@@ -25,7 +25,7 @@ from ..Objects.function_py import t_fonction, t_fonction_c, t_nappe
 from ..Cata.Syntax import _F
 from ..Commands import CALC_FONCTION, CREA_TABLE, IMPR_TABLE
 from ..Objects.table_py import Table
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def info_fonction_ops(self, INFO, **args):

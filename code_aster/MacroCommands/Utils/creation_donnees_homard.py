@@ -28,7 +28,7 @@ __all__ = []
 import os
 import os.path
 
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 EnumTypes = (list, tuple)
 

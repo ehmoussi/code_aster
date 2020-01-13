@@ -34,7 +34,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import aster_core
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Utilities import value_is_sequence
 

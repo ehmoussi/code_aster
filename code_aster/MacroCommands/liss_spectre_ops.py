@@ -25,7 +25,7 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import (CALC_FONCTION, DEFI_FICHIER, DEFI_NAPPE, DETRUIRE, IMPR_FONCTION,
                                  INFO_EXEC_ASTER)
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def recu_val(tab, para, stop=0, typ=None):

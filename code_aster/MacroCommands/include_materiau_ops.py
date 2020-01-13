@@ -53,7 +53,7 @@ from math import pow
 
 import aster
 import aster_core
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from .. import Commands
 from ..Cata.DataStructure import formule

@@ -23,7 +23,7 @@ from math import cos, sin, sqrt
 from ..Cata.Syntax import _F
 from ..Commands import DEFI_FONCTION, DEFI_INTE_SPEC
 from ..Helpers.UniteAster import UniteAster
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def lire_inte_spec_ops(self,

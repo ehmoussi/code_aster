@@ -20,7 +20,7 @@
 import copy
 
 import aster
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ...Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ...Cata.Syntax import _F
 from ...Commands import CREA_CHAMP, DEFI_LIST_REEL, DYNA_NON_LINE

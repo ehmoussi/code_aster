@@ -24,7 +24,7 @@ import numpy as NP
 from numpy import array
 
 import aster
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Behaviours import catalc
 from ...Cata.Syntax import _F

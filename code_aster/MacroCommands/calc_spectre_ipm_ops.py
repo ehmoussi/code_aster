@@ -26,7 +26,7 @@ import aster_fonctions
 from ..Cata.DataStructure import fonction_c, fonction_sdaster, nappe_sdaster
 from ..Cata.Syntax import _F
 from ..Commands import CALC_FONCTION, CREA_TABLE, DEFI_FONCTION, RECU_FONCTION
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def calc_spectre_ipm_ops(

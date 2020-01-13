@@ -38,7 +38,7 @@ from math import log
 import numpy as NP
 
 import aster
-from Utilitai.Utmess import ASSERT, UTMESS
+from ...Messages import ASSERT, UTMESS
 
 from ...Helpers.UniteAster import UniteAster
 from ...Utilities import force_list, transpose

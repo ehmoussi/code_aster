@@ -23,7 +23,7 @@ from math import exp, log, pi, sqrt
 import numpy as NP
 
 import aster
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Cata.Syntax import _F
 from ..Commands import (CALC_FONCTION, CREA_TABLE, DEFI_FONCTION,

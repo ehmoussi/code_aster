@@ -27,7 +27,7 @@ from math import factorial, log, pi
 import numpy as np
 
 import aster
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ..Cata.Syntax import _F
 from ..Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,

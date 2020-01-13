@@ -37,7 +37,7 @@ import numpy as NP
 from numpy.fft import fft, ifft
 
 import aster
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import (AFFE_CHAR_MECA_F, CALC_FONC_INTERP, CALC_FONCTION,

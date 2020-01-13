@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -228,7 +228,7 @@ RESU=STAT_NON_LINE(MODELE=MO,
                                   );
 
 # on souhaite verifier que l'alarme MECANONLINE10_25 a ete emise
-from Utilitai.Utmess import MessageLog
+from code_aster.Messages import MessageLog
 infos = MessageLog.get_info_alarm()
 emit = [alr[0] for alr in infos if alr[0] == 'MECANONLINE10_25']
 is_ok = len(emit) > 0

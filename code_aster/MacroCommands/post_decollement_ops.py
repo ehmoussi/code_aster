@@ -25,7 +25,7 @@ from ..Commands import (AFFE_MATERIAU, AFFE_MODELE, CREA_CHAMP,
                                  CREA_RESU, CREA_TABLE, DEFI_GROUP,
                                  DEFI_MATERIAU, IMPR_TABLE, POST_ELEM,
                                  POST_RELEVE_T)
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 
 def fctZeroUn(listIN):

@@ -30,7 +30,7 @@ from ..Cata.Syntax import _F
 from ..Commands import (CREA_CHAMP, CREA_RESU, DEFI_GROUP, DETRUIRE,
                                  MODI_REPERE, POST_RELEVE_T, PROJ_CHAMP,
                                  RECU_TABLE)
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def observation_ops(self,

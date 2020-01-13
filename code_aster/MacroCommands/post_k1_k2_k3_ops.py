@@ -24,7 +24,7 @@ from math import pi
 import numpy as NP
 
 import aster
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ..Cata.Syntax import _F
 from ..Commands import (AFFE_MODELE, CALC_TABLE, CREA_MAILLAGE, CREA_TABLE,

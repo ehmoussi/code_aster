@@ -25,7 +25,7 @@ from pprint import pformat
 import numpy as np
 
 import aster
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Cata.DataStructure import *
 from ..Cata.DataStructure import table_container, table_fonction

@@ -25,7 +25,7 @@
 
 import aster
 from libaster import Material
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Utilities import injector
 

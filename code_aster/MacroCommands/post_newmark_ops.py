@@ -30,7 +30,7 @@ from ..Commands import (CALC_CHAMP, CALC_FONCTION, CALC_TABLE,
                                  CREA_TABLE, DEFI_FONCTION, DEFI_GROUP,
                                  MACR_LIGN_COUPE, POST_ELEM, POST_RELEVE_T,
                                  PROJ_CHAMP)
-from Utilitai.Utmess import ASSERT, UTMESS
+from ..Messages import ASSERT, UTMESS
 
 #-------------------------------------------------------
 # POST_NEWMARK : calcul de stabilite ouvrage en remblai au seisme

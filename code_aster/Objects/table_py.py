@@ -29,7 +29,7 @@ from copy import copy
 
 import numpy
 
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ..Utilities import (cut_long_lines, is_complex, is_float, is_int,
                          is_number, is_sequence, is_str, transpose)

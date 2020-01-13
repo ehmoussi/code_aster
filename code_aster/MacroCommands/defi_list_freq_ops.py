@@ -20,7 +20,7 @@
 from math import fmod, sqrt
 
 from ..Commands import DEFI_LIST_REEL
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def defi_list_freq_ops(self, **args):

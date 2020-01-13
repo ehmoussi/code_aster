@@ -40,7 +40,7 @@ import numpy as NP
 
 import aster
 import aster_core
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from ...Objects.function_py import t_fonction
 from .partition import MAIL_PY

@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ...Supervis import CO
 from ..Commands import NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE

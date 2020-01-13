@@ -33,9 +33,8 @@ from asrun.profil import AsterProfil
 
 import aster
 import aster_core
-import Utilitai
 from libaster import onFatalError
-from Utilitai.Utmess import UTMESS, MessageLog
+from ..Messages import UTMESS, MessageLog
 
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE, DEFI_LIST_REEL, TEST_TABLE

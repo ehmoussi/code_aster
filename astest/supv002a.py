@@ -34,7 +34,7 @@ import time
 import signal
 
 import code_aster
-from Utilitai.Utmess import UTMESS, MessageLog
+from code_aster.Messages import UTMESS, MessageLog
 from code_aster.Utilities import convert, is_int, localization as LO
 import Messages
 

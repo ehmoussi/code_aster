@@ -23,7 +23,7 @@ from ..Commands import (ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAMP,
                                  CALC_MATR_ELEM, CALC_VECT_ELEM, CALCUL,
                                  CREA_RESU, DEFI_LIST_REEL, EXTR_TABLE,
                                  FACTORISER, NUME_DDL, RESOUDRE)
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,

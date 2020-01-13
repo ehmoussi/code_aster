@@ -35,7 +35,7 @@ from ...Commands import (AFFE_CHAR_CINE, AFFE_CHAR_MECA, CALC_CHAMP,
                                  DETRUIRE, MODI_MAILLAGE, PERM_MAC3COEUR,
                                  POST_RELEVE_T, STAT_NON_LINE)
 from ...Helpers.UniteAster import UniteAster
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 from .mac3coeur_coeur import CoeurFactory
 from .thyc_result import lire_resu_thyc

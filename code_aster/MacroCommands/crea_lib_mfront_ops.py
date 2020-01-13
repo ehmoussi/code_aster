@@ -26,7 +26,7 @@ from subprocess import call
 
 import aster_core
 from ..Helpers.UniteAster import UniteAster
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, DEBUG, **args):

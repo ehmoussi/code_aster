@@ -27,7 +27,7 @@ from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox,
 import numpy
 
 import aster
-from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
+from ...Messages import MESSAGE_LOGGER, UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import CREA_TABLE, DETRUIRE, IMPR_TABLE, RECU_FONCTION

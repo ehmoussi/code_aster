@@ -26,7 +26,7 @@ from ..Cata.Syntax import _F
 from ..Commands import (CALC_FONCTION, CREA_TABLE, DEFI_FICHIER, DEFI_FONCTION, DETRUIRE,
                                  IMPR_FONCTION, IMPR_TABLE, INFO_EXEC_ASTER, INFO_FONCTION,
                                  RECU_FONCTION)
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def calc_bornes(inte_arias, duree, cav, dmaxi, vmaxi, amaxi, asv,

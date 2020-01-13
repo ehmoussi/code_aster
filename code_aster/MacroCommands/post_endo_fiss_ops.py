@@ -30,7 +30,7 @@ import numpy as NP
 
 import aster
 from ..Helpers.UniteAster import UniteAster
-from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ..Cata.Syntax import _F
 from ..Commands import (CREA_CHAMP, CREA_RESU, CREA_TABLE, LIRE_MAILLAGE,

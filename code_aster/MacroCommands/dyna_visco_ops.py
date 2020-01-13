@@ -20,7 +20,7 @@
 import numpy as NP
 
 import aster
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import (AFFE_MATERIAU, ASSE_MATRICE, CALC_MATR_ELEM,

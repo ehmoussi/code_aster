@@ -26,7 +26,7 @@ import aster
 from ..Cata.Language.SyntaxObjects import _F
 from ..Commands import (CALC_TABLE, CREA_CHAMP, CREA_RESU, CREA_TABLE, DETRUIRE, FORMULE,
                                  POST_ELEM)
-from Utilitai.Utmess import ASSERT, UTMESS
+from ..Messages import ASSERT, UTMESS
 
 
 def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):

@@ -26,7 +26,7 @@ import aster
 import aster_core
 from .cata_ce import InterSpectre, Resultat, nume_ddl_gene, nume_ddl_phy
 from ...Cata.Syntax import _F
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 
 class CalcEssaiIdentification:

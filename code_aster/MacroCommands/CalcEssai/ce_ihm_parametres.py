@@ -48,7 +48,7 @@ from ...Cata.Syntax import _F
 from ...Commands import DEFI_FICHIER, DETRUIRE, EXEC_LOGICIEL, IMPR_RESU, INFO_EXEC_ASTER
 from gmsh import GMSH
 from ...Objects.table_py import Table
-from Utilitai.Utmess import UTMESS
+from ...Messages import UTMESS
 
 TEMPLATESDIR = None # TODO waiting for ce_* removal!
 

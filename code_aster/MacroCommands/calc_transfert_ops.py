@@ -25,7 +25,7 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import (CALC_FONC_INTERP, CALC_FONCTION, CREA_TABLE,
                                  DEFI_FONCTION, DEFI_LIST_REEL, RECU_FONCTION)
-from Utilitai.Utmess import UTMESS
+from ..Messages import UTMESS
 
 
 def calc_transfert_ops(
