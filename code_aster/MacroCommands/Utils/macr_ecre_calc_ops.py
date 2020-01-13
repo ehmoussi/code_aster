@@ -21,11 +21,11 @@ import os
 import shutil
 
 import aster
-import aster_core
-from ...Messages import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import CREA_TABLE
+from ...Messages import UTMESS
+from ...Utilities import ExecutionParameter
 from ...Utilities.System import ExecCommand
 
 
@@ -270,7 +270,7 @@ def macr_ecre_calc_ops(self, **args):
         else:
             chemin_executable = str(LOGICIEL)
     else:
-        chemin_executable = aster_core.get_option('prog:ecrevisse')
+        chemin_executable = ExecutionParameter().get_option('prog:ecrevisse')
         if debug:
             print('chemin_executable:', chemin_executable)
 

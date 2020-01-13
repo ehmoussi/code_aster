@@ -33,12 +33,13 @@ import traceback
 from subprocess import PIPE
 
 import aster
-import aster_core
 from libaster import AsterError
+
 from ..Commands import LIRE_MAILLAGE
 from ..Helpers.LogicalUnit import FileAccess, FileType, LogicalUnitFile
 from ..Helpers.UniteAster import UniteAster
 from ..Messages import UTMESS
+from ..Utilities import ExecutionParameter
 
 
 class CommandLine( object ):
@@ -215,7 +216,7 @@ class ExecSalome( ExecMesher ):
         self.uniteAster.Libre(action='ASSOCIER', nom=self.fileOut, new=True)
         # start a SALOME session
         portFile = tempfile.NamedTemporaryFile(dir='.', suffix='.port').name
-        self.prog = self.prog or aster_core.get_option('prog:salome')
+        self.prog = self.prog or ExecutionParameter().get_option('prog:salome')
         self.args = ['start', '-t', '--ns-port-log={}'.format(portFile)]
         # do not capture the output, it will block!
         self.executeCommand(capture=False, silent=True)
@@ -242,7 +243,7 @@ class ExecGmsh( ExecMesher ):
         self.format = "MED"
         self.fileOut = tempfile.NamedTemporaryFile(dir='.', suffix='.med').name
         self.uniteAster.Libre(action='ASSOCIER', nom=self.fileOut, new=True)
-        self.prog = self.prog or aster_core.get_option('prog:gmsh')
+        self.prog = self.prog or ExecutionParameter().get_option('prog:gmsh')
         self.args.extend( ['-3', '-format', 'med',
                            self.fileIn, '-o', self.fileOut] )
 
@@ -263,7 +264,7 @@ class ExecSalomeScript( ExecProgram ):
             local = osp.join(os.environ['HOME'], os.environ['APPLI'],
                              'salome')
         else:
-            local = aster_core.get_option('prog:salome')
+            local = ExecutionParameter().get_option('prog:salome')
         if not self.prog or factKw['MACHINE']:
             self.prog = local
         self.args.insert(0, 'shell')

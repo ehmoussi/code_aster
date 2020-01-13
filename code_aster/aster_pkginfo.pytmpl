@@ -31,6 +31,9 @@ version_info = namedtuple('aster_version_info', [
 *@VERSION_INFO@
 )
 
+def get_version():
+    """Return the version number as string"""
+    return '.'.join(str(i) for i in version_info.version)
 
 def get_version_name():
     """Return the 'name' of the version.

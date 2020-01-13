@@ -28,13 +28,15 @@ from tkinter import *
 from numpy import arange, array, log, maximum, minimum
 
 import aster
-import aster_core
-from .cata_ce import DynaHarmo, ModeMeca
 from libaster import AsterError
+
 from ...Cata.Syntax import _F, ASSD, CO
-from ...Commands import (AFFE_CHAR_MECA, CREA_CHAMP, DEFI_FONCTION, DEPL_INTERNE, DETRUIRE,
-                                 DYNA_VIBRA, OBSERVATION, RECU_FONCTION)
+from ...Commands import (AFFE_CHAR_MECA, CREA_CHAMP, DEFI_FONCTION,
+                         DEPL_INTERNE, DETRUIRE, DYNA_VIBRA, OBSERVATION,
+                         RECU_FONCTION)
 from ...Messages import MESSAGE_LOGGER, UTMESS
+from ...Utilities import ExecutionParameter
+from .cata_ce import DynaHarmo, ModeMeca
 
 # from .ce_ihm_parametres import CalcEssaiSalome
 
@@ -2178,7 +2180,7 @@ class CalcEssaiXmgr(Xmgr):
     plusieurs fois en même temps ."""
 
     def __init__(self, xmgr_idx, gr_max=10, options=None,
-                 xmgrace=aster_core.get_option('prog:xmgrace')):
+                 xmgrace=ExecutionParameter().get_option('prog:xmgrace')):
 
         self.gr_max = gr_max        # nombre de graphes
         self.gr_act = 0             # numero du graphe actif

@@ -112,16 +112,9 @@ def build(self):
     self(
         features = "py",
             name = "code_aster_py",
-          source = get_srcs("**/*.py", excl="aster_core.py"),
+          source = get_srcs("**/*.py"),
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, "code_aster"),
-    )
-    self(
-        features = "py",
-            name = "aster_core",
-          source = "aster_core.py",
-    install_from = '.',
-    install_path = env.ASTERLIBDIR,
     )
 
     self(
@@ -132,6 +125,7 @@ def build(self):
     install_path = osp.join(env.ASTERLIBDIR, "code_aster", "Utilities"),
     VERSION_INFO = pformat(env['ASTER_VERSION']),
     )
+
     self(
         features = 'subst py',
             name = 'pytmpl',

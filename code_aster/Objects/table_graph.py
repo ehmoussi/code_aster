@@ -34,9 +34,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import aster_core
-from ..Messages import UTMESS
 
-from ..Utilities import value_is_sequence
+from ..Messages import UTMESS
+from ..Utilities import ExecutionParameter, value_is_sequence
 
 
 class Graph(object):
@@ -945,7 +945,7 @@ class TraceXmgrace(TraceGraph):
             self.Fich[0].write('\n'.join(content))
             self._FermFich()
         else:
-            xmgr = aster_core.get_option('prog:xmgrace')
+            xmgr = ExecutionParameter().get_option('prog:xmgrace')
             nfwrk = self.NomFich[0] + '.wrk'
             with open(nfwrk, 'w') as f:
                 f.write('\n'.join(content))
@@ -966,8 +966,8 @@ class TraceXmgrace(TraceGraph):
                     UTMESS('I', 'GRAPH0_7')
                 UTMESS('I', 'GRAPH0_8', valk=os.environ['DISPLAY'])
             else:
-                if aster_core.get_option('prog:gracebat') != 'gracebat':
-                    xmgr = aster_core.get_option('prog:gracebat')
+                if ExecutionParameter().get_option('prog:gracebat') != 'gracebat':
+                    xmgr = ExecutionParameter().get_option('prog:gracebat')
                 lcmde = '%s -hdevice %s -hardcopy -printfile %s %s' % (
                     xmgr, pilo, nfhard, nfwrk)
             # appel xmgrace

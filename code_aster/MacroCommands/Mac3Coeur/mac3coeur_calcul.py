@@ -26,17 +26,17 @@ This module defines the different types of calculations
 import os.path as osp
 from functools import wraps
 
-import aster_core
 from libaster import ConvergenceError
+
 from ...Cata.DataStructure import maillage_sdaster, modele_sdaster
 from ...Cata.Syntax import _F
 from ...Commands import (AFFE_CHAR_CINE, AFFE_CHAR_MECA, CALC_CHAMP,
-                                 CREA_CHAMP, CREA_RESU, DEFI_FONCTION,
-                                 DETRUIRE, MODI_MAILLAGE, PERM_MAC3COEUR,
-                                 POST_RELEVE_T, STAT_NON_LINE)
+                         CREA_CHAMP, CREA_RESU, DEFI_FONCTION, DETRUIRE,
+                         MODI_MAILLAGE, PERM_MAC3COEUR, POST_RELEVE_T,
+                         STAT_NON_LINE)
 from ...Helpers.UniteAster import UniteAster
 from ...Messages import UTMESS
-
+from ...Utilities import ExecutionParameter
 from .mac3coeur_coeur import CoeurFactory
 from .thyc_result import lire_resu_thyc
 
@@ -1132,7 +1132,7 @@ class Mac3CoeurEtatInitial(Mac3CoeurLame):
 # helper functions
 def _build_coeur(typ_coeur, macro, sdtab,longueur=None):
     """Return a `Coeur` object of the given type"""
-    rcdir = aster_core.get_option("rcdir")
+    rcdir = ExecutionParameter().get_option("rcdir")
     datg = osp.join(rcdir, "datg")
     factory = CoeurFactory(datg)
     # prepare the Table object

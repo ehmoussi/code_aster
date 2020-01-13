@@ -26,12 +26,12 @@ import numpy as N
 import numpy.linalg as LA
 
 import aster
-import aster_core
+
 from ...Cata.Syntax import _F
 from ...Commands import CALC_TABLE, CREA_TABLE, FORMULE, IMPR_TABLE
 from ...Helpers.UniteAster import UniteAster
 from ...Messages import UTMESS
-
+from ...Utilities import ExecutionParameter
 from .mac3coeur_coeur import CoeurFactory
 
 UL=UniteAster()
@@ -367,9 +367,7 @@ def PostForme(l_f, meth):
 
 def post_mac3coeur_ops(self, **args):
     """Corps principal de la macro de post-traitement de MAC3COEUR"""
-
-
-    rcdir = aster_core.get_option("rcdir")
+    rcdir = ExecutionParameter().get_option("rcdir")
     datg = osp.join(rcdir, "datg")
     coeur_factory = CoeurFactory(datg)
 

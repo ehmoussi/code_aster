@@ -40,14 +40,14 @@ from math import cos, pi, sin
 
 import numpy as NP
 
-import aster
 import aster_core
-from ...Messages import UTMESS
+import aster
 
 from ...Cata.Syntax import _F
 from ...Commands import IMPR_MACR_ELEM, MACR_ELEM_DYNA
 from ...Helpers.LogicalUnit import LogicalUnitFile
-from ...Utilities import ASTER_TIMER
+from ...Messages import UTMESS
+from ...Utilities import ASTER_TIMER, ExecutionParameter
 from ...Utilities.misc import (_print, _printDBG, decode_str, encode_str,
                                send_file, set_debug)
 from ...Utilities.System import ExecCommand
@@ -136,7 +136,7 @@ class CalculMiss(object):
 
         copie_fichier(self._fichier_tmp("in"),
                       osp.join(self.param['_WRKDIR'], "MISS.IN"))
-        cmd = aster_core.get_option("prog:run_miss3d") + " " + self.param['VERSION']
+        cmd = ExecutionParameter().get_option("prog:run_miss3d") + " " + self.param['VERSION']
         iret = 4
         try:
             os.chdir(self.param['_WRKDIR'])

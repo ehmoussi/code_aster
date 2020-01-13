@@ -52,13 +52,13 @@ import pprint
 from math import pow
 
 import aster
-import aster_core
-from ..Messages import UTMESS
 
 from .. import Commands
 from ..Cata.DataStructure import formule
 from ..Cata.Syntax import _F
 from ..Commands import DEFI_MATERIAU
+from ..Messages import UTMESS
+from ..Utilities import ExecutionParameter
 
 EXTR = 'extraction'
 FTEMP = 'temp_eval'
@@ -110,7 +110,7 @@ def include_materiau_ops(self,
     if not fmat:
         bnmat = ''.join([args['NOM_AFNOR'], '_', args['TYPE_MODELE'],
                          '_', args['VARIANTE'], '.', args['TYPE_VALE']])
-        rcdir = aster_core.get_option("rcdir")
+        rcdir = ExecutionParameter().get_option("rcdir")
         fmat = osp.join(rcdir, "materiau", bnmat)
 
     if not osp.exists(fmat):

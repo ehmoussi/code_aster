@@ -27,16 +27,11 @@ from datetime import datetime
 
 import numpy
 
-import _aster_core
+import aster_core
 import aster
 
 from ..Messages import UTMESS
 from ..Utilities import ExecutionParameter, aster_pkginfo, localization
-
-
-def _get_version():
-    """Return the version number as string"""
-    return '.'.join(str(i) for i in aster_pkginfo.version_info.version)
 
 
 def _print_alarm():
@@ -45,7 +40,7 @@ def _print_alarm():
     uncommitted = aster_pkginfo.version_info.uncommitted
     if changes:
         UTMESS('I', 'SUPERVIS_41',
-               valk=_get_version(), vali=changes)
+               valk=aster_pkginfo.get_version(), vali=changes)
     if uncommitted and type(uncommitted) is list:
         fnames = ', '.join(uncommitted)
         UTMESS('A', 'SUPERVIS_42',
@@ -60,7 +55,7 @@ def _print_header():
     UTMESS('I', 'SUPERVIS2_4',
            valk=aster_pkginfo.get_version_desc())
     UTMESS('I', 'SUPERVIS2_23',
-           valk=(_get_version(),
+           valk=(aster_pkginfo.get_version(),
                  date_build,
                  aster_pkginfo.version_info.parentid[:12],
                  aster_pkginfo.version_info.branch),)
@@ -76,7 +71,7 @@ def _print_header():
     pyvers = '%s.%s.%s' % tuple(sys.version_info[:3])
     UTMESS('I', 'SUPERVIS2_9', valk=(pyvers, numpy.__version__))
     # avertissement si la version a plus de 15 mois
-    if _aster_core._NO_EXPIR == 0:
+    if aster_core._NO_EXPIR == 0:
         try:
             d0, m0, y0 = list(map(int, date_build.split('/')))
             tbuild = datetime(y0, m0, d0)
