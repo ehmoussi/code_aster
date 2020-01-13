@@ -77,6 +77,7 @@ class ExecutionParameter(metaclass=Singleton):
     _args = _bool = None
     _timer = _command_counter = None
     _catalc = _unit = _syntax = None
+    _print_header = _checksd = _testresu_print = None
 
     __setattr__ = no_new_attributes(object.__setattr__)
 
@@ -367,6 +368,33 @@ class ExecutionParameter(metaclass=Singleton):
     def syntax(self, klass):
         """Setter of `_syntax`."""
         self._syntax = klass
+
+    @property
+    def print_header(self):
+        """func: Attribute that holds the 'print_header' function."""
+        return self._print_header
+
+    @print_header.setter
+    def print_header(self, func):
+        self._print_header = func
+
+    @property
+    def checksd(self):
+        """func: Attribute that holds the 'checksd' property."""
+        return self._checksd
+
+    @checksd.setter
+    def checksd(self, func):
+        self._checksd = func
+
+    @property
+    def testresu_print(self):
+        """func: Attribute that holds the 'testresu_print' property."""
+        return self._testresu_print
+
+    @testresu_print.setter
+    def testresu_print(self, func):
+        self._testresu_print = func
 
 
 def get_program_path(program):

@@ -19,6 +19,8 @@
 
 from collections import namedtuple
 
+from .i18n import translate as _
+
 __all__ = ['locale_dir', 'version_info']
 
 locale_dir = '@ASTERLOCALEDIR@'
@@ -44,7 +46,6 @@ def get_version_name():
 
 def get_version_desc():
     """Return the description of the version"""
-    from .i18n import translate as _
     name = get_version_name()
     # could not be global because of the translation system (``_`` not
     # yet installed by gettext)

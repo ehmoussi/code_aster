@@ -38,7 +38,7 @@ passed during the initialization to the
 
 
 import aster
-import aster_core
+import _aster_core
 import libaster
 
 from ..Behaviours import catalc
@@ -47,6 +47,8 @@ from ..Cata.SyntaxUtils import remove_none
 from ..Helpers import LogicalUnitFile, Serializer, loadObjects
 from ..Messages import MessageLog
 from ..Supervis import CommandSyntax, ExecuteCommand
+from ..Supervis.ctopy import checksd, print_header
+from ..Supervis.TestResult import testresu_print
 from ..Utilities import ExecutionParameter, Options, logger
 from ..Utilities.i18n import localization
 
@@ -75,7 +77,10 @@ class ExecutionStarter(object):
         cls.params.catalc = catalc
         cls.params.logical_unit = LogicalUnitFile
         cls.params.syntax = CommandSyntax
-        aster_core.register(cls.params)
+        cls.params.print_header = print_header
+        cls.params.checksd = checksd
+        cls.params.testresu_print = testresu_print
+        _aster_core.register(cls.params, MessageLog)
         libaster.jeveux_init()
         if cls.params.option & Options.Abort:
             libaster.onFatalError('ABORT')
