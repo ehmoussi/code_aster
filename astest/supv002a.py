@@ -19,24 +19,25 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
+import gettext
+import multiprocessing as MPR
 import os
 import os.path as osp
+import queue
 import re
-import gettext
+import signal
 import tempfile
-from subprocess import Popen, PIPE
+import time
+import traceback
 from functools import partial
 from glob import glob
-import traceback
-import multiprocessing as MPR
-import queue
-import time
-import signal
+from subprocess import PIPE, Popen
 
 import code_aster
-from code_aster.Messages import UTMESS, MessageLog
-from code_aster.Utilities import convert, is_int, localization as LO
 import Messages
+from code_aster.Messages import UTMESS, MessageLog
+from code_aster.Utilities import convert, is_int
+from code_aster.Utilities import localization as LO
 
 ENCODING = "utf-8"
 VALUES = MessageLog.default_args.copy()
@@ -467,7 +468,7 @@ def supv002_ops(self, ERREUR, **kwargs):
 
 if __name__ != '__main__':
     from code_aster.Cata.Syntax import MACRO, SIMP
-    from code_aster.Commands.ExecuteCommand import UserMacro
+    from code_aster.Supervis.ExecuteCommand import UserMacro
     supv_cata = MACRO(nom='SUPV002', op=supv002_ops,
                       ERREUR = SIMP(statut='o',typ='TXM', max='**',),
                       INFO = SIMP(statut='f',typ='I', defaut=1, into=(1, 2),),

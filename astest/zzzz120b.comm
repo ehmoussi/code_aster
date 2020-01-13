@@ -1,4 +1,11 @@
 from functools import reduce
+
+from code_aster.Cata.Commons import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Syntax import *
+from code_aster.Commands import *
+from code_aster.Supervis.ExecuteCommand import ExecuteMacro
+
 # coding=utf-8
 # --------------------------------------------------------------------
 # Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
@@ -22,11 +29,6 @@ from functools import reduce
 # macro commande de post-traitement (ex POST_GOUJ2E)
 # calcul des reactions cumulees suivant les filets
 
-from code_aster.Commands import *
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-from code_aster.Commands.ExecuteCommand import ExecuteMacro
 
 def POST_GOUJ_ops(self,**args):
   TABLE = args["TABLE"]

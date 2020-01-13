@@ -17,7 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ..Commands import NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE
+from ..Commands import NUME_DDL_GENE as NUME_DDL_GENE_CMD
+from ..Commands import PROJ_MATR_BASE, PROJ_VECT_BASE
 from ..Messages import UTMESS
 from ..Objects import GeneralizedDOFNumbering
 from ..Supervis import CO
@@ -41,11 +42,11 @@ def proj_base_ops(self, **args):
     # et  creation du nume_ddl_gene
     numgen = NUME_DDL_GENE
     if numgen is None:
-        _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
+        _num = NUME_DDL_GENE_CMD(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
     elif isinstance(numgen, GeneralizedDOFNumbering):
         _num = numgen
     elif isinstance(numgen, CO):
-        _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
+        _num = NUME_DDL_GENE_CMD(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
         self.register_result(_num, numgen)
     else:
         assert( False )

@@ -24,12 +24,12 @@ import copy
 import numpy
 
 import aster
-from ..Cata.DataStructure import (dyna_harmo, dyna_trans, evol_elas,
-                                           mode_meca)
+
+from ..Cata.DataStructure import dyna_harmo, dyna_trans, evol_elas, mode_meca
 from ..Cata.Syntax import _F
-from ..Commands import (CREA_CHAMP, CREA_RESU, DEFI_GROUP, DETRUIRE,
-                                 MODI_REPERE, POST_RELEVE_T, PROJ_CHAMP,
-                                 RECU_TABLE)
+from ..Commands import CREA_CHAMP, CREA_RESU, DEFI_GROUP, DETRUIRE
+from ..Commands import MODI_REPERE as MODI_REPERE_CMD
+from ..Commands import POST_RELEVE_T, PROJ_CHAMP, RECU_TABLE
 from ..Messages import UTMESS
 
 
@@ -48,10 +48,6 @@ def observation_ops(self,
     """
      Ecriture de la macro MACRO_OBSERVATION
     """
-    # on transforme le mc MODI_REPERE pour ne pas le confondre avec l'operateur
-    # du meme nom
-    MODIF_REPERE = MODI_REPERE
-
     # dans **args, on range les options de PROJ_CHAMP facultatives, et dont on
     # ne sert pas par la suite
     mcfact = args
@@ -456,10 +452,10 @@ def observation_ops(self,
 #                         REPERE   = 'UTILISATEUR',
 #                         ANGL_NAUT = (alpha, beta, gamma), )
 #                    )
-        if MODIF_REPERE is not None:
+        if MODI_REPERE is not None:
             num_ordr = __proj.getRanks()
 
-            for modif_rep in MODIF_REPERE:
+            for modif_rep in MODI_REPERE:
                 modi_rep = modif_rep
                 type_cham = modif_rep['TYPE_CHAM']
                 nom_cmp = modif_rep['NOM_CMP']
@@ -503,10 +499,10 @@ def observation_ops(self,
                         argsm = {'MODI_CHAM': mcfact1,
                                  'AFFE': mcfact2}
 
-                        __bidon = MODI_REPERE(RESULTAT=__proj,
-                                              REPERE='UTILISATEUR',
-                                              NUME_ORDRE=num_ordr,
-                                              **argsm)
+                        __bidon = MODI_REPERE_CMD(RESULTAT=__proj,
+                                                  REPERE='UTILISATEUR',
+                                                  NUME_ORDRE=num_ordr,
+                                                  **argsm)
                         DETRUIRE(CONCEPT=_F(NOM=__proj), INFO=1)
                         __proj = __bidon
 
@@ -549,11 +545,11 @@ def observation_ops(self,
                                             'ANGL_NAUT': angl_naut})
                             argsm = {'MODI_CHAM': mcfact1,
                                      'AFFE': mcfact2}
-                            __bid[k + 1] = MODI_REPERE(RESULTAT=__bid[k],
-                                                       REPERE='UTILISATEUR',
-                                                       TOUT_ORDRE='OUI',
-                                                       CRITERE='RELATIF',
-                                                       **argsm)
+                            __bid[k + 1] = MODI_REPERE_CMD(RESULTAT=__bid[k],
+                                                           REPERE='UTILISATEUR',
+                                                           TOUT_ORDRE='OUI',
+                                                           CRITERE='RELATIF',
+                                                           **argsm)
                             k = k + 1
 
                         __proj = __bid[-1:][0]
@@ -585,9 +581,9 @@ def observation_ops(self,
                                  'REPERE':  modi_rep['REPERE'],
                                  'AFFE': mcfact2}
 
-                        __bidon = MODI_REPERE(RESULTAT=__proj,
-                                              CRITERE='RELATIF',
-                                              **argsm)
+                        __bidon = MODI_REPERE_CMD(RESULTAT=__proj,
+                                                  CRITERE='RELATIF',
+                                                  **argsm)
                         DETRUIRE(CONCEPT=_F(NOM=__proj), INFO=1)
                         __proj = __bidon
 

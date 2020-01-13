@@ -77,10 +77,10 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
             # On peut passer des mots cles egaux a None. Ils sont ignores
             motscles = {}
             if NUME_DDL is not None:
-                num = NUME_DDL(MATR_RIGI=__nomrig, **motscles)
+                num = NUME_DDL_CMD(MATR_RIGI=__nomrig, **motscles)
                 self.register_result(num, NUME_DDL)
             else:
-                _num = NUME_DDL(MATR_RIGI=__nomrig, **motscles)
+                _num = NUME_DDL_CMD(MATR_RIGI=__nomrig, **motscles)
                 num = _num
         else:
             num = NUME_DDL
@@ -130,7 +130,7 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
                 OPTION='RIGI_MECA', MODELE=MODELE, **motscles)
 
             if lnume:
-                _num = NUME_DDL(MATR_RIGI=__nomrig, )
+                _num = NUME_DDL_CMD(MATR_RIGI=__nomrig, )
                 num = _num
                 lnume = 0
 
