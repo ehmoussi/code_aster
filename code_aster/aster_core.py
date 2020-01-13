@@ -37,7 +37,7 @@ import numpy
 
 import _aster_core
 import aster
-import aster_pkginfo
+from code_aster.Utilities import aster_pkginfo
 # methods and attributes of C implementation of the module
 from _aster_core import (_NO_EXPIR, _POSIX, _USE_64_BITS, _USE_MPI,
                          _USE_OPENMP, ASTER_INT_SIZE, MPI_Barrier, MPI_Bcast,

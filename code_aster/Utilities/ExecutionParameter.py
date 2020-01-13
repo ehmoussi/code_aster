@@ -43,7 +43,7 @@ import sys
 import warnings
 from argparse import SUPPRESS, ArgumentParser
 
-import aster_pkginfo
+from . import aster_pkginfo
 import libaster
 
 from .as_timer import ASTER_TIMER

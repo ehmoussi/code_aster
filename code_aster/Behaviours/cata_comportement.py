@@ -473,7 +473,7 @@ class CataLoiComportement(metaclass=Singleton):
         Il n'y a pas d'erreur si elles n'existent pas.
         Si on ne donne pas de nom, on supprime toutes les lois "de travail".
         Une loi "de travail" est créée par assemblage (cf. ``create``) et ne
-        fait pas partie des lois définies dans bibpyt/Comportement.
+        fait pas partie des lois définies dans code_aster/Behaviours.
 
         CALL LCDISCARD(COMPOR)
         ==> catalc.discard(COMPOR)"""

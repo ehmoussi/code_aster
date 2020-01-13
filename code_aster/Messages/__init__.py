@@ -17,5 +17,5 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from .Utmess import (UTMESS, MasquerAlarme, MessageLog, RetablirAlarme,
+from .Utmess import (ASSERT, UTMESS, MasquerAlarme, MessageLog, RetablirAlarme,
                      message_exception)
