@@ -47,7 +47,7 @@ __all__ = []
 
 # import libaster to call initAsterModules
 import aster
-import _aster_core
+import aster_core
 import aster_fonctions
 import med_aster
 import libaster

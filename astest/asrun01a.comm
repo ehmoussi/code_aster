@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,8 +50,8 @@ unite_out   = 72
 
 # -----------------------------------------------------------------------------
 # version de Code_Aster
-import aster_core
-vers = aster_core.__version__
+from code_aster.Utilities import get_version
+vers = get_version()
 
 # -----------------------------------------------------------------------------
 # lecture du fichier de paramètres

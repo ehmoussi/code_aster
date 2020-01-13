@@ -938,7 +938,7 @@ static PyMethodDef methods[] = {
 
 static struct PyModuleDef aster_core_def = {
         PyModuleDef_HEAD_INIT,
-        "_aster_core",
+        "aster_core",
         NULL,
         -1,
         methods,
@@ -949,7 +949,7 @@ static struct PyModuleDef aster_core_def = {
 };
 
 #ifndef _WITHOUT_PYMOD_
-PyObject* PyInit__aster_core(void)
+PyObject* PyInit_aster_core(void)
 {
     aster_core = PyModule_Create(&aster_core_def);
     // until all fileOut are removed

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2016  EDF R2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,13 +60,13 @@ T22=287.
 
 TREF=20.
 
-import aster_core
+from code_aster.Utilities import ExecutionParameter
 
-def include_maillage(MAILLAGE):
-    """Fonction pour chercher le maillage confidentiel"""
+def includeExternalData(theFile):
+    """Retrieve a file in the external data folder"""
     import os.path as osp
-    rcdir = aster_core.get_option('rcdir')
-    return osp.join(rcdir, 'tests_data', MAILLAGE)
+    rcdir = ExecutionParameter().get_option('rcdir')
+    return osp.join(rcdir, 'tests_data', theFile)
 
 nom_maillage = include_maillage('ssll501a.mail')
 unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=nom_maillage, ACCES='NEW', UNITE=20)

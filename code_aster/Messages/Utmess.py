@@ -68,7 +68,7 @@ class MESSAGE_LOGGER(metaclass=Singleton):
 
     """Classe gérant l'impression de messages.
     On ne crée qu'une instance de ce type (singleton).
-    Cette instance est accessible dans le module aster_core pour les appels
+    Cette instance est accessible dans le module `aster_core` pour les appels
     depuis le fortran.
     """
 

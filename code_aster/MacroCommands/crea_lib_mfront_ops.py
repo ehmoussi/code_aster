@@ -24,9 +24,9 @@ import os.path as osp
 import shutil
 from subprocess import call
 
-import aster_core
 from ..Helpers.UniteAster import UniteAster
 from ..Messages import UTMESS
+from ..Utilities import ExecutionParameter
 
 
 def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, DEBUG, **args):
@@ -36,7 +36,7 @@ def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, DEBUG, **args):
     infile = UL.Nom(UNITE_MFRONT)
     outlib = UL.Nom(UNITE_LIBRAIRIE)
 
-    cmd = [aster_core.get_option('prog:mfront'),
+    cmd = [ExecutionParameter().get_option('prog:mfront'),
            "--build",
            "--interface=aster"]
     if DEBUG == 'OUI':

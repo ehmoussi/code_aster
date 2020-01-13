@@ -31,16 +31,15 @@ import tarfile
 from glob import glob
 
 import aster
-import aster_core
-from ..Helpers.UniteAster import UniteAster
-#
-from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ..Cata.Syntax import _F
 from ..Commands import (DEFI_FICHIER, EXEC_LOGICIEL, IMPR_RESU, LIRE_CHAMP,
                         LIRE_MAILLAGE)
 from ..Helpers import Serializer
-from ..Utilities import logger
+from ..Helpers.UniteAster import UniteAster
+#
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Utilities import ExecutionParameter, logger
 from .Utils import creation_donnees_homard
 
 EnumTypes = (list, tuple)
@@ -1629,7 +1628,7 @@ def macr_adap_mail_ops(self,
         if (LOGICIEL is not None):
             homard = str(LOGICIEL)
         else:
-            homard = aster_core.get_option("prog:homard")
+            homard = ExecutionParameter().get_option("prog:homard")
         if not os.path.isfile(str(homard)):
             UTMESS('F', 'HOMARD0_10', valk=homard)
 #

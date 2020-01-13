@@ -26,6 +26,7 @@ No external import of other :py:mod:`code_aster` packages.
 """
 
 from .as_timer import ASTER_TIMER
+from .aster_pkginfo import get_version
 from .base_utils import (Singleton, accept_array, array_to_list, force_list,
                          force_tuple, import_object, is_complex, is_float,
                          is_float_or_int, is_int, is_number, is_sequence,

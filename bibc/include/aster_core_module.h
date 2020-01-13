@@ -28,7 +28,7 @@
  *
  */
 
-extern PyObject* PyInit__aster_core(void);
+extern PyObject* PyInit_aster_core(void);
 
 ASTERINTEGER DEFS( JDCGET, jdcget, _IN char *, STRING_SIZE );
 extern void DEFSP( JDCSET, jdcset, _IN char *, STRING_SIZE, _IN ASTERINTEGER * );

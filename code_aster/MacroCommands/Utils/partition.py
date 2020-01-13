@@ -27,12 +27,12 @@ import time
 import numpy as N
 
 import aster
-import aster_core
 
 from ...Cata.Syntax import _F
 from ...Commands import DEFI_GROUP, LIRE_MAILLAGE
 from ...Helpers.LogicalUnit import (Action, FileAccess, FileType,
                                     LogicalUnitFile)
+from ...Utilities import ExecutionParameter
 
 # ============================================================================ #
 
@@ -461,8 +461,8 @@ class PARTITION:
         self.OPTIONS = {'NB_PART': '',
                         'ALGO': '',
                         'INFO': '',
-                        'rep_metis': aster_core.get_option('repout'),
-                        'exe_metis': os.path.join(aster_core.get_option('repout'), 'pmetis'),
+                        'rep_metis': ExecutionParameter().get_option('repout'),
+                        'exe_metis': os.path.join(ExecutionParameter().get_option('repout'), 'pmetis'),
                         'fichier_in': 'fort.66',
                         'fichier_out': 'fort.68',
                         'elimine_bords': 'OUI',
@@ -527,7 +527,7 @@ class PARTITION:
 
         if METHODE:
             self.OPTIONS['exe_metis'] = os.path.join(
-                aster_core.get_option('repout'), METHODE.lower())
+                ExecutionParameter().get_option('repout'), METHODE.lower())
         elif LOGICIEL:
             self.OPTIONS['exe_metis'] = LOGICIEL
 

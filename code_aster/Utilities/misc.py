@@ -34,7 +34,7 @@ from subprocess import Popen
 from asrun.run import AsRunFactory
 
 import aster
-import aster_core
+from .ExecutionParameter import ExecutionParameter
 
 from .strfunc import convert, maximize_lines
 
@@ -79,7 +79,7 @@ def get_titre_concept(co=None):
     }
     format = [fmt["version"], ]
     dfmt = {
-        "version": aster_core.get_version(),
+        "version": ExecutionParameter().get_version(),
         "dateheure": time.strftime("LE %m/%d/%Y A %H:%M:%S"),
     }
     if co:

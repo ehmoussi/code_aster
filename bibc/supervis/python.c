@@ -56,7 +56,7 @@
 
 void initAsterModules()
 {
-    PyImport_AppendInittab("_aster_core", PyInit__aster_core);
+    PyImport_AppendInittab("aster_core", PyInit_aster_core);
     PyImport_AppendInittab("aster", PyInit_aster);
 
     /* Module définissant des opérations sur les objets fonction_sdaster */

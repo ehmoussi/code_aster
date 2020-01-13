@@ -38,7 +38,7 @@ passed during the initialization to the
 
 
 import aster
-import _aster_core
+import aster_core
 import libaster
 
 from ..Behaviours import catalc
@@ -80,7 +80,7 @@ class ExecutionStarter(object):
         cls.params.print_header = print_header
         cls.params.checksd = checksd
         cls.params.testresu_print = testresu_print
-        _aster_core.register(cls.params, MessageLog)
+        aster_core.register(cls.params, MessageLog)
         libaster.jeveux_init()
         if cls.params.option & Options.Abort:
             libaster.onFatalError('ABORT')

@@ -146,7 +146,7 @@ def exec_pyaster(self, pyfile, args, **kwargs):
         cmdenv.append('LD_LIBRARY_PATH="%s"' % environ['LD_LIBRARY_PATH'])
 
     destdir = self.options.destdir
-    python_path = destdir + self.get_tgen_by_name('aster_core').install_path
+    python_path = destdir + env.ASTERLIBDIR
     add_to_env_paths(environ, 'LIBDIR', destdir + env['LIBDIR'])
     add_to_env_paths(environ, 'BINDIR', destdir + env['BINDIR'])
     add_to_env_paths(environ, 'PYTHONARCHDIR', env['PYTHONARCHDIR'])
