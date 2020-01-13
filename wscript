@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -125,7 +125,6 @@ def options(self):
     self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
-    self.recurse('bibpyt')
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
@@ -155,7 +154,7 @@ def configure(self):
         self.options.use_config = os.environ['DEVTOOLS_COMPUTER_ID'] + suffix
     self.load('use_config')
     self.load('gnu_dirs')
-    self.env['BIBPYTPATH'] = self.path.find_dir('bibpyt').abspath()
+    self.env['CODEASTERPATH'] = self.path.find_dir('code_aster').abspath()
 
     self.env.ASTER_EMBEDS = []
 
@@ -208,7 +207,6 @@ def configure(self):
     self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
-    self.recurse('bibpyt')
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
@@ -243,7 +241,6 @@ def build(self):
     self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
-    self.recurse('bibpyt')
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('catalo')
