@@ -17,9 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster.Commands import *
+from code_aster.MacroCommands.Contrib.macro_bascule_schema_cata import (
+    MACRO_BASCULE_SCHEMA)
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IGNORE_ALARM=('DYNAMIQUE_3'),);
 
-from code_aster.MacroCommands.Contrib.macro_bascule_schema_cata import MACRO_BASCULE_SCHEMA
 
 # Length of beam
 length = 0.2

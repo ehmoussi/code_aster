@@ -26,13 +26,15 @@
 #            CHARGEMENT   : CYCLIQUE TRACTION - COMPRESSION
 #            REMARQUE 1   : ON TESTE DEFI_GLRC
 
+import aster
+from code_aster.Commands import *
+
 POURSUITE(CODE='OUI',
           DEBUG=_F(SDVERI='OUI',),
           PAR_LOT='NON');
 
 
 
-import aster
 
 
 MPa = 1E6

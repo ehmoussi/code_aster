@@ -19,17 +19,20 @@
 
 # person_in_charge: emricka.julan at edf.fr
 
+import numpy as NP
+
+from code_aster.Commands import *
+from code_aster.MacroCommands.Contrib.diffusion_H2 import (CHAMP_DETOILE,
+                                                           CHAR_GRAD_IMPO,
+                                                           CHAR_GRAD_INI,
+                                                           CHAR_SOURCE)
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',));
 
 ##############
 # appel du fichier contenant la macro de calcul du chargement pour la diffusion H2
 ##############
 
-from code_aster.MacroCommands.Contrib.diffusion_H2 import CHAR_SOURCE
-from code_aster.MacroCommands.Contrib.diffusion_H2 import CHAMP_DETOILE
-from code_aster.MacroCommands.Contrib.diffusion_H2 import CHAR_GRAD_IMPO
-from code_aster.MacroCommands.Contrib.diffusion_H2 import CHAR_GRAD_INI
-import numpy as NP
 
 #......................................................................
 # PLAQUE CARREE 2D CONTRAINTES PLANES

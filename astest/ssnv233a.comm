@@ -22,18 +22,20 @@
 #
 # TITRE: ESSAI DE TORSION - LOI DE MOHR-COULOMB, SIMU_POINT_MAT
 
-#
-# REMARQUE IMPORTANTE:
-# ---------------------
-#
-# Pour pouvoir utiliser VERI_MATR_TANG, il faut mettre SDVERI='NON'
-#                                                      ------------
-from code_aster.MacroCommands.Utils.veri_matr_tang import VERI_MATR_TANG
-import numpy as np
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       PAR_LOT='OUI',
       DEBUG=_F(SDVERI='OUI'))
+#
+# REMARQUE IMPORTANTE:
+# ---------------------
+#
+import numpy as np
+
+from code_aster.Commands import *
+# Pour pouvoir utiliser VERI_MATR_TANG, il faut mettre SDVERI='NON'
+#                                                      ------------
+from code_aster.MacroCommands.Utils.veri_matr_tang import VERI_MATR_TANG
 
 # modules mecaniques [kPa]
 K=516.2E6

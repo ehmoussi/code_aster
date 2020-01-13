@@ -17,9 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster.Commands import *
+from code_aster.Messages import MessageLog
+
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'), PAR_LOT='NON')
 
-from code_aster.Messages import MessageLog
 
 mail=LIRE_MAILLAGE(FORMAT='ASTER',UNITE=20);
 

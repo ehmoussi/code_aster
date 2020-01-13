@@ -17,6 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster.Commands import *
+# on souhaite verifier que l'alarme MECANONLINE10_25 a ete emise
+from code_aster.Messages import MessageLog
+
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
               ),
@@ -227,8 +231,6 @@ RESU=STAT_NON_LINE(MODELE=MO,
                    NEWTON=_F(REAC_ITER=1,),
                                   );
 
-# on souhaite verifier que l'alarme MECANONLINE10_25 a ete emise
-from code_aster.Messages import MessageLog
 infos = MessageLog.get_info_alarm()
 emit = [alr[0] for alr in infos if alr[0] == 'MECANONLINE10_25']
 is_ok = len(emit) > 0

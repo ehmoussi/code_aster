@@ -20,6 +20,9 @@
 # FICHIER MODELE GEVIBUS
 # person_in_charge: andre.adobes at edf.fr
 
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
+
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI') )
 
 #
@@ -88,7 +91,6 @@ CARA=AFFE_CARA_ELEM(  MODELE=MODELE,
                                   VALE = (9.525E-03, 1.09E-03,)))
 #
 
-from code_aster.Utilities import ExecutionParameter
 
 def includeExternalData(theFile):
     """Retrieve a file in the external data folder"""

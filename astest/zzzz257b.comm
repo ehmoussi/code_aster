@@ -23,12 +23,18 @@
 # MAILLAGE : TRIA6
 # COMPORTEMENT ELASTIQUE
 
+from math import *
+
+from code_aster.Commands import *
+# verification de l'emission de l'alarme :
+#-----------------------------------------
+from code_aster.Messages import MessageLog
+
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI',), PAR_LOT='NON');
 # PAR_LOT='NON' pour pouvoir tester l'emission d'une alarme importante
 
-from math import *
 
 #####################################
 ###Definition de la fissure en dur###
@@ -217,9 +223,6 @@ CHARDUAL=AFFE_CHAR_MECA_F(MODELE=MODL,
                                             FY=FMOINY,
                                             FZ=FMOINZ,),),);
 
-# verification de l'emission de l'alarme :
-#-----------------------------------------
-from code_aster.Messages import MessageLog
 infos = MessageLog.get_info_alarm()
 
 # dict pour simplifier le test
