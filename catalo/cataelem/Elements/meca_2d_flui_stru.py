@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,43 +31,46 @@ from cataelem.Options.options import OP
 
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
-    components=('DX','DY','PHI',))
+                             components=('DX', 'DY', 'PHI',))
 
 
-NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y',))
+NGEOMER = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
+                            components=('X', 'Y',))
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y','W',))
+                             components=('X', 'Y', 'W',))
 
 
-MMATUUR  = ArrayOfComponents(phys=PHY.MDEP_R, locatedComponents=DDL_MECA)
+MMATUUR = ArrayOfComponents(
+    phys=PHY.MDEP_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class MEAXFSS2(Element):
+class MEFSSE2(Element):
+
     """Please document this element"""
     meshType = MT.SEG2
-    elrefe =(
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2','FPG1=FPG1',), mater=('FPG1',),),
-        )
+    elrefe = (
+        ElrefeLoc(
+            MT.SE2, gauss=('RIGI=FPG2', 'FPG1=FPG1',), mater=('FPG1',),),
+    )
     calculs = (
 
         OP.COOR_ELGA(te=478,
-            para_in=((SP.PGEOMER, NGEOMER), ),
-            para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
-        ),
+                     para_in=((SP.PGEOMER, NGEOMER), ),
+                     para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
+                     ),
 
         OP.MASS_MECA(te=257,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                              ),
+                     para_out=((SP.PMATUUR, MMATUUR), ),
                      ),
-            para_out=((SP.PMATUUR, MMATUUR), ),
-        ),
 
         OP.TOU_INI_ELGA(te=99,
-            para_out=((OP.TOU_INI_ELGA.PGEOM_R, EGGEOP_R), ),
-        ),
+                        para_out=((OP.TOU_INI_ELGA.PGEOM_R, EGGEOP_R), ),
+                        ),
 
         OP.TOU_INI_ELEM(te=99,
             para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D), ),
@@ -75,16 +78,18 @@ class MEAXFSS2(Element):
 
 
         OP.TOU_INI_ELNO(te=99,
-            para_out=((OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), ),
-        ),
+                        para_out=((OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), ),
+                        ),
 
     )
 
 
 #------------------------------------------------------------
-class MEAXFSS3(MEAXFSS2):
+class MEFSSE3(MEFSSE2):
+
     """Please document this element"""
     meshType = MT.SEG3
-    elrefe =(
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('FPG1',),),
-        )
+    elrefe = (
+        ElrefeLoc(
+            MT.SE3, gauss=('RIGI=FPG4', 'FPG1=FPG1',), mater=('FPG1',),),
+    )

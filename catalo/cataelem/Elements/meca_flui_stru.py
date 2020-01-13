@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,15 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# Ce catalogue correspondant aux elements de surface libre fluide (2D)
-# pour le couplage fluide-structure n'ont que des DDL de :
-#  deplacement vertical DH et potentiel de deplacement PHI.
-# La contrainte n'existe pas, ni la deformation.
-# Les options FULL_MECA et RAPH_MECA sont disponibles mais correspondent
-# a un probleme lineaire : le CODRET sera toujours OK sur ces elements.
-# On le garde neanmoins pour des raisons de compatibilite.
-
-
 from cataelem.Tools.base_objects import LocatedComponents, ArrayOfComponents, SetOfNodes, ElrefeLoc
 from cataelem.Tools.base_objects import Calcul, Element
 import cataelem.Commons.physical_quantities as PHY
@@ -39,12 +30,8 @@ from cataelem.Options.options import OP
 #----------------
 
 
-NDEPLAC = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
-                            components=('PHI', 'DH',))
-
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
-                             components=('PHI', 'DH',))
+                             components=('DX', 'DY', 'DZ', 'PHI',))
 
 
 
@@ -57,17 +44,12 @@ EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
                              components=('X', 'Y', 'Z', 'W',))
 
 
-MVECTUR = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=DDL_MECA)
-
-MMATUUC = ArrayOfComponents(
-    phys=PHY.MDEP_C, locatedComponents=NDEPLAC)
-
 MMATUUR = ArrayOfComponents(
     phys=PHY.MDEP_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class MEFP_FACE3(Element):
+class MEFS_FACE3(Element):
 
     """Please document this element"""
     meshType = MT.TRIA3
@@ -82,72 +64,11 @@ class MEFP_FACE3(Element):
                      para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
                      ),
 
-        OP.FORC_NODA(te=370,
-                     para_in=((SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                              (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                              ),
-                     para_out=((SP.PVECTUR, MVECTUR), ),
-                     ),
-
-        OP.FULL_MECA(te=370,
-                     para_in=(
-                         (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
-                             SP.PDEPLMR, DDL_MECA),
-                     (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
-                     (SP.PMATERC, LC.CMATERC), ),
-                     para_out=((SP.PCODRET, LC.ECODRET), (SP.PMATUUR, MMATUUR),
-                               (SP.PVECTUR, MVECTUR), ),
-                     ),
-
-        OP.MASS_MECA(te=371,
+        OP.MASS_MECA(te=172,
                      para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                               ),
                      para_out=((SP.PMATUUR, MMATUUR), ),
                      ),
-
-        OP.NSPG_NBVA(te=496,
-                     para_in=((OP.NSPG_NBVA.PCOMPOR, LC.CCOMPO2), ),
-                     para_out=((SP.PDCEL_I, LC.EDCEL_I), ),
-                     ),
-
-        OP.PAS_COURANT(te=405,
-                       para_in=(
-                           (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                       ),
-                       para_out=((SP.PCOURAN, LC.ECOURAN), ),
-                       ),
-
-        OP.RAPH_MECA(te=370,
-                     para_in=(
-                         (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
-                             SP.PDEPLMR, DDL_MECA),
-                     (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
-                     (SP.PMATERC, LC.CMATERC), ),
-                     para_out=((SP.PCODRET, LC.ECODRET), (SP.PVECTUR, MVECTUR),
-                               ),
-                     ),
-
-        OP.RIGI_MECA(te=370,
-                     para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                              ),
-                     para_out=((SP.PMATUUR, MMATUUR), ),
-                     ),
-
-        OP.RIGI_MECA_HYST(te=370,
-                          para_in=(
-                              (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                          ),
-                          para_out=((SP.PMATUUC, MMATUUC), ),
-                          ),
-
-        OP.RIGI_MECA_TANG(te=370,
-                          para_in=(
-                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
-                              SP.PDEPLMR, DDL_MECA),
-                          (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
-                          (SP.PMATERC, LC.CMATERC), ),
-                          para_out=((SP.PMATUUR, MMATUUR), ),
-                          ),
 
         OP.TOU_INI_ELEM(te=99,
                         para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
@@ -165,7 +86,7 @@ class MEFP_FACE3(Element):
 
 
 #------------------------------------------------------------
-class MEFP_FACE4(MEFP_FACE3):
+class MEFS_FACE4(MEFS_FACE3):
 
     """Please document this element"""
     meshType = MT.QUAD4
@@ -176,7 +97,7 @@ class MEFP_FACE4(MEFP_FACE3):
 
 
 #------------------------------------------------------------
-class MEFP_FACE6(MEFP_FACE3):
+class MEFS_FACE6(MEFS_FACE3):
 
     """Please document this element"""
     meshType = MT.TRIA6
@@ -187,7 +108,7 @@ class MEFP_FACE6(MEFP_FACE3):
 
 
 #------------------------------------------------------------
-class MEFP_FACE8(MEFP_FACE3):
+class MEFS_FACE8(MEFS_FACE3):
 
     """Please document this element"""
     meshType = MT.QUAD8
@@ -198,7 +119,7 @@ class MEFP_FACE8(MEFP_FACE3):
 
 
 #------------------------------------------------------------
-class MEFP_FACE9(MEFP_FACE3):
+class MEFS_FACE9(MEFS_FACE3):
 
     """Please document this element"""
     meshType = MT.QUAD9
