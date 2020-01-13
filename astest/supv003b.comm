@@ -17,6 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import aster_core
+from code_aster.Commands import *
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       PAR_LOT='NON', IGNORE_ALARM='SUPERVIS_1')
 """
@@ -40,7 +43,6 @@ FIN s'est passé correctement, donc on affiche un message <F> dans le fichier
 RESULTAT pour dégrader le diagnostic.
 """
 
-import aster_core
 rank, size = aster_core.MPI_CommRankSize()
 
 def just_for_test_decorator(meth):

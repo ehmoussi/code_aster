@@ -18,12 +18,15 @@
 # --------------------------------------------------------------------
 
 
+import os
+import tempfile
+
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
+
 POURSUITE(CODE='OUI',
           PAR_LOT='NON',
           DEBUG=_F(SDVERI='OUI'),)
-import os
-import tempfile
-from code_aster.Utilities import ExecutionParameter
 
 fic = tempfile.NamedTemporaryFile(dir='.')
 prog_salome=ExecutionParameter().get_option('prog:salome')

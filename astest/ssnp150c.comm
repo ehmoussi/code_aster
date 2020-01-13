@@ -18,6 +18,8 @@
 # --------------------------------------------------------------------
 import math
 
+from code_aster.Commands import *
+
 try:
   # Import du module de calcul symbolique Sympy
   import sympy

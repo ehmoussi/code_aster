@@ -20,7 +20,9 @@
 # person_in_charge: jean-luc.flejou at edf.fr
 # GEOMETRIE PROCHE DU CPP N4
 
-from code_aster.MacroCommands.Contrib.macro_rota_globale import MACR_ROTA_GLOBALE
+from code_aster.Commands import *
+from code_aster.MacroCommands.Contrib.macro_rota_globale import (
+    MACR_ROTA_GLOBALE)
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='OUI'))
 

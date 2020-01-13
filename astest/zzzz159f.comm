@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
-
 import glob
 import os
 import os.path as osp
@@ -29,7 +27,13 @@ from asrun.profil import AsterProfil
 
 # Recuperation du chemin du fichier recal.py
 import code_aster.MacroCommands.Recal
+from code_aster.Commands import *
 from code_aster.Utilities.System import ExecCommand
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
+
+
+
 
 ROOT = os.getcwd()
 

@@ -22,13 +22,15 @@
 
 import numpy as NP
 
+from code_aster.Commands import *
+from code_aster.Objects.table_py import Table
+
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
               ),
               PAR_LOT='OUI',
               DEBUG=_F(SDVERI='OUI'),);
 
-from code_aster.Objects.table_py import Table
 
 K1YY=DEFI_FONCTION(NOM_PARA='INST',
                    VALE=(0.0,    0.9000000e+08,

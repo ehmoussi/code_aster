@@ -19,7 +19,9 @@
 
 # person_in_charge: david.haboussa at edf.fr
 
+from code_aster.Commands import *
 from code_aster.MacroCommands.Utils.veri_matr_tang import VERI_MATR_TANG
+from ssnd106a import CHAR_ROTA
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
@@ -88,7 +90,6 @@ ClFixe=AFFE_CHAR_MECA(MODELE=modele,DDL_IMPO=(
                         _F(GROUP_MA='FY0', DY=0.0,),
                         _F(GROUP_MA='FY1', DY=0.0,),),);
 
-from ssnd106a import CHAR_ROTA
 
 #### boucle sur les comportements
 resu=[None]*len(compor)

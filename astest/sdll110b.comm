@@ -23,6 +23,9 @@
 # FICHIER MODELE GEVIBUS
 # person_in_charge: andre.adobes at edf.fr
 
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
+
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 TUBE=LIRE_MAILLAGE(FORMAT='MED')
@@ -73,7 +76,6 @@ PROFVIT1=DEFI_FONC_FLUI(MAILLAGE=TUBE,
                         VITE=_F(PROFIL='UNIFORME',
                                 VALE=1.000000E+00),);
 
-from code_aster.Utilities import ExecutionParameter
 
 def includeExternalData(theFile):
     """Retrieve a file in the external data folder"""

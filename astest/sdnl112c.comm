@@ -22,8 +22,9 @@
 # D'USURE PAR DES CHOCS
 # FICHIER MODELE GEVIBUS
 # person_in_charge: andre.adobes at edf.fr
-#-------------------------------------------------------------------
-#
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
+
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 #
 
@@ -78,7 +79,6 @@ PROFVIT1=DEFI_FONCTION(  NOM_PARA='ABSC',
 'N_05_005'  , 'N_05_012'  , 'N_05_015'  , 'N_06_001'  , 'N_06_007'  , )
 )
 
-from code_aster.Utilities import ExecutionParameter
 
 def includeExternalData(theFile):
     """Retrieve a file in the external data folder"""

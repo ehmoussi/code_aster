@@ -17,14 +17,17 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import numpy as N
+from numpy import *
+
+from code_aster.Commands import *
+from code_aster.MacroCommands.Utils.partition import *
+
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
               ),PAR_LOT='NON',);
 
 
-from code_aster.MacroCommands.Utils.partition import *
-import numpy as N
-from numpy import *
 
 _OMEGA = 6.4;
 Fx=-100;

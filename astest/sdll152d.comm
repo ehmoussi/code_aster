@@ -25,6 +25,9 @@
 D = 0.040 # Tube diameter  = 4 cm
 t = 0.005 # Tube thickness = 5 mm
 
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
+
 DEBUT( CODE=_F(NIV_PUB_WEB='INTRANET'),DEBUG=_F(SDVERI='NON'))
 
 TUBE=LIRE_MAILLAGE(FORMAT='ASTER')
@@ -45,7 +48,6 @@ CARA=AFFE_CARA_ELEM(MODELE = MODEL,
                                 CARA     = ('R','EP',),
                                 VALE     = (0.5*D, t)))
 
-from code_aster.Utilities import ExecutionParameter
 
 def includeExternalData(theFile):
     """Retrieve a file in the external data folder"""
