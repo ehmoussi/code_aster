@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,11 +35,11 @@ DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
 
 
 NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y','Z',))
+    components=('X','Y',))
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y','Z','W',))
+    components=('X','Y','W',))
 
 
 MVECTUR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=DDL_MECA)
@@ -48,27 +48,27 @@ MMATUUR  = ArrayOfComponents(phys=PHY.MDEP_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class MEFA_FACE3(Element):
+class MEFASE2(Element):
     """Please document this element"""
-    meshType = MT.TRIA3
+    meshType = MT.SEG2
     elrefe =(
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2','FPG1=FPG1',), mater=('RIGI','FPG1',),),
         )
     calculs = (
 
-        OP.COOR_ELGA(te=488,
+        OP.COOR_ELGA(te=478,
             para_in=((SP.PGEOMER, NGEOMER), ),
             para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
         ),
 
-        OP.IMPE_ABSO(te=555,
+        OP.IMPE_ABSO(te=550,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVITENT, DDL_MECA), (SP.PVITPLU, DDL_MECA),
                      ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
-        OP.IMPE_MECA(te=10,
+        OP.IMPE_MECA(te=258,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PIMPEDR, LC.EIMPEDR),
                      (SP.PMATERC, LC.CMATERC), ),
             para_out=((SP.PMATUUR, MMATUUR), ),
@@ -79,7 +79,7 @@ class MEFA_FACE3(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D), ),
         ),
 
 
@@ -91,36 +91,9 @@ class MEFA_FACE3(Element):
 
 
 #------------------------------------------------------------
-class MEFA_FACE4(MEFA_FACE3):
+class MEFASE3(MEFASE2):
     """Please document this element"""
-    meshType = MT.QUAD4
+    meshType = MT.SEG3
     elrefe =(
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-        )
-
-
-#------------------------------------------------------------
-class MEFA_FACE6(MEFA_FACE3):
-    """Please document this element"""
-    meshType = MT.TRIA6
-    elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-        )
-
-
-#------------------------------------------------------------
-class MEFA_FACE8(MEFA_FACE3):
-    """Please document this element"""
-    meshType = MT.QUAD8
-    elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-        )
-
-
-#------------------------------------------------------------
-class MEFA_FACE9(MEFA_FACE3):
-    """Please document this element"""
-    meshType = MT.QUAD9
-    elrefe =(
-            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
         )
