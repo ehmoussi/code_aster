@@ -25,14 +25,15 @@ from pprint import pformat
 import numpy as np
 
 import aster
+from Utilitai.Utmess import UTMESS
+
 from ..Cata.DataStructure import *
 from ..Cata.DataStructure import table_container, table_fonction
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE, DETRUIRE
+from ..Objects.table_py import Table, merge, remove_twins
 from ..Utilities import force_list
-from Utilitai.Table import Table, merge, remove_twins
-from Utilitai.utils import get_titre_concept
-from Utilitai.Utmess import UTMESS
+from ..Utilities.misc import get_titre_concept
 
 
 def calc_table_prod(TABLE, ACTION, **args):

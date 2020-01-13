@@ -35,9 +35,8 @@ from asrun.run import AsRunFactory
 
 import aster
 import aster_core
-from code_aster.Utilities import convert
-from Utilitai.string_utils import maximize_lines
 
+from .strfunc import convert, maximize_lines
 
 DEBUG = False
 

@@ -20,6 +20,9 @@
 # person_in_charge: mathieu.courtois at edf.fr
 __all__ = ['Graph', 'AjoutParaCourbe']
 
+# TODO solve dependency TablePy/Graph
+# aslint: disable=C4008
+
 import os
 import os.path
 import re
@@ -31,15 +34,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import aster_core
-from code_aster.Utilities import value_is_sequence
 from Utilitai.Utmess import UTMESS
 
-
-if 'Table' not in sys.modules:
-    from . import Table
+from ..Utilities import value_is_sequence
 
 
-# ------------------------------------------------------------------------
 class Graph(object):
 
     """Cette classe définit l'objet Graph pour Code_Aster.
@@ -472,8 +471,9 @@ class TraceTableau(TraceGraph):
         """Méthode pour 'tracer' l'objet Graph dans un fichier.
         Met en page l'entete, la description des courbes et les valeurs selon
         le format et ferme le fichier.
-        L'ouverture et la fermeture du fichier sont gérées par l'objet Table.
+        L'ouverture et la fermeture du fichier sont gérées par l'objet TablePy.
         """
+        from .table_py import Table as TablePy
         g = self.Graph
         msg = []
         if g.NbCourbe > 0:
@@ -491,8 +491,8 @@ class TraceTableau(TraceGraph):
                                    "abscisses supérieur à %9.2E" % (i + 1, self.EPSILON))
                         msg.append("     Utilisez IMPR_FONCTION pour interpoler "
                                    "les valeurs sur la première liste d'abscisses.")
-            # objet Table
-            Tab = Table.Table()
+            # objet TablePy
+            Tab = TablePy()
             # titre / sous-titre
             tit = []
             tit.extend([self.DicForm['ccom'] + ' ' + line for line in g.Titre])

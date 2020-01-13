@@ -24,14 +24,14 @@ import pprint
 
 import aster
 from libaster import AsterError
-from ..Cata.DataStructure import (fonction_c, formule, formule_c,
-                                           nappe_sdaster)
+from Utilitai.Utmess import UTMESS
+
+from ..Cata.DataStructure import fonction_c, formule, formule_c, nappe_sdaster
 from ..Cata.Syntax import _F
 from ..Commands import CALC_FONC_INTERP, DEFI_LIST_REEL
 from ..Helpers import LogicalUnitFile, ReservedUnitUsed
-from Utilitai import Graph
-from Utilitai.utils import fmtF2PY
-from Utilitai.Utmess import UTMESS
+from ..Objects.table_graph import AjoutParaCourbe, Graph
+from ..Utilities.misc import fmtF2PY
 
 
 def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
@@ -112,7 +112,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     # 1. Récupération des valeurs des N courbes sous forme
     #    d'une liste de N listes
     #----------------------------------------------
-    graph = Graph.Graph()
+    graph = Graph()
     iocc = -1
     isnappelisse = 0
     for dCi in Courbe:
@@ -191,7 +191,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                         dCi['LEGENDE'] = '%s %s=%g' % (Leg, dic['NOM_PARA'].strip(), p)
                     elif typi == 'NAPPE_LISSEE':
                         dCi['LEGENDE'] = 'NAPPE_LISSEE %s %s=%g' % (Leg, dic['NOM_PARA'].strip(), p)
-                    Graph.AjoutParaCourbe(dicC, args=dCi)
+                    AjoutParaCourbe(dicC, args=dCi)
                     graph.AjoutCourbe(**dicC)
                 if typi == 'NAPPE_LISSEE':
                     isnappelisse=1
@@ -244,7 +244,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                         'Val': [lx, lr],
                         'Lab': [dpar['NOM_PARA'], nomresu]
                     }
-                Graph.AjoutParaCourbe(dicC, args=dCi)
+                AjoutParaCourbe(dicC, args=dCi)
                 graph.AjoutCourbe(**dicC)
 
         # 1.2.2. Mot-clé LIST_RESU
@@ -260,7 +260,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                 'Val': [lx, lr],
                 'Lab': [dCi['LIST_PARA'].getName(), obj.getName()]
             }
-            Graph.AjoutParaCourbe(dicC, args=dCi)
+            AjoutParaCourbe(dicC, args=dCi)
             graph.AjoutCourbe(**dicC)
 
         # 1.2.3. Mot-clé FONC_X
@@ -327,7 +327,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                     'Val': [lx, ly],
                     'Lab': [nomresur, nomresu2]
                 }
-            Graph.AjoutParaCourbe(dicC, args=dCi)
+            AjoutParaCourbe(dicC, args=dCi)
             graph.AjoutCourbe(**dicC)
 
         # 1.2.4. Mot-clé ABSCISSE / ORDONNEE
@@ -343,7 +343,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                 'Val': [lx, lr],
                 'Lab': ['Absc', 'Ordo']
             }
-            Graph.AjoutParaCourbe(dicC, args=dCi)
+            AjoutParaCourbe(dicC, args=dCi)
             graph.AjoutCourbe(**dicC)
 
     # 1.3. dbg

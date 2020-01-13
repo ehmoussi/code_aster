@@ -22,10 +22,11 @@
 import os.path as osp
 
 import aster
+from Utilitai.Utmess import UTMESS, raise_UTMESS
+
 from ..Commands import CREA_TABLE
 from ..Helpers import LogicalUnitFile
-from Utilitai.TableReader import TableReaderFactory, unique_parameters
-from Utilitai.Utmess import UTMESS, raise_UTMESS
+from .Utils.TableReader import TableReaderFactory, unique_parameters
 
 
 def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, **args):

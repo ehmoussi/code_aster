@@ -22,8 +22,9 @@ import math
 
 import numpy as N
 
-from code_aster.Utilities import force_list
 from Utilitai.Utmess import UTMESS
+
+from ...Utilities import force_list
 
 
 class filtre:

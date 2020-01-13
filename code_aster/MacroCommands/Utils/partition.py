@@ -28,10 +28,11 @@ import numpy as N
 
 import aster
 import aster_core
-from code_aster.Cata.Syntax import _F
-from code_aster.Commands import DEFI_GROUP, LIRE_MAILLAGE
-from code_aster.Helpers.LogicalUnit import Action, FileAccess, FileType, LogicalUnitFile
-from Utilitai.Partition import MAIL_PY
+
+from ...Cata.Syntax import _F
+from ...Commands import DEFI_GROUP, LIRE_MAILLAGE
+from ...Helpers.LogicalUnit import (Action, FileAccess, FileType,
+                                    LogicalUnitFile)
 
 # ============================================================================ #
 
@@ -289,11 +290,6 @@ class MAIL_PY:
 
 # -------------------------------------------------------------
     def ToAster(self, unite=None):
-        try:
-        except:
-            print("Il faut lancer ce programme depuis Aster pour pouvoir générer un maillage Aster.")
-            sys.exit()
-
         # Récupération d'une unité logique libre si besoin
         if unite is None:
             fileObject = LogicalUnitFile.new_free(new=True)
@@ -1329,11 +1325,6 @@ class PARTITION:
         t0 = time.clock()
 
         # Creation et lancement de la commande DEFI_GROUP associée
-        try:
-        except:
-            print("\n\nERREUR : il faut lancer ce programme depuis Aster pour pouvoir \ngénérer les groupes de mailles Aster.\n\n")
-            return
-
         _tmp = []
         _l_sd = []
         _l_bord = []

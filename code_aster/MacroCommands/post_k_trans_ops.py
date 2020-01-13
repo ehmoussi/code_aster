@@ -18,11 +18,12 @@
 # --------------------------------------------------------------------
 
 import aster
+from Utilitai.Utmess import UTMESS
+
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE
-from Utilitai.Table import Table, merge
-from Utilitai.utils import get_titre_concept
-from Utilitai.Utmess import UTMESS
+from ..Objects.table_py import Table, merge
+from ..Utilities.misc import get_titre_concept
 
 
 def post_k_trans_ops(self, **args):

@@ -30,8 +30,8 @@ from ..Commands import (AFFE_CHAR_MECA, AFFE_CHAR_MECA_F, CALC_FONCTION, CALC_TA
                                  CREA_MAILLAGE, CREA_RESU, DEFI_FONCTION, DEFI_GROUP, DEFI_NAPPE,
                                  DETRUIRE, IMPR_FONCTION, LIRE_FONCTION, LIRE_MAILLAGE,
                                  MODI_MAILLAGE)
-from Utilitai.Table import Table
-from Utilitai.UniteAster import UniteAster
+from ..Objects.table_py import Table
+from ..Helpers.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
 
 

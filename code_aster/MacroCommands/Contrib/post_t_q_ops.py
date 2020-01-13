@@ -24,8 +24,6 @@ from math import pi
 import numpy as NP
 
 import aster
-from Utilitai.Table import Table, merge
-from Utilitai.utils import get_titre_concept
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ...Cata.DataStructure import mode_meca
@@ -33,7 +31,9 @@ from ...Cata.Syntax import _F
 from ...Commands import (AFFE_MODELE, CALC_TABLE, CREA_MAILLAGE, CREA_TABLE,
                          DEFI_GROUP, DETRUIRE, LIRE_MAILLAGE, MACR_LIGN_COUPE,
                          POST_RELEVE_T, PROJ_CHAMP)
+from ...Objects.table_py import Table, merge
 from ...SD.sd_mater import sd_compor1
+from ...Utilities.misc import get_titre_concept
 
 # Normalizing a vector
 

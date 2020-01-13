@@ -23,7 +23,7 @@ from copy import copy
 from math import atan, atan2, cos, degrees, pi, radians, sin, sqrt
 
 import aster
-from Utilitai.Table import Table, merge
+from ...Objects.table_py import Table, merge
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ...Cata.Syntax import _F

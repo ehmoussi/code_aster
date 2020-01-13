@@ -29,7 +29,7 @@ import aster
 import aster_core
 from ...Cata.Syntax import _F
 from ...Commands import CALC_TABLE, CREA_TABLE, FORMULE, IMPR_TABLE
-from Utilitai.UniteAster import UniteAster
+from ...Helpers.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
 
 from .mac3coeur_coeur import CoeurFactory

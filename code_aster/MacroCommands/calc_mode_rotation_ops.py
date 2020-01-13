@@ -21,7 +21,7 @@
 
 from ..Cata.Syntax import _F
 from ..Commands import CALC_MODES, COMB_MATR_ASSE, CREA_TABLE
-from Utilitai.Table import Table
+from ..Objects.table_py import Table
 
 
 def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,

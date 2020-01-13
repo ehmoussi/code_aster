@@ -29,7 +29,7 @@ import numpy as NP
 import aster
 from ..Cata.Syntax import _F
 from ..Commands import *
-from Utilitai.Table import Table
+from ..Objects.table_py import Table
 from Utilitai.Utmess import UTMESS
 
 filter_columns = ('TOUT_ORDRE','NUME_ORDRE','NUME_MODE','FREQ','LIST_FREQ','NOM_CAS','CRITERE','PRECISION')

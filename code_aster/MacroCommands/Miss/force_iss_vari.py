@@ -25,14 +25,14 @@ from numpy import linalg
 
 import aster
 import aster_core
-from Utilitai.signal_correlation_utils import (CALC_COHE, calc_dist2,
-                                               get_group_nom_coord)
-from Utilitai.Table import Table
+from ...Objects.table_py import Table
 from Utilitai.Utmess import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import (COMB_MATR_ASSE, CREA_CHAMP, DETRUIRE, DYNA_VIBRA,
                          LIRE_FORC_MISS, LIRE_IMPE_MISS)
+from ..Utils.signal_correlation_utils import (CALC_COHE, calc_dist2,
+                                              get_group_nom_coord)
 
 
 def force_iss_vari(self,imod,MATR_GENE,NOM_CMP,ISSF,INFO,UNITE_RESU_FORC,

@@ -29,9 +29,9 @@ import unittest
 from math import sqrt
 from pprint import pformat
 
+from ..Utils import test_utils
 from .miss_domain import MissDomains
 from .miss_utils import dict_format
-from Utilitai import test_utils
 
 
 class MissCmdeGenerator(object):

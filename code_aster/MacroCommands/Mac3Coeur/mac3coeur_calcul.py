@@ -34,7 +34,7 @@ from ...Commands import (AFFE_CHAR_CINE, AFFE_CHAR_MECA, CALC_CHAMP,
                                  CREA_CHAMP, CREA_RESU, DEFI_FONCTION,
                                  DETRUIRE, MODI_MAILLAGE, PERM_MAC3COEUR,
                                  POST_RELEVE_T, STAT_NON_LINE)
-from Utilitai.UniteAster import UniteAster
+from ...Helpers.UniteAster import UniteAster
 from Utilitai.Utmess import UTMESS
 
 from .mac3coeur_coeur import CoeurFactory

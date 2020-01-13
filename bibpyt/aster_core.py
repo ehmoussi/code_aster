@@ -39,13 +39,14 @@ import _aster_core
 import aster
 import aster_pkginfo
 # methods and attributes of C implementation of the module
-from _aster_core import (_NO_EXPIR, _POSIX, _USE_64_BITS, _USE_MPI, _USE_OPENMP, ASTER_INT_SIZE,
-                         MPI_Barrier, MPI_Bcast, MPI_CommRankSize, MPI_GatherStr, MPI_Warn,
+from _aster_core import (_NO_EXPIR, _POSIX, _USE_64_BITS, _USE_MPI,
+                         _USE_OPENMP, ASTER_INT_SIZE, MPI_Barrier, MPI_Bcast,
+                         MPI_CommRankSize, MPI_GatherStr, MPI_Warn,
                          get_mem_stat, matfpe, set_mem_stat)
-from code_aster.Utilities import localization
 # This module is available from the C/Fortran that's why the following functions
 # are imported here:
-from Utilitai.TestResult import testresu_print
+from code_aster.MacroCommands.Utils.TestResult import testresu_print
+from code_aster.Utilities import localization
 from Utilitai.Utmess import MessageLog  # prevent cycling import
 from Utilitai.Utmess import UTMESS
 

@@ -29,12 +29,11 @@ from math import pi
 import numpy as NP
 
 import aster
-from .function_py import t_fonction, t_fonction_c
 from libaster import Function, FunctionComplex
-from Utilitai.Graph import Graph
-from Utilitai.Utmess import UTMESS
 
 from ..Utilities import accept_array, injector
+from .function_py import t_fonction, t_fonction_c
+from .table_graph import Graph
 
 
 @injector(Function)
@@ -110,8 +109,6 @@ class ExtendedFunction(object):
         TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
         objev = '%-19s.PROL' % self.getName()
         prol = self.sdj.PROL.get()
-        if prol == None:
-            UTMESS('F', 'SDVERI_2', valk=[objev])
         dico = {
             'INTERPOL': [prol[1][0:3], prol[1][4:7]],
             'NOM_PARA': prol[2][0:16].strip(),
@@ -218,8 +215,6 @@ class ExtendedFunctionComplex(object):
         TypeProl = {'E': 'EXCLU', 'L': 'LINEAIRE', 'C': 'CONSTANT'}
         objev = '%-19s.PROL' % self.getName()
         prol = self.sdj.PROL.get()
-        if prol == None:
-            UTMESS('F', 'SDVERI_2', valk=[objev])
         dico = {
             'INTERPOL': [prol[1][0:3], prol[1][4:7]],
             'NOM_PARA': prol[2][0:16].strip(),

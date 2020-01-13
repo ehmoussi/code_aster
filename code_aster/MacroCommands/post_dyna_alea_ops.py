@@ -23,14 +23,15 @@ from math import exp, log, pi, sqrt
 import numpy as NP
 
 import aster
-from ..Objects.function_py import t_fonction
-from ..Cata.Syntax import _F
-from ..Commands import (CALC_FONCTION, CREA_TABLE, DEFI_FONCTION, DEFI_LIST_REEL,
-                                 RECU_FONCTION)
-from Utilitai.optimize import fmin
-from Utilitai.stats import linregress, normcdf
-from Utilitai.Table import Table
 from Utilitai.Utmess import UTMESS
+
+from ..Cata.Syntax import _F
+from ..Commands import (CALC_FONCTION, CREA_TABLE, DEFI_FONCTION,
+                        DEFI_LIST_REEL, RECU_FONCTION)
+from ..Objects.function_py import t_fonction
+from ..Objects.table_py import Table
+from .Utils.optimize import fmin
+from .Utils.stats import linregress, normcdf
 
 EnumTypes = (list, tuple)
 

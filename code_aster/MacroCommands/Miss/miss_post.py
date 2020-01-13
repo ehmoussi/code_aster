@@ -37,9 +37,6 @@ import numpy as NP
 from numpy.fft import fft, ifft
 
 import aster
-from Utilitai.partition import MAIL_PY
-from Utilitai.Table import Table
-from Utilitai.utils import _print, _printDBG, set_debug
 from Utilitai.Utmess import UTMESS
 
 from ...Cata.Syntax import _F
@@ -52,6 +49,9 @@ from ...Commands import (AFFE_CHAR_MECA_F, CALC_FONC_INTERP, CALC_FONCTION,
                          RECU_FONCTION, REST_SPEC_TEMP)
 from ...Helpers.LogicalUnit import LogicalUnitFile
 from ...Objects import DataStructure
+from ...Objects.table_py import Table
+from ...Utilities.misc import _print, _printDBG, set_debug
+from ..Utils.partition import MAIL_PY
 from .force_iss_vari import force_iss_vari
 from .miss_resu_miss import MissCsolReader
 

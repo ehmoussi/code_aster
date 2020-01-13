@@ -19,7 +19,7 @@
 
 import copy
 
-from Utilitai.Table import merge
+from ..Objects.table_py import merge
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
 from ..Cata.Syntax import _F

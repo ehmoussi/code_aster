@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 import aster
-from Utilitai.partition import MAIL_PY
-from Utilitai.Table import Table
+from ..Objects.table_py import Table
 from Utilitai.Utmess import UTMESS
+
+from .Utils.partition import MAIL_PY
 
 
 def buildTabString(tabLevel):

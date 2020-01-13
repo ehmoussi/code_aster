@@ -35,16 +35,16 @@ import aster
 import aster_core
 import Utilitai
 from libaster import onFatalError
-from Utilitai.optimize import (approx_fhess_p, approx_fprime, fmin, fminBFGS,
-                               fminNCG, line_search, line_search_BFGS)
 from Utilitai.Utmess import UTMESS, MessageLog
 
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE, DEFI_LIST_REEL, TEST_TABLE
-from .Recal.reca_controles import gestion
-from .Recal.reca_evol import evolutivo
 from .Recal import (reca_algo, reca_calcul_aster, reca_interp, reca_message,
                     reca_utilitaires, recal)
+from .Recal.reca_controles import gestion
+from .Recal.reca_evol import evolutivo
+from .Utils.optimize import (approx_fhess_p, approx_fprime, fmin, fminBFGS,
+                             fminNCG, line_search, line_search_BFGS)
 
 debug = False
 
