@@ -30,11 +30,12 @@ from numpy import arange, array, log, maximum, minimum
 import aster
 from libaster import AsterError
 
-from ...Cata.Syntax import _F, ASSD, CO
+from ...Cata.Syntax import _F
 from ...Commands import (AFFE_CHAR_MECA, CREA_CHAMP, DEFI_FONCTION,
                          DEPL_INTERNE, DETRUIRE, DYNA_VIBRA, OBSERVATION,
                          RECU_FONCTION)
 from ...Messages import MESSAGE_LOGGER, UTMESS
+from ...Supervis import CO
 from ...Utilities import ExecutionParameter
 from .cata_ce import DynaHarmo, ModeMeca
 

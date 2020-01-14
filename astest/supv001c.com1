@@ -27,6 +27,7 @@ from code_aster.Cata.DataStructure import CO as typCO
 from code_aster.Cata.DataStructure import table_sdaster
 from code_aster.Cata.Syntax import MACRO, SIMP
 from code_aster.Commands import *
+from code_aster.Supervis import UserMacro
 
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
@@ -62,7 +63,7 @@ MA_MACRO_cata = MACRO(
     TABLE = SIMP(statut='f', typ=typCO,),
 )
 
-MA_MACRO = ExecuteCommand.UserMacro("MA_MACRO", MA_MACRO_cata, ma_macro_ops)
+MA_MACRO = UserMacro("MA_MACRO", MA_MACRO_cata, ma_macro_ops)
 
 
 MA_MACRO(TABLE=CO('tabd'))

@@ -26,8 +26,9 @@ from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox,
 from numpy import (arctan, array, conjugate, identity, log, ones, pi,
                    transpose, zeros)
 
-from ...Cata.Syntax import _F, CO
+from ...Cata.Syntax import _F
 from ...Commands import DETRUIRE, IMPR_RESU, OBSERVATION
+from ...Supervis import CO
 from .cata_ce import (CreaTable, InterSpectre, ModeMeca, Resultat,
                       nume_ddl_gene, nume_ddl_phy)
 from .ce_calcul_identification import CalcEssaiIdentification

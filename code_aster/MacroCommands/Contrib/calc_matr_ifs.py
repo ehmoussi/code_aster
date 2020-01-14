@@ -23,7 +23,7 @@ from math import *
 import aster
 from ...Messages import UTMESS
 
-from ...Cata.DataStructure import CO as CATA_CO
+from ...Cata.DataStructure import CO as typCO
 from ...Cata.DataStructure import *
 from ...Cata.Syntax import *
 from ...Cata.Syntax import _F, MACRO, SIMP
@@ -131,8 +131,8 @@ def calc_matr_ifs_ops(self, **args):
                                      _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_1,),),)
 # Creation du NUME_DDL
 
-    NUME_DDL=NUME_DDL(MODELE = MODELE)
-    self.register_result(NUME_DDL, NUME_DDL_OUT)
+    numeddl=NUME_DDL(MODELE = MODELE)
+    self.register_result(numeddl, NUME_DDL_OUT)
 
 # Calcul des matrices d'impédance
 
@@ -147,12 +147,12 @@ def calc_matr_ifs_ops(self, **args):
                                CHAM_MATER=_MAT_MK1,)
 
         IMPE_I=ASSE_MATRICE(MATR_ELEM=_ElIMPEi,
-                              NUME_DDL=NUME_DDL,
+                              NUME_DDL=numeddl,
                               CHAR_CINE=CHAR_CINE,)
         self.register_result(IMPE_I, IMPE_I_OUT)
 
         IMPE_R=ASSE_MATRICE(MATR_ELEM=_ElIMPEr,
-                            NUME_DDL=NUME_DDL,
+                            NUME_DDL=numeddl,
                             CHAR_CINE=CHAR_CINE,)
         self.register_result(IMPE_R, IMPE_R_OUT)
 
@@ -166,12 +166,12 @@ def calc_matr_ifs_ops(self, **args):
                             CHAM_MATER=_MAT_MSF,)
 
     MASS_E=ASSE_MATRICE(MATR_ELEM=_ElMASSe,
-                        NUME_DDL=NUME_DDL,
+                        NUME_DDL=numeddl,
                         CHAR_CINE=CHAR_CINE,)
     self.register_result(MASS_E, MASS_E_OUT)
 
     MASS_F=ASSE_MATRICE(MATR_ELEM=_ElMASSf,
-                        NUME_DDL=NUME_DDL,
+                        NUME_DDL=numeddl,
                         CHAR_CINE=CHAR_CINE,)
     self.register_result(MASS_F, MASS_F_OUT)
 
@@ -192,11 +192,11 @@ def calc_matr_ifs_ops(self, **args):
                             CHAM_MATER=_MAT_MK2,)
 
     RIGI_F=ASSE_MATRICE(MATR_ELEM=_ElRIGIf,
-                        NUME_DDL=NUME_DDL,
+                        NUME_DDL=numeddl,
                         CHAR_CINE=CHAR_CINE,)
     self.register_result(RIGI_F, RIGI_F_OUT)
     RIGI_E=ASSE_MATRICE(MATR_ELEM=_ElRIGIe,
-                        NUME_DDL=NUME_DDL,
+                        NUME_DDL=numeddl,
                         CHAR_CINE=CHAR_CINE,)
     self.register_result(RIGI_E, RIGI_E_OUT)
 
@@ -210,7 +210,7 @@ def calc_matr_ifs_ops(self, **args):
                                 CHAM_MATER=_MAT_MK3,
                                 RIGI_MECA=_ElRIGf1,)
         RIGI_V=ASSE_MATRICE(MATR_ELEM=_ElRIGf2,
-                            NUME_DDL=NUME_DDL,
+                            NUME_DDL=numeddl,
                             CHAR_CINE=CHAR_CINE,)
         self.register_result(RIGI_V, RIGI_V_OUT)
 
@@ -275,7 +275,7 @@ CALC_MATR_IFS_CATA=MACRO(nom="CALC_MATR_IFS",
                  MODELE          =SIMP(statut='o',typ=modele_sdaster),
                  CHAR_CINE       =SIMP(statut='f',typ=char_cine_meca),
                  INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
-                 NUME_DDL        =SIMP(statut='o',typ=(nume_ddl_sdaster,CATA_CO)),
+                 NUME_DDL        =SIMP(statut='o',typ=(nume_ddl_sdaster,typCO)),
 
 # Zones d'affectation
                  GROUP_MA_ELAS   =SIMP(statut='o',typ=grma,validators=NoRepeat(),max='**'),
@@ -294,14 +294,14 @@ CALC_MATR_IFS_CATA=MACRO(nom="CALC_MATR_IFS",
                  CHAR_IMPE_C     =SIMP(statut='f',typ='R'),
 
 # Sorties (matrices)
-                 MASS_E          =SIMP(statut='f',typ= CATA_CO),
-                 MASS_F          =SIMP(statut='f',typ= CATA_CO),
-                 MASS_FI         =SIMP(statut='f',typ= CATA_CO),
-                 RIGI_E          =SIMP(statut='f',typ= CATA_CO),
-                 RIGI_F          =SIMP(statut='f',typ= CATA_CO),
-                 RIGI_V          =SIMP(statut='f',typ= CATA_CO),
-                 IMPE_R          =SIMP(statut='f',typ= CATA_CO),
-                 IMPE_I          =SIMP(statut='f',typ= CATA_CO),
+                 MASS_E          =SIMP(statut='f',typ= typCO),
+                 MASS_F          =SIMP(statut='f',typ= typCO),
+                 MASS_FI         =SIMP(statut='f',typ= typCO),
+                 RIGI_E          =SIMP(statut='f',typ= typCO),
+                 RIGI_F          =SIMP(statut='f',typ= typCO),
+                 RIGI_V          =SIMP(statut='f',typ= typCO),
+                 IMPE_R          =SIMP(statut='f',typ= typCO),
+                 IMPE_I          =SIMP(statut='f',typ= typCO),
 )
 
 CALC_MATR_IFS = UserMacro("CALC_MATR_IFS", CALC_MATR_IFS_CATA, calc_matr_ifs_ops)

@@ -28,7 +28,7 @@ using their catalog definition.
 
 """
 
-from ..Supervis.ExecuteCommand import CO
+from ..Supervis import CO
 # please keep alphabetical order
 from .affe_cara_elem import AFFE_CARA_ELEM
 from .affe_char_acou import AFFE_CHAR_ACOU

@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 import math
 
-from code_aster.Cata.DataStructure import CO as typCO
 from code_aster.Cata.DataStructure import (cham_mater, cham_no_sdaster,
                                            char_meca, listr8_sdaster,
                                            maillage_sdaster, modele_sdaster,
