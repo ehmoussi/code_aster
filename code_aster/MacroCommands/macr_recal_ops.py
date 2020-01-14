@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# aslint: disable=C4008
-
 # person_in_charge: mathieu.courtois@edf.fr
 
 import copy
@@ -44,10 +42,17 @@ from .Recal.reca_evol import evolutivo
 from .Utils.optimize import (approx_fhess_p, approx_fprime, fmin, fminBFGS,
                              fminNCG, line_search, line_search_BFGS)
 
+try:
+    import Gnuplot
+    HAS_GNUPLOT = True
+except ImportError:
+    HAS_GNUPLOT = False
+
 debug = False
 
 INFO = 1
 NOMPRO = 'MACR_RECAL'
+
 
 
 # ------------------------------------------------------------------------
@@ -231,9 +236,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         dGRAPHIQUE = GRAPHIQUE[0].cree_dict_valeurs(GRAPHIQUE[0].mc_liste)
         if 'FORMAT' in dGRAPHIQUE and dGRAPHIQUE['FORMAT'] == 'GNUPLOT':
         # On essaie d'importer Gnuplot -> PAS DE GRAPHIQUE
-            try:
-                import Gnuplot
-            except ImportError:
+            if not HAS_GNUPLOT:
                 GRAPHIQUE = None
                 UTMESS('A', 'RECAL0_3')
 

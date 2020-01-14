@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# aslint: disable=C4008
-
 # =====================================================================
 # Based on tensor.py written by Konrad Hinsen <hinsen@cnrs-orleans.fr>
 # =====================================================================
