@@ -33,10 +33,6 @@ passed during the initialization to the
 :py:class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter`.
 """
 
-# for 'ptvsd'
-# aslint: disable=C4008
-
-
 import aster
 import aster_core
 import libaster
@@ -51,6 +47,12 @@ from ..Supervis.ctopy import checksd, print_header
 from ..Supervis.TestResult import testresu_print
 from ..Utilities import ExecutionParameter, Options, logger
 from ..Utilities.i18n import localization
+
+try:
+    import ptvsd
+    HAS_PTVSD = True
+except ImportError:
+    HAS_PTVSD = False
 
 
 class ExecutionStarter(object):
@@ -187,8 +189,7 @@ def init(*argv, **kwargs):
         ExecutionParameter().enable(Options.Debug)
     kwargs.pop('debug', None)
 
-    if kwargs.get('ptvsd'):
-        import ptvsd
+    if kwargs.get('ptvsd') and HAS_PTVSD:
         print('Waiting for debugger attach...'),
         ptvsd.enable_attach(address=('127.0.0.1', kwargs['ptvsd']))
         ptvsd.wait_for_attach()

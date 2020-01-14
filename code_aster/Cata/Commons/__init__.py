@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# aslint: disable=C4008
 # c_mfront_official will only be available after installation
 try:
     from .c_mfront_official import C_MFRONT_OFFICIAL # pragma pylint: disable=import-error
