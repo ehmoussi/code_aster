@@ -25,21 +25,18 @@ from distutils.sysconfig import get_python_lib
 
 from asrun.profil import AsterProfil
 
-# Recuperation du chemin du fichier recal.py
-import code_aster.MacroCommands.Recal
+# Recuperation du chemin du fichier 'reca_main.py'
+import code_aster
 from code_aster.Commands import *
 from code_aster.Utilities.System import ExecCommand
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
 
-
-
 ROOT = os.getcwd()
 
-commande = osp.join(osp.dirname(code_aster.MacroCommands.Recal.__file__),
-                    'recal.py')
-
+commande = osp.abspath(osp.join(code_aster.__path__[0], "..", "..", "..",
+                                "share", "aster", "reca_main.py"))
 
 arguments = ' --objective=fcalc --objective_type=float --gradient_type=no --mr_parameters=fort.2 '
 commande = '%s %s %s' % (sys.executable, commande, arguments)

@@ -33,10 +33,10 @@ from asrun.profil import AsterProfil
 
 import aster
 from libaster import onFatalError
-from ..Messages import UTMESS, MessageLog
 
 from ..Cata.Syntax import _F
 from ..Commands import CREA_TABLE, DEFI_LIST_REEL, TEST_TABLE
+from ..Messages import UTMESS, MessageLog
 from .Recal import (reca_algo, reca_calcul_aster, reca_interp, reca_message,
                     reca_utilitaires, recal)
 from .Recal.reca_controles import gestion
@@ -442,7 +442,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         UNITE_INCLUDE = UNITE_ESCL
         recal.make_include_files(
             UNITE_INCLUDE=UNITE_INCLUDE, calcul=RESU_CALC, parametres=LIST_PARA)
-        # if os.path.isfile(pre): recal.execfile(filename)
 
     #-------------------------------------------------------------------------------
     # Pas d'optimisation (juste une evaluation de la fonctionnelle pour le point courant)
