@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.greffet at edf.fr
 
 
-from ...Cata.Syntax import PROC, SIMP
+from ...Cata.Syntax import PROC, SIMP, tr
 from ...Supervis import ExecuteCommand
 
 INIT_COMPO_CATA = PROC(nom="INIT_COMPO",

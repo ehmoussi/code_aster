@@ -82,7 +82,7 @@ class AssertRaisesContext(case._AssertRaisesContext):
         return True
 
 
-class TestCase( unittest.TestCase ):
+class TestCase(unittest.TestCase):
     """Similar to a unittest.TestCase
     Does not fail but print result OK/NOOK in the .resu file"""
 
