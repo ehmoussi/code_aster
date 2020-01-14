@@ -34,7 +34,8 @@ from ...Cata.Syntax import _F
 from ...Commands import (AFFE_CHAR_MECA, CREA_CHAMP, DEFI_FONCTION,
                          DEPL_INTERNE, DETRUIRE, DYNA_VIBRA, OBSERVATION,
                          RECU_FONCTION)
-from ...Messages import MESSAGE_LOGGER, UTMESS
+from ...Messages import UTMESS
+from ...Messages import MessageLog as mess
 from ...Supervis import CO
 from ...Utilities import ExecutionParameter
 from .cata_ce import DynaHarmo, ModeMeca
@@ -42,9 +43,6 @@ from .cata_ce import DynaHarmo, ModeMeca
 # from .ce_ihm_parametres import CalcEssaiSalome
 
 palette = ["#%02x%02x%02x" % (255 - i, 255 - i, 255 - i) for i in range(256)]
-# MESSAGE_LOGGER = classe permettant de formatter et d'afficher les
-# messages d'erreur
-mess = MESSAGE_LOGGER()
 
 
 class TabbedWindow(Frame):
@@ -2170,116 +2168,6 @@ class VecteurEntry:
         """Détruit l'object vecteur"""
         for wid in self.widgets:
             wid.destroy()
-
-
-#-----------------------------------------------------------------------------
-
-
-class CalcEssaiXmgr(Xmgr):
-
-    """Une interface à Xmgrace pouvant être lancée
-    plusieurs fois en même temps ."""
-
-    def __init__(self, xmgr_idx, gr_max=10, options=None,
-                 xmgrace=ExecutionParameter().get_option('prog:xmgrace')):
-
-        self.gr_max = gr_max        # nombre de graphes
-        self.gr_act = 0             # numero du graphe actif
-        self.sets = [0] * gr_max    # nombre de sets par graphe
-        self.nom_pipe = 'xmgr%i.pipe' % xmgr_idx  # nom du pipe de communication
-        self.xmgrace = xmgrace
-
-        # Ouverture du pipe de communication avec xmgrace
-        if os.path.exists(self.nom_pipe):
-            os.remove(self.nom_pipe)
-        os.mkfifo(self.nom_pipe)
-        self.pipe = open(self.nom_pipe, 'a+')
-
-        # Lancement de xmgrace
-        shell = self.xmgrace + ' -noask '
-        if options is not None:
-            shell += options
-        shell += ' -graph ' + repr(gr_max - 1) + ' -npipe ' + self.nom_pipe
-
-        # Teste le DISPLAY avant de lancer xmgrace...
-        if 'DISPLAY' in os.environ:
-            UTMESS('I', 'CALCESSAI1_9', valk=[shell])
-            Popen([shell], shell=True)
-
-            # Mise a l'echelle des graphes
-            for i in range(gr_max):
-                gr = 'G' + repr(i)
-                self.Send('WITH ' + gr)
-                self.Send('VIEW XMIN 0.10')
-                self.Send('VIEW XMAX 0.95')
-                self.Send('VIEW YMIN 0.10')
-                self.Send('VIEW YMAX 0.95')
-
-            # Activation du graphe G0
-            self.Active(0)
-
-        else:
-            UTMESS('A', 'CALCESSAI1_3', valk=['XMGRACE'])
-
-    def Ech_x(self, ech_x):
-        """Place l'échelle sur x à NORMAL, LOGARITHMIC ou RECIPROCAL"""
-        if self.Terminal_ouvert():
-            self.Send('WITH G' + repr(self.gr_act))
-            # XXX un probleme Xmgrace (à revoir)
-            if ech_x == "LOGARITHMIC":
-                self.Send('WORLD XMIN 0.1')
-            self.Send('XAXES SCALE ' + ech_x)
-            self.Send('REDRAW')
-
-    def Ech_y(self, ech_y):
-        """Place l'échelle sur y à NORMAL, LOGARITHMIC ou RECIPROCAL"""
-        if self.Terminal_ouvert():
-            self.Send('WITH G' + repr(self.gr_act))
-            # XXX un probleme Xmgrace (à revoir)
-            if ech_y == "LOGARITHMIC":
-                self.Send('WORLD YMIN 0.1')
-            self.Send('YAXES SCALE ' + ech_y)
-            self.Send('REDRAW')
-
-
-class XmgrManager:
-
-    """Garde en référence les instances de `CalcEssaiXmgr'.
-    """
-
-    def __init__(self):
-        self.xmgr_nb = 0
-        self.xmgr_list = []
-        self.echelle_dict = {'LIN': 'NORMAL',
-                             'LOG': 'LOGARITHMIC'}
-
-    def affiche(self, abscisses, ordonnees, couleur, legende,
-                ech_x, ech_y):
-        """!Sortie des données sur une courbe XMGrace
-
-        \param abscisse abscisses du graphe
-        \param ordonnees tableau de valeurs
-        """
-        self.xmgr_nb += 1
-        xmgr = CalcEssaiXmgr(self.xmgr_nb)
-        self.xmgr_list.append(xmgr)
-
-        xmgr.Titre("Courbe", "Sous_titre")
-        xmgr.Axe_x("Frequence")
-        xmgr.Axe_y("Amplitude")
-
-        for ordo, leg in zip(ordonnees, legende):
-            cbr = Courbe(abscisses, ordo)
-            xmgr.Courbe(cbr, leg)
-
-        # xmgr.Ech_x(self.echelle_dict[ech_x])
-        # xmgr.Ech_y(self.echelle_dict[ech_y])
-
-    def fermer(self):
-        """Enlève les fichiers temporaires utlisés
-        pour les graphiques et les pipe avec Xmgrace."""
-        for xmgr in self.xmgr_list:
-            xmgr.Fermer()
 
 
 #-------------------------------------------------------------------------

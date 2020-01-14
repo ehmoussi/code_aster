@@ -31,24 +31,27 @@ import time
 import tkinter.font
 import weakref
 from subprocess import Popen
-from tkinter import (DISABLED, NORMAL, BooleanVar, Button, Canvas, Checkbutton, Entry, Frame,
-                     IntVar, Label, Listbox, Menu, Menubutton, Radiobutton, Scrollbar, StringVar,
-                     Tk, Toplevel)
+from tkinter import (DISABLED, NORMAL, BooleanVar, Button, Canvas, Checkbutton,
+                     Entry, Frame, IntVar, Label, Listbox, Menu, Menubutton,
+                     Radiobutton, Scrollbar, StringVar, Tk, Toplevel)
 
 import aster
-from .cata_ce import (CalcEssaiObjects, CaraElem, DynaHarmo, InterSpectre, ModeMeca,
-                                Resultat)
-from .ce_calcul_expansion import CalcEssaiExpansion, make_mac_salome, make_mesh_mac
-from .outils_ihm import (DispFRFDialogue, DispObs, MacWindowFrame, MyMenu, StudyList,
-                                   XmgrManager)
+from gmsh import GMSH
+
 from ...Cata.Syntax import _F
 #
 # Classes specifiques pour chaque logiciel de post-traitement
 #
-from ...Commands import DEFI_FICHIER, DETRUIRE, EXEC_LOGICIEL, IMPR_RESU, INFO_EXEC_ASTER
-from gmsh import GMSH
-from ...Objects.table_py import Table
+from ...Commands import (DEFI_FICHIER, DETRUIRE, EXEC_LOGICIEL, IMPR_RESU,
+                         INFO_EXEC_ASTER)
 from ...Messages import UTMESS
+from ...Objects.table_py import Table
+from .cata_ce import (CalcEssaiObjects, CaraElem, DynaHarmo, InterSpectre,
+                      ModeMeca, Resultat)
+from .ce_calcul_expansion import (CalcEssaiExpansion, make_mac_salome,
+                                  make_mesh_mac)
+from .outils_ihm import (DispFRFDialogue, DispObs, MacWindowFrame, MyMenu,
+                         StudyList)
 
 TEMPLATESDIR = None # TODO waiting for ce_* removal!
 
@@ -480,13 +483,10 @@ class InterfaceParametres(Frame):
         # Les courbes sont transferees par CORBA
         # => Pas besoin de verifier le protocole rcp/scp
         self.save_parameters(do_check_protocole=False)
-        if self.logiciel.get() == "Gmsh/Xmgrace":
-            return CalcEssaiXmgrace()
+        if self.ce_salome_courbes:
+            return self.ce_salome_courbes
         else:
-            if self.ce_salome_courbes:
-                return self.ce_salome_courbes
-            else:
-                return CalcEssaiSalomeCourbes(self.mess, self.machine_name, self.salome_port.get(), self)
+            return CalcEssaiSalomeCourbes(self.mess, self.machine_name, self.salome_port.get(), self)
         pass
 
     def visu_studylist(self):
@@ -910,38 +910,6 @@ class CalcEssaiSalomeCourbes(CalcEssaiSalome):
                       )
 
         UTMESS('I', 'CALCESSAI1_20')
-
-    def fermer(self):
-        pass
-
-
-# class CalcEssaiXmgrace(CalcEssaiLogicielCourbes):
-class CalcEssaiXmgrace():
-
-    def __init__(self):
-        self.xmgr_manager = None
-        pass
-
-    # l_x: liste des abscisses
-    # ll_y: liste de liste des ordonnees (une liste par courbe)
-    def affiche(self, l_x, ll_y, couleur=None, titre='Courbes', l_legende=None,
-                legende_x=' ', legende_y=' ',
-                unite_x=' ', unite_y=' '):
-        if couleur is None:
-            # XXX color n'est plus uilisé mais est-ce important?
-            # Xmgrace applique automatiquement une nouvelle couleur
-            # à chaque courbe.
-            couleur = list(range(1, 15))
-            if len(couleur) > len(l_x):
-                couleur = couleur[0: len(l_x)]
-            elif len(couleur) < len(l_x):
-                for k in range(len(l_x) - len(couleur)):
-                    couleur.append(',1')
-
-        self.xmgr_manager = XmgrManager()
-        self.xmgr_manager.affiche(
-            l_x, ll_y, couleur, l_legende, legende_x, legende_y)
-        pass
 
     def fermer(self):
         pass
