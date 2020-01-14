@@ -24,7 +24,7 @@ import os
 import sys
 import time
 
-import numpy as N
+import numpy as NP
 
 import aster
 

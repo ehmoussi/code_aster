@@ -4,7 +4,7 @@ from code_aster.Cata.Commons import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Syntax import *
 from code_aster.Commands import *
-from code_aster.Supervis.ExecuteCommand import ExecuteMacro
+from code_aster.Supervis import UserMacro
 
 # coding=utf-8
 # --------------------------------------------------------------------
@@ -79,7 +79,7 @@ def POST_GOUJ_ops(self,**args):
 POST_GOUJ_CATA=MACRO(nom="POST_GOUJ",op=POST_GOUJ_ops,sd_prod=table_sdaster,reentrant='n',fr="",
                      TABLE=SIMP(statut='o',typ=table_sdaster),)
 
-POST_GOUJ = ExecuteCommand.UserMacro("POST_GOUJ", POST_GOUJ_CATA, POST_GOUJ_ops)
+POST_GOUJ = UserMacro("POST_GOUJ", POST_GOUJ_CATA, POST_GOUJ_ops)
 ########################################################################
 
 POURSUITE(CODE='OUI')

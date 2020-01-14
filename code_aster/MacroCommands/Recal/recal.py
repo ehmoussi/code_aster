@@ -999,7 +999,7 @@ class CALCULS_ASTER:
            Ajoute un bloc a la fin de l'esclave pour l'affichage des MAC pour l'appariement manuel
         """
         txt = []
-        txt.append( "from ..MacroCommands.Recal.reca_mac import extract_mac_array, get_modes, fenetre_mac\n" )
+        txt.append( "from code_aster.MacroCommands.Recal.reca_mac import extract_mac_array, get_modes, fenetre_mac\n" )
         txt.append( "_mac = extract_mac_array("+str(reponse[0])+")\n" )
         txt.append( "l_mac=[]\n" )
         txt.append( "nb_freq=_mac.shape[1]\n" )

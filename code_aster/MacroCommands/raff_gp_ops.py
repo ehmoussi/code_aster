@@ -20,10 +20,12 @@
 from numpy import cos, pi, sin
 
 import aster
+
 from ..Cata.Syntax import _F
-from ..Commands import (AFFE_MODELE, CO, COPIER, CREA_CHAMP, DETRUIRE,
-                                 FORMULE, MACR_ADAP_MAIL)
+from ..Commands import (AFFE_MODELE, COPIER, CREA_CHAMP, DETRUIRE, FORMULE,
+                        MACR_ADAP_MAIL)
 from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Supervis import CO
 
 #
 #

@@ -19,13 +19,13 @@
 
 import copy
 
-from ..Objects.table_py import merge
-from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
-
 from ..Cata.Syntax import _F
-from ..Commands import (AFFE_MATERIAU, CO, CREA_TABLE, DEFI_LIST_REEL,
-                        DETRUIRE, PROJ_CHAMP, STAT_NON_LINE, THER_LINEAIRE)
+from ..Commands import (AFFE_MATERIAU, CREA_TABLE, DEFI_LIST_REEL, DETRUIRE,
+                        PROJ_CHAMP, STAT_NON_LINE, THER_LINEAIRE)
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 from ..Objects import EntityType
+from ..Objects.table_py import merge
+from ..Supervis import CO
 from .Utils.calc_ecrevisse import CALC_ECREVISSE
 
 

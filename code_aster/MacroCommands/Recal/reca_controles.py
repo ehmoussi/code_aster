@@ -119,8 +119,8 @@ def verif_fichier(UL, PARAMETRES, REPONSES):
     txt = ""
     txt_alarme = ""
     try:
-        fichier = open('fort.' + str(UL), 'r')
-        fic = fichier.read()
+        with open('fort.' + str(UL), 'r') as fichier:
+            fic = fichier.read()
     except:
         txt += "\nImpossible d'ouvrir le fichier esclave declare avec l'unite logique " + \
             str(UL)
