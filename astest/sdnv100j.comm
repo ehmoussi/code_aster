@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from math import sqrt
+
 from code_aster.Commands import *
 from code_aster.MacroCommands.Contrib.macro_bascule_schema_cata import (
     MACRO_BASCULE_SCHEMA)
